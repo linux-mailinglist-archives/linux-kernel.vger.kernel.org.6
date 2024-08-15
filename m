@@ -1,215 +1,169 @@
-Return-Path: <linux-kernel+bounces-287646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A0A8952AB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:38:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C508952AB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EBCE1C215B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:38:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ECAD1F21935
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3C51A76AE;
-	Thu, 15 Aug 2024 08:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751641AB525;
+	Thu, 15 Aug 2024 08:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="PUPXQEIU"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Ij/YyljS"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80708224EF
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCBD224EF;
+	Thu, 15 Aug 2024 08:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723709303; cv=none; b=pckTyclv4TTqt3+mnR/1vN3fv9uWy81dj+Rv9Nv4WakmX1RyP0UCq7xRdyO29w+kIu+r8s2/Jhm5LOqtWmT/PwfVTghwSfXw2JA7E3YlPIHc0EofTgxeOlr1YWtict2kfk4a1YSOBheLu+QfZF7SNIgZeOG96zgaqLcD4HITxjY=
+	t=1723709407; cv=none; b=CREMFp8FSHbxukhW+E3+/f3FuUHEw92dVRR60HqhXv6tZ7y61YZXcVTIS74BhNH6TS8TAk3BY7LAfAECJCVviAOHjeRPjTm7ipsS/S9VLcvMi3Qszdxmz73tuvnfXVfDvV0eGH8azEDAy+MYy5/fOThjzytb6vXebbzONnjsriI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723709303; c=relaxed/simple;
-	bh=+Zd7PLS5h6fj7q4S8XQLSecPTF3PKTeEVSECo0mbYNs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YQIeuQyGb0s5AxLqTBd/MI8sZLS4lbhJAoMt+C8jL78p4c7Be8OUu72aSMfj5VF1bhYSf/7hhBBeYHEuFiQP2rpPMI8E+bihoQrkQ/y31S1MqQGhKN2pBvcOU84BgrNB7L2Uup6LcYKcBAdYl7KSH3hmRT7iICCIpZwqFCBSR+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=PUPXQEIU; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com [209.85.221.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 6CA9A3F1F4
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:08:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1723709298;
-	bh=QwzUdLAd7aHB4wJiWgZPpnda9jdXnSJALlxOCLuXUk8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=PUPXQEIUZTdiF7i9C+IJVWWN4MJ/J1yIe5Wi/XKVYUpxvr6mvIiHnTdC0q0vtdThO
-	 ziwKXtXVH7SUvE6vZnf7Rb9w5Dk7zB4lofqezWoqpDskR7Z0gmMJNOY3cIzCKoGu76
-	 ebcPmTDu8Q85p0KZbLlE2LP+PN7ArmofulnQZQC9Ud/g5qB5DD91NhtoqyNYoownhC
-	 MurAQ9UlnMzOgYICfTdP8S0HZcxkNTWeFvCqVT29zLvGUTfZkVxTjV3/axK1p0l8H6
-	 QVDXNvR69vPfLVZtjRkj/8mFrpEf9cDubcxzttUQKw0/HWqZR2CKiOVnMwWfBbngz/
-	 Uoef4cMmm44Mg==
-Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-4fc59a051f5so211169e0c.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 01:08:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723709297; x=1724314097;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QwzUdLAd7aHB4wJiWgZPpnda9jdXnSJALlxOCLuXUk8=;
-        b=XbLReAn3A0odzM8BgElORHMYjEy43Jqtd/Que/GsTuFVhfrasxdMVrRl5XmG7SxAz/
-         ldZ5r6K/YJg4NyIhyWN5U5uccGNWLbwh89EuTFO3+TPKqrERZGKyMKgSMFcVT4rUjXs5
-         x8JD4hURWiM0NrwTfCG11twMCqTAdg8qvjrlU3atZUf9fhVUvzoTZWxgrE9bGDRrzOiv
-         gF26PVgkPWH5GhI4F+uKXbGQkg6IQiOhuwAl8eWNWQzSUy2UcYsImL/uOo1e9T12adaU
-         q9uoaEeYrTL/dl+EVAHN2YZU7FKLSgUD8ouEX1yuhNA9JfnWBXoIs5pwaKK1OIrfCxh+
-         nvkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUUjrCwPeqw8912JWCYfgtRfxuaBXCIJ5prQSY3sbYnUg3Kb/NyFrhFwFfOmL21S9j3r4DgewmXrgYVAlm0wLnEh5F5hU5qhpYv9RpQ
-X-Gm-Message-State: AOJu0YxAKmTYzLYAHPMrTpwwqutqFx+rFSn2EICH5siBffBz4VAZPzzA
-	rsRA713+o/YySOrsNVzruc/is9eTiUNxrCFuCMlSeidlshGc8M+gRX1NGmeADZ0UgLGK4vsg9YF
-	8SC51BUK5QsKdvS5n4O8opKo3U94B8hk2kf9i8I9HPtg/SwgJS7sD76cOcl4m3A9j2HFc0iB0X6
-	nzO1bVlYIr1cZJc6BVucBc2s7R5atVm5nLqLJ+C9U/nRnke2m7lhSo
-X-Received: by 2002:a05:6122:3c49:b0:4f6:a85d:38b3 with SMTP id 71dfb90a1353d-4fad2333ecamr6572752e0c.13.1723709296701;
-        Thu, 15 Aug 2024 01:08:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEGFGN8CN0DSqDWCPM1VOUm2IQgxthofz228sV9vN9siAmKC/cV/UuZJl2+ATDIB7LSvUrwIx5kTE1n2/k62gk=
-X-Received: by 2002:a05:6122:3c49:b0:4f6:a85d:38b3 with SMTP id
- 71dfb90a1353d-4fad2333ecamr6572734e0c.13.1723709296323; Thu, 15 Aug 2024
- 01:08:16 -0700 (PDT)
+	s=arc-20240116; t=1723709407; c=relaxed/simple;
+	bh=Vq9fdpiHYCcA3YutqCJf5nOgy5ZsiZMwomSl6P5m1+k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IPMadaO94IegUsM3PIsJcxfCfwhXr8GYYf2q5ocTMDwpILtiZpzMflwNd1ODkV3AXhptzpAYRnruMIMFBA4GIRXhaP7rVyS3iZijOA5V78o0Ui5TSSXhOn2MbqYXa+19V+X1zSnQEIm0NvjILiDHDyehKKixrCMRFYc1gQfFzDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Ij/YyljS; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1723709396; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=dhlnD4w2ERVomdZm2wZoEaPSUN72pF3OY/AUE2o6W1E=;
+	b=Ij/YyljSxBzt4x0JMM0Wt9lEGIHPeQqWvoLvVORm3/1o+FOzsPn463lzmX4PKsgcBBpABDoeibAtg0KrmOe1filN5iTnOtUTN1QSRZ4CQfpJNdV0oaLUjRUOQROjucRnBUPR2K4Dd1FBJFt/dyao5NUpkF1vpx6dLnZZWQ+nVm0=
+Received: from 30.221.149.192(mailfrom:alibuda@linux.alibaba.com fp:SMTPD_---0WCw3Kx0_1723709394)
+          by smtp.aliyun-inc.com;
+          Thu, 15 Aug 2024 16:09:55 +0800
+Message-ID: <5f283fe3-92e9-4622-bda6-ad40b718aadc@linux.alibaba.com>
+Date: Thu, 15 Aug 2024 16:09:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814114034.113953-1-aleksandr.mikhalitsyn@canonical.com>
- <20240814114034.113953-10-aleksandr.mikhalitsyn@canonical.com> <20240814-knochen-ersparen-9b3f366caac4@brauner>
-In-Reply-To: <20240814-knochen-ersparen-9b3f366caac4@brauner>
-From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date: Thu, 15 Aug 2024 10:08:05 +0200
-Message-ID: <CAEivzxeQOY6h2AB+eHpnNPAkHMjVoCdOxG99KmkPZx7MVyjhvQ@mail.gmail.com>
-Subject: Re: [PATCH v2 9/9] fs/fuse: allow idmapped mounts
-To: Christian Brauner <brauner@kernel.org>
-Cc: mszeredi@redhat.com, stgraber@stgraber.org, linux-fsdevel@vger.kernel.org, 
-	Seth Forshee <sforshee@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Amir Goldstein <amir73il@gmail.com>, Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net,v4] net/smc: prevent NULL pointer dereference in
+ txopt_get
+To: Alexandra Winter <wintera@linux.ibm.com>,
+ Jeongjun Park <aha310510@gmail.com>
+Cc: gbayer@linux.ibm.com, guwen@linux.alibaba.com, jaka@linux.ibm.com,
+ tonylu@linux.alibaba.com, wenjia@linux.ibm.com, davem@davemloft.net,
+ dust.li@linux.alibaba.com, edumazet@google.com, kuba@kernel.org,
+ linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+ netdev@vger.kernel.org, pabeni@redhat.com
+References: <64c2d755-eb4b-42fa-befb-c4afd7e95f03@linux.ibm.com>
+ <20240814150558.46178-1-aha310510@gmail.com>
+ <9db86945-c889-4c0f-adcf-119a9cbeb0cc@linux.alibaba.com>
+ <CAO9qdTGFGxgD_8RYQKTx9NJbwa0fiFziFyx2FJpnYk3ZvFbUmw@mail.gmail.com>
+ <6bcd6097-13dd-44fd-aa67-39a3bcc69af2@linux.alibaba.com>
+ <c9c35759-33e7-4103-a4f0-af1d5fdefcdf@linux.ibm.com>
+ <08f4d3cf-4d9a-47e6-a033-ed8c03ee5a0e@linux.alibaba.com>
+ <5ad4de6f-48d4-4d1b-b062-e1cd2e8b3600@linux.ibm.com>
+Content-Language: en-US
+From: "D. Wythe" <alibuda@linux.alibaba.com>
+In-Reply-To: <5ad4de6f-48d4-4d1b-b062-e1cd2e8b3600@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 14, 2024 at 4:19=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
+
+
+On 8/15/24 3:56 PM, Alexandra Winter wrote:
 >
-> On Wed, Aug 14, 2024 at 01:40:34PM GMT, Alexander Mikhalitsyn wrote:
-> > Now we have everything in place and we can allow idmapped mounts
-> > by setting the FS_ALLOW_IDMAP flag. Notice that real availability
-> > of idmapped mounts will depend on the fuse daemon. Fuse daemon
-> > have to set FUSE_ALLOW_IDMAP flag in the FUSE_INIT reply.
-> >
-> > To discuss:
-> > - we enable idmapped mounts support only if "default_permissions" mode =
-is enabled,
-> > because otherwise we would need to deal with UID/GID mappings in the us=
-erspace side OR
-> > provide the userspace with idmapped req->in.h.uid/req->in.h.gid values =
-which is not
-> > something that we probably want to. Idmapped mounts phylosophy is not a=
-bout faking
-> > caller uid/gid.
-> >
-> > - We have a small offlist discussion with Christian around adding fs_ty=
-pe->allow_idmap
-> > hook. Christian pointed that it would be nice to have a superblock flag=
- instead like
-> > SB_I_NOIDMAP and we can set this flag during mount time if we see that =
-filesystem does not
-> > support idmappings. But, unfortunately I didn't succeed here because th=
-e kernel will
-> > know if the filesystem supports idmapping or not after FUSE_INIT reques=
-t, but FUSE_INIT request
-> > is being sent at the end of mounting process, so mount and superblock w=
-ill exist and
-> > visible by the userspace in that time. It seems like setting SB_I_NOIDM=
-AP flag in this
-> > case is too late as user may do the trick with creating a idmapped moun=
-t while it wasn't
-> > restricted by SB_I_NOIDMAP. Alternatively, we can introduce a "positive=
-" version SB_I_ALLOWIDMAP
+> On 15.08.24 09:34, D. Wythe wrote:
+>>
+>> On 8/15/24 3:03 PM, Alexandra Winter wrote:
+>>> On 15.08.24 08:43, D. Wythe wrote:
+>>>> On 8/15/24 11:15 AM, Jeongjun Park wrote:
+>>>>> 2024년 8월 15일 (목) 오전 11:51, D. Wythe <alibuda@linux.alibaba.com>님이 작성:
+>>>>>> On 8/14/24 11:05 PM, Jeongjun Park wrote:
+>>>>>>> Alexandra Winter wrote:
+>>>>>>>> On 14.08.24 15:11, D. Wythe wrote:
+>>>>>>>>>         struct smc_sock {                /* smc sock container */
+>>>>>>>>> -    struct sock        sk;
+>>>>>>>>> +    union {
+>>>>>>>>> +        struct sock        sk;
+>>>>>>>>> +        struct inet_sock    inet;
+>>>>>>>>> +    };
+>>>>>>>> I don't see a path where this breaks, but it looks risky to me.
+>>>>>>>> Is an smc_sock always an inet_sock as well? Then can't you go with smc_sock->inet_sock->sk ?
+>>>>>>>> Or only in the IPPROTO SMC case, and in the AF_SMC case it is not an inet_sock?
+>>>>>> There is no smc_sock->inet_sock->sk before. And this part here was to
+>>>>>> make smc_sock also
+>>>>>> be an inet_sock.
+>>>>>>
+>>>>>> For IPPROTO_SMC, smc_sock should be an inet_sock, but it is not before.
+>>>>>> So, the initialization of certain fields
+>>>>>> in smc_sock(for example, clcsk) will overwrite modifications made to the
+>>>>>> inet_sock part in inet(6)_create.
+>>>>>>
+>>>>>> For AF_SMC,  the only problem is that  some space will be wasted. Since
+>>>>>> AF_SMC don't care the inet_sock part.
+>>>>>> However, make the use of sock by AF_SMC and IPPROTO_SMC separately for
+>>>>>> the sake of avoid wasting some space
+>>>>>> is a little bit extreme.
+>>>>>>
+>>> Thank you for the explanation D. Wythe. That was my impression also.
+>>> I think it is not very clean and risky to use the same structure (smc_sock)
+>>> as inet_sock for IPPROTO_SMC and as smc_sock type for AF_SMC.
+>>> I am not concerned about wasting space, mroe about maintainability.
+>>>
+>>>
+>> Hi Alexandra,
+>>
+>> I understand your concern, the maintainability is of course the most important. But if we use different
+>> sock types for IPPROTO_SMC and AF_SMC, it would actually be detrimental to maintenance because
+>> we have to use a judgment of which type of sock is to use in all the code of smc, it's really dirty.
+>>
+>> In fact, because a sock is either given to IPPROTO_SMC as inet_sock or to AF_SMC as smc_sock,
+>> it cannot exist the same time.  So it's hard to say what risks there are.
+>>
+>> Of course, I have to say that this may not be that clean, but compared to adding a type judgment
+>> for every sock usage, it is already a very clean approach.
+>>
+>
+> At least the union makes it visible now, so it is cleaner than before.
+> Maybe add a comment to the union, which one is used in which case?
+>
+>> Best wishes,
+>> D. Wythe
+>>
+> [...]
+>
+>>>>>>> -#define smc_sk(ptr) container_of_const(ptr, struct smc_sock, sk)
+>>>>>>> +#define smc_sk(ptr) container_of_const(ptr, struct smc_sock, inet.sk)
+>>>>>>>
+>
+> Just an idea: Maybe it would be sufficient to do the type judgement in smc_sk() ?
 
-Hi Christian,
+I'm afraid not. We need do at least like this
+
+void  smc_sendmsg(struct sock *sk, ...)
+{
+     struct smc_inet_sock *inet_smc;
+     struct smc_sock * smc ;
+
+     if (sk->protocol == IPPROTO_SMC) {
+         inet_smc = smc_inet_sk(sk);
+         do_same_sendmsg_but_with_inet_sock(inet_smc);
+     } else {
+         smc = smc_sk(sk);
+         do_same_sendmsg_but_with_smc_sock(smc);
+     }
+}
+
+I am more prefer to what you said about adding more comments. Of course 
+it's just my idea,
+We can also see if Jan and Wenjia have any other ideas too.
+
+Best wishes,
+D. Wythe
+
 
 >
-> Hm, I'm confused why won't the following (uncompiled) work?
 
-I believe that your way should work. Sorry about that. It's my bad that I
-didn't consider setting SB_I_NOIDMAP in fill_super and unsetting it
-later on once
-we had enough information.
-
-Huge thanks for pointing this out!
-
-I'll drop -v3 soon and also add support for virtiofs in the same series.
-
-Kind regards,
-Alex
-
->
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index ed4c2688047f..8ead1cacdd2f 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -1346,10 +1346,12 @@ static void process_init_reply(struct fuse_mount =
-*fm, struct fuse_args *args,
->                         if (flags & FUSE_OWNER_UID_GID_EXT)
->                                 fc->owner_uid_gid_ext =3D 1;
->                         if (flags & FUSE_ALLOW_IDMAP) {
-> -                               if (fc->owner_uid_gid_ext && fc->default_=
-permissions)
-> +                               if (fc->owner_uid_gid_ext && fc->default_=
-permissions) {
->                                         fc->allow_idmap =3D 1;
-> -                               else
-> +                                       fm->sb->s_iflags &=3D ~SB_I_NOIDM=
-AP;
-> +                               } else {
->                                         ok =3D false;
-> +                               }
->                         }
->                 } else {
->                         ra_pages =3D fc->max_read / PAGE_SIZE;
-> @@ -1576,6 +1578,7 @@ static void fuse_sb_defaults(struct super_block *sb=
-)
->         sb->s_time_gran =3D 1;
->         sb->s_export_op =3D &fuse_export_operations;
->         sb->s_iflags |=3D SB_I_IMA_UNVERIFIABLE_SIGNATURE;
-> +       sb->s_iflags |=3D SB_I_NOIDMAP;
->         if (sb->s_user_ns !=3D &init_user_ns)
->                 sb->s_iflags |=3D SB_I_UNTRUSTED_MOUNTER;
->         sb->s_flags &=3D ~(SB_NOSEC | SB_I_VERSION);
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 328087a4df8a..d1702285c915 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -4436,6 +4436,10 @@ static int can_idmap_mount(const struct mount_katt=
-r *kattr, struct mount *mnt)
->         if (!(m->mnt_sb->s_type->fs_flags & FS_ALLOW_IDMAP))
->                 return -EINVAL;
->
-> +       /* The filesystem has turned off idmapped mounts. */
-> +       if (m->mnt_sb->s_iflags & SB_I_NOIDMAP)
-> +               return -EINVAL;
-> +
->         /* We're not controlling the superblock. */
->         if (!ns_capable(fs_userns, CAP_SYS_ADMIN))
->                 return -EPERM;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index fd34b5755c0b..185004c41a5e 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1189,6 +1189,7 @@ extern int send_sigurg(struct fown_struct *fown);
->  #define SB_I_TS_EXPIRY_WARNED 0x00000400 /* warned about timestamp range=
- expiry */
->  #define SB_I_RETIRED   0x00000800      /* superblock shouldn't be reused=
- */
->  #define SB_I_NOUMASK   0x00001000      /* VFS does not apply umask */
-> +#define SB_I_NOIDMAP   0x00002000      /* No idmapped mounts on this sup=
-erblock */
->
->  /* Possible states of 'frozen' field */
->  enum {
 
