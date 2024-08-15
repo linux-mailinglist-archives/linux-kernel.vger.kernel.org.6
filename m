@@ -1,91 +1,127 @@
-Return-Path: <linux-kernel+bounces-288487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F2F3953AAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:11:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7820D953ABF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:16:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8C291F23489
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:11:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA654285028
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20AF13A416;
-	Thu, 15 Aug 2024 19:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D847823CE;
+	Thu, 15 Aug 2024 19:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UOHdiyBt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="bEPOA2se"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 000CA7E110;
-	Thu, 15 Aug 2024 19:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659EA3214;
+	Thu, 15 Aug 2024 19:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723749081; cv=none; b=vCNn5o29MlW4W8KSVBkwhJU9YwAcjYz2/7OxEtj7skDnUjQ+np6idIZI4T37lGM87ejO81/PuT/b2mgRWiLbsfjBFK2fEXCzIfEIqBLhHeMFJVnn22ntQLPcOo5isZBIpfzVpy/c08gekmh/qByKjKTb/p5S+O38v2Sg+XmVsCs=
+	t=1723749353; cv=none; b=eqh6zGRXYinUeihEfFEjEu0/ANghQIcRvZnx+5Kbpxfy6epzEipPqnnl5tXQDok2FLP2KbXAPo3SRpJWcjt9xReD775unUo2FZJ+8TaDgo0ZoOkNtcSqH7PdAxrBuGQT6EVcf+zkasYlJzCUeCKsnAABXgJIflcHbJKldpdLtfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723749081; c=relaxed/simple;
-	bh=92vX60iqYAh7PcbjNcrQqaG2doDOIb7T48bvLsUa0es=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=INAJn1OKe7pkRLm111PvrMcQqMoxPvFWhBj1rYYBMNrIvnmEH9v9xl+x9Yci0oAO+plYI667+Q6mbmGUWGM72MIE7g/NAi3cB13k2bstiOe+qcmqTmZDPMFbD/YKW26XieSlkJS+wBhvSH/98mXCX7O5ikeq6QqaGHYaSyLt5lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UOHdiyBt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96149C4AF0D;
-	Thu, 15 Aug 2024 19:11:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723749080;
-	bh=92vX60iqYAh7PcbjNcrQqaG2doDOIb7T48bvLsUa0es=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UOHdiyBtBjL78lF+LspGrJO+g4uj5hXlvI5A0Ik7hOfQgYvKq4s1ruTipCavK/2fg
-	 hMXF7H+BejJi9sNQkqyZqi6PNspk/hjzNAwNiTbn4pektqsGKsRr0bNp67H6xnDoTN
-	 Ybnyqv6LdCB+EmHn1M137f8eqclJL0oQqpV0PSyNyx3iuugEOQeEqNbFBgdJQDdE6+
-	 2dXAEP92JuC6O8mDJJZ+kEmjyKsIxtoep+A+KevKJorlfBCZC6P+Syo5shZM/JSJ5b
-	 4Y4svYibD4q8NR5Qz3//toPVVJ3Zi2HP1aUdc4jWK8UDDYYa7w+gH8S7qWo8YSpwbQ
-	 SYQk4Ps22ZbIA==
-From: Bjorn Andersson <andersson@kernel.org>
-To: mathieu.poirier@linaro.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	konrad.dybcio@linaro.org,
-	manivannan.sadhasivam@linaro.org,
-	Naina Mehta <quic_nainmeht@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH v4 0/5] Add MPSS remoteproc support for SDX75
-Date: Thu, 15 Aug 2024 12:15:32 -0700
-Message-ID: <172374932841.1370237.8680270462656640056.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240709064924.325478-1-quic_nainmeht@quicinc.com>
-References: <20240709064924.325478-1-quic_nainmeht@quicinc.com>
+	s=arc-20240116; t=1723749353; c=relaxed/simple;
+	bh=3IA/lEQS5Ka5U3GAMoEyvBhsFlr1JFKsKR/ohfA3REs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uibhTXThcQIghl4a4DjDaWKz0RT6siY5Nh/41gNvlauopmUyvaem1bbvi2q9ZRIUJBOfQSEfv6c3l5jwn/QK79H93iooJekX0qkvD8LTINSksphU0gtb/bU388tgeN+vhhXEhE/OEQx9+nb77Kr147peuSNA+9s1c5GKQdpA2Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=bEPOA2se; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1723749349; x=1724008549;
+	bh=3IA/lEQS5Ka5U3GAMoEyvBhsFlr1JFKsKR/ohfA3REs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=bEPOA2seWoWAvvPfEDo2VYV4iguqmyMHOj798GZZgq48xgguk84oyqCyFLm8kutlV
+	 f8IXV12LywLJOn7Mrt1IM8nsCD596IfFNCgQdFKJAl5O98wjiFzydwa9w3y8rB/IcV
+	 WJ2LaoO7f5rKO10Q0clbr4P1tm45xabLTFw9tiawcm5eLfUMMAzYLQU5s0/M60Czu+
+	 0IeiJ929pnADxyp9bW1fMng244RRbl/9i0v6n4qgC2q8vouJktkGVZ4nrmw8vIThJi
+	 kJBbu3jgz7n/HDwGJU6hp8Pe7dmXbGaSnf1eAlgS95U0FtqfXNjB7ppyl6PIUEbthe
+	 UcB81T8CC3neA==
+Date: Thu, 15 Aug 2024 19:15:43 +0000
+To: Alice Ryhl <aliceryhl@google.com>, Andreas Hindborg <nmi@metaspace.dk>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Jens Axboe <axboe@kernel.dk>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, "Behme Dirk (XC-CP/ESB5)" <Dirk.Behme@de.bosch.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] rust: block: fix wrong usage of lockdep API
+Message-ID: <5b251842-564c-4b7a-8d4d-d7fc2b1b857c@proton.me>
+In-Reply-To: <10ae8a5a-5dbc-4d6a-8f86-30236dacc5b3@proton.me>
+References: <20240815074519.2684107-1-nmi@metaspace.dk> <20240815074519.2684107-3-nmi@metaspace.dk> <CAH5fLgih1QtO-ACyoifNsgqd=VtJimoGV+aD=3iHG0wb+iDGyw@mail.gmail.com> <10ae8a5a-5dbc-4d6a-8f86-30236dacc5b3@proton.me>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 3516b6ed98df991ff6888e2756a91275131bcb07
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On 15.08.24 21:05, Benno Lossin wrote:
+> On 15.08.24 10:04, Alice Ryhl wrote:
+>> On Thu, Aug 15, 2024 at 9:49=E2=80=AFAM Andreas Hindborg <nmi@metaspace.=
+dk> wrote:
+>>>
+>>> From: Andreas Hindborg <a.hindborg@samsung.com>
+>>>
+>>> When allocating `struct gendisk`, `GenDiskBuilder` is using a dynamic l=
+ock
+>>> class key without registering the key. This is incorrect use of the API=
+,
+>>> which causes a `WARN` trace. This patch fixes the issue by using a stat=
+ic
+>>> lock class key, which is more appropriate for the situation anyway.
+>>>
+>>> Fixes: 3253aba3408a ("rust: block: introduce `kernel::block::mq` module=
+")
+>>> Reported-by: "Behme Dirk (XC-CP/ESB5)" <Dirk.Behme@de.bosch.com>
+>>> Closes: https://rust-for-linux.zulipchat.com/#narrow/stream/288089-Gene=
+ral/topic/6.2E11.2E0-rc1.3A.20rust.2Fkernel.2Fblock.2Fmq.2Ers.3A.20doctest.=
+20lock.20warning
+>>> Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
+>>
+>> LGTM. This makes me wonder if there's some design mistake in how we
+>> handle lock classes in Rust.
+>=20
+> So `LockClassKey::new` doesn't initialize the `lock_class_key` and is
+> also movable. I think in this case we either just overlooked it or
+> thought that the C side would initialize it.
+>=20
+> For those people that know about this, are there APIs that initialize
+> `lock_class_key` themselves? (ie not a function to initialize a lock
+> class key, but rather an API like `__blk_mq_alloc_disk`)
+> Because if it is usually expected that the class key is already
+> initialized, then I think we should change our abstraction.
 
-On Tue, 09 Jul 2024 12:19:19 +0530, Naina Mehta wrote:
-> Add modem support to SDX75 using the PAS remoteproc driver.
-> Also, add qlink_logging memory region and split MPSS DSM
-> region into 2 separate regions.
-> 
-> These patches were co-authored by Rohit Agarwal while at
-> Qualcomm.
-> 
-> [...]
+Sorry, I got confused, this has nothing to do with initialization.
 
-Applied, thanks!
+---
+Cheers,
+Benno
 
-[1/5] dt-bindings: remoteproc: qcom,sm8550-pas: document the SDX75 PAS
-      commit: 888583bd3543da10c4bcb90c78825168fa8e7b90
-[2/5] remoteproc: qcom: pas: Add SDX75 remoteproc support
-      commit: 76064d8f4cd608e18cef74e810a934ce6da81b4c
+> Additionally, I think that it needs to be pinned, since it contains an
+> `struct hlist_node` (I might be wrong on this, but that looks and sounds
+> like an intrusive linked list).
+>=20
+> Also the `new` function is probably prone for misuse, since it will
+> create a new lock class key every time it is run. But as I learned in
+> [1], the more common use-case is a single lock class key for several
+> locks. Therefore it might be a good idea to at least rename it to
+> `new_dynamic` or similar and add appropriate documentation pointing to
+> `static_lock_class!`.
+>=20
+> [1]: https://rust-for-linux.zulipchat.com/#narrow/stream/288089-General/t=
+opic/.E2.9C.94.206.2E11.2E0-rc1.3A.20rust.2Fkernel.2Fblock.2Fmq.2Ers.3A.20d=
+octest.20lock.20warning/near/460074755
+>=20
+> ---
+> Cheers,
+> Benno
+>=20
+>=20
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
 
