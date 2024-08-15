@@ -1,257 +1,169 @@
-Return-Path: <linux-kernel+bounces-288255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D70D89537F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:10:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90600953807
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:12:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6311B1F2389E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:10:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCA721C25693
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2121B8EA8;
-	Thu, 15 Aug 2024 16:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7321B3F2C;
+	Thu, 15 Aug 2024 16:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r1D0FVaQ"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="HEbIHsHJ"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazolkn19011036.outbound.protection.outlook.com [52.103.33.36])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C361B1B29A2
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 16:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723738212; cv=none; b=bLqsuHLI/Zo2pSBKS2FfFG0jFPQ8PH8nEbKtIed5e34rEmFI+98Ewff1+YF+uoQzvw9qmZsqP+Nj/G65R9igu5cMwLr7umI7as5ExvSvB9yqyDhdKbZ6Ttq+1CeulSQ3fIzwU5oT3NCtYAF8+dIIU6QfmsFAzDsUPB35rhUarj4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723738212; c=relaxed/simple;
-	bh=u7TvbK3WD9JGvuuqyWQIMqBEruAdfoxECZ0duiUt5kk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=djHbnuCTi9zElIDo6wMFMm09QXxTjbsR8hWly4jJEYXkwoY5voeGyvZUL1ij0B3ITUhuv72iD8dcJy/ke/Jnw6bZh1tDw1huWfIK9TwRfnTeDVIyCVebM0nrlR/rROP4Svdxxi+fHL4RwZ0VLAeTsLp/jIpD8hwXXyEc7OrFmI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r1D0FVaQ; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso7557765e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:10:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723738208; x=1724343008; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dmkiJ4k0iP8rLehKXXA87IwgLNjvAKrkUrp7KICnqGw=;
-        b=r1D0FVaQcNIN7CNiM3zTvQWhC5dyTP4fruBwwDM2YZry3AqcGLSkcrSMMk1l1ScXDP
-         DMHQ7RCYG5zPyM3ObLy8LVmXONSLGlTn0E8VJXWb6tdYTRy8zq8aBtWZhu1zpJQGtNv1
-         s5SyCNoK8Qk3X2ZI6qAAoip9OXriPmMXtKpjVFM/Lrk/avew3eJoPEpOXgQaCvbx5/4B
-         MpSq66RzbF0IbOIFRjRX4oU2sl94hVwu40pjwBu0pcj8Fz69ODdmfrgdmC5AD2f4bHgN
-         LphMLiQfqVHUIE0YVCjRklBw+C9qwo3uIUrvxT+20MhMTTRjVnl7Cz13qjLfWA5Lvd8h
-         DCLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723738208; x=1724343008;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dmkiJ4k0iP8rLehKXXA87IwgLNjvAKrkUrp7KICnqGw=;
-        b=T4YoMu6cavYNS4PKQeZ9VzshuAf8iA0JXIFmeI+9c6xIhC6G0wykJRPQyBgUjA8o+F
-         2a9JBP0SALIJzfCIf7jT+nRHxDAUMPej91YXAUDsd3m89vV5/mpSAuxYncPLMxqiNb4v
-         msMpVAwYwNjwbDezo0HfoyEj0dZQhQFao/4tbIVFYHgjzaA2lufjtVfibHQOJUqyr1GQ
-         DzORX7jbHlxbB6vAYLo5ZTJG13e2NuuMsyxhbDiZs7xnVAKueDca6bJJlYIHF5iQg0DH
-         53mBGJr0bBF8as3ML92Rg6/f10+EgEuwmIaAGvwqQ4J/EX2JE+xKreUErHmc5hi190Gt
-         JtrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWPnENS337wpeC3h1yO4+RObqq4jhJ1MNU8+azqGEaA4wJDW0ToZUvLT9LT/wa21wqVoz0kYEwuvdadlfh8Fz953m9L5v290UO3igb+
-X-Gm-Message-State: AOJu0Yz30iyBmS5Mjy2zynO0vJx/8RfQRSSl0R+PhBflLRmWJxIyysnX
-	PFjsxIy1wng/w5MDASB2i+nI58SA6R+jdL9CiZvwQNwRYbJQJPFuCxUF3BgMSHc=
-X-Google-Smtp-Source: AGHT+IHbfwiW1pXKhSkWxn6GIvztBdPu73+tN1vtom1RsFUih70ii2khzdjpmDpbjtaZGLOsuAalzA==
-X-Received: by 2002:a05:600c:35ca:b0:428:f0c2:ef4a with SMTP id 5b1f17b1804b1-429dd2384d2mr49692865e9.13.1723738207592;
-        Thu, 15 Aug 2024 09:10:07 -0700 (PDT)
-Received: from [192.168.0.25] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded299a9sm51617595e9.18.2024.08.15.09.10.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Aug 2024 09:10:07 -0700 (PDT)
-Message-ID: <be0b5f96-2863-4b10-b003-6829dfb04b95@linaro.org>
-Date: Thu, 15 Aug 2024 17:10:06 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E641B29B9;
+	Thu, 15 Aug 2024 16:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.33.36
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723738319; cv=fail; b=PKGdXcRTiSvikPOLOg3ZrcfRixTI5HMiI4x29dMrnjeysQxy4DodgVVsxYEPVh1dU3Nj+weCXmqLzTZI/Y+W8KPBfL5mN8lWoLEu9EXW9Mm7cAZdnS9LjdmOzPg7S67wFmAwCMeV4dJONYbBQp3swiFBN6aLSGUBrM5fj5wUEG0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723738319; c=relaxed/simple;
+	bh=9mhAsiYcMOFRcBOFr4iWzBYYYSTAfka4LL11W16NdzM=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=gd7CCqOnEz62p8mzH/GhJR5LKUOwOuoKuJfseV4lw42CamBshAxXLYCUeh6JXg0/2j35QWrUfmBM7rzWx7WJ3CBy9WwezeJOR+BnNx8J0AfwTVzgLiF/26yRze3CuT4cPAkzcMGkO/eoBlgrOdg7vtBPdSYGOX4/bkLCnExldW4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=HEbIHsHJ; arc=fail smtp.client-ip=52.103.33.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wJE0acdLJPPYKxo4uZn4aCYqZfaa0d9rHVu7YWrhYYIN58scAk7AMdNNsi54F695DZTC/TXLJaiJXsSs9b4JOmlm516aHBQBGxqFIJSi3Fi6CFEtbRsxjTXG4ATukhrk2NC5W2nWUCwmF3Cs/XY13gWGQCQ0JBBiUkms5zsKdQWI0FxzLvBnLA1/C1NfLUeeahStnV+sSces0nO/L0q/j8knXqHaBpk86yLEOl9BZwHxctUyEhdz7iIaBxyJ5wqE4COfCsCuKAzPQLaY0MXphxjKZg/8e0NNFL0cNGZRhOaWtFzyiWv+no1lqiDmIQQ+v+Jzrfp0Nd0DEXX3Ygddyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2hQb4Nvl+0Ps9qDrk2gupeReaTQ2BjO5pqYMR3hds+E=;
+ b=nMVzio+38ff6O61ontPraP8iag07yBjP6BOiFv2Cmp8Jds2CFduk0+kfWAeMWBywHM5PmYQug6K4Jt3zSPKw6wdvWD4cJk9efOXPhF16+r9rQC69Np0vL3oDT50CTVHwBCVH/tMBvOoOWkPWLot7mTcLAhwADZz6APTODZ0hVkJ5l+RzwJb81H8nw6xApbmoBDATT/jw6OsR8EzZ+oEDBoj0LrTC1xhwiPU/74KNTO3OACPZ4Ti7ZKssHCZSJlaot2wj2guZPrOYaQVAARicglJwnS816nMGMYvzJxa2ri1DjSEf5UfNrWhPaztPfBj/PhXiCp0Qog9AbGdz76nQyA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2hQb4Nvl+0Ps9qDrk2gupeReaTQ2BjO5pqYMR3hds+E=;
+ b=HEbIHsHJC2fseQbG4P0MTHtsLOxK/wcGsBqYo9lDdhwFmGN6metE0azrqQZcNDS0SmC6OsAAmzRvGJJxCm3DMHOhbuE//Ar+ltQgWrY97QyOv+mCsQL53tQRGm75x+pGvgmRGCnKrziJxzDW1Qbvl2hw34FJZBZz2CW7zDnPDICSNs4rYRE98XPynusvnxOaFRBRRP5qzjCHEudf0oss+2LQxwstQunm7pVfYYt+IjV01l1m7Xiz81yMYuiKKNnPs/tfkPXr/k264X1/p3hx4BS2YfE9C6MkKmuos05jdI25Om0xLTXTUqBkuz1fLRj6tdJCvxx7Dv0OPiV2bi3Tlg==
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com (2603:10a6:20b:e4::10)
+ by AM7PR03MB6133.eurprd03.prod.outlook.com (2603:10a6:20b:142::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.18; Thu, 15 Aug
+ 2024 16:11:55 +0000
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7]) by AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7%6]) with mapi id 15.20.7875.016; Thu, 15 Aug 2024
+ 16:11:55 +0000
+From: Juntong Deng <juntong.deng@outlook.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next 1/2] bpf: Make the pointer returned by iter next method valid
+Date: Thu, 15 Aug 2024 17:10:10 +0100
+Message-ID:
+ <AM6PR03MB58489794C158C438B04FD0E599802@AM6PR03MB5848.eurprd03.prod.outlook.com>
+X-Mailer: git-send-email 2.39.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [WjddbNVysARXYnm+NXADiM763c6v8Xen]
+X-ClientProxiedBy: SG2PR01CA0134.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:8f::14) To AM6PR03MB5848.eurprd03.prod.outlook.com
+ (2603:10a6:20b:e4::10)
+X-Microsoft-Original-Message-ID:
+ <20240815161010.605444-1-juntong.deng@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/13] media: qcom: camss: Add CSID Gen3 support for
- sm8550
-To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@quicinc.com, Yongsheng Li <quic_yon@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-13-quic_depengs@quicinc.com>
- <44efa3ba-f60d-4a17-a8a1-fa7d49aa3234@linaro.org>
- <ff261ab4-b59d-48a1-9ede-3c691842d913@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <ff261ab4-b59d-48a1-9ede-3c691842d913@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM6PR03MB5848:EE_|AM7PR03MB6133:EE_
+X-MS-Office365-Filtering-Correlation-Id: f2ac063c-e757-418e-3a64-08dcbd44fadf
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|8060799006|461199028|19110799003|15080799003|5072599009|440099028|3412199025;
+X-Microsoft-Antispam-Message-Info:
+	575XHwxdqO7qtkn99AtooRxANz74RFg4inTID+srTDMdlFCIolYILIOWAdnaKrBtgS21sWwKm6ja1MWkSaoJDRqBEama05K+sqGMUJ1GQ4wcSor5eG2SY2DfCezafRmMVpXxBop6ewW/fwOYkSds8tKnw7ETU81tGO9p9ty8hdBMvKyoWGB/IEXy9tJiT7xHg9203vgQ4cAeojQlzVBeu2k2jJI8HtcaPT9U8sBsWHL5bEUPNWO02OkpQLIm4LEkhQluHhD3s/uFRK93oYkegEV925D4Xv3ttnKWqUlUQc/ieZKG+zSdoyd9innum6UHwzdXq/R2z0xzPJQNMomGQJG1b+/4JH/thQmpZtf+7kgwKq/vuhcLdgv8FoiPO7mPYvuDnU+FQJVvP38re108U56JH7YnmF5tEb5qA0GdLwfk0Kb0KpnH04kQb3c4SqIGh34TVTrK5SESSGcS+5IgymbHsstoD6xVqxwPv99DbCzD6CykckELjfB1zeTyiyllziNhCsR4MCfLT6nA8g5zYZe56oyFXZj93MEw0LsXlLMwJYeqKtn3Co5GhTIEpaIeGZk8CF8Wqe3HPuoRlVVYIUprsmCDQmnaxBzReKpKy545czYLue8leb91nn2Ad+QklTZlUNeCIT4RNdKPFjJfV5Ym6okJxdgfx50StyvmEtXYT/vj+6dF0ga7zi5U5IVovRHjaA2xHoAas7foInYnUw==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?OGli+X+YS0aJl+wAYaKot9Y92f9xVNhIIltxuU0i/DYsmakLv1tYa+B/EOqC?=
+ =?us-ascii?Q?idXSSdb0jR8ciq1MeCbvWv0JKvszBFs1miQsZDRMIkbCkc7eLATFyP+6kY0X?=
+ =?us-ascii?Q?N4YA4mlxCFi49R6YsDpIKoGdMzZGxFMCyuHo4rinVBYIPOcDYTA0LHyNbf1h?=
+ =?us-ascii?Q?xURlGmQZzU3KNzBP02+3kMg1c7CbrjXzsN+SGZru6obZP951QZxpZ+i5yCJE?=
+ =?us-ascii?Q?LfaAKh56dKpy4q8NNgKCcYQCVo3bS2iMaRHIKtz/WmVX5xwfEJymE8Z1CYe6?=
+ =?us-ascii?Q?G7vOQuLewrC4QF7wIHKg59bsvhwblfzh6CInHb2zA4MNCdRBjxNfMlZYem+j?=
+ =?us-ascii?Q?7ZrJizOGfE0WX2t2b4085MGtofN2xKP6rbBI9nARjEVIRJTjRZdRNWnjTMVP?=
+ =?us-ascii?Q?xpbbEogC7/r09CJ5bG3RFjxi1Pv2K1XGjJZOdZ6ZX/+B5EME1y6tYiNluLtP?=
+ =?us-ascii?Q?dIT+jPDL11tZ+jQgboAMilu1nGOKPyed3x3xaTVtmbD9N8s7+bPwHzcsjATO?=
+ =?us-ascii?Q?teFCObinXclYaV/hH4eIm5l2tR8/wj0COYOfCqNuLtpEHr3aVs+f/qcFB5lf?=
+ =?us-ascii?Q?qwGN0IFHorSpTb6kgRei7y/WkIDTVNPIcLwNUoOWUguKIjR8hfNMMeVvzIKE?=
+ =?us-ascii?Q?wKUUR5ra3SeN0+zt6RvQ+vPjyHHBL0zbQEamaP17hY3I9JFDyYE3pNyamyng?=
+ =?us-ascii?Q?hpDYx5ab+ulWAylqxWMsIeUHEIkH8pkM+IO6w1tzmgBQMZDJVr47j1pFzrmN?=
+ =?us-ascii?Q?vcTB3OQmD13ZvuBTBDT+wdQrloIvhRrOc2H5JZQDjWrEYqSQYcReN7M0/pUp?=
+ =?us-ascii?Q?1sIK/wA8nLDK0T2cYuLsOQyOyT1NDgLidEHdRwugg8LW5+8OT3ca/msfYads?=
+ =?us-ascii?Q?LteDeSUBtukKHrEL7Kw5tFWz+1/ITI0ptwIHcKp8rm0+DexRKVPT8zHeSTkV?=
+ =?us-ascii?Q?Yb4eBt0s4/+L/PMs4reXbzcG4nd5cAAZM2Caw170DiLV+msrLgB8QzMrdniR?=
+ =?us-ascii?Q?5d/RUZvTwy5uU9s2oD4HzGeZP8xjXLrM8aRlZVbx5XIKfFSZUm3F1XZyqisS?=
+ =?us-ascii?Q?iaHTnl0/00F7+/06tYROgsWAA3V9jIL9/90hMLJmeplok907Fh6PxG3QWMDO?=
+ =?us-ascii?Q?sxVqbD7OHJxiU+RZA8NgZIS9xgGSGxbDTcVwfYvM6qLdQfygu+COYNu2J7T5?=
+ =?us-ascii?Q?R5wXatic8oqx+w6SBOkB5L0Vt2qNSCNwaA4D8dLLgcCeuBI3FzKD/UzfywN/?=
+ =?us-ascii?Q?L9hl/BwdJytOPQMOiOcM?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f2ac063c-e757-418e-3a64-08dcbd44fadf
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5848.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2024 16:11:54.9103
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR03MB6133
 
-On 15/08/2024 16:14, Depeng Shao wrote:
-> Hi Bryan,
-> 
-> 
->>> ---
->>>   drivers/media/platform/qcom/camss/Makefile    |   1 +
->>>   .../platform/qcom/camss/camss-csid-gen3.c     | 339 ++++++++++++++++++
->>>   .../platform/qcom/camss/camss-csid-gen3.h     |  26 ++
->>
->>
->> So this "gen2" and "gen3" stuff would make sense if we had a number of 
->> SoCs based on gen2 and gen3 which were controlled from the upper-level 
->> gen2.c and gen3.c.
->>
->> What you're submitting here is csid-780 so the file should be named 
->> csid-780.
->>
->> When we add 680 or 880 then it makes sense to try to encapsulate a 
->> class of generation into one file - potentially.
->>
->> I'd guess that was the intent behind gen2.c.
->>
->> TL;DR please name your file csid-xxx.c
-> 
-> Sure, I will use csid-780.c
-> 
->>> +
->>> +    writel(val, csid->base + CSID_CSI2_RX_CFG0);
->>> +
->>> +    val = 1 << CSI2_RX_CFG1_ECC_CORRECTION_EN;
->>> +    if (vc > 3)
->>> +        val |= 1 << CSI2_RX_CFG1_VC_MODE;
->>
->> So again these are needless bit-shifts.
->>
->> #define CSI2_RX_CFG1_PACKET_ECC_CORRECTION_EN BIT(0)
->>
->> val = CSI2_RX_CFG1_PACKET_ECC_CORRECTION_EN;
->>
-> 
-> You posted same comments in v3 series, I also replied it.
-> https://lore.kernel.org/all/eeaf4f4e-5200-4b13-b38f-3f3385fc2a2b@quicinc.com/
-> 
-> Some of register bits which just need to be configured to 0 or 1, then 
-> can use BIT(X), but some register bits need to configure a specific 
-> value, e.g.,  CSID_RDI_CFG0 bits[22:26] need to configure a vc vaule, 
-> bits[16:21] need to configure a dt value, then we can't use BIT(x) to 
-> handle this.
+Currently we cannot pass the pointer returned by iter next method as
+argument to KF_TRUSTED_ARGS kfuncs, because the pointer returned by
+iter next method is not "valid".
 
-Yes please use macros() to bury any _necessary_ bit shifts to populate a 
-_bit_field_ away but as an example CSI2_RX_CFG1_PACKET_ECC_CORRECTION_EN 
-is not a bit-field.
+This patch sets the pointer returned by iter next method to be valid.
 
+This is based on the fact that if the iterator is implemented correctly,
+then the pointer returned from the iter next method should be valid.
 
-> 
-> 
->>>       case MSM_CSID_PAD_SRC:
->>> -        if (csid->testgen_mode->cur.val == 0) {
->>> +        if (!csid->testgen_mode || csid->testgen_mode->cur.val == 0) {
->>
->> See my comments on adding new guards to core functionality.
->>
->> Is this sm8550 specific or generic ?
->>
-> 
-> It is sm8550 specific, since we don't have testgen mode in sm8550 csid, 
-> so need to add some guards, the guards are added for similar reason.
+This does not make NULL pointer valid. If the iter next method has
+KF_RET_NULL flag, then the verifier will ask the ebpf program to
+check NULL pointer.
 
-Hmm, I see in my tree I just assigned testgen_mode to some dummy data. 
-You're right, retain this, when we enable testgen as a standalone entity 
-outside of CSID we can address this again.
-
-> 
->>>               /* Test generator is disabled, */
->>>               /* keep pad formats in sync */
->>>               u32 code = fmt->code;
->>> @@ -1042,6 +1042,7 @@ static int csid_init_formats(struct v4l2_subdev 
->>> *sd, struct v4l2_subdev_fh *fh)
->>>   static int csid_set_test_pattern(struct csid_device *csid, s32 value)
->>>   {
->>>       struct csid_testgen_config *tg = &csid->testgen;
->>> +    const struct csid_hw_ops *hw_ops = csid->res->hw_ops;
->>>       /* If CSID is linked to CSIPHY, do not allow to enable test 
->>> generator */
->>>       if (value && media_pad_remote_pad_first(&csid- 
->>> >pads[MSM_CSID_PAD_SINK]))
->>> @@ -1049,7 +1050,10 @@ static int csid_set_test_pattern(struct 
->>> csid_device *csid, s32 value)
->>>       tg->enabled = !!value;
->>> -    return csid->res->hw_ops->configure_testgen_pattern(csid, value);
->>> +    if (hw_ops->configure_testgen_pattern)
->>> +        return -EOPNOTSUPP;
->>> +    else
->>> +        return hw_ops->configure_testgen_pattern(csid, value);
->>
->> If you just add a dummy configure_testgen_pattern we can get rid of 
->> this branching stuff.
->>
-> 
-> Do you mean add dummy function in csid-780/gen3.c? How about the other 
-> ops in vfe_ops_780, add dummy function or use NULL? We need to guards if 
-> we set it as NULL.
-
-See above, you're right what you have is fine.
-
-> 
-> static int csid_configure_testgen_pattern(struct csid_device *csid, s32 
-> val)
-> {
->      return 0;
-> }
-> 
->>>   }
->>>   /*
->>> @@ -1121,6 +1125,19 @@ int msm_csid_subdev_init(struct camss *camss, 
->>> struct csid_device *csid,
->>>           csid->base = devm_platform_ioremap_resource_byname(pdev, 
->>> res->reg[0]);
->>>           if (IS_ERR(csid->base))
->>>               return PTR_ERR(csid->base);
->>> +
->>> +        /* CSID "top" is a new function in new version HW,
->>> +         * CSID can connect to VFE & SFE(Sensor Front End).
->>> +         * this connection is controlled by CSID "top" registers.
->>> +         * There is only one CSID "top" region for all CSIDs.
->>> +         */
->>> +        if (!csid_is_lite(csid) && res->reg[1] && !camss- 
->>> >csid_top_base) {
->>> +            camss->csid_top_base =
->>> +                devm_platform_ioremap_resource_byname(pdev, res- 
->>> >reg[1]);
->>
->> That's a complex clause.
->>
->> Let me send you a patch to do it a different way.
->>
-> 
-> I was also thinking to addd it in camss level, then I thought it is in 
-> csid block, so I moved it to csid, but it is also fine to add it in 
-> camss. Can I add your patch into this series? Just like the csiphy patches.
-
-static const struct resources_wrapper csid_wrapper_res_sm8550 = {
-         .reg = "csid_wrapper",
-};
-
-Yes go ahead, all you should need to do then is add 
-"&csid_wrapper_res_sm8550" to your resources.
-
-static const struct camss_resources sm8550_resources = {
-         .version = CAMSS_SM8550,
-         .pd_name = "top",
-         .csiphy_res = csiphy_res_sm8550,
-         .csid_res = csid_res_sm8550,
-         .ispif_res = NULL,
-         .vfe_res = vfe_res_sm8550,
-         .csid_wrapper_res = &csid_wrapper_res_sm8550,
-...
-};
-
+Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
 ---
-bod
+ kernel/bpf/verifier.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index ebec74c28ae3..35a7b7c6679c 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -12832,6 +12832,10 @@ static int check_kfunc_call(struct bpf_verifier_env *env, struct bpf_insn *insn,
+ 			/* For mark_ptr_or_null_reg, see 93c230e3f5bd6 */
+ 			regs[BPF_REG_0].id = ++env->id_gen;
+ 		}
++
++		if (is_iter_next_kfunc(&meta))
++			regs[BPF_REG_0].type |= PTR_TRUSTED;
++
+ 		mark_btf_func_reg_size(env, BPF_REG_0, sizeof(void *));
+ 		if (is_kfunc_acquire(&meta)) {
+ 			int id = acquire_reference_state(env, insn_idx);
+-- 
+2.39.2
+
 
