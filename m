@@ -1,115 +1,200 @@
-Return-Path: <linux-kernel+bounces-287489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0374A952855
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 05:36:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01597952856
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 05:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81A4CB23F15
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 03:36:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 265E41C2118A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 03:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C9738FA1;
-	Thu, 15 Aug 2024 03:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82DC134545;
+	Thu, 15 Aug 2024 03:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CP+i6tKx"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mZOL7tqd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22921D52B
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 03:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC442032A
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 03:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723692995; cv=none; b=FTH2f+hsSbSKHTgwQcxbJ78Nf8+RdQEpc/YEAIOQZ0d+x76yktIMbS5N4xaGPa9VuTzdx46mL9vZyZJa0zi/19W70shYiN+WMOEXm/PTMulish6Pb3ofqxA6ma9V+T1YvsFBxIbcr38lfGMarhGSuzCdJ7H3EEP1/5M1HYISPXQ=
+	t=1723693077; cv=none; b=UztKi3AlSwXBd0+bqKqrYU1rWA8P7qXebfeO92mjzNvVcTYcrBVB4Zlxu475NteCSLaWA9F+lLZcX6DYMvGp5msz9t52k56ZdtYYfnEMivrReq5fv1XaC9ao9tYPKKE2vPUU/CIg1wsnieLJ+Q76oJ509Alz2RCkIuvQqUOB3h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723692995; c=relaxed/simple;
-	bh=VmeDJe5IiChyVSiwtUDllH7JOe3LYaNcF1sph/vs5MA=;
+	s=arc-20240116; t=1723693077; c=relaxed/simple;
+	bh=RUsSzefQLL5RIfWA58S2AELi2vV5CEh7fOcoNvMJO0k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qzIdCzUyZntcolmPCBewfXIjnqri/nOJZRT4TDDrNcO6ono8AnUIFMRu7fn0qrVJQgleL12x/XMMWmSR2RfgbWUeGJg0KbyCcVeSP3uzepZdhPjeaNCYZ5+NL1S0kJ5sBEgS6Cdq5VXJr/uBwyQxVyH63xolMKd3eMeOPE6FTC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CP+i6tKx; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fc65329979so5206585ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 20:36:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723692993; x=1724297793; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=uz/2NgVRt2KKEiEq3hw8wd1EQ71jZ2iS/El9DiUWZbk=;
-        b=CP+i6tKxwkcdQl6OlqNVcLTL9uvFqY5Kaiy6OUVANBInsm+0pnSFouGoXTMkadYLuI
-         qdaLTFLyw9gwnpHxqWTN4jT7ixNFHlPOx3ihdG1yL0o5Kc8VoaFm8uJ3x+Sy/x7TYM85
-         ke/vaj4rhdZ7kmeR7zmo3B13u8CfsC3pnB6Ag/Ts21Na9klLVZmxNTbWPaf5QzTnWGPY
-         xMSYpf/DtDqYx/2JzkerSfAALTjhkfbsQYyzRIwWk8vJaJGrPNNHAyQlmBfLoAoCS0to
-         eiJ3a+LgowGT5Ug+05zswJq9OygsbSRODWCYnrFH5IZ6ZhNamMOIj2aJ9aqrd48PUzmd
-         7kSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723692993; x=1724297793;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uz/2NgVRt2KKEiEq3hw8wd1EQ71jZ2iS/El9DiUWZbk=;
-        b=B3PvaIo67ykFf6e7h07jPpye3BDVWNt6mK7X3kTy60W8XN+X5z12ls+m9LHJ4gEIzF
-         en4Ukd+NJqrPeds8tf7Xr7de9BoNMgg20RsXS4zvERzH2UsX/5eWldYHZgpdWxJc4DZQ
-         5WfxzmQtalSqw3Nga9484szQnfc/HFaKe+3uIcpWxdngZXi1+pBeles5KjewXASIWff9
-         Yx9lDKKBBg3si1Wszw9n41qv+vCk7s6WQsQp6LRJ+ClHqiVzlBrvJxtZ5nVWVGhlK6AE
-         6uYo7CUFBdJcss4TVFXV9Wi8haZxDtx1mRnJFbUqF5i84lg+LRq5PWmGGaKXvW66YDuz
-         nJTg==
-X-Forwarded-Encrypted: i=1; AJvYcCX0uFZw7MUJvQAnqTs4mJXnbgQDUmVQTu+ItXi+4eq/fDFdh//WhLaR2BiRYSt0luftU6uJOQw0f6Qqv065QLflwDbt+iMcsOPUZPl4
-X-Gm-Message-State: AOJu0YxFlsk1+YIYCvP/OjV7Hr47rO7rGLGYEujEsfMOJNabmu3Yxwm7
-	ZPpsSUetk+ZzxPKMLSXUwZ4dG3ao1HHzr0ulPsvE2irIBjkJFs7mspNolnwHDw==
-X-Google-Smtp-Source: AGHT+IEMvWY/Z1OVulH8TSILC9neilL+JWYFVF+pUMJtaZh3B6tR9sxb+rJu6EZq+pGEBrQM/vvA5g==
-X-Received: by 2002:a17:902:d2c9:b0:1fb:94e2:5643 with SMTP id d9443c01a7336-201d63b3fe6mr50032115ad.12.1723692993188;
-        Wed, 14 Aug 2024 20:36:33 -0700 (PDT)
-Received: from thinkpad ([36.255.17.34])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f0319755sm3371305ad.65.2024.08.14.20.36.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 20:36:32 -0700 (PDT)
-Date: Thu, 15 Aug 2024 09:06:27 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, Kyoungrul Kim <k831.kim@samsung.com>
-Subject: Re: [PATCH 1/3] ufs: core: Rename LSDB to SDBS to reflect the UFSHCI
- 4.0 spec
-Message-ID: <20240815033627.GA2562@thinkpad>
-References: <20240814-ufs-bug-fix-v1-0-5eb49d5f7571@linaro.org>
- <20240814-ufs-bug-fix-v1-1-5eb49d5f7571@linaro.org>
- <3e7cf9f9-abab-4249-9e7b-71f237850bdf@acm.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BrGVZ79L9guZxCUpUPAqKN6KVy5EgDFKNX9JLeCFqV+4tMznd8iGpJqwHLT4A0A2jaA6BlrCZgsBUUFvOeiNfhg4tReSe4FKkXudS4WBtEaQoBbUY+eCQe6xxpELizXrRQo/LT060jpgDrC89o8Cmg+GfuXaqOsQy1XXsO9fPAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mZOL7tqd; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723693076; x=1755229076;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RUsSzefQLL5RIfWA58S2AELi2vV5CEh7fOcoNvMJO0k=;
+  b=mZOL7tqdo+8aeXk7U6dzxrMPCztC2sfFAzffsVTXoDFwSfDQAQvav+/5
+   kUZ3ggMGbqrqDszvlzdG5GVPLkndvMCUmGsdDRbfjFU50OpyQwI0Gilqd
+   s13s3D/45pM9LS7meF8NQq1ZqqxBVpL/Adve7eOQ6TQFr5b8Q4GN5qchN
+   zfWHUNvRGpZxKZEBitVhnRj+Rsbqv65ACJxQeAw8oHHF9Z1uOP4o7BWZN
+   pjRIUDATOTdRh0JVivb4K+t8RhHz6/9A+BxzyGjwBEOKoV+77rB1UxKcM
+   UiAhFB1Mw9eRogMiMIal6HCfFUN+Pp6A5HPWh+i/JYUHfMjkel+12TViG
+   A==;
+X-CSE-ConnectionGUID: WVeGYdDbQwizl7s8+Q5Vug==
+X-CSE-MsgGUID: 8zjVjANqTEK428TOMfmZBA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="21585524"
+X-IronPort-AV: E=Sophos;i="6.10,147,1719903600"; 
+   d="scan'208";a="21585524"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 20:37:55 -0700
+X-CSE-ConnectionGUID: RmMIUmLJTZO8j0qFQEYi3Q==
+X-CSE-MsgGUID: /DMoub1oTq29BheBM+yWCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,147,1719903600"; 
+   d="scan'208";a="59208691"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 14 Aug 2024 20:37:53 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1seRJ9-00038w-0O;
+	Thu, 15 Aug 2024 03:37:51 +0000
+Date: Thu, 15 Aug 2024 11:37:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Shanker Donthineni <sdonthineni@nvidia.com>,
+	Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Sudeep Holla <sudeep.holla@arm.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Shanker Donthineni <sdonthineni@nvidia.com>
+Subject: Re: [PATCH] irqchip/gic-v3: Allow unused SGIs for drivers/modules
+Message-ID: <202408151138.JtTxkiQ6-lkp@intel.com>
+References: <20240813033925.925947-1-sdonthineni@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3e7cf9f9-abab-4249-9e7b-71f237850bdf@acm.org>
+In-Reply-To: <20240813033925.925947-1-sdonthineni@nvidia.com>
 
-On Wed, Aug 14, 2024 at 10:27:48AM -0700, Bart Van Assche wrote:
-> On 8/14/24 10:15 AM, Manivannan Sadhasivam via B4 Relay wrote:
-> > UFSHCI 4.0 spec names the 'Legacy Queue & Single Doorbell Support' field in
-> > Controller Capabilities register as 'SDBS'. So let's use the same
-> > terminology in the driver to align with the spec.
-> 
-> If a rename happens, we should use the name from the spec. I found the
-> following in the UFSHCI 4.0 specification: "Legacy Single DoorBell Support
-> (LSDBS)". So please either rename SDBS into LSDBS or drop this
-> patch.
-> 
+Hi Shanker,
 
-Hmm. I looked into the editorial version of the 4.0 spec that I got access to
-and that used SDBS. Maybe that got changed in the final version. Will change it
-to LSDBS.
+kernel test robot noticed the following build errors:
 
-- Mani
+[auto build test ERROR on arm64/for-next/core]
+[also build test ERROR on tip/irq/core soc/for-next linus/master v6.11-rc3 next-20240814]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Shanker-Donthineni/irqchip-gic-v3-Allow-unused-SGIs-for-drivers-modules/20240814-221122
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-next/core
+patch link:    https://lore.kernel.org/r/20240813033925.925947-1-sdonthineni%40nvidia.com
+patch subject: [PATCH] irqchip/gic-v3: Allow unused SGIs for drivers/modules
+config: arm-randconfig-004-20240815 (https://download.01.org/0day-ci/archive/20240815/202408151138.JtTxkiQ6-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240815/202408151138.JtTxkiQ6-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408151138.JtTxkiQ6-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/irqchip/irq-gic-v3.c: In function 'gic_irq_domain_translate':
+>> drivers/irqchip/irq-gic-v3.c:1658:40: error: 'MAX_IPI' undeclared (first use in this function); did you mean 'MAX_INPUT'?
+    1658 |                 if (fwspec->param[0] < MAX_IPI) {
+         |                                        ^~~~~~~
+         |                                        MAX_INPUT
+   drivers/irqchip/irq-gic-v3.c:1658:40: note: each undeclared identifier is reported only once for each function it appears in
+
+
+vim +1658 drivers/irqchip/irq-gic-v3.c
+
+  1600	
+  1601	static int gic_irq_domain_translate(struct irq_domain *d,
+  1602					    struct irq_fwspec *fwspec,
+  1603					    unsigned long *hwirq,
+  1604					    unsigned int *type)
+  1605	{
+  1606		if (fwspec->param_count == 1 && fwspec->param[0] < 16) {
+  1607			*hwirq = fwspec->param[0];
+  1608			*type = IRQ_TYPE_EDGE_RISING;
+  1609			return 0;
+  1610		}
+  1611	
+  1612		if (is_of_node(fwspec->fwnode)) {
+  1613			if (fwspec->param_count < 3)
+  1614				return -EINVAL;
+  1615	
+  1616			switch (fwspec->param[0]) {
+  1617			case 0:			/* SPI */
+  1618				*hwirq = fwspec->param[1] + 32;
+  1619				break;
+  1620			case 1:			/* PPI */
+  1621				*hwirq = fwspec->param[1] + 16;
+  1622				break;
+  1623			case 2:			/* ESPI */
+  1624				*hwirq = fwspec->param[1] + ESPI_BASE_INTID;
+  1625				break;
+  1626			case 3:			/* EPPI */
+  1627				*hwirq = fwspec->param[1] + EPPI_BASE_INTID;
+  1628				break;
+  1629			case GIC_IRQ_TYPE_LPI:	/* LPI */
+  1630				*hwirq = fwspec->param[1];
+  1631				break;
+  1632			case GIC_IRQ_TYPE_PARTITION:
+  1633				*hwirq = fwspec->param[1];
+  1634				if (fwspec->param[1] >= 16)
+  1635					*hwirq += EPPI_BASE_INTID - 16;
+  1636				else
+  1637					*hwirq += 16;
+  1638				break;
+  1639			default:
+  1640				return -EINVAL;
+  1641			}
+  1642	
+  1643			*type = fwspec->param[2] & IRQ_TYPE_SENSE_MASK;
+  1644	
+  1645			/*
+  1646			 * Make it clear that broken DTs are... broken.
+  1647			 * Partitioned PPIs are an unfortunate exception.
+  1648			 */
+  1649			WARN_ON(*type == IRQ_TYPE_NONE &&
+  1650				fwspec->param[0] != GIC_IRQ_TYPE_PARTITION);
+  1651			return 0;
+  1652		}
+  1653	
+  1654		if (is_fwnode_irqchip(fwspec->fwnode)) {
+  1655			if(fwspec->param_count != 2)
+  1656				return -EINVAL;
+  1657	
+> 1658			if (fwspec->param[0] < MAX_IPI) {
+  1659				pr_err(FW_BUG "Illegal GSI%d translation request\n",
+  1660				       fwspec->param[0]);
+  1661				return -EINVAL;
+  1662			}
+  1663	
+  1664			*hwirq = fwspec->param[0];
+  1665			*type = fwspec->param[1];
+  1666	
+  1667			WARN_ON(*type == IRQ_TYPE_NONE);
+  1668			return 0;
+  1669		}
+  1670	
+  1671		return -EINVAL;
+  1672	}
+  1673	
 
 -- 
-மணிவண்ணன் சதாசிவம்
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
