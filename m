@@ -1,81 +1,51 @@
-Return-Path: <linux-kernel+bounces-287681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FF90952B49
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:46:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09E89952B4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:49:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BBA81F217FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:46:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E69F528311F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCF61A76A2;
-	Thu, 15 Aug 2024 08:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dESvSrli"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CBA41AB519;
+	Thu, 15 Aug 2024 08:48:00 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54EFB19D09F;
-	Thu, 15 Aug 2024 08:43:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA5B19AD8E
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723711437; cv=none; b=S9B+I+DfVqLO0Nszhca08wOz3rbnzf7gIr2ZreH3BJt3ZAGEXr2gnDTzUqOFj9VWZJr9npIln7Ersu6Ojg7C9vc0sp4nGV/sUqtZHBrmBunje4dKzmMeoqcy18gkUP3mjgLBhDv6DtvMVI9w8gBGTq2FsFOo6lNy3+y56XPFqEU=
+	t=1723711680; cv=none; b=GHlN7BtlCUplG2fNz2BzpO8Q2LvqafZ6yVC+YaCEmx10LQaHHV9sJdg3Iw2PtAuhvjooAyyPl1CWM9PiOWmYXFaVAlUG/9a14hMiWX9Vsuc8ZKEELv72I3c5gfgQkjt/08dlRQZV0kQVPlDHKVnM14x1czLacKj4gE9rMH9fULw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723711437; c=relaxed/simple;
-	bh=FO7AnkhwQyc9LhN8JC/o1Qjan4QTR/ZpW+sH5LA0iWs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t+3TeqzZSn80F/SlaPB3hKfbAB1ArtYtfFdqv/k9PLSzW6EbRpgpAVG4s4iJ2/eyxkmEcgq5SmDTDg6uKBx6eA9EozH0iumsuC75oGl7imvPmDhRRA81bP2uJuTTLIg2KjqDdV3CTDLDOs4OWDOzEA2r/y0eKyIipmStHx8Ixig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dESvSrli; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-201f44ad998so1348985ad.0;
-        Thu, 15 Aug 2024 01:43:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723711435; x=1724316235; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lPX9A1uvCQ4gNMQHnZ6Jg67ZdZgU4Gk19HgaovouPWw=;
-        b=dESvSrliPxXPgu991cxBFNP4uOKdJSK4+Dez4jrt7wK/mMTp+cxrDVB/SKQe+X+v+p
-         l5lU8WG/JcK0AZpG1Rcwz2Lia+oo/dmjKmQfQSoudzjdiVK+eHu/4yDjhO8tsCAwFkcB
-         zQjuSutPR8Ox2gtAA4Z6Fp3YUnqlgddcw8NxfW8+Bwf+Col7PPu3H8TMp46hdYTe8P0w
-         oA4T+WHozfBitiYuS5FGwUqRguqD1lp25IxoOaLTvrAPt4bZGhivSrjFH7a20GpYjF10
-         9KLdoFF/GewS1ANWD7/ug0y1pPnIjTuwktnVKsMN45fHmu0JhuhmhEweMjt9rWHwUVl5
-         p7Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723711435; x=1724316235;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lPX9A1uvCQ4gNMQHnZ6Jg67ZdZgU4Gk19HgaovouPWw=;
-        b=HXwaJiNPqOGDlTnshOrG52CljwmtmML6aGyPUAqJlydCtRdY14SN+1Dyys+6NwU3qn
-         GOPOhtaqP3Yx0dDzmlU3gugH0CyfJmyA1r8c6+ILYA8X2M6YgIZ2HGP8QE87r4B0ouaK
-         GWLzAUXG0MKnh0zSGIH2KiwurAYaP/KNnKCjOXIeeJKD5JzZm7AA32aa7zi/AK/gYZOA
-         v1zAj7s7oAOwSr7IdTv/3/o2MACBgkEPe2O2dGzFNjLR4DD3Z0vAeEDyP23HM/lEKi9E
-         AVDIlcsxbSL6ZUf00Ufec65TH0wFUayv1aqJFlMgGue/VGzy8Eu9OXfuvOMRWFNi8lW5
-         0uSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWiKqIAmCJb9Anr/OWkkGjtORhFd4V0pK91JNvHjreccYlAVYHfqKcSKpYclt5/uF+BvS0jY7shvGeR9QrlRFxysU9RJCT96pLEYo9Z
-X-Gm-Message-State: AOJu0YzGTzBM4XkMncoXFNnd9rB3Igo3BnL2z/vEbtlt7DsbG3l5Doe8
-	32V2vnKO+VB9I1qk20Af2PAgOwWnpLURYwJNL03qht0NrqbsqQ6As5/0yRgh/93OtQ==
-X-Google-Smtp-Source: AGHT+IFG5IUzajGO8WTnXHCc/L6HrLRQovNVOWulK/PTn9tc6hwuJYOydAxLLcEQZtHaGhinVaFaEw==
-X-Received: by 2002:a17:902:ce83:b0:1fd:6ca4:f987 with SMTP id d9443c01a7336-201ee4bc32cmr42639545ad.15.1723711435400;
-        Thu, 15 Aug 2024 01:43:55 -0700 (PDT)
-Received: from localhost.localdomain ([49.0.197.176])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f02fb4f1sm6814175ad.1.2024.08.15.01.43.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 01:43:55 -0700 (PDT)
-From: sunyiqi <sunyiqixm@gmail.com>
-To: edumazet@google.com,
-	davem@davemloft.net,
-	dsahern@kernel.org,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	sunyiqi <sunyiqixm@gmail.com>
-Subject: [PATCH] net: remove release/lock_sock in tcp_splice_read
-Date: Thu, 15 Aug 2024 16:43:30 +0800
-Message-Id: <20240815084330.166987-1-sunyiqixm@gmail.com>
+	s=arc-20240116; t=1723711680; c=relaxed/simple;
+	bh=b5h0H+TbmDorO827YGVAMIgw1/eouvVnZo0hwm3Vjls=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hqNkN3JAfmChevoEn7Ty4ll1ugzTGWPa8qVl1kHlLSMOJZ9qnIyofdvHD70iwKRyzFd8xJ6+braUj+90oYSjPZQkpy650KWUx1D9Qk2Kry8nA/t/CkmXIHA4d0i4lPKez/GeN1H1sLyC/cX6onl6JjwJ+Q2pCgD639Jt9JgnKUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4WkzCl25ggz1S7vp;
+	Thu, 15 Aug 2024 16:42:59 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id C9D48180019;
+	Thu, 15 Aug 2024 16:47:52 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 15 Aug
+ 2024 16:47:52 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
+	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+	<vschneid@redhat.com>
+CC: <linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>
+Subject: [PATCH -next] sched/deadline: Remove unused inline functions
+Date: Thu, 15 Aug 2024 16:45:24 +0800
+Message-ID: <20240815084524.4156827-1-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -84,36 +54,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-When enters tcp_splice_read, tcp_splice_read will call lock_sock
-for sk in order to prevent other threads acquiring sk and release it
-before return.
+Commit 5fe7765997b1 ("sched/deadline: Make dl_rq->pushable_dl_tasks update
+drive dl_rq->overloaded") leave this unused.
 
-But in while(tss.len) loop, it releases and re-locks sk, give the other
-thread a small window to lock the sk.
-
-As a result, release/lock_sock in the while loop in tcp_splice_read may
-cause race condition.
-
-Fixes: 9c55e01c0cc8 ("[TCP]: Splice receive support.")
-Signed-off-by: sunyiqi <sunyiqixm@gmail.com>
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 ---
- net/ipv4/tcp.c | 2 --
- 1 file changed, 2 deletions(-)
+ kernel/sched/deadline.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-index e03a342c9162..7a2ce0e2e5be 100644
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -856,8 +856,6 @@ ssize_t tcp_splice_read(struct socket *sock, loff_t *ppos,
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index c5f1cc753a31..d0c974bea9a9 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -745,16 +745,6 @@ void dequeue_pushable_dl_task(struct rq *rq, struct task_struct *p)
+ {
+ }
  
- 		if (!tss.len || !timeo)
- 			break;
--		release_sock(sk);
--		lock_sock(sk);
- 
- 		if (sk->sk_err || sk->sk_state == TCP_CLOSE ||
- 		    (sk->sk_shutdown & RCV_SHUTDOWN) ||
+-static inline
+-void inc_dl_migration(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
+-{
+-}
+-
+-static inline
+-void dec_dl_migration(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
+-{
+-}
+-
+ static inline void deadline_queue_push_tasks(struct rq *rq)
+ {
+ }
 -- 
 2.34.1
 
