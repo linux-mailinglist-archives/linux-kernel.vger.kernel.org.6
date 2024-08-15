@@ -1,108 +1,73 @@
-Return-Path: <linux-kernel+bounces-288119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F4C29535D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:43:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96A2F9535DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:43:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19BF5B2977C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:43:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 458471F22735
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29A61AB50A;
-	Thu, 15 Aug 2024 14:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE8D1ABEBB;
+	Thu, 15 Aug 2024 14:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YhjXKMVy"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=holm.dev header.i=@holm.dev header.b="qOSMXXyI"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9165F1A76C1
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB8D1ABEC5
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723732908; cv=none; b=hsjYpJdgNM6YCWaNEaikP/hTcLsE3fqA/gnWbJz29GWqQ9QFXQd8imSV7d09pUouLTf+Dcek4ZjnAfXuBeTqXp58uAyVsbUG6QcU/RH99FUrDxWyYheh0skMyskvuDtndPgZo+qg8Tq4WHqfDjRKV9nmhA9MyPklx0Uz7A02hTw=
+	t=1723732917; cv=none; b=EBR19/qvb+mDZLkyiMrjzLo+LDgR+Jg0Ny4/RLYfqDNmFce8K0cXRiuUotKUgUohkpQW2XEMk+Q9FfHLmRIiEaOte+uc3Dse4lsxXWTipBzTljJvtDeAy/8btIhGqsCoaJCsgYf7gF8fT+UQ9tnscMDDp11OLSW7QeuVTytiglI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723732908; c=relaxed/simple;
-	bh=V8QdjGFb8F+F+uBmy8H9NtHYvs5qGYjs+alfqKY+Mes=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Fs0m5BRarF7yZlCiQLgMUGbv+yknHuUX9WNEL/OyKZC4kPuhi+OA4T+cuIg/fCzlafwwr/ZGekif2Xsnc8VpVYifGVmdNk6aQhsXV8qs7LeveWY7L4u597DeGcllsQKAUW0bDeF+HAD5PpxYmxpYyU2jo8XtvvZ4Q8cgwxoW8cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YhjXKMVy; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-65194ea3d4dso16863867b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 07:41:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723732905; x=1724337705; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=V8QdjGFb8F+F+uBmy8H9NtHYvs5qGYjs+alfqKY+Mes=;
-        b=YhjXKMVy3wL4n/6wI9utVm7rRSlM+4+a2pwbZkfplXGRZEFOtkAkjj854VfCrFJwjl
-         Hold8vOKYyeFUnxE/VpUFqqvCa0lzSnlpo5PTj9Cp6chpL/qsFxmrcJlG4/FVOxy6Rv0
-         bs7RBZOpC0vNtzgrcm8AwiN9n5vqVbQQa1Ku3v/WTCtGmGPY66otH083I95ZMZsxPCDH
-         7R3QSo+UVbKH/OVit1NikJNS7AZPCuicWA7NY3shBpNzi8u95OD/QVw8HRi07vyV88Ax
-         y6xieO84SetyFfeaZojUBgHUAJGR8sKrZo6WK6WF7E4n+GDSuy0q+pcadE/Xf4RFh30p
-         h6xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723732905; x=1724337705;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=V8QdjGFb8F+F+uBmy8H9NtHYvs5qGYjs+alfqKY+Mes=;
-        b=LJfb82aZcPf3fs0lF8yezYywfWGwZFmklA3Qmj5pYZ1j4k8RYpGyO41ifRyU6tZ0rv
-         SddgdaD9mFX/dOVffH8gJxjqX994qX+qedOHjiis+dc3ZDvZnvoEAdvsL2g6ZQ9sB6XR
-         S9L3akbj+5ol1pjkyGUzmLq9T1F9pv9mt8OAHGTDlFzRMR/0mzf2FUOqK9vrIIvaadMr
-         7OI+vUWwa7YGh6P3KnRDSdrkdr1tCesOdas/2p/2twdQCoJmdwagMTid95uROjflp9jS
-         0UcUUFmYwjUqTpYYDsT1cC8ZrPlsW9zoMoEnRnCzRcf81Pr2tfvGhomXP4DFeKC6+DWt
-         0NKw==
-X-Forwarded-Encrypted: i=1; AJvYcCXAmcOE53O/vRSHnbl9NX/h39V32d8VOru8HWtGJHEv7pgPJYsVUOQZdxvuxUDAnCbJsl7XGqxlccVrIfz+tvTwE8eu4FoXchVLutjV
-X-Gm-Message-State: AOJu0YxU9l7Bd+Fhq0/JutHNXc6UxuzGcdVLaxd6DNszEbtT+QARox7k
-	egaZs9HMGGw8NKdzq/8tgmqhW8v7EEkYJLkb39yGmTC3woY6gUWDMmRjMD8g8b6vhKeKXLcPvxv
-	bGQ==
-X-Google-Smtp-Source: AGHT+IFSiCB9jnN8MHCdZgXQSjJCqbcr/Subh+gxUDVsexDTlSRc3K/rXclSfcwq3ddq5WwRJAk3mZhT5yM=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a81:5cd4:0:b0:64a:d1b0:4f24 with SMTP id
- 00721157ae682-6ac9b002b3dmr1171957b3.7.1723732905559; Thu, 15 Aug 2024
- 07:41:45 -0700 (PDT)
-Date: Thu, 15 Aug 2024 07:41:44 -0700
-In-Reply-To: <cc44c0da-4f9f-456f-84e5-87bd4fa47af6@intel.com>
+	s=arc-20240116; t=1723732917; c=relaxed/simple;
+	bh=V1Tmi90Vp6+xVthfYBvn9AgjYVq/QodifRtN0GFYLAw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CFkGgUkrMWAbFBIpujW4RtMlDZg89c8FyBakvRimyF4d4yw4jfGLZ33rJxoMBzVar4elkGU+sY8OEgZeHuLQBgjIwhlQOCc6xWL6Xt86T7nnhXPXvWnqb+PXPasWSQhQgIS4cyUQqBv7+DbLpd0GWPFb0SxW8hImoqUEwK92Rxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=holm.dev; spf=pass smtp.mailfrom=holm.dev; dkim=pass (2048-bit key) header.d=holm.dev header.i=@holm.dev header.b=qOSMXXyI; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=holm.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=holm.dev
+Message-ID: <886dd1f9-82f0-48f3-90bb-684a2e193ed4@holm.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=holm.dev; s=key1;
+	t=1723732912;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V1Tmi90Vp6+xVthfYBvn9AgjYVq/QodifRtN0GFYLAw=;
+	b=qOSMXXyIaKlk62rmLQ7dh/+QRGQyCSs26sQ6hgLNqjYgZ/MYHFTA6j9B+dGjay6c2VciwG
+	HxPdbGdATS5qLQcQOX4Z3DzSzBX66iifKRF1XhPIvK0hu7tlerBHIvBkEV5pztHL5OV116
+	hmnwTplW3HMcIcocOJ9RLkS+Z1hXm3Vc5mxeo1R6MbdJ72igApAqCPriKk4uytHynfpA2K
+	rXnX1HNB47Ie9BJinyiDKhqV+lI/w/BcmDhLu69KLRfyxlMEEjApQf02Becbd6mgKNXHu6
+	J6ffIYn2wx1cmkA5jyWtPdjJcP3znEwxuTCO1dtDYKbA8MbZo1sKO7qlQeaQoQ==
+Date: Thu, 15 Aug 2024 16:41:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240608000639.3295768-1-seanjc@google.com> <e8db3e58-38de-47d4-ac6c-08408f9aaa10@redhat.com>
- <cc44c0da-4f9f-456f-84e5-87bd4fa47af6@intel.com>
-Message-ID: <Zr4TqH9dYk0BbGkd@google.com>
-Subject: Re: [PATCH v3 0/8] KVM: Register cpuhp/syscore callbacks when
- enabling virt
-From: Sean Christopherson <seanjc@google.com>
-To: Kai Huang <kai.huang@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Chao Gao <chao.gao@intel.com>, Marc Zyngier <Marc.Zyngier@arm.com>, 
-	Anup Patel <Anup.Patel@wdc.com>, Huacai Chen <chenhuacai@kernel.org>, 
-	Oliver Upton <oupton@google.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Subject: Re: [PATCH 6.10 00/22] 6.10.6-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240815131831.265729493@linuxfoundation.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kevin Holm <kevin@holm.dev>
+In-Reply-To: <20240815131831.265729493@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Aug 15, 2024, Kai Huang wrote:
->=20
-> > Also placed in kvm/queue, mostly as a reminder to myself, and added
-> > other maintainers for testing on ARM, RISC-V and LoongArch.=C2=A0 The c=
-hanges
-> > from v3 to v4 should be mostly nits, documentation and organization of
-> > the series.
-> >=20
->=20
-> Also another reminder:
->=20
-> Could you also remove the WARN_ON() in kvm_uninit_virtualization() so tha=
-t
-> we can allow additional kvm_disable_virtualization() after that for TDX?
+Works without any new errors or problems on my Setup.
 
-Yeah, I'll take care of that in v4 (as above, Paolo put this in kvm/queue a=
-s a
-placeholder of sorts).
+Tested-By: Kevin Holm <kevin@holm.dev>
 
