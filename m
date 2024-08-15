@@ -1,63 +1,78 @@
-Return-Path: <linux-kernel+bounces-287550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F23295291C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:00:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 977B695291E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:02:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF6C71C232EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 06:00:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3130288131
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 06:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA46176AC8;
-	Thu, 15 Aug 2024 06:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBD5176AAE;
+	Thu, 15 Aug 2024 06:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2b/M4Tny"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gKv3R2Ta"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C039C18D65F;
-	Thu, 15 Aug 2024 06:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF928433D0
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 06:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723701625; cv=none; b=QH7YWAuXm4mw5X4LxIRrTv43gg6zAjKfRh40Qh78c8knErm+MmdENHUkC9naEfYkWRt4SLdDp/w1Q1Nt4tX+68CGtjdnsb7NrPt57vT55dyUC+kYjjOL4k1NxlOQRtjekjkGpXCWUxJYXCgHuhFPqjMf6NT8weoqIl6QMc0ebKE=
+	t=1723701722; cv=none; b=iM86xZsw72wTpsYvMZcOZYAk4WCU/sQC1qqR0xe/ZMpq9L49h33HfbDxn+yQl7OkZj6iVzjG29oKHhidb9KPKXkzL2AF0ycCNU3N7Il3Q6ajsoIGYhuBsr0r65U097kysA7A2MP8Imkm1Tw24LXLIpOCInUE9mTNlgZYnGnJZ74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723701625; c=relaxed/simple;
-	bh=PXaelrwKMZ1s8FPCKQRWlrygRpcJAkRt+IzMlQPK1MM=;
+	s=arc-20240116; t=1723701722; c=relaxed/simple;
+	bh=vu1B/EeFrK/WcfW+zjpMgI08UNRgMD3HObvhhZKI/Fk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PdBpI52PP54mvN3bvaSJg+Owqfktp1+W+PKbSbGGLG6kag8eMMHGyieiobz7O3voucdj7nBNhOpoXW4pjWB+nAeCfh4P/178rWQGjePxO0TPXiI+8FxVlDp1BJOXQvmeusueMZQo23y98pYcTCmdx0HRsiBs9XuS6g278JIHs8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=2b/M4Tny; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=UKze76rDFjNG1UPvsO71YB4jtU6QU6F+FLF+ZvJi74Y=; b=2b/M4TnyjNVuOR1EiBZpdHhQAv
-	70rjRE2LW/Kz0/mbCKO2zkOBP1sySP3kmwmsNT7MjBscf+Tbl1rNvjgTy85hQZl5EvetBx2ZCqHfu
-	yt/NC2reNdPLDNcwTlYzGpeLYHk03vH5h9P2VBxwE2tJ62QEOmD7ThzlR1C8CpjzUihdGEeEgiIEX
-	UYi0xxedstZhmIRGLoiAV2GZ3LTuhoYSYjxId7A0GT12w+55ET3M7SzLunoctfnURx2H/urfWegtA
-	ctM9oIujfm2YfizqkerxcnPCrDUH/8ivHIwQEBB6z6LMAGACsYc+QqbJzqI1aqwJiE0b32awhngTd
-	CeyvtI6A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1seTX5-0000000989n-0Yzr;
-	Thu, 15 Aug 2024 06:00:23 +0000
-Date: Wed, 14 Aug 2024 23:00:23 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	djwong@kernel.org, brauner@kernel.org, david@fromorbit.com,
-	jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 3/6] iomap: advance the ifs allocation if we have more
- than one blocks per folio
-Message-ID: <Zr2Zd-fjb96D3ZQi@infradead.org>
-References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
- <20240812121159.3775074-4-yi.zhang@huaweicloud.com>
- <ZrxBfKi_DpThYo94@infradead.org>
- <b098d15b-4b80-2b73-d05b-f4dbb5d4631a@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=huIPlSFniOVO6JJrbasteVIwBAJVEcWYhqIzIB2BfJHCVLYSDPCNkF2++rMr/vdjgarcF58vZaB4wVP7H6Gmsw/eX6tmNJKmb4nkPIB6+83tHNHv/a2SiIjyzUpHlg98D0T1FhagsCwKHhmV8TS7iP2V1WNQl8gy6eVLKsBWpJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gKv3R2Ta; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723701721; x=1755237721;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vu1B/EeFrK/WcfW+zjpMgI08UNRgMD3HObvhhZKI/Fk=;
+  b=gKv3R2TaXfAfi8wV3l78fKt3D7bLQ0lp2hOnfxw1zW0MWirky4H7G03V
+   S3HUSb2zfjkdbVZIozj6RgbxEGoj0vAxivSHeKWAZk/UjqLKZA3M7sIyo
+   C6JesQ0/+HP5PUMn49iRDUQxsQ15pjNPIKPBmhV5b6j004Z+wzNUoIYO3
+   qcm/WbxTQI3aMKM27EFCaIt6kcpwHzPUy+vic3SQek0Bh3VgOd/8RcQAQ
+   gbSQMLapqKMA93I+lzKMc3cbB63Ep/LXHacM3oSuja1PfnZY1nRlDMjJ9
+   onxfpMJ5isz6Ww4NNwBwSbdzVLkvQrr0E9QZiALVlk45L75q89pUCn113
+   A==;
+X-CSE-ConnectionGUID: /qJJwqDQRuWqVKG4OGORpw==
+X-CSE-MsgGUID: pyDg65jGRGOj133xMUrpxQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="21821138"
+X-IronPort-AV: E=Sophos;i="6.10,148,1719903600"; 
+   d="scan'208";a="21821138"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 23:02:00 -0700
+X-CSE-ConnectionGUID: gPdgotpfQI6thxk2ydnzLA==
+X-CSE-MsgGUID: 9LUZn0LHRk2aVlw9PuLIng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,148,1719903600"; 
+   d="scan'208";a="59238463"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 14 Aug 2024 23:01:58 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1seTYa-0003Fa-0W;
+	Thu, 15 Aug 2024 06:01:56 +0000
+Date: Thu, 15 Aug 2024 14:01:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Daniel Almeida <daniel.almeida@collabora.com>, liviu.dudau@arm.com,
+	steven.price@arm.com, carsten.haitzler@arm.com,
+	boris.brezillon@collabora.com, robh@kernel.org,
+	faith.ekstrand@collabora.com
+Cc: oe-kbuild-all@lists.linux.dev,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] drm: panthor: add devcoredump support
+Message-ID: <202408151326.jXpMoKtS-lkp@intel.com>
+References: <20240813210555.607641-4-daniel.almeida@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,24 +81,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b098d15b-4b80-2b73-d05b-f4dbb5d4631a@huaweicloud.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20240813210555.607641-4-daniel.almeida@collabora.com>
 
-On Wed, Aug 14, 2024 at 03:08:25PM +0800, Zhang Yi wrote:
-> > iomap_invalidate_folio when it actually is needed?
-> > 
-> 
-> Therefore, you mean current strategy of allocating ifs is to try to delay
-> the allocation time as much as possible?
+Hi Daniel,
 
-Yes.
+kernel test robot noticed the following build errors:
 
-> The advantage is that it could
-> avoid some unnecessary allocation operations if the whole folio are
-> invalidated before write back. right?
+[auto build test ERROR on drm/drm-next]
+[also build test ERROR on drm-exynos/exynos-drm-next drm-intel/for-linux-next drm-intel/for-linux-next-fixes drm-misc/drm-misc-next drm-tip/drm-tip linus/master v6.11-rc3 next-20240814]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Yes.  And hopefully we can also get to the point where we don't need
-to actually allocate it for writeback.  I've been wanting to do that
-for a while but never got it.
+url:    https://github.com/intel-lab-lkp/linux/commits/Daniel-Almeida/drm-panthor-expose-some-fw-information-through-the-query-ioctl/20240814-234511
+base:   git://anongit.freedesktop.org/drm/drm drm-next
+patch link:    https://lore.kernel.org/r/20240813210555.607641-4-daniel.almeida%40collabora.com
+patch subject: [PATCH v2 2/5] drm: panthor: add devcoredump support
+config: x86_64-buildonly-randconfig-002-20240815 (https://download.01.org/0day-ci/archive/20240815/202408151326.jXpMoKtS-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240815/202408151326.jXpMoKtS-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408151326.jXpMoKtS-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from <command-line>:
+>> ./usr/include/drm/panthor_drm.h:1073:9: error: unknown type name 'u32'
+    1073 |         u32 flags;
+         |         ^~~
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
