@@ -1,135 +1,285 @@
-Return-Path: <linux-kernel+bounces-288717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15B8C953DF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:32:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF58C953DF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:36:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94B601F22101
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:32:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 302DA1F220D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5B4156236;
-	Thu, 15 Aug 2024 23:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lZtND6sZ"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5291547FF;
-	Thu, 15 Aug 2024 23:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45265156665;
+	Thu, 15 Aug 2024 23:35:53 +0000 (UTC)
+Received: from spindle.queued.net (spindle.queued.net [45.33.49.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B54D1AC88F;
+	Thu, 15 Aug 2024 23:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.33.49.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723764724; cv=none; b=MkJnbo3NKfzHySvEwddy+51h7+KG7PkDl+rUJEHTt7uwObWLwYR6pGyoRHykmSGCfXDbN8qG/GxsaFP4cfYBdGzcTrL9KCJjbaKSvk3V+pTuL9lVSu/18zGCT65XVXPaMf8yL8aZnEpAKc8A8+Qp9aNSZSP9QDTp14/877VgqJc=
+	t=1723764952; cv=none; b=pWH4y/du6iZqJVPjc2I5ZoACQimjqdhu+1Io7AGFXU5iM9leCQLVygoEQBuly5NdlJoaJ6h5zkLaCMKfXHOyORoXiUbJnJKzO2VXEMB3vIqwTc8GOCR8jT2dYPPFiSwsMUHFbt8IzK5yF5P0+NbkG9NMJ73GpFz86RGKhCLqaLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723764724; c=relaxed/simple;
-	bh=yQigOF5eQGL7Ydd8DtIlEXS/h+1Roi9GzWdfft2iRF0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o+3XwGs21dRSaYy1jI6XXikE2KX1LxwyczDz5fcPiHcJoC91UPNRuI+f8ELDtG+bJo+tuERjADiz2i6hKssjhzeDlqLb6n9GCPkR7TLagUmVKEMrdTCjXCSuE4tntF1/bALgNoff8aX3FWRAvb+HK94cENaZ8ZNp7xzlaDK6SA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lZtND6sZ; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6bf7a2035d9so7017276d6.1;
-        Thu, 15 Aug 2024 16:32:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723764721; x=1724369521; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yQigOF5eQGL7Ydd8DtIlEXS/h+1Roi9GzWdfft2iRF0=;
-        b=lZtND6sZ/QeF78Qy7TIHkNv+l6iVigQdRKqtL7RQ/sh/PYYGzsDhxXC+LmJ/2f086W
-         aM8I86pzJXeJoF6thNQOhvuomZxAnyAG+PFzqlopdz2nogUE6+v8m8LL33UICvaMFhQe
-         lg+5Q8ycPxHEcdsG2mH0vs6C7PBPnGpST7ZgV+V1TwP7opPL7cegub0gK3jxbKbDocKd
-         yYw35M9KYjMVZ5h25YJiDw7VnRdcNSaZ+gWlF+DAuWuSRUo4IzdUXuhDdwvcDOftZG5s
-         BI0VjWlo7l0UzcwXFACwiCgjGmzjVSmr43wtDHfu9pWGA7qQNcgPPpbt/8DkaTgjTNom
-         TmeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723764721; x=1724369521;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yQigOF5eQGL7Ydd8DtIlEXS/h+1Roi9GzWdfft2iRF0=;
-        b=Iq78rhP9B0HigbH2Hmc9R2Eu7YegmOPPHKx9GlJcgkJ7MWakkUHUrkk4oc7BLQtqic
-         5p5jX7cDX1n5HRRIhFdgboTngtM6zB5zf+SoFFQTjz28u6F8oqUXwFrmRHZMHq47g6Qi
-         RX2gOgCHzx4Ts/CVjDwgTEf6+r1ZcHkSaiNiJ0FuRRCI0gkducAHlQn3Re/Gc2ai0iZP
-         NXGhn9E2C9VkwXfkFSz/AQddaANTHL6JoycVoHqPry3nqRliKrthztaZObdEXX2bW9to
-         eqakmo3qGHJBKeIAWTb/7LykN284ZFEiVeuX0zhqCx28nLOrlUrPNyxPxHSB9LGci0qX
-         T20w==
-X-Forwarded-Encrypted: i=1; AJvYcCVyaakwf46VR7KEBzyOAZWo9dmXRRTq2V2R4E7EDNFkKkfaPrR1g2mOxFi4PIJKhAqGBBRWz3ri09Sm5/lrHNUKFiB2rB8K+vxbyi8i82Ggq8/UR/V9HljZ/C1cbJfgxQqiXZecCQ==
-X-Gm-Message-State: AOJu0YwQT0MNUDamXgQh3fYFBT6wub5HGdc/4+Af0PZC1Cycq8UMQ5z+
-	sGX51WFLeTpAXBoNRxDx8I1VHKCHmYK3lrkpvQZomrfidqWBzCwvcNt8za3xe8/u6Ep4INW7SJq
-	Dcaw9en7G1C7P1E4rKbpQX+5M3a4=
-X-Google-Smtp-Source: AGHT+IHU6G58rVKMj+aRmyqqW7vPgGFeK5cKETFFid5YSn9XIvkoyYNQs0na099XvSqN8a5PMEzJyhX64q6lif3Ag+c=
-X-Received: by 2002:a05:6214:5d01:b0:6bf:60b8:d4d7 with SMTP id
- 6a1803df08f44-6bf7d545f64mr12246996d6.15.1723764721380; Thu, 15 Aug 2024
- 16:32:01 -0700 (PDT)
+	s=arc-20240116; t=1723764952; c=relaxed/simple;
+	bh=Z8EOfb49CC3S7FBg8192Uau2gO3NkBrpQvt5ppCuULk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sZxap0KQzHdGuy1H6+wi5VQT8guAv2pZjLiNnenZSRFircA7hYnsM+yS3lK4DZEw6DrDPTvFsc4HSsmVGXDh1QC/QRsuyo0ituqEdHVRV7tLMf3PS6DnG8ov+ICgl5NfK1olCqv4Ml6tax8cK2h/F5NlAtIjWKgwZteW3SThTWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=queued.net; spf=pass smtp.mailfrom=queued.net; arc=none smtp.client-ip=45.33.49.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=queued.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queued.net
+Received: by spindle.queued.net (Postfix, from userid 1001)
+	id A81481160A7; Thu, 15 Aug 2024 19:35:50 -0400 (EDT)
+Received: from 5400 (unknown [172.56.34.244])
+	by spindle.queued.net (Postfix) with ESMTPSA id 1A453115D1B;
+	Thu, 15 Aug 2024 19:35:49 -0400 (EDT)
+Date: Thu, 15 Aug 2024 19:35:46 -0400
+From: Andres Salomon <dilinger@queued.net>
+To: linux-kernel@vger.kernel.org
+Cc: Pali =?UTF-8?B?Um9ow6Fy?= <pali@kernel.org>,
+ platform-driver-x86@vger.kernel.org, Matthew Garrett <mjg59@srcf.ucam.org>,
+ Sebastian Reichel <sre@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
+ "Ilpo =?UTF-8?B?SsOkcnZpbmVu?=" <ilpo.jarvinen@linux.intel.com>,
+ linux-pm@vger.kernel.org, Dell.Client.Kernel@dell.com
+Subject: [PATCH v2 2/2] platform/x86:dell-laptop: remove duplicate code w/
+ battery function
+Message-ID: <20240815193546.2123b010@5400>
+In-Reply-To: <20240815192848.3489d3e1@5400>
+References: <20240815192848.3489d3e1@5400>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814171800.23558-1-me@yhndnzj.com> <CAKEwX=NrOBg0rKJnXGaiK9-PWeUDS+c3cFmaFFV0RrE8GkNZZA@mail.gmail.com>
- <CAJD7tkZ_jNuYQsGMyS1NgMf335Gi4_x5Ybkts_=+g5OyjtJQDQ@mail.gmail.com>
- <a2f67cbcc987cdb2d907f9c133e7fcb6a848992d.camel@yhndnzj.com>
- <CAKEwX=MDZdAHei3=UyYrsgWqyt-41_vOdCvTxj35O62NZhcN2A@mail.gmail.com>
- <20240815150819.9873910fa73a3f9f5e37ef4d@linux-foundation.org> <CAJD7tkZ3v9N1D=0SSphPFMETbih5DadcAiOK=VVv=7J6_ohytQ@mail.gmail.com>
-In-Reply-To: <CAJD7tkZ3v9N1D=0SSphPFMETbih5DadcAiOK=VVv=7J6_ohytQ@mail.gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Thu, 15 Aug 2024 16:31:50 -0700
-Message-ID: <CAKEwX=Pz4Pe-CAevBvxUCpPZJ-fRseLN4T35Wt3mb84gqCY25w@mail.gmail.com>
-Subject: Re: [PATCH] mm/memcontrol: respect zswap.writeback setting from
- parent cg too
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Mike Yuan <me@yhndnzj.com>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
-	Muchun Song <muchun.song@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Michal Hocko <mhocko@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Bogosity: Ham, tests=bogofilter, spamicity=0.000000, version=1.2.5
 
-On Thu, Aug 15, 2024 at 3:10=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com>=
- wrote:
->
-> On Thu, Aug 15, 2024 at 3:08=E2=80=AFPM Andrew Morton <akpm@linux-foundat=
-ion.org> wrote:
-> >
-> > On Thu, 15 Aug 2024 12:12:26 -0700 Nhat Pham <nphamcs@gmail.com> wrote:
-> >
-> > > > Yeah, I thought about the other way around and reached the same
-> > > > conclusion.
-> > > > And there's permission boundary in the mix too - if root disables z=
-swap
-> > > > writeback for its cgroup, the subcgroups, which could possibly be o=
-wned
-> > > > by other users, should not be able to reenable this.
-> > >
-> > > Hmm yeah, I think I agree with your and Yosry's reasonings :) It
-> > > doesn't affect our use case AFAICS, and the code looks solid to me,
-> > > so:
-> > >
-> > > Reviewed-by: Nhat Pham <nphamcs@gmail.com>
-> >
-> > But you'd still like an update to Documentation/admin-guide/cgroup-v2.r=
-st?
->
->
-> Yeah I'd rather see a v2 with updated docs, and hopefully a selftest
-> if the existing tests problem is resolved.
+The dell battery patch added dell_send_request_for_tokenid() and
+dell_set_std_token_value(), which encapsulates a very common pattern
+when SMBIOS queries are addressed to token->location. This calls them
+in various places outside of the dell laptop code, allowing us to delete
+a bunch of code.
 
-Ah yeah, I was thinking this could be done in a follow-up patch.
+Also some very minor cleanups:
+  - mark the kbd init functions as __init
+  - don't read buffer.output unless dell_send_request() was successful.
+  - actually return errors from micmute_led_set/mute_led_set instead of
+    always returning 0.
 
-But yes, please - documentation. Preferably everything together as v2.
+Only minor behavior changes; the delayed read of buffer.output and
+actually returning errors for the brightness_set_blocking hooks.
 
->
-> Also, do we want a Fixes tag and to backport this so that current
-> users get the new behavior ASAP?
+Signed-off-by: Andres Salomon <dilinger@queued.net>
 
-Hmm, I wonder if it's more confusing for users to change the behavior
-in older kernels.
+---
+Changes in v2:
+    - use renamed and helper functions dell_send_request_for_tokenid()
+      and dell_set_std_token_value().
+    - no longer need to move functions around
+    - document the brightness_set_blocking hook changes
+---
+ drivers/platform/x86/dell/dell-laptop.c | 105 ++++++------------------
+ 1 file changed, 25 insertions(+), 80 deletions(-)
 
-(OTOH, if this already is what people expect, then yeah it's a good
-idea to backport).
+diff --git a/drivers/platform/x86/dell/dell-laptop.c b/drivers/platform/x86/dell/dell-laptop.c
+index 8cc05f0fab91..5df0944e5bf6 100644
+--- a/drivers/platform/x86/dell/dell-laptop.c
++++ b/drivers/platform/x86/dell/dell-laptop.c
+@@ -935,43 +935,24 @@ static void dell_cleanup_rfkill(void)
+ static int dell_send_intensity(struct backlight_device *bd)
+ {
+ 	struct calling_interface_buffer buffer;
+-	struct calling_interface_token *token;
+-	int ret;
+-
+-	token = dell_smbios_find_token(BRIGHTNESS_TOKEN);
+-	if (!token)
+-		return -ENODEV;
+-
+-	dell_fill_request(&buffer,
+-			   token->location, bd->props.brightness, 0, 0);
+-	if (power_supply_is_system_supplied() > 0)
+-		ret = dell_send_request(&buffer,
+-					CLASS_TOKEN_WRITE, SELECT_TOKEN_AC);
+-	else
+-		ret = dell_send_request(&buffer,
+-					CLASS_TOKEN_WRITE, SELECT_TOKEN_BAT);
++	u16 pwr;
+ 
+-	return ret;
++	pwr = power_supply_is_system_supplied() > 0 ?
++			SELECT_TOKEN_AC : SELECT_TOKEN_BAT;
++	return dell_send_request_for_tokenid(&buffer, CLASS_TOKEN_WRITE,
++			pwr, BRIGHTNESS_TOKEN, bd->props.brightness);
+ }
+ 
+ static int dell_get_intensity(struct backlight_device *bd)
+ {
+ 	struct calling_interface_buffer buffer;
+-	struct calling_interface_token *token;
+ 	int ret;
++	u16 pwr;
+ 
+-	token = dell_smbios_find_token(BRIGHTNESS_TOKEN);
+-	if (!token)
+-		return -ENODEV;
+-
+-	dell_fill_request(&buffer, token->location, 0, 0, 0);
+-	if (power_supply_is_system_supplied() > 0)
+-		ret = dell_send_request(&buffer,
+-					CLASS_TOKEN_READ, SELECT_TOKEN_AC);
+-	else
+-		ret = dell_send_request(&buffer,
+-					CLASS_TOKEN_READ, SELECT_TOKEN_BAT);
+-
++	pwr = power_supply_is_system_supplied() > 0 ?
++			SELECT_TOKEN_AC : SELECT_TOKEN_BAT;
++	ret = dell_send_request_for_tokenid(&buffer, CLASS_TOKEN_READ, pwr,
++			BRIGHTNESS_TOKEN, 0);
+ 	if (ret == 0)
+ 		ret = buffer.output[1];
+ 
+@@ -1395,20 +1376,11 @@ static int kbd_set_state_safe(struct kbd_state *state, struct kbd_state *old)
+ static int kbd_set_token_bit(u8 bit)
+ {
+ 	struct calling_interface_buffer buffer;
+-	struct calling_interface_token *token;
+-	int ret;
+ 
+ 	if (bit >= ARRAY_SIZE(kbd_tokens))
+ 		return -EINVAL;
+ 
+-	token = dell_smbios_find_token(kbd_tokens[bit]);
+-	if (!token)
+-		return -EINVAL;
+-
+-	dell_fill_request(&buffer, token->location, token->value, 0, 0);
+-	ret = dell_send_request(&buffer, CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
+-
+-	return ret;
++	return dell_set_std_token_value(&buffer, kbd_tokens[bit], USE_TVAL);
+ }
+ 
+ static int kbd_get_token_bit(u8 bit)
+@@ -1427,11 +1399,10 @@ static int kbd_get_token_bit(u8 bit)
+ 
+ 	dell_fill_request(&buffer, token->location, 0, 0, 0);
+ 	ret = dell_send_request(&buffer, CLASS_TOKEN_READ, SELECT_TOKEN_STD);
+-	val = buffer.output[1];
+-
+ 	if (ret)
+ 		return ret;
+ 
++	val = buffer.output[1];
+ 	return (val == token->value);
+ }
+ 
+@@ -1537,7 +1508,7 @@ static inline int kbd_init_info(void)
+ 
+ }
+ 
+-static inline void kbd_init_tokens(void)
++static inline void __init kbd_init_tokens(void)
+ {
+ 	int i;
+ 
+@@ -1546,7 +1517,7 @@ static inline void kbd_init_tokens(void)
+ 			kbd_token_bits |= BIT(i);
+ }
+ 
+-static void kbd_init(void)
++static void __init kbd_init(void)
+ {
+ 	int ret;
+ 
+@@ -2171,21 +2142,11 @@ static int micmute_led_set(struct led_classdev *led_cdev,
+ 			   enum led_brightness brightness)
+ {
+ 	struct calling_interface_buffer buffer;
+-	struct calling_interface_token *token;
+ 	int state = brightness != LED_OFF;
++	u32 val;
+ 
+-	if (state == 0)
+-		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_DISABLE);
+-	else
+-		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_ENABLE);
+-
+-	if (!token)
+-		return -ENODEV;
+-
+-	dell_fill_request(&buffer, token->location, token->value, 0, 0);
+-	dell_send_request(&buffer, CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
+-
+-	return 0;
++	val = state == 0 ? GLOBAL_MIC_MUTE_DISABLE : GLOBAL_MIC_MUTE_ENABLE;
++	return dell_set_std_token_value(&buffer, val, USE_TVAL);
+ }
+ 
+ static struct led_classdev micmute_led_cdev = {
+@@ -2199,21 +2160,11 @@ static int mute_led_set(struct led_classdev *led_cdev,
+ 			   enum led_brightness brightness)
+ {
+ 	struct calling_interface_buffer buffer;
+-	struct calling_interface_token *token;
+ 	int state = brightness != LED_OFF;
++	u32 val;
+ 
+-	if (state == 0)
+-		token = dell_smbios_find_token(GLOBAL_MUTE_DISABLE);
+-	else
+-		token = dell_smbios_find_token(GLOBAL_MUTE_ENABLE);
+-
+-	if (!token)
+-		return -ENODEV;
+-
+-	dell_fill_request(&buffer, token->location, token->value, 0, 0);
+-	dell_send_request(&buffer, CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
+-
+-	return 0;
++	val = state == 0 ? GLOBAL_MUTE_DISABLE : GLOBAL_MUTE_ENABLE;
++	return dell_set_std_token_value(&buffer, val, USE_TVAL);
+ }
+ 
+ static struct led_classdev mute_led_cdev = {
+@@ -2498,7 +2449,7 @@ static void __exit dell_battery_exit(void)
+ 
+ static int __init dell_init(void)
+ {
+-	struct calling_interface_token *token;
++	struct calling_interface_buffer buffer;
+ 	int max_intensity = 0;
+ 	int ret;
+ 
+@@ -2560,16 +2511,10 @@ static int __init dell_init(void)
+ 	if (acpi_video_get_backlight_type() != acpi_backlight_vendor)
+ 		return 0;
+ 
+-	token = dell_smbios_find_token(BRIGHTNESS_TOKEN);
+-	if (token) {
+-		struct calling_interface_buffer buffer;
+-
+-		dell_fill_request(&buffer, token->location, 0, 0, 0);
+-		ret = dell_send_request(&buffer,
+-					CLASS_TOKEN_READ, SELECT_TOKEN_AC);
+-		if (ret == 0)
+-			max_intensity = buffer.output[3];
+-	}
++	ret = dell_send_request_for_tokenid(&buffer, CLASS_TOKEN_READ,
++			SELECT_TOKEN_AC, BRIGHTNESS_TOKEN, 0);
++	if (ret == 0)
++		max_intensity = buffer.output[3];
+ 
+ 	if (max_intensity) {
+ 		struct backlight_properties props;
+-- 
+2.39.2
+
+
+
+
+-- 
+I'm available for contract & employment work, please contact me if
+interested.
 
