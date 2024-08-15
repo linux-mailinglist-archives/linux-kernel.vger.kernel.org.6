@@ -1,198 +1,93 @@
-Return-Path: <linux-kernel+bounces-287864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DD95952D5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:23:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A755952C57
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:36:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE3BF1F25CB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:23:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A52B1C20CF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F74817C9B6;
-	Thu, 15 Aug 2024 11:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C161ABEBA;
+	Thu, 15 Aug 2024 09:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="jWew8cyi";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bnV2X2Ck"
-Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H1nL5aoz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E2B17BEA5;
-	Thu, 15 Aug 2024 11:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD4217BEAA;
+	Thu, 15 Aug 2024 09:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723720928; cv=none; b=qwIt80BeQEg7XYYvDHJ1z1YIFLAtpZa0Kc9xxS/5jcTD7LHa2Z+No/ffn/4bA4e171CS83vLg7j1UyPqQhbW0RyN3cEuk/bsiNCTSa9tUu3e/awm+EatRgXvKSMnlAd+4XTD4cq3Zj0TqgL3t7qEYsNR2eKZciuxV9Q0zevP8ac=
+	t=1723715497; cv=none; b=oEuTQwLU1hTpSSJJa4D0oBfc6TULOSgcmGZyuLPJG9eg0dyDbdzw+hgWZqpiSkKYceFNFHKPcg9QMyklY+ofohw8wqHkevibl/uSgcw4nNpjhfUx+6SKT8ALn8mSFTG4r15jIXn+/he7SvRlgCDSpjSlQBHvvGSiix8msxPN9YA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723720928; c=relaxed/simple;
-	bh=t5XfoTJWXwwXAGlByPNFeBy5WcBirNsYfE4PPFhTurw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C2HdDm3pBaDYj+ZfEcjuPX1mncC7XvQH4pOSLgnIaIAu6S5wH3KydDVKvvCkltxGnMLTPhm1tGvJH0s0vLYZrmHVxEBpfYngTJkkLPJTJSqdVC61LJ7T3eYQN8/0+yKTkynz7Yr6IFr2CgBh54hbILa+OK9d/krrSR+AYnrVlTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=jWew8cyi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bnV2X2Ck; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-05.internal (phl-compute-05.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 1E8FD1151D74;
-	Thu, 15 Aug 2024 05:49:38 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Thu, 15 Aug 2024 05:49:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm3; t=1723715378; x=1723801778; bh=FdEeSS6bn1a4+EeyUiAp0
-	LL4fOJqFIrBmisl+3Lam6Y=; b=jWew8cyiFNqzqdC+EyxAjkTUHlbOyJPL7NAF6
-	bX+0cbLVaf5nQkz6mdJ27IZRsa2w9gZYI3Pd30By1KKbaNDz4rF4sVWY3XO+Soq0
-	3jIWoOELkM9MnNUTuFTgrh+a1vIoZ7kdSHpBRJcJDbB1PiRK2T8Y5odrWoZPXYLz
-	V4q9S87v/KHEmrFnyN35AKAll6KkIQ0HXC9+65Y6W+030GsGh1NskbXAjIVfDkoW
-	towNSU9uZXLzFBziOdFvtJ4BL8UIncM/FmlD65AQtzYrV7RvVSAiOdnwm0uAvgoP
-	RLGUnMN03lCRt3jf691OyPFFmzArJF+gKecWkmzsf3HTFJ4qg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1723715378; x=1723801778; bh=FdEeSS6bn1a4+EeyUiAp0LL4fOJq
-	FIrBmisl+3Lam6Y=; b=bnV2X2CkvMO5R6N0KNS/sJuiNB+RRQQWL8UEqxlSNXos
-	D9Ht9Tpi0QOvNZP3o16R5n9CEy3itRxvRT8luyOH51XF3AH+VBQh9qUSsY8e01kf
-	AYH8sO/HI0fNJoX4cSyQ5aiHA0mIwHB1bx4iyeXhrZdpL2eYXTHjkFnhWYpIfSgl
-	t2n1iN8xZylhRguVVnCnYDMInw+fDA36klU8+mwxOBxBpKsy6ZA67NX+hjjcytSU
-	O3UbzBkd68rj7+bNRkCwuB5XpT+A7107ToMcfbUihK/33X4FoywYqvXixMibidCV
-	+QnB/yoO4y5jgugUaHhUjhlVDicz1pwZZ/S0DlOEDA==
-X-ME-Sender: <xms:Mc-9ZnIY2F2245FDCPPi4Mn0HuMICWKiXahr3NdgSOBJKEJcGUeruQ>
-    <xme:Mc-9ZrLwBsgFFNIA_BTB75BhrjIF1lV88yGjz_CE_MDnx88l368mfzdO4VZlGBS14
-    KGrL-WefXxpln0>
-X-ME-Received: <xmr:Mc-9Zvu_rJ7GpkjiHVT7WurjZCmKjzGNsa6RSRCuIXsAErrZsL6JCeW342RzIKHvTtFghTFZA4MgLPE6xDl2bPxcRzYgCpbYKPKRxDPnqOnfSIbi>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddtiedgvddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttdenucfh
-    rhhomhepifhrihhffhhinhcumfhrohgrhhdqjfgrrhhtmhgrnhcuoehgrhhifhhfihhnse
-    hkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpefhgeffjeejhfeffeffhefhjedv
-    ffdvgfffudfhgffhudelieefjeeludetvdelieenucffohhmrghinhepkhgvrhhnvghlrd
-    horhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhep
-    ghhrihhffhhinheskhhrohgrhhdrtghomhdpnhgspghrtghpthhtohepuddupdhmohguvg
-    epshhmthhpohhuthdprhgtphhtthhopehsrhhinhhivhgrshdrkhgrnhgurghgrghtlhgr
-    sehlihhnrghrohdrohhrghdprhgtphhtthhopegrmhgrhhgvshhhsehqthhirdhquhgrlh
-    gtohhmmhdrtghomhdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhmshhmsehvghgvrhdr
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfh
-    hrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhes
-    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhhifhhfihhnsehkrhhorg
-    hhrdgtohhmpdhrtghpthhtohepshhtrggslhgvsehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehquhhitggpvghkrghnghhuphhtsehquhhitghinhgtrdgtohhmpdhrtghpthhtoh
-    epughmihhtrhihrdgsrghrhihshhhkohhvsehlihhnrghrohdrohhrgh
-X-ME-Proxy: <xmx:Mc-9ZgasUK4O-h506OixpcqrTA-7liBCiEhtYwDhTErp3XSoqA8ReA>
-    <xmx:Ms-9ZuZmsrhOQfBfasBuXSL6XEDhuztRLkWqukuu-rVpXBWq-mvzmQ>
-    <xmx:Ms-9ZkAQV73dolPKiBsMZhb3DppLRgXKr-GzG1vEg175GXPoMUR6ug>
-    <xmx:Ms-9Zsb8SMQshpUmswKcXYNrRolXPqNLToL7soQ9yY9XH5STpXYDzQ>
-    <xmx:Ms-9ZgCz0VzyavjrrNP_pYAZZZz0v9a-fA8SFbPjJjbnoJlD06aIU8SQ>
-Feedback-ID: i1d2843be:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 15 Aug 2024 05:49:36 -0400 (EDT)
-From: Griffin Kroah-Hartman <griffin@kroah.com>
-To: srinivas.kandagatla@linaro.org,
-	amahesh@qti.qualcomm.com
-Cc: linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Griffin Kroah-Hartman <griffin@kroah.com>,
-	stable <stable@kernel.org>,
-	Ekansh Gupta <quic_ekangupt@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Joel Selvaraj <joelselvaraj.oss@gmail.com>
-Subject: [PATCH] Revert "misc: fastrpc: Restrict untrusted app to attach to privileged PD"
-Date: Thu, 15 Aug 2024 11:49:20 +0200
-Message-ID: <20240815094920.8242-1-griffin@kroah.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1723715497; c=relaxed/simple;
+	bh=J1UkmUFXsy8DG2J8jkCpx59FPXmshWrfK/EwyZH8ttE=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=MIr1ngqrS6Mj64WSvu4KSu10p7aETTV40YgHK1rBQXOQPkfW+qmAFx4toHBvfPElJ9HBH2Mf6GXB4VJ5r+bs1knOkvi1ELGhTNKb8bnXJnDGm3IQFuBi9p3Y1Ju1Rh3fjC/gYEohebBLxRp7Smcsma1GBEzkbelYjHLisKDSg1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H1nL5aoz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EED1CC32786;
+	Thu, 15 Aug 2024 09:51:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723715496;
+	bh=J1UkmUFXsy8DG2J8jkCpx59FPXmshWrfK/EwyZH8ttE=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=H1nL5aoz0K8KtauZKgFdU+DL3yG3h4M7rGVqsRg9grr4iYMdGx4piO3MGCEI8I+mo
+	 wX8P1YO585VCNLpbFwsP2h/GKUxjncYujDb9ZmM7HSuGC+Yo/82heiu+guIMdc7+4K
+	 YZaN2qDZQnKo7tcVLQmgFrEQqkTbqUhdCsvOz6z17ne0GYx8TwpUK/ChqYhvf0x65M
+	 USdgpJJCA3lFSK3yGUPnstPYLAwDxcY9FFZUz/WywqHJj85VmAuTruURjcQKPz++pF
+	 k5zf+zQin3kv9JixuJLDQRlgp79I5Iv2RdZEeXdBje55TWLgoVMR5AM7nPYfurMov0
+	 GRknFNEFRHAZg==
+From: Kalle Valo <kvalo@kernel.org>
+To: David Lin <yu-hao.lin@nxp.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>,  "linux-wireless@vger.kernel.org"
+ <linux-wireless@vger.kernel.org>,  "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>,  "johannes@sipsolutions.net"
+ <johannes@sipsolutions.net>,  "briannorris@chromium.org"
+ <briannorris@chromium.org>,  "francesco@dolcini.it"
+ <francesco@dolcini.it>,  Pete Hsieh <tsung-hsien.hsieh@nxp.com>
+Subject: Re: [EXT] Re: [PATCH v2 40/43] wifi: nxpwifi: add wmm.h
+References: <20240809094533.1660-1-yu-hao.lin@nxp.com>
+	<20240809094533.1660-41-yu-hao.lin@nxp.com>
+	<2024081430-derail-diocese-78dc@gregkh>
+	<PA4PR04MB9638C1186FC4D56569D7D0E4D1802@PA4PR04MB9638.eurprd04.prod.outlook.com>
+	<2024081523-curator-pronounce-4619@gregkh>
+	<PA4PR04MB963855F4620A2E2C48B2DC2CD1802@PA4PR04MB9638.eurprd04.prod.outlook.com>
+Date: Thu, 15 Aug 2024 12:51:33 +0300
+In-Reply-To: <PA4PR04MB963855F4620A2E2C48B2DC2CD1802@PA4PR04MB9638.eurprd04.prod.outlook.com>
+	(David Lin's message of "Thu, 15 Aug 2024 06:20:48 +0000")
+Message-ID: <87zfpexgey.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-This reverts commit bab2f5e8fd5d2f759db26b78d9db57412888f187.
+David Lin <yu-hao.lin@nxp.com> writes:
 
-Joel reported that this commit breaks userspace and stops sensors in
-SDM845 from working. Also breaks other qcom SoC devices running postmarketOS.
+> So that mean I still need to add description for every file, right?
+>
+> Once if confirmed, I will prepare patch v3.
 
-Cc: stable <stable@kernel.org>
-Cc: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reported-by: Joel Selvaraj <joelselvaraj.oss@gmail.com>
-Link: https://lore.kernel.org/r/9a9f5646-a554-4b65-8122-d212bb665c81@umsystem.edu
-Signed-off-by: Griffin Kroah-Hartman <griffin@kroah.com>
----
- drivers/misc/fastrpc.c      | 22 +++-------------------
- include/uapi/misc/fastrpc.h |  3 ---
- 2 files changed, 3 insertions(+), 22 deletions(-)
+Please don't send a new version yet, patchbombing doesn't solve
+anything. I would say wait for review comments at least a month before
+sending a new version. But maybe send the patches only to
+linux-wireless, that way people outside wireless don't get confused.
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index 5204fda51da3..339d126414d4 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -2085,16 +2085,6 @@ static int fastrpc_req_mem_map(struct fastrpc_user *fl, char __user *argp)
- 	return err;
- }
- 
--static int is_attach_rejected(struct fastrpc_user *fl)
--{
--	/* Check if the device node is non-secure */
--	if (!fl->is_secure_dev) {
--		dev_dbg(&fl->cctx->rpdev->dev, "untrusted app trying to attach to privileged DSP PD\n");
--		return -EACCES;
--	}
--	return 0;
--}
--
- static long fastrpc_device_ioctl(struct file *file, unsigned int cmd,
- 				 unsigned long arg)
- {
-@@ -2107,19 +2097,13 @@ static long fastrpc_device_ioctl(struct file *file, unsigned int cmd,
- 		err = fastrpc_invoke(fl, argp);
- 		break;
- 	case FASTRPC_IOCTL_INIT_ATTACH:
--		err = is_attach_rejected(fl);
--		if (!err)
--			err = fastrpc_init_attach(fl, ROOT_PD);
-+		err = fastrpc_init_attach(fl, ROOT_PD);
- 		break;
- 	case FASTRPC_IOCTL_INIT_ATTACH_SNS:
--		err = is_attach_rejected(fl);
--		if (!err)
--			err = fastrpc_init_attach(fl, SENSORS_PD);
-+		err = fastrpc_init_attach(fl, SENSORS_PD);
- 		break;
- 	case FASTRPC_IOCTL_INIT_CREATE_STATIC:
--		err = is_attach_rejected(fl);
--		if (!err)
--			err = fastrpc_init_create_static_process(fl, argp);
-+		err = fastrpc_init_create_static_process(fl, argp);
- 		break;
- 	case FASTRPC_IOCTL_INIT_CREATE:
- 		err = fastrpc_init_create_process(fl, argp);
-diff --git a/include/uapi/misc/fastrpc.h b/include/uapi/misc/fastrpc.h
-index 91583690bddc..f33d914d8f46 100644
---- a/include/uapi/misc/fastrpc.h
-+++ b/include/uapi/misc/fastrpc.h
-@@ -8,14 +8,11 @@
- #define FASTRPC_IOCTL_ALLOC_DMA_BUFF	_IOWR('R', 1, struct fastrpc_alloc_dma_buf)
- #define FASTRPC_IOCTL_FREE_DMA_BUFF	_IOWR('R', 2, __u32)
- #define FASTRPC_IOCTL_INVOKE		_IOWR('R', 3, struct fastrpc_invoke)
--/* This ioctl is only supported with secure device nodes */
- #define FASTRPC_IOCTL_INIT_ATTACH	_IO('R', 4)
- #define FASTRPC_IOCTL_INIT_CREATE	_IOWR('R', 5, struct fastrpc_init_create)
- #define FASTRPC_IOCTL_MMAP		_IOWR('R', 6, struct fastrpc_req_mmap)
- #define FASTRPC_IOCTL_MUNMAP		_IOWR('R', 7, struct fastrpc_req_munmap)
--/* This ioctl is only supported with secure device nodes */
- #define FASTRPC_IOCTL_INIT_ATTACH_SNS	_IO('R', 8)
--/* This ioctl is only supported with secure device nodes */
- #define FASTRPC_IOCTL_INIT_CREATE_STATIC _IOWR('R', 9, struct fastrpc_init_create_static)
- #define FASTRPC_IOCTL_MEM_MAP		_IOWR('R', 10, struct fastrpc_mem_map)
- #define FASTRPC_IOCTL_MEM_UNMAP		_IOWR('R', 11, struct fastrpc_mem_unmap)
+And PLEASE do stop top posting, that's the most trivial detail when
+working with the community. If you continue top posting then I will
+automatically drop any patches from you.
+
+Carefully read our wiki page IN FULL about submitting patches, link
+below.
+
 -- 
-2.46.0
+https://patchwork.kernel.org/project/linux-wireless/list/
 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
