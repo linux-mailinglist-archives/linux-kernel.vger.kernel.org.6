@@ -1,175 +1,181 @@
-Return-Path: <linux-kernel+bounces-287483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 850B4952842
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 05:26:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 234D0952848
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 05:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 138761F2398B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 03:26:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 480201C222CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 03:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A813436127;
-	Thu, 15 Aug 2024 03:26:29 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5CE36AF8;
+	Thu, 15 Aug 2024 03:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0WBqIejO"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE9439AE3;
-	Thu, 15 Aug 2024 03:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EC679EA
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 03:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723692389; cv=none; b=DATjLySNCOko5ddbUhBLL+ebnHQFrm34v9pc39PuBzuTtgiUOdrzp7Y826zN1SniBHftd/3yoHwooJn/gwMO8yydCBKOjTEqAOMAMob+wUu+zVsKJazBnDZrzQOihtHReA4L66ZDfAQvi1maSrYHMsCTk7JUlqCTo928t+M2av0=
+	t=1723692533; cv=none; b=K2qywmioLOphXdCVxcqWOe/4k60E9it3GAmioU3TPkgt6mPSXa8DV39vgBA7/saJOUGgOsYAny1qOlAVO15Hn8afnDe2NDYIY+vQjbqVzMC8qs4Mv55v4EHeKyAVNGP3ulCUNzIQJOn2qPDDaILa4SI/+qEGSoxsmy+QHvuhrPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723692389; c=relaxed/simple;
-	bh=jZd0e8AlCeccIrI+TjyspmDO83JLXOK3oAqwexxCFkw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=K1kzSzaVTYmIRaqAaPuHovbZ39dgtxKZTM9JvkO2JPS4qwrIjxIrmS39QWsOzsExIB4ZfeSlaT5tmHG7vmdAmJUKF5YlzDzHVlNOrar9YDsOecUxl97MADyAviNRusJnd/pUhZfw/FuozDt+ueTsHuup2qpK+Hq0VzbVEgrV9U0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wkr9r3M5hzyPvC;
-	Thu, 15 Aug 2024 11:25:52 +0800 (CST)
-Received: from kwepemd100010.china.huawei.com (unknown [7.221.188.107])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6766314022E;
-	Thu, 15 Aug 2024 11:26:23 +0800 (CST)
-Received: from kwepemd100011.china.huawei.com (7.221.188.204) by
- kwepemd100010.china.huawei.com (7.221.188.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 15 Aug 2024 11:26:23 +0800
-Received: from kwepemd100011.china.huawei.com ([7.221.188.204]) by
- kwepemd100011.china.huawei.com ([7.221.188.204]) with mapi id 15.02.1258.034;
- Thu, 15 Aug 2024 11:26:23 +0800
-From: duchangbin <changbin.du@huawei.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-CC: duchangbin <changbin.du@huawei.com>, Adrian Hunter
-	<adrian.hunter@intel.com>, Ian Rogers <irogers@google.com>, Jiri Olsa
-	<jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, Namhyung Kim
-	<namhyung@kernel.org>, Andi Kleen <andi@firstfloor.org>, "Linux Kernel
- Mailing List" <linux-kernel@vger.kernel.org>,
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>
-Subject: Re: [PATCH 1/1] perf build: Fix up broken capstone feature detection
- fast path
-Thread-Topic: [PATCH 1/1] perf build: Fix up broken capstone feature detection
- fast path
-Thread-Index: AQHa7lAYZwgNZDGaUkS80NPtR1ZNSbInqQqA
-Date: Thu, 15 Aug 2024 03:26:22 +0000
-Message-ID: <76c92af3b3544f8a9fed412fc287947d@huawei.com>
-References: <Zry0sepD5Ppa5YKP@x1>
-In-Reply-To: <Zry0sepD5Ppa5YKP@x1>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-imapappendstamp: kwepemd100011.china.huawei.com (15.02.1258.034)
-x-ms-exchange-messagesentrepresentingtype: 1
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <09DE3855F974F245AE8CF8A95706EC08@huawei.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1723692533; c=relaxed/simple;
+	bh=pHk2y705314CsPI2YL9Jn7MSA4P7y50mbU8JVEertSQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r5kbe9TRoj8PVl3iB+I6YX1Dwrl9NgZTeL/jHG+M25a3Ss0Hcw+TiwLjbBaR4YQrUUKYl31zxbi0lWxPY35/xMl61GJ0/TmVljZ5K/Ydd0ryS4L2Wo8NVg3tqJ8wA2N3RBbilV5T70SMkBVKJUUlp/MqUmJ2pbgtR84EGY9sfEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0WBqIejO; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52f00ad303aso634230e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 20:28:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723692529; x=1724297329; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4wjx59lWoXbwmdfqWfaPSPqk+zYnJcqiORbyfT+nNPs=;
+        b=0WBqIejOVh2XJWAsQSDrUTVgILfj1m4oR9rmkdPEDEFASbj2S7qp5DIvdPelYbrTQz
+         zatf8fxRlLrwLh4AAcf7neIelb5Cs/x80qEZwraGAriqLWgxZ/8z080BTYymTbNyA8bz
+         rEemlnEeaKQQH1tUFrYAwSplKNW9NVsV0hwg5u4xtZ5E6VqA8iLIWx67zw5E2iX1maIc
+         ZnEP8BJyksxsHiFIc5W6UP3pDsOpiXsC2kW/w+XZrEs+8MZl6DNEjbGP7xE+PqSGtAcC
+         qFg69jTsDk6zRgsFaBrflx2TwYUHZpbmfeA7wdpTXPr21uHilz6BsLkVWA5J2Qt3bpqC
+         9IRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723692529; x=1724297329;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4wjx59lWoXbwmdfqWfaPSPqk+zYnJcqiORbyfT+nNPs=;
+        b=tYIyI/NY8yC1yjrEq+OBTFSzlawtbbVKxy2dRBUyt6tRsEOWyhz48ThjTkLiF5K5IK
+         jFa2xe+flNMb81lS7TbLwj5Ak/aGekJPxTFx3L020FSYPiujpQF1iaXeHx4WmS0pF+8N
+         6y8fL39v2strXlzNq0lQ+2vYvyHT8LTBCSJq986OAshBr37tyLuTOHfBE7S5qTbJjxDE
+         pDMJsgXx/5TRpBEs6ot9yEM9Z87uYUigBfyw5aFVqpng00upntR4H/Jtvn2WPtn8nUb3
+         5yXynIfBietLXCkRrnnty2ViL1Gym9N7KVdh9JIY7rR6sJDwUHnEPJ+kHAQT5rFM63l4
+         mSMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqYdtB/DOhm7CqauV4WXBQKOybefobzQEnp9F3lRm6QAeM2yhwBLGIQsNkI5bVnYUV1W8t5Ukc/t5NxPG9qH1uEu86NY81JBrZIATO
+X-Gm-Message-State: AOJu0Yxat9LDqHsotfr5CwPQLS1REaE7W55bajbl/GF9YzoxRcl0uGnC
+	qkgMcl19jqCQrGpyv0tHGnQlDO98d6bA05DWoTStTMuyRM5Rn2c98TpQ3Aj/pDttFIH4TuXMLmB
+	BGdqbYuxdDlHbvvbcc4Qxyl9iYxXohEpG4EpJVH8HjmhqKPpJIz8f
+X-Google-Smtp-Source: AGHT+IG+oFQPlgLf1D7mZieVo5I4Z9fny4yaWPInD4rQ6bQmW7z6rkEtgozX1zdXoPSI3L0Cf9iS9LwOrb1z3xYRvdk=
+X-Received: by 2002:a05:6512:2216:b0:52e:74f5:d13 with SMTP id
+ 2adb3069b0e04-532eda81aa2mr2706631e87.30.1723692528957; Wed, 14 Aug 2024
+ 20:28:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240718173423.1574395-1-maskray@google.com> <a97e6b4232394e837666adbaf7e657900cb7b1a8.camel@xry111.site>
+ <CAFP8O3LcEZD2L6KFw-Qh5jGivtifFUzqTM=JceWKU4nJrBaBZg@mail.gmail.com>
+In-Reply-To: <CAFP8O3LcEZD2L6KFw-Qh5jGivtifFUzqTM=JceWKU4nJrBaBZg@mail.gmail.com>
+From: Fangrui Song <maskray@google.com>
+Date: Wed, 14 Aug 2024 20:28:35 -0700
+Message-ID: <CAFP8O3JdJ+NA_L4juLMN+C7ZsOws5OXJxxuoD+eq=6oSawkg0w@mail.gmail.com>
+Subject: Re: [PATCH] arm64/vdso: Remove --hash-style=sysv
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGksIEFybmFsZG8sDQoNCkhvdyBhYm91dCB3b3JrYXJvdW5kIGl0IGJ5IHJlbmFtZSB0aGUgJ2Jw
-Zl9pbnNuJyBpbiBjYXBzdGlvbmU/DQoNCkNoYW5nZSB0ZXN0LWxpYmNhcHN0b25lLmMgYXM6DQoN
-CiNkZWZpbmUgYnBmX2luc24gY2Fwc3RvbmVfYnBmX2luc24NCiNpbmNsdWRlIDxjYXBzdG9uZS9j
-YXBzdG9uZS5oPg0KI3VuZGVmIGJwZl9pbnNuDQoNCkkgaGF2ZW4ndCB0cmllZCBpdCBidXQgc2Vl
-bXMgZmVhc2libGUuDQoNCk9uIFdlZCwgQXVnIDE0LCAyMDI0IGF0IDEwOjQ0OjE3QU0gLTAzMDAs
-IEFybmFsZG8gQ2FydmFsaG8gZGUgTWVsbyB3cm90ZToNCj4gVGhlIGNhcHN0b25lIGRldmVsIGhl
-YWRlcnMgZGVmaW5lICdzdHJ1Y3QgYnBmX2luc24nIGluIGEgd2F5IHRoYXQgY2xhc2hlcyB3aXRo
-DQo+IHdoYXQgaXMgaW4gdGhlIGxpYmJwZiBkZXZlbCBoZWFkZXJzLCBzbyB3ZSBzbyBmYXIgbmVl
-ZCB0byBhdm9pZCBpbmNsdWRpbmcgYm90aC4NCj4gDQo+IFRoaXMgaXMgaGFwcGVuaW5nIG9uIHRo
-ZSB0b29scy9idWlsZC9mZWF0dXJlL3Rlc3QtYWxsLmMgZmlsZSwgd2hlcmUgd2UgdHJ5DQo+IGJ1
-aWxkaW5nIGFsbCB0aGUgZXhwZWN0ZWQgc2V0IG9mIGxpYnJhcmllcyB0byBiZSBub3JtYWxseSBh
-dmFpbGFibGUgb24gYQ0KPiBzeXN0ZW06DQo+IA0KPiAgIOKsolthY21lQHRvb2xib3ggcGVyZi10
-b29scy1uZXh0XSQgY2F0IC90bXAvYnVpbGQvcGVyZi10b29scy1uZXh0L2ZlYXR1cmUvdGVzdC1h
-bGwubWFrZS5vdXRwdXQNCj4gICBJbiBmaWxlIGluY2x1ZGVkIGZyb20gdGVzdC1icGYuYzozLA0K
-PiAgICAgICAgICAgICAgICAgICAgZnJvbSB0ZXN0LWFsbC5jOjE1MDoNCj4gICAvaG9tZS9hY21l
-L2dpdC9wZXJmLXRvb2xzLW5leHQvdG9vbHMvaW5jbHVkZS91YXBpL2xpbnV4L2JwZi5oOjc3Ojg6
-IGVycm9yOiDigJhicGZfaW5zbuKAmSBkZWZpbmVkIGFzIHdyb25nIGtpbmQgb2YgdGFnDQo+ICAg
-ICAgNzcgfCBzdHJ1Y3QgYnBmX2luc24gew0KPiAgICAgICAgIHwgICAgICAgIF5+fn5+fn5+DQo+
-ICAg4qyiW2FjbWVAdG9vbGJveCBwZXJmLXRvb2xzLW5leHRdJCBjYXQgL3RtcC9idWlsZC9wZXJm
-LXRvb2xzLW5leHQvZmVhdHVyZS90ZXN0LWFsbC5tYWtlLm91dHB1dA0KPiANCj4gV2hlbiBkb2lu
-ZyBzbyB0aGVyZSBpcyBhIHRyaWNrIHdoZXJlIHdlIGRlZmluZSBtYWluIHRvIGJlDQo+IG1haW5f
-dGVzdF9saWJjYXBzdG9uZSwgdGhlbiBpbmNsdWRlIHRoZSBpbmRpdmlkdWFsDQo+IHRvb2xzL2J1
-aWxkL2ZldHVyZS90ZXN0LWxpYmNhcHN0b25lLmMgY2FwYWJpbGl0eSBxdWVyeSB0ZXN0LCBhbmQg
-dGhlbiB3ZSB1bmRlZg0KPiAnbWFpbicgYmVjYXVzZSB3ZSdsbCBkbyBpdCBhbGwgb3ZlciBhZ2Fp
-biB3aXRoIHRoZSBuZXh0IGV4cGVjdGVkIGxpYnJhcnkgdG8NCj4gYmUgdGVzdGVkIChhdCB0aGlz
-IHRpbWUgJ2x6bWEnKS4NCj4gDQo+IFRvIGNvbXBsZXRlIHRoaXMgbWVjaGFuaXNtIHdlIG5lZWQg
-dG8sIGluIHRlc3QtYWxsLmMgJ21haW4nIHJvdXRpbmUsIHRvDQo+IGNhbGwgbWFpbl90ZXN0X2xp
-YmNhcHN0b25lKCksIHdoaWNoIGlzbid0IGJlaW5nIGRvbmUsIHNvIHRoZSBlZmZlY3Qgb2YNCj4g
-YWRkaW5nIHJlZmVyZW5jZXMgdG8gY2Fwc3RvbmUgaW4gdGVzdC1hbGwuYyBhcmUgbm90IGFjaGll
-dmVkLg0KPiANCj4gVGhlIG9ubHkgdGhpbmcgdGhhdCBpcyBoYXBwZW5pbmcgaXMgdGhhdCB0ZXN0
-LWFsbC5jIGlzIGZhaWxpbmcgdG8gYnVpbGQgYW5kIHRodXMNCj4gYWxsIHRoZSB0ZXN0cyB3aWxs
-IGhhdmUgdG8gYmUgZG9uZSBpbmRpdmlkdWFsbHksIHdoaWNoIG51bGxpZmllcyB0aGUgdGVzdC1h
-bGwuYw0KPiBzaW5nbGUgYnVpbGQgc3BlZWR1cC4NCj4gDQo+IFNvIGxldHMgcmVtb3ZlIHJlZmVy
-ZW5jZXMgdG8gY2Fwc3RvbmUgZnJvbSB0ZXN0LWFsbC5jIHRvIHNlZSBpZiB0aGlzIG1ha2VzIGl0
-DQo+IGJ1aWxkIGFnYWluIHNvIHRoYXQgd2UgZ2V0IGZhc3RlciBidWlsZHMgb3IgZ28gb24gZml4
-aW5nIHVwIHdoYXRldmVyIGlzDQo+IHByZXZlbnRpbmcgdXMgdG8gZ2V0IHRoYXQgYmVuZWZpdC4N
-Cj4gDQo+IE5vdGhpbmc6IGFmdGVyIHRoaXMgZml4IHdlIGdldCBhIGNsZWFuIHRlc3QtYWxsLmMg
-YnVpbGQgYW5kIGdldCB0aGUgYnVpbGQgc3BlZWR1cCBiYWNrOg0KPiANCj4gICDirKJbYWNtZUB0
-b29sYm94IHBlcmYtdG9vbHMtbmV4dF0kIGNhdCAvdG1wL2J1aWxkL3BlcmYtdG9vbHMtbmV4dC9m
-ZWF0dXJlL3Rlc3QtYWxsLm1ha2Uub3V0cHV0DQo+ICAg4qyiW2FjbWVAdG9vbGJveCBwZXJmLXRv
-b2xzLW5leHRdJCBjYXQgL3RtcC9idWlsZC9wZXJmLXRvb2xzLW5leHQvZmVhdHVyZS90ZXN0LWFs
-bC4NCj4gICB0ZXN0LWFsbC5iaW4gICAgICAgICAgdGVzdC1hbGwuZCAgICAgICAgICAgIHRlc3Qt
-YWxsLm1ha2Uub3V0cHV0DQo+ICAg4qyiW2FjbWVAdG9vbGJveCBwZXJmLXRvb2xzLW5leHRdJCBj
-YXQgL3RtcC9idWlsZC9wZXJmLXRvb2xzLW5leHQvZmVhdHVyZS90ZXN0LWFsbC5tYWtlLm91dHB1
-dA0KPiAgIOKsolthY21lQHRvb2xib3ggcGVyZi10b29scy1uZXh0XSQgbGRkIC90bXAvYnVpbGQv
-cGVyZi10b29scy1uZXh0L2ZlYXR1cmUvdGVzdC1hbGwuYmluDQo+ICAgCWxpbnV4LXZkc28uc28u
-MSAoMHgwMDAwN2YxMzI3N2ExMDAwKQ0KPiAgIAlsaWJweXRob24zLjEyLnNvLjEuMCA9PiAvbGli
-NjQvbGlicHl0aG9uMy4xMi5zby4xLjAgKDB4MDAwMDdmMTMyNmUwMDAwMCkNCj4gICAJbGlibS5z
-by42ID0+IC9saWI2NC9saWJtLnNvLjYgKDB4MDAwMDdmMTMyNzRiZTAwMCkNCj4gICAJbGlidHJh
-Y2VldmVudC5zby4xID0+IC9saWI2NC9saWJ0cmFjZWV2ZW50LnNvLjEgKDB4MDAwMDdmMTMyNzQ5
-NjAwMCkNCj4gICAJbGlidHJhY2Vmcy5zby4xID0+IC9saWI2NC9saWJ0cmFjZWZzLnNvLjEgKDB4
-MDAwMDdmMTMyNzQ2ZjAwMCkNCj4gICAJbGliY3J5cHRvLnNvLjMgPT4gL2xpYjY0L2xpYmNyeXB0
-by5zby4zICgweDAwMDA3ZjEzMjY4MDAwMDApDQo+ICAgCWxpYnVud2luZC14ODZfNjQuc28uOCA9
-PiAvbGliNjQvbGlidW53aW5kLXg4Nl82NC5zby44ICgweDAwMDA3ZjEzMjc0NTIwMDApDQo+ICAg
-CWxpYnVud2luZC5zby44ID0+IC9saWI2NC9saWJ1bndpbmQuc28uOCAoMHgwMDAwN2YxMzI3NDM2
-MDAwKQ0KPiAgIAlsaWJsem1hLnNvLjUgPT4gL2xpYjY0L2xpYmx6bWEuc28uNSAoMHgwMDAwN2Yx
-MzI3NDAzMDAwKQ0KPiAgIAlsaWJkdy5zby4xID0+IC9saWI2NC9saWJkdy5zby4xICgweDAwMDA3
-ZjEzMjZkNmYwMDApDQo+ICAgCWxpYnouc28uMSA9PiAvbGliNjQvbGliei5zby4xICgweDAwMDA3
-ZjEzMjczZTIwMDApDQo+ICAgCWxpYmVsZi5zby4xID0+IC9saWI2NC9saWJlbGYuc28uMSAoMHgw
-MDAwN2YxMzI2ZDUzMDAwKQ0KPiAgIAlsaWJudW1hLnNvLjEgPT4gL2xpYjY0L2xpYm51bWEuc28u
-MSAoMHgwMDAwN2YxMzI3M2Q0MDAwKQ0KPiAgIAlsaWJzbGFuZy5zby4yID0+IC9saWI2NC9saWJz
-bGFuZy5zby4yICgweDAwMDA3ZjEzMjY0MDAwMDApDQo+ICAgCWxpYnBlcmwuc28uNS4zOCA9PiAv
-bGliNjQvbGlicGVybC5zby41LjM4ICgweDAwMDA3ZjEzMjYwMDAwMDApDQo+ICAgCWxpYmMuc28u
-NiA9PiAvbGliNjQvbGliYy5zby42ICgweDAwMDA3ZjEzMjVlMGYwMDApDQo+ICAgCWxpYnpzdGQu
-c28uMSA9PiAvbGliNjQvbGlienN0ZC5zby4xICgweDAwMDA3ZjEzMjY3NDEwMDApDQo+ICAgCS9s
-aWI2NC9sZC1saW51eC14ODYtNjQuc28uMiAoMHgwMDAwN2YxMzI3N2EzMDAwKQ0KPiAgIAlsaWJi
-ejIuc28uMSA9PiAvbGliNjQvbGliYnoyLnNvLjEgKDB4MDAwMDdmMTMyNmQzZjAwMCkNCj4gICAJ
-bGliY3J5cHQuc28uMiA9PiAvbGliNjQvbGliY3J5cHQuc28uMiAoMHgwMDAwN2YxMzI2ZDA3MDAw
-KQ0KPiAgIOKsolthY21lQHRvb2xib3ggcGVyZi10b29scy1uZXh0XSQNCj4gDQo+IEFuZCB3aGVu
-IGhhdmluZyBjYXBzdG9uZS1kZXZlbCBpbnN0YWxsZWQgd2UgZ2V0IGl0IGRldGVjdGVkIGFuZCBs
-aW5rZWQgd2l0aA0KPiBwZXJmLCBhbGxvd2luZyB1cyB0byBiZW5lZml0IGZyb20gdGhlIGZlYXR1
-cmVzIHRoYXQgaXQgZW5hYmxlczoNCj4gDQo+ICAg4qyiW2FjbWVAdG9vbGJveCBwZXJmLXRvb2xz
-LW5leHRdJCBycG0gLXEgY2Fwc3RvbmUtZGV2ZWwNCj4gICBjYXBzdG9uZS1kZXZlbC01LjAuMS0z
-LmZjNDAueDg2XzY0DQo+ICAg4qyiW2FjbWVAdG9vbGJveCBwZXJmLXRvb2xzLW5leHRdJCBsZGQg
-L3RtcC9idWlsZC9wZXJmLXRvb2xzLW5leHQvcGVyZiB8IGdyZXAgY2Fwc3RvbmUNCj4gICAJbGli
-Y2Fwc3RvbmUuc28uNSA9PiAvbGliNjQvbGliY2Fwc3RvbmUuc28uNSAoMHgwMDAwN2ZlNmE1YzAw
-MDAwKQ0KPiAgIOKsolthY21lQHRvb2xib3ggcGVyZi10b29scy1uZXh0XSQgL3RtcC9idWlsZC9w
-ZXJmLXRvb2xzLW5leHQvcGVyZiAtdnYgfCBncmVwIGNhcA0KPiAgICAgICAgICAgICAgbGliY2Fw
-c3RvbmU6IFsgb24gIF0gICMgSEFWRV9MSUJDQVBTVE9ORV9TVVBQT1JUDQo+ICAg4qyiW2FjbWVA
-dG9vbGJveCBwZXJmLXRvb2xzLW5leHRdJA0KPiANCj4gRml4ZXM6IDhiNzY3ZGIzMzA5NTk1YTIg
-KCJwZXJmOiBidWlsZDogaW50cm9kdWNlIHRoZSBsaWJjYXBzdG9uZSIpDQo+IENjOiBBZHJpYW4g
-SHVudGVyIDxhZHJpYW4uaHVudGVyQGludGVsLmNvbT4NCj4gQ2M6IEFuZGkgS2xlZW4gPGFuZGlA
-Zmlyc3RmbG9vci5vcmc+DQo+IENjOiBDaGFuZ2JpbiBEdSA8Y2hhbmdiaW4uZHVAaHVhd2VpLmNv
-bT4NCj4gQ2M6IElhbiBSb2dlcnMgPGlyb2dlcnNAZ29vZ2xlLmNvbT4NCj4gQ2M6IEppcmkgT2xz
-YSA8am9sc2FAa2VybmVsLm9yZz4NCj4gQ2M6IEthbiBMaWFuZyA8a2FuLmxpYW5nQGxpbnV4Lmlu
-dGVsLmNvbT4NCj4gQ2M6IE5hbWh5dW5nIEtpbSA8bmFtaHl1bmdAa2VybmVsLm9yZz4NCj4gU2ln
-bmVkLW9mZi1ieTogQXJuYWxkbyBDYXJ2YWxobyBkZSBNZWxvIDxhY21lQHJlZGhhdC5jb20+DQo+
-IC0tLQ0KPiAgdG9vbHMvYnVpbGQvZmVhdHVyZS90ZXN0LWFsbC5jIHwgNCAtLS0tDQo+ICAxIGZp
-bGUgY2hhbmdlZCwgNCBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS90b29scy9idWls
-ZC9mZWF0dXJlL3Rlc3QtYWxsLmMgYi90b29scy9idWlsZC9mZWF0dXJlL3Rlc3QtYWxsLmMNCj4g
-aW5kZXggZGQwYTE4YzJlZjhmYzA4MC4uNmY0YmYzODZhM2I1YzRiMCAxMDA2NDQNCj4gLS0tIGEv
-dG9vbHMvYnVpbGQvZmVhdHVyZS90ZXN0LWFsbC5jDQo+ICsrKyBiL3Rvb2xzL2J1aWxkL2ZlYXR1
-cmUvdGVzdC1hbGwuYw0KPiBAQCAtMTM0LDEwICsxMzQsNiBAQA0KPiAgI3VuZGVmIG1haW4NCj4g
-ICNlbmRpZg0KPiAgDQo+IC0jZGVmaW5lIG1haW4gbWFpbl90ZXN0X2xpYmNhcHN0b25lDQo+IC0j
-IGluY2x1ZGUgInRlc3QtbGliY2Fwc3RvbmUuYyINCj4gLSN1bmRlZiBtYWluDQo+IC0NCj4gICNk
-ZWZpbmUgbWFpbiBtYWluX3Rlc3RfbHptYQ0KPiAgIyBpbmNsdWRlICJ0ZXN0LWx6bWEuYyINCj4g
-ICN1bmRlZiBtYWluDQo+IC0tIA0KPiAyLjQ1LjINCj4gDQo+IA0KDQotLSANCkNoZWVycywNCkNo
-YW5nYmluIER1DQo=
+On Wed, Aug 14, 2024 at 6:23=E2=80=AFPM Fangrui Song <maskray@google.com> w=
+rote:
+>
+> On Wed, Aug 14, 2024 at 12:56=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> w=
+rote:
+> >
+> > On Thu, 2024-07-18 at 10:34 -0700, Fangrui Song wrote:
+> > > glibc added support for .gnu.hash in 2006 and .hash has been obsolete=
+d
+> > > for more than one decade in many Linux distributions.  Using
+> > > --hash-style=3Dsysv might imply unaddressed issues and confuse reader=
+s.
+> > >
+> > > Just drop the option and rely on the linker default, which is likely
+> > > "both", or "gnu" when the distribution really wants to eliminate sysv
+> > > hash overhead.
+> > >
+> > > Similar to commit 6b7e26547fad ("x86/vdso: Emit a GNU hash").
+> > >
+> > > Signed-off-by: Fangrui Song <maskray@google.com>
+> >
+> > Hi Fangrui,
+> >
+> > If I read tools/testing/selftests/vDSO/parse_vdso.c correctly, it does
+> > know DT_GNU_HASH as at now.  Thus after this change the vDSO selftests
+> > are skipped with "Couldn't find __vdso_gettimeofday" etc if the distro
+> > enables --hash-style=3Dgnu by default.
+> >
+> > So it seems we need to add DT_GNU_HASH support for parse_vdso.c to keep
+> > test coverage.
+>
+> Hi Xi,
+>
+> Perhaps the selftests file needs DT_GNU_HASH support like
+> https://github.com/abseil/abseil-cpp/commit/1278ee9bd9bd4916181521fac96d6=
+fa1100e38e6
+
+Created https://lore.kernel.org/linux-kselftest/20240815032614.2747224-1-ma=
+skray@google.com/T/#u
+([PATCH] selftests/vDSO: support DT_GNU_HASH)
+
+>
+> > > ---
+> > >  arch/arm64/kernel/vdso/Makefile   | 2 +-
+> > >  arch/arm64/kernel/vdso32/Makefile | 2 +-
+> > >  2 files changed, 2 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/arch/arm64/kernel/vdso/Makefile b/arch/arm64/kernel/vdso=
+/Makefile
+> > > index d63930c82839..d11da6461278 100644
+> > > --- a/arch/arm64/kernel/vdso/Makefile
+> > > +++ b/arch/arm64/kernel/vdso/Makefile
+> > > @@ -21,7 +21,7 @@ btildflags-$(CONFIG_ARM64_BTI_KERNEL) +=3D -z force=
+-bti
+> > >  # potential future proofing if we end up with internal calls to the =
+exported
+> > >  # routines, as x86 does (see 6f121e548f83 ("x86, vdso: Reimplement v=
+dso.so
+> > >  # preparation in build-time C")).
+> > > -ldflags-y :=3D -shared -soname=3Dlinux-vdso.so.1 --hash-style=3Dsysv=
+       \
+> > > +ldflags-y :=3D -shared -soname=3Dlinux-vdso.so.1 \
+> > >            -Bsymbolic --build-id=3Dsha1 -n $(btildflags-y)
+> > >
+> > >  ifdef CONFIG_LD_ORPHAN_WARN
+> > > diff --git a/arch/arm64/kernel/vdso32/Makefile b/arch/arm64/kernel/vd=
+so32/Makefile
+> > > index cc4508c604b2..25a2cb6317f3 100644
+> > > --- a/arch/arm64/kernel/vdso32/Makefile
+> > > +++ b/arch/arm64/kernel/vdso32/Makefile
+> > > @@ -98,7 +98,7 @@ VDSO_AFLAGS +=3D -D__ASSEMBLY__
+> > >  # From arm vDSO Makefile
+> > >  VDSO_LDFLAGS +=3D -Bsymbolic --no-undefined -soname=3Dlinux-vdso.so.=
+1
+> > >  VDSO_LDFLAGS +=3D -z max-page-size=3D4096 -z common-page-size=3D4096
+> > > -VDSO_LDFLAGS +=3D -shared --hash-style=3Dsysv --build-id=3Dsha1
+> > > +VDSO_LDFLAGS +=3D -shared --build-id=3Dsha1
+> > >  VDSO_LDFLAGS +=3D --orphan-handling=3D$(CONFIG_LD_ORPHAN_WARN_LEVEL)
+> > >
+> > >
+> >
+> > --
+> > Xi Ruoyao <xry111@xry111.site>
+> > School of Aerospace Science and Technology, Xidian University
+>
+>
+>
+> --
+> =E5=AE=8B=E6=96=B9=E7=9D=BF
+
+
+
+--=20
+=E5=AE=8B=E6=96=B9=E7=9D=BF
 
