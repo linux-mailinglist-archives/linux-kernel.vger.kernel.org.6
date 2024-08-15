@@ -1,76 +1,80 @@
-Return-Path: <linux-kernel+bounces-287374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A3195271A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:38:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A5FF95271E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B06B91F23E7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:38:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17606284385
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823D74A0F;
-	Thu, 15 Aug 2024 00:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BC43D62;
+	Thu, 15 Aug 2024 00:46:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="hanE+fn0";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="hanE+fn0"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WUhHkLsQ"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76691186A;
-	Thu, 15 Aug 2024 00:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9136815D1
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 00:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723682292; cv=none; b=uEninI84I8aWUxljv+ysGD5T2NyLeqonDeycU521ctQBKtOml+aedNCFTm1P9BzMJ3pOXLXcjxhamkqhtn9RWPVT6wsfAmymRsOFSlbFjX2/Vr2EBvraRiw+mA60XJQLtvHIljJgcXeOgY4I/XYA8jlMQ9aW8QNTOSrqOSdSX6k=
+	t=1723682785; cv=none; b=S+qDYPupOZKrRMQI/T1MI2aLCNZr9OHVPX+goL+HXgyet70CA1/8HhKy4p2WwK5PE0EXwludRs9ncSnMU2bsRU+eRaO+sWFl4iTVVOg8nhTbrjOBAdMX/yjejHLh3PcGXvaxlfkfc4awUbleAvt7/okUpLm9uG3gkvCFKVnjcQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723682292; c=relaxed/simple;
-	bh=3DolbV72r+ZktqzDGiQbuyZ4jYwpkQfNN+pzs9OQ3vY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m8QOArrFH95SxyBVOZJVelpoYl2NCSsWwGL+quBkxg3iVq5MIWq3N4TwhdsJnlZBGzfb8O+00rxTH48rBoaQ3AX/eMPqrAvv6/PP792Dg/0PQRhlEicNisvGZPjhGtin1hVGfT/KDh/UHLGxBJyNYOtIZ9vURynoFSEz9qdff/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=hanE+fn0; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=hanE+fn0; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6465F1FC04;
-	Thu, 15 Aug 2024 00:38:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1723682287; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=gygwxlJiBVf1p6hCClu6Ljyjykin3NQXB2ZaepiiHrU=;
-	b=hanE+fn03kqV4sHxm8TGC77ONpxrdJl+vuFHUxucGm5d6M2PSJHRpZraU8cN+XbgTbdDke
-	MpeU0qKvRUvIlZSL07wkLS4LIDyVILGq70pLvICuL4NQd57j0Xn0dvDPL7R/mvCkNG4fAN
-	5VWHoN8AHvJA+hPdtsGyxUsS9LNJJhI=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1723682287; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=gygwxlJiBVf1p6hCClu6Ljyjykin3NQXB2ZaepiiHrU=;
-	b=hanE+fn03kqV4sHxm8TGC77ONpxrdJl+vuFHUxucGm5d6M2PSJHRpZraU8cN+XbgTbdDke
-	MpeU0qKvRUvIlZSL07wkLS4LIDyVILGq70pLvICuL4NQd57j0Xn0dvDPL7R/mvCkNG4fAN
-	5VWHoN8AHvJA+hPdtsGyxUsS9LNJJhI=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 587E513983;
-	Thu, 15 Aug 2024 00:38:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wuNYFe9NvWaBBAAAD6G6ig
-	(envelope-from <dsterba@suse.com>); Thu, 15 Aug 2024 00:38:07 +0000
-From: David Sterba <dsterba@suse.com>
-To: torvalds@linux-foundation.org
-Cc: David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Btrfs fixes for 6.11-rc4
-Date: Thu, 15 Aug 2024 02:38:02 +0200
-Message-ID: <cover.1723673272.git.dsterba@suse.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1723682785; c=relaxed/simple;
+	bh=MFpYAqAur2CBTuwezZFu2fjaPugZ2gH2Pu9bI39ap9Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SAEmJDuWH0BhxuW/S6UHhoMRs/Gy/soDPi5hyOAjaKBoAaEaD+31UEWQWmuTq1osdiHplEMZV6QcKmcyGqYb1NQrGpfscQ7G5fuV3stN1XXijllLN+6ftVEDidCKgk53l+rBFwPoyXQRf0q00vnOSliHaaNbUJVzdpdjPUPkngU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WUhHkLsQ; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7093890e133so30920a34.3
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:46:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1723682782; x=1724287582; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C7eQNG3qJiwvs9MNyrho4kKV2vMWG5TUUcItl6qZj48=;
+        b=WUhHkLsQ6qmf7EMmG12baVU79wFo2WK2aoqyEoUidkWLiAq5t+mse4CKSJanDNvvVy
+         ylhHP1OsLZX+6wUDMNeYOrkbHGWGlIXndMiJn9DnSepcYDrkctklfo5mUIfBdeNdcBGV
+         CSFIvW4NUsZKJrj8cHDf6zLb0zfYSyHbQDZgM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723682782; x=1724287582;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C7eQNG3qJiwvs9MNyrho4kKV2vMWG5TUUcItl6qZj48=;
+        b=d2IAnytrfl7dgGHwmVEekqZa1uW1YHOBpwQvsZp2gVn23xOvOr8MXMkywWFskiV8Fo
+         RtGJAdljVgxEoBOeCDuxTUSFXVStfpGUui3PGZdETOC5BbynwUIStQ57buNyJPlil6GZ
+         9t8iOz0CfykCcPtx5SCj54bR/JS2LfRLqBI32KsfHsZNZ5CVOdpMTwCMFks1S/CqKEzY
+         E6rmpqQxz0UXAhHh5j4/wvbt16/IMdZ4I9wATiZmaf382fyrbQLAYhuavJ3RkZEpLBGh
+         z0tDwpFBQXbmpR0fH1k5e65L7c+KsP3VmifS0WsYif3ubeNOrhAu3vZJ9Y/ELrZiBPMv
+         AgoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVi8ifN5jxlwTTX2uYr8K9XjEITjurXcYzgQNTHlAqdOWvIPtVFze/DnuqztfbcVK1GXTS8GCVVifWarBcxrywC96NFYJvRcKJhP6AA
+X-Gm-Message-State: AOJu0YxVVPk//gAVURAfLODznupK1G+Xbh+K1iyhwLgpQi3e3aHHzVFU
+	ve0nGZxGZaXrONqusBJdaVcqGIyY4cqCTOFERCUrQM4iAKwFHGjJOqVX5cIW1Q==
+X-Google-Smtp-Source: AGHT+IHSVf2Ro3Z8JmcPhwCQkLbT2k7ksoTCsp6QSWAbLA5ZEaTIF51XkrLoFFWSu23YtxtemeDyEg==
+X-Received: by 2002:a05:6358:569f:b0:1ac:efb0:fb3a with SMTP id e5c5f4694b2df-1b385aeced1mr85394055d.2.1723682782595;
+        Wed, 14 Aug 2024 17:46:22 -0700 (PDT)
+Received: from philipchen.c.googlers.com.com (140.248.236.35.bc.googleusercontent.com. [35.236.248.140])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fdd9072sm2165626d6.15.2024.08.14.17.46.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 17:46:22 -0700 (PDT)
+From: Philip Chen <philipchen@chromium.org>
+To: Pankaj Gupta <pankaj.gupta.linux@gmail.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>
+Cc: virtualization@lists.linux.dev,
+	nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Philip Chen <philipchen@chromium.org>
+Subject: [PATCH] virtio_pmem: Add freeze/restore callbacks
+Date: Thu, 15 Aug 2024 00:46:17 +0000
+Message-ID: <20240815004617.2325269-1-philipchen@chromium.org>
+X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,83 +82,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
 
-Hi,
+Add basic freeze/restore PM callbacks to support hibernation (S4):
+- On freeze, delete vq and quiesce the device to prepare for
+  snapshotting.
+- On restore, re-init vq and mark DRIVER_OK.
 
-please pull the following branch, with stable fixes and one regression
-fix.  Thanks.
+Signed-off-by: Philip Chen <philipchen@chromium.org>
+---
+ drivers/nvdimm/virtio_pmem.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-- extend tree-checker verification of directory item type
+diff --git a/drivers/nvdimm/virtio_pmem.c b/drivers/nvdimm/virtio_pmem.c
+index c9b97aeabf85..2396d19ce549 100644
+--- a/drivers/nvdimm/virtio_pmem.c
++++ b/drivers/nvdimm/virtio_pmem.c
+@@ -143,6 +143,28 @@ static void virtio_pmem_remove(struct virtio_device *vdev)
+ 	virtio_reset_device(vdev);
+ }
+ 
++static int virtio_pmem_freeze(struct virtio_device *vdev)
++{
++	vdev->config->del_vqs(vdev);
++	virtio_reset_device(vdev);
++
++	return 0;
++}
++
++static int virtio_pmem_restore(struct virtio_device *vdev)
++{
++	int ret;
++
++	ret = init_vq(vdev->priv);
++	if (ret) {
++		dev_err(&vdev->dev, "failed to initialize virtio pmem's vq\n");
++		return ret;
++	}
++	virtio_device_ready(vdev);
++
++	return 0;
++}
++
+ static unsigned int features[] = {
+ 	VIRTIO_PMEM_F_SHMEM_REGION,
+ };
+@@ -155,6 +177,8 @@ static struct virtio_driver virtio_pmem_driver = {
+ 	.validate		= virtio_pmem_validate,
+ 	.probe			= virtio_pmem_probe,
+ 	.remove			= virtio_pmem_remove,
++	.freeze			= virtio_pmem_freeze,
++	.restore		= virtio_pmem_restore,
+ };
+ 
+ module_virtio_driver(virtio_pmem_driver);
+-- 
+2.46.0.76.ge559c4bf1a-goog
 
-- fix regression in page/folio and extent state tracking in xarray, the
-  dirty status can get out of sync and can cause problems e.g. a hang
-
-- in send, detect last extent and allow to clone it instead of sending
-  it as write, reduces amount of data transferred in the stream
-
-- fix checking extent references when cleaning deleted subvolumes
-
-- fix one more case in the extent map shrinker, let it run only in the
-  kswapd context so it does not cause latency spikes during other
-  operations
-
-----------------------------------------------------------------
-The following changes since commit 7c626ce4bae1ac14f60076d00eafe71af30450ba:
-
-  Linux 6.11-rc3 (2024-08-11 14:27:14 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.11-rc3-tag
-
-for you to fetch changes up to 6252690f7e1b173b86a4c27dfc046b351ab423e7:
-
-  btrfs: fix invalid mapping of extent xarray state (2024-08-13 15:36:57 +0200)
-
-----------------------------------------------------------------
-Filipe Manana (2):
-      btrfs: only run the extent map shrinker from kswapd tasks
-      btrfs: send: allow cloning non-aligned extent if it ends at i_size
-
-Josef Bacik (1):
-      btrfs: check delayed refs when we're checking if a ref exists
-
-Naohiro Aota (1):
-      btrfs: fix invalid mapping of extent xarray state
-
-Qu Wenruo (1):
-      btrfs: tree-checker: reject BTRFS_FT_UNKNOWN dir type
-
- fs/btrfs/delayed-ref.c  | 67 +++++++++++++++++++++++++++++++++++++++++++++++++
- fs/btrfs/delayed-ref.h  |  2 ++
- fs/btrfs/extent-tree.c  | 51 ++++++++++++++++++++++++++++++++-----
- fs/btrfs/extent_io.c    | 14 +++++------
- fs/btrfs/extent_map.c   | 22 +++++-----------
- fs/btrfs/send.c         | 52 ++++++++++++++++++++++++++++----------
- fs/btrfs/super.c        | 10 ++++++++
- fs/btrfs/tree-checker.c |  5 ++--
- 8 files changed, 179 insertions(+), 44 deletions(-)
 
