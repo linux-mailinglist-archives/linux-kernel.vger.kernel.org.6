@@ -1,142 +1,101 @@
-Return-Path: <linux-kernel+bounces-288210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A70C995375B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:34:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F22595375D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:35:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B15E1F21867
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:34:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B10861C237C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C111B32C2;
-	Thu, 15 Aug 2024 15:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE0F1B9B55;
+	Thu, 15 Aug 2024 15:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TsxpUceS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CmgqOmJP";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1KmzIFai"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8338E1B1417;
-	Thu, 15 Aug 2024 15:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795BC1B3739;
+	Thu, 15 Aug 2024 15:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723736052; cv=none; b=TiZYfEi6KmdXknSUfkdsuVYVzPoZqfEaGrK7brr52XPKo2MEqwTu7DL+HWIauIYbfYOKahD3Wf5VOwhDsPR1Getgr5vxayJ53qpycmD3Ma+oyMdcYyUhQO4bnD9Tdrovm6D/i7IvznsYylr/qcrB0F8BfYHTGVgOfA08MC6WrLE=
+	t=1723736054; cv=none; b=U1GwBKkhLPySihhgRtLqroz43KnXEthRPK4FQ6hVl4s+zAYt/fGWICd1D/LtpzDLihb1eHsb3cQVgUeQhAuJJJshm8vysMms1m8wv637kGubmM7OYhlWiRVM/EbMNnTJr+gdTP2J8R61QW9Vbi6E3TER9sXpeis/ye1y5RkDmWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723736052; c=relaxed/simple;
-	bh=AW4TlLRmEDZOFTUbLxWAekcWzjzmHFDWoVLpWKnxXiU=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=raq9NKsO0PsWhNia28aV32Do3m2WEzo4BnsufrKVU2VmIsxlimHZFfjf9m6LwdU29bThcqsVxRVMIADP56B0BSwylrOPfXgfMlCfswrSeToYsIkaOTI7uypSE/RLERBS7VWWGGgLdqhSmiYBHSpB1JhXjzLDhILE+9yWfbd5ros=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TsxpUceS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3BB0C4AF0D;
-	Thu, 15 Aug 2024 15:34:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723736052;
-	bh=AW4TlLRmEDZOFTUbLxWAekcWzjzmHFDWoVLpWKnxXiU=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=TsxpUceSqebY8Ix7Z9JgVs9pf85uwlRB8ovttnF17eUDkWoidXy+0TO9b14S2OoK2
-	 KplYfgp1HQSAHIp2TUxi6HjNF0YaUL4hAv7fTLopvNp79ejA3r5XbViTh83xCR+nGA
-	 A6Bdg7SrP8Y2vq6mDBbbXDGcUSwizF26oWtIVzMSTyi1GKMtV92+54XZTYseL4tjvG
-	 wFKvFqR1sXdTgRHycp/ZXhWHcghQI7ZN28CZjicRV0tXykh0zTC1NhHDqbLn/KTWvF
-	 rrp2/qfLRTdTOZhavrHXON4SABC4EVCLUbnC9OnO40HPpsdyc8Kgc7wsqYP1A1/i62
-	 9BbDV0nXkh/CQ==
-Date: Thu, 15 Aug 2024 09:34:11 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1723736054; c=relaxed/simple;
+	bh=43bVPuZyOnLGe42cYp7OOkOZfbglB1bik6tRdeNS+yY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=r5UCeBgWQR5ae2hro/QEhNV5Pkjq+04ukHHQ/iq24M0hJD1afzwdn3s9fKyPrmwa7+C9FSr4yO7TDiFeER9HIAqE7IZf7HNqM4IP+N1UsMczY5GHg14i9g3UQFxeYVCL6/xSoTKo3j8NWFxmWIJocWalaZ2MCTLz5lGlNPAM9qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CmgqOmJP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1KmzIFai; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723736051;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bFCC+n03Hh7o5d7QnJPx32st3+SECAs+nlR5Jgdd/8k=;
+	b=CmgqOmJPPfPKNWQLoDHnQoyaDO22Ikplh1HRJ8vS9/wl4VWVSIPr0oPCbczyBsKsB4wbJo
+	coiuwGn1TVKxcoz1+/12WiQcQRUSG5VQ7+UQ+HGl1oGuNWhdqoeGvCcpNdFLfn7Zlw7Ryr
+	7k3uHjgG4R5sj1spF8LdzuZPg69p5KJNwM6Ng0vM+4ppjVgChvCFsd89+a1xKhpC5FCxlU
+	q1TmW/sIN3n5aeXdIHozVDqPh//lNkR+HPpVPXdzpqoPWQ6DfTaMkC57iI00ngL+8rlGPF
+	HdgueoaZ5Z4As510N6+5m1oEK5nwSKfTNjSzJvyuil9rGYcDsNCSxiamKAGaBw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723736051;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bFCC+n03Hh7o5d7QnJPx32st3+SECAs+nlR5Jgdd/8k=;
+	b=1KmzIFainOz36kgrDRrA5u4iOZcds1Je6RtVvXuDOynu+vKvxwENGF0GJ/5qDJN3UIDEl9
+	JTwFyxjgKW46wkCQ==
+To: Sean Christopherson <seanjc@google.com>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, Xiaoyao Li
+ <xiaoyao.li@intel.com>, Kai Huang <kai.huang@intel.com>, Jim Mattson
+ <jmattson@google.com>, Shan Kang <shan.kang@intel.com>, Xin Li
+ <xin3.li@intel.com>, Zhao Liu <zhao1.liu@intel.com>
+Subject: Re: [PATCH v8 01/10] x86/cpu: KVM: Add common defines for
+ architectural memory types (PAT, MTRRs, etc.)
+In-Reply-To: <20240605231918.2915961-2-seanjc@google.com>
+References: <20240605231918.2915961-1-seanjc@google.com>
+ <20240605231918.2915961-2-seanjc@google.com>
+Date: Thu, 15 Aug 2024 17:34:11 +0200
+Message-ID: <87bk1tn6ks.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-In-Reply-To: <20240815-pending-sacrifice-f2569ed756fe@spud>
-References: <20240815-shindig-bunny-fd42792d638a@spud>
- <20240815-pending-sacrifice-f2569ed756fe@spud>
-Message-Id: <172373604945.1948429.11074973738435374630.robh@kernel.org>
-Subject: Re: [RFC PATCH 06/11] dt-bindings: soc: microchip: document the
- two simple-mfd syscons on PolarFire SoC
+Content-Type: text/plain
 
+On Wed, Jun 05 2024 at 16:19, Sean Christopherson wrote:
 
-On Thu, 15 Aug 2024 15:01:09 +0100, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
-> 
-> There are two syscons on PolarFire SoC that provide various functionality of
-> use to the OS.
-> 
-> The first of these is the "control-scb" region, that contains the "tvs"
-> temperature and voltage sensors and the control/status registers for the
-> system controller's mailbox. The mailbox has a dedicated node, so
-> there's no need for a child node describing it, looking the syscon up by
-> compatible is sufficient.
-> 
-> The second, "mss-top-sysreg", contains clocks, pinctrl, resets, and
-> interrupt controller and more. For this RFC, only the reset controller
-> child is described as that's all that is described by the existing
-> bindings. The clock controller already has a dedicated node, and will
-> retain it as there are other clock regions, so like the mailbox,
-> a compatible-based lookup of the syscon is sufficient to keep the clock
-> driver working as before so no child is needed.
-> 
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
-> (I'll split this in two later, it's just easier when I have the same
-> questions about both...)
-> 
-> Are these things entitled to have child nodes for the reset and sensor
-> nodes, or should the properties be in the parent and the OS probe the
-> drivers for the functions? That's something that, despite supposedly
-> being a maintainer, I do not understand the rules (of thumb?) for.
-> 
-> Secondly, is it okay to make the "pragmatic" decision to not have a
-> child clock node and keep routing the clocks via the existing & retained
-> clock node (and therefore not update the various clocks nodes in the
-> consumers)? Doing so would require a lot more hocus pocus with the clock
-> driver than this series does, as the same driver would no longer be
-> suitable for the before/after bindings.
-> ---
->  .../microchip/microchip,mpfs-control-scb.yaml | 54 +++++++++++++++++++
->  .../microchip,mpfs-mss-top-sysreg.yaml        | 53 ++++++++++++++++++
->  2 files changed, 107 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-control-scb.yaml
->  create mode 100644 Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-mss-top-sysreg.yaml
-> 
+> Add defines for the architectural memory types that can be shoved into
+> various MSRs and registers, e.g. MTRRs, PAT, VMX capabilities MSRs, EPTPs,
+> etc.  While most MSRs/registers support only a subset of all memory types,
+> the values themselves are architectural and identical across all users.
+>
+> Leave the goofy MTRR_TYPE_* definitions as-is since they are in a uapi
+> header, but add compile-time assertions to connect the dots (and sanity
+> check that the msr-index.h values didn't get fat-fingered).
+>
+> Keep the VMX_EPTP_MT_* defines so that it's slightly more obvious that the
+> EPTP holds a single memory type in 3 of its 64 bits; those bits just
+> happen to be 2:0, i.e. don't need to be shifted.
+>
+> Opportunistically use X86_MEMTYPE_WB instead of an open coded '6' in
+> setup_vmcs_config().
+>
+> No functional change intended.
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-control-scb.example.dts:21.13-38: Warning (reg_format): /example-0/soc/syscon@37020000:reg: property has invalid length (8 bytes) (#address-cells == 2, #size-cells == 1)
-Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-control-scb.example.dtb: Warning (pci_device_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-control-scb.example.dtb: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-control-scb.example.dtb: Warning (simple_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-control-scb.example.dtb: Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-control-scb.example.dtb: Warning (spi_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-control-scb.example.dts:19.27-26.13: Warning (avoid_default_addr_size): /example-0/soc/syscon@37020000: Relying on default #address-cells value
-Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-control-scb.example.dts:19.27-26.13: Warning (avoid_default_addr_size): /example-0/soc/syscon@37020000: Relying on default #size-cells value
-Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-control-scb.example.dtb: Warning (unique_unit_address_if_enabled): Failed prerequisite 'avoid_default_addr_size'
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240815-pending-sacrifice-f2569ed756fe@spud
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 
