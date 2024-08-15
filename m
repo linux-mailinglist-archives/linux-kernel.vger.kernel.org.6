@@ -1,57 +1,41 @@
-Return-Path: <linux-kernel+bounces-288225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C559C9537A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:50:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 813269537A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76FE22823F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:50:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3639D1F25D52
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2751B1514;
-	Thu, 15 Aug 2024 15:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EQiuTurO"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802A41B1506;
+	Thu, 15 Aug 2024 15:50:35 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C3115E88;
-	Thu, 15 Aug 2024 15:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165A419EEA4;
+	Thu, 15 Aug 2024 15:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723737014; cv=none; b=M/yC4GfqvozApulbcE0ponq66iczJAvJPgtfZbervSAz6rvGKFC+tsioOMgS96DGqhOJbPs5lbJrgKSr4h0nXBN9/G9bBAkWaB/WhKbJmiuFkt2kHTUhH2GKjEAMnTteXoPiCDDJxpPEscjTjSQQpMtLhL1Ho9D1p0qr8abvv/Q=
+	t=1723737035; cv=none; b=t8qwHyRv1ru1hJf8YQI5jroyimnTj3h225t27MpoZr003KDmL6JE6J+oz3LCzGn6B33n3+3ooExbmie1PYdfrCSaKs25fUztcAN0GChgxWoMtNZi5wrTIbW/Np9MZ9HxTDQDkewc5zxRHwSQrZ+rJ2AbRaNsU1PeuXlpPpSBtcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723737014; c=relaxed/simple;
-	bh=xN7UdZrI0x2sSwbrhbNFyqv5rQaHms9/rajWM/qikRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pzLLbtnVWlPLQ/v8Zqfe8V1iiK1T1DWm/WUfaViyAsxIu+LCcFKD0IR6Nh87DI3X8eEUYtha9ume+27pk8VJGtiQIPBt0sIiLGBorqhIsMV+UOImC/SR42uY/EHlwZYzfcgX324kL0ElM/+4j9qRkWdfsI1+9NkhXyKNagtd2hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EQiuTurO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA46FC32786;
-	Thu, 15 Aug 2024 15:50:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723737014;
-	bh=xN7UdZrI0x2sSwbrhbNFyqv5rQaHms9/rajWM/qikRM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EQiuTurOYvuoI1KRGYJYqmsfOEuf0rl9jFywmsfiy6GmUh3Fp6fIrwxku7H8EvOMD
-	 CuTieCONOnKJQ0cw0tLPy7X7Vs3qIaeUP3m8Wzz5b1FODZ0VHh457wYgs5w8i1DQ8h
-	 yzPupHAe7fim7a9Gro546sB0IkSdXa0NytmPBgPKwucPAZHXg6rxwQse6fUXgmD6Wo
-	 /4AD9ZjQjMiJo7p0IAMxTdspbn3+F/yGdMtbcs07DjBMosHQx5EljlmO6cpqe+eKON
-	 qhjKBHPMCzeT+aR8MQRZ51JGRkWN7d/sKJmxzq35rOuHU8vg+rHyjJ0sTS269FY46z
-	 fLUNw8zPAyv+A==
-Date: Thu, 15 Aug 2024 08:50:12 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Abhinav Jain <jain.abhinav177@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com,
- javier.carrasco.cruz@gmail.com, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
- shuah@kernel.org, skhan@linuxfoundation.org
-Subject: Re: [PATCH net v6 0/2] Enhance network interface feature testing
-Message-ID: <20240815085012.01edb574@kernel.org>
-In-Reply-To: <20240815110442.1389625-1-jain.abhinav177@gmail.com>
-References: <20240814175748.35889b6d@kernel.org>
-	<20240815110442.1389625-1-jain.abhinav177@gmail.com>
+	s=arc-20240116; t=1723737035; c=relaxed/simple;
+	bh=R8HdVbH/c1X4P4zF6q1ObFI49LFeJcgJjRZMzDcnxCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=SqGW62Lj5GNZgsTKEk5rSB5avIfN248hx2Pz/rdP6XNzu64rmkS524+5N5cCcLRuwkj40WH760gvX0ibPw5/YOljKeIiTGrFj6aBHZdDdKkaWgjnt7FJot+2TyLyjRNIvz6T6hKcnI4SfluVj008f5zhFWbskJ7qoRNU9cIDOjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1320C32786;
+	Thu, 15 Aug 2024 15:50:33 +0000 (UTC)
+Date: Thu, 15 Aug 2024 11:50:32 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Vincent Donnefort <vdonnefort@google.com>
+Subject: [PATCH] ring-buffer: Add magic and struct size to boot up meta data
+Message-ID: <20240815115032.0c197b32@rorschach.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,28 +45,60 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu, 15 Aug 2024 16:34:42 +0530 Abhinav Jain wrote:
-> > > One more:
-> > >
-> > > tools/testing/selftests/net/netdevice.sh: echo "SKIP: $netdev: set IP address"
-> > >
-> > > I think the SKIP -> XFAIL conversion should be a separate patch (for
-> > > total of 3 patches in the series).  
-> >
-> > P.S. and please change the subject to [PATCH net-next], it's a net-next
-> > change, not a net fix.  
-> 
-> I have sent v7 now with net-next instead of net:
-> https://lore.kernel.org/all/20240815105924.1389290-1-jain.abhinav177@gmail.com
-> 
-> For set IP address part, I have added logic to XFAIL if veth pair was created 
-> and to SKIP if that's not the case in third patch of the series as directed above.
-> 
-> Right now, there is no logic to set IP address in the script for normal interfaces
-> either and it is a TODO as well. I will focus on it next after this one is applied.
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Minor note, please keep your guidance on frequency of reposting in mind:
-https://www.kernel.org/doc/html/next/process/maintainer-netdev.html
+Add a magic number as well as save the struct size of the ring_buffer_meta
+structure in the meta data to also use as validation. Updating the magic
+number could be used to force a invalidation between kernel versions, and
+saving the structure size is also a good method to make sure the content
+is what is expected.
+
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/trace/ring_buffer.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index b16f301b8a93..c3a5e6cbb940 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -44,7 +44,11 @@
+ 
+ static void update_pages_handler(struct work_struct *work);
+ 
++#define RING_BUFFER_META_MAGIC	0xBADFEED
++
+ struct ring_buffer_meta {
++	int		magic;
++	int		struct_size;
+ 	unsigned long	text_addr;
+ 	unsigned long	data_addr;
+ 	unsigned long	first_buffer;
+@@ -1627,6 +1631,13 @@ static bool rb_meta_valid(struct ring_buffer_meta *meta, int cpu,
+ 	unsigned long buffers_end;
+ 	int i;
+ 
++	/* Check the meta magic and meta struct size */
++	if (meta->magic != RING_BUFFER_META_MAGIC ||
++	    meta->struct_size != sizeof(*meta)) {
++		pr_info("Ring buffer boot meta[%d] mismatch of magic or struct size\n", cpu);
++		return false;
++	}
++
+ 	/* The subbuffer's size and number of subbuffers must match */
+ 	if (meta->subbuf_size != subbuf_size ||
+ 	    meta->nr_subbufs != nr_pages + 1) {
+@@ -1858,6 +1869,9 @@ static void rb_range_meta_init(struct trace_buffer *buffer, int nr_pages)
+ 
+ 		memset(meta, 0, next_meta - (void *)meta);
+ 
++		meta->magic = RING_BUFFER_META_MAGIC;
++		meta->struct_size = sizeof(*meta);
++
+ 		meta->nr_subbufs = nr_pages + 1;
+ 		meta->subbuf_size = PAGE_SIZE;
+ 
 -- 
-pv-bot: 24h
+2.43.0
+
 
