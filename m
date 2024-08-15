@@ -1,101 +1,157 @@
-Return-Path: <linux-kernel+bounces-288014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9934A953050
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:41:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8306695305B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:42:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 182C4286846
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:41:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B9F3281C80
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A064419EEBD;
-	Thu, 15 Aug 2024 13:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vtFlbMjn";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="69CflsgF"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD6A19DF60
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 13:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5047119EECF;
+	Thu, 15 Aug 2024 13:41:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5891C14AD0A
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 13:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723729287; cv=none; b=XhfShcu2JxE5R6IHK2oFtkr6nsVL1nTvfwG40v0ZCAMjIbHUTF4oZBDs6d7rl7cZVD2tTxlt0oPRWwbCqQzrTUNTELy1u3R8WQitu6yhlN5lQFn2Qj3fELXDCvbVSacetGnX2Vwm8zcBgUAX1hrR/ltuPTQjnHrHl4HbnJxtBtY=
+	t=1723729317; cv=none; b=RenUDNz8VXFXskY7rwPDFQBUhcGxhr8QZgAj+Bn6cDIlLj/wPufOhNqwO49e5AOGFm6/uY8/i7+P1rgd7Va9Pu8Z81C33T4TAq0SqUhMH0egxG+nBzWncUOPIeUICo2JVOlZ6vK9hC15XSu4shCfbzKNuU/Ez/kJzpUpvb6FxnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723729287; c=relaxed/simple;
-	bh=HEv3T2OJg63ZWuoNiRtvUM0qIH1Po5TBb51QSabocZk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=K31X7f+PyCzvilgvV7rbfblqFn1BqwRzPIvLskEJ7LeogHvQH2X6jBl+e3xyz8QhQITle+ij45Mgpe2vOthFj4l4xspulEb92l/YIdLH6mCneoFtTcfZKWuxIgcafiwo1UbawoYmCl3F2mLhNPBnE/Jqo94JNjFHEasrhq6hlAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vtFlbMjn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=69CflsgF; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723729282;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nUPq7nTcZ/5rB57N+BBqv8C/kYVFpDlbnSC0IU4n96M=;
-	b=vtFlbMjnttTNEK6DwcBO/ep/1+D5odt8EKylE38aUyYa6fbrCocecsx9NQuPf6y5yAVv/8
-	el6JhM4lL8oeQ/FGZ0J9tJmMj3jIl1QefPLFaFufjSfHp++orcg4w2UOtmDuVliXpclK3N
-	hDEaXwAOEGzFHwH49JX54vsHHjvTulvXGhtBlBCTnJHvBi8MAAyyQ2dj+X04eIdOwuViyg
-	ItLeyE1iq2S94j9j1VDFHxmXi2MxwPaHnlWaVnxpQAdCRefc7mtY+iBI2HhH3ay2GO9xwr
-	3zhwuShYns5oWv/hwhKhfXmW5z+5Su9OGa7M+TfrYaaBr6mn0q4Ah+UBuwQsFw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723729282;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nUPq7nTcZ/5rB57N+BBqv8C/kYVFpDlbnSC0IU4n96M=;
-	b=69CflsgFp4EQ2HSJQhGLkJXTsuc003qsFjiyDb0DxnOcAGXsvfATfmFrWCKigUDGMiA0Ep
-	9/Mn8wZyaWjPQ+Dg==
-To: Christoph Hellwig <hch@infradead.org>, Alistair Popple <apopple@nvidia.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Max Ramanouski
- <max8rr8@gmail.com>, x86@kernel.org, dave.hansen@linux.intel.com,
- luto@kernel.org, peterz@infradead.org, linux-kernel@vger.kernel.org,
- jniethe@nvidia.com, jhubbard@nvidia.com, linux-mm@kvack.org
-Subject: Re: [PATCH v2] x86/ioremap: Use is_ioremap_addr() in iounmap()
-In-Reply-To: <87wmkjnqi4.ffs@tglx>
-References: <20240812203538.82548-1-max8rr8@gmail.com>
- <Zrwyh9bKGVzkLzeA@infradead.org> <878qwzpfbi.ffs@tglx>
- <87le0zmhdp.fsf@nvdebian.thelocal> <ZrygJqIAz_AqqjcT@infradead.org>
- <87wmkjnqi4.ffs@tglx>
-Date: Thu, 15 Aug 2024 15:41:22 +0200
-Message-ID: <87jzghnbst.ffs@tglx>
+	s=arc-20240116; t=1723729317; c=relaxed/simple;
+	bh=GjZQ1hT/OPm1A53XVFOMboJ7JrKo1ngaSeiyyHVkxLU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ukzYjzpJUiS+JaFWvlzed2OdFUPdxbjl2FFLSwa5y0Xy1ensd2ZQgWJqgcWc0EKIg+YTHPGgPyytO68P+JI2aZxOZPmh9JxFhJG6Hv/c+ej5EI08Fkpi2sktYXSOJoONF19Huv51jkumiNxol34muQCVXxdrL1BhVuTv0FngbWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A122914BF;
+	Thu, 15 Aug 2024 06:42:21 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 58FC63F6A8;
+	Thu, 15 Aug 2024 06:41:54 -0700 (PDT)
+Message-ID: <43290d6c-004d-423c-822c-7b2558badcee@arm.com>
+Date: Thu, 15 Aug 2024 14:41:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] iommu/arm-smmu-v3: Match Stall behaviour for S2
+To: Jason Gunthorpe <jgg@ziepe.ca>, Mostafa Saleh <smostafa@google.com>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, will@kernel.org, joro@8bytes.org,
+ jean-philippe@linaro.org, nicolinc@nvidia.com, mshavit@google.com
+References: <20240814145633.2565126-1-smostafa@google.com>
+ <20240814155151.GB3468552@ziepe.ca> <Zr3m4YCY7Ape3R6y@google.com>
+ <91d6574d-c67e-484c-ad96-91c9fd3d0c43@arm.com> <Zr30BjAcVDKJPv3B@google.com>
+ <20240815125919.GH3468552@ziepe.ca>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240815125919.GH3468552@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 14 2024 at 16:11, Thomas Gleixner wrote:
-
-> On Wed, Aug 14 2024 at 05:16, Christoph Hellwig wrote:
->> On Wed, Aug 14, 2024 at 10:08:23PM +1000, Alistair Popple wrote:
->>> I would tend to agree and had the same thought when we found this. At
->>> least some kind of message (WARN_ON, WARN_ON_ONCE, printk, etc) would
->>> have made the issue we were debugging much more obvious. FWIW I have
->>> tested running with a WARN_ON() there and it never fired except in the
->>> bug scenario.
+On 15/08/2024 1:59 pm, Jason Gunthorpe wrote:
+> On Thu, Aug 15, 2024 at 12:26:46PM +0000, Mostafa Saleh wrote:
+>> Hi Robin,
 >>
->> Various architectures had either an early ioremap variant that got
->> silently ignored here, or magic carveout that don't get remapped at all.
->> None of this should currently apply to x86, though.
->
-> So I'm inclined to have:
->
->        if (WARN_ON_ONCE(is_ioremap_addr(addr)))
->        		return;
->
-> in the x86 variant then.
+>> On Thu, Aug 15, 2024 at 01:16:19PM +0100, Robin Murphy wrote:
+>>> On 15/08/2024 12:30 pm, Mostafa Saleh wrote:
+>>>> Hi Jason,
+>>>>
+>>>> On Wed, Aug 14, 2024 at 12:51:51PM -0300, Jason Gunthorpe wrote:
+>>>>> On Wed, Aug 14, 2024 at 02:56:33PM +0000, Mostafa Saleh wrote:
+>>>>>
+>>>>>> Also described in the pseudocode “SteIllegal()”
+>>>>>>       if eff_idr0_stall_model == '10' && STE.S2S == '0' then
+>>>>>>           // stall_model forcing stall, but S2S == 0
+>>>>>>           return TRUE;
+>>>>>
+>>>>> This clips out an important bit:
+>>>>>
+>>>>> if STE.Config == '11x' then
+>>>>>     [..]
+>>>>>     if eff_idr0_stall_model == '10' && STE.S2S == '0' then
+>>>>>         // stall_model forcing stall, but S2S == 0
+>>>>>         return TRUE;
+>>>>>
+>>>>> And here we are using STRTAB_STE_0_CFG_S1_TRANS which is 101 and won't
+>>>>> match the STE.Config qualification.
+>>>>>
+>>>>> The plain text language said the S2S is only required if the S2 is
+>>>>> translating, STRTAB_STE_0_CFG_S1_TRANS puts it in bypass.
+>>>>
+>>>> Yes, my bad, this should be for stage-2 only which is populated in
+>>>> arm_smmu_make_s2_domain_ste()
+>>>>
+>>>>>
+>>>>>> +	/*
+>>>>>> +	 * S2S is ignored if stage-2 exists but not enabled.
+>>>>>> +	 * S2S is not compatible with ATS.
+>>>>>> +	 */
+>>>>>> +	if (master->stall_enabled && !ats_enabled &&
+>>>>>> +	    smmu->features & ARM_SMMU_FEAT_TRANS_S2)
+>>>>>> +		target->data[2] |= STRTAB_STE_2_S2S;
+>>>>>
+>>>>> We can't ignore ATS if it was requested here.
+>>>
+>>> I don't see much value in adding effectively-dead checks for something which
+>>> is already forbidden by the architecture. The definition of STALL_MODEL
+>>> explicitly states:
+>>>
+>>> "An SMMU associated with a PCI system must not have STALL_MODEL == 0b10".
+>>>
+>>
+>> Ah, I was expecting that as otherwise it's contradiction, but couldn't
+>> find it while searching. Thanks for pointing it out, I will drop all
+>> references to ATS then.
+> 
+> I was thinking this was also protecting against buggy FW since
+> stall_enable can be set by:
+>      device_property_read_bool(dev, "dma-can-stall"))
 
-Max, care to provide that with a reasonable change log?
+If firmware goes out of its way to describe the system incorrectly then 
+I'd consider that all bets are off, and there's little point in us 
+trying to guess how to cope with a contradiction. For all we know, it 
+could be that the stall property is in fact genuine and it's the ATS 
+capability that was advertised erroneously.
+
+> Alternatively we could directly prevent the clash even earlier:
+> 
+> @@ -3292,8 +3292,13 @@ static struct iommu_device *arm_smmu_probe_device(struct device *dev)
+>   
+>          if ((smmu->features & ARM_SMMU_FEAT_STALLS &&
+>               device_property_read_bool(dev, "dma-can-stall")) ||
+> -           smmu->features & ARM_SMMU_FEAT_STALL_FORCE)
+> -               master->stall_enabled = true;
+> +           smmu->features & ARM_SMMU_FEAT_STALL_FORCE) {
+> +               if (!dev_is_pci(dev))
+> +                       master->stall_enabled = true;
+> +               else
+> +                       dev_err(dev, FW_BUG
+> +                               "A SMMUv3 is required to run in stall mode for a PCI device\n");
+
+Unfortunately we can't do that, because there *are* RCiEP devices whose 
+data interfaces are native AMBA, and thus for whom stalling is not 
+actually a protocol violation as it would be on a real PCIe transport 
+layer; correspondingly, it's *because* they are not true PCIe devices 
+that they can't support ATS, and thus need stall support in order to do 
+SVA, so things should still work out OK in practice.
+
+> +           }
+>   
+>          if (dev_is_pci(dev)) {
+> 
+> Though I have no idea how the GPU driver that wants to use this
+> works - it doesn't seem to be intree :\
+
+It's not a GPU: drivers/crypto/hisilicon/zip/
 
 Thanks,
-
-        tglx
+Robin.
 
