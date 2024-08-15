@@ -1,125 +1,210 @@
-Return-Path: <linux-kernel+bounces-287886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3A17952DB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:45:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0341952DB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:46:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 603B31F2237F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:45:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BC021F22605
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A701714DA;
-	Thu, 15 Aug 2024 11:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0461714CC;
+	Thu, 15 Aug 2024 11:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JUZgsS5o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jDDWq1Lk"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B857C7DA6D;
-	Thu, 15 Aug 2024 11:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4761AC8A2;
+	Thu, 15 Aug 2024 11:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723722300; cv=none; b=JCKMQYLWOUbQw6QTyajFaQDdt0vnfENVn4MGG1oSd8vdJOAYqBAqbpkAcrhnK4AYoTON2//7kHCOfC+85iCP2sK2utijUJ98MGdAuil9sfqzSkm+h9BtAwecGFli91dkvO2qBLbm1JuFMCeqXRgZlSARCBFs0okY1hyv+4b4Rtc=
+	t=1723722362; cv=none; b=ZBAz+iwiQ6URV+7ErcSj1+lSNfml5vAU8Yc+2IDNreHlB7j8k87FyOJAdVTIpCIFe1Kx8qalFV7sZMTRTcN+O9A5Ble+35gUKhxj86HWD7/t0phLjCB0Lp4fwjdjaTXVJ/m9fsfv0GENRAwRWs2/d5sgT7QOqISqiTeV6PcG59Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723722300; c=relaxed/simple;
-	bh=DD04X7e+IRTT47kw4861eORV8QakL3FUlZzRdWiImvI=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=EmO1r7VeRB7SfypDhS7B1izzJHg7Fdr6NIsNI0Cx0gMc8OyAwB0zNWPYBXRoKZi8jcUXzTTw6YeJzb+nYYq05wMQNEmYuXoOWR8WKvC59SYzTvkYmnlbHMmjZQZvZSI+bQFYskqA/OGz2y2ORGWV3spP5Y5p03e320ZCewOZLxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JUZgsS5o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF285C32786;
-	Thu, 15 Aug 2024 11:44:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723722300;
-	bh=DD04X7e+IRTT47kw4861eORV8QakL3FUlZzRdWiImvI=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=JUZgsS5oaxQrKe/f9VIi3RLHwFPM7lXdLegMG1yepHdfce8Fix+Yzc5E2sk0xgGDa
-	 c6FCplqIzpMXN1WNaXi6ZVRY7tkVLhI5cVJZ67IS3+kHCbsXyBFcbnNVJ+b1kH0Xfp
-	 4N4O4ilYVctoAxOcwNkmTRiEBuNImKfVar5h40OQqFD9Y+BXrKjp9gAKyUnjBBv3kJ
-	 ATTtKQu/i197OistiVYU9dVEszL8klK3I3nGszgvZMH5WoI6HuSDzPvSUZwvtTQ3Hk
-	 ligtXcte8h2VL+VNVsTRkQt8daAO+NMOe6IH/f9h8Av3XhXNEP7G2e6Lvin1A1eVfJ
-	 2cNFWiXeF1X3Q==
-From: Kalle Valo <kvalo@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: David Lin <yu-hao.lin@nxp.com>,  "linux-wireless@vger.kernel.org"
- <linux-wireless@vger.kernel.org>,  "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>,  "johannes@sipsolutions.net"
- <johannes@sipsolutions.net>,  "briannorris@chromium.org"
- <briannorris@chromium.org>,  "francesco@dolcini.it"
- <francesco@dolcini.it>,  Pete Hsieh <tsung-hsien.hsieh@nxp.com>
-Subject: Re: [EXT] Re: [PATCH v2 40/43] wifi: nxpwifi: add wmm.h
-References: <20240809094533.1660-1-yu-hao.lin@nxp.com>
-	<20240809094533.1660-41-yu-hao.lin@nxp.com>
-	<2024081430-derail-diocese-78dc@gregkh>
-	<PA4PR04MB9638C1186FC4D56569D7D0E4D1802@PA4PR04MB9638.eurprd04.prod.outlook.com>
-	<2024081523-curator-pronounce-4619@gregkh> <877cciyvdg.fsf@kernel.org>
-	<2024081500-essential-recovery-374f@gregkh>
-Date: Thu, 15 Aug 2024 14:44:57 +0300
-In-Reply-To: <2024081500-essential-recovery-374f@gregkh> (Greg KH's message of
-	"Thu, 15 Aug 2024 11:58:28 +0200")
-Message-ID: <87v802xb5y.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1723722362; c=relaxed/simple;
+	bh=VpjspMk453JIHOunH/RLTO9IPdQzWfX7Z/pxhe2EgHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=OMY4OtGm7KKYh/dGVXpvf14GHey6WWV6l9D/Gfp8IbBdoM0lmu8mt0/Snswk1Ij9nWBaq305TradiQBUYCfWtt1IvMw1uPHs34l/GYAZTgenPjm9145+WV2/wEYISpSUes6WccTgVYxfn8P2LXW+qs+4ACTtzD5WR+JzuZGx8OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jDDWq1Lk; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5b3fff87e6bso1155959a12.0;
+        Thu, 15 Aug 2024 04:46:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723722359; x=1724327159; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wceJuM/bJLtr3SVzfHfUR8ftk7EPEsj8fAnbxqXeEBU=;
+        b=jDDWq1LkCzF5s7C/7krTbe+3mydQXFgB4pfJffiCuC2xmzweKo255Nos9uwYm6u0/W
+         TeU5FVxpfO+r8HKeWHQyvzZG7Z+eplECiaAkynHGu0GZfev7CN4LyV3XCEYlkOWBQwUP
+         MYpuAnbEd5mmVwCFpboqCruqn2UOWSf8JQOV2G+uJdjh3ahahxpU+qNKElxPNseiCMb9
+         BlxqBO6rn8ppVoUp5kYpEftNHOZ/f41sB4jXUk4IHsXZy42HmWhuBWwk3KO4FpQqyEHe
+         3l5GNChpHaiAq7vzOKOHINBx+/Miy1fC853TTHAZOatgosjopv78CzMGdfQfjAYgqFhD
+         CHWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723722359; x=1724327159;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wceJuM/bJLtr3SVzfHfUR8ftk7EPEsj8fAnbxqXeEBU=;
+        b=hc0koqF9zNcBT9e2vdSuarO5bhT+EXg6f7Alm7Gh0qD5uoIJaAmMzRWPLy6BO7BAIO
+         Vj25RxK80liYhLOv6PjP6A/2PQT3Plm2Fw3RSlYLqGVQihp9QpEJFQJ9ro95tPQYk6pn
+         6H3MAdD+2jOGMZCNoerclqbw8lyskYUgBBYKpyYVtl6cxznSh4vu8Fe+kVWfPV+uYNTA
+         wx2JXvI+fYQ+W5qVE22ELj27l+YOScaEYzL65C87H44ZoTgCgrDyVLbkRHHrlUaEXSXQ
+         uP2be6A437M3tZQULtj+Fn/KArLVCpAtHVhHMCI9LupNcdQASifY9q6V7dbSjKoWfCkW
+         nsvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXaQ/oDMUAGvQLwpsHEGPj9Py/cS6lll+1CZ5ntG0sAIhY2+EcalfVPB9+wM5Nii+capPp+LW9i2ILNwTt5p6wymXQtO+BRsxlRuR72Sifgf/Ql/eR7o4LpGA0gnPvQhdrccEbtHiJpeQ==
+X-Gm-Message-State: AOJu0Yw3MJ3cjQrBYQmJ/a4KjHdgE2jb5PWVJI6k9Hp6ekqVBsNZREei
+	GxzLMK1am2blCaG/YoMylXpRMNSrDBWufDWiZuI00yU+QS4q5mnSeljfaw==
+X-Google-Smtp-Source: AGHT+IFfI013YzD7AXBUTaTeAMiug4U5ze+Uy2VcSdFs3BdEo+kN57GRnlGR9Zpdl/r6EoIuW1AFJg==
+X-Received: by 2002:a17:907:f1ea:b0:a77:dde0:d669 with SMTP id a640c23a62f3a-a83670335e9mr365570166b.45.1723722358319;
+        Thu, 15 Aug 2024 04:45:58 -0700 (PDT)
+Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838cfaffsm89703766b.76.2024.08.15.04.45.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 04:45:58 -0700 (PDT)
+Date: Thu, 15 Aug 2024 13:45:56 +0200
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: i2c: i2c-sprd: convert to YAML
+Message-ID: <Zr3qdNep9BCb7Knc@standask-GA-A55M-S2HP>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Greg KH <gregkh@linuxfoundation.org> writes:
+Convert the Spreadtrum SC9860 I2C controller bindings to DT schema.
+Adjust filename to match compatible.
 
-> On Thu, Aug 15, 2024 at 12:43:07PM +0300, Kalle Valo wrote:
->
->> Greg KH <gregkh@linuxfoundation.org> writes:
->> 
->> > On Thu, Aug 15, 2024 at 01:52:18AM +0000, David Lin wrote:
->> >> Hi Greg,
->> >> 
->> >> 	Following the guideline for new driver, it should let every
->> >> file as a single patch for review and generate a final
->> >> 	single patch after reviewing. I think stuffs mentioned by you can be got from cover letter.
->> >> 
->> >> 	If I misunderstood anything, please let me know.
->> >
->> > Please read the kernel documentation for how to submit kernel changes in
->> > a way that we can properly review, and accept them.  As-is, there is
->> > nothing we can do with this series at all, sorry.
->> 
->> Greg, just a bit background for this:
->> 
->> Because wireless drivers can be huge in our documentation we have
->> actually requested to split the driver one patch per file for easier
->> review and avoid mailing list limits:
->> 
->> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#new_driver
->> 
->> The final patch to be commited will be just one big patch with a proper
->> commit message.
->
-> Ick, wow, good luck!
+Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+---
+ .../devicetree/bindings/i2c/i2c-sprd.txt      | 31 ---------
+ .../bindings/i2c/sprd,sc9860-i2c.yaml         | 65 +++++++++++++++++++
+ 2 files changed, 65 insertions(+), 31 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-sprd.txt
+ create mode 100644 Documentation/devicetree/bindings/i2c/sprd,sc9860-i2c.yaml
 
-Wireless drivers can be 40 kLOC and even if you can review a monster
-patch like that, us mere mortals cannot :)
-
-> That being said, you still can't take patches without any changelog text
-> and most importantly, no signed-off-by lines, right?
-
-I will not accept empty commit messages. I think you misunderstood what
-we do so I'll give a concrete example with rtw89 driver. Here's how the
-driver was split for review one file per patch:
-
-https://lore.kernel.org/linux-wireless/20201230044223.14085-1-pkshih@realtek.com/
-
-And here's the one big commit the driver was applied to the tree:
-
-https://git.kernel.org/linus/e3ec7017f6a2
-
-Actually initial rtw89 version was a whopping 92 kLOC.
-
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-sprd.txt b/Documentation/devicetree/bindings/i2c/i2c-sprd.txt
+deleted file mode 100644
+index 7b6b3b8d0d11..000000000000
+--- a/Documentation/devicetree/bindings/i2c/i2c-sprd.txt
++++ /dev/null
+@@ -1,31 +0,0 @@
+-I2C for Spreadtrum platforms
+-
+-Required properties:
+-- compatible: Should be "sprd,sc9860-i2c".
+-- reg: Specify the physical base address of the controller and length
+-  of memory mapped region.
+-- interrupts: Should contain I2C interrupt.
+-- clock-names: Should contain following entries:
+-  "i2c" for I2C clock,
+-  "source" for I2C source (parent) clock,
+-  "enable" for I2C module enable clock.
+-- clocks: Should contain a clock specifier for each entry in clock-names.
+-- clock-frequency: Contains desired I2C bus clock frequency in Hz.
+-- #address-cells: Should be 1 to describe address cells for I2C device address.
+-- #size-cells: Should be 0 means no size cell for I2C device address.
+-
+-Optional properties:
+-- Child nodes conforming to I2C bus binding
+-
+-Examples:
+-i2c0: i2c@70500000 {
+-	compatible = "sprd,sc9860-i2c";
+-	reg = <0 0x70500000 0 0x1000>;
+-	interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
+-	clock-names = "i2c", "source", "enable";
+-	clocks = <&clk_i2c3>, <&ext_26m>, <&clk_ap_apb_gates 11>;
+-	clock-frequency = <400000>;
+-	#address-cells = <1>;
+-	#size-cells = <0>;
+-};
+-
+diff --git a/Documentation/devicetree/bindings/i2c/sprd,sc9860-i2c.yaml b/Documentation/devicetree/bindings/i2c/sprd,sc9860-i2c.yaml
+new file mode 100644
+index 000000000000..ec0d39e73d26
+--- /dev/null
++++ b/Documentation/devicetree/bindings/i2c/sprd,sc9860-i2c.yaml
+@@ -0,0 +1,65 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/i2c/sprd,sc9860-i2c.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Spreadtrum SC9860 I2C controller
++
++maintainers:
++  - Orson Zhai <orsonzhai@gmail.com>
++  - Baolin Wang <baolin.wang7@gmail.com>
++  - Chunyan Zhang <zhang.lyra@gmail.com>
++
++allOf:
++  - $ref: /schemas/i2c/i2c-controller.yaml#
++
++properties:
++  compatible:
++    const: sprd,sc9860-i2c
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: I2C clock
++      - description: I2C source (parent) clock
++      - description: I2C module enable clock
++
++  clock-names:
++    items:
++      - const: i2c
++      - const: source
++      - const: enable
++
++  clock-frequency: true
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - clock-frequency
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    i2c@70500000 {
++      compatible = "sprd,sc9860-i2c";
++      reg = <0x70500000 0x1000>;
++      interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
++      clocks = <&clk_i2c3>, <&ext_26m>, <&clk_ap_apb_gates 11>;
++      clock-names = "i2c", "source", "enable";
++      clock-frequency = <400000>;
++      #address-cells = <1>;
++      #size-cells = <0>;
++    };
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+2.34.1
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
