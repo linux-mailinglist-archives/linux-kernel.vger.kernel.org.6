@@ -1,310 +1,226 @@
-Return-Path: <linux-kernel+bounces-287712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2731F952BCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:19:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B15952BCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D08A32833AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:18:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13C031C21478
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C7B1BB6AC;
-	Thu, 15 Aug 2024 09:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UIz9bxfq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2FA1BC091;
+	Thu, 15 Aug 2024 09:07:21 +0000 (UTC)
+Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.154.197.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED4019DF68
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83331A00DE
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.154.197.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723712707; cv=none; b=sEAGWhd5OITJnbXl2Va7MjfKByOA5IInf+zTk9bk7MXi4ILvuEKiCXhoC7T7GujKYyoRNrechFjpGthTnjsSRW/0HQVIccKfac1nSm9K7g70N75G1Tev1LqksFcEnEuj2+D8TwWQjBKiDXlMVCMU4pkp73VS0zcQITtq+Ui7NNk=
+	t=1723712840; cv=none; b=QgZ0/AVb7WzJhxZt8q22+CDXUSiXUXHKsVrsGK4EMWwFP5uS0zwNNiVIglcwbZYIBa80liIANxoNTaXuFP2sCWHQe+TEeRrmV9kyPAvvBUUKe6EPpt9EyusvUPmtQWaXau93XdacR9qNftAmXw1S+erG9XrDxrFKcxu7hlrVXBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723712707; c=relaxed/simple;
-	bh=BvBoKEulluwwI50YIpSSyN30AprN3f9CQurdOkmlusk=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=rD1N6pjV4UzdChTFPU38EY8s0h/LqJ6JcjfTx67z9P06LEO3RUda9ojZ2pETNP/jIMxaApp2DmoyclAAt1bpxZGyqNTMitgW6HGFeyrbAf7CgD40ktW95GTeC5On7qfTmsrpDwdIZDG1ISo+5pdjLh9V+z9aiHrvwEi1boR6sVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UIz9bxfq; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723712705; x=1755248705;
-  h=date:from:to:cc:subject:message-id;
-  bh=BvBoKEulluwwI50YIpSSyN30AprN3f9CQurdOkmlusk=;
-  b=UIz9bxfqCP31j7NRYGHdxa/JcguTYUCQHsz/vbOot6A1EWZn4UjOXe3r
-   /zfdlUAgIk66iLTjT5UrVcd/Myw0Ic4Z5XBeCJpMp+1M35CGPhSJXlkTh
-   A1jPFbdsmv9baYfWi4BFQgj/0OBUxr+hNNlmEBUOnie17aonpXnfnzYGi
-   UKx0YH5ryE0UZsaVl/K78GHBXXc8+6XgofnYtCmvNaBoLfu0F+muWNiGR
-   5GuKBdPMbHNja2hFeLkd3+h7DcLrk+/3FZjB5cSk35z07q/9CzWEHVKFG
-   Z+Qe/kFfUHQPvEF8pUtuUavCPeWojD0OfObkltxaOxLIttDBFJ7aOybqR
-   Q==;
-X-CSE-ConnectionGUID: XRvnnFO6QMugmm0ncpBIfw==
-X-CSE-MsgGUID: ID53IZR6R12rNwrl8pmswQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="44478447"
-X-IronPort-AV: E=Sophos;i="6.10,148,1719903600"; 
-   d="scan'208";a="44478447"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 02:05:04 -0700
-X-CSE-ConnectionGUID: 9a9Lsy5HTPC68FOX0y8bvw==
-X-CSE-MsgGUID: IjNBZuYSTAmDuLnMwBsjeg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,148,1719903600"; 
-   d="scan'208";a="58929988"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 15 Aug 2024 02:05:03 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1seWPl-0003M2-0i;
-	Thu, 15 Aug 2024 09:05:01 +0000
-Date: Thu, 15 Aug 2024 17:04:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:timers/core] BUILD SUCCESS
- 330dd6d9c0fce69718b53ca0bc4f2e3920f7f600
-Message-ID: <202408151705.7QT9tYbb-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1723712840; c=relaxed/simple;
+	bh=1Qzrw/hSDv1EEmBRrwXUMIAwEY4KT7V1uEqgKZLGaj4=;
+	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
+	 References:In-Reply-To; b=sd4Jd0X+QoHAsoippH0IKIVvq6+g1MwzUmdBf/7n1QNOXD4Mcq3Iu2d9H0bsq9YN37zEN0YL+AduffWx8OmsRppY3cEcbLp6SirgjFxIuShGqpYf8748DckCh6UfPVrpf3MxvuNcxWB3EEH2RpwQJ9jHYXA1aMPQtatuOXgPaJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=43.154.197.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shingroup.cn
+X-QQ-GoodBg: 2
+X-BAN-DOWNLOAD: 1
+X-BAN-SHARE: 1
+X-QQ-SSF: 0040000000000060
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-XMAILINFO: NDtUtlvFer7vj5R3nzcc/gmww5EXp7HZjxd92AkKdI4W5c7Ag2hyCzMQ
+	sfw6xwjZJWdOjvWoINO22ddzHdHyItKKDL/gPwJcEaeTnfuLpV0lRu/tLmlI7hh24vj1VII
+	5KZb9NrgjeBl4vD6owrOITqudD0v/LhahsoffBXenNCOYUdIQKfHABPf2GtsWke/N+gOfJL
+	1UNOrgzOSec/1dj+4eP1Xdv4Y2qPubzXpYNX44N0BwuHGG1dQqK8PZ/l57/GO3WJ0q4dDBl
+	Goamrh3Scew9vIFSBN4/I/kBDQaWsZ1+Nf78M2gCYJM85nl9O0Q/UYoWHr7M2L9KO0QpPrj
+	JUVB3UQclTPWnfoRWavA6KQ3VAsvqRjOsMEvIi8F3Zv8HzEs4R4J00CTPb9jcOi8551M+3c
+	XrSVBymKMY+8NOub1OkOHecTxekgGnFegu7P27+LwKImgFnyEmaJ2OYn2dyahzg9eX2Gj/z
+	Ai7oSgrF9vS5rJjRXkJhu0ZbCb2VvaTACx5dFfvvWR6J4vZgVoyKPmTKBkVHIoVrEf19tN0
+	6l9WEQ4K17ZHIN4njOHxkNST3nx8QXWpZmq5svutKb35atqJrMOjdAYmrAIht5N479Oq6Ky
+	kWRlFme0aC4e70IYQzdInzGfygRsLhi2kwH0QXBTqPvcdLtIGSY25iwlRQmwH/L+5Qbqehh
+	uJeNzwqgWUQnjdoSGV5UZq7phtv/yObp3CqmHxwpWoP7PZduTomt4AC4H4H8tUCq7I2Su3V
+	hFbwBGkjCgJ2Jyoo0Ef90XIEoTi/wNnSF6t4ApMPNu5QvDxVlFYJTflEfuwbL4pDIGeef8y
+	cGIXklrQcJ+PTx071DXriNM/pCFfXP0aMDAV+Qh2YDu3za8gilSWWrUTVcGP2ygXiMbkhCR
+	Fz8dgwj78wUbzGP2lEGqX9e8xAh3I2oRUQ3NPTg4czU=
+X-QQ-FEAT: D4aqtcRDiqQpBpTnjIJt3/f21w9WO3enREO5ZSgO7MU=
+X-QQ-BUSINESS-ORIGIN: 2
+X-QQ-Originating-IP: k3WaxIoXFxcNhKxdcLegAHMD65bG0o/5i9gOCI74Uhk=
+X-QQ-STYLE: 
+X-QQ-mid: t6gz5a-0t1723712700t896640
+From: "=?utf-8?B?6Jme6ZmG6ZOt?=" <luming.yu@shingroup.cn>
+To: "=?utf-8?B?bXBl?=" <mpe@ellerman.id.au>
+Cc: "=?utf-8?B?bGludXhwcGMtZGV2?=" <linuxppc-dev@lists.ozlabs.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?bnBpZ2dpbg==?=" <npiggin@gmail.com>, "=?utf-8?B?Y2hyaXN0b3BoZS5sZXJveQ==?=" <christophe.leroy@csgroup.eu>, "=?utf-8?B?bHVtaW5nLnl1?=" <luming.yu@gmail.com>, "=?utf-8?B?5p2o5L2z6b6Z?=" <jialong.yang@shingroup.cn>, "=?utf-8?B?c2hlbmdodWkucXU=?=" <shenghui.qu@shingroup.cn>
+Subject: Re: [PATCH 1/2] powerpc/locking: implement this_cpu_cmpxchg local API
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Date: Thu, 15 Aug 2024 17:04:59 +0800
+X-Priority: 3
+Message-ID: <tencent_557D12BC225E6BB1038444ED@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+References: <0EFBD0242622180B+20231204022303.528-1-luming.yu@shingroup.cn>
+	<87jzpldl1l.fsf@mail.lhotse>
+	<6A256ED30D339626+ZXwTQL1lMXhQ_inW@HX09040029.powercore.com.cn>
+In-Reply-To: <6A256ED30D339626+ZXwTQL1lMXhQ_inW@HX09040029.powercore.com.cn>
+X-QQ-ReplyHash: 3381554083
+X-BIZMAIL-ID: 3717986667113412693
+X-QQ-SENDSIZE: 520
+Received: from qq.com (unknown [127.0.0.1])
+	by smtp.qq.com (ESMTP) with SMTP
+	id ; Thu, 15 Aug 2024 17:05:01 +0800 (CST)
+Feedback-ID: t:shingroup.cn:qybglogicsvrgz:qybglogicsvrgz8a-0
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
-branch HEAD: 330dd6d9c0fce69718b53ca0bc4f2e3920f7f600  hrtimer: Annotate hrtimer_cpu_base_.*_expiry() for sparse.
+SGksDQoNCkkganVzdCBnZXQgYmFuZHdpZHRoIHRvIGRvIHNvbWUgcGVyZiB0ZXN0IHdpdGgg
+dGhlIHBhdGNoIHByb3Bvc2FsIG9uIGEgYmFyZW1ldGFsIHA4IHBvd2VybnYgcGxhdGZvcm0u
+DQpJdCBhcHBlYXJzICB0aGVyZSBpcyArNSUgcGVyZm9ybWFuY2UgZ2FpbiBpbiB1bml4YmVu
+Y2gsIHdoaWNoIGxvb2tzciBlbmNvdXJhZ2luZy4gOiAtKQ0KCSAgICAgICAgU3lzdGVtIEJl
+bmNobWFya3MgSW5kZXggU2NvcmUgICAgICAJMQ0Kd2l0aCBwYXRjaAlTeXN0ZW0gQmVuY2ht
+YXJrcyBJbmRleCBTY29yZSAgCTEuMDUNCgkJcmF0aW86IDEuMDV4DQoNCiBJIGtub3cgcGVy
+Zm9ybWFuY2UgaXMgdHJpY2t5LiBJIHdpbGwgdHJ5IHRvIHRha2UgbW9yZSByZXNvdXJjZSB0
+byBkZWVwIGRpdmUgd2l0aCBjcGkgYnJlYWtkb3duIGFuZCBvdGhlciBwZXJmIHRvb2xzDQog
+dG8gbWFrZSBzdXJlIHRoZSBwZXJmIGRpZmYgaXMgcmVhbGx5IG5vdCBmcm9tIG90aGVyIHJh
+bmRvbSB2YXJpYWJsZXMgaXJyZWxldmFudCB0byB0aGUgcGF0Y2ggcHJvcG9zYWwuDQoNClN0
+YXkgdHVubmVkLg0KDQpCUg0KTHVtaW5nIA0KIA0KLS0tLS0tLS0tLS0tLS0tLS0tIE9yaWdp
+bmFsIC0tLS0tLS0tLS0tLS0tLS0tLQ0KRnJvbTogICLomZ7pmYbpk60iPGx1bWluZy55dUBz
+aGluZ3JvdXAuY24+Ow0KRGF0ZTogIEZyaSwgRGVjIDE1LCAyMDIzIDA0OjUwIFBNDQpUbzog
+ICJtcGUiPG1wZUBlbGxlcm1hbi5pZC5hdT47IA0KQ2M6ICAibGludXhwcGMtZGV2IjxsaW51
+eHBwYy1kZXZAbGlzdHMub3psYWJzLm9yZz47ICJsaW51eC1rZXJuZWwiPGxpbnV4LWtlcm5l
+bEB2Z2VyLmtlcm5lbC5vcmc+OyAibnBpZ2dpbiI8bnBpZ2dpbkBnbWFpbC5jb20+OyAiY2hy
+aXN0b3BoZS5sZXJveSI8Y2hyaXN0b3BoZS5sZXJveUBjc2dyb3VwLmV1PjsgImx1bWluZy55
+dSI8bHVtaW5nLnl1QGdtYWlsLmNvbT47ICJrZS56aGFvIjxrZS56aGFvQHNoaW5ncm91cC5j
+bj47ICJkYXdlaS5saSI8ZGF3ZWkubGlAc2hpbmdyb3VwLmNuPjsgInNoZW5naHVpLnF1Ijxz
+aGVuZ2h1aS5xdUBzaGluZ3JvdXAuY24+OyANClN1YmplY3Q6ICBSZTogW1BBVENIIDEvMl0g
+cG93ZXJwYy9sb2NraW5nOiBpbXBsZW1lbnQgdGhpc19jcHVfY21weGNoZyBsb2NhbCBBUEkN
+Cg0KIA0KDQpPbiBNb24sIERlYyAxMSwgMjAyMyBhdCAxMDo0MDozOFBNICsxMTAwLCBNaWNo
+YWVsIEVsbGVybWFuIHdyb3RlOg0KPiBIaSBMdW1pbmcgWXUsDQo+IA0KPiBMdW1pbmcgWXUg
+PGx1bWluZy55dUBzaGluZ3JvdXAuY24+IHdyaXRlczoNCj4gPiBwcGMgYXBwZWFycyB0byBo
+YXZlIGFscmVhZHkgc3VwcG9ydGVkIGNtcHhjaGctbG9jYWwgYXRvbWljIHNlbWFudGljcw0K
+PiA+IHRoYXQgaXMgZGVmaW5lZCBieSB0aGUga2VybmVsIGNvbnZlbnRpb24gb2YgdGhlIGZl
+YXR1cmUuDQo+ID4gQWRkIHRoaXNfY3B1X2NtcHhjaGcgcHBjIGxvY2FsIGZvciB0aGUgcGVy
+Zm9ybWFuY2UgYmVuZWZpdCBvZiBhcmNoDQo+ID4gc2VwY2lmaWMgaW1wbGVtZW50YXRpb24g
+dGhhbiBhc20tZ2VuZXJpYyBjIHZlcmlzb24gb2YgdGhlIGxvY2tpbmcgQVBJLg0KPiANCj4g
+SW1wbGVtZW50aW5nIHRoaXMgaGFzIGJlZW4gc3VnZ2VzdGVkIGJlZm9yZSBidXQgaXQgd2Fz
+bid0IGNsZWFyIHRoYXQgaXQNCj4gd2FzIGFjdHVhbGx5IGdvaW5nIHRvIHBlcmZvcm0gYmV0
+dGVyIHRoYW4gdGhlIGdlbmVyaWMgdmVyc2lvbi4NClRoYW5rcyBmb3IgdGhlIGluZm8uIFRv
+IG1lLCBpdCBpcyBhIG5ld3MuIDogLSkNCkkgd2lsbCBjaGVjayBpZiBhbnkgd2ViIHNlYXJj
+aCBlbmdpbmUgY291bGQgc2VydmUgbWUgd2VsbCB0byBmaW5kIGl0IG91dC4gDQo+IA0KPiBP
+biA2NC1iaXQgd2UgaGF2ZSBpbnRlcnJ1cHQgc29mdCBtYXNraW5nLCBzbyBkaXNhYmxpbmcg
+aW50ZXJydXB0cyBpcw0KPiByZWxhdGl2ZWx5IGNoZWFwLiBTbyB0aGUgZ2VuZXJpYyB0aGlz
+X2NwdV9jbXB4aGcgdXNpbmcgaXJxIGRpc2FibGUganVzdA0KPiBiZWNvbWVzIGEgZmV3IGxv
+YWRzICYgc3RvcmVzLCBubyBhdG9taWMgb3BzIHJlcXVpcmVkLg0KDQpzb21ldGhpbmcgbGlr
+ZSB0aGlzIGp1c3QgcG9wcGVkIHVwIGluIG15IGZpcnN0IHRyeSB3aXRoIGEgcDggdGVzdCBr
+dm0gb24NCmEgYzEwMDAgcG93ZXJudjggcGxhdGZvcm0/DQoNCkknbSBub3Qgc3VyZSB0aGUg
+c29mdCBsb2NrdXAgaXMgcmVsZXZhbnQgdG8gdGhlIGludGVycnVwdCBzb2Z0IG1hc2tpbmcs
+DQpidXQgSSB3aWxsIGZpbmQgaXQgb3V0IGZvciBzdXJlLiA6IC0pDQoNClsgIDQ2MC4yMTc2
+NjldIHdhdGNoZG9nOiBCVUc6IHNvZnQgbG9ja3VwIC0gQ1BVIzAgc3R1Y2sgZm9yIDIycyEg
+W3N3YXBwZXIvMDoxXQ0KWyAgNDYwLjIxNzc0Ml0gTW9kdWxlcyBsaW5rZWQgaW46DQpbICA0
+NjAuMjE3ODI4XSBDUFU6IDAgUElEOiAxIENvbW06IHN3YXBwZXIvMCBUYWludGVkOiBHICAg
+ICAgICBXICAgIEwgICBOIDYuNy4wLXJjNSsgIzUNClsgIDQ2MC4yMTc5MTVdIEhhcmR3YXJl
+IG5hbWU6IElCTSBwU2VyaWVzIChlbXVsYXRlZCBieSBxZW11KSBQT1dFUjkgKHJhdykgMHg0
+ZTEyMDAgMHhmMDAwMDA1IG9mOlNMT0YsZ2l0LTZiNmMxNiBwU2VyaWVzDQpbICA0NjAuMjE3
+OTk5XSBOSVA6ICBjMDAwMDAwMDAwMDNlMGVjIExSOiBjMDAwMDAwMDAwMDNlNDE0IENUUjog
+MDAwMDAwMDAwMDAwMDAwMA0KWyAgNDYwLjIxODA3NF0gUkVHUzogYzAwMDAwMDAwNDc5Nzc4
+OCBUUkFQOiAwOTAwICAgVGFpbnRlZDogRyAgICAgICAgVyAgICBMICAgTiAgKDYuNy4wLXJj
+NSspDQpbICA0NjAuMjE4MTUxXSBNU1I6ICA4MDAwMDAwMDAyMDA5MDMzIDxTRixWRUMsRUUs
+TUUsSVIsRFIsUkksTEU+ICBDUjogMjQwNDI0NDIgIFhFUjogMDAwMDAwMDANClsgIDQ2MC4y
+MTgzNDJdIENGQVI6IDAwMDAwMDAwMDAwMDAwMDAgSVJRTUFTSzogMA0KWyAgNDYwLjIxODM0
+Ml0gR1BSMDA6IGMwMDAwMDAwMDAwM2U0MTQgYzAwMDAwMDAwNDc5Nzc2MCBjMDAwMDAwMDAx
+NTgzYjAwIGMwMDAwMDAwMDQ3OTc3NTgNClsgIDQ2MC4yMTgzNDJdIEdQUjA0OiAwMDAwMDAw
+MDAwMDAwMDAwIDAwMDAwMDAwMDAwMDAwMDQgYzAwMDAwMDAwNGNjZjUxYyBjMDAwMDAwMDAy
+MjRlNTEwDQpbICA0NjAuMjE4MzQyXSBHUFIwODogNDAwMDAwMDAwMDAwMDAwMiAwMDAwMDAw
+MDAwMDAwMDQ5IGMwMDAwMDAwMDQ1N2IyODAgMDAxNTAwMGIwMDE3MDAzOA0KWyAgNDYwLjIx
+ODM0Ml0gR1BSMTI6IDAwMzQwMDMwMDAzYTAwMTAgYzAwMDAwMDAwMmY0MDAwMCAwMDAwMDAw
+MDAwMDAwMDA4IGMwMDAwMDAwMDRjY2Y0ZmMNClsgIDQ2MC4yMTgzNDJdIEdQUjE2OiAwMDAw
+MDAwMDAwMDA3NTg2IGMwMDAwMDAwMDQwZjQ1YzAgYzAwMDAwMDAwNGRkZDA4MCBjMDAwMDAw
+MDA0MGY0NWMwDQpbICA0NjAuMjE4MzQyXSBHUFIyMDogMDAwMDAwMDAwMDAwMDAwOCAwMDAw
+MDAwMDAwMDAwMDI0IDAwMDAwMDAwMDAwMDAwMDQgYzAwMDAwMDAwNGNjZjRmYw0KWyAgNDYw
+LjIxODM0Ml0gR1BSMjQ6IDAwMDAwMDAwMDAwMDAwM2YgMDAwMDAwMDAwMDAwMDAwMSAwMDAw
+MDAwMDAwMDAwMDAxIGMwMDAwMDAwMDRjYzZlN2UNClsgIDQ2MC4yMTgzNDJdIEdQUjI4OiBm
+Y2ZmZmZmZmZmZmZmZmZmIDAwMDAwMDAwMDAwMDAwMDIgZmNmZmZmZmZmZmZmZmZmZiAwMDAw
+MDAwMDAwMDAwMDAzDQpbICA0NjAuMjE5MTg3XSBOSVAgW2MwMDAwMDAwMDAwM2UwZWNdIF9f
+cmVwbGF5X3NvZnRfaW50ZXJydXB0cysweDNjLzB4MTYwDQpbICA0NjAuMjE5Mjg2XSBMUiBb
+YzAwMDAwMDAwMDAzZTQxNF0gYXJjaF9sb2NhbF9pcnFfcmVzdG9yZSsweDE3NC8weDFhMA0K
+WyAgNDYwLjIxOTM2NV0gQ2FsbCBUcmFjZToNClsgIDQ2MC4yMTk0MDBdIFtjMDAwMDAwMDA0
+Nzk3NzYwXSBbYzAwMDAwMDAwMDAzZTE1MF0gX19yZXBsYXlfc29mdF9pbnRlcnJ1cHRzKzB4
+YTAvMHgxNjAgKHVucmVsaWFibGUpDQpbICA0NjAuMjE5NTE1XSBbYzAwMDAwMDAwNDc5Nzkx
+MF0gW2MwMDAwMDAwMDAwM2U0MTRdIGFyY2hfbG9jYWxfaXJxX3Jlc3RvcmUrMHgxNzQvMHgx
+YTANClsgIDQ2MC4yMTk2MTJdIFtjMDAwMDAwMDA0Nzk3OTUwXSBbYzAwMDAwMDAwMGExNTVj
+NF0gZ2V0X3JhbmRvbV91MzIrMHhiNC8weDE0MA0KWyAgNDYwLjIxOTY5OV0gW2MwMDAwMDAw
+MDQ3OTc5YTBdIFtjMDAwMDAwMDAwOGIxYWUwXSBnZXRfcmN3X3dlKzB4MTM4LzB4Mjc0DQpb
+ICA0NjAuMjE5NzgxXSBbYzAwMDAwMDAwNDc5N2EzMF0gW2MwMDAwMDAwMDIwOGQ0YmNdIHRl
+c3RfcnNsaWJfaW5pdCsweDhiOC8weGI3MA0KWyAgNDYwLjIxOTg3N10gW2MwMDAwMDAwMDQ3
+OTdjNDBdIFtjMDAwMDAwMDAwMDBmYjgwXSBkb19vbmVfaW5pdGNhbGwrMHg2MC8weDM5MA0K
+WyAgNDYwLjIxOTk2NV0gW2MwMDAwMDAwMDQ3OTdkMTBdIFtjMDAwMDAwMDAyMDA0YTE4XSBr
+ZXJuZWxfaW5pdF9mcmVlYWJsZSsweDMyYy8weDNkYw0KWyAgNDYwLjIyMDA1OV0gW2MwMDAw
+MDAwMDQ3OTdkZTBdIFtjMDAwMDAwMDAwMDEwMmE0XSBrZXJuZWxfaW5pdCsweDM0LzB4MWIw
+DQpbICA0NjAuMjIwMTQxXSBbYzAwMDAwMDAwNDc5N2U1MF0gW2MwMDAwMDAwMDAwMGNmMTRd
+IHJldF9mcm9tX2tlcm5lbF91c2VyX3RocmVhZCsweDE0LzB4MWMNClsgIDQ2MC4yMjAyMjld
+IC0tLSBpbnRlcnJ1cHQ6IDAgYXQgMHgwDQpbICA0NjAuMjIwMjkxXSBDb2RlOiA2MDAwMDAw
+MCA3YzA4MDJhNiBmODAxMDAxMCBmODIxZmU1MSBlOTJkMGM3OCBmOTIxMDFhOCAzOTIwMDAw
+MCAzODYxMDAyOCA4OTJkMDkzMyA2MTI5MDA0MCA5OTJkMDkzMyA0ODA0M2EzZCA8NjAwMDAw
+MDA+IDM5MjAwMDAwIGU5NDEwMTMwIGY5MjEwMTYwDQpbICA0NjAuOTU1MzY5XSBUZXN0aW5n
+ICgyMywxNSlfNjQgY29kZS4uLg0KDQo+IA0KPiBJbiBjb250cmFzdCBpbXBsZW1lbnRpbmcg
+aXQgdXNpbmcgX19jbXB4Y2hnX2xvY2FsKCkgd2lsbCB1c2UNCj4gbGRhcngvc3RkY3ggZXRj
+LiB3aGljaCB3aWxsIGJlIG1vcmUgZXhwZW5zaXZlLg0KPiANCj4gSGF2ZSB5b3UgZG9uZSBh
+bnkgcGVyZm9ybWFuY2UgbWVhc3VyZW1lbnRzPw0KWWVzLCBJJ20gbG9va2luZyBmb3IgcmVz
+b3VyY2UgdG8gdHJhY2sgdGhlIHBlcmYgY2hhbmdlcyAocG9zaXRpdmUgb3IgbmVnYXRpdmUp
+DQppbiB0aGlzIGNvcm5lciBmb3IgdGhpcyBwYXRjaCBzZXQgYmVpbmcgcHJvcG9zZWQgYWdh
+aW4uDQoNCj4gDQo+IEl0IHByb2JhYmx5IGlzIGEgYml0IGZpc2h5IHRoYXQgd2UgZG9uJ3Qg
+bWFzayBQTVUgaW50ZXJydXB0cyB2cw0KPiB0aGlzX2NwdV9jbXB4Y2hnKCkgZXRjLiwgYnV0
+IEkgZG9uJ3QgdGhpbmsgaXQncyBhY3R1YWxseSBhIGJ1ZyBnaXZlbiB0aGUNCj4gZmV3IHBs
+YWNlcyB1c2luZyB0aGlzX2NwdV9jbXB4Y2hnKCkuIFRob3VnaCBJIGNvdWxkIGJlIHdyb25n
+IGFib3V0IHRoYXQuDQpJIHdpbGwgdHJ5IHRvIHVuZGVyc3RhbmQgdGhlIGNvbmNlcm4gYW5k
+IHdpbGwgdHJ5IHRvIGNvbWUgdXAgd2l0aCBhIHBhdGNoIHVwZGF0ZSwNCmlmZiB0aGUgcGVy
+Zm9ybWFuY2UgbnVtYmVyIGZyb20gdGhlIGNoYW5nZSBjb3VsZCBsb29rIHJlYXNvbmFibGUg
+YW5kIHByb21pc2luZy4NCj4gDQo+ID4gZGlmZiAtLWdpdCBhL2FyY2gvcG93ZXJwYy9pbmNs
+dWRlL2FzbS9wZXJjcHUuaCBiL2FyY2gvcG93ZXJwYy9pbmNsdWRlL2FzbS9wZXJjcHUuaA0K
+PiA+IGluZGV4IDhlNWI3ZDBiODUxYy4uY2VhYjVkZjZlN2FiIDEwMDY0NA0KPiA+IC0tLSBh
+L2FyY2gvcG93ZXJwYy9pbmNsdWRlL2FzbS9wZXJjcHUuaA0KPiA+ICsrKyBiL2FyY2gvcG93
+ZXJwYy9pbmNsdWRlL2FzbS9wZXJjcHUuaA0KPiA+IEBAIC0xOCw1ICsxOCwyMiBAQA0KPiA+
+ICAjaW5jbHVkZSA8YXNtLWdlbmVyaWMvcGVyY3B1Lmg+DQo+ID4gIA0KPiA+ICAjaW5jbHVk
+ZSA8YXNtL3BhY2EuaD4NCj4gPiArI2luY2x1ZGUgPGFzbS9jbXB4Y2hnLmg+DQo+ID4gKyNp
+ZmRlZiB0aGlzX2NwdV9jbXB4Y2hnXzENCj4gPiArI3VuZGVmIHRoaXNfY3B1X2NtcHhjaGdf
+MQ0KPiAgDQo+IElmIHdlIG5lZWQgdG8gdW5kZWYgdGhlbiBJIHRoaW5rIHNvbWV0aGluZyBo
+YXMgZ29uZSB3cm9uZyB3aXRoIHRoZQ0KPiBoZWFkZXIgaW5jbHVzaW9uIG9yZGVyLCB0aGUg
+bW9kZWwgc2hvdWxkIGJlIHRoYXQgdGhlIGFyY2ggZGVmaW5lcyB3aGF0DQo+IGl0IGhhcyBh
+bmQgdGhlIGdlbmVyaWMgY29kZSBwcm92aWRlcyBmYWxsYmFja3MgaWYgdGhlIGFyY2ggZGlk
+bid0IGRlZmluZQ0KPiBhbnl0aGluZy4NCj4gDQo+ID4gKyNkZWZpbmUgdGhpc19jcHVfY21w
+eGNoZ18xKHBjcCwgb3ZhbCwgbnZhbCkJX19jbXB4Y2hnX2xvY2FsKHJhd19jcHVfcHRyKCYo
+cGNwKSksIG92YWwsIG52YWwsIDEpDQo+IA0KPiBJIHRoaW5rIHRoaXMgaXMgdW5zYWZlIHZz
+IHByZWVtcHRpb24uIFRoZSByYXdfY3B1X3B0cigpIGNhbiBnZW5lcmF0ZSB0aGUNCj4gcGVy
+LWNwdSBhZGRyZXNzLCBidXQgdGhlbiB0aGUgdGFzayBjYW4gYmUgcHJlZW1wdGVkIGFuZCBt
+b3ZlZCB0byBhDQo+IGRpZmZlcmVudCBDUFUgYmVmb3JlIHRoZSBsZGFyeC9zdGRjeCBkbyB0
+aGUgY21weGNoZy4NCj4gDQo+IFRoZSBhcm02NCBpbXBsZW1lbnRhdGlvbiBoYWQgdGhlIHNh
+bWUgYnVnIHVudGlsIHRoZXkgZml4ZWQgaXQuDQpUaGFua3MgZm9yIHRoZSByZXZpZXcsIEkg
+d2lsbCBsb29rIGRlZXBlciBpbnRvIHRoaXMgc3BvdC4gSSBzdXBwb3NlLCBmb3IgcGVyIGNw
+dSBhcGkgZG93biB0byB0aGlzIGxldmVsLA0KaXQgaXMgc2FmZSB0byBhc3N1bWUgaXQncyBz
+YWZlIGluIHRlcm1zIG9mIGJlaW5nIHByZWVtcHRpb24tZGlzYWJsZWQuIEJ1dCwgdGhpbmdz
+IGNvdWxkIGJlIG1pcy11bmRlcnN0b29kDQphbmQgSSBjYW4gYmUgd3JvbmcgYXMgd2VsbCBh
+cyBsaW51eCBrZXJuZWwgaGFzIGJlZW4gcmFwaWRseSBjaGFuZ2luZyBzbyBtdWNoLjotKA0K
+PiANCj4gPiArI2VuZGlmIA0KPiA+ICsjaWZkZWYgdGhpc19jcHVfY21weGNoZ18yDQo+ID4g
+KyN1bmRlZiB0aGlzX2NwdV9jbXB4Y2hnXzINCj4gPiArI2RlZmluZSB0aGlzX2NwdV9jbXB4
+Y2hnXzIocGNwLCBvdmFsLCBudmFsKQlfX2NtcHhjaGdfbG9jYWwocmF3X2NwdV9wdHIoJihw
+Y3ApKSwgb3ZhbCwgbnZhbCwgMikNCj4gPiArI2VuZGlmDQo+ID4gKyNpZmRlZiB0aGlzX2Nw
+dV9jbXB4Y2hnXzQNCj4gPiArI3VuZGVmIHRoaXNfY3B1X2NtcHhjaGdfNA0KPiA+ICsjZGVm
+aW5lIHRoaXNfY3B1X2NtcHhjaGdfNChwY3AsIG92YWwsIG52YWwpCV9fY21weGNoZ19sb2Nh
+bChyYXdfY3B1X3B0cigmKHBjcCkpLCBvdmFsLCBudmFsLCA0KQ0KPiA+ICsjZW5kaWYNCj4g
+PiArI2lmZGVmIHRoaXNfY3B1X2NtcHhjaGdfOA0KPiA+ICsjdW5kZWYgdGhpc19jcHVfY21w
+eGNoZ184DQo+ID4gKyNkZWZpbmUgdGhpc19jcHVfY21weGNoZ184KHBjcCwgb3ZhbCwgbnZh
+bCkJX19jbXB4Y2hnX2xvY2FsKHJhd19jcHVfcHRyKCYocGNwKSksIG92YWwsIG52YWwsIDgp
+DQo+ID4gKyNlbmRpZg0KPiA+ICANCj4gPiAgI2VuZGlmIC8qIF9BU01fUE9XRVJQQ19QRVJD
+UFVfSF8gKi8NCj4gDQo+IGNoZWVycw0KPiANCmJlc3QgcmVnYXJkcw==
 
-elapsed time: 1337m
-
-configs tested: 218
-configs skipped: 7
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-alpha                             allnoconfig   gcc-13.3.0
-alpha                            allyesconfig   gcc-13.3.0
-alpha                               defconfig   gcc-13.2.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                   randconfig-001-20240815   gcc-13.2.0
-arc                   randconfig-002-20240815   gcc-13.2.0
-arm                              alldefconfig   gcc-14.1.0
-arm                              allmodconfig   gcc-13.2.0
-arm                              allmodconfig   gcc-14.1.0
-arm                               allnoconfig   clang-20
-arm                               allnoconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-14.1.0
-arm                        clps711x_defconfig   gcc-14.1.0
-arm                                 defconfig   gcc-13.2.0
-arm                            dove_defconfig   gcc-14.1.0
-arm                   randconfig-001-20240815   gcc-13.2.0
-arm                   randconfig-002-20240815   gcc-13.2.0
-arm                   randconfig-003-20240815   gcc-13.2.0
-arm                   randconfig-004-20240815   gcc-13.2.0
-arm64                            allmodconfig   clang-20
-arm64                            allmodconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-14.1.0
-arm64                               defconfig   gcc-13.2.0
-arm64                 randconfig-001-20240815   gcc-13.2.0
-arm64                 randconfig-002-20240815   gcc-13.2.0
-arm64                 randconfig-003-20240815   gcc-13.2.0
-arm64                 randconfig-004-20240815   gcc-13.2.0
-csky                              allnoconfig   gcc-13.2.0
-csky                              allnoconfig   gcc-14.1.0
-csky                                defconfig   gcc-13.2.0
-csky                  randconfig-001-20240815   gcc-13.2.0
-csky                  randconfig-002-20240815   gcc-13.2.0
-hexagon                          allmodconfig   clang-20
-hexagon                           allnoconfig   clang-20
-hexagon                          allyesconfig   clang-20
-i386                             allmodconfig   clang-18
-i386                             allmodconfig   gcc-12
-i386                              allnoconfig   clang-18
-i386                              allnoconfig   gcc-12
-i386                             allyesconfig   clang-18
-i386                             allyesconfig   gcc-12
-i386         buildonly-randconfig-001-20240814   clang-18
-i386         buildonly-randconfig-001-20240815   gcc-12
-i386         buildonly-randconfig-002-20240814   clang-18
-i386         buildonly-randconfig-002-20240815   gcc-12
-i386         buildonly-randconfig-003-20240814   clang-18
-i386         buildonly-randconfig-003-20240815   gcc-12
-i386         buildonly-randconfig-004-20240814   clang-18
-i386         buildonly-randconfig-004-20240815   gcc-12
-i386         buildonly-randconfig-005-20240814   gcc-12
-i386         buildonly-randconfig-005-20240815   gcc-12
-i386         buildonly-randconfig-006-20240814   gcc-12
-i386         buildonly-randconfig-006-20240815   gcc-12
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240814   clang-18
-i386                  randconfig-001-20240815   gcc-12
-i386                  randconfig-002-20240814   gcc-12
-i386                  randconfig-002-20240815   gcc-12
-i386                  randconfig-003-20240814   gcc-12
-i386                  randconfig-003-20240815   gcc-12
-i386                  randconfig-004-20240814   clang-18
-i386                  randconfig-004-20240815   gcc-12
-i386                  randconfig-005-20240814   clang-18
-i386                  randconfig-005-20240815   gcc-12
-i386                  randconfig-006-20240814   clang-18
-i386                  randconfig-006-20240815   gcc-12
-i386                  randconfig-011-20240814   gcc-12
-i386                  randconfig-011-20240815   gcc-12
-i386                  randconfig-012-20240814   gcc-12
-i386                  randconfig-012-20240815   gcc-12
-i386                  randconfig-013-20240814   clang-18
-i386                  randconfig-013-20240815   gcc-12
-i386                  randconfig-014-20240814   gcc-11
-i386                  randconfig-014-20240815   gcc-12
-i386                  randconfig-015-20240814   gcc-12
-i386                  randconfig-015-20240815   gcc-12
-i386                  randconfig-016-20240814   gcc-12
-i386                  randconfig-016-20240815   gcc-12
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch                           defconfig   gcc-13.2.0
-loongarch             randconfig-001-20240815   gcc-13.2.0
-loongarch             randconfig-002-20240815   gcc-13.2.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                                defconfig   gcc-13.2.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-14.1.0
-mips                  cavium_octeon_defconfig   gcc-14.1.0
-mips                           ci20_defconfig   gcc-14.1.0
-nios2                             allnoconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-14.1.0
-nios2                               defconfig   gcc-13.2.0
-nios2                 randconfig-001-20240815   gcc-13.2.0
-nios2                 randconfig-002-20240815   gcc-13.2.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc                randconfig-001-20240815   gcc-13.2.0
-parisc                randconfig-002-20240815   gcc-13.2.0
-parisc64                            defconfig   gcc-13.2.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   clang-20
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                        cell_defconfig   gcc-14.1.0
-powerpc               randconfig-001-20240815   gcc-13.2.0
-powerpc               randconfig-002-20240815   gcc-13.2.0
-powerpc                     sequoia_defconfig   gcc-14.1.0
-powerpc                     tqm8548_defconfig   gcc-14.1.0
-powerpc64             randconfig-001-20240815   gcc-13.2.0
-powerpc64             randconfig-002-20240815   gcc-13.2.0
-powerpc64             randconfig-003-20240815   gcc-13.2.0
-riscv                            allmodconfig   clang-20
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   clang-20
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-14.1.0
-riscv                 randconfig-001-20240815   gcc-13.2.0
-riscv                 randconfig-002-20240815   gcc-13.2.0
-s390                             allmodconfig   clang-20
-s390                              allnoconfig   clang-20
-s390                              allnoconfig   gcc-14.1.0
-s390                             allyesconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   gcc-14.1.0
-s390                  randconfig-001-20240815   gcc-13.2.0
-s390                  randconfig-002-20240815   gcc-13.2.0
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-13.2.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-14.1.0
-sh                 kfr2r09-romimage_defconfig   gcc-14.1.0
-sh                          kfr2r09_defconfig   gcc-14.1.0
-sh                    randconfig-001-20240815   gcc-13.2.0
-sh                    randconfig-002-20240815   gcc-13.2.0
-sh                      rts7751r2d1_defconfig   gcc-14.1.0
-sh                           se7750_defconfig   gcc-14.1.0
-sh                   sh7724_generic_defconfig   gcc-14.1.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc                       sparc64_defconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-14.1.0
-sparc64               randconfig-001-20240815   gcc-13.2.0
-sparc64               randconfig-002-20240815   gcc-13.2.0
-um                               allmodconfig   clang-20
-um                               allmodconfig   gcc-13.3.0
-um                                allnoconfig   clang-17
-um                                allnoconfig   gcc-14.1.0
-um                               allyesconfig   gcc-12
-um                               allyesconfig   gcc-13.3.0
-um                                  defconfig   gcc-14.1.0
-um                             i386_defconfig   gcc-14.1.0
-um                    randconfig-001-20240815   gcc-13.2.0
-um                    randconfig-002-20240815   gcc-13.2.0
-um                           x86_64_defconfig   gcc-14.1.0
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240815   gcc-12
-x86_64       buildonly-randconfig-002-20240815   gcc-11
-x86_64       buildonly-randconfig-002-20240815   gcc-12
-x86_64       buildonly-randconfig-003-20240815   clang-18
-x86_64       buildonly-randconfig-003-20240815   gcc-12
-x86_64       buildonly-randconfig-004-20240815   gcc-12
-x86_64       buildonly-randconfig-005-20240815   gcc-12
-x86_64       buildonly-randconfig-006-20240815   gcc-12
-x86_64                              defconfig   clang-18
-x86_64                              defconfig   gcc-11
-x86_64                randconfig-001-20240815   clang-18
-x86_64                randconfig-001-20240815   gcc-12
-x86_64                randconfig-002-20240815   gcc-12
-x86_64                randconfig-003-20240815   clang-18
-x86_64                randconfig-003-20240815   gcc-12
-x86_64                randconfig-004-20240815   gcc-12
-x86_64                randconfig-005-20240815   clang-18
-x86_64                randconfig-005-20240815   gcc-12
-x86_64                randconfig-006-20240815   gcc-12
-x86_64                randconfig-011-20240815   clang-18
-x86_64                randconfig-011-20240815   gcc-12
-x86_64                randconfig-012-20240815   gcc-12
-x86_64                randconfig-013-20240815   gcc-12
-x86_64                randconfig-014-20240815   gcc-12
-x86_64                randconfig-015-20240815   gcc-12
-x86_64                randconfig-016-20240815   clang-18
-x86_64                randconfig-016-20240815   gcc-12
-x86_64                randconfig-071-20240815   clang-18
-x86_64                randconfig-071-20240815   gcc-12
-x86_64                randconfig-072-20240815   gcc-12
-x86_64                randconfig-073-20240815   clang-18
-x86_64                randconfig-073-20240815   gcc-12
-x86_64                randconfig-074-20240815   gcc-12
-x86_64                randconfig-075-20240815   clang-18
-x86_64                randconfig-075-20240815   gcc-12
-x86_64                randconfig-076-20240815   gcc-12
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
-xtensa                            allnoconfig   gcc-14.1.0
-xtensa                randconfig-001-20240815   gcc-13.2.0
-xtensa                randconfig-002-20240815   gcc-13.2.0
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
