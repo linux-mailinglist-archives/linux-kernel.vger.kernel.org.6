@@ -1,110 +1,115 @@
-Return-Path: <linux-kernel+bounces-287542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 891989528F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 07:28:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4766F9528F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 07:29:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A95EB23644
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 05:28:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1EE51F24C3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 05:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C31B1547DD;
-	Thu, 15 Aug 2024 05:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5174A155753;
+	Thu, 15 Aug 2024 05:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hHw50lU0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OaEJrADA"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D011547C0;
-	Thu, 15 Aug 2024 05:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E9F1553BD;
+	Thu, 15 Aug 2024 05:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723699686; cv=none; b=oG9T5n1BGo1fiOkeAwadrTcjaLTninywY07pb6LwjtFPuOb0Ev3AWzw8DogNNXloVnVzJ2PDTDPSvLOYxu+RHt/vw96gkiZBNO4M1BTzCs+unJIhJnKD7B0NnBO5DIbUhnuUU2I9pZduvpf9wo+hApI60rl6+SnlZlx9hM6zj2M=
+	t=1723699759; cv=none; b=lGqPMyLHpaAk6HG1Cwo7d+rZ84OyqpYchQbD/3BYvSvq7kNfkWKRwadk3GaDf/GZ1zNNLbaT3GEPiW4d7/dqJGiLGkbIr5TPN/m1d/C/Ie8XlJflfhwyjnKig6/9eeX43csFNxE/itH8+J8go3ZbHywmS1H5YBOKE5Eg8ny+DVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723699686; c=relaxed/simple;
-	bh=eSAiG30U4Qk4f+W5EYF3TdYcm6s5V1OE+Tr7YHKbOXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XV4YJhdq1Dqkkch2vbN0JNqbrEDVnpuU8emomSbuRManTMRgf8sjNm31TBr7nbp/W8nAoAeekHlrUTnvlMnhaPZEsswsN8X+wlPm0D+NCZdRRWw98NlXkBn6N2S6GzSKx5Rs95JQnfcHg9SEKSy+h617FKxgo+H/QiUYqzqCJYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hHw50lU0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4662BC4AF0A;
-	Thu, 15 Aug 2024 05:28:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723699685;
-	bh=eSAiG30U4Qk4f+W5EYF3TdYcm6s5V1OE+Tr7YHKbOXw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hHw50lU0zcvoqZryILu6hk6kw/qqvBsksy7t17Z3t5vNSSZFNg3rhC60tZdyDA5uo
-	 7hu123/rmhafQd0QTImyUwCAlCPZwZNcFK51NkilkilfBS4+RDpYaqre/dvQSJHFIv
-	 Cv1qTbJXdv5MOto6QzABXxwsmB26eMuiHLGea0n8=
-Date: Thu, 15 Aug 2024 07:28:02 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Alexander Aring <aahringo@redhat.com>
-Cc: teigland@redhat.com, gfs2@lists.linux.dev, song@kernel.org,
-	yukuai3@huawei.com, agruenba@redhat.com, mark@fasheh.com,
-	jlbec@evilplan.org, joseph.qi@linux.alibaba.com, rafael@kernel.org,
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	linux-raid@vger.kernel.org, ocfs2-devel@lists.linux.dev,
-	lucien.xin@gmail.com
-Subject: Re: [RFC dlm/next 09/12] kobject: export generic helper ops
-Message-ID: <2024081519-caddy-monstrous-b37d@gregkh>
-References: <20240814143414.1877505-1-aahringo@redhat.com>
- <20240814143414.1877505-10-aahringo@redhat.com>
- <2024081445-coffee-antiques-e9cc@gregkh>
- <CAK-6q+hN8ZRAHc7aS7C_RO4pEGN1t3eA_vDChsSgsQOcJEU4vg@mail.gmail.com>
+	s=arc-20240116; t=1723699759; c=relaxed/simple;
+	bh=2a9AgodhrhH3CTPo5Xri+BdzgtYXv5AFaphVQ/5mojw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ASwqkPwlgb+EeB/ctYjTaq4IWRjO2R2jNYJMBqLyLC+yuIWzsScYfLIfxY6ze0HdwO3uC5LKteEMs2AiZ0FqCnpKE+uTB828rJOWX32H64vfAA2gRAUlSJRNSnd3+mjlRUI5D21GYFa7zZGZXTAPqsuB00u7SbNFzQbdmto+uAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OaEJrADA; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f3b8eb3df5so2407181fa.1;
+        Wed, 14 Aug 2024 22:29:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723699756; x=1724304556; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rZS64AVtiuq4By/oS75dC4kq1+h/gjy5AfNcubB/vso=;
+        b=OaEJrADA7/Vx2gncSWZPSgLgO27Q38i2zjZMARiwFFpAkFgH+SzzM1CPJw4kZ6NRp3
+         2JoeJzxgllADbuR0MjgLC/y8fKt53YGceFU98WfJcbYcbWiv8vDpyvEkvC6CfkEYxwcq
+         tvu2I+r8P/AlURxoeTBA5H7grruYPp9cYVNsUAeXT4EGyeiownvB7dhbxO+FK7i/xImQ
+         gWnIE64EYhx/I0naUG05LW3KsTVBlwPkcl+BpP55Z2uO0ex2SLVuiYmpG8qB2nsfmfDe
+         M/kPElH7etUwKic5vNAQwFgMcBdKIhypbwzbaaY6Sv2jXnEDNE90gtXHDln9iSMR89/Z
+         zdng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723699756; x=1724304556;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rZS64AVtiuq4By/oS75dC4kq1+h/gjy5AfNcubB/vso=;
+        b=O2+DDNxzFaCpHhXZJf4I5Z3FHllZkv/TrQ5j+WN/fZn3saTx9k7C/ySy2tHlvGF76v
+         zYdnkl/10CWSkqBvH3dwOe1raP8wh9aXqYkYR9pT8tSf1PlZslk45qToSze+O3IgLI3S
+         JBO6uykByiSCWreASkOCaZGw/s3kIYDpjI/yVt07zjp++7lV63MkfVu+PFD4efZlzeEG
+         owP20L6Cj5yrQTPCasN9NCyiZFz5+WYbGkia99aOTNacSgnWuK5gqF3cP3NY2furyOD/
+         tTViFPfkA/3iKVXSs7f7ShHYSjThjWtEGcJ33b42OleokktbUdZg4D6AILBCbd6rsKdA
+         gWjw==
+X-Forwarded-Encrypted: i=1; AJvYcCWpL7avb062dGUBshborqqQmJ8oBMKzvOAEJNCFEo/GylTnQFc67kyGqc0wBD9pDsu2T/3eCj9EGFpmHOidO2KvtlT0VrCVHiSDD0FN9TumjEap3hiX98iijhDEOrw5LJ1sY25RntQKGcoKHKuYtpuM9zresVU8puxp25paSTfI+MTnH56zW4EXiAk=
+X-Gm-Message-State: AOJu0Yyq5rPUaCdId5PseTdJW0/3YL9ApiWiQEUYwZX0Byaxrhj6LbnV
+	BIybTNwKA8kSXQJDzgtyec5UuWEFNZMPuEKQzM7gIpLe3vBiaGM6
+X-Google-Smtp-Source: AGHT+IGycwR4CF+14CvU4aVgAtzgZxOGWE6QAjBwpP5moXbwFV6NbNV7ekPWJ2Phb4XyRpTlTbWbrg==
+X-Received: by 2002:a05:651c:8d:b0:2f2:9f39:3e58 with SMTP id 38308e7fff4ca-2f3aa301372mr28041681fa.48.1723699755321;
+        Wed, 14 Aug 2024 22:29:15 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f3b746cf56sm863451fa.18.2024.08.14.22.29.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 22:29:14 -0700 (PDT)
+Message-ID: <f591cbac-8bbf-4112-b619-c6eb2e5de05e@gmail.com>
+Date: Thu, 15 Aug 2024 08:29:13 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK-6q+hN8ZRAHc7aS7C_RO4pEGN1t3eA_vDChsSgsQOcJEU4vg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/7] regulator: bd96801: Use scoped device node handling
+ to simplify error paths
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+ Cristian Marussi <cristian.marussi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, arm-scmi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240814-cleanup-h-of-node-put-regulator-v1-0-87151088b883@linaro.org>
+ <20240814-cleanup-h-of-node-put-regulator-v1-2-87151088b883@linaro.org>
+Content-Language: en-US, en-GB
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20240814-cleanup-h-of-node-put-regulator-v1-2-87151088b883@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 14, 2024 at 04:47:28PM -0400, Alexander Aring wrote:
-> Hi,
+On 8/14/24 18:04, Krzysztof Kozlowski wrote:
+> Obtain the device node reference with scoped/cleanup.h and use scoped
+> for_each_child_of_node_scoped() to reduce error handling and make the
+> code a bit simpler.  Add also brackets {} over outer for loop for code
+> readability.
 > 
-> On Wed, Aug 14, 2024 at 11:06 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Wed, Aug 14, 2024 at 10:34:11AM -0400, Alexander Aring wrote:
-> > > This patch exports generic helpers like kset_release() and
-> > > kset_get_ownership() so users can use them in their own struct kobj_type
-> > > implementation instead of implementing their own functions that do the
-> > > same.
-> >
-> > Why is anyone needing these?  What raw kobjects require this type of
-> > stuff?
-> >
-> 
-> In this patch series I introduced kset_type_create_and_add() to have
-> the possibility to do the exact same what kset_create_and_add() is
-> doing, just setting a different "struct kobj_type", for the kset that
-> is created internally by kset_create_and_add(). I can't use
-> kset_create_and_add() as it always uses "kset_ktype", see [0].
-> 
-> I am doing that to have only a callback for ".child_ns_type" assigned
-> as it returns the "&net_ns_type_operations;" structure to tell
-> underneath everything is separated by net namespaces.
-> I don't want to change anything else so the "struct kobj_type" should
-> look like what kset_create_and_add() is doing. Therefore I am creating
-> the same structure as kset_create_and_add() is using, see [0]. The
-> "kobj_sysfs_ops" structure seems to be already accessible from
-> outside, just the two functions I am exporting in this patch are
-> missing. Or I implement it in the same way in the dlm/gfs2 codebase
-> (that is what nfs is currently doing, see [1]).
-> 
-> And then we are at the two users of those kobjects that are using
-> those functions, it's DLM and GFS2 as they used kset_create_and_add()
-> before and I just want to add the ".child_ns_type" callback. Other
-> users could be nfs [1] (for the release, get_ownership - I have no
-> idea).
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Ah, makes much more sense, thanks.  And ick, network namespaces...
+Acked-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-Anyway, feel free to take this through whatever tree the rest of the
-series needs to go through:
+Yours,
+	-- Matti
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+-- 
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
+
 
