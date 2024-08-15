@@ -1,107 +1,176 @@
-Return-Path: <linux-kernel+bounces-287649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 649B2952AC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:43:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 020A3952AD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D699C1F22504
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:43:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46C572831D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A325B1AD3E0;
-	Thu, 15 Aug 2024 08:13:27 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31D71AED33;
+	Thu, 15 Aug 2024 08:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cs3h0oQs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C586D17625E
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52244176AA9
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723709607; cv=none; b=VcJ1f6eU1aW/TULalaMinliz3Rv3bLxfkRGk0mtghG+LbR14WjWmiv9BabBDya1vg9rs1wS1Oi+JNCnW5qXE6QK+Gu7ftAKfJ5IX/OmfujT0QXfDYZ344WP65gi8cSgnxGQarxLWNMYfB1AZvAIG0fr2p3nwzIyatZnv1Ktk1ns=
+	t=1723709762; cv=none; b=C02mN1tn4JIaov1DnbZhWWOjRCfnO/KqL7oQqbVFSHFRJB6Jj8ja+aczmCojJIed2tEXYMnY1oEVyjN3F4bzU7yo2v+rHCvxaLQzprmtk3FsoTrDebsaGvzeUTTWZWIOBGVDQVJ3ua4Nc5T7yBkaEFFjRQ90ZkFCpfMyDLLlKb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723709607; c=relaxed/simple;
-	bh=ewhADhyT3fNtYCGKnT23K6eaLlgAh60N6lXGYwPq9eY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=gCBpRl5Z9DZOatfgZ1W7t1S03UsyQ2KXmUeTEzRj2WyYHe/qRRcueuRx6ygzhVbROMo+FOal8sUZdf/RLTR0XS3Jj/U4vdI1mECMqSkX8+rVRCCGjac8WPl85/UvL0rEq9B3e48zsyjHcLcSVJ6AI/n0nxn28mSxvsIKaUtui7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39b3dc8cdcbso8467605ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 01:13:24 -0700 (PDT)
+	s=arc-20240116; t=1723709762; c=relaxed/simple;
+	bh=It2n54/Wszz22dJy2yFkRqq3oHwCh6v6hF6ITpdTWaA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FnIZDxdQJFRCnC3EgmUExCzpmpe7Dl1umJFfMrwPuxNBGq5XChKUY+M7rRpOVnkv4RqAJqHkc5ESIka6IJSj4Eu2jpfon/RHVaIKsEsgO28LxTRRmRykVlWFinqLkXR5f8T4uOzARnxbuy6bgHtVAmSEmcLUcg6NFRmRQIC2QOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cs3h0oQs; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723709759;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6siwQRc65l8C/JRIpOzVH+/lh/N1bi7Q5Wrmcr0+NwY=;
+	b=cs3h0oQsedm7XwDrJn2RVNfRlxsq/hCcFZEa1W5CA322gr8C3ljXzl+Dk+VypeWqitYHmX
+	FVrZ2SUMSo0ZvpU4HUU9C4SdNaAzFaFrBFftCPVwDdTsALw89kaCkxokJugxwbtuStw0/J
+	rLU0UfBpOyWY+OI72YYg04oqsH4GtDc=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-187-0IeDo_v0OaCbyYSIf3bvDA-1; Thu, 15 Aug 2024 04:15:57 -0400
+X-MC-Unique: 0IeDo_v0OaCbyYSIf3bvDA-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-429c224d9edso3975575e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 01:15:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723709604; x=1724314404;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0L5d3bNE0mTcAv3mnFj57C89MwNgyNNLWWoM18JidsQ=;
-        b=i+9b8BzrEOcOfdGOVUBCfZ1L9BjiqEatarwzvYIOlwlfBOuvRTyoaLgD75bxWgi97o
-         HoqNw+s1n4LW/R06/0wUH1+cQTzJXiMbxhaGkW9AA9GNvI4mKeJJAMoNvlI/XW+zfKN8
-         eoPnjTJ+xtYdEIeMg05jNPJo1CuCFLkDJZM77mS56rEhghNru1MJVBgbQSvkvJvVEapn
-         HAfL22RrNFybK6KzDqVanJ8LtTyjfdGQ7q5Ec3Slh/ox9ko5/FJXHULajMhQ1cJZg+BB
-         kB3PCPkazkm4ATF/09FVpJJ0S2HtuiWF2AS0txgqf/rmqGOmbAVUvsP0VZ9R1uStUQVR
-         C/lA==
-X-Gm-Message-State: AOJu0YyX7LSca/4PJUlb3TwTY7KWdM6vdd1gdDkZ6eE2NO8WzinPvOXq
-	RWT7JCu5reCXVf7Ks25GN/o7PDNrIlPTaC5PJ1pJzHJgbv9Ij8rO2NyOHOkS0G4KffMbZCjIB2M
-	Su63rJJMKdNdgLIEzYlePmt6qrQbh2IZf1WxDfOktHIo/K8Cok8zj2C4=
-X-Google-Smtp-Source: AGHT+IElPG02X7Bm5pfKej7O+cBCiuyluGjZl8n6pQNhc8jWgU+bfnNCxZNUokolvYfvv5WETcoLPjYAJHrtrnZNpaXpNvM4hbyg
+        d=1e100.net; s=20230601; t=1723709756; x=1724314556;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6siwQRc65l8C/JRIpOzVH+/lh/N1bi7Q5Wrmcr0+NwY=;
+        b=et907qkBqiBdbcNytVLRKmF5aj9CsJ6mdt/OTSkDn3LXVQeuM2hP/DU8RbSK+Cn+T7
+         Yh9IC2IzXkiiEP2JCu2+ku0cUfbfS3pMnzOG1YzWba+yyE2vzad+yk5MeXj4TIDLJIaP
+         ilOlJpwwDmoAvT3+DzaHtjKITdXEp9q4+WevtBUkK+VtOzRTmCkVWiHKygkK7/h0W8DV
+         OUHA0A8S8Op5gpiF6mK6kALeSOPlDLpdNZOGDb6Sxp5ivI8yW1zeRyJBplW2g+QYn36K
+         2YB9/7p/MZUPCmxvhwFMJE5u5rX751AdXeCbSZ6u+F0Ky7VFQRZqG1Qn9Hvy9H8qYBJx
+         IVaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBIedwk+VGHd19CXnsRd+5XgslDg2pQTs4VXHpPzRcX7mBbs57dDmqvtR8lYoBCgz3wD43IFowS/mXsC6HiBJzRuYwvfmEUmi7kaau
+X-Gm-Message-State: AOJu0YxPlUJKItezEZu7ShzedECLgrvFD3DEYjpbJU4kBzcUYoqXgDFD
+	TMq3F+oP8qtcnC5jBsl8UkbUcyn63ddVrDpQ3ZYmgoCYwctOPa/knWjPLMC90g0/sxXDxUb+0Er
+	founlagunuFXHx5KBBxPdJe3ye8HEB15A4O7GKVb5C6dR+ioTbZQoouHctlMe+9xxzjrumqYzBN
+	/czVYA+aEhrGmS3UJhrp+F2iyPaPvX0DMYQFVNQ2VmEiNarg==
+X-Received: by 2002:a05:600c:190e:b0:427:ff7a:79e with SMTP id 5b1f17b1804b1-429dd2393f0mr36255105e9.16.1723709755774;
+        Thu, 15 Aug 2024 01:15:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEoCzTh17WSwxryGBjxZNK9ZCVO20bZbVHu6qlfgD4Z3joMLanQfxCiyYHbDAD7X7wJK27mdQ==
+X-Received: by 2002:a05:600c:190e:b0:427:ff7a:79e with SMTP id 5b1f17b1804b1-429dd2393f0mr36254675e9.16.1723709755074;
+        Thu, 15 Aug 2024 01:15:55 -0700 (PDT)
+Received: from fedora (g2.ign.cz. [91.219.240.8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429e7e1ca28sm11970905e9.44.2024.08.15.01.15.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 01:15:54 -0700 (PDT)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Mirsad Todorovac <mtodorovac69@gmail.com>, kvm@vger.kernel.org, Paolo
+ Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [BUG] arch/x86/kvm/vmx/vmx_onhyperv.h:109:36: error:
+ dereference of NULL =?utf-8?B?4oCYMOKAmQ==?=
+In-Reply-To: <Zr0rEy0bO1ju_f1C@google.com>
+References: <b44227c5-5af6-4243-8ed9-2b8cdc0e5325@gmail.com>
+ <Zpq2Lqd5nFnA0VO-@google.com>
+ <207a5c75-b6ad-4bfb-b436-07d4a3353003@gmail.com>
+ <87a5i05nqj.fsf@redhat.com>
+ <b20eded4-0663-49fb-ba88-5ff002a38a7f@gmail.com>
+ <87plqbfq7o.fsf@redhat.com> <ZrzIVnkLqcbUKVDZ@google.com>
+ <87mslff728.fsf@redhat.com> <Zr0rEy0bO1ju_f1C@google.com>
+Date: Thu, 15 Aug 2024 10:15:53 +0200
+Message-ID: <87h6bmfbgm.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20c3:b0:397:3a28:94f1 with SMTP id
- e9e14a558f8ab-39d124cd834mr4180145ab.3.1723709604147; Thu, 15 Aug 2024
- 01:13:24 -0700 (PDT)
-Date: Thu, 15 Aug 2024 01:13:24 -0700
-In-Reply-To: <0000000000007ec511061f00a7b2@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a6c344061fb46a09@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
-From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+Sean Christopherson <seanjc@google.com> writes:
 
-***
+> On Wed, Aug 14, 2024, Vitaly Kuznetsov wrote:
+>> Sean Christopherson <seanjc@google.com> writes:
+>> 
+>> > On Wed, Aug 14, 2024, Vitaly Kuznetsov wrote:
+>> >> What I meant is something along these lines (untested):
+>> >> 
+>> >> diff --git a/arch/x86/kvm/vmx/vmx_onhyperv.h b/arch/x86/kvm/vmx/vmx_onhyperv.h
+>> >> index eb48153bfd73..e2d8c67d0cad 100644
+>> >> --- a/arch/x86/kvm/vmx/vmx_onhyperv.h
+>> >> +++ b/arch/x86/kvm/vmx/vmx_onhyperv.h
+>> >> @@ -104,6 +104,14 @@ static inline void evmcs_load(u64 phys_addr)
+>> >>         struct hv_vp_assist_page *vp_ap =
+>> >>                 hv_get_vp_assist_page(smp_processor_id());
+>> >>  
+>> >> +       /*
+>> >> +        * When enabling eVMCS, KVM verifies that every CPU has a valid hv_vp_assist_page()
+>> >> +        * and aborts enabling the feature otherwise. CPU onlining path is also checked in
+>> >> +        * vmx_hardware_enable(). With this, it is impossible to reach here with vp_ap == NULL
+>> >> +        * but compilers may still complain.
+>> >> +        */
+>> >> +       BUG_ON(!vp_ap);
+>> >
+>> > A full BUG_ON() is overkill, and easily avoided.  If we want to add a sanity
+>> > check here and do more than just WARN, then it's easy enough to plumb in @vcpu
+>> > and make this a KVM_BUG_ON() so that the VM dies, i.e. so that KVM doesn't risk
+>> > corrupting the guest somehow.
+>> >
+>> 
+>> I'm still acting under the impression this is an absolutely impossible
+>> situation :-)
+>> 
+>> AFAICS, we only call evmcs_load() from vmcs_load() but this one doesn't
+>> have @vcpu/@kvm either and I wasn't sure it's worth the effort to do the
+>> plumbing (or am I missing an easy way to go back from @vmcs to
+>> @vcpu?). On the other hand, vmcs_load() should not be called that ofter
+>> so if we prefer to have @vcpu there for some other reason -- why not.
+>
+> kvm_get_running_vcpu(), though I honestly purposely didn't suggest it earlier
+> because I am not a fan of using kvm_get_running_vcpu() unless it's absolutely
+> necessary.  But for this situation, I'd be fine with using it.
 
-Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
-Author: lizhi.xu@windriver.com
+Ah, nice, so we don't even need the plumbing then I guess? Compile-tested only:
 
-clean dirty for the release inode, stop to worker wb it again.
-
-#syz test: upstream c0ecd6388360
-
-diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
-index ec6cf8707fb0..02b06e4e3596 100644
---- a/fs/netfs/write_issue.c
-+++ b/fs/netfs/write_issue.c
-@@ -530,7 +530,9 @@ int netfs_writepages(struct address_space *mapping,
- 		if (netfs_folio_group(folio) != NETFS_FOLIO_COPY_TO_CACHE &&
- 		    unlikely(!test_bit(NETFS_RREQ_UPLOAD_TO_SERVER, &wreq->flags))) {
- 			set_bit(NETFS_RREQ_UPLOAD_TO_SERVER, &wreq->flags);
--			wreq->netfs_ops->begin_writeback(wreq);
-+			printk("ino: %lx, sync: %d, wsize: %u, %s\n", wreq->inode->i_ino, wreq->inode->i_state & I_SYNC, wreq->wsize, __func__);
-+			if (wreq->inode->i_state & ~I_SYNC)
-+				wreq->netfs_ops->begin_writeback(wreq);
- 		}
+diff --git a/arch/x86/kvm/vmx/vmx_onhyperv.h b/arch/x86/kvm/vmx/vmx_onhyperv.h
+index eb48153bfd73..318f5f95f211 100644
+--- a/arch/x86/kvm/vmx/vmx_onhyperv.h
++++ b/arch/x86/kvm/vmx/vmx_onhyperv.h
+@@ -104,6 +104,19 @@ static inline void evmcs_load(u64 phys_addr)
+        struct hv_vp_assist_page *vp_ap =
+                hv_get_vp_assist_page(smp_processor_id());
  
- 		error = netfs_write_folio(wreq, wbc, folio);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 876cc64aadd7..9176270fe35a 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -438,6 +438,8 @@ static inline int __filemap_fdatawrite(struct address_space *mapping,
- 
- int filemap_fdatawrite(struct address_space *mapping)
- {
-+	struct inode *inode = mapping->host;
-+	printk("ino: %lx, sync: %d, %s \n", inode->i_ino, inode->i_state & I_SYNC, __func__);
- 	return __filemap_fdatawrite(mapping, WB_SYNC_ALL);
- }
- EXPORT_SYMBOL(filemap_fdatawrite);
++       /*
++        * When enabling eVMCS, KVM verifies that every CPU has a valid hv_vp_assist_page()
++        * and aborts enabling the feature otherwise. CPU onlining path is also checked in
++        * vmx_hardware_enable(). With this, it is impossible to reach here with vp_ap == NULL
++        * but compilers may still complain.
++        */
++       if (!vp_ap) {
++               struct kvm_vcpu *vcpu = kvm_get_running_vcpu();
++
++               KVM_BUG_ON(1, vcpu->kvm);
++               return;
++       }
++
+        if (current_evmcs->hv_enlightenments_control.nested_flush_hypercall)
+                vp_ap->nested_control.features.directhypercall = 1;
+        vp_ap->current_nested_vmcs = phys_addr;
+
+(I hope we can't reach here with kvm_running_vcpu unset, can we?)
+
+-- 
+Vitaly
+
 
