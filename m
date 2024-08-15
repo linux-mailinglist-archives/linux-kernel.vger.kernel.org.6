@@ -1,243 +1,208 @@
-Return-Path: <linux-kernel+bounces-288193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A504095371E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:26:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE3BD953725
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13C8EB25317
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:26:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B0F31F21914
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:26:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DCDF1AD400;
-	Thu, 15 Aug 2024 15:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432941AED25;
+	Thu, 15 Aug 2024 15:26:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VrqWkRE6"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="ALyQxPng"
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2081.outbound.protection.outlook.com [40.107.105.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62E7176AA3;
-	Thu, 15 Aug 2024 15:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723735561; cv=none; b=uTLpm1+e0rxdvuRDOUpA8Panndvwj+wJjUIkBcl9zF9cAJ9x2MHMFDL5cJ4HBe4WuKjlWJDESsaI/+SYI5EPSZggBy5YGBtPLK//pHA+T93KWXY7g58aHYa9Uf3g5s/af1SnKzWAWcZkVdN2vqjtk5rtA7/KsuYXwFPPPLws9xQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723735561; c=relaxed/simple;
-	bh=cYz+TDDhsykODWMTDqbceoQB+zKzHA+X3bE50CBx4m4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oTdImkX1tQWxf3TJd5CPAt5olcCzCrtNv4GeMK7IQkJ/4b/aDSbIANqqutIer1RubSKItFrVh2WbKLTopNN6dUNUQ5WMSy4DAjv/NFhTpvdXwhUFVvkLKk56ojdU9j8M4NVaVFBbwQ3Cd+OdW5ud/BM70Kt4nj9Df+Mh5lO7uVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VrqWkRE6; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42803bbf842so9845315e9.1;
-        Thu, 15 Aug 2024 08:25:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723735558; x=1724340358; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zGytb5LTYI4euY6Qlrzf7/tyRyLi82Zco7uVwIScyTY=;
-        b=VrqWkRE6Sy3uABI2P3Oq1xg/DcLlWrQ/8D/I/Ygxyy0vZ95cbd196lvmXY4ObTphTx
-         H97SDiTev5QmVmaqamNpTnUDMxqEo6VbDZthI0Erd7G5Hshzu0P/9o6C/nHrIsqIw6jo
-         h13LVwCcW+cSVDqOm5HgliI5ETEGAXvOJl4dIU85O35PVEHPGYw4BKUBddAbmQb2ymWF
-         V03vHEltYctPaX6iEaJ5F5kfgxILMmulkPGkcDDGwIeyDL0oZwoXmQFea/x9AejVR2c3
-         aljNO3OPD63eW9Qb3JnajUBAk1+QT1GFLnysnYZPaFl8m34pMFt8A6WN7UZeThW1krhj
-         KRrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723735558; x=1724340358;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zGytb5LTYI4euY6Qlrzf7/tyRyLi82Zco7uVwIScyTY=;
-        b=YJ62NtxSORUibVgOa8dSkmsGCxodc3peYeGLb4Gw9q0ZEykZbYEj9Q+4um8nishPao
-         DO/7jLTlnJ4FhXHKIsH9+XVjigPceDyyrKy89bXi0WaqZXOo28fc8VYz///6s4Fj3OMS
-         2s/p/eHvU6YyLwPzkR3P8FbtiT486n+oiHxT2x4LhuGmfVAXnol0N0JqhMUEpLWZY3CU
-         lPSOH1FXmBsu4Mo/WaUwAgd9i6CKC/0p12GrgOl/eJWrl8e1aZiVm35ez2d7JH8HH8Eg
-         BghKOBBcXgprw5fYw891j+ISAWQKjL38LwrYklAx9R9hKlElJD+WUFJxGFq/K/wHlbnT
-         Q4BA==
-X-Forwarded-Encrypted: i=1; AJvYcCXnJ40ofm9brdLbhcNhgtMCJ+Il46SPWfQprhdVo4BnWbpJ5EUY2jBPSp9UVGHPkwW1q/gSEvmxckd2z+bMYTyWsnDgH4oTEArkM8cDkNfpEXb0zTRjQgZmhMkTwjIy2kxDqgFs
-X-Gm-Message-State: AOJu0YzznaFFwQf1AHfXGM5cAwR20o8Vvwirzxspw5C5joMiWY+2qAjj
-	tgh8iH+KCr1T7HFwsIvHRVfrKEscagI1GhSBn9cTRr6fdI6nWeSiEBhe/K7dMo19BhweVIFbpDD
-	HVAIN38OJ7s9OfrHp6osXl4PqRqOZ2oS7
-X-Google-Smtp-Source: AGHT+IF+q+3Fjs27gzFiH+tEX4ugMizHrZJESz/KVjstuzcfFCh03nxywzC6Lzyp8oSUUoYp5HmYF3tulbgjvTqq2Y4=
-X-Received: by 2002:a05:600c:511e:b0:426:59d3:8cae with SMTP id
- 5b1f17b1804b1-429dd236521mr63021845e9.13.1723735557660; Thu, 15 Aug 2024
- 08:25:57 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4739176AA3;
+	Thu, 15 Aug 2024 15:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723735586; cv=fail; b=TVaW9KinsuOdGVbSBPENRghxZO7Qa91kGrUKPYk6n6wrrcqK8xuXL8sxRZ7Wth7evBbd9NR1FZtVdIor/hQvWpvkL2HUU5f3r20LVOiRZ6IaKNOK7XL6vcW5sEPfNK8Hjr+WSKOt49hdeUC7PMN2aKAR99akq9/WI4yJkoYLIow=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723735586; c=relaxed/simple;
+	bh=t4ojcTLuWaJ7+UTHJROPz/3J0KRxrwl3+JFAQmEOvNI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ibZb0NE7KQ89OswrP0O5RRShORCQoc6ll9VRJolgzb1ocvx9yUMeol3MpM2oF21D9Wj/MaG5h7saIDmoDCF6M1DOsdLQKX0JiAEaxCOsf0v6oVMU6mvB3MNgx1QpFu4RqLxv9ekYXtcg+kNSH9B7RdzYVxWfUsTVoMknAXpk6xo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=ALyQxPng; arc=fail smtp.client-ip=40.107.105.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=F6+ma8GcEnxXRpTNr1PsLI8HkhZ04yIEy9KU2R2DGzRUf1VqLN0ot+3wpgLR3McNVi14XRlflw5qNFcvyMsHlggo7i2Z9IGcXE2eTaUdOuQQuTI8sgWgMzDPZ0YVPOQZB7/Qua10wwzbL4Iwcf7XdnFpeR+QDveoxlcRyTN1fAEnto7qky6rCYnjMWggjD/407U5sUzQRuiqQaraV1fM49GFNoSTjb3ZBXuo0d5+IFgD+35e01DYe9H1+Iv0uYgW0uRkV1QJE59IaiyOe3ektsoO3L87u85nn2MRDkFQpfm0hhRZJBcXsWtTUCW1dXoRf9bm84IbTAuvaTSdZRjb4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=15FDFEWIr6J0gKYLUnwoHpR3dNzuFV4LwBW528+Yy/Q=;
+ b=JbUzJBiH3a4miLNxXPTenwNvdwV+V977MF0WgaCUGF1kizryXH8rIa8cWrKvB3SWNQS78iEuWpiccGQJGOrdex6GtWAqYM7cY0DBxdJ0xh0NEGletg8Iwm4BU9oJxJlf9z+dHM51zojup4SvEL73GnK17vNbXqI4Fl/fCi+zYjW39cAMZexLJq8+rtbsyJKum6fjOED4rOwANY7Q8/NvLIMWVIgcDYwG8uqiYoSqeeaH9A4KyaSrzFTI0bYIRALhLwDc3rbyetlBThhq4DwCnbeSeJ9+q2vK3MyI55n0avRzY7nUQQY1SHUY0n903K2AuToe0mtIandUDI+LtT34vQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 139.15.153.205) smtp.rcpttodomain=kernel.org smtp.mailfrom=de.bosch.com;
+ dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=15FDFEWIr6J0gKYLUnwoHpR3dNzuFV4LwBW528+Yy/Q=;
+ b=ALyQxPngpxIxrLpkNxreM1XQAlqG/MmDxxK/KM7Ry0HN9T7E3cddftt6q859kzhZ8xxrXbv3n4Y3iZvs8JbwxhKQoY3fTijQCJ4iSKXE1DvSf3WAuxxcl3+PxEAMNtWdWV0b4IUaCSNdnoGND9EOSLfhEBnOGEhfWkReJXT8CG66+eW9wrcY19Hq6daZ/XYm6ZlHcqQO4AzcToTZf+H9YXbUc4SIS82VfN005OtYNw1E1OH8ZC7IYI7BCLQso9YrpbQY3MOUF68gQemwljoFEQ6jJOouEXCzKqNriYueCjT2katqTy4KW323wmJsnrRKI5CEdLspel/DD8pN6Grsaw==
+Received: from DU2PR04CA0027.eurprd04.prod.outlook.com (2603:10a6:10:3b::32)
+ by AS1PR10MB5627.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:47a::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.18; Thu, 15 Aug
+ 2024 15:26:19 +0000
+Received: from DB5PEPF00014B9C.eurprd02.prod.outlook.com
+ (2603:10a6:10:3b:cafe::74) by DU2PR04CA0027.outlook.office365.com
+ (2603:10a6:10:3b::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.23 via Frontend
+ Transport; Thu, 15 Aug 2024 15:26:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.205)
+ smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=de.bosch.com;
+Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
+ 139.15.153.205 as permitted sender) receiver=protection.outlook.com;
+ client-ip=139.15.153.205; helo=eop.bosch-org.com; pr=C
+Received: from eop.bosch-org.com (139.15.153.205) by
+ DB5PEPF00014B9C.mail.protection.outlook.com (10.167.8.170) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.8 via Frontend Transport; Thu, 15 Aug 2024 15:26:19 +0000
+Received: from SI-EXCAS2000.de.bosch.com (10.139.217.201) by eop.bosch-org.com
+ (139.15.153.205) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 15 Aug
+ 2024 17:26:05 +0200
+Received: from LR-C-0008DVM.rt.de.bosch.com (10.139.217.196) by
+ SI-EXCAS2000.de.bosch.com (10.139.217.201) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 15 Aug 2024 17:26:05 +0200
+From: <Jianping.Shen@de.bosch.com>
+To: <jic23@kernel.org>, <lars@metafoo.de>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <dima.fedrau@gmail.com>,
+	<marcelo.schmitt1@gmail.com>, <linux-iio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<Jianping.Shen@de.bosch.com>, <Christian.Lorenz3@de.bosch.com>,
+	<Ulrike.Frauendorf@de.bosch.com>, <Kai.Dolde@de.bosch.com>
+Subject: [PATCH v3 0/2] iio: imu: smi240: cover-letter
+Date: Thu, 15 Aug 2024 17:25:43 +0200
+Message-ID: <20240815152545.7705-1-Jianping.Shen@de.bosch.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808123714.462740-1-linyunsheng@huawei.com>
- <20240808123714.462740-12-linyunsheng@huawei.com> <d9814d6628599b7b28ed29c71d6fb6631123fdef.camel@gmail.com>
- <7f06fa30-fa7c-4cf2-bd8e-52ea1c78f8aa@huawei.com>
-In-Reply-To: <7f06fa30-fa7c-4cf2-bd8e-52ea1c78f8aa@huawei.com>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Thu, 15 Aug 2024 08:25:21 -0700
-Message-ID: <CAKgT0Uetu1HA4hCGvBLwRgsgX6Y95FDw0epVf5S+XSnezScQ_w@mail.gmail.com>
-Subject: Re: [PATCH net-next v13 11/14] mm: page_frag: introduce
- prepare/probe/commit API
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB5PEPF00014B9C:EE_|AS1PR10MB5627:EE_
+X-MS-Office365-Filtering-Correlation-Id: ca52d7f1-27aa-4c2d-7752-08dcbd3e9c9d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RU1wTnFIV05DVHdnOEo1RStDWGkxYzRGS2RtUHNBTTRKRTlLYzNsb2p1VmJl?=
+ =?utf-8?B?N2k5YzRCYXdjTm1KQmFPTUVtMjk4Q0NBQkpQQ202V3VWelV3eGdUa0E2T0h3?=
+ =?utf-8?B?c0R4VStTYWxVNFhzM0tRQVhpUVQxNEx4S0hodytGaDh4blYzc3F5c1p2TXlw?=
+ =?utf-8?B?dTBOMk5oTmR1Uk8xV2JDUk9YZGZDeUtBZk9pVENaQVFhMUxQV3NOTmZPcEVD?=
+ =?utf-8?B?YVllcEV2b01HcGNyZVhTWVZyQng3MjlFTldFZVJlSk5YeXVRa3Q3QUw4R2lY?=
+ =?utf-8?B?Nk9Ma29oS1h5Z0ZRbGI5ZDAyeXZXdWhNQ1I0djlFcEtucklzWFZUQmhDd3Bj?=
+ =?utf-8?B?SXhjUXk2OEtLOS9rM3RRVUo2SXZWQXJhZnRFUC9ENWhPUXFBSG9mNWU0d25P?=
+ =?utf-8?B?R0NtYURqd3dyYm9tR1pSbVdSWXVNZ3NxZE96M3Q3NG9FVEhPUTVCcER4TURF?=
+ =?utf-8?B?STBJdkh2SnFsQVVQR0VGVThvUFMrTXBlL3F0d201ZTNWbzJtYVA3UDBTaGw1?=
+ =?utf-8?B?K3dXYnBtWTllSmRRbTF6VjBqZGdoenF2eHZTUEhYUWdxL0JkOVEvS3hEWGFy?=
+ =?utf-8?B?MTR2VjlmMUlJc0xPRzRKRm1IZnFNTnZKNUtFazlGVXRyY0ZXTWtzek9qZ0JK?=
+ =?utf-8?B?cWx6NUZ4bjZXM3pwRXVuZWMxWkR3b2tiZjcydjh0OTJ3azNSMmRMN0FlYTAv?=
+ =?utf-8?B?d3dsT2hpQ0swNGdwY1pueE41c2EzRkNKekVyeXZBOE4rcitkbDdsNlVZYit5?=
+ =?utf-8?B?Wkh6OTgvbDRPZHd6bWFFZTJLVS84eWh3OVZ2cndVdkxRUkZubXpSMFpNaHpv?=
+ =?utf-8?B?cU1xWUtYeUgrcnAraHBLTjB1NXBWd3BtaUJZcU1KUjk2QWVJWXN1Y2xBbFI1?=
+ =?utf-8?B?QnlXeGV2azgyeDlUcUdEWEVab09Sd2RuYVprd3ZBWUtiTnFlVG1oc2VVUFlR?=
+ =?utf-8?B?RkFPVVNGTlNLUDFOZmhpMzhpMHkwUWZ5QzY5UjRIR0NldnZqN3plZC9WeSth?=
+ =?utf-8?B?VURqU2JrMUc5UVNuVCtNa2ZvQmUybGpBQzVkTExXNjBzS2Q5eTdIbFNOQWVJ?=
+ =?utf-8?B?TGIxNEJzTzQ1NGNnRHc0d2hURzZyb0k2UkpDMEltUGYycFU1anp4ZlZLSEdp?=
+ =?utf-8?B?K3grVGdnWEl6aWRCeG9rRzBTTGNaVmZsWllvY1lVMVc2VEdwb1RaSjBxUDdM?=
+ =?utf-8?B?QytVQjJhRDN1MVNhVEErT05rNUFqMGR5RnhrRU1YUURJS1N5WllVNmRlNjZL?=
+ =?utf-8?B?VU9hRWY4OHdySTAzYURRUk1kNlBXcUV1a2dxcWdVdjNpOFNscE5iMlQ0b0dQ?=
+ =?utf-8?B?dTVNMStGbDhRc01sWlFFLy9BbGxoZWtnMzVUaVpOaWdKOXROMnJQZGJBRTJq?=
+ =?utf-8?B?UTE3MmpNdkRYQnRUdHdaRnZoVllPSjBwOWRwS3hyeUhJb0tQREt0T1Z6Ri91?=
+ =?utf-8?B?TlZMOTVoUFZrNkVTT3JyV3l3MElpWmh2Q3lBcTZCQklHbEVvZUNET0ZGQ0R2?=
+ =?utf-8?B?dkZycUhjbXZVN0h3a2VCSzV3MWRPWVg1aytpcVdFRjI1VUNjb096TmFqYTVi?=
+ =?utf-8?B?N3cxemNWNnNjVmtTK0VhdGEySkpSODZlcDdJL1ZMZTNxSmZzTGNSTW41TENG?=
+ =?utf-8?B?QWVwbzQxZXlRdTJnbnpVdUMrVS9jbXpUUDY2OE5sTkFaZlc4NlVtek9vRTQ1?=
+ =?utf-8?B?RXF2TytYWUR4Vkg0TWhtMnlrc0l2L3UrNVhxSEwzRXFGVDZHNElUNFRoWHcv?=
+ =?utf-8?B?aExCWHJEbjFhK2Q3STBXQ0Z5Z1FUUHpyRVFGbVNNdHRta2daS2c1QTdaV2lB?=
+ =?utf-8?B?ajU5K1c1aURoS1A3Z0FJSmZiTWFEVW43MGRybVp4NEgvRmwrb0ZrcDU5SWZa?=
+ =?utf-8?B?eEZIWmtUdUtBY3VqUkpmLzgyWmxsZ0gyUXAvZjZHdXhFYXFJMUpxelk1OXVn?=
+ =?utf-8?B?MHJzZEpBajUraHNlU1V2bUhiTzlrb3poRW1OL3RGbmlBaVd0bGFCQVY2VUc0?=
+ =?utf-8?B?OFRVTG5BQm5nPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:139.15.153.205;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: de.bosch.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2024 15:26:19.1861
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ca52d7f1-27aa-4c2d-7752-08dcbd3e9c9d
+X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.205];Helo=[eop.bosch-org.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB5PEPF00014B9C.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR10MB5627
 
-On Wed, Aug 14, 2024 at 8:05=E2=80=AFPM Yunsheng Lin <linyunsheng@huawei.co=
-m> wrote:
->
-> On 2024/8/15 5:00, Alexander H Duyck wrote:
+From: Shen Jianping <Jianping.Shen@de.bosch.com>
 
-...
+This patchset adds the iio driver and the dt-binding for bosch imu smi240.
+The smi240 is a combined three axis angular rate and three axis acceleration
+sensor module with a measurement range of +/-300°/s and up to 16g.
+smi240 does not support interrupt.
 
-> >> +static inline void page_frag_alloc_abort(struct page_frag_cache *nc,
-> >> +                                     unsigned int fragsz)
-> >> +{
-> >> +    nc->pagecnt_bias++;
-> >> +    nc->remaining +=3D fragsz;
-> >> +}
-> >> +
-> >
-> > This doesn't add up. Why would you need abort if you have commit? Isn't
-> > this more of a revert? I wouldn't think that would be valid as it is
-> > possible you took some sort of action that might have resulted in this
-> > memory already being shared. We shouldn't allow rewinding the offset
-> > pointer without knowing that there are no other entities sharing the
-> > page.
->
-> This is used for __tun_build_skb() in drivers/net/tun.c as below, mainly
-> used to avoid performance penalty for XDP drop case:
+dt-bindings: 
+v1 -> v2
+    - Add more detail in description
+    - Add maintainer
+    - Add vdd and vddio power supply
+    - Use generic node name
+    - Order the properties according to DTS coding style
+ v2 -> v3   
+    - improve description
+    - improve supply definition
+    - make supply definition as required
+    - add supply definition in example
 
-Yeah, I reviewed that patch. As I said there, rewinding the offset
-should be avoided unless you can verify you are the only owner of the
-page as you have no guarantees that somebody else didn't take an
-access to the page/data to send it off somewhere else. Once you expose
-the page to any other entity it should be written off or committed in
-your case and you should move on to the next block.
+imu driver:
+v1 -> v2
+    - Use regmap for register access
+    - Redefine channel for each singel axis
+    - Provide triggered buffer
+    - Fix findings in Kconfig
+    - Remove unimportant functions
+v2 -> v3
+    - Use enum für capture mode
+    - Using spi default init value instead manual init 
+    - remove duplicated module declaration
+    - Fix code to avoid warning
 
+Shen Jianping (2):
+  dt-bindings: iio: imu: smi240: devicetree binding
+  iio: imu: smi240: imu driver
 
->
-> >> +static struct page *__page_frag_cache_reload(struct page_frag_cache *=
-nc,
-> >> +                                         gfp_t gfp_mask)
-> >>  {
-> >> +    struct page *page;
-> >> +
-> >>      if (likely(nc->encoded_va)) {
-> >> -            if (__page_frag_cache_reuse(nc->encoded_va, nc->pagecnt_b=
-ias))
-> >> +            page =3D __page_frag_cache_reuse(nc->encoded_va, nc->page=
-cnt_bias);
-> >> +            if (page)
-> >>                      goto out;
-> >>      }
-> >>
-> >> -    if (unlikely(!__page_frag_cache_refill(nc, gfp_mask)))
-> >> -            return false;
-> >> +    page =3D __page_frag_cache_refill(nc, gfp_mask);
-> >> +    if (unlikely(!page))
-> >> +            return NULL;
-> >>
-> >>  out:
-> >>      /* reset page count bias and remaining to start of new frag */
-> >>      nc->pagecnt_bias =3D PAGE_FRAG_CACHE_MAX_SIZE + 1;
-> >>      nc->remaining =3D page_frag_cache_page_size(nc->encoded_va);
-> >> -    return true;
-> >> +    return page;
-> >> +}
-> >> +
-> >
-> > None of the functions above need to be returning page.
->
-> Are you still suggesting to always use virt_to_page() even when it is
-> not really necessary? why not return the page here to avoid the
-> virt_to_page()?
+ .../bindings/iio/imu/bosch,smi240.yaml        |  52 +++
+ drivers/iio/imu/Kconfig                       |   1 +
+ drivers/iio/imu/Makefile                      |   1 +
+ drivers/iio/imu/smi240/Kconfig                |  12 +
+ drivers/iio/imu/smi240/Makefile               |   7 +
+ drivers/iio/imu/smi240/smi240.h               |  32 ++
+ drivers/iio/imu/smi240/smi240_core.c          | 386 ++++++++++++++++++
+ drivers/iio/imu/smi240/smi240_spi.c           | 164 ++++++++
+ 8 files changed, 655 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml
+ create mode 100644 drivers/iio/imu/smi240/Kconfig
+ create mode 100644 drivers/iio/imu/smi240/Makefile
+ create mode 100644 drivers/iio/imu/smi240/smi240.h
+ create mode 100644 drivers/iio/imu/smi240/smi240_core.c
+ create mode 100644 drivers/iio/imu/smi240/smi240_spi.c
 
-Yes. The likelihood of you needing to pass this out as a page should
-be low as most cases will just be you using the virtual address
-anyway. You are essentially trading off branching for not having to
-use virt_to_page. It is unnecessary optimization.
+-- 
+2.34.1
 
-
->
-> >> +struct page *page_frag_alloc_pg(struct page_frag_cache *nc,
-> >> +                            unsigned int *offset, unsigned int fragsz=
-,
-> >> +                            gfp_t gfp)
-> >> +{
-> >> +    unsigned int remaining =3D nc->remaining;
-> >> +    struct page *page;
-> >> +
-> >> +    VM_BUG_ON(!fragsz);
-> >> +    if (likely(remaining >=3D fragsz)) {
-> >> +            unsigned long encoded_va =3D nc->encoded_va;
-> >> +
-> >> +            *offset =3D page_frag_cache_page_size(encoded_va) -
-> >> +                            remaining;
-> >> +
-> >> +            return virt_to_page((void *)encoded_va);
-> >> +    }
-> >> +
-> >> +    if (unlikely(fragsz > PAGE_SIZE))
-> >> +            return NULL;
-> >> +
-> >> +    page =3D __page_frag_cache_reload(nc, gfp);
-> >> +    if (unlikely(!page))
-> >> +            return NULL;
-> >> +
-> >> +    *offset =3D 0;
-> >> +    nc->remaining =3D remaining - fragsz;
-> >> +    nc->pagecnt_bias--;
-> >> +
-> >> +    return page;
-> >>  }
-> >> +EXPORT_SYMBOL(page_frag_alloc_pg);
-> >
-> > Again, this isn't returning a page. It is essentially returning a
-> > bio_vec without calling it as such. You might as well pass the bio_vec
-> > pointer as an argument and just have it populate it directly.
->
-> I really don't think your bio_vec suggestion make much sense  for now as
-> the reason mentioned in below:
->
-> "Through a quick look, there seems to be at least three structs which hav=
-e
-> similar values: struct bio_vec & struct skb_frag & struct page_frag.
->
-> As your above agrument about using bio_vec, it seems it is ok to use any
-> one of them as each one of them seems to have almost all the values we
-> are using?
->
-> Personally, my preference over them: 'struct page_frag' > 'struct skb_fra=
-g'
-> > 'struct bio_vec', as the naming of 'struct page_frag' seems to best mat=
-ch
-> the page_frag API, 'struct skb_frag' is the second preference because we
-> mostly need to fill skb frag anyway, and 'struct bio_vec' is the last
-> preference because it just happen to have almost all the values needed.
-
-That is why I said I would be okay with us passing page_frag in patch
-12 after looking closer at the code. The fact is it should make the
-review of that patch set much easier if you essentially just pass the
-page_frag back out of the call. Then it could be used in exactly the
-same way it was before and should reduce the total number of lines of
-code that need to be changed.
-
-> Is there any specific reason other than the above "almost all the values =
-you
-> are using are exposed by that structure already " that you prefer bio_vec=
-?"
->
-> 1. https://lore.kernel.org/all/ca6be29e-ab53-4673-9624-90d41616a154@huawe=
-i.com/
-
-My reason for preferring bio_vec is that of the 3 it is the most setup
-to be used as a local variable versus something stored in a struct
-such as page_frag or used for some specialty user case such as
-skb_frag_t. In addition it already has a set of helpers for converting
-it to a virtual address or copying data to and from it which would
-make it easier to get rid of a bunch of duplicate code.
 
