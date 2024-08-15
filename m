@@ -1,152 +1,133 @@
-Return-Path: <linux-kernel+bounces-288099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8235953473
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:27:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A68C95349E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:28:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C859E1C21032
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:27:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 477A0285B3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FDA31AB53E;
-	Thu, 15 Aug 2024 14:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914B51A01DA;
+	Thu, 15 Aug 2024 14:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jLm7C+jU"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fTyaTxso"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3AF63C
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9EB963C;
+	Thu, 15 Aug 2024 14:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723731959; cv=none; b=E3NOejVu+8wYNjqLVGRKDoRm8Ww/bOEtLto6E2EYmOcEABPnWTrupWrpkrjVroIgVmpotSWqc56j5SmSZMHK38upritRKH1UjqliByrbhio+QFZ2s9PemCkdCK+Wo56p+xJvPaROG7GdAzPu5OsDidLDJjbaE/mSZsTiZ5RJ+f8=
+	t=1723732084; cv=none; b=uHtqpVgqp02D8bYKnsDMmAFDbW73wbE8SMGbxbxa3MC+pTip0NqCRPweTyKQKRq8uM+tV3lveVQoDp/1AN6fQqy+53X1Isfvpcdv1sP/9Ozy2Br8PyaJeI5oIagqwUvuC9fmPk3VNyb6xgoDz0TCXoiNkl8Ar2VkmvJsoNIpXus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723731959; c=relaxed/simple;
-	bh=T6w22f/EV1nqV5GX244Le2gSBKKj4m81OK4ziNx9288=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=oR7dSlKZgAkH1UFqriZdaczCJRxmWO/gF1cEIWLYXHijNyKh4FqopclBhXX7/OLgL4XLq5Npvc+ZKGscDhVPvxPE0A6IAUgKzBjGNigGLq+4+irFKw4/MJrCQcsq6ucT5h64r4SLRClU9fJAa44g274nRSl1wGtBJe/P/UQ/X90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jLm7C+jU; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6b036192efaso9431907b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 07:25:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723731957; x=1724336757; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=roDNKJdSnZwy+Mcdcl1djSIrOYwbDe7Ptmk1JHrL0bw=;
-        b=jLm7C+jU6XjfdoT0kILhERtZHfJVwi6W8vZAc2IJkmjgVBCedI9LuIjl2a7MLQrIkZ
-         5rDVQ9zecfHJfkP+byHthcYdAmKUwth7u6WTic25k1iVsSi2KKB2u5kLp6rPOJwhniSc
-         hqtWUQh7ZGwz0zZzjBSmDqRI+z0Yhb2I6bnRzUaAm1bfYinlWLZzieQD5KipfyUuaNJ6
-         OoXxf1qeKcASfVpaS19JzUvV91gLXMfPjT4e9DUGjRUpxBoO6pvWCwIo68CIgJ/Oh/Ac
-         2knsYeyJs0EFq7Xb8FVL3YvdDkUt6eeDEwX8y3Jhtmkn27fPonTyVnr4BcsEVaK1QocS
-         iI2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723731957; x=1724336757;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=roDNKJdSnZwy+Mcdcl1djSIrOYwbDe7Ptmk1JHrL0bw=;
-        b=J6MeAE5I92mYS8FLkUiW4CsjLooz8UbCyKk8kwg9AmoVWnmE+5NVYJF2re67nF3eG8
-         jrKDgs/8dZchpFYHOJ0YtQrYhJwC2NeiGCMMzlcR5CK52oOBQdMnUPQ/hnngo8weZr+0
-         WkACLAf30REam9Vif7azmLnoDjOBjOlCiwGWefhR445GAOEQ4gV0R+vKR40Q+VZoyuPj
-         tpso1f5208KTUpQXXW0P7DLTOE0RWMExmJyoLFJ7TdwTtA5Muhwx274E1jN3gbKfziL2
-         TdHTQEpYd1g2f2HrhxTwXzQfm2CqFMqpQp3eMelmAKpI43RYJ7WqMlFKJhjJ0WAGO+El
-         4QmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+ORnIwpuuiP1tJNrk6kU/qn4M4h62b2P2JACVCHsTrIKDEzUmm4YbAqZPnDalUBTn8EJUXxWWOFE04lW9lXfdwY39wedvz+u8iT4Z
-X-Gm-Message-State: AOJu0YyTVywXks4/aBFf3Nfa3HiwfgPI42z2Rd4C0jZW2y9wUdW3CS8e
-	7W7RuofrSja0Mu/lK2NbuwT+Fn3nXb+ps4DZDerDu/j0xfBflFmgOJtVmBIgKdWEyhPNQPGDjup
-	S8g==
-X-Google-Smtp-Source: AGHT+IFE0Vi4b+EvUBIA+1EZT1ThmV3wetNw2WaTANsCnH4Lk17nU+Pfq+H8vJYE/x9QR0+/9/9P2e/bgOA=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a0d:d385:0:b0:673:b39a:92ea with SMTP id
- 00721157ae682-6ac997f8a9cmr3405997b3.7.1723731957160; Thu, 15 Aug 2024
- 07:25:57 -0700 (PDT)
-Date: Thu, 15 Aug 2024 07:25:55 -0700
-In-Reply-To: <5f8c0ca4-ae99-4d1c-8525-51c6f1096eaa@redhat.com>
+	s=arc-20240116; t=1723732084; c=relaxed/simple;
+	bh=N6W+kdsRIJgs6BgWYIx1Fmb+FrqcQji/yE9Gm23xVqE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mnM0x/0I698exyEzrc2rciBXLVsK+WfrU6dm+wvS4f9JDC9sk5L6kUEHqC+TZYEMrFOGc7yRxxxucN7BV1Qt5DKI74hXN69AMa6xoYq3IUrPBi3cpz70KNb54BqOT4IyghZWlJRT/gaBJ5X7ajmOCkrDEBBUHYjw8CHLtfJSXmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fTyaTxso; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47FERjpC107604;
+	Thu, 15 Aug 2024 09:27:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723732065;
+	bh=NqGks5ZmmaFD2NYgflpmv3wLE/YC3/eEbp1rSchg8og=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=fTyaTxsoNRJhlTniYomZCMf9fDBVZwr5+ODtSfRpE++A7yzI4YgAy6qrpBzbucp6i
+	 NmpbUtsHReAfyYm1w9+4dHqkPVRXrczkB2YbG8DJCpkAVy/85c8hAK4RjYj995tlu0
+	 lc4VwPTM8w5xsjIaTx7Keebp7xQWtlJxo2CM8WuQ=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47FERjdt055511
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 15 Aug 2024 09:27:45 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 15
+ Aug 2024 09:27:44 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 15 Aug 2024 09:27:44 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47FERixs037874;
+	Thu, 15 Aug 2024 09:27:44 -0500
+Message-ID: <440c9c5b-85ca-47f1-ac05-498ec9a1911b@ti.com>
+Date: Thu, 15 Aug 2024 09:27:44 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240809190319.1710470-1-seanjc@google.com> <20240809190319.1710470-23-seanjc@google.com>
- <5f8c0ca4-ae99-4d1c-8525-51c6f1096eaa@redhat.com>
-Message-ID: <Zr4P86YRZvefE95k@google.com>
-Subject: Re: [PATCH 22/22] KVM: x86/mmu: Detect if unprotect will do anything
- based on invalid_list
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Peter Gonda <pgonda@google.com>, Michael Roth <michael.roth@amd.com>, 
-	Vishal Annapurve <vannapurve@google.com>, Ackerly Tng <ackerleytng@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/6] Add and fix ESM nodes
+To: Nishanth Menon <nm@ti.com>
+CC: Jan Kiszka <jan.kiszka@siemens.com>, <devicetree@vger.kernel.org>,
+        Vignesh
+ Raghavendra <vigneshr@ti.com>, <linux-kernel@vger.kernel.org>,
+        Rob Herring
+	<robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>
+References: <20240813230312.3289428-1-jm@ti.com>
+ <4295a15a-6285-4005-bc40-328e52addc2b@siemens.com>
+ <6134b3c1-f7ea-4cca-8777-56e5705aadf6@ti.com>
+ <20240815122928.4i2yob5aj5ssqhzw@reply>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <20240815122928.4i2yob5aj5ssqhzw@reply>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Wed, Aug 14, 2024, Paolo Bonzini wrote:
-> On 8/9/24 21:03, Sean Christopherson wrote:
-> > Explicitly query the list of to-be-zapped shadow pages when checking to
-> > see if unprotecting a gfn for retry has succeeded, i.e. if KVM should
-> > retry the faulting instruction.
-> > 
-> > Add a comment to explain why the list needs to be checked before zapping,
-> > which is the primary motivation for this change.
-> > 
-> > No functional change intended.
-> > 
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >   arch/x86/kvm/mmu/mmu.c | 11 +++++++----
-> >   1 file changed, 7 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> > index 300a47801685..50695eb2ee22 100644
-> > --- a/arch/x86/kvm/mmu/mmu.c
-> > +++ b/arch/x86/kvm/mmu/mmu.c
-> > @@ -2731,12 +2731,15 @@ bool __kvm_mmu_unprotect_gfn_and_retry(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
-> >   			goto out;
-> >   	}
-> > -	r = false;
-> >   	write_lock(&kvm->mmu_lock);
-> > -	for_each_gfn_valid_sp_with_gptes(kvm, sp, gpa_to_gfn(gpa)) {
-> > -		r = true;
-> > +	for_each_gfn_valid_sp_with_gptes(kvm, sp, gpa_to_gfn(gpa))
-> >   		kvm_mmu_prepare_zap_page(kvm, sp, &invalid_list);
-> > -	}
-> > +
-> > +	/*
-> > +	 * Snapshot the result before zapping, as zapping will remove all list
-> > +	 * entries, i.e. checking the list later would yield a false negative.
-> > +	 */
+Hi Nishanth,
+
+On 8/15/24 7:29 AM, Nishanth Menon wrote:
+> On 08:59-20240814, Judith Mendez wrote:
+>> Hi Jan,
+>>
+>> On 8/13/24 11:04 PM, Jan Kiszka wrote:
+>>> On 14.08.24 01:03, Judith Mendez wrote:
+>>>> The following patch adds ESM nodes and fixes ESM source
+>>>> interrupts for Sitara K3 platforms. Currently watchdog cannot
+>>>> reset the CPU because of misconfiguration or missing ESM node
+>>>> in DT.
+>>>>
+>>>> ESM node was added for am62ax and am65x. For am62px ESM source
+>>>> interrupts are fixed. Comments were also added for clarity on what
+>>>> source interrupts are routed to ESM based on device TRM.
+>>>>
+>>>> ESM nodes like MCU ESM for am65x are added for device completion,
+>>>> currently, some ESM0 events are not routed to MCU ESM, so watchdog
+>>>> cannot reset the CPU using the current implementation.
+>>>
+>>> Yes, that's why there is https://github.com/siemens/k3-rti-wdt and
+>>> probably similar bits in other R5 firmware. I was always told that is
+>>> the only way to reset the /system/ (CPU alone would not help). That
+>>> information is still correct?
+>>
+>> If you look at 9.4.14 MCU_ESM0 Interrupt Map, ESM0_ESM_INT_CFG_LVL_0,
+>> ESM0_ESM_INT_HI_LVL_0, and ESM0_ESM_INT_LOW_LVL_0 are not routed to
+>> MCU_ESM0. So the current implementation to route events from ESM0 to
+>> MCU_ESM0 to reset the CPU will not work for AM65x, this is the
+>> implementation on other K3 Sitara platforms and how watchdog can reset
+>> the cpu.
+>>
+>> I did find MAIN_ESM_ERROR_INT which should be SOC_SAFETY_ERRORn, look
+>> at Figure 12-3690. Perhaps the ESMs could be configured to use
+>> SOC_SAFETY_ERRORn instead, not sure.
+>>
+>> The above should apply to both SR1 and SR2 devices according to the TRM.
 > 
-> Hmm, the comment is kinda overkill?  Maybe just
+> Thanks for clarifying - you should add that in the commit message.
 > 
-> 	/* Return whether there were sptes to zap.  */
-> 	r = !list_empty(&invalid_test);
 
-I would strongly prefer to keep the verbose comment.  I was "this" close to
-removing the local variable and checking list_empty() after the commit phase.
-If we made that goof, it would only show up at the worst time, i.e. when a guest
-triggers retry and gets stuck.  And the logical outcome of fixing such a bug
-would be to add a comment to prevent it from happening again, so I say just add
-the comment straightaway.
+Sure, I can send v3 with another commit message fixup.
 
-> I'm not sure about patch 21 - I like the simple kvm_mmu_unprotect_page()
-> function.
+~ Judith
 
-From a code perspective, I kinda like having a separate helper too.  As you
-likely suspect given your below suggestion, KVM should never unprotect a gfn
-without retry protection, i.e. there should never be another caller, and I want
-to enforce that.
-
-> Maybe rename it to kvm_mmu_zap_gfn() and make it static in the same patch?
-
-kvm_mmu_zap_gfn() would be quite misleading.  Unlike kvm_zap_gfn_range(), it only
-zaps non-leaf shadow pages.  E.g. the name would suggest that it could be used by
-__kvm_set_or_clear_apicv_inhibit(), but it would do the complete wrong thing.
-
-kvm_mmu_zap_shadow_pages() is the least awful I can come up with (it needs to be
-plural because it zaps all SPs related to the gfn), but that's something confusing
-too since it would take in a single gfn.  So I think my vote is to keep patch 21
-and dodge the naming entirely.
 
