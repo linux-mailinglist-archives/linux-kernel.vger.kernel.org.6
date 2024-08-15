@@ -1,104 +1,108 @@
-Return-Path: <linux-kernel+bounces-288226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 813269537A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:50:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8A729537C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3639D1F25D52
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:50:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15C051C254C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802A41B1506;
-	Thu, 15 Aug 2024 15:50:35 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77DB31B3F2C;
+	Thu, 15 Aug 2024 15:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="vlsCWXHJ"
+Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165A419EEA4;
-	Thu, 15 Aug 2024 15:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FB41B143B;
+	Thu, 15 Aug 2024 15:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723737035; cv=none; b=t8qwHyRv1ru1hJf8YQI5jroyimnTj3h225t27MpoZr003KDmL6JE6J+oz3LCzGn6B33n3+3ooExbmie1PYdfrCSaKs25fUztcAN0GChgxWoMtNZi5wrTIbW/Np9MZ9HxTDQDkewc5zxRHwSQrZ+rJ2AbRaNsU1PeuXlpPpSBtcU=
+	t=1723737572; cv=none; b=jTGqT5jr4fFMtiNzHH1U2LSs1IUUmsULLrTzaAGjkcwmJoRy5WdjCiGtUb/rX76Qh5PZDJguG2oCIBJnO9Un1qH4D1I71LPzP8KoWUPiI8RZmqtZ6IsTN8wQbR9un4KYmUJ8BkMIDOt6Tv24zpacKeWOaiFdONSMUltZNU+eNB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723737035; c=relaxed/simple;
-	bh=R8HdVbH/c1X4P4zF6q1ObFI49LFeJcgJjRZMzDcnxCI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=SqGW62Lj5GNZgsTKEk5rSB5avIfN248hx2Pz/rdP6XNzu64rmkS524+5N5cCcLRuwkj40WH760gvX0ibPw5/YOljKeIiTGrFj6aBHZdDdKkaWgjnt7FJot+2TyLyjRNIvz6T6hKcnI4SfluVj008f5zhFWbskJ7qoRNU9cIDOjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1320C32786;
-	Thu, 15 Aug 2024 15:50:33 +0000 (UTC)
-Date: Thu, 15 Aug 2024 11:50:32 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Vincent Donnefort <vdonnefort@google.com>
-Subject: [PATCH] ring-buffer: Add magic and struct size to boot up meta data
-Message-ID: <20240815115032.0c197b32@rorschach.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1723737572; c=relaxed/simple;
+	bh=+rwOr/Eb6aLx1oQeqhMY8o2Y2is7QVnmjzrnSPwAwdw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ia8MGQqxcNgGbY3h8PKxVNnd78MPrq2napbyOd/c9U7LzJHJxuBYWHu2ekGjPf4Al8J5nF6KxHm/hOAwpQtPzDIQyBUTVL5cF56CMWlBM/DTN+hHTBAbMENCuNLy15Eu7M4GY0+yy1FRHQiVu6pPqJvjdhzTNiKKW64aE3yJYB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=vlsCWXHJ; arc=none smtp.client-ip=193.136.128.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 38EB06002402;
+	Thu, 15 Aug 2024 16:51:27 +0100 (WEST)
+X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
+Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
+ by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
+ with LMTP id p4XKnI0bjZwz; Thu, 15 Aug 2024 16:51:25 +0100 (WEST)
+Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [IPv6:2001:690:2100:1::b3dd:b9ac])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id D06B16002405;
+	Thu, 15 Aug 2024 16:51:24 +0100 (WEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
+	s=mail; t=1723737084;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=f2g1boM6IStFG0tqVscyGKuPc9jQ/FmFMZf7AExGi4s=;
+	b=vlsCWXHJO/yrIzy3Vn6MJdnib0n/4YSzAYZD9Dv1+PCUA8xQjlyaG2sE1mFgQjfPlXOhjz
+	v0ObDZl30fyV8YCaIkV13XZgJTlGAu+iytlzVmYdZCSBp/U8dsoAjLUImRUVw2b1bH7qKU
+	HubUUa1kewtudoY62pDxAc5jmpQqoTA=
+Received: from [192.168.1.53] (unknown [IPv6:2a01:14:8073:1e10:a82d:2c2b:d13b:a86a])
+	(Authenticated sender: ist187313)
+	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 7A2733600F3;
+	Thu, 15 Aug 2024 16:51:24 +0100 (WEST)
+From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Subject: [PATCH 0/2] arm64: tegra: add wp-gpio to P2957 board
+Date: Thu, 15 Aug 2024 16:50:38 +0100
+Message-Id: <20240815-tx1_sdmmc-v1-0-7856ac25a204@tecnico.ulisboa.pt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAM4jvmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDC0NT3ZIKw/jilNzcZF1jQ8NUEwsDo2QLE2MloPqCotS0zAqwWdGxtbU
+ AKjWiHlsAAAA=
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723737084; l=699;
+ i=diogo.ivo@tecnico.ulisboa.pt; s=20240529; h=from:subject:message-id;
+ bh=+rwOr/Eb6aLx1oQeqhMY8o2Y2is7QVnmjzrnSPwAwdw=;
+ b=EOWSwcYvnH9afo/ilzzVIELdqmia0RpMszkwhFFkTsj7/Ku4R4A5bgJ3bWBnsEGUjgpHpl92b
+ x/ZWfwKLZOtAA9bfokebKQjsMguEpLTdoi8Rbwh3YnM+6y9b5LG00SC
+X-Developer-Key: i=diogo.ivo@tecnico.ulisboa.pt; a=ed25519;
+ pk=BRGXhMh1q5KDlZ9y2B8SodFFY8FGupal+NMtJPwRpUQ=
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Define the wp-gpio for the P2597 board.
 
-Add a magic number as well as save the struct size of the ring_buffer_meta
-structure in the meta data to also use as validation. Updating the magic
-number could be used to force a invalidation between kernel versions, and
-saving the structure size is also a good method to make sure the content
-is what is expected.
+For this, patch 1 fixes the assignment of the vmmc supply's gpio that
+was incorrectly assigned to the wp-gpio of the external slot.
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Patch 2 adds the definition of the wp-gpio.
+
+Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
 ---
- kernel/trace/ring_buffer.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Diogo Ivo (2):
+      arm64: tegra: Fix gpio for P2597 vmmc regulator
+      arm64: tegra: Add wp-gpio for P2597's external card slot
 
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index b16f301b8a93..c3a5e6cbb940 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -44,7 +44,11 @@
- 
- static void update_pages_handler(struct work_struct *work);
- 
-+#define RING_BUFFER_META_MAGIC	0xBADFEED
-+
- struct ring_buffer_meta {
-+	int		magic;
-+	int		struct_size;
- 	unsigned long	text_addr;
- 	unsigned long	data_addr;
- 	unsigned long	first_buffer;
-@@ -1627,6 +1631,13 @@ static bool rb_meta_valid(struct ring_buffer_meta *meta, int cpu,
- 	unsigned long buffers_end;
- 	int i;
- 
-+	/* Check the meta magic and meta struct size */
-+	if (meta->magic != RING_BUFFER_META_MAGIC ||
-+	    meta->struct_size != sizeof(*meta)) {
-+		pr_info("Ring buffer boot meta[%d] mismatch of magic or struct size\n", cpu);
-+		return false;
-+	}
-+
- 	/* The subbuffer's size and number of subbuffers must match */
- 	if (meta->subbuf_size != subbuf_size ||
- 	    meta->nr_subbufs != nr_pages + 1) {
-@@ -1858,6 +1869,9 @@ static void rb_range_meta_init(struct trace_buffer *buffer, int nr_pages)
- 
- 		memset(meta, 0, next_meta - (void *)meta);
- 
-+		meta->magic = RING_BUFFER_META_MAGIC;
-+		meta->struct_size = sizeof(*meta);
-+
- 		meta->nr_subbufs = nr_pages + 1;
- 		meta->subbuf_size = PAGE_SIZE;
- 
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+---
+base-commit: 1fb918967b56df3262ee984175816f0acb310501
+change-id: 20240815-tx1_sdmmc-311e4802c843
+
+Best regards,
 -- 
-2.43.0
+Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
 
 
