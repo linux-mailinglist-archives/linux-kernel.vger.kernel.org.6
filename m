@@ -1,138 +1,147 @@
-Return-Path: <linux-kernel+bounces-288056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E67DA953281
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:06:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 095AE9532A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:08:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F6D21C25878
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:06:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F232D1C2587A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A4D1B29A2;
-	Thu, 15 Aug 2024 14:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9161AD401;
+	Thu, 15 Aug 2024 14:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="apfbk/hU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I74r7hEt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8B119F470;
-	Thu, 15 Aug 2024 14:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D291AD3FC
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723730696; cv=none; b=pnwjG+zB9+mQDSvhWxZI4hRWexeRND2CN27VQr6DzlDozAiKWltM8F0k5LszVAoDt25g6q+bD12Z74aJrpW24zwz7MputZ8kzqmWdLJ6+gqRXfRUXJ8kWyLiyPtFgogfdV58fYAU2+1k5bGa4UDnw3QHxkiGLhg9jxJBcmG+Bys=
+	t=1723730768; cv=none; b=pwyrKL7JZYrRXXpsu5geXvAzhHjvbfdfb5IuaYfIm6T1D6N3ZFZj2aXPNvSkLZYrTDNR25vqysI9e6s1wa9MnxTrtQoXIoOyXRTa/w6TYf9VdHglKzHEqkSfxP+BkrOjqzl2SnIIhQVBV1UDaNCFtHCRCRtgoUcjemkwaTqnRmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723730696; c=relaxed/simple;
-	bh=hsIRhn+LY4Ti41CZQ1o9YBVR7CGgFLQpY2GyG4Gwj2w=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=eXX5DRgPBfw02f9xXAowLkxBoc0BZiZKQM5yXRUHLpM33zJB+JqM3PHAAezdct8hO/yysu/bRLT3EGJnZKiWIrXN2Jq75Ez0OjfJ17CLZIYi8S707aJUtidr1G+jKD6iGs91DHL7T91HKMyBghfwHB0ixbFVcKOgdf5brgALnn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=apfbk/hU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB790C4AF0C;
-	Thu, 15 Aug 2024 14:04:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723730695;
-	bh=hsIRhn+LY4Ti41CZQ1o9YBVR7CGgFLQpY2GyG4Gwj2w=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=apfbk/hUNZ2TsrJyVKKu71e8PEzOCRdAQ40+Krq7oy7t03OJSfheU+Ub7vAt4+fty
-	 kyW7K9fp3CwvosWsK9PgJKILzQDSXf9wjqiRNfKBGjeIKjj94yCMZB8HT1frKoeeug
-	 cNxjj5fXsDzuUCjE+z67Wcpkia3Wg20k9T1qrPBAynOl5Y2S1L8XN9mdRvFkNgBTIk
-	 EOrrcujsnCqiK9Bvy199jpMJXY7q+2ico2PlxTiTIo13UtSfxnKH6LXF4ntWskg0Fj
-	 q+3a5POZVI5wHFJumapD0sy8DkEGsYSWf6Q3DVP4bLB1RofwcOP31yUMl3dHvEGgFd
-	 hJp8tYmcsNumQ==
-From: Kalle Valo <kvalo@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jeff Johnson <jjohnson@kernel.org>,  Johannes Berg
- <johannes@sipsolutions.net>,  Ath10k List <ath10k@lists.infradead.org>,
-  Aditya Kumar Singh <quic_adisi@quicinc.com>,  Baochen Qiang
- <quic_bqiang@quicinc.com>,  Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>,  Linux Next Mailing List
- <linux-next@vger.kernel.org>,  Wireless <linux-wireless@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the ath-next tree with the ath tree
-References: <20240808104348.6846e064@canb.auug.org.au>
-	<20240814110019.6be39d14@canb.auug.org.au>
-Date: Thu, 15 Aug 2024 17:04:52 +0300
-In-Reply-To: <20240814110019.6be39d14@canb.auug.org.au> (Stephen Rothwell's
-	message of "Wed, 14 Aug 2024 11:00:19 +1000")
-Message-ID: <87msldyj97.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1723730768; c=relaxed/simple;
+	bh=GFGV6hG2L9cJe+RwX4Rr9aJaP3Dznc+5t8xgYGuImoo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dpuTfv4fEm08eu+dw0t3E4nWa4FpXk6dT+i1FqO2b+b/+9SK5zuWSPsilez9D3xYhCcXC38fYJ7zhgUSNWyaiaI1DRtibbdwExSYTYejbbjg6o10XMQ1opBhJSzzvfdHDEQbZC4aqkzqfbYxygp6jF3pmBf9Pk5ZQ+lANXS5QTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I74r7hEt; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723730766;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ZS4F7hsY/hM6v7C2VdqDg+CWknMwWtfQFu4wLfe09pw=;
+	b=I74r7hEt642dJybELa9prrEhlEdLhyx+SEd7quB71Wl0wDaNtXHL5K2SepYw9gaL6Y/pzw
+	hjfxuOqheurQGVN4JZSUvpN+sxto5LYzngnzlDJJmC0Ob9zwAOTaM9r1wHmtQG1nlLspRW
+	wQCKxHzzhOAEEc7KYYjWlryPaIJiTrc=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-42-tUMZuTjiOyiE04Bw36Fvlg-1; Thu,
+ 15 Aug 2024 10:06:03 -0400
+X-MC-Unique: tUMZuTjiOyiE04Bw36Fvlg-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 432061955BF1;
+	Thu, 15 Aug 2024 14:06:01 +0000 (UTC)
+Received: from fedora.brq.redhat.com (unknown [10.43.17.68])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 79797300019C;
+	Thu, 15 Aug 2024 14:05:59 +0000 (UTC)
+From: tglozar@redhat.com
+To: rostedt@goodmis.org
+Cc: linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jwyatt@redhat.com,
+	jkacur@redhat.com,
+	Tomas Glozar <tglozar@redhat.com>
+Subject: [PATCH v3 0/6] rtla: Support idle state disabling via libcpupower in timerlat
+Date: Thu, 15 Aug 2024 16:05:03 +0200
+Message-ID: <20240815140509.12468-1-tglozar@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+From: Tomas Glozar <tglozar@redhat.com>
 
-> Hi all,
->
-> On Thu, 8 Aug 2024 10:43:48 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> Today's linux-next merge of the ath-next tree got a conflict in:
->> 
->>   drivers/net/wireless/ath/ath12k/hw.c
->> 
->> between commit:
->> 
->>   38055789d151 ("wifi: ath12k: use 128 bytes aligned iova in transmit path for WCN7850")
->> 
->> from the ath tree and commit:
->> 
->>   8be12629b428 ("wifi: ath12k: restore ASPM for supported hardwares only")
->> 
->> from the ath-next tree.
->> 
->> I fixed it up (see below) and can carry the fix as necessary. This
->> is now fixed as far as linux-next is concerned, but any non trivial
->> conflicts should be mentioned to your upstream maintainer when your tree
->> is submitted for merging.  You may also want to consider cooperating
->> with the maintainer of the conflicting tree to minimise any particularly
->> complex conflicts.
->> 
->> diff --cc drivers/net/wireless/ath/ath12k/hw.c
->> index 7b0b6a7f4701,76c0e07a88de..000000000000
->> --- a/drivers/net/wireless/ath/ath12k/hw.c
->> +++ b/drivers/net/wireless/ath/ath12k/hw.c
->> @@@ -925,7 -925,7 +925,9 @@@ static const struct ath12k_hw_params at
->>   		.acpi_guid = NULL,
->>   		.supports_dynamic_smps_6ghz = true,
->>   
->>  +		.iova_mask = 0,
->> ++
->> + 		.supports_aspm = false,
->>   	},
->>   	{
->>   		.name = "wcn7850 hw2.0",
->> @@@ -1003,7 -1003,7 +1005,9 @@@
->>   		.acpi_guid = &wcn7850_uuid,
->>   		.supports_dynamic_smps_6ghz = false,
->>   
->>  +		.iova_mask = ATH12K_PCIE_MAX_PAYLOAD_SIZE - 1,
->> ++
->> + 		.supports_aspm = true,
->>   	},
->>   	{
->>   		.name = "qcn9274 hw2.0",
->> @@@ -1077,7 -1077,7 +1081,9 @@@
->>   		.acpi_guid = NULL,
->>   		.supports_dynamic_smps_6ghz = true,
->>   
->>  +		.iova_mask = 0,
->> ++
->> + 		.supports_aspm = false,
->>   	},
->>   };
->>   
->
-> This is now a conflict between the wireless-next tree and the ath tree.
 
-Thanks. The plan is that the network maintainers will fix this once the
-commits "meet" in net-next. We are trying to avoid unnessary merges.
+rtla-timerlat allows reducing latency on wake up from idle by setting
+/dev/cpu_dma_latency during the timerlat measurement. This has an effect on
+the idle states of all CPUs, including those which are not used by timerlat.
+
+Add option --deepest-idle-state that allows limiting the idle state only on cpus
+where the timerlat measurement is running.
+
+libcpupower is used to do the disabling of idle states via the corresponding
+sysfs interface.
+
+v2:
+- Split patch adding dependency on libcpupower to two patches, one for
+libcpupower detection and one for rtla libcpupower dependency.
+- Make building against libcpupower optional. rtla will throw an error
+when built without libcpupower and --deepest-idle-state is used.
+- Rename option from --disable-idle-states to --deepest-idle-state and
+add an argument to choose the deepest idle state the CPU is allowed to
+get into. -1 can be used to disable all idle states: this is useful on
+non-ACPI platforms, where idle state 0 can be an actual idle state with
+an exit latency rather than a representation of an active CPU, as with the
+ACPI C0 state.
+
+Note: It is also possible to retrieve the latency for individual idle states
+of a cpu by calling cpuidle_state_latency. This could be used to implement
+another rtla option that would take the maximum latency, like --dma-latency
+does, and which would only take effect on CPUs used by timerlat.
+
+My opinion is that this proposed feature should not replace either
+--dma-latency nor --deepest-idle-state. For the former, there might be
+systems which have /dev/cpu_dma_latency but don't have a cpuidle
+implementation; for the latter, in many cases the user will want to set
+the idle state rather than the latency itself.
+
+v3:
+- Remove unneeded NULL check before free in restore_cpu_idle_disable_state
+and free_cpu_idle_disable_states.
+- Check for calloc() returning NULL in save_cpu_idle_disable_state.
+- Check for saved_cpu_idle_disable_state existing in
+restore_cpu_idle_disable_state.
+- Implement dummy functions for libcpupower functionality if libcpupower is
+not present during build. That allows libcpupower presence to be checked
+through a special function at one place instead of using several #ifdefs.
+- Only call sysconf() once when iterating through all CPUs. Note that there
+are a few instances in the original code which keep on calling sysconf()
+multiple times; fixing that is for another patch.
+
+Tomas Glozar (6):
+  tools/build: Add libcpupower dependency detection
+  rtla: Add optional dependency on libcpupower
+  rtla/utils: Add idle state disabling via libcpupower
+  rtla/timerlat: Add --deepest-idle-state for top
+  rtla/timerlat: Add --deepest-idle-state for hist
+  rtla: Documentation: Mention --deepest-idle-state
+
+ .../tools/rtla/common_timerlat_options.rst    |   8 +
+ tools/build/Makefile.feature                  |   1 +
+ tools/build/feature/Makefile                  |   4 +
+ tools/tracing/rtla/Makefile                   |   2 +
+ tools/tracing/rtla/Makefile.config            |  10 ++
+ tools/tracing/rtla/README.txt                 |   4 +
+ tools/tracing/rtla/src/timerlat_hist.c        |  42 ++++-
+ tools/tracing/rtla/src/timerlat_top.c         |  42 ++++-
+ tools/tracing/rtla/src/utils.c                | 148 ++++++++++++++++++
+ tools/tracing/rtla/src/utils.h                |  13 ++
+ 10 files changed, 272 insertions(+), 2 deletions(-)
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+2.46.0
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
