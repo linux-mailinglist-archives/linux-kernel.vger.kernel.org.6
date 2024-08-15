@@ -1,217 +1,197 @@
-Return-Path: <linux-kernel+bounces-287568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51C5695296E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:39:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C95395296F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:40:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA5881F23450
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 06:39:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22A64287074
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 06:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5919E177999;
-	Thu, 15 Aug 2024 06:39:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA12178383;
+	Thu, 15 Aug 2024 06:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tScpLZ39"
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="W95hu87Z"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F481448FD
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 06:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38381176FAE
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 06:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723703990; cv=none; b=HTtHSTtaPJLNEyn0+29eNfunixgWD2QfrJFspk36tqPPB9UC0aPzBhV5LFVdJN+XGwYKs5jnPvcFBbpTxfjdYuNCsgdhrs9HZo8kGjbxz3E0lnqGvHithMiN0b6khKIKAwDHdMgF0yMLgFeJ5YHTGXa0xw3Jdn7ha09haom8g98=
+	t=1723704037; cv=none; b=X/WRY5jg6tE3xAUiRYmlOZ41pHMGWQNACUE0NDm7riaLRKMbj2Th3ZVUbspgtbOgVmMnoLeXytrQDe/QJk5obZAqhHwXiU7XUPIho3A3JRMYuO5ocB1mIVBiNYsqhXnxIWDEpWDs058S0QKS7K7LF/1tz/HXzCzsuu6tTzJ8wP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723703990; c=relaxed/simple;
-	bh=ofboGTk7Zi5bRne3eXQi4FNEA1q5CQ/5MTTobpcQ9wA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VcCPJMKxtqkTPUbM+eu81HPL/uGg/HbGdQZwoQgHJRoxF70Coji3kpZ9OIbZcD7uoqMKAw7i9VgFzry2lqqQL8FVjOB+QfWfmniWZKk5CSAE1rX3czSFhpuZ8hlKquQLYVJWlbUFWo0bnwRiTL5Jsjkxio1KPSTClY9njR0+Gsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tScpLZ39; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7093f3a1af9so357481a34.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 23:39:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723703988; x=1724308788; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=gbaMLK+XQjhH4yV/bFgYN8cKYTQ+/DDzMgI6nWFCLPo=;
-        b=tScpLZ39htsCCgBM3HzepiiUyU7U412ahe0rdfaGiRXKRbdIwX/6+HF/4osxLxVh3s
-         wAR2gfm3GidPZHO90W3ESGXeuZb6At8AcXiz1G1enpm02JZQdRTJ35WPHxM6wUDm38Ov
-         56ICnRIx961meAn1sgHYjOEbhSd9X5AIRbH/6PjmxOYEaTXfFxjuyhUUheehPhsLZVCR
-         ajAYvYaYl7Ub9jv+FUF6KwjNBFa2CA1WX1BlhjDSHy5Z0OQUYvmjCnyvTIh83VwByxfo
-         a8czRCTFWG1LrkTpPTS2eINGnoix1gsnaenok9CsQdi0CpdXjipA1xfLEleTS+QfwRsX
-         S2ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723703988; x=1724308788;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gbaMLK+XQjhH4yV/bFgYN8cKYTQ+/DDzMgI6nWFCLPo=;
-        b=LP9HxffUO3yGVgt4SQ0oMvbZNT/VfyzDX6h1szyPvv0RXoWusc7qAQtQrBhectb8rC
-         GnrMC3KWI7mTJuv3I0bzV0TMq5RJSL2fYKjN1NAWUKTDcn0pm94J4wjowctf+5s8xnEV
-         fT6rJ8OApAB9TPkmkoq68+0zTV7sxIKcdARolS35PDrOWYlrZsn0L0ufg579kzW9FpVp
-         CdDqH/xhpueDYL7+RoWK/qOtiKXbHUQqWUK3xfiEdM7aYuuoXSZ52N2s/nOkBJ9Md9h3
-         Zhjmu6UsqPgRlem9aCM/4z2Mm2/4TA1ji/Nx5i0b57VFgqLopbS210wsJKk+tuNyvYXH
-         waOw==
-X-Forwarded-Encrypted: i=1; AJvYcCV7QffD57oOH41WACsEQwjWdjBvtrzGWwvglZ/sMtvMx+yumDu5h+mGvoDvtV711N9Gp5Lx6g2HBB58U4g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzguLj8h8q5rSRY8t1aDT1XDl7BCnZQIpOeO0f8u39i6dsN6lC0
-	Phdu3Y/6Xbm5c3jG70AcFfvaM06pigERYwsL3lMjqxC9nIYZFnEwTiX2X16xSgBvMQOKWLCbC9a
-	MDaOZK8Z2RH8D1k4iwMtfRkPawXXZHgQ66J60
-X-Google-Smtp-Source: AGHT+IFImIaPAUYQzr8PF6bkEdWd5/hDadwEyZbDoQt/62xTHr8zVvGiRtNrC91ziyD6IoKBgFtg6pWMoqUG9Pxdb3E=
-X-Received: by 2002:a05:6358:2908:b0:1ad:10eb:cd39 with SMTP id
- e5c5f4694b2df-1b1aad68251mr611057555d.26.1723703987597; Wed, 14 Aug 2024
- 23:39:47 -0700 (PDT)
+	s=arc-20240116; t=1723704037; c=relaxed/simple;
+	bh=btVyO5gQo/KA6fR4kSWu222wz0/LfuumKfAIGpzzPRg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=geqbJYrEVh4+iH2fbx7a59Lv4ORhbCHxN4y1Fm2DwOMKswbHLy64qmk508+He4KF/4fwRdZuyeSEOgKglKowu4Zs+f+txRIJy0n7iQU41pdgsIXqjZTg+2024cJbfkMXNUU+c6Gpmuqi7uzzKbWItMLsBgZufH9B9AyjA5ZFdK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=W95hu87Z; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1723704032; x=1723963232;
+	bh=JS43fM60RhDm+Th9MoEtNNKuKV29u1Ehm7PpXPr8fO8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=W95hu87ZrFzIJKRWqy7jJGYtEoW0XwdV1CnQ1Mti26jwCs+JTKG/sqp5axXMQ4hUb
+	 hTD74u4GPLku7uhSh6sIWl2Ik3XIGcIo2lfHrnncUYbwbXlw6q/Ist2VXoOOp3cRtd
+	 w5swmtogjto4IplpVXSITimV2GUqtZpg3J/Kp8VkoLxuJk5ebwciDefgc/pLUPspkT
+	 Vodt4I8TBq2TqGGn8Lg7HttJ+Z7bn8OMceUolzjewXmegH7dbMdjN8tf0nZEII3kiA
+	 xlrol+93f/+cwEmNBA7ZAoy4SgaQn17JJhJyAyEVO3P7CNx9FTLK3r9xtsh36+2IL3
+	 J7Uzxarcc132g==
+Date: Thu, 15 Aug 2024 06:40:28 +0000
+To: Boqun Feng <boqun.feng@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, Aakash Sen Sharma <aakashsensharma@gmail.com>, Valentin Obst <kernel@valentinobst.de>, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v3 1/3] rust: Introduce irq module
+Message-ID: <2b139d06-c0e0-4896-8747-d62499aec82f@proton.me>
+In-Reply-To: <Zr2JryyeoZPn3JGC@boqun-archlinux>
+References: <20240802001452.464985-1-lyude@redhat.com> <20240802001452.464985-2-lyude@redhat.com> <Zrzq8su-LhUIoavm@boqun-archlinux> <1bcae676ec4751ae137782c4ced8aad505ec1bb9.camel@redhat.com> <Zr0QyN8sQ6W2hPoJ@boqun-archlinux> <9855f198-858d-4e3f-9259-cd9111900c0c@proton.me> <Zr0aUwTqJXOxE-ju@boqun-archlinux> <Zr2JryyeoZPn3JGC@boqun-archlinux>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 64c2b25ea9656e001ad16ddd492ff2aec8b43367
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815000431.401869-1-ivan.orlov0322@gmail.com>
-In-Reply-To: <20240815000431.401869-1-ivan.orlov0322@gmail.com>
-From: David Gow <davidgow@google.com>
-Date: Thu, 15 Aug 2024 14:39:35 +0800
-Message-ID: <CABVgOSm5SNAaYg61kEntXLtNS=u5foFeGRb+3AcUagmLpQGQ0Q@mail.gmail.com>
-Subject: Re: [PATCH] kunit/overflow: Fix UB in overflow_allocation_test
-To: Ivan Orlov <ivan.orlov0322@gmail.com>
-Cc: akpm@linux-foundation.org, kees@kernel.org, kunit-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, erhard_f@mailbox.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000eb3527061fb31b32"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
---000000000000eb3527061fb31b32
-Content-Type: text/plain; charset="UTF-8"
+On 15.08.24 06:53, Boqun Feng wrote:
+> On Wed, Aug 14, 2024 at 01:57:55PM -0700, Boqun Feng wrote:
+>> On Wed, Aug 14, 2024 at 08:44:15PM +0000, Benno Lossin wrote:
+>>> On 14.08.24 22:17, Boqun Feng wrote:
+>>>> On Wed, Aug 14, 2024 at 03:38:47PM -0400, Lyude Paul wrote:
+>>>>> On Wed, 2024-08-14 at 10:35 -0700, Boqun Feng wrote:
+>>>>>> On Thu, Aug 01, 2024 at 08:10:00PM -0400, Lyude Paul wrote:
+>>>>>> [...]
+>>>>>>> +/// Run the closure `cb` with interrupts disabled on the local CPU=
+.
+>>>>>>> +///
+>>>>>>> +/// This creates an [`IrqDisabled`] token, which can be passed to =
+functions that must be run
+>>>>>>> +/// without interrupts.
+>>>>>>> +///
+>>>>>>> +/// # Examples
+>>>>>>> +///
+>>>>>>> +/// Using [`with_irqs_disabled`] to call a function that can only =
+be called with interrupts
+>>>>>>> +/// disabled:
+>>>>>>> +///
+>>>>>>> +/// ```
+>>>>>>> +/// use kernel::irq::{IrqDisabled, with_irqs_disabled};
+>>>>>>> +///
+>>>>>>> +/// // Requiring interrupts be disabled to call a function
+>>>>>>> +/// fn dont_interrupt_me(_irq: IrqDisabled<'_>) {
+>>>>>>> +///     /* When this token is available, IRQs are known to be disa=
+bled. Actions that rely on this
+>>>>>>> +///      * can be safely performed
+>>>>>>> +///      */
+>>>>>>> +/// }
+>>>>>>> +///
+>>>>>>> +/// // Disabling interrupts. They'll be re-enabled once this closu=
+re completes.
+>>>>>>> +/// with_irqs_disabled(|irq| dont_interrupt_me(irq));
+>>>>>>> +/// ```
+>>>>>>> +#[inline]
+>>>>>>> +pub fn with_irqs_disabled<T>(cb: impl for<'a> FnOnce(IrqDisabled<'=
+a>) -> T) -> T {
+>>>>>>
+>>>>>> Given the current signature, can `cb` return with interrupts enabled=
+ (if
+>>>>>> it re-enables interrupt itself)? For example:
+>>>>>>
+>>>>>> =09with_irqs_disabled(|irq_disabled| {
+>>>>>>
+>>>>>> =09    // maybe a unsafe function.
+>>>>>> =09    reenable_irq(irq_disabled);
+>>>>>
+>>>>> JFYI: this wouldn't be unsafe, it would be broken code in all circums=
+tances
+>>>>> Simply put: `with_irqs_disabled()` does not provide the guarantee tha=
+t
+>>>>> interrupts were enabled previously, only that they're disabled now. A=
+nd it is
+>>>>> never a sound operation in C or Rust to ever enable interrupts withou=
+t a
+>>>>> matching disable in the same scope because that immediately risks a d=
+eadlock
+>>>>> or other undefined behavior. There's no usecase for this, I'd conside=
+r any
+>>>>> kind of function that returns with a different interrupt state then i=
+t had
+>>>>> upon being called to simply be broken.
+>>>>>
+>>>>> Also - like we previously mentioned, `IrqDisabled` is just a marker t=
+ype. It
+>>>>> doesn't enable or disable anything itself, the most it does is run a =
+debug
+>>>>
+>>>> Yes, I know, but my question is more that should `cb` return a
+>>>> `IrqDisabled` to prove the interrupt is still in the disabled state?
+>>>> I.e. no matter what `cb` does, the interrupt remains disabled.
+>>>
+>>> What does this help with? I don't think this will add value (at least
+>>> with how `IrqDisabled` is designed at the moment).
+>>>
+>>
+>> I was trying to make sure that user shouldn't mess up with interrupt
+>> state in the callback function, but as you mention below, type system
+>> cannot help here.
+>>
+> [...]
+>>>>
+>>>> I haven't found a problem with `&IrqDisabled` as the closure parameter=
+,
+>>>> but I may miss something.
+>>>
+>>> We could also use `&'a IrqDisabled` instead of `IrqDisabled<'a>` (note
+>>> the first one doesn't have a lifetime). But there is no behavioral
+>>> difference between the two. Originally the intended API was to use `&'a
+>>> IrqDisabled<'a>` as the closure parameter and `IrqDisabled<'a>` in
+>>> functions that require irqs being disabled. As long as we decide on a
+>>> consistent type, I don't mind either (since then we can avoid
+>>> reborrowing).
+>>>
+>>>> So the key ask from me is: it looks like we are on the same page that
+>>>> when `cb` returns, the IRQ should be in the same disabled state as whe=
+n
+>>>> it gets called. So how do we express this "requirement" then? Type
+>>>> sytem, comments, safety comments?
+>>>
+>>> I don't think that expressing this in the type system makes sense, sinc=
+e
+>>> the type that we select (`&'a IrqDisabled` or `IrqDisabled<'a>`) will b=
+e
+>>> `Copy`. And thus you can just produce as many of those as you want.
+>>>
+>=20
+> Hmm.. on a second thought, `Copy` doesn't affect what I'm proposing
+> here, yes one could have as many `IrqDisabled<'a>` as one wants, but
+> making `cb` returns a `(IrqDisabled<'a>, T)` means the `cb` has to prove
+> at least one of the `IrqDisabled<'a>` exists, i.e. it must prove the irq
+> is still disabled, which the requirement of `with_irqs_disabled`, right?
 
-On Thu, 15 Aug 2024 at 08:04, Ivan Orlov <ivan.orlov0322@gmail.com> wrote:
->
-> The 'device_name' array doesn't exist out of the
-> 'overflow_allocation_test' function scope. However, it is being used as
-> a driver name when calling 'kunit_driver_create' from
-> 'kunit_device_register'. It produces the kernel panic with KASAN
-> enabled.
->
-> Since this variable is used in one place only, remove it and pass the
-> device name into kunit_device_register directly as an ascii string.
->
-> Signed-off-by: Ivan Orlov <ivan.orlov0322@gmail.com>
-> ---
+Yes, but that doesn't do anything. If the token is `Copy`, then we are
+not allowed to have the following API:
 
-Thanks -- we've got plans to add support for non-constant strings
-here, but the first version had some issues, and (Kees -- correct me
-if I'm wrong) there doesn't seem to be any need to have this be
-dynamically allocated.
+    fn enable_irq(irq: IrqDisabled<'_>);
 
-Reviewed-by: David Gow <davidgow@google.com>
+Since if the token is `Copy`, you can just copy it, call the function
+and still return an `IrqDisabled<'a>` to satisfy the closure. It only
+adds verbosity IMO.
 
+> Or you're saying there could exist an `IrqDisabled<'a>` but the
+> interrupts are enabled?
+
+No.
+
+---
 Cheers,
--- David
+Benno
 
->  lib/overflow_kunit.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/lib/overflow_kunit.c b/lib/overflow_kunit.c
-> index f314a0c15a6d..2abc78367dd1 100644
-> --- a/lib/overflow_kunit.c
-> +++ b/lib/overflow_kunit.c
-> @@ -668,7 +668,6 @@ DEFINE_TEST_ALLOC(devm_kzalloc,  devm_kfree, 1, 1, 0);
->
->  static void overflow_allocation_test(struct kunit *test)
->  {
-> -       const char device_name[] = "overflow-test";
->         struct device *dev;
->         int count = 0;
->
-> @@ -678,7 +677,7 @@ static void overflow_allocation_test(struct kunit *test)
->  } while (0)
->
->         /* Create dummy device for devm_kmalloc()-family tests. */
-> -       dev = kunit_device_register(test, device_name);
-> +       dev = kunit_device_register(test, "overflow-test");
->         KUNIT_ASSERT_FALSE_MSG(test, IS_ERR(dev),
->                                "Cannot register test device\n");
->
-> --
-> 2.34.1
->
-
---000000000000eb3527061fb31b32
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIIPqgYJKoZIhvcNAQcCoIIPmzCCD5cCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-gg0EMIIEtjCCA56gAwIBAgIQeAMYYHb81ngUVR0WyMTzqzANBgkqhkiG9w0BAQsFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMDA3MjgwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFQxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
-IFIzIFNNSU1FIENBIDIwMjAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvLe9xPU9W
-dpiHLAvX7kFnaFZPuJLey7LYaMO8P/xSngB9IN73mVc7YiLov12Fekdtn5kL8PjmDBEvTYmWsuQS
-6VBo3vdlqqXZ0M9eMkjcKqijrmDRleudEoPDzTumwQ18VB/3I+vbN039HIaRQ5x+NHGiPHVfk6Rx
-c6KAbYceyeqqfuJEcq23vhTdium/Bf5hHqYUhuJwnBQ+dAUcFndUKMJrth6lHeoifkbw2bv81zxJ
-I9cvIy516+oUekqiSFGfzAqByv41OrgLV4fLGCDH3yRh1tj7EtV3l2TngqtrDLUs5R+sWIItPa/4
-AJXB1Q3nGNl2tNjVpcSn0uJ7aFPbAgMBAAGjggGKMIIBhjAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l
-BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFHzM
-CmjXouseLHIb0c1dlW+N+/JjMB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHsGCCsG
-AQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3Ry
-MzA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1y
-My5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIz
-LmNybDBMBgNVHSAERTBDMEEGCSsGAQQBoDIBKDA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5n
-bG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzANBgkqhkiG9w0BAQsFAAOCAQEANyYcO+9JZYyqQt41
-TMwvFWAw3vLoLOQIfIn48/yea/ekOcParTb0mbhsvVSZ6sGn+txYAZb33wIb1f4wK4xQ7+RUYBfI
-TuTPL7olF9hDpojC2F6Eu8nuEf1XD9qNI8zFd4kfjg4rb+AME0L81WaCL/WhP2kDCnRU4jm6TryB
-CHhZqtxkIvXGPGHjwJJazJBnX5NayIce4fGuUEJ7HkuCthVZ3Rws0UyHSAXesT/0tXATND4mNr1X
-El6adiSQy619ybVERnRi5aDe1PTwE+qNiotEEaeujz1a/+yYaaTY+k+qJcVxi7tbyQ0hi0UB3myM
-A/z2HmGEwO8hx7hDjKmKbDCCA18wggJHoAMCAQICCwQAAAAAASFYUwiiMA0GCSqGSIb3DQEBCwUA
-MEwxIDAeBgNVBAsTF0dsb2JhbFNpZ24gUm9vdCBDQSAtIFIzMRMwEQYDVQQKEwpHbG9iYWxTaWdu
-MRMwEQYDVQQDEwpHbG9iYWxTaWduMB4XDTA5MDMxODEwMDAwMFoXDTI5MDMxODEwMDAwMFowTDEg
-MB4GA1UECxMXR2xvYmFsU2lnbiBSb290IENBIC0gUjMxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzAR
-BgNVBAMTCkdsb2JhbFNpZ24wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDMJXaQeQZ4
-Ihb1wIO2hMoonv0FdhHFrYhy/EYCQ8eyip0EXyTLLkvhYIJG4VKrDIFHcGzdZNHr9SyjD4I9DCuu
-l9e2FIYQebs7E4B3jAjhSdJqYi8fXvqWaN+JJ5U4nwbXPsnLJlkNc96wyOkmDoMVxu9bi9IEYMpJ
-pij2aTv2y8gokeWdimFXN6x0FNx04Druci8unPvQu7/1PQDhBjPogiuuU6Y6FnOM3UEOIDrAtKeh
-6bJPkC4yYOlXy7kEkmho5TgmYHWyn3f/kRTvriBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti
-+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGjQjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8E
-BTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5NUPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEA
-S0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigHM8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9u
-bG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmUY/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaM
-ld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88
-q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcya5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/f
-hO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/XzCCBOMwggPLoAMCAQICEAFsPHWl8lqMEwx3lAnp
-ufYwDQYJKoZIhvcNAQELBQAwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYt
-c2ExKjAoBgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjMgU01JTUUgQ0EgMjAyMDAeFw0yNDA1MDIx
-NjM4MDFaFw0yNDEwMjkxNjM4MDFaMCQxIjAgBgkqhkiG9w0BCQEWE2RhdmlkZ293QGdvb2dsZS5j
-b20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCTXdIWMQF7nbbIaTKZYFFHPZMXJQ+E
-UPQgWZ3nEBBk6iSB8aSPiMSq7EAFTQAaoNLZJ8JaIwthCo8I9CKIlhJBTkOZP5uZHraqCDWArgBu
-hkcnmzIClwKn7WKRE93IX7Y2S2L8/zs7VKX4KiiFMj24sZ+8PkN81zaSPcxzjWm9VavFSeMzZ8oA
-BCXfAl7p6TBuxYDS1gTpiU/0WFmWWAyhEIF3xXcjLSbem0317PyiGmHck1IVTz+lQNTO/fdM5IHR
-zrtRFI2hj4BxDQtViyXYHGTn3VsLP3mVeYwqn5IuIXRSLUBL5lm2+6h5/S/Wt99gwQOw+mk0d9bC
-weJCltovAgMBAAGjggHfMIIB2zAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1Ud
-DwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFDNpU2Nt
-JEfDtvHU6wy3MSBE3/TrMFcGA1UdIARQME4wCQYHZ4EMAQUBATBBBgkrBgEEAaAyASgwNDAyBggr
-BgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wDAYDVR0TAQH/
-BAIwADCBmgYIKwYBBQUHAQEEgY0wgYowPgYIKwYBBQUHMAGGMmh0dHA6Ly9vY3NwLmdsb2JhbHNp
-Z24uY29tL2NhL2dzYXRsYXNyM3NtaW1lY2EyMDIwMEgGCCsGAQUFBzAChjxodHRwOi8vc2VjdXJl
-Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcnQwHwYDVR0jBBgw
-FoAUfMwKaNei6x4schvRzV2Vb4378mMwRgYDVR0fBD8wPTA7oDmgN4Y1aHR0cDovL2NybC5nbG9i
-YWxzaWduLmNvbS9jYS9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcmwwDQYJKoZIhvcNAQELBQADggEB
-AGwXYwvLVjByVooZ+uKzQVW2nnClCIizd0jfARuMRTPNAWI2uOBSKoR0T6XWsGsVvX1vBF0FA+a9
-DQOd8GYqzEaKOiHDIjq/o455YXkiKhPpxDSIM+7st/OZnlkRbgAyq4rAhAjbZlceKp+1vj0wIvCa
-4evQZvJNnJvTb4Vcnqf4Xg2Pl57hSUAgejWvIGAxfiAKG8Zk09I9DNd84hucIS2UIgoRGGWw3eIg
-GQs0EfiilyTgsH8iMOPqUJ1h4oX9z1FpaiJzfxcvcGG46SCieSFP0USs9aMl7GeERue37kBf14Pd
-kOYIfx09Pcv/N6lHV6kXlzG0xeUuV3RxtLtszQgxggJqMIICZgIBATBoMFQxCzAJBgNVBAYTAkJF
-MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFzIFIz
-IFNNSU1FIENBIDIwMjACEAFsPHWl8lqMEwx3lAnpufYwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZI
-hvcNAQkEMSIEILB9N74Sjao34XlaFa/T1uhHO8Qo0VVU/REQWK8j2A1XMBgGCSqGSIb3DQEJAzEL
-BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDgxNTA2Mzk0OFowaQYJKoZIhvcNAQkPMVww
-WjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkq
-hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAmjG6W
-n6+kRURu0TevEP5O7J6WTemcAuClFW5ZqxHccnBsPBh14iM8vQ9oPiyCeL8brBwct9SgjzRivDqI
-9xfGGy7R3FQEBAW1rqSX6br45SS4IedI3ZK4A0ofHfZK68tAyGhDp77ZET1LPzQevCFxU3Jg6LJU
-JVy2CpaKHbgLce2BKhB1FsMm0HwFttqC2GUHSi6EsVo3N9VYIdXRoT8dYxsjyAOt5kTawThx0BqG
-YfijWikt4PZfPSElq2H5UbnR2Tij4FHorXCFrP5AAemkAANtnMbnVABEEsvZp/8qVJnnFeHVbW2H
-U9qVhBtZbq8J50fK9bgIdETAJkVpRE4v
---000000000000eb3527061fb31b32--
 
