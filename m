@@ -1,69 +1,160 @@
-Return-Path: <linux-kernel+bounces-287373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1904B952719
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:38:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24A3195271A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:38:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75C1BB219D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:38:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B06B91F23E7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC5A8F6D;
-	Thu, 15 Aug 2024 00:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823D74A0F;
+	Thu, 15 Aug 2024 00:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IeVmL6NQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="hanE+fn0";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="hanE+fn0"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D3079EA;
-	Thu, 15 Aug 2024 00:37:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76691186A;
+	Thu, 15 Aug 2024 00:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723682267; cv=none; b=pF1RxIQgty6Lo8fjzsk9kKwASuzDEyfcwlhAwGb6eTo6cAf807jTLQJGsTaoTxmJ2Iu9+orwAagvnEOWQ2ZJk7xBL/skVbUV8x9BEArxs8dYaGD2I9hhuIbRj7BT1+LIMlDdZ4lxqADl/ldZxBR5aw+h5aFod3R9F7v/jHF//9E=
+	t=1723682292; cv=none; b=uEninI84I8aWUxljv+ysGD5T2NyLeqonDeycU521ctQBKtOml+aedNCFTm1P9BzMJ3pOXLXcjxhamkqhtn9RWPVT6wsfAmymRsOFSlbFjX2/Vr2EBvraRiw+mA60XJQLtvHIljJgcXeOgY4I/XYA8jlMQ9aW8QNTOSrqOSdSX6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723682267; c=relaxed/simple;
-	bh=FbEpakbgWICNk3nlJqbA6FXCmf5YNZkwBBFvrfU3gjU=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=r2Y1Q0fn5NfbTX5RL1C7FXBTes3ZTCoT0Q/i1bvvn3Kl+68MVAtXrR0exf51/GUxcaL6qsx59NWhBAGpc3zEfQopbmG0jx/04xf6uXpOMzuLCw91c9Ic/1ylMaI53ls8qdKxnQTR1mLCBUMAU+7h8/aZSXRPqPnCSKgajbBR8gA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IeVmL6NQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76875C116B1;
-	Thu, 15 Aug 2024 00:37:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723682266;
-	bh=FbEpakbgWICNk3nlJqbA6FXCmf5YNZkwBBFvrfU3gjU=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=IeVmL6NQ1sbHO8eUyQJo4WzDCEhfuFIWxiW11fX6YltzXfSwGqeLs1GLHHZLhGPWu
-	 s9h75ru1anHWRQcsnFj/y7BSKed+CJ4ZQ/wtfQ2hK76/ElMV8dwpdhmNLtUsgeEb0v
-	 wSbWn+PXETN43G2iOa5KqNK3LdARHGoU1wOE1FEG2gXSRZByRD11mezG52pVwpGIoD
-	 GMcWmQErDisc60b5jvEGxOZG6RUfHt4g0abHorCSG3KJyDz+fyqLtKAiCoGSU4rQ/9
-	 RNh5xyLBNs6EQuORo8hkBeq7Mueng205b7r8LZvl2g0DJXhEU34ol9tlS5kb0KA+VX
-	 V3h01VNnsSKbg==
-Message-ID: <5b8ba4227b22fbefc433569378b2ae21.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1723682292; c=relaxed/simple;
+	bh=3DolbV72r+ZktqzDGiQbuyZ4jYwpkQfNN+pzs9OQ3vY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m8QOArrFH95SxyBVOZJVelpoYl2NCSsWwGL+quBkxg3iVq5MIWq3N4TwhdsJnlZBGzfb8O+00rxTH48rBoaQ3AX/eMPqrAvv6/PP792Dg/0PQRhlEicNisvGZPjhGtin1hVGfT/KDh/UHLGxBJyNYOtIZ9vURynoFSEz9qdff/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=hanE+fn0; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=hanE+fn0; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6465F1FC04;
+	Thu, 15 Aug 2024 00:38:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1723682287; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=gygwxlJiBVf1p6hCClu6Ljyjykin3NQXB2ZaepiiHrU=;
+	b=hanE+fn03kqV4sHxm8TGC77ONpxrdJl+vuFHUxucGm5d6M2PSJHRpZraU8cN+XbgTbdDke
+	MpeU0qKvRUvIlZSL07wkLS4LIDyVILGq70pLvICuL4NQd57j0Xn0dvDPL7R/mvCkNG4fAN
+	5VWHoN8AHvJA+hPdtsGyxUsS9LNJJhI=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1723682287; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=gygwxlJiBVf1p6hCClu6Ljyjykin3NQXB2ZaepiiHrU=;
+	b=hanE+fn03kqV4sHxm8TGC77ONpxrdJl+vuFHUxucGm5d6M2PSJHRpZraU8cN+XbgTbdDke
+	MpeU0qKvRUvIlZSL07wkLS4LIDyVILGq70pLvICuL4NQd57j0Xn0dvDPL7R/mvCkNG4fAN
+	5VWHoN8AHvJA+hPdtsGyxUsS9LNJJhI=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 587E513983;
+	Thu, 15 Aug 2024 00:38:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id wuNYFe9NvWaBBAAAD6G6ig
+	(envelope-from <dsterba@suse.com>); Thu, 15 Aug 2024 00:38:07 +0000
+From: David Sterba <dsterba@suse.com>
+To: torvalds@linux-foundation.org
+Cc: David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Btrfs fixes for 6.11-rc4
+Date: Thu, 15 Aug 2024 02:38:02 +0200
+Message-ID: <cover.1723673272.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240814125513.2637955-3-andriy.shevchenko@linux.intel.com>
-References: <20240814125513.2637955-1-andriy.shevchenko@linux.intel.com> <20240814125513.2637955-3-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2 2/2] clk: visconti: Switch to use kmemdup_array()
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 14 Aug 2024 17:37:44 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Level: 
 
-Quoting Andy Shevchenko (2024-08-14 05:54:08)
-> Let the kmemdup_array() take care about multiplication and possible
-> overflows.
->=20
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
+Hi,
 
-Applied to clk-next
+please pull the following branch, with stable fixes and one regression
+fix.  Thanks.
+
+- extend tree-checker verification of directory item type
+
+- fix regression in page/folio and extent state tracking in xarray, the
+  dirty status can get out of sync and can cause problems e.g. a hang
+
+- in send, detect last extent and allow to clone it instead of sending
+  it as write, reduces amount of data transferred in the stream
+
+- fix checking extent references when cleaning deleted subvolumes
+
+- fix one more case in the extent map shrinker, let it run only in the
+  kswapd context so it does not cause latency spikes during other
+  operations
+
+----------------------------------------------------------------
+The following changes since commit 7c626ce4bae1ac14f60076d00eafe71af30450ba:
+
+  Linux 6.11-rc3 (2024-08-11 14:27:14 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.11-rc3-tag
+
+for you to fetch changes up to 6252690f7e1b173b86a4c27dfc046b351ab423e7:
+
+  btrfs: fix invalid mapping of extent xarray state (2024-08-13 15:36:57 +0200)
+
+----------------------------------------------------------------
+Filipe Manana (2):
+      btrfs: only run the extent map shrinker from kswapd tasks
+      btrfs: send: allow cloning non-aligned extent if it ends at i_size
+
+Josef Bacik (1):
+      btrfs: check delayed refs when we're checking if a ref exists
+
+Naohiro Aota (1):
+      btrfs: fix invalid mapping of extent xarray state
+
+Qu Wenruo (1):
+      btrfs: tree-checker: reject BTRFS_FT_UNKNOWN dir type
+
+ fs/btrfs/delayed-ref.c  | 67 +++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/btrfs/delayed-ref.h  |  2 ++
+ fs/btrfs/extent-tree.c  | 51 ++++++++++++++++++++++++++++++++-----
+ fs/btrfs/extent_io.c    | 14 +++++------
+ fs/btrfs/extent_map.c   | 22 +++++-----------
+ fs/btrfs/send.c         | 52 ++++++++++++++++++++++++++++----------
+ fs/btrfs/super.c        | 10 ++++++++
+ fs/btrfs/tree-checker.c |  5 ++--
+ 8 files changed, 179 insertions(+), 44 deletions(-)
 
