@@ -1,89 +1,85 @@
-Return-Path: <linux-kernel+bounces-287600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3980E9529C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:19:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D6EF9529C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 564A71C21FC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 07:19:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87DB41C2092D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 07:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808E617AE1E;
-	Thu, 15 Aug 2024 07:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA23B17AE1B;
+	Thu, 15 Aug 2024 07:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TGbIa2yr"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q6v2IFkf"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EFF417A590
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 07:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B41317A5BD
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 07:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723706373; cv=none; b=ew8nTNgw5l77XtByj/r0lxGiyQyjLrtWeaVMVQ2q6vLYCWvjofays+b89AbJu4SB9X+4KZ+NESEITpcsRtXO9B1qXjjdDwFvGNaEELVY/BXiydM/anmo+rCUqd3dPlZGe+96PD6xvBMYtDTMkyB4WUenHPFkVxopByEjpOvuIQM=
+	t=1723706406; cv=none; b=ddPnenILBqu4HKwD/2Rj8VrwxQ5G2tm17PIZFLM4+Z6+lvVNGVhhxIDo/4NKgAezz4qiX+w69NwUb7ACAVEMInuXb0bPZIyyEkf++HIrPUejICxa9femH+xtiiGiq+FTW3PTka0yBdFubDZfWyu0zNsnX3CmSvnnYuLykhACqV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723706373; c=relaxed/simple;
-	bh=0aDqFb9x+MKvUfcLmRZLE0edxA2SzrFvTX87CwOLRaM=;
+	s=arc-20240116; t=1723706406; c=relaxed/simple;
+	bh=jsPdeOnIlJPuMPjLCro5SKmZvXAl1puLv+RSKZxyf4c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mGXWVoy9fOZtYwcOp/bK5Dkuu+EYnznJAzPkTUSdwaZvUy4kWPtgbkd4Ag6knHTfl7DfG9XJq/jqOw4w7Nz8erXA1Jr4sDBqQxVNsWWAPKpmb5huKqKTRB6PSjcUeg7yv08hapFa/d+zsP4EUm8NKLQuNvmDdjTArasViOWeQME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TGbIa2yr; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2d1daa2577bso441261a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 00:19:31 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=cnYCJiK+afxWJ8UonXMxguLPny7+IBdhBSp4oWSBheErIdSh6q/YyhglHJzydC8ykY0u1yXDMQyGTbpUVFg/HFBRUv7QlY0hpe2RPC9r5RfdvXhoEfbbMusY/vD4EQGf7OZ4GrNLZpKUI8+4DtY3aCPcmkb7DFp/UH58Wq0ccBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q6v2IFkf; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so1340623e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 00:20:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723706371; x=1724311171; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723706403; x=1724311203; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NmpuMWed3wE/MKqQQ30dx9YCUbl3v+yH31472iJ8R/c=;
-        b=TGbIa2yr20k9wYfthAsuCk9y0d+QP7odvEVrq7vs7Tc3xNZ/uOC2oSYkfqlUTZ2g9o
-         IOM7mY5engl8jb648hA/qq90q7/uoI9QJ/6O3I8MVmaEB7QfIMMf1SpNKYj/9SYJcOeh
-         nGSXvBc0STIIxjv4nRvqMBszJ0UC2iEdtsdCE=
+        bh=BYyfFXtm6C6RsJuLWVzh6ZAxLrDVeC9/C1JLKXigeWI=;
+        b=Q6v2IFkf7k7L9fubJwBqKefqSfn90S2qms5+DaT2JxgczViT6Es+DeRK1363k2PE5X
+         qn4i0V7lDf8GsPC0Iz4/+5LNzq5MZGeiyEtswOq49K07sSZf43eYXpIkjMOMIlvm+zuh
+         lh/qOJf9bZFLirddGmO5FsXXUtoBYlU0O2XTEWAsSgJ3Qg6bFYZxEdcYmrBj3hKyL5qj
+         M6SoJ8mi3rIomzACC3vWeJmgiMKaVYszUV0waM13WD2BQuaYyBGNXRPX9iC90SuF+5cK
+         KR93XdR3aanYyc01SI1bkr9ng1EbixKMdFeztV4/8sfFdzV0TU8AtRpGG/ew/X0GUIkn
+         RSDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723706371; x=1724311171;
+        d=1e100.net; s=20230601; t=1723706403; x=1724311203;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NmpuMWed3wE/MKqQQ30dx9YCUbl3v+yH31472iJ8R/c=;
-        b=IHO0t64uR9iyGKQ4qBcpuzv6Q87kEkw4/9eZjrpojGl9lAIknX41raopTYIU0YZ9vH
-         758/dmBOEc21Km5vpbBTMBzySxdh1kaXRiBoBc+NkBbVRr6lliVf/hf1ZSuVWzb58abE
-         PsdpTMDnh1M2WyKaraB0OIGfEUYgOG22aZRfAe3tb3zWiVW6ilqhluDAuKzaAM8MA/P0
-         LesLInbGWH4JS8NyBUChcq+F3TK8Lry88d9HhSsmfvmMImA5YCA8k/Zm6pQFEGEiY7+Y
-         vCxbBA4/qiZn333Iqmxb5xSLcb0X0kZ8binbqWa3y68MlBSyo1iWGI20IRXnipbJAEGd
-         gN0g==
-X-Forwarded-Encrypted: i=1; AJvYcCXE+bJeB20GvqBzIIBRxLSZcuh9Zs779ml78sxRo/xfW1LYQuhm7kCTaowZhcUV1GpJaI8qw7iX39Tu/NVMV7o9I1E1b/oZ3HYf4iws
-X-Gm-Message-State: AOJu0YwE72WzSxIRe2gYlyvXzrlYNqTUHU8uO1XMxPbAZ15mA8ynmcgU
-	YM0LdSrrvhU13ivDG1wD3Quz74iaTca6i0X/FNoSYetPsDG1ifXDad3OPSxEPQ==
-X-Google-Smtp-Source: AGHT+IHRshLWXbi6eNNbn2lqpjEggfJMf0Uyu0Go3ioD6E5Am71ibLtxHtFVTG87K3YJW6ZSoF1EvA==
-X-Received: by 2002:a17:90b:4b12:b0:2d3:90e1:41c7 with SMTP id 98e67ed59e1d1-2d3aab492a6mr6014296a91.31.1723706370866;
-        Thu, 15 Aug 2024 00:19:30 -0700 (PDT)
-Received: from google.com ([2401:fa00:1:10:745d:58f7:b3cd:901f])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3c87b0450sm741049a91.28.2024.08.15.00.19.27
+        bh=BYyfFXtm6C6RsJuLWVzh6ZAxLrDVeC9/C1JLKXigeWI=;
+        b=TG9oLW8McKqp/HAAGjgJKfBOrx+27k7zOMaPvTf54EwC/q8sAsH6whTpRCEmKPp6EJ
+         VZtqJE2Fc8C5ujJXK79oc5mv6W46yw8YTVtJWHhFFRBmeUa5YX8asYBC9xt9pxpwMSga
+         KUc3NOWJ2VKNPcrAOWxI5EkcRCouLZN81xnREjiEkedlqCDFdkGZROgSnfpQxVS9yVQ6
+         BXfqvt+fXZaBLzrXb3D+D+PMal8qVQrO3QaPqtdyXHkZHIVroXOpwN+dZo0m5l7SpDqZ
+         ADfhPlJnxN9egcGu8xhEok/ozBEZyfRUBdjAY0eOToINsQoeABlk6mVEO9yIFJxecT+T
+         gPnA==
+X-Forwarded-Encrypted: i=1; AJvYcCWoLUkwkEnKxMeC3011OUKjJLMLLNSRrlI702YfTgGyM2yUmBof+WezlnQ8fecEAr7r8Z0KyOco6QC61A+Hg5j6b0Lc67DhwfHd7yBN
+X-Gm-Message-State: AOJu0YxKMTZiiQiCbf5bKRaM/pCVhJlqvKeDfMBv6+I3K+LSZiBucG9/
+	1rI+/an2eF4kknBkbxJaNiCLVdUM5rDpBSkmmDSRVO/jsfPXECeTOSV7PgEwgyY=
+X-Google-Smtp-Source: AGHT+IGjAIXc3LM1HfHMtHToUbYecK2vDjK6Pc4pBkKHI9xD09PLovIkzA3HfX5+XUcVIhkIkzuY4Q==
+X-Received: by 2002:a05:6512:12c8:b0:52c:df83:a740 with SMTP id 2adb3069b0e04-532eda8a993mr4211925e87.30.1723706402380;
+        Thu, 15 Aug 2024 00:20:02 -0700 (PDT)
+Received: from linaro.org ([82.79.186.176])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839693ccsm57192266b.190.2024.08.15.00.20.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 00:19:30 -0700 (PDT)
-Date: Thu, 15 Aug 2024 15:19:25 +0800
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Amit Kucheria <amitk@kernel.org>,
-	Thara Gopinath <thara.gopinath@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Vasily Khoruzhick <anarsoul@gmail.com>,
-	Yangtao Li <tiny.windzz@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH 3/7] thermal: of: Use scoped device node handling to
- simplify of_thermal_zone_find()
-Message-ID: <20240815071925.GC350960@google.com>
-References: <20240814-b4-cleanup-h-of-node-put-thermal-v1-0-7a1381e1627e@linaro.org>
- <20240814-b4-cleanup-h-of-node-put-thermal-v1-3-7a1381e1627e@linaro.org>
+        Thu, 15 Aug 2024 00:20:01 -0700 (PDT)
+Date: Thu, 15 Aug 2024 10:20:00 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Marcus Glocker <marcus@nazgul.ch>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Subject: Re: [PATCH v2 7/7] arm64: dts: qcom: Add Samsung Galaxy Book4 Edge
+ Makefile
+Message-ID: <Zr2sIAhB1i7akCCc@linaro.org>
+References: <qv5pz4gnmy5xbxxjoqqyyvn4gep5xn3jafcof5merqxxllczwy@oaw3recv3tp5>
+ <mtyjmbhqv5otvxhxyyvkxg6tubmtkeouwibmsmywmjdamnqnus@mow2w5trrmok>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,80 +88,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240814-b4-cleanup-h-of-node-put-thermal-v1-3-7a1381e1627e@linaro.org>
+In-Reply-To: <mtyjmbhqv5otvxhxyyvkxg6tubmtkeouwibmsmywmjdamnqnus@mow2w5trrmok>
 
-On Wed, Aug 14, 2024 at 10:17:49PM +0200, Krzysztof Kozlowski wrote:
-> Obtain the device node reference with scoped/cleanup.h to reduce error
-> handling and make the code a bit simpler.
+On 24-08-14 23:14:51, Marcus Glocker wrote:
+> Add the new Samsung Galaxy Book4 Edge to the Makefile to compile the
+> DTB file.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Marcus Glocker <marcus@nazgul.ch>
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+This should be squashed into patch 6.
 
 > ---
+>  arch/arm64/boot/dts/qcom/Makefile | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> This depends on my earlier fixes:
-> 
-> https://lore.kernel.org/all/20240814195823.437597-1-krzysztof.kozlowski@linaro.org/
-> ---
->  drivers/thermal/thermal_of.c | 18 ++++++------------
->  1 file changed, 6 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
-> index c8ded4462bb8..fb5472d6ffea 100644
-> --- a/drivers/thermal/thermal_of.c
-> +++ b/drivers/thermal/thermal_of.c
-> @@ -157,10 +157,9 @@ static struct thermal_trip *thermal_of_trips_init(struct device_node *np, int *n
->  
->  static struct device_node *of_thermal_zone_find(struct device_node *sensor, int id)
->  {
-> -	struct device_node *np, *tz;
->  	struct of_phandle_args sensor_specs;
->  
-> -	np = of_find_node_by_name(NULL, "thermal-zones");
-> +	struct device_node *np __free(device_node) = of_find_node_by_name(NULL, "thermal-zones");
->  	if (!np) {
->  		pr_debug("No thermal zones description\n");
->  		return ERR_PTR(-ENODEV);
-> @@ -178,8 +177,7 @@ static struct device_node *of_thermal_zone_find(struct device_node *sensor, int
->  						   "#thermal-sensor-cells");
->  		if (count <= 0) {
->  			pr_err("%pOFn: missing thermal sensor\n", child);
-> -			tz = ERR_PTR(-EINVAL);
-> -			goto out;
-> +			return ERR_PTR(-EINVAL);
->  		}
->  
->  		for (i = 0; i < count; i++) {
-> @@ -191,22 +189,18 @@ static struct device_node *of_thermal_zone_find(struct device_node *sensor, int
->  							 i, &sensor_specs);
->  			if (ret < 0) {
->  				pr_err("%pOFn: Failed to read thermal-sensors cells: %d\n", child, ret);
-> -				tz = ERR_PTR(ret);
-> -				goto out;
-> +				return ERR_PTR(ret);
->  			}
->  
->  			if ((sensor == sensor_specs.np) && id == (sensor_specs.args_count ?
->  								  sensor_specs.args[0] : 0)) {
->  				pr_debug("sensor %pOFn id=%d belongs to %pOFn\n", sensor, id, child);
-> -				tz = no_free_ptr(child);
-> -				goto out;
-> +				return no_free_ptr(child);
->  			}
->  		}
->  	}
-> -	tz = ERR_PTR(-ENODEV);
-> -out:
-> -	of_node_put(np);
-> -	return tz;
-> +
-> +	return ERR_PTR(-ENODEV);
->  }
->  
->  static int thermal_of_monitor_init(struct device_node *np, int *delay, int *pdelay)
-> 
+> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> index 0e5c810304fb..77a48a5780ed 100644
+> --- a/arch/arm64/boot/dts/qcom/Makefile
+> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> @@ -265,3 +265,4 @@ dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-asus-vivobook-s15.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-crd.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-lenovo-yoga-slim7x.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-qcp.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-samsung-galaxy-book4-edge.dtb
 > -- 
-> 2.43.0
+> 2.39.2
 > 
 
