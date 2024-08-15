@@ -1,131 +1,102 @@
-Return-Path: <linux-kernel+bounces-287857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0446952D4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:18:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03B3D952D50
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:20:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14D7B1C23046
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:18:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AA53B2138E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FBD7DA87;
-	Thu, 15 Aug 2024 11:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B311AC8A2;
+	Thu, 15 Aug 2024 11:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ClcjQcit"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NQKrB/tj"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58BF56FBF
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 11:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29EDE1AC88A
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 11:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723720720; cv=none; b=gHL7z51ydNUnCpl/DWJfvReoqJ2AVWJBX2eaOvIrMrOImigLHVmVXVwKrF/DLHxP2MUDwDduprLwpdGErRcLx3QBteXPHL9KLmOp0S9iguiNFkSAbVzo9A8pWw0JJ/JOXlQd7kC+cNl6qd4VdyMNzJpibJn69ur41XOlKZdmwMY=
+	t=1723720804; cv=none; b=r/L8lYR2zGqK1+tuwGdn+avphq5nt5T7/xbOzLzufMfWb+TjKruPMVJJ9rM6yWIc9EkPTaKT+zlnKx0GfvR5z2OaiE2U85P7RgT30WiX0cc+AzbKvaqEWIoLyLMgVX8CRHdymTMbnIbJzPyXApbEN2auQaOB8b9sgMkff9hGJQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723720720; c=relaxed/simple;
-	bh=GfzHkA3NEtdmCsr/KpIs6KlwwNWqBKlqq8cB1Tg+n5c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WYJ/3OviFBSiXBuUKwOiFskc/JG3if1GZemwILO/TkNr8lTaoGC5a+fY7v2AJRwqCib9I3gbsySH7hwm8wIChoh3IgEqukD9qzd3z1WaS8hE4RUflMzLpXErOWFVCEqmeM8grLXqvGsOXlE5uf6At5tPwmBK6Ok9GH3glxvRAsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ClcjQcit; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723720718;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=24V3VGfwIrKGka7iIRCvCp2rkdbP5TtQ2k/YsWqeb00=;
-	b=ClcjQcit89HLaWkst+62OniPPNn3E7JMuKgrar2cghJdhNENVGy/K30Qrqk4BL5I0k9kWv
-	Qa/hRi3iZQVef1UnOKS6qsSfxdrp3uY7octyTeuu/dcybROGiWxVeGbj6EjLj3Yg6PhUAN
-	mggxtBYNLW6hJv06ePGc5/bBhUF/d+8=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-645-mHSf96N7PUqEuRRi7-uNfw-1; Thu, 15 Aug 2024 07:18:37 -0400
-X-MC-Unique: mHSf96N7PUqEuRRi7-uNfw-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-428fb085cc3so1616215e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 04:18:37 -0700 (PDT)
+	s=arc-20240116; t=1723720804; c=relaxed/simple;
+	bh=yURztonZrBwHUHibkawREdePNMweVxOWwY8OJ0QSyB0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=awfSqmy6JizKwkGwIduXsDUCuseikyTBE90cMWm4OXr7jwNFzHyxA5aQoWsoO9k5B4X0X3izkQH2f1uNxH1L0WaAtk+1oNUXFQIAoaYW/5GVq+MIN0EGwBlkS6aJALO2z5nXtXe9ZOrZfyDeSmMIvuD/hEjYG8JQytTBHCewV8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NQKrB/tj; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4280c55e488so4070005e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 04:20:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723720801; x=1724325601; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nI4171woC8AbIwEQ7yZoKX44iROE7Q6gQWAZSkQrquE=;
+        b=NQKrB/tj/k375VSGk79fmL9o7iqpTCgt1iPBQjzQmRdPJxdwqiI8sisfdLcez3fBmt
+         1Yf1xUuaREFHR5CG5KZiJYA3ozkQkOOamKlSBIpO6ip1kMqCv6tkfeL9941j4jfWmYlJ
+         eaam3qtZdLWsIACtVula3bGHggy4YerhlFQC5/2hL/C9qCa9XNb+YvAzJTWwO00V+cEr
+         EDChFrKKSiBojYMFIgLtXKf9dRd0sMEi7k8cn6zSSytgJKFEgI8ZKtbEerIXcjX3p8ob
+         7HIJJd0LsVXwIUL95Zp2AC7N3TlFGAx4GspXKBAVXMHovOeXWZIuNiKy4KGCYDWVDrnA
+         EAKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723720716; x=1724325516;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1723720801; x=1724325601;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=24V3VGfwIrKGka7iIRCvCp2rkdbP5TtQ2k/YsWqeb00=;
-        b=Z5HNEydDzXUvSvh3IqIWAEGomEh1LnHH3vFp8JCcL/2nM9RFC9KmfvTRdOUjMBMEDU
-         6FD5skPdc2ckZF4Va5YsggfK6NWOtX2ncfDRi6JAta+NEg9OJAVQ8ow/Gpj9huoYVQMA
-         3pFrauz4qp0Rn6764ueDB5uqwGpmtH6EGnn/AbVEyxEVFcWIvFwYl4cAdJI3Bs1Tbllv
-         A2N7kJwzjSCe5pw+00E+Kaqc8AK+DU0LNsCkOwmbJMxMi/4z5NviokAT3MuF6ar1QZGB
-         KXLJON2s+qbfmIsdsT/PnpV2AyflBJQtkBzilNVaUWLIc0gfdI++qYUHpgGVZ5ad79Dp
-         Rmvw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJyln+VKhNPq+scs+42PtOBcnENIUuiiqmUUHGaCPzcfvK8GewhUD6oSr7BwBSv2icbWbz0Tdobg8+Pkjy3jB/2HbByH4DN+h3LrzV
-X-Gm-Message-State: AOJu0YyXKmEEsYTJsIIQTiF5jvcUflzycwSz7N/wIcYIs+DbBbbCPHS6
-	tKPePABpAImLzNxb0ofZ/2lB3Xabi+KYhrJ1GINq2SxFADUgwBPCdQvHrnZ0L80Z9j8cuE6K2D3
-	M0AomeELXLoRHatL7I56yz1yotmN4Kp7dQbq++sNIddVYdM+ZBPRW1CeWDO5kcg==
-X-Received: by 2002:a05:600c:35c5:b0:426:5f08:542b with SMTP id 5b1f17b1804b1-429e63a22aamr9302565e9.0.1723720715959;
-        Thu, 15 Aug 2024 04:18:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHGnOYnq3ro7PPvOKCikfdHFb1kTWeqIJYge0M34FZQMbh0yh0VysW0l11ZYuiNklVTcOTdkw==
-X-Received: by 2002:a05:600c:35c5:b0:426:5f08:542b with SMTP id 5b1f17b1804b1-429e63a22aamr9302335e9.0.1723720715429;
-        Thu, 15 Aug 2024 04:18:35 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:1711:4010:5731:dfd4:b2ed:d824? ([2a0d:3344:1711:4010:5731:dfd4:b2ed:d824])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded19627sm45254015e9.5.2024.08.15.04.18.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Aug 2024 04:18:34 -0700 (PDT)
-Message-ID: <fd30815f-cf2b-42a0-9911-4f71e4e4dd14@redhat.com>
-Date: Thu, 15 Aug 2024 13:18:33 +0200
+        bh=nI4171woC8AbIwEQ7yZoKX44iROE7Q6gQWAZSkQrquE=;
+        b=G6BJ57jBsWkcZdZ5lamjGqVd66rwrG+ijwglOdopWQpgj6ccWobc57Q6GuwITqIgYE
+         dOiW6bTNSckSK1LQwCj+OyYuRStxNqKkmaCe5gE5BpVjC/8/PSQLmAYHxFEpAuC1Wx+i
+         Q+FQVPZIIPGT1hTQfpdnX+pCsAUYb7J8DtkHTf2HVtNHyrf5PReqyxlknYk9wa+LXtJR
+         IF6UziIPHo1JV438PBWj1Q5osfq1fzWrsBpLyhYdo7iCNHL9j6ikZFV0KIeOyKT5r2DX
+         EJxRTCYl+eqkGYEwlkWuqsD+yppNd3FZMmubBVxREAdfMNJ/2Fb8Hx+W2ns0Q5Tsf+SK
+         v7tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWryqOmUzeb/SE1SP4fLOG34iMZcq5T5iOu0MbnDZNVT1NmorB7AxjjUhHno2/WKr4thDDw/qKdvjZGl/yZxEge65bRRS2T62GHMKIl
+X-Gm-Message-State: AOJu0YxwIL6RMj9mDqUt/QEO8PlcfV2cLG4qp3uaIuAYwfImFtdQWqNb
+	xe12SebomC47XK3AATmELjokc8MCo6fHr2vCaOwFTRGiZrtUfyZjhpAZLaifPrk=
+X-Google-Smtp-Source: AGHT+IHd9j20vHOXcP9rlnZ9ILGmbI3Pz/RRtKxnfVhu+foJuiDVUD5jJfu6OyZ/hkQoLTos92SGtA==
+X-Received: by 2002:a05:600c:500c:b0:426:6981:1bd with SMTP id 5b1f17b1804b1-429e233b139mr20497645e9.5.1723720801296;
+        Thu, 15 Aug 2024 04:20:01 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429e7bfd90bsm16608105e9.9.2024.08.15.04.20.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 04:20:00 -0700 (PDT)
+Date: Thu, 15 Aug 2024 14:19:56 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Pavitrakumar M <pavitrakumarm@vayavyalabs.com>
+Cc: Bhoomika K <bhoomikak@vayavyalabs.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ruud Derwig <Ruud.Derwig@synopsys.com>,
+	shwetar <shwetar@vayavyalabs.com>
+Subject: [PATCH 0/3] crypto: spacc - More Smatch fixes
+Message-ID: <df1ed763-0916-41e9-bdcf-a1a51c8ad88a@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: Don't allow to attach xdp if bond slave device's
- upper already has a program
-To: Feng zhou <zhoufeng.zf@bytedance.com>, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, ast@kernel.org, daniel@iogearbox.net,
- hawk@kernel.org, john.fastabend@gmail.com, jiri@resnulli.us,
- bigeasy@linutronix.de, lorenzo@kernel.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, yangzhenze@bytedance.com, wangdongdong.6@bytedance.com
-References: <20240814090811.35343-1-zhoufeng.zf@bytedance.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20240814090811.35343-1-zhoufeng.zf@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 8/14/24 11:08, Feng zhou wrote:
-> From: Feng Zhou <zhoufeng.zf@bytedance.com>
-> 
-> Cannot attach when an upper device already has a program, This
-> restriction is only for bond's slave devices, and should not be
-> accidentally injured for devices like eth0 and vxlan0.
-> 
-> Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
-> ---
->   net/core/dev.c | 10 ++++++----
->   1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/net/core/dev.c b/net/core/dev.c
-> index 6ea1d20676fb..e1f87662376a 100644
-> --- a/net/core/dev.c
-> +++ b/net/core/dev.c
-> @@ -9501,10 +9501,12 @@ static int dev_xdp_attach(struct net_device *dev, struct netlink_ext_ack *extack
->   	}
->   
->   	/* don't allow if an upper device already has a program */
-> -	netdev_for_each_upper_dev_rcu(dev, upper, iter) {
-> -		if (dev_xdp_prog_count(upper) > 0) {
-> -			NL_SET_ERR_MSG(extack, "Cannot attach when an upper device already has a program");
-> -			return -EEXIST;
-> +	if (netif_is_bond_slave(dev)) {
+A few more Smatch one liner patches.
 
-I think we want to consider even team port devices.
+Dan Carpenter (3):
+  crypto: spacc - Fix uninitialized variable in spacc_aead_process()
+  crypto: spacc - Fix NULL vs IS_ERR() check in spacc_aead_fallback()
+  crypto: spacc - Check for allocation failure in
+    spacc_skcipher_fallback()
 
-Thanks,
+ drivers/crypto/dwc-spacc/spacc_aead.c     | 8 +++-----
+ drivers/crypto/dwc-spacc/spacc_skcipher.c | 2 ++
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-Paolo
+-- 
+2.43.0
 
 
