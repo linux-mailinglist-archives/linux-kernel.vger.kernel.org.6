@@ -1,157 +1,302 @@
-Return-Path: <linux-kernel+bounces-288292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04260953879
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:43:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B26495387C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65F62B20F49
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:43:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C899BB214AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6A61BA87B;
-	Thu, 15 Aug 2024 16:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585F01BA875;
+	Thu, 15 Aug 2024 16:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QHMXQqqp"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="MBos0nqn"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0F31B4C44
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 16:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466EB1714BB;
+	Thu, 15 Aug 2024 16:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723740173; cv=none; b=W+Y7quAiwGflihfMFFZhBQ+fiD4AtkqW7tOyDvn6v6GKy4dqNYCRT/KcNCVwiL104cnqY7j29ZzjdG1qCAW+IWoFXnmIgndT9gWo1s6uuQ6rkAVxCD8VhrYSGSk+Fw9xdoaryXOaU5QGTICOmgNUXD022Sp0l3KRDYUicUBrS0g=
+	t=1723740223; cv=none; b=gmmsgUfIAiRe1cDaSunXH+BeF6WmAKOGeXFRcWxWtTNIA6Y+a8nmu7Ds/IqC+3xKjMRDLg//s/+Zw6yRva+EntIoSRqhA8h2KJqWFZKv6exO8B80ryME+nMya0s9+2Tb74EjDYA1ZRWreZaJUm78c+jlOwB1W6jSytvyrGlYzI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723740173; c=relaxed/simple;
-	bh=1zRUFULarkTq6LPHVNJ0pkCLjhF3gvttZE7Jb/DKsk4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=irw3c6A7KwXWaNaAgra3fAIwilU1Pc8VGjma4WwAP64Bi8E12c3sU9vAo0xAZqJx5mdnVAiPftI9Rn8qV66zv5xHacoY+zRBRhZHvlHhcwcrp4qX8NXTig+WfSY2CDrGs6kmql+7cAkP0PRHWCyyRN3ldcz3SeuZgpJwGz+ZUTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QHMXQqqp; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3db157cb959so696400b6e.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:42:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723740171; x=1724344971; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=f9XWOzgA/HPz/G4P1h718yGI+VzmZbkZwfnQInlVNGo=;
-        b=QHMXQqqp0faOlKAPErne6hqqOve9t3QxZ8ty67nwkIUROLh34MGXfI7bliG0RtkeSF
-         9rCCO8BgHeAeHGqg63hvu+VuAYE6DdLuhpQSeStjC2dYjBEGB4SXUCYP2686IP7FFcpR
-         rh3Tq9cK1xqctLKQ3WWKIaMmqvl50QLfwsKfxX5MgPydR7XuCIEH4KYvekPCOk7lSprA
-         XHAttpT48PZFtEHpO8npLkq+WhvmrlTJaMkrU8Z8MUvAvYn9N4TXUgAc1YtrO5ubYa/x
-         NJFCwFezWMx+eGY0UnLmVO3IoINGl/j/ZmEsAa7KJFbvOqAPG4VpHJK6/eNaRQrQp1yF
-         rL4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723740171; x=1724344971;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f9XWOzgA/HPz/G4P1h718yGI+VzmZbkZwfnQInlVNGo=;
-        b=WnlCLvgIvzS/2bCbhjU6JZihUVQpJePvMuAD2+/wcx54jrvCDRnqFL4XQeCIB27DNV
-         PgU0+2rd2I/pgde49quQ14LhmFeHgPTZIVo0rW7EH674mgZAQsGkKLKZEYZBW3aPSCwy
-         KPxIT7GtPw3QakGvlJyKvjzpUCBBweR64B1UO5NYHaRAY/Efy/hyhj60mE3LUtVvgBqN
-         8Qw5KG2/i3TJy2Xq3cPaM76TWyt7WQ6i227YAhhoFo7Oddig0VYtgzhWHsEhUmN+P+XJ
-         3uRjmzkkN1bQw1qOd0HmpNlsh0WrybCQiOYfDHbtlEIn65DpAnu6jCrHInE5WD9eCGUf
-         jQvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW7Pytzh7IlrFh6dlO3xck4VCWCzB3wp+SBdkMavWPNXI2NdBYUJ4JOrAMXaSkBpYErm0o9a6X4NDCtrgX6q+Fs5d1o0H/afHgP60T5
-X-Gm-Message-State: AOJu0Ywy1FzCiNvTsHzf3EA/xflHkbEH51sqsOYdNHukto7mLHGOyFnw
-	yCrfQWG8OeVpYxFC+TACDVb0ouVhRX12QFE3Lo7re6w86ijcrh030Wfdmi5hsw==
-X-Google-Smtp-Source: AGHT+IGcK7SGE8EjW4QiHlEKJJHDBb8NIW/RbvoYkf19zDjo/HtqxIAEn4/qp/U2DyWRmGixwywMhA==
-X-Received: by 2002:a05:6808:1b13:b0:3da:57b8:22f3 with SMTP id 5614622812f47-3dd29971d90mr8649806b6e.43.1723740170612;
-        Thu, 15 Aug 2024 09:42:50 -0700 (PDT)
-Received: from google.com (176.13.105.34.bc.googleusercontent.com. [34.105.13.176])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b636ca92sm1324086a12.91.2024.08.15.09.42.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 09:42:49 -0700 (PDT)
-Date: Thu, 15 Aug 2024 09:42:44 -0700
-From: Vipin Sharma <vipinsh@google.com>
-To: kernel test robot <lkp@intel.com>
-Cc: seanjc@google.com, pbonzini@redhat.com, oe-kbuild-all@lists.linux.dev,
-	dmatlack@google.com, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] KVM: x86/mmu: Recover NX Huge pages belonging to TDP
- MMU under MMU read lock
-Message-ID: <20240815164244.GA132028.vipinsh@google.com>
-References: <20240812171341.1763297-3-vipinsh@google.com>
- <202408150646.VV4z8Znl-lkp@intel.com>
+	s=arc-20240116; t=1723740223; c=relaxed/simple;
+	bh=sT04QvnLEsoGXewaUEmLWMYdjXWOQ/Qe16TyWFy9crE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=somuc9W/8qz2pyAz/TZ9oPMhPR7l3jxdVrCzLFuUvj8vjHwNzADKfTwgRqfSEc6UqwBOmPLRPkelw0SQwhkJm7HEffFgnrTkmTTDfe4hRylII2hGiMIYE+C5O/s9HQrX+UWsWfeNA5pE2Pa+xOu2RXnyhvgiXjdcxTFSnGV/494=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=MBos0nqn; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Dq8puxKj0ZeN7IVpwGFCF5x6k5LykH5w1x10HHPN5Sg=; b=MBos0nqnRP7dkdT8OBgJI4MLbr
+	86XxcH61JoKPx3Lh9ripFgnIMZyaYuC2ajT6obDwySQfgVdtnNMqY4Z0hrkfaxWmMBW+r+c0OCMSN
+	0oHKHHCSm26Y0ZSb93NDXMoy8rC8opEiEyiJjy9nC1f7audLXYD3xgh+raPufldKTHKYSHKH+3WQz
+	/AuiBIEtcgLHBeGQHhvUIclFBmpt2vUG38M/9LJmdA1P3tLPG6ynRObk6ypfXQ7uvIkhzrAdZuj/P
+	lDZPDtBlieidCYjYDG7d06u0uf8YSEcthqNGD8m9KtWVy7SVbgROFbSb7TGXpIPc+HjwtxiDHy26J
+	6G1ymHlw==;
+Received: from i53875a9f.versanet.de ([83.135.90.159] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sedZJ-0005XG-K6; Thu, 15 Aug 2024 18:43:21 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Chris Morgan <macromorgan@hotmail.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
+ Andy Yan <andyshrk@163.com>, Muhammed Efe Cetin <efectn@protonmail.com>,
+ Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>,
+ Ondrej Jirman <megi@xff.cz>, Yao Zi <ziyao@disroot.org>
+Cc: Celeste Liu <CoelacanthusHex@gmail.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ Yao Zi <ziyao@disroot.org>
+Subject: Re: [PATCH v3 3/4] arm64: dts: rockchip: Add base DT for rk3528 SoC
+Date: Thu, 15 Aug 2024 18:43:20 +0200
+Message-ID: <10324095.IZOipudI63@diego>
+In-Reply-To: <20240814155014.18097-4-ziyao@disroot.org>
+References:
+ <20240814155014.18097-1-ziyao@disroot.org>
+ <20240814155014.18097-4-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202408150646.VV4z8Znl-lkp@intel.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On 2024-08-15 06:50:04, kernel test robot wrote:
-> sparse warnings: (new ones prefixed by >>)
-> >> arch/x86/kvm/mmu/tdp_mmu.c:847:21: sparse: sparse: incompatible types in comparison expression (different address spaces):
->    arch/x86/kvm/mmu/tdp_mmu.c:847:21: sparse:    unsigned long long [usertype] *
->    arch/x86/kvm/mmu/tdp_mmu.c:847:21: sparse:    unsigned long long [noderef] [usertype] __rcu *
->    arch/x86/kvm/mmu/tdp_mmu.c: note: in included file (through include/linux/rbtree.h, include/linux/mm_types.h, include/linux/mmzone.h, ...):
->    include/linux/rcupdate.h:812:25: sparse: sparse: context imbalance in '__tdp_mmu_zap_root' - unexpected unlock
->    arch/x86/kvm/mmu/tdp_mmu.c:1447:33: sparse: sparse: context imbalance in 'tdp_mmu_split_huge_pages_root' - unexpected unlock
+Hi,
+
+Am Mittwoch, 14. August 2024, 17:50:13 CEST schrieb Yao Zi:
+> This initial device tree describes CPU, interrupts and UART on the chip
+> and is able to boot into basic kernel with only UART. Cache information
+> is omitted for now as there is no precise documentation. Support for
+> other features will be added later.
 > 
-> vim +847 arch/x86/kvm/mmu/tdp_mmu.c
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+
+not sure if you have seen Krzysztof's comment yesterday, that he found
+the soc node getting documented in 2019 [0].
+
+I guess that counts as a strong suggestion. Not sure how you're feeling
+about that, but I guess we could move to that scheme for new socs.
+
+So would you be willing to move the mmio-devices to a soc node?
+(stuff with mmio addresses in the node name)
+
+
+Thanks
+Heiko
+
+[0] https://lore.kernel.org/all/6320e4f3-e737-4787-8a72-7bd314ba883c@kernel.org/
+
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 182 +++++++++++++++++++++++
+>  1 file changed, 182 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528.dtsi
 > 
->    819	
->    820	static bool tdp_mmu_zap_sp(struct kvm *kvm, struct kvm_mmu_page *sp)
->    821	{
->    822		struct tdp_iter iter = {};
->    823	
->    824		lockdep_assert_held_read(&kvm->mmu_lock);
->    825	
->    826		/*
->    827		 * This helper intentionally doesn't allow zapping a root shadow page,
->    828		 * which doesn't have a parent page table and thus no associated entry.
->    829		 */
->    830		if (WARN_ON_ONCE(!sp->ptep))
->    831			return false;
->    832	
->    833		iter.old_spte = kvm_tdp_mmu_read_spte(sp->ptep);
->    834		iter.sptep = sp->ptep;
->    835		iter.level = sp->role.level + 1;
->    836		iter.gfn = sp->gfn;
->    837		iter.as_id = kvm_mmu_page_as_id(sp);
->    838	
->    839	retry:
->    840		/*
->    841		 * Since mmu_lock is held in read mode, it's possible to race with
->    842		 * another CPU which can remove sp from the page table hierarchy.
->    843		 *
->    844		 * No need to re-read iter.old_spte as tdp_mmu_set_spte_atomic() will
->    845		 * update it in the case of failure.
->    846		 */
->  > 847		if (sp->spt != spte_to_child_pt(iter.old_spte, iter.level))
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> new file mode 100644
+> index 000000000000..816573c5fe9d
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> @@ -0,0 +1,182 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (c) 2022 Rockchip Electronics Co., Ltd.
+> + * Copyright (c) 2024 Yao Zi <ziyao@disroot.org>
+> + */
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +/ {
+> +	compatible = "rockchip,rk3528";
+> +
+> +	interrupt-parent = <&gic>;
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> +
+> +	aliases {
+> +		serial0 = &uart0;
+> +		serial1 = &uart1;
+> +		serial2 = &uart2;
+> +		serial3 = &uart3;
+> +		serial4 = &uart4;
+> +		serial5 = &uart5;
+> +		serial6 = &uart6;
+> +		serial7 = &uart7;
+> +	};
+> +
+> +	cpus {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		cpu-map {
+> +			cluster0 {
+> +				core0 {
+> +					cpu = <&cpu0>;
+> +				};
+> +				core1 {
+> +					cpu = <&cpu1>;
+> +				};
+> +				core2 {
+> +					cpu = <&cpu2>;
+> +				};
+> +				core3 {
+> +					cpu = <&cpu3>;
+> +				};
+> +			};
+> +		};
+> +
+> +		cpu0: cpu@0 {
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x0>;
+> +			device_type = "cpu";
+> +			enable-method = "psci";
+> +		};
+> +
+> +		cpu1: cpu@1 {
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x1>;
+> +			device_type = "cpu";
+> +			enable-method = "psci";
+> +		};
+> +
+> +		cpu2: cpu@2 {
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x2>;
+> +			device_type = "cpu";
+> +			enable-method = "psci";
+> +		};
+> +
+> +		cpu3: cpu@3 {
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x3>;
+> +			device_type = "cpu";
+> +			enable-method = "psci";
+> +		};
+> +	};
+> +
+> +	psci {
+> +		compatible = "arm,psci-1.0", "arm,psci-0.2";
+> +		method = "smc";
+> +	};
+> +
+> +	timer {
+> +		compatible = "arm,armv8-timer";
+> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+> +	};
+> +
+> +	xin24m: clock-xin24m {
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <24000000>;
+> +		clock-output-names = "xin24m";
+> +		#clock-cells = <0>;
+> +	};
+> +
+> +	gic: interrupt-controller@fed01000 {
+> +		compatible = "arm,gic-400";
+> +		reg = <0x0 0xfed01000 0 0x1000>,
+> +		      <0x0 0xfed02000 0 0x2000>,
+> +		      <0x0 0xfed04000 0 0x2000>,
+> +		      <0x0 0xfed06000 0 0x2000>;
+> +		interrupts = <GIC_PPI 9
+> +			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+> +		interrupt-controller;
+> +		#address-cells = <0>;
+> +		#interrupt-cells = <3>;
+> +	};
+> +
+> +	uart0: serial@ff9f0000 {
+> +		compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
+> +		reg = <0x0 0xff9f0000 0x0 0x100>;
+> +		clock-frequency = <24000000>;
+> +		interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
+> +		reg-io-width = <4>;
+> +		reg-shift = <2>;
+> +		status = "disabled";
+> +	};
+> +
+> +	uart1: serial@ff9f8000 {
+> +		compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
+> +		reg = <0x0 0xff9f8000 0x0 0x100>;
+> +		interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+> +		reg-io-width = <4>;
+> +		reg-shift = <2>;
+> +		status = "disabled";
+> +	};
+> +
+> +	uart2: serial@ffa00000 {
+> +		compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
+> +		reg = <0x0 0xffa00000 0x0 0x100>;
+> +		interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+> +		reg-io-width = <4>;
+> +		reg-shift = <2>;
+> +		status = "disabled";
+> +	};
+> +
+> +	uart3: serial@ffa08000 {
+> +		compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
+> +		reg = <0x0 0xffa08000 0x0 0x100>;
+> +		reg-io-width = <4>;
+> +		reg-shift = <2>;
+> +		status = "disabled";
+> +	};
+> +
+> +	uart4: serial@ffa10000 {
+> +		compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
+> +		reg = <0x0 0xffa10000 0x0 0x100>;
+> +		interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
+> +		reg-io-width = <4>;
+> +		reg-shift = <2>;
+> +		status = "disabled";
+> +	};
+> +
+> +	uart5: serial@ffa18000 {
+> +		compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
+> +		reg = <0x0 0xffa18000 0x0 0x100>;
+> +		interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
+> +		reg-io-width = <4>;
+> +		reg-shift = <2>;
+> +		status = "disabled";
+> +	};
+> +
+> +	uart6: serial@ffa20000 {
+> +		compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
+> +		reg = <0x0 0xffa20000 0x0 0x100>;
+> +		interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
+> +		reg-io-width = <4>;
+> +		reg-shift = <2>;
+> +		status = "disabled";
+> +	};
+> +
+> +	uart7: serial@ffa28000 {
+> +		compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
+> +		reg = <0x0 0xffa28000 0x0 0x100>;
+> +		interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
+> +		reg-io-width = <4>;
+> +		reg-shift = <2>;
+> +		status = "disabled";
+> +	};
+> +};
+> 
 
-Hmm, I need to wrap spte_to_child_pt() with rcu_access_pointer() before
-comparing it to sp->spt. Following patch makes this Sparse error go
-away.
 
-diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-index 7c7d207ee590..7d5dbfe48c4b 100644
---- a/arch/x86/kvm/mmu/tdp_mmu.c
-+++ b/arch/x86/kvm/mmu/tdp_mmu.c
-@@ -820,6 +820,7 @@ static void tdp_mmu_zap_root(struct kvm *kvm, struct kvm_mmu_page *root,
- static bool tdp_mmu_zap_sp(struct kvm *kvm, struct kvm_mmu_page *sp)
- {
-        struct tdp_iter iter = {};
-+       tdp_ptep_t pt;
 
-        lockdep_assert_held_read(&kvm->mmu_lock);
-
-@@ -844,7 +845,8 @@ static bool tdp_mmu_zap_sp(struct kvm *kvm, struct kvm_mmu_page *sp)
-         * No need to re-read iter.old_spte as tdp_mmu_set_spte_atomic() will
-         * update it in the case of failure.
-         */
--       if (sp->spt != spte_to_child_pt(iter.old_spte, iter.level))
-+       pt = spte_to_child_pt(iter.old_spte, iter.level);
-+       if (sp->spt != rcu_access_pointer(pt))
-                return false;
-
-        if (tdp_mmu_set_spte_atomic(kvm, &iter, SHADOW_NONPRESENT_VALUE))
 
 
