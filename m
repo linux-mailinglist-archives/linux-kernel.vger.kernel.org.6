@@ -1,108 +1,114 @@
-Return-Path: <linux-kernel+bounces-288189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21EF9953711
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:23:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32D1B95370B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:23:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C23EE287312
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:23:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D87BF2895AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E641B1507;
-	Thu, 15 Aug 2024 15:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE431AD3F7;
+	Thu, 15 Aug 2024 15:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eFQD0nev"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b7H7vJFW"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F01A176AA3
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 15:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37C0176AA3
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 15:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723735404; cv=none; b=I5yrTHFEIzw5tdkKgFf5Fkms2P/2lwlmZn26b6eTAWoVcO3LXfxS17LzFd88GdKur2brpOhKybcelualWbIBEhqVG4mw4+cZh54ON5Ka2b008cL3C4OyOhASfLtt17r8JnkU/PqHT8TdeGCWVquoGh3Q0XRl3QP3oYUy+s5T52Q=
+	t=1723735399; cv=none; b=sLEHJTQkcF3EhDGEPG6dTOfFh/JLoXfR7A7gSaqSH1ytDQf+VwyO9oHyuP/Lsmeqd53Xmd5EG5EqVVJpRxlfX7QyqiITY6+awe3R+MKEKjW3+S/DEiJjnxC90yN/scPr2wuZdOPaFUMfu83Tm4BYC0oqFG6YiaUcB1h2w3CkJbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723735404; c=relaxed/simple;
-	bh=Z0PZF3iT3kmG4kVxpER+Pkc+8Vs70AzAJbTnaHohF+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gfEFIDhP3xAN4IWun4RLYreC8YTp6BZHSoxBWAjgM9xGr2GSnqJ+GofhO9fY3LA1jDoJ03Wsy2T3P6vRiSHweF9Sd2nZ1rqp/GAPyD2oGMl//ij1vrulPzIRKE6WtZ1dpnHNjlwi7Lxzq4Q65N0eseBNjFmFk9CCZsijliDYN+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eFQD0nev; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723735402;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z0PZF3iT3kmG4kVxpER+Pkc+8Vs70AzAJbTnaHohF+Q=;
-	b=eFQD0nevqfO/haJ9/Ucomfn3UuNhzfJNzpIHMP6gaeReC9MKunvTd82n7Q6rbyFvjfSjGt
-	UbRXmHIsOs8rJgHMP3jfluxZ8c8tsKve0iDVN2+bG+JNm+F1SDGvi+XtRf2Wa+qBhRotq/
-	G+JQckSpTu+5gCmgId2vkEZU+5babXo=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-510-_zlqN_YoPQWHN79WWiAxAQ-1; Thu, 15 Aug 2024 11:23:20 -0400
-X-MC-Unique: _zlqN_YoPQWHN79WWiAxAQ-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a77f0eca75bso107592266b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:23:20 -0700 (PDT)
+	s=arc-20240116; t=1723735399; c=relaxed/simple;
+	bh=RCmMBR8DvUYeuvHk6y3sEzZPOE5ZBWrbKoIqGeQ9lWA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Content-Type; b=XI6Zkr07hzX+zoLL/W0IwwvbyYMQ77cM8lIqp25Px2zX30j5YP1YZN1ou9pgjtsPdhv8LWNBVYYiG+8d2rcaGvwArq4ZWXIyVXXFJ8VIF2233ddzr6jOvCQ/3hm9pAXCAxqKTbgIXTsSZY+RKbvFQLtQ28sLBh/nWY0oEB8ZCDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b7H7vJFW; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-71050384c9aso979581b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:23:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723735397; x=1724340197; darn=vger.kernel.org;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/ZHCOvhAjcmBbX1eOeOharlXaIX1okAqgVUy9FSEGIA=;
+        b=b7H7vJFWv/E7gPm7yd+JT827VrbWqc2F0PwUNhvwaSD3f3DBZlilmVF/fkr+6DCG1K
+         aqeJKUxMmW0GlyzWbdXbQNrQfUeL+rV05eUM9xmRNaejG7rGZp8wzTPBsAwHZV7/zZak
+         UFQ5rtE+Nfg1ezM1Ygy1huHszDhJXZQpnFqjDQLjP48DCHjRSkxhALT89sybkAzERRRZ
+         vdAPRCkmrdAi/l5USDzvSQceXbKTueKjhicsu2CuARVxg+4gZOmrsDQk8uqQcm5ekNIs
+         +bmZWQNy6cu5F0w510FJWTLXzJ9euSepNg43/nh3RTICPGbEzpueNhOhoRowR2XUhHU6
+         9DWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723735399; x=1724340199;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z0PZF3iT3kmG4kVxpER+Pkc+8Vs70AzAJbTnaHohF+Q=;
-        b=UdqhLZP4sS44TnW1BBauYV+TIymCfe57XXnUkLya4chOf63UScHn6b7/wsoN+E24zT
-         rExICGLn2/H9fX8Us+Y811CWZjhH6ekmyT3bClGMnKAhoruWy6KJLD6rewhLE5JSV017
-         yqpJpPK2xxPf8MK20Sa9yxPKYKGHmq+kIT73k35rYGViOejcAf4YcFJEBwBwhlhI/xIw
-         YMLt1rsHOMC3UKrQdAQpjElyqlcoSTXCXY21tKFsE3PTVB6UYoJn43CwX12xz6gL792/
-         cfgUctPKXfS1NWMd7l6qMjoFTQw6MArXf7MHewuWgg/2I13anFe2NwVGPwfV6ygK6AHP
-         jJnA==
-X-Gm-Message-State: AOJu0YwsYEZLPWmNaKKjuWNcHwT23SThgTpF4j9hH2T+sHHfkIL8l2X/
-	BZg2YZglB2RZ2/8NjA4VoZeI8yE6dnrOokHkM3MHJQ6tVyQ0KgU/+qkdR9YpNS5Wt+iPzMBNICV
-	EdXvqu1UZGhuq3r2eQJTNtct5+InoQpbqw6vd1wYOPa4m3PHgN5H3WvRoaEJocg==
-X-Received: by 2002:a17:907:f782:b0:a7a:9f0f:ab14 with SMTP id a640c23a62f3a-a8366d7786fmr467851166b.33.1723735399592;
-        Thu, 15 Aug 2024 08:23:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHmfTaj56j9tYVD0QKL1sNvdoIgl/XRqpaSrAVLu8JRyiak502h9wKyYixOsF/EtaN1gS67Hg==
-X-Received: by 2002:a17:907:f782:b0:a7a:9f0f:ab14 with SMTP id a640c23a62f3a-a8366d7786fmr467848466b.33.1723735398782;
-        Thu, 15 Aug 2024 08:23:18 -0700 (PDT)
-Received: from redhat.com ([2a02:14f:178:8f0f:2cfe:cb96:98c4:3fd0])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c65f2sm117028966b.29.2024.08.15.08.23.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 08:23:16 -0700 (PDT)
-Date: Thu, 15 Aug 2024 11:23:11 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Jason Wang <jasowang@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	virtualization@lists.linux.dev,
-	Darren Kenny <darren.kenny@oracle.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: Re: [PATCH RFC 0/3] Revert "virtio_net: rx enable premapped mode by
- default"
-Message-ID: <20240815112228-mutt-send-email-mst@kernel.org>
-References: <20240511031404.30903-1-xuanzhuo@linux.alibaba.com>
- <a6ec1c84-428f-41b7-9a57-183f2aeca289@leemhuis.info>
+        d=1e100.net; s=20230601; t=1723735397; x=1724340197;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ZHCOvhAjcmBbX1eOeOharlXaIX1okAqgVUy9FSEGIA=;
+        b=JfL9n2z5YUKt35ApmdAkyCuW241eUND5RVZ3hY0+AMKjDr3xw4fQacBDigziWMy9Nu
+         /hMCnwXpqRP+Co9sApw+iHHgkjbjsKjSCsBElb3lt+K9TsAbpg6uhpzP398ASRHYTQ9H
+         7WqeGvRt8TS1+HS95sxEeFGty82K/XSVKr6vZpvhwg6MGu8Tf5BZ3ZoCvaFeu6qHa9aS
+         r4ubGzsAC+C2eoCar3xoAxTwNqgMv/OySHdlpFNOPzKloz4Qk7ID1HMV9KUkchIh4Nhu
+         yDnvlPwyIk0ZgeBTGAWm8DqGBowihxzMEwv0WDFRcWHeCT2OSl8qPgst6872vj4Buml0
+         ykNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW15qDWH7UjBRwMtLk70ZW3Udkl2pngKwXc+M8+CRuMVOhcvvYuUh1MFJp4GbI6Ht3Wg+afSnH+U+qOy6TM1o+WeuVUp92OdE3dKf2E
+X-Gm-Message-State: AOJu0YwOliB/gDKnXjKxjtiQwox/pQ8c9H3SIoFI06RPl3PM1aEr1Jcb
+	oFmuNTCWaNboaHzhPkiRmKvz4ZxOiD9LUcDDsYn0QO5QJaKXSxIlJ7l+nz4ppTZvAs2Et6F8U9s
+	kGw==
+X-Google-Smtp-Source: AGHT+IHmTF1tHqrCbwhVwT870NoGi74qkwpNRwiZLS3kdWZMOuGyHdwVhFJz1azvuma30wR+ZpAWfYoUa/U=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:915f:b0:70d:3466:2f1a with SMTP id
+ d2e1a72fcca58-7127aedd631mr17807b3a.1.1723735396761; Thu, 15 Aug 2024
+ 08:23:16 -0700 (PDT)
+Date: Thu, 15 Aug 2024 08:23:15 -0700
+In-Reply-To: <20240605231918.2915961-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a6ec1c84-428f-41b7-9a57-183f2aeca289@leemhuis.info>
+Mime-Version: 1.0
+References: <20240605231918.2915961-1-seanjc@google.com>
+Message-ID: <Zr4dY1EbVu6u7Czv@google.com>
+Subject: Re: [PATCH v8 00/10] x86/cpu: KVM: Clean up PAT and VMX macros
+From: Sean Christopherson <seanjc@google.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Andy Lutomirski <luto@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Xiaoyao Li <xiaoyao.li@intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Jim Mattson <jmattson@google.com>, Shan Kang <shan.kang@intel.com>, Xin Li <xin3.li@intel.com>, 
+	Zhao Liu <zhao1.liu@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, Aug 15, 2024 at 09:14:27AM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
-> [side note: the message I have been replying to at least when downloaded
-> from lore has two message-ids, one of them identical two a older
-> message, which is why this looks odd in the lore archives:
-> https://lore.kernel.org/all/20240511031404.30903-1-xuanzhuo@linux.alibaba.com/]
+On Wed, Jun 05, 2024, Sean Christopherson wrote:
+> The primary goal of this series is to clean up the VMX MSR macros and their
+> usage in KVM.
+> 
+> The first half of the series touches memtype code that (obviously) impacts
+> areas well outside of KVM, in order to address several warts:
+> 
+>   (a) KVM is defining VMX specific macros for the architectural memtypes
+>   (b) the PAT and MTRR code define similar, yet different macros
+>   (c) that the PAT code not only has macros for the types (well, enums),
+>       it also has macros for encoding the entire PAT MSR that can be used
+>       by KVM.
+> 
+> The memtype changes aren't strictly required for the KVM-focused changes in
+> the second half of the series, but splitting this into two series would
+> generating a number of conflicts that would be cumbersome to resolve after
+> the fact.
+> 
+> I would like to take this through the KVM tree, as I don't expect the PAT/MTRR
+> code to see much change in the near future, and IIRC the original motiviation
+> of the VMX MSR cleanups was to prepare for KVM feature enabling (FRED maybe?).
 
-Sorry, could you clarify - which message has two message IDs?
+x86 folks, can I get Acks/reviews/NAKs on patches 1-2?  I'd like to land this
+series in 6.12 as there is KVM feature enabling work that builds on top.  It's
+not a hard dependency, but having these cleanups in place would make my life easier.
 
+Thanks!
 
