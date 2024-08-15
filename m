@@ -1,141 +1,130 @@
-Return-Path: <linux-kernel+bounces-288009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70712952FFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:38:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FB1695301D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:39:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24E24287A8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:38:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C29851C24DB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 349CE1A01AE;
-	Thu, 15 Aug 2024 13:37:36 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8EE1A00D2;
-	Thu, 15 Aug 2024 13:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85DF19EED0;
+	Thu, 15 Aug 2024 13:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="CCObtL38"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646181714A8
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 13:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723729055; cv=none; b=WIAKeMf5AjRB1cViM7d6HGmVUNLhNvxwJlKHczo7TxLX5yx+2qBnHpmOo7/EHDmeenUmNOX9cEcPCrWIBS03K7cnVmyTW6kCVEk+SHVgcypPTlfAcdhl0HBy72GcRwdjoojInHhmsYQjmqXS+//9ZncF+xbjm3HOBTD2FWDrccM=
+	t=1723729153; cv=none; b=nyD6oHieH2d+AMUn+Z6wdfvbQdeo0gqhDKzUoTMCA8jGmO3vDXfhAidoigeCneijxQiHWLKZUCc5f27mj1bzZfvWlPYP0RQ7mjZkjP+tgg6/HXTvkxQ9tj1CuuFUQBzQJNWEx7X+FfNz8ZGbhSjban0MFBhQdXAz+LuZNl429ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723729055; c=relaxed/simple;
-	bh=S55pv2tvhOplbIrUC4DKqA+mD14R5cLIsvDmthqKVzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L6s4WctyvMiO2fCofrup8ORU8b4kLe+uPPOLUZRz1N99GVUhJa6eJQV/bTKHii9Tvl9VZvHwuLcoBApH24C5WE6OZhUY5vGMiv2SPRjouoZJ+VvQvrZTgKYebNlB3h5CgS4pE5dk56uWLrwj0B7HzYnKEs1TwLf/9njGwLJGChM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D46EC14BF;
-	Thu, 15 Aug 2024 06:37:58 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3AA023F6A8;
-	Thu, 15 Aug 2024 06:37:28 -0700 (PDT)
-Date: Thu, 15 Aug 2024 14:37:22 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 23/40] arm64/signal: Set up and restore the GCS
- context for signal handlers
-Message-ID: <Zr4EkmtUKop9o9wu@e133380.arm.com>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-23-699e2bd2190b@kernel.org>
- <ZrzEfg5LqdAzgJ6+@e133380.arm.com>
- <08932f6d-01ef-40e8-97d2-08f0d2016191@sirena.org.uk>
+	s=arc-20240116; t=1723729153; c=relaxed/simple;
+	bh=nokUy4SHF39XRwI3OPkHLurJXww6mSnTAY3AffIpiXw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G9Dx9XezwsI9hFQuuI4tyORt87NeK6CGAFOGd1Zrm1jbfl51HAubAfmt0XBxkGjC3xxhdon+/a3fy06sNoLELmOHdr3SwNY5HU5NjIvFU50Vk3aDxyIs3qDpiKI/84W1/7MwsYsKTmK7jkwtW3HpBARsrU19BMYKV5eZnAug3Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=CCObtL38; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1723729148; x=1723988348;
+	bh=4KOOqAhDO4ZFOzpad7+VhAff7zaPU1/74FXUVL+elaU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=CCObtL38d0Coq+We8Xj0kaBUjG3dRDjJIMu6fyvpjTKqgkohBsyZySwWtYFx/3Lxw
+	 M1Z4QNZkJNETFpuLe13BdAa4OJ7CHhz3OCGOG2f9J6r+FfSUTTDYdok6Gi63mkm91I
+	 hAAocKzFR6J/m9N+R4IU/JbWEM/NBqHnrsRwJPUNCkZxZQhVrpZRTqf9Xb+ajYoSYu
+	 DGfYUNqhgMN0jTnljODXYy11wZIUX3SDfyoKeOfA2m23Ut51c4v9Sqi3WNuqk7b6Sy
+	 ovSrJ5NGdOorSFnn8Uze5tEkCfjN0oBbVMe+SSdMtdnPXvy7XX6zjfbQ9gyLFFO9O6
+	 mKqFq28FKr+/A==
+Date: Thu, 15 Aug 2024 13:39:05 +0000
+To: Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Boqun Feng <boqun.feng@gmail.com>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v5 00/26] Generic `Allocator` support for Rust
+Message-ID: <e0b0bffb-c240-4d23-bf4d-0c1c19608f60@proton.me>
+In-Reply-To: <Zr4DpPSjDqSoMh0j@cassiopeiae>
+References: <20240812182355.11641-1-dakr@kernel.org> <Zr0GP0OXliPRqx4C@boqun-archlinux> <Zr1teqjuOHeeFO4Z@cassiopeiae> <CAH5fLgjvuE5uU00u4y+HyHTkQU_OBYvHe6NS5ohAhrLntTX1zQ@mail.gmail.com> <Zr31jqnA2b3qHK5l@cassiopeiae> <CAH5fLgjzNpeVVurPqVS=tMkKQOhXz08EsXRO4s9wYsNBuT6eVw@mail.gmail.com> <Zr4DpPSjDqSoMh0j@cassiopeiae>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 37da0818d01e8d58e689de0b12c5023f70729564
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <08932f6d-01ef-40e8-97d2-08f0d2016191@sirena.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 14, 2024 at 05:00:23PM +0100, Mark Brown wrote:
-> On Wed, Aug 14, 2024 at 03:51:42PM +0100, Dave Martin wrote:
-> > On Thu, Aug 01, 2024 at 01:06:50PM +0100, Mark Brown wrote:
-> 
-> > > +	put_user_gcs((unsigned long)sigtramp, gcspr_el0 - 2, &ret);
-> > > +	put_user_gcs(GCS_SIGNAL_CAP(gcspr_el0 - 1), gcspr_el0 - 1, &ret);
-> > > +	if (ret != 0)
-> > > +		return ret;
-> 
-> > What happens if we went wrong here, or if the signal we are delivering
-> > was caused by a GCS overrun or bad GCSPR_EL0 in the first place?
-> 
-> > It feels like a program has no way to rescue itself from excessive
-> > recursion in some thread.  Is there something equivalent to
-> > sigaltstack()?
-> 
-> > Or is the shadow stack always supposed to be big enough to cope with
-> > recursion that exhausts the main stack and alternate signal stack (and
-> > if so, how is this ensured)?
-> 
-> There's no sigaltstack() for GCS, this is also the ABI with the existing
-> shadow stack on x86 and should be addressed in a cross architecture
-> fashion.  There have been some discussions about providing a shadow alt
-> stack but they've generally been circular and inconclusive, there were a
-> bunch of tradeoffs for corner cases and nobody had a clear sense as to
-> what a good solution should be.  It was a bit unclear that actively
-> doing anything was worthwhile.  The issues were IIRC around unwinders
-> and disjoint shadow stacks, compatibility with non-shadow stacks and
-> behaviour when we overflow the shadow stack.  I think there were also
-> some applications trying to be very clever with alt stacks that needed
-> to be interacted with and complicated everything but I could be
-> misremembering there.
-> 
-> Practically speaking since we're only storing return addresses the
-> default GCS should be extremely large so it's unlikely to come up
-> without first encountering and handling issues on the normal stack.
-> Users allocating their own shadow stacks should be careful.  This isn't
-> really satisfying but is probably fine in practice, there's certainly
-> not been any pressure yet from the existing x86 deployments (though at
-> present nobody can explicitly select their own shadow stack size,
-> perhaps it'll become more of an issue when the clone3() stuff is in).
+On 15.08.24 15:33, Danilo Krummrich wrote:
+> On Thu, Aug 15, 2024 at 02:34:50PM +0200, Alice Ryhl wrote:
+>> On Thu, Aug 15, 2024 at 2:33=E2=80=AFPM Danilo Krummrich <dakr@kernel.or=
+g> wrote:
+>>>
+>>> On Thu, Aug 15, 2024 at 11:20:32AM +0200, Alice Ryhl wrote:
+>>>> On Thu, Aug 15, 2024 at 4:52=E2=80=AFAM Danilo Krummrich <dakr@kernel.=
+org> wrote:
+>>>>>
+>>>>> On Wed, Aug 14, 2024 at 12:32:15PM -0700, Boqun Feng wrote:
+>>>>>> Hi Danilo,
+>>>>>>
+>>>>>> I'm trying to put your series on rust-dev, but I hit a few conflicts=
+ due
+>>>>>> to the conflict with `Box::drop_contents`, which has been in rust-de=
+v
+>>>>>> for a while. And the conflict is not that trivial for me to resolve.
+>>>>>> So just a head-up, that's a requirement for me to put it on rust-dev=
+ for
+>>>>>> more tests from my end ;-)
+>>>>>
+>>>>> I rebased everything and you can fetch them from [1].
+>>>>>
+>>>>> I resolved the following conflicts:
+>>>>>
+>>>>>   - for `Box`, implement
+>>>>>     - `drop_contents`
+>>>>>     - `manually_drop_contents` [2]
+>>>>
+>>>> Not sure I like this name. It sounds like something that runs the
+>>>> destructor, but it does the exact opposite.
+>>>
+>>> I thought it kinda makes sense, since it's analogous to `ManuallyDrop::=
+new`.
+>>>
+>>> What about `Box::forget_contents` instead?
+>>
+>> One option is `into_manually_drop`. This uses the convention of using
+>> the `into_*` prefix for conversions that take ownership of the
+>> original value.
+>=20
+> The signature of the current `Box::manually_drop_contents` is the same as=
+ for
+> `Box::drop_contents`, namely
+> `fn manually_drop_contents(this: Self) -> Box<MaybeUninit<T>, A>`.
+>=20
+> `into_manually_drop` seems misleading for for returning a
+> `Box<MaybeUninit<T>, A>`.
+>=20
+> I still think `forget_contents` hits it quite well. Just as `drop_content=
+s`
+> drops the value, `forget_contents` makes the `Box` forget the value.
 
-Ack, if this is a known limitation then I guess it makes sense just to
-follow other arches.
+I think `forget_contents` sounds good. Can you please add some more docs
+to that function though? Like an example and change "Manually drops the
+contents, but keeps the allocation" to "Forgets the contents (does not
+run the destructor), but keeps the allocation.".
 
-I see that we default the shadow stack size to half the main stack size,
-which should indeed count as "huge".  I guess this makes shadow stack
-overrun unlikely at least (at least, not before the main stack
-overruns).
+Another thing that I spotted while looking at the patch, `move_out`
+doesn't need the `transmute_copy`, you should be able to just call
+`read` on the pointer.
 
+---
+Cheers,
+Benno
 
-Hopping to an alternate (main) stack while continuing to push on the
-same shadow stack doesn't sound broken in principle.
-
-Is there a test for taking and returning from a signal on an alternate
-(main) stack, when a shadow stack is in use?  Sounds like something
-that would be good to check if not.
-
-Cheers
----Dave
 
