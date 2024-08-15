@@ -1,120 +1,319 @@
-Return-Path: <linux-kernel+bounces-287653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59186952ADD
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:50:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D139E952ADF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7C9E1F2344F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:50:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB7341F23CF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174F11B32D5;
-	Thu, 15 Aug 2024 08:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7349E1B3F16;
+	Thu, 15 Aug 2024 08:19:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OGa3Bud8"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mysnt.onmicrosoft.com header.i=@mysnt.onmicrosoft.com header.b="PR3578ML"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2137.outbound.protection.outlook.com [40.107.20.137])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D487E176AA9;
-	Thu, 15 Aug 2024 08:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723709898; cv=none; b=PxKQjnAy0+HUHsv1oQHlVaYWbh6UiuSIcT/5GcAv57/KLlP3pjRWNz/nZhuhMvrt8PIMeTDzCZhj7GysIxtteTT5G3ltMZ253p/4KYT36i9zHwzwGm7M45DaFXOYCnP7jjrDYiLFq8GZc10jWewVV2pJtWnuoDW4QJKaad2OyOU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723709898; c=relaxed/simple;
-	bh=SCMcZlsxOg0bWvNs9re2KNKekbWFq534OYjgFt++y9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kM4ILjrm9ZTdx3Z3cv1gdpZPc/dGpWDUf0LNy9ceODa84T7X4kq/YcbV5XJJzodC5VjS21A6q0GeaBmWYxSfMd+GaA00aKpnGen/6raSzRSJ413AZLu4bKHxeMmWaKyRvvoUlhdmVNnZWGSuaN0Z6dmEwQLWiX25V//37Fj9E98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OGa3Bud8; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5bebd3b7c22so426406a12.0;
-        Thu, 15 Aug 2024 01:18:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723709895; x=1724314695; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YvlAxY1bGtRdImuOWaDEOzlQq4rW/Tt8gXa2bjpqACU=;
-        b=OGa3Bud8MN0IezW/IgUGaNQfBWnEZWqcOpsYP9YfKXtWvaGtXDchdOqaPD+Y17JOgC
-         PLFulw9PnGZcsrCILN7IMmeiYmJQUlSc9Xb7n1GgEvoEpTQI5QbIPRax5glykIxc/JIT
-         22GmggLT8aN/f15LgUw0mDC7UJZ/7SgPTsCd92bJWF3GKWY98BaFC2VptohEhtmzxGU4
-         x1BUhn1qoFp0T1oe+Zzt7PeZm54Z5TWdG7N9D5ITFRtmOBCeVYKVCP0pIBc83KJXwluc
-         hk6xuy5jIcRPgwFP2sJhjHd1HrOmygRrYkpCjy5jiFYvKU0XVJkUJlWQ40zH7ghk86U2
-         WSEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723709895; x=1724314695;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YvlAxY1bGtRdImuOWaDEOzlQq4rW/Tt8gXa2bjpqACU=;
-        b=FmxGaJz5L9qdOBxn4oT3y0b3rqM64AjpiBaQ9XO3Pdl0u1NUNPOQ+0grlRblmhbpSh
-         8CE4rAjRikJR9InJhbyJF6mT92z4JNx5kNKX8ApbrvffF7B57Cv3R6ZEmIpFJfcMhrdb
-         YaYAi+g3VKfR1pmZonMwMD+yrVybSKc8JdB60AISoJl/z/H06c4rtxsJ/7V4J3Fm7j32
-         YQf42Dmi0TC2T1r5I00JzYEQUCTROFg5nHZgutEvfDMFhMokvJcODPNZyrpHmrcYj9FK
-         hzF2Mra+4dOGpjSJMGnEwJQOJqn6c9get1G0leIDyHcAkpD+6oX+eMnq8ulKoT1bNf4K
-         /NCA==
-X-Forwarded-Encrypted: i=1; AJvYcCWrSKGs2wAya59+AyfkVqy2QXMx9hSdf9qJ92p2+/cxka+xBG586126fhIDD7VZt88/7LQkc4yve5LFqNVoetEHsMJbmWIKdiFNGiEHQ/eHWfRict7ku0c4G/wJ078MVfBBhxpuD2looA==
-X-Gm-Message-State: AOJu0YyhCwEZa4VWw7J4AhQ2To6qpZKgfqa/mqwZiKQJTAzhmhEL5kci
-	jlvL5lZ1a2fNRfBdVs47ezHjUYgg2vssXQZwTZ5OtePHmdmmzcip
-X-Google-Smtp-Source: AGHT+IE7xZlpJZIQFRTzXgIhFT/EOuGwj2l3VlFwMzZs0V9OCOaAFcKyWalP5CtpVOtB/e1kDNE0mg==
-X-Received: by 2002:a17:906:f598:b0:a72:64f0:552e with SMTP id a640c23a62f3a-a837cca3904mr205621466b.19.1723709894756;
-        Thu, 15 Aug 2024 01:18:14 -0700 (PDT)
-Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839342f6sm63839666b.137.2024.08.15.01.18.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 01:18:14 -0700 (PDT)
-Date: Thu, 15 Aug 2024 10:18:12 +0200
-From: Stanislav Jakubek <stano.jakubek@gmail.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH 2/2] arm64: dts: sprd: sc2731: rename fuel gauge
- node to be generic
-Message-ID: <Zr25xAv65+fd/qHW@standask-GA-A55M-S2HP>
-References: <cover.1720957783.git.stano.jakubek@gmail.com>
- <246c0c7763a432d4bebcb0e99b90dcf4cded333d.1720957783.git.stano.jakubek@gmail.com>
- <172364518667.95114.7859805701643557423.b4-ty@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2810817B51C
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.137
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723709978; cv=fail; b=DuObsuT3Hc4TB5ycOM6xcjKuYhbNhHuFqRyucleGR4f0Xk8QG+ebAAXZA55/zFYpF/coXNSkBe0jRqwk3c2frKvzbIISVsuCpsIL9AgXJttio5VvuE2mdEs3DCNFc231IUwZ0SmXxK/uJkBPKp6jSbsCsq5drgVgVm4Ca8bkvXc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723709978; c=relaxed/simple;
+	bh=oc8RQN+fiRq9SK/3t436g8gosLjvGZYFmADDDn+h/rw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=XVpzaCupEpiqSjsQphJETDznN45BTceicQyEIwgqtEyZnUR3dYo+7v42skBcdguaAS0O5W9Vp0DsnMnGeUJuvOq9ArMmtUoLqB17eUSdkl4x1B21AQkIqFZ8EgmCiK8h6IvJJkH2kJogYHmovhKeebIKZY4gmvMq1kVQZVvMxFk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de; spf=pass smtp.mailfrom=kontron.de; dkim=pass (1024-bit key) header.d=mysnt.onmicrosoft.com header.i=@mysnt.onmicrosoft.com header.b=PR3578ML; arc=fail smtp.client-ip=40.107.20.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kontron.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NkMCnAvQimGJTNP/HFrofrckmB9wLS2i7/GzgR5686Xm5hq1fCq425kC7rMSSbDsLREW6GDsiNyGRzZ337dfqfZxx5jkLBX8UOaoEdozbZI39Dw1VCfIFG0XyvUkNAlIL1gx3qhGgRH0utPNY5wf7HJyPZMt/+fT/pm6/69SqOU9qLBISCEjUElrIcKPbhbJRPrSZNdHt4DuGf6tgQDDg3AgGJ3r87ih8LTkkGzyTF6I5WKFwdUK1t26nBYhuVJCepeIgHpxFPZvKIKe9BE2hCO8Kq3Ku1ezwOfF0Tt74G2TrPtFInROs+uUZkNEaCJ4VCwQmBM9y8zskaV1NfnxbA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=66Zi5tPuLc0iFDOBqaoyhe/owZnMsgbGn3N7GzUq3W4=;
+ b=AzGk5Jkcky/EU2ROVNO1EMgLr+OMT7iD/0tVCsuJEafzCdzAzyYlilX7yHqteQFMxSQoKw+nBRpd/KtpioxDXUyT+8rnqs/BxfVNa8b0x2pjKTcnsb7NdycYo5Y3GOtnA/R3ehqkR5tbOJHj7p54lCzLP6iZ2GGp7IJtrZLp5VMY0Vs1q6BxnxMPsvGvuuPIiq5E5nuDjNX9ee7zCTves4c6llxeRIsW414sLRZDc3V2fMD3HurCNkHR6eMCYdXE6Jrm1EYl8KNuXcynouuCd/ifioB4zVyZDsY1UkbBnSo4iw+bCHA6cxC0P54QatII3hNCQ+ydkI3SQME2PVocaQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kontron.de; dmarc=pass action=none header.from=kontron.de;
+ dkim=pass header.d=kontron.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mysnt.onmicrosoft.com;
+ s=selector2-mysnt-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=66Zi5tPuLc0iFDOBqaoyhe/owZnMsgbGn3N7GzUq3W4=;
+ b=PR3578MLZuEY01EqiH1fNoEhzq8fe7e/ofE6WuXXfkw1wgncssGGvZhAv36FQYd5VzGzlTDz3ppS20EPYtj8ECyFJ5sOwE4ESUb0/pLrscPjrGDdIvPFV7gcni/8FjNhYl9Er4zBFpiVZBLhR2mHTswuPjTgz2qK4PwGpMmwJjo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kontron.de;
+Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:263::10)
+ by VI0PR10MB8523.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:237::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.17; Thu, 15 Aug
+ 2024 08:19:30 +0000
+Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::b854:7611:1533:2a19]) by PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::b854:7611:1533:2a19%7]) with mapi id 15.20.7849.021; Thu, 15 Aug 2024
+ 08:19:30 +0000
+Message-ID: <cd03ecb1-100e-4699-95ed-d837a2802dc7@kontron.de>
+Date: Thu, 15 Aug 2024 10:19:27 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: drm/bridge/imx8mp-hdmi-tx: Allow inexact pixel clock frequencies
+ (Was: [PATCH V8 10/12] drm/bridge: imx: add bridge wrapper driver for i.MX8MP
+ DWC HDMI)
+To: Lucas Stach <l.stach@pengutronix.de>,
+ Dominique MARTINET <dominique.martinet@atmark-techno.com>,
+ Adam Ford <aford173@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, marex@denx.de,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+ Makoto Sato <makoto.sato@atmark-techno.com>
+References: <20240203165307.7806-1-aford173@gmail.com>
+ <20240203165307.7806-11-aford173@gmail.com>
+ <Zm_UzO4Jmm7Aykcm@atmark-techno.com>
+ <22a3f5266260dd3915269ae3eec7724f7537eb55.camel@pengutronix.de>
+Content-Language: en-US, de-DE
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
+In-Reply-To: <22a3f5266260dd3915269ae3eec7724f7537eb55.camel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0115.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:bb::20) To PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:102:263::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <172364518667.95114.7859805701643557423.b4-ty@linaro.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PA4PR10MB5681:EE_|VI0PR10MB8523:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6907b217-2a61-4da5-d449-08dcbd02fc78
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?LzNESUV4cWhEZXhiOGRtSzFQdFlhcGJSZmVZaFgvN3NZSzAzWnFBSHhTQVFO?=
+ =?utf-8?B?L05PMDNlRXJBS28raDhYRlpjVGdxaXRyYTl6aFhmK1dnYVpjQ1Evc1U5ekNh?=
+ =?utf-8?B?cEJmNDF3ZXhtRXl0RXAzeTF1b0JCSTNKeUNFRHN2SVFuUXdwSlorQ2NJaEdI?=
+ =?utf-8?B?RTEvQ1NrdUtBajZDZWlkQkR6R3hRck1Gb09vd2JKcGF1TGdmUmNML1ZsZ2hp?=
+ =?utf-8?B?YUZ3QmozR0V3TU51WFhvKytKUXU5c3p2KzB3K21WUHNrN1RNKzk3WU40eWVv?=
+ =?utf-8?B?WDdsVUtuQzFUUU1vSHNyVGZCUUdQSFQrY2dvZlg1ZHdyUkhFK0dPeUl4d09P?=
+ =?utf-8?B?cU5Ub1h6d1dDeC9pSmhHNVdLekhPdU5ianhpK3ZOczYxSlZnS1duZmc1dWRB?=
+ =?utf-8?B?NXJ5d1VqdVF6aXRYYjFIMEl5SlVNd3VSTTRKZ2JkamtrbXhtNHk1azlmWnht?=
+ =?utf-8?B?enpJaGhsTnZoRDBtK2VYMGJXaTNqZ1Z5eWJWbFVzbGVaZVphWjdLS0pUVldm?=
+ =?utf-8?B?ZFhydDVPOElHVjFGTDE2OXBmRWVFdDRteEpHMTdaVmZ4QjBQRzBoQk83Y25W?=
+ =?utf-8?B?QkxmbE40T1RVWk5zL1B6K09TTFBLTHFHTVlQM0lKYit6NHJVVDlVNlBlQWdr?=
+ =?utf-8?B?UmdsMEM1aW5PdSsyRHpTOHRWeGdkSmVneXpvdWlwbUhPQ0ROOWs4cEVSL2c1?=
+ =?utf-8?B?MW1SKzIxVGNVempnQ05YY1J3d3VpS1FnYllQYXlZdnMyZ2RWV1FqYmFvSjJs?=
+ =?utf-8?B?cFpad1dOT0JDYnRuUmV3V0dlSmswdVhsc29EUjl1RUxZWW1aWHRPRXdBVEhv?=
+ =?utf-8?B?d0c3ZTV1NURBOTFqN1dXbDBTWFB3dzR0Um9rSmdRRHduM2dVeklIcnZLVUhh?=
+ =?utf-8?B?S2R0OWF0cUNQSWJ5MWZJV0t1Z0NVTFZQQU1XbkI1bUFaQ0gvNEY2UnJPMW9E?=
+ =?utf-8?B?L0NxSDVER0h2dmhzVW1NMmpLQmIveHhjL2ZFdXlOQXd2dTlqbERmQmNyOWQ4?=
+ =?utf-8?B?OHhQU3hYUW9mbXVVbCsvbWVnOXJFYXJ2NlN6NjdiWDdNWnFXYXlhdzlwaE1t?=
+ =?utf-8?B?SWw0UzVQZlM2QXZyTDZ4cHdhMTh0dlM5L1ZEblBYN1dLRklPQ1NEeFk0SVJG?=
+ =?utf-8?B?M3JGNkFnZXZpMHdBcVdhc2oxNEZRaGsweUJmR3FPaGhneWdMcExTTmt4ZUhN?=
+ =?utf-8?B?eWwwT3FpQWc3T1VLYmU2Z0NKUEJaNnFYcjdmM2F3MENsbjlNVklHUW4rd25y?=
+ =?utf-8?B?dDI0OHhiY1NaSVllaHQ5NkZRc1VoTWNhWHB0K1ljMVlGWDMvY2Fpbmx4RzVm?=
+ =?utf-8?B?WlNxRFNIemEzUDBFUWR2UGh5aWUvbGd2a0RNT1lySmhNbWZVTkNxUlgvUk9z?=
+ =?utf-8?B?RDR4T0dQM0REMzJUTDhIOU5Yb1pIMWFhS1VXMFk5bzhNYzBQREFrYUJlOWor?=
+ =?utf-8?B?WmcrL2lHYjJNRUNzSzZzajhiZ1RrSTlETFkwTTZPbXNZU3ZleGVBQWVNRlc2?=
+ =?utf-8?B?Q25yMFJJcWlCQkgvS0tJbkxOekpNdythT1BiNW5rQ1Foc3JKem1TY0x5czlz?=
+ =?utf-8?B?V1hFYkRJMTkySlhUUmh3TXZtV3d0MDZsdExHQ28rWjFGMUdkemVDellKMDU5?=
+ =?utf-8?B?TTgwaDlncW16eUJQcHhiOHRKTTNUeWFsS1o0UnVSWnFCWnd6YjN5MnhYSE9i?=
+ =?utf-8?B?bmZEd1dqdEZ4RGx6d3ErOTg2Y3N3Zlhwd0F1M3lSN1hsMW55Q1JkWTdPQThF?=
+ =?utf-8?B?S28zd1lHTFp3MTRKTUJyOUtQaVF2dkg3STNxUWU2RDl4YzM2QXIxUjRCQkFp?=
+ =?utf-8?B?NzFlN1RkQlN6QkZCdHVrZz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?N0FxTHU3ZDEzVzZnQUdXY29ROFBrL2liRlFGRXV1RDRzcmxuOTMrSjRYeU1z?=
+ =?utf-8?B?T2ExQ0FDa2tDR29IYXdadTFnd01JYlhGNHR0dmd3cy84VFAzMjZRZUNsbWJu?=
+ =?utf-8?B?bHBOUFVzRk9ESGUrMWtSZGZHZ3B1cW9KRFlFdmpZQ3Q2TmtDVmtLc0d5Lzds?=
+ =?utf-8?B?ajRrdWdlZmZLUURyWkE1K1hQNUxSRUNIQkFPZnNsZEVqRldZVlVGRGczdTlr?=
+ =?utf-8?B?ZlNKMDF3ZFByaVpZUHUvSWlIWkw0cWN6S0syY2dWaWw4eFFobkR4OWpEcDg1?=
+ =?utf-8?B?cFFPcFozM1k5Qis0ZzJzUDE3dW5KcWNmak5sWHhXKzQwSXdkV3dlWGRuK1Ar?=
+ =?utf-8?B?dGRNL2xuUDA0YnJPYi8rd2xmbXNlazdLeC9ubElwUU93VGNQcml4c3JrRHlM?=
+ =?utf-8?B?Si9EUVFBYlhxTXFqaEFXQThoMktDUXI4NkNoc2RjVlo2c09ZRmxZRllQNmU5?=
+ =?utf-8?B?WXB2WmVUZjNtUmFnWDF5YVoyQlNDeVdXaWR2aldtVTBYelNNak5DVlphYXZV?=
+ =?utf-8?B?UTZlL0JOKzkrVUVTNzZpUU9xVUs4VFJFVUVzLzZqV29aeURtMUtoSVUxcVE0?=
+ =?utf-8?B?NnBwRVJuZzV0UlREK25SZUY1LzBwam1xV1JMY1JHS0tqcE5UMEdWeGhsRmxh?=
+ =?utf-8?B?SUFHNUJIOUxHYlFaREwveVo1YnRWejl4ZUkza0ttNUxwa3NNaG53QlNmS0RF?=
+ =?utf-8?B?Z2srMTdXUDlGcGZMd2hzRXBHdXBGMys0Q1VFNkNOYzd5MS9rN2lEY2tYY3Z5?=
+ =?utf-8?B?enprZnlFT3NGc21rbHVRajIwV1k5YUVtdUtqYUdIWVVGN0wyNEorcGJ2M0Fa?=
+ =?utf-8?B?SXBVYnlsMVRLdFo3cVpiaVJRbFJIRm1ZekF1K041cVVoRjJYdWROeWRTQWJB?=
+ =?utf-8?B?Nk95Mml0VDlXT2RvdmxPNTJGazdtMGhSOHZUbFNjNnpqQUkzb2ovTjM4bkhL?=
+ =?utf-8?B?b1VkWFFJaVZWZ0NZQWxvV1duNTJjaHFzNTB5SFU2c2owWTZLWmhMSm1xMDIx?=
+ =?utf-8?B?azkrYmNMbjFET3BzQ0pxUE5ubDdRTjVKaHRnVnNWTUd6S3FIRHRNWWVPT251?=
+ =?utf-8?B?NkJKaWtTc0V1TWkyYW56QUhlditMMGRqZzA0amFkZ0l2Vy9nVEZVak1mT0NG?=
+ =?utf-8?B?ZE9JbGk0UmN2MWhiRkRhZkhxNEc4aXpGZFpsbzVMUHcyVGtuWFdIM0ZYQjlK?=
+ =?utf-8?B?eDNUNTkrTUVqV2xaaXZKdSs2UFQyYVVCNDhXMFk4eFZHYXB6RlBTalFQejFT?=
+ =?utf-8?B?QU1qR2RhUkhXOVVXRE9EOHoyem1INVl1UGY3Tmk2bjdkRU1wNGVXbUEycGxV?=
+ =?utf-8?B?UW56WU5CL0g5SFpueGUyc0RCTGZKQVU5QzBMajM3dWZxZGRUbXhib1ZENnNK?=
+ =?utf-8?B?cjdKSW5DNDNRTUs1NGV1ZUhKQ084cUt5MTlTMVk1Ti9qaWgzQkpBaUpCSkU5?=
+ =?utf-8?B?Z2FoWHVnNVBDa2RrTzFpdTZpVXpWZXNtOW1La1lwSHFOY1cwbkdEclgvbXc3?=
+ =?utf-8?B?bTRwUEE3WVZEc0VObE5raC95Z0MySGIzS1pub0x0MlVxVjk0ZCtyN0VSc1da?=
+ =?utf-8?B?RGw0dXphNlpqWjJuMmtrNHhmSFQwMEdGRGRuUGRIaFZnVlF6R0plNWF1cmdy?=
+ =?utf-8?B?bjZ3c3pzOWxDbGpBQzM3WnlEcGswenkrT3hsajZSWG9jRXdHZ29hQ1hORnRt?=
+ =?utf-8?B?bzZNaFRCejMxbFdtanVXR0FxT21aUjZYT2VkUndHcVhlT3pRTC8yTUU0dWZV?=
+ =?utf-8?B?OFEzZGF1MlR0N3h4b1EvWExZZmNGYUFrNDBrZ3dRVFQxWkxWZWYwY3pTZzhz?=
+ =?utf-8?B?aXRQL2JOSzA0MEhDZ3Jvczdqb1BVQUt3TmlML3BrZmtlcUYxWDhEdXFacHN5?=
+ =?utf-8?B?bXNwKzRjWlBqcU0yRVZnaUl4TUptdlFqQ1FVRG1PcERoaFljTWdOaGRQV05a?=
+ =?utf-8?B?QWQ3M3JibXRrNmJRU0R1aVpXL3R5Vk1KRXNmMm5XMFR6LzNUcGpjVFo5djVO?=
+ =?utf-8?B?eUZzQ05ZZ3BORmFCNkFBS3lpLzdpd2NNcXU4YmNHUkhJQ0tWY3Vma1U4UmVq?=
+ =?utf-8?B?ckZDc1dlcXRid2lOVkpEdElXWTl3WDRmUkttM0FKeTIxS1VTTzZYTWhyRkVh?=
+ =?utf-8?B?Um5iRkVZTXdBUlpuZ0pkQTVwN0ZieDFVdkZvNXY2QUpiL1JUK3l1TXNvSlJs?=
+ =?utf-8?B?aXc9PQ==?=
+X-OriginatorOrg: kontron.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6907b217-2a61-4da5-d449-08dcbd02fc78
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2024 08:19:30.4092
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8c9d3c97-3fd9-41c8-a2b1-646f3942daf1
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TS+hzLRzecrvf7XL/pP7BXyKk4zl2DtAiC/H+AOJJLQTo0IUKSDCvL1nr9Z0i9AREujf7p1YDenNRw2p77S8P/3zRAg/fv4EfiAfC+ILlYw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR10MB8523
 
-On Wed, Aug 14, 2024 at 04:20:29PM +0200, Krzysztof Kozlowski wrote:
-> 
-> On Sun, 14 Jul 2024 13:57:00 +0200, Stanislav Jakubek wrote:
-> > According to DT spec, node names should be generic. Rename the
-> > sprd,sc2731-fgu node to a more generic "fuel-gauge".
-> > 
-> > 
-> 
-> This also waits for something... so I grabbed it.
-> 
-> Applied, thanks!
-> 
-> [2/2] arm64: dts: sprd: sc2731: rename fuel gauge node to be generic
->       https://git.kernel.org/krzk/linux-dt/c/e06e908dba9fed62c9493ea5cea2e4cbd306d23c
-> 
-> Best regards,
-> -- 
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Hi Dominique, hi Lucas,
 
-Hi Krzysztof,
+On 17.06.24 6:32 PM, Lucas Stach wrote:
+> Hi Dominique,
+> 
+> Am Montag, dem 17.06.2024 um 15:16 +0900 schrieb Dominique MARTINET:
+>> Adam Ford wrote on Sat, Feb 03, 2024 at 10:52:50AM -0600:
+>>> From: Lucas Stach <l.stach@pengutronix.de>
+>>>
+>>> Add a simple wrapper driver for the DWC HDMI bridge driver that
+>>> implements the few bits that are necessary to abstract the i.MX8MP
+>>> SoC integration.
+>>
+>> Hi Lucas, Adam,
+>> (trimmed ccs a bit)
+>>
+>> First, thank you for the effort of upstreaming all of this!! It's really
+>> appreciated, and with display working I'll really be wanting to upstream
+>> our DTS as well as soon as I have time (which is going to be a while,
+>> but better late than never ?)
+>>
+>> Until then, it's been a few months but I've got a question on this bit:
+>>
+>>> diff --git a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c b/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
+>>> new file mode 100644
+>>> index 000000000000..89fc432ac611
+>>> --- /dev/null
+>>> +++ b/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
+>>> +static enum drm_mode_status
+>>> +imx8mp_hdmi_mode_valid(struct dw_hdmi *dw_hdmi, void *data,
+>>> +		       const struct drm_display_info *info,
+>>> +		       const struct drm_display_mode *mode)
+>>> +{
+>>> +	struct imx8mp_hdmi *hdmi = (struct imx8mp_hdmi *)data;
+>>> +
+>>> +	if (mode->clock < 13500)
+>>> +		return MODE_CLOCK_LOW;
+>>> +
+>>> +	if (mode->clock > 297000)
+>>> +		return MODE_CLOCK_HIGH;
+>>> +
+>>> +	if (clk_round_rate(hdmi->pixclk, mode->clock * 1000) !=
+>>> +	    mode->clock * 1000)
+>>> +		return MODE_CLOCK_RANGE;
+>>
+>> Do you know why such a check is here?
+> 
+> Sending a HDMI signal with a different rate than what the display
+> expects rarely ends well, so this check avoids that.
+> 
+> However, this check is a bit overcautious in that it only allows exact
+> rate matches. IIRC HDMI allows a rate mismatch of +- 0.5%, so this
+> check could be relaxed quite a bit to allow for that.
 
-you already applied this change as part of [1].
+I checked with a 1080p display that reports 23 possible modes via EDID.
+Out of these 15 are accepted by the driver with the strict check.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit?id=0dcc203956537696e6f936eef886fde70e049f54
+Two more would be accepted with a relaxed check that allows a 0.5% margin.
 
-Cheers,
-Stanislav
+For the remaining six modes, the pixel clock would deviate up to ~5%
+from what the display expects. Still, if I remove the check altogether,
+all 23 modes seem to work just fine.
+
+>>
+>> When plugging in a screen with no frequency identically supported in its
+>> EDID this check causes the screen to stay black, and we've been telling
+>> customers to override the EDID but it's a huge pain.
+>>
+>> Commit 6ad082bee902 ("phy: freescale: add Samsung HDMI PHY") already
+>> "fixed" the samsung hdmi phy driver to return the next frequency if an
+>> exact match hasn't been found (NXP tree's match frequencies exactly, but
+>> this gets the first clock with pixclk <= rate), so if this check is also
+>> relaxed our displays would work out of the box.
+>>
+>> I also don't see any other bridge doing this kind of check.
+>> drivers/gpu/drm/bridge/imx/imx93-mipi-dsi.c has a similar check with a
+>> 0.5% leeway, and all the other drivers don't check anything.
+>> If you want to add some level of safety, I think we could make this work
+>> with a 5% margin easily... Printing a warning in dmesg could work if
+>> you're worried about artifacts, but litteraly anything is better than a
+>> black screen with no error message in my opinion.
+>>
+>>
+>> In practice the screen I'm looking at has an EDID which only supports
+>> 51.2MHz and the closest frequency supported by the Samsung HDMI phy is
+>> 50.4MHz, so that's a ~1.5% difference and it'd be great if it could work
+>> out of the box.
+> 
+> For rate mismatches larger than the 0.5% allowed by the HDMI spec it
+> would be better to actually add PHY PLL parameters matching those
+> rates.
+
+I'd really like to be able to add more PHY PLL setpoints for displays
+that use non-CEA-861 modes. Unfortunately I didn't manage to figure out
+the fractional-n PLL parameter calculation so far.
+
+The i.MX8MP Reference Manual provides formulas to calculate the
+parameters based on the register values and I tried to make sense of it
+using the existing register values in the driver. But somehow it doesn't
+add up for me.
+
+Lucas, did you already work with the PLL parameters? By any chance, do
+you now how the math behind them works?
+
+> 
+> We could potentially add some more leeway for displays like yours that
+> aren't actually HDMI (as it doesn't seem to have a standard HDMI
+> resolution). But that's more of a last resort option, as it may
+> introduce other problems for displays that aren't as tolerant with
+> their input rates. Remember the mode_valid call is used to filter modes
+> that aren't compatible with the source, so for a display with multiple
+> modes allowing too much leeway may lead to incompatible modes not
+> getting tossed, in turn allowing userspace to set a mode that the
+> display may not like due to too much rate deviation, instead of only
+> presenting a list of valid modes. This again would present the user
+> with a black-screen without warning situation.
+
+What about adding some option to relax or remove the check for debugging
+purposes? Maybe combined with printing a warning message?
+
+I agree that we should prevent incompatible modes from passing the
+filter, but it would be really helpful if people had an easy way to
+relax/remove the check to see whether their display could potentially
+work without them needing to modify and recompile the kernel.
+
+Thanks
+Frieder
 
