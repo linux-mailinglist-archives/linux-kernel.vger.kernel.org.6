@@ -1,73 +1,72 @@
-Return-Path: <linux-kernel+bounces-287994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 969E2952F68
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:32:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 699B3952F6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E5B61F27482
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:32:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11E041F277E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D916B18D627;
-	Thu, 15 Aug 2024 13:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0DE198E78;
+	Thu, 15 Aug 2024 13:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="PzAHX10Y"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gvbpwq3K"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787257DA78
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 13:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B3919DFA6
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 13:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723728739; cv=none; b=KMS1rpNguRjya8kx4YTnKeTaXlcUm7pj2tgQB7avBElVzRfDPtcfR9N9++lWct2fxEjuHfPP2dKdVj+TNi923UROc4+MYXcX/5eTD3i6XYt1I/COFvtJFJwbJg5Nj9/WHdicEtM2VVvSIC7ZTKKAMXWjHAVbIp2lB83n4EhzFNA=
+	t=1723728756; cv=none; b=dSr+zgltOWGHA15wnAzdi+Ewt5Q8CKqgTnJNLkUcxxsZ2pQIxhsfUMF7WgUM7sPWeIDRDOhl9rRH4rzgz8Znl5fhtkitiD/5dnfrt+Kp1HQBSwf2W+I5NQO8dcB2Dmcim+KxVVSDJddWu3+/va0j4UggAF3U0n+VTFKVtLYTyX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723728739; c=relaxed/simple;
-	bh=/TAmiKj3TJje3yEkw53SwjfDuWFvKzp/CRga5BntAgU=;
+	s=arc-20240116; t=1723728756; c=relaxed/simple;
+	bh=+hcZ/NB/zrvlloIKjM3Y/VgaSg1YW6GN57pBgQtJD+A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EWuLWodh1xkhNEH+Q0E9CUkz246eo9qYLpNzV78h7tLiXMPWEDu9PCj5BFM/9UIPMG3hFf0rKcZVVR2tsXZfd/qLrdCrEl06ISBL3pyvHv1Ude5Cy9GecaX4cla5N3aeRc4mdQK3GsynxnSdn9Du/qbSaSW2y0DAGKxxlxIKDis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=PzAHX10Y; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-39834949f27so3644185ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 06:32:17 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=qJunJLVFgtVU9XYQSpMMlAkFX5n0i/ZNaIM08PXiD5g6dyl9i2g/Cp9+5z6s174W/stEe7sawP1wfe776/HiGxjFBDq8i1UHV595tZLzFjFhADdHFpFhXKFTc6oKQMaOLNateM7IVasV88PHOr/YQHC5nbg43ZPlMLE0T2TyXmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gvbpwq3K; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7aac70e30dso111527466b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 06:32:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1723728736; x=1724333536; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1723728753; x=1724333553; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=c90FMbGqmHJsy39PbcUXujyRxpEVVDaAYWfFKvTYmOY=;
-        b=PzAHX10YbLjMSQ+XqMirIUrmQCFThCuzNA6eZ8csmNN+qtOdjhwA+NswR0fXVQ2Ecv
-         +v+SMgSHu9OsqutsDZU15wqV6sHBFq9gSOQyamO/4YnRHlwPiyMY2QSC9VFjHGA4NYCR
-         usNuc+5gINgxQs4/y2pSBkTROR5WOKS7ZF2F2sjahHib+9dSDliuckbNChr3JGQ2bYSD
-         tWK1smLza+yZB7P5F9UkptdXBXNQCa5IajArubQIM4tYj/x+LkJDToWL6MFIocl8fGPU
-         rpk9jJcw0jp43XtHTUz4uNDmPYg1T+jLk8Gc2w/QcREjQilRCYyO4FJ+quToFBizZc0k
-         A3hQ==
+        bh=8zXAuqY3CZjwnnH2CQ1ELNWwnsIYLtO8vuSWwbGnpM8=;
+        b=gvbpwq3KBfopUFBARJkXd7iWJPS9vyZjwZfBd/5txIlqoJDFPHYJM3Y6bIWr+Gn3sY
+         LXo++N9QGiiA/t6e4BeWx1lCWOn4l5oXeqF5bkcct4sELF/ycgPcwTXZ3uJRiUP0cCAM
+         0ddHudThO/Tqsetn182sEhN96lM6Xd0qXCnbwVNnOl8tiGvSz6weKGbxAmiH0EW8v6WD
+         seI+i4VNxWmiQ3cmxx63XdONS9niaKKr1cuSbcX8VL0hZea9DLyOLT76X7kSPHtUz6hB
+         MbAbjCm6cF9L7uGtUDrnPCC4A70I0L5kfXVc4axN4ZbWXZN4RydvnQ9ShBv4lDyA5HgN
+         fsHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723728736; x=1724333536;
+        d=1e100.net; s=20230601; t=1723728753; x=1724333553;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c90FMbGqmHJsy39PbcUXujyRxpEVVDaAYWfFKvTYmOY=;
-        b=Oed0y/U6TvKZkYgqhc0SzDp373YyFEpZ79a8E+gN8s1mMR9MKjHnBQSNiJkGcqFH/J
-         PzyCi/avBkt3lDg3OHon5y3Ve+6bomLwNq35DkneVymZQjjq9rxD2uSBcQ8Z1HfGNDus
-         h5dJ8v4LF3iRRFJBADhn3mIXNto8OJZdEu8dC2S7uSTQRiw9hMeHjjnHAFeoWXJfYpLk
-         bvoA8/z1rrRriIZJCsaCXc+FI3hjDMcoAsO1oFrMzkglTph/j1TPARMFVTyfc7mhNCQe
-         ttkAeaFo8ypnBW7JM9gj/YE/NjukcGr50tY1+HebXk4XB/Yxu1hAYRtqTdYDCp2f/nwJ
-         ymiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpTLCbVlz3tgR30ui9HXkwnGPFRt9YlBPtqd1FDVh5M7VElayWqr8OGwwm25OARNfPo6s9qOmF6nj5XlOCPIoQ/PklutAio2W6MvKD
-X-Gm-Message-State: AOJu0YxOvUJsHgqSZHdPYABB1HEBHehEQNuZyRCAY/Cy14FF7VeYDL7u
-	ZwvH4F0AuS5BY5L9KM0c/dfpnj9Xcx+ayqCMOeDvtnZm2kQlv3BuVsoBbdmxB9g=
-X-Google-Smtp-Source: AGHT+IHI7UfNjjro7QbfS9BfRNW6H3aTBH/ngYckglkBrk5LzBa9PTiRaSVPXPfCdh4Pdsz1Ab81yg==
-X-Received: by 2002:a05:6e02:1808:b0:375:dc39:cfd2 with SMTP id e9e14a558f8ab-39d1245483amr76389715ab.11.1723728736498;
-        Thu, 15 Aug 2024 06:32:16 -0700 (PDT)
-Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39d1ec03005sm5645905ab.28.2024.08.15.06.32.15
+        bh=8zXAuqY3CZjwnnH2CQ1ELNWwnsIYLtO8vuSWwbGnpM8=;
+        b=lJ07wpvXR5OaDJZSkEQWtcVDrZme2TpR66nDbNhurKgrnh9nSaGUNTryjVrjL9tDBe
+         UC/MoGyFivMZ8Zpzfvb5wlF+LwZfZqibAdQiYz/JVp9ISPeTy5fZBPwUeBm5Ga3dhpI9
+         r5fG1E1g6hRTD6ehmID+qAdWHAbp49mxLW/Q8O7MSFYIO9kzYO0UFo5DZbCSRqOBlhVL
+         EgJNeROREaTKjwZ3ro0hzDcZ2hL5L86NqmeNetuGaAvTyXnRzcMJZ0C4VOF03+BIP774
+         83iysPHeJYxG21dQ+vYaNsc9pdpqNScoN/ZXChwXQpbqnGzHqPks2wT6GempnAu5NIzX
+         GS/A==
+X-Gm-Message-State: AOJu0YwrJGHzUwX708YE15E1G7D9/KHo3KJjC/Se6rZXUhdr/GxyZgAS
+	/QtIN8mrD5XpTMPLXQI7llyH6NhmoUnnfkEKlf1aqYT+aR8hElEZmJy+KE6fNuM=
+X-Google-Smtp-Source: AGHT+IGucy+SPZEcoRQb67/gDR2h50bksAKMcx86hThfEkkg8FTO21B7NGgUWX3TRrnhsivjalNdoQ==
+X-Received: by 2002:a17:907:2d94:b0:a72:aeff:dfed with SMTP id a640c23a62f3a-a836702c436mr461354766b.53.1723728752835;
+        Thu, 15 Aug 2024 06:32:32 -0700 (PDT)
+Received: from ?IPV6:2003:e5:8741:4a00:60e5:7bee:fc48:e85c? (p200300e587414a0060e57beefc48e85c.dip0.t-ipconnect.de. [2003:e5:8741:4a00:60e5:7bee:fc48:e85c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c6c1dsm102907666b.5.2024.08.15.06.32.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Aug 2024 06:32:16 -0700 (PDT)
-Message-ID: <686d61c4-e7ac-4dca-a7fd-decdd72e84d9@sifive.com>
-Date: Thu, 15 Aug 2024 08:32:13 -0500
+        Thu, 15 Aug 2024 06:32:32 -0700 (PDT)
+Message-ID: <c2536a0c-4632-48e9-badb-0e0e682abf8f@suse.com>
+Date: Thu, 15 Aug 2024 15:32:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,86 +74,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/9] Fix Allwinner D1 boot regression
-To: Thomas Gleixner <tglx@linutronix.de>,
- Emil Renner Berthing <emil.renner.berthing@canonical.com>,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Anup Patel <apatel@ventanamicro.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Daniel Lezcano <daniel.lezcano@linaro.org>
-References: <20240814145642.344485-1-emil.renner.berthing@canonical.com>
- <87jzgjnh9z.ffs@tglx>
- <CAJM55Z8WERQgs=QMyFGWvAHOpwcnOAudBqovaEuDudPSXCvL5Q@mail.gmail.com>
- <87ttfmm2ns.ffs@tglx>
- <CAJM55Z88H635Crc-Aeq+K0qcAk7NC89WVTAFdXDd2aQKQ7QmEg@mail.gmail.com>
- <CAJM55Z_qQX7n8tAeOFqrAH1BFjA9vaWA8rtsPG2BcKmiO88m=Q@mail.gmail.com>
- <87plqalyd4.ffs@tglx>
+Subject: Re: [PATCH 2/3] x86/cpu: fix unbootable VMs by inlining memcmp() in
+ hypervisor_cpuid_base()
+To: Alexey Dobriyan <adobriyan@gmail.com>, boris.ostrovsky@oracle.com,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com
+References: <20240802154253.482658-1-adobriyan@gmail.com>
+ <20240802154253.482658-2-adobriyan@gmail.com>
 Content-Language: en-US
-From: Samuel Holland <samuel.holland@sifive.com>
-In-Reply-To: <87plqalyd4.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+In-Reply-To: <20240802154253.482658-2-adobriyan@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Thomas, Emil,
+On 02.08.24 17:42, Alexey Dobriyan wrote:
+> If this memcmp() is not inlined then PVH early boot code can call
+> into KASAN-instrumented memcmp() which results in unbootable VMs:
+> 
+> 	pvh_start_xen
+> 	xen_prepare_pvh
+> 	xen_cpuid_base
+> 	hypervisor_cpuid_base
+> 	memcmp
+> 
+> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 
-On 2024-08-15 8:16 AM, Thomas Gleixner wrote:
-> On Thu, Aug 15 2024 at 05:14, Emil Renner Berthing wrote:
->> Emil Renner Berthing wrote:
->>> 6.11-rc3 + these reverts:  https://us01.z.antigena.com/l/Er4kZWDmvL5-bLzHHJoZv0k71iwW2jCD5qNpiz0x0XdYY6oORF_nXh7U7jw6oubhi~32HI4i71jUW9v8~NvSvPeUWrdYx3WJBr2GPDUjOu6LYPCOBfR2dVQuMWvlNj4tDjXFp3QEQAmeawZflD4JrIJjtSYIbKfe6v-tgH7SEuHMeSSriU633Lv 
->>> 6.11-rc3 + Samuel's patch: https://us01.z.antigena.com/l/EULtAYky6ZvgqZ49KGS-WBsYTg~Ht1NoQtEYmUVb56ymS9jDagqYHLK90WDjnVt69GfB4IX5NSRQXmSfkNsTzB8lJmFvDihHQmGrsCv9FzlorD9yGfXDlQ6rG6vmn5BNDwlipmssGaOGfh9yko8n9ArWR4TLhEf~f9ODqme~NXXwA9DLLc9p 
->>
->> I think this confirms what Charlie found here:
->> https://lore.kernel.org/linux-riscv/ZoydV7vad5JWIcZb@ghost/
-> 
-> Yes. So the riscv timer is not working on this thing or it stops
-> somehow.
+Acked-by: Juergen Gross <jgross@suse.com>
 
-That's correct. With the (firmware) devicetree that Emil is using, the OpenSBI
-firmware does not have a timer device, so it does not expose the (optional[1])
-SBI time extension, and sbi_set_timer() does nothing.
 
-I wrote a patch (not submitted) to skip registering riscv_clock_event when the
-SBI time extension is unavailable, but this doesn't fully solve the issue
-either, because then we have no clockevent at all when
-check_unaligned_access_all_cpus() is called.
-
-How early in the boot process are we "required" to have a functional clockevent?
-Do we need to refactor check_unaligned_access_all_cpus() so it works on systems
-where the only clockevent is provided by a platform device?
-
-Regards,
-Samuel
-
-[1] https://github.com/riscv-non-isa/riscv-sbi-doc/blob/master/src/intro.adoc
-
-> Can you apply the debug patch below and check whether you see the
-> 'J: ....' output at all and if so whether it stops at some point.
-> 
-> Thanks,
-> 
->         tglx
-> 
-> ---
-> --- a/kernel/time/timer.c
-> +++ b/kernel/time/timer.c
-> @@ -2459,6 +2459,9 @@ static void run_local_timers(void)
->  {
->  	struct timer_base *base = this_cpu_ptr(&timer_bases[BASE_LOCAL]);
->  
-> +	if (!(jiffies & 0xFF))
-> +		pr_info("J: %lx\n", jiffies);
-> +
->  	hrtimer_run_queues();
->  
->  	for (int i = 0; i < NR_BASES; i++, base++) {
-> 
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
-> 
+Juergen
 
 
