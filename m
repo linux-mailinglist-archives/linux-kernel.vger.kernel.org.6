@@ -1,144 +1,93 @@
-Return-Path: <linux-kernel+bounces-287753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67C7E952C2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:32:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC15F952C34
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:32:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0473DB22C3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:32:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74B832827B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA4C1C3F34;
-	Thu, 15 Aug 2024 09:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="b5w9JmZO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B402139A7;
+	Thu, 15 Aug 2024 09:33:00 +0000 (UTC)
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B7B54FAD;
-	Thu, 15 Aug 2024 09:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949A619E7D3;
+	Thu, 15 Aug 2024 09:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723714336; cv=none; b=TGQpOgcqEGg15q++m0uDHlnrfGSTNo5t9FpTuhjTS6nbAB+NGF+Y5JEDTG2+GEkMw8sDoxiE90WH2+zHE82WiU+hhenAlF8bQJT0HMcu4Pm+S4cFKfzsz7MBJh+ZZOwBEl6dLv02K9gi2ZuPxRrtwtSMPP3XG3q1vRSLuPDwrMc=
+	t=1723714380; cv=none; b=cXynizpMHgkDvjDnE0Xm7KHY/IaM/lrwRY5vx/2jv1jaVqF6k11Xf045F2ZIhxQu+L0noSwknPFu2aayUPyqeDlm1BvnfE/KBtPYfQYjh/n1M6dUd5Uf1uRiXKpXIWlsL1zoEhg/VMA3VvLe4oLue5bBbAVxHsaS0lLE5sH0Pbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723714336; c=relaxed/simple;
-	bh=jZHRHvaX/IzmII2xnKjKwDcMo3fvzr76zrIGPbhbC5A=;
+	s=arc-20240116; t=1723714380; c=relaxed/simple;
+	bh=p5e7HrnqukDLLvq2H+BCHUCrFjJAHwl1x/QW8KqX7H0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OOjNBLByQ45U2ktc18kvu1VPDq+xyEs9zQn4+oiQbk6XO+6urL8ADIOkv0zrmhk6+EJnrMYkPdvReRxzeHuGsNa5ruTvjwJ+MBFXNFxpWH2RrI9XNvAhvsfFP62s/Mr8bE9TFPsAcWO+N7EZPFp2cxq+4HjNO/jeLcvp69RbUoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=b5w9JmZO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9612C32786;
-	Thu, 15 Aug 2024 09:32:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723714336;
-	bh=jZHRHvaX/IzmII2xnKjKwDcMo3fvzr76zrIGPbhbC5A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b5w9JmZO/0uLOLEI8W1JTlJCPEZvnb/z+af2l63C499M15qf3Ln68iyBnE5JwtbCK
-	 /t88TdX5gUgqjNptY7VMOtjDZr2mv+hE1d565m065Z6gaVEr5hkrY79Jukc9ruWLjR
-	 5t/asageQLqEJTB/PsmVoiXyTfwBiblkCnzFs1Gg=
-Date: Thu, 15 Aug 2024 11:32:13 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Abhishek Tamboli <abhishektamboli9@gmail.com>
-Cc: dan.scally@ideasonboard.com, laurent.pinchart@ideasonboard.com,
-	dan.carpenter@linaro.org, linux-usb@vger.kernel.org,
-	skhan@linuxfoundation.org, rbmarliere@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] usb: gadget: uvc: Fix ERR_PTR dereference in
- uvc_v4l2.c
-Message-ID: <2024081508-swinger-arrange-02dd@gregkh>
-References: <20240815071416.585559-1-abhishektamboli9@gmail.com>
- <2024081508-okay-underpaid-5029@gregkh>
- <Zr3IKD4LCrlke+8H@embed-PC.myguest.virtualbox.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HWZcD7T7SRGX7PRSJ1Ivl1nEaKxmck78A1pOy58D5rgb5dtxZCExRmoTuheAOLbMBcBDEFbFwiujgZv8PFY9fyN4R/Q8xecmHcucqy2j0gvuvBUJi/ofu+koihafB96RCxFnjnqS3IM6pHNZjiDMwpXywoggqk7uLwno8jfkRkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
+Received: from [78.30.37.63] (port=44336 helo=gnumonks.org)
+	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <pablo@gnumonks.org>)
+	id 1seWqi-00Gu5u-S4; Thu, 15 Aug 2024 11:32:55 +0200
+Date: Thu, 15 Aug 2024 11:32:51 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: icejl <icejl0001@gmail.com>, kadlec@netfilter.org, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfilter: nfnetlink: fix uninitialized local variable
+Message-ID: <Zr3LQ4hGx-sN5T8Q@calendula>
+References: <20240815082733.272087-1-icejl0001@gmail.com>
+ <Zr3EhKBKllxigfcD@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zr3IKD4LCrlke+8H@embed-PC.myguest.virtualbox.org>
+In-Reply-To: <Zr3EhKBKllxigfcD@gmail.com>
+X-Spam-Score: -1.9 (-)
 
-On Thu, Aug 15, 2024 at 02:49:36PM +0530, Abhishek Tamboli wrote:
-> Hi Greg,
-> Thank you for the feedback.
+On Thu, Aug 15, 2024 at 02:04:04AM -0700, Breno Leitao wrote:
+> On Thu, Aug 15, 2024 at 04:27:33PM +0800, icejl wrote:
+> > In the nfnetlink_rcv_batch function, an uninitialized local variable
+> > extack is used, which results in using random stack data as a pointer.
+> > This pointer is then used to access the data it points to and return
+> > it as the request status, leading to an information leak. If the stack
+> > data happens to be an invalid pointer, it can cause a pointer access
+> > exception, triggering a kernel crash.
+> > 
+> > Signed-off-by: icejl <icejl0001@gmail.com>
+> > ---
+> >  net/netfilter/nfnetlink.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/net/netfilter/nfnetlink.c b/net/netfilter/nfnetlink.c
+> > index 4abf660c7baf..b29b281f4b2c 100644
+> > --- a/net/netfilter/nfnetlink.c
+> > +++ b/net/netfilter/nfnetlink.c
+> > @@ -427,6 +427,7 @@ static void nfnetlink_rcv_batch(struct sk_buff *skb, struct nlmsghdr *nlh,
+> >  
+> >  	nfnl_unlock(subsys_id);
+> >  
+> > +	memset(&extack, 0, sizeof(extack));
+> >  	if (nlh->nlmsg_flags & NLM_F_ACK)
+> >  		nfnl_err_add(&err_list, nlh, 0, &extack);
 > 
-> On Thu, Aug 15, 2024 at 10:00:27AM +0200, Greg KH wrote:
-> > On Thu, Aug 15, 2024 at 12:44:16PM +0530, Abhishek Tamboli wrote:
-> > > Fix potential dereferencing of ERR_PTR() in find_format_by_pix()
-> > > and uvc_v4l2_enum_format().
-> > > 
-> > > Fix the following smatch errors:
-> > > 
-> > > drivers/usb/gadget/function/uvc_v4l2.c:124 find_format_by_pix()
-> > > error: 'fmtdesc' dereferencing possible ERR_PTR()
-> > > 
-> > > drivers/usb/gadget/function/uvc_v4l2.c:392 uvc_v4l2_enum_format()
-> > > error: 'fmtdesc' dereferencing possible ERR_PTR()
-> > > 
-> > > Also, fix similar issue in uvc_v4l2_try_format() for potential
-> > > dereferencing of ERR_PTR().
-> > > 
-> > > Fixes: 588b9e85609b ("usb: gadget: uvc: add v4l2 enumeration api calls")
-> > > Fixes: e219a712bc06 ("usb: gadget: uvc: add v4l2 try_format api call")
-> > > Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
-> > > ---
-> > > Changes in v2:
-> > > - Add check for dereferencing of ERR_PTR() in uvc_v4l2_try_format()
-> > > 
-> > >  drivers/usb/gadget/function/uvc_v4l2.c | 12 +++++++++++-
-> > >  1 file changed, 11 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/usb/gadget/function/uvc_v4l2.c b/drivers/usb/gadget/function/uvc_v4l2.c
-> > > index a024aecb76dc..8bb88c864b60 100644
-> > > --- a/drivers/usb/gadget/function/uvc_v4l2.c
-> > > +++ b/drivers/usb/gadget/function/uvc_v4l2.c
-> > > @@ -121,6 +121,9 @@ static struct uvcg_format *find_format_by_pix(struct uvc_device *uvc,
-> > >  	list_for_each_entry(format, &uvc->header->formats, entry) {
-> > >  		const struct uvc_format_desc *fmtdesc = to_uvc_format(format->fmt);
-> > > 
-> > > +		if (IS_ERR(fmtdesc))
-> > > +			continue;
-> > > +
-> > >  		if (fmtdesc->fcc == pixelformat) {
-> > >  			uformat = format->fmt;
-> > >  			break;
-> > > @@ -240,6 +243,7 @@ uvc_v4l2_try_format(struct file *file, void *fh, struct v4l2_format *fmt)
-> > >  	struct uvc_video *video = &uvc->video;
-> > >  	struct uvcg_format *uformat;
-> > >  	struct uvcg_frame *uframe;
-> > > +	const struct uvc_format_desc *fmtdesc;
-> > >  	u8 *fcc;
-> > > 
-> > >  	if (fmt->type != video->queue.queue.type)
-> > > @@ -277,7 +281,10 @@ uvc_v4l2_try_format(struct file *file, void *fh, struct v4l2_format *fmt)
-> > >  		fmt->fmt.pix.height = uframe->frame.w_height;
-> > >  		fmt->fmt.pix.bytesperline = uvc_v4l2_get_bytesperline(uformat, uframe);
-> > >  		fmt->fmt.pix.sizeimage = uvc_get_frame_size(uformat, uframe);
-> > > -		fmt->fmt.pix.pixelformat = to_uvc_format(uformat)->fcc;
-> > > +		fmtdesc = to_uvc_format(uformat);
-> > > +		if (IS_ERR(fmtdesc))
-> > > +			return -EINVAL;
-> > 
-> > Why not return the error given to you?
-> Returning -EINVAL directly was based on the current implementation of to_uvc_format(), 
-> which only returns ERR_PTR(-EINVAL) in case of error.
-> > 
-> > > +		fmt->fmt.pix.pixelformat = fmtdesc->fcc;
-> > >  	}
-> > >  	fmt->fmt.pix.field = V4L2_FIELD_NONE;
-> > >  	fmt->fmt.pix.colorspace = V4L2_COLORSPACE_SRGB;
-> > > @@ -389,6 +396,9 @@ uvc_v4l2_enum_format(struct file *file, void *fh, struct v4l2_fmtdesc *f)
-> > >  		return -EINVAL;
-> > > 
-> > >  	fmtdesc = to_uvc_format(uformat);
-> > > +	if (IS_ERR(fmtdesc))
-> > > +		return -EINVAL;
-> > 
-> > Same here.
-> If you'd like me to make the changes to use PTR_ERR()? 
+> There is a memset later in that function , inside the 
+> `while (skb->len >= nlmsg_total_size(0))` loop. Should that one be
+> removed?
 
-Yes please.
+no, the batch contains a series of netlink message, each of them needs
+a fresh extack area which is zeroed.
+
+this pointer leak only affects the recently released 6.10, older
+kernels are not affected.
 
