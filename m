@@ -1,93 +1,151 @@
-Return-Path: <linux-kernel+bounces-287754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC15F952C34
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:32:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 827B4952C35
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:32:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74B832827B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:32:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5585D283910
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B402139A7;
-	Thu, 15 Aug 2024 09:33:00 +0000 (UTC)
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C998A3DAC05;
+	Thu, 15 Aug 2024 09:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MA4ZDSzd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949A619E7D3;
-	Thu, 15 Aug 2024 09:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E0619E7D3
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723714380; cv=none; b=cXynizpMHgkDvjDnE0Xm7KHY/IaM/lrwRY5vx/2jv1jaVqF6k11Xf045F2ZIhxQu+L0noSwknPFu2aayUPyqeDlm1BvnfE/KBtPYfQYjh/n1M6dUd5Uf1uRiXKpXIWlsL1zoEhg/VMA3VvLe4oLue5bBbAVxHsaS0lLE5sH0Pbg=
+	t=1723714388; cv=none; b=sOLWRW1MTqhzkrzW4lfQRhaIVTbXp3H7nGvK7uWp84djpTTmVvgzCH79QSeg0sJr7oS7QiwTxuwSUguhkpmeDBwq4MS20MjypIU9EB3qV/znZImG+cC7QAbPOk3DNqDNl8STq4aEQuMxSMAzNvMJ1QdWyRjNREPsvFM2sygvn1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723714380; c=relaxed/simple;
-	bh=p5e7HrnqukDLLvq2H+BCHUCrFjJAHwl1x/QW8KqX7H0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HWZcD7T7SRGX7PRSJ1Ivl1nEaKxmck78A1pOy58D5rgb5dtxZCExRmoTuheAOLbMBcBDEFbFwiujgZv8PFY9fyN4R/Q8xecmHcucqy2j0gvuvBUJi/ofu+koihafB96RCxFnjnqS3IM6pHNZjiDMwpXywoggqk7uLwno8jfkRkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
-Received: from [78.30.37.63] (port=44336 helo=gnumonks.org)
-	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <pablo@gnumonks.org>)
-	id 1seWqi-00Gu5u-S4; Thu, 15 Aug 2024 11:32:55 +0200
-Date: Thu, 15 Aug 2024 11:32:51 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: icejl <icejl0001@gmail.com>, kadlec@netfilter.org, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfilter: nfnetlink: fix uninitialized local variable
-Message-ID: <Zr3LQ4hGx-sN5T8Q@calendula>
-References: <20240815082733.272087-1-icejl0001@gmail.com>
- <Zr3EhKBKllxigfcD@gmail.com>
+	s=arc-20240116; t=1723714388; c=relaxed/simple;
+	bh=YiYZidn1idmYV57lmRj2Oy4O0BfPjV/4Sf952NuF1NY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fTWPqUvKwZcY2S9xo/kE2+eADdAvSmHULPpTfX/Wox5MskNNB0gxTXuQKJj4b+SD6riQ9ZMys9GKnZBmP57mSJKJ28LqejlF/r8OsZYCAzF9edt3ehpsh59hH4UIwrflQ0J7qf1yjVhCW9mgtRcnzCxgqRvyKF4GY4+6PoS1RNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MA4ZDSzd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2BD5C32786;
+	Thu, 15 Aug 2024 09:33:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723714387;
+	bh=YiYZidn1idmYV57lmRj2Oy4O0BfPjV/4Sf952NuF1NY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MA4ZDSzdiG09znu0W6odTW1qjdCTZcUfV6+u1HQ4iu9ADpvZkpsI0l14y6MdQsMJ1
+	 9fFN+8mcV1sz3BKsrIzuafcnRH1lB3NE0ojdSsKUsFWsjENPN1zSP+phRSu2CMKZKy
+	 3rssF49nhbMt7YkwZQsiGYy/clG9ZaL8p5/p3DBNDliURV2nJ/zOYYu/6NSi0b1xXX
+	 09Ad6lTxTIKqhRdb9YyEb2/M57doYnIP2RGbisG2n6NOWgv0AE3Chzy6Ug1Rz/mVsn
+	 ag5dWOVwKjST30V9zLH+sATXcnqG5ECxvcimsPR5Vtz5C2DK7tqg6MTHm/+pvVd/Ev
+	 Bhf1M4hNN8rRw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1seWqv-003ugc-Iu;
+	Thu, 15 Aug 2024 10:33:05 +0100
+Date: Thu, 15 Aug 2024 10:33:05 +0100
+Message-ID: <86plqayvu6.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Shanker Donthineni <sdonthineni@nvidia.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] irqchip/gic-v3: Allow unused SGIs for drivers/modules
+In-Reply-To: <Zrs2i9Iyrlqc-a4K@bogus>
+References: <20240813033925.925947-1-sdonthineni@nvidia.com>
+	<86zfpgztmt.wl-maz@kernel.org>
+	<Zrs2i9Iyrlqc-a4K@bogus>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Zr3EhKBKllxigfcD@gmail.com>
-X-Spam-Score: -1.9 (-)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: sudeep.holla@arm.com, sdonthineni@nvidia.com, tglx@linutronix.de, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, Aug 15, 2024 at 02:04:04AM -0700, Breno Leitao wrote:
-> On Thu, Aug 15, 2024 at 04:27:33PM +0800, icejl wrote:
-> > In the nfnetlink_rcv_batch function, an uninitialized local variable
-> > extack is used, which results in using random stack data as a pointer.
-> > This pointer is then used to access the data it points to and return
-> > it as the request status, leading to an information leak. If the stack
-> > data happens to be an invalid pointer, it can cause a pointer access
-> > exception, triggering a kernel crash.
-> > 
-> > Signed-off-by: icejl <icejl0001@gmail.com>
-> > ---
-> >  net/netfilter/nfnetlink.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/net/netfilter/nfnetlink.c b/net/netfilter/nfnetlink.c
-> > index 4abf660c7baf..b29b281f4b2c 100644
-> > --- a/net/netfilter/nfnetlink.c
-> > +++ b/net/netfilter/nfnetlink.c
-> > @@ -427,6 +427,7 @@ static void nfnetlink_rcv_batch(struct sk_buff *skb, struct nlmsghdr *nlh,
-> >  
-> >  	nfnl_unlock(subsys_id);
-> >  
-> > +	memset(&extack, 0, sizeof(extack));
-> >  	if (nlh->nlmsg_flags & NLM_F_ACK)
-> >  		nfnl_err_add(&err_list, nlh, 0, &extack);
+On Tue, 13 Aug 2024 11:33:47 +0100,
+Sudeep Holla <sudeep.holla@arm.com> wrote:
 > 
-> There is a memset later in that function , inside the 
-> `while (skb->len >= nlmsg_total_size(0))` loop. Should that one be
-> removed?
+> On Tue, Aug 13, 2024 at 09:58:34AM +0100, Marc Zyngier wrote:
+> > No. This is the wrong approach, and leads to inconsistent behaviour if
+> > we ever change this MAX_IPI value. It also breaks 32 bit builds, and
+> > makes things completely inconsistent between ACPI and DT.
+> >
+> > I don't know how the FFA code was tested, because I cannot see how it
+> > can work.
+> >
+> > *IF* we are going to allow random SGIs being requested by random
+> > drivers, we need to be able to do it properly. Not as a side hack like
+> > this.
+> 
+> I am open for any ideas as FF-A spec authors/architects decided to allow
+> secure world to donate one of its SGI to the normal world for FF-A
+> notifications.
 
-no, the batch contains a series of netlink message, each of them needs
-a fresh extack area which is zeroed.
+Let's first try to answer a simple question: how is that going to work
+for interrupt architectures that do not have the concept of SGIs, but
+rely on normal interrupts (similar to SPIs or LPIs) for their IPIs?
 
-this pointer leak only affects the recently released 6.10, older
-kernels are not affected.
+They don't have a global interrupt number per CPU for their IPIs, and
+may not even have the concept of a shared numbering space between
+security domains.
+
+This makes the whole concept of "delegating" an interrupt number from
+secure to non-secure a dead-end. Should we build a SW ecosystem on that?
+
+The other thing is: if FFA is exposing interrupts to be signalled from
+secure to non-secure, and that it insists on using SGIs, why isn't
+that described in DT/ACPI, with a reservation mechanism that would
+allow the GIC driver to reserve the corresponding SGI and not dish it
+out as a normal mechanism?
+
+Because this sort of thing
+
++       if (acpi_disabled) {
++               struct of_phandle_args oirq = {};
++               struct device_node *gic;
++
++               /* Only GICv3 supported currently with the device tree */
++               gic = of_find_compatible_node(NULL, NULL, "arm,gic-v3");
++               if (!gic)
++                       return -ENXIO;
++
++               oirq.np = gic;
++               oirq.args_count = 1;
++               oirq.args[0] = sr_intid;
++               irq = irq_create_of_mapping(&oirq);
++               of_node_put(gic);
++#ifdef CONFIG_ACPI
++       } else {
++               irq = acpi_register_gsi(NULL, sr_intid, ACPI_EDGE_SENSITIVE,
++                                       ACPI_ACTIVE_HIGH);
++#endif
++       }
+
+is an absolute howler. It is abusing the arch-private interface, is at
+the mercy of buggy EL3 returning stupid values, and may tramp over the
+kernel's own IPI allocation.
+
+All these problems need to be addressed.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
