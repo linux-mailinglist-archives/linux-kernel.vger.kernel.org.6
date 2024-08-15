@@ -1,96 +1,172 @@
-Return-Path: <linux-kernel+bounces-288320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F3D19538C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:07:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35AC49538C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:09:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A93C1C24487
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:07:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1217B24334
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A844E1BBBE0;
-	Thu, 15 Aug 2024 17:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6BA91BB6BC;
+	Thu, 15 Aug 2024 17:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2xt2+Mp"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="CmMAxUux"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626DAC147;
-	Thu, 15 Aug 2024 17:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93807C147
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 17:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723741656; cv=none; b=R2ELOhHwbAn2UcTEu2oEacYqKXlPM7FfjLOxOI4PZvNam+WLtVUm/EC8hMQi56jsxH565CFGCQPe3B78a0w9DJeOrNflccdLetcZO+aRynRgHURvyoMCVLePzXepTuRj7ICs9jn/QgUBvmxbeolUbbdCnTEUywX9UL3sWwEIgio=
+	t=1723741759; cv=none; b=O3Y2ftTNHv86ZVn6gTjJSQvsKLchixFyrz6Zjd13hrgslfxdORAxlH2osInyONVuRBch9mpOWvReJckqiKokZ+lom2U6KCvVuE3BnrdYoxjPnuYYw7VPKRkyfCQ2H+G2ZWIbF3jn8SgnYNr6Olg5OdwRcscktRSD50GfQU0Y3tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723741656; c=relaxed/simple;
-	bh=bZXdxt5rsuaIjfCsiuPdc+57GZgVL8e6hq/aP3YNeoA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bO5PW5f4jabowGjfyLzkjXC3L27/4fFc7K2AfVwKFfsAtOcVWbdWHwJK+QGagOOR2TpuYYoA629TPJSLxIgEyXcALYl3/Q1B6NBZW2XW8akQE6hg0aOXJvJvuElE7rOjNMlhyRagnBS5OkVqHTzRpz8/MxNT6/lLczobGHq3EfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k2xt2+Mp; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ef2cce8be8so12713811fa.1;
-        Thu, 15 Aug 2024 10:07:33 -0700 (PDT)
+	s=arc-20240116; t=1723741759; c=relaxed/simple;
+	bh=X5L5hwnjmA/iS+JyOjzWx8Qds/xtd74+wB99jhBeUsQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Wh5D9jWzxB4ZBYdPrINAxHDiBJuuTKAGVI0Fylm/MMZcDxvl3/4A4cXsLmy6pRJlmIa369a9Lf1dBl9h0BEwd5UR/OWRRO7gTDxtT/ZXMEpdz2JAvZAzN0QaSaCRnvh0Aczc5K2/twrUFKugKpuw1fvR+PtqscgBsz/y1pyrOuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=CmMAxUux; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-201fae21398so3884975ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 10:09:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723741652; x=1724346452; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bZXdxt5rsuaIjfCsiuPdc+57GZgVL8e6hq/aP3YNeoA=;
-        b=k2xt2+MpSKULg+TSp4Y1kH4aMC35DbpMfV/a2b+rJnQ2ZOZnkL9vMNhRzELOeGAEzm
-         3OgXIDDHuFuB5qtQGp2gSwgDJGefBbjQNt7xinpV/SiI7WJWg9ozhTvxKyDpThFmyekL
-         JkCP+l8LU6tX8du6RwhZnl8gn2QBdujWns6HWu1viAnnUYfEkLHCFcwbMEUeomuBdlJh
-         rTuNrDz0MEkLUP18qmafVu/3mBAl3nH0FyH/N5MbQb7e4vqegHU1+Wn7uA2C1gtl5ki4
-         9ojmzZ1rPaYCCnukqkuYsYS/M24nfkHpZveF4JIr8Q9Zs1FcBSxpaBjx9MmFFs0kpXef
-         9hqA==
+        d=ventanamicro.com; s=google; t=1723741756; x=1724346556; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lVJxT5QcdO7Ui6miH35lV51PmIys+9/MJB+dZzASdvk=;
+        b=CmMAxUuxB9TsXBqMO3V8lG4dOvi6Cq4OO8gfz1SzBjxxH/h7V+yVz+u2xuJt8IDDyl
+         m+qPNdvsi6iPe2r6wr8s4BVSDtGMRJ25WTxVznbBX4VwhWqhKWLXD5vWwmr9vyqa99uo
+         y/nQ6TAY2+gpxdr0loAVdGUBUM+E5DrUu6S2u+2NXTkslVqfU6S1JsoB3WOdr6l5DIRv
+         0VpETlQMvPdFDQ5FZHMke2vBDsBLw1KVA+U+cCQDWn3pyP3/i36F2MMyLiG9A3RQyIT9
+         EON+mCsTKN8e2rSOV0j6TdyTCjz2fnIYTtjqWTIopWMGVXsoKlzpjb7AfIlE71SAhNCJ
+         lmdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723741652; x=1724346452;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1723741756; x=1724346556;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bZXdxt5rsuaIjfCsiuPdc+57GZgVL8e6hq/aP3YNeoA=;
-        b=BaWEuhP/G38bn2K4m4bGNtgi0lDl4PUF03qmN7Hv8O31FeVRVm9xhJaX/Gm9BPAOSl
-         oKzIabcmsu/fMXENphEWnbEcsk6QgqyHbrpAsxiDX9l97J/LF3JeGQKuXCwHnqe6ejsi
-         BEShSx3J5nf9gKdy8H+knoMMQvXj0gfe6Wl9yOnqAFvrWZP28JLJDsJmwGxd4ZY71CHE
-         pPu/YnZmTYITLP7QuTwvZhLa3wI4pdEAhmFuSJI25nzUlG4ZcI2Ui3NzNYXZqeWpsSNQ
-         3EOekTVM86y2RrpllYLEkedivbAHfvkPG0RYXngvg+QEyMYG+xMz2IX94/9ZmpNw07tE
-         VAUA==
-X-Forwarded-Encrypted: i=1; AJvYcCXURssdIBx946diZAW6igtH9F8QVdHRzqfD45apLe7Vn7DQDgJigoyrZ4tMnf0OqfJcY6NnwCmLCa0LehHYByble5KkKMLFaoklpJoAmXyLsLq1mSSSl23Cs2+GXOmIuTKkASxg
-X-Gm-Message-State: AOJu0YwWz8yImTraTMgqzi2THkoC79aojT4h2EDxyX7eTfQoq6XVp06S
-	4bY+7h8VBNefsAwdLaR6EVQ9Sb4AcmsFxWyKpBHUEvxzLT5VnyQ703Sj5maxzuQyFMtFQ3ZSNQu
-	f14tYdkAy3y7eAd2ctev0OX+c2PRTU6TvMGgDEQ==
-X-Google-Smtp-Source: AGHT+IFrape4a46TIlcp9lo77AaAcqTx9xazVqA6BRWifosAN2sBEsBPed5/P4Ew2wsNSvRNfWzhfLlUqL3RgVX3mlw=
-X-Received: by 2002:a05:6512:1110:b0:52c:d819:517e with SMTP id
- 2adb3069b0e04-5331c6b050cmr72282e87.30.1723741651823; Thu, 15 Aug 2024
- 10:07:31 -0700 (PDT)
+        bh=lVJxT5QcdO7Ui6miH35lV51PmIys+9/MJB+dZzASdvk=;
+        b=QSsDcDMQYuLv+N7D6ILMpvkRLrf36F7fMo8LwFGsguQtfBARv1WTXQwxAs9A935WMw
+         I0g5E2Eqpe4kTy71Smx9Kit3/bbXmKkaAD02PV04w0O8FxugKVEH8MEKokuzmx694+UK
+         M5xYNJr3gHAdGB2QxH84cnfbxyY+ezjk0sKblZ+YqoV3w3EAhEfnt9qy/FH3Hhpb5zXQ
+         XLCkIFxnv6AE4wnO/NT8BHJSh/P4rf/SyjqljwrkJrcSuq6u6c8Bh/S11ZEPaKG3SZOQ
+         Qk4iulQITURevf9FwRw4Uble9QJnla8qNTB3jfqDErHXtSvLvrvEK8UhxY2Wase2SZfZ
+         SfWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUdZE8WYLPSJxx/Ez/44aGWG5VW2BfkwZ0B9/m2c8d0IQTNDFLvB9ubphDkbcOp2hypZgQbX2LXxQ8n+0z5E+RcC8DVpsRZwGpBU/Oe
+X-Gm-Message-State: AOJu0YwV+pm7bUeFAqC/G4gU+O9A9vl/8YbD6g3KVqhmZSprzG9b4dUe
+	xuBmBW1ZN2QW3rBVRl4Vy1KVejJnihg+kpzKUvOWy5AHwdqZ0XNUJbXOfXQxeaw=
+X-Google-Smtp-Source: AGHT+IEJsKSb7GMBEJwKRJb18oE3FCx/YFCHoyOQ+/rTrCh0U70ekG6XQEIGyKSA9piI909Jdbh/YA==
+X-Received: by 2002:a17:903:32c8:b0:201:f44d:6f00 with SMTP id d9443c01a7336-20203f51592mr4328345ad.57.1723741755569;
+        Thu, 15 Aug 2024 10:09:15 -0700 (PDT)
+Received: from anup-ubuntu-vm.localdomain ([223.185.130.49])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f03022d9sm12369535ad.25.2024.08.15.10.09.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 10:09:14 -0700 (PDT)
+From: Anup Patel <apatel@ventanamicro.com>
+To: Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Atish Patra <atishp@atishpatra.org>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Anup Patel <anup@brainfault.org>,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Anup Patel <apatel@ventanamicro.com>
+Subject: [PATCH] RISC-V: KVM: Don't zero-out PMU snapshot area before freeing data
+Date: Thu, 15 Aug 2024 22:39:07 +0530
+Message-Id: <20240815170907.2792229-1-apatel@ventanamicro.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814173121.33590-1-abhashkumarjha123@gmail.com> <20240815125321.GA632411@kernel.org>
-In-Reply-To: <20240815125321.GA632411@kernel.org>
-From: Abhash jha <abhashkumarjha123@gmail.com>
-Date: Thu, 15 Aug 2024 22:37:19 +0530
-Message-ID: <CAG=0RqKvw58-aN1onSjzc+WwhXk8uh_Ak=Po5gQyOmZUNgvaKg@mail.gmail.com>
-Subject: Re: [PATCH] selftests/net/pmtu.sh: Fix typo in error message
-To: Simon Horman <horms@kernel.org>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kuba@kernel.org, shuah@kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-> I agree with the correctness of this change.
-> And I verified that with this patch applied,
-> coedspell only flags false positives in this file.
->
-> Reviewed-by: Simon Horman <horms@kernel.org>
+With the latest Linux-6.11-rc3, the below NULL pointer crash is observed
+when SBI PMU snapshot is enabled for the guest and the guest is forcefully
+powered-off.
 
-Hi Simon,
-Thanks for the review, Should I still send the patch again with the
-fixes tag and the target repo for the patch as suggested by
-liuhangbin@gmail.com. Or is it fine for now.
+  Unable to handle kernel NULL pointer dereference at virtual address 0000000000000508
+  Oops [#1]
+  Modules linked in: kvm
+  CPU: 0 UID: 0 PID: 61 Comm: term-poll Not tainted 6.11.0-rc3-00018-g44d7178dd77a #3
+  Hardware name: riscv-virtio,qemu (DT)
+  epc : __kvm_write_guest_page+0x94/0xa6 [kvm]
+   ra : __kvm_write_guest_page+0x54/0xa6 [kvm]
+  epc : ffffffff01590e98 ra : ffffffff01590e58 sp : ffff8f80001f39b0
+   gp : ffffffff81512a60 tp : ffffaf80024872c0 t0 : ffffaf800247e000
+   t1 : 00000000000007e0 t2 : 0000000000000000 s0 : ffff8f80001f39f0
+   s1 : 00007fff89ac4000 a0 : ffffffff015dd7e8 a1 : 0000000000000086
+   a2 : 0000000000000000 a3 : ffffaf8000000000 a4 : ffffaf80024882c0
+   a5 : 0000000000000000 a6 : ffffaf800328d780 a7 : 00000000000001cc
+   s2 : ffffaf800197bd00 s3 : 00000000000828c4 s4 : ffffaf800248c000
+   s5 : ffffaf800247d000 s6 : 0000000000001000 s7 : 0000000000001000
+   s8 : 0000000000000000 s9 : 00007fff861fd500 s10: 0000000000000001
+   s11: 0000000000800000 t3 : 00000000000004d3 t4 : 00000000000004d3
+   t5 : ffffffff814126e0 t6 : ffffffff81412700
+  status: 0000000200000120 badaddr: 0000000000000508 cause: 000000000000000d
+  [<ffffffff01590e98>] __kvm_write_guest_page+0x94/0xa6 [kvm]
+  [<ffffffff015943a6>] kvm_vcpu_write_guest+0x56/0x90 [kvm]
+  [<ffffffff015a175c>] kvm_pmu_clear_snapshot_area+0x42/0x7e [kvm]
+  [<ffffffff015a1972>] kvm_riscv_vcpu_pmu_deinit.part.0+0xe0/0x14e [kvm]
+  [<ffffffff015a2ad0>] kvm_riscv_vcpu_pmu_deinit+0x1a/0x24 [kvm]
+  [<ffffffff0159b344>] kvm_arch_vcpu_destroy+0x28/0x4c [kvm]
+  [<ffffffff0158e420>] kvm_destroy_vcpus+0x5a/0xda [kvm]
+  [<ffffffff0159930c>] kvm_arch_destroy_vm+0x14/0x28 [kvm]
+  [<ffffffff01593260>] kvm_destroy_vm+0x168/0x2a0 [kvm]
+  [<ffffffff015933d4>] kvm_put_kvm+0x3c/0x58 [kvm]
+  [<ffffffff01593412>] kvm_vm_release+0x22/0x2e [kvm]
 
-Regards,
-Abhash
+Clearly, the kvm_vcpu_write_guest() function is crashing because it is
+being called from kvm_pmu_clear_snapshot_area() upon guest tear down.
+
+To address the above issue, simplify the kvm_pmu_clear_snapshot_area() to
+not zero-out PMU snapshot area from kvm_pmu_clear_snapshot_area() because
+the guest is anyway being tore down.
+
+The kvm_pmu_clear_snapshot_area() is also called when guest changes
+PMU snapshot area of a VCPU but even in this case the previous PMU
+snaphsot area must not be zeroed-out because the guest might have
+reclaimed the pervious PMU snapshot area for some other purpose.
+
+Fixes: c2f41ddbcdd7 ("RISC-V: KVM: Implement SBI PMU Snapshot feature")
+Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+---
+ arch/riscv/kvm/vcpu_pmu.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
+
+diff --git a/arch/riscv/kvm/vcpu_pmu.c b/arch/riscv/kvm/vcpu_pmu.c
+index bcf41d6e0df0..2707a51b082c 100644
+--- a/arch/riscv/kvm/vcpu_pmu.c
++++ b/arch/riscv/kvm/vcpu_pmu.c
+@@ -391,19 +391,9 @@ int kvm_riscv_vcpu_pmu_read_hpm(struct kvm_vcpu *vcpu, unsigned int csr_num,
+ static void kvm_pmu_clear_snapshot_area(struct kvm_vcpu *vcpu)
+ {
+ 	struct kvm_pmu *kvpmu = vcpu_to_pmu(vcpu);
+-	int snapshot_area_size = sizeof(struct riscv_pmu_snapshot_data);
+ 
+-	if (kvpmu->sdata) {
+-		if (kvpmu->snapshot_addr != INVALID_GPA) {
+-			memset(kvpmu->sdata, 0, snapshot_area_size);
+-			kvm_vcpu_write_guest(vcpu, kvpmu->snapshot_addr,
+-					     kvpmu->sdata, snapshot_area_size);
+-		} else {
+-			pr_warn("snapshot address invalid\n");
+-		}
+-		kfree(kvpmu->sdata);
+-		kvpmu->sdata = NULL;
+-	}
++	kfree(kvpmu->sdata);
++	kvpmu->sdata = NULL;
+ 	kvpmu->snapshot_addr = INVALID_GPA;
+ }
+ 
+-- 
+2.34.1
+
 
