@@ -1,262 +1,180 @@
-Return-Path: <linux-kernel+bounces-288019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 615B5953096
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:44:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7948C953091
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF59A288059
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:44:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEE251F21965
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58AF01A0710;
-	Thu, 15 Aug 2024 13:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC0419EED0;
+	Thu, 15 Aug 2024 13:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ltjCduHH"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zlWjmqXg"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B5A176ADE;
-	Thu, 15 Aug 2024 13:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DA319F470
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 13:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723729460; cv=none; b=c0XfK8WhEhT0rkWBEPccC+6M4xJK2KveztS9TYNd162QDk/1yBp7QsLVcNTlYrFE8rC3aA82k0BQFf/szHzUGTnccqneCkUWStQVzn9zgsOqfPg1NM2bFunDcNS0ZgJXy+2o7fcxhlNJgAMehVS2i2SRqmpHSIVqV7DR1hyfQsw=
+	t=1723729452; cv=none; b=rcuqhktHqGvYLW6P7XMOpapSj+PPmSMSlG1phLfuDo7o+shOc9N7zJfwQCOS6LfogsKGkDhE8tmPzGICzALdyG5X1WnaZufjY0l+yO/vkEToYf30VWW7txDu7lZimlZUko7FJ/hx2gthEG4kMAijRz+7BEXQRMr+NOUCBvrqNVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723729460; c=relaxed/simple;
-	bh=JUNPZHjm8v/nuaFJIljwv0sgnsRj7CmxSLSveG/QhwY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kQqnTqZxG9ZTjhbxBvIRRZfL1FeohLmvfa1hzHilFCdty8vpDlmaInKX0CzDYik0lS/VrDrCv24F+r5FspR0Cud5YhGxjIzSLYH9fJE/IQAeuVKf0bbreTUtfdzUSrzcxaTZnmDcqAuhc8EAA1RzotjyAAnhxhC+hHqiEXVZZaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ltjCduHH; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a61386so1271921a12.2;
-        Thu, 15 Aug 2024 06:44:18 -0700 (PDT)
+	s=arc-20240116; t=1723729452; c=relaxed/simple;
+	bh=9AGELrkuV7EZRikIMXBDlNIHEDvCKbJikKbwKsHwsv4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=gCA90QQCOqgieWW6qV2sCAtV/HpwLicw4TFWoIN+cGpJzP7rRHU86vkXGFBu0gA0rUCdUhCoLOuAAenDIG+TBqj9QOa+QF/Utm/XBtxFtL48Mxygge07Nahp61qPF8uClRGeRcW/kCX+gb6G0Geaytz/NZUQeVSuOZaAfrmGBbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zlWjmqXg; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e03623b24ddso1471559276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 06:44:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723729457; x=1724334257; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OEWVOSOkejG3Jox0hqATz/vxP68NCLIvNT+z/Tsv/XM=;
-        b=ltjCduHHgAzppF22e70u2BjEaIps8pXmBhuLcUu/JrBWWR4+Fj+LrCifK98cL1xZEO
-         idlClixSFVEFr+SGASOJmkpqGhoaNY/xm1xHVPrel/uOecJtM9aHlEeb4dyCDymp8vPv
-         dsUqJiunjcGWNn4BBJRs8EetsAbvQQFxcPxbkixJa/72whCe49vTqWsCQg3QoDeuR5lO
-         1td9YWAQ88HoyQsVT6pfWZTQqObWdDmuYigMmn8o785WvGDWMm/mDH4VPL+zzqN7ZL33
-         IG3dMq4Tp6NyVypqqB33Dz0Ib8DEKhnWc7Urnkv547nd4RSSRuB+4PFuXq+9zgLuqzJ9
-         P2sg==
+        d=google.com; s=20230601; t=1723729450; x=1724334250; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XPX484PwSJ0KtNfnOFVCkU6UyyOJERQv814+10anCE0=;
+        b=zlWjmqXgu7ZI7yiWh4lZlj/LPHkFQ92UZhA0QLww3rePfrlIcAgHVsXbXq2bz1DYMV
+         IM3s/VLLokKueOjzMoAUjuGauO43FPqC57f06Vke122IGQt9cpmDjl23FLiMTMhAu6Yk
+         Qwffh0TndhPTKK6GGsmiDLRPAp0Jov9//9fbuw0i+k0LXP7B9w0Aw2JR55yQlvb4qP3e
+         6N1zFoYAQo/x9mvaBa8yGliWbUunSNr6TgDMx1oraaQKZhdH0CfMojzdYNttaPRLZJpb
+         ZmbxVaImKwptDKID8V7B68Dtia/WhmH7N+QRt5aGWgetyxRLlLRe4jRdiQQ8hWnK9b/g
+         prKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723729457; x=1724334257;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OEWVOSOkejG3Jox0hqATz/vxP68NCLIvNT+z/Tsv/XM=;
-        b=GCV53worLsKA5agzZqMjMPgaJuor5hI/9ShOP/y7n/vmLI7FFazAj2qyNRRn1B4FjR
-         +HuC1Pi5TYqxhHS/w/Xh3VgbiaTDnSQqSXwPNGUEIUZyfSNzoqj8shKRnbCSgwHfKFwf
-         3nkd6V/MDXXfgaOTirz6A8oYW74qWMB34ZTXWi+rezNeWQBfFZIkLpShbg4YUlc0VXhn
-         7VvPIKDiVRLdNFVeCLvzkKapCcMVJ/IWcaePWM7u+9AHru3C3PA32D5t2I4+XO8bYC1c
-         IYfByXllTI8hd9oS4xeD5+vo/e3asZbMKhzsJNsMLR0GZBNCzS64w19FyQdzYk6UoRx9
-         x3eA==
-X-Forwarded-Encrypted: i=1; AJvYcCWzH40mSkoLpOtbU6pqD24P8nXBq4CgufWWRkyx1S7IYdd3LHNx8X3e7JmdYDPBA0Y5oJrj4LaV8kU9ZUjKBr8mnsCfNdrFsMbUnQDLbxY5KIXNJqL1OcSsOe22I8F4qHQ9RxbXvw9VomdZ9ftYyXMBEBwUPierWyE84YErf67OdLo0lnNa
-X-Gm-Message-State: AOJu0Yy3LaL2Dsp9pFayxTNMKvkxbjC9VZHmTwd2wXJYBP0PfJaYi0O/
-	SLQoGpXlGXbGxadPvx4DT5+CLlmiWxlijj9XXIyMQeajdwQjXwEt
-X-Google-Smtp-Source: AGHT+IHXmPnNO1BQhxO6MMFT6/TIgWYHu9VHKbep57A+dn6tZDRSYYtt+JQEDnN+t7z56GsriXVnxw==
-X-Received: by 2002:a05:6402:1913:b0:5be:c852:433d with SMTP id 4fb4d7f45d1cf-5bec8524614mr211111a12.15.1723729456450;
-        Thu, 15 Aug 2024 06:44:16 -0700 (PDT)
-Received: from f (cst-prg-76-86.cust.vodafone.cz. [46.135.76.86])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebbe7ecc7sm913742a12.62.2024.08.15.06.44.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 06:44:15 -0700 (PDT)
-Date: Thu, 15 Aug 2024 15:44:05 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, 
-	linux-trace-kernel@vger.kernel.org, peterz@infradead.org, oleg@redhat.com, rostedt@goodmis.org, 
-	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jolsa@kernel.org, paulmck@kernel.org, willy@infradead.org, 
-	akpm@linux-foundation.org, linux-mm@kvack.org
-Subject: Re: [PATCH RFC v3 13/13] uprobes: add speculative lockless VMA to
- inode resolution
-Message-ID: <o46u6b2w4b2ijrh3yzj7rc4c3outqmmtzbgbnzhscfuqsu4i4u@uhv65maza2d5>
-References: <20240813042917.506057-1-andrii@kernel.org>
- <20240813042917.506057-14-andrii@kernel.org>
- <7byqni7pmnufzjj73eqee2hvpk47tzgwot32gez3lb2u5lucs2@5m7dvjrvtmv2>
- <CAJuCfpG8hCNjqmttb91yq5kPaSGaYLL1ozkHKqUjD7X3n_60+w@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1723729450; x=1724334250;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XPX484PwSJ0KtNfnOFVCkU6UyyOJERQv814+10anCE0=;
+        b=YiYnfBdhkMgchc4bqlp7S4P9y0xAy9W8IcwxEyEkutKAsFOY11Hef25dlN2hz4JAyo
+         4I0M9ydpNhN76bPHE65sFXJWjko9kFvrBKxIKWr+Gj3xA/1Y4vwQj2+gIYiUGKcQTrxa
+         DUxZ+nrIIfDbMwHMSSuyNlQyqVmBc+cW8EHTm2YajDzDGyO6JPGJES9H8XUkbg4T4+gm
+         Oy25MdtlbRdqNY9l5ZoWgfdDcO55ApL97G5sgaCulXXgElw99dTtXgqqVrYUDjHN6+wm
+         xM4R0RxWGSyO5yHBivzVGOuubTPsn6+vlK1kqFOJEPMhQFrKjoYUxiCuLjlnYG2FI3ig
+         EnFw==
+X-Forwarded-Encrypted: i=1; AJvYcCUewLMZagQYlJlu1Un0pWNJt5q2E7sIIdPgTXs55eWJD84OCMwTlhi/bc2ah7SV6lk7KAtNhrZpyA+5SydGULn1LV14fB5V60gjSqNB
+X-Gm-Message-State: AOJu0Yx1kAhbss2IXE6lje3J5+8Y0aNEhtJecDhBBQaFKl3kVjxZbOFu
+	jDV8wAJb6UP7C4XXM37A7ul+Jj1mxdFvDjbX0IHe8tUZnx+tjnaFZMv1RHY8kwrS/FPWZRAcYEn
+	b7g==
+X-Google-Smtp-Source: AGHT+IGSgylacpA/2U2pcu8PcEw6cZjfuj/ASwhZ1QB063VQnq4fE/QQFvRwasAXHSOpiMB5bZZ2pZbZXxU=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:e4c4:0:b0:e03:6556:9fb5 with SMTP id
+ 3f1490d57ef6-e1155ba2c78mr102561276.11.1723729449919; Thu, 15 Aug 2024
+ 06:44:09 -0700 (PDT)
+Date: Thu, 15 Aug 2024 06:44:08 -0700
+In-Reply-To: <87h6bmfbgm.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpG8hCNjqmttb91yq5kPaSGaYLL1ozkHKqUjD7X3n_60+w@mail.gmail.com>
+Mime-Version: 1.0
+References: <b44227c5-5af6-4243-8ed9-2b8cdc0e5325@gmail.com>
+ <Zpq2Lqd5nFnA0VO-@google.com> <207a5c75-b6ad-4bfb-b436-07d4a3353003@gmail.com>
+ <87a5i05nqj.fsf@redhat.com> <b20eded4-0663-49fb-ba88-5ff002a38a7f@gmail.com>
+ <87plqbfq7o.fsf@redhat.com> <ZrzIVnkLqcbUKVDZ@google.com> <87mslff728.fsf@redhat.com>
+ <Zr0rEy0bO1ju_f1C@google.com> <87h6bmfbgm.fsf@redhat.com>
+Message-ID: <Zr4GKEzp8eQDDH1d@google.com>
+Subject: Re: [BUG] =?utf-8?Q?arch=2Fx86=2Fkvm=2Fvmx?= =?utf-8?Q?=2Fvmx=5Fonhyperv=2Eh=3A109=3A36=3A_error=3A_dereference_of_NUL?=
+ =?utf-8?B?TCDigJgw4oCZ?=
+From: Sean Christopherson <seanjc@google.com>
+To: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Mirsad Todorovac <mtodorovac69@gmail.com>, kvm@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Aug 13, 2024 at 08:36:03AM -0700, Suren Baghdasaryan wrote:
-> On Mon, Aug 12, 2024 at 11:18 PM Mateusz Guzik <mjguzik@gmail.com> wrote:
-> >
-> > On Mon, Aug 12, 2024 at 09:29:17PM -0700, Andrii Nakryiko wrote:
-> > > Now that files_cachep is SLAB_TYPESAFE_BY_RCU, we can safely access
-> > > vma->vm_file->f_inode lockless only under rcu_read_lock() protection,
-> > > attempting uprobe look up speculatively.
-> > >
-> > > We rely on newly added mmap_lock_speculation_{start,end}() helpers to
-> > > validate that mm_struct stays intact for entire duration of this
-> > > speculation. If not, we fall back to mmap_lock-protected lookup.
-> > >
-> > > This allows to avoid contention on mmap_lock in absolutely majority of
-> > > cases, nicely improving uprobe/uretprobe scalability.
-> > >
-> >
-> > Here I have to admit to being mostly ignorant about the mm, so bear with
-> > me. :>
-> >
-> > I note the result of find_active_uprobe_speculative is immediately stale
-> > in face of modifications.
-> >
-> > The thing I'm after is that the mmap_lock_speculation business adds
-> > overhead on archs where a release fence is not a de facto nop and I
-> > don't believe the commit message justifies it. Definitely a bummer to
-> > add merely it for uprobes. If there are bigger plans concerning it
-> > that's a different story of course.
-> >
-> > With this in mind I have to ask if instead you could perhaps get away
-> > with the already present per-vma sequence counter?
+On Thu, Aug 15, 2024, Vitaly Kuznetsov wrote:
+> Sean Christopherson <seanjc@google.com> writes:
 > 
-> per-vma sequence counter does not implement acquire/release logic, it
-> relies on vma->vm_lock for synchronization. So if we want to use it,
-> we would have to add additional memory barriers here. This is likely
-> possible but as I mentioned before we would need to ensure the
-> pagefault path does not regress. OTOH mm->mm_lock_seq already halfway
-> there (it implements acquire/release logic), we just had to ensure
-> mmap_write_lock() increments mm->mm_lock_seq.
+> > On Wed, Aug 14, 2024, Vitaly Kuznetsov wrote:
+> >> Sean Christopherson <seanjc@google.com> writes:
+> >> 
+> >> > On Wed, Aug 14, 2024, Vitaly Kuznetsov wrote:
+> >> >> What I meant is something along these lines (untested):
+> >> >> 
+> >> >> diff --git a/arch/x86/kvm/vmx/vmx_onhyperv.h b/arch/x86/kvm/vmx/vmx_onhyperv.h
+> >> >> index eb48153bfd73..e2d8c67d0cad 100644
+> >> >> --- a/arch/x86/kvm/vmx/vmx_onhyperv.h
+> >> >> +++ b/arch/x86/kvm/vmx/vmx_onhyperv.h
+> >> >> @@ -104,6 +104,14 @@ static inline void evmcs_load(u64 phys_addr)
+> >> >>         struct hv_vp_assist_page *vp_ap =
+> >> >>                 hv_get_vp_assist_page(smp_processor_id());
+> >> >>  
+> >> >> +       /*
+> >> >> +        * When enabling eVMCS, KVM verifies that every CPU has a valid hv_vp_assist_page()
+> >> >> +        * and aborts enabling the feature otherwise. CPU onlining path is also checked in
+> >> >> +        * vmx_hardware_enable(). With this, it is impossible to reach here with vp_ap == NULL
+> >> >> +        * but compilers may still complain.
+> >> >> +        */
+> >> >> +       BUG_ON(!vp_ap);
+> >> >
+> >> > A full BUG_ON() is overkill, and easily avoided.  If we want to add a sanity
+> >> > check here and do more than just WARN, then it's easy enough to plumb in @vcpu
+> >> > and make this a KVM_BUG_ON() so that the VM dies, i.e. so that KVM doesn't risk
+> >> > corrupting the guest somehow.
+> >> >
+> >> 
+> >> I'm still acting under the impression this is an absolutely impossible
+> >> situation :-)
+> >> 
+> >> AFAICS, we only call evmcs_load() from vmcs_load() but this one doesn't
+> >> have @vcpu/@kvm either and I wasn't sure it's worth the effort to do the
+> >> plumbing (or am I missing an easy way to go back from @vmcs to
+> >> @vcpu?). On the other hand, vmcs_load() should not be called that ofter
+> >> so if we prefer to have @vcpu there for some other reason -- why not.
+> >
+> > kvm_get_running_vcpu(), though I honestly purposely didn't suggest it earlier
+> > because I am not a fan of using kvm_get_running_vcpu() unless it's absolutely
+> > necessary.  But for this situation, I'd be fine with using it.
 > 
-> So, from the release fence overhead POV I think whether we use
-> mm->mm_lock_seq or vma->vm_lock, we would still need a proper fence
-> here.
+> Ah, nice, so we don't even need the plumbing then I guess? Compile-tested only:
 > 
-
-Per my previous e-mail I'm not particularly familiar with mm internals,
-so I'm going to handwave a little bit with my $0,03 concerning multicore
-in general and if you disagree with it that's your business. For the
-time being I have no interest in digging into any of this.
-
-Before I do, to prevent this thread from being a total waste, here are
-some remarks concerning the patch with the assumption that the core idea
-lands.
-
-From the commit message:
-> Now that files_cachep is SLAB_TYPESAFE_BY_RCU, we can safely access
-> vma->vm_file->f_inode lockless only under rcu_read_lock() protection,
-> attempting uprobe look up speculatively.
-
-Just in case I'll note a nit that this paragraph will need to be removed
-since the patch adding the flag is getting dropped.
-
-A non-nit which may or may not end up mattering is that the flag (which
-*is* set on the filep slab cache) makes things more difficult to
-validate. Normal RCU usage guarantees that the object itself wont be
-freed as long you follow the rules. However, the SLAB_TYPESAFE_BY_RCU
-flag weakens it significantly -- the thing at hand will always be a
-'struct file', but it may get reallocated to *another* file from under
-you. Whether this aspect plays a role here I don't know.
-
-> +static struct uprobe *find_active_uprobe_speculative(unsigned long bp_vaddr)
-> +{
-> +	const vm_flags_t flags = VM_HUGETLB | VM_MAYEXEC | VM_MAYSHARE;
-> +	struct mm_struct *mm = current->mm;
-> +	struct uprobe *uprobe;
-> +	struct vm_area_struct *vma;
-> +	struct file *vm_file;
-> +	struct inode *vm_inode;
-> +	unsigned long vm_pgoff, vm_start;
-> +	int seq;
-> +	loff_t offset;
+> diff --git a/arch/x86/kvm/vmx/vmx_onhyperv.h b/arch/x86/kvm/vmx/vmx_onhyperv.h
+> index eb48153bfd73..318f5f95f211 100644
+> --- a/arch/x86/kvm/vmx/vmx_onhyperv.h
+> +++ b/arch/x86/kvm/vmx/vmx_onhyperv.h
+> @@ -104,6 +104,19 @@ static inline void evmcs_load(u64 phys_addr)
+>         struct hv_vp_assist_page *vp_ap =
+>                 hv_get_vp_assist_page(smp_processor_id());
+>  
+> +       /*
+> +        * When enabling eVMCS, KVM verifies that every CPU has a valid hv_vp_assist_page()
+> +        * and aborts enabling the feature otherwise. CPU onlining path is also checked in
+> +        * vmx_hardware_enable(). With this, it is impossible to reach here with vp_ap == NULL
+> +        * but compilers may still complain.
+> +        */
+> +       if (!vp_ap) {
+> +               struct kvm_vcpu *vcpu = kvm_get_running_vcpu();
 > +
-> +	if (!mmap_lock_speculation_start(mm, &seq))
-> +		return NULL;
+> +               KVM_BUG_ON(1, vcpu->kvm);
+> +               return;
+
+Eh, I would just do:
+
+	if (KVM_BUG_ON(!vp_ap, kvm_get_running_vcpu()->kvm))
+		return
+
+> +       }
 > +
-> +	rcu_read_lock();
-> +
+>         if (current_evmcs->hv_enlightenments_control.nested_flush_hypercall)
+>                 vp_ap->nested_control.features.directhypercall = 1;
+>         vp_ap->current_nested_vmcs = phys_addr;
+> 
+> (I hope we can't reach here with kvm_running_vcpu unset, can we?)
 
-I don't think there is a correctness problem here, but entering rcu
-*after* deciding to speculatively do the lookup feels backwards.
+Yes?  kvm_running_vcpu is set before kvm_arch_vcpu_load() and cleared after
+kvm_arch_vcpu_put(), and I can't think of a scenario where it would be legal/sane
+to invoke vmcs_load() without a running/loaded vCPU.  VMX needs the current VMCS
+to be loaded to ensure guest state can be accessed, so any ioctl() that can touch
+guest state needs to do vcpu_load().
 
-> +	vma = vma_lookup(mm, bp_vaddr);
-> +	if (!vma)
-> +		goto bail;
-> +
-> +	vm_file = data_race(vma->vm_file);
-> +	if (!vm_file || (vma->vm_flags & flags) != VM_MAYEXEC)
-> +		goto bail;
-> +
+x86's kvm_arch_vcpu_ioctl() unconditionally does vcpu_load(), and the only ioctls
+I see in kvm_vcpu_ioctl() that _don't_ do vcpu_load() are KVM_SET_SIGNAL_MASK and
+KVM_GET_STATS_FD, so I think we're good.
 
-If vma teardown is allowed to progress and the file got fput'ed...
-
-> +	vm_inode = data_race(vm_file->f_inode);
-
-... the inode can be NULL, I don't know if that's handled.
-
-More importantly though, per my previous description of
-SLAB_TYPESAFE_BY_RCU, by now the file could have been reallocated and
-the inode you did find is completely unrelated.
-
-I understand the intent is to backpedal from everything should the mm
-seqc change, but the above may happen to matter.
-
-> +	vm_pgoff = data_race(vma->vm_pgoff);
-> +	vm_start = data_race(vma->vm_start);
-> +
-> +	offset = (loff_t)(vm_pgoff << PAGE_SHIFT) + (bp_vaddr - vm_start);
-> +	uprobe = find_uprobe_rcu(vm_inode, offset);
-> +	if (!uprobe)
-> +		goto bail;
-> +
-> +	/* now double check that nothing about MM changed */
-> +	if (!mmap_lock_speculation_end(mm, seq))
-> +		goto bail;
-
-This leaks the reference obtained by find_uprobe_rcu().
-
-> +
-> +	rcu_read_unlock();
-> +
-> +	/* happy case, we speculated successfully */
-> +	return uprobe;
-> +bail:
-> +	rcu_read_unlock();
-> +	return NULL;
-> +}
-
-Now to some handwaving, here it is:
-
-The core of my concern is that adding more work to down_write on the
-mmap semaphore comes with certain side-effects and plausibly more than a
-sufficient speed up can be achieved without doing it.
-
-An mm-wide mechanism is just incredibly coarse-grained and it may happen
-to perform poorly when faced with a program which likes to mess with its
-address space -- the fast path is going to keep failing and only
-inducing *more* overhead as the code decides to down_read the mmap
-semaphore.
-
-Furthermore there may be work currently synchronized with down_write
-which perhaps can transition to "merely" down_read, but by the time it
-happens this and possibly other consumers expect a change in the
-sequence counter, messing with it.
-
-To my understanding the kernel supports parallel faults with per-vma
-locking. I would find it surprising if the same machinery could not be
-used to sort out uprobe handling above.
-
-I presume a down_read on vma around all the work would also sort out any
-issues concerning stability of the file or inode objects.
-
-Of course single-threaded performance would take a hit due to atomic
-stemming from down/up_read and parallel uprobe lookups on the same vma
-would also get slower, but I don't know if that's a problem for a real
-workload.
-
-I would not have any comments if all speed ups were achieved without
-modifying non-uprobe code.
+And if I'm wrong and the impossible happens twice, so be it, we die on #GP :-)
 
