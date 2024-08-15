@@ -1,206 +1,189 @@
-Return-Path: <linux-kernel+bounces-287832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25433952CFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:55:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3A3F952D00
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:56:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 487E51C22E01
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:55:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8614281A69
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:56:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F281BC092;
-	Thu, 15 Aug 2024 10:47:26 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9267A1BD039;
+	Thu, 15 Aug 2024 10:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AC0JdNfy"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC39F1BBBFD
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 10:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61781BC9F6
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 10:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723718845; cv=none; b=tglvkxOCjroxQV3S08Uh7E2X85n63l7QgM38U0ddB17M3pzMT6NMs6+paCVnmr41WsKLFJmj3+h9PkaSZSgmvRFLnqRY6ggi1f6e+3D1IBW2iIbdnDOUMX1vLRe9jT38CDxhX4qZUm3t7SFC7t3U3ETbO6zwUz3mH76w5wWGZfw=
+	t=1723718849; cv=none; b=YgyYVUJcpfwJFa48MKleozN9CKU8DA7Os1uPanHmhHzALfGDNe0t3nR3gqWxs/arHjZ+URaa80wgdEFY1cKtvUYZtQy16tuKUBDvMUodFPLJ0PxLP7BOzn3mskUNuAqz7BdLZ3QnAeZJP+1rxzMyj/pX8djZAIDW2hjA0EVkcjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723718845; c=relaxed/simple;
-	bh=1RItO4p+ev170hIK/MJDRjPZMzF55+38seCWlCOsqU0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=UM2OtSpGsFd8wxGJwFa8xscVL608cw7/y522+fR5G3U8zzV5MbNhBICMSn5HMNBhPkMlNo+cZupstK+sE6IkVWaWAiZgvKF0xXCf7xtk7RbiFpYGDhMvNav+s4VvjSc3cDBSu+qM7hzMMRVB35pduaALXIIfY7bbTyIScC95bcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39b3b5858e6so7480215ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 03:47:23 -0700 (PDT)
+	s=arc-20240116; t=1723718849; c=relaxed/simple;
+	bh=6tGzmiTzEPMRyKJk0PGvlaJdsO9+QLBrYLK+b36RDG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=irA0qhyleUU6TIKNpZolwxKkbcI5PaglgKYQ/QB3lTc8mrUzu+VKUCoAuWVqWrFetIF0AOC0wsbVwzBKHSOkrymahVV4rBXPODVnZc8OCcJu8BFjEgJVkhETIph76lAq+otkmSMfN+942P+lQ36Btp69q4crpluzDS/V3FNYzI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AC0JdNfy; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2eeb1ba0468so11070871fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 03:47:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723718846; x=1724323646; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xFiBa+U9hFlCzSJ6jAO6RRxbfDnmoUHchd4gNuf1fR0=;
+        b=AC0JdNfysm7QLop8eLtmUM9be0fBWrj+5i0eGDY41c6besVtOenu6hv7N537snTW26
+         lAJ5A9rRqf+IdBDVEjk/6fXY5Vjlo0ING9NWD0AgBQEgMUaqFRq5hTatv4dz+zUR822B
+         uttVva25bLKgjxGIbkYP37Gvjdz8VizJ8xT+ZKJdSnaKEiV34Q84WuvPAZlhIbWVxCyY
+         CyTXU7UHqSXONX9lCgqnuAXOnwLFQr7eIG58T/clNsC2IA7oFxMDUCjLMjDwevoNL1l7
+         6rae/sWckiwq0xmdq1wwmgiHApaNWwcge6Us0bxu/5E5UVu7EnYyak2uJVc4HoEjf00E
+         uErA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723718843; x=1724323643;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7VeczzzrEjWxpGG7pSmoLg+bL4Z82lYXHTGkDEdUF4s=;
-        b=CNVSN6h9IOh8/gRPH8MjWYI3CQlfjZnxwc2kHZU1V579L71LH1fgJrByZRy39ScEjt
-         e27w9ZSBrgZoIkG4y6ycYRF0loBYgcnrRjnA30IcPj9I8kAnChvTmjFtEl3tNp3Zsbug
-         iXOF4fv45b2ZB9X+gKhkMO1FcRz6m1Ya2pGyIu1uS6KYDlM2P2yls5VivpSAFAC/VhjH
-         fGdwWtuWZ54VC1bmHw6sqmQigar1czhywQgVmBaSOVcPWm12pIhEizM8jX4SJFSls1+G
-         FD4oLqi5aOd7KhMo5tNEqUNPIsqNMtPslmp4osa4zoEy0CQ468oVn2IIeKLL8AnRZPai
-         o+Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDg3SwtXQfQR3sJvMWNQ+FtktkwoaWNZqDXcxzn/GeftK7nD9sivszjAu6PqUVmblSNtCF/q7nYZt5QoG6HPsJpRV+CW8rRwkK+ryo
-X-Gm-Message-State: AOJu0Yz7DhdQbICmI6ZlI/MhjJ6Epjc87G8GRdDU6/D1KQkb+6mpbFKQ
-	85tccPfRYEqhN8BPKCZW3B2LW27U3Z98gKenZjnCOFdlgje5PDuOGn8hoNp4tw4vS5BuOby4LW3
-	V/EMS+GgKH7DmuEF4ZfidDBuAYZlNfmOZW5dJC8DCMeS/v6UteKVYKcE=
-X-Google-Smtp-Source: AGHT+IFhAZQFAAcScjbLus+PNzkM3outFtJXk3JsTx8ZqwAZV+0vpqfPTAev5ZjvgDgRk8ld3NE2oglIYSkAE7FwjUgSs9M6ufPu
+        d=1e100.net; s=20230601; t=1723718846; x=1724323646;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xFiBa+U9hFlCzSJ6jAO6RRxbfDnmoUHchd4gNuf1fR0=;
+        b=XudHANCa3uc8LORKy6xljrntv4ExwSHufHGfRy1q3Y/4yt+E9MvnfBbnSOCi4QdIW/
+         8/I6+U12qqKheMbd8n03ZJR6+10B1N1uA9WwKa0qUbrMFyRSFjDfsN1NK893ZQIRJOaw
+         bWLyIWwVjCU99/ldei/70n9DJaIzUPhSLs4Qnvj1nzQxvO9SdfgCRVtzrkN7sC6sNr+D
+         B5xSH45nNN+XO3y4EE23mFCz2aQvNJ5QhSN/GbaSjmZhOWsmanBdWBb1R5EuZV8EeT8R
+         /Tk4IVZ1t9GgBEQCs4GPVTpWURA8dBWkEvgR7KLEciFGY6RX9G83Euu8l4jI2VCKkNpS
+         ADVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOFk1auaINE4rlKSUJpgEC32S2qG6B+hxYfJlS/b71oeBBzjACvA0Gw6Pt3pneg8oRGJVOZ8yEmVXOhDxXd2GZJt5exFFKtBTOVgn1
+X-Gm-Message-State: AOJu0YzqfZ/Hpn+xljBgNP0uctrFmR81hLYoSf/bSeWKc9qOx8g31VXK
+	HHncYxKyflcRdj6tx2wILcZIcVDWDiwtQgfW3fyUE8uAbitEc+ezG6dMxNSXvv8=
+X-Google-Smtp-Source: AGHT+IFhIREb9DDHPxPjjEWsOsR0T8cVRKEasMD22RcTYJZf7Fjoq4Bq9TP7VGvZC1uKvZYxPNDGdA==
+X-Received: by 2002:a2e:3210:0:b0:2ee:7bcd:a52 with SMTP id 38308e7fff4ca-2f3aa1f9d0dmr31464881fa.46.1723718845647;
+        Thu, 15 Aug 2024 03:47:25 -0700 (PDT)
+Received: from linaro.org ([82.79.186.176])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebbbe29c3sm753708a12.14.2024.08.15.03.47.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 03:47:25 -0700 (PDT)
+Date: Thu, 15 Aug 2024 13:47:23 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Marcus Glocker <marcus@nazgul.ch>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Subject: Re: [PATCH v3 4/6] arm64: dts: qcom: Add UFS node
+Message-ID: <Zr3cuxv4EdxMQa9C@linaro.org>
+References: <v2iah5yrne4u6uzrnzg36tvtxzqrpiez6io2gyyfrht2x42umw@5ribqndiavxv>
+ <ejeph4wspggkmvhl7qmpvw5jlojyvma7epqd67i6vk5p6fncrk@de56nvgi6vzi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1ca6:b0:375:a55e:f5fc with SMTP id
- e9e14a558f8ab-39d12443709mr4096845ab.1.1723718842875; Thu, 15 Aug 2024
- 03:47:22 -0700 (PDT)
-Date: Thu, 15 Aug 2024 03:47:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000528f32061fb69112@google.com>
-Subject: [syzbot] [ocfs2?] general protection fault in ocfs2_buffer_cached
-From: syzbot <syzbot+adfd64e93c46b99c957e@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ejeph4wspggkmvhl7qmpvw5jlojyvma7epqd67i6vk5p6fncrk@de56nvgi6vzi>
 
-Hello,
+On 24-08-15 12:42:29, Marcus Glocker wrote:
+> Add the UFS Host Controller node.  This was basically copied from the
+> arch/arm64/boot/dts/qcom/sc7180.dtsi file.
+> 
+> Signed-off-by: Marcus Glocker <marcus@nazgul.ch>
+> ---
+>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 71 ++++++++++++++++++++++++++
+>  1 file changed, 71 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> index 7bca5fcd7d52..235e20e4b51f 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> @@ -2878,6 +2878,77 @@ mmss_noc: interconnect@1780000 {
+>  			#interconnect-cells = <2>;
+>  		};
+>  
+> +		ufs_mem_hc: ufs@1d84000 {
+> +			compatible = "qcom,x1e80100-ufshc", "qcom,ufshc",
+> +				     "jedec,ufs-2.0";
+> +			reg = <0 0x01d84000 0 0x3000>;
+> +			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
+> +			phys = <&ufs_mem_phy>;
+> +			phy-names = "ufsphy";
+> +			lanes-per-direction = <1>;
+> +			#reset-cells = <1>;
+> +			resets = <&gcc GCC_UFS_PHY_BCR>;
+> +			reset-names = "rst";
+> +
+> +			power-domains = <&gcc GCC_UFS_PHY_GDSC>;
+> +
+> +			iommus = <&apps_smmu 0xa0 0x0>;
+> +
+> +			clock-names = "core_clk",
+> +				      "bus_aggr_clk",
+> +				      "iface_clk",
+> +				      "core_clk_unipro",
+> +				      "ref_clk",
+> +				      "tx_lane0_sync_clk",
+> +				      "rx_lane0_sync_clk";
+> +			clocks = <&gcc GCC_UFS_PHY_AXI_CLK>,
+> +				 <&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>,
+> +				 <&gcc GCC_UFS_PHY_AHB_CLK>,
+> +				 <&gcc GCC_UFS_PHY_UNIPRO_CORE_CLK>,
+> +				 <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&gcc GCC_UFS_PHY_TX_SYMBOL_0_CLK>,
+> +				 <&gcc GCC_UFS_PHY_RX_SYMBOL_0_CLK>;
+> +			freq-table-hz = <50000000 200000000>,
+> +					<0 0>,
+> +					<0 0>,
+> +					<37500000 150000000>,
+> +					<0 0>,
+> +					<0 0>,
+> +					<0 0>;
+> +
+> +			interconnects = <&aggre1_noc MASTER_UFS_MEM QCOM_ICC_TAG_ALWAYS
+> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
+> +					 &config_noc SLAVE_UFS_MEM_CFG QCOM_ICC_TAG_ALWAYS>;
+> +			interconnect-names = "ufs-ddr", "cpu-ufs";
+> +
+> +			qcom,ice = <&ice>;
+> +
+> +			status = "disabled";
+> +		};
+> +
+> +		ufs_mem_phy: phy@1d87000 {
+> +			compatible = "qcom,x1e80100-qmp-ufs-phy";
 
-syzbot found the following issue on:
+Can't find any phy patch that adds this compatible to the driver.
 
-HEAD commit:    d07b43284ab3 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=126c2aa3980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
-dashboard link: https://syzkaller.appspot.com/bug?extid=adfd64e93c46b99c957e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1206cdd3980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13cfea91980000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-d07b4328.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/91ceec6e19d3/vmlinux-d07b4328.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/be11646b0c05/bzImage-d07b4328.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/90c0e9dcfbf9/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+adfd64e93c46b99c957e@syzkaller.appspotmail.com
-
-loop0: detected capacity change from 0 to 32768
-(syz-executor178,5091,0):ocfs2_read_blocks:240 ERROR: status = -12
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
-CPU: 0 UID: 0 PID: 5091 Comm: syz-executor178 Not tainted 6.11.0-rc3-syzkaller-00060-gd07b43284ab3 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:ocfs2_buffer_cached+0xcb/0x840 fs/ocfs2/uptodate.c:237
-Code: eb b2 65 fe 4c 89 7c 24 20 4c 8b 5d 00 48 89 5c 24 08 48 89 df 41 ff d3 66 90 48 89 44 24 18 49 83 c5 18 4d 89 ec 49 c1 ec 03 <43> 80 3c 34 00 74 08 4c 89 ef e8 b6 b2 65 fe 49 8b 55 00 48 8b 44
-RSP: 0018:ffffc9000b01e620 EFLAGS: 00010206
-RAX: 0000000000000012 RBX: ffff88805f1faa70 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff88805f1faa70
-RBP: ffffffff8c48fcc0 R08: 0000000000000003 R09: fffff52001603cb4
-R10: dffffc0000000000 R11: ffffffff8385d210 R12: 0000000000000003
-R13: 0000000000000018 R14: dffffc0000000000 R15: 1ffff1100be3f54e
-FS:  00005555632e5380(0000) GS:ffff888020800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffc970f4c08 CR3: 0000000036024000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ocfs2_set_buffer_uptodate+0xa1/0x1350 fs/ocfs2/uptodate.c:474
- ocfs2_read_blocks+0x103e/0x1620 fs/ocfs2/buffer_head_io.c:392
- ocfs2_read_virt_blocks+0x4c8/0xa50 fs/ocfs2/extent_map.c:1010
- ocfs2_read_dir_block fs/ocfs2/dir.c:508 [inline]
- ocfs2_find_entry_el fs/ocfs2/dir.c:715 [inline]
- ocfs2_find_entry+0x43b/0x2780 fs/ocfs2/dir.c:1080
- ocfs2_find_files_on_disk+0xff/0x360 fs/ocfs2/dir.c:1980
- ocfs2_lookup_ino_from_name+0xb1/0x1e0 fs/ocfs2/dir.c:2002
- _ocfs2_get_system_file_inode fs/ocfs2/sysfile.c:136 [inline]
- ocfs2_get_system_file_inode+0x305/0x7b0 fs/ocfs2/sysfile.c:112
- ocfs2_init_global_system_inodes+0x32c/0x730 fs/ocfs2/super.c:457
- ocfs2_initialize_super fs/ocfs2/super.c:2250 [inline]
- ocfs2_fill_super+0x3068/0x5880 fs/ocfs2/super.c:994
- mount_bdev+0x20a/0x2d0 fs/super.c:1679
- legacy_get_tree+0xee/0x190 fs/fs_context.c:662
- vfs_get_tree+0x90/0x2a0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3472
- do_mount fs/namespace.c:3812 [inline]
- __do_sys_mount fs/namespace.c:4020 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4945e4ddea
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdf618e318 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffdf618e330 RCX: 00007f4945e4ddea
-RDX: 0000000020004480 RSI: 00000000200044c0 RDI: 00007ffdf618e330
-RBP: 0000000000000004 R08: 00007ffdf618e370 R09: 000000000000446f
-R10: 0000000002800400 R11: 0000000000000282 R12: 0000000002800400
-R13: 00007ffdf618e370 R14: 0000000000000003 R15: 0000000001000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:ocfs2_buffer_cached+0xcb/0x840 fs/ocfs2/uptodate.c:237
-Code: eb b2 65 fe 4c 89 7c 24 20 4c 8b 5d 00 48 89 5c 24 08 48 89 df 41 ff d3 66 90 48 89 44 24 18 49 83 c5 18 4d 89 ec 49 c1 ec 03 <43> 80 3c 34 00 74 08 4c 89 ef e8 b6 b2 65 fe 49 8b 55 00 48 8b 44
-RSP: 0018:ffffc9000b01e620 EFLAGS: 00010206
-RAX: 0000000000000012 RBX: ffff88805f1faa70 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff88805f1faa70
-RBP: ffffffff8c48fcc0 R08: 0000000000000003 R09: fffff52001603cb4
-R10: dffffc0000000000 R11: ffffffff8385d210 R12: 0000000000000003
-R13: 0000000000000018 R14: dffffc0000000000 R15: 1ffff1100be3f54e
-FS:  00005555632e5380(0000) GS:ffff888020800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffc970f4c08 CR3: 0000000036024000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	eb b2                	jmp    0xffffffb4
-   2:	65 fe 4c 89 7c       	decb   %gs:0x7c(%rcx,%rcx,4)
-   7:	24 20                	and    $0x20,%al
-   9:	4c 8b 5d 00          	mov    0x0(%rbp),%r11
-   d:	48 89 5c 24 08       	mov    %rbx,0x8(%rsp)
-  12:	48 89 df             	mov    %rbx,%rdi
-  15:	41 ff d3             	call   *%r11
-  18:	66 90                	xchg   %ax,%ax
-  1a:	48 89 44 24 18       	mov    %rax,0x18(%rsp)
-  1f:	49 83 c5 18          	add    $0x18,%r13
-  23:	4d 89 ec             	mov    %r13,%r12
-  26:	49 c1 ec 03          	shr    $0x3,%r12
-* 2a:	43 80 3c 34 00       	cmpb   $0x0,(%r12,%r14,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	4c 89 ef             	mov    %r13,%rdi
-  34:	e8 b6 b2 65 fe       	call   0xfe65b2ef
-  39:	49 8b 55 00          	mov    0x0(%r13),%rdx
-  3d:	48                   	rex.W
-  3e:	8b                   	.byte 0x8b
-  3f:	44                   	rex.R
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> +			reg = <0 0x01d87000 0 0x1000>;
+> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>;
+> +			clock-names = "ref",
+> +				      "ref_aux",
+> +				      "qref";
+> +			power-domains = <&gcc GCC_UFS_PHY_GDSC>;
+> +			resets = <&ufs_mem_hc 0>;
+> +			reset-names = "ufsphy";
+> +			#phy-cells = <0>;
+> +			status = "disabled";
+> +		};
+> +
+> +		ice: crypto@1d90000 {
+> +			compatible = "qcom,x1e80100-inline-crypto-engine",
+> +				     "qcom,inline-crypto-engine";
+> +			reg = <0 0x01d90000 0 0x8000>;
+> +			clocks = <&gcc GCC_UFS_PHY_ICE_CORE_CLK>;
+> +		};
+> +
+>  		pcie6a: pci@1bf8000 {
+>  			device_type = "pci";
+>  			compatible = "qcom,pcie-x1e80100";
+> -- 
+> 2.39.2
+> 
 
