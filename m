@@ -1,135 +1,110 @@
-Return-Path: <linux-kernel+bounces-288490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A06F7953ABA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:14:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44AE2953AA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:11:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D18161C227DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:14:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E19251F23F40
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E227E107;
-	Thu, 15 Aug 2024 19:14:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5FC7DA73;
+	Thu, 15 Aug 2024 19:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FrV7BBnf"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LGgMfrlE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955E54AEEA;
-	Thu, 15 Aug 2024 19:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EEC5644E;
+	Thu, 15 Aug 2024 19:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723749277; cv=none; b=rRW58q5IIPhm7t0f//NZrdtg4gqKr6/SLwTg4kZ9R2vvQGxcnFbkliiIh8RIc7IrfYwkC5DRXNPK0B1VZgt/geLetTq2Q2ZyNr9Eryfbmz9SkN9lk0OtY4HNdTheAr1CFzeIqbBVFBYsgFSe+CXSAxh0QbVF/aGMFxQfIPm470k=
+	t=1723749080; cv=none; b=XFQHA+9Q/CgBF1KQj/6nmEos91c0TKbCKTP+47P3ZHqpi4DovlttCoEQZNO8PvnX8lbqsb6cNFcTv453ssjqIeiiYZU5kOEz1vtt0GC4qHSxIrtX+sqIJw+GX+ksgq6UBXSbVNl8TuPDK/86myYSVaaDzmV3xhqVC9YSvwwsNp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723749277; c=relaxed/simple;
-	bh=ZZ/G5UApgamR1bZhb2gVHjVkFTPdIRkoeKz9QdIpCek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MIsEPxZgQAHJlp6GtYFxgjuNZJZkWYlrGeXRyInTwRitDgaYi/5rmfbl7sXG9Ls2Zxs7o6uVVubsjuFfw6c99HMiIe2p0Qxorw9vL6UnzLZn1PjpwwuieDrkA/wYeEV1kOPpXJ88mKgY82tNMIoIIEgPfagN6Ud5+gbJWdmkkyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FrV7BBnf; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-6bce380eb96so873160a12.0;
-        Thu, 15 Aug 2024 12:14:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723749276; x=1724354076; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=z7WMncMgmKEb+KbsAwgAmYN6PSSe41pQsIcx1ldX02Q=;
-        b=FrV7BBnfl2s+3P+srv1C2px10lhwWn23KhcViQVIlsvZphKi6qJsJtRRWnZNuMBXMT
-         I7BYvyNiK9f0FEdAU2QTZ2DcIG29WFy3x3wrAyah6hU4d0dSgBWihtFTCcMYInclWJzF
-         MZyeyDuu06oQxxNpXdf4Np57Dtyo1zANF9v7ozunCBc0pDvm5XHhg8EF+EZQBPyDjCNG
-         pMQdq8fkdHlTjfLp5u+6NIpKvpjwx8CPrVLEDy7nn82Hiqh+0aWT7CsWdvNy3ugvqKK4
-         qUEQ2MFVVj5Hxu48rKxqt2b0lFa/fIbjI7tnrNK1Kh6SP0EoNM1SsumyYchqQx+GTdS7
-         Nhiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723749276; x=1724354076;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z7WMncMgmKEb+KbsAwgAmYN6PSSe41pQsIcx1ldX02Q=;
-        b=buneI50aG2DTbpWC5hpDyrkBJtyUkz51k/Wz+wx/IquRt7dF6rY+8taMcqF4dzgkCq
-         r/nBz/1MwO3FlO6fU7gz/H6+GkD5nWCYiH7+TUELxWloK4naNhz0jCStcJFqjHS9J42H
-         le7+REBDsok3/pcKjUo0nUPSz2Z6ZEJUH70/Isx20hUszmn8bosOJ8908uj2JEhDY9mJ
-         LITFbwBf4FwQyawUVm+G06iW16CX6tdtOBElRHkGagQpbpy4n5/IX+tMgySKH4HL4jta
-         HwYA+y6/jgaH+fwahTvKx3FB+fYOEoJ+u16Xnx7bXKfiertgN4aUfcB9AHHXbbKGZZbZ
-         hflw==
-X-Forwarded-Encrypted: i=1; AJvYcCVB6lhDrFz6yj1K4wJMcqOaLKy1oc8mz9aZDkrTUcGd44OlnyANTq+9UiI6mUCNlkm7dI59mcTSMTHsxUC6Rqhu7pbDTj2oJU0fwV/sGymUn9DBqhU8h0XNhFfJhUZGLIsuFB3KhK8BNzTVGrlIqVfbeP3NgLMRlz7do93wK7SpCD/5W38d
-X-Gm-Message-State: AOJu0Yz0JwVdHaWM7YPjVWWQrGmongto4e8t+k0sIenkxxj9fYEwvBJm
-	CxbLa14NKmi0Ow3IVpg7Tt279Ok2e5MWplBDb7B+KrVWf2lh/YM+
-X-Google-Smtp-Source: AGHT+IGcVeNgkntbw2cZPknkiVRzDRUVnj2hzr5w9yADfwCWLixg2lLFoSq+Drgxr9JvKyFlLM6+Dg==
-X-Received: by 2002:a17:90a:8a02:b0:2c8:87e:c2d9 with SMTP id 98e67ed59e1d1-2d3e03e89dcmr771031a91.39.1723749275678;
-        Thu, 15 Aug 2024 12:14:35 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:1ffe:470a:d451:c59])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3ac7ca35fsm3968643a91.9.2024.08.15.12.14.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 12:14:35 -0700 (PDT)
-Date: Thu, 15 Aug 2024 12:14:32 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Marek Vasut <marex@denx.de>, Rob Herring <robh@kernel.org>,
+	s=arc-20240116; t=1723749080; c=relaxed/simple;
+	bh=ftamXaAZqJ/z5Ku33xTqxr2h+dFFbkRdhF/bKzRT2/o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O8RPbPMn2rpllXQHi+SlphZ5+molT0D3MdCK6GuKpK+Y/IenPFJOTJKUfCH554dnXtZ1Gd7sSBMR4Qxb9xPVlP/BTd6GN5TPgXrnBnqJj/UNyF8Js5zQ3l6hV+xJTAhTmYkrSBNBqVGredWywSjWi4YdjbKsncy8U0X6QVgAU7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LGgMfrlE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D924DC4AF09;
+	Thu, 15 Aug 2024 19:11:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723749079;
+	bh=ftamXaAZqJ/z5Ku33xTqxr2h+dFFbkRdhF/bKzRT2/o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=LGgMfrlEuo7Xux1unmJiWmVQTnSOcGDXahAd2BhLjChqRNjAFdlqjgyIq00Y6Vz2G
+	 nH+kuPJNBk2JOysWieztstngslD5G8quWyC8F2CKc2mY1xoab+imvOQ3nLvq7Wzlhk
+	 KLDlGih6Ly0IW7KoWtQKac9rgXT+nb/c1tx5sVlgJ8gwah+dQK/oHBNvgOBpVBWq7N
+	 R4Vz9CITgyydtXiWVw9nOXb5aTUMpClYJBi2macZxCvfu4Hk4Im8kEFgsKd5UYqwYy
+	 WorQBDYDwFbTuwiM55BGCrbZfD6ioAGz3OaRvKMz3+BpLhjTDyP2Y5ZEtLHOrVcsOT
+	 1gpfE8waUh75g==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Amol Maheshwari <amahesh@qti.qualcomm.com>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mark Hasemeyer <markhas@chromium.org>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	"open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." <linux-input@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH v2 1/1] dt-bindings: input: touchscreen: convert
- ads7846.txt to yaml
-Message-ID: <Zr5TmAkd67XcyYvJ@google.com>
-References: <20240815161413.4182796-1-Frank.Li@nxp.com>
- <5864cdcf-a1f2-45a6-a034-a05315402663@denx.de>
- <Zr5RwL5qRVBKbHcc@lizhi-Precision-Tower-5810>
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Tengfei Fan <quic_tengfan@quicinc.com>,
+	Ling Xu <quic_lxu5@quicinc.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: (subset) [PATCH v4 0/6] arm64: qcom: sa8775p: enable remoteprocs - ADSP, CDSP and GPDSP
+Date: Thu, 15 Aug 2024 12:15:31 -0700
+Message-ID: <172374932843.1370237.187138601087557561.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240805-topic-sa8775p-iot-remoteproc-v4-0-86affdc72c04@linaro.org>
+References: <20240805-topic-sa8775p-iot-remoteproc-v4-0-86affdc72c04@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zr5RwL5qRVBKbHcc@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 15, 2024 at 03:06:40PM -0400, Frank Li wrote:
-> On Thu, Aug 15, 2024 at 08:44:56PM +0200, Marek Vasut wrote:
-> > On 8/15/24 6:14 PM, Frank Li wrote:
-> >
-> > [...]
-> >
-> > > +  ti,debounce-max:
-> > > +    deprecated: true
-> > > +    $ref: /schemas/types.yaml#/definitions/uint16
-> > > +    description: Max number of additional readings per sample (u16).
-> >
-> > Could you drop the (u16) which is already part of the $ref'd type ?
+
+On Mon, 05 Aug 2024 19:08:01 +0200, Bartosz Golaszewski wrote:
+> Add DT bindings, relevant DT defines, DTS nodes and driver changes
+> required to enable the remoteprocs on sa8775p.
 > 
-> Sorry, I forget it.
+> To: Bjorn Andersson <andersson@kernel.org>
+> To: Mathieu Poirier <mathieu.poirier@linaro.org>
+> To: Rob Herring <robh@kernel.org>
+> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> To: Conor Dooley <conor+dt@kernel.org>
+> To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> To: Jassi Brar <jassisinghbrar@gmail.com>
+> To: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: linux-remoteproc@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> >
-> > [...]
-> >
-> > > +  ti,x-max:
-> > > +    deprecated: true
-> > > +    $ref: /schemas/types.yaml#/definitions/uint16
-> > > +    description: Maximum value on the X axis (u16).
-> > > +
-> > > +  ti,x-min:
-> >
-> > Is this deprecated too, the same way as x-max above is deprecated ?
-> 
-> I am not sure. I guest x-min and y-min is still useful becasue it may
-> indicate invalidated touch. but x-max and y-max should not usefull because
-> max value should be Vcc.  x-min and y-min help filter out some noise.
+> [...]
 
-There are standard properties touchscreen-min-x and touchscreen-min-y
-that will be used if present, so I think ti,x-min can also be marked as
-deprecated.
+Applied, thanks!
 
-Thanks.
+[3/6] remoteproc: qcom_q6v5_pas: Add support for SA8775p ADSP, CDSP and GPDSP
+      commit: 9091225ba28c0106d3cd041c7abf5551a94bb524
 
+Best regards,
 -- 
-Dmitry
+Bjorn Andersson <andersson@kernel.org>
 
