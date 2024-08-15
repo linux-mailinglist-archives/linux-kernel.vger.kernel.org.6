@@ -1,139 +1,127 @@
-Return-Path: <linux-kernel+bounces-288090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FE4D953405
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:22:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7345953413
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:22:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34EEEB23224
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:22:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 513BC1F28673
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:22:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185771A3BCA;
-	Thu, 15 Aug 2024 14:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92071A00FF;
+	Thu, 15 Aug 2024 14:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GAycxkgW"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="OYJVc1T2"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE28B1E526;
-	Thu, 15 Aug 2024 14:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0494E19D068
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723731693; cv=none; b=NoO7wRCpdW14qJuMd6vc6mVDdayg2JYYTb8TMLBbIT9/Zw1ijnWS/3f887fjwI/3yHIfWi1CW0wGWKq9M4f1ro2QR7fpmdRu1kSp0kqLoTQTigGOTc0CvvBQjnkpihczhkvWPbWT07CQrF2J/mO6mUl7R+d+cOHpeNiCDxMVc9E=
+	t=1723731734; cv=none; b=SI4XQrLKlduf9fFWvKIWwRcFZJDXix6O8tRKmjhWeJldrhi379LxQvP1xQD7N1Pg4PKKJMS1bou8SVBQ0Y8R6mWQM10TwhPiF5HUbQaZvQb40vsxuugLZLmDHrKQPvrWegb9D45ieyEUT59DUoSbO3ItUgk7wkLNzS9Yh57Flq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723731693; c=relaxed/simple;
-	bh=O3yVi/sK5TWhIzw4ZEtvqC2DBM92N/LguKZYwN+a+lw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sldawOuY9JA3Gdyw0JMaZKJlFvX5FOTsg/F8/LaUUv8sG8k+H9yhGQ36sNsCiqLiCco+T98sLcAECgMwEjWnkAu/Zh38NUpSxLZQr6Mtq2OBzMGeam/GZ60WYiqQs+eU+e0DgpFoHUIH87l6nTsfBcUX84MILpkqdle1lxw7PiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GAycxkgW; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47F11aJL017856;
-	Thu, 15 Aug 2024 14:21:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0Zi1ZQwKAx27nhCCtHmlLY589bvE5yH0KBvcMqQmfKM=; b=GAycxkgWwoogA71P
-	Fo2E7Fnd1hkqms5SyNQOE6o+y0YiDCI5mKinyDWP9CO+sXba5X9zvi1vFHRFBo79
-	sPQLdaKwQSebLj1Dsj/MEBOn9SrE3c1okgduJiVetYIcwsSkt/+Z09fdH5YeBJtJ
-	mPvGa/K/bfMyFrsn7qAfU0gRq8UjG2fqd9JM6hpl5ElsorLA1KrS6W2GPn3iQ0al
-	r30Co44fyd6AghChyOcoL49inJyo3QPUGDKIGL4fIHq8H4BDsCrVgK8RUxfBt7JX
-	BeIxsJgzky/Xtj0AEmHpUv0IFnNLZjuUSVpCfbn5Ta+xdFGSWIHZ3hZkaG05hwMy
-	ReODnA==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 410kywmrdg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Aug 2024 14:21:26 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47FELPdj016026
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Aug 2024 14:21:25 GMT
-Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 15 Aug
- 2024 07:21:19 -0700
-Message-ID: <eb77972c-9c9a-48f9-b850-21e6c2df005a@quicinc.com>
-Date: Thu, 15 Aug 2024 22:21:17 +0800
+	s=arc-20240116; t=1723731734; c=relaxed/simple;
+	bh=rIEKsoCM7sCe56txbGt/hB/x9FWfkA7a88spgqZqEnI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fvkkNTdeVyma4S0kXM35jW/2BCyOlz+CuPqk8TnXEsG9uPsBzE+Zb2JHhvotb6TzYEDQF2+a1mATIAOXtFCrNM16HTldJxwHmSIMOsF9hBuJ9riMyKgREpB9rkgu7F2mdWQ2JoIU087QONjJbiPG9FR/eQraJAVurCgyoP91t74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=OYJVc1T2; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=fUdYMf0fIQJ6ml8nv0t9/DBiRHKMZgkMHt7sQfyC6Yo=; b=OYJVc1T2qui93MirtcLWGtxnsX
+	zLjIiVVi5ZbGQV0oovmYfOsXgOZ/uIOHK6uyln/OrWfpihGSUP2PXJ+Atde2uNwZ0aC19IJ+dJy3s
+	LCPdJV1+Qd/ZkLIXP4lLID7EJ5yOCRfs8YLthEIgSWVzYj/5eCWka9c+eUcZgGSYpYFU8k10c4j1q
+	0qt88wmrWjDHfnuuJI+9KZbEE+eIKNnuNQI/07/co3r61Z6MmpcYNROBjwIXvALd3HkdaRf6s9HsE
+	xE8rCDPF6Cv+2+jR6YR9pS+QWg8pOiR8rwQBGAeGYZUphkRdH+lIiVI33glNj0CXyBX97xIym6oDW
+	dCa83ngg==;
+Received: from i53875a9f.versanet.de ([83.135.90.159] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sebMF-0003fh-7S; Thu, 15 Aug 2024 16:21:43 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Sean Paul <seanpaul@chromium.org>, Jeffy Chen <jeffy.chen@rock-chips.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, Mark Yao <markyao0591@gmail.com>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH RESEND] drm/rockchip: Unregister platform drivers in reverse order
+Date: Thu, 15 Aug 2024 16:21:42 +0200
+Message-ID: <9027071.qdD9tO9HgI@diego>
+In-Reply-To: <20240808-rk-drm-fix-unreg-v1-1-c30d9a754722@collabora.com>
+References: <20240808-rk-drm-fix-unreg-v1-1-c30d9a754722@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/13] media: qcom: camss: Add support for VFE hardware
- version Titan 780
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <rfoss@kernel.org>,
-        <todor.too@gmail.com>, <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>, Yongsheng Li <quic_yon@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-14-quic_depengs@quicinc.com>
- <6ddaa41b-86cf-44e5-a671-fd70f266642b@linaro.org>
-Content-Language: en-US
-From: Depeng Shao <quic_depengs@quicinc.com>
-In-Reply-To: <6ddaa41b-86cf-44e5-a671-fd70f266642b@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: j8zi87lWZbdzyTixcagW6qF7844CcQZW
-X-Proofpoint-GUID: j8zi87lWZbdzyTixcagW6qF7844CcQZW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-15_07,2024-08-15_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- impostorscore=0 mlxscore=0 phishscore=0 malwarescore=0 clxscore=1015
- mlxlogscore=999 priorityscore=1501 bulkscore=0 lowpriorityscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408150104
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Bryan,
+Am Donnerstag, 8. August 2024, 13:58:02 CEST schrieb Cristian Ciocaltea:
+> Move rockchip_drm_platform_driver unregistration after its sub-drivers,
+> which ensures all drivers are unregistered in the reverse order used
+> when they were registered.
 
-On 8/15/2024 8:25 AM, Bryan O'Donoghue wrote:
-> On 12/08/2024 15:41, Depeng Shao wrote:
->> +void camss_reg_update(struct camss *camss, int hw_id, int port_id, 
->> bool is_clear)
->> +{
->> +    struct csid_device *csid;
->> +
->> +    if (hw_id < camss->res->csid_num) {
->> +        csid = &(camss->csid[hw_id]);
->> +
->> +        csid->res->hw_ops->reg_update(csid, port_id, is_clear);
->> +    }
->> +}
+are you sure about that?
+
+I.e. currently rockchip_drm_init() does 
+  platform_register_drivers(rockchip_sub_drivers, ...)
+to register the sub-drivers and only after that registers the main
+drm-platform-driver
+
+rockchip_drm_fini currently does the reverse of first unregistering the
+main drm-platform-driver and after that unregistering the array of sub-
+drivers.
+
+
+So as it stands right now, rockchip_drm_fini does already do exactly the
+reverse when de-registering.
+
+> Fixes: 8820b68bd378 ("drm/rockchip: Refactor the component match logic.")
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> ---
+>  drivers/gpu/drm/rockchip/rockchip_drm_drv.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> The naming here doesn't make the action clear
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+> index 44d769d9234d..ca7b07503fbe 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+> @@ -528,10 +528,9 @@ static int __init rockchip_drm_init(void)
+>  
+>  static void __exit rockchip_drm_fini(void)
+>  {
+> -	platform_driver_unregister(&rockchip_drm_platform_driver);
+> -
+>  	platform_unregister_drivers(rockchip_sub_drivers,
+>  				    num_rockchip_sub_drivers);
+> +	platform_driver_unregister(&rockchip_drm_platform_driver);
+>  }
+>  
+>  module_init(rockchip_drm_init);
 > 
-> hw_ops->rup_update(csid, port, clear);
-> 
-> "is_clear" is not required since the type is a bool the "is" is implied 
-> in the the logical state so just "clear" will do.
-> 
-> But re: my previous comment on having the ISR do the clear as is done in 
-> the VFE 480, I don't think this is_clear parameter is warranted.
-> 
-> We want the calling function to request the rup_update() for the 
-> rup_update() function to wait on completion and the ISR() to do the 
-> clear once the RUP interrupt has been raised.
-> 
-> At least I think that's how it should work - could you please experiment 
-> with your code for the flow - as it appears to match the VFE 480 logic.
+> ---
+> base-commit: 1eb586a9782cde8e5091b9de74603e0a8386b09e
+> change-id: 20240702-rk-drm-fix-unreg-9f3f29996a00
 > 
 
-Thanks for catching this, I forget to add the rup irq, so this logic is 
-also missed. I have tried it just now, the logic works good, will add it 
-in next version patch.
 
-Thanks,
-Depeng
+
 
 
