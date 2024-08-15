@@ -1,197 +1,135 @@
-Return-Path: <linux-kernel+bounces-287569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C95395296F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:40:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B24B1952970
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22A64287074
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 06:40:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F17FB23324
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 06:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA12178383;
-	Thu, 15 Aug 2024 06:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="W95hu87Z"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B33B17838D;
+	Thu, 15 Aug 2024 06:40:39 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38381176FAE
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 06:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF0E1448FD
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 06:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723704037; cv=none; b=X/WRY5jg6tE3xAUiRYmlOZ41pHMGWQNACUE0NDm7riaLRKMbj2Th3ZVUbspgtbOgVmMnoLeXytrQDe/QJk5obZAqhHwXiU7XUPIho3A3JRMYuO5ocB1mIVBiNYsqhXnxIWDEpWDs058S0QKS7K7LF/1tz/HXzCzsuu6tTzJ8wP4=
+	t=1723704038; cv=none; b=f1wDqbBEHAdcORQDREnhnt4QCTp58W1kJR6QBXmGrC643CXJu8RNE7i/aYdJ0TQu0N/x9qX3gleKMIwsjrOpVecIWRSW3pVEpWqUiIMG2kGwciGNCxgoigtaNHf0gb1jHCYAj4okuqNqNqu8d/wxLhQ5UPhmWiKDNMCIJ7IrRWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723704037; c=relaxed/simple;
-	bh=btVyO5gQo/KA6fR4kSWu222wz0/LfuumKfAIGpzzPRg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=geqbJYrEVh4+iH2fbx7a59Lv4ORhbCHxN4y1Fm2DwOMKswbHLy64qmk508+He4KF/4fwRdZuyeSEOgKglKowu4Zs+f+txRIJy0n7iQU41pdgsIXqjZTg+2024cJbfkMXNUU+c6Gpmuqi7uzzKbWItMLsBgZufH9B9AyjA5ZFdK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=W95hu87Z; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1723704032; x=1723963232;
-	bh=JS43fM60RhDm+Th9MoEtNNKuKV29u1Ehm7PpXPr8fO8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=W95hu87ZrFzIJKRWqy7jJGYtEoW0XwdV1CnQ1Mti26jwCs+JTKG/sqp5axXMQ4hUb
-	 hTD74u4GPLku7uhSh6sIWl2Ik3XIGcIo2lfHrnncUYbwbXlw6q/Ist2VXoOOp3cRtd
-	 w5swmtogjto4IplpVXSITimV2GUqtZpg3J/Kp8VkoLxuJk5ebwciDefgc/pLUPspkT
-	 Vodt4I8TBq2TqGGn8Lg7HttJ+Z7bn8OMceUolzjewXmegH7dbMdjN8tf0nZEII3kiA
-	 xlrol+93f/+cwEmNBA7ZAoy4SgaQn17JJhJyAyEVO3P7CNx9FTLK3r9xtsh36+2IL3
-	 J7Uzxarcc132g==
-Date: Thu, 15 Aug 2024 06:40:28 +0000
-To: Boqun Feng <boqun.feng@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, Aakash Sen Sharma <aakashsensharma@gmail.com>, Valentin Obst <kernel@valentinobst.de>, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v3 1/3] rust: Introduce irq module
-Message-ID: <2b139d06-c0e0-4896-8747-d62499aec82f@proton.me>
-In-Reply-To: <Zr2JryyeoZPn3JGC@boqun-archlinux>
-References: <20240802001452.464985-1-lyude@redhat.com> <20240802001452.464985-2-lyude@redhat.com> <Zrzq8su-LhUIoavm@boqun-archlinux> <1bcae676ec4751ae137782c4ced8aad505ec1bb9.camel@redhat.com> <Zr0QyN8sQ6W2hPoJ@boqun-archlinux> <9855f198-858d-4e3f-9259-cd9111900c0c@proton.me> <Zr0aUwTqJXOxE-ju@boqun-archlinux> <Zr2JryyeoZPn3JGC@boqun-archlinux>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 64c2b25ea9656e001ad16ddd492ff2aec8b43367
+	s=arc-20240116; t=1723704038; c=relaxed/simple;
+	bh=Vy2YoRP3WMBL9Q0m0cvv2z3doL40ax72V/J2g22sdOI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=berX4Mlw9zkPbN8bz+95Fx6/ovfNZ1rfoN92+tY0scYZ6J0eFLCt4XGkwdn6IHoLyyvV7TP6eAm4v6oHl5Sb9f0dbJ9OmMNKApwp6YdbLqktC4ZopfVR8S1OFKhUkYIdNpsJws68zuRSQS0G5LJ6obcGKKDH4YNjVJM1kZix9LE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1seU9u-0002L8-Ty; Thu, 15 Aug 2024 08:40:30 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1seU9t-000XGZ-Oj; Thu, 15 Aug 2024 08:40:29 +0200
+Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
+	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1seU9t-002CsL-2H;
+	Thu, 15 Aug 2024 08:40:29 +0200
+From: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Date: Thu, 15 Aug 2024 08:40:29 +0200
+Subject: [PATCH v2] usb: dwc3: ep0: Don't reset resource alloc flag
+ (including ep0)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240814-dwc3hwep0reset-v2-1-29e1d7d923ea@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIANyivWYC/3WOOw6DMBBEr4K2jiP/FEiq3COiwHjB2xi0JkCEu
+ HsMXYqUbzRPMxskZMIEj2IDxpkSDTGDvhTQhib2KMhnBi21lZWywi+tCQuOkjHhJJz1plRVaez
+ dQpZck1A4bmIbDu23fRRGxo7Wc/FVZw6UpoE/54FZHenfrVkJJWRVOun1rTNePkeM/XviIdJ69
+ Qj1vu9fEiwMaNIAAAA=
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Michael Grzeschik <m.grzeschik@pengutronix.de>
+X-Mailer: b4 0.12.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1784;
+ i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
+ bh=Vy2YoRP3WMBL9Q0m0cvv2z3doL40ax72V/J2g22sdOI=;
+ b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBmvaLd76WjuTzBse4a1zQhSPCx4BbCb63ZKWekQ
+ 78y4MU4I5mJAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZr2i3QAKCRC/aVhE+XH0
+ q/F6D/9egYIhDfTzbtMWhwhK6deKJS363ZTXV5Xq9R8Bt6wjqDfp8yz9StX0LewcdFcKBPbb/NC
+ LiJPB1yWimhY8ENM+KLjb63lzgvkiYR0fLC2Ruzo9ZpCBSflWy4xAPLiPICVr3ghxaT7wxQs+Ha
+ qGJnp1dsIbuhtATkniT6HtAtFHsNEu8jamCuHy8r9+94C1R1CUcOvf0RXbq/fftGJOZgaOLe3GE
+ 8gFUo8PRG6gsArFmU0+lUyN+HHIpOKAsi1xl3bUyhwLGuwdonUrdpYFjCm0RVFEHMCAObC7GeCI
+ 6WzLPiCNP1aUB0b99AxUC3tIb0/Pi7DEudPOYKw2iZwJoGuv0ZZjuiIKK2Wt01K3R2XaAQIWSIo
+ Y0L3YpzJ7l4k0DaFNWKhPVeZHRrxkYmT88INiACI/ICsCAcD3SdbQLe3PuBGybpVaX/coEnrS7p
+ xWWYQlLGZ7pt4gqKDT2QwwEKQzWaWb5UAkWRu8XOVsYvAQ1h3yeum5+zApVhHrnn1M3woRvoFDV
+ q7RhUCfdU5ubUq6O3l8uioR5DsRKzboitMEDpQ3StXrNpB88cm7MqJvy3o0mnd4shM6duI3m/V8
+ BSqlmXWLxEFQariB6S2CCuH5vuOmOSc0w31IAPvnV52h7wbOprmk1N+GnDLx9xTiwne+H2zRaCE
+ 0992l7kkJRLM5ag==
+X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
+ fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 15.08.24 06:53, Boqun Feng wrote:
-> On Wed, Aug 14, 2024 at 01:57:55PM -0700, Boqun Feng wrote:
->> On Wed, Aug 14, 2024 at 08:44:15PM +0000, Benno Lossin wrote:
->>> On 14.08.24 22:17, Boqun Feng wrote:
->>>> On Wed, Aug 14, 2024 at 03:38:47PM -0400, Lyude Paul wrote:
->>>>> On Wed, 2024-08-14 at 10:35 -0700, Boqun Feng wrote:
->>>>>> On Thu, Aug 01, 2024 at 08:10:00PM -0400, Lyude Paul wrote:
->>>>>> [...]
->>>>>>> +/// Run the closure `cb` with interrupts disabled on the local CPU=
-.
->>>>>>> +///
->>>>>>> +/// This creates an [`IrqDisabled`] token, which can be passed to =
-functions that must be run
->>>>>>> +/// without interrupts.
->>>>>>> +///
->>>>>>> +/// # Examples
->>>>>>> +///
->>>>>>> +/// Using [`with_irqs_disabled`] to call a function that can only =
-be called with interrupts
->>>>>>> +/// disabled:
->>>>>>> +///
->>>>>>> +/// ```
->>>>>>> +/// use kernel::irq::{IrqDisabled, with_irqs_disabled};
->>>>>>> +///
->>>>>>> +/// // Requiring interrupts be disabled to call a function
->>>>>>> +/// fn dont_interrupt_me(_irq: IrqDisabled<'_>) {
->>>>>>> +///     /* When this token is available, IRQs are known to be disa=
-bled. Actions that rely on this
->>>>>>> +///      * can be safely performed
->>>>>>> +///      */
->>>>>>> +/// }
->>>>>>> +///
->>>>>>> +/// // Disabling interrupts. They'll be re-enabled once this closu=
-re completes.
->>>>>>> +/// with_irqs_disabled(|irq| dont_interrupt_me(irq));
->>>>>>> +/// ```
->>>>>>> +#[inline]
->>>>>>> +pub fn with_irqs_disabled<T>(cb: impl for<'a> FnOnce(IrqDisabled<'=
-a>) -> T) -> T {
->>>>>>
->>>>>> Given the current signature, can `cb` return with interrupts enabled=
- (if
->>>>>> it re-enables interrupt itself)? For example:
->>>>>>
->>>>>> =09with_irqs_disabled(|irq_disabled| {
->>>>>>
->>>>>> =09    // maybe a unsafe function.
->>>>>> =09    reenable_irq(irq_disabled);
->>>>>
->>>>> JFYI: this wouldn't be unsafe, it would be broken code in all circums=
-tances
->>>>> Simply put: `with_irqs_disabled()` does not provide the guarantee tha=
-t
->>>>> interrupts were enabled previously, only that they're disabled now. A=
-nd it is
->>>>> never a sound operation in C or Rust to ever enable interrupts withou=
-t a
->>>>> matching disable in the same scope because that immediately risks a d=
-eadlock
->>>>> or other undefined behavior. There's no usecase for this, I'd conside=
-r any
->>>>> kind of function that returns with a different interrupt state then i=
-t had
->>>>> upon being called to simply be broken.
->>>>>
->>>>> Also - like we previously mentioned, `IrqDisabled` is just a marker t=
-ype. It
->>>>> doesn't enable or disable anything itself, the most it does is run a =
-debug
->>>>
->>>> Yes, I know, but my question is more that should `cb` return a
->>>> `IrqDisabled` to prove the interrupt is still in the disabled state?
->>>> I.e. no matter what `cb` does, the interrupt remains disabled.
->>>
->>> What does this help with? I don't think this will add value (at least
->>> with how `IrqDisabled` is designed at the moment).
->>>
->>
->> I was trying to make sure that user shouldn't mess up with interrupt
->> state in the callback function, but as you mention below, type system
->> cannot help here.
->>
-> [...]
->>>>
->>>> I haven't found a problem with `&IrqDisabled` as the closure parameter=
-,
->>>> but I may miss something.
->>>
->>> We could also use `&'a IrqDisabled` instead of `IrqDisabled<'a>` (note
->>> the first one doesn't have a lifetime). But there is no behavioral
->>> difference between the two. Originally the intended API was to use `&'a
->>> IrqDisabled<'a>` as the closure parameter and `IrqDisabled<'a>` in
->>> functions that require irqs being disabled. As long as we decide on a
->>> consistent type, I don't mind either (since then we can avoid
->>> reborrowing).
->>>
->>>> So the key ask from me is: it looks like we are on the same page that
->>>> when `cb` returns, the IRQ should be in the same disabled state as whe=
-n
->>>> it gets called. So how do we express this "requirement" then? Type
->>>> sytem, comments, safety comments?
->>>
->>> I don't think that expressing this in the type system makes sense, sinc=
-e
->>> the type that we select (`&'a IrqDisabled` or `IrqDisabled<'a>`) will b=
-e
->>> `Copy`. And thus you can just produce as many of those as you want.
->>>
->=20
-> Hmm.. on a second thought, `Copy` doesn't affect what I'm proposing
-> here, yes one could have as many `IrqDisabled<'a>` as one wants, but
-> making `cb` returns a `(IrqDisabled<'a>, T)` means the `cb` has to prove
-> at least one of the `IrqDisabled<'a>` exists, i.e. it must prove the irq
-> is still disabled, which the requirement of `with_irqs_disabled`, right?
+The DWC3_EP_RESOURCE_ALLOCATED flag ensures that the resource of an
+endpoint is only assigned once. Unless the endpoint is reset, don't
+clear this flag. Otherwise we may set endpoint resource again, which
+prevents the driver from initiate transfer after handling a STALL or
+endpoint halt to the control endpoint.
 
-Yes, but that doesn't do anything. If the token is `Copy`, then we are
-not allowed to have the following API:
+Commit f2e0eee47038 ("usb: dwc3: ep0: Don't reset resource alloc flag")
+was fixing the initial issue, but did this only for physical ep1. Since
+the function dwc3_ep0_stall_and_restart is resetting the flags for both
+physical endpoints, this also has to be done for ep0.
 
-    fn enable_irq(irq: IrqDisabled<'_>);
+Cc: stable@vger.kernel.org
+Fixes: b311048c174d ("usb: dwc3: gadget: Rewrite endpoint allocation flow")
+Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+---
+v2: Added missing double quotes in the referenced patch name
 
-Since if the token is `Copy`, you can just copy it, call the function
-and still return an `IrqDisabled<'a>` to satisfy the closure. It only
-adds verbosity IMO.
+- Link to v1: https://lore.kernel.org/r/20240814-dwc3hwep0reset-v1-1-087b0d26f3d0@pengutronix.de
+---
+ drivers/usb/dwc3/ep0.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> Or you're saying there could exist an `IrqDisabled<'a>` but the
-> interrupts are enabled?
-
-No.
+diff --git a/drivers/usb/dwc3/ep0.c b/drivers/usb/dwc3/ep0.c
+index d96ffbe520397..c9533a99e47c8 100644
+--- a/drivers/usb/dwc3/ep0.c
++++ b/drivers/usb/dwc3/ep0.c
+@@ -232,7 +232,8 @@ void dwc3_ep0_stall_and_restart(struct dwc3 *dwc)
+ 	/* stall is always issued on EP0 */
+ 	dep = dwc->eps[0];
+ 	__dwc3_gadget_ep_set_halt(dep, 1, false);
+-	dep->flags = DWC3_EP_ENABLED;
++	dep->flags &= DWC3_EP_RESOURCE_ALLOCATED;
++	dep->flags |= DWC3_EP_ENABLED;
+ 	dwc->delayed_status = false;
+ 
+ 	if (!list_empty(&dep->pending_list)) {
 
 ---
-Cheers,
-Benno
+base-commit: 38343be0bf9a7d7ef0d160da5f2db887a0e29b62
+change-id: 20240814-dwc3hwep0reset-b4d371873494
+
+Best regards,
+-- 
+Michael Grzeschik <m.grzeschik@pengutronix.de>
 
 
