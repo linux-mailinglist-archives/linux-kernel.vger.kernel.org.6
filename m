@@ -1,95 +1,129 @@
-Return-Path: <linux-kernel+bounces-288195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EDC5953723
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:26:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A1EC953730
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:27:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB4711F20CDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:26:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9E051C2498C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7251AD9F9;
-	Thu, 15 Aug 2024 15:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09191B1437;
+	Thu, 15 Aug 2024 15:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LSMo27Ik"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="psefFyFw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB4A1ABEBA;
-	Thu, 15 Aug 2024 15:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB321AD9E8;
+	Thu, 15 Aug 2024 15:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723735586; cv=none; b=Z/yvqEsZlBzoEq3glmop7WyPzf+qIz1Tjy5v/AucdabPyiy8dfs/jIuhsjf2qwQ2Y4XPS7uK/ChjPFHefvw/zYRPFFzuLJ4wnA9TVBA2YJCz+3CDRls1BMocVCGabOdubIR7R4VSdh3HCbAIj6W8JhrealSrzluJZiq6cW6DnK0=
+	t=1723735608; cv=none; b=WB+5R7LwF42YEazsx7N/wvLP3wac/GW+Xw+84Y0qalwLWEkqVmMMAvHT8y7cI7r65MtANDNh49VRYV1f7BWFolxUJF1eXmOlarLrD0kUZQ09Hbv2kHP1InQ0aIaWEnLcIYInWaheUXuSpjATwW+y5dAeh65wB7HIxIf3F7/nEss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723735586; c=relaxed/simple;
-	bh=chUBqqmXI7iyoUjg33iK+8MmTB56lRavf1zo+HiDWhY=;
+	s=arc-20240116; t=1723735608; c=relaxed/simple;
+	bh=Wv1kQ8mBOvNs2q3MqL2TJnvCXLTai7JxFQflhk6OGQo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=quLqKgjC+XXPvphuDT8zlfbiOOj5zCWH+XYr0QWbm0YfgiKqETuzUTcq9zL4IibTx7QAUldp2SFo4o8DXntFEsmKD6c2waBwrsnDdecZnMFqRXvrkhlD8ZsBYoyYSiG34InJwq+JIYfGWG88g7Zka7sJntpBGP/YmFnLD3lh0K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LSMo27Ik; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71F36C4AF09;
-	Thu, 15 Aug 2024 15:26:23 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pg//R7WFypvQLdlCpOGBqFsmdjbzC6tz2UQSZ55dvFJgIMTITpA0KttVJ8vpOF/U+3n1WH8SsCDv8bwKg10fZfW+cJKO4lDGXCkuIh3FgWb1mu+P2PLbCWRb1yDg5qiQeXRswIPoacvM6wlsBJssvLDHgWn2pmy2T0P3iyX77hE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=psefFyFw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 714D9C4AF0D;
+	Thu, 15 Aug 2024 15:26:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723735585;
-	bh=chUBqqmXI7iyoUjg33iK+8MmTB56lRavf1zo+HiDWhY=;
+	s=k20201202; t=1723735607;
+	bh=Wv1kQ8mBOvNs2q3MqL2TJnvCXLTai7JxFQflhk6OGQo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LSMo27IkMXuq/VIdsHrCQ8QBQ+K0z+jElfn1WoPOQMJ4B04qm/SooLqbqtsPDykWM
-	 Ayj+ivdH8vN5Iws5aMXxjZuHDiwhCcbrLCJZiF0lModEFNB4DvF9Ng2FwpfCVW2xqF
-	 NHMatld/1bmDlW9+Gv2rfY2Xs0hwuthBnyBlZWXqvbe1VY49eUSBASVArScF14CoqC
-	 okK/yPJGk9z40xQ2QBek/JOcmTR/HZlryJfvfdxZvowTIuMY8r1sleqa4ItTi9IQFp
-	 Cnpd5xmKZlmDVdlBpYFu4DirY7Df1oYqigaex6PtKaIdeli5Lzp1xZ9+1fWm07gzeh
-	 zjrFxtAxI+KhA==
-Date: Thu, 15 Aug 2024 16:26:21 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Vladimir Zapolskiy <vz@mleia.com>, linux-watchdog@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: watchdog: nxp,lpc1850-wdt: Convert bindings
- to dtschema
-Message-ID: <20240815-undocked-shun-20797c63532c@spud>
-References: <20240814061210.56213-1-animeshagarwal28@gmail.com>
+	b=psefFyFwcCSMM704n/PghElOSiJNvILlJNI0F9AWzTMwXrebRp5JcacIDypratT/1
+	 0v73e8fN2mho163LqjEJtpaHXOuGAR1msR4cfx917H+frORBPL41NHpr7hKJ52tLV7
+	 DDOLTfoES26QUqTBCR6Mi7zHCAZM1FdO91OOgnmLXfhnmLymP+AKnXqRXuJisb/8Hn
+	 CaiF+u1pKyKBUNTe8jpwL11FVRnO6ahy5qNXExYGGIF7OEKCfLzQ+wkytqH2lktzeM
+	 Fx7GWcm+n0dGpb7ocTZSESpLstlhljmUetVxXd/Y7BbrABrVO2e8I9L4aakKxQ2CHg
+	 1Xn27J8A2inAw==
+Date: Thu, 15 Aug 2024 16:26:38 +0100
+From: Mark Brown <broonie@kernel.org>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "corbet@lwn.net" <corbet@lwn.net>, "ardb@kernel.org" <ardb@kernel.org>,
+	"maz@kernel.org" <maz@kernel.org>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
+	"james.morse@arm.com" <james.morse@arm.com>,
+	"debug@rivosinc.com" <debug@rivosinc.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"oleg@redhat.com" <oleg@redhat.com>,
+	"arnd@arndb.de" <arnd@arndb.de>,
+	"ebiederm@xmission.com" <ebiederm@xmission.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+	"kees@kernel.org" <kees@kernel.org>,
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"ross.burton@arm.com" <ross.burton@arm.com>,
+	"fweimer@redhat.com" <fweimer@redhat.com>,
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"palmer@dabbelt.com" <palmer@dabbelt.com>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+	"thiago.bauermann@linaro.org" <thiago.bauermann@linaro.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH v10 12/40] mm: Define VM_SHADOW_STACK for arm64 when we
+ support GCS
+Message-ID: <3a7d9b69-e9df-4271-a3f0-8e8683c2654f@sirena.org.uk>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+ <20240801-arm64-gcs-v10-12-699e2bd2190b@kernel.org>
+ <34f7a5378447b1a8d5a9561594b37cfeaa6bd2b1.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="L/843tFBv2lEsulm"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="MksM19X6NXlfICdi"
 Content-Disposition: inline
-In-Reply-To: <20240814061210.56213-1-animeshagarwal28@gmail.com>
+In-Reply-To: <34f7a5378447b1a8d5a9561594b37cfeaa6bd2b1.camel@intel.com>
+X-Cookie: -- Owen Meredith
 
 
---L/843tFBv2lEsulm
+--MksM19X6NXlfICdi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 14, 2024 at 11:42:03AM +0530, Animesh Agarwal wrote:
-> Convert the NXP LPC18xx Watchdog Timer bindings to yaml format.
->=20
-> Cc: Daniel Baluta <daniel.baluta@nxp.com>
-> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+On Thu, Aug 15, 2024 at 03:20:52PM +0000, Edgecombe, Rick P wrote:
+> On Thu, 2024-08-01 at 13:06 +0100, Mark Brown wrote:
+> > Use VM_HIGH_ARCH_5 for guarded control stack pages.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> FYI - If you want to have more complete guard gaps, you need to do this for arm
+> too:
+> https://lore.kernel.org/linux-mm/20240326021656.202649-14-rick.p.edgecombe@intel.com/
 
---L/843tFBv2lEsulm
+> Using VM_SHADOW_STACK only gets you part of the way there.
+
+Oh, thanks for the heads up - I'd missed that.
+
+--MksM19X6NXlfICdi
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZr4eHQAKCRB4tDGHoIJi
-0lFhAP4jwpI7e9hAqXex3sii+gGBYhQ+/JCOORpV8aybJoWzmgEAx9Nj2TQqqLY3
-hGn8Qar0qfxoKTwNj/NxF/WlhgRU7wM=
-=TUhA
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma+Hi4ACgkQJNaLcl1U
+h9Doewf/XswNKQ3VlzKzKEKNyYD5iFma82uwYhlhHv9Nqsb6eiF4zUSOOgbna6xT
+Cq8p3DS/Im1Fgx/SaMcGP6tNihKE5DGkEufWy+6GIiS5SsrxhPlnzDtY0F4cJ4a5
+AELeMm6OD9wZFwcAwnuUJraMRY6olKHlI+cfrFcncvwLNwLkaVE0JlcB1dOxMNSR
+OqvnO/G0VM25OdY7SV+tJKRi/U5eIa+chRhV0i+qaQOu8oRJfEo6BqkFxz+ZHF19
+Dwr/HiGZa663RJVxgdp7mhrotkqK/nCoNksP+gjuEt6z2TIFNdcxPg0BK6mfgN+0
+qAKWzvjayIQ9j400dGkkiwuj5/+SNw==
+=TSgi
 -----END PGP SIGNATURE-----
 
---L/843tFBv2lEsulm--
+--MksM19X6NXlfICdi--
 
