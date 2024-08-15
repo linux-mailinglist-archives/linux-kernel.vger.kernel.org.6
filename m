@@ -1,137 +1,112 @@
-Return-Path: <linux-kernel+bounces-288205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AECD5953747
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:30:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D46395374A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:31:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 537232835B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:30:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01DA81F24723
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6BF91B012B;
-	Thu, 15 Aug 2024 15:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34BB1AD405;
+	Thu, 15 Aug 2024 15:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f2VOK3AI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W+A6v2+y"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FF41AD408;
-	Thu, 15 Aug 2024 15:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12F753365;
+	Thu, 15 Aug 2024 15:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723735804; cv=none; b=NxDouc4hbo76zpjRsgLGdKcsiObamiUAswOG6VuCpunDfG6sWILKk1TD/KJm62Mexkl8Veabrvy2A2F6b2+TI/vs3ylXtKdiCxUluLjbfW6rMdlo6PbPMk/GwsLVHMfKA3fkwOeK/Ud5aXr36Wegh3e8wsIcho9kDwl+R0wIBSI=
+	t=1723735900; cv=none; b=SWE6X6VjrHZXpSrrGXAcdDaQuMXa9SxbDcUqiX5ni413FVZmXZ0emChXm6KX8kIrU1OTXfV/WpcS3QgLirMTP59tqlAr67zxKsYbwh3C1zjPW+qucBIXI26l3mvvlHO7VRYrxMfzjYZAHpa7mzliiCfs0hkH8RH745/27c7uQB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723735804; c=relaxed/simple;
-	bh=eIyx3IBfKno0cNAgEw1iBNzp1pqq6ljpPhCQTDU9dZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hQXV2jzuFR26xsYd3d2AJUZKgg3G+FJysj5nxQgTz1+OnF2/Ny33wMpqPrmFX50yGGfvVyADvD1y29lxMa3TdkHWEHy4+fn7bH76iKI7iX87Y3L19FNwdpVb0tCTJnlcBF6RtxDC43Y1YBVmxLR+mTKD8tK9CqsE1MLWaVHB5fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f2VOK3AI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01F12C32786;
-	Thu, 15 Aug 2024 15:29:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723735803;
-	bh=eIyx3IBfKno0cNAgEw1iBNzp1pqq6ljpPhCQTDU9dZk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f2VOK3AIWLU8QSUcuez403jAVeUCxkGiqTwl/3vXpTISYj5ZNiaC7iRk9B1NZQLjA
-	 ovS1xr5gzeXsj2qNTSBFtyK1r+NxVe1nNs7sFTPO/KORonQhYRYOL9MBdvAC1kTDUW
-	 vaAvADvtMEuupWZG7KxvNlIMv37mit4/B9L6sSEm1SlLUCoOOZInyG6S0M6A8fjPBo
-	 O0D6R9ho6KCsny6znOChjPwNDpYIp/Ae8NQuuWxnILZlVGI6zgwCn/Allcb9RHmYO+
-	 fd68FywO/qwePHjIoRGOlchOiPZz3nc64ZdSlgTIdvCBcid+R8wy8E1G3vTTrZTKT1
-	 QB/eLkqJrI0jg==
-Date: Thu, 15 Aug 2024 16:29:54 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 23/40] arm64/signal: Set up and restore the GCS
- context for signal handlers
-Message-ID: <7fa96f26-5bf6-490f-8986-258033fbfe0e@sirena.org.uk>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-23-699e2bd2190b@kernel.org>
- <ZrzEfg5LqdAzgJ6+@e133380.arm.com>
- <08932f6d-01ef-40e8-97d2-08f0d2016191@sirena.org.uk>
- <Zr4EkmtUKop9o9wu@e133380.arm.com>
- <c56fa974-88f7-4c1f-83bd-8c481fe0045d@sirena.org.uk>
- <Zr4avB6+U4tLDy8E@e133380.arm.com>
+	s=arc-20240116; t=1723735900; c=relaxed/simple;
+	bh=zO8i28esgOwM2IKZTj6QVpLHk2hrVfYuXE8+Db5XxMc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Zr5VibnqVFTkEAwm1y5BvtwwWO0Z4DkcxhfEPmepoqbHaosHYPP7W5igKWqbeXWEgPWR+TzLM48ZO5OtWHDUd57iKyhJq0SDYId7lE39RWkGEqailRG+vMbF7hLZIV0+xXw2ajmSwddDof5rOnqXp4L6S+ZG6Qt1gbRvY5NtXVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W+A6v2+y; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2d3bc043e81so752546a91.2;
+        Thu, 15 Aug 2024 08:31:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723735898; x=1724340698; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a+LqYglqDDwweyHeY9WF0lHIc3M24FlH5C4AoMCNycQ=;
+        b=W+A6v2+yq5xuQmVedigaKEVz1rdhyJlY9PX7OTBxlxals+vTLUJqdZ6AlpDKV+ypY0
+         lERmMmY1y08waEvHzjpGcAGrt24RT/rzaS2+UvZ2Edtze7oePQyLwY8rsCIWgrMChstH
+         Q3oy/D85P8k9Fwp2KtdHuIz6GMyqcwBqo1oy8iyriOVqNhu+AaYX4qVa8wtFHgXM3A0f
+         jAe3Eafb+6FmP0MLrpV/OPeSHXO+sZZRfbmU5G39mRUYrWPPRzw4o8HHmwrXoQ6Zso+3
+         zr3CA2BXW2WfBBi4kqLKPvNw9/qDzPIyiVqEuqdjVapVusCvQNaE+47m60RQ3rm7mQC+
+         rILQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723735898; x=1724340698;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a+LqYglqDDwweyHeY9WF0lHIc3M24FlH5C4AoMCNycQ=;
+        b=w2ENHZg/JpzMXrMtIASEmprvIYU9xCkh5wmi1UkzKKwBoPMYL+sCOBEvdQlC6K/QMv
+         o0aAq3r3Y3EHL+FdTPTsuIAp7DfBg1TFDGW65FcdyNYyn242RrAplrIYydAv/KJ1BT9A
+         9nU5moUrvyW0/dy+zzx1j5FHfVQfSuZOpybguBYkj6G9/5H+ML2Ybva34ZSs/nFgXUTT
+         /AzOtg3jI8O9YR2ziF+nOd+qWrXbaeX9jtzd4+4ItBl0f0ZZNRPWJA8o2NSkk30QdTmj
+         bArVW/u5rks05nVExqDvaQX/SrJQGPmCbZjD9gThXgDHHU2AryjEY9fRHJtgHJqdW2F9
+         A9iw==
+X-Forwarded-Encrypted: i=1; AJvYcCVyCLJ+LRcPhAe71ik+r/vUuex2Uo58l6EIXZAOdvh9YivAwnqR5XCgeIAhTkuYR5VaYtJ5Qpqr/Xzi1fDxc2qeX2u7Ymi50JmmQSi2icVbq8EP2G5T3SjQ7cYFC6qDP/eAomPFE4rLFOJ9rNX8VlKfB7o75JrwKyC+YMek9jDbwOOnKLQ7n40lLA==
+X-Gm-Message-State: AOJu0YzjNwch3Ci12dnfrKXrIzidcoWjIIRzPfUI6QPRODaEYr0lm1AR
+	pV6vCNht0zFyIBAJhIgDoF+66O/45y3ybsQ767vt7h+XnQKg0aTcpPGiWuawIGG9S2H+M7xRCcZ
+	zlHjPqD+9QaaXmMnPllKOGEVmt/0=
+X-Google-Smtp-Source: AGHT+IFZKfJDyUVUlLPZnL5SSp2gdP0C0YyAdgL1sqDAM9BZcm3HcihDUZEP+nsUhxy6U1bt7PVprEEKbniigIEBU5s=
+X-Received: by 2002:a17:90a:ca89:b0:2c9:754d:2cba with SMTP id
+ 98e67ed59e1d1-2d3dfc2aa3amr18264a91.3.1723735898110; Thu, 15 Aug 2024
+ 08:31:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="YyEFoEtU1rhfM5GN"
-Content-Disposition: inline
-In-Reply-To: <Zr4avB6+U4tLDy8E@e133380.arm.com>
-X-Cookie: -- Owen Meredith
+References: <20240815074519.2684107-1-nmi@metaspace.dk> <172373175849.6989.2668092199011403509.b4-ty@kernel.dk>
+In-Reply-To: <172373175849.6989.2668092199011403509.b4-ty@kernel.dk>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 15 Aug 2024 17:31:25 +0200
+Message-ID: <CANiq72kFXihVGDGmRyuc0LkODYOv2jX3shP-dEHjV3k1sqFEKg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] rust: fix erranous use of lock class key in rust
+ block device bindings
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Andreas Hindborg <nmi@metaspace.dk>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	"Behme Dirk (XC-CP/ESB5)" <Dirk.Behme@de.bosch.com>, linux-block@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Jens,
 
---YyEFoEtU1rhfM5GN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Thu, Aug 15, 2024 at 4:22=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> Applied, thanks!
+>
+> [2/2] rust: block: fix wrong usage of lockdep API
+>       commit: d28b514ea3ae15274a4d70422ecc873bf6258e77
 
-On Thu, Aug 15, 2024 at 04:11:56PM +0100, Dave Martin wrote:
-> On Thu, Aug 15, 2024 at 03:45:45PM +0100, Mark Brown wrote:
-> > On Thu, Aug 15, 2024 at 02:37:22PM +0100, Dave Martin wrote:
+If you picked 2/2 only, it requires the former as far as I understand.
 
-> > > Is there a test for taking and returning from a signal on an alternate
-> > > (main) stack, when a shadow stack is in use?  Sounds like something
-> > > that would be good to check if not.
+If you want to pick both:
 
-> > Not specifically for any of the architectures.
+Acked-by: Miguel Ojeda <ojeda@kernel.org>
 
-> Can you see any reason why this shouldn't work?
+Otherwise, I am happy to take them too.
 
-No, it's expected to work - I'm just not specifically aware of an
-explicit test for it.  Possibly some of the userspace bringup work
-might've covered it?  Any libc tests for altstack support should've
-exercised it for example.
+Thanks!
 
-> Maybe I'll hacking up a test if I get around to it, but don't take this
-> as a promise!
-
-Thanks for your firm commitment!  :P
-
---YyEFoEtU1rhfM5GN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma+HvEACgkQJNaLcl1U
-h9BAegf/QtK1e+T9WZ1prxPIxk18DlFBSQaVl3fAvm96vjPtE5PP3xAzEPik0b3O
-Z8qDui3LXfB5xvftgIUUnEo1Yl7a5NiEUuqdU1fUUvXGk8OCVEmEQLXbBPOC6cyQ
-e0jNgMzBJ0L/zIM5XPjEBw33aYk0GrwL/ib4Fyzo7SfscLaZQ926T72vSydRXaIo
-TXc3QKHKWYHOaCAEMZgW2uBgmm7u97mFH7E7HJAqEiRPE0T4f6qQjluDGEcy1crb
-DJfTgadShNXTjshCzNYyYtHXZgrQjyRUSbCA4Cgnwj9McpBbwQQkbx9kXH6sZdHV
-Qgdiabh+uFXtADbJInyFT0RqRakHXg==
-=3J6F
------END PGP SIGNATURE-----
-
---YyEFoEtU1rhfM5GN--
+Cheers,
+Miguel
 
