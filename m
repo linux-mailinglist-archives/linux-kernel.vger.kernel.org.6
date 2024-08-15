@@ -1,125 +1,122 @@
-Return-Path: <linux-kernel+bounces-287324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F188495266A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:04:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68B7B95267E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:07:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BE381F2211A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:04:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 109011F22976
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4FF5A47;
-	Thu, 15 Aug 2024 00:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A0310E5;
+	Thu, 15 Aug 2024 00:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GSbdWmEC"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VsTayENF"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B6133F6
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 00:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A1436D;
+	Thu, 15 Aug 2024 00:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723680279; cv=none; b=qBXBDha+E94I3nI28lPJfX8xRAB0WJD7uZv4pU76MWWag5WW+tCH25dm8o4qRHbpZfpJRLbkdDSWSeVBmzzDjmbQc8TQ1cO9Z7iZp9BwQP11T0zG850Leavv8bqbx5Fb9/9GWRtw0xv1XwZZw7WZfIWUdu/PtRObTsEB1Fekuhk=
+	t=1723680411; cv=none; b=agHHyJeAJm73/2P9QzqqWj+R8G565rBnviVUs88wfvmu/saydrNeMjyOy9MccYJgV5DMQUnK9uAXQpI4gv60aAHxgX+G5lyOSVml7kR25NDFEI3Ag7gziBTatUQaHHByPa1M7h92lST0pAaBlYLbNidMYjkbLMkUL+LarMRbsEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723680279; c=relaxed/simple;
-	bh=bHdzoAQ9TpHRc8xnb5B/l3G9z7Cpe4OqQWIqw8Gc81Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dT9W16TGgftig3Ipnf9MmZq7bdQh+cqdExledPZB9Sb6jWQ1R1RWpP5Nz6bNymOg7CIP3y/43/66cW9hD5T0VHT1Pvl4TBZ2VQcZ5DVmAhotkR1+lA26QUfpDl5P7GuaHO343sRcfzpLj50uwt22XQN2BmfKFp28+N8WiLi6Tvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GSbdWmEC; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3718291cd6aso52622f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:04:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723680276; x=1724285076; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oI0xEt04nW9vXke2inRd8VZEohgjA2k6NfhGuvD+VJE=;
-        b=GSbdWmECv5din0itFAlqW2VBisk5YX0jHKGRK5WpbQXL7iqQnK4VHrsnoG7MKQ+FFc
-         9ccE+ESNoRLODUHgx+hqq6NLMDWir5l1w/xFaLCt9ii4KeJLb83g7dtJNysLZ9UoxqTU
-         x4yicxQ07YJ6nJ86jBC0PVQJa659CkfdSFAOmnFMD25VQ6HQRSfPSg9IN/tgydrBWFms
-         Wwirstby/1/HWMQbnCL1dDoZe9LJTTJIjQIwHHut7zzdSiZIlM12kHnba9UxQmojiNwS
-         wL5qri2qMSXLypk3PlobiYVEBd9wayknjCxCV003F9IFu64RqJifA3HxGVAi9TSoTjAK
-         LXwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723680276; x=1724285076;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oI0xEt04nW9vXke2inRd8VZEohgjA2k6NfhGuvD+VJE=;
-        b=OAuLUeFqhBp2KCl+IWsSB6CVEtiu1tuo/oWn1du68HRdhzUxKCiucgV38ZhbSQR6Uu
-         4vrLUc7nfTNtAmIhbO9b4HgYVDabNWSgv+qc6oYqRjJeTeCRZkG61n1EQrlAINoiXa9t
-         C8hnpnBhGdm6sSuRHXW8hD+DKjmNAyUKnMfYfgokDCHmz7083AYn1yD4AUfScAvPf73S
-         1xuqn9BewLoq9hZBzcDg/S3HMuu3V3CINKLTJlXGDW+8AtXzz0NQSK0cGEDycl2wiBjc
-         6fxhNxhtyx/gbt+vq5R3mSckPAjfyf1SgXL6Hx3h/NKrcczeBWf27mScCf+pibWfkQ1k
-         ULJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNpPTyCHFWNuKLPJtlPOIifCs+FHwJti16vnf7AjXmxe6UkAiqRUXL1YKWbeoeoNAXdW9UgTwbg2EIq+w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw45yMvyY/iX/cOPNLqlzvmhBuqVt8BsVAYlQYICz43USgtSmDJ
-	ONVABClA4ZUTGRYPi4+wI5PoLwDcgFk1CaP1ZCTHqB3ntv019eTO
-X-Google-Smtp-Source: AGHT+IG+t71s1X4Gof8Idlif5nSP0V2fAIDFRz4YizHFyhhpFs3EW5kKgYXQ5WfiqJBVsrnFSw1l5w==
-X-Received: by 2002:a05:600c:4446:b0:428:f17:6baf with SMTP id 5b1f17b1804b1-429dd280266mr18464115e9.5.1723680275274;
-        Wed, 14 Aug 2024 17:04:35 -0700 (PDT)
-Received: from ivan-HLYL-WXX9.. ([2a01:4b00:d20e:7300:ce68:853e:d0e2:925f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429e7bfd917sm4305575e9.8.2024.08.14.17.04.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 17:04:34 -0700 (PDT)
-From: Ivan Orlov <ivan.orlov0322@gmail.com>
-To: akpm@linux-foundation.org,
-	kees@kernel.org,
-	davidgow@google.com
-Cc: Ivan Orlov <ivan.orlov0322@gmail.com>,
-	kunit-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	erhard_f@mailbox.org
-Subject: [PATCH] kunit/overflow: Fix UB in overflow_allocation_test
-Date: Thu, 15 Aug 2024 01:04:31 +0100
-Message-Id: <20240815000431.401869-1-ivan.orlov0322@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723680411; c=relaxed/simple;
+	bh=H9pfpREOJDPtkrlyrUSjaBWRENw6kdmQ+s7JxNpN7wM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C/vtRhmvzazAY5QSHCqY2lBZHp0ehNxmLkyRZbDKFFIsHHhzTYFJ+lOXHu0AzeDx16jmiIbPIMoMT6m4DLRezaQvkPcPYuJ871lTjzgNgWo+0TQ2tmgb/uzt+EisMaVAJKE8m5sRVCOr8qG/StznE+BjXz19Ivr/GvsD4Qlr+oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VsTayENF; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1723680406;
+	bh=ARl6f8MSkmz4JW8KuWT5Ct613OXSeMqqRaXctk8vXfE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VsTayENFexUTHo1E6Me2WO/9yntTir0HgT7/dLkq0dCnj3QJeq+RDp597bONQAZG/
+	 Sgg9njVEwgVSb1NMgpyDhiIwFTtLkP/txzXzetiyB+0Q1esm21R0fUmrT2lcmpnrmL
+	 Apa/s86LcLpMg7bpBW6lT8GtRrHTeyLfODRlqKAO5dc3zO6U9ErWw50YwZhepHOl3D
+	 KvE3/FKz5RWEelWlEBgHljagavCUbYHnf0V2Sl3Li7AMP3TjKY6kZ8JlvTFlMDAAOk
+	 xSq8oBvlGUnlf82ySn2qc+SepuV5snK34ZzbzT6kwXR+FHALrz8TH3HN9OayI4oVhk
+	 84hhPOX8ImBxg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wklm642Yhz4wp0;
+	Thu, 15 Aug 2024 10:06:46 +1000 (AEST)
+Date: Thu, 15 Aug 2024 10:06:45 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jani Nikula <jani.nikula@intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the mm tree
+Message-ID: <20240815100645.25b7a87f@canb.auug.org.au>
+In-Reply-To: <20240815095734.751c6ec5@canb.auug.org.au>
+References: <20240815095734.751c6ec5@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/TSXRc_dSfWVSOG_aED9w+eg";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-The 'device_name' array doesn't exist out of the
-'overflow_allocation_test' function scope. However, it is being used as
-a driver name when calling 'kunit_driver_create' from
-'kunit_device_register'. It produces the kernel panic with KASAN
-enabled.
+--Sig_/TSXRc_dSfWVSOG_aED9w+eg
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Since this variable is used in one place only, remove it and pass the
-device name into kunit_device_register directly as an ascii string.
+Hi all,
 
-Signed-off-by: Ivan Orlov <ivan.orlov0322@gmail.com>
----
- lib/overflow_kunit.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+On Thu, 15 Aug 2024 09:57:34 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the mm tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+>=20
+	.
+	.
+	.
+>=20
+> Caused by commit
+>=20
+>   2771559a5531 ("fault-inject: improve build for CONFIG_FAULT_INJECTION=
+=3Dn")
+>=20
+> This is just whack-a-mole ... :-(
 
-diff --git a/lib/overflow_kunit.c b/lib/overflow_kunit.c
-index f314a0c15a6d..2abc78367dd1 100644
---- a/lib/overflow_kunit.c
-+++ b/lib/overflow_kunit.c
-@@ -668,7 +668,6 @@ DEFINE_TEST_ALLOC(devm_kzalloc,  devm_kfree, 1, 1, 0);
- 
- static void overflow_allocation_test(struct kunit *test)
- {
--	const char device_name[] = "overflow-test";
- 	struct device *dev;
- 	int count = 0;
- 
-@@ -678,7 +677,7 @@ static void overflow_allocation_test(struct kunit *test)
- } while (0)
- 
- 	/* Create dummy device for devm_kmalloc()-family tests. */
--	dev = kunit_device_register(test, device_name);
-+	dev = kunit_device_register(test, "overflow-test");
- 	KUNIT_ASSERT_FALSE_MSG(test, IS_ERR(dev),
- 			       "Cannot register test device\n");
- 
--- 
-2.34.1
+These files might also be worth a look:
 
+$ git grep -l '\<debugfs_' $(git grep -L 'linux/debugfs.h' $(git grep -l 'l=
+inux/fault-inject.h'))
+drivers/gpu/drm/msm/msm_drv.c
+drivers/misc/xilinx_tmr_inject.c
+drivers/ufs/core/ufs-fault-injection.c
+include/linux/mmc/host.h
+include/ufs/ufshcd.h
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/TSXRc_dSfWVSOG_aED9w+eg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma9RpUACgkQAVBC80lX
+0Gzjewf/aZF4t0WVC58aCraPlg31GNZSQ/ITCta+G376KMzlkr+pQqLQ+v1Ow3Mu
+Yhug4RwXG+zvLan86Kgq8PlZrvsoh0os5YAesjY3akU92UbiEqscBwyxdbTct51s
+xbUPPvK0eq10ql/LmWmowoqR9EeF7Sb5QD3mFh+FW4PhvDARwsiP4ho2BbRcRrQu
+KKNtX7wmUv1UU/X6aGv5mXSbUzyCy6K0HKVlRVb6zO7FjMke9tHUnAzClVkTBWG0
+RwhbkZmGzN4zgNJ+v7MgOBgSfBVE5+jEWhHGnzIk8shwTFF+2iLyOfJYdEXINkVi
+VSLAXGDna9jt02Xt3/aElEjRlsbqxg==
+=x/+5
+-----END PGP SIGNATURE-----
+
+--Sig_/TSXRc_dSfWVSOG_aED9w+eg--
 
