@@ -1,204 +1,172 @@
-Return-Path: <linux-kernel+bounces-288011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01A7F95301F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:39:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF11952F03
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7B3A28861D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:39:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C58D41F21AB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C48819FA87;
-	Thu, 15 Aug 2024 13:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A6B19DFA6;
+	Thu, 15 Aug 2024 13:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RD1ZA3IO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="jXC+39dj"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C424D19EECF;
-	Thu, 15 Aug 2024 13:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FBF1DDF5;
+	Thu, 15 Aug 2024 13:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723729153; cv=none; b=HRwFSGCQk02DnhZOhDhI7odVzrFQjL6+2vI5GrLDWnbhI4BphVWzbEevCMM1e6lJzLWkUE/LI7QWIGFhK6sro+A2Hv/AYKLNJC7mV5qlMXcGzSpfB6I9lMXo5FXZRXIepNd6tvEwN0k700mkkwYtFD4s0waMroONy7X96Cec3rI=
+	t=1723728434; cv=none; b=r6icEquL8ZO1gFfwXW0VPzASTYJHjeoI0CpcR9EIzRmT2UDWJSDMwwJb9ytip2gaUx2NWwLmVTbcjAEvcblX9m09TNihJxtIW46w1ccqerW0R4kwil6u9K3xXkkh3ZXQAnz7GIFy1RZ+fjGP9CzFY/NEJWgP3vBhuBPdMDv9tkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723729153; c=relaxed/simple;
-	bh=wfNjkiwjF3OQQaLpX0or6c2Q95TUZGbxbvgApXQCKn4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=swHAAVpJ+fek+9qF4hufrSQvXe1SpHHVfh6DUS2nuTHr15zIplKEMMQtAkCr/HfzafiaJTRIMR+XEfYJeOSBtjl3/i5giovrrjOZwbxQukrZ5wMhPZPm4mkJIE1bmg6CjSeKwgmeCkFZZEe8zpiLdLXlFfkA1bz3hyrkFOgQODo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RD1ZA3IO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D50C9C4AF0A;
-	Thu, 15 Aug 2024 13:39:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723729153;
-	bh=wfNjkiwjF3OQQaLpX0or6c2Q95TUZGbxbvgApXQCKn4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=RD1ZA3IODvwLqwVDN+JLa1dWLE1WA+A3i7sWEUi62zpwIhS23RgIw7DEf44lM3Ft+
-	 l4b+/2cn/ItD7TvTYDzndkJ9SrT45QAkfhT0GxzTumv+FsBYwOfibkpvSexup2jFOt
-	 vcvaQnP06Ynm5owTVJaOFHb4cN3ToFnQXmwRvVN0=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	allen.lkml@gmail.com,
-	broonie@kernel.org
-Subject: [PATCH 6.10 00/22] 6.10.6-rc1 review
-Date: Thu, 15 Aug 2024 15:25:08 +0200
-Message-ID: <20240815131831.265729493@linuxfoundation.org>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1723728434; c=relaxed/simple;
+	bh=rvjTc/V+WC8MQxt5c2VWNDmHQVX8nkxIBdiXAj6NHco=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qLw7QFqAf2hx7UaOotSGlxTc6Z68EDu3RbOnSuIktQpVq6vjRHqHG+h+NCrJ+Oj6DMD/IkksWwsaSHQKeKRjpRc763T+l+YRaTUhnFIc8h6puSvnAQI4unrMyzsihMKbunhQ63lVNEY6BxXOGD0XMPTmvAv+xTEfgvVMzgRwdcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=jXC+39dj; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=cxEWD0e0QZ9HFrd/OmZU464Gkp7yr4zIzG+4PJ+YvQs=; t=1723728432;
+	x=1724160432; b=jXC+39dj2pUYDQRYg9Id8C6Ag3WpYpcfpc0308Z0UaihcAV5LdlBwtJcW7rdn
+	e9ZgXk59IiEXmmDMWy5YxmG/GjDr4MTGuK+GTlasQDiw3LZbeMAP3dsKL+jn8u/NkgDRCfuFcOG+C
+	KA7Gs4Sukj+caqAXKZAzO2xxyEgdf1hQF93kIx2FgU7vYfZ/2SnU9h0AacSeR446RkIl5RCCucJNe
+	igMFNzAHoNgnt945wSR2RBpCGR27yZl7GPOVqVLZ4lr1SHBkNzA9BmF+mOvaaHjrlbX1dXAAnS8cQ
+	iKYzawcIxTJzZ0qY0Hg5V2NkytnDMdyV9d3cpuL/Z06NBRE+Fw==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1seaVI-0002M3-TU; Thu, 15 Aug 2024 15:27:00 +0200
+Message-ID: <3716b1d7-71d5-4e53-9004-c75fc9424a57@leemhuis.info>
+Date: Thu, 15 Aug 2024 15:27:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.6-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-6.10.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 6.10.6-rc1
-X-KernelTest-Deadline: 2024-08-17T13:18+00:00
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: Fix grammar and phrasing errors in
+ reporting-issues.rst
+To: SurajSonawane2415 <surajsonawane0215@gmail.com>
+Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240815103114.10461-1-surajsonawane0215@gmail.com>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: en-US, de-DE
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 n7RI
+In-Reply-To: <20240815103114.10461-1-surajsonawane0215@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1723728432;3ba6dea3;
+X-HE-SMSGID: 1seaVI-0002M3-TU
 
-This is the start of the stable review cycle for the 6.10.6 release.
-There are 22 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+Lo! Thx again for doing this. 
 
-Responses should be made by Sat, 17 Aug 2024 13:18:17 +0000.
-Anything received after that time might be too late.
+You might want to add a version to the subject (see the -v option for
+'git format-patch', which I assume you used to prepare the mail), it
+helps to avoid confusion and some maintainers are picky there -- but I
+guess Jonathan might not care too much for a simple patch like this.
+Some maintainers also would have insisted on a changelog below the
+ "---" line; again, for a simple patch like this it likely is not
+important.
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.6-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-and the diffstat can be found below.
+On 15.08.24 12:31, SurajSonawane2415 wrote:
+> This patch corrects some grammatical errors in the `reporting-issues.rst` 
+> documentation file. These changes improve the readability and accuracy of 
+> the instructions provided in the documentation.
 
-thanks,
+Please use imperative mood, which
+https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+describes better then I can do that quickly here.
 
-greg k-h
+> Signed-off-by: SurajSonawane2415 <surajsonawane0215@gmail.com>
+> ---
+>  Documentation/admin-guide/reporting-issues.rst | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/reporting-issues.rst b/Documentation/admin-guide/reporting-issues.rst
+> index 2fd5a0302..61de4454b 100644
+> --- a/Documentation/admin-guide/reporting-issues.rst
+> +++ b/Documentation/admin-guide/reporting-issues.rst
+> @@ -56,7 +56,7 @@ developers. It might be all that's needed for people already familiar with
+>  reporting issues to Free/Libre & Open Source Software (FLOSS) projects. For
+>  everyone else there is this section. It is more detailed and uses a
+>  step-by-step approach. It still tries to be brief for readability and leaves
+> -out a lot of details; those are described below the step-by-step guide in a
+> +out a lot of details; those are described below in the step-by-step guide in a
+>  reference section, which explains each of the steps in more detail.
+>  
+>  Note: this section covers a few more aspects than the TL;DR and does things in
+> @@ -299,7 +299,7 @@ face, even if they look small or totally unrelated. That's why you should report
+>  issues with these kernels to the vendor. Its developers should look into the
+>  report and, in case it turns out to be an upstream issue, fix it directly
+>  upstream or forward the report there. In practice that often does not work out
+> -or might not what you want. You thus might want to consider circumventing the
+> +or might not be what you want. You thus might want to consider circumventing the
+>  vendor by installing the very latest Linux kernel core yourself. If that's an
+>  option for you move ahead in this process, as a later step in this guide will
+>  explain how to do that once it rules out other potential causes for your issue.
 
--------------
-Pseudo-Shortlog of commits:
+Looks fine. But you dropped this change from your earlier patch
+afaics:
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 6.10.6-rc1
+-module not part of the Linux kernel. That why your might need to uninstall the
++module not part of the Linux kernel. That's why you might be need to uninstall the
+ packages with such software to get rid of any 3rd party kernel module.
 
-Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>
-    drm/amdgpu/display: Fix null pointer dereference in dc_stream_program_cursor_position
+Sorry, guess I was not clear enough what I wanted in my last mail.
+Please re-add that change, but this time keep the line wrapping
+intact -- which most likely will mean that the "the" and the end
+of the changed line needs to go to the beginning of the next line.
 
-Wayne Lin <Wayne.Lin@amd.com>
-    drm/amd/display: Solve mst monitors blank out problem after resume
-
-Kees Cook <kees@kernel.org>
-    binfmt_flat: Fix corruption when not offsetting data start
-
-Gergo Koteles <soyer@irl.hu>
-    platform/x86: ideapad-laptop: add a mutex to synchronize VPC commands
-
-Gergo Koteles <soyer@irl.hu>
-    platform/x86: ideapad-laptop: move ymc_trigger_ec from lenovo-ymc
-
-Gergo Koteles <soyer@irl.hu>
-    platform/x86: ideapad-laptop: introduce a generic notification chain
-
-Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-    platform/x86/amd/pmf: Fix to Update HPD Data When ALS is Disabled
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: usb: Fix UBSAN warning in parse_audio_unit()
-
-Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-    fs/ntfs3: Do copy_to_user out of run_lock
-
-Pei Li <peili.dev@gmail.com>
-    jfs: Fix shift-out-of-bounds in dbDiscardAG
-
-Edward Adam Davis <eadavis@qq.com>
-    jfs: fix null ptr deref in dtInsertEntry
-
-Willem de Bruijn <willemb@google.com>
-    fou: remove warn in gue_gro_receive on unsupported protocol
-
-Chao Yu <chao@kernel.org>
-    f2fs: fix to cover read extent cache access with lock
-
-Chao Yu <chao@kernel.org>
-    f2fs: fix to do sanity check on F2FS_INLINE_DATA flag in inode during GC
-
-yunshui <jiangyunshui@kylinos.cn>
-    bpf, net: Use DEV_STAT_INC()
-
-Simon Trimmer <simont@opensource.cirrus.com>
-    ASoC: cs35l56: Patch CS35L56_IRQ1_MASK_18 to the default value
-
-WangYuli <wangyuli@uniontech.com>
-    nvme/pci: Add APST quirk for Lenovo N60z laptop
-
-Huacai Chen <chenhuacai@kernel.org>
-    LoongArch: Define __ARCH_WANT_NEW_STAT in unistd.h
-
-Fangzhi Zuo <jerry.zuo@amd.com>
-    drm/amd/display: Prevent IPX From Link Detect and Set Mode
-
-Harry Wentland <harry.wentland@amd.com>
-    drm/amd/display: Separate setting and programming of cursor
-
-Wayne Lin <wayne.lin@amd.com>
-    drm/amd/display: Defer handling mst up request in resume
-
-Kees Cook <kees@kernel.org>
-    exec: Fix ToCToU between perm check and set-uid/gid usage
-
-
--------------
-
-Diffstat:
-
- Makefile                                           |   4 +-
- arch/loongarch/include/uapi/asm/unistd.h           |   1 +
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  14 +-
- .../drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c    |   6 +-
- drivers/gpu/drm/amd/display/dc/core/dc_stream.c    |  94 ++++++++-----
- drivers/gpu/drm/amd/display/dc/dc_stream.h         |   8 ++
- .../drm/amd/display/dc/hwss/dcn30/dcn30_hwseq.c    |   2 +-
- drivers/nvme/host/pci.c                            |   7 +
- drivers/platform/x86/Kconfig                       |   1 +
- drivers/platform/x86/amd/pmf/spc.c                 |  32 ++---
- drivers/platform/x86/ideapad-laptop.c              | 148 ++++++++++++++++++---
- drivers/platform/x86/ideapad-laptop.h              |   9 ++
- drivers/platform/x86/lenovo-ymc.c                  |  60 +--------
- fs/binfmt_flat.c                                   |   4 +-
- fs/exec.c                                          |   8 +-
- fs/f2fs/extent_cache.c                             |  50 +++----
- fs/f2fs/f2fs.h                                     |   2 +-
- fs/f2fs/gc.c                                       |  10 ++
- fs/f2fs/inode.c                                    |  10 +-
- fs/jfs/jfs_dmap.c                                  |   2 +
- fs/jfs/jfs_dtree.c                                 |   2 +
- fs/ntfs3/frecord.c                                 |  75 ++++++++++-
- net/core/filter.c                                  |   8 +-
- net/ipv4/fou_core.c                                |   2 +-
- sound/soc/codecs/cs35l56-shared.c                  |   1 +
- sound/usb/mixer.c                                  |   7 +
- 26 files changed, 388 insertions(+), 179 deletions(-)
-
-
+Ciao, Thorsten
 
