@@ -1,236 +1,115 @@
-Return-Path: <linux-kernel+bounces-287919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D838A952E3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:28:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B777952E3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:29:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 085521C21A83
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:28:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 383AAB23E3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686C717C9B6;
-	Thu, 15 Aug 2024 12:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hu7zM216"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9046A17C9B9;
+	Thu, 15 Aug 2024 12:29:05 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7950B17C9AA;
-	Thu, 15 Aug 2024 12:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834D5148847;
+	Thu, 15 Aug 2024 12:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723724927; cv=none; b=bySIka8xr5RsXAovg6AmOo4TGEPchC8fwms5kE2iV4QozTlCLE15sepQhaICfnbaDsGLtjwHzM4WhmKZkHK8OiAf0XFjEPD1uAQOmcGsUenwpB8dasGnXxc5Uq2/SdY2H9r23jCMDa7enEvLYiFLjCu3UzAUIDLXUK1QlZZyM4o=
+	t=1723724945; cv=none; b=PCYGjdWRcjTjXQxuQZ5fgAPo2kPbd8GuN+H++y/ztVOAi54pzhiUm7RlujZTXyWEUtMJZ777K2uAtNdV5s9zSGlK4RZHBBFl8mb3IDuiVSUNd7yUS466xvRZKQqBDyUhxk5WHA9NoesvgqRjkz0ySXVQTmegXNW/X+lYlWlbSNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723724927; c=relaxed/simple;
-	bh=JrFPrJ87Ftrhx6cgiCBPw22H3cmXQRsRa5UrN+y10r0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CM4g8IBqOfL4VXGSR/iLDZ41DXPM03LLEBS8NsGIg+vDGtUxpsLncW7Q6UQunTa2vIqDjq/zNLaUoDpZo13CBhl4YTyR6u2hY94k8RwR6Ofuq5EjxcyoDm87kSJDFAT7j7dkyXI8xjBRQuqKVcL0Xko/E1e1AojkdMJzdpDiDMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hu7zM216; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f01e9f53e3so13657151fa.1;
-        Thu, 15 Aug 2024 05:28:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723724923; x=1724329723; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U7ji7Xbpe0QiRxrQIY6BjYXQUxvS4UkrQQS8Vvk9NPA=;
-        b=hu7zM216OM0x8KR3yKzO9UWjXjESPdYx/q5xNBScKxQ2QCxa5lPGvOSMF2Wm3hUkf7
-         t4cJRJNjD8/xH3VsqmBvw87KiV+mtEfZap39BydiauW7tykqc0J1/F0W+bqBNPyxIKWQ
-         UtYmiBYdCHkB/c/JEAUTlAi6+d637Vwb4VvTHxPZESQe5BxjgM99K+HFSatZP1NdD4nF
-         vk+rWHXCeOAhDKlIe3BUxLMZBoQmzwWEbpq7xUnGm4vhBcDRgQ/B+ty3tAMvrvkWL7ED
-         cI3e4rZXSyBl66eRK1I2Kt6Kh7Uc3hJmMwoPJbzOUMdsxqN9NUqS+mMXL7k0FWIGu0UQ
-         uEHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723724923; x=1724329723;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U7ji7Xbpe0QiRxrQIY6BjYXQUxvS4UkrQQS8Vvk9NPA=;
-        b=loCBZJFffiVBZpEu8OhFNp8pgx3feygFCs6MHFJ5WOGIVjenikF4B6VHqa6b0z4+5J
-         wVZdiHV8s+4+GQSgN7Xv06hL3TjqG8kzd7U0x3XDby9f0FfFqqRoa2N0ghAdcZIhTMEj
-         w/kQ0ZIDV0uV8UW3SO+8aX4Y6FwmARzj6+822TvT/oG0/p3WVWPh2E8a9C1BzNqxZJ3e
-         FhmS0MFTFygEZ2/LnJrMM09ek32xKL5MsuANw+12rR5VPNukTKjdn1hE6EWkR079Ozxm
-         kh/HyO036Uu99TQrrFMmxazjSrS3ocYaTv/yQ8TYNj585Cj4M6GSYHAHtp7qruGBjB3H
-         m/xg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXcAGSW5d3foLN/lRiJnUSL3g+Gd7mq2jZDSfwumvqFThJvWmiM+Xo8tk3/0+xVxm1Qb+X6DaE/WnAU92eTkcKppWZj3eH59cu1Nv8xb2NuecXcqf104nJpkzRZwvjClyPSMciEH98Jw==
-X-Gm-Message-State: AOJu0YwBkORz8NVovizOwLoDXtfa4Qo/mxh9iXgNGoJKUwLA7kE4XNkA
-	vl2MbABbaYkPTtmOBCJ3zw+UK8vwcP2ReJlwxxxFQtg3ePtwfxD//UqGOKri+C3cSKOJTqX4TUl
-	TUCZyz2aJVOURBzg2u2a7EVf4eO0SlQ==
-X-Google-Smtp-Source: AGHT+IFN3/Tti+ht+OVwgF6hTjfmaJW/vXQBGY6af8yYnxegYHkbgG7upb0ZVxtChhPola27NZIHH2nQ1+KNsjdzpBs=
-X-Received: by 2002:a05:651c:510:b0:2ef:28ed:1ff2 with SMTP id
- 38308e7fff4ca-2f3aa1d8164mr49731521fa.9.1723724922972; Thu, 15 Aug 2024
- 05:28:42 -0700 (PDT)
+	s=arc-20240116; t=1723724945; c=relaxed/simple;
+	bh=q+3JW+TJIv2uaOj0tc308BO0oWOka3Uf9ZIKkpfddTs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FaXmj7Tlc4SFwFrpQMdSpFlTS/gZhZMPiL8rS49qgBnJ3Po+01cd9MxmemTxCJz8ILLREZbMgvIzYhzULT0eAHWnWWD29njTuJdugMabwdfYpHPFWvI6TVFcgdVtD/8kZzmuNxAAqSMtdRViS406DEY5xtyzraRJlzaXqZZocfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wl4754y4lz20lhY;
+	Thu, 15 Aug 2024 20:24:17 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id C6D86180019;
+	Thu, 15 Aug 2024 20:28:52 +0800 (CST)
+Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 15 Aug
+ 2024 20:28:52 +0800
+Message-ID: <5262cc0e-8e89-4ba0-8777-2ba49ec7c1f8@huawei.com>
+Date: Thu, 15 Aug 2024 20:28:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815093829.275058c7@canb.auug.org.au> <CAFULd4byjR7fF2wBUJMH=8_p5sE2vK9SkG=O4sUOjS4x9MUyRw@mail.gmail.com>
-In-Reply-To: <CAFULd4byjR7fF2wBUJMH=8_p5sE2vK9SkG=O4sUOjS4x9MUyRw@mail.gmail.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Thu, 15 Aug 2024 14:28:34 +0200
-Message-ID: <CAFULd4Y3sqaRZeOGpEVDSi4NWA2OHR+rpiqz0syLWjHrcQQE4w@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the mm tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cgroup: update some statememt about delegation
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+CC: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
+	<longman@redhat.com>, <cgroups@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240815024118.3137952-1-chenridong@huawei.com>
+ <vrozw5w2l32ni43akbf3xceq6rqpkskdlwbp2ko32qxv546n6s@qtw4l3qt357v>
+Content-Language: en-US
+From: chenridong <chenridong@huawei.com>
+In-Reply-To: <vrozw5w2l32ni43akbf3xceq6rqpkskdlwbp2ko32qxv546n6s@qtw4l3qt357v>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-On Thu, Aug 15, 2024 at 9:42=E2=80=AFAM Uros Bizjak <ubizjak@gmail.com> wro=
-te:
->
-> On Thu, Aug 15, 2024 at 1:38=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.o=
-rg.au> wrote:
-> >
-> > Hi all,
-> >
-> > After merging the mm tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
-> >
-> > In file included from include/linux/kcsan-checks.h:13,
-> >                  from include/linux/instrumented.h:12,
-> >                  from include/asm-generic/bitops/instrumented-atomic.h:=
-14,
-> >                  from arch/powerpc/include/asm/bitops.h:321,
-> >                  from include/linux/bitops.h:68,
-> >                  from arch/powerpc/include/asm/mce.h:12,
-> >                  from arch/powerpc/include/asm/paca.h:32,
-> >                  from arch/powerpc/include/asm/percpu.h:30,
-> >                  from include/linux/err.h:9,
-> >                  from arch/powerpc/include/asm/ptrace.h:22,
-> >                  from arch/powerpc/kernel/vdso/sigtramp64.S:14:
-> > include/linux/compiler_attributes.h:55: warning: "__always_inline" rede=
-fined
-> >    55 | #define __always_inline                 inline __attribute__((_=
-_always_inline__))
-> >       |
-> > In file included from include/linux/stddef.h:5,
-> >                  from include/linux/string.h:9,
-> >                  from arch/powerpc/include/asm/paca.h:16:
-> > include/uapi/linux/stddef.h:8: note: this is the location of the previo=
-us definition
-> >     8 | #define __always_inline inline
-> >       |
-> > include/linux/compiler_attributes.h:91:20: error: missing binary operat=
-or before token "("
-> >    91 | #if __has_attribute(__copy__)
-> >       |                    ^
-> > include/linux/compiler_attributes.h:104:20: error: missing binary opera=
-tor before token "("
-> >   104 | #if __has_attribute(__counted_by__)
-> >       |                    ^
-> > include/linux/compiler_attributes.h:107: warning: "__counted_by" redefi=
-ned
-> >   107 | # define __counted_by(member)
-> >       |
-> > include/uapi/linux/stddef.h:55: note: this is the location of the previ=
-ous definition
-> >    55 | #define __counted_by(m)
-> >       |
-> > include/linux/compiler_attributes.h:116:20: error: missing binary opera=
-tor before token "("
-> >   116 | #if __has_attribute(__diagnose_as_builtin__)
-> >       |                    ^
-> > include/linux/compiler_attributes.h:139:20: error: missing binary opera=
-tor before token "("
-> >   139 | #if __has_attribute(__designated_init__)
-> >       |                    ^
-> > include/linux/compiler_attributes.h:150:20: error: missing binary opera=
-tor before token "("
-> >   150 | #if __has_attribute(__error__)
-> >       |                    ^
-> > include/linux/compiler_attributes.h:161:20: error: missing binary opera=
-tor before token "("
-> >   161 | #if __has_attribute(__externally_visible__)
-> >       |                    ^
-> > include/linux/compiler_attributes.h:198:20: error: missing binary opera=
-tor before token "("
-> >   198 | #if __has_attribute(__no_caller_saved_registers__)
-> >       |                    ^
-> > include/linux/compiler_attributes.h:209:20: error: missing binary opera=
-tor before token "("
-> >   209 | #if __has_attribute(__noclone__)
-> >       |                    ^
-> > include/linux/compiler_attributes.h:226:20: error: missing binary opera=
-tor before token "("
-> >   226 | #if __has_attribute(__fallthrough__)
-> >       |                    ^
-> > include/linux/compiler_attributes.h:252:20: error: missing binary opera=
-tor before token "("
-> >   252 | #if __has_attribute(__nonstring__)
-> >       |                    ^
-> > include/linux/compiler_attributes.h:264:20: error: missing binary opera=
-tor before token "("
-> >   264 | #if __has_attribute(__no_profile_instrument_function__)
-> >       |                    ^
-> > include/linux/compiler_attributes.h:283:20: error: missing binary opera=
-tor before token "("
-> >   283 | #if __has_attribute(__no_stack_protector__)
-> >       |                    ^
-> > include/linux/compiler_attributes.h:294:20: error: missing binary opera=
-tor before token "("
-> >   294 | #if __has_attribute(__overloadable__)
-> >       |                    ^
-> > include/linux/compiler_attributes.h:313:20: error: missing binary opera=
-tor before token "("
-> >   313 | #if __has_attribute(__pass_dynamic_object_size__)
-> >       |                    ^
-> > include/linux/compiler_attributes.h:318:20: error: missing binary opera=
-tor before token "("
-> >   318 | #if __has_attribute(__pass_object_size__)
-> >       |                    ^
-> > include/linux/compiler_attributes.h:342:20: error: missing binary opera=
-tor before token "("
-> >   342 | #if __has_attribute(__uninitialized__)
-> >       |                    ^
-> > include/linux/compiler_attributes.h:388:20: error: missing binary opera=
-tor before token "("
-> >   388 | #if __has_attribute(__warning__)
-> >       |                    ^
-> > include/linux/compiler_attributes.h:405:20: error: missing binary opera=
-tor before token "("
-> >   405 | #if __has_attribute(disable_sanitizer_instrumentation)
-> >       |                    ^
-> >
-> > Caused by commit
-> >
-> >   8e53757638ec ("err.h: add ERR_PTR_PCPU(), PTR_ERR_PCPU() and IS_ERR_P=
-CPU() functions")
-> >
-> > Does include/linux/err.h really need to include asm/percpu.h?  __percpu=
- is
-> > defined in compiler_types.h which is included in every c code compile.
->
-> Currently it is not needed, but with the proposed patch [1]
->
-> [1] https://lore.kernel.org/lkml/20240812115945.484051-4-ubizjak@gmail.co=
-m/
->
-> that repurposes __percpu to also include percpu named address
-> qualifier, it will be needed, because per_cpu_qual will be defined in
-> include/asm-generic/percpu.h.
->
-> I looked a bit at the error and noticed that the error happens when
-> building VDSO sigtramp64.S that includes:
->
-> #include <asm/ptrace.h> /* XXX for __SIGNAL_FRAMESIZE */
->
-> The crash happens through this include, so perhaps XXX above marks
-> some expected problem with the include that my change was unlucky
-> enough to trigger?
 
-OTOH, powerpc percpu.h includes paca.h that further includes
-linux/string.h. AFAICS, nothing in paca.h requires linux/string.h
-(which includes many other headers), so perhaps removing "#include
-linux/string.h" from paca.h makes the header "light enough" to be
-included in err.h.through percpu.h.
 
-Uros.
+On 2024/8/15 20:12, Michal Koutný wrote:
+> Hi,
+> thanks for writing up on the care needed when you only use namespacing
+> (and not de-privilgation) for delegation.
+> 
+> On Thu, Aug 15, 2024 at 02:41:18AM GMT, Chen Ridong <chenridong@huawei.com> wrote:
+> ...
+> 
+> What about some more clarifications to prevent other confusions?
+> 
+>> --- a/Documentation/admin-guide/cgroup-v2.rst
+>> +++ b/Documentation/admin-guide/cgroup-v2.rst
+>> @@ -533,10 +533,12 @@ cgroup namespace on namespace creation.
+>>   Because the resource control interface files in a given directory
+>>   control the distribution of the parent's resources, the delegatee
+>>   shouldn't be allowed to write to them.  For the first method, this is
+>> -achieved by not granting access to these files.  For the second, the
+>> -kernel rejects writes to all files other than "cgroup.procs" and
+>> -"cgroup.subtree_control" on a namespace root from inside the
+>> -namespace.
+>> +achieved by not granting access to these files.  For the second, files
+>> +outside the namespace shouldn't be visible from within the delegated
+>                           should be hidden from the delegatee by the
+> means of at least mount namespacing, and the kernel...
+> 
+>> +namespace, and the kernel rejects writes to all files on a namespace
+>> +root from inside the namespace, except for those files listed in
+>            inside the cgroup namespace
+> 
+>> +"/sys/kernel/cgroup/delegate" (including "cgroup.procs", "cgroup.threads",
+>> +"cgroup.subtree_control", etc.).
+>    
+> ...
+>> -	 * except for the files explicitly marked delegatable -
+>> -	 * cgroup.procs and cgroup.subtree_control.
+>> +	 * except for the set delegatable files shown in /sys/kernel/cgroup/delegate,
+>> +	 * including cgroup.procs, cgroup.threads and cgroup.subtree_control, etc.
+> 
+> "Marked delegatable" (meaning CFTYPE_NS_DELEGATABLE) is appropriate
+> comment in the code, a reference to the sysfs file is only consequential
+> to this marking. A minimal change would be like:
+> 
+> -	 * cgroup.procs and cgroup.subtree_control.
+> +	 * e.g. cgroup.procs and cgroup.subtree_control.
+Thank you, Michal, I will send new patch.
+
+Thanks,
+Ridong
 
