@@ -1,105 +1,113 @@
-Return-Path: <linux-kernel+bounces-288259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B02A7953804
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:11:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C2F8953809
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:13:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46896283581
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:11:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BFB41C2128E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651581B3749;
-	Thu, 15 Aug 2024 16:11:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5441B29A9;
+	Thu, 15 Aug 2024 16:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="I3YFT+mM"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="y/mgYsQz"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CF11B29A5
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 16:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4FB11AC89F
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 16:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723738304; cv=none; b=HTO/bF+8uoefL4LW2AF4joVQrH/iVoQCq/mh62RQdipFc3FaC3/29Jwpkg0K7T7qNFRcWp88WJayC4w8afhWRDErXZCEL+FxnhT243xoSqpGct52MZgxKFNL8Peu8jYRkZKlPReYx0fKNTSe9AxVg5AHPndVS9lifKt/tfw2wyw=
+	t=1723738381; cv=none; b=fgEDCIVW1VXROtBTEK7WuD260dLTYbG+02Ac5GkAISFY5xyVK0jDMPpgIIecdKoTC5LFhFsLoyIxoyZiLxTW9Bycr7QsUC1g+PDHDo0ituHzwjChf9VsZaHTr0/+3Iket5EaC4fkd5ISzosY2DbIcnFCACJPZ6L+gYKjJuhSd4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723738304; c=relaxed/simple;
-	bh=stmfQPjThOY5JY5xeIkuajVC8TaX1REhTG6g4I0TuS4=;
-	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Cc:Subject:References:In-Reply-To; b=sS+qQ1d+ptRVufKOu5FLxbMaUUXu4FOYNKDn6U+vPS9eICjwcOxaTEjxJinWd3H2iuMxJxWU9cbIAu0UuWceWslpn8MILQpJBxdu8ZaZiJldHnPpe96///qT9EiiJ8r8zRYZq8npb4sf+6O30RfpEj3mle9gSQK3M8q+OwpPzJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=I3YFT+mM; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6bb84ac8facso5297716d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:11:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1723738302; x=1724343102; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UJMlTsl69w1myQg1uCFGfwb6Hmq9ET+WkI++9CZ+3Gk=;
-        b=I3YFT+mM/WAviM/75hFTw3+CbMcp/jt5bOuBP0X0ETsyTU48gossRdfpvQ0w1DH5zC
-         HGxKw3Pyycm1z82bnrs7q+TGy9PaB9Aa1lLJWFiQO3mzjO39DnXwFRqU90CDh+EhOKvw
-         9yNT+E1xloCTEDNv41KqisvyoQkk/nbxl42Xgiz7sP2uLPh4wDq0y1d2bWhRUqqqoHl5
-         NgiJHsY+aaeybwetIAIPqaV1Hv920J9MPb1G19BlZqa2On6pLQX+WzVx/L1hMc7WSfWE
-         ha2O7g42KZWUaed6gOV0cYGBC6je5eCmAaDHT4kppFmoWG0vKxgEPv+bQTaJxK1Rkun0
-         ga4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723738302; x=1724343102;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UJMlTsl69w1myQg1uCFGfwb6Hmq9ET+WkI++9CZ+3Gk=;
-        b=JddxV05whvmsRCDgPyjcUeh6XWOcuX1+eJnjxarPB//q2xisgJhatL2s2nNn/gAIWC
-         JsixzSi/mvQ7cbZ8OSIz9Cd44YfsVwdpxE/XSLspJK32M6UaA5XpZtQ+aJoIAPTGyVFk
-         n25i5SdC2JIWlm5EwUIYG7Ybhb6RsDI8gWWnYNhsVQrzJrd9lNvhEceICrEv1UaTtKL4
-         YzP0rwp0mAczrqxWa1EWucxlr1hS8uuf8PYmzSjxD03cjnnEGFLp2IGBysKSLZNOdSz0
-         QDB6qEEZ/+fgPMGw9nVDPCi5TqfSeX1tr0PNgmT9b1qu5ASLfxAAgAPtQE9P3gqrcpVv
-         LEuA==
-X-Forwarded-Encrypted: i=1; AJvYcCXLuHSCY7M7pifYjgqDoFhN5eJFwl30A/Uo/ND9l3M5kPgxHlKo1MZfQ9HtqwYU4oAQJbM9xIITpwfLbBQiFX/v1QxoKb8UtNrSIfq/
-X-Gm-Message-State: AOJu0YxrQe0RDKTAg0JjicOBcl374HPeKNj+UGaWx1nPz8AKfwSLGFpN
-	ZBIZEgiecYkgd9ef48ucX7MRZ1akYqlz1AED+aLSkim51HOf+HpJyaENV65NjgTvTbmrrtlFtiI
-	=
-X-Google-Smtp-Source: AGHT+IHQ1oOJcKiCksF01aDFCB2y7+5wp5A5LBl+qgAXT7t5DQc/XTTEcSo/ahqIW74tm7SnPGG2NA==
-X-Received: by 2002:a05:6214:5989:b0:6bd:7f27:3565 with SMTP id 6a1803df08f44-6bf5d1c5053mr81869636d6.6.1723738301725;
-        Thu, 15 Aug 2024 09:11:41 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fdd9c7esm7568686d6.4.2024.08.15.09.11.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 09:11:41 -0700 (PDT)
-Date: Thu, 15 Aug 2024 12:11:40 -0400
-Message-ID: <bfc25c139caf8eacc02973b94ac05030@paul-moore.com>
+	s=arc-20240116; t=1723738381; c=relaxed/simple;
+	bh=GBcFGVUeVA5D/CrjFjXzZnJNgb26b2nvgdXx03lZUo8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UnEytzBz06woU2DRFgnIzK53eZhyot8JvsXTtFmsAMkei3GAizF9vA8GqwIPZrkBCddgL8LQ8mBXKc4ZCd5ss200+HEKH729Pu18ds7IdNHDt9R9OZ7B+KvnDmiHznJSrRoKYVrTtpYnoVQ5s2kL18+44NPxcVpvqF4a1bbkT6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=y/mgYsQz; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=/+Gq5JqbMy1Ohz5FGdcJwbNyFqGLttXx8PyGPZaul8c=; b=y/mgYsQzJGaqPJP0WAZ2WUBVDL
+	JquQwfK8Y8T21O0vy3IlMBc1Ib4g10MVY713tLJJ7asTjmdOJ1N6V2gO7e8qHmICD4C6AxGn2xOSH
+	bd+IkJmC305GG9v8V5Y8Py/NUHSFNJrAcpNzJJCS6+RNl2kHTi+mJHRUUvbYCdRh9Uaesq4M4FsdM
+	+x+HtclWRw9qtiuRrWCNH4QLNFpHoV8JIuuYjU2AbB6FkFBhWE91o8ZL/A/xkxqOKGUlaVocAtIgq
+	jnYLRJXt0tcyyVeDWsKKJkZOFQfKA/SqQu8TPygXtS8r4eBafY1lzKv9CRq3wP1PUizesjbJLQCQh
+	mn0xdG6g==;
+Received: from i53875a9f.versanet.de ([83.135.90.159] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sed5l-00056j-5O; Thu, 15 Aug 2024 18:12:49 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: linux-rockchip@lists.infradead.org, linux-phy@lists.infradead.org,
+ Dragan Simic <dsimic@manjaro.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH] phy: phy-rockchip-inno-usb2: Handle failed extcon allocation
+ better
+Date: Thu, 15 Aug 2024 18:12:48 +0200
+Message-ID: <4927264.xgNZFEDtJV@diego>
+In-Reply-To:
+ <5fa7796d71e2f46344e972bc98a54539f55b6109.1723551599.git.dsimic@manjaro.org>
+References:
+ <5fa7796d71e2f46344e972bc98a54539f55b6109.1723551599.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=utf-8 
-Content-Disposition: inline 
-Content-Transfer-Encoding: 8bit
-From: Paul Moore <paul@paul-moore.com>
-To: Yue Haibing <yuehaibing@huawei.com>, <jmorris@namei.org>, <serge@hallyn.com>, <kees@kernel.org>, <casey@schaufler-ca.com>
-Cc: <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>
-Subject: Re: [PATCH] lockdown: Make lockdown_lsmid static
-References: <20240814033004.2216000-1-yuehaibing@huawei.com>
-In-Reply-To: <20240814033004.2216000-1-yuehaibing@huawei.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Aug 13, 2024 Yue Haibing <yuehaibing@huawei.com> wrote:
+Am Dienstag, 13. August 2024, 20:38:17 CEST schrieb Dragan Simic:
+> Return the actual error code upon failure to allocate extcon device, instead
+> of hardcoding -ENOMEM.  While there, produce an appropriate error message.
 > 
-> Fix sparse warning:
-> 
-> security/lockdown/lockdown.c:79:21: warning:
->  symbol 'lockdown_lsmid' was not declared. Should it be static?
-> 
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-> Reviewed-by: Kees Cook <kees@kernel.org>
+> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
 > ---
->  security/lockdown/lockdown.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> index 4f71373ae6e1..d33418a1e7a8 100644
+> --- a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> +++ b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> @@ -434,8 +434,10 @@ static int rockchip_usb2phy_extcon_register(struct rockchip_usb2phy *rphy)
+>  		edev = devm_extcon_dev_allocate(rphy->dev,
+>  						rockchip_usb2phy_extcon_cable);
+>  
+> -		if (IS_ERR(edev))
+> -			return -ENOMEM;
+> +		if (IS_ERR(edev)) {
+> +			dev_err(rphy->dev, "failed to allocate extcon device\n");
+> +			return PTR_ERR(edev);
+> +		}
 
-Merged into lsm/dev, thanks!
+maybe even use dev_err_probe?
 
---
-paul-moore.com
+rockchip_usb2phy_extcon_register() gets called from the probe function,
+so even using it is also sematically correct ;-) .
+
+
+Heiko
+
+>  
+>  		ret = devm_extcon_dev_register(rphy->dev, edev);
+>  		if (ret) {
+> 
+
+
+
+
 
