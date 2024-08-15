@@ -1,76 +1,83 @@
-Return-Path: <linux-kernel+bounces-287708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86B69952BC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:17:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0932A952BF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F8702833A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:16:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81F98B22D9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017EF1DC482;
-	Thu, 15 Aug 2024 08:58:18 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D631E6747;
+	Thu, 15 Aug 2024 09:10:01 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB5A17623F
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8A81E4EF6;
+	Thu, 15 Aug 2024 09:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723712297; cv=none; b=W2Wp+r9nuUBTP74nWuncgnxCC/Ht1FILuVnPetZNi6s02OveGrDb8zgH6+OBo4Lb1owHDKYi+whl7NKpjad0YZ3zNl39gqFvJ5twYdTPj3v++gfMOsQusfxUM4a880htUqLoGC0fHFg86xPo6LcUaj8Kh62G5sKB3vDXSnsjBHM=
+	t=1723713001; cv=none; b=Qj/o12da1pAPbDhnbKwuTf0CfRsd6+ccACSIj7i9/ggeEWQMcNKeKujzB2h67Axctl+Cok5oSeIUiWaQP6gxj8ttAChWVCuANpK1ClHQu+oQEnOkEShPYzz0lbuQURderJ8ouAMXHTRICWpp6QHwf7hBMJ+5yIMQ/4uYMyZ1jsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723712297; c=relaxed/simple;
-	bh=evFwm/CVXlrZL+OYNwhKqiKeB+wDiuWlLPBx8/hwoE4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=F24cJRCrkqg2dwVW+UOMg27Wk3c+MTB6vyqAxi59yDDPaL4k9dkuWAzcIPleXaCRwo34+utaGD6dPy+CQXNCdSOlPfHLYz4e+ff9H9Dt10tND3jVHAWrJ/+7UWCFSBLVc0JJ5d5Q4pk56CfmuZbfie0XEuliAXDHuDZpqUxgybs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3994393abd5so7447855ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 01:58:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723712295; x=1724317095;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=evFwm/CVXlrZL+OYNwhKqiKeB+wDiuWlLPBx8/hwoE4=;
-        b=AcSH+Koz/h1PDes7zc6oV2BcstAvHiymJDkYxe5AIZ8ZobB6SdhckKGl42cBpGlR9L
-         bdezDgnhKdNalwHvBZMmW0zmsKTsDXasoTYRQkSe2ivZckZGfYaamwiPojvHNRALTbS/
-         GtU7dXX4T0v4YA7VeChZ0cJKJUjZgTpGSs3e2H3RjL+4EZzZWtturFXQvopa3GfFsAwo
-         QQ8SJYKZeLSEX2hd+WPpOEJZ84slUBNiPfeQzm9RHecFJWp+oRR1/kz2ovuviEltDUuF
-         pCgQ1z01DIY3sweR8Qye3ByN1X6ty+X1fhUQ5tz5bV7GI/lUXDcKrYGTIA+cI58moyW/
-         PtNw==
-X-Gm-Message-State: AOJu0Yy3fWa7OYZZ343fyjkAnzoMo6Hii3Yne1YpiUq3yEz4FwwFWkAw
-	8Z9Txs6EmhbDUEQLWNTtEI5WUE3cXiMRlNgactaqSKZrTAmkld3gma9oqsWITgqcl0CWpST69Ra
-	xjCJ/n+XLMSR49SHkpe/9MKj8Qw3I6K1QIW5evQ9v5NZW/iRP9pl4k5w=
-X-Google-Smtp-Source: AGHT+IERcahk9dFGNE+U6GmUpa4WbBOl2O5IydTQGOXP+cQ1zyJ41eEtWf+HM1c9kqUxprxkFLcXyMza9ZpJJNahqW63ypBO9yfC
+	s=arc-20240116; t=1723713001; c=relaxed/simple;
+	bh=lHn3fEVCycgTvABI3HB4fI3oU0AS1hAXMund21/jUZE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Rvtgp1QK6B+u8vogvLhRp+qDzkJqNhG6/SpBlG6spldI3FHthCf0oVC0wdgszV/gTAsJuXUhFsrIMckO5Wu0uyJlJHEoDH6ypBSsXaXTI0Jqyr4pRbl0jps0xXJsY439nzBOfM5X4XLVh8U1DU21CtKnSjTIVUrZYz9PkQL3bBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WkzlF2kffz1HGXm;
+	Thu, 15 Aug 2024 17:06:49 +0800 (CST)
+Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id BEA4414011F;
+	Thu, 15 Aug 2024 17:09:54 +0800 (CST)
+Received: from huawei.com (10.67.174.76) by kwepemg500010.china.huawei.com
+ (7.202.181.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 15 Aug
+ 2024 17:09:54 +0800
+From: Yuntao Liu <liuyuntao12@huawei.com>
+To: <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>
+CC: <david-b@pacbell.net>, <khali@linux-fr.org>,
+	<wsa+renesas@sang-engineering.com>, <liuyuntao12@huawei.com>
+Subject: [PATCH] i2c: fix module autoloading
+Date: Thu, 15 Aug 2024 09:02:25 +0000
+Message-ID: <20240815090225.756845-1-liuyuntao12@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:138c:b0:396:dc3a:72f2 with SMTP id
- e9e14a558f8ab-39d124d5c0bmr4372355ab.3.1723712295387; Thu, 15 Aug 2024
- 01:58:15 -0700 (PDT)
-Date: Thu, 15 Aug 2024 01:58:15 -0700
-In-Reply-To: <000000000000f386f90616fea5ef@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000fd2d4061fb50bd4@google.com>
-Subject: Re: [syzbot] KASAN: slab-use-after-free Read in chrdev_open
-From: syzbot <syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemg500010.china.huawei.com (7.202.181.71)
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
+based on the alias from i2c_device_id table.
 
-***
+Fixes: e9f1373b64388 ("i2c: Add i2c_new_dummy() utility")
+Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
+---
+ drivers/i2c/i2c-core-base.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Subject: KASAN: slab-use-after-free Read in chrdev_open
-Author: almaz.alexandrovich@paragon-software.com
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index b63f75e44296..82622ef71b41 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -1070,6 +1070,7 @@ static const struct i2c_device_id dummy_id[] = {
+ 	{ "smbus_host_notify", },
+ 	{ },
+ };
++MODULE_DEVICE_TABLE(i2c, dummy_id);
+ 
+ static int dummy_probe(struct i2c_client *client)
+ {
+-- 
+2.34.1
 
-#syz test
 
