@@ -1,141 +1,162 @@
-Return-Path: <linux-kernel+bounces-288164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D522C9536AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:08:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 794C49536AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ECD51F21CAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:08:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D6E71C212DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED311AD3F3;
-	Thu, 15 Aug 2024 15:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152F41AD402;
+	Thu, 15 Aug 2024 15:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="wQJT5lrq"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ESp7wNLh"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364E71AB53B
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 15:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEF01AD3EA;
+	Thu, 15 Aug 2024 15:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723734482; cv=none; b=ZSXpKMu/XNCd/DjHRsisJA2T21YvoYAtOsCc547pWNQKGaDE/qmF0magqxrtuLCA1ts/QhiGHpz78k+oMhNdwsR8rKiY6d+0bStqueUSJm+tuGmOqybOyL5th5fNwhG71iJyn5ydbZG1HnMO5Ybmsjqof5TPnc6Z4PN9u3Xm3G0=
+	t=1723734484; cv=none; b=uhzFsliK+uTaSQFb+nvfFfG5YF41jL2E+gru0IFTFupqhbXxYiOb9/oAmP+fC39qFJSztfgJTMSzkN/KRutbrEKWWs2Ga7A9Q3EZAi8YlfSG9oTBKBJdsTi6kBXqm3OXzTNPPttKR4FIT9r8IbjPiA4B37GQNfM4OqytYRLMN88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723734482; c=relaxed/simple;
-	bh=O7Gj4FPw3G7uLAU4MEGR/F0KrwTcd+1Rxuwc21U9P1U=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MFcNhi4K12HtT6DxTERMKavknfSgFTNYRrQxbMCEmNw+K6MEJRotQRHz6KixMhcD/MdMAAd1z0gQF+/aFsH4hn7lObqyy7ClVVH6sRFf0VoX5vpGw1QKs2KQZrfXgsAcgKXVTkS67oaN5oA7S2WzuyKsa2dybmCT/e111nHVVQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=wQJT5lrq; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id A8084421F7
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 15:07:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1723734475;
-	bh=O7Gj4FPw3G7uLAU4MEGR/F0KrwTcd+1Rxuwc21U9P1U=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=wQJT5lrqEKK7bwMEepHVYnOfk/d2rpGQAxTYcpCkwpmAaiwiVXmeg0Jl7HZO6THoj
-	 g7dTKEFT4Kqh01TKDvIYtlg9lRgq7O32xHc4g6vPM/7T3esp5cVQbTu/zRybZLXxVS
-	 g4/RsK56vUYmEF7jDPFQxrUpGErEV9E4is1t5KAuKaF6AWxuF68UOgIDKfu0wCE+kk
-	 nq0EPQANskYGQmUqem7LcvayssRfLR2InhEYxutVI9lT3Xma4Ts9eKV6UKPcGar2oE
-	 7HPXaE2wHrYaEOQv+sTR8cnqVToBltU4PV6BFtH9MwceFaOEeXem3taKr2k/ZiQeTJ
-	 c5JKZuszJf+xQ==
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4501aa4886fso11500661cf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:07:55 -0700 (PDT)
+	s=arc-20240116; t=1723734484; c=relaxed/simple;
+	bh=rePoMYq2GQHvaW6y0gSgq7VSorqmEQBpzhrFLSQZ1G4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TTM0DhfmPD/eXKCjXFr05tLT+FJd5avytLc94bnWl9yqJPuV3yTrbf14ornE7W35Z+jUzmoCbIt70jnD8gZbxFTFvgWRcLZP4CuL+JR8rwnEMezWG+RRJaSitmtvHX5NuuCsjqV/w2iPuaODva54YzYjhQZGIL0f3HDeYVhOs8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ESp7wNLh; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2cb53da06a9so698842a91.0;
+        Thu, 15 Aug 2024 08:08:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723734482; x=1724339282; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=D66ybycPKZhaFRIpW981ozNH4TBSQq6vwpEIuehcJSA=;
+        b=ESp7wNLhVz/dkH6T6fL7+8J3JZhdtRy2M/f645hFtefYI1WZYtwgOGmiKM0Lk2JGw9
+         S4RdQCuDJKjqLB2ZUgMjv6PIITnJsyTT4OHS41W1TC5PUauN8RlIlBUx7pe6FTFL8OwI
+         mi/jQDgNgbJr4X2xEwlOHjAUqiv7epU2FmwL0umf9dBj61UJwIF1yJwfPvxxtkJD/7Ns
+         5XnJie314v9UfImW058oQmmKMqZ0WYOfHnIpi9CWC2TK9ez/182unpAu9Azbmd+nyYQn
+         Bcl1ueEO/40A70k7QN+jdEPHvbrl9/YGsHYneKNAwgotB8eWazs7npp/7xl/PP2HKEAr
+         E30w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723734474; x=1724339274;
-        h=content-transfer-encoding:cc:to:subject:message-id:date
-         :mime-version:references:in-reply-to:from:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=O7Gj4FPw3G7uLAU4MEGR/F0KrwTcd+1Rxuwc21U9P1U=;
-        b=OgJArY7OTf3PbL85azND4ByRgkmg6/WjVCqQC0wimQW7jmfCeRdOanrfiTc8wRT1bI
-         /xftQ5HOQsDpXnZeqUfgVyEG2Tm/LRvE+IF5FN7xRPO3ucNUmLOmbJuQPb6OuGWNBzxa
-         Pa1TuoW9MJxZGBruR1NsAHHX226UFAPu6OOVgkko1JSeESo5dq5gYjO5sWzdVOutUr9X
-         6btmCJWQGRUU8mhI1QoXegeMhTatOguF4l4CNTIoD4kiugs0wnp0SFLmFbwIzP0UcC9v
-         UFUqnK7YVvIQ5NOgVoBQiCOX2hUej7UF/wCAn0bhxd6Pkrn2vR+V4K826sW7B+koP/9u
-         Yebw==
-X-Gm-Message-State: AOJu0YwUw2UHGwh7iMY/lNr7XFKQ9ZCDkqJvUKRgqAV/YP1yEUXTBrLl
-	+rCKDpCS4MDoHsZEUUJ6fApnVL+JXYJyflhWD+VDVxOz1B7BGi3y9iQk3kZYPpJAs3f8OiYYOJ2
-	qK19NwrXwVV064POSfrmouEowUqw8y6cBpN5a5fV5C4WpV1MxD3EbwhP6tkJy1W/sm03yZC2JTx
-	CmpNrFmXYhqurQam1ChAB1b2kHuI6rpwwJaxq0wkkmTOWZEIAX7IGZ
-X-Received: by 2002:ac8:1199:0:b0:453:6c9f:ec5a with SMTP id d75a77b69052e-4536c9fef86mr16626291cf.22.1723734474060;
-        Thu, 15 Aug 2024 08:07:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGEQrMUB6uwmlpoSPzE4Q46pTqZ42Lh5kb+mFo2U+8h2TWgZ0fwtNPmKmP2B+Kwln77U5qhE7GkLX7KM8FZ/xk=
-X-Received: by 2002:ac8:1199:0:b0:453:6c9f:ec5a with SMTP id
- d75a77b69052e-4536c9fef86mr16625871cf.22.1723734473624; Thu, 15 Aug 2024
- 08:07:53 -0700 (PDT)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 15 Aug 2024 11:07:53 -0400
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <be1db8f5-af55-48a4-be7a-5e8a1a5e25c4@sifive.com>
-References: <20240814145642.344485-1-emil.renner.berthing@canonical.com>
- <87jzgjnh9z.ffs@tglx> <CAJM55Z8WERQgs=QMyFGWvAHOpwcnOAudBqovaEuDudPSXCvL5Q@mail.gmail.com>
- <87ttfmm2ns.ffs@tglx> <CAJM55Z88H635Crc-Aeq+K0qcAk7NC89WVTAFdXDd2aQKQ7QmEg@mail.gmail.com>
- <CAJM55Z_qQX7n8tAeOFqrAH1BFjA9vaWA8rtsPG2BcKmiO88m=Q@mail.gmail.com>
- <87plqalyd4.ffs@tglx> <686d61c4-e7ac-4dca-a7fd-decdd72e84d9@sifive.com>
- <87h6blnaf1.ffs@tglx> <CAK9=C2V7oL023=u6nodJs76k_0yHZ8PTJs=n1QFqDWCcCnG9kw@mail.gmail.com>
- <be1db8f5-af55-48a4-be7a-5e8a1a5e25c4@sifive.com>
+        d=1e100.net; s=20230601; t=1723734482; x=1724339282;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D66ybycPKZhaFRIpW981ozNH4TBSQq6vwpEIuehcJSA=;
+        b=cORhhq5UJZ4TFGH1OocUxY7eh5aCVeDnZoUi+OX9n5oKFkIkOw5WWy0FZRU1unQNLP
+         2fAGlAxCL2MvVng7rQthnIHtdLYhdgn4ERt1f9LSMTPrkkPMYVzMqWSbxEssgKDzXgse
+         pj11fQLavfbEDtp9R4RGM8FMctGRNLZ7Nj9QHsczOqC+NxmPgoGzUCsPM3gmK6T5PsC0
+         ItkWiW2d2jt/wOuGp33pHOe3ZCjyfjOnqm5fSpobVaeRiF8AeMzYFs42IdqO8hv3w9gb
+         OAfFR1tyB8OlnSg8i9+nI5QlPO9mDGjTz19Ov5d1CFgSPi14KS1k5RFqjdaV/jmL1MNx
+         dVNw==
+X-Forwarded-Encrypted: i=1; AJvYcCXvMXHPq6+JfceFUWDiRGo5rfpylKlZktVHvlXsdXotaF9B8Punv3KtreYb7D97ywnJO8CF09tPPc+gaikvzAjvu1oc+eUVsIKU+vH5JIauazg/X09EVSwSohjbdzjdx8NYP4Or
+X-Gm-Message-State: AOJu0Yw+/B7YbNytBT9fNinoeGZMgebIpwcBgIV/hjEuumjP8MKHwTnw
+	cUYj/GwTHsbgP8iEJQw/WwLOMvFgmpKH8rB4LAfeyxOAQKLdakWn
+X-Google-Smtp-Source: AGHT+IH01pcp/8Vzab/PdImdrPtMOyMx+4HnMc+f8CRk2gvrCe/DOWKDLmUhbmKkqukyDtbKpwd+nQ==
+X-Received: by 2002:a17:90b:124b:b0:2d3:ad05:7240 with SMTP id 98e67ed59e1d1-2d3c3aa98bbmr5087007a91.22.1723734481875;
+        Thu, 15 Aug 2024 08:08:01 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3bc1b86casm2339484a91.1.2024.08.15.08.07.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Aug 2024 08:08:01 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <d3a5a6b1-4c15-4d02-8c60-5a4d55f497b2@roeck-us.net>
+Date: Thu, 15 Aug 2024 08:07:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Thu, 15 Aug 2024 11:07:53 -0400
-Message-ID: <CAJM55Z9kKqs-kMubsGsRkS6E2Y4ur1MmwD+1XFvGP=UVNrJvRg@mail.gmail.com>
-Subject: Re: [PATCH v1 0/9] Fix Allwinner D1 boot regression
-To: Samuel Holland <samuel.holland@sifive.com>, Anup Patel <apatel@ventanamicro.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Daniel Lezcano <daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.10 00/22] 6.10.6-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+ allen.lkml@gmail.com, broonie@kernel.org
+References: <20240815131831.265729493@linuxfoundation.org>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240815131831.265729493@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Samuel Holland wrote:
-> On 2024-08-15 9:16 AM, Anup Patel wrote:
-> > On Thu, Aug 15, 2024 at 7:41=E2=80=AFPM Thomas Gleixner <tglx@linutroni=
-x.de> wrote:
-> >>
-> >> On Thu, Aug 15 2024 at 08:32, Samuel Holland wrote:
-> >>> On 2024-08-15 8:16 AM, Thomas Gleixner wrote:
-> >>>> Yes. So the riscv timer is not working on this thing or it stops
-> >>>> somehow.
-> >>>
-> >>> That's correct. With the (firmware) devicetree that Emil is using, th=
-e OpenSBI
-> >>> firmware does not have a timer device, so it does not expose the (opt=
-ional[1])
-> >>> SBI time extension, and sbi_set_timer() does nothing.
-> >>
-> >> Sigh. Does RISCV really have to repeat all mistakes which have been ma=
-de
-> >> by x86, ARM and others before? It's known for decades that the kernel
-> >> relies on a working timer...
-> >
-> > My apologies for the delay in finding a fix for this issue.
-> >
-> > Almost all RISC-V platforms (except this one) have SBI Timer always
-> > available and Linux uses a better timer or Sstc extension whenever
-> > it is available.
->
-> So this is the immediate solution: add the CLINT to the firmware devicetr=
-ee so
-> that the SBI time extension works, and Linux will boot without any code c=
-hanges,
-> albeit with a higher-overhead clockevent device.
+On 8/15/24 06:25, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.10.6 release.
+> There are 22 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 17 Aug 2024 13:18:17 +0000.
+> Anything received after that time might be too late.
+> 
 
-But this will mean that you can't update your kernel to v6.9 or newer witho=
-ut
-reflashing OpenSBI and u-boot. That's still a regression right?
+arm:allmodconfig and various other allmodconfig builds:
 
-/Emil
+drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_mst_types.c:1581:13: error: 'is_dsc_common_config_possible' defined but not used [-Werror=unused-function]
+  1581 | static bool is_dsc_common_config_possible(struct dc_stream_state *stream,
+       |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_mst_types.c:1569:21: error: 'kbps_from_pbn' defined but not used [-Werror=unused-function]
+  1569 | static unsigned int kbps_from_pbn(unsigned int pbn)
+
+This was introduced in v6.10.5 and is seen with CONFIG_DRM_AMD_DC_FP=n
+and CONFIG_DRM_AMD_DC=y. AFAICS that happens for images built with gcc
+on architectures which don't have kernel FPU support.
+
+Guenter
+
 
