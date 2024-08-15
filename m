@@ -1,124 +1,149 @@
-Return-Path: <linux-kernel+bounces-287434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A80D9527B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 03:54:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F87E9527AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 03:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4828428172C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 01:54:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAEFA1F23555
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 01:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC92111AD;
-	Thu, 15 Aug 2024 01:54:31 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2FA17BD9;
+	Thu, 15 Aug 2024 01:54:26 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB9B22094;
-	Thu, 15 Aug 2024 01:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115FBBA20;
+	Thu, 15 Aug 2024 01:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723686870; cv=none; b=hxQpJUPmMwul+pkGsNXJyKcmwqv0RyIA4b04PhcHKGkXcbobvjOFK0oKv2vy/TwhT0uf8lDUarIbvZjINZ3pQ2+T+sYWDBOKSEcMThX/g4FFNOBeMgdOefBxqaZUQ7rUsubBNSZqx0ddUOtVJ6tyFvzstO4vneGkEt0fpoRwt/E=
+	t=1723686865; cv=none; b=VP3Im9mC27effFVF48YQkXh8LULiqlIXykFZKawK0OSfkMTDwo+g5vcA0/FyjMaimTsmsAPtQs6BARaj7zMGSDtAbqDZFXA1Gm2VLBpnXUxU0mm2y3nL30Ws9VvMHmQqMxhQ2byPySm0pAfaFCCOYxyoAKDmVBzaSuCbV33dKwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723686870; c=relaxed/simple;
-	bh=2XgjUA3+Jq76hc3frjNsDmVolGe3r+NnQBfF+T8bkz4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WZhwapPX+tCjmbN1lbGMttenYwcnNvEUIZbobIZcEwvZlNVsXSG4XXm7lWihdn2lbL/e5CyKOVywDsuNnno84mLGEThhAc6CpQpcK2YQQXpMyaRZgfAb/o14AOWASVfYumI2THhlpn1DZ0ZJzN6dV+ZX5yYAK/NfgC7sWH4jq/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-03 (Coremail) with SMTP id rQCowACHj0fCX71mwUKIBg--.7688S2;
-	Thu, 15 Aug 2024 09:54:18 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: dinguyen@kernel.org,
-	bp@alien8.de,
-	tony.luck@intel.com,
-	james.morse@arm.com,
-	mchehab@kernel.org,
-	rric@kernel.org,
-	niravkumar.l.rabara@intel.com,
-	akpm@linux-foundation.org
-Cc: linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2 RESEND] EDAC/altera: Fix possible null pointer dereference
-Date: Thu, 15 Aug 2024 09:54:09 +0800
-Message-Id: <20240815015409.148443-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1723686865; c=relaxed/simple;
+	bh=9Vt7bZj3r8ykVXUlYSK9XbLtW9JOWLDtf3YeFYfQX9A=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=QTpiQuYMkHpWFVerwC49QWCde3hr2KfqqAPLUws1MtVVLpVPFIjplgBMkcNzhP/HdceirMPKvSd9ryV3c4KhrwISZGiIrj1HiuTeRElT3m31QNK6hL8aES3DP8etLvIFGuSj3JoxphMxQmzgoamxR4rODv98jzieTgUrkicY/PA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Wkp7x4Qxcz4f3js2;
+	Thu, 15 Aug 2024 09:54:05 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 66BDB1A0568;
+	Thu, 15 Aug 2024 09:54:19 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgAHL4XJX71mMjTkBg--.10385S3;
+	Thu, 15 Aug 2024 09:54:19 +0800 (CST)
+Subject: Re: [PATCH] block: Fix potential deadlock warning in
+ blk_mq_mark_tag_wait
+To: Jens Axboe <axboe@kernel.dk>, Bart Van Assche <bvanassche@acm.org>,
+ Li Lingfeng <lilingfeng@huaweicloud.com>, hch@lst.de, jack@suse.cz,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: yukuai1@huaweicloud.com, houtao1@huawei.com, yi.zhang@huawei.com,
+ yangerkun@huawei.com, lilingfeng3@huawei.com, "yukuai (C)"
+ <yukuai3@huawei.com>
+References: <20240814113542.911023-1-lilingfeng@huaweicloud.com>
+ <ad92f738-9ba5-4cfc-aef5-3918a35e77ec@acm.org>
+ <6e729890-7374-4335-ab7d-ead00775057e@kernel.dk>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <a3271107-f6d2-a689-78d5-f98d53fd497b@huaweicloud.com>
+Date: Thu, 15 Aug 2024 09:54:17 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <6e729890-7374-4335-ab7d-ead00775057e@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowACHj0fCX71mwUKIBg--.7688S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw1fCr17Ww4rWFWDuw45KFg_yoW8Xw4xpr
-	W7W345tryUKa4UWr4vvws5XFy5C3Z3Xay0qrWIyayY93y3Xw15Jryj9FWUta4jqrW8Cay3
-	tr45tw45AayUJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBS14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+X-CM-TRANSID:gCh0CgAHL4XJX71mMjTkBg--.10385S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF4rCFWxJrWxJr17Jw1UZFb_yoW8Zw45pF
+	WxXan8Kan8JrZ29w4jkrsFvr1S9ws5Wr13Jrn5Wr45Z34jvr1fWa4xAF1q9FWvgrs3AF4q
+	vr1jq395KF4DA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
-	4UJVWxJr1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r
-	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAq
-	YI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82
-	IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC2
-	0s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMI
-	IF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF
-	0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87
-	Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUF0eHDUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-In altr_s10_sdram_check_ecc_deps(), of_get_address() may return NULL which
-is later dereferenced. Fix this bug by adding NULL check.
-of_translate_address() is the same.
+Hi,
 
-Found by code review.
+在 2024/08/15 4:22, Jens Axboe 写道:
+> On 8/14/24 1:52 PM, Bart Van Assche wrote:
+>> On 8/14/24 4:35 AM, Li Lingfeng wrote:
+>>> When interrupt is turned on while a lock holding by spin_lock_irq it
+>>> throws a warning because of potential deadlock.
+>>
+>> Which tool reported the warning? Please mention this in the patch
+>> description.
+>>>
+>>> blk_mq_mark_tag_wait
+>>>    spin_lock_irq(&wq->lock)
+>>>         --> turn off interrupt and get lockA
+>>>    blk_mq_get_driver_tag
+>>>     __blk_mq_tag_busy
+>>>      spin_lock_irq(&tags->lock)
+>>>      spin_unlock_irq(&tags->lock)
+>>>         --> release lockB and turn on interrupt accidentally
 
-Cc: stable@vger.kernel.org
-Fixes: e1bca853dddc ("EDAC/altera: Add SDRAM ECC check for U-Boot")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v2:
-- modified the check of of_translate_address() as suggestions.
----
- drivers/edac/altera_edac.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+This looks correct, however, many details are hidden:
 
-diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
-index fe89f5c4837f..4fbfa338e05f 100644
---- a/drivers/edac/altera_edac.c
-+++ b/drivers/edac/altera_edac.c
-@@ -1086,6 +1086,7 @@ static int altr_s10_sdram_check_ecc_deps(struct altr_edac_device_dev *device)
- 	struct arm_smccc_res result;
- 	struct device_node *np;
- 	phys_addr_t sdram_addr;
-+	const __be32 *sdram_addrp;
- 	u32 read_reg;
- 	int ret;
- 
-@@ -1093,8 +1094,14 @@ static int altr_s10_sdram_check_ecc_deps(struct altr_edac_device_dev *device)
- 	if (!np)
- 		goto sdram_err;
- 
--	sdram_addr = of_translate_address(np, of_get_address(np, 0,
--							     NULL, NULL));
-+	sdram_addrp = of_get_address(np, 0, NULL, NULL);
-+	if (!sdram_addrp)
-+		return -EINVAL;
-+
-+	sdram_addr = of_translate_address(np, sdram_addrp);
-+	if (sdram_addr == OF_BAD_ADDR)
-+		return -EINVAL;
-+
- 	of_node_put(np);
- 	sdram_ecc_addr = (unsigned long)sdram_addr + prv->ecc_en_ofst;
- 	arm_smccc_smc(INTEL_SIP_SMC_REG_READ, sdram_ecc_addr,
--- 
-2.25.1
+t1: IO dispatch
+blk_mq_prep_dispatch_rq
+  blk_mq_get_driver_tag
+   __blk_mq_get_driver_tag
+    __blk_mq_alloc_driver_tag
+     blk_mq_tag_busy -> tag is already busy
+     // failed to get driver tag
+
+  blk_mq_mark_tag_wait
+   spin_lock_irq(&wq->lock) -> lock A
+   __add_wait_queue(wq, wait) -> wait queue active
+   blk_mq_get_driver_tag
+   __blk_mq_tag_busy
+-> 1) tag must be idle, which means there can't be inflight IO
+    spin_lock_irq(&tags->lock) -> lock B
+    spin_unlock_irq(&tags->lock) -> unlock B
+-> 2) context must be preempt by IO interrupt to trigger deadlock.
+
+So, the deadlock is not possible in theory, there can't be inflight IO
+if __blk_mq_tag_busy what to hold the second lock, while deadlock
+require IO to be done.
+
+Any way, the change looks good to me.
+
+Thanks,
+Kuai
+
+>>
+>> The above call chain does not match the code in Linus' master tree.
+>> Please fix this.
+>>
+>>> Fix it by using spin_lock_irqsave to get lockB instead of spin_lock_irq.
+>>> Fixes: 4f1731df60f9 ("blk-mq: fix potential io hang by wrong 'wake_batch'")
+>>> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+>>
+>> Please leave a blank line between the patch description and the section
+>> with tags.
+> 
+> Please just include the actual lockdep trace rather than a doctored up
+> one, it's a lot more descriptive. And use the real lock names rather
+> than turn it into hypotheticals.
+> 
 
 
