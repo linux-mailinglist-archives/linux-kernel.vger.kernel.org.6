@@ -1,138 +1,96 @@
-Return-Path: <linux-kernel+bounces-288319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81A379538C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:07:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F3D19538C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEEEA1C2336A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:07:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A93C1C24487
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FE41BBBD8;
-	Thu, 15 Aug 2024 17:07:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A844E1BBBE0;
+	Thu, 15 Aug 2024 17:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kFjMALsa"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2xt2+Mp"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90E71BB698;
-	Thu, 15 Aug 2024 17:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626DAC147;
+	Thu, 15 Aug 2024 17:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723741637; cv=none; b=PkO8MZCuzfcVtR0BOvatJ/aqEmjpMk731KshiYqI/bzHl4s8e50cQcNhiRfDJpFIO+YPCUWWTxpML2qPCPrqCUt9KU4p6nCThIIcqJw86QIfeKAKMvTSv/sEktTHKgBO58y7mSp0yX1itx8OhG9QzEf4Idwk/lfQyhrOeBk0RIc=
+	t=1723741656; cv=none; b=R2ELOhHwbAn2UcTEu2oEacYqKXlPM7FfjLOxOI4PZvNam+WLtVUm/EC8hMQi56jsxH565CFGCQPe3B78a0w9DJeOrNflccdLetcZO+aRynRgHURvyoMCVLePzXepTuRj7ICs9jn/QgUBvmxbeolUbbdCnTEUywX9UL3sWwEIgio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723741637; c=relaxed/simple;
-	bh=ezoUPV9NtiZJSTV6zls7zJ7zcj268aTx3CmYfyW3TL8=;
+	s=arc-20240116; t=1723741656; c=relaxed/simple;
+	bh=bZXdxt5rsuaIjfCsiuPdc+57GZgVL8e6hq/aP3YNeoA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R1kjNZoFLTBqK43bMGvM8Ezor6JEV5Jk7p5ULWxE0voBURou/IbPAosN9GFntZzsKKYNX0eC+2HiD2RUntJg8kOYfnaia7UCcCxkPvRnDeWEYpUrGvnqc0/uKmJYT/ma4IZ4KSeWRBrHtcVMniKC1+7wdSA/olZ3j9LqkXdvsDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kFjMALsa; arc=none smtp.client-ip=209.85.210.179
+	 To:Cc:Content-Type; b=bO5PW5f4jabowGjfyLzkjXC3L27/4fFc7K2AfVwKFfsAtOcVWbdWHwJK+QGagOOR2TpuYYoA629TPJSLxIgEyXcALYl3/Q1B6NBZW2XW8akQE6hg0aOXJvJvuElE7rOjNMlhyRagnBS5OkVqHTzRpz8/MxNT6/lLczobGHq3EfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k2xt2+Mp; arc=none smtp.client-ip=209.85.208.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7106e2d0ec1so938680b3a.2;
-        Thu, 15 Aug 2024 10:07:15 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ef2cce8be8so12713811fa.1;
+        Thu, 15 Aug 2024 10:07:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723741635; x=1724346435; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ezoUPV9NtiZJSTV6zls7zJ7zcj268aTx3CmYfyW3TL8=;
-        b=kFjMALsa3urV4H+2rZ2tKhgvwzTzy3j+gYkSeee2EtQSSfOyXhnVM0EGVAiJcyUySo
-         bTIvHXilNnhxLtXd11tKnjKLF5mMhRHK5IA/4nqR6/rbHMMK+xjKt87Ous9aQXS4UTUv
-         rPDvsNJFMM1RQgGoKtywhQl4YAqk3g1YxOwlMgh2x87dXejz49a9yV6KA5mnsYyIaqR/
-         Eu6vXlWEULzc40OGvucM/MhOTpn4iOOSVX4x0E0mBkTEDoCkHMICjIANcYQfs9DdXUAg
-         Zxgzrt3J+8dzW+l1dZjVsB1lqVvCE93ogT+YTdsdcinF4AlM/cr0rjNiBKJUFQ/dcPzK
-         Nt0w==
+        d=gmail.com; s=20230601; t=1723741652; x=1724346452; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bZXdxt5rsuaIjfCsiuPdc+57GZgVL8e6hq/aP3YNeoA=;
+        b=k2xt2+MpSKULg+TSp4Y1kH4aMC35DbpMfV/a2b+rJnQ2ZOZnkL9vMNhRzELOeGAEzm
+         3OgXIDDHuFuB5qtQGp2gSwgDJGefBbjQNt7xinpV/SiI7WJWg9ozhTvxKyDpThFmyekL
+         JkCP+l8LU6tX8du6RwhZnl8gn2QBdujWns6HWu1viAnnUYfEkLHCFcwbMEUeomuBdlJh
+         rTuNrDz0MEkLUP18qmafVu/3mBAl3nH0FyH/N5MbQb7e4vqegHU1+Wn7uA2C1gtl5ki4
+         9ojmzZ1rPaYCCnukqkuYsYS/M24nfkHpZveF4JIr8Q9Zs1FcBSxpaBjx9MmFFs0kpXef
+         9hqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723741635; x=1724346435;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ezoUPV9NtiZJSTV6zls7zJ7zcj268aTx3CmYfyW3TL8=;
-        b=aYAuBhaifLY7Lbqpj6C34h2lAvlmo72Syav32qru6iC/RLiyk//hL5O8JXDORxtBEt
-         up0glNEZmrm/yoiUZzeYbXVAaQkuCZ+5dT/NejINL5hjJ8HOTuCF7aQ05H7jjwSvKzR2
-         R3Eu36HZepnIbUj0NjOVrpKD/I2Dh3aa+DyWZDdIebMH918wYuUMBJesyy7kiBYMBbbI
-         JuOLvDN5kD5sus3EGgObYuqhuAqUud6eBGJSaojbD8Z3k8unvfNPWRic4z9zJ7x2nFj4
-         Oc4qAuWTK1l2NNlz68QI1MDejTV4Fwuwp4Hl/8ZK5H1JB2zVl91hH5C61FjJSKdkOmEX
-         yKTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXB1iqaXylN9X7TQ/qVlFQ+vp0KWd1Vsx6uXNpDYFAo4QvYluAGLhBIN5kvDJVElSQde0yzaHx93/C0ucnwCrOOjY6YlEB2hZcut6hsOkz4iWGnlMAMldWi1/LG//dpyTNUh03oyJ78o5FZ5d+bpeWq6g2/cpi8tQF81Bh2weOW+QTbo4ie
-X-Gm-Message-State: AOJu0YyZMfiDEOaUPvlWjGz/6LTGWd50/yin0zA5tjJMn9DSUAupSubK
-	Hyj0D9O6GDXm94+OA1mmGnGOw3GPoaNejSa3rerkWD+NV4yhGHUEL+tMnHqWs8BBHN1lu4C5XqY
-	WDvqvwxgL7AJhWhwxsmi6LijkpFc=
-X-Google-Smtp-Source: AGHT+IEhG8yb0DN5azLksyXPUrRHr8vbXffVkqBSYdftGQ8kgbIULC9JtvZq1U5symED/v3v5+dTCncrrJJvNXH6Woo=
-X-Received: by 2002:a17:90a:ec14:b0:2c4:b0f0:8013 with SMTP id
- 98e67ed59e1d1-2d3dfc6adb1mr310656a91.11.1723741634889; Thu, 15 Aug 2024
- 10:07:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723741652; x=1724346452;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bZXdxt5rsuaIjfCsiuPdc+57GZgVL8e6hq/aP3YNeoA=;
+        b=BaWEuhP/G38bn2K4m4bGNtgi0lDl4PUF03qmN7Hv8O31FeVRVm9xhJaX/Gm9BPAOSl
+         oKzIabcmsu/fMXENphEWnbEcsk6QgqyHbrpAsxiDX9l97J/LF3JeGQKuXCwHnqe6ejsi
+         BEShSx3J5nf9gKdy8H+knoMMQvXj0gfe6Wl9yOnqAFvrWZP28JLJDsJmwGxd4ZY71CHE
+         pPu/YnZmTYITLP7QuTwvZhLa3wI4pdEAhmFuSJI25nzUlG4ZcI2Ui3NzNYXZqeWpsSNQ
+         3EOekTVM86y2RrpllYLEkedivbAHfvkPG0RYXngvg+QEyMYG+xMz2IX94/9ZmpNw07tE
+         VAUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXURssdIBx946diZAW6igtH9F8QVdHRzqfD45apLe7Vn7DQDgJigoyrZ4tMnf0OqfJcY6NnwCmLCa0LehHYByble5KkKMLFaoklpJoAmXyLsLq1mSSSl23Cs2+GXOmIuTKkASxg
+X-Gm-Message-State: AOJu0YwWz8yImTraTMgqzi2THkoC79aojT4h2EDxyX7eTfQoq6XVp06S
+	4bY+7h8VBNefsAwdLaR6EVQ9Sb4AcmsFxWyKpBHUEvxzLT5VnyQ703Sj5maxzuQyFMtFQ3ZSNQu
+	f14tYdkAy3y7eAd2ctev0OX+c2PRTU6TvMGgDEQ==
+X-Google-Smtp-Source: AGHT+IFrape4a46TIlcp9lo77AaAcqTx9xazVqA6BRWifosAN2sBEsBPed5/P4Ew2wsNSvRNfWzhfLlUqL3RgVX3mlw=
+X-Received: by 2002:a05:6512:1110:b0:52c:d819:517e with SMTP id
+ 2adb3069b0e04-5331c6b050cmr72282e87.30.1723741651823; Thu, 15 Aug 2024
+ 10:07:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814080356.2639544-1-liaochang1@huawei.com> <Zr3RN4zxF5XPgjEB@J2N7QTR9R3>
-In-Reply-To: <Zr3RN4zxF5XPgjEB@J2N7QTR9R3>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 15 Aug 2024 10:07:02 -0700
-Message-ID: <CAEf4BzaUy+oxMk9guMX06z-MLeUJMmf8TvzoLveO7ukBFaJiqg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: insn: Simulate nop and push instruction for better
- uprobe performance
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Liao Chang <liaochang1@huawei.com>, catalin.marinas@arm.com, will@kernel.org, 
-	mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org, 
-	puranjay@kernel.org, ast@kernel.org, andrii@kernel.org, xukuohai@huawei.com, 
-	revest@chromium.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org
+References: <20240814173121.33590-1-abhashkumarjha123@gmail.com> <20240815125321.GA632411@kernel.org>
+In-Reply-To: <20240815125321.GA632411@kernel.org>
+From: Abhash jha <abhashkumarjha123@gmail.com>
+Date: Thu, 15 Aug 2024 22:37:19 +0530
+Message-ID: <CAG=0RqKvw58-aN1onSjzc+WwhXk8uh_Ak=Po5gQyOmZUNgvaKg@mail.gmail.com>
+Subject: Re: [PATCH] selftests/net/pmtu.sh: Fix typo in error message
+To: Simon Horman <horms@kernel.org>
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kuba@kernel.org, shuah@kernel.org, netdev@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 15, 2024 at 2:58=E2=80=AFAM Mark Rutland <mark.rutland@arm.com>=
- wrote:
+> I agree with the correctness of this change.
+> And I verified that with this patch applied,
+> coedspell only flags false positives in this file.
 >
-> On Wed, Aug 14, 2024 at 08:03:56AM +0000, Liao Chang wrote:
-> > As Andrii pointed out, the uprobe/uretprobe selftest bench run into a
-> > counterintuitive result that nop and push variants are much slower than
-> > ret variant [0]. The root cause lies in the arch_probe_analyse_insn(),
-> > which excludes 'nop' and 'stp' from the emulatable instructions list.
-> > This force the kernel returns to userspace and execute them out-of-line=
-,
-> > then trapping back to kernel for running uprobe callback functions. Thi=
-s
-> > leads to a significant performance overhead compared to 'ret' variant,
-> > which is already emulated.
->
-> I appreciate this might be surprising, but does it actually matter
-> outside of a microbenchmark?
+> Reviewed-by: Simon Horman <horms@kernel.org>
 
-I'll leave the ARM parts to Liao, but yes, it does a lot. Admittedly,
-my main focus right now is x86-64, but ARM64 keeps growing in
-importance.
+Hi Simon,
+Thanks for the review, Should I still send the patch again with the
+fixes tag and the target repo for the patch as suggested by
+liuhangbin@gmail.com. Or is it fine for now.
 
-But on x86-64 we specifically added emulation of push/pop operations
-(a while ago) so we can mitigate performance degradation for a common
-case of installing uprobes on (user space) function entry. That was a
-significant speed up because we avoided doing one extra interrupt hop
-between kernel and user space, which is a big chunk of uprobe
-activation cost. And then in BPF cases, BPF uprobe program logic is
-usually pretty lightweight, so the uprobe triggering overhead is still
-very noticeable in practice.
-
-So if there is anything that can be done to improve performance on
-ARM64 for similar function entry situations, that would be greatly
-appreciated by many bpftrace and BPF users at the very least.
-
->
-> > Typicall uprobe is installed on 'nop' for USDT and on function entry
-> > which starts with the instrucion 'stp x29, x30, [sp, #imm]!' to push lr
-> > and fp into stack regardless kernel or userspace binary.
->
-> Function entry doesn't always start with a STP; these days it's often a
-> BTI or PACIASP, and for non-leaf functions (or with shrink-wrapping in
-> the compiler), it could be any arbitrary instruction. This might happen
-> to be the common case today, but there are certain;y codebases where it
-> is not.
->
-
-[...]
+Regards,
+Abhash
 
