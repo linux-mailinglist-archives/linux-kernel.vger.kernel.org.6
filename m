@@ -1,185 +1,135 @@
-Return-Path: <linux-kernel+bounces-288489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E1D6953AB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:12:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A06F7953ABA
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:14:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA3DB1F2267A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:12:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D18161C227DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054B07BB15;
-	Thu, 15 Aug 2024 19:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E227E107;
+	Thu, 15 Aug 2024 19:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JZVLUgqN"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FrV7BBnf"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED405644E;
-	Thu, 15 Aug 2024 19:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955E54AEEA;
+	Thu, 15 Aug 2024 19:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723749160; cv=none; b=PimpBWVGEvoG/YXEII4KjSzWwQCSBXl9jOVpLmkTrgOV/V0DflotozuGHemJDfwCBEbma7OpO9C0T2sS8LRSLpvhEt6xIhn0SJF7aeAn3KZEpFwahvhpOqWakBy1NRIQcZttziAxMCF9g6Yu7c0CX2Un1gcXuVO/A+gwl5ybg+8=
+	t=1723749277; cv=none; b=rRW58q5IIPhm7t0f//NZrdtg4gqKr6/SLwTg4kZ9R2vvQGxcnFbkliiIh8RIc7IrfYwkC5DRXNPK0B1VZgt/geLetTq2Q2ZyNr9Eryfbmz9SkN9lk0OtY4HNdTheAr1CFzeIqbBVFBYsgFSe+CXSAxh0QbVF/aGMFxQfIPm470k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723749160; c=relaxed/simple;
-	bh=mFfzZ3pFgqDb8mIZqmgPfNFtwYForYW8jYw7gaAy3c4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OZmskEsGDXjBNETDm0N+OSZn5lnR4DZsuYW+Farn+rzX3A6681o40UvmLysT8SpTdYvvnJ+MO/rFt0IpjXz1znyjtaBM9hCbQOWUElEOOf3JHWDR+V0fvW/pGZHsswGvsnFh6LOHV3lrl02Hi/AlazK/N66CODjMk5MdhETFCrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JZVLUgqN; arc=none smtp.client-ip=209.85.219.53
+	s=arc-20240116; t=1723749277; c=relaxed/simple;
+	bh=ZZ/G5UApgamR1bZhb2gVHjVkFTPdIRkoeKz9QdIpCek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MIsEPxZgQAHJlp6GtYFxgjuNZJZkWYlrGeXRyInTwRitDgaYi/5rmfbl7sXG9Ls2Zxs7o6uVVubsjuFfw6c99HMiIe2p0Qxorw9vL6UnzLZn1PjpwwuieDrkA/wYeEV1kOPpXJ88mKgY82tNMIoIIEgPfagN6Ud5+gbJWdmkkyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FrV7BBnf; arc=none smtp.client-ip=209.85.215.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6bf6beda0c0so7353976d6.1;
-        Thu, 15 Aug 2024 12:12:38 -0700 (PDT)
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-6bce380eb96so873160a12.0;
+        Thu, 15 Aug 2024 12:14:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723749157; x=1724353957; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mFfzZ3pFgqDb8mIZqmgPfNFtwYForYW8jYw7gaAy3c4=;
-        b=JZVLUgqN6++xTLUKeq/GzeeMKUn98j8WAJzKVbGO4mFMin+69KfUuCyFtm3nOlUI18
-         C7fW0uLd5+9sZxZ2OLXV0Nf6gVM97g9ECNru1k+ulbK+24AfQ2uTwKNxac0LXfPXrWpA
-         YOWqohvRzOUsDukbAO19B0/4lYCIxyGYXZdY21JVvlWqlj1kU7R+SNW8hEEcYAFHF0za
-         NMguxNJ8/M0Em3qRCNzRuDs34G4uq0DZh9fFfkLMfQR8yl9fKIFUtcWsbMJrnHrlCY2O
-         oh1WUNSyPNpR0yj9kvgTVk//+rxUPVP1FpHcM3Pt3csLUaOTrQp/OT75PMYsnV3O0P0H
-         79/A==
+        d=gmail.com; s=20230601; t=1723749276; x=1724354076; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=z7WMncMgmKEb+KbsAwgAmYN6PSSe41pQsIcx1ldX02Q=;
+        b=FrV7BBnfl2s+3P+srv1C2px10lhwWn23KhcViQVIlsvZphKi6qJsJtRRWnZNuMBXMT
+         I7BYvyNiK9f0FEdAU2QTZ2DcIG29WFy3x3wrAyah6hU4d0dSgBWihtFTCcMYInclWJzF
+         MZyeyDuu06oQxxNpXdf4Np57Dtyo1zANF9v7ozunCBc0pDvm5XHhg8EF+EZQBPyDjCNG
+         pMQdq8fkdHlTjfLp5u+6NIpKvpjwx8CPrVLEDy7nn82Hiqh+0aWT7CsWdvNy3ugvqKK4
+         qUEQ2MFVVj5Hxu48rKxqt2b0lFa/fIbjI7tnrNK1Kh6SP0EoNM1SsumyYchqQx+GTdS7
+         Nhiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723749157; x=1724353957;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mFfzZ3pFgqDb8mIZqmgPfNFtwYForYW8jYw7gaAy3c4=;
-        b=Zjglpb1S64EoAEFPLU+YJyGI0DgsMrmFnF0lfAKxCv78QcWXkUbqxmXDb6d5CZpwwb
-         UYbWWOg44JDCTgnkWElC5ScP3WVgum6E1lDMlDbodYCG8emAsSdwtR6CvnjgkLOc9vjE
-         +hiVa7KMHE/YUtEDlQzVcDpm2QBLn5PrWqqXNIsahABRqsdmVrqfgIJBv71PKCw8Tg0R
-         Dy/F5SmS0uFBJyDJsN+18x/BF5xu0X0LIei7dcF5l0fG/mSwoMIzJASGRxd028iT1y0c
-         lhTs7tVfkvmCVqlArDBRprNDVABcMWxXREq1F4Q/3Uv/KwLlad7EaNFNyvojCL9xwxUS
-         /SPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWiOT8YH081qj+lyKa4ex84GAQhifJoK3YtUQUMjo10PaQBc9HHcUsUANAxZGmoHUAVvyxjOl0wPPzBiKV81WdP9eZXVmvz7iPf19GCcOIY4Ht8rr8xAhg8BMAMZ+AccPNbDZaYw==
-X-Gm-Message-State: AOJu0YwcxAo/8OQ9qcVPyMqYSBuQLfqpotXXkBeXR4DqMpT5NgQdaRA0
-	g0PwrPyfIjPWiZk1soeS+knAQLz3zPil3Xh4rZes48rOKvQnpiH3nW1ZNoSG3OPQCXtfufN5krZ
-	QIMFVtxOGjIFGPsLNMqP/VydXHlY=
-X-Google-Smtp-Source: AGHT+IEn/1oERfpX0KiSjifFU04Jgclm2hv8aboG2vr2BmvzqniXqnbcBMH4kvGFVH3Y1dIl6cPxXpob+kp2eSbtPzg=
-X-Received: by 2002:a05:6214:5542:b0:6b9:5fb9:113f with SMTP id
- 6a1803df08f44-6bf7ce04b10mr7208596d6.27.1723749157464; Thu, 15 Aug 2024
- 12:12:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723749276; x=1724354076;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z7WMncMgmKEb+KbsAwgAmYN6PSSe41pQsIcx1ldX02Q=;
+        b=buneI50aG2DTbpWC5hpDyrkBJtyUkz51k/Wz+wx/IquRt7dF6rY+8taMcqF4dzgkCq
+         r/nBz/1MwO3FlO6fU7gz/H6+GkD5nWCYiH7+TUELxWloK4naNhz0jCStcJFqjHS9J42H
+         le7+REBDsok3/pcKjUo0nUPSz2Z6ZEJUH70/Isx20hUszmn8bosOJ8908uj2JEhDY9mJ
+         LITFbwBf4FwQyawUVm+G06iW16CX6tdtOBElRHkGagQpbpy4n5/IX+tMgySKH4HL4jta
+         HwYA+y6/jgaH+fwahTvKx3FB+fYOEoJ+u16Xnx7bXKfiertgN4aUfcB9AHHXbbKGZZbZ
+         hflw==
+X-Forwarded-Encrypted: i=1; AJvYcCVB6lhDrFz6yj1K4wJMcqOaLKy1oc8mz9aZDkrTUcGd44OlnyANTq+9UiI6mUCNlkm7dI59mcTSMTHsxUC6Rqhu7pbDTj2oJU0fwV/sGymUn9DBqhU8h0XNhFfJhUZGLIsuFB3KhK8BNzTVGrlIqVfbeP3NgLMRlz7do93wK7SpCD/5W38d
+X-Gm-Message-State: AOJu0Yz0JwVdHaWM7YPjVWWQrGmongto4e8t+k0sIenkxxj9fYEwvBJm
+	CxbLa14NKmi0Ow3IVpg7Tt279Ok2e5MWplBDb7B+KrVWf2lh/YM+
+X-Google-Smtp-Source: AGHT+IGcVeNgkntbw2cZPknkiVRzDRUVnj2hzr5w9yADfwCWLixg2lLFoSq+Drgxr9JvKyFlLM6+Dg==
+X-Received: by 2002:a17:90a:8a02:b0:2c8:87e:c2d9 with SMTP id 98e67ed59e1d1-2d3e03e89dcmr771031a91.39.1723749275678;
+        Thu, 15 Aug 2024 12:14:35 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:1ffe:470a:d451:c59])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3ac7ca35fsm3968643a91.9.2024.08.15.12.14.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 12:14:35 -0700 (PDT)
+Date: Thu, 15 Aug 2024 12:14:32 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Marek Vasut <marex@denx.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Mark Hasemeyer <markhas@chromium.org>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	"open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." <linux-input@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH v2 1/1] dt-bindings: input: touchscreen: convert
+ ads7846.txt to yaml
+Message-ID: <Zr5TmAkd67XcyYvJ@google.com>
+References: <20240815161413.4182796-1-Frank.Li@nxp.com>
+ <5864cdcf-a1f2-45a6-a034-a05315402663@denx.de>
+ <Zr5RwL5qRVBKbHcc@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814171800.23558-1-me@yhndnzj.com> <CAKEwX=NrOBg0rKJnXGaiK9-PWeUDS+c3cFmaFFV0RrE8GkNZZA@mail.gmail.com>
- <CAJD7tkZ_jNuYQsGMyS1NgMf335Gi4_x5Ybkts_=+g5OyjtJQDQ@mail.gmail.com> <a2f67cbcc987cdb2d907f9c133e7fcb6a848992d.camel@yhndnzj.com>
-In-Reply-To: <a2f67cbcc987cdb2d907f9c133e7fcb6a848992d.camel@yhndnzj.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Thu, 15 Aug 2024 12:12:26 -0700
-Message-ID: <CAKEwX=MDZdAHei3=UyYrsgWqyt-41_vOdCvTxj35O62NZhcN2A@mail.gmail.com>
-Subject: Re: [PATCH] mm/memcontrol: respect zswap.writeback setting from
- parent cg too
-To: Mike Yuan <me@yhndnzj.com>
-Cc: Yosry Ahmed <yosryahmed@google.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	cgroups@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Muchun Song <muchun.song@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Michal Hocko <mhocko@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zr5RwL5qRVBKbHcc@lizhi-Precision-Tower-5810>
 
-On Wed, Aug 14, 2024 at 1:43=E2=80=AFPM Mike Yuan <me@yhndnzj.com> wrote:
->
-> On 2024-08-14 at 13:22 -0700, Yosry Ahmed wrote:
-> > On Wed, Aug 14, 2024 at 12:52=E2=80=AFPM Nhat Pham <nphamcs@gmail.com> =
-wrote:
-> > >
-> > > On Wed, Aug 14, 2024 at 10:20=E2=80=AFAM Mike Yuan <me@yhndnzj.com> w=
-rote:
-> > > >
-> > > > Currently, the behavior of zswap.writeback wrt.
-> > > > the cgroup hierarchy seems a bit odd. Unlike zswap.max,
-> > > > it doesn't honor the value from parent cgroups. This
-> > > > surfaced when people tried to globally disable zswap writeback,
-> > > > i.e. reserve physical swap space only for hibernation [1] -
-> > > > disabling zswap.writeback only for the root cgroup results
-> > > > in subcgroups with zswap.writeback=3D1 still performing writeback.
-> > > >
-> > > > The consistency became more noticeable after I introduced
-> > > > the MemoryZSwapWriteback=3D systemd unit setting [2] for
-> > > > controlling the knob. The patch assumed that the kernel would
-> > > > enforce the value of parent cgroups. It could probably be
-> > > > workarounded from systemd's side, by going up the slice unit
-> > > > tree and inherit the value. Yet I think it's more sensible
-> > > > to make it behave consistently with zswap.max and friends.
-> > >
-> > > May I ask you to add/clarify this new expected behavior in
-> > > Documentation/admin-guide/cgroup-v2.rst?
-> > >
-> > > >
-> > > > [1]
-> > > > https://wiki.archlinux.org/title/Power_management/Suspend_and_hiber=
-nate#Disable_zswap_writeback_to_use_the_swap_space_only_for_hibernation
-> > >
-> > > This is an interesting use case. Never envisioned this when I
-> > > developed this feature :)
-> > >
-> > > > [2] https://github.com/systemd/systemd/pull/31734
-> > > >
-> > > > Signed-off-by: Mike Yuan <me@yhndnzj.com>
-> > > > ---
-> > >
-> > > Personally, I don't feel too strongly about this one way or
-> > > another. I
-> > > guess you can make a case that people want to disable zswap
-> > > writeback
-> > > by default, and only selectively enable it for certain descendant
-> > > workloads - for convenience, they would set memory.zswap.writeback
-> > > =3D=3D
-> > > 0 at root, then enable it on selected descendants?
-> > >
-> > > It's not super expensive IMHO - we already perform upward traversal
-> > > on
-> > > every zswap store. This wouldn't be the end of the world.
-> > >
-> > > Yosry, Johannes - how do you two feel about this?
+On Thu, Aug 15, 2024 at 03:06:40PM -0400, Frank Li wrote:
+> On Thu, Aug 15, 2024 at 08:44:56PM +0200, Marek Vasut wrote:
+> > On 8/15/24 6:14 PM, Frank Li wrote:
 > >
-> > I wasn't CC'd on this, but found it by chance :) I think there is a
-> > way for the zswap maintainers entry to match any patch that mentions
-> > "zswap", not just based on files, right?
+> > [...]
 > >
-> > Anyway, both use cases make sense to me, disabling writeback
-> > system-wide or in an entire subtree, and disabling writeback on the
-> > root and then selectively enabling it. I am slightly inclined to the
-> > first one (what this patch does).
+> > > +  ti,debounce-max:
+> > > +    deprecated: true
+> > > +    $ref: /schemas/types.yaml#/definitions/uint16
+> > > +    description: Max number of additional readings per sample (u16).
 > >
-> > Considering the hierarchical cgroup knobs work, we usually use the
-> > most restrictive limit among the ancestors. I guess it ultimately
-> > depends on how we define "most restrictive". Disabling writeback is
-> > restrictive in the sense that you don't have access to free some
-> > zswap
-> > space to reclaim more memory. OTOH, disabling writeback also means
-> > that your zswapped memory won't go to disk under memory pressure, so
-> > in that sense it would be restrictive to force writeback :)
+> > Could you drop the (u16) which is already part of the $ref'd type ?
+> 
+> Sorry, I forget it.
+> 
 > >
-> > Usually, the "default" is the non-restrictive thing, and then you can
-> > set restrictions that apply to all children (e.g. no limits are set
-> > by
-> > default). Since writeback is enabled by default, it seems like the
-> > restriction would be disabling writeback. Hence, it would make sense
-> > to inherit zswap disabling (i.e. only writeback if all ancestors
-> > allow
-> > it, like this patch does).
+> > [...]
 > >
->
-> Yeah, I thought about the other way around and reached the same
-> conclusion.
-> And there's permission boundary in the mix too - if root disables zswap
-> writeback for its cgroup, the subcgroups, which could possibly be owned
-> by other users, should not be able to reenable this.
+> > > +  ti,x-max:
+> > > +    deprecated: true
+> > > +    $ref: /schemas/types.yaml#/definitions/uint16
+> > > +    description: Maximum value on the X axis (u16).
+> > > +
+> > > +  ti,x-min:
+> >
+> > Is this deprecated too, the same way as x-max above is deprecated ?
+> 
+> I am not sure. I guest x-min and y-min is still useful becasue it may
+> indicate invalidated touch. but x-max and y-max should not usefull because
+> max value should be Vcc.  x-min and y-min help filter out some noise.
 
-Hmm yeah, I think I agree with your and Yosry's reasonings :) It
-doesn't affect our use case AFAICS, and the code looks solid to me,
-so:
+There are standard properties touchscreen-min-x and touchscreen-min-y
+that will be used if present, so I think ti,x-min can also be marked as
+deprecated.
 
-Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+Thanks.
+
+-- 
+Dmitry
 
