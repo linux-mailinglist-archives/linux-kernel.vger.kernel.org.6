@@ -1,166 +1,68 @@
-Return-Path: <linux-kernel+bounces-288080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92AC095335F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:16:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33F1D953386
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:17:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C36591C21089
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:16:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4CDAB20CC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812091A76A2;
-	Thu, 15 Aug 2024 14:14:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364061A705B;
+	Thu, 15 Aug 2024 14:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KVOYGwY/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ECYrY2g+"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC4517C9B6;
-	Thu, 15 Aug 2024 14:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142DE18D64F
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723731258; cv=none; b=gIfeTm0ZjMvqlSAjuWx5S0OSczvRuxSerVn6bWzgPXKpKaM3YINdNU8K97yyXvWsVW8hPZYy+QQlxkxP+87tUeyjhIzGdzFFSsA77Dex9wNrB3C5n3RheueNIepuj5FPq8oE9hYJKntGBhJme+c69nbTzZcX3yr8K0YhD+Hl+hI=
+	t=1723731371; cv=none; b=IiLHYj2aqhgQV6k0xuwfovRS/i9Z8+myWe7oAg2kXu2ovya0wMsCKkFuqGt9Zv6PPs/n4kZuksY/fQnfmSFmO8fS+H/84JUy8R7gPvz4cK8CWO2cdzTiKbLPi0CbNAOxyb9QxpImEmyZSoq+M9kIrQY2y2MyNurJ+O/x9znoZvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723731258; c=relaxed/simple;
-	bh=auBu9+oC83v29ZheKF493q3yi+itL8YaD8SgmjgHmeU=;
+	s=arc-20240116; t=1723731371; c=relaxed/simple;
+	bh=CBbGXwKpWfZtOY3lnfYDdW3hW5Y5Qg6Ws+FAdH/xFo4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nFdpfmYUKrgjFAO5vNFuHAnH9pAcHNlg1yF5+diDFvDyun5oQF9NQplWm8T0qnV8JNTxYa+intwkfINI/Q0ThbRZ9izeFzx4uce3i77rO2USXrlk+4I07sz/OdFAfztyyGlF2zY3yu7RXsXgIMxnMauDYCMJgaa1tLSXdZJ3MaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KVOYGwY/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CB42C32786;
-	Thu, 15 Aug 2024 14:14:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723731258;
-	bh=auBu9+oC83v29ZheKF493q3yi+itL8YaD8SgmjgHmeU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KVOYGwY/YiP2UY21n7UnJgB6VxYfZtItgGIAROlmUPhpGi1vsXCnsIveU1Xx64iIo
-	 oTuOIY6z/HvvDPjoo1TXk5n3JEZni2h5oX93GrTgCuxc8itESEjr2/scSoqPXnIo9i
-	 fctL6A3nLfoeCUa9cuLa+jTuooQ6QM1qgjdPeGiK28bvH1SwFNWFpzlT22ZFHGyV4f
-	 WWCDmAUVeoe2FLqWFoedOf7KHzlUzQXy7hxvf6Lc5Zf1+1SbCY1sX/45GepKnRi8up
-	 LUbuLiezlMEX8cnF4wFu3dgR26fmmaybVNPrUAHqggNoFJIKRPwy88lPQct6+HrQCG
-	 HjsWoDRoIXLSA==
-Date: Thu, 15 Aug 2024 16:14:15 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@kernel.org>
-Cc: Valentin Schneider <vschneid@redhat.com>, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>
-Subject: Re: [PATCH v3 13/25] context_tracking, rcu: Rename
- rcu_dynticks_task*() into rcu_task*()
-Message-ID: <Zr4NN7mZQRQaTyl0@pavilion.home>
-References: <20240724144325.3307148-1-vschneid@redhat.com>
- <20240724144325.3307148-14-vschneid@redhat.com>
- <ZqphRBrI4mlSdER4@localhost.localdomain>
- <20240814120655.GA1412760@neeraj.linux>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pE1ncxJLi9YiLipcLqk+Dgo5LI1pHe1fMjzrvcE12vidgs16E0BJ+OAn7SP4ZQNLongcuo5jHWUcxLSmwJEr/UiJNrWIN870KjY4leJNXKU9ckmnVAfwdmHfd4YnoRIMdIMbdzsnkeap1cv2cKuu/RmFyGaYMygTrQj28026FDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ECYrY2g+; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 15 Aug 2024 10:16:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723731367;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2tYSK8p06bsoRJhHkMdpM1MeiXSBmcTwCM5x9J+HYkw=;
+	b=ECYrY2g+yuAy3gfdijn+s+i2cA/mvWkyyAVM1mDye+m3PxD2pkCcsOj2r7sN4sZTejwn6V
+	VmB5dC4h6ImwRZ0Qmcx2y31vNJ8oiPMH7BJ7GoLGU/1AiINnMEjoZol+sBiz1oVfms9NUM
+	e5hXaBJYVX9Cpm1i1Bz+Vee3D3JNXDA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Li Zetao <lizetao1@huawei.com>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] bcachefs: support iopoll method
+Message-ID: <rqt2hvqaukziy5pzg3v7conihbjwa2icej23qbay3zm5b5kn5s@cvccny7kpz7p>
+References: <20240815142034.1561661-1-lizetao1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240814120655.GA1412760@neeraj.linux>
+In-Reply-To: <20240815142034.1561661-1-lizetao1@huawei.com>
+X-Migadu-Flow: FLOW_OUT
 
-Le Wed, Aug 14, 2024 at 05:36:55PM +0530, Neeraj Upadhyay a écrit :
-> On Wed, Jul 31, 2024 at 06:07:32PM +0200, Frederic Weisbecker wrote:
-> > Le Wed, Jul 24, 2024 at 04:43:13PM +0200, Valentin Schneider a écrit :
-> > > The context_tracking.state RCU_DYNTICKS subvariable has been renamed to
-> > > RCU_WATCHING, and the 'dynticks' prefix can be dropped without losing any
-> > > meaning.
-> > > 
-> > > While at it, flip the suffixes of these helpers. We are not telling
-> > > that we are entering dynticks mode from an RCU-task perspective anymore; we
-> > > are telling that we are exiting RCU-tasks because we are in eqs mode.
-> > > 
-> > > Suggested-by: Frederic Weisbecker <frederic@kernel.org>
-> > > Signed-off-by: Valentin Schneider <vschneid@redhat.com>
-> > > ---
-> > >  kernel/context_tracking.c | 28 ++++++++++++++--------------
-> > >  1 file changed, 14 insertions(+), 14 deletions(-)
-> > > 
-> > > diff --git a/kernel/context_tracking.c b/kernel/context_tracking.c
-> > > index 8262f57a43636..1c16a7336360f 100644
-> > > --- a/kernel/context_tracking.c
-> > > +++ b/kernel/context_tracking.c
-> > > @@ -38,24 +38,24 @@ EXPORT_SYMBOL_GPL(context_tracking);
-> > >  #ifdef CONFIG_CONTEXT_TRACKING_IDLE
-> > >  #define TPS(x)  tracepoint_string(x)
-> > >  
-> > > -/* Record the current task on dyntick-idle entry. */
-> > > -static __always_inline void rcu_dynticks_task_enter(void)
-> > > +/* Record the current task on exiting RCU-tasks (dyntick-idle entry). */
-> > > +static __always_inline void rcu_task_exit(void)
-> > 
-> > So this makes sense.
-> > 
-> > >  {
-> > >  #if defined(CONFIG_TASKS_RCU) && defined(CONFIG_NO_HZ_FULL)
-> > >  	WRITE_ONCE(current->rcu_tasks_idle_cpu, smp_processor_id());
-> > >  #endif /* #if defined(CONFIG_TASKS_RCU) && defined(CONFIG_NO_HZ_FULL) */
-> > >  }
-> > >  
-> > > -/* Record no current task on dyntick-idle exit. */
-> > > -static __always_inline void rcu_dynticks_task_exit(void)
-> > > +/* Record no current task on entering RCU-tasks (dyntick-idle exit). */
-> > > +static __always_inline void rcu_task_enter(void)
-> > 
-> > That too.
-> > 
-> > >  {
-> > >  #if defined(CONFIG_TASKS_RCU) && defined(CONFIG_NO_HZ_FULL)
-> > >  	WRITE_ONCE(current->rcu_tasks_idle_cpu, -1);
-> > >  #endif /* #if defined(CONFIG_TASKS_RCU) && defined(CONFIG_NO_HZ_FULL) */
-> > >  }
-> > >  
-> > > -/* Turn on heavyweight RCU tasks trace readers on idle/user entry. */
-> > > -static __always_inline void rcu_dynticks_task_trace_enter(void)
-> > > +/* Turn on heavyweight RCU tasks trace readers on kernel exit. */
-> > > +static __always_inline void rcu_task_trace_exit(void)
-> > 
-> > But that eventually doesn't, because it's not about not wathing anymore from
-> > an RCU-TASKS-TRACE perspective. It's actually about adding more heavyweight
-> > ordering to track down RCU-TASKS-TRACE read side while traditional RCU is not
-> > watching. Sorry for understanding it that late.
-> > 
-> > Oh well. So a more accurate name here would be rcu_task_trace_heavyweight_enter().
-> > 
-> > >  {
-> > >  #ifdef CONFIG_TASKS_TRACE_RCU
-> > >  	if (IS_ENABLED(CONFIG_TASKS_TRACE_RCU_READ_MB))
-> > > @@ -63,8 +63,8 @@ static __always_inline void rcu_dynticks_task_trace_enter(void)
-> > >  #endif /* #ifdef CONFIG_TASKS_TRACE_RCU */
-> > >  }
-> > >  
-> > > -/* Turn off heavyweight RCU tasks trace readers on idle/user exit. */
-> > > -static __always_inline void rcu_dynticks_task_trace_exit(void)
-> > > +/* Turn off heavyweight RCU tasks trace readers on kernel entry. */
-> > > +static __always_inline void rcu_task_trace_enter(void)
-> > 
-> > And rcu_task_trace_heavyweight_exit().
-> > 
+On Thu, Aug 15, 2024 at 10:20:34PM GMT, Li Zetao wrote:
+> When bcachefs uses io_uring, implement the iopoll method to support
+> IORING_SETUP_IOPOLL.
 > 
-> I have updated it here [1]. Please let me know if something looks
-> incorrect.
-> 
-> 
-> [1]
-> https://git.kernel.org/pub/scm/linux/kernel/git/neeraj.upadhyay/linux-rcu.git/commit/?h=next.14.08.24a&id=cfc22b9f1572b137dd9f36da831dd7b69c9fe352
+> Signed-off-by: Li Zetao <lizetao1@huawei.com>
 
-Looks good!
-
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-
-Thanks!
+tested?
 
