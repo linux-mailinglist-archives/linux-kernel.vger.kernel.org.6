@@ -1,179 +1,128 @@
-Return-Path: <linux-kernel+bounces-288123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1C0D9535EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:44:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B5009535FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73A25282694
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:44:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F18101F21366
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147F31B4C44;
-	Thu, 15 Aug 2024 14:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED561B9B49;
+	Thu, 15 Aug 2024 14:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="e8gEoXIz"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UrBgl2ZH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5A41A4F3B;
-	Thu, 15 Aug 2024 14:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5420319D89D;
+	Thu, 15 Aug 2024 14:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723732939; cv=none; b=TltORHNvzQ0e44F5mziB95pIeNNPlDN2KWXdVlqx6qY3FYQ74A+1/OWlh3rozn8Z5XctWaTQXR3fpfQHXnO7m9J40JkzPYe1DUWqU7x6uThldUDSzDNKzNVpEm2O5/UMe+mQIr6KUj+CtCf9Kfp918TKOwTAZxd+LkO7nYJuwMg=
+	t=1723732973; cv=none; b=Qw4fTnZJmEZKXCwN+GLPou1IdQdtiRBcG0CGbKmXmmp/Fvf6cfsVFd+rpNqaqqxooAZ3y++z8LBegpN8Jf74jbe6bXHOs2U13YVbNN2tgq3Tn/tG6shstYUo/aw0oN9I3eoOXlR8tYvbC02NWiiOwb6DZqZvWZhLoIyw6Kvu+eA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723732939; c=relaxed/simple;
-	bh=t+pO7N5Z6JtmiS6ojDZxc9cP8xXS67WNZzSbC144FPc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Xi+huLliX21bDZ4ooUxX/OUQ/LFVj9KXJPZSJ1e084HBHpFCYZC/ke4kmHsyYdAqw+Z54/BRIMO3wrEGFi+CQNb9lnGlFQR7NXvywxAEeap5FK0GlMw0HU0Kdh1WKnfnu/qeW4/0cCoS4f539pf7LidwebcHGqmgmDcA16M+x/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=e8gEoXIz; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47F2i0E4025516;
-	Thu, 15 Aug 2024 14:42:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	emXGD2ixoz9xo1hqs7NNv/4icoml3oxrGVHnw8YysrA=; b=e8gEoXIzUj9TMddo
-	Q38y2I8lLTeJGo4l3YWEc2rbmwZco93y7K3hieKgMEgBMiHzVJLEF/4H/80agKp4
-	TQGCyrsfFWs7foG0L+kqPVgGv2mLxMJlDxpZ3AY94IiA1aVRZg6qUicjXP2pqLE9
-	DPsj78RoqLhtxnZH1cgWSFEsNFuTDiLQEpN92dHHYy2/CEAK+qjARN/IHQZpc2tM
-	DUG5pwum8NTpw2Lj+1CTu1eeCS7ZsA3PS5U/TkKQ/JsuCcHBpxzzKAWjFhzprDzs
-	Ofi3HAimGrxHnFwHpX6s0DYDmAQgOiGFPdnWaLcQ/IVT6+4Lh7AfmSv3NxbAZcAD
-	ypi9JA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 411957sf0k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Aug 2024 14:42:12 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47FEgAFv020324
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Aug 2024 14:42:10 GMT
-Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 15 Aug
- 2024 07:42:05 -0700
-Message-ID: <82200889-a98d-4815-bc31-f81b15d02513@quicinc.com>
-Date: Thu, 15 Aug 2024 22:42:03 +0800
+	s=arc-20240116; t=1723732973; c=relaxed/simple;
+	bh=bBXh6kYTTgi9MjJkwNqZSkd5ZjNPCu6uClsTZcZBw00=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gV40JTmEvu9Ke24j9PTfMOW1lc6h0IaVnay1e7jPL2cc+0PeKHVH3IgG5ruOLwLakFI2Q/aNZFkTRax1AAr8mRHmTWafTKy0wfjowXEjvb/3PrmUtwxHWIz1BBBh2touDeliYhi6G1gf/nj457CVybDGWQRv+/ft5YGCMawAgkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UrBgl2ZH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98E0BC32786;
+	Thu, 15 Aug 2024 14:42:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723732973;
+	bh=bBXh6kYTTgi9MjJkwNqZSkd5ZjNPCu6uClsTZcZBw00=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UrBgl2ZHr7mefzi+wNxigOZl5d8WLC+stExumTJ+IY72s4ivFNvWEP3hpFiyi2SxZ
+	 jcEyjRj1swk9iHH2azkFjuCHilrOYneLbgBQ0HTz4ZGbe4c+cs45hWKW8fuDftBEHM
+	 i2/FGokcI+aarAer2EA7QGR9IZXA7GqRA0Tu1sumvdp1dszeNkaBvfNFaBZiFEZJCp
+	 iLxvzBlOsKStWUyD0PE0GqPCAhV9gEupfHPNF7+o/CTE3syMOn7ADYCwT3yMoErqOg
+	 Jw+9rw6exhDwc3odftHL0WZASdyAGi9BLYlmpo4f5Uqtd6qseh/UcMHajvREJFdvMZ
+	 IPdsOviboiReA==
+Date: Thu, 15 Aug 2024 15:42:48 +0100
+From: Simon Horman <horms@kernel.org>
+To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, ramon.nordin.rodriguez@ferroamp.se,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	UNGLinuxDriver@microchip.com, Thorsten.Kummermehr@microchip.com
+Subject: Re: [PATCH net-next 5/7] net: phy: microchip_t1s: add support for
+ Microchip's LAN867X Rev.C1
+Message-ID: <20240815144248.GF632411@kernel.org>
+References: <20240812134816.380688-1-Parthiban.Veerasooran@microchip.com>
+ <20240812134816.380688-6-Parthiban.Veerasooran@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/13] media: qcom: camss: Add support for VFE hardware
- version Titan 780
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, <rfoss@kernel.org>,
-        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
-        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>, Yongsheng Li <quic_yon@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-14-quic_depengs@quicinc.com>
- <4b745c1a-33d9-472a-97af-153a2a7c8721@linaro.org>
- <2de0b7a8-b879-49e9-9656-ec86f29ce559@quicinc.com>
- <b0787142-0f85-4616-9895-72e33f21c2da@linaro.org>
-Content-Language: en-US
-From: Depeng Shao <quic_depengs@quicinc.com>
-In-Reply-To: <b0787142-0f85-4616-9895-72e33f21c2da@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 5fnvQgpmZ2cdt8aN5eXx9DA6pgQgeeuE
-X-Proofpoint-ORIG-GUID: 5fnvQgpmZ2cdt8aN5eXx9DA6pgQgeeuE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-15_07,2024-08-15_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- lowpriorityscore=0 mlxlogscore=999 clxscore=1015 suspectscore=0
- impostorscore=0 bulkscore=0 malwarescore=0 spamscore=0 mlxscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408150107
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812134816.380688-6-Parthiban.Veerasooran@microchip.com>
 
-Hi Vladimir,
+On Mon, Aug 12, 2024 at 07:18:14PM +0530, Parthiban Veerasooran wrote:
+> This patch adds support for LAN8670/1/2 Rev.C1 as per the latest
+> configuration note AN1699 released (Revision E (DS60001699F - June 2024))
+> https://www.microchip.com/en-us/application-notes/an1699
+> 
+> Signed-off-by: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
+> ---
+>  drivers/net/phy/Kconfig         |  2 +-
+>  drivers/net/phy/microchip_t1s.c | 68 ++++++++++++++++++++++++++++++++-
+>  2 files changed, 67 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
+> index 68db15d52355..63b45544c191 100644
+> --- a/drivers/net/phy/Kconfig
+> +++ b/drivers/net/phy/Kconfig
+> @@ -282,7 +282,7 @@ config MICREL_PHY
+>  config MICROCHIP_T1S_PHY
+>  	tristate "Microchip 10BASE-T1S Ethernet PHYs"
+>  	help
+> -	  Currently supports the LAN8670/1/2 Rev.B1 and LAN8650/1 Rev.B0/B1
+> +	  Currently supports the LAN8670/1/2 Rev.B1/C1 and LAN8650/1 Rev.B0/B1
+>  	  Internal PHYs.
+>  
+>  config MICROCHIP_PHY
+> diff --git a/drivers/net/phy/microchip_t1s.c b/drivers/net/phy/microchip_t1s.c
+> index d0af02a25d01..62f5ce548c6a 100644
+> --- a/drivers/net/phy/microchip_t1s.c
+> +++ b/drivers/net/phy/microchip_t1s.c
+> @@ -3,7 +3,7 @@
+>   * Driver for Microchip 10BASE-T1S PHYs
+>   *
+>   * Support: Microchip Phys:
+> - *  lan8670/1/2 Rev.B1
+> + *  lan8670/1/2 Rev.B1/C1
+>   *  lan8650/1 Rev.B0/B1 Internal PHYs
+>   */
+>  
+> @@ -12,6 +12,7 @@
+>  #include <linux/phy.h>
+>  
+>  #define PHY_ID_LAN867X_REVB1 0x0007C162
+> +#define PHY_ID_LAN867X_REVC1 0x0007C164
+>  /* Both Rev.B0 and B1 clause 22 PHYID's are same due to B1 chip limitation */
+>  #define PHY_ID_LAN865X_REVB 0x0007C1B3
+>  
+> @@ -243,7 +244,7 @@ static int lan865x_revb_config_init(struct phy_device *phydev)
+>  		if (ret)
+>  			return ret;
+>  
+> -		if (i == 2) {
+> +		if (i == 1) {
+>  			ret = lan865x_setup_cfgparam(phydev, offsets);
+>  			if (ret)
+>  				return ret;
 
-On 8/15/2024 7:20 AM, Vladimir Zapolskiy wrote:
+Hi Parthiban,
 
->>
->>>> +void camss_reg_update(struct camss *camss, int hw_id, int port_id,
->>>> bool is_clear)
->>>
->>>> +{
->>>> +    struct csid_device *csid;
->>>> +
->>>> +    if (hw_id < camss->res->csid_num) {
->>>> +        csid = &(camss->csid[hw_id]);
->>>> +
->>>> +        csid->res->hw_ops->reg_update(csid, port_id, is_clear);
->>>> +    }
->>>> +}
->>>> +
->>>
->>> Please add the new exported function camss_reg_update() in a separate
->>> preceding commit.
+This patch is addressing LAN867X Rev.C1 support.
+But the hunk above appears to update LAN865X Rev.B0/B1 support.
+Is that intentional?
 
->>
->> Thanks for your comments, I will address them in new series.
->>
->> But I have some concern about above comment, you want to add a separate
->> commit for camss_reg_update, maybe camss_buf_done also need to do this,
->> but I guess I will get new comments from Krzysztof if I make a separate
->> change, Krzysztof posted few comments in v3 series, he asked, "must
->> organize your patches in logical junks" and the code must have a user.
->>
->> Please check below comments.
->>
->> https://lore.kernel.org/all/e1b298df-05da-4881- 
->> a628-149a8a625544@kernel.org/
->>
->> https://lore.kernel.org/all/d0f8b72d-4355-43cd-a5f9- 
->> c44aab8147e5@kernel.org/
-> 
-> Krzysztof is absolutely right in his two comments.
-> 
->  From what I see there is a difference between his concerns and mine ones
-> though, Krzysztof points to unused data, which should raise a build time
-> warning, and I asked to make a separate commit for a non-static function,
-> I believe it'll be removed by the linker silently...
-> 
-> The potential runtime logic change introduced by camss_reg_update() in the
-> generic code is not trivial, which opens an option to update/fix it lately
-> referencing a commit from generic domain rather than platform specific one.
-> 
-> If someone for whatever reasons wants to merge a new generic and shared
-> camss_reg_update() function within a the platform specific code/commit,
-> I won't strongly object, let it be merged together then.
-> 
->>
->> Or I don't add reg update and buf done functionality in
->> camss-csid-gen3.c and camss-vfe-780.c firstly, then add them in a later
->> commit.
->>
->> Could you please comment on whether this is acceptable? Please also help
->> to common on if one commit to add them or need two separate commits, one
->> is for reg update and the other one is for buf done.
->>
-> 
-> I would prefer to see two more separate commits within non-platform 
-> specific
-> code, however as I stated above if it causes anyone's concerns, including
-> your own, let it be kept as it is done today. Eventually we do discuss
-> a non-functional change.
-> 
-
-Thanks for the confirmation, even though I add the rup_update and 
-buf_done function in later commits, it is still called in platform 
-specific code(camss-vfe-780.c), so I will keep as it is done today.
-
-Thanks,
-Depeng
-
+...
 
