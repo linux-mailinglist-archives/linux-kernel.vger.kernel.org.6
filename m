@@ -1,231 +1,173 @@
-Return-Path: <linux-kernel+bounces-288411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD63F9539DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:24:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C22389539DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E23C2839C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:24:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A696B23DF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DFB85B1FB;
-	Thu, 15 Aug 2024 18:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000116BB39;
+	Thu, 15 Aug 2024 18:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="uyh4s9pc"
-Received: from CWXP265CU008.outbound.protection.outlook.com (mail-ukwestazon11020118.outbound.protection.outlook.com [52.101.195.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cuw16Ahz"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBC4664C6;
-	Thu, 15 Aug 2024 18:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.195.118
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723746246; cv=fail; b=PHwkmdzup+Yxi1JqpYZQwc8YGEH57wBeH00D/PS9lXiEEHav0D7Doa9t/S4xmjCwwbBgaKFC+Bi5qqx+LT/cmNcJMLPRdJkl4XhlRgekWRBWEUAOdu8ehZ0i1Nu1LK4jsIJwA10h8zpJgiwIQ4DSCoA9Evk/LqLJv9bu5BvE+oc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723746246; c=relaxed/simple;
-	bh=aR148PXGSN71ubmA/kV+zQwnkgBGyfBNAaC6Bh4v61w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=c1OnjoD4z/hPdB9s02DQSzJRuvpkwEja0mRJsZkLVlgrS20ohi7mWZztV8NQoWtU533WRKzFvJpyYPuStSEG5QMZl4cyMlbqGOpJsCjibQ477B0PtYKwD6ib8ItZyMkYcw8CWlq1ylA5ywOZmDgbXo3qU+yKpeOBC8nfQhe4GSs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=uyh4s9pc; arc=fail smtp.client-ip=52.101.195.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NspDaiwdAE26FrHPIbAtPXd2T5xgNZotR+z9jjNj1RKIvSD9V6LAgVxZ3VslJ9aohLCB45YjNXeaA7xWrY1xSj6SO9Ma9v0zhSrje0V/N50HkDQrfblbq+tPskEcHD+g6ZVJ8HPaL3orV/EAmjpWsZM+Di4lRM2IrAv3+R+Byv9YCyzVV5pDgkccESZBpM+7rdu7xO1F+sULp9usPatUyR9KKuW0FrTIWrdnQeo4vNCOVRWC2TP86gmVODG1RM+H3o3BtUO7AVFQ5bU3zGRkHeZFqY6BuOIBFzSWymIb0o2JH74JviUtnABmIun3QFPTe3cMJRYtsy+ouhMl6YtcZQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=v3ktZKm3V9RzrJonM1mdFRdhkHJOp2mhrg+eQLr++5w=;
- b=vjEzuqOhXrtJx59St31VnK7Su8tuyZ/O+QmFyIFERejZIf4cZCI2nlNKtqMEtIq3LAnqXxTiIk3VwjlvlPVQh5VSD6GatfogJWY/GkTeHzveGKlpok6AvJsrkaBNQ4ufOJeqboxmwmo56ot6k1a4e7qJBy7Lu9MnFKVVsNXsj2o8m1hBHYlf4UpA+9Usp42u65p1ASpqXiifJVNylenrRqRi2M+3wxy5VdHS6UwLsuLMmD9ttwD+bs7jyoIRrjwWdkSGCpKNWLVPFnv9MCs2RwRVnkZ/LbMYol29V7UIN3/COpC0iPbShLHjFyV3YOmKkh86Qw+Mp8VLW902UxeQlQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v3ktZKm3V9RzrJonM1mdFRdhkHJOp2mhrg+eQLr++5w=;
- b=uyh4s9pczAFtSEOM0z7+kHht9EgOdgDhukp9FMIsSWxZMrxTZsgBOEJSETCrf65q26vcZMtVoMp2g1tN3Cd1TzgMUf7HBHf/D8g0MzsUK/ohOGCGqefgqByPzhUWvWFT8aLmO0mcVyW1HxmsQw7gF4EdZWk52BiHQGE5b6uYGMM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
- by CWLP265MB6151.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:187::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Thu, 15 Aug
- 2024 18:24:01 +0000
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7%7]) with mapi id 15.20.7875.016; Thu, 15 Aug 2024
- 18:24:01 +0000
-Date: Thu, 15 Aug 2024 19:23:56 +0100
-From: Gary Guo <gary@garyguo.net>
-To: Andreas Hindborg <nmi@metaspace.dk>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Masahiro Yamada
- <masahiroy@kernel.org>, Andreas Hindborg <a.hindborg@samsung.com>, Boqun
- Feng <boqun.feng@gmail.com>, =?UTF-8?B?QmrDtnJu?= Roy Baron
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Alice
- Ryhl <aliceryhl@google.com>, Nathan Chancellor <nathan@kernel.org>, Nicolas
- Schier <nicolas@fjasle.eu>, Sergio =?UTF-8?B?R29uesOhbGV6?= Collado
- <sergio.collado@gmail.com>, rust-for-linux@vger.kernel.org,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] kbuild: rust: split up helpers.c
-Message-ID: <20240815192356.4c88b8b1.gary@garyguo.net>
-In-Reply-To: <20240815103016.2771842-1-nmi@metaspace.dk>
-References: <20240815103016.2771842-1-nmi@metaspace.dk>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0274.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:195::9) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:253::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788345B1E0;
+	Thu, 15 Aug 2024 18:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723746272; cv=none; b=qOZwAHJs/ZuIDzW77R2EFFRfkECEZibrYcQBXPf9a1Rb9TASel6yL1+EM+0LVg/29devfT0gFuD466cVZF+MrmHumPnimhqm6z/ikNL/y8ofB18Th9DZoeuM+ES3HyxLNpAr0S6H3LiiVMQj8NFCdnyYrAduzz903KGywV1stw4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723746272; c=relaxed/simple;
+	bh=HhpX9mFHejliR5elf1NsnfmL/ghUHSWa6TNyQGH0IYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j5ZPp8JCXw4u5StYC7+KQwbgE8aDAU2tsClvGnRLeMDBLP6ONXG8qN09lIXsJCixjVEmiYdFFxxHQJKISV+xonEUipMBP4sbB57Ue8BWltYSJvhuKOwjyb891MV3D2X70X1slNLaZqbwd6L2QQKp3caIcBcOH5NlgRKI0Nnm7Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cuw16Ahz; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-371893dd249so519198f8f.2;
+        Thu, 15 Aug 2024 11:24:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723746269; x=1724351069; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8KTOckrbLosoH+MqatNzZ6gxaYF4DiO7VwZNlqNUG40=;
+        b=Cuw16Ahz6I4pncNyAGEqAg/sFlTTlYBYmwIR4v7LIYq6PPIJLe19JCu57nLG5Infr6
+         HRDcmY71tjaKBx5CGiQgFS09ol+wf2MYp3w/1e1+wHEipw4EVF3nF9zseDA/Xq3m6wyB
+         of3uEwmIhaKi7SSeobFz6kGVltLth5H6QnC5lJs4PzChem2z/Lgd9MitSdlbVhiBrpzg
+         lG/PS1U1K/I3pFSUrXcsIUEpAfydusr4CBWbaimW6lchzuEOB21CMwin/A4JD/YI4CW6
+         wfaYZ7kskz85AG1y1jAdeqQ/ngkjixQiTkvPz1p3RrxJ/W8HkS13ZaGuUqxPfbMyi9Nm
+         wE4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723746269; x=1724351069;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8KTOckrbLosoH+MqatNzZ6gxaYF4DiO7VwZNlqNUG40=;
+        b=Vn9lgFhD0duRw3ktxsuYvU7j7XmiDLFD+r3b4cOhVshOLvaIPuaaToh+KhM0yLRYor
+         eXj9HniRphHdi/Bc3X0pCwO+3Cmw+DbASSI0hEC5fpQVx4QyjMJQriD8UpKxnna34Ohf
+         9j6Fi2cZWnczygRnaBPWuqYSnrnVHCYyf7HCBbIwcxL75i5mmGlmVC6w7+I2Tj/1X2if
+         q1bShGJVckMszUaUiqaJ40QI3k3P8MtabvGRhIuCbrlbDI3alx2yz8GzZtiQUICNPiGH
+         d63QQC2xWXxKR/pF541f/kfs4za/JgqHovWV97arugIrkQEQQ/iCJVyNvywNmcwxAljo
+         pZqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmREJYubFkfOWExDJ2wpyd+vHTc7i1tqKVy6rDRUl2w0ZnVTPylc61UjufHjZnDJG766MJ65qQpJaWs0A/w0uL8uRw+8FkRRzUSTQ42Q3rYUjhFcmMO57pU+2cYTBc+m/yujOSxTPFBLeIPUCJ06Zg8OoA4NV6858ExD7ftjdXyELrAJZb
+X-Gm-Message-State: AOJu0YxYd3Wa9Rw/y17nA2+dc29bKyjhLRw0otvk1HMmd/siCeVrWk+b
+	Ous5TK4yIFOCh6QbtbtrHCVewbP1JpWOiDNeXfB3ITLClTowViomdFrDaCVl
+X-Google-Smtp-Source: AGHT+IGQoj9gJ04NKNoIhlq7hwLmGKYPEgKnWxl/ceBsbuCi0I8Bo3zXwbffCScibD2/t+fV1OTjvQ==
+X-Received: by 2002:adf:cc8c:0:b0:368:633c:a341 with SMTP id ffacd0b85a97d-3719445210fmr202041f8f.22.1723746268336;
+        Thu, 15 Aug 2024 11:24:28 -0700 (PDT)
+Received: from f (cst-prg-76-86.cust.vodafone.cz. [46.135.76.86])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718985a6ddsm2101099f8f.58.2024.08.15.11.24.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 11:24:27 -0700 (PDT)
+Date: Thu, 15 Aug 2024 20:24:15 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, peterz@infradead.org, 
+	oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, willy@infradead.org, 
+	akpm@linux-foundation.org, linux-mm@kvack.org, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH RFC v3 13/13] uprobes: add speculative lockless VMA to
+ inode resolution
+Message-ID: <guxwr4wzs5yt5ajrpwwpjdv6lbjf4dhgmjh7edrbc7lvevnh2o@joquw2jf6s4i>
+References: <20240813042917.506057-1-andrii@kernel.org>
+ <20240813042917.506057-14-andrii@kernel.org>
+ <7byqni7pmnufzjj73eqee2hvpk47tzgwot32gez3lb2u5lucs2@5m7dvjrvtmv2>
+ <CAJuCfpG8hCNjqmttb91yq5kPaSGaYLL1ozkHKqUjD7X3n_60+w@mail.gmail.com>
+ <o46u6b2w4b2ijrh3yzj7rc4c3outqmmtzbgbnzhscfuqsu4i4u@uhv65maza2d5>
+ <CAEf4BzZ6jSFr_75cWQdxZOHzR-MyJS1xUY-TkG0=2A8Z1gP42g@mail.gmail.com>
+ <CAJuCfpGZT+ci0eDfTuLvo-3=jtEfMLYswnDJ0CQHfittou0GZQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|CWLP265MB6151:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3e2c4129-9ec8-4db5-07d1-08dcbd576f6e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?JhkYcUfX5pEKJjS7yI7ljKrGJLC8pISaNypKYznKs3Hok3NHAkVzs2AclKpv?=
- =?us-ascii?Q?2+bdBit9lhoZE8rrWa0/0aE6kdy4L+r1KhObsaXH8dqn3tylslQ8IV6f5ox2?=
- =?us-ascii?Q?uxjZVBtdpsULjLKneTglydT7aCarJ/5Nt/jLy/rpA/32bXabyV/rUTWy3gdF?=
- =?us-ascii?Q?1ZsTiqdh2JSY9ueCe3DAHgEqIb4sTcs3N+YHLZeELOFbF2RN+rbfJp4P40El?=
- =?us-ascii?Q?E9df/+AHb7J/P/0kWhXQxs2xQWBA2JKAhx0ELgJVhHxKwoDekjnFexgSfsXh?=
- =?us-ascii?Q?c8Qg0QbxvrIgMlVU7Rj+5QfR7W4qQsPrWM6Sjhjib8hWIZDHo19WCZZ/+c6D?=
- =?us-ascii?Q?zkwT5421qSxeCosGxE1EsLPy9JOuQv+rUTPNAoBMMPE/1SmZkErGJk2UPI9R?=
- =?us-ascii?Q?juvsYwhgAc4gQ49JhLZviUR+0Iumru63V10hUfbxMYBDlKEqoeqmwR6x66MA?=
- =?us-ascii?Q?eLyCqZwd8knGf2tKU+A0MKqm60lmBt7w31gnFhjHpsmdqSnKBvCRxOSIVBX9?=
- =?us-ascii?Q?CFHo9lQbk0glQwkIqdWQL9dYfn4TBvC3DwInNW5+5dDF2OxtxzAvbbVcF7pa?=
- =?us-ascii?Q?FDamSh24NRT5tbO7H+NvzE3m2bWHzNkqcAaam7Me8IRWr8KtSvkB0V4+SEfC?=
- =?us-ascii?Q?uc+BHTELIQa29SYdCBrHA56P8+FFRzX4B/M+c2cYSr8doJ6kn5wGLVqJUzcF?=
- =?us-ascii?Q?wyOvY5oSY7k4xYf3xB6RfsxC0gbikp5n8wGLdoanwbhHptuGAqj/PBLXgiM7?=
- =?us-ascii?Q?qO13kBIYsRuy10rDaOymqydaC5q3N4JxC8jmfNJTacsLseiDDu00HNP5yvID?=
- =?us-ascii?Q?/oabApUfla+M7dVqC8EJRE6HMdHGwANNHBLQXm+/QW4b440gFLja7IyWndx1?=
- =?us-ascii?Q?ipb6jP1MSRM6kML3ww8H8uoX0VH/eJiGPB9RZIq7kWkKSGeMHlrbQAQqZkIH?=
- =?us-ascii?Q?SCX3ooNUy5n5p53TQ5OHtu8G9L9bQnzcfWrl61AJ20H0iYG3KGz2uOCkkaEa?=
- =?us-ascii?Q?79t1SaFPU+xuQt+App8u2dZmHobDnRVP+XS5KlDrgGxdL6f9QtrKvRS+uItq?=
- =?us-ascii?Q?UVHfbBI/wd70W+0GtUXllUpbMAwUuLcLwcSTL16O1iN3fbCVXvIQzBh3eqc4?=
- =?us-ascii?Q?nqM+mFmzG7Ib+YOSxAh8t6+CQfZKnyVpp/R+Qe6NMuo+Aq4VztR6cM9DWeS6?=
- =?us-ascii?Q?Xfr00FsWnlOYvW4J70X62j43gUJ8Y3DMDPBK3KMapfe3yQyJC5TRBEP2O0vW?=
- =?us-ascii?Q?lzmH3ib82ZSSuEhl78lsvRRzEzwcJawC5hwHb97TGztrzekS8eaN+j1TG3g5?=
- =?us-ascii?Q?q5k=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?H11uJ0L+zD3/IX7aT03T8h+1wnpVq0dnBpOotMofHc4HDxoudxm5RfITy9HC?=
- =?us-ascii?Q?BNnMy12xapVhneTSldXogxpNTAUR6Wo/uhqbMrhwnTwN8hE4BO8MnUT1dZVl?=
- =?us-ascii?Q?F5Ib/2jxGccqd6Yq6B05wc1647N+K3SYU1bhYX/5MMKjahGrM7EjRH7Mwpcq?=
- =?us-ascii?Q?orS/d538e2uE6JM7+oyeoDwIezJdf9edCaaP0+W5LoljLe6Wqe0O4+T7fZxb?=
- =?us-ascii?Q?iP8V6m5J9gawmg31OMVEMJu2PA4CkNpbiQlF3o/bI0bB6LdeeES5w9dfo1IP?=
- =?us-ascii?Q?cI6+4BnksRmicwVpSAtkncVwm+D0Vky28F7Sqe7/E2YJCwiU5odi1p5KNuSH?=
- =?us-ascii?Q?wZGYLOSEjIketICnPgQMbqbOtgr6sfA3bgSvXWfOPH0wYAryf1Q0bbiosf4K?=
- =?us-ascii?Q?rzAjIdRLelUA1gaGFtBejjivW8gud2MBME00AfvhXQlg6CRn35fM6Xpjm92m?=
- =?us-ascii?Q?wTBreV95sx7jXMX2Z1bBxH+YRBf3xwtSWSArDPX17lOBXubILdetc4gH++pd?=
- =?us-ascii?Q?Jg6TXfekzHqtivlcNFlhmPTZzPqVUIVAalK4z8DnRLLRHfOGVOc8DXc4jv4p?=
- =?us-ascii?Q?KpLMV+EAU2awkG8+Sby7c4bXBBH+W5G6cfTbknZcN0jiqHprPxMtFZkCXT22?=
- =?us-ascii?Q?9eCFNxilVEw/RwEIG0/5n4lXURcu1+WHkFYyJmUFD1vRFG1Yy2BNdP7x/LBH?=
- =?us-ascii?Q?Zn1bz+zELAvZcA6GjFmxkUJFxgvZuPm2SqQ4KeKQqcg2i6sPNhmnq3iTwsri?=
- =?us-ascii?Q?EfA5svg+I4H4zLCnstVOy2boa9aYYx7skwe5tcH8b0MEJ9G8odKAab+P1cPn?=
- =?us-ascii?Q?XeWN1f1QDiN7oAaSxPHRXl5SxSRVwq6KT7cn4oNjU64PZHuqncjodTRaOeu1?=
- =?us-ascii?Q?PAWBVqjeimARt5x4rkSoZRQ1LbHW//R/SrfiE+hte90v7gb0Iiq2JuzbcEUb?=
- =?us-ascii?Q?SmSn8RpEJq+xA6ySdV+YXXOCmOvI/4cukbn8onFKfjfxLoQ7lych7YJqYIBV?=
- =?us-ascii?Q?BY+L2MIhzNu489BezAThOfmkArm1CUInZgBTzj+dFXTL7oggJ7biOARbPKjl?=
- =?us-ascii?Q?JrOq3BXRZm70WOCboRwVoQ2vV9V0dsBlLqJSnL7iYLgSui0ADvC5v6rqTN41?=
- =?us-ascii?Q?oemwCCogEzl+ztIXdvMfy9pCoP+Fmk3+2PNqLZPM6gnrMm8lsIznD+XxtkI1?=
- =?us-ascii?Q?lQhsJ2cpB6PZQ+aP3NQEHXgNXv/elmn3kc3yHZPGk1hqx2co8FTtdJOQCp/s?=
- =?us-ascii?Q?iRbYmijUcQTjkzMuD+4thcbl967gdfcOy1wiFBJpwa44cpgRUFKdonG/LH0/?=
- =?us-ascii?Q?2Wf9PINW0cgBTWFIBvkOJLZXRm7QIM29ahWvHWcKPmbjZ0EvaFt5LM3/QHIw?=
- =?us-ascii?Q?Nb7joOIvQrpWtVQNUgfT8A7WXiwHIxEwk+T6vsA6+2g4GdTfNYQiqV8weHH+?=
- =?us-ascii?Q?kGKzMBPAvInIYSG1tuinP71l3P+rO6V0Vo8qg0vlUSy2/GJeIGRCMMfs1D63?=
- =?us-ascii?Q?IFBRV8356SUsb3vdfbRFskPfjMQnn6889mp9UeqviNdDPecsTsSN0oe3EZay?=
- =?us-ascii?Q?oLWRdFk6eRgbdFH35t1M+sZWbjkR0vvkItNZQGdr?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e2c4129-9ec8-4db5-07d1-08dcbd576f6e
-X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2024 18:24:01.0589
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BccVSlw1G6G4vpr8LNA4xhfsG3cN+15cEXHnHKfPEPz/WzPZ0be8Z0PHfr655S8/dp3dA05liKYHRh422jiMDQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWLP265MB6151
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAJuCfpGZT+ci0eDfTuLvo-3=jtEfMLYswnDJ0CQHfittou0GZQ@mail.gmail.com>
 
-On Thu, 15 Aug 2024 10:30:26 +0000
-Andreas Hindborg <nmi@metaspace.dk> wrote:
+On Thu, Aug 15, 2024 at 10:45:45AM -0700, Suren Baghdasaryan wrote:
+> >From all the above, my understanding of your objection is that
+> checking mmap_lock during our speculation is too coarse-grained and
+> you would prefer to use the VMA seq counter to check that the VMA we
+> are working on is unchanged. I agree, that would be ideal. I had a
+> quick chat with Jann about this and the conclusion we came to is that
+> we would need to add an additional smp_wmb() barrier inside
+> vma_start_write() and a smp_rmb() in the speculation code:
+> 
+> static inline void vma_start_write(struct vm_area_struct *vma)
+> {
+>         int mm_lock_seq;
+> 
+>         if (__is_vma_write_locked(vma, &mm_lock_seq))
+>                 return;
+> 
+>         down_write(&vma->vm_lock->lock);
+>         /*
+>          * We should use WRITE_ONCE() here because we can have concurrent reads
+>          * from the early lockless pessimistic check in vma_start_read().
+>          * We don't really care about the correctness of that early check, but
+>          * we should use WRITE_ONCE() for cleanliness and to keep KCSAN happy.
+>          */
+>         WRITE_ONCE(vma->vm_lock_seq, mm_lock_seq);
+> +        smp_wmb();
+>         up_write(&vma->vm_lock->lock);
+> }
+> 
+> Note: up_write(&vma->vm_lock->lock) in the vma_start_write() is not
+> enough because it's one-way permeable (it's a "RELEASE operation") and
+> later vma->vm_file store (or any other VMA modification) can move
+> before our vma->vm_lock_seq store.
+> 
+> This makes vma_start_write() heavier but again, it's write-locking, so
+> should not be considered a fast path.
+> With this change we can use the code suggested by Andrii in
+> https://lore.kernel.org/all/CAEf4BzZeLg0WsYw2M7KFy0+APrPaPVBY7FbawB9vjcA2+6k69Q@mail.gmail.com/
+> with an additional smp_rmb():
+> 
+> rcu_read_lock()
+> vma = find_vma(...)
+> if (!vma) /* bail */
+> 
+> vm_lock_seq = smp_load_acquire(&vma->vm_lock_seq);
+> mm_lock_seq = smp_load_acquire(&vma->mm->mm_lock_seq);
+> /* I think vm_lock has to be acquired first to avoid the race */
+> if (mm_lock_seq == vm_lock_seq)
+>         /* bail, vma is write-locked */
+> ... perform uprobe lookup logic based on vma->vm_file->f_inode ...
+> smp_rmb();
+> if (vma->vm_lock_seq != vm_lock_seq)
+>         /* bail, VMA might have changed */
+> 
+> The smp_rmb() is needed so that vma->vm_lock_seq load does not get
+> reordered and moved up before speculation.
+> 
+> I'm CC'ing Jann since he understands memory barriers way better than
+> me and will keep me honest.
+> 
 
-> From: Andreas Hindborg <a.hindborg@samsung.com>
-> 
-> This patch splits up the rust helpers C file. When rebasing patch sets on
-> upstream linux, merge conflicts in helpers.c is common and time consuming
-> [1]. Thus, split the file so that each kernel component can live in a
-> separate file.
-> 
-> This patch lists helper files explicitly and thus conflicts in the file
-> list is still likely. However, they should be more simple to resolve than
-> the conflicts usually seen in helpers.c.
-> 
-> Link: https://rust-for-linux.zulipchat.com/#narrow/stream/288089-General/topic/Splitting.20up.20helpers.2Ec/near/426694012 [1]
-> Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
+So I briefly noted that maybe down_read on the vma would do it, but per
+Andrii parallel lookups on the same vma on multiple CPUs are expected,
+which whacks that out.
 
-Thanks, the include approach indeed looks cleaner.
+When I initially mentioned per-vma sequence counters I blindly assumed
+they worked the usual way. I don't believe any fancy rework here is
+warranted especially given that the per-mm counter thing is expected to
+have other uses.
 
-Reviewed-by: Gary Guo <gary@garyguo.net>
+However, chances are decent this can still be worked out with per-vma
+granualarity all while avoiding any stores on lookup and without
+invasive (or complicated) changes. The lockless uprobe code claims to
+guarantee only false negatives and the miss always falls back to the
+mmap semaphore lookup. There may be something here, I'm going to chew on
+it.
 
-> 
-> ---
-> 
-> Changes since v2 [2]:
-> - Rebase on 6.11-rc3.
-> - Use `cpp` instead of Makefile scripting to concatenate files.
-> 
-> Link:
-> https://lore.kernel.org/rust-for-linux/20240507210818.672517-1-ojeda@kernel.org/ [2]
-> ---
->  rust/Makefile               |   6 +-
->  rust/helpers.c              | 239 ------------------------------------
->  rust/helpers/README.md      |  17 +++
->  rust/helpers/blk.c          |  16 +++
->  rust/helpers/bug.c          |   9 ++
->  rust/helpers/build_assert.c |  25 ++++
->  rust/helpers/build_bug.c    |  10 ++
->  rust/helpers/err.c          |  22 ++++
->  rust/helpers/helpers.c      |  18 +++
->  rust/helpers/kunit.c        |  10 ++
->  rust/helpers/mutex.c        |  10 ++
->  rust/helpers/page.c         |  24 ++++
->  rust/helpers/refcount.c     |  22 ++++
->  rust/helpers/signal.c       |  10 ++
->  rust/helpers/slab.c         |  10 ++
->  rust/helpers/spinlock.c     |  27 ++++
->  rust/helpers/task.c         |  22 ++++
->  rust/helpers/uaccess.c      |  17 +++
->  rust/helpers/wait.c         |  10 ++
->  rust/helpers/workqueue.c    |  16 +++
->  20 files changed, 298 insertions(+), 242 deletions(-)
->  delete mode 100644 rust/helpers.c
->  create mode 100644 rust/helpers/README.md
->  create mode 100644 rust/helpers/blk.c
->  create mode 100644 rust/helpers/bug.c
->  create mode 100644 rust/helpers/build_assert.c
->  create mode 100644 rust/helpers/build_bug.c
->  create mode 100644 rust/helpers/err.c
->  create mode 100644 rust/helpers/helpers.c
->  create mode 100644 rust/helpers/kunit.c
->  create mode 100644 rust/helpers/mutex.c
->  create mode 100644 rust/helpers/page.c
->  create mode 100644 rust/helpers/refcount.c
->  create mode 100644 rust/helpers/signal.c
->  create mode 100644 rust/helpers/slab.c
->  create mode 100644 rust/helpers/spinlock.c
->  create mode 100644 rust/helpers/task.c
->  create mode 100644 rust/helpers/uaccess.c
->  create mode 100644 rust/helpers/wait.c
->  create mode 100644 rust/helpers/workqueue.c
+That said, thank you both for writeup so far.
 
