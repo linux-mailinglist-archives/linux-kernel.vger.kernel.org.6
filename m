@@ -1,54 +1,76 @@
-Return-Path: <linux-kernel+bounces-287640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA6C0952A45
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:00:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F04CE952AAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE2F51C20F8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:00:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A23B282776
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C1A199398;
-	Thu, 15 Aug 2024 07:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B94B1A00FE;
+	Thu, 15 Aug 2024 08:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="s3B6z3IO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ry/IzBCg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C901EB31;
-	Thu, 15 Aug 2024 07:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AFD719DF92;
+	Thu, 15 Aug 2024 08:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723708789; cv=none; b=pR8FLvITRI8mqcTpE/AmL1HzMf+QEnnszkGCfizpjEPB/2rqbOEP0eZ8bYCLltwwMhHL0IXf9xgAYzeYKHZJ2hCAA9PhWQ5pVnKGBl7/5HgJ7unnOxjnuhUOcHE01/DqypwjjSMERcA68o06FV8qgCONPJUHRssQKP8LTLxMfv0=
+	t=1723708903; cv=none; b=sxLFKm0KRen7AbqXAmKp/9v+c0DsYzqljjmqKmXKVnkW7tNfta5XkZU2hb2Z8tCPutvNxhnR7rHwdLm4AKvVyluq0L4vWUuw8xc3WkjM4T4Dq1vR++Liq+onoVL6tSxPHNTMZ1MSOEgrtR2dv07j54IjTzryPVRVUx+j6fQZeGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723708789; c=relaxed/simple;
-	bh=Zod0gbsi9YzsV+5+kT02BUtMJKBboJ3kJnWsCc2wn3g=;
+	s=arc-20240116; t=1723708903; c=relaxed/simple;
+	bh=L+iIkWaROx53+mbR/KlFrGWriCKk7KswEX0BCz+zJXk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XuiNrlOtegGZgCanGz0r95uCfz8fJdwzOF23sKHEsfoyyS0VRBsOblLAKOD31+QsBbjGVaX5h0PkD4VI9BSosV9TLvfmEnPCDIsF6rGULBTFYZCMhyugFDlZc/RCa4DxRz3h396/Y5Q/TwxdWQGDUKY6C3gjc6CHZh8Qs724rU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=s3B6z3IO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A74A6C32786;
-	Thu, 15 Aug 2024 07:59:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723708789;
-	bh=Zod0gbsi9YzsV+5+kT02BUtMJKBboJ3kJnWsCc2wn3g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s3B6z3IOyBjkUzRYQ6V2qwyhaKEBSs1nUDqThOEasMyXrkFHKxE2hArjmUBhSzMpc
-	 O2/tF6VjbgkU9lIXCbx2Brtq1Wwx3xJBzNE4jk48nHYEOYbg5g7cBZamndgALMgMjn
-	 qKdujhaOfOsU0jIVtE0zC+uyfNu0bbs7o/RJof+0=
-Date: Thu, 15 Aug 2024 09:59:45 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Abhishek Tamboli <abhishektamboli9@gmail.com>
-Cc: dan.scally@ideasonboard.com, laurent.pinchart@ideasonboard.com,
-	dan.carpenter@linaro.org, linux-usb@vger.kernel.org,
-	skhan@linuxfoundation.org, rbmarliere@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] usb: gadget: uvc: Fix ERR_PTR dereference in
- uvc_v4l2.c
-Message-ID: <2024081536-unfrozen-childless-9139@gregkh>
-References: <20240815071416.585559-1-abhishektamboli9@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pgjaFERcxm0cwVsx0vfxnFgUT4EpavSn72lDY7M5r6VYeAcjAN0qwBfhC4X08TRgCCMuEMZyNPnyCKmhwY8cQWj7FuTPoneenpnm9WChmsoP7EvTaWHPWznELVcWrZoDHLYM31juPsNe9pEUKy52GXS3ywfYMIeRqrQx0AyUg9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ry/IzBCg; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723708902; x=1755244902;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=L+iIkWaROx53+mbR/KlFrGWriCKk7KswEX0BCz+zJXk=;
+  b=Ry/IzBCgswXC2xhj9JNbB35qu8CCzawKwohbRvT7qsN3SXRX6wQ/ErMl
+   kwjYmOHSb7eLejswMz34zdKgBzgynUoKihSdDo3mjod0M1RsfPuKIu9Pd
+   q1ju6vgZKUHNW8KZp3MdBXqZGyAxzzAuCRM+jr/GzCq3dbMlVTd0n9XxR
+   sTxSQxfGbbhmkcN4mch2lUGZ4OOj9pm8IHBbf7wLR4UWnO1IbJcF5aj4o
+   RWgIwnsQ5FcblnRKNQlt4EfYeNWRp10ERz1SQfQD8Re7ir64qeoAcLKRI
+   pTRd/kgFBsY5YfIjLXBeq8p77lbgkkHAJ1OtjLLafSD8q//2nKFk0En17
+   g==;
+X-CSE-ConnectionGUID: A8s0lY62S3Crzlp0fbodVQ==
+X-CSE-MsgGUID: d4G1Au7LTdm0Vo6EpOt0wQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="22090508"
+X-IronPort-AV: E=Sophos;i="6.10,148,1719903600"; 
+   d="scan'208";a="22090508"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 01:01:41 -0700
+X-CSE-ConnectionGUID: At7ErGaiRciMc6LYfxJrhw==
+X-CSE-MsgGUID: QNiy1+u9RbyVeLD72TnEnA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,148,1719903600"; 
+   d="scan'208";a="63438239"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa003.fm.intel.com with ESMTP; 15 Aug 2024 01:01:38 -0700
+Date: Thu, 15 Aug 2024 15:59:26 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org,
+	kai.huang@intel.com, isaku.yamahata@gmail.com,
+	tony.lindgren@linux.intel.com, xiaoyao.li@intel.com,
+	linux-kernel@vger.kernel.org,
+	Isaku Yamahata <isaku.yamahata@intel.com>,
+	Binbin Wu <binbin.wu@linux.intel.com>
+Subject: Re: [PATCH 09/25] KVM: TDX: Get system-wide info about TDX module on
+ initialization
+Message-ID: <Zr21XioOyi0CZ+FV@yilunxu-OptiPlex-7050>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-10-rick.p.edgecombe@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,109 +79,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240815071416.585559-1-abhishektamboli9@gmail.com>
+In-Reply-To: <20240812224820.34826-10-rick.p.edgecombe@intel.com>
 
-On Thu, Aug 15, 2024 at 12:44:16PM +0530, Abhishek Tamboli wrote:
-> Fix potential dereferencing of ERR_PTR() in find_format_by_pix()
-> and uvc_v4l2_enum_format().
-> 
-> Fix the following smatch errors:
-> 
-> drivers/usb/gadget/function/uvc_v4l2.c:124 find_format_by_pix()
-> error: 'fmtdesc' dereferencing possible ERR_PTR()
-> 
-> drivers/usb/gadget/function/uvc_v4l2.c:392 uvc_v4l2_enum_format()
-> error: 'fmtdesc' dereferencing possible ERR_PTR()
-> 
-> Also, fix similar issue in uvc_v4l2_try_format() for potential
-> dereferencing of ERR_PTR().
-> 
-> Fixes: 588b9e85609b ("usb: gadget: uvc: add v4l2 enumeration api calls")
-> Fixes: e219a712bc06 ("usb: gadget: uvc: add v4l2 try_format api call")
-> Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
-> ---
-> Changes in v2:
-> - Add check for dereferencing of ERR_PTR() in uvc_v4l2_try_format()
-> 
->  drivers/usb/gadget/function/uvc_v4l2.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/gadget/function/uvc_v4l2.c b/drivers/usb/gadget/function/uvc_v4l2.c
-> index a024aecb76dc..8bb88c864b60 100644
-> --- a/drivers/usb/gadget/function/uvc_v4l2.c
-> +++ b/drivers/usb/gadget/function/uvc_v4l2.c
-> @@ -121,6 +121,9 @@ static struct uvcg_format *find_format_by_pix(struct uvc_device *uvc,
->  	list_for_each_entry(format, &uvc->header->formats, entry) {
->  		const struct uvc_format_desc *fmtdesc = to_uvc_format(format->fmt);
-> 
-> +		if (IS_ERR(fmtdesc))
-> +			continue;
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index de14e80d8f3a..90b44ebaf864 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -3,6 +3,7 @@
+>  #include <asm/tdx.h>
+>  #include "capabilities.h"
+>  #include "x86_ops.h"
+> +#include "mmu.h"
+
+Is the header file still needed?
+
+>  #include "tdx.h"
+>  
+>  #undef pr_fmt
+> @@ -30,6 +31,72 @@ static void __used tdx_guest_keyid_free(int keyid)
+>  	ida_free(&tdx_guest_keyid_pool, keyid);
+>  }
+>  
+> +static int tdx_get_capabilities(struct kvm_tdx_cmd *cmd)
+> +{
+> +	const struct tdx_sysinfo_td_conf *td_conf = &tdx_sysinfo->td_conf;
+> +	struct kvm_tdx_capabilities __user *user_caps;
+> +	struct kvm_tdx_capabilities *caps = NULL;
+> +	int i, ret = 0;
 > +
->  		if (fmtdesc->fcc == pixelformat) {
->  			uformat = format->fmt;
->  			break;
-> @@ -240,6 +243,7 @@ uvc_v4l2_try_format(struct file *file, void *fh, struct v4l2_format *fmt)
->  	struct uvc_video *video = &uvc->video;
->  	struct uvcg_format *uformat;
->  	struct uvcg_frame *uframe;
-> +	const struct uvc_format_desc *fmtdesc;
->  	u8 *fcc;
-> 
->  	if (fmt->type != video->queue.queue.type)
-> @@ -277,7 +281,10 @@ uvc_v4l2_try_format(struct file *file, void *fh, struct v4l2_format *fmt)
->  		fmt->fmt.pix.height = uframe->frame.w_height;
->  		fmt->fmt.pix.bytesperline = uvc_v4l2_get_bytesperline(uformat, uframe);
->  		fmt->fmt.pix.sizeimage = uvc_get_frame_size(uformat, uframe);
-> -		fmt->fmt.pix.pixelformat = to_uvc_format(uformat)->fcc;
-> +		fmtdesc = to_uvc_format(uformat);
-> +		if (IS_ERR(fmtdesc))
-> +			return -EINVAL;
-> +		fmt->fmt.pix.pixelformat = fmtdesc->fcc;
->  	}
->  	fmt->fmt.pix.field = V4L2_FIELD_NONE;
->  	fmt->fmt.pix.colorspace = V4L2_COLORSPACE_SRGB;
-> @@ -389,6 +396,9 @@ uvc_v4l2_enum_format(struct file *file, void *fh, struct v4l2_fmtdesc *f)
->  		return -EINVAL;
-> 
->  	fmtdesc = to_uvc_format(uformat);
-> +	if (IS_ERR(fmtdesc))
+> +	/* flags is reserved for future use */
+> +	if (cmd->flags)
 > +		return -EINVAL;
 > +
->  	f->pixelformat = fmtdesc->fcc;
-> 
->  	return 0;
-> --
-> 2.34.1
-> 
-> 
+> +	caps = kmalloc(sizeof(*caps), GFP_KERNEL);
+> +	if (!caps)
+> +		return -ENOMEM;
+> +
+> +	user_caps = u64_to_user_ptr(cmd->data);
+> +	if (copy_from_user(caps, user_caps, sizeof(*caps))) {
+> +		ret = -EFAULT;
+> +		goto out;
+> +	}
+> +
+> +	if (caps->nr_cpuid_configs < td_conf->num_cpuid_config) {
+> +		ret = -E2BIG;
 
-Hi,
+How about output the correct num_cpuid_config to userspace as a hint,
+to avoid user blindly retries.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+> +		goto out;
+> +	}
+> +
+> +	*caps = (struct kvm_tdx_capabilities) {
+> +		.attrs_fixed0 = td_conf->attributes_fixed0,
+> +		.attrs_fixed1 = td_conf->attributes_fixed1,
+> +		.xfam_fixed0 = td_conf->xfam_fixed0,
+> +		.xfam_fixed1 = td_conf->xfam_fixed1,
+> +		.supported_gpaw = TDX_CAP_GPAW_48 |
+> +		((kvm_host.maxphyaddr >= 52 &&
+> +		  cpu_has_vmx_ept_5levels()) ? TDX_CAP_GPAW_52 : 0),
+> +		.nr_cpuid_configs = td_conf->num_cpuid_config,
+> +		.padding = 0,
+> +	};
+> +
+> +	if (copy_to_user(user_caps, caps, sizeof(*caps))) {
+> +		ret = -EFAULT;
+> +		goto out;
+> +	}
+> +
+> +	for (i = 0; i < td_conf->num_cpuid_config; i++) {
+> +		struct kvm_tdx_cpuid_config cpuid_config = {
+> +			.leaf = (u32)td_conf->cpuid_config_leaves[i],
+> +			.sub_leaf = td_conf->cpuid_config_leaves[i] >> 32,
+> +			.eax = (u32)td_conf->cpuid_config_values[i].eax_ebx,
+> +			.ebx = td_conf->cpuid_config_values[i].eax_ebx >> 32,
+> +			.ecx = (u32)td_conf->cpuid_config_values[i].ecx_edx,
+> +			.edx = td_conf->cpuid_config_values[i].ecx_edx >> 32,
+> +		};
+> +
+> +		if (copy_to_user(&(user_caps->cpuid_configs[i]), &cpuid_config,
+                                  ^                           ^
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+I think the brackets could be removed.
 
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
+> +					sizeof(struct kvm_tdx_cpuid_config))) {
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
+sizeof(cpuid_config) could be better.
 
-thanks,
-
-greg k-h's patch email bot
+Thanks,
+Yilun
 
