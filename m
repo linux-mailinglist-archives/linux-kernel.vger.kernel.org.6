@@ -1,329 +1,207 @@
-Return-Path: <linux-kernel+bounces-287371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6B2B952715
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:37:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AE8D952701
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22E05B2301C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:37:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A99081F229A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BE74DA13;
-	Thu, 15 Aug 2024 00:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A2EDF42;
+	Thu, 15 Aug 2024 00:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hpfTQvsD"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L/DnNENI"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCBC343AB4
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 00:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C428F62
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 00:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723682085; cv=none; b=of8s/Qt9f6epclGsdKzO42bxodHkaTmjjf3lTP8MVvAOG049ppSlQEB0quNVm2tDVYHt0EQnVSUHbSn5ig5TcC4cQYUvr5h9RS4sIJ2zZnpbo0zjiwNrWmChoAtFXbolBC3Z0/MgyIqTllzEQceUW2PGQRAqHDLtdzLw7FEeTss=
+	t=1723682068; cv=none; b=iQZV4qpO/iwsWe8PxXLbzlg3aofjPPtLqPRUtnXBSm8NRstAtBnjvDPbmo+wv+hkyqTRIRvAeBWhZbUud6cn+zD2MAXzaJBnhY3D5+lNAquEYKXsidrYnTrkSU2YKtSEojK3QlhPXyFuHvbgtdIoRy2RPOMsUkiIATbcnHfFjg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723682085; c=relaxed/simple;
-	bh=cnou3RaHYgs9uNVMimdkYBuUV/fum7WzcYAeoVvS/us=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ag1jhtMK9amFCdUGdzKo8QhVEkjo0ifwDVLlGE0NbFrbfDBsH8p1X6IIG6fDu2am2WbFqm/rabpdKIanb/x5ti8NNRjmOUOxVlSVFRFi7vDF52LtV/6tvCIh1NWuXDA9rWvgaLzAVPYUUux8SwHFY8MyE4ZgiuInRimF2qdcb+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hpfTQvsD; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-201ee6b084bso4004485ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:34:43 -0700 (PDT)
+	s=arc-20240116; t=1723682068; c=relaxed/simple;
+	bh=VytSzQob+eJH5p5v4nuk6Tb4UlSJyQPTWnXVa9f7qHA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tF8IhsPs9wxlGtUdGOwBDOsteUaRTmN42zPUZozrF/oVgJnKEDPfwc6deRJax+C8xntXbsPuUvtRYEaY6GCiXW1vZrlPSlSHxD/14FG7OnlbzxqIq55QjkpGLuGJRjN1F20hSaT1t2CrSfKxLoTZRoXaHiqRLyuGH3o8svFS4u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L/DnNENI; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-429c4a4c6a8so2188245e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:34:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723682083; x=1724286883; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Llrpv/bhvM+ILeynT8xxMAhRB4gmjRWr+CKfaVkSb14=;
-        b=hpfTQvsDg3TYvE8f6itsv/fWCqocFfuRNyN3p35cutCaU4OU7ijCHZIrR2OpQftVvm
-         H0JEyt0Yglkjj3LTlEhT+owOUxBWW4Zq7ozdxZBHj9T71oiZM5hgJGj+SHB7WwjK0Pcq
-         /Ol0ncn91qkle/9kEWqNyQxApatKaxxURe4sE=
+        d=gmail.com; s=20230601; t=1723682065; x=1724286865; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GYBBp8MdgJpDzmzKWf0FPivxU2t9lT+77YiFk2ooOxQ=;
+        b=L/DnNENIwaF87Q16E+4ti1rRZRBLBj/NtyLCSvf3wRwKsCQIuaF0RKswlLv4akfjyq
+         fEwf2xvvFR153BkVL8IOcQsFDDCHOU/TUH6DE6mlRuLrDPT2iQKickRVIKoLJBC+b+kK
+         yOTHQHOUlJQ2TqVA9nrgja8/8uJv4jQNnX9pVj4bnDVqd8ELFAsKTocZVPrKOoMg60XL
+         LxbJqIRjrtYFOXtOFSHK+YbnrGhZs7Sva53dYbMyxghXlJHiZ6kOP8JiUpJ2ckMuR9D8
+         WxyIHnBqNq6Gn9a0PUlr989sRK5KdbVNZVdqjEgMep1B7GgDtMwkZFQTtB51DggmXfDZ
+         35Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723682083; x=1724286883;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Llrpv/bhvM+ILeynT8xxMAhRB4gmjRWr+CKfaVkSb14=;
-        b=iMCDWQwbvuIXPw+0rRArXXSBeG1HIj2KCAoxJLtailtsw99A/qSyAgrF/fpkFnTLFo
-         9FlDfSlNBWmwBPbXru2TVKEQ/eGUQVUWJimH3moOik8wU0hBLQukvYzOS+ljyTwpurrF
-         ZkdyAejWyZbG0qrsWzL/PaHnkj7Vq/M5t+DXM9vzhBmc85A6vZSZztR4IqKfqMpce/ss
-         rl+FQPKSoB5NZ2oX5cCp7Huzj6aHy9z+45GkcwUdVc5T7k5kQSyfQhrH4yndl0YVH79L
-         oQuDw//Z1xHFC2UiMDZxJzrJdRIn/qWBxfMzFqznx92XT795C1dj2/jLegougACaJE0M
-         1xHA==
-X-Gm-Message-State: AOJu0Yzr0W+zXHwY6HzK8wytWKhBFh8XHfmMzKXhkSkU7YVzMHFOumXg
-	gLesc1FBvcgpHliua0feGT6WCAEtXxwMokCPlW0eu9SElNLkislwNiQ62bcYMg==
-X-Google-Smtp-Source: AGHT+IEVlM5ZgWwPjr8Cf8G8BgFV3d3kS53MUapqW/O1uSuFqkLJw8H1IVUD3jIv722S8xs6osc3hw==
-X-Received: by 2002:a17:903:18a:b0:1fa:2b89:f549 with SMTP id d9443c01a7336-201d638d77dmr64360645ad.10.1723682083238;
-        Wed, 14 Aug 2024 17:34:43 -0700 (PDT)
-Received: from localhost (210.73.125.34.bc.googleusercontent.com. [34.125.73.210])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-201f03751e0sm1992385ad.177.2024.08.14.17.34.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 17:34:42 -0700 (PDT)
-From: Stephen Boyd <swboyd@chromium.org>
-To: chrome-platform@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Pin-yen Lin <treapking@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Benson Leung <bleung@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	Guenter Roeck <groeck@chromium.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Lee Jones <lee@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Prashant Malani <pmalani@chromium.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tzung-Bi Shih <tzungbi@kernel.org>
-Subject: [PATCH v2 11/11] platform/chrome: cros_ec_typec: Handle lack of HPD information
-Date: Wed, 14 Aug 2024 17:34:16 -0700
-Message-ID: <20240815003417.1175506-12-swboyd@chromium.org>
-X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
-In-Reply-To: <20240815003417.1175506-1-swboyd@chromium.org>
-References: <20240815003417.1175506-1-swboyd@chromium.org>
+        d=1e100.net; s=20230601; t=1723682065; x=1724286865;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GYBBp8MdgJpDzmzKWf0FPivxU2t9lT+77YiFk2ooOxQ=;
+        b=JHDgMpv38szfIAw8yoG740Km1Y/VCh6ywk77T1Fx14sNQcsoqAT1U9ZoWf2IsTUYNc
+         JUvgraWfCKKL4FapqLpTJRPnegF2OaixHHHcByzJhhbFjU8X32dkru9GLH6qzcrgqJFn
+         ccBgK7IkTkHtEa9CG463SbzUgUFpekDFxB+vaiZlUy3JRtPMWNV92EG2iRPV3PoPHD3O
+         oGP39scFyuN1rGSNRVIoZxtBN1xd/SmnJi6fhY3/5a/X/25dAMpWS/8UsacyDgel5GTI
+         Uw+ZXIipROIazu2e00VQTXgArKCCMQvFVofyJH+n5PDvAQ7CdhAUNDEMvvtbzTeFvFyl
+         h03Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXEyICKWOMRY4me8ZdLzX332i9ehUTJLyQ4wYLEWmCHozy/EiRT856vDYImyuJvTGR9bMsh1DT+s6Wo7YxeNYZxwRCtoVlSMrPyajs5
+X-Gm-Message-State: AOJu0Yy6A+7OoaEBAmUcmh2ygE4FHIpQQ6p0ERTJevMEaOjkwuHAVaJ3
+	yeOeZUjTHSPfxlPKboUQaT3XSFA0xD6Kw4DOpdZHOgXAR4kXYWGD1fnulQ==
+X-Google-Smtp-Source: AGHT+IElhjGJFHAjb3pDkCKnDLfu6WM/NR0TgZhQutcTk8dyPGJvZ5qmOb2PW6YXLSFWnrJpHzgUMA==
+X-Received: by 2002:a05:600c:4f45:b0:428:2502:75b5 with SMTP id 5b1f17b1804b1-429dd238160mr26205455e9.11.1723682064361;
+        Wed, 14 Aug 2024 17:34:24 -0700 (PDT)
+Received: from andrea ([151.76.20.39])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded19670sm33932685e9.9.2024.08.14.17.34.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 17:34:23 -0700 (PDT)
+Date: Thu, 15 Aug 2024 02:34:19 +0200
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Atish Patra <atishp@rivosinc.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] riscv: Eagerly flush in flush_icache_deferred()
+Message-ID: <Zr1NC7GBQHfqqplf@andrea>
+References: <20240813-fix_fencei_optimization-v1-0-2aadc2cdde95@rivosinc.com>
+ <20240813-fix_fencei_optimization-v1-2-2aadc2cdde95@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240813-fix_fencei_optimization-v1-2-2aadc2cdde95@rivosinc.com>
 
-Some EC firmwares on Trogdor/Strongbad boards don't properly indicate
-the state of DP HPD on a type-c port. Instead, the EC only indicates
-that a type-c port has entered or exited DP mode. To make matters worse,
-on these boards the DP signal is muxed between two USB type-c
-connectors, so we can't use the DP entry of a port to figure out which
-type-c port is actually displaying DP.
+> <---- Thread 1 starts running here on CPU1
+> 
+> <---- Thread 2 starts running here with same mm
+> 
+> T2: prctl(PR_RISCV_SET_ICACHE_FLUSH_CTX, PR_RISCV_CTX_SW_FENCEI_ON, PR_RISCV_SCOPE_PER_PROCESS);
+> T2: <-- kernel sets current->mm->context.force_icache_flush to true
 
-Read the state of the EC's analog mux from the hpd notification callback
-to figure out which type-c port is displaying DP. This circumvents the
-entire host command/message interface, because it doesn't work all the
-time. Stash the hpd state into the port that's muxed, and then inject
-that hpd state into the struct we get from the EC. Only do this when we
-have the mux-gpios property in DT, indicating that we have to read the
-EC gpio state to figure this out. For now we only support a single gpio
-"bit", so there can only be two USB type-c ports.
+Mmh, TBH, I'm not sure how this patch is supposed to fix the race in
+question:
 
-Cc: Prashant Malani <pmalani@chromium.org>
-Cc: Benson Leung <bleung@chromium.org>
-Cc: Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: <chrome-platform@lists.linux.dev>
-Cc: Pin-yen Lin <treapking@chromium.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/platform/chrome/cros_ec_typec.c | 107 +++++++++++++++++++++---
- drivers/platform/chrome/cros_ec_typec.h |   1 +
- 2 files changed, 98 insertions(+), 10 deletions(-)
+For once, AFAIU, the operation
 
-diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
-index 9b54b3288f5f..e6e33b7bb543 100644
---- a/drivers/platform/chrome/cros_ec_typec.c
-+++ b/drivers/platform/chrome/cros_ec_typec.c
-@@ -7,6 +7,7 @@
-  */
- 
- #include <linux/acpi.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_graph.h>
-@@ -28,6 +29,7 @@ struct cros_typec_dp_bridge {
- 	struct cros_typec_data *typec_data;
- 	struct drm_dp_typec_bridge_dev *dev;
- 	struct cros_typec_port *active_port;
-+	struct gpio_desc *mux_gpio;
- 	bool orientation;
- };
- 
-@@ -445,6 +447,43 @@ static int cros_typec_init_ports(struct cros_typec_data *typec)
- 	return ret;
- }
- 
-+static void cros_typec_dp_bridge_hpd_notify(struct drm_dp_typec_bridge_dev *typec_bridge_dev,
-+					    void *data, enum drm_connector_status status)
-+{
-+	struct cros_typec_dp_bridge *dp_bridge = data;
-+	struct cros_typec_port *typec_port;
-+	struct cros_typec_data *typec;
-+	struct gpio_desc *mux_gpio;
-+	struct device *dev;
-+	int val;
-+
-+	typec = dp_bridge->typec_data;
-+	typec_port = typec->ports[0];
-+	dev = typec->dev;
-+
-+	/*
-+	 * Some ECs don't notify AP when HPD goes high or low so we have to
-+	 * read the EC GPIO that controls the mux to figure out which type-c
-+	 * port is connected to DP by the EC.
-+	 */
-+	mux_gpio = dp_bridge->mux_gpio;
-+	if (mux_gpio) {
-+		val = gpiod_get_value_cansleep(mux_gpio);
-+		if (val < 0) {
-+			dev_err(dev, "Failed to read mux gpio for hpd notify\n");
-+			return;
-+		}
-+
-+		typec_port = typec->ports[val];
-+	}
-+
-+	/* Proxy the connector status as the HPD state to replay later. */
-+	typec_port->hpd_asserted = status == connector_status_connected;
-+
-+	/* Refresh port state. */
-+	schedule_work(&typec->port_work);
-+}
-+
- static int cros_typec_init_dp_bridge(struct cros_typec_data *typec)
- {
- 	struct device *dev = typec->dev;
-@@ -471,12 +510,21 @@ static int cros_typec_init_dp_bridge(struct cros_typec_data *typec)
- 	dp_bridge->typec_data = typec;
- 
- 	dp_bridge->orientation = fwnode_property_read_bool(devnode, "orientation");
-+	dp_bridge->mux_gpio = devm_gpiod_get_optional(dev, "mux", GPIOD_ASIS);
-+	if (IS_ERR(dp_bridge->mux_gpio))
-+		return dev_err_probe(dev, PTR_ERR(dp_bridge->mux_gpio), "failed to get mux gpio\n");
- 
- 	num_lanes = fwnode_property_count_u32(ep, "data-lanes");
- 	if (num_lanes < 0)
- 		num_lanes = 4;
- 	desc.num_dp_lanes = num_lanes;
- 
-+	desc.no_hpd = fwnode_property_read_bool(devnode, "no-hpd");
-+	if (desc.no_hpd) {
-+		desc.hpd_notify = cros_typec_dp_bridge_hpd_notify;
-+		desc.hpd_data = dp_bridge;
-+	}
-+
- 	dp_dev = devm_drm_dp_typec_bridge_alloc(dev, &desc);
- 	if (IS_ERR(dp_dev))
- 		return PTR_ERR(dp_dev);
-@@ -582,6 +630,7 @@ static int cros_typec_enable_dp(struct cros_typec_data *typec,
- 				struct ec_response_usb_pd_control_v2 *pd_ctrl)
- {
- 	struct cros_typec_port *port = typec->ports[port_num];
-+	struct cros_typec_port *muxed_port;
- 	struct cros_typec_dp_bridge *dp_bridge = typec->dp_bridge;
- 	struct typec_displayport_data dp_data;
- 	u32 cable_tbt_vdo;
-@@ -589,6 +638,9 @@ static int cros_typec_enable_dp(struct cros_typec_data *typec,
- 	int ret;
- 	enum typec_orientation orientation;
- 	bool hpd_asserted = port->mux_flags & USB_PD_MUX_HPD_LVL;
-+	bool is_active_port = false;
-+	struct gpio_desc *mux_gpio;
-+	int val;
- 
- 	if (typec->pd_ctrl_ver < 2) {
- 		dev_err(typec->dev,
-@@ -596,15 +648,47 @@ static int cros_typec_enable_dp(struct cros_typec_data *typec,
- 		return -ENOTSUPP;
- 	}
- 
--	/*
--	 * Assume the first port to have HPD asserted is the one muxed to DP
--	 * (i.e. active_port). When there's only one port this delays setting
--	 * the active_port until HPD is asserted, but before that the
--	 * drm_connector looks disconnected so active_port doesn't need to be
--	 * set.
--	 */
--	if (dp_bridge && hpd_asserted && !dp_bridge->active_port)
--		dp_bridge->active_port = port;
-+	if (dp_bridge) {
-+		/*
-+		 * Some ECs don't notify AP when HPD goes high or low so we have to
-+		 * read the EC GPIO that controls the mux to figure out which type-c
-+		 * port is connected to DP by the EC.
-+		 */
-+		mux_gpio = dp_bridge->mux_gpio;
-+		if (mux_gpio) {
-+			/*
-+			 * Only read the mux GPIO setting if hpd is asserted
-+			 * and we need to change the active_port. Otherwise, an
-+			 * active_port is already set and HPD going high or low
-+			 * doesn't change the muxed port until DP mode is
-+			 * exited.
-+			 */
-+			if (hpd_asserted && !dp_bridge->active_port) {
-+				val = gpiod_get_value_cansleep(mux_gpio);
-+				if (val < 0) {
-+					dev_err(typec->dev, "Failed to read mux gpio\n");
-+					return val;
-+				}
-+
-+				muxed_port = typec->ports[val];
-+			}
-+		} else {
-+			muxed_port = port;
-+		}
-+
-+		/*
-+		 * Assume the first port to have HPD asserted is the one muxed
-+		 * to DP (i.e. active_port). When there's only one port this
-+		 * delays setting the active_port until HPD is asserted, but
-+		 * before that the drm_connector looks disconnected so
-+		 * active_port doesn't need to be set.
-+		 */
-+		if (hpd_asserted && !dp_bridge->active_port && muxed_port == port)
-+			dp_bridge->active_port = port;
-+
-+		if (dp_bridge->active_port == port)
-+			is_active_port = true;
-+	}
- 
- 	if (!pd_ctrl->dp_mode) {
- 		dev_err(typec->dev, "No valid DP mode provided.\n");
-@@ -627,7 +711,7 @@ static int cros_typec_enable_dp(struct cros_typec_data *typec,
- 			return ret;
- 	}
- 
--	if (dp_bridge && dp_bridge->active_port == port) {
-+	if (is_active_port) {
- 		orientation = TYPEC_ORIENTATION_NORMAL;
- 		if (dp_bridge->orientation &&
- 		    port->mux_flags & USB_PD_MUX_POLARITY_INVERTED)
-@@ -729,6 +813,9 @@ static int cros_typec_configure_mux(struct cros_typec_data *typec, int port_num,
- 	}
- 
- 	dp_enabled = resp.flags & USB_PD_MUX_DP_ENABLED;
-+	/* Replay HPD from the GPIO state if EC firmware is broken */
-+	if (dp_enabled && port->hpd_asserted)
-+		resp.flags |= USB_PD_MUX_HPD_LVL;
- 
- 	/* No change needs to be made, let's exit early. */
- 	if (port->mux_flags == resp.flags && port->role == pd_ctrl->role)
-diff --git a/drivers/platform/chrome/cros_ec_typec.h b/drivers/platform/chrome/cros_ec_typec.h
-index 74d062dc03b2..26565cd77d79 100644
---- a/drivers/platform/chrome/cros_ec_typec.h
-+++ b/drivers/platform/chrome/cros_ec_typec.h
-@@ -69,6 +69,7 @@ struct cros_typec_port {
- 	uint8_t mux_flags;
- 	uint8_t role;
- 
-+	bool hpd_asserted;
- 	u32 lane_mapping[NUM_USB_SS];
- 	struct typec_altmode *port_altmode[CROS_EC_ALTMODE_MAX];
- 
--- 
-https://chromeos.dev
+T2: cpumask_setall(&current->mm->context.icache_stale_mask)
 
+(on CPU2?) you've added with this patch...
+
+
+> T2: <modification of instructions>
+> T2: fence.i
+> 
+> T1: fence.i (to synchronize with other thread, has some logic to
+>              determine when to do this)
+> T1: <-- thread 1 is preempted
+> T1: <-- thread 1 is placed onto CPU3 and starts context switch sequence
+> T1 (kernel): flush_icache_deferred() -> skips flush because switch_to_should_flush_icache() returns true
+
+... does _not_ ensure that T1: flush_icache_deferred() on CPU3 will
+observe/read from that operation: IOW,
+
+T1: cpumask_test_and_clear_cpu(cpu, &mm->context.icache_stale_mask)
+
+may still evaluate to FALSE, thus preventing the FENCE.I execution.
+
+Moreover, AFAIU, ...
+
+
+> 				     -> thread has migrated and task->mm->context.force_icache_flush is true
+> 
+> T2: prctl(PR_RISCV_SET_ICACHE_FLUSH_CTX, PR_RISCV_CTX_SW_FENCEI_OFF, PR_RISCV_SCOPE_PER_PROCESS);
+
+... moving the operation(s)
+
+T2: set_icache_stale_mask()
+	T2: cpumask_setall(&current->mm->context.icache_stale_mask)
+
+before the following operation...  (per patch #1)
+
+
+> T2 (kernel): kernel sets current->mm->context.force_icache_flush = false
+> 
+> T1 (kernel): switch_to() calls switch_to_should_flush_icache() which now
+> 	     returns false because task->mm->context.force_icache_flush
+> 	     is false due to the other thread emitting
+> 	     PR_RISCV_CTX_SW_FENCEI_OFF.
+
+... does not ensure that T1: switch_to_should_flush_icache() on CPU3
+will observe
+
+T1: cpumask_test_cpu(<cpu3>, &task->mm->context.icache_stale_mask) == true
+
+in fact, T1 may evaluate the latter expression to FALSE while still
+being able to observe the "later" operation, i.e.
+
+T1: task->mm->context.force_icache_flush == false
+
+
+Perhaps a simplified but useful way to look at such scenarios is as
+follows:
+
+  - CPUs are just like nodes of a distributed system, and
+
+  - store are like messages to be exchanged (by the memory subsystem)
+    between CPUs: without some (explicit) synchronization/constraints,
+    messages originating from a given CPU can propagate/be visible to
+    other CPUs at any time and in any order.
+
+
+IAC, can you elaborate on the solution proposed here (maybe by adding
+some inline comments), keeping the above considerations in mind? what
+am I missing?
+
+
+> T1 (back in userspace): Instruction cache was never flushed on context
+> 			switch to CPU3, and thus may execute incorrect
+> 			instructions.
+
+Mmh, flushing the I$ (or, as meant here, executing a FENCE.I) seems
+to be only half of the solution: IIUC, we'd like to ensure that the
+store operation
+
+T2: <modification of instructions>
+
+originated from CPU2 is _visible_ to CPU3 by the time that FENCE.I
+instruction is executed, cf.
+
+[from Zifencei - emphasis mine]
+
+A FENCE.I instruction ensures that a subsequent instruction fetch on
+a RISC-V hart will see any previous data stores _already visible_ to
+the same RISC-V hart.
+
+
+IOW (but assuming code is in coherent main memory), imagine that the
+(putative) FENCE.I on CPU3 is replaced by some
+
+T1: LOAD reg,0(insts_addr)
+
+question is: would such a load be guaranteed to observe the store
+
+T2: <modification of instructions>  #  STORE new_insts,0(insts_addr)
+
+originated from CPU2? can you elaborate?
+
+  Andrea
 
