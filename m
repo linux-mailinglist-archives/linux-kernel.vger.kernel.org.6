@@ -1,130 +1,120 @@
-Return-Path: <linux-kernel+bounces-288036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 503769531BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:57:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05F819531A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82C271C22412
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:57:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3973A1C21880
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5292019F49B;
-	Thu, 15 Aug 2024 13:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7844819DF9C;
+	Thu, 15 Aug 2024 13:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="UM26XQGV"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB5317C9A9;
-	Thu, 15 Aug 2024 13:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="zK9QEZX9"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5B31714A1
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 13:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723730263; cv=none; b=YP+xgEa39gCyNEsXwLFYKpV7RgBhXcVwHs368Vm750+JOpwt8w3nx+D92S5wxYTItMd7YnJpaBGtzy5wdbZYZy7/11WWjcqInj9NmH9mq/bPnqHhYPKXA55Ql2j63yqZAOVAHSZtIki4OSu5HbsU024VGWIlhyWuBNp5/QeO31Q=
+	t=1723730204; cv=none; b=p0967NU5k22I7bOqswkJV6qwrL57PnRHtkof8+y0Kjixr+77mtHQIetWzZeBopjFIPM6+NTpWQo7Z4f8B7yCp94RkVo3LPSjNYlVyROOg6e9VE68340x/KiC8VGJyq0GcTlYv6bRKpxfKAQC6RNg5xtZ9JSruEAAeffh/gIWgcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723730263; c=relaxed/simple;
-	bh=syLoSRrr/IJyTap3WxKfJZ6zB66dFvWEBIi0jH/f6Qw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TiOlbug1GoPKLxMO4VuEt0elACAKEUOT8mVRfeZSCyguT644yzxpta6JbJJ3J34fOZlfExLqBiwGhl6bAZ6WZqCJeAEplxIspwhdxCNqZ8n0boYzO27VNKKZNrT1g/C12LMnnZbjl0k3z5Xu5WZg/HPaomxt2LWjUO/owAFfI9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=UM26XQGV; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=ZQaMG
-	qV6eCHUSrBXt7if74+TPAJ0t26UBuqEhi5Zp7M=; b=UM26XQGV9FcllPQ/g9oiZ
-	Ia4VR0tKbi8XgErszHo9ZeN91smiQoHx6KZ6/JpHNnNUp+9997vJVB7Ko1hmM9+B
-	un66D2iJWGYSWs3ZWwxog6R3tBoxejleFSatsX6VBQtEWyVmB6gNF+wNU0EQcFTu
-	RLlOods60BqhjbTlaDWwnw=
-Received: from test-pc.. (unknown [111.48.69.245])
-	by gzsmtp1 (Coremail) with SMTP id sCgvCgDHBtDgCL5mlzAwAA--.9515S2;
-	Thu, 15 Aug 2024 21:55:47 +0800 (CST)
-From: Jiangshan Yi <13667453960@163.com>
-To: andrii@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net
-Cc: bpf@vger.kernel.org,
-	haoluo@google.com,
-	john.fastabend@gmail.com,
-	jolsa@kernel.org,
-	kpsingh@kernel.org,
-	martin.lau@linux.dev,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	eddyz87@gmail.com,
-	sdf@fomichev.me,
-	danieltimlee@gmail.com,
-	linux-kernel@vger.kernel.org,
-	13667453960@163.com,
-	Jiangshan Yi <yijiangshan@kylinos.cn>,
-	Qiang Wang <wangqiang1@kylinos.cn>
-Subject: [PATCH] samples/bpf: fix compilation errors with cf-protection option
-Date: Thu, 15 Aug 2024 21:55:24 +0800
-Message-Id: <20240815135524.140675-1-13667453960@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723730204; c=relaxed/simple;
+	bh=vqxWsJzciRMbILiYK+Kat3pn1oc69qfxQfFSLs7kul0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:Cc:To; b=hUUXTXKuEeH5rpJ5cftShXJ1pp7X1vjPSmQqgoZf77689dKLFLqrwBAWo5LO/7tQZpLnjT29PEqmhpLg7i7BsPvI9J4strNuvMSex1hI7rvjgvWlLl1eGn4vujFyrYd/xYTdfjqraUG8nMnyABJkqcDuNwMDMWeGGMt7di2IM1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=zK9QEZX9; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:sCgvCgDHBtDgCL5mlzAwAA--.9515S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ZFWrtry8WF15uw15Jr4rAFb_yoW8uFWxpF
-	n5Ca4kKw4rZ3yFgFW7ArWFk3W3Aw4DKrW5Gr1kJrZ0y3ZIvFyvyF4xKr18uFs7GryxCw47
-	ZrZYkr9xGrWUA3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zic18DUUUUU=
-X-CM-SenderInfo: bprtllyxuvjmiwq6il2tof0z/1tbizQM8+2V4Iqz5UwAAsw
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1723730199;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=jRUdXH2Gl6rw+xJJhhgxHtdMQ1UkSxCrnpLh3C7+fX8=;
+	b=zK9QEZX90pzd4bqhseXo1FpO5UsNhnweJu6H4bUBMb3SvWcgZJgc7B7WTF6JeKqmjdsP6Q
+	xnGx0iZJ7QMZ38iRpdc/mBBLPj90ZUkC4hjXIiJq9kgZkzMSbqyhdu5WZIRpseLNsdOK66
+	7W5/vQK+TaNVjrYMmzjYWX5MXAurfMHqTBavN7aix+J3v36N7wkYnXIPJY6f+oVsNqOoCY
+	en5TUjlYYjohLiSZ9XFJWan8SxCDzmhfY7y6cu+h0aYNHbq9gSdtEfvwQLFCdNg7q/53Hf
+	jaOhsd2iJfLhEaChZISjXP4+g8KdMz8Uya0cG+1qBY+06u8P75xM8j4o3Hwyrw==
+Content-Type: multipart/signed;
+ boundary=62032c8257d9ec58f3454a49951ee88f6705259ff7df0bbe783d64edb2fc;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Thu, 15 Aug 2024 15:56:26 +0200
+Message-Id: <D3GJCRNY4KDK.3SPJB5WP8Z7DK@cknow.org>
+Subject: [BUG] Non working HWRNG on AMD Ryzen 5 5500GT
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+Cc: "Herbert Xu" <herbert@gondor.apana.org.au>, "David S. Miller"
+ <davem@davemloft.net>, <linux-crypto@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Diederik de Haas" <didi.debian@cknow.org>
+To: "Tom Lendacky" <thomas.lendacky@amd.com>, "John Allen"
+ <john.allen@amd.com>
+X-Migadu-Flow: FLOW_OUT
 
-From: Jiangshan Yi <yijiangshan@kylinos.cn>
+--62032c8257d9ec58f3454a49951ee88f6705259ff7df0bbe783d64edb2fc
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Currently, compiling the bpf programs will result the compilation errors
-with the cf-protection option as follows in arm64 and loongarch64 machine
-when using gcc 12.3.1 and clang 17.0.6. This commit fixes the compilation
-errors by limited the cf-protection option only used in x86 platform.
+Hi,
 
-[root@localhost linux]# make M=samples/bpf
-	......
-  CLANG-bpf  samples/bpf/xdp2skb_meta_kern.o
-error: option 'cf-protection=return' cannot be specified on this target
-error: option 'cf-protection=branch' cannot be specified on this target
-2 errors generated.
-  CLANG-bpf  samples/bpf/syscall_tp_kern.o
-error: option 'cf-protection=return' cannot be specified on this target
-error: option 'cf-protection=branch' cannot be specified on this target
-2 errors generated.
-	......
+I recently bought an Asus ROG STRIX B550-F GAMING MB with an
+AMD Ryzen 5 5500GT CPU (and installed the latest BIOS: 3607).
+I'm running Debian Testing/Sid on it with kernel 6.9 and now 6.10
+and it seems to work great.
+I've been doing some (unrelated) tests with `rngtest` from the
+`rng-tools5` package and wondered how it would fare on my AMD CPU.
 
-Fixes: 34f6e38f58db ("samples/bpf: fix warning with ignored-attributes")
-Reported-by: Jiangshan Yi <yijiangshan@kylinos.cn>
-Tested-by: Qiang Wang <wangqiang1@kylinos.cn>
-Signed-off-by: Jiangshan Yi <yijiangshan@kylinos.cn>
----
- samples/bpf/Makefile | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+And I found out it doesn't work at all!
+But on another system I have (Asus ROG CROSSHAIR VII HERO MB +
+AMD Ryzen 1800X CPU) it works absolutely fine.
 
-diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
-index 3e003dd6bea0..dca56aa360ff 100644
---- a/samples/bpf/Makefile
-+++ b/samples/bpf/Makefile
-@@ -169,6 +169,10 @@ BPF_EXTRA_CFLAGS += -I$(srctree)/arch/mips/include/asm/mach-generic
- endif
- endif
- 
-+ifeq ($(ARCH), x86)
-+BPF_EXTRA_CFLAGS += -fcf-protection
-+endif
-+
- TPROGS_CFLAGS += -Wall -O2
- TPROGS_CFLAGS += -Wmissing-prototypes
- TPROGS_CFLAGS += -Wstrict-prototypes
-@@ -405,7 +409,7 @@ $(obj)/%.o: $(src)/%.c
- 		-Wno-gnu-variable-sized-type-not-at-end \
- 		-Wno-address-of-packed-member -Wno-tautological-compare \
- 		-Wno-unknown-warning-option $(CLANG_ARCH_ARGS) \
--		-fno-asynchronous-unwind-tables -fcf-protection \
-+		-fno-asynchronous-unwind-tables \
- 		-I$(srctree)/samples/bpf/ -include asm_goto_workaround.h \
- 		-O2 -emit-llvm -Xclang -disable-llvm-passes -c $< -o - | \
- 		$(OPT) -O2 -mtriple=bpf-pc-linux | $(LLVM_DIS) | \
--- 
-2.27.0
+# dmesg | grep ccp
+[    5.399853] ccp 0000:07:00.2: ccp: unable to access the device: you might
+be running a broken BIOS.
+[    5.401031] ccp 0000:07:00.2: tee enabled
+[    5.401113] ccp 0000:07:00.2: psp enabled
 
+Found an article [1] which could be relevant and downloaded and ran the
+accompanying test program (written by Jason Donenfeld):
+# ./amd-rdrand-bug
+Your RDRAND() does not have the AMD bug.
+# ./test-rdrand
+RDRAND() = 0x47c993c0
+RDRAND() = 0xec7c697d
+... (more seemingly random numbers)
+RDRAND() = 0xba858101
+
+I tried it with the latest microcode dd 2024-07-10, but that didn't make
+a difference.
+
+So I'd like to know if this may actually be a bug on the kernel side.
+
+Happy to provide additional information or run tests or try patches.
+
+Cheers,
+  Diederik
+
+[1] https://arstechnica.com/gadgets/2019/10/how-a-months-old-amd-microcode-bug-destroyed-my-weekend/
+
+--62032c8257d9ec58f3454a49951ee88f6705259ff7df0bbe783d64edb2fc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZr4JDgAKCRDXblvOeH7b
+blWgAP0dg1azuw0JBqEIdwQkI/hE8oZw3WkNKYwBckEcCQEY0gEAkr8b4LpvK/jw
+J3Rp0WKaYWWd7IXn8Y+R86U+1kkYYgU=
+=1wh9
+-----END PGP SIGNATURE-----
+
+--62032c8257d9ec58f3454a49951ee88f6705259ff7df0bbe783d64edb2fc--
 
