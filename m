@@ -1,243 +1,153 @@
-Return-Path: <linux-kernel+bounces-288519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F7F953B33
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:57:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60EF7953B3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D3011F23832
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:57:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F9CE1C24BF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE11A13E881;
-	Thu, 15 Aug 2024 19:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B6557333;
+	Thu, 15 Aug 2024 20:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="l9njajc2"
-Received: from smtp-fw-33001.amazon.com (smtp-fw-33001.amazon.com [207.171.190.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XEoCxbyL"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557775A0F5;
-	Thu, 15 Aug 2024 19:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.190.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E8B10FF
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 20:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723751828; cv=none; b=Wv4w55+VuDa7lRsmFeOoBm5kHc+ubTllK+6o6/q3pVDl9aIFP4f9++NchrKfX6WHByVcbu9ENIKzHguOdd+5yyv4CYJbyYaziOu/ZP1PohuSjF0fv8fsQoFiNbf0mSLWNMrEGiSD+6BwsXu61LHfhZCbgp2ppGZoBF58bUNjM+I=
+	t=1723752037; cv=none; b=JHC+iYhzZb46gk1FyD40HPaaradSV9ixNtIGOkPclKJk3Nw3kPV94oHSFy+2rqteWlXx6b4u/i3b4ySQ7gHjvTRoEeTUG2HxnBJsywqTtnAhT2yXDbzM7E6jKAv7YzvhJZIcdKz+MW0IiLT7x85tEjwcisBWpNdOdKQkVGGzCxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723751828; c=relaxed/simple;
-	bh=feu46mf8V8KT+QQdsoaIbTOPPVAE1/mj1S85hocTI3s=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RBT6dOan2/AfuTeyRj/wjmBGRcTzyU7FiEO/EXWJxJSmr1KP7IV3kCb3lX8sdcFfnAakw3W+ca2Po5dqXTGfrbKJdI8ijrLRSqy4ss1UObNbAom+S4waSF9pSBCffpVmbnvUrG4LKeBeygvHSpRFke1qOyuNNMUeyNyMs3ufFIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=l9njajc2; arc=none smtp.client-ip=207.171.190.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1723752037; c=relaxed/simple;
+	bh=xGYBVjCJruWxpObTcbXRaohepR1nP2OwaL5Zu9E+LTY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DvP26zGu5uKIrZJnRvv/y4J089YUe5hmhcpZ0tu+f3tEARAYfYyQ3LQzFzwITbOwoIzU3duvYe9bPKDnj+Se9YmGzJkMcraZF+5Z3BHCQhs9vztcCZwj7yWaafXjcRFEd9TwqfK/Qv2yiO5QbOROAzl4ddSaYXxr0cfX4AQIZz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XEoCxbyL; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5bebc830406so1768a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 13:00:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1723751826; x=1755287826;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=sWRo8z/c0hTkwKpcQpYiaasM1XYNZGlVmju7dSB97NQ=;
-  b=l9njajc2n8jfIrQDA6mvfyERAcafc79I23yb9ObsIi5ox43ruswBc2tz
-   eu1sqGllUfFDz04wYv3hk9fxSWbDq/J7ze/koKVKntamf1PbYHXBVvEeq
-   TddBmJOfEtxMwTS74ennJsNlIzHwnEV8/6B+dyvpkGYJvdSLztNKEoc+o
-   4=;
-X-IronPort-AV: E=Sophos;i="6.10,149,1719878400"; 
-   d="scan'208";a="362510511"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-33001.sea14.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 19:56:59 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.21.151:38126]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.57.153:2525] with esmtp (Farcaster)
- id 11d1a420-e338-4bb0-91ea-c17e247e603a; Thu, 15 Aug 2024 19:56:57 +0000 (UTC)
-X-Farcaster-Flow-ID: 11d1a420-e338-4bb0-91ea-c17e247e603a
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 15 Aug 2024 19:56:57 +0000
-Received: from 88665a182662.ant.amazon.com (10.106.100.33) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 15 Aug 2024 19:56:54 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <sunyiqixm@gmail.com>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<pabeni@redhat.com>, <kuniyu@amazon.com>
-Subject: Re: [PATCH] net: do not release sk in sk_wait_event
-Date: Thu, 15 Aug 2024 12:56:45 -0700
-Message-ID: <20240815195645.43808-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240815102329.172161-1-sunyiqixm@gmail.com>
-References: <20240815102329.172161-1-sunyiqixm@gmail.com>
+        d=google.com; s=20230601; t=1723752034; x=1724356834; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d3ArqisW88zeUJ5548euro8ampk/ZNm/xfRfsdbWrSo=;
+        b=XEoCxbyLwL4HcM51EsZbF3tltEsLeG0fMLChLyci6j8xwhfdhsrk6PiWQztaCnghnC
+         eaT2mcJ4GFV3M/3yL2RhFQQJf3dUVdRow4s3vrr2/+04q2tTYkdxTpp3dAklavj7Nqat
+         qt3xj+w69yg9KR3KfFxFysAFY0NCnGqPh/+jZDSKE8vgmyM40WTWy39GMYmEuULcPvna
+         aWkDjRKI0g9hrEGuYsZQoJniEdjA0Z1H51ZpwRfckEvQM/453k1oPkSM1Tb389rtf0BX
+         OKs8QmWwYCgZDH20vSOLhDjMJhyNsMS6uelDMF9OtT2GHwOMx8BqyfLU4FfjClsjs7nI
+         QfJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723752034; x=1724356834;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d3ArqisW88zeUJ5548euro8ampk/ZNm/xfRfsdbWrSo=;
+        b=jH5l/y6r7kjOaH9PCtkMxOMSNtlGJavNJkd/gdV+NAnE3rauoNI+WplKfbBYEpocmk
+         lC6HhOpv2x5dHOjxGugB+8rP87SZ6+ihk5jBRKNk7++yaJLRAQb+tYEKOxBWYFeYQB15
+         caAPO9DduxRMeGRBXKqmDJfX8lUsj8HYREi9llKqiMkGhqff8wY81vTQDbd4FF4Zbhzh
+         P42zGty9pT/K4s4kK3xfuQa6dvcH0NrqfLO9NEhBGoUElqoKCC6jIaJhHNIbGq/mO1fK
+         r+cgBP/SsSUG58xZrydD27q1sz25ydK/Vd3LZs0XrOZto5ZDxG2+/6XsnvZRi8FewQFk
+         xesg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYOx1FWQGJXW7W5aPK7YlV2WOd79t+zu8lmp2PnrG54HyjzWLV6VX9xlCuVBP1/Wj5K0skpugvqp60YGovG6+cOxkNJnLJP0vExdrP
+X-Gm-Message-State: AOJu0YxqaHcRP5qYLpJnpj/nRrQG/Fjj1Sao+OS5U++viAuEURxYF3E5
+	1b2twodKW5JM0AHnLsz5rObHE2ZdJd4ECol48GxmFaWYIjxYHcypDS8ZPFxRsM7KsMiD+W4yAQD
+	sXQC2nmV/uXRRv468Qy6wOIYtoFpRNPf244MA
+X-Google-Smtp-Source: AGHT+IFwS4EKwUlrFlYXcuSN5oh43sNNRYX1HBigJRCxXbMVgn7z8rfDqxIsTOr1QPI6vYSZFktXxOduALeTABTxFEw=
+X-Received: by 2002:a05:6402:27ca:b0:57c:b712:47b5 with SMTP id
+ 4fb4d7f45d1cf-5becb50aa8cmr15762a12.4.1723752032713; Thu, 15 Aug 2024
+ 13:00:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D041UWB002.ant.amazon.com (10.13.139.179) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+References: <20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com>
+ <20240805-remove-cred-transfer-v2-1-a2aa1d45e6b8@google.com> <2494949.1723751188@warthog.procyon.org.uk>
+In-Reply-To: <2494949.1723751188@warthog.procyon.org.uk>
+From: Jann Horn <jannh@google.com>
+Date: Thu, 15 Aug 2024 21:59:54 +0200
+Message-ID: <CAG48ez2LBmS91fQVLYRYEaBHssj22NyUjB0HVtkDHUXDvDZ6EA@mail.gmail.com>
+Subject: Re: Can KEYCTL_SESSION_TO_PARENT be dropped entirely? -- was Re:
+ [PATCH v2 1/2] KEYS: use synchronous task work for changing parent credentials
+To: David Howells <dhowells@redhat.com>
+Cc: Jeffrey Altman <jaltman@auristor.com>, openafs-devel@openafs.org, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, John Johansen <john.johansen@canonical.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, linux-afs@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	apparmor@lists.ubuntu.com, keyrings@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: sunyiqi <sunyiqixm@gmail.com>
-Date: Thu, 15 Aug 2024 18:23:29 +0800
-> On Thu, 15 Aug 2024 12:03:37 +0200, Paolo Abeni wrote:
-> > On 8/15/24 10:49, sunyiqi wrote:
-> > > When investigating the kcm socket UAF which is also found by syzbot,
-> > > I found that the root cause of this problem is actually in
-> > > sk_wait_event.
-> > > 
-> > > In sk_wait_event, sk is released and relocked and called by
-> > > sk_stream_wait_memory. Protocols like tcp, kcm, etc., called it in some
-> > > ops function like *sendmsg which will lock the sk at the beginning.
-> > > But sk_stream_wait_memory releases sk unexpectedly and destroy
-> > > the thread safety. Finally it causes the kcm sk UAF.
-> > > 
-> > > If at the time when a thread(thread A) calls sk_stream_wait_memory
-> > > and the other thread(thread B) is waiting for lock in lock_sock,
-> > > thread B will successfully get the sk lock as thread A release sk lock
-> > > in sk_wait_event.
-> > > 
-> > > The thread B may change the sk which is not thread A expecting.
-> > > 
-> > > As a result, it will lead kernel to the unexpected behavior. Just like
-> > > the kcm sk UAF, which is actually cause by sk_wait_event in
-> > > sk_stream_wait_memory.
-> > > 
-> > > Previous commit d9dc8b0f8b4e ("net: fix sleeping for sk_wait_event()")
-> > > in 2016 seems do not solved this problem. Is it necessary to release
-> > > sock in sk_wait_event? Or just delete it to make the protocol ops
-> > > thread-secure.
-> > 
-> > As a I wrote previously, please describe the suspected race more 
-> > clearly, with the exact calls sequence that lead to the UAF.
-> > 
-> > Releasing the socket lock is not enough to cause UAF.
-> 
-> Thread A                 Thread B
-> kcm_sendmsg
->  lock_sock               kcm_sendmsg
->                           lock_sock (blocked & waiting)
->  head = sk->seq_buf
->  sk_stream_wait_memory
->   sk_wait_event
->    release_sock
->                           lock_sock (get the lock)
->                           head = sk->seq_buf
->                           add head to sk->sk_write_queue
->                           release_sock
->    lock_sock              return
->  err_out to free(head)
->  release_sock
->  return
-> // ...
-> kcm_release
->  // ...
->  __skb_queue_purge(&sk->sk_write_queue) // <--- UAF
->  // ...
-> 
-> The repro can be downloaded here:
-> https://syzkaller.appspot.com/bug?extid=b72d86aa5df17ce74c60
+On Thu, Aug 15, 2024 at 9:46=E2=80=AFPM David Howells <dhowells@redhat.com>=
+ wrote:
+> Jann Horn <jannh@google.com> wrote:
+>
+> > Rewrite keyctl_session_to_parent() to run task work on the parent
+> > synchronously, so that any errors that happen in the task work can be
+> > plumbed back into the syscall return value in the child.
+>
+> The main thing I worry about is if there's a way to deadlock the child an=
+d the
+> parent against each other.  vfork() for example.
 
-When a thread is building a skb with MSG_MORE, another thread
-must not touch it nor complete building it by queuing it to
-write queue and setting NULL to kcm->seq_skb.
+Yes - I think it would work fine for scenarios like using
+KEYCTL_SESSION_TO_PARENT from a helper binary against the shell that
+launched the helper (which I think is the intended usecase?), but
+there could theoretically be constellations where it would cause an
+(interruptible) hang if the parent is stuck in
+uninterruptible/killable sleep.
 
-I think the correct fix is simply serialise them with mutex.
-
----8<---
-diff --git a/include/net/kcm.h b/include/net/kcm.h
-index 90279e5e09a5..441e993be634 100644
---- a/include/net/kcm.h
-+++ b/include/net/kcm.h
-@@ -70,6 +70,7 @@ struct kcm_sock {
- 	struct work_struct tx_work;
- 	struct list_head wait_psock_list;
- 	struct sk_buff *seq_skb;
-+	struct mutex tx_mutex;
- 	u32 tx_stopped : 1;
- 
- 	/* Don't use bit fields here, these are set under different locks */
-diff --git a/net/kcm/kcmsock.c b/net/kcm/kcmsock.c
-index 2f191e50d4fc..d4118c796290 100644
---- a/net/kcm/kcmsock.c
-+++ b/net/kcm/kcmsock.c
-@@ -755,6 +755,7 @@ static int kcm_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
- 		  !(msg->msg_flags & MSG_MORE) : !!(msg->msg_flags & MSG_EOR);
- 	int err = -EPIPE;
- 
-+	mutex_lock(&kcm->tx_mutex);
- 	lock_sock(sk);
- 
- 	/* Per tcp_sendmsg this should be in poll */
-@@ -926,6 +927,7 @@ static int kcm_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
- 	KCM_STATS_ADD(kcm->stats.tx_bytes, copied);
- 
- 	release_sock(sk);
-+	mutex_unlock(&kcm->tx_mutex);
- 	return copied;
- 
- out_error:
-@@ -951,6 +953,7 @@ static int kcm_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
- 		sk->sk_write_space(sk);
- 
- 	release_sock(sk);
-+	mutex_unlock(&kcm->tx_mutex);
- 	return err;
- }
- 
-@@ -1204,6 +1207,7 @@ static void init_kcm_sock(struct kcm_sock *kcm, struct kcm_mux *mux)
- 	spin_unlock_bh(&mux->lock);
- 
- 	INIT_WORK(&kcm->tx_work, kcm_tx_work);
-+	mutex_init(&kcm->tx_mutex);
- 
- 	spin_lock_bh(&mux->rx_lock);
- 	kcm_rcv_ready(kcm);
----8<---
+I think vfork() is rather special in that it does a killable wait for
+the child to exit or execute; and based on my understanding of the
+intended usecase of KEYCTL_SESSION_TO_PARENT, I think normally
+KEYCTL_SESSION_TO_PARENT would only be used by a child that has gone
+through execve?
 
 
-We can allow another thread to complete building skb by the
-following but it doesn't sound correct to me.
+> > +     if (task_work_cancel(parent, &ctx.work)) {
+> > +             /*
+> > +              * We got interrupted and the task work was canceled befo=
+re it
+> > +              * could execute.
+> > +              * Use -ERESTARTNOINTR instead of -ERESTARTSYS for
+> > +              * compatibility - the manpage does not list -EINTR as a
+> > +              * possible error for keyctl().
+> > +              */
+>
+> I think returning EINTR is fine, provided that if we return EINTR, the ch=
+ange
+> didn't happen.  KEYCTL_SESSION_TO_PARENT is only used by the aklog, dlog =
+and
+> klog* OpenAFS programs AFAIK, and only if "-setpag" is set as a command l=
+ine
+> option.  It also won't be effective if you strace the program.
 
----8<---
-diff --git a/net/kcm/kcmsock.c b/net/kcm/kcmsock.c
-index 2f191e50d4fc..51f2409d6113 100644
---- a/net/kcm/kcmsock.c
-+++ b/net/kcm/kcmsock.c
-@@ -748,7 +748,7 @@ static int kcm_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
- {
- 	struct sock *sk = sock->sk;
- 	struct kcm_sock *kcm = kcm_sk(sk);
--	struct sk_buff *skb = NULL, *head = NULL;
-+	struct sk_buff *skb = NULL, *head = NULL, *seq_skb;
- 	size_t copy, copied = 0;
- 	long timeo = sock_sndtimeo(sk, msg->msg_flags & MSG_DONTWAIT);
- 	int eor = (sock->type == SOCK_DGRAM) ?
-@@ -763,6 +763,7 @@ static int kcm_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
- 	if (sk->sk_err)
- 		goto out_error;
- 
-+	seq_skb = kcm->seq_skb;
- 	if (kcm->seq_skb) {
- 		/* Previously opened message */
- 		head = kcm->seq_skb;
-@@ -888,6 +889,8 @@ static int kcm_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
- 		err = sk_stream_wait_memory(sk, &timeo);
- 		if (err)
- 			goto out_error;
-+		if (seq_skb && seq_skb != kcm->seq_skb)
-+			goto out_stolen;
- 	}
- 
- 	if (eor) {
-@@ -943,7 +946,7 @@ static int kcm_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
- 		kfree_skb(head);
- 		kcm->seq_skb = NULL;
- 	}
--
-+out_stolen:
- 	err = sk_stream_error(sk, msg->msg_flags, err);
- 
- 	/* make sure we wake any epoll edge trigger waiter */
----8<---
+Ah, I didn't even know about those.
+
+The users I knew of are the command-line tools "keyctl new_session"
+and "e4crypt new_session" (see
+https://codesearch.debian.net/search?q=3DKEYCTL_SESSION_TO_PARENT&literal=
+=3D1,
+which indexes code that's part of Debian).
+
+> Maybe the AFS people can say whether it's even worth keeping the function=
+ality
+> rather than just dropping KEYCTL_SESSION_TO_PARENT?
+
+I think this would break the tools "keyctl new_session" and "e4crypt
+new_session" - though I don't know if anyone actually uses those
+invocations.
 
