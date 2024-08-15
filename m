@@ -1,159 +1,148 @@
-Return-Path: <linux-kernel+bounces-288235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582C49537BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:59:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3D8D9537C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7645C1C2553F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:59:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B5C11F21ABA
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226751B29DA;
-	Thu, 15 Aug 2024 15:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C861B143B;
+	Thu, 15 Aug 2024 15:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bzVzhOtg"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="SkI11rOA"
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2DB1B143B
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 15:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B921B3F0B
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 15:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723737558; cv=none; b=h5WpQLdVu0HZ2Ui4dXZxJqSdbIUkc2/H+00gyyhfpFw36UCh2XxOOFuV5XHRIea8rMBaWiVLjmJgKw+eWWxKLFlKOGs5MGO4QTuChri6OjGYGpHoicp1zWSN9QsTUQbw9yAE0Pag/tbDfqBSZarBCjlsAjr/u9asQ69mrjFobEs=
+	t=1723737581; cv=none; b=t7fsu8JwWcAjYxL2/CJK6ya00aOvBu/ByPG5oLEzbEFI4qCEfQAMICOkUOeMRFnAtfGZBpOvn396brXGpw7s3aY+dEkPVtmvvhtGOol0BETUpdnT7wnJySTt535zsCaYFgMJ8KKy35yCQ9mxOeTvCnaNSwepRTleWi+NFPd9a/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723737558; c=relaxed/simple;
-	bh=Z/fyRi93/FgvuhZIwHmKOmN49p2qBtOwlI7YvJ6Mm3g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D8sj/0qq35vVUhxeqCQWCcAKX1KIO5yq8Fxf5sno7cPeW5erWJPl/HujnGo4lMQX5NPLDEuWY4dBG37jQNR3i7eaQn64A9wsf8n8KqE+io+XpF2ykRT+DPwEr+7wdKkXOCe5Z+YiZExVlOA/SiX0DVwSIvBs2g4k1L/4ngOW/Y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bzVzhOtg; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70d1cbbeeaeso916685b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:59:16 -0700 (PDT)
+	s=arc-20240116; t=1723737581; c=relaxed/simple;
+	bh=MNgHIH+lkUsEt2L6I+eFso69L5v3uwKBRJthgipnp8Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s9z2wwAVanaZwMIQMN6KF+fXi4SFMRavLrLVdsCXe/Wo19nOGwi2ROOCyUIbwCtOvdhzUsJSuCEAxoYL8lQ2hHYkLCa1lvMOmzh0j6EkGi/uVi8+p1eVIU2glI795cqawbCX3CHYN/GLFnQULrpwYg8fUyP7pyqMiLpxCxhlpyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=SkI11rOA; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-81f86fd93acso39307039f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:59:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723737556; x=1724342356; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Go1TBNFKLXqY7P67ovoHUjFQplVz6G9uJaPMlcb/pTE=;
-        b=bzVzhOtg9IAvBisJHwbZCN41rlvYmy9NtseOS5883Y+FJ3gd8yULsv5KpIZOgKiuyq
-         GZiZox/W1XezNRchxrw+l7W8Hrt28Sd6oQaO6Fghb92KOGJp3uzYSdwIfIHvhB9+roqK
-         QRH8T1M1n5gGtMt/uUEP/myVJc1uGfJACzQZ9Nuz3nw/BevV6/umhpeaHW57aqKu04RV
-         0BeHlbO3aajVLk5Y9ih8LWyenX8WuolWYpiXTldwnE0QdvC/WSgoq7xevBsNYn408qkd
-         4t2hrgDzUd0BRUvree7ZS1bAFBltKYZTTVB5yYGQBQUYktErI7eIr+pnqBPSQfD+FKxG
-         pdxg==
+        d=sifive.com; s=google; t=1723737579; x=1724342379; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=g4+z91zLwzol+brq2IIPZq1Ohh/pu+6NsMuoxH1a358=;
+        b=SkI11rOA6ZMBXozIGSKIw4X5RO4bwoAA7e3w1/SlV0Zv8MmMLhNXU5SjjiNMb9vz/S
+         89Mow9KyEAsPIrsNnOjzHRYgP9IfQAxHXqopDqxWP+BliVV194tWJdsbGda0OBxbx41b
+         ERGQVMaqHBuu1mWDZjB7ElmG90SGJeLfiUGMc6ZvFkJorky3A8pwCPr0ze//6nhP42xs
+         CSk0D1XtIuqUDdhaP9178HfRrYQgyKejjVHdfqqsX0RuG4XfqP/EHUQJ3AvHalx3hUNt
+         A+nt4mHANS5VMdM/oc5THcOnhttaXKZnQZUYpopqVYsVMWQ8FI4+KjEPy4d/2p6AM0WX
+         Jlng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723737556; x=1724342356;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1723737579; x=1724342379;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Go1TBNFKLXqY7P67ovoHUjFQplVz6G9uJaPMlcb/pTE=;
-        b=Q1C499VVball1Yv3rNl6T2D06cOnCY8Zs1nCJ/9LqoBdkz/JOrFj+qM9POxyFRDW81
-         IjdTZWQkJKvCTeg+xye+J5LROpaJ99YQnkkysh186TGZ3SwOR+FBe3KldjOB4FIOtR7M
-         fgTFRduue44dvhs7AZztaF0SKoY9T7gfdl9wzOsBlON8kCikDZrOIib5tbrtu9GA++hL
-         5tSzoGKePlolI0HRhAp1sS5kO1Kuc++VnedHm9gJCQ3y6tEeTkk7nesP7HA0k8NW4v50
-         cBNfz+0x72xo9Ekf5yQL56d1+U5/rNFBYTOYrKiU1OVUwtGnpbow+/meupIrxq4ZW+Dp
-         RBIA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ+s1vLWxgd5KzwphYhXp7uoVgMVxFG+aEWCcSflaoz1fcO9mz1PnDdD0Ga/izlK+RTnLqCahuKFOq8y3G3q/Wfy4Me1j1wipusveO
-X-Gm-Message-State: AOJu0YzWvsaynubbqnViUDuYFRBjMqjGQ4arK7XtNGf5Gur1dNjOY0nm
-	A/z8OGqmPj4vPI0DyHHDFoPY07FxCAzc5J/NvaU23MDjYTGIKAQrY+Q4yM+6tA==
-X-Google-Smtp-Source: AGHT+IGk4qceJ8StUFPW4JHw1XS1cn4wjioyj97u+D8ec4AIR96mMNUmXxt7TcNKR/bC4iSHsI2ajg==
-X-Received: by 2002:a05:6a20:9f90:b0:1c0:f529:bad6 with SMTP id adf61e73a8af0-1c90505350emr174630637.45.1723737556019;
-        Thu, 15 Aug 2024 08:59:16 -0700 (PDT)
-Received: from thinkpad ([36.255.17.34])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f0393684sm11660685ad.239.2024.08.15.08.59.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 08:59:15 -0700 (PDT)
-Date: Thu, 15 Aug 2024 21:29:09 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: kernel test robot <lkp@intel.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-Cc: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	oe-kbuild-all@lists.linux.dev, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 05/13] PCI: endpoint: Assign PCI domain number for
- endpoint controllers
-Message-ID: <20240815155909.GD2562@thinkpad>
-References: <20240731-pci-qcom-hotplug-v3-5-a1426afdee3b@linaro.org>
- <202408111053.0PLHSTeH-lkp@intel.com>
+        bh=g4+z91zLwzol+brq2IIPZq1Ohh/pu+6NsMuoxH1a358=;
+        b=GLg1wKXo5daC3rM9WIJuX8QiTn6p5/jW3wAekzPyvvCUEBVPref60GjqrtJXw2/dJ3
+         ipSK/2Dy7bdsHGjhte4P74jdAcxNTjqDpqXHq4vFBkk1p2zIUTYHcLIn22853frS9TRZ
+         1lnsm936zbMrYhhZ4Jt6EZE6OUW4mIQknxtZ7y/1pp8Zw3dQ4jOmyZF3m5BNTmhjZbmY
+         pNy9vwagsNUNJmcRIxxD91+gPemGBTc0FsU7nfbRccxrwzO9m4mINmDQpIh1o47uhEbL
+         rscRwbX6vVvaWI90H1egme1bUMxyZGBNnavdMWY+vyLsEXr0gX/ia1YWcaMtrjaL/Qp0
+         jOqQ==
+X-Gm-Message-State: AOJu0YwGUOerT2hi4g/+9K8EimQnxEayxbSrMaxWZcnEDeqNlMd8hOxX
+	CnajxJc7ouYgdj0HAysO3nV/PD4ZJZeb6SHgCrX5zIPnY4HZ4TK9Bl5x7ljPT5M=
+X-Google-Smtp-Source: AGHT+IFNOb+TtVyiLhjQXNipwoGI8CZl3XTIEhqlZdMaV4HQw3tSJmyEeEAIBgFrQISH3pvXP4F29g==
+X-Received: by 2002:a5e:df02:0:b0:81f:8825:af8f with SMTP id ca18e2360f4ac-824e76b222cmr271498539f.2.1723737579038;
+        Thu, 15 Aug 2024 08:59:39 -0700 (PDT)
+Received: from [100.64.0.1] ([147.124.94.167])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-824e990d5b4sm57205339f.14.2024.08.15.08.59.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Aug 2024 08:59:38 -0700 (PDT)
+Message-ID: <085c8332-d7f1-41df-8854-bee06291ba83@sifive.com>
+Date: Thu, 15 Aug 2024 10:59:37 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/9] Fix Allwinner D1 boot regression
+To: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+ Anup Patel <apatel@ventanamicro.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+References: <20240814145642.344485-1-emil.renner.berthing@canonical.com>
+ <87jzgjnh9z.ffs@tglx>
+ <CAJM55Z8WERQgs=QMyFGWvAHOpwcnOAudBqovaEuDudPSXCvL5Q@mail.gmail.com>
+ <87ttfmm2ns.ffs@tglx>
+ <CAJM55Z88H635Crc-Aeq+K0qcAk7NC89WVTAFdXDd2aQKQ7QmEg@mail.gmail.com>
+ <CAJM55Z_qQX7n8tAeOFqrAH1BFjA9vaWA8rtsPG2BcKmiO88m=Q@mail.gmail.com>
+ <87plqalyd4.ffs@tglx> <686d61c4-e7ac-4dca-a7fd-decdd72e84d9@sifive.com>
+ <87h6blnaf1.ffs@tglx>
+ <CAK9=C2V7oL023=u6nodJs76k_0yHZ8PTJs=n1QFqDWCcCnG9kw@mail.gmail.com>
+ <be1db8f5-af55-48a4-be7a-5e8a1a5e25c4@sifive.com>
+ <CAJM55Z9kKqs-kMubsGsRkS6E2Y4ur1MmwD+1XFvGP=UVNrJvRg@mail.gmail.com>
+Content-Language: en-US
+From: Samuel Holland <samuel.holland@sifive.com>
+In-Reply-To: <CAJM55Z9kKqs-kMubsGsRkS6E2Y4ur1MmwD+1XFvGP=UVNrJvRg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <202408111053.0PLHSTeH-lkp@intel.com>
 
-On Sun, Aug 11, 2024 at 10:47:08AM +0800, kernel test robot wrote:
-> Hi Manivannan,
-> 
-> kernel test robot noticed the following build warnings:
-> 
-> [auto build test WARNING on 8400291e289ee6b2bf9779ff1c83a291501f017b]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Manivannan-Sadhasivam-via-B4-Relay/PCI-qcom-ep-Drop-the-redundant-masking-of-global-IRQ-events/20240802-024847
-> base:   8400291e289ee6b2bf9779ff1c83a291501f017b
-> patch link:    https://lore.kernel.org/r/20240731-pci-qcom-hotplug-v3-5-a1426afdee3b%40linaro.org
-> patch subject: [PATCH v3 05/13] PCI: endpoint: Assign PCI domain number for endpoint controllers
-> config: microblaze-randconfig-r072-20240810 (https://download.01.org/0day-ci/archive/20240811/202408111053.0PLHSTeH-lkp@intel.com/config)
-> compiler: microblaze-linux-gcc (GCC) 14.1.0
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202408111053.0PLHSTeH-lkp@intel.com/
-> 
-> New smatch warnings:
-> drivers/pci/endpoint/pci-epc-core.c:843 pci_epc_destroy() warn: inconsistent indenting
-> 
-> Old smatch warnings:
-> drivers/pci/endpoint/pci-epc-core.c:908 __pci_epc_create() warn: inconsistent indenting
-> 
+Hi Emil,
 
-Krzysztof, will you be able to fix the indendation while applying? If not,
-please let me know. I'll spin v4.
-
-- Mani
-
-> vim +843 drivers/pci/endpoint/pci-epc-core.c
+On 2024-08-15 10:07 AM, Emil Renner Berthing wrote:
+> Samuel Holland wrote:
+>> On 2024-08-15 9:16 AM, Anup Patel wrote:
+>>> On Thu, Aug 15, 2024 at 7:41 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>>>>
+>>>> On Thu, Aug 15 2024 at 08:32, Samuel Holland wrote:
+>>>>> On 2024-08-15 8:16 AM, Thomas Gleixner wrote:
+>>>>>> Yes. So the riscv timer is not working on this thing or it stops
+>>>>>> somehow.
+>>>>>
+>>>>> That's correct. With the (firmware) devicetree that Emil is using, the OpenSBI
+>>>>> firmware does not have a timer device, so it does not expose the (optional[1])
+>>>>> SBI time extension, and sbi_set_timer() does nothing.
+>>>>
+>>>> Sigh. Does RISCV really have to repeat all mistakes which have been made
+>>>> by x86, ARM and others before? It's known for decades that the kernel
+>>>> relies on a working timer...
+>>>
+>>> My apologies for the delay in finding a fix for this issue.
+>>>
+>>> Almost all RISC-V platforms (except this one) have SBI Timer always
+>>> available and Linux uses a better timer or Sstc extension whenever
+>>> it is available.
+>>
+>> So this is the immediate solution: add the CLINT to the firmware devicetree so
+>> that the SBI time extension works, and Linux will boot without any code changes,
+>> albeit with a higher-overhead clockevent device.
 > 
->    830	
->    831	/**
->    832	 * pci_epc_destroy() - destroy the EPC device
->    833	 * @epc: the EPC device that has to be destroyed
->    834	 *
->    835	 * Invoke to destroy the PCI EPC device
->    836	 */
->    837	void pci_epc_destroy(struct pci_epc *epc)
->    838	{
->    839		pci_ep_cfs_remove_epc_group(epc->group);
->    840		device_unregister(&epc->dev);
->    841	
->    842		#ifdef CONFIG_PCI_DOMAINS_GENERIC
->  > 843			pci_bus_release_domain_nr(NULL, &epc->dev);
->    844		#endif
->    845	}
->    846	EXPORT_SYMBOL_GPL(pci_epc_destroy);
->    847	
-> 
-> -- 
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+> But this will mean that you can't update your kernel to v6.9 or newer without
+> reflashing OpenSBI and u-boot. That's still a regression right?
 
--- 
-மணிவண்ணன் சதாசிவம்
+I suppose that depends on if you think the SBI time extension is (or should have
+been) mandatory for platforms without Sstc. If the SBI time extension is
+mandatory, then this is a firmware bug, and not really Linux's responsibility to
+work around.
+
+If the SBI time extension is not mandatory, then Linux needs to be able to
+handle platforms where the S-mode visible timer is attached to an external
+interrupt controller (PLIC or APLIC), so the irqchip driver needs to be loaded
+before time_init() (timer_probe()). So in that case, the bug is a Linux
+regression, and we would need to revert the platform driver conversion.
+
+Regards,
+Samuel
+
 
