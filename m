@@ -1,180 +1,119 @@
-Return-Path: <linux-kernel+bounces-288495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F4D953ACF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:20:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D7EA953AD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90A14286CF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:20:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 236731F25768
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E727BB17;
-	Thu, 15 Aug 2024 19:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639B578C9D;
+	Thu, 15 Aug 2024 19:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L9BE+/io"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ai1e7fav"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D34B1DDF5
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 19:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792311DDF5;
+	Thu, 15 Aug 2024 19:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723749643; cv=none; b=ex4ul09SZzddXiYiD/hDbj89hG8j/EGTbNHoaosnp6AqF7HILdHUEbcv9mEiWh5+7Wm1gydhUbpXuGDNUluoBdfI7syYoYZ5HbFIKSfEfk4BERyNJpcQTIvD+LXm+RpE6gu1RojOSLDtaKF4m3ETJlnlSlxJ2cTNivPez8y8J1Y=
+	t=1723749695; cv=none; b=rALY4o05slsS2j3FSzu7S3sxxDsHeKHaRSMS/+AkF3TtY+8c63MPTihx1GYDokvKJnBBlURKj3ZmYYXqSkQGLjwxbEy6VcolzNfP21iVQJ4MIoFrlDIMTRzxSYWu9wkz+1jfqUp2/G01phcWuFSHifL5a+RXVC+0/ClLsybRRVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723749643; c=relaxed/simple;
-	bh=GE/hnbfYUn8fmUyXpMOkkkPkKY+6QjaFve5xgWbEj5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hnWOdO8vVBqMN27elm32AL27I5SvLflb2mLudPQaX56xanTiqKSMBguHG+uRGJfSk3yKPH39CEpoN3t5lrab+xe722RrJBnQLGplQemOmhDHqf9HIwdU79mlCZqpaeQp55NLuSREy5sJBQ2wMU/C/pXoQ4rIFWmWM24jzQur2eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L9BE+/io; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723749641;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hN3cWnGeWKQo07EqYMNPRxi9dbHHJOKA4fs/GpZzU4w=;
-	b=L9BE+/ioC/FHxOhLEc6x6p0qPeF9x5FIGcKtIgkPCIv9po+JJ8r94XoQ/JHl+C5/YTwxPm
-	yqaXq41RnPJJGon+BdE/cusGJoTNdKO8Td3z4AJsih2FjMVwbW8J1p6VX9jNffJDKQh28V
-	jMulnB+1p3D+vOymSN5Pa117sAG8pys=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-205-A01HLFr2MDiweCy5HVe6og-1; Thu, 15 Aug 2024 15:20:40 -0400
-X-MC-Unique: A01HLFr2MDiweCy5HVe6og-1
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-44fe325cd56so1830311cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 12:20:39 -0700 (PDT)
+	s=arc-20240116; t=1723749695; c=relaxed/simple;
+	bh=L8EPgfErufotgtcVogDTGa11kdtq+O4nYORBDNA/Lgw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RgfjtflPYdqLCsLV12V+0TTF4n9zPG6LeCWQ6YzPy0PaiofGvanlFbYkdNp59A6PYH4szpd88lNHMr5V7qrG/mnlXvrzBR3nYL4/Jro3UPQ7bSXi7Tjcv5f2ULJPhMYGyeIHRHFr9X6edHgDhm9aadgAQ8CuYAfsp7kKqcGx9aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ai1e7fav; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fd70ba6a15so11587815ad.0;
+        Thu, 15 Aug 2024 12:21:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723749694; x=1724354494; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Umz9hDXFSz3YBUb9yk0tQ3KFZaZp7tJt+ZRbi1r2fU0=;
+        b=ai1e7favJeZcz+fFusvJ18pV9sDRABySy8b5+urVJvhfxWrlalfW1I7MZsm30Q1LEw
+         DMtb3Kl9tPpcmdCAF9ipUulRK+3AF6fmd94xztYO6+jnKw9sWagOXQWfSb8YCnI/FoX5
+         CJQuys845WNP7Yi5RpZfnAXAEf6/T9uwVe62to+HNBhLgI13+cqYXJSX3kSx6itYH55M
+         gInAhPDbQW6Ixyv5+lnUtNrZmMkAYtErJqQD4WvsGZN7LC+pyzQJaemAd7smo43Ko+5K
+         0QYmpgt3jWYjgN1u9xrY2JY5drribsnB4PPKPhSL+RK6ok1/6zFzNV7pjfGZyjKix3HQ
+         qkbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723749639; x=1724354439;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hN3cWnGeWKQo07EqYMNPRxi9dbHHJOKA4fs/GpZzU4w=;
-        b=GnFzvdV6XDMoqRHODPg0ceQj//x7snYZ2+wgGEJgwzex//GrVrvkSZpf1bPC10UK7l
-         JWUUhKUcRpVv6BsZfrc/s1mVwzMsJknq8Ti7NArCWWi4+aronfJdqBEnIOijpwgp1T/h
-         Hy3GJpIVER2PRApwdhxM1Pp9S9Gi+dzGqHuG3DVi1L08Baa8ebWV5c+jKgl1CiFfD2KV
-         MxKEFzPizthG0Y6UHn4Hra/8tfToD8oJ3PQV4xqBUSAodk7T0+ce9cI1M01mbFwRRrbT
-         PNiC57hUMSbw8JfOBH7S42GShFmoH4RUfIsEWLaAOtYx/E5feoXEPB1nLfTRxfASi2TJ
-         yK1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWJlxfDZWb+wVgYYfP1fjk5Zx9sY+pb7Fn2xq4Wv8MAPpRdhWsGHuMVjofdRU3B7Df1jgZP0W+9gIDUuow=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyex47zj171/ClQsgN/phRgERXMe6gE4LB/U7d+g6GLEFwxEbsf
-	eZaqzCJw9dmOiZ9bfDmWyyuNFrCUta+g+C9Was++H0sVG/HPJY25pcD9ZKuZg60Di2wASnXu5hR
-	4y85XfHCGahUZ4BZPd94WWSywCnbnH31zMoiSpNQqK1T1zb+/lypA68tOT8l/ww==
-X-Received: by 2002:a05:620a:4153:b0:7a2:1c0:37b5 with SMTP id af79cd13be357-7a50693d38fmr45572685a.4.1723749639334;
-        Thu, 15 Aug 2024 12:20:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFojTZh/htiiNcOeQoBS1xVpbX6xb2lxm+nPbSup4gW+eZznV4PZFeir1x4wegN1uR+lXAZRg==
-X-Received: by 2002:a05:620a:4153:b0:7a2:1c0:37b5 with SMTP id af79cd13be357-7a50693d38fmr45569585a.4.1723749638927;
-        Thu, 15 Aug 2024 12:20:38 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4ff055ae8sm90637485a.51.2024.08.15.12.20.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 12:20:38 -0700 (PDT)
-Date: Thu, 15 Aug 2024 15:20:35 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Sean Christopherson <seanjc@google.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-	Will Deacon <will@kernel.org>, Gavin Shan <gshan@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, Zi Yan <ziy@nvidia.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Borislav Petkov <bp@alien8.de>,
-	David Hildenbrand <david@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: Re: [PATCH 00/19] mm: Support huge pfnmaps
-Message-ID: <Zr5VA6QSBHO3rpS8@x1n>
-References: <20240809160909.1023470-1-peterx@redhat.com>
- <20240814123715.GB2032816@nvidia.com>
+        d=1e100.net; s=20230601; t=1723749694; x=1724354494;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Umz9hDXFSz3YBUb9yk0tQ3KFZaZp7tJt+ZRbi1r2fU0=;
+        b=Oh8M1bJ2fnHk7T6Klw6qW5YrbiLn0I9npwsX60hCabjLdDYk2p1MscPrp/Y9VQz8In
+         oE7v4J5tE/5DYveG35atVOM4z1xZIHRaMLAFrv9waEa5Ll5WhJua13WLHwUKkafrh2C1
+         0WVCmMaVJfyjLwOpoJYfcluE7Jyrt5Rg7iMNueyBzYlEHgPA2bzLCfa4MDj3E7uKV0YW
+         5kCr/wbpgnNd2o6XJFanRRD7niUOiR7/Z40yhzzilNEI4nUrluI6Pjzrwbn+bpFGCtK4
+         vZg+5Hd+ztnE2vDepMWNbW6M6aQmlvjB5tEy7gT8S2s6KkO4kk/qDP6zYyqzcM9eD8RP
+         He1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWn++ABYWo4aWRvpZN09PV27sut7dfwO6NRpPksKlE31i+m8dH7EOKzoKShs+ZVagcmETNbFsj2vQ3NPHc5Cqm/qRJdMfFKv3xKJ84U/RO/M0zSvAElcKc6Z6o3UdRY30dMlz9D
+X-Gm-Message-State: AOJu0YymxvO/WRFw8lmPpu/qie9+hZLNOWNwrfdbV8x2mm5hiU4AbxxS
+	toCVsTWVwejpEMX5TpNLt42vLATvR5PViwH+RpjQeOlonqzzDByk
+X-Google-Smtp-Source: AGHT+IF7fvFs+8/4+eEtd/uO/sToK/u6WOiwUJ3JPwO8p43BjJXgCpRgn8uVmQNMyQanV4QZgamreg==
+X-Received: by 2002:a17:902:f68c:b0:201:febc:436a with SMTP id d9443c01a7336-20203e868dbmr7931075ad.15.1723749693535;
+        Thu, 15 Aug 2024 12:21:33 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-201f03a1468sm13274725ad.271.2024.08.15.12.21.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Aug 2024 12:21:33 -0700 (PDT)
+Message-ID: <d203bdb1-1ee3-4de5-9d20-1e2b08e710e7@gmail.com>
+Date: Thu, 15 Aug 2024 12:21:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240814123715.GB2032816@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.4 000/259] 5.4.282-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240815131902.779125794@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20240815131902.779125794@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 14, 2024 at 09:37:15AM -0300, Jason Gunthorpe wrote:
-> > Currently, only x86_64 (1G+2M) and arm64 (2M) are supported.  
+On 8/15/24 06:22, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.282 release.
+> There are 259 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> There is definitely interest here in extending ARM to support the 1G
-> size too, what is missing?
-
-Currently PUD pfnmap relies on THP_PUD config option:
-
-config ARCH_SUPPORTS_PUD_PFNMAP
-	def_bool y
-	depends on ARCH_SUPPORTS_HUGE_PFNMAP && HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
-
-Arm64 unfortunately doesn't yet support dax 1G, so not applicable yet.
-
-Ideally, pfnmap is too simple comparing to real THPs and it shouldn't
-require to depend on THP at all, but we'll need things like below to land
-first:
-
-https://lore.kernel.org/r/20240717220219.3743374-1-peterx@redhat.com
-
-I sent that first a while ago, but I didn't collect enough inputs, and I
-decided to unblock this series from that, so x86_64 shouldn't be affected,
-and arm64 will at least start to have 2M.
-
+> Responses should be made by Sat, 17 Aug 2024 13:18:17 +0000.
+> Anything received after that time might be too late.
 > 
-> > The other trick is how to allow gup-fast working for such huge mappings
-> > even if there's no direct sign of knowing whether it's a normal page or
-> > MMIO mapping.  This series chose to keep the pte_special solution, so that
-> > it reuses similar idea on setting a special bit to pfnmap PMDs/PUDs so that
-> > gup-fast will be able to identify them and fail properly.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.282-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
 > 
-> Make sense
+> thanks,
 > 
-> > More architectures / More page sizes
-> > ------------------------------------
-> > 
-> > Currently only x86_64 (2M+1G) and arm64 (2M) are supported.
-> > 
-> > For example, if arm64 can start to support THP_PUD one day, the huge pfnmap
-> > on 1G will be automatically enabled.
-> 
-> Oh that sounds like a bigger step..
+> greg k-h
 
-Just to mention, no real THP 1G needed here for pfnmaps.  The real gap here
-is only about the pud helpers that only exists so far with CONFIG_THP_PUD
-in huge_memory.c.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
->  
-> > VFIO is so far the only consumer for the huge pfnmaps after this series
-> > applied.  Besides above remap_pfn_range() generic optimization, device
-> > driver can also try to optimize its mmap() on a better VA alignment for
-> > either PMD/PUD sizes.  This may, iiuc, normally require userspace changes,
-> > as the driver doesn't normally decide the VA to map a bar.  But I don't
-> > think I know all the drivers to know the full picture.
-> 
-> How does alignment work? In most caes I'm aware of the userspace does
-> not use MAP_FIXED so the expectation would be for the kernel to
-> automatically select a high alignment. I suppose your cases are
-> working because qemu uses MAP_FIXED and naturally aligns the BAR
-> addresses?
-> 
-> > - x86_64 + AMD GPU
-> >   - Needs Alex's modified QEMU to guarantee proper VA alignment to make
-> >     sure all pages to be mapped with PUDs
-> 
-> Oh :(
-
-So I suppose this answers above. :) Yes, alignment needed.
-
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-Peter Xu
+Florian
 
 
