@@ -1,174 +1,135 @@
-Return-Path: <linux-kernel+bounces-288715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D5DC953DEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:31:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15B8C953DF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7AE4282967
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:31:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94B601F22101
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C78155C97;
-	Thu, 15 Aug 2024 23:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5B4156236;
+	Thu, 15 Aug 2024 23:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eqrYtWgA"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lZtND6sZ"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30C91AC897;
-	Thu, 15 Aug 2024 23:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5291547FF;
+	Thu, 15 Aug 2024 23:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723764685; cv=none; b=DIKn/oz3gm7Pto5hrCpFTqfPhufcRCC3MQs0jWt23G7Nou6v9sZVNP9s1dku+C65A7VdGlzRvc3BCJqg2GQx1xiWDkRFSjHc76iSoBK03DjWtizNahd+EGRSVoD3ZdkLpjMXtkbfbl4m8ufZ9ABTGtvhGWlFH4pI1zPbxd5ZaHQ=
+	t=1723764724; cv=none; b=MkJnbo3NKfzHySvEwddy+51h7+KG7PkDl+rUJEHTt7uwObWLwYR6pGyoRHykmSGCfXDbN8qG/GxsaFP4cfYBdGzcTrL9KCJjbaKSvk3V+pTuL9lVSu/18zGCT65XVXPaMf8yL8aZnEpAKc8A8+Qp9aNSZSP9QDTp14/877VgqJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723764685; c=relaxed/simple;
-	bh=Q00Wy/EH0Tpo4vlmp+Hm4TrJ3Hq2oPEIBrWzGhTrgug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RkJA5W390ranRyER/54ZtYggJGcebgYDW4kffcKH81sFj7jnBWL+fD7oXCrqXwdzea9TpDcKU1ADiY44JDd4/kJORdl/0iVcX4/6nk3dhqNlSqpfoI6Y/8GJxGaHnYm053m8/+RncZCmzbXkp7ompHVffWBnRYv4Vaq6NtS2wVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eqrYtWgA; arc=none smtp.client-ip=209.85.214.176
+	s=arc-20240116; t=1723764724; c=relaxed/simple;
+	bh=yQigOF5eQGL7Ydd8DtIlEXS/h+1Roi9GzWdfft2iRF0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o+3XwGs21dRSaYy1jI6XXikE2KX1LxwyczDz5fcPiHcJoC91UPNRuI+f8ELDtG+bJo+tuERjADiz2i6hKssjhzeDlqLb6n9GCPkR7TLagUmVKEMrdTCjXCSuE4tntF1/bALgNoff8aX3FWRAvb+HK94cENaZ8ZNp7xzlaDK6SA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lZtND6sZ; arc=none smtp.client-ip=209.85.219.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fc65329979so14463795ad.0;
-        Thu, 15 Aug 2024 16:31:23 -0700 (PDT)
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6bf7a2035d9so7017276d6.1;
+        Thu, 15 Aug 2024 16:32:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723764683; x=1724369483; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TJUrcjdRDSHYk+JjRgPgoz0uj64QHPtt5Zknd43gI+Q=;
-        b=eqrYtWgAxTDdXazmIbsbxd95ylo+IGd4Br6nd3vbWXJmP8J9zAGMr/IWF7jOsD1yL6
-         QzDNaa0zd70m1lrFD/5M7pgGe71nS6StMMeik5VC7+FpdZZcH9qPEt4RfgpF83A/mJbg
-         NnXczPb54nW7ADu3lWNvFFqFv3cpt+x1ufArdLkrPyN2bQA9FtfGeOG2O6TDEIObGW2K
-         P1FGgfsNrz9UePuVy0yzmRqs0PAau3vi13NJ6UR8+hnnDSYJijj8ljNFcJ3EWrKC5vBw
-         5VJReTApE+2ob1XJa160nNmNzb2fguARwh6HwJ035KzaiRIfDBZtN/myQMBEWwzxcYMn
-         TPAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723764683; x=1724369483;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1723764721; x=1724369521; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TJUrcjdRDSHYk+JjRgPgoz0uj64QHPtt5Zknd43gI+Q=;
-        b=RhXffbnLvSn/MTzL6+l7K5kwY2UBNCbnE+x3PLP79XCsBIxhtih3hJlNoEWbUTwD5Z
-         ix3IEPgjXrTpBi5Azo/OM+QUYbt3Qn6CNFTi5NRQjnxgyt88osPLFIP2CRT7TEv8ICgI
-         v41KKUa25ZLRU6jqftTMPZ1xjZ3OwFxaFYFO/F1tQP0ke/uIC4e+SARrR/qX68zFueZJ
-         Fm5+2tzqjsMg6HX0ZsvdOGtYAGszAhrPbDavhm/kRUtaxXqUGInbwdHWpHNmHKgE+Ook
-         hR5TZy0QMT0wR+ejjA7CnnnghABNNqMH/uwtdBQ4z7ADA00k12Qq7yWdSSHN+7ifC9g7
-         ON1g==
-X-Forwarded-Encrypted: i=1; AJvYcCX122imbbbqxB+epwZE+Q1HlXXCSo8zExhLOmfXalccnB1gaQGFYQ6IAht/LGl8mnFEsl3ELBKrXYomcjyTKRl4W9VtbUDGJfGl+v5llJDRz1SPDV+uDhu7A/63UU0Sx8KR
-X-Gm-Message-State: AOJu0YxiXVJxFZ38SSmRRzBtLg8K338xlLBuS0EtvAOsfYkcZym0SFIU
-	vr3KTrEINYNnQsljGYp+/xLqTzxH4ZxRmBSj0+GgwicdJxnXYzIn0WZgdQ==
-X-Google-Smtp-Source: AGHT+IF+b039Cjf7T7Bg8XxuJ/M8/eT5IIR2en8CeRs7a7NXKHt8IOo5PeHoGADcAGX+98RuQoCJgQ==
-X-Received: by 2002:a17:903:187:b0:1fa:8f64:8b0d with SMTP id d9443c01a7336-20203e4f2b4mr16331995ad.4.1723764682896;
-        Thu, 15 Aug 2024 16:31:22 -0700 (PDT)
-Received: from localhost (89.208.245.145.16clouds.com. [89.208.245.145])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f03a35fcsm15149675ad.256.2024.08.15.16.31.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 16:31:22 -0700 (PDT)
-Date: Fri, 16 Aug 2024 07:31:19 +0800
-From: Yao Yuan <yaoyuan0329os@gmail.com>
-To: Yuan Yao <yuan.yao@linux.intel.com>
-Cc: Sean Christopherson <seanjc@google.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Peter Gonda <pgonda@google.com>, Michael Roth <michael.roth@amd.com>, 
-	Vishal Annapurve <vannapurve@google.com>, Ackerly Tng <ackerleytng@google.com>
-Subject: Re: [PATCH 04/22] KVM: x86/mmu: Skip emulation on page fault iff 1+
- SPs were unprotected
-Message-ID: <6fsgci4fceoin7fp3ejeulbaybaitx3yo3nylzecanoba5gvhd@3ubrvlykgonn>
-References: <20240809190319.1710470-1-seanjc@google.com>
- <20240809190319.1710470-5-seanjc@google.com>
- <20240814142256.7neuthobi7k2ilr6@yy-desk-7060>
+        bh=yQigOF5eQGL7Ydd8DtIlEXS/h+1Roi9GzWdfft2iRF0=;
+        b=lZtND6sZ/QeF78Qy7TIHkNv+l6iVigQdRKqtL7RQ/sh/PYYGzsDhxXC+LmJ/2f086W
+         aM8I86pzJXeJoF6thNQOhvuomZxAnyAG+PFzqlopdz2nogUE6+v8m8LL33UICvaMFhQe
+         lg+5Q8ycPxHEcdsG2mH0vs6C7PBPnGpST7ZgV+V1TwP7opPL7cegub0gK3jxbKbDocKd
+         yYw35M9KYjMVZ5h25YJiDw7VnRdcNSaZ+gWlF+DAuWuSRUo4IzdUXuhDdwvcDOftZG5s
+         BI0VjWlo7l0UzcwXFACwiCgjGmzjVSmr43wtDHfu9pWGA7qQNcgPPpbt/8DkaTgjTNom
+         TmeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723764721; x=1724369521;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yQigOF5eQGL7Ydd8DtIlEXS/h+1Roi9GzWdfft2iRF0=;
+        b=Iq78rhP9B0HigbH2Hmc9R2Eu7YegmOPPHKx9GlJcgkJ7MWakkUHUrkk4oc7BLQtqic
+         5p5jX7cDX1n5HRRIhFdgboTngtM6zB5zf+SoFFQTjz28u6F8oqUXwFrmRHZMHq47g6Qi
+         RX2gOgCHzx4Ts/CVjDwgTEf6+r1ZcHkSaiNiJ0FuRRCI0gkducAHlQn3Re/Gc2ai0iZP
+         NXGhn9E2C9VkwXfkFSz/AQddaANTHL6JoycVoHqPry3nqRliKrthztaZObdEXX2bW9to
+         eqakmo3qGHJBKeIAWTb/7LykN284ZFEiVeuX0zhqCx28nLOrlUrPNyxPxHSB9LGci0qX
+         T20w==
+X-Forwarded-Encrypted: i=1; AJvYcCVyaakwf46VR7KEBzyOAZWo9dmXRRTq2V2R4E7EDNFkKkfaPrR1g2mOxFi4PIJKhAqGBBRWz3ri09Sm5/lrHNUKFiB2rB8K+vxbyi8i82Ggq8/UR/V9HljZ/C1cbJfgxQqiXZecCQ==
+X-Gm-Message-State: AOJu0YwQT0MNUDamXgQh3fYFBT6wub5HGdc/4+Af0PZC1Cycq8UMQ5z+
+	sGX51WFLeTpAXBoNRxDx8I1VHKCHmYK3lrkpvQZomrfidqWBzCwvcNt8za3xe8/u6Ep4INW7SJq
+	Dcaw9en7G1C7P1E4rKbpQX+5M3a4=
+X-Google-Smtp-Source: AGHT+IHU6G58rVKMj+aRmyqqW7vPgGFeK5cKETFFid5YSn9XIvkoyYNQs0na099XvSqN8a5PMEzJyhX64q6lif3Ag+c=
+X-Received: by 2002:a05:6214:5d01:b0:6bf:60b8:d4d7 with SMTP id
+ 6a1803df08f44-6bf7d545f64mr12246996d6.15.1723764721380; Thu, 15 Aug 2024
+ 16:32:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240814142256.7neuthobi7k2ilr6@yy-desk-7060>
+References: <20240814171800.23558-1-me@yhndnzj.com> <CAKEwX=NrOBg0rKJnXGaiK9-PWeUDS+c3cFmaFFV0RrE8GkNZZA@mail.gmail.com>
+ <CAJD7tkZ_jNuYQsGMyS1NgMf335Gi4_x5Ybkts_=+g5OyjtJQDQ@mail.gmail.com>
+ <a2f67cbcc987cdb2d907f9c133e7fcb6a848992d.camel@yhndnzj.com>
+ <CAKEwX=MDZdAHei3=UyYrsgWqyt-41_vOdCvTxj35O62NZhcN2A@mail.gmail.com>
+ <20240815150819.9873910fa73a3f9f5e37ef4d@linux-foundation.org> <CAJD7tkZ3v9N1D=0SSphPFMETbih5DadcAiOK=VVv=7J6_ohytQ@mail.gmail.com>
+In-Reply-To: <CAJD7tkZ3v9N1D=0SSphPFMETbih5DadcAiOK=VVv=7J6_ohytQ@mail.gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Thu, 15 Aug 2024 16:31:50 -0700
+Message-ID: <CAKEwX=Pz4Pe-CAevBvxUCpPZJ-fRseLN4T35Wt3mb84gqCY25w@mail.gmail.com>
+Subject: Re: [PATCH] mm/memcontrol: respect zswap.writeback setting from
+ parent cg too
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Mike Yuan <me@yhndnzj.com>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	Muchun Song <muchun.song@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Michal Hocko <mhocko@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 14, 2024 at 10:22:56PM GMT, Yuan Yao wrote:
-> On Fri, Aug 09, 2024 at 12:03:01PM -0700, Sean Christopherson wrote:
-> > When doing "fast unprotection" of nested TDP page tables, skip emulation
-> > if and only if at least one gfn was unprotected, i.e. continue with
-> > emulation if simply resuming is likely to hit the same fault and risk
-> > putting the vCPU into an infinite loop.
-> >
-> > Note, it's entirely possible to get a false negative, e.g. if a different
-> > vCPU faults on the same gfn and unprotects the gfn first, but that's a
-> > relatively rare edge case, and emulating is still functionally ok, i.e.
-> > the risk of putting the vCPU isn't an infinite loop isn't justified.
-> >
-> > Fixes: 147277540bbc ("kvm: svm: Add support for additional SVM NPF error codes")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >  arch/x86/kvm/mmu/mmu.c | 28 ++++++++++++++++++++--------
-> >  1 file changed, 20 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> > index e3aa04c498ea..95058ac4b78c 100644
-> > --- a/arch/x86/kvm/mmu/mmu.c
-> > +++ b/arch/x86/kvm/mmu/mmu.c
-> > @@ -5967,17 +5967,29 @@ static int kvm_mmu_write_protect_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
-> >  	bool direct = vcpu->arch.mmu->root_role.direct;
-> >
-> >  	/*
-> > -	 * Before emulating the instruction, check if the error code
-> > -	 * was due to a RO violation while translating the guest page.
-> > -	 * This can occur when using nested virtualization with nested
-> > -	 * paging in both guests. If true, we simply unprotect the page
-> > -	 * and resume the guest.
-> > +	 * Before emulating the instruction, check to see if the access may be
-> > +	 * due to L1 accessing nested NPT/EPT entries used for L2, i.e. if the
-> > +	 * gfn being written is for gPTEs that KVM is shadowing and has write-
-> > +	 * protected.  Because AMD CPUs walk nested page table using a write
-
-Hi Sean,
-
-I Just want to consult how often of this on EPT:
-
-The PFERR_GUEST_PAGE_MASK is set when EPT violation happens
-in middle of walking the guest CR3 page table, and the guest
-CR3 page table page is write-protected on EPT01, are these
-guest CR3 page table pages also are EPT12 page table pages
-often?  I just think most of time they should be data page
-on guest CR3 table for L1 to access them by L1 GVA, if so
-the PFERR_GUEST_FINAL_MASK should be set but not
-PFERR_GUEST_PAGE_MASK.
-
-> > +	 * operation, walking NPT entries in L1 can trigger write faults even
-> > +	 * when L1 isn't modifying PTEs, and thus result in KVM emulating an
-> > +	 * excessive number of L1 instructions without triggering KVM's write-
-> > +	 * flooding detection, i.e. without unprotecting the gfn.
-> > +	 *
-> > +	 * If the error code was due to a RO violation while translating the
-> > +	 * guest page, the current MMU is direct (L1 is active), and KVM has
-> > +	 * shadow pages, then the above scenario is likely being hit.  Try to
-> > +	 * unprotect the gfn, i.e. zap any shadow pages, so that L1 can walk
-> > +	 * its NPT entries without triggering emulation.  If one or more shadow
-> > +	 * pages was zapped, skip emulation and resume L1 to let it natively
-> > +	 * execute the instruction.  If no shadow pages were zapped, then the
-> > +	 * write-fault is due to something else entirely, i.e. KVM needs to
-> > +	 * emulate, as resuming the guest will put it into an infinite loop.
-> >  	 */
+On Thu, Aug 15, 2024 at 3:10=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com>=
+ wrote:
 >
-> Reviewed-by: Yuan Yao <yuan.yao@intel.com>
+> On Thu, Aug 15, 2024 at 3:08=E2=80=AFPM Andrew Morton <akpm@linux-foundat=
+ion.org> wrote:
+> >
+> > On Thu, 15 Aug 2024 12:12:26 -0700 Nhat Pham <nphamcs@gmail.com> wrote:
+> >
+> > > > Yeah, I thought about the other way around and reached the same
+> > > > conclusion.
+> > > > And there's permission boundary in the mix too - if root disables z=
+swap
+> > > > writeback for its cgroup, the subcgroups, which could possibly be o=
+wned
+> > > > by other users, should not be able to reenable this.
+> > >
+> > > Hmm yeah, I think I agree with your and Yosry's reasonings :) It
+> > > doesn't affect our use case AFAICS, and the code looks solid to me,
+> > > so:
+> > >
+> > > Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+> >
+> > But you'd still like an update to Documentation/admin-guide/cgroup-v2.r=
+st?
 >
-> >  	if (direct &&
-> > -	    (error_code & PFERR_NESTED_GUEST_PAGE) == PFERR_NESTED_GUEST_PAGE) {
-> > -		kvm_mmu_unprotect_page(vcpu->kvm, gpa_to_gfn(cr2_or_gpa));
-> > +	    (error_code & PFERR_NESTED_GUEST_PAGE) == PFERR_NESTED_GUEST_PAGE &&
-> > +	    kvm_mmu_unprotect_page(vcpu->kvm, gpa_to_gfn(cr2_or_gpa)))
-> >  		return RET_PF_FIXED;
-> > -	}
-> >
-> >  	/*
-> >  	 * The gfn is write-protected, but if emulation fails we can still
-> > --
-> > 2.46.0.76.ge559c4bf1a-goog
-> >
-> >
 >
+> Yeah I'd rather see a v2 with updated docs, and hopefully a selftest
+> if the existing tests problem is resolved.
+
+Ah yeah, I was thinking this could be done in a follow-up patch.
+
+But yes, please - documentation. Preferably everything together as v2.
+
+>
+> Also, do we want a Fixes tag and to backport this so that current
+> users get the new behavior ASAP?
+
+Hmm, I wonder if it's more confusing for users to change the behavior
+in older kernels.
+
+(OTOH, if this already is what people expect, then yeah it's a good
+idea to backport).
 
