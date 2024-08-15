@@ -1,150 +1,139 @@
-Return-Path: <linux-kernel+bounces-288084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ABA495339C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:18:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BADD9533A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E5EE1C251A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:18:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39BA61C25494
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4C51ABEC8;
-	Thu, 15 Aug 2024 14:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3AB1A706A;
+	Thu, 15 Aug 2024 14:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="gFubfzSY"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kuHd6kMf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3463214
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C871A0712;
+	Thu, 15 Aug 2024 14:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723731427; cv=none; b=PyDLNpTKp1Pbwjd2aUv8VH/PqF/5JMaXPm9pXFWTwW66ngqjeqbqOmlKX3gAg/SbCCNPm2b7o62kT6LnEVizv7q4cd8B+PQhk9AbxY7LhAfhySgnVKHZPLe+Q0BVoWxLCmhtB8UJOWyhtwh1rn9wYWaZYKvLT9H5XrZo/ml74uA=
+	t=1723731457; cv=none; b=kY4/H9wfWUpWxdWn1oc8ihU+fTwjhJcS0ZWIXLLq50ZA7N5/Nj61C9XLvQz1vCmLNZd6ORLS2SyLk69LNE+IFHUex8P0Oh4HPUcHqTl0RtX1N9qx0O592PUqKfia14vE7rSfWRXnUKNetMUVk+IJY/Zu+vmSA2+T0sGULA0gxJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723731427; c=relaxed/simple;
-	bh=lnzMl695VSGRAib7TxI4EDKXjdJGD7KQgExAJp7Eb/8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Czo8z2BIUGSSnek1OCJS0ZbVGQaQPq2x6AqHusywWxTOMoee2Ns0uRMx7RFr1LbrR8lww/uwrCQ+TDtJYxodOIqOfGQqySDSqsiSsB2L5Vj0tkH6eefF/oWjgPD5TzGNtqA4SgEIQwz+EQaehdU9JVs60FKYd2B3bTH9635wzPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=gFubfzSY; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7aa4ca9d72so141672866b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 07:17:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1723731424; x=1724336224; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dAVLP2QFhmGnxnmeTbf8eFIID24nsinWmxF9a6BsjI4=;
-        b=gFubfzSY7A+PtAIpslrXvQIKZaVcnj1tk48imn3Zpgw36ZKIe8eLtIVromCtB7HuSZ
-         RH7V9krF8Xl583cqzas+h5T9110JhdI/kwL++CfraPr2ePtKhja94YjlEPa85Toibr+X
-         VkhAcbwCMjYfT2JR/rsDNBjyTRu475KCoNS8PkE6x+kz+qQv1ku8TscQ+uAXp8OqGjaw
-         aP9KwJLPWHy2yLAGrvhGljlPM3L21v7JwudwX7VYJPOm1zZZgr1fsrZMjoUwPt0uBpDZ
-         MpAfXllu7XeMY3hZcym92+JhW9HSWczyNLTP7nfbY4SUNwTYTGI86xZ6sQPdnvRkAUdu
-         lVnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723731424; x=1724336224;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dAVLP2QFhmGnxnmeTbf8eFIID24nsinWmxF9a6BsjI4=;
-        b=QkhJMLy/PC6WkJrV5bOE9UQlOG0gWJTRd7wA2wXuaGMcADWjn/E3f1bswOFYT2hmdW
-         CJCUDQfrOhoswra8YnBePy+QC/KGGGhdg+4NFdZtFbERFa0B+QayB+p9mRz/dLoNfRSu
-         Ca9ld/CojkwZwISt+tn+ToX9kHo96K4VYQHnwMSC1MjJQA+8mlzPFLgwggBsa+lv+c/u
-         lyQEzOBudhRfAq1aqW2S+ibQWLwvf3gDACpgU4qEae2MCSsrSM6xHCtxuuIU4nnjcmBM
-         Es0MfFc/3mgs4aWWQS0ybtrnCbFoCjGSm4gUZSNlBr4R2KNrYulpiRKlM/NwZdJPZ8q/
-         sRSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmrp9xxq+fLO7OAOfF0/Hq2ylGUHrjkZimah53Juo/pbSWJHzw69IvrbMNW1/JGT5uTpAlaNW435eJAvAe9Tr3IXe9JN04LrjDGLJk
-X-Gm-Message-State: AOJu0YyvD8D2+1aaA4+4eYsN1OHzzGQDoo1racIteKarED0Gc13O823B
-	MlXNkNfj0/K96txjodF9enNJsd+zWNFnJ985EOXadK8tq9ei/mty4WLr/WwCHbUdqqXtAou1RR2
-	P1/JST8MXk3fMu78JdPIJa8/6L3N2kLyX8di50g==
-X-Google-Smtp-Source: AGHT+IGZQZVkLs1R94f5r/cOZntuAVJ3giaLkP9ibYuSTl3FYwhnVnxfqxGmllCdLoMsajtZsF2ijZS0FEtKusHWF7c=
-X-Received: by 2002:a17:907:f70b:b0:a7a:b895:656f with SMTP id
- a640c23a62f3a-a8366d44eefmr447980366b.38.1723731423795; Thu, 15 Aug 2024
- 07:17:03 -0700 (PDT)
+	s=arc-20240116; t=1723731457; c=relaxed/simple;
+	bh=Kby6yhzXoUk+UkDsvLSOc5svMZXjS9dbjQp2GqhLQNY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rBPjr8zXpSwpKwtTLMjXu3Xh86SMtR1rTOLhZplX1JQ0EKqxWPHQ/WTRekJQKSqn8lac3JFDhFKWJvdAYDwURtOhuw+xpzLouV8MzE64x0ZUSRSnVaKuGIK4n6d3EgdVYXz/lZADpqJrzE9PsceB+Axv5rMwL/X5m49ADit2GUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kuHd6kMf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40A1FC32786;
+	Thu, 15 Aug 2024 14:17:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723731456;
+	bh=Kby6yhzXoUk+UkDsvLSOc5svMZXjS9dbjQp2GqhLQNY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kuHd6kMfGvDjRn+edV5fGItrR6OXVpZzUpcArLByZhhRNzXDa5CL6Sh2EVHSdJnRz
+	 2b4JgMX/44zfYQj6M1pwTs/syPaRkVIPPv3IlrbeVuBJMBj9E70rWz3mc5rXSxj9C3
+	 VoDRfa2tMUn3FLGOG+rHOg6DLyT2H3QnNI4TY5M6qjGmHkFsIOFTHIP4EO7pZjZFRc
+	 kvFF26IilTJMeFi8CZGPCIwhdi7hE+cihojFF2S+E5I94XD54XrpeU6AhSyQ1ihLMH
+	 EugGWpLHK+wqvJWUscTtooPQf2abet8NVMYNHzntIbUBNmFnwEXXzv7aGdu/yzF7SP
+	 UFnJR9ytvnKpg==
+Message-ID: <3ca1824a-8918-460d-bd99-fd88cdf92329@kernel.org>
+Date: Thu, 15 Aug 2024 16:17:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814145642.344485-1-emil.renner.berthing@canonical.com>
- <87jzgjnh9z.ffs@tglx> <CAJM55Z8WERQgs=QMyFGWvAHOpwcnOAudBqovaEuDudPSXCvL5Q@mail.gmail.com>
- <87ttfmm2ns.ffs@tglx> <CAJM55Z88H635Crc-Aeq+K0qcAk7NC89WVTAFdXDd2aQKQ7QmEg@mail.gmail.com>
- <CAJM55Z_qQX7n8tAeOFqrAH1BFjA9vaWA8rtsPG2BcKmiO88m=Q@mail.gmail.com>
- <87plqalyd4.ffs@tglx> <686d61c4-e7ac-4dca-a7fd-decdd72e84d9@sifive.com> <87h6blnaf1.ffs@tglx>
-In-Reply-To: <87h6blnaf1.ffs@tglx>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Thu, 15 Aug 2024 19:46:52 +0530
-Message-ID: <CAK9=C2V7oL023=u6nodJs76k_0yHZ8PTJs=n1QFqDWCcCnG9kw@mail.gmail.com>
-Subject: Re: [PATCH v1 0/9] Fix Allwinner D1 boot regression
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Samuel Holland <samuel.holland@sifive.com>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 09/26] rust: alloc: implement kernel `Box`
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+ boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org,
+ daniel.almeida@collabora.com, faith.ekstrand@collabora.com,
+ boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com,
+ zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
+ ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+References: <20240812182355.11641-1-dakr@kernel.org>
+ <20240812182355.11641-10-dakr@kernel.org>
+ <a69e7280-7291-49f7-a46f-1ad465efce04@proton.me>
+ <Zr0ocI-j3fZZM7Rw@cassiopeiae>
+ <56ebda7b-c570-4dc6-8456-ab768d3a4b77@proton.me>
+ <Zr4J4e1aLADlyDMD@cassiopeiae>
+ <66ed33bf-b17a-406f-b277-501ea9f002bf@proton.me>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <66ed33bf-b17a-406f-b277-501ea9f002bf@proton.me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 15, 2024 at 7:41=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de=
-> wrote:
->
-> On Thu, Aug 15 2024 at 08:32, Samuel Holland wrote:
-> > On 2024-08-15 8:16 AM, Thomas Gleixner wrote:
-> >> Yes. So the riscv timer is not working on this thing or it stops
-> >> somehow.
-> >
-> > That's correct. With the (firmware) devicetree that Emil is using, the =
-OpenSBI
-> > firmware does not have a timer device, so it does not expose the (optio=
-nal[1])
-> > SBI time extension, and sbi_set_timer() does nothing.
->
-> Sigh. Does RISCV really have to repeat all mistakes which have been made
-> by x86, ARM and others before? It's known for decades that the kernel
-> relies on a working timer...
+On 8/15/24 4:10 PM, Benno Lossin wrote:
+> On 15.08.24 16:00, Danilo Krummrich wrote:
+>> On Thu, Aug 15, 2024 at 01:24:47PM +0000, Benno Lossin wrote:
+>>> On 14.08.24 23:58, Danilo Krummrich wrote:
+>>>> On Wed, Aug 14, 2024 at 05:01:34PM +0000, Benno Lossin wrote:
+>>>>> On 12.08.24 20:22, Danilo Krummrich wrote:
+>>>>>> +///
+>>>>>> +/// # Examples
+>>>>>> +///
+>>>>>> +/// ```
+>>>>>> +/// let b = KBox::new(24_u64, GFP_KERNEL)?;
+>>>>>> +///
+>>>>>> +/// assert_eq!(*b, 24_u64);
+>>>>>> +///
+>>>>>> +/// # Ok::<(), Error>(())
+>>>>>> +/// ```
+>>>>>> +pub type KBox<T> = Box<T, super::allocator::Kmalloc>;
+>>>>>> +
+>>>>>> +/// Type alias for `Box` with a `Vmalloc` allocator.
+>>>>>
+>>>>> Same here, add that this is supposed to be used for big values (or is
+>>>>> this also a general-purpose allocator, just not guaranteeing that the
+>>>>> memory is physically contiguous? in that case I would document it
+>>>>> here and also on `Vmalloc`).
+>>>>
+>>>> Same as above, I'd rather not duplicate that. But I'm happy to link things in,
+>>>> just not sure what's the best way doing it.
+>>>
+>>> I took a look at the link and there is the "Selecting memory allocator"
+>>> section, but there isn't really just a vmalloc or kmalloc section, it is
+>>> rather stuff that we would put in the module documentation.
+>>
+>> There are no dedicated sections, but...
+>>
+>>> What I would write on these types would be what to use these boxes for.
+>>> eg large allocations, general purpose etc. I don't think that that is
+>>> easily accessible from the docs that you linked above.
+>>
+>> ...this stuff should be covered by the document, e.g.:
+>>
+>> "The maximal size of a chunk that can be allocated with kmalloc is limited. The
+>> actual limit depends on the hardware and the kernel configuration, but it is a
+>> good practice to use kmalloc for objects smaller than page size."
+>>
+>> or
+>>
+>> "For large allocations you can use vmalloc() and vzalloc(), or directly request
+>> pages from the page allocator. The memory allocated by vmalloc and related
+>> functions is not physically contiguous."
+> 
+> Yeah, but for that you have to read big chunks of the document and item
+> docs in Rust are often very short, since you only need to know what that
+> one item does.
 
-My apologies for the delay in finding a fix for this issue.
+In this specific case I'd argue that the contents of this document should be
+read and understood by everyone who attempts to write kernel code anyways,
+hence linking it should be fine.
 
-Almost all RISC-V platforms (except this one) have SBI Timer always
-available and Linux uses a better timer or Sstc extension whenever
-it is available.
-
-When Emil first reported this issue, I did try to help him root cause
-the issue but unfortunately I don't have this particular platform and
-PLIC on all other RISC-V platforms works fine.
-
-I am also surprised that none of the Allwiner folks tried helping.
-
->
-> > I wrote a patch (not submitted) to skip registering riscv_clock_event w=
-hen the
-> > SBI time extension is unavailable, but this doesn't fully solve the iss=
-ue
-> > either, because then we have no clockevent at all when
-> > check_unaligned_access_all_cpus() is called.
->
-> check_unaligned_access_all_cpus() is irrelevant.
->
-> > How early in the boot process are we "required" to have a functional cl=
-ockevent?
-> > Do we need to refactor check_unaligned_access_all_cpus() so it works on=
- systems
-> > where the only clockevent is provided by a platform device?
->
-> Right after init/main::late_time_init() everything can depend on a
-> working timer and on jiffies increasing.
->
-> I'm actually surprised that the boot process gets that far. That's just
-> by pure luck, really.
->
-> Thanks,
->
->         tglx
-
-Regards,
-Anup
+> Would be a good idea to talk about how we can improve this at Kangrejos.
+> 
+> ---
+> Cheers,
+> Benno
+> 
 
