@@ -1,158 +1,95 @@
-Return-Path: <linux-kernel+bounces-287972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B24952ECA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:08:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB13A952EC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:07:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 001C41F22760
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:08:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 193081C23BAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699E519F49A;
-	Thu, 15 Aug 2024 13:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CWysPbmr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9BD1714A8;
-	Thu, 15 Aug 2024 13:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6C519DF85;
+	Thu, 15 Aug 2024 13:07:47 +0000 (UTC)
+Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [207.226.244.122])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5FE1714A8;
+	Thu, 15 Aug 2024 13:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.226.244.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723727274; cv=none; b=Y5LtgRdPlYSG4DLjfYUrHbBRfTnlmGFLpv5JRI9bLPL/rK4XX6B8HVHnVyre/oNpQkJo2LA7Ujp/cbJe/EJTR0HDYtlA9uvSNz1BYo8kUkQpnIgzAIMHOso7CzQszsDLH2zU6+i4WF9ElS4Yd3w97AAC+lX7+Xum/3ZbaXiWMYA=
+	t=1723727267; cv=none; b=jZAGXZ20wSuRXbKPCGjJ6OASqTOaueNtmXMQ2Ls6StlyWvqnhHpQRcaGw5W2OlESOu6CQ3Cs70MiqpUSV8/2nwcOPyblgmOstahGDBotnyvHtH8STaytqhOF1kQXm37QUBbkBIpi35RqABX2krFn3/2c4Qn9jB+/C1yrctTrPFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723727274; c=relaxed/simple;
-	bh=jMFzZlcFi1TkZ5Y4pxf1tYJzK0rbZrrELQbpOJ8RF3U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sK4OKI0xV2ECB2cAJ29dVLkJy9xmJE9ZqXf5KKAG/AYe+Y7fHV4ehrLrl1ucKaa7pR9/Dl2jk1Vt6wHghZHFyj02mfLerz4sVNvA7GL5O2wA8VqIxdWR/yoeTeJCcmQ+RIS1OynoUBmUgaarZpojtWUc774tFU2hjQYuOL/J7g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CWysPbmr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC276C4AF12;
-	Thu, 15 Aug 2024 13:07:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723727274;
-	bh=jMFzZlcFi1TkZ5Y4pxf1tYJzK0rbZrrELQbpOJ8RF3U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CWysPbmrhoJPoY6REaRiKM1koRkT1R+xchonrJPpv1x9I+tee+tSfKXPRigLEF1Pp
-	 H0I6xL+kL3jAdP83wrbd95nqrX4gOFtGasClay/ikEcqMAsrRbgUgm8uymaNB2JJyC
-	 s9fAuxND+GVsI3CvvG4maGRFXUv1mrH/QMsPdEHwjeAnn4LLJl1uL87/6fKQvF81e/
-	 gN47e2z5uZcj4pF1aOpUhKbSFnw/JNFL2aRtTdKMtegAQCGM+3alB+E0XbvxVZ0GZx
-	 vSI/1pnVv1gMF6wJ8a7T6crM136WP7rIW/dyqW6P8SmyiDRFQoN0YMbOf3Fz7aHcH8
-	 iawKWeu/fPcSQ==
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Tom Talpey <tom@talpey.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Gao Xiang <xiang@kernel.org>,
-	Steve French <smfrench@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v2 00/25] netfs: Read/write improvements
-Date: Thu, 15 Aug 2024 15:07:42 +0200
-Message-ID: <20240815-umzog-irgendein-80514d89315a@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240814203850.2240469-1-dhowells@redhat.com>
-References: <20240814203850.2240469-1-dhowells@redhat.com>
+	s=arc-20240116; t=1723727267; c=relaxed/simple;
+	bh=vly1wT4XrhXc97INn4caTGhoBFjIcE5gvgKZFhOQLXI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=rz0GbwFmgylIZeqC7k75eoo6fEhVsxcQ+xvMr6hteKR9pZ+trQ9W2oRHUeeIuZuBbApaontBuYvUElMulZoq7rAG4PZbLDSleU3IRMGoGJVWBwZb1sIl8yKRIQ62RZeedvYk1zpDrPO+eSdc7E7or4XJ1TEOnWlukK+7mWMtyGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=207.226.244.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
+X-CSE-ConnectionGUID: TaGGtM+PTKibyu1xf22nGA==
+X-CSE-MsgGUID: qWFsU24+Tq255oQw+tsfZA==
+X-IronPort-AV: E=Sophos;i="6.10,148,1719849600"; 
+   d="scan'208";a="119451388"
+From: =?utf-8?B?56ug6L6J?= <zhanghui31@xiaomi.com>
+To: Bart Van Assche <bvanassche@acm.org>,
+	"James.Bottomley@HansenPartnership.com"
+	<James.Bottomley@HansenPartnership.com>, "martin.petersen@oracle.com"
+	<martin.petersen@oracle.com>
+CC: "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>, "avri.altman@wdc.co"
+	<avri.altman@wdc.co>, "peter.wang@mediatek.com" <peter.wang@mediatek.com>,
+	"manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>, "Huang
+ Jianan" <huangjianan@xiaomi.com>, "linux-scsi@vger.kernel.org"
+	<linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [External Mail]Re: [PATCH] ufs: core: fix bus timeout in
+ ufshcd_wl_resume flow
+Thread-Topic: [External Mail]Re: [PATCH] ufs: core: fix bus timeout in
+ ufshcd_wl_resume flow
+Thread-Index: AQHa7YdYc9Ki7OjQ5EaL6aO/rOJ9D7IldP+AgAJSDwA=
+Date: Thu, 15 Aug 2024 13:07:42 +0000
+Message-ID: <baef8886-5ec0-4ba4-930e-cd1487ba3a56@xiaomi.com>
+References: <20240813134729.284583-1-zhanghui31@xiaomi.com>
+ <b2fbe277-2819-4af4-9b36-b7407618cbf6@acm.org>
+In-Reply-To: <b2fbe277-2819-4af4-9b36-b7407618cbf6@acm.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A49E0C54580F104ABB40AE1C7CA81DF5@xiaomi.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3763; i=brauner@kernel.org; h=from:subject:message-id; bh=jMFzZlcFi1TkZ5Y4pxf1tYJzK0rbZrrELQbpOJ8RF3U=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTt/TvfdD5fB2vZ4St+TJxt5mWrLDw33/gjvqHIU/p1x 4z/b++v6yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjI3TKGf7rW+puKJr8xC2Fc +4dN6MQSIQHtD5UCjw3EjTPKG9RWaTEyrOUUX7jY9aVQn42A5tbDjh4fbp/6mSTXO6u8fQdHhII sPwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
 
-On Wed, 14 Aug 2024 21:38:20 +0100, David Howells wrote:
-> This set of patches includes a couple of fixes:
-> 
->  (1) Revert the removal of waits on PG_private_2 from netfs_release_page()
->      and netfs_invalidate_page().
-> 
->  (2) Make cachefiles take the sb_writers lock around set/removexattr.
-> 
-> [...]
-
-Applied to the vfs.netfs branch of the vfs/vfs.git tree.
-Patches in the vfs.netfs branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.netfs
-
-[01/25] cachefiles: Fix non-taking of sb_writers around set/removexattr
-        https://git.kernel.org/vfs/vfs/c/4ca422fc1c25
-[02/25] netfs: Adjust labels in /proc/fs/netfs/stats
-        https://git.kernel.org/vfs/vfs/c/2d8e8e0dcfa8
-[03/25] netfs: Record contention stats for writeback lock
-        https://git.kernel.org/vfs/vfs/c/b946f63b34fa
-[04/25] netfs: Reduce number of conditional branches in netfs_perform_write()
-        https://git.kernel.org/vfs/vfs/c/922d33ef048c
-[05/25] netfs, cifs: Move CIFS_INO_MODIFIED_ATTR to netfs_inode
-        https://git.kernel.org/vfs/vfs/c/4c1daf044aed
-[06/25] netfs: Move max_len/max_nr_segs from netfs_io_subrequest to netfs_io_stream
-        https://git.kernel.org/vfs/vfs/c/a479f52b4401
-[07/25] netfs: Reserve netfs_sreq_source 0 as unset/unknown
-        https://git.kernel.org/vfs/vfs/c/e1de76429131
-[08/25] netfs: Remove NETFS_COPY_TO_CACHE
-        https://git.kernel.org/vfs/vfs/c/2a4e83a305ef
-[09/25] netfs: Set the request work function upon allocation
-        https://git.kernel.org/vfs/vfs/c/52c62b5f6dc0
-[10/25] netfs: Use bh-disabling spinlocks for rreq->lock
-        https://git.kernel.org/vfs/vfs/c/45268b70a77d
-[11/25] mm: Define struct folio_queue and ITER_FOLIOQ to handle a sequence of folios
-        https://git.kernel.org/vfs/vfs/c/3e73d92929db
-[12/25] iov_iter: Provide copy_folio_from_iter()
-        https://git.kernel.org/vfs/vfs/c/7a51f5cf0851
-[13/25] cifs: Provide the capability to extract from ITER_FOLIOQ to RDMA SGEs
-        https://git.kernel.org/vfs/vfs/c/97b15fbddd0c
-[14/25] netfs: Use new folio_queue data type and iterator instead of xarray iter
-        https://git.kernel.org/vfs/vfs/c/b33aa21f3b7f
-[15/25] netfs: Provide an iterator-reset function
-        https://git.kernel.org/vfs/vfs/c/7306dffdd871
-[16/25] netfs: Simplify the writeback code
-        https://git.kernel.org/vfs/vfs/c/5fb0299ed8df
-[17/25] afs: Make read subreqs async
-        https://git.kernel.org/vfs/vfs/c/05fd361eb083
-[18/25] netfs: Speed up buffered reading
-        https://git.kernel.org/vfs/vfs/c/6437a28f5de1
-[19/25] netfs: Remove fs/netfs/io.c
-        https://git.kernel.org/vfs/vfs/c/85112b95630c
-[20/25] cachefiles, netfs: Fix write to partial block at EOF
-        https://git.kernel.org/vfs/vfs/c/3b5a6483e8d2
-[21/25] netfs: Cancel dirty folios that have no storage destination
-        https://git.kernel.org/vfs/vfs/c/3cca08a1c4c5
-[22/25] cifs: Use iterate_and_advance*() routines directly for hashing
-        https://git.kernel.org/vfs/vfs/c/c86e6c334311
-[23/25] cifs: Switch crypto buffer to use a folio_queue rather than an xarray
-        https://git.kernel.org/vfs/vfs/c/04c9967360ea
-[24/25] cifs: Don't support ITER_XARRAY
-        https://git.kernel.org/vfs/vfs/c/7d0f7f2d1e8b
+T24gMjAyNC84LzE0IDk6NDEsIEJhcnQgVmFuIEFzc2NoZcKgd3JvdGU6DQo+IE9uIDgvMTMvMjQg
+Njo0NyBBTSwgWmhhbmdIdWkgd3JvdGU6DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy91ZnMvY29y
+ZS91ZnNoY2QuYyBiL2RyaXZlcnMvdWZzL2NvcmUvdWZzaGNkLmMNCj4+IGluZGV4IDVlM2M2N2U5
+Njk1Ni4uZTVlM2UwMjc3ZDQzIDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy91ZnMvY29yZS91ZnNo
+Y2QuYw0KPj4gKysrIGIvZHJpdmVycy91ZnMvY29yZS91ZnNoY2QuYw0KPj4gQEAgLTMyOTEsNiAr
+MzI5MSw4IEBAIHN0YXRpYyBpbnQgdWZzaGNkX2V4ZWNfZGV2X2NtZChzdHJ1Y3QgdWZzX2hiYSAN
+Cj4+ICpoYmEsDQo+PiDCoMKgwqDCoMKgIHN0cnVjdCB1ZnNoY2RfbHJiICpscmJwID0gJmhiYS0+
+bHJiW3RhZ107DQo+PiDCoMKgwqDCoMKgIGludCBlcnI7DQo+Pg0KPj4gK8KgwqDCoMKgIGlmICho
+YmEtPnVmc2hjZF9yZWdfc3RhdGUgPT0gVUZTSENEX1JFR19SRVNFVCkNCj4+ICvCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgcmV0dXJuIC1FQlVTWTsNCj4+IMKgwqDCoMKgwqAgLyogUHJvdGVjdHMg
+dXNlIG9mIGhiYS0+cmVzZXJ2ZWRfc2xvdC4gKi8NCj4+IMKgwqDCoMKgwqAgbG9ja2RlcF9hc3Nl
+cnRfaGVsZCgmaGJhLT5kZXZfY21kLmxvY2spOw0KPg0KPiBEb2VzIHRoaXMgY2hhbmdlIG1ha2Ug
+dWZzaGNkX2V4ZWNfZGV2X2NtZCgpIHVucHJlZGljdGFibGUgLSBpdCBzdWNjZWVkcw0KPiBpZiB0
+aGUgY29udHJvbGxlciBpcyBpbiB0aGUgbm9ybWFsIHN0YXRlIGFuZCBmYWlscyBpZiBlcnJvciBy
+ZWNvdmVyeQ0KPiBpcyBvbmdvaW5nPyBJZiBzbywgd2hpY2ggY29kZSBwYXRocyBkb2VzIHRoaXMg
+YWZmZWN0IGFuZC9vciBicmVhaz8NCj4NCj4gQWRkaXRpb25hbGx5LCBJIHRoaW5rIHRoZSBhYm92
+ZSBjaGVjayBpcyByYWN5LiBoYmEtPnVmc2hjZF9yZWdfc3RhdGUgbWF5DQo+IGNoYW5nZSBhZnRl
+ciB0aGUgYWJvdmUgY29kZSBjaGVja2VkIGl0IGFuZCBiZWZvcmUgdWZzaGNkX2V4ZWNfZGV2X2Nt
+ZCgpDQo+IGhhcyBmaW5pc2hlZC4gV291bGRuJ3QgaXQgYmUgYmV0dGVyIHRvIG1ha2UgY29kZSB0
+aGF0IHNob3VsZG4ndCBiZQ0KPiBleGVjdXRlZCB3aGlsZSB0aGUgZXJyb3IgaGFuZGxlciBpcyBv
+bmdvaW5nIHdhaXQgdW50aWwgZXJyb3IgaGFuZGxpbmcNCj4gaGFzIGZpbmlzaGVkPw0KPg0KPiBU
+aGFua3MsDQo+DQo+IEJhcnQuDQo+DQpoaSBCYXJ0LA0KDQoxLiBJZiB0aGUgaG9zdCBuZWVkcyB0
+byBzZW5kIGEgZGV2IGNvbW1hbmQsIHRoZSBIQkEgbXVzdCBiZSBlbmFibGVkLg0KV2UgaGF2ZSBz
+ZXQgdGhlIHVmc2hjZF9yZWdfc3RhdGUgdG8gb3BlcmF0aW9uYWwgaW4gdGhlIHVmc2hjZF9oYmFf
+ZW5hYmxlLA0Kc28gaXQgaXMgbm90IHVucHJlZGljdGFibGUuDQoNCjIuIFRoYXQncyBhIGdvb2Qg
+cXVlc3Rpb24sIGJ1dCBJIHRoaW5rIGl0IG1ha2VzIHNlbnNlIHRvIGJsb2NrIGRldiBjbWQgd2hp
+bGUNCnVmcyBpcyBkb2luZyBhIHJlc2V0Lg0KDQoNClRoYW5rcw0KWmhhbmdodWkNCg0K
 
