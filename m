@@ -1,142 +1,126 @@
-Return-Path: <linux-kernel+bounces-287911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BB14952E29
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:17:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEA2B952E2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:18:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE351B21299
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:17:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A555B24605
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB97178CCF;
-	Thu, 15 Aug 2024 12:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E0317A592;
+	Thu, 15 Aug 2024 12:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QseeLamu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5UM9eemT"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mo/IZUZR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DC11AC888;
-	Thu, 15 Aug 2024 12:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DDB6146A6D;
+	Thu, 15 Aug 2024 12:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723724236; cv=none; b=SLwwLQfXV8SdErjAPjSNPg5Ee4WV3GFdfxQ+5wpBmpqVFUWcsNBnv5WehvtUNt4LG9Df2aFRsmeTbNaFvpuSXfMgrDs2wDqcjcW5bROf4qErYWwj0MC6M9PguyTNHReJzGivsF2E9IYEqNuxd90pTcUNe1PUs6nlV0bLfk/DjaA=
+	t=1723724269; cv=none; b=EOgPJo6U0ANlosCQzdZCTeUlV5UfENJeXC7n1V0gR8ZKY9Y8/2vBX67XqwlvrcV+0aKuYU+o2yI3D/9lgZ4AEZO6So1AQuacyCTOLDca9koGeEk+nvhnYCpucQRqqRzAb2fM5Ntm7NT3SLulHbBrksmybqHHNJ1+LzpoSMIfW3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723724236; c=relaxed/simple;
-	bh=8GzwF1RSODdXKQsmpYs3h1fjM4vibb9GvTjZrpElbrA=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
-	 Content-Type; b=gHmUTTfSzO4IC8OeBL0zlL9RSzjNOPwAUG6K9DSwXXhqyWL6OEBcKk9CwyC8Ri2CnZ8NQlRV6pQ4JTdzCccnzRHb77Q2GArcSaw5OCYlfcteMogCaA1oO3KosOWJ/mUJZTjRy+Kc9zvbvjLLXEtApmNpYr5xoOF0V93/uEpOU3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QseeLamu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5UM9eemT; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723724232;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=rRigOJOO3qhALtqJE6dw15axLsE6DCGme8lKMcQne9I=;
-	b=QseeLamu+Ve6G/d3HbW7okSVN98YQ2FNSrDeLd1E3GlVr8M63wB4CHCPs+NxPhKct4C4zc
-	CHaKE6hfu/PQgUQ7Ky438ULIYOeaTZ5rJiC7fP+lkSt2vM7RhtimWvUlgFtQnRpTKz3g7F
-	/S6aqMaio9VKU83MuH7FRTg1R+rmJk2KdX7KeiVQZgvBI/hAQZHuWqMeWy91SNpTyVOEhf
-	5QeoV7TQ6iQdmAfmWEayfH6mm6fbKLoIQyLw+CO4Cc3mSsO5ZLdeLyHdWQKY5Es26Tu5Rl
-	+0fyU8dO9pPvNQ94ID/rjVgjWKCD9HDr6Iyr2rD5h6iK4cT+is8orsJTOMvALg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723724232;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=rRigOJOO3qhALtqJE6dw15axLsE6DCGme8lKMcQne9I=;
-	b=5UM9eemTh6QW2duf1BOI6wBtqOvSeGaa8dJXAMrsOWaSKxHE9KNZkfxuix/5OayqMO8ppG
-	Hy5eX/jx/Yc48mDA==
-To: Mary Strodl <mstrodl@csh.rit.edu>, linux-kernel@vger.kernel.org
-Cc: akpm@linux-foundation.org, urezki@gmail.com, hch@infradead.org,
- linux-mm@kvack.org, lee@kernel.org, andi.shyti@kernel.org,
- linux-i2c@vger.kernel.org, s.hauer@pengutronix.de,
- christian.gmeiner@gmail.com, Mary Strodl <mstrodl@csh.rit.edu>
-Subject: Re: [PATCH v4 1/2] x86: Add basic support for the Congatec CGEB
- BIOS interface
-In-Reply-To: <20240814184731.1310988-2-mstrodl@csh.rit.edu>
-Date: Thu, 15 Aug 2024 14:17:12 +0200
-Message-ID: <87sev6m14n.ffs@tglx>
+	s=arc-20240116; t=1723724269; c=relaxed/simple;
+	bh=sKgXj6G3qZ7k0Aq7YegUtpEBhQSBFus/Yl44KMx0kZQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ha3a4MCoKiFBdsWAU/uwzfo5ZIQC+RCDyylbXEtQZZ3/DyBu1M0odOirrJL6AoqsGGAsmqCFaUcFUFSBVENms2Taps3w4YA4gEi1JDP19g95yDRU3xAu6v7VUc+liSbGBwA7G0CLSdkWrPTbrfnghkSKvRjw8opqDeIg6S3qFVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mo/IZUZR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12259C32786;
+	Thu, 15 Aug 2024 12:17:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723724268;
+	bh=sKgXj6G3qZ7k0Aq7YegUtpEBhQSBFus/Yl44KMx0kZQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mo/IZUZR87m061SONyuxATMj5nYLudVagEu+ohuxGe1qYvlMxID6PY0z/ymR7+YAg
+	 qDQ1LDn+6sQzmGQlUr0pfXgHsHICWQokyXr5160x+xA4B9AEiPAEF5NwH5UaBLw/9q
+	 xluSzp4LmUWWbqNOq+FofqZFoB7Z7fZ3Dtre46HG7CxOe8RqTbU+sL4+FtpQjsUWsi
+	 XtvL+GOQh4p7kBTw4nSsIHJMf2hAsQvmAAlXKEP14BWzmxogTSlk9EvdUIDdgs2Ih+
+	 R5uN4hGPYcUiRuveRQVKqF6YdBtJkgjj232JSf6sPtAZav7pYKgj7kBOsR83D94ye6
+	 aQ48JOwm5P3MA==
+Message-ID: <01106f43-3338-4eec-bd6b-2ee820f7267c@kernel.org>
+Date: Thu, 15 Aug 2024 14:17:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 13/26] rust: alloc: implement kernel `Vec` type
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+ boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me, a.hindborg@samsung.com, akpm@linux-foundation.org,
+ daniel.almeida@collabora.com, faith.ekstrand@collabora.com,
+ boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com,
+ zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
+ ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+References: <20240812182355.11641-1-dakr@kernel.org>
+ <20240812182355.11641-14-dakr@kernel.org>
+ <CAH5fLggchaAzcRK=i=zRm7hTg6qX0yGBAyAHcO45rG-oEh-AMQ@mail.gmail.com>
+ <Zr0z0fBM_acHFezv@cassiopeiae>
+ <CAH5fLgjDMuiR07jc=aa-3radEOgU8iMn-u+XttepuWr9r_doYQ@mail.gmail.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <CAH5fLgjDMuiR07jc=aa-3radEOgU8iMn-u+XttepuWr9r_doYQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Mary!
+On 8/15/24 9:30 AM, Alice Ryhl wrote:
+> On Thu, Aug 15, 2024 at 12:46 AM Danilo Krummrich <dakr@kernel.org> wrote:
+>>
+>> On Wed, Aug 14, 2024 at 10:42:28AM +0200, Alice Ryhl wrote:
+>>>> +#[macro_export]
+>>>> +macro_rules! kvec {
+>>>> +    () => (
+>>>> +        {
+>>>> +            $crate::alloc::KVec::new()
+>>>> +        }
+>>>> +    );
+>>>> +    ($elem:expr; $n:expr) => (
+>>>> +        {
+>>>> +            $crate::alloc::KVec::from_elem($elem, $n, GFP_KERNEL)
+>>>> +        }
+>>>> +    );
+>>>> +    ($($x:expr),+ $(,)?) => (
+>>>> +        {
+>>>> +            match $crate::alloc::KBox::new([$($x),+], GFP_KERNEL) {
+>>>> +                Ok(b) => Ok($crate::alloc::KBox::into_vec(b)),
+>>>> +                Err(e) => Err(e),
+>>>
+>>> Hmm. This currently generates code that:
+>>>
+>>> 1. Creates the array.
+>>> 2. Allocates the memory.
+>>> 3. Moves the array into the box.
+>>>
+>>> Whereas the stdlib macro swaps step 1 and 2.
+>>
+>> Isn't stdlib [1] doing the same thing I do?
+>>
+>> [1] https://doc.rust-lang.org/1.80.1/src/alloc/macros.rs.html#49
+> 
+> Stdlib is using something called #[rustc_box] which has the effect I described.
+> 
+>>> You can do the same by utilizing new_uninit. A sketch:
+>>>
+>>> match KBox::<[_; _]>::new_uninit(GFP_KERNEL) {
+>>
+>> How do we get the size here? `#![feature(generic_arg_infer)]` seems to be
+>> unstable.
+> 
+> It probably works if you don't specify the type at all:
+> `KBox::new_uninit`. But you should double check.
 
-On Wed, Aug 14 2024 at 14:47, Mary Strodl wrote:
+That works, thanks.
 
-So this caught the attention of my mail filter because the subsystem
-prefix is 'x86:' while it obviously should be 'mfd:'
-
-> The Congatec CGEB is a BIOS interface found on some Congatec x86
-> modules. It provides access to on board peripherals like I2C busses
-> and watchdogs. This driver contains the basic support for accessing
-> the CGEB interface and registers the child devices.
->
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
-> Signed-off-by: Mary Strodl <mstrodl@csh.rit.edu>
-
-This Signed-off-by chain is invalid. See Documentation/process/
-
-Aisde of that. How is any of this supposed to work. What is the user
-mode helper doing and why does this need this netlink indirection?
-
-And looking at that reference implementation on github makes me just
-shudder:
-
-        board.mem_fd = open("/dev/mem", O_RDONLY);
-
-and then it allocates anon memory:
-
-	board->code = mmap(NULL, msg->code.length,
-		           PROT_READ | PROT_WRITE,
-			   MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-
-which it hands back to the kernel so the kernel can copy stuff into it
-followed by some other command:
-
-         mprotect(board->code, msg->code.length,
-		  PROT_EXEC | PROT_READ | PROT_WRITE)
-
-Seriously? RWX mappings?
-
-So this copies a code blob out of the BIOS region into user space and
-lets user space use this blob to interact with the BIOS extension,
-right?
-
-So an i2c transfer does a full round trip:
-
-   i2c::xfer -> cgeb -> netlink -> user helper -> execute random code ->
-   user helper -> netlink -> cgeb -> ...
-     
-right?
-
-Has anyone tried to analyze what this BIOS provided code blob is
-actually doing?
-
-All it does is to poke at a range of IOPORTS with in*(), out*() and that
-poking mechanism depends on the generation of that CGEB implementation.
-
-Congatec even provides the GPL2 licenced source for this pokery as a
-kernel driver.
-
-Three generations of interfaces and for each the poking is about 200
-lines of unreadable, malformated gunk, which can be probably condensed
-to 100 lines of readable kernel code for each generation.
-
-Add a bunch of helpers which set up the various transfers for the
-subdevices and you can spare all this horrible nonsense with user mode
-helper, executing random BIOS provided gunk, netlink and completely ill
-defined data structures.
-
-Thanks,
-
-        tglx
+> 
+>>>      Ok(b) => Ok(KVec::from(KBox::write(b, [$($x),+]))),
+>>>      Err(e) => Err(e),
+>>> }
+> 
 
