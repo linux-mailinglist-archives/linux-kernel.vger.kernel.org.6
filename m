@@ -1,150 +1,110 @@
-Return-Path: <linux-kernel+bounces-288022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E8A79530C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:46:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B5D69530CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12E77287F92
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:46:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F4F11C226CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5F519E7F6;
-	Thu, 15 Aug 2024 13:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3ZUA6J3F";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jvF4QCfL"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FEE1714D9;
-	Thu, 15 Aug 2024 13:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA5E19F499;
+	Thu, 15 Aug 2024 13:46:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C5F7DA9E;
+	Thu, 15 Aug 2024 13:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723729570; cv=none; b=b3YHi/QiJ1swSkSw8yI0KthOpdxVpr2uQoxqopJ6s9Ep+hkCPFP0dpL2ct/wwQ57snr5gxadvy61diU++OEfgwht16FdntVHkINhg6Vw1dGC9J+qEeL/hTw1BHU4L8+n5dwcf4SxhAY0vJoJa/CRadivfuim7dYEBGW0KLoU9zQ=
+	t=1723729590; cv=none; b=gkwCtm1qDnIgYFi1LAeDESUeZUyt5tZdoPfALZa1Z/k6qS5h0Q5zjfWVx2JQkxfTPZvRRcExbG2jkzOxIwqq7U4TK5u5YrbRKXvDuSZdMvhCmxZ3Gmji+sBrVlreNChDeLUUA46D82cFT1FI6f7lKX53IC6aGkpPXBocIDnbbx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723729570; c=relaxed/simple;
-	bh=GyBZ5JcUbc/XHvnuWXeMqGP7fodtXDjKmTZ7B8cEzk4=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=kYBp7E3cOBkQ6fX1eDXZRAo1zu1K8+7JcJhEyuengN8nGaupxIFxbz4vMqjdrfrqGVrk50m6l+lK9Fy72AoCqrMIn/ZQ1Y56cR1R6kUbo/akh1bQB/fxsC75SoYrvIEYFovq9rzclXIjb23Iks6gZMjXfAZ3DFrHMWAxVioS8KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3ZUA6J3F; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jvF4QCfL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 15 Aug 2024 13:46:06 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723729567;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+V+gUqLFe7cwaShPYD/MTvcflRm0uV8oy39eMy+7IbE=;
-	b=3ZUA6J3FYpNrOLQc2Nxg/n8ip/1M9tuS+ej59gJhIlBA0ykc33+Irgat2yAR1mdPpvyXQW
-	J8TP9AIWoiw8DLvSc6LdDKU9YMMFX3g2KBalisvYoRjhkFADn0FpmvpzFujSsuK78RU9GS
-	yK0uWJAdaGX9hDMhb0mYY1v3fjPkG8l4tkIUlGCh1JNcp0KM9p7eky5DyDjblawy8OchI/
-	Y1nrrwRbTrmVcP6k0KpV+P/iz1GwH1ZZnRlBwMGQSkValF4kbdMDeP7cdzV/pManz6jVmC
-	8penNMHdx80HILDeiK0ZOBLEtxyDZTnwYz3xMG/Cl44BooMBS8h5JM87UdhwNQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723729567;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+V+gUqLFe7cwaShPYD/MTvcflRm0uV8oy39eMy+7IbE=;
-	b=jvF4QCfLt3qZYfWjU+r7wIr++7np8y04TFStPbogrKtHSJksVX55eiiIifMRh2eQpwn7hb
-	XhNVyaHk19YZ36Cw==
-From: "tip-bot2 for Roland Xu" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: locking/urgent] rtmutex: Drop rt_mutex::wait_lock before scheduling
-Cc: Roland Xu <mu001999@outlook.com>, Thomas Gleixner <tglx@linutronix.de>,
- stable@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3CME0P300MB063599BEF0743B8FA339C2CECC802=40ME0P300MB?=
- =?utf-8?q?0635=2EAUSP300=2EPROD=2EOUTLOOK=2ECOM=3E?=
-References: =?utf-8?q?=3CME0P300MB063599BEF0743B8FA339C2CECC802=40ME0P300M?=
- =?utf-8?q?B0635=2EAUSP300=2EPROD=2EOUTLOOK=2ECOM=3E?=
+	s=arc-20240116; t=1723729590; c=relaxed/simple;
+	bh=xpa67Wr74Im2iD+qPPKLdhggzJuep5WPCdoIlQ89s5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d6GJSHPtnjZ3jHvpbu0RL/gBE3ODpsm2d1ceGbSSF3aJvxyj2D46Yxa+IYyAV/QyrG4NcBCsBBFEq42e9B9zVhnK7GOJ/Z8CiWDqS9QqmNPQ2Y4oz7UP8GBUMZpFPGwISGv83EvkF3MyMrPg8XpeLu298Uk8xyQz6odjWndZmns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 34EF914BF;
+	Thu, 15 Aug 2024 06:46:54 -0700 (PDT)
+Received: from bogus (e107155-lin.cambridge.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A72063F6A8;
+	Thu, 15 Aug 2024 06:46:26 -0700 (PDT)
+Date: Thu, 15 Aug 2024 14:46:24 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Sibi Sankar <quic_sibis@quicinc.com>, cristian.marussi@arm.com,
+	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org, quic_rgottimu@quicinc.com,
+	quic_kshivnan@quicinc.com, johan@kernel.org,
+	Sudeep Holla <sudeep.holla@arm.com>, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH] pmdomain: arm: Fix debugfs node creation failure
+Message-ID: <Zr4GsOndEEMI-6ap@bogus>
+References: <20240703110741.2668800-1-quic_sibis@quicinc.com>
+ <ZoZ6Pk7NSUNDB74i@bogus>
+ <064274c4-3783-c59e-e293-dd53a8595d8e@quicinc.com>
+ <Zofvc31pPU23mjnp@bogus>
+ <CAPDyKFrESupeNS4BO8TPHPGpXFLsNqLPrUEw3xzr8oh8FsLHeA@mail.gmail.com>
+ <Zryxrdodn2Y2xsej@bogus>
+ <CAPDyKFqmV7yvMdLjGhDHJN4CFiUun3FXprEk7uGFV_qmn9vA8Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172372956693.2215.10534564675111967043.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPDyKFqmV7yvMdLjGhDHJN4CFiUun3FXprEk7uGFV_qmn9vA8Q@mail.gmail.com>
 
-The following commit has been merged into the locking/urgent branch of tip:
+On Thu, Aug 15, 2024 at 12:46:15PM +0200, Ulf Hansson wrote:
+> On Wed, 14 Aug 2024 at 15:31, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> >
+> > On Wed, Aug 14, 2024 at 02:38:24PM +0200, Ulf Hansson wrote:
+> > >
+> > > Sudeep, while I understand your point and I agree with it, it's really
+> > > a simple fix that $subject patch is proposing. As the unique name
+> > > isn't mandated by the SCMI spec, it looks to me that we should make a
+> > > fix for it on the Linux side.
+> > >
+> >
+> > Yes, I did come to the conclusion that this is inevitable but hadn't
+> > thought much on the exact solution. This email and you merging the original
+> > patch made me think a bit quickly now 😉
+> 
+> Alright, great!
+> 
+> >
+> > > I have therefore decided to queue up $subject patch for fixes. Please
+> > > let me know if you have any other proposals/objections moving forward.
+> >
+> > The original patch may not work well with the use case Peng presented.
+> > As the name and id may also match in their case, I was wondering if we
+> > need to add some prefix like perf- or something to avoid the potential
+> > clash across power and perf genpds ? I may be missing something still as
+> > it is hard to visualise all possible case that can happen with variety
+> > of platform and their firmware.
+> >
+> > In short, happy to have some fix for the issue in some form whichever
+> > works for wider set of platforms.
+> 
+> Okay, so I have dropped the $subject patch from my fixes branch for
+> now, to allow us and Sibi to come up with an improved approach.
+> 
+> That said, it looks to me that the proper fix needs to involve
+> pm_genpd_init() in some way, as this problem with unique device naming
+> isn't really limited to SCMI. Normally we use an "ida" to get a unique
+> index that we tag on to the device's name, but maybe there is a better
+> strategy here!?
 
-Commit-ID:     d33d26036a0274b472299d7dcdaa5fb34329f91b
-Gitweb:        https://git.kernel.org/tip/d33d26036a0274b472299d7dcdaa5fb34329f91b
-Author:        Roland Xu <mu001999@outlook.com>
-AuthorDate:    Thu, 15 Aug 2024 10:58:13 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 15 Aug 2024 15:38:53 +02:00
+Yes using "ida" for unique index might work here as well AFAIU. It can be
+one of the possible solution for sure.
 
-rtmutex: Drop rt_mutex::wait_lock before scheduling
-
-rt_mutex_handle_deadlock() is called with rt_mutex::wait_lock held.  In the
-good case it returns with the lock held and in the deadlock case it emits a
-warning and goes into an endless scheduling loop with the lock held, which
-triggers the 'scheduling in atomic' warning.
-
-Unlock rt_mutex::wait_lock in the dead lock case before issuing the warning
-and dropping into the schedule for ever loop.
-
-[ tglx: Moved unlock before the WARN(), removed the pointless comment,
-  	massaged changelog, added Fixes tag ]
-
-Fixes: 3d5c9340d194 ("rtmutex: Handle deadlock detection smarter")
-Signed-off-by: Roland Xu <mu001999@outlook.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/all/ME0P300MB063599BEF0743B8FA339C2CECC802@ME0P300MB0635.AUSP300.PROD.OUTLOOK.COM
----
- kernel/locking/rtmutex.c |  9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
-index 88d08ee..fba1229 100644
---- a/kernel/locking/rtmutex.c
-+++ b/kernel/locking/rtmutex.c
-@@ -1644,6 +1644,7 @@ static int __sched rt_mutex_slowlock_block(struct rt_mutex_base *lock,
- }
- 
- static void __sched rt_mutex_handle_deadlock(int res, int detect_deadlock,
-+					     struct rt_mutex_base *lock,
- 					     struct rt_mutex_waiter *w)
- {
- 	/*
-@@ -1656,10 +1657,10 @@ static void __sched rt_mutex_handle_deadlock(int res, int detect_deadlock,
- 	if (build_ww_mutex() && w->ww_ctx)
- 		return;
- 
--	/*
--	 * Yell loudly and stop the task right here.
--	 */
-+	raw_spin_unlock_irq(&lock->wait_lock);
-+
- 	WARN(1, "rtmutex deadlock detected\n");
-+
- 	while (1) {
- 		set_current_state(TASK_INTERRUPTIBLE);
- 		rt_mutex_schedule();
-@@ -1713,7 +1714,7 @@ static int __sched __rt_mutex_slowlock(struct rt_mutex_base *lock,
- 	} else {
- 		__set_current_state(TASK_RUNNING);
- 		remove_waiter(lock, waiter);
--		rt_mutex_handle_deadlock(ret, chwalk, waiter);
-+		rt_mutex_handle_deadlock(ret, chwalk, lock, waiter);
- 	}
- 
- 	/*
+-- 
+Regards,
+Sudeep
 
