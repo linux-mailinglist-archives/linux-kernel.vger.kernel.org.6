@@ -1,225 +1,132 @@
-Return-Path: <linux-kernel+bounces-288096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A6C195344E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:25:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BDD1953457
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:25:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5FE728A05B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:25:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 125F21F2914A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E150F1A3BCE;
-	Thu, 15 Aug 2024 14:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4350A1ABED4;
+	Thu, 15 Aug 2024 14:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VaBif9Ud"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RL6Yv0zX"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F222519DF92;
-	Thu, 15 Aug 2024 14:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47C919F473;
+	Thu, 15 Aug 2024 14:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723731863; cv=none; b=BBtsrJNGq8On+1yyYEz7fJkyKDXUehC2W1I12Yv4z8zmcC/o0/78V2lh/HRTjgXwhr174UQHjHM+c/XPxKXIe6rNK6YBOPorE5CVK7wRmQZfv5Gu6VDBq0MShwGGJCIWRInHxt+ysP5tEem8mGIbXR4a+vN0pnNnfo2qHAMU1sU=
+	t=1723731879; cv=none; b=gqR4b7lv3sNywSLOKYc2ZGCTxuOR/YiCibovOiSnLv6rSk6IEpmfKmHupWvJCAo9ZK2NB3ue7ehoBWfcZV/BIxWTlVker7+MtxBVbizHcSzPUTDIJ8YiqKxiiRP2EJGoLqge9io5nmeQ7zNCmc3W/QCl4cReB3HoJJrDur20Prg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723731863; c=relaxed/simple;
-	bh=oWFM9hMu5UM6J5ZKg5Hx8ZMhLMm107p2yHuAWNRa3m4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E4a2FHG/U0B0AlgzCiqPO9xUE0c2wUbG4qPupkaIJg/bGH3kBXo1vpU9hlqmDQjO7Dn6CWAsZKnc/u53kk8dkmZljE+Pd5EJQd3LqSTzUw0ntyOwMAotIK64OOkoiofIUfAlX83ICgA5DKArfwLm/awyzM2EG2PzzrVaEDLpLDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VaBif9Ud; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08637C4AF0A;
-	Thu, 15 Aug 2024 14:24:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723731862;
-	bh=oWFM9hMu5UM6J5ZKg5Hx8ZMhLMm107p2yHuAWNRa3m4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VaBif9UdXbtREpa11t2MJuTKMDptGTnf5IWTXQcPry88RlerBT0sgLpTwT8zhu3OY
-	 oTvhVFrLdDsqhyyB7v46LqXYKEtpbuSa3iE1Og/WdougSOjZUk/fYXwPJGA2To7FqZ
-	 sWlzD9DmbQUJJBOY7aqqLk2VyVlVuWDsa2+EOmZIcb4osahXiuPb23Z3pcw1xnktNr
-	 30hLn3uHf7lE/8TAWiwGCUL0O5QyRQAib+VGIi5BJ8yuKHaHEStIaGjRJ4/s9sFhln
-	 vhS7rfEf8XO7eKZl1nLTV/IEbpvScTLOhtVLEOs5KoMEBT+nEQwstAwS3cOWDyEmve
-	 +qED5TyWDjt2Q==
-Date: Thu, 15 Aug 2024 15:24:12 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
-	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"debug@rivosinc.com" <debug@rivosinc.com>,
-	"mgorman@suse.de" <mgorman@suse.de>,
-	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
-	"fweimer@redhat.com" <fweimer@redhat.com>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"vschneid@redhat.com" <vschneid@redhat.com>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"bsegall@google.com" <bsegall@google.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"juri.lelli@redhat.com" <juri.lelli@redhat.com>,
-	"jannh@google.com" <jannh@google.com>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"kees@kernel.org" <kees@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-	"will@kernel.org" <will@kernel.org>
-Subject: Re: [PATCH RFT v8 4/9] fork: Add shadow stack support to clone3()
-Message-ID: <3e3570b8-f138-4373-94b8-b471419bbf11@sirena.org.uk>
-References: <20240808-clone3-shadow-stack-v8-0-0acf37caf14c@kernel.org>
- <20240808-clone3-shadow-stack-v8-4-0acf37caf14c@kernel.org>
- <f3a2a564094d05beac2dc5ab657cbc009c465667.camel@intel.com>
+	s=arc-20240116; t=1723731879; c=relaxed/simple;
+	bh=cE18OWNgSDCuLxpDUVFjwNKQqYPgAUOzSh0r/G2Xd5w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=P469EE4O2bLnGUg83ACFJLX1oCVvFjNOt5ytsvs4wu5JTrIZEgnnN8zdRgYFtNL9OetY0GEetFbgHaYw0gNc1FwhigaSbz99t5qP+mtv2BbpDz1meA/cMR5K+aFr1JZszntn3Sn9w9/EqhGmFbiRTBzOCLHPucPuWdsIADo4Tfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RL6Yv0zX; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47FB265L002207;
+	Thu, 15 Aug 2024 14:24:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JKyMHexjW8mHunkV4x2xjpwj51aFu22HNL3RDXdjm7E=; b=RL6Yv0zXsOx3q0Zs
+	b/dM4HBfvU6LgAR65HkaqD9Tw1wT/B+sJTocLWiXSMRhzhOKbTJ18dt9732oebpb
+	SqYsO89MeTmH6bLXvCgyleO7nNc4ea5MOpTaoPbm+aZQIF2tQX0Gls3CubPOtfwv
+	cp3ygthwjImKhUYOUATAkjwmqi7hZhjwWCLpQTjBgDMNP8j8UYVm1vLt/vKZr3Jw
+	SEhiaSRZKfaQ2vs1ws68AU8g605q/4wxX15V93ISB8TQFpF086SP9YQN+Kk/0GLV
+	wCu4Dy3TB5ZMUUkw1eiV89rgdbyJN2GJr3L/8oY0E0Li4PgdG/m7PY4fm/6ydmx0
+	EitAqA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4112r3t5ht-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 Aug 2024 14:24:32 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47FEOVps019575
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 Aug 2024 14:24:31 GMT
+Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 15 Aug
+ 2024 07:24:25 -0700
+Message-ID: <9f06450f-70a8-4ece-8b67-1b0695fbf414@quicinc.com>
+Date: Thu, 15 Aug 2024 22:24:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Rf75a+d8nN1mvn3I"
-Content-Disposition: inline
-In-Reply-To: <f3a2a564094d05beac2dc5ab657cbc009c465667.camel@intel.com>
-X-Cookie: -- Owen Meredith
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 13/13] media: qcom: camss: Add support for VFE hardware
+ version Titan 780
+To: Bryan O'Donoghue <pure.logic@nexus-software.ie>, <rfoss@kernel.org>,
+        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
+        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>, Yongsheng Li <quic_yon@quicinc.com>
+References: <20240812144131.369378-1-quic_depengs@quicinc.com>
+ <20240812144131.369378-14-quic_depengs@quicinc.com>
+ <b31f175e-4171-491f-9203-8186a84ab712@nexus-software.ie>
+Content-Language: en-US
+From: Depeng Shao <quic_depengs@quicinc.com>
+In-Reply-To: <b31f175e-4171-491f-9203-8186a84ab712@nexus-software.ie>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ApBaGQrka866zN899C4pDLNfsv0SDCMx
+X-Proofpoint-ORIG-GUID: ApBaGQrka866zN899C4pDLNfsv0SDCMx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-15_07,2024-08-15_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ lowpriorityscore=0 phishscore=0 bulkscore=0 mlxscore=0 suspectscore=0
+ clxscore=1011 priorityscore=1501 malwarescore=0 impostorscore=0
+ mlxlogscore=999 spamscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2408150104
 
+Hi Bryan,
 
---Rf75a+d8nN1mvn3I
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>> +
+>> +static inline void vfe_reg_update_clear(struct vfe_device *vfe,
+>> +                    enum vfe_line_id line_id)
+>> +{
+>> +    int port_id = line_id;
+>> +
+>> +    /* RUP(register update) registers has beem moved to CSID in Titan 
+>> 780.
+>> +     * Notify the event of trigger RUP clear.
+>> +     */
+>> +    camss_reg_update(vfe->camss, vfe->id, port_id, true);
+>> +}
+> 
+> Hmm, so another thought here.
+> 
+> camss_reg_update() is not an accurate name -> camss_rup_update() because 
+> in this case we only update the RUP register, not the AUP or MUP.
+> 
+> reg is an abbreviation for register - but RUP has a defined meaning in 
+> the camera namespace i.e. RUP = register update and its job is to latch 
+> shadow registers to real registers.
+> 
+> camss_rup_update() please.
+> 
 
-On Thu, Aug 15, 2024 at 12:18:23AM +0000, Edgecombe, Rick P wrote:
-> On Thu, 2024-08-08 at 09:15 +0100, Mark Brown wrote:
+Yes, you are right, the rup_update is reasonable, I will update it in 
+next version patch.
 
-> > +=A0=A0=A0=A0=A0=A0=A0ssp =3D args->shadow_stack + args->shadow_stack_s=
-ize;
-> > +=A0=A0=A0=A0=A0=A0=A0addr =3D ssp - SS_FRAME_SIZE;
-> > +=A0=A0=A0=A0=A0=A0=A0expected =3D ssp | BIT(0);
+Thanks,
+Depeng
 
-> > +=A0=A0=A0=A0=A0=A0=A0mm =3D get_task_mm(t);
-> > +=A0=A0=A0=A0=A0=A0=A0if (!mm)
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0return -EFAULT;
-
-> We could check that the VMA is shadow stack here. I'm not sure what could=
- go
-> wrong though. If you point it to RW memory it could start the thread with=
- that
-> as a shadow stack and just blow up at the first call. It might be nicer t=
-o fail
-> earlier though.
-
-Sure, I wasn't doing anything since like you say the new thread will
-fail anyway but we can do the check.  As you point out below it'll close
-down the possibility of writing to memory.
-
-> > +=A0=A0=A0=A0=A0=A0=A0/* This should really be an atomic cmpxchg.=A0 It=
- is not. */
-> > +=A0=A0=A0=A0=A0=A0=A0if (access_remote_vm(mm, addr, &val, sizeof(val),
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0 FOLL_FORCE) !=3D sizeof(val))
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0goto out;
-> > +
-> > +=A0=A0=A0=A0=A0=A0=A0if (val !=3D expected)
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0goto out;
-> > +=A0=A0=A0=A0=A0=A0=A0val =3D 0;
-
-> After a token is consumed normally, it doesn't set it to zero. Instead it=
- sets
-> it to a "previous-ssp token". I don't think we actually want to do that h=
-ere
-> though because it involves the old SSP, which doesn't really apply in thi=
-s case.
-> I don't see any problem with zero, but was there any special thinking beh=
-ind it?
-
-I wasn't aware of the x86 behaviour for pivots here, 0 was just a
-default thing to choose for an invalid value.  arm64 will also leave
-a value on the outgoing stack as a product of the two step pivots we
-have but it's not really something you'd look for.
-
-> > +=A0=A0=A0=A0=A0=A0=A0if (access_remote_vm(mm, addr, &val, sizeof(val),
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0 FOLL_FORCE | FOLL_WRITE) !=3D sizeof(val))
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0goto out;
-
-> The GUPs still seem a bit unfortunate for a couple reasons:
->  - We could do a CMPXCHG version and are just not (I see ARM has identica=
-l code
-> in gcs_consume_token()). It's not the only race like this though FWIW.
->  - I *think* this is the only unprivileged FOLL_FORCE that can write to t=
-he
-> current process in the kernel. As is, it could be used on normal RO mappi=
-ngs, at
-> least in a limited way. Maybe another point for the VMA check. We'd want =
-to
-> check that it is normal shadow stack?
->  - Lingering doubts about the wisdom of doing GUPs during task creation.
-
-> I don't think they are show stoppers, but the VMA check would be nice to =
-have in
-> the first upstream support.
-
-The check you suggest for shadow stack memory should avoid abuse of the
-FOLL_FORCE at least.  It'd be a bit narrow, you'd only be able to
-overwrite a value where we managed to read a valid token, but it's
-there.
-
-> > +static void shstk_post_fork(struct task_struct *p,
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0 struct kernel_clone_args *args)
-> > +{
-> > +=A0=A0=A0=A0=A0=A0=A0if (!IS_ENABLED(CONFIG_ARCH_HAS_USER_SHADOW_STACK=
-))
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0return;
-> > +
-> > +=A0=A0=A0=A0=A0=A0=A0if (!args->shadow_stack)
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0return;
-> > +
-> > +=A0=A0=A0=A0=A0=A0=A0if (arch_shstk_post_fork(p, args) !=3D 0)
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0force_sig_fault_to_task(S=
-IGSEGV, SEGV_CPERR, NULL, p);
-> > +}
-
-> Hmm, is this forcing the signal on the new task, which is set up on a user
-> provided shadow stack that failed the token check? It would handle the si=
-gnal
-> with an arbitrary SSP then I think. We should probably fail the clone cal=
-l in
-> the parent instead, which can be done by doing the work in copy_process()=
-=2E Do
-
-One thing I was thinking when writing this was that I wanted to make it
-possible to implement the check in the vDSO if there's any architectures
-that could do so, avoiding any need to GUP, but I can't see that that's
-actually been possible.
-
-> you see a problem with doing it at the end of copy_process()? I don't kno=
-w if
-> there could be ordering constraints.
-
-I was concerned when I was writing the code about ordring constraints,
-but I did revise what the code was doing several times and as I was
-saying in reply to Catalin I'm no longer sure those apply.
-
---Rf75a+d8nN1mvn3I
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma+D4sACgkQJNaLcl1U
-h9BTdAf9GZtUARmVLIt9R/bsU7tcZIAMeU6tc+dWKGy+SUT/uCod0ZgF63tGvD6F
-6TpHq1piVctZtKejTOEJBeOdgGqlO2D57o+nKyucCfzQGf+GsDO7RfqPmbEtTOUx
-i6CuIiF5FLeR8iQA9h6LXqF3k1m4qfupN8Qw8oIjeZh1Y/DVwhLbn0AiPwE2uIIy
-bkBbDcTt9ULonqH8VoVE0nR370gqtLyz9wS06HbwOSpLXQRiILFbvw4g2rre5LKu
-X/6TVOwCqa0xO8lhUXPkVCVmWrNxHvZAjeuFUS1ZWcOLKcDNr1mVdrPjK9OAckbY
-S7l+1L1FnN5QZlndcPRc3YqOeUM5rA==
-=FCea
------END PGP SIGNATURE-----
-
---Rf75a+d8nN1mvn3I--
 
