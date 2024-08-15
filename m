@@ -1,198 +1,293 @@
-Return-Path: <linux-kernel+bounces-288027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10234953119
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:50:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09C01953142
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:52:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF6862880DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:50:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48468B20BC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F113819F471;
-	Thu, 15 Aug 2024 13:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A541E1494C5;
+	Thu, 15 Aug 2024 13:51:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="dvruiuGc"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JWrdldnE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BE21494C5;
-	Thu, 15 Aug 2024 13:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723729808; cv=none; b=h7a8cox5ri62i0FhQOwDpxOsgF199qyP9I0INcDEowJe8iEPGpBLCcLBEOfhRbbPltjw/sONY55HWTOCviyyd6VDT6LwukqXhSownzRryVSYefakdIxv0NAFQcVhSAf/q60KGO6sJcQDtmBrJjeiMeXIHPYHDY9vCTrOl7H8AzY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723729808; c=relaxed/simple;
-	bh=VHcZHRipWBwVJFTK+W08oRNQL269lIOOCvroraVRk0Q=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q16Y229ZWTwObViXn0Xn7lCftrHcbpc8etIInjww0HaQsc85rOh5X0n0XErF1gn0iBKwsFGmSpxZ+7f2h3c+JzsRKZdY9uPxkdFuEfGRL8MfDInFpmxJ9scunoQQmNduN9lm1S74YmR9cRI3H7igDITjSs38Z2sJ6+XgExpbC0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=dvruiuGc; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1723729802; x=1723989002;
-	bh=KEupb37DrZI7fKTirvjR5sFyvknSbw5Bw1SxzjumzWg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=dvruiuGcYy9XjfiiXN+udkg0CQt6KsH/wfuGMotUl+tnvX/rODk0lST+iZ2OiQnQn
-	 ofK+rV6bfXB5BUFhwHkRxXwWDbezOi0xfPg0756FKGYyko8o/b79S1V06eYZuxyHt+
-	 olkc4sDvKn+RBP7ZOArwu/H7xbH5d1LEEOJsqFMcncPRFEwttVn8oo/66GYbKFp35y
-	 cp60QNWMkTBXeqheFwSolxhdtTIe812KSB77CrmxZFDgEpLb0lrSyZFpi4mC5UVFtA
-	 wbFxvRhSfAR91QgmTFQfuFuRKFGccDTbekjEe3FbVsWgbvlV1dGGXzXXhuGKHo+hq6
-	 S/wzOuYpuS4HQ==
-Date: Thu, 15 Aug 2024 13:49:55 +0000
-To: Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v5 01/26] rust: alloc: add `Allocator` trait
-Message-ID: <a2462e9e-0b65-4cbd-82d9-32298dfb781e@proton.me>
-In-Reply-To: <Zr1Izo9Qp8mYkbpr@cassiopeiae>
-References: <20240812182355.11641-1-dakr@kernel.org> <20240812182355.11641-2-dakr@kernel.org> <cfcdaa42-6a62-4a17-a8dc-2382e88774dc@proton.me> <Zr1Izo9Qp8mYkbpr@cassiopeiae>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 93fe3d43e70bb7f12b5d0fa2bcfee2ab778e703f
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932371714A1;
+	Thu, 15 Aug 2024 13:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723729914; cv=fail; b=abDE4mOnH0EE98/EpTX5ZKVqxA6LrBf43lHXVMSTXhlP6rmk4Bq4yNCHBJ1UuyMHSy5z+qi2wMiVgdFkSJOGNUGqeRPpZOSY+SirJZVlTDZxY4qHMtMglJyUXd3NGfRnynD66YHOvVcF2S64SGstgXa7PtlG/vH/1phinonnoQw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723729914; c=relaxed/simple;
+	bh=0iyrzcAy0jw4DGcEoDaodr2tcDNlagt8YNxA0P/STtU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Xxr6gHTpaNaI8uEPS4uAGuocZ0m0EWmICLBV4vWnUBLXeVcxln6qx8ix+XamKXppo17dL4B23EcJwSh4zpC2IQJyXL07CIZNg7hkSMUi+1Bzlw1AvCnHfYTAfSzn69AOE2VG3lK6Tc7J3ARFGJR+JBvTO767ktCFZFs/Wklp+VI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JWrdldnE; arc=fail smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723729912; x=1755265912;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=0iyrzcAy0jw4DGcEoDaodr2tcDNlagt8YNxA0P/STtU=;
+  b=JWrdldnEzM/Qusf7YDZDAdEe5gKN36RBJoqCNVWHB1Kmk14l55ZQL4f7
+   iegxSjr3P89e39lWskHUi6JQdaf48sXc2Ivf8lAKAmvYB2ND1tgEAKEV4
+   F98p+fPvHfBNF3wXXaP1duBoV9I+9++/WbRseC4hCR6YWBlh0pw/iPdaG
+   Q86Dzc35F4NxI0zt76jd+Fm4YnOWu+/o7UCTNjz/rbjyVd7750sLJk74Y
+   UmjbzR0Ip7ISIVP8TIRy/+4D653VBArA/K872iPiFuLUIQRCV4zbLq5Wg
+   jEe9Ekh4rAaxbJfpmeOjSLjVwVTqhR5xBS2cUxYOC848hGOybqN7JdG7j
+   w==;
+X-CSE-ConnectionGUID: 5ZKzTKc3RIuOU9PmRpSl7Q==
+X-CSE-MsgGUID: dnNmaxSnQoSKDde1+9n1Aw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11165"; a="33393433"
+X-IronPort-AV: E=Sophos;i="6.10,149,1719903600"; 
+   d="scan'208";a="33393433"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 06:51:51 -0700
+X-CSE-ConnectionGUID: hI/0eQQeTD62i5/9MIElMQ==
+X-CSE-MsgGUID: /nuPbEI3TJik/3LYppG0wg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,149,1719903600"; 
+   d="scan'208";a="58993697"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 15 Aug 2024 06:51:52 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 15 Aug 2024 06:51:51 -0700
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 15 Aug 2024 06:51:50 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 15 Aug 2024 06:51:50 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.176)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 15 Aug 2024 06:51:50 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=F1kZm5WJvfxumMHXDVQuWWqPy4uAxEcq7s/tOIiotmU6/KaoJJh6eia3/2Lt7Bm4qlcIj+KB1KgzHmhmYowh5g7UBmhAeiUC6VzRdpbR0558x8GxoTl6dHFmfEJpjFptXNmc8t2bFwLIjUz9vkKZgAvVoHmjq+CH9hDP6kJzCX7zcmDGHjLsfn03pVbTznEJOuobQtHMi1wSqKmiZgNNSU0zAo2K4O1QZYHAty2UFi3YXkQblaylaZhArMNZ0xnmCk06x27c7C9k1OBYj/gR1l5W/o88EnhFiHMJxDOnEmV5ZaLZAc/Xbr7cIwIE2ecUBdsbxLlhZGbKX37kb8PIHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8YdeyatExCyHLMAlTjTsOX5F5KwAphegWoPb33CFN/Q=;
+ b=tH4hq1A6gOI5KqdmbmzKO80nzTEmqVuL3w/8tbu4uD1J3rJT8BnByQR7+RJZZlbZhz8/6wel/AQS5gwJdxF8kbQBSHJVmGhsejm27d9zJ3bWHu35WIkJISYNRDMFmJvWC17ogxZ3Wk1vRMw8/okwmnwvwrW1DkjmpxWtrCwbXi0eHx+M4/GRhm9L6jQhIYaRHdfRUt3z/s6voWvcX/C+Ndg9FTY2jVTAAKp2jCZGvybpgPz6LxGIHcsx883zpUE9Zl+WY86233VD9OWLIv7fj3BozFTeBLjh986i7KtBFpAhIX0oTfl2zrdVHwzWSfxGvr1cr440lV6MqaAdBvWIPw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
+ by SJ0PR11MB4910.namprd11.prod.outlook.com (2603:10b6:a03:2d7::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.18; Thu, 15 Aug
+ 2024 13:51:48 +0000
+Received: from CY5PR11MB6139.namprd11.prod.outlook.com
+ ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
+ ([fe80::7141:316f:77a0:9c44%7]) with mapi id 15.20.7875.016; Thu, 15 Aug 2024
+ 13:51:48 +0000
+Date: Thu, 15 Aug 2024 08:51:43 -0500
+From: Lucas De Marchi <lucas.demarchi@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+CC: Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>, Jani Nikula
+	<jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI
+	<dri-devel@lists.freedesktop.org>, DRM XE List
+	<intel-xe@lists.freedesktop.org>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, Linux Next Mailing List
+	<linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the drm-xe tree with the drm-intel
+ tree
+Message-ID: <sjhsi5wv4g4ewb2f4qfog7drjsc4wvoeeohzxh2spl7pw4njla@svug3iudbdux>
+References: <20240815113717.1c81c44c@canb.auug.org.au>
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20240815113717.1c81c44c@canb.auug.org.au>
+X-ClientProxiedBy: MW4PR04CA0316.namprd04.prod.outlook.com
+ (2603:10b6:303:82::21) To CY5PR11MB6139.namprd11.prod.outlook.com
+ (2603:10b6:930:29::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|SJ0PR11MB4910:EE_
+X-MS-Office365-Filtering-Correlation-Id: 86c2e576-32fb-455d-9654-08dcbd316852
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?CtF2bFmHifteB1D8QFRJOeEbCRtOMmatTxwjYRB3C/DIXpiwXMH3YeiMyIzV?=
+ =?us-ascii?Q?xKmlhA9NnK9t965oBXRavOlkg15jfnNsgY3r8nqjjFJLgaebcPSPp51Su6UT?=
+ =?us-ascii?Q?DldCIvbC5eAwdiiQHv8vd+q5qFMPrJH2+HRQfSLHoJ03GT74vk9VppPduCBq?=
+ =?us-ascii?Q?+ytLYhjc0GdwZEzX9pUg0Rd7yPcrQ+s68JAv70ymgR/PgNmL81NygFyYDZde?=
+ =?us-ascii?Q?gZpPfduYyO2GWa+uBFsLkk5Hd3E4Ho6wOBcpsxdoAbjY8MWcPxsL2mlfKe2u?=
+ =?us-ascii?Q?joBHhzuGB/Qip7UdNMhoiTDCIX+eLgN9xtBIMj3Nsp+7CkU35JAzhwXcuyig?=
+ =?us-ascii?Q?3dXWJmWJGA3Nsv6d4P1xeNPSswT04UfxNiM/QuwJ6noHXgx5PcyI0xSW1C74?=
+ =?us-ascii?Q?X5zqNQ1Gw8dT0e0K81KDiLNokXz5fvEvudg0Y86KsHFeDBKXp/b74tCuNkUS?=
+ =?us-ascii?Q?CInxcYPZSjVWSTX844/+8TmNmYl8yMWfX9/Nc0sZPV9v03PdnfoX/1ZY4beo?=
+ =?us-ascii?Q?nLB61Yx2Urxtz8NjGahCRwSmIizmmxLrYq/zZtmda8vRjTnib4FLajiZ94U1?=
+ =?us-ascii?Q?qM6gfSOG43K/jMg+5jmUqpif0ioBcAU2d8rxaL+Kk4axSQimU6rx7n5MIXvB?=
+ =?us-ascii?Q?+ZS0eITPYXk+mr0o+1LgVuSqRpS+Ngbq+d4jgZ3q4zHCrOE8TO9UK9rmYYyW?=
+ =?us-ascii?Q?0aBT6fVt1sBlff/vvEFF3zjTSmBxwqLBs0ktJx/Ysoc8nP0ReH/Y8j1knhbq?=
+ =?us-ascii?Q?3KtGWthCY6BNW+buh6BkG4hC4qI+Gy4yHRqTzFr/1clSsSNxYaJQymlbobX5?=
+ =?us-ascii?Q?F1zNASnpBfsiBvxg4rnKfyvg8jop93BDG7RnL9aqmDfh2AFJs4Lv9vnc26AI?=
+ =?us-ascii?Q?2nComOAJEq37t6gsBL3XKmEjWsqP6eWR/QtVnQjBH8TDPdFyw7DsuJkIaYmo?=
+ =?us-ascii?Q?Na8n1OOeTYqdSRfvsGhRYRY2VsTKamaWrVIFuRyVbaI0f9gAPWmMDT1TzYj6?=
+ =?us-ascii?Q?c1n0yWJhrs0ZJPTx/sF4J4lq0+0I227dCsf6lICBcDMVLGXwhE6mC/+8I9VV?=
+ =?us-ascii?Q?E3xx89ksuTf2MxDp982Yj/ilQ7ypd0JEJ2MbfMjCE33+zUtz7XMi8BAO/qp4?=
+ =?us-ascii?Q?w2AE0OAQyyDjzTr+j0v6sd2lDbvQyc4Py2Vhdr586xbkzs16Dd9OuPJFreoL?=
+ =?us-ascii?Q?xgrQcHjr96gu6pDWuRSOVdy4xkwBxGdrjhj6K+oVWjTDRRt+t0fKcqHLxdRz?=
+ =?us-ascii?Q?weLwFf5sXQkTXZkF5/UfeuvdDN6YiRAqikNlHuw4DL3lR2tDzOq37T+khXmz?=
+ =?us-ascii?Q?WUe3+VZ5mXpAFtfZkDxGLMzbJxjKS8KyEFiZx5+nGbd+DA=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?PfA0LdDnVEIf2j5ShW09h94ap6nkvvDwa58uonHQNXtVm/sq9C3mW2cfVg9c?=
+ =?us-ascii?Q?zdpB5EVa7Ip/ZKkPnLvDW1qG/VMDwRL6hE979hWMdNevxkwDjY6tG7r0QemL?=
+ =?us-ascii?Q?tOiydSH81v9ZRHX7hTo7w/ppTguhSAho2W1tnhfHkxOBZQR5yr8iz4QXX/GU?=
+ =?us-ascii?Q?upfHlB8KWYUd4XcACmUJ91b0+ahgyKeVzoYObp/4Zp5wAa2b6s6yACsm00p8?=
+ =?us-ascii?Q?xbfZksOpqoI5zbd5Hd1TP/d8oAm4y8OXK0YYwO6Q1Tch3D3YU7xDCt3XSHV9?=
+ =?us-ascii?Q?Jh6iZEy031eKm2OatQzvFYt/A8sSxasRJ+gm55GyCGrGYrp28MdJ20xP10BV?=
+ =?us-ascii?Q?rHNbmFHma439cef0pIUcD+XdT/VQMj6xfvxu779f3acjKU957qtPWBOyJoWP?=
+ =?us-ascii?Q?mRJcjdzI4UpX/p0Q3i4LX5UNWy+Nhvq5JkDynrhL/VE5Pxc4UCciKU9NzIho?=
+ =?us-ascii?Q?2b8R3w0Ozu8QTUMWVSwyST0TdTOTTt15WEB/bLbYRPVsAXwD568+VhnuSWCF?=
+ =?us-ascii?Q?J7vNfPkixzdErA39OUObKZxWYU9ozMrbUZIBhH/2dkyNRHwDV18kgQHhgxU0?=
+ =?us-ascii?Q?S8Ygff8zQigGeBJYeMDDAvaKTGd/3oPqPTq+FWVLPTpQmQkab+PPN9bPVjFF?=
+ =?us-ascii?Q?O7siL2CaSq2ggcju1O9K6UHJbHmeMRWeJsGCXRJS99Q/g8Rn6qqw7ccWOsQu?=
+ =?us-ascii?Q?qHqVQo/sHUfFPBZv7KXW0BNxiS72dN1FSl4TjwX/XybQhY1gBrjhCiTCusfn?=
+ =?us-ascii?Q?If44d+Xa0CdikB1L5plmRRMZp5iUFRdrLP8fnpo6kCPiLPgshq67bnzV+zTd?=
+ =?us-ascii?Q?3brKQyd+8nMDJyd4xI2TBnVvx0Z5d+VVBqfaGN1azXzv3ZmcOj8q8ktCRTHr?=
+ =?us-ascii?Q?Q2G/jAJ/Ic8Cp8eCN7rr8oVORqut2T9Vn1jxWHBDuF1SKclt4n2+Bmp1ZhnD?=
+ =?us-ascii?Q?ZNJYS8rbpEmqTDVHDprEoigyX8MelvmIUsDiM6ntkUsrQjZOnVweXkAE1WpS?=
+ =?us-ascii?Q?6u6bwR1czm1xFhmeBsiCxsJrh0lOcHfV6t6QNL6v8RNT5oua5FT+9ah98+gK?=
+ =?us-ascii?Q?FHW695+ot1SdgnL3yJY6A+vrNptEoWp8ucVfQLG0KvYxgYI5YsJEF2ddzI8g?=
+ =?us-ascii?Q?Tuhamv8Kl2xhOazqbuxsbIww/zPkPpl0hv2CdBzZE5YzEmR9osw9YrHhqLPt?=
+ =?us-ascii?Q?n7uOVH4tMkk55HDC1fPQqKJWHpWcVyrtmzXBTMdFgpqwt8WsBx60KGH9HQDV?=
+ =?us-ascii?Q?OcaBfIzIX6On2R5S/c1xSdwDJNc6DpR3DUEM6GUBLx2f2nNDXTJMe6O7sT7/?=
+ =?us-ascii?Q?11UqhYhTsBA00iUFy0vmCw2ePbxhWTJ/J3YKMVsOI7PbBa7Mhac67OieyC4l?=
+ =?us-ascii?Q?xDVJcvhzDRi6SB64M+mxvHM8jwmUH718iJ8GywDzvlfmlsyN3nOUatJQLY3I?=
+ =?us-ascii?Q?guTR9fFmFspFrl8D+kpEuc2zpm5C9HENmOQxYthqDqLBYcQYQH2r2BWV4qCO?=
+ =?us-ascii?Q?bEKIkqiCyjh2n4T1NN8W1KjaMv8GlsrmDHn05JRm5Pju+V8mMx+qTyXbSJJ6?=
+ =?us-ascii?Q?00kY8DNZh9DCyR6Ppq4qYlOehgjbC6FEremH08UHoLVpBB7eRiVgYC+tJoOk?=
+ =?us-ascii?Q?Vg=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86c2e576-32fb-455d-9654-08dcbd316852
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2024 13:51:48.2544
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NbtyRN+24c3YovX28G1/wPXefUpoQp//ojCvgQZf+MDx+0gS2b2fWMHk+0N892HyGik+l6A9XeRiNc7KwLFWwu0up0xnqo3ngxubQRCWeZk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4910
+X-OriginatorOrg: intel.com
 
-On 15.08.24 02:16, Danilo Krummrich wrote:
-> On Wed, Aug 14, 2024 at 04:13:06PM +0000, Benno Lossin wrote:
->> On 12.08.24 20:22, Danilo Krummrich wrote:
->>> +/// # Safety
->>> +///
->>> +/// Memory returned from an allocator must point to a valid memory buf=
-fer and remain valid until
->>> +/// it is explicitly freed.
->>
->> I wouldn't say that an allocator "returns memory", and in general I
->> don't think the structure of the safety comment here is nice, how about
->> the following: we put "Implementers must ensure that all trait functions
->> abide by the guarantees documented in the `# Guarantees` sections."...
->=20
-> Sounds reasonable to me. Additionally, I'd still keep the part below, tha=
-t says
-> that any pointer to a memory allocation must bbe valid to be passed to an=
-y other [`Allocator`]
-> function of the same type.
+On Thu, Aug 15, 2024 at 11:37:17AM GMT, Stephen Rothwell wrote:
+>Hi all,
+>
+>Today's linux-next merge of the drm-xe tree got a conflict in:
+>
+>  drivers/gpu/drm/xe/display/xe_display.c
+>
+>between commit:
+>
+>  769b081c18b9 ("drm/i915/opregion: convert to struct intel_display")
+>
+>from the drm-intel tree and commit:
+>
+>  1eda95cba9df ("drm/xe: Rename enable_display module param")
+>
+>from the drm-xe tree.
+>
+>I fixed it up (see below) and can carry the fix as necessary. This
+>is now fixed as far as linux-next is concerned, but any non trivial
+>conflicts should be mentioned to your upstream maintainer when your tree
+>is submitted for merging.  You may also want to consider cooperating
+>with the maintainer of the conflicting tree to minimise any particularly
+>complex conflicts.
 
-Yes of course, that should be kept.
+this matches our current merge and will be resolved when we backmerge
+drm-next, before sending our next pull.
 
->>> +///
->>> +/// Any pointer to a memory buffer which is currently allocated must b=
-e valid to be passed to any
->>> +/// other [`Allocator`] function of the same type.
->>> +///
->>> +/// If `realloc` is called with:
->>> +///   - a size of zero, the given memory allocation, if any, must be f=
-reed
->>> +///   - `None`, a new memory allocation must be created
+thanks
+Lucas De Marchi
 
-Only this list should be moved.
+>
+>-- 
+>Cheers,
+>Stephen Rothwell
+>
+>diff --cc drivers/gpu/drm/xe/display/xe_display.c
+>index 0e4adde84cb2,56a940b39412..000000000000
+>--- a/drivers/gpu/drm/xe/display/xe_display.c
+>+++ b/drivers/gpu/drm/xe/display/xe_display.c
+>@@@ -127,9 -126,8 +127,9 @@@ int xe_display_init_nommio(struct xe_de
+>  static void xe_display_fini_noirq(void *arg)
+>  {
+>  	struct xe_device *xe = arg;
+> +	struct intel_display *display = &xe->display;
+>
+>- 	if (!xe->info.enable_display)
+>+ 	if (!xe->info.probe_display)
+>  		return;
+>
+>  	intel_display_driver_remove_noirq(xe);
+>@@@ -138,10 -135,9 +138,10 @@@
+>
+>  int xe_display_init_noirq(struct xe_device *xe)
+>  {
+> +	struct intel_display *display = &xe->display;
+>  	int err;
+>
+>- 	if (!xe->info.enable_display)
+>+ 	if (!xe->info.probe_display)
+>  		return 0;
+>
+>  	intel_display_driver_early_probe(xe);
+>@@@ -252,9 -246,7 +252,9 @@@ void xe_display_irq_handler(struct xe_d
+>
+>  void xe_display_irq_enable(struct xe_device *xe, u32 gu_misc_iir)
+>  {
+> +	struct intel_display *display = &xe->display;
+> +
+>- 	if (!xe->info.enable_display)
+>+ 	if (!xe->info.probe_display)
+>  		return;
+>
+>  	if (gu_misc_iir & GU_MISC_GSE)
+>@@@ -289,9 -296,8 +289,9 @@@ static bool suspend_to_idle(void
+>
+>  void xe_display_pm_suspend(struct xe_device *xe, bool runtime)
+>  {
+> +	struct intel_display *display = &xe->display;
+>  	bool s2idle = suspend_to_idle();
+>- 	if (!xe->info.enable_display)
+>+ 	if (!xe->info.probe_display)
+>  		return;
+>
+>  	/*
+>@@@ -341,9 -347,7 +341,9 @@@ void xe_display_pm_resume_early(struct
+>
+>  void xe_display_pm_resume(struct xe_device *xe, bool runtime)
+>  {
+> +	struct intel_display *display = &xe->display;
+> +
+>- 	if (!xe->info.enable_display)
+>+ 	if (!xe->info.probe_display)
+>  		return;
+>
+>  	intel_dmc_resume(xe);
 
->>> +pub unsafe trait Allocator {
->>> +    /// Allocate memory based on `layout` and `flags`.
->>> +    ///
->>> +    /// On success, returns a buffer represented as `NonNull<[u8]>` th=
-at satisfies the layout
->>> +    /// constraints (i.e. minimum size and alignment as specified by `=
-layout`).
->>> +    ///
->>> +    /// This function is equivalent to `realloc` when called with `Non=
-e`.
->>
->> ... Then we can add this here:
->>
->>     /// # Guarantees
->>     ///
->>     /// When the return value is `Ok(ptr)`, then `ptr` is
->>     /// - valid for writes (and reads after the memory has been initiali=
-zed) for `layout.size()` bytes,
->>     ///   until it is passed to [`Allocator::free`] or [`Allocator::real=
-loc`],
->>     /// - aligned to `layout.align()`,
->>     /// - is valid for reads, if `flags.contains(flags::__GFP_ZERO)`,
->>
->> Do we need to handle other flags?
->=20
-> The whole flags thing is a bit difficult to represent here properly.
->=20
-> Theoretically, we'd need to add that it guarantees that the memory is zer=
-oed for
-> __GFP_ZERO, non-blocking for GFP_NOWAIT, etc. But, I think we shouldn't
-> re-iterate all different behavior for the different flags.
-
-If there are good docs, then link them.
-
-> Another inconvenience is that not all page flags are honored or make sens=
-e for
-> all allocators. This is especially inconvenient for `KVmalloc` where we c=
-an't
-> even say if we end up in vrealloc() or krealloc(). kvmalloc() even contai=
-ns a
-> couple of flag fixups for this reason [2].
-
-I am wondering if we want to encode this in the type system...
-
-> I think we should just point to [1], which should document everything alr=
-eady.
->=20
-> [1] https://elixir.bootlin.com/linux/v6.10.4/source/include/linux/gfp_typ=
-es.h
-> [2] https://elixir.bootlin.com/linux/v6.10.4/source/mm/util.c#L612
->=20
->> Also IIRC the memory given to us by C is considered initialized by Rust
->> (though it has a non-deterministic value), so we might have an
->> unconditional "valid for reads". Am I correct?
->=20
-> Yes, but as you say, unless allocated with __GFP_ZERO, it contains non-de=
-terministic data. It may
-> even contain old data from previous allocations.
-
-Yeah, but IIRC that is not a soundness issue. So memory coming from C is
-always considered initialized by Rust. Whereas
-`MaybeUninit::uninit().assume_init()` is insta-UB, reading such memory
-should be fine (just not useful).
-
->>> +    /// by this allocator. The alignment encoded in `layout` must be s=
-maller than or equal to the
->>> +    /// alignment requested in the previous `alloc` or `realloc` call =
-of the same allocation.
->>> +    ///
->>> +    /// Additionally, `ptr` is allowed to be `None`; in this case a ne=
-w memory allocation is
->>> +    /// created.
->>
->> This Safety section does not talk about the case `layout.size() =3D=3D 0=
-`,
->> but it should have the same requirement as `free()`.
->>
->> Also add a `# Guarantees` section here:
->>
->>     /// # Guarantees
->>     ///
->>     /// This function has the same guarantees as [`Allocator::alloc`]. W=
-hen `ptr =3D=3D Some(p)`, then it
->>     /// additionally has the following:
->>     /// - when `Ok(ret_ptr)` is the return value, then
->>     ///   `ret_ptr[0..min(layout.size(), old_size)] =3D=3D p[0..min(layo=
-ut.size(), old_size)]`, where
->>     ///   `old_size` is the size of the allocation that `p` points at.
->=20
-> We could also say "The contents of the memory pointed to by `p` are prese=
-rved
-> up to the lesser of the new and old size." But I'm fine with both.
-
-I can read and write the math-ish syntax better, so I would prefer that
-over words. If others think we should use words, then we can discuss.
-
----
-Cheers,
-Benno
 
 
