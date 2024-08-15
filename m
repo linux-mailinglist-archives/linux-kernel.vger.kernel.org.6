@@ -1,110 +1,171 @@
-Return-Path: <linux-kernel+bounces-288585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8C21953C11
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:50:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A86F953C14
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9C741C23B87
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:50:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E6D41F261C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053271537DE;
-	Thu, 15 Aug 2024 20:41:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310FE1537D9;
+	Thu, 15 Aug 2024 20:42:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CkP1GTLX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+ZkG/9x"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D6914A096;
-	Thu, 15 Aug 2024 20:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D59C149C6F;
+	Thu, 15 Aug 2024 20:42:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723754516; cv=none; b=kUJCq3xUYcS/Fy06ucTaFtSx3wCqzYh2wxCCCT01khQAE9DRBtjhzXqjJo9VtpDMEbFT/iKZ51lutQ72fdhxCIGREu/Fc18tPno/uXC+cMeg4DcPYYPNmZSm0PfJm3WPIRBjZf+5s4rEAUpQo9ruBB7A5Vmf4QySGja+IF7zqo0=
+	t=1723754547; cv=none; b=pZF9dHw/XR89QQWTy9qkPJuGdOGb1lNpcpTcxHO0cqf/RVwv6Uf+qULRO51S6CvbFuTbvgwAXsQnG7scpHsJFQxFtW7Y71va+5DkKfDvkATDBrwD76Z2Kv8MNww9GqdYKaz/GCZ79N/zOl5QEE6mJX84F+jALNHjTK1inNPSPnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723754516; c=relaxed/simple;
-	bh=bltzrFzpplIY5A3AClMkcWd9BZbMj1RdKr3vpJUH5Vw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a2gYmdFYWMQPSxwVJKa3ZAtiT7S+7Qr0g3FGU4I8DaDP3I8HSq0kwd/RUH1CpnQ2cw7bBWo4XWBASz0QynOB06XiDptZRcajlThyh+YFOYWXWzg28kGGbaI7KCjQLLMM0wQtclFTcN6/OxZ0vSjvO9FFwN88e/EGb6RCOVEBBac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CkP1GTLX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 984CBC4AF0E;
-	Thu, 15 Aug 2024 20:41:55 +0000 (UTC)
+	s=arc-20240116; t=1723754547; c=relaxed/simple;
+	bh=g8ehn/PJBUinnXWgPe0QmVwYk1A8/HXAzwHp6W2rokg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l/TM3Aiy3sPfodCjWB0t7sxbIPChiGuBhvp2wuHzlyTu8U3pFb5S7kZZ6SptonE9i/b7SAmJ4J0cwYuwsg6uizNkYBNn3Zcx+q88xrPgCZNtm/vZnbJqeTv+AtccEmopXdD74Bw5tq6Ks2cJGsYE7HsJ3FXLpH8biVHnn5KI6zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+ZkG/9x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CE46C32786;
+	Thu, 15 Aug 2024 20:42:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723754515;
-	bh=bltzrFzpplIY5A3AClMkcWd9BZbMj1RdKr3vpJUH5Vw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CkP1GTLXDK/os0/zTkd5wgLAIPer3WmGN8BZ5b2IDEea8nrIA5w61HNpz+ohF2vHf
-	 XasRtFmLyU3LpicylGOaEHKoqRlhSM7+6Oa+tcpxFJ3PfZHxxd6dnAmE+pdS53g7K/
-	 EcBp+QGrrxhrWCJRxs+I6E8TYkKSwwwd2KVvPx+y+7OFwM1+g6LoSHOWdznmYsaXIZ
-	 HKlTAWdnsLIGB2MhHSmidHVMqCRS3IwIObg/JSFKuR4dcvPXKXXl5GNgIdVwWRBm3A
-	 CL6qiIQujDTpvY1w6jQVuIamLQtkix5CdNNrB4aZuf2AwIaJ/3VGTxM31yn3FY6AEF
-	 z7Fgk6CqJSd4A==
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ef1c12ae23so12122841fa.0;
-        Thu, 15 Aug 2024 13:41:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWUw2ceaJaXFXLuQ6J6l5T9v3RTc1VK6I7TIYcnCTzDOAOxsiPwuQ8cxazsRQDoLSlAPEbzPExIixvSxki1vYHW3Hg3QS05JrWZh9kIen7DTB1jFdme2jqoy9npQIKGP6wi6Ss7wrOiag==
-X-Gm-Message-State: AOJu0YwxCdLs5r9qsbrPg1c/+R0nLUhIVH58vT2+dtR9PH1AKweOzj8E
-	xCxCLWcl0QgKHPrkXqWIpuBwmDi2OEJU7BICyFk/e5hedc7EgLyq3gXmlSn4OXXPEiNBs1yKE9X
-	O7Iw5tKXZtclGjHgeD65pB+IYsLk=
-X-Google-Smtp-Source: AGHT+IGaKZ7/XhYdh2qE8EeQNF0sp1g1b9yQ9FNmNriOuR4Ts2JKMiZyPfWBbWB7teSeSK6gp2BwW5VMKADLJvD+nWY=
-X-Received: by 2002:a2e:b041:0:b0:2ef:2bac:bb50 with SMTP id
- 38308e7fff4ca-2f3be586938mr5698001fa.11.1723754513934; Thu, 15 Aug 2024
- 13:41:53 -0700 (PDT)
+	s=k20201202; t=1723754545;
+	bh=g8ehn/PJBUinnXWgPe0QmVwYk1A8/HXAzwHp6W2rokg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c+ZkG/9xzQDuWX4vOQ4JtBOVopR9yfHTcyI40zRvf1ybJUIun38Z5RuAg0wj538Rz
+	 E29ykJe0Tsp8ZLOPFpd3qevLk6MCgT/9lid/dBF8lPSGRyjbQLXGoR/ycsbe+iPbg3
+	 +d+yd183NdMaHDuo6RQmx0AeUfJDNp42YbuEdSvPLqvaC3/AL4qWh6zhiSzc/S7Upq
+	 LsmZJD0ydnpftuZlGEkIpAadBDFGzRwwW90DNKTiNGFUgHwPke9xZc8/iAwgJ06Vsr
+	 S8nGOPkQvFHAzM8KPdbTVjrhS9gNW17GAVtf2I9ReSurAFvMquQsscTcFoguKr8Xq7
+	 7QDWNEKs2zZxw==
+Date: Thu, 15 Aug 2024 21:42:22 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
+	Lee Jones <lee@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 06/11] dt-bindings: soc: microchip: document the two
+ simple-mfd syscons on PolarFire SoC
+Message-ID: <20240815-afloat-baton-77a6d4e47b18@spud>
+References: <20240815-shindig-bunny-fd42792d638a@spud>
+ <20240815-pending-sacrifice-f2569ed756fe@spud>
+ <20240815200003.GA2956351-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240803091137.3197008-1-yukuai1@huaweicloud.com>
-In-Reply-To: <20240803091137.3197008-1-yukuai1@huaweicloud.com>
-From: Song Liu <song@kernel.org>
-Date: Thu, 15 Aug 2024 13:41:41 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW5Q9_RymaSKHtfn1XUqmCG1Se-e9oT+iCh2Rb62-b4Svg@mail.gmail.com>
-Message-ID: <CAPhsuW5Q9_RymaSKHtfn1XUqmCG1Se-e9oT+iCh2Rb62-b4Svg@mail.gmail.com>
-Subject: Re: [PATCH -next] md/raid1: fix data corruption for degraded array
- with slow disk
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: mat.jonczyk@o2.pl, yukuai3@huawei.com, xni@redhat.com, 
-	paul.e.luse@linux.intel.com, linux-raid@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="aUl07Qh2nQayq3NX"
+Content-Disposition: inline
+In-Reply-To: <20240815200003.GA2956351-robh@kernel.org>
+
+
+--aUl07Qh2nQayq3NX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 3, 2024 at 2:15=E2=80=AFAM Yu Kuai <yukuai1@huaweicloud.com> wr=
-ote:
->
-> From: Yu Kuai <yukuai3@huawei.com>
->
-> read_balance() will avoid reading from slow disks as much as possible,
-> however, if valid data only lands in slow disks, and a new normal disk
-> is still in recovery, unrecovered data can be read:
->
-> raid1_read_request
->  read_balance
->   raid1_should_read_first
->   -> return false
->   choose_best_rdev
->   -> normal disk is not recovered, return -1
->   choose_bb_rdev
->   -> missing the checking of recovery, return the normal disk
->  -> read unrecovered data
->
-> Root cause is that the checking of recovery is missing in
-> choose_bb_rdev(). Hence add such checking to fix the problem.
->
-> Also fix similar problem in choose_slow_rdev().
->
-> Fixes: 9f3ced792203 ("md/raid1: factor out choose_bb_rdev() from read_bal=
-ance()")
-> Fixes: dfa8ecd167c1 ("md/raid1: factor out choose_slow_rdev() from read_b=
-alance()")
-> Reported-and-tested-by: Mateusz Jo=C5=84czyk <mat.jonczyk@o2.pl>
-> Closes: https://lore.kernel.org/all/9952f532-2554-44bf-b906-4880b2e88e3a@=
-o2.pl/
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+On Thu, Aug 15, 2024 at 02:00:03PM -0600, Rob Herring wrote:
+> On Thu, Aug 15, 2024 at 03:01:09PM +0100, Conor Dooley wrote:
+> > From: Conor Dooley <conor.dooley@microchip.com>
+> >=20
+> > There are two syscons on PolarFire SoC that provide various functionali=
+ty of
+> > use to the OS.
+> >=20
+> > The first of these is the "control-scb" region, that contains the "tvs"
+> > temperature and voltage sensors and the control/status registers for the
+> > system controller's mailbox. The mailbox has a dedicated node, so
+> > there's no need for a child node describing it, looking the syscon up by
+> > compatible is sufficient.
+> >=20
+> > The second, "mss-top-sysreg", contains clocks, pinctrl, resets, and
+> > interrupt controller and more. For this RFC, only the reset controller
+> > child is described as that's all that is described by the existing
+> > bindings. The clock controller already has a dedicated node, and will
+> > retain it as there are other clock regions, so like the mailbox,
+> > a compatible-based lookup of the syscon is sufficient to keep the clock
+> > driver working as before so no child is needed.
+>=20
+> I'm confused. The reset controller is reused from somewhere else?
 
-Applied to md-6.11. Thanks for the fix!
+There's already a driver for it on this device, but probed via the
+auxiliary bus, and the #reset-cells property is in the clock controller
+node. The only devices that use this driver are the various different
+logic element SKUs (which all share a compatible, they're identical as
+far as an OS is concerned) and an upcoming SoC that is effectively a
+zero logic element SKU.
 
-Song
+> I=20
+> thought you didn't expect any reuse of the IP happening.
+
+> If a child node=20
+> makes it possible to enable the h/w without any s/w changes, then that=20
+> is a compelling argument for having a child node.
+
+No, in both cases there'd be software changes - they're just simpler
+with a child node.
+
+>=20
+> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> > ---
+> > (I'll split this in two later, it's just easier when I have the same
+> > questions about both...)
+> >=20
+> > Are these things entitled to have child nodes for the reset and sensor
+> > nodes, or should the properties be in the parent and the OS probe the
+> > drivers for the functions? That's something that, despite supposedly
+> > being a maintainer, I do not understand the rules (of thumb?) for.
+>=20
+> Besides the is it an independent, reusable IP block test, my test=20
+> generally is do the child nodes have their own DT resources? Say=20
+> you have phy registers mixed in some syscon and clocks which only go to=
+=20
+> the phy. Then a child node with "clocks" makes sense. If your only=20
+> property is #phy-cells, then a child node doesn't make sense. Of course=
+=20
+> you could reach different conclusions based on the completeness of the=20
+> binding.
+
+AFAIK, none of these things are consumers of resources like that, other
+than the interrupt controller, which has an interrupts property. I think
+that could justify a child node (and I think a dedicated binding,
+because it is a confusing irq mux that that kernel doesn't appear to
+have anything else similar to).
+
+> > Secondly, is it okay to make the "pragmatic" decision to not have a
+> > child clock node and keep routing the clocks via the existing & retained
+> > clock node (and therefore not update the various clocks nodes in the
+> > consumers)? Doing so would require a lot more hocus pocus with the clock
+> > driver than this series does, as the same driver would no longer be
+> > suitable for the before/after bindings.
+>=20
+> In the 2 cases here, I don't think you need child nodes. I would expect=
+=20
+> pinctrl to have one though if only as a container for all the pinctrl=20
+> child nodes.
+
+Good to know for when that gets written. Hopefully not by me, I have
+enough messes to sort out as is!
+
+Cheers,
+Conor.
+
+--aUl07Qh2nQayq3NX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZr5oLgAKCRB4tDGHoIJi
+0owVAQCRkSdo/hUd7wk0uN5NZW7djgJSquy18gbzGCqmTEZyXAEApoAV/aNJXcR+
+xexMkf+YtA9tnksmeZ2e2OH6nf5WDwc=
+=BIBj
+-----END PGP SIGNATURE-----
+
+--aUl07Qh2nQayq3NX--
 
