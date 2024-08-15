@@ -1,270 +1,334 @@
-Return-Path: <linux-kernel+bounces-288647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A24CC953CF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:53:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 710F3953CF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:54:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B12F28632B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:53:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2B65B216F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE2915442A;
-	Thu, 15 Aug 2024 21:53:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD66B1547C6;
+	Thu, 15 Aug 2024 21:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HYpmx/rQ"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mek/yeXC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D271815380B
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 21:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF1E1514C8;
+	Thu, 15 Aug 2024 21:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723758808; cv=none; b=LcyVCUXkWVGSWtPXwA83+itOats+pCYad44AwNTqX+ysxkQsAMdNpgjcCHKtHab6azxQBMvSaHMORFe0tdv+OFoQZzQnHluzhIcH/bNMifpHzoDmzagMfd1aZ40ls6bUM7F0ba0C4DMSBBsBH0Ms49k5fKqR70X58jHFxRgN3yI=
+	t=1723758872; cv=none; b=nX8jIrtwg7VHqrm9sQlhDf+Bqmup16zWOcNmjVTNBeBcnc8TVCZs1NpwF5LWqx721Dc7gyyOVX9l9mpnXs09zDXedKyJMAnkdY1vpMbKuitvTQBUwxwZuH/9XvjeF0Eum0TkwjVixWsCv6YDs8NKpVqG9vJoLGmqZH31t6Y8pnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723758808; c=relaxed/simple;
-	bh=78bx67Tet1c+c8KNfs9+WIOpJSt0ODviPpxiWkk6FO8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iHWuWLYCTBxcIVh0mtq+6Qqwc1IvO1VeHg+z/u2Je03CKx8eLM+ppwiYWYFY9kRH/2lDO+/i/mk7shwbSjDWmd52y5A0V5EgFbsP1Pfuhg9a/2WV0uGhd3sIZuTCR+tZQwjFRPJTvOF18bDRS3M3wPyMDW014gMFluxNNg/poE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HYpmx/rQ; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3db51133978so873161b6e.3
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:53:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723758805; x=1724363605; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8zJpy/IyCPqQzjs+ERcVL5gW6xIYZ4aJwCr3Umsn95I=;
-        b=HYpmx/rQugw3JtS2RzUJwP3iMZmNU824VoOoed1tBCIEEe17neZfunt7/vSLr8A1Aq
-         nKfSrrOdxuhf+qoIz+LzbnDtukUnIo2fV/wtS50ythGuuunhodHSeQ1DrMMVKoLIStdG
-         IQ3ipJJQdDm7PpaZ88cyAzCISWmKPQglbesZmAU3I2BaL3EK1ucpp0fBbH34I3zDCV/j
-         HQ7Kl9GItIhq2M7e88vgOqsDJuBfSGFiZWsl2egPmVgR9pFGl4hRfh4+jgYpp46h3mjE
-         nn3oBctLPlk5R6jTOyRNju4F3KVTxLZQ6roBuVeu4t5L6PUhqI1SA6jZzrFdEFpUHYGu
-         Z2ZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723758805; x=1724363605;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8zJpy/IyCPqQzjs+ERcVL5gW6xIYZ4aJwCr3Umsn95I=;
-        b=nrtsGJ6z/GwdQdITkW3Z5sYZSNGwNup3hHB68SeZsilUXhYQTN0kpDyhVUlriCjKY1
-         bjwyyGVZeZBeUjrmPEtfy/ztCMv5SirLBczScXGpdehGmrlFRY24Y/WJFgGickInDePi
-         F8zQct/5O+0z7i9trHbM159vcbqSJxtpv9RZslLEzoyuoZkmIWczoLbBxcmYKezA7lHJ
-         gDI831WZYahE1ZYuLzujGiULQQxUpCiXHB+ypXRYIEsbA2cnHava+HvW7kpyRGW3Uo+8
-         6ibP13V+w3aT7CBmolcTL2/wA+cfRJg65lDNsXBOA3vcnqdBVkNmBbyI4UsCnnIJv9b/
-         UAhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9j/wLG+PPELoFkULX7HWndk/riOS1KSEeTTHctulhAlNoVi+g1B0rCHbVltCn9kuzVdg8rM26yLo8dWme/rwlkhILWMpUyz8zG+/S
-X-Gm-Message-State: AOJu0Yye3uYfR7+lr5MoG0o9pSVgVCYb3I+MSV0whByXcFFZ9VLjne6R
-	nPrTnIclJQnzAetB8ZCaM/CaZkosp3rR109kjuAyB6ho2wywMQPZGxYeWg==
-X-Google-Smtp-Source: AGHT+IGOW9B3upBTZIdKzWpP0/qRNUf6283GowEY8DUKzjuipp8t5d3FT3uRQsiJ3fEXUOoxYFPvlw==
-X-Received: by 2002:a05:6808:120d:b0:3d6:2b42:82ff with SMTP id 5614622812f47-3dd3ae2a516mr809151b6e.37.1723758804767;
-        Thu, 15 Aug 2024 14:53:24 -0700 (PDT)
-Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b63694a1sm1593939a12.92.2024.08.15.14.53.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 14:53:24 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: chrisl@kernel.org
-Cc: akpm@linux-foundation.org,
-	david@redhat.com,
-	hughd@google.com,
-	justinjiang@vivo.com,
-	kaleshsingh@google.com,
-	kasong@tencent.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	ryan.roberts@arm.com,
-	v-songbaohua@oppo.com,
-	ying.huang@intel.com,
-	yosryahmed@google.com
-Subject: Re: [PATCH v3 2/2] mm: attempt to batch free swap entries for zap_pte_range()
-Date: Fri, 16 Aug 2024 09:53:08 +1200
-Message-Id: <20240815215308.55233-1-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CACePvbUOgPLyCPzQMvH8sNZj_=FayR9Y7A4sGBEyk4ubW1Uo_w@mail.gmail.com>
-References: <CACePvbUOgPLyCPzQMvH8sNZj_=FayR9Y7A4sGBEyk4ubW1Uo_w@mail.gmail.com>
+	s=arc-20240116; t=1723758872; c=relaxed/simple;
+	bh=xlNK/PzNDYdGBjudfy2KDxXzSE1WFPFrx9O2eJpr+Wk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NwVI/oqxQSFuqX3c12OjMxSwU3oho4pE/b4GbGW57yzsIACaHtlkbXUjcnO1CY7Bpq+2/kf9YyBW+IAwEBCq+5rD64mjqGRHLzPiCArvLDJFNh3141U63ro6VvQe+tMnpYGNCfAJ88y+Ey9biGpXlefDXjZ3wqwc8GkLSbs1YtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mek/yeXC; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723758871; x=1755294871;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xlNK/PzNDYdGBjudfy2KDxXzSE1WFPFrx9O2eJpr+Wk=;
+  b=mek/yeXCliJ3/kn2IRRzamfaE8K+GZPWBxqrxhT0879BIN3wlxt0wSlb
+   nf6Vz+Z/7pwruL0hgtAGDdex5Pk1bzZrc1qNqvOsgtoXSMmMdqINz9Yc2
+   fPayo1Ka97amHL8LTYAOFJGSBtgYMtsAok76fj1Pjm8+40ZWk6VCMEzb+
+   CTaXY0KO7VEY2CFTAQhxGqHaDOgLeK+24RCRSim7A3cJPtVp0Z0TUje1h
+   5PWhSXLgGzjCpcbyMndmoP65c0g5n/U0luGZ5eIpxJOAmavM/bHb+90v+
+   Xclrd1AqSJAT3rszZIHQJarISUBoFwF36UUrhm1nkZrxNvzDT+GoY+7ET
+   w==;
+X-CSE-ConnectionGUID: 139P8nRcTGqqR80Q22QVkg==
+X-CSE-MsgGUID: yNK++Z92Qv+xl4lVbXR1cg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11165"; a="25842284"
+X-IronPort-AV: E=Sophos;i="6.10,150,1719903600"; 
+   d="scan'208";a="25842284"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 14:54:30 -0700
+X-CSE-ConnectionGUID: t4E3BAXKQnKmvd6oZFAg7Q==
+X-CSE-MsgGUID: eQTgYPX7S/qSFpIa20AkCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,150,1719903600"; 
+   d="scan'208";a="97002030"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 15 Aug 2024 14:54:27 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1seiQK-0005fO-2L;
+	Thu, 15 Aug 2024 21:54:24 +0000
+Date: Fri, 16 Aug 2024 05:54:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>,
+	Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Bao Cheng Su <baocheng.su@siemens.com>,
+	Chao Zeng <chao.zeng@siemens.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/3] iio: proximity: Add support for everlight pmd16d17
+ sensor
+Message-ID: <202408160542.UEjIkjkC-lkp@intel.com>
+References: <abb0c1c0724be733138276f638e43e98784bd191.1723527641.git.jan.kiszka@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <abb0c1c0724be733138276f638e43e98784bd191.1723527641.git.jan.kiszka@siemens.com>
 
-On Fri, Aug 16, 2024 at 6:29 AM Chris Li <chrisl@kernel.org> wrote:
->
-> Hi Barry,
->
-> We got a crash report from syzbot that has been bisect into this change.
-> > +static bool __swap_entries_free(struct swap_info_struct *si,
-> > +               swp_entry_t entry, int nr)
-> > +{
-> > +       unsigned long offset = swp_offset(entry);
-> > +       unsigned int type = swp_type(entry);
-> > +       struct swap_cluster_info *ci;
-> > +       bool has_cache = false;
-> > +       unsigned char count;
-> > +       int i;
-> > +
-> > +       if (nr <= 1 || swap_count(data_race(si->swap_map[offset])) != 1)
-> > +               goto fallback;
-> > +       /* cross into another cluster */
-> > +       if (nr > SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER)
-> > +               goto fallback;
-> > +
-> > +       ci = lock_cluster_or_swap_info(si, offset);
-> > +       if (!swap_is_last_map(si, offset, nr, &has_cache)) {
-> > +               unlock_cluster_or_swap_info(si, ci);
-> > +               goto fallback;
-> > +       }
-> > +       for (i = 0; i < nr; i++)
-> > +               WRITE_ONCE(si->swap_map[offset + i], SWAP_HAS_CACHE);
-> > +       unlock_cluster_or_swap_info(si, ci);
-> > +
-> > +       if (!has_cache) {
-> > +               spin_lock(&si->lock);
-> > +               swap_entry_range_free(si, entry, nr);
->
-> Here it calls swap_entry_range_free() to free a range of the swap
-> entry. However the swap_entry_range_free() has the assumption that all
-> entries belong to the same folio and charge to the same memcg.
-> It eventually pass down to swap_cgroup_record(), which BUG on this line:
->
-> VM_BUG_ON(sc->id != old);
->
-> The root cause is that the swap entries are not from the same memcg.
-> Thankos Yosry for finding the root cause.
->
-> > +               spin_unlock(&si->lock);
-> > +       }
-> > +       return has_cache;
-> > +
-> > +fallback:
-> > +       for (i = 0; i < nr; i++) {
-> > +               if (data_race(si->swap_map[offset + i])) {
-> > +                       count = __swap_entry_free(si, swp_entry(type, offset + i));
-> > +                       if (count == SWAP_HAS_CACHE)
-> > +                               has_cache = true;
-> > +               } else {
-> > +                       WARN_ON_ONCE(1);
-> > +               }
-> > +       }
-> > +       return has_cache;
-> > +}
-> > +
-> >  /*
-> >   * Drop the last HAS_CACHE flag of swap entries, caller have to
-> >   * ensure all entries belong to the same cgroup.
-> > @@ -1792,11 +1856,9 @@ void free_swap_and_cache_nr(swp_entry_t entry, int nr)
-> >  {
-> >         const unsigned long start_offset = swp_offset(entry);
-> >         const unsigned long end_offset = start_offset + nr;
-> > -       unsigned int type = swp_type(entry);
-> >         struct swap_info_struct *si;
-> >         bool any_only_cache = false;
-> >         unsigned long offset;
-> > -       unsigned char count;
-> >
-> >         if (non_swap_entry(entry))
-> >                 return;
-> > @@ -1811,15 +1873,7 @@ void free_swap_and_cache_nr(swp_entry_t entry, int nr)
-> >         /*
-> >          * First free all entries in the range.
-> >          */
-> > -       for (offset = start_offset; offset < end_offset; offset++) {
-> > -               if (data_race(si->swap_map[offset])) {
-> > -                       count = __swap_entry_free(si, swp_entry(type, offset));
-> > -                       if (count == SWAP_HAS_CACHE)
-> > -                               any_only_cache = true;
-> > -               } else {
-> > -                       WARN_ON_ONCE(1);
-> > -               }
-> > -       }
-> > +       any_only_cache = __swap_entries_free(si, entry, nr);
->
-> Here we are just doing a page table walk, there is no guarantee the
-> 'nr' number of swap entries came from the same folio and previously
-> charged to the same memcg. The swap_pte_batch() only checks they are
-> the same swap type, does not check they charge to the same memcg.
->
+Hi Jan,
 
-Sorry for the trouble, thanks for the report, Yosry & Chris.
-Does the below fix the problem? otherwise, we might remove
-the assumption all swaps must belong to one swap_cgroup in
-batch free?
+kernel test robot noticed the following build warnings:
 
-From c68e0d780ba808da4bb682b753e3fa77c4f96e13 Mon Sep 17 00:00:00 2001
-From: Barry Song <v-songbaohua@oppo.com>
-Date: Fri, 16 Aug 2024 09:36:23 +1200
-Subject: [PATCH] mm: check all swaps belong to same swap_cgroup in
- swap_pte_batch()
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on robh/for-next linus/master v6.11-rc3 next-20240815]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Right now, it is possible two folios are contiguous in swap slots
-but they don't belong to one memcg. In this case, even we return
-a large nr, we can't really batch free all slots.
+url:    https://github.com/intel-lab-lkp/linux/commits/Jan-Kiszka/dt-bindings-vendor-prefixes-Add-EVERLIGHT/20240814-234801
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/abb0c1c0724be733138276f638e43e98784bd191.1723527641.git.jan.kiszka%40siemens.com
+patch subject: [PATCH 3/3] iio: proximity: Add support for everlight pmd16d17 sensor
+config: x86_64-randconfig-101-20240816 (https://download.01.org/0day-ci/archive/20240816/202408160542.UEjIkjkC-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240816/202408160542.UEjIkjkC-lkp@intel.com/reproduce)
 
-Reported-by: Yosry Ahmed <yosryahmed@google.com>
-Reported-by: Chris Li <chrisl@kernel.org>
-Signed-off-by: Barry Song <v-songbaohua@oppo.com>
----
- mm/internal.h | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408160542.UEjIkjkC-lkp@intel.com/
 
-diff --git a/mm/internal.h b/mm/internal.h
-index adbf8c88c9df..d1f1e221212d 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -15,6 +15,7 @@
- #include <linux/rmap.h>
- #include <linux/swap.h>
- #include <linux/swapops.h>
-+#include <linux/swap_cgroup.h>
- #include <linux/tracepoint-defs.h>
- 
- /* Internal core VMA manipulation functions. */
-@@ -275,18 +276,22 @@ static inline int swap_pte_batch(pte_t *start_ptep, int max_nr, pte_t pte)
- {
- 	pte_t expected_pte = pte_next_swp_offset(pte);
- 	const pte_t *end_ptep = start_ptep + max_nr;
-+	swp_entry_t entry = pte_to_swp_entry(pte);
- 	pte_t *ptep = start_ptep + 1;
-+	unsigned short cgroup_id;
- 
- 	VM_WARN_ON(max_nr < 1);
- 	VM_WARN_ON(!is_swap_pte(pte));
--	VM_WARN_ON(non_swap_entry(pte_to_swp_entry(pte)));
-+	VM_WARN_ON(non_swap_entry(entry));
- 
-+	cgroup_id = lookup_swap_cgroup_id(entry);
- 	while (ptep < end_ptep) {
- 		pte = ptep_get(ptep);
- 
- 		if (!pte_same(pte, expected_pte))
- 			break;
--
-+		if (lookup_swap_cgroup_id(pte_to_swp_entry(pte)) != cgroup_id)
-+			break;
- 		expected_pte = pte_next_swp_offset(expected_pte);
- 		ptep++;
- 	}
+All warnings (new ones prefixed by >>):
+
+   drivers/iio/proximity/pm16d17.c: In function 'pm16d17_chip_init':
+>> drivers/iio/proximity/pm16d17.c:194:13: warning: argument 1 null where non-null expected [-Wnonnull]
+     194 |         if (strcmp(conv_time, "0.4") == 0)
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from include/linux/bitmap.h:13,
+                    from include/linux/cpumask.h:12,
+                    from arch/x86/include/asm/tlbbatch.h:5,
+                    from include/linux/mm_types_task.h:16,
+                    from include/linux/sched.h:38,
+                    from include/linux/delay.h:23,
+                    from drivers/iio/proximity/pm16d17.c:11:
+   include/linux/string.h:156:12: note: in a call to function 'strcmp' declared 'nonnull'
+     156 | extern int strcmp(const char *,const char *);
+         |            ^~~~~~
+   drivers/iio/proximity/pm16d17.c:196:18: warning: argument 1 null where non-null expected [-Wnonnull]
+     196 |         else if (strcmp(conv_time, "0.8") == 0)
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/string.h:156:12: note: in a call to function 'strcmp' declared 'nonnull'
+     156 | extern int strcmp(const char *,const char *);
+         |            ^~~~~~
+   drivers/iio/proximity/pm16d17.c:198:18: warning: argument 1 null where non-null expected [-Wnonnull]
+     198 |         else if (strcmp(conv_time, "1.6") == 0)
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/string.h:156:12: note: in a call to function 'strcmp' declared 'nonnull'
+     156 | extern int strcmp(const char *,const char *);
+         |            ^~~~~~
+   drivers/iio/proximity/pm16d17.c:200:18: warning: argument 1 null where non-null expected [-Wnonnull]
+     200 |         else if (strcmp(conv_time, "3.2") == 0)
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/string.h:156:12: note: in a call to function 'strcmp' declared 'nonnull'
+     156 | extern int strcmp(const char *,const char *);
+         |            ^~~~~~
+   drivers/iio/proximity/pm16d17.c:202:18: warning: argument 1 null where non-null expected [-Wnonnull]
+     202 |         else if (strcmp(conv_time, "6.3") == 0)
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/string.h:156:12: note: in a call to function 'strcmp' declared 'nonnull'
+     156 | extern int strcmp(const char *,const char *);
+         |            ^~~~~~
+   drivers/iio/proximity/pm16d17.c:204:18: warning: argument 1 null where non-null expected [-Wnonnull]
+     204 |         else if (strcmp(conv_time, "12.6") == 0)
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/string.h:156:12: note: in a call to function 'strcmp' declared 'nonnull'
+     156 | extern int strcmp(const char *,const char *);
+         |            ^~~~~~
+   drivers/iio/proximity/pm16d17.c:206:18: warning: argument 1 null where non-null expected [-Wnonnull]
+     206 |         else if (strcmp(conv_time, "25.2") == 0)
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/string.h:156:12: note: in a call to function 'strcmp' declared 'nonnull'
+     156 | extern int strcmp(const char *,const char *);
+         |            ^~~~~~
+   drivers/iio/proximity/pm16d17.c:214:13: warning: argument 1 null where non-null expected [-Wnonnull]
+     214 |         if (strcmp(wait_time, "12.5") == 0)
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/string.h:156:12: note: in a call to function 'strcmp' declared 'nonnull'
+     156 | extern int strcmp(const char *,const char *);
+         |            ^~~~~~
+   drivers/iio/proximity/pm16d17.c:216:18: warning: argument 1 null where non-null expected [-Wnonnull]
+     216 |         else if (strcmp(wait_time, "25") == 0)
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/string.h:156:12: note: in a call to function 'strcmp' declared 'nonnull'
+     156 | extern int strcmp(const char *,const char *);
+         |            ^~~~~~
+   drivers/iio/proximity/pm16d17.c:218:18: warning: argument 1 null where non-null expected [-Wnonnull]
+     218 |         else if (strcmp(wait_time, "50") == 0)
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/string.h:156:12: note: in a call to function 'strcmp' declared 'nonnull'
+     156 | extern int strcmp(const char *,const char *);
+         |            ^~~~~~
+   drivers/iio/proximity/pm16d17.c:220:18: warning: argument 1 null where non-null expected [-Wnonnull]
+     220 |         else if (strcmp(wait_time, "100") == 0)
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/string.h:156:12: note: in a call to function 'strcmp' declared 'nonnull'
+     156 | extern int strcmp(const char *,const char *);
+         |            ^~~~~~
+   drivers/iio/proximity/pm16d17.c:222:18: warning: argument 1 null where non-null expected [-Wnonnull]
+     222 |         else if (strcmp(wait_time, "200") == 0)
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/string.h:156:12: note: in a call to function 'strcmp' declared 'nonnull'
+     156 | extern int strcmp(const char *,const char *);
+         |            ^~~~~~
+   drivers/iio/proximity/pm16d17.c:224:18: warning: argument 1 null where non-null expected [-Wnonnull]
+     224 |         else if (strcmp(wait_time, "400") == 0)
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/string.h:156:12: note: in a call to function 'strcmp' declared 'nonnull'
+     156 | extern int strcmp(const char *,const char *);
+         |            ^~~~~~
+   drivers/iio/proximity/pm16d17.c:226:18: warning: argument 1 null where non-null expected [-Wnonnull]
+     226 |         else if (strcmp(wait_time, "800") == 0)
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/string.h:156:12: note: in a call to function 'strcmp' declared 'nonnull'
+     156 | extern int strcmp(const char *,const char *);
+         |            ^~~~~~
+   drivers/iio/proximity/pm16d17.c:228:18: warning: argument 1 null where non-null expected [-Wnonnull]
+     228 |         else if (strcmp(wait_time, "1600") == 0)
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/string.h:156:12: note: in a call to function 'strcmp' declared 'nonnull'
+     156 | extern int strcmp(const char *,const char *);
+         |            ^~~~~~
+
+
+vim +194 drivers/iio/proximity/pm16d17.c
+
+   152	
+   153	static int pm16d17_chip_init(struct pm16d17_data *data)
+   154	{
+   155		struct i2c_client *client = data->client;
+   156		struct device_node *np = client->dev.of_node;
+   157		const char *conv_time = NULL;
+   158		const char *wait_time = NULL;
+   159		uint8_t op_mode_setting_val;
+   160		uint32_t ps_offset_cancel;
+   161		uint8_t offset_lsb;
+   162		uint8_t offset_msb;
+   163		uint32_t pulse_count;
+   164		uint32_t pgain;
+   165		unsigned int val;
+   166		int ret;
+   167	
+   168		ret = pm16d17_read_reg(data, PM16D17_DEV_ID, &val);
+   169	
+   170		if (ret < 0 || (val != DEVICE_ID)) {
+   171			dev_err(&client->dev, "Invalid chip id 0x%04x\n", val);
+   172			return -ENODEV;
+   173		}
+   174	
+   175		dev_dbg(&client->dev, "Detected PM16D17 with chip id: 0x%04x\n", val);
+   176	
+   177		ret = pm16d17_write_reg(data, PM16D17_OP_MODE, ENABLE_PS_FUNCTION);
+   178		if (ret < 0)
+   179			return ret;
+   180	
+   181		of_property_read_u32(np, "ps-gain", &pgain);
+   182		switch (pgain) {
+   183		case 1:
+   184		case 2:
+   185		case 4:
+   186		case 8:
+   187			op_mode_setting_val |= (ilog2(pgain) << 6) & PS_GAIN_MASK;
+   188			break;
+   189		default:
+   190			break;
+   191		}
+   192	
+   193		of_property_read_string(np, "ps-itime", &conv_time);
+ > 194		if (strcmp(conv_time, "0.4") == 0)
+   195			op_mode_setting_val |= PITIME_0_POINT_4_MS & PS_ITIME_MASK;
+   196		else if (strcmp(conv_time, "0.8") == 0)
+   197			op_mode_setting_val |= PITIME_0_POINT_8_MS & PS_ITIME_MASK;
+   198		else if (strcmp(conv_time, "1.6") == 0)
+   199			op_mode_setting_val |= PITIME_1_POINT_6_MS & PS_ITIME_MASK;
+   200		else if (strcmp(conv_time, "3.2") == 0)
+   201			op_mode_setting_val |= PITIME_3_POINT_2_MS & PS_ITIME_MASK;
+   202		else if (strcmp(conv_time, "6.3") == 0)
+   203			op_mode_setting_val |= PITIME_6_POINT_3_MS & PS_ITIME_MASK;
+   204		else if (strcmp(conv_time, "12.6") == 0)
+   205			op_mode_setting_val |= PITIME_12_POINT_6_MS & PS_ITIME_MASK;
+   206		else if (strcmp(conv_time, "25.2") == 0)
+   207			op_mode_setting_val |= PITIME_25_POINT_2_MS & PS_ITIME_MASK;
+   208		else {
+   209			dev_info(&client->dev, "Using default ps itime value\n");
+   210			op_mode_setting_val |= PITIME_0_POINT_4_MS & PS_ITIME_MASK;
+   211		}
+   212	
+   213		of_property_read_string(np, "ps-wtime", &wait_time);
+   214		if (strcmp(wait_time, "12.5") == 0)
+   215			op_mode_setting_val |= PWTIME_12_POINT_5_MS & PS_WTIME_MASK;
+   216		else if (strcmp(wait_time, "25") == 0)
+   217			op_mode_setting_val |= PWTIME_25_MS & PS_WTIME_MASK;
+   218		else if (strcmp(wait_time, "50") == 0)
+   219			op_mode_setting_val |= PWTIME_50_MS & PS_WTIME_MASK;
+   220		else if (strcmp(wait_time, "100") == 0)
+   221			op_mode_setting_val |= PWTIME_100_MS & PS_WTIME_MASK;
+   222		else if (strcmp(wait_time, "200") == 0)
+   223			op_mode_setting_val |= PWTIME_200_MS & PS_WTIME_MASK;
+   224		else if (strcmp(wait_time, "400") == 0)
+   225			op_mode_setting_val |= PWTIME_400_MS & PS_WTIME_MASK;
+   226		else if (strcmp(wait_time, "800") == 0)
+   227			op_mode_setting_val |= PWTIME_800_MS & PS_WTIME_MASK;
+   228		else if (strcmp(wait_time, "1600") == 0)
+   229			op_mode_setting_val |= PWTIME_1600_MS & PS_WTIME_MASK;
+   230		else {
+   231			dev_info(&client->dev, "Using default ps wtime value\n");
+   232			op_mode_setting_val |= PWTIME_12_POINT_5_MS & PS_WTIME_MASK;
+   233		}
+   234	
+   235		ret = pm16d17_write_reg(data, PM16D17_PS_SETTING, op_mode_setting_val);
+   236		if (ret < 0)
+   237			return ret;
+   238	
+   239		of_property_read_u32(np, "ps-ir-led-pulse-count", &pulse_count);
+   240		if (pulse_count > 256)
+   241			pulse_count = 256;
+   242		ret = pm16d17_write_reg(data, PM16D17_VCSEL_DRIVE_PULSE, pulse_count - 1);
+   243		if (ret < 0)
+   244			return ret;
+   245	
+   246		of_property_read_u32(np, "ps-offset-cancel", &ps_offset_cancel);
+   247		if (ps_offset_cancel != 0) {
+   248			ret = pm16d17_write_reg(data, PM16D17_PS_SETTING2, OFFSET_CANCEL_ENABLE);
+   249			if (ret < 0)
+   250				return ret;
+   251	
+   252			offset_lsb = ps_offset_cancel & PS_OFFSET_CANCEL_LSB_MASK;
+   253			offset_msb = (ps_offset_cancel & PS_OFFSET_CANCEL_MSB_MASK) >> 8;
+   254	
+   255			ret = pm16d17_write_reg(data, PM16D17_PS_OFFSET_CANCEL_L, offset_lsb);
+   256			if (ret < 0)
+   257				return ret;
+   258	
+   259			ret = pm16d17_write_reg(data, PM16D17_PS_OFFSET_CANCEL_H, offset_msb);
+   260			if (ret < 0)
+   261				return ret;
+   262		}
+   263	
+   264		return 0;
+   265	}
+   266	
+
 -- 
-2.34.1
-
-
-> Chris
->
-> >
-> >         /*
-> >          * Short-circuit the below loop if none of the entries had their
-> > --
-> > 2.34.1
-> >
-
-Thanks
-Barry
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
