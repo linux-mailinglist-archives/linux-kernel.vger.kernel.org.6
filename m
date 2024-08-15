@@ -1,197 +1,143 @@
-Return-Path: <linux-kernel+bounces-288069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1086E9532CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:10:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F96E9532EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F5DFB22E28
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:10:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02355280D1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361401A76AE;
-	Thu, 15 Aug 2024 14:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 084C91B29C1;
+	Thu, 15 Aug 2024 14:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="DAfw62Z/"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HWMotfgD"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58AB44376
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6481AD9C5
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723730865; cv=none; b=nVXJ4inAlnQHBzkoM1sq6MYYYr1RGKRRmqxV8lUx3hCC5Vxd042VA8lLuhpuXbehI6OeaSP5g2ksOCHuio6/yh8BrGMwpqHNNqTFA4WYkY6tmc2bqlO2SjsmGwrvVdLl11gsflkmQOw2/wjtIFo9VW29cwS9GHCLQNJ9fNJPNq4=
+	t=1723730948; cv=none; b=nYjbBCtkk4sxptrWnXMm7W11CnuUgQ0V448xmxjBB7KvruJNI/lmNJIZTHobfNP8yA9wH5LHrVrX+ohF7QdygASL1gkae++esDdimDDs/aVZCPj4/SA9SOYlKKKO2vCLelFjx1u7dafYODZtAfTmiokF6WeUTofJxM3oTy221cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723730865; c=relaxed/simple;
-	bh=k70GG4C+xklWNfHBD34LI0TSB31IckyMeKl/JrKJKkI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nZIn5e0nqQ+v1c3XtDWP7GqgwBR6S3FctCNuU5Cvk5sobDxfNY01xk9MHMc+NTqD+uqP7BAIPEaeEBw/VboWMGGHhW30i99qdKcR+GNpga2mub1norTqfgjTQJZoNlI8E9QHE9aoEhNrXF/uyRnIeWFE6owCL4Tc2o4W2dIWcgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=DAfw62Z/; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=RJ4T4U8nLMh+ZQ2Vs65FJCDqKIz6KxKL1v8cX4Zy8ss=; b=DAfw62Z/5NObi7T3b4KqBPmFDC
-	yL2iKZp33FBa+AYH2012Lf4tYY16mRIh8k7zpcZ3zFL2KemjDyKUrgIt74BFzdhtx7iHqF6sN9fua
-	FYOLJnfaAfmgNiB+MLSrZLRC0LYDapFiyVf6aOlo61eWMVr6Ntyanc6vTROugz0n9+SSHrQ0sB0EL
-	SK0Y0aF5+NSi5NxQvlGJ6lZ4dQIFJ7H9Wjyf+TKTebG0DGdV5FCKFYda/az37qmVXshS65d/CZ64z
-	MznFoaYBVrdmC7D9Tbr0bhmZxDX2nYdh+rC9yFSZwxwCFrcaZSnjJCKdxpZfhyMr4wRt0fCnevL5S
-	hxCJGH4w==;
-Received: from [187.36.213.55] (helo=[192.168.1.212])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1seb8Y-000dsP-FM; Thu, 15 Aug 2024 16:07:34 +0200
-Message-ID: <1205c363-6635-4081-8155-5a8573481f3f@igalia.com>
-Date: Thu, 15 Aug 2024 11:07:25 -0300
+	s=arc-20240116; t=1723730948; c=relaxed/simple;
+	bh=qo9ZE4dFQ6mM/Bc850JYi0KMklchFhxHbwhodm8U5P8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=m84FDEvJZxnfM0uXUaXd8J5NHndMp9/DzSS+xQWXvEV3YSKkUFS03KfbjTkAlqCl2P8lu9PidWI0Jaid2g+6CXah8NioOtFCKMHI8AGooM8bKQPy2Q6Ne4Ip7AC1jDcEE/J02AB2SpDMut5ljev2FYvEdpNg6TZV5rEroKIsKoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HWMotfgD; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e0ebbee58a8so1460569276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 07:09:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723730945; x=1724335745; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qIvQlh/LEmcc/D/obNuZ6E+YY/ClqP2nQTGGm+92/XA=;
+        b=HWMotfgDUfdZSYw8ZSXij6R9WdNMMsZ2E+HJc6307o4WXfBFy+834Bx3LYyDiMQjsf
+         Lesj5wm9Uj6kKEDoZfUTL/4Pf9onA+KqhU1IS+OaS7W4tgiitSppFfub0jEiMS3feSig
+         n7Sw39mWzCawqcZCR3h2zISm5Lp/JYKq/Lqd+vrXTfb7rQiItuQNBNPBbr2dUtbyCIIH
+         o8GeMlDlr+/IQSmOQtqzhzZuT9r/dmcIVfY3gMg4a2cXIFv9Ytv9vlysNcX4Q9QEBy49
+         1A1ppUw8CgpGCGzR3S7hD6NXOCLq6gmth89M7elHCD7WMgnEzwvC46XRY+H64InOiBEU
+         jB4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723730945; x=1724335745;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qIvQlh/LEmcc/D/obNuZ6E+YY/ClqP2nQTGGm+92/XA=;
+        b=iPZUFvZNSRWdIGz9Zlh+6JuTUUyZAEspo2eJDz4vBfRwsd7c2tZ3s22bJkp5ZoXdT+
+         F5acy6TNDwAuv++Sesczv0YFLx7TV6vASHj83zjPznIWTTbOMIbNIlAcGC7dP+yZfY9b
+         bWZxRCc8r6IDdqIu9w80qltDt3Is8RShYkj8bcKcCjaPfpYdKXicqwudDKnbhuUIuRw9
+         uw6ZvLFDu+bWUOkCk3eNP7oQO55hsZt++WXj8DPuFfQivxKIHbC2UvDngG04VE5k/qot
+         fAs/FT2Zm8q1Hwkzw8aUIJLlqfLf7qW1JWMpgtXv7gfZqxUY4wGYMT9XPuhG8ZJsog0w
+         NOvA==
+X-Forwarded-Encrypted: i=1; AJvYcCWKe+oojaReL+I6rp9k7s95Y3KD5iwQmwrYhDcdXIBXBSZLQHTqpYGN1/NJO3NomSNR0uLbB9VdLJtjDOtMpMJE6uHUHXoT0ZxwhcOQ
+X-Gm-Message-State: AOJu0Yw8/DvxE9CSLa8b1Q7upw6k+N1kQsMaCJaabFK5hcOLOALwZPwr
+	ZUfihUlkn5TG2OVY5RTKEIA7yn9r0o3e8KgZAwXwgCXgjzXTtiHsYrrKoT9u+oKldsv1ArOIgFJ
+	aWg==
+X-Google-Smtp-Source: AGHT+IF6xQQzYTHNueQz5cB9KMs+14iCDwXd48e2Sh7vGWOyT8D00eLV92GkWwL3v1SLnd0khMovT1/aszU=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:2783:0:b0:e05:eccb:95dc with SMTP id
+ 3f1490d57ef6-e1155aa6f02mr27854276.6.1723730945293; Thu, 15 Aug 2024 07:09:05
+ -0700 (PDT)
+Date: Thu, 15 Aug 2024 07:09:03 -0700
+In-Reply-To: <e50240f9-a476-4ace-86aa-f2fd33fbe320@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] drm/vkms: Rename index to possible_crtc
-To: Louis Chauvet <louis.chauvet@bootlin.com>,
- Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
- Melissa Wen <melissa.srw@gmail.com>,
- Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
- linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
- miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
- seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com
-References: <20240814-google-clarifications-v1-0-3ee76d7d0c28@bootlin.com>
- <20240814-google-clarifications-v1-2-3ee76d7d0c28@bootlin.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-Autocrypt: addr=mcanal@igalia.com; keydata=
- xjMEZIsaeRYJKwYBBAHaRw8BAQdAGU6aY8oojw61KS5rGGMrlcilFqR6p6ID45IZ6ovX0h3N
- H01haXJhIENhbmFsIDxtY2FuYWxAaWdhbGlhLmNvbT7CjwQTFggANxYhBDMCqFtIvFKVRJZQ
- hDSPnHLaGFVuBQJkixp5BQkFo5qAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQNI+cctoYVW5u
- GAEAwpaC5rI3wD8zqETKwGVoXd6+AbmGfZuVD40xepy7z/8BAM5w95/oyPsHUqOsg/xUTlNp
- rlbhA+WWoaOXA3XgR+wCzjgEZIsaeRIKKwYBBAGXVQEFAQEHQGoOK0jgh0IorMAacx6WUUWb
- s3RLiJYWUU6iNrk5wWUbAwEIB8J+BBgWCAAmFiEEMwKoW0i8UpVEllCENI+cctoYVW4FAmSL
- GnkFCQWjmoACGwwACgkQNI+cctoYVW6cqwD/Q9R98msvkhgRvi18fzUPFDwwogn+F+gQJJ6o
- pwpgFkAA/R2zOfla3IT6G3SBoV5ucdpdCpnIXFpQLbmfHK7dXsAC
-In-Reply-To: <20240814-google-clarifications-v1-2-3ee76d7d0c28@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240809190319.1710470-1-seanjc@google.com> <20240809190319.1710470-10-seanjc@google.com>
+ <e50240f9-a476-4ace-86aa-f2fd33fbe320@redhat.com>
+Message-ID: <Zr4L_4dzZl-qa3xu@google.com>
+Subject: Re: [PATCH 09/22] KVM: x86/mmu: Try "unprotect for retry" iff there
+ are indirect SPs
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Gonda <pgonda@google.com>, Michael Roth <michael.roth@amd.com>, 
+	Vishal Annapurve <vannapurve@google.com>, Ackerly Tng <ackerleytng@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On 8/14/24 05:46, Louis Chauvet wrote:
-> The meaning of index was not clear. Replace them with crtc_index to
-> clearly indicate its usage.
+On Wed, Aug 14, 2024, Paolo Bonzini wrote:
+> On 8/9/24 21:03, Sean Christopherson wrote:
+> > Try to unprotect shadow pages if and only if indirect_shadow_pages is non-
+> > zero, i.e. iff there is at least one protected such shadow page.  Pre-
+> > checking indirect_shadow_pages avoids taking mmu_lock for write when the
+> > gfn is write-protected by a third party, i.e. not for KVM shadow paging,
+> > and in the *extremely* unlikely case that a different task has already
+> > unprotected the last shadow page.
+> > 
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > ---
+> >   arch/x86/kvm/mmu/mmu.c | 3 +++
+> >   1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> > index 09a42dc1fe5a..358294889baa 100644
+> > --- a/arch/x86/kvm/mmu/mmu.c
+> > +++ b/arch/x86/kvm/mmu/mmu.c
+> > @@ -2736,6 +2736,9 @@ bool kvm_mmu_unprotect_gfn_and_retry(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa)
+> >   	gpa_t gpa = cr2_or_gpa;
+> >   	bool r;
+> > +	if (!vcpu->kvm->arch.indirect_shadow_pages)
+> > +		return false;
 > 
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> indirect_shadow_pages is accessed without a lock, so here please add a note
+> that, while it may be stale, a false negative will only cause KVM to skip
+> the "unprotect and retry" optimization.
 
-IMHO no need for this patch, especially considering that you are going
-to change those lines anyway in a future series.
+Correct, I'll add a comment.
 
-I'd just drop it.
-
-Best Regards,
-- Maíra
-
-> ---
->   drivers/gpu/drm/vkms/vkms_drv.h    |  4 ++--
->   drivers/gpu/drm/vkms/vkms_output.c | 13 +++++++------
->   drivers/gpu/drm/vkms/vkms_plane.c  |  4 ++--
->   3 files changed, 11 insertions(+), 10 deletions(-)
+> (This is preexisting in reexecute_instruction() and goes away in patch 18, if
+> I'm pre-reading that part of the series correctly).
 > 
-> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-> index 526bf5207524..3028678e4f9b 100644
-> --- a/drivers/gpu/drm/vkms/vkms_drv.h
-> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
-> @@ -222,10 +222,10 @@ struct vkms_device {
->   int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
->   		   struct drm_plane *primary, struct drm_plane *cursor);
->   
-> -int vkms_output_init(struct vkms_device *vkmsdev, int index);
-> +int vkms_output_init(struct vkms_device *vkmsdev, int possible_crtc_index);
->   
->   struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
-> -				   enum drm_plane_type type, int index);
-> +				   enum drm_plane_type type, int possible_crtc_index);
->   
->   /* CRC Support */
->   const char *const *vkms_get_crc_sources(struct drm_crtc *crtc,
-> diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
-> index 5ce70dd946aa..d42ca7d10389 100644
-> --- a/drivers/gpu/drm/vkms/vkms_output.c
-> +++ b/drivers/gpu/drm/vkms/vkms_output.c
-> @@ -31,12 +31,12 @@ static const struct drm_connector_helper_funcs vkms_conn_helper_funcs = {
->   	.get_modes    = vkms_conn_get_modes,
->   };
->   
-> -static int vkms_add_overlay_plane(struct vkms_device *vkmsdev, int index,
-> +static int vkms_add_overlay_plane(struct vkms_device *vkmsdev, int possible_crtc_index,
->   				  struct drm_crtc *crtc)
->   {
->   	struct vkms_plane *overlay;
->   
-> -	overlay = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_OVERLAY, index);
-> +	overlay = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_OVERLAY, possible_crtc_index);
->   	if (IS_ERR(overlay))
->   		return PTR_ERR(overlay);
->   
-> @@ -46,7 +46,7 @@ static int vkms_add_overlay_plane(struct vkms_device *vkmsdev, int index,
->   	return 0;
->   }
->   
-> -int vkms_output_init(struct vkms_device *vkmsdev, int index)
-> +int vkms_output_init(struct vkms_device *vkmsdev, int possible_crtc_index)
->   {
->   	struct vkms_output *output = &vkmsdev->output;
->   	struct drm_device *dev = &vkmsdev->drm;
-> @@ -58,20 +58,21 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
->   	int writeback;
->   	unsigned int n;
->   
-> -	primary = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_PRIMARY, index);
-> +	primary = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_PRIMARY, possible_crtc_index);
-> +
->   	if (IS_ERR(primary))
->   		return PTR_ERR(primary);
->   
->   	if (vkmsdev->config->overlay) {
->   		for (n = 0; n < NUM_OVERLAY_PLANES; n++) {
-> -			ret = vkms_add_overlay_plane(vkmsdev, index, crtc);
-> +			ret = vkms_add_overlay_plane(vkmsdev, possible_crtc_index, crtc);
->   			if (ret)
->   				return ret;
->   		}
->   	}
->   
->   	if (vkmsdev->config->cursor) {
-> -		cursor = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_CURSOR, index);
-> +		cursor = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_CURSOR, possible_crtc_index);
->   		if (IS_ERR(cursor))
->   			return PTR_ERR(cursor);
->   	}
-> diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-> index 03716616f819..9d85464ee0e9 100644
-> --- a/drivers/gpu/drm/vkms/vkms_plane.c
-> +++ b/drivers/gpu/drm/vkms/vkms_plane.c
-> @@ -219,12 +219,12 @@ static const struct drm_plane_helper_funcs vkms_plane_helper_funcs = {
->   };
->   
->   struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
-> -				   enum drm_plane_type type, int index)
-> +				   enum drm_plane_type type, int possible_crtc_index)
->   {
->   	struct drm_device *dev = &vkmsdev->drm;
->   	struct vkms_plane *plane;
->   
-> -	plane = drmm_universal_plane_alloc(dev, struct vkms_plane, base, 1 << index,
-> +	plane = drmm_universal_plane_alloc(dev, struct vkms_plane, base, 1 << possible_crtc_index,
->   					   &vkms_plane_funcs,
->   					   vkms_formats, ARRAY_SIZE(vkms_formats),
->   					   NULL, type, NULL);
-> 
+> Bonus points for opportunistically adding a READ_ONCE() here and in
+> kvm_mmu_track_write().
+
+Hmm, right, this one should have a READ_ONCE(), but I don't see any reason to
+add one in kvm_mmu_track_write().  If the compiler was crazy and generate multiple
+loads between the smp_mb() and write_lock(), _and_ the value transitioned from
+1->0, reading '0' on the second go is totally fine because it means the last
+shadow page was zapped.  Amusingly, it'd actually be "better" in that it would
+avoid unnecessary taking mmu_lock.
+
+Practically speaking, the compiler would have to be broken to generate multiple
+loads in the 0->1 case, as that would mean the generated code loaded the value
+but ignored the result.  But even if that were to happen, a final read of '1' is
+again a-ok.
+
+This code is different because a READ_ONCE() would ensure that indirect_shadow_pages
+isn't reloaded for every check.  Though that too would be functionally ok, just
+weird.
+
+Obviously the READ_ONCE() would be harmless, but IMO it would be more confusing
+than helpful, e.g. would beg the question of why kvm_vcpu_exit_request() doesn't
+wrap vcpu->mode with READ_ONCE().  Heh, though arguably vcpu->mode should be
+wrapped with READ_ONCE() since it's a helper and could be called multiple times
+without any code in between that would guarantee a reload.
 
