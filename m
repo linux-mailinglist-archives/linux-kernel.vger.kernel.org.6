@@ -1,108 +1,103 @@
-Return-Path: <linux-kernel+bounces-287995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 699B3952F6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:32:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9059952F74
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11E041F277E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:32:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52FFE1F279C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0DE198E78;
-	Thu, 15 Aug 2024 13:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CFD019F49D;
+	Thu, 15 Aug 2024 13:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gvbpwq3K"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dz+3WBKP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B3919DFA6
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 13:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D031714AE;
+	Thu, 15 Aug 2024 13:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723728756; cv=none; b=dSr+zgltOWGHA15wnAzdi+Ewt5Q8CKqgTnJNLkUcxxsZ2pQIxhsfUMF7WgUM7sPWeIDRDOhl9rRH4rzgz8Znl5fhtkitiD/5dnfrt+Kp1HQBSwf2W+I5NQO8dcB2Dmcim+KxVVSDJddWu3+/va0j4UggAF3U0n+VTFKVtLYTyX0=
+	t=1723728763; cv=none; b=tlO92MA8krggAeYBfUSbksRz/Xi3+U8XGSm2f27Kp0OgxJIWJduZkmESPQa4NYKqONLHLh2r8e+OAWEX6/+TkhDT6WoNnbBXt/czlSXxt6LAj4cZH6mPpEMER3WRpABORnsMRIfGniXkDRH+IdfKn3HKD6vpqm0O35vxzYKCwAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723728756; c=relaxed/simple;
-	bh=+hcZ/NB/zrvlloIKjM3Y/VgaSg1YW6GN57pBgQtJD+A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qJunJLVFgtVU9XYQSpMMlAkFX5n0i/ZNaIM08PXiD5g6dyl9i2g/Cp9+5z6s174W/stEe7sawP1wfe776/HiGxjFBDq8i1UHV595tZLzFjFhADdHFpFhXKFTc6oKQMaOLNateM7IVasV88PHOr/YQHC5nbg43ZPlMLE0T2TyXmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gvbpwq3K; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7aac70e30dso111527466b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 06:32:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1723728753; x=1724333553; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8zXAuqY3CZjwnnH2CQ1ELNWwnsIYLtO8vuSWwbGnpM8=;
-        b=gvbpwq3KBfopUFBARJkXd7iWJPS9vyZjwZfBd/5txIlqoJDFPHYJM3Y6bIWr+Gn3sY
-         LXo++N9QGiiA/t6e4BeWx1lCWOn4l5oXeqF5bkcct4sELF/ycgPcwTXZ3uJRiUP0cCAM
-         0ddHudThO/Tqsetn182sEhN96lM6Xd0qXCnbwVNnOl8tiGvSz6weKGbxAmiH0EW8v6WD
-         seI+i4VNxWmiQ3cmxx63XdONS9niaKKr1cuSbcX8VL0hZea9DLyOLT76X7kSPHtUz6hB
-         MbAbjCm6cF9L7uGtUDrnPCC4A70I0L5kfXVc4axN4ZbWXZN4RydvnQ9ShBv4lDyA5HgN
-         fsHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723728753; x=1724333553;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8zXAuqY3CZjwnnH2CQ1ELNWwnsIYLtO8vuSWwbGnpM8=;
-        b=lJ07wpvXR5OaDJZSkEQWtcVDrZme2TpR66nDbNhurKgrnh9nSaGUNTryjVrjL9tDBe
-         UC/MoGyFivMZ8Zpzfvb5wlF+LwZfZqibAdQiYz/JVp9ISPeTy5fZBPwUeBm5Ga3dhpI9
-         r5fG1E1g6hRTD6ehmID+qAdWHAbp49mxLW/Q8O7MSFYIO9kzYO0UFo5DZbCSRqOBlhVL
-         EgJNeROREaTKjwZ3ro0hzDcZ2hL5L86NqmeNetuGaAvTyXnRzcMJZ0C4VOF03+BIP774
-         83iysPHeJYxG21dQ+vYaNsc9pdpqNScoN/ZXChwXQpbqnGzHqPks2wT6GempnAu5NIzX
-         GS/A==
-X-Gm-Message-State: AOJu0YwrJGHzUwX708YE15E1G7D9/KHo3KJjC/Se6rZXUhdr/GxyZgAS
-	/QtIN8mrD5XpTMPLXQI7llyH6NhmoUnnfkEKlf1aqYT+aR8hElEZmJy+KE6fNuM=
-X-Google-Smtp-Source: AGHT+IGucy+SPZEcoRQb67/gDR2h50bksAKMcx86hThfEkkg8FTO21B7NGgUWX3TRrnhsivjalNdoQ==
-X-Received: by 2002:a17:907:2d94:b0:a72:aeff:dfed with SMTP id a640c23a62f3a-a836702c436mr461354766b.53.1723728752835;
-        Thu, 15 Aug 2024 06:32:32 -0700 (PDT)
-Received: from ?IPV6:2003:e5:8741:4a00:60e5:7bee:fc48:e85c? (p200300e587414a0060e57beefc48e85c.dip0.t-ipconnect.de. [2003:e5:8741:4a00:60e5:7bee:fc48:e85c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c6c1dsm102907666b.5.2024.08.15.06.32.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Aug 2024 06:32:32 -0700 (PDT)
-Message-ID: <c2536a0c-4632-48e9-badb-0e0e682abf8f@suse.com>
-Date: Thu, 15 Aug 2024 15:32:31 +0200
+	s=arc-20240116; t=1723728763; c=relaxed/simple;
+	bh=DK7p6Hi4z0x9zpCXYWf5u9eW0rFFXTc71hq6Bw4Y/bg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=c9WXsK5Vv5H6CYSKUlAB/Gdn2vDVtQetD1Br6yxDTo/XZM7+p7MeC57x/QrlgLYrv9amIT7SdceovwREMPUD1rsKNjZKIpoFT9fEqls+77QLePmjfVcCdonO3Hp5jxqwA6ul0b9Td3/xt52URhT75IkmHbfAxu+Lh1uPP1mGScE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dz+3WBKP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0F77C4AF0C;
+	Thu, 15 Aug 2024 13:32:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723728763;
+	bh=DK7p6Hi4z0x9zpCXYWf5u9eW0rFFXTc71hq6Bw4Y/bg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Dz+3WBKP2pNfh3Uv9+keP2qYeWlxENhxKPaFA+kwWRmHnOdp2vPj/tu0TUvC3NfLY
+	 rcDUSM9VSqJIUP+Abk38/zyNcZInXF3wTXobxIsXdZAfe9WcWbOWdZhX9MbEU9KDSw
+	 2QHFP3pgcA0KrM1nU2vTlxoZdW3BLO8wVyqOtZWf5UzgZ1TSUcsnmsjSUekY/7xH4v
+	 CeUeQSkMAZxoxNFfr6xCuXuhIBi54NEhkBUjg4Pbu1FI9hgrypQ3v33mRpS+VaxbL8
+	 lp9bk2tE3BoyAA8l2JjYpilU5BB3eb33BO6IFwuPRfVmMO/wgu+FiMOG51Rcq+uFOq
+	 IGDTXfIgd3D5Q==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+In-Reply-To: <20240813185827.154779-1-brgl@bgdev.pl>
+References: <20240813185827.154779-1-brgl@bgdev.pl>
+Subject: Re: [PATCH 1/3] regulator: dt-bindings: qcom,qca6390-pmu: fix the
+ description for bt-enable-gpios
+Message-Id: <172372876138.37563.7896512013547080088.b4-ty@kernel.org>
+Date: Thu, 15 Aug 2024 14:32:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] x86/cpu: fix unbootable VMs by inlining memcmp() in
- hypervisor_cpuid_base()
-To: Alexey Dobriyan <adobriyan@gmail.com>, boris.ostrovsky@oracle.com,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com
-References: <20240802154253.482658-1-adobriyan@gmail.com>
- <20240802154253.482658-2-adobriyan@gmail.com>
-Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-In-Reply-To: <20240802154253.482658-2-adobriyan@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-On 02.08.24 17:42, Alexey Dobriyan wrote:
-> If this memcmp() is not inlined then PVH early boot code can call
-> into KASAN-instrumented memcmp() which results in unbootable VMs:
+On Tue, 13 Aug 2024 20:58:25 +0200, Bartosz Golaszewski wrote:
+> The Bluetooth module is obviously not an ath11k so drop the word.
 > 
-> 	pvh_start_xen
-> 	xen_prepare_pvh
-> 	xen_cpuid_base
-> 	hypervisor_cpuid_base
-> 	memcmp
 > 
-> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 
-Acked-by: Juergen Gross <jgross@suse.com>
+Applied to
 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-Juergen
+Thanks!
+
+[1/3] regulator: dt-bindings: qcom,qca6390-pmu: fix the description for bt-enable-gpios
+      commit: d275e9918cc01d27ab511e5dbf2aafc1e782628e
+[2/3] regulator: dt-bindings: qcom,qca6390-pmu: document WCN6855
+      commit: 2416d2f87be431d98b2b05137fcd1f4da9a83894
+[3/3] regulator: dt-bindings: qcom,qca6390-pmu: document the swctrl-gpios property
+      commit: 39b8cb4e1b51191dd0da03b77fbd8b2a2e3e7645
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
