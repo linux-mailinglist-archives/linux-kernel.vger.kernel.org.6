@@ -1,112 +1,78 @@
-Return-Path: <linux-kernel+bounces-288699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AA10953DCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:01:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1456E953DCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 164FB1F26D43
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:01:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95032B21E56
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26101581F9;
-	Thu, 15 Aug 2024 23:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C8C15532E;
+	Thu, 15 Aug 2024 23:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FPag1Np9"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KGsmILbq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F2A156C6F;
-	Thu, 15 Aug 2024 23:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADCA14D2B8
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 23:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723762840; cv=none; b=f9vNE0kcl+/yfdoyXs71wgW1ofmEslWaW+N1w5AumW0FJv0fbtJGPmekMCK74LDVFXPplsdfK4zEhAstvQ4U1spZhYzGduUrGg+z6qPm/gW25WeCeLfdOWzAm7FDRQRg4E7dfhlrTJ3vF74UDKe7LgksbY+Xy8XF3e0kBYYgxxY=
+	t=1723762909; cv=none; b=n+vI3rKMEofDtG+P5iixlAWLoFjibLZ0NquEE6EsTKmB0HatHkQWzO7e3u4qPcnVVQFbSDs67bvDkAqg8ShTr/ZCERAIAQIWPYTSpUH8Hj5+Ft6Um21YuMT+18lpIh2bLClr9KV3aQFVNyI1LsrC//VxMhNxV1AZt9Ja4irT04M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723762840; c=relaxed/simple;
-	bh=ClXOneOebma6lnT00NIgNHZTe12DXes5aJiuH7Rj1mQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=aL+A1GgbT1uW6cd9NTRdwcBHzOShzY1U2in5R5OH7Xan7/yjx5nOx93wd7VVxD+GqrinbFfen5aet+k+rotPKOxxahcMgP5366rJ1wVlIbfL2Ek0Tk+fhC83CtYWk4Yrwp12Ku0f0tO5DigWGbNFQUBiptIHeBVu56C99xOkwC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FPag1Np9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43CAFC32786;
-	Thu, 15 Aug 2024 23:00:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723762840;
-	bh=ClXOneOebma6lnT00NIgNHZTe12DXes5aJiuH7Rj1mQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=FPag1Np9nhtrj/xqdrCriQ5M0kwJTceajxbzCYNmg4aS+YgxjVF8x2TcsxmjxOsiV
-	 YDu26vfLJQY4y7v+qFvsWEsj0CLmuEwuylM68Y1OTAR9ozp1vY5HycgeWqaVog8qfF
-	 W09k5X+hP9sbdAt5i4Os/7M6SpenhCspZiKX1XpJTBpWUB4vX1A+ZR1R4XbsQzfR3K
-	 FahLfrJWJFpF3iN5vXpIgn6EbA13tXgfTN0DCDBaI6galpz+Bf+0owcZtO2duj20ry
-	 OsdCE6iPyn9yHstRjL/ueK2YbrQIj30YPAO3urmAWoJbvzyvAppfMt1LdQdg9vC/qD
-	 BkQxYaLytFhTw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AF979382327A;
-	Thu, 15 Aug 2024 23:00:40 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1723762909; c=relaxed/simple;
+	bh=6fQ70VoBaPm8Se49rH2OcnCedp5xVUREo0KNlCHP0Cg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=GsXYePPvOw2bZWxUxGsJ9CvTnAx3NAoN6e5vzomyCG7WOLePa4Nf++2+0RCUwksGHFvcfh2UzC695ikX5mxr72j85G9Y/38WpN6FUds2nHdtkLEQXKDQbj07n9aSe53XkUUQtXS91+Vf89eRTV7o6YP6c2lw+XRwgNxgdsLEMIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=KGsmILbq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 998B2C32786;
+	Thu, 15 Aug 2024 23:01:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1723762908;
+	bh=6fQ70VoBaPm8Se49rH2OcnCedp5xVUREo0KNlCHP0Cg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KGsmILbq8h11rZduj0rH9BdMCpwqnTb7YUQXy+zMfQi9a3xrgQPtVEWQ9GxMlUloK
+	 fo0ogFYEmaQBhUTJt9PcWPqhp14Djh9DsSdRu9AFn7YDWN7JK9afRWcvRb6rVluCMi
+	 Fe2DJfPuOcJW8RO1Dw0yubUphD6emN/qIQD7yvio=
+Date: Thu, 15 Aug 2024 16:01:48 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Ivan Orlov <ivan.orlov0322@gmail.com>
+Cc: kees@kernel.org, davidgow@google.com, kunit-dev@googlegroups.com,
+ linux-kernel@vger.kernel.org, erhard_f@mailbox.org
+Subject: Re: [PATCH] kunit/overflow: Fix UB in overflow_allocation_test
+Message-Id: <20240815160148.be83228a7804c6389393429a@linux-foundation.org>
+In-Reply-To: <20240815000431.401869-1-ivan.orlov0322@gmail.com>
+References: <20240815000431.401869-1-ivan.orlov0322@gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v4] libbpf: workaround -Wmaybe-uninitialized false positive
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172376283924.3058964.12790981460632106306.git-patchwork-notify@kernel.org>
-Date: Thu, 15 Aug 2024 23:00:39 +0000
-References: <14ec488a1cac02794c2fa2b83ae0cef1bce2cb36.1723578546.git.sam@gentoo.org>
-In-Reply-To: <14ec488a1cac02794c2fa2b83ae0cef1bce2cb36.1723578546.git.sam@gentoo.org>
-To: Sam James <sam@gentoo.org>
-Cc: andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
- daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
- jose.marchesi@oracle.com, quic_apinski@quicinc.com,
- kacper.slominski72@gmail.com, arsen@gentoo.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Thu, 15 Aug 2024 01:04:31 +0100 Ivan Orlov <ivan.orlov0322@gmail.com> wrote:
 
-This patch was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
-
-On Tue, 13 Aug 2024 20:49:06 +0100 you wrote:
-> In `elf_close`, we get this with GCC 15 -O3 (at least):
-> ```
-> In function ‘elf_close’,
->     inlined from ‘elf_close’ at elf.c:53:6,
->     inlined from ‘elf_find_func_offset_from_file’ at elf.c:384:2:
-> elf.c:57:9: warning: ‘elf_fd.elf’ may be used uninitialized [-Wmaybe-uninitialized]
->    57 |         elf_end(elf_fd->elf);
->       |         ^~~~~~~~~~~~~~~~~~~~
-> elf.c: In function ‘elf_find_func_offset_from_file’:
-> elf.c:377:23: note: ‘elf_fd.elf’ was declared here
->   377 |         struct elf_fd elf_fd;
->       |                       ^~~~~~
-> In function ‘elf_close’,
->     inlined from ‘elf_close’ at elf.c:53:6,
->     inlined from ‘elf_find_func_offset_from_file’ at elf.c:384:2:
-> elf.c:58:9: warning: ‘elf_fd.fd’ may be used uninitialized [-Wmaybe-uninitialized]
->    58 |         close(elf_fd->fd);
->       |         ^~~~~~~~~~~~~~~~~
-> elf.c: In function ‘elf_find_func_offset_from_file’:
-> elf.c:377:23: note: ‘elf_fd.fd’ was declared here
->   377 |         struct elf_fd elf_fd;
->       |                       ^~~~~~
-> ```
+> The 'device_name' array doesn't exist out of the
+> 'overflow_allocation_test' function scope. However, it is being used as
+> a driver name when calling 'kunit_driver_create' from
+> 'kunit_device_register'. It produces the kernel panic with KASAN
+> enabled.
 > 
-> [...]
+> Since this variable is used in one place only, remove it and pass the
+> device name into kunit_device_register directly as an ascii string.
 
-Here is the summary with links:
-  - [v4] libbpf: workaround -Wmaybe-uninitialized false positive
-    https://git.kernel.org/bpf/bpf-next/c/fab45b962749
+Fixes: ca90800a91ba ("test_overflow: Add memory allocation overflow tests")
+Cc: <stable@vger.kernel.org>
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+yes?
 
+
+I'll grab it now, but perhaps Kees will handle this.
 
 
