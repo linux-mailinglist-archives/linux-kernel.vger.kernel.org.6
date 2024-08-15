@@ -1,134 +1,103 @@
-Return-Path: <linux-kernel+bounces-287710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58EF2952BC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:17:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69DC7952BEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:23:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 015F71F2120A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:17:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCB67282E07
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29AFA1BB6A6;
-	Thu, 15 Aug 2024 09:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KJ8J/pXm"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19DA71BC067;
+	Thu, 15 Aug 2024 09:04:12 +0000 (UTC)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C593214
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0172319DF68;
+	Thu, 15 Aug 2024 09:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723712618; cv=none; b=rIVbYqQxYqdeUqsxDouqIULWAJDuPOx1ffOj+glzmAjD44O4NcAVWbLUxP0iCexd8HLQ7OTLokWxtne4ONYJSo/+YQzlwdJGgsYWLtPlat2OAM5StqcBmDXgJkuZAJ4/whGEw2+JKLQY431HrLxjCRVF2tP53bdxiZyDhNX1JfE=
+	t=1723712651; cv=none; b=Z0oyjamUQlB3W1QTzjaodCPwUhqfLSC34/udDbfecIevEhmZmiY048m8MghTBLRCzvozRSEWJRdkOkuTEmKGYNuBS8Avp+49re6t0ae1bIRZdDP4XCto1Jjwzn/MYdFRj79mqGccHlDP4nfmDxYrF+aGxUeTuow2L1V0P2Drgng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723712618; c=relaxed/simple;
-	bh=82ovCvhb1Tyh9pHOR9sZr/vyvdxlbkeBt+Pryy9GisQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n4XaWU6CcyPA3wwlgdn65XU1HuLhhR1ECUY9VmJHaxz9l4getbARBTEh9b9fXAxZ8CqiwIe9uccL1nA8FrBrMzPyw39Bo/aSjR1faOrzI1FG9TvMtWwFTjKspWJurVtZsKCDl+J1IdUkpvFG9gDdD3SQEuwMrJWddJ4qQLSs5DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KJ8J/pXm; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723712614;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=KIxXFek9GnWErg2oi1kCRegTo0ov+46L+2lXaPDEJTs=;
-	b=KJ8J/pXmJ0e6DIJ5Y5+erb/enczRu6YoLS3Dh54naD4kxN7XYrjOS2KcC3wKytgZXUVMnZ
-	6WDujFs0uYGoeXqfBEK40SgRagMs2iuNZE8tgswic1Ejtd/zjKmXouzPq+6jjdxwh4+kU/
-	2HHiFqswCA/SOX9aeCi37RrBmaxEDrA=
-From: Hao Ge <hao.ge@linux.dev>
-To: rppt@kernel.org,
-	akpm@linux-foundation.org,
-	surenb@google.com,
-	babka@suse.cz,
-	kent.overstreet@linux.dev,
-	kees@kernel.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Hao Ge <gehao@kylinos.cn>
-Subject: [PATCH] codetag: debug: mark codetags for cma pages as empty
-Date: Thu, 15 Aug 2024 17:03:24 +0800
-Message-Id: <20240815090324.36065-1-hao.ge@linux.dev>
+	s=arc-20240116; t=1723712651; c=relaxed/simple;
+	bh=Cy92Jp84Df9o5H0KPaXA6rhuX88LhcChTDxIsiUS+FU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lmXuCX2UJYOsa3X2fiTekWm41wIIsgJrBbEGDIcivr7oaVJYYCz/U7qzpa9oul9srN7pT3ZqTcCKx+fgZCOg4vGaz+v6h87U6i69+B/hsVf4wjbCNsz0cEG+2O3OPUfYKOeB91qgwYu71WtzEtTSUK6yWTrhvo8RRWShL/8t3m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f01e9f53e3so11039821fa.1;
+        Thu, 15 Aug 2024 02:04:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723712648; x=1724317448;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GGdA1uTAZfwjQPOwAEugx2cuORuo6xK2pemc/JdMcEs=;
+        b=NfVTLe/0weUHYFQGcaouRf+JHCXzM5ogrTYw05eaWi/vqeMZJvatibAkWk78y/am2r
+         LZOsAdO3BHf8YP5dDz0MyAgsHSkrGm7YyY5SFf24LA0KAFHXTH4GFgS0FSNYl7q70/wb
+         0frwGBQqINqwfr01EIe69wxpq99haZMoN2gIqs+4/731yWi+KW8k4mGy1kjoZKyG5NFQ
+         NtFkPxtNn0C1WBWNoFNIp202k9xa2G8+tz6utdUb69XT9lkfH1L1avqGs7Vz3ToeBlr5
+         0LDjw6b+NZpq/Z7bwEUbw5Is7vRDpGpMnyD0683LPrs6BCOzB9bqxhObjtZNHN3e/UOK
+         Kbdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXJVxIpSp+QrD73yfs29leNg4ArhU9M2Om8h+yjjJAIdbu9vHyJ59/Fhd+bIB3D1go+9InwCmA7CqybhLSFTEvci63o5Q+0wHg9souLYljpTYs6nkzvDOW5RyWLvjr+jydN6fVRgTjCRUx9miXYuaWaG2VHAi4Td2Zv2BwZw2iH/GA6WMro
+X-Gm-Message-State: AOJu0Yz3nY9noErHw0vIfyy/H3qjVJfzn0FZN5DG8uKLheFowA+vZ0ZZ
+	HRNSh0p+OUhrwjP/qheI/ZWVK9XNW9p5uvLuq97I8i1DNXzyFWYV
+X-Google-Smtp-Source: AGHT+IGEOchYHmiCwd/DoRSgts40Fxyf+kMc/9VZZdbawHLe55tHQbdSBvwegPU1kWP2Jr4dfG0TsA==
+X-Received: by 2002:a2e:e09:0:b0:2ef:17ee:62a2 with SMTP id 38308e7fff4ca-2f3aa1df04emr36835281fa.14.1723712647572;
+        Thu, 15 Aug 2024 02:04:07 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-011.fbsv.net. [2a03:2880:30ff:b::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c70afsm70871266b.15.2024.08.15.02.04.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 02:04:07 -0700 (PDT)
+Date: Thu, 15 Aug 2024 02:04:04 -0700
+From: Breno Leitao <leitao@debian.org>
+To: icejl <icejl0001@gmail.com>
+Cc: pablo@netfilter.org, kadlec@netfilter.org, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfilter: nfnetlink: fix uninitialized local variable
+Message-ID: <Zr3EhKBKllxigfcD@gmail.com>
+References: <20240815082733.272087-1-icejl0001@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240815082733.272087-1-icejl0001@gmail.com>
 
-From: Hao Ge <gehao@kylinos.cn>
+On Thu, Aug 15, 2024 at 04:27:33PM +0800, icejl wrote:
+> In the nfnetlink_rcv_batch function, an uninitialized local variable
+> extack is used, which results in using random stack data as a pointer.
+> This pointer is then used to access the data it points to and return
+> it as the request status, leading to an information leak. If the stack
+> data happens to be an invalid pointer, it can cause a pointer access
+> exception, triggering a kernel crash.
+> 
+> Signed-off-by: icejl <icejl0001@gmail.com>
+> ---
+>  net/netfilter/nfnetlink.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/net/netfilter/nfnetlink.c b/net/netfilter/nfnetlink.c
+> index 4abf660c7baf..b29b281f4b2c 100644
+> --- a/net/netfilter/nfnetlink.c
+> +++ b/net/netfilter/nfnetlink.c
+> @@ -427,6 +427,7 @@ static void nfnetlink_rcv_batch(struct sk_buff *skb, struct nlmsghdr *nlh,
+>  
+>  	nfnl_unlock(subsys_id);
+>  
+> +	memset(&extack, 0, sizeof(extack));
+>  	if (nlh->nlmsg_flags & NLM_F_ACK)
+>  		nfnl_err_add(&err_list, nlh, 0, &extack);
 
-Here are some warnning
-
-[    1.342603] ------------[ cut here ]------------
-[    1.342608] alloc_tag was not set
-[    1.342623] WARNING: CPU: 0 PID: 1 at ./include/linux/alloc_tag.h:130 __free_pages+0x1a4/0x1b4
-[    1.342633] Modules linked in:
-[    1.342639] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-rc3+ #12
-[    1.342645] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    1.342650] pc : __free_pages+0x1a4/0x1b4
-[    1.342654] lr : __free_pages+0x1a4/0x1b4
-[    1.342658] sp : ffff8000833dbcb0
-[    1.342661] x29: ffff8000833dbcb0 x28: ffff000b34d9dac0 x27: ffff80008175f000
-[    1.342669] x26: 00000000000fc000 x25: ffff800082ac6028 x24: ffff80008252e000
-[    1.342675] x23: ffff0000c0660000 x22: 0000000000000000 x21: 0000000000000009
-[    1.342681] x20: 0000000000000000 x19: fffffd7fc3ac0000 x18: ffffffffffffffff
-[    1.342688] x17: ffff80008105bf68 x16: ffff800081841bb4 x15: 0720072007200720
-[    1.342694] x14: 0720072007200720 x13: 0720072007200720 x12: 0720072007200720
-[    1.342700] x11: 0720072007200720 x10: 0720072007200720 x9 : 0720072007200720
-[    1.342706] x8 : 0720072007200720 x7 : ffff80008237bad0 x6 : c0000000ffff7fff
-[    1.342712] x5 : ffff80008237ba78 x4 : ffff8000820bbad0 x3 : 0000000000000001
-[    1.342719] x2 : 13c63f521095dc00 x1 : 13c63f521095dc00 x0 : 0000000000000000
-[    1.342725] Call trace:
-[    1.342728]  __free_pages+0x1a4/0x1b4
-[    1.342732]  init_cma_reserved_pageblock+0x5c/0xac
-[    1.342739]  cma_init_reserved_areas+0x2b4/0x3f4
-[    1.342744]  do_one_initcall+0x54/0x368
-[    1.342749]  kernel_init_freeable+0x23c/0x450
-[    1.342755]  kernel_init+0x2c/0x144
-[    1.342760]  ret_from_fork+0x10/0x20
-[    1.342764] ---[ end trace 0000000000000000 ]---
-
-To avoid debug warnings while freeing cma pages which were not
-allocated with usual allocators, mark their codetags as empty before
-freeing.
-
-Reference commit d224eb0287fb ("codetag: debug: mark codetags
-for reserved pages as empty")
-
-Fixes: 4b8736964640 ("mm/slab: add allocation accounting into slab allocation and free paths")
-Signed-off-by: Hao Ge <gehao@kylinos.cn>
----
- mm/mm_init.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/mm/mm_init.c b/mm/mm_init.c
-index 75c3bd42799b..d7d40a8d738f 100644
---- a/mm/mm_init.c
-+++ b/mm/mm_init.c
-@@ -2243,6 +2243,16 @@ void __init init_cma_reserved_pageblock(struct page *page)
- 		set_page_count(p, 0);
- 	} while (++p, --i);
- 
-+	/* pages were reserved and not allocated */
-+	if (mem_alloc_profiling_enabled()) {
-+		union codetag_ref *ref = get_page_tag_ref(page);
-+
-+		if (ref) {
-+			set_codetag_empty(ref);
-+			put_page_tag_ref(ref);
-+		}
-+	}
-+
- 	set_pageblock_migratetype(page, MIGRATE_CMA);
- 	set_page_refcounted(page);
- 	__free_pages(page, pageblock_order);
--- 
-2.25.1
-
+There is a memset later in that function , inside the 
+`while (skb->len >= nlmsg_total_size(0))` loop. Should that one be
+removed?
 
