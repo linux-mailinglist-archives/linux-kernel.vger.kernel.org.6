@@ -1,196 +1,162 @@
-Return-Path: <linux-kernel+bounces-287791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3055A952C9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:44:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C4D2952CAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5582C1C20FE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:44:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEE44281FD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D4B1BB680;
-	Thu, 15 Aug 2024 10:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3075C1D1F42;
+	Thu, 15 Aug 2024 10:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DjHbEQod"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hBBU+GYY"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC0E1B4C26
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 10:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9421BE22B;
+	Thu, 15 Aug 2024 10:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723717213; cv=none; b=PRHwTdsbJ8x+PdOhK0ukxSO+sLHtCY3oELjVsYQz+hHCP7Znm6qghFXDXqZo5ftdojwXoNzN2XaLqhZ6u+5zfoUqMOBDMtOZjEmHEAy3TQimGb4twy50CDZtXyOjlNdF3gnmLkhrGe2CyHLkCayJ/WwhenEN2z1qeGZPN+2IZDc=
+	t=1723717437; cv=none; b=Fi2v38kvD9Y3CPwiPGXj8ugaoQZuTTLxx0UfCdgCHwD5Xjl+A47QgDg0Fkeg2/m0VLaum/37/W1OAA/wY67XviFLTNbHKyWUchv0/4DkeLgez3PzLPcj3JsyXCtJf+4F3Ag32CWeWBIEU58yBPbqOVRM8Zwwcmd5CWuDniOe8vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723717213; c=relaxed/simple;
-	bh=jLR1YGSpfznlsV5IXa0lkVrnHvlrRcEWy7vboavp1Ng=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QRceWymIX73nT8Z5zoKr9XHZ2DivUaJ+wP9GlyBZ6o5Q0KFfkfno357uYU0vF3FgBk0M+/gtfbZbsWMi2aJn+5bv1lJL02mUlK6wQzLKqecJIDFiT3Vg0gRFZPzZMmAiHZdR20058dibA/jqdE+q+400ztnziZyDiVwii/DxvOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DjHbEQod; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723717210;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Si//7O5ApUP1/yDL06AmAILjSFyyJ/JUarAYtZfx0u8=;
-	b=DjHbEQodlhqe/81bfXZHgAYaEMOeVURay+kjjx9im+GETLBQhiqE7g6baDuH4MRWZBLLKT
-	7eQKjImuNCetPIxXDVb0DrIHJf2HdgnLDe61MouHrgb1RIF9TFz4CxsevfgamatGP5oZ1r
-	EhCwkTl7MnLNm07iXWpWI9rVFncp3uI=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-240-qe2usBu4Opuwi-h3OXDjog-1; Thu, 15 Aug 2024 06:20:09 -0400
-X-MC-Unique: qe2usBu4Opuwi-h3OXDjog-1
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2ee81ff717fso6830941fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 03:20:08 -0700 (PDT)
+	s=arc-20240116; t=1723717437; c=relaxed/simple;
+	bh=vaO2bQL+x+qVSEjpB5J2V0P2pQYy5iaElBnUbnLPXko=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PINHV6+Uh4A3JQUhWCjrXko4rkxgyG/DukAaSV1AjwUYawbCARSJ0YwihMdC8d8ismON2UWWaE7NwwooCZrsoS5aNIQnjpLaJEDT+ZEulB6gAYNMTDveGJYAzibcmKrdAbvcF2L4uX2CU6y1UNgaeoiG/BrswWeoOZ4xft7z01I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hBBU+GYY; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fd70ba6a15so6766265ad.0;
+        Thu, 15 Aug 2024 03:23:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723717435; x=1724322235; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iq7fbg1eOsvG0ItPF//0IwrkFyZmuk5NQdbvO/TCh44=;
+        b=hBBU+GYYPb1UcBQnA2PGbFiCwLvijoRE4eCGcEZ2t6iHvE+EvHykoF28+b1LCVP1SI
+         PVOxx+FG97pga1syBDNyGEPSKdETq/u9KwKSA0msd8hUHyxzBEziwYaCPdq9AX/ivNC9
+         fOC16nKysEXFtiE6Vee3hzTqbzi8kmKh0gqMTdOnhHZRCHoFmo7TQg3ya3tt0toTpCoU
+         YcNJJVd9uOixIcxv19d0fFRQUEePKAccNHcoJl9mWZrTx7UXcyo1YNjdxHjMCdsH0ocm
+         YPN0apUaQyS5kcuwlFTxHZrVQy4qV3z+5/f2QwzhLkvBD4qSrUAPUc1jucGHFtILADEn
+         o3Gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723717207; x=1724322007;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Si//7O5ApUP1/yDL06AmAILjSFyyJ/JUarAYtZfx0u8=;
-        b=o/tL7M8SyWouwHS8Y+PBaIfWWE2UvWFynY8Pt/81Y46Yq4ohs2DJI5tRM51sTQlatJ
-         4HvzhFFIwsbSziY8IuRvOeVujGEMAZsyskp0o+96o8yEYX+cY0RVU9OAYSUhQMqa6ydr
-         xjsd7VAOw8QMvLWP0NKU/5Svu2KfDQCsIO7yDp62lrU2OU919wNzl1kUE265kvQn+2w6
-         1MHtt+ecjADYK9S57zmT248U445POh/r51EA4qt2gIkQlkx7N2ZsedfqJz3nwTO06Uqw
-         jd+o0dvPDAF2SUPv6Duy2oLgxwY2gyls/FINBsI6p1W5Wr/0nF+Rvfujlo3miX4QKP8e
-         bfDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCaiUglt/QLWAU7IF6ezg0DfKBxHrcWdm4VlSdVZG7CRI68s82U86hRjX9wEkwnFWNjSttnqUYAcjA851eCel4DEh/n/LzjBmxMD9x
-X-Gm-Message-State: AOJu0YzyoWfLAuRK0PHo3mI0jyY5UpGRn87lMdwQ49GHbd65T+TqRRCx
-	fKPrJ6sjdI0Oi3p11VqRKqi4AiqXX9nEYjxbpb2JJWugfdnHaggfY/mgvHOgsRHE92hLtmMsvR5
-	A2TsprsbN9LGJUTJ9dnG1zMn0BDc6bRwwfftz4heh7bvwV4oprtQ9mYN+CMdlOA==
-X-Received: by 2002:a05:651c:4cb:b0:2f3:b081:114c with SMTP id 38308e7fff4ca-2f3b0811230mr27742601fa.40.1723717207576;
-        Thu, 15 Aug 2024 03:20:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHux6zl6U7v9rMQLhfrQ4zeec5RHR/ht/KJxk5mZK5+XcKUmM1aN/PRnOCbP6iGW/YvCVN/Rg==
-X-Received: by 2002:a05:651c:4cb:b0:2f3:b081:114c with SMTP id 38308e7fff4ca-2f3b0811230mr27742351fa.40.1723717206911;
-        Thu, 15 Aug 2024 03:20:06 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c717:6d00:aebb:127d:2c1a:7f3a? (p200300cbc7176d00aebb127d2c1a7f3a.dip0.t-ipconnect.de. [2003:cb:c717:6d00:aebb:127d:2c1a:7f3a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429d877e066sm81438265e9.1.2024.08.15.03.20.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Aug 2024 03:20:06 -0700 (PDT)
-Message-ID: <6938b43c-ec61-46f1-bccc-d1b8f6850253@redhat.com>
-Date: Thu, 15 Aug 2024 12:20:04 +0200
+        d=1e100.net; s=20230601; t=1723717435; x=1724322235;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iq7fbg1eOsvG0ItPF//0IwrkFyZmuk5NQdbvO/TCh44=;
+        b=h/4dNderS3vYHZtb0uSlRdz6QAbqCc+gQtDQm8PvY8i1KSgoBDLSgsXpsBF6MzqVGP
+         kAL2lOEaMlNRkd1MwuNaK8N0l1QzlRcmocIV4rzi0r6C/bH+W4/strNz3x80uExfcTcV
+         fw8lmZ5IgHQbAP7j1e/Ci6iMsYioavlGl/tZQSJ/8XRdnwIiXtShHWkiqk0xbwPm+FLc
+         3n1Vup/3tJrt9Rb7h1aGm0IkGffTS/h7ozV3zbvpCAYpDgoezmVoDgRT/l9hspsJzmxR
+         jCeVVGKOWPMkZM+9tyVq2BSHmLIiKG6DkT2IJU9RFLvRmhAIAgZY1hNn2/Eo+/nWo1Yu
+         LEyw==
+X-Forwarded-Encrypted: i=1; AJvYcCUrWxZu+XROX6efrdVkE1AD3UXv9L8k8R0TRDjIK1AjJ783ooqJAfGxvztHVB0Vdi9gwvqzGXD2lCcM+kCGVmYHN6A48auMNWz3C8sKQck4XYnfBtnF1r33VdCcBBkoh6VJAPlACD2J
+X-Gm-Message-State: AOJu0Yy3WLoI1KN/QB0QOD8LfdcjNVyNm99vPv3gFF5IOsCL6NE3pSo2
+	LpiIEYMJ7SJvI+zeAA3rIRTAgHNP1vIFpqUHXpA92ObaJ4lL4UbZ
+X-Google-Smtp-Source: AGHT+IF65Vk0UJTrOg0O0JsLoJ7hNz2P7gEInAhGTSB5ssnKOUPkBDzbHJf6OrSiEYHxKyNqi53Ylw==
+X-Received: by 2002:a17:902:f68b:b0:201:f6e6:c7cf with SMTP id d9443c01a7336-201f6e6d26bmr10889685ad.45.1723717435098;
+        Thu, 15 Aug 2024 03:23:55 -0700 (PDT)
+Received: from embed-PC.. ([106.222.235.192])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f038b303sm7892025ad.192.2024.08.15.03.23.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 03:23:54 -0700 (PDT)
+From: Abhishek Tamboli <abhishektamboli9@gmail.com>
+To: dan.scally@ideasonboard.com,
+	laurent.pinchart@ideasonboard.com
+Cc: gregkh@linuxfoundation.org,
+	dan.carpenter@linaro.org,
+	linux-usb@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	rbmarliere@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] usb: gadget: uvc: Fix ERR_PTR dereference in uvc_v4l2.c
+Date: Thu, 15 Aug 2024 15:52:02 +0530
+Message-Id: <20240815102202.594812-1-abhishektamboli9@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 07/11] mm/huge_memory: convert split_huge_pages_pid()
- from follow_page() to folio_walk
-To: Pankaj Raghav <p.raghav@samsung.com>
-Cc: agordeev@linux.ibm.com, akpm@linux-foundation.org,
- borntraeger@linux.ibm.com, corbet@lwn.net, frankja@linux.ibm.com,
- gerald.schaefer@linux.ibm.com, gor@linux.ibm.com, hca@linux.ibm.com,
- imbrenda@linux.ibm.com, kvm@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-s390@vger.kernel.org, svens@linux.ibm.com,
- willy@infradead.org
-References: <20240802155524.517137-8-david@redhat.com>
- <20240815100423.974775-1-p.raghav@samsung.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240815100423.974775-1-p.raghav@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 15.08.24 12:04, Pankaj Raghav wrote:
-> Hi David,
-> 
-> On Fri, Aug 02, 2024 at 05:55:20PM +0200, David Hildenbrand wrote:
->>   			continue;
->>   		}
->>   
->> -		/* FOLL_DUMP to ignore special (like zero) pages */
->> -		page = follow_page(vma, addr, FOLL_GET | FOLL_DUMP);
->> -
->> -		if (IS_ERR_OR_NULL(page))
->> +		folio = folio_walk_start(&fw, vma, addr, 0);
->> +		if (!folio)
->>   			continue;
->>   
->> -		folio = page_folio(page);
->>   		if (!is_transparent_hugepage(folio))
->>   			goto next;
->>   
->> @@ -3544,13 +3542,19 @@ static int split_huge_pages_pid(int pid, unsigned long vaddr_start,
->>   
->>   		if (!folio_trylock(folio))
->>   			goto next;
->> +		folio_get(folio);
-> 
-> Shouldn't we lock the folio after we increase the refcount on the folio?
-> i.e we do folio_get() first and then folio_trylock()?
-> 
-> That is how it was done before (through follow_page) and this patch changes
-> that. Maybe it doesn't matter? To me increasing the refcount and then
-> locking sounds more logical but I do see this ordering getting mixed all
-> over the kernel.
+Fix potential dereferencing of ERR_PTR() in find_format_by_pix()
+and uvc_v4l2_enum_format().
 
-There is no need to grab a folio reference if we hold an implicit 
-reference through the mapping that cannot go away (not that we hold the 
-page table lock). Locking the folio is not special in that regard: we 
-just have to make sure that the folio cannot get freed concurrently, 
-which is the case here.
+Fix the following smatch errors:
 
-So here, we really only grab a reference if we have to -- when we are 
-about to drop the page table lock and will continue using the folio 
-afterwards.
+drivers/usb/gadget/function/uvc_v4l2.c:124 find_format_by_pix()
+error: 'fmtdesc' dereferencing possible ERR_PTR()
 
--- 
-Cheers,
+drivers/usb/gadget/function/uvc_v4l2.c:392 uvc_v4l2_enum_format()
+error: 'fmtdesc' dereferencing possible ERR_PTR()
 
-David / dhildenb
+Also, fix similar issue in uvc_v4l2_try_format() for potential
+dereferencing of ERR_PTR().
+
+Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
+---
+Changes in v3:
+- Return the error code using PTR_ERR() in uvc_v4l2_try_format()
+and uvc_v4l2_enum_format() instead of directly returning -EINVAL.
+
+Changes in v2:
+- Add check for dereferencing of ERR_PTR() in uvc_v4l2_try_format().
+
+ drivers/usb/gadget/function/uvc_v4l2.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/gadget/function/uvc_v4l2.c b/drivers/usb/gadget/function/uvc_v4l2.c
+index a024aecb76dc..de1736f834e6 100644
+--- a/drivers/usb/gadget/function/uvc_v4l2.c
++++ b/drivers/usb/gadget/function/uvc_v4l2.c
+@@ -121,6 +121,9 @@ static struct uvcg_format *find_format_by_pix(struct uvc_device *uvc,
+ 	list_for_each_entry(format, &uvc->header->formats, entry) {
+ 		const struct uvc_format_desc *fmtdesc = to_uvc_format(format->fmt);
+
++		if (IS_ERR(fmtdesc))
++			continue;
++
+ 		if (fmtdesc->fcc == pixelformat) {
+ 			uformat = format->fmt;
+ 			break;
+@@ -240,6 +243,7 @@ uvc_v4l2_try_format(struct file *file, void *fh, struct v4l2_format *fmt)
+ 	struct uvc_video *video = &uvc->video;
+ 	struct uvcg_format *uformat;
+ 	struct uvcg_frame *uframe;
++	const struct uvc_format_desc *fmtdesc;
+ 	u8 *fcc;
+
+ 	if (fmt->type != video->queue.queue.type)
+@@ -277,7 +281,10 @@ uvc_v4l2_try_format(struct file *file, void *fh, struct v4l2_format *fmt)
+ 		fmt->fmt.pix.height = uframe->frame.w_height;
+ 		fmt->fmt.pix.bytesperline = uvc_v4l2_get_bytesperline(uformat, uframe);
+ 		fmt->fmt.pix.sizeimage = uvc_get_frame_size(uformat, uframe);
+-		fmt->fmt.pix.pixelformat = to_uvc_format(uformat)->fcc;
++		fmtdesc = to_uvc_format(uformat);
++		if (IS_ERR(fmtdesc))
++			return PTR_ERR(fmtdesc);
++		fmt->fmt.pix.pixelformat = fmtdesc->fcc;
+ 	}
+ 	fmt->fmt.pix.field = V4L2_FIELD_NONE;
+ 	fmt->fmt.pix.colorspace = V4L2_COLORSPACE_SRGB;
+@@ -389,6 +396,9 @@ uvc_v4l2_enum_format(struct file *file, void *fh, struct v4l2_fmtdesc *f)
+ 		return -EINVAL;
+
+ 	fmtdesc = to_uvc_format(uformat);
++	if (IS_ERR(fmtdesc))
++		return PTR_ERR(fmtdesc);
++
+ 	f->pixelformat = fmtdesc->fcc;
+
+ 	return 0;
+--
+2.34.1
 
 
