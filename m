@@ -1,91 +1,101 @@
-Return-Path: <linux-kernel+bounces-287847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF211952D26
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:01:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD99F952D27
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20A7D281EAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:01:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DBBD1C23A8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637C9626CB;
-	Thu, 15 Aug 2024 11:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sjKtLJpx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D671AC89D;
+	Thu, 15 Aug 2024 11:01:46 +0000 (UTC)
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D67B1AC88B;
-	Thu, 15 Aug 2024 11:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C271AC890
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 11:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723719634; cv=none; b=HKcj66Oey+TjLZSrDZ09Jm89nZOzZQVFZjPp7yrqiYNbkY8fkX1oP8QeP4JHe2mp9tj1vPWS2+yB4S193vkBWAu4i7UNaSFIKKtLJQyIu4lnl6US+e4eYSOQEOtUvcRtVGQfWHvpB1x8Adb33Ipr33dZABSBdyQcmWqx3NUemhM=
+	t=1723719706; cv=none; b=kkTdSZgJFuOrqU5GCftO50DPVSPPRWSBbMzopEzQ/PxwC4kfRlwEpvHsCSVr3XHjV0NALYjeCSKXEVI8WVfBDRzv1cCp2+Eb0a1Vc7+DBvTXomaSHJ8G6dxEH9qh0Dt2e8FoMI28S9oxsDeMWY8Gz44yBIvrhuBrGgiUQgLgGJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723719634; c=relaxed/simple;
-	bh=O+CoYyg2426DsdYP06h6zsQ/M0suIVGCgtbbPNA/XuI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=otuDG/p72BstCKnGvhy1yoBfSqNH1DV4ZIjmdbSoVUj86GHo6ZF16/SoKjS+4lIWkPuRt649AK4qTI/aBCaxuV+nkL/cw57JV0YM6hkT2+E1FggtcOEwNRNc297R4vUP64INSxeGR8qRkLQ6z2OJY7UKMfwyjCElz4r3TdEs0ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sjKtLJpx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 128CCC32786;
-	Thu, 15 Aug 2024 11:00:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723719634;
-	bh=O+CoYyg2426DsdYP06h6zsQ/M0suIVGCgtbbPNA/XuI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=sjKtLJpxoNDshdriu1I7jfYgERaXFAPtSY3yMqP0wiu1zVKjTmzyywVWZyI3kMQS9
-	 P2GqOdsnNhdd4LGD4GBp2L0thamuYKL9XRlQjxpS0n5EYN05ZcumPM1EN+m7CVgMkH
-	 HrkidDbzRLTQl7BZ9k61yNDwvvjOyzrL/IEU76oxDN9wx3uVS6pAwcpW+krBBUcph9
-	 pA4kaB7X6sLfviVJEmIxe3W7BZHPxw2NKDomyVSSAg890nYRj6jjcwJe2FYlNOIsD8
-	 pfS2VSYlRepJw/U3jkZ1hGHFGnNEZ23E0LdByrJRafLlMMQbrb7cCvogK3xp4kne7M
-	 BGkbi/PgWdPnw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71652382327A;
-	Thu, 15 Aug 2024 11:00:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1723719706; c=relaxed/simple;
+	bh=WMRMJAWuc0rrjp1JzmdhGRrglJU/0QI3o/yoKIrMi5Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=YplInKh6TBGltrKOL0nhxrwV2N+u/uKjGcyNcqJEoFz/22fwLJcepOkKSOBOJRB/KGN3fqwHCAgoGwSt8i/k6kmV0Q8gj4g0GkrT8sLco0BM3E5Js0+jH81Pw9Dfd9cg1BQnZ+b50IL5QnHnCyXYD7GejzfUAfUM4BVZORDoYNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 986191C0002;
+	Thu, 15 Aug 2024 11:01:38 +0000 (UTC)
+Message-ID: <afaa4192-da08-4180-a09b-2b953293ba76@ghiti.fr>
+Date: Thu, 15 Aug 2024 13:01:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: thunder_bgx: Fix netdev structure allocation
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172371963327.2820806.10090628006772754958.git-patchwork-notify@kernel.org>
-Date: Thu, 15 Aug 2024 11:00:33 +0000
-References: <20240812141322.1742918-1-maz@kernel.org>
-In-Reply-To: <20240812141322.1742918-1-maz@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, leitao@debian.org, sgoutham@marvell.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: add a warning when physical memory address
+ overflows
+Content-Language: en-US
+To: Yunhui Cui <cuiyunhui@bytedance.com>, punit.agrawal@bytedance.com,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ alexghiti@rivosinc.com, chenjiahao16@huawei.com, guoren@kernel.org,
+ vishal.moola@gmail.com, stuart.menefy@codasip.com,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240814062625.19794-1-cuiyunhui@bytedance.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20240814062625.19794-1-cuiyunhui@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-Hello:
+Hi Yunhui,
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+On 14/08/2024 08:26, Yunhui Cui wrote:
+> The part of physical memory that exceeds the size of the linear mapping
+> will be discarded. When the system starts up normally, a warning message
+> will be printed to prevent confusion caused by the mismatch between the
+> system memory and the actual physical memory.
+>
+> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> ---
+>   arch/riscv/mm/init.c | 8 ++++++--
+>   1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+> index 52290c9bd04bd..c93164dc51658 100644
+> --- a/arch/riscv/mm/init.c
+> +++ b/arch/riscv/mm/init.c
+> @@ -236,8 +236,12 @@ static void __init setup_bootmem(void)
+>   	 */
+>   	if (IS_ENABLED(CONFIG_64BIT)) {
+>   		max_mapped_addr = __pa(PAGE_OFFSET) + KERN_VIRT_SIZE;
+> -		memblock_cap_memory_range(phys_ram_base,
+> -					  max_mapped_addr - phys_ram_base);
+> +		if (memblock_end_of_DRAM() > max_mapped_addr) {
+> +			memblock_cap_memory_range(phys_ram_base,
+> +						  max_mapped_addr - phys_ram_base);
+> +			pr_warn("Physical memory overflows the linear mapping size: region above 0x%llx removed",
+> +				max_mapped_addr);
+> +		}
+>   	}
+>   
+>   
 
-On Mon, 12 Aug 2024 15:13:22 +0100 you wrote:
-> Commit 94833addfaba ("net: thunderx: Unembed netdev structure") had
-> a go at dynamically allocating the netdev structures for the thunderx_bgx
-> driver.  This change results in my ThunderX box catching fire (to be fair,
-> it is what it does best).
-> 
-> The issues with this change are that:
-> 
-> [...]
 
-Here is the summary with links:
-  - [net] net: thunder_bgx: Fix netdev structure allocation
-    https://git.kernel.org/netdev/net/c/1f1b19428409
+A bit weird to review and test my own patch, but here it is anyway :)
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
+Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
+Thanks,
+
+Alex
 
 
