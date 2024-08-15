@@ -1,104 +1,165 @@
-Return-Path: <linux-kernel+bounces-287409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A58395277B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 03:21:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E90F995277E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 03:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48957284ACC
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 01:21:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1303283A2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 01:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3552847C;
-	Thu, 15 Aug 2024 01:21:17 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBAE4A0F;
+	Thu, 15 Aug 2024 01:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mIqgNiG8"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC97164A
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 01:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FEF417C9
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 01:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723684877; cv=none; b=KSISnhljHiOhDEjuDlCbaBzAZvkOqTHtPTTumQhXpTmIhauRw7RQnvPHwIAkRntT9bJbI0pCyFj4l/g2ztn+F8ehQm7PkRFufX+TjTjQMBczlw8O5PnHN1KN4ePGm45461j507Eo0CJB6ow9nIWhbSqUa6RWREsyXsCqukebv2Q=
+	t=1723685041; cv=none; b=afnoz74sgNghoFYIWXnWK49RxAv8/IgVvW3+8zdprRVTyaapwbtFV3iPr96tGONLKUO+ZLHWHdu3QVfYc83jq807Jjb8mw+hMilyKZczI5zhPEBXUQFOjpbV3699VfyJIIVzfcp1l7otRKWKUKUOdYa60yLKESbkN2G+Hqm5sfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723684877; c=relaxed/simple;
-	bh=Hb3X4riTxNkNCGjBLuPrCPRcXoa2jIrWSholPAoh3Io=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=YtBd2BNGp9oLtih5X9d3sn4wRv8tPpzD0rrQ/cFcMS71zte0VjSK8wUoT/dYaKvmQrKmHq2+WW1B5QxG8OK2eLYVOeaUKY8k8F9hvq9MY3WnqJWvzclll2WW4VW83ASlCUP21NH5QUViH/imMPea3oukiW6/o2+V8YFo0GwRmCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39b3245b20eso3787565ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 18:21:14 -0700 (PDT)
+	s=arc-20240116; t=1723685041; c=relaxed/simple;
+	bh=IPanApsJyaaxjvVuTuWizOqptJ7DXErfoFO3SGXCop0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MHVqTYItOqvgFANZuheIOg78o4zt24TWPeckhFjjt8mbs8iiVT3xWsYwB5QTPfjig98N/1gdFeup7RW3neJA3OrwbKGwZ7GO/P69YLF76DV6BYwwm8Pzi4Jkl0t5m9iiEB2J+pnmNurP0br3bXECAsb7cp+TpruHnamxMyTknf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mIqgNiG8; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so943533e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 18:23:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723685038; x=1724289838; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hQp22hCpTnstTtw8wIhx12A0v1Bwi4IEODinYcz0rtQ=;
+        b=mIqgNiG8yULWufamW0g/yWCTaymeS8DOpIw04pPcaph7qjpQk742GK2IWvtS6g2N+M
+         mR3Bddgr1fFg1yjQadfaMRTG/T+SZOFyomNuRYk1Mi0MIB7P/k+f79F/OgsTf7zOIuvc
+         8YQGxujPWIGM1u6OL/cijXClvcBbOz07jf1wMb4q1ZYWiW1C1E2qKMFJns7P5D7ZYOaX
+         daoPmT8prAg5DRXcAeI8FQOOKcDYYRRVX0W6BGdJtTZ5P9oIZeKzJM/8iSzBc2B5OnvE
+         WmG1Riq/x12hP1kKmIXNH8+p4ZPURYi0T6c6WONGmYUs1AgCQpjn+fW79tCAPeFuJinJ
+         MNzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723684874; x=1724289674;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hb3X4riTxNkNCGjBLuPrCPRcXoa2jIrWSholPAoh3Io=;
-        b=bTKoYRGofn7DBG4n/JGy1h2HDXzcAce5r86IUL2sQ6IgGRaa1Qg/uZDCD0GRTLQKcx
-         bHL3c3jgDVsp4ruPUyNOQuCyWYL0HWxCFrDbXifbnPfzQ4eo+p89PGJ0GtcpPc+AMMFu
-         GAWpXLejkRzX02Z/F+CT7j/jnbUVb58Rn0R0YoWtOJ6+kTm8FcDbRTY6ogFZTd4zaE3O
-         5q+5vPKYHQS3PRfvXvlq2Ejm0LAMRJ6xkqyXg4JFAwIUziZEx3kndoIdi9GfLuCg5v37
-         USOQJybJFylNc0OvI37kF3Lu/9yNw0FH74tZ0BfPVCLyqLcqf90FbJ8mrEJOEklJM+dM
-         /Nfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVrXcxMLcFSjJY9Ccmu3WiLnRLVMTj98K0f1WO/ltMcJDLVVhp2fH1KlI8zJx8t/BHdAmG6GJjgfjhneSSCOuQCyb9AdGHmyyHvD4CA
-X-Gm-Message-State: AOJu0YyleTNGfBy/G9K56NiolfjHb3m1KVvARYRqI4Off1MJZl3uAEz2
-	/K3ILOfs2lgDqGzx9EjUDpVpxQWqxqoI8keod6YdEfYox92kn9t6FkIRyr5JyfZ+CPJci9pG48N
-	ge6l+f89JG246DfNPzb/FmFspc3DzkzeUo4pkBFTfPHQ1p4f40eu4In4=
-X-Google-Smtp-Source: AGHT+IE1L+cIMMAFHcc0Wx8kcH60VX5XGrnjTgUDbjMF+9tGU9/HcW1WoLcbwHPNqV8SKgFyweHjql3dcF+ilk3XSi+FpZYWPhcz
+        d=1e100.net; s=20230601; t=1723685038; x=1724289838;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hQp22hCpTnstTtw8wIhx12A0v1Bwi4IEODinYcz0rtQ=;
+        b=oG2YyDnUU3DiUCTEbxGuVKmqtxt5Ey2MvMIY2So8VtAHtelwL3K7GAc/qWG/yV52o1
+         if4F5MtucR3ArNWV/NvTswP5Xc6fsicSNFR/erJpQdXc6qKD9NYjw4sJKXQOyxrtGcgD
+         DfLaAPwob61bIebkiVJcVqQYZ8oXh8ixwG4MaSkq2xKC1JVSDBjaOS8r034Q0SE4e97t
+         tGwBoKakhrdhTzwGw2KDMV8LEXrj8xRnltBo9PNeiSz8ia+GcJJHyJU1qAZu8tHZTrUI
+         rvoqeC+mbhFEflH6FjAT3lbhh48HIeb+NlMaARDwz0SVN6MccZYdU6bDCmxXTx6l4Gba
+         xyQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWA14xXyZFcfsbt2ORhZr5XsJ5fiV64Ip3SRq2wN4pEP45Gud652rnGjHLF2IvuyaroU1aDa962IPvKLZvahZexSumQD3Rle2hOcnzM
+X-Gm-Message-State: AOJu0YyMQ7xEeXQfu8kR924l0Ihe6voMMzRjQdFiGfxSIVZp5HG7nvAY
+	EeSAPWcRKKirVOeAWvVEQ0X+PWmknRlD68GZL5ecfKNa+9ZxwnRQbljFFJEWD8yD9zgqdAMF/FZ
+	8mCCWBhXcSmjL9iAH23qoCwCb9NVUUnSPZ3GV
+X-Google-Smtp-Source: AGHT+IFrmbv+IGINyaiTjjFMEcT1EM7N8NhQ+gfP0HDbTjV9qfqTdAooQ6NiqoWk3LCU+4dwnx1K8uEXRcbmhM9BWxg=
+X-Received: by 2002:ac2:5695:0:b0:532:fb9e:a175 with SMTP id
+ 2adb3069b0e04-532fb9ea617mr2873611e87.6.1723685036624; Wed, 14 Aug 2024
+ 18:23:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2181:b0:39b:c00:85aa with SMTP id
- e9e14a558f8ab-39d1bd3bb90mr881145ab.0.1723684873954; Wed, 14 Aug 2024
- 18:21:13 -0700 (PDT)
-Date: Wed, 14 Aug 2024 18:21:13 -0700
-In-Reply-To: <000000000000ac237d06179e3237@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009df8df061faea836@google.com>
-Subject: Re: [syzbot] KASAN: slab-use-after-free Read in htab_map_alloc (2)
-From: syzbot <syzbot+061f58eec3bde7ee8ffa@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
-	houtao@huaweicloud.com, john.fastabend@gmail.com, jolsa@kernel.org, 
-	kpsingh@kernel.org, linux-kernel@vger.kernel.org, martin.lau@linux.dev, 
-	netdev@vger.kernel.org, sdf@google.com, song@kernel.org, 
-	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+References: <20240718173423.1574395-1-maskray@google.com> <a97e6b4232394e837666adbaf7e657900cb7b1a8.camel@xry111.site>
+In-Reply-To: <a97e6b4232394e837666adbaf7e657900cb7b1a8.camel@xry111.site>
+From: Fangrui Song <maskray@google.com>
+Date: Wed, 14 Aug 2024 18:23:43 -0700
+Message-ID: <CAFP8O3LcEZD2L6KFw-Qh5jGivtifFUzqTM=JceWKU4nJrBaBZg@mail.gmail.com>
+Subject: Re: [PATCH] arm64/vdso: Remove --hash-style=sysv
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This bug is marked as fixed by commit:
-net/sched: unregister lockdep keys in qdisc_create/qdisc_alloc
+On Wed, Aug 14, 2024 at 12:56=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wro=
+te:
+>
+> On Thu, 2024-07-18 at 10:34 -0700, Fangrui Song wrote:
+> > glibc added support for .gnu.hash in 2006 and .hash has been obsoleted
+> > for more than one decade in many Linux distributions.  Using
+> > --hash-style=3Dsysv might imply unaddressed issues and confuse readers.
+> >
+> > Just drop the option and rely on the linker default, which is likely
+> > "both", or "gnu" when the distribution really wants to eliminate sysv
+> > hash overhead.
+> >
+> > Similar to commit 6b7e26547fad ("x86/vdso: Emit a GNU hash").
+> >
+> > Signed-off-by: Fangrui Song <maskray@google.com>
+>
+> Hi Fangrui,
+>
+> If I read tools/testing/selftests/vDSO/parse_vdso.c correctly, it does
+> know DT_GNU_HASH as at now.  Thus after this change the vDSO selftests
+> are skipped with "Couldn't find __vdso_gettimeofday" etc if the distro
+> enables --hash-style=3Dgnu by default.
+>
+> So it seems we need to add DT_GNU_HASH support for parse_vdso.c to keep
+> test coverage.
 
-But I can't find it in the tested trees[1] for more than 90 days.
-Is it a correct commit? Please update it by replying:
+Hi Xi,
 
-#syz fix: exact-commit-title
+Perhaps the selftests file needs DT_GNU_HASH support like
+https://github.com/abseil/abseil-cpp/commit/1278ee9bd9bd4916181521fac96d6fa=
+1100e38e6
 
-Until then the bug is still considered open and new crashes with
-the same signature are ignored.
 
-Kernel: Linux
-Dashboard link: https://syzkaller.appspot.com/bug?extid=061f58eec3bde7ee8ffa
+> > ---
+> >  arch/arm64/kernel/vdso/Makefile   | 2 +-
+> >  arch/arm64/kernel/vdso32/Makefile | 2 +-
+> >  2 files changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/arm64/kernel/vdso/Makefile b/arch/arm64/kernel/vdso/M=
+akefile
+> > index d63930c82839..d11da6461278 100644
+> > --- a/arch/arm64/kernel/vdso/Makefile
+> > +++ b/arch/arm64/kernel/vdso/Makefile
+> > @@ -21,7 +21,7 @@ btildflags-$(CONFIG_ARM64_BTI_KERNEL) +=3D -z force-b=
+ti
+> >  # potential future proofing if we end up with internal calls to the ex=
+ported
+> >  # routines, as x86 does (see 6f121e548f83 ("x86, vdso: Reimplement vds=
+o.so
+> >  # preparation in build-time C")).
+> > -ldflags-y :=3D -shared -soname=3Dlinux-vdso.so.1 --hash-style=3Dsysv  =
+     \
+> > +ldflags-y :=3D -shared -soname=3Dlinux-vdso.so.1 \
+> >            -Bsymbolic --build-id=3Dsha1 -n $(btildflags-y)
+> >
+> >  ifdef CONFIG_LD_ORPHAN_WARN
+> > diff --git a/arch/arm64/kernel/vdso32/Makefile b/arch/arm64/kernel/vdso=
+32/Makefile
+> > index cc4508c604b2..25a2cb6317f3 100644
+> > --- a/arch/arm64/kernel/vdso32/Makefile
+> > +++ b/arch/arm64/kernel/vdso32/Makefile
+> > @@ -98,7 +98,7 @@ VDSO_AFLAGS +=3D -D__ASSEMBLY__
+> >  # From arm vDSO Makefile
+> >  VDSO_LDFLAGS +=3D -Bsymbolic --no-undefined -soname=3Dlinux-vdso.so.1
+> >  VDSO_LDFLAGS +=3D -z max-page-size=3D4096 -z common-page-size=3D4096
+> > -VDSO_LDFLAGS +=3D -shared --hash-style=3Dsysv --build-id=3Dsha1
+> > +VDSO_LDFLAGS +=3D -shared --build-id=3Dsha1
+> >  VDSO_LDFLAGS +=3D --orphan-handling=3D$(CONFIG_LD_ORPHAN_WARN_LEVEL)
+> >
+> >
+>
+> --
+> Xi Ruoyao <xry111@xry111.site>
+> School of Aerospace Science and Technology, Xidian University
 
----
-[1] I expect the commit to be present in:
 
-1. for-kernelci branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
 
-2. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
-
-3. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
-
-4. main branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
-
-The full list of 10 trees can be found at
-https://syzkaller.appspot.com/upstream/repos
+--=20
+=E5=AE=8B=E6=96=B9=E7=9D=BF
 
