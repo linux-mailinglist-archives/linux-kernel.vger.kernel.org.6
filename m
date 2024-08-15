@@ -1,173 +1,216 @@
-Return-Path: <linux-kernel+bounces-288412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C22389539DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:24:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B379539E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:25:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A696B23DF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:24:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F42F1C236DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000116BB39;
-	Thu, 15 Aug 2024 18:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8FA78685;
+	Thu, 15 Aug 2024 18:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cuw16Ahz"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="e94eP1Rk"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012020.outbound.protection.outlook.com [52.101.66.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788345B1E0;
-	Thu, 15 Aug 2024 18:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723746272; cv=none; b=qOZwAHJs/ZuIDzW77R2EFFRfkECEZibrYcQBXPf9a1Rb9TASel6yL1+EM+0LVg/29devfT0gFuD466cVZF+MrmHumPnimhqm6z/ikNL/y8ofB18Th9DZoeuM+ES3HyxLNpAr0S6H3LiiVMQj8NFCdnyYrAduzz903KGywV1stw4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723746272; c=relaxed/simple;
-	bh=HhpX9mFHejliR5elf1NsnfmL/ghUHSWa6TNyQGH0IYc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j5ZPp8JCXw4u5StYC7+KQwbgE8aDAU2tsClvGnRLeMDBLP6ONXG8qN09lIXsJCixjVEmiYdFFxxHQJKISV+xonEUipMBP4sbB57Ue8BWltYSJvhuKOwjyb891MV3D2X70X1slNLaZqbwd6L2QQKp3caIcBcOH5NlgRKI0Nnm7Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cuw16Ahz; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-371893dd249so519198f8f.2;
-        Thu, 15 Aug 2024 11:24:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723746269; x=1724351069; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8KTOckrbLosoH+MqatNzZ6gxaYF4DiO7VwZNlqNUG40=;
-        b=Cuw16Ahz6I4pncNyAGEqAg/sFlTTlYBYmwIR4v7LIYq6PPIJLe19JCu57nLG5Infr6
-         HRDcmY71tjaKBx5CGiQgFS09ol+wf2MYp3w/1e1+wHEipw4EVF3nF9zseDA/Xq3m6wyB
-         of3uEwmIhaKi7SSeobFz6kGVltLth5H6QnC5lJs4PzChem2z/Lgd9MitSdlbVhiBrpzg
-         lG/PS1U1K/I3pFSUrXcsIUEpAfydusr4CBWbaimW6lchzuEOB21CMwin/A4JD/YI4CW6
-         wfaYZ7kskz85AG1y1jAdeqQ/ngkjixQiTkvPz1p3RrxJ/W8HkS13ZaGuUqxPfbMyi9Nm
-         wE4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723746269; x=1724351069;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8KTOckrbLosoH+MqatNzZ6gxaYF4DiO7VwZNlqNUG40=;
-        b=Vn9lgFhD0duRw3ktxsuYvU7j7XmiDLFD+r3b4cOhVshOLvaIPuaaToh+KhM0yLRYor
-         eXj9HniRphHdi/Bc3X0pCwO+3Cmw+DbASSI0hEC5fpQVx4QyjMJQriD8UpKxnna34Ohf
-         9j6Fi2cZWnczygRnaBPWuqYSnrnVHCYyf7HCBbIwcxL75i5mmGlmVC6w7+I2Tj/1X2if
-         q1bShGJVckMszUaUiqaJ40QI3k3P8MtabvGRhIuCbrlbDI3alx2yz8GzZtiQUICNPiGH
-         d63QQC2xWXxKR/pF541f/kfs4za/JgqHovWV97arugIrkQEQQ/iCJVyNvywNmcwxAljo
-         pZqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVmREJYubFkfOWExDJ2wpyd+vHTc7i1tqKVy6rDRUl2w0ZnVTPylc61UjufHjZnDJG766MJ65qQpJaWs0A/w0uL8uRw+8FkRRzUSTQ42Q3rYUjhFcmMO57pU+2cYTBc+m/yujOSxTPFBLeIPUCJ06Zg8OoA4NV6858ExD7ftjdXyELrAJZb
-X-Gm-Message-State: AOJu0YxYd3Wa9Rw/y17nA2+dc29bKyjhLRw0otvk1HMmd/siCeVrWk+b
-	Ous5TK4yIFOCh6QbtbtrHCVewbP1JpWOiDNeXfB3ITLClTowViomdFrDaCVl
-X-Google-Smtp-Source: AGHT+IGQoj9gJ04NKNoIhlq7hwLmGKYPEgKnWxl/ceBsbuCi0I8Bo3zXwbffCScibD2/t+fV1OTjvQ==
-X-Received: by 2002:adf:cc8c:0:b0:368:633c:a341 with SMTP id ffacd0b85a97d-3719445210fmr202041f8f.22.1723746268336;
-        Thu, 15 Aug 2024 11:24:28 -0700 (PDT)
-Received: from f (cst-prg-76-86.cust.vodafone.cz. [46.135.76.86])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718985a6ddsm2101099f8f.58.2024.08.15.11.24.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 11:24:27 -0700 (PDT)
-Date: Thu, 15 Aug 2024 20:24:15 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, peterz@infradead.org, 
-	oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, willy@infradead.org, 
-	akpm@linux-foundation.org, linux-mm@kvack.org, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH RFC v3 13/13] uprobes: add speculative lockless VMA to
- inode resolution
-Message-ID: <guxwr4wzs5yt5ajrpwwpjdv6lbjf4dhgmjh7edrbc7lvevnh2o@joquw2jf6s4i>
-References: <20240813042917.506057-1-andrii@kernel.org>
- <20240813042917.506057-14-andrii@kernel.org>
- <7byqni7pmnufzjj73eqee2hvpk47tzgwot32gez3lb2u5lucs2@5m7dvjrvtmv2>
- <CAJuCfpG8hCNjqmttb91yq5kPaSGaYLL1ozkHKqUjD7X3n_60+w@mail.gmail.com>
- <o46u6b2w4b2ijrh3yzj7rc4c3outqmmtzbgbnzhscfuqsu4i4u@uhv65maza2d5>
- <CAEf4BzZ6jSFr_75cWQdxZOHzR-MyJS1xUY-TkG0=2A8Z1gP42g@mail.gmail.com>
- <CAJuCfpGZT+ci0eDfTuLvo-3=jtEfMLYswnDJ0CQHfittou0GZQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FFE15B69E;
+	Thu, 15 Aug 2024 18:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723746285; cv=fail; b=P5g3OUJAZzXZNVrnc7fg8sG9Vbjsxj+R9XHvFJJS6NYsssq0pTYBjgIfG7U91nihS/mR+NusuZGv4JzmxwH0rbkI14PVUBznwEvEwlSlj95WvPph4Da4MKm4vxp4/h2pUir7vZvK4YdpHsrcA+ycwlc+4+gXVhCIrPZhvK7rUqU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723746285; c=relaxed/simple;
+	bh=0YM7JTEQ5yzNdQEcx092cVzaF8x29DOoGoWJ1Fr1GQg=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ffcn+Mgvt8pN+hWUo4fQPeaGtt6B+RtY7LBH+ooS6kmwp7cET2zOMKuoYy5Q+sz17wlT7C8IFGGNlI70A5OBG21J+bbjB79aUoSMw9rDi3h+PSqeDdERfBv831V2I3vC/TmCHwO2d9gg/xiuPqu3VOPgu3RErMFz1fqe/YRWbmo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=e94eP1Rk; arc=fail smtp.client-ip=52.101.66.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jdimTbL+3W6qAFnQhdNyJjWVKu1yts2TMh97RU41XuXjrZZXsWM3OG/vKIqkm4VGQJpg/wx9yaeAWSw6VOJLHFKcRkTtu+zP/C+VqhJCyRI9baO8Cbw5XPAx7X1NJrMKRT8+murxYQploeRG3j2pVlxH36u4Cb+7Yh1Le+M/cJT4LNPco28cS6OppeygecG5Tj6249ybTqVnC2LMqW3vBJmWqd9+0IQl1K245C4rCVkj3I5Bnb5wnSFcSo/Qf138DoU1275ETP79uVsa35mGSeBzUEOVMN8zNlpY4CF8RaAPyYV9aa/TrbAY7OE7Mq1+hv7ADNZPzRR8yDuhq6PyFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0NtYljWgIO+S6vIQTcC/GZM0+4tz0ue+1wyu7vMmLv0=;
+ b=Un4m/3aa5XbON28/hM59tn16SLXdW8b1CMV1w2+oUzd8uUKm8RqsWQBkFhtljnTHIL065DfZg3wBdTgkIlD02tXjU33QvTAgiDv6fZe4sHp2Y0nI7gHVB2BzAX1jd6yxRsB7kMH3qBQ8yheBUbcINMpcyxQsVMnH9XE1BNRms6byP5eEPUy+vpuZ7C/bPztTImGbuvVmIjrYZmLjnv4zQF7xCjHqxoMGo64XX021zDAQcDt8kMKPFkB/+Ml/IRirRpOrJB0iMvLtI9ZJloZmoY1CxNu85xsyyECC9B+ikB/Fyx6ipZ9xL0T3huBVVWfw1dhYa6ZiXp3v5XGYoBKHmw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0NtYljWgIO+S6vIQTcC/GZM0+4tz0ue+1wyu7vMmLv0=;
+ b=e94eP1RkacR9SYOUxkFdF4Ah+WzDU6/1foYLGVFqyv9/sHF/2VqASsK2eN4x78+vei+TPGmr8uABQTrZLwmO74JKmb5G7AE7vC7F5H9OAhQFThaDMi/KQ9uL3yL+EledGuc/wkynHVsv0WMKQuzXTecbJ91KpeW+icHusgOBxBj3xdKGdX2iDvnPGz/7rml/g/Mv+T0S6Kmhg2gX6ODCbT4pwplDGEIHyTxJ4XzACxJPDPmPcSkuINO3Dq0ex2b1MdC5+LzDRJSH83Z/e5NcvVvjyzgtGNo2i3n73DT6jMGgVeX/lyUH7QlSMU/A3tlo5FRgGh8Ewx5SafjJnu5HDw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS1PR04MB9584.eurprd04.prod.outlook.com (2603:10a6:20b:473::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.18; Thu, 15 Aug
+ 2024 18:24:39 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7875.016; Thu, 15 Aug 2024
+ 18:24:39 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: manivannan.sadhasivam@linaro.org
+Cc: Frank.Li@nxp.com,
+	Zhiqiang.Hou@nxp.com,
+	bhelgaas@google.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	krzk+dt@kernel.org,
+	kw@linux.com,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	lpieralisi@kernel.org,
+	robh@kernel.org
+Subject: [PATCH v2 1/1] PCI: mobivel: Mark layerscape gen4 support as Obsolete
+Date: Thu, 15 Aug 2024 14:24:20 -0400
+Message-Id: <20240815182420.58821-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR03CA0193.namprd03.prod.outlook.com
+ (2603:10b6:a03:2ef::18) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJuCfpGZT+ci0eDfTuLvo-3=jtEfMLYswnDJ0CQHfittou0GZQ@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS1PR04MB9584:EE_
+X-MS-Office365-Filtering-Correlation-Id: a8d4b773-21aa-425a-66f3-08dcbd578665
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?CKSt81mOa1PCLa0B8EJv64dfNg17l5ZDwW7TIikFbpRpmhgP19CgC03b24P2?=
+ =?us-ascii?Q?PxnqedeG9g93PZPRFlCf3pU9unswdGyJICyy4Oc0BLSVheLmTj6+C2fJn5vH?=
+ =?us-ascii?Q?hkFua2M5pGuzTjZp6sUj1hK/varsGZipVPL0Gwbelr6oXXW34t8q08F6zoKM?=
+ =?us-ascii?Q?aKfPO81LsBhIAsdooPhd1DbmeVWnxuC0Xj+1GT1CQ4SRFs+TCHHH7b8bsWNE?=
+ =?us-ascii?Q?I2FIpseM9x4nC/UMfD4bv81Rx883lzZjsV37qXlbX84H4UX/ygNYP1vumJtR?=
+ =?us-ascii?Q?qO59OzNO/tyxp010rXypIiZKABon7NfWbjql/ji/sTPvvNgAjjtNvmZ5cq9o?=
+ =?us-ascii?Q?JhRUyFVnLqb6olAPvoSVvuYiloNRaGg41lscfUjDXBuO98WEK7dw8v8aKfux?=
+ =?us-ascii?Q?6uivCpIQycJbge2df+UMcdj13a1F2OP/MPQdEYSdqggaESjqp5mdTEjJE2FG?=
+ =?us-ascii?Q?+lnmWyE+EQVA1BWyFso8NoPHtcj112mAp1cZBCfTGbLVLMSKhZ/XGH7M941d?=
+ =?us-ascii?Q?wLOMjjL5Aad9yLAyRsRa1OcW/ZbriNGmJjPqIuBnJE11Lh6Q/KP+82Iz6WRA?=
+ =?us-ascii?Q?eZCHyAFucg6SO1IIg3jHEy5aWb8bC0coE+QlhsVUuIhvcCJ7WLMhZmBycbvF?=
+ =?us-ascii?Q?1Nt18Bey6dpOdi3N6xx6g5Mw4zYxSW7rC19gFFsc/G+5gsa4AY/9WbvJYTDD?=
+ =?us-ascii?Q?N4lDchIhgPIgC8vHutEvFrQHYAHDOYx1CsYa9tFRBMY1zRffLPVsgULEW0WY?=
+ =?us-ascii?Q?tFqssDLAc7Ru8QQ1GEsfCCtb1m7sHiasYuhpj1KUxdiNXOi/vMkhJLiHnnlT?=
+ =?us-ascii?Q?EbztPFzAeHpJFoBojg8aEycCMCI4bH13jN/rVAmV6aIi3AbaXCrqQNzpjxUp?=
+ =?us-ascii?Q?pVvsGqseG2rREcRPyAomLN6sVOluUoWq7ZXZaVou54GH7I4c+jUMXI9kNN5C?=
+ =?us-ascii?Q?unnRlPpSm/u1HIb9WsdQOAI640tvxg2LpJwUElgFzxvPyWbdXm6D7mmCinYp?=
+ =?us-ascii?Q?Bqv4OONwSTzRb16KdDQeEdKgL1vTC1OF+Jg3ag1aDs/S79z2jyd6a8XI3Ak2?=
+ =?us-ascii?Q?vh+Z7yytxo6bDpc5sLiJO+Lx5nFdXBnkIUNV/CcILudCipxqhaLn+8qxbUtd?=
+ =?us-ascii?Q?+oAU7wxj0ZBtbjf5ajf59sriMse7xndYm42QQsJy3iJ19bRRK6nOsNku/NDi?=
+ =?us-ascii?Q?+ugNLm6DoRcQMxhduerZt3ZDsvT7EN8Yh6Yvn85qqF2a4Y4jWkculI8aEqFB?=
+ =?us-ascii?Q?ntIQB2MZgKaDGu/SDgEnlm4+yjXp9aRwfkh7/uqjegKM1rnazZWqmJ41p85Y?=
+ =?us-ascii?Q?tpuxpsCkIkQ0GTCRTsobgDZ9+f2rqeXGqVrdwSLaT6V1k55J5OlvtsVeUmT5?=
+ =?us-ascii?Q?xEkuY6NuKv3fJWrzJRs6UK4R8m+Ij1fbn0UNYDOyEVoAapHuTQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?150R4y0ZlcheV9NjFbfngVWL8YqHatC4z56RAHZRw2/kDBU1ZasEfbAojg4i?=
+ =?us-ascii?Q?v7RtYjrzx1tG5Zio5euAdJyzC1Hhd6Pr1s5u7UrVkvbuZAZG7Ky97CcycWEB?=
+ =?us-ascii?Q?DcsGtS4G0P454H+0A9yMUtE6bWSVUXZs/artbU/QyfkUeRjMXUJyasWAWlA+?=
+ =?us-ascii?Q?UgzZe4qlOBRmvBecLOiUOXSPN+oCKzZTHZkTeHrQT9e9vtXIuFtWtz9rnw4t?=
+ =?us-ascii?Q?L/lpp0OET5Y4xUT76RSPbUX1elUs7OtcMUcxNPbUW1n/OUpHmuYVOSAP9p2F?=
+ =?us-ascii?Q?7O/SPjMFlbcmWbrf452Hdfz1cvGEWQ89Y1O/aLS9NDKLJxCgM9Au+sA7FuSD?=
+ =?us-ascii?Q?xBXzgDOg/p3+8lr1jCFhAEU9612sCYKCN+/zRSNyM7/VcZ4XdYD2ADrW0UMZ?=
+ =?us-ascii?Q?bb6W09hrO+/e2lrBizN5OT6FWOpFr+82avU+X6xUGFNR7oThTQO1UOvSzH4C?=
+ =?us-ascii?Q?UTgfzs0FA3OZGjZo/MsKg5OWCApLHzTx8KUWcGzRoV3vTBGy7L5JJ7WHXzGk?=
+ =?us-ascii?Q?FwJbZtTay5W7RtEeFMnMSKmUcPDINH+JGwxjDQaCHXAxX83B2oJox0G68arE?=
+ =?us-ascii?Q?3mtN7fPK49YRcTG36U7p88a3uQtG6o8p5pvc3jcuES98V4hpkqNQ8ld3dVgj?=
+ =?us-ascii?Q?FhaQqBrd8Emv7idmdBg7zfqkho8XYno8TA00p8zAQQRYltGnahOkLZXUOgcz?=
+ =?us-ascii?Q?L69N+QfsTQLoLxLeRIVDwnQhvAxfHKXmlqNYw/kEbyrUA/DYf2d8CwyzR3l9?=
+ =?us-ascii?Q?fjdvu82ZqFe4ZbizEO45BKtf0of1ENkLaeOgGhSX5U1zb3k1qqxq3Iy0Cmsl?=
+ =?us-ascii?Q?GaHDZ2Z2R9puITKb3EHJa6zazmLi0+/wG5Q6rCrdTOFVNqSuiK1epyJJL6F/?=
+ =?us-ascii?Q?o8hB975hDzglPJDJk+XLO5xW8gk5yfLRS+f3stsujmCqfzvGRJKLtonwGGCA?=
+ =?us-ascii?Q?oi84Ak/LognIRV04Hl5qyMjaeAj3L46EYhycc78ub7sa7+0LQ78GVcvelyeD?=
+ =?us-ascii?Q?uIdCHOAeWPWN9NwBVD3qZW+IFbjTBPMtQBXeuekI6NKEvtLrMT7upV5IRpQQ?=
+ =?us-ascii?Q?4njriO9dcafdFelRK3WHRT7UCnD9uhpgjMk1Gb10VmEa0fXlD7Cry0Tw2nbg?=
+ =?us-ascii?Q?uaf75nbw3GhguFCLapy7HELiUnZq6MT5lUHHCmIcMp46vjDPxgvBWOAu/mkV?=
+ =?us-ascii?Q?Qa7H8Nzp0A5sbGnwPAzSORum+Equa0VQJ4J4Deh68MwHk+toXyjieumC+c8D?=
+ =?us-ascii?Q?EprsG2lRY8cxkKD9SL1qk1cF5CJCxvslbJyzccSCXAcCKv/bUoKAqm+mRhzq?=
+ =?us-ascii?Q?pYa4gs00gKH9IrMQFSQHEF99cSELEZQLUtOQHoLASCBhZpD6hP8hmOWyybO0?=
+ =?us-ascii?Q?ODzsRcOwd+0ITyOaylnPY9rPa+neeHQRwQQ0I8Cp+pQZcgc9IzxZkDzn6puw?=
+ =?us-ascii?Q?fwOrDsJQd/rUeP1t9cV93Bn+yrwbSDGrc+B1xxLNW+WHFtUKVxaDQLC/EWRo?=
+ =?us-ascii?Q?gM6n7gPkBD6+bjtEbMEZB/B3Y6k+s7RLkivEsPuTJzU5G2BVHu6t1f44dBBS?=
+ =?us-ascii?Q?Rp+JxZ1oU9DW9bd5B70=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a8d4b773-21aa-425a-66f3-08dcbd578665
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2024 18:24:39.6077
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 404erZ64dZfB29MLPz3JI3JY12AJRT94nFVlfGXslQkvY7tMfrPyejbezJaWhszJhIsETOpB2lhF2EYA8raltw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9584
 
-On Thu, Aug 15, 2024 at 10:45:45AM -0700, Suren Baghdasaryan wrote:
-> >From all the above, my understanding of your objection is that
-> checking mmap_lock during our speculation is too coarse-grained and
-> you would prefer to use the VMA seq counter to check that the VMA we
-> are working on is unchanged. I agree, that would be ideal. I had a
-> quick chat with Jann about this and the conclusion we came to is that
-> we would need to add an additional smp_wmb() barrier inside
-> vma_start_write() and a smp_rmb() in the speculation code:
-> 
-> static inline void vma_start_write(struct vm_area_struct *vma)
-> {
->         int mm_lock_seq;
-> 
->         if (__is_vma_write_locked(vma, &mm_lock_seq))
->                 return;
-> 
->         down_write(&vma->vm_lock->lock);
->         /*
->          * We should use WRITE_ONCE() here because we can have concurrent reads
->          * from the early lockless pessimistic check in vma_start_read().
->          * We don't really care about the correctness of that early check, but
->          * we should use WRITE_ONCE() for cleanliness and to keep KCSAN happy.
->          */
->         WRITE_ONCE(vma->vm_lock_seq, mm_lock_seq);
-> +        smp_wmb();
->         up_write(&vma->vm_lock->lock);
-> }
-> 
-> Note: up_write(&vma->vm_lock->lock) in the vma_start_write() is not
-> enough because it's one-way permeable (it's a "RELEASE operation") and
-> later vma->vm_file store (or any other VMA modification) can move
-> before our vma->vm_lock_seq store.
-> 
-> This makes vma_start_write() heavier but again, it's write-locking, so
-> should not be considered a fast path.
-> With this change we can use the code suggested by Andrii in
-> https://lore.kernel.org/all/CAEf4BzZeLg0WsYw2M7KFy0+APrPaPVBY7FbawB9vjcA2+6k69Q@mail.gmail.com/
-> with an additional smp_rmb():
-> 
-> rcu_read_lock()
-> vma = find_vma(...)
-> if (!vma) /* bail */
-> 
-> vm_lock_seq = smp_load_acquire(&vma->vm_lock_seq);
-> mm_lock_seq = smp_load_acquire(&vma->mm->mm_lock_seq);
-> /* I think vm_lock has to be acquired first to avoid the race */
-> if (mm_lock_seq == vm_lock_seq)
->         /* bail, vma is write-locked */
-> ... perform uprobe lookup logic based on vma->vm_file->f_inode ...
-> smp_rmb();
-> if (vma->vm_lock_seq != vm_lock_seq)
->         /* bail, VMA might have changed */
-> 
-> The smp_rmb() is needed so that vma->vm_lock_seq load does not get
-> reordered and moved up before speculation.
-> 
-> I'm CC'ing Jann since he understands memory barriers way better than
-> me and will keep me honest.
-> 
+Only lx2160 rev1 use mobiveil PCIe controller. Rev2 switch to designware
+PCIe controller. Rev2 is mass production chip and Rev1 will be not
+supported. So mark it as Obsolete at MAINTAINERS and add depericated
+information in Kconfig. Only allow COMPILE_TEST can choose it to make
+impact more visible.
 
-So I briefly noted that maybe down_read on the vma would do it, but per
-Andrii parallel lookups on the same vma on multiple CPUs are expected,
-which whacks that out.
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+Change v1 to v2
+- make as Obsolete and deprecated instead of delete these directly. If no
+one complain for some time, then clean up related code.
 
-When I initially mentioned per-vma sequence counters I blindly assumed
-they worked the usual way. I don't believe any fancy rework here is
-warranted especially given that the per-mm counter thing is expected to
-have other uses.
+v1: https://lore.kernel.org/imx/20240808-mobivel_cleanup-v1-0-f4f6ea5b16de@nxp.com/T/#t
+---
+ MAINTAINERS                             | 2 +-
+ drivers/pci/controller/mobiveil/Kconfig | 5 +++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-However, chances are decent this can still be worked out with per-vma
-granualarity all while avoiding any stores on lookup and without
-invasive (or complicated) changes. The lockless uprobe code claims to
-guarantee only false negatives and the miss always falls back to the
-mmap semaphore lookup. There may be something here, I'm going to chew on
-it.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 42decde383206..c97ca861abae9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17497,7 +17497,7 @@ PCI DRIVER FOR NXP LAYERSCAPE GEN4 CONTROLLER
+ M:	Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+ L:	linux-pci@vger.kernel.org
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+-S:	Maintained
++S:	Obsolete
+ F:	Documentation/devicetree/bindings/pci/layerscape-pcie-gen4.txt
+ F:	drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c
+ 
+diff --git a/drivers/pci/controller/mobiveil/Kconfig b/drivers/pci/controller/mobiveil/Kconfig
+index 58ce034f701ab..8f95fc831c3fe 100644
+--- a/drivers/pci/controller/mobiveil/Kconfig
++++ b/drivers/pci/controller/mobiveil/Kconfig
+@@ -12,13 +12,14 @@ config PCIE_MOBIVEIL_HOST
+ 	select PCIE_MOBIVEIL
+ 
+ config PCIE_LAYERSCAPE_GEN4
+-	bool "Freescale Layerscape Gen4 PCIe controller"
++	bool "Freescale Layerscape Gen4 PCIe controller (Deprecated)" if COMPILE_TEST
+ 	depends on ARCH_LAYERSCAPE || COMPILE_TEST
+ 	depends on PCI_MSI
+ 	select PCIE_MOBIVEIL_HOST
+ 	help
+ 	  Say Y here if you want PCIe Gen4 controller support on
+-	  Layerscape SoCs.
++	  Layerscape SoCs. It is only used at lx2160a rev1 chip, which is
++	  not mass production. lx2160a rev2 switch to designware version.
+ 
+ config PCIE_MOBIVEIL_PLAT
+ 	bool "Mobiveil AXI PCIe controller"
+-- 
+2.34.1
 
-That said, thank you both for writeup so far.
 
