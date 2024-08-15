@@ -1,119 +1,123 @@
-Return-Path: <linux-kernel+bounces-288035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDEF89531AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:57:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF689531EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04FD21C2305A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:57:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBA3428829F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:59:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E0D19EEB6;
-	Thu, 15 Aug 2024 13:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCEC119F49A;
+	Thu, 15 Aug 2024 13:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DaPmhwBl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="kpP/wN5G"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D701714A1;
-	Thu, 15 Aug 2024 13:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7C01991D0
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 13:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723730215; cv=none; b=cD6ZcYxDhLvS001YNb33dGfqy4x1hdDzr56aYBj1qMYWOsFOvisSg25GillIW8j5qQq6dFOWy7764/Gk7xBru5Cmve3V/w+Qld+t73tZHscKTMo3/AD4dKKvVHOlVS/hV6Av7Tg6diZCHu/nqQTJ9djfGPykvCWcauTcb4wIkV8=
+	t=1723730396; cv=none; b=M/bxykIcupt2pO7z2YsRw9849t5Xtyx1q2+lv4b0/vm+rboZ9kPuKLYDr0m8qCZKsdC3/xRV9llOvlphsfVNYn+OYqhzgyXs9KWHhUMkOON1W739nCAj+dwxz+WGRUCXD6o/DWpflhISNhjII2yxqSyDnq9P4r9be2Zgik6/fuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723730215; c=relaxed/simple;
-	bh=pNzAuHuhw5vFj0MfUJcfnnwgyE2OQGAdmeyHX+UNaD4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PHacP5TBa7onHV1Z8I6XWukTe58h3KcZToH9LlD6+4PtHYy1tUexWQOH1hy3YEGs+SdbMh6XEMgkCh/62troGj9RXwVIccoqOuD1vjyff2G5P/Dm52Nno2xQfA3WMjTB51nhSdCjwOEWJRR8r14mOY2r1WfmGNfRGyTmY0V7iOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DaPmhwBl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 880A2C4AF0D;
-	Thu, 15 Aug 2024 13:56:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723730215;
-	bh=pNzAuHuhw5vFj0MfUJcfnnwgyE2OQGAdmeyHX+UNaD4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DaPmhwBlEUrM/uGlSuvQkk2mh69hNGpN3oP0zLSuu4YAZAzR4D8aC2ZIcAvzlNQLr
-	 TKegh9YnwSlgdfXVJXTVxMs/EDzX6qV4Ssxp2LMUz4bgwuKfoNmvcczsng8Na4ZpGJ
-	 LYncOTQnQp7swLnA6FCPHVtRBkq1LSxkehOTEI61CKit6QLrxbEgrE6AhMhs2ET97Q
-	 NwlTi/+tj10fBRStqSZv3MnAIGe4CM2S1h2kOKMCEprJjcAbtiKWPpnuO+RB0u8LZa
-	 0F0BPI2p8oxY/tShm1OCxw6z9kRmx4reVienSJTiRThdFZaarVJCtLlJDZhqZlLnPL
-	 9/YiktCVJGk+A==
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2d3b785d8b1so627114a91.1;
-        Thu, 15 Aug 2024 06:56:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWIshp+OSZgQudqTKxOP59iwq2RLFWSlzBIgQHtLFpcRyIkvZVGSN1LvCJ7UDcA8BJWZpnzq9yzT+Epfr+6bkd8hYgVHunWHtyuy8mxURWf/YnQWQ9QcODXuaM6Vb+1Dc/63NMC
-X-Gm-Message-State: AOJu0Yz6O1RqlXz4Joi3s0yqEkOD7PCQwmUt1a99AuHZ6uaY0JwS+caZ
-	0Nbyb2GgAFvggIP0FX8Lvy2kCMqlJiS41ZmiayloQczztrqcM6aVN7jrpmKu3n0VuGDuNnARjw9
-	tXSY69svFq7mTxlY6wEtdICbcFQ==
-X-Google-Smtp-Source: AGHT+IHF8lihSFvFy146V9RFDKmET4UMbp4dFKkjYWDYSa8MfftqgIMB+sTB/uU6Rl3c42kHJSnavDM+yFIZjN3/ZEk=
-X-Received: by 2002:a17:90b:230d:b0:2d3:ad41:4d7a with SMTP id
- 98e67ed59e1d1-2d3c391157dmr4796664a91.4.1723730215112; Thu, 15 Aug 2024
- 06:56:55 -0700 (PDT)
+	s=arc-20240116; t=1723730396; c=relaxed/simple;
+	bh=i3+GFw9Kb+1vg/wagAiTI6DAAGXtT4Of6H280gyIteg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nn35aQiY1NdoGWwwEUtGtXC0SfezFaJDPJ40162hXXElKuYePwsj4L0kJqx6qimdfJZeAXAnw0y71lFcr1ZyCi7SXFnvekpGja0GH8a3JG0qfa+WLVds/QrbtetHW/FkaEReExtWMpjzDmqXyomNYC7itocc0HKEn8fnzdWtvi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=kpP/wN5G; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6bf790944f1so1754626d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 06:59:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1723730393; x=1724335193; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RvUa6R9Ngwkz+XHKPZK7VQ65M31ZGD3yUkDY22gLioE=;
+        b=kpP/wN5G64AYpK72evutxg8jzpmhBy0OSpYVdowCU1PiNXaYbmAvyX/bzQi+TCdNGk
+         66dARy2m+qZEzJtj4o3JJkwMOwJOK+bIkLVRM/tDwCcpVN3h/oTUb2sEwpehrGfQ09QK
+         lT631FSQsn1GHkVcFMO1GI16u0PUNjtpXOCHCTro54jLArXXHFo5QaE5BsfSguSz63ja
+         yFyQ7kHfbx4xi+tkY6yB+abxMxmcS+36KJgB9fWpIvt64K/ELkcVcD0rqOs3SgjIB6/x
+         4gyTn/YQYHDgeVK0BaXYVWUwe+NWBZovA8VikN6UA2KlH2/jWdtPbEAVarjn5ae9kQNf
+         CnPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723730393; x=1724335193;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RvUa6R9Ngwkz+XHKPZK7VQ65M31ZGD3yUkDY22gLioE=;
+        b=VK3eEytLzf7fSOLgpisWO722Khh0jwD+Fjk68ZzoBVosQpQsO+Hd63aZaq7Q3CZi/D
+         QgfJ1m0WIa6v+Hm/q29ZxNUJHHkDvvoTtvNMm4uA8t8sVg+VghyWls/4VvXDJQDVG9re
+         9eO8OW1Ma+xn0IP7eThVGptti6tg+EE77cZsr4inTbjXUYvTssNbhu+Hu1VWC+0d1JpG
+         CHZuI81ZgpoPem/FMON5TJjH/Di+AoLtylqmnFviM/XIP/pnNW3lgolDzCBNV0sYHvQx
+         zCXg4DBe+28kn1xd3EtLaf9yKoa73CfLd/6Vmr4S+Vp1NV3mtJmC0bujkZCnCQzW58PJ
+         xIAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVGH+Aa4o0yc2XxLywW7wvoYxqXZagYLRbYhhk3rqAeEcILouxwIVImulX1KskjsFNp7Aw6gVvIB0OWzE3A+wxwUpegMGS0b9M8XZo
+X-Gm-Message-State: AOJu0YzZtgWfVUVWWB1YUnZB3qlUZjHddQQ6WRyO2gu/DvBs9HZXbdgj
+	FxZWb/Izr0EyFyx1K9bxEZm3r243pNZBgtuuYEik3dXndPKJdAcbejCj0+nFkG91L+OFCtY03kf
+	tcLU=
+X-Google-Smtp-Source: AGHT+IGoyA/8Iq/P+2JCZgm5EBJMl53zENEDiocnjbraFpHg4YpT96fqlFsiW0Tns/OdsqGyBH6Y+Q==
+X-Received: by 2002:a05:6214:3202:b0:6bf:7acb:ff4 with SMTP id 6a1803df08f44-6bf7acb1aa3mr5666206d6.52.1723730393194;
+        Thu, 15 Aug 2024 06:59:53 -0700 (PDT)
+Received: from ziepe.ca ([128.77.69.90])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fef3124sm6542716d6.123.2024.08.15.06.59.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 06:59:52 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1seb15-003IAo-L0;
+	Thu, 15 Aug 2024 10:59:51 -0300
+Date: Thu, 15 Aug 2024 10:59:51 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Mostafa Saleh <smostafa@google.com>, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	will@kernel.org, joro@8bytes.org, jean-philippe@linaro.org,
+	nicolinc@nvidia.com, mshavit@google.com
+Subject: Re: [PATCH v2] iommu/arm-smmu-v3: Match Stall behaviour for S2
+Message-ID: <20240815135951.GM3468552@ziepe.ca>
+References: <20240814145633.2565126-1-smostafa@google.com>
+ <20240814155151.GB3468552@ziepe.ca>
+ <Zr3m4YCY7Ape3R6y@google.com>
+ <91d6574d-c67e-484c-ad96-91c9fd3d0c43@arm.com>
+ <Zr30BjAcVDKJPv3B@google.com>
+ <20240815125919.GH3468552@ziepe.ca>
+ <43290d6c-004d-423c-822c-7b2558badcee@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624-mtk_disp_ovl_adaptor_scoped-v1-0-9fa1e074d881@gmail.com>
-In-Reply-To: <20240624-mtk_disp_ovl_adaptor_scoped-v1-0-9fa1e074d881@gmail.com>
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Thu, 15 Aug 2024 21:57:07 +0800
-X-Gmail-Original-Message-ID: <CAAOTY__EAW-Tj93oSnN1TTB0sH3VMnHwwRaVv-Nm7cEGBeuvcQ@mail.gmail.com>
-Message-ID: <CAAOTY__EAW-Tj93oSnN1TTB0sH3VMnHwwRaVv-Nm7cEGBeuvcQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] drm/mediatek: fixes for ovl_adaptor
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	"Nancy.Lin" <nancy.lin@mediatek.com>, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <43290d6c-004d-423c-822c-7b2558badcee@arm.com>
 
-Hi, Javier:
+On Thu, Aug 15, 2024 at 02:41:52PM +0100, Robin Murphy wrote:
 
-Javier Carrasco <javier.carrasco.cruz@gmail.com> =E6=96=BC 2024=E5=B9=B46=
-=E6=9C=8825=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8A=E5=8D=8812:44=E5=AF=AB=E9=
-=81=93=EF=BC=9A
->
-> The main fix is a possible memory leak on an early exit in the
-> for_each_child_of_node() loop. That fix has been divided into a patch
-> that can be backported (a simple of_node_put()), and another one that
-> uses the scoped variant of the macro, removing the need for any
-> of_node_put(). That prevents mistakes if new break/return instructions
-> are added, but the macro might not be available in older kernels.
->
-> When at it, an unused header has been dropped.
+> Unfortunately we can't do that, because there *are* RCiEP devices whose data
+> interfaces are native AMBA, and thus for whom stalling is not actually a
+> protocol violation as it would be on a real PCIe transport layer;
+> correspondingly, it's *because* they are not true PCIe devices that they
+> can't support ATS, and thus need stall support in order to do SVA, so things
+> should still work out OK in practice.
 
-For this series, applied to mediatek-drm-next [1], thanks.
+I wondered if that would be the case.
 
-Regards,
-CK
+Looks like if we want to do anything then arm_smmu_ats_supported()
+would be the right place.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
-log/?h=3Dmediatek-drm-next
+> >          if (dev_is_pci(dev)) {
+> > 
+> > Though I have no idea how the GPU driver that wants to use this
+> > works - it doesn't seem to be intree :\
+> 
+> It's not a GPU: drivers/crypto/hisilicon/zip/
 
->
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
-> Javier Carrasco (3):
->       drm/mediatek: ovl_adaptor: drop unused mtk_crtc.h header
->       drm/mediatek: ovl_adaptor: add missing of_node_put()
->       drm/mediatek: ovl_adaptor: use scoped variant of for_each_child_of_=
-node()
->
->  drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> ---
-> base-commit: f76698bd9a8ca01d3581236082d786e9a6b72bb7
-> change-id: 20240624-mtk_disp_ovl_adaptor_scoped-0702a6b23443
->
-> Best regards,
-> --
-> Javier Carrasco <javier.carrasco.cruz@gmail.com>
->
+Ohhhh.. so it goes through uacce, I see.
+
+Jason
 
