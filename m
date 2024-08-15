@@ -1,104 +1,142 @@
-Return-Path: <linux-kernel+bounces-287910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38C11952E25
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:16:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BB14952E29
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:17:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA06F2832A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:16:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE351B21299
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD985178CCF;
-	Thu, 15 Aug 2024 12:16:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9441714B9
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 12:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB97178CCF;
+	Thu, 15 Aug 2024 12:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QseeLamu";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5UM9eemT"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DC11AC888;
+	Thu, 15 Aug 2024 12:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723724190; cv=none; b=Djptz5l9XT+WJAXufNjJZpzjhnmiAh2tvH2euYB2hqHW/jvIFmMRQalPUKpLdKpa84l2HasrTnV4wzxX6JBa82Owlgjb8ToVN47hDb8cBWdJeX5DhQbEWxs6qTZuJi6XNq6gTZWhq8MN2ItCAcpaBrEZH/08CJqu+lic6NILW+I=
+	t=1723724236; cv=none; b=SLwwLQfXV8SdErjAPjSNPg5Ee4WV3GFdfxQ+5wpBmpqVFUWcsNBnv5WehvtUNt4LG9Df2aFRsmeTbNaFvpuSXfMgrDs2wDqcjcW5bROf4qErYWwj0MC6M9PguyTNHReJzGivsF2E9IYEqNuxd90pTcUNe1PUs6nlV0bLfk/DjaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723724190; c=relaxed/simple;
-	bh=f8gmWffMskUMaA4rGBasmLTckzOc5vjIU3yXzHvy4NY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qmM2NJqAvvTIIqwPDLQpKfXY4hIGR/HTLFcMnjPAOJQXNXucWsXbE1PCrjzCtjuOmq3ch+1mrda23zSSKrdZFwszZgAaTWXAEbdzx/Va260+XFnTuYi+7/mOZFtf8ApRdh3u9ZY9K1JkZMREvQUs4lXNv1fmLaHXkjyZDV5xnq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2A40514BF;
-	Thu, 15 Aug 2024 05:16:48 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0CDCE3F6A8;
-	Thu, 15 Aug 2024 05:16:20 -0700 (PDT)
-Message-ID: <91d6574d-c67e-484c-ad96-91c9fd3d0c43@arm.com>
-Date: Thu, 15 Aug 2024 13:16:19 +0100
+	s=arc-20240116; t=1723724236; c=relaxed/simple;
+	bh=8GzwF1RSODdXKQsmpYs3h1fjM4vibb9GvTjZrpElbrA=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
+	 Content-Type; b=gHmUTTfSzO4IC8OeBL0zlL9RSzjNOPwAUG6K9DSwXXhqyWL6OEBcKk9CwyC8Ri2CnZ8NQlRV6pQ4JTdzCccnzRHb77Q2GArcSaw5OCYlfcteMogCaA1oO3KosOWJ/mUJZTjRy+Kc9zvbvjLLXEtApmNpYr5xoOF0V93/uEpOU3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QseeLamu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5UM9eemT; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723724232;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=rRigOJOO3qhALtqJE6dw15axLsE6DCGme8lKMcQne9I=;
+	b=QseeLamu+Ve6G/d3HbW7okSVN98YQ2FNSrDeLd1E3GlVr8M63wB4CHCPs+NxPhKct4C4zc
+	CHaKE6hfu/PQgUQ7Ky438ULIYOeaTZ5rJiC7fP+lkSt2vM7RhtimWvUlgFtQnRpTKz3g7F
+	/S6aqMaio9VKU83MuH7FRTg1R+rmJk2KdX7KeiVQZgvBI/hAQZHuWqMeWy91SNpTyVOEhf
+	5QeoV7TQ6iQdmAfmWEayfH6mm6fbKLoIQyLw+CO4Cc3mSsO5ZLdeLyHdWQKY5Es26Tu5Rl
+	+0fyU8dO9pPvNQ94ID/rjVgjWKCD9HDr6Iyr2rD5h6iK4cT+is8orsJTOMvALg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723724232;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=rRigOJOO3qhALtqJE6dw15axLsE6DCGme8lKMcQne9I=;
+	b=5UM9eemTh6QW2duf1BOI6wBtqOvSeGaa8dJXAMrsOWaSKxHE9KNZkfxuix/5OayqMO8ppG
+	Hy5eX/jx/Yc48mDA==
+To: Mary Strodl <mstrodl@csh.rit.edu>, linux-kernel@vger.kernel.org
+Cc: akpm@linux-foundation.org, urezki@gmail.com, hch@infradead.org,
+ linux-mm@kvack.org, lee@kernel.org, andi.shyti@kernel.org,
+ linux-i2c@vger.kernel.org, s.hauer@pengutronix.de,
+ christian.gmeiner@gmail.com, Mary Strodl <mstrodl@csh.rit.edu>
+Subject: Re: [PATCH v4 1/2] x86: Add basic support for the Congatec CGEB
+ BIOS interface
+In-Reply-To: <20240814184731.1310988-2-mstrodl@csh.rit.edu>
+Date: Thu, 15 Aug 2024 14:17:12 +0200
+Message-ID: <87sev6m14n.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] iommu/arm-smmu-v3: Match Stall behaviour for S2
-To: Mostafa Saleh <smostafa@google.com>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, will@kernel.org, joro@8bytes.org,
- jean-philippe@linaro.org, nicolinc@nvidia.com, mshavit@google.com
-References: <20240814145633.2565126-1-smostafa@google.com>
- <20240814155151.GB3468552@ziepe.ca> <Zr3m4YCY7Ape3R6y@google.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <Zr3m4YCY7Ape3R6y@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 15/08/2024 12:30 pm, Mostafa Saleh wrote:
-> Hi Jason,
-> 
-> On Wed, Aug 14, 2024 at 12:51:51PM -0300, Jason Gunthorpe wrote:
->> On Wed, Aug 14, 2024 at 02:56:33PM +0000, Mostafa Saleh wrote:
->>
->>> Also described in the pseudocode “SteIllegal()”
->>>      if eff_idr0_stall_model == '10' && STE.S2S == '0' then
->>>          // stall_model forcing stall, but S2S == 0
->>>          return TRUE;
->>
->> This clips out an important bit:
->>
->> if STE.Config == '11x' then
->>    [..]
->>    if eff_idr0_stall_model == '10' && STE.S2S == '0' then
->>        // stall_model forcing stall, but S2S == 0
->>        return TRUE;
->>
->> And here we are using STRTAB_STE_0_CFG_S1_TRANS which is 101 and won't
->> match the STE.Config qualification.
->>
->> The plain text language said the S2S is only required if the S2 is
->> translating, STRTAB_STE_0_CFG_S1_TRANS puts it in bypass.
-> 
-> Yes, my bad, this should be for stage-2 only which is populated in
-> arm_smmu_make_s2_domain_ste()
-> 
->>
->>> +	/*
->>> +	 * S2S is ignored if stage-2 exists but not enabled.
->>> +	 * S2S is not compatible with ATS.
->>> +	 */
->>> +	if (master->stall_enabled && !ats_enabled &&
->>> +	    smmu->features & ARM_SMMU_FEAT_TRANS_S2)
->>> +		target->data[2] |= STRTAB_STE_2_S2S;
->>
->> We can't ignore ATS if it was requested here.
+Mary!
 
-I don't see much value in adding effectively-dead checks for something 
-which is already forbidden by the architecture. The definition of 
-STALL_MODEL explicitly states:
+On Wed, Aug 14 2024 at 14:47, Mary Strodl wrote:
 
-"An SMMU associated with a PCI system must not have STALL_MODEL == 0b10".
+So this caught the attention of my mail filter because the subsystem
+prefix is 'x86:' while it obviously should be 'mfd:'
+
+> The Congatec CGEB is a BIOS interface found on some Congatec x86
+> modules. It provides access to on board peripherals like I2C busses
+> and watchdogs. This driver contains the basic support for accessing
+> the CGEB interface and registers the child devices.
+>
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> Signed-off-by: Christian Gmeiner <christian.gmeiner@gmail.com>
+> Signed-off-by: Mary Strodl <mstrodl@csh.rit.edu>
+
+This Signed-off-by chain is invalid. See Documentation/process/
+
+Aisde of that. How is any of this supposed to work. What is the user
+mode helper doing and why does this need this netlink indirection?
+
+And looking at that reference implementation on github makes me just
+shudder:
+
+        board.mem_fd = open("/dev/mem", O_RDONLY);
+
+and then it allocates anon memory:
+
+	board->code = mmap(NULL, msg->code.length,
+		           PROT_READ | PROT_WRITE,
+			   MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+
+which it hands back to the kernel so the kernel can copy stuff into it
+followed by some other command:
+
+         mprotect(board->code, msg->code.length,
+		  PROT_EXEC | PROT_READ | PROT_WRITE)
+
+Seriously? RWX mappings?
+
+So this copies a code blob out of the BIOS region into user space and
+lets user space use this blob to interact with the BIOS extension,
+right?
+
+So an i2c transfer does a full round trip:
+
+   i2c::xfer -> cgeb -> netlink -> user helper -> execute random code ->
+   user helper -> netlink -> cgeb -> ...
+     
+right?
+
+Has anyone tried to analyze what this BIOS provided code blob is
+actually doing?
+
+All it does is to poke at a range of IOPORTS with in*(), out*() and that
+poking mechanism depends on the generation of that CGEB implementation.
+
+Congatec even provides the GPL2 licenced source for this pokery as a
+kernel driver.
+
+Three generations of interfaces and for each the poking is about 200
+lines of unreadable, malformated gunk, which can be probably condensed
+to 100 lines of readable kernel code for each generation.
+
+Add a bunch of helpers which set up the various transfers for the
+subdevices and you can spare all this horrible nonsense with user mode
+helper, executing random BIOS provided gunk, netlink and completely ill
+defined data structures.
 
 Thanks,
-Robin.
+
+        tglx
 
