@@ -1,95 +1,179 @@
-Return-Path: <linux-kernel+bounces-287971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB13A952EC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:07:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2C94952ECF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:09:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 193081C23BAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:07:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FB93283B3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6C519DF85;
-	Thu, 15 Aug 2024 13:07:47 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [207.226.244.122])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5FE1714A8;
-	Thu, 15 Aug 2024 13:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.226.244.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A1A19DFB9;
+	Thu, 15 Aug 2024 13:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qieAn9XT"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B634B1714A2
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 13:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723727267; cv=none; b=jZAGXZ20wSuRXbKPCGjJ6OASqTOaueNtmXMQ2Ls6StlyWvqnhHpQRcaGw5W2OlESOu6CQ3Cs70MiqpUSV8/2nwcOPyblgmOstahGDBotnyvHtH8STaytqhOF1kQXm37QUBbkBIpi35RqABX2krFn3/2c4Qn9jB+/C1yrctTrPFI=
+	t=1723727344; cv=none; b=r/M3OJzdi2hZDYeObYlQwTXIRk6a48oWGbBLLoa6GPxsiv/4w752F511sHNi7EzWHRFkCSIXpaXbhUzx3bacBYJ6jRTD+lsv092x8/VnKnaq9nHdIHZoUSQw6vQodhqsYVHMQ/CE6JMdCqn4CIwOpWIKZxqQi76Nt2gdzNL6+ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723727267; c=relaxed/simple;
-	bh=vly1wT4XrhXc97INn4caTGhoBFjIcE5gvgKZFhOQLXI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=rz0GbwFmgylIZeqC7k75eoo6fEhVsxcQ+xvMr6hteKR9pZ+trQ9W2oRHUeeIuZuBbApaontBuYvUElMulZoq7rAG4PZbLDSleU3IRMGoGJVWBwZb1sIl8yKRIQ62RZeedvYk1zpDrPO+eSdc7E7or4XJ1TEOnWlukK+7mWMtyGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=207.226.244.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: TaGGtM+PTKibyu1xf22nGA==
-X-CSE-MsgGUID: qWFsU24+Tq255oQw+tsfZA==
-X-IronPort-AV: E=Sophos;i="6.10,148,1719849600"; 
-   d="scan'208";a="119451388"
-From: =?utf-8?B?56ug6L6J?= <zhanghui31@xiaomi.com>
-To: Bart Van Assche <bvanassche@acm.org>,
-	"James.Bottomley@HansenPartnership.com"
-	<James.Bottomley@HansenPartnership.com>, "martin.petersen@oracle.com"
-	<martin.petersen@oracle.com>
-CC: "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>, "avri.altman@wdc.co"
-	<avri.altman@wdc.co>, "peter.wang@mediatek.com" <peter.wang@mediatek.com>,
-	"manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>, "Huang
- Jianan" <huangjianan@xiaomi.com>, "linux-scsi@vger.kernel.org"
-	<linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [External Mail]Re: [PATCH] ufs: core: fix bus timeout in
- ufshcd_wl_resume flow
-Thread-Topic: [External Mail]Re: [PATCH] ufs: core: fix bus timeout in
- ufshcd_wl_resume flow
-Thread-Index: AQHa7YdYc9Ki7OjQ5EaL6aO/rOJ9D7IldP+AgAJSDwA=
-Date: Thu, 15 Aug 2024 13:07:42 +0000
-Message-ID: <baef8886-5ec0-4ba4-930e-cd1487ba3a56@xiaomi.com>
-References: <20240813134729.284583-1-zhanghui31@xiaomi.com>
- <b2fbe277-2819-4af4-9b36-b7407618cbf6@acm.org>
-In-Reply-To: <b2fbe277-2819-4af4-9b36-b7407618cbf6@acm.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A49E0C54580F104ABB40AE1C7CA81DF5@xiaomi.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1723727344; c=relaxed/simple;
+	bh=ZNiq2dS7G8t+fkB7QAgvHsxKjUH2MxNcZXjk9gsTVRc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HtrSomJKpKEM53+VVzoiPeVPuieMIXMcvDOmm+OO5KYGzzHMhrqoWx45GbxTZ5wVQncfUmnOXXSrU5hss8WX+o4EEVHc3NGXDDndafzYvJDuHX8JS7LHtzq6fYdcJoOQD4Gt0r/dNax92q1gPazFIGM2om/E64Veda6jmwwy300=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qieAn9XT; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f3b7aba3dbso8073651fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 06:09:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723727340; x=1724332140; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TNY1eM+k8dVypAWpZEMkyA4Ex7FP/CU7h/TDaorYfbM=;
+        b=qieAn9XTOcFXLy1q6ngbr8ohGiyMYSkbbgYITEVXOjgodlaX70MEymEn/xwYRhEKtC
+         7nnvEBibVEMeIzW3anm0ti3i7mr28qu30gHUZhSfhJIJ3tvQpJfCeC9xHJUrcOPIGL0z
+         sOjCyltVwivnlhKZzVXQbhga9dRWMukWZAH1IZxg/PFqaJVIbGUNYuXtpyy25Jjds9h0
+         zXC54Q+/4mz1oydMbtXvtELsdo9Ex1LLphiQ1BsClC7lJrM0NOSF6yRc0GBXsPbUKyc8
+         N3sxOcuAPNb6b6VPpy5RWlfz4lGGOSD9eJLoyneUjs4nO6D2D2cC30JOPUb3g1Xl69Qv
+         Vm1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723727340; x=1724332140;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TNY1eM+k8dVypAWpZEMkyA4Ex7FP/CU7h/TDaorYfbM=;
+        b=KPQlqoAM/Ux3M10nWhpqnL6WSRgPVf4vPPPjN7O/PgRgyj9AWBwTICyrfqUaFoPgbB
+         mtcxPXwAYF3WrvhsPPL+DeXF32s4uHLVIX6HE0KD0xG4wCr6VGZH0+VPt8EO3OcN7ImA
+         gbHtEnivQczUEuuHoxZ7Hs8liYYM/74DKzWPEY6GSDJVQ5PuP7AI5tcJLOT+YZVMkl7R
+         hfZ0InGmPgcwSUdXUZo497pj6erIwmSLXyO3DoHp4AE4/tm38io+0GDTRIrYXWPtXPFe
+         Yf/g+kZgW8KHdxQhCqus6kLNZF9noQEh1pGqr2/k3hQsCQ0QM4i1QGd2A8bchsVLvIos
+         Vqxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVLLoPp1/GKoleGniAv8kKTYD4Jcahh59zY/JO4ig/SNLBolPdaObMfq0TnhTca8UG/fTCs61+LqTR5QK95xBPXfiOm19szY4vJdICY
+X-Gm-Message-State: AOJu0Yy4s5Rrxtt4bdjeN8n0feU7YFpTiWFXQQLSeDIGALR+V1o2XnqP
+	GcSQp86yW1WF9XEGbba12MLN4rbpy1sQ8uEl+ZV42yhnbpUVodI6pUdzGIExYNI=
+X-Google-Smtp-Source: AGHT+IE+mnCIG8BYgBw5oHWVA2VHQioa6RNCWwiCufSDfkzDIzHQOepsTOsLlr6E2Nlerb9pp9JkZg==
+X-Received: by 2002:a05:6512:1292:b0:530:e228:7799 with SMTP id 2adb3069b0e04-532edbcaab6mr3519137e87.58.1723727339644;
+        Thu, 15 Aug 2024 06:08:59 -0700 (PDT)
+Received: from ?IPV6:2a02:8109:aa0d:be00::e7e1? ([2a02:8109:aa0d:be00::e7e1])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a838396dfddsm99761266b.214.2024.08.15.06.08.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Aug 2024 06:08:59 -0700 (PDT)
+Message-ID: <f341e9e9-3da6-4029-9892-90e6ec856544@linaro.org>
+Date: Thu, 15 Aug 2024 15:08:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/16] Add cmd descriptor support
+To: Md Sadre Alam <quic_mdalam@quicinc.com>, vkoul@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andersson@kernel.org, konradybcio@kernel.org, thara.gopinath@gmail.com,
+ herbert@gondor.apana.org.au, davem@davemloft.net, gustavoars@kernel.org,
+ u.kleine-koenig@pengutronix.de, kees@kernel.org, agross@kernel.org,
+ linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-crypto@vger.kernel.org
+Cc: quic_srichara@quicinc.com, quic_varada@quicinc.com,
+ quic_utiwari@quicinc.com
+References: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
+Content-Language: en-US
+From: Caleb Connolly <caleb.connolly@linaro.org>
+In-Reply-To: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-T24gMjAyNC84LzE0IDk6NDEsIEJhcnQgVmFuIEFzc2NoZcKgd3JvdGU6DQo+IE9uIDgvMTMvMjQg
-Njo0NyBBTSwgWmhhbmdIdWkgd3JvdGU6DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy91ZnMvY29y
-ZS91ZnNoY2QuYyBiL2RyaXZlcnMvdWZzL2NvcmUvdWZzaGNkLmMNCj4+IGluZGV4IDVlM2M2N2U5
-Njk1Ni4uZTVlM2UwMjc3ZDQzIDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy91ZnMvY29yZS91ZnNo
-Y2QuYw0KPj4gKysrIGIvZHJpdmVycy91ZnMvY29yZS91ZnNoY2QuYw0KPj4gQEAgLTMyOTEsNiAr
-MzI5MSw4IEBAIHN0YXRpYyBpbnQgdWZzaGNkX2V4ZWNfZGV2X2NtZChzdHJ1Y3QgdWZzX2hiYSAN
-Cj4+ICpoYmEsDQo+PiDCoMKgwqDCoMKgIHN0cnVjdCB1ZnNoY2RfbHJiICpscmJwID0gJmhiYS0+
-bHJiW3RhZ107DQo+PiDCoMKgwqDCoMKgIGludCBlcnI7DQo+Pg0KPj4gK8KgwqDCoMKgIGlmICho
-YmEtPnVmc2hjZF9yZWdfc3RhdGUgPT0gVUZTSENEX1JFR19SRVNFVCkNCj4+ICvCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAgcmV0dXJuIC1FQlVTWTsNCj4+IMKgwqDCoMKgwqAgLyogUHJvdGVjdHMg
-dXNlIG9mIGhiYS0+cmVzZXJ2ZWRfc2xvdC4gKi8NCj4+IMKgwqDCoMKgwqAgbG9ja2RlcF9hc3Nl
-cnRfaGVsZCgmaGJhLT5kZXZfY21kLmxvY2spOw0KPg0KPiBEb2VzIHRoaXMgY2hhbmdlIG1ha2Ug
-dWZzaGNkX2V4ZWNfZGV2X2NtZCgpIHVucHJlZGljdGFibGUgLSBpdCBzdWNjZWVkcw0KPiBpZiB0
-aGUgY29udHJvbGxlciBpcyBpbiB0aGUgbm9ybWFsIHN0YXRlIGFuZCBmYWlscyBpZiBlcnJvciBy
-ZWNvdmVyeQ0KPiBpcyBvbmdvaW5nPyBJZiBzbywgd2hpY2ggY29kZSBwYXRocyBkb2VzIHRoaXMg
-YWZmZWN0IGFuZC9vciBicmVhaz8NCj4NCj4gQWRkaXRpb25hbGx5LCBJIHRoaW5rIHRoZSBhYm92
-ZSBjaGVjayBpcyByYWN5LiBoYmEtPnVmc2hjZF9yZWdfc3RhdGUgbWF5DQo+IGNoYW5nZSBhZnRl
-ciB0aGUgYWJvdmUgY29kZSBjaGVja2VkIGl0IGFuZCBiZWZvcmUgdWZzaGNkX2V4ZWNfZGV2X2Nt
-ZCgpDQo+IGhhcyBmaW5pc2hlZC4gV291bGRuJ3QgaXQgYmUgYmV0dGVyIHRvIG1ha2UgY29kZSB0
-aGF0IHNob3VsZG4ndCBiZQ0KPiBleGVjdXRlZCB3aGlsZSB0aGUgZXJyb3IgaGFuZGxlciBpcyBv
-bmdvaW5nIHdhaXQgdW50aWwgZXJyb3IgaGFuZGxpbmcNCj4gaGFzIGZpbmlzaGVkPw0KPg0KPiBU
-aGFua3MsDQo+DQo+IEJhcnQuDQo+DQpoaSBCYXJ0LA0KDQoxLiBJZiB0aGUgaG9zdCBuZWVkcyB0
-byBzZW5kIGEgZGV2IGNvbW1hbmQsIHRoZSBIQkEgbXVzdCBiZSBlbmFibGVkLg0KV2UgaGF2ZSBz
-ZXQgdGhlIHVmc2hjZF9yZWdfc3RhdGUgdG8gb3BlcmF0aW9uYWwgaW4gdGhlIHVmc2hjZF9oYmFf
-ZW5hYmxlLA0Kc28gaXQgaXMgbm90IHVucHJlZGljdGFibGUuDQoNCjIuIFRoYXQncyBhIGdvb2Qg
-cXVlc3Rpb24sIGJ1dCBJIHRoaW5rIGl0IG1ha2VzIHNlbnNlIHRvIGJsb2NrIGRldiBjbWQgd2hp
-bGUNCnVmcyBpcyBkb2luZyBhIHJlc2V0Lg0KDQoNClRoYW5rcw0KWmhhbmdodWkNCg0K
+Hi,
+
+A note for future patches, please scope your cover letter subject:
+
+"dmaengine: qcom: bam_dma: add cmd descriptor support"
+
+On 15/08/2024 10:57, Md Sadre Alam wrote:
+> This series of patches will add command descriptor
+> support to read/write crypto engine register via
+> BAM/DMA
+> 
+> We need this support because if there is multiple EE's
+> (Execution Environment) accessing the same CE then there
+> will be race condition. To avoid this race condition
+> BAM HW hsving LOC/UNLOCK feature on BAM pipes and this
+> LOCK/UNLOCK will be set via command descriptor only.
+> 
+> Since each EE's having their dedicated BAM pipe, BAM allows
+> Locking and Unlocking on BAM pipe. So if one EE's requesting
+> for CE5 access then that EE's first has to LOCK the BAM pipe
+> while setting LOCK bit on command descriptor and then access
+> it. After finishing the request EE's has to UNLOCK the BAM pipe
+> so in this way we race condition will not happen.
+> 
+> tested with "tcrypt.ko" and "kcapi" tool.
+> 
+> Need help to test these all the patches on msm platform
+
+DT changes here are only for a few IPQ platforms, please explain in the 
+cover letter if this is some IPQ specific feature which doesn't exist on 
+other platforms, or if you're only enabling it on IPQ.
+
+Some broad strokes testing instructions (at the very least) and 
+requirements (testing on what hardware?) aren't made obvious at all here.
+
+Kind regards,
+> 
+> v2:
+>   * Addressed all the comments from v1
+>   * Added the dt-binding
+>   * Added locking/unlocking mechanism in bam driver
+> 
+> v1:
+>   * https://lore.kernel.org/lkml/20231214114239.2635325-1-quic_mdalam@quicinc.com/
+>   * Initial set of patches for cmd descriptor support
+> 
+> Md Sadre Alam (16):
+>    dt-bindings: dma: qcom,bam: Add bam pipe lock
+>    dmaengine: qcom: bam_dma: add bam_pipe_lock dt property
+>    dmaengine: qcom: bam_dma: add LOCK & UNLOCK flag support
+>    crypto: qce - Add support for crypto address read
+>    crypto: qce - Add bam dma support for crypto register r/w
+>    crypto: qce - Convert register r/w for skcipher via BAM/DMA
+>    crypto: qce - Convert register r/w for sha via BAM/DMA
+>    crypto: qce - Convert register r/w for aead via BAM/DMA
+>    crypto: qce - Add LOCK and UNLOCK flag support
+>    crypto: qce - Add support for lock aquire,lock release api.
+>    crypto: qce - Add support for lock/unlock in skcipher
+>    crypto: qce - Add support for lock/unlock in sha
+>    crypto: qce - Add support for lock/unlock in aead
+>    arm64: dts: qcom: ipq9574: enable bam pipe locking/unlocking
+>    arm64: dts: qcom: ipq8074: enable bam pipe locking/unlocking
+>    arm64: dts: qcom: ipq6018: enable bam pipe locking/unlocking
+> 
+>   .../devicetree/bindings/dma/qcom,bam-dma.yaml |   8 +
+>   arch/arm64/boot/dts/qcom/ipq6018.dtsi         |   1 +
+>   arch/arm64/boot/dts/qcom/ipq8074.dtsi         |   1 +
+>   arch/arm64/boot/dts/qcom/ipq9574.dtsi         |   1 +
+>   drivers/crypto/qce/aead.c                     |   4 +
+>   drivers/crypto/qce/common.c                   | 142 +++++++----
+>   drivers/crypto/qce/core.c                     |  13 +-
+>   drivers/crypto/qce/core.h                     |  12 +
+>   drivers/crypto/qce/dma.c                      | 232 ++++++++++++++++++
+>   drivers/crypto/qce/dma.h                      |  26 +-
+>   drivers/crypto/qce/sha.c                      |   4 +
+>   drivers/crypto/qce/skcipher.c                 |   4 +
+>   drivers/dma/qcom/bam_dma.c                    |  14 +-
+>   include/linux/dmaengine.h                     |   6 +
+>   14 files changed, 424 insertions(+), 44 deletions(-)
+> 
+
+-- 
+// Caleb (they/them)
 
