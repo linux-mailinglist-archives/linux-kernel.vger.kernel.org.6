@@ -1,83 +1,103 @@
-Return-Path: <linux-kernel+bounces-288150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F1E3953680
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:02:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BFD3953681
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFCEFB23C53
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:02:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9EAB1F220B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BFDE1A7057;
-	Thu, 15 Aug 2024 15:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A36B1A7057;
+	Thu, 15 Aug 2024 15:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BoHC+pD6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0rd/21J"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F75819DF9C;
-	Thu, 15 Aug 2024 15:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB15F19DF9C;
+	Thu, 15 Aug 2024 15:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723734143; cv=none; b=ojrdm9QVtsaa821I5wI1x0bGsNCFKAtpjFfG1I3WvsCGcDKXSWdUhwhElqD1gmiDZw/TVrdHdrH0I4GoaRb+2eaR6xviporDE0V80BbVtIvQ53K2zYJ1TD9P4hfZgzgEk40vRidmIIWReSIiEKlbhFbSrkce5B7UknTItAiVI74=
+	t=1723734159; cv=none; b=RlxkBtMAeIxscwGqSwWViI8OpqOSK8X/pIpgj/7VNpkwUoQ45vksdkacmzID7qduTooTX+hthYsA3BP55eOjI4jtDCVXehLOGSIUblsKnXMrjwFWEQ8gi8FjvMie4VJRCzGgk8/rYOBzrYHj7g6aNZ6rlH2mC2qFvIhd7n0G5kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723734143; c=relaxed/simple;
-	bh=rRi+6EmOs7+pVG1EHAvt51XP2hQn0UWhMGz5gSVJY24=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z6G8Um0assXQMLKJaJGn0U4gxsh9a2t8qSKGUTGP1+mKjyVrzWUj3ftDQ6vSYZicv4BOpaNFIwb7NgM7s2dTkTKkvt44tjIGAfbp4jMU7ZzOdudosZpdkvcvr4yK46Uig0eZwrVirI5UuFdDaWxk4P8iw1sugGREC2EggCxiedg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BoHC+pD6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AFDFC32786;
-	Thu, 15 Aug 2024 15:02:20 +0000 (UTC)
+	s=arc-20240116; t=1723734159; c=relaxed/simple;
+	bh=Qi1DjTq9vVDqCeRuFOoVg6IgfHpg4V/a9iumQ8zlP8Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=P2ZDHdAd27+C/gZuaZXgwH/hfhxEH4LhGKOffn3ZA6enmxKrAsz4B2aQL0d00hQzeqJyewHRkfzZ3228B5O0P/39BOJ+u96DH50FwuUPpPk8IZDrRb+c/t55ZROO5/m5sEPiYAM4SRrcHQ5P26K6GIkYYdop9aSVSTWcbiYfLvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0rd/21J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E98BC32786;
+	Thu, 15 Aug 2024 15:02:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723734143;
-	bh=rRi+6EmOs7+pVG1EHAvt51XP2hQn0UWhMGz5gSVJY24=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BoHC+pD6oPocFglcJdtHSimP1f3hS2iNbMAN4Fp4aTg4UBQdiyg7VE99+0IzEtN5R
-	 5jiiIKs+pVdzrvYL5LaAgwcJSi4+8jf8eC5zkk0Y9r4Qph8JpoNf6RyGV2YCyYcevV
-	 ZJsTQxKACkyHks19UcEOOU4TWfygXXYsQ0Lh3X//SKhx3KRfh1iq8b7l378Ekzv+YZ
-	 oWRzJ/trg3FzanoJz7NQL7Gd5V1PPFLrFfh0rbB+C7AjsuXQO7Czke1Y7Sw2Z6HOub
-	 9UVEA3bEEfv5Tm5aGebkx/ChHD00ssmCdB46Lvt8u0bFA1EMJNQsRsNGfJz+Ng6iVr
-	 RnVj6CDw2OD5A==
-Date: Thu, 15 Aug 2024 16:02:18 +0100
-From: Simon Horman <horms@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Lunn <andrew@lunn.ch>, Michal Simek <michal.simek@amd.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Paolo Abeni <pabeni@redhat.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Jakub Kicinski <kuba@kernel.org>,
-	Ariane Keller <ariane.keller@tik.ee.ethz.ch>
-Subject: Re: [PATCH net-next 4/4] net: xilinx: axienet: Support IFF_ALLMULTI
-Message-ID: <20240815150218.GJ632411@kernel.org>
-References: <20240812200437.3581990-1-sean.anderson@linux.dev>
- <20240812200437.3581990-5-sean.anderson@linux.dev>
+	s=k20201202; t=1723734159;
+	bh=Qi1DjTq9vVDqCeRuFOoVg6IgfHpg4V/a9iumQ8zlP8Y=;
+	h=Date:From:To:Cc:Subject:From;
+	b=i0rd/21JE4X8c7Jb8hhTRiOvMzR86hBZMaB8M1FS7v8xZS7QdqYg1ZJWs3mLvnroT
+	 18lgaQ81+yaOcHLj5XXVkBXVwW11SU/SoxNZ8c2//iSpo3v827mIo3VhjCT9XWRxXN
+	 i7RW0bXrk93hc7nBt2vI+rhs/WeKplvC8o6gFE+r6rqGq3cHhYtSlGB7PckvmPL/4Y
+	 bHOQ9fDof5EgSR7JIrbdYA6VPVl+hLtYa+7yT2t2/sfDgGJOOIGLA2Ryt60OeDM7VX
+	 Py3D9iPAivtgHi91K9iqhuOCXGJi5Zo9c0FqiAudoQ2CakuYcafIuzKPaCcNWM3BuC
+	 EuhLxaPxP/OOQ==
+Date: Thu, 15 Aug 2024 17:02:35 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Linux Media Mailing List
+ <linux-media@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL for v6.11-rc4] media fixes
+Message-ID: <20240815170235.0ab77b44@foz.lan>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812200437.3581990-5-sean.anderson@linux.dev>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 12, 2024 at 04:04:37PM -0400, Sean Anderson wrote:
-> Add support for IFF_ALLMULTI by configuring a single filter to match the
-> multicast address bit. This allows us to keep promiscuous mode disabled,
-> even when we have more than four multicast addresses. An even better
-> solution would be to "pack" addresses into the available CAM registers,
-> but that can wait for a future series.
-> 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+Hi Linus,
 
-My comment on patch 1/4 notwithstanding, this looks good to me.
+Please pull from:
+  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v6.11-3
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+For two regression fixes:
+- fix atomisp support for ISP2400;
+- fix dvb-usb regression for TeVii s480 dual DVB-S2 S660 board.
+
+Regards,
+Mauro
+
+---
+
+
+The following changes since commit e2ed53694e5356a55fd539a4d8dc56c2fa42b2ff:
+
+  Merge tag 'tags/fixes-media-uvc-20230722' of git://git.kernel.org/pub/scm/linux/kernel/git/pinchartl/linux.git (2024-08-03 11:01:04 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v6.11-3
+
+for you to fetch changes up to 63de936b513f7a9ce559194d3269ac291f4f4662:
+
+  media: atomisp: Fix streaming no longer working on BYT / ISP2400 devices (2024-08-14 08:06:07 +0200)
+
+----------------------------------------------------------------
+media fixes for v6.11-rc4
+
+----------------------------------------------------------------
+Hans de Goede (1):
+      media: atomisp: Fix streaming no longer working on BYT / ISP2400 devices
+
+Sean Young (1):
+      media: Revert "media: dvb-usb: Fix unexpected infinite loop in dvb_usb_read_remote_control()"
+
+ drivers/media/usb/dvb-usb/dvb-usb-init.c           | 35 +++-------------------
+ .../media/atomisp/pci/ia_css_stream_public.h       |  8 +++--
+ .../staging/media/atomisp/pci/sh_css_internal.h    | 19 ++++++++++--
+ 3 files changed, 26 insertions(+), 36 deletions(-)
 
 
