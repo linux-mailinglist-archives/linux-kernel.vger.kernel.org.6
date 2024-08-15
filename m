@@ -1,143 +1,147 @@
-Return-Path: <linux-kernel+bounces-288071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F96E9532EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:12:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 760049532F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:12:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02355280D1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:12:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF0FEB25BE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 084C91B29C1;
-	Thu, 15 Aug 2024 14:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F831B3F39;
+	Thu, 15 Aug 2024 14:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HWMotfgD"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rodQTSjR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6481AD9C5
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9061AE035;
+	Thu, 15 Aug 2024 14:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723730948; cv=none; b=nYjbBCtkk4sxptrWnXMm7W11CnuUgQ0V448xmxjBB7KvruJNI/lmNJIZTHobfNP8yA9wH5LHrVrX+ohF7QdygASL1gkae++esDdimDDs/aVZCPj4/SA9SOYlKKKO2vCLelFjx1u7dafYODZtAfTmiokF6WeUTofJxM3oTy221cU=
+	t=1723730968; cv=none; b=p8dzo/KCDKaPzoPuXRCVbBNszA6sK/FPRGO314I6DkLro2mCXdvsm21D3lW3GScdsAMeEDNQ7MIUPxGE/1DCjOvIBrMBkwB/IZSpzAorN5q1T7tZKTyDeiKGd6oNWGns9DWT/DEB98kDSvpsFlAhG/F7iLwlQBjsxGyFqcCHeuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723730948; c=relaxed/simple;
-	bh=qo9ZE4dFQ6mM/Bc850JYi0KMklchFhxHbwhodm8U5P8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=m84FDEvJZxnfM0uXUaXd8J5NHndMp9/DzSS+xQWXvEV3YSKkUFS03KfbjTkAlqCl2P8lu9PidWI0Jaid2g+6CXah8NioOtFCKMHI8AGooM8bKQPy2Q6Ne4Ip7AC1jDcEE/J02AB2SpDMut5ljev2FYvEdpNg6TZV5rEroKIsKoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HWMotfgD; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e0ebbee58a8so1460569276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 07:09:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723730945; x=1724335745; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qIvQlh/LEmcc/D/obNuZ6E+YY/ClqP2nQTGGm+92/XA=;
-        b=HWMotfgDUfdZSYw8ZSXij6R9WdNMMsZ2E+HJc6307o4WXfBFy+834Bx3LYyDiMQjsf
-         Lesj5wm9Uj6kKEDoZfUTL/4Pf9onA+KqhU1IS+OaS7W4tgiitSppFfub0jEiMS3feSig
-         n7Sw39mWzCawqcZCR3h2zISm5Lp/JYKq/Lqd+vrXTfb7rQiItuQNBNPBbr2dUtbyCIIH
-         o8GeMlDlr+/IQSmOQtqzhzZuT9r/dmcIVfY3gMg4a2cXIFv9Ytv9vlysNcX4Q9QEBy49
-         1A1ppUw8CgpGCGzR3S7hD6NXOCLq6gmth89M7elHCD7WMgnEzwvC46XRY+H64InOiBEU
-         jB4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723730945; x=1724335745;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qIvQlh/LEmcc/D/obNuZ6E+YY/ClqP2nQTGGm+92/XA=;
-        b=iPZUFvZNSRWdIGz9Zlh+6JuTUUyZAEspo2eJDz4vBfRwsd7c2tZ3s22bJkp5ZoXdT+
-         F5acy6TNDwAuv++Sesczv0YFLx7TV6vASHj83zjPznIWTTbOMIbNIlAcGC7dP+yZfY9b
-         bWZxRCc8r6IDdqIu9w80qltDt3Is8RShYkj8bcKcCjaPfpYdKXicqwudDKnbhuUIuRw9
-         uw6ZvLFDu+bWUOkCk3eNP7oQO55hsZt++WXj8DPuFfQivxKIHbC2UvDngG04VE5k/qot
-         fAs/FT2Zm8q1Hwkzw8aUIJLlqfLf7qW1JWMpgtXv7gfZqxUY4wGYMT9XPuhG8ZJsog0w
-         NOvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKe+oojaReL+I6rp9k7s95Y3KD5iwQmwrYhDcdXIBXBSZLQHTqpYGN1/NJO3NomSNR0uLbB9VdLJtjDOtMpMJE6uHUHXoT0ZxwhcOQ
-X-Gm-Message-State: AOJu0Yw8/DvxE9CSLa8b1Q7upw6k+N1kQsMaCJaabFK5hcOLOALwZPwr
-	ZUfihUlkn5TG2OVY5RTKEIA7yn9r0o3e8KgZAwXwgCXgjzXTtiHsYrrKoT9u+oKldsv1ArOIgFJ
-	aWg==
-X-Google-Smtp-Source: AGHT+IF6xQQzYTHNueQz5cB9KMs+14iCDwXd48e2Sh7vGWOyT8D00eLV92GkWwL3v1SLnd0khMovT1/aszU=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:2783:0:b0:e05:eccb:95dc with SMTP id
- 3f1490d57ef6-e1155aa6f02mr27854276.6.1723730945293; Thu, 15 Aug 2024 07:09:05
- -0700 (PDT)
-Date: Thu, 15 Aug 2024 07:09:03 -0700
-In-Reply-To: <e50240f9-a476-4ace-86aa-f2fd33fbe320@redhat.com>
+	s=arc-20240116; t=1723730968; c=relaxed/simple;
+	bh=2WMl6EaRKHyEK2/ZQZdr02Mc4qbGm1r0DYQ2zC7R8LE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BojKYfXtYsXNeTUWkf2aXihEzuVbWCcZ5yJFVHZZ8lq7jmow8DcmRFR0r1Cxwt7L9b5RwvC2HmvC+SNAOlZHeYwTIMO19O1yDtAPRJ7oXq0oUQiLc/8GCtjsaQl6E3WUYsen2nEzVcOYm4ibzOU3VZ8h3N9lpt3tISSCoksjJ3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rodQTSjR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8DE7C4AF0D;
+	Thu, 15 Aug 2024 14:09:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723730968;
+	bh=2WMl6EaRKHyEK2/ZQZdr02Mc4qbGm1r0DYQ2zC7R8LE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rodQTSjRyZaZMi9wvpDn6L5vd2PItWpn+1+Hze3ZI6tx7NDN1XGsNH/seMN8chlZe
+	 9fnuYBBvRX+7FPpJwcgzS61CVgHj7TpWsViVSxyWAJfwZv5gTJ1V5BHbnpYInVZ2cF
+	 KyOnhrzJApsM5HutwlWg0lYgo+oeuiXznnrPE5JKDqA/IqHGZ5C9r8/zsVBoM8j5vZ
+	 MDNtDGgNoV7mA+SHZni/cBBbXo9uJ8w/DzB5Bd50+Js6boJ/M4nOpliwp2rI4EgkBO
+	 DrJhnZ34rnCUrCpq547G11cZIXcB/P7ujFG4j9I+pWp1uUxIWIdGm58EIE52f+JgoF
+	 S1lapkYIrjUOg==
+Date: Thu, 15 Aug 2024 16:09:20 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>,
+	ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com,
+	akpm@linux-foundation.org, daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
+	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v5 00/26] Generic `Allocator` support for Rust
+Message-ID: <Zr4MEPlbYGrx6BbO@cassiopeiae>
+References: <20240812182355.11641-1-dakr@kernel.org>
+ <Zr0GP0OXliPRqx4C@boqun-archlinux>
+ <Zr1teqjuOHeeFO4Z@cassiopeiae>
+ <CAH5fLgjvuE5uU00u4y+HyHTkQU_OBYvHe6NS5ohAhrLntTX1zQ@mail.gmail.com>
+ <Zr31jqnA2b3qHK5l@cassiopeiae>
+ <CAH5fLgjzNpeVVurPqVS=tMkKQOhXz08EsXRO4s9wYsNBuT6eVw@mail.gmail.com>
+ <Zr4DpPSjDqSoMh0j@cassiopeiae>
+ <e0b0bffb-c240-4d23-bf4d-0c1c19608f60@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240809190319.1710470-1-seanjc@google.com> <20240809190319.1710470-10-seanjc@google.com>
- <e50240f9-a476-4ace-86aa-f2fd33fbe320@redhat.com>
-Message-ID: <Zr4L_4dzZl-qa3xu@google.com>
-Subject: Re: [PATCH 09/22] KVM: x86/mmu: Try "unprotect for retry" iff there
- are indirect SPs
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Peter Gonda <pgonda@google.com>, Michael Roth <michael.roth@amd.com>, 
-	Vishal Annapurve <vannapurve@google.com>, Ackerly Tng <ackerleytng@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e0b0bffb-c240-4d23-bf4d-0c1c19608f60@proton.me>
 
-On Wed, Aug 14, 2024, Paolo Bonzini wrote:
-> On 8/9/24 21:03, Sean Christopherson wrote:
-> > Try to unprotect shadow pages if and only if indirect_shadow_pages is non-
-> > zero, i.e. iff there is at least one protected such shadow page.  Pre-
-> > checking indirect_shadow_pages avoids taking mmu_lock for write when the
-> > gfn is write-protected by a third party, i.e. not for KVM shadow paging,
-> > and in the *extremely* unlikely case that a different task has already
-> > unprotected the last shadow page.
+On Thu, Aug 15, 2024 at 01:39:05PM +0000, Benno Lossin wrote:
+> On 15.08.24 15:33, Danilo Krummrich wrote:
+> > On Thu, Aug 15, 2024 at 02:34:50PM +0200, Alice Ryhl wrote:
+> >> On Thu, Aug 15, 2024 at 2:33 PM Danilo Krummrich <dakr@kernel.org> wrote:
+> >>>
+> >>> On Thu, Aug 15, 2024 at 11:20:32AM +0200, Alice Ryhl wrote:
+> >>>> On Thu, Aug 15, 2024 at 4:52 AM Danilo Krummrich <dakr@kernel.org> wrote:
+> >>>>>
+> >>>>> On Wed, Aug 14, 2024 at 12:32:15PM -0700, Boqun Feng wrote:
+> >>>>>> Hi Danilo,
+> >>>>>>
+> >>>>>> I'm trying to put your series on rust-dev, but I hit a few conflicts due
+> >>>>>> to the conflict with `Box::drop_contents`, which has been in rust-dev
+> >>>>>> for a while. And the conflict is not that trivial for me to resolve.
+> >>>>>> So just a head-up, that's a requirement for me to put it on rust-dev for
+> >>>>>> more tests from my end ;-)
+> >>>>>
+> >>>>> I rebased everything and you can fetch them from [1].
+> >>>>>
+> >>>>> I resolved the following conflicts:
+> >>>>>
+> >>>>>   - for `Box`, implement
+> >>>>>     - `drop_contents`
+> >>>>>     - `manually_drop_contents` [2]
+> >>>>
+> >>>> Not sure I like this name. It sounds like something that runs the
+> >>>> destructor, but it does the exact opposite.
+> >>>
+> >>> I thought it kinda makes sense, since it's analogous to `ManuallyDrop::new`.
+> >>>
+> >>> What about `Box::forget_contents` instead?
+> >>
+> >> One option is `into_manually_drop`. This uses the convention of using
+> >> the `into_*` prefix for conversions that take ownership of the
+> >> original value.
 > > 
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >   arch/x86/kvm/mmu/mmu.c | 3 +++
-> >   1 file changed, 3 insertions(+)
+> > The signature of the current `Box::manually_drop_contents` is the same as for
+> > `Box::drop_contents`, namely
+> > `fn manually_drop_contents(this: Self) -> Box<MaybeUninit<T>, A>`.
 > > 
-> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> > index 09a42dc1fe5a..358294889baa 100644
-> > --- a/arch/x86/kvm/mmu/mmu.c
-> > +++ b/arch/x86/kvm/mmu/mmu.c
-> > @@ -2736,6 +2736,9 @@ bool kvm_mmu_unprotect_gfn_and_retry(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa)
-> >   	gpa_t gpa = cr2_or_gpa;
-> >   	bool r;
-> > +	if (!vcpu->kvm->arch.indirect_shadow_pages)
-> > +		return false;
+> > `into_manually_drop` seems misleading for for returning a
+> > `Box<MaybeUninit<T>, A>`.
+> > 
+> > I still think `forget_contents` hits it quite well. Just as `drop_contents`
+> > drops the value, `forget_contents` makes the `Box` forget the value.
 > 
-> indirect_shadow_pages is accessed without a lock, so here please add a note
-> that, while it may be stale, a false negative will only cause KVM to skip
-> the "unprotect and retry" optimization.
+> I think `forget_contents` sounds good. Can you please add some more docs
+> to that function though? Like an example and change "Manually drops the
+> contents, but keeps the allocation" to "Forgets the contents (does not
+> run the destructor), but keeps the allocation.".
 
-Correct, I'll add a comment.
+I can't really think of a good real world example other than moving out of a
+`Box`, can you? Otherwise, maybe it just shouldn't be public?
 
-> (This is preexisting in reexecute_instruction() and goes away in patch 18, if
-> I'm pre-reading that part of the series correctly).
 > 
-> Bonus points for opportunistically adding a READ_ONCE() here and in
-> kvm_mmu_track_write().
+> Another thing that I spotted while looking at the patch, `move_out`
+> doesn't need the `transmute_copy`, you should be able to just call
+> `read` on the pointer.
 
-Hmm, right, this one should have a READ_ONCE(), but I don't see any reason to
-add one in kvm_mmu_track_write().  If the compiler was crazy and generate multiple
-loads between the smp_mb() and write_lock(), _and_ the value transitioned from
-1->0, reading '0' on the second go is totally fine because it means the last
-shadow page was zapped.  Amusingly, it'd actually be "better" in that it would
-avoid unnecessary taking mmu_lock.
+While technically it's the same I thought `transmute_copy` is considered better,
+since it has less stict safety requirements?
 
-Practically speaking, the compiler would have to be broken to generate multiple
-loads in the 0->1 case, as that would mean the generated code loaded the value
-but ignored the result.  But even if that were to happen, a final read of '1' is
-again a-ok.
+For `transmute_copy` we only need to say, that dst has the same type as src,
+whereas for `read` the pointer must be valid for reads, properly aligned and
+point to an initialized value.
 
-This code is different because a READ_ONCE() would ensure that indirect_shadow_pages
-isn't reloaded for every check.  Though that too would be functionally ok, just
-weird.
-
-Obviously the READ_ONCE() would be harmless, but IMO it would be more confusing
-than helpful, e.g. would beg the question of why kvm_vcpu_exit_request() doesn't
-wrap vcpu->mode with READ_ONCE().  Heh, though arguably vcpu->mode should be
-wrapped with READ_ONCE() since it's a helper and could be called multiple times
-without any code in between that would guarantee a reload.
+> 
+> ---
+> Cheers,
+> Benno
+> 
 
