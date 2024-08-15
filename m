@@ -1,165 +1,234 @@
-Return-Path: <linux-kernel+bounces-287462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECDD0952809
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 04:58:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9167095280B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 04:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DA621F21F72
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:58:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DFA02866DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C022208B0;
-	Thu, 15 Aug 2024 02:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="uPxCf3H6"
-Received: from AUS01-ME3-obe.outbound.protection.outlook.com (mail-me3aus01olkn2104.outbound.protection.outlook.com [40.92.63.104])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758702C182;
+	Thu, 15 Aug 2024 02:58:50 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2261CA9C
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 02:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.63.104
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723690710; cv=fail; b=W7BR3WSIZS/8zRKyv2jTmSp7VXm3jjFa+Rr66yXOesD7f9uhLiAS+iWV3UgO3elniR0m1HepCvgBqCu5YqYbMaiYZgkXbX3j/n0UlyJkJwd3U3shsFLITkIyI2n8YwjpNj1oUbs9QNlYbUW6ZstPuvnh+i4oAvzKTFNUtWDCeU8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723690710; c=relaxed/simple;
-	bh=N0FjUtSYsqMYnXnNsmZcWSM0H2CKVCCLtvCAUxIln4M=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=VBRHNgtlrzcMLwSLGqRLc4w5hQVrHQFQknsH6wsZ7XdDRWPTnuF7LmsTVLEvydlWToPHMtT4GGW8EuCnwvRXicjPZr9YejK8BnZU2hQPi8rs+uWAmfzCuRnApjyFJaOSkRkkR63VDmXtxSKOUvZh3nV18J6poSKLTqFqrI2wOCA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=uPxCf3H6; arc=fail smtp.client-ip=40.92.63.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KApIGQ3s/+zdzU1o10XZHkHrV99Gcen74IAx4jmYlokth0F4XDyIxEBJnkK6A+CCH7rHdkgn4gUoj+YCJy1/TSsLrglHfbhWXNK5MXlOd8K0lpguxQlakKeeRoeQT6ifgbczj4IH74R6gz49pBwbE2f0zBPDZYvsMpw4ebFiEoiCZWIhtxXnQtFbvfe2f9Vcv27xdTumEWrmQrz3dL9avl8XfGl5R8p15KPBmtECbwprI3/92PCcfHWzNXF2z/Ehe0rnci5RpbkrkxhFD8eCdScg3RVt6H04qhC3QH9SZQqZiJNhQc81v0q5Sy29CazHmR7tNPdpE/neGw5SXAxz7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eubp37KkZ/RAdu+V0tZbFGPTFeI5eY8DvCCo8q93/vo=;
- b=hrIxjoJHQdGLAHs26fnYq9xofMk7z9/nGt6X7G4fMwGkICGI8PV1qAOUWrktpwN5UuBTxr8LDVgrMwxdJC6oAMTdtQYauUNAU+v1CLqgb0Y9wsptpLYImtD4gfOw4pBuABTBlEf2YNEgS0ETLFueeGnlqEVujlqQiwvrqMgq9BPKonIis4tI1wtxV3/9V5uWu61jwxuvNqU8jGPtD+sSITi5BLmZdAMG/iE+HBGCvMZNVu7jNOOBc81Y2vkjYaXi0DfTcgBy9FjDKF/4FCetCwyMHzIqlDR9G1Pc+3ezjUaMKcDWCSGeJuBD5chHoYZr4czcUsvQvNTkyZ4zHU83CA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eubp37KkZ/RAdu+V0tZbFGPTFeI5eY8DvCCo8q93/vo=;
- b=uPxCf3H6UgRL56XQG9TEr94q49L2YfAxlZvE92RcxD9o3lgev3oICvKciXhSZIKJCCYYGLAdea8LYbRR1c9M/nJLTA4Zn3sUuSUzn9vLrxFvgLNZrV+2NTZCpmDmA3dj3uwyExtrANzoGtDtA4LzkFOxnXmKyxrUHEbYWAQwwn/M0n6cjhkZCSJy2usdOwvMSelUPIGYbl28HYTXq1ODil6KGnGS+wMmrgzo5a//QErXkQaVtH1Hhtn9tdmZDWnjIAz1oj7eXVV8g3lCLss9frojaqLzvRFVpcw8usYUY4TOew+UNYje4aJfkGSdYQ3ldLfN6pyMZkhKC+Fj4n1sgw==
-Received: from ME0P300MB0635.AUSP300.PROD.OUTLOOK.COM (2603:10c6:220:22d::7)
- by SY8P300MB0550.AUSP300.PROD.OUTLOOK.COM (2603:10c6:10:291::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Thu, 15 Aug
- 2024 02:58:24 +0000
-Received: from ME0P300MB0635.AUSP300.PROD.OUTLOOK.COM
- ([fe80::f32e:dcbd:f696:7ea1]) by ME0P300MB0635.AUSP300.PROD.OUTLOOK.COM
- ([fe80::f32e:dcbd:f696:7ea1%4]) with mapi id 15.20.7849.023; Thu, 15 Aug 2024
- 02:58:24 +0000
-From: Roland Xu <mu001999@outlook.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	will@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Roland Xu <mu001999@outlook.com>
-Subject: [PATCH RESEND] Avoid schedule while atomic if meeting the early deadlock.
-Date: Thu, 15 Aug 2024 10:58:13 +0800
-Message-ID:
- <ME0P300MB063599BEF0743B8FA339C2CECC802@ME0P300MB0635.AUSP300.PROD.OUTLOOK.COM>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [01opBXNGGkcxDf6AnjxEd64DBX+9Z1QXWPpVfv5l8mI=]
-X-ClientProxiedBy: SG2PR01CA0195.apcprd01.prod.exchangelabs.com
- (2603:1096:4:189::17) To ME0P300MB0635.AUSP300.PROD.OUTLOOK.COM
- (2603:10c6:220:22d::7)
-X-Microsoft-Original-Message-ID:
- <20240815025813.2224708-1-mu001999@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB3C38382;
+	Thu, 15 Aug 2024 02:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723690729; cv=none; b=so+zn0p31FG4g0vuf6CfL1SQN/D6oUZdbMaYvwVtvagHmqdIW3meGZ+THX5ABXcJLlE2WT/lXoOedk3/cDWC2nTcrpgHidzBRQD/jIoxXdJR+iPWnHoFWmh3zkbd2BBQBsDXAr+fe0iY1YaMvQqBRtOr9eFhTJHHB2qqfesIheA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723690729; c=relaxed/simple;
+	bh=86J0cKNCLMIx8ugIr/ubHmolU32V6osL0szusAhIeNk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DxRdYQOtWIeofKLuy20hiEYw7YCs5p52zAk+fQNNJ0O0P4hQ6mnx5RHaJiINmyMIxVIA315SfA4wIG905yc3RUzJzAtmfjlqoMDpTfJeH0Cuse86FfOSHBaQm05XY0UGjZLf+T5vd0Y5jG7mJtixuVFBjhF2jUlqMGBQUvXNqYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WkqXy3MGgzpTDN;
+	Thu, 15 Aug 2024 10:57:22 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3AB981800A0;
+	Thu, 15 Aug 2024 10:58:44 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 15 Aug 2024 10:58:42 +0800
+Message-ID: <9044640f-727a-f4ec-cb70-35eeeb28111e@huawei.com>
+Date: Thu, 15 Aug 2024 10:58:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ME0P300MB0635:EE_|SY8P300MB0550:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5c1fc358-c982-4c79-b47f-08dcbcd6210e
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|15080799003|5072599009|19110799003|8060799006|440099028|3412199025|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	ilLaYY9P3PL+cb2MSoHPMApvoJ8yv3PRe1SjCGXI+2nRsdSz0k8xVbk+e7O9BX7kahuSQ6tDbZQSPkM14fvUrMWN9WNNmZCH2H90ZkenCily9r8ZxfDXDipe9Vp2qiYQYs2x3H4tiM7qKjsUzv4LtWH2aEs5RIKDWcHogak0EnoNMyslrI6me2lEiRpA3EKmP9wxNiM7Zq/N6TGAX0vF0sh+kaO6aA9qtVXIi9hzp6jfc57OnG++pGTovabNUTd3Ix6HHieSH1ltjU5P/ayW+39JSYs9dNXhFljL+IK1TsAYWFOjXOOiT723Edl6kje7mHBEmPOo2yFOtoiorK/+NQ1eJ3Wm0uKDjFs/SlejPmNWW0nSuk/EpkZjsTzyFicQacQ08rbJ2VkQbnOsufRhXnfq8jGfTlEXcJsfTFvg7gT7GNnZCcm9w1WQsnE1D01FJSxZk6bkIU6XrevyHKtbP0juedz16t7g+YSSuFgoStYuap/oQNR7km90FBWXyzRBsF/Uuf/yh6o5uf998INPXMj9SuQt3QF2f1fjH60q7N+JeQYAaLWq+Kvdm7qveLm9S7/wGbRYbV0OrNVos5Jz4elk7rwb0g5juc7pOZvaqJdNK40/4TndpwVpJ4WW8AoJ5pkiXsXishYVqW0JPpoykEtt/pfKCeT/1qnNeEGvrhA2x6connmGSJGXT24R9F0PMOgqOJ+xRlA0oRNNRZINJdDT4JGSddH6TV238wCBlfk=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?GmZpLg3Buo5F0vyUO03dir9X7nSLStOe9/MB54VVaQDnThFSWa5YdhnyKY6L?=
- =?us-ascii?Q?G8w1Odgp8DXERxZbImLror2h5x9oTBVQhUfFMLchZhk6BZUEDmP/T1J7QVWf?=
- =?us-ascii?Q?SUJMMBuDZoomTNl8Chw2twsBhblQ3V8UeF4I43O9ZUKpziV+y83fyXqOCEXO?=
- =?us-ascii?Q?sfXmQaFpEvZ2HGKxjLTJ5rpuW7rfZyNBpni1jOblg+2pN9JV3KuyPzmmqmwh?=
- =?us-ascii?Q?dbs8en+UNKMheL1aHBi6YAPsHoDI9I2LOKRqqccwN3x/v0er4w7z3SqlPbRl?=
- =?us-ascii?Q?RMljFXYrqJA0ljM49IPjMWbXOavodwoeMe+KyF5H4cjp37Mng8RhZcm3NXUY?=
- =?us-ascii?Q?hnxiz/eHROSlXh3wXmXOmwai0NqqMbFxqns2h9baQKQDSwYjPanhsnbVeulH?=
- =?us-ascii?Q?H2VajlqGpHnhNdSRgOCbFOlJ+9nWoDsJhRHRWSJi+72ojkTH50Tvt7V9fdr2?=
- =?us-ascii?Q?9KYz5Sx3cliJbiONLv6myjm20t/pIcTrUc3xJoMqfrFWvkUxmLTIIzGJ/8Co?=
- =?us-ascii?Q?KvND4W9BQDP8mPukX602HbxnFRAmyaFCt2HquP24KVn3FDXPn0YALn/EY91q?=
- =?us-ascii?Q?6MVFuaWXGfOWvbm53DipiG6aGoxPMDqPBcOCNnGO1f4QE7rCJ/LE+PA40Ywm?=
- =?us-ascii?Q?YdEtGcdNd59HcLUZ4IN+F48Ch/rXULCQQN0LYtAK3h0QR7z6838vXNqXQmmw?=
- =?us-ascii?Q?YgiqkOcE1fLI5+Jv3uLQBGO9vs/WVN05E3mmFxfeV5b5DUTKeQTVJ73qdd++?=
- =?us-ascii?Q?sJv8ufa4/bp7I2vfr45RXpkggjH7jpg8hyrRy9MwvkbDnZ2anyBJR/ZrSYUs?=
- =?us-ascii?Q?ctJKs2LAMldlWeX9+vnQdybZqxjJU8Gu9kLvRqeQOa+A3Miyi586YRFbo5/n?=
- =?us-ascii?Q?6WwzbSg0XAIh2fg8Q0MZ6ddmKlt/j/+GIJeJuWOXYAAl843q+GopAZUSZR/H?=
- =?us-ascii?Q?xgxWy45l/MlWsUCa2GwTLhzlF7sI/iAcDzbWkH+jegshNyOKrqahW/yRw+by?=
- =?us-ascii?Q?2KlmBTE3KNuarJbqOWuwrhr4KDsrdk7otWIdibcKetRw/WYCdJxVpgDNIjCM?=
- =?us-ascii?Q?lasac0B0FjvXs60GL8IOdVqlZ474ux10JmX0LOGCmk2/LCe/8Kpbl9YmW/JJ?=
- =?us-ascii?Q?UEdiHNaa+XCbcn/Uxnr6QMsbwJKlPzqWEJtLYyAICsuBv9LJUaZ4LABD8PUo?=
- =?us-ascii?Q?IZ5by35p787j1CXbt8YL0/4jeqs75FKZG4cJjBS0t7fi3B4DL7BBQEU5cxw?=
- =?us-ascii?Q?=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5c1fc358-c982-4c79-b47f-08dcbcd6210e
-X-MS-Exchange-CrossTenant-AuthSource: ME0P300MB0635.AUSP300.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2024 02:58:24.6765
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SY8P300MB0550
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH] uprobes: Optimize the allocation of insn_slot for
+ performance
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+CC: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+	<namhyung@kernel.org>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
+	"oleg@redhat.com >> Oleg Nesterov" <oleg@redhat.com>, Andrii Nakryiko
+	<andrii@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt
+	<rostedt@goodmis.org>, <paulmck@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <bpf@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>
+References: <20240727094405.1362496-1-liaochang1@huawei.com>
+ <7eefae59-8cd1-14a5-ef62-fc0e62b26831@huawei.com>
+ <CAEf4BzaO4eG6hr2hzXYpn+7Uer4chS0R99zLn02ezZ5YruVuQw@mail.gmail.com>
+ <85991ce3-674d-b46e-b4f9-88a50f7f5122@huawei.com>
+ <CAEf4BzYvpgfFGckcKdzkC_g1J1SFi7xBe=_cjdVy4KEMikvGMw@mail.gmail.com>
+ <2c23e9cc-5593-84d0-9157-1e946df941d9@huawei.com>
+ <CAEf4BzZkXWcE7=2FNm-DrSFOR-Pd9LqrQJvV0ShXfPnXzSzYjg@mail.gmail.com>
+From: "Liao, Chang" <liaochang1@huawei.com>
+In-Reply-To: <CAEf4BzZkXWcE7=2FNm-DrSFOR-Pd9LqrQJvV0ShXfPnXzSzYjg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-The wait_lock is held in rt_mutex_handle_deadlock,
-so unlock_irq it if rtmutex deadlock is detected.
-Otherwise, this would trigger scheduling while atomic.
 
-Signed-off-by: Roland Xu <mu001999@outlook.com>
----
- kernel/locking/rtmutex.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
-index 88d08eeb8bc0..9188bfb63cb6 100644
---- a/kernel/locking/rtmutex.c
-+++ b/kernel/locking/rtmutex.c
-@@ -1644,6 +1644,7 @@ static int __sched rt_mutex_slowlock_block(struct rt_mutex_base *lock,
- }
- 
- static void __sched rt_mutex_handle_deadlock(int res, int detect_deadlock,
-+					     struct rt_mutex_base *lock,
- 					     struct rt_mutex_waiter *w)
- {
- 	/*
-@@ -1660,6 +1661,7 @@ static void __sched rt_mutex_handle_deadlock(int res, int detect_deadlock,
- 	 * Yell loudly and stop the task right here.
- 	 */
- 	WARN(1, "rtmutex deadlock detected\n");
-+	raw_spin_unlock_irq(&lock->wait_lock);
- 	while (1) {
- 		set_current_state(TASK_INTERRUPTIBLE);
- 		rt_mutex_schedule();
-@@ -1713,7 +1715,7 @@ static int __sched __rt_mutex_slowlock(struct rt_mutex_base *lock,
- 	} else {
- 		__set_current_state(TASK_RUNNING);
- 		remove_waiter(lock, waiter);
--		rt_mutex_handle_deadlock(ret, chwalk, waiter);
-+		rt_mutex_handle_deadlock(ret, chwalk, lock, waiter);
- 	}
- 
- 	/*
+在 2024/8/15 2:42, Andrii Nakryiko 写道:
+> On Tue, Aug 13, 2024 at 9:17 PM Liao, Chang <liaochang1@huawei.com> wrote:
+>>
+>>
+>>
+>> 在 2024/8/13 1:49, Andrii Nakryiko 写道:
+>>> On Mon, Aug 12, 2024 at 4:11 AM Liao, Chang <liaochang1@huawei.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> 在 2024/8/9 2:26, Andrii Nakryiko 写道:
+>>>>> On Thu, Aug 8, 2024 at 1:45 AM Liao, Chang <liaochang1@huawei.com> wrote:
+>>>>>>
+>>>>>> Hi Andrii and Oleg.
+>>>>>>
+>>>>>> This patch sent by me two weeks ago also aim to optimize the performance of uprobe
+>>>>>> on arm64. I notice recent discussions on the performance and scalability of uprobes
+>>>>>> within the mailing list. Considering this interest, I've added you and other relevant
+>>>>>> maintainers to the CC list for broader visibility and potential collaboration.
+>>>>>>
+>>>>>
+>>>>> Hi Liao,
+>>>>>
+>>>>> As you can see there is an active work to improve uprobes, that
+>>>>> changes lifetime management of uprobes, removes a bunch of locks taken
+>>>>> in the uprobe/uretprobe hot path, etc. It would be nice if you can
+>>>>> hold off a bit with your changes until all that lands. And then
+>>>>> re-benchmark, as costs might shift.
+>>>>>
+>>>>> But also see some remarks below.
+>>>>>
+>>>>>> Thanks.
+>>>>>>
+>>>>>> 在 2024/7/27 17:44, Liao Chang 写道:
+>>>>>>> The profiling result of single-thread model of selftests bench reveals
+>>>>>>> performance bottlenecks in find_uprobe() and caches_clean_inval_pou() on
+>>>>>>> ARM64. On my local testing machine, 5% of CPU time is consumed by
+>>>>>>> find_uprobe() for trig-uprobe-ret, while caches_clean_inval_pou() take
+>>>>>>> about 34% of CPU time for trig-uprobe-nop and trig-uprobe-push.
+>>>>>>>
+>>>>>>> This patch introduce struct uprobe_breakpoint to track previously
+>>>>>>> allocated insn_slot for frequently hit uprobe. it effectively reduce the
+>>>>>>> need for redundant insn_slot writes and subsequent expensive cache
+>>>>>>> flush, especially on architecture like ARM64. This patch has been tested
+>>>>>>> on Kunpeng916 (Hi1616), 4 NUMA nodes, 64 cores@ 2.4GHz. The selftest
+>>>>>>> bench and Redis GET/SET benchmark result below reveal obivious
+>>>>>>> performance gain.
+>>>>>>>
+>>>>>>> before-opt
+>>>>>>> ----------
+>>>>>>> trig-uprobe-nop:  0.371 ± 0.001M/s (0.371M/prod)
+>>>>>>> trig-uprobe-push: 0.370 ± 0.001M/s (0.370M/prod)
+>>>>>>> trig-uprobe-ret:  1.637 ± 0.001M/s (1.647M/prod)
+>>>>>
+>>>>> I'm surprised that nop and push variants are much slower than ret
+>>>>> variant. This is exactly opposite on x86-64. Do you have an
+>>>>> explanation why this might be happening? I see you are trying to
+>>>>> optimize xol_get_insn_slot(), but that is (at least for x86) a slow
+>>>>> variant of uprobe that normally shouldn't be used. Typically uprobe is
+>>>>> installed on nop (for USDT) and on function entry (which would be push
+>>>>> variant, `push %rbp` instruction).
+>>>>>
+>>>>> ret variant, for x86-64, causes one extra step to go back to user
+>>>>> space to execute original instruction out-of-line, and then trapping
+>>>>> back to kernel for running uprobe. Which is what you normally want to
+>>>>> avoid.
+>>>>>
+>>>>> What I'm getting at here. It seems like maybe arm arch is missing fast
+>>>>> emulated implementations for nops/push or whatever equivalents for
+>>>>> ARM64 that is. Please take a look at that and see why those are slow
+>>>>> and whether you can make those into fast uprobe cases?
+>>>>
+>>>> Hi Andrii,
+>>>>
+>>>> As you correctly pointed out, the benchmark result on Arm64 is counterintuitive
+>>>> compared to X86 behavior. My investigation revealed that the root cause lies in
+>>>> the arch_uprobe_analyse_insn(), which excludes the Arm64 equvialents instructions
+>>>> of 'nop' and 'push' from the emulatable instruction list. This forces the kernel
+>>>> to handle these instructions out-of-line in userspace upon breakpoint exception
+>>>> is handled, leading to a significant performance overhead compared to 'ret' variant,
+>>>> which is already emulated.
+>>>>
+>>>> To address this issue, I've developed a patch supports  the emulation of 'nop' and
+>>>> 'push' variants. The benchmark results below indicates the performance gain of
+>>>> emulation is obivious.
+>>>>
+>>>> xol (1 cpus)
+>>>> ------------
+>>>> uprobe-nop:  0.916 ± 0.001M/s (0.916M/prod)
+>>>> uprobe-push: 0.908 ± 0.001M/s (0.908M/prod)
+>>>> uprobe-ret:  1.855 ± 0.000M/s (1.855M/prod)
+>>>> uretprobe-nop:  0.640 ± 0.000M/s (0.640M/prod)
+>>>> uretprobe-push: 0.633 ± 0.001M/s (0.633M/prod)
+>>>> uretprobe-ret:  0.978 ± 0.003M/s (0.978M/prod)
+>>>>
+>>>> emulation (1 cpus)
+>>>> -------------------
+>>>> uprobe-nop:  1.862 ± 0.002M/s  (1.862M/s/cpu)
+>>>> uprobe-push: 1.743 ± 0.006M/s  (1.743M/s/cpu)
+>>>> uprobe-ret:  1.840 ± 0.001M/s  (1.840M/s/cpu)
+>>>> uretprobe-nop:  0.964 ± 0.004M/s  (0.964M/s/cpu)
+>>>> uretprobe-push: 0.936 ± 0.004M/s  (0.936M/s/cpu)
+>>>> uretprobe-ret:  0.940 ± 0.001M/s  (0.940M/s/cpu)
+>>>>
+>>>> As you can see, the performance gap between nop/push and ret variants has been significantly
+>>>> reduced. Due to the emulation of 'push' instruction need to access userspace memory, it spent
+>>>> more cycles than the other.
+>>>
+>>> Great, it's an obvious improvement. Are you going to send patches
+>>> upstream? Please cc bpf@vger.kernel.org as well.
+>>
+>> I'll need more time to thoroughly test this patch. The emulation o push/nop
+>> instructions also impacts the kprobe/kretprobe paths on Arm64, As as result,
+>> I'm working on enhancements to trig-kprobe/kretprobe to prevent performance
+>> regression.
+> 
+> Why would the *benchmarks* have to be modified? The typical
+> kprobe/kretprobe attachment should be fast, and those benchmarks
+> simulate typical fast path kprobe/kretprobe. Is there some simulation
+> logic that is shared between uprobes and kprobes or something?
+
+Yes, kprobe and uprobe share many things for Arm64, but there are curical
+difference. Let me explain further. Simulating a 'push' instruction on
+arm64 will modify the stack pointer at *probe breakpoint. However, kprobe
+and uprobe use different way to restore the stack pointer upon returning
+from the breakpoint exception. Consequently.sharing the same simulation
+logic for both would result in kernel panic for kprobe.
+
+To avoid complicating the exception return logic, I've opted to simuate
+'push' only for uprobe and maintain the single-stepping for kprobe [0].
+This trade-off avoid the impacts to kprobe/kretprobe, and no need to
+change the kprobe/kretprobe related benchmark.
+
+[0] https://lore.kernel.org/all/20240814080356.2639544-1-liaochang1@huawei.com/
+
+> 
+>>
+>>>
+>>>
+>>> I'm also thinking we should update uprobe/uretprobe benchmarks to be
+>>> less x86-specific. Right now "-nop" is the happy fastest case, "-push"
+>>> is still happy, slightly slower case (due to the need to emulate stack
+>>> operation) and "-ret" is meant to be the slow single-step case. We
+>>> should adjust the naming and make sure that on ARM64 we hit similar
+>>> code paths. Given you seem to know arm64 pretty well, can you please
+>>> take a look at updating bench tool for ARM64 (we can also rename
+>>> benchmarks to something a bit more generic, rather than using
+>>> instruction names)?
+>>
+> 
+> [...]
+
 -- 
-2.34.1
-
+BR
+Liao, Chang
 
