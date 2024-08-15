@@ -1,67 +1,67 @@
-Return-Path: <linux-kernel+bounces-287705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DCBF952BBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:15:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F06C0952BAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B94C51C2170B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:15:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79A982839D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FBDD1DB420;
-	Thu, 15 Aug 2024 08:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D6D1D54F0;
+	Thu, 15 Aug 2024 08:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ejQs7cZn"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MmQy/tZ5"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ACA11D0DCC;
-	Thu, 15 Aug 2024 08:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2B01BB698;
+	Thu, 15 Aug 2024 08:57:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723712282; cv=none; b=TmbiqakWcL8A+ai++5770HLAssVD0oncH6wMtvhAgrxpyKXqPpH0xEXDvsaDTOQiMZxHVSTqh74vWrXr5jB9pggwsgXz3Xat8TUTF5Pc1PIOgfShvlTK1yjIs16tRgGPQPpgcXj+63tQS655JYaMU5n6Q/nkZHjK6qpNl1VHH00=
+	t=1723712279; cv=none; b=Xp260x12HsgUt/GfEUQDmvZlou/ucw5ENYnK5N6BHFY8OLimvHhx51tgL5KoymAbX8N6UAi43CbRD2bp0iDzBz7CTFkdNz3sa542jFhqO2j2eOV9LW9u6VfSYQPwuKe+CVNMiRb+v4N0b0PHw+r0kG23/UzcjwE1wwx4FlbuImk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723712282; c=relaxed/simple;
-	bh=8yKbiZoSG5+2O1cL7KxT+nPMB24eJ5utceYaWXsXvRw=;
+	s=arc-20240116; t=1723712279; c=relaxed/simple;
+	bh=PHOqtyKbmBusl7egA3xoMemSBFA9/t04wTp2QcxKP24=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iyApTAsxerpbsr8Al4V01AEja7zHWeMH00lvjhe1vNbXa2XMOlhZ1hMl5TakqYjAC/iwmCgMBfUTgZ/AuaW3i8hUovnxfVC6j+y39rGpjM0E4ysGNRwzoFHZMGumKe2na0gBMIEBgmEEWDa1A0gwatWfxirr6pkPNg2RNv/C4nE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ejQs7cZn; arc=none smtp.client-ip=205.220.180.131
+	 MIME-Version; b=VU5t+c6DGecOR/oGNCCj/j8VSNJisH9nrjKzH+Yl3NaWpsQcCGEpUoYEpjHsTMEmIxXhYozAHVDuzthblB5fENwuFKbsa5vYN+U9usmjE75RS4+QhLbElevUc9QC3dYuwLhGm6UKpfR18W+ENgn24TYxO4oqaqQ28hi/LgipHmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MmQy/tZ5; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47F7GhZa027049;
-	Thu, 15 Aug 2024 08:57:35 GMT
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47ENBsqx027591;
+	Thu, 15 Aug 2024 08:57:34 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=LrV6XUVSbqs
-	7hBbne3RhDNRoz1u6Bydsa8+6oj0Smoc=; b=ejQs7cZnSaf9luyaNF4coPFlPX2
-	84mWy6I7RglMtr7s/vFVMD7F5F8e6CXVUAVMrMDTVchCinal0aD8p6IzoU+UK7I8
-	7wHbGz5MXxvwsT6oSA8uK2KMLk9tIahGGUWvBhZqD+qZARQe0JGqcFSbdeeUxl8o
-	RUBoRq2GH4autHWM63Yx2BaLSTJ8Uj12XIFwK7DkDYSvjQ69H6J5T1OcrIb6HB1V
-	BnoYwq4T1kwmbss64UeNqdr/ovizuN2aL65/aOzYrIu9Qahq2aXzCDklpz5D3Qpe
-	xlUVJH1he5QB+qOIrOqygIBP7oSYMhy1U6MQkfHObIKEK7zXgM6xMtW7thw==
+	:mime-version:references:subject:to; s=qcppdkim1; bh=xRdyMW3l8LB
+	NMV4txZ7rIFHVybiYltWd1qVEgHQBIxA=; b=MmQy/tZ5rZLNU9JYamzUvSbDkv0
+	a8C2yIGVGkNhHF60J6C0qW+SnFcPrlmEMexJ0gm3sH1uMtNDVvE1CXlwClyoa73H
+	a+V3adM8L2Wx8D6rz56zIHlO11cvfPlX/Fev4GbnnbtzJHZa87qzPLIf6eVd6uCV
+	wgSX/PWtLxqy/KuNdjlSWaQsD5aBL0XVX07zO/sbm86ldm6cj3kmaNfFkZRNCDLP
+	KPMQXxMhhX7OMOi16tjFV2sld3frkLI+gBUdBZX49ZpRRTvjPWZjauxbZn4zFkga
+	/QeFEvEirkAO8EOXn91RLk2hyRCHz/d9IzM3wj/NHyxJN9UJ4BLXZoee5Vg==
 Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 411d5688pf-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x3etdq40-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Aug 2024 08:57:34 +0000 (GMT)
+	Thu, 15 Aug 2024 08:57:33 +0000 (GMT)
 Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 47F8vUko029776;
+	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 47F8vSvE029673;
 	Thu, 15 Aug 2024 08:57:30 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 40xkmhennu-1
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 40xkmhennq-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Thu, 15 Aug 2024 08:57:30 +0000
 Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47F8vUe7029710;
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47F8vUxI029708;
 	Thu, 15 Aug 2024 08:57:30 GMT
 Received: from hu-devc-blr-u22-a.qualcomm.com (hu-mdalam-blr.qualcomm.com [10.131.36.157])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 47F8vTJh029695
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 47F8vTg7029698
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Thu, 15 Aug 2024 08:57:30 +0000
 Received: by hu-devc-blr-u22-a.qualcomm.com (Postfix, from userid 466583)
-	id A8E53417F2; Thu, 15 Aug 2024 14:27:27 +0530 (+0530)
+	id AC27A417F7; Thu, 15 Aug 2024 14:27:27 +0530 (+0530)
 From: Md Sadre Alam <quic_mdalam@quicinc.com>
 To: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
         andersson@kernel.org, konradybcio@kernel.org, thara.gopinath@gmail.com,
@@ -72,9 +72,9 @@ To: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
         linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
 Cc: quic_srichara@quicinc.com, quic_varada@quicinc.com,
         quic_mdalam@quicinc.com, quic_utiwari@quicinc.com
-Subject: [PATCH v2 08/16] crypto: qce - Convert register r/w for aead via BAM/DMA
-Date: Thu, 15 Aug 2024 14:27:17 +0530
-Message-Id: <20240815085725.2740390-9-quic_mdalam@quicinc.com>
+Subject: [PATCH v2 09/16] crypto: qce - Add LOCK and UNLOCK flag support
+Date: Thu, 15 Aug 2024 14:27:18 +0530
+Message-Id: <20240815085725.2740390-10-quic_mdalam@quicinc.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
 References: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
@@ -89,128 +89,66 @@ X-QCInternal: smtphost
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: xlAxxxqmd5PHiw0roT84S5i9Xc_q8yBd
-X-Proofpoint-ORIG-GUID: xlAxxxqmd5PHiw0roT84S5i9Xc_q8yBd
+X-Proofpoint-GUID: u6rFz-1kcwrVF-bUzY_5784bz7lk605l
+X-Proofpoint-ORIG-GUID: u6rFz-1kcwrVF-bUzY_5784bz7lk605l
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-08-15_01,2024-08-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- malwarescore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0
- suspectscore=0 bulkscore=0 clxscore=1015 phishscore=0 priorityscore=1501
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408150064
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ suspectscore=0 impostorscore=0 phishscore=0 clxscore=1015 mlxlogscore=999
+ lowpriorityscore=0 priorityscore=1501 spamscore=0 adultscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408150064
 
-Convert register read/write for aead via BAM/DMA.
-with this change all the crypto register configuration
-will be done via BAM/DMA. This change will prepare command
-descriptor for all register and write it once.
+Add LOCK and UNLOCK flag support while preapring
+command descriptor for writing crypto register.
 
 Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
 ---
 
 Change in [v2]
 
-* updated commit message 
+* No change
 
 Change in [v1]
 
-* Added initial support for reagister read/write via bam
-  for aead
+* Added initial support for lock/un-lock flag
 
- drivers/crypto/qce/common.c | 38 ++++++++++++++++++++++---------------
- 1 file changed, 23 insertions(+), 15 deletions(-)
+ drivers/crypto/qce/dma.c | 7 ++++++-
+ drivers/crypto/qce/dma.h | 2 ++
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/qce/common.c b/drivers/crypto/qce/common.c
-index d485762a3fdc..ff96f6ba1fc5 100644
---- a/drivers/crypto/qce/common.c
-+++ b/drivers/crypto/qce/common.c
-@@ -454,7 +454,9 @@ static int qce_setup_regs_aead(struct crypto_async_request *async_req)
- 	unsigned long flags = rctx->flags;
- 	u32 encr_cfg, auth_cfg, config, totallen;
- 	u32 iv_last_word;
-+	int ret;
+diff --git a/drivers/crypto/qce/dma.c b/drivers/crypto/qce/dma.c
+index e4e672d65302..93d455d1d5b4 100644
+--- a/drivers/crypto/qce/dma.c
++++ b/drivers/crypto/qce/dma.c
+@@ -72,7 +72,12 @@ int qce_submit_cmd_desc(struct qce_device *qce, unsigned long flags)
+ 	unsigned long desc_flags;
+ 	int ret = 0;
  
-+	qce_clear_bam_transaction(qce);
- 	qce_setup_config(qce);
+-	desc_flags = DMA_PREP_CMD;
++	if (flags & QCE_DMA_DESC_FLAG_LOCK)
++		desc_flags = DMA_PREP_CMD | DMA_PREP_LOCK;
++	else if (flags & QCE_DMA_DESC_FLAG_UNLOCK)
++		desc_flags = DMA_PREP_CMD | DMA_PREP_UNLOCK;
++	else
++		desc_flags = DMA_PREP_CMD;
  
- 	/* Write encryption key */
-@@ -467,12 +469,12 @@ static int qce_setup_regs_aead(struct crypto_async_request *async_req)
+ 	/* For command descriptor always use consumer pipe
+ 	 * it recomended as per HPG
+diff --git a/drivers/crypto/qce/dma.h b/drivers/crypto/qce/dma.h
+index f10991590b3f..ad8a18a720b1 100644
+--- a/drivers/crypto/qce/dma.h
++++ b/drivers/crypto/qce/dma.h
+@@ -19,6 +19,8 @@
+ #define QCE_BAM_CMD_ELEMENT_SIZE       64
+ #define QCE_DMA_DESC_FLAG_BAM_NWD      (0x0004)
+ #define QCE_MAX_REG_READ               8
++#define QCE_DMA_DESC_FLAG_LOCK          (0x0002)
++#define QCE_DMA_DESC_FLAG_UNLOCK        (0x0001)
  
- 	if (IS_CCM(rctx->flags)) {
- 		iv_last_word = enciv[enciv_words - 1];
--		qce_write(qce, REG_CNTR3_IV3, iv_last_word + 1);
-+		qce_write_reg_dma(qce, REG_CNTR3_IV3, iv_last_word + 1, 1);
- 		qce_write_array(qce, REG_ENCR_CCM_INT_CNTR0, (u32 *)enciv, enciv_words);
--		qce_write(qce, REG_CNTR_MASK, ~0);
--		qce_write(qce, REG_CNTR_MASK0, ~0);
--		qce_write(qce, REG_CNTR_MASK1, ~0);
--		qce_write(qce, REG_CNTR_MASK2, ~0);
-+		qce_write_reg_dma(qce, REG_CNTR_MASK, ~0, 1);
-+		qce_write_reg_dma(qce, REG_CNTR_MASK0, ~0, 1);
-+		qce_write_reg_dma(qce, REG_CNTR_MASK1, ~0, 1);
-+		qce_write_reg_dma(qce, REG_CNTR_MASK2, ~0, 1);
- 	}
- 
- 	/* Clear authentication IV and KEY registers of previous values */
-@@ -508,7 +510,7 @@ static int qce_setup_regs_aead(struct crypto_async_request *async_req)
- 	encr_cfg = qce_encr_cfg(flags, enc_keylen);
- 	if (IS_ENCRYPT(flags))
- 		encr_cfg |= BIT(ENCODE_SHIFT);
--	qce_write(qce, REG_ENCR_SEG_CFG, encr_cfg);
-+	qce_write_reg_dma(qce, REG_ENCR_SEG_CFG, encr_cfg, 1);
- 
- 	/* Set up AUTH_SEG_CFG */
- 	auth_cfg = qce_auth_cfg(rctx->flags, auth_keylen, ctx->authsize);
-@@ -525,34 +527,40 @@ static int qce_setup_regs_aead(struct crypto_async_request *async_req)
- 		else
- 			auth_cfg |= AUTH_POS_BEFORE << AUTH_POS_SHIFT;
- 	}
--	qce_write(qce, REG_AUTH_SEG_CFG, auth_cfg);
-+	qce_write_reg_dma(qce, REG_AUTH_SEG_CFG, auth_cfg, 1);
- 
- 	totallen = rctx->cryptlen + rctx->assoclen;
- 
- 	/* Set the encryption size and start offset */
- 	if (IS_CCM(rctx->flags) && IS_DECRYPT(rctx->flags))
--		qce_write(qce, REG_ENCR_SEG_SIZE, rctx->cryptlen + ctx->authsize);
-+		qce_write_reg_dma(qce, REG_ENCR_SEG_SIZE, rctx->cryptlen + ctx->authsize, 1);
- 	else
--		qce_write(qce, REG_ENCR_SEG_SIZE, rctx->cryptlen);
--	qce_write(qce, REG_ENCR_SEG_START, rctx->assoclen & 0xffff);
-+		qce_write_reg_dma(qce, REG_ENCR_SEG_SIZE, rctx->cryptlen, 1);
-+	qce_write_reg_dma(qce, REG_ENCR_SEG_START, rctx->assoclen & 0xffff, 1);
- 
- 	/* Set the authentication size and start offset */
--	qce_write(qce, REG_AUTH_SEG_SIZE, totallen);
--	qce_write(qce, REG_AUTH_SEG_START, 0);
-+	qce_write_reg_dma(qce, REG_AUTH_SEG_SIZE, totallen, 1);
-+	qce_write_reg_dma(qce, REG_AUTH_SEG_START, 0, 1);
- 
- 	/* Write total length */
- 	if (IS_CCM(rctx->flags) && IS_DECRYPT(rctx->flags))
--		qce_write(qce, REG_SEG_SIZE, totallen + ctx->authsize);
-+		qce_write_reg_dma(qce, REG_SEG_SIZE, totallen + ctx->authsize, 1);
- 	else
--		qce_write(qce, REG_SEG_SIZE, totallen);
-+		qce_write_reg_dma(qce, REG_SEG_SIZE, totallen, 1);
- 
- 	/* get little endianness */
- 	config = qce_config_reg(qce, 1);
--	qce_write(qce, REG_CONFIG, config);
-+	qce_write_reg_dma(qce, REG_CONFIG, config, 1);
- 
- 	/* Start the process */
- 	qce_crypto_go(qce, !IS_CCM(flags));
- 
-+	ret = qce_submit_cmd_desc(qce, 0);
-+	if (ret) {
-+		dev_err(qce->dev, "Error in aead cmd descriptor\n");
-+		return ret;
-+	}
-+
- 	return 0;
- }
- #endif
+ struct qce_result_dump {
+ 	u32 auth_iv[QCE_AUTHIV_REGS_CNT];
 -- 
 2.34.1
 
