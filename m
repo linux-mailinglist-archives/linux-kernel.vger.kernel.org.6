@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-287747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 148A3952C20
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:30:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 906DE952C27
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:31:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47AB31C235F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:30:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5DC21C23689
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE32C21018D;
-	Thu, 15 Aug 2024 09:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDC921C169;
+	Thu, 15 Aug 2024 09:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="R86FgbAk"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="X7pteKxh"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90DE1BF33E
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90ABE2101BC
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723713910; cv=none; b=Qhtf3c3G4bXT3NXgTa6TwYR1c6kYopxV5DM25PRFRUSS0tXolbRo8R2aa14rDL9jT+d5yEzuhOfBFhajAtmHAkXOhuRn5ZWUe5OvL7stmBb/mlHSLY1o44cdl32SVksrUas55KNG2xUFjYxWDHVwHNa8Dx8/3KxaC3/9jwfOw/E=
+	t=1723713914; cv=none; b=FMM+QlVVfvuoSHuJJ+f6I6tb4WdABhhcuP9HcOLUrKHhuF+YlJa8lnNYdZlrEI4EtIGVCWhlDJ88ZQYFpCZ4fkTNvuTkSjqvYs07AqDSP/hV9Og4ryU6H3X4ENqK1rhQ+lTQLFW4Flh/B/nBhoJl8edX9ZWmUSiwNEwHSH7dIgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723713910; c=relaxed/simple;
-	bh=9LyCmNQL+Wo2sLWHPY86vHgjnCGu8A+hXloJ3pDxAko=;
+	s=arc-20240116; t=1723713914; c=relaxed/simple;
+	bh=Uvo6a5h0Mq4wDc4UKZj3kSS6IHIbPsNpdHtWtHYTJrE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Qx/wnaUoNRo1dMO9Bv4+0crMzE6sZgD3hcYhA8hl9XhLjetHpdY0Qgxzu546deOxtLibBr62hYMgnuw3jwHwBVtUKXDdSgFow9ND+egXNqm9FkzpaQJqoJKODodxsDuZyaFDO1gOAPB6oJTNivYW79xKmxO0OGtyp+Vljc8vDHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=R86FgbAk; arc=none smtp.client-ip=185.125.188.122
+	 MIME-Version; b=mAgajzgataRQoLQ6l65RTNsAddRUbh3chFb7K3Vnp5mJstj+vixTz0y5kAxHkRdqB0Cho0uUyEZfKRHMQ9g2TzopyUvQvv+K9I72EF4IHshBqPTlxLO+OFErlZZaJyykwTQkgEQGbh8oPbj3XfP/J/3dGda43ZYLZFO0GDe7VAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=X7pteKxh; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id B14D63F429
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:25:07 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 30D823F1F4
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:25:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1723713907;
-	bh=ex29ohbhGi3Fy6+0Qs/1K/FDT7vHiirCCSI2eAx8vvk=;
+	s=20210705; t=1723713911;
+	bh=63Iup0ra8rDQZw3AHJfX27OH/U8X3fJMxHpyqnCbE2I=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
 	 MIME-Version;
-	b=R86FgbAkGw8v8oIzoq6yVS/N45XM7MC35LVyhhnJYLgPT+P1mtfCZ1juOGIJk24I2
-	 wHln28uqSibfD9o/Ck2KAMUOJV7uhJbbxEtGMrrEgxl7tc7INt7yQF7RCt8/rP5mZ3
-	 wxRWWqOuTR7Pt1zKkxsI3+MdiGIqknitdln2Fmry27A21GCnxIEk/8KfAWM5YctxjR
-	 jvayuk5uUbXAcqQ/rDnqrScP+29Udp3xUHVxOKM3JVF1fKRqoK9ZxeUzml+HIdrpA6
-	 LBJB40UcnPOOf7ELFeSmNuCpnCTIWAEiE0MB7aeKE5gY4VkA7nk8nSacTWLHeIbhXl
-	 1s+PvInnZg1Yg==
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a837cc95c77so66421266b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 02:25:07 -0700 (PDT)
+	b=X7pteKxhTQdg6dDKuM17Z4/hWR5DvkQhqHozDJFSmU9/1oUypHAs26OiJNOJm5DC0
+	 TOWIwK54ndx+agaNEg0AiHWha6fj2NSWEW7SwuUXA2q6ByUfGHazkBpugUqYmDuxnY
+	 jDyfzKph3kDXJZi4nDQFGWNeWOSCV/DofyxCiR7E7VmGOkuK9uViyz1qhwGzkxsj4t
+	 nazEqdWOWTsB+GE5JiJ+AW70DhORI+kzlc1RaKGYtnqzdn+TmVepReAQPa0oI4QnAi
+	 J7E/jIl4TNIyuZ0jKuDTyxZ/s6sNaNbzf8gg906Rxj6fb4Tm6y1nxgyYiHtetUx3mX
+	 Zi0fukupu1LQg==
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a837cc95c77so66423466b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 02:25:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723713907; x=1724318707;
+        d=1e100.net; s=20230601; t=1723713909; x=1724318709;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ex29ohbhGi3Fy6+0Qs/1K/FDT7vHiirCCSI2eAx8vvk=;
-        b=KCYCdoxg6Nqyd8IDQjyv3uIPMJ9CnLqA3fFQVNi7ZV9g5cC0oobfxdJ+xmjq+jHiib
-         rW7Qz0Z4gP4DoE1r58C0MdjXqE7uU25RkhVNc1/Ts2am6oBiHBJcUnGUCsz1tO2pzoIX
-         BaFbJFFgDBwUl/6/ZnVCtX8MMKEy+qiEKV9+Aujq2FfF6MrouzIQszJwWw5aZp6ETMR3
-         oKrlC8cLcQm8TAU5sIl5w02Kz7s91LuW/BpYRZtiAhaie2x840icRRN1/Q9xgjMQ6z3U
-         ykqW50ghpxepktHi9GFYRcokLuY7y9BpdWWnqA6BA1N5tifnjscsu1OsEl6JYC2m8/YP
-         nzjg==
-X-Forwarded-Encrypted: i=1; AJvYcCVf4hSb5M+CNdGb9Ypr+ozZj33nxu8uvdi/Hok76IKJDNcVMYJgGVNqJmHbMYa8HvaecO/l6sIESGVzaUioi4mBbUa9Nzg50YIb38z2
-X-Gm-Message-State: AOJu0YxNXUrrwdpmE3OJXZnFY7Q2EOZlL2+rHTzSgzoQNVna8hwe62ZU
-	Y3zscrx+1gI9sjiFEMGq3wI5zu0LTwtXyxuHkTzVmnf8dnbtQwjBAqYEqrxkB/tZGn+K4KCHjqn
-	+Zy2NW/yxl1HpkWkz3RjpzIUZovcYuaG+JYtjRIbhaty0MLUvHtuGgRH9Cym67cZkQ7e37ppQ8m
-	XpQw==
-X-Received: by 2002:a17:907:e622:b0:a7d:cf4f:180b with SMTP id a640c23a62f3a-a8366d5be39mr383852366b.32.1723713906894;
-        Thu, 15 Aug 2024 02:25:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHZ5OnmkMFXHCENGvuouya0YLtsXvkFjYOL6tsjC3SgQjQW5b/e4j/Mtgu8clZbCAuhvbK4pg==
-X-Received: by 2002:a17:907:e622:b0:a7d:cf4f:180b with SMTP id a640c23a62f3a-a8366d5be39mr383851166b.32.1723713906574;
-        Thu, 15 Aug 2024 02:25:06 -0700 (PDT)
+        bh=63Iup0ra8rDQZw3AHJfX27OH/U8X3fJMxHpyqnCbE2I=;
+        b=oOyb861onB6LvePuMv9o9WnboREHshXe+vITjvfmDdH3CT1GJvJqtfm1v9nc+oWW49
+         kDOXiNPQkEGtPeuIWOoz54FHb/x8X5JgIdvLB/kASh1oC5r+eajt9l3AWg6NzcXEYtHu
+         9jNonYVp1yV081V7TOFo/vJzt9Fg7jzPW39uPSJcihm4ZKRwfXRU72byiRAK0B9FF2uQ
+         UC+Q2LmNC8tpmdnOzyUWUbJhwVHJv4ZhQZvFmq6NVxdIBcdy7y4jxKQYCXUoYxUjldKO
+         A1yemB4njeaNbjiMLsOjuYjDaj73t8Efqzg/3e1QpmjQOB1rRhkTgF+EZjsVW2IuSkKh
+         /9Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCXSL0QHjLYDffj/07xrFHHNAZtVX91UBgfCJxzIJX8vwhNN61aLIY21humz6KwNwlqV+voEg20f/veErA1IzU3XMXDQqu8rFzO+ytW4
+X-Gm-Message-State: AOJu0YynKSvjAA+xjH457emaopalheHXUFBy/UiUMTLI/SRB9o2w2nQs
+	O/Jp96kLllpeAqahbi6XBtlBkjAaW9q3nKkyo9GKq5+1xg08j13+1NmIJfkXrGLx1nOUOOmb761
+	ug5nD3t8DTH94axGwApO9c8DZfc5wt5+MwUU9iQcwfDkjGhDUaeipi0EK/giCLyxa+m3cYPdpWP
+	NmNw==
+X-Received: by 2002:a17:907:ea5:b0:a80:bf0f:2256 with SMTP id a640c23a62f3a-a8366c1e7a1mr381459466b.8.1723713909250;
+        Thu, 15 Aug 2024 02:25:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IETTIDQ9OzhDD4lLGreLHiYuvXvyqwtTitrGMl+Ajjnib3jCTcBF7RJUjWTevOZFresikXBrg==
+X-Received: by 2002:a17:907:ea5:b0:a80:bf0f:2256 with SMTP id a640c23a62f3a-a8366c1e7a1mr381457466b.8.1723713908704;
+        Thu, 15 Aug 2024 02:25:08 -0700 (PDT)
 Received: from amikhalitsyn.. ([188.192.113.77])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383934585sm72142866b.107.2024.08.15.02.25.05
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383934585sm72142866b.107.2024.08.15.02.25.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 02:25:06 -0700 (PDT)
+        Thu, 15 Aug 2024 02:25:08 -0700 (PDT)
 From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 To: mszeredi@redhat.com
 Cc: brauner@kernel.org,
@@ -86,9 +86,9 @@ Cc: brauner@kernel.org,
 	Bernd Schubert <bschubert@ddn.com>,
 	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 09/11] fs/fuse: properly handle idmapped ->rename op
-Date: Thu, 15 Aug 2024 11:24:26 +0200
-Message-Id: <20240815092429.103356-10-aleksandr.mikhalitsyn@canonical.com>
+Subject: [PATCH v3 10/11] fs/fuse: allow idmapped mounts
+Date: Thu, 15 Aug 2024 11:24:27 +0200
+Message-Id: <20240815092429.103356-11-aleksandr.mikhalitsyn@canonical.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240815092429.103356-1-aleksandr.mikhalitsyn@canonical.com>
 References: <20240815092429.103356-1-aleksandr.mikhalitsyn@canonical.com>
@@ -100,15 +100,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Support of RENAME_WHITEOUT with idmapped mounts requires
-an API extension for FUSE_RENAME2.
+Now we have everything in place and we can allow idmapped mounts
+by setting the FS_ALLOW_IDMAP flag. Notice that real availability
+of idmapped mounts will depend on the fuse daemon. Fuse daemon
+have to set FUSE_ALLOW_IDMAP flag in the FUSE_INIT reply.
 
-Let's just forbid this combination for now. It's not
-critical at all as it's only needed for overlayfs on top
-of fuse/virtiofs.
+To discuss:
+- we enable idmapped mounts support only if "default_permissions" mode is enabled,
+because otherwise we would need to deal with UID/GID mappings in the userspace side OR
+provide the userspace with idmapped req->in.h.uid/req->in.h.gid values which is not
+something that we probably want to. Idmapped mounts phylosophy is not about faking
+caller uid/gid.
 
-Choice of EINVAL is not random, we just simulate a standard
-behavior when RENAME_WHITEOUT flag is not supported.
+Some extra links and examples:
+
+- libfuse support
+https://github.com/mihalicyn/libfuse/commits/idmap_support
+
+- fuse-overlayfs support:
+https://github.com/mihalicyn/fuse-overlayfs/commits/idmap_support
+
+- cephfs-fuse conversion example
+https://github.com/mihalicyn/ceph/commits/fuse_idmap
+
+- glusterfs conversion example
+https://github.com/mihalicyn/glusterfs/commits/fuse_idmap
 
 Cc: Christian Brauner <brauner@kernel.org>
 Cc: Seth Forshee <sforshee@kernel.org>
@@ -119,25 +135,104 @@ Cc: <linux-fsdevel@vger.kernel.org>
 Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 ---
 v2:
-	- this commit added
+	- simplified and get rid of ->allow_idmap global VFS callback
+v3:
+	- now use a new SB_I_NOIDMAP flag
 ---
- fs/fuse/dir.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/fuse/inode.c           | 14 +++++++++++---
+ include/uapi/linux/fuse.h |  5 ++++-
+ 2 files changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index c50f951596dd..0cd01f25251f 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1111,6 +1111,9 @@ static int fuse_rename2(struct mnt_idmap *idmap, struct inode *olddir,
- 	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
- 		return -EINVAL;
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 6c205731c844..b840189ac8be 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1345,6 +1345,12 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+ 				fm->sb->s_export_op = &fuse_export_fid_operations;
+ 			if (flags & FUSE_OWNER_UID_GID_EXT)
+ 				fc->owner_uid_gid_ext = 1;
++			if (flags & FUSE_ALLOW_IDMAP) {
++				if (fc->owner_uid_gid_ext && fc->default_permissions)
++					fm->sb->s_iflags &= ~SB_I_NOIDMAP;
++				else
++					ok = false;
++			}
+ 		} else {
+ 			ra_pages = fc->max_read / PAGE_SIZE;
+ 			fc->no_lock = 1;
+@@ -1392,7 +1398,8 @@ void fuse_send_init(struct fuse_mount *fm)
+ 		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT | FUSE_INIT_EXT |
+ 		FUSE_SECURITY_CTX | FUSE_CREATE_SUPP_GROUP |
+ 		FUSE_HAS_EXPIRE_ONLY | FUSE_DIRECT_IO_ALLOW_MMAP |
+-		FUSE_NO_EXPORT_SUPPORT | FUSE_HAS_RESEND | FUSE_OWNER_UID_GID_EXT;
++		FUSE_NO_EXPORT_SUPPORT | FUSE_HAS_RESEND | FUSE_OWNER_UID_GID_EXT |
++		FUSE_ALLOW_IDMAP;
+ #ifdef CONFIG_FUSE_DAX
+ 	if (fm->fc->dax)
+ 		flags |= FUSE_MAP_ALIGNMENT;
+@@ -1569,6 +1576,7 @@ static void fuse_sb_defaults(struct super_block *sb)
+ 	sb->s_time_gran = 1;
+ 	sb->s_export_op = &fuse_export_operations;
+ 	sb->s_iflags |= SB_I_IMA_UNVERIFIABLE_SIGNATURE;
++	sb->s_iflags |= SB_I_NOIDMAP;
+ 	if (sb->s_user_ns != &init_user_ns)
+ 		sb->s_iflags |= SB_I_UNTRUSTED_MOUNTER;
+ 	sb->s_flags &= ~(SB_NOSEC | SB_I_VERSION);
+@@ -1981,7 +1989,7 @@ static void fuse_kill_sb_anon(struct super_block *sb)
+ static struct file_system_type fuse_fs_type = {
+ 	.owner		= THIS_MODULE,
+ 	.name		= "fuse",
+-	.fs_flags	= FS_HAS_SUBTYPE | FS_USERNS_MOUNT,
++	.fs_flags	= FS_HAS_SUBTYPE | FS_USERNS_MOUNT | FS_ALLOW_IDMAP,
+ 	.init_fs_context = fuse_init_fs_context,
+ 	.parameters	= fuse_fs_parameters,
+ 	.kill_sb	= fuse_kill_sb_anon,
+@@ -2002,7 +2010,7 @@ static struct file_system_type fuseblk_fs_type = {
+ 	.init_fs_context = fuse_init_fs_context,
+ 	.parameters	= fuse_fs_parameters,
+ 	.kill_sb	= fuse_kill_sb_blk,
+-	.fs_flags	= FS_REQUIRES_DEV | FS_HAS_SUBTYPE,
++	.fs_flags	= FS_REQUIRES_DEV | FS_HAS_SUBTYPE | FS_ALLOW_IDMAP,
+ };
+ MODULE_ALIAS_FS("fuseblk");
  
-+	if ((flags & RENAME_WHITEOUT) && (idmap != &nop_mnt_idmap))
-+		return -EINVAL;
-+
- 	if (flags) {
- 		if (fc->no_rename2 || fc->minor < 23)
- 			return -EINVAL;
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index d9ecc17fd13b..b23e8247ce43 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -221,6 +221,7 @@
+  *  7.41
+  *  - add FUSE_EXT_OWNER_UID_GID
+  *  - add FUSE_OWNER_UID_GID_EXT
++ *  - add FUSE_ALLOW_IDMAP
+  */
+ 
+ #ifndef _LINUX_FUSE_H
+@@ -256,7 +257,7 @@
+ #define FUSE_KERNEL_VERSION 7
+ 
+ /** Minor version number of this interface */
+-#define FUSE_KERNEL_MINOR_VERSION 40
++#define FUSE_KERNEL_MINOR_VERSION 41
+ 
+ /** The node ID of the root inode */
+ #define FUSE_ROOT_ID 1
+@@ -427,6 +428,7 @@ struct fuse_file_lock {
+  *		    of the request ID indicates resend requests
+  * FUSE_OWNER_UID_GID_EXT: add inode owner UID/GID info to create, mkdir,
+  *			   symlink and mknod
++ * FUSE_ALLOW_IDMAP: allow creation of idmapped mounts
+  */
+ #define FUSE_ASYNC_READ		(1 << 0)
+ #define FUSE_POSIX_LOCKS	(1 << 1)
+@@ -473,6 +475,7 @@ struct fuse_file_lock {
+ /* Obsolete alias for FUSE_DIRECT_IO_ALLOW_MMAP */
+ #define FUSE_DIRECT_IO_RELAX	FUSE_DIRECT_IO_ALLOW_MMAP
+ #define FUSE_OWNER_UID_GID_EXT	(1ULL << 40)
++#define FUSE_ALLOW_IDMAP	(1ULL << 41)
+ 
+ /**
+  * CUSE INIT request/reply flags
 -- 
 2.34.1
 
