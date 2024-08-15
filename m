@@ -1,70 +1,83 @@
-Return-Path: <linux-kernel+bounces-288016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83CE395307D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:43:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A2B4953086
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:44:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 323322842EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:43:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F281A286CD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:43:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E64019F482;
-	Thu, 15 Aug 2024 13:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0982E19F49C;
+	Thu, 15 Aug 2024 13:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="nzgwInHZ"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GgrQHBAG"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450F1198E78;
-	Thu, 15 Aug 2024 13:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF4019DF60
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 13:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723729408; cv=none; b=R3SB0/iCYIn+BBhft6KB5+sGItdIgPolOQK0UZd3J7+0O//iL+0ZVLz1Sr6bAr3MdeH3okWPshMW9wrBDIbPs3cwXgLQrm/v1iQW9cBLjVqViZRmHKdwerD+wXMQqU01Kf2E+2Oq+7Hxm3rAwLotbVAfvGg3OVho+QvExJ+n4W0=
+	t=1723729423; cv=none; b=o2CMDTHl97+Yx2S4JYzUp6bBqPcnyiQoNOuBLNmRHVq1dGHs9UNF//CMieREdOxVUu1ogU+oPnaiGVZVT9OlDONhdVlItYD23W0l6mDCqC1DbWcq8RYrey03bICAd5IzwcH/P4qhXXyY7ICHgZaAwlaUHpFYFlMtVTnD3mHCVxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723729408; c=relaxed/simple;
-	bh=Ph4FtNVKoaw0OcMp+awfgaGWGwBkaALXj3ATCIi+uXs=;
+	s=arc-20240116; t=1723729423; c=relaxed/simple;
+	bh=O4yLnFi4rtD8pwc4Wy5KyRHItfx+wXhhebwLRzGiYfc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KKhYBpGBjaskRCuNErFq2/INDxnyFc2CNjVPKZkn4XC4uR+0hZmliqkOd+85mKZpJriByyxq8cPmivaQcqg7peJKVZPVVaAqlq+auMzyrr6F5Ip4Y+bAa/LRAUdBilKGRcsjsDkVlO6a29rEVkuJAxiPOGLo5WzmENmYOWfsPXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=nzgwInHZ; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Wl5tL0xQDz9shW;
-	Thu, 15 Aug 2024 15:43:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1723729402;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9Hpq6ksyDyUHd4So1QZsJOGGQCrhZxE48p6ibJ33Odk=;
-	b=nzgwInHZh2zeO0XU7LkZpRjNksVr9RPBAtBO6uSA0SBZSI6osMxGbjzKZeUGCqgcFLM1U9
-	Yf6SUO2S5rhtQdG2BGJeY0mcm2vGlEH51AcB8HO1QcIaDM1tya/vrNGGnT4vBmGnJiuovv
-	izOVHYDETMo7KAZfZBl0lxZDGzeLV37X7QARxem5/QDu+VeSijdCV4E7TVMveIMLn5kYJl
-	rVE8mFs6a+HgbcO2jmWNHwB0OP8sEfCkzU+UddH1/GtWXsH729UGALyOy0ZsC58q+XPZwz
-	EAxMTmPZUKrYOUWa5qaTQ56aq2xwWR80CwgAFTCsboURZZ7II2R5KuQPFgFsQg==
-Date: Thu, 15 Aug 2024 13:43:16 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Pankaj Raghav <p.raghav@samsung.com>, agordeev@linux.ibm.com,
-	akpm@linux-foundation.org, borntraeger@linux.ibm.com,
-	corbet@lwn.net, frankja@linux.ibm.com,
-	gerald.schaefer@linux.ibm.com, gor@linux.ibm.com, hca@linux.ibm.com,
-	imbrenda@linux.ibm.com, kvm@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-s390@vger.kernel.org, svens@linux.ibm.com,
-	willy@infradead.org
-Subject: Re: [PATCH v1 07/11] mm/huge_memory: convert split_huge_pages_pid()
- from follow_page() to folio_walk
-Message-ID: <20240815134316.h4l4wohtgm2oz2uo@quentin>
-References: <20240802155524.517137-8-david@redhat.com>
- <20240815100423.974775-1-p.raghav@samsung.com>
- <6938b43c-ec61-46f1-bccc-d1b8f6850253@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dgKmw6DTAtWW7qc7v8yowY4F33o5Rxoz2a3GvndmNkA9q9QvKrbbk5SwtqM8xDZXwZoNtiFa62GCGAd9stPDFhAmqI6dNl4l8N98QhawWIznJ1/aPOLF/BUf83j7YHTbo+OlZoXzxWdIIGo+SjcsLMYbf9lL+xYqW9c7pUvwcCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GgrQHBAG; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-429da8b5feaso8619295e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 06:43:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1723729420; x=1724334220; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tto6eM9hNP9kwaU98qa0E0bzpJp65GdsSW76u9NX6RA=;
+        b=GgrQHBAGeIEIjbNkt1Jh5jvZ58HV3lHTeS6kFyL1HfRm7m1DyKOeYxZEW4Sig2l5Zn
+         PoLoNK8E6ZjHcON96BbUowhxQ9pvbW6SsixsemarJslXG5iJrVRYylclo6vO7LkJGC4p
+         Xjz+/a7FRI46hBQgAGLLOwE9B1QokU1ZQyUoOHyukJ9D4r//bgbq/HsM/6Tfq38fdQpe
+         u04VLdOeC+7hxTWiNtezyTzJ6whhhJdR8fhs7E0F1jf8SdlMhactZ8nMEFAKN6z8UssS
+         Hg05X5pNwZUeWzV2rioBcTj3qjw2zcMizEiJUa6/gefTbQ8CtxgLxn12lP/s0A//jrwo
+         CthQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723729420; x=1724334220;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tto6eM9hNP9kwaU98qa0E0bzpJp65GdsSW76u9NX6RA=;
+        b=o8a61ucay6ewRJxo0fI7HmgyBA/A9yxLB08O3ZFKZQZQ/tR69UmveJ7Yp84qvAUCMF
+         nGN7Okh+qtqw+7RP+sgx9yh+9ne+0I9mN5QQEaLvjADkUhQNGlk4NACUoWexRYurTdQd
+         cS6jFFl/Bq9An/wJ0JBFmr+R+4QcDGowht2VzTwlACnDMx1EUbBUYUV5IK+W7bt2RhYf
+         V1lpx4AdgpIcHc1Zoz6UreyDkwmha2829HIV8OAFeEqUn1GpgEBomLSQpsKuOMA4cqNu
+         wvykri4iH1o7qRDNEEsKCWYRQF3TyUOvau0ay3ebv2Wsquu78ERHFnwbeMR2leo3YTna
+         n1XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPx/ZVZDNwx/woIcfljeG61HGKdWiBZTY2kEOzrecES9U4ENpqw91agMAW3JissR5L3hc0taxPdDTvNS9xPyV+x39lDOGDaMClnV+i
+X-Gm-Message-State: AOJu0Yzf+Rw2AU4ZS1wh5AW6vgZOrCVovoFguKiZG6Rp9EMCbHNqkMpC
+	iLRNRCrMRQNGBmSQV2p9N4MSAPNF7NZps2LpRvWsmEZUMVj+3hU51A/3qshnnpI=
+X-Google-Smtp-Source: AGHT+IFBN0eoxUO6gO0o4RftKhcYBMgFTRCPjkqUHwDSFbLveCxPzSAiRKMU11VMwlnvN1NNkNtixQ==
+X-Received: by 2002:adf:e10a:0:b0:368:5042:25f3 with SMTP id ffacd0b85a97d-37177783510mr5153752f8f.34.1723729419493;
+        Thu, 15 Aug 2024 06:43:39 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383946538sm103525766b.151.2024.08.15.06.43.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 06:43:39 -0700 (PDT)
+Date: Thu, 15 Aug 2024 15:43:37 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Miroslav Benes <mbenes@suse.cz>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Nicolai Stange <nstange@suse.de>, live-patching@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [POC 2/7] livepatch: Allow to handle lifetime of shadow
+ variables using the livepatch state
+Message-ID: <Zr4GCYkfof1aJ-hp@pathway.suse.cz>
+References: <20231110170428.6664-1-pmladek@suse.com>
+ <20231110170428.6664-3-pmladek@suse.com>
+ <alpine.LSU.2.21.2407251329300.21729@pobox.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,51 +86,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6938b43c-ec61-46f1-bccc-d1b8f6850253@redhat.com>
-X-Rspamd-Queue-Id: 4Wl5tL0xQDz9shW
+In-Reply-To: <alpine.LSU.2.21.2407251329300.21729@pobox.suse.cz>
 
-On Thu, Aug 15, 2024 at 12:20:04PM +0200, David Hildenbrand wrote:
-> On 15.08.24 12:04, Pankaj Raghav wrote:
-> > Hi David,
-> > 
-> > On Fri, Aug 02, 2024 at 05:55:20PM +0200, David Hildenbrand wrote:
-> > >   			continue;
-> > >   		}
-> > > -		/* FOLL_DUMP to ignore special (like zero) pages */
-> > > -		page = follow_page(vma, addr, FOLL_GET | FOLL_DUMP);
-> > > -
-> > > -		if (IS_ERR_OR_NULL(page))
-> > > +		folio = folio_walk_start(&fw, vma, addr, 0);
-> > > +		if (!folio)
-> > >   			continue;
-> > > -		folio = page_folio(page);
-> > >   		if (!is_transparent_hugepage(folio))
-> > >   			goto next;
-> > > @@ -3544,13 +3542,19 @@ static int split_huge_pages_pid(int pid, unsigned long vaddr_start,
-> > >   		if (!folio_trylock(folio))
-> > >   			goto next;
-> > > +		folio_get(folio);
-> > 
-> > Shouldn't we lock the folio after we increase the refcount on the folio?
-> > i.e we do folio_get() first and then folio_trylock()?
-> > 
-> > That is how it was done before (through follow_page) and this patch changes
-> > that. Maybe it doesn't matter? To me increasing the refcount and then
-> > locking sounds more logical but I do see this ordering getting mixed all
-> > over the kernel.
+On Thu 2024-07-25 13:31:40, Miroslav Benes wrote:
+> > diff --git a/kernel/livepatch/state.c b/kernel/livepatch/state.c
+> > index 6693d808106b..4ec65afe3a43 100644
+> > --- a/kernel/livepatch/state.c
+> > +++ b/kernel/livepatch/state.c
+> > @@ -198,11 +198,17 @@ void klp_release_states(struct klp_patch *patch)
+> >  		if (is_state_in_other_patches(patch, state))
+> >  			continue;
+> >  
+> > -		if (!state->callbacks.release)
+> > -			continue;
+> > -
+> > -		if (state->callbacks.setup_succeeded)
+> > +		if (state->callbacks.release && state->callbacks.setup_succeeded)
+> >  			state->callbacks.release(patch, state);
+> > +
+> > +		if (state->is_shadow)
+> > +			klp_shadow_free_all(state->id, state->callbacks.shadow_dtor);
 > 
-> There is no need to grab a folio reference if we hold an implicit reference
-> through the mapping that cannot go away (not that we hold the page table
-> lock). Locking the folio is not special in that regard: we just have to make
-> sure that the folio cannot get freed concurrently, which is the case here.
+> The following
 > 
-> So here, we really only grab a reference if we have to -- when we are about
-> to drop the page table lock and will continue using the folio afterwards.
-Got it. Thanks!
+> > +		/*
+> > +		 * The @release callback is supposed to restore the original
+> > +		 * state before the @setup callback was called.
+> > +		 */
+> > +		state->callbacks.setup_succeeded = 0;
 > 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
+> should go to the previous patch perhaps?
+
+Great catch!
+
+I am going to refactor the code in the next version so that it would
+look like:
+
+void klp_states_post_unpatch(struct klp_patch *patch)
+{
+	struct klp_state *state;
+
+	klp_for_each_state(patch, state) {
+		if (is_state_in_other_patches(patch, state))
+			continue;
+
+		if (!state->callbacks.pre_patch_succeeded)
+			continue;
+
+		if (state->callbacks.post_unpatch)
+			state->callbacks.post_unpatch(patch, state);
+
++		if (state->is_shadow)
++			klp_shadow_free_all(state->id, state->callbacks.shadow_dtor);
++
+		state->callbacks.pre_patch_succeeded = 0;
+	}
+}
+
+
+Best Regards,
+Petr
+
 
