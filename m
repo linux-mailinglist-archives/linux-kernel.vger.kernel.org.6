@@ -1,173 +1,179 @@
-Return-Path: <linux-kernel+bounces-288122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBCE19535E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:44:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1C0D9535EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DEF0281FB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:44:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73A25282694
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59EAE1AC43B;
-	Thu, 15 Aug 2024 14:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147F31B4C44;
+	Thu, 15 Aug 2024 14:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VEAB2bn5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="e8gEoXIz"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902F41A2570;
-	Thu, 15 Aug 2024 14:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5A41A4F3B;
+	Thu, 15 Aug 2024 14:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723732925; cv=none; b=OBaX9VzF/z34F04OOGXB6MBLwc2NcP/l0shPKwf87Ci8DchWZx33vWUAJKc18QcxNvwgvJXtbIQNEtpEUGCRdCaG+4hXSseb6y7+y4jZ1kzZyF93RnH90u9OVnSdNt6PEn3kzNLkS3a8E1E98HbamlQ0M8l++joQynQu41j/z6o=
+	t=1723732939; cv=none; b=TltORHNvzQ0e44F5mziB95pIeNNPlDN2KWXdVlqx6qY3FYQ74A+1/OWlh3rozn8Z5XctWaTQXR3fpfQHXnO7m9J40JkzPYe1DUWqU7x6uThldUDSzDNKzNVpEm2O5/UMe+mQIr6KUj+CtCf9Kfp918TKOwTAZxd+LkO7nYJuwMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723732925; c=relaxed/simple;
-	bh=M40/005yIp6PCsxxKStq9i/vMz5yXRGyPImHwfgRiyQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ngdOLL7p9Pt2K9xjn0eEvnaosRzcHKy4zmY4KTPglX9YTM9q+6flb3Rl5QYI0trPtniS0BTgfgJdvlg9ReeXs6enRTnOwl+JGC5w5+mHG9JZUK9SOZsWh7GyopQkw7E3LSg5pQvYaip3aJOaWcQcwHdckvjYCXVHhsVdpvrTQi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VEAB2bn5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C93ABC32786;
-	Thu, 15 Aug 2024 14:42:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723732925;
-	bh=M40/005yIp6PCsxxKStq9i/vMz5yXRGyPImHwfgRiyQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VEAB2bn5hNHq7njuWlDTwBaBdfm593hUm+7dAlHYT1OXAgZo5F5FwZQGGvCvXRcXH
-	 Ix+EVn36nGzdPtpoGHDBmxWfsDGB9R00F1NtpKo4KUZ9xEVMEVhVdT0rd0s/JGskIz
-	 kRvbs7GY5572G1kVn+7t23D+XoNj7g+exF5MT9GlnanqdVJX1MhOVfjO+Q4Ugd2B0e
-	 sicrwqsWDLXwTCTJPcY0xgvtcgPYed8xFYfaCRxFaNN9icRjFy6/FNsFVZVrZcEa5a
-	 SPO8jgsVrwOzqHhwrvhd7IIJ1xngfd5kKoV01ssLmo63DyCnmulPArf46eD/FZxn/9
-	 JdARv89eYqdMg==
-Date: Thu, 15 Aug 2024 15:42:00 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Minda Chen <minda.chen@starfivetech.com>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjIgMS8z?= =?utf-8?Q?=5D?=
- dt-bindings: phy: jh7110-usb-phy: Add sys-syscon property
-Message-ID: <20240815-endless-credible-324438d164f4@spud>
-References: <cover.1723472153.git.jan.kiszka@siemens.com>
- <30f3ca9f6bd788e16767b36aa22c0e9dc4d1c6a4.1723472153.git.jan.kiszka@siemens.com>
- <20240812-overstuff-skirt-7a8aabbcdc6f@spud>
- <8cdba8b0-7364-4c09-b18a-f3f59da1eae2@siemens.com>
- <20240813-haiku-pusher-f2fb037a2f49@wendy>
- <SHXPR01MB08633B523DA1F6C5632F6D9DE6802@SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn>
+	s=arc-20240116; t=1723732939; c=relaxed/simple;
+	bh=t+pO7N5Z6JtmiS6ojDZxc9cP8xXS67WNZzSbC144FPc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Xi+huLliX21bDZ4ooUxX/OUQ/LFVj9KXJPZSJ1e084HBHpFCYZC/ke4kmHsyYdAqw+Z54/BRIMO3wrEGFi+CQNb9lnGlFQR7NXvywxAEeap5FK0GlMw0HU0Kdh1WKnfnu/qeW4/0cCoS4f539pf7LidwebcHGqmgmDcA16M+x/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=e8gEoXIz; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47F2i0E4025516;
+	Thu, 15 Aug 2024 14:42:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	emXGD2ixoz9xo1hqs7NNv/4icoml3oxrGVHnw8YysrA=; b=e8gEoXIzUj9TMddo
+	Q38y2I8lLTeJGo4l3YWEc2rbmwZco93y7K3hieKgMEgBMiHzVJLEF/4H/80agKp4
+	TQGCyrsfFWs7foG0L+kqPVgGv2mLxMJlDxpZ3AY94IiA1aVRZg6qUicjXP2pqLE9
+	DPsj78RoqLhtxnZH1cgWSFEsNFuTDiLQEpN92dHHYy2/CEAK+qjARN/IHQZpc2tM
+	DUG5pwum8NTpw2Lj+1CTu1eeCS7ZsA3PS5U/TkKQ/JsuCcHBpxzzKAWjFhzprDzs
+	Ofi3HAimGrxHnFwHpX6s0DYDmAQgOiGFPdnWaLcQ/IVT6+4Lh7AfmSv3NxbAZcAD
+	ypi9JA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 411957sf0k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 Aug 2024 14:42:12 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47FEgAFv020324
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 Aug 2024 14:42:10 GMT
+Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 15 Aug
+ 2024 07:42:05 -0700
+Message-ID: <82200889-a98d-4815-bc31-f81b15d02513@quicinc.com>
+Date: Thu, 15 Aug 2024 22:42:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Y6obAq/LA5e3r0dd"
-Content-Disposition: inline
-In-Reply-To: <SHXPR01MB08633B523DA1F6C5632F6D9DE6802@SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 13/13] media: qcom: camss: Add support for VFE hardware
+ version Titan 780
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, <rfoss@kernel.org>,
+        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
+        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>, Yongsheng Li <quic_yon@quicinc.com>
+References: <20240812144131.369378-1-quic_depengs@quicinc.com>
+ <20240812144131.369378-14-quic_depengs@quicinc.com>
+ <4b745c1a-33d9-472a-97af-153a2a7c8721@linaro.org>
+ <2de0b7a8-b879-49e9-9656-ec86f29ce559@quicinc.com>
+ <b0787142-0f85-4616-9895-72e33f21c2da@linaro.org>
+Content-Language: en-US
+From: Depeng Shao <quic_depengs@quicinc.com>
+In-Reply-To: <b0787142-0f85-4616-9895-72e33f21c2da@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 5fnvQgpmZ2cdt8aN5eXx9DA6pgQgeeuE
+X-Proofpoint-ORIG-GUID: 5fnvQgpmZ2cdt8aN5eXx9DA6pgQgeeuE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-15_07,2024-08-15_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ lowpriorityscore=0 mlxlogscore=999 clxscore=1015 suspectscore=0
+ impostorscore=0 bulkscore=0 malwarescore=0 spamscore=0 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408150107
 
+Hi Vladimir,
 
---Y6obAq/LA5e3r0dd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 8/15/2024 7:20 AM, Vladimir Zapolskiy wrote:
 
-On Thu, Aug 15, 2024 at 10:33:55AM +0000, Minda Chen wrote:
->=20
->=20
-> >=20
-> > On Tue, Aug 13, 2024 at 07:31:50AM +0200, Jan Kiszka wrote:
-> > > On 12.08.24 17:55, Conor Dooley wrote:
-> > > > On Mon, Aug 12, 2024 at 04:15:51PM +0200, Jan Kiszka wrote:
-> > > >> From: Jan Kiszka <jan.kiszka@siemens.com>
-> > > >>
-> > > >> Analogously to the PCI PHY, access to sys_syscon is needed to
-> > > >> connect the USB PHY to its controller.
-> > > >>
-> > > >> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> > > >> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> > > >> ---
-> > > >> CC: Rob Herring <robh@kernel.org>
-> > > >> CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> > > >> CC: Conor Dooley <conor+dt@kernel.org>
-> > > >> ---
-> > > >>  .../bindings/phy/starfive,jh7110-usb-phy.yaml         | 11
-> > +++++++++++
-> > > >>  1 file changed, 11 insertions(+)
-> > > >>
-> > > >> diff --git
-> > > >> a/Documentation/devicetree/bindings/phy/starfive,jh7110-usb-phy.yam
-> > > >> l
-> > > >> b/Documentation/devicetree/bindings/phy/starfive,jh7110-usb-phy.yam
-> > > >> l index 269e9f9f12b6..eaf0050c6f17 100644
-> > > >> ---
-> > > >> a/Documentation/devicetree/bindings/phy/starfive,jh7110-usb-phy.yam
-> > > >> l
-> > > >> +++ b/Documentation/devicetree/bindings/phy/starfive,jh7110-usb-phy
-> > > >> +++ .yaml
-> > > >> @@ -19,6 +19,16 @@ properties:
-> > > >>    "#phy-cells":
-> > > >>      const: 0
-> > > >>
-> > > >> +  starfive,sys-syscon:
-> > > >> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> > > >> +    items:
-> > > >> +      - items:
-> > > >> +          - description: phandle to System Register Controller
-> > sys_syscon node.
-> > > >> +          - description: PHY connect offset of
-> > SYS_SYSCONSAIF__SYSCFG register for USB PHY.
-> > > >
-> > > > Why is having a new property for this required? The devicetree only
-> > > > has a single usb phy, so isn't it sufficient to look up the syscon
-> > > > by compatible, rather than via phandle + offset?
-> > > >
-> > >
-> > > I didn't design this, I just copied it from
-> > > starfive,jh7110-pcie-phy.yaml. As that already exists, I'm neither
-> > > sure we want to change that anymore nor deviate in the pattern here.
-> >=20
-> > To be honest, I think some of the other users of phandle + offset on th=
-is soc were
-> > just copy-pasted without thinking about whether or not they were requir=
-ed too.
-> > This one seems like it should just be a lookup by compatible in the dri=
-ver instead
-> > of by phandle. As a bonus, it will work with existing devicetrees - whe=
-reas your
-> > current implementation will fail to probe on systems that have the old
-> > devicetree, a regression for systems running with that devicetree and
-> > downstream firmware.
-> >=20
-> > Cheers,
-> > Conor.
-> >=20
-> Hi Conor
-> I know you would like to put the offset value to the code, Just set sysco=
-n in dts.
-> Just like pcie-starfive.c. right?
+>>
+>>>> +void camss_reg_update(struct camss *camss, int hw_id, int port_id,
+>>>> bool is_clear)
+>>>
+>>>> +{
+>>>> +    struct csid_device *csid;
+>>>> +
+>>>> +    if (hw_id < camss->res->csid_num) {
+>>>> +        csid = &(camss->csid[hw_id]);
+>>>> +
+>>>> +        csid->res->hw_ops->reg_update(csid, port_id, is_clear);
+>>>> +    }
+>>>> +}
+>>>> +
+>>>
+>>> Please add the new exported function camss_reg_update() in a separate
+>>> preceding commit.
 
-No, not quite. That still uses a phandle lookup, I was talking about
-using syscon_regmap_lookup_by_compatible().
+>>
+>> Thanks for your comments, I will address them in new series.
+>>
+>> But I have some concern about above comment, you want to add a separate
+>> commit for camss_reg_update, maybe camss_buf_done also need to do this,
+>> but I guess I will get new comments from Krzysztof if I make a separate
+>> change, Krzysztof posted few comments in v3 series, he asked, "must
+>> organize your patches in logical junks" and the code must have a user.
+>>
+>> Please check below comments.
+>>
+>> https://lore.kernel.org/all/e1b298df-05da-4881- 
+>> a628-149a8a625544@kernel.org/
+>>
+>> https://lore.kernel.org/all/d0f8b72d-4355-43cd-a5f9- 
+>> c44aab8147e5@kernel.org/
+> 
+> Krzysztof is absolutely right in his two comments.
+> 
+>  From what I see there is a difference between his concerns and mine ones
+> though, Krzysztof points to unused data, which should raise a build time
+> warning, and I asked to make a separate commit for a non-static function,
+> I believe it'll be removed by the linker silently...
+> 
+> The potential runtime logic change introduced by camss_reg_update() in the
+> generic code is not trivial, which opens an option to update/fix it lately
+> referencing a commit from generic domain rather than platform specific one.
+> 
+> If someone for whatever reasons wants to merge a new generic and shared
+> camss_reg_update() function within a the platform specific code/commit,
+> I won't strongly object, let it be merged together then.
+> 
+>>
+>> Or I don't add reg update and buf done functionality in
+>> camss-csid-gen3.c and camss-vfe-780.c firstly, then add them in a later
+>> commit.
+>>
+>> Could you please comment on whether this is acceptable? Please also help
+>> to common on if one commit to add them or need two separate commits, one
+>> is for reg update and the other one is for buf done.
+>>
+> 
+> I would prefer to see two more separate commits within non-platform 
+> specific
+> code, however as I stated above if it causes anyone's concerns, including
+> your own, let it be kept as it is done today. Eventually we do discuss
+> a non-functional change.
+> 
 
---Y6obAq/LA5e3r0dd
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks for the confirmation, even though I add the rup_update and 
+buf_done function in later commits, it is still called in platform 
+specific code(camss-vfe-780.c), so I will keep as it is done today.
 
------BEGIN PGP SIGNATURE-----
+Thanks,
+Depeng
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZr4TuAAKCRB4tDGHoIJi
-0sIFAQC/JyXvK+VLgbIRFzTwOSJvSzC4aJueRc46G1g/t0SWQAEAsiQzJzNWfk3E
-4/t1gvtNHk8K7qm6C0l8crJVrI7AsAY=
-=JWz8
------END PGP SIGNATURE-----
-
---Y6obAq/LA5e3r0dd--
 
