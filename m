@@ -1,157 +1,123 @@
-Return-Path: <linux-kernel+bounces-288015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8306695305B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:42:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83CE395307D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:43:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B9F3281C80
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:42:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 323322842EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5047119EECF;
-	Thu, 15 Aug 2024 13:41:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5891C14AD0A
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 13:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E64019F482;
+	Thu, 15 Aug 2024 13:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="nzgwInHZ"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450F1198E78;
+	Thu, 15 Aug 2024 13:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723729317; cv=none; b=RenUDNz8VXFXskY7rwPDFQBUhcGxhr8QZgAj+Bn6cDIlLj/wPufOhNqwO49e5AOGFm6/uY8/i7+P1rgd7Va9Pu8Z81C33T4TAq0SqUhMH0egxG+nBzWncUOPIeUICo2JVOlZ6vK9hC15XSu4shCfbzKNuU/Ez/kJzpUpvb6FxnQ=
+	t=1723729408; cv=none; b=R3SB0/iCYIn+BBhft6KB5+sGItdIgPolOQK0UZd3J7+0O//iL+0ZVLz1Sr6bAr3MdeH3okWPshMW9wrBDIbPs3cwXgLQrm/v1iQW9cBLjVqViZRmHKdwerD+wXMQqU01Kf2E+2Oq+7Hxm3rAwLotbVAfvGg3OVho+QvExJ+n4W0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723729317; c=relaxed/simple;
-	bh=GjZQ1hT/OPm1A53XVFOMboJ7JrKo1ngaSeiyyHVkxLU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ukzYjzpJUiS+JaFWvlzed2OdFUPdxbjl2FFLSwa5y0Xy1ensd2ZQgWJqgcWc0EKIg+YTHPGgPyytO68P+JI2aZxOZPmh9JxFhJG6Hv/c+ej5EI08Fkpi2sktYXSOJoONF19Huv51jkumiNxol34muQCVXxdrL1BhVuTv0FngbWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A122914BF;
-	Thu, 15 Aug 2024 06:42:21 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 58FC63F6A8;
-	Thu, 15 Aug 2024 06:41:54 -0700 (PDT)
-Message-ID: <43290d6c-004d-423c-822c-7b2558badcee@arm.com>
-Date: Thu, 15 Aug 2024 14:41:52 +0100
+	s=arc-20240116; t=1723729408; c=relaxed/simple;
+	bh=Ph4FtNVKoaw0OcMp+awfgaGWGwBkaALXj3ATCIi+uXs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KKhYBpGBjaskRCuNErFq2/INDxnyFc2CNjVPKZkn4XC4uR+0hZmliqkOd+85mKZpJriByyxq8cPmivaQcqg7peJKVZPVVaAqlq+auMzyrr6F5Ip4Y+bAa/LRAUdBilKGRcsjsDkVlO6a29rEVkuJAxiPOGLo5WzmENmYOWfsPXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=nzgwInHZ; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Wl5tL0xQDz9shW;
+	Thu, 15 Aug 2024 15:43:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1723729402;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9Hpq6ksyDyUHd4So1QZsJOGGQCrhZxE48p6ibJ33Odk=;
+	b=nzgwInHZh2zeO0XU7LkZpRjNksVr9RPBAtBO6uSA0SBZSI6osMxGbjzKZeUGCqgcFLM1U9
+	Yf6SUO2S5rhtQdG2BGJeY0mcm2vGlEH51AcB8HO1QcIaDM1tya/vrNGGnT4vBmGnJiuovv
+	izOVHYDETMo7KAZfZBl0lxZDGzeLV37X7QARxem5/QDu+VeSijdCV4E7TVMveIMLn5kYJl
+	rVE8mFs6a+HgbcO2jmWNHwB0OP8sEfCkzU+UddH1/GtWXsH729UGALyOy0ZsC58q+XPZwz
+	EAxMTmPZUKrYOUWa5qaTQ56aq2xwWR80CwgAFTCsboURZZ7II2R5KuQPFgFsQg==
+Date: Thu, 15 Aug 2024 13:43:16 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Pankaj Raghav <p.raghav@samsung.com>, agordeev@linux.ibm.com,
+	akpm@linux-foundation.org, borntraeger@linux.ibm.com,
+	corbet@lwn.net, frankja@linux.ibm.com,
+	gerald.schaefer@linux.ibm.com, gor@linux.ibm.com, hca@linux.ibm.com,
+	imbrenda@linux.ibm.com, kvm@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-s390@vger.kernel.org, svens@linux.ibm.com,
+	willy@infradead.org
+Subject: Re: [PATCH v1 07/11] mm/huge_memory: convert split_huge_pages_pid()
+ from follow_page() to folio_walk
+Message-ID: <20240815134316.h4l4wohtgm2oz2uo@quentin>
+References: <20240802155524.517137-8-david@redhat.com>
+ <20240815100423.974775-1-p.raghav@samsung.com>
+ <6938b43c-ec61-46f1-bccc-d1b8f6850253@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] iommu/arm-smmu-v3: Match Stall behaviour for S2
-To: Jason Gunthorpe <jgg@ziepe.ca>, Mostafa Saleh <smostafa@google.com>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, will@kernel.org, joro@8bytes.org,
- jean-philippe@linaro.org, nicolinc@nvidia.com, mshavit@google.com
-References: <20240814145633.2565126-1-smostafa@google.com>
- <20240814155151.GB3468552@ziepe.ca> <Zr3m4YCY7Ape3R6y@google.com>
- <91d6574d-c67e-484c-ad96-91c9fd3d0c43@arm.com> <Zr30BjAcVDKJPv3B@google.com>
- <20240815125919.GH3468552@ziepe.ca>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240815125919.GH3468552@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6938b43c-ec61-46f1-bccc-d1b8f6850253@redhat.com>
+X-Rspamd-Queue-Id: 4Wl5tL0xQDz9shW
 
-On 15/08/2024 1:59 pm, Jason Gunthorpe wrote:
-> On Thu, Aug 15, 2024 at 12:26:46PM +0000, Mostafa Saleh wrote:
->> Hi Robin,
->>
->> On Thu, Aug 15, 2024 at 01:16:19PM +0100, Robin Murphy wrote:
->>> On 15/08/2024 12:30 pm, Mostafa Saleh wrote:
->>>> Hi Jason,
->>>>
->>>> On Wed, Aug 14, 2024 at 12:51:51PM -0300, Jason Gunthorpe wrote:
->>>>> On Wed, Aug 14, 2024 at 02:56:33PM +0000, Mostafa Saleh wrote:
->>>>>
->>>>>> Also described in the pseudocode “SteIllegal()”
->>>>>>       if eff_idr0_stall_model == '10' && STE.S2S == '0' then
->>>>>>           // stall_model forcing stall, but S2S == 0
->>>>>>           return TRUE;
->>>>>
->>>>> This clips out an important bit:
->>>>>
->>>>> if STE.Config == '11x' then
->>>>>     [..]
->>>>>     if eff_idr0_stall_model == '10' && STE.S2S == '0' then
->>>>>         // stall_model forcing stall, but S2S == 0
->>>>>         return TRUE;
->>>>>
->>>>> And here we are using STRTAB_STE_0_CFG_S1_TRANS which is 101 and won't
->>>>> match the STE.Config qualification.
->>>>>
->>>>> The plain text language said the S2S is only required if the S2 is
->>>>> translating, STRTAB_STE_0_CFG_S1_TRANS puts it in bypass.
->>>>
->>>> Yes, my bad, this should be for stage-2 only which is populated in
->>>> arm_smmu_make_s2_domain_ste()
->>>>
->>>>>
->>>>>> +	/*
->>>>>> +	 * S2S is ignored if stage-2 exists but not enabled.
->>>>>> +	 * S2S is not compatible with ATS.
->>>>>> +	 */
->>>>>> +	if (master->stall_enabled && !ats_enabled &&
->>>>>> +	    smmu->features & ARM_SMMU_FEAT_TRANS_S2)
->>>>>> +		target->data[2] |= STRTAB_STE_2_S2S;
->>>>>
->>>>> We can't ignore ATS if it was requested here.
->>>
->>> I don't see much value in adding effectively-dead checks for something which
->>> is already forbidden by the architecture. The definition of STALL_MODEL
->>> explicitly states:
->>>
->>> "An SMMU associated with a PCI system must not have STALL_MODEL == 0b10".
->>>
->>
->> Ah, I was expecting that as otherwise it's contradiction, but couldn't
->> find it while searching. Thanks for pointing it out, I will drop all
->> references to ATS then.
+On Thu, Aug 15, 2024 at 12:20:04PM +0200, David Hildenbrand wrote:
+> On 15.08.24 12:04, Pankaj Raghav wrote:
+> > Hi David,
+> > 
+> > On Fri, Aug 02, 2024 at 05:55:20PM +0200, David Hildenbrand wrote:
+> > >   			continue;
+> > >   		}
+> > > -		/* FOLL_DUMP to ignore special (like zero) pages */
+> > > -		page = follow_page(vma, addr, FOLL_GET | FOLL_DUMP);
+> > > -
+> > > -		if (IS_ERR_OR_NULL(page))
+> > > +		folio = folio_walk_start(&fw, vma, addr, 0);
+> > > +		if (!folio)
+> > >   			continue;
+> > > -		folio = page_folio(page);
+> > >   		if (!is_transparent_hugepage(folio))
+> > >   			goto next;
+> > > @@ -3544,13 +3542,19 @@ static int split_huge_pages_pid(int pid, unsigned long vaddr_start,
+> > >   		if (!folio_trylock(folio))
+> > >   			goto next;
+> > > +		folio_get(folio);
+> > 
+> > Shouldn't we lock the folio after we increase the refcount on the folio?
+> > i.e we do folio_get() first and then folio_trylock()?
+> > 
+> > That is how it was done before (through follow_page) and this patch changes
+> > that. Maybe it doesn't matter? To me increasing the refcount and then
+> > locking sounds more logical but I do see this ordering getting mixed all
+> > over the kernel.
 > 
-> I was thinking this was also protecting against buggy FW since
-> stall_enable can be set by:
->      device_property_read_bool(dev, "dma-can-stall"))
-
-If firmware goes out of its way to describe the system incorrectly then 
-I'd consider that all bets are off, and there's little point in us 
-trying to guess how to cope with a contradiction. For all we know, it 
-could be that the stall property is in fact genuine and it's the ATS 
-capability that was advertised erroneously.
-
-> Alternatively we could directly prevent the clash even earlier:
+> There is no need to grab a folio reference if we hold an implicit reference
+> through the mapping that cannot go away (not that we hold the page table
+> lock). Locking the folio is not special in that regard: we just have to make
+> sure that the folio cannot get freed concurrently, which is the case here.
 > 
-> @@ -3292,8 +3292,13 @@ static struct iommu_device *arm_smmu_probe_device(struct device *dev)
->   
->          if ((smmu->features & ARM_SMMU_FEAT_STALLS &&
->               device_property_read_bool(dev, "dma-can-stall")) ||
-> -           smmu->features & ARM_SMMU_FEAT_STALL_FORCE)
-> -               master->stall_enabled = true;
-> +           smmu->features & ARM_SMMU_FEAT_STALL_FORCE) {
-> +               if (!dev_is_pci(dev))
-> +                       master->stall_enabled = true;
-> +               else
-> +                       dev_err(dev, FW_BUG
-> +                               "A SMMUv3 is required to run in stall mode for a PCI device\n");
-
-Unfortunately we can't do that, because there *are* RCiEP devices whose 
-data interfaces are native AMBA, and thus for whom stalling is not 
-actually a protocol violation as it would be on a real PCIe transport 
-layer; correspondingly, it's *because* they are not true PCIe devices 
-that they can't support ATS, and thus need stall support in order to do 
-SVA, so things should still work out OK in practice.
-
-> +           }
->   
->          if (dev_is_pci(dev)) {
+> So here, we really only grab a reference if we have to -- when we are about
+> to drop the page table lock and will continue using the folio afterwards.
+Got it. Thanks!
 > 
-> Though I have no idea how the GPU driver that wants to use this
-> works - it doesn't seem to be intree :\
-
-It's not a GPU: drivers/crypto/hisilicon/zip/
-
-Thanks,
-Robin.
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
 
