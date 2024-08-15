@@ -1,95 +1,133 @@
-Return-Path: <linux-kernel+bounces-287985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B53B9952EFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:23:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADAD5952EFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A3F9B24D17
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:23:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F11B8B22716
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483A119DFAE;
-	Thu, 15 Aug 2024 13:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD87719E7EF;
+	Thu, 15 Aug 2024 13:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J91fjJ5O";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7+rqDMm7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="DcfGVhQ3"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34DDE1714D0;
-	Thu, 15 Aug 2024 13:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723728208; cv=none; b=vFYj+/3pJPgEI9vryD5BkCrVPu4La7IrV/i7agxNcBe2wk3jaWoP+Elnm9RbMeWzThr93zKAOHrOJb3hB6h5Bju4829rtonoPKSRwLi5Dlq44gBow7tv3LbhnCyUvtZSiHUqZWoxB7zQ5nNZS8zZla0vuIJK4r7tOnEGQ+47zFI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723728208; c=relaxed/simple;
-	bh=2Vb+RMwTgKVFWNik0V48KKODIqOfKyl73RQHm1ZeGNM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QQFP5yZ8XwC21tl9L6kyvICY1iYR9GRTmVCvcIIqZAYFWpoX/syBRJFFrD2qcU4U/z2uy5z+nejy+gFOs0XxaEfxM9tVc2D4cGUXBYdkIonODzU1ZHRypnJ+137r4ATruteGstLa874AeQuz0YMcNIu7Fia2IMUztRg42jsaa5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J91fjJ5O; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7+rqDMm7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723728204;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EQR2bfNvJQ81T9N7AIq6wV+tHy/CCdW+i/V2bG+WVoQ=;
-	b=J91fjJ5OE5GSKm4Yn7+uXy/2BRdmGXpUz49FVh+BA4ILfaut0E5NYAOSPkF4TWLPmkTd6Y
-	INXVTc1bAvUdcJzl9g5O/VCBC8VogFVLVPu5F+Hlrx28LUoYpEZAAef0UHZA97G1rw6yVo
-	yiTF0VnEqeMDFce8lu9kBlzvs2RNsUG7SYA2zEAXunHHqjN07RPm1pA3U9UsZgdDcWCRRa
-	PrsCt5HXlaadWfcdZD1QcHPijyop5oH2mIew0FFGqavUmiOOoOo212qmG2u1/QCxwWOG1l
-	0f6KeNQK9qvaU89V4zrMFSxzhgM9Nv7c/TIG1KoFkdtrajtmjkdRgJFdBN0uXw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723728204;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EQR2bfNvJQ81T9N7AIq6wV+tHy/CCdW+i/V2bG+WVoQ=;
-	b=7+rqDMm7t/hgpsBUqCvHKvR3/DTI1UrHrnFjBLInTZ1OyM+x+qzLZ2Ib8YOjU/oOq9VmXA
-	VSGleR++SVZC6tDA==
-To: Mary Strodl <mstrodl@freedom.csh.rit.edu>
-Cc: Mary Strodl <mstrodl@csh.rit.edu>, linux-kernel@vger.kernel.org,
- akpm@linux-foundation.org, urezki@gmail.com, hch@infradead.org,
- linux-mm@kvack.org, lee@kernel.org, andi.shyti@kernel.org,
- linux-i2c@vger.kernel.org, s.hauer@pengutronix.de,
- christian.gmeiner@gmail.com
-Subject: Re: [PATCH v4 1/2] x86: Add basic support for the Congatec CGEB
- BIOS interface
-In-Reply-To: <Zr329S8995L0OsCu@freedom.csh.rit.edu>
-References: <20240814184731.1310988-2-mstrodl@csh.rit.edu>
- <87sev6m14n.ffs@tglx> <Zr329S8995L0OsCu@freedom.csh.rit.edu>
-Date: Thu, 15 Aug 2024 15:23:24 +0200
-Message-ID: <87msldncmr.ffs@tglx>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5DF1E521;
+	Thu, 15 Aug 2024 13:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723728159; cv=pass; b=CAqljBHR6b2a5Rq09swRKS0aSRB6ctwQxKSvUFpvGJlxt+/Y3ByjVxAKxiTgfucZ77tXj6AeBdARSJ/MbgX/YU/R267kpnp0H7qb7MHj5XUUYv18wa6l2tvofw2z0Cn6TrbdK8QY+q+H83r7LDlR90ubN8Ck99/co0m4j1NCE6g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723728159; c=relaxed/simple;
+	bh=Am6Um6GarnKWNvcoMt+2lU97JRuYlvLwxAb0jhKGrmY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jMNQM0k/q7+kXcLTGPsS7hEIeMmTbwKP/jYRD1T2tAVcwHBPEwj5sZTShY1q5J/KQ3n/nvRTE9gSEagL8G/iAc79yAnkSIe7oPI+qZF3cN44GzDFSb0loQWQr+6bHc5zaCMy0wl/pcagJskkf4IG4hT6yqcj0MU85VvM1eZq/Co=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=DcfGVhQ3; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: kernel@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1723728133; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=F+f+/m+3yoalyK2PJzkFo+Tupgp9cPh4Tjb5I8Bo0B6JwGSNH+RspfAWYBAghyJaMwqpBfsB4CnaGXyBqoxqnDA/CThDVeVg+N3jpbQVUeLCUEGFAhuylTw4CXyyu41AT5PyLxxM6mHCL05d/8DAPfVdEd45nI3x06XdYoTk+kg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1723728133; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=3jD5WsZNkgzCPHbwdRHU3z7HY4AhHudi/075H3onC+g=; 
+	b=d5pNEIS5M++TnFvZssINEBI2Pz69a8A2BJ374wxLHQMc662ocw1uH38KUAktY/pp2aWSEj3LvtaqCOn7vPTvth5uS7XoMtvscJT6JMVvuiKL/20BxLOTWR7K5Rlx9pxJULjDBPeLPKwghq7tOswavlAPBx6MEtDg0ZXU1NuE1AQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723728133;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=3jD5WsZNkgzCPHbwdRHU3z7HY4AhHudi/075H3onC+g=;
+	b=DcfGVhQ3UnLTLR5cZ/XXIxZUpgSGP0lCd/ysHHzVPav0BueYScAUr7i3Z6d8ekh/
+	6znr1w2Xwj3l+aAyO9IKfWTO7REENho7qdz5Af/GKWDohudjhr+c+pdxtLdqv3dB7FL
+	mCndEleBPQAQUdaG3ZwYigYbNwrJHmDaDqEk0Es0=
+Received: by mx.zohomail.com with SMTPS id 1723728131107663.2447060327355;
+	Thu, 15 Aug 2024 06:22:11 -0700 (PDT)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>
+Cc: shawn.lin@rock-chips.com, Ulf Hansson <ulf.hansson@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v3 2/3] mmc: dw_mmc-rockchip: Add v2 tuning support
+Date: Thu, 15 Aug 2024 09:23:40 -0400
+Message-ID: <2742918.mvXUDI8C0e@trenzalore>
+In-Reply-To: <5dc82aa2-82a0-4778-b598-88775d5f791c@rock-chips.com>
+References:
+ <20240814223555.3695-1-detlev.casanova@collabora.com>
+ <20240814223555.3695-3-detlev.casanova@collabora.com>
+ <5dc82aa2-82a0-4778-b598-88775d5f791c@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ZohoMailClient: External
 
-Mary!
+On Wednesday, 14 August 2024 20:55:37 EDT Shawn Lin wrote:
+> Hi Detlev
+>=20
+> =E5=9C=A8 2024/8/15 6:34, Detlev Casanova =E5=86=99=E9=81=93:
+> > From: Shawn Lin <shawn.lin@rock-chips.com>
+> >=20
+> > v2 tuning will inherit pre-stage loader's phase settings for the first
+> > time, and do re-tune if necessary.
+> > Re-tune will still try the rough degrees, for instance, 90, 180, 270,
+> > 360 but continue to do the fine tuning if sample window isn't good
+> > enough.
+> >=20
+> > Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> > ---
+> >=20
+> >   drivers/mmc/host/dw_mmc-rockchip.c | 49 ++++++++++++++++++++++++++++++
+> >   1 file changed, 49 insertions(+)
+> >=20
+> > diff --git a/drivers/mmc/host/dw_mmc-rockchip.c
+> > b/drivers/mmc/host/dw_mmc-rockchip.c index b07190ba4b7ac..367633f4e8892
+> > 100644
+> > --- a/drivers/mmc/host/dw_mmc-rockchip.c
+> > +++ b/drivers/mmc/host/dw_mmc-rockchip.c
 
-On Thu, Aug 15 2024 at 08:39, Mary Strodl wrote:
-> On Thu, Aug 15, 2024 at 02:17:12PM +0200, Thomas Gleixner wrote:
->> Congatec even provides the GPL2 licenced source for this pokery as a
->> kernel driver.
->
-> The only driver I've found from them is the one that runs blobs in the BIOS.
-> Where did you find the IOPORT stuff?
+[...]
 
-Look for CGOS_DIRECT_Lx_R3.0.0.zip on the congatec webpage.
+> >   	=09
+> >   		priv->default_sample_phase =3D 0;
+> >=20
+> > +	priv->use_v2_tuning =3D
+> > +		of_device_is_compatible(host->dev->of_node,
+> > +					"rockchip,rk3576-dw-
+mshc");
+> > +
+>=20
+> v2 is a kind of software decision instead of hardware dependency.
+> So in theory, any SoC can claim to use it via DT.
 
-Caveat: You need to wear protective glasses to look at it and you should
-        keep your favorite booze handy to clear your brain afterwards.
+Yes but from my tests, only rk3576 won't work without it. So it makes sense=
+ to=20
+only use v2 for this SoC (and other future ones not supported yet)
 
-> Thanks for taking time to read through this!
+>=20
+> >   	priv->drv_clk =3D devm_clk_get(host->dev, "ciu-drive");
+> >   	if (IS_ERR(priv->drv_clk))
+> >   =09
+> >   		dev_dbg(host->dev, "ciu-drive not available\n");
 
-You're welcome.
 
-       tglx
+Detlev.
+
+
 
