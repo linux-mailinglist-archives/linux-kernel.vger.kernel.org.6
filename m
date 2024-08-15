@@ -1,68 +1,67 @@
-Return-Path: <linux-kernel+bounces-287365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BB0F952708
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:35:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94B4D95270A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 616211C21795
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:35:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02B3AB23003
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DEE2B9BF;
-	Thu, 15 Aug 2024 00:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F86E383A2;
+	Thu, 15 Aug 2024 00:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="d+lq+kVO"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lXQSQpIv"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF17422094
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 00:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956CA17C9
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 00:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723682073; cv=none; b=k6Cv9Mf3kwj2O8VKnHu/HWRQPgjCnqyI6VKeT/hH+TVl8FpXuNztVKqc+ut3Q9HbnOLyu9GMrqpa3YIB0C5pWfJIVIDudkjx9gm/Tq6WC5OT8zxCL5W/Qac5HID57DIlMaPikeibLsO2TsLKS/6ZlxuVuxiCdJ0xJ/3M4V1BCqc=
+	t=1723682075; cv=none; b=i5jjNwSEPiAiI/WB4SqeT6PjVPlXyP3Vz4j9PIdbIiQ5raJ5fLSfPTT5B5r2rzN4hzxYKeKMuiVgiriekD9I4A/VECChHtEYlgt/O5mSiqiQdJoBa7TZ2cynCRn2qZaofgLQLc9H0Tb5Oj0Cn669yeU2cI4L7WvfXCuPYu9vKy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723682073; c=relaxed/simple;
-	bh=zTeIEewkb693isW8NOwvdmeLRQkQjPtBIKI0+HHAg2E=;
+	s=arc-20240116; t=1723682075; c=relaxed/simple;
+	bh=/jcJ+rI0gKZr/IVP6XjS/Ak4IPjJQVitYadHxzTrZ4s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dpkmktb4vg3HYQI8H1fKEr1otn2iJxHJm6b/8yJqQVML20zy1ng0tS+9t3oKravsT3JFv/qTDqtw5mataOdnLdU7GgGaqXQ426MrgVD4eQDWd2od/KTyKYTLlvdwTKUZlfkV2QZGfm+8F6kGUSSj0RRTCHTRVO4Kp2W8JfSZLXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=d+lq+kVO; arc=none smtp.client-ip=209.85.215.174
+	 MIME-Version; b=cHL1bhVD2f725nWKTllYwvbMx3TB8nh/7Rjm1de+0ju9NomYqaZHlEobTmHxt3I/dT07QRxleciVUTjuzOVymod+pnx/DTyBoQwmYTT8Em8Cn7GH8dtbQrg8lDdWZ+YQ0eiNQGa/kU5Q8kSIEceaYLwyILuwHkK2uz7YGEIVlYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lXQSQpIv; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7a10b293432so364633a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:34:31 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fd70ba6a15so4079415ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:34:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723682071; x=1724286871; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1723682073; x=1724286873; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LTAqmUB3C74WyCJMJxJLb1pif+r1V9bPB5gyO42OGKo=;
-        b=d+lq+kVOuJYCq7i0nzKWt9Nz/xXBAKJyEIHtJOK+vCDWSdm9YPEd1LpRr+IZ3KMNQm
-         Cqxd40bs2yj9zhYaXo0/0/eZIjU415VVPVlXmKcWi1yj2cml/Uw8V87iCvGzIhvTEu+i
-         xTHIGzMujkiO5exQ02aTxhEk/S5y+CjA1nZcQ=
+        bh=/yiv0xFPMhU7ZUs+XvuB/ZZA+l47REHWpzG575OPKPI=;
+        b=lXQSQpIv6FXxMe09ClVhx4zRYbjS9mjO+31RPg8GOxJoOGknc0F45Kcc2zxhSdGWXW
+         fl/MnqT53XQm2iLM/goAFP0Ohs0HlhcMjzSeu5SvQxbuiZSRZ5ft4pwr5X0nbJIroBk6
+         33Ll8z/c8tVxt0UzqTCPaSf/i1ErysvLjd3mM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723682071; x=1724286871;
+        d=1e100.net; s=20230601; t=1723682073; x=1724286873;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LTAqmUB3C74WyCJMJxJLb1pif+r1V9bPB5gyO42OGKo=;
-        b=Wmrn+tuHsieLx5qRz4gaz1yRYKGq1+8iz23kMi+YNULf+QGs8i4W9mbWybwsUTx081
-         BN5NdJywXN1/MsFEoHP7rtIg57ALF7rrsg4LDCPMG+bWipuv7oE8g35Ot1Nf4/Byr0YC
-         OvyT8SDMrimvxSk3goxY5dXMiJA7/ErvuD1YN2pNiJyte8qeLw61PU8U2ZqfpDShShWl
-         +wEUCNQyIgU8FzC27/tMVhAKuAQsgQSPF6RWkb78xViIOMz4K1yct86UsDN+kYQs7CRX
-         EhD0jiPZby7xNyzlezL1ahsfXK8WBntxQalYaRkQSuc0h7ob+PAfDzm4anDjnyU6L/aa
-         TKYA==
-X-Gm-Message-State: AOJu0YxFcSFsT0RcC4VOMVebtx4VT0MFcOQKHzF8WkMJhZAfXljuJs61
-	vIA92Dd8TTle74Hdl7P+RcEtRkENPujzcekHqqcsZWIbGaehHRgGKt3VqZdTx4Z8PyiW/duyv30
-	=
-X-Google-Smtp-Source: AGHT+IFi1sUOZeFN/sl/EmCy6pJtHVwtGc94+AhjMPhFgSZ7/Ovt9ABuwlS25ptPfHZRf5MNIAy+Kw==
-X-Received: by 2002:a05:6a21:2d0a:b0:1c6:fa3a:c798 with SMTP id adf61e73a8af0-1c8eaee91ecmr5582828637.32.1723682071315;
-        Wed, 14 Aug 2024 17:34:31 -0700 (PDT)
+        bh=/yiv0xFPMhU7ZUs+XvuB/ZZA+l47REHWpzG575OPKPI=;
+        b=grr84fP33byxVNQOw/8oc/Cdg3pnsmM7k1VM6xPXVgsSL9n3mhk5Xd5uXDT2QzXp8v
+         JFNSgtMlog0ioVvDUTiIBXJ/6NyTiy73JJNaQvF4G14sv6EjIAxZL+ZMn/CuWAIHrt31
+         IQkatJySKq7FVm1myn8mHrMCgo6A8Y4QbeviKW5UBr7v2HSWlVV79YpHmx4SUVpuYnx1
+         /Y1lR0WidMI8qqTy+ohmJPWHokahCb719WYq5fq+jG9Qbl7Ry8y30EhYEdG2nuLMYV+U
+         z8iSNJLFgUVn1HWOcmDIurUzTUl5B0J8pQydqoMrn5TaE6Z3z7VPzScdIiPA1wxBKW2I
+         dSLw==
+X-Gm-Message-State: AOJu0YztUhudloj33WpSIRu8suy78xjBYdRWp2uyx468vxR4OgAGsCte
+	tQoz9GjoJTpLwOmCHv7VsZrUcyrXLubtMvpZcfP7unYbBQMFJBbxTJb6LZ/GMQ==
+X-Google-Smtp-Source: AGHT+IHJN+4iBjtg5BFHkoM0j1LHWILoEX4QehkqxO/ua5YPwB+wrtI73F9/wcxBEBcJXyMVg84zJg==
+X-Received: by 2002:a17:902:7c92:b0:1fc:6b8b:4918 with SMTP id d9443c01a7336-201d64b09ddmr38089775ad.41.1723682072985;
+        Wed, 14 Aug 2024 17:34:32 -0700 (PDT)
 Received: from localhost (210.73.125.34.bc.googleusercontent.com. [34.125.73.210])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7127af1999fsm151333b3a.169.2024.08.14.17.34.30
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-201f03a16b2sm1970445ad.268.2024.08.14.17.34.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 17:34:30 -0700 (PDT)
+        Wed, 14 Aug 2024 17:34:32 -0700 (PDT)
 From: Stephen Boyd <swboyd@chromium.org>
 To: chrome-platform@lists.linux.dev
 Cc: linux-kernel@vger.kernel.org,
@@ -91,9 +90,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Rob Herring <robh+dt@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
 	Tzung-Bi Shih <tzungbi@kernel.org>
-Subject: [PATCH v2 05/11] drm/bridge: dp_typec: Add "no-hpd" support
-Date: Wed, 14 Aug 2024 17:34:10 -0700
-Message-ID: <20240815003417.1175506-6-swboyd@chromium.org>
+Subject: [PATCH v2 06/11] drm/bridge: dp_typec: Allow users to hook hpd notify path
+Date: Wed, 14 Aug 2024 17:34:11 -0700
+Message-ID: <20240815003417.1175506-7-swboyd@chromium.org>
 X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
 In-Reply-To: <20240815003417.1175506-1-swboyd@chromium.org>
 References: <20240815003417.1175506-1-swboyd@chromium.org>
@@ -105,19 +104,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Some EC firmwares on Trogdor/Strongbad boards don't properly indicate
-the state of the DP HPD level on a type-c port. The EC only indicates
-that DP mode is entered or exited for a type-c port. The HPD state is
-expressed to the DP controller via a pin on the AP that the EC drives
-high or low when the type-c port partner (i.e. monitor) asserts or
-deasserts HPD.
+The previous patch added support for no-hpd to drm_dp_typec_bridge code.
+Allow users of this bridge to hook the HPD notification path of the
+bridge chain so that they can be made aware of the connector status
+changing. This helps HPD-less users of the bridge inject the HPD state
+into their code by using the connector status as a proxy for HPD being
+asserted or deasserted.
 
-TL;DR: These devices don't support HPD signaling from the type-c code
-paths.
-
-Add support for HPD coming from somewhere else in the bridge chain.
-Callers can set the struct drm_dp_typec_bridge_desc::no_hpd member to
-indicate that HPD shouldn't be signaled from this bridge.
+In particular, this will help Trogdor/Strongbad boards that need to read
+the EC's analog mux which steers the DP signal to one or the other USB
+type-c ports to figure out which type-c port has HPD asserted.
 
 Cc: Prashant Malani <pmalani@chromium.org>
 Cc: Benson Leung <bleung@chromium.org>
@@ -127,99 +123,82 @@ Cc: Pin-yen Lin <treapking@chromium.org>
 Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
- drivers/gpu/drm/bridge/aux-hpd-bridge.c | 12 +++++++++++-
- include/drm/bridge/aux-bridge.h         |  2 ++
- 2 files changed, 13 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/bridge/aux-hpd-bridge.c | 19 +++++++++++++++++++
+ include/drm/bridge/aux-bridge.h         |  5 +++++
+ 2 files changed, 24 insertions(+)
 
 diff --git a/drivers/gpu/drm/bridge/aux-hpd-bridge.c b/drivers/gpu/drm/bridge/aux-hpd-bridge.c
-index 79652d27db40..a5a434b7d5ec 100644
+index a5a434b7d5ec..32c0171c512c 100644
 --- a/drivers/gpu/drm/bridge/aux-hpd-bridge.c
 +++ b/drivers/gpu/drm/bridge/aux-hpd-bridge.c
-@@ -20,6 +20,7 @@ static DEFINE_IDA(drm_aux_hpd_bridge_ida);
- struct drm_aux_hpd_bridge_data {
- 	struct drm_bridge bridge;
- 	struct device *dev;
-+	bool no_hpd;
- };
- 
- enum dp_lane {
-@@ -54,6 +55,7 @@ to_drm_dp_typec_bridge_data(struct drm_bridge *bridge)
+@@ -55,6 +55,9 @@ to_drm_dp_typec_bridge_data(struct drm_bridge *bridge)
  struct drm_dp_typec_bridge_dev {
  	struct auxiliary_device adev;
  	size_t max_lanes;
-+	bool no_hpd;
++	void (*hpd_notify)(struct drm_dp_typec_bridge_dev *dev,
++			   void *data, enum drm_connector_status status);
++	void *hpd_data;
+ 	bool no_hpd;
  };
  
- static inline struct drm_dp_typec_bridge_dev *
-@@ -232,6 +234,7 @@ devm_drm_dp_typec_bridge_alloc(struct device *parent, const struct drm_dp_typec_
- 	adev->dev.release = drm_dp_typec_bridge_release;
+@@ -235,6 +238,8 @@ devm_drm_dp_typec_bridge_alloc(struct device *parent, const struct drm_dp_typec_
  	adev->dev.platform_data = of_node_get(desc->of_node);
  	typec_bridge_dev->max_lanes = desc->num_dp_lanes;
-+	typec_bridge_dev->no_hpd = desc->no_hpd;
+ 	typec_bridge_dev->no_hpd = desc->no_hpd;
++	typec_bridge_dev->hpd_notify = desc->hpd_notify;
++	typec_bridge_dev->hpd_data = desc->hpd_data;
  
  	ret = auxiliary_device_init(adev);
  	if (ret) {
-@@ -278,6 +281,8 @@ void drm_aux_hpd_bridge_notify(struct device *dev, enum drm_connector_status sta
- 
- 	if (!data)
- 		return;
-+	if (data->no_hpd)
-+		return;
- 
- 	drm_bridge_hpd_notify(&data->bridge, status);
+@@ -305,6 +310,19 @@ void drm_dp_typec_bridge_notify(struct drm_dp_typec_bridge_dev *typec_bridge_dev
  }
-@@ -467,6 +472,7 @@ static int drm_aux_hpd_bridge_probe(struct auxiliary_device *auxdev,
- {
- 	struct device *dev = &auxdev->dev;
- 	struct drm_aux_hpd_bridge_data *hpd_data;
+ EXPORT_SYMBOL_GPL(drm_dp_typec_bridge_notify);
+ 
++static void drm_dp_typec_bridge_hpd_notify(struct drm_bridge *bridge,
++					    enum drm_connector_status status)
++{
++	struct drm_dp_typec_bridge_data *data;
 +	struct drm_dp_typec_bridge_dev *typec_bridge_dev;
- 	struct drm_dp_typec_bridge_data *typec_data;
- 	struct drm_bridge *bridge;
- 	u8 dp_lanes[] = { DP_ML0, DP_ML1, DP_ML2, DP_ML3 };
-@@ -477,6 +483,7 @@ static int drm_aux_hpd_bridge_probe(struct auxiliary_device *auxdev,
- 			return -ENOMEM;
- 		bridge = &hpd_data->bridge;
- 		bridge->funcs = &drm_aux_hpd_bridge_funcs;
-+		bridge->ops = DRM_BRIDGE_OP_HPD;
- 	} else if (id->driver_data == DRM_AUX_TYPEC_BRIDGE) {
- 		typec_data = devm_kzalloc(dev, sizeof(*typec_data), GFP_KERNEL);
- 		if (!typec_data)
-@@ -484,6 +491,10 @@ static int drm_aux_hpd_bridge_probe(struct auxiliary_device *auxdev,
- 		hpd_data = &typec_data->hpd_bridge;
- 		bridge = &hpd_data->bridge;
- 		bridge->funcs = &drm_dp_typec_bridge_funcs;
-+		typec_bridge_dev = to_drm_dp_typec_bridge_dev(dev);
-+		if (!typec_bridge_dev->no_hpd)
-+			bridge->ops = DRM_BRIDGE_OP_HPD;
-+		hpd_data->no_hpd = typec_bridge_dev->no_hpd;
- 		memcpy(typec_data->dp_lanes, dp_lanes, sizeof(typec_data->dp_lanes));
- 	} else {
- 		return -ENODEV;
-@@ -491,7 +502,6 @@ static int drm_aux_hpd_bridge_probe(struct auxiliary_device *auxdev,
++
++	data = to_drm_dp_typec_bridge_data(bridge);
++	typec_bridge_dev = to_drm_dp_typec_bridge_dev(data->hpd_bridge.dev);
++
++	if (typec_bridge_dev->hpd_notify)
++		typec_bridge_dev->hpd_notify(typec_bridge_dev, typec_bridge_dev->hpd_data, status);
++}
++
+ static int drm_aux_hpd_bridge_attach(struct drm_bridge *bridge,
+ 				     enum drm_bridge_attach_flags flags)
+ {
+@@ -460,6 +478,7 @@ static const struct drm_bridge_funcs drm_dp_typec_bridge_funcs = {
+ 	.atomic_reset = drm_atomic_helper_bridge_reset,
+ 	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+ 	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
++	.hpd_notify = drm_dp_typec_bridge_hpd_notify,
+ };
  
- 	hpd_data->dev = dev;
- 	bridge->of_node = dev_get_platdata(dev);
--	bridge->ops = DRM_BRIDGE_OP_HPD;
- 	bridge->type = DRM_MODE_CONNECTOR_DisplayPort;
- 
- 	auxiliary_set_drvdata(auxdev, hpd_data);
+ enum drm_aux_bridge_type {
 diff --git a/include/drm/bridge/aux-bridge.h b/include/drm/bridge/aux-bridge.h
-index 258b87c93623..13f5e98b4d31 100644
+index 13f5e98b4d31..3229f200f0df 100644
 --- a/include/drm/bridge/aux-bridge.h
 +++ b/include/drm/bridge/aux-bridge.h
-@@ -28,10 +28,12 @@ struct drm_dp_typec_bridge_dev;
+@@ -28,11 +28,16 @@ struct drm_dp_typec_bridge_dev;
   * struct drm_dp_typec_bridge_desc - drm_dp_typec_bridge descriptor
   * @of_node: device node pointer corresponding to this bridge instance
   * @num_dp_lanes: number of input DP lanes possible (1, 2 or 4)
-+ * @no_hpd: true if this bridge can't signal HPD state with drm_dp_typec_bridge_notify()
++ * @hpd_notify: callback for bridge hot plug detect events
++ * @hpd_data: data passed to @hpd_notify callback
+  * @no_hpd: true if this bridge can't signal HPD state with drm_dp_typec_bridge_notify()
   */
  struct drm_dp_typec_bridge_desc {
  	struct device_node *of_node;
  	size_t num_dp_lanes;
-+	bool no_hpd;
++	void (*hpd_notify)(struct drm_dp_typec_bridge_dev *typec_bridge_dev,
++			   void *data, enum drm_connector_status status);
++	void *hpd_data;
+ 	bool no_hpd;
  };
  
- enum usb_ss_lane {
 -- 
 https://chromeos.dev
 
