@@ -1,98 +1,85 @@
-Return-Path: <linux-kernel+bounces-287814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E02AC952CD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:50:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF042952CDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:51:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CBE6286946
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:50:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2763E284545
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E1719F471;
-	Thu, 15 Aug 2024 10:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="14QS5XXz"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3833D1A01DA;
+	Thu, 15 Aug 2024 10:41:08 +0000 (UTC)
+Received: from gollum.nazgul.ch (gollum.nazgul.ch [81.221.21.253])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153031AC8AD
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 10:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAF419F47A;
+	Thu, 15 Aug 2024 10:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.221.21.253
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723718464; cv=none; b=pzPa/FedSZOshT9Wfap/yQjzcPlIQ1VWA4TfX/fmTIVuNI71rn4XnIY+hAfRK84djZETmJdyU64kLemhFZspJc4vSIlpJfAWe27jNd29zBAGHuh0PBsnbbgA2b2X4Fn5PBt8uJT8CgeyKxRJCHMjl2E+ZkLSeyn7xDC1f0KRPjQ=
+	t=1723718467; cv=none; b=iGWeSquXf7mPsbPDipwmwyuJvfvWYcawv0W7eyv3e/yU19vSNcOkg1ihkbOh1FgtZFCYL3Z8oAQwlJ01+vcHxtT6Tsjs4hZYpk+7qITU/ohGdgsXaNjOxIuRJQ/lAnH7T07ze7CcCJNsKuULiZ4crc+VsUBKVYFm8QbIidvbObw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723718464; c=relaxed/simple;
-	bh=0A3BeWpT25SIP9LGQuhq01i2QuRx5hRzSDRG7Z5bs/Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gWaHf6/4shr0lwmzoZp9D5KxglHv5cAhfY97jr95vJbE0/fmwsX8Yj31ZeYhU+DOshv1TADfLjGuy0XV/gKGH5jZCEpQwlQAW2rg51xvZ/2jRWf2iAT1/ujIofHxgf0K51sSqVhfcFWi0GV5rZ+xbbNS5STZSPN6jbeoBi8dkAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=14QS5XXz; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=vhK51bOti9km8q+PAjJsqfOkQmP4br8Lmu/o8WHP+Ik=; b=14QS5XXz34UzotjhZznoyjzdEA
-	zzVIpq0gV+HQvvrrJl+RHNosEAzZHvmkjOgS2pkFcoh9l2JVbzIBfUGh3umXdsH1RtuErY1TeJC4v
-	YsO0h5O+HWa/+RggLJ7CWM5dxiwUT4fBBEHqFSgxiVqJpFFc/1gBg5vZu0bUG0jGD55kPyaEg0CL5
-	rP5GftLnRDfH+inrGQca57zjD6Um+JRCef3VzAuIuD9lMWbfqeTGf2SxHeinQmE7kvFPeQg25SHiz
-	S/G6I/Ws6i0DRDYqkcMvU+lfN5PnBAJd2vYptnxuMyoX2tEbEdMnbxGDaVMrho8yOikQNBOb1TKec
-	cBH0FPwQ==;
-Received: from i53875a9f.versanet.de ([83.135.90.159] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1seXuX-0000oc-0A; Thu, 15 Aug 2024 12:40:53 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Maxime Ripard <mripard@kernel.org>,
-	Sandy Huang <hjc@rock-chips.com>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Alex Bee <knaerzche@gmail.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-rockchip@lists.infradead.org,
-	David Airlie <airlied@gmail.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] drm/rockchip: inno-hdmi: Fix infoframe upload
-Date: Thu, 15 Aug 2024 12:40:51 +0200
-Message-Id: <172371844381.722173.15806804441564466230.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240805110855.274140-2-knaerzche@gmail.com>
-References: <20240805110855.274140-2-knaerzche@gmail.com>
+	s=arc-20240116; t=1723718467; c=relaxed/simple;
+	bh=DRCh9Hn/zBfgF1mCF83AaVJu3s25m6zEa/bsiaWDkG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kq6WTS0dFEXjD9tGdhPm/bYLadgRX0BrbFQl1GXnT/zvY0nYsbIM/Dflx4R6MDJ+4Dyphhpgsj31XF3VZF7In0Ku1U9AEGHr0Ep8OB8Y7zTv3qFLBqt3uApgBhDEyuT9tGILFSbSEJrgsgrtgF9k5+gAJHKMCRQsPAs//sihIEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nazgul.ch; spf=pass smtp.mailfrom=nazgul.ch; arc=none smtp.client-ip=81.221.21.253
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nazgul.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nazgul.ch
+Received: from localhost (gollum.nazgul.ch [local])
+	by gollum.nazgul.ch (OpenSMTPD) with ESMTPA id 37917d19;
+	Thu, 15 Aug 2024 12:41:03 +0200 (CEST)
+Date: Thu, 15 Aug 2024 12:41:03 +0200
+From: Marcus Glocker <marcus@nazgul.ch>
+To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>
+Subject: [PATCH v3 3/6] dt-bindings: ufs: Add X1E80100 UFS
+Message-ID: <3mjmyo45td4zpnzntphwqdbc6rogs7c7q6jkjvqgvyzxl2l7ie@wkusfdalqwj5>
+References: <v2iah5yrne4u6uzrnzg36tvtxzqrpiez6io2gyyfrht2x42umw@5ribqndiavxv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <v2iah5yrne4u6uzrnzg36tvtxzqrpiez6io2gyyfrht2x42umw@5ribqndiavxv>
 
-On Mon, 5 Aug 2024 13:08:56 +0200, Alex Bee wrote:
-> HDMI analyser shows that the AVI infoframe is no being longer send.
-> 
-> The switch to the HDMI connector api should have used the frame content
-> which is now given in the buffer parameter, but instead still uses the
-> (now) empty and superfluous packed_frame variable.
-> 
-> Fix it.
-> 
-> [...]
+Add the UFS Host Controller binding.
 
-Applied, thanks!
+Signed-off-by: Marcus Glocker <marcus@nazgul.ch>
+---
+ Documentation/devicetree/bindings/ufs/qcom,ufs.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-[1/1] drm/rockchip: inno-hdmi: Fix infoframe upload
-      commit: fd45cc614b8acca5bb435ba37fe9b3f9a17fab84
-
-Best regards,
+diff --git a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
+index 25a5edeea164..4cb3fea53651 100644
+--- a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
++++ b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
+@@ -41,6 +41,7 @@ properties:
+           - qcom,sm8450-ufshc
+           - qcom,sm8550-ufshc
+           - qcom,sm8650-ufshc
++          - qcom,x1e80100-ufshc
+       - const: qcom,ufshc
+       - const: jedec,ufs-2.0
+ 
+@@ -121,6 +122,7 @@ allOf:
+           contains:
+             enum:
+               - qcom,sc7180-ufshc
++              - qcom,x1e80100-ufshc
+     then:
+       properties:
+         clocks:
 -- 
-Heiko Stuebner <heiko@sntech.de>
+2.39.2
+
 
