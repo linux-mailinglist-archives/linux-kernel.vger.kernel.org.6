@@ -1,140 +1,121 @@
-Return-Path: <linux-kernel+bounces-288025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77471953106
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:49:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8843995310C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:49:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20FFC1F260F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:49:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 310A3282C55
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F2519EECF;
-	Thu, 15 Aug 2024 13:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="F4jASlBM"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF911A00E7;
+	Thu, 15 Aug 2024 13:49:31 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F95A14AD0A;
-	Thu, 15 Aug 2024 13:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B011494C5;
+	Thu, 15 Aug 2024 13:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723729761; cv=none; b=jvUv1qAWU5nFMCJywKND/ENXzdGvS2k4QLJl1kh5AMyWoKqwqPe+Roma3HGoj9NU+2jH47XPPG/Cmt1vWCcAfhp8+0wIAex78YlrBTx6w7nS+q1bAdfZuqxBIJSdbja14ySszyqQ1awiwG7UJwbCDv7CDO3yKQpuoGHEPRhzqko=
+	t=1723729770; cv=none; b=FH+4LG9pEg0So+hPyYbCFsqV1B1LY8a6FvqZNB7OEMknOZkb5ks1X2qdU5LF9LC+mLIjDFz9fPKQBQu5Z+taTKTcZYFqqNYJJNNH4568lk1tuaRWTFsnK2ULE9LqPBo58HyUCY4qFZ28MeBKw35c+GXBq90/KRBQAzyvlha7g1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723729761; c=relaxed/simple;
-	bh=l29BpF0pE5dummAf4WWU6M7uDFZRtdSPnLLm2sEUcWU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TkiLwTYe2gu+6ykav3kprwlq9N0qtaTvRcTFHRyk3/aOeM5xJgqveM/iiMwk6Xe+G+uXUNU+UKnbZFGBCHU1LZPReIeMvz+QZC4sINQPEBQrARPTk39hhfqX73emVU0mLyjlijPS/cqEJOwAjp1TW6bb0IMb5Tkx7tYNJneTVhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=F4jASlBM; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=+qjUZXXQPxMbzidk2Un7iyE+5qXqgDIpBfTv+OoiY/8=; b=F4jASlBMHLJFuTxmhQmLd6CS/j
-	3NjADgAqcSl22SIIgqYqRERAsTyT5hfI646h0/71qZTNnWT3HHQYCe619+p8wQ/qvvvt+Txd2U1nd
-	5B35td3fAFveSUz3jGvEzysWWh9ge4i69J92C7NLB+/W0U5qlIF0Q0V/TcgjwaaLmUR+ButCPZ1Ag
-	Sq1Wg94yjFUZfJ6OjgQrSOo6iUdymNPO6HXlSZ26JSFPNhF+pw+dRpb9v6NWK10abrSpvcwaLp6TZ
-	7VWmshsSob2mvkEt2fG/cGq6H/Hc1glLWZ9CH2ZasXzmOm5lYwGMUYdvjXFKH+FPvNQRGekqRux4j
-	A/Un8Fbg==;
-Received: from i53875a9f.versanet.de ([83.135.90.159] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1seaqn-0003Br-7q; Thu, 15 Aug 2024 15:49:13 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: linux-kernel@vger.kernel.org,
- Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com,
- Detlev Casanova <detlev.casanova@collabora.com>
-Subject: Re: [PATCH v3 1/3] dt-bindings: mmc: Add support for rk3576 dw-mshc
-Date: Thu, 15 Aug 2024 15:49:12 +0200
-Message-ID: <5057223.82XvGhxQ46@diego>
-In-Reply-To: <20240814223555.3695-2-detlev.casanova@collabora.com>
-References:
- <20240814223555.3695-1-detlev.casanova@collabora.com>
- <20240814223555.3695-2-detlev.casanova@collabora.com>
+	s=arc-20240116; t=1723729770; c=relaxed/simple;
+	bh=TCpjlsm4xqeK0L2uxXsv6Gm044Qcen8eAGQR3XuiNRg=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=jGEH27V5hWCq+OKwzU6tsDb8sjobYSszR0zY9He9W8P0XEeEukHkMDRRlBSK2C/Tvlb+w3fcuN2OqHqhLF+VIzOLx1xUOHrpc6J59oAKizQQWMnh6LGu2wcKIialI5Pu9tHNOyjSr1wJ7HA9JIjsFYdQc3SN3RGH5C71BOinsnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Wl5vz5Dx6zQpvK;
+	Thu, 15 Aug 2024 21:44:47 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5A4621400E3;
+	Thu, 15 Aug 2024 21:49:23 +0800 (CST)
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 15 Aug 2024 21:49:22 +0800
+CC: Shuai Xue <xueshuai@linux.alibaba.com>, Jing Zhang
+	<renyu.zj@linux.alibaba.com>, Will Deacon <will@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, Yicong
+ Yang <yangyicong@hisilicon.com>, Jonathan Cameron
+	<Jonathan.Cameron@huawei.com>, Jonathan Corbet <corbet@lwn.net>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<quic_vbadigan@quicinc.com>, <quic_nitegupt@quicinc.com>,
+	<quic_skananth@quicinc.com>, <quic_ramkri@quicinc.com>,
+	<quic_parass@quicinc.com>, <quic_mrana@quicinc.com>
+Subject: Re: [PATCH 3/4] perf/dwc_pcie: Always register for PCIe bus notifier
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+References: <20240731-dwc_pmu_fix-v1-0-ca47d153e5b2@quicinc.com>
+ <20240731-dwc_pmu_fix-v1-3-ca47d153e5b2@quicinc.com>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <55303289-bb41-4e67-9912-4cf4335244ca@huawei.com>
+Date: Thu, 15 Aug 2024 21:49:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20240731-dwc_pmu_fix-v1-3-ca47d153e5b2@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 
-Am Donnerstag, 15. August 2024, 00:34:00 CEST schrieb Detlev Casanova:
-> Add the compatible string for rockchip,rk3576-dw-mshc and add support
-> for the rockchip,v2-tuning flag, a new feature of this core.
+On 2024/7/31 12:23, Krishna chaitanya chundru wrote:
+> When the PCIe devices are discovered late, the driver can't find
+> the PCIe devices and returns in the init without registering with
+> the bus notifier. Due to that the devices which are discovered late
+> the driver can't register for this.
 > 
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> Register for bus notifier even if the device is not found in init.
+> 
+> Fixes: af9597adc2f1 ("drivers/perf: add DesignWare PCIe PMU driver")
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
 > ---
->  Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/perf/dwc_pcie_pmu.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
-> index 211cd0b0bc5f3..0543cdb51c657 100644
-> --- a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
-> @@ -39,6 +39,7 @@ properties:
->                - rockchip,rk3368-dw-mshc
->                - rockchip,rk3399-dw-mshc
->                - rockchip,rk3568-dw-mshc
-> +              - rockchip,rk3576-dw-mshc
->                - rockchip,rk3588-dw-mshc
->                - rockchip,rv1108-dw-mshc
->                - rockchip,rv1126-dw-mshc
+> diff --git a/drivers/perf/dwc_pcie_pmu.c b/drivers/perf/dwc_pcie_pmu.c
+> index c115348b8d53..aa1010b44bcb 100644
+> --- a/drivers/perf/dwc_pcie_pmu.c
+> +++ b/drivers/perf/dwc_pcie_pmu.c
+> @@ -741,8 +741,6 @@ static int __init dwc_pcie_pmu_init(void)
+>  
+>  		found = true;
+>  	}
+> -	if (!found)
+> -		return -ENODEV;
+>  
+>  	ret = cpuhp_setup_state_multi(CPUHP_AP_ONLINE_DYN,
+>  				      "perf/dwc_pcie_pmu:online",
+> @@ -753,9 +751,11 @@ static int __init dwc_pcie_pmu_init(void)
+>  
+>  	dwc_pcie_pmu_hp_state = ret;
+>  
+> -	ret = platform_driver_register(&dwc_pcie_pmu_driver);
+> -	if (ret)
+> -		goto platform_driver_register_err;
+> +	if (!found) {
+> +		ret = platform_driver_register(&dwc_pcie_pmu_driver);
+> +		if (ret)
+> +			goto platform_driver_register_err;
+> +	}
+> 
 
-this would mark the rk3576-dw-mshc as being the "same" as the
-core rk3288 variant. rk3288 was the first controller introducing the
-clock tuning for higher speeds. with the clocks being part of the CRU.
+This doesn't match the commit.
 
-As we can see in later patches, this rk3576 though changes that
-setup with moving the tunable clock configurations into the controller
-itself.
+If any device is found at this stage, we cannot use them since you don't
+register a driver.
 
-So please don't claim to be compatible to the 3288, but instead start
-a new block for this new set of controllers:
-
-
-  compatible:
-    oneOf:
-      # for Rockchip RK2928 and before RK3288
-      - const: rockchip,rk2928-dw-mshc
-      # for Rockchip RK3288
-      - const: rockchip,rk3288-dw-mshc
-      - items:
-          - enum:
-              - rockchip,px30-dw-mshc
-              - rockchip,rk1808-dw-mshc
-              - rockchip,rk3036-dw-mshc
-              - rockchip,rk3128-dw-mshc
-              - rockchip,rk3228-dw-mshc
-              - rockchip,rk3308-dw-mshc
-              - rockchip,rk3328-dw-mshc
-              - rockchip,rk3368-dw-mshc
-              - rockchip,rk3399-dw-mshc
-              - rockchip,rk3568-dw-mshc
-              - rockchip,rk3588-dw-mshc
-              - rockchip,rv1108-dw-mshc
-              - rockchip,rv1126-dw-mshc
-          - const: rockchip,rk3288-dw-mshc
-+      # for Rockchip RK3576 with phase tuning inside the controller
-+      - const: rockchip,rk3576-dw-mshc
-
-That way you can simplify the dt-parsing code too.
-
-
-Heiko
-
-
+>  	ret = bus_register_notifier(&pci_bus_type, &dwc_pcie_pmu_nb);
+>  	if (ret)
+> 
 
