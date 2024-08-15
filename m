@@ -1,160 +1,159 @@
-Return-Path: <linux-kernel+bounces-287599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CC0E9529BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:17:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF8D49529AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:14:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB8D51F21C8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 07:17:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E4FB1C22438
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 07:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E376A17ADE3;
-	Thu, 15 Aug 2024 07:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7C717A5BE;
+	Thu, 15 Aug 2024 07:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QyP4XM8G"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="vDP945ET"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB13DCA62;
-	Thu, 15 Aug 2024 07:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266851EB31;
+	Thu, 15 Aug 2024 07:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723706255; cv=none; b=T8uZC0Bk9clG0SKKk+y8kyQXXyVjGVk3QErdRLQixeMVEkNzK5lid2RCrbl9u5Vm0AgAaEGTCXcUyOFpanMPl0OzNhybWfkLjIhQRh7ezQdsNmkHdHBGgLYnxDx6cgystORa1VMNwTZKSCC76J1Gn1RLRwMZlWBfW86qMWZV/Hg=
+	t=1723706073; cv=none; b=ObUt1ygyIK3qG25dRi7QpWDiiRI1p2CkHpolRsN24RQCACjRbdFgRYlW559Agni3av2myzuZU7Vq5eVEMg1RDo1MvzPrhdqGzf6Uyo0XRDVW9m4SHO6OwxCCH93bSor92US1GbFoeTmClHI+coHDXsiGxVV34a08yktldfXCD3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723706255; c=relaxed/simple;
-	bh=aaFDd5ISb84lhCJFQsTbHtxY5uuIzKwhP/XKSewykcU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Xg+paoMeHME52jcbxDwzYtLA/K5zc6t2k7v0wjLMxd0HBzlmmhkmA7YbIhILCHaG82yKAeOt9E9lEEzzqhETiHyEadtLBT+Rw+ijpAUViW5a0bA9EXUfvD8j9beERFrkQDdyQKreFCxj8WDwqVci32Tlbpa+JQ0jKfIvm0vJuSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QyP4XM8G; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70d1c655141so421212b3a.1;
-        Thu, 15 Aug 2024 00:17:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723706253; x=1724311053; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jvruj7SsdqsHY133idfzMsgdOO/tE81N6D79Gm7sQSA=;
-        b=QyP4XM8GASFru9G6mrfgkfM4n964+mRasYyBWcdsfGIDi6iV69aVEg1Hl+fxMTMqTY
-         y8iYUlZeaJtGEdmyIZOQ2QlJPM3AA/lthelMXk0r9i7YpTxtrxiJQLZKz159zS6fTvfB
-         esqkjvWlJdvaXhXGhQSLdWggfanvaQSqAdxdm4OJDT4HfafSDzw2CrBpj/Xs5nwnM7NM
-         LXV27h8voKifwF8Fi6/55FmVgpUBvp70bIk53h1V+KXP0X8pdY1v64dMHIn3Zb+nf5fV
-         4AJvaPShKg2ZJZF8mL6yze4tGK1tJnf+NrhwcFB/F3e89nob5YXlZfQ7gSPUQ7CkSRA7
-         ozbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723706253; x=1724311053;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jvruj7SsdqsHY133idfzMsgdOO/tE81N6D79Gm7sQSA=;
-        b=ui1GAiCG2Z/OH3kWNQS4OqfyY/Tl7bcKa1BrmOFFR2WQX3SZshM9AjYlJKFeDDdSMr
-         /LrMH/MHnhzdeKJrAgDlX4qs2EizjCBq+wa7IsUO9zC/einBUxo6W8KR4jMhyHSVpKxM
-         Lo6PZ0DI7nnYS7H2CJa+oTZ416QtpKR0AXlSJH344peD/MUyOIr1XvMY8MBii+b6G3yZ
-         N3MdQf1VFZw1ZutuoVB+XkSX+3C3i2gKnrV9noeVPtTfwDQ5F2VJEzneNZGJf8qaATs1
-         CCpyw81C23hIIQo5NSBCETpao+5mdcLGmmfEASMo+IgQR5DdVDMH4DaqrhDPsmUwvlmq
-         yl5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVgYVS2VXUlz3SlkWbgIayATfXrhaE/LtT+wZzLaYi52gGFgNNdg1BMgWjbY/axHV2/MHJlC8Jj2zCGgCDiFVXdxTt8a4JXYfKw6tojQHf0qT2X5EIOmoCCmEwqYFsk0em+4NAZHAir
-X-Gm-Message-State: AOJu0Yx/Y0uUiEOzbR3gut3dfOl9J0wlppjvugNApbxyZWPny0ulfEhT
-	LiQ/8qYNM2WVjp+Ydb7xEkLDKS6Fuci0sE/rzpOzbKCaZt0HZptI
-X-Google-Smtp-Source: AGHT+IHnq8ZsMvaDul8KdxjK2STZStCb5oTgnTG8zdSTjLFE5fRFXTJFZbeFFOVy7c6u8+cQmX0/3w==
-X-Received: by 2002:a05:6a00:170a:b0:70e:91ca:32ab with SMTP id d2e1a72fcca58-712670fa539mr6744797b3a.6.1723706252977;
-        Thu, 15 Aug 2024 00:17:32 -0700 (PDT)
-Received: from embed-PC.. ([117.99.192.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b61a7672sm604455a12.4.2024.08.15.00.17.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 00:17:32 -0700 (PDT)
-From: Abhishek Tamboli <abhishektamboli9@gmail.com>
-To: dan.scally@ideasonboard.com,
-	laurent.pinchart@ideasonboard.com
-Cc: gregkh@linuxfoundation.org,
-	dan.carpenter@linaro.org,
-	linux-usb@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	rbmarliere@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] usb: gadget: uvc: Fix ERR_PTR dereference in uvc_v4l2.c
-Date: Thu, 15 Aug 2024 12:44:16 +0530
-Message-Id: <20240815071416.585559-1-abhishektamboli9@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723706073; c=relaxed/simple;
+	bh=Jrjcm6+EhcaXEJi1rFzH1jGC5K6EkwBZ3kV70fPa7t4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ejaKwYo7btNjIwZfYW9enIWlYarFEemR3ISzWdVFyz7q5G9Myd6Ltja6o/LcUndSQifTMixxfYTiWfFbzZMQcC+0R43yMJeaU7q60t7hT9yfN57IQPWDhEMK4BP6ns7pSqR1IixASSZrkC/JWWfusivMASxgHXq9TJKPQ9XCYsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=vDP945ET; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=9qxoS+3oeTjP70ryzrOdH6IaU/FJ7BJBCt3EOY6TtFk=;
+	t=1723706072; x=1724138072; b=vDP945ETztl0XzPCLUkZEkthJF1Pz7cC97vowEZUnyXVplh
+	5IOpnEDMe7FedeNw93/vPAAduNsTiAumSBvnEs35lsbF2BkVgTzMk0KBIO3WnGLf9tQ6pZothMwp8
+	oYrQ0i/LF5HDUxKcGAF6gz93ouCsXGNxZSrrVF0M4Cci4vpKxIEvCVWBW1UC2EPSCMbhtOo5UMZVq
+	sxTecF69WmM0CEi06GccHu6T5BLcR8G+GxFKIxyaK+U4WW7iSPWfs+Zotyw3w60v9cW5lbrIUoWQb
+	/qQnFG1CmH35TrBdeiKahqn5rmbeLJ+b/z+tsmz8j9mGG7Sjr2K8nm2e5svNTFeQ==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1seUgm-0003lm-Bo; Thu, 15 Aug 2024 09:14:28 +0200
+Message-ID: <a6ec1c84-428f-41b7-9a57-183f2aeca289@leemhuis.info>
+Date: Thu, 15 Aug 2024 09:14:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 0/3] Revert "virtio_net: rx enable premapped mode by
+ default"
+To: "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
+Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Jason Wang <jasowang@redhat.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ virtualization@lists.linux.dev, Darren Kenny <darren.kenny@oracle.com>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+References: <20240511031404.30903-1-xuanzhuo@linux.alibaba.com>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <20240511031404.30903-1-xuanzhuo@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1723706072;233a5b5e;
+X-HE-SMSGID: 1seUgm-0003lm-Bo
 
-Fix potential dereferencing of ERR_PTR() in find_format_by_pix()
-and uvc_v4l2_enum_format().
+[side note: the message I have been replying to at least when downloaded
+from lore has two message-ids, one of them identical two a older
+message, which is why this looks odd in the lore archives:
+https://lore.kernel.org/all/20240511031404.30903-1-xuanzhuo@linux.alibaba.com/]
 
-Fix the following smatch errors:
+On 14.08.24 08:59, Michael S. Tsirkin wrote:
+> Note: Xuan Zhuo, if you have a better idea, pls post an alternative
+> patch.
+> 
+> Note2: untested, posting for Darren to help with testing.
+> 
+> Turns out unconditionally enabling premapped 
+> virtio-net leads to a regression on VM with no ACCESS_PLATFORM, and with
+> sysctl net.core.high_order_alloc_disable=1
+> 
+> where crashes and scp failures were reported (scp a file 100M in size to VM):
+> [...]
 
-drivers/usb/gadget/function/uvc_v4l2.c:124 find_format_by_pix()
-error: 'fmtdesc' dereferencing possible ERR_PTR()
+TWIMC, there is a regression report on lore and I wonder if this might
+be related or the same problem, as it also mentioned a "get_swap_device:
+Bad swap file entry" error:
+https://bugzilla.kernel.org/show_bug.cgi?id=219154
 
-drivers/usb/gadget/function/uvc_v4l2.c:392 uvc_v4l2_enum_format()
-error: 'fmtdesc' dereferencing possible ERR_PTR()
+To quote:
 
-Also, fix similar issue in uvc_v4l2_try_format() for potential
-dereferencing of ERR_PTR().
+"""
+Hello,
 
-Fixes: 588b9e85609b ("usb: gadget: uvc: add v4l2 enumeration api calls")
-Fixes: e219a712bc06 ("usb: gadget: uvc: add v4l2 try_format api call")
-Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
----
-Changes in v2:
-- Add check for dereferencing of ERR_PTR() in uvc_v4l2_try_format()
+I've encountered repeated crashes or freezes when a KVM VM receives
+large amounts of data over the network while the system is under memory
+load and performing I/O operations. The crashes sometimes occur in the
+filesystem code (ext4 and btrfs, at least), but they also happen in
+other locations.
 
- drivers/usb/gadget/function/uvc_v4l2.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+This issue occurs on my custom builds using kernel versions v6.10 to
+v6.11-rc2, with virtio network and disk drivers, and either Ubuntu 22.04
+or Debian 12 user space.
 
-diff --git a/drivers/usb/gadget/function/uvc_v4l2.c b/drivers/usb/gadget/function/uvc_v4l2.c
-index a024aecb76dc..8bb88c864b60 100644
---- a/drivers/usb/gadget/function/uvc_v4l2.c
-+++ b/drivers/usb/gadget/function/uvc_v4l2.c
-@@ -121,6 +121,9 @@ static struct uvcg_format *find_format_by_pix(struct uvc_device *uvc,
- 	list_for_each_entry(format, &uvc->header->formats, entry) {
- 		const struct uvc_format_desc *fmtdesc = to_uvc_format(format->fmt);
+The same kernel build did not crash on an Azure VM, which does not use
+the virtio network driver. Since this issue only appears when receiving
+data, I suspect there could be an issue related to the virtio interface
+or receive buffer handling.
 
-+		if (IS_ERR(fmtdesc))
-+			continue;
-+
- 		if (fmtdesc->fcc == pixelformat) {
- 			uformat = format->fmt;
- 			break;
-@@ -240,6 +243,7 @@ uvc_v4l2_try_format(struct file *file, void *fh, struct v4l2_format *fmt)
- 	struct uvc_video *video = &uvc->video;
- 	struct uvcg_format *uformat;
- 	struct uvcg_frame *uframe;
-+	const struct uvc_format_desc *fmtdesc;
- 	u8 *fcc;
+This issue did not occur on the Debian backport kernel 6.9.7-1~bpo12+1
+amd64.
 
- 	if (fmt->type != video->queue.queue.type)
-@@ -277,7 +281,10 @@ uvc_v4l2_try_format(struct file *file, void *fh, struct v4l2_format *fmt)
- 		fmt->fmt.pix.height = uframe->frame.w_height;
- 		fmt->fmt.pix.bytesperline = uvc_v4l2_get_bytesperline(uformat, uframe);
- 		fmt->fmt.pix.sizeimage = uvc_get_frame_size(uformat, uframe);
--		fmt->fmt.pix.pixelformat = to_uvc_format(uformat)->fcc;
-+		fmtdesc = to_uvc_format(uformat);
-+		if (IS_ERR(fmtdesc))
-+			return -EINVAL;
-+		fmt->fmt.pix.pixelformat = fmtdesc->fcc;
- 	}
- 	fmt->fmt.pix.field = V4L2_FIELD_NONE;
- 	fmt->fmt.pix.colorspace = V4L2_COLORSPACE_SRGB;
-@@ -389,6 +396,9 @@ uvc_v4l2_enum_format(struct file *file, void *fh, struct v4l2_fmtdesc *f)
- 		return -EINVAL;
+Steps to Reproduce:
+1. Setup a small VM on a KVM host.
+   I tested this on an x86_64 KVM VM with 1 CPU, 512 MB RAM, 2 GB SWAP
+(the smallest configuration from Vultr), using a Debian 12 user space,
+virtio disk, and virtio net.
+2. Induce high memory and I/O load. Run the following command:
+   stress --vm 2 --hdd 1
+   (Adjust --vm to to occupy all the RAM)
+   This slows down the system but does not cause a crash.
+3. Send large data to the VM.
+   I used `iperf3 -s` on the VM and sent data using `iperf3 -c` from
+another host. The system crashes within a few seconds to a few minutes.
+(The reverse direction `iperf3 -c -R` did not cause a crash.)
 
- 	fmtdesc = to_uvc_format(uformat);
-+	if (IS_ERR(fmtdesc))
-+		return -EINVAL;
-+
- 	f->pixelformat = fmtdesc->fcc;
 
- 	return 0;
---
-2.34.1
+The OOPS messages are mostly general protection faults, but sometimes I
+see "Bad pagetable" or other errors, such as:
+Oops: general protection fault, probably for non-canonical address
+0x2f9b7fa5e2bde696: 0000 [#1] PREEMPT SMP PTI
+Oops: Oops: 0000 [#1] PREEMPT SMP PTI
+Oops: Bad pagetable: 000d [#1] PREEMPT SMP PTI
 
+In some cases, dmesg contains something like:
+UBSAN: shift-out-of-bounds in lib/xarray.c:158:34
+
+When the system freezes without crash, I sometimes found BUGON messages
+in some cases, such as:
+get_swap_device: Bad swap file entry 3403b0f5b2584992
+BUG: Bad page map in process stress  pte:c42f93fac0299e1d pmd:0d9b2047
+BUG: Bad rss-counter-state mm:000000004df3dd9a type:MM_ANONPAGES val:2
+BUG: Bad rss-counter-state mm:000000004df3dd9a type:MM_SWAPENTS val:-1
+
+Thanks.
+"""
+
+Ciao, Thorsten
 
