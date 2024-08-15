@@ -1,166 +1,96 @@
-Return-Path: <linux-kernel+bounces-287464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DBCA95280F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 05:00:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20756952814
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 05:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4D97285467
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 03:00:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C53A41F21527
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 03:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF2B38DC8;
-	Thu, 15 Aug 2024 03:00:04 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07512231C;
+	Thu, 15 Aug 2024 03:00:37 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783081E884;
-	Thu, 15 Aug 2024 03:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BAC18641
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 03:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723690804; cv=none; b=BZpr/dIsmzu51DEXUPWUuCL4zbEmboTpmp2n+O3gsyJou5m2NigWkYinDVXFvgVRbeFAX/r3dSAOZBawZ64+AdJZnxTt6cdxbBEbWIasXfjoV+y5fufCRTL7ZMDva3CUg/INxDCwb1obm+HGhgWufM7W75u+TfkQ2xrBWX4JsHg=
+	t=1723690837; cv=none; b=RbPGD18q5c1wGDxErhMAYwegaitCoxfSWKpKbQHmVl59nTgmEZQalmy0m49PO8cVA7bbsGx1CeyC62g94Y2BD8ZfFUPuDh7bvdCwqAxu1SJYNC4+mQdFhMz2arW5B4O2pwULOZbJFnQ9xJ/eqsx7L3Woz5iUewVwdNLYIJ0yN7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723690804; c=relaxed/simple;
-	bh=9ppxBCocPnEtgPPka1NCRYp9zcY55WpRrtq/MyyUvHs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mCaraMZSJbBp0ysmZ7WN29CG2XLGDL5kmNMz+UB7X+pGQ2MFzHQGSo9IwCT9x09lI8h0D2FCtXjq83xyspAKXG/+4CIveBnm+G6njp/FGmeRbeMZW8S1PTLG3qN6EPSjxfpca4N6PavK8aazlxC8hwH52Ltzir117TK7upStVCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WkqXP209yz1HGKB;
-	Thu, 15 Aug 2024 10:56:53 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5EBEA1A0188;
-	Thu, 15 Aug 2024 10:59:58 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 15 Aug 2024 10:59:57 +0800
-Message-ID: <676a2a15-d390-48a7-a8d7-6e491c89e200@huawei.com>
-Date: Thu, 15 Aug 2024 10:59:57 +0800
+	s=arc-20240116; t=1723690837; c=relaxed/simple;
+	bh=L2puwB1qaWdyP49tq60T5NvoRN2oruVvJ6wyKczpE0k=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=pBUoT1up3pcOfxzZoUbBvvNrBtZGJ3bzdoG8VBYwOeYqZSsOsZcV2VT7OYia3uMnLowmP3YqS3p07+S1BwY/Uf8HC0ZhG16DdJmnM6m9hLOMLETj3NjaHh9XVIgSLGMR170Re1ZPhV3IiQxDW7ey9pj3EM2xFXBI3deLRF3G86M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-8223aed78e2so68718139f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 20:00:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723690835; x=1724295635;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6I+gIWxg5dsZIsatp2hWJDv5yzRQI5JZ8eTuaHX3O0Y=;
+        b=oqtFmywkmbb2vueL4i2jt4Yp2yj2VUzm9MmQNY210ZmpDdMEuwpBQEdfTOXzYM2iWV
+         aLdeOhCzXBYRZlJPEjDJS02u355F5BbFNrd/SZeDR66pslLJWyfLLBnK2l3BQjo4yHtw
+         fMYluwNkHoA5b6SUY6WLrmNPg3kaDWojn4DGgTEDbeSPPOO3cCOF3oBEl04/u9x0ZN8S
+         8IhvspXx+mAiPSAyCbf+SuYKf0byRENuJ28OA2M2aPbv1Nz2L2k04UOIW8yEPN9Sqn+W
+         RnYvk9VfCwrdaZX3I7xtZRxNSCRYIPwYZBBCqAOtiarn3G696cFXTxCYLwzihhpYkgqx
+         rFHw==
+X-Gm-Message-State: AOJu0YxyjSUeQLk2O34TkjWAX4exEyvvQouA5QbfowdcNOgIV3rsNG2P
+	ZOUaBl+Qjq/J8TXcMG/67qKYoBA0gMcSlII4U522yxFYqkDirNPakUW9KbxJKRnYRMgYC+ez9s+
+	RYXjA41cq39NSLpuhffMjVPoptLWuIBwbwLEPCNJuKQU2WQjruRrb4Ns=
+X-Google-Smtp-Source: AGHT+IGEVCZA+saxlNqhLzAF2ajTZYUmInut5GIz1l4iqQee4FV/yYmLuz+Z8fSBz31Gp540NsFk+F1wUcNwUUsfo7IZDRRBkpTX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v13 04/14] mm: page_frag: add '_va' suffix to
- page_frag API
-To: Alexander H Duyck <alexander.duyck@gmail.com>, <davem@davemloft.net>,
-	<kuba@kernel.org>, <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Subbaraya
- Sundeep <sbhatta@marvell.com>, Chuck Lever <chuck.lever@oracle.com>, Sagi
- Grimberg <sagi@grimberg.me>, Jeroen de Borst <jeroendb@google.com>, Praveen
- Kaligineedi <pkaligineedi@google.com>, Shailend Chand <shailend@google.com>,
-	Eric Dumazet <edumazet@google.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Sunil Goutham
-	<sgoutham@marvell.com>, Geetha sowjanya <gakula@marvell.com>, hariprasad
-	<hkelam@marvell.com>, Felix Fietkau <nbd@nbd.name>, Sean Wang
-	<sean.wang@mediatek.com>, Mark Lee <Mark-MC.Lee@mediatek.com>, Lorenzo
- Bianconi <lorenzo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Keith
- Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig
-	<hch@lst.de>, Chaitanya Kulkarni <kch@nvidia.com>, "Michael S. Tsirkin"
-	<mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko
-	<andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard
- Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
-	<yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Stanislav Fomichev
-	<sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>,
-	Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>, Olga
- Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey
-	<tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, Anna Schumaker
-	<anna@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	<intel-wired-lan@lists.osuosl.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-nvme@lists.infradead.org>,
-	<kvm@vger.kernel.org>, <virtualization@lists.linux.dev>,
-	<linux-mm@kvack.org>, <bpf@vger.kernel.org>, <linux-afs@lists.infradead.org>,
-	<linux-nfs@vger.kernel.org>, <linux-kselftest@vger.kernel.org>
-References: <20240808123714.462740-1-linyunsheng@huawei.com>
- <20240808123714.462740-5-linyunsheng@huawei.com>
- <d1a23116d054e2ebb00067227f0cffecefe33e11.camel@gmail.com>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <d1a23116d054e2ebb00067227f0cffecefe33e11.camel@gmail.com>
+X-Received: by 2002:a05:6e02:b23:b0:381:c14:70cf with SMTP id
+ e9e14a558f8ab-39d1244769amr4533495ab.1.1723690835179; Wed, 14 Aug 2024
+ 20:00:35 -0700 (PDT)
+Date: Wed, 14 Aug 2024 20:00:35 -0700
+In-Reply-To: <0000000000007ec511061f00a7b2@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ef1381061fb00b6c@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf200006.china.huawei.com (7.185.36.61)
 
-On 2024/8/14 23:49, Alexander H Duyck wrote:
-> On Thu, 2024-08-08 at 20:37 +0800, Yunsheng Lin wrote:
->> Currently the page_frag API is returning 'virtual address'
->> or 'va' when allocing and expecting 'virtual address' or
->> 'va' as input when freeing.
->>
->> As we are about to support new use cases that the caller
->> need to deal with 'struct page' or need to deal with both
->> 'va' and 'struct page'. In order to differentiate the API
->> handling between 'va' and 'struct page', add '_va' suffix
->> to the corresponding API mirroring the page_pool_alloc_va()
->> API of the page_pool. So that callers expecting to deal with
->> va, page or both va and page may call page_frag_alloc_va*,
->> page_frag_alloc_pg*, or page_frag_alloc* API accordingly.
->>
->> CC: Alexander Duyck <alexander.duyck@gmail.com>
->> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
->> Reviewed-by: Subbaraya Sundeep <sbhatta@marvell.com>
->> Acked-by: Chuck Lever <chuck.lever@oracle.com>
->> Acked-by: Sagi Grimberg <sagi@grimberg.me>
->> ---
->>  drivers/net/ethernet/google/gve/gve_rx.c      |  4 ++--
->>  drivers/net/ethernet/intel/ice/ice_txrx.c     |  2 +-
->>  drivers/net/ethernet/intel/ice/ice_txrx.h     |  2 +-
->>  drivers/net/ethernet/intel/ice/ice_txrx_lib.c |  2 +-
->>  .../net/ethernet/intel/ixgbevf/ixgbevf_main.c |  4 ++--
->>  .../marvell/octeontx2/nic/otx2_common.c       |  2 +-
->>  drivers/net/ethernet/mediatek/mtk_wed_wo.c    |  4 ++--
->>  drivers/nvme/host/tcp.c                       |  8 +++----
->>  drivers/nvme/target/tcp.c                     | 22 +++++++++----------
->>  drivers/vhost/net.c                           |  6 ++---
->>  include/linux/page_frag_cache.h               | 21 +++++++++---------
->>  include/linux/skbuff.h                        |  2 +-
->>  kernel/bpf/cpumap.c                           |  2 +-
->>  mm/page_frag_cache.c                          | 12 +++++-----
->>  net/core/skbuff.c                             | 16 +++++++-------
->>  net/core/xdp.c                                |  2 +-
->>  net/rxrpc/txbuf.c                             | 15 +++++++------
->>  net/sunrpc/svcsock.c                          |  6 ++---
->>  .../selftests/mm/page_frag/page_frag_test.c   | 13 ++++++-----
->>  19 files changed, 75 insertions(+), 70 deletions(-)
->>
-> 
-> I still say no to this patch. It is an unnecessary name change and adds
-> no value. If you insist on this patch I will reject the set every time.
-> 
-> The fact is it is polluting the git history and just makes things
-> harder to maintain without adding any value as you aren't changing what
-> the function does and there is no need for this. In addition it just
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-I guess I have to disagree with the above 'no need for this' part for
-now, as mentioned in [1]:
+***
 
-"There are three types of API as proposed in this patchset instead of
-two types of API:
-1. page_frag_alloc_va() returns [va].
-2. page_frag_alloc_pg() returns [page, offset].
-3. page_frag_alloc() returns [va] & [page, offset].
+Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+Author: lizhi.xu@windriver.com
 
-You seemed to miss that we need a third naming for the type 3 API.
-Do you see type 3 API as a valid API? if yes, what naming are you
-suggesting for it? if no, why it is not a valid API?"
+clean dirty for the release inode, stop to worker wb it again.
 
+#syz test: upstream c0ecd6388360
 
-1. https://lore.kernel.org/all/ca6be29e-ab53-4673-9624-90d41616a154@huawei.com/
-
-> makes it that much harder to backport fixes in the future as people
-> will have to work around the rename.
-> 
+diff --git a/fs/9p/vfs_dir.c b/fs/9p/vfs_dir.c
+index e0d34e4e9076..85161f0bb749 100644
+--- a/fs/9p/vfs_dir.c
++++ b/fs/9p/vfs_dir.c
+@@ -218,7 +218,12 @@ int v9fs_dir_release(struct inode *inode, struct file *filp)
+ 		if ((S_ISREG(inode->i_mode)) && (filp->f_mode & FMODE_WRITE))
+ 			retval = filemap_fdatawrite(inode->i_mapping);
+ 
++		printk("fid: %p, fidnum: %d, ino: %lx, ino is freeing:%d, will free: %d, dirty: %d, %s\n", fid, fid->fid, inode->i_ino, 
++				inode->i_state & I_FREEING, 
++				inode->i_state & I_WILL_FREE,
++				inode->i_state & I_DIRTY, __func__);
+ 		spin_lock(&inode->i_lock);
++		inode->i_state |= I_FREEING;
+ 		hlist_del(&fid->ilist);
+ 		spin_unlock(&inode->i_lock);
+ 		put_err = p9_fid_put(fid);
 
