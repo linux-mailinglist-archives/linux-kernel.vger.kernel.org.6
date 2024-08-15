@@ -1,108 +1,81 @@
-Return-Path: <linux-kernel+bounces-287983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63E35952EF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:22:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57DF7952EDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:15:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06C251F213D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:22:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F5641C226C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5341919DFA6;
-	Thu, 15 Aug 2024 13:21:59 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2601E521;
-	Thu, 15 Aug 2024 13:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF16F1A01BB;
+	Thu, 15 Aug 2024 13:14:24 +0000 (UTC)
+Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [207.226.244.122])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E908F19F462;
+	Thu, 15 Aug 2024 13:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.226.244.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723728118; cv=none; b=OtJwbsnHH463aLl62DMQtoAZ5aYIAPv0leEGbplvhVokAl0ZCHL4SFLUO5Ut5C2VQUtWF2hVUEOMViAAtNML1oBQIFLqAG6UJKXjbKB/Ti4CPai6osld658wyHXikPpoCtPmnHqk0unigXu4VC8cLT605tcDXugs56KySfy745w=
+	t=1723727664; cv=none; b=Ei9udhFca1GpZY2+oOCi8FPvUX264fQRbOlvU5D40Xj6nv0+wxu9B3ZphItGqJzpb2q34weluiAIZT5/X3x6DRMDFNN6z5sMsxx7tgl+okpwfESng0e08HeSKM5dPEq33cIgH3QWQETAbrZh7sz2Z2CMRw7NWeXpPIm9XFkdOtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723728118; c=relaxed/simple;
-	bh=Oe5QLGz9IsxtEhKFpb2QYxfZH/epKIlSLym8xKeYm1M=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=leayrsGvp9ONBlI9Olep6oI0fzngfWYyxm92g93etyAQGVtYnDQn8GKrICE0D97qvHqmaWNQEnz12IIClUXa6455P63Ikd4SVlr19S5Jd6pVDXaLSW6OPzXsRe1q7JxYWEUrBsQnBeM83AifiW+5vViSomIQKmopupOZ6VrHhzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Wl5MF6NLgz1xvH1;
-	Thu, 15 Aug 2024 21:19:53 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id C4B5414040F;
-	Thu, 15 Aug 2024 21:21:45 +0800 (CST)
-Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 15 Aug
- 2024 21:21:45 +0800
-From: Chen Ridong <chenridong@huawei.com>
-To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
-	<longman@redhat.com>, <mkoutny@suse.com>
-CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 -next] cgroup: update some statememt about delegation
-Date: Thu, 15 Aug 2024 13:14:08 +0000
-Message-ID: <20240815131408.3151804-1-chenridong@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723727664; c=relaxed/simple;
+	bh=xK81SCJet9OWcNbkPj598ufd8Y9tG3VHTlqcbNbLCh8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=NK6rPtcj3hsntGHPaSe4Fvgo7vAKBiaNDIwxEnhRjfRFpdhXcSrquviM7Rm91DrM3d1LfVDCfcbVHklgrMoKvX/kprYNtBs7OxqOyKubTw6tFQPTmAkxPYCsxzd2BI/Ds4hOqUh/kWi5MX2fohGkGKoJoiF1EM8JiVHG4+xnQps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=207.226.244.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
+X-CSE-ConnectionGUID: ysuD4FvjQESPyVZtHZq1bg==
+X-CSE-MsgGUID: UyOh9GZHQk6T38EMZcVvtA==
+X-IronPort-AV: E=Sophos;i="6.10,149,1719849600"; 
+   d="scan'208";a="119451810"
+From: =?utf-8?B?56ug6L6J?= <zhanghui31@xiaomi.com>
+To: =?utf-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>,
+	"James.Bottomley@HansenPartnership.com"
+	<James.Bottomley@HansenPartnership.com>, "martin.petersen@oracle.com"
+	<martin.petersen@oracle.com>
+CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"alim.akhtar@samsung.com" <alim.akhtar@samsung.com>, "bvanassche@acm.org"
+	<bvanassche@acm.org>, "avri.altman@wdc.co" <avri.altman@wdc.co>, Huang Jianan
+	<huangjianan@xiaomi.com>, "manivannan.sadhasivam@linaro.org"
+	<manivannan.sadhasivam@linaro.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [External Mail]Re: [PATCH] ufs: core: fix bus timeout in
+ ufshcd_wl_resume flow
+Thread-Topic: [External Mail]Re: [PATCH] ufs: core: fix bus timeout in
+ ufshcd_wl_resume flow
+Thread-Index: AQHa7YdYc9Ki7OjQ5EaL6aO/rOJ9D7IlyESAgAIAogA=
+Date: Thu, 15 Aug 2024 13:14:18 +0000
+Message-ID: <8c96dc60-1977-4109-a625-ff74fdd005ad@xiaomi.com>
+References: <20240813134729.284583-1-zhanghui31@xiaomi.com>
+ <58c2bf59f5190f6ef527c1debffaf73cd0752311.camel@mediatek.com>
+In-Reply-To: <58c2bf59f5190f6ef527c1debffaf73cd0752311.camel@mediatek.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <36FA0C062066114B95504A7F8AFB2E6B@xiaomi.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd100013.china.huawei.com (7.221.188.163)
 
-The comment in cgroup_file_write is missing some interfaces, such as
-'cgroup.threads'. All delegatable files are listed in
-'/sys/kernel/cgroup/delegate', so update the comment in cgroup_file_write.
-Besides, add a statement that files outside the namespace shouldn't be
-visible from inside the delegated namespace.
-
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- Documentation/admin-guide/cgroup-v2.rst | 10 ++++++----
- kernel/cgroup/cgroup.c                  |  2 +-
- 2 files changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index f2d1ec7d6aba..3618168de371 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -533,10 +533,12 @@ cgroup namespace on namespace creation.
- Because the resource control interface files in a given directory
- control the distribution of the parent's resources, the delegatee
- shouldn't be allowed to write to them.  For the first method, this is
--achieved by not granting access to these files.  For the second, the
--kernel rejects writes to all files other than "cgroup.procs" and
--"cgroup.subtree_control" on a namespace root from inside the
--namespace.
-+achieved by not granting access to these files.  For the second, files
-+outside the namespace should be hidden from the delegatee by the means
-+of at least mount namespacing, and the kernel rejects writes to all files
-+on a namespace root from inside the cgroup namespace, except for those
-+files listed in "/sys/kernel/cgroup/delegate" (including "cgroup.procs",
-+"cgroup.threads", "cgroup.subtree_control", etc.).
- 
- The end results are equivalent for both delegation types.  Once
- delegated, the user can build sub-hierarchy under the directory,
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index a3fa645f8433..16b9749e131e 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -4131,7 +4131,7 @@ static ssize_t cgroup_file_write(struct kernfs_open_file *of, char *buf,
- 	 * If namespaces are delegation boundaries, disallow writes to
- 	 * files in an non-init namespace root from inside the namespace
- 	 * except for the files explicitly marked delegatable -
--	 * cgroup.procs and cgroup.subtree_control.
-+	 * eg. cgroup.procs, cgroup.threads and cgroup.subtree_control.
- 	 */
- 	if ((cgrp->root->flags & CGRP_ROOT_NS_DELEGATE) &&
- 	    !(cft->flags & CFTYPE_NS_DELEGATABLE) &&
--- 
-2.34.1
-
+T24gMjAyNC84LzE0IDE0OjM5LCBQZXRlciBXYW5nICjnjovkv6Hlj4spIHdyb3RlOg0KPiBPbiBU
+dWUsIDIwMjQtMDgtMTMgYXQgMjE6NDcgKzA4MDAsIFpoYW5nSHVpIHdyb3RlOg0KPj4gRnJvbTog
+emhhbmdodWkgPHpoYW5naHVpMzFAeGlhb21pLmNvbT4NCj4+DQo+PiBJZiB0aGUgU1NVIENNRCBj
+b21wbGV0aW9uIGZsb3cgaW4gVUZTIHJlc3VtZSBhbmQgdGhlIENNRCB0aW1lb3V0IGZsb3cNCj4+
+IG9jY3VyDQo+PiBzaW11bHRhbmVvdXNseSwgdGhlIHRpbWVzdGFtcCBhdHRyaWJ1dGUgY29tbWFu
+ZCB3aWxsIGJlIHNlbnQgdG8gdGhlDQo+PiBkZXZpY2UNCj4+DQo+IEhpIFpoYW5naHVpLA0KPg0K
+PiBJZiB0aGUgdGltZW91dCBjb21tYW5kIGlzIFNTVT8NCj4gSW4gcmVzdW1lIGZsb3csIGlmIFNT
+VSBjb21tYW5kIHRpbWVvdXQsIHVmc2hjZF9laF9ob3N0X3Jlc2V0X2hhbmRsZXINCj4gaW52b2tl
+IHVmc2hjZF9saW5rX3JlY292ZXJ5IG9ubHksIG5vdCBzY2hlZHVsZSBlaCB3b3JrPw0KPg0KPg0K
+PiBUaGFua3MuDQo+IFBldGVyDQoNCmhpIFBldGVyIEcsDQoNCiDCoMKgwqAgdWZzaGNkX2xpbmtf
+cmVjb3ZlcnkgY2FsbHMgdWZzaGNkX2hvc3RfcmVzZXRfYW5kX3Jlc3RvcmUgdG8gcG93ZXIgDQpj
+eWNsZQ0KDQogwqDCoMKgIGFuZCByZXNldCB0aGUgaG9zdCBjb250cm9sbGVyLg0KDQoNClRoYW5r
+cw0KDQpaaGFuZ2h1aQ0KDQoNCg==
 
