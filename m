@@ -1,257 +1,180 @@
-Return-Path: <linux-kernel+bounces-288663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F31B953D48
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 00:17:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69149953D4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 00:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DD62B231EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:17:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1023B24EE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58EE5155351;
-	Thu, 15 Aug 2024 22:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27843154C11;
+	Thu, 15 Aug 2024 22:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CnowL2va"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ljuaBqxA"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978ED14F12F;
-	Thu, 15 Aug 2024 22:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C6180B;
+	Thu, 15 Aug 2024 22:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723760223; cv=none; b=NUlZPlTZFjogWqLXCp2xM83hg7itRPWtvFWO3Nh4oCRlzbe7bmZfe/PgBZdZ+9nK46ZHcpjWKJ4yNCe6W/zWkVxr1VuzdrWDMBXiyn5jKR784bnsX+jldIiqgTpcbvkF8QlhRgJTB4VfJzK7by1A069cXvhAT8Ff5Fi5fwD/R/U=
+	t=1723760356; cv=none; b=Wn7MeMyIMDEeKGGpAiKmYWaR1CRslI0y545R7n5+jfN/sOGXgAzrEUu7hq72Q0jHTnF1IQdzrwOsnxNORQAPtp2NuaFfKj3i58sSQLyfFwDDjwtnTzju+0LWOBYxGHFM4nze6zyvW/As9249QdRvevhe9yS1EMttPyh0HYCi9cY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723760223; c=relaxed/simple;
-	bh=/FiOEv3+fuK+fRr7TYiTlNmvfk6cliwV5N+0K7DoudA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=BUAe6lmmkXQy//rfOZ1pt7eJG/XI3+khQgdFZcDBZZXOfs7bmD0xVlFecmWhyo0zWZaYwZwY3bA/4UkdQyP7PQ1Dilye5+O3EeZue2VoGRHuxdtMaUW4gp0+O5mXjOLUWEbXRbaquZmJAfl9aaf+oeoWVKxciJarl7cFafuMdis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CnowL2va; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47FAfkGe025484;
-	Thu, 15 Aug 2024 22:16:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=pp1; bh=ejPq03iTPyAQAfZo6/4iaQns1QV
-	WO8J2L0RjkZ5jv2o=; b=CnowL2vaVKNlBK28LQbSny10nqmmx2XbIM1du8N1zko
-	mk2kT3tfKeehXz1WuImbx+fhBn8POUVjT6hmSvKKg/An+WCdwQ293MNNQnRxyy0M
-	Fw2nt4BMB/9LDz1AEjr3K8UMWcdtnU1wmYoxrU6pCFcKsfLCZDgvEJ9of+MrOwuA
-	4YeVN1+602Vmf5ClqrM+EQrluCN94cdqqRvbOnG88dSonvgA8KWK9c1rABOU2eAS
-	PXBJ7vTr9ZwQKEHJXxS4xq6ViMc1fwQ9A0j0oQQTSEMCwMcQkM0NtAsd83S3g8eu
-	yMs3ieLP0rYFLu1OQkPSjL8GzaHZGkbzyeDG9R1zm3w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4111d6nn74-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Aug 2024 22:16:51 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47FMGpMk017102;
-	Thu, 15 Aug 2024 22:16:51 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4111d6nn72-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Aug 2024 22:16:51 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 47FIPxfb029759;
-	Thu, 15 Aug 2024 22:16:50 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 40xmrmrm1e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Aug 2024 22:16:50 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47FMGl8W51053038
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 15 Aug 2024 22:16:49 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EA6B420067;
-	Thu, 15 Aug 2024 22:16:46 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5C1F620063;
-	Thu, 15 Aug 2024 22:16:45 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.195.37.23])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 15 Aug 2024 22:16:45 +0000 (GMT)
-Date: Fri, 16 Aug 2024 03:46:42 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+1ad8bac5af24d01e2cbd@syzkaller.appspotmail.com,
-        adilger.kernel@dilger.ca, jack@suse.cz, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu
-Subject: Re: [PATCH] ext4: fix divide error in ext4_mb_regular_allocator
-Message-ID: <Zr5+SvVwqIWeO75m@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <000000000000b1b164061f96213d@google.com>
- <tencent_42D9D2CB066909BF6EDDAEDB8C8067F3C606@qq.com>
- <Zrw4/N7a/XrjOgtS@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zrw4/N7a/XrjOgtS@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 3trqDdTCGyBhYNmJLThD8R3jqKpFqDrm
-X-Proofpoint-ORIG-GUID: iaWJddupJrNeP1AWGMvtz9RMf4IbaY8q
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1723760356; c=relaxed/simple;
+	bh=icHSIu0l7pBrco4Eu2cNoXgmfprBwfnaEs5muYDiy20=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j86enu4UxSjFLDJIv6N5AJJ4epiIIrKvaT2Wd9L11PDdfrmQ2SRbG68WImzh8x7qJfUXK/BtzuZO/V0oyZQ0U2mIQvESCd8BpxZdkApKNfjO/PU3PADXuWZb//9sHek+/Ev5eaUP9TElJ/nwTcL/+BboYXPiAk+91PqXgXmZMbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ljuaBqxA; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2d3c071d276so1039660a91.1;
+        Thu, 15 Aug 2024 15:19:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723760354; x=1724365154; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lLJHHKDAwig/AQRi9bGoaIZfCY+PqMjFwCKMZdglFC0=;
+        b=ljuaBqxABx8qS2Jb4TdU4XyDTwzM2OSDI7GtXuyKhxgpEFpoeCKy3++r+m3XI157iM
+         x6FluH7DNUTiKdaVoESZH0aQHbwJuxQtIFHI3L8r3os3va0YSKGxSV0Hg5Z3wBQcoZ8J
+         tD9TB2BQGEaa+Dj9qcviAoMaJh79rNwevJqLcFTXUTesKUNh1TrTsyM2WjaYI/W7bRnj
+         akTcD4fwuJef0jxodYpr26lOMZDH9YNoJltRkal60jhxd55GQkJcnn0uiOHvxr8epsvR
+         IQ+DAkdyIcgVFhyN3dhJ/p3/inxgNRy4bZZaBYlJP7B4UO+83RCWWIA0Zu/YIs0BgY2H
+         JlRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723760354; x=1724365154;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lLJHHKDAwig/AQRi9bGoaIZfCY+PqMjFwCKMZdglFC0=;
+        b=GfKbgRmllFFMKKfP++LaRFuSAmMovkyehCU3ABX3lfkoVRYm9FOHqYMnYf2NFxthyH
+         flOM39qp7dLmWPZXFVGeqddZbQn7glOkMadTGddCl8/Uhx0cvZiZKuPLFV9xSYfJoIO+
+         /8Z5cqOwCTHe5R6ewMueGm3lULOYd3odtJJQD9C/mAFSSNFNJgGnWwr653e77tqqduOR
+         q/+KTGDt6G5+yMfMiOKvepUqMSRUQQuTAZH0t2bgSJU59FnaJfTcqtwzLLlVGPUKKt4E
+         LNZrl9JvBuFHK8FFp7G3xjlfx1HzHOvVlK48CR22Phbyi4Xd/Nz7+gE3IolMF671HA5v
+         2ggA==
+X-Forwarded-Encrypted: i=1; AJvYcCX4MV9qcUKrXXybizO9dYrG6Z2nF+m3pSKEit+lMjgU0k8jOQX9PhmWSw94jv5/NCTYj9qWw5mZ4lwLHGwbpGJS1U7UUy5xKILYzQxqHF2CS0EPsCYGhJ0YS1pRIyCqJsWvF9XDa7STnHqtDh0YInE/I8+GjhVuigZw9FISudDtBuHQGtlP
+X-Gm-Message-State: AOJu0YzaXhJ1SrWpOkNyj1gthRMEVvafEOPx88G+QCkMkDSvYLRt5g6I
+	c4n7zVFeELAJzkkZIkFpXIi/Yn+6YQIT4vkCXTG4x8Tkfq6Ge+8Fy1hiAQMkKuoBNMk3IvGIuEw
+	QMVH13PtV0TvlMIBN1JyjQchuYcPNb8aH
+X-Google-Smtp-Source: AGHT+IFG7mY0qYN+Y5hIyJtTq3AVU8LkUpa5/f8B367RmJz9R34MnxjEQ9P6YpDxp84/cNS2FYoD+Ad1Kk9lMjzUvA8=
+X-Received: by 2002:a17:90a:5e0f:b0:2c8:e3e6:ec99 with SMTP id
+ 98e67ed59e1d1-2d3e03f2820mr1075505a91.43.1723760354003; Thu, 15 Aug 2024
+ 15:19:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-15_14,2024-08-15_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- spamscore=0 mlxscore=0 malwarescore=0 bulkscore=0 priorityscore=1501
- adultscore=0 impostorscore=0 clxscore=1015 lowpriorityscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408150161
+References: <20240813132831.184362-1-technoboy85@gmail.com> <20240813132831.184362-2-technoboy85@gmail.com>
+In-Reply-To: <20240813132831.184362-2-technoboy85@gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 15 Aug 2024 15:19:02 -0700
+Message-ID: <CAEf4Bzbq6YoSW3VOENP6AKBXHXF6C2UJbreq6Y=bfGHA-e3YKQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v5 1/2] bpf: enable generic kfuncs for
+ BPF_CGROUP_* programs
+To: Matteo Croce <technoboy85@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, bpf@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Matteo Croce <teknoraver@meta.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 14, 2024 at 10:26:47AM +0530, Ojaswin Mujoo wrote:
-> On Wed, Aug 14, 2024 at 10:12:00AM +0800, Edward Adam Davis wrote:
-> > Before determining that the goal length is a multiple of the stripe size,
-> > check CR_GOAL_LEN_FAST and CR_BEST_AVAIL_LEN first.
-> > 
-> > Fixes: 1f6bc02f1848 ("ext4: fallback to complex scan if aligned scan doesn't work")
-> > Reported-and-tested-by: syzbot+1ad8bac5af24d01e2cbd@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=1ad8bac5af24d01e2cbd
-> > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> > ---
-> >  fs/ext4/mballoc.c | 7 +++----
-> >  1 file changed, 3 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> > index 9dda9cd68ab2..451f92cde461 100644
-> > --- a/fs/ext4/mballoc.c
-> > +++ b/fs/ext4/mballoc.c
-> > @@ -2928,13 +2928,12 @@ ext4_mb_regular_allocator(struct ext4_allocation_context *ac)
-> >       if (cr == CR_POWER2_ALIGNED)
-> >         ext4_mb_simple_scan_group(ac, &e4b);
-> >       else {
-> > -       bool is_stripe_aligned = sbi->s_stripe &&
-> > +       bool is_stripe_aligned = (cr == CR_GOAL_LEN_FAST ||
-> > +         cr == CR_BEST_AVAIL_LEN) && sbi->s_stripe &&
-> >           !(ac->ac_g_ex.fe_len %
-> >             EXT4_B2C(sbi, sbi->s_stripe));
-> 
-> Hi Edward, 
-> 
-> Thanks for the patch. So I didn't get a chance to look at syszcaller
-> report but assuming that EXT4_B2C(sbi, sbi->s_stripe) is becoming 0,
-> I'm not understanding how is this patch fixing the bug?
-> 
-> It just seems to short circuit the actual bug but we might still hit it
-> right? 
-> 
-> As for EXT4_B2C(stripe) becoming zero, I have 2 observations:
-> 
-> 1. We should definitely be using EXT4_NUM_B2C() here to make sure we
->    don't get 0 if stripe is less than cluster size.
-> 
-> 2. That being saidIm not sure if it's even possible for this to become zero
->    because we do check that stripe size is a multiple of cluster size in
->    ext4_fill_super, else we disable it:
+On Tue, Aug 13, 2024 at 6:28=E2=80=AFAM Matteo Croce <technoboy85@gmail.com=
+> wrote:
+>
+> From: Matteo Croce <teknoraver@meta.com>
+>
+> These kfuncs are enabled even in BPF_PROG_TYPE_TRACING, so they
+> should be safe also in BPF_CGROUP_* programs.
+>
+> In enum btf_kfunc_hook, rename BTF_KFUNC_HOOK_CGROUP_SKB to a more
+> generic BTF_KFUNC_HOOK_CGROUP, since it's used for all the cgroup
+> related program types.
+>
+> Signed-off-by: Matteo Croce <teknoraver@meta.com>
+> ---
+>  kernel/bpf/btf.c     | 8 ++++++--
+>  kernel/bpf/helpers.c | 6 ++++++
+>  2 files changed, 12 insertions(+), 2 deletions(-)
+>
+> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+> index 95426d5b634e..08d094875f00 100644
+> --- a/kernel/bpf/btf.c
+> +++ b/kernel/bpf/btf.c
+> @@ -212,7 +212,7 @@ enum btf_kfunc_hook {
+>         BTF_KFUNC_HOOK_TRACING,
+>         BTF_KFUNC_HOOK_SYSCALL,
+>         BTF_KFUNC_HOOK_FMODRET,
+> -       BTF_KFUNC_HOOK_CGROUP_SKB,
+> +       BTF_KFUNC_HOOK_CGROUP,
+>         BTF_KFUNC_HOOK_SCHED_ACT,
+>         BTF_KFUNC_HOOK_SK_SKB,
+>         BTF_KFUNC_HOOK_SOCKET_FILTER,
+> @@ -8312,8 +8312,12 @@ static int bpf_prog_type_to_kfunc_hook(enum bpf_pr=
+og_type prog_type)
+>         case BPF_PROG_TYPE_SYSCALL:
+>                 return BTF_KFUNC_HOOK_SYSCALL;
+>         case BPF_PROG_TYPE_CGROUP_SKB:
+> +       case BPF_PROG_TYPE_CGROUP_SOCK:
+> +       case BPF_PROG_TYPE_CGROUP_DEVICE:
+>         case BPF_PROG_TYPE_CGROUP_SOCK_ADDR:
+> -               return BTF_KFUNC_HOOK_CGROUP_SKB;
+> +       case BPF_PROG_TYPE_CGROUP_SOCKOPT:
+> +       case BPF_PROG_TYPE_CGROUP_SYSCTL:
+> +               return BTF_KFUNC_HOOK_CGROUP;
+>         case BPF_PROG_TYPE_SCHED_ACT:
+>                 return BTF_KFUNC_HOOK_SCHED_ACT;
+>         case BPF_PROG_TYPE_SK_SKB:
+> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+> index d02ae323996b..0d1d97d968b0 100644
+> --- a/kernel/bpf/helpers.c
+> +++ b/kernel/bpf/helpers.c
+> @@ -3052,6 +3052,12 @@ static int __init kfunc_init(void)
+>         ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_XDP, &gene=
+ric_kfunc_set);
+>         ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS=
+, &generic_kfunc_set);
+>         ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL, &=
+generic_kfunc_set);
+> +       ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_SKB=
+, &generic_kfunc_set);
+> +       ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_SOC=
+K, &generic_kfunc_set);
+> +       ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_DEV=
+ICE, &generic_kfunc_set);
+> +       ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_SOC=
+K_ADDR, &generic_kfunc_set);
+> +       ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_SYS=
+CTL, &generic_kfunc_set);
+> +       ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_SOC=
+KOPT, &generic_kfunc_set);
 
-So I figured out the issue. It is indeed possible for this to happen
-since we forgot to add the below check on remount path in the following 
-patch:
+So given all those CGROUP_xxx program types map to the same
+cgroup-generic BTF_KFUNC_HOOK_CGROUP hook, why do we need 6
+repetitions of the same thing?
 
-	c3defd99d58c ("ext4: treat stripe in block unit")
+I'd say let's keep just one (pick any, CGROUP_SKB, for example)
+registration. And then we should follow up with cleaning up
+register_btf_kfunc_id_set() to accept hook type, not program type. And
+then it will be clean and will make most sense.
 
-The patch at the end of the mail should fix this issue. Once syscaller
-tests it I'll send out the patch addressing this as well as making the
-change mentioned in point 1 of previous email.
+But other than that looks good to me.
 
-> 
->   /*
->    * It's hard to get stripe aligned blocks if stripe is not aligned with
->    * cluster, just disable stripe and alert user to simpfy code and avoid
->    * stripe aligned allocation which will rarely successes.
->    */
->   if (sbi->s_stripe > 0 && sbi->s_cluster_ratio > 1 &&
->       sbi->s_stripe % sbi->s_cluster_ratio != 0) {
->     ext4_msg(sb, KERN_WARNING,
->        "stripe (%lu) is not aligned with cluster size (%u), "
->        "stripe is disabled",
->        sbi->s_stripe, sbi->s_cluster_ratio);
->     sbi->s_stripe = 0;
->   }
+pw-bot: cr
 
-We disable stripe size in __ext4_fill_super if it is not a multiple of
-the cluster ratio however this check is missed when trying to remount.
-This can leave us with cases where stripe < cluster_ratio after
-remount:set making EXT4_B2C(sbi->s_stripe) become 0 that can cause some
-unforeseen bugs like divide by 0.
 
-Fix that by adding the check in remount path as well.
-
-Additionally, change the users of EXT4_B2C(sbi->s_stripe) to
-EXT4_NUM_B2C() so that if we ever accidentally hit this again, we can
-avoid the value becoming 0. This should not change existing functionality.
-
-#syz test: https://github.com/torvalds/linux master
-
-Reported-by: syzbot+1ad8bac5af24d01e2cbd@syzkaller.appspotmail.com
-Fixes: c3defd99d58c ("ext4: treat stripe in block unit")
-Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
----
- fs/ext4/super.c | 29 ++++++++++++++++++++++-------
- 1 file changed, 22 insertions(+), 7 deletions(-)
-
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index e72145c4ae5a..8ca6bbc337a6 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -5165,6 +5165,18 @@ static int ext4_block_group_meta_init(struct super_block *sb, int silent)
- 	return 0;
- }
- 
-+/*
-+ * It's hard to get stripe aligned blocks if stripe is not aligned with
-+ * cluster, just disable stripe and alert user to simpfy code and avoid
-+ * stripe aligned allocation which will rarely successes.
-+ */
-+static bool ext4_is_stripe_incompatible(struct super_block *sb, unsigned long stripe)
-+{
-+	struct ext4_sb_info *sbi = EXT4_SB(sb);
-+	return (stripe > 0 && sbi->s_cluster_ratio > 1 &&
-+		stripe % sbi->s_cluster_ratio != 0);
-+}
-+
- static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
- {
- 	struct ext4_super_block *es = NULL;
-@@ -5272,13 +5284,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
- 		goto failed_mount3;
- 
- 	sbi->s_stripe = ext4_get_stripe_size(sbi);
--	/*
--	 * It's hard to get stripe aligned blocks if stripe is not aligned with
--	 * cluster, just disable stripe and alert user to simpfy code and avoid
--	 * stripe aligned allocation which will rarely successes.
--	 */
--	if (sbi->s_stripe > 0 && sbi->s_cluster_ratio > 1 &&
--	    sbi->s_stripe % sbi->s_cluster_ratio != 0) {
-+	if (ext4_is_stripe_incompatible(sb, sbi->s_stripe)) {
- 		ext4_msg(sb, KERN_WARNING,
- 			 "stripe (%lu) is not aligned with cluster size (%u), "
- 			 "stripe is disabled",
-@@ -6441,6 +6447,15 @@ static int __ext4_remount(struct fs_context *fc, struct super_block *sb)
- 
- 	}
- 
-+	if (ctx->spec & EXT4_SPEC_s_stripe &&
-+	    ext4_is_stripe_incompatible(sb, ctx->s_stripe)) {
-+		ext4_msg(sb, KERN_WARNING,
-+			 "stripe (%lu) is not aligned with cluster size (%u), "
-+			 "stripe is disabled",
-+			 ctx->s_stripe, sbi->s_cluster_ratio);
-+		ctx->s_stripe = 0;
-+	}
-+
- 	/*
- 	 * Changing the DIOREAD_NOLOCK or DELALLOC mount options may cause
- 	 * two calls to ext4_should_dioread_nolock() to return inconsistent
--- 
-2.39.3
+>         ret =3D ret ?: register_btf_id_dtor_kfuncs(generic_dtors,
+>                                                   ARRAY_SIZE(generic_dtor=
+s),
+>                                                   THIS_MODULE);
+> --
+> 2.46.0
+>
 
