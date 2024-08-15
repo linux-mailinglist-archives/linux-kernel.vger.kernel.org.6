@@ -1,104 +1,157 @@
-Return-Path: <linux-kernel+bounces-288284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9F1D953858
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:35:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D1F95385E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:36:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A5851F239CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:35:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B4751F23C0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928851B9B58;
-	Thu, 15 Aug 2024 16:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094F81B9B53;
+	Thu, 15 Aug 2024 16:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="OyXy+w3b"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sMfQ1Wi2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82ED81B4C31;
-	Thu, 15 Aug 2024 16:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4630F26AE4;
+	Thu, 15 Aug 2024 16:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723739740; cv=none; b=nYkdrBaLT2jpaPLvSh7G3YrBj+PIWFDtV2LcGTweNbEMXJZiUTLvXuFBT1S6eNqmziupysHd4Fr+XxCiGXTLuD/R15uuyy1cjFDfY5Akj6w28lBpFg0P+cJQDFwS8dNl+qt5GxT9vH0lFlX+gLsAjLrSdlrmOvFAiDafW5fOAWM=
+	t=1723739795; cv=none; b=saM3vGQNXr7KZ7ML2SsnofI0UKZ4G5ir3EdAPEhVNLAshfLLW2vVrYcVaHxvKlPvLaJoAWloxcT7PEbgDiLQUchfoEt5sMeoorwF18yyf2EyNZ7J3x3JQzD1I9/x81SGeYkzJX8jNXJqfxvXbacKADvArO0T/kRqVR/fiCap24A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723739740; c=relaxed/simple;
-	bh=2YsIYBU4KdzLxYOq/DWZJaW8fsNmm7V/n/GVrhzx8fU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ayp68A9+00dtlEFra6rRbFKqrRptsgEuK8pT8MLB2GkUa+gqXGQSAliTTfXjjyJfdBS6HDwYV3ZavmfnQVy5W9kRZD5pjbk3f73gTRseoX2dSRuYT05VsoT9SvnHZaK02t4Go+Yz7fgLZdzwJsZBSMDGGeufH9Wc1xznqLBZHW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=OyXy+w3b; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=2YsIYBU4KdzLxYOq/DWZJaW8fsNmm7V/n/GVrhzx8fU=; b=OyXy+w3bleVZ7blXyZNiQ9LVCb
-	bhzsyx0+QQMv/aBgZT9jtgM0Ws9Kkswdf6EMIbVOzYPIcIATpMTffVE98W5J2RC0NB/5JCK4UaHYa
-	5Y+DqD5Y3IgQHovKo69Q0srhgBNUXKHJ2btWtuc1hlO2XJIHixiRm29zqDv+0sfPu44JFw1A1VRKC
-	gHbNkBVlKal+PKZ8jl3HllTyWw9YIfVqGodkro07kCDtpNKPPH+55IDIr66B/N428V4pHw/faaZHQ
-	K7cm8AeiJw2ogzoQ9WU25F/04tDZ5EvEYJqpsrHvvZ3goIJxny75LNbFDCXc2W1uWYyCOp+p707c4
-	/igHZSFw==;
-Received: from i53875a9f.versanet.de ([83.135.90.159] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sedRb-0005Qb-Gy; Thu, 15 Aug 2024 18:35:23 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Detlev Casanova <detlev.casanova@collabora.com>,
- linux-kernel@vger.kernel.org, David Wu <david.wu@rock-chips.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Giuseppe Cavallaro <peppe.cavallaro@st.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com,
- kernel@collabora.com
-Subject:
- Re: [PATCH v2 2/2] ethernet: stmmac: dwmac-rk: Add GMAC support for RK3576
-Date: Thu, 15 Aug 2024 18:35:22 +0200
-Message-ID: <2148922.heUyiRONoq@diego>
-In-Reply-To: <a73ff2ab-7e68-4d6b-b38d-37e7303af40d@rock-chips.com>
-References:
- <20240808170113.82775-1-detlev.casanova@collabora.com>
- <3304458.aeNJFYEL58@trenzalore>
- <a73ff2ab-7e68-4d6b-b38d-37e7303af40d@rock-chips.com>
+	s=arc-20240116; t=1723739795; c=relaxed/simple;
+	bh=xKVVPX3rDcMygqr4duaL+U23CUdrlkMrIkiE6lBMEFQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LBcvELixth7sbejw7KM+YOUqZOczWgCxZKFCW6u6PrakxzmsgAYbeTFC0JVoeNMXBgIFWsyFYCGI8560WMaRsgdNDfss9oa5Mt/mwHeR/uXjofvMOxIVAcRUAI1C8r5nBOlUVlSOngSjrddngGXvqVEmWfSrJ59N8xPIWOrbk3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sMfQ1Wi2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1E2AC32786;
+	Thu, 15 Aug 2024 16:36:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723739794;
+	bh=xKVVPX3rDcMygqr4duaL+U23CUdrlkMrIkiE6lBMEFQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sMfQ1Wi2wCpmRS2RPMPrdGCCYj4oc34JzrUZiTu4+06mlW3ao9Ox1PoT4/3eAFoQt
+	 RDSxwxpDOz3K1fuzGAkmgJO7NtfMIusYQeE4CHHVmGO2C42r4oz6PmAOdBKqmbOBKh
+	 dvhtGKbnm+A337zbKE/8L38Z5pzNDsvEuUeRRhQ71jOxk8KLUl+hOPCaXqCA98W5xg
+	 4gLSoGVsQdka6WXPgIAwhCSImSLqGHIrLukLqnAGSe7lZ+nOAOFvmQNjJaOtjyU/fI
+	 mx3JxVUlK34yA7LuV/vzivGnH39GKBz0CzRiUjBwCNipgl1G50CFXH/6K1yBrZHXaz
+	 rolsYiaQFRalQ==
+Date: Thu, 15 Aug 2024 09:36:34 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Zizhi Wo <wozizhi@huawei.com>
+Cc: chandan.babu@oracle.com, dchinner@redhat.com, osandov@fb.com,
+	john.g.garry@oracle.com, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yangerkun@huawei.com
+Subject: Re: [PATCH V3 1/2] xfs: Fix the owner setting issue for rmap query
+ in xfs fsmap
+Message-ID: <20240815163634.GH865349@frogsfrogsfrogs>
+References: <20240812011505.1414130-1-wozizhi@huawei.com>
+ <20240812011505.1414130-2-wozizhi@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812011505.1414130-2-wozizhi@huawei.com>
 
-Hi David,
+On Mon, Aug 12, 2024 at 09:15:04AM +0800, Zizhi Wo wrote:
+> I notice a rmap query bug in xfs_io fsmap:
+> [root@fedora ~]# xfs_io -c 'fsmap -vvvv' /mnt
+>  EXT: DEV    BLOCK-RANGE           OWNER              FILE-OFFSET      AG AG-OFFSET             TOTAL
+>    0: 253:16 [0..7]:               static fs metadata                  0  (0..7)                    8
+>    1: 253:16 [8..23]:              per-AG metadata                     0  (8..23)                  16
+>    2: 253:16 [24..39]:             inode btree                         0  (24..39)                 16
+>    3: 253:16 [40..47]:             per-AG metadata                     0  (40..47)                  8
+>    4: 253:16 [48..55]:             refcount btree                      0  (48..55)                  8
+>    5: 253:16 [56..103]:            per-AG metadata                     0  (56..103)                48
+>    6: 253:16 [104..127]:           free space                          0  (104..127)               24
+>    ......
+> 
+> Bug:
+> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 0 3' /mnt
+> [root@fedora ~]#
+> Normally, we should be able to get one record, but we got nothing.
+> 
+> The root cause of this problem lies in the incorrect setting of rm_owner in
+> the rmap query. In the case of the initial query where the owner is not
+> set, __xfs_getfsmap_datadev() first sets info->high.rm_owner to ULLONG_MAX.
+> This is done to prevent any omissions when comparing rmap items. However,
+> if the current ag is detected to be the last one, the function sets info's
+> high_irec based on the provided key. If high->rm_owner is not specified, it
+> should continue to be set to ULLONG_MAX; otherwise, there will be issues
+> with interval omissions. For example, consider "start" and "end" within the
+> same block. If high->rm_owner == 0, it will be smaller than the founded
+> record in rmapbt, resulting in a query with no records. The main call stack
+> is as follows:
+> 
+> xfs_ioc_getfsmap
+>   xfs_getfsmap
+>     xfs_getfsmap_datadev_rmapbt
+>       __xfs_getfsmap_datadev
+>         info->high.rm_owner = ULLONG_MAX
+>         if (pag->pag_agno == end_ag)
+> 	  xfs_fsmap_owner_to_rmap
+> 	    // set info->high.rm_owner = 0 because fmr_owner == 0
+> 	    dest->rm_owner = 0
+> 	// get nothing
+> 	xfs_getfsmap_datadev_rmapbt_query
+> 
+> The problem can be resolved by setting the rm_owner of high to ULLONG_MAX
+> again under certain conditions.
+> 
+> After applying this patch, the above problem have been solved:
+> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 0 3' /mnt
+>  EXT: DEV    BLOCK-RANGE      OWNER              FILE-OFFSET      AG AG-OFFSET        TOTAL
+>    0: 253:16 [0..7]:          static fs metadata                  0  (0..7)               8
+> 
+> Fixes: e89c041338ed ("xfs: implement the GETFSMAP ioctl")
+> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+> ---
+>  fs/xfs/xfs_fsmap.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/fs/xfs/xfs_fsmap.c b/fs/xfs/xfs_fsmap.c
+> index 85dbb46452ca..d346acff7725 100644
+> --- a/fs/xfs/xfs_fsmap.c
+> +++ b/fs/xfs/xfs_fsmap.c
+> @@ -655,6 +655,13 @@ __xfs_getfsmap_datadev(
+>  			error = xfs_fsmap_owner_to_rmap(&info->high, &keys[1]);
+>  			if (error)
+>  				break;
+> +			/*
+> +			 * Set the owner of high_key to the maximum again to
+> +			 * prevent missing intervals during the query.
+> +			 */
+> +			if (info->high.rm_owner == 0 &&
+> +			    info->missing_owner == XFS_FMR_OWN_FREE)
+> +			    info->high.rm_owner = ULLONG_MAX;
 
-Am Montag, 12. August 2024, 04:21:27 CEST schrieb David Wu:
-> Hi Detlev, Heiko:
->=20
-> It's really a TRM error here, RMII PHY has been verified for this patch.
+Shouldn't this be in xfs_fsmap_owner_to_rmap?
 
-thanks for double checking.
+And, looking at that function, isn't this the solution:
 
+	switch (src->fmr_owner) {
+	case 0:			/* "lowest owner id possible" */
+	case -1ULL:		/* "highest owner id possible" */
+		dest->rm_owner = src->fmr_owner;
+		break;
 
-Heiko
+instead of this special-casing outside the setter function?
 
-> =E5=9C=A8 2024/8/9 22:38, Detlev Casanova =E5=86=99=E9=81=93:
-> > Can't be sure about that. An error in the TRM is not impossible either,=
- as for
-> > rk3588, it is also bit[5]=3D0: DIV20 and bit[5]=3D1: DIV2. I can switch=
- them to
-> > match the TRM though, we may never now.
+--D
 
-
-
-
+>  			xfs_getfsmap_set_irec_flags(&info->high, &keys[1]);
+>  		}
+>  
+> -- 
+> 2.39.2
+> 
+> 
 
