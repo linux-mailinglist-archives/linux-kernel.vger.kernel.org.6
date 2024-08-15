@@ -1,119 +1,106 @@
-Return-Path: <linux-kernel+bounces-287381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2046695272B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:51:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE74F952733
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5442F1C217DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:51:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FC791C21747
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FA34A3E;
-	Thu, 15 Aug 2024 00:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB494A04;
+	Thu, 15 Aug 2024 00:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KH5ey9aW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hl60/AXk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E847B4A04
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 00:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606B663C;
+	Thu, 15 Aug 2024 00:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723683097; cv=none; b=PnRUGRLf3gSXRKMaG0pTSXpJCkOsbAkQrDPvU/POylg98KbG62XddSG7L8RCTI/HbxRUyqkP4Jf1+pEmeroAnG0NktWDigINH6ApgvSjWhyo0jSYdEsP+xl4A0Of0rA9X5o9gUoXcEqLiinqvY4UNP+cw6XisZTmwNlT1kYyEeQ=
+	t=1723683322; cv=none; b=nTwbEa8j6+ndntniC7gHUL8ARbT9N4f2rLfEqIhhPZVty2pTtMDXSmAfJiwSjoqj42VTU49jiqu8yRCdhiud2JiK50PYJgjZ2LhlryFeOvxE7/y/7LLPuxYNdJzLGc0D4M47OE2XFnx28Yy+utkJ5FED/SFl8nZyZrdv1alScHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723683097; c=relaxed/simple;
-	bh=pPzJvLK4QhT/YIFBLvsdlqwEKbdcS1cslS2BGsUwV1s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RNffJRW1dEtzcRixv3mP55p6J+WtxXJH91+qC8cE5R3WtTkLivYMU9jvq64Xm6MVaSmf/FdkWdQpm9KU9N5BioDUXGHMmIB3vESlNVtXSzgjtd48Dm2aaQzPLQl9HpsJuOpRKYBIuBhOOXxCEq4Ha/uhkmR0fYeKaLWgKCodWd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KH5ey9aW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5707C116B1;
-	Thu, 15 Aug 2024 00:51:34 +0000 (UTC)
+	s=arc-20240116; t=1723683322; c=relaxed/simple;
+	bh=xMjGUKON6LLUAWLnJja4K6PiE7W+OUxh2h/3ZA5g+fs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pEIhUTZ3pkPjlc01Ct/aBNyNyhbO23Dkmmy/NCG3ADtn0H2Mjbn+GKqEvU/+BfZBpWJ61GF6rF3P/5XbKYQu11cmzq0terU8cccb/DvQ3dT8q3gbWPakHNLXplJZgMj5/fZOcrRXjmGFlUgye3xcoDRbg8JX58vYWts7+afeqwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hl60/AXk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56D2DC116B1;
+	Thu, 15 Aug 2024 00:55:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723683096;
-	bh=pPzJvLK4QhT/YIFBLvsdlqwEKbdcS1cslS2BGsUwV1s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KH5ey9aWoFgXYB82sXPybGE6NIClJr9ElHCv5l24WRTZ3YVYYy96e8VsbXGuJVtNS
-	 kgiAC4qX8TDB1+h0lf3sLhR1yfCmfruXlNUKkNCZbfSdSY+9f5E8TRHIb7+IKLnAhV
-	 DnzwVHtNUFGfAJsZ98IMemn/qjBDwZUu2/sufX62z+Wr9rUTJFBqAhqrzcKJpWy2OI
-	 /VgSotL9jOMeLAe44KmQlRntNetVTCdLATvBFtPGmUs+5lEYqUWuZyNFVbF6n5plLu
-	 Rm+TibJtiX/HkR6nrM/crWXVD3fOX0yZZE3zqbz8NEv9vBJVJIK7tnKmoo8l4lWQov
-	 QfnKpZhw/2Yyg==
-Message-ID: <efcc15bf-0248-4690-b4d4-11022d12cffd@kernel.org>
-Date: Thu, 15 Aug 2024 08:51:32 +0800
+	s=k20201202; t=1723683321;
+	bh=xMjGUKON6LLUAWLnJja4K6PiE7W+OUxh2h/3ZA5g+fs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hl60/AXkRBRAMhBRJRfv3E0Nx2gYuOASZCV7fgOD9pEQYk2ywMUc4DyvzFLl8XDYl
+	 HhvXqtK4sFdAce+V4o9nqrK1SMP+36SJa0GeclXDIzdRgvTQSoikJjrz3qO8wA7fWz
+	 Ds6jCccJHwC20HO3bwjtDz0kfXqjtP04KLYGNuEW5hSMzZsIxm308wih29PwICWDmt
+	 eoMcd4EvmrrPx6hOnpyVjLVN++P8kZAcGVriaaHoM5TS8YwwS9MBaUfGaUwlvo8AB+
+	 llHmuHlKALWNot/IVBjtXbSRUtwezcYP+Yb8agOQ4m6JDpXsXTUD+wdbfYecfX8XxD
+	 WCsF6kBIb+3hA==
+From: Stephen Boyd <sboyd@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	patches@lists.linux.dev,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>,
+	Rae Moar <rmoar@google.com>
+Subject: [PATCH 00/12] clk: Unit test clk unregistration paths
+Date: Wed, 14 Aug 2024 17:55:06 -0700
+Message-ID: <20240815005520.1192374-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] f2fs: fix unreleased reader lock on return
-To: Diogo Jahchan Koike <djahchankoike@gmail.com>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org,
- syzbot+733300ca0a9baca7e245@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <20240814211640.167728-1-djahchankoike@gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240814211640.167728-1-djahchankoike@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 2024/8/15 5:16, Diogo Jahchan Koike wrote:
-> fix reader lock unreleased in error path.
+The clk_hw_unregister() path is rarely used and almost entirely
+untested. Case in point, the first patch in this series that fixes a bug
+due to unregistering a clk_hw and calling clk_put(). Add unit tests for
+this code and test the consumer APIs to make sure the behavior stays
+consistent.
 
-Thank you for catching this, if you don't mind, I'd like to merge it to
-original patch, since it is still in dev-test branch.
+The last patch is a WIP because I haven't gotten around to fixing all
+the problems.
 
-Thanks,
+Cc: Brendan Higgins <brendan.higgins@linux.dev>
+Cc: David Gow <davidgow@google.com>
+Cc: Rae Moar <rmoar@google.com>
 
-> 
-> Fixes: 374a8881ce4c ("f2fs: atomic: fix to forbid dio in atomic_file")
-> Reported-by: syzbot+733300ca0a9baca7e245@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=733300ca0a9baca7e245
-> Signed-off-by: Diogo Jahchan Koike <djahchankoike@gmail.com>
-> ---
->   fs/f2fs/file.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 51f6ffd5f4e2..c9eda5dbd11f 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -2172,6 +2172,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
->   	ret = filemap_write_and_wait_range(inode->i_mapping, 0, LLONG_MAX);
->   	if (ret) {
->   		f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
-> +		f2fs_up_write(&fi->i_gc_rwsem[READ]);
->   		goto out;
->   	}
->   
-> @@ -2181,6 +2182,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
->   		pinode = f2fs_iget(inode->i_sb, fi->i_pino);
->   		if (IS_ERR(pinode)) {
->   			f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
-> +			f2fs_up_write(&fi->i_gc_rwsem[READ]);
->   			ret = PTR_ERR(pinode);
->   			goto out;
->   		}
-> @@ -2189,6 +2191,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
->   		iput(pinode);
->   		if (ret) {
->   			f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
-> +			f2fs_up_write(&fi->i_gc_rwsem[READ]);
->   			goto out;
->   		}
->   
-> @@ -2202,6 +2205,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
->   		ret = f2fs_do_truncate_blocks(fi->cow_inode, 0, true);
->   		if (ret) {
->   			f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
-> +			f2fs_up_write(&fi->i_gc_rwsem[READ]);
->   			goto out;
->   		}
->   	}
+Nuno Sá (1):
+  clk: Fix clk not being unlinked from consumers list
+
+Stephen Boyd (11):
+  clk: test: Introduce clk_hw_unregister_kunit()
+  clk: test: Introduce clk_put_kunit()
+  clk: Add tests for unregistering clk_hw and using consumer APIs
+  clk: Fail phase APIs after clk_hw is unregistered
+  clk: Test clk_get_phase() behavior after clk_hw is unregistered
+  clk: Fail duty cycle APIs after clk_hw is unregistered
+  clk: Test clk_set_duty_cycle() behavior after clk_hw is unregistered
+  clk: Prevent unregistered clk_hw from being reinserted into clk tree
+  clk: Test clk_set_parent() behavior after clk_hw is unregistered
+  clk: Test parent/clk flags combos while unregistering a clk_hw
+  WIP: clk: Test behavior of children clks after a parent is
+    unregistered
+
+ drivers/clk/clk.c               |  26 +-
+ drivers/clk/clk_kunit_helpers.c |  46 ++
+ drivers/clk/clk_test.c          | 720 ++++++++++++++++++++++++++++++++
+ include/kunit/clk.h             |   2 +
+ 4 files changed, 791 insertions(+), 3 deletions(-)
+
+
+base-commit: 274aff8711b2e77c27bbda0ddc24caa39f154bfa
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
 
 
