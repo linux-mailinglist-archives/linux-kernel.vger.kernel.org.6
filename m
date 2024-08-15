@@ -1,95 +1,184 @@
-Return-Path: <linux-kernel+bounces-287688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0F46952B5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:57:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42F71952B80
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C416BB20FBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:57:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A76DF1F212F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A2A1BA863;
-	Thu, 15 Aug 2024 08:55:52 +0000 (UTC)
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B89E1D1F53;
+	Thu, 15 Aug 2024 08:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LEdZlbyb"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F6317625E;
-	Thu, 15 Aug 2024 08:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5F81AE87C;
+	Thu, 15 Aug 2024 08:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723712152; cv=none; b=c6VxOXRTp+heeXXZYEMZao/XVVOSNui2c0+HOzA3oqKKTVbSg+ckJJPWm6uhfc86hWaqHOHGwrb6R3bM1ktg4poIgKH2nPmAFSck1deXedbnDjOZBXiXl8BMTCTVT4hUTuP57kiInaZIhnC7lZvEA2mJnMfJmtmGeOcVmN9Rg4M=
+	t=1723712278; cv=none; b=BXz42CKWt4lObS4+3qDDdVyit4rcEQAhOYsPNEOf8qaRjitTX4ns5VnMdmqDz9fI5bJf517RGAYoaYqaUQiNze6sVckorbrXCQy41Ws6FJotC0t5hvibBZDgtHtisXOFuztDbG5VnMDlexSvxz81FJlUX1vSOC5MS2Xjj3xG8qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723712152; c=relaxed/simple;
-	bh=6Pa7Piw4vYLO/WuuQnk7QzeAp3aDRW6Q0Ehifw9hFlM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SZFIQkC1UhjJkreeflVcIuNa/t1uwo4KwEALCm9TRtE0iugIXyXL8Go86soVicVOmZZY/IOrK99JVcC6RH+jiz73A6wzHVoFw7kR/Z9pnyT16RF1MkJ64PeYK+2Vy0nMjDoS26XViUuUFVsn3Hirr2hy7nVdbVPo7v8ZQTYy2+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
-Received: from [78.30.37.63] (port=36446 helo=gnumonks.org)
-	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <pablo@gnumonks.org>)
-	id 1seWGk-00GrRE-Rj; Thu, 15 Aug 2024 10:55:45 +0200
-Date: Thu, 15 Aug 2024 10:55:41 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: icejl <icejl0001@gmail.com>
-Cc: kadlec@netfilter.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfilter: nfnetlink: fix uninitialized local variable
-Message-ID: <Zr3CjbzNMOqntLDi@calendula>
-References: <20240815082733.272087-1-icejl0001@gmail.com>
- <Zr29B7UWlDCYQMCR@calendula>
+	s=arc-20240116; t=1723712278; c=relaxed/simple;
+	bh=vl/T7ZGahV2ed87B2vBdq0c1rbggs+bQLu5/eGdHwkU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=eOi5JjHLa0VgxB37C6Cwr0SelhnrZlp4TA099xD8Kh54upJC09IczwDXvahU8jh7UOtAFdnLnG0lEd6rHJtooHiSZ4YgixQj67E9GE5k3QRFXvagyli6Yi97zBQcAglHMhh9b5qbvOBl0nXxDGQpdSQjjJWf5gTM0vO4SBsq168=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LEdZlbyb; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47EMKkqS027601;
+	Thu, 15 Aug 2024 08:57:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=7lnRtsX8RcO
+	IS0YefxLVrkBHcLfVapkwzjVGjh3VaKw=; b=LEdZlbybL4igAcgBb4YT7AE1G92
+	Y+AcFl+Dt0AMnxjBnEoOH/fykcK/mEtdgbxnjNRD+wbeOHJokOLY1pTIa9JWFGLl
+	YVhiVz+CglMGk/Jw/0Bc+n2yieE/JDi9tCMPB3LAF43yh0CHkarSUVGoKbrW5a1i
+	ox9tCAsCkrT0f178dXzPGDn2yk462TIQ3blKSA1mr6duR1SzvPxhLVgxoZVQv8AQ
+	GOPcekFISzybMLEeCYpA9rj146xOoVprXgFjanhobErM0hmWAKjFjM9nSAdqXQ2a
+	55w4d7DnmgfRE4pGMPKC/uAHSSYjcQOdUugCsejW8+OjglQPXk6U/rF5gWQ==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x3etdq3w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 Aug 2024 08:57:33 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 47F8u8eC028285;
+	Thu, 15 Aug 2024 08:57:29 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 40xkmhenmm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 Aug 2024 08:57:29 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47F8vSAZ029649;
+	Thu, 15 Aug 2024 08:57:28 GMT
+Received: from hu-devc-blr-u22-a.qualcomm.com (hu-mdalam-blr.qualcomm.com [10.131.36.157])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 47F8vSoK029641
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 Aug 2024 08:57:28 +0000
+Received: by hu-devc-blr-u22-a.qualcomm.com (Postfix, from userid 466583)
+	id 9B58441328; Thu, 15 Aug 2024 14:27:27 +0530 (+0530)
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+To: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        andersson@kernel.org, konradybcio@kernel.org, thara.gopinath@gmail.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        gustavoars@kernel.org, u.kleine-koenig@pengutronix.de, kees@kernel.org,
+        agross@kernel.org, linux-arm-msm@vger.kernel.org,
+        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
+Cc: quic_srichara@quicinc.com, quic_varada@quicinc.com,
+        quic_mdalam@quicinc.com, quic_utiwari@quicinc.com
+Subject: [PATCH v2 04/16] crypto: qce - Add support for crypto address read
+Date: Thu, 15 Aug 2024 14:27:13 +0530
+Message-Id: <20240815085725.2740390-5-quic_mdalam@quicinc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
+References: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Zr29B7UWlDCYQMCR@calendula>
-X-Spam-Score: -1.9 (-)
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: p3P9FvkGCCxxLnxm90hBxU_-mHEuUf__
+X-Proofpoint-ORIG-GUID: p3P9FvkGCCxxLnxm90hBxU_-mHEuUf__
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-15_01,2024-08-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ suspectscore=0 impostorscore=0 phishscore=0 clxscore=1015 mlxlogscore=999
+ lowpriorityscore=0 priorityscore=1501 spamscore=0 adultscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408150064
 
-For the record:
+Get crypto base address from DT. This will use for
+command descriptor support for crypto register r/w
+via BAM/DMA
 
-https://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf.git/commit/?id=d1a7b382a9d3f0f3e5a80e0be2991c075fa4f618
+Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+---
+Change in [v2]
 
-Fixes: bf2ac490d28c ("netfilter: nfnetlink: Handle ACK flags for batch messages")
+* Addressed all comments from v1
 
-On Thu, Aug 15, 2024 at 10:32:11AM +0200, Pablo Neira Ayuso wrote:
-> There is a fix already traveling for this in a pull request.
-> 
-> On Thu, Aug 15, 2024 at 04:27:33PM +0800, icejl wrote:
-> > In the nfnetlink_rcv_batch function, an uninitialized local variable
-> > extack is used, which results in using random stack data as a pointer.
-> > This pointer is then used to access the data it points to and return
-> > it as the request status, leading to an information leak. If the stack
-> > data happens to be an invalid pointer, it can cause a pointer access
-> > exception, triggering a kernel crash.
-> > 
-> > Signed-off-by: icejl <icejl0001@gmail.com>
-> > ---
-> >  net/netfilter/nfnetlink.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/net/netfilter/nfnetlink.c b/net/netfilter/nfnetlink.c
-> > index 4abf660c7baf..b29b281f4b2c 100644
-> > --- a/net/netfilter/nfnetlink.c
-> > +++ b/net/netfilter/nfnetlink.c
-> > @@ -427,6 +427,7 @@ static void nfnetlink_rcv_batch(struct sk_buff *skb, struct nlmsghdr *nlh,
-> >  
-> >  	nfnl_unlock(subsys_id);
-> >  
-> > +	memset(&extack, 0, sizeof(extack));
-> >  	if (nlh->nlmsg_flags & NLM_F_ACK)
-> >  		nfnl_err_add(&err_list, nlh, 0, &extack);
-> >  
-> > -- 
-> > 2.34.1
-> > 
+Change in [v1]
+
+* Added support to read crypto base address from dt
+
+ drivers/crypto/qce/core.c | 13 ++++++++++++-
+ drivers/crypto/qce/core.h |  1 +
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/crypto/qce/core.c b/drivers/crypto/qce/core.c
+index 28b5fd823827..9b23a948078a 100644
+--- a/drivers/crypto/qce/core.c
++++ b/drivers/crypto/qce/core.c
+@@ -192,6 +192,7 @@ static int qce_crypto_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct qce_device *qce;
++	struct resource *res;
+ 	int ret;
+ 
+ 	qce = devm_kzalloc(dev, sizeof(*qce), GFP_KERNEL);
+@@ -201,10 +202,16 @@ static int qce_crypto_probe(struct platform_device *pdev)
+ 	qce->dev = dev;
+ 	platform_set_drvdata(pdev, qce);
+ 
+-	qce->base = devm_platform_ioremap_resource(pdev, 0);
++	qce->base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+ 	if (IS_ERR(qce->base))
+ 		return PTR_ERR(qce->base);
+ 
++	qce->base_dma = dma_map_resource(dev, res->start,
++					 resource_size(res),
++					 DMA_BIDIRECTIONAL, 0);
++	if (dma_mapping_error(dev, qce->base_dma))
++		return -ENXIO;
++
+ 	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
+ 	if (ret < 0)
+ 		return ret;
+@@ -280,6 +287,7 @@ static int qce_crypto_probe(struct platform_device *pdev)
+ static void qce_crypto_remove(struct platform_device *pdev)
+ {
+ 	struct qce_device *qce = platform_get_drvdata(pdev);
++	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 
+ 	tasklet_kill(&qce->done_tasklet);
+ 	qce_unregister_algs(qce);
+@@ -287,6 +295,9 @@ static void qce_crypto_remove(struct platform_device *pdev)
+ 	clk_disable_unprepare(qce->bus);
+ 	clk_disable_unprepare(qce->iface);
+ 	clk_disable_unprepare(qce->core);
++
++	dma_unmap_resource(&pdev->dev, qce->base_dma, resource_size(res),
++			   DMA_BIDIRECTIONAL, 0);
+ }
+ 
+ static const struct of_device_id qce_crypto_of_match[] = {
+diff --git a/drivers/crypto/qce/core.h b/drivers/crypto/qce/core.h
+index 228fcd69ec51..25e2af45c047 100644
+--- a/drivers/crypto/qce/core.h
++++ b/drivers/crypto/qce/core.h
+@@ -39,6 +39,7 @@ struct qce_device {
+ 	struct qce_dma_data dma;
+ 	int burst_size;
+ 	unsigned int pipe_pair_id;
++	dma_addr_t base_dma;
+ 	int (*async_req_enqueue)(struct qce_device *qce,
+ 				 struct crypto_async_request *req);
+ 	void (*async_req_done)(struct qce_device *qce, int ret);
+-- 
+2.34.1
+
 
