@@ -1,242 +1,122 @@
-Return-Path: <linux-kernel+bounces-288003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 177EF952F94
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:34:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D00952F8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CC281C24844
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:34:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AE971C247A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7916F1ABEA2;
-	Thu, 15 Aug 2024 13:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914411A01C3;
+	Thu, 15 Aug 2024 13:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KnWKJ/I1"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ngYAa+J4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB091A255C;
-	Thu, 15 Aug 2024 13:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02B11A00FE;
+	Thu, 15 Aug 2024 13:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723728819; cv=none; b=X1GZf4ZxrrlXTSkqevpqPjv/bYjH0lFUmjmSa52MmWNf4W0h8rZ4eQowKmy1IUN6/42YaDFG835ynWMfDnDwICRDqHOtRZeknzw9ras1+vGv0tpRZKPKA9DLkywxDUn0rhAxcbC3Wr8InMtVPV7gYeTTaQeaRHynZcDuTuESstY=
+	t=1723728812; cv=none; b=vD4Clwa3qhgXcPf+8Qv3hVdI0neArtO4UZ5xnUnYXU+KREZwZVR7o+HFx+WIV5LOclyfWOqdfRxaIlt5XPp69b1TYAJ3pbWzENX6msq5LBKQxWwKcKgghE0dnC4o3Voufa6B/IJMUyuEDOdy6Yl3CLVvaIx8wm0NUNiHKH0kiBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723728819; c=relaxed/simple;
-	bh=xDjhfqPS2o+oDH5/ecesXAuXbEw+HvBzT0vWf2cTHBc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Okxv7SdJZvd9gNn6gx20kgVdZqC37NxJ68+gDkviWUA7Ihc2zCiQ5n+gQSv9jhggNtyd0NNyhfXhmUZHxPiMtKsjn96RQzoxE7RD4zWySDjpOMlxZnPvxEZ4+32LLT+cflbK/jCXg7RREJbSZijYmnHWrRSgKCybRqymdwfA/xU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KnWKJ/I1; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47F1xZ0L021528;
-	Thu, 15 Aug 2024 13:33:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wjQ+waepsqWG6bfx0jN0N0x2uwvT5aJvn8iAsKyZlU8=; b=KnWKJ/I11DuhR3+6
-	yhXrsKpB4iW8pnqrGlYxp++QJ+hTv8kbF8PJm+8b1zvCWW2rm4mwoM/s4dSOudnN
-	hoJY3vlnpwqGb/F5iWYwbB1GZtE0ACCIju+yAkDdbZ7JR2Tj/fAzHG5/fnQzRqeR
-	P6x7UaQJj7co3JcAZ5GeIiupMecgJnJa0CserpcY3bzCQhXyK38dpOYXcLxXHqrk
-	ElRZ5zDTCFNPTJyrRg3oUaG/hQCgFqUq0w0092EL4p5hK9tuEytV3N+C3sMUKW5W
-	iPD1Nb5EqjENYMNEKRJWPjsPyTTFQBY5u8Z9+LmRuu1vR9cCBVgfeAYFYNFw0HY2
-	iWmh4g==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 410m294pdu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Aug 2024 13:33:20 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47FDXKEZ022352
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Aug 2024 13:33:20 GMT
-Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 15 Aug
- 2024 06:33:14 -0700
-Message-ID: <8e38308a-4198-420e-ac4d-718299033eb5@quicinc.com>
-Date: Thu, 15 Aug 2024 21:33:12 +0800
+	s=arc-20240116; t=1723728812; c=relaxed/simple;
+	bh=PyWZsXcN1KLaK/0ybPQA0H3GW8k5zX8A1tAoYrLpzpE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uRKMUin3gRvNzIqFFAASPTXilYaVB8e6b9hxWsECtE6jF7wP3B2bJGSEoshT0W6X1bIYSfnrGO8tKqWAxDz0m1nqf8b5pxMtPKOuMGNLQW03MqlfGAlPL/DHJb7oNUcg7zFxY9f8Y5ldFFvlYW1ZfFNSf5cTrKqGXjcncdPkWVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ngYAa+J4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E65E4C32786;
+	Thu, 15 Aug 2024 13:33:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723728811;
+	bh=PyWZsXcN1KLaK/0ybPQA0H3GW8k5zX8A1tAoYrLpzpE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ngYAa+J4Ou6sP2e00T0jBO21XSV4TJCGBdv5oJJqDxbg0+WiW9Waf8Pd9QTu0SvLX
+	 73iVIVi59bIdBbu0KRHJXpq6h/qZBZMIFQTslKrx1evOMnd7LtWu6zyBEpWRchHBL3
+	 853MrCVLMtUDryXkpE7QtPDczyLmiLYb98sbou9oHVkATDhSofH7rjb541/PpgfZsl
+	 soRlMuPnq0KbZ7hqusJV3CU0i7/fNKrd6KHVllQkO/AS01Q8zQyA/hK1RQPkvbsWb/
+	 SWAkU42i70iGbdxkVso5lVTJBGzG8do4sIBRTw0ErenTFaleOh7D0q1ukBFu+HIBpz
+	 o+837E+kpnjqw==
+Date: Thu, 15 Aug 2024 15:33:24 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, ojeda@kernel.org,
+	alex.gaynor@gmail.com, wedsonaf@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, akpm@linux-foundation.org,
+	daniel.almeida@collabora.com, faith.ekstrand@collabora.com,
+	boris.brezillon@collabora.com, lina@asahilina.net,
+	mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com,
+	jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com,
+	lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v5 00/26] Generic `Allocator` support for Rust
+Message-ID: <Zr4DpPSjDqSoMh0j@cassiopeiae>
+References: <20240812182355.11641-1-dakr@kernel.org>
+ <Zr0GP0OXliPRqx4C@boqun-archlinux>
+ <Zr1teqjuOHeeFO4Z@cassiopeiae>
+ <CAH5fLgjvuE5uU00u4y+HyHTkQU_OBYvHe6NS5ohAhrLntTX1zQ@mail.gmail.com>
+ <Zr31jqnA2b3qHK5l@cassiopeiae>
+ <CAH5fLgjzNpeVVurPqVS=tMkKQOhXz08EsXRO4s9wYsNBuT6eVw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/13] media: qcom: camss: Add support for VFE hardware
- version Titan 780
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <rfoss@kernel.org>,
-        <todor.too@gmail.com>, <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>, Yongsheng Li <quic_yon@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-14-quic_depengs@quicinc.com>
- <b78f23ca-eb6e-45cf-9e42-86c906ff901f@linaro.org>
-Content-Language: en-US
-From: Depeng Shao <quic_depengs@quicinc.com>
-In-Reply-To: <b78f23ca-eb6e-45cf-9e42-86c906ff901f@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: DzLclLzsHct6KgLxh1EBQI6QEFU8lPf3
-X-Proofpoint-ORIG-GUID: DzLclLzsHct6KgLxh1EBQI6QEFU8lPf3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-15_06,2024-08-15_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
- spamscore=0 priorityscore=1501 mlxscore=0 bulkscore=0 adultscore=0
- impostorscore=0 phishscore=0 malwarescore=0 mlxlogscore=999
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408150098
+In-Reply-To: <CAH5fLgjzNpeVVurPqVS=tMkKQOhXz08EsXRO4s9wYsNBuT6eVw@mail.gmail.com>
 
-Hi Bryan,
-
-On 8/15/2024 12:23 AM, Bryan O'Donoghue wrote:
-
->> @@ -674,15 +675,17 @@ int vfe_reset(struct vfe_device *vfe)
->>   {
->>       unsigned long time;
->> -    reinit_completion(&vfe->reset_complete);
->> +    if (vfe->res->hw_ops->global_reset) {
->> +        reinit_completion(&vfe->reset_complete);
->> -    vfe->res->hw_ops->global_reset(vfe);
->> +        vfe->res->hw_ops->global_reset(vfe);
->> -    time = wait_for_completion_timeout(&vfe->reset_complete,
->> -        msecs_to_jiffies(VFE_RESET_TIMEOUT_MS));
->> -    if (!time) {
->> -        dev_err(vfe->camss->dev, "VFE reset timeout\n");
->> -        return -EIO;
->> +        time = wait_for_completion_timeout(&vfe->reset_complete,
->> +            msecs_to_jiffies(VFE_RESET_TIMEOUT_MS));
->> +        if (!time) {
->> +            dev_err(vfe->camss->dev, "VFE reset timeout\n");
->> +            return -EIO;
->> +        }
+On Thu, Aug 15, 2024 at 02:34:50PM +0200, Alice Ryhl wrote:
+> On Thu, Aug 15, 2024 at 2:33 PM Danilo Krummrich <dakr@kernel.org> wrote:
+> >
+> > On Thu, Aug 15, 2024 at 11:20:32AM +0200, Alice Ryhl wrote:
+> > > On Thu, Aug 15, 2024 at 4:52 AM Danilo Krummrich <dakr@kernel.org> wrote:
+> > > >
+> > > > On Wed, Aug 14, 2024 at 12:32:15PM -0700, Boqun Feng wrote:
+> > > > > Hi Danilo,
+> > > > >
+> > > > > I'm trying to put your series on rust-dev, but I hit a few conflicts due
+> > > > > to the conflict with `Box::drop_contents`, which has been in rust-dev
+> > > > > for a while. And the conflict is not that trivial for me to resolve.
+> > > > > So just a head-up, that's a requirement for me to put it on rust-dev for
+> > > > > more tests from my end ;-)
+> > > >
+> > > > I rebased everything and you can fetch them from [1].
+> > > >
+> > > > I resolved the following conflicts:
+> > > >
+> > > >   - for `Box`, implement
+> > > >     - `drop_contents`
+> > > >     - `manually_drop_contents` [2]
+> > >
+> > > Not sure I like this name. It sounds like something that runs the
+> > > destructor, but it does the exact opposite.
+> >
+> > I thought it kinda makes sense, since it's analogous to `ManuallyDrop::new`.
+> >
+> > What about `Box::forget_contents` instead?
 > 
-> Per my comment on the CSID - this feels like a fix you are introducing 
-> here in the guise of a silicon add.
-> 
-> Please break it up.
-> 
-> If you have a number of fixes to core functionality they need to be
-> 
-> 1. Granular and individual
-> 2. Indivdually scrutable with their own patch and descritption
-> 3. git cherry-pickable
-> 4. Have a Fixes tag
-> 5. And be cc'd to stable@vger.kernel.org
-> 
-> Can't accept either the fixes or the silicon add if the two live mixed 
-> up in one patch.
-> 
+> One option is `into_manually_drop`. This uses the convention of using
+> the `into_*` prefix for conversions that take ownership of the
+> original value.
 
-This isn't a bug fix, adding a null pointer checking just because vfe780 
-doesn't have enable_irq/global_reset/isr/vfe_halt hw_ops, so adding the 
-null checking for these hw_ops in this patch and adding them in one patch.
-The original code doesn't have any bug.
+The signature of the current `Box::manually_drop_contents` is the same as for
+`Box::drop_contents`, namely
+`fn manually_drop_contents(this: Self) -> Box<MaybeUninit<T>, A>`.
 
+`into_manually_drop` seems misleading for for returning a
+`Box<MaybeUninit<T>, A>`.
 
+I still think `forget_contents` hits it quite well. Just as `drop_contents`
+drops the value, `forget_contents` makes the `Box` forget the value.
 
->> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.h b/drivers/ 
->> media/platform/qcom/camss/camss-vfe.h
->> index fcbf4f609129..9dec5bc0d1b1 100644
->> --- a/drivers/media/platform/qcom/camss/camss-vfe.h
->> +++ b/drivers/media/platform/qcom/camss/camss-vfe.h
->> @@ -243,6 +243,7 @@ extern const struct vfe_hw_ops vfe_ops_4_7;
->>   extern const struct vfe_hw_ops vfe_ops_4_8;
->>   extern const struct vfe_hw_ops vfe_ops_170;
->>   extern const struct vfe_hw_ops vfe_ops_480;
->> +extern const struct vfe_hw_ops vfe_ops_780;
->>   int vfe_get(struct vfe_device *vfe);
->>   void vfe_put(struct vfe_device *vfe);
->> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/ 
->> media/platform/qcom/camss/camss.c
->> index 7ee102948dc4..92a0fa02e415 100644
->> --- a/drivers/media/platform/qcom/camss/camss.c
->> +++ b/drivers/media/platform/qcom/camss/camss.c
->> @@ -1666,6 +1666,125 @@ static const struct camss_subdev_resources 
->> csid_res_8550[] = {
->>       }
->>   };
->> +static const struct camss_subdev_resources vfe_res_8550[] = {
->> +    /* VFE0 */
->> +    {
->> +        .regulators = {},
->> +        .clock = { "gcc_axi_hf", "cpas_ahb", "cpas_fast_ahb_clk", 
->> "vfe0_fast_ahb",
->> +               "vfe0", "cpas_vfe0", "camnoc_axi" },
 > 
-> Should the camnoc AXI clock go here or in the CSID ?
+> Alice
 > 
-
-camnoc is responsible for ddr writing, so it is needed for the WM in vfe.
-
-
->> +    /* VFE4 lite */
->> +    {
->> +        .regulators = {},
->> +        .clock = { "gcc_axi_hf", "cpas_ahb", "cpas_fast_ahb_clk", 
->> "vfe_lite_ahb",
->> +               "vfe_lite", "cpas_ife_lite", "camnoc_axi" },
->> +        .clock_rate = {    { 0, 0, 0, 0, 0 },
->> +                { 0, 0, 0, 0, 80000000 },
->> +                { 300000000, 300000000, 400000000, 400000000, 
->> 400000000 },
->> +                { 300000000, 300000000, 400000000, 400000000, 
->> 400000000 },
-> 
-> I realise you're specifying all of the operating points here but the 
-> clock only needs to appear once i.e.
-> 
-> 1 x 300 MHz
-> 1 x 400 MHz
-> 1 x 480 MHz
-> 
-> etc.
-> 
-
-Sure, will update in next series.
-
->> +                { 400000000, 480000000, 480000000, 480000000, 
->> 480000000 },
->> +                { 300000000, 300000000, 400000000, 400000000, 
->> 400000000 },
->> +                { 300000000, 300000000, 400000000, 400000000, 
->> 400000000 } },
->> +        .reg = { "vfe_lite1" },
->> +        .interrupt = { "vfe_lite1" },
->> +        .vfe = {
->> +            .line_num = 4,
->> +            .is_lite = true,
->> +            .hw_ops = &vfe_ops_780,
->> +            .formats_rdi = &vfe_formats_rdi_845,
->> +            .formats_pix = &vfe_formats_pix_845
->> +        }
->> +    },
->> +};
-
->> +void camss_reg_update(struct camss *camss, int hw_id, int port_id, 
->> bool is_clear)
->> +{
->> +    struct csid_device *csid;
->> +
->> +    if (hw_id < camss->res->csid_num) {
-> 
-> Does this cause do anything ? Is it just defensive programming ? Can the 
-> hw_id index exceed the number of CSIDs defined and if so why ?
-> 
-> Smells wrong.
-> 
-
-It is just a defensive programming, just like some null pointer checking.
-
-
-Thanks,
-Depeng
 
