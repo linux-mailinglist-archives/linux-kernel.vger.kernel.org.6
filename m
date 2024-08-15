@@ -1,141 +1,145 @@
-Return-Path: <linux-kernel+bounces-288300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5825953890
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:49:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 242ED953893
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01B731C23678
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:49:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5429C1C237F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95181BA88C;
-	Thu, 15 Aug 2024 16:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0673D1BA88C;
+	Thu, 15 Aug 2024 16:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yu3kT0RG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mMfwcqkf"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6BF1B3756
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 16:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856321B3756
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 16:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723740535; cv=none; b=U2HLWeP6kMzapJvNkhbifMHHkwPcbvnbdXf3vUCSpwmVGaKm4404fTck9+S9jxPscNnWs5kBFekGYR8bBgo1men2nFLIAZVcLNJkYnBCM2wgEY+UeJP+BtTJRor1mSfjXcJzOez0/+npQNBfPId96JkG8lSbTFb3RYkeXTAbLC8=
+	t=1723740551; cv=none; b=KzgvsUe0odLpMbDreX6IvLVneT+xGtTzcuJxvRGKECeTx09m21bO+BMKX12v4u1PNMMyZNdFs+kWIWrWlFcLY5iow/WoBpaKepMRFxDfM41I0C5xdRwVnNQ942U8cUCmxMWyFOGoLHhBWZvExciPxJb3zWURsBsmME6LUszQLnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723740535; c=relaxed/simple;
-	bh=LX0H7T59howhQUCK+ljDoyYrSqydSu2jLYt4IKsLzFc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cCn4DYPji1Lng0MehMQ9CXu8BWkiWYHn6x+yDxNkGvW4gf+NHaxSC0hxVH9LovQsoFq8S8iB6aRY7B/MBeCyiZvtcmdBTpEuOMdfh1gwyV5UAO8ob1uPqpjw7U7UiiRjqihpAQarkbMqo4zhI9tJ2fAXmBc9gvtIqfnKIkReVc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yu3kT0RG; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723740532;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pncdtjKt0JujPY/3N69/LmC6bpA92ExCyNXIcB41Qks=;
-	b=Yu3kT0RGFcZtul37OZVwY3QKA77zomxyXseJL7SAeMo0PektaY44/5iIVfZJYqWV3frTOV
-	GYEh24a5OwGMwAlT/excNZlDmo1U6gFL5P4BptoNY2m40CLLcmC6/647MTE1z4qY/umiX9
-	gOpv66yPD8sotJRURXAGaKBefty5HRg=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-511-KRPLVL3QNoKNn3SFs07_0w-1; Thu, 15 Aug 2024 12:48:51 -0400
-X-MC-Unique: KRPLVL3QNoKNn3SFs07_0w-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4281310bf7aso7127495e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:48:51 -0700 (PDT)
+	s=arc-20240116; t=1723740551; c=relaxed/simple;
+	bh=tFpXS3GuOZgmyhYlErFt6pCIn0BCfVCnojKLEo1Xp0s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tsPG+Eq/fK0kW2drygD+P+aHLQFaL5nZatnc3Jvk/k8xrICbJKizDkTjouVDSjQ0RkJ0cbWjisPi6TkmTU3CehpfO33AKG5QUSH0AVdkHaew8rJincUVprMGNGDurJj1XvTgOFwD4hVqkKxSNvWKjJvrdetHgOKDOJoa9O6t/0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mMfwcqkf; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-428085a3ad1so8252815e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:49:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723740548; x=1724345348; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Y6ZvBDWCoaIRtuHQSX0AStS65o7NOQvjseSgluHUkE=;
+        b=mMfwcqkfQlUgOaWS3OuHJ83CBtbbXM7DPLGP0GF6x6DKkiR/Ere7/xoclbQV/FwHha
+         voP6yTyYr45avBTadEyxtJGw3GhUJK+cjsJdYWDc7a7yRelDzyGnQU0AunkZw+0JvtyE
+         J3rNbZyoHL5CYI54BE3dQoo0Cg1eZSki0OHXWzgBVYOFIr1D4MwrwB9+ilHeqWIergyf
+         yfCrMq9U5SmCt+foMzAEfhukYewy1puW5OEQqr1gz5XGtIQYah58lXSUtagCYHR9qE3T
+         QmcBr+OWeNWKqK8XqhuB3te3EyK7PoC9Yvlc8FWZjXkmdPUNKrCkHYCBlDpTjQ70K2Ou
+         JTkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723740530; x=1724345330;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pncdtjKt0JujPY/3N69/LmC6bpA92ExCyNXIcB41Qks=;
-        b=ddPophIfqaT7mbcQ7Hva7PBwFQ60+w8K1DLHqm4eELL5eMw9fiJ+VRCBRPz50613Dv
-         hddWimt2PDxFwKqSUBn/am51fK35Gh4znt0q4ypYFI+L4HZZ90oO9BIVy963Uwx7PHjX
-         hoGV6UEs9Q46pe6eKPI526YdHBPTCZdydCwOIkHSY0hRm1bULWenIu6h33d+/KYpMYaE
-         Lx3VfC1sK8u/TARuD5Th/4vYIiUq0dzpqqQkHImpgWazffbjE6XMfcARWv+K2b0tHreh
-         Na2g8eMA74bWPg1GGQ/061pkPuvoKe4d8dzIM+9jovRzPtdM+WB+zOOj1iTDpvw4luFM
-         YcCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXmM49TQEztSBREHCMoabnnhAdDob3BAn+n99ffMrnECfeNZygdTRdh+uX+rHBNNIYH91a3PzyKqCeGr5rDaUEqBIuaDNWcVBuEQ5Hf
-X-Gm-Message-State: AOJu0YzS3Yqzf+atMCzmrSN+KiK6xaX6Nz31IKvW1DCvhWSl2XCUmdVU
-	tz/aRIfPhRBdG5+xUpTwjx3KG1szwP74D8ZnANBtn869pHPppjUZCFSCmiziBp45OhoNRdZSKuf
-	9z3p+3pAgM5QC4PozY/Y7MSEDeEdH+MHb15LwdLiuoPJOqQw3ExDlYB13WqoOnsNjdgQuuQy+vZ
-	1GHIm+snDab3HK1WgR4NNqisJvqo6kr4P+PVg0
-X-Received: by 2002:a05:600c:468f:b0:426:593c:935d with SMTP id 5b1f17b1804b1-429dd22ff11mr44548235e9.5.1723740529933;
-        Thu, 15 Aug 2024 09:48:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHoTrQ879n/ysyQctBFZ/2SXwCQCk8sn+EomvA7CTTpaL9SOacnhe2rO5VnSYbhln8UK0Q77xLW0MZG6BizNWU=
-X-Received: by 2002:a05:600c:468f:b0:426:593c:935d with SMTP id
- 5b1f17b1804b1-429dd22ff11mr44548065e9.5.1723740529383; Thu, 15 Aug 2024
- 09:48:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723740548; x=1724345348;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+Y6ZvBDWCoaIRtuHQSX0AStS65o7NOQvjseSgluHUkE=;
+        b=oCx5bHTN7Sg6YrvuS1mQj+QMyD+oqQataJuZYwNoLWV1Qj9wxGixI9LKEitCfliL+h
+         ofLK38+8/Xkv3HSbPzNVgQGO/WJJBw4D5RIIhUaZ2NVWKwA0TZ53pbecpJij3WMT/EEk
+         mjG+bOwO+6+eQ02dVGTOiFTUdasb+gWjF6NvPn9Pfuwtuhvhm60BUz+ErenkpTObWFNE
+         p04PwWmPs5zYx4y55JStjhErZgcfNWza/+JWSBsFb40UBnq70A5l4U0wvQabhLUJltwK
+         PYgvgghGsMhRrd/oYGOgsRJ1lR8FefX0MzQPdcI+71d+KXG2SK+GXGJB1KWLzSLfYlwM
+         BZNg==
+X-Forwarded-Encrypted: i=1; AJvYcCWy2Tu2QG0MOWUIG9rru6Cbk5DRi7AZI9Qa4CSDm6YpxmmUF4IkOFxTz+uD8bCP3WCZZZldIvYdGQ98wftlJPe2jO1ot/9haVZO8D6l
+X-Gm-Message-State: AOJu0YztLkLUsUz9DRybRkycyu20Sq1HKyfvLzbscVVvL70ZIFTfepvE
+	7IWKilKgxS15Xt1++svSRBEsFLqaeVqEs+muIucgXV5h7TuMjfCXIJq8brQtoRdEWe6VTL1C45C
+	H
+X-Google-Smtp-Source: AGHT+IEBnZLAf9YOI60yg1r6SCUktEL5+20HiBAaC6yEF9ZLknx9q0499kEGmstkp3oNB17v8y2TrA==
+X-Received: by 2002:a05:600c:3108:b0:426:61e8:fb3b with SMTP id 5b1f17b1804b1-429dd264e92mr45940385e9.27.1723740547705;
+        Thu, 15 Aug 2024 09:49:07 -0700 (PDT)
+Received: from localhost.localdomain ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37189896bf0sm1940718f8f.73.2024.08.15.09.49.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 09:49:06 -0700 (PDT)
+From: srinivas.kandagatla@linaro.org
+To: broonie@kernel.org
+Cc: perex@perex.cz,
+	tiwai@suse.com,
+	alsa-devel@alsa-project.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	amit.pundir@linaro.org,
+	dmitry.baryshkov@linaro.org,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH] ASoC: codecs: lpass-va-macro: set the default codec version for sm8250
+Date: Thu, 15 Aug 2024 17:49:03 +0100
+Message-Id: <20240815164903.18400-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809190319.1710470-1-seanjc@google.com> <20240809190319.1710470-10-seanjc@google.com>
- <e50240f9-a476-4ace-86aa-f2fd33fbe320@redhat.com> <Zr4L_4dzZl-qa3xu@google.com>
-In-Reply-To: <Zr4L_4dzZl-qa3xu@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Thu, 15 Aug 2024 18:48:36 +0200
-Message-ID: <CABgObfbyJo2uYYkTTYdrrYQcB6XgB2+PhmfqwKrQ-g7D5UPr5A@mail.gmail.com>
-Subject: Re: [PATCH 09/22] KVM: x86/mmu: Try "unprotect for retry" iff there
- are indirect SPs
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Peter Gonda <pgonda@google.com>, Michael Roth <michael.roth@amd.com>, 
-	Vishal Annapurve <vannapurve@google.com>, Ackerly Tng <ackerleytng@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 15, 2024 at 4:09=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
-> > (This is preexisting in reexecute_instruction() and goes away in patch =
-18, if
-> > I'm pre-reading that part of the series correctly).
-> >
-> > Bonus points for opportunistically adding a READ_ONCE() here and in
-> > kvm_mmu_track_write().
->
-> Hmm, right, this one should have a READ_ONCE(), but I don't see any reaso=
-n to
-> add one in kvm_mmu_track_write().  If the compiler was crazy and generate=
- multiple
-> loads between the smp_mb() and write_lock(), _and_ the value transitioned=
- from
-> 1->0, reading '0' on the second go is totally fine because it means the l=
-ast
-> shadow page was zapped.  Amusingly, it'd actually be "better" in that it =
-would
-> avoid unnecessary taking mmu_lock.
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-Your call, but I have started leaning towards always using
-READ_ONCE(), similar to all atomic_t accesses are done with
-atomic_read(); that is, just as much as a marker for cross-thread
-lock-free accesses, in addition to limiting the compiler's
-optimizations.
+sm8250 and sc7280 have lpass codec version 1.0, as these are very old
+platforms, they do not have a reliable way to get the codec version
+from core_id registers.
 
-tools/memory-model/Documentation/access-marking.txt also suggests
-using READ_ONCE() and WRITE_ONCE() always except in special cases.
-They are also more friendly to KCSAN (though I have never used it).
+Add the version info into of_data, so that it does not need to use
+core_id registers to get version number.
 
-This of course has the issue of being yet another unfinished transition.
+Fixes: 378918d59181 ("ASoC: codecs: lpass-macro: add helpers to get codec version")
+Fixes: dbacef05898d ("ASoC: codec: lpass-rx-macro: prepare driver to accomdate new codec versions")
+Fixes: 727de4fbc546 ("ASoC: codecs: lpass-wsa-macro: Correct support for newer v2.5 version")
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ sound/soc/codecs/lpass-va-macro.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-> Obviously the READ_ONCE() would be harmless, but IMO it would be more con=
-fusing
-> than helpful, e.g. would beg the question of why kvm_vcpu_exit_request() =
-doesn't
-> wrap vcpu->mode with READ_ONCE().  Heh, though arguably vcpu->mode should=
- be
-> wrapped with READ_ONCE() since it's a helper and could be called multiple=
- times
-> without any code in between that would guarantee a reload.
-
-Indeed, who said I wouldn't change that one as well? :)
-
-Paolo
+diff --git a/sound/soc/codecs/lpass-va-macro.c b/sound/soc/codecs/lpass-va-macro.c
+index 8454193ed22a..e95d1f29ef18 100644
+--- a/sound/soc/codecs/lpass-va-macro.c
++++ b/sound/soc/codecs/lpass-va-macro.c
+@@ -228,11 +228,13 @@ struct va_macro {
+ struct va_macro_data {
+ 	bool has_swr_master;
+ 	bool has_npl_clk;
++	int version;
+ };
+ 
+ static const struct va_macro_data sm8250_va_data = {
+ 	.has_swr_master = false,
+ 	.has_npl_clk = false,
++	.version = LPASS_CODEC_VERSION_1_0,
+ };
+ 
+ static const struct va_macro_data sm8450_va_data = {
+@@ -1587,7 +1589,14 @@ static int va_macro_probe(struct platform_device *pdev)
+ 			goto err_npl;
+ 	}
+ 
+-	va_macro_set_lpass_codec_version(va);
++	/**
++	 * old version of codecs do not have a reliable way to determine the
++	 * version from registers, get them from soc specific data
++	 */
++	if (data->version)
++		lpass_macro_set_codec_version(data->version);
++	else /* read version from register */
++		va_macro_set_lpass_codec_version(va);
+ 
+ 	if (va->has_swr_master) {
+ 		/* Set default CLK div to 1 */
+-- 
+2.25.1
 
 
