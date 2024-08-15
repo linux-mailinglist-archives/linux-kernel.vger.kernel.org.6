@@ -1,110 +1,104 @@
-Return-Path: <linux-kernel+bounces-287818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28F9F952CE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:51:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0AB2952CE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:52:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6910E285AE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:51:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 981111F211CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2771A7072;
-	Thu, 15 Aug 2024 10:41:20 +0000 (UTC)
-Received: from mail.valinux.co.jp (mail.valinux.co.jp [210.128.90.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A3E1AC421;
+	Thu, 15 Aug 2024 10:42:36 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B471A256C
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 10:41:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.128.90.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0463F1AB50A;
+	Thu, 15 Aug 2024 10:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723718480; cv=none; b=HPE3jurnvAE0X8yI9PuN9IxaB0qoE/RFdCeCoffJ9oBFHIN6Rjv8kIxDCPCqAwCZfBrKLCsEJl43ddTayBU8sn78VsXiLoGsz0EKZSj8AOWOuA6pKg6YnpPV1XkXPW4kugZOs6bMr4N+jFb8L6Mtcxs71X0urMUcK5wVwKGJfLg=
+	t=1723718556; cv=none; b=PBZQ/QBfGqLu3G9e2Eu4Ih9IHA4Itv3MGjpYmzmLSWNhCVzuePU1hrtAbAndPTNJqcchVN0smNrdqYZppVexQMnYsWSuQlk2IkzCk/TED3vot/lbEz2e8X+dPacWYwBvDquTQ94yNg44ggkJ1CeqpAvDgOocjziT18Dt39nc/Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723718480; c=relaxed/simple;
-	bh=qXoa31UOI/ScyxIxnQ8eIYh103YErjefJAiSWIIZWgQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NpnfjSho27BJSuih4GiFTpH8QfpacDInc+LBHi24HktHlrUlbovZH6IRuyl6DE6b8htPkBvAayIz1hPmqkg0eOHtSZ1mpUUnH6w6foempA5x+wICocHRCEXnPaLgwfyvwvpvrdV3dMvoBQqV8646kl9gLXz7D7Fa32Oio1vqP0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; arc=none smtp.client-ip=210.128.90.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
-Received: from localhost (localhost [127.0.0.1])
-	by mail.valinux.co.jp (Postfix) with ESMTP id 06FFDA9E69;
-	Thu, 15 Aug 2024 19:41:10 +0900 (JST)
-X-Virus-Scanned: Debian amavisd-new at valinux.co.jp
-Received: from mail.valinux.co.jp ([127.0.0.1])
-	by localhost (mail.valinux.co.jp [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id K6y3jmnz_U8p; Thu, 15 Aug 2024 19:41:09 +0900 (JST)
-Received: from DESKTOP-NBGHJ1C.local.valinux.co.jp (vagw.valinux.co.jp [210.128.90.14])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mail.valinux.co.jp (Postfix) with ESMTPSA id CEDDBA9E65;
-	Thu, 15 Aug 2024 19:41:09 +0900 (JST)
-From: takakura@valinux.co.jp
-To: pmladek@suse.com,
-	john.ogness@linutronix.de
-Cc: akpm@linux-foundation.org,
-	bhe@redhat.com,
-	feng.tang@intel.com,
-	j.granados@samsung.com,
-	linux-kernel@vger.kernel.org,
-	lukas@wunner.de,
-	nishimura@valinux.co.jp,
-	rostedt@goodmis.org,
-	senozhatsky@chromium.org,
-	stephen.s.brennan@oracle.com,
-	taka@valinux.co.jp,
-	takakura@valinux.co.jp,
-	ubizjak@gmail.com,
-	wangkefeng.wang@huawei.com
-Subject: Re: [PATCH v3 1/2] Allow cpu backtraces to be written into ringbuffer during panic
-Date: Thu, 15 Aug 2024 19:41:08 +0900
-Message-Id: <20240815104108.48576-1-takakura@valinux.co.jp>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <ZrtkMciiYhUK8Fs4@pathway.suse.cz>
-References: <ZrtkMciiYhUK8Fs4@pathway.suse.cz>
+	s=arc-20240116; t=1723718556; c=relaxed/simple;
+	bh=5Z5ob43v97sv7FlY2gStwSzKV526jmeLqAdW9ir+IKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DwxwVSvEsukDSKE0H4qmdRGZ52DLbNXT0Oqz/LCKtL0FjgF7iiC7knqPwKe3F1Npt0OVLEk4t+Bghx4DlEvcx6l1UnFgjwE/1/5Rl3igK7MilorWYsrMHYPF6ZVlUKG420RBSs+Ni14lc3zK/ZZLpkSEBIPkss0/KSuclzlhCTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36C1AC32786;
+	Thu, 15 Aug 2024 10:42:30 +0000 (UTC)
+Date: Thu, 15 Aug 2024 11:42:28 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 02/40] prctl: arch-agnostic prctl for shadow stack
+Message-ID: <Zr3blK41YpWEgZSb@arm.com>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+ <20240801-arm64-gcs-v10-2-699e2bd2190b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240801-arm64-gcs-v10-2-699e2bd2190b@kernel.org>
 
-Hi Petr and John,
+On Thu, Aug 01, 2024 at 01:06:29PM +0100, Mark Brown wrote:
+> Three architectures (x86, aarch64, riscv) have announced support for
+> shadow stacks with fairly similar functionality.  While x86 is using
+> arch_prctl() to control the functionality neither arm64 nor riscv uses
+> that interface so this patch adds arch-agnostic prctl() support to
+> get and set status of shadow stacks and lock the current configuation to
+> prevent further changes, with support for turning on and off individual
+> subfeatures so applications can limit their exposure to features that
+> they do not need.  The features are:
+> 
+>   - PR_SHADOW_STACK_ENABLE: Tracking and enforcement of shadow stacks,
+>     including allocation of a shadow stack if one is not already
+>     allocated.
+>   - PR_SHADOW_STACK_WRITE: Writes to specific addresses in the shadow
+>     stack.
+>   - PR_SHADOW_STACK_PUSH: Push additional values onto the shadow stack.
+> 
+> These features are expected to be inherited by new threads and cleared
+> on exec(), unknown features should be rejected for enable but accepted
+> for locking (in order to allow for future proofing).
+> 
+> This is based on a patch originally written by Deepak Gupta but modified
+> fairly heavily, support for indirect landing pads is removed, additional
+> modes added and the locking interface reworked.  The set status prctl()
+> is also reworked to just set flags, if setting/reading the shadow stack
+> pointer is required this could be a separate prctl.
+> 
+> Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 
-On Tue 2024-08-13 13:48, Petr Mladek wrote:
->On Mon 2024-08-12 16:27:03, takakura@valinux.co.jp wrote:
->> From: Ryo Takakura <takakura@valinux.co.jp>
->> 
->> commit 779dbc2e78d7 ("printk: Avoid non-panic CPUs writing
->> to ringbuffer") disabled non-panic CPUs to further write messages to
->> ringbuffer after panicked.
->> 
->> Since the commit, non-panicked CPU's are not allowed to write to
->> ring buffer after panicked and CPU backtrace which is triggered
->> after panicked to sample non-panicked CPUs' backtrace no longer
->> serves its function as it has nothing to print.
->> 
->> Fix the issue by allowing non-panicked CPUs to write into ringbuffer
->> while CPU backtrace is in flight.
->> 
->> Fixes: 779dbc2e78d7 ("printk: Avoid non-panic CPUs writing to ringbuffer")
->> Signed-off-by: Ryo Takakura <takakura@valinux.co.jp>
->> Reviewed-by: Petr Mladek <pmladek@suse.com>
->
->JFYI, I have pushed this patch into printk/linux.git, branch for-6.11-fixup.
->I am going to create pull request after it spends at least one or two
->days in linux-next.
-
-Thanks!!
-
->The 2nd patch is more complicated. It depends on another patchset
->integrating con->write_atomic() callback. 
->
->Best Regards,
->Petr
-
-Sincerely,
-Ryo Takakura
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
