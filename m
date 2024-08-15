@@ -1,123 +1,246 @@
-Return-Path: <linux-kernel+bounces-288109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EEE2953578
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:38:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26638953588
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4159B1C23CF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:38:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C02C4282DA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6F01A01CB;
-	Thu, 15 Aug 2024 14:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55BDF1AC893;
+	Thu, 15 Aug 2024 14:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cldTCEjk"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LIH/NSNC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5DC3214;
-	Thu, 15 Aug 2024 14:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C7A1684AC;
+	Thu, 15 Aug 2024 14:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723732692; cv=none; b=StQJYvnaG41K92G6z2ftGgLh0Jzz/K6vYwZYyZVHdYKO8HwwnSIucxSVl/Rv95mPGRYvltoX/YxKaH86EbD9SrNQvZW0o1A87V4Sm7NIiPrgiABzozrDs24xC2aEgEL8sE06BK84BEEuLszg5vTOQB4o3yqVSEsvZTzcW0X26Gg=
+	t=1723732721; cv=none; b=IgBw+2Y7LBdf6ujqKi1DU2SYkBrdGrigUlKyECL/THZPkUZGAyLeh8Twuf9aVBIdr/+azphJIVPz/eI76R/+TLCKybxAZmfEuggeCIL6jQLbXMn8eDDdy15osu5dzDZY+PGPqfheKuWEhvmY00uTeEMKGq0stAgoOzv5n17qpNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723732692; c=relaxed/simple;
-	bh=9eR2eaK14h0jFdZYscJcZ9NNiF9V1Ls5CoWnxENQvp8=;
+	s=arc-20240116; t=1723732721; c=relaxed/simple;
+	bh=k3UTEcJQzJQY4LxNoDzAK/SiM1woRUGDUADRkRRyGHw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UAuf690NLq5Qwy+IX+syGdIOv1keqFxPy0RP8BAvITBxCP0MoaVcK/J+c7IYKoqebltWT9BWopk2xs6U1I8QIGSAG0IZmN5urobfbA77efNgxYK2/JJ5KkQ3neP8oZ4XpEsKXJxYfKYntoNDKtqyq++kYdp3DZ53MVdMJgPOv3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cldTCEjk; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-530e2548dfdso1082656e87.1;
-        Thu, 15 Aug 2024 07:38:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723732688; x=1724337488; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TpSFVkFZ+ieMC7Edi47GLFH3X8aPb2mRtfeJvBEpOWQ=;
-        b=cldTCEjkPWv1fCZR0iY0M3M4/5F9F1HMYo6W/UHwoX4o/f5NLquSXxjXGyYliOkrCu
-         nFpy4mM62p5FIIjzfW/WdYelnJQvuOUqPZG+Ta+LOBwEq4BC9TmmyDvPfQ9Y2Ut3lvl/
-         K5QE/dTtgcLFWLQVmpOV/lFO7mdb/iYWe64496x+hsNIOWDaBREeVf2HdnYA0Vl+J7sA
-         kzi1JHppn3zpG8zKNXC/FZ1ghYhWEIkgpXf3u+IIfguUIC9QcQkytPZf+Nby+SF16K49
-         F/Y1TvFPGw16u1x8Gvux6Kx/XZUoULjZqdwPUi7QPnN/VuhwtZgi6X88h3PIB/0k9LGR
-         m1ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723732688; x=1724337488;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TpSFVkFZ+ieMC7Edi47GLFH3X8aPb2mRtfeJvBEpOWQ=;
-        b=jmBe2nm3Op1poOv2Il5AP9Fi7N95gySajf1k+dFmXeghbRP0ykKYjrZFwSFQ5gLlB9
-         3AgdKMKaPrt3n7sCVSWHm8L8pq9WY8cDihhcVOnOCrcoMdl6cJ5yN0l49kOV3zEmvb3t
-         6u3Pn+aMipXAfvOb9SGtKh9fjr6xrYrQpT964h7jVpf03drs2RYZGmulgOuKyODgkVHi
-         UEhDAkC4Qhot11h6OJ/U3g8lEIdxUeDd70kA1FGo/6E54BDxzU9VR2rop5rOz72HpENA
-         r+vZF9FgHR/XP11Unh8bY5cosWZWR9mrQwv3GB05JOzaPz9z7ZRnGETl1vMKn1NkdjSE
-         qHYg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1sCc87lNRS/8g74r9kFhS7cu5PrMcWGfk7rqRx7RaMs1yWtMJIWLVScrHToArvjUm6cD6+vGClA3DKTnhxFelKAEcj4YqV9ttPpJh0jrHYAt027iUxNBfWis+fg0nm7MSz2mMrr+QWw==
-X-Gm-Message-State: AOJu0YyKR2aUvwx/ZxgT7IuJUi4+2jO+jguH+dFE/ki2IZtBD7RYZLqj
-	OXzGJc+u/jiqaTEHDvFNzMzp1cZdskgdoRJbwFrvLFOJkeVGcIul
-X-Google-Smtp-Source: AGHT+IEkwol/TJD1HBGQZksDLREN0Wsc7UJAVMs7ix8fFZCbVmUUBtgQjbld43xO/ooRsjLUH4i4fw==
-X-Received: by 2002:a05:6512:2208:b0:52e:7444:162e with SMTP id 2adb3069b0e04-532edbbf094mr4442659e87.55.1723732687917;
-        Thu, 15 Aug 2024 07:38:07 -0700 (PDT)
-Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839471b4sm110659566b.164.2024.08.15.07.38.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 07:38:07 -0700 (PDT)
-Date: Thu, 15 Aug 2024 16:38:05 +0200
-From: Stanislav Jakubek <stano.jakubek@gmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=aoRJ90ivqOmlhZW4VzOwGHSRDEi/njprB2nb/tAi/bxzdpTiYg48ufLJRfH1u4z8Xbr9ZN4Bx7ZysHsVtyazYWj5gykJoGdWp+RI74mWSjNjajN8rOJJS2JWPZ3uAhbmtxLfAw4lPOuVAOIVZFHgqpUNqys7uMGmgTY4o+qH0N0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LIH/NSNC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F960C4AF0D;
+	Thu, 15 Aug 2024 14:38:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723732721;
+	bh=k3UTEcJQzJQY4LxNoDzAK/SiM1woRUGDUADRkRRyGHw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LIH/NSNCo2aNiYQvTHxh4IwPIcLBke3cjGULP+pg/k/Nmbrlw/pkIRmKP9tj5wJNz
+	 f2X95GMDFVkINfY5j4HwKqIcYuFCwLDcd5I+ZAGbJ0+qvS3q30LL2baigXkshbXt/9
+	 JszKli5b8ZtkgBcv9nCVS2FioFD2mjSV0fY2nCX6RayS8Jtp6BeYaVElTJI2yvCCav
+	 gBG21UwR+q6NEL8+SA3Lw3UKyRIwGZX73R4XI+gdi37aaEUtHe1gLvdNS5AL2qAm+H
+	 qmURzIfKGO66lsxcGk8wjZOdvzphuvb7RVuNMbhE0FMdD7rL3/R+R8ixeQww/cKiHg
+	 GrpaVRvyxy5sg==
+Date: Thu, 15 Aug 2024 15:38:35 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Guillaume Stols <gstols@baylibre.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: mfd: sprd,sc2731: convert to YAML
-Message-ID: <Zr4Sze8ea3q4d+Xk@standask-GA-A55M-S2HP>
-References: <Zr3X1RoQs7ElTnlJ@standask-GA-A55M-S2HP>
- <20240815140046.GA1603296-robh@kernel.org>
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	20240705211452.1157967-2-u.kleine-koenig@baylibre.com,
+	20240712171821.1470833-2-u.kleine-koenig@baylibre.com,
+	cover.1721040875.git.u.kleine-koenig@baylibre.com,
+	aardelean@baylibre.com
+Subject: Re: [PATCH 2/8] dt-bindings: iio: adc: ad7606: Add iio backend
+ bindings
+Message-ID: <20240815-chatter-monotone-c1a00c246d1f@spud>
+References: <20240815-ad7606_add_iio_backend_support-v1-0-cea3e11b1aa4@baylibre.com>
+ <20240815-ad7606_add_iio_backend_support-v1-2-cea3e11b1aa4@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="6HKhWcDgbvoBp7P3"
+Content-Disposition: inline
+In-Reply-To: <20240815-ad7606_add_iio_backend_support-v1-2-cea3e11b1aa4@baylibre.com>
+
+
+--6HKhWcDgbvoBp7P3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240815140046.GA1603296-robh@kernel.org>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
+On Thu, Aug 15, 2024 at 12:11:56PM +0000, Guillaume Stols wrote:
+> Add the required properties for iio-backend support, as well as an
+> example and the conditions to mutually exclude interruption and
+> conversion trigger with iio-backend.
+> The iio-backend's function is to controls the communication, and thus the
+> interruption pin won't be available anymore.
+> As a consequence, the conversion pin must be controlled externally since
+> we will miss information about when every single conversion cycle (i.e
+> conversion + data transfert) ends, hence a PWM is introduced to trigger
+> the conversions.
+>=20
+> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+> ---
+>  .../devicetree/bindings/iio/adc/adi,ad7606.yaml    | 75 ++++++++++++++++=
++++++-
+>  1 file changed, 72 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml b/=
+Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> index c0008d36320f..4b324f7e3207 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> @@ -114,13 +114,28 @@ properties:
+>        assumed that the pins are hardwired to VDD.
+>      type: boolean
+> =20
+> +  pwms:
+> +    description:
+> +      In case the conversion is triggered by a PWM instead of a GPIO plu=
+gged to
+> +      the CONVST pin, the PWM must be referenced.
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  pwm-names:
+> +    minItems: 1
+> +    maxItems: 2
 
-[skip]
+You need to describe what the pwms are.
 
-> > ---
-> > Depends on:
-> >   - eFuse YAML conversion: https://lore.kernel.org/lkml/9fba73ce66f1f3b7b2a8f46e7c21f60cff5a85f0.1721199034.git.stano.jakubek@gmail.com/
-> >   - RTC YAML conversion: https://lore.kernel.org/lkml/ZrBzmQI0IAL7LI3e@standask-GA-A55M-S2HP/
-> 
-> These either have to be sent as 1 series for 1 maintainer to apply (Lee) 
-> or you'll have to wait a cycle for the dependencies.
+> +  io-backends:
+> +    description:
+> +      A reference to the iio-backend, which is responsible handling the =
+BUSY
+> +      pin's falling edge and communication.
+> +      An example of backend can be found at
+> +      http://analogdevicesinc.github.io/hdl/library/axi_ad7606x/index.ht=
+ml
+> +
+>  required:
+>    - compatible
+> -  - reg
+>    - avcc-supply
+>    - vdrive-supply
+> -  - interrupts
+> -  - adi,conversion-start-gpios
+> =20
+>  # This checks if reg is a chipselect so the device is on an SPI
+>  # bus, the if-clause will fail if reg is a tuple such as for a
+> @@ -137,6 +152,35 @@ then:
+>          - spi-cpol
+> =20
+>  allOf:
+> +  # Communication is handled either by the backend or an interrupt.
 
-I've had this patch sitting on my harddrive for over a month now.
-Both of the dependencies have been sitting on the mailing lists
-pretty much unchanged for about a month as well...
-Also, there are technically more dependencies, but they're in linux-next
-already, so I didn't include them here.
+This comment seems misplaced, but also superfluous?
 
-Just wanted to get this out to get some feedback (and hope that it would
-move the dependencies along).
+> +  - if:
+> +      properties:
+> +        pwms: false
+> +    then:
+> +      required:
+> +        - adi,conversion-start-gpios
+> +
+> +  - if:
+> +      properties:
+> +        adi,conversion-start-gpios: false
+> +    then:
+> +      required:
+> +        - pwms
+> +
+> +  - if:
+> +      properties:
+> +        interrupts: false
+> +    then:
+> +      required:
+> +        - io-backends
+> +
+> +  - if:
+> +      properties:
+> +        io-backends: false
+> +    then:
+> +      required:
+> +        - interrupts
+> +
+>    - if:
+>        properties:
+>          compatible:
+> @@ -178,12 +222,37 @@ allOf:
+>          adi,sw-mode: false
+>      else:
+>        properties:
+> +        pwms:
+> +          maxItems: 1
+> +        pwm-names:
+> +          maxItems: 1
+>          adi,conversion-start-gpios:
+>            maxItems: 1
+> =20
+>  unevaluatedProperties: false
+> =20
+>  examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    / {
+> +        adi_adc {
+> +                compatible =3D "adi,ad7606b";
 
-[skip]
- 
-> The preference is one complete example here and drop any partial 
-> examples of the child nodes in the child node schemas.
-
-I can add a more complete example here, sure.
-But I don't understand the point of removing the examples in child node
-bindings. Seems to me like all that would do is provide less documentation.
+Just two space indent for examples please.
 
 Cheers,
-Stanislav
+Conor.
+
+> +
+> +                pwms =3D <&axi_pwm_gen 0 0>;
+> +
+> +                avcc-supply =3D <&adc_vref>;
+> +                vdrive-supply =3D <&vdd_supply>;
+> +
+> +                reset-gpios =3D <&gpio0 91 GPIO_ACTIVE_HIGH>;
+> +                standby-gpios =3D <&gpio0 90 GPIO_ACTIVE_LOW>;
+> +                adi,range-gpios =3D <&gpio0 89 GPIO_ACTIVE_HIGH>;
+> +                adi,oversampling-ratio-gpios =3D <&gpio0 88 GPIO_ACTIVE_=
+HIGH
+> +                                                &gpio0 87 GPIO_ACTIVE_HI=
+GH
+> +                                                &gpio0 86 GPIO_ACTIVE_HI=
+GH>;
+> +                io-backends =3D <&iio_backend>;
+> +        };
+> +    };
+> +
+>    - |
+>      #include <dt-bindings/gpio/gpio.h>
+>      #include <dt-bindings/interrupt-controller/irq.h>
+>=20
+> --=20
+> 2.34.1
+>=20
+
+--6HKhWcDgbvoBp7P3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZr4S6gAKCRB4tDGHoIJi
+0ulbAP9hVpWaS+YqUymxF/KYZehF0e4fGiVa8VvqdBGTq4r69AD+MauYvu8v8/CJ
+i/lNXDbt57S3gsQSkOzHbY8DnCzcQgk=
+=tsYn
+-----END PGP SIGNATURE-----
+
+--6HKhWcDgbvoBp7P3--
 
