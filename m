@@ -1,79 +1,122 @@
-Return-Path: <linux-kernel+bounces-288447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E298D953A2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:35:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBBB2953A33
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:35:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F8BC1C248AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:35:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBBB81C25255
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228BD57CBC;
-	Thu, 15 Aug 2024 18:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35DA5B1FB;
+	Thu, 15 Aug 2024 18:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b="5ZHdrUVy"
-Received: from mail.antaris-organics.com (mail.antaris-organics.com [91.227.220.155])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ABo/r0Kp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D09383A3;
-	Thu, 15 Aug 2024 18:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.227.220.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD013A8CB;
+	Thu, 15 Aug 2024 18:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723746893; cv=none; b=ijEMGACleMEMLxaIW1u3Prku7gHA+ZqQNMQQ+RO9pItTGUO0yYsF5OoewO7Wdt7cx4m7fj9PczXEP+8NEYgEVO/Qgvl8JBw45/79MXh74dAPhHEHgkU8qxxx0WgXF7JcYqzgL5SoMw0Qyp2la5bMNLnYnSI6dyw6yWzrj6bmoUw=
+	t=1723746918; cv=none; b=JHN6/lvWdXEdWv8L02lGgiuWWxiam0mBvF9xeZjHjcHMzZsa+8V5eRUY9F7ev4tF9EWklNGlQJeiWF3/DDeJSPFCvxy9Y4rIYCpswXq9Hn4xKLSk+d44F8OK3H0sGrWtbwNgpAKUNYt1ajDFP/tTvTz9DSsCvD5dHFsrLQ2SNMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723746893; c=relaxed/simple;
-	bh=xLnJMUPm2aYBrTTcAEmd/1AjrG7nIACiu9DwvTR9ocA=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rO+hsxeYgQ3vHy++0BYzgdfH1sAh5gC3a3QQUUhNf8MRPHn6WOxqbfh1k4g3XeZPKvhc7S/oBcpo/CRF4Sa2F+lYSggr2/ct6R2RJqXu4Duyq+CWpt0JUyZyQhHJxSq0XGVCmywjau5qRW6h8n7VRnOONSti0Z9SS9opVcKPrvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com; spf=pass smtp.mailfrom=mareichelt.com; dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b=5ZHdrUVy; arc=none smtp.client-ip=91.227.220.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mareichelt.com
-Date: Thu, 15 Aug 2024 20:34:41 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mareichelt.com;
-	s=202107; t=1723746883;
-	bh=xLnJMUPm2aYBrTTcAEmd/1AjrG7nIACiu9DwvTR9ocA=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To:Cc:Cc:content-type:content-type:date:date:
-	 From:from:in-reply-to:in-reply-to:message-id:mime-version:
-	 references:reply-to:Sender:Subject:Subject:To:To;
-	b=5ZHdrUVydthB2a5OjGdMWBqYCQaoBiCmhcAJBUKMV4P7xIUjgQLMQoJAerzDBx2h+
-	 jy0RB5uZmCdmmcv497I2lALIUAJvnGOJ5fAmMitFB3DN3h2uh0UvTcIWoruSWBkEs0
-	 mvJOimilZZsd085CCKjSDA4jiZOpIlO6UdOaqljCTbEUJLecbCA8Rm0cLxPI/MVo8+
-	 Qglvcn4hvBKdCzzqQYAYycX8rEnk42bC2caDDBlmB7hljOcuHa6bFiu95pnqU1XdD3
-	 MdVSP+zvR1sHUX48p69RQFlgP5aPtdI8RsQw1XEaL0IxqYZ00lbsw30zCcNCYepncV
-	 SJBRRRYrqnimw==
-From: Markus Reichelt <lkt+2023@mareichelt.com>
-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6.10 00/22] 6.10.6-rc1 review
-Message-ID: <20240815183441.GB5407@pc21.mareichelt.com>
-Mail-Followup-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240815131831.265729493@linuxfoundation.org>
+	s=arc-20240116; t=1723746918; c=relaxed/simple;
+	bh=cTCsOgynQ4MwhMR6ZY7de0r7dfkhZkEHbhoL0qooFwQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=DDlBqo184Wc9mG0Oxiwlmm0E9sXsSlzNUB1EHilvWnk2c9gzYPF6TKpPrI7EFLQMQf8X6g1TTuNl0aF+eU40+YdgibW8UxkwTiqPNcnidEj1KGLfLITORUEEwL7pj3p/3ePtE18XWPdJAru1AryJJypOQKMF1pz5dG4345xqwRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ABo/r0Kp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB574C32786;
+	Thu, 15 Aug 2024 18:35:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723746917;
+	bh=cTCsOgynQ4MwhMR6ZY7de0r7dfkhZkEHbhoL0qooFwQ=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=ABo/r0KpwzV2fsu7t9P88x9rSwJlLxWCZferGBEeusbxc7rkDoUTF3J8FWwiBqwqT
+	 NWJ2Xp90EgLXVEbil6GcV6DJHVaeoSTZi0TgVXlv9VIiBMvvFYrRJid9gLrX/txws7
+	 siYy5jScFJrXwMXXkt0d9iiK3DUfh5wGFRCEdfchdNfkT04PQWTO+dMD6ip9w5NLB1
+	 REC4S4UU4k9XDBy0Bx9u67wRSu7YIcEuxtwUQDBRVZ86u/aPmhNmriluSFbl0eVYSV
+	 Vj+N++DUAjE6ZtDvBDIcwM/lybcx0V1R3Q/dmHf3imznH1+CD3U7BBdaxQlqGS7Aqi
+	 LrEYvArcKSYNA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240815131831.265729493@linuxfoundation.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 15 Aug 2024 21:35:13 +0300
+Message-Id: <D3GPA85MRNMM.3GMP3BTBEEYFP@kernel.org>
+Cc: <dpsmith@apertussolutions.com>, <tglx@linutronix.de>,
+ <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+ <dave.hansen@linux.intel.com>, <ardb@kernel.org>, <mjg59@srcf.ucam.org>,
+ <James.Bottomley@hansenpartnership.com>, <peterhuewe@gmx.de>,
+ <jgg@ziepe.ca>, <luto@amacapital.net>, <nivedita@alum.mit.edu>,
+ <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <corbet@lwn.net>,
+ <ebiederm@xmission.com>, <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
+ <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
+ <trenchboot-devel@googlegroups.com>
+Subject: Re: [PATCH v9 09/19] x86: Secure Launch kernel late boot stub
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: <ross.philipson@oracle.com>, <linux-kernel@vger.kernel.org>,
+ <x86@kernel.org>, <linux-integrity@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+ <kexec@lists.infradead.org>, <linux-efi@vger.kernel.org>,
+ <iommu@lists.linux-foundation.org>
+X-Mailer: aerc 0.17.0
+References: <20240531010331.134441-1-ross.philipson@oracle.com>
+ <20240531010331.134441-10-ross.philipson@oracle.com>
+ <D1RHZDG3HJNK.ZWTFLXDBEXD1@kernel.org>
+ <ad84cdaf-bea6-483e-82f3-c83a6b7006c3@oracle.com>
+In-Reply-To: <ad84cdaf-bea6-483e-82f3-c83a6b7006c3@oracle.com>
 
-* Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+On Mon Aug 12, 2024 at 10:02 PM EEST,  wrote:
+> On 6/4/24 3:59 PM, Jarkko Sakkinen wrote:
+> > On Fri May 31, 2024 at 4:03 AM EEST, Ross Philipson wrote:
+> >> The routine slaunch_setup is called out of the x86 specific setup_arch=
+()
+> >> routine during early kernel boot. After determining what platform is
+> >> present, various operations specific to that platform occur. This
+> >> includes finalizing setting for the platform late launch and verifying
+> >> that memory protections are in place.
+> >>
+> >> For TXT, this code also reserves the original compressed kernel setup
+> >> area where the APs were left looping so that this memory cannot be use=
+d.
+> >>
+> >> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+> >> ---
+> >>   arch/x86/kernel/Makefile   |   1 +
+> >>   arch/x86/kernel/setup.c    |   3 +
+> >>   arch/x86/kernel/slaunch.c  | 525 +++++++++++++++++++++++++++++++++++=
+++
+> >>   drivers/iommu/intel/dmar.c |   4 +
+> >>   4 files changed, 533 insertions(+)
+> >>   create mode 100644 arch/x86/kernel/slaunch.c
+> >>
+> >> diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+> >> index 5d128167e2e2..b35ca99ab0a0 100644
+> >> --- a/arch/x86/kernel/Makefile
+> >> +++ b/arch/x86/kernel/Makefile
+> >> @@ -76,6 +76,7 @@ obj-$(CONFIG_X86_32)		+=3D tls.o
+> >>   obj-$(CONFIG_IA32_EMULATION)	+=3D tls.o
+> >>   obj-y				+=3D step.o
+> >>   obj-$(CONFIG_INTEL_TXT)		+=3D tboot.o
+> >> +obj-$(CONFIG_SECURE_LAUNCH)	+=3D slaunch.o
+> >=20
+> > Hmm... should that be CONFIG_X86_SECURE_LAUNCH?
+>
+> Further thoughts on this after discussions...
+>
+> The Secure Launch feature will cover other architectures beyond x86 in=20
+> the future. We may have to rework/move the config settings at that point=
+=20
+> but for now I don't think we want to change it.
 
-> This is the start of the stable review cycle for the 6.10.6 release.
-> There are 22 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 17 Aug 2024 13:18:17 +0000.
-> Anything received after that time might be too late.
+OK got it.
 
-Hi Greg
-
-6.10.6-rc1 compiles, boots and runs here on x86_64
-(AMD Ryzen 5 PRO 4650G, Slackware64-15.0)
-
-Tested-by: Markus Reichelt <lkt+2023@mareichelt.com>
+BR, Jarkko
 
