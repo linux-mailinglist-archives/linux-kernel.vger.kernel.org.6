@@ -1,139 +1,182 @@
-Return-Path: <linux-kernel+bounces-287457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 771729527FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 04:51:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C662952801
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 04:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04D75284F49
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:51:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A55FB23992
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11B42231C;
-	Thu, 15 Aug 2024 02:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gzMr9WFg"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC321E884;
+	Thu, 15 Aug 2024 02:52:49 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E3921105;
-	Thu, 15 Aug 2024 02:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED6418C0C
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 02:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723690307; cv=none; b=uHi+WRTTcwhp6UaDCesZFLgp1kh9b2sK9IyGgHJUgBGcrJJDR559bepLzeeDfl3QjgOedSbTqWNv+qmEEUbNaIYqPhXLtbOD8Day3tcGW9dc0rWO3MRMMp0t/mT6gF4kmO6VlRQ8vLd245ApIUTabqe48mszWgVsxwUomRO9HLc=
+	t=1723690368; cv=none; b=WJA7a1Mgh/3uv4BTc1jA3JKgDtSUcgZTxo59V1N8sphCnPtysdkAZkBnE4FIA1pmQXIohiVISjfq4b7dSx/ZcIXM8o3LW9JRR+2yDZ1wRw7Zvv3ZRgUNdS9FNElL+Msl51JqL/aAfEXXRCmNfMevyYzzrtLoVWsVgYQCj5Aqli0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723690307; c=relaxed/simple;
-	bh=XB/OFRNrquH4mpAQclpCYONQ3pgQikjiRXZkuOQFGbY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qFIIxuR/nJzpZ+g4hiWgWEjy/SBKFWsLl0tFJx1qhGTi9zz8oNlHJ2I16vmjOvv/jSkmILrJoSqOFMzl8eyC3zYegPLuFOSHBr/uMKwA7tzTVISVc/lQj4/Q8A74+MSXIvmn1k+6d07xvOi43dIhZkRgwXKPg1CgnChnHiCHWRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gzMr9WFg; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1723690296; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=UT+txWt3od0RrNF4QQo+/QHyhZ0lGG/Ah9rRkU+1xw0=;
-	b=gzMr9WFgES9x9PlGozMcMstCl9PeCHhCgJy4hrQU9LSow0qKN7EgiphrR53+/DqYm2Fy9kWfHxlvjXtty7LtsOwbIw7H0yy8gHpsR+jFypg7vArV7/04E5VKGU1h5lVEPq/KTZRWCQGu8PXfoHBTZ1FzPCUjrwSrgNwrTvDK/rA=
-Received: from 30.32.126.52(mailfrom:alibuda@linux.alibaba.com fp:SMTPD_---0WCv-Oun_1723690294)
-          by smtp.aliyun-inc.com;
-          Thu, 15 Aug 2024 10:51:35 +0800
-Message-ID: <9db86945-c889-4c0f-adcf-119a9cbeb0cc@linux.alibaba.com>
-Date: Thu, 15 Aug 2024 10:51:33 +0800
+	s=arc-20240116; t=1723690368; c=relaxed/simple;
+	bh=4UaTEUtbiJIeLsEshXga9iiwnFeBPdGGXj4h3pNQ7V0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hpqBiuxlMP/5sOT8Xcgx6Bz7nqxVIiaCTp7L8TvHwxQ4Y18vffhDw2bDIuq1zpdJIgNzts5XdhS0O05C/47q4o3lFA+vfqs9r6/0TtNXjGCQ1uBNfabOdVgsOmrK5kGTDAp6vLgtyI8EqX9V53CbRwih9ubTkBZwQS4A+CEfheo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 6a848b885ab111efa216b1d71e6e1362-20240815
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_TXT
+	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_LANG
+	HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN
+	HR_SJ_PRE_RE, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
+	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_UNTRUSTED, SA_UNFAMILIAR
+	SN_UNTRUSTED, SN_UNFAMILIAR, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
+	CIE_BAD, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO
+	GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU
+	ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:3dae992a-3970-4d33-a827-4a01fd0edcf8,IP:15,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:6
+X-CID-INFO: VERSION:1.1.38,REQID:3dae992a-3970-4d33-a827-4a01fd0edcf8,IP:15,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:6
+X-CID-META: VersionHash:82c5f88,CLOUDID:f708a65ec67914657e3fcd77420b4279,BulkI
+	D:240815103116B2BGWHMD,BulkQuantity:1,Recheck:0,SF:66|24|72|19|44|64|817|1
+	02,TC:nil,Content:0|-5,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,B
+	EC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 1,FCT|NGT
+X-CID-BAS: 1,FCT|NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
+X-UUID: 6a848b885ab111efa216b1d71e6e1362-20240815
+X-User: liuye@kylinos.cn
+Received: from localhost.localdomain [(39.156.73.13)] by mailgw.kylinos.cn
+	(envelope-from <liuye@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 920210700; Thu, 15 Aug 2024 10:52:31 +0800
+From: liuye <liuye@kylinos.cn>
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	liuye@kylinos.cn
+Subject: Re: Re: [PATCH] mm/vmscan: Fix hard LOCKUP in function isolate_lru_folios
+Date: Thu, 15 Aug 2024 10:52:26 +0800
+Message-Id: <20240815025226.8973-1-liuye@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240814142743.c8227d72be4c5fd9777a4717@linux-foundation.org>
+References: <20240814142743.c8227d72be4c5fd9777a4717@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net,v4] net/smc: prevent NULL pointer dereference in
- txopt_get
-To: Jeongjun Park <aha310510@gmail.com>, wintera@linux.ibm.com,
- gbayer@linux.ibm.com, guwen@linux.alibaba.com, jaka@linux.ibm.com,
- tonylu@linux.alibaba.com, wenjia@linux.ibm.com
-Cc: davem@davemloft.net, dust.li@linux.alibaba.com, edumazet@google.com,
- kuba@kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
- netdev@vger.kernel.org, pabeni@redhat.com
-References: <64c2d755-eb4b-42fa-befb-c4afd7e95f03@linux.ibm.com>
- <20240814150558.46178-1-aha310510@gmail.com>
-Content-Language: en-US
-From: "D. Wythe" <alibuda@linux.alibaba.com>
-In-Reply-To: <20240814150558.46178-1-aha310510@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+> > Fixes: b2e18757f2c9 ("mm, vmscan: begin reclaiming pages on a per-node basis")
+> 
+> Merged in 2016.
+> 
+> Under what circumstances does it occur?  
 
+User processe are requesting a large amount of memory and keep page active.
+Then a module continuously requests memory from ZONE_DMA32 area.
+Memory reclaim will be triggered due to ZONE_DMA32 watermark alarm reached.
+However pages in the LRU(active_anon) list are mostly from 
+the ZONE_NORMAL area.
 
-On 8/14/24 11:05 PM, Jeongjun Park wrote:
-> Alexandra Winter wrote:
->> On 14.08.24 15:11, D. Wythe wrote:
->>>      struct smc_sock {                /* smc sock container */
->>> -    struct sock        sk;
->>> +    union {
->>> +        struct sock        sk;
->>> +        struct inet_sock    inet;
->>> +    };
->>
->> I don't see a path where this breaks, but it looks risky to me.
->> Is an smc_sock always an inet_sock as well? Then can't you go with smc_sock->inet_sock->sk ?
->> Or only in the IPPROTO SMC case, and in the AF_SMC case it is not an inet_sock?
+> Can you please describe how to reproduce this?  
 
+Terminal 1: Construct to continuously increase pages active(anon). 
+mkdir /tmp/memory
+mount -t tmpfs -o size=1024000M tmpfs /tmp/memory
+dd if=/dev/zero of=/tmp/memory/block bs=4M
+tail /tmp/memory/block
 
-There is no smc_sock->inet_sock->sk before. And this part here was to 
-make smc_sock also
-be an inet_sock.
+Terminal 2:
+vmstat -a 1
+active will increase.
+procs -----------memory---------- ---swap-- -----io---- -system-- -------cpu-------
+ r  b   swpd   free  inact active   si   so    bi    bo   in   cs us sy id wa st gu
+ 1  0      0 1445623076 45898836 83646008    0    0     0     0 1807 1682  0  0 100  0  0  0
+ 1  0      0 1445623076 43450228 86094616    0    0     0     0 1677 1468  0  0 100  0  0  0
+ 1  0      0 1445623076 41003480 88541364    0    0     0     0 1985 2022  0  0 100  0  0  0
+ 1  0      0 1445623076 38557088 90987756    0    0     0     4 1731 1544  0  0 100  0  0  0
+ 1  0      0 1445623076 36109688 93435156    0    0     0     0 1755 1501  0  0 100  0  0  0
+ 1  0      0 1445619552 33663256 95881632    0    0     0     0 2015 1678  0  0 100  0  0  0
+ 1  0      0 1445619804 31217140 98327792    0    0     0     0 2058 2212  0  0 100  0  0  0
+ 1  0      0 1445619804 28769988 100774944    0    0     0     0 1729 1585  0  0 100  0  0  0
+ 1  0      0 1445619804 26322348 103222584    0    0     0     0 1774 1575  0  0 100  0  0  0
+ 1  0      0 1445619804 23875592 105669340    0    0     0     4 1738 1604  0  0 100  0  0  0
 
-For IPPROTO_SMC, smc_sock should be an inet_sock, but it is not before. 
-So, the initialization of certain fields
-in smc_sock(for example, clcsk) will overwrite modifications made to the 
-inet_sock part in inet(6)_create.
+cat /proc/meminfo | head
+Active(anon) increase.
+MemTotal:       1579941036 kB
+MemFree:        1445618500 kB
+MemAvailable:   1453013224 kB
+Buffers:            6516 kB
+Cached:         128653956 kB
+SwapCached:            0 kB
+Active:         118110812 kB
+Inactive:       11436620 kB
+Active(anon):   115345744 kB   
+Inactive(anon):   945292 kB
 
-For AF_SMC,  the only problem is that  some space will be wasted. Since 
-AF_SMC don't care the inet_sock part.
-However, make the use of sock by AF_SMC and IPPROTO_SMC separately for 
-the sake of avoid wasting some space
-is a little bit extreme.
+When the Active(anon) is 115345744 kB, insmod module triggers the ZONE_DMA32 watermark.
 
+perf show nr_scanned=28835844. 
+28835844 * 4k = 115343376KB approximately equal to 115345744 kB.
 
-> hmm... then how about changing it to something like this?
->
-> @@ -283,7 +283,7 @@ struct smc_connection {
->   };
->   
->   struct smc_sock {				/* smc sock container */
-> -	struct sock		sk;
-> +	struct inet_sock	inet;
->   	struct socket		*clcsock;	/* internal tcp socket */
->   	void			(*clcsk_state_change)(struct sock *sk);
+perf record -e vmscan:mm_vmscan_lru_isolate -aR
+perf script
+isolate_mode=0 classzone=1 order=1 nr_requested=32 nr_scanned=2 nr_skipped=2 nr_taken=0 lru=active_anon
+isolate_mode=0 classzone=1 order=1 nr_requested=32 nr_scanned=0 nr_skipped=0 nr_taken=0 lru=active_anon
+isolate_mode=0 classzone=1 order=0 nr_requested=32 nr_scanned=28835844 nr_skipped=28835844 nr_taken=0 lru=active_anon
+isolate_mode=0 classzone=1 order=1 nr_requested=32 nr_scanned=28835844 nr_skipped=28835844 nr_taken=0 lru=active_anon
+isolate_mode=0 classzone=1 order=0 nr_requested=32 nr_scanned=29 nr_skipped=29 nr_taken=0 lru=active_anon
+isolate_mode=0 classzone=1 order=0 nr_requested=32 nr_scanned=0 nr_skipped=0 nr_taken=0 lru=active_anon
 
+If increase Active(anon) to 1000G then insmod module triggers the ZONE_DMA32 watermark. hard lockup will occur.
 
-Don't.
+In my device nr_scanned = 0000000003e3e937 when hard lockup. Convert to memory size 0x0000000003e3e937 * 4KB = 261072092 KB.
 
->   						/* original stat_change fct. */
-> @@ -327,7 +327,7 @@ struct smc_sock {				/* smc sock container */
->   						 * */
->   };
->   
-> -#define smc_sk(ptr) container_of_const(ptr, struct smc_sock, sk)
-> +#define smc_sk(ptr) container_of_const(ptr, struct smc_sock, inet.sk)
->   
->   static inline void smc_init_saved_callbacks(struct smc_sock *smc)
->   {
->
-> It is definitely not normal to make the first member of smc_sock as sock.
->
-> Therefore, I think it would be appropriate to modify it to use inet_sock
-> as the first member like other protocols (sctp, dccp) and access sk in a
-> way like &smc->inet.sk.
->
-> Although this fix would require more code changes, we tested the bug and
-> confirmed that it was not triggered and the functionality was working
-> normally.
->
-> What do you think?
->
-> Regards,
-> Jeongjun Park
+#5 [ffffc90006fb7c28] isolate_lru_folios at ffffffffa597df53
+    ffffc90006fb7c30: 0000000000000020 0000000000000000 
+    ffffc90006fb7c40: ffffc90006fb7d40 ffff88812cbd3000 
+    ffffc90006fb7c50: ffffc90006fb7d30 0000000106fb7de8 
+    ffffc90006fb7c60: ffffea04a2197008 ffffea0006ed4a48 
+    ffffc90006fb7c70: 0000000000000000 0000000000000000 
+    ffffc90006fb7c80: 0000000000000000 0000000000000000 
+    ffffc90006fb7c90: 0000000000000000 0000000000000000 
+    ffffc90006fb7ca0: 0000000000000000 0000000003e3e937 
+    ffffc90006fb7cb0: 0000000000000000 0000000000000000 
+    ffffc90006fb7cc0: 8d7c0b56b7874b00 ffff88812cbd3000 
 
+> Why do you think it took eight years to be discovered?
+
+The problem requires the following conditions to occur:
+1. The device memory should be large enough.
+2. Pages in the LRU(active_anon) list are mostly from the ZONE_NORMAL area.
+3. The memory in ZONE_DMA32 needs to reach the watermark.
+
+If the memory is not large enough, or if the usage design of ZONE_DMA32 area memory is reasonable, this problem is difficult to detect.
+
+notes:
+The problem is most likely to occur in ZONE_DMA32 and ZONE_NORMAL, but other suitable scenarios may also trigger the problem.
+
+> It looks like that will fix, but perhaps something more fundamental
+> needs to be done - we're doing a tremendous amount of pretty pointless
+> work here.  Answers to my above questions will help us resolve this.
+> 
+> Thanks.
+
+Please refer to the above explanation for details.
+
+Thanks.
 
