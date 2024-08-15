@@ -1,179 +1,150 @@
-Return-Path: <linux-kernel+bounces-287662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3AA8952B0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:06:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EF2F952B18
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 027731C20FC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:06:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06C8B1F228B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D471BDA9B;
-	Thu, 15 Aug 2024 08:30:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AEC177980;
-	Thu, 15 Aug 2024 08:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A0A1C0DE7;
+	Thu, 15 Aug 2024 08:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QQ5kBSSU"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B261BF31D
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723710618; cv=none; b=UZkZ/gRAgg4MjnORFdDpjQ0mjNXpPesO3+09I9shWVHzIBR6hNAiDL471FJkQyFVQfMhTPKedUrX65VVXPiWuQNbbLvhcIX7B+JAqSYO7gO6tyJZiG0PG6lGb68gnp5rzNBPGp7hNCIYdWeGoIe4fxeEMsplHPxDE3g2xXKS5mg=
+	t=1723710648; cv=none; b=P6TDVt1tUR70Vy5pA2eFpyE4jX+C9jzRm9sMFIAGGtri1DhGuJahPMLCmsWOjzkmTZ43nGcC2nNhHZn7DnzsMoUq1Pt/D9VHgjAgCuENza/zgHqL63nf3ZFgty/w6+OEv0MXFYHvRTifBbI3/KAvaLmDL4+eWXUrtteGVUd3Z6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723710618; c=relaxed/simple;
-	bh=eGKMZIAHZn0qGfSlPf2pl0TT/SzeZGIQ4kHgw2k7x68=;
+	s=arc-20240116; t=1723710648; c=relaxed/simple;
+	bh=nl3MznZJdMVxI4LJ4em4IKdizm38EsySmGVIpcr66fw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=chhHWpGVi5qrAeimplQEG7ZiEd2JDrWYQM56kEqpi3b6bdiR0wgB7gGya7u3tA2xTsdEyUDMBuwH9yNpO/bGvlrPmi4a46owZXcxP6oIrMDuId3NuI6ozJvzj9LgFMzJhXi1GCwBNHr+RBAY4gVpKxnGTWbT9uRqrm6W8h1EV4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 649E516F3;
-	Thu, 15 Aug 2024 01:30:42 -0700 (PDT)
-Received: from [192.168.1.13] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E04A63F6A8;
-	Thu, 15 Aug 2024 01:30:11 -0700 (PDT)
-Message-ID: <2a510219-4681-4915-9c27-c7ecdc6df133@arm.com>
-Date: Thu, 15 Aug 2024 10:30:04 +0200
+	 In-Reply-To:Content-Type; b=srqY4m+y69cs+ZXXqh/QLpVWCdcP7D55YXoHZ1mfYhF1SqFeGMGTJ27xUBRQujOEQ3PtRZWYhF7WNVasXKwnrGWAQ2VK9jXHN4A+6NkQK/2HUWDHPV2gdTrUYVk9eNhA1ut4qag6El6QwEaM+TN8SAyW4h8rTx/3+f0HnuLAfts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QQ5kBSSU; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <0282be6f-e8ac-4428-a2ac-1ea6b7c25f4a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723710642;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H46cTvBqsMii2CYcoZMIb49w/3n4/lbMyRjfJLUdJ2Y=;
+	b=QQ5kBSSUL/fpningt+lddUKbZtmay4Op1qrYDO1/87pza2jcYIc7WLCb1I3KId3gx/Y21J
+	MeEc4lJHD0snpaw9tVRGOABPPFW8MDsbkJ3N3EnRcy4782lC6efr73WO/6PLdrKIsbjnno
+	W8Gx4HYxvt5aORCsrhqVxaQGT1LlpTA=
+Date: Thu, 15 Aug 2024 16:30:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 6/8] rust: Extend cpufreq bindings for driver
- registration
-To: Viresh Kumar <viresh.kumar@linaro.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
- Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>
-Cc: linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>,
- Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
- rust-for-linux@vger.kernel.org,
- Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
- Erik Schilling <erik.schilling@linaro.org>,
- =?UTF-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>,
- Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <cover.1722334569.git.viresh.kumar@linaro.org>
- <9eb75ce148b8fead5b66c1927cff2355325ae621.1722334569.git.viresh.kumar@linaro.org>
+Subject: Re: [PATCH] SUNRPC: Fix -Wformat-truncation warning
+To: NeilBrown <neilb@suse.de>
+Cc: trondmy@kernel.org, anna@kernel.org, chuck.lever@oracle.com,
+ jlayton@kernel.org, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Kunwu Chan <chentao@kylinos.cn>
+References: <20240814093853.48657-1-kunwu.chan@linux.dev>
+ <172363131189.6062.4199842989565550209@noble.neil.brown.name>
 Content-Language: en-US
-From: Pierre Gondois <pierre.gondois@arm.com>
-In-Reply-To: <9eb75ce148b8fead5b66c1927cff2355325ae621.1722334569.git.viresh.kumar@linaro.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kunwu Chan <kunwu.chan@linux.dev>
+In-Reply-To: <172363131189.6062.4199842989565550209@noble.neil.brown.name>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello Viresh,
+Thanks for your reply.
 
-On 7/30/24 12:27, Viresh Kumar wrote:
-> This extends the cpufreq bindings with bindings for registering a
-> driver.
-> 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->   rust/kernel/cpufreq.rs | 478 ++++++++++++++++++++++++++++++++++++++++-
->   1 file changed, 476 insertions(+), 2 deletions(-)
-> 
-> diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs
-> index d58bb0bbaad4..2631dbb4865f 100644
-> --- a/rust/kernel/cpufreq.rs
-> +++ b/rust/kernel/cpufreq.rs
-> @@ -9,14 +9,17 @@
->   use crate::{
->       bindings, clk, cpumask,
->       device::Device,
-> -    error::{code::*, from_err_ptr, to_result, Result, VTABLE_DEFAULT_ERROR},
-> +    devres::Devres,
-> +    error::{code::*, from_err_ptr, from_result, to_result, Result, VTABLE_DEFAULT_ERROR},
->       prelude::*,
->       types::ForeignOwnable,
->   };
->   
->   use core::{
-> +    cell::UnsafeCell,
-> +    marker::PhantomData,
->       pin::Pin,
-> -    ptr::self,
-> +    ptr::{self, addr_of_mut},
->   };
->   
->   use macros::vtable;
-> @@ -563,3 +566,474 @@ fn register_em(_policy: &mut Policy) {
->           kernel::build_error(VTABLE_DEFAULT_ERROR)
->       }
->   }
-> +
-> +/// Registration of a cpufreq driver.
-> +pub struct Registration<T: Driver> {
-> +    drv: Box<UnsafeCell<bindings::cpufreq_driver>>,
-> +    _p: PhantomData<T>,
-> +}
-> +
-> +// SAFETY: `Registration` doesn't offer any methods or access to fields when shared between threads
-> +// or CPUs, so it is safe to share it.
-> +unsafe impl<T: Driver> Sync for Registration<T> {}
-> +
-> +// SAFETY: Registration with and unregistration from the cpufreq subsystem can happen from any thread.
-> +// Additionally, `T::Data` (which is dropped during unregistration) is `Send`, so it is okay to move
-> +// `Registration` to different threads.
-> +#[allow(clippy::non_send_fields_in_send_ty)]
-> +unsafe impl<T: Driver> Send for Registration<T> {}
-> +
-> +impl<T: Driver> Registration<T> {
-> +    /// Registers a cpufreq driver with the rest of the kernel.
-> +    pub fn new(name: &'static CStr, data: T::Data, flags: u16, boost: bool) -> Result<Self> {
-> +        let mut drv = Box::new(
-> +            UnsafeCell::new(bindings::cpufreq_driver::default()),
-> +            GFP_KERNEL,
-> +        )?;
-> +        let drv_ref = drv.get_mut();
-> +
-> +        // Account for the trailing null character.
-> +        let len = name.len() + 1;
-> +        if len > drv_ref.name.len() {
-> +            return Err(EINVAL);
-> +        };
-> +
-> +        // SAFETY: `name` is a valid Cstr, and we are copying it to an array of equal or larger
-> +        // size.
-> +        let name = unsafe { &*(name.as_bytes_with_nul() as *const [u8] as *const [i8]) };
-> +        drv_ref.name[..len].copy_from_slice(name);
-> +
-> +        drv_ref.boost_enabled = boost;
-> +        drv_ref.flags = flags;
-> +
-> +        // Allocate an array of 3 pointers to be passed to the C code.
-> +        let mut attr = Box::new([ptr::null_mut(); 3], GFP_KERNEL)?;
-> +        let mut next = 0;
-> +
-> +        // SAFETY: The C code returns a valid pointer here, which is again passed to the C code in
-> +        // an array.
-> +        attr[next] =
-> +            unsafe { addr_of_mut!(bindings::cpufreq_freq_attr_scaling_available_freqs) as *mut _ };
-> +        next += 1;
-> +
-> +        if boost {
-> +            // SAFETY: The C code returns a valid pointer here, which is again passed to the C code
-> +            // in an array.
-> +            attr[next] =
-> +                unsafe { addr_of_mut!(bindings::cpufreq_freq_attr_scaling_boost_freqs) as *mut _ };
-> +            next += 1;
-> +        }
-> +        attr[next] = ptr::null_mut();
-> +
-> +        // Pass the ownership of the memory block to the C code. This will be freed when
-> +        // the [`Registration`] object goes out of scope.
-> +        drv_ref.attr = Box::leak(attr) as *mut _;
+On 2024/8/14 18:28, NeilBrown wrote:
+> On Wed, 14 Aug 2024, kunwu.chan@linux.dev wrote:
+>> From: Kunwu Chan <chentao@kylinos.cn>
+>>
+>> Increase size of the servername array to avoid truncated output warning.
+>>
+>> net/sunrpc/clnt.c:582:75: error：‘%s’ directive output may be truncated
+>> writing up to 107 bytes into a region of size 48
+>> [-Werror=format-truncation=]
+>>    582 |                   snprintf(servername, sizeof(servername), "%s",
+>>        |                                                             ^~
+>>
+>> net/sunrpc/clnt.c:582:33: note:‘snprintf’ output
+>> between 1 and 108 bytes into a destination of size 48
+>>    582 |                     snprintf(servername, sizeof(servername), "%s",
+>>        |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>    583 |                                          sun->sun_path);
+>>
+>> Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
+>> ---
+>>   net/sunrpc/clnt.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/net/sunrpc/clnt.c b/net/sunrpc/clnt.c
+>> index 09f29a95f2bc..874085f3ed50 100644
+>> --- a/net/sunrpc/clnt.c
+>> +++ b/net/sunrpc/clnt.c
+>> @@ -546,7 +546,7 @@ struct rpc_clnt *rpc_create(struct rpc_create_args *args)
+>>   		.connect_timeout = args->connect_timeout,
+>>   		.reconnect_timeout = args->reconnect_timeout,
+>>   	};
+>> -	char servername[48];
+>> +	char servername[108];
+> If we choose this approach to removing the warning, then we should use
+> UNIX_PATH_MAX rather than 108.
+My negligence.
+>
+> However the longest server name copied in here will in practice be
+>     /var/run/rpcbind.sock
+>
+> so the extra 60 bytes on the stack is wasted ...  maybe that doesn't
+> matter.
+I'm thinking  about use a dynamic space alloc method like kasprintf to 
+avoid space waste.
+> The string is only used by xprt_create_transport() which requires it to
+> be less than RPC_MAXNETNAMELEN - which is 256.
+> So maybe that would be a better value to use for the array size ....  if
+> we assume that stack space isn't a problem.
 
-I think it would be better to give the possibility to the cpufreq driver to pass the
-attr array, as not all drivers might want these attributes,
+Thank you for the detailed explanation. I read the 
+xprt_create_transport,  the RPC_MAXNETNAMELEN
 
-Regards,
-Pierre
+is only use to xprt_create_transport .
+
+> What ever number we use, I'd rather it was a defined constant, and not
+> an apparently arbitrary number.
+
+Whether we could check the sun->sun_path length before using snprintf?  
+The array size should smaller
+
+than  the minimum of sun->sun_path and RPC_MAXNETNAMELEN.
+
+Or use the dynamic space allocate method to save space.
+
+>
+> Thanks,
+> NeilBrown
+>
+>
+>>   	struct rpc_clnt *clnt;
+>>   	int i;
+>>   
+>> -- 
+>> 2.40.1
+>>
+>>
+-- 
+Thanks,
+   Kunwu.Chan
+
 
