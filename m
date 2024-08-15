@@ -1,112 +1,106 @@
-Return-Path: <linux-kernel+bounces-287977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3E43952EE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:17:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BD85952EE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FD511C23D51
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:17:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9016B1C2404B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83F417CA1D;
-	Thu, 15 Aug 2024 13:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XYVxa3vg";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zeMj9je9"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A7819E7C8;
+	Thu, 15 Aug 2024 13:17:22 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1C51DA4E
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 13:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10BB017C984;
+	Thu, 15 Aug 2024 13:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723727819; cv=none; b=oeClgbm+gq1YLwUdIPnvmnYHdfmAYVkqDptZuobn/bviFqWVzeZzQnm/q5q+84bJGurDZErZltarsQ0vex0W3MC1Qc7rK1WuL0j+B8m8yDlp5krh8gzgHUOhXw+Zxaor95XLek3md+hzaoNIHrsuQ0tODfvipbzAAm7j2AzkUeI=
+	t=1723727842; cv=none; b=MuJ84LB2Nk3ux8U8e4JKObUM0G01cffDwRyyk0kPr48YXbAxjY2C5QFVsAFrrx7GVGK8uvLW/9tFOBpbgVbiUiFnSYNqOswLquYALYpwGxIKM0sKTkyzGkaIkKF6Z/zShnDc1ArUQ25RqTqrfva/WemHrQ82IZZ6TgcvDl7LrkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723727819; c=relaxed/simple;
-	bh=vvlPM4tQg6oUEHg1ci/iLoe3DQHswcLZewRSrBdXQeQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Nb4zjqA6u3/ZF8O5WYFIYqgrPV09BnYR7iKk98hiZ/TsuS02tgDJvtA0/CUjoFdMW0D9CQv2bYP8KC4EXVs7a/+sTTdCZwT/CtWSxROJKb44Jm3zdR82Ny61Tqr5eoTYOBMb1DKWBBugszLEQkI9vWLkRsU2stYqHWN5Z/iXP4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XYVxa3vg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zeMj9je9; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723727815;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nsfL4lSYcJUNCgpw/d4PnpralW8hjkD2gnw1p553Xgw=;
-	b=XYVxa3vgapYFX5Gv1T1I2LtfFjFq3Jpz9d1PRcC2mgs1xXpZ0A820zXlq7R6AiTY+9IgDk
-	ewGSqJiODtQE4SCCc71ede5XByFNoAJ2i2QsbwGTUaZvduWIqUzTQeMXnhNOE9utj+hpgL
-	Ep3vVR/gyzoKjufu6SEWj8sGM5I9PdUftr+w+waC/5VyuV/tiH2ryBfX0NKkMZ0217oRu5
-	sssP4FcRXinB/bbVi3kujuDcbV9+DLXC+iDsTFx0RVr5afSNk+LFMrgadSa4OAr4f3kqAh
-	zJ5X3cgVGGskfIDs1lK+zGqwVL8bDHLLja4kkEPH5xgj9gn8GGGAXLPqmxNzEg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723727815;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nsfL4lSYcJUNCgpw/d4PnpralW8hjkD2gnw1p553Xgw=;
-	b=zeMj9je9tFNfPbvoemRp0rsQO8v3oshK7uBtUNdhWefQRTTS2QO1EzZURv8y+5F5F2Ah7+
-	9BPw4lAGgddbdpBw==
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>, Emil Renner
- Berthing <emil.renner.berthing@canonical.com>,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, Anup Patel
- <apatel@ventanamicro.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland
- <samuel.holland@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert
- Ou <aou@eecs.berkeley.edu>, Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH v1 0/9] Fix Allwinner D1 boot regression
-In-Reply-To: <CAJM55Z_qQX7n8tAeOFqrAH1BFjA9vaWA8rtsPG2BcKmiO88m=Q@mail.gmail.com>
-References: <20240814145642.344485-1-emil.renner.berthing@canonical.com>
- <87jzgjnh9z.ffs@tglx>
- <CAJM55Z8WERQgs=QMyFGWvAHOpwcnOAudBqovaEuDudPSXCvL5Q@mail.gmail.com>
- <87ttfmm2ns.ffs@tglx>
- <CAJM55Z88H635Crc-Aeq+K0qcAk7NC89WVTAFdXDd2aQKQ7QmEg@mail.gmail.com>
- <CAJM55Z_qQX7n8tAeOFqrAH1BFjA9vaWA8rtsPG2BcKmiO88m=Q@mail.gmail.com>
-Date: Thu, 15 Aug 2024 15:16:55 +0200
-Message-ID: <87plqalyd4.ffs@tglx>
+	s=arc-20240116; t=1723727842; c=relaxed/simple;
+	bh=8jSrqs/ttZ3XYQ4hBjYpXMRRoxshAmgWAE1/Ah8aamo=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=JyQiUMCs0DhhXBWw/J33dFwBnRVJI4oKXzesZur940u0TyQkQ2iKN7/ratvNkpGbcdBvDUzmXU+0GO2Fxmc0uSdyC9DElvcSKpLGXbbyaKmNcbEO2H6SDTvGx6UeUofTrdv7VQzSBwjaaw195/LphZ42Y3kIqdLkEjcaCvf4FBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Wl5Hw59y3z4f3jHg;
+	Thu, 15 Aug 2024 21:17:00 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 89ABB1A018D;
+	Thu, 15 Aug 2024 21:17:14 +0800 (CST)
+Received: from [10.174.178.129] (unknown [10.174.178.129])
+	by APP3 (Coremail) with SMTP id _Ch0CgAHtrTX_71mvh_SBg--.17524S2;
+	Thu, 15 Aug 2024 21:17:12 +0800 (CST)
+Subject: Re: [PATCH 1/7] ext4: avoid buffer_head leak in ext4_mark_inode_used
+To: Markus Elfring <Markus.Elfring@web.de>, linux-ext4@vger.kernel.org,
+ Andreas Dilger <adilger.kernel@dilger.ca>, Theodore Ts'o <tytso@mit.edu>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240813120712.2592310-2-shikemeng@huaweicloud.com>
+ <fec59d4d-898d-447c-b4fb-e9d055550f96@web.de>
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+Message-ID: <5d75ab7f-0fad-07ef-bbcb-3fed16a5170e@huaweicloud.com>
+Date: Thu, 15 Aug 2024 21:17:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <fec59d4d-898d-447c-b4fb-e9d055550f96@web.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgAHtrTX_71mvh_SBg--.17524S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtw45XFyUAF1rZw18JrW7XFb_yoWfXFX_WF
+	97Cr1ktw4UK3WfXan8KrsxCrZ3Ca47W3WFv3y0gF4xAw1fJa98Xan7WF9Yy3s7Xr93Crsx
+	uFs3XwnYq3W29jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb4kYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v2
+	6r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
+	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCI
+	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
+	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
+	Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU7IJmUU
+	UUU
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-On Thu, Aug 15 2024 at 05:14, Emil Renner Berthing wrote:
-> Emil Renner Berthing wrote:
->> 6.11-rc3 + these reverts:  https://termbin.com/q6wk
->> 6.11-rc3 + Samuel's patch: https://termbin.com/7cgs
->
-> I think this confirms what Charlie found here:
-> https://lore.kernel.org/linux-riscv/ZoydV7vad5JWIcZb@ghost/
 
-Yes. So the riscv timer is not working on this thing or it stops
-somehow.
 
-Can you apply the debug patch below and check whether you see the
-'J: ....' output at all and if so whether it stops at some point.
+on 8/15/2024 5:55 PM, Markus Elfring wrote:
+>> Release inode_bitmap_bh from ext4_read_inode_bitmap in
+>> ext4_mark_inode_used to avoid buffer_head leak.
+>> By the way, remove unneeded goto for invalid ino when inode_bitmap_bh
+>> is NULL.
+> 
+> 1. I suggest to split such changes into separate update steps.
+>    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.11-rc3#n81
+It's acceptable to me, but I'm not sure if it worth separate patches
+to others. I will do separate in next version if no person is against
+this.
+> 
+> 2. How do you think about to add any tags (like “Fixes” and “Cc”) accordingly?
+> 
+> 3. Would you like to append parentheses to any function names?
+Thanks for remind me of these. I will improve the series in next
+version.
 
 Thanks,
-
-        tglx
-
----
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -2459,6 +2459,9 @@ static void run_local_timers(void)
- {
- 	struct timer_base *base = this_cpu_ptr(&timer_bases[BASE_LOCAL]);
- 
-+	if (!(jiffies & 0xFF))
-+		pr_info("J: %lx\n", jiffies);
-+
- 	hrtimer_run_queues();
- 
- 	for (int i = 0; i < NR_BASES; i++, base++) {
-
+Kemeng
+> 
+> Regards,
+> Markus
+> 
 
 
