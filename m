@@ -1,188 +1,130 @@
-Return-Path: <linux-kernel+bounces-289284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C841954449
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:29:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F40F95444C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:29:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C08F51C20B5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:29:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62944B22DD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5DE6159571;
-	Fri, 16 Aug 2024 08:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31A013AD0F;
+	Fri, 16 Aug 2024 08:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ePRWQodI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FoMH296b"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A0C13A256;
-	Fri, 16 Aug 2024 08:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65FA13A26B;
+	Fri, 16 Aug 2024 08:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723796627; cv=none; b=m3j1QhoCwHJ+1sh0RNplsOvuZC2Jl6//1xj52CWTtBwasuGVxDrkg67f52hXf8/7tTr6K+s+SsfSosvNCoLHt3j0D2prHGpfJzpp/SCOpslH/lUEzJLsXaznV+HYQGu2+O8cJl/Qhu2/M16qlfxaTrVoXOXxOY8NEERqAnBUfXs=
+	t=1723796648; cv=none; b=VHOximy/NbijonRjavuixbk3Ff9isBNyl9GsTmpKkzkwWaIT58KrqahdjlNxSOFdaSQgGQx/0u0U9kiFTy7jkJNpd8nYuNN5pxWikw08hvu30B2SoKilt8G7i7CYEOnuOyec8xPnWUhQLNkXDOMOZPyKfk7hZSbwCUc6axhbwfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723796627; c=relaxed/simple;
-	bh=I4jD9noy6kedXXh1u+n1aRGJn3cGj+nV2MzUS/dZpUA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LZm2QzuPLxTcsrzhtgXdHA/jK5A2CX1fJ4VHsuLqO4c2b+CmltDG2eix9frr5y+RB2pUwe0M7a/MAjQB0ZC4IOHJryZej8ntvMzImM6I+2a48VR6RoZas6COk+c3CcTgZtJVNUjYnwEEFbKgNeJKy/jSlHmmmVFnruibOQoQYL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ePRWQodI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14379C32782;
-	Fri, 16 Aug 2024 08:23:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723796627;
-	bh=I4jD9noy6kedXXh1u+n1aRGJn3cGj+nV2MzUS/dZpUA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ePRWQodI9pMQX6TxlQGcEXCnJzzDxmoakBwJ0ioiW16SNeldu9o0ZJsQ+kf8KGUHw
-	 6OjE21a8NLjN1zZNjtVJklssrI22rMz2G15NcGoGg37zFp9eBeHYon5hiBE5XLE/29
-	 NQ+k+REciR6WKeWx7T/l+GM68YmcMvoDg5nsiPfDwbLHU56MXywa5Bdm1oD78ERGaT
-	 JrWKdP3IGwbFsjQNFkstZmtSB/IrtIe/JkCDDnMFrZ48wGy1zXfTB+bDo9MKPw3n4u
-	 Xl0S4FXj0lFH5JJeXKvwHc6qudhDLqlPlCGJtIpuM0/dhP9cKgL8nt5mh7YcwQrZSp
-	 rHYQ8CsXQKbMA==
-Message-ID: <20e1c51c-0231-40de-919e-664df906a724@kernel.org>
-Date: Fri, 16 Aug 2024 10:23:40 +0200
+	s=arc-20240116; t=1723796648; c=relaxed/simple;
+	bh=IiNHzqaGpQsMRMD9TA17SqkxP/qb21zVGIdoXUJ/IHQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KYctHFaGrJV2fMtDI9BIXxAIT6brrsQQAlbgC0Zce+DgU6uVf8J/SM10/1ZaBvtHUm0L6J+FfiBayWhlYfrUKmCW2YkNc+wc8h3SU2mTW4Jj0pzpgnDQbgskqNeegpNJnCJLmSKdBwj3GxJ8oR2OorIDu/C7V9NWvSqtdZ6pmC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FoMH296b; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-268eec6c7c1so1124680fac.3;
+        Fri, 16 Aug 2024 01:24:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723796646; x=1724401446; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=mt7cmJhnccQWu/9cWXpdzK0cFZpHG00oH/rJ6h+75mc=;
+        b=FoMH296bmKC7bAqyeWlZ+N5PY3+EhrVwChbPr9V6HVyTSuAOQ6trK+07yqUAQUIQtl
+         79DhziR05SHFZTfkU6f7TiecNen8YppowNv293+4ZWOm5Q0yOUmXIig4fk8GxF1MXrBY
+         W/kmsRfpwz31ToOiSIyvzk2+gafQ3r8DyVycmz2mOtJCfn8RgZAWtn/TpgcPAb8+NN8r
+         OThNPIFHEPBFxYR40xKCBs2/k80qn1A9aSsUNg69jQ/161VwISOzfgCAo5Lwi8pmULXG
+         yTKZw3ujbc+b0dD+OJ81R3BqJgsARR5NGwF2PHmulD1JGs3rbPjh5SJ28BHCtXMuCBm2
+         TMmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723796646; x=1724401446;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mt7cmJhnccQWu/9cWXpdzK0cFZpHG00oH/rJ6h+75mc=;
+        b=vq8RNHmORgM/PERosw9Sc8BTqusYwt7BBa8oNK4UPPoIh3i85QGmo+qILuVoI3l/EM
+         tN6RqUJ7x91AQSVqUxFwC11UkiC9zxmImPGXjDKR7W93aC/qranzY91EZ6syPb5eT5gi
+         yy8EFvXoo63BW/nLdfEMdk+NsoyaxhqIVTtm8TmNWgx4HkX7O9fxzaTJzO8C66IDeWl9
+         XDP4HtvOnphdGIEc3UH2No9eyWNEiWC8eZ2Wm8IJQ1uUBsjkvkxI2Sq/EuVziCaq49f8
+         aXWkEuGz1kmslmF361HyM+KybUvLSc4ijmhqkEimHrQ0Wl9Fu8aVU9HAjUc4m0iCswiy
+         e2/A==
+X-Forwarded-Encrypted: i=1; AJvYcCX43rppQ9xcUnwl9BjAo6CXFGL6ft4IvpqM+pct+BB22cW+VQA0+asuudPQ8pxbLss3+nN4xEchpA6cT+ERsPCtDSAKoNWFPrBt9e7GPKYFmGl+vXvJbtcAF/XxhPo6vrbAvw+6wzm+qT784eeG5Y7CiiztR3VO6mxtN/phYUKWUg==
+X-Gm-Message-State: AOJu0Yxo8w4b4Ga7H+foDqOYp1QAx0z/iIUwqUncA4F9OJoKIIpxcfSQ
+	PsKUfKAfyMl3HTUYpf1OExsViSg+D7xr9OVCtt+iegH5u4cfBbwkgmn10WsmqTKC6iBOcJTIctj
+	YF/U9ImApbSbWOqR1Rfk6ctAkOck=
+X-Google-Smtp-Source: AGHT+IFB08B011Hg+xh85G9fYink+w99UUHcebksfvo5gqopEdUjZVwkWvf8XdImzq3WYMHCIREcF/Dfb3/AFPcmWAA=
+X-Received: by 2002:a05:6870:4154:b0:270:2733:8159 with SMTP id
+ 586e51a60fabf-2702733c0d8mr668903fac.17.1723796645803; Fri, 16 Aug 2024
+ 01:24:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: mmc: Add support for rk3576 dw-mshc
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- linux-kernel@vger.kernel.org, Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>,
- linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- kernel@collabora.com
-References: <20240814223555.3695-1-detlev.casanova@collabora.com>
- <5057223.82XvGhxQ46@diego> <e640cbc4-6870-4607-a91e-0af41dd76df9@kernel.org>
- <2504176.W2GruxG5Vl@diego>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <2504176.W2GruxG5Vl@diego>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240816065924.1094942-1-vtpieter@gmail.com> <e3dff6ce-7fb2-47fa-9141-9281e5e9de5e@kernel.org>
+In-Reply-To: <e3dff6ce-7fb2-47fa-9141-9281e5e9de5e@kernel.org>
+From: Pieter <vtpieter@gmail.com>
+Date: Fri, 16 Aug 2024 10:23:54 +0200
+Message-ID: <CAHvy4AowJHZNcJB=ZM7h770jcGxPhQ_Pb6y+HU68c4bnWWKY5A@mail.gmail.com>
+Subject: Re: [RFC] net: dsa: microchip: add KSZ8 change_tag_protocol support
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, 
+	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com, 
+	Russell King <linux@armlinux.org.uk>, Pieter Van Trappen <pieter.van.trappen@cern.ch>, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 16/08/2024 09:45, Heiko Stübner wrote:
-> Am Freitag, 16. August 2024, 08:52:04 CEST schrieb Krzysztof Kozlowski:
->> On 15/08/2024 15:49, Heiko Stübner wrote:
->>> Am Donnerstag, 15. August 2024, 00:34:00 CEST schrieb Detlev Casanova:
->>>> Add the compatible string for rockchip,rk3576-dw-mshc and add support
->>>> for the rockchip,v2-tuning flag, a new feature of this core.
->>>>
->>>> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
->>>> ---
->>>>  Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml | 1 +
->>>>  1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
->>>> index 211cd0b0bc5f3..0543cdb51c657 100644
->>>> --- a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
->>>> +++ b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
->>>> @@ -39,6 +39,7 @@ properties:
->>>>                - rockchip,rk3368-dw-mshc
->>>>                - rockchip,rk3399-dw-mshc
->>>>                - rockchip,rk3568-dw-mshc
->>>> +              - rockchip,rk3576-dw-mshc
->>>>                - rockchip,rk3588-dw-mshc
->>>>                - rockchip,rv1108-dw-mshc
->>>>                - rockchip,rv1126-dw-mshc
->>>
->>> this would mark the rk3576-dw-mshc as being the "same" as the
->>
->> Not the same, but compatible.
->>
->>> core rk3288 variant. rk3288 was the first controller introducing the
->>> clock tuning for higher speeds. with the clocks being part of the CRU.
->>>
->>> As we can see in later patches, this rk3576 though changes that
->>> setup with moving the tunable clock configurations into the controller
->>> itself.
->>>
->>> So please don't claim to be compatible to the 3288, but instead start
->>> a new block for this new set of controllers:
->>
->> The question is can new device work with old compatible (without new
->> features)?
-> 
-> the rk3288 and following have their clock phase tuning for hs-modes in
-> the main soc's clock controller. Hence you have the "ciu-drive" and
-> "ciu-sample" clocks [0].
-> 
-> On the rk3576 (and probably following) those clock phase settings moved
-> inside the mmc controller itself. So there are no external phase clocks
-> anymore.
-> 
-> So right now we have two types in the binding, the rk2928 type [1],
-> used on the old rk3066 and rk3188 socs, that did not support mmc hs-modes
-> and the rk3288-type which introduced phase tuning via clocks from the
-> main clock controller.
-> 
-> The rk3576 now switches to having phase tuning in the mmc controller
-> itself. So throwing that on unmodified code for the rk3288 will get you
-> degraded functionality, because the tuning won't work because there are
-> no "ciu-drive" and "ciu-sample" anymore .
+On Friday 16 August 2024 at 09:12, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On 16/08/2024 08:59, vtpieter@gmail.com wrote:
+> > From: Pieter Van Trappen <pieter.van.trappen@cern.ch>
+> >
+> > Add support for changing the KSZ8 switches tag protocol. In fact
+> > these devices can only enable or disable the tail tag, so there's
+> > really only three supported protocols:
+> > - DSA_TAG_PROTO_KSZ8795 for KSZ87xx
+> > - DSA_TAG_PROTO_KSZ9893 for KSZ88x3
+> > - DSA_TAG_PROTO_NONE
+> >
+> > --- a/Documentation/devicetree/bindings/net/dsa/dsa-port.yaml
+> > +++ b/Documentation/devicetree/bindings/net/dsa/dsa-port.yaml
+> > @@ -53,6 +53,7 @@ properties:
+> >      enum:
+> >        - dsa
+> >        - edsa
+> > +      - none
+> >        - ocelot
+> >        - ocelot-8021q
+> >        - rtl8_4
+>
+> Please run scripts/checkpatch.pl and fix reported warnings. Then please
+> run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
+> Some warnings can be ignored, especially from --strict run, but the code
+> here looks like it needs a fix. Feel free to get in touch if the warning
+> is not clear.
 
-One could still argue that rest of programming model is the same, thus
-"degraded" mode counts as compatibility, but I do not insist on that.
+Hi Krzysztof, thanks indeed I forgot to run it after my last modifications.
+I am aware that the dt-binding patch should be separate, I just thought
+it'd make more sense for this RFC to have these together.
 
-> 
-> 
-> And with that separate compatible we could also "tighten" the binding
-> a bit to make those additional clocks more explicit for the rk3288 type.
-This you can, and actually should, do with existing binding. Maybe just
-a bit more tricky/complicated code.
+> Anyway, what does "none" mean in terms of protocol? Is there a "none"
+> protocol? Or you mean, disable tagging entirely?
 
-Anyway, fine with both compatibility-approaches.
+Indeed the 'none' protocol is DSA_TAG_PROTO_NONE which means
+disable tagging entirely. The concept with advantages and disadvantages
+is well described in the paper with link which i part of the commit message.
 
-Best regards,
-Krzysztof
-
+Cheers, Pieter
 
