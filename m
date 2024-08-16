@@ -1,129 +1,292 @@
-Return-Path: <linux-kernel+bounces-289645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C67B9548BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:30:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C76269548BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:30:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0652286239
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:30:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC7371C23295
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E3D1B32BF;
-	Fri, 16 Aug 2024 12:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3664C1B86C0;
+	Fri, 16 Aug 2024 12:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="g1ydmzpZ"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eaE3qJFd"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBD5191F84
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 12:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B74196D80
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 12:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723811413; cv=none; b=fGDJ6ZHmh5vglI62fjwQXp46r2RoqLHhb8/3RmD74+UMd7F+DAbzAWYZuLyxMulhy0SXQFQ6BMcZxPcAzhcWsNGorBIfD2hBIHtK2XBj9Nbr3C2sJjiYUELobFgsyXMYvDGxmmkcgBd/MQFOFqJ2tqlJ+mcipM1oLEEe4Lf9OJI=
+	t=1723811434; cv=none; b=Z9s37XK1H3Rtc1Z7bgpZUQIXdSkzyjxWNVd1pPUlFjKsjGM0FdVKDwLgRRATvG7HcuDjey97PjYw009qcG4DuVTkYrjcVichFpD7/BQD44uDrpO7AOx5mJEk3Ex2JXZ9z4aR0Uz3D8Dbevqomd1lyCJRMDNB+dTCGxcokjGHdhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723811413; c=relaxed/simple;
-	bh=KEWMVxcu/NLQtr33F3tQHy3IBtqOb4ps9ENmIRZm+W0=;
+	s=arc-20240116; t=1723811434; c=relaxed/simple;
+	bh=2GSzoiyKMiwuW/RfJJ5i8kkgbzhghA4P1g2K4QpBjLU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tpIXZec1v0fgVYowB8EWAR5iKvmUExRx2JfeNnxZkOm/4BiWDgmvVr0FuAYlqKv3Xlm8VNy4N3npcjfuUeagr2OYd4GWzSOXLTQcZeUIN3mDJUJSJcJ17ojsqw6W+qKY+vZ2syl7RcQb2NtKiUTEYmM84Y9KJQAh9KqDNgoC9b8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=g1ydmzpZ; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53301d46c54so2681298e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 05:30:11 -0700 (PDT)
+	 To:Cc:Content-Type; b=ZscARAHALNUKBsaR+DR7H0EqVNnaQ2j9g/20Vhzp0BOdAoduOqzG4QBHX7pdTbNCodY2mH+XoTkA15aabMA0U4n6mD41lc0M8ic4td+/yewjvtY+VquIm4RBKYdoBksJjmhWfpJ9dg234r13JlxEx4b2M0FTSTf4wKi6XkcjEUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=eaE3qJFd; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5bed72ff2f2so433303a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 05:30:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723811409; x=1724416209; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w96eQaH+JFVwUc2NHdKcq4o8sWhYVnxpQd6m10yEznM=;
-        b=g1ydmzpZlyIoAsEzBXBw3+psyCyndmGoztl8ZXN7uGBj7hwOEUkoFeBXh+bBeIR/TT
-         Nk37KNPO1JhHyJgfr22aAMtI8Gjf692Pua98WGbchNLopYyAX+upK1RV/20nyH+wdGfJ
-         ICzRciSIqNlIXtHtpGP4IFnXFu2mzNxZlxG391grEfPsu35kgnCWz/sD98zfVVsxilPU
-         TidTK+bVnngIVG/JUUN9mijqm6NaNmRpo4CU3Ir4QpIoVmHalU2gfmrYXGs9agpW1sGd
-         OCAYf/TkhTAZN7vBMLIWrRhd98pDYFKbQ/25qSE5Hh2zNphmf32Q3N7k7uO+0xq4JXq9
-         mFfA==
+        d=chromium.org; s=google; t=1723811430; x=1724416230; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/zsQ2AT0Bnh8gAvOcK04FWb59JsFbwO7jWLVExppFh0=;
+        b=eaE3qJFdesj1pC+Y5cJWfcv0dbu5oS+CJ2VNvC8m5yGEsJasnHCL77MM3P4Varo+fN
+         rj9Mke18Gc5fMRs3MHYUM5CszM3AMOxWpybuJrHoGQqA6I+jmcJRc91c33hxowtfhDIM
+         IpvCDTZXxoQbR38sgfnZjCVXZRI4ln+kXiBCE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723811409; x=1724416209;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w96eQaH+JFVwUc2NHdKcq4o8sWhYVnxpQd6m10yEznM=;
-        b=twCSucCdLYTKlsSMZiOR+VBs3YMqzY8eVmhJarWI8UBiYUVa3Vo+Ov3iXnx2mQhQVF
-         VPCf6DGBgxSCOCM1aISrml2oAViQ1wi6qo0EZcwk+k5Y8dSIdlHfInv5vcsEMbFQi4fX
-         EhXtg+8LLjmCb+NjlRANU9BRZnFzkKmYa6LSkCmp8ZFMw+HtIuq9O8O+rclnH9ULNBz4
-         Sb+2dViwWRyrrC6h4ILgdSLQ87M2YBPQ3LvbhFiRu32lpk8PqOqnHsowINYfKujIZT6I
-         GJIUcDf+0MtxnOVg1y9LfyjTMGaQh5+56qS/8rR2mk4jHFXcQntA8xgt+CxmYdxbW4XL
-         AaTg==
-X-Forwarded-Encrypted: i=1; AJvYcCWHgJAkvDTkTehzplsKNwmLMxBkIWoUsscaDDw2jB3ho2Jyh8LQxnoQC4CVNOzGd1CYugGBt0NXl0OufSd9mADg5+VbYh7W/2XUSeWU
-X-Gm-Message-State: AOJu0YysRb++sf9nhdxtBiC2sOpKQgDBveriZqG8jL9vTklc+nERbocK
-	zf+N5MzS2nfGiqWL2188AaWQ2SFHNJivUCGK/+NxGdDa/o7qrLEEo73D2WDNNd4GgsszQRdd8aC
-	ifVX3yy4yxWJL18MoDFn7Yo5ykPE5DX2GqS2G+A==
-X-Google-Smtp-Source: AGHT+IFZaK4vjw4Aem+81rYMCtAGdtY0O6D4wq9Y8v3rCLdzZcg4Vb5soplVtVkp/6l3JtM6+jGW1KtRA1lR1iP6gzQ=
-X-Received: by 2002:a05:6512:3dab:b0:52c:c5c4:43d4 with SMTP id
- 2adb3069b0e04-5331c6f0065mr1560017e87.53.1723811408941; Fri, 16 Aug 2024
- 05:30:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723811430; x=1724416230;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/zsQ2AT0Bnh8gAvOcK04FWb59JsFbwO7jWLVExppFh0=;
+        b=qLZlL6N10uCINKmysTfA9BHYzZDdFHVz4pi6SxmXhQLlToJPYOzJb/SMlfUk4/EmTi
+         IWEvm/FQT2YpZh75Ef5NaMsQM2H+c3Iph1EfmUUy6U/1k2OTT0BHlGXk2yGdyrYIYxol
+         rHqrjMnYmbumEPwwpJ0nIwIhOhFKa8H22v2fcNR6e5beoJJ3VP93fPD+LtQRpEybs9zj
+         1YSHVy+zVAvbamafPBvr9+1XHM/XojV0VOJwnMumUnhbbeHVefI0RjHJCVU/04EmzufH
+         fy6mGhR2lkkNjCtKY/PlSpDrsqbltYQeeBA6uZc7CQGLga49HlE/xqUXKFhXxaidg8SK
+         bHbg==
+X-Forwarded-Encrypted: i=1; AJvYcCW2mMI1bpd7GV+n7OZn9MMA6xp4kKHcFRdz0L7tyPYKYIJstjZRLhmFooLlsguU97WOxrvGSEKvANJBAuEERVusVDLinXYP5lruapNc
+X-Gm-Message-State: AOJu0YwPiisDwZ1w1mY/o3dMu+823rGeR/XpzqQzLUMaVJ0/OTPE4TKa
+	WrBay/EY0F1skxqT6K1Y6w1bMuIZ70DuXX/wc/F/JtnsVr2DNJ+rz39G8NbesxuCYtdVQJPme5Y
+	AWg==
+X-Google-Smtp-Source: AGHT+IGpErvoAmtKdS5runhft5+ASZYK2TX8zBM8o04jqSGgv09mBUYaCF1XVq5Iw5jyjixfaxxNHw==
+X-Received: by 2002:a17:907:efe0:b0:a7a:aa35:409a with SMTP id a640c23a62f3a-a8392a4b317mr191946266b.68.1723811430091;
+        Fri, 16 Aug 2024 05:30:30 -0700 (PDT)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c6b07sm249259966b.30.2024.08.16.05.30.29
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Aug 2024 05:30:29 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5becc379f3fso783381a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 05:30:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV1+wdxxnWiuvrgJtYTGQlmLrxo5rXyjWFwzA3FaMnitPqbAaekcn+fKQuQetvI9e/YTcqMlF9/knsW1IUdED699DLwmZLTifPZwuZv
+X-Received: by 2002:a17:907:da2:b0:a7a:bbbb:6243 with SMTP id
+ a640c23a62f3a-a8392a15b4bmr192355066b.51.1723811428946; Fri, 16 Aug 2024
+ 05:30:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240816102345.16481-1-brgl@bgdev.pl> <c0af2eec-c289-4147-aca2-aac438451f5e@kernel.org>
-In-Reply-To: <c0af2eec-c289-4147-aca2-aac438451f5e@kernel.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 16 Aug 2024 14:29:56 +0200
-Message-ID: <CAMRc=MdmgcRUfYGo25spPOKqjpebiaZUP34B7PuuoAxMAupAYA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: misc: qcom,fastrpc: document new domain ID
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Amol Maheshwari <amahesh@qti.qualcomm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Tengfei Fan <quic_tengfan@quicinc.com>, Ling Xu <quic_lxu5@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20240814-coccinelle-followup-v2-0-88b4e4a9af56@chromium.org> <20240814-coccinelle-followup-v2-1-88b4e4a9af56@chromium.org>
+In-Reply-To: <20240814-coccinelle-followup-v2-1-88b4e4a9af56@chromium.org>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Fri, 16 Aug 2024 14:30:16 +0200
+X-Gmail-Original-Message-ID: <CANiDSCuOmE32Hhw6QC7jfO+gPauxOrPZis-4NhDL8eXO1a_JWg@mail.gmail.com>
+Message-ID: <CANiDSCuOmE32Hhw6QC7jfO+gPauxOrPZis-4NhDL8eXO1a_JWg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] media: drivers/media/dvb-core: Split dvb_frontend_open()
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 16, 2024 at 1:21=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
+Hi
+
+On Wed, 14 Aug 2024 at 16:10, Ricardo Ribalda <ribalda@chromium.org> wrote:
 >
-> On 16/08/2024 12:23, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > Add "cdsp1" as the new supported label for the CDSP1 fastrpc domain.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >  Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml b=
-/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
-> > index c27a8f33d8d7..2a5b18982804 100644
-> > --- a/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
-> > +++ b/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
-> > @@ -26,6 +26,7 @@ properties:
-> >        - mdsp
-> >        - sdsp
-> >        - cdsp
-> > +      - cdsp1
+> Move the actual opening to its own function.
 >
-> Are there more than one cdsp domains? Why adding suffixes? Driver source
-> code does not have "cdsp1" domain, so this is confusing.
+> Not intended code change. This is a preparation for the next patch.
 >
-> Best regards,
-> Krzysztof
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/dvb-core/dvb_frontend.c | 143 +++++++++++++++++-----------------
+>  1 file changed, 70 insertions(+), 73 deletions(-)
+>
+> diff --git a/drivers/media/dvb-core/dvb_frontend.c b/drivers/media/dvb-core/dvb_frontend.c
+> index 4f78f30b3646..e81b9996530e 100644
+> --- a/drivers/media/dvb-core/dvb_frontend.c
+> +++ b/drivers/media/dvb-core/dvb_frontend.c
+> @@ -2760,80 +2760,13 @@ static __poll_t dvb_frontend_poll(struct file *file, struct poll_table_struct *w
+>         return 0;
+>  }
+>
+> -static int dvb_frontend_open(struct inode *inode, struct file *file)
+> +static int __dvb_frontend_open(struct inode *inode, struct file *file)
+>  {
+>         struct dvb_device *dvbdev = file->private_data;
+>         struct dvb_frontend *fe = dvbdev->priv;
+>         struct dvb_frontend_private *fepriv = fe->frontend_priv;
+> -       struct dvb_adapter *adapter = fe->dvb;
+>         int ret;
+>
+> -       dev_dbg(fe->dvb->device, "%s:\n", __func__);
+> -       if (fe->exit == DVB_FE_DEVICE_REMOVED)
+> -               return -ENODEV;
+> -
+> -       if (adapter->mfe_shared == 2) {
+> -               mutex_lock(&adapter->mfe_lock);
+> -               if ((file->f_flags & O_ACCMODE) != O_RDONLY) {
+> -                       if (adapter->mfe_dvbdev &&
+> -                           !adapter->mfe_dvbdev->writers) {
+> -                               mutex_unlock(&adapter->mfe_lock);
+> -                               return -EBUSY;
+> -                       }
+> -                       adapter->mfe_dvbdev = dvbdev;
+> -               }
+> -       } else if (adapter->mfe_shared) {
+> -               mutex_lock(&adapter->mfe_lock);
+> -
+> -               if (!adapter->mfe_dvbdev)
+> -                       adapter->mfe_dvbdev = dvbdev;
+> -
+> -               else if (adapter->mfe_dvbdev != dvbdev) {
+> -                       struct dvb_device
+> -                               *mfedev = adapter->mfe_dvbdev;
+> -                       struct dvb_frontend
+> -                               *mfe = mfedev->priv;
+> -                       struct dvb_frontend_private
+> -                               *mfepriv = mfe->frontend_priv;
+> -                       int mferetry = (dvb_mfe_wait_time << 1);
+> -
+> -                       mutex_unlock(&adapter->mfe_lock);
+> -                       while (mferetry-- && (mfedev->users != -1 ||
+> -                                             mfepriv->thread)) {
+> -                               if (msleep_interruptible(500)) {
+> -                                       if (signal_pending(current))
+> -                                               return -EINTR;
+> -                               }
+> -                       }
+> -
+> -                       mutex_lock(&adapter->mfe_lock);
+> -                       if (adapter->mfe_dvbdev != dvbdev) {
+> -                               mfedev = adapter->mfe_dvbdev;
+> -                               mfe = mfedev->priv;
+> -                               mfepriv = mfe->frontend_priv;
+> -                               if (mfedev->users != -1 ||
+> -                                   mfepriv->thread) {
+> -                                       mutex_unlock(&adapter->mfe_lock);
+> -                                       return -EBUSY;
+> -                               }
+> -                               adapter->mfe_dvbdev = dvbdev;
+> -                       }
+> -               }
+> -       }
+> -
+> -       if (dvbdev->users == -1 && fe->ops.ts_bus_ctrl) {
+> -               if ((ret = fe->ops.ts_bus_ctrl(fe, 1)) < 0)
+> -                       goto err0;
+> -
+> -               /* If we took control of the bus, we need to force
+> -                  reinitialization.  This is because many ts_bus_ctrl()
+> -                  functions strobe the RESET pin on the demod, and if the
+> -                  frontend thread already exists then the dvb_init() routine
+> -                  won't get called (which is what usually does initial
+> -                  register configuration). */
+> -               fepriv->reinitialise = 1;
+> -       }
+
+This branch was missing in the patch. I will send a new version.
+
+Hopefuly someone with access to the hardware can test it?
+
+
+> -
+>         if ((ret = dvb_generic_open(inode, file)) < 0)
+>                 goto err1;
+>
+> @@ -2871,8 +2804,6 @@ static int dvb_frontend_open(struct inode *inode, struct file *file)
+>
+>         dvb_frontend_get(fe);
+>
+> -       if (adapter->mfe_shared)
+> -               mutex_unlock(&adapter->mfe_lock);
+>         return ret;
+>
+>  err3:
+> @@ -2891,9 +2822,75 @@ static int dvb_frontend_open(struct inode *inode, struct file *file)
+>  err1:
+>         if (dvbdev->users == -1 && fe->ops.ts_bus_ctrl)
+>                 fe->ops.ts_bus_ctrl(fe, 0);
+> -err0:
+> -       if (adapter->mfe_shared)
+> -               mutex_unlock(&adapter->mfe_lock);
+> +
+> +       return ret;
+> +}
+> +
+> +static int dvb_frontend_open(struct inode *inode, struct file *file)
+> +{
+> +       struct dvb_device *dvbdev = file->private_data;
+> +       struct dvb_frontend *fe = dvbdev->priv;
+> +       struct dvb_adapter *adapter = fe->dvb;
+> +       int ret;
+> +
+> +       dev_dbg(fe->dvb->device, "%s:\n", __func__);
+> +       if (fe->exit == DVB_FE_DEVICE_REMOVED)
+> +               return -ENODEV;
+> +
+> +       if (!adapter->mfe_shared)
+> +               return __dvb_frontend_open(inode, file);
+> +
+> +       if (adapter->mfe_shared == 2) {
+> +               mutex_lock(&adapter->mfe_lock);
+> +               if ((file->f_flags & O_ACCMODE) != O_RDONLY) {
+> +                       if (adapter->mfe_dvbdev &&
+> +                           !adapter->mfe_dvbdev->writers) {
+> +                               mutex_unlock(&adapter->mfe_lock);
+> +                               return -EBUSY;
+> +                       }
+> +                       adapter->mfe_dvbdev = dvbdev;
+> +               }
+> +       } else {
+> +               mutex_lock(&adapter->mfe_lock);
+> +
+> +               if (!adapter->mfe_dvbdev) {
+> +                       adapter->mfe_dvbdev = dvbdev;
+> +               } else if (adapter->mfe_dvbdev != dvbdev) {
+> +                       struct dvb_device
+> +                               *mfedev = adapter->mfe_dvbdev;
+> +                       struct dvb_frontend
+> +                               *mfe = mfedev->priv;
+> +                       struct dvb_frontend_private
+> +                               *mfepriv = mfe->frontend_priv;
+> +                       int mferetry = (dvb_mfe_wait_time << 1);
+> +
+> +                       mutex_unlock(&adapter->mfe_lock);
+> +                       while (mferetry-- && (mfedev->users != -1 ||
+> +                                             mfepriv->thread)) {
+> +                               if (msleep_interruptible(500)) {
+> +                                       if (signal_pending(current))
+> +                                               return -EINTR;
+> +                               }
+> +                       }
+> +
+> +                       mutex_lock(&adapter->mfe_lock);
+> +                       if (adapter->mfe_dvbdev != dvbdev) {
+> +                               mfedev = adapter->mfe_dvbdev;
+> +                               mfe = mfedev->priv;
+> +                               mfepriv = mfe->frontend_priv;
+> +                               if (mfedev->users != -1 ||
+> +                                   mfepriv->thread) {
+> +                                       mutex_unlock(&adapter->mfe_lock);
+> +                                       return -EBUSY;
+> +                               }
+> +                               adapter->mfe_dvbdev = dvbdev;
+> +                       }
+> +               }
+> +       }
+> +
+> +       ret = __dvb_frontend_open(inode, file);
+> +       mutex_unlock(&adapter->mfe_lock);
+> +
+>         return ret;
+>  }
+>
+>
+> --
+> 2.46.0.76.ge559c4bf1a-goog
 >
 
-It does, Srini picked up this patch earlier today. I'm not an expert
-in fast RPC but it looks like the domain ID number matters here.
 
-Bart
-
-[1] https://lore.kernel.org/all/20240805-topic-sa8775p-iot-remoteproc-v4-4-=
-86affdc72c04@linaro.org/
+-- 
+Ricardo Ribalda
 
