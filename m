@@ -1,184 +1,310 @@
-Return-Path: <linux-kernel+bounces-289437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83E3B954632
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:51:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A320954639
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:52:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FDD3285424
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:51:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5E46285553
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F6B175D35;
-	Fri, 16 Aug 2024 09:50:27 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969B316EBE9;
+	Fri, 16 Aug 2024 09:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="y+TBDVao";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/h/+Ch9T"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22B416EB63
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB1984A40;
+	Fri, 16 Aug 2024 09:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723801826; cv=none; b=nEs5w5p0KlCrPYmyIHruFAJ76yOFTv7GXTEvllFRzXB7+WMWz1F+e8y447eWN7zd04v2guEyVdsomNREn/wcn3g+2ySrLMn5x1eAZwPepZAv41hXFx3oq78MTRvWAUZrvlBpgUOiGofPNvVUnYRuMtKSvNwEUwYguct/VjktSzc=
+	t=1723801892; cv=none; b=GxwG/Ipy88d+wdwgXYrRz414p4OgLr3vc0fhxYjJ3XfFP3OtKUKU8kKWwsIcKZ+gKIhiYBAvNYfrUMPwef8H38GL1KODqWtp3NkdNW81EHA2D3m9WYBq4ZKhS7GiMFbRM5aR6QhzhA0tRp2MotquUuhewIeZB6wMgWexAAnqO84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723801826; c=relaxed/simple;
-	bh=YMlRIfpgLWfzMnUxUOnXs045GiCUCvfInjRCzY39Xdc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dMG4zycrjwvxFiTdnP3ZP3vTZ9c8su+T4HvCkFJ36QWYPm+JfLt6alJORX1uwn8ITWoiAH1gwDQe94vhcy2FXDQB5B0fMjgrMEAbBSkewAToO8UBV5zAPbQgS890jR7oijsz4m0U0mV+eUiDRzcOrAPvCzyg/8nWDEdRICYa9r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-396c41de481so18742015ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 02:50:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723801824; x=1724406624;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RGL9FQmB5nbopldCpt+u4K2VdFzYz6hmq4pNpCAgyHY=;
-        b=Aj7XY0+oIEBpn+hzLMXfbjPWrmZRop14sSYDZRMi65RSR1iHLmt/62ocs0yGjg7B5s
-         T5OYJ9AosKTsShXfWi3z6jyG49xbXHfTM557np4onSHC3/gRfHmRrRDB0iFit9n6iVmy
-         y5eRLw8ytd4tQvEF/NXbgKdThMaGtODa3+ninWlkF1lcjdmBcJiY/E66zvySPXZgBmNJ
-         gw/LYxWSIZK9qbxIypQUCE/UK/HxzYikGBzEGbS8AMn784tYFdfkLULEHyB/q0JpMsZy
-         YJY8MeYKeYBLNFDH/yxKMBJcTaGcF9Kxc839cUxvzGTMpTNuX1gywAsZ+0zGk8V5ok55
-         mTOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMpeEh/xscHudJDrN8TCyC/itakHcR8u9GIWeMOOXu65fJVeSyVDliirLhAZiJa75/iFOSb3GRG/KM+LlwTcdaP59lCswosuXokfIj
-X-Gm-Message-State: AOJu0YwPGMNB/Bvzn3vA6BnIAusCCUqMQ86hCWse5WSQJgbYK43fy8jY
-	F1Oap2hsxIJWoGFp0NCFBdtNkxqVa1RgQUzgH9EuBMViLCUgt/Y80RRsJjDV0V9+tMPcrwCi5sI
-	Mt5GAy82VIVi/T1Z1j7Fg2fWlwar+cG11cqky28fLY4FrhCB29gRFOSI=
-X-Google-Smtp-Source: AGHT+IERcO2HqACqr41RDkKB2vxzlsKnEPdx3dkn9e3rFXNcfYP9pF4V9ffVljmUSusg+ZMOLbun+sdOCOHRDMgIRAW34M2ISA/p
+	s=arc-20240116; t=1723801892; c=relaxed/simple;
+	bh=xp2s+GULj0ndTyhp162xqYgKnNZW5+pstiPfJtGuhtg=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=OuKd5PdSjohUI7lt06CrrLWYnl8Hlo2MGFd8T1rcddJlodxVFap6OZWbxWLGoED+J5klErGh52XIpoKmzrRg1ZfWTDDixMn1E2vDoDX4D49VXgBV6aTpIi/l3ynzUZKonYWg6tmGTCHI7iH7jmnCRLP6G8qKI7ggpIaA/8/J1kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=y+TBDVao; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/h/+Ch9T; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 16 Aug 2024 09:51:28 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723801889;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DZxKpsa6PxVzgUzZobJXs9joMqMbHyHMV99vADbMyGE=;
+	b=y+TBDVaovT4DCYWATL2hLnASwcO/1s06P0GVf0+vs++0QCgq4qYNB49PqvgZ5lUC9vX+El
+	Mc+i6z549C/pV9vYiRw5F/zh4O9rzxMgsKXEYe5co6IdEOy9kKrZiBska/iRWjdHrr2Oss
+	FGfKpq3rBV7/919CAYpRoi7UwnatfeRiXx2CK3QSRPjA2RJ6S+c2HjVddgZdCt4g4ZlVjq
+	nh1yJAaf3BP8pNIe0MjCiw6Vpffv/KK3JNDxxpNJUuwqGM9N9Ki8KnTidWWK70YBwju2h+
+	70G3v+bDhAh4mSrwZ3mQqNDzcMsdKf+pQsngZexXNzaxfslRiEtgBvg4dlQCOA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723801889;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DZxKpsa6PxVzgUzZobJXs9joMqMbHyHMV99vADbMyGE=;
+	b=/h/+Ch9TNciIHIb/8oftU7IOxl3ePrrR1sZnoQPksbE7Kd9ZgjnbvrVQYEU4OKReIbvxt5
+	r5X3ujbtoc9p7tDA==
+From: "tip-bot2 for Caleb Sander Mateos" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/core] softirq: Remove unused 'action' parameter from action
+ callback
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
+ x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20240815171549.3260003-1-csander@purestorage.com>
+References: <20240815171549.3260003-1-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a25:b0:380:9233:96e6 with SMTP id
- e9e14a558f8ab-39d26d856dcmr1543855ab.4.1723801823791; Fri, 16 Aug 2024
- 02:50:23 -0700 (PDT)
-Date: Fri, 16 Aug 2024 02:50:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005ee2e9061fc9e38c@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_lru_change (2)
-From: syzbot <syzbot+510b0b28f8e6de64d307@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <172380188809.2215.9016977809020232144.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hello,
+The following commit has been merged into the irq/core branch of tip:
 
-syzbot found the following issue on:
+Commit-ID:     7874673ee43f5e44d3cf4bf5e8e1df9e9aa5dffa
+Gitweb:        https://git.kernel.org/tip/7874673ee43f5e44d3cf4bf5e8e1df9e9aa5dffa
+Author:        Caleb Sander Mateos <csander@purestorage.com>
+AuthorDate:    Thu, 15 Aug 2024 11:15:40 -06:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Fri, 16 Aug 2024 11:40:26 +02:00
 
-HEAD commit:    1fb918967b56 Merge tag 'for-6.11-rc3-tag' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17d08bc5980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
-dashboard link: https://syzkaller.appspot.com/bug?extid=510b0b28f8e6de64d307
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=145916d5980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=134f55f3980000
+softirq: Remove unused 'action' parameter from action callback
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-1fb91896.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/cd6e8883313a/vmlinux-1fb91896.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/87b718d2d1df/bzImage-1fb91896.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/4878c2c54d9c/mount_0.gz
+When soft interrupt actions are called, they are passed a pointer to the
+struct softirq action which contains the action's function pointer.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+510b0b28f8e6de64d307@syzkaller.appspotmail.com
+This pointer isn't useful, as the action callback already knows what
+function it is. And since each callback handles a specific soft interrupt,
+the callback also knows which soft interrupt number is running.
 
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/lru.h:19!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5085 Comm: syz-executor267 Not tainted 6.11.0-rc3-syzkaller-00066-g1fb918967b56 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:lru_pos fs/bcachefs/lru.h:19 [inline]
-RIP: 0010:__bch2_lru_set fs/bcachefs/lru.c:48 [inline]
-RIP: 0010:bch2_lru_del fs/bcachefs/lru.c:54 [inline]
-RIP: 0010:bch2_lru_change+0x65c/0x680 fs/bcachefs/lru.c:69
-Code: 80 e1 07 38 c1 0f 8c 47 fd ff ff be 14 00 00 00 48 8b 7c 24 10 e8 14 d9 c2 fd e9 33 fd ff ff e8 3a 62 7e 07 e8 65 92 5b fd 90 <0f> 0b e8 5d 92 5b fd 90 0f 0b e8 55 92 5b fd 90 0f 0b e8 4d 92 5b
-RSP: 0018:ffffc9000aece6e0 EFLAGS: 00010293
-RAX: ffffffff8437f70b RBX: 1ffff920015d9cf2 RCX: ffff8880001fc880
-RDX: 0000000000000000 RSI: 0100000001000000 RDI: 0000ffffffffffff
-RBP: ffffc9000aece810 R08: ffffffff8437f253 R09: ffffffff8404216f
-R10: 0000000000000003 R11: ffff8880001fc880 R12: 0000ffffffffffff
-R13: 1ffff920015d9ce4 R14: 0100000001000000 R15: ffff000001000000
-FS:  0000555576dd6380(0000) GS:ffff888020800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f6d9100bd97 CR3: 00000000122b8000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bch2_trigger_alloc+0x1745/0x3f80 fs/bcachefs/alloc_background.c:877
- bch2_key_trigger fs/bcachefs/bkey_methods.h:88 [inline]
- run_one_trans_trigger fs/bcachefs/btree_trans_commit.c:507 [inline]
- run_btree_triggers+0xc91/0x1270 fs/bcachefs/btree_trans_commit.c:540
- bch2_trans_commit_run_triggers fs/bcachefs/btree_trans_commit.c:583 [inline]
- __bch2_trans_commit+0x542/0x9030 fs/bcachefs/btree_trans_commit.c:1058
- bch2_trans_commit fs/bcachefs/btree_update.h:184 [inline]
- bch2_extent_update+0x4c0/0xbb0 fs/bcachefs/io_write.c:325
- bch2_fpunch_at+0x87c/0x1020 fs/bcachefs/io_misc.c:184
- bch2_fpunch+0x412/0x690 fs/bcachefs/io_misc.c:203
- bchfs_fpunch+0x282/0x7a0 fs/bcachefs/fs-io.c:538
- bch2_fallocate_dispatch+0x3e7/0x540 fs/bcachefs/fs-io.c:792
- vfs_fallocate+0x553/0x6c0 fs/open.c:334
- do_vfs_ioctl+0x2592/0x2e50 fs/ioctl.c:886
- __do_sys_ioctl fs/ioctl.c:905 [inline]
- __se_sys_ioctl+0x81/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fad0bc1ab99
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc8d92bed8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0031656c69662f2e RCX: 00007fad0bc1ab99
-RDX: 0000000020000180 RSI: 0000000040305829 RDI: 0000000000000004
-RBP: 00007fad0bc935f0 R08: 0000555576dd74c0 R09: 0000555576dd74c0
-R10: 0000555576dd74c0 R11: 0000000000000246 R12: 00007ffc8d92bf00
-R13: 00007ffc8d92c128 R14: 431bde82d7b634db R15: 00007fad0bc6303b
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:lru_pos fs/bcachefs/lru.h:19 [inline]
-RIP: 0010:__bch2_lru_set fs/bcachefs/lru.c:48 [inline]
-RIP: 0010:bch2_lru_del fs/bcachefs/lru.c:54 [inline]
-RIP: 0010:bch2_lru_change+0x65c/0x680 fs/bcachefs/lru.c:69
-Code: 80 e1 07 38 c1 0f 8c 47 fd ff ff be 14 00 00 00 48 8b 7c 24 10 e8 14 d9 c2 fd e9 33 fd ff ff e8 3a 62 7e 07 e8 65 92 5b fd 90 <0f> 0b e8 5d 92 5b fd 90 0f 0b e8 55 92 5b fd 90 0f 0b e8 4d 92 5b
-RSP: 0018:ffffc9000aece6e0 EFLAGS: 00010293
-RAX: ffffffff8437f70b RBX: 1ffff920015d9cf2 RCX: ffff8880001fc880
-RDX: 0000000000000000 RSI: 0100000001000000 RDI: 0000ffffffffffff
-RBP: ffffc9000aece810 R08: ffffffff8437f253 R09: ffffffff8404216f
-R10: 0000000000000003 R11: ffff8880001fc880 R12: 0000ffffffffffff
-R13: 1ffff920015d9ce4 R14: 0100000001000000 R15: ffff000001000000
-FS:  0000555576dd6380(0000) GS:ffff888020800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffab111bad5 CR3: 00000000122b8000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+No soft interrupt action callback actually uses this parameter, so remove
+it from the function pointer signature. This clarifies that soft interrupt
+actions are global routines and makes it slightly cheaper to call them.
 
-
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
+Link: https://lore.kernel.org/all/20240815171549.3260003-1-csander@purestorage.com
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ block/blk-mq.c            |  2 +-
+ include/linux/interrupt.h |  4 ++--
+ kernel/rcu/tiny.c         |  2 +-
+ kernel/rcu/tree.c         |  2 +-
+ kernel/sched/fair.c       |  2 +-
+ kernel/softirq.c          | 15 +++++++--------
+ kernel/time/hrtimer.c     |  2 +-
+ kernel/time/timer.c       |  2 +-
+ lib/irq_poll.c            |  2 +-
+ net/core/dev.c            |  4 ++--
+ 10 files changed, 18 insertions(+), 19 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index e3c3c0c..aa28157 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -1128,7 +1128,7 @@ static void blk_complete_reqs(struct llist_head *list)
+ 		rq->q->mq_ops->complete(rq);
+ }
+ 
+-static __latent_entropy void blk_done_softirq(struct softirq_action *h)
++static __latent_entropy void blk_done_softirq(void)
+ {
+ 	blk_complete_reqs(this_cpu_ptr(&blk_cpu_done));
+ }
+diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+index 3f30c88..694de61 100644
+--- a/include/linux/interrupt.h
++++ b/include/linux/interrupt.h
+@@ -594,7 +594,7 @@ extern const char * const softirq_to_name[NR_SOFTIRQS];
+ 
+ struct softirq_action
+ {
+-	void	(*action)(struct softirq_action *);
++	void	(*action)(void);
+ };
+ 
+ asmlinkage void do_softirq(void);
+@@ -609,7 +609,7 @@ static inline void do_softirq_post_smp_call_flush(unsigned int unused)
+ }
+ #endif
+ 
+-extern void open_softirq(int nr, void (*action)(struct softirq_action *));
++extern void open_softirq(int nr, void (*action)(void));
+ extern void softirq_init(void);
+ extern void __raise_softirq_irqoff(unsigned int nr);
+ 
+diff --git a/kernel/rcu/tiny.c b/kernel/rcu/tiny.c
+index 4402d6f..b3b3ce3 100644
+--- a/kernel/rcu/tiny.c
++++ b/kernel/rcu/tiny.c
+@@ -105,7 +105,7 @@ static inline bool rcu_reclaim_tiny(struct rcu_head *head)
+ }
+ 
+ /* Invoke the RCU callbacks whose grace period has elapsed.  */
+-static __latent_entropy void rcu_process_callbacks(struct softirq_action *unused)
++static __latent_entropy void rcu_process_callbacks(void)
+ {
+ 	struct rcu_head *next, *list;
+ 	unsigned long flags;
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index e641cc6..93bd665 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -2855,7 +2855,7 @@ static __latent_entropy void rcu_core(void)
+ 		queue_work_on(rdp->cpu, rcu_gp_wq, &rdp->strict_work);
+ }
+ 
+-static void rcu_core_si(struct softirq_action *h)
++static void rcu_core_si(void)
+ {
+ 	rcu_core();
+ }
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 9057584..8dc9385 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -12483,7 +12483,7 @@ out:
+  * - indirectly from a remote scheduler_tick() for NOHZ idle balancing
+  *   through the SMP cross-call nohz_csd_func()
+  */
+-static __latent_entropy void sched_balance_softirq(struct softirq_action *h)
++static __latent_entropy void sched_balance_softirq(void)
+ {
+ 	struct rq *this_rq = this_rq();
+ 	enum cpu_idle_type idle = this_rq->idle_balance;
+diff --git a/kernel/softirq.c b/kernel/softirq.c
+index 0258201..d082e78 100644
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -551,7 +551,7 @@ restart:
+ 		kstat_incr_softirqs_this_cpu(vec_nr);
+ 
+ 		trace_softirq_entry(vec_nr);
+-		h->action(h);
++		h->action();
+ 		trace_softirq_exit(vec_nr);
+ 		if (unlikely(prev_count != preempt_count())) {
+ 			pr_err("huh, entered softirq %u %s %p with preempt_count %08x, exited with %08x?\n",
+@@ -700,7 +700,7 @@ void __raise_softirq_irqoff(unsigned int nr)
+ 	or_softirq_pending(1UL << nr);
+ }
+ 
+-void open_softirq(int nr, void (*action)(struct softirq_action *))
++void open_softirq(int nr, void (*action)(void))
+ {
+ 	softirq_vec[nr].action = action;
+ }
+@@ -760,8 +760,7 @@ static bool tasklet_clear_sched(struct tasklet_struct *t)
+ 	return false;
+ }
+ 
+-static void tasklet_action_common(struct softirq_action *a,
+-				  struct tasklet_head *tl_head,
++static void tasklet_action_common(struct tasklet_head *tl_head,
+ 				  unsigned int softirq_nr)
+ {
+ 	struct tasklet_struct *list;
+@@ -805,16 +804,16 @@ static void tasklet_action_common(struct softirq_action *a,
+ 	}
+ }
+ 
+-static __latent_entropy void tasklet_action(struct softirq_action *a)
++static __latent_entropy void tasklet_action(void)
+ {
+ 	workqueue_softirq_action(false);
+-	tasklet_action_common(a, this_cpu_ptr(&tasklet_vec), TASKLET_SOFTIRQ);
++	tasklet_action_common(this_cpu_ptr(&tasklet_vec), TASKLET_SOFTIRQ);
+ }
+ 
+-static __latent_entropy void tasklet_hi_action(struct softirq_action *a)
++static __latent_entropy void tasklet_hi_action(void)
+ {
+ 	workqueue_softirq_action(true);
+-	tasklet_action_common(a, this_cpu_ptr(&tasklet_hi_vec), HI_SOFTIRQ);
++	tasklet_action_common(this_cpu_ptr(&tasklet_hi_vec), HI_SOFTIRQ);
+ }
+ 
+ void tasklet_setup(struct tasklet_struct *t,
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index b8ee320..836157e 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -1757,7 +1757,7 @@ static void __hrtimer_run_queues(struct hrtimer_cpu_base *cpu_base, ktime_t now,
+ 	}
+ }
+ 
+-static __latent_entropy void hrtimer_run_softirq(struct softirq_action *h)
++static __latent_entropy void hrtimer_run_softirq(void)
+ {
+ 	struct hrtimer_cpu_base *cpu_base = this_cpu_ptr(&hrtimer_bases);
+ 	unsigned long flags;
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index 64b0d8a..760bbeb 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -2440,7 +2440,7 @@ static void run_timer_base(int index)
+ /*
+  * This function runs timers and the timer-tq in bottom half context.
+  */
+-static __latent_entropy void run_timer_softirq(struct softirq_action *h)
++static __latent_entropy void run_timer_softirq(void)
+ {
+ 	run_timer_base(BASE_LOCAL);
+ 	if (IS_ENABLED(CONFIG_NO_HZ_COMMON)) {
+diff --git a/lib/irq_poll.c b/lib/irq_poll.c
+index 2d5329a..08b242b 100644
+--- a/lib/irq_poll.c
++++ b/lib/irq_poll.c
+@@ -75,7 +75,7 @@ void irq_poll_complete(struct irq_poll *iop)
+ }
+ EXPORT_SYMBOL(irq_poll_complete);
+ 
+-static void __latent_entropy irq_poll_softirq(struct softirq_action *h)
++static void __latent_entropy irq_poll_softirq(void)
+ {
+ 	struct list_head *list = this_cpu_ptr(&blk_cpu_iopoll);
+ 	int rearm = 0, budget = irq_poll_budget;
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 6ea1d20..e24a3bc 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -5247,7 +5247,7 @@ int netif_rx(struct sk_buff *skb)
+ }
+ EXPORT_SYMBOL(netif_rx);
+ 
+-static __latent_entropy void net_tx_action(struct softirq_action *h)
++static __latent_entropy void net_tx_action(void)
+ {
+ 	struct softnet_data *sd = this_cpu_ptr(&softnet_data);
+ 
+@@ -6920,7 +6920,7 @@ static int napi_threaded_poll(void *data)
+ 	return 0;
+ }
+ 
+-static __latent_entropy void net_rx_action(struct softirq_action *h)
++static __latent_entropy void net_rx_action(void)
+ {
+ 	struct softnet_data *sd = this_cpu_ptr(&softnet_data);
+ 	unsigned long time_limit = jiffies +
 
