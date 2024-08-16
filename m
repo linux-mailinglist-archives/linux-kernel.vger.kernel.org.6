@@ -1,353 +1,387 @@
-Return-Path: <linux-kernel+bounces-289716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93994954AEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:21:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1409954AF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:22:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 225951F2385D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:21:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 247851F2385D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348281BC067;
-	Fri, 16 Aug 2024 13:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="fpymQp6l"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BBC1B9B29
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 13:21:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654FA1BB69D;
+	Fri, 16 Aug 2024 13:21:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93A1198851
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 13:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723814485; cv=none; b=qsNBwoQvHvpspjW9OW0ady5EsjX5D0WveoHCAJt/rKSQH4y4kinIKy/+e4uDtDNONr5Vxfh2iw+mh3uTe13PgKQfs6Nhi/cYO5kE3r4sL3PMPcJJ2qTnIrydqA+uzjvIS1CkP0tlb/dVs2+K5ivJ54IKbSJEQNtp8C88SBSA7R4=
+	t=1723814518; cv=none; b=qjSmJjQIJDFfUQ4Bf7cWKyF1yHb5ks9B4UPi40y6F9N7PKgxMRysat2kEHcPS7GVZtAfgmYJEi00lofuNpVz2p5OyJbxo3EWH0TtDNVg1mMBjuDBUnGXVC00zCapAxwlb+ZpsIFmmIY5joAHDErBhXCwPGaPSLN1tOEW+IDJVls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723814485; c=relaxed/simple;
-	bh=aAJ+TicSzcxqpA713GipQoOCUl+RJqqpvwSqos1zuP4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JniP3GYaOtKOLH2IHWa4gBQC2b23xQ0tl4G9G6gd1JzI1eKX/+mhI5zQn7GX/d1nrOhh4P1JGSqCf6VlGilz3MbDNZD2iAvh2Vo/l8ZKRuznKZ9+OmNMKttyyeH38fmCz0j8877VDuqdYFqHDTI8NK/q20ExsnXS1gF5XOd2aOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=fpymQp6l; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f01e9f53e3so31226061fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 06:21:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1723814481; x=1724419281; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9tzbkpHa0cq4jRrURvNzDIHWfx9oBrvzJsu/1tWEVT4=;
-        b=fpymQp6lz4k8tCh1FF/EcIgGKDoxX4HI5i6Yo/spQ6q7mQKaGj/3x05aanweeS8sx3
-         eSxkTTRafOKnZrGs8+uDzyMUlKw1+apLsWX6gALYLfdby7zuAYzeHSO4KD6vENBmPZjB
-         jHtps/k+ZXKxwtovHhWTfSHQErFdG1t4xOG5Hhu3y4fZc35LE1h4cGJ7FSx9sboIhJT6
-         L9LykiB156bU5L1Q2IzkqVcgq75Vy2hNuzCNPsdel2B796/3t1CgQDroZv2brHMm4rab
-         mnJC1G6LZvJBBnhXP+yJTar0PfnWTVa6ENYIIyulM0rtTHyITIUDbaE1c6GWKxguTrVp
-         eMxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723814481; x=1724419281;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9tzbkpHa0cq4jRrURvNzDIHWfx9oBrvzJsu/1tWEVT4=;
-        b=qMvuBIFD6fj/k+XqP+QY4LJYoBA3o9AvhUoWqJcjukCUOwUXOrx6a8WE1zE6JufYWh
-         EuIWGdXLaec+vXJFsdda1EsXj7zO20DxQBgqHrf47C0uDYu3zLg7EWB4/gj+rQUvv7jY
-         ka2jWjNutS3F/HrsEha2wOr412JV8uAHvtj0WSdu8yQ+XWNksLqYJQE8vbRVH/YbDo6K
-         1R9c2a6jViXR3JQD5TcWWIG16ooe/zHmmjdOjEJlHfttzzpLLINr9SWhTWx0Q92FwH56
-         y84XBwaRW6I0z3ylw3DMYwXrk93XaXARUn5VJJHWcc/tPnBmyHYZZLLNBEwei9V7LliJ
-         EnXw==
-X-Forwarded-Encrypted: i=1; AJvYcCVH3EKGSQX427xbbHnaMWfp9bwi8MujOITyq2cib4hg985hGYXaTar+Bg/Cu8163kW618gkxhpB6sHKedOPmbZ5HLgptqUU0j07b4nD
-X-Gm-Message-State: AOJu0YzSlPvt5wsFEYDpJh/muEwbqz3uZdX7+Q729VP7Aeag4A4jMEOO
-	GDBU4kbN3q3XAyBzEHFiG/daDelJ+sx/V+JWDMmDerLCwnP4li1K2zrjkjPEYNuEDkpght/CXjt
-	T4aGD1LMzDrMLeO9mI65OrdBrmV1KjcOqk4wksw==
-X-Google-Smtp-Source: AGHT+IHsGXQrWOUSHsstAbeiWjP0hjs3rLbKpygT5zcZkzhaVvceUx3hjqV1jUPOl4zjzCfAJUuVcqrljwcTwKRM3cc=
-X-Received: by 2002:a05:6512:2346:b0:530:ad8d:dcdb with SMTP id
- 2adb3069b0e04-5331c6a1931mr2612100e87.19.1723814480446; Fri, 16 Aug 2024
- 06:21:20 -0700 (PDT)
+	s=arc-20240116; t=1723814518; c=relaxed/simple;
+	bh=+ur4AjLDWgHgxkpsDSRqiaJ4I71IFqXM08mwjYc7XVM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AYMStiqm+aDJhyaUItlAGBcWrqq0JDy6dIgQCuMhQ5JYher2RZ9AocS+W7CUrxGF+NrpGze38ijcYrfl0BhgUn4OsProPiOMw9YWynoxWwMlOEED/6EvW/0Pwg4c89Jh46hFYNnvKO5n3+VIkZNcXBRZCRCkXy/buP9gSGjD/zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1F6B143D;
+	Fri, 16 Aug 2024 06:22:20 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 22CD63F58B;
+	Fri, 16 Aug 2024 06:21:54 -0700 (PDT)
+Message-ID: <ae674391-c8b1-47f9-b92f-748bf376b4a5@arm.com>
+Date: Fri, 16 Aug 2024 14:21:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814081437.956855-1-samuel.holland@sifive.com> <20240814081437.956855-5-samuel.holland@sifive.com>
-In-Reply-To: <20240814081437.956855-5-samuel.holland@sifive.com>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Fri, 16 Aug 2024 18:51:08 +0530
-Message-ID: <CAK9=C2XOktu5kPXEWKMY4Wsf0D9kwh3rZNXricWqLQaiaqWnnQ@mail.gmail.com>
-Subject: Re: [PATCH v3 04/10] riscv: Add support for userspace pointer masking
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, 
-	linux-kernel@vger.kernel.org, Anup Patel <anup@brainfault.org>, 
-	Conor Dooley <conor@kernel.org>, kasan-dev@googlegroups.com, 
-	Atish Patra <atishp@atishpatra.org>, Evgenii Stepanov <eugenis@google.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/8] perf/arm-cmn: Refactor node ID handling. Again.
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: will@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, ilkka@os.amperecomputing.com
+References: <cover.1723229941.git.robin.murphy@arm.com>
+ <998064aa2bdb0e39f91b4f1fea2f428689978ea9.1723229941.git.robin.murphy@arm.com>
+ <Zr8c-eL1rDFDG7_O@J2N7QTR9R3> <14686473-de4a-4d43-a3d1-0df750662ca8@arm.com>
+ <Zr9J1YfnPFfmS6jn@J2N7QTR9R3>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <Zr9J1YfnPFfmS6jn@J2N7QTR9R3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 14, 2024 at 1:45=E2=80=AFPM Samuel Holland
-<samuel.holland@sifive.com> wrote:
->
-> RISC-V supports pointer masking with a variable number of tag bits
-> (which is called "PMLEN" in the specification) and which is configured
-> at the next higher privilege level.
->
-> Wire up the PR_SET_TAGGED_ADDR_CTRL and PR_GET_TAGGED_ADDR_CTRL prctls
-> so userspace can request a lower bound on the number of tag bits and
-> determine the actual number of tag bits. As with arm64's
-> PR_TAGGED_ADDR_ENABLE, the pointer masking configuration is
-> thread-scoped, inherited on clone() and fork() and cleared on execve().
->
-> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
-> ---
->
-> Changes in v3:
->  - Rename CONFIG_RISCV_ISA_POINTER_MASKING to CONFIG_RISCV_ISA_SUPM,
->    since it only controls the userspace part of pointer masking
->  - Use IS_ENABLED instead of #ifdef when possible
->  - Use an enum for the supported PMLEN values
->  - Simplify the logic in set_tagged_addr_ctrl()
->
-> Changes in v2:
->  - Rebase on riscv/linux.git for-next
->  - Add and use the envcfg_update_bits() helper function
->  - Inline flush_tagged_addr_state()
->
->  arch/riscv/Kconfig                 | 11 ++++
->  arch/riscv/include/asm/processor.h |  8 +++
->  arch/riscv/include/asm/switch_to.h | 11 ++++
->  arch/riscv/kernel/process.c        | 90 ++++++++++++++++++++++++++++++
->  include/uapi/linux/prctl.h         |  3 +
->  5 files changed, 123 insertions(+)
->
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 0f3cd7c3a436..817437157138 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -512,6 +512,17 @@ config RISCV_ISA_C
->
->           If you don't know what to do here, say Y.
->
-> +config RISCV_ISA_SUPM
-> +       bool "Supm extension for userspace pointer masking"
-> +       depends on 64BIT
-> +       default y
-> +       help
-> +         Add support for pointer masking in userspace (Supm) when the
-> +         underlying hardware extension (Smnpm or Ssnpm) is detected at b=
-oot.
-> +
-> +         If this option is disabled, userspace will be unable to use
-> +         the prctl(PR_{SET,GET}_TAGGED_ADDR_CTRL) API.
-> +
->  config RISCV_ISA_SVNAPOT
->         bool "Svnapot extension support for supervisor mode NAPOT pages"
->         depends on 64BIT && MMU
-> diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/=
-processor.h
-> index 586e4ab701c4..5c4d4fb97314 100644
-> --- a/arch/riscv/include/asm/processor.h
-> +++ b/arch/riscv/include/asm/processor.h
-> @@ -200,6 +200,14 @@ extern int set_unalign_ctl(struct task_struct *tsk, =
-unsigned int val);
->  #define RISCV_SET_ICACHE_FLUSH_CTX(arg1, arg2) riscv_set_icache_flush_ct=
-x(arg1, arg2)
->  extern int riscv_set_icache_flush_ctx(unsigned long ctx, unsigned long p=
-er_thread);
->
-> +#ifdef CONFIG_RISCV_ISA_SUPM
-> +/* PR_{SET,GET}_TAGGED_ADDR_CTRL prctl */
-> +long set_tagged_addr_ctrl(struct task_struct *task, unsigned long arg);
-> +long get_tagged_addr_ctrl(struct task_struct *task);
-> +#define SET_TAGGED_ADDR_CTRL(arg)      set_tagged_addr_ctrl(current, arg=
-)
-> +#define GET_TAGGED_ADDR_CTRL()         get_tagged_addr_ctrl(current)
-> +#endif
-> +
->  #endif /* __ASSEMBLY__ */
->
->  #endif /* _ASM_RISCV_PROCESSOR_H */
-> diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/=
-switch_to.h
-> index 9685cd85e57c..94e33216b2d9 100644
-> --- a/arch/riscv/include/asm/switch_to.h
-> +++ b/arch/riscv/include/asm/switch_to.h
-> @@ -70,6 +70,17 @@ static __always_inline bool has_fpu(void) { return fal=
-se; }
->  #define __switch_to_fpu(__prev, __next) do { } while (0)
->  #endif
->
-> +static inline void envcfg_update_bits(struct task_struct *task,
-> +                                     unsigned long mask, unsigned long v=
-al)
-> +{
-> +       unsigned long envcfg;
-> +
-> +       envcfg =3D (task->thread.envcfg & ~mask) | val;
-> +       task->thread.envcfg =3D envcfg;
-> +       if (task =3D=3D current)
-> +               csr_write(CSR_ENVCFG, envcfg);
-> +}
-> +
->  static inline void __switch_to_envcfg(struct task_struct *next)
->  {
->         asm volatile (ALTERNATIVE("nop", "csrw " __stringify(CSR_ENVCFG) =
-", %0",
-> diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
-> index e4bc61c4e58a..1280a7c4a412 100644
-> --- a/arch/riscv/kernel/process.c
-> +++ b/arch/riscv/kernel/process.c
-> @@ -7,6 +7,7 @@
->   * Copyright (C) 2017 SiFive
->   */
->
-> +#include <linux/bitfield.h>
->  #include <linux/cpu.h>
->  #include <linux/kernel.h>
->  #include <linux/sched.h>
-> @@ -171,6 +172,9 @@ void flush_thread(void)
->         memset(&current->thread.vstate, 0, sizeof(struct __riscv_v_ext_st=
-ate));
->         clear_tsk_thread_flag(current, TIF_RISCV_V_DEFER_RESTORE);
->  #endif
-> +       if (IS_ENABLED(CONFIG_RISCV_ISA_SUPM) &&
-> +           riscv_has_extension_unlikely(RISCV_ISA_EXT_SUPM))
-> +               envcfg_update_bits(current, ENVCFG_PMM, ENVCFG_PMM_PMLEN_=
-0);
+On 16/08/2024 1:45 pm, Mark Rutland wrote:
+> On Fri, Aug 16, 2024 at 12:56:48PM +0100, Robin Murphy wrote:
+>> On 2024-08-16 10:33 am, Mark Rutland wrote:
+>>> Hi Robin,
+>>>
+>>> On Fri, Aug 09, 2024 at 08:15:40PM +0100, Robin Murphy wrote:
+>>>> It transpires that despite the explicit example to the contrary in the
+>>>> CMN-700 TRM, the "extra device ports" config is in fact a per-XP thing
+>>>> rather than a global one. To that end, rework node IDs yet again to
+>>>> carry around the additional data necessary to decode them properly. At
+>>>> this point the notion of fully decomposing an ID becomes more
+>>>> impractical than it's worth, so unabstracting the XY mesh coordinates
+>>>> (where 2/3 users were just debug anyway) ends up leaving things a bit
+>>>> simpler overall.
+>>>>
+>>>> Fixes: 60d1504070c2 ("perf/arm-cmn: Support new IP features")
+>>>
+>>> Does this fix an observable functional issue? It's difficult to tell
+>>> what the impact of this is from the commit message.
+>>>
+>>> i.e. what is the impact:
+>>>
+>>> * On the CMN-700 programmers model?
+>>>
+>>> * As observed by a user of the PMU driver?
+>>
+>> Yes, there are two areas where we functionally depend on decoding the bottom
+>> 3 bits of a node ID to the individual port/device numbers. One is just for
+>> the debugfs nicety, but the other is in arm_cmn_event_add() for setting
+>> input_sel to the appropriate event source.
+> 
+> Cool; and does treating this wrong just result in getting bad values out
+> in sysfs/perf, or is it possible that we have something like memory
+> corruption?
 
-Seeing a compile warning with this patch on RV32.
+Yup, it just means we'll configure the DTM to count an event input which 
+most likely doesn't exist, and thus get 0, plus debugfs looks a little 
+wonky, e.g.:
 
-linux/arch/riscv/kernel/process.c: In function 'flush_thread':
-linux/arch/riscv/include/asm/csr.h:202:41: warning: conversion from
-'long long unsigned int' to 'long unsigned int' changes value from
-'12884901888' to '0' [-Woverflow]
-  202 | #define ENVCFG_PMM                      (_AC(0x3, ULL) << 32)
-      |                                         ^~~~~~~~~~~~~~~~~~~~~
-linux/arch/riscv/kernel/process.c:179:45: note: in expansion of macro
-'ENVCFG_PMM'
-  179 |                 envcfg_update_bits(current, ENVCFG_PMM,
-ENVCFG_PMM_PMLEN_0);
-      |                                             ^~~~~~~~~~
+     1|        |
+-----+--------+--------
+0    | XP #0  | XP #1
+      | DTC 0  | DTC 0
+      |........|........
+   0  |  RN-I  |  RN-D
+     0|   #0   |   #0
+     1|        |
+   1  |  HN-T  |
+     0|        |
+     1|        |
+   2  |        |
+     0|   #1   |
+     1|        |
+   3  |        |
+     0|        |
+     1|        |
+-----+--------+--------
 
-Regards,
-Anup
+(the HN-T node type still shows up in the right place since that comes 
+directly from the per-port connect_info registers, but its corresponding 
+logical ID is looked up via the node ID, thus mistakenly decoded as 
+belonging to port 2 and output on the wrong line)
 
->  }
->
->  void arch_release_task_struct(struct task_struct *tsk)
-> @@ -233,3 +237,89 @@ void __init arch_task_cache_init(void)
->  {
->         riscv_v_setup_ctx_cache();
->  }
-> +
-> +#ifdef CONFIG_RISCV_ISA_SUPM
-> +enum {
-> +       PMLEN_0 =3D 0,
-> +       PMLEN_7 =3D 7,
-> +       PMLEN_16 =3D 16,
-> +};
-> +
-> +static bool have_user_pmlen_7;
-> +static bool have_user_pmlen_16;
-> +
-> +long set_tagged_addr_ctrl(struct task_struct *task, unsigned long arg)
-> +{
-> +       unsigned long valid_mask =3D PR_PMLEN_MASK;
-> +       struct thread_info *ti =3D task_thread_info(task);
-> +       unsigned long pmm;
-> +       u8 pmlen;
-> +
-> +       if (is_compat_thread(ti))
-> +               return -EINVAL;
-> +
-> +       if (arg & ~valid_mask)
-> +               return -EINVAL;
-> +
-> +       /*
-> +        * Prefer the smallest PMLEN that satisfies the user's request,
-> +        * in case choosing a larger PMLEN has a performance impact.
-> +        */
-> +       pmlen =3D FIELD_GET(PR_PMLEN_MASK, arg);
-> +       if (pmlen =3D=3D PMLEN_0)
-> +               pmm =3D ENVCFG_PMM_PMLEN_0;
-> +       else if (pmlen <=3D PMLEN_7 && have_user_pmlen_7)
-> +               pmm =3D ENVCFG_PMM_PMLEN_7;
-> +       else if (pmlen <=3D PMLEN_16 && have_user_pmlen_16)
-> +               pmm =3D ENVCFG_PMM_PMLEN_16;
-> +       else
-> +               return -EINVAL;
-> +
-> +       envcfg_update_bits(task, ENVCFG_PMM, pmm);
-> +
-> +       return 0;
-> +}
-> +
-> +long get_tagged_addr_ctrl(struct task_struct *task)
-> +{
-> +       struct thread_info *ti =3D task_thread_info(task);
-> +       long ret =3D 0;
-> +
-> +       if (is_compat_thread(ti))
-> +               return -EINVAL;
-> +
-> +       switch (task->thread.envcfg & ENVCFG_PMM) {
-> +       case ENVCFG_PMM_PMLEN_7:
-> +               ret =3D FIELD_PREP(PR_PMLEN_MASK, PMLEN_7);
-> +               break;
-> +       case ENVCFG_PMM_PMLEN_16:
-> +               ret =3D FIELD_PREP(PR_PMLEN_MASK, PMLEN_16);
-> +               break;
-> +       }
-> +
-> +       return ret;
-> +}
-> +
-> +static bool try_to_set_pmm(unsigned long value)
-> +{
-> +       csr_set(CSR_ENVCFG, value);
-> +       return (csr_read_clear(CSR_ENVCFG, ENVCFG_PMM) & ENVCFG_PMM) =3D=
-=3D value;
-> +}
-> +
-> +static int __init tagged_addr_init(void)
-> +{
-> +       if (!riscv_has_extension_unlikely(RISCV_ISA_EXT_SUPM))
-> +               return 0;
-> +
-> +       /*
-> +        * envcfg.PMM is a WARL field. Detect which values are supported.
-> +        * Assume the supported PMLEN values are the same on all harts.
-> +        */
-> +       csr_clear(CSR_ENVCFG, ENVCFG_PMM);
-> +       have_user_pmlen_7 =3D try_to_set_pmm(ENVCFG_PMM_PMLEN_7);
-> +       have_user_pmlen_16 =3D try_to_set_pmm(ENVCFG_PMM_PMLEN_16);
-> +
-> +       return 0;
-> +}
-> +core_initcall(tagged_addr_init);
-> +#endif /* CONFIG_RISCV_ISA_SUPM */
-> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-> index 35791791a879..6e84c827869b 100644
-> --- a/include/uapi/linux/prctl.h
-> +++ b/include/uapi/linux/prctl.h
-> @@ -244,6 +244,9 @@ struct prctl_mm_map {
->  # define PR_MTE_TAG_MASK               (0xffffUL << PR_MTE_TAG_SHIFT)
->  /* Unused; kept only for source compatibility */
->  # define PR_MTE_TCF_SHIFT              1
-> +/* RISC-V pointer masking tag length */
-> +# define PR_PMLEN_SHIFT                        24
-> +# define PR_PMLEN_MASK                 (0x7fUL << PR_PMLEN_SHIFT)
->
->  /* Control reclaim behavior when allocating memory */
->  #define PR_SET_IO_FLUSHER              57
-> --
-> 2.45.1
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+>> This was revealed once some hardware turned up with a mix of 3-port and
+>> 2-port XPs, and events from a node at port 1 device 0 on a 2-porter were not
+>> counting. It took a while to get to the "hang on, why does that ID end in
+>> 0x4 not 0x2?" moment...
+> 
+> I see; so we were mislead by the documentation, then saw HW which
+> demonstrated this.
+> 
+> It'd be nice to say something like:
+> 
+>    The CMN-700 TRM implies that the "extra device ports" configuration is
+>    global to a CMN instance and the CMN PMU driver currently assumes
+>    this. Unfortunately this is not correct as this configuration is
+>    per-XP, and hardware exists where some XPs have extra device ports
+>    while others do not.
+> 
+>    The presence of extra decice ports affects how the bottom 3 bits of a
+>    node ID map to individual port/device numbers, and when the driver
+>    misinterprets this, it may expose incorrect information in syfs, and
+>    arm_cmn_event_add() may configure input_sel incorrectly, resulting in
+>    incorrect performance counter numbers.
+> 
+>    Fix this by reworking node IDs to carry the additional data necessary
+>    to decode them properly. At this point the notion of fully decomposing
+>    an ID becomes more impractical than it's worth, so unabstracting the
+>    XY mesh coordinates (where 2/3 users were just debug anyway) ends up
+>    leaving things a bit simpler overall.
+> 
+> With that wording (or something very similar), this looks good to me,
+> and with that:
+
+Sure, I'll spell out the implications properly - I do tend to forget 
+that the people reading these won't just be those working on the driver 
+itself, but also those assessing for backports in general.
+
+Cheers,
+Robin.
+
+> 
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
+> 
+> Mark.
+> 
+>>> ... and is there anything in the manual that spells out that this is a
+>>> per-XP property? I'm struggling to find that in the CMN-700 TRM, as it
+>>> seems to talk about "mesh configuration(s) with extra device ports".
+>>
+>> That's the thing, the only suggestion is where example 3-4 strongly implies
+>> it's global by going out of its way to demonstrate the 3-port format on a
+>> 2-port XP, despite that being the opposite of reality. (And yes, this has
+>> been raised with the documentation folks as well.)
+>>
+>> Thansk,
+>> Robin.
+>>
+>>>
+>>> Mark.
+>>>
+>>>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+>>>> ---
+>>>>    drivers/perf/arm-cmn.c | 94 ++++++++++++++++++------------------------
+>>>>    1 file changed, 40 insertions(+), 54 deletions(-)
+>>>>
+>>>> diff --git a/drivers/perf/arm-cmn.c b/drivers/perf/arm-cmn.c
+>>>> index c932d9d355cf..fd2122a37f22 100644
+>>>> --- a/drivers/perf/arm-cmn.c
+>>>> +++ b/drivers/perf/arm-cmn.c
+>>>> @@ -24,14 +24,6 @@
+>>>>    #define CMN_NI_NODE_ID			GENMASK_ULL(31, 16)
+>>>>    #define CMN_NI_LOGICAL_ID		GENMASK_ULL(47, 32)
+>>>> -#define CMN_NODEID_DEVID(reg)		((reg) & 3)
+>>>> -#define CMN_NODEID_EXT_DEVID(reg)	((reg) & 1)
+>>>> -#define CMN_NODEID_PID(reg)		(((reg) >> 2) & 1)
+>>>> -#define CMN_NODEID_EXT_PID(reg)		(((reg) >> 1) & 3)
+>>>> -#define CMN_NODEID_1x1_PID(reg)		(((reg) >> 2) & 7)
+>>>> -#define CMN_NODEID_X(reg, bits)		((reg) >> (3 + (bits)))
+>>>> -#define CMN_NODEID_Y(reg, bits)		(((reg) >> 3) & ((1U << (bits)) - 1))
+>>>> -
+>>>>    #define CMN_CHILD_INFO			0x0080
+>>>>    #define CMN_CI_CHILD_COUNT		GENMASK_ULL(15, 0)
+>>>>    #define CMN_CI_CHILD_PTR_OFFSET		GENMASK_ULL(31, 16)
+>>>> @@ -280,8 +272,11 @@ struct arm_cmn_node {
+>>>>    	u16 id, logid;
+>>>>    	enum cmn_node_type type;
+>>>> +	/* XP properties really, but replicated to children for convenience */
+>>>>    	u8 dtm;
+>>>>    	s8 dtc;
+>>>> +	u8 portid_bits:4;
+>>>> +	u8 deviceid_bits:4;
+>>>>    	/* DN/HN-F/CXHA */
+>>>>    	struct {
+>>>>    		u8 val : 4;
+>>>> @@ -357,49 +352,33 @@ struct arm_cmn {
+>>>>    static int arm_cmn_hp_state;
+>>>>    struct arm_cmn_nodeid {
+>>>> -	u8 x;
+>>>> -	u8 y;
+>>>>    	u8 port;
+>>>>    	u8 dev;
+>>>>    };
+>>>>    static int arm_cmn_xyidbits(const struct arm_cmn *cmn)
+>>>>    {
+>>>> -	return fls((cmn->mesh_x - 1) | (cmn->mesh_y - 1) | 2);
+>>>> +	return fls((cmn->mesh_x - 1) | (cmn->mesh_y - 1));
+>>>>    }
+>>>> -static struct arm_cmn_nodeid arm_cmn_nid(const struct arm_cmn *cmn, u16 id)
+>>>> +static struct arm_cmn_nodeid arm_cmn_nid(const struct arm_cmn_node *dn)
+>>>>    {
+>>>>    	struct arm_cmn_nodeid nid;
+>>>> -	if (cmn->num_xps == 1) {
+>>>> -		nid.x = 0;
+>>>> -		nid.y = 0;
+>>>> -		nid.port = CMN_NODEID_1x1_PID(id);
+>>>> -		nid.dev = CMN_NODEID_DEVID(id);
+>>>> -	} else {
+>>>> -		int bits = arm_cmn_xyidbits(cmn);
+>>>> -
+>>>> -		nid.x = CMN_NODEID_X(id, bits);
+>>>> -		nid.y = CMN_NODEID_Y(id, bits);
+>>>> -		if (cmn->ports_used & 0xc) {
+>>>> -			nid.port = CMN_NODEID_EXT_PID(id);
+>>>> -			nid.dev = CMN_NODEID_EXT_DEVID(id);
+>>>> -		} else {
+>>>> -			nid.port = CMN_NODEID_PID(id);
+>>>> -			nid.dev = CMN_NODEID_DEVID(id);
+>>>> -		}
+>>>> -	}
+>>>> +	nid.dev = dn->id & ((1U << dn->deviceid_bits) - 1);
+>>>> +	nid.port = (dn->id >> dn->deviceid_bits) & ((1U << dn->portid_bits) - 1);
+>>>>    	return nid;
+>>>>    }
+>>>>    static struct arm_cmn_node *arm_cmn_node_to_xp(const struct arm_cmn *cmn,
+>>>>    					       const struct arm_cmn_node *dn)
+>>>>    {
+>>>> -	struct arm_cmn_nodeid nid = arm_cmn_nid(cmn, dn->id);
+>>>> -	int xp_idx = cmn->mesh_x * nid.y + nid.x;
+>>>> +	int id = dn->id >> (dn->portid_bits + dn->deviceid_bits);
+>>>> +	int bits = arm_cmn_xyidbits(cmn);
+>>>> +	int x = id > bits;
+>>>> +	int y = id & ((1U << bits) - 1);
+>>>> -	return cmn->xps + xp_idx;
+>>>> +	return cmn->xps + cmn->mesh_x * y + x;
+>>>>    }
+>>>>    static struct arm_cmn_node *arm_cmn_node(const struct arm_cmn *cmn,
+>>>>    					 enum cmn_node_type type)
+>>>> @@ -485,13 +464,13 @@ static const char *arm_cmn_device_type(u8 type)
+>>>>    	}
+>>>>    }
+>>>> -static void arm_cmn_show_logid(struct seq_file *s, int x, int y, int p, int d)
+>>>> +static void arm_cmn_show_logid(struct seq_file *s, const struct arm_cmn_node *xp, int p, int d)
+>>>>    {
+>>>>    	struct arm_cmn *cmn = s->private;
+>>>>    	struct arm_cmn_node *dn;
+>>>> +	u16 id = xp->id | d | (p << xp->deviceid_bits);
+>>>>    	for (dn = cmn->dns; dn->type; dn++) {
+>>>> -		struct arm_cmn_nodeid nid = arm_cmn_nid(cmn, dn->id);
+>>>>    		int pad = dn->logid < 10;
+>>>>    		if (dn->type == CMN_TYPE_XP)
+>>>> @@ -500,7 +479,7 @@ static void arm_cmn_show_logid(struct seq_file *s, int x, int y, int p, int d)
+>>>>    		if (dn->type < CMN_TYPE_HNI)
+>>>>    			continue;
+>>>> -		if (nid.x != x || nid.y != y || nid.port != p || nid.dev != d)
+>>>> +		if (dn->id != id)
+>>>>    			continue;
+>>>>    		seq_printf(s, " %*c#%-*d  |", pad + 1, ' ', 3 - pad, dn->logid);
+>>>> @@ -521,6 +500,7 @@ static int arm_cmn_map_show(struct seq_file *s, void *data)
+>>>>    	y = cmn->mesh_y;
+>>>>    	while (y--) {
+>>>>    		int xp_base = cmn->mesh_x * y;
+>>>> +		struct arm_cmn_node *xp = cmn->xps + xp_base;
+>>>>    		u8 port[CMN_MAX_PORTS][CMN_MAX_DIMENSION];
+>>>>    		for (x = 0; x < cmn->mesh_x; x++)
+>>>> @@ -528,16 +508,14 @@ static int arm_cmn_map_show(struct seq_file *s, void *data)
+>>>>    		seq_printf(s, "\n%-2d   |", y);
+>>>>    		for (x = 0; x < cmn->mesh_x; x++) {
+>>>> -			struct arm_cmn_node *xp = cmn->xps + xp_base + x;
+>>>> -
+>>>>    			for (p = 0; p < CMN_MAX_PORTS; p++)
+>>>> -				port[p][x] = arm_cmn_device_connect_info(cmn, xp, p);
+>>>> +				port[p][x] = arm_cmn_device_connect_info(cmn, xp + x, p);
+>>>>    			seq_printf(s, " XP #%-3d|", xp_base + x);
+>>>>    		}
+>>>>    		seq_puts(s, "\n     |");
+>>>>    		for (x = 0; x < cmn->mesh_x; x++) {
+>>>> -			s8 dtc = cmn->xps[xp_base + x].dtc;
+>>>> +			s8 dtc = xp[x].dtc;
+>>>>    			if (dtc < 0)
+>>>>    				seq_puts(s, " DTC ?? |");
+>>>> @@ -554,10 +532,10 @@ static int arm_cmn_map_show(struct seq_file *s, void *data)
+>>>>    				seq_puts(s, arm_cmn_device_type(port[p][x]));
+>>>>    			seq_puts(s, "\n    0|");
+>>>>    			for (x = 0; x < cmn->mesh_x; x++)
+>>>> -				arm_cmn_show_logid(s, x, y, p, 0);
+>>>> +				arm_cmn_show_logid(s, xp + x, p, 0);
+>>>>    			seq_puts(s, "\n    1|");
+>>>>    			for (x = 0; x < cmn->mesh_x; x++)
+>>>> -				arm_cmn_show_logid(s, x, y, p, 1);
+>>>> +				arm_cmn_show_logid(s, xp + x, p, 1);
+>>>>    		}
+>>>>    		seq_puts(s, "\n-----+");
+>>>>    	}
+>>>> @@ -1815,10 +1793,7 @@ static int arm_cmn_event_init(struct perf_event *event)
+>>>>    	}
+>>>>    	if (!hw->num_dns) {
+>>>> -		struct arm_cmn_nodeid nid = arm_cmn_nid(cmn, nodeid);
+>>>> -
+>>>> -		dev_dbg(cmn->dev, "invalid node 0x%x (%d,%d,%d,%d) type 0x%x\n",
+>>>> -			nodeid, nid.x, nid.y, nid.port, nid.dev, type);
+>>>> +		dev_dbg(cmn->dev, "invalid node 0x%x type 0x%x\n", nodeid, type);
+>>>>    		return -EINVAL;
+>>>>    	}
+>>>> @@ -1921,7 +1896,7 @@ static int arm_cmn_event_add(struct perf_event *event, int flags)
+>>>>    			arm_cmn_claim_wp_idx(dtm, event, d, wp_idx, i);
+>>>>    			writel_relaxed(cfg, dtm->base + CMN_DTM_WPn_CONFIG(wp_idx));
+>>>>    		} else {
+>>>> -			struct arm_cmn_nodeid nid = arm_cmn_nid(cmn, dn->id);
+>>>> +			struct arm_cmn_nodeid nid = arm_cmn_nid(dn);
+>>>>    			if (cmn->multi_dtm)
+>>>>    				nid.port %= 2;
+>>>> @@ -2168,10 +2143,12 @@ static int arm_cmn_init_dtcs(struct arm_cmn *cmn)
+>>>>    			continue;
+>>>>    		xp = arm_cmn_node_to_xp(cmn, dn);
+>>>> +		dn->portid_bits = xp->portid_bits;
+>>>> +		dn->deviceid_bits = xp->deviceid_bits;
+>>>>    		dn->dtc = xp->dtc;
+>>>>    		dn->dtm = xp->dtm;
+>>>>    		if (cmn->multi_dtm)
+>>>> -			dn->dtm += arm_cmn_nid(cmn, dn->id).port / 2;
+>>>> +			dn->dtm += arm_cmn_nid(dn).port / 2;
+>>>>    		if (dn->type == CMN_TYPE_DTC) {
+>>>>    			int err = arm_cmn_init_dtc(cmn, dn, dtc_idx++);
+>>>> @@ -2341,18 +2318,27 @@ static int arm_cmn_discover(struct arm_cmn *cmn, unsigned int rgn_offset)
+>>>>    		arm_cmn_init_dtm(dtm++, xp, 0);
+>>>>    		/*
+>>>>    		 * Keeping track of connected ports will let us filter out
+>>>> -		 * unnecessary XP events easily. We can also reliably infer the
+>>>> -		 * "extra device ports" configuration for the node ID format
+>>>> -		 * from this, since in that case we will see at least one XP
+>>>> -		 * with port 2 connected, for the HN-D.
+>>>> +		 * unnecessary XP events easily, and also infer the per-XP
+>>>> +		 * part of the node ID format.
+>>>>    		 */
+>>>>    		for (int p = 0; p < CMN_MAX_PORTS; p++)
+>>>>    			if (arm_cmn_device_connect_info(cmn, xp, p))
+>>>>    				xp_ports |= BIT(p);
+>>>> -		if (cmn->multi_dtm && (xp_ports & 0xc))
+>>>> +		if (cmn->num_xps == 1) {
+>>>> +			xp->portid_bits = 3;
+>>>> +			xp->deviceid_bits = 2;
+>>>> +		} else if (xp_ports > 0x3) {
+>>>> +			xp->portid_bits = 2;
+>>>> +			xp->deviceid_bits = 1;
+>>>> +		} else {
+>>>> +			xp->portid_bits = 1;
+>>>> +			xp->deviceid_bits = 2;
+>>>> +		}
+>>>> +
+>>>> +		if (cmn->multi_dtm && (xp_ports > 0x3))
+>>>>    			arm_cmn_init_dtm(dtm++, xp, 1);
+>>>> -		if (cmn->multi_dtm && (xp_ports & 0x30))
+>>>> +		if (cmn->multi_dtm && (xp_ports > 0xf))
+>>>>    			arm_cmn_init_dtm(dtm++, xp, 2);
+>>>>    		cmn->ports_used |= xp_ports;
+>>>> -- 
+>>>> 2.39.2.101.g768bb238c484.dirty
+>>>>
 
