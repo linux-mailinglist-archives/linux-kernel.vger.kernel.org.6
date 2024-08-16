@@ -1,149 +1,132 @@
-Return-Path: <linux-kernel+bounces-289031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92ACF95416A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:54:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05D2F954173
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:58:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 086C51F214D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 05:54:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77BB4B2114F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 05:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1762912C474;
-	Fri, 16 Aug 2024 05:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A5281749;
+	Fri, 16 Aug 2024 05:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E9FfHys3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eGnkED94"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECAE12C465
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 05:53:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B473C24;
+	Fri, 16 Aug 2024 05:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723787609; cv=none; b=tUteAnhmfX6mB/9YOX13+nquVOLxFu5mEVAhYhrnP5G3rz2on5WmusEYaPFKVGd3cWc+wzwx7JjAPnHF9jfLp97+Ivs0YXnYxGy3s3zKJtX0KAE+Hp5CUP/Sp1jjAmXCSZIMa2szJOPZloifL5u9TYCmSkY8AFrYAX6fiEds/mU=
+	t=1723787886; cv=none; b=JvqB6F5mgpotzbqNxrqFgUJaKvKy4ULCIwgoGFL/0PMpOqWvct87/GU4iqEYxZx7ETa0eI7ni6WfHC9T4eUEij2Es+dsa1paBvjwSaxVCmsTS46gb6+sTZPrfxq6k5Pk6U6Qeg1kUL0St/DhfAlaDtQgY/eP7agAms6sVsnCVP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723787609; c=relaxed/simple;
-	bh=LWRRIA8wOeT0HTfKuLc/si+HYdOOXvHvaOnkPiGSYaY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JeL3PcU5ovl0kHm9iZM+79h7ikTTPpfq5MnFaQRSEQ+z0YaqW291neiRfCdp4s5nvFWTOuKWEvvyyOrP1Qi8P1CrIMq5SpWbNUCK0u+v6soxg6wtpkFFVgLwDu3ObusGrOJ2Ccz5/m4cUlL5LlmtVbkLxmBNsuFbxliQQ7yJrCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E9FfHys3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D1A2C32782;
-	Fri, 16 Aug 2024 05:53:27 +0000 (UTC)
+	s=arc-20240116; t=1723787886; c=relaxed/simple;
+	bh=mrC7KQbQrAxXex/wa8omsiJATn3SVfbbeLWyX/xFST4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=belXzWcGUSx0PtS+PkQ61zi811dw/Csvdc1pCi87clphEFseWKd9VrrGkDReZDvbldq/LPZMZdCt9W581e2MEvIaWH9HMZB47XbaJSNoTOEK2XrMqEeI4Ho37ZGTMbKP62PHj8+8Jwmevaehfdn+cH86Yn+naYhxHY4GiEYkyXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eGnkED94; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5423C32782;
+	Fri, 16 Aug 2024 05:57:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723787609;
-	bh=LWRRIA8wOeT0HTfKuLc/si+HYdOOXvHvaOnkPiGSYaY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=E9FfHys3oOHsG3AabTuPIaj1EI+PmRSANhkHKbZ6CC36IpFsz1idJSIWiaedCIXcD
-	 5Lb6w4N50jOO1WK4hE5tsn0LPPEFFs3SWYuBbBf9brV6vh8owUMKYgIEbg0kKhNPTt
-	 VdD8EZG+E8QZMM2e4/v9QmYJ/5WMHVru65fzBg7MzJv1LolLxgFVrpdL+7mdAnx5dn
-	 fZwwldNqo++AAWO3jd/ytF2//EJfAs3nAPW8mBIc9oPhQX0tP4I/DxhX9z74vqKP0u
-	 1TT6FqCe9C4NtfpxRvHMJy/jyAnxEOMHY2gnWq4pCJFnPplY+kZ8uQ1muEoCu8eCpM
-	 uALvz1bwmc8dw==
-Date: Fri, 16 Aug 2024 07:53:24 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Shiju Jose <shiju.jose@huawei.com>, "Michael S. Tsirkin"
- <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>, Igor Mammedov
- <imammedo@redhat.com>, <linux-kernel@vger.kernel.org>,
- <qemu-devel@nongnu.org>
-Subject: Re: [PATCH v7 01/10] acpi/generic_event_device: add an APEI error
- device
-Message-ID: <20240816075324.19d13670@foz.lan>
-In-Reply-To: <20240814133321.00006401@Huawei.com>
-References: <cover.1723591201.git.mchehab+huawei@kernel.org>
-	<0be6db8d06b3abab551f24dcc645d46d72d3f668.1723591201.git.mchehab+huawei@kernel.org>
-	<20240814133321.00006401@Huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=k20201202; t=1723787886;
+	bh=mrC7KQbQrAxXex/wa8omsiJATn3SVfbbeLWyX/xFST4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eGnkED94cb70hlA9j74Xqwgu9r+aTWIE0WbNvTjjGY8U4ZRl6U5Z1prrWO1AL/oPE
+	 kZbZ7r24KPyinhDiDXMxU6Apyu5npe0oV7ye7cpoxK88tQnWHp2XlRv9VmwC+Qtpa7
+	 l6UJi9xbLuTleHdDGS4dC/5cLd0qxmbZl+P+9tVCzf6EquGXXCxrYBR2ywzcPmrS2X
+	 X6kOa/Iga+6EkqzYrHsjuY9QC8mFVecaSoLj0/der/PEi12DQ3iEuhltC7l7eA+f/s
+	 wpUhKUmxCUi8QKwQVf2DqUkkZEEkNzTCCcu1+9wE7/r78G8jYXaeX+R3lOmv4e6MfO
+	 EVUW33fF1H3TQ==
+Message-ID: <3faac3f5-5159-41aa-a5e7-31d2eee9c0bd@kernel.org>
+Date: Fri, 16 Aug 2024 07:57:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] arm64: dts: rockchip: Add base DT for rk3528 SoC
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Yao Zi <ziyao@disroot.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Chris Morgan <macromorgan@hotmail.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
+ Andy Yan <andyshrk@163.com>, Muhammed Efe Cetin <efectn@protonmail.com>,
+ Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>,
+ Ondrej Jirman <megi@xff.cz>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org
+References: <20240803125510.4699-2-ziyao@disroot.org>
+ <b967ab05-dd0e-4fc5-bee6-ad7639e47bfb@kernel.org>
+ <6320e4f3-e737-4787-8a72-7bd314ba883c@kernel.org> <2548443.Ac65pObt5d@diego>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <2548443.Ac65pObt5d@diego>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Em Wed, 14 Aug 2024 13:33:21 +0100
-Jonathan Cameron <Jonathan.Cameron@Huawei.com> escreveu:
-
-> On Wed, 14 Aug 2024 01:23:23 +0200
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+On 15/08/2024 18:44, Heiko Stübner wrote:
+>>
+>> One more comment, I forgot we actually have it documented long time ago:
+>>
+>> https://elixir.bootlin.com/linux/v6.11-rc1/source/Documentation/devicetree/bindings/writing-bindings.rst#L90
 > 
-> > Adds a generic error device to handle generic hardware error
-> > events as specified at ACPI 6.5 specification at 18.3.2.7.2:
-> > https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#event-notification-for-generic-error-sources
-> > using HID PNP0C33.
-> > 
-> > The PNP0C33 device is used to report hardware errors to
-> > the guest via ACPI APEI Generic Hardware Error Source (GHES).
-> > 
-> > Co-authored-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > Co-authored-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > Reviewed-by: Igor Mammedov <imammedo@redhat.com>
-> > ---
-> >  hw/acpi/aml-build.c                    | 10 ++++++++++
-> >  hw/acpi/generic_event_device.c         |  8 ++++++++
-> >  include/hw/acpi/acpi_dev_interface.h   |  1 +
-> >  include/hw/acpi/aml-build.h            |  2 ++
-> >  include/hw/acpi/generic_event_device.h |  1 +
-> >  5 files changed, 22 insertions(+)
-> > 
-> > diff --git a/hw/acpi/aml-build.c b/hw/acpi/aml-build.c
-> > index 6d4517cfbe3d..cb167523859f 100644
-> > --- a/hw/acpi/aml-build.c
-> > +++ b/hw/acpi/aml-build.c
-> > @@ -2520,3 +2520,13 @@ Aml *aml_i2c_serial_bus_device(uint16_t address, const char *resource_source)
-> >  
-> >      return var;
-> >  }
-> > +
-> > +/* ACPI 5.0: 18.3.2.6.2 Event Notification For Generic Error Sources */  
-> 
-> Given this section got a rename maybe the comment should mention old
-> name and current name for the section?
+> I guess that piece of documentation should move to the dts style
+> guide though? Because it's not about writing bindings but how
+> to structure a dts/dtsi.
 
-ACPI 6.5 has the same name for the section:
+Yes, it should.
 
-	18.3.2.7.2. Event Notification For Generic Error Sources
+Best regards,
+Krzysztof
 
-	An event notification is recommended for corrected errors where latency 
-	in processing error reports is not critical to proper system operation. 
-	The implementation of Event notification requires the platform to define
-	a device with PNP ID PNP0C33 in the ACPI namespace, referred to as the
-	error device. 
-
-Just section number changed. IMO, it is still good enough to seek for
-it at the docs.
-
-Btw, in this specific case, the best is to use the search box of
-Sphinx html output and seek for PNP0C33 ;-)
-
-> 
-> > +Aml *aml_error_device(void)
-> > +{
-> > +    Aml *dev = aml_device(ACPI_APEI_ERROR_DEVICE);
-> > +    aml_append(dev, aml_name_decl("_HID", aml_string("PNP0C33")));
-> > +    aml_append(dev, aml_name_decl("_UID", aml_int(0)));
-> > +
-> > +    return dev;
-> > +}
-> > diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
-> > index 15b4c3ebbf24..1673e9695be3 100644
-> > --- a/hw/acpi/generic_event_device.c
-> > +++ b/hw/acpi/generic_event_device.c
-> > @@ -26,6 +26,7 @@ static const uint32_t ged_supported_events[] = {
-> >      ACPI_GED_PWR_DOWN_EVT,
-> >      ACPI_GED_NVDIMM_HOTPLUG_EVT,
-> >      ACPI_GED_CPU_HOTPLUG_EVT,
-> > +    ACPI_GED_ERROR_EVT  
-> 
-> trailing comma missing.
-
-I'll add.
-
-Thanks,
-Mauro
 
