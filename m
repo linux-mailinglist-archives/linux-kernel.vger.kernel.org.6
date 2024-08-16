@@ -1,90 +1,114 @@
-Return-Path: <linux-kernel+bounces-290065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BABF2954F02
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:39:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3DA3954F09
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A147B22B11
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:39:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70087284952
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CA71BD00B;
-	Fri, 16 Aug 2024 16:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496C41BF30B;
+	Fri, 16 Aug 2024 16:40:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BALNaDHU"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E39A1BCA1C
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 16:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bx8PDUEW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755621BDA82;
+	Fri, 16 Aug 2024 16:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723826331; cv=none; b=A/GWqJaWarIYmYLDyIY+m05/kZr/wA6WErd5eD5ozxKQxUPu2lNGDfFyNww8Eo3ZcWJC/pc16CWXwLHcK6zVuwgtmWETLlKOWLDbo00dm2iqWzcNODhP0Xm4o/dI6/+tWiLFH9jpczQbwETBrFTKVG+5YETNncLYeRJ87HOSmtY=
+	t=1723826442; cv=none; b=D6iQMBXOa1HqchvNoxeLJfOf2tQjQW9AOFEvqA5K41hk+BLKvWMW4UAPXlH9cHvLKMuk3GtIUzIiN8yZjFr1IhcLF8xXKadzIMRHph4PiT3RZ8TUjLHuFV8GYPYrT7+AR66TT3LuiNDmvJ1rkwlb/8k39gpRd4EFXejZDkV+kVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723826331; c=relaxed/simple;
-	bh=DMuyEFK3cmUpuS8u+TITRwUj7w74Y7+Pqpaz/zNH3wo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VjATrndJrfI0x8SaJvHX7lAEM+KO94EETlGpdol491BemjqADn556yUbEMUyrkJSL9aP1rpF1EjeVvfEvkxH390+A7Y4NmozXW+S0DXBduX5VsVgnLuzmazbW++ooTbCZEqNcxOvttN1gF5lw/23P9/c5tPrx8kwXj5Zfx4pAXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=BALNaDHU; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from DESKTOP-0403QTC. (unknown [50.53.30.84])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 88BD720B7165;
-	Fri, 16 Aug 2024 09:38:48 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 88BD720B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1723826328;
-	bh=bIzzFxwaG7ZBRfhFz9fLGTSKI4TDBzR08/JY618cF4A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BALNaDHUD+WhhCRqP+PGxACBtWUZzXZ4hFD3yMe16qzyURA4TZjvu3D6Avb2kI8XN
-	 ZTYfHhdWHzHyPmbMK3VM2AtKz4LrYfRC4oQq6AFZLcML5LuD4J2Nfzw/xkY1xDFJt8
-	 CFrrOFy9nUTv8fawry+TG+iesQRr/kz4tyZu7CX0=
-Date: Fri, 16 Aug 2024 09:38:46 -0700
-From: Jacob Pan <jacob.pan@linux.microsoft.com>
-To: Tina Zhang <tina.zhang@intel.com>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>, Kevin Tian <kevin.tian@intel.com>,
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] iommu/vt-d: Introduce batched cache invalidation
-Message-ID: <20240816093846.40dbd623@DESKTOP-0403QTC.>
-In-Reply-To: <20240815065221.50328-5-tina.zhang@intel.com>
-References: <20240815065221.50328-1-tina.zhang@intel.com>
-	<20240815065221.50328-5-tina.zhang@intel.com>
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1723826442; c=relaxed/simple;
+	bh=BGu9Em/D4e6K7dXhfPgKpkjZwmJfH6pzeSu5bH6pCAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t8cmQqBNMyXsDjMgfvsaBT2lRsZbfhRo/RX7lhwHpeF9qiK8QDFzka/tEzqyJU05kZ03gO3FgMSAVplSE7DIHqh8HnnfpqvuGWg7WlGjXb/usrc3MgzlmYpfS38qOap/AxrJiIJnEXDntiGQlSOjjMc1zX4awNwGPomFPTg9pGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bx8PDUEW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B70FC32782;
+	Fri, 16 Aug 2024 16:40:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723826442;
+	bh=BGu9Em/D4e6K7dXhfPgKpkjZwmJfH6pzeSu5bH6pCAE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bx8PDUEWSBbiXN+J/oaqDxDOwNEu/sWGaL/5CKpETphOZte+boC0QMPsfc9cdAqNG
+	 HZOPq27/wfPB3GKiOcypObakigPyl1rAc+5uKcyrXycyvUQTuJSU/z4MHfKsWHsIF2
+	 25EVk14M4OyjOSYyaBe43JtPH/mQIuDk9jvHTLbCOdvfsAYMSlVnGk+BnVuoHsA0+T
+	 yAFcqa7LrnNkSbXimbM/LReSglZBz2Dp8ja9c2xLxugHZcnOVE1xyNd9L80owvRaDy
+	 zVwfO5fy/kLANyaTJBa6LPEUjDW9Ww1SMTomhVscX7wV7sphD9QrIZ1N1f7xCQJ5ae
+	 GCaGCcPa7J0VQ==
+Date: Fri, 16 Aug 2024 11:40:38 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Md Sadre Alam <quic_mdalam@quicinc.com>
+Cc: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, konradybcio@kernel.org, thara.gopinath@gmail.com, 
+	herbert@gondor.apana.org.au, davem@davemloft.net, gustavoars@kernel.org, 
+	u.kleine-koenig@pengutronix.de, kees@kernel.org, agross@kernel.org, 
+	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, quic_srichara@quicinc.com, 
+	quic_varada@quicinc.com, quic_utiwari@quicinc.com
+Subject: Re: [PATCH v2 14/16] arm64: dts: qcom: ipq9574: enable bam pipe
+ locking/unlocking
+Message-ID: <lr53irikxjjoiks2utckyt5bsflxm52r2nlospkv3id6qwkfih@pycrjkeibx4g>
+References: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
+ <20240815085725.2740390-15-quic_mdalam@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240815085725.2740390-15-quic_mdalam@quicinc.com>
 
-On Thu, 15 Aug 2024 14:52:21 +0800
-Tina Zhang <tina.zhang@intel.com> wrote:
+On Thu, Aug 15, 2024 at 02:27:23PM GMT, Md Sadre Alam wrote:
+> enable bam pipe locking/unlocking for ipq9507 SoC.
 
-> @@ -270,7 +343,8 @@ static void cache_tag_flush_iotlb(struct
-> dmar_domain *domain, struct cache_tag * u64 type = DMA_TLB_PSI_FLUSH;
+Note that the commit messages for the other non-dts commits will not
+show up in the git history for this file. So, please follow
+https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+and give some indication of "problem description", to give future
+readers an idea why this is here.
+
+> 
+> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> ---
+> 
+> Change in [v2]
+> 
+> * enabled locking/unlocking support for ipq9574
+> 
+> Change in [v1]
+> 
+> * This patch was not included in [v1]
+> 
+>  arch/arm64/boot/dts/qcom/ipq9574.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> index 48dfafea46a7..dacaec62ec39 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> @@ -262,6 +262,7 @@ cryptobam: dma-controller@704000 {
+>  			#dma-cells = <1>;
+>  			qcom,ee = <1>;
+>  			qcom,controlled-remotely;
+> +			qcom,bam_pipe_lock;
+
+Per the question before about what does this actually lock. Is this a
+property of the BAM controller, or the crypto channel?
+
+Regards,
+Bjorn
+
+>  		};
 >  
->  	if (domain->use_first_level) {
-> -		qi_flush_piotlb(iommu, tag->domain_id, tag->pasid,
-> addr, pages, ih);
-> +		qi_batch_add_piotlb(iommu, tag->domain_id,
-> tag->pasid, addr,
-> +				    pages, ih, domain->qi_batch);
->  		return;
->  	}
->  
-> @@ -287,7 +361,8 @@ static void cache_tag_flush_iotlb(struct
-> dmar_domain *domain, struct cache_tag * }
->  
->  	if (ecap_qis(iommu->ecap))
-> -		qi_flush_iotlb(iommu, tag->domain_id, addr | ih,
-> mask, type);
-> +		qi_batch_add_iotlb(iommu, tag->domain_id, addr | ih,
-> mask, type,
-> +				   domain->qi_batch);
->  
-If I understand this correctly, IOTLB flush maybe deferred until the
-batch array is full, right? If so, is there a security gap where
-callers think the mapping is gone after the call returns?
+>  		crypto: crypto@73a000 {
+> -- 
+> 2.34.1
+> 
 
