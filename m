@@ -1,146 +1,94 @@
-Return-Path: <linux-kernel+bounces-289768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93C05954B85
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:57:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C023A954B87
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:58:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 026DC2873E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:57:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 434E5B2238A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440841BB6B7;
-	Fri, 16 Aug 2024 13:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7621BCA08;
+	Fri, 16 Aug 2024 13:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="skoonXmm"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="s+dtJTWM"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE181B8E84
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 13:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60F31BC9F9;
+	Fri, 16 Aug 2024 13:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723816653; cv=none; b=c2UVsMSth4me3Sd5XxuOCj/nU6ja9qWn1OkHzYSJsUGHyx8AXvB1q87ALoeypphefTLaHdmSmsrlr276B+qkUqU1vh7o9aXVyezRpdh6S+HV5QcBMSQkMXCxKMYmorqC93A7aeely7lZOoI0Hwswo1CDoX/J+P4vhWUkKq7hQtU=
+	t=1723816664; cv=none; b=km/HIc4yyyekptvm2ytwkwy58A0j1XSRbs4FZ/LsMNo0I9bcIkX6WI6MgYNDmthDIZKAz8Oom7IAg0gdo7t7Kfchoxrzf2bGoIWKvFp6+wTXypaAc+1VYkqU4L7mOTkKxUTTvMU38vfI29uM0LDZls0I1WhV74dwVEgwRn2LjTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723816653; c=relaxed/simple;
-	bh=ES5WNhjQ97KkXEVEYI5UMpRbkvt68q9g+APgmhu1B+o=;
+	s=arc-20240116; t=1723816664; c=relaxed/simple;
+	bh=StscK8FxfWZdG6WMuxNgzCEvEk1AejAC7UhY7FRMahQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bmnJn2wxNzti7j0feCzTAdyHKeBUU33ZLxcU4KDBaeOO2Eq03LGXO5wnkdjuuSDcf6NJlL4UKKnLgHFjg8eIjiyU/hTTaHkAzRrVuTozr7zBYiepsalusVI7RtTq3gL2IjdmCt4dF/Wuoh1pzjrbIzM3txeJ8eeSgeK14s8nLwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=skoonXmm; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42803bbf842so20573895e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 06:57:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723816650; x=1724421450; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7FU7Yn36ou/qawMkS1iMJfnBA3me627G17eoAbOIhIU=;
-        b=skoonXmm9AwCuIWHcBSRq8UxYQLVxV/Z0RKihKZpXrIthrUc7QxE3d71BfCLk/V6aO
-         xv3yKRKRwbfy88GCBLQtPbZlcvpR8/p8fu1G05/rBH6JAK2JYvPEk1cv28zNmw73olhU
-         r7zv3kqaOmSVV9s+VHOt7Cg3Hh1HZKKYtz21V5IEH1AE0FjoU6SSgKRtq+w2IC5dufBl
-         aLf/vErAMkaHEErKeivvLPMSCxHjddRq8+XQmsfqzBgxYmDTs2mAcu9pqmZwC+YbJprg
-         putZa7ibi7AfEIuz1U8sTw9JtGDeNcEcOBP49IXR2Z4VBOUtMY5LstBTGh1nBQxC8QIU
-         ah3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723816650; x=1724421450;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7FU7Yn36ou/qawMkS1iMJfnBA3me627G17eoAbOIhIU=;
-        b=rBjkRMDIjcf8gkm9QSP3MgC5W7xjdzCyVbL9e2fU4kc4bI9MLZClfeQIPyKJ16eo1r
-         u9QzhXPyCE6sb+D5Peb0kP/5bpde39Zh5CTvdXinY2GtDktU4E4y+YPhJx+zHdmmCZed
-         oggUQt/Yj4Mvjb7A/c4KQnZr05zYBRXQZSpJrY+uptLzdDKywrQNypj9wW5GDIGIxuEY
-         d4Kg39LGyHVR7of6vA6JsxJoN05p2tQAlmoDMiEmypZWDqODV+9micD7kL6xiYxNnRES
-         KVdd0qU9Pd23bfgaIDM6aaIZY9/h+qxttMQA/lcsIpDcwQ3fPgGcAMpKu8Q0VELSBeju
-         yLxg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCaJJw6Bb1oiYvnLAZ8Cbqv9y/whK1Eyn6m0Zbopc5Gs9Il3MoKtbdQ+9LGraMYmxdOcTMdrufJdSkLoDAHqoJzj+bl0FaJHbF+aPm
-X-Gm-Message-State: AOJu0Yz+vuRlnwkTl/EtEgFhEPLdPP7vkD+opXPYcWMK9Dkl/rHBH4G+
-	ob1T5G3B8Q+AQVpZyIed54xMpinlGVGNT4V7SkSwEDMDpADPa0NdbOaTv7Glf5s=
-X-Google-Smtp-Source: AGHT+IF64oucyuEIrdECCSfRCeOVjjInXceFWeMY/QFE6S9rq989ayLrMtsEH0Yly5SMl9RtJuP63A==
-X-Received: by 2002:a05:600c:3b26:b0:426:6f87:65fc with SMTP id 5b1f17b1804b1-429ed7b6a3dmr24128425e9.17.1723816649988;
-        Fri, 16 Aug 2024 06:57:29 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded36a95sm76183995e9.28.2024.08.16.06.57.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 06:57:29 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Timo Alho <talho@nvidia.com>,
-	linux-tegra@vger.kernel.org,
+	 MIME-Version:Content-Type; b=fcmtUeGEmlNH7a54nYa1Qn/CnoHtB+llCG8UUotThUfvkyneBcHD7ts+Nm0MDe4ixUEbulDh/t/lmNCBqvpZFZYAJouH1iIfNTFnbl5IBezsP/SBRXTNre8GQlXaCaurA2Wdo4lf6pjeeom+4OvKzh4ySgdnbFcvei+N+8pYtSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=s+dtJTWM; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=c/qeNm0gickEi5kHpgsZtFtwQ/SdYgXdxnuELkHBkC4=; b=s+dtJTWMR1Z+iN5/NcVIN3Z+5x
+	ZKJSHyMDp6qT+0g6RR/0naXbad1QJp8au5ngnLaWAq7qmwNiIUwLwd2lT99UVnjBh1RgxRFYcGxIS
+	U/3yuezvXEsPs9IvY7xVFANYGD4lM8aqZbGFq7wGqfC9KLqy+xXJYbWbKhFPdYN1vEa1YE0hSvxZa
+	OxwsLCSiR66VXrh+22NnNn6UmwgI+/kyirGRXv1sVz7m9Av1Yq1ZmiCNbVmnFEyf9D7aNuB6KnVKf
+	P43b535eIAxltDBT1oqKdbzuFIyT82poSk7GUQ5HsZSxddFmUxRkafJ2Sg3uAY6b8ej8u58N/pZe6
+	LaMfmsIQ==;
+Received: from i53875a9f.versanet.de ([83.135.90.159] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sexSK-0002hb-TQ; Fri, 16 Aug 2024 15:57:29 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Conor Dooley <conor+dt@kernel.org>,
+	Michael Riesch <michael.riesch@wolfvision.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/2] firmware: tegra: bpmp: use scoped device node handling to simplify error paths
-Date: Fri, 16 Aug 2024 15:57:22 +0200
-Message-ID: <20240816135722.105945-2-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] arm64: dts: rockchip: add wolfvision pf5 visualizer display
+Date: Fri, 16 Aug 2024 15:57:26 +0200
+Message-ID: <172381656037.84677.11780206459201436040.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240816135722.105945-1-krzysztof.kozlowski@linaro.org>
-References: <20240816135722.105945-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240412-feature-wolfvision-pf5-display-v1-1-f032f32dba1a@wolfvision.net>
+References: <20240412-feature-wolfvision-pf5-display-v1-1-f032f32dba1a@wolfvision.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Obtain the device node reference with scoped/cleanup.h to reduce error
-handling and make the code a bit simpler.
+On Fri, 12 Apr 2024 14:54:09 +0200, Michael Riesch wrote:
+> Add device tree overlay for the WolfVision PF5 Visualizer display.
+> Since there shall be additional variants of the WolfVision PF5 display in
+> future, move common definitions to a device tree include file.
+> 
+> 
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/firmware/tegra/bpmp.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+Applied, thanks!
 
-diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-index c3a1dc344961..2edc3838538e 100644
---- a/drivers/firmware/tegra/bpmp.c
-+++ b/drivers/firmware/tegra/bpmp.c
-@@ -3,6 +3,7 @@
-  * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
-  */
- 
-+#include <linux/cleanup.h>
- #include <linux/clk/tegra.h>
- #include <linux/genalloc.h>
- #include <linux/mailbox_client.h>
-@@ -36,27 +37,22 @@ struct tegra_bpmp *tegra_bpmp_get(struct device *dev)
- {
- 	struct platform_device *pdev;
- 	struct tegra_bpmp *bpmp;
--	struct device_node *np;
- 
--	np = of_parse_phandle(dev->of_node, "nvidia,bpmp", 0);
-+	struct device_node *np __free(device_node) = of_parse_phandle(dev->of_node,
-+								      "nvidia,bpmp", 0);
- 	if (!np)
- 		return ERR_PTR(-ENOENT);
- 
- 	pdev = of_find_device_by_node(np);
--	if (!pdev) {
--		bpmp = ERR_PTR(-ENODEV);
--		goto put;
--	}
-+	if (!pdev)
-+		return ERR_PTR(-ENODEV);
- 
- 	bpmp = platform_get_drvdata(pdev);
- 	if (!bpmp) {
--		bpmp = ERR_PTR(-EPROBE_DEFER);
- 		put_device(&pdev->dev);
--		goto put;
-+		return ERR_PTR(-EPROBE_DEFER);
- 	}
- 
--put:
--	of_node_put(np);
- 	return bpmp;
- }
- EXPORT_SYMBOL_GPL(tegra_bpmp_get);
+[1/1] arm64: dts: rockchip: add wolfvision pf5 visualizer display
+      commit: 73d6eb7e77099054f7ce4a595767603cb4a096b1
+
+DTC update in linux-next now:
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=d2a97be34548fc5643b4e9536ac8789d839f7374
+to prevent the compile error regarding the unknown node-name
+
+Best regards,
 -- 
-2.43.0
-
+Heiko Stuebner <heiko@sntech.de>
 
