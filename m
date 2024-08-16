@@ -1,110 +1,114 @@
-Return-Path: <linux-kernel+bounces-290067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EAFB954F0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:41:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A322954EF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:36:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF003284696
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:41:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3BA52833AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7F3D1BE87A;
-	Fri, 16 Aug 2024 16:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18F51BDA9C;
+	Fri, 16 Aug 2024 16:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="rzt8FJzk"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TPIAcTeI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75ACE1BDA94;
-	Fri, 16 Aug 2024 16:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487C16F2F0;
+	Fri, 16 Aug 2024 16:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723826480; cv=none; b=O7tD284fc4XdiLfjC5UlwiGdWz8KLLH6NhICnEtxLUUPn77Bar+ezkt299PlzH75LAHJsMXJyrz41kowy63T+mOYdcR18BUPmuZJS4D+pHleeatbkCYQF5ZzgOAYNYLKZMBWOyjAJhnhgnOjycDtDaNTzYhGwt/LRBOYPKnGKf0=
+	t=1723826197; cv=none; b=kxkKXjPXnrBv5Ad8RwbxzZ9MU3rVFkYzsPnOXDid3ndtzwnG+vqUUUtQvZs7SJLY+nFsfU+8zmwrMnksLVoxPp0UgSo+Zx2T8z/wJmgrarr6XkqCoUf9wKK+LxsYd0CDdHZm//ddGJS/cGT7hISy/xmkTjF7nO7E4+njogq6eXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723826480; c=relaxed/simple;
-	bh=v6rChcYuxBEw0so4bWfxcvKXwAV37nc/MZS6YMgModQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FpChyows66QZeU2bYfYVR1La5JNt0HzzD7ZkMR1mzjEipb+ww9GtRO9tW2dVyP8AIcXVtLDm7F4gUj2Q6+cV2QZV0lkRqqbBY7Li1XMSJE6vgwixYI4lgSpP+yLOgou+n5l7okCbrWP7ERPt0CQI5A1u1I2K8rE5T6Yw9rM8X9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=rzt8FJzk; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id CAD5F88B83;
-	Fri, 16 Aug 2024 18:41:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1723826476;
-	bh=PpQOfftn8geigz3SLUxYxKtO6L8f9VTUsBYD3jhI6Hc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rzt8FJzk0BcGY0xPM5SfqgKYhkjLTsc1z3uNWt8frcc+oTxIeTnQG8umRgRPwRYEF
-	 kuezM8F6bscCu1cXnD6ABsSQAPT0n0JhjjGjRqufArFdIhefvxEng/97jCBEGWq6IL
-	 dM0boyzSfaMBmhm7NcinZqGYZv8balfewOXn0o+wHYaVAUt5lKD5ERWPQYRfXXrD65
-	 y6Whb7Ym3Gi2y2HrBZ2nNOdOAG9IVOS1wu/9MCt2X3agRT5mDF8vpvq+I+xZEQgD7u
-	 BnCFUzHobrOBw83p5lp7uQOxjBz34PolXh7xE/M/HqUFMjVka53ZQwkKOTmJ05wWNH
-	 KYBl1AlxApOYw==
-Message-ID: <d42f0f37-9c17-4daa-a807-23e8b5c5668b@denx.de>
-Date: Fri, 16 Aug 2024 18:36:03 +0200
+	s=arc-20240116; t=1723826197; c=relaxed/simple;
+	bh=jpTpSSV9F/SL9g+TdUoyDgRSkH9SqJBsGcdxZf9uEPo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XuiV/2o6yrVRHPk+6zUqSx6pMKI83TyEZgzZAWdgpLw2qLDSS1cXSy5nKsZYFzsJST0xBlSj7pgQc7rWvcPWFICg+LsbLIEco2cu6jXXnBscTefJ7QrVzoLoW6P9W5/jPHsK3QwQCsorjwKyzY4s2/YjE4jv9B38kwpQfHaS7+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TPIAcTeI; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723826196; x=1755362196;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=jpTpSSV9F/SL9g+TdUoyDgRSkH9SqJBsGcdxZf9uEPo=;
+  b=TPIAcTeII0mqNRIrI6CwSQXXJN5rhZS2U18BGTi7UVISy+qr3x2TJA/C
+   3tah+jyPFPTMk6sWs9JzQNXP77ZHGs7MfMwTvhiyPzZwGfKN0OMa6iSwM
+   zCJoFS1uOJ9FrQ9D03XLiItMF7QRU4ySmqkcDoP4Z/uv+5XbRo3kMyoSw
+   dZ4TX/pQN5gX7s0YUpDznZnshmlDuKE8rdJQtwSTcYkPwalhN4IHqaNSv
+   c7Bb2IJPOSLUtbi9cAkLiwT82iLtb7Rimy0CLlHK35ydxZkw6kb5H7dyj
+   D5KdIz38WadqYJ2ceqolUTvKvJ8dMJHQudehz85pQBAWCjclwoqK62rfG
+   A==;
+X-CSE-ConnectionGUID: Qx8OEcuZQgyJPPWNDLfSFQ==
+X-CSE-MsgGUID: 9V4h0vp9T+6fS5H1HQp3Zg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="22098401"
+X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
+   d="scan'208";a="22098401"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 09:36:36 -0700
+X-CSE-ConnectionGUID: VbCL0jPUTbqoab3uowuPBA==
+X-CSE-MsgGUID: V4RmGtPxTtWGGtamHKi9XA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
+   d="scan'208";a="97229364"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
+  by orviesa001.jf.intel.com with ESMTP; 16 Aug 2024 09:36:34 -0700
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com
+Cc: platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] platform/x86: ISST: Fix return value on last invalid resource
+Date: Fri, 16 Aug 2024 09:36:26 -0700
+Message-ID: <20240816163626.415762-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] dt-bindings: input: touchscreen: convert
- ads7846.txt to yaml
-To: Frank Li <Frank.Li@nxp.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, Mark Hasemeyer <markhas@chromium.org>,
- Alexander Stein <alexander.stein@ew.tq-group.com>,
- "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..."
- <linux-input@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Cc: imx@lists.linux.dev
-References: <20240816161300.128269-1-Frank.Li@nxp.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <20240816161300.128269-1-Frank.Li@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Transfer-Encoding: 8bit
 
-On 8/16/24 6:12 PM, Frank Li wrote:
+When only the last resource is invalid, tpmi_sst_dev_add() is returing
+error even if there are other valid resources before. This function
+should return error when there are no valid resources.
 
-[...]
+Here tpmi_sst_dev_add() is returning "ret" variable. But this "ret"
+variable contains the failure status of last call to sst_main(), which
+failed for the invalid resource. But there may be other valid resources
+before the last entry.
 
-> +  ti,debounce-max:
-> +    deprecated: true
-> +    $ref: /schemas/types.yaml#/definitions/uint16
-> +    description: Max number of additional readings per sample.
-> +
-> +  ti,debounce-rep:
-> +    $ref: /schemas/types.yaml#/definitions/uint16
-> +    description:
-> +      Additional consecutive good readings required after the first two.
+To address this, do not update "ret" variable for sst_main() return
+status.
 
-Should the description: and the description text be on the same line ? 
-Or separate by newline ? Or should it use description: | and then a 
-newline ?
+Fixes: 9d1d36268f3d ("platform/x86: ISST: Support partitioned systems")
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: <stable@vger.kernel.org> # 6.10+
+---
+ drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-It would be good to be consistent about this.
+diff --git a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
+index 7fa360073f6e..404582307109 100644
+--- a/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
++++ b/drivers/platform/x86/intel/speed_select_if/isst_tpmi_core.c
+@@ -1549,8 +1549,7 @@ int tpmi_sst_dev_add(struct auxiliary_device *auxdev)
+ 			goto unlock_free;
+ 		}
+ 
+-		ret = sst_main(auxdev, &pd_info[i]);
+-		if (ret) {
++		if (sst_main(auxdev, &pd_info[i])) {
+ 			/*
+ 			 * This entry is not valid, hardware can partially
+ 			 * populate dies. In this case MMIO will have 0xFFs.
+-- 
+2.45.0
 
-> +  ti,debounce-tol:
-> +    $ref: /schemas/types.yaml#/definitions/uint16
-> +    description: Tolerance used for filtering.
-> +
-> +  ti,hsync-gpios:
-> +    description:
-> +      GPIO line to poll for hsync
-
-Please make sure each sentence ends with a fullstop '.' .
-
-Thanks !
 
