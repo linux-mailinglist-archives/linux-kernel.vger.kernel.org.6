@@ -1,617 +1,257 @@
-Return-Path: <linux-kernel+bounces-290059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D28E0954EED
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:33:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 959CF954EEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:34:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88BBD281C9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:33:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 432051F22814
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3551364A0;
-	Fri, 16 Aug 2024 16:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D457B1BD00B;
+	Fri, 16 Aug 2024 16:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aedgjlyy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bwnuBBKm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62BE81BB68D;
-	Fri, 16 Aug 2024 16:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31EA364A0;
+	Fri, 16 Aug 2024 16:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723826027; cv=none; b=OodFTasoeOyR1QtnYynaEzVMGWGm1PbceijySt1zmTBtRualqVKlAi65oD9mogj6rux9StSTg6b9kZClBWngroPrjrUlTJZNlPdtTdIeNrsVhUMLkbMnE8gpqw5Dg+aYWEQc/22BbF8KtlmpInUdJNKCJN7+TEmeT9vHN0A8j7A=
+	t=1723826058; cv=none; b=pwvI6cCgH5LsuZJ4HQUo8PSEorsN+Fv71Lp3ct+2zG7JqQEyTwuHHsZEPXPpeEr3tfw1G1KJlf49erdXk65bMOn1LkAFKKtMJsS71IAgpY7DbEBhDwG9ThXsOOfsk+VDbHzAdyn3O3ISU7mGGnAvUazR1le5lcb8jgbFsbe8N/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723826027; c=relaxed/simple;
-	bh=8PegLeA8ICo/unMsE+/5YOIGOrhrPTOLpTobLL0DceQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H7sPFTrg2voeCweQhG6t0DQSAIbO+1yaYHCaCZFI7QCv0BNxpeu12m/NATwfOhtNQsXs6WqDf9iRGP0BqIf90wFUu0VFDo2zb+/qtIUbR80I3j3Wz89BNcHIpamqDU/VKh2136K27mL8bINYBW+RS6UKDaaOwLAHRrQj/WsBMtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aedgjlyy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E77F9C32782;
-	Fri, 16 Aug 2024 16:33:46 +0000 (UTC)
+	s=arc-20240116; t=1723826058; c=relaxed/simple;
+	bh=EMxaGKEoQ5XNlozPQE68tVdZt5YficiAtbfARAv2tSA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JVF+8/+wF2WTkfSCn48+M+jD2g47CjocA+VwXMrVAder/EJPi/PQertok5aF/W19zb7LoLzJGUmatUF4RJ//X7r0XDYDQ1WGvr42+J1WhLfjGdL0RxO/s9nYOZxLS1hoqzQiMFuQJUkqRw9hm0JfQ8vACEku89mfJXYFlaA0eno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bwnuBBKm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77766C32782;
+	Fri, 16 Aug 2024 16:34:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723826027;
-	bh=8PegLeA8ICo/unMsE+/5YOIGOrhrPTOLpTobLL0DceQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aedgjlyyJPhogO/7GzbHh8EHS5SnWWpowXn8vRAFuGX2WlEEJqpgdXVI/BOgEtFqQ
-	 iewoIQgda0Kbp7emjA+hm4YE0IQiBfkma5ava2PKaVQDrm/JEJ5ucE5Kxb1QHPN7vv
-	 tm+YWLVpOkwlj5Dq4K8rU0sfVejWZzp/nKc61rnbH1+KoQiYQS6pg8+sznQp/pU7mV
-	 4Bpdwa2X//LXFGctvTGLTjOEXqDlH1eJxy6itJb+3ei/GS7Fhwp/7JFEIJ0/Q+n0Tb
-	 aTx6vZVbJ07TPKdFS/kbaC0UcjNEH3YTyL3gO6zzk3zrE+nLvenQigcV33TKjevYDx
-	 73gxjIv1HYVZg==
-Received: by pali.im (Postfix)
-	id 21D037B7; Fri, 16 Aug 2024 18:33:42 +0200 (CEST)
-Date: Fri, 16 Aug 2024 18:33:41 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: Andres Salomon <dilinger@queued.net>,
-	LKML <linux-kernel@vger.kernel.org>,
-	platform-driver-x86@vger.kernel.org,
-	Matthew Garrett <mjg59@srcf.ucam.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>, linux-pm@vger.kernel.org,
-	Dell.Client.Kernel@dell.com
-Subject: Re: [PATCH v3 1/2] platform/x86:dell-laptop: Add knobs to change
- battery charge settings
-Message-ID: <20240816163341.fesk7afikv3n3yer@pali>
-References: <20240815192848.3489d3e1@5400>
- <2feb1cf1-7597-9762-0864-87dc9c2c5559@linux.intel.com>
+	s=k20201202; t=1723826058;
+	bh=EMxaGKEoQ5XNlozPQE68tVdZt5YficiAtbfARAv2tSA=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=bwnuBBKmCd7Wr9YulPadaEHbJTQq1/irAgEwmqiMLMxQGYU26a8q0I4uzw1vNGzyH
+	 6TgsXgL7iYz7oUpDWYoO2vdC0algO7V5j1Q6j3VnWF2TrhC5/ZgRY5ZZj85XkOu3ZW
+	 bRy98qYcTm5L7HAL/z9a49r1gJod6n7YeYMcoBmKrXClMIz0d01SiuW/sdig/jUSF8
+	 NR9J/7jrcx4Kib/9RfhBofrDWnB8mrLQ+1AFrMeH+yeIMJxauKJnqPyrx7Tlxodp6J
+	 uijP0n+dkE+zo5gASPjinbXtgxK3Pnm/whwvH+sSNF3n4c1IMxx1yO0RUMc8HCys9s
+	 hMHzuoC0iZJuw==
+Message-ID: <0bc0bc150313d5cb91578f1b692bc62e066aa9e7.camel@kernel.org>
+Subject: Re: [PATCH 1/3] nfsd: bring in support for delstid draft XDR
+ encoding
+From: Jeff Layton <jlayton@kernel.org>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Neil Brown <neilb@suse.de>, Olga Kornievskaia <kolga@netapp.com>, Dai
+ Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, Trond Myklebust
+ <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, Tom Haynes
+ <loghyr@gmail.com>, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
+Date: Fri, 16 Aug 2024 12:34:16 -0400
+In-Reply-To: <Zr97bLdCvjD69yW7@tissot.1015granger.net>
+References: <20240816-delstid-v1-0-c221c3dc14cd@kernel.org>
+	 <20240816-delstid-v1-1-c221c3dc14cd@kernel.org>
+	 <Zr9thPcPcqYQuXed@tissot.1015granger.net>
+	 <f51cc300fe6be795d8d77b39a0218317bf6f9522.camel@kernel.org>
+	 <Zr97bLdCvjD69yW7@tissot.1015granger.net>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2feb1cf1-7597-9762-0864-87dc9c2c5559@linux.intel.com>
-User-Agent: NeoMutt/20180716
 
-On Friday 16 August 2024 16:56:24 Ilpo Järvinen wrote:
-> On Thu, 15 Aug 2024, Andres Salomon wrote:
-> 
-> > The Dell BIOS allows you to set custom charging modes, which is useful
-> > in particular for extending battery life. This adds support for tweaking
-> > those various settings from Linux via sysfs knobs. One might, for
-> > example, have their laptop plugged into power at their desk the vast
-> > majority of the time and choose fairly aggressive battery-saving
-> > settings (eg, only charging once the battery drops below 50% and only
-> > charging up to 80%). When leaving for a trip, it would be more useful
-> > to instead switch to a standard charging mode (top off at 100%, charge
-> > any time power is available). Rebooting into the BIOS to change the
-> > charging mode settings is a hassle.
-> > 
-> > For the Custom charging type mode, we reuse the common
-> > charge_control_{start,end}_threshold sysfs power_supply entries. The
-> > BIOS also has a bunch of other charging modes (with varying levels of
-> > usefulness), so this also adds a 'charge_type' sysfs entry that maps the
-> > standard values to Dell-specific ones and documents those mappings in
-> > sysfs-class-power-dell.
-> > 
-> > This work is based on a patch by Perry Yuan <perry_yuan@dell.com> and
-> > Limonciello Mario <Mario_Limonciello@Dell.com> submitted back in 2020:
-> > https://lore.kernel.org/all/20200729065424.12851-1-Perry_Yuan@Dell.com/
-> > Both of their email addresses bounce, so I'm assuming they're no longer
-> > with the company. I've reworked most of the patch to make it smaller and
-> > cleaner.
-> > 
-> > Signed-off-by: Andres Salomon <dilinger@queued.net>
-> > ---
-> > Changes in v3:
-> >     - switch tokenid and class types
-> >     - be stricter with results from both userspace and BIOS
-> >     - no longer allow failed BIOS reads
-> >     - rename/move dell_send_request_by_token_loc, and add helper function
-> >     - only allow registration for BAT0
-> >     - rename charge_type modes to match power_supply names
-> > Changes in v2, based on extensive feedback from Pali Rohár <pali@kernel.org>:
-> >     - code style changes
-> >     - change battery write API to use token->value instead of passed value
-> >     - stop caching current mode, instead querying SMBIOS as needed
-> >     - drop the separate list of charging modes enum
-> >     - rework the list of charging mode strings
-> >     - query SMBIOS for supported charging modes
-> >     - split dell_battery_custom_set() up
-> > ---
-> >  .../ABI/testing/sysfs-class-power-dell        |  33 ++
-> >  drivers/platform/x86/dell/Kconfig             |   1 +
-> >  drivers/platform/x86/dell/dell-laptop.c       | 316 ++++++++++++++++++
-> >  drivers/platform/x86/dell/dell-smbios.h       |   7 +
-> >  4 files changed, 357 insertions(+)
-> >  create mode 100644 Documentation/ABI/testing/sysfs-class-power-dell
-> > 
-> > diff --git a/Documentation/ABI/testing/sysfs-class-power-dell b/Documentation/ABI/testing/sysfs-class-power-dell
-> > new file mode 100644
-> > index 000000000000..d8c542177558
-> > --- /dev/null
-> > +++ b/Documentation/ABI/testing/sysfs-class-power-dell
-> > @@ -0,0 +1,33 @@
-> > +What:		/sys/class/power_supply/<supply_name>/charge_type
-> > +Date:		August 2024
-> > +KernelVersion:	6.12
-> > +Contact:	linux-pm@vger.kernel.org
-> > +Description:
-> > +		Select the charging algorithm to use for the (primary)
-> > +		battery.
-> > +
-> > +		Standard:
-> > +			Fully charge the battery at a moderate rate.
-> > +		Fast:
-> > +			Quickly charge the battery using fast-charge
-> > +			technology. This is harder on the battery than
-> > +			standard charging and may lower its lifespan.
-> > +			The Dell BIOS calls this ExpressCharge™.
-> > +		Trickle:
-> > +			Users who primarily operate the system while
-> > +			plugged into an external power source can extend
-> > +			battery life with this mode. The Dell BIOS calls
-> > +			this "Primarily AC Use".
-> > +		Adaptive:
-> > +			Automatically optimize battery charge rate based
-> > +			on typical usage pattern.
-> > +		Custom:
-> > +			Use the charge_control_* properties to determine
-> > +			when to start and stop charging. Advanced users
-> > +			can use this to drastically extend battery life.
-> > +
-> > +		Access: Read, Write
-> > +		Valid values:
-> > +			      "Standard", "Fast", "Trickle",
-> > +			      "Adaptive", "Custom"
-> > +
-> > diff --git a/drivers/platform/x86/dell/Kconfig b/drivers/platform/x86/dell/Kconfig
-> > index 85a78ef91182..02405793163c 100644
-> > --- a/drivers/platform/x86/dell/Kconfig
-> > +++ b/drivers/platform/x86/dell/Kconfig
-> > @@ -49,6 +49,7 @@ config DELL_LAPTOP
-> >  	default m
-> >  	depends on DMI
-> >  	depends on BACKLIGHT_CLASS_DEVICE
-> > +	depends on ACPI_BATTERY
-> >  	depends on ACPI_VIDEO || ACPI_VIDEO = n
-> >  	depends on RFKILL || RFKILL = n
-> >  	depends on DELL_WMI || DELL_WMI = n
-> > diff --git a/drivers/platform/x86/dell/dell-laptop.c b/drivers/platform/x86/dell/dell-laptop.c
-> > index 6552dfe491c6..8cc05f0fab91 100644
-> > --- a/drivers/platform/x86/dell/dell-laptop.c
-> > +++ b/drivers/platform/x86/dell/dell-laptop.c
-> > @@ -22,11 +22,13 @@
-> >  #include <linux/io.h>
-> >  #include <linux/rfkill.h>
-> >  #include <linux/power_supply.h>
-> > +#include <linux/sysfs.h>
-> >  #include <linux/acpi.h>
-> >  #include <linux/mm.h>
-> >  #include <linux/i8042.h>
-> >  #include <linux/debugfs.h>
-> >  #include <linux/seq_file.h>
-> > +#include <acpi/battery.h>
-> >  #include <acpi/video.h>
-> >  #include "dell-rbtn.h"
-> >  #include "dell-smbios.h"
-> > @@ -99,6 +101,18 @@ static bool force_rfkill;
-> >  static bool micmute_led_registered;
-> >  static bool mute_led_registered;
-> >  
-> > +static const struct {
-> > +	int token;
-> > +	const char *label;
-> > +} battery_modes[] = {
-> 
-> Please don't try to do this in one go but split it into two (define and 
-> then declaration of the variable).
+On Fri, 2024-08-16 at 12:16 -0400, Chuck Lever wrote:
+> On Fri, Aug 16, 2024 at 11:45:32AM -0400, Jeff Layton wrote:
+> > On Fri, 2024-08-16 at 11:17 -0400, Chuck Lever wrote:
+> > > On Fri, Aug 16, 2024 at 08:42:07AM -0400, Jeff Layton wrote:
+> > > > This adds support for the "delstid" draft:
+> > > >=20
+> > > > =C2=A0=C2=A0=C2=A0
+> > > > https://datatracker.ietf.org/doc/draft-ietf-nfsv4-delstid/05/
+> > > >=20
+> > > > Most of this was autogenerated using Chuck's lkxdrgen tool with
+> > > > some
+> > > > by-hand tweaks to work around some symbol conflicts, and to add
+> > > > some
+> > > > missing pieces that were needed from nfs4_1.x.
+> > >=20
+> > > I haven't read delstid closely enough to comment on the approach
+> > > you've taken in 3/3, but I do have some thoughts about code
+> > > organization here. I will try to study that draft soon.
+> > >=20
+> > > And, I'm assuming you are continuing to evolve support for the
+> > > draft
+> > > and will be growing this series. So I will hold off on careful
+> > > inspection of 3/3 for the moment.
+> > >=20
+> >=20
+> > Yes. The client pieces are already in place, and I read I get is
+> > that
+> > the draft is all but done at this point. 3/3 is probably pretty
+> > close
+> > to what should go in. There are really 3 parts to the delstid
+> > draft:
+> >=20
+> > 1/ the OPEN_XOR_DELEGATION part, which allows the server to avoid
+> > giving out an open stateid when giving out a deleg.
+> >=20
+> > 2/ delegated timestamp support (which is the part I'm still looking
+> > at)
+> >=20
+> > 3/ FATTR4_OPEN_ARGUMENTS (which enables 1 and 2)
+> >=20
+> > This patchset encompasses 1 & 3. Part 2 shouldn't have much bearing
+> > on
+> > this set. It's really a separate feature entirely that just happens
+> > to
+> > also depend on FATTR4_OPEN_ARGUMENTS support.
+> >=20
+> > > First, I'm pleased that you found xdrgen useful for rapid
+> > > prototyping. That's not something I had envisioned when I created
+> > > the tool, but it's a good match, looks like.
+> > >=20
+> >=20
+> > Yeah. It has some bugs that still need fixing, but it was certainly
+> > better than having to roll all of that by hand.
+>=20
+> I'm very interested to hear bug reports.
+>=20
 
-Why? Splitting definition of this anonymous structure and definition of
-variable would leak definition of anonymous structure of out the scope
-where it is used.
+I should have been more diligent about collecting them! I'll do that
+soon.
 
-> > +	{ BAT_STANDARD_MODE_TOKEN, "Standard" },
-> > +	{ BAT_EXPRESS_MODE_TOKEN, "Fast" },
-> > +	{ BAT_PRI_AC_MODE_TOKEN, "Trickle" },
-> > +	{ BAT_ADAPTIVE_MODE_TOKEN, "Adaptive" },
-> > +	{ BAT_CUSTOM_MODE_TOKEN, "Custom" },
-> 
-> I suggest aligning the strings with tabs for better readability.
+>=20
+> > > Here you add a separate set of source files for delstid XDR...=C2=A0
+> > > That
+> > > approach might not be scalable for adding subsequent new features
+> > > in
+> > > general, it occurs to me.
+> > >=20
+> > > We might end up with a bunch of these little code blurbs with no
+> > > clear understanding of how they inter-relate.=C2=A0 Thoughts about ho=
+w
+> > > to
+> > > manage these are welcome: xdrgen could generate only header files
+> > > and then we would #include them where needed, for example.
+> > >=20
+> > > For now, I suggest folding the new generated XDR code into the
+> > > existing NFSv4 "open" XDR code in fs/nfsd/nfs4xdr.c, when you
+> > > have
+> > > some time for cleaning up the patches. An alternative would be to
+> > > leave it and I can fold these together before committing.
+> > >=20
+> > > (The long term, of course, will hopefully be generating all XDR
+> > > code
+> > > automatically, but we're a ways out from that, IMO).
+> > >=20
+> >=20
+> > This is where I disagree.
+> >=20
+> > The nice thing about lkxdrgen is that most of what it generates is
+> > fairly self-contained. I think we ought to try to keep the new
+> > (mostly
+> > autogenerated) and old code (hand-rolled) separate for now.
+> >=20
+> > I'm not sure what makes the most sense for a new naming scheme, but
+> > I
+> > really don't think we should paste all of this into nfs4xdr.c,
+> > which is
+> > just a huge jumble of hand-rolled XDR code.=20
+>=20
+> nfs4xdr.c is a mix of stuff that I constructed by rote, which is
+> pretty clean, and stuff that mixes the "just serialize" logic with
+> "do the proc part as well" logic, which is more ugly. I had thought
+> that OPEN's XDR was in the former category, but I get it.=20
+>=20
+> So I still think there's a scalability problem with adding each new
+> feature in its own XDR .c and .h, but I don't mind keeping the
+> generated code separate from the legacy code. How about creating one
+> new file to collect the mostly- or all-generated XDR code?
+>=20
+> I've been using fs/nfsd/nfs[34]gen_xdr.[ch] in my testing.
+>=20
 
-For aligning something for better readability in "git diff" and
-"git show" (which includes also git format-patch and emails) is better
-to use spaces and not tabs. tab-alignment in git makes worse readability
-(due to name of the token).
-
-> > +};
-> > +static u32 battery_supported_modes;
-> > +
-> >  module_param(force_rfkill, bool, 0444);
-> >  MODULE_PARM_DESC(force_rfkill, "enable rfkill on non whitelisted models");
-> >  
-> > @@ -353,6 +367,32 @@ static const struct dmi_system_id dell_quirks[] __initconst = {
-> >  	{ }
-> >  };
-> >  
-> > +/* -1 is a sentinel value, telling us to use token->value */
-> > +#define USE_TVAL ((u32) -1)
-> > +static int dell_send_request_for_tokenid(struct calling_interface_buffer *buffer,
-> > +					 u16 class, u16 select, u16 tokenid,
-> > +					 u32 val)
-> > +{
-> > +	struct calling_interface_token *token;
-> > +
-> > +	token = dell_smbios_find_token(tokenid);
-> > +	if (!token)
-> > +		return -ENODEV;
-> > +
-> > +	if (val == USE_TVAL)
-> > +		val = token->value;
-> > +
-> > +	dell_fill_request(buffer, token->location, val, 0, 0);
-> > +	return dell_send_request(buffer, class, select);
-> > +}
-> > +
-> > +static inline int dell_set_std_token_value(struct calling_interface_buffer *buffer,
-> > +		u16 tokenid, u32 value)
-> > +{
-> > +	return dell_send_request_for_tokenid(buffer, CLASS_TOKEN_WRITE,
-> > +			SELECT_TOKEN_STD, tokenid, value);
-> > +}
-> > +
-> >  /*
-> >   * Derived from information in smbios-wireless-ctl:
-> >   *
-> > @@ -2183,6 +2223,279 @@ static struct led_classdev mute_led_cdev = {
-> >  	.default_trigger = "audio-mute",
-> >  };
-> >  
-> > +static int dell_battery_set_mode(const u16 tokenid)
-> > +{
-> > +	struct calling_interface_buffer buffer;
-> > +
-> > +	return dell_set_std_token_value(&buffer, tokenid, USE_TVAL);
-> > +}
-> > +
-> > +static int dell_battery_read(const u16 tokenid)
-> > +{
-> > +	struct calling_interface_buffer buffer;
-> > +	int err;
-> > +
-> > +	err = dell_send_request_for_tokenid(&buffer, CLASS_TOKEN_READ,
-> > +			SELECT_TOKEN_STD, tokenid, 0);
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	if (buffer.output[1] > INT_MAX)
-> > +		return -EIO;
-> > +
-> > +	return buffer.output[1];
-> > +}
-> > +
-> > +static bool dell_battery_mode_is_active(const u16 tokenid)
-> > +{
-> > +	struct calling_interface_token *token;
-> > +	int ret;
-> > +
-> > +	ret = dell_battery_read(tokenid);
-> > +	if (ret < 0)
-> > +		return false;
-> > +
-> > +	token = dell_smbios_find_token(tokenid);
-> > +	/* token's already verified by dell_battery_read() */
-> > +
-> > +	return token->value == (u16) ret;
-> > +}
-> > +
-> > +/*
-> > + * The rules: the minimum start charging value is 50%. The maximum
-> > + * start charging value is 95%. The minimum end charging value is
-> > + * 55%. The maximum end charging value is 100%. And finally, there
-> > + * has to be at least a 5% difference between start & end values.
-> > + */
-> > +#define CHARGE_START_MIN	50
-> > +#define CHARGE_START_MAX	95
-> > +#define CHARGE_END_MIN		55
-> > +#define CHARGE_END_MAX		100
-> > +#define CHARGE_MIN_DIFF		5
-> > +
-> > +static int dell_battery_set_custom_charge_start(int start)
-> > +{
-> > +	struct calling_interface_buffer buffer;
-> > +	int end;
-> > +
-> > +	if (start < CHARGE_START_MIN)
-> > +		start = CHARGE_START_MIN;
-> > +	else if (start > CHARGE_START_MAX)
-> > +		start = CHARGE_START_MAX;
-> 
-> We have clamp().
-> 
-> > +
-> > +	end = dell_battery_read(BAT_CUSTOM_CHARGE_END);
-> > +	if (end < 0)
-> > +		return end;
-> > +	if ((end - start) < CHARGE_MIN_DIFF)
-> 
-> Extra parenthesis.
-
-I pointed about this in previous version and from the discussion the
-conclusion was that there is no reason to remove extra parenthesis.
-
-> > +		start = end - CHARGE_MIN_DIFF;
-> > +
-> > +	return dell_set_std_token_value(&buffer, BAT_CUSTOM_CHARGE_START,
-> > +			start);
-> > +}
-> > +
-> > +static int dell_battery_set_custom_charge_end(int end)
-> > +{
-> > +	struct calling_interface_buffer buffer;
-> > +	int start;
-> > +
-> > +	if (end < CHARGE_END_MIN)
-> > +		end = CHARGE_END_MIN;
-> > +	else if (end > CHARGE_END_MAX)
-> > +		end = CHARGE_END_MAX;
-> 
-> clamp.
-> 
-> > +	start = dell_battery_read(BAT_CUSTOM_CHARGE_START);
-> > +	if (start < 0)
-> > +		return start;
-> > +	if ((end - start) < CHARGE_MIN_DIFF)
-> 
-> Extra parenthesis.
-> 
-> > +		end = start + CHARGE_MIN_DIFF;
-> > +
-> > +	return dell_set_std_token_value(&buffer, BAT_CUSTOM_CHARGE_END, end);
-> > +}
-> > +
-> > +static ssize_t charge_type_show(struct device *dev,
-> > +		struct device_attribute *attr,
-> > +		char *buf)
-> > +{
-> > +	ssize_t count = 0;
-> > +	int i;
-> > +
-> > +	for (i = 0; i < ARRAY_SIZE(battery_modes); i++) {
-> > +		bool active;
-> > +
-> > +		if (!(battery_supported_modes & BIT(i)))
-> 
-> Why not store this supported information into battery_modes itself?
-
-Same style is already used in other parts in this driver / source file.
-
-> What's the benefit of obfuscation it with the extra variable & BIT()?
-
-In my opinion, this is not obfuscation but clear and common style how to
-check which values of some enumeration are supported.
-
-Storing this kind of information into battery_modes is not possible
-because battery_modes is constant array with constant data.
-
-> 
-> -- 
->  i.
-> 
-> > +			continue;
-> > +
-> > +		active = dell_battery_mode_is_active(battery_modes[i].token);
-> > +		count += sysfs_emit_at(buf, count, active ? "[%s] " : "%s ",
-> > +				battery_modes[i].label);
-> > +	}
-> > +
-> > +	/* convert the last space to a newline */
-> > +	if (count > 0)
-> > +		count--;
-> > +	count += sysfs_emit_at(buf, count, "\n");
-> > +
-> > +	return count;
-> > +}
-> > +
-> > +static ssize_t charge_type_store(struct device *dev,
-> > +		struct device_attribute *attr,
-> > +		const char *buf, size_t size)
-> > +{
-> > +	bool matched = false;
-> > +	int err, i;
-> > +
-> > +	for (i = 0; i < ARRAY_SIZE(battery_modes); i++) {
-> > +		if (!(battery_supported_modes & BIT(i)))
-> > +			continue;
-> > +
-> > +		if (sysfs_streq(battery_modes[i].label, buf)) {
-> > +			matched = true;
-> > +			break;
-> > +		}
-> > +	}
-> > +	if (!matched || !(battery_supported_modes & BIT(i)))
-> > +		return -EINVAL;
-> > +
-> > +	err = dell_battery_set_mode(battery_modes[i].token);
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	return size;
-> > +}
-> > +
-> > +static ssize_t charge_control_start_threshold_show(struct device *dev,
-> > +		struct device_attribute *attr,
-> > +		char *buf)
-> > +{
-> > +	int start;
-> > +
-> > +	start = dell_battery_read(BAT_CUSTOM_CHARGE_START);
-> > +	if (start < 0)
-> > +		return start;
-> > +
-> > +	if (start > CHARGE_START_MAX)
-> > +		return -EIO;
-> > +
-> > +	return sysfs_emit(buf, "%d\n", start);
-> > +}
-> > +
-> > +static ssize_t charge_control_start_threshold_store(struct device *dev,
-> > +		struct device_attribute *attr,
-> > +		const char *buf, size_t size)
-> > +{
-> > +	int ret, start;
-> > +
-> > +	ret = kstrtoint(buf, 10, &start);
-> > +	if (ret)
-> > +		return ret;
-> > +	if (start < 0 || start > 100)
-> > +		return -EINVAL;
-> > +
-> > +	ret = dell_battery_set_custom_charge_start(start);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	return size;
-> > +}
-> > +
-> > +static ssize_t charge_control_end_threshold_show(struct device *dev,
-> > +		struct device_attribute *attr,
-> > +		char *buf)
-> > +{
-> > +	int end;
-> > +
-> > +	end = dell_battery_read(BAT_CUSTOM_CHARGE_END);
-> > +	if (end < 0)
-> > +		return end;
-> > +
-> > +	if (end > CHARGE_END_MAX)
-> > +		return -EIO;
-> > +
-> > +	return sysfs_emit(buf, "%d\n", end);
-> > +}
-> > +
-> > +static ssize_t charge_control_end_threshold_store(struct device *dev,
-> > +		struct device_attribute *attr,
-> > +		const char *buf, size_t size)
-> > +{
-> > +	int ret, end;
-> > +
-> > +	ret = kstrtouint(buf, 10, &end);
-> > +	if (ret)
-> > +		return ret;
-> > +	if (end < 0 || end > 100)
-> > +		return -EINVAL;
-> > +
-> > +	ret = dell_battery_set_custom_charge_end(end);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	return size;
-> > +}
-> > +
-> > +static DEVICE_ATTR_RW(charge_control_start_threshold);
-> > +static DEVICE_ATTR_RW(charge_control_end_threshold);
-> > +static DEVICE_ATTR_RW(charge_type);
-> > +
-> > +static struct attribute *dell_battery_attrs[] = {
-> > +	&dev_attr_charge_control_start_threshold.attr,
-> > +	&dev_attr_charge_control_end_threshold.attr,
-> > +	&dev_attr_charge_type.attr,
-> > +	NULL,
-> > +};
-> > +ATTRIBUTE_GROUPS(dell_battery);
-> > +
-> > +static int dell_battery_add(struct power_supply *battery,
-> > +		struct acpi_battery_hook *hook)
-> > +{
-> > +	/* this currently only supports the primary battery */
-> > +	if (strcmp(battery->desc->name, "BAT0") != 0)
-> > +		return -ENODEV;
-> > +
-> > +	return device_add_groups(&battery->dev, dell_battery_groups);
-> > +}
-> > +
-> > +static int dell_battery_remove(struct power_supply *battery,
-> > +		struct acpi_battery_hook *hook)
-> > +{
-> > +	device_remove_groups(&battery->dev, dell_battery_groups);
-> > +	return 0;
-> > +}
-> > +
-> > +static struct acpi_battery_hook dell_battery_hook = {
-> > +	.add_battery = dell_battery_add,
-> > +	.remove_battery = dell_battery_remove,
-> > +	.name = "Dell Primary Battery Extension",
-> > +};
-> > +
-> > +static u32 __init battery_get_supported_modes(void)
-> > +{
-> > +	u32 modes = 0;
-> > +	int i;
-> > +
-> > +	for (i = 0; i < ARRAY_SIZE(battery_modes); i++) {
-> > +		if (dell_smbios_find_token(battery_modes[i].token))
-> > +			modes |= BIT(i);
-> > +	}
-> > +
-> > +	return modes;
-> > +}
-> > +
-> > +static void __init dell_battery_init(struct device *dev)
-> > +{
-> > +	battery_supported_modes = battery_get_supported_modes();
-> > +
-> > +	if (battery_supported_modes != 0)
-> > +		battery_hook_register(&dell_battery_hook);
-> > +}
-> > +
-> > +static void __exit dell_battery_exit(void)
-> > +{
-> > +	if (battery_supported_modes != 0)
-> > +		battery_hook_unregister(&dell_battery_hook);
-> > +}
-> > +
-> >  static int __init dell_init(void)
-> >  {
-> >  	struct calling_interface_token *token;
-> > @@ -2219,6 +2532,7 @@ static int __init dell_init(void)
-> >  		touchpad_led_init(&platform_device->dev);
-> >  
-> >  	kbd_led_init(&platform_device->dev);
-> > +	dell_battery_init(&platform_device->dev);
-> >  
-> >  	dell_laptop_dir = debugfs_create_dir("dell_laptop", NULL);
-> >  	debugfs_create_file("rfkill", 0444, dell_laptop_dir, NULL,
-> > @@ -2293,6 +2607,7 @@ static int __init dell_init(void)
-> >  	if (mute_led_registered)
-> >  		led_classdev_unregister(&mute_led_cdev);
-> >  fail_led:
-> > +	dell_battery_exit();
-> >  	dell_cleanup_rfkill();
-> >  fail_rfkill:
-> >  	platform_device_del(platform_device);
-> > @@ -2311,6 +2626,7 @@ static void __exit dell_exit(void)
-> >  	if (quirks && quirks->touchpad_led)
-> >  		touchpad_led_exit();
-> >  	kbd_led_exit();
-> > +	dell_battery_exit();
-> >  	backlight_device_unregister(dell_backlight_device);
-> >  	if (micmute_led_registered)
-> >  		led_classdev_unregister(&micmute_led_cdev);
-> > diff --git a/drivers/platform/x86/dell/dell-smbios.h b/drivers/platform/x86/dell/dell-smbios.h
-> > index ea0cc38642a2..77baa15eb523 100644
-> > --- a/drivers/platform/x86/dell/dell-smbios.h
-> > +++ b/drivers/platform/x86/dell/dell-smbios.h
-> > @@ -33,6 +33,13 @@
-> >  #define KBD_LED_AUTO_50_TOKEN	0x02EB
-> >  #define KBD_LED_AUTO_75_TOKEN	0x02EC
-> >  #define KBD_LED_AUTO_100_TOKEN	0x02F6
-> > +#define BAT_PRI_AC_MODE_TOKEN	0x0341
-> > +#define BAT_ADAPTIVE_MODE_TOKEN	0x0342
-> > +#define BAT_CUSTOM_MODE_TOKEN	0x0343
-> > +#define BAT_STANDARD_MODE_TOKEN	0x0346
-> > +#define BAT_EXPRESS_MODE_TOKEN	0x0347
-> > +#define BAT_CUSTOM_CHARGE_START	0x0349
-> > +#define BAT_CUSTOM_CHARGE_END	0x034A
-> >  #define GLOBAL_MIC_MUTE_ENABLE	0x0364
-> >  #define GLOBAL_MIC_MUTE_DISABLE	0x0365
-> >  #define GLOBAL_MUTE_ENABLE	0x058C
-> > 
-
+Sure, that sounds fine. I'll rename delstid_xdr.* to nfs4gen_xdr.*.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
