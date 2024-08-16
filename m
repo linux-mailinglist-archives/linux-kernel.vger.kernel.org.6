@@ -1,70 +1,67 @@
-Return-Path: <linux-kernel+bounces-289933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C239954D77
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:17:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A498954D78
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:17:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E79ED286BF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:17:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64CAD1C21A4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9960D1BDA93;
-	Fri, 16 Aug 2024 15:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF93B1BDAA4;
+	Fri, 16 Aug 2024 15:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eVh4w6IU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r1MY10e4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B301BDA8F
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3381BF315;
+	Fri, 16 Aug 2024 15:16:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723821389; cv=none; b=HYasiBTahpGv2BprmSEhq+kCzEhlo+rquFfRilMIAPZMdxmjPq/ruS7nrErRcL0YT7EKigHodp3ZCQA1u+I/a5c3PwEnhjBztt9dY+FD2WHq2G7GPytshen5y3sJXdkYxlAW0HUUYMGkrOCKCJ6l8LiZUVNDJ8KBXv+2lxRBhI8=
+	t=1723821392; cv=none; b=Ao0r6uAOltosU7XdJvDhmcBbvQBFqckuk5Zr2Z/Jw5zOl50Ekp5M6flp8G0wSdQT/itIGSj7Tb6n4c8S1VIYYVJHNmOpkFPTiNW6iMCwu7Z5Gb8rzQ0/fXBxRsraYGRz6B8nzGWA0buSlQ96PS/CvP87y9DbQC50FwuPIP9kVWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723821389; c=relaxed/simple;
-	bh=M3aXYfvZtOSP1Cm45umkLlCrgyuN8YBKot+wHksTLeY=;
+	s=arc-20240116; t=1723821392; c=relaxed/simple;
+	bh=yWWNx6BeN3bNDNPu8WhxlsRmGiU5W9kSaETwg3COSq8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N3d9LlSLh2Bh1KVlXeax91AjgVMjpYiies5HNpV8JeTTm3a2HriLq9txGT218zd0cb5tmua2addQgUV75Wx0cpSB7OTsp/EJs7GttihCluSafEkg2TXxvzOv1wE1Y8+wbgY5b/oxhPI4bvSY19Yxdijkppt4eD+JFJZi+COxZQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eVh4w6IU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 499C2C4AF11;
-	Fri, 16 Aug 2024 15:16:25 +0000 (UTC)
+	 MIME-Version:Content-Type; b=WQiZI5it/1MeTBh0F8sIr1tQXNkRx4CsMof/oIhNO+IMItcid4VezomP6Ws2OeF7ULQjQft+SZWE6PTSJr/p3F4xKmwAIKd2nX5gE6MuM/fGrHuo5XSsluYxhtAYJZhHHitc0LW8w2SXUO+2Z3SCoGa3/uEmgMcxGxOi2F19ezc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r1MY10e4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF30DC4AF0B;
+	Fri, 16 Aug 2024 15:16:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723821388;
-	bh=M3aXYfvZtOSP1Cm45umkLlCrgyuN8YBKot+wHksTLeY=;
+	s=k20201202; t=1723821391;
+	bh=yWWNx6BeN3bNDNPu8WhxlsRmGiU5W9kSaETwg3COSq8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=eVh4w6IU4BSTS3EEym+oVd0Mq9Ouw3SmOallmWODUWdGVf9OugK7otEfi9BoLeKAz
-	 J5PZ0UXn8RIKzwhJiOzTplTw64PmFk4gvwywbayvCdJHI6LOtYkWBRf+zu0DYADo3y
-	 Wv+WRh172doczIcxyUdWBblmE3+v07vGSj62NNA6QDtVypTduqILY+dGQyfiCoLcrz
-	 SgtrXpwq6g7+r6aC1XGenCfs44AUf9TEDQ16aQita6pLU3g8YPLZ1yoUN3u6iQ23q8
-	 JOJ1yZ9+/cOktFvkJcoTH4g0sFhsGf3DUBX04Xyb9tnfC65Ful/vkdLm6VX8LmO4Wr
-	 Y+/55HnIpEV5g==
+	b=r1MY10e4HJWsfOp/AAtHzqRuGlyw599ZBBbz0Crr0qJ0gnwCffoZPUdfIIY1lMgKr
+	 i27vHVT+6yRv7bmwebAajl3o/YzBl1G9qCDrz4cBncAu9X/kzUAlZaJ/MLFbJJ+0WV
+	 W1bJp/Ush4dzLWbHBz9kNyBdHPwmVZfG841FuDjfI3TKSBURXuz1fXjNq1pHGs9uCu
+	 guGY2XsWCrnhk8880lmHZOWsglcDclnm+Ld4XWBO9g3stDP23M3tUgPX2jx84q6HK6
+	 Cshh7W7GeM+LHznZUJpXB0y4uSHE2xM9HK2KQQkdy+s1rBdD8nEr6ad+fha2ytMucO
+	 qGX+cYQGKkrpQ==
 From: Will Deacon <will@kernel.org>
-To: sunilvl@ventanamicro.com,
-	Haibo Xu <haibo1.xu@intel.com>
+To: iommu@lists.linux.dev,
+	Rob Clark <robdclark@gmail.com>
 Cc: catalin.marinas@arm.com,
 	kernel-team@android.com,
 	Will Deacon <will@kernel.org>,
-	xiaobo55x@gmail.com,
-	ajones@ventanamicro.com,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Gavin Shan <gshan@redhat.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	James Morse <james.morse@arm.com>,
-	Hanjun Guo <guohanjun@huawei.com>,
+	Rob Clark <robdclark@chromium.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Georgi Djakov <quic_c_gdjako@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Pranjal Shrivastava <praan@google.com>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] ACPI: NUMA: initialize all values of acpi_early_node_map to NUMA_NO_NODE
-Date: Fri, 16 Aug 2024 16:15:57 +0100
-Message-Id: <172380817082.2918676.9519520229609793025.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommu/arm-smmu: Un-demote unhandled-fault msg
+Date: Fri, 16 Aug 2024 16:15:58 +0100
+Message-Id: <172381862229.1794487.17068761066364130246.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20240729035958.1957185-1-haibo1.xu@intel.com>
-References: <20240729035958.1957185-1-haibo1.xu@intel.com>
+In-Reply-To: <20240809172716.10275-1-robdclark@gmail.com>
+References: <20240809172716.10275-1-robdclark@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,17 +71,16 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Mon, 29 Jul 2024 11:59:55 +0800, Haibo Xu wrote:
-> Currently, only acpi_early_node_map[0] was initialized to NUMA_NO_NODE.
-> To ensure all the values were properly initialized, switch to initialize
-> all of them to NUMA_NO_NODE.
+On Fri, 09 Aug 2024 10:27:14 -0700, Rob Clark wrote:
+> Previously this was dev_err_ratelimited() but it got changed to a
+> ratelimited dev_dbg().  Change it back to dev_err().
 > 
 > 
 
-Applied arm64 hunk to arm64 (for-next/acpi), thanks!
+Applied to will (for-joerg/arm-smmu/updates), thanks!
 
-[1/1] ACPI: NUMA: initialize all values of acpi_early_node_map to NUMA_NO_NODE
-      https://git.kernel.org/arm64/c/8bb0376fe082
+[1/1] iommu/arm-smmu: Un-demote unhandled-fault msg
+      https://git.kernel.org/will/c/98db56e49008
 
 Cheers,
 -- 
