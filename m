@@ -1,130 +1,88 @@
-Return-Path: <linux-kernel+bounces-290312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 942E4955210
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:53:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 499BB955212
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:56:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51836286E5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:53:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7342B226E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D23F1C2307;
-	Fri, 16 Aug 2024 20:53:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2521C232A;
+	Fri, 16 Aug 2024 20:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="XJJTx5sN"
-Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="tzmo23kK"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8F913AD32
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 20:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EADB44374;
+	Fri, 16 Aug 2024 20:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723841611; cv=none; b=dM2ZsRpnX2RNxd75lWhk+Fau+ymO4S8OTCL6aGmvwNFmF443MxQKhEsP3AFqu5cqI1a9g8XvOJoGHy29NijsDha/4kpbe4/hpbDXHFAp0rq9Rv1BYJ1oXfIWDN1x4MmUcLa460RxVUmQrKy3bbvdZ5s9PxufVH9mDMFkJuFeFfA=
+	t=1723841790; cv=none; b=rHbL35DesSn1gCllrrmib0pWUlwj+4Od6O5FD5lzofvhihXjRSnlDjZhYla4fB+LKclJqNbBX4N4YlAxpo6YmQdHQTeV1sCGk3axRHonLloAwZMC+3vgo1rQHXoCvxZ8tilH7QikDjjqNWUZw8HPnizqqUV6zdCMyOXMyIUQYlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723841611; c=relaxed/simple;
-	bh=wu/nrRtusJ1ZmSrs4cBH1WMs+1feXfjCqd9WvPnzqzM=;
-	h=Subject:To:Cc:References:From:In-Reply-To:Message-ID:Date:
-	 MIME-Version:Content-Type; b=R4n1Mab0hL/8ZCCXJdBtvWKhMvHVet0RU22/9p8f7e5uUDdhq680vcdFH/8Pyfxj4beWICIcTOyaNxg1AiwxjGREQc73tf2pQtSFuRxlFfFBAT0StEkpTDEvSn+MHXE1f4BhzIYZtJ0T3ucixD6jdfPLyoeBzVIFd6yPp1VwWpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=XJJTx5sN; arc=none smtp.client-ip=44.202.169.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6007a.ext.cloudfilter.net ([10.0.30.247])
-	by cmsmtp with ESMTPS
-	id eZnNsIF7s1zuHf3wusgm9w; Fri, 16 Aug 2024 20:53:29 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id f3wtsJEhI02uCf3wusavCj; Fri, 16 Aug 2024 20:53:28 +0000
-X-Authority-Analysis: v=2.4 cv=a88291SF c=1 sm=1 tr=0 ts=66bfbc48
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=VwQbUJbxAAAA:8 a=HaFmDPmJAAAA:8
- a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
- a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:In-Reply-To:From:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=yZIWAXXOUQbRbKx3GtCM3kQc+3f/6fkRgCAH+j0kJUg=; b=XJJTx5sNStnR7fyJLVDqiowyV3
-	HOI2dMVK9opBAOng4uUANGHHJMDTDh/ILa5M7nnzftpjNZIl5ETc8k3k+ATeos0pa+O7VGrN336DC
-	+BJv56rbgVKVQmrWgdJBwS0EdYVOPFAZ56RN8I4MrpnL86oq2q9Z/G9v5xJmghQLkGKZEU1p4o1hI
-	Rz06uHL6tDk9R0md8XdUwNCK8cXSlOHHx/Koq69vthTlGRA0A6dpL2122k63W9vGm98FaPpVI42MO
-	vDWsS6vbGwkDK65R4yMkuiY4TbL4GH1viBMW/2fh7cRGRLvLKhKAmD5P4n05RIo6S8rGkQI5sWoYJ
-	u2z3oV7w==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:35234 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1sf3wp-000DA1-1V;
-	Fri, 16 Aug 2024 14:53:23 -0600
-Subject: Re: [PATCH 5.15 000/483] 5.15.165-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240816101524.478149768@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20240816101524.478149768@linuxfoundation.org>
-Message-ID: <4021e4bc-e532-5fa0-a2f5-46891bb99ffc@w6rz.net>
-Date: Fri, 16 Aug 2024 13:53:17 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1723841790; c=relaxed/simple;
+	bh=xM7a0sjEn5EU7xMgGaRiT2wnAsyzH3IhZm4MDK7tH+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N/jS9QvdMwGEvgMKiD394zqUreyas5+vIXo2Tqjgn68pwxPrMMfDqwczrbtCMxqZ1qPIsSniUe0/1099PBWnYRaGibnTF5Gvwda3CzpRdQczvKYGcVI9CHLjH1npntXaeAH24GMgt0UR4NbaHumRURrMIA6y4/L42OijVud8BIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=tzmo23kK; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=kessJoZEAlIP3wCOgJvS54+BXGLCvL32IvfCD/5qQbM=; b=tzmo23kK1ueDfCkbJcYEZaCLPM
+	VC881F5H0/kDP9m0RH69fXgnpVpb18uu4aXPgQOGsyOmKS2gGBlwy0TFsNZyxy7RIxRCY37i6dgSe
+	DHLbTB3+k19YN4vhywTA7wwdjT9oaVUEzQl6GaaV9qKRVJiTzxWGOb/VNEMk4sTL+Eeo=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sf3zc-004xn0-UV; Fri, 16 Aug 2024 22:56:16 +0200
+Date: Fri, 16 Aug 2024 22:56:16 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Divya Koppera <divya.koppera@microchip.com>
+Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com
+Subject: Re: [PATCH net-next v2 2/2] net: phy: microchip_t1: Adds support for
+ lan887x phy
+Message-ID: <4956ed49-89b4-46fc-a2e8-8debada5a35c@lunn.ch>
+References: <20240813181515.863208-1-divya.koppera@microchip.com>
+ <20240813181515.863208-3-divya.koppera@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1sf3wp-000DA1-1V
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:35234
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 61
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfGpcP6RLWFKwmo10C+v0SXgzNz44dQ4QCp2BkhvgmKtoKWTKKuGDCX9WtdhxM0V4PQ/1hZXVq4finwENQNgQ3xjORKTSWPXQMmZec0vhntrFJ0175So1
- 0KyIi92d+H4bLO5Mdg2ZQu+B81v9rUfdSQuDGkJgT5+jRV9nvyo3CySbPyi/IPTAylOZifnXLat4yS70NI9076Ulkwjdj++OlEA=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240813181515.863208-3-divya.koppera@microchip.com>
 
-On 8/16/24 3:22 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.165 release.
-> There are 483 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 18 Aug 2024 10:14:00 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.165-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Tue, Aug 13, 2024 at 11:45:15PM +0530, Divya Koppera wrote:
+> The LAN887x is a Single-Port Ethernet Physical Layer Transceiver compliant
+> with the IEEE 802.3bw (100BASE-T1) and IEEE 802.3bp (1000BASE-T1)
+> specifications. The device provides 100/1000 Mbit/s transmit and receive
+> capability over a single Unshielded Twisted Pair (UTP) cable. It supports
+> communication with an Ethernet MAC via standard RGMII/SGMII interfaces.
+> 
+> LAN887x supports following features,
+> - Events/Interrupts
+> - LED/GPIO Operation
+> - IEEE 1588 (PTP)
+> - SQI
+> - Sleep and Wakeup (TC10)
+> - Cable Diagnostics
+> 
+> First patch only supports 100Mbps and 1000Mbps force-mode.
+> 
+> Signed-off-by: Divya.Koppera <divya.koppera@microchip.com>
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Tested-by: Ron Economos <re@w6rz.net>
-
+    Andrew
 
