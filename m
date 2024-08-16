@@ -1,108 +1,201 @@
-Return-Path: <linux-kernel+bounces-289063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A716C9541B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:26:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E692F9541B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:28:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B6351F22681
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:26:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 175071C21346
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBD984E1E;
-	Fri, 16 Aug 2024 06:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XEw3yFh7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE4584DF8;
-	Fri, 16 Aug 2024 06:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E725581ACB;
+	Fri, 16 Aug 2024 06:28:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF99D34CD8;
+	Fri, 16 Aug 2024 06:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723789575; cv=none; b=QQvBTvp3WVr2a7HCe8+obdhi9poXV1rzoViZc4AUGshlfNNmWSLPoeLLIyLhlTdG6Ce8o55rXCq+nGB/Wpq8Tw0+ZNS0qxyOKbj2gJzRLJWU4NMsgTsGJVIwuDQowB5GE7I6BQn57Z8HIZrN7eb9NrdJ8WZCFraHxafb028xciU=
+	t=1723789693; cv=none; b=nmPMQoxnmSo/WcVL2YbDK4z/PEJmiF7HTd1nJUpLxZiW4C9LCTJ2R0Pbl+dLq9LQC0YY56CzlLon8+RboP5aW2aas/fjg/MoQ5HR1OOKc8YLXRHHS4QNN0nQTr3D3XZpsGhbE4d4cYHcStwTABd8K+pSVv9nP7Jymp/b9LIrgfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723789575; c=relaxed/simple;
-	bh=AlqWkw/2JMAlkwmyJf8Pc8RsnoA/o6Fq3Kq4FPM4U5o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=q15vuIwPx7zvRw0rvPAOs14t69JZtufjbbO3TEKBMUV2aWCl30B4VMZLoe39f8it5DfgdLjs+Hf0bxQCFcJ2Rmh4GSOkrJ567HYlM5Z6n8MtWNF8Ijcs+Djd1EBKKamdrdrCpYjGQM/gY0sC6aHpk35x9bwO64E5gVWMI7JzPWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XEw3yFh7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13510C4AF0F;
-	Fri, 16 Aug 2024 06:26:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723789574;
-	bh=AlqWkw/2JMAlkwmyJf8Pc8RsnoA/o6Fq3Kq4FPM4U5o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XEw3yFh7pxuvjza8cAH+szYzMC9+gafSUrHu/U3V6LeFgYY3rEhzsXIwPfgNx+3zY
-	 Ytu0ootI3Sjkc5Qvy8dp9sb/6c2GaP+HVtKZxpEPdMIqLJiUjFnIbfgaffhnqZtFFI
-	 iw/Q2abWdATx+cq4Y4XtqfARQNCntZLYEuNNYj4UkNlRwn+xGCgsooPfDsCGuSNqbT
-	 6rzjmirg+LjrJlWoGeW2hbPoJJjur9gE23+AE6plgpLIeaxiOx8R5dxocBZ6HbqCOn
-	 UwQqYbaLUuzsHxmZVg8yWjBPFBkO/BXFEn1udF0Jz2Jiyyah5xoBaKjmCI5CyMtG0b
-	 wMJRR7fSOG99A==
-From: neeraj.upadhyay@kernel.org
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	paulmck@kernel.org,
-	neeraj.upadhyay@kernel.org,
-	neeraj.upadhyay@amd.com,
-	boqun.feng@gmail.com,
-	joel@joelfernandes.org,
-	urezki@gmail.com,
-	frederic@kernel.org
-Subject: [PATCH rcu 3/3] srcu: Mark callbacks not currently participating in barrier operation
-Date: Fri, 16 Aug 2024 11:55:32 +0530
-Message-Id: <20240816062532.51893-3-neeraj.upadhyay@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240816062445.GA51253@neeraj.linux>
-References: <20240816062445.GA51253@neeraj.linux>
+	s=arc-20240116; t=1723789693; c=relaxed/simple;
+	bh=YWQI/nyT5QdlLevRRr/GwMqaTttd/nH11Y3stUGbZrY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RQVhX5AAj3v8CtuuFBAqgKoX6cK7mscR12xqkrR3vnDZVrRTvC02hf6HW/N+nrx9n33eIlnFsAo1/MGG+w5j8cKVSgNqct6VlslxykdCliS0rlBovyxjYOhvBr45FzkJ4zkE7ZfaV1IRyBK3g3y+LiqCR/qMGPUVA9AIKcgifvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B0D9E143D;
+	Thu, 15 Aug 2024 23:28:35 -0700 (PDT)
+Received: from [10.163.57.106] (unknown [10.163.57.106])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 315173F73B;
+	Thu, 15 Aug 2024 23:28:06 -0700 (PDT)
+Message-ID: <090eb237-10f4-4358-be07-1eb8d30c3ec1@arm.com>
+Date: Fri, 16 Aug 2024 11:58:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 1/2] uapi: Define GENMASK_U128
+To: linux-kernel@vger.kernel.org
+Cc: ardb@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>, Arnd Bergmann <arnd@arndb.de>,
+ linux-arch@vger.kernel.org
+References: <20240801071646.682731-1-anshuman.khandual@arm.com>
+ <20240801071646.682731-2-anshuman.khandual@arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20240801071646.682731-2-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: "Paul E. McKenney" <paulmck@kernel.org>
 
-SRCU keeps a count of the number of callbacks that the current
-srcu_barrier() is waiting on, but there is currently no easy way to
-work out which callback is stuck.  One way to do this is to mark idle
-SRCU-barrier callbacks by making the ->next pointer point to the callback
-itself, and this commit does just that.
 
-Later commits will use this for debug output.
+On 8/1/24 12:46, Anshuman Khandual wrote:
+> This adds GENMASK_U128() and __GENMASK_U128() macros using __BITS_PER_U128
+> and __int128 data types. These macros will be used in providing support for
+> generating 128 bit masks.
+> 
+> Cc: Yury Norov <yury.norov@gmail.com>
+> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Cc: Arnd Bergmann <arnd@arndb.de>>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-arch@vger.kernel.org
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+>  include/linux/bits.h       | 13 +++++++++++++
+>  include/uapi/linux/bits.h  |  3 +++
+>  include/uapi/linux/const.h | 15 +++++++++++++++
+>  3 files changed, 31 insertions(+)
+> 
+> diff --git a/include/linux/bits.h b/include/linux/bits.h
+> index 0eb24d21aac2..bf99feb5570e 100644
+> --- a/include/linux/bits.h
+> +++ b/include/linux/bits.h
+> @@ -36,4 +36,17 @@
+>  #define GENMASK_ULL(h, l) \
+>  	(GENMASK_INPUT_CHECK(h, l) + __GENMASK_ULL(h, l))
+>  
+> +/*
+> + * Missing asm support
+> + *
+> + * __GENMASK_U128() depends on _BIT128() which would not work
+> + * in the asm code, as it shifts an 'unsigned __init128' data
+> + * type instead of direct representation of 128 bit constants
+> + * such as long and unsigned long. The fundamental problem is
+> + * that a 128 bit constant will get silently truncated by the
+> + * gcc compiler.
+> + */
+> +#define GENMASK_U128(h, l) \
+> +	(GENMASK_INPUT_CHECK(h, l) + __GENMASK_U128(h, l))
+> +
+>  #endif	/* __LINUX_BITS_H */
+> diff --git a/include/uapi/linux/bits.h b/include/uapi/linux/bits.h
+> index 3c2a101986a3..4d4b7b08003c 100644
+> --- a/include/uapi/linux/bits.h
+> +++ b/include/uapi/linux/bits.h
+> @@ -12,4 +12,7 @@
+>          (((~_ULL(0)) - (_ULL(1) << (l)) + 1) & \
+>           (~_ULL(0) >> (__BITS_PER_LONG_LONG - 1 - (h))))
+>  
+> +#define __GENMASK_U128(h, l) \
+> +	((_BIT128((h) + 1)) - (_BIT128(l)))
+> +
+>  #endif /* _UAPI_LINUX_BITS_H */
+> diff --git a/include/uapi/linux/const.h b/include/uapi/linux/const.h
+> index a429381e7ca5..5be12e8f8f9c 100644
+> --- a/include/uapi/linux/const.h
+> +++ b/include/uapi/linux/const.h
+> @@ -28,6 +28,21 @@
+>  #define _BITUL(x)	(_UL(1) << (x))
+>  #define _BITULL(x)	(_ULL(1) << (x))
+>  
+> +/*
+> + * Missing asm support
+> + *
+> + * __BIT128() would not work in the asm code, as it shifts an
+> + * 'unsigned __init128' data type as direct representation of
+> + * 128 bit constants is not supported in the gcc compiler, as
+> + * they get silently truncated.
+> + *
+> + * TODO: Please revisit this implementation when gcc compiler
+> + * starts representing 128 bit constants directly like long
+> + * and unsigned long etc. Subsequently drop the comment for
+> + * GENMASK_U128() which would then start supporting asm code.
+> + */
+> +#define _BIT128(x)	((unsigned __int128)(1) << (x))
+> +
+>  #define __ALIGN_KERNEL(x, a)		__ALIGN_KERNEL_MASK(x, (__typeof__(x))(a) - 1)
+>  #define __ALIGN_KERNEL_MASK(x, mask)	(((x) + (mask)) & ~(mask))
+>  
 
-Signed-off-by: "Paul E. McKenney" <paulmck@kernel.org>
-Signed-off-by: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
----
- kernel/rcu/srcutree.c | 2 ++
- 1 file changed, 2 insertions(+)
+Hello Yuri/Arnd,
 
-diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
-index aaee09a6748c..31706e3293bc 100644
---- a/kernel/rcu/srcutree.c
-+++ b/kernel/rcu/srcutree.c
-@@ -137,6 +137,7 @@ static void init_srcu_struct_data(struct srcu_struct *ssp)
- 		sdp->srcu_cblist_invoking = false;
- 		sdp->srcu_gp_seq_needed = ssp->srcu_sup->srcu_gp_seq;
- 		sdp->srcu_gp_seq_needed_exp = ssp->srcu_sup->srcu_gp_seq;
-+		sdp->srcu_barrier_head.next = &sdp->srcu_barrier_head;
- 		sdp->mynode = NULL;
- 		sdp->cpu = cpu;
- 		INIT_WORK(&sdp->work, srcu_invoke_callbacks);
-@@ -1562,6 +1563,7 @@ static void srcu_barrier_cb(struct rcu_head *rhp)
- 	struct srcu_data *sdp;
- 	struct srcu_struct *ssp;
+This proposed GENMASK_U128(h, l) warns during build when the higher end
+bit is 127 (which in itself is a valid input).
+
+./include/uapi/linux/const.h:45:44: warning: left shift count >= width of type [-Wshift-count-overflow]
+   45 | #define _BIT128(x) ((unsigned __int128)(1) << (x))
+      |                                            ^~
+./include/asm-generic/bug.h:123:25: note: in definition of macro ‘WARN_ON’
+  123 |  int __ret_warn_on = !!(condition);    \
+      |                         ^~~~~~~~~
+./include/uapi/linux/bits.h:16:4: note: in expansion of macro ‘_BIT128’
+   16 |  ((_BIT128((h) + 1)) - (_BIT128(l)))
+      |    ^~~~~~~
+./include/linux/bits.h:51:31: note: in expansion of macro ‘__GENMASK_U128’
+   51 |  (GENMASK_INPUT_CHECK(h, l) + __GENMASK_U128(h, l))
+      |                               ^~~~~~~~~~~~~~
+
+This is caused by ((unsigned __int128)(1) << (128)) which is generated
+via (h + 1) element in __GENMASK_U128().
+
+#define _BIT128(x)	((unsigned __int128)(1) << (x))
+#define __GENMASK_U128(h, l) \
+	((_BIT128((h) + 1)) - (_BIT128(l)))
+
+Adding some extra tests in lib/test_bits.c exposes this build problem,
+although it does not fail these new tests.
+
+[    1.719221]     # Subtest: bits-test
+[    1.719291]     # module: test_bits
+[    1.720522]     ok 1 genmask_test
+[    1.721570]     ok 2 genmask_ull_test
+[    1.722668]     ok 3 genmask_u128_test
+[    1.723760]     ok 4 genmask_input_check_test
+[    1.723909] # bits-test: pass:4 fail:0 skip:0 total:4
+[    1.724101] ok 1 bits-test
+
+diff --git a/lib/test_bits.c b/lib/test_bits.c
+index d3d858b24e02..7a972edc7122 100644
+--- a/lib/test_bits.c
++++ b/lib/test_bits.c
+@@ -49,6 +49,8 @@ static void genmask_u128_test(struct kunit *test)
+        KUNIT_EXPECT_EQ(test, 0xffffffffffffffffULL, GENMASK_U128(63, 0));
+        KUNIT_EXPECT_EQ(test, 0xffffffffffffffffULL, GENMASK_U128(64, 0) >> 1);
+        KUNIT_EXPECT_EQ(test, 0x00000000ffffffffULL, GENMASK_U128(81, 50) >> 50);
++       KUNIT_EXPECT_EQ(test, 0x0000000000000003ULL, GENMASK_U128(127, 126) >> 126);
++       KUNIT_EXPECT_EQ(test, 0x0000000000000001ULL, GENMASK_U128(127, 127) >> 127);
+
+The most significant bit in the generate mask can be added separately
+, thus voiding that extra shift. The following patch solves the build
+problem.
+
+diff --git a/include/uapi/linux/bits.h b/include/uapi/linux/bits.h
+index 4d4b7b08003c..4e50f635c6d9 100644
+--- a/include/uapi/linux/bits.h
++++ b/include/uapi/linux/bits.h
+@@ -13,6 +13,6 @@
+          (~_ULL(0) >> (__BITS_PER_LONG_LONG - 1 - (h))))
  
-+	rhp->next = rhp; // Mark the callback as having been invoked.
- 	sdp = container_of(rhp, struct srcu_data, srcu_barrier_head);
- 	ssp = sdp->ssp;
- 	if (atomic_dec_and_test(&ssp->srcu_sup->srcu_barrier_cpu_cnt))
--- 
-2.40.1
-
+ #define __GENMASK_U128(h, l) \
+-       ((_BIT128((h) + 1)) - (_BIT128(l)))
++       (((_BIT128(h)) - (_BIT128(l))) | (_BIT128(h)))
 
