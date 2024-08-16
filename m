@@ -1,361 +1,370 @@
-Return-Path: <linux-kernel+bounces-289348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5373954525
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:06:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C396095452A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:07:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AD76B254F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:06:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E87681C23F26
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5E813A416;
-	Fri, 16 Aug 2024 09:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A3C13DDDF;
+	Fri, 16 Aug 2024 09:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nGRYv5tK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="SNfQ/sZS"
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83AD3770F5
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344617581B;
+	Fri, 16 Aug 2024 09:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723799176; cv=none; b=Cv/Ll1Bh5tBvlosqEaHKOx1jw/QBF02W1Jn6eYD5MobJYrLJrXm3pONITRMW1YcwCWqZjMDEy8L4F7gFnUwAvQal8bUml7r0Bgus+JHAckBnP7RgDN5IRGPBcm/EY7PmnboXKm4hyCa07ghENKDlNvZWN/3tvt82DsrKFs0xqbI=
+	t=1723799233; cv=none; b=NKlkJFbOlfli3q/l2+nupdeMP2QntIkXVwpkpqDbsSRD5yzPl5Rws28DnV/km9nfYKmN7Bdyk8Tcg8lIzivdYdTrBa5brUBv23uGcXdEbxNt4gsXSQaLtaJpDneVKTU7jJn5NVfqcG4g6rNZa6I3Pgt7frGaV7ppbV4GoebUK2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723799176; c=relaxed/simple;
-	bh=MyI/45LMmsU6KUFtM3kYchwuIuP+akqv6p8GzSK4sF4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=PGhYgKcg0/2MEu7Ua/ym6ooOm3g3NWNtuFI35iEuQJDuHf/XXajyqdz0Sm6k/FwFak5jtlWXaJQIrzf7UfGHf5nluI0jq8CL/TG8VNhRRvnzT8zquLm5NFGGqlHKdjpgRmyPl0oQRGU7PJfi/f29cWJNvi6wN1MC9ZElJbbwmvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nGRYv5tK; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723799170; x=1755335170;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=MyI/45LMmsU6KUFtM3kYchwuIuP+akqv6p8GzSK4sF4=;
-  b=nGRYv5tK9jZoy1iPIOEdhjYWADy6EG+ANytLlWJjVSIbKCZ8wClQdjfj
-   BAv5CWFvgyt+fVKXJTO50NYwzgnd8g/gNCLkLfD5m0CrbvjylcD0G1a1F
-   oU5G7StwKPXjvG5dRO+Af3fbsIDtzoVCB8TJe0eyZ1oBsl4FWMTqbRWXg
-   fyfFeyYKm11xsqEYpZQag0vM7VErLFOn7itrg16MfqCo+hCcVoZbp2yLR
-   bjbJXJ2R8WpZtgBr587aZRjQJELhSVuwDPSnqKwUHZW8yU+bAptVpLUEf
-   ytx12D2kfOV/zmks1pKmyLBNjVzti+WZN0jCf0UzHZPVcOEk+grRcpqUI
-   Q==;
-X-CSE-ConnectionGUID: qUIDXot+QByzHMhKuY54Yw==
-X-CSE-MsgGUID: ChYIGBGYRa+sf2anYakB5Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11165"; a="22058411"
-X-IronPort-AV: E=Sophos;i="6.10,151,1719903600"; 
-   d="scan'208";a="22058411"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 02:06:09 -0700
-X-CSE-ConnectionGUID: 4FvkaFBiRNadwdZRU84CEQ==
-X-CSE-MsgGUID: mc09l7cLQDqIlX7/MHGo8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,151,1719903600"; 
-   d="scan'208";a="59298158"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 02:06:05 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Cc: <linux-kernel@vger.kernel.org>,  <linux-mm@kvack.org>,
-  <hannes@cmpxchg.org>,  <yosryahmed@google.com>,  <nphamcs@gmail.com>,
-  <ryan.roberts@arm.com>,  <21cnbao@gmail.com>,
-  <akpm@linux-foundation.org>,  <nanhai.zou@intel.com>,
-  <wajdi.k.feghali@intel.com>,  <vinodh.gopal@intel.com>
-Subject: Re: [PATCH v2 0/4] mm: ZSWAP swap-out of mTHP folios
-In-Reply-To: <20240816054805.5201-1-kanchana.p.sridhar@intel.com> (Kanchana
-	P. Sridhar's message of "Thu, 15 Aug 2024 22:48:01 -0700")
-References: <20240816054805.5201-1-kanchana.p.sridhar@intel.com>
-Date: Fri, 16 Aug 2024 17:02:32 +0800
-Message-ID: <87ttfkj0wn.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1723799233; c=relaxed/simple;
+	bh=aDi33gnq827IsLeQojqZBT6YfKs0Um8l69tkdh2P+kw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HfuELESdIUlx8V0VGLJ/uwAD//+aaS/OjRM9qefSU1Lnst0Imjdb45MHsjIif/hxyQgPvYP21IPyp91Uf8IiLL05gVt+rhqHRFrNlLxz+EX5nRVPCKpRP2wWqHkosgZfh2w/RAHLoXRcr+suHnQbWGNbiaMiBkXsa2rkg+FXuB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=SNfQ/sZS; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C218B1487947;
+	Fri, 16 Aug 2024 11:06:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1723799221; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=vzhuOaZRrz7wvypL0j5SsmkvRUltT4LkYMrLgENZ3Yc=;
+	b=SNfQ/sZSy0WnDn3riywMCvN1/p7NOeDwtGcyozGJ8jE4J92OvEmSDyDvOQTjtWmRV3reV6
+	yIC58i/2wtEO6Ki+NEZoxfbeVCl6lPmv/BaHutNW0n0pT7GQQ9EKXUxtQeaawpEvZRyHtn
+	Z1r1HpocRjXD9tozUffYrHLgV5PTsFjeDZyoaqh1HVvAx3QNDA8FmVjZ0zA4AR0ErDHd2j
+	dY2JFwANv0mQ3djSrinGX39eYFZeUJ3Hy49j3LDRVmLFgptO9cqeE9mOvrVZ7KjBFvPNJK
+	Ol1+ParhoKlTG+HHR+ainkHgSfKkJQm6AbsBv4KeXzVJVyj4QvJPMxunKPGLLA==
+Date: Fri, 16 Aug 2024 11:06:54 +0200
+From: Alexander Dahl <ada@thorsis.com>
+To: Andrei.Simion@microchip.com
+Cc: claudiu.beznea@tuxon.dev, Nicolas.Ferre@microchip.com,
+	alexandre.belloni@bootlin.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, peda@axentia.se,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, Cristian.Birsan@microchip.com,
+	linux-leds@vger.kernel.org
+Subject: Re: [PATCH 5/5] ARM: dts: microchip: Rename LED sub nodes name
+Message-ID: <20240816-maturity-yin-d58e0e20b08d@thorsis.com>
+Mail-Followup-To: Andrei.Simion@microchip.com, claudiu.beznea@tuxon.dev,
+	Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	peda@axentia.se, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Cristian.Birsan@microchip.com, linux-leds@vger.kernel.org
+References: <20240814122633.198562-1-andrei.simion@microchip.com>
+ <20240814122633.198562-6-andrei.simion@microchip.com>
+ <20240815-ambush-cavalier-80adf0260765@thorsis.com>
+ <13ac28fe-e2ae-4c9b-a350-e7d2ba400340@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <13ac28fe-e2ae-4c9b-a350-e7d2ba400340@microchip.com>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Last-TLS-Session-Version: TLSv1.3
 
-Kanchana P Sridhar <kanchana.p.sridhar@intel.com> writes:
+Hello Andrei,
 
-> Hi All,
->
-> This patch-series enables zswap_store() to accept and store mTHP
-> folios. The most significant contribution in this series is from the 
-> earlier RFC submitted by Ryan Roberts [1]. Ryan's original RFC has been
-> migrated to v6.11-rc3 in patch 2/4 of this series.
->
-> [1]: [RFC PATCH v1] mm: zswap: Store large folios without splitting
->      https://lore.kernel.org/linux-mm/20231019110543.3284654-1-ryan.roberts@arm.com/T/#u
->
-> Additionally, there is an attempt to modularize some of the functionality
-> in zswap_store(), to make it more amenable to supporting any-order
-> mTHPs.
->
-> For instance, the determination of whether a folio is same-filled is
-> based on mapping an index into the folio to derive the page. Likewise,
-> there is a function "zswap_store_entry" added to store a zswap_entry in
-> the xarray.
->
-> For accounting purposes, the patch-series adds per-order mTHP sysfs
-> "zswpout" counters that get incremented upon successful zswap_store of
-> an mTHP folio:
->
-> /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/zswpout
->
-> This patch-series is a precursor to ZSWAP compress batching of mTHP
-> swap-out and decompress batching of swap-ins based on swapin_readahead(),
-> using Intel IAA hardware acceleration, which we would like to submit in
-> subsequent RFC patch-series, with performance improvement data.
->
-> Thanks to Ying Huang for pre-posting review feedback and suggestions!
->
-> Changes since RFC v1:
-> =====================
->
-> 1) Use sysfs for zswpout mTHP stats, as per Barry Song's suggestion.
->    Thanks Barry!
-> 2) Addressed some of the code review comments that Nhat Pham provided in
->    Ryan's initial RFC [1]:
->    - Added a comment about the cgroup zswap limit checks occuring once per
->      folio at the beginning of zswap_store().
->      Nhat, Ryan, please do let me know if the comments convey the summary
->      from the RFC discussion. Thanks!
->    - Posted data on running the cgroup suite's zswap kselftest.
-> 3) Rebased to v6.11-rc3.
-> 4) Gathered performance data with usemem and the rebased patch-series.
->
-> Performance Testing:
-> ====================
-> Testing of this patch-series was done with the v6.11-rc3 mainline, without
-> and with this patch-series, on an Intel Sapphire Rapids server,
-> dual-socket 56 cores per socket, 4 IAA devices per socket.
->
-> The system has 503 GiB RAM, 176 GiB swap/ZSWAP with ZRAM as the backing
-> swap device. Core frequency was fixed at 2500MHz.
+Am Fri, Aug 16, 2024 at 08:52:14AM +0000 schrieb Andrei.Simion@microchip.com:
+> Hello Alex,
+> 
+> On 15.08.2024 10:57, Alexander Dahl wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> > 
+> > Hello Andrei,
+> >> Am Wed, Aug 14, 2024 at 03:26:33PM +0300 schrieb Andrei Simion:
+> >> dtbs_check warnings:
+> >> leds: 'd[0-9]', 'ds[0-9]' do not match any of the regexes:
+> >> '(^led-[0-9a-f]$|led)', 'pinctrl-[0-9]+'
+> >> leds: 'red', 'green', 'blue' do not match any of regexes:
+> >> '(^led-[0-9a-f]$|led)', 'pinctrl-[0-9]+'
+> >>
+> >> Rename the led sub nodes according to devicetree
+> >> specification and leds-gpio.yaml.
+> >>
+> >> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
+> >> ---
+> >> Split the bloadted patch into small patches on topics
+> >> based on comments:
+> >> https://lore.kernel.org/linux-arm-kernel/89f51615-0dee-4ab0-ab72-e3c057fee1e7@tuxon.dev/
+> >> ---
+> >>  arch/arm/boot/dts/microchip/aks-cdu.dts        | 8 ++++----
+> >>  arch/arm/boot/dts/microchip/animeo_ip.dts      | 8 ++++----
+> >>  arch/arm/boot/dts/microchip/at91-sam9x60ek.dts | 6 +++---
+> >>  arch/arm/boot/dts/microchip/at91rm9200ek.dts   | 6 +++---
+> >>  arch/arm/boot/dts/microchip/at91sam9260ek.dts  | 4 ++--
+> >>  arch/arm/boot/dts/microchip/at91sam9261ek.dts  | 6 +++---
+> >>  arch/arm/boot/dts/microchip/at91sam9263ek.dts  | 4 ++--
+> >>  arch/arm/boot/dts/microchip/at91sam9g20ek.dts  | 4 ++--
+> >>  8 files changed, 23 insertions(+), 23 deletions(-)
+> >>
+> >> diff --git a/arch/arm/boot/dts/microchip/aks-cdu.dts b/arch/arm/boot/dts/microchip/aks-cdu.dts
+> >> index 52e166c8a365..95a0639c5579 100644
+> >> --- a/arch/arm/boot/dts/microchip/aks-cdu.dts
+> >> +++ b/arch/arm/boot/dts/microchip/aks-cdu.dts
+> >> @@ -98,23 +98,23 @@ rootfs@500000 {
+> >>       leds {
+> >>               compatible = "gpio-leds";
+> >>
+> >> -             red {
+> >> +             led-red {
+> >>                       gpios = <&pioC 10 GPIO_ACTIVE_HIGH>;
+> >>                       linux,default-trigger = "none";
+> >>               };
+> >>
+> >> -             green {
+> >> +             led-green {
+> >>                       gpios = <&pioA 5 GPIO_ACTIVE_LOW>;
+> >>                       linux,default-trigger = "none";
+> >>                       default-state = "on";
+> >>               };
+> >>
+> >> -             yellow {
+> >> +             led-yellow {
+> >>                       gpios = <&pioB 20 GPIO_ACTIVE_LOW>;
+> >>                       linux,default-trigger = "none";
+> >>               };
+> >>
+> >> -             blue {
+> >> +             led-blue {
+> >>                       gpios = <&pioB 21 GPIO_ACTIVE_LOW>;
+> >>                       linux,default-trigger = "none";
+> >>               };
+> > 
+> > As reported with <20240730-rambling-helping-2f03f5ddee6a@thorsis.com>
+> > already, this will probably change sysfs paths and thus might break
+> > userspace depending on those paths.  Did you consider adding a label
+> > to avoid this?
+> > 
+> > (Added linux-leds to Cc.)
+> > 
+> 
+> https://elixir.bootlin.com/linux/v6.11-rc3/source/Documentation/devicetree/bindings/leds/common.yaml#L54
+> Based on the information provided above: "If omitted, the label is 
+> taken from the node name (excluding the unit address)." and "This 
+> property is deprecated"
+> So, in your opinion what should I do? use function and color?
+> My patch reason is to rename the label to avoid the warnings.
 
-I don't think that this is a reasonable test configuration, there's no
-benefit to use ZSWAP+ZRAM.  We should use a normal SSD as backing swap
-device.
+I understood the intention, and I appreciate the effort of eliminating
+those warnings.  I would add the label property here and use the
+previous node name as value.  The deprecation statement makes sense
+when introducing new nodes with new LEDs.  In this case there's
+already a somewhat deprecated name, but if that should stay stable,
+then in my opinion adding the label property is the best choice.
 
-> The vm-scalability "usemem" test was run in a cgroup whose memory.high
-> was fixed at 40G. Following a similar methodology as in Ryan Roberts'
-> "Swap-out mTHP without splitting" series [2], 70 usemem processes were
-> run, each allocating and writing 1G of memory:
->
->     usemem --init-time -w -O -n 70 1g
->
-> Other kernel configuration parameters:
->
->     ZSWAP Compressor  : LZ4, DEFLATE-IAA
->     ZSWAP Allocator   : ZSMALLOC
->     ZRAM Compressor   : LZO-RLE
->     SWAP page-cluster : 2
->
-> In the experiments where "deflate-iaa" is used as the ZSWAP compressor,
-> IAA "compression verification" is enabled. Hence each IAA compression
-> will be decompressed internally by the "iaa_crypto" driver, the crc-s
-> returned by the hardware will be compared and errors reported in case of
-> mismatches. Thus "deflate-iaa" helps ensure better data integrity as
-> compared to the software compressors.
->
-> Throughput reported by usemem and perf sys time for running the test
-> are as follows:
->
->  64KB mTHP:
->  ==========
->   ------------------------------------------------------------------
->  |                    |                   |            |            |
->  |Kernel              | mTHP SWAP-OUT     | Throughput | Improvement|
->  |                    |                   |       KB/s |            |
->  |--------------------|-------------------|------------|------------|
->  |v6.11-rc3 mainline  | ZRAM lzo-rle      |    118,928 |   Baseline |
->  |zswap-mTHP-Store    | ZSWAP lz4         |     82,665 |       -30% |
+Example, before:
 
-Because the test configuration isn't reasonable, the performance drop
-isn't reasonable too.  We should compare between zswap+SSD w/o mTHP
-zswap and zswap+SSD w/ mTHP zswap.  I think that there should be
-performance improvement for that.
+  yellow {
+    gpios = < ... >;
+    linux,default-trigger = ...;
+  };
 
->  |zswap-mTHP-Store    | ZSWAP deflate-iaa |    176,210 |        48% |
->  |------------------------------------------------------------------|
->  |                    |                   |            |            |
->  |Kernel              | mTHP SWAP-OUT     |   Sys time | Improvement|
->  |                    |                   |        sec |            |
->  |--------------------|-------------------|------------|------------|
->  |v6.11-rc3 mainline  | ZRAM lzo-rle      |   1,032.20 |   Baseline |
->  |zswap-mTHP=Store    | ZSWAP lz4         |   1,854.51 |       -80% |
->  |zswap-mTHP-Store    | ZSWAP deflate-iaa |     582.71 |        44% |
->   ------------------------------------------------------------------
->
->   -----------------------------------------------------------------------
->  | VMSTATS, mTHP ZSWAP stats,   |  v6.11-rc3 |  zswap-mTHP |  zswap-mTHP |
->  | mTHP ZRAM stats:             |   mainline |       Store |       Store |
->  |                              |            |         lz4 | deflate-iaa |
->  |-----------------------------------------------------------------------|
->  | pswpin                       |         16 |           0 |           0 |
->  | pswpout                      |  7,770,720 |           0 |           0 |
->  | zswpin                       |        547 |         695 |         579 |
->  | zswpout                      |      1,394 |  15,462,778 |   7,284,554 |
->  |-----------------------------------------------------------------------|
->  | thp_swpout                   |          0 |           0 |           0 |
->  | thp_swpout_fallback          |          0 |           0 |           0 |
->  | pgmajfault                   |      3,786 |       3,541 |       3,367 |
->  |-----------------------------------------------------------------------|
->  | hugepages-64kB/stats/zswpout |            |     966,328 |     455,196 |
->  |-----------------------------------------------------------------------|
->  | hugepages-64kB/stats/swpout  |    485,670 |           0 |           0 |
->   -----------------------------------------------------------------------
->
->
->  2MB PMD-THP/2048K mTHP:
->  =======================
->   ------------------------------------------------------------------
->  |                    |                   |            |            |
->  |Kernel              | mTHP SWAP-OUT     | Throughput | Improvement|
->  |                    |                   |       KB/s |            |
->  |--------------------|-------------------|------------|------------|
->  |v6.11-rc3 mainline  | ZRAM lzo-rle      |    177,340 |   Baseline |
->  |zswap-mTHP-Store    | ZSWAP lz4         |     84,030 |       -53% |
->  |zswap-mTHP-Store    | ZSWAP deflate-iaa |    185,691 |         5% |
->  |------------------------------------------------------------------|
->  |                    |                   |            |            |
->  |Kernel              | mTHP SWAP-OUT     |   Sys time | Improvement|
->  |                    |                   |        sec |            |
->  |--------------------|-------------------|------------|------------|
->  |v6.11-rc3 mainline  | ZRAM lzo-rle      |     876.29 |   Baseline |
->  |zswap-mTHP-Store    | ZSWAP lz4         |   1,740.55 |       -99% |
->  |zswap-mTHP-Store    | ZSWAP deflate-iaa |     650.33 |        26% |
->   ------------------------------------------------------------------
->
->   ------------------------------------------------------------------------- 
->  | VMSTATS, mTHP ZSWAP stats,     |  v6.11-rc3 |  zswap-mTHP |  zswap-mTHP |
->  | mTHP ZRAM stats:               |   mainline |       Store |       Store |
->  |                                |            |         lz4 | deflate-iaa |
->  |-------------------------------------------------------------------------|
->  | pswpin                         |          0 |           0 |           0 |
->  | pswpout                        |  8,628,224 |           0 |           0 |
->  | zswpin                         |        678 |      22,733 |       1,641 |
->  | zswpout                        |      1,481 |  14,828,597 |   9,404,937 |
->  |-------------------------------------------------------------------------|
->  | thp_swpout                     |     16,852 |           0 |           0 |
->  | thp_swpout_fallback            |          0 |           0 |           0 |
->  | pgmajfault                     |      3,467 |      25,550 |       4,800 |
->  |-------------------------------------------------------------------------|
->  | hugepages-2048kB/stats/zswpout |            |      28,924 |      18,366 |
->  |-------------------------------------------------------------------------|
->  | hugepages-2048kB/stats/swpout  |     16,852 |           0 |           0 |
->   -------------------------------------------------------------------------
->
-> As expected, in the "Before" experiment, there are relatively fewer
-> swapouts because ZRAM utilization is not accounted in the cgroup.
->
-> With the introduction of zswap_store mTHP, the "After" data reflects the
-> higher swapout activity, and consequent throughput/sys time degradation
-> when LZ4 is used as the zswap compressor. However, we observe considerable
-> throughput and sys time improvement in the "After" data when DEFLATE-IAA
-> is the zswap compressor. This observation holds for 64K mTHP and 2MB THP
-> experiments. IAA's higher compression ratio and better compress latency
-> can be attributed to fewer swap-outs and major page-faults, that result
-> in better throughput and sys time.
->
-> Our goal is to improve ZSWAP mTHP store performance using batching. With
-> Intel IAA compress/decompress batching used in ZSWAP (to be submitted as
-> additional RFC series), we are able to demonstrate significant
-> performance improvements and memory savings with IAA as compared to
-> software compressors.
->
-> cgroup zswap kselftest:
-> =======================
->
-> "Before":
-> =========
->   Test run with v6.11-rc3 and no code changes:
->     mTHP 64K set to 'always'
->     zswap compressor set to 'lz4'
->     page-cluster = 3
->
->   zswap shrinker_enabled = N:
->   ---------------------------
->   ok 1 test_zswap_usage
->   ok 2 test_swapin_nozswap
->   # at least 24MB should be brought back from zswap
->   not ok 3 test_zswapin
->   # zswpwb_after is 0 while wb is enablednot ok 4 test_zswap_writeback_enabled
->   # Failed to reclaim all of the requested memory
->   not ok 5 test_zswap_writeback_disabled
->   ok 6 # SKIP test_no_kmem_bypass
->   ok 7 test_no_invasive_cgroup_shrink
->
->   zswap shrinker_enabled = Y:
->   ---------------------------
->   ok 1 test_zswap_usage
->   ok 2 test_swapin_nozswap
->   # at least 24MB should be brought back from zswap
->   not ok 3 test_zswapin
->   # zswpwb_after is 0 while wb is enablednot ok 4 test_zswap_writeback_enabled
->   # Failed to reclaim all of the requested memory
->   not ok 5 test_zswap_writeback_disabled
->   ok 6 # SKIP test_no_kmem_bypass
->   not ok 7 test_no_invasive_cgroup_shrink
->
-> "After":
-> ========
->   Test run with this patch-series and v6.11-rc3:
->     mTHP 64K set to 'always'
->     zswap compressor set to 'deflate-iaa'
->     page-cluster = 3
->
->   zswap shrinker_enabled = N:
->   ---------------------------
->   ok 1 test_zswap_usage
->   ok 2 test_swapin_nozswap
->   ok 3 test_zswapin
->   ok 4 test_zswap_writeback_enabled
->   ok 5 test_zswap_writeback_disabled
->   ok 6 # SKIP test_no_kmem_bypass
->   ok 7 test_no_invasive_cgroup_shrink
->   
->   zswap shrinker_enabled = Y:
->   ---------------------------
->   ok 1 test_zswap_usage
->   ok 2 test_swapin_nozswap
->   # at least 24MB should be brought back from zswap
->   not ok 3 test_zswapin
->   ok 4 test_zswap_writeback_enabled
->   ok 5 test_zswap_writeback_disabled
->   ok 6 # SKIP test_no_kmem_bypass
->   not ok 7 test_no_invasive_cgroup_shrink
->
-> I haven't taken an in-depth look into the cgroup zswap tests, but it
-> looks like the results with the patch-series are no worse than without,
-> and in some cases better (not exactly sure why, this needs more
-> analysis).
->
-> I would greatly appreciate your code review comments and suggestions!
->
-> Thanks,
-> Kanchana
->
-> [2] https://lore.kernel.org/linux-mm/20240408183946.2991168-1-ryan.roberts@arm.com/
->
->
-> Kanchana P Sridhar (4):
->   mm: zswap: zswap_is_folio_same_filled() takes an index in the folio.
->   mm: zswap: zswap_store() extended to handle mTHP folios.
->   mm: Add MTHP_STAT_ZSWPOUT to sysfs per-order mthp stats.
->   mm: swap: Count successful mTHP ZSWAP stores in sysfs mTHP stats.
->
->  include/linux/huge_mm.h |   1 +
->  mm/huge_memory.c        |   2 +
->  mm/page_io.c            |   7 ++
->  mm/zswap.c              | 238 +++++++++++++++++++++++++++++-----------
->  4 files changed, 184 insertions(+), 64 deletions(-)
+After:
 
---
-Best Regards,
-Huang, Ying
+  led-yellow {
+    label = "yellow";
+    gpios = < ... >;
+    linux,default-trigger = ...;
+  };
+
+This way the sysfs path should be /sys/class/leds/yellow before and
+after, and the dts warnings be gone, right?
+
+Greets
+Alex
+
+> 
+> Best Regards,
+> Andrei Simion
+> 
+> > Greets
+> > Alex
+> > 
+> >> diff --git a/arch/arm/boot/dts/microchip/animeo_ip.dts b/arch/arm/boot/dts/microchip/animeo_ip.dts
+> >> index 911c8d9ee013..52ac840bcd35 100644
+> >> --- a/arch/arm/boot/dts/microchip/animeo_ip.dts
+> >> +++ b/arch/arm/boot/dts/microchip/animeo_ip.dts
+> >> @@ -146,23 +146,23 @@ ohci: usb@500000 {
+> >>       leds {
+> >>               compatible = "gpio-leds";
+> >>
+> >> -             power_green {
+> >> +             led-power-green {
+> >>                       label = "power_green";
+> >>                       gpios = <&pioC 17 GPIO_ACTIVE_HIGH>;
+> >>                       linux,default-trigger = "heartbeat";
+> >>               };
+> >>
+> >> -             power_red {
+> >> +             led-power-red {
+> >>                       label = "power_red";
+> >>                       gpios = <&pioA 2 GPIO_ACTIVE_HIGH>;
+> >>               };
+> >>
+> >> -             tx_green {
+> >> +             led-tx-green {
+> >>                       label = "tx_green";
+> >>                       gpios = <&pioC 19 GPIO_ACTIVE_HIGH>;
+> >>               };
+> >>
+> >> -             tx_red {
+> >> +             led-tx-red {
+> >>                       label = "tx_red";
+> >>                       gpios = <&pioC 18 GPIO_ACTIVE_HIGH>;
+> >>               };
+> >> diff --git a/arch/arm/boot/dts/microchip/at91-sam9x60ek.dts b/arch/arm/boot/dts/microchip/at91-sam9x60ek.dts
+> >> index b9a21f9f9a6d..da31b07d6828 100644
+> >> --- a/arch/arm/boot/dts/microchip/at91-sam9x60ek.dts
+> >> +++ b/arch/arm/boot/dts/microchip/at91-sam9x60ek.dts
+> >> @@ -53,17 +53,17 @@ leds {
+> >>               pinctrl-0 = <&pinctrl_gpio_leds>;
+> >>               status = "okay"; /* Conflict with pwm0. */
+> >>
+> >> -             red {
+> >> +             led-red {
+> >>                       label = "red";
+> >>                       gpios = <&pioB 11 GPIO_ACTIVE_HIGH>;
+> >>               };
+> >>
+> >> -             green {
+> >> +             led-green {
+> >>                       label = "green";
+> >>                       gpios = <&pioB 12 GPIO_ACTIVE_HIGH>;
+> >>               };
+> >>
+> >> -             blue {
+> >> +             led-blue {
+> >>                       label = "blue";
+> >>                       gpios = <&pioB 13 GPIO_ACTIVE_HIGH>;
+> >>                       linux,default-trigger = "heartbeat";
+> >> diff --git a/arch/arm/boot/dts/microchip/at91rm9200ek.dts b/arch/arm/boot/dts/microchip/at91rm9200ek.dts
+> >> index 3089912dd6be..641d443e6ca9 100644
+> >> --- a/arch/arm/boot/dts/microchip/at91rm9200ek.dts
+> >> +++ b/arch/arm/boot/dts/microchip/at91rm9200ek.dts
+> >> @@ -127,19 +127,19 @@ root@350000  {
+> >>       leds {
+> >>               compatible = "gpio-leds";
+> >>
+> >> -             ds2 {
+> >> +             led-ds2 {
+> >>                       label = "green";
+> >>                       gpios = <&pioB 0 GPIO_ACTIVE_LOW>;
+> >>                       linux,default-trigger = "mmc0";
+> >>               };
+> >>
+> >> -             ds4 {
+> >> +             led-ds4 {
+> >>                       label = "yellow";
+> >>                       gpios = <&pioB 1 GPIO_ACTIVE_LOW>;
+> >>                       linux,default-trigger = "heartbeat";
+> >>               };
+> >>
+> >> -             ds6 {
+> >> +             led-ds6 {
+> >>                       label = "red";
+> >>                       gpios = <&pioB 2 GPIO_ACTIVE_LOW>;
+> >>               };
+> >> diff --git a/arch/arm/boot/dts/microchip/at91sam9260ek.dts b/arch/arm/boot/dts/microchip/at91sam9260ek.dts
+> >> index ed259e2cb853..4933971d0585 100644
+> >> --- a/arch/arm/boot/dts/microchip/at91sam9260ek.dts
+> >> +++ b/arch/arm/boot/dts/microchip/at91sam9260ek.dts
+> >> @@ -174,13 +174,13 @@ eeprom@50 {
+> >>       leds {
+> >>               compatible = "gpio-leds";
+> >>
+> >> -             ds1 {
+> >> +             led-ds1 {
+> >>                       label = "ds1";
+> >>                       gpios = <&pioA 9 GPIO_ACTIVE_HIGH>;
+> >>                       linux,default-trigger = "heartbeat";
+> >>               };
+> >>
+> >> -             ds5 {
+> >> +             led-ds5 {
+> >>                       label = "ds5";
+> >>                       gpios = <&pioA 6 GPIO_ACTIVE_LOW>;
+> >>               };
+> >> diff --git a/arch/arm/boot/dts/microchip/at91sam9261ek.dts b/arch/arm/boot/dts/microchip/at91sam9261ek.dts
+> >> index 4d9269cc5f32..9c44177db714 100644
+> >> --- a/arch/arm/boot/dts/microchip/at91sam9261ek.dts
+> >> +++ b/arch/arm/boot/dts/microchip/at91sam9261ek.dts
+> >> @@ -192,19 +192,19 @@ watchdog@fffffd40 {
+> >>       leds {
+> >>               compatible = "gpio-leds";
+> >>
+> >> -             ds8 {
+> >> +             led-ds8 {
+> >>                       label = "ds8";
+> >>                       gpios = <&pioA 13 GPIO_ACTIVE_LOW>;
+> >>                       linux,default-trigger = "none";
+> >>               };
+> >>
+> >> -             ds7 {
+> >> +             led-ds7 {
+> >>                       label = "ds7";
+> >>                       gpios = <&pioA 14 GPIO_ACTIVE_LOW>;
+> >>                       linux,default-trigger = "nand-disk";
+> >>               };
+> >>
+> >> -             ds1 {
+> >> +             led-ds1 {
+> >>                       label = "ds1";
+> >>                       gpios = <&pioA 23 GPIO_ACTIVE_LOW>;
+> >>                       linux,default-trigger = "heartbeat";
+> >> diff --git a/arch/arm/boot/dts/microchip/at91sam9263ek.dts b/arch/arm/boot/dts/microchip/at91sam9263ek.dts
+> >> index a8ea36db4c04..cf5434f9449d 100644
+> >> --- a/arch/arm/boot/dts/microchip/at91sam9263ek.dts
+> >> +++ b/arch/arm/boot/dts/microchip/at91sam9263ek.dts
+> >> @@ -219,13 +219,13 @@ &pioA 21 GPIO_ACTIVE_HIGH
+> >>       leds {
+> >>               compatible = "gpio-leds";
+> >>
+> >> -             d3 {
+> >> +             led-d3 {
+> >>                       label = "d3";
+> >>                       gpios = <&pioB 7 GPIO_ACTIVE_HIGH>;
+> >>                       linux,default-trigger = "heartbeat";
+> >>               };
+> >>
+> >> -             d2 {
+> >> +             led-d2 {
+> >>                       label = "d2";
+> >>                       gpios = <&pioC 29 GPIO_ACTIVE_LOW>;
+> >>                       linux,default-trigger = "nand-disk";
+> >> diff --git a/arch/arm/boot/dts/microchip/at91sam9g20ek.dts b/arch/arm/boot/dts/microchip/at91sam9g20ek.dts
+> >> index 6de7a7cd3c07..1e62fd371ddb 100644
+> >> --- a/arch/arm/boot/dts/microchip/at91sam9g20ek.dts
+> >> +++ b/arch/arm/boot/dts/microchip/at91sam9g20ek.dts
+> >> @@ -14,13 +14,13 @@ / {
+> >>       leds {
+> >>               compatible = "gpio-leds";
+> >>
+> >> -             ds1 {
+> >> +             led-ds1 {
+> >>                       label = "ds1";
+> >>                       gpios = <&pioA 9 GPIO_ACTIVE_HIGH>;
+> >>                       linux,default-trigger = "heartbeat";
+> >>               };
+> >>
+> >> -             ds5 {
+> >> +             led-ds5 {
+> >>                       label = "ds5";
+> >>                       gpios = <&pioA 6 GPIO_ACTIVE_LOW>;
+> >>               };
+> >> --
+> >> 2.34.1
+> >>
+> >>
+> 
 
