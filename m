@@ -1,59 +1,75 @@
-Return-Path: <linux-kernel+bounces-289935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5FE8954D7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:17:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 238D7954D7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9783B1F231D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:17:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C311286F28
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43DD91BF32E;
-	Fri, 16 Aug 2024 15:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532041C0DD5;
+	Fri, 16 Aug 2024 15:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nExxfuLl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g0ow7PZC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886A31BF30B
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4661BDAB8;
+	Fri, 16 Aug 2024 15:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723821393; cv=none; b=s+TIzppyB9Ua0wnEyhbECICRSl9pEeX1XHgXaR2EhP6sgcy5jMB1G/KPh+kOQnLAvjRneKQd8v4PS8Bk4t3M3LuV9kfcHkPsuPyVFtqQKW8pKytPz4n456kV2/u/4AS23rERTLpjyFlIrjVFyEMBQV3NI4yU6a65rTXnlQv5b2M=
+	t=1723821400; cv=none; b=Iay5nC+4wRKCKTzK4C/qIF/UjUeVHxIhObEzLNuAwXO85KaSjglAHbCUNGl0i9BoeS9bgL5IVP4g6DMHgDAg+MWpiSNYlRrgeu1OwuOmk1jBW2M+uLbZoqCOS94w5LyQtkCK1BVCfKNxv1+qqf0ms8Mm/XGQ8xCZAtxUiFVWLDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723821393; c=relaxed/simple;
-	bh=xIyE9SEfcQYZTbYlOOYYUjkFYLyJNpYbBdhgsnKvB4k=;
+	s=arc-20240116; t=1723821400; c=relaxed/simple;
+	bh=HrCbWr5sE7d1FSdM7OLBHJqb9SmFXoXZLsUxeMJ23UI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NrGRhppKW7KI0gF4gpUECw4JJKb9Zh8rsZ4IXToXi961AYkti5DaL+rpVcSnAR/7vZgvjwjSNagrGZKOtIn/j6TOb78JugbzNAhsd36dMWuqnhFGqe7TyyU8RNwTYYeB3YGl89iILvH2iO2OlrXiIJZ+vMg7viZ0fFcbT3Aranc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nExxfuLl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06C81C4AF0F;
-	Fri, 16 Aug 2024 15:16:31 +0000 (UTC)
+	 MIME-Version:Content-Type; b=OLzeYLLxKHAOrY1uGjiDrp8lkpG/tX/nYT+oc/v5ZapGRxVNhGD6T3v+zm1IwdjVSEIJoJOShJz8yFVjCci+UAflcnF0opJ2rb/Qlq1WXnFzxVpBIf/lv+vlbRte4qKcq0I9isuCWmuoxHOtno0iUU4Y2bRUA8CwyroW8R1g2/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g0ow7PZC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB04DC4AF15;
+	Fri, 16 Aug 2024 15:16:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723821393;
-	bh=xIyE9SEfcQYZTbYlOOYYUjkFYLyJNpYbBdhgsnKvB4k=;
+	s=k20201202; t=1723821397;
+	bh=HrCbWr5sE7d1FSdM7OLBHJqb9SmFXoXZLsUxeMJ23UI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nExxfuLlQC+Z/zXJFnBv3wfhOoJhCMmH2zQwf/vt4YOnkcTjDgILh+mTU+U6uI1uz
-	 ov6+jNs8f6xD+4VZkx0T8ftbUwZN/KufWe/bRmpf5blVU/YPckxGHM85/IWkcI+tGy
-	 m7uGsI7PPzJc5stSpLKHXqA0SqYVsXgB+DOzuo6Uc5b8W4Dl2LJtDXsQVKVnIhW2t5
-	 y5SoQFZmQZ/dOQ3Ocnr0noCZdczLvCaPRclav1E49RmBTK80MEFIe2rpNgC4ZLoKZF
-	 PxZaLtv1pJLpuAXBuOct1RSka++hWp61hHRp0cTdOs45kQ/O09W/sRN1Hmq7FK+L+l
-	 QAXuMzfsYBfIg==
+	b=g0ow7PZCEAeb1DhfX64PhHghH8VhkFKmrwqQMgR9rLVNBmd43SIIOtS9FOi0qX87X
+	 cUiRlvGtXuTGsgtYcFxohdKZmuHSSd8c4sbESFF3D2QK8pmWOM4qwKXL1NT30h/UeD
+	 r9jE65tOX6EtKYQVm7Juj2voDjuY3UmN6jAqmm+/jGos7P78CW0+3m329QJ9u8+oiO
+	 5EX+MbrCoGy0qHv8iKYxH1LVj4feBTxQknCiQP5DAY0q+bNYvaaY66dBc4GksU7tIS
+	 HZ5dRigI+gtE7jjSrTaKl0+kr2arqwy7vaMbtoKd0Ftf3BHovRC5UBvE+qga02mZTt
+	 ur8Qgvx40jshg==
 From: Will Deacon <will@kernel.org>
-To: Mark Rutland <mark.rutland@arm.com>,
+To: Marc Zyngier <maz@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	James Clark <james.clark@linaro.org>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Zenghui Yu <yuzenghui@huawei.com>,
 	"Rob Herring (Arm)" <robh@kernel.org>
-Cc: catalin.marinas@arm.com,
-	kernel-team@android.com,
+Cc: kernel-team@android.com,
 	Will Deacon <will@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf: arm_pmu: Use of_property_present()
-Date: Fri, 16 Aug 2024 16:15:59 +0100
-Message-Id: <172381010195.133769.6140795913867011503.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v3 0/7] arm64: Add support for Armv9.4 PMU fixed instruction counter
+Date: Fri, 16 Aug 2024 16:16:00 +0100
+Message-Id: <172381015369.134151.12311687013802000544.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20240731191312.1710417-15-robh@kernel.org>
-References: <20240731191312.1710417-15-robh@kernel.org>
+In-Reply-To: <20240731-arm-pmu-3-9-icntr-v3-0-280a8d7ff465@kernel.org>
+References: <20240731-arm-pmu-3-9-icntr-v3-0-280a8d7ff465@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,20 +79,32 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Wed, 31 Jul 2024 13:12:53 -0600, Rob Herring (Arm) wrote:
-> Use of_property_present() to test for property presence rather than
-> of_find_property(). This is part of a larger effort to remove callers
-> of of_find_property() and similar functions. of_find_property() leaks
-> the DT struct property and data pointers which is a problem for
-> dynamically allocated nodes which may be freed.
-> 
+On Wed, 31 Jul 2024 10:51:17 -0600, Rob Herring (Arm) wrote:
+> This series adds support for the optional fixed instruction counter
+> added in Armv9.4 PMU. Most of the series is a refactoring to remove the
+> index to counter number conversion which dates back to the Armv7 PMU
+> driver. Removing it is necessary in order to support more than 32
+> counters without a bunch of conditional code further complicating the
+> conversion.
 > 
 > [...]
 
 Applied to will (for-next/perf), thanks!
 
-[1/1] perf: arm_pmu: Use of_property_present()
-      https://git.kernel.org/will/c/48b035121a56
+[1/7] perf: arm_pmu: Remove event index to counter remapping
+      https://git.kernel.org/will/c/bf5ffc8c80e0
+[2/7] perf: arm_pmuv3: Prepare for more than 32 counters
+      https://git.kernel.org/will/c/a4a6e2078d85
+[3/7] KVM: arm64: pmu: Use arm_pmuv3.h register accessors
+      https://git.kernel.org/will/c/741ee5284551
+[4/7] KVM: arm64: pmu: Use generated define for PMSELR_EL0.SEL access
+      https://git.kernel.org/will/c/f9b11aa00708
+[5/7] arm64: perf/kvm: Use a common PMU cycle counter define
+      https://git.kernel.org/will/c/126d7d7cce5e
+[6/7] KVM: arm64: Refine PMU defines for number of counters
+      https://git.kernel.org/will/c/2f62701fa5b0
+[7/7] perf: arm_pmuv3: Add support for Armv9.4 PMU instruction counter
+      https://git.kernel.org/will/c/d8226d8cfbaf
 
 Cheers,
 -- 
