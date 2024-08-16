@@ -1,127 +1,110 @@
-Return-Path: <linux-kernel+bounces-289973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 291B9954DF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:39:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86789954DF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BA631C209EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:39:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF9D928452E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894A11BDAA3;
-	Fri, 16 Aug 2024 15:38:55 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E131BDAA0;
+	Fri, 16 Aug 2024 15:39:25 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EB81DDF5;
-	Fri, 16 Aug 2024 15:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9571BD50E
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723822735; cv=none; b=SSN2aMSOJN3Mx8wH07wFOf4Q8GnwX7KKYNxIX/M0XlFxjxYixbLy2QHnYnSJZP+N3BM/9ZYA7l2Csmqpb640XvbJndK48zKQfh9Sbj4k/Hk0IG7wn89/sQQskhackRyg3gjlA+H+eIk64FQo1fC5Q3oW+/jS//dm/LimzQOwGUM=
+	t=1723822764; cv=none; b=pYbpmEQLIhdjdmz7ss62q3xfXjZwV/xQ2uIwtodhKiLOahwuP78jTKGcvZ7orVygRpZOMkzHjqoEwulsBmblGCw/q1Xm/zn8wp+0KPbAjL0MZTzsylN5bQ1nqYPgSojIdCNmSCCR/HUfHyRe6qT/t9A8UiUZh1eGHEKDiIx8iNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723822735; c=relaxed/simple;
-	bh=jhH9HJuzS6uir4HieayuUjEk9MIauiiZ5eQdD5kG3XQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gf5RQlT18SmG/72UIAjSQ7bDPSpXV+sEjdoFjSOjOvV/6SU0RZxMFcI0U0P/SfOSamRlFunkZN0Ji1Ol8OYATxYBd4T9zJ1Bqm53p+u1cRuNTxPkAqFPSpq4BP7kpi3kBmNwut/OEd0k+CyHvXNmL7aA9w/c/aoOeXVo0h5jaJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16609C32782;
-	Fri, 16 Aug 2024 15:38:49 +0000 (UTC)
-Date: Fri, 16 Aug 2024 16:38:48 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
-	"juri.lelli@redhat.com" <juri.lelli@redhat.com>,
-	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"debug@rivosinc.com" <debug@rivosinc.com>,
-	"mgorman@suse.de" <mgorman@suse.de>,
-	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
-	"fweimer@redhat.com" <fweimer@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"vschneid@redhat.com" <vschneid@redhat.com>,
-	"kees@kernel.org" <kees@kernel.org>,
-	"will@kernel.org" <will@kernel.org>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"jannh@google.com" <jannh@google.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"bsegall@google.com" <bsegall@google.com>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"broonie@kernel.org" <broonie@kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH RFT v8 4/9] fork: Add shadow stack support to clone3()
-Message-ID: <Zr9yiH6DP0IPac-H@arm.com>
-References: <20240808-clone3-shadow-stack-v8-0-0acf37caf14c@kernel.org>
- <20240808-clone3-shadow-stack-v8-4-0acf37caf14c@kernel.org>
- <f3a2a564094d05beac2dc5ab657cbc009c465667.camel@intel.com>
- <Zr8RfoHZYRWem1K9@arm.com>
- <23a8838adda28b03b3db77e135934e2da0599d0f.camel@intel.com>
+	s=arc-20240116; t=1723822764; c=relaxed/simple;
+	bh=Qua74G8TmHMqzpDOApA3OP9bZzvNpc2IpkXeC8mI4y0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=SRADq47WpsFvxKGyHQB0s5yfep8fsxPKGsrCej4dEi2PXQT9pfaHcMvWJvYLegCIVqIh486X2PbEiJHiAMUsdptMerZin86+P50B7fWvDzR+8gUj2yseGfeyw6TuoPnkTGVDM6Si5ciEVzOAxHBuw5a7I89z5LmkFogiU9q6GHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-37642e69d7eso18806245ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:39:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723822762; x=1724427562;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N8JJez+0p2S8btQve7w0Pep7EZa2y6dLItyWBelrZsk=;
+        b=xRu7uIOSO/7BYsv2LyrfxyLaIiefdd2fa+znqPfrvrnUTIkLfR/TwWoHzxtqPe8PdW
+         E93EcDwqnou0axEbr3G06NCK4Zr+d7IrNk6zuqJb8ri49Yco/tD8QEBI384Tgcwj2kY2
+         qtov9rX3ZWABNYsDBAdgDByFLY1c00QXhCQtJUtxCnMPy0WTq92Zo2Psh7maBcxYTlGs
+         cHk29LPwu+9OJfueO3KCJNEYgOIlr+gGdNuiilD2y9oCbGiWXjQv0OVdcCQcC2ovFZHw
+         ijiJiJl38+oykePYYDZTnz4wRtvq8RafaHJ03I9qShnbMd8Cq6Afx3dfa6XrMHeU74se
+         YRZA==
+X-Forwarded-Encrypted: i=1; AJvYcCWB1shu4bp0W0OpdtHO8sr2/U+4D+XL3uxBkmM85Ph5iifl/O0+IpZAROxeyJK6UKln/v8R3adnhFH1DBxtVADz3MhcCImaN4Ngkbpj
+X-Gm-Message-State: AOJu0Yzg90G/PTSPSfF0XfS98oFVK9IeVnSf2G8NfdUNsMOknggi49WU
+	trcZU9F27s3uN6Ss2PITzIr+Du6GF1IEXdVX/L8Srvf7pK97X8hXwi3bOuc3jcx+HAZ8COrCX9z
+	FjkRjsdrj+qMk1Zbx75PS1p0wAnNwaWGnF2wIywe0UPPpsD4Kl/d3+1w=
+X-Google-Smtp-Source: AGHT+IH+DNxcyVYu22+wS8Im7fRACul9MEEKcf/DaaIOWxOiPuPbKbPyVxVJwl69AVkF5DZTBZA4g3tZks/5IibMJpW6Uxz9Tdtz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <23a8838adda28b03b3db77e135934e2da0599d0f.camel@intel.com>
+X-Received: by 2002:a05:6e02:170e:b0:39a:eb4d:23c5 with SMTP id
+ e9e14a558f8ab-39d26c36cfamr3092675ab.0.1723822762159; Fri, 16 Aug 2024
+ 08:39:22 -0700 (PDT)
+Date: Fri, 16 Aug 2024 08:39:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000065062c061fcec37b@google.com>
+Subject: [syzbot] riscv/fixes test error: can't ssh into the instance
+From: syzbot <syzbot+cfbcb82adf6d7279fd35@syzkaller.appspotmail.com>
+To: aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, palmer@dabbelt.com, paul.walmsley@sifive.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Aug 16, 2024 at 02:52:28PM +0000, Edgecombe, Rick P wrote:
-> On Fri, 2024-08-16 at 09:44 +0100, Catalin Marinas wrote:
-> > > After a token is consumed normally, it doesn't set it to zero. Instead it
-> > > sets it to a "previous-ssp token". I don't think we actually want to do that here
-> > > though because it involves the old SSP, which doesn't really apply in this
-> > > case. I don't see any problem with zero, but was there any special thinking behind
-> > > it?
-> > 
-> > BTW, since it's the parent setting up the shadow stack in its own
-> > address space before forking, I think at least the read can avoid
-> > access_remote_vm() and we could do it earlier, even before the new
-> > process is created.
-> 
-> Hmm. Makes sense. It's a bit racy since the parent could consume that token from
-> another thread, but it would be a race in any case.
+Hello,
 
-More on the race below. If we handle it properly, we don't need the
-separate checks.
+syzbot found the following issue on:
 
-> > > > +       if (access_remote_vm(mm, addr, &val, sizeof(val),
-> > > > +                            FOLL_FORCE | FOLL_WRITE) != sizeof(val))
-> > > > +               goto out;
-> > > 
-> > > The GUPs still seem a bit unfortunate for a couple reasons:
-> > >   - We could do a CMPXCHG version and are just not (I see ARM has identical
-> > > code in gcs_consume_token()). It's not the only race like this though FWIW.
-> > >   - I *think* this is the only unprivileged FOLL_FORCE that can write to the
-> > > current process in the kernel. As is, it could be used on normal RO
-> > > mappings, at
-> > > least in a limited way. Maybe another point for the VMA check. We'd want to
-> > > check that it is normal shadow stack?
-> > >   - Lingering doubts about the wisdom of doing GUPs during task creation.
-> > 
-> > I don't like the access_remote_vm() either. In the common (practically
-> > only) case with CLONE_VM, the mm is actually current->mm, so no need for
-> > a GUP.
-> 
-> On the x86 side, we don't have a shadow stack access CMPXCHG. We will have to
-> GUP and do a normal CMPXCHG off of the direct map to handle it fully properly in
-> any case (CLONE_VM or not).
+HEAD commit:    32d5f7add080 Merge patch series "RISC-V: hwprobe: Misalign..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git fixes
+console output: https://syzkaller.appspot.com/x/log.txt?x=10e639f3980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e12019db89cebcd1
+dashboard link: https://syzkaller.appspot.com/bug?extid=cfbcb82adf6d7279fd35
+compiler:       riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: riscv64
 
-I guess we could do the same here and for the arm64 gcs_consume_token().
-Basically get_user_page_vma_remote() gives us the page together with the
-vma that you mentioned needs checking. We can then do a cmpxchg directly
-on the page_address(). It's probably faster anyway than doing GUP twice.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/a741b348759c/non_bootable_disk-32d5f7ad.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/360b3f269693/vmlinux-32d5f7ad.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c6ef680b5e89/Image-32d5f7ad.xz
 
--- 
-Catalin
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+cfbcb82adf6d7279fd35@syzkaller.appspotmail.com
+
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
