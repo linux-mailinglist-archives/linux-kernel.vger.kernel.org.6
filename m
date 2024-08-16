@@ -1,91 +1,130 @@
-Return-Path: <linux-kernel+bounces-289466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC05954682
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:08:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 695EE954685
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00F4F1F21E2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:08:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26422284AB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B8E175D46;
-	Fri, 16 Aug 2024 10:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1751B172BA5;
+	Fri, 16 Aug 2024 10:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NFwpjc6D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="0rAapn9M"
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7D916F27C;
-	Fri, 16 Aug 2024 10:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB7A170A2D;
+	Fri, 16 Aug 2024 10:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723802841; cv=none; b=I60UT3I+2hScuYl39tWoedEi5BO/nQ1ufdSvc2n6j5foaSzahwxzSYVRCY7czAJ7bkiAM0NuBNGZj1C/Q59czCfEDcIs0lhuxQsRVRoBwJOinPMZE+XSCyiEc2VnD9HwrN0YzyWFwc02PHgjIhMD1ljjjSuPlxq1k/GktlF6PX4=
+	t=1723802955; cv=none; b=iT1Za5CqycltO1kWvqym2vvZsrXBl2WG62YiCbJfW8afxCHNFu3Fb+Z5fKXo+MuLVRRWStiKRBEyNlWJMxfJZuDmNOAyDqFIdDeOQkiZztjeQ6K7XPaxm7lR0oBZ7sDHeKaHCM1FeX/fbHdOzEzSEN92HOk7zE+2K+9exR5fL70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723802841; c=relaxed/simple;
-	bh=Mbc+sLuhxuPXBjCsvB2V5cqv1xkV7XhLkdGzIspi/LI=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=NZyKOD2m/t3n9f2aYjZG96SblwTtXcmBAJBYR3LUCgsBRXCFgjPeBMaygMbVD4napn8CcC/JoUUVjh5h15o0L4D1ThaToOhO+K4fgP2TXXXGzmUxqj79UZpfTJXI094GGGofngzNfH9FIgnRjNBQb8NoL3tJGIuWWWYwr86wMVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NFwpjc6D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7083AC4AF0C;
-	Fri, 16 Aug 2024 10:07:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723802841;
-	bh=Mbc+sLuhxuPXBjCsvB2V5cqv1xkV7XhLkdGzIspi/LI=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=NFwpjc6DxIt0P3Xu9hhXPrfIz1Kb5xMwxH/etzQdi9anH3vhREc2IVmsJO5buK8IP
-	 ArVXsJ3N3cprgO+IUQLwk4MmZY3Bz2J8bMd5dnNRyhBqscgkzi9iJYOsV4tZss43UN
-	 FlHwVCpISLZr9VEaABnsFP4WwrlOT8yVLcclZeotrMyJfRBJJhWiSoDM9wGTCGIhep
-	 CADxlNDl46o6YJCtwySnnNHmHLLY1d9Pb+6W0ypInRFCq++Ib+vLROs7ci//I9lEhy
-	 MLAuQMBB0EUO8x73AC9sI5rfBoKYFJELCTYZ88FG3y3p13WIZxoHKcpo7nBIEaLzTg
-	 5VieUhHUgRi+A==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1723802955; c=relaxed/simple;
+	bh=XblC078xni1zsUW+8Or/GJX8jPozvOle7xqNGC4RZTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HVX+Pk9NsJKySVrq5xuOy6qm00rIyM27W2J45+PWPjTerYfzYm4rzl7xTtixusxfFRxsdeat3akaMeX+Pob0YQ1fobZvLbIYZVeOFa1MNWA6ReaRZ+6t0Zoj76yD7A4Mqu36sunOChtqrad+bEDjcz72cLG+z+6kjPeUbNU/iKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=0rAapn9M; arc=none smtp.client-ip=217.72.192.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1723802902; x=1724407702; i=christian@heusel.eu;
+	bh=do2Bwj8g7fpyb7cE3waI5N/4aZzXIwqgM6OvvBVCdzU=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=0rAapn9M/HHnd+OSQOQMZzhUhuXl3L6gQrshVPb8Gq1jKgk+mze+yQE+Nw15OK/R
+	 w+XvPC/gFVUNaz9rQECbW9X/f0ndmmlz1Bx00ZQR85cd1/LiopZZQD0hxBwyYn6Q4
+	 l3wZKw1jmnMvj4uuZuEuhlzzC+EzH2zIi/JBp6iCRpT2joQFGB2G70tL0PVpF+qxI
+	 JNS3nhw+cIEX1r0FCgDC1CfEkA3LI5AtrcxltH3wtdKxe9+9sEqYbjmgLj6nekhZt
+	 iS7WLBtBJwMXxzFCpYO+5A5iLWxSuG9VbB2L9vWBGPxTrHhQFFECNVW4cmiVV/dG7
+	 oXGtnoTnTuCtynKS8A==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([93.196.141.81]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1N49d1-1sEOmd2GmH-00scsn; Fri, 16 Aug 2024 12:08:22 +0200
+Date: Fri, 16 Aug 2024 12:08:18 +0200
+From: Christian Heusel <christian@heusel.eu>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
+	allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.10 00/22] 6.10.6-rc1 review
+Message-ID: <6bd15eac-5ec9-42b6-8644-a716ffef67a1@heusel.eu>
+References: <20240815131831.265729493@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] wifi: mwifiex: keep mwifiex_cfg80211_ops constant
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: 
- <20240809-mwifiex-duplicate-mwifiex_cfg80211_ops-v1-1-23e0e6290ace@pengutronix.de>
-References: 
- <20240809-mwifiex-duplicate-mwifiex_cfg80211_ops-v1-1-23e0e6290ace@pengutronix.de>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Brian Norris <briannorris@chromium.org>,
- Francesco Dolcini <francesco@dolcini.it>, David Lin <yu-hao.lin@nxp.com>,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@pengutronix.de, Sascha Hauer <s.hauer@pengutronix.de>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <172380283788.1488109.5178167432284634889.kvalo@kernel.org>
-Date: Fri, 16 Aug 2024 10:07:19 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="akhn5qsxjckqmavt"
+Content-Disposition: inline
+In-Reply-To: <20240815131831.265729493@linuxfoundation.org>
+X-Provags-ID: V03:K1:9aabSk45RqJ+ZtzmTO3WSN0YZBmstwf7pqgDl01OY/mcI19xKAl
+ ibHfNRGveAR7kNfHMi8R+04n/Jh0jSfZ1juH5Mo2gJX8dwESaG/OuVvWMmnDG5vaqClPGZr
+ 9PLmCTBMx+9J1Aanv0hWf+V2Dzpdpe7ixRoDwapmOA2lHzH+jz58zGqMtRnp9jFr5KzToMC
+ m2SxSyyqOi8c/ylX2qX4w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ffyTtNvRhe0=;t8hEJbfZanaSV4+rzi6cbpBajog
+ PqVo7CKlw/uuXQiyBf6lzUn7CSoOtbYW6HWg4b7G9A1fCaU96J0SaN1QIImsJb2bmXqmUkrEU
+ VO/AD/bpvQz1G5Oy1eLSevkpTKTE4T+Fx4uvwF2J1OrIXaaIajgWvAq1FZQ1zKiuCyQOlSYYI
+ sYD+o+wKTjdL5nE/TE4hBRq2hL6wJuv4VXrIa8VjjxLdHyjC/IAtz5sGa7G1GD5WsXyoP9sAq
+ IvvCNYb6JxdSAKoYBh12A90Eb2cZCxPJ6vafoubmf0KLj3NJW1A63dRvdKacdKCSGqt+IZvnw
+ L75whREfXqb2OroNwLMm7jeSdoKHxnaIDr246/uqr1LjwPX/zKi5PqPQAGAbDlQ+y/Khglc1j
+ WqMwd0Gf9feUGDcHq+ofEb4AIQSxVCnc+RkxPafxtA+bpNS9633h78Gf1kO7Ouq40SmOa3DLW
+ ikNBdEugH4ZFx9zvz/O0ecpGpBuZTBkgd/j2WpgC7nscISZyhJyRBOFFf9ey1g/OS22QbEBx6
+ iDaADE/ceXmgwI3xZjpjTjc5CTuyb7zfXU6ka/bcfbeQU5k3dQPOGo8cMaoBXjxaIsuFU2E9C
+ BzJwazXPJZNJo6UR8Rkf48TneLyh6MqJgh7buDUwOOkQOMwxByJIK0Zf/auI/9qzvj+O7a1lP
+ SsQjnU6wddRZoQU0GTqH1G+Hvxhe66yc1fU33eK0XKMde03hMac+Yd9Nj6+M5mY27tz1Nwa/G
+ 1UFRMU3H0l6Vfw6TKzmzigp4Ri7b59PbQ==
 
-Sascha Hauer <s.hauer@pengutronix.de> wrote:
 
-> With host_mlme support being added mwifiex_cfg80211_ops is no longer
-> constant, but supplemented with the host_mlme related ops when host_mlme
-> support is enabled. This doesn't work with multiple adapters when only
-> few of then have host_mlme support. Duplicate mwifiex_cfg80211_ops
-> before using it and keep the original constant.
-> 
-> While at it mark mwifiex_cfg80211_ops const to prevent people from
-> changing it again during runtime.
-> 
-> Fixes: 36995892c271c ("wifi: mwifiex: add host mlme for client mode")
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> Acked-by: Brian Norris <briannorris@chromium.org>
+--akhn5qsxjckqmavt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Patch applied to wireless-next.git, thanks.
+On 24/08/15 03:25PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.10.6 release.
+> There are 22 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>=20
+> Responses should be made by Sat, 17 Aug 2024 13:18:17 +0000.
+> Anything received after that time might be too late.
 
-daaf0dd0398d wifi: mwifiex: keep mwifiex_cfg80211_ops constant
+Tested-by: Christian Heusel <christian@heusel.eu>
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20240809-mwifiex-duplicate-mwifiex_cfg80211_ops-v1-1-23e0e6290ace@pengutronix.de/
+Tested on a ThinkPad E14 Gen 3 with a AMD Ryzen 5 5500U CPU
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+--akhn5qsxjckqmavt
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAma/JRIACgkQwEfU8yi1
+JYWTLA//d3OSFssO46jfyyh/6gniFNV3Z5Nq/lwnHxgStLiDVYCxlSohbz0I7rKK
+oI9XfwiKZ+PhUagudeyNgscQjygKt/Z1stodjRJNKEXIq+syQB23KqLifTLqRazN
+FdtBxq4ZfyFMAALv/dZuEKZF6BdX60er8sNHmZU6rIym+Ux9DxERKGoqVAGiUl4j
+YV0BXk7p1CaccVY3jD3WxTZ4loKpXLJmfPU2EEAr1pWlgjTwQPOljoYbX23w24Pi
+fbvgGukCzVn1/M9fBN3rXz9SH/eHVZLTP6qKFHpQKZ2izZ0Z4UHRnweRgUqrkHZm
+TKfmyHZMO1Xnu3OOo6q2wUT5p8RpCZe0GiQZVz7ZWgQs3YcVCYrnUKgq9Lb1WEm4
+kVL21hJOSiGFNSv7f70iqhvGTAnUfW5lGKyUVyNzKR4jZK62VJgi1bhFp62z4pfa
+5zgtYm7AMwxbKq1kLW3l/skWW0WDNIBrRMHT3smnZjRAvL2BHeCQGvCo+Lr05HUL
+C660BuqnDd/5nHxIkrDGcanKA09BIh4lA3sq7JEhpChmJYKMQncpgtPUOYOVzGUO
+WK82yVztX9FY73sgNI1tNOtrtnKikUP+zp2WcVel2tZuUuCkPnr7IFvSqYpDBnMO
+nkWyfIRgU7ja97OnWfH8WpBUs9xUUbroigOf5bJ0BjHp37kdW+c=
+=HNMX
+-----END PGP SIGNATURE-----
+
+--akhn5qsxjckqmavt--
 
