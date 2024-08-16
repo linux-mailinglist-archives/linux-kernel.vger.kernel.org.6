@@ -1,84 +1,209 @@
-Return-Path: <linux-kernel+bounces-290385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A827495532A
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 00:13:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FDDF955330
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 00:15:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB94C1C210E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:13:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83DC01F22299
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D66144D0F;
-	Fri, 16 Aug 2024 22:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E2D145A0A;
+	Fri, 16 Aug 2024 22:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pdN3VGdJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JPYo0ft+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52C213D882;
-	Fri, 16 Aug 2024 22:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CAF13D882;
+	Fri, 16 Aug 2024 22:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723846391; cv=none; b=rGc3gXjZnBGDwv2DtWCmNDnuq+/JBmju1Ij+whbSSFpF7A0Dw0vu2tUTqYkTltgbr7214JVg7nIS5HAiYrE0rO+kFXHg3qYuK/JtbfL8tg0MlA3F/yvqN+uXaj+QJB1OTyVlzq6jFmivhcRm58vHU7qZ99bVmth54fSQYKjyVRM=
+	t=1723846501; cv=none; b=pS0nDK/vcVR0a4gv44IqsbKLR+yBi8k5W4M4EJLTmWddIf50k/xs91pW1lOGlXX1sMvqatuaZxTFGW1RB5fbAkQBc/LNah+/XseuLsjBTg3XlbDj91xT2JT4YwsZIEWgS/Zt7GH7LQC+I2ESNr7sXezA/SHxOTRCTJEJvcElEko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723846391; c=relaxed/simple;
-	bh=bPUTxKSsaCNz7sMonQ8qq2ULBVbPwSEXbqUK6RnJB/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rjZBCpgafR93pn0kh30LthgY1rvSjOtETb3KfU8KgcRlEnU2edQmufGtwwilfYpBVLnc9fqSKEF5ZgwKvnwFil989ppJsk05MIuGLmnV/WZdnJwScu7p88otl22UMwXKM1bO7M1LtXhsV+QkVKuM22+SsweWFucqNcJfS81v83w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pdN3VGdJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 245FDC32782;
-	Fri, 16 Aug 2024 22:13:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723846391;
-	bh=bPUTxKSsaCNz7sMonQ8qq2ULBVbPwSEXbqUK6RnJB/k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pdN3VGdJV4o8JQyUEsG+dlEyZwngI4/uoSTvJV82uj9HdNs4/4pvj5hE8wpb9s8bP
-	 xQkF0fRvf1TGq9iv/ym3Z2BloyoeOOju5ZaNOqufxGzv1lkaBIcPxmlYb3QXrrKWvP
-	 Cm3QDv6OPC+sgAJ+Kzxx6tiIoeD9HT7bt37dc4VXrZhWtSCs4wYpIK+SGmhNyD2UMG
-	 RSNqza1QTF0kTMHI3xOJGiSHcDmKEt1tOJ05TwgB1ktkjSlzXuJOPfx9aw8Srkdpa4
-	 oOpUlEFCIfis5LspKN7WkxLPlXl503d5/KX3RIkvar+HZPRekF7vblcVv9tqYPNBQY
-	 5tpc2M895UwZw==
-Date: Fri, 16 Aug 2024 15:13:08 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.10 000/263] 6.10.5-rc1 review
-Message-ID: <20240816221308.GA3360409@thelio-3990X>
-References: <20240812160146.517184156@linuxfoundation.org>
- <8852e518-3867-4802-adea-0c0ee68d1010@roeck-us.net>
- <2024081616-gents-snowcap-0e5f@gregkh>
- <b27c5434-f1b1-4697-985b-91bb3e9a22df@roeck-us.net>
+	s=arc-20240116; t=1723846501; c=relaxed/simple;
+	bh=5J1GuYUnbG2FOnw0lH0OF0aLsKFIEl0BmHGJA/QgCPA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z4WnG575UxFv6WyaCNBt5WpCns31+slpW7LkvGjXi9tQdR/DHd0RA7ifE4PVDllKVwURzyvyOsYBex9pgE9eYPEqbHqnvCalUhqT+30sFDD9lVQtwIXA0X8BMlFDFBFwhMeOp5fssv6l7WmaCEm6cLcIQOWdHtL7i/peEx4KntQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JPYo0ft+; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723846500; x=1755382500;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=5J1GuYUnbG2FOnw0lH0OF0aLsKFIEl0BmHGJA/QgCPA=;
+  b=JPYo0ft+A4jV8mXz1XYAQUBPogR2Dj7pZgvLQvab0C95isylHsG5AK/l
+   wxKZfp0wkJXV7Wwr67f7LjjiwB1Clc1cZULVZv71WOlgaUapONvgeoXTW
+   wH6f3V49s83Nc6mXRYSMVKlYzQhmsd6OBjtEhAGztF7SQANSmfMoEoPK4
+   4MsQZQTovIFV5CvrDhSmigBa56LFmWn8TrxS2z1iqf766yMWeA55RoHEo
+   3PXYBTDyci+TGgOnmn91mAKlXxRyhVxwoP/VNQAByVFYHIkMS9ZpEWsLd
+   /8oLhr+xJmEA9aWwxB4JQhwNslZ+bLXUwWI4Jr3BbbGQqyr3QOR1UzRpc
+   Q==;
+X-CSE-ConnectionGUID: /7Y5ycuDRmGmXcIhaneV+w==
+X-CSE-MsgGUID: Cr1zSisET3C4ob33dpVZew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="25951003"
+X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
+   d="scan'208";a="25951003"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 15:14:59 -0700
+X-CSE-ConnectionGUID: QmtEyer7QfW6tcMUMNur7A==
+X-CSE-MsgGUID: J0cnrZfCQ/OktFaxHpW/0A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
+   d="scan'208";a="90527847"
+Received: from unknown (HELO [10.125.111.71]) ([10.125.111.71])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 15:14:57 -0700
+Message-ID: <fe15b551-d22f-4d46-88e0-162cacc507a7@intel.com>
+Date: Fri, 16 Aug 2024 15:14:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b27c5434-f1b1-4697-985b-91bb3e9a22df@roeck-us.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 08/25] cxl/region: Add dynamic capacity decoder and
+ region modes
+To: ira.weiny@intel.com, Fan Ni <fan.ni@samsung.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+ Davidlohr Bueso <dave@stgolabs.net>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, linux-btrfs@vger.kernel.org,
+ linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, nvdimm@lists.linux.dev
+References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
+ <20240816-dcd-type2-upstream-v3-8-7c9b96cba6d7@intel.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20240816-dcd-type2-upstream-v3-8-7c9b96cba6d7@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 16, 2024 at 07:43:31AM -0700, Guenter Roeck wrote:
-> On 8/16/24 01:38, Greg Kroah-Hartman wrote:
-> > Odd that other allmodconfig builds passed :(
-> > 
+
+
+On 8/16/24 7:44 AM, ira.weiny@intel.com wrote:
+> From: Navneet Singh <navneet.singh@intel.com>
 > 
-> Yes, that is odd. Maybe they all build with clang nowadays ?
+> One or more decoders each pointing to a Dynamic Capacity (DC) partition
+> form a CXL software region.  The region mode reflects composition of
+> that entire software region.  Decoder mode reflects a specific DC
+> partition.  DC partitions are also known as DC regions per CXL
+> specification r3.1.
+> 
+> Define the new modes and helper functions required to make the
+> association between these new modes.
+> 
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Reviewed-by: Fan Ni <fan.ni@samsung.com>
+> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
+> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
-I doubt that is the factor because our CI sees it and we obviously only
-use clang:
-
-https://github.com/ClangBuiltLinux/continuous-integration2/actions/runs/10424364978
-
-Cheers,
-Nathan
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> 
+> ---
+> Changes:
+> [iweiny: keep tags on simple patch]
+> [Fan: s/partitions/partition/]
+> [djiang: New wording for the commit message]
+> [iweiny: reword commit message more]
+> ---
+>  drivers/cxl/core/region.c |  4 ++++
+>  drivers/cxl/cxl.h         | 23 +++++++++++++++++++++++
+>  2 files changed, 27 insertions(+)
+> 
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index 796e5a791e44..650fe33f2ed4 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -1870,6 +1870,8 @@ static bool cxl_modes_compatible(enum cxl_region_mode rmode,
+>  		return true;
+>  	if (rmode == CXL_REGION_PMEM && dmode == CXL_DECODER_PMEM)
+>  		return true;
+> +	if (rmode == CXL_REGION_DC && cxl_decoder_mode_is_dc(dmode))
+> +		return true;
+>  
+>  	return false;
+>  }
+> @@ -3239,6 +3241,8 @@ cxl_decoder_to_region_mode(enum cxl_decoder_mode mode)
+>  		return CXL_REGION_RAM;
+>  	case CXL_DECODER_PMEM:
+>  		return CXL_REGION_PMEM;
+> +	case CXL_DECODER_DC0 ... CXL_DECODER_DC7:
+> +		return CXL_REGION_DC;
+>  	case CXL_DECODER_MIXED:
+>  	default:
+>  		return CXL_REGION_MIXED;
+> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+> index f766b2a8bf53..d2674ab46f35 100644
+> --- a/drivers/cxl/cxl.h
+> +++ b/drivers/cxl/cxl.h
+> @@ -370,6 +370,14 @@ enum cxl_decoder_mode {
+>  	CXL_DECODER_NONE,
+>  	CXL_DECODER_RAM,
+>  	CXL_DECODER_PMEM,
+> +	CXL_DECODER_DC0,
+> +	CXL_DECODER_DC1,
+> +	CXL_DECODER_DC2,
+> +	CXL_DECODER_DC3,
+> +	CXL_DECODER_DC4,
+> +	CXL_DECODER_DC5,
+> +	CXL_DECODER_DC6,
+> +	CXL_DECODER_DC7,
+>  	CXL_DECODER_MIXED,
+>  	CXL_DECODER_DEAD,
+>  };
+> @@ -380,6 +388,14 @@ static inline const char *cxl_decoder_mode_name(enum cxl_decoder_mode mode)
+>  		[CXL_DECODER_NONE] = "none",
+>  		[CXL_DECODER_RAM] = "ram",
+>  		[CXL_DECODER_PMEM] = "pmem",
+> +		[CXL_DECODER_DC0] = "dc0",
+> +		[CXL_DECODER_DC1] = "dc1",
+> +		[CXL_DECODER_DC2] = "dc2",
+> +		[CXL_DECODER_DC3] = "dc3",
+> +		[CXL_DECODER_DC4] = "dc4",
+> +		[CXL_DECODER_DC5] = "dc5",
+> +		[CXL_DECODER_DC6] = "dc6",
+> +		[CXL_DECODER_DC7] = "dc7",
+>  		[CXL_DECODER_MIXED] = "mixed",
+>  	};
+>  
+> @@ -388,10 +404,16 @@ static inline const char *cxl_decoder_mode_name(enum cxl_decoder_mode mode)
+>  	return "mixed";
+>  }
+>  
+> +static inline bool cxl_decoder_mode_is_dc(enum cxl_decoder_mode mode)
+> +{
+> +	return (mode >= CXL_DECODER_DC0 && mode <= CXL_DECODER_DC7);
+> +}
+> +
+>  enum cxl_region_mode {
+>  	CXL_REGION_NONE,
+>  	CXL_REGION_RAM,
+>  	CXL_REGION_PMEM,
+> +	CXL_REGION_DC,
+>  	CXL_REGION_MIXED,
+>  };
+>  
+> @@ -401,6 +423,7 @@ static inline const char *cxl_region_mode_name(enum cxl_region_mode mode)
+>  		[CXL_REGION_NONE] = "none",
+>  		[CXL_REGION_RAM] = "ram",
+>  		[CXL_REGION_PMEM] = "pmem",
+> +		[CXL_REGION_DC] = "dc",
+>  		[CXL_REGION_MIXED] = "mixed",
+>  	};
+>  
+> 
 
