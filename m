@@ -1,193 +1,238 @@
-Return-Path: <linux-kernel+bounces-289727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90027954B13
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:27:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6A6D954B18
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:30:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3E441C23AAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:27:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D6821F233DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15281BB69D;
-	Fri, 16 Aug 2024 13:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DFC1BBBE8;
+	Fri, 16 Aug 2024 13:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hxZW5vKn"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="MpKrGBgT"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05olkn2078.outbound.protection.outlook.com [40.92.89.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338FE1A01CF
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 13:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723814845; cv=none; b=uBrnXr+L4NrJg0IANIfHfHFwsyX+qTFU3Wim7iVzwk9lsULLK24izFV1o41IZ2aJFK/uBbWAbbGcxTUTNSsNr5Pj+3am4krnZkPHwUrDb2MSES0sT2O0TuBbo+Qlczc7nwvoXsnqchB2lTm8vxFKM+KOIxi9sPt//kx2iTBqeM4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723814845; c=relaxed/simple;
-	bh=41rlXTFpA1svYSraeTj87VnYGe/UKMBKBWxBA5v5yqA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fp3oCvHfudACROVvT+E7bhxQ93RYfdLlsxRI8aNQ614euqn6Si8TP5/RFssccaYKCAnTdTwCm9E033/BFRhWLh7ON8PXRVuhUZeK1lFu/THu+8sLzCzMr8qzral3TqQb/q1BtdNKFW7IkR+Z7HqKHS0U8MpGokeBDpN8KJyEmxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hxZW5vKn; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-428141be2ddso13696045e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 06:27:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723814841; x=1724419641; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7WCQM6v4NTwhI05qdS59VV07dC5nARwtW2tumhNxSAs=;
-        b=hxZW5vKnJZWgavbXFKns4kvEqCWQTwqW0IGGY/rqvi9yvW4cyaOQl9EIW6wBnWpE/J
-         hnuCjjB+49TdEqboT/1NKhjSfgtw172efdNAs9sGkZP0bXjheJDr6GHRlpiaMKVw2Ofn
-         5e3NMmbtBc8F3Vwev/MjabhIPaNEw8CMNrx/tQvwgWNJ57joJ9edogNGYlIRvax1XMLo
-         B5YTu/M1tBSINI9bJBmKY4Ijgg/MdyZ7UPQ22NlwiwvCyMcTfOPOJVKM2yFLlVlyKxbi
-         64kvSWyjJ5SHWTQVKTnAQfCrTefguAhq4PWf/bRgqXjLXtDh9TfzGHIA589Su/TLoktH
-         q/+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723814841; x=1724419641;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7WCQM6v4NTwhI05qdS59VV07dC5nARwtW2tumhNxSAs=;
-        b=pfL5RzJZbKjm4/9w/DsvnKOc4dn9exavhGvfpJ3U4/nosXsxeAUf9ZcGMIVwCAXwtK
-         Y+DxOeR0Ck3DqquO0RjYP8dYL8nlazzpyRKJy41DxcsaMLhQg0oLcYR119WIAfO9PCeV
-         BuTSONomHs+J1BReDtqmHw93BZq9Y0rDVtaPkX0D9ZMRXa5QRBhB4j7HF6yjyZGulCUV
-         ojUHXxXBxrPt8JKM+8VzmAIM4rtRALD9X8e9JSLDCsbQGdVeIBH9xfY172e67ekNrVAa
-         D6Tk0eJdJJFTeS0JRB2e/Gev8i/sLB8BY1ZwV3PFo13ijmwylUPW7E4f/AwwYV3IYTWL
-         KntQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVoRGdpnMRO8KNX0I2w7BIiQDO5n3ybqNUEowKwWJu3j9MhMGP9ECAwfe8Ir293XwSfH2qhsMDfWfyftcdTdyZgmP8BakHt6bZZtIFL
-X-Gm-Message-State: AOJu0Yz2s/s329QNRKgQsSl9s1h84f7j89Xfur7NnHVnOjsu1wHWPHST
-	i497hg/kbdk+HxfM+CLWty/qvSK6LgYsU1rL0xWFyOOgNPSoPiKUrLbhgQk4EQs=
-X-Google-Smtp-Source: AGHT+IHbFkHu9392EA0i6PYQpeLlqoUxj+nwG7GXFX79pIwS5rABIJuq9XtLqO3ZGS6JxW3l8tgH3A==
-X-Received: by 2002:a05:600c:4ecb:b0:426:6379:3b4f with SMTP id 5b1f17b1804b1-429ed7dba98mr20081015e9.31.1723814840869;
-        Fri, 16 Aug 2024 06:27:20 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed6585d1sm22808075e9.22.2024.08.16.06.27.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Aug 2024 06:27:20 -0700 (PDT)
-Message-ID: <177108bc-2bdd-4914-97cc-ee09dfef75c3@linaro.org>
-Date: Fri, 16 Aug 2024 14:27:19 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4803D38F91;
+	Fri, 16 Aug 2024 13:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.89.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723815022; cv=fail; b=LEXumiWo8AqOgBqsAotRGzsZIkiZW82Bzd3enDYdlpcSYLqgFITU3hf22lfocy4TUar/sibJ/T66bOoUEvdKQh3lRTgl89THVySP4tI5vA2ceiYkVHsTEPJbAJlLJvmlX3v+k06U+D5po7WJs+Tjfu8vFx//bNNXhNET8bnt1zQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723815022; c=relaxed/simple;
+	bh=W9UUy4sq698REGpFb/ZT/J9nFi34ad5lo3r9ZIEgKr4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mhEyjvYOZizuPh7frJV2aHOEJj11vh21j7kYIFpIqpS1aBfLUdAxOSMeu5OU/6YBeM9/3gH43OTIJ0spet0PVq86Y0UHe6S0UXuccl/jtlyJam++9BrFFEXIf+8zT4TkoxaJ7F9JGm2oVwRXLDqMQq1l7OOOgxM2D1oPOXYPvAI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=MpKrGBgT; arc=fail smtp.client-ip=40.92.89.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nnnAoP5Q0lsAPKunOF17eHpBX6hzLjqEWtiM7mBn3buaaLPU0GCUALiJ5v0eGNyq6oPfRlADTXxDG2+6hU9mrLc8/f00LkzZWkqHvqyKFftUdthAreI9F0ldA0+Tefkvu5BckaI/jcFVirFO5Xltwm+l5vJgieUksmqHG4XjN6bM8LGpbC5z4CN77yxywbpDgKHU9Edc+omQizugkNrzp1xfBsI25ORQuyS2qlUnP/Cz/TZFgMk37Do9AX5Sm46ksNcUl6c0NEScYRqg8Nxcm4VWQRhtY2FVpKIZ+L2Q+AkW5j9JFQYomelXI15GQyEeUv6QUSS1iWCKdpQx7MdrBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=blutEk5NaIEsjjxv4y8HcBLZ0ek1xwg8JjcdxgqAY/A=;
+ b=GpnGistHZN83/3/8RA6gDkYTrAWtWy/QFX3dKtU4DDEtirCWmIb0NvsWNlRX/aq2xT+9tlOvGrraYutrRZyWZfipg8+1HajKOSqffvM96Wn7xkf/Oo9CCg2UD9ShP5PtKmJUjg28bQaKcrB4Ea2hdEOZPC50Cd1ns/iTIlDOX+8GuWmeTh+TFGR7KehQYn+lgSw9BOdMXR6l1na34AHphKBZYOzuC9g7USZYUmJSoerexdtxBDfYhzvrlD0jYss37p3ZfiQFi5FqR8YlUcLqssf6dofnEbF3ecgxT9Vf2m7DKSMSBxf8c89cbY2JXQCFsA6XRoFqc4iNJ84SVjyTYg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=blutEk5NaIEsjjxv4y8HcBLZ0ek1xwg8JjcdxgqAY/A=;
+ b=MpKrGBgTKeSs7yY4lPquqpgj8w2V2cKgG/PlVhtup/Eluu9t7oquMRboAPRW+vl6aDgHAcjp8Goxg8Uop2IUYp9C/d/GeLUv6+c+R0rrp+HFwRmLyeNPd+uRJXS+sIKueUuIfC3xm9fvV4vrSzi7VHIeDaKl4mt4EtZQg4t5eJm44EGf7nBKDfLurYcTtfzaAo8D3NRDrubIDb3GezMgnvBs5inUc8nfu3ZcMJfZinEV1SoJPTZIbJ6nZBgD3KNxcv6E+ASq7KloKmSnb8U6Eob6LnTaqW/2ErCrBGmmfOGNPTnw/aNe8bxmEF55V2TMwY5xvk05TAEVrAiEzkGvmg==
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com (2603:10a6:20b:e4::10)
+ by DB9PR03MB7788.eurprd03.prod.outlook.com (2603:10a6:10:2cf::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.18; Fri, 16 Aug
+ 2024 13:30:17 +0000
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7]) by AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7%6]) with mapi id 15.20.7875.016; Fri, 16 Aug 2024
+ 13:30:17 +0000
+From: Juntong Deng <juntong.deng@outlook.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next 2/2] selftests/bpf: Add test for non-zero offset pointer as KF_ACQUIRE kfuncs argument
+Date: Fri, 16 Aug 2024 14:27:37 +0100
+Message-ID:
+ <AM6PR03MB584824410EBBD3D80F009F5F99812@AM6PR03MB5848.eurprd03.prod.outlook.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <AM6PR03MB584837A72DB98E45AE595A9799812@AM6PR03MB5848.eurprd03.prod.outlook.com>
+References: <AM6PR03MB584837A72DB98E45AE595A9799812@AM6PR03MB5848.eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [EGe+5b4KG4e6ctrVoTJDZAoCPO5aWYhc]
+X-ClientProxiedBy: SG2PR03CA0126.apcprd03.prod.outlook.com
+ (2603:1096:4:91::30) To AM6PR03MB5848.eurprd03.prod.outlook.com
+ (2603:10a6:20b:e4::10)
+X-Microsoft-Original-Message-ID:
+ <20240816132737.88005-1-juntong.deng@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drivers/perf: arm_spe: Use perf_allow_kernel() for
- permissions
-To: Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, peterz@infradead.org,
- Al Grant <al.grant@arm.com>, Mark Rutland <mark.rutland@arm.com>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org
-References: <20240807155153.2714025-1-james.clark@linaro.org>
- <20240816124459.GA24323@willie-the-truck>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20240816124459.GA24323@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM6PR03MB5848:EE_|DB9PR03MB7788:EE_
+X-MS-Office365-Filtering-Correlation-Id: bc4c0a58-b39a-46bf-81a6-08dcbdf790ea
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|19110799003|15080799003|5072599009|461199028|8060799006|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	9aawJcROkUuxvAcbPBW1/XzMtVXA3Uh+cs7yp2tPw66BaV9qIKBDyo4teeFb6YIFJLt2A0DQoH9LY8nrGS2fd3ZJMPFh/upzXSIfoGl/dOd9HP2plcrRNAPM7uYFwAfvg34YvPN8AeU7spvC9n1mlYuT+hkxfZItBgdSNV9QBL5s8yxrJ0edE+t4b5CHLojq8/FbyAljYWpFGgq1V7XswiSyaa/CTrm/2kUbsYaj1t2VhfEb4uBJlG7ZyME31/UJewwe4KRdIGCZMz0EaX2HUNLcArDlBPelGDf6hcee+QhvI1jfUONJCTVq8i3DhY7Cz4LGWYLq45+2mtF6JWL9ApSy+8ux6T7CLLiWC8uxUzAHD751MZ/fpwMeNMKJZ4He/6ynZzSXmPall7jwdFx+mkwx5m0prgja/fX7PIlJAmxsp4Vl8loCh435LDJlagmMAi2pcA1dHX6JXd/tMKzbxvnuPOqoKjMGda8dXRQmqsBB/3U0o9IGaAViFPgHYOlYM1qRhNMyn7QcGqyj+yLNKg5qzdpsPbge4lDl/8VsDgaRfn75JHiQEBfgxC6q/pISqTa0QHJUPSzG6Av+zHqVrLW1+ioAbQ5pjfuXi3R3zCwaPfsJl+5EHEeiSgdrfkTlBvE0gef+NUx/tJiJC2FUx8L/lyTgtFzNf2l6Q/pwA77pw9Af02UNBarGHNlBRNlPsSvvlpy62ww904JA6ac12A==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?MZAjHNs0EMIJNnRHa4UK+eZPDwKtZ1BTuRQ7bFb1+Ry3yWqrSA07nVUoAXHe?=
+ =?us-ascii?Q?22CgT0EimMk2es+vj3SK3+5YTh+MX1G1FXIWXvMh9hndEN9Gm3/G1J/qF4mD?=
+ =?us-ascii?Q?hNhWbJ06QZNMG7PRcsw1n5G+KmAywAWmK8WmPy3My1m/JMR90jMiKc51yERK?=
+ =?us-ascii?Q?7wxmoYYTA0NixDcd58EBA6LfVsYutMjZL6tDDrBQBI0ns16PT/jnX9bTvxK6?=
+ =?us-ascii?Q?GvGp5P9jFaItaM2f1eszvYVjv8T2jpCJIOcbJHYuq1Y7XfszU5VlhCEBDWV7?=
+ =?us-ascii?Q?7SegxrMfMWPfdFZ2jH66A7ToYzs9OAqAjS3FEe78uHR7/70+QskNax5Ht4FE?=
+ =?us-ascii?Q?PrYYMoF4mvaOLBQK1kBFFfF8RmRYBecje/5pacGPWhpBHyXoVCgSBKkzHLK6?=
+ =?us-ascii?Q?WbL2PRWKRN8tMJEsvr3IkCqumOc5l7Qy+QZkaWiDT0OPsWG3jF3Ke5NfCVWS?=
+ =?us-ascii?Q?TvlzuYxw05atFSsx0Dlu2oLUH9ckzSia5U+zdkBYxh3Znk5AAISkzahQwfNH?=
+ =?us-ascii?Q?u2nWzOnEX2nmHM2LZko0ySYLaMPYE9isKBGYYVhZ6kCZnhAQve1xcLpwYGBe?=
+ =?us-ascii?Q?qa9LKVOvWLo6EApKLrcGoLngJVCOuKFFs+MIanJzYdIi2D6TUTw6nxUHPwE+?=
+ =?us-ascii?Q?eHJaW2uUZYnE9ySkRjyWYfRkitOb0Mf54hQu/9RXy9xZ95qN0GX8NuQswJf9?=
+ =?us-ascii?Q?4YMEZJd7FK2StzRr/I9tACvUUP3Ohs9UbfDj3ZRM7THFL6szBD6ViYUaGZWi?=
+ =?us-ascii?Q?HA+iz7GiW61Rn79gtTtjFf8HX4Rm+hBnRjcf8oNR1blQNsM69WOuZms7v6yN?=
+ =?us-ascii?Q?C1ZTiQNXhlBs7PZdw/1BjPFDvJHgHT0/xifMAlVQapo1mqlKsd0wZYJhqCcS?=
+ =?us-ascii?Q?gAC6eGvjSBKlpf9Xt6r2SC+hVV1VVBINBcoVMGTmAYJY1ZBHdwUx+FiU4jBC?=
+ =?us-ascii?Q?JTx1CBFeZqJPLj83Rm5LuMH18MbXYUjFyoplaKDV7XVrHIkHpzgPC4yKHWBY?=
+ =?us-ascii?Q?ABNT94fEx4RlQrxOR4Y2vwWx84UEFXOKv0i/B4SgQpoke+P6zMSNCRGfvN0k?=
+ =?us-ascii?Q?ly9i3b6y4PQiltaTm5yfcY80JZHXsDrfq9BH+BDQmdgHoM3jh3c/J+djSfPU?=
+ =?us-ascii?Q?1LOuPPVxG1p4PAmaEcYK7mknw2g0qy4aA8ahR+s9gizKfXFMnDnptpw73c/S?=
+ =?us-ascii?Q?Ol8P7mEXIM2bFSd3F7LVZFkpg0KWqwRBSIl1M6w9SjBfu9BZvFg7aHdnAsUE?=
+ =?us-ascii?Q?PpVSsa42C3w8bR3FMlFv?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc4c0a58-b39a-46bf-81a6-08dcbdf790ea
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5848.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2024 13:30:16.9456
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR03MB7788
 
+This patch adds a test case for non-zero offset pointer as KF_ACQUIRE
+kfuncs argument. Currently KF_ACQUIRE kfuncs should support passing in
+pointers like &sk->sk_write_queue and not be rejected by the verifier.
 
+Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+---
+ .../selftests/bpf/bpf_testmod/bpf_testmod.c   | 11 ++++++++++
+ .../bpf/bpf_testmod/bpf_testmod_kfunc.h       |  3 +++
+ .../selftests/bpf/prog_tests/nested_trust.c   |  4 ++++
+ .../selftests/bpf/progs/nested_acquire.c      | 21 +++++++++++++++++++
+ 4 files changed, 39 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/progs/nested_acquire.c
 
-On 16/08/2024 1:45 pm, Will Deacon wrote:
-> On Wed, Aug 07, 2024 at 04:51:53PM +0100, James Clark wrote:
->> For other PMUs, PERF_SAMPLE_PHYS_ADDR requires perf_allow_kernel()
->> rather than just perfmon_capable(). Because PMSCR_EL1_PA is another form
->> of physical address, make it consistent and use perf_allow_kernel() for
->> SPE as well. PMSCR_EL1_PCT and PMSCR_EL1_CX also get the same change.
->>
->> This improves consistency and indirectly fixes the following error
->> message which is misleading because perf_event_paranoid is not taken
->> into account by perfmon_capable():
->>
->>    $ perf record -e arm_spe/pa_enable/
->>
->>    Error:
->>    Access to performance monitoring and observability operations is
->>    limited. Consider adjusting /proc/sys/kernel/perf_event_paranoid
->>    setting ...
->>
->> Suggested-by: Al Grant <al.grant@arm.com>
->> Signed-off-by: James Clark <james.clark@linaro.org>
->> ---
->> Changes since v1:
->>
->>    * Export perf_allow_kernel() instead of sysctl_perf_event_paranoid
->>
->>   drivers/perf/arm_spe_pmu.c | 9 ++++-----
->>   include/linux/perf_event.h | 8 +-------
->>   kernel/events/core.c       | 9 +++++++++
->>   3 files changed, 14 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
->> index 9100d82bfabc..3569050f9cf3 100644
->> --- a/drivers/perf/arm_spe_pmu.c
->> +++ b/drivers/perf/arm_spe_pmu.c
->> @@ -41,7 +41,7 @@
->>   
->>   /*
->>    * Cache if the event is allowed to trace Context information.
->> - * This allows us to perform the check, i.e, perfmon_capable(),
->> + * This allows us to perform the check, i.e, perf_allow_kernel(),
->>    * in the context of the event owner, once, during the event_init().
->>    */
->>   #define SPE_PMU_HW_FLAGS_CX			0x00001
->> @@ -50,7 +50,7 @@ static_assert((PERF_EVENT_FLAG_ARCH & SPE_PMU_HW_FLAGS_CX) == SPE_PMU_HW_FLAGS_C
->>   
->>   static void set_spe_event_has_cx(struct perf_event *event)
->>   {
->> -	if (IS_ENABLED(CONFIG_PID_IN_CONTEXTIDR) && perfmon_capable())
->> +	if (IS_ENABLED(CONFIG_PID_IN_CONTEXTIDR) && !perf_allow_kernel(&event->attr))
->>   		event->hw.flags |= SPE_PMU_HW_FLAGS_CX;
-> 
-> The rationale for this change in the commit message is because other
-> drivers gate PERF_SAMPLE_PHYS_ADDR on perf_allow_kernel(). However,
-> putting the PID in contextidr doesn't seem to have anything to do with
-> that...
-> 
+diff --git a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+index a80b0d2c6f38..d742b91af270 100644
+--- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
++++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+@@ -176,6 +176,15 @@ __bpf_kfunc void bpf_kfunc_dynptr_test(struct bpf_dynptr *ptr,
+ {
+ }
+ 
++__bpf_kfunc struct sk_buff *bpf_kfunc_nested_acquire_test(struct sk_buff_head *ptr)
++{
++	return NULL;
++}
++
++__bpf_kfunc void bpf_kfunc_nested_release_test(struct sk_buff *ptr)
++{
++}
++
+ __bpf_kfunc struct bpf_testmod_ctx *
+ bpf_testmod_ctx_create(int *err)
+ {
+@@ -533,6 +542,8 @@ BTF_ID_FLAGS(func, bpf_iter_testmod_seq_next, KF_ITER_NEXT | KF_RET_NULL)
+ BTF_ID_FLAGS(func, bpf_iter_testmod_seq_destroy, KF_ITER_DESTROY)
+ BTF_ID_FLAGS(func, bpf_kfunc_common_test)
+ BTF_ID_FLAGS(func, bpf_kfunc_dynptr_test)
++BTF_ID_FLAGS(func, bpf_kfunc_nested_acquire_test, KF_ACQUIRE)
++BTF_ID_FLAGS(func, bpf_kfunc_nested_release_test, KF_RELEASE)
+ BTF_ID_FLAGS(func, bpf_testmod_ctx_create, KF_ACQUIRE | KF_RET_NULL)
+ BTF_ID_FLAGS(func, bpf_testmod_ctx_release, KF_RELEASE)
+ BTF_KFUNCS_END(bpf_testmod_common_kfunc_ids)
+diff --git a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod_kfunc.h b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod_kfunc.h
+index e587a79f2239..7213d77717c1 100644
+--- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod_kfunc.h
++++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod_kfunc.h
+@@ -144,4 +144,7 @@ void bpf_kfunc_dynptr_test(struct bpf_dynptr *ptr, struct bpf_dynptr *ptr__nulla
+ struct bpf_testmod_ctx *bpf_testmod_ctx_create(int *err) __ksym;
+ void bpf_testmod_ctx_release(struct bpf_testmod_ctx *ctx) __ksym;
+ 
++struct sk_buff *bpf_kfunc_nested_acquire_test(struct sk_buff_head *ptr) __ksym;
++void bpf_kfunc_nested_release_test(struct sk_buff *ptr) __ksym;
++
+ #endif /* _BPF_TESTMOD_KFUNC_H */
+diff --git a/tools/testing/selftests/bpf/prog_tests/nested_trust.c b/tools/testing/selftests/bpf/prog_tests/nested_trust.c
+index 39886f58924e..54a112ad5f9c 100644
+--- a/tools/testing/selftests/bpf/prog_tests/nested_trust.c
++++ b/tools/testing/selftests/bpf/prog_tests/nested_trust.c
+@@ -4,9 +4,13 @@
+ #include <test_progs.h>
+ #include "nested_trust_failure.skel.h"
+ #include "nested_trust_success.skel.h"
++#include "nested_acquire.skel.h"
+ 
+ void test_nested_trust(void)
+ {
+ 	RUN_TESTS(nested_trust_success);
+ 	RUN_TESTS(nested_trust_failure);
++
++	if (env.has_testmod)
++		RUN_TESTS(nested_acquire);
+ }
+diff --git a/tools/testing/selftests/bpf/progs/nested_acquire.c b/tools/testing/selftests/bpf/progs/nested_acquire.c
+new file mode 100644
+index 000000000000..5e3a499afd6f
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/nested_acquire.c
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <vmlinux.h>
++#include <bpf/bpf_tracing.h>
++#include <bpf/bpf_helpers.h>
++#include "bpf_misc.h"
++#include "../bpf_testmod/bpf_testmod_kfunc.h"
++
++char _license[] SEC("license") = "GPL";
++
++SEC("tp_btf/tcp_probe")
++__success
++int BPF_PROG(test_nested_acquire, struct sock *sk, struct sk_buff *skb)
++{
++	struct sk_buff *ptr;
++
++	ptr = bpf_kfunc_nested_acquire_test(&sk->sk_write_queue);
++
++	bpf_kfunc_nested_release_test(ptr);
++	return 0;
++}
+-- 
+2.39.2
 
-That is true, I suppose I was thinking of two reasons to do it this way 
-that I didn't really elaborate on:
-
-#1 because context IDs and physical timestamps didn't seem to be any 
-more sensitive than physical addresses, so it wouldn't make sense for 
-them to have a stricter permissions model than addresses.
-
-#2 (although this is indirect and not really related to the driver) but 
-Perf will still print the misleading warning when physical timestamps 
-are requested. So some other fix would eventually have to be made for that.
-
-I'm not sure if you are objecting to the permissions change for the 
-other two things, or it's just a lack of reasoning in the commit message?
-
-IMO if we think the other two can't be changed, I would actually rather 
-drop the change than only target PERF_SAMPLE_PHYS_ADDR. Because that 
-seems like it unnecessarily complicates the permissions and might be 
-quite surprising to a user. And then maybe some attempt of a fix could 
-be made in Perf instead. Although that could be difficult because of the 
-lack of a specific error code from the driver.
-
->>   }
->>   
->> @@ -745,9 +745,8 @@ static int arm_spe_pmu_event_init(struct perf_event *event)
->>   
->>   	set_spe_event_has_cx(event);
->>   	reg = arm_spe_event_to_pmscr(event);
->> -	if (!perfmon_capable() &&
->> -	    (reg & (PMSCR_EL1_PA | PMSCR_EL1_PCT)))
->> -		return -EACCES;
->> +	if (reg & (PMSCR_EL1_PA | PMSCR_EL1_PCT))
-> 
-> Similarly here. What does the physical counter have to do with physical
-> address sampling other than sharing the word "physical"?
-> 
-> Will
 
