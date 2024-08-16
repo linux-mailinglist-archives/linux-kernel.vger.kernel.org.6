@@ -1,232 +1,123 @@
-Return-Path: <linux-kernel+bounces-289638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FE1E9548A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:21:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD3889548A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:21:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58072284C4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:21:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FE941F24237
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944601B3F2D;
-	Fri, 16 Aug 2024 12:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vepJIgQv"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CB11B0122;
+	Fri, 16 Aug 2024 12:21:37 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799D919DFBB
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 12:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18D812AAC6;
+	Fri, 16 Aug 2024 12:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723810860; cv=none; b=hlugfOq16LVNBTRg20OGaDfUjmPnUaflR5tjSOPpawo3azr2U2MUAk47tS53DD6IBehfpCvrAtX9N55VzDS3NV3qkreB2ZTZxtiHkfOfoppijr16oq9Y7ga0ZA10gElkUy/3FfuRwHwsLMbw68fIrMJJQUv6+b6FqE0xlxxd5OQ=
+	t=1723810896; cv=none; b=sTEAJP0SdHrUVABzel/d9lvGQaVBWBmaNUXGeVj+8yEP3edqUzCrjeruBFnmdbhCGYYADticCDiY+l3z02LnY7Q1ceslLA9WQXUHFWjOrUmyuCT/Mzt2hV7olEA/nwCPTmN8n6CXiBE56Z6RhfBnoea2uZlPbclWSvXhDd8qWnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723810860; c=relaxed/simple;
-	bh=uDHRwF0otXkj+agrQEA0lwHEUq1GTb5X3dySo2OqWmA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i1Vsg9p70T//TdeNm2RxqX65kcLC2FXKFTQmA6smHuc00KzC0ug1BZMh66yYxJv/EN3u1aDudvxDrjDVvDafgG61VJTvYWHFqRCoLZHK1e4FnwDgDy1IGS0Ejw+dvO8bW0JmqtfE5m8OQ2Ma6N5d0SIIt3vq3DBKXM2MjXMItgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vepJIgQv; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7a1e31bc1efso121070685a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 05:20:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723810857; x=1724415657; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=60gFb7YBVOLPqGwy/Oc6xhCaH/QA9b9t6B6yBp4eA0s=;
-        b=vepJIgQvm2wUGg7wPKHnb+cadQKMpOzbWijLOw8Y601NGnc5kVVQQPvwKuFuHmO9dT
-         MJgiqk3ifseVfRq/1H89bggOm/n7pq2Mm8dmsp81hGSa5WPe8joH83P6y+SfpVSL5VCH
-         lZLxAXq0w4X5pjPxczK8MnzECXq4GfetXQZQfQsE1q5cckXfkWtkW5TRvbSxcOYtVr4U
-         /ROBZ3uaTofnbmaov+YziEU4mN5Jx1qhndecyk+dDXswFTYJQF2zRTdUbbakad1/rIsM
-         DwzU5Muj2HTFtxM1/A66Nbfr3az4ejPZ29MAKl9DO+8SgPw7kWqtxMFRF8n5JpvPCqFk
-         yYhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723810857; x=1724415657;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=60gFb7YBVOLPqGwy/Oc6xhCaH/QA9b9t6B6yBp4eA0s=;
-        b=ltLZmGxP5hHMluQKdZkJrOYmHLjCPOdT/eB0r6uOSly4JC5jpb/m3tD/Vb/qvI/dKD
-         1+HEs+I9Qq52P74AQQ9un3A8feQGKIB2lJ9sxLcxjLeg8l1qb/voX0bjI2hxFy+/GAnK
-         QzXqph6CTrzcT2UY5RKhyHkilQ0xaihPIFHVUt53kgylbB2s/MV8D0zknr1hs39FR9JB
-         QtyjBpG+/WnruKrpKFWEF/tJJF0d3xww6dXhN117zCYwVOHul+ARx+NMUsCdm1uAF8Br
-         2h50uj5N7dizxoCVn5/xnlL1G8FpEsLfu6xb+SwvgvWtxVuECv0I4m8KB1lK46bIveEv
-         qkCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWBUk2uuCb8pCLTM6yQP4mRj+tUo4eCld+qdhD06Ac4zQvp8sTs63CSRA6SOmdJ5LI3kkxta0egyFgCVMCxCxTGe0dc5dkmGk4HOa+D
-X-Gm-Message-State: AOJu0YwAO3Y2jjQUm7vF0wHtWAVzxwmTLJGVxoApI3iH5XQXZTz8zqPy
-	80QsBiZKN3UrI9kgSd9JzeD9Y40RezCSpOqucNMUvwK/Dks3ri0gy1RKPnlKifoY30mufeSB7tM
-	h/RvjlD6VmdfMmg7z2ox/1Ju+hhWg9eS4KTtv
-X-Google-Smtp-Source: AGHT+IGZmdSIKsIbNLMCWhDr7siS0fg53Dzm3mUEgRlOmZUGtYHuIW2VVl49SrIQcFwsu42Q03aJr/PwI9drpzidh7Q=
-X-Received: by 2002:a05:6214:5713:b0:6bf:7c34:e419 with SMTP id
- 6a1803df08f44-6bf7cdcb101mr38991616d6.5.1723810857192; Fri, 16 Aug 2024
- 05:20:57 -0700 (PDT)
+	s=arc-20240116; t=1723810896; c=relaxed/simple;
+	bh=TkX6qWziGg4Tt4r7MEJjYTjrsF+fQMQK1CuUPADhI3s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OCAPQWpzufN8IZKYMuqfojTcElBe6v/JEGLxja+Xy66JkFR1g0BVZBH5N9ki9Z9IacBe//NaeHJQX3c4LmsICqd2PJ2T+y/tZmTDcf0x0/OcwDi4Aux3JMt7haO7UeR2v+u+FXbtf600DRhkw8MOqYbkBkiwuFRbA6mjRadCNQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Wlh122nyrz4f3jMP;
+	Fri, 16 Aug 2024 20:21:10 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 451631A0359;
+	Fri, 16 Aug 2024 20:21:24 +0800 (CST)
+Received: from [10.174.177.210] (unknown [10.174.177.210])
+	by APP4 (Coremail) with SMTP id gCh0CgBnj4VCRL9mJ4dqBw--.4895S3;
+	Fri, 16 Aug 2024 20:21:24 +0800 (CST)
+Message-ID: <9de82d23-902f-cb18-7688-f5e687e86d14@huaweicloud.com>
+Date: Fri, 16 Aug 2024 20:21:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813211317.3381180-7-almasrymina@google.com>
- <de7daf80-a2e4-4451-b666-2a67ccc3649e@gmail.com> <CAHS8izPMC+XhXKbJOQ3ymizyKuARSOv_cO_xO+q1EG4zoy6Gig@mail.gmail.com>
- <31640ff4-25a6-4115-85e6-82092ce57393@gmail.com> <20240815182245.2b5e3f44@kernel.org>
-In-Reply-To: <20240815182245.2b5e3f44@kernel.org>
-From: Mina Almasry <almasrymina@google.com>
-Date: Fri, 16 Aug 2024 08:20:44 -0400
-Message-ID: <CAHS8izO9LDM9rLVnJPgp6QXb4YLW5+3ziGOHTqScy-SKOLejYA@mail.gmail.com>
-Subject: Re: [PATCH net-next v19 06/13] memory-provider: dmabuf devmem memory provider
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, 
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
-	Nikolay Aleksandrov <razor@blackwall.org>, Taehee Yoo <ap420073@gmail.com>, David Wei <dw@davidwei.uk>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, 
-	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
-	Praveen Kaligineedi <pkaligineedi@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Kaiyuan Zhang <kaiyuanz@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH] ext4: disambiguate the return value of
+ ext4_dio_write_end_io()
+To: alexjlzheng@gmail.com, tytso@mit.edu, adilger.kernel@dilger.ca
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jinliang Zheng <alexjlzheng@tencent.com>
+References: <20240815112746.18570-1-alexjlzheng@tencent.com>
+From: yangerkun <yangerkun@huaweicloud.com>
+In-Reply-To: <20240815112746.18570-1-alexjlzheng@tencent.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBnj4VCRL9mJ4dqBw--.4895S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7tr1rtFWfGFyDZr1UKw4Uurg_yoW8XF1kpr
+	s0kasFyryqv342k397KF1DZr18ua18G3y5XF909w17ZrZFvrn5KF1Utas0vF10yrZ7Ww4F
+	qa1ktr9Ivw1jy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
+	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHD
+	UUUUU==
+X-CM-SenderInfo: 51dqwvhunx0q5kxd4v5lfo033gof0z/
 
-On Thu, Aug 15, 2024 at 9:22=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
->
-> On Wed, 14 Aug 2024 17:32:53 +0100 Pavel Begunkov wrote:
-> > > This is where I get a bit confused. Jakub did mention that it is
-> > > desirable for core to verify that the driver did the right thing,
-> > > instead of trusting that a driver did the right thing without
-> > > verifying. Relying on a flag from the driver opens the door for the
-> > > driver to say "I support this" but actually not create the mp
-> > > page_pool. In my mind the explicit check is superior to getting
-> > > feedback from the driver.
-> >
-> > You can apply the same argument to anything, but not like
-> > after each for example ->ndo_start_xmit we dig into the
-> > interface's pending queue to make sure it was actually queued.
-> >
-> > And even if you check that there is a page pool, the driver
-> > can just create an empty pool that it'll never use. There
-> > are always ways to make it wrong.
-> >
-> > Yes, there is a difference, and I'm not against it as a
-> > WARN_ON_ONCE after failing it in a more explicit way.
-> >
-> > Jakub might have a different opinion on how it should look
-> > like, and we can clarify on that, but I do believe it's a
-> > confusing interface that can be easily made better.
->
-> My queue API RFC patches had configuration arguments, not sure if this
-> is the right version but you'll get the idea:
-> https://github.com/kuba-moo/linux/blob/qcfg/include/net/netdev_cfg.h#L43-=
-L50
-> This way we can _tell_ the driver what the config should be. That part
-> got lost somewhere along the way, because perhaps in its embryonic form
-> it doesn't make sense.
->
-> We can bring it back, add HDS with threshold of 0, to it, and a bit for
-> non-readable memory. On top of that "capability bits" in struct
-> netdev_queue_mgmt_ops to mark that the driver pays attention to particula=
-r
-> fields of the config.
->
-> Not sure if it should block the series, but that'd be the way I'd do it
-> (for now?)
->
 
-I'm not sure I want to go into a rabbit hole of adding configuration
-via the queue API, blocking this series . We had discussed this months
-back and figured that it's a significant undertaking on its own. I'm
-not sure GVE has HDS threshold capability for example, and I'm also
-not sure how to coexist header split negotiability via the queue API
-when an ethtool API exists alongside it. I think this is worthy of
-separating in its own follow up series.
 
-For now detecting that the driver was able to create the page_pool
-with the correct memory provider in core should be sufficient. Also
-asking the driver to set a
-netdev_rx_queue->unreadable_netmem_supported flag should also be
-sufficient. I've implemented both locally and they work well.
+在 2024/8/15 19:27, alexjlzheng@gmail.com 写道:
+> From: Jinliang Zheng <alexjlzheng@tencent.com>
+> 
+> The commit 91562895f803 ("ext4: properly sync file size update after O_SYNC
+> direct IO") causes confusion about the meaning of the return value of
+> ext4_dio_write_end_io().
+> 
+> Specifically, when the ext4_handle_inode_extension() operation succeeds,
+> ext4_dio_write_end_io() directly returns count instead of 0.
+> 
+> This does not cause a bug in the current kernel, but the semantics of the
+> return value of the ext4_dio_write_end_io() function are wrong, which is
+> likely to introduce bugs in the future code evolution.
+> 
+> Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+> ---
+>   fs/ext4/file.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index c89e434db6b7..6df5a92cec2b 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -392,8 +392,9 @@ static int ext4_dio_write_end_io(struct kiocb *iocb, ssize_t size,
+>   	 */
+>   	if (pos + size <= READ_ONCE(EXT4_I(inode)->i_disksize) &&
+>   	    pos + size <= i_size_read(inode))
+> -		return size;
+> -	return ext4_handle_inode_extension(inode, pos, size);
+> +		return 0;
+> +	error = ext4_handle_inode_extension(inode, pos, size);
+> +	return error < 0 ? error : 0;
 
-> I'd keep the current check with a WARN_ON_ONCE(), tho.
-> Given the absence of tests driver developers can use.
-> Especially those who _aren't_ supporting the feature.
->
+Why?
 
-Yes what I have locally is the driver setting
-netdev_rx_queue->unreadable_netmem_supported when header split is
-turned on, and additionally a WARN_ON_ONCE around the check in core. I
-was about to send that when I read your email. I'm hoping we don't
-have to go through the scope creep of adding configuration via the
-queue API, which I think is a very significant undertaking.
+iomap_dio_complete can use the return value directly without any bug. 
+And I think the code now seems more clearly...
 
-> > > and cons to each approach; I don't see a showstopping reason to go
-> > > with one over the other.
-> > >
-> > >> And page_pool_check_memory_provider() is not that straightforward,
-> > >> it doesn't walk through pools of a queue.
-> > >
-> > > Right, we don't save the pp of a queue, only a netdev. The outer loop
-> > > checks all the pps of the netdev to find one with the correct binding=
-,
-> > > and the inner loop checks that this binding is attached to the correc=
-t
-> > > queue.
-> >
-> > That's the thing, I doubt about the second part.
-> >
-> > net_devmem_bind_dmabuf_to_queue() {
-> >       err =3D xa_alloc(&binding->bound_rxqs, &xa_idx, rxq);
-> >       if (err)
-> >               return err;
-> >
-> >       netdev_rx_queue_restart();
-> >
-> >       // page_pool_check_memory_provider
-> >       ...
-> >       xa_for_each(&binding->bound_rxqs, xa_idx, binding_rxq) {
-> >               if (rxq =3D=3D binding_rxq)
-> >                       return success;
-> > }
-> >
-> > Can't b4 the patches for some reason, but that's the highlight
-> > from the patchset, correct me if I'm wrong. That xa_for_each
-> > check is always true because you put the queue in there right
-> > before it, and I don't that anyone could've erased it.
-> >
-> > The problem here is that it seems the ->bound_rxqs state doesn't
-> > depend on what page pools were actually created and with what mp.
->
-> FWIW I don't understand the point of walking the xa either.
-> Just check the queue number of the pp you found matches,
-> page pool params are saved in the page pool. No?
->
+>   }
+>   
+>   static const struct iomap_dio_ops ext4_dio_write_ops = {
 
-Yes, I changed this check to check pool->p.queue, and it works fine.
-
---=20
-Thanks,
-Mina
 
