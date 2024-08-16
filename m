@@ -1,271 +1,269 @@
-Return-Path: <linux-kernel+bounces-289244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BAEF954394
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:00:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EF66954396
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:02:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC0C1282795
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:00:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40FBA281DED
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1972712C49C;
-	Fri, 16 Aug 2024 08:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49D97BAF4;
+	Fri, 16 Aug 2024 08:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="FCWZzY1o";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="dyHmQHH0"
-Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Km7r/Z7Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C283C76056;
-	Fri, 16 Aug 2024 07:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=216.71.154.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723795200; cv=fail; b=iGbgPtFHhVP2jFjO3I4dzCrGNXgI5TH54/SZ/86yAK7WV273s3ch5YeMKuxUGTVSIPL5o9hcgzvFF3gkLP6iO9cSctMAjDrb1aLeIU/X3fDrAVHDIW70qobSvp9GSOCz+0jNXZkFxFrnXe47lcmQd4Whc60CxU4hti2bsXvjcYE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723795200; c=relaxed/simple;
-	bh=0HHBdgqqXiypQT08+4MACd/HLsn4hX4fQOO3SAtUcNc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=WNEitYHJtoHlDOOVMsE/yHxFBeF6oS8EogTMtwemcHW7ggsd8YyH911m+G4OXm5ZW8P3UzLEaEaqSxxegpK4dJ7HZMBDHAFIsrlRN3IaGOg+FUA52H4LUYJVY5qZyKxtWVqXYn7P/+d4EI7rU/vJf2ZaFLFNUfkbSiJWmIgJ0kk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=FCWZzY1o; dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b=dyHmQHH0; arc=fail smtp.client-ip=216.71.154.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1723795199; x=1755331199;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=0HHBdgqqXiypQT08+4MACd/HLsn4hX4fQOO3SAtUcNc=;
-  b=FCWZzY1ocPoIWpx1p5A5lq1DDSQBlfnJvk45CYu+qFLVpucobMhIZhl/
-   j7B9oGd/q76usFHo4jUsQOcxsJqbsMY7M/08G0qMSfnlIx0UYFF/zXx2n
-   N+7OyWq+UEsBWP+wAc8b740hfbBbsgaURHm4mDw/ZOREi/DT6qLnK204a
-   T7SuLDevdZpZyhraah2aBMbETJcKs7zbmthIeQ1Se/2EiajN8/7Z3I8Kq
-   YJ3QmQfP6FvIdjhHPP9fN2ktsfEOg+rhEMqEcauC6EonBn+FNXKEKxxi+
-   m3yhpN+wBLHr7ilnCmyWgzqKnYNBY5wJqxtRkc172JjWGM4CxPwsP68Ph
-   A==;
-X-CSE-ConnectionGUID: zip7UUe5TieiwEWnl2Kogw==
-X-CSE-MsgGUID: VxSKsP7ER06G7xP8LvVbrg==
-X-IronPort-AV: E=Sophos;i="6.10,151,1719849600"; 
-   d="scan'208";a="23805261"
-Received: from mail-centralusazlp17011024.outbound.protection.outlook.com (HELO DM5PR21CU001.outbound.protection.outlook.com) ([40.93.13.24])
-  by ob1.hgst.iphmx.com with ESMTP; 16 Aug 2024 15:59:57 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GJp0cJEd1XHDh9H8faoOkyF3vwLI9ULV0BeAFOWYm7ZFjc2DjG/KcetICOi9E8/gYNYESKNz78AI/K+sTMYPYwdmJAjPcKizH4mpnrkjnYbh4vghO0O9Y/hYz5R/9ONTjPmulFrPGr6ZRSIg14cs7N65o1+WwPTceL1lLqboBXYpSbqtdQWsaeZo/ckGrHg5Ynsfc9tEfJi2nfh5doFaCl3y518xRR8DoRLw3UIOdOM3iDNE4c2DfXnsmCaz4WxRJVImth5nVo4D9Y3OuCuxGUECf0y9WSD4T34b1OOaZVQNeqFOd/x20vHGPuaaKKQa6P2Xt3pYoDVffj5JXcoTXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cs4s9Amv0VSmZGLEXvM7DJ2e7oVLt5PlaRDrV5ndYSA=;
- b=XysSw+d6ZFO0IEBkPiMDGIsVR0oplLqpxcf+YPU5pLmwLnF4lxtTl11dieIVmJL7P2C53knpGbaUUxrhP4/MDIYJjFOLCbnZGNMVNkFbU0xRWPE4LTB8AdUkAC0ykBwtDsZRzoMe+taISKzT7v65bwDZ/SHc1uWT1wAKpLdA3ct7CK/U86NkryZu0hx3NbdTJfq1goHyJ9v7W8w1F/kqZxaUXBWVaU99IsdSocrFw7FbzKWuzOm3B0kH1IbnCVGizbIakfaigBXNMxrigc2NOGX/mU4jZVXCZv3BpBG10pkTt1EII7oNI8qX9Kbi5PKWYWbpcnzNqK/BEyAREwi2Fw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cs4s9Amv0VSmZGLEXvM7DJ2e7oVLt5PlaRDrV5ndYSA=;
- b=dyHmQHH0uMKalMeW4xsFcwV9xt7a4yAlokwydeX54Q0ZS+radc5Fo7VQ31Q8gUN/JFNwSfDInEHAPfkFSb+cBqlAMqmEqp3hL+Pk+VGsBVRgt3vZlPi5z3O4NAGo+m+YXzgopfE8TCbojRZdmUQJALFfxs0Bb7xTLJAuORsupEU=
-Received: from DM8PR04MB8037.namprd04.prod.outlook.com (2603:10b6:8:f::6) by
- BY5PR04MB6360.namprd04.prod.outlook.com (2603:10b6:a03:1ef::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Fri, 16 Aug
- 2024 07:59:53 +0000
-Received: from DM8PR04MB8037.namprd04.prod.outlook.com
- ([fe80::b27f:cdfa:851:e89a]) by DM8PR04MB8037.namprd04.prod.outlook.com
- ([fe80::b27f:cdfa:851:e89a%4]) with mapi id 15.20.7875.018; Fri, 16 Aug 2024
- 07:59:52 +0000
-From: Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-CC: Chris Bainbridge <chris.bainbridge@gmail.com>, "fengli@smartx.com"
-	<fengli@smartx.com>, hch <hch@lst.de>, "axboe@kernel.dk" <axboe@kernel.dk>,
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [REGRESSION] critical target error, bisected
-Thread-Topic: [REGRESSION] critical target error, bisected
-Thread-Index: AQHa77JGPKw4giBhfEOqqIP2hh1M6w==
-Date: Fri, 16 Aug 2024 07:59:52 +0000
-Message-ID: <whnt3t5fqae5pujt6fkg5xu6mqxc2x5llbmq6q2lclfuuafbqx@tzj3dzgb7ury>
-References: <Zrog4DYXrirhJE7P@debian.local>
- <yq1ikw1qg49.fsf@ca-mkp.ca.oracle.com>
-In-Reply-To: <yq1ikw1qg49.fsf@ca-mkp.ca.oracle.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM8PR04MB8037:EE_|BY5PR04MB6360:EE_
-x-ms-office365-filtering-correlation-id: b174b176-e22f-4724-a638-08dcbdc96914
-x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?wp86qhetcrHqQZIZRWsJ34hMS76JZmicrUcEuooqyS7vYlo1AqLLejtrJnce?=
- =?us-ascii?Q?zr2m+RxuKlso3/jIfMSKIDy7uiYESvIJ+gVfJ4ItXPiMRai/0dKnNP0o+qcF?=
- =?us-ascii?Q?Q+/CPVlq46bcdPYNYzd6lXWyKa92Xej2LP1ujbf/CfnHp1nnWkQwp0+Auahw?=
- =?us-ascii?Q?gR7VqYiXbwKc74GDAnObj9RjOKmTyflk3xbrgY5xBPV6O88p+erWTImF77Co?=
- =?us-ascii?Q?GtHkuHvDL2QadiloYRx/2fOOH2GxHLRS7QjDEzklMWi8//toR7dzlRjJxXBg?=
- =?us-ascii?Q?1vv2z5crjDnS5hBubiQ/2MtdwMG5dVW/XFdZgCHntl+/yIo00PfXK1F+hKyJ?=
- =?us-ascii?Q?MwTgUWTCWLzHwPbNteuYsi4uXsp/aEhANgM9rSV86ul8MN+cxN/tfu0dMy3X?=
- =?us-ascii?Q?8eQyMWfqFKnkSrTHNkK+xA2QKr6qF+HroXPdFN96fjDc3tPRNMX0RYqslWir?=
- =?us-ascii?Q?Uz4+4NGCYQeisFTSZAAQyqjSeIQc9jV5R7u+rPAHrNCUa1dP0X3AbIqtf1yH?=
- =?us-ascii?Q?rWHmpewoKOBckV3G2sGia0Q/hVCo+dvlogmgT1dGH0iVR8U35FKfy6N3ltfb?=
- =?us-ascii?Q?wE3o3Z4r1+5qjhk/r3KhLfzdLqh46Mx189DdEOFEw72lfksio+S9t25bCKxz?=
- =?us-ascii?Q?aAA+yw7hhMyskMpH7lX8CSVN5AiR9ZVJGOQXmalybAROewdoa5+lcXFJWN83?=
- =?us-ascii?Q?TqDGrWxYabUFl8PxTSwkWUVeP8DT0sGMi5dbJjSMacWoS5cgoIeuMmjEqPh4?=
- =?us-ascii?Q?Ji3+59iN0cOZErFlzcEElvixFbBDqnET7TYGJyaj/WsXDr58qGySRzzS97ox?=
- =?us-ascii?Q?/o5XXuwS8uXZQu9iG1uGkoPNtqLdKcEv3/B/VFuHI2fWBX8Jgs5v7Cs0sKmZ?=
- =?us-ascii?Q?tWkMmAqAwcByz4sJc1cJaj4120Zii367FCQ/LrzO2o2bO8QyvC1Mq/NkWsw5?=
- =?us-ascii?Q?/fyrXQX50T01PSW0uv7jDB0DKP6IsVtjm2xj4prDj0aPOWUTLtQRc7JK5N3w?=
- =?us-ascii?Q?La49QEC/D6qqyrKbCZqk0d1UNyivrsGAyL5l/Y+zxo8OlPfJGXD4s/CFCK3K?=
- =?us-ascii?Q?jcSjjhK27LGvxM9NbCJOELoRV/cwg6jLLNm7OIY2hKICcO6OERqUDHzCeAs+?=
- =?us-ascii?Q?INzbd5GQFuNlEI6B2GVz27PMpNYbgbOdWfXzKTN3AsxmcbVPVrBS2PqBQQQv?=
- =?us-ascii?Q?59U+VSN1KJgWEE1WE9RIsISVTidDsIPxxHLdwdaGpSflrPLtr2B1ogmmlrkl?=
- =?us-ascii?Q?zLt9RzDmP+U5rHYGNFglMrPdsQNJ8mmq9RIA5t6dt0VNQ+DW7E5UFKAfmJfh?=
- =?us-ascii?Q?3R5PDSy4uJ3TwpC5VvtgQbkxTiqUhPv/H8ZhzbXQcfh6Qfxdn1B8jtT0/Qbu?=
- =?us-ascii?Q?iWy1jhCzZO8DQ04HMtLORz/WXEA7WnmLNZVzindUY3XZbsqQvg=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR04MB8037.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?5RSfATog+VGiRcLlQelBHzS2RQJfHX80jCWPsi8cV0VlMsl2gpq5fzli8l9X?=
- =?us-ascii?Q?wwB03bDrNxHnG326ABp1K6lrHDKqATT2CuDrhFdWHFvN2Wl/3fk8VuvwkR16?=
- =?us-ascii?Q?Mur/5ThnT/uk3j8at8OwIY2CEBuaIvceImAHXAA+u6W2PiqZethqvo+i1W4C?=
- =?us-ascii?Q?y/dS7M2rstaomSUZac2piOMYLu74KOkGipTX63Lo0C9ZBrzYN0Qrng1jK9I+?=
- =?us-ascii?Q?rf3dkV1pAuKPPfRVt0Ou2UnsBMMZQFbcZefu3n6nfSFQopFSgAKzbZ1r5Hy7?=
- =?us-ascii?Q?lnDVIhQke0UJ3ypvRPQNG8ELmbv/tKqcxXTA8Kvh7QSbwiiYAZwuQOcEkQkT?=
- =?us-ascii?Q?fn12HIV0q84EZd5TATwtppnPzk1RDHLfcx8+MvUMrLLnN/Mdm6yAwFVi7L92?=
- =?us-ascii?Q?stlP2nfHuFXEgrV8rKEaV6HP0M+e5ZAbsJgXbFbGDrl4f5b5E0UL8woDroQ2?=
- =?us-ascii?Q?iV0VaepIZcL4k42Ny8GkcghH+S+2YsWNNoyFHZEQuoqufRKvkb8R+hCH5YO1?=
- =?us-ascii?Q?5f3BJEdNL7sridxDhdq6xpjLAQjP1bvdFWsy3xNVfOpSoXEaiJ/ZwYcVhUcK?=
- =?us-ascii?Q?bjfFdSQn/CE/r/V/hJrp99kRcizJpDpzJJgs7ZcLnPyhLW8eKaAHjJ1sCdkC?=
- =?us-ascii?Q?HmpR8pf759mchnPi6aVcz8b7ObSmYryrpM5hCub8HG2exRRNlaPLJjwZBgzU?=
- =?us-ascii?Q?RF6XdQ+ozU2yOkH8fL5e8U1zDULNAqDX8iZhwGO7QULhALIR9z50Y8umExgf?=
- =?us-ascii?Q?cX3qPmC3475uMoE4m1+zyy1jtXFTs10TvrQTOSY//I8oR/nGT9zcqGc9Ni2U?=
- =?us-ascii?Q?uwknAfaw393zrVlhl9O+gC0IPmU8Yb954NKq7Dl03fqYlWOufDkKxEooOrd6?=
- =?us-ascii?Q?/Vs05pvMYIYM8r9MNd4/5f2iVYJRRPKdD08Nei6RrByvcFRth/0dXwAjLYyL?=
- =?us-ascii?Q?N7+R/UjRVrDel5EfKr3wcoUlSccKMio/99Grfz0zgdx8eMJ7epSGsrd4QJCb?=
- =?us-ascii?Q?ttZCKvblc6N9NnxORiqGCzYmZ4p/8XXcfRCc9QUBrcp3AtMEgbR0s4cnkpiK?=
- =?us-ascii?Q?xnR3PbQ/qkwKs4uRbGaOKKXZ8f1/bf/EcjWLzRiZKKQ5RXJ/N74u6wpqaDAo?=
- =?us-ascii?Q?6PouAeN8DdC2T6wy2hrkizKCPP10Zte4AIhWUQtL3Vedl2ZfYwJK5g/ZmYXp?=
- =?us-ascii?Q?lnOCxMP3wd5Qxs8Q4FDtGiQi+bIOBKhH/BO8y3MxTAZIOdIR5QWJAfJCcUgE?=
- =?us-ascii?Q?Z/mtFJ2MY4fM0qez0/hfUuixc4UCfKxr/8faJENktFJZtsEb7yimRw8uslgR?=
- =?us-ascii?Q?TVXkqO5g7Ooqwl2JcpA0om+yTH8ACUKnl2/E63uNiFNWKVBqjBUL+uH17+x+?=
- =?us-ascii?Q?zJJm1eAmT2WhrPa1JHw5SJ4/hhGOG27eZWLrpzTOn4iszfMXdtTcqOaRQRtw?=
- =?us-ascii?Q?cv7WFe8kyeD4KIVhXHxyV/ofojAfPtE/xcnoSbQmYV6P7oJ9fR97woA7+PDA?=
- =?us-ascii?Q?HNlViP/dmx5pGn4N2fxQ1YILHOEqNsF+vYXqRoq2xIIFbNAYQtsQQ9YvQMzX?=
- =?us-ascii?Q?gxBawj13BJnksnmVqOGp4a5oI6gqqxykJOQPpCccgw17LaKidSlOd0PWnhih?=
- =?us-ascii?Q?+BoC0LYYokhRbWoAjR/LJ4k=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <497EEA31FA2B1C4695B58F714E32F0B8@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC87718EAD
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723795314; cv=none; b=bjlppJfLnNVdT7idJYmwfI8DN8wFOz7NeewcoGhczQ+0l/PwQLDKKlExtpX57lnZP3bVDCMJfKd9h+EP/x5dxqYDKYh2Qbfl2tjwOvfI8Ou3vOK9qf53n1e0CgSZAuunZH6aL53h5pWirKHhhFz2Djgmi+JodPXgA04Z+skhcPM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723795314; c=relaxed/simple;
+	bh=PqiXV8v2CEz2TTGEV4fB+NpOMuGJApvPrzEMwpopwTs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VG+N9r72hxAIHCfN9ejdwUAaA3IKwOWxLKlLqd4hN+3KpJPjwzFGclIP33vO7TGLB7sqx2KpjnhNJd8K39/mcXka8YUOKcxEnwtG6pV1EmWzonIs2EBtPGrlHC0QU/6GskeT0V46BUfmeciKMaunA8iO5A9K4JETEpGBXLqhTX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Km7r/Z7Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C92AC4AF14
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:01:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723795313;
+	bh=PqiXV8v2CEz2TTGEV4fB+NpOMuGJApvPrzEMwpopwTs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Km7r/Z7QSTFPfgzJaMSAW1d9fQIf7mcCOS7di8SwgTz/fJPRrpsXPahCKukWl9KAV
+	 wBbjiiNpLr5weLVjaNKE41r+2ppmmYko/G/USmR6txW/j0TOI5aZrKH6/2ZzJLaORR
+	 MoLlF4CdZF83W6Rtx+5UbDxh1qF6/B8SximwWfKP64RLSnS0i0s/jd1MFaoQCmNJBu
+	 a1m5nC+DLq7sbiJYhJbsFYrH1KWwdTPJlFPevZg2JMbuMbYDjRHGrQi+GTalSlLA2F
+	 YAjXGeBK5+WAm6mVJdLyNGPlP535pXykjSZAT6G0XJ5uLCiRNE0nWM1OJ+MtxKoIIL
+	 IRkOAOTb228Iw==
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-66a048806e6so18096387b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 01:01:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUBS/kE7bmxOrjiv0KXW6zvE+KXsTUXV4OhPB30NyFm3V0gJNG/FXANsggkcwXY0yR9ctibpwEgYQaM1qUodH27IkWbhYFFyBDU9snk
+X-Gm-Message-State: AOJu0YzorYQSoFfru6F3vD0AZR4LiGut2nrHWDbvfBKemt/7gylbBCWd
+	EAvk89ZvH/j7kMLJEG381jg5YLGtMjflO6IxGV8XNiOvtNtKCrnLWLn/2mbx/p9OE+vPniHHGr0
+	sCRpUI3ZfKWyBmcPA783N+wybTeHN8rIDic8Z+A==
+X-Google-Smtp-Source: AGHT+IFEZusVZzrM/+uEeHMOCidiTmtG6ke4RPG56HzV8fpFJseWcNqnS9L/ESv3a1uiFxePrdIQz+DgvTmf/LYF+Vo=
+X-Received: by 2002:a05:690c:7690:b0:65f:ca0b:451c with SMTP id
+ 00721157ae682-6b1b890e704mr23973577b3.21.1723795312597; Fri, 16 Aug 2024
+ 01:01:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	J2ptJYyIze2DGKwvEySQak8Vf16oVUpKZQzmNBFkILVM6ppbIq+E77HpjVj/tFkdUzK14tlKKJN5JEvHG3RSbcMUK5S0HM26Z369uLUjz/K2xEA6Bg/sJwhQFrlweWu5d2SyE0gwKaqksPybMfRq2d3r+MVDYQg1lKgyvvVCwiZeXcgnHWlXqQ4ELv7fNFr/af7sas0Q/o/Xo5hbpirAJmpbHgTkxUHYU7p5Lr2RQrAljRhYaKQuQeaTCLuVEUlluOh9n0LtMux7wlUWJNznoi8wrWFSrJt/RsDBcxEbnRSv6C1J3TKus6pDDk8m0i26+jFQBF71nff+DAp/g6/WQQ5H9MvWf77mjxFgIh1C+D2vJ81eiBJWKv0g9swQrMhP5UWsx2si7sscFJCNX+rqnMUqN7AjRl+aUTIsoXOVD8x3dcXgSgfgKoKfwvtWRMjSdG4mb7owuIvBh4pWvDMmpjC4iW+1M7IkeDUzcBC4OIeC909ybXMAx0XkgBPrjCsMeA8yyQeLr9uu3I9woRMG97qWhAEJbcYpWtq5ojLqqbt02BVLC5rOUQ/idJnYPAEmdfgcG6Gql4VddaTJdPVebORG1edKA8aMRHn7jBn9kQre/hZxPgkKOwDHDCt5SuM8
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR04MB8037.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b174b176-e22f-4724-a638-08dcbdc96914
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Aug 2024 07:59:52.8425
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: tYSGNpKd84+y2OYv0yoa6Z0wqN4pLUkq3tZP2tp0VcJxf1MbOZ7TZcxMn0KaTM2G1FcNo/vnb2z42GKyxEfp85E+CO7MZBMMP1LJNXNtUsI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR04MB6360
+References: <20240730-swap-allocator-v5-0-cb9c148b9297@kernel.org>
+ <20240730-swap-allocator-v5-2-cb9c148b9297@kernel.org> <87bk23250r.fsf@yhuang6-desk2.ccr.corp.intel.com>
+In-Reply-To: <87bk23250r.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Fri, 16 Aug 2024 01:01:41 -0700
+X-Gmail-Original-Message-ID: <CACePvbX1M8tfqj__nvMwvD0P0abEjbju2gQDEea9BPZ6eUuRuQ@mail.gmail.com>
+Message-ID: <CACePvbX1M8tfqj__nvMwvD0P0abEjbju2gQDEea9BPZ6eUuRuQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/9] mm: swap: mTHP allocate swap entries from nonfull list
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Kairui Song <kasong@tencent.com>, 
+	Hugh Dickins <hughd@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Barry Song <baohua@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Aug 15, 2024 / 23:56, Martin K. Petersen wrote:
->=20
-> Chris,
->=20
-> > [  195.647081] sd 0:0:0:0: [sda] tag#0 FAILED Result: hostbyte=3DDID_OK=
- driverbyte=3DDRIVER_OK cmd_age=3D0s
-> > [  195.647093] sd 0:0:0:0: [sda] tag#0 Sense Key : Illegal Request [cur=
-rent]
-> > [  195.647096] sd 0:0:0:0: [sda] tag#0 Add. Sense: Invalid command oper=
-ation code
-> > [  195.647099] sd 0:0:0:0: [sda] tag#0 CDB: Write same(16) 93 08 00 00 =
-00 00 04 dd 42 f8 00 00 2d 48 00 00
-> > [  195.647101] critical target error, dev sda, sector 81609464 op 0x3:(=
-DISCARD) flags 0x800 phys_seg 1 prio class 0
+On Wed, Aug 7, 2024 at 6:14=E2=80=AFPM Huang, Ying <ying.huang@intel.com> w=
+rote:
+>
+> Chris Li <chrisl@kernel.org> writes:
+>
+> > Track the nonfull cluster as well as the empty cluster
+> > on lists. Each order has one nonfull cluster list.
+> >
+> > The cluster will remember which order it was used during
+> > new cluster allocation.
+> >
+> > When the cluster has free entry, add to the nonfull[order]
+> > list.  When the free cluster list is empty, also allocate
+> > from the nonempty list of that order.
+> >
+> > This improves the mTHP swap allocation success rate.
+> >
+> > There are limitations if the distribution of numbers of
+> > different orders of mTHP changes a lot. e.g. there are a lot
+> > of nonfull cluster assign to order A while later time there
+> > are a lot of order B allocation while very little allocation
+> > in order A. Currently the cluster used by order A will not
+> > reused by order B unless the cluster is 100% empty.
+> >
+> > Signed-off-by: Chris Li <chrisl@kernel.org>
+> > ---
+> >  include/linux/swap.h |  4 ++++
+> >  mm/swapfile.c        | 38 +++++++++++++++++++++++++++++++++++---
+> >  2 files changed, 39 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/include/linux/swap.h b/include/linux/swap.h
+> > index edafd52d7ac4..6716ef236766 100644
+> > --- a/include/linux/swap.h
+> > +++ b/include/linux/swap.h
+> > @@ -254,9 +254,11 @@ struct swap_cluster_info {
+> >                                */
+> >       u16 count;
+> >       u8 flags;
+> > +     u8 order;
+> >       struct list_head list;
+> >  };
+> >  #define CLUSTER_FLAG_FREE 1 /* This cluster is free */
+> > +#define CLUSTER_FLAG_NONFULL 2 /* This cluster is on nonfull list */
+> >
+> >  /*
+> >   * The first page in the swap file is the swap header, which is always=
+ marked
+> > @@ -295,6 +297,8 @@ struct swap_info_struct {
+> >       unsigned long *zeromap;         /* vmalloc'ed bitmap to track zer=
+o pages */
+> >       struct swap_cluster_info *cluster_info; /* cluster info. Only for=
+ SSD */
+> >       struct list_head free_clusters; /* free clusters list */
+> > +     struct list_head nonfull_clusters[SWAP_NR_ORDERS];
+> > +                                     /* list of cluster that contains =
+at least one free slot */
+> >       unsigned int lowest_bit;        /* index of first free in swap_ma=
+p */
+> >       unsigned int highest_bit;       /* index of last free in swap_map=
+ */
+> >       unsigned int pages;             /* total of usable pages of swap =
+*/
+> > diff --git a/mm/swapfile.c b/mm/swapfile.c
+> > index bceead7f9e3c..dcf09eb549db 100644
+> > --- a/mm/swapfile.c
+> > +++ b/mm/swapfile.c
+> > @@ -361,14 +361,22 @@ static void swap_cluster_schedule_discard(struct =
+swap_info_struct *si,
+> >       memset(si->swap_map + idx * SWAPFILE_CLUSTER,
+> >                       SWAP_MAP_BAD, SWAPFILE_CLUSTER);
+> >
+> > -     list_add_tail(&ci->list, &si->discard_clusters);
+> > +     VM_BUG_ON(ci->flags & CLUSTER_FLAG_FREE);
+> > +     if (ci->flags & CLUSTER_FLAG_NONFULL)
+> > +             list_move_tail(&ci->list, &si->discard_clusters);
+> > +     else
+> > +             list_add_tail(&ci->list, &si->discard_clusters);
+> > +     ci->flags =3D 0;
+>
+> As Ryan pointed out before, it's better to clear the specific bit
+> instead of assigning 0.  This will make code future proof.
+Ack.
 
-Hello Chris, Martin,
+BTW, I plan to change the bit to a list number in the future.I can
+define a list bit mask for now.
 
-I also observed a different but similar failure symptom when I ran f2fs wor=
-kload
-using a zoned TCMU device. I found that the trigger is the commit f874d7210=
-d88
-("scsi: sd: Keep the discard mode stable") that Chris found. After the comm=
-it,
-the device has unexpected non-zero values for the sysfs attributes
-queue/discard_max_bytes and queue/discard_max_hw_bytes. I found that Martin=
-'s
-fix avoids my failure symptom also. With the fix, the failure disappeared a=
-nd
-the sysfs attribute have the expected value 0. Thanks!
+>
+> >       schedule_work(&si->discard_work);
+> >  }
+> >
+> >  static void __free_cluster(struct swap_info_struct *si, struct swap_cl=
+uster_info *ci)
+> >  {
+> > +     if (ci->flags & CLUSTER_FLAG_NONFULL)
+> > +             list_move_tail(&ci->list, &si->free_clusters);
+> > +     else
+> > +             list_add_tail(&ci->list, &si->free_clusters);
+> >       ci->flags =3D CLUSTER_FLAG_FREE;
+> > -     list_add_tail(&ci->list, &si->free_clusters);
+> >  }
+> >
+> >  /*
+> > @@ -491,8 +499,15 @@ static void dec_cluster_info_page(struct swap_info=
+_struct *p, struct swap_cluste
+> >       VM_BUG_ON(ci->count =3D=3D 0);
+> >       ci->count--;
+> >
+> > -     if (!ci->count)
+> > +     if (!ci->count) {
+> >               free_cluster(p, ci);
+> > +             return;
+> > +     }
+> > +
+> > +     if (!(ci->flags & CLUSTER_FLAG_NONFULL)) {
+> > +             list_add_tail(&ci->list, &p->nonfull_clusters[ci->order])=
+;
+> > +             ci->flags |=3D CLUSTER_FLAG_NONFULL;
+> > +     }
+> >  }
+> >
+> >  /*
+> > @@ -553,6 +568,19 @@ static bool scan_swap_map_try_ssd_cluster(struct s=
+wap_info_struct *si,
+> >       if (tmp =3D=3D SWAP_NEXT_INVALID) {
+> >               if (!list_empty(&si->free_clusters)) {
+> >                       ci =3D list_first_entry(&si->free_clusters, struc=
+t swap_cluster_info, list);
+> > +                     list_del(&ci->list);
+> > +                     spin_lock(&ci->lock);
+> > +                     ci->order =3D order;
+> > +                     ci->flags =3D 0;
+> > +                     spin_unlock(&ci->lock);
+> > +                     tmp =3D cluster_index(si, ci) * SWAPFILE_CLUSTER;
+> > +             } else if (!list_empty(&si->nonfull_clusters[order])) {
+> > +                     ci =3D list_first_entry(&si->nonfull_clusters[ord=
+er],
+> > +                                           struct swap_cluster_info, l=
+ist);
+> > +                     list_del(&ci->list);
+> > +                     spin_lock(&ci->lock);
+> > +                     ci->flags =3D 0;
+> > +                     spin_unlock(&ci->lock);
+> >                       tmp =3D cluster_index(si, ci) * SWAPFILE_CLUSTER;
+> >               } else if (!list_empty(&si->discard_clusters)) {
+>
+> We should check discard_clusters before nonfull clusters.
 
-> From dcbe0126551fedef94fd8334288e5b2bb6059475 Mon Sep 17 00:00:00 2001
-> From: "Martin K. Petersen" <martin.petersen@oracle.com>
-> Date: Tue, 13 Aug 2024 03:58:27 -0400
-> Subject: [PATCH] scsi: sd: Do not attempt to configure discard unless LBP=
-ME is
->  set
->=20
-> Commit f874d7210d88 ("scsi: sd: Keep the discard mode stable")
-> attempted to address an issue where one mode of discard operation got
-> configured prior to the device completing full discovery.
-> Unfortunately this change assumed discard was always enabled on the
-> device.
->=20
-> Do not attempt to configure discard unless LBPME is set.
->=20
-> Fixes: f874d7210d88 ("scsi: sd: Keep the discard mode stable")
-> Reported-by: Chris Bainbridge <chris.bainbridge@gmail.com>
-> Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
->=20
-> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-> index 699f4f9674d9..966fc717d235 100644
-> --- a/drivers/scsi/sd.c
-> +++ b/drivers/scsi/sd.c
-> @@ -3308,6 +3308,9 @@ static void sd_read_app_tag_own(struct scsi_disk *s=
-dkp, unsigned char *buffer)
-> =20
->  static unsigned int sd_discard_mode(struct scsi_disk *sdkp)
->  {
-> +	if (!sdkp->lbpme)
-> +		return SD_LBP_DISABLE;
+And the reason behind that is?
 
-I guess SD_LBP_FULL would be more appropriate than SD_LBP_DISABLE, because =
-the
-comment in drivers/scsi/sd.h says that SD_LBP_DISABLE indicates that "Disca=
-rd
-disabled due to failed cmd".
+I see the discard_cluster can take a long time. It will take a
+synchronous wait for the issuing the discard command. Why not just use
+the  nonfull list and return immediately. When the discard command
+finished. It will show up in the free list anyway.
 
-$ git grep SD_LBP_DISABLE
-drivers/scsi/sd.c:      [SD_LBP_DISABLE]        =3D "disabled",
-drivers/scsi/sd.c:      sdkp->provisioning_mode =3D SD_LBP_DISABLE;
-drivers/scsi/sd.c:      case SD_LBP_DISABLE:
-drivers/scsi/sd.c:      return SD_LBP_DISABLE;
-drivers/scsi/sd.h:      SD_LBP_DISABLE,         /* Discard disabled due to =
-failed cmd */
+BTW, what is your take on my  previous analysis of the current SSD
+prefer write new cluster can wear out the SSD faster?
+I think it might be useful to provide users an option to choose to
+write a non full list first. The trade off is more friendly to SSD
+wear out than preferring to write new blocks. If you keep doing the
+swap long enough, there will be no new free cluster anyway.
 
-I confirmed that the fix patch avoids my failure both with SD_LBP_DISABLE
-and SD_LBP_FULL.
+The example I give in this email:
 
-Tested-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+https://lore.kernel.org/linux-mm/CACePvbXGBNC9WzzL4s2uB2UciOkV6nb4bKKkc5TBZ=
+P6QuHS_aQ@mail.gmail.com/
 
-> +
->  	if (!sdkp->lbpvpd) {
->  		/* LBP VPD page not provided */
->  		if (sdkp->max_unmap_blocks)
+Chris
+>
+> >                       /*
+> > @@ -967,6 +995,7 @@ static void swap_free_cluster(struct swap_info_stru=
+ct *si, unsigned long idx)
+> >       ci =3D lock_cluster(si, offset);
+> >       memset(si->swap_map + offset, 0, SWAPFILE_CLUSTER);
+> >       ci->count =3D 0;
+> > +     ci->order =3D 0;
+> >       ci->flags =3D 0;
+> >       free_cluster(si, ci);
+> >       unlock_cluster(ci);
+> > @@ -2922,6 +2951,9 @@ static int setup_swap_map_and_extents(struct swap=
+_info_struct *p,
+> >       INIT_LIST_HEAD(&p->free_clusters);
+> >       INIT_LIST_HEAD(&p->discard_clusters);
+> >
+> > +     for (i =3D 0; i < SWAP_NR_ORDERS; i++)
+> > +             INIT_LIST_HEAD(&p->nonfull_clusters[i]);
+> > +
+> >       for (i =3D 0; i < swap_header->info.nr_badpages; i++) {
+> >               unsigned int page_nr =3D swap_header->info.badpages[i];
+> >               if (page_nr =3D=3D 0 || page_nr > swap_header->info.last_=
+page)
+>
+> --
+> Best Regards,
+> Huang, Ying
 
