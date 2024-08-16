@@ -1,300 +1,188 @@
-Return-Path: <linux-kernel+bounces-290181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73778955065
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:58:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DE19955067
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97FA31C212E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:58:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 537C31C225F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824B51C7B72;
-	Fri, 16 Aug 2024 17:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E661C231B;
+	Fri, 16 Aug 2024 17:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TW7ZmdZ7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="V+KWZnz+"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2046.outbound.protection.outlook.com [40.107.220.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71DFC1C68BC;
-	Fri, 16 Aug 2024 17:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723830977; cv=none; b=f7cqhT/EPO/O8X+unFi+MUS3eR9wfZzLGqnAJIu+jWRk34d9JTvbV7zUIB0Pl3rVTwefI4AmrlUzqiecJuFLOntplstSM0DsCJ5SktOxUS/FipV08twM/FnW16i5ZQp1/1L2xdlEVs6Verh5RV+ZmJpL2oW8+fmsxcEKJQac2cs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723830977; c=relaxed/simple;
-	bh=1nTnm/+BPLU9cVwWoXDMCuedVYe8mzXtHdP/ivu98UA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Jl7sBSW3FEtdquinvqXY6MqGZsU4i3D4omv52TYkX5jf19mn1BI/f4hsqoti+/coryCxPLNRoypoW9dPgtpuqXh0elWCVftieTBoJyzFqDKtQsQ4YrU7GxANVj54zJHNix1ssIld/RdD+/VwE4Hbj8ueAEnbyW9KXenhCnbiCP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TW7ZmdZ7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7494AC32782;
-	Fri, 16 Aug 2024 17:56:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723830977;
-	bh=1nTnm/+BPLU9cVwWoXDMCuedVYe8mzXtHdP/ivu98UA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=TW7ZmdZ74Qv2yYxlLEFJVTNsrLAcml2w+pZUFPw9eJhk+1el7+H1Vb6u4cPW/ZRb0
-	 N+w3mYxSDp6r9E0PPGNCp9Wa4XpiZLmdsR6isWgtdWX+VjIXM/9T8CYF+fZubUGElQ
-	 GJ8T8I5b4CjWNUbjSKOKy6K0SyrlxQSjzula6RIfuLvS95RfMVyb1wuXQzVEcOWxRd
-	 bkxAdXsG/FnP/shnE06DgmNvT3kg31NpRkc7A3yzZu4DmB2DPDYmCcPoAdmQgT0ZP9
-	 hA0cMexKlETeTsEPFfbZc5SkLPAOhzj2+ZCVwtlhvoF6oGXY6ZAHV+HN6px+tI8E2R
-	 G8c+yzYhqLNjA==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Fri, 16 Aug 2024 19:55:53 +0200
-Subject: [PATCH bpf-next 2/2] selftests: bpf: remove duplicated UAPI if_xdp
- headers
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A254AEE5;
+	Fri, 16 Aug 2024 17:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723830987; cv=fail; b=gEg6/MiP4XupHkw5fFukTCjs7SU+7dSKHLPAAa3uPvFonI2wc5gK0HwZtXvxF7Y0hPAhey9cCC4Dfy9W6NjoOPL8EAJGd1ZGzMgb0LyIOwzSowWheSYn6fvAA9TUula341Gm4sxczx63wbfLFi1En8xRBIXZcFQoy6B/D2EJc7k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723830987; c=relaxed/simple;
+	bh=IfPy2GDD/P31Zw5EtJ6wgt8pK/apGeRtonxPzQWbs8g=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rPXX6mj/dl9S9hnfbY/6Hnqcv2xODS9zR3hecSncWfypNyeUDySJvjlM45TBzXGO0fuu07rDdV9Up/NPnOn740aF4OFDByXwTPFqPDDCS74ZIFzQmsX/nB6GCURj13q0L4fsoZ9WozAgsi1q5KZsw7KsZtq9itPaOozSb5mx/Wc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=V+KWZnz+; arc=fail smtp.client-ip=40.107.220.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=D7nb3BQvsyHAZsumvbSJLiBm7BR7NGUQSopmy/6BgnYlBQqcOgcskUcmLcEzSbSjsVVUjemjhXk4U9vAdxO+WoESlbld6B1DKaJVVt1i8O+5B6Vnq3oEP6WHwMIaAh506Iwg/YuIuu7FagxhrAYc7tdSA2DfxT1yZLeVjCm+W+KMDscF64gKxEg2giR0sIADEkh4G9bmerwqDAXOLYyBQadMOtIE7S7NbnHHGJVPzZcirXV2Sm4yjyxDV3rWMXjWnO4RFFiw7a6bFht4rWnNpQCdNTESm8wdFsAeVJpwxlJ0bBh/QtUjlVu1diLbBtOi6FDtPuLdSetxjXhW22eBbQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FqCFfnVqPkZOsP5sAC9Oc/nP0sAnJ0tnm2bXOadJwLI=;
+ b=D+DKbJtlA17MVJBBjrEClvXZLcCSsqL06/RjMye57A+edejvFKcVY2nHBDCyXUNDS4agFxWcVyuBO3bTMz6CKBXHbWH4T0CqMt2WSuqkRly12OF1rtUG4FcjtnwNB4skdM6cX29jHSrrLwbIEwseYjGf/rBInfwU+wZRlRDSwpxb6AdGy+lNa5NFPx7F0ZNiiqG2TheX4xHBXI/1MBqEL3lgQLUE4EP7cU52l7MBrAFcezE1hFJwJAD3wE7TVtD6ylktq1OVTvVsxOkAJ9xcZHS5ehJ5dEDGsr7s19JK31RJSdK+jivEhYqwtCBbhA+ju2nD092XeJa24wC2uTm0Wg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FqCFfnVqPkZOsP5sAC9Oc/nP0sAnJ0tnm2bXOadJwLI=;
+ b=V+KWZnz+fGVqtw+e9Ufhu4tuBs+5BVWD1XPaPnE5btcr1nwBCg9cl/wxqyWECkDHs5wJKmUQXO8WU7WvuljPwXTE7Q2R8gtMOorRY8GkAaRaOAIF1H4K5e6zX0iBtIXAx2jrjvf+OLQ0KB63HvnlwVEKUybD4aang+TzGxLgTZLtCVpFMWalDMjwHP7weBW9scgxsOSsCyrSePbKnriEFMc4PmCym5EF2Fn01CFD9u7yrAylUVIIGeafShvz7bndxL1UWgHlcLiGf6qwCbIGFUfPbLjD3VSfDE9m/axcJIh4Yj2owRdrLpJzZFc8ffHoETFLmfeWSW7riYI0DovtyA==
+Received: from MN0PR02CA0003.namprd02.prod.outlook.com (2603:10b6:208:530::6)
+ by CY5PR12MB6059.namprd12.prod.outlook.com (2603:10b6:930:2c::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.20; Fri, 16 Aug
+ 2024 17:56:22 +0000
+Received: from MN1PEPF0000F0DE.namprd04.prod.outlook.com
+ (2603:10b6:208:530:cafe::14) by MN0PR02CA0003.outlook.office365.com
+ (2603:10b6:208:530::6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.20 via Frontend
+ Transport; Fri, 16 Aug 2024 17:56:22 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ MN1PEPF0000F0DE.mail.protection.outlook.com (10.167.242.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.8 via Frontend Transport; Fri, 16 Aug 2024 17:56:22 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 16 Aug
+ 2024 10:56:07 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 16 Aug
+ 2024 10:56:07 -0700
+Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com (10.129.68.10)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Fri, 16 Aug 2024 10:56:06 -0700
+Date: Fri, 16 Aug 2024 10:56:05 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Will Deacon <will@kernel.org>
+CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <jgg@nvidia.com>,
+	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v11 2/9] iommu/arm-smmu-v3: Enforce
+ arm_smmu_cmdq_build_sync_cmd
+Message-ID: <Zr+StUydk2tk6WmS@Asurada-Nvidia>
+References: <cover.1722993435.git.nicolinc@nvidia.com>
+ <9e59a460c969357a98b3434ed5007ddf9381899b.1722993435.git.nicolinc@nvidia.com>
+ <20240816135331.GA24607@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240816-ups-bpf-next-selftests-use-khdr-v1-2-1e19f3d5b17a@kernel.org>
-References: <20240816-ups-bpf-next-selftests-use-khdr-v1-0-1e19f3d5b17a@kernel.org>
-In-Reply-To: <20240816-ups-bpf-next-selftests-use-khdr-v1-0-1e19f3d5b17a@kernel.org>
-To: mptcp@lists.linux.dev, Andrii Nakryiko <andrii@kernel.org>, 
- Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>, 
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, 
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
- Jesper Dangaard Brouer <hawk@kernel.org>
-Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7279; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=1nTnm/+BPLU9cVwWoXDMCuedVYe8mzXtHdP/ivu98UA=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBmv5KyWvPWfAKfgQov1oKBL4O5YXVEuXa/x49q/
- lX0K61rFOWJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZr+SsgAKCRD2t4JPQmmg
- c36TEAC8lekkD1MbsUYRYRgb/DHI0sb8IMEjaj0UMlLgXQD3ku2Hpklqu9VujgxDK+iEJ6JAJQ6
- aambDfVSOvG+C1lad1qbPGb+wK4U48+h5HN5QrjOtYRy0M80eiB0Hl0oj1Em7NTZqmUDa7Fj0d2
- z4RNYIVPqYQcpOQDZtADHqnYQCsDQGADl1RVudLs7cbw974Y6DUD/D1eBvwuxH0BfffnYM5wefE
- 1Bp1bdhSi6xRXryz5ra5rLKcwmoQPbuF3JG6YQe4tiaqf+ZmiZ9AnQMZoaz+mMA3ApslkaDoi0r
- s57Qcx0/zmx4hxRkIqhycNJ7Th2LXIqGgpO5JwLGJ7ez8dvyDf1Sk0hXR7j9XTfx250XP4zuX/o
- DnE7L7+CSd+p7QNpUnJbtOk+5qrJdYQjSmcRxQgPNqLra1thmTDkf+fvxslnpcpxarTtJITIOrE
- 8PNfMPt6hHgf/DAxcz2mdeDrHOkTGr9nv+II4YXJqEKB1bULB63/nnk35xaCO0fgo/PLIG9AB+X
- hvj8x4CkEBkoY1hBvP6wfUvrT9lJj4mNcoLDGsJOVFZYpe11w6uA/kl0LxrhGCmnHLokkOdkPOv
- DK3bDHl1kil5gj0nyUxoGkrG90m+wzvMd1EmhtbbBvXtRxnkOwf+sAOuFF241DFNwe3wcM8OfOr
- 1W+NdxOu8TByfKA==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240816135331.GA24607@willie-the-truck>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0DE:EE_|CY5PR12MB6059:EE_
+X-MS-Office365-Filtering-Correlation-Id: eb894f5d-9d71-441f-332a-08dcbe1cbd68
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?AJ9QHrGGVuZ8GmvrI/W5p02WjQp5RWZuAY0VtA5oeyWuQGWDDSt3xd0av79x?=
+ =?us-ascii?Q?xn5ZpG6PgFAMl942F6BQqJGTd0oJ/mEwfqUsF/dyLSPTDP6/7G5SB1XNx2G+?=
+ =?us-ascii?Q?1R+UTvTni7E0+eR8PPEnE5/beoeshINC0WrLgCOklpi/ZDZup9V6lA/5wKtg?=
+ =?us-ascii?Q?sSM2lqCOv1/JCJDuWtdGLy/ykcxrJouZ7iJEz4/rudRXlwYG9Maxuyatgjkh?=
+ =?us-ascii?Q?5B5XGqs/3MLZUXgq/Tlim26jjU4ctTa1s9xhJ00FT7ycbMzw9ClTZnOckD0h?=
+ =?us-ascii?Q?HbxFdP2Kalgls2VmFqzV/GfOYnN7OAnGLVm1qM4vSEGU3/RqXxn4UIvXennk?=
+ =?us-ascii?Q?kOxMxcWn4HCJkUMNQQHN1Xz0RVHcQh4y6XO60FdRKZuaLsOxvAQ3fKP2/Jhi?=
+ =?us-ascii?Q?sow8bYdEa/+X45d70WMHcQNCfZcNwD9cJKKr4l3OKnCUpk6zbilHEBjTOv0j?=
+ =?us-ascii?Q?FMKaXsdhZIUwBgJmgaNGK61Nh2xC8zA2DXKFVc3Qnqq6lwMOGQtTN3+cxNfs?=
+ =?us-ascii?Q?8JGSai5AiouCJXGaDd2LciYZhGqMrvskDm1TlbtxQdkNgUzyxgpyxz7ltbyd?=
+ =?us-ascii?Q?RZ1b4/4N9x7aXdLS7dQ+cwF2VkeQnaiLdDgtlgBapZycJmWTuQ8gZJSPprMZ?=
+ =?us-ascii?Q?rdRjvYnChV4Q0W1Ca7MNAcz3K16E+2tAZ/1843dg/zQWYMb+PQWb/ogRgjsD?=
+ =?us-ascii?Q?wFtgGX1HVQJnjL7/ImVDJ9kFQ46zxYYBAMg2VxL/HOL/3aMhz1gbfYGT6G2t?=
+ =?us-ascii?Q?Sv1hIwL6M+LyvYvLlzgW4FKr3r/VyoK0a0bSBCR1MQl+exi0+mVMurliJrmj?=
+ =?us-ascii?Q?mupjiMIKABo3lrLUiyfilHKNsLcYrI9A2rNG+dfKSQLrJ1OUvcK22hw5RmOC?=
+ =?us-ascii?Q?S1wkiYys2FAJCQocb9vTmgVgTFxovw7j3tCK6cmA2OvzQnYoAn+zsF8Yi5M8?=
+ =?us-ascii?Q?eSUwhB3+Au9EiWKRidJZW+43iwWF+Ty9usyimpf7YXRVE//6K0vysAeZ92Ol?=
+ =?us-ascii?Q?8PTS5C7HEOPkMQMyP0dXyZno8OY2ds/dOpKcgSdW4ouHR5Z7VE4kSR/uMMX1?=
+ =?us-ascii?Q?7zUvNylefuQjjLOmUu/3OLL4JaMD11xsdHNQXFD2EtirxMOC8Q8SRzoMD/u+?=
+ =?us-ascii?Q?5tHeCfBnetzGJAauCoqJNMzaf3ZCUapfyDnGHH6yesPomycxNyclrPwTez/+?=
+ =?us-ascii?Q?n8qIDSjcq8sjtfo+GJe5Yhdce8Rs7fiwOfNOaD0/PqdQxabMD2WNEtdLAOt5?=
+ =?us-ascii?Q?CdtkQEpfoYaSckHAMAf0WzI5ba/QEWPYGLwDOl+Yyxp+5pJ3DODReyApZmKI?=
+ =?us-ascii?Q?hEDHHbS3q8P3IYolfYBnlOLMWXDh7Fcktfh9T/n29QZjYW9B7lclwvEwf/AD?=
+ =?us-ascii?Q?WEOuq2IFMs59NIoMeOqMoqPtpr+TzEJ77Cs2OyRjnpjjEOztBRpZbtK6IPW2?=
+ =?us-ascii?Q?v5c+nyV5XqCoeTPg4H0Eg8CKE/65HE+I?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2024 17:56:22.3820
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb894f5d-9d71-441f-332a-08dcbe1cbd68
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000F0DE.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6059
 
-Thanks to the previous commit, this file is no longer needed, because
-the BPF selftests will take the UAPI headers from the kernel source.
+On Fri, Aug 16, 2024 at 02:53:31PM +0100, Will Deacon wrote:
+> On Tue, Aug 06, 2024 at 07:11:47PM -0700, Nicolin Chen wrote:
+> > There is an existing arm_smmu_cmdq_build_sync_cmd() so the driver should
+> > call it at all places other than going through arm_smmu_cmdq_build_cmd()
+> > separately. This helps the following patch that adds a CS_NONE option.
+> >
+> > Note that this changes the type of CMD_SYNC in __arm_smmu_cmdq_skip_err,
+> > in ARM_SMMU_OPT_MSIPOLL=true case, from previously a non-MSI one to now
+> > an MSI one that is proven to still work using a hacking test:
+> >   nvme: Adding to iommu group 10
+> >   nvme: --------hacking-----------
+> >   arm-smmu-v3: unexpected global error reported (0x00000001),
+> >                this could be serious
+> >   arm-smmu-v3: CMDQ error (cons 0x01000022): Illegal command
+> >   arm-smmu-v3: skipping command in error state:
+> >   arm-smmu-v3:  0x0000000000000000
+> >   arm-smmu-v3:  0x0000000000000000
+> >   nvme: -------recovered----------
+> >   nvme nvme0: 72/0/0 default/read/poll queues
+> >    nvme0n1: p1 p2
+> 
+> Hmm, I'm still a little wary of this. The only reason we emit a CMD_SYNC
+> in __arm_smmu_cmdq_skip_err() is because the SMMU doesn't have a NOP
+> command. So I'd really like the SYNC to have as little functionality
+> as possible in this case.
+> 
+> I think we could either propapate the 'cs' field down to
+> arm_smmu_cmdq_build_cmd() or just open-code the command-creation in
+> __arm_smmu_cmdq_skip_err().
 
-Note that this file was an old copy of the UAPI one, which was causing a
-warning at compilation time:
+OK. Let's go with your approach then:
++       if (arm_smmu_cmdq_needs_busy_polling(smmu, cmdq))
++               u64p_replace_bits(cmd, CMDQ_SYNC_0_CS_NONE, CMDQ_SYNC_0_CS);
 
-  Warning: Kernel ABI header at 'tools/include/uapi/linux/if_xdp.h' differs from latest version at 'include/uapi/linux/if_xdp.h'
-
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- tools/include/uapi/linux/if_xdp.h | 173 --------------------------------------
- tools/lib/bpf/Makefile            |   3 -
- 2 files changed, 176 deletions(-)
-
-diff --git a/tools/include/uapi/linux/if_xdp.h b/tools/include/uapi/linux/if_xdp.h
-deleted file mode 100644
-index 2f082b01ff22..000000000000
---- a/tools/include/uapi/linux/if_xdp.h
-+++ /dev/null
-@@ -1,173 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
--/*
-- * if_xdp: XDP socket user-space interface
-- * Copyright(c) 2018 Intel Corporation.
-- *
-- * Author(s): Björn Töpel <bjorn.topel@intel.com>
-- *	      Magnus Karlsson <magnus.karlsson@intel.com>
-- */
--
--#ifndef _LINUX_IF_XDP_H
--#define _LINUX_IF_XDP_H
--
--#include <linux/types.h>
--
--/* Options for the sxdp_flags field */
--#define XDP_SHARED_UMEM	(1 << 0)
--#define XDP_COPY	(1 << 1) /* Force copy-mode */
--#define XDP_ZEROCOPY	(1 << 2) /* Force zero-copy mode */
--/* If this option is set, the driver might go sleep and in that case
-- * the XDP_RING_NEED_WAKEUP flag in the fill and/or Tx rings will be
-- * set. If it is set, the application need to explicitly wake up the
-- * driver with a poll() (Rx and Tx) or sendto() (Tx only). If you are
-- * running the driver and the application on the same core, you should
-- * use this option so that the kernel will yield to the user space
-- * application.
-- */
--#define XDP_USE_NEED_WAKEUP (1 << 3)
--/* By setting this option, userspace application indicates that it can
-- * handle multiple descriptors per packet thus enabling AF_XDP to split
-- * multi-buffer XDP frames into multiple Rx descriptors. Without this set
-- * such frames will be dropped.
-- */
--#define XDP_USE_SG	(1 << 4)
--
--/* Flags for xsk_umem_config flags */
--#define XDP_UMEM_UNALIGNED_CHUNK_FLAG	(1 << 0)
--
--/* Force checksum calculation in software. Can be used for testing or
-- * working around potential HW issues. This option causes performance
-- * degradation and only works in XDP_COPY mode.
-- */
--#define XDP_UMEM_TX_SW_CSUM		(1 << 1)
--
--/* Request to reserve tx_metadata_len bytes of per-chunk metadata.
-- */
--#define XDP_UMEM_TX_METADATA_LEN	(1 << 2)
--
--struct sockaddr_xdp {
--	__u16 sxdp_family;
--	__u16 sxdp_flags;
--	__u32 sxdp_ifindex;
--	__u32 sxdp_queue_id;
--	__u32 sxdp_shared_umem_fd;
--};
--
--/* XDP_RING flags */
--#define XDP_RING_NEED_WAKEUP (1 << 0)
--
--struct xdp_ring_offset {
--	__u64 producer;
--	__u64 consumer;
--	__u64 desc;
--	__u64 flags;
--};
--
--struct xdp_mmap_offsets {
--	struct xdp_ring_offset rx;
--	struct xdp_ring_offset tx;
--	struct xdp_ring_offset fr; /* Fill */
--	struct xdp_ring_offset cr; /* Completion */
--};
--
--/* XDP socket options */
--#define XDP_MMAP_OFFSETS		1
--#define XDP_RX_RING			2
--#define XDP_TX_RING			3
--#define XDP_UMEM_REG			4
--#define XDP_UMEM_FILL_RING		5
--#define XDP_UMEM_COMPLETION_RING	6
--#define XDP_STATISTICS			7
--#define XDP_OPTIONS			8
--
--struct xdp_umem_reg {
--	__u64 addr; /* Start of packet data area */
--	__u64 len; /* Length of packet data area */
--	__u32 chunk_size;
--	__u32 headroom;
--	__u32 flags;
--	__u32 tx_metadata_len;
--};
--
--struct xdp_statistics {
--	__u64 rx_dropped; /* Dropped for other reasons */
--	__u64 rx_invalid_descs; /* Dropped due to invalid descriptor */
--	__u64 tx_invalid_descs; /* Dropped due to invalid descriptor */
--	__u64 rx_ring_full; /* Dropped due to rx ring being full */
--	__u64 rx_fill_ring_empty_descs; /* Failed to retrieve item from fill ring */
--	__u64 tx_ring_empty_descs; /* Failed to retrieve item from tx ring */
--};
--
--struct xdp_options {
--	__u32 flags;
--};
--
--/* Flags for the flags field of struct xdp_options */
--#define XDP_OPTIONS_ZEROCOPY (1 << 0)
--
--/* Pgoff for mmaping the rings */
--#define XDP_PGOFF_RX_RING			  0
--#define XDP_PGOFF_TX_RING		 0x80000000
--#define XDP_UMEM_PGOFF_FILL_RING	0x100000000ULL
--#define XDP_UMEM_PGOFF_COMPLETION_RING	0x180000000ULL
--
--/* Masks for unaligned chunks mode */
--#define XSK_UNALIGNED_BUF_OFFSET_SHIFT 48
--#define XSK_UNALIGNED_BUF_ADDR_MASK \
--	((1ULL << XSK_UNALIGNED_BUF_OFFSET_SHIFT) - 1)
--
--/* Request transmit timestamp. Upon completion, put it into tx_timestamp
-- * field of union xsk_tx_metadata.
-- */
--#define XDP_TXMD_FLAGS_TIMESTAMP		(1 << 0)
--
--/* Request transmit checksum offload. Checksum start position and offset
-- * are communicated via csum_start and csum_offset fields of union
-- * xsk_tx_metadata.
-- */
--#define XDP_TXMD_FLAGS_CHECKSUM			(1 << 1)
--
--/* AF_XDP offloads request. 'request' union member is consumed by the driver
-- * when the packet is being transmitted. 'completion' union member is
-- * filled by the driver when the transmit completion arrives.
-- */
--struct xsk_tx_metadata {
--	__u64 flags;
--
--	union {
--		struct {
--			/* XDP_TXMD_FLAGS_CHECKSUM */
--
--			/* Offset from desc->addr where checksumming should start. */
--			__u16 csum_start;
--			/* Offset from csum_start where checksum should be stored. */
--			__u16 csum_offset;
--		} request;
--
--		struct {
--			/* XDP_TXMD_FLAGS_TIMESTAMP */
--			__u64 tx_timestamp;
--		} completion;
--	};
--};
--
--/* Rx/Tx descriptor */
--struct xdp_desc {
--	__u64 addr;
--	__u32 len;
--	__u32 options;
--};
--
--/* UMEM descriptor is __u64 */
--
--/* Flag indicating that the packet continues with the buffer pointed out by the
-- * next frame in the ring. The end of the packet is signalled by setting this
-- * bit to zero. For single buffer packets, every descriptor has 'options' set
-- * to 0 and this maintains backward compatibility.
-- */
--#define XDP_PKT_CONTD (1 << 0)
--
--/* TX packet carries valid metadata. */
--#define XDP_TX_METADATA (1 << 1)
--
--#endif /* _LINUX_IF_XDP_H */
-diff --git a/tools/lib/bpf/Makefile b/tools/lib/bpf/Makefile
-index 2cf892774346..977dba26ba87 100644
---- a/tools/lib/bpf/Makefile
-+++ b/tools/lib/bpf/Makefile
-@@ -148,9 +148,6 @@ $(BPF_IN_SHARED): force $(BPF_GENERATED)
- 	@(test -f ../../include/uapi/linux/bpf_common.h -a -f ../../../include/uapi/linux/bpf_common.h && ( \
- 	(diff -B ../../include/uapi/linux/bpf_common.h ../../../include/uapi/linux/bpf_common.h >/dev/null) || \
- 	echo "Warning: Kernel ABI header at 'tools/include/uapi/linux/bpf_common.h' differs from latest version at 'include/uapi/linux/bpf_common.h'" >&2 )) || true
--	@(test -f ../../include/uapi/linux/if_xdp.h -a -f ../../../include/uapi/linux/if_xdp.h && ( \
--	(diff -B ../../include/uapi/linux/if_xdp.h ../../../include/uapi/linux/if_xdp.h >/dev/null) || \
--	echo "Warning: Kernel ABI header at 'tools/include/uapi/linux/if_xdp.h' differs from latest version at 'include/uapi/linux/if_xdp.h'" >&2 )) || true
- 	$(Q)$(MAKE) $(build)=libbpf OUTPUT=$(SHARED_OBJDIR) CFLAGS="$(CFLAGS) $(SHLIB_FLAGS)"
- 
- $(BPF_IN_STATIC): force $(BPF_GENERATED)
-
--- 
-2.45.2
-
+Thanks
+Nicolin
 
