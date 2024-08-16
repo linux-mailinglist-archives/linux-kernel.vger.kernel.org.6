@@ -1,209 +1,283 @@
-Return-Path: <linux-kernel+bounces-290195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 227AB955099
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:12:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E570E95508A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:09:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 462231C20F26
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:12:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D0DC2840C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:09:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BE01C379A;
-	Fri, 16 Aug 2024 18:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D64A1C3796;
+	Fri, 16 Aug 2024 18:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CsX2078Y"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ltDJZmhA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D101F1BB698;
-	Fri, 16 Aug 2024 18:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723831931; cv=none; b=Wwly6uFb8LharQb3BGFukRQpMlEywkslaqiZC9IVQGfeu3aubvgRu8Kotq3S80iNBfJJiBdAAwo4XGPq2w3cxAJ0kRxi2M0SpFJlig/4Uku/S4X7baULv7wiaaUteBV1o1aEw/e/f4QlqISCE1ivMNc6blWm0HquFE2aJSYGA6k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723831931; c=relaxed/simple;
-	bh=mupVOxGtRgyXrHi0m4zC6bQx0ZXLDP9VTuKBPwP+2iM=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dX1S0fu/lOp/sE+SkiA/bUJLymUZwGFcSJPq60C6nU41V3qLi03LXl1kcOX+NFAmJ6cpakMYRnMHyP+9y+uDJzqHQsNp0qzxrch3s8N7Xn+Di8O+PculwBYLiJZv/OC4OSX+ctISIYALbsOe/r9mw6R6DMdtweDEVjbhJGLHfnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CsX2078Y; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-201f2b7fe0dso16244695ad.1;
-        Fri, 16 Aug 2024 11:12:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723831929; x=1724436729; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=U5l/0VSy6fqZaacoTqYSq61RAXhnTHweezwv61jbJ0Y=;
-        b=CsX2078YS2pSP2F8oR2T+zHM2p9W4aqkWoga6SvhZE06CmleWM5N8JqnxZejMxq8Ik
-         Ock5wJOgO34RkhjrvtE0uB5qDkX4BRTImo7Ch/v46hUnlyqGiv93Q6MPI77LXlOCmzmu
-         CBQS4nHQFankF0xg63vZbb+nSPA5vSuTX5wQrB/fYSvW7cr7HnnApxlRQsXnoaPpmIgo
-         VprEMUuhxBpSDqJI4780yc4ZGXsDcpjFkmS6ZC27SmYa1FZZvoV5CDuDqV3kkFCKyNvn
-         heLFoOOmqscROU/t3SiiVjl5ufvMxDWIq6JX5UkjNvpivZiqhyQQqpir/Si+i8htvJsv
-         I9ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723831929; x=1724436729;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U5l/0VSy6fqZaacoTqYSq61RAXhnTHweezwv61jbJ0Y=;
-        b=sdvR8WnZ9g//GXkTjwsN5fjh7Ysss/oA5XQP2CjcMeIhFT1TLraHRVYR2LgUnOGkLA
-         bUEGfb9QfQcT0NU9vpvJwH1Ran0o+mD/B7We8BkKj5SG53Zd6q2ONKxEmmkuHfCeLGE4
-         bIwCuZzAiL2SSwZan6SOHFqzqWXmUGIetmAfobXw00l46MbHflFcOu7Z9Zrk9uKZxFY6
-         yQMHEqCORBeVC33Og4Dsz25rq//NEtKio48cXwiDHxohn5GYkYDbeQsi5+U/Tl0VGhke
-         hxp55IaSVRqAUBAEE0TI1DfASnApCokoihkyOOoRAHIZ9NDk2ixgHuET1eacqfyHc3YY
-         yl0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV7FHMuYLW/IWWa95KN996pHXJWyZj4tmO8/z90xbmUcGuyYwH/iAi28l2Dxrlow7Zse50iChO6oBfvKtOhLGd8KC2YzVotM0uS4Un5effcmpPxAV67bVBLiVmZmOQ7BjuX+n1Yl2IZD21QXL6f
-X-Gm-Message-State: AOJu0Yytyu64x0O2aIl+ZXeV5/Jw7yvzwCOrCjASn79cNm1QvP6H80bO
-	RXoHIZ8lhgv4eWD1Tyk5sTsicyjy+g/aH2+yt7az1seQGkjbX1LF
-X-Google-Smtp-Source: AGHT+IE9C/aLOhdS0C3ly72nc2bgoyh9bdEhmy1vCLr8xsbc57OwrGBuSeS6GRQihj7C/li24A4YOg==
-X-Received: by 2002:a17:902:cec1:b0:201:ef87:9535 with SMTP id d9443c01a7336-20203e4c9c5mr46728515ad.3.1723831928894;
-        Fri, 16 Aug 2024 11:12:08 -0700 (PDT)
-Received: from localhost ([27.6.216.27])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f037599asm28293515ad.149.2024.08.16.11.12.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 11:12:08 -0700 (PDT)
-Date: Fri, 16 Aug 2024 23:38:51 +0530
-From: Aryabhatta Dey <aryabhattadey35@gmail.com>
-To: akpm@linux-foundation.org, shuah@kernel.org, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] selftests/mm: compaction_test: Move often used filepaths
- to strings
-Message-ID: <5kedpmxee2wvblijsxmmyk5l6aufuwkjkiovnsyh7n7iuz7cok@7lfnhaobpzd7>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056A71482F4;
+	Fri, 16 Aug 2024 18:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723831765; cv=fail; b=oyN4D74qVbmZc3XuRO1hKiu//gMnIf1xq5pvbDqMBmGT8sQH8PoFKITexvw5S8V/Gx5TjJ4+0y1Zxpg+e06sIQInC3Pq69PW9O5LdzpyKT81NGdtYMALKAlv3hVOy+xVJEduQkiRXxdPi5DSthEiLcC+8i/bz6qf9q5PD2UEzEo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723831765; c=relaxed/simple;
+	bh=Joahxcl8osLw9uMrtBWa7uTzqVFVj7kn7p6ZhQSIpiY=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=bD6OQ/lvLpP/0wH2rZIykP5euJIi0N69Jj51XbCDF5rSgmy3aKwfeVyhGbZ4p1SbG4HoDGs9vedG36qbFxRTPgWmgXwSF+xvKMieRdL9gpeacogriZBkHd2phpCnuvkUsEVt82mOFJPyxZrABLM2cjB1RuTDR6ofdHnwgG0KLIs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ltDJZmhA; arc=fail smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723831763; x=1755367763;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Joahxcl8osLw9uMrtBWa7uTzqVFVj7kn7p6ZhQSIpiY=;
+  b=ltDJZmhAZI5yuDp+vfIsB2WS3Bw/3IPh7YQMwGyoHz2qnXPt6eAzF+nD
+   NpEpghhaZ+xh87UV5FzaYsW31I6bqYRVHcI16MOo8KCRc+QUWwhim/y+O
+   t55Gi8HdbB4zTN9HvTbEpKOXjVrJjBlxs4BDKUHWVuUxz15iEArJltwtK
+   b6H4c++lhfR2i0R84UNjuEuzGtNShCOiOvT8pL19tcX7qForB0SAVpEEe
+   +wMj6VunLrBbRXhbHRTdaufYQiLKDjfxnomr7IDxg3PIBEWF+5Q7XD9BI
+   sNgsYNrz83JZU+vadxMluE2uNYkgZndcYyqtehZ5BiECHHeZa+NqgqDkE
+   g==;
+X-CSE-ConnectionGUID: qfO584YYTJONsWLVMTmbLg==
+X-CSE-MsgGUID: KXcoX1ubRPmcM4pk8exaQA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="39652037"
+X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
+   d="scan'208";a="39652037"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 11:09:21 -0700
+X-CSE-ConnectionGUID: KbNhurR+SymVcj90avPY8A==
+X-CSE-MsgGUID: noAEh+rMR/qs3EZzKB81bQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
+   d="scan'208";a="82954260"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Aug 2024 11:09:20 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 16 Aug 2024 11:09:20 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 16 Aug 2024 11:09:20 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.175)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 16 Aug 2024 11:09:20 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=O1buPdPcPN0LbrO1PJB96sUsxCBrlPD26GZfQUF++H1J+oLTMuln0EzjAqatNes5pXh5Geh1bamhtccnEnNwTXlBKLBxX0pEqszSIH9paHzWr4SKLecaBo70nViBSkEx8UW3RMKk4UtQoOjk6Iycu7e3N3QOkwcLJlvXkN7WpqYONfuYo4wUe7W95b7LzIf+7dKQ9JK0072ufLX7TY40XAUAHWMcAX5+IKunA4V4F3GSnTbm9YI1fjvYoO3c8YYlfVCfVxMG4xW9B2173ti0Bb6XOw/GJCo6prwkB8G/xrK4AYcYchqDviD5a+aRaJ7cOx6MOFYKMPwoxCrd6ArKVQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WJr3U9Euy6OujDkJooLTGTQ1ZO5HP1NGf5lK3SDeh5E=;
+ b=jhXLD3HjMmb1SBL9OAqtPO0MBfKAQNKv+8Jv/zN4Nh5q6Q5gs1/SW+Nw541iDwcy1jiZnV1q+Z623jZeTi/OzHbGS9yhriUmq1CDdWbTIFgxrUys7you0Pvc07+95yXOo/lkoyMsSKSi3RRA9hL4HPO7n3FPkf4EGICLoCrF0YepQlJX4B1eW7dreThVhPVSYUkLMJPA1rnmtLOhsa4/cWLO5lLqJ1i6xIWrqI/gJFmGGRtWzqBV3UdYLqDrIaY92v4K2/34DNqaVJv+zgypB006oLiaMqnRQJXLjqXrr/TmUUVy85TkPLC8Y9ZJ5/A0A5txLr8WH2fSR5RzHhfZWA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by SJ0PR11MB5151.namprd11.prod.outlook.com (2603:10b6:a03:2ac::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Fri, 16 Aug
+ 2024 18:09:16 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7875.016; Fri, 16 Aug 2024
+ 18:09:16 +0000
+Message-ID: <56aae68f-b590-42ec-a6b5-de3af97a8091@intel.com>
+Date: Fri, 16 Aug 2024 11:09:12 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 19/22] x86/resctrl: Introduce the interface to switch
+ between monitor modes
+To: Peter Newman <peternewman@google.com>
+CC: James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
+	<x86@kernel.org>, <hpa@zytor.com>, <paulmck@kernel.org>,
+	<rdunlap@infradead.org>, <tj@kernel.org>, <peterz@infradead.org>,
+	<yanjiewtw@gmail.com>, <kim.phillips@amd.com>, <lukas.bulwahn@gmail.com>,
+	<seanjc@google.com>, <jmattson@google.com>, <leitao@debian.org>,
+	<jpoimboe@kernel.org>, <rick.p.edgecombe@intel.com>,
+	<kirill.shutemov@linux.intel.com>, <jithu.joseph@intel.com>,
+	<kai.huang@intel.com>, <kan.liang@linux.intel.com>,
+	<daniel.sneddon@linux.intel.com>, <pbonzini@redhat.com>,
+	<sandipan.das@amd.com>, <ilpo.jarvinen@linux.intel.com>,
+	<maciej.wieczor-retman@intel.com>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <eranian@google.com>, <mingo@redhat.com>,
+	<bp@alien8.de>, <corbet@lwn.net>, <dave.hansen@linux.intel.com>,
+	<fenghua.yu@intel.com>, <tglx@linutronix.de>
+References: <cover.1722981659.git.babu.moger@amd.com>
+ <784eaa900b9e0778ddc534c04c7ded9466bfd19b.1722981659.git.babu.moger@amd.com>
+ <983fded5-48f8-439d-8afe-45b60841985a@arm.com>
+ <8c93c091-39b3-4219-b892-9df2747eb91a@intel.com>
+ <CALPaoCjmRyP00b9rTCjpxwLDJ2rYkQ8HuNMYJA+qVNo5a4Q9JQ@mail.gmail.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <CALPaoCjmRyP00b9rTCjpxwLDJ2rYkQ8HuNMYJA+qVNo5a4Q9JQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MW4PR04CA0357.namprd04.prod.outlook.com
+ (2603:10b6:303:8a::32) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SJ0PR11MB5151:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1b812bae-1b92-4491-184a-08dcbe1e8a58
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?T0RITllKV1c5eElhK0Z6WkFUNDlzdFFMYmVUSEpmaDhJN0F6ZC9vajlFUzRk?=
+ =?utf-8?B?Qng3R3grbDhkckQ3RVFOdGlNT2l6UGdlWlRHU1hKY0tvbk9VdEpZMUsybnh5?=
+ =?utf-8?B?U0xjckNuaGRnV3o5TG80bFJ6K0JSaDJEOUFXa2YrSE5aa1VFdWZVc05kNEN4?=
+ =?utf-8?B?eGU5WGNPUmIybFNBUld1eElxR2xtczRLQXIwdXBKWTRzanNJVUVxZTYwRDZM?=
+ =?utf-8?B?VDV5Y3BVWWFrWFdaK2FER09Wbzc0MlEwVWNRcGRUUFNHd1Rib05xdjRFU09E?=
+ =?utf-8?B?Q0RIZGNoZTdEc3BXR1ZNTkUzY0srTHk3bi94akVRamxsTjE4L1BoencyeFc5?=
+ =?utf-8?B?YkhDT0I1dHlJZnZVVVVsYW1saUZiMDloU3Y3T3ZJdDZlZEczcUhRenBiczYx?=
+ =?utf-8?B?bWp0UWlzTk45Z0kxTjNZZUhnbytITUFwMnNXWDRPNjM0eXBKMHRoemhBOUNK?=
+ =?utf-8?B?dk5QUDhmQU1VZy9kTjlLaUVZOFhPcXUwa2loaFp2TFVITUhPR2MzeXhLUVpt?=
+ =?utf-8?B?L1hweDlyL2ZsRWtVYndEeVVjbHBHTDViS05oNE5IWEpENE9BMlB2MEdqMkly?=
+ =?utf-8?B?dnJQeXcybktZS05nd3oxNForSS9OazlEOTgvZWlzRCtrUTZzYnZHZzM4ZTA1?=
+ =?utf-8?B?L0JYdW1tMlFoaVFoT29oell0anYzYzlRWW11c2RJbXZ5ZTdFRmNHclYrR0Vr?=
+ =?utf-8?B?YU1UQ2J5OElFdDN3UzVZeWRWSXdOV3NnYWlKS1Vaa2hBTjBmZEFaY1B4VlAy?=
+ =?utf-8?B?REd2bG9hVnlTdGJ2SElGbEZYcUNpMjJObkZnMXhYS2VsUW5tUXpjMGZ2MnB4?=
+ =?utf-8?B?dnZnTVBFRmVkNUtacDBxalN6cyswL1k3UVI1R3VnUzE0UWEwUDh5VzhLbHdh?=
+ =?utf-8?B?TFV4L1d1Yy9RZ2hISUwxb3hIZGVRaEJYQ1Jpdm0zdzBZUHRUZW4zVE00Q29Q?=
+ =?utf-8?B?Z0xaS3VlYy9NaUtuSmI0MDR0QURSRjd0RjM0MGZEUXBRd2dUTk4yMmErRkUv?=
+ =?utf-8?B?a0NSOHllYXRvbzlQWWpJRzJZaWIwMm9SbElJUURxTlFKTVdCVGE4ZjVta3JV?=
+ =?utf-8?B?RGM2TVd3Qlh5VDY2U0s3TnExQlNRT0ZqS3hVeWVWWmxhNFJvV2U2Znd6YVJ6?=
+ =?utf-8?B?YU9tSVQ5MkdWNEh1OFhKd0JFZWtwSlJUdVRMd0tQV09mTXAxcjk1dHg4bm5P?=
+ =?utf-8?B?aGhQZFhwNU1rNlhabnBYSXV5bjYySGFYWlZ2OXR4Vm1mRFZXaERvamxUL1JC?=
+ =?utf-8?B?bC8wZ2RMNVhxdmlWL2h5RHJqNXh0UHVXSitiL09IQWxwRXpNaWk5SlR1Qm5C?=
+ =?utf-8?B?SFJzRTdQdHFHTjc5ZUVvYlNuTFJwZHROMDh2eTg4T2o0Z01zVmJsUzN3K1lT?=
+ =?utf-8?B?ZjZLV1pUUzc1bE5uSWFKTUtldWU0b2ZuZmU5VXhodmpKMG9kNmN3ZmtFd0dC?=
+ =?utf-8?B?c1doZ254emtJUW5LWldxRk9CNytxMjBjSkVnRGdMT1d3S0NIUW1hanliS2NJ?=
+ =?utf-8?B?cVZFWHhsSlBDb0NGMGMxNUlsOWg1d0UzYTRDN21aRnFlbTBZbmtHd1RGbUVP?=
+ =?utf-8?B?UXFWS2V2MGxqcXV5YTVabGZCRUY5eU5RODFKQkJxeklwMS9yV0RTL2hvZXpk?=
+ =?utf-8?B?RlBEMXlEd3pkNDVZbFMySWdZQzd2djNxM2doMjJnaE1ORjFXL1kyWFNrTm5X?=
+ =?utf-8?B?YUhWekRlckdsbThDQ0owdlFUYjlSWDljbkNGQm9MS3dLcVI0RXZBSEl4YmI1?=
+ =?utf-8?B?d3NKQmtzR0dWdUtDbnRGUDY4ZDRKUUxaSWUwQlRlakZtUSt5Y0JpZ3hESlVF?=
+ =?utf-8?B?dWxHc1B5STFPMlhjWHppQT09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NnlKdDVibjVvaGNSbjgxdFFvVU1RSVhrSUhqdlp0V1h5L2hJaDFlMDdPa2Jz?=
+ =?utf-8?B?cWxmRGt3VFVyRHd0OW53bnMrT0lDQmRHRXM3V1V0VzArZFR3QXZKZnAzSXdk?=
+ =?utf-8?B?SlZSMDBHMG11eEgxWjRyZUtaLzdLOFk0TWdqWGs4cFNBYzQ4UGJlV0oyK0Qr?=
+ =?utf-8?B?VkRsTXg3a1dqUG9wQzVXTm9SblR2ODFxSkJEQm9aOUJsNEd6eXQwM1lsTk1Q?=
+ =?utf-8?B?R3pmemVjVFhJZ1JaNDkxRXJ6M2FNZ2o5Q1J4blp5R2gvQkNCVGhDSWRPMGd3?=
+ =?utf-8?B?VGRtTE5aaWVvVGJZWFdrN2ZKSUdidnZCcVVWZjQwc3ZLbzFtUDZXbHJ0T2tH?=
+ =?utf-8?B?MHZ6bVdsYmVDdExNVEtzeXZ6SUFqdk5VT1hGYVM4a3ZUUTZxVmJTN2VTcEU0?=
+ =?utf-8?B?QjFHaE9uVmsxUHFqQVdzV0lEQ0tEb0daUWFrZlc3V2poK09SdmFhcEQ2K0do?=
+ =?utf-8?B?amtrc1hINzVwYWw3akRQVHB1emdTNHVTYjNFdytYNlRZdjRBaEhTNElwWE93?=
+ =?utf-8?B?OFJEa1o5ZGZIVjhmOGRQcnFORjVJbm9tVHh4b0c1Ymc2elllOUJ2Qjdpb0dv?=
+ =?utf-8?B?aTRUand3RS9XclFuNWJ0aTRUeGsvNGxGUHZvbG1zUnZBYU0rbWJSeEJ2Vm1i?=
+ =?utf-8?B?VHE5UVFFSFFRRlBMQXY3b1RWdlpKOXVlQmNJTXRXc1ZneG51aVBoOVlTcW96?=
+ =?utf-8?B?SHE0Z3ZyV255dDA2ZmxGNk94OWgxNTl3b2t2djZCa2NoYjV1KzJwRi9pUWwv?=
+ =?utf-8?B?U2RIc24yWHpFYVgzNkozZmhQSnB3dzEwbmFsWWs3dEtHQXBvdVFMM3JQTFJK?=
+ =?utf-8?B?R2FkWU9RZTA4QWEwYXFNZ3pQR1ArUW5OYXRVaTZjOVhMbGRrQUtwcHpheTJZ?=
+ =?utf-8?B?b1E4NU0xRVdiSDZtYlhmS2pnNkpwTTVMN0taWTJDdjQ1R0J4YldMZFpRMzNw?=
+ =?utf-8?B?eGp0cUk5WStueEk0REs4VXdNd2d6bFV5QktHQ3NEQzBVdnptMDN4YnZvSkRs?=
+ =?utf-8?B?M0F0Tk11WWlxRlFVS2U3dmsweUdqblZscFlLQXd0M3Z2aDV1bmFnYUsrRXpV?=
+ =?utf-8?B?ajgwMFNkYi90RzRIaytUR0xtSGF0Si9yV29BdVUydmxFUWE2aWgxQjYyaU12?=
+ =?utf-8?B?Qk54Q1luVEVEQ01nTXZtL1RVRnNOcHlkNm1pQkZMMEdxQ1dOTk5tdndhNkRF?=
+ =?utf-8?B?S2FRcVdlWTdvYmFFZEV2SVhiMkswbkpFR2RKOHo5cHYyejBqYmJvb0YvK2dj?=
+ =?utf-8?B?Q1FseFZJUW5nZmhMRm9pQXhUUThXNHVud1VtSDcxNTBuOEJvY2h4T3puZnJE?=
+ =?utf-8?B?cmttWEg5Z0wvV3c0WmdOZGhNaHBQSDRqOEJ2ekNXcWwwNnVpV3F4d0h6VUI5?=
+ =?utf-8?B?QXBiMUlIY0ZkSDg3S1dSc0FYUDdpOGpxcWg3SmtqNmNUb2hZdElvc00vbjE0?=
+ =?utf-8?B?cmVveFFUNlpucDVmQ3lxeExxbXUyT3BOZnRDWDBsYndackpQc21PSDJxNlJj?=
+ =?utf-8?B?S3k3R2tiWmhDQjVYSnlzbG9pdk9zYjIxRXpuWWFTWW5PSDJ2T1RQTjdqS29I?=
+ =?utf-8?B?Q0dsVFpKQ1VkRnh3N3NPbVdpVVZyYWs5M2Q5ZUM1WXdCL0JPejEycm5acHJ0?=
+ =?utf-8?B?RXNiZ2xmeDExMVZUdTVkMFlkZUhGbmJBUUNIRGd4VldsZlJyNWg0cWxTd3lS?=
+ =?utf-8?B?ZzMxbGo5KytIQ3d3ek4yMjZrT0xnUXJKTGU1Tk1KLy9yU0Jhc3c1N25GK1Jq?=
+ =?utf-8?B?ampFL3Z2c1NYTVFhMnFpYitVM21lU1JiWmxWMkRocEZkNi9RRVBvc2paaUE1?=
+ =?utf-8?B?T016Q3RYdk14ZExiYTk5ekwyM1J5OStjVHZMSUhZRWF2d3lQNGp4enNCVlVF?=
+ =?utf-8?B?aWQwQTRtZWd5LzVDZmZvNnlmUi91ZXh3VVA3WlpxVWFoNGRpWS8rbjVaQlU4?=
+ =?utf-8?B?Z05FTXlXek9qa0o3ZEdrV21PNmhGZXRoTXNJanJwRldFTjVIUlh0MG1vclRj?=
+ =?utf-8?B?WjFlWTBVbFNoVndFbUFnbmFvVDhSa2d5WWNVTjB2dU1GblZDQndIeFNSalQ1?=
+ =?utf-8?B?VDJiU0QrSDloZlV2SU04VXR1S1RHSlE0Z1JJQXE2UXcvNEE3NTlVSTc2bUJ2?=
+ =?utf-8?B?RFRXWHZsR0RYdU1OR0FYSWgraVdKeDFjaUFZMWR6SXY4ZC9ZUTE0MG1iejdv?=
+ =?utf-8?B?TVE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b812bae-1b92-4491-184a-08dcbe1e8a58
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2024 18:09:16.0526
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: exuWvMYaLRiafS7Zn0GwXoh6smQNoGuiPIgoYfAcqSy5aZg7whoiGS9JNfhvlmN3+cjvfa9vLD+la5yBGP5LIfDI3QtMR9n9ZS03beqsuVc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5151
+X-OriginatorOrg: intel.com
 
-Add defines for the file path names to avoid duplicate strings
-in print messages and make it easier to maintain.
+Hi Peter,
 
-Signed-off-by: Aryabhatta Dey <aryabhattadey35@gmail.com>
----
- tools/testing/selftests/mm/compaction_test.c | 46 ++++++++++----------
- 1 file changed, 24 insertions(+), 22 deletions(-)
+On 8/16/24 10:16 AM, Peter Newman wrote:
+> Hi Reinette,
+> 
+> On Fri, Aug 16, 2024 at 10:01 AM Reinette Chatre
+> <reinette.chatre@intel.com> wrote:
+>>
+>> Hi James,
+>>
+>> On 8/16/24 9:31 AM, James Morse wrote:
+>>> Hi Babu,
+>>>
+>>> On 06/08/2024 23:00, Babu Moger wrote:
+>>>> Introduce interface to switch between ABMC and legacy modes.
+>>>>
+>>>> By default ABMC is enabled on boot if the feature is available.
+>>>> Provide the interface to go back to legacy mode if required.
+>>>
+>>> I may have missed it on an earlier version ... why would anyone want the non-ABMC
+>>> behaviour on hardware that requires it: counters randomly reset and randomly return
+>>> 'Unavailable'... is that actually useful?
+>>>
+>>> You default this to on, so there isn't a backward compatibility argument here.
+>>>
+>>> It seems like being able to disable this is a source of complexity - is it needed?
+>>
+>> The ability to go back to legacy was added while looking ahead to support the next
+>> "assignable counter" feature that is software based ("soft-RMID" .. "soft-ABMC"?).
+>>
+>> This series adds support for ABMC on recent AMD hardware to address the issue described
+>> in cover letter. This issue also exists on earlier AMD hardware that does not have the ABMC
+>> feature and Peter is working on a software solution to address the issue on non-ABMC hardware.
+>> This software solution is expected to have the same interface as the hardware solution but
+>> earlier discussions revealed that it may introduce extra latency that users may only want to
+>> accept during periods of active monitoring. Thus the option to disable the counter assignment
+>> mode.
+> 
+> Sorry again for the soft-RMID/soft-ABMC confusion[1], it was soft-RMID
+> that impacted context switch latency. Soft-ABMC does not require any
+> additional work at context switch.
 
-diff --git a/tools/testing/selftests/mm/compaction_test.c b/tools/testing/selftests/mm/compaction_test.c
-index e140558e6f53..8f46431a9182 100644
---- a/tools/testing/selftests/mm/compaction_test.c
-+++ b/tools/testing/selftests/mm/compaction_test.c
-@@ -21,6 +21,9 @@
- #define MAP_SIZE_MB	100
- #define MAP_SIZE	(MAP_SIZE_MB * 1024 * 1024)
- 
-+#define COMPACT_UNEVICTABLE_ALLOWED_FILE_PATH "/proc/sys/vm/compact_unevictable_allowed"
-+#define NR_HUGEPAGES_FILE_NAME_PATH "/proc/sys/vm/nr_hugepages"
-+
- struct map_list {
- 	void *map;
- 	struct map_list *next;
-@@ -59,17 +62,16 @@ int prereq(void)
- 	char allowed;
- 	int fd;
- 
--	fd = open("/proc/sys/vm/compact_unevictable_allowed",
--		  O_RDONLY | O_NONBLOCK);
-+	fd = open(COMPACT_UNEVICTABLE_ALLOWED_FILE_PATH, O_RDONLY | O_NONBLOCK);
- 	if (fd < 0) {
--		ksft_print_msg("Failed to open /proc/sys/vm/compact_unevictable_allowed: %s\n",
--			       strerror(errno));
-+		ksft_print_msg("Failed to open %s: %s\n",
-+			       COMPACT_UNEVICTABLE_ALLOWED_FILE_PATH, strerror(errno));
- 		return -1;
- 	}
- 
- 	if (read(fd, &allowed, sizeof(char)) != sizeof(char)) {
--		ksft_print_msg("Failed to read from /proc/sys/vm/compact_unevictable_allowed: %s\n",
--			       strerror(errno));
-+		ksft_print_msg("Failed to read from %s: %s\n",
-+			       COMPACT_UNEVICTABLE_ALLOWED_FILE_PATH, strerror(errno));
- 		close(fd);
- 		return -1;
- 	}
-@@ -97,10 +99,10 @@ int check_compaction(unsigned long mem_free, unsigned long hugepage_size,
- 	   in to play */
- 	mem_free = mem_free * 0.8;
- 
--	fd = open("/proc/sys/vm/nr_hugepages", O_RDWR | O_NONBLOCK);
-+	fd = open(NR_HUGEPAGES_FILE_NAME_PATH, O_RDWR | O_NONBLOCK);
- 	if (fd < 0) {
--		ksft_print_msg("Failed to open /proc/sys/vm/nr_hugepages: %s\n",
--			       strerror(errno));
-+		ksft_print_msg("Failed to open %s: %s\n",
-+			       NR_HUGEPAGES_FILE_NAME_PATH, strerror(errno));
- 		ret = -1;
- 		goto out;
- 	}
-@@ -108,16 +110,16 @@ int check_compaction(unsigned long mem_free, unsigned long hugepage_size,
- 	/* Request a large number of huge pages. The Kernel will allocate
- 	   as much as it can */
- 	if (write(fd, "100000", (6*sizeof(char))) != (6*sizeof(char))) {
--		ksft_print_msg("Failed to write 100000 to /proc/sys/vm/nr_hugepages: %s\n",
--			       strerror(errno));
-+		ksft_print_msg("Failed to write 100000 to %s: %s\n",
-+			       NR_HUGEPAGES_FILE_NAME_PATH, strerror(errno));
- 		goto close_fd;
- 	}
- 
- 	lseek(fd, 0, SEEK_SET);
- 
- 	if (read(fd, nr_hugepages, sizeof(nr_hugepages)) <= 0) {
--		ksft_print_msg("Failed to re-read from /proc/sys/vm/nr_hugepages: %s\n",
--			       strerror(errno));
-+		ksft_print_msg("Failed to re-read from %s: %s\n",
-+			       NR_HUGEPAGES_FILE_NAME_PATH, strerror(errno));
- 		goto close_fd;
- 	}
- 
-@@ -134,8 +136,8 @@ int check_compaction(unsigned long mem_free, unsigned long hugepage_size,
- 
- 	if (write(fd, init_nr_hugepages, strlen(init_nr_hugepages))
- 	    != strlen(init_nr_hugepages)) {
--		ksft_print_msg("Failed to write value to /proc/sys/vm/nr_hugepages: %s\n",
--			       strerror(errno));
-+		ksft_print_msg("Failed to write value to %s: %s\n",
-+			       NR_HUGEPAGES_FILE_NAME_PATH, strerror(errno));
- 		goto close_fd;
- 	}
- 
-@@ -162,15 +164,15 @@ int set_zero_hugepages(unsigned long *initial_nr_hugepages)
- 	int fd, ret = -1;
- 	char nr_hugepages[20] = {0};
- 
--	fd = open("/proc/sys/vm/nr_hugepages", O_RDWR | O_NONBLOCK);
-+	fd = open(NR_HUGEPAGES_FILE_NAME_PATH, O_RDWR | O_NONBLOCK);
- 	if (fd < 0) {
--		ksft_print_msg("Failed to open /proc/sys/vm/nr_hugepages: %s\n",
--			       strerror(errno));
-+		ksft_print_msg("Failed to open %s: %s\n",
-+			       NR_HUGEPAGES_FILE_NAME_PATH, strerror(errno));
- 		goto out;
- 	}
- 	if (read(fd, nr_hugepages, sizeof(nr_hugepages)) <= 0) {
--		ksft_print_msg("Failed to read from /proc/sys/vm/nr_hugepages: %s\n",
--			       strerror(errno));
-+		ksft_print_msg("Failed to read from %s: %s\n",
-+			       NR_HUGEPAGES_FILE_NAME_PATH, strerror(errno));
- 		goto close_fd;
- 	}
- 
-@@ -178,8 +180,8 @@ int set_zero_hugepages(unsigned long *initial_nr_hugepages)
- 
- 	/* Start with the initial condition of 0 huge pages */
- 	if (write(fd, "0", sizeof(char)) != sizeof(char)) {
--		ksft_print_msg("Failed to write 0 to /proc/sys/vm/nr_hugepages: %s\n",
--			       strerror(errno));
-+		ksft_print_msg("Failed to write 0 to %s: %s\n",
-+			       NR_HUGEPAGES_FILE_NAME_PATH, strerror(errno));
- 		goto close_fd;
- 	}
- 
--- 
-2.46.0
+No problem. I did read [1] but I do not think I've seen soft-ABMC yet so
+my understanding of what it does is vague.
 
+> The only disadvantage to soft-ABMC I can think of is that it also
+> limits reading llc_occupancy event counts to "assigned" groups,
+> whereas without it, llc_occupancy works reliably on all RMIDs on AMD
+> hardware.
+
+hmmm ... keeping original llc_occupancy behavior does seem useful enough
+as motivation to keep the "legacy"/"default" mbm_assign_mode? It does sound
+to me as though soft-ABMC may not be as accurate when it comes to llc_occupancy.
+As I understand the hardware may tag entries in cache with RMID and that has a longer
+lifetime than the tasks that allocated that data into the cache. If soft-ABMC
+permanently associates an RMID with a local and total counter pair but that
+RMID is dynamically assigned to resctrl groups then a group may not always
+get the same RMID ... and thus its llc_occupancy data would be a combination of
+its cache allocations and all the cache allocations of resource groups that had
+that RMID before it. This may need significantly enhanced "limbo" handling?
+
+Reinette
 
