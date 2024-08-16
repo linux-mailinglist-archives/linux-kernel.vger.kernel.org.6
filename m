@@ -1,236 +1,146 @@
-Return-Path: <linux-kernel+bounces-289283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C10CF954443
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:29:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F4C095440A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:24:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E36371C20A97
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:29:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44B4D1C21FBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2505A156875;
-	Fri, 16 Aug 2024 08:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="febFUmn5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E7713A89A;
+	Fri, 16 Aug 2024 08:23:07 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACB8149E09
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147451D69E
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723796619; cv=none; b=gBZt9phlMYYLT8+aY7En56MsUI/CXd/LBOGyuMjYPcfbUNYFUnZEBuvz1D6oCwGUg22MhNsZ3Ce18o262Wp8FNNKTSWRhH6AfNxn27TvYun6r40rC0XaXlikL8vAXOhct7IrcRxnQaiV9vLdLH6AknyPHM7nr7QayX4JYBQ+uF8=
+	t=1723796586; cv=none; b=AO3SIAVjbBUIKjeJ43bTQTUtxseepK6rZ5m0Q1PFH+q6HNzlNeoyOlQ3bQ15D5qmyUHsN1LM6nhDchs2QlmLRKTukPuA9ujxi2gRYhnPGJHLNQX8zGD0nXschNgJb6PtJGk6Ibx+MNAGQqh1ar8OJdCx0ZSHSiSw5ZoIZZwrg7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723796619; c=relaxed/simple;
-	bh=WeLrRQQZMB+M17UvRJFKdDj0pyrJSBe8hp5JfipVdgY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XVyMcGuUhxAkmUhcksSv4vVisYXyvyUdCYP/NPGHmyMt7+hNxaviQ1sBG2nzkH8D9mu4sx5QFfmL/sEQCTzwjV3WCzXT1uSh8fEJ/WaqoB2P3zPQwSQhYvM2Hoxxma5QpcRDnICr2SH0HkZb58Gojlqd1h0Ye2QnJTeR1MurbJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=febFUmn5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723796616;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K9KK4cPQPxfE3+CuptPMI06hfd7cwzBu3NuXzthoA3A=;
-	b=febFUmn5hCMRA4gCqJPwpHPceTH62vcQgrHIe3LAZV2ovx2XvzdM8U9DPbz4UBxIz6tYcX
-	sfyxVzMiB0xMcDFDoPGXHYJAC83FA77Vr0OYVV8CbCnHM7Yb304zRFmnNsbC4G9Yky6v3E
-	0rYRU/Nfd35LhF63qVsMXhFZ28z+Mnw=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-613-gRDDq2__N2uxd6m-jQCG1g-1; Fri, 16 Aug 2024 04:23:34 -0400
-X-MC-Unique: gRDDq2__N2uxd6m-jQCG1g-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-429e937ed37so2345095e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 01:23:34 -0700 (PDT)
+	s=arc-20240116; t=1723796586; c=relaxed/simple;
+	bh=zX8o4fAmOi91htoqHJU0TGVa9WM8+3TbYd2O9StBJNQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=K1SSUrQ8/a4ae8O3eD7213nRV27bAfTe/v9atqzHsOIPEZ7aib4MXXlLaApJxGbkyNPnmkZ7/tVFfe1WvrMJbm8xg1XmQSnAq1J3hFsMoX0VzwM9tseUiS1CMeVOTvY2uyahNRZEgthbw+dPGEbaRnbdTr0gj8EIxE/E/dokluE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39b3b5858e6so16160555ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 01:23:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723796613; x=1724401413;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K9KK4cPQPxfE3+CuptPMI06hfd7cwzBu3NuXzthoA3A=;
-        b=SL9KYf5yhR6zROvoNZinqUaqbyfB6fl2TdCTKi0atSWILQlLlBRFeKkYya9D2tBQkB
-         57b7tlJO7fliHJhlRK7gAHSOxuOn6aNeyxg2fHOFf2IKhR8x+OxXeo5MOHpXVmfVO8g7
-         SBZYK04wDn5kec9kK84mnJ0MuHTY7l5Wjy67ZLnFPLFhiFE96mswlNOpioTMvpCY9fOJ
-         3pcDDeHoqy5aSg83gFD49jQ+4aeJIkutsS16OeMJLUevNFbuGuzgEpPtYzZ5/whCoNpl
-         6+1D7wLaU5BQ6PhTvRJbR0mjGfz0Mh4QoJtEU4mhHNCPrKj4UaVPTMbbLcClLAZYC+e+
-         GN4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUL2kRiU8HTPk/tBn0mgmtCgzpe9BN62VhLcpWr5ZOKU+zm8rJDqiDzrjMYrsSdQ9h/M5gBn7YCL1xIUw8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzRnvcJ5uM85HoEuaBk13dRASP7+WwzUQfvkzPNXrCOya9S1uk
-	2imqWKRDt51QEsBWWZefEZuvX3yYudJEub+eDTxUnuVVC8m+lyFL5a3HSpcMk37I1pSLzz47s/O
-	njnfHbsLi4snSOSkHmA994BEsbSNANabrx9Z1XUEOm/GauBQwHlTnh36/9tbF4A==
-X-Received: by 2002:a05:600c:3b0f:b0:426:6cd1:d104 with SMTP id 5b1f17b1804b1-429ed7f72ccmr7955845e9.4.1723796612921;
-        Fri, 16 Aug 2024 01:23:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFs1K45T6n4GqAA7kRJ9Z9vLdlCmjYbo94PMhiOgANbOu7cQ9323rvUxQ+wVpplvzg2GKSCyg==
-X-Received: by 2002:a05:600c:3b0f:b0:426:6cd1:d104 with SMTP id 5b1f17b1804b1-429ed7f72ccmr7955535e9.4.1723796612453;
-        Fri, 16 Aug 2024 01:23:32 -0700 (PDT)
-Received: from eisenberg.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded367ebsm71461355e9.25.2024.08.16.01.23.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 01:23:32 -0700 (PDT)
-From: Philipp Stanner <pstanner@redhat.com>
-To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Jie Wang <jie.wang@intel.com>,
-	Shashank Gupta <shashank.gupta@intel.com>,
-	Philipp Stanner <pstanner@redhat.com>,
-	Adam Guerin <adam.guerin@intel.com>,
-	Tero Kristo <tero.kristo@linux.intel.com>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Arnaud Ebalard <arno@natisbad.org>,
-	Srujana Challa <schalla@marvell.com>,
-	Nithin Dabilpuram <ndabilpuram@marvell.com>,
-	Bharat Bhushan <bbhushan2@marvell.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Gregory Greenman <gregory.greenman@intel.com>,
-	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-	Yedidya Benshimol <yedidya.ben.shimol@intel.com>,
-	Breno Leitao <leitao@debian.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Mark Brown <broonie@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: qat-linux@intel.com,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	Damien Le Moal <dlemoal@kernel.org>
-Subject: [PATCH v3 10/10] PCI: Remove pcim_iomap_regions_request_all()
-Date: Fri, 16 Aug 2024 10:23:02 +0200
-Message-ID: <20240816082304.14115-11-pstanner@redhat.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240816082304.14115-1-pstanner@redhat.com>
-References: <20240816082304.14115-1-pstanner@redhat.com>
+        d=1e100.net; s=20230601; t=1723796584; x=1724401384;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XUvryhNoIJAWl86PsTdJgEXusgSnDkCrEJGDICSPLyc=;
+        b=RFiTxlvWksxu7IUKxpy5ZiWz/kggIfTSx6arvydR14siFoTVhVABea2fPv+iow5Lu0
+         GlxU50ZM2d4j/XJhbc4a8cyUcIpB6/N9HkVqxOo5UItsfaOdj/03yAAc7xk3ntrjmT8i
+         r8vtbVnsOPub3FzyhC5KOumBcm7CRLC38Xt+NOmbFldWzUB8zd86X0ZplqijBDWn7lcU
+         16YvG5KrLzgmwjFlMeQobJmSwB5mR/PRqZiYIvm9TSwa8ospIfC7gONVXljGpvC4vxcu
+         NmOz/ZrWQ9oND1ebDFPN0wX/6/7qxfJ4HjHA63lAY2w6O+oElrX0RbL95SmWGeHBC497
+         XEpQ==
+X-Gm-Message-State: AOJu0YxhIgOxVAYf6PmV9PYjzFmXD18B6/+4+SodN3hn8gYLXvOIV881
+	brDBMCjXJ8GIMJ9A4Qa7ExbeGv1ArulmqlX4OL461k0TEEFNbmOveg3Zt8lj097bLpk94+TSuIA
+	MQSKz5k0PPj4buvPPaYdHb/QEjsV7o/SagP4mPIBvfc7iEqqCB4eHaCg=
+X-Google-Smtp-Source: AGHT+IFz6KIIzZ06+qW9CKJYBRjvZy695mWnU7fETbHZoNspL6Q0ddgqTZT9QnnF0YeEbn9vBWKiL+gebrHydu2tNjNwNzbay2Ag
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:164c:b0:397:95c7:6f72 with SMTP id
+ e9e14a558f8ab-39d26d95de3mr2367405ab.6.1723796584167; Fri, 16 Aug 2024
+ 01:23:04 -0700 (PDT)
+Date: Fri, 16 Aug 2024 01:23:04 -0700
+In-Reply-To: <20240816080852.2626448-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000108fea061fc8ab6d@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_iget
+From: syzbot <syzbot+5bdd4953bc58c8fbd6eb@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-pcim_iomap_regions_request_all() had been deprecated in
-commit e354bb84a4c1 ("PCI: Deprecate pcim_iomap_table(),
-pcim_iomap_regions_request_all()").
+Hello,
 
-All users of this function have been ported to other interfaces by now.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+kernel BUG in ocfs2_iget
 
-Remove pcim_iomap_regions_request_all().
+(syz.0.15,5573,0):ocfs2_read_locked_inode:536 ERROR: bug expression: !!(fe->i_flags & cpu_to_le32(OCFS2_SYSTEM_FL)) != !!(args->fi_flags & OCFS2_FI_FLAG_SYSFILE)
+(syz.0.15,5573,0):ocfs2_read_locked_inode:536 ERROR: Inode 17: system file state is ambiguous
+------------[ cut here ]------------
+kernel BUG at fs/ocfs2/inode.c:536!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5573 Comm: syz.0.15 Not tainted 6.11.0-rc3-syzkaller-00156-gd7a5aa4b3c00 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:ocfs2_read_locked_inode fs/ocfs2/inode.c:533 [inline]
+RIP: 0010:ocfs2_iget+0x202b/0x2120 fs/ocfs2/inode.c:159
+Code: 00 e8 b9 84 75 fe 4c 8b 84 24 c0 01 00 00 4c 89 f7 48 c7 c6 78 bf 0b 8e ba 18 02 00 00 48 c7 c1 00 00 49 8c e8 16 c9 16 00 90 <0f> 0b e8 ee 3d 0e fe 90 0f 0b e8 e6 3d 0e fe 31 db 65 ff 0d 35 8a
+RSP: 0018:ffffc9000280efe0 EFLAGS: 00010246
+RAX: 0dfa14ca5ec41c00 RBX: ffffc9000280f140 RCX: 0dfa14ca5ec41c00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffffc9000280f270 R08: ffffffff817402fc R09: 1ffff92000501d70
+R10: dffffc0000000000 R11: fffff52000501d71 R12: ffff88804cc18200
+R13: dffffc0000000000 R14: ffffc9000280f160 R15: 1000000000000000
+FS:  00007ff56b8ba6c0(0000) GS:ffff888020800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f99dd1b4ba8 CR3: 000000003671e000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ocfs2_init_global_system_inodes+0xc6/0x730 fs/ocfs2/super.c:437
+ ocfs2_initialize_super fs/ocfs2/super.c:2250 [inline]
+ ocfs2_fill_super+0x3068/0x5880 fs/ocfs2/super.c:994
+ mount_bdev+0x20a/0x2d0 fs/super.c:1679
+ legacy_get_tree+0xee/0x190 fs/fs_context.c:662
+ vfs_get_tree+0x90/0x2a0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3472
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff56ab7b0ba
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 7e 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ff56b8b9e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ff56b8b9ef0 RCX: 00007ff56ab7b0ba
+RDX: 0000000020004480 RSI: 00000000200044c0 RDI: 00007ff56b8b9eb0
+RBP: 0000000020004480 R08: 00007ff56b8b9ef0 R09: 0000000002800400
+R10: 0000000002800400 R11: 0000000000000246 R12: 00000000200044c0
+R13: 00007ff56b8b9eb0 R14: 0000000000004481 R15: 00000000200001c0
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:ocfs2_read_locked_inode fs/ocfs2/inode.c:533 [inline]
+RIP: 0010:ocfs2_iget+0x202b/0x2120 fs/ocfs2/inode.c:159
+Code: 00 e8 b9 84 75 fe 4c 8b 84 24 c0 01 00 00 4c 89 f7 48 c7 c6 78 bf 0b 8e ba 18 02 00 00 48 c7 c1 00 00 49 8c e8 16 c9 16 00 90 <0f> 0b e8 ee 3d 0e fe 90 0f 0b e8 e6 3d 0e fe 31 db 65 ff 0d 35 8a
+RSP: 0018:ffffc9000280efe0 EFLAGS: 00010246
+RAX: 0dfa14ca5ec41c00 RBX: ffffc9000280f140 RCX: 0dfa14ca5ec41c00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffffc9000280f270 R08: ffffffff817402fc R09: 1ffff92000501d70
+R10: dffffc0000000000 R11: fffff52000501d71 R12: ffff88804cc18200
+R13: dffffc0000000000 R14: ffffc9000280f160 R15: 1000000000000000
+FS:  00007ff56b8ba6c0(0000) GS:ffff888020800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005616292ca000 CR3: 000000003671e000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
----
- .../driver-api/driver-model/devres.rst        |  1 -
- drivers/pci/devres.c                          | 56 -------------------
- include/linux/pci.h                           |  2 -
- 3 files changed, 59 deletions(-)
 
-diff --git a/Documentation/driver-api/driver-model/devres.rst b/Documentation/driver-api/driver-model/devres.rst
-index ac9ee7441887..895eef433e07 100644
---- a/Documentation/driver-api/driver-model/devres.rst
-+++ b/Documentation/driver-api/driver-model/devres.rst
-@@ -394,7 +394,6 @@ PCI
-   pcim_enable_device()		: after success, all PCI ops become managed
-   pcim_iomap()			: do iomap() on a single BAR
-   pcim_iomap_regions()		: do request_region() and iomap() on multiple BARs
--  pcim_iomap_regions_request_all() : do request_region() on all and iomap() on multiple BARs
-   pcim_iomap_table()		: array of mapped addresses indexed by BAR
-   pcim_iounmap()		: do iounmap() on a single BAR
-   pcim_iounmap_regions()	: do iounmap() and release_region() on multiple BARs
-diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
-index 0ec2b23e6cac..eef3ffbd5b74 100644
---- a/drivers/pci/devres.c
-+++ b/drivers/pci/devres.c
-@@ -952,62 +952,6 @@ int pcim_request_all_regions(struct pci_dev *pdev, const char *name)
- }
- EXPORT_SYMBOL(pcim_request_all_regions);
- 
--/**
-- * pcim_iomap_regions_request_all - Request all BARs and iomap specified ones
-- *			(DEPRECATED)
-- * @pdev: PCI device to map IO resources for
-- * @mask: Mask of BARs to iomap
-- * @name: Name associated with the requests
-- *
-- * Returns: 0 on success, negative error code on failure.
-- *
-- * Request all PCI BARs and iomap regions specified by @mask.
-- *
-- * To release these resources manually, call pcim_release_region() for the
-- * regions and pcim_iounmap() for the mappings.
-- *
-- * This function is DEPRECATED. Don't use it in new code. Instead, use one
-- * of the pcim_* region request functions in combination with a pcim_*
-- * mapping function.
-- */
--int pcim_iomap_regions_request_all(struct pci_dev *pdev, int mask,
--				   const char *name)
--{
--	int bar;
--	int ret;
--	void __iomem **legacy_iomap_table;
--
--	ret = pcim_request_all_regions(pdev, name);
--	if (ret != 0)
--		return ret;
--
--	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++) {
--		if (!mask_contains_bar(mask, bar))
--			continue;
--		if (!pcim_iomap(pdev, bar, 0))
--			goto err;
--	}
--
--	return 0;
--
--err:
--	/*
--	 * If bar is larger than 0, then pcim_iomap() above has most likely
--	 * failed because of -EINVAL. If it is equal 0, most likely the table
--	 * couldn't be created, indicating -ENOMEM.
--	 */
--	ret = bar > 0 ? -EINVAL : -ENOMEM;
--	legacy_iomap_table = (void __iomem **)pcim_iomap_table(pdev);
--
--	while (--bar >= 0)
--		pcim_iounmap(pdev, legacy_iomap_table[bar]);
--
--	pcim_release_all_regions(pdev);
--
--	return ret;
--}
--EXPORT_SYMBOL(pcim_iomap_regions_request_all);
--
- /**
-  * pcim_iounmap_regions - Unmap and release PCI BARs
-  * @pdev: PCI device to map IO resources for
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 5b5856ba63e1..8fe5d03cdac4 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -2294,8 +2294,6 @@ void __iomem *pcim_iomap(struct pci_dev *pdev, int bar, unsigned long maxlen);
- void pcim_iounmap(struct pci_dev *pdev, void __iomem *addr);
- void __iomem * const *pcim_iomap_table(struct pci_dev *pdev);
- int pcim_iomap_regions(struct pci_dev *pdev, int mask, const char *name);
--int pcim_iomap_regions_request_all(struct pci_dev *pdev, int mask,
--				   const char *name);
- void pcim_iounmap_regions(struct pci_dev *pdev, int mask);
- void __iomem *pcim_iomap_range(struct pci_dev *pdev, int bar,
- 				unsigned long offset, unsigned long len);
--- 
-2.46.0
+Tested on:
 
+commit:         d7a5aa4b Merge tag 'perf-tools-fixes-for-v6.11-2024-08..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15510ad5980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
+dashboard link: https://syzkaller.appspot.com/bug?extid=5bdd4953bc58c8fbd6eb
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
 
