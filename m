@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-290056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5E45954EE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:33:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B5B8954EE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C3501F265D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:33:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40AC1288A78
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4223E1BCA1C;
-	Fri, 16 Aug 2024 16:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C441C232D;
+	Fri, 16 Aug 2024 16:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oRvGps54"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XvMFH7ku"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8715E1B3F0F
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 16:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7BA1C2315;
+	Fri, 16 Aug 2024 16:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723825959; cv=none; b=IoA1uo5nGwr6c6j45BpvdVJAenkaQ0Pob3O9X2/TraW7KOMz+a4OdkuZGnAMj+mMRoZaSMEh56RGYze+FskDv/5QHj3uSa4zcBEEMykDjIzwqcGtKmqDa2xU3edxd5djy9RtdVy2t5O3E0Lcu9ffYsRl7KYh+rxcRAzY3br4L2Y=
+	t=1723825961; cv=none; b=JbRV9eUyzbzzfHXFej9Sw6yJ0WwwM7wGjg7jY02Hs2J1yzJxMhpI8MKOc53QQyjcpIegGGMWuzDpqx1nHiUPsK+3FwjB+vgMn2fAyfM7fIzzIaSeAvcHdOTnq6Cz78DGmoZOtP1MD/C8643OhGcJp1EtdyoelE2pQjgc1eOxchI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723825959; c=relaxed/simple;
-	bh=EPs0IqSoJTfi4M7WPh40SrWqMnzvWxfTqkGPO3jiRnQ=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=D7nhNWvRY2EExz93eBxwr4ZvydXZDMmyuQzId7Who04egJgX944gkd59I3/0vReTsWwZxhosry+MWkUbKW5p5ZvnmCVM386nwX94X6ZkXBAndOvcFBrrY2j8giFvsxTEMStd4GPdWPpIJz7hLlN8W7jp5Hm/ZFwk+Kv8c4dKWAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oRvGps54; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69ED1C32782;
-	Fri, 16 Aug 2024 16:32:39 +0000 (UTC)
+	s=arc-20240116; t=1723825961; c=relaxed/simple;
+	bh=EyaKVt8Rq1vby01DDZlsf9sxr84aXhphW9EMKl3I6gE=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=DbI8iz2juMOIrRzaH6sARIBOCpRA8Kx7XHksCbpvh60xqc0/Ghe9GLPlQX6t14jDF1zJ+FhqdzmTI+Qypo0yzq0PEphBQLCzuB1tchf4rxB76GTKuGuJnwEwOCMPSTTtaIvwH7/PKgsSBvXIrpCGzi11uHyl07tHLY8nctBX3/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XvMFH7ku; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C80AC4AF13;
+	Fri, 16 Aug 2024 16:32:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723825959;
-	bh=EPs0IqSoJTfi4M7WPh40SrWqMnzvWxfTqkGPO3jiRnQ=;
+	s=k20201202; t=1723825961;
+	bh=EyaKVt8Rq1vby01DDZlsf9sxr84aXhphW9EMKl3I6gE=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=oRvGps54XkvBUTtCqz4PwCZl7oLA7IH9tpJBT1ADuMe0vfzfMDzpdpYzLAC1ik4LH
-	 vdgnHe0L1ZJMdePLzK2/n8meL4sxQp+mkj+HZwrHOctNNwhguboj/Rd48e9Li+z07E
-	 yK9Ei/NqA7mplB5BtmljWaXeKR7hW3ldvjS1Wf5G64EaiUN1OAJS4uFG0Ewv4OgaPD
-	 7Prugn9ntmc07Ghhjt8RJnAFo4bo8amyyX98BMktK++lzX2OJv1UzUO/RsXsOXeKiS
-	 fvLUjN0JkVjVtgSM1kyUyen5cdG+47lZndKxlixyUUMJ8aEbIIhIO9/Cu8Zyqt7EOL
-	 CyGgpb02IGRww==
+	b=XvMFH7kuQ9B4HkyD0D10mR12je/GWOlNgDRt/imYBhxsV6gAEJlbK2X7ag6g/XVFz
+	 Yittaf8OiIXbGIF9MvhhZiKdoLoEh7fmvtE5nFWQnrCmahIVDnFv1LCaqTujNWCX+E
+	 Fsnq1b7/3ASTe1U7b4eiL5U0ORwk9HeEx3hJDr0JNK7Z3dOxfYAgb0xBAvKF4c7eo2
+	 432QxlKC19ACz2Md8GC+5FnDfil4OUfTOfJyjw3PbmMAnmRCbZsxB78m5ypoiXQFhc
+	 y4rJsngOlRI/BaZKdICZCkHz3HsObEngKU6yJ0v34DxYOE6c9a8/0JWZaRcV/CWchL
+	 znLTtOsEyGNwg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB42138231F8;
-	Fri, 16 Aug 2024 16:32:39 +0000 (UTC)
-Subject: Re: [git pull] drm fixes for 6.11-rc4
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE82C38231F8;
+	Fri, 16 Aug 2024 16:32:41 +0000 (UTC)
+Subject: Re: [GIT PULL] sound fixes for 6.11-rc4
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAPM=9tx8NORNyjwOMapLrZwGEVxgVxYDmChmkLOwz1vyYUgoGw@mail.gmail.com>
-References: <CAPM=9tx8NORNyjwOMapLrZwGEVxgVxYDmChmkLOwz1vyYUgoGw@mail.gmail.com>
+In-Reply-To: <87sev43lh1.wl-tiwai@suse.de>
+References: <87sev43lh1.wl-tiwai@suse.de>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAPM=9tx8NORNyjwOMapLrZwGEVxgVxYDmChmkLOwz1vyYUgoGw@mail.gmail.com>
-X-PR-Tracked-Remote: https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2024-08-16
-X-PR-Tracked-Commit-Id: fee9d135e2fd5963a7f466cd1ef2060731a1ab29
+X-PR-Tracked-Message-Id: <87sev43lh1.wl-tiwai@suse.de>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.11-rc4
+X-PR-Tracked-Commit-Id: 829e2a23121fb36ee30ea5145c2a85199f68e2c8
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 37b20e9a5810e132a21c54f858043b22671396dd
-Message-Id: <172382595844.3569819.178240747837345650.pr-tracker-bot@kernel.org>
-Date: Fri, 16 Aug 2024 16:32:38 +0000
-To: Dave Airlie <airlied@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+X-PR-Merge-Commit-Id: d58c542a33e719029ae3fc1343b4cb09c125cb09
+Message-Id: <172382596015.3569819.16954797403646488041.pr-tracker-bot@kernel.org>
+Date: Fri, 16 Aug 2024 16:32:40 +0000
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Fri, 16 Aug 2024 14:09:28 +1000:
+The pull request you sent on Fri, 16 Aug 2024 10:44:58 +0200:
 
-> https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2024-08-16
+> git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.11-rc4
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/37b20e9a5810e132a21c54f858043b22671396dd
+https://git.kernel.org/torvalds/c/d58c542a33e719029ae3fc1343b4cb09c125cb09
 
 Thank you!
 
