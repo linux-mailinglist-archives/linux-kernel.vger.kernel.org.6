@@ -1,150 +1,188 @@
-Return-Path: <linux-kernel+bounces-289702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98288954ABB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:07:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0B5D954AC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:08:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F3F4B21728
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:07:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11A851C235D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA041B86EA;
-	Fri, 16 Aug 2024 13:07:23 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7712F1B8E8A;
+	Fri, 16 Aug 2024 13:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="IehBWnw/"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4F616EC0E
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 13:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835A11B86C7;
+	Fri, 16 Aug 2024 13:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723813642; cv=none; b=JbidioUm2XPYMTbw0GejiNHJcSQKP2gxU2EQk4ULTkHx5WlkPmK1hFlDF2ZWZnDnN1RdCYzhYrtdZCz7DCObpivCgx/Dj/QrcGHgo9mjdXDQg5d9clMSgDA/CF17d2GUiLLZzuUQNnOFTSoP8f6EuD3U8taubrXY2yREATs4nuc=
+	t=1723813719; cv=none; b=ewUytqagUel3MaDOitMFwSwQUsEH5FpNUjaHVzZe5oxlsPTbgAi6Rv1ptXBLMwkHgcMxJJ3DHXcGMTecWnPk1xEqbv7p2QV4G3prqHsCQOY8V3CKAIX751F55yDFh47mLtrYDlpXiq5+rsR7DkPRXweQE9uXRcicMEZJG7SLh/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723813642; c=relaxed/simple;
-	bh=L0HmvgiYBapFgYk2WLFw55WRD/kTFaqhncFko4ZwkBE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mNHzaGEmF/TSxHHoGN6gaxqhhiA3QoqQMdVV3uRi8zr8honkkOqT7oSzl/nMIPE/I3XGgjvM2Inko+fw6QEnikjNeouXwVoP+ug1S5eWAvOSveNY4kH8Qzc1JJyI08nbEWljyJjHPCegBbk85wy4aes/HlkuPnQGsrZbUX067wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81f8c78cc66so196080939f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 06:07:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723813640; x=1724418440;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TyMkDBKqyj36JPXBuwBod4T135oilhSCwmX1ZPtj3sQ=;
-        b=EIwjKEheYxTT/YhDiAXJRRMnvIpB5RufS+IrPDftgrKjAnVaHjjneurlghgPN6s0S5
-         Rsz2u0H4lRr4IllNs1uJwAfcBatJEytH+E3K0PuHIXi9DOx3Aw4pgQTp0HHz5SQEAsYI
-         LyJR6qatFy2VUZfcYSyM8S5lISbbPn+uEggbfuNo+TpFH7TgSFW4B0jaRXaW1ZETGi8h
-         FX0GNcifLQu82FWNe3ece+vZfzUdVdWASfhSoArhx6BjHmunq4Xh3x61OWRiVlkDJ8hW
-         LZWKcRtAcb7TdyC0cyahc/i0vMN88wf8qG/Tg/+y1FMpGXu3jfWroDS8Ac1K97F+vziP
-         qtxw==
-X-Forwarded-Encrypted: i=1; AJvYcCXw1BInfR/1o+zsWG2Y+hd2VSReb+bEBtFpHEMA2TkDYKtPhKi+q0ysmZRAUFMoYlioWfz3e4dG2qsP5WxzNUZu3B1AkVQ1vDVLz9oL
-X-Gm-Message-State: AOJu0Yy3gNG1J3TtfPioKodsl+6c5ywi8K42y60MlbWuaJqnVkZ5scpW
-	h6hPWD6V/MdRua8m92A5V6tKVhI7mpTb8yXik/GGU+kMkLytAx4rC8AuzQjW6x3LuliT4/iMhiu
-	8/z5JzFThV9MVMU9SR4Q/CTTgiG4/WR2FoEkoPZKqzli1XY6sTBvuMoE=
-X-Google-Smtp-Source: AGHT+IGjua6JpoA+z6hx7QNHNQWcC3nh3FhqFDLriCJMoggKSjfiVcWyOYnNmx2110f3aMUdrYWbMJ3JMYk2qD+7LpGfD+ik3ARN
+	s=arc-20240116; t=1723813719; c=relaxed/simple;
+	bh=uLZRSEKvV+sYwD5VMfcEH45Ip8gLy4Lvpolp9iUOzDA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YzjbyucbsLM5EY8GjfWoGyQ7f8WKqiNqojeKS1ba4g5WZPKL4SVBq6PsOXvs4wJacI34jqfTBZSiw3Q3WVDWda8EcvX9bwptCLCEYvGo+fALzpoi2GBjoRva5EmojP5D9Qphbrakvj1LCvHu4aT9oUq1ZMOvHM7YoutQSed3T7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=IehBWnw/; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1723813715; x=1724072915;
+	bh=62zRic87JxqPmj05J36bTPKEn8/CdP3vVB4/nw0/CTU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=IehBWnw/g7yU1gMhY6AuaUfxXHqS5k9KGX9wjWLHdQcd2DTHryxyIqpvL/eE3BWLU
+	 laDCiUJ6FKXyyQdw06pX/jh9l0kk1ulv5JvQ6fsw/xfGOqdIwB/g8uuIdDKPn4DmYB
+	 2TstslElKcciKLBDmYD9F/Uxt7I3akIC0G5lS9Ze3KXRTW2t8ZcpJlQC/TY9lNdgyK
+	 75iM92e/SohGRKdIYpGJtO/cx/ystzGz3FLSkDHIfyebd2oHV/yoAFZJFO2wAafmXN
+	 pT+dSfMwawEqSZRi9w8nNzdLaAIKSb8rIhihcCZ+GNpdrlMa5TvegmQbkITJqxI+7y
+	 rV8cPaz+90EgA==
+Date: Fri, 16 Aug 2024 13:08:29 +0000
+To: Gary Guo <gary@garyguo.net>, Boqun Feng <boqun.feng@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Alice Ryhl <aliceryhl@google.com>, Andreas Hindborg <nmi@metaspace.dk>, Jens Axboe <axboe@kernel.dk>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, "Behme Dirk (XC-CP/ESB5)" <Dirk.Behme@de.bosch.com>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] rust: block: fix wrong usage of lockdep API
+Message-ID: <2e3bc20e-ca91-45bb-9e35-586620e56d96@proton.me>
+In-Reply-To: <20240815224234.561de1b5.gary@garyguo.net>
+References: <20240815074519.2684107-1-nmi@metaspace.dk> <20240815074519.2684107-3-nmi@metaspace.dk> <CAH5fLgih1QtO-ACyoifNsgqd=VtJimoGV+aD=3iHG0wb+iDGyw@mail.gmail.com> <20240815200738.096dca4a.gary@garyguo.net> <Zr5z7N2JCMBbQ_YK@boqun-archlinux> <20240815224234.561de1b5.gary@garyguo.net>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 4f98ced78d52e0365dbab01ea38cf10610a2e445
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3410:b0:7f6:1e9c:d6f4 with SMTP id
- ca18e2360f4ac-824f271e077mr10873139f.3.1723813640070; Fri, 16 Aug 2024
- 06:07:20 -0700 (PDT)
-Date: Fri, 16 Aug 2024 06:07:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000acfa76061fcca330@google.com>
-Subject: [syzbot] [ntfs3?] kernel panic: stack is corrupted in vprintk_emit
-From: syzbot <syzbot+4d2aaeff9eb5a2cfec70@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On 15.08.24 23:42, Gary Guo wrote:
+> On Thu, 15 Aug 2024 14:32:28 -0700
+> Boqun Feng <boqun.feng@gmail.com> wrote:
+>> On Thu, Aug 15, 2024 at 08:07:38PM +0100, Gary Guo wrote:
+>>> On Thu, 15 Aug 2024 10:04:56 +0200
+>>> Alice Ryhl <aliceryhl@google.com> wrote:
+>>>> On Thu, Aug 15, 2024 at 9:49=E2=80=AFAM Andreas Hindborg <nmi@metaspac=
+e.dk> wrote:
+>>>>> From: Andreas Hindborg <a.hindborg@samsung.com>
+>>>>>
+>>>>> When allocating `struct gendisk`, `GenDiskBuilder` is using a dynamic=
+ lock
+>>>>> class key without registering the key. This is incorrect use of the A=
+PI,
+>>>>> which causes a `WARN` trace. This patch fixes the issue by using a st=
+atic
+>>>>> lock class key, which is more appropriate for the situation anyway.
+>>>>>
+>>>>> Fixes: 3253aba3408a ("rust: block: introduce `kernel::block::mq` modu=
+le")
+>>>>> Reported-by: "Behme Dirk (XC-CP/ESB5)" <Dirk.Behme@de.bosch.com>
+>>>>> Closes: https://rust-for-linux.zulipchat.com/#narrow/stream/288089-Ge=
+neral/topic/6.2E11.2E0-rc1.3A.20rust.2Fkernel.2Fblock.2Fmq.2Ers.3A.20doctes=
+t.20lock.20warning
+>>>>> Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
+>>>>
+>>>> LGTM. This makes me wonder if there's some design mistake in how we
+>>>> handle lock classes in Rust.
+>>>>
+>>>> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+>>>
+>>> I agree. The API that we current have is designed without much
+>>> consideration into dynamically allocated keys, and we use `&'static
+>>> LockClassKey` in a lot of kernel crate APIs.
+>>>
+>>> This arguably is wrong, because presence of `&'static LockClassKey`
+>>> doesn't mean the key is static. If we do a
+>>> `Box::leak(Box::new(LockClassKey::new()))`, then this is a `&'static
+>>> LockClassKey`, but lockdep wouldn't consider this as a static object.
+>>>
+>>> Maybe we should make the `new` function unsafe.
+>>>
+>>
+>> I think a more proper fix is to make LockClassKey pin-init, for
+>> dynamically allocated LockClassKey, we just use lockdep_register_key()
+>> as the initializer and lockdep_unregister_key() as the desconstructor.
+>> And instead of a `&'static LockClassKey`, we should use `Pin<&'static
+>> LockClassKey>` to pass a lock class key. Of course we will need some
+>> special treatment on static allocated keys (e.g. assume they are
+>> initialized since lockdep doesn't require initialization for them).
+>>
+>>
+>> Pin initializer:
+>>
+>> =09impl LockClassKey {
+>> =09    pub fn new() -> impl PinInit<Self> {
+>> =09=09pin_init!(Self {
+>> =09=09    inner <- Opaque::ffi_init(|slot| { lockdep_register_key(slot) =
+})
+>> =09=09})
+>> =09    }
+>> =09}
+>>
+>> LockClassKey::new_uninit() for `static_lock_class!`:
+>>
+>>
+>> =09impl LockClassKey {
+>> =09    pub const fn new_uninit() -> MaybeUninit<Self> {
 
-syzbot found the following issue on:
+We don't need to wrap it in `MaybeUninit`, since it already is
+containing an `Opaque`. But I think we don't need to expose this
+function at all, see below.
 
-HEAD commit:    d7a5aa4b3c00 Merge tag 'perf-tools-fixes-for-v6.11-2024-08..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1451b6d5980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
-dashboard link: https://syzkaller.appspot.com/bug?extid=4d2aaeff9eb5a2cfec70
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1450656b980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1391c35d980000
+>> =09        ....
+>> =09    }
+>> =09}
+>>
+>> and the new `static_lock_class!`:
+>>
+>> =09macro_rules! static_lock_class {
+>> =09    () =3D> {{
+>> =09=09static CLASS: MaybeUninit<$crate::sync::LockClassKey> =3D $crate::=
+sync::LockClassKey::new_uninit();
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-d7a5aa4b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/af15738cca6c/vmlinux-d7a5aa4b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/62dacb1384ee/bzImage-d7a5aa4b.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/9787f2a8ed93/mount_0.gz
+    () =3D> {{
+        // SAFETY: `LockClassKey` contains a single field of type `Opaque` =
+and thus an uninitialized
+        // value is valid.
+        static CLASS: $crate::sync::LockClassKey =3D unsafe {
+            ::core::mem::MaybeUninit::uninit().assume_init()
+        };
+        Pin::from_static(&CLASS)
+    }};
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4d2aaeff9eb5a2cfec70@syzkaller.appspotmail.com
+That way users can either create a static class, or a dynamic one via
+`new_dynmaic` (I think we should rename it while we're at it), which is
+always registered.
 
-ntfs3: loop0: Different NTFS sector size (1024) and media sector size (512).
-ntfs3: loop0: Failed to load $UpCase (-22).
-Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: vprintk_emit+0x764/0x770
-CPU: 0 UID: 0 PID: 5459 Comm: syz-executor295 Not tainted 6.11.0-rc3-syzkaller-00156-gd7a5aa4b3c00 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- panic+0x349/0x860 kernel/panic.c:348
- __stack_chk_fail+0x15/0x20 kernel/panic.c:821
- vprintk_emit+0x764/0x770
- _printk+0xd5/0x120 kernel/printk/printk.c:2373
- ntfs_printk+0x3ad/0x420 fs/ntfs3/super.c:93
- ntfs_fill_super+0x2eb8/0x4730
- get_tree_bdev+0x3f7/0x570 fs/super.c:1635
- vfs_get_tree+0x90/0x2a0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3472
- do_mount fs/namespace.c:3812 [inline]
- __do_sys_mount fs/namespace.c:4020 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb031d0492a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 1e 09 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffce447eda8 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fb031d0492a
-RDX: 000000002001f800 RSI: 000000002001f840 RDI: 00007ffce447edf0
-RBP: 0000000000000004 R08: 00007ffce447ee30 R09: 000000000001f825
-R10: 0000000000000801 R11: 0000000000000286 R12: 00007ffce447edf0
-R13: 00007ffce447ee30 R14: 0000000000000003 R15: 0000000000200000
- </TASK>
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+> nit: this could just be `MaybeUninit::uninit()`
+>=20
+>>
+>> =09        // SAFETY: `CLASS` is pinned because it's static
+>> =09=09// allocated. And it's OK to assume it's initialized
+>> =09=09// because lockdep support uninitialized static
+>> =09=09// allocated key.
+>> =09=09unsafe { Pin::new_unchecked(CLASS.assume_init_ref()) }
+>=20
+> nit: this could be `Pin::from_static(unsafe { CLASS.assume_init_ref() })`
+>=20
+>> =09    }};
+>> =09}
+>>
+>> Thoughts?
+>=20
+> I think this design looks good. I suggested adding unsafe as a quick
+> way to address the pontential misuse, when we have no user for
+> dynamically allocated keys.
 
+I think we should do it properly, since the solution seems easy.
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Cheers,
+Benno
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
