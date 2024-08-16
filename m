@@ -1,170 +1,164 @@
-Return-Path: <linux-kernel+bounces-290204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 433B19550B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:20:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 551CF9550B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA0EA1F23455
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:20:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C87C91F233CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF651C2329;
-	Fri, 16 Aug 2024 18:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBF31C37B2;
+	Fri, 16 Aug 2024 18:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UoUxW7KC"
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UcxQHT6A"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9982778B50
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 18:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD547DA90
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 18:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723832426; cv=none; b=eTolxMC+twSmVRa6tXU7EJ1BdC5T1MeEpGi4gYQgyFgBpE9/ddAcE2E154KS4+2+HmqSJ5CrgfdhojFkO+N/A1mDc6GsOLRIrZBUEZCvs4LjgbBprVJgXGIy44gJjgZu+O/bwiYALQ2qAxB4iL4Uhox8VpihELisPOVj8s2dd+o=
+	t=1723832442; cv=none; b=iBl1dIskqRtjcoT0T816mvWZkEdZl8AH4VoyWF78+B8zqJNb9cDj1kZwObvYEjjHRWFliNFzTTUCRj+t3kJNuzfIm8+RqjVBlQ3ntxT1qWlZHORbhIHDzEXvZgmLXQWum7pWgBLFELUNJanRb9dXGkOTIsKCp1R3iwHkndB4WnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723832426; c=relaxed/simple;
-	bh=n/FXMFtOMSOKWHPC5EaF2MRbry0sjl3NmT0Egf/WIbs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sSO4r7js3VHAqjGE21/hHvhiFUhUgUSpXK8Lt4PuSeXn36pVq1E5FqqGLVlBUiADj8dO/6xappnSHV0aAVXheUKteHj+bQ1sNFl7S4PpFjPBirH5z6X2C3AYScqBk/+E1jnUZulcOG+mGb0QX1ALALgUMPcNUwuWatMyEUUnvT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UoUxW7KC; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-260f033fda3so1370996fac.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 11:20:24 -0700 (PDT)
+	s=arc-20240116; t=1723832442; c=relaxed/simple;
+	bh=IbVmYFoIxyQulrGV2li59J1UGx7YeDN54yW8QQYBykc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=h8pk1sgFW7vr1eu636iujUH73UwuoWorCsW4xVozKIdyhbu0Z5lTuC/hEBF/PQqQTsQlnDe75imh43ZGBJ++8Kj9ld5OG4BCtmgkl4GtccA/IzBk1FQtlsJcxGRtorfAIMcM0IpXiqg2pErbzD2daJZLVjzY34myCaOdSHA5Zzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UcxQHT6A; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e1173581259so2843372276.2
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 11:20:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723832423; x=1724437223; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fPb+ESAaq2wrltkCUy/I577774QCbBTFaaMwP+kYFKM=;
-        b=UoUxW7KCBBj5oza7v6iklgL3Vll1yazXcra5QA0XEWSs1lja4VBt83JNe/EhlztCHN
-         lvgp1v09e4c280rVz8vCI3i0SEjmGspxrJ9949y9RvUnk0ehtcJNVPJPFjP3Uwm0V8k+
-         hWBUh8dReQhHWIMLOfyNgJc1tKBSiOX5G+NRQ=
+        d=google.com; s=20230601; t=1723832439; x=1724437239; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=N3tmSlk8QlfN4jJU+Ovee8DLWMKdOuytFzcWHsW6egI=;
+        b=UcxQHT6AhAMhgRKwkaWv2qwVvCbCIjDZanMpY+imawmgO+Jy84qqB9RqXLiWMh+PR7
+         mjVoZlhSZqm8u+A/3xNbro6CKu+ruI8AaUkfzH0sT9bzkOB6bsWk7W6LRuX2GfbNgvNk
+         A21uDumh7dZmWv04IUE42angsxrhbGYkgeUUfRB9EqhJmtzpKrfrK+aTxgVWR+BFJT05
+         GKJLPHwY+yHb9ZQBQhN4XqJWohTGj4jJpjbDC+AobV1DmoBn9jGZ3gwzCYxz2F3q5OBV
+         /z+GagH5wLXl2thfcFKP3/ibbuQXPf6BzF+X0C7HDQlnb2HbDPWG0cxo+8fNWgchoq+r
+         Jb/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723832423; x=1724437223;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fPb+ESAaq2wrltkCUy/I577774QCbBTFaaMwP+kYFKM=;
-        b=r6n94RWgORd1rfdNvYcyWJ1hwuJt/4WtIMLAz0vGbCYvvTiWiG/W+Sf3guxgRvNII2
-         CKKiN0/nb3UT7ZrRGGIpncHJgngfb1g54l7bYkjKJcv0oImfGj/GzLGtNBy8fat5ri2T
-         XcjJnnBtgnlr4bYnzpwZrC3l+f/yLJFyjnpSV3YqfWHooOlSFoXePE5+ABTGZqCirk+H
-         nxV/Ri7n2zkRLSpE5ZUqlSJ+BWGBhJQU9qecQCLGzenxB9Wpem6qdrvLft9LqCLQmgtT
-         6lHKVE+hDH7/zzi1HtUNaJSlCiUNMcslAbEr2u8oi5dLFZCrjmE5iYXUnMCkQDjQtGHT
-         /1fw==
-X-Forwarded-Encrypted: i=1; AJvYcCUsiJ9hZwjoromMG6rrtwq4O+dHp+Yy9jOptAvwZhp7GrcNLuehFj07pRE4VB2BeK/5TtCobonkKkIX1eeO6gsiaS70YqNgLpY1mF5z
-X-Gm-Message-State: AOJu0YxGRhf9jHOPCla2xONbvN7Rs5FRzbKVnWLGC4a+WML7rHayQoIx
-	jZv68tsn7oZzJvFVDq1ypBQBZIIPlyWqOAG3lxLD3y1/R4piOtHDwhgt8Pb4yVF8xX4wZX2jPDO
-	wdgpmT2heo9Hz9hYdY4As5/TLxrQORHFWvgCY
-X-Google-Smtp-Source: AGHT+IFh6uaaGAPXUqIFgzUea3SoJXHOqApu/hbIQHCcwYCPdKTsA88ruKomvfRzGZOMDVrdfjZErMZfrsa7e4nKwfI=
-X-Received: by 2002:a05:6870:a117:b0:265:b32b:c45f with SMTP id
- 586e51a60fabf-27033c40e26mr558194fac.0.1723832423583; Fri, 16 Aug 2024
- 11:20:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723832439; x=1724437239;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N3tmSlk8QlfN4jJU+Ovee8DLWMKdOuytFzcWHsW6egI=;
+        b=MF80+48jaEq5hrtqwQ/OEPb/IEwQbTvr2puvTGYyl3BIWJd/jsbUuCW5HD2xo7pnIw
+         Qn5GoKYQ4DDilZTbGSZ/wM2C/jEUTarUn3mpcTXww/K10jH3f1A2BxCU6HFNWsMYKhH+
+         +dbcp/xlCYUhGnk4ex1AhwspeDZ3AV8jvDwIwvhEvbVsij+Nfa+3YBHfIE/7G0wprFSP
+         PKcK/dh+Snd7bvNAZtXkVQ8P1+zJ4daueu9vdSFZEjxsYDXK6daSND5msQmR4xUgrZqM
+         wiug4d7T6DgA2urbY2yvIpwtLNMmIZYR+lzOw/tXXh5pd56f63O8KEiB1SKGtFb/TPRx
+         tyGA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0EcjZ1YdtBotNhFYtsh0WSojMu7FGnBZfh5uN8IOLjhixI44vQSPwj2EYatAbedSopb3MProD0umd3v3uFIXrGlFWXAoKxPMtcL2+
+X-Gm-Message-State: AOJu0Yw1Fx35X3ghtSV7G2fIDloseDb8ACY4k5JK0Se9H0zvEXaYGOn4
+	L9IzlWA3cD+G/IPBGmx+dRJYEBjyzfUM8dRFxZi/aVjInE2hC0JimQu5tcxq/RtL8kPHU6VmfaF
+	3rQ==
+X-Google-Smtp-Source: AGHT+IH53F61lOun6gFWjC7pOAiTbzvO9f/I6y3MGI837xE97OoqGPqg4QBoHrpu5k9vU+7gjfC5O97rXuI=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:2943:0:b0:e11:5c41:54e2 with SMTP id
+ 3f1490d57ef6-e1180ba7fa8mr6979276.0.1723832439504; Fri, 16 Aug 2024 11:20:39
+ -0700 (PDT)
+Date: Fri, 16 Aug 2024 11:20:38 -0700
+In-Reply-To: <000000000000fd4bde061b17c4a0@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240807211309.2729719-1-pedro.falcato@gmail.com>
- <20240808161226.b853642c0ecf530b5cef2ecc@linux-foundation.org>
- <CAKbZUD0_BSv6KOgaRuqjLWGnttzcprcUu5WysSZeX8FXAvui5w@mail.gmail.com>
- <CALmYWFs0v07z5vheDt1h3hD+3--yr6Va0ZuQeaATo+-8MuRJ-g@mail.gmail.com>
- <CABi2SkUYAc557wwOriwUW3tfTc_U9MDPQ4bE-Q+tTdNgGT3UuQ@mail.gmail.com>
- <CAKbZUD3_3KN4fAyQsD+=p3PV8svAvVyS278umX40Ehsa+zkz3w@mail.gmail.com>
- <CABi2SkVrEHbWa4AsffX9RXv_a-KjwZajkscZ3Bi4JWzJ4fr6wQ@mail.gmail.com> <CAKbZUD0ZA8q0QdSs_OwbdfSvM3Ze+0MaMQsn2dKM2pN6nn3J4g@mail.gmail.com>
-In-Reply-To: <CAKbZUD0ZA8q0QdSs_OwbdfSvM3Ze+0MaMQsn2dKM2pN6nn3J4g@mail.gmail.com>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Fri, 16 Aug 2024 11:20:11 -0700
-Message-ID: <CABi2SkVj8c7Cw_4DQ-U55Nkv5YCYR4WhjU3U_cw-cU2o7MAhMQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] mm: Optimize mseal checks
-To: Pedro Falcato <pedro.falcato@gmail.com>
-Cc: Jeff Xu <jeffxu@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, oliver.sang@intel.com, 
-	torvalds@linux-foundation.org, Michael Ellerman <mpe@ellerman.id.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <000000000000fd4bde061b17c4a0@google.com>
+Message-ID: <Zr-Ydj8FBpiqmY_c@google.com>
+Subject: Re: [syzbot] [kvm?] WARNING in kvm_put_kvm
+From: Sean Christopherson <seanjc@google.com>
+To: syzbot <syzbot+d8775ae2dbebe5ab16fd@syzkaller.appspotmail.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, pbonzini@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, Aug 16, 2024 at 11:09=E2=80=AFAM Pedro Falcato <pedro.falcato@gmail=
-.com> wrote:
->
-> On Fri, Aug 16, 2024 at 6:07=E2=80=AFPM Jeff Xu <jeffxu@chromium.org> wro=
-te:
-> > Please run this test on the latest kernel branch to verify:
-> >
-> > static void test_munmap_free_multiple_ranges(bool seal)
-> > {
-> >         void *ptr;
-> >         unsigned long page_size =3D getpagesize();
-> >         unsigned long size =3D 8 * page_size;
-> >         int ret;
-> >         int prot;
-> >
-> >         setup_single_address(size, &ptr);
-> >         FAIL_TEST_IF_FALSE(ptr !=3D (void *)-1);
-> >
-> >         /* unmap one page from beginning. */
-> >         ret =3D sys_munmap(ptr, page_size);
-> >         FAIL_TEST_IF_FALSE(!ret);
-> >
-> >         /* unmap one page from middle. */
-> >         ret =3D sys_munmap(ptr + 4 * page_size, page_size);
-> >         FAIL_TEST_IF_FALSE(!ret);
-> >
-> >         /* seal the last page */
-> >         if (seal) {
-> >                 ret =3D sys_mseal(ptr + 7 * page_size, page_size);
-> >                 FAIL_TEST_IF_FALSE(!ret);
-> >         }
-> >
-> >         /* munmap all 8  pages from beginning */
-> >         ret =3D sys_munmap(ptr, 8 * page_size);
-> >         if (seal) {
-> >                 FAIL_TEST_IF_FALSE(ret < 0);
-> >
-> >                 /* verify none of existing pages in  the range are unma=
-pped */
-> >                 size =3D get_vma_size(ptr + page_size, &prot);
-> >                 FAIL_TEST_IF_FALSE(size =3D=3D 3 * page_size);
-> >                 FAIL_TEST_IF_FALSE(prot =3D=3D 4);
-> >
-> >                 size =3D get_vma_size(ptr +  5 * page_size, &prot);
-> >                 FAIL_TEST_IF_FALSE(size =3D=3D 2 * page_size);
-> >                 FAIL_TEST_IF_FALSE(prot =3D=3D 4);
-> >
-> >                 size =3D get_vma_size(ptr +  7 * page_size, &prot);
-> >                 FAIL_TEST_IF_FALSE(size =3D=3D 1 * page_size);
-> >                 FAIL_TEST_IF_FALSE(prot =3D=3D 4);
-> >         } else {
-> >                 FAIL_TEST_IF_FALSE(!ret);
-> >
-> >                 /* verify all pages are unmapped */
-> >                 for (int i =3D 0; i < 8; i++) {
-> >                         size =3D get_vma_size(ptr, &prot);
-> >                         FAIL_TEST_IF_FALSE(size =3D=3D 0);
-> >                 }
-> >         }
-> >
-> >         REPORT_TEST_PASS();
-> > }
-> >
->
-> FWIW this test does not work correctly on my end due to sealed VMAs
-> getting merged. I hacked up setup_single_address to work around that,
-> and the test does pass on both 6.10.5 and my local mseal changes
-> branch.
-Yes. you would need to comment out other tests and run this test only,
-it didn't consider the case that sealed vma will merge with another
-sealed vma (created from another test)
+On Mon, Jun 17, 2024, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1695b7ee980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=b8786f381e62940f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=d8775ae2dbebe5ab16fd
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/a4edf8b28d7f/disk-2ccbdf43.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/5f9b0fd6168d/vmlinux-2ccbdf43.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/a2c5f918ca4f/bzImage-2ccbdf43.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+d8775ae2dbebe5ab16fd@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 17017 at kernel/rcu/srcutree.c:653 cleanup_srcu_struct+0x37c/0x520 kernel/rcu/srcutree.c:653
+> Modules linked in:
+> CPU: 0 PID: 17017 Comm: syz-executor.4 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+> RIP: 0010:cleanup_srcu_struct+0x37c/0x520 kernel/rcu/srcutree.c:653
+> Code: 83 c4 20 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc 90 0f 0b 90 48 83 c4 20 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc 90 <0f> 0b 90 e9 35 ff ff ff 90 0f 0b 90 48 b8 00 00 00 00 00 fc ff df
+> RSP: 0018:ffffc90003567d20 EFLAGS: 00010202
+> RAX: 0000000000000001 RBX: ffffc90002d6e000 RCX: 0000000000000002
+> RDX: fffff91ffffab294 RSI: 0000000000000008 RDI: ffffe8ffffd59498
+> RBP: ffff88805b6c0000 R08: 0000000000000000 R09: fffff91ffffab293
+> R10: ffffe8ffffd5949f R11: 0000000000000000 R12: ffffc90002d778a8
+> R13: ffffc90002d77880 R14: ffffc90002d77868 R15: 0000000000000004
+> FS:  00007fa719dec6c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000020078000 CR3: 000000006176a000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  kvm_destroy_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:1351 [inline]
+>  kvm_put_kvm+0x8df/0xb80 arch/x86/kvm/../../../virt/kvm/kvm_main.c:1380
+>  kvm_vm_release+0x42/0x60 arch/x86/kvm/../../../virt/kvm/kvm_main.c:1403
+>  __fput+0x408/0xbb0 fs/file_table.c:422
+>  task_work_run+0x14e/0x250 kernel/task_work.c:180
+>  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+>  exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+>  exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+>  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+>  syscall_exit_to_user_mode+0x278/0x2a0 kernel/entry/common.c:218
+>  do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-The test didn't pass with the V2 patch (the seal =3D true) case.
+syzbot reported a rash of KVM cleanup_srcu_struct() splats, and while they suggest
+that KVM has a rogue SRCU reader, I strongly suspect that something is/was going
+sideways with bcachefs, and KVM is an innocent bystander.  All of the splats have
+bcachefs activity shortly before the failure, and syzbot has never managed to find
+a reproducer.
 
--Jeff
+If if KVM were at fault, e.g. was accessing SRCU after its freed, I would expect
+at least one report to not include bcachefs activity, and I would think we'd have
+at least one reproducer.
 
->
-> --
-> Pedro
+Furthermore, except for the __timer_delete_sync() splat, all of the issues
+mysteriously stopped occuring at roughly the same time, and I definitely don't
+recall fixing anything remotely relevant in KVM.
+
+So, I'm going to close all of the stale reports as invalid, and assign the
+__timer_delete_sync() to bcachefs, because again there's nothing in there that
+suggests KVM is at fault.
+
+        general protection fault in detach_if_pending (3) bcachefs kvm		5	52d	52d	
+        general protection fault in get_work_pool (2) kvm			5	59d	59d	
+        WARNING in kvm_put_kvm kvm				                14	51d	60d	
+        KASAN: wild-memory-access Read in __timer_delete_sync kvm		5	14d	81d	<= ???
+        WARNING in srcu_check_nmi_safety kvm				        255	51d	104d	
+        WARNING in cleanup_srcu_struct (4) kvm bcachefs				3567	51d	105d	
+
+#syz invalid
 
