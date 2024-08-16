@@ -1,80 +1,98 @@
-Return-Path: <linux-kernel+bounces-290109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A182954F83
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:04:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F40D954F82
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:04:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C8C11C21715
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:04:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 953541C216A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD3B1BF307;
-	Fri, 16 Aug 2024 17:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E335B1C0DF2;
+	Fri, 16 Aug 2024 17:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T0zjFfn+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U8GWKdEh"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572981C230B
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 17:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B043136E30;
+	Fri, 16 Aug 2024 17:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723827851; cv=none; b=T8Pd5nyGJNCovdPEG26nkVlW8Fu2OK/JhnYxEipRc/XA5PXGDyL+9VfuMWYk3+EylutHb+9ammfNEnlENHJWFvGPTfywMVh7wJ4G3iatbkSYE7+MhbFUaw9pe9wI9fqiyxp+kCcbjQgO4n1o7Y+dPQQeWOJPEJkQo3WMjnV4MZA=
+	t=1723827846; cv=none; b=fUe/M5qmMMM4xByNF13ZsAWzNpqMFSpEiOAoOqf6LU+TUiALG6AVKSjCofSRFncQQlgFi8zoMpFr3cokBVj1qbMn0jc5+L4cAqX0lugy1gK73fFVcx5JdzqO0BQumD3O3wEzMni8CiEBS1Ew3IJessW+ijle3EBUJp7CzwtvB6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723827851; c=relaxed/simple;
-	bh=P20DWhVVbXE78SrQLtmrGxDo+7IQpJR9AulDZ0zkIh0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=noMENAPSCKwL8m3b0mDKmToWa//OR0t3FgSQPC1U3rXoMXrMCUXRM3n1Rc5x1mo8N3s9q10Dy4HgJCKhYgBfZ36Jsvlnv1TGxdLyEb5QkA7lqndaE1DYyMLOw0zSJKmF/OoFtJoNRolIxO0ZH59euYif2Xrb4vwTRFOvGtfVgdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T0zjFfn+; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723827849; x=1755363849;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=P20DWhVVbXE78SrQLtmrGxDo+7IQpJR9AulDZ0zkIh0=;
-  b=T0zjFfn+e8FOBabPtWOJCXipgj8M8KjXqpuC0Ieg2JHapJ9kAzg3wDZy
-   wlEJyZqQHASfzdresOISTIO0lP52mJFXZR4rxnCJ2KEzAsP1XNfIdCMnx
-   BMlLY0MhiE+tJBkrM7T+WZXAziBsMHE/XXQI5tecBYSXaJGm4YO69m6by
-   DH0x75ocmc7vVUNw37Y7OhqhFSK043L3kg6RQi7zdgL2RL06ud/223IDp
-   qastAwPmczvmmsGedBSbIfCg2BSIPDOYvjPMZwxbcqzKFSsFhgMrBMOdY
-   SCtP76POxTmPvsmeRcfipp8MqAJcRZUTZpHXYuSGpYjHuZLUDsg+02I8N
-   w==;
-X-CSE-ConnectionGUID: B+Sn7SUyTm6yu3SxwrFVtw==
-X-CSE-MsgGUID: cSuOCfYFRTSlKTnZVqSiqQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="32766291"
-X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
-   d="scan'208";a="32766291"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 10:04:08 -0700
-X-CSE-ConnectionGUID: WCz2KdYTRTKhdlF/01b/uA==
-X-CSE-MsgGUID: CzLW3HYTSy29BFDerxsfkw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
-   d="scan'208";a="59741002"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 16 Aug 2024 10:04:05 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sf0Mt-0006fG-0j;
-	Fri, 16 Aug 2024 17:04:03 +0000
-Date: Sat, 17 Aug 2024 01:03:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	hannes@cmpxchg.org, yosryahmed@google.com, nphamcs@gmail.com,
-	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com,
-	akpm@linux-foundation.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	nanhai.zou@intel.com, wajdi.k.feghali@intel.com,
-	vinodh.gopal@intel.com, kanchana.p.sridhar@intel.com
-Subject: Re: [PATCH v2 4/4] mm: swap: Count successful mTHP ZSWAP stores in
- sysfs mTHP stats.
-Message-ID: <202408170059.sq8QoVWB-lkp@intel.com>
-References: <20240816054805.5201-5-kanchana.p.sridhar@intel.com>
+	s=arc-20240116; t=1723827846; c=relaxed/simple;
+	bh=wuYag45KCCMNPdVOTNXs6hx1m9ceBhoFn44hOT7ug0w=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=klSUvmw0xl2GioLfypHOZV/YDsMMyHsarg7nnIbcy4uF6AalXGz+Mu8ulWQkwjV8ldQ31UYEDJPs/EbzgQJsbUfCQdfMhpHnSiLUwmAXNGNMMuZw3ld7imZwhJdqrkZ74mIro8SCFCVXUYsItwrMKwtzTa3eUuLYnldaB4prA+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U8GWKdEh; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7a9e25008aso293038866b.0;
+        Fri, 16 Aug 2024 10:04:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723827843; x=1724432643; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nsViohMsVlT1Cr/vk07GM1E4ZDq3GRRcVAXcInsaHcE=;
+        b=U8GWKdEhFbV+oScjo0uKWWVDDzCEuz/Nz6RJ1PUGQWg7DvRx7fU98z+JY978VfYjKD
+         nY8JI5CmtYDlHUC7lZHiG+zIWGe098qoa+5CaRknVQqX9P5A7ahpMbWrz3OzfA6kKg5K
+         pbxsTjtePFo4zOBuiYedrBxDDTHbiC1kVcyViCFaJkxZkg08Cd/SbhF8sC6C8645GtbG
+         yKprHrI/fLPD1uxVTZDbbbC85uiUhE1047YJmtwnGRTW5DEudxAHFODVaqmu9kJYHGuO
+         v23n7v9qvsT6jQowlVK66/TrB+4Aspwa+NHPoxlulUOImE+NUJrSjjLzmCxG0pkpfByb
+         Gcig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723827843; x=1724432643;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nsViohMsVlT1Cr/vk07GM1E4ZDq3GRRcVAXcInsaHcE=;
+        b=pHRPCvu1CL5y7EWNyTOteAf09i9lwxYtkln8AwsgBLrPgNIHkwRMLGpFaIURmJ3CT/
+         wKVI8nqDjPLzxKonFl8gQvTrKs/0+BDUzoNZegrmGp10rS9TYhbdwIEsaL63jDzzBwvp
+         EMTUBgyPS6Id6ui2Fo5HPjQaa06HzsZEc4JnIsAJc75MiKtdU7iLQpPxTVef6ZVNTrIc
+         l0qBj6oX5Uji8KiWNg4he92kRqWvUav+dDQXOdzvy/mlc50ZxLWMuRy+Ai90T1t09mJz
+         YPctpR7XlKkRFsMhw3Ob/wKXfTdIWetSFBEAi92APUUglty+xrdSD3aHXrTCqlIwPhcA
+         8YAA==
+X-Forwarded-Encrypted: i=1; AJvYcCWu3Bwc1yYKpjnCgyz2ablcowCO572uf95tEsh/GChL3d0jk27DwlniL1ktMAXfMS+0ZAkFAowfvpP4FU5cWhC/VoB8lclIg/IRkDTI1tlzg4uty/6/KaO0Nv1B9WxhwYrBfrFNQuJgk4kV8FYIyi71d+mUenCfIz47Tw1iyqkRbffCqCEYaqcTPjpLXjHvbu5CCH4j6TniSPI47Pr7QRc0XRCpQ8bnIdKG7vUjwcOF0NsieXnGYRA7CouP
+X-Gm-Message-State: AOJu0YyXn+LZvKzACtSB53sAQGzxim0Dyo1RwDFr5KAO+2pNcru1QlXK
+	y/rh4Fno10u+ROOgru/8I+Cp+e8T10OhfqkgjAn0VVdokhS/lp45
+X-Google-Smtp-Source: AGHT+IGmQHqLgP7Yyh+oz/nFR7ZhrguSPynoN6KhTrPqXBYW/CiVRsTdzvtIkZTesS8hMABI8OjPqg==
+X-Received: by 2002:a17:907:e6e4:b0:a7a:a33e:47b6 with SMTP id a640c23a62f3a-a8392a4b3f4mr270755866b.60.1723827842255;
+        Fri, 16 Aug 2024 10:04:02 -0700 (PDT)
+Received: from krava (ip-94-113-247-30.net.vodafone.cz. [94.113.247.30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383948d19sm281827466b.186.2024.08.16.10.04.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 10:04:01 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Fri, 16 Aug 2024 19:03:59 +0200
+To: Alejandro Colomar <alx@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+	linux-man@vger.kernel.org, x86@kernel.org, bpf@vger.kernel.org,
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>
+Subject: Re: [PATCHv8 9/9] man2: Add uretprobe syscall page
+Message-ID: <Zr-Gf3EEganRSzGM@krava>
+References: <20240611112158.40795-1-jolsa@kernel.org>
+ <20240611112158.40795-10-jolsa@kernel.org>
+ <20240611233022.82e8abfa2ff0e43fd36798b2@kernel.org>
+ <3pc746tolavkbac4n62ku5h4qqkbcinvttvcnkib6nxvzzfzym@k6vozf6totdw>
+ <20240807162734.100d3b55@gandalf.local.home>
+ <ygpwfyjvhuctug2bsibvc7exbirahojuivglcfjusw4rrqeqhc@44h23muvk3xb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,59 +101,115 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240816054805.5201-5-kanchana.p.sridhar@intel.com>
+In-Reply-To: <ygpwfyjvhuctug2bsibvc7exbirahojuivglcfjusw4rrqeqhc@44h23muvk3xb>
 
-Hi Kanchana,
+On Fri, Aug 16, 2024 at 01:42:26PM +0200, Alejandro Colomar wrote:
+> Hi Steven, Jiri,
+> 
+> On Wed, Aug 07, 2024 at 04:27:34PM GMT, Steven Rostedt wrote:
+> > Just in case nobody pinged you, the rest of the series is now in Linus's
+> > tree.
+> 
+> Thanks for the ping!
+> 
+> I have prepared some tweaks to the patch (see below).
+> Also, I have some doubts.  The prototype shows that it has no arguments
+> (void), but the text said that arguments, if any, are arch-specific.
+> Does any arch have arguments?  Should we use a variadic prototype (...)?
 
-kernel test robot noticed the following build errors:
+hi,
+there are no args for x86.. it's there just to note that it might
+be different on other archs, so not sure what man page should say
+in such case.. keeping (void) is fine with me
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.11-rc3]
-[cannot apply to akpm-mm/mm-everything next-20240816]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> Please add the changes proposed below to your patch, tweak anything if
+> you consider it appropriate) and send it as v10.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kanchana-P-Sridhar/mm-zswap-zswap_is_folio_same_filled-takes-an-index-in-the-folio/20240816-134948
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20240816054805.5201-5-kanchana.p.sridhar%40intel.com
-patch subject: [PATCH v2 4/4] mm: swap: Count successful mTHP ZSWAP stores in sysfs mTHP stats.
-config: arm-randconfig-002-20240816 (https://download.01.org/0day-ci/archive/20240817/202408170059.sq8QoVWB-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 26670e7fa4f032a019d23d56c6a02926e854e8af)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240817/202408170059.sq8QoVWB-lkp@intel.com/reproduce)
+it looks good to me, thanks a lot
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408170059.sq8QoVWB-lkp@intel.com/
+Acked-by: From: Jiri Olsa <jolsa@kernel.org>
 
-All errors (new ones prefixed by >>):
+jirka
 
-   In file included from mm/page_io.c:14:
-   In file included from include/linux/mm.h:2228:
-   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> mm/page_io.c:178:3: error: call to undeclared function 'count_mthp_stat'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     178 |                 count_mthp_stat(folio_order(folio), MTHP_STAT_ZSWPOUT);
-         |                 ^
->> mm/page_io.c:178:39: error: use of undeclared identifier 'MTHP_STAT_ZSWPOUT'
-     178 |                 count_mthp_stat(folio_order(folio), MTHP_STAT_ZSWPOUT);
-         |                                                     ^
-   1 warning and 2 errors generated.
+> 
+> Have a lovely day!
+> Alex
+> 
+> 
+> diff --git i/man/man2/uretprobe.2 w/man/man2/uretprobe.2
+> index cf1c2b0d8..51b566998 100644
+> --- i/man/man2/uretprobe.2
+> +++ w/man/man2/uretprobe.2
+> @@ -7,50 +7,43 @@ .SH NAME
+>  uretprobe \- execute pending return uprobes
+>  .SH SYNOPSIS
+>  .nf
+> -.B int uretprobe(void)
+> +.B int uretprobe(void);
+>  .fi
+>  .SH DESCRIPTION
+> -The
+>  .BR uretprobe ()
+> -system call is an alternative to breakpoint instructions for triggering return
+> -uprobe consumers.
+> +is an alternative to breakpoint instructions
+> +for triggering return uprobe consumers.
+>  .P
+>  Calls to
+>  .BR uretprobe ()
+> -system call are only made from the user-space trampoline provided by the kernel.
+> +are only made from the user-space trampoline provided by the kernel.
+>  Calls from any other place result in a
+>  .BR SIGILL .
+> -.SH RETURN VALUE
+> -The
+> +.P
+> +Details of the arguments (if any) passed to
+>  .BR uretprobe ()
+> -system call return value is architecture-specific.
+> +are architecture-specific.
+> +.SH RETURN VALUE
+> +The return value is architecture-specific.
+>  .SH ERRORS
+>  .TP
+>  .B SIGILL
+> -The
+>  .BR uretprobe ()
+> -system call was called by a user-space program.
+> +was called by a user-space program.
+>  .SH VERSIONS
+> -Details of the
+> -.BR uretprobe ()
+> -system call behavior vary across systems.
+> +The behavior varies across systems.
+>  .SH STANDARDS
+>  None.
+>  .SH HISTORY
+> -TBD
+> -.SH NOTES
+> -The
+> +Linux 6.11.
+> +.P
+>  .BR uretprobe ()
+> -system call was initially introduced for the x86_64 architecture
+> +was initially introduced for the x86_64 architecture
+>  where it was shown to be faster than breakpoint traps.
+>  It might be extended to other architectures.
+> -.P
+> -The
+> +.SH CAVEATS
+>  .BR uretprobe ()
+> -system call exists only to allow the invocation of return uprobe consumers.
+> +exists only to allow the invocation of return uprobe consumers.
+>  It should
+>  .B never
+>  be called directly.
+> -Details of the arguments (if any) passed to
+> -.BR uretprobe ()
+> -and the return value are architecture-specific.
+> 
+> -- 
+> <https://www.alejandro-colomar.es/>
 
-
-vim +/count_mthp_stat +178 mm/page_io.c
-
-   174	
-   175	static inline void count_mthp_zswpout_vm_event(struct folio *folio)
-   176	{
-   177		if (IS_ENABLED(CONFIG_THP_SWAP))
- > 178			count_mthp_stat(folio_order(folio), MTHP_STAT_ZSWPOUT);
-   179	}
-   180	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
