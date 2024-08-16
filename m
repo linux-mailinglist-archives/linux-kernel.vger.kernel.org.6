@@ -1,85 +1,143 @@
-Return-Path: <linux-kernel+bounces-290006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 992D7954E58
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:01:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 690F3954E5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2895D283CDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:01:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92C161C244A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B671BE224;
-	Fri, 16 Aug 2024 16:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B24D1BB68E;
+	Fri, 16 Aug 2024 16:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFtE8rN3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qqxa+zDY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D49C1BC9FE;
-	Fri, 16 Aug 2024 16:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474B11BE87A;
+	Fri, 16 Aug 2024 16:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723824096; cv=none; b=jPeI7OVBb2/0hjaqY9mFVAlRCXQh8RVEG16QOcEf8gyTuA94lSnORopGEMTMmFnTTh/cfuNSljTFG18ytU7Icq5L5QPLAq1cEAfwgrOY4ouliJYPVNCD4dpITqFp9Qn3fNeHrCCAcFM6/lw1TgjNFPxWlo5JpEjLE38bFQjyrYo=
+	t=1723824098; cv=none; b=lDiDLEB3Jcpi1gZdKZXxyKLqbGgcF1XXJA8oFfEa9zVn7QmhHDQ681tS9C4PnPM8ow3tecS8QUPGqLyFCSt4Ij+TXK0A2Ssbt7rSdincmgAkbsl8/wSJFJbXzewMLzw9UOa2M+imI6wmALtuEMi8mdmyp+pbG7zATLO+oywu0tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723824096; c=relaxed/simple;
-	bh=CiJGKQa+IE+T3ZkcWX/oy178uqrLN1LuLII+8zj3uH4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=XkRQML2NViupRty2Xid4i+Ewaoj9Pd0j69Z2mD21xhTJiX97McnOS4GNoz5snBiEHcM0D1wbuc2yvP6rQJbAP/6o+th/oDu3GorNSUdVSkeWHDIPKTuej75ogQt28It2HHXRMtWVBySB5J/ZbCVPSpd8OU4Wqmz7zVcWInbQ6UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFtE8rN3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8623AC32782;
-	Fri, 16 Aug 2024 16:01:30 +0000 (UTC)
+	s=arc-20240116; t=1723824098; c=relaxed/simple;
+	bh=OvCWp5XhqJ8jljZ2uZz4DriEyBAtWKpz6285nOgMkmQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nGkuXTot2dEHyimRXNiC6eQCauyNikVAsWKCXJXmqI88voio5axFfBZ10TMiEXFNPVkgMTMqRWs/S30kjMJruk6AVh3EJi0nw7/QLjpJZHv2UxsEqNLgQKv55PmLgdLCurT9Ml7LULaJingSRmO2NgMNPQssZt1xJChb9VH+n8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qqxa+zDY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24FFAC4AF09;
+	Fri, 16 Aug 2024 16:01:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723824095;
-	bh=CiJGKQa+IE+T3ZkcWX/oy178uqrLN1LuLII+8zj3uH4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=WFtE8rN3utss1FjmMnm/yg+HGGxXdTddOxmU6eihRE0cAJ2UM54EXfEx2WCmV1tA8
-	 hU+qxnlTzgx5dNfUSn2n8/USL6QMwjH+JDPhwIh06L50cOzqVA54XW5wziX9uqrIeI
-	 r3jTZP0IJDfc+BRVrr+MbY91C7wD6T96DgzQ8DutzgiMUs5ZnuauxGfCfW5o9DSzs9
-	 FKUSC6WJsQUrnR2RX4u0sn4k1gzGPOEOWe0ol+9RTrJ+dalWBSERhwy3+jSbwU+X4R
-	 16DDoWadYBKLSO3LGd1tlKZVT6Maur3beQ5VoJ+OMhDmz0S0aqHOgtuZMCjX1Deuup
-	 EWQcVuIGFpG7w==
-From: Lee Jones <lee@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- Isai Gaspar <isaiezequiel.gaspar@nxp.com>, Marek Vasut <marex@denx.de>, 
- Jonathan Cameron <jic23@kernel.org>, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240807-leds-pca995x-fix-fwnode-usage-v1-1-8057c84dc583@gmail.com>
-References: <20240807-leds-pca995x-fix-fwnode-usage-v1-1-8057c84dc583@gmail.com>
-Subject: Re: (subset) [PATCH] leds: pca995x: Fix device child node usage in
- pca995x_probe()
-Message-Id: <172382409029.3366296.12169044923782597357.b4-ty@kernel.org>
-Date: Fri, 16 Aug 2024 17:01:30 +0100
+	s=k20201202; t=1723824097;
+	bh=OvCWp5XhqJ8jljZ2uZz4DriEyBAtWKpz6285nOgMkmQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qqxa+zDYpGwyKNRdjTmZdxvdNlk5G4TonrjIj/e1NpJ9NYm+9nxeXN16Afg1cRIU6
+	 gLNjl2rTzlxtKaDm4Q3/uyjDc2buHEjoatNOABtdxY2AVpwqYM/HI/ESW+dJ+t4hH8
+	 J40lkX1JKraNwU5zKB4wgjMN29nng7TJOewk1KMkDP8ngUyYzuGCkBUk0OfQBBC/aT
+	 qcs3gqtlaaZxotrkjtw62v1X5Sg5Ef9A62Qc+Uz+quuyKg9vwACmHQ/8RM+MtrYtVa
+	 zKTc9gyF/Cq4Ehsexd42gwVp0M/tJAVKSVNxRuPc/OjKhvXI1O6JDTGGkox2yoNBsR
+	 XH2Gfe1+Yr5wg==
+Date: Fri, 16 Aug 2024 11:01:34 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Md Sadre Alam <quic_mdalam@quicinc.com>
+Cc: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, konradybcio@kernel.org, thara.gopinath@gmail.com, 
+	herbert@gondor.apana.org.au, davem@davemloft.net, gustavoars@kernel.org, 
+	u.kleine-koenig@pengutronix.de, kees@kernel.org, agross@kernel.org, 
+	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, quic_srichara@quicinc.com, 
+	quic_varada@quicinc.com, quic_utiwari@quicinc.com
+Subject: Re: [PATCH v2 00/16] Add cmd descriptor support
+Message-ID: <3p43hay67bofcddnar7wm2bsods5zqbylnjhnd22gcbniztymn@2zziltxxbaiv>
+References: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
 
-On Wed, 07 Aug 2024 15:37:03 +0200, Javier Carrasco wrote:
-> The current implementation accesses the `child` fwnode handle outside of
-> device_for_each_child_node() without incrementing its refcount.
+On Thu, Aug 15, 2024 at 02:27:09PM GMT, Md Sadre Alam wrote:
+> This series of patches will add command descriptor
+> support to read/write crypto engine register via
+> BAM/DMA
 > 
-> Add the missing call to `fwnode_handle_get(child)`.
+> We need this support because if there is multiple EE's
+> (Execution Environment) accessing the same CE then there
+> will be race condition. To avoid this race condition
+> BAM HW hsving LOC/UNLOCK feature on BAM pipes and this
+> LOCK/UNLOCK will be set via command descriptor only.
 > 
-> The cleanup process where `child` is accessed is not right either
-> because a single call to `fwnode_handle_put()` is carried out in case of
-> an error, ignoring unasigned nodes at the point when the error happens.
+> Since each EE's having their dedicated BAM pipe, BAM allows
+> Locking and Unlocking on BAM pipe. So if one EE's requesting
+> for CE5 access then that EE's first has to LOCK the BAM pipe
+> while setting LOCK bit on command descriptor and then access
+> it. After finishing the request EE's has to UNLOCK the BAM pipe
+> so in this way we race condition will not happen.
 > 
-> [...]
+> tested with "tcrypt.ko" and "kcapi" tool.
+> 
+> Need help to test these all the patches on msm platform
+> 
+> v2:
+>  * Addressed all the comments from v1
 
-Applied, thanks!
+Please describe the actual changes you're making between your versions.
 
-[1/1] leds: pca995x: Fix device child node usage in pca995x_probe()
-      commit: 82c5ada1f9d05902a4ccb926c7ce34e2fe699283
+>  * Added the dt-binding
+>  * Added locking/unlocking mechanism in bam driver
 
---
-Lee Jones [李琼斯]
+Seems to me that this was already part of v1, as patch 6/11?
 
+Regards,
+Bjorn
+
+> 
+> v1:
+>  * https://lore.kernel.org/lkml/20231214114239.2635325-1-quic_mdalam@quicinc.com/
+>  * Initial set of patches for cmd descriptor support
+> 
+> Md Sadre Alam (16):
+>   dt-bindings: dma: qcom,bam: Add bam pipe lock
+>   dmaengine: qcom: bam_dma: add bam_pipe_lock dt property
+>   dmaengine: qcom: bam_dma: add LOCK & UNLOCK flag support
+>   crypto: qce - Add support for crypto address read
+>   crypto: qce - Add bam dma support for crypto register r/w
+>   crypto: qce - Convert register r/w for skcipher via BAM/DMA
+>   crypto: qce - Convert register r/w for sha via BAM/DMA
+>   crypto: qce - Convert register r/w for aead via BAM/DMA
+>   crypto: qce - Add LOCK and UNLOCK flag support
+>   crypto: qce - Add support for lock aquire,lock release api.
+>   crypto: qce - Add support for lock/unlock in skcipher
+>   crypto: qce - Add support for lock/unlock in sha
+>   crypto: qce - Add support for lock/unlock in aead
+>   arm64: dts: qcom: ipq9574: enable bam pipe locking/unlocking
+>   arm64: dts: qcom: ipq8074: enable bam pipe locking/unlocking
+>   arm64: dts: qcom: ipq6018: enable bam pipe locking/unlocking
+> 
+>  .../devicetree/bindings/dma/qcom,bam-dma.yaml |   8 +
+>  arch/arm64/boot/dts/qcom/ipq6018.dtsi         |   1 +
+>  arch/arm64/boot/dts/qcom/ipq8074.dtsi         |   1 +
+>  arch/arm64/boot/dts/qcom/ipq9574.dtsi         |   1 +
+>  drivers/crypto/qce/aead.c                     |   4 +
+>  drivers/crypto/qce/common.c                   | 142 +++++++----
+>  drivers/crypto/qce/core.c                     |  13 +-
+>  drivers/crypto/qce/core.h                     |  12 +
+>  drivers/crypto/qce/dma.c                      | 232 ++++++++++++++++++
+>  drivers/crypto/qce/dma.h                      |  26 +-
+>  drivers/crypto/qce/sha.c                      |   4 +
+>  drivers/crypto/qce/skcipher.c                 |   4 +
+>  drivers/dma/qcom/bam_dma.c                    |  14 +-
+>  include/linux/dmaengine.h                     |   6 +
+>  14 files changed, 424 insertions(+), 44 deletions(-)
+> 
+> -- 
+> 2.34.1
+> 
 
