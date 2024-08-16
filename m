@@ -1,124 +1,122 @@
-Return-Path: <linux-kernel+bounces-289352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 477AB954533
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:10:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CB49954534
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:11:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7929B21D35
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:10:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F6321C21501
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D4013D8B8;
-	Fri, 16 Aug 2024 09:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AaiFDElG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B31F13C667;
+	Fri, 16 Aug 2024 09:11:45 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BB313C801;
-	Fri, 16 Aug 2024 09:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2AA57581B
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723799433; cv=none; b=LewovBDfjnyjeS68Gpa4mtrEaC3/3kq0PhCVSTYK8qZ3GGBsGoBs/AztP1LbdFCakQ2QlaCV0PO5fhi1wlzO2RoF3C1qW035suDTM9+2TuwLrsJUVwf1D79c0dav3RaFVse7hg1KmmraV+GlpWwPBrvtkyRl1cNmNVQQ/pxKJbA=
+	t=1723799505; cv=none; b=U0DSbuSY5f5X2kGTPxztV/9uCBLhgvDBphzaykGfb+N0++ixSKUAJbMb9QoD/m3IYO9FdOBhT5JFpcO0Blr1v6nYaH0KDbuVDxIeDLHkoNTi2OcAeR+Hm8+m5y5HuXZfCh1Tr8U6/UWAyCnyzCA4ZTCB73yjYM9BtTN7zl8cUdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723799433; c=relaxed/simple;
-	bh=S9r9yGxVBVVt8iz8VZ6BiPMcB2RBNjLI7DiZjXXCPnM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=bdG+jvkrF7X4mred0YKfl+dOaqlaEpO796/S0DMAuErhsNOKxDlTrlaLI7J0YGJpXp3jGCyUTE6ahfPoAjwQ4nZeqB1AKhsgY8X71SGwzoohhSzUqxxCzZn0f4SYon5IQFYWjtvenq13QF7VtmL9NkJISazjpT3iydqubcpfcvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AaiFDElG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0593AC4AF0E;
-	Fri, 16 Aug 2024 09:10:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723799433;
-	bh=S9r9yGxVBVVt8iz8VZ6BiPMcB2RBNjLI7DiZjXXCPnM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=AaiFDElGcQlADY2h4llu8sBTpqefXgK+iL4Au8i8jzAi7VXApVT/OCSs+U5Ed6R4/
-	 EF8e9hQa5VysVYQXNdIK7FdMgak7LT6I41P6rC/s/mjdlxNndtc8G9Dzmt8U1ecu6e
-	 hn6NNbonoDUFWHkR28/hzNBMcS4zLEm83xpWcn8BPh1eMs4vx9ONdC3wQ7OsgwpDgC
-	 y8b44M2W9uRrm6VerRZyS5QsBn5H05WrhWG9XBrXsbVRn1aQU35FVWx55Faz6KjWRI
-	 rHgXDoIczxOBL+L3fB1Xqo7fJLEY+UKHeb0En/K6Pg5qrgDOcZN1H7emsCAx10hMzB
-	 Mr2H6Kd3kTQ5g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70FB538231F8;
-	Fri, 16 Aug 2024 09:10:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1723799505; c=relaxed/simple;
+	bh=Qw29rppShCdDm6QOLmWc34/CLwzrzgi9ru94pb7hd3M=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=dj27IrP7mGQvIeQxClVp1uu+CqRVUlI35+Evx4PjWgHp/5s1b3yr5lXxvun/WZ+yvTyr3TpA6a6wHKTNDHRFpZgli0kLUI+MSj9eHp0Lg2AArSgVYmXCForm7kwuXb3w0IdmL3IgFj+K63v50wfZUZ1X6+ZGH2GEXD+yXd8kOTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39d2dbd9bebso1397335ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 02:11:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723799503; x=1724404303;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MQeOsbshCLQQEsLzLhQBt7SxIOMZxubosBFbVjVhuLo=;
+        b=WIxlDGZ5v8OV7PAMP6O41S1RRZnsOsybwckGpwqmyhOck8nMANDRXRNaQbBcgIZ+ap
+         kxoPUbMzzQ/musCulJo6tJkNDJmnde2cy3iPUUIMm48ViAs2XrtDA9t3ybiJkxZEkD/I
+         zhVNkw95hjfP4O03MYhWh71clieYgq5fimhrTh5u/waKw1eiJW/RcZLIXSVwrBSkyyEG
+         sgIyGt/5N57SEO9PiMUzqPRNebs+OYgH29g4jh+I/8s/Dm8MzRUZVvg+SfcscPuvsGz9
+         Z+RjAOk+G6KaUVuuq47i/PLCQxqVBn1DbuXQ8U9ZcQ1o6rDKHdt4Ou7Z34RhZzLzCEDP
+         aStA==
+X-Gm-Message-State: AOJu0YwHSWVUse9z9tILgDbMTCNS7tbUHVeWY3buY7MpJY7Mgxon7pMC
+	rkCNp3Bn4jnVZneqHU9BL7I0s/nDQTH8IAuedjx7OzU02NKWfrIgV+DiXE9ndu86iK41yqtJtcs
+	DvfVBy4Ysj0UJLRVgxLJwfEEt3RhTq28u5MAV8EWerfLOQdmMsSdYJ4Q=
+X-Google-Smtp-Source: AGHT+IH3TG3/p7WuY1mraYFCqGGPOZ4CSeMPw96iht0IjSTwKUt6O0ZY4uYUXbJFEXx8FFtyyUikcSAsl4oZLNqqHY5SPstl2i2U
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net 00/14] VLAN fixes for Ocelot driver
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172379943226.3458201.417541764470956886.git-patchwork-notify@kernel.org>
-Date: Fri, 16 Aug 2024 09:10:32 +0000
-References: <20240815000707.2006121-1-vladimir.oltean@nxp.com>
-In-Reply-To: <20240815000707.2006121-1-vladimir.oltean@nxp.com>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, claudiu.manoil@nxp.com,
- alexandre.belloni@bootlin.com, atenart@kernel.org,
- UNGLinuxDriver@microchip.com, hongbo.wang@nxp.com, xiaoliang.yang_1@nxp.com,
- andrew@lunn.ch, f.fainelli@gmail.com, colin.foster@in-advantage.com,
- horatiu.vultur@microchip.com, liuhangbin@gmail.com, petrm@nvidia.com,
- idosch@nvidia.com, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6e02:1a6e:b0:385:ffe:4516 with SMTP id
+ e9e14a558f8ab-39d26ce52e0mr1328045ab.2.1723799502914; Fri, 16 Aug 2024
+ 02:11:42 -0700 (PDT)
+Date: Fri, 16 Aug 2024 02:11:42 -0700
+In-Reply-To: <0000000000004e582f061fb691ff@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000009222e061fc959b5@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_iget
+From: syzbot <syzbot+5bdd4953bc58c8fbd6eb@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-This series was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
+***
 
-On Thu, 15 Aug 2024 03:06:53 +0300 you wrote:
-> This is a collection of patches I've gathered over the past several
-> months.
-> 
-> Patches 1-6/14 are supporting patches for selftests.
-> 
-> Patch 9/14 fixes PTP TX from a VLAN upper of a VLAN-aware bridge port
-> when using the "ocelot-8021q" tagging protocol. Patch 7/14 is its
-> supporting selftest.
-> 
-> [...]
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_iget
+Author: lizhi.xu@windriver.com
 
-Here is the summary with links:
-  - [net,01/14] selftests: net: local_termination: refactor macvlan creation/deletion
-    https://git.kernel.org/netdev/net/c/8d019b15ddd5
-  - [net,02/14] selftests: net: local_termination: parameterize sending interface
-    https://git.kernel.org/netdev/net/c/4261fa35185c
-  - [net,03/14] selftests: net: local_termination: parameterize test name
-    https://git.kernel.org/netdev/net/c/df7cf5cc551c
-  - [net,04/14] selftests: net: local_termination: add one more test for VLAN-aware bridges
-    https://git.kernel.org/netdev/net/c/5b8e74182ed3
-  - [net,05/14] selftests: net: local_termination: introduce new tests which capture VLAN behavior
-    https://git.kernel.org/netdev/net/c/5fea8bb00974
-  - [net,06/14] selftests: net: local_termination: don't use xfail_on_veth()
-    https://git.kernel.org/netdev/net/c/9aa3749ca4a8
-  - [net,07/14] selftests: net: local_termination: add PTP frames to the mix
-    https://git.kernel.org/netdev/net/c/237979504264
-  - [net,08/14] selftests: net: bridge_vlan_aware: test that other TPIDs are seen as untagged
-    https://git.kernel.org/netdev/net/c/e29b82ef2761
-  - [net,09/14] net: mscc: ocelot: use ocelot_xmit_get_vlan_info() also for FDMA and register injection
-    https://git.kernel.org/netdev/net/c/67c3ca2c5cfe
-  - [net,10/14] net: mscc: ocelot: fix QoS class for injected packets with "ocelot-8021q"
-    https://git.kernel.org/netdev/net/c/e1b9e80236c5
-  - [net,11/14] net: mscc: ocelot: serialize access to the injection/extraction groups
-    https://git.kernel.org/netdev/net/c/c5e12ac3beb0
-  - [net,12/14] net: dsa: provide a software untagging function on RX for VLAN-aware bridges
-    https://git.kernel.org/netdev/net/c/93e4649efa96
-  - [net,13/14] net: dsa: felix: fix VLAN tag loss on CPU reception with ocelot-8021q
-    https://git.kernel.org/netdev/net/c/f1288fd7293b
-  - [net,14/14] net: mscc: ocelot: treat 802.1ad tagged traffic as 802.1Q-untagged
-    https://git.kernel.org/netdev/net/c/36dd1141be70
+BH_Lock state check micro buffer_locked not work?
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+#syz test: upstream d07b43284ab3
 
-
+diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
+index cdb9b9bdea1f..f67f82adfee2 100644
+--- a/fs/ocfs2/buffer_head_io.c
++++ b/fs/ocfs2/buffer_head_io.c
+@@ -148,6 +148,8 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
+ 		get_bh(bh); /* for end_buffer_read_sync() */
+ 		bh->b_end_io = end_buffer_read_sync;
+ 		submit_bh(REQ_OP_READ, bh);
++		printk("bio, jbd: %d, dirty: %d, i: %d, bh: %p, buflocked: %d, bfl: %d, status: %d, %s\n", buffer_jbd(bh),
++			buffer_dirty(bh), i, bh, buffer_locked(bh), bh->b_state & BH_Lock, status, __func__);
+ 	}
+ 
+ read_failure:
+@@ -170,9 +172,15 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
+ 			continue;
+ 		}
+ 
++		printk("rf, jbd: %d, dirty: %d, i: %d, bh: %p, buflocked: %d, bfl: %d, status: %d, %s\n", buffer_jbd(bh),
++			buffer_dirty(bh), i, bh, buffer_locked(bh), bh->b_state & BH_Lock, status, __func__);
+ 		/* No need to wait on the buffer if it's managed by JBD. */
+-		if (!buffer_jbd(bh))
++		if (!buffer_jbd(bh)) {
++			if (!buffer_locked(bh) && (bh->b_state & BH_Lock) && bh->b_end_io == end_buffer_read_sync)
++				lock_buffer(bh);
++
+ 			wait_on_buffer(bh);
++		}
+ 
+ 		if (!buffer_uptodate(bh)) {
+ 			/* Status won't be cleared from here on out,
+diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+index e022e40b099e..33c179fa522e 100644
+--- a/include/linux/buffer_head.h
++++ b/include/linux/buffer_head.h
+@@ -411,7 +411,7 @@ map_bh(struct buffer_head *bh, struct super_block *sb, sector_t block)
+ static inline void wait_on_buffer(struct buffer_head *bh)
+ {
+ 	might_sleep();
+-	if (buffer_locked(bh))
++	if (bh->b_state & BH_Lock)
+ 		__wait_on_buffer(bh);
+ }
+ 
 
