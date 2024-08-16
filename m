@@ -1,153 +1,141 @@
-Return-Path: <linux-kernel+bounces-289683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42BFD954927
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:53:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 530EB954970
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:55:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 634391C22FF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:53:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE2F81F22CD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35441B5801;
-	Fri, 16 Aug 2024 12:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3351B86C1;
+	Fri, 16 Aug 2024 12:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MbHL8MSo"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ccqst9i5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8898A1741D2;
-	Fri, 16 Aug 2024 12:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4840D45026;
+	Fri, 16 Aug 2024 12:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723812806; cv=none; b=eix70uUYuxeNoUECfeMKHaKxrFKC0gwKbRXBNJrpbOv//AOzG6bO159WarWcf4ssripNuTZe972NM7W3APSJkMXbTYdHsE1A62J5SgAjGrirmb30KpY6u30JM4WnsURHbCfOPHNoClH79BBi5J6jKYLfaatIRJfld0HuMSP0wOc=
+	t=1723812899; cv=none; b=eOzbRBVb/JLKgVy7XddMbvslahxh7yMWLBC4aIirGSyeVu+q+yNJPQ0tj5kbtzhPQRhWvNBxrYG42FWu7ZJEZBqeBPtJCkrAIJsvpPls98QxjEFZeMcLxEpKbv1rPgt/vELZ/Erq7PuB+WjMGSrZfzERm4JkAxwKQy7Hp6aJSMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723812806; c=relaxed/simple;
-	bh=KvPISS19necwS5apJOOzv3MYk1sBeLC6RtlRpJugNyM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wxrj5iO7HsCff92gicj3tzX72CpedLcF4Zcp9CiWpKDZM80RDGCn2t5z/HDgGqTuHHTB0k5CWJRydQ66Yne5Tg4XOpXcOXBb0I/RNTjEc3eTgweq/NOjRtWTfxH/qh1WNFMXmkVU2+CohkrwwSegsz7HgzD51ETGFWOmIIo9oJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MbHL8MSo; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2d3eda6603cso384474a91.3;
-        Fri, 16 Aug 2024 05:53:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723812805; x=1724417605; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E7f7c9gCLpeAm9IK9HiBlES+dcX5qvMqcqJoh8BiSCI=;
-        b=MbHL8MSovu2sdS33qvHHJ9W4iedJ0RGd5759WDKYkWZnP2tHI7V8zAUJbg+NrF0Stq
-         vJ7JcOQyWvoayRxK2q5ZGIUFOlUJssQOb1O9TcSeypvX39UCpDT2mDjPvySyUmSX6N25
-         Vd6lsUaM7xP2lD1710OM5rSugK0iuhS3Vb+5tqwkk+IxWi/N//OlHiBPazhy6+X2BBm6
-         Htp/mXZk7riLQV1s87AwKVZEtHUdi9ZtDOYFqYryQmEFtwGZlZ+UZgEln0lt/P4XJiHm
-         NGAf75IEvyXJVAfxSpMw7+eDHCSouIjaAW2Ueoi7gXChskKBiMcRRf5Cl3TAlqxlD/5o
-         EPnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723812805; x=1724417605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E7f7c9gCLpeAm9IK9HiBlES+dcX5qvMqcqJoh8BiSCI=;
-        b=TO8/rj3Avc2qp7ZvljRFWTgCNn2Z/ycLGAcCCs7TBuLJjnfHso0kMTSwSndPIVuOoI
-         fS5PkxTGmQk4ertf8YVcjjuLQiVAk5GFT62CwUpLnkdUuUXRgV6N9pOQeM1yrtXeY4Xx
-         mwCMgrVxYILo5muh3eMUt2NNx8PxFR+kgblIrHfts4DIK4K4g1uyqSR+Q2C7YgI/ofYp
-         YeqIPM0njq7LJgFryeoPeGy/e8RJ3hqxSnIBp3tDdd71K4Kr1wufOpWmZoJMsxlw85cH
-         fbKI/+y+bJL/BnlTjLRBKdoFgb2Wdd1gfUnTQu3ln4dytT8ZHnUWt4fCfkqXm31CzsYa
-         DVyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWHD9TFHSAaE/UzCttL26shKusmyVVS3pGLKj9IvmJY2nimqP59myIWkwBlrTHHYOXtj2YOw/qqZKxqZZRZpvm4oD8j6QQs4kmLdtWwgYW+kQCGn5Bo63EZbI9iQOEunbwk4CAV7w==
-X-Gm-Message-State: AOJu0YwdpoqJ89qlT6qh6W7RoAiUX0oF281HyZ7wRSnWRbq4g1UkvI6l
-	HQwHefEgpuM6+EoWQ6O26U+CJmZDhULLgUDt8hQxNw5xgxgQzMfFpQlFFRnOuDDLHJI5MQ9zYBQ
-	l/ITEf+2DvKxxY5pB2rCpB5fd3fo=
-X-Google-Smtp-Source: AGHT+IENuSY/G7txvr3NALCz0aSrRBsuY917yFsddOtno94JvTi5i6jJ9cgafZw250TStNqic0+Ww9h3jro05k7+UC8=
-X-Received: by 2002:a17:90a:c38e:b0:2d2:453:12cb with SMTP id
- 98e67ed59e1d1-2d3dfc1f571mr2994649a91.2.1723812804692; Fri, 16 Aug 2024
- 05:53:24 -0700 (PDT)
+	s=arc-20240116; t=1723812899; c=relaxed/simple;
+	bh=OSCzB+p00nSVW/dHRk7hsNkN+RR7Pek+A4z85VZMYuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gsxAhs7sszGGxjqfL2982xjotfOpsa2/6hEqV9yOAjaI+O0x8c3kn0NxXmP/ThjilyHrSvCiUVHi75rcz9oW6jrv5BJOzN3MkKBkW24zvCUZxPil+QpqoHiDMsCG4fcHBVwwGldeZtXk8aV3i8ZK0NlnDxRhYyzl7n7sdS/NuMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ccqst9i5; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723812899; x=1755348899;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OSCzB+p00nSVW/dHRk7hsNkN+RR7Pek+A4z85VZMYuU=;
+  b=ccqst9i548UGMuEgqqoGlKB6DJ1xnfGu6cc2xDgTaZ5dFCb73wVoGCJj
+   RbazYnVEZ15B2oCqSDJFMKAYfRVW0AhzvDbSb9bteZtcsmxuGQuVbx/Un
+   tYKEcxyUBdp+yHJFbeVyBKdlcNAptzl1ndKi+3Mgic8uCG9Qpz12BD9LC
+   yhk/L83BXqPbboA3/mRdRlPJKyKo4tr6FLME8scAwWfHbkGq8M0dvWF4x
+   z6ioI3u53ED50KFoYG0Slqk7/MIzh6k5ZptuEXAzx6+BLWDL0vevKXnFz
+   RQcfoDBR61ed2XFzh+V76k+XlYnE1Q/acQsa7pB+8YgzBznc8AdW7bw1s
+   Q==;
+X-CSE-ConnectionGUID: 2tZsFIBJSf+vXEyHD7p+lA==
+X-CSE-MsgGUID: b2/5FrpDRiaHfIVsLAU94A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="33259274"
+X-IronPort-AV: E=Sophos;i="6.10,151,1719903600"; 
+   d="scan'208";a="33259274"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 05:54:58 -0700
+X-CSE-ConnectionGUID: QDVynEIoRQ270siWOnAKdw==
+X-CSE-MsgGUID: m3JGk3tFT6SARvoiCDI1VA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,151,1719903600"; 
+   d="scan'208";a="90440914"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 16 Aug 2024 05:54:54 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sewTk-0006Qs-2B;
+	Fri, 16 Aug 2024 12:54:52 +0000
+Date: Fri, 16 Aug 2024 20:54:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Huan Yang <link@vivo.com>, Gerd Hoffmann <kraxel@redhat.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, opensource.kernel@vivo.com,
+	Huan Yang <link@vivo.com>
+Subject: Re: [PATCH v3 5/5] udmabuf: remove udmabuf_folio
+Message-ID: <202408162012.cL9pnFSm-lkp@intel.com>
+References: <20240813090518.3252469-6-link@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHC9VhSrPS27KSG1_On8_WqUfR7tokbrmVwfW3+L_-XJiA=WZw@mail.gmail.com>
- <20240816035751.62058-1-aha310510@gmail.com> <CAEjxPJ6gznARkD_jTZUhXJmQ5zvdrwxJOiSC0YQoZekNe76Nug@mail.gmail.com>
- <CAEjxPJ6nZY-RV2V0b5mqnUA4fKa09RhKp2SX7io9oO6XhZsacA@mail.gmail.com>
-In-Reply-To: <CAEjxPJ6nZY-RV2V0b5mqnUA4fKa09RhKp2SX7io9oO6XhZsacA@mail.gmail.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Fri, 16 Aug 2024 08:53:13 -0400
-Message-ID: <CAEjxPJ4ARrOkNQczhndBo3p5PHvGPpCQxwSAMGi=1ygKPYDfdw@mail.gmail.com>
-Subject: Re: selinux: support IPPROTO_SMC in socket_type_to_security_class()
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: paul@paul-moore.com, linux-kernel@vger.kernel.org, omosnace@redhat.com, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240813090518.3252469-6-link@vivo.com>
 
-On Fri, Aug 16, 2024 at 7:42=E2=80=AFAM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
->
-> On Fri, Aug 16, 2024 at 7:21=E2=80=AFAM Stephen Smalley
-> <stephen.smalley.work@gmail.com> wrote:
-> >
-> > On Thu, Aug 15, 2024 at 11:57=E2=80=AFPM Jeongjun Park <aha310510@gmail=
-.com> wrote:
-> > >
-> > > Paul Moore wrote:
-> > > >
-> > > > On Thu, Aug 15, 2024 at 4:32=E2=80=AFAM Jeongjun Park <aha310510@gm=
-ail.com> wrote:
-> > > > >
-> > > > > IPPROTO_SMC feature has been added to net/smc. It is now possible=
- to
-> > > > > create smc sockets in the following way:
-> > > > >
-> > > > >   /* create v4 smc sock */
-> > > > >   v4 =3D socket(AF_INET, SOCK_STREAM, IPPROTO_SMC);
-> > > > >
-> > > > >   /* create v6 smc sock */
-> > > > >   v6 =3D socket(AF_INET6, SOCK_STREAM, IPPROTO_SMC);
-> > > > >
-> > > > > Therefore, we need to add code to support IPPROTO_SMC in
-> > > > > socket_type_to_security_class().
-> > > > >
-> > > > > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> > > > > ---
-> > > > >  security/selinux/hooks.c | 2 ++
-> > > > >  1 file changed, 2 insertions(+)
-> > > >
-> > > > I'm a little concerned that the small patch below might not be all
-> > > > that is needed to properly support SMC in SELinux.  Can you explain
-> > > > what testing you've done with SMC on a SELinux system?
-> > >
-> > > I don't have much knowledge about smc, so I can't tested everything, =
-but
-> > > I created a socket, performed setsockopt, and tested two sockets
-> > > communicating with each other. When I tested it, performing smc-relat=
-ed
-> > > functions worked well without any major problems.
-> > >
-> > > And after analyzing it myself, I didn't see any additional patches ne=
-eded
-> > > to support IPPROTO_SMC in selinux other than this patch. So you don't
-> > > have to worry.
-> >
-> > Note that Jeongjun is not introducing SELinux support for SMC sockets
-> > for the first time here; he is just updating the already existing
-> > support to correctly map the new IPPROTO_SMC to the already existing
-> > SECCLASS_SMC_SOCKET. We were already handling such sockets created via
-> > socket(AF_SMC, ...); what changed was that they added support for
-> > creating them via socket(AF_INET, SOCK_STREAM, IPPROTO_SMC) too.
->
-> Also, the extent of the support is limited to just the socket layer
-> checks, but this is not a change and is no different than many of the
-> other AF_* families besides the small number that have been more
-> specifically instrumented for SELinux.
+Hi Huan,
 
-Normally, this would be exercised by
-selinux-testsuite/tests/extended_socket_class but we didn't include
-SMC testing there originally because SMC sockets depend on INFINIBAND.
-However, looking at the kconfig options, it appears that perhaps we
-could test it locally via CONFIG_SMC_LO=3Dy if we enable that along with
-CONFIG_SMC and CONFIG_INFINIBAND in the selinux-testsuite/defconfig.
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on 033a4691702cdca3a613256b0623b8eeacb4985e]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Huan-Yang/udmabuf-cancel-mmap-page-fault-direct-map-it/20240814-231504
+base:   033a4691702cdca3a613256b0623b8eeacb4985e
+patch link:    https://lore.kernel.org/r/20240813090518.3252469-6-link%40vivo.com
+patch subject: [PATCH v3 5/5] udmabuf: remove udmabuf_folio
+config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20240816/202408162012.cL9pnFSm-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240816/202408162012.cL9pnFSm-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408162012.cL9pnFSm-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/dma-buf/udmabuf.c:175: warning: Function parameter or struct member 'ubuf' not described in 'unpin_all_folios'
+
+
+vim +175 drivers/dma-buf/udmabuf.c
+
+17a7ce20349045 Gurchetan Singh 2019-12-02  165  
+d934739404652b Huan Yang       2024-08-13  166  /**
+d934739404652b Huan Yang       2024-08-13  167   * unpin_all_folios:		unpin each folio we pinned in create
+d934739404652b Huan Yang       2024-08-13  168   * The udmabuf set all folio in folios and pinned it, but for large folio,
+d934739404652b Huan Yang       2024-08-13  169   * We may have only used a small portion of the physical in the folio.
+d934739404652b Huan Yang       2024-08-13  170   * we will repeatedly, sequentially set the folio into the array to ensure
+d934739404652b Huan Yang       2024-08-13  171   * that the offset can index the correct folio at the corresponding index.
+d934739404652b Huan Yang       2024-08-13  172   * Hence, we only need to unpin the first iterred folio.
+d934739404652b Huan Yang       2024-08-13  173   */
+d934739404652b Huan Yang       2024-08-13  174  static void unpin_all_folios(struct udmabuf *ubuf)
+c6a3194c05e7e6 Vivek Kasireddy 2024-06-23 @175  {
+d934739404652b Huan Yang       2024-08-13  176  	pgoff_t pg;
+d934739404652b Huan Yang       2024-08-13  177  	struct folio *last = NULL;
+c6a3194c05e7e6 Vivek Kasireddy 2024-06-23  178  
+d934739404652b Huan Yang       2024-08-13  179  	for (pg = 0; pg < ubuf->pagecount; pg++) {
+d934739404652b Huan Yang       2024-08-13  180  		struct folio *tmp = ubuf->folios[pg];
+c6a3194c05e7e6 Vivek Kasireddy 2024-06-23  181  
+d934739404652b Huan Yang       2024-08-13  182  		if (tmp == last)
+d934739404652b Huan Yang       2024-08-13  183  			continue;
+c6a3194c05e7e6 Vivek Kasireddy 2024-06-23  184  
+d934739404652b Huan Yang       2024-08-13  185  		last = tmp;
+d934739404652b Huan Yang       2024-08-13  186  		unpin_folio(tmp);
+d934739404652b Huan Yang       2024-08-13  187  	}
+c6a3194c05e7e6 Vivek Kasireddy 2024-06-23  188  }
+c6a3194c05e7e6 Vivek Kasireddy 2024-06-23  189  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
