@@ -1,73 +1,39 @@
-Return-Path: <linux-kernel+bounces-290013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F958954E6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:06:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4682954E70
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:06:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C22E31C24350
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:06:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B9FD285599
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F79D1BE25E;
-	Fri, 16 Aug 2024 16:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Rg9Ffr1A"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CFD2BB0D
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 16:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E9E1BE871;
+	Fri, 16 Aug 2024 16:06:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5581BDA87;
+	Fri, 16 Aug 2024 16:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723824356; cv=none; b=OqK+8XagrmCmOr/f4uATBHekVM7xb2WWPnn0f/TabcsaG4D3gKxc0Vg26NM2huWAiRcv3NMaRhDue3rQ0ZogM0btgEsTXI1Icl154EN9qbIv3/sRyjoN0sKRp+2DVWr9JceCMNkmpiCgDPDmosC4V9/1r9Fm8UnwQWDOruYhDos=
+	t=1723824391; cv=none; b=Xobx+jOWS3DzBpzdGt7lV/tTYrqnyJriLLe+QnRSgIFckzhc7Ha5pH0QAky7UN3wyryjz6q7sEF6+wPMXL3OcYI7Y+b3ciwcOtrl1Yrf8g056c5/PlnEfmOrZou/R/OUt3CoaIE/9ftDYYQR23uH+tlbyk9LjjpdTWVcjIhdPPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723824356; c=relaxed/simple;
-	bh=6BO/maEjrx/cZR2u127dlkQbYICXH0x1XZX2uW9uN2U=;
+	s=arc-20240116; t=1723824391; c=relaxed/simple;
+	bh=37h/oRDfh6L4BPlZhucfApa/80jVTHA6BUgyGnnHCjs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F4oMEDhH1TCDzzhDhX2iKfrsIWVUHvm1GhsTQA/pmlMGDMVsJccAPbL32ygsahm1yQJW9pR3skZWDqitQUwo1mwjBayhW8lhj+iI/OC9uItLmSsGPF/We1sstXudMO8aHC6sxI3y6TssyPXv7iPwlBUj1QiUdl2ltePpnEu5oH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Rg9Ffr1A; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-81f85130660so102192439f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:05:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1723824354; x=1724429154; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o84N4ouk6Dkhcje+6ztzZIHY0vWe2YxL+gh1TxT0Vmk=;
-        b=Rg9Ffr1ALKk0DvEJVTwwARrd2ATOqAAgxa2tBbNkxCMTNM2NvfquLYtZMmpOkS7gJz
-         24yUGg9jPQt0l2mZXAMUjiF6ks3ihsakTEBYxzjcQqHG2KvJgPhBqKPI3WD35nklC/Ip
-         xafdqSOVlXPFsqYEyAyo9MYBLdJsJIp8SAtSPC8rCePM9ws5dRnjHogjJNPPq1H9hae7
-         szVAUXoqltitsVR9iUCrkUMdSWe6m8pYLxoDtY+t53eGoli1xpKk/SQDUojceVmN+NKm
-         P+VqnGMBemZJMQ0VzJCioPboBOYFZ2nc7Fyh4/9KJe6n4Vwb9RitD3BiYHEdsKgHrW4E
-         1k1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723824354; x=1724429154;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o84N4ouk6Dkhcje+6ztzZIHY0vWe2YxL+gh1TxT0Vmk=;
-        b=kSrgN9NJbrSufGF5VAdzcTtN8mBiXZuI9/tHS2asp4JGg6kZiUnXa4fZC9awrQTiqV
-         PyjUsel4gbKYl/KtMrnOA0yhy6lTRPmJR9kPsAoTo3V+xjIAmxeePmfEsrlnSiVekHsT
-         1chHxG5XLpaYbKhXjHDO6aCDa3sAa/xWRuTMITwdcpvlC5hGFQG2TjIg7cetaMy6fmBS
-         kQ3BZHAoHl0xFQxH9nKodWIYgNCfIKRG66t5wlIUKyG/cSTktfXf07t20/Gzi07AS22d
-         cfjr10/UqAt1oM0uz/XsQkNYJkn2zvCK5E79iumM3dRhrCiiTLKp3yXgmGtQoG8Fyno2
-         Xx9g==
-X-Forwarded-Encrypted: i=1; AJvYcCVVwB8gZbD1woYUvffCd9Iy+OMDiqa4bWJ7Jl2Ed085G7ew0ZF0xV1/bBFbpffvfZyyRMGg5eGRPaQvyIbZsywstUh8Ao+ymOb7tfK0
-X-Gm-Message-State: AOJu0YyC4tXCjs4QtTMUg95n66M+QOTucDPGQ3xTYSzXIqEQk4NdSmEx
-	e8l7XYUa0PfWFfk0nwmihw+fXbZuwzGAkMYFnnvw3E5rSv0NaBUHzyir+Mf+ZCo=
-X-Google-Smtp-Source: AGHT+IG4laNFDhHnrQVOSwBV9czZ1pZoYL3nYxxmHeLOYJCIUBgZ9DJquHb1GQnoxRC0uU+qj0Q7Hg==
-X-Received: by 2002:a05:6e02:1c49:b0:39a:e9b8:cdae with SMTP id e9e14a558f8ab-39d1bc97b4emr73110195ab.0.1723824353392;
-        Fri, 16 Aug 2024 09:05:53 -0700 (PDT)
-Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39d247324afsm11366425ab.13.2024.08.16.09.05.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Aug 2024 09:05:52 -0700 (PDT)
-Message-ID: <7d741701-8966-45f1-8404-4b3618d44ea4@sifive.com>
-Date: Fri, 16 Aug 2024 11:05:50 -0500
+	 In-Reply-To:Content-Type; b=qJauXQkuIrP1lxYLPJbOHtyX/Cu5wl978Sk4e6qjHGn0TogQXGqT624agarnH5v6DIol8HUvCPXV2s6PJoTXyBoH+smBvjl2+gG8JhS1L8oNrf0dkkBMJYm3JHcMX2fDvYkTwISuHrGmuy8aIUC5hrZkEaRgah/oumMAR+VQIJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C928013D5;
+	Fri, 16 Aug 2024 09:06:54 -0700 (PDT)
+Received: from [10.1.34.14] (e122027.cambridge.arm.com [10.1.34.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 44E003F58B;
+	Fri, 16 Aug 2024 09:06:26 -0700 (PDT)
+Message-ID: <27c942e0-0e7c-4e71-b1df-1a8f70df5411@arm.com>
+Date: Fri, 16 Aug 2024 17:06:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,164 +41,135 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/10] riscv: Add support for userspace pointer masking
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
- devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
- linux-kernel@vger.kernel.org, Anup Patel <anup@brainfault.org>,
- Conor Dooley <conor@kernel.org>, kasan-dev@googlegroups.com,
- Atish Patra <atishp@atishpatra.org>, Evgenii Stepanov <eugenis@google.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Rob Herring <robh+dt@kernel.org>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20240814081437.956855-1-samuel.holland@sifive.com>
- <20240814081437.956855-5-samuel.holland@sifive.com>
- <CAK9=C2XOktu5kPXEWKMY4Wsf0D9kwh3rZNXricWqLQaiaqWnnQ@mail.gmail.com>
-From: Samuel Holland <samuel.holland@sifive.com>
-Content-Language: en-US
-In-Reply-To: <CAK9=C2XOktu5kPXEWKMY4Wsf0D9kwh3rZNXricWqLQaiaqWnnQ@mail.gmail.com>
+Subject: Re: [PATCH v4 00/15] arm64: Support for running as a guest in Arm CCA
+To: Shanker Donthineni <sdonthineni@nvidia.com>,
+ Matias Ezequiel Vara Larsen <mvaralar@redhat.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+ Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+References: <20240701095505.165383-1-steven.price@arm.com>
+ <ZpDvTXMDq6i+4O0m@fedora> <09fdebd7-32a0-4a88-9002-0f24eebe00a8@nvidia.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <09fdebd7-32a0-4a88-9002-0f24eebe00a8@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Anup,
-
-On 2024-08-16 8:21 AM, Anup Patel wrote:
-> On Wed, Aug 14, 2024 at 1:45 PM Samuel Holland
-> <samuel.holland@sifive.com> wrote:
->>
->> RISC-V supports pointer masking with a variable number of tag bits
->> (which is called "PMLEN" in the specification) and which is configured
->> at the next higher privilege level.
->>
->> Wire up the PR_SET_TAGGED_ADDR_CTRL and PR_GET_TAGGED_ADDR_CTRL prctls
->> so userspace can request a lower bound on the number of tag bits and
->> determine the actual number of tag bits. As with arm64's
->> PR_TAGGED_ADDR_ENABLE, the pointer masking configuration is
->> thread-scoped, inherited on clone() and fork() and cleared on execve().
->>
->> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
->> ---
->>
->> Changes in v3:
->>  - Rename CONFIG_RISCV_ISA_POINTER_MASKING to CONFIG_RISCV_ISA_SUPM,
->>    since it only controls the userspace part of pointer masking
->>  - Use IS_ENABLED instead of #ifdef when possible
->>  - Use an enum for the supported PMLEN values
->>  - Simplify the logic in set_tagged_addr_ctrl()
->>
->> Changes in v2:
->>  - Rebase on riscv/linux.git for-next
->>  - Add and use the envcfg_update_bits() helper function
->>  - Inline flush_tagged_addr_state()
->>
->>  arch/riscv/Kconfig                 | 11 ++++
->>  arch/riscv/include/asm/processor.h |  8 +++
->>  arch/riscv/include/asm/switch_to.h | 11 ++++
->>  arch/riscv/kernel/process.c        | 90 ++++++++++++++++++++++++++++++
->>  include/uapi/linux/prctl.h         |  3 +
->>  5 files changed, 123 insertions(+)
->>
->> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
->> index 0f3cd7c3a436..817437157138 100644
->> --- a/arch/riscv/Kconfig
->> +++ b/arch/riscv/Kconfig
->> @@ -512,6 +512,17 @@ config RISCV_ISA_C
->>
->>           If you don't know what to do here, say Y.
->>
->> +config RISCV_ISA_SUPM
->> +       bool "Supm extension for userspace pointer masking"
->> +       depends on 64BIT
->> +       default y
->> +       help
->> +         Add support for pointer masking in userspace (Supm) when the
->> +         underlying hardware extension (Smnpm or Ssnpm) is detected at boot.
->> +
->> +         If this option is disabled, userspace will be unable to use
->> +         the prctl(PR_{SET,GET}_TAGGED_ADDR_CTRL) API.
->> +
->>  config RISCV_ISA_SVNAPOT
->>         bool "Svnapot extension support for supervisor mode NAPOT pages"
->>         depends on 64BIT && MMU
->> diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/processor.h
->> index 586e4ab701c4..5c4d4fb97314 100644
->> --- a/arch/riscv/include/asm/processor.h
->> +++ b/arch/riscv/include/asm/processor.h
->> @@ -200,6 +200,14 @@ extern int set_unalign_ctl(struct task_struct *tsk, unsigned int val);
->>  #define RISCV_SET_ICACHE_FLUSH_CTX(arg1, arg2) riscv_set_icache_flush_ctx(arg1, arg2)
->>  extern int riscv_set_icache_flush_ctx(unsigned long ctx, unsigned long per_thread);
->>
->> +#ifdef CONFIG_RISCV_ISA_SUPM
->> +/* PR_{SET,GET}_TAGGED_ADDR_CTRL prctl */
->> +long set_tagged_addr_ctrl(struct task_struct *task, unsigned long arg);
->> +long get_tagged_addr_ctrl(struct task_struct *task);
->> +#define SET_TAGGED_ADDR_CTRL(arg)      set_tagged_addr_ctrl(current, arg)
->> +#define GET_TAGGED_ADDR_CTRL()         get_tagged_addr_ctrl(current)
->> +#endif
->> +
->>  #endif /* __ASSEMBLY__ */
->>
->>  #endif /* _ASM_RISCV_PROCESSOR_H */
->> diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/switch_to.h
->> index 9685cd85e57c..94e33216b2d9 100644
->> --- a/arch/riscv/include/asm/switch_to.h
->> +++ b/arch/riscv/include/asm/switch_to.h
->> @@ -70,6 +70,17 @@ static __always_inline bool has_fpu(void) { return false; }
->>  #define __switch_to_fpu(__prev, __next) do { } while (0)
->>  #endif
->>
->> +static inline void envcfg_update_bits(struct task_struct *task,
->> +                                     unsigned long mask, unsigned long val)
->> +{
->> +       unsigned long envcfg;
->> +
->> +       envcfg = (task->thread.envcfg & ~mask) | val;
->> +       task->thread.envcfg = envcfg;
->> +       if (task == current)
->> +               csr_write(CSR_ENVCFG, envcfg);
->> +}
->> +
->>  static inline void __switch_to_envcfg(struct task_struct *next)
->>  {
->>         asm volatile (ALTERNATIVE("nop", "csrw " __stringify(CSR_ENVCFG) ", %0",
->> diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
->> index e4bc61c4e58a..1280a7c4a412 100644
->> --- a/arch/riscv/kernel/process.c
->> +++ b/arch/riscv/kernel/process.c
->> @@ -7,6 +7,7 @@
->>   * Copyright (C) 2017 SiFive
->>   */
->>
->> +#include <linux/bitfield.h>
->>  #include <linux/cpu.h>
->>  #include <linux/kernel.h>
->>  #include <linux/sched.h>
->> @@ -171,6 +172,9 @@ void flush_thread(void)
->>         memset(&current->thread.vstate, 0, sizeof(struct __riscv_v_ext_state));
->>         clear_tsk_thread_flag(current, TIF_RISCV_V_DEFER_RESTORE);
->>  #endif
->> +       if (IS_ENABLED(CONFIG_RISCV_ISA_SUPM) &&
->> +           riscv_has_extension_unlikely(RISCV_ISA_EXT_SUPM))
->> +               envcfg_update_bits(current, ENVCFG_PMM, ENVCFG_PMM_PMLEN_0);
+On 15/08/2024 23:16, Shanker Donthineni wrote:
+> Hi Steven,
 > 
-> Seeing a compile warning with this patch on RV32.
+> On 7/12/24 03:54, Matias Ezequiel Vara Larsen wrote:
+>> On Mon, Jul 01, 2024 at 10:54:50AM +0100, Steven Price wrote:
+>>> This series adds support for running Linux in a protected VM under the
+>>> Arm Confidential Compute Architecture (CCA). This has been updated
+>>> following the feedback from the v3 posting[1]. Thanks for the feedback!
+>>> Individual patches have a change log. But things to highlight:
+>>>
+>>>   * a new patch ("firmware/psci: Add psci_early_test_conduit()") to
+>>>     prevent SMC calls being made on systems which don't support them -
+>>>     i.e. systems without EL2/EL3 - thanks Jean-Philippe!
+>>>
+>>>   * two patches dropped (overriding set_fixmap_io). Instead
+>>>     FIXMAP_PAGE_IO is modified to include PROT_NS_SHARED. When support
+>>>     for assigning hardware devices to a realm guest is added this will
+>>>     need to be brought back in some form. But for now it's just adding
+>>>     complixity and confusion for no gain.
+>>>
+>>>   * a new patch ("arm64: mm: Avoid TLBI when marking pages as valid")
+>>>     which avoids doing an extra TLBI when doing the break-before-make.
+>>>     Note that this changes the behaviour in other cases when making
+>>>     memory valid. This should be safe (and saves a TLBI for those
+>>> cases),
+>>>     but it's a separate patch in case of regressions.
+>>>
+>>>   * GIC ITT allocation now uses a custom genpool-based allocator. I
+>>>     expect this will be replaced with a generic way of allocating
+>>>     decrypted memory (see [4]), but for now this gets things working
+>>>     without wasting too much memory.
+>>>
+>>> The ABI to the RMM from a realm (the RSI) is based on the final RMM v1.0
+>>> (EAC 5) specification[2]. Future RMM specifications will be backwards
+>>> compatible so a guest using the v1.0 specification (i.e. this series)
+>>> will be able to run on future versions of the RMM without modification.
+>>>
+>>> This series is based on v6.10-rc1. It is also available as a git
+>>> repository:
+>>>
+>>> https://gitlab.arm.com/linux-arm/linux-cca cca-guest/v4
 > 
-> linux/arch/riscv/kernel/process.c: In function 'flush_thread':
-> linux/arch/riscv/include/asm/csr.h:202:41: warning: conversion from
-> 'long long unsigned int' to 'long unsigned int' changes value from
-> '12884901888' to '0' [-Woverflow]
->   202 | #define ENVCFG_PMM                      (_AC(0x3, ULL) << 32)
->       |                                         ^~~~~~~~~~~~~~~~~~~~~
-> linux/arch/riscv/kernel/process.c:179:45: note: in expansion of macro
-> 'ENVCFG_PMM'
->   179 |                 envcfg_update_bits(current, ENVCFG_PMM,
-> ENVCFG_PMM_PMLEN_0);
->       |                                             ^~~~~~~~~~
+> Which cca-host branch should I use for testing cca-guest/v4?
+> 
+> I'm getting compilation errors with cca-host/v3 and cca-guest/v4, is there
+> any known WAR or fix to resolve this issue?
 
-Right, thanks, that's why I needed to use #ifdef here before. I'll switch this
-instance back for v4.
+cca-host/v3 should work with cca-guest/v4. I've been working on
+rebasing/updating the branches and should be able to post v4/v5 series
+next week.
 
-Regards,
-Samuel
+> 
+> arch/arm64/kvm/rme.c: In function ‘kvm_realm_reset_id_aa64dfr0_el1’:
+> ././include/linux/compiler_types.h:487:45: error: call to
+> ‘__compiletime_assert_650’ declared with attribute error: FIELD_PREP:
+> value too large for the field
+>   487 |         _compiletime_assert(condition, msg,
+> __compiletime_assert_, __COUNTER__)
+>       |                                             ^
+> ././include/linux/compiler_types.h:468:25: note: in definition of macro
+> ‘__compiletime_assert’
+>   468 |                         prefix ##
+> suffix();                             \
+>       |                         ^~~~~~
+> ././include/linux/compiler_types.h:487:9: note: in expansion of macro
+> ‘_compiletime_assert’
+>   487 |         _compiletime_assert(condition, msg,
+> __compiletime_assert_, __COUNTER__)
+>       |         ^~~~~~~~~~~~~~~~~~~
+> ./include/linux/build_bug.h:39:37: note: in expansion of macro
+> ‘compiletime_assert’
+>    39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond),
+> msg)
+>       |                                     ^~~~~~~~~~~~~~~~~~
+> ./include/linux/bitfield.h:68:17: note: in expansion of macro
+> ‘BUILD_BUG_ON_MSG’
+>    68 |                 BUILD_BUG_ON_MSG(__builtin_constant_p(_val)
+> ?           \
+>       |                 ^~~~~~~~~~~~~~~~
+> ./include/linux/bitfield.h:115:17: note: in expansion of macro
+> ‘__BF_FIELD_CHECK’
+>   115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP:
+> ");    \
+>       |                 ^~~~~~~~~~~~~~~~
+> arch/arm64/kvm/rme.c:315:16: note: in expansion of macro ‘FIELD_PREP’
+>   315 |         val |= FIELD_PREP(ID_AA64DFR0_EL1_BRPs_MASK, bps - 1) |
+>       |                ^~~~~~~~~~
+> make[5]: *** [scripts/Makefile.build:244: arch/arm64/kvm/rme.o] Error 1
+> make[4]: *** [scripts/Makefile.build:485: arch/arm64/kvm] Error 2
+> make[3]: *** [scripts/Makefile.build:485: arch/arm64] Error 2
+> make[3]: *** Waiting for unfinished jobs....
+> 
+> I'm using gcc-13.3.0 compiler and cross-compiling on X86 machine.
+
+I'm not sure quite how this happens. The 'value' (bps - 1) shouldn't be
+considered constant, so I don't see how the compiler has decided to
+complain here - the __builtin_constant_p() should really be evaluating to 0.
+
+The only thing I can think of is if the compiler has somehow determined
+that rmm_feat_reg0 is 0 - which in theory it could do if it knew that
+kvm_init_rme() cannot succeed (rmi_features() would never be called, so
+the variable will never be set). Which makes me wonder if you're
+building with a PAGE_SIZE other than 4k?
+
+Obviously the code should still build if that's the case (so this would
+be a bug) but we don't currently support CCA with PAGE_SIZE != 4k.
+
+Steve
 
 
