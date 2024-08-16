@@ -1,106 +1,80 @@
-Return-Path: <linux-kernel+bounces-289674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99705954906
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:44:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86D9495490C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:45:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF55D1C2403C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:44:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34A0F1F20C66
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9817C1B3F3D;
-	Fri, 16 Aug 2024 12:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5761D1B86C3;
+	Fri, 16 Aug 2024 12:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dn77U71m"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GST0JKnU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9DD137903;
-	Fri, 16 Aug 2024 12:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E7F1B3F08
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 12:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723812261; cv=none; b=EYQ3QtP4W40YejWwK8CP4sk+OyumIT1tMoZ7dZ3wAss++e/fHFTcvP3Oyezqm5Ex+QVdfiYDlRmZ6CfVCRii+HymQEUb53ubYgdiLYhMJ3r9Tl0imcdI5pf2/uw5enr4YC+6lmsPTGFU2zDdWZPdzfdVpbO4AvovF1Wsa+Yj/e8=
+	t=1723812300; cv=none; b=TijNTIjFh3BrwSgbKZfpE7PG0Xkvp3yodWgnPZx/DiWx4K0Jnj57FLeuW/RFxBcbNVA8eLLg3y1/E32opCDanvvfjDMWG06ItSwGUcO83OcwKOhp3iAGEMMKSai18fa1QsX/KRcIKnD+4H6FoMSmKWjKl1oFFmmsK1rgmUDi1BA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723812261; c=relaxed/simple;
-	bh=a3pp/geZwZ34/wswnYDBzcjuy0ey0iItmKxdoIwIuVQ=;
+	s=arc-20240116; t=1723812300; c=relaxed/simple;
+	bh=fvGhxIuzPUioSNTTe3EoSTFxz8wI2lhy+hs0qJT16y4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pZ1EJmWPjy3ZNOkatGVW25JOTj2WZOH3EoMEhprKzV05qvibvRIqWH4nbg1+eLeR0rH9wUW3b4/Xiwtt5bDAQY8olWG8HFwz4oxdsCY4CRJg1JHIJjU5oMhF5rrFynZZouY0bLM9ZedJKpWSia0oplgxNzSECVmThl6oCJxquuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dn77U71m; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47GCJUIX011993;
-	Fri, 16 Aug 2024 12:44:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=FxG5AO0a05E65VCYddzaEdcy3rX
-	c9OnstfLvnE4yiAA=; b=dn77U71m4WAYrJk3pY3P+Cny23MgaPO5XsRB94tZafY
-	pQnZN9aAxhrqxJnt+aqlQtQIbsRV4KMVWECNqfGfPDq7+yYuRVN+HDv53/JIAGxL
-	r9kVL/5IHw6DRnDFc7D3dIi7Ffw8XJzJGDp/VGQynDKvmvVlVyy3xQAXtycFkyTJ
-	5ExeNbcTD0Nn9hsegil/8mTxbP8y5+W/Ikdt4QtLLW9IjGYYWtHJF5Bq0Ebh0eF2
-	abrnBizk/qgm3Pw7qv1bs9cQue+mpRCFAdxmafzMgOe7EmcA/+HImoXD4AjMXPhm
-	hP13NfHDF9TueeSuHwicMh2LbcQGyzR7fvduptLiu7Q==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4111d6gkdp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Aug 2024 12:44:02 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47GCi1i5003772;
-	Fri, 16 Aug 2024 12:44:01 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4111d6gkdg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Aug 2024 12:44:01 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 47G9mPvi010088;
-	Fri, 16 Aug 2024 12:43:59 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40xjx13t8k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Aug 2024 12:43:59 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47GChrkj35193230
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 16 Aug 2024 12:43:56 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DAEA320043;
-	Fri, 16 Aug 2024 12:43:53 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C383C20040;
-	Fri, 16 Aug 2024 12:43:49 +0000 (GMT)
-Received: from li-e7e2bd4c-2dae-11b2-a85c-bfd29497117c.ibm.com (unknown [9.124.218.83])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 16 Aug 2024 12:43:49 +0000 (GMT)
-Date: Fri, 16 Aug 2024 18:13:40 +0530
-From: Amit Machhiwal <amachhiw@linux.ibm.com>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Rob Herring <robh@kernel.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-ppc@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        Lizhi Hou <lizhi.hou@amd.com>, Saravana Kannan <saravanak@google.com>,
-        Vaibhav Jain <vaibhav@linux.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Vaidyanathan Srinivasan <svaidy@linux.ibm.com>,
-        Kowshik Jois B S <kowsjois@linux.ibm.com>,
-        Lukas Wunner <lukas@wunner.de>, kernel-team@lists.ubuntu.com,
-        Stefan Bader <stefan.bader@canonical.com>
-Subject: Re: [PATCH v3] PCI: Fix crash during pci_dev hot-unplug on pseries
- KVM guest
-Message-ID: <20240816180441.81f4d694-3b-amachhiw@linux.ibm.com>
-Mail-Followup-To: Michael Ellerman <mpe@ellerman.id.au>, 
-	Bjorn Helgaas <helgaas@kernel.org>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	kvm-ppc@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
-	Lizhi Hou <lizhi.hou@amd.com>, Saravana Kannan <saravanak@google.com>, 
-	Vaibhav Jain <vaibhav@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>, 
-	Vaidyanathan Srinivasan <svaidy@linux.ibm.com>, Kowshik Jois B S <kowsjois@linux.ibm.com>, 
-	Lukas Wunner <lukas@wunner.de>, kernel-team@lists.ubuntu.com, 
-	Stefan Bader <stefan.bader@canonical.com>
-References: <20240806200059.GA74866@bhelgaas>
- <87h6bm1ngo.fsf@mail.lhotse>
+	 Content-Type:Content-Disposition:In-Reply-To; b=D0+XZ8ovnROnE28VshQCeIP4bkACdcje+BuZxNJowMDRGlbD3rH26EYVatEgghTS3081b8LN8uHy8vvDOHgbT1q6TbXCP5amAQttktJuhte2ryc2+5FWg0X2cJnwEk0RtHOZPP3rWqgRGsfoTKjzkcGjqgAz8mNXb2Eb5itJNpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GST0JKnU; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723812299; x=1755348299;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fvGhxIuzPUioSNTTe3EoSTFxz8wI2lhy+hs0qJT16y4=;
+  b=GST0JKnUhe1K7ZITGKGWQ712/qfA4sZJdqrNCvXgUe5lb40lawIjsDVx
+   XbhZordQKCPOrjCBSpDxFn7II5UYTzCLPp1A5hoscMEQ9Faga7VbJuNxX
+   WeEjU3tLn7aeKBCvrg5iZW2r060dncG+wdJUuN0ZswdhnGEfPgj5a1tjy
+   qO5QwMRwkJOFEQuEkVSrGfJVezIH8/csiovyZn7pGEtOJsmkFl8Ko6RPp
+   2ZkG4sE/q2mTVAATpwWMIIO06lkSVQ8wm2BuOTC4L9jI3wPS8+B97u4Gk
+   TlLCcEiJXAs6herqQWfQvjAKlW72CTj9+wK3yJjdRpECBYdQHHraPc51t
+   Q==;
+X-CSE-ConnectionGUID: +STeHcCSRGeKjlDq77J7Eg==
+X-CSE-MsgGUID: hgGRe5hPQheUdTMfUK1DQg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="44625450"
+X-IronPort-AV: E=Sophos;i="6.10,151,1719903600"; 
+   d="scan'208";a="44625450"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 05:44:57 -0700
+X-CSE-ConnectionGUID: pzvbqMBIQSqcDRf43NMVfw==
+X-CSE-MsgGUID: 8HfQNVKBQTilZOBzibhyrQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,151,1719903600"; 
+   d="scan'208";a="64333875"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 16 Aug 2024 05:44:54 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sewK4-0006QC-15;
+	Fri, 16 Aug 2024 12:44:52 +0000
+Date: Fri, 16 Aug 2024 20:44:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	hannes@cmpxchg.org, yosryahmed@google.com, nphamcs@gmail.com,
+	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com,
+	akpm@linux-foundation.org
+Cc: oe-kbuild-all@lists.linux.dev, nanhai.zou@intel.com,
+	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com,
+	kanchana.p.sridhar@intel.com
+Subject: Re: [PATCH v2 4/4] mm: swap: Count successful mTHP ZSWAP stores in
+ sysfs mTHP stats.
+Message-ID: <202408162056.MQnreTgK-lkp@intel.com>
+References: <20240816054805.5201-5-kanchana.p.sridhar@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -109,79 +83,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87h6bm1ngo.fsf@mail.lhotse>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: fjxpXS4-C-n-T_sJtPF7tEjSYLYcNVMQ
-X-Proofpoint-ORIG-GUID: iFlwX-ZVYmO-todBMlQrqiZ-aMe-_LZD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-16_03,2024-08-16_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_spam_definite policy=outbound score=100 mlxlogscore=-999
- phishscore=0 spamscore=100 malwarescore=0 priorityscore=1501
- impostorscore=0 adultscore=0 bulkscore=0 mlxscore=100 lowpriorityscore=0
- suspectscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408160091
+In-Reply-To: <20240816054805.5201-5-kanchana.p.sridhar@intel.com>
 
-Hi Michael,
+Hi Kanchana,
 
-On 2024/08/15 01:20 PM, Michael Ellerman wrote:
-> Bjorn Helgaas <helgaas@kernel.org> writes:
-> > On Sat, Aug 03, 2024 at 12:03:25AM +0530, Amit Machhiwal wrote:
-> >> With CONFIG_PCI_DYNAMIC_OF_NODES [1], a hot-plug and hot-unplug sequence
-> >> of a PCI device attached to a PCI-bridge causes following kernel Oops on
-> >> a pseries KVM guest:
-> >
-> > What is unique about pseries here?  There's nothing specific to
-> > pseries in the patch, so I would expect this to be a generic problem
-> > on any arch.
-> >
-> >>  RTAS: event: 2, Type: Hotplug Event (229), Severity: 1
-> >>  Kernel attempted to read user page (10ec00000048) - exploit attempt? (uid: 0)
-> >>  BUG: Unable to handle kernel data access on read at 0x10ec00000048
-> >
-> > Weird address.  I would expect NULL or something.  Where did this
-> > non-NULL pointer come from?
-> 
-> It originally comes from np->data, which is supposed to be an
-> of_changeset.
-> 
-> The powerpc code also uses np->data for the struct pci_dn pointer, see
-> pci_add_device_node_info().
-> 
-> I wonder if that's why it's non-NULL?
+kernel test robot noticed the following build errors:
 
-I'm also looking into the code to figure out where's that value coming from. I
-will update as soon as I get there.
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.11-rc3]
+[cannot apply to akpm-mm/mm-everything next-20240816]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> 
-> Amit, do we have exact steps to reproduce this? I poked around a bit but
-> couldn't get it to trigger.
+url:    https://github.com/intel-lab-lkp/linux/commits/Kanchana-P-Sridhar/mm-zswap-zswap_is_folio_same_filled-takes-an-index-in-the-folio/20240816-134948
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20240816054805.5201-5-kanchana.p.sridhar%40intel.com
+patch subject: [PATCH v2 4/4] mm: swap: Count successful mTHP ZSWAP stores in sysfs mTHP stats.
+config: i386-buildonly-randconfig-005-20240816 (https://download.01.org/0day-ci/archive/20240816/202408162056.MQnreTgK-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240816/202408162056.MQnreTgK-lkp@intel.com/reproduce)
 
-Sure, below are the steps:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408162056.MQnreTgK-lkp@intel.com/
 
-1. Set CONFIG_PCI_DYNAMIC_OF_NODES=y in the kernel config and compile (Fedora
-   has it disabled in it's distro config, Ubuntu has it enabled but will have it
-   disabled in the next update)
+All errors (new ones prefixed by >>):
 
-2. If you are using Fedora cloud images, make sure you've these packages
-   installed:
-    $ rpm -qa | grep -e 'ppc64-diag\|powerpc-utils'
-    powerpc-utils-core-1.3.11-6.fc40.ppc64le
-    powerpc-utils-1.3.11-6.fc40.ppc64le
-    ppc64-diag-rtas-2.7.9-6.fc40.ppc64le
-    ppc64-diag-2.7.9-6.fc40.ppc64le
+   mm/page_io.c: In function 'count_mthp_zswpout_vm_event':
+>> mm/page_io.c:178:17: error: implicit declaration of function 'count_mthp_stat' [-Werror=implicit-function-declaration]
+     178 |                 count_mthp_stat(folio_order(folio), MTHP_STAT_ZSWPOUT);
+         |                 ^~~~~~~~~~~~~~~
+>> mm/page_io.c:178:53: error: 'MTHP_STAT_ZSWPOUT' undeclared (first use in this function)
+     178 |                 count_mthp_stat(folio_order(folio), MTHP_STAT_ZSWPOUT);
+         |                                                     ^~~~~~~~~~~~~~~~~
+   mm/page_io.c:178:53: note: each undeclared identifier is reported only once for each function it appears in
+   cc1: some warnings being treated as errors
 
-3. Hotplug a pci device as follows:
-    virsh attach-interface <domain_name> bridge --source virbr0
 
-4. Check if the pci device was added by running `ip a s`
+vim +/count_mthp_stat +178 mm/page_io.c
 
-5. Try hot-unplug of that device by supplying the MAC, which should trigger the
-   Oops
-    virsh detach-interface <domain_name> bridge <mac_addr>
+   174	
+   175	static inline void count_mthp_zswpout_vm_event(struct folio *folio)
+   176	{
+   177		if (IS_ENABLED(CONFIG_THP_SWAP))
+ > 178			count_mthp_stat(folio_order(folio), MTHP_STAT_ZSWPOUT);
+   179	}
+   180	
 
-Thanks,
-Amit
-
-> cheers
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
