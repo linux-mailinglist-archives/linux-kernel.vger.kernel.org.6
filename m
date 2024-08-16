@@ -1,187 +1,95 @@
-Return-Path: <linux-kernel+bounces-290429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1440D9553B6
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:14:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 599429553B9
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C381B218BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:14:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFF7BB20D12
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77AA5146D53;
-	Fri, 16 Aug 2024 23:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB60A145A16;
+	Fri, 16 Aug 2024 23:17:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20230601.gappssmtp.com header.i=@lixom-net.20230601.gappssmtp.com header.b="10MusjK7"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="JhDfl4w/"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C47F12C46D
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 23:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050C0B664
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 23:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723850080; cv=none; b=KXosnH9Fu4jAo+bpjBXN0gto05fzsM47sQu8r4LSyEx9YP74jbeDXWIni+QsZGW7c4YKJX40Grp1cuGAcEKcvYRHO4S/ghS/heDwypRnvmdHHdv6ThnM4/5qUVSVvZ/6cFDqQ1RupzK4FJOTA+gmGnLM2KBbGoo3cmstTN8Wxgk=
+	t=1723850221; cv=none; b=NlBpjApuaPsQaqMp8t6ZHR0R/rTMWMsPRkvekA/hw03ofRwdvBYlaRvVyO+LQQzXdcUBdcjX3DIFwa2fo4/MwCfoOAuk6PVAonf8u+XgO3zS4MbOPFCLypJ9SSh3eSKJl8X9LGB3W9IuBI92naZ5ddv+e9haZ+w7hnYYPovDy6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723850080; c=relaxed/simple;
-	bh=CqGF+vIIR37/TO1jmzSxW7Ztfy1Ee1V06lXhLznk3pU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L4oKU45yS8jkb6QSpRXrsJrs7KZqA7d6nd38q2inWCjtg9fs0QrthaXYwEw3USstXal19dZ1R2hJKIwSPyIB9fiwcSG4p8pT4c4MeHHv1xq6aREBYR5eBYGZ6ktIIPwF8KejAY4DXid9BnAD0Tk3x29/3TeZ7w8csPEf5bEe9Sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net; spf=none smtp.mailfrom=lixom.net; dkim=pass (2048-bit key) header.d=lixom-net.20230601.gappssmtp.com header.i=@lixom-net.20230601.gappssmtp.com header.b=10MusjK7; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=lixom.net
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-450059a25b9so23802251cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 16:14:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20230601.gappssmtp.com; s=20230601; t=1723850078; x=1724454878; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ueNzYl5S7O1PRoMwwd5P/GZe77RoSlXmg5l4LsdO/TU=;
-        b=10MusjK7VPy78wF7+m6RiXOuxGPP4Dr02hzW4PBEsIcTmwLrI9XXV4UDB23J4AnmBm
-         +MUXzcyhg1irerW2d8vKrR3AYLJJlfBw0ssUZe92d9IzA7SEiTHyvCYRwx3aAHpyGQQC
-         sP1UoUhyEJvqf6IAS67EgFmthp6UTaQEdjxCiPs5X2K86NtdoMV5gbv2shxQsWoNKY1Y
-         3poLS7A3vtI4lvSPvTLPeolDsIXA/PRN0GftAaJK3pSDjVoCPJHcGAkP/zdti85y0wtQ
-         jUyFpZ1vc91qLU03X9SH33vv9uLkBW4UxjjWEtedhH/6qnf69+GyEeYsKMNbf3HveiVN
-         gEQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723850078; x=1724454878;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ueNzYl5S7O1PRoMwwd5P/GZe77RoSlXmg5l4LsdO/TU=;
-        b=Z68wMv7wSyuDhnmLLrco7uyEbs8qr4gka30HtG8zfk57FV0y5p8OXr0HLfAqIDuh15
-         OHpxjDlnX5d2iTKM/OBq5iL5Q4sTJSQ4dv7AC4Gb98O2CZg/jbfamXiG355Mm/xX52qK
-         Bt8XoQVqMGU6JL0fUco0t2svDiA3owk8FohUd41yFQURmgOeJhj+OvkQfxTZUrY7nO0S
-         fz2IWBi/pw8Dd56urwqmTg4L7ZVkqOO4/LhrYl2xDdTomYtDpNQHcfTOBgAFtROdkcjG
-         uq3H2WU+d7MziPh5ZL595eakAsmjSbslmxVd9unAuWTHu+XCyoIYwZwEX2wZHOfN78vL
-         ds5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWdF4rl9P0MHsgmIairYSZoGRE/YObRuTH9fPs4T3/UJVLQ5ZRRUb7O/RGuLvsrBp933CKiMfampKydJQQFJhOzWrQAEKL8VSIiUokv
-X-Gm-Message-State: AOJu0Yz/ojPJwJbx+WQ4FGmqcquWVUIP6mLDYMWHaTA0WjcTC16GmdA1
-	SAVSQWQ4xS29UA6JSH/bA63xth05o167flrMKh80dXdN4dXlyoi9NVbNxxTNsMgXwjGavskyiLt
-	XxoWbhl0gvQbHQ599/PZl8+9C4kYkiJv9XqNG0w==
-X-Google-Smtp-Source: AGHT+IF49VekPZCw/4NwZB0RcuzNygPEhsTRH8TcXdf45Xfzx0CgPlfWgMUjL+tdTNoBeYol1xBY8xm7kkQpO93mfF4=
-X-Received: by 2002:a05:622a:14d:b0:44f:ff65:97be with SMTP id
- d75a77b69052e-4536787bea2mr152143891cf.14.1723850077946; Fri, 16 Aug 2024
- 16:14:37 -0700 (PDT)
+	s=arc-20240116; t=1723850221; c=relaxed/simple;
+	bh=roRvnMwEWZWDsXSMqVQw0j/j8y20FwYSvEpuhG751tI=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=KAbiqHL1AJenpiJKCGsWync2TUOASs6Cq8+KNe6i1xPt0ROm7GYtuC8uVCUBhsjYkHEOxdtBZ5M3RSuCd+RUmFJtuPf9DmcOJeLiEHAW+uL6eyqOlCmXh2WMRWxH34ojIoWvV28p6acfCSnNqaUST7o8fYbuOVQU0r+anct4LlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=JhDfl4w/; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1723850207; bh=w4EDB6xIbYl4sweb0Ucwmvlm9pLvdkiDIhy2X+d1Y8E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=JhDfl4w/Hy/7Y13LGHkFSKR5j87ngJaLGSvc46AJNC9nv3aY07ezgOVf7Bhlj4PL9
+	 Kej5lzEnSrZXbO1sPWD0WdCKls+3jEsC1xu9k8jPmgS8eLNxjy5wMMoF/ihKIzzFr8
+	 IahknQmF6qGwW1rY8l7WKvqFxN+znDfaLJM+LpBE=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
+	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
+	id 42D3322D; Sat, 17 Aug 2024 07:16:45 +0800
+X-QQ-mid: xmsmtpt1723850205tivmd9kqf
+Message-ID: <tencent_656E089498E91AEFC2CFEC78566F042E410A@qq.com>
+X-QQ-XMAILINFO: OdIVOfqOaVcrVz7lZ/6IcCsTq2d26SvflW5o0awemGjQOH5Az4hS9HNnlUilSS
+	 HnyCxTJPGEFSTeK7CHOOndnrlrsAF06Ve22lESdKmdlLcVBvErSlgCrlFnkULoAJFFxU4GxMxgs2
+	 AzIhqUxa8mT+5FWPZUflwHEHAVkH0PJyeAVzo7c7fEblAHLZ7ny+ZPRv9xZfNSGY07MxT8I7m++P
+	 KhCvDj01dFgqfiexJLwMnZcxges0mpJPQ/aWF9xG/yZsnJ+i5j9xDGVF+Pev6aqkT8M6BPhy2S5z
+	 cDpvLa8WaKk0JrDMPN4hK1Zryk/nFazZIrK3Gr+EeH5Qik6/DKdU8TK8/3L5S3gYFygR0sdHpUdA
+	 B1hwJWjd3sdocGwwdFiKQny4auwCYY0o1/qb8xROI7DYOJx5tW9k2dYfnc+ETBl1LStBYH6XtDqX
+	 xjzKATItC8F2TEx7fffgc6Ye4oI+i8jfvy27fy3B39QbKNe4zmpArWr9sAmWldf9a2yf02lTZDvT
+	 pGfKA4LPTZFPhEY7PZxIMC6dCYcS+vA3bGUCise9o2QX+J4ZTcK8JI/I6h0dzVPk1bcZwFPZB9TJ
+	 4G/je0dQtwKN4t25Gms7sOx9IQCMgb8RdlJZ0QP6M9hQ9/4zq1JhBTsQ52IpnyFPKwza0Vbuxt3L
+	 jP6mMZMdYGUW4JRDI8wiIvUfP6Jq+lRQcgRtuT7do6UzU+MAt3utlSYS/8N0OJmOu7oPt+2Vzroc
+	 DjrVf4f7At5EKSuutTHvqKNHiMQ3v24TBUPqu6mwHlzDT+ZkaGlNntIA35Zu5hKeknBAONJQJtZY
+	 dvUy6CkGDMzGTZ9pRs7C+cLTgpXLVxlBkuzYwqVsmzfAJHDV0iLoLhdBCYSIv+bEOr01zdnZMKzn
+	 DderMZEIZMv2LLKdwsk5tnXoUAq0kDiTI2XbbVwCa4
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+3c010e21296f33a5dc16@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [syzbot] [jfs?] KASAN: slab-use-after-free Read in dbFreeBits
+Date: Sat, 17 Aug 2024 07:16:44 +0800
+X-OQ-MSGID: <20240816231643.1446092-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <00000000000012a63d061fccab65@google.com>
+References: <00000000000012a63d061fccab65@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zr+H3gHZ/B7zTKBW@lizhi-Precision-Tower-5810> <20240816181500.GA69082@bhelgaas>
- <Zr+lslEn4cfBJ0A3@lizhi-Precision-Tower-5810>
-In-Reply-To: <Zr+lslEn4cfBJ0A3@lizhi-Precision-Tower-5810>
-From: Olof Johansson <olof@lixom.net>
-Date: Fri, 16 Aug 2024 16:14:27 -0700
-Message-ID: <CAOesGMi9F2S4LP5pp0tR4Ax0uf3z5cOgG6UKB3r3hAmjrC9gFQ@mail.gmail.com>
-Subject: Re: [PATCH 4/4] MAINTAINERS: drop NXP LAYERSCAPE GEN4 CONTROLLER
-To: Frank Li <Frank.li@nxp.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Zhiqiang.Hou@nxp.com, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 16, 2024 at 12:17=E2=80=AFPM Frank Li <Frank.li@nxp.com> wrote:
->
-> On Fri, Aug 16, 2024 at 01:15:00PM -0500, Bjorn Helgaas wrote:
-> > On Fri, Aug 16, 2024 at 01:09:50PM -0400, Frank Li wrote:
-> > > On Fri, Aug 16, 2024 at 11:12:31AM +0530, Manivannan Sadhasivam wrote=
-:
-> > > > On Thu, Aug 15, 2024 at 03:15:52PM -0600, Rob Herring wrote:
-> > > > > On Thu, Aug 15, 2024 at 9:53=E2=80=AFAM Manivannan Sadhasivam
-> > > > > <manivannan.sadhasivam@linaro.org> wrote:
-> > > > > > On Thu, Aug 08, 2024 at 12:02:17PM -0400, Frank Li wrote:
-> > > > > > > LX2160 Rev1 use mobivel PCIe controller, but Rev2 switch to d=
-esignware
-> > > > > > > PCIe controller. Rev2 is mass production chip. Rev1 will not =
-be maintained
-> > > > > > > so drop maintainer information for that.
-> > > > > >
-> > > > > > Instead of suddenly removing the code and breaking users, you c=
-an just mark the
-> > > > > > driver as 'Obsolete' in MAINTAINERS. Then after some point of t=
-ime, we could
-> > > > > > hopefully remove.
-> > > > >
-> > > > > Is anyone really going to pay attention to that? It doesn't sound=
- like
-> > > > > there's anyone to really care, and it is the company that made th=
-e h/w
-> > > > > asking to remove it. The only thing people use pre-production h/w=
- for
-> > > > > once there's production h/w is as a dust collector.
-> > > > >
-> > > > > If anyone complains, it's simple enough to revert these patches.
-> > > >
-> > > > My comment was based on the fact that Bjorn was not comfortable in =
-removing the
-> > > > driver [1] unless no Rev1 boards are not in use and Frank said that=
- he was not
-> > > > sure about that [2].
-> > > >
-> > > > But I think if Frank can atleast guarantee that the chip never made=
- into mass
-> > > > production or shared with customers, then we can remove the driver =
-IMO. But that
-> > > > is up to the discretion of Bjorn.
-> > >
-> > > I think Bjorn's request is impossible task. Generally chip company se=
-nd
-> > > out some evaluted sample to parter, which use these sample to built u=
-p
-> > > some small quantity production. Chip company have not responsibility =
-to
-> > > call back this samples. There are always some reasons to drop mobivel=
- and
-> > > switch designware, it may be caused by some IP issues which can't mat=
-ch
-> > > mass production's requirememnt. Such informaiton already removed from
-> > > nxp.com. Only Rev2 left.
-> >
-> > If you're reasonably confident that nobody will notice the removal of
-> > support for Rev1, we can include that in the commit log and just
-> > remove it.
-> >
-> > The original commit log basically said "we don't want to support Rev1"
-> > without any indication of where those parts went or whether anybody
-> > might care about them.  But if Rev1 only went to partners for
-> > evaluation and we don't expect end users to have them, I think it's
-> > reasonable to say that and remove the code.
->
-> Thanks, I just find 2020 Yang li try to drop dts part in below thread:
->
-> https://lore.kernel.org/all/CAOesGMhz8PYNG_bgMX-6gka77k1hJOZUv6xqJRqATaJ6=
-mFbk6A@mail.gmail.com/
->
-> Olof Johansson raise concern about their HoneyComb.
->
-> I added Olof Johansson in this thread. I think HoneyComb use evaluation
-> chip to build some small quaitity boards.
->
-> As my best knowledge, rev1 should have some big problem. I can't find any
-> detail about these because rev1 informaion already cleanup totally. I don=
-'t
-> prefer continue use risking rev1 chip.
+sync jfs remount and  jfs ioctrl with s_umount
 
-I paid good money for my HoneyComb, and while it was an early system,
-I certainly wouldn't expect it to stop working because some maintainer
-is bored of supporting it. It's clearly been commercially sold as
-systems.
+#syz test: upstream master
 
-Mind you, I can't remember last time I powered on my system any more,
-since I mostly use the Ampere board or VMs on my Mac for ARM linux
-work when needed, but that doesn't mean I want to send off the
-HoneyComb to recycling.
+diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
+index cb3cda1390ad..a409ae18454a 100644
+--- a/fs/jfs/jfs_dmap.c
++++ b/fs/jfs/jfs_dmap.c
+@@ -1645,7 +1645,9 @@ s64 dbDiscardAG(struct inode *ip, int agno, s64 minlen)
+ 		 * call jfs_issue_discard() itself */
+ 		if (!(JFS_SBI(sb)->flag & JFS_DISCARD))
+ 			jfs_issue_discard(ip, tt->blkno, tt->nblocks);
++		down_read(&sb->s_umount);
+ 		dbFree(ip, tt->blkno, tt->nblocks);
++		up_read(&sb->s_umount);
+ 		trimmed += tt->nblocks;
+ 	}
+ 	kfree(totrim);
 
-Don't regress your users. Thanks.
-
-
--Olof
 
