@@ -1,146 +1,183 @@
-Return-Path: <linux-kernel+bounces-289989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7E04954E2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:50:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47395954E31
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:51:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FD8D285724
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:50:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D2601C24525
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197FF1BD515;
-	Fri, 16 Aug 2024 15:50:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC10A1BDABD;
+	Fri, 16 Aug 2024 15:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="d6IGlsnA"
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EnOpsI0x"
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC7C1BDA94
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5291E1BE228
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723823426; cv=none; b=Ne8XnlubM3L4Fd8U4swh055mrYth7wJHvE1kk8lnnTIjRLUlFDCbEezowXj5DfHhc3NXNYP5HJBoHwptkruX//NYLvUacWmswLo0erRnml7/V/qqzMtCeQqMiQa9WbKGBU6/zpd5NT1+P5UPP9FOqLb9rwAkKGnkM1Ryw+2YK0o=
+	t=1723823495; cv=none; b=gTjSt1JT+BzyABJI3JtNoUN2bdwwlL4yfkOL72bxoFJ9B1Kxkim407O0PACKMw5hX20yfzm07CvCc+XxJOHsVCI0L4tNeKrxB4pNEPhUluXB73I0eBRxo+aJTGgsSgI7vAjjO867YnNRxo6n/k/0sTvsYqCQ1c+J5WxfCzFWZkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723823426; c=relaxed/simple;
-	bh=WQdmIL3ebAOO0xVkHMynMFWZBLZgYyRqLYq+hICJS8o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kE95ow4UVR++Ss/LmBDlbKoioljlqwKYD2pH58mxw3CGS399cB5xPpfqcezA7HnJ3n/KFiK88n4kyBgXZqE4Y6XJXMhVlIs5NigJ2qQ9BATWJLSBakNqoyhnLzHBW0sdmH5T9GlrNXjDVZLuwFwdh4E2EG8HkHwoe8Aw7SAlqbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=d6IGlsnA; arc=none smtp.client-ip=209.85.217.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-493e8ef36b4so809194137.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:50:24 -0700 (PDT)
+	s=arc-20240116; t=1723823495; c=relaxed/simple;
+	bh=aTpatmIGqiMC7+hU1OkoYLiM35+6LYxID9L25XPk8l8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LoLmlzp259JxrN8XPGoFtPq0yS9d91h6NEEU41Rv/cY8f/apQyNa7591rPL+L4akzjh4OChEBy0hv78yFyQltrEm1j3CwfhuebFVEuThlfF0IF2fnGCT5yfOojEtJM9nHwnLOGlZON4bLf2SLPudCVC+PLyhcA7iy4ijK2BkmPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EnOpsI0x; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-492a8333cb1so746621137.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:51:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1723823424; x=1724428224; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=04UNYulrmBw5at1Th7g14Wg4WZSr6HgYutjIS185Fn8=;
-        b=d6IGlsnALB0KOhf6915sdlOrwIHOvuslI0NYMn9bSidLj/7Bwl/MFfh7MWG3fdUOvP
-         sNw+ltCpWGPMpa+drLV7WdfCfxcfPUKpgtkA64am+grybUrmuVst/UowkV8cikzyPfpF
-         tg9kS8Qdlrt8NFTWMhPHju7AcrMgQTPY8LZ5c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723823424; x=1724428224;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1723823492; x=1724428292; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=04UNYulrmBw5at1Th7g14Wg4WZSr6HgYutjIS185Fn8=;
-        b=AQl+3KAUouFQJ9eFm2qlm6pSQMrYYAS/KlnkLOt3vs3fa6EQauAjuJNKhUOdIFWgr1
-         ORoHK5U8Lfqo3kVj7L7WwD8/WZ3iwEBVIK0O4LAZrftrLEoZKQ5w3iQ9kk0z4rICh51Y
-         u1fvSAzwelmU9eGAMwu7zd5gmtXbatBqtSqUj3zGQwFtXjo6M2I8xQ9ZmimEnrbWlu/9
-         F91XBl/bdQenBY7l6IJKUOJ3qgOv/+KUPmw4UAeSKLXuuKwBo09DtW9OQ0EOf+RqP0dW
-         a8v04u/lufjiI0N4tSgaiP5rhnCXFbZMkyM6fBZMRe2kEGSKdcNWTffb5zG4SSWbPRZc
-         PWSw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+8iUdya5PEukVJBj5vmFRBdCBjrroFXu/4yFED6fHG0+Zsd1u0rlE8hmt3Y5bfIJbSqdiL+TbEJwzk18I9vDYbwwTKXPkqyiABbHp
-X-Gm-Message-State: AOJu0YzSDZiLTFh5cMqvVcsFT90iowVCHiDX4/fswzva5WxiI12BxgwJ
-	394HOvWQqRNaYVTaGEjP5Tu5x5NxShupPJr1M50rRoZCHG5tRRMcapFC6NpAuA==
-X-Google-Smtp-Source: AGHT+IE2SAN3rGBjCvJuW576PqD2U+6D8iHOvypWNA4L+rUXdZYnB1HrLenKMMJE5odaPgj8kD4R3A==
-X-Received: by 2002:a05:6102:511e:b0:48f:831d:cea6 with SMTP id ada2fe7eead31-497799a592dmr4404272137.25.1723823423697;
-        Fri, 16 Aug 2024 08:50:23 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45369fd9e39sm17816701cf.2.2024.08.16.08.50.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Aug 2024 08:50:23 -0700 (PDT)
-Message-ID: <9c9a050c-f35b-47b8-823d-96535614b5bb@broadcom.com>
-Date: Fri, 16 Aug 2024 08:50:19 -0700
+        bh=oVTGOKA5IKmJj5zDO1DyZoUEkVlymdLnKbH0vw8teA4=;
+        b=EnOpsI0x1zX/KA9JOiq3diJCg5p8yrxq1Kju5yDHOkDoRasrBXR4Qtbe+z8I94zRy9
+         oKaDMOZ/aYTTSak0IcgTBQS4kRdWgajUIcwyyQ1m+bJLPBR90TOYap/SZ3Z/o26iq237
+         uqgLRSvHz+IwVU7WZGKOu0alI9eyJwLW2urG1eHtTtX6ahUoS0GZx1yj0+bpOojaiKn5
+         Yhd7aQgQttY0FKjilLjfzUlJbo/SnJGlhQl7ysTbIzomoBvs9EBT8ZG93NCZTOaxJoij
+         q/EqTVCEYlz4gcAlhkuSsrr/GYJfBQgb+xXQ4KlYOdZswH6w63KQBVyTdxEnucQyV0rY
+         Pgzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723823492; x=1724428292;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oVTGOKA5IKmJj5zDO1DyZoUEkVlymdLnKbH0vw8teA4=;
+        b=j6JzH5dSRY/jdNcYxV+Hi3aIgJkq+TCameMe7O0oA9CVN+xM7PYk/0vextFHShm+t/
+         hjLv9qzGFF1iHiidnY6Tt/QXsqQaJ03jFO7dBWvHEghxOWVN8RdHMm8/EcyMoM3FuENu
+         bFyod+xtHvcXly4ZDn29fbBVv+nLp+Y9ED7/nIMscPNYE7Ui9qMv353sYYto0pt2xsKz
+         nnsSz+cl6nvAVzUxnpmQ4labfq4+VcFTNmjQPy9QmiaOp3IjO8g7QLURNHnv/TyBwHea
+         RG6qXA1r9fppeDKBIQLRxXpR9L6Oxm+dXvpiRLA74smxXQmMBQEHGQZxUjoQ0Dam9Vw3
+         sfaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXv2RK6Gm7Rs53yUNNhA9DoT8HHCVHzzB4AzRECGzHV1jUgxSGtnx04/pp/C8ii/qsOAruADLy2BRMaPtVYu5KPWRgAEAdGrgZcieVv
+X-Gm-Message-State: AOJu0YycusP4d7/ZooIGl1zoXFdZjkA9j6PxHfY3h4X5Yc3nVbg0G2PZ
+	zYCLyvaJTI7RIGzGBP6FxnN0LTSpLhLccZTIEdJDwFaYzFUBUIDQep4MMcWLqzC8i8D+A4WtaIJ
+	5cZdRGZGEdcY3wBYymo2ld1lby+5A0Ak6BVyy
+X-Google-Smtp-Source: AGHT+IFrg6f6qSm3TiL3zt4TuWVBOxUcMXZyDfUiXF2IUyGH3wmo6nzc1yc+vCPuTrt/IV1JuHI4FaQJcHYE6thnrtU=
+X-Received: by 2002:a05:6102:390f:b0:48f:380a:ca90 with SMTP id
+ ada2fe7eead31-4978848984dmr131943137.18.1723823491972; Fri, 16 Aug 2024
+ 08:51:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 04/13] PCI: brcmstb: Use common error handling code in
- brcm_pcie_probe()
-To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240815225731.40276-1-james.quinlan@broadcom.com>
- <20240815225731.40276-5-james.quinlan@broadcom.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20240815225731.40276-5-james.quinlan@broadcom.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-37-samitolvanen@google.com> <2024081600-grub-deskwork-4bae@gregkh>
+In-Reply-To: <2024081600-grub-deskwork-4bae@gregkh>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Fri, 16 Aug 2024 08:50:53 -0700
+Message-ID: <CABCJKuedc3aCO2Or+_YBSzK_zp9zB8nFwjr-tK95EBM3La1AmA@mail.gmail.com>
+Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved
+ structure fields
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Matthew Maurer <mmaurer@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, 
+	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/15/24 15:57, Jim Quinlan wrote:
-> Refactor the error handling in the bottom half of the probe
-> function for readability.  The invocation of clk_prepare_enable()
-> is moved lower in the function and this simplifies a couple
-> of return paths.  dev_err_probe() is also used when it is apt.
-> 
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+Hi Greg,
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+On Fri, Aug 16, 2024 at 12:20=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Thu, Aug 15, 2024 at 05:39:20PM +0000, Sami Tolvanen wrote:
+> > Distributions that want to maintain a stable kABI need the ability to
+> > add reserved fields to kernel data structures that they anticipate
+> > will be modified during the ABI support timeframe, either by LTS
+> > updates or backports.
+> >
+> > With genksyms, developers would typically hide changes to the reserved
+> > fields from version calculation with #ifndef __GENKSYMS__, which would
+> > result in the symbol version not changing even though the actual type
+> > of the reserved field changes. When we process precompiled object
+> > files, this is again not an option.
+> >
+> > To support stable symbol versions for reserved fields, change the
+> > union type processing to recognize field name prefixes, and if the
+> > union contains a field name that starts with __kabi_reserved, only use
+> > the type of that field for computing symbol versions. In other words,
+> > let's assume we have a structure where we want to reserve space for
+> > future changes:
+> >
+> >   struct struct1 {
+> >     long a;
+> >     long __kabi_reserved_0; /* reserved for future use */
+> >   };
+> >   struct struct1 exported;
+> >
+> > gendwarfksyms --debug produces the following output:
+> >
+> >   variable structure_type struct1 {
+> >     member base_type long int byte_size(8) encoding(5) data_member_loca=
+tion(0),
+> >     member base_type long int byte_size(8) encoding(5) data_member_loca=
+tion(8),
+> >   } byte_size(16);
+> >   #SYMVER exported 0x67997f89
+> >
+> > To take the reserved field into use, a distribution would replace it
+> > with a union, with one of the fields keeping the __kabi_reserved name
+> > prefix for the original type:
+> >
+> >   struct struct1 {
+> >     long a;
+> >     union {
+> >       long __kabi_reserved_0;
+> >       struct {
+> >           int b;
+> >           int v;
+> >       };
+> >     };
+> >
+>
+> Ah, ignore my previous email, here's the --stable stuff.
+>
+> But this all needs to go into some documentation somewhere, trying to
+> dig it out of a changelog is going to be impossible to point people at.
 
+I agree, which is why I included the details in the comments too.
+There's also an example file if you scroll down a bit further, but I
+can certainly add some actual documentation too. Since the --stable
+bits are not really needed in the mainline kernel, do you prefer a
+file in Documentation/ or is it sufficient to expand the example files
+to include any missing details?
+
+> > +/* See dwarf.c:process_reserved */
+> > +#define RESERVED_PREFIX "__kabi_reserved"
+>
+> Seems semi-sane, I can live with this.
+
+Is there something you'd change to make this more than semi-sane?
+
+> I don't know if you want to take the next step and provide examples of
+> how to use this in "easy to use macros" for it all, but if so, that
+> might be nice.
+
+This should already work with the macros Android uses, for example,
+with minor changes. The current example file doesn't include macro
+wrappers, but I can add them in the next version.
+
+> Especially as I have no idea how you are going to do
+> this with the rust side of things, this all will work for any structures
+> defined in .rs code, right?
+
+Yes, Rust structures can use the same scheme. Accessing union members
+might be less convenient than in C, but can presumably be wrapped in
+helper macros if needed.
+
+Sami
 
