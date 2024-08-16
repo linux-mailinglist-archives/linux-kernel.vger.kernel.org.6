@@ -1,123 +1,190 @@
-Return-Path: <linux-kernel+bounces-290039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13455954EB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:20:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C22F954EB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA9BC2841C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:20:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E7691C225F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 245CF1BE85C;
-	Fri, 16 Aug 2024 16:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B411BE87D;
+	Fri, 16 Aug 2024 16:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eEcYCFCU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pv+7Pmd1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F404179A3;
-	Fri, 16 Aug 2024 16:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BBC817;
+	Fri, 16 Aug 2024 16:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723825200; cv=none; b=LngxmoQwvQcYr/T6+EeDkIApzl+TXU2u8xI5b37k6onIeMa2oyCMrTEiZNR/GlZK13ISoAinVWQT/xdQPPL0o5eC8Kd/PvY/U1Gp2J2CbHjwYZM/9y4wq0U8mHlFJh0onQkDaU2XJIOVnJHRJru1j3v6YH2tZ2g91yXAiFsj5qI=
+	t=1723825353; cv=none; b=GFueE1piu6Q5/jGuMb/CN1bXfU85dqgMaJIRrUQNtbC3s/jnP97asAAX9MP/zvAtSBEHozkELRIYe9poWVGfQKD5QYai8L29yW9gZy8jX697AR9q5ZuBczn9yH0m9iGfb5R/Nl5ZTdiNWxc+ls3SHdpSHZy9SZ0a6dmTFO+e5X4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723825200; c=relaxed/simple;
-	bh=+wHgLCMoNBTbXfTrTddHqDd6dedGHf4s3xdy+t7NxlQ=;
+	s=arc-20240116; t=1723825353; c=relaxed/simple;
+	bh=5bM/+gMH6YeK6p9UWhTLUC1eR9DgYt1YNPoIMImSiO8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U7Soa4bPnr9ka+GInfE3u0SEhBvLVMTdxE87GA406emYc8A4L+km/nTdv6OQtC2R/hCHdFl1zEFV5WB35uspm+sZeXZ6Mfa0O4g3/ShAiDwp8Ta5XkYYa04q+pitbje0j6kCt6uw+tFwAkueN4k3jQMOyKJLTNGQcvNd3De2VFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eEcYCFCU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AD69C32782;
-	Fri, 16 Aug 2024 16:19:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rX4k1Ec1Eh8gZjtpgDOjNVK5k3qZvfTVsoQ02le456hLT8ylibd1NL+fHQvlbtyO8cQp6P5ppWj4qpwSUDSXRwXqJyNens3n+/LShmRp3DeFNiKq/VRDtS7wHDVhRA9CQu2Tm2Zch1EiuutnERL9UBs9fNQg67uPEqkUIVsaFac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pv+7Pmd1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC01AC32782;
+	Fri, 16 Aug 2024 16:22:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723825200;
-	bh=+wHgLCMoNBTbXfTrTddHqDd6dedGHf4s3xdy+t7NxlQ=;
+	s=k20201202; t=1723825353;
+	bh=5bM/+gMH6YeK6p9UWhTLUC1eR9DgYt1YNPoIMImSiO8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eEcYCFCU28GMlOB2IagRpXWIRYODIfkp7pLUkD92oEiCVC8jh73ELOhQfPFcmZrN7
-	 msmyGRQYAMH68iGk8lyq8E4UGqW8KiU4cDa9ilMwqEZ2NaoxgimByUqdNwreDVGWn+
-	 Sd5pAScq6Ca1fZ2SQdczHJVekgUTh6Dx2pfi7t++RjrOTs1c7A5WFFA2OjumGuMwRa
-	 FYWGT79cPaf42/FdXxN9S774iQjkXHKM87oDPm/thJwcfaLWAHAGluBEsegoDfisdX
-	 Q8nXrYz1KaD0zOTNdek8K7zXyXWfAHl51H/UfAwr68yrsTHZof4G+TAE3CcqpxKLcw
-	 Ehw0fY+/UoDOQ==
-Date: Fri, 16 Aug 2024 17:19:51 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Jann Horn <jannh@google.com>
-Cc: brauner@kernel.org, Kees Cook <kees@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-kselftest@vger.kernel.org,
-	linux-api@vger.kernel.org, David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH RFT v8 0/9] fork: Support shadow stacks in clone3()
-Message-ID: <ae718ea0-bcbb-48c6-8513-81c353d1729b@sirena.org.uk>
-References: <20240808-clone3-shadow-stack-v8-0-0acf37caf14c@kernel.org>
- <CAG48ez38VVj10fixN5FYo1qujHSH17bPGynzUQugqeBRYAOBRw@mail.gmail.com>
+	b=pv+7Pmd1kACFZxzIUAdZ2un+e62Xi6DceMWdZeVLaXPqhsbZX4WK1ZXHcYUiDGMtM
+	 6EeCw5L7Pnqtq1MLPX3+HkMSxWkf9AP2AmDVMfbsp7MzrcwXrb2NNoHiwdpH6oap75
+	 3CD+R0wvp4rySmpKLgobsF0Dan7f/MSQGEREW8QbaO9oPrD6bysk9mwWN2U67Inkhi
+	 Bebk/NWgCSLYUNlli/Zw/vHsRyR8FyUXSspKnWhIP1IAtOKJe6bQjmKwFqliAl/q7O
+	 3tVs5IjFW3Bl0XaoW95SZNLDfSMObrqMn5VCpJ5zFT2HeIxaT5K8CTVjtjkbzfnb51
+	 DDmjuclRg7Jtg==
+Date: Fri, 16 Aug 2024 11:22:29 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Md Sadre Alam <quic_mdalam@quicinc.com>
+Cc: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, konradybcio@kernel.org, thara.gopinath@gmail.com, 
+	herbert@gondor.apana.org.au, davem@davemloft.net, gustavoars@kernel.org, 
+	u.kleine-koenig@pengutronix.de, kees@kernel.org, agross@kernel.org, 
+	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, quic_srichara@quicinc.com, 
+	quic_varada@quicinc.com, quic_utiwari@quicinc.com
+Subject: Re: [PATCH v2 03/16] dmaengine: qcom: bam_dma: add LOCK & UNLOCK
+ flag support
+Message-ID: <knhqbj2pyluwrvr2f4h6zgpfosa6o2qgnhtl4qltadpuyfexgu@kk5knurc4v7h>
+References: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
+ <20240815085725.2740390-4-quic_mdalam@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="OAknQQKfG3OHJHRI"
-Content-Disposition: inline
-In-Reply-To: <CAG48ez38VVj10fixN5FYo1qujHSH17bPGynzUQugqeBRYAOBRw@mail.gmail.com>
-X-Cookie: A Smith & Wesson beats four aces.
-
-
---OAknQQKfG3OHJHRI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240815085725.2740390-4-quic_mdalam@quicinc.com>
 
-On Fri, Aug 16, 2024 at 05:52:20PM +0200, Jann Horn wrote:
+On Thu, Aug 15, 2024 at 02:27:12PM GMT, Md Sadre Alam wrote:
+> Add lock and unlock flag support on command descriptor.
+> Once lock set in requester pipe, then the bam controller
+> will lock all others pipe and process the request only
+> from requester pipe. Unlocking only can be performed from
+> the same pipe.
+> 
 
-> As a heads-up so you don't get surprised by this in the future:
+Is the lock per channel, or for the whole BAM instance?
 
-> Because clone3() does not pass the flags in a register like clone()
-> does, it is not available in places like docker containers that use
-> the default Docker seccomp policy
-> (https://github.com/moby/moby/blob/master/profiles/seccomp/default.json).
-> Docker uses seccomp to filter clone() arguments (to prevent stuff like
-> namespace creation), and that's not possible with clone3(), so
-> clone3() is blocked.
+> If DMA_PREP_LOCK flag passed in command descriptor then requester
+> of this transaction wanted to lock the BAM controller for this
+> transaction so BAM driver should set LOCK bit for the HW descriptor.
 
-This is probably fine, the existing shadow stack ABI provides a sensible
-default behaviour for things that just use regular clone().  This series
-just adds more control for things using clone3(), the main issue would
-be anything that *needs* to specify stack size/placement and can't use
-clone3().  That would need a separate userspace API if required, and
-we'd still want to extend clone3() anyway.
+You use the expression "this transaction" here, but if I understand the
+calling code the lock is going to be held over multiple DMA operations
+and even across asynchronous operations in the crypto driver.
 
---OAknQQKfG3OHJHRI
-Content-Type: application/pgp-signature; name="signature.asc"
+DMA_PREP_LOCK indicates that this is the beginning of a transaction,
+consisting of multiple operations that needs to happen while other EEs
+are being locked out, and DMA_PREP_UNLOCK marks the end of the
+transaction.
 
------BEGIN PGP SIGNATURE-----
+That said, I'm not entirely fond of the fact that these flags are not
+just used on first and last operation in one sequence, but spread out.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma/fCYACgkQJNaLcl1U
-h9Bk7gf+IN6OW0esjGTwucGU05u2q8/D58PS0K6hdwW93kXXCfMIi6tu3LPKICVK
-yx77X1fO4P4j6K56dl/hV7inTSFiOx+1YtUEvia0hYaAek3iml/kk4gyG6I2HMGA
-xcqEI41t4zp0sedKPUO7kGoEi4eZLYADaC01jPgQy3QX3QDsdAyMIxWA5+7rmYyO
-fsZcOJZ2NKOukJLa5y6ngTVxbIdjJQ/t3tMTpVeUyTCiTd5+ax9efRiyjzDH0KCV
-uM8a9HUk18alrQpAowDgVYZp1dl6+FDJ8C6RBk3PvrwrQN8UN9HhqkZMzP0jJK3G
-P0c78igE/ZZ4M0bl9hdPuEzJt5Yj9g==
-=00pP
------END PGP SIGNATURE-----
+Locking is hard, when you spread the responsibility of locking and
+unlocking across different entities it's made harder...
 
---OAknQQKfG3OHJHRI--
+> 
+> If DMA_PREP_UNLOCK flag passed in command descriptor then requester
+> of this transaction wanted to unlock the BAM controller.so BAM driver
+> should set UNLOCK bit for the HW descriptor.
+> 
+> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> ---
+> 
+> Change in [v2]
+> 
+> * Added LOCK and UNLOCK flag in bam driver
+> 
+> Change in [v1]
+> 
+> * This patch was not included in [v1]
+
+v1 can be found here:
+https://lore.kernel.org/all/20231214114239.2635325-7-quic_mdalam@quicinc.com/
+
+And it was also posted once before that:
+https://lore.kernel.org/all/1608215842-15381-1-git-send-email-mdalam@codeaurora.org/
+
+In particular during the latter (i.e. first post) we had a rather long
+discussion about this feature, so that's certainly worth linking to.
+
+Looks like this series provides some answers to the questions we had
+back then.
+
+Regards,
+Bjorn
+
+> 
+>  drivers/dma/qcom/bam_dma.c | 10 +++++++++-
+>  include/linux/dmaengine.h  |  6 ++++++
+>  2 files changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dma/qcom/bam_dma.c b/drivers/dma/qcom/bam_dma.c
+> index 1ac7e250bdaa..ab3b5319aa68 100644
+> --- a/drivers/dma/qcom/bam_dma.c
+> +++ b/drivers/dma/qcom/bam_dma.c
+> @@ -58,6 +58,8 @@ struct bam_desc_hw {
+>  #define DESC_FLAG_EOB BIT(13)
+>  #define DESC_FLAG_NWD BIT(12)
+>  #define DESC_FLAG_CMD BIT(11)
+> +#define DESC_FLAG_LOCK BIT(10)
+> +#define DESC_FLAG_UNLOCK BIT(9)
+>  
+>  struct bam_async_desc {
+>  	struct virt_dma_desc vd;
+> @@ -692,9 +694,15 @@ static struct dma_async_tx_descriptor *bam_prep_slave_sg(struct dma_chan *chan,
+>  		unsigned int curr_offset = 0;
+>  
+>  		do {
+> -			if (flags & DMA_PREP_CMD)
+> +			if (flags & DMA_PREP_CMD) {
+>  				desc->flags |= cpu_to_le16(DESC_FLAG_CMD);
+>  
+> +				if (bdev->bam_pipe_lock && flags & DMA_PREP_LOCK)
+> +					desc->flags |= cpu_to_le16(DESC_FLAG_LOCK);
+> +				else if (bdev->bam_pipe_lock && flags & DMA_PREP_UNLOCK)
+> +					desc->flags |= cpu_to_le16(DESC_FLAG_UNLOCK);
+> +			}
+> +
+>  			desc->addr = cpu_to_le32(sg_dma_address(sg) +
+>  						 curr_offset);
+>  
+> diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+> index b137fdb56093..70f23068bfdc 100644
+> --- a/include/linux/dmaengine.h
+> +++ b/include/linux/dmaengine.h
+> @@ -200,6 +200,10 @@ struct dma_vec {
+>   *  transaction is marked with DMA_PREP_REPEAT will cause the new transaction
+>   *  to never be processed and stay in the issued queue forever. The flag is
+>   *  ignored if the previous transaction is not a repeated transaction.
+> + *  @DMA_PREP_LOCK: tell the driver that there is a lock bit set on command
+> + *  descriptor.
+> + *  @DMA_PREP_UNLOCK: tell the driver that there is a un-lock bit set on command
+> + *  descriptor.
+>   */
+>  enum dma_ctrl_flags {
+>  	DMA_PREP_INTERRUPT = (1 << 0),
+> @@ -212,6 +216,8 @@ enum dma_ctrl_flags {
+>  	DMA_PREP_CMD = (1 << 7),
+>  	DMA_PREP_REPEAT = (1 << 8),
+>  	DMA_PREP_LOAD_EOT = (1 << 9),
+> +	DMA_PREP_LOCK = (1 << 10),
+> +	DMA_PREP_UNLOCK = (1 << 11),
+>  };
+>  
+>  /**
+> -- 
+> 2.34.1
+> 
 
