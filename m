@@ -1,97 +1,219 @@
-Return-Path: <linux-kernel+bounces-290266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1866955187
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:35:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7C79955185
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E330B2181B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:35:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D6291F22CBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461521C461E;
-	Fri, 16 Aug 2024 19:34:48 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E37B1C3F3F;
+	Fri, 16 Aug 2024 19:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ot/PeEYN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FE21BDA90;
-	Fri, 16 Aug 2024 19:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18EE680045;
+	Fri, 16 Aug 2024 19:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723836887; cv=none; b=H+A7bJvXfwKGeIjJBCO4GHpuBBd928fEJml86XtRWK/BogsYmpw+eskvIhRe47z6plRgBhGR8IYDS8bNHdGIH1Z1csCeV8AZCtWBcRGhM9Jbax75MB16i9vQg+0jlpg1FCxKbzp42iLtpFhgHM9UXi1tPW2B/07ykNfMf4Iin6M=
+	t=1723836886; cv=none; b=XfscMetios8XiWJhcIBJTumayo8BdvPL8u1ETczj6Zqgrn/Flu0QPwS557lw7MXWdPVgfPD7jz2qOcEAj/OOwxkrMwAWxzWeCRM0r5QjL5g/EXpyHXiIGOrem47ypIzS4qd9dv2zTAWAT0njgYK67pqMZQ+moi79wF5u3imeG1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723836887; c=relaxed/simple;
-	bh=cG9IFK24Xt85Di46e93qIxn3NtGFyMASqg7UK3yFink=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IUBu26mtqlH3nsVPtXSKWKYrlPn7carB5lsiS0qjrmKNcUWbRtIpkAp13NFBBw0wywjFKQdXjLaAG4hs/3ok+02fwuTib+KTZIh75/KtyDulyoK527A2A+XSi7gJc/9de8TnPm5qWGBE7XYEh04mb87qIpEiQe+Wq2wZ8V522TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 3D3531C00A1; Fri, 16 Aug 2024 21:34:38 +0200 (CEST)
-Date: Fri, 16 Aug 2024 21:34:37 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 5.10 000/350] 5.10.224-rc2 review
-Message-ID: <Zr+pzUSX97GvJEyG@duo.ucw.cz>
-References: <20240816101509.001640500@linuxfoundation.org>
+	s=arc-20240116; t=1723836886; c=relaxed/simple;
+	bh=Dq0NpHjb98fLGowXWIwgQbP1aYd4cC+HY/p6PVZACK4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NiTIIz4LGDlFVyCpxR+VSw1J1NxZMeWnV6/witAHs/+ZQxFyanyqbX9ABBtQqxaK7Zbl/NpSsrpZ5kcI3oBtT8Cc2o58Z01VPxbDDy8qszsn98IcLx7rY+bamVBiLv9RjjaAbo0k7wcLYsdt0rl8pQT4ca7U1h74dF+AOnTPUqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ot/PeEYN; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723836885; x=1755372885;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Dq0NpHjb98fLGowXWIwgQbP1aYd4cC+HY/p6PVZACK4=;
+  b=Ot/PeEYN8Ky2edy0PUozOYGdrEJUnN6gXqf7k9UiA/4pf0ik9RBP3vhu
+   9GgJLwTKJ4chhBAzoG5cCo1OBUETwMsuPA3jB/dfmEluuU7OgrStkDtq7
+   Hj3kH+kYHwXuhiGuYPrcPt50xknZRbEv5wA0roVTo3P2Xj0XAh498hcOi
+   2DsGS6uFtgFubwopV/5uxGyQKhZmi3A49a9Vupnue+p+WvIUlaV29vkIj
+   6RRojKlQl1NPsziRdxrXgK+MT8Nd7yp47JjgVVk6U823t+URbLy0BwuA4
+   kHSPGXnsH8xDVuzbv7ccJqKOGvlLCroiKPQRekjkhOxcyBoIvZp/A3B4y
+   Q==;
+X-CSE-ConnectionGUID: qyn0eMO+S4+2Djrse47yvg==
+X-CSE-MsgGUID: 8WBpo79ARCWOGZ8Hilunyw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="22114366"
+X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
+   d="scan'208";a="22114366"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 12:34:44 -0700
+X-CSE-ConnectionGUID: 7YLI+eO4TGOILABjHOZc4Q==
+X-CSE-MsgGUID: 7i27mFRCTBiomI4xpLFvIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
+   d="scan'208";a="82968920"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 12:34:44 -0700
+Received: from [10.212.50.43] (kliang2-mobl1.ccr.corp.intel.com [10.212.50.43])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 34D4C20CFEDA;
+	Fri, 16 Aug 2024 12:34:43 -0700 (PDT)
+Message-ID: <1b0464bf-0258-44d3-adca-4346a9fdfd31@linux.intel.com>
+Date: Fri, 16 Aug 2024 15:34:41 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UdEPW0NgBQK0hZOt"
-Content-Disposition: inline
-In-Reply-To: <20240816101509.001640500@linuxfoundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf report: Support --total-cycles --group in the tui
+ mode
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: acme@kernel.org, irogers@google.com, peterz@infradead.org,
+ mingo@kernel.org, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org
+References: <20240814141942.2513194-1-kan.liang@linux.intel.com>
+ <CAM9d7ciPg_1DJ+gJxqU2O0nwX_L9-2+K+NkObq64e12_6vDA_g@mail.gmail.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <CAM9d7ciPg_1DJ+gJxqU2O0nwX_L9-2+K+NkObq64e12_6vDA_g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
---UdEPW0NgBQK0hZOt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On 2024-08-15 6:44 p.m., Namhyung Kim wrote:
+> Hi Kan,
+> 
+> On Wed, Aug 14, 2024 at 7:19 AM <kan.liang@linux.intel.com> wrote:
+>>
+>> From: Kan Liang <kan.liang@linux.intel.com>
+>>
+>> With the --total-cycles, the --group is only supported in the stdio
+>> mode, but not supported in the tui mode. The output is inconsistent
+>> with different modes.
+>>
+>> if symbol_conf.event_group is applied, always output the event group
+>> information together in tui mode as well.
+>>
+>> $perf record -e "{cycles,instructions}",cache-misses -b sleep 1
+>> $perf report --total-cycles --group --tui
+>>
+>> Before the patch,
+>>
+>> Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles                         [Pro
+>>           6.45%            2.0K        0.57%         667    [dl-cacheinfo.h:164 -> dl
+>>           5.62%            1.7K        0.74%         871            [dl-cache.c:230 -
+>>           5.21%            1.6K        1.37%        1.6K          [setup-vdso.h:37 ->
+>>           4.92%            1.5K        0.09%         109            [dl-cache.c:367 -
+>>
+>> Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles                         [Pro
+>>           5.62%            1.7K        2.76%         871            [dl-cache.c:230 -
+>>           4.92%            1.5K        0.35%         109            [dl-cache.c:367 -
+>>           1.12%             346        0.55%         173
+>>           0.87%             270        0.43%         135                    [rtld.c:5
+>>           0.64%             197        0.03%           8      [dl-tunables.c:305 -> d
+>>           0.60%             185        0.01%           3      [dl-tunables.c:305 -> d
+>>
+>> Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles                         [Pro
+>>           5.90%            1.8K        1.28%        1.8K                  [strtod.c:8
+>>           5.70%            1.8K        1.24%        1.8K            [strtod_l.c:681 -
+>>           5.68%            1.8K        1.24%        1.8K            [strtod_l.c:508 -
+>>           5.48%            1.7K        1.19%        1.7K          [strtod_l.c:1175 ->
+>>           5.21%            1.6K        1.13%        1.6K          [setup-vdso.h:37 ->
+>>
+>> With the patch,
+>>
+>> Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles                         [Pro
+>>           6.45%            2.0K        0.57%         667    [dl-cacheinfo.h:164 -> dl
+>>           5.62%            1.7K        0.74%         871            [dl-cache.c:230 -
+>>           5.21%            1.6K        1.37%        1.6K          [setup-vdso.h:37 ->
+>>           4.92%            1.5K        0.09%         109            [dl-cache.c:367 -
+> 
+> Hmm.. it seems the output just removed the second one.
+> I guess it should combine the first and second output somehow.
+>
 
-> This is the start of the stable review cycle for the 5.10.224 release.
-> There are 350 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+The patch is just to make the behavior/output the same between --stdio
+and the tui mode for --group. I didn't change the algorithm of
+calculating the cycles.
 
-CIP testing did not find any problems here:
+Yes, it looks suspicious. I will take a deep look and see how the group
+information are processed.
 
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-5.10.y
+Thanks,
+Kan
 
-(5.15.165-rc2 (aff234a5be72) passes test, too)
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
-
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---UdEPW0NgBQK0hZOt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZr+pzQAKCRAw5/Bqldv6
-8vfQAJ449THy2kV2W5zR8B5nbVSpzoJh1wCfcPp7Bmvk3m3QuS/EVGUvYKkvw2o=
-=Quay
------END PGP SIGNATURE-----
-
---UdEPW0NgBQK0hZOt--
+> Thanks,
+> Namhyung
+> 
+>>
+>> Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles                         [Pro
+>>           5.90%            1.8K        1.28%        1.8K                  [strtod.c:8
+>>           5.70%            1.8K        1.24%        1.8K            [strtod_l.c:681 -
+>>           5.68%            1.8K        1.24%        1.8K            [strtod_l.c:508 -
+>>           5.48%            1.7K        1.19%        1.7K          [strtod_l.c:1175 ->
+>>           5.21%            1.6K        1.13%        1.6K          [setup-vdso.h:37 ->
+>>
+>> Fixes: 7fa46cbf20d3 ("perf report: Sort by sampled cycles percent per block for tui")
+>> Closes: https://lore.kernel.org/lkml/ZrupfUSZwem-hCZm@x1/
+>> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+>> ---
+>>  tools/perf/builtin-report.c    |  6 +++++-
+>>  tools/perf/ui/browsers/hists.c | 12 ++++++++++--
+>>  2 files changed, 15 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+>> index 1643113616f4..574342fb7269 100644
+>> --- a/tools/perf/builtin-report.c
+>> +++ b/tools/perf/builtin-report.c
+>> @@ -541,7 +541,11 @@ static int evlist__tui_block_hists_browse(struct evlist *evlist, struct report *
+>>         int i = 0, ret;
+>>
+>>         evlist__for_each_entry(evlist, pos) {
+>> -               ret = report__browse_block_hists(&rep->block_reports[i++].hist,
+>> +               i++;
+>> +               if (symbol_conf.event_group && !evsel__is_group_leader(pos))
+>> +                       continue;
+>> +
+>> +               ret = report__browse_block_hists(&rep->block_reports[i - 1].hist,
+>>                                                  rep->min_percent, pos,
+>>                                                  &rep->session->header.env);
+>>                 if (ret != 0)
+>> diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
+>> index 49ba82bf3391..22af1a6e29d6 100644
+>> --- a/tools/perf/ui/browsers/hists.c
+>> +++ b/tools/perf/ui/browsers/hists.c
+>> @@ -3665,11 +3665,19 @@ single_entry: {
+>>  static int block_hists_browser__title(struct hist_browser *browser, char *bf,
+>>                                       size_t size)
+>>  {
+>> -       struct hists *hists = evsel__hists(browser->block_evsel);
+>> -       const char *evname = evsel__name(browser->block_evsel);
+>> +       struct evsel *evsel = browser->block_evsel;
+>> +       struct hists *hists = evsel__hists(evsel);
+>>         unsigned long nr_samples = hists->stats.nr_samples;
+>> +       const char *evname;
+>> +       char buf[512];
+>>         int ret;
+>>
+>> +       if (evsel__is_group_event(evsel)) {
+>> +               evsel__group_desc(evsel, buf, sizeof(buf));
+>> +               evname = buf;
+>> +       } else
+>> +               evname = evsel__name(evsel);
+>> +
+>>         ret = scnprintf(bf, size, "# Samples: %lu", nr_samples);
+>>         if (evname)
+>>                 scnprintf(bf + ret, size -  ret, " of event '%s'", evname);
+>> --
+>> 2.38.1
+>>
+> 
 
