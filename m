@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-290351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C694E955299
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:41:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A249C95529B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:42:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB0FD1C20C09
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:41:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6A701C21750
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3741C461E;
-	Fri, 16 Aug 2024 21:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96841C461E;
+	Fri, 16 Aug 2024 21:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JxpPmap/"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cTHxtRMt"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D69E4315D;
-	Fri, 16 Aug 2024 21:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6404315D;
+	Fri, 16 Aug 2024 21:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723844475; cv=fail; b=dcWKjpR9YiK1bOoyX5qSLEBomfKEeM+oE1SNcZ+rIOWDPPVrbBh4zz95ynoTM6F9UYLpC1N2qgBY1gRWybgAoF7eu9ui87qPwgRAA4M0ngSvO9vnPY1Fr9ETp0ZlM2V1wL374j0OWyOYNqJuCFqcYFuZbLcGYHKPUfldDVR5YlA=
+	t=1723844515; cv=fail; b=h/EXNzAvxcNKwgLuwg0oJRzD8v+G2eoONxyiXgRhw7vfpwmgl+kAwmtrY3mLu9HF7ZHisN5qHaAxgOx1a/dGa3ADslImtLHqA+gb9agErNlJUsP0wRbcZiVmScbFs671vxdUJaiPpSGt6TLSz7fml+Q/mDxPEFfQc5cNC8m9es0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723844475; c=relaxed/simple;
-	bh=FgVwzV8PU9hQ0y/fMUWlLUVUCwyvGrj58FUA/OVwl6Q=;
+	s=arc-20240116; t=1723844515; c=relaxed/simple;
+	bh=ndE6S6JQcsDMMMVVGUzU14Dt7YV6pUyT+cIJdYh68v0=;
 	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=a/0TDSW7zzEAHhCMzLByEiwxZv6/QQyrUzf4nygsx8RkVODKo3H22vFRjTRoHlHGIDbE4Iwglm/zDU1u9tkFiHJtU6tb7UxqENST5z/uwIbGPA6xmNSnTIX65H9Skt4NvOplghKl4sC+uC4iTY57ZqdTck60WsDu8TXLec8+Gd4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JxpPmap/; arc=fail smtp.client-ip=192.198.163.14
+	 Content-Type:MIME-Version; b=de3hTt/X00x2tl2HESkQ9tR4bZk5cXW7cbznZjIa/gEmwI53PLsRi5jjbAG2Q6FNsrG9jOqOgmAiGB4nhROC2xFKBmPQZdKkfPxHtSvn44jtalTAGFq/X0bhM4KlpAwEDgz6WakXamuyIndygBjof0zLH8jWuDMxDucrXxOHqkk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cTHxtRMt; arc=fail smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723844474; x=1755380474;
+  t=1723844514; x=1755380514;
   h=message-id:date:subject:to:cc:references:from:
    in-reply-to:content-transfer-encoding:mime-version;
-  bh=FgVwzV8PU9hQ0y/fMUWlLUVUCwyvGrj58FUA/OVwl6Q=;
-  b=JxpPmap/r22mLhUc0g1TBZvL1iG/m5lfO1G5DFckOgNzfmVYHrvPvkFq
-   ws2HdAF0gkgTPPlMu1sihm64uHdoo+8SbGjV+NcbgKshPMnveoqYo2JMM
-   8TIw/oQ2cFIdfvsn6CsW4AZzjHMZp5/bFIJmACKVsAKgbPcamXNruKYlk
-   Z6Kd6Z7vdmzyUFP6lzuNUlA7So/B2ESgJXsLF2dyDA7f7uafJT6XjyKa+
-   /mDydoIHG7ftRUDL4CkOQA9IvFO43+0QgzsrfXNsWjAxRTbWeXK5Io7EL
-   g/iDCfZIEmlYgkY2to4bQ3lq6XJeUDAI5XBoY+chV3xaBCB8Z/xI/dhW2
+  bh=ndE6S6JQcsDMMMVVGUzU14Dt7YV6pUyT+cIJdYh68v0=;
+  b=cTHxtRMtXD/QPk7nwzA4/b2Jbek8MtaFsLngYN6JZW+ZCvIQ0yL12yvb
+   QzWr/JrpZb/BNb6GFBbSrjVNbREWZKy7ovA30VjtNC7LVtUzwvy10/TxS
+   4iw27yGLvG3s7RXnDNTZx/IkkAX+OPgR4WdFNW9oqycrlVpYMZUUVXjyO
+   dyixWw4VDzGNRBOnacPuTqBXS9gi0TUK+MUneRa5Sswi0OxakTNoLnar+
+   uTF8E1VLTHijKCQx8G4Y2wMfElvcx/Xuzldh5JXA0Y1luSlKnOZP42oyf
+   9BwovOPlO3GRdf+nZXWDbjhclxdKqvau7tGCy4ff5shTlpiQ0zUxDy899
    w==;
-X-CSE-ConnectionGUID: UuiDVXZUQVm9XhnpYTxuyg==
-X-CSE-MsgGUID: xc3/3vjcRA2Ykn/JosnxRQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="22325511"
+X-CSE-ConnectionGUID: mi0x58voQ6GOv+bQH77l6w==
+X-CSE-MsgGUID: 93KhmS8vSm24ujaRrPhONA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="22325554"
 X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
-   d="scan'208";a="22325511"
+   d="scan'208";a="22325554"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 14:41:12 -0700
-X-CSE-ConnectionGUID: XBDrMPj7RqyOcZ1+H/3VyA==
-X-CSE-MsgGUID: UXAVZuqxQMOdtNlDAWmwqQ==
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 14:41:53 -0700
+X-CSE-ConnectionGUID: Bv0MVAraRti6qu/AfQVnoQ==
+X-CSE-MsgGUID: FD1DZ50iRty7oMIcwVY+RQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
-   d="scan'208";a="60066604"
+   d="scan'208";a="60066736"
 Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Aug 2024 14:41:12 -0700
+  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Aug 2024 14:41:53 -0700
 Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
  fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 16 Aug 2024 14:41:11 -0700
+ 15.1.2507.39; Fri, 16 Aug 2024 14:41:52 -0700
 Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
  fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 16 Aug 2024 14:41:10 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.40) by
- edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ 15.1.2507.39 via Frontend Transport; Fri, 16 Aug 2024 14:41:52 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.174)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 16 Aug 2024 14:41:10 -0700
+ 15.1.2507.39; Fri, 16 Aug 2024 14:41:51 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bHqVIs6AihXN6D5Zm1d1nJhZSIRGzZUF7U3exlYaCpoaItYlAE/uWPXG66lfvQlVg/HmQslJ7Uooc0qA2bAZNqNVik1Nwu00ZJ3uGCJz5svjHxCRSxomEHKrwHv7tb8b9+FxDU5A9S4xZdk137Xj/6mQWHhot5ew3nl9Q4iwTRyYiXPa08dW4oMEG6wDu3QVw0zlIsVKiGDUnS5eUNh44vXIPRXxiuB4/FKEjlyI7a4n/pHnnAVzw+W4TM/ZThnKVGwEwa5DrbXZ1HyO2CmLJd1OJ2nzTQ1WOJKoFvYXOsmRSb/+aFFFZFJHSNRvdRjh7V8OXPtUl9KwRq8xsbJ11Q==
+ b=ugMb0inJyl1bNBGRVuWUfVF73TvvLm4XtZazDzflqynLLtjTMya8meMAPy5hG97lKMCkZUbf0+FW0GlJdP8b0gc6kR9o8sHLiq4MYkB55jF4xoH4pZWyKOJvJJCzaD3nKj2hJRBxwht+CwzEVXArrBu4PiwatMpsUStVZT70Nc0yVugX5f4xDKVx/6fZpnm0/0IsRlVOusKqARcrqWrQjTH8SmIPpQhFBU3523910J+/z1TE1X/Fugqewi5B9VnoAEOTVHOUnLzBCW39M2tocwZUdFClfXN6w8WYOsN7W0kySgiWE6eubSk2TF1zapItYnmZfwBwHx5aqJ4ZzY+wmg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WQEcctdXCBDFM0FBNT6y/elhNGZAmiCQoUWut0fCRL0=;
- b=V4LIm9LTpsXvd6DJhmJCiZlWJW9nEzJstUTPEhMedWh+SkueIDu/dokf35PkhWoJzjlZmVTS5S7po+V8/B6qFyKTjoRVaoAZ2kgAchhcuAtUwBdlZPfhwIUCiV7Iz864AQNzBqEjjemiGfL36XgOMDXWlTeD9vIyM+bnYJijdbnoUlqu2xKKWS7umTjg6/9ujhEXyaZk2Lb+pxHpLp+E+EGmoDE0SZyQPbhGtmOiwhu/mMrHTAR6NIgPxZBQUqxJlisKH++4e9L0fImPA7dOrn/JpJv884ajX9DiniXsJOtGMCqI8s+WJSFOjXLatPlU6Y52AVw5Q/ZW0HwH/xVn3w==
+ bh=J/5UWE8U2Pcpsrg3+TQyGmDTvPf43dGywdxiGMqLTDc=;
+ b=pcG/x9XfOXoEYN1GlacgbzUcYiZHpiBz47f6/TgJSYZtmLHvxJe/nNsprpuIY5EW+A+YDxtG7E5rFx9XoY8rwjE9dDM9t1rXjJyXrHI1a+OwYPCLBozebFv9aMAB62uw7U8qswl5+hFCB7Kypt8krPJtyCFBbTEu4CvNVB1OeXQrqJASgfCAYKpqt1kYMWvPHCLNqlZ8wTtdKm92kLfwvfBuLGIAUWCQIcihjeKKd6iAOEaImM1U9oOeIKrsub2T4tq0omGDZ04aVI85w5/7EtqZ3a3e/qFUaCxXQul/kJBkHgr+WIy/DyQRVPEXasFVhG/cT2gf1TfJ9Aw/UcJo9w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
@@ -85,16 +85,16 @@ Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
  by SJ0PR11MB4976.namprd11.prod.outlook.com (2603:10b6:a03:2d7::5) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.18; Fri, 16 Aug
- 2024 21:41:07 +0000
+ 2024 21:41:45 +0000
 Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
  ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
  ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7875.016; Fri, 16 Aug 2024
- 21:41:07 +0000
-Message-ID: <aa118320-72eb-4dd6-8826-0f3f7287becc@intel.com>
-Date: Fri, 16 Aug 2024 14:41:03 -0700
+ 21:41:45 +0000
+Message-ID: <e2b9bcd1-4b5d-4eb9-8e3c-604a4c5cafe8@intel.com>
+Date: Fri, 16 Aug 2024 14:41:41 -0700
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 15/22] x86/resctrl: Add the interface to assign a
- hardware counter
+Subject: Re: [PATCH v6 16/22] x86/resctrl: Add the interface to unassign a MBM
+ counter
 To: Babu Moger <babu.moger@amd.com>, <corbet@lwn.net>, <fenghua.yu@intel.com>,
 	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
 	<dave.hansen@linux.intel.com>
@@ -111,14 +111,14 @@ CC: <x86@kernel.org>, <hpa@zytor.com>, <paulmck@kernel.org>,
 	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<eranian@google.com>, <james.morse@arm.com>
 References: <cover.1722981659.git.babu.moger@amd.com>
- <099ecbbe678dd44387a8962d0cb81e61500cd2fa.1722981659.git.babu.moger@amd.com>
+ <09da6e20b695086558d6cadefbc4830961e6e60b.1722981659.git.babu.moger@amd.com>
 Content-Language: en-US
 From: Reinette Chatre <reinette.chatre@intel.com>
-In-Reply-To: <099ecbbe678dd44387a8962d0cb81e61500cd2fa.1722981659.git.babu.moger@amd.com>
+In-Reply-To: <09da6e20b695086558d6cadefbc4830961e6e60b.1722981659.git.babu.moger@amd.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR03CA0196.namprd03.prod.outlook.com
- (2603:10b6:303:b8::21) To SJ2PR11MB7573.namprd11.prod.outlook.com
+X-ClientProxiedBy: MW4PR03CA0197.namprd03.prod.outlook.com
+ (2603:10b6:303:b8::22) To SJ2PR11MB7573.namprd11.prod.outlook.com
  (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -128,90 +128,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SJ0PR11MB4976:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3ecff65d-7077-4b33-5773-08dcbe3c22d6
+X-MS-Office365-Filtering-Correlation-Id: 59a6cc97-21df-4909-5f25-08dcbe3c394f
 X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?cVBMN0I5RmNldU92RlN1RndmOTdyVythcjV4NnU5NUVLaVZUL3NURnNUL0JR?=
- =?utf-8?B?L3RZS1M3VCtWNmxDMFEzMDg5RVNubGpsVHhZZmEzNDM2UWw1Tzd0WFhWN1hM?=
- =?utf-8?B?WGx4NWJRUldxU0pVNCszRW9tZUFRa29NYWlkQkNBZDdNWWtzdndxTEdlK2Zu?=
- =?utf-8?B?R3Q2QnVxNlh6WXp1RFIreWk5MkNFSTMzZlZnTXp6Qzk3bE5TUGEvSGcyWnpx?=
- =?utf-8?B?OVdtZ3B5NUVLdFdiSFoyYkNIQzNoL1BNTTVrVmVZSEhTbSt1Vi9CY0VpcitM?=
- =?utf-8?B?TDVRWHppb1ZYblRxK0JiTmJSUEpLSjJZRFV0cFN5OUsybzNmU08vM2JDM2tF?=
- =?utf-8?B?YjNwNHhRTlBIaXpTMVlJZmtIcW9relFPQzlWWEk0cHQ5empOazFwd3U3bjVy?=
- =?utf-8?B?K2cxMFVPQ0N1UyswZG5NYkJqeXFJQUo5SnVyTXM4Z08wc2pNWW00QnZYb2Rl?=
- =?utf-8?B?Wm9UNHVrem1MVTQ4YXRVLy80cVFEOVlRV0FTNjllY2VNdVk5R0hkRFJEczdK?=
- =?utf-8?B?eVRRdHdzQ1U4Q1ljdkx1TWw4RmtpUTZQb1lkL3hiRUVSb2NMd281OHA0b0pq?=
- =?utf-8?B?OTNVY241VmZYZk5xZTF1eitncjJYZmNzajQ2d0NUbU9vT0YvT2IxdHptTi9R?=
- =?utf-8?B?eE5NNS8xL0pkNG4yYk0xMkxjR0FiMmRLZDBueDk4VDgzOE5Pa1NFSDgrSzJQ?=
- =?utf-8?B?SEhWbVpXZTNWbG5KeW53NHF3ZW95SmZZeU1LSGxDMFptSGlPVDdhVkdNNGUr?=
- =?utf-8?B?YWJpY1htVXhKQ05uZmwvNjkwK2l0b3F1Q1Rsa0NCQStBQWV4MXAxMXQxZWpF?=
- =?utf-8?B?M1FDTjRodVJIQXQzOUZuclo3L2g1K0JzQmRZelBXb3RpbmNrY005MWVsTlRz?=
- =?utf-8?B?VHVvWUxzbXhMdnZqNzQ1b2NSV0loS0Jyc1NTc0ozeGp1QzZUaG9IbzBXZWJn?=
- =?utf-8?B?YmNSOXZEc01QSitQdEVDOTdCZ29TRzZwN0Z2ZGk2dWQyT081QmpqMFEvd094?=
- =?utf-8?B?b3FiS1ZPdXduYUlxUDUvTnRjU1RFYzFTakpxRWtaTkVQekZqYkVLUzM1cVlK?=
- =?utf-8?B?MVBodHhUa1NRUVNleS8vdm9ocEtZbFlPeGdybmZ3YnQzd1o5ekxjQWVaejh5?=
- =?utf-8?B?MkJmZGUvREdIam4vZnVwcm1ibE53eXBHck9iOENhUGxTREFFeDY0ZmlCcVN3?=
- =?utf-8?B?cHg2ekRBT25KMjlpd1lUZ1R0UnFyUHN6d2p3RE9GdkxKcHZaMEJWVHdCbkFu?=
- =?utf-8?B?SnZqRkg1eDdIRUtwNHVuM1dmeFJINlpBTUx3RHZhQlVJRjNiV0VkQXhXZXBS?=
- =?utf-8?B?MzNXR255MkJsSTBQdzl3R1diNHBtekNRb2FBUFJLeHU2TThFZHV4dTVPbEM1?=
- =?utf-8?B?RTVRc3RmdTVXakVsK3VMYmtvWGw2eDBIUUxqYk9uM3J6SStBRXV2UER2QXgv?=
- =?utf-8?B?SkFIanQxZW9TYzZKaWhwZWttRmZNL2xQZnhjc2tsaHo4N3VoWTFrVE9YS3Qr?=
- =?utf-8?B?V2lVQzVncXloaDZDVTM2UEtsQzlDaW5MVkIwNktmUmNxZUUxWVN5RU5ZMWZJ?=
- =?utf-8?B?U1c3YmJBY2VzV00vbEROcnR5c0hhN1RxTXZPaVlDTEtmYmlMNE1taXpWUjhr?=
- =?utf-8?B?bXpBUWp5Um1iYU43L0lUc214U3FKVkpKMkRlNlIzRmJiVFpWT0NYcGZOOHA1?=
- =?utf-8?B?WHZuYlpPQXpKUVR1Y05DUUROblZzc3JwMEo2WXBTZ0ExMTg2UFQ5Y2pSRzcx?=
- =?utf-8?B?R2l0c2ozaENBREJyRFE0cVRlSEk0c2hsbllTYmFnT1BEZkRuMzFuUGMxUENr?=
- =?utf-8?Q?fIZZXLRUYWUHh/mnT3gjteJXNcWN6gK9j7pFY=3D?=
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?M1pTZFVvalVVWW4vS25kY21lWVp4QVZWMFBBaUg4SUxRWCsvalZNMEJKVjBx?=
+ =?utf-8?B?VTZBRFpsR0trdVRHdURWWnp5cnc0SGZoU0hPWVJZbFFxMWJrTmdoWEpSdTBy?=
+ =?utf-8?B?WkdJVDRSMG5neFVkSlYvbzlFc0N5Tm5Ga2M0OXcrZkUzN1BJY1B2YWs3K05Y?=
+ =?utf-8?B?SzJQODdCSXhqM1VFaGJLMW9TZVV3aFFjRmU0R1JQcVptaE5GdXNoazQxTXNq?=
+ =?utf-8?B?R1Nxb0JTaXJXdmswTVI3UCtYT21lWFc4aXVDc0lRZURGM1NmZWdaZ3k3NHdL?=
+ =?utf-8?B?MzRQTjZUdXU0S1RHYTcva0ZBbzZXWGl0RVJmZ1hudmkycTBVcUlKKyt3V2kw?=
+ =?utf-8?B?c2hzQ08zaHFocmZualRGcnEzM2FPKzEzVHBGYytja2VZUGVJbUhFbU94djY4?=
+ =?utf-8?B?L1JXMGo1RW1aVURqY004M2FGRzZDdHlzTEI5eStHRzdiMFBydy8rWTg1RDly?=
+ =?utf-8?B?SVhKTGFoZzNzSndNMUl2czJwL2EyMElBTmFVNzVxWkVXWk9hR0xEUmhiM2l2?=
+ =?utf-8?B?VGoxa3dLS0ZieWRDaEhQREZ2YlFlQk5NVVRMcHdrR0svZlkvdEFKUitrd1pW?=
+ =?utf-8?B?cEc5OE9iVVNVWEFDSTFOSGNDT3k1ZllsK1BJV3Z1NzZENXp1ZEhoWTE2b1dh?=
+ =?utf-8?B?RUd1dUljd0tPVEFMY0JpNXZvUTh1Z2htd292SERxbnRZWUpmT1ZmNnBHZUJs?=
+ =?utf-8?B?SU96R2g2Wm1hUGJOeC9iNDhGNEtMK01JNXk4NnM4Vk80SVpyKzZ6UEJDVzNX?=
+ =?utf-8?B?aWdnWlA4L1FnV3d1QmMzVEY2UDZsWWt4SFBkdDdWU0NIalZBTmFSM3JpL0VN?=
+ =?utf-8?B?Z2dvZzd3dXhTUVArWEFOUlJrYVdtNGxndFA0YzhOMHo0ZHQ5S3BkT3QrSE16?=
+ =?utf-8?B?LzBsNUtDNjVJR29EaURPNEtkelRzWG93blVpMjJXVlRVNUVkcldFenJHWlE2?=
+ =?utf-8?B?eXFnRHFHeklWckNNOWJDanFUc2dTVEFXZTNSY01KU2l2SGpub3J2ZWtPOHVi?=
+ =?utf-8?B?WGUzem8rWlFOSmpHbnI4NFZaeXBNSVJ4RzVlKzhWVzAwWFN2S1FvSm5UZklI?=
+ =?utf-8?B?Y1lRRHJ1YzRoOENKNGtrM2w4bWtsSGowYzAyaEw2bFcwb05YZGFGRG1PQlFJ?=
+ =?utf-8?B?Sko1YlRnQjJkdVYvdEwrdVpnWmhFYnU2ZEMxZU5VdzFnWmo3b29aWnM1V1JG?=
+ =?utf-8?B?UUdpeWRqK2RUMm5LTGROUkFNdTdKTC9laUVVM1FXdVZBTXRNa0RDRVNmK21Y?=
+ =?utf-8?B?UVk3M2VROUVBZ3gwbXVFYjdDMnpWOXRSVlU4VVl6TGYyNVBTWjEyY012STRj?=
+ =?utf-8?B?VDRzbkVNaWkwdDBGSzBqclh4TlJLcmRJd1dVZUtsQmV2NTZ3MEV4NERtMGNu?=
+ =?utf-8?B?M3FpdW9YWXlmOUY3OGI4TXhKSWdENUZ0SG0yRGpwVjJqdFdGTmthaVR0MEQ1?=
+ =?utf-8?B?TDBuR3ZvaTl0TEhsR1V1NDhSckRvZDFOMXZlL2I0UVpQQTdLTW0yUERhc0xN?=
+ =?utf-8?B?b3NMZ3NTWHBSTGE0aFR2L0JVeUY4bnZxU3NvNlFDdG11V0RkT0pKQVgwQmZT?=
+ =?utf-8?B?V3JUQzNXZGFwVTN5Nmw0WTAraUd1TktrNzNNTHA4QTJkV2NYanA3ZWpuWEN2?=
+ =?utf-8?B?QlFzUzdydE96dWJ1K3ZSeGE4S2licjg3c3RjRWxxM0FwdklucFdPcDlnbFdx?=
+ =?utf-8?B?dnlZVHZ3UXdOclovbUZxZkEvSXg4NmdqK29QN1k4VmM3NTFQK21RcXBsdGQ3?=
+ =?utf-8?B?TWhGS2xCQXBQUzcxZlgvOXJFMkxXTzhTRGIxVXM1bUs1Wno0dEppWUJLYUtF?=
+ =?utf-8?Q?cB7kgr8IuiCde3yGRjSQ+2ShJNmJFHaimK0Rg=3D?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZkpUaUdHLzlnSXJJc0ovWHVxcFlZNGZQempZcXZJb2t4TWF4TE4xdXZxdndh?=
- =?utf-8?B?eDJTUnJ0N1VpT1IzM09JK1J2K2RQeVhmNHlERnVDa01UbEhFTERXcGJQajNu?=
- =?utf-8?B?RVRrZDF0VlFab0xsTVJGS3RUaklLU0dSREFwQitNbEkxUE0yVUZ4cG51K2VI?=
- =?utf-8?B?L1QydS9DdEhvWENXeGRXd0VJSUVCY3hyaGZ3VlJKZEpGdTh6UEZ2Nitzb1Uz?=
- =?utf-8?B?L0dmQmdzWUd4NG16STZKZmNoT3cvZ291Y1ZRZEtGamRDSUdXSGk0L3FBWnN4?=
- =?utf-8?B?RzBqcm56dUZIQXNmTmZCTjJQVjdlQ0xaNzIxV1ZxMURaN2pSbzJXZWVhREVS?=
- =?utf-8?B?MU1ZbXNJNFN0Wk9ESzdnNmhmNUN4MlhKR1M5TytjWjlDRnhrOWRVWXc2cDZo?=
- =?utf-8?B?bUdDMjdabHBDclZWY0NyTkt4SDVla1YvZHQ1WDc0TFVSa2xCM1hzMWM0RXpj?=
- =?utf-8?B?MlZzam55WEUycVpQODRUaFNxSjQvYWdCM1NCckF0UktLNnNmYldrcXJ0d1Mr?=
- =?utf-8?B?d3BzQTJhMUxoS25wZ1UwblU1SGdiaDdFYWtaVUV2a2ErOStaMkttaVZGbjdn?=
- =?utf-8?B?ZXJMcTA2emlsYUk5VkxyV1U2TENHNHVHN2gwOTVkZnI3ckk1RnAzZ001ZFUw?=
- =?utf-8?B?T2FSWXVPSVRCTENaR1hhai9KazhGdUVvK2t4Qzl2ZFVaVFNtY1J2a3JCc0hm?=
- =?utf-8?B?ejJnNFQ1azBxOHdXSC9IU1ZlaFJ5YVI1OWU2ZTJLVlJudFpvbEZmT2pJeDZL?=
- =?utf-8?B?MHZaYzRhVmloalV1bkxsbmN4dXJBTzJKWjYxMmlKamU5d3hwdGdVdkw2OXY4?=
- =?utf-8?B?QW9JU2JQc2dyaEpSb2Z5akdCT1dGbzNWK2tiTEN6SG5obkhzcDNRVWNyUUR5?=
- =?utf-8?B?MEZua0V3OWQyRXluZzR5NWFBSDFIZTFkUVBMVm5tNUJKdElLRFN2cXFMTFQz?=
- =?utf-8?B?S2g5LzRIdnFkam1iKzFiQWxUMzBnNklvbXZXaGlMT0pIbFZ6dkFXVXJVdDZm?=
- =?utf-8?B?K24xSFk3Y2grWUFpMXFvNjlGSHZ6YnA2WGNUcXJZVk9xMmt6K005elI2d3Rm?=
- =?utf-8?B?clU2VXpiRVV0cjFUT2lHYVBCMjZZcUFOTEhPVlozZzJZV3FueC8rY0NRVmxy?=
- =?utf-8?B?N2p0WG9tZTJXa2d2WXg5T2doUzIydFUvM1VBYWNPa01RZkxMQzVjSHdoSG1q?=
- =?utf-8?B?cGNuOHhBREVwbGYrSUw0RW1tcGE3RXR2S2VSK0daeEVKZWdScjM3ZS96QU5u?=
- =?utf-8?B?UkpmSnRPZndIU0F1aEt0eDRUM0hlRC85SXRaVVdXMTVIMHJUVDdsc1BTUHEw?=
- =?utf-8?B?TDdDdUNRRGxuYnVyQU1rU3BjbkZEc3htSzFJUXVoQ2ZRYWoxT2JTZEpvcDJY?=
- =?utf-8?B?eWpCRlVhaFZXak5LV2ZlZ2IvMm5rRTkvTHVaZkdmQlpsa1BNTXRiTnJoeEs3?=
- =?utf-8?B?dUxvc3Uwb2w0RFkyQXJkbnU2K2s1NWRhT29MbVN3SFJLd3IzdUdIcGU0bkF3?=
- =?utf-8?B?a1BxVmFYaE9uZXZCTHNSNmdXQW4zU3hPNkxnUm5yZEh5MHdGOUhMY2xLK0FS?=
- =?utf-8?B?T1BDaGN1Y3pxM3hOblFybUxOTTBuMlpVcTVzWDd1S1NmTTA5Q3UwcmROV3FS?=
- =?utf-8?B?Mkd3RGxLWGkveUp3amZIcXc5dTl1OUwrQ3RlQnlrYllFbWhQQy9lNlB2R2dR?=
- =?utf-8?B?KzhFWFJlSmJHaEFOK1VBMHRPNXg0TFlXWVdBREJpVmJuSGV3TFFDMGMxekNi?=
- =?utf-8?B?VW0xM0xpY2pYOGpzdnJjSmlta0prU3M2RVFlY0hJTFpzT2U3TE1KTjY0Y0py?=
- =?utf-8?B?azVFMFRFNFU1Y01zVVVibGMzU1A3UDE2d1VaeXd2TDdQRUZaeXJ0aFA5K0g4?=
- =?utf-8?B?cVJxVDI4eGNPNnBFVThXZHo0c1VsdWdtcDJaeHhheTZaeTFyMDdhaEtzeUY3?=
- =?utf-8?B?ZTUxdm1sRS9YTFNnbHFmVkNtN2tsUHltWWdObkpSdTJ4RUJ2c09DSUdSR21V?=
- =?utf-8?B?cDFlcml1b3UyaEptQjlZMTVEemp6RU1EamVzOEloRHB3ZkpyOU9KK0ErNGRh?=
- =?utf-8?B?U0w0emJqZzI5NTJ4SkhpNWF6MSt5VEJXTjk0S0p3d1hFODhYOWpXUy9aam9j?=
- =?utf-8?B?NGNaVGdoWWtHWHhuTE5LQ2RnTlF6TDJFbXRRU1ZBckxBdlVRY1VZWWhyYnV0?=
- =?utf-8?B?NGc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3ecff65d-7077-4b33-5773-08dcbe3c22d6
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aWdBTFlaeTNDUDkxSHFFeVpSbzFVNXhNSnBBRGZOUEhJMXRoUWNicFh4VGhJ?=
+ =?utf-8?B?NGY0SWpJTlBoY1pjUzhOUGYyU0JMRmFROWpUdlV3QWhOSHVqQm9OWGpRMzVN?=
+ =?utf-8?B?MGF4ZTljNC9ZNGRpdk5iWVFvaXI1QVlZcUhpSkhPZW4xREVpODBTV0lnemda?=
+ =?utf-8?B?aFp2eHArai91TjkxT2dOQjBmZGR6Z3Jtbml6dkpKZ21QV1BHK0d2bC9WaUo5?=
+ =?utf-8?B?MnZpMWQ4SGlHSkxNK09KMW05dElLSnJrSFYvSXliV05BRzc3UDIwOEllYUVy?=
+ =?utf-8?B?ZlJKSVA3TmErbUV3b2xxSGlxUmsvOTBCdlFCRmJqTEwwVmFtdjdVUmVUTjBM?=
+ =?utf-8?B?eFdwZmhOZkxxMzh5SE9VK1BHQnFBN3VyZmpXcEJ0Q0lUTmk1WkdtYS9jeDZG?=
+ =?utf-8?B?WFBraU1wZjRtQ2s2dTJqVUF0bllDV1R1TzczYStNNEloVklMMSsyNGk0VEcy?=
+ =?utf-8?B?RHU2KzRBMEMrZWtQZElMWUJ6UW5JMjlhVkdETFVqNzM0MWNmbm9Qd0loRFlY?=
+ =?utf-8?B?WFNlZHA1VjVrbUV6eE9VQ2tpTUxLWTdHVnIzQXl4TUNhTzdaa2FkUHpyVTFE?=
+ =?utf-8?B?QVNJbHhHbmREaFU5WStUZXJzYnBLYUkvaDNkS3ZzNnZmdHVScTdwTkM4K1FY?=
+ =?utf-8?B?Z2FDTUlSMXpmVHRadWVIZG1qWUxEbjRyN2xMU3loYkE3SGdrUFRWck9aRTVD?=
+ =?utf-8?B?dVJwaEl5ZktXNHhjbDl3Vm1yZklETjZWRWhEVktlV21heFYxWEJWNTV3MHcy?=
+ =?utf-8?B?MGVBY0U5NUUxQ3JsWmk5eXRUT3pzdUNCblU1ekZVN01uNVBnTjFubE1LYURn?=
+ =?utf-8?B?Z1h6SkpyYU9xVCtIR3A4YUNHTVNyQ0hqR0tVbWx6Zm5KNG81NEpic0FoUzdh?=
+ =?utf-8?B?QUxjRi9yM0l6SjRMODZsZFAxekthc2N3QW93eFpha1hpeSswSGYwMkJoZFN0?=
+ =?utf-8?B?ekt1Z094QzFGQ1VXTkk4dXFCZUI2RW1ZaGNlV0RFZGVmY21sVGNFajZqQldh?=
+ =?utf-8?B?U284UzM2dUo4a1lEZ2hRK1A0ZkF1WHJKOTJwYlQ4Y24zR0VxVjlTVlhWdWtw?=
+ =?utf-8?B?Z0Q0K000Wmo3bFlEaXVRaHpmcTJhVUJzckVvbGNVekEzanFPeEtnRVo2Y3Zq?=
+ =?utf-8?B?MGZ6ckY0UzBEYnNpcTI2ODdrZVE2cUZBSGhTY1dIYzBpN0EvNHNLUnhHbVNK?=
+ =?utf-8?B?VkVUbW03TFM4S1RCS002RFVMN3BKZEpmWCtUUzhMZ0lUNFdYakFsTXcrUXFa?=
+ =?utf-8?B?VktDcXN5OWRuV1hWbUdOWktibFgxSVBXV3YvQnUxM2VFL3ZZaHFsWk9VQWsr?=
+ =?utf-8?B?Tnd5RGV6Z0VpQjh1RmpaZ25MTEJNNzVyenY1b3VweUlJME1Id0lNeno2VFJQ?=
+ =?utf-8?B?dktkS1h0b3ZraDlzazdXeDBvYkNicU9VVFVHR3REWFJkM09QRktVQTk0MkM4?=
+ =?utf-8?B?Mk1BcFhrV2YxNkQrYS9CU3BOdHZkZm5MWXg3WWd6OTdxMVZmTmg4Nk5QSURi?=
+ =?utf-8?B?cU03Q3NQckJhYytUOVg1NUJPR0xkQklEdXNHb3o0bEJhVjBUNDRqM0FjSVQw?=
+ =?utf-8?B?QUtyYis0OStxTWRqdkhqY2Yxck96b0xJODhjU3JiTFdOWGpQakVCTmNxVE1U?=
+ =?utf-8?B?NStFWHFrR2hkdkZ6T3NmQjRZY0FqdzJBb29JNWlaR3FiWk1CaXQwMkRXUzFp?=
+ =?utf-8?B?OHZmRlphTmN2QUNiTXlzRUQxMHlrbnJXVk54NGFnMkhSb3M1ZFZnbDlyWHI2?=
+ =?utf-8?B?RVFoa1p4WmxQYXpEWnNwTzdRZFZaRXM2ZlpLL0NObEpiblY5Y0dMSitUbXlR?=
+ =?utf-8?B?a3hYUm1kN2svZ0dwdnUrQVNSQ1hRZXZHMzF0QkFWLytheWNVa2NyL0xmbmQ3?=
+ =?utf-8?B?dkF4ZkdoR2gvdDJZTVlVRWlYcUVNSHQ3L0R1elBmam9nMW1VSXI5VU9wSjhx?=
+ =?utf-8?B?bWVHbGFvUVdRYUliaEVRYzdkRHYreS9xcjdlMCtRTTBocjQwWkZhV0ZQM01X?=
+ =?utf-8?B?Vlk3bThrNzdqbVIwV3JPb0JVdDFqdlZwMi96Nncybm5kOE5saDAwSHlSMVhH?=
+ =?utf-8?B?RXN3Z212NnpSZXdremVMVXRjQkpIMFJVaXhxQ2N0YTRrNlM0MXBjcllqV1NW?=
+ =?utf-8?B?blFnRWdyOE40eU54VHA4ZzZ2eURVc2VmL0J2ZDFZRmhObjVlUVlTVjZPWXMx?=
+ =?utf-8?B?dUE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 59a6cc97-21df-4909-5f25-08dcbe3c394f
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2024 21:41:07.2575
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2024 21:41:44.9765
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Qqh8dJFHQfhZ41Ht8nz2wC4d9ddlw29gENF6tHsTPLd70qB39XkYonDn3CNx3jAOReT887zkcJjO9VZwlmXUMizt5eA0BKI0iY9ELAFDTSY=
+X-MS-Exchange-CrossTenant-UserPrincipalName: sot9PwLLTEMeB81AkcNUoPCqSkbflUMNiVMSVuq5shK3iklUhijOqPfwGM84B7VQ5xRXdo6+qIACTjCQUmRe/xV6LXv1OD0KvXuxsmyxcPA=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4976
 X-OriginatorOrg: intel.com
 
@@ -220,17 +220,20 @@ Hi Babu,
 On 8/6/24 3:00 PM, Babu Moger wrote:
 > The ABMC feature provides an option to the user to assign a hardware
 
-This patch is a mix of resctrl fs and arch code, could each piece please
-be desribed clearly?
+This is about resctrl fs so "The ABMC feature" -> "mbm_cntr_assign mode"
+(please check whole series).
 
 > counter to an RMID and monitor the bandwidth as long as it is assigned.
 > The assigned RMID will be tracked by the hardware until the user unassigns
 > it manually.
 > 
-> Counters are configured by writing to L3_QOS_ABMC_CFG MSR and
-> specifying the counter id, bandwidth source, and bandwidth types.
+> Hardware provides only limited number of counters. If the system runs out
+> of assignable counters, kernel will display an error when a new assignment
+> is requested. Users need to unassign a already assigned counter to make
+> space for new assignment.
 > 
-> Provide the interface to assign the counter ids to RMID.
+> Provide the interface to unassign the counter ids from the group. Free the
+> counter if it is not assigned in any of the domains.
 > 
 > The feature details are documented in the APM listed below [1].
 > [1] AMD64 Architecture Programmer's Manual Volume 2: System Programming
@@ -240,197 +243,109 @@ be desribed clearly?
 > Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
 > Signed-off-by: Babu Moger <babu.moger@amd.com>
 > ---
-> v6: Removed mbm_cntr_alloc() from this patch to keep fs and arch code
->      separate.
->      Added code to update the counter assignment at domain level.
+> v6: Removed mbm_cntr_free from this patch.
+>      Added counter test in all the domains and free if it is not assigned to
+>      any domains.
 > 
 > v5: Few name changes to match cntr_id.
 >      Changed the function names to
->        rdtgroup_assign_cntr
->        resctr_arch_assign_cntr
->        More comments on commit log.
->        Added function summary.
+>      rdtgroup_unassign_cntr
+>      More comments on commit log.
 > 
-> v4: Commit message update.
->        User bitmap APIs where applicable.
->        Changed the interfaces considering MPAM(arm).
->        Added domain specific assignment.
+> v4: Added domain specific unassign feature.
+>      Few name changes.
 > 
-> v3: Removed the static from the prototype of rdtgroup_assign_abmc.
->        The function is not called directly from user anymore. These
->        changes are related to global assignment interface.
+> v3: Removed the static from the prototype of rdtgroup_unassign_abmc.
+>      The function is not called directly from user anymore. These
+>      changes are related to global assignment interface.
 > 
-> v2: Minor text changes in commit message.
+> v2: No changes.
 > ---
->   arch/x86/kernel/cpu/resctrl/internal.h |  4 ++
->   arch/x86/kernel/cpu/resctrl/rdtgroup.c | 97 ++++++++++++++++++++++++++
->   2 files changed, 101 insertions(+)
+>   arch/x86/kernel/cpu/resctrl/internal.h |  2 +
+>   arch/x86/kernel/cpu/resctrl/rdtgroup.c | 52 ++++++++++++++++++++++++++
+>   2 files changed, 54 insertions(+)
 > 
 > diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-> index d93082b65d69..4e8109dee174 100644
+> index 4e8109dee174..cc832955b787 100644
 > --- a/arch/x86/kernel/cpu/resctrl/internal.h
 > +++ b/arch/x86/kernel/cpu/resctrl/internal.h
-> @@ -685,6 +685,10 @@ int mbm_cntr_alloc(struct rdt_resource *r);
->   void mbm_cntr_free(u32 cntr_id);
->   void resctrl_mbm_evt_config_init(struct rdt_hw_mon_domain *hw_dom);
->   unsigned int mon_event_config_index_get(u32 evtid);
-> +int resctrl_arch_assign_cntr(struct rdt_mon_domain *d, enum resctrl_event_id evtid,
-> +			     u32 rmid, u32 cntr_id, u32 closid, bool assign);
-> +int rdtgroup_assign_cntr(struct rdtgroup *rdtgrp, enum resctrl_event_id evtid);
-> +int rdtgroup_alloc_cntr(struct rdtgroup *rdtgrp, int index);
+> @@ -689,6 +689,8 @@ int resctrl_arch_assign_cntr(struct rdt_mon_domain *d, enum resctrl_event_id evt
+>   			     u32 rmid, u32 cntr_id, u32 closid, bool assign);
+>   int rdtgroup_assign_cntr(struct rdtgroup *rdtgrp, enum resctrl_event_id evtid);
+>   int rdtgroup_alloc_cntr(struct rdtgroup *rdtgrp, int index);
+> +int rdtgroup_unassign_cntr(struct rdtgroup *rdtgrp, enum resctrl_event_id evtid);
+> +void rdtgroup_free_cntr(struct rdt_resource *r, struct rdtgroup *rdtgrp, int index);
 >   void rdt_staged_configs_clear(void);
 >   bool closid_allocated(unsigned int closid);
 >   int resctrl_find_cleanest_closid(void);
 > diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> index 60696b248b56..1ee91a7293a8 100644
+> index 1ee91a7293a8..0c2215dbd497 100644
 > --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
 > +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> @@ -1864,6 +1864,103 @@ static ssize_t mbm_local_bytes_config_write(struct kernfs_open_file *of,
->   	return ret ?: nbytes;
+> @@ -1961,6 +1961,58 @@ int rdtgroup_assign_cntr(struct rdtgroup *rdtgrp, enum resctrl_event_id evtid)
+>   	return 0;
 >   }
 >   
-> +static void rdtgroup_abmc_cfg(void *info)
+> +static int rdtgroup_mbm_cntr_test(struct rdt_resource *r, u32 cntr_id)
 
-This has nothing to do with a resctrl group (arch code has no insight into the groups anyway).
-Maybe an arch specific name like "resctrl_abmc_config_one_amd()" to match earlier
-"resctrl_abmc_set_one_amd()"?
+Could "test" be replaced with something more specific about what is tested?
+for example, "rdtgroup_mbm_cntr_is_assigned()" or something better? The function
+looks like a good candidate for returning a bool.
 
+Is this function needed though? (more below)
 
 > +{
-> +	u64 *msrval = info;
+> +	struct rdt_mon_domain *d;
 > +
-> +	wrmsrl(MSR_IA32_L3_QOS_ABMC_CFG, *msrval);
-> +}
-> +
-> +/*
-> + * Send an IPI to the domain to assign the counter id to RMID.
-> + */
-> +int resctrl_arch_assign_cntr(struct rdt_mon_domain *d, enum resctrl_event_id evtid,
-> +			     u32 rmid, u32 cntr_id, u32 closid, bool assign)
-> +{
-> +	struct rdt_hw_mon_domain *hw_dom = resctrl_to_arch_mon_dom(d);
-> +	union l3_qos_abmc_cfg abmc_cfg = { 0 };
-> +	struct arch_mbm_state *arch_mbm;
-> +
-> +	abmc_cfg.split.cfg_en = 1;
-> +	abmc_cfg.split.cntr_en = assign ? 1 : 0;
-> +	abmc_cfg.split.cntr_id = cntr_id;
-> +	abmc_cfg.split.bw_src = rmid;
-> +
-> +	/* Update the event configuration from the domain */
-> +	if (evtid == QOS_L3_MBM_TOTAL_EVENT_ID) {
-> +		abmc_cfg.split.bw_type = hw_dom->mbm_total_cfg;
-> +		arch_mbm = &hw_dom->arch_mbm_total[rmid];
-> +	} else {
-> +		abmc_cfg.split.bw_type = hw_dom->mbm_local_cfg;
-> +		arch_mbm = &hw_dom->arch_mbm_local[rmid];
-> +	}
-> +
-> +	smp_call_function_any(&d->hdr.cpu_mask, rdtgroup_abmc_cfg, &abmc_cfg, 1);
-> +
-> +	/*
-> +	 * Reset the architectural state so that reading of hardware
-> +	 * counter is not considered as an overflow in next update.
-> +	 */
-> +	if (arch_mbm)
-> +		memset(arch_mbm, 0, sizeof(struct arch_mbm_state));
+> +	list_for_each_entry(d, &r->mon_domains, hdr.list)
+> +		if (test_bit(cntr_id, d->mbm_cntr_map))
+> +			return 1;
 > +
 > +	return 0;
 > +}
 > +
-> +/* Allocate a new counter id if the event is unassigned */
-> +int rdtgroup_alloc_cntr(struct rdtgroup *rdtgrp, int index)
+> +/* Free the counter id after the event is unassigned */
+> +void rdtgroup_free_cntr(struct rdt_resource *r, struct rdtgroup *rdtgrp,
+> +			int index)
 > +{
-> +	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
-> +	int cntr_id;
-> +
-> +	/* Nothing to do if event has been assigned already */
-> +	if (rdtgrp->mon.cntr_id[index] != MON_CNTR_UNSET) {
-> +		rdt_last_cmd_puts("ABMC counter is assigned already\n");
-
-This is resctrl fs code. Please replace the arch specific messages
-("ABMC") with resctrl fs terms.
-
-> +		return 0;
+> +	/* Update the counter bitmap */
+> +	if (!rdtgroup_mbm_cntr_test(r, rdtgrp->mon.cntr_id[index])) {
+> +		mbm_cntr_free(rdtgrp->mon.cntr_id[index]);
+> +		rdtgrp->mon.cntr_id[index] = MON_CNTR_UNSET;
 > +	}
-> +
-> +	/*
-> +	 * Allocate a new counter id and update domains
-> +	 */
-> +	cntr_id = mbm_cntr_alloc(r);
-> +	if (cntr_id < 0) {
-> +		rdt_last_cmd_puts("Out of ABMC counters\n");
-
-here also.
-
-> +		return -ENOSPC;
-> +	}
-> +
-> +	rdtgrp->mon.cntr_id[index] = cntr_id;
-> +
-> +	return 0;
 > +}
 > +
 > +/*
-> + * Assign a hardware counter to the group and assign the counter
-> + * all the domains in the group. It will try to allocate the mbm
-> + * counter if the counter is available.
+> + * Unassign a hardware counter from the group and update all the domains
+> + * in the group.
 > + */
-> +int rdtgroup_assign_cntr(struct rdtgroup *rdtgrp, enum resctrl_event_id evtid)
+> +int rdtgroup_unassign_cntr(struct rdtgroup *rdtgrp, enum resctrl_event_id evtid)
 > +{
 > +	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
 > +	struct rdt_mon_domain *d;
 > +	int index;
 > +
 > +	index = mon_event_config_index_get(evtid);
-
-After going through MPAM series this no longer looks correct. As the name of this
-function implies this is an index unique to the monitor event configuration feature
-and as the MPAM series highlights, it is unique to the architecture, not something
-that is visible to resctrl fs. resctrl fs uses the event IDs and it is only when the
-fs makes a request to the architecture that this translation comes into play.
-
-With this change, what is the architecture specific "mon event config index" now
-becomes part of resctrl fs used for something totally different from mon event
-configuration.
-
-I think we should separate this to make sure we distinguish between an architectural
-translation and a resctrl fs translation, the array index is not the same as the architecture
-specific "mov event config index".
-
-How about we start with something simple that is defined by resctrl fs? for example:
-#define MBM_EVENT_ARRAY_INDEX(_event) (_event  - 2)
-
-
 > +	if (index == INVALID_CONFIG_INDEX)
 > +		return -EINVAL;
 > +
-> +	if (rdtgroup_alloc_cntr(rdtgrp, index))
-> +		return -EINVAL;
+> +	if (rdtgrp->mon.cntr_id[index] != MON_CNTR_UNSET) {
+> +		list_for_each_entry(d, &r->mon_domains, hdr.list) {
+> +			resctrl_arch_assign_cntr(d, evtid, rdtgrp->mon.rmid,
+> +						 rdtgrp->mon.cntr_id[index],
+> +						 rdtgrp->closid, false);
+> +			clear_bit(rdtgrp->mon.cntr_id[index],
+> +				  d->mbm_cntr_map);
+> +		}
 > +
+> +		/* Free the counter at group level */
+> +		rdtgroup_free_cntr(r, rdtgrp, index);
 
-hmmm ... so rdtgroup_alloc_cntr() returns 0 if the counter is assigned already, and
-in this case the configuration is done again even if counter was already assigned.
-Is this intended?
+rdtgroup_free_cntr() is called right after the counter has been unassigned
+from all domains. Will rdtgroup_mbm_cntr_test() thus not always return 0?
+It seems unnecessary to have rdtgroup_mbm_cntr_test() and considering that,
+rdtgroup_free_cntr() can just be open coded here?
 
-rdtgroup_assign_cntr() seems to be almost identical to rdtgroup_assign_update()
-that has protection against the above from happening. It looks like these two
-functions can be merged into one?
-
-> +	list_for_each_entry(d, &r->mon_domains, hdr.list) {
-> +		resctrl_arch_assign_cntr(d, evtid, rdtgrp->mon.rmid,
-> +					 rdtgrp->mon.cntr_id[index],
-
-There currently seems to be a mismatch between functions needing to
-access this ID directly as above in some cases while also needing to
-use helpers like rdtgroup_alloc_cntr().
-
-Also, as James indicated, resctrl_arch_assign_cntr() may fail on Arm
-so this needs error checking even though the x86 implementation always
-returns success.
-
-> +					 rdtgrp->closid, true);
-> +		set_bit(rdtgrp->mon.cntr_id[index], d->mbm_cntr_map);
 > +	}
 > +
 > +	return 0;
