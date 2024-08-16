@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-290408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F38095536D
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 00:40:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0619955371
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 00:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 049ED1F219DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:40:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88165283AEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9AB145FED;
-	Fri, 16 Aug 2024 22:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324E2145FEE;
+	Fri, 16 Aug 2024 22:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="drt0e7SJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ObvEDYP4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAABBBA33;
-	Fri, 16 Aug 2024 22:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D268BA33;
+	Fri, 16 Aug 2024 22:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723847998; cv=none; b=id7ALX6Gd5I+EWzA2m5jYX2RdVPkKSArYDeHfrZNjBUoSJGE629bPXxP+h4hGpiIDRcuPXVmRP8120AgzQEwLXFFnslScOiKmAjO9qkZxr1l0Ta3IVy1AkbYGOTRyr3SytN+pRdtBlAQ2qLbuqQYuyffpLq5lgeGuY4vHYGHxNQ=
+	t=1723848053; cv=none; b=rHGboKbmNAMczOoxFhAzb4Of7I9tE3k1mUX4IdZk+pNWIz/zrAwrakuM9a2qsv//APX+yhi7tqSTCnFNaMSZuo8zXAvMJysLSlY/0kmZTn8wlDcHZGnOChx1ozyeBirQ2Stb0R7OmbEnk4O+2y+Zc7mAQ6eOdX5LonV/u4vbCnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723847998; c=relaxed/simple;
-	bh=yLgBm9EHFdqhhjPZ0xAEPGSJiVwgSWNa0lcI/kftets=;
+	s=arc-20240116; t=1723848053; c=relaxed/simple;
+	bh=35Gggnneu4ZsX1jEkgo7SKcrzozXMNAhO7CG53M/PLM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IkiNMF6d+Ed9w1gJZSJczCB+DIRXJWxcJednVnp+G4CG9fSF67TmhrIRULHyppe5sDi3sVXqqNInJHdcFeFLOvX6w/MXyCk6s1SIjUcrEM6Gu/C3kiw3SegqmuAqaTx0uggAA4ui9O7FuWRhxTMs35VIR+AhZsiGk5TNkZYa+HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=drt0e7SJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CAC1C32782;
-	Fri, 16 Aug 2024 22:39:58 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=PCpe2dmjOO4hjGFbjEVLmvqunUxlH9+NUUAY4+vfh8JlOa9ORFGoxW7bI1uiHnCXpaJ81c0SJbrEO8jXiAglhD27/wfY3w1HHYJKzMfMh+DpJFjg9IxNDzilzZy+P16c5y1NgK/Efq2uART61UXsVR0v5B9kw4qbSMepKd9vqBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ObvEDYP4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25373C32782;
+	Fri, 16 Aug 2024 22:40:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723847998;
-	bh=yLgBm9EHFdqhhjPZ0xAEPGSJiVwgSWNa0lcI/kftets=;
+	s=k20201202; t=1723848053;
+	bh=35Gggnneu4ZsX1jEkgo7SKcrzozXMNAhO7CG53M/PLM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=drt0e7SJlXPXlA5dgoJrHp/EE6nyWURgh3JHxpgb3xvT7uRmoe2zziG2njkn2Obcx
-	 P1jWxlq/Z/NbE8rNjwIzmworTxqMWk48ZFT2EZ9FF5vmAirX8Tg1MFUfV6e2FcFyHD
-	 FbIWKcl6cdSSz5kwxbrFjJadhLYGvZKCCU5bZ4faHRp02Tz9oFKNkzE/a9XQBC1NVo
-	 NqUNd6WOu4KaDu0bHzQU1/cha920gSrChM+k9GHvgP3DLqd8kWXFROosgadTWRLD+d
-	 oCRLWdN5t3dGxJprHRVdgtAY6DIOEIg4LLPE5FJLBKMqZNtZjLpyQZ5NCrkGgwFlJM
-	 Tz+YKhKeAsiHg==
-Date: Fri, 16 Aug 2024 16:39:57 -0600
+	b=ObvEDYP4s28qGNh8+dScvtQ3Ge9sCUNL4/VV3ncRwmwDXEIFPv6kzzb90iIrspzSW
+	 EejbsO1BKu1KaoXBZbgEtyGcoCJ1T4LRBhsygoJNItdS/T+MbrCPDxJA7JclCOFY1B
+	 L16OOTLiroTpWEg/JscLQnGcHTwMy5XaJHqzJZCw7FP3qRdSDh7tysllljZybASaxb
+	 3QLOA6dIrUbiWsz4Gi+TPm4S8JXNv/AYFc7Uh8zZBxN5alUkdG06aX5tJdW9BGq7rf
+	 LGVXI6/pW3Bn5W7hVb12D2VK712CXwf1HqZ9X1hsgyiFpm9ivGRPMk4Sc/BzEx6Nrb
+	 E7Ku3h0izOk7Q==
+Date: Fri, 16 Aug 2024 16:40:52 -0600
 From: Rob Herring <robh@kernel.org>
 To: Liu Ying <victor.liu@nxp.com>
 Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
@@ -53,11 +53,11 @@ Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
 	festevam@gmail.com, tglx@linutronix.de, vkoul@kernel.org,
 	kishon@kernel.org, aisheng.dong@nxp.com, agx@sigxcpu.org,
 	francesco@dolcini.it, frank.li@nxp.com
-Subject: Re: [PATCH v3 04/19] dt-bindings: display: imx: Add i.MX8qxp Display
- Controller pixel engine
-Message-ID: <20240816223957.GC2394350-robh@kernel.org>
+Subject: Re: [PATCH v3 03/19] dt-bindings: display: imx: Add i.MX8qxp Display
+ Controller display engine
+Message-ID: <20240816224052.GD2394350-robh@kernel.org>
 References: <20240724092950.752536-1-victor.liu@nxp.com>
- <20240724092950.752536-5-victor.liu@nxp.com>
+ <20240724092950.752536-4-victor.liu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,13 +66,11 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240724092950.752536-5-victor.liu@nxp.com>
+In-Reply-To: <20240724092950.752536-4-victor.liu@nxp.com>
 
-On Wed, Jul 24, 2024 at 05:29:35PM +0800, Liu Ying wrote:
-> i.MX8qxp Display Controller pixel engine consists of all processing units
-> that operate in the AXI bus clock domain.  Command sequencer and interrupt
-> controller of the Display Controller work with AXI bus clock, but they are
-> not in pixel engine.
+On Wed, Jul 24, 2024 at 05:29:34PM +0800, Liu Ying wrote:
+> i.MX8qxp Display Controller display engine consists of all processing units
+> that operate in a display clock domain.
 > 
 > Signed-off-by: Liu Ying <victor.liu@nxp.com>
 > ---
@@ -80,12 +78,14 @@ On Wed, Jul 24, 2024 at 05:29:35PM +0800, Liu Ying wrote:
 > * No change.
 > 
 > v2:
-> * Drop fsl,dc-*-id DT properties from example. (Krzysztof)
+> * Drop fsl,dc-*-id DT properties. (Krzysztof)
+> * Drop port property. (Krzysztof)
 > * Fix register range sizes in example.
 > 
->  .../imx/fsl,imx8qxp-dc-pixel-engine.yaml      | 250 ++++++++++++++++++
->  1 file changed, 250 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-pixel-engine.yaml
+>  .../imx/fsl,imx8qxp-dc-display-engine.yaml    | 152 ++++++++++++++++++
+>  1 file changed, 152 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-display-engine.yaml
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
