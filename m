@@ -1,138 +1,111 @@
-Return-Path: <linux-kernel+bounces-288789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A17A953E9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:00:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97703953E5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 02:49:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABA5EB24C7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:00:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B19F51C223D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 00:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7A7BA27;
-	Fri, 16 Aug 2024 00:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C61C17BA1;
+	Fri, 16 Aug 2024 00:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="GkzPlGex"
-Received: from mail-m12818.netease.com (mail-m12818.netease.com [103.209.128.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5ITK+WQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06EAFB647;
-	Fri, 16 Aug 2024 00:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.209.128.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1B93D64;
+	Fri, 16 Aug 2024 00:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723769993; cv=none; b=W0EfTPEdXluofww3xKI5vJjdFeCbPnRqccapDoLFG/K6T2oYn1rxlc6qymoO/0ai8cfAKogPj4T06kuVr1vB2NVPoQ5gTeKzYo4oifQWy0Dd/knb8fJ0Ytoys7sfAqAFyBjzGHI4I5VuwvtIMVu+7/3mteYnfqwxb0j5/H72F9I=
+	t=1723769336; cv=none; b=hM7t2UtWG79RXaYpnazMEWjvYXl4XV7xPUb0Lp+o299IJfQCalpbC1MDsh9g9vuKOyPMq6X/whfVFWefeybLuAGstyqF8SuNop7tQuIdLgTgNvgsbG4J5Mgy5WjiTGj6VC15PB1lb/sBKKOMoVFPyDi2APnyATobeRIQ9SK6MFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723769993; c=relaxed/simple;
-	bh=XwerIgFAHBD+vtSqyfGLdrUSAg9gAWh6kuP/68feRGw=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=HwfHmiVAgn5R3Z1fUAv2sG8ulhT7XemZ/+CXlZ7gpII0E93MvUaSEFXCtJCX7zuJdfz1I5pC0z3+LKYyxOtxbAnxGb1BxPVtemIc0SD4sy8LoNxZ9LYOmLxJQ3iXkCfxxh9ekJ6TWWQ4E7nBLSPPo4c37pgtzliK2wKgagRuBe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=GkzPlGex; arc=none smtp.client-ip=103.209.128.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-DKIM-Signature: a=rsa-sha256;
-	b=GkzPlGexYR9mpFJHzYzoQkPk0Qui3j39k078hHjhz3E2/FF8QFws9/w9CFsYwMj+L1D5FtMQQMaU03vbG16Dyz3Ottual4Ym9JDQa4CommpbGI+/l6hYDRl0GtZrRCgntsPXyBs2cuHCuu8iEjR1d2qVpNzlNTAFYc4G7iDJl44=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=u2bY45nOuxIO29yl3xiZLYWOFNM2Z13NxlwmREOfWz8=;
-	h=date:mime-version:subject:message-id:from;
-Received: from [172.16.12.45] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 5EE434601F5;
-	Fri, 16 Aug 2024 08:41:59 +0800 (CST)
-Message-ID: <87304544-b223-4825-86a3-d0fd9eff0afe@rock-chips.com>
-Date: Fri, 16 Aug 2024 08:41:59 +0800
+	s=arc-20240116; t=1723769336; c=relaxed/simple;
+	bh=Ytv9yoDmPpxLpzsc/yRsSXmYq/2gwEitzTmx7ZSGLI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AK2dVa/UI+er9WvHD2h1yPh0pLaHMIputNVffjywqzM5FBy7NVmzsOa6+dLJAIaxTuPJI/xLsKOMXprDHpqmkpg9bz3lLgcJiqhprIz1Q9PacDchH9qHfy8MWPT3i6x0RLFg9WIRmOK+zlgssVevUNqWz8LgRNxn2SFAxV5NPIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e5ITK+WQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62AD2C32786;
+	Fri, 16 Aug 2024 00:48:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723769335;
+	bh=Ytv9yoDmPpxLpzsc/yRsSXmYq/2gwEitzTmx7ZSGLI4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=e5ITK+WQTBSBd0ONLrV8Z07tHWXazMUo9DUF+ybTMbIx8l9X8e7vv9fHgLRLwkL+F
+	 fUFlVZCO1aZmTn7HWjJSb1AFkTLPqJqexHx6JDAUHI/lE1ooDN/ZmbwRaq0hcD2sIc
+	 /F7bmJ0uF7YPbeEXlceauH+SehcI+RC1efSfm1PYPBCp+HRMArbvvawNtTwYtB8POl
+	 9zKqa00MUqjxTyPKr3oN4UM5dGM6BoxIx87kHA8X+R1VWZcpQ8zvTvKpwX3WbVenMV
+	 YHtccFvyDipTPgy5bT8DeAmspcKtDeaACtk8f7jp3VsmXF75Z6u27ITubBXiFFaH7U
+	 ddgfGM5Dpvcxw==
+Date: Thu, 15 Aug 2024 17:48:52 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ bpf@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Donald
+ Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Richard
+ Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky
+ <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Thomas
+ Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>,
+ Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
+ <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, Herbert
+ Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, Willem
+ de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, Sumit
+ Semwal <sumit.semwal@linaro.org>, "Christian =?UTF-8?B?S8O2bmln?="
+ <christian.koenig@amd.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Christoph
+ Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>,
+ Taehee Yoo <ap420073@gmail.com>, Pavel Begunkov <asml.silence@gmail.com>,
+ David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin
+ <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, Harshitha
+ Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi
+ <pkaligineedi@google.com>, Willem de Bruijn <willemb@google.com>, Kaiyuan
+ Zhang <kaiyuanz@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: Re: [PATCH net-next v19 03/13] netdev: support binding dma-buf to
+ netdevice
+Message-ID: <20240815174852.48bbfccf@kernel.org>
+In-Reply-To: <20240813211317.3381180-4-almasrymina@google.com>
+References: <20240813211317.3381180-4-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: shawn.lin@rock-chips.com, Ulf Hansson <ulf.hansson@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>,
- linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- kernel@collabora.com
-Subject: Re: [PATCH v3 2/3] mmc: dw_mmc-rockchip: Add v2 tuning support
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Detlev Casanova <detlev.casanova@collabora.com>, linux-kernel@vger.kernel.org
-References: <20240814223555.3695-1-detlev.casanova@collabora.com>
- <20240814223555.3695-3-detlev.casanova@collabora.com>
- <5dc82aa2-82a0-4778-b598-88775d5f791c@rock-chips.com>
- <18146801.MNNF8PUAaN@diego>
-Content-Language: en-GB
-From: Shawn Lin <shawn.lin@rock-chips.com>
-In-Reply-To: <18146801.MNNF8PUAaN@diego>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUpMSlZMSU9DQx4eTRlNTh9WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a9158a258f203aekunm5ee434601f5
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NBQ6Hjo4AjIwKDorGDZMARYS
-	LzFPCUtVSlVKTElITE1DQklLTEJIVTMWGhIXVQgTGgwVVRcSFTsJFBgQVhgTEgsIVRgUFkVZV1kS
-	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQU9KSEI3Bg++
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Heiko,
+On Tue, 13 Aug 2024 21:13:05 +0000 Mina Almasry wrote:
+> +int dev_get_max_mp_channel(const struct net_device *dev)
+> +{
+> +	int i, max = -1;
 
-在 2024/8/15 21:17, Heiko Stübner 写道:
-> Am Donnerstag, 15. August 2024, 02:55:37 CEST schrieb Shawn Lin:
->> Hi Detlev
->>
->> 在 2024/8/15 6:34, Detlev Casanova 写道:
->>> From: Shawn Lin <shawn.lin@rock-chips.com>
->>>
->>> v2 tuning will inherit pre-stage loader's phase settings for the first
->>> time, and do re-tune if necessary.
->>> Re-tune will still try the rough degrees, for instance, 90, 180, 270,
->>> 360 but continue to do the fine tuning if sample window isn't good
->>> enough.
->>>
->>> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
->>> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> 
->>> @@ -277,6 +322,10 @@ static int dw_mci_rk3288_parse_dt(struct dw_mci *host)
->>>    					&priv->default_sample_phase))
->>>    		priv->default_sample_phase = 0;
->>>    
->>> +	priv->use_v2_tuning =
->>> +		of_device_is_compatible(host->dev->of_node,
->>> +					"rockchip,rk3576-dw-mshc");
->>> +
->>
->> v2 is a kind of software decision instead of hardware dependency.
->> So in theory, any SoC can claim to use it via DT.
-> 
-> which actually makes it unsuitable for dt. >
+I presume the bug from yesterday is self evident once reported? :)
 
-Understood.
+> +	ASSERT_RTNL();
+> +
+> +	for (i = 0; i < dev->real_num_rx_queues; i++)
+> +		if (dev->_rx[i].mp_params.mp_priv)
+> +			/* The number of queues is the idx plus 1. */
+> +			max = i + 1;
 
-> Devicetree describes hardware-properties and should _not_ be used for
-> software configuration.
-> 
->  From the comment above, I assume the rk3576 does not need that feature
-> and can just work with the regular tuning?
+The +1 is odd. The function as it stands reports min channel count.
+Not max_mp_channel, if you ask me. And if you renamed it, you don't
+have to use -1 as "not installed".
 
-Yep, your are right.
-
-> 
-> So there are two routes for the immediate future:
-> (1) rk3576 _needs_ that feature, then going with the compatible is fine
-> 
-> (2) rk3576 does not need absolutely need that feature, then I'd expect
-> the basic rk3576 to first come without, as I'd expect a lot more explanation
-> on why it is actually needed, and which cases it does improve.
-> The commit message does not really explain that much about why this
-> is a great/needed feature and which areas it does improve.
-> 
-
-Vote for the 2nd. rk3576 just need
-[PATCH v3 3/3] mmc: dw_mmc-rockchip: Add internal phase support
-
-
-> 
-> Heiko
-> 
-> 
+> +	return max;
 
