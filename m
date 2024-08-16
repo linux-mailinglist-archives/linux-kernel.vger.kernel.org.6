@@ -1,159 +1,216 @@
-Return-Path: <linux-kernel+bounces-288802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 023C2953EEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:34:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7734D953EF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9440E1F237D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:34:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A3591C222E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FEAE1E502;
-	Fri, 16 Aug 2024 01:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="exhJrQZJ"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782AC1EA91;
+	Fri, 16 Aug 2024 01:37:30 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E9BBA53
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 01:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03472372;
+	Fri, 16 Aug 2024 01:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723772048; cv=none; b=En1EJ2jMIvHjtUmlqBvU+rsJKmqtACZKN36BiJQXb60m6kvDMUOFjctFsealC+Yifp0UFkauxg857lnprUSPk2IepucB0PUXSIiNmNkFim8hXVcelU3yyS+87jzbeeuj2to0ZN6m6iRXFLsuQL3R7Rn+Qutf3GliZLK4ieMTtqs=
+	t=1723772249; cv=none; b=lZsSvKGpt2EsKBtLSFLkyc1HUbHzbxghcpm60dIaQUcNb7zdoe0XkwkNP3shBqQtjihP+vddNnRISEM0J+nC4bzvBWO8Rbwln6YfxjbicZJJiaHctVj/xMaUhRNE7nOSEXig/M7Vq+NXGfPsR3EEfnJ8EwisuXPrIBQrJciNLdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723772048; c=relaxed/simple;
-	bh=5R5dXRpR6eYdb1sjisQlhRy0Qrdafnq8FVX44MzTPig=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=F0rRE7wjqey4zRA3UOa93xblvoRBaNfPXC9cDa9UbVHM65qAxe8IpeTtK/ACjm4PNqXYI1NtL+x5KAEekDcq0HYzd/xBfxaALhHPkml3BCwSmvFSS49m4FXwKeJfTXJ/TYu21xR/EfBsCwLaQ4CXxHGReuuQNcgZ6wY8l+tWlts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=exhJrQZJ; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723772043;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BRPxcS0Hb28gbfuevEypKu5iGXP9IOHao5nXppLKMFo=;
-	b=exhJrQZJe0SErKtm8EKncvJ30xbUH5sdl6vD/JuZ0cMA2n/NOskPy19TLAp8KIOYa6CqYN
-	Zo3d/oVeqKWSnMGAw8uomE/NSn0AcQSC50ZVEVEGnRwzNaYY8FxaCBRyKMpOY50bQQQtkL
-	jye9g2TOj2HdDwcYz1pZ5E93sh0riMo=
-From: Hao Ge <hao.ge@linux.dev>
-To: surenb@google.com
-Cc: 42.hyeyoo@gmail.com,
-	akpm@linux-foundation.org,
-	cl@linux.com,
-	gehao@kylinos.cn,
-	hao.ge@linux.dev,
-	iamjoonsoo.kim@lge.com,
-	kees@kernel.org,
-	kent.overstreet@linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	penberg@kernel.org,
-	rientjes@google.com,
-	roman.gushchin@linux.dev,
-	vbabka@suse.cz
-Subject: [PATCH v2] mm/slub: Add check for s->flags in the alloc_tagging_slab_free_hook
-Date: Fri, 16 Aug 2024 09:33:36 +0800
-Message-Id: <20240816013336.17505-1-hao.ge@linux.dev>
-In-Reply-To: <CAJuCfpF5v397w9+532bQzPonXzAbBwVVvuXFw3z46q0R1E7Rug@mail.gmail.com>
-References: <CAJuCfpF5v397w9+532bQzPonXzAbBwVVvuXFw3z46q0R1E7Rug@mail.gmail.com>
+	s=arc-20240116; t=1723772249; c=relaxed/simple;
+	bh=z+lsAwsip94Z2fFceHUQZ/+28SOZl6Dhef5zkAGCVBo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GAvfbuMhloRygLxDuaC8CC+FBcFwJfGJ//9oRz/aYeSDGi9RIN3V1FINOk9dyuS3NbK83huYPCOjZLYqH+X6TDDcy2KGUcwekmNHJVk5lT8V4V6mpbY0J1xwJvNT0/y3898SKzmmh7mcQtPp3r36u9vFrJTGxNFHb+lClHyg/G4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WlPcS1Vmzz1j6Sb;
+	Fri, 16 Aug 2024 09:32:24 +0800 (CST)
+Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1B7D41A0188;
+	Fri, 16 Aug 2024 09:37:18 +0800 (CST)
+Received: from [10.174.176.88] (10.174.176.88) by
+ kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 16 Aug 2024 09:37:17 +0800
+Message-ID: <35611fba-98b7-4fa3-8108-ee0785d29cef@huawei.com>
+Date: Fri, 16 Aug 2024 09:37:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 2/2] xfs: Fix missing interval for missing_owner in xfs
+ fsmap
+To: "Darrick J. Wong" <djwong@kernel.org>
+CC: <chandan.babu@oracle.com>, <dchinner@redhat.com>, <osandov@fb.com>,
+	<john.g.garry@oracle.com>, <linux-xfs@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <yangerkun@huawei.com>
+References: <20240812011505.1414130-1-wozizhi@huawei.com>
+ <20240812011505.1414130-3-wozizhi@huawei.com>
+ <20240815174229.GI865349@frogsfrogsfrogs>
+From: Zizhi Wo <wozizhi@huawei.com>
+In-Reply-To: <20240815174229.GI865349@frogsfrogsfrogs>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemf100017.china.huawei.com (7.202.181.16)
 
-From: Hao Ge <gehao@kylinos.cn>
 
-When enable CONFIG_MEMCG & CONFIG_KFENCE & CONFIG_KMEMLEAK,
-the following warning always occurs,This is because the
-following call stack occurred:
-mem_pool_alloc
-    kmem_cache_alloc_noprof
-        slab_alloc_node
-            kfence_alloc
 
-Once the kfence allocation is successful,slab->obj_exts will not be empty,
-because it has already been assigned a value in kfence_init_pool.
+在 2024/8/16 1:42, Darrick J. Wong 写道:
+> On Mon, Aug 12, 2024 at 09:15:05AM +0800, Zizhi Wo wrote:
+>> In the fsmap query of xfs, there is an interval missing problem:
+>> [root@fedora ~]# xfs_io -c 'fsmap -vvvv' /mnt
+>>   EXT: DEV    BLOCK-RANGE           OWNER              FILE-OFFSET      AG AG-OFFSET             TOTAL
+>>     0: 253:16 [0..7]:               static fs metadata                  0  (0..7)                    8
+>>     1: 253:16 [8..23]:              per-AG metadata                     0  (8..23)                  16
+>>     2: 253:16 [24..39]:             inode btree                         0  (24..39)                 16
+>>     3: 253:16 [40..47]:             per-AG metadata                     0  (40..47)                  8
+>>     4: 253:16 [48..55]:             refcount btree                      0  (48..55)                  8
+>>     5: 253:16 [56..103]:            per-AG metadata                     0  (56..103)                48
+>>     6: 253:16 [104..127]:           free space                          0  (104..127)               24
+>>     ......
+>>
+>> BUG:
+>> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 104 107' /mnt
+>> [root@fedora ~]#
+>> Normally, we should be able to get [104, 107), but we got nothing.
+>>
+>> The problem is caused by shifting. The query for the problem-triggered
+>> scenario is for the missing_owner interval (e.g. freespace in rmapbt/
+>> unknown space in bnobt), which is obtained by subtraction (gap). For this
+>> scenario, the interval is obtained by info->last. However, rec_daddr is
+>> calculated based on the start_block recorded in key[1], which is converted
+>> by calling XFS_BB_TO_FSBT. Then if rec_daddr does not exceed
+>> info->next_daddr, which means keys[1].fmr_physical >> (mp)->m_blkbb_log
+>> <= info->next_daddr, no records will be displayed. In the above example,
+>> 104 >> (mp)->m_blkbb_log = 12 and 107 >> (mp)->m_blkbb_log = 12, so the two
+>> are reduced to 0 and the gap is ignored:
+>>
+>>   before calculate ----------------> after shifting
+>>   104(st)  107(ed)		      12(st/ed)
+>>    |---------|				  |
+>>    sector size			      block size
+>>
+>> Resolve this issue by introducing the "end_daddr" field in
+>> xfs_getfsmap_info. This records |key[1].fmr_physical + key[1].length| at
+>> the granularity of sector. If the current query is the last, the rec_daddr
+>> is end_daddr to prevent missing interval problems caused by shifting. We
+>> only need to focus on the last query, because xfs disks are internally
+>> aligned with disk blocksize that are powers of two and minimum 512, so
+>> there is no problem with shifting in previous queries.
+>>
+>> After applying this patch, the above problem have been solved:
+>> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 104 107' /mnt
+>>   EXT: DEV    BLOCK-RANGE      OWNER            FILE-OFFSET      AG AG-OFFSET        TOTAL
+>>     0: 253:16 [104..106]:      free space                        0  (104..106)           3
+>>
+>> Fixes: e89c041338ed ("xfs: implement the GETFSMAP ioctl")
+>> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+>> ---
+>>   fs/xfs/xfs_fsmap.c | 12 +++++++++++-
+>>   1 file changed, 11 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/xfs/xfs_fsmap.c b/fs/xfs/xfs_fsmap.c
+>> index d346acff7725..4ae273b54129 100644
+>> --- a/fs/xfs/xfs_fsmap.c
+>> +++ b/fs/xfs/xfs_fsmap.c
+>> @@ -162,6 +162,7 @@ struct xfs_getfsmap_info {
+>>   	xfs_daddr_t		next_daddr;	/* next daddr we expect */
+>>   	/* daddr of low fsmap key when we're using the rtbitmap */
+>>   	xfs_daddr_t		low_daddr;
+>> +	xfs_daddr_t		end_daddr;	/* daddr of high fsmap key */
+> 
+> This ought to be initialized to an obviously impossible value (e.g.
+> -1ULL) in xfs_getfsmap before we start walking btrees.
+> 
 
-Since in the prepare_slab_obj_exts_hook function,we perform a check for
-s->flags & (SLAB_NO_OBJ_EXT | SLAB_NOLEAKTRACE),the alloc_tag_add function
-will not be called as a result.Therefore,ref->ct remains NULL.
+This really makes the semantics clearer. So the assignment condition for
+rec_daddr = info->end_daddr also needs to be changed.
 
-However,when we call mem_pool_free,since obj_ext is not empty,
-it eventually leads to the alloc_tag_sub scenario being invoked.
-This is where the warning occurs.
+>>   	u64			missing_owner;	/* owner of holes */
+>>   	u32			dev;		/* device id */
+>>   	/*
+>> @@ -294,6 +295,13 @@ xfs_getfsmap_helper(
+>>   		return 0;
+>>   	}
+>>   
+>> +	/*
+>> +	 * To prevent missing intervals in the last query, consider using
+>> +	 * sectors as the granularity.
+>> +	 */
+>> +	if (info->last && info->end_daddr)
+>> +		rec_daddr = info->end_daddr;
+> 
+> I think this needs a better comment.  How about:
+> 
+> 	/*
+> 	 * For an info->last query, we're looking for a gap between the
+> 	 * last mapping emitted and the high key specified by userspace.
+> 	 * If the user's query spans less than 1 fsblock, then
+> 	 * info->high and info->low will have the same rm_startblock,
+> 	 * which causes rec_daddr and next_daddr to be the same.
+> 	 * Therefore, use the end_daddr that we calculated from
+> 	 * userspace's high key to synthesize the record.  Note that if
+> 	 * the btree query found a mapping, there won't be a gap.
+> 	 */
+> 
 
-So we should add corresponding checks in the alloc_tagging_slab_free_hook.
-For __GFP_NO_OBJ_EXT case,I didn't see the specific case where it's
-using kfence,so I won't add the corresponding check in
-alloc_tagging_slab_free_hook for now.
+A more detailed explanation, indeed. As for my previous description, I
+simply explained that it would be missed, but did not say the specific
+reason. I will adopt it in the next patch, thanks.
 
-[    3.734349] ------------[ cut here ]------------
-[    3.734807] alloc_tag was not set
-[    3.735129] WARNING: CPU: 4 PID: 40 at ./include/linux/alloc_tag.h:130 kmem_cache_free+0x444/0x574
-[    3.735866] Modules linked in: autofs4
-[    3.736211] CPU: 4 UID: 0 PID: 40 Comm: ksoftirqd/4 Tainted: G        W          6.11.0-rc3-dirty #1
-[    3.736969] Tainted: [W]=WARN
-[    3.737258] Hardware name: QEMU KVM Virtual Machine, BIOS unknown 2/2/2022
-[    3.737875] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    3.738501] pc : kmem_cache_free+0x444/0x574
-[    3.738951] lr : kmem_cache_free+0x444/0x574
-[    3.739361] sp : ffff80008357bb60
-[    3.739693] x29: ffff80008357bb70 x28: 0000000000000000 x27: 0000000000000000
-[    3.740338] x26: ffff80008207f000 x25: ffff000b2eb2fd60 x24: ffff0000c0005700
-[    3.740982] x23: ffff8000804229e4 x22: ffff800082080000 x21: ffff800081756000
-[    3.741630] x20: fffffd7ff8253360 x19: 00000000000000a8 x18: ffffffffffffffff
-[    3.742274] x17: ffff800ab327f000 x16: ffff800083398000 x15: ffff800081756df0
-[    3.742919] x14: 0000000000000000 x13: 205d344320202020 x12: 5b5d373038343337
-[    3.743560] x11: ffff80008357b650 x10: 000000000000005d x9 : 00000000ffffffd0
-[    3.744231] x8 : 7f7f7f7f7f7f7f7f x7 : ffff80008237bad0 x6 : c0000000ffff7fff
-[    3.744907] x5 : ffff80008237ba78 x4 : ffff8000820bbad0 x3 : 0000000000000001
-[    3.745580] x2 : 68d66547c09f7800 x1 : 68d66547c09f7800 x0 : 0000000000000000
-[    3.746255] Call trace:
-[    3.746530]  kmem_cache_free+0x444/0x574
-[    3.746931]  mem_pool_free+0x44/0xf4
-[    3.747306]  free_object_rcu+0xc8/0xdc
-[    3.747693]  rcu_do_batch+0x234/0x8a4
-[    3.748075]  rcu_core+0x230/0x3e4
-[    3.748424]  rcu_core_si+0x14/0x1c
-[    3.748780]  handle_softirqs+0x134/0x378
-[    3.749189]  run_ksoftirqd+0x70/0x9c
-[    3.749560]  smpboot_thread_fn+0x148/0x22c
-[    3.749978]  kthread+0x10c/0x118
-[    3.750323]  ret_from_fork+0x10/0x20
-[    3.750696] ---[ end trace 0000000000000000 ]---
+>> +
+>>   	/* Are we just counting mappings? */
+>>   	if (info->head->fmh_count == 0) {
+>>   		if (info->head->fmh_entries == UINT_MAX)
+>> @@ -973,8 +981,10 @@ xfs_getfsmap(
+>>   		 * low key, zero out the low key so that we get
+>>   		 * everything from the beginning.
+>>   		 */
+>> -		if (handlers[i].dev == head->fmh_keys[1].fmr_device)
+>> +		if (handlers[i].dev == head->fmh_keys[1].fmr_device) {
+>>   			dkeys[1] = head->fmh_keys[1];
+>> +			info.end_daddr = dkeys[1].fmr_physical + dkeys[1].fmr_length;
+> 
+> dkeys[1].fmr_length is never used by anything in the fsmap code --
+> __xfs_getfsmap_datadev sets end_fsb using only dkeys[1].fmr_physical.
+> You shouldn't add it to end_daddr here because then they won't be
+> describing the same thing.
+> 
 
-Fixes: 4b8736964640 ("mm/slab: add allocation accounting into slab allocation and free paths")
-Signed-off-by: Hao Ge <gehao@kylinos.cn>
----
- mm/slub.c | 4 ++++
- 1 file changed, 4 insertions(+)
+I actually have a question here. We set info->low.rm_blockcount with
+keys[0].fmr_length to indicate if this is the first fsmap query. But I'm
+not sure what keys[1].fmr_length does. When fsmap is invoked in user
+mode, keys[1].fmr_physical is only set. In view of this, I hope to get
+your answer.
 
-diff --git a/mm/slub.c b/mm/slub.c
-index c9d8a2497fd6..a77f354f8325 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2116,6 +2116,10 @@ alloc_tagging_slab_free_hook(struct kmem_cache *s, struct slab *slab, void **p,
- 	if (!mem_alloc_profiling_enabled())
- 		return;
- 
-+	/* slab->obj_exts might not be NULL if it was created for MEMCG accounting. */
-+	if (s->flags & (SLAB_NO_OBJ_EXT | SLAB_NOLEAKTRACE))
-+		return;
-+
- 	obj_exts = slab_obj_exts(slab);
- 	if (!obj_exts)
- 		return;
--- 
-2.25.1
+Anyway, I will send the next patch as soon as possible, thanks for your
+comments.
 
+Thanks,
+Zizhi Wo
+
+> Anyway I'll figure out a reproducer for fstests and send the whole pile
+> back to the mailing list once it passes QA.  Thanks for finding the bug
+> and attempting a fix. :)
+> 
+> --D
+> 
+>> +		}
+>>   		if (handlers[i].dev > head->fmh_keys[0].fmr_device)
+>>   			memset(&dkeys[0], 0, sizeof(struct xfs_fsmap));
+>>   
+>> -- 
+>> 2.39.2
+>>
+>>
 
