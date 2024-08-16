@@ -1,97 +1,105 @@
-Return-Path: <linux-kernel+bounces-288966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D45979540BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:53:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5F999540BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:56:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81DCC1F23583
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:53:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BC2C287D27
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C29D77111;
-	Fri, 16 Aug 2024 04:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AD377119;
+	Fri, 16 Aug 2024 04:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="v6VR5slJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n0Twf9N6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487A06F076;
-	Fri, 16 Aug 2024 04:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0AC98489;
+	Fri, 16 Aug 2024 04:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723783984; cv=none; b=iA1HNjfyRg3XC9iz6RxRSnvePRl/CpgXMsj7EwRijHZbf7tywhJ+gap8tnOHitp0dzgGkjyo9ZbzDL3h6Idebab+YepwgWMHzNARPbYotptAtc/UQAPq6cnGk+odEbFK7BXy3/vXAZmWfFwxAw+1aT/XXK+Kg8ZpjqqdVCW3wbI=
+	t=1723784208; cv=none; b=iar8MOIH6ZVQP9vEFvcNXtrnqzsZegZ0xiYy4A5KHg4ioPNj+yVLlCLPL87W+3ETmnEuPpTwyJfzmAFIbVFlPLEOyFmHNunJea8D2AktE+Y6/gCkbkln+ePg3d3ODHXNXW0oFGjb6dGFlEJgy/zF60IVVRGrdFRdnO/WEOOlf1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723783984; c=relaxed/simple;
-	bh=zdLM0KIP970E4GbthIkogSEpCsJYb5OSpA3ofPumAe8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=N9KNfN7Ax1P6aQt7zPv2O5A1giIJMl94zCXT3qtD5LIEp2uMl/rpRAZ5LM2c92LHeaLlQBGyGWGTGvxnIe8RsVRz6PGIAQAqa6jFeSRP8/8ah+OVNcHCZ+JlFN4HKk1J3X+RkmJ2mUQnwPabZ9idq7Yyn5VDCroH/004wPY7pWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=v6VR5slJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63512C32782;
-	Fri, 16 Aug 2024 04:53:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1723783983;
-	bh=zdLM0KIP970E4GbthIkogSEpCsJYb5OSpA3ofPumAe8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=v6VR5slJWMCcwANxphEdf8OCr/x0DfvnAW8+cGd7YvQYL6QlzHHQ+dZmxVcPAOhOd
-	 w0IW1eMdj59ZslsO9qhyIUCzIII6iLICD1gDYuRwi2DKpOoebyGbtUO4H9tUKcvKHb
-	 dYkUQhgKWSj3O4jfEUOoqvcTR0yAs2gVWaPdER/Q=
-Date: Thu, 15 Aug 2024 21:53:02 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Huang Ying <ying.huang@intel.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-cxl@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
- Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron
- <jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>, Alison
- Schofield <alison.schofield@intel.com>, Vishal Verma
- <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Alistair
- Popple <apopple@nvidia.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Baoquan He <bhe@redhat.com>
-Subject: Re: [PATCH] Resource: fix region_intersects() for CXL memory
-Message-Id: <20240815215302.5ed29b99e94a48aea49269ce@linux-foundation.org>
-In-Reply-To: <20240816020723.771196-1-ying.huang@intel.com>
-References: <20240816020723.771196-1-ying.huang@intel.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1723784208; c=relaxed/simple;
+	bh=ZoyRo/tyseF652lJUasxSfc5hrvMgjk/ZV2qAotF3O4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WFTrPZCtnM+8u4UXVUA+Afyxc+y+LEJhcq0hA5fsneChsfEhCqU9C7PeVEioLVREULsNxnskG6iGpcpaYUwQJ5qFL62MkdBvl3Tqe36RL+GOV3d7JDS4Q3Ool9ngUE4bTlwePK4oLAysjhXTgbDkH1iN6xoNFGEQko63i2z4V0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n0Twf9N6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC8B6C32782;
+	Fri, 16 Aug 2024 04:56:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723784208;
+	bh=ZoyRo/tyseF652lJUasxSfc5hrvMgjk/ZV2qAotF3O4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=n0Twf9N6SzQifxo75tc4zBmYyZ7lw0zl0HPmf0ypS8pdHoBidwMQs0jE9VcWwym/u
+	 ocxVPMZ47A1EKFEHeHt3b19Yw0ZqpPwWP0goDjyeqOgMnt1k/IVKRZdcT09zP8WDXP
+	 WNiW2yGR2yC9QNbiUNhFHKadnU2FAD9V9Z9ucoUB0wxt+dt9gGe/s0faYralxHGSCm
+	 b8EEQxZfGBbzS1sGiPIso27T8jbv5TSPaeMRNUEEz4MvucNU4OvxLxOv+Itt9BbRxZ
+	 tYN7pvR/54M5hWR1pd8ofiw1wslcGCkNMX6eDrhrUXKj23rltereRhAS2DXxDa6Rkn
+	 ABcnPFMubzwDA==
+From: neeraj.upadhyay@kernel.org
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	paulmck@kernel.org,
+	neeraj.upadhyay@kernel.org,
+	neeraj.upadhyay@amd.com,
+	boqun.feng@gmail.com,
+	joel@joelfernandes.org,
+	urezki@gmail.com,
+	frederic@kernel.org
+Subject: [PATCH rcu 00/11] Nocb updates for v6.12
+Date: Fri, 16 Aug 2024 10:25:57 +0530
+Message-Id: <20240816045608.30564-1-neeraj.upadhyay@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 16 Aug 2024 10:07:23 +0800 Huang Ying <ying.huang@intel.com> wrote:
+From: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
 
-> On a system with CXL memory installed, the resource tree (/proc/iomem)
-> related to CXL memory looks like something as follows.
-> 
-> 490000000-50fffffff : CXL Window 0
->   490000000-50fffffff : region0
->     490000000-50fffffff : dax0.0
->       490000000-50fffffff : System RAM (kmem)
-> 
-> When the following command line is run to try writing some memory in
-> CXL memory range,
-> 
->  $ dd if=data of=/dev/mem bs=1k seek=19136512 count=1
->  dd: error writing '/dev/mem': Bad address
->  1+0 records in
->  0+0 records out
->  0 bytes copied, 0.0283507 s, 0.0 kB/s
-> 
-> the command fails as expected.  However, the error code is wrong.  It
-> should be "Operation not permitted" instead of "Bad address".  And,
-> the following warning is reported in kernel log.
-> 
->  ioremap on RAM at 0x0000000490000000 - 0x0000000490000fff
->  WARNING: CPU: 2 PID: 416 at arch/x86/mm/ioremap.c:216 __ioremap_caller.constprop.0+0x131/0x35d
-> ...
->
+This series contains various updates and simplifications to RCU
+nocb code to handle (de-)offloading of callbacks only for offline
+CPUs, courtesy of Frederic Weisbecker.
 
-Presumably we want to fix earlier kernels?  If so, are you able to
-identify a suitable Fixes: target?  Possibly 974854ab0728 ("cxl/acpi:
-Track CXL resources in iomem_resource")?
+
+Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/neeraj.upadhyay/linux-rcu.git/log/?h=nocb.29.07.24a
+
+
+- Neeraj
+
+Frederic Weisbecker (11):
+  rcu/nocb: Introduce RCU_NOCB_LOCKDEP_WARN()
+  rcu/nocb: Move nocb field at the end of state struct
+  rcu/nocb: Assert no callbacks while nocb kthread allocation fails
+  rcu/nocb: Introduce nocb mutex
+  rcu/nocb: (De-)offload callbacks on offline CPUs only
+  rcu/nocb: Remove halfway (de-)offloading handling from bypass
+  rcu/nocb: Remove halfway (de-)offloading handling from rcu_core()'s QS
+    reporting
+  rcu/nocb: Remove halfway (de-)offloading handling from rcu_core
+  rcu/nocb: Remove SEGCBLIST_RCU_CORE
+  rcu/nocb: Remove SEGCBLIST_KTHREAD_CB
+  rcu/nocb: Simplify (de-)offloading state machine
+
+ include/linux/rcu_segcblist.h |   6 +-
+ include/linux/rcupdate.h      |   7 +
+ kernel/rcu/rcu_segcblist.c    |  11 --
+ kernel/rcu/rcu_segcblist.h    |  11 +-
+ kernel/rcu/tree.c             |  45 +-----
+ kernel/rcu/tree.h             |   6 +-
+ kernel/rcu/tree_nocb.h        | 268 +++++++++++++---------------------
+ kernel/rcu/tree_plugin.h      |   5 +-
+ 8 files changed, 123 insertions(+), 236 deletions(-)
+
+-- 
+2.40.1
+
 
