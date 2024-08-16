@@ -1,293 +1,197 @@
-Return-Path: <linux-kernel+bounces-289003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFAA6954123
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:28:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5CFD954125
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32953B22512
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 05:27:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 356A01F24946
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 05:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D8D8120D;
-	Fri, 16 Aug 2024 05:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UDNXRt5X"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB907E0FF;
+	Fri, 16 Aug 2024 05:28:26 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8CC7D3F5
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 05:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6227E7DA64
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 05:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723786062; cv=none; b=QgC7gGQU036XWj+0xCwdsd1MOvM+dgtU+Dqq5tI+yPjdhVGdbI+1ovBTxrA4wdviAgv5HHdOjAlYqqhVDvwjhXlv0Zy02sAESIWNIU6xkkB4itBqGK7qCMCKpFK2UPrDIGh7HdKWAi/0iFQtlCvy4yJ7Bo7iEWHcEJLAiocX/54=
+	t=1723786105; cv=none; b=o5OXWbxRYVZxmhjPzAWNgDG70pyf+Xxd5mpIY0nxbbGP82MbeflspzuYa79lMovh7rvZqWopTNGaUfHtXEs7t9t5CpnyspRft6v1fZ0xmcZkD+MpH0V9ruho+i8/EuMP7oZ7t1nLJstvmaaV9MODxoFp+0Kmu5YEZelxKLgONsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723786062; c=relaxed/simple;
-	bh=aTzQxHcq17xaLPsNM9+5kXko1CrQIC6Ft4OukYHadrA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=bCDc2Y8X74tyjrpBN94RMKnOAKoHnem7HjytFuOzMCqlRPUT+4A/nPk8K+5/5Z8b5N1qiWgxBwtadQOZjfdHtmKXXkRzcB+KamfKIn5139x+ztGFHqZ7OqeT5S5ZN7BwwJUAUxg4+I74Kfsm6WKSdVhjgFiXzPdNGMun6vMXe6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UDNXRt5X; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <4254277c-2037-44bc-9756-c32b41c01bdf@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723786056;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/gTtWjkvrzP07/15t/7VwvkJr9zd2YYKh4iTWos35Vk=;
-	b=UDNXRt5XjUDx4p6ubiZXDZTI8CQVL08GzM9olKRD6dRLNCMMRu4tHq/CGtswddPN7Y3k/G
-	1WhXNVBs7IPh5BxCeAtsVp8/+5QimPy3XGP8Bzq0o5bD/Zgx9s8YgbThAeT99NH8l5K6J/
-	I51DRq9JMgxfGg4XkDFY5P43TcbXnfY=
-Date: Fri, 16 Aug 2024 13:27:26 +0800
+	s=arc-20240116; t=1723786105; c=relaxed/simple;
+	bh=4z2Syb1+eS522vjsqVxXqzcKWCEZYptdpr7QFMsxdsg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cOIRcW5mttVzIj6JAocPsUgTeplTXvjeK+PTZcxIq8LOiO9aiw6q7wWpRx4/3udRESgLORjO3aYPsjtlnzUPMjlvYWvOHcmCGOQwjweMezeYX+vCH5kfVE7x3UZryZ59H7W7ePjfwuURc5yvMuvkyeShfBFP29Wnxb8mvcDB1f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-824d69be8f7so160196239f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 22:28:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723786103; x=1724390903;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tfkpXZlVfKsNrt8/k0HrMw88NUkmjdtZRZe3QSFlO/8=;
+        b=HLRfS/suF5z4Vu3BQ81rkV29ppnBSjcOfRclHT8fP/UH/ZpayoJpR9haNlsrtXutLi
+         V+8SVEcV8d0qCaOpi6jNqqvXm0YKMOiiygEVR3Azd3zyzoqnVztP4YOTMFdG6s+7YLsB
+         1wT3RRLetpvX8NUHC1rhdDjCeC8QxKNGGRyARM0xAIf+x2se7fROfaZQHEC/MDixUUpJ
+         Pxu+FEbtTODtVImeG98XnfQ2PgzK2UFTgbH/O2DVvIXLXIKHoJ7awnFpa3fBRzLHonYj
+         2blylxcLjW7nth9jJDB5wZkG/fzUWK5MIZD1RYO8C0U2ZEXgvPD0ojAK/J6ft63HTLUQ
+         OThA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJIU8qV+n9gF+L1CQgqMtebOcRtLbK/757R2CnmmjI5vqmOCaxT/tbMe0uhluWNsRrIMDlua09UFo4fEmf9ZizmeE2i95TldVhs85H
+X-Gm-Message-State: AOJu0YzxSG9RVlt3r+OWNTbWAqWJrNHLW7L0NsJjd5MVQiq2R17WoI4M
+	ctffGz0nC8hZgckFru4Hlek4M7uADfYdW4wU2H+F+oKhAMcfhptTn+XJfP3w+MaxuNccwEcb/NY
+	elCs7KZ/xND0/RkVPvUXQfB4nhYUL/b69UY0MAbC7usvcCqe7TB0d2Po=
+X-Google-Smtp-Source: AGHT+IFDit4P1gn68jUFHJU8L/e0XDfRjKECL8Eymwd2Zih5i4hexN6I8PdniqWcH8VorCrA5LmLAz4ovwjwLINinB+ct9CBe7hn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [linus:master] [RDMA/iwcm] aee2424246:
- WARNING:at_kernel/workqueue.c:#check_flush_dependency
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-To: kernel test robot <oliver.sang@intel.com>,
- Bart Van Assche <bvanassche@acm.org>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
- Leon Romanovsky <leon@kernel.org>,
- Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
- linux-rdma@vger.kernel.org
-References: <202408151633.fc01893c-oliver.sang@intel.com>
- <c64a2f6e-ea18-4e8d-b808-0f1732c6d004@linux.dev>
-In-Reply-To: <c64a2f6e-ea18-4e8d-b808-0f1732c6d004@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6638:8416:b0:4c0:9380:a262 with SMTP id
+ 8926c6da1cb9f-4cce15bec24mr88570173.1.1723786103417; Thu, 15 Aug 2024
+ 22:28:23 -0700 (PDT)
+Date: Thu, 15 Aug 2024 22:28:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005cff41061fc63a83@google.com>
+Subject: [syzbot] [cgroups?] [mm?] kernel BUG in swap_cgroup_record
+From: syzbot <syzbot+4745e725b07d34503a64@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, cgroups@vger.kernel.org, david@redhat.com, 
+	hannes@cmpxchg.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	mhocko@kernel.org, muchun.song@linux.dev, roman.gushchin@linux.dev, 
+	shakeel.butt@linux.dev, syzkaller-bugs@googlegroups.com, 
+	v-songbaohua@oppo.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    9e6869691724 Add linux-next specific files for 20240812
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=14c97e83980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=61ba6f3b22ee5467
+dashboard link: https://syzkaller.appspot.com/bug?extid=4745e725b07d34503a64
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10cf435d980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f1b086192f50/disk-9e686969.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b457920fb52e/vmlinux-9e686969.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e63ba9cce98a/bzImage-9e686969.xz
+
+The issue was bisected to:
+
+commit d65aea610f0a14cda5ec56a154c724584ef7da17
+Author: Barry Song <v-songbaohua@oppo.com>
+Date:   Wed Aug 7 21:58:59 2024 +0000
+
+    mm: attempt to batch free swap entries for zap_pte_range()
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1493ea91980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1693ea91980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1293ea91980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4745e725b07d34503a64@syzkaller.appspotmail.com
+Fixes: d65aea610f0a ("mm: attempt to batch free swap entries for zap_pte_range()")
+
+------------[ cut here ]------------
+kernel BUG at mm/swap_cgroup.c:141!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 UID: 0 PID: 5371 Comm: syz.0.15 Not tainted 6.11.0-rc3-next-20240812-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:swap_cgroup_record+0x2cd/0x2d0 mm/swap_cgroup.c:141
+Code: e7 e8 a7 c9 f6 ff e9 64 fe ff ff e8 cd 41 8e ff 48 c7 c7 c0 db a5 8e 48 89 de e8 2e 8c e8 02 e9 7a fd ff ff e8 b4 41 8e ff 90 <0f> 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f
+RSP: 0018:ffffc90003e172f8 EFLAGS: 00010093
+RAX: ffffffff82054c9c RBX: 000000000000000b RCX: ffff88802298bc00
+RDX: 0000000000000000 RSI: 000000000000000a RDI: 0000000000000000
+RBP: 0000000000000001 R08: ffffffff82054b43 R09: fffff520007c2e3c
+R10: dffffc0000000000 R11: fffff520007c2e3c R12: ffff88801cf0f014
+R13: 0000000000000000 R14: 000000000000000a R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880b9100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f9332107a8c CR3: 000000000e734000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __mem_cgroup_uncharge_swap+0x84/0x2e0 mm/memcontrol.c:5118
+ mem_cgroup_uncharge_swap include/linux/swap.h:668 [inline]
+ swap_entry_range_free+0x45f/0x1120 mm/swapfile.c:1556
+ __swap_entries_free mm/swapfile.c:1518 [inline]
+ free_swap_and_cache_nr+0xa65/0xae0 mm/swapfile.c:1876
+ zap_pte_range mm/memory.c:1653 [inline]
+ zap_pmd_range mm/memory.c:1736 [inline]
+ zap_pud_range mm/memory.c:1765 [inline]
+ zap_p4d_range mm/memory.c:1786 [inline]
+ unmap_page_range+0x1924/0x42c0 mm/memory.c:1807
+ unmap_vmas+0x3cc/0x5f0 mm/memory.c:1897
+ exit_mmap+0x267/0xc20 mm/mmap.c:1923
+ __mmput+0x115/0x390 kernel/fork.c:1347
+ exit_mm+0x220/0x310 kernel/exit.c:571
+ do_exit+0x9b2/0x28e0 kernel/exit.c:926
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
+ x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9331f779f9
+Code: Unable to access opcode bytes at 0x7f9331f779cf.
+RSP: 002b:00007fff65ce5d18 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f9331f779f9
+RDX: 0000000000000064 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000003 R08: 00007fff65ce5dff R09: 00007f93320d0260
+R10: 0000000000000001 R11: 0000000000000246 R12: 00007f93320d0f68
+R13: 00007f93320d0260 R14: 0000000000000003 R15: 00007fff65ce5dc0
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:swap_cgroup_record+0x2cd/0x2d0 mm/swap_cgroup.c:141
+Code: e7 e8 a7 c9 f6 ff e9 64 fe ff ff e8 cd 41 8e ff 48 c7 c7 c0 db a5 8e 48 89 de e8 2e 8c e8 02 e9 7a fd ff ff e8 b4 41 8e ff 90 <0f> 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f
+RSP: 0018:ffffc90003e172f8 EFLAGS: 00010093
+RAX: ffffffff82054c9c RBX: 000000000000000b RCX: ffff88802298bc00
+RDX: 0000000000000000 RSI: 000000000000000a RDI: 0000000000000000
+RBP: 0000000000000001 R08: ffffffff82054b43 R09: fffff520007c2e3c
+R10: dffffc0000000000 R11: fffff520007c2e3c R12: ffff88801cf0f014
+R13: 0000000000000000 R14: 000000000000000a R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880b9100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f9332107a8c CR3: 000000000e734000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
-在 2024/8/16 12:14, Zhu Yanjun 写道:
->
-> 在 2024/8/16 9:07, kernel test robot 写道:
->>
->> Hello,
->>
->> kernel test robot noticed 
->> "WARNING:at_kernel/workqueue.c:#check_flush_dependency" on:
->>
->> commit: aee2424246f9f1dadc33faa78990c1e2eb7826e4 ("RDMA/iwcm: Fix a 
->> use-after-free related to destroying CM IDs")
->> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
->>
->> [test failed on linus/master 5189dafa4cf950e675f02ee04b577dfbbad0d9b1]
->> [test failed on linux-next/master 
->> 61c01d2e181adfba02fe09764f9fca1de2be0dbe]
->>
->> in testcase: blktests
->> version: blktests-x86_64-775a058-1_20240702
->> with following parameters:
->>
->>     disk: 1SSD
->>     test: nvme-group-01
->>     nvme_trtype: rdma
->
-> Hi, Bart && Jason && Leon
->
-> It seems that it is related with WQ_MEM_RECLAIM.
->
-> Not sure if adding WQ_MEM_RECLAIM to iw_cm_wq can fix this or not.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-The commit is as below.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-diff --git a/drivers/infiniband/core/iwcm.c b/drivers/infiniband/core/iwcm.c
-index 1a6339f3a63f..7e3a55349e10 100644
---- a/drivers/infiniband/core/iwcm.c
-+++ b/drivers/infiniband/core/iwcm.c
-@@ -1182,7 +1182,7 @@ static int __init iw_cm_init(void)
-         if (ret)
-                 return ret;
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
--       iwcm_wq = alloc_ordered_workqueue("iw_cm_wq", 0);
-+       iwcm_wq = alloc_ordered_workqueue("iw_cm_wq", WQ_MEM_RECLAIM);
-         if (!iwcm_wq)
-                 goto err_alloc;
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-Zhu Yanjun
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
->
-> Best Regards,
->
-> Zhu Yanjun
->
->>
->>
->>
->> compiler: gcc-12
->> test machine: 224 threads 2 sockets Intel(R) Xeon(R) Platinum 8480+ 
->> (Sapphire Rapids) with 256G memory
->>
->> (please refer to attached dmesg/kmsg for entire log/backtrace)
->>
->>
->>
->> If you fix the issue in a separate patch/commit (i.e. not just a new 
->> version of
->> the same patch/commit), kindly add following tags
->> | Reported-by: kernel test robot <oliver.sang@intel.com>
->> | Closes: 
->> https://lore.kernel.org/oe-lkp/202408151633.fc01893c-oliver.sang@intel.com
->>
->>
->> [  125.048981][ T1430] ------------[ cut here ]------------
->> [  125.056856][ T1430] workqueue: WQ_MEM_RECLAIM 
->> nvme-reset-wq:nvme_rdma_reset_ctrl_work [nvme_rdma] is flushing 
->> !WQ_MEM_RECLAIM iw_cm_wq:0x0
->> [ 125.056873][ T1430] WARNING: CPU: 2 PID: 1430 at 
->> kernel/workqueue.c:3706 check_flush_dependency 
->> (kernel/workqueue.c:3706 (discriminator 9))
->> [  125.085014][ T1430] Modules linked in: siw ib_uverbs nvmet_rdma 
->> nvmet nvme_rdma nvme_fabrics rdma_cm iw_cm ib_cm ib_core dimlib 
->> dm_multipath btrfs blake2b_generic intel_rapl_msr xor 
->> intel_rapl_common zstd_compress intel_uncore_frequency 
->> intel_uncore_frequency_common raid6_pq libcrc32c x86_pkg_temp_thermal 
->> intel_powerclamp coretemp nvme nvme_core ast t10_pi kvm_intel 
->> qat_4xxx drm_shmem_helper mei_me kvm crct10dif_pclmul crc32_pclmul 
->> crc32c_intel ghash_clmulni_intel sha512_ssse3 rapl intel_cstate 
->> intel_uncore dax_hmem intel_th_gth intel_qat crc64_rocksoft_generic 
->> dh_generic intel_th_pci idxd crc8 i2c_i801 crc64_rocksoft mei 
->> intel_vsec idxd_bus drm_kms_helper intel_th authenc crc64 i2c_smbus 
->> i2c_ismt ipmi_ssif wmi acpi_power_meter ipmi_si acpi_ipmi 
->> ipmi_devintf ipmi_msghandler acpi_pad binfmt_misc loop fuse drm 
->> dm_mod ip_tables [last unloaded: ib_uverbs]
->> [  125.176472][ T1430] CPU: 2 PID: 1430 Comm: kworker/u898:26 Not 
->> tainted 6.10.0-rc1-00015-gaee2424246f9 #1
->> [  125.188840][ T1430] Workqueue: nvme-reset-wq 
->> nvme_rdma_reset_ctrl_work [nvme_rdma]
->> [ 125.199152][ T1430] RIP: 0010:check_flush_dependency 
->> (kernel/workqueue.c:3706 (discriminator 9))
->> [ 125.207527][ T1430] Code: fa 48 c1 ea 03 80 3c 02 00 0f 85 a8 00 00 
->> 00 49 8b 54 24 18 49 8d b5 c0 00 00 00 49 89 e8 48 c7 c7 20 46 08 84 
->> e8 ed 8b f9 ff <0f> 0b e9 93 fd ff ff e8 a1 bf 82 00 e9 80 fd ff ff 
->> e8 97 bf 82 00
->> All code
->> ========
->>     0:    fa                       cli
->>     1:    48 c1 ea 03              shr    $0x3,%rdx
->>     5:    80 3c 02 00              cmpb   $0x0,(%rdx,%rax,1)
->>     9:    0f 85 a8 00 00 00        jne    0xb7
->>     f:    49 8b 54 24 18           mov    0x18(%r12),%rdx
->>    14:    49 8d b5 c0 00 00 00     lea    0xc0(%r13),%rsi
->>    1b:    49 89 e8                 mov    %rbp,%r8
->>    1e:    48 c7 c7 20 46 08 84     mov $0xffffffff84084620,%rdi
->>    25:    e8 ed 8b f9 ff           callq  0xfffffffffff98c17
->>    2a:*    0f 0b                    ud2            <-- trapping 
->> instruction
->>    2c:    e9 93 fd ff ff           jmpq   0xfffffffffffffdc4
->>    31:    e8 a1 bf 82 00           callq  0x82bfd7
->>    36:    e9 80 fd ff ff           jmpq   0xfffffffffffffdbb
->>    3b:    e8 97 bf 82 00           callq  0x82bfd7
->>
->> Code starting with the faulting instruction
->> ===========================================
->>     0:    0f 0b                    ud2
->>     2:    e9 93 fd ff ff           jmpq   0xfffffffffffffd9a
->>     7:    e8 a1 bf 82 00           callq  0x82bfad
->>     c:    e9 80 fd ff ff           jmpq   0xfffffffffffffd91
->>    11:    e8 97 bf 82 00           callq  0x82bfad
->> [  125.231266][ T1430] RSP: 0018:ffa000001375fb88 EFLAGS: 00010282
->> [  125.239626][ T1430] RAX: 0000000000000000 RBX: ff11000341233c00 
->> RCX: 0000000000000027
->> [  125.250304][ T1430] RDX: 0000000000000027 RSI: 0000000000000004 
->> RDI: ff110017fc930b08
->> [  125.260878][ T1430] RBP: 0000000000000000 R08: 0000000000000001 
->> R09: ffe21c02ff926161
->> [  125.271664][ T1430] R10: ff110017fc930b0b R11: 0000000000000010 
->> R12: ff1100208d2a4000
->> [  125.282387][ T1430] R13: ff1100020d87a000 R14: 0000000000000000 
->> R15: ff11000341233c00
->> [  125.292984][ T1430] FS:  0000000000000000(0000) 
->> GS:ff110017fc900000(0000) knlGS:0000000000000000
->> [  125.304552][ T1430] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [  125.313446][ T1430] CR2: 00007fa84066aa1c CR3: 000000407c85a005 
->> CR4: 0000000000f71ef0
->> [  125.324080][ T1430] DR0: 0000000000000000 DR1: 0000000000000000 
->> DR2: 0000000000000000
->> [  125.334584][ T1430] DR3: 0000000000000000 DR6: 00000000fffe07f0 
->> DR7: 0000000000000400
->> [  125.345252][ T1430] PKRU: 55555554
->> [  125.350876][ T1430] Call Trace:
->> [  125.356281][ T1430]  <TASK>
->> [ 125.361285][ T1430] ? __warn (kernel/panic.c:693)
->> [ 125.367640][ T1430] ? check_flush_dependency 
->> (kernel/workqueue.c:3706 (discriminator 9))
->> [ 125.375689][ T1430] ? report_bug (lib/bug.c:180 lib/bug.c:219)
->> [ 125.382505][ T1430] ? handle_bug (arch/x86/kernel/traps.c:239)
->> [ 125.388987][ T1430] ? exc_invalid_op (arch/x86/kernel/traps.c:260 
->> (discriminator 1))
->> [ 125.395831][ T1430] ? asm_exc_invalid_op 
->> (arch/x86/include/asm/idtentry.h:621)
->> [ 125.403125][ T1430] ? check_flush_dependency 
->> (kernel/workqueue.c:3706 (discriminator 9))
->> [ 125.410984][ T1430] ? check_flush_dependency 
->> (kernel/workqueue.c:3706 (discriminator 9))
->> [ 125.418764][ T1430] __flush_workqueue (kernel/workqueue.c:3970)
->> [ 125.426021][ T1430] ? __pfx___might_resched 
->> (kernel/sched/core.c:10151)
->> [ 125.433431][ T1430] ? destroy_cm_id 
->> (drivers/infiniband/core/iwcm.c:375) iw_cm
->> [  125.440844][ T2411] /usr/bin/wget -q --timeout=3600 --tries=1 
->> --local-encoding=UTF-8 
->> http://internal-lkp-server:80/~lkp/cgi-bin/lkp-jobfile-append-var?job_file=/lkp/jobs/scheduled/lkp-spr-2sp1/blktests-1SSD-rdma-nvme-group-01-debian-12-x86_64-20240206.cgz-aee2424246f9-20240809-69442-1dktaed-4.yaml&job_state=running 
->> -O /dev/null
->> [ 125.441209][ T1430] ? __pfx___flush_workqueue 
->> (kernel/workqueue.c:3910)
->> [  125.441215][ T2411]
->> [ 125.473900][ T1430] ? _raw_spin_lock_irqsave 
->> (arch/x86/include/asm/atomic.h:107 
->> include/linux/atomic/atomic-arch-fallback.h:2170 
->> include/linux/atomic/atomic-instrumented.h:1302 
->> include/asm-generic/qspinlock.h:111 include/linux/spinlock.h:187 
->> include/linux/spinlock_api_smp.h:111 kernel/locking/spinlock.c:162)
->> [ 125.473909][ T1430] ? __pfx__raw_spin_lock_irqsave 
->> (kernel/locking/spinlock.c:161)
->> [  125.480265][ T2411] target ucode: 0x2b0004b1
->> [ 125.482537][ T1430] _destroy_id 
->> (drivers/infiniband/core/cma.c:2044) rdma_cm
->> [  125.488511][ T2411]
->> [ 125.495072][ T1430] nvme_rdma_free_queue 
->> (drivers/nvme/host/rdma.c:656 drivers/nvme/host/rdma.c:650) nvme_rdma
->> [  125.500747][ T2411] LKP: stdout: 2876: current_version: 2b0004b1, 
->> target_version: 2b0004b1
->> [ 125.505827][ T1430] nvme_rdma_reset_ctrl_work 
->> (drivers/nvme/host/rdma.c:2180) nvme_rdma
->> [ 125.505831][ T1430] process_one_work (kernel/workqueue.c:3231)
->> [  125.508377][ T2411]
->> [ 125.515122][ T1430] worker_thread (kernel/workqueue.c:3306 
->> kernel/workqueue.c:3393)
->> [ 125.515127][ T1430] ? __pfx_worker_thread (kernel/workqueue.c:3339)
->> [  125.524642][ T2411] check_nr_cpu
->> [ 125.531837][ T1430] kthread (kernel/kthread.c:389)
->> [  125.537327][ T2411]
->> [ 125.539864][ T1430] ? __pfx_kthread (kernel/kthread.c:342)
->> [  125.545392][ T2411] CPU(s):                               224
->> [ 125.550628][ T1430] ret_from_fork (arch/x86/kernel/process.c:147)
->> [  125.554342][ T2411]
->> [ 125.558840][ T1430] ? __pfx_kthread (kernel/kthread.c:342)
->> [ 125.558844][ T1430] ret_from_fork_asm (arch/x86/entry/entry_64.S:257)
->> [  125.561843][ T2411] On-line CPU(s) list: 0-223
->> [  125.566487][ T1430]  </TASK>
->> [  125.566488][ T1430] ---[ end trace 0000000000000000 ]---
->>
->>
->>
->> The kernel config and materials to reproduce are available at:
->> https://download.01.org/0day-ci/archive/20240815/202408151633.fc01893c-oliver.sang@intel.com 
->>
->>
->>
->>
--- 
-Best Regards,
-Yanjun.Zhu
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
+If you want to undo deduplication, reply with:
+#syz undup
 
