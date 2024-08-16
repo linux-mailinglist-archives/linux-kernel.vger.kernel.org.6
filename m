@@ -1,122 +1,149 @@
-Return-Path: <linux-kernel+bounces-289353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CB49954534
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:11:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B11954536
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:12:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F6321C21501
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:11:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECE3E1F26524
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B31F13C667;
-	Fri, 16 Aug 2024 09:11:45 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0369113D297;
+	Fri, 16 Aug 2024 09:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YCf26TwE"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2AA57581B
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10917581B
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723799505; cv=none; b=U0DSbuSY5f5X2kGTPxztV/9uCBLhgvDBphzaykGfb+N0++ixSKUAJbMb9QoD/m3IYO9FdOBhT5JFpcO0Blr1v6nYaH0KDbuVDxIeDLHkoNTi2OcAeR+Hm8+m5y5HuXZfCh1Tr8U6/UWAyCnyzCA4ZTCB73yjYM9BtTN7zl8cUdQ=
+	t=1723799544; cv=none; b=Rn7peusnooD6MW/rWGEXkw8hN35Oi6ntt9zWd4W5lME9sngI0/mMyw+Wht4yEwQkid0mTapFo2aDad/R8hvzxCK1qMfiJ3VPM3z9JkYbpZzi2Hc/RI8etXQeFsMfikxvdoCi2tDF9EPWkpxye0kbPYmE1NQXTolqM4ePPLFtVhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723799505; c=relaxed/simple;
-	bh=Qw29rppShCdDm6QOLmWc34/CLwzrzgi9ru94pb7hd3M=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=dj27IrP7mGQvIeQxClVp1uu+CqRVUlI35+Evx4PjWgHp/5s1b3yr5lXxvun/WZ+yvTyr3TpA6a6wHKTNDHRFpZgli0kLUI+MSj9eHp0Lg2AArSgVYmXCForm7kwuXb3w0IdmL3IgFj+K63v50wfZUZ1X6+ZGH2GEXD+yXd8kOTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39d2dbd9bebso1397335ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 02:11:43 -0700 (PDT)
+	s=arc-20240116; t=1723799544; c=relaxed/simple;
+	bh=uvPfs/sxceMFOcpt6ca5ZNnxd1WJmw0aOuCls/fF4tk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NGZo1+niTrurVNWzSnfo/cW69REQf2lUpzuivdgbKM14VkF7LlFLNVlnCNh9h82dd+gxBFGQx3HfPy5xvwL3zSga8iQ/1IJFnrAihY+mSSDvEmtX7VvTjUlb9yezcX1xc2hu0WNIYp0zqBElH/P7gpjFsDuTLuzyw9bgX/XjFT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YCf26TwE; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4281c164408so12146825e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 02:12:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723799541; x=1724404341; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WllYCtmCZzHsMxTLdu431wvQusgsnPG7xw41l1l/SJI=;
+        b=YCf26TwEuMvUmoJU8bY5TfLXC3LSgXyVlzoa5ZaJ8xIqGiLWgOYEEoYVok+Db4v6I1
+         yCmA/i6aqwVwqje5Tg3fxFFN5wNVHDD01txonwCZVGmIeai/CnN+aGzLuILcgil6OnLI
+         AcncqUtEH65inDJsyCUmaJ67qcFszXMoCpdTfh7WxEpls/tHBd4ToeG0ltBraQ7FJJ7T
+         5dcTa2PF6ElTgXcIAac2ez+Cvh1pQEYqFG/ceDADw+ZnjEUbb7i2Wxu6tpHJr3CQcoF+
+         xpPwuvV50Srn6+eorocKfDxwzNUODFE7U290WIbP/+ouxDnlu7HScPma2Prd6vg5/Lhn
+         MklQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723799503; x=1724404303;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MQeOsbshCLQQEsLzLhQBt7SxIOMZxubosBFbVjVhuLo=;
-        b=WIxlDGZ5v8OV7PAMP6O41S1RRZnsOsybwckGpwqmyhOck8nMANDRXRNaQbBcgIZ+ap
-         kxoPUbMzzQ/musCulJo6tJkNDJmnde2cy3iPUUIMm48ViAs2XrtDA9t3ybiJkxZEkD/I
-         zhVNkw95hjfP4O03MYhWh71clieYgq5fimhrTh5u/waKw1eiJW/RcZLIXSVwrBSkyyEG
-         sgIyGt/5N57SEO9PiMUzqPRNebs+OYgH29g4jh+I/8s/Dm8MzRUZVvg+SfcscPuvsGz9
-         Z+RjAOk+G6KaUVuuq47i/PLCQxqVBn1DbuXQ8U9ZcQ1o6rDKHdt4Ou7Z34RhZzLzCEDP
-         aStA==
-X-Gm-Message-State: AOJu0YwHSWVUse9z9tILgDbMTCNS7tbUHVeWY3buY7MpJY7Mgxon7pMC
-	rkCNp3Bn4jnVZneqHU9BL7I0s/nDQTH8IAuedjx7OzU02NKWfrIgV+DiXE9ndu86iK41yqtJtcs
-	DvfVBy4Ysj0UJLRVgxLJwfEEt3RhTq28u5MAV8EWerfLOQdmMsSdYJ4Q=
-X-Google-Smtp-Source: AGHT+IH3TG3/p7WuY1mraYFCqGGPOZ4CSeMPw96iht0IjSTwKUt6O0ZY4uYUXbJFEXx8FFtyyUikcSAsl4oZLNqqHY5SPstl2i2U
+        d=1e100.net; s=20230601; t=1723799541; x=1724404341;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WllYCtmCZzHsMxTLdu431wvQusgsnPG7xw41l1l/SJI=;
+        b=lRuV0VdIroyiUCzLpCBeCX3rHb+Pt210vct8dpNNJ2lhpDgPmEtzKa/5zcmOrW+PuW
+         vJcPVOZIOp3dUOg3sUKgFL7waUWZHc4+VeJk7QAdWJBhjTB0yvt1Ebyn1k/dnXIn8YQl
+         ElEx4TeFZsId5u6eKII6DTk2s+LYNT5anr062jUAhx2qVJwXg19npzevhtYhXWpIu7WU
+         s0pL5ix1eIMsykB1TBjSTcn4W/Z0PYgZkM5wu2ByXx9XP39j5fJm9ltmi/FnwdU2Dfv6
+         ryOpCgy73WBA39vpRF8Ql2FzkvzYMJ2oqAeTAidB5EyqMJbY/Cv9j9TSTBynOJSU2JGx
+         qVBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzhcWljvSe/QCjX7GyFioOJdS0WLTysW/C4OIXgi4EUC+ziFxvdgTIbSdoBm1X/nS6GxDJ5WZ4Cr+ZbSYuyV4tX3PPQhYbYdzDUtOD
+X-Gm-Message-State: AOJu0Yz3toDWZkIlKKm/xGJNIY07f1odgSxJwEfb/1xqk4i2ujVzburi
+	m15cFZsnFyUOw/BVrq44rgbdHLf8ZVH/BSFRiVmWUKAoMwvXTKuypKLvPYxB1SM=
+X-Google-Smtp-Source: AGHT+IGvQ9bU4HwT1y0LssYKgZiF6iaa0214ap/5xVyvjFPYigK5l5fFUuG/x6CX2HWGTdPrbEznbA==
+X-Received: by 2002:a05:600c:3550:b0:428:fb96:e94a with SMTP id 5b1f17b1804b1-429ed788f3amr15403345e9.9.1723799540837;
+        Fri, 16 Aug 2024 02:12:20 -0700 (PDT)
+Received: from localhost.localdomain ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed6507c4sm17525635e9.15.2024.08.16.02.12.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 02:12:20 -0700 (PDT)
+From: srinivas.kandagatla@linaro.org
+To: broonie@kernel.org
+Cc: perex@perex.cz,
+	tiwai@suse.com,
+	alsa-devel@alsa-project.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	amit.pundir@linaro.org,
+	dmitry.baryshkov@linaro.org,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2] ASoC: codecs: lpass-va-macro: set the default codec version for sm8250
+Date: Fri, 16 Aug 2024 10:12:10 +0100
+Message-Id: <20240816091210.50172-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a6e:b0:385:ffe:4516 with SMTP id
- e9e14a558f8ab-39d26ce52e0mr1328045ab.2.1723799502914; Fri, 16 Aug 2024
- 02:11:42 -0700 (PDT)
-Date: Fri, 16 Aug 2024 02:11:42 -0700
-In-Reply-To: <0000000000004e582f061fb691ff@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000009222e061fc959b5@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_iget
-From: syzbot <syzbot+5bdd4953bc58c8fbd6eb@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-***
+sm8250 and sc7280 have lpass codec version 1.0, as these are very old
+platforms, they do not have a reliable way to get the codec version
+from core_id registers.
 
-Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_iget
-Author: lizhi.xu@windriver.com
+On codec versions below 2.0, even though the core_id registers are
+available to read, the values of these registers are not unique to be
+able to determine the version of the codec dynamically.
 
-BH_Lock state check micro buffer_locked not work?
+Add the version info into of_data, so that driver does not need to use
+core_id registers to get version number for such situations.
 
-#syz test: upstream d07b43284ab3
+Fixes: 378918d59181 ("ASoC: codecs: lpass-macro: add helpers to get codec version")
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+Changes since v1:
+	- updated commit text to add more details
 
-diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
-index cdb9b9bdea1f..f67f82adfee2 100644
---- a/fs/ocfs2/buffer_head_io.c
-+++ b/fs/ocfs2/buffer_head_io.c
-@@ -148,6 +148,8 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
- 		get_bh(bh); /* for end_buffer_read_sync() */
- 		bh->b_end_io = end_buffer_read_sync;
- 		submit_bh(REQ_OP_READ, bh);
-+		printk("bio, jbd: %d, dirty: %d, i: %d, bh: %p, buflocked: %d, bfl: %d, status: %d, %s\n", buffer_jbd(bh),
-+			buffer_dirty(bh), i, bh, buffer_locked(bh), bh->b_state & BH_Lock, status, __func__);
+ sound/soc/codecs/lpass-va-macro.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/lpass-va-macro.c b/sound/soc/codecs/lpass-va-macro.c
+index 8454193ed22a..e95d1f29ef18 100644
+--- a/sound/soc/codecs/lpass-va-macro.c
++++ b/sound/soc/codecs/lpass-va-macro.c
+@@ -228,11 +228,13 @@ struct va_macro {
+ struct va_macro_data {
+ 	bool has_swr_master;
+ 	bool has_npl_clk;
++	int version;
+ };
+ 
+ static const struct va_macro_data sm8250_va_data = {
+ 	.has_swr_master = false,
+ 	.has_npl_clk = false,
++	.version = LPASS_CODEC_VERSION_1_0,
+ };
+ 
+ static const struct va_macro_data sm8450_va_data = {
+@@ -1587,7 +1589,14 @@ static int va_macro_probe(struct platform_device *pdev)
+ 			goto err_npl;
  	}
  
- read_failure:
-@@ -170,9 +172,15 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
- 			continue;
- 		}
+-	va_macro_set_lpass_codec_version(va);
++	/**
++	 * old version of codecs do not have a reliable way to determine the
++	 * version from registers, get them from soc specific data
++	 */
++	if (data->version)
++		lpass_macro_set_codec_version(data->version);
++	else /* read version from register */
++		va_macro_set_lpass_codec_version(va);
  
-+		printk("rf, jbd: %d, dirty: %d, i: %d, bh: %p, buflocked: %d, bfl: %d, status: %d, %s\n", buffer_jbd(bh),
-+			buffer_dirty(bh), i, bh, buffer_locked(bh), bh->b_state & BH_Lock, status, __func__);
- 		/* No need to wait on the buffer if it's managed by JBD. */
--		if (!buffer_jbd(bh))
-+		if (!buffer_jbd(bh)) {
-+			if (!buffer_locked(bh) && (bh->b_state & BH_Lock) && bh->b_end_io == end_buffer_read_sync)
-+				lock_buffer(bh);
-+
- 			wait_on_buffer(bh);
-+		}
- 
- 		if (!buffer_uptodate(bh)) {
- 			/* Status won't be cleared from here on out,
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index e022e40b099e..33c179fa522e 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -411,7 +411,7 @@ map_bh(struct buffer_head *bh, struct super_block *sb, sector_t block)
- static inline void wait_on_buffer(struct buffer_head *bh)
- {
- 	might_sleep();
--	if (buffer_locked(bh))
-+	if (bh->b_state & BH_Lock)
- 		__wait_on_buffer(bh);
- }
- 
+ 	if (va->has_swr_master) {
+ 		/* Set default CLK div to 1 */
+-- 
+2.25.1
+
 
