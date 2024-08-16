@@ -1,176 +1,116 @@
-Return-Path: <linux-kernel+bounces-289971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63FA6954DD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:35:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EAB3954DE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 967111C214B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:35:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4272D1C21427
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0930B1C6881;
-	Fri, 16 Aug 2024 15:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8F11BF309;
+	Fri, 16 Aug 2024 15:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JczSFs7Z"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bKSTGrm8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC521C578C
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51CA1BDA94;
+	Fri, 16 Aug 2024 15:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723822342; cv=none; b=uQxLN9rzdWxik0cSUt8RzvBbsCechLSpkmrkmiAS6P9VcVFxtImKWs6TEiuPklucd5UFBsIByO+KpVcchdSEEblbun2Eil9wg01a4dhIVOTg60EetrElo6QrrqtpOwmIHDnLLzZptFBly0TE9JUk7s6g18GWuRkuQE5lti+mYhE=
+	t=1723822514; cv=none; b=q8vdHNDbEtIVp/Jle4ZR6+Qb0Q2g4qgWqA1nO4BCiOQUoiu3YE5CiN/NvmxC+l19eHqfkNLfS68Wyz9ROfQo4DzeyRACsH72BHFtT/z1uUsxNW6pVdEYh29cOUq+gwpxW4G5FApEprUi1lSiw6iAMo0nPyjk1i7jTRrePYT1TO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723822342; c=relaxed/simple;
-	bh=evm4/Qf1Gix0CG1zjk2y90RZHb2Oo+FXRI+CwqZngfA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YyXES6GNfbyc1/+ODIaa/xQZw6dtLh0WDCvFpoqyWEAwW1ehKeU2C3yIDaURUxIIOJlJ6EPc7g3Bt7oOl/KXBZD6+KLa17+nP0rNBBXtSy9ZXZPW8TC5mi7lxP2BHCQNk2npt0jgDQVWNcbXVVJiawTnGAtBCjE8uw+q5V0oJq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JczSFs7Z; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-429e29933aaso14824285e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:32:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723822339; x=1724427139; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i72cl2LG6rsfBE9NuFNe0vCjzQLf8lqqkLVcJWffpKE=;
-        b=JczSFs7ZSvunsqpKG0tEFpCPMfCVKwpUkJ9EhwdByAotzt/2sR8MvwtwfomvDKVzqT
-         2QIeR02aa0p82Ta9ucEnF9354TAw8CJxxqDF8BRsG7kCt1TuZjvFksBgbfP1X0gi8tL8
-         CUCj1GE1vXfp6b4FnzWK5/JHVwqkafKqChWdnfQIXbA7P7nVYIx76IBbgTSM/UZB4XXN
-         hlJhBzE5Z6jEpkcTZ7TUbv+0fOBYird/7oNiJQ7vKyhW9kk8fkK5w0rMbDL0Cjp3MmUN
-         TV+b3sh0bhqCKSi5eX+CqpIF7xasaiQFN6jAz9QNcx644b6IP29pDd0W2EmT3o3MTccT
-         z0UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723822339; x=1724427139;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i72cl2LG6rsfBE9NuFNe0vCjzQLf8lqqkLVcJWffpKE=;
-        b=hMNXM0i2+cxCGtz8wcdCdb7RuQL6Sv9YUTW22bRYX68OasZHa5n5FEWo4P3s8n+kiD
-         opFYs30pJPSNBIDqJVbHvO88EixhR3dO68BYyiKiHT+V/Ss49Ou/oRU82mwfzAgFPFeY
-         Vi2K30T9+LWBpK/lSMvOIca/mzQPaTltTSWuopDtE3FKeCqgFxgLXavp4P7+EL8eJbAZ
-         Xy/kqmb7NXtCSFx33tF+4MIbCvbm+ksFTyGQOoV9g00hUrIpBIhXs6kiht97qCbAoIlw
-         7uEe/vIPdV4D9PNsQHs5QZ6kEhEUuoGKjnVtWs5tw/ltRqa3MYgA6QS3Ta+FGObH3QMy
-         ksXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXXYWYlTGYMutk82J4WuBWPuKrKMmHw7tvYZoa0egAEeObCeGgZQQnRt0edGhx85B6bXh4MZ2z43POlzV0pjGmqyEHT5uwPtUHMK3hq
-X-Gm-Message-State: AOJu0Yzax2p6GDzB2wcjl9CuLw0VPey8Wdys6jXcrNEBrWJx7e1tWXYF
-	fjAANcRdIgAA0DnSu26ZD6WUMbbZFvwLWVRedd2oEWF9rTJk8aRdCbsaaMtC1cA=
-X-Google-Smtp-Source: AGHT+IED0WYx0TreQX2OrKap07J96mSpWj6wWPju1D8qe2yhsCsW41zGu895F7DsFQ1Mn543/zW+Kg==
-X-Received: by 2002:a5d:4b02:0:b0:371:82ec:206f with SMTP id ffacd0b85a97d-371943293cdmr1861574f8f.16.1723822338955;
-        Fri, 16 Aug 2024 08:32:18 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898497f0sm3853661f8f.39.2024.08.16.08.32.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 08:32:18 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Fri, 16 Aug 2024 17:31:49 +0200
-Subject: [PATCH 17/17] leds: qcom-lpg: Simplify with scoped for each OF
- child loop
+	s=arc-20240116; t=1723822514; c=relaxed/simple;
+	bh=Q18cNSCViMkznglQB7U8THt2jlE6uRjEx/JSrUARwzc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QfDIvowUn708IFttF9aIWWLZhB9jvsVT9fLhFMcle1MI9fav49grmqhGIY13TsYQQUXajDVB8SCq4Nc9KOIPTPoNt26ucXVjL+EQNFzQT1k+iFGvUeaLAz3s+DGK9P3YCe54ZAB1SKCrBv5pM/aJz7JRsXRJ3TR81a04RtUVp10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bKSTGrm8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41C32C32782;
+	Fri, 16 Aug 2024 15:35:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723822513;
+	bh=Q18cNSCViMkznglQB7U8THt2jlE6uRjEx/JSrUARwzc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bKSTGrm8LaF2gwztx+/6SinSoy24s5gR4CldYRBEkiNOSwgcpm7hLvrrK2gtq0Pvx
+	 hMOv7Np2xjcElkjbz06G6kxT1paCcuIl6tgDnhA1FReWgEk0VrJIV5VnmY28VW+uM3
+	 rZACO8v+MYhjqas3sNB0o4umHsNfCDqpROl01Mt/tH5odX/nLSTCmpnMqAFo9lHFii
+	 7gaHt6gXGlFMnEUaVC739Sgm/hKhGjvNlG4yZPxcjScZu7DwFyzYVs8aZxgV2ToxjC
+	 MflEhOxEm/9blSXnL7eNEt3U0O1uRbAir3rluhSYsWuh/JjkeQLFqL1D7S/NCKi2I7
+	 8SQyYhQ0iAcDw==
+Date: Fri, 16 Aug 2024 08:35:10 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>, Richard Henderson
+ <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+ Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
+ <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>,
+ Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
+ <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, Herbert
+ Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, Willem
+ de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, Sumit
+ Semwal <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Christoph
+ Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>,
+ Taehee Yoo <ap420073@gmail.com>, David Wei <dw@davidwei.uk>, Jason
+ Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, Shailend
+ Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
+ <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
+ Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
+Subject: Re: [PATCH net-next v19 06/13] memory-provider: dmabuf devmem
+ memory provider
+Message-ID: <20240816083510.3386fb10@kernel.org>
+In-Reply-To: <CAHS8izO9LDM9rLVnJPgp6QXb4YLW5+3ziGOHTqScy-SKOLejYA@mail.gmail.com>
+References: <20240813211317.3381180-7-almasrymina@google.com>
+	<de7daf80-a2e4-4451-b666-2a67ccc3649e@gmail.com>
+	<CAHS8izPMC+XhXKbJOQ3ymizyKuARSOv_cO_xO+q1EG4zoy6Gig@mail.gmail.com>
+	<31640ff4-25a6-4115-85e6-82092ce57393@gmail.com>
+	<20240815182245.2b5e3f44@kernel.org>
+	<CAHS8izO9LDM9rLVnJPgp6QXb4YLW5+3ziGOHTqScy-SKOLejYA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240816-cleanup-h-of-node-put-var-v1-17-1d0292802470@linaro.org>
-References: <20240816-cleanup-h-of-node-put-var-v1-0-1d0292802470@linaro.org>
-In-Reply-To: <20240816-cleanup-h-of-node-put-var-v1-0-1d0292802470@linaro.org>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- Sean Wang <sean.wang@mediatek.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Riku Voipio <riku.voipio@iki.fi>, Orson Zhai <orsonzhai@gmail.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Chunyan Zhang <zhang.lyra@gmail.com>, 
- =?utf-8?q?Marek_Beh=C3=BAn?= <kabel@kernel.org>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1848;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=evm4/Qf1Gix0CG1zjk2y90RZHb2Oo+FXRI+CwqZngfA=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmv3DojUfs6j9ghjY8rYQZeR83/DBn5C5vGVai7
- SH1nEKJD1aJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZr9w6AAKCRDBN2bmhouD
- 12UID/4yUfw9u/p7xohuwxORPZDDT+wUHcCCjyoUV2diG+Nd0Oqzcv35eu6NeZNl7BNB3X0EQoQ
- VQn8BrW9aEHJFgdQC2UPhVqwKnqyy2th/AJfD9MDAa63IdWIdTPI4ZAUqhAMFTHyj4QCIM+Cewp
- 6LSA+M0GHdFwqqZXKWRyINxmfNb+nD1yOcUJSn1p4mQVAlwWCr5tXZEmhFh/pvurGumxCqeHGt4
- EEPK8uuEV/ZrxuMoKFKYaZxEmbrQkvfISkoql4+54GXtQ4u7qmSdTqCSESVW8wrX19GteWzW34w
- /3rW7iV14tptFvALyHd80HwsDP/FpK1oa9PDUI4ukf8VXk4DMcTg0/DlK553j0gew5RgjMZszdh
- D6o0hFLVuvoe4M/wRvnYDb2c/HvPKNwKG2yLIkft3ezelGstcfsyprKU6Wvg9ui2s4MSiYcfIpb
- RkiasvWRnhtsxaMbCeE0GbtB8xTkCUJufOlMHca6MY6/0upIL7buM+iZ2gQD03zfpWZChYZ9xRT
- noGcSiHIFcHWGBT7QU3Aac96iJHkrY4pfr8vq2oE3o8DZhpegNlm58HqHDk0kl89GIR+JuccPSF
- ZN/CyNtXDJP5V8DPnd4ZHC6QzRAeZYyQ3PrXV/BluuDVR+gcWQ4G60i6McsRcpRxELK+EFjjgst
- yLwTWCItNdg6GjA==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Use scoped for_each_available_child_of_node_scoped() when iterating over
-device nodes to make code a bit simpler.
+On Fri, 16 Aug 2024 08:20:44 -0400 Mina Almasry wrote:
+> > I'd keep the current check with a WARN_ON_ONCE(), tho.
+> > Given the absence of tests driver developers can use.
+> > Especially those who _aren't_ supporting the feature.
+> 
+> Yes what I have locally is the driver setting
+> netdev_rx_queue->unreadable_netmem_supported when header split is
+> turned on, and additionally a WARN_ON_ONCE around the check in core. I
+> was about to send that when I read your email. I'm hoping we don't
+> have to go through the scope creep of adding configuration via the
+> queue API, which I think is a very significant undertaking.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/leds/rgb/leds-qcom-lpg.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+I don't like adding more and more transient stuff to netdev_rx_queue.
+It's one thing if we create a temporary solution in the core, which
+we can easily redo later. It's another altogether when we expect drivers
+to keep some bit up to date across all the reconfiguration paths they
+have. Just to then got an replace that with another API.
 
-diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
-index e74b2ceed1c2..f3c9ef2bfa57 100644
---- a/drivers/leds/rgb/leds-qcom-lpg.c
-+++ b/drivers/leds/rgb/leds-qcom-lpg.c
-@@ -1368,7 +1368,6 @@ static int lpg_add_led(struct lpg *lpg, struct device_node *np)
- {
- 	struct led_init_data init_data = {};
- 	struct led_classdev *cdev;
--	struct device_node *child;
- 	struct mc_subled *info;
- 	struct lpg_led *led;
- 	const char *state;
-@@ -1399,12 +1398,10 @@ static int lpg_add_led(struct lpg *lpg, struct device_node *np)
- 		if (!info)
- 			return -ENOMEM;
- 		i = 0;
--		for_each_available_child_of_node(np, child) {
-+		for_each_available_child_of_node_scoped(np, child) {
- 			ret = lpg_parse_channel(lpg, child, &led->channels[i]);
--			if (ret < 0) {
--				of_node_put(child);
-+			if (ret < 0)
- 				return ret;
--			}
- 
- 			info[i].color_index = led->channels[i]->color;
- 			info[i].intensity = 0;
-@@ -1600,7 +1597,6 @@ static int lpg_init_sdam(struct lpg *lpg)
- 
- static int lpg_probe(struct platform_device *pdev)
- {
--	struct device_node *np;
- 	struct lpg *lpg;
- 	int ret;
- 	int i;
-@@ -1640,12 +1636,10 @@ static int lpg_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		return ret;
- 
--	for_each_available_child_of_node(pdev->dev.of_node, np) {
-+	for_each_available_child_of_node_scoped(pdev->dev.of_node, np) {
- 		ret = lpg_add_led(lpg, np);
--		if (ret) {
--			of_node_put(np);
-+		if (ret)
- 			return ret;
--		}
- 	}
- 
- 	for (i = 0; i < lpg->num_channels; i++)
-
--- 
-2.43.0
-
+If the post-check works let's go with that for now.
 
