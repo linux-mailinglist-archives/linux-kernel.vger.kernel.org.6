@@ -1,82 +1,161 @@
-Return-Path: <linux-kernel+bounces-290190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C5EC95508D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:09:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1EF195508E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:10:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F0411C23396
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:09:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EF9E287626
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB56F1C37BC;
-	Fri, 16 Aug 2024 18:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1141C379A;
+	Fri, 16 Aug 2024 18:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C4voLZmR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ElQdQKxg"
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087681482F4;
-	Fri, 16 Aug 2024 18:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C90B1BE860
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 18:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723831773; cv=none; b=Ot3cYLOBwBBEBOpTx+DCHvyhl8tatUbYxkaIBPl6HrsUMMgRI2ZGheVKAfODvP78adwh4vl6LjzzVW/pimU2TqfPCdBPfgDwz7MstYaBKysBFeFH5/+cibSW6/15UpH0NCP5ynF82O4Nn3b6SWdZ60pcjrtH2RkMrDEr9iZgs0c=
+	t=1723831799; cv=none; b=of88KHTxcIueCyFJUdZRUdWn7ySqjpUSJbyAVqrO7fY9SsEqdmKsZfLG6w6z5vQRMhB1vlqEWpI81YyD9LcTdS3tZ0YsmplO3Pmq8osccKjxP07VdsrnOhn8s0I4jm1gEXlpxvEc3wCBx+39NrmmPtG1hHOhixrdlDCPZbmIl3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723831773; c=relaxed/simple;
-	bh=2pwdYzQ2ojaf94uUSc3VfR/126ez82e5gZxfj8e+7BA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DIsHIdKwSrWuXfQZvJiwdE34oVT3gu5eISisLDXpNOOw2pW3kt9Uj/gDi3rP6WeV5WMx1T0Feiis1aJ7pIXvqXw2N+q5FGfdYTZZ/YhWNrwkX6S9sr0L7y4AM2pevwKp2aHToULuNTfY8QSbavG2cRQ2pNi+m+hOYWezNfvbZy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C4voLZmR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E2F8C4AF0E;
-	Fri, 16 Aug 2024 18:09:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723831771;
-	bh=2pwdYzQ2ojaf94uUSc3VfR/126ez82e5gZxfj8e+7BA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=C4voLZmRQ5Wf7Hx+7sGeKAABNuyIbLbewF/VAV0+W+YSxA8X4e8A62Lo4Myd2tkCp
-	 qS4TMHCH0Bs0gG+Ra4ABe5l7fK8XozXgNK1T31AqzAJ3AYTCbD7LdXBS9SV1JvBI8o
-	 PWU+/tMTo2HqIV+CSEKqlm7w2NIDN+EBBRbFsG908yoOb1J4YosA7yRRM/pU+nYInN
-	 dFkUU4GFP4JRAO4NsgO68P8OEJgeaCd1L0ggEN+q0zYv7I8R8ygoWeiAth2rEA3hx7
-	 dM4yTPHqN9DD8IPgCT2iHNmU0jore++z0+JkyyXdQ47IWeq80GkFgAXMrb4MxB7SKS
-	 6WgQBHYw6atmg==
-Date: Fri, 16 Aug 2024 11:09:28 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: ende.tan@starfivetech.com
-Cc: netdev@vger.kernel.org, andrew@lunn.ch, alexandre.torgue@foss.st.com,
- joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, mcoquelin.stm32@gmail.com, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, leyfoon.tan@starfivetech.com,
- minda.chen@starfivetech.com, endeneer@gmail.com
-Subject: Re: [net-next,v1,1/1] net: stmmac: Introduce set_rx_ic() for
- enabling RX interrupt-on-completion
-Message-ID: <20240816110928.1a75d223@kernel.org>
-In-Reply-To: <20240814092438.3129-1-ende.tan@starfivetech.com>
-References: <20240814092438.3129-1-ende.tan@starfivetech.com>
+	s=arc-20240116; t=1723831799; c=relaxed/simple;
+	bh=lJhyzLAL1aPGd9matGw1kcgWnNHk3dZ1XLPMMUFZUH8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Dq37d8g9bUO9OjPrBMLwBytYuNR7axSV7AwySWS4AEu0gmTMMKii39grCONUVn/TlZmn2v1VeOLdejr3xUZlnlNq/tVkDL2wSgDQZUBftDzhQ6B18x3zcu7iJr2/9JBy/o/W7HIv5/Z5hVCYCxoTFUYH8mDiQ8oNsRBR5zCO0mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ElQdQKxg; arc=none smtp.client-ip=209.85.217.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4929fd67c7bso698635137.0
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 11:09:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723831797; x=1724436597; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QXT+EkhrklWLGFU9rN71QI1DWSXDXH6Sll6gVrnThPY=;
+        b=ElQdQKxgzKzKMMnSpQq3d0CNJ1uJ9t4fRIHAnHKHmHeokLN08Dp5gTxY9D2Cm3jM6E
+         MYejuLxNFswLWraVMQUulDLr3QjiWXELrNRGGFO90Ss8LV3hlvwx4fV3VqzU/2aK5dE4
+         H95yxru7B2gdnfV/RCj0Jb2VDuIEDj2ehMBUGRLTYDU6hHjtHwAcIMKpL2LiyofO/nMi
+         zzo/ZVFpcJaSwsHwAZ2OYuOeu2c91B6T+a6+7dEtEQSy/2hYyk5TYmN0Gk65laFLUBnh
+         9nkiGaerZpCFHWyCWEM2zi2YPFq0ogyfMguRbK8iDxxh+Ff2yeDftx8VpAMp+pFWdfBn
+         oK/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723831797; x=1724436597;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QXT+EkhrklWLGFU9rN71QI1DWSXDXH6Sll6gVrnThPY=;
+        b=G6H6Esl1r1IZD2+I/nlZuNkxDD1UUDJdms6ObL8Ckz+yutFwa+kYGCa8WQPc6vRIE2
+         ekzmECC0/tpMhJ3D5+w1XuSEx2cfJr19lPFMdnbXrZOTP81WpECYxg5/s62+PMaK37Vh
+         x4eKVsYdF0Fxf3AKYLBvMp3D2d6jRnkoy39uqFwPOypl57FLsSzxM9ykw99g0ZryP2um
+         azUxMPciVJuzrTfFZERT0zVHE1C5c85UP3cWUztAuaBVpCo7Lxtuk8KmGmmncLzBmkQH
+         6FdPNoQAGZFNf1EMD+pM5KD7N5vMWWdwufqCydwUPS7sLOjJFD+VVLzVCidfWQp60oXc
+         jf8w==
+X-Forwarded-Encrypted: i=1; AJvYcCV4CL7LX7naFOTqAAZ0WGvCP3AwZMrywRJRQQArAf64igAYJtnNg24u/3T6FtNErIPc9JC1OKM4y1C+LiEmy+4JlUB3VRe+pHmZ4PW5
+X-Gm-Message-State: AOJu0Ywok2nh1fN0sSplKJMBrCGwkbgG0YcDzW0noGLqKAqOfYmGhfS7
+	dApiW6zFvOni77MXHiK0JIjqDyKxuK4HzdoGzqpODgI/38efIczWsbg9g7t5ucHi0E+a3OEwNpt
+	S+DqtsEidS2zTElgzgcAFuaU7T1k=
+X-Google-Smtp-Source: AGHT+IF6bpgzYv6bEGMmO6lcZP53YsDNKH3SbarJRk7qsMyOgpwPwpioZkOEHvWDwwtIj2+y8IVgv92PvQw80CDQTRs=
+X-Received: by 2002:a67:f84d:0:b0:497:7b07:8d37 with SMTP id
+ ada2fe7eead31-4977b07961dmr3360779137.29.1723831796876; Fri, 16 Aug 2024
+ 11:09:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240807211309.2729719-1-pedro.falcato@gmail.com>
+ <20240808161226.b853642c0ecf530b5cef2ecc@linux-foundation.org>
+ <CAKbZUD0_BSv6KOgaRuqjLWGnttzcprcUu5WysSZeX8FXAvui5w@mail.gmail.com>
+ <CALmYWFs0v07z5vheDt1h3hD+3--yr6Va0ZuQeaATo+-8MuRJ-g@mail.gmail.com>
+ <CABi2SkUYAc557wwOriwUW3tfTc_U9MDPQ4bE-Q+tTdNgGT3UuQ@mail.gmail.com>
+ <CAKbZUD3_3KN4fAyQsD+=p3PV8svAvVyS278umX40Ehsa+zkz3w@mail.gmail.com> <CABi2SkVrEHbWa4AsffX9RXv_a-KjwZajkscZ3Bi4JWzJ4fr6wQ@mail.gmail.com>
+In-Reply-To: <CABi2SkVrEHbWa4AsffX9RXv_a-KjwZajkscZ3Bi4JWzJ4fr6wQ@mail.gmail.com>
+From: Pedro Falcato <pedro.falcato@gmail.com>
+Date: Fri, 16 Aug 2024 19:09:44 +0100
+Message-ID: <CAKbZUD0ZA8q0QdSs_OwbdfSvM3Ze+0MaMQsn2dKM2pN6nn3J4g@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] mm: Optimize mseal checks
+To: Jeff Xu <jeffxu@chromium.org>
+Cc: Jeff Xu <jeffxu@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, oliver.sang@intel.com, 
+	torvalds@linux-foundation.org, Michael Ellerman <mpe@ellerman.id.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 14 Aug 2024 17:24:38 +0800 ende.tan@starfivetech.com wrote:
-> From: Tan En De <ende.tan@starfivetech.com>
-> 
-> Currently, some set_rx_owner() callbacks set interrupt-on-completion bit
-> in addition to OWN bit, without inserting a dma_wmb() barrier. This
-> might cause missed interrupt if the DMA sees the OWN bit before the
-> interrupt-on-completion bit is set.
-> 
-> Thus, let's introduce set_rx_ic() for enabling interrupt-on-completion,
-> and call it before dma_wmb() and set_rx_owner() in the main driver,
-> ensuring proper ordering and preventing missed interrupt.
+On Fri, Aug 16, 2024 at 6:07=E2=80=AFPM Jeff Xu <jeffxu@chromium.org> wrote=
+:
+> Please run this test on the latest kernel branch to verify:
+>
+> static void test_munmap_free_multiple_ranges(bool seal)
+> {
+>         void *ptr;
+>         unsigned long page_size =3D getpagesize();
+>         unsigned long size =3D 8 * page_size;
+>         int ret;
+>         int prot;
+>
+>         setup_single_address(size, &ptr);
+>         FAIL_TEST_IF_FALSE(ptr !=3D (void *)-1);
+>
+>         /* unmap one page from beginning. */
+>         ret =3D sys_munmap(ptr, page_size);
+>         FAIL_TEST_IF_FALSE(!ret);
+>
+>         /* unmap one page from middle. */
+>         ret =3D sys_munmap(ptr + 4 * page_size, page_size);
+>         FAIL_TEST_IF_FALSE(!ret);
+>
+>         /* seal the last page */
+>         if (seal) {
+>                 ret =3D sys_mseal(ptr + 7 * page_size, page_size);
+>                 FAIL_TEST_IF_FALSE(!ret);
+>         }
+>
+>         /* munmap all 8  pages from beginning */
+>         ret =3D sys_munmap(ptr, 8 * page_size);
+>         if (seal) {
+>                 FAIL_TEST_IF_FALSE(ret < 0);
+>
+>                 /* verify none of existing pages in  the range are unmapp=
+ed */
+>                 size =3D get_vma_size(ptr + page_size, &prot);
+>                 FAIL_TEST_IF_FALSE(size =3D=3D 3 * page_size);
+>                 FAIL_TEST_IF_FALSE(prot =3D=3D 4);
+>
+>                 size =3D get_vma_size(ptr +  5 * page_size, &prot);
+>                 FAIL_TEST_IF_FALSE(size =3D=3D 2 * page_size);
+>                 FAIL_TEST_IF_FALSE(prot =3D=3D 4);
+>
+>                 size =3D get_vma_size(ptr +  7 * page_size, &prot);
+>                 FAIL_TEST_IF_FALSE(size =3D=3D 1 * page_size);
+>                 FAIL_TEST_IF_FALSE(prot =3D=3D 4);
+>         } else {
+>                 FAIL_TEST_IF_FALSE(!ret);
+>
+>                 /* verify all pages are unmapped */
+>                 for (int i =3D 0; i < 8; i++) {
+>                         size =3D get_vma_size(ptr, &prot);
+>                         FAIL_TEST_IF_FALSE(size =3D=3D 0);
+>                 }
+>         }
+>
+>         REPORT_TEST_PASS();
+> }
+>
 
-Having multiple indirect function calls to write a single descriptor 
-is really not great. Looks like it's always bit 31, can't this be coded
-up as common handler which sets bit 31 in the appropriate word (word
-offset specified per platform)?
+FWIW this test does not work correctly on my end due to sealed VMAs
+getting merged. I hacked up setup_single_address to work around that,
+and the test does pass on both 6.10.5 and my local mseal changes
+branch.
+
+--=20
+Pedro
 
