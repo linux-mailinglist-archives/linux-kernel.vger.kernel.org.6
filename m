@@ -1,62 +1,45 @@
-Return-Path: <linux-kernel+bounces-288990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D179540EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:12:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B1079540EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:13:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EBD7B21828
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 05:12:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AFD92865ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 05:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290237B3F3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE307D08F;
 	Fri, 16 Aug 2024 05:12:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="P7l7PDDC"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Xw035Nh7"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EBB7641D;
-	Fri, 16 Aug 2024 05:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C61763EE
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 05:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723785162; cv=none; b=FedUungrc7g8WiAMQFo09T7g7juGfcVJTUFk1zKw1Tk4MDp+K/3LNSUi8FUwVV+JByvrNv094LX95R+sSlX+TdbRnqU/9TJ1+nfUOZ8moH5C38+9xFA0G+aZ/Fbl+KVBby6gOC28o4BfVKJCUoAvthNYaTL5PCwRTKtwLeQGBYU=
+	t=1723785162; cv=none; b=SwlQsSpxbMBdAZ7NHlbdOefUVeOFf2HHbybKXQVGmflDTAodQygUTDKU1iQC76BcQRQ0hkscR/5RsHTbW0dqRdwsATvlD3weWfZEfPm1c+k23z9IZCwWwawkegEk+f5EIbC+oVNq4A+PCd3Nx1tqEimidx/l8owMvL9fYWuVm40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723785162; c=relaxed/simple;
-	bh=SmZCuuog49yLg7CxDQXLbMf/8zxvQ3bcX1FvPNUQHNc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eUS/Fn0eYRvDEhBufCBHqbMAQE2ACAbYumZIvIMhrHdeFgI5AOiBSRG+wkkeDvxbCMkPw5leqBGtFqlkCgN1HCiDbC29VBj2vEHqyG0S0Q77/xGJDeJ38kh9Xf45nZbiDvpP5XGUz+UbQ7NPpqNCTLO/ZlFhuxO2jo71HIrJ3Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=P7l7PDDC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47FJPVkp010240;
-	Fri, 16 Aug 2024 05:12:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fC/+fzCREMjHQ5BCiMs5qQYrgUquyGGzNPjk2kSeIn8=; b=P7l7PDDCfy7BZV66
-	20ii0aCDh53kaN0t0BoAcH2iRb93Ct+/t3ae3/AFXMSaU1Lggp2qbl7s6oQ/pode
-	jAMQ96B5hysHkVC2aEToUv5XH2LaZnDLgeG85qVB72aJ4V4xEzwkUy01+IBGglj3
-	oEzqkmixse8Nk5kBRQxkJyqBd4RSQ5/WICMBVu35XtRoQ6M05MZ8v2X+l1pRhn4w
-	is2QwA5CoMa8l/RU/UpOnCsagTpwrUCjtskICanCSJRVzXcWnn2sAU6n0Aovo3BB
-	NKQQaEPZ4iUewoUjsCkrVmDcY5ycUpwt3mc4+TlgEEW+fHVa4/tM5vusdopO156D
-	j9r9Jg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41082wr6jy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Aug 2024 05:12:36 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47G5CZs4019462
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Aug 2024 05:12:35 GMT
-Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 15 Aug
- 2024 22:12:30 -0700
-Message-ID: <f642cf7e-e243-4378-b080-def0ccc45ce4@quicinc.com>
-Date: Fri, 16 Aug 2024 10:42:26 +0530
+	bh=wWHocHiVRaQDBAGZpYBq/QWdvrNFTKyzbY6+cB6VYx0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gwwZtu437WbVAqD90KS2pxWuJcGUfUZoH/TrLclKmiBLPFbEyGfXy0k/eh+FN7K/mG7JSPrxY+GC80D3fs7pEYjgYQ8ajpNoWBiy3KgHDLWkHmVpBcae4wt3Wwn3Zod316nmwOj9dCuLIcsN4z5ru2TuGK7p2aAn4P9bbFyprgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Xw035Nh7; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1723785157; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=SzPJYmstJwhog2+5yusTke5RmDuBUbggjzQg63D68/s=;
+	b=Xw035Nh7mlfYbGp3PXB7DFzvlM6w0HJPUC+ZpCaxl6dxGS0TLoTDzEV5FBLGrnWGalF3h+HOWHOckx917NqFVyjGO4DVFO1W7oqt26WWRXiV3GuknpiKHVdqZ/JKF/ltkGP6AP5QQ0bZrfhfsg8EOmQzyxjkQzzcIpMffq77SE0=
+Received: from 30.221.129.229(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WCzH9pD_1723785156)
+          by smtp.aliyun-inc.com;
+          Fri, 16 Aug 2024 13:12:37 +0800
+Message-ID: <aa5ac560-1dcc-45b6-8e24-0e9cb59feb18@linux.alibaba.com>
+Date: Fri, 16 Aug 2024 13:12:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,81 +47,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/8] clk: qcom: Add support for Video clock controller
- on SA8775P
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_imrashai@quicinc.com>, <quic_jkona@quicinc.com>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>
-References: <20240715-sa8775p-mm-v3-v1-0-badaf35ed670@quicinc.com>
- <20240715-sa8775p-mm-v3-v1-2-badaf35ed670@quicinc.com>
- <8916840a-e5e1-406c-a1e8-a073ad344d56@linaro.org>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <8916840a-e5e1-406c-a1e8-a073ad344d56@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [PATCH] mm/migrate: fix deadlock in migrate_pages_batch() on
+ large folios
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Huang, Ying" <ying.huang@intel.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Gao Xiang <xiang@kernel.org>
+References: <20240728154913.4023977-1-hsiangkao@linux.alibaba.com>
+ <87plqx0yh2.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <d93b06a5-20f2-41bd-a7f5-d06906d88ba4@linux.alibaba.com>
+ <20240815220224.d7970835d5c12b4833bd04dc@linux-foundation.org>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240815220224.d7970835d5c12b4833bd04dc@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: UnjDuz-FkCoUlJtYJwjVQNwQjViJ6Hd-
-X-Proofpoint-GUID: UnjDuz-FkCoUlJtYJwjVQNwQjViJ6Hd-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-15_18,2024-08-15_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 bulkscore=0 mlxlogscore=927 clxscore=1015 mlxscore=0
- spamscore=0 priorityscore=1501 suspectscore=0 phishscore=0 adultscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408160035
 
 
+Hi Andrew,
 
-On 7/16/2024 5:35 PM, Konrad Dybcio wrote:
-> On 15.07.2024 10:23 AM, Taniya Das wrote:
->> Add support for Video Clock Controller for SA8775P platform.
+On 2024/8/16 13:02, Andrew Morton wrote:
+> On Mon, 29 Jul 2024 09:58:02 +0800 Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
+> 
+>>> For the fix, I think that we should still respect migrate_mode because
+>>> users may prefer migration success over blocking.
+>>>
+>>> @@ -1492,11 +1492,17 @@ static int unmap_and_move_huge_page(new_folio_t get_new_folio,
+>>>    	return rc;
+>>>    }
+>>>    
+>>> -static inline int try_split_folio(struct folio *folio, struct list_head *split_folios)
+>>> +static inline int try_split_folio(struct folio *folio, struct list_head *split_folios,
+>>> +				  enum migrate_mode mode)
+>>>    {
+>>>    	int rc;
+>>>    
+>>> -	folio_lock(folio);
+>>> +	if (mode == MIGRATE_ASYNC) {
+>>> +		if (!folio_trylock(folio))
+>>> +			return -EAGAIN;
+>>> +	} else {
+>>> +		folio_lock(folio);
+>>> +	}
+>>>    	rc = split_folio_to_list(folio, split_folios);
+>>>    	folio_unlock(folio);
+>>>    	if (!rc)
 >>
->> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->> ---
+>> Okay, yeah it looks better since it seems I missed the fallback
+>> part in migrate_pages_sync().
+>>
+>> Let me send the next version to follow your advice, thanks.
 > 
-> [...]
-> 
->> +
->> +static struct gdsc video_cc_mvs0_gdsc = {
->> +	.gdscr = 0x809c,
->> +	.en_rest_wait_val = 0x2,
->> +	.en_few_wait_val = 0x2,
->> +	.clk_dis_wait_val = 0x6,
->> +	.pd = {
->> +		.name = "video_cc_mvs0_gdsc",
->> +	},
->> +	.pwrsts = PWRSTS_OFF_ON,
->> +	.parent = &video_cc_mvs0c_gdsc.pd,
->> +	.flags = RETAIN_FF_ENABLE | POLL_CFG_GDSCR | HW_CTRL,
-> 
-> HW_CTRL_TRIGGER? Not sure why HW_CTRL wasn't removed altogether with
-> the hwctrl patchset..
-> 
-> Konrad
+> The author seems to have disappeared.  Should we merge this as-is or
+> does someone want to take a look at developing a v2?
 
-I will submit the next patchset with HW_CTRL_TRIGGER and going forward 
-as per our Video software team we will support HW_CTRL_TRIGGER for all 
-targets.
+I've replied your email last week, I'm not sure why it has not
+been addressed?
 
--- 
-Thanks & Regards,
-Taniya Das.
+https://lore.kernel.org/linux-mm/20240729021306.398286-1-hsiangkao@linux.alibaba.com/
+
+The patch in your queue is already v2? No?
+
+Thanks,
+Gao Xiang
 
