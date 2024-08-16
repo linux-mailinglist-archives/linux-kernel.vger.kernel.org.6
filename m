@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-289109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56D2295421F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:54:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E583954222
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:54:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD9BC286838
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:54:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B18791C2484D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39E6A957;
-	Fri, 16 Aug 2024 06:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54917129A78;
+	Fri, 16 Aug 2024 06:52:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zo7WGocp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p5QceN2y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC7883A14;
-	Fri, 16 Aug 2024 06:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AEF81AB1;
+	Fri, 16 Aug 2024 06:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723791131; cv=none; b=F7z1NwYqH/4mPuC9FZPLLPeGiIpi6HGyyQmaNIf7O57mbE+UZGQTK1za+H2zmg6LEZTOcm8v2d+Z2fEcpUZL/OhsRYJIZblHNk9e1XwIJOI8ScF2wnTo6YLu10ma+dM56eMP8kvXxub1iqPELjOwdik6C5+MGQboH96sApdbsRA=
+	t=1723791150; cv=none; b=OSDbvwHVzK/7TqUn2Q7Z8JRLmUBzfm9sACfVIGplymSUTyPajMW4AOHEmRd5MpjgJON17G2jUSoJeZiM4pKtBZCwLpNPWFWE9o3Y7Pu2kebV51JP47wKSskQIwZvVjOdSzw9MwI4dXnkeMSTFyZqhWYBSd8aK3NGSu1/yM58sUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723791131; c=relaxed/simple;
-	bh=CNlOXycKiFSceNRzjlQD+0OVZBgpNKaNK14h3Rjries=;
+	s=arc-20240116; t=1723791150; c=relaxed/simple;
+	bh=jGUWDst3LDZtfstJY0tKbJkJfFirkitZ+F1QIW3rm7Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fgxoSUnKDsJ70baQWDjer1Wp+IF0kgUuhtI+jbLWa02LAH1lt12XYi9fc0AQQrTDWC//e8sTUY283//m7im8iGren9UrwL3YU4L/hXGXNeLVe2cTOlv6hPp9CNFCdIdPYz2iVADhr4KjAL2fiMowMnp6NXtejJ2H5kbZg6sNh1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zo7WGocp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4320BC32782;
-	Fri, 16 Aug 2024 06:52:07 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=tB6rQ0t0BdUBWXzRjVnK6YxkXu8G791W0c5fWowlMlhmSVGM/0hI9GGK/F5xue6vdOJNHXbkJU17wLqfEX9+LYal5/6Ack5zh44fqq8fZC3fQf5Bd/fb2stotgV8NUwHJBQRdoq2OzZqg/91HTOSe4WhClamir8dKehHEyzXk7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p5QceN2y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E5B9C32782;
+	Fri, 16 Aug 2024 06:52:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723791131;
-	bh=CNlOXycKiFSceNRzjlQD+0OVZBgpNKaNK14h3Rjries=;
+	s=k20201202; t=1723791150;
+	bh=jGUWDst3LDZtfstJY0tKbJkJfFirkitZ+F1QIW3rm7Y=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Zo7WGocp5h2tHXhxJbSSOBdCnErDQwUlYQsJj+eJ9Qyc4XLN9nNZx42Rlj2Oa7t7a
-	 /jn1fwe1qY8NKVTBWc9TGx/beZzfG+nX1E3Tzm9M1pry/AZksiHfiL073OOEXH+y+b
-	 dtNAYx2AsmRencneBkgramDvZzzuJcz+xoMkzwODGIP79JgfqMmDK3z9cRYcwGZRAd
-	 /sf8hkYecWFqTvBaMhX159umfbFqD1K1b1DV72rbclnI/UeWprEGxHbszGcjoTYQn5
-	 zjf6kNSkxwkyiwwCIsMS+cqSrAEE7l8O19adGpQoka6wN9X8/Im9ZoUp2W8MrHPoOc
-	 jK2MCrdaooSyg==
-Message-ID: <e640cbc4-6870-4607-a91e-0af41dd76df9@kernel.org>
-Date: Fri, 16 Aug 2024 08:52:04 +0200
+	b=p5QceN2ylI6+lCBOVGWseJexABUcA//P2ePTdkRiGPsZ7bhB9+WShJ8D3ol1JD03o
+	 Ca1OUt5L9PWX6je5Nr/9CdyqOziRYFXHMWuSRM83ZRr8Fs70WLbG1vTFa2XllAGjra
+	 kM3JqnEeXQhkJ3fVA4TmmhsVwzLqPK+NY1Z7JJaLoTdvJpJtHarrSQe/ikgTo75tD3
+	 ktvNfTL6LBA3YsfVdbWyYEooS2kFpBNi0hSCdPohse3L0QZ2P1LRVtTFVTkL2MdNsr
+	 U8UM6aAQNbTN9gKQTJOFlek0UplXAIPSHZYmrA0FmL9RMe0dihBcDn1SEsg1SW/Q+G
+	 +3wGYR7NXPdxA==
+Message-ID: <e7b2707b-d056-49f9-83f0-18cc8155f8c8@kernel.org>
+Date: Fri, 16 Aug 2024 08:52:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: mmc: Add support for rk3576 dw-mshc
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- linux-kernel@vger.kernel.org, Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jaehoon Chung <jh80.chung@samsung.com>,
- linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- kernel@collabora.com
-References: <20240814223555.3695-1-detlev.casanova@collabora.com>
- <20240814223555.3695-2-detlev.casanova@collabora.com>
- <5057223.82XvGhxQ46@diego>
+Subject: Re: [PATCH v6 01/13] dt-bindings: PCI: Change brcmstb maintainer and
+ cleanup
+To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20240815225731.40276-1-james.quinlan@broadcom.com>
+ <20240815225731.40276-2-james.quinlan@broadcom.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,50 +116,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <5057223.82XvGhxQ46@diego>
+In-Reply-To: <20240815225731.40276-2-james.quinlan@broadcom.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 15/08/2024 15:49, Heiko Stübner wrote:
-> Am Donnerstag, 15. August 2024, 00:34:00 CEST schrieb Detlev Casanova:
->> Add the compatible string for rockchip,rk3576-dw-mshc and add support
->> for the rockchip,v2-tuning flag, a new feature of this core.
->>
->> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
->> ---
->>  Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
->> index 211cd0b0bc5f3..0543cdb51c657 100644
->> --- a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
->> +++ b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
->> @@ -39,6 +39,7 @@ properties:
->>                - rockchip,rk3368-dw-mshc
->>                - rockchip,rk3399-dw-mshc
->>                - rockchip,rk3568-dw-mshc
->> +              - rockchip,rk3576-dw-mshc
->>                - rockchip,rk3588-dw-mshc
->>                - rockchip,rv1108-dw-mshc
->>                - rockchip,rv1126-dw-mshc
+On 16/08/2024 00:57, Jim Quinlan wrote:
+> Change maintainer: Nicolas has not been active for a while.
+> It also makes sense for a Broadcom employee to be the
+> maintainer as many of the details are privy to Broadcom.
 > 
-> this would mark the rk3576-dw-mshc as being the "same" as the
-
-Not the same, but compatible.
-
-> core rk3288 variant. rk3288 was the first controller introducing the
-> clock tuning for higher speeds. with the clocks being part of the CRU.
+> Also, alphabetize the compatible strings.
 > 
-> As we can see in later patches, this rk3576 though changes that
-> setup with moving the tunable clock configurations into the controller
-> itself.
-> 
-> So please don't claim to be compatible to the 3288, but instead start
-> a new block for this new set of controllers:
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
 
-The question is can new device work with old compatible (without new
-features)?
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
