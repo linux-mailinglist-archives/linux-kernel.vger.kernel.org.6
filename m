@@ -1,171 +1,125 @@
-Return-Path: <linux-kernel+bounces-289743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAC7F954B43
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:43:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 869F8954B41
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 562FA2860E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:43:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C0A928537B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4891BC08B;
-	Fri, 16 Aug 2024 13:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1C81BBBF0;
+	Fri, 16 Aug 2024 13:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IgxlnkaO"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UuUOdSE/"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426E8817
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 13:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9AE1817
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 13:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723815771; cv=none; b=jib/VrsSqPI6lVm5A5Xi2Y5gLlFYq9WU8Wa++/820mijp6UGwH3eTuILfyeYm7olmetyGqHFRXEQ1H0Gi7NUIGl4oGiL7bU2U5fzg+Dqa26LShji5bE43BIH/cahF2sP9R2ySGO2A4c8qaKivds5AcUepcNi8w433NDXsKsH5TE=
+	t=1723815761; cv=none; b=CfyGbSMhrQdYSqVdKVa3KQP4gC7792Ylv1sI072p38V6TdFpegxqVid4hFTyD2Uj0i3TMO9UqWi/ttnf9wtvso6nETaUXGGk/4j/aImJ+951Ue84j/WPNTIa+5p3l5FhxMB2M2eFGgnssJ1CN9b6Ge0XxVZ30Hgs6OldQ5x3EHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723815771; c=relaxed/simple;
-	bh=VUjevNzfCOhuSgfHK7hVllwqbQuOBOWFpozfCwYFreY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=kKYOhc9aZY5AuwTqtYxYlIMpg2mpVPSpidrovq343S5J+vaajnKRKcd8aNBulCTzTkRy65GTuZtbHqJJOUlMndO6eEpkX5/jeV4u2B2vFZx0roVKmY+xyPyU6ur0lNwrBpARpSZM5Je/525rdzTCcgR+TWnu/Z53Sbf13GgEJ/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=IgxlnkaO; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47GDfl3K039424;
-	Fri, 16 Aug 2024 08:41:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723815707;
-	bh=VUjevNzfCOhuSgfHK7hVllwqbQuOBOWFpozfCwYFreY=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To;
-	b=IgxlnkaOoeE6Xb1ZIgzGKVoiv3/WJh3oau5jgBDKUH+ctlMRfZOlZISI0Wht/0sjF
-	 +jCrCU+5vx2lLDcoR7635YGfC66Eb2kuwb16UZ8R97WVpwCuHVq+b0GGMWLq44Cues
-	 RBvnOT/GUxwtMSGmv/RQO8GMwOCCbi3cVQIgbe1I=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47GDfldZ040821
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 16 Aug 2024 08:41:47 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 16
- Aug 2024 08:41:46 -0500
-Received: from DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c]) by
- DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c%18]) with mapi id
- 15.01.2507.023; Fri, 16 Aug 2024 08:41:46 -0500
-From: "Ding, Shenghao" <shenghao-ding@ti.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC: "broonie@kernel.org" <broonie@kernel.org>,
-        "lgirdwood@gmail.com"
-	<lgirdwood@gmail.com>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "pierre-louis.bossart@linux.intel.com"
-	<pierre-louis.bossart@linux.intel.com>,
-        "13916275206@139.com"
-	<13916275206@139.com>,
-        "zhourui@huaqin.com" <zhourui@huaqin.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "Salazar, Ivan"
-	<i-salazar@ti.com>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "Chadha, Jasjot Singh" <j-chadha@ti.com>,
-        "liam.r.girdwood@intel.com" <liam.r.girdwood@intel.com>,
-        "Yue, Jaden"
-	<jaden-yue@ti.com>,
-        "yung-chuan.liao@linux.intel.com"
-	<yung-chuan.liao@linux.intel.com>,
-        "Rao, Dipa" <dipa@ti.com>, "yuhsuan@google.com" <yuhsuan@google.com>,
-        "Lo, Henry" <henry.lo@ti.com>, "tiwai@suse.de" <tiwai@suse.de>,
-        "Xu, Baojun" <baojun.xu@ti.com>,
-        "Baojun.Xu@fpt.com" <Baojun.Xu@fpt.com>,
-        "judyhsiao@google.com"
-	<judyhsiao@google.com>,
-        "Navada Kanyana, Mukund" <navada@ti.com>,
-        "cujomalainey@google.com" <cujomalainey@google.com>,
-        "Kutty, Aanya"
-	<aanya@ti.com>,
-        "Mahmud, Nayeem" <nayeem.mahmud@ti.com>,
-        "savyasanchi.shukla@netradyne.com" <savyasanchi.shukla@netradyne.com>,
-        "flaviopr@microsoft.com" <flaviopr@microsoft.com>,
-        "Ji, Jesse"
-	<jesse-ji@ti.com>,
-        "darren.ye@mediatek.com" <darren.ye@mediatek.com>,
-        "antheas.dk@gmail.com" <antheas.dk@gmail.com>,
-        "Jerry2.Huang@lcfuturecenter.com" <Jerry2.Huang@lcfuturecenter.com>
-Subject: RE: [EXTERNAL] Re: [PATCH v1] ASoc: tas2781: Rename dai_driver name
- to unify the name between TAS2563 and TAS2781
-Thread-Topic: [EXTERNAL] Re: [PATCH v1] ASoc: tas2781: Rename dai_driver name
- to unify the name between TAS2563 and TAS2781
-Thread-Index: AQHa5VUVVJh0PH35uk6MrsBIXoZO8rIkKEGAgAOLIdCAAOxGgIABVSlQ
-Date: Fri, 16 Aug 2024 13:41:46 +0000
-Message-ID: <2a4f9f583b5e4495b9fb50a446c2c949@ti.com>
-References: <20240803032717.175-1-shenghao-ding@ti.com>
- <ZrovmRCPN7pc0n40@smile.fi.intel.com>
- <9ec30bafdec441078828cb0d7be93342@ti.com>
- <Zr3uwfNLtTdJWrz4@smile.fi.intel.com>
-In-Reply-To: <Zr3uwfNLtTdJWrz4@smile.fi.intel.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-exclaimer-md-config: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1723815761; c=relaxed/simple;
+	bh=GDRN/U17nLltMwM8K86CB2KETOu93s5A4TrFjyjHQjw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fa3lL0qfpxGoHSrkh2FnUNUsBrfGnb7OhX85W0GrHvJsHa2wTdSjWIMr84qU38iL5jqTpVL/bgIyqlXvEW+FDd6pXD4JQIviJGQwUBT3n+Yo1hv/dZlt3zVCtA6PhhxzrbXb48gA2CXGDCdre1GOJMLoz/Bzghhs9YuXgImxA3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UuUOdSE/; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-428e3129851so14719415e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 06:42:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723815758; x=1724420558; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IuyVvuAkRjJSIAKvYtsQnHCMkhH/3BO0FwvyRHQBab0=;
+        b=UuUOdSE/oc9msqV/BzHkfcVs/GAWjLLBCXcUrO01sXDSHszz2VPUlZU3G2HoA0Sawb
+         cwR9CtnyuArII387n7fq14ngSMs/xdiJe4ekhkfz/qD2no2zDnkftWc1OWBy1D7Md11P
+         I6PZnYbyf8HLTpmMcFTtXcrbYWO1UNPVgSupqMhi41sIEAqJarxhb4PLqRRtJyEPAkrK
+         0uVsn/vuw4MJo3B6YAIe/iGdY3qqGx4NCLu9C956vCCtTnhI5hgKRw/qQBf651P9qP+n
+         ZVEAOPsWffgWOMvutB7UZRl5gYCQ/svkpNYT3XFSJCaixMdi1+VL3TPNjUVkYhZO79sL
+         oEgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723815758; x=1724420558;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IuyVvuAkRjJSIAKvYtsQnHCMkhH/3BO0FwvyRHQBab0=;
+        b=t6DNmw5KM2+qzU6pWuBwEXn7Mb4nGOMHVKEFLTxFnOghT16zJJWtM/4crQB/WaoCXz
+         k39WE380gPuVNMtuxTEdk8Cm4uxWfJHiLkKYPes9G6f8+6ey8KbHLGCHqUJD7uNXiYbl
+         yYuq7eaQQtQZXy+/a1535d5vrNP75mTZT9oUjQDKqgM3RmCOC1ynSgUK0qcJ7kVlLYyb
+         pNnk5U1sqGoLlunI+YmWOxDYtECVLWaPPe0PTwmep//sIxkiB4/c4N0MvuW9wAdHFxZ+
+         htvendNnpRfx22QT5gjwBklR5q0nPirsmup7h3EKL6c94T71wonH6+VRZx7Gz5aQW5Pa
+         nLfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXH+V+AjBwnQnrXUpydy9tx7wpVUVdMAoZY0jVjlK54BzT2MjjXdV+O87dpP2T3rKMl8yf50dTy0tP6/QAXHQj4BxMArTrwPSggcwfP
+X-Gm-Message-State: AOJu0Yws4bq6QSa+i8UiF+r4B4jSL5FiHd70a0X9SNFFBn4nP8ykHD/q
+	tNBXTT4J3PxDL38L+ak7y63HPGpYN4w7lxAuPJtjfIWd9rYtxdDX7At7qQ==
+X-Google-Smtp-Source: AGHT+IH5kC7MTYBBM7V3Itm0SZ+IDwrTPeMZxvzzWO1NKbR+0e0bPv9WVVYmTDRNL4HQoOoR5xE4fA==
+X-Received: by 2002:a05:600c:450b:b0:428:640:c1b1 with SMTP id 5b1f17b1804b1-429ed7c0944mr18400495e9.17.1723815757628;
+        Fri, 16 Aug 2024 06:42:37 -0700 (PDT)
+Received: from hostname ([2a02:c7c:6696:8300:44d8:63fa:6beb:ff38])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed6593casm23148145e9.28.2024.08.16.06.42.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 06:42:37 -0700 (PDT)
+Date: Fri, 16 Aug 2024 14:41:56 +0100
+From: qasdev <qasdev00@gmail.com>
+To: mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com
+Cc: ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: [PATCH] ocfs2: Fix shift-out-of-bounds UBSAN bug in
+ ocfs2_verify_volume()
+Message-ID: <Zr9XJJlZ+RzkLK/M@hostname>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-SGkgQW5keQ0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEFuZHkgU2hl
-dmNoZW5rbyA8YW5kcml5LnNoZXZjaGVua29AbGludXguaW50ZWwuY29tPg0KPiBTZW50OiBUaHVy
-c2RheSwgQXVndXN0IDE1LCAyMDI0IDg6MDQgUE0NCj4gVG86IERpbmcsIFNoZW5naGFvIDxzaGVu
-Z2hhby1kaW5nQHRpLmNvbT4NCj4gQ2M6IGJyb29uaWVAa2VybmVsLm9yZzsgbGdpcmR3b29kQGdt
-YWlsLmNvbTsgcGVyZXhAcGVyZXguY3o7IHBpZXJyZS0NCj4gbG91aXMuYm9zc2FydEBsaW51eC5p
-bnRlbC5jb207IDEzOTE2Mjc1MjA2QDEzOS5jb207IHpob3VydWlAaHVhcWluLmNvbTsNCj4gYWxz
-YS1kZXZlbEBhbHNhLXByb2plY3Qub3JnOyBTYWxhemFyLCBJdmFuIDxpLXNhbGF6YXJAdGkuY29t
-PjsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IENoYWRoYSwgSmFzam90IFNpbmdo
-IDxqLWNoYWRoYUB0aS5jb20+Ow0KPiBsaWFtLnIuZ2lyZHdvb2RAaW50ZWwuY29tOyBZdWUsIEph
-ZGVuIDxqYWRlbi15dWVAdGkuY29tPjsgeXVuZy0NCj4gY2h1YW4ubGlhb0BsaW51eC5pbnRlbC5j
-b207IFJhbywgRGlwYSA8ZGlwYUB0aS5jb20+OyB5dWhzdWFuQGdvb2dsZS5jb207DQo+IExvLCBI
-ZW5yeSA8aGVucnkubG9AdGkuY29tPjsgdGl3YWlAc3VzZS5kZTsgWHUsIEJhb2p1biA8YmFvanVu
-Lnh1QHRpLmNvbT47DQo+IHNveWVyQGlybC5odTsgQmFvanVuLlh1QGZwdC5jb207IGp1ZHloc2lh
-b0Bnb29nbGUuY29tOyBOYXZhZGEgS2FueWFuYSwNCj4gTXVrdW5kIDxuYXZhZGFAdGkuY29tPjsg
-Y3Vqb21hbGFpbmV5QGdvb2dsZS5jb207IEt1dHR5LCBBYW55YQ0KPiA8YWFueWFAdGkuY29tPjsg
-TWFobXVkLCBOYXllZW0gPG5heWVlbS5tYWhtdWRAdGkuY29tPjsNCj4gc2F2eWFzYW5jaGkuc2h1
-a2xhQG5ldHJhZHluZS5jb207IGZsYXZpb3ByQG1pY3Jvc29mdC5jb207IEppLCBKZXNzZSA8amVz
-c2UtDQo+IGppQHRpLmNvbT47IGRhcnJlbi55ZUBtZWRpYXRlay5jb207IGFudGhlYXMuZGtAZ21h
-aWwuY29tOw0KPiBKZXJyeTIuSHVhbmdAbGNmdXR1cmVjZW50ZXIuY29tDQo+IFN1YmplY3Q6IFJl
-OiBbRVhURVJOQUxdIFJlOiBbUEFUQ0ggdjFdIEFTb2M6IHRhczI3ODE6IFJlbmFtZSBkYWlfZHJp
-dmVyDQo+IG5hbWUgdG8gdW5pZnkgdGhlIG5hbWUgYmV0d2VlbiBUQVMyNTYzIGFuZCBUQVMyNzgx
-DQo+IA0KPiBPbiBUaHUsIEF1ZyAxNSwgMjAyNCBhdCAwMzrigIowMjrigIowMUFNICswMDAwLCBE
-aW5nLCBTaGVuZ2hhbyB3cm90ZTogPiA+IEZyb206DQo+IEFuZHkgU2hldmNoZW5rbyA8YW5kcml5
-LuKAinNoZXZjaGVua29A4oCKbGludXgu4oCKaW50ZWwu4oCKY29tPiA+ID4gU2VudDogTW9uZGF5
-LA0KPiBBdWd1c3QgMTIsIDIwMjQgMTE64oCKNTIgUE0gPiA+IE9uIFNhdCwgQXVnIDAzLCAyMDI0
-IGF0IDExOuKAijI3OuKAijE0QU0gKzA4MDAsDQo+IFNoZW5naGFvIFpqUWNtUVJZRnBmcHRCYW5u
-ZXJTdGFydCBUaGlzIG1lc3NhZ2Ugd2FzIHNlbnQgZnJvbSBvdXRzaWRlIG9mDQo+IFRleGFzIElu
-c3RydW1lbnRzLg0KPiBEbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bmxl
-c3MgeW91IHJlY29nbml6ZSB0aGUgc291cmNlIG9mIHRoaXMNCj4gZW1haWwgYW5kIGtub3cgdGhl
-IGNvbnRlbnQgaXMgc2FmZS4NCj4gPGh0dHBzOi8vdXMtcGhpc2hhbGFybS0NCj4gZXd0LnByb29m
-cG9pbnQuY29tL0VXVC92MS9HM3ZLIXVCZG5WVmZuM29mVTVZN290bHpQTkh6OHFLLQ0KPiAySUp5
-ZmtwYzcyMmQzTHhMZFQzVEdLOGU2RVc5QjEtajF5MVB0QXdFS0poci11ZTM5ekRRLVFaQSQ+DQo+
-IFJlcG9ydCBTdXNwaWNpb3VzDQo+IA0KPiBaalFjbVFSWUZwZnB0QmFubmVyRW5kDQo+IE9uIFRo
-dSwgQXVnIDE1LCAyMDI0IGF0IDAzOjAyOjAxQU0gKzAwMDAsIERpbmcsIFNoZW5naGFvIHdyb3Rl
-Og0KPiA+ID4gRnJvbTogQW5keSBTaGV2Y2hlbmtvIDxhbmRyaXkuc2hldmNoZW5rb0BsaW51eC5p
-bnRlbC5jb20+DQo+ID4gPiBTZW50OiBNb25kYXksIEF1Z3VzdCAxMiwgMjAyNCAxMTo1MiBQTSBP
-biBTYXQsIEF1ZyAwMywgMjAyNCBhdA0KPiA+ID4gMTE6Mjc6MTRBTSArMDgwMCwgU2hlbmdoYW8g
-RGluZyB3cm90ZToNCj4gDQo+IC4uLg0KPiANCj4gPiA+ID4gKwlzdHJzY3B5KG5hbWUsICJTcGVh
-a2VyIFByb2ZpbGUgSWQiLA0KPiA+ID4gU05EUlZfQ1RMX0VMRU1fSURfTkFNRV9NQVhMRU4pOw0K
-PiA+ID4NCj4gPiA+ID4gKwlzdHJzY3B5KHByb2dfbmFtZSwgIlNwZWFrZXIgUHJvZ3JhbSBJZCIs
-DQo+ID4gPiA+ICsJCVNORFJWX0NUTF9FTEVNX0lEX05BTUVfTUFYTEVOKTsNCj4gPiA+DQo+ID4g
-PiA+ICsJc3Ryc2NweShjb25mX25hbWUsICJTcGVha2VyIENvbmZpZyBJZCIsDQo+ID4gPiA+ICtT
-TkRSVl9DVExfRUxFTV9JRF9OQU1FX01BWExFTik7DQo+ID4gPg0KPiA+ID4gV2h5IG5vdCAyLXBh
-cmFtZXRlciBzdHJzY3B5KCk/DQo+ID4gc3Ryc2NweSBzZWVtZWQgbm90IHN1cHBvcnQgMiBwYXJh
-bXMuIERvIHlvdSBtZWFuIHN0cmNweT8NCj4gDQo+IDEuIEl0IGRvZXMuDQo+IDIuIE5vLCBJIG1l
-YW50IHN0cnNjcHkoKS4NCkkgaGF2ZSB0cmllZCAyLXBhcmFtZXRlciBzdHJzY3B5KCksIGFuZCBv
-Y2N1cnJlZCBjb21waWxpbmcgaXNzdWUuDQpUaGUgZmlyc3QgcGFyYW1ldGVyIG9mIHN0cnNjcHks
-ICpkc3QsIG11c3QgYmUgYXJyYXksIGJ1dCBpbiB0aGlzIGNvZGUNCnByb2dfbmFtZSBhbmQgY29u
-Zl9uYW1lIGFyZSBwb2ludHMgdG8gdGhlIG1lbW9yaWVzIGFwcGxpZWQgYnkNCmRldm1fa2NhbGxv
-Yy4NCj4gDQo+IC0tDQo+IFdpdGggQmVzdCBSZWdhcmRzLA0KPiBBbmR5IFNoZXZjaGVua28NCj4g
-DQoNCg==
+From ad1ca2fd2ecf4eb7ec2c76fcbbf34639f0ad87ca Mon Sep 17 00:00:00 2001
+From: Qasim Ijaz <qasdev00@gmail.com>
+Date: Fri, 16 Aug 2024 02:30:25 +0100
+Subject: [PATCH] ocfs2: Fix shift-out-of-bounds UBSAN bug in
+ ocfs2_verify_volume()
+
+This patch addresses a shift-out-of-bounds error in the 
+ocfs2_verify_volume() function, identified by UBSAN. The bug was triggered 
+by an invalid s_clustersize_bits value (e.g., 1548), which caused the 
+expression "1 << le32_to_cpu(di->id2.i_super.s_clustersize_bits)" 
+to exceed the limits of a 32-bit integer, 
+leading to an out-of-bounds shift.
+
+Reported-by: syzbot <syzbot+f3fff775402751ebb471@syzkaller.appspotmail.com>
+Closes: https://syzkaller.appspot.com/bug?extid=f3fff775402751ebb471
+Tested-by: syzbot <syzbot+f3fff775402751ebb471@syzkaller.appspotmail.com>
+Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+---
+ fs/ocfs2/super.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
+index afee70125ae3..1e43cdca7f40 100644
+--- a/fs/ocfs2/super.c
++++ b/fs/ocfs2/super.c
+@@ -2357,8 +2357,12 @@ static int ocfs2_verify_volume(struct ocfs2_dinode *di,
+ 			     (unsigned long long)bh->b_blocknr);
+ 		} else if (le32_to_cpu(di->id2.i_super.s_clustersize_bits) < 12 ||
+ 			    le32_to_cpu(di->id2.i_super.s_clustersize_bits) > 20) {
+-			mlog(ML_ERROR, "bad cluster size found: %u\n",
+-			     1 << le32_to_cpu(di->id2.i_super.s_clustersize_bits));
++			if (le32_to_cpu(di->id2.i_super.s_clustersize_bits) < 32)
++				mlog(ML_ERROR, "bad cluster size found: %u\n",
++				     1 << le32_to_cpu(di->id2.i_super.s_clustersize_bits));
++			else
++				mlog(ML_ERROR, "invalid cluster size bit value: %u\n",
++				     le32_to_cpu(di->id2.i_super.s_clustersize_bits));
+ 		} else if (!le64_to_cpu(di->id2.i_super.s_root_blkno)) {
+ 			mlog(ML_ERROR, "bad root_blkno: 0\n");
+ 		} else if (!le64_to_cpu(di->id2.i_super.s_system_dir_blkno)) {
+-- 
+2.30.2
 
