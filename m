@@ -1,125 +1,307 @@
-Return-Path: <linux-kernel+bounces-289625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E03954865
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:58:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E58A954867
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33EC71F21B8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:58:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24CA1281736
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C323854BD4;
-	Fri, 16 Aug 2024 11:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="usFrliDk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D9E1AE873;
+	Fri, 16 Aug 2024 11:58:19 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D22A817;
-	Fri, 16 Aug 2024 11:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C091215B12C;
+	Fri, 16 Aug 2024 11:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723809476; cv=none; b=YlH+iir5vHkVd7MGpyDJ8x284WQkbtq2rT6Zi/4efE4R3q20I8ZOkibyPc8Q3CMAN3WdyKk8K3RrfXUoufg8R+wgk1fJg2zNt1su3NqGxATwlGBfLvuxoKZLokJLNtZqOB43/yTYUNFjI/l6bBtZs4eXIqjBo0vGlpZjdrjoBIc=
+	t=1723809498; cv=none; b=NHG2AGJoZU/euUIOVyRW6UpsfwCSecdImdpC/mRcILxyKrAh/lQ4ZU0KrU9lR7fVNw3C/rIrGIiI8oqA+6PoXQNeT+w4jS0NAab8hd4Nan1tXsIQxdz2nSDc8ynGZAr9Mv6luP1nUFYz71ZJYFCn9XVtf69Tv+Piji+lG4s36do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723809476; c=relaxed/simple;
-	bh=BZFtNH8vyEH7JVS6mXDtn7rtCm+P/fGVF5p7/mCyYh8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l3gAbzx5hyE/PXnplejreJ4yhE5hDDIiNbY0azvnkxE1S7jnst0S88ydo093QjZbp9wT+w/QQ8L6aCWZx4Fx3WBNqZ3D5Kmkg5mHhoUU1EB9HBMnuqwROLckyvmfoo7WCikivybzdC8NQ6TXkdEYE8jIebvVhF6FuPOkB13Vs4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=usFrliDk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 290D4C32782;
-	Fri, 16 Aug 2024 11:57:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723809475;
-	bh=BZFtNH8vyEH7JVS6mXDtn7rtCm+P/fGVF5p7/mCyYh8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=usFrliDklvGQjjuhPcsUFQQyZ3jcV4k/hIcekMRgZyEQ2rdfO6KyxrneM42O+RYWI
-	 nefi3U9kD+BAXloDiBZJZTqU62k26VbIllVG8Vdvm35IMIJXwgM5w4h4g6LiEUCGBi
-	 W6UYISzFpcvuGnNKjOoEx8d4ZSiACdsAVbcAz+Qs=
-Date: Fri, 16 Aug 2024 13:57:52 +0200
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: =?utf-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>
-Cc: "quic_prashk@quicinc.com" <quic_prashk@quicinc.com>,
-	"quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"opensource.kernel" <opensource.kernel@vivo.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Subject: Re: [PATCH v1] usb: gadget: u_serial: check Null pointer in EP
- callback
-Message-ID: <2024081608-punch-coherent-d29e@gregkh>
-References: <TYUPR06MB62177737F0054278B489962BD2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
+	s=arc-20240116; t=1723809498; c=relaxed/simple;
+	bh=9naL2R4gWIIu1gcPGYAMnaQNDml2CkZCg7ht5GhFC+k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QhcmuTk4LyJMbv8xMMb6OOPiA6p2zuzyRXMJHKtV2+pEctNNbwlP9W2bvcPvsfn5sjo45IpeZcR5VEx64Ocfu3TYVFpN0HOFHM2BaUxJdDKzAWH7tnt8w09k/DsQdBAd2ryg/D9ItRjlsB7DaUcJOgWCOhQZ2CKNO8m8HaA5YIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WlgVF37chzcdXH;
+	Fri, 16 Aug 2024 19:57:57 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id A002B1800A4;
+	Fri, 16 Aug 2024 19:58:14 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 16 Aug 2024 19:58:14 +0800
+Message-ID: <4741c680-2959-489d-a774-005dd9c27697@huawei.com>
+Date: Fri, 16 Aug 2024 19:58:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v13 08/14] mm: page_frag: some minor refactoring
+ before adding new API
+To: Alexander Duyck <alexander.duyck@gmail.com>
+CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Andrew Morton
+	<akpm@linux-foundation.org>, <linux-mm@kvack.org>
+References: <20240808123714.462740-1-linyunsheng@huawei.com>
+ <20240808123714.462740-9-linyunsheng@huawei.com>
+ <7d16ba784eb564f9d556f532d670b9bc4698d913.camel@gmail.com>
+ <82cc55f0-35e9-4e54-8316-00312389de3f@huawei.com>
+ <CAKgT0Ud6EnT0ggwmVUEubX9TPkgGb9+5TTWK-_XnTBbqaec8Gw@mail.gmail.com>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <CAKgT0Ud6EnT0ggwmVUEubX9TPkgGb9+5TTWK-_XnTBbqaec8Gw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <TYUPR06MB62177737F0054278B489962BD2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-On Fri, Aug 16, 2024 at 11:21:24AM +0000, 胡连勤 wrote:
-> From: Lianqin Hu <hulianqin@vivo.com>
+On 2024/8/15 23:09, Alexander Duyck wrote:
+> On Wed, Aug 14, 2024 at 8:04 PM Yunsheng Lin <linyunsheng@huawei.com> wrote:
+>>
+>> On 2024/8/15 1:54, Alexander H Duyck wrote:
+>>> On Thu, 2024-08-08 at 20:37 +0800, Yunsheng Lin wrote:
+>>>> Refactor common codes from __page_frag_alloc_va_align()
+>>>> to __page_frag_cache_reload(), so that the new API can
+>>>> make use of them.
+>>>>
+>>>> CC: Alexander Duyck <alexander.duyck@gmail.com>
+>>>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+>>>> ---
+>>>>  include/linux/page_frag_cache.h |   2 +-
+>>>>  mm/page_frag_cache.c            | 138 ++++++++++++++++++--------------
+>>>>  2 files changed, 81 insertions(+), 59 deletions(-)
+>>>>
+>>>> diff --git a/include/linux/page_frag_cache.h b/include/linux/page_frag_cache.h
+>>>> index 4ce924eaf1b1..0abffdd10a1c 100644
+>>>> --- a/include/linux/page_frag_cache.h
+>>>> +++ b/include/linux/page_frag_cache.h
+>>>> @@ -52,7 +52,7 @@ static inline void *encoded_page_address(unsigned long encoded_va)
+>>>>
+>>>>  static inline void page_frag_cache_init(struct page_frag_cache *nc)
+>>>>  {
+>>>> -    nc->encoded_va = 0;
+>>>> +    memset(nc, 0, sizeof(*nc));
+>>>>  }
+>>>>
+>>>
+>>> Still not a fan of this. Just setting encoded_va to 0 should be enough
+>>> as the other fields will automatically be overwritten when the new page
+>>> is allocated.
+>>>
+>>> Relying on memset is problematic at best since you then introduce the
+>>> potential for issues where remaining somehow gets corrupted but
+>>> encoded_va/page is 0. I would rather have both of these being checked
+>>> as a part of allocation than just just assuming it is valid if
+>>> remaining is set.
+>>
+>> Does adding something like VM_BUG_ON(!nc->encoded_va && nc->remaining) to
+>> catch the above problem address your above concern?
 > 
-> Added null pointer check to avoid system crash.
+> Not really. I would prefer to just retain the existing behavior.
+As my understanding, it is a implementation detail that API caller does
+not need to care about if the API is used correctly. If not, we have bigger
+problem than above.
+
+If there is a error in that implementation, it would be good to point it
+out. And there is already a comment explaining that implementation detail
+in this patch, doesn't adding a explicit VM_BUG_ON() make it more obvious.
+
 > 
-> Unable to handle kernel NULL pointer dereference at
-> virtual address 00000000000001a8
-> pc : gs_read_complete+0x58/0x240
-> lr : usb_gadget_giveback_request+0x40/0x160
-> sp : ffffffc00f1539c0
-> x29: ffffffc00f1539c0 x28: ffffff8002a30000 x27: 0000000000000000
-> x26: ffffff8002a30000 x25: 0000000000000000 x24: ffffff8002a30000
-> x23: ffffff8002ff9a70 x22: ffffff898e7a7b00 x21: ffffff803c9af9d8
-> x20: ffffff898e7a7b00 x19: 00000000000001a8 x18: ffffffc0099fd098
-> x17: 0000000000001000 x16: 0000000080000000 x15: 0000000ac1200000
-> x14: 0000000000000003 x13: 000000000000d5e8 x12: 0000000355c314ac
-> x11: 0000000000000015 x10: 0000000000000012 x9 : 0000000000000008
-> x8 : 0000000000000000 x7 : 0000000000000000 x6 : ffffff887cd12000
-> x5 : 0000000000000002 x4 : ffffffc00f9b07f0 x3 : ffffffc00f1538d0
-> x2 : 0000000000000001 x1 : 0000000000000000 x0 : 00000000000001a8
-> Call trace:
-> gs_read_complete+0x58/0x240
-> usb_gadget_giveback_request+0x40/0x160
-> dwc3_remove_requests+0x170/0x484
-> dwc3_ep0_out_start+0xb0/0x1d4
-> __dwc3_gadget_start+0x25c/0x720
-> kretprobe_trampoline.cfi_jt+0x0/0x8
-> kretprobe_trampoline.cfi_jt+0x0/0x8
-> udc_bind_to_driver+0x1d8/0x300
-> usb_gadget_probe_driver+0xa8/0x1dc
-> gadget_dev_desc_UDC_store+0x13c/0x188
-> configfs_write_iter+0x160/0x1f4
-> vfs_write+0x2d0/0x40c
-> ksys_write+0x7c/0xf0
-> __arm64_sys_write+0x20/0x30
-> invoke_syscall+0x60/0x150
-> el0_svc_common+0x8c/0xf8
-> do_el0_svc+0x28/0xa0
-> el0_svc+0x24/0x84
-> el0t_64_sync_handler+0x88/0xec
-> el0t_64_sync+0x1b4/0x1b8
-> Code: aa1f03e1 aa1303e0 52800022 2a0103e8 (88e87e62)
-> ---[ end trace 938847327a739172 ]---
-> Kernel panic - not syncing: Oops: Fatal exception
+>>>
+>>> I would prefer to keep the check for a non-0 encoded_page value and
+>>> then check remaining rather than just rely on remaining as it creates a
+>>> single point of failure. With that we can safely tear away a page and
+>>> the next caller to try to allocate will populated a new page and the
+>>> associated fields.
+>>
+>> As mentioned before, the memset() is used mainly because of:
+>> 1. avoid a checking in the fast path.
+>> 2. avoid duplicating the checking pattern you mentioned above for the
+>>    new API.
 > 
-> Signed-off-by: Lianqin Hu <hulianqin@vivo.com>
-> ---
-> v1:
->   - Optimize code comments, delete log printing
+> I'm not a fan of the new code flow after getting rid of the checking
+> in the fast path. The code is becoming a tangled mess of spaghetti
 
-This is "v2" not "v1".
+I am not sure if you get the point that getting rid of nc->encoded_va
+checking in the fast path is the reason we are able able to refactor
+common codes into __page_frag_cache_reload(), so that both the old API
+and new APIs can reuse the common codes.
 
-Also, same comment as before, what:
-  - causes port to be NULL
-  - prevents it from changing to NULL right after you check it
+> code in my opinion. Arguably the patches don't help as you are taking
+> huge steps in many of these patches and it is making it hard to read.
+> In addition the code becomes more obfuscated with each patch which is
+> one of the reasons why I would have preferred to see this set broken
+> into a couple sets so we can give it some time for any of the kinks to
+> get worked out.
 
-Both need to be answered before we can take this change.
+If there is no new APIs added, I guess I am agreed with your above
+argument.
+With the new API for new use case, the refactoring in this patch make
+code more reusable and maintainable, that is why I would have preferred
+not to break this patchset into more patchsets as it is already hard to
+argue the reason behind the refactoring.
 
-thanks,
+> 
+>>>
+>>>>  static inline bool page_frag_cache_is_pfmemalloc(struct page_frag_cache *nc)
+>>>> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
+>>>> index 2544b292375a..4e6b1c4684f0 100644
+>>>> --- a/mm/page_frag_cache.c
+>>>> +++ b/mm/page_frag_cache.c
+>>>> @@ -19,8 +19,27 @@
+>>>>  #include <linux/page_frag_cache.h>
+>>>>  #include "internal.h"
+>>>>
+>>
+>> ...
+>>
+>>>> +
+>>>> +/* Reload cache by reusing the old cache if it is possible, or
+>>>> + * refilling from the page allocator.
+>>>> + */
+>>>> +static bool __page_frag_cache_reload(struct page_frag_cache *nc,
+>>>> +                                 gfp_t gfp_mask)
+>>>> +{
+>>>> +    if (likely(nc->encoded_va)) {
+>>>> +            if (__page_frag_cache_reuse(nc->encoded_va, nc->pagecnt_bias))
+>>>> +                    goto out;
+>>>> +    }
+>>>> +
+>>>> +    if (unlikely(!__page_frag_cache_refill(nc, gfp_mask)))
+>>>> +            return false;
+>>>> +
+>>>> +out:
+>>>> +    /* reset page count bias and remaining to start of new frag */
+>>>> +    nc->pagecnt_bias = PAGE_FRAG_CACHE_MAX_SIZE + 1;
+>>>> +    nc->remaining = page_frag_cache_page_size(nc->encoded_va);
+>>>
+>>> One thought I am having is that it might be better to have the
+>>> pagecnt_bias get set at the same time as the page_ref_add or the
+>>> set_page_count call. In addition setting the remaining value at the
+>>> same time probably would make sense as in the refill case you can make
+>>> use of the "order" value directly instead of having to write/read it
+>>> out of the encoded va/page.
+>>
+>> Probably, there is always tradeoff to make regarding avoid code
+>> duplication and avoid reading the order, I am not sure it matters
+>> for both for case, I would rather keep the above pattern if there
+>> is not obvious benefit for the other pattern.
+> 
+> Part of it is more about keeping the functions contained to generating
+> self contained objects. I am not a fan of us splitting up the page
+> init into a few sections as it makes it much easier to mess up a page
+> by changing one spot and overlooking the fact that an additional page
+> is needed somewhere else.
 
-greg k-h
+To be honest, I am not so obsessed with where are pagecnt_bias and
+remaining set.
+I am obsessed with whether the __page_frag_cache_reload() is needed.
+Let's be more specific about your suggestion here: are you suggesting to
+remove __page_frag_cache_reload()?
+If yes, are you really expecting both old and new API duplicating the
+below checking pattern? Why?
+
+if (likely(nc->encoded_va)) {
+	if (__page_frag_cache_reuse(nc->encoded_va, nc->pagecnt_bias))
+		...
+}
+
+if (unlikely(remaining < fragsz)) {
+	page = __page_frag_cache_refill(nc, gfp_mask);
+	....
+}
+
+If no, doesn't it make sense to call __page_frag_cache_reload() for both
+old and new API?
+
+> 
+>>>
+>>> With that we could simplify this function and get something closer to
+>>> what we had for the original alloc_va_align code.
+>>>
+>>>> +    return true;
+>>>>  }
+>>>>
+>>>>  void page_frag_cache_drain(struct page_frag_cache *nc)
+>>>> @@ -55,7 +100,7 @@ void page_frag_cache_drain(struct page_frag_cache *nc)
+>>>>
+>>>>      __page_frag_cache_drain(virt_to_head_page((void *)nc->encoded_va),
+>>>>                              nc->pagecnt_bias);
+>>>> -    nc->encoded_va = 0;
+>>>> +    memset(nc, 0, sizeof(*nc));
+>>>>  }
+>>>>  EXPORT_SYMBOL(page_frag_cache_drain);
+>>>>
+>>>> @@ -73,67 +118,44 @@ void *__page_frag_alloc_va_align(struct page_frag_cache *nc,
+>>>>                               unsigned int align_mask)
+>>>>  {
+>>>>      unsigned long encoded_va = nc->encoded_va;
+>>>> -    unsigned int size, remaining;
+>>>> -    struct page *page;
+>>>> -
+>>>> -    if (unlikely(!encoded_va)) {
+>>>
+>>> We should still be checking this before we even touch remaining.
+>>> Otherwise we greatly increase the risk of providing a bad virtual
+>>> address and have greatly decreased the likelihood of us catching
+>>> potential errors gracefully.
+
+I would argue that by duplicating the above checking for both the old
+and new API will make the code less maintainable, for example, when
+fixing bug or making changing to the duplicated checking, it is more
+likely miss to change some of them if there are duplicated checking
+codes.
+
+>>>
+>>>> -refill:
+>>>> -            page = __page_frag_cache_refill(nc, gfp_mask);
+>>>> -            if (!page)
+>>>> -                    return NULL;
+>>>> -
+>>>> -            encoded_va = nc->encoded_va;
+>>>> -            size = page_frag_cache_page_size(encoded_va);
+>>>> -
+>>>> -            /* Even if we own the page, we do not use atomic_set().
+>>>> -             * This would break get_page_unless_zero() users.
+>>>> -             */
+>>>> -            page_ref_add(page, PAGE_FRAG_CACHE_MAX_SIZE);
+>>>> -
+>>>> -            /* reset page count bias and remaining to start of new frag */
+>>>> -            nc->pagecnt_bias = PAGE_FRAG_CACHE_MAX_SIZE + 1;
+>>>> -            nc->remaining = size;
+>>>
+>>> With my suggested change above you could essentially just drop the
+>>> block starting from the comment and this function wouldn't need to
+>>> change as much as it is.
+>>
+>> It seems you are still suggesting that new API also duplicates the old
+>> checking pattern in __page_frag_alloc_va_align()?
+>>
+>> I would rather avoid the above if something like VM_BUG_ON() can address
+>> your above concern.
+> 
+> Yes, that is what I am suggesting. It makes the code much less prone
+> to any sort of possible races as resetting encoded_va would make it so
+> that reads for all the other fields would be skipped versus having to
+> use a memset which differs in implementation depending on the
+> architecture.
+
+It would good to be more specific about what is the race here? if it does
+exist, we can fix it.
+
+And it would be good to have more specific suggestion and argument too,
+othewise it just you arguing for preserving old behavior to make
+the code much less prone to any sort of possible races, and me arguing
+for making the old code more reusable and maintainable for the new API.
 
