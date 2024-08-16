@@ -1,227 +1,142 @@
-Return-Path: <linux-kernel+bounces-290223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DF149550E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:32:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 008C89550E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2F6E1C21880
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:32:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 331BC1C216DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0771C37AE;
-	Fri, 16 Aug 2024 18:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="Narn3HSk"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1F51C2316
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 18:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0F71C37A1;
+	Fri, 16 Aug 2024 18:33:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1871C231F
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 18:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723833171; cv=none; b=pftXhtDwuA4oU0HgphULOtkaTW9YtFNTuTVM4LzL4N1sboUBi+9QSI0UJ9eWK6DqoGx1boB8UFIa+gPjRhhyjFHwWdTs/brAf/kqbY8gdPZ6n79G16JhxvawQt2umYrn5v/mHnjaYFch5zfJcnrvH84FtgFoppn7UPVTApVAXU0=
+	t=1723833196; cv=none; b=SRdoDcnXWrF2FX7lJBS+WfER2t6EqQ6KkdiQ9/0D6yaVo3Y/fP1a8aK+ZZfP1v3vasn0qBWK1TZfv3IDYPbAWbjQzaK6mrSeK381IM1DY1EOLqPL8x+214oU3gqqhwLtiu+CQtFv/Lej24fWCXU7fY1DmraxQInnTQHsUo46XpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723833171; c=relaxed/simple;
-	bh=sqBlDYYe+xJpwACaKDyMfF9NxH+kMPPNUTDDVwfyb0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pBfSEOdubeeGUqd/ULr2e8eL3nTTQ5FcK9sCngExJJUOYLTYLFkzb/dHvwVecMKhc75qUPxxv3l7Prw7jmk8unZ5HM430a8dwuLbwBEASkdhAjdgj2AGuOYZYDxY11dJ3cpEMn14IxWPWEWSXwnVRa8ECkkdh2Xk2vIjrtS7IXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=Narn3HSk; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6bf89e59ff8so186166d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 11:32:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1723833167; x=1724437967; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=25KDEXnm6DLgip12pSEllSf24x/AMgAnP17PmbvYjCY=;
-        b=Narn3HSkTEzudoNM8PEyOB0gT2i3UzxQy6JLuGKwdVDm3Kv7V6erE579MFQ4to5qfl
-         EHOloPMVoatZKT2kcFu5rFhobFTx/R7wV6fmgoYOzaYcjeglaLUKMTXhEzslTIzK9Sh/
-         ol83NwQ+v5KG2S6P8K8IiR5fSrSjnpJbWUUwxEouME0rxXaLf25TAbUgZSVzlv7WYqgR
-         j2sYWWVyHNw0SULa2QszPdYSeQxNPMvQGGmmUsNarEwHWf99SoSK1P4R+Z4pGcJPxQNs
-         fcdnraBKN/p/qbLphlvPX3NqSv/OxIiR9fDSlscZI3LWHX4w3XH0vDjbXEFAs9HzvwXb
-         l/3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723833167; x=1724437967;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=25KDEXnm6DLgip12pSEllSf24x/AMgAnP17PmbvYjCY=;
-        b=lN/u9PadIMdTwNDUNueUtuS5AD3ya2gn9o+ksxSNBZJIG3NXb4xipDhAcT9Zme8VmW
-         URZuKJp/zvko4dOIYpgxP9QX0A9xzij2HTDi5ZMuN8eSa0TBxVYRVMeZWkXv3Pj8poxn
-         rryoZXhrNxquUBYppl3srHXiLz3rEbGJyLxfF/6AWLT0+Z7H3gP+RP0We+CfHDpJUMU+
-         n+txgqZH10+3e5ivkcaDZNv6wzNlEmiFnzL+Dun2BY0iKT2mPbBzsLzgSJfX+IxW1uTi
-         d+Ojnl/eqMH74obAlA8FhVwBUoV9w68/OAasWDGvi7n8wcaXeRdpdSGQQiUsuLSaAgyK
-         Fliw==
-X-Forwarded-Encrypted: i=1; AJvYcCX0Au0zPF1PrtYbh9G1do+Cg5KV2WvZBlRa1lx6zVTfmS9IaUMRNKCsyaoUp+uHeapTMcu5KJ5LyS60hcY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKtx8aZSH6oWR7F7HjoJu7zXOFjqcWa3QyDnQSFaySR9H1HbFu
-	TWEVmCDvp92dYNKLmqiaIIOQ79C2NAew8aPcndGMNqSEsUxXd89cl2IZcATFsGg=
-X-Google-Smtp-Source: AGHT+IFeUXfbFQq1xqErrB83JkB93nde+CNIB9jmJX5I2LdaP+61jOYfRxYWoA1tiPMJ7n7leTuOCQ==
-X-Received: by 2002:a05:6214:3384:b0:6bf:6990:4e50 with SMTP id 6a1803df08f44-6bf7ce4233bmr32481546d6.41.1723833166565;
-        Fri, 16 Aug 2024 11:32:46 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fef0706sm20313996d6.116.2024.08.16.11.32.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 11:32:46 -0700 (PDT)
-Date: Fri, 16 Aug 2024 14:32:41 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Robert Richter <rrichter@amd.com>
-Cc: Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] Address translation for HDM decoding
-Message-ID: <Zr-bSY9UVncTdY_Y@PC2K9PVX.TheFacebook.com>
-References: <20240701174754.967954-1-rrichter@amd.com>
+	s=arc-20240116; t=1723833196; c=relaxed/simple;
+	bh=HgrFxERRhvFkyAKVdhaZs5z2jyxxDEf3sl0uhCt50Ok=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pAlAWlOxsRDrG/zcW/sSA1f0E86CZu+zK4+uZlzZ6shf1SbrFXBdMuOkbs4zHmKE+R9+Jp6hRKU3urV0IWernUVRf/vLsR5Qtse3tI6x0qnNlsjLXDfaAznJuwhyBAZNyxBudzs4Yn7IhMZulLz0acZzjMZj2wuUyBECkNLfUn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3022913D5;
+	Fri, 16 Aug 2024 11:33:39 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8DF303F6A8;
+	Fri, 16 Aug 2024 11:33:12 -0700 (PDT)
+Message-ID: <d506e4cc-fa7f-4881-885b-e2665c063524@arm.com>
+Date: Fri, 16 Aug 2024 19:33:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240701174754.967954-1-rrichter@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/8] perf/arm-cmn: Fix CCLA register offset
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: will@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, ilkka@os.amperecomputing.com
+References: <cover.1723229941.git.robin.murphy@arm.com>
+ <e73b31da42a7840d4247fc8a4a3cea805c2ab618.1723229941.git.robin.murphy@arm.com>
+ <Zr8jJq3l9sfvJuil@J2N7QTR9R3>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <Zr8jJq3l9sfvJuil@J2N7QTR9R3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 01, 2024 at 07:47:48PM +0200, Robert Richter wrote:
-> Default expectation of Linux is that HPA == SPA, which means that
-> hardware addresses in the decoders are the same as the kernel sees
-> them. However, there are platforms where this is not the case and an
-> address translation between decoder's (HPA) and the system's physical
-> addresses (SPA) is needed.
+On 16/08/2024 11:00 am, Mark Rutland wrote:
+> On Fri, Aug 09, 2024 at 08:15:41PM +0100, Robin Murphy wrote:
+>> Apparently pmu_event_sel is offset by 8 for all CCLA nodes, not just
+>> the CCLA_RNI combination type.
 > 
-> This series implements address translation for HDM decoding. The
-> implementation follows the rule that the representation of hardware
-> address ranges in the kernel are all SPA. If decoder registers (HDM
-> decoder cap or register range) are not SPA, a base offset must be
-> applied. Translation happens when accessing the registers back and
-> forth. After a read access an address will be converted to SPA and
-> before a write access the programmed address is translated from an
-> SPA. The decoder register access can be easily encapsulated by address
-> translation and thus there are only a few places where translation is
-> needed and the code must be changed. This is implemented in patch #2,
-> patch #1 is a prerequisite.
+> Was there some reason we used to think that was specific to CCLA_RNI
+> nodes, or was that just an oversight?
+
+I imagine it was just oversight/confusion helped by the original r0p0 
+TRM listing both a por_ccla_pmu_event_sel and a 
+por_ccla_rni_pmu_event_sel as CCLA registers, which I could well believe 
+I misread at a glance while scrolling up and down.
+
+> Looking at the CMN-700 TRM and scanning for pmu_event_sel, we have:
 > 
-> Address translation is restricted to platforms that need it. As such a
-> platform check is needed and a flag is introduced for this (patch #3).
+> 	16'h2000	por_ccg_ha_pmu_event_sel
+> 	16'h2000	por_ccg_ra_pmu_event_sel
+> 	16'h2008	por_ccla_pmu_event_sel
+> 	16'h2000	por_dn_pmu_event_sel
+> 	16'h2000	cmn_hns_pmu_event_sel
+> 	16'h2000	por_hni_pmu_event_sel
+> 	16'h2008	por_hnp_pmu_event_sel
+> 	16'h2000	por_mxp_pmu_event_sel
+> 	16'h2000	por_rnd_pmu_event_sel
+> 	16'h2000	por_rni_pmu_event_sel
+> 	16'h2000	por_sbsx_pmu_event_sel
 > 
-> For address translation the base offset must be determined for the
-> memory domain. Depending on the platform there are various options for
-> this. The address range in the CEDT's CFWMS entry of the CXL host
-> bridge can be used to determine the decoder's base address (patch
-> #4). This is enabled for AMD Zen4 platforms (patch #5).
+>> Fixes: 23760a014417 ("perf/arm-cmn: Add CMN-700 support")
+>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+>> ---
+>>   drivers/perf/arm-cmn.c | 5 ++++-
+>>   1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/perf/arm-cmn.c b/drivers/perf/arm-cmn.c
+>> index fd2122a37f22..0e2e12e2f4fb 100644
+>> --- a/drivers/perf/arm-cmn.c
+>> +++ b/drivers/perf/arm-cmn.c
+>> @@ -2393,10 +2393,13 @@ static int arm_cmn_discover(struct arm_cmn *cmn, unsigned int rgn_offset)
+>>   			case CMN_TYPE_CXHA:
+>>   			case CMN_TYPE_CCRA:
+>>   			case CMN_TYPE_CCHA:
+>> -			case CMN_TYPE_CCLA:
+>>   			case CMN_TYPE_HNS:
+>>   				dn++;
+>>   				break;
+>> +			case CMN_TYPE_CCLA:
+>> +				dn->pmu_base += CMN_HNP_PMU_EVENT_SEL;
+>> +				dn++;
+>> +				break;
 > 
-
-Just testing this out, and I'm seeing an inability to actually map the
-memory, though the reason escapes me.
-
-Do you have the expected workflow of this down?
-
-For example this fails:
-
-echo ram > /sys/bus/cxl/devices/decoder2.0/mode
-echo 0x40000000 > /sys/bus/cxl/devices/decoder2.0/dpa_size
-echo region0 > /sys/bus/cxl/devices/decoder0.0/create_ram_region
-echo 4096 > /sys/bus/cxl/devices/region0/interleave_granularity
-echo 1 > /sys/bus/cxl/devices/region0/interleave_ways
-echo 0x40000000 > /sys/bus/cxl/devices/region0/size
-echo decoder2.0 > /sys/bus/cxl/devices/region0/target0
-^^^^ at this point: -bash: echo: write error: Invalid argument
-
-echo 1 > /sys/bus/cxl/devices/region0/commit
-
-and while the cxl driver sees the correct topology, the current version
-of cxl-cli reports the memdevs as "anonymous" and reports a failure to
-lookup the targets for a region
-
-without adding too much bulk to the email
-
-[~/ndctl]# ./build/cxl/cxl list -vvvvv
-libcxl: cxl_mappings_init: region0 target0:  lookup failure
-[
-  {
-    "anon memdevs":[
-      {
-        "memdev":"mem0",
-        "ram_size":137438953472,
-...
-      {
-        "memdev":"mem1",
-        "ram_size":137438953472,
-...
-  {
-    "buses":[
-      {
-...
-        "decoders:root0":[
-          {
-            "decoder":"decoder0.0",
-            "resource":825975898112,
-            "size":260382392320,
-            "interleave_ways":1,
-            "max_available_extent":260382392320,
-            "volatile_capable":true,
-            "qos_class":1,
-            "nr_targets":1,
-            "targets":[
-              {
-                "target":"pci0000:00",
-                "alias":"ACPI0016:01",
-                "position":0,
-                "id":0
-              }
-            ],
-            "regions:decoder0.0":[
-              {
-                "region":"region0",
-                "resource":825975898112,
-                "size":260382392320,
-                "type":"ram",
-                "interleave_ways":1,
-                "interleave_granularity":256,
-                "decode_state":"reset",
-                "state":"disabled",
-                "mappings":[
-                ]
-              }
-...
-
-Do you have a sense of what might generate this behavior?
-
-~Gregory
-
-> Changelog:
+> When reading this for the first time, it looks like a copy-paste error
+> since CMN_HNP_PMU_EVENT_SEL doesn't have any obvious relationship with
+> CCLA nodes.
 > 
-> v2:
->  * Fixed build error for other archs [kbot]
+> I reckon it'd be worth adding CMN_CCLA_PMU_EVENT_SEL, and replacing the
+> existing comment above the definition of CMN_HNP_PMU_EVENT_SEL, e.g.
 > 
+> /*
+>   * Some nodes place common registers at different offsets from most
+>   * other nodes.
+>   */
+> #define CMN_HNP_PMU_EVENT_SEL		0x008
+> #define CMN_CCLA_PMU_EVENT_SEL		0x008
 > 
-> Robert Richter (5):
->   cxl/hdm: Moving HDM specific code to core/hdm.c.
->   cxl/hdm: Implement address translation for HDM decoding
->   cxl/acpi: Add platform flag for HPA address translation
->   cxl/hdm: Setup HPA base for address translation using the HPA window
->     in CFMWS
->   cxl/acpi: Enable address translation for Zen4 platforms
+> That way the switch looks less suspicious, and the comment is a bit more
+> helpful to anyone trying to figure out what's going on here.
+
+Sure, that's a reasonable argument.
+
+> With that:
 > 
->  drivers/cxl/acpi.c      |  16 +++
->  drivers/cxl/core/core.h |   2 +
->  drivers/cxl/core/hdm.c  | 245 ++++++++++++++++++++++++++++++++++++++--
->  drivers/cxl/core/pci.c  | 119 +------------------
->  drivers/cxl/cxl.h       |   2 +
->  drivers/cxl/cxlmem.h    |   4 +
->  drivers/cxl/cxlpci.h    |   3 -
->  7 files changed, 262 insertions(+), 129 deletions(-)
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
+
+Thanks,
+Robin.
+
 > 
+> Mark.
 > 
-> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-> -- 
-> 2.39.2
-> 
+>>   			/* Nothing to see here */
+>>   			case CMN_TYPE_MPAM_S:
+>>   			case CMN_TYPE_MPAM_NS:
+>> -- 
+>> 2.39.2.101.g768bb238c484.dirty
+>>
 
