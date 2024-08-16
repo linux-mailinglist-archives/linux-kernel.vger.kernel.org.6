@@ -1,237 +1,177 @@
-Return-Path: <linux-kernel+bounces-289672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31E19548FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:43:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2B59954901
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:43:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65F56287159
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:43:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FCAEB23495
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CF11B9B27;
-	Fri, 16 Aug 2024 12:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42BAE1BB691;
+	Fri, 16 Aug 2024 12:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A7TvqmQK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZYtfJXs1"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DCC1B86FB;
-	Fri, 16 Aug 2024 12:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDEF1B3F08;
+	Fri, 16 Aug 2024 12:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723812157; cv=none; b=FQe3roroq8kU9ZFLaQSnVH5Rl7yKS5vaXY6BhkcOkDQsSBUu3edk+XgC4E9EIbw3D+EJRnxyh4q0oYg9gvrG4mMvGFYxl20S4T5hdwv7+Fb90p3o0M+W5Kt6uHWTk/XJcm6AVikdbAaQCUCsQqN30bNPITa7tF16SbxbgSNHrZ8=
+	t=1723812169; cv=none; b=KFHTqDOJXyvBTELcr+bsb/ae13+8GvU811zauM12LYs1LG7cWhczDzGmObJDQp6zgwfIYZz64Vsv29wfc0Mm7mKl4mtIsjpk/yU9clqLv1TUO8pWnLEuD95bJjXGmnTrHECM7QR8fgjdVXdg2Sifgua4bHBT6+GghBg9R+c1ogY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723812157; c=relaxed/simple;
-	bh=2Rn+7obbQILo75kJbV/0b2zIBmSLl5DIxT28qY2BWXU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Fydi5HcCYnyps4OalFtZdxwtgQ7Nnb89z4Yzrw2nXRI5aBKnpY3+8D4zM96aJTfnuKdj43t4lIRsEsecGu5ib2t/7Z4ZKTwvge2lzBa6fp51b4ewvUJnh0jBbDW8sIgOlsN6U9utp9JPkMpSkwLCHxyxi2ucNH9s2XudxGTTZsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A7TvqmQK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1253BC32782;
-	Fri, 16 Aug 2024 12:42:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723812157;
-	bh=2Rn+7obbQILo75kJbV/0b2zIBmSLl5DIxT28qY2BWXU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=A7TvqmQKvEqghTYmZSsxs8PX1YQTz2iorX6Y0k8t2jXQzqIzGAzPEJaWjyuqKqpkp
-	 jRtd7rLV6DK67O8qai3l32IIZkQsYydxmm+V9rQ7azHzS6CFMxZMOorZuTbX9WTuIQ
-	 M+5fEU0mFUurpRKBZUQclG50M0NfPP+5oMiFTUNr4A7SXRptXC/GkvYDT/kBTJvdPX
-	 LPisENFRshMAtbdfmmiEWG+SQQ/OM+U2T57n8yHnZ03mTQ5LYpTsSggq6KcIrrHUrj
-	 3SLS2HAXjI/53Eaw6o9JfMwT3iXFQOXuk+GO05GZADs7IDKFa2BP3jCJp2LSLdIdaS
-	 5a0XyY7hjYzow==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Fri, 16 Aug 2024 08:42:09 -0400
-Subject: [PATCH 3/3] nfsd: implement
- OPEN_ARGS_SHARE_ACCESS_WANT_OPEN_XOR_DELEGATION
+	s=arc-20240116; t=1723812169; c=relaxed/simple;
+	bh=qY+BKcV1QJLSNJP2L18fdcbi6799Za9UeU7BvMK/iDQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tIqqfptHGkcMoDlPkVcNf19cnMgpMI2Iluj4H23NYuYZ80EASYYhhxY4wkVpE+jdY1LDWrkwMHYh0FXvtithKusgI+i20BgGOx9R9ztUYoAW3fXNYMQqZUV4BN22VoVl+cEVkAUGFdyuptEIkYPtK9g3aGpDstoNnHDSXMJqXrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZYtfJXs1; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47G8ZSBf008617;
+	Fri, 16 Aug 2024 12:42:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FSGM7Z7frwAZYrHwwjdoJgBdsi+vSGc631EYgUU93Ak=; b=ZYtfJXs1TMHjeIXJ
+	7sCtWDBHLq3SvL+Z57SKw9nYPl+t+AMkrxjk2Zp4ouQ4CFSdqd0ycAmNr++x891o
+	V685sYd1AEemHpWIlPDHj+zmv3EHyRmujqEP+AYPUJX+rLYWCzj0YDZUBxi/nqGX
+	il3sf6nnUsQxR8wX9HLEW7YXygjY0d/a5HUlz0JBg3xH04W84p2oTeeCX5wLcQXe
+	43wVbe0UmrZZ9DTrWxRvqmFAqNPz/txSHWFpK+OSvx0nY2jmWJRjlioPkrvCct4i
+	XWTHdn5e5+PZ5fo3wh08K/aWncP/jw3xCX7QU5DDb1pFnqWmIt2/2YAf0bEznRsC
+	LbNxsg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4123cugmpd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Aug 2024 12:42:42 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47GCgfQp005317
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Aug 2024 12:42:41 GMT
+Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 16 Aug
+ 2024 05:42:35 -0700
+Message-ID: <de2c8fa3-afc1-4163-aae5-3868ca59e95e@quicinc.com>
+Date: Fri, 16 Aug 2024 20:42:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 13/13] media: qcom: camss: Add support for VFE hardware
+ version Titan 780
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, <rfoss@kernel.org>,
+        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
+        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>, Yongsheng Li <quic_yon@quicinc.com>
+References: <20240812144131.369378-1-quic_depengs@quicinc.com>
+ <20240812144131.369378-14-quic_depengs@quicinc.com>
+ <4b745c1a-33d9-472a-97af-153a2a7c8721@linaro.org>
+ <2de0b7a8-b879-49e9-9656-ec86f29ce559@quicinc.com>
+ <b0787142-0f85-4616-9895-72e33f21c2da@linaro.org>
+ <82200889-a98d-4815-bc31-f81b15d02513@quicinc.com>
+ <7130beef-7787-42a1-85c8-f27574241ba7@linaro.org>
+ <5ecbcd10-d9b7-4134-9666-6df790527b1f@quicinc.com>
+ <56211603-de02-4b8f-a7c6-a4d80ace4e2f@linaro.org>
+Content-Language: en-US
+From: Depeng Shao <quic_depengs@quicinc.com>
+In-Reply-To: <56211603-de02-4b8f-a7c6-a4d80ace4e2f@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240816-delstid-v1-3-c221c3dc14cd@kernel.org>
-References: <20240816-delstid-v1-0-c221c3dc14cd@kernel.org>
-In-Reply-To: <20240816-delstid-v1-0-c221c3dc14cd@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
- Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, 
- Anna Schumaker <anna@kernel.org>
-Cc: Tom Haynes <loghyr@gmail.com>, linux-kernel@vger.kernel.org, 
- linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5770; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=2Rn+7obbQILo75kJbV/0b2zIBmSLl5DIxT28qY2BWXU=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmv0k4OSAyuXEt4tdH+4tnp4U6uVekWYFeDvkph
- VC5Vc2vPEiJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZr9JOAAKCRAADmhBGVaC
- FfrqD/4u58lJLNqhuJn0g+OhIMScCoQw5x8/UOS3b9Fsxp4xkdlewMUw9P+k7t0oazQvB6QKICW
- y94PQKDi9dMezICQJI+h7qnf28tFciP4hUMc6c+rRY2QGouoXycilp8LoX59i+yWtxbrK/ArOnv
- woiMSSyIht4CPVTfPOCeGPT+VD5RCe+muaqfJB8fL/ivMjiZdmk98sYsy8ve3rRb2ARKQh1gVEs
- sM0U2/rLsH8/iFaPdgp/SEO5HuGhKIk0cjmnI4qnmyGsw9aVx2nJX5LeEcTelguVhKsmePgmmjt
- C+srLNpj14stn12u7Yp0heVdwC3ffJScRZkLQaV1bdvkGZImOEWD39jnUUimJdIlY8wWX6BczO+
- 3a4UpG4Ynnogty/SuisPRtJJ3IOSddOKUUm+PpC2WU1oK7H81I9vTXs/kitlWhYutt8BMbmxFp3
- HZrPGs6feBApBrHmg6Qykw9+whOtfiUP7CBTwxbbh9Z7+irEWnO2NyIFPqL+AEi21brOV54uaCt
- 0bS3JtRerhGHUrXik1fsM6N//YT+8ghc5LEdppeo6kbx9o4zxOIf23MtGXx/na9TiBVjrAeo1Y9
- YncdobMaQJNJnV12Y34f22Fpt2I+QLG/nBhwzvO3nYRcgktdY1jcqqhZNFGXD+OZm0s3xxMl6Ss
- d8by10kunM5lwpA==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Hxb6zIEHULxVFgXXJQV6tNkVTVIRFSCS
+X-Proofpoint-ORIG-GUID: Hxb6zIEHULxVFgXXJQV6tNkVTVIRFSCS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-16_03,2024-08-16_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ clxscore=1015 mlxlogscore=999 priorityscore=1501 spamscore=0 bulkscore=0
+ adultscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408160092
 
-Allow clients to request getting a delegation xor an open stateid if a
-delegation isn't available. This allows the client to avoid sending a
-final CLOSE for the (useless) open stateid, when it is granted a
-delegation.
+Hi Vladimir,
 
-This is done by moving the increment of the open stateid and unlocking
-of the st_mutex until after we acquire a delegation. If we get a
-delegation, we zero out the op_stateid field and set the NO_OPEN_STATEID
-flag. If the open stateid was brand new, then unhash it too in this case
-since it won't be needed.
+On 8/16/2024 5:31 AM, Vladimir Zapolskiy wrote:
+> Hi Depeng.
+> 
+> On 8/15/24 18:43, Depeng Shao wrote:
+>> Hi Vladimir,
+>>
+>>>>
+>>>> Thanks for the confirmation, even though I add the rup_update and
+>>>> buf_done function in later commits, it is still called in platform
+>>>> specific code(camss-vfe-780.c), so I will keep as it is done today.
+>>>
+>>> let it be so.
+>>>
+>>> I have another ask about it, please move new camss_reg_update() out from
+>>> camss.c into camss-csid.c, and camss_buf_done() from camss.c into camss-
+>>> vfe.c
+>>>
+>>
+>> The cross direct call has been removed by below commit, so it looks
+>> strange if I add the cross direct call.
+>>
+>> media: qcom: camss: Decouple VFE from CSID
+>> https://lore.kernel.org/lkml/20240522154659.510-9- 
+>> quic_grosikop@quicinc.com/
+> 
+> This I don't understand, please elaborate. I don't ask for a "cross direct
+> call", but you do introduce a CSID specific function in the generic camss.c
+> and another VFE specific function in the same camss.c
+> 
 
-If we can't get a delegation or the new flag wasn't requested, then just
-increment and copy the open stateid as usual.
+CSID calls vfe_get/vfe_put to power up/reset vfe hw in old code, but 
+above decouple commit removes this cross direct call, this commit has 
+been merged recently.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/nfsd/nfs4state.c       | 29 +++++++++++++++++++++++++----
- fs/nfsd/nfs4xdr.c         |  5 +++--
- include/uapi/linux/nfs4.h |  7 +++++--
- 3 files changed, 33 insertions(+), 8 deletions(-)
+> What I ask is just move the current versions of camss_buf_done() and
+> camss_reg_update() out from camss.c to the files, which are related to the
+> sub-IP blocks, and of course move the function declarations from camss.h
+> into camss-vfe.h and camss-csid.h respectively.
+> 
+> If possible there shall be no CSID or VFE specific specific code in 
+> camss.c,
+> and that fact is that it's possible.
+> 
 
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index b67f151837c1..9d209cbd95cd 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -56,6 +56,7 @@
- #include "pnfs.h"
- #include "filecache.h"
- #include "trace.h"
-+#include "delstid_xdr.h"
- 
- #define NFSDDBG_FACILITY                NFSDDBG_PROC
- 
-@@ -6029,6 +6030,17 @@ static void nfsd4_deleg_xgrade_none_ext(struct nfsd4_open *open,
- 	 */
- }
- 
-+/* Are we only returning a delegation stateid? */
-+static bool open_xor_delegation(struct nfsd4_open *open)
-+{
-+	if (!(open->op_deleg_want & OPEN4_SHARE_ACCESS_WANT_OPEN_XOR_DELEGATION))
-+		return false;
-+	if (open->op_delegate_type != NFS4_OPEN_DELEGATE_READ &&
-+	    open->op_delegate_type != NFS4_OPEN_DELEGATE_WRITE)
-+		return false;
-+	return true;
-+}
-+
- /**
-  * nfsd4_process_open2 - finish open processing
-  * @rqstp: the RPC transaction being executed
-@@ -6051,6 +6063,7 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
- 	struct nfs4_delegation *dp = NULL;
- 	__be32 status;
- 	bool new_stp = false;
-+	bool deleg_only = false;
- 
- 	/*
- 	 * Lookup file; if found, lookup stateid and check open request,
-@@ -6105,9 +6118,6 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
- 			open->op_odstate = NULL;
- 	}
- 
--	nfs4_inc_and_copy_stateid(&open->op_stateid, &stp->st_stid);
--	mutex_unlock(&stp->st_mutex);
--
- 	if (nfsd4_has_session(&resp->cstate)) {
- 		if (open->op_deleg_want & NFS4_SHARE_WANT_NO_DELEG) {
- 			open->op_delegate_type = NFS4_OPEN_DELEGATE_NONE_EXT;
-@@ -6121,7 +6131,18 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
- 	* OPEN succeeds even if we fail.
- 	*/
- 	nfs4_open_delegation(open, stp, &resp->cstate.current_fh);
-+	deleg_only = open_xor_delegation(open);
- nodeleg:
-+	if (deleg_only) {
-+		memcpy(&open->op_stateid, &zero_stateid, sizeof(open->op_stateid));
-+		open->op_rflags |= OPEN4_RESULT_NO_OPEN_STATEID;
-+		if (new_stp)
-+			release_open_stateid(stp);
-+	} else {
-+		nfs4_inc_and_copy_stateid(&open->op_stateid, &stp->st_stid);
-+	}
-+	mutex_unlock(&stp->st_mutex);
-+
- 	status = nfs_ok;
- 	trace_nfsd_open(&stp->st_stid.sc_stateid);
- out:
-@@ -6137,7 +6158,7 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
- 	/*
- 	* To finish the open response, we just need to set the rflags.
- 	*/
--	open->op_rflags = NFS4_OPEN_RESULT_LOCKTYPE_POSIX;
-+	open->op_rflags |= NFS4_OPEN_RESULT_LOCKTYPE_POSIX;
- 	if (nfsd4_has_session(&resp->cstate))
- 		open->op_rflags |= NFS4_OPEN_RESULT_MAY_NOTIFY_LOCK;
- 	else if (!(open->op_openowner->oo_flags & NFS4_OO_CONFIRMED))
-diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-index dbaadb0ad980..ecc9ddf4c28d 100644
---- a/fs/nfsd/nfs4xdr.c
-+++ b/fs/nfsd/nfs4xdr.c
-@@ -1067,7 +1067,7 @@ static __be32 nfsd4_decode_share_access(struct nfsd4_compoundargs *argp, u32 *sh
- 		return nfs_ok;
- 	if (!argp->minorversion)
- 		return nfserr_bad_xdr;
--	switch (w & NFS4_SHARE_WANT_MASK) {
-+	switch (w & NFS4_SHARE_WANT_TYPE_MASK) {
- 	case NFS4_SHARE_WANT_NO_PREFERENCE:
- 	case NFS4_SHARE_WANT_READ_DELEG:
- 	case NFS4_SHARE_WANT_WRITE_DELEG:
-@@ -3411,7 +3411,8 @@ static __be32 nfsd4_encode_fattr4_xattr_support(struct xdr_stream *xdr,
- 
- #define NFSD_OA_SHARE_ACCESS_WANT	(BIT(OPEN_ARGS_SHARE_ACCESS_WANT_ANY_DELEG)		| \
- 					 BIT(OPEN_ARGS_SHARE_ACCESS_WANT_NO_DELEG)		| \
--					 BIT(OPEN_ARGS_SHARE_ACCESS_WANT_CANCEL))
-+					 BIT(OPEN_ARGS_SHARE_ACCESS_WANT_CANCEL)		| \
-+					 BIT(OPEN_ARGS_SHARE_ACCESS_WANT_OPEN_XOR_DELEGATION))
- 
- #define NFSD_OA_OPEN_CLAIM	(BIT(OPEN_ARGS_OPEN_CLAIM_NULL)		| \
- 				 BIT(OPEN_ARGS_OPEN_CLAIM_PREVIOUS)	| \
-diff --git a/include/uapi/linux/nfs4.h b/include/uapi/linux/nfs4.h
-index caf4db2fcbb9..4273e0249fcb 100644
---- a/include/uapi/linux/nfs4.h
-+++ b/include/uapi/linux/nfs4.h
-@@ -58,7 +58,7 @@
- #define NFS4_SHARE_DENY_BOTH	0x0003
- 
- /* nfs41 */
--#define NFS4_SHARE_WANT_MASK		0xFF00
-+#define NFS4_SHARE_WANT_TYPE_MASK	0xFF00
- #define NFS4_SHARE_WANT_NO_PREFERENCE	0x0000
- #define NFS4_SHARE_WANT_READ_DELEG	0x0100
- #define NFS4_SHARE_WANT_WRITE_DELEG	0x0200
-@@ -66,13 +66,16 @@
- #define NFS4_SHARE_WANT_NO_DELEG	0x0400
- #define NFS4_SHARE_WANT_CANCEL		0x0500
- 
--#define NFS4_SHARE_WHEN_MASK		0xF0000
-+#define NFS4_SHARE_WHEN_MASK				0xF0000
- #define NFS4_SHARE_SIGNAL_DELEG_WHEN_RESRC_AVAIL	0x10000
- #define NFS4_SHARE_PUSH_DELEG_WHEN_UNCONTENDED		0x20000
- 
-+#define NFS4_SHARE_WANT_MOD_MASK			0xF00000
- #define NFS4_SHARE_WANT_DELEG_TIMESTAMPS		0x100000
- #define NFS4_SHARE_WANT_OPEN_XOR_DELEGATION		0x200000
- 
-+#define NFS4_SHARE_WANT_MASK	(NFS4_SHARE_WANT_TYPE_MASK | NFS4_SHARE_WANT_MOD_MASK)
-+
- #define NFS4_CDFC4_FORE	0x1
- #define NFS4_CDFC4_BACK 0x2
- #define NFS4_CDFC4_BOTH 0x3
+Yes, I understand what you mean. Let's take camss_buf_done as example, 
+if we move camss_buf_done to camss-vfe.c, but this function is called in 
+csid csid driver, so here will have a cross direct call again, 
+camss_reg_update is same. Since the cross call is removed in above 
+commit, then it will be strange if I do this again.
 
--- 
-2.46.0
+So, I moved them to camss.c
+
+>> I use the v4l2_subdev_notify to do the cross communication in v1 and v2
+>> series, but Bryan said, "The subdev notify is I think not the right fit
+>> for this purpose within our driver.".
+> 
+> As far as I see all of that is irrelevant.
+> 
+>> Then I add an internal notify interface in camss structure, but Bryan
+>> suggested to use direct call, so I add these functions directly in 
+>> camss.c
+>>
+>> https://lore.kernel.org/all/236cfe43-8321-4168-8630- 
+>> fb9528f581bd@linaro.org/
+>>
+> 
+
+Thanks,
+Depeng
 
 
