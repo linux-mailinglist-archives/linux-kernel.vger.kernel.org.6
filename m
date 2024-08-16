@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-289175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0CDB9542B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:24:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F559542BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:26:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E55591C20F7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:24:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B3441F21A91
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D5213A868;
-	Fri, 16 Aug 2024 07:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB2D12C491;
+	Fri, 16 Aug 2024 07:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QdMr69Hk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="baInNCP5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7966E13A256;
-	Fri, 16 Aug 2024 07:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8CBC7710E;
+	Fri, 16 Aug 2024 07:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723793043; cv=none; b=GqzCyrHSpUw5B3GpMbEV5q/W10jZncodB6R6ire4Cjb/d1mpNgrC2uVYBGvKruGPVJDKusP82A8HpCXhR610SPXGarP659TsD+rvWWBaKfrveaQAmNalE4b8F49IwXb/UzmSesGN6vVWyQLCUgk3o51arRgA4Kmgg5ZCGPdxIfQ=
+	t=1723793192; cv=none; b=isW9roPtqFOjs5abYqVpV/MCtKp/fKPl32z1wkwkrMEWzHmXtx9H+/zqnjxTMuJuQrxO+928JjNA/ng4d8DdR1xhIL827bcuA6l63QQNG9wcZwjUu5eE+ZMkuJU60MXwi8/xucNIUAPuh3h4qQ/Au1Hm4k3caU6tFYGk2C8af7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723793043; c=relaxed/simple;
-	bh=JqtSMRSsdYme+dtzMkAIDZdEVbaaiUpD9pO5ki0H7Fs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GJx3L4haQiG/j6EoXSKaebkKaA3ZXxGWFkRHx2p+tx5vdMtEBg9ti72smS76n7HBWYC3OL4E1SoecaTAunIeseiHuaElEPwMmtdtJg6Qy7TdfCkXjOBxWK62ZkV3B+O8CB6PeCn5b1335/+nwFne0KKDIg0FxFBR8F460rQPI0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QdMr69Hk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36EFDC4AF09;
-	Fri, 16 Aug 2024 07:23:59 +0000 (UTC)
+	s=arc-20240116; t=1723793192; c=relaxed/simple;
+	bh=8jdxMs9eYxoxwq9ryBRvyyNMPaHW50XHDWYI4zoeYg4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=NZWm/94GEaoV+TUiROtNf4yb2N5PGwnT1z3tZyCw04D9aaAdBw4/tZ6rIPSxhbN6LIX2PQiCKuoyNTW+/ZyDx3HSGAxY1wbyuUmbQSbDICLiHgwTKf6iOVOcpF64TTK8JGPYvjXhNbsmEpOvFDzdMn8qyF8++69sxObly6Jo5Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=baInNCP5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D603AC32782;
+	Fri, 16 Aug 2024 07:26:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723793043;
-	bh=JqtSMRSsdYme+dtzMkAIDZdEVbaaiUpD9pO5ki0H7Fs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QdMr69Hk7hYwDETmvj1TISvnTrE44wram3fQ/DzCTSZ5YMxPOujjGj1zxd+uXmEUr
-	 KuRVyOyAxD88tuqk+n9n5lnPE4B0RyyhBJS9RZN9guKg/9kBkBl2zrSQzEeFQv9Kgy
-	 qra0kMkFKixfHt4644em/RCepINPh1Tx5JngtGuY67Q1Uvrsb+hWuqBrlqsBsvbkPv
-	 9i1vbKtMzP48jW25jOynTNDzzYETyncYJKGjT4bV36q5c3XeeToMFC1jgdFSvWgah8
-	 Ps/qnk5raKtJdlouhX3GBgs01TlHSt4RpiG9QnRN4EdPSpIF4wITmdD8rMFe+dkvly
-	 4GEDAoiUNxnJA==
-Message-ID: <27487f8c-2cd4-414d-b9f9-e538fb6ef227@kernel.org>
-Date: Fri, 16 Aug 2024 09:23:56 +0200
+	s=k20201202; t=1723793190;
+	bh=8jdxMs9eYxoxwq9ryBRvyyNMPaHW50XHDWYI4zoeYg4=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=baInNCP5y5lLHO00rMk/8eBjbfBFL/H2YH+csuQ8wqd52VNtEgE+xZ0CRbYLrlNTA
+	 FqOdA8upzzrXxyGSLFnHh6tmiRZWANM5t4n+JyqSg+yvpmWm3D3ccpUncMFgRO1P1m
+	 QBJfJ3TyFRy662ns56JqUyvlE1FVidYC4Bf+4+n+3H6zCuQATnc6askYc6s1FT+16q
+	 Zv/6bVfGQdnMFgwpfUd+g6WOnJsxCP5sgpRqR474YSYM6byEJTF+IRa9RzIhjZIs8K
+	 1eFLuv0Pne7TUdSQuIIRiJcQFOefyPkVz8HMzdDZRNfEbnAsc0bsFUmvw6o5qLTBgM
+	 t2CuhO0JUR2wQ==
+Message-ID: <23bce839-d991-4553-929a-9e53b7c2d4e3@kernel.org>
+Date: Fri, 16 Aug 2024 09:26:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: dt-bindings: qcom,lpass-wsa-macro: correct clocks
- on SM8250
-To: srinivas.kandagatla@linaro.org, broonie@kernel.org
-Cc: perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
- linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, amit.pundir@linaro.org,
- dmitry.baryshkov@linaro.org, devicetree@vger.kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org
-References: <20240815165320.18836-1-srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: iio: imu: smi240: devicetree binding
+To: Jianping.Shen@de.bosch.com, jic23@kernel.org, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ dima.fedrau@gmail.com, marcelo.schmitt1@gmail.com,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Christian.Lorenz3@de.bosch.com,
+ Ulrike.Frauendorf@de.bosch.com, Kai.Dolde@de.bosch.com
+References: <20240815152545.7705-1-Jianping.Shen@de.bosch.com>
+ <20240815152545.7705-2-Jianping.Shen@de.bosch.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,25 +103,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240815165320.18836-1-srinivas.kandagatla@linaro.org>
+In-Reply-To: <20240815152545.7705-2-Jianping.Shen@de.bosch.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 15/08/2024 18:53, srinivas.kandagatla@linaro.org wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+On 15/08/2024 17:25, Jianping.Shen@de.bosch.com wrote:
+> From: Shen Jianping <Jianping.Shen@de.bosch.com>
 > 
-> we seems to have ended up with duplicate clocks for frame-sync on sm8250,
-> it has both va and fsgen which are exactly same things. Remove the redundant
-> va clock and make it align with other SoCs.
+> dt-bindings: iio: imu: smi240: add sensor dt-binding
+
+Nothing improved. Please write proper commit msgs. See
+submitting-patches document.
+
+> Signed-off-by: Shen Jianping <Jianping.Shen@de.bosch.com>
+> ---
 > 
-> Codec driver does not even handle va clock, so remove this from the
-> bindings and examples to avoid any confusion.
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
 Best regards,
 Krzysztof
 
