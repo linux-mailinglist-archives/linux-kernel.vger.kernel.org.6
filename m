@@ -1,158 +1,190 @@
-Return-Path: <linux-kernel+bounces-288883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D2F9953FFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 05:15:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DDA01954000
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 05:16:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06095285BFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:15:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A372285F96
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F7855898;
-	Fri, 16 Aug 2024 03:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8066A1877;
+	Fri, 16 Aug 2024 03:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JZ22vipS"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2SFQMqCU"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317F14F20E
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 03:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5371B1AC8BE
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 03:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723778088; cv=none; b=a+QqRThb8aLi0tkXty3nXWNXkPaPFVsVgnXp20rWnqy1KCRPXunUgog6xUci91xvzNiqSonOwQbderLYZK0Js1+uHM3p+cmZOSoFjzeMGxyNk4mnrJJ+rbAvUWvWB914Ot9blxkz4I3tWNy5z8U2D1a1rqnKLOUZYWmH8UZFoG8=
+	t=1723778164; cv=none; b=Reoh/Aw4v2ronIcKwJn4tthHGcj+rMYg31E4e2mVqWmN93lSuakToOIfNYXKiAWNBTK1j5u7dFthmuNFAN7kHah7m4Wqmb7zUACw49L9m+SuXfCS2L1GmHGOLrWev0MbRuNpDfW+/yxEC3y6Iw8zD77Y40fFyRjqI9C5ZBVYbzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723778088; c=relaxed/simple;
-	bh=cvVP25e+Rq4y+RdzbIJKDjmY0YmJ/tAmTsyQAdl1VFQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=jMX4vgi6HKgbkqLtrJSqaqGH6kQ8Ht5dOBpYCbkOX6pdwJdZhS9DeXb+mOEMChPEjInAGa/GB3IbbsJrIltXAklW5vylV6B3AZw7TiPzVKX3uQcTfOLcu7jn0+cjWkxWSqVxx8ZimQSoJIKsFL23ovQxD2EmmKv+bpxgR1vOeOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JZ22vipS; arc=none smtp.client-ip=209.85.214.174
+	s=arc-20240116; t=1723778164; c=relaxed/simple;
+	bh=QvgCRCVIJQlf3c9D/c6CQexGv/AVEDoPki6TZ6C+lgU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DXICLlT5dpQIU/qX8J6ba/4SGjsGHS+9JloL7v+TVW5vwS4Q0GdnZu3J6KNRsVzR+3ZA8VTD978yNQP5YkaW1voM5Hy/FaTWsQAiFJx23oD6j2U8qF6+t1euMoiIQXKNnmYH2Mry6bmEXOYkyBNTdf2ErYJyteYaCkm5T0emPk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2SFQMqCU; arc=none smtp.client-ip=209.85.166.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-202018541afso35595ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 20:14:46 -0700 (PDT)
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-39c3bf0584cso33905ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 20:16:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723778086; x=1724382886; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mncEnTrGLhr0XZSwehPQoXmibCtIqyrKNXwcgQ7YQTo=;
-        b=JZ22vipSU3OVCzwuK2vDAmc2Qs6Zmk6BN2tDcCLENgT+19BseWlOu7125AQU1cIS6N
-         hWBgjNQPc9GStHoWc/bRdJRxtprFA90siaN4+H93elZumZnaJSO+C3r5JeGFhyt1NY0w
-         at2S38nz1UNYDe7PM1ApeA267TmWBnCM0oWdIMMaID6xWUc2HH0+fLzNdWraB6AKORYg
-         HjQFDDQnLfF4Z60amCC4c8iw2B1SR7HOnBhcYmxRfKQOQs9SBSeMMmwcAdxEXpSeHL3q
-         OoNMSwbssxjjWk9jF28UVpCH8w7L9sXsQlfIoBN3bXtEZTvcDJR+ARfvO8MyRAefHh2T
-         qxEA==
+        d=google.com; s=20230601; t=1723778162; x=1724382962; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cBDLm5A+RDH4WkOIu6haLqh5HgWheaTx6ZttayiUTD8=;
+        b=2SFQMqCUIpkJUZxtgzkCIqfZ97iypt9gOlvR5s0M9Cvu5BZ9+9pCTp151Fgwju2Qsr
+         GBIK4zCxXRBk0q/phrcpYwJ9Glm1GWm548wFw7sn5WIQ/RX36tQNlCDWnzwXa/ZtIzZW
+         TJKubAKN1e8wQidEd1H/X+R8unfofl/eb1I0APcO/KTcw8g3he9coVhf1rncCdK/q5J9
+         YQNZomjSXDxDr9ahVKeKZaGj4Knuj2eSSpUcSyeHlA+6dD/sytegWuBn8IfGntopML7w
+         +MQLYf5BSlTIfWZ4yrG/BtravblKaVcCud1GaWL1/P1AcOwWUSZTmfNMilXycQoyHgGA
+         X7Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723778086; x=1724382886;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mncEnTrGLhr0XZSwehPQoXmibCtIqyrKNXwcgQ7YQTo=;
-        b=b5QCDLJDKEz+exi0yr80mgdo5pRV1QvhWWTlLzAzggzQhIBseokHW99app64eP9wBM
-         vnO9cEqZHmBPL1KoTUTH+jkEBPaJe6dWrZ+QWrMYfb5oorQMp5ynDqg0xb04jjZpN0Y1
-         C00aW5JumQvw6gCKC+jkDjxUN+qvEq0cV8dOkMU/2CusGORV4qV7xUaFupudyAXC1FE+
-         OKaFLpDRX7s3yukbaDcbqDZDtJ2LeQ0uKWRj9/LZ4ZfbkPYrdKnotFjcjeinWj1j2aok
-         M6stZjbYizFgUqslHmoL/Wijz77aRb8vBDXPdB28Ylrnfiw0ktYkmNkp+iTjlyzw8hcX
-         tABw==
-X-Forwarded-Encrypted: i=1; AJvYcCVZpWL24XvFNL4DqEwjgR3p8dfj8QOQTrep4aUeKoiETxVw0G3FSAE3R48UeetKQ4O/tLmGfO4OWeUGCIH6B5SBe+Lq7BgCYVfpULZJ
-X-Gm-Message-State: AOJu0YzwEosbOlAONTbMmEigHuMPh9BWaWl+2KGjTi2fw7FG6lk7kZLE
-	kzmuBqooGcOSz+Xqeimqscxash4Omk9k5KTlIzdGj8JcSbchIR54lQMbl/iCrQ==
-X-Google-Smtp-Source: AGHT+IFkMI2RQ+dV/zqGKwCGQNSnORZnm91mCder9ExHmxN0iIRaokp29nlhb3NlU0WjhxLfSdsqYg==
-X-Received: by 2002:a17:902:ce90:b0:1fb:563:3c25 with SMTP id d9443c01a7336-20206100d86mr759675ad.18.1723778086021;
-        Thu, 15 Aug 2024 20:14:46 -0700 (PDT)
-Received: from [2620:0:1008:15:4d4d:6efc:cb52:8b8e] ([2620:0:1008:15:4d4d:6efc:cb52:8b8e])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3e2e6b3ccsm633416a91.20.2024.08.15.20.14.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 20:14:45 -0700 (PDT)
-Date: Thu, 15 Aug 2024 20:14:44 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-cc: Yuanchu Xie <yuanchu@google.com>, David Hildenbrand <david@redhat.com>, 
-    "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>, 
-    Khalid Aziz <khalid.aziz@oracle.com>, Henry Huang <henry.hj@antgroup.com>, 
-    Yu Zhao <yuzhao@google.com>, Dan Williams <dan.j.williams@intel.com>, 
-    Gregory Price <gregory.price@memverge.com>, 
-    Huang Ying <ying.huang@intel.com>, Lance Yang <ioworker0@gmail.com>, 
-    Randy Dunlap <rdunlap@infradead.org>, 
-    Muhammad Usama Anjum <usama.anjum@collabora.com>, 
-    Kalesh Singh <kaleshsingh@google.com>, Wei Xu <weixugc@google.com>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    "Rafael J. Wysocki" <rafael@kernel.org>, 
-    Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-    Roman Gushchin <roman.gushchin@linux.dev>, 
-    Muchun Song <muchun.song@linux.dev>, Shuah Khan <shuah@kernel.org>, 
-    Yosry Ahmed <yosryahmed@google.com>, Matthew Wilcox <willy@infradead.org>, 
-    Sudarshan Rajagopalan <quic_sudaraja@quicinc.com>, 
-    Kairui Song <kasong@tencent.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-    Vasily Averin <vasily.averin@linux.dev>, Nhat Pham <nphamcs@gmail.com>, 
-    Miaohe Lin <linmiaohe@huawei.com>, Qi Zheng <zhengqi.arch@bytedance.com>, 
-    Abel Wu <wuyun.abel@bytedance.com>, 
-    "Vishal Moola (Oracle)" <vishal.moola@gmail.com>, 
-    Kefeng Wang <wangkefeng.wang@huawei.com>, linux-kernel@vger.kernel.org, 
-    linux-mm@kvack.org, cgroups@vger.kernel.org, 
-    linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 0/7] mm: workingset reporting
-In-Reply-To: <20240813113313.1af3a5d7db7134a354a4cda3@linux-foundation.org>
-Message-ID: <54a4d626-faed-ad86-f3c4-5e725986bd29@google.com>
-References: <20240813165619.748102-1-yuanchu@google.com> <20240813113313.1af3a5d7db7134a354a4cda3@linux-foundation.org>
+        d=1e100.net; s=20230601; t=1723778162; x=1724382962;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cBDLm5A+RDH4WkOIu6haLqh5HgWheaTx6ZttayiUTD8=;
+        b=LPi8gLYLCoPhzQNytSHHqYqPOuT+kDbVSKOTaABag6qp5rNe509khxDfUqz3Pr/im1
+         oAKsiw3WQuP4G8aIVsAMXjChngWbl/sGWj7wZzM8oJ99kzJjZ7rTZNMTrhtCqrd2Watf
+         5OhDqKZeNGxmOa8IjZsUwzTWjghZQMxRZDhfuaiTDSFFR7UsVsRqybDYhBPOhLuX+3k9
+         i50g41aN0tv1fxu2M8x9xawLQL30mrKNaft1PJpOJBgr/L8u6KGmVcn4YFY7YgHs+sve
+         fHpXAEEockXTdwQZ+0PPde28gvT66UyExtnxzXj3fJnWBMVwbCSYSSOPikouC9PB5ArG
+         Rnzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbEBHF/49c7OKnrN2CEDNCgKJYBGXz41bOHhul68ibflPQg4Uvt8Lky3jIepCsCh/v9LxGDD45tWjqsf5Q2/5QXqREOqQy+sRMBp+K
+X-Gm-Message-State: AOJu0YwBSB4ty7Z9QqniMhTWg7yg9Xbb90nhrMLp3E+s/onF6fb9W4Ts
+	U+de0bVWNgwbz3D6DYDNZ58Cxd8xa2iF1lt03HkaXx+zSK2OrORIR1i/3BezuICGyvBghD1lIVI
+	65uiw5gQyFlAmMV3aH/nJtCmQfimgoL/FYDV9
+X-Google-Smtp-Source: AGHT+IFG54skZod88kVSUZv1syt2i20zv5Fvy6Kdg2iPfl7E7+fCdF6DLOt5umNOo0pJ6e7zslmiGSByBIx+/w+nThY=
+X-Received: by 2002:a05:6e02:16cf:b0:39a:14f7:1bfd with SMTP id
+ e9e14a558f8ab-39d28eecf1cmr543285ab.5.1723778162148; Thu, 15 Aug 2024
+ 20:16:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20240815013626.935097-1-howardchu95@gmail.com> <20240815013626.935097-11-howardchu95@gmail.com>
+In-Reply-To: <20240815013626.935097-11-howardchu95@gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 15 Aug 2024 20:15:51 -0700
+Message-ID: <CAP-5=fUqU0sKKNaQmA=ra0en3Mky_PvRu=-48E5Q-6Wov7_UNQ@mail.gmail.com>
+Subject: Re: [PATCH v2 10/10] perf trace: Add general tests for augmented syscalls
+To: Howard Chu <howardchu95@gmail.com>
+Cc: acme@kernel.org, adrian.hunter@intel.com, jolsa@kernel.org, 
+	kan.liang@linux.intel.com, namhyung@kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 13 Aug 2024, Andrew Morton wrote:
+On Wed, Aug 14, 2024 at 6:37=E2=80=AFPM Howard Chu <howardchu95@gmail.com> =
+wrote:
+>
+> In this test, augmentation for:
+>
+> * string
+> * buffer
+> * struct
+>
+> Is tested.
+>
+> Please use this command to test it out:
+>
+> perf test "perf trace general tests"
+>
+> Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> ---
+>  tools/perf/tests/shell/trace_btf_general.sh | 59 +++++++++++++++++++++
+>  1 file changed, 59 insertions(+)
+>  create mode 100755 tools/perf/tests/shell/trace_btf_general.sh
+>
+> diff --git a/tools/perf/tests/shell/trace_btf_general.sh b/tools/perf/tes=
+ts/shell/trace_btf_general.sh
+> new file mode 100755
+> index 000000000000..9c5e9d321b42
+> --- /dev/null
+> +++ b/tools/perf/tests/shell/trace_btf_general.sh
+> @@ -0,0 +1,59 @@
+> +#!/bin/sh
+> +# perf trace general tests
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +err=3D0
+> +set -e
+> +
+> +. "$(dirname $0)"/lib/probe.sh
+> +skip_if_no_perf_trace || exit 2
+> +
+> +file1=3D$(mktemp /tmp/file1_XXXXX)
+> +file2=3D$(echo $file1 | sed 's/file1/file2/g')
+> +
+> +buffer=3D"this is a buffer for testing"
+> +
+> +trace_test_string() {
+> +  echo "Testing perf trace's string augmentation"
+> +  if ! perf trace -e renameat* --max-events=3D1 -- mv ${file1} ${file2} =
+2>&1 | grep -q -E "renameat[2]*.*oldname: \"${file1}\".*newname: \"${file2}=
+\".*"
+> +  then
+> +    echo "String augmentation failed"
+> +    err=3D1
+> +  fi
+> +}
+> +
+> +trace_test_buffer() {
+> +  echo "Testing perf trace's buffer augmentation"
+> +  if ! perf trace -e write --max-events=3D1 -- echo "${buffer}" 2>&1 | g=
+rep -q -E ".*write.*buf: \"${buffer}.*\".*"
+> +  then
+> +    echo "Buffer augmentation failed"
+> +    err=3D1
+> +  fi
+> +}
+> +
+> +trace_test_struct() {
+> +  echo "Testing perf trace's struct augmentation"
+> +  if ! perf trace -e clock_nanosleep --max-events=3D1 -- sleep 1 2>&1 | =
+grep -q -E ".*clock_nanosleep\(rqtp: \{1,\}, rmtp: \{1,\}\).* =3D 0"
+> +  then
+> +    echo "Struct augmentation failed"
+> +    err=3D1
+> +  fi
+> +}
+> +
+> +cleanup() {
+> +       rm -rf ${file2}
+> +}
 
-> On Tue, 13 Aug 2024 09:56:11 -0700 Yuanchu Xie <yuanchu@google.com> wrote:
-> 
-> > This patch series provides workingset reporting of user pages in
-> > lruvecs, of which coldness can be tracked by accessed bits and fd
-> > references.
-> 
-> Very little reviewer interest.  I wonder why.  Will Google be the only
-> organization which finds this useful?
-> 
+It can be nice to have a trap handler clean things up, as well as to
+say a trap happened (as will happen with any non-zero exit with "set
+-e" above). There's an example here where the function of the trap is
+printed:
+https://lore.kernel.org/lkml/20240813043439.933329-2-irogers@google.com/
 
-Although also from Google, I'm optimistic that others will find this very 
-useful.  It's implemented in a way that is intended to be generally useful 
-for multiple use cases, including user defined policy for proactive 
-reclaim.  The cited sample userspace implementation is intended to 
-demonstrate how this insight can be put into practice.
+Thanks,
+Ian
 
-Insight into the working set of applications, particularly on multi-tenant 
-systems, has derived significant memory savings for Google over the past 
-decade.  The introduction of MGLRU into the upstream kernel has allowed 
-this information to be derived in a much more efficient manner, presented 
-here, that should make upstreaming of this insight much more palatable.
-
-This insight into working set will only become more critical going forward 
-with memory tiered systems.
-
-Nothing here is specific to Google; in fact, we apply the insight into 
-working set in very different ways across our fleets.
-
-> > Benchmarks
-> > ==========
-> > Ghait Ouled Amar Ben Cheikh has implemented a simple "reclaim everything
-> > colder than 10 seconds every 40 seconds" policy and ran Linux compile
-> > and redis from the phoronix test suite. The results are in his repo:
-> > https://github.com/miloudi98/WMO
-> 
-> I'd suggest at least summarizing these results here in the [0/N].  The
-> Linux kernel will probably outlive that URL!
-> 
-
-Fully agreed that this would be useful for including in the cover letter.  
-
-The results showing the impact of proactive reclaim using insight into 
-working set is impressive for multi-tenant systems.  Having very 
-comparable performance for kernbench with a fraction of the memory usage 
-shows the potential for proactive reclaim and without the dependency on 
-direct reclaim or throttling of the application itself.
-
-This is one of several benchmarks that we are running and we'll be 
-expanding upon this with cotenancy, user defined latency senstivity per 
-job, extensions for insight into memory re-access, and in-guest use cases.
+> +
+> +trace_test_string
+> +
+> +if [ $err =3D 0 ]; then
+> +  trace_test_buffer
+> +fi
+> +
+> +if [ $err =3D 0 ]; then
+> +  trace_test_struct
+> +fi
+> +
+> +cleanup
+> +
+> +exit $err
+> --
+> 2.45.2
+>
 
