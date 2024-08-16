@@ -1,219 +1,196 @@
-Return-Path: <linux-kernel+bounces-290265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7C79955185
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:34:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D0C95518D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:41:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D6291F22CBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:34:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F2B11F2369F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E37B1C3F3F;
-	Fri, 16 Aug 2024 19:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845281C4609;
+	Fri, 16 Aug 2024 19:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ot/PeEYN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Pkzli0Ae"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2063.outbound.protection.outlook.com [40.107.243.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18EE680045;
-	Fri, 16 Aug 2024 19:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723836886; cv=none; b=XfscMetios8XiWJhcIBJTumayo8BdvPL8u1ETczj6Zqgrn/Flu0QPwS557lw7MXWdPVgfPD7jz2qOcEAj/OOwxkrMwAWxzWeCRM0r5QjL5g/EXpyHXiIGOrem47ypIzS4qd9dv2zTAWAT0njgYK67pqMZQ+moi79wF5u3imeG1c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723836886; c=relaxed/simple;
-	bh=Dq0NpHjb98fLGowXWIwgQbP1aYd4cC+HY/p6PVZACK4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NiTIIz4LGDlFVyCpxR+VSw1J1NxZMeWnV6/witAHs/+ZQxFyanyqbX9ABBtQqxaK7Zbl/NpSsrpZ5kcI3oBtT8Cc2o58Z01VPxbDDy8qszsn98IcLx7rY+bamVBiLv9RjjaAbo0k7wcLYsdt0rl8pQT4ca7U1h74dF+AOnTPUqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ot/PeEYN; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723836885; x=1755372885;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Dq0NpHjb98fLGowXWIwgQbP1aYd4cC+HY/p6PVZACK4=;
-  b=Ot/PeEYN8Ky2edy0PUozOYGdrEJUnN6gXqf7k9UiA/4pf0ik9RBP3vhu
-   9GgJLwTKJ4chhBAzoG5cCo1OBUETwMsuPA3jB/dfmEluuU7OgrStkDtq7
-   Hj3kH+kYHwXuhiGuYPrcPt50xknZRbEv5wA0roVTo3P2Xj0XAh498hcOi
-   2DsGS6uFtgFubwopV/5uxGyQKhZmi3A49a9Vupnue+p+WvIUlaV29vkIj
-   6RRojKlQl1NPsziRdxrXgK+MT8Nd7yp47JjgVVk6U823t+URbLy0BwuA4
-   kHSPGXnsH8xDVuzbv7ccJqKOGvlLCroiKPQRekjkhOxcyBoIvZp/A3B4y
-   Q==;
-X-CSE-ConnectionGUID: qyn0eMO+S4+2Djrse47yvg==
-X-CSE-MsgGUID: 8WBpo79ARCWOGZ8Hilunyw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="22114366"
-X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
-   d="scan'208";a="22114366"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 12:34:44 -0700
-X-CSE-ConnectionGUID: 7YLI+eO4TGOILABjHOZc4Q==
-X-CSE-MsgGUID: 7i27mFRCTBiomI4xpLFvIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
-   d="scan'208";a="82968920"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 12:34:44 -0700
-Received: from [10.212.50.43] (kliang2-mobl1.ccr.corp.intel.com [10.212.50.43])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 34D4C20CFEDA;
-	Fri, 16 Aug 2024 12:34:43 -0700 (PDT)
-Message-ID: <1b0464bf-0258-44d3-adca-4346a9fdfd31@linux.intel.com>
-Date: Fri, 16 Aug 2024 15:34:41 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CBF80045;
+	Fri, 16 Aug 2024 19:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723837263; cv=fail; b=nYICqjnRsiBavYoEOh1Isc/XaeuaAqsgKFO8F4qlO+NSbq0rXm0NTpmy9aIMrYoVWxkRsrojmby9rkQV0ZauxDBIVYNQUykTVGKt/FPZTmZ8rqebHvAMYc+5Zua6l3xmFQmhrTTu9AOg8cK8sozsj+w63dUWPLqL8RDdVIt7QYk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723837263; c=relaxed/simple;
+	bh=yas+TU04J0y+4+UJyNjIdR7im+YxP5b0VHrJlqib9Io=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=RAYwTt+YcGzMRf+vFBNd7QbcsoITamBDo2F3mRHeKa7fkPn7COcSYcXYFWtp41S/E68cgBYhAMrfRmo/r6nLBNPlk+OFCELQt2C3sYVa14k+Zq63YoZZvu+semhlB+q6iiQRDMPgjjeMKIlGlAQ8w9kEPbSshqP5t4QSCiQSIQ4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Pkzli0Ae; arc=fail smtp.client-ip=40.107.243.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AUpcUtiCEsxJm8wmCM9NiRYOmJFlT8PmZLIh4P9Hpmwsu8VPYxP1G6jAkBBaloDhY2G37m4toMdjlxxhHtCaRHkzQAXbDhW50tSr01FE97RGzK6mKOm0+U7r/sDfEPJ7TfFB+kjI+wTo/WA6K567JvheHgXLtYGVw6Ouueo1pEN5TSG6LmyYxAIEVtgqmkn4/FUrEmaQGyS+15WxajyYy3+PK8y09uChRyF/rbwmtuKrPL/pilMROK4FhIlRAMzpGSl4TCHstDEypY5Q0FHDz86KIta6tbQVsD8Q2ZGQAay/QpKB+Py/yRWvhyB2WqtKEOASqDJGikCma3HL68hLJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vJs+wcAAh3+FHPxjTTJBOtMBgUD/v68T49K9aAFThFg=;
+ b=ZdzU8ItMNXjpyruOpTebDGUDu4smbpVM4vOhXiO+FDVyvyoDogHCONvLSZE/iREA+DmGqtMJqbSo+pefijAf5eb+r3B2idHTqS+SYTXHAzMLOCKDeUHHGqH7pN0eknbJEb6aiGBobTQzCUa+Jr23+l9NeV7GHdPPVUK1AxPSvGi5F0m8QtWvmRZPJvk3VfNtW4fSz/885+B+o3ikeNsAewvr1ZfFRV9oRS71hQeofxjct1Zsu+OqqHTtXeDV3uvRr45yOPrThCTBfc1tSa0rBiArH6if6jrjCbtV853GSaWs2phwzA5LK9PepuDUFz1lp6fx/heAxJ2lC0NRNZ8efA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vJs+wcAAh3+FHPxjTTJBOtMBgUD/v68T49K9aAFThFg=;
+ b=Pkzli0AerP0hVSf05i9DkIEDdPxrj+jNFrvXSVHAIzdgsXQOq9hhNbLWBmInwM2nln75nZaF9SeOpJa/H+OyV1+YXQAMyy0OryxHM9/kpIbe+Py8k4prKwtt4a1gJNT4/ws5edPm155qCsT+iJNkwXTWuejPg8sZhw+0fckqiXvWNRtdh+MKa+0xL2BzcqDWRy8WhxmuAWfU0MQwjYY5Y7pbSSMYOlxcsOv/GGAiXAB4jIQ34thns2tvLOH9ieWC+HlC7XMLtO6wCKXfHM/acXnAr4Uv7VoymfeNstk2l47j4fSJTtU84D8srbhuuUrCnbBuSCg8UCLGLu48XFlx1w==
+Received: from MW3PR05CA0008.namprd05.prod.outlook.com (2603:10b6:303:2b::13)
+ by IA1PR12MB6329.namprd12.prod.outlook.com (2603:10b6:208:3e5::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Fri, 16 Aug
+ 2024 19:40:58 +0000
+Received: from SJ1PEPF0000231D.namprd03.prod.outlook.com
+ (2603:10b6:303:2b:cafe::ef) by MW3PR05CA0008.outlook.office365.com
+ (2603:10b6:303:2b::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.11 via Frontend
+ Transport; Fri, 16 Aug 2024 19:40:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SJ1PEPF0000231D.mail.protection.outlook.com (10.167.242.234) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7828.19 via Frontend Transport; Fri, 16 Aug 2024 19:40:57 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 16 Aug
+ 2024 12:40:49 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 16 Aug 2024 12:40:49 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Fri, 16 Aug 2024 12:40:49 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 4.19 000/196] 4.19.320-rc1 review
+In-Reply-To: <20240815131852.063866671@linuxfoundation.org>
+References: <20240815131852.063866671@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf report: Support --total-cycles --group in the tui
- mode
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: acme@kernel.org, irogers@google.com, peterz@infradead.org,
- mingo@kernel.org, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org
-References: <20240814141942.2513194-1-kan.liang@linux.intel.com>
- <CAM9d7ciPg_1DJ+gJxqU2O0nwX_L9-2+K+NkObq64e12_6vDA_g@mail.gmail.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <CAM9d7ciPg_1DJ+gJxqU2O0nwX_L9-2+K+NkObq64e12_6vDA_g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-ID: <f52d1e6f-f15b-4d01-be73-1280c52b6198@drhqmail203.nvidia.com>
+Date: Fri, 16 Aug 2024 12:40:49 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF0000231D:EE_|IA1PR12MB6329:EE_
+X-MS-Office365-Filtering-Correlation-Id: 52529c41-55e5-4463-b901-08dcbe2b5952
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OGNseHJsRDFnWEwvNFRCZy9xbzZkVDgwNzE2ZXNNcUNzbDNwSmZiaWFtcTRT?=
+ =?utf-8?B?ZEQwL0tlaDNCZkNCdis4bVo1Qnptc0pwOWo3SXJtdGpES2VZQ1VhamlSM3Va?=
+ =?utf-8?B?YTNTSlpEQUFYbURhekRGaVpyeDRmZVMyVGdqWlAvS0M0d0JabloraktWZzdW?=
+ =?utf-8?B?K2xkZFE1SmVxcWxqNXZTajl5MkR4RkUyaEdidlNQUzRRdXBiWU5IM3NCTEE0?=
+ =?utf-8?B?TENEdStYQVNWYVZwd01DSEhONG5CUXZrU0ZZQS9iUzFJSk5hVncrVGZYZTZB?=
+ =?utf-8?B?TFZJRjQyc05PYXM5NXMxUTc0SCtoYkUvbTlXNVZLUW1hZ1VBOGNUZWVMbzA0?=
+ =?utf-8?B?S2pTZXA5cStLS3FWSEREUzJ0d3p5UXV2NFZvTEZUSDhqNmpuYzdIaXM0REd1?=
+ =?utf-8?B?dW9JT3ZYdEQrQW10WWJVeFJNeHdaY3EydzgyalQ4d2xDUDRrUVdHZWlJR1VH?=
+ =?utf-8?B?bktIV1ZKcEx3ek5xU280dFUvWm0rVGo1NW12bVlxdVVmbEtNVjdYZXFtSTFr?=
+ =?utf-8?B?bXJyZ3YzNUx0V25uZlNGOExXSHREQitaRmU2Q1lkUkNvNUpJdXJzcWgvbEZy?=
+ =?utf-8?B?Kzh0ZjNPU3c3QlhFbGxJbWV4NGs5SVc4b01kaEFRdGVhQlZHS0hBUm1pcklS?=
+ =?utf-8?B?M3l3UXk5ekJ5QVB5OGxLYmNYa1A0alNhcnhQdmNlY2xheDdNSCsyUE52eFV0?=
+ =?utf-8?B?QUorb0g0cXJxU3B2QzlQdWdzU1VMdTVwekhFM1FIWXZPTlFYQmRJL3BLZGg4?=
+ =?utf-8?B?WFlRU0hLblFKM3Y1YjZtalBDQWY3K2pwRlhmWFBBN1l2WHZzY2FjTUhQMVl3?=
+ =?utf-8?B?NTZ1dTUxeWd3Z0ZQaWVkc1Y1cGdiTkQ0akdBcTFMbi9KZ2pXQmdUeHRhRzhO?=
+ =?utf-8?B?aXB3RzZyZXV5eFdEeDYvaU01WHh3czR4K0N0YlJwQU5tME5sYlNwY0orWDgy?=
+ =?utf-8?B?MGFlMk1Fdm9BWk5zZHBTbjRvc2c3ZjVMKzVpYkpkbE9iQURGYnZPMUhJWjdH?=
+ =?utf-8?B?b1ZOdVpYZFNiUmorU3UySUgrTFRtdjVZaEV2WjhYRlhJNzJRT1ZvVEhQMkQz?=
+ =?utf-8?B?Ly84NjVndHNCQU5FQ2dSVjlCQ2lqYm5oVjNtNVhkbWpLNWI4dWJhM0syM2o0?=
+ =?utf-8?B?ZXdWSlhMRHpXOVIzc2JGZGsvbkJ5WlYzcHhEOWZDMHhubDVwTDVyME9mNTlS?=
+ =?utf-8?B?ZXFaYzNpSDBmdC9JZDdPNmRhVGpLeTZ3WUZHY1g1dTA2Mm1WcTMxaU1Cb2g2?=
+ =?utf-8?B?Wkp1anBpN09UdEQyZHVxaTd6RklCc3hNNGJ0T2ZSdSt1N0Vsd0lFVFdQTXNy?=
+ =?utf-8?B?Z1JvTTJlM0xrU3RDNjdyVHJyTE1SU3RtVEZVdllENUZJMEM5VE0zWHNQY3J4?=
+ =?utf-8?B?U0V6dFRFTWRVMkd0a1k0MlFIMnVBcTI0Z1BCdnI2U1B3VkhzTFhTcE1vTjBL?=
+ =?utf-8?B?RG1UZk5yOUthTzAvUHMvczk2WHNLOXQ0NlIveGNwV05vd2dJSXE2QjFBeWFo?=
+ =?utf-8?B?L0VqbERlcnJJR2hnSXFRRzNQT3lrcHpnYWkxT2xmbll2dk16UVowMUsvTDBj?=
+ =?utf-8?B?NjJHeEc5N0pOTGRKL05HT1VON0RyQS8xRzZPMmhsdjNhY0txLzhnNWlSWHlq?=
+ =?utf-8?B?c2FBSFBWNGxLRURnYjZILzFLcjhxUWJWRk5qcGVyK2ZJbENIWFV5MTZJWHFU?=
+ =?utf-8?B?R1hmeitOUEhtR3FPSDJGN1lrQlluZjNhS2JicUVsNTZhYjdvZ0pqNXlXQ0RY?=
+ =?utf-8?B?VFQ0a2h4UGtKYnorcTl2bjBBamUrZ3duZE9xeHF6Y0U0Tlg1QTc3NFRwMjJO?=
+ =?utf-8?B?Y0NESDFSekdweHBLL1hkaVc0T3dtcnJqUXliSXkvWXZ5OU5zdVUxdXgxZFhX?=
+ =?utf-8?B?Qm50bUoxVkdDMENxTlU0b3EwbG5Pd1NqR083MlkrWTJXZkNBaXZwdVRGUnBm?=
+ =?utf-8?Q?/TG5jVku47WaRmSyufyouIboCa2JgY0A?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2024 19:40:57.0920
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 52529c41-55e5-4463-b901-08dcbe2b5952
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF0000231D.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6329
 
-
-
-On 2024-08-15 6:44 p.m., Namhyung Kim wrote:
-> Hi Kan,
+On Thu, 15 Aug 2024 15:21:57 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.320 release.
+> There are 196 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> On Wed, Aug 14, 2024 at 7:19 AM <kan.liang@linux.intel.com> wrote:
->>
->> From: Kan Liang <kan.liang@linux.intel.com>
->>
->> With the --total-cycles, the --group is only supported in the stdio
->> mode, but not supported in the tui mode. The output is inconsistent
->> with different modes.
->>
->> if symbol_conf.event_group is applied, always output the event group
->> information together in tui mode as well.
->>
->> $perf record -e "{cycles,instructions}",cache-misses -b sleep 1
->> $perf report --total-cycles --group --tui
->>
->> Before the patch,
->>
->> Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles                         [Pro
->>           6.45%            2.0K        0.57%         667    [dl-cacheinfo.h:164 -> dl
->>           5.62%            1.7K        0.74%         871            [dl-cache.c:230 -
->>           5.21%            1.6K        1.37%        1.6K          [setup-vdso.h:37 ->
->>           4.92%            1.5K        0.09%         109            [dl-cache.c:367 -
->>
->> Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles                         [Pro
->>           5.62%            1.7K        2.76%         871            [dl-cache.c:230 -
->>           4.92%            1.5K        0.35%         109            [dl-cache.c:367 -
->>           1.12%             346        0.55%         173
->>           0.87%             270        0.43%         135                    [rtld.c:5
->>           0.64%             197        0.03%           8      [dl-tunables.c:305 -> d
->>           0.60%             185        0.01%           3      [dl-tunables.c:305 -> d
->>
->> Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles                         [Pro
->>           5.90%            1.8K        1.28%        1.8K                  [strtod.c:8
->>           5.70%            1.8K        1.24%        1.8K            [strtod_l.c:681 -
->>           5.68%            1.8K        1.24%        1.8K            [strtod_l.c:508 -
->>           5.48%            1.7K        1.19%        1.7K          [strtod_l.c:1175 ->
->>           5.21%            1.6K        1.13%        1.6K          [setup-vdso.h:37 ->
->>
->> With the patch,
->>
->> Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles                         [Pro
->>           6.45%            2.0K        0.57%         667    [dl-cacheinfo.h:164 -> dl
->>           5.62%            1.7K        0.74%         871            [dl-cache.c:230 -
->>           5.21%            1.6K        1.37%        1.6K          [setup-vdso.h:37 ->
->>           4.92%            1.5K        0.09%         109            [dl-cache.c:367 -
+> Responses should be made by Sat, 17 Aug 2024 13:18:17 +0000.
+> Anything received after that time might be too late.
 > 
-> Hmm.. it seems the output just removed the second one.
-> I guess it should combine the first and second output somehow.
->
-
-The patch is just to make the behavior/output the same between --stdio
-and the tui mode for --group. I didn't change the algorithm of
-calculating the cycles.
-
-Yes, it looks suspicious. I will take a deep look and see how the group
-information are processed.
-
-Thanks,
-Kan
-
-> Thanks,
-> Namhyung
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.320-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
 > 
->>
->> Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles                         [Pro
->>           5.90%            1.8K        1.28%        1.8K                  [strtod.c:8
->>           5.70%            1.8K        1.24%        1.8K            [strtod_l.c:681 -
->>           5.68%            1.8K        1.24%        1.8K            [strtod_l.c:508 -
->>           5.48%            1.7K        1.19%        1.7K          [strtod_l.c:1175 ->
->>           5.21%            1.6K        1.13%        1.6K          [setup-vdso.h:37 ->
->>
->> Fixes: 7fa46cbf20d3 ("perf report: Sort by sampled cycles percent per block for tui")
->> Closes: https://lore.kernel.org/lkml/ZrupfUSZwem-hCZm@x1/
->> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
->> ---
->>  tools/perf/builtin-report.c    |  6 +++++-
->>  tools/perf/ui/browsers/hists.c | 12 ++++++++++--
->>  2 files changed, 15 insertions(+), 3 deletions(-)
->>
->> diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
->> index 1643113616f4..574342fb7269 100644
->> --- a/tools/perf/builtin-report.c
->> +++ b/tools/perf/builtin-report.c
->> @@ -541,7 +541,11 @@ static int evlist__tui_block_hists_browse(struct evlist *evlist, struct report *
->>         int i = 0, ret;
->>
->>         evlist__for_each_entry(evlist, pos) {
->> -               ret = report__browse_block_hists(&rep->block_reports[i++].hist,
->> +               i++;
->> +               if (symbol_conf.event_group && !evsel__is_group_leader(pos))
->> +                       continue;
->> +
->> +               ret = report__browse_block_hists(&rep->block_reports[i - 1].hist,
->>                                                  rep->min_percent, pos,
->>                                                  &rep->session->header.env);
->>                 if (ret != 0)
->> diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
->> index 49ba82bf3391..22af1a6e29d6 100644
->> --- a/tools/perf/ui/browsers/hists.c
->> +++ b/tools/perf/ui/browsers/hists.c
->> @@ -3665,11 +3665,19 @@ single_entry: {
->>  static int block_hists_browser__title(struct hist_browser *browser, char *bf,
->>                                       size_t size)
->>  {
->> -       struct hists *hists = evsel__hists(browser->block_evsel);
->> -       const char *evname = evsel__name(browser->block_evsel);
->> +       struct evsel *evsel = browser->block_evsel;
->> +       struct hists *hists = evsel__hists(evsel);
->>         unsigned long nr_samples = hists->stats.nr_samples;
->> +       const char *evname;
->> +       char buf[512];
->>         int ret;
->>
->> +       if (evsel__is_group_event(evsel)) {
->> +               evsel__group_desc(evsel, buf, sizeof(buf));
->> +               evname = buf;
->> +       } else
->> +               evname = evsel__name(evsel);
->> +
->>         ret = scnprintf(bf, size, "# Samples: %lu", nr_samples);
->>         if (evname)
->>                 scnprintf(bf + ret, size -  ret, " of event '%s'", evname);
->> --
->> 2.38.1
->>
+> thanks,
 > 
+> greg k-h
+
+All tests passing for Tegra ...
+
+Test results for stable-v4.19:
+    10 builds:	10 pass, 0 fail
+    20 boots:	20 pass, 0 fail
+    37 tests:	37 pass, 0 fail
+
+Linux version:	4.19.320-rc1-ged3349953afb
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
 
