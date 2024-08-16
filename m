@@ -1,148 +1,189 @@
-Return-Path: <linux-kernel+bounces-289629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F21B954878
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:02:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09CF5954885
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:09:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4200C1C22823
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:02:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B58CD28458A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B861B012B;
-	Fri, 16 Aug 2024 12:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4FB1B1427;
+	Fri, 16 Aug 2024 12:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lammGcz+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DoBwLVp8"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83878156F44;
-	Fri, 16 Aug 2024 12:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4448B13AA2B;
+	Fri, 16 Aug 2024 12:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723809752; cv=none; b=f+QLPcCuiXJcGdAHu60XxYHadWy33lav9wNM7+GVqnHYkW1MHFrtgZcspp1PfbOxdHnm+ydnp8t30j8FzwYppuwwckjCnrMTyWk+2uirsJR9Z0cD5WgpbaMsGhdKLOBW+4Wu34iMTDDfe9KfbfAQGagl26QBjvDol1nxkFPCTfQ=
+	t=1723810171; cv=none; b=O8zZXsiRkXGWQQV3c26STvQgIzdPA1adLRbmJa25noA0h0MjQkyPbxw5Jlrr5raNYtP6Gd9ZiygCD7rpeobr47wTV1QIY4T8mpbueFPZBL9g7J4tBgAuIMAS2zEob96ogqBNosELNII0E8wpYbOEUCKtckfKF2V5KCsG+3VmxGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723809752; c=relaxed/simple;
-	bh=oPeCvIbifLel6Ow5IZxAJAB7Vu3RJACPj3rWPilHCSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=te5ImRZvugcFy3zuE2UJRPaFLfcVdvhbmAOt5/QcuB8MHwgxjjZSJXeDijX2E38O2Sk9H9OB4ZmHnlmDpd10R99OO4FEGIsoJjsc8GB56ukj4s94RTXlKcy/c/ixpVzXVqJPUdG/g7QYNZm2J3G2cJ0AK5L9ydBuyRoW/Nav4dM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lammGcz+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D3A6C32782;
-	Fri, 16 Aug 2024 12:02:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723809752;
-	bh=oPeCvIbifLel6Ow5IZxAJAB7Vu3RJACPj3rWPilHCSM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lammGcz+t6OGLNs0WJ0Ion4Wo4GhurUkVu9VWiP20uUI84FAGr99BGSEVKLI3fz0A
-	 fdGUkReozzGf4aWRVUznXu1+ekkxTAXKX9asXpNuaMQ1tYN4asJdK2ScKq+YtJngv9
-	 eBTUzZ6sgM4PJfqhUUEouo3q1afG4J2UT9kK9sHh3i6JTPG7VScNqDMPYJjMiJ/yEb
-	 aDHpqxKNlUXj5jxTAw9xe58I5LaYxqrSdwd8JLqUkMgLqODMxadE/yFK1sG8NLIRrS
-	 rF0cmj1k6ZNEaPvijrCCoPuA1yH2NQ+PEC7/6R5P2m1BKIliB/yCGa8WCxE1omVOJe
-	 vrEUxH6ID2hnA==
-Date: Fri, 16 Aug 2024 13:02:22 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 05/40] arm64/gcs: Document the ABI for Guarded
- Control Stacks
-Message-ID: <7c17b28e-a5d1-4113-9580-9501692af513@sirena.org.uk>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-5-699e2bd2190b@kernel.org>
- <Zr8zTTrJ6M0SCvCV@arm.com>
+	s=arc-20240116; t=1723810171; c=relaxed/simple;
+	bh=ssDzuyZYKj2TsincB2yA+zCltvCHnFaG6dUqlEY8INw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=p7mmoaW8vJMjGpYiV5c50oILY58AnLmB/l4f2m5ctQeIe1SQaQk775rWrXg4YCx+lPz71A3WhzSfNfrlA4YxXnWyMAv9kQ63fpnukTTB/TXBmnujscdazTtTSbQPZz/myo48a/gsJt7XB9hTMAn64XfjCQ6+/PwMRmbJklTZ6kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DoBwLVp8; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47G71hI3032570;
+	Fri, 16 Aug 2024 12:04:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7+gfS5ltFtO1Jxub9Fy/GIcO9Ez0LcxryZ2AZ4lP5oA=; b=DoBwLVp8A/HVFgbg
+	f3c9qxQv329gLrejA+N/5q/HlbmxfZxcOEb7ZjS2p/IctLiBblg7e7NJe0XkvMnN
+	vIL+A6+seUlcfN4tsbOi1PBteodOc2BEuSf0jLZICy5rwnbYdOSXpa8zYJbPiNR/
+	sxvo84QdrLV3XpgV18cQXCumkqXwz1Pp3nOZevB7i8fdKk/5rvi6fenIMAlDKjs2
+	gqGYffJtulig9l2SzhQXyme7fkCg8qckugYKiMC3ey8R5XlMVztU4cJFGxg+58PN
+	s2IShPQdXrHtIqC7t2mzY7xqp3v+bEXRXUhyy0RxUXTUDj95nFBoK+oHs1FU+KIm
+	OPLgoA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4104382992-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Aug 2024 12:04:02 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47GC41OF017819
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Aug 2024 12:04:01 GMT
+Received: from [10.216.27.9] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 16 Aug
+ 2024 05:03:55 -0700
+Message-ID: <21fa1207-be83-ffdc-deab-81c070bb94c7@quicinc.com>
+Date: Fri, 16 Aug 2024 17:33:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="p6v+ZIr+kcIsmhYm"
-Content-Disposition: inline
-In-Reply-To: <Zr8zTTrJ6M0SCvCV@arm.com>
-X-Cookie: A Smith & Wesson beats four aces.
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH v2 00/16] Add cmd descriptor support
+To: Caleb Connolly <caleb.connolly@linaro.org>, <vkoul@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>,
+        <thara.gopinath@gmail.com>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>, <gustavoars@kernel.org>,
+        <u.kleine-koenig@pengutronix.de>, <kees@kernel.org>,
+        <agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>,
+        <quic_utiwari@quicinc.com>
+References: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
+ <f341e9e9-3da6-4029-9892-90e6ec856544@linaro.org>
+Content-Language: en-US
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+In-Reply-To: <f341e9e9-3da6-4029-9892-90e6ec856544@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: rr_TjtZmS9cGzTqFnZeuP3hLllP6xUtC
+X-Proofpoint-GUID: rr_TjtZmS9cGzTqFnZeuP3hLllP6xUtC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-16_03,2024-08-16_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1011
+ mlxlogscore=999 malwarescore=0 lowpriorityscore=0 phishscore=0 spamscore=0
+ bulkscore=0 suspectscore=0 adultscore=0 mlxscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408160088
 
 
---p6v+ZIr+kcIsmhYm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Fri, Aug 16, 2024 at 12:09:01PM +0100, Catalin Marinas wrote:
-> On Thu, Aug 01, 2024 at 01:06:32PM +0100, Mark Brown wrote:
+On 8/15/2024 6:38 PM, Caleb Connolly wrote:
+> Hi,
+> 
+> A note for future patches, please scope your cover letter subject:
+> 
+> "dmaengine: qcom: bam_dma: add cmd descriptor support"
 
-> > +* EL0 GCS entries with bit 63 set are reserved for use, one such use is defined
+   Sure will add this in next patch.
+> 
+> On 15/08/2024 10:57, Md Sadre Alam wrote:
+>> This series of patches will add command descriptor
+>> support to read/write crypto engine register via
+>> BAM/DMA
+>>
+>> We need this support because if there is multiple EE's
+>> (Execution Environment) accessing the same CE then there
+>> will be race condition. To avoid this race condition
+>> BAM HW hsving LOC/UNLOCK feature on BAM pipes and this
+>> LOCK/UNLOCK will be set via command descriptor only.
+>>
+>> Since each EE's having their dedicated BAM pipe, BAM allows
+>> Locking and Unlocking on BAM pipe. So if one EE's requesting
+>> for CE5 access then that EE's first has to LOCK the BAM pipe
+>> while setting LOCK bit on command descriptor and then access
+>> it. After finishing the request EE's has to UNLOCK the BAM pipe
+>> so in this way we race condition will not happen.
+>>
+>> tested with "tcrypt.ko" and "kcapi" tool.
+>>
+>> Need help to test these all the patches on msm platform
+> 
+> DT changes here are only for a few IPQ platforms, please explain in the cover letter if this is some IPQ specific feature which doesn't exist on other platforms, or if you're only enabling it on IPQ.
 
-> Maybe "reserved for specific uses". The proposed sentenced feels like
-> it's missing something.
+    This feature is BAM hardware feature so its applicable for all the QCOM Soc where bam is there. Its not IPQ specific. Will add all the explanation in cover letter in next patch
+> 
+> Some broad strokes testing instructions (at the very least) and requirements (testing on what hardware?) aren't made obvious at all here.
 
-Actually we removed the usage of bit 63 so I'll just drop this.
-
-> > +* When a new thread is created by a thread which has GCS enabled then a
-> > +  new Guarded Control Stack will be allocated for the new thread with
-> > +  half the size of the standard stack.
-
-> Is the half size still the case? It also seems a bit inconsistent to
-> have RLIMIT_STACK when GCS is enabled and half the stack size when a new
-> thread is created.
-
-Yes, this predates the rebase onto clone3() - I'll update.
-
-> [...]
-> > +* When a thread is freed the Guarded Control Stack initially allocated for
-> > +  that thread will be freed.  Note carefully that if the stack has been
-> > +  switched this may not be the stack currently in use by the thread.
-
-> Is this true for shadow stacks explicitly allocated by the user with
-> map_shadow_stack()?
-
-It is only true for the stacks allocaeted by the kernel, if we didn't
-allocate a stack we don't free it.
-
-> > +* The signal handler will use the same GCS as the interrupted context.
-
-> I assume this is true even with sigaltstack. Not easy to have
-> alternative shadow stack without additional ABI.
-
-Yes.
-
---p6v+ZIr+kcIsmhYm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma/P80ACgkQJNaLcl1U
-h9Dfgwf9EHMFRik1mUwmgRytVPWYPFLCBG8YZtDuO0Wxbs78KN6zc8ji2vFJ8lIJ
-B1hNUxCH6BOhm+AfFVF3zkoXZn+wjlPnLRGOPJUodgh27zecCwTCrwayO8ncECyf
-bIeq0XnjssL7P2A2wNVK0cFXU9W+Gw3OjVUAPUQmdC7lk6w4GwIMnpgQs1Vrueko
-IO1qBTeiV0rySxm/x0E14lq3kpX7eAcrBERnR+wfA17R4CtVClV2S1lT8YyUdYl7
-n81clFcHhylhTBz7napWIOchWjXqicUT7zqHLPKHMVxutUuuT1Mc+obOdDSUsdcl
-8qUKqX887cAFNJNPd+6Nlq+t+MtUZA==
-=6lHH
------END PGP SIGNATURE-----
-
---p6v+ZIr+kcIsmhYm--
+    Sure will update in cover letter in next patch.
+> 
+> Kind regards,
+>>
+>> v2:
+>>   * Addressed all the comments from v1
+>>   * Added the dt-binding
+>>   * Added locking/unlocking mechanism in bam driver
+>>
+>> v1:
+>>   * https://lore.kernel.org/lkml/20231214114239.2635325-1-quic_mdalam@quicinc.com/
+>>   * Initial set of patches for cmd descriptor support
+>>
+>> Md Sadre Alam (16):
+>>    dt-bindings: dma: qcom,bam: Add bam pipe lock
+>>    dmaengine: qcom: bam_dma: add bam_pipe_lock dt property
+>>    dmaengine: qcom: bam_dma: add LOCK & UNLOCK flag support
+>>    crypto: qce - Add support for crypto address read
+>>    crypto: qce - Add bam dma support for crypto register r/w
+>>    crypto: qce - Convert register r/w for skcipher via BAM/DMA
+>>    crypto: qce - Convert register r/w for sha via BAM/DMA
+>>    crypto: qce - Convert register r/w for aead via BAM/DMA
+>>    crypto: qce - Add LOCK and UNLOCK flag support
+>>    crypto: qce - Add support for lock aquire,lock release api.
+>>    crypto: qce - Add support for lock/unlock in skcipher
+>>    crypto: qce - Add support for lock/unlock in sha
+>>    crypto: qce - Add support for lock/unlock in aead
+>>    arm64: dts: qcom: ipq9574: enable bam pipe locking/unlocking
+>>    arm64: dts: qcom: ipq8074: enable bam pipe locking/unlocking
+>>    arm64: dts: qcom: ipq6018: enable bam pipe locking/unlocking
+>>
+>>   .../devicetree/bindings/dma/qcom,bam-dma.yaml |   8 +
+>>   arch/arm64/boot/dts/qcom/ipq6018.dtsi         |   1 +
+>>   arch/arm64/boot/dts/qcom/ipq8074.dtsi         |   1 +
+>>   arch/arm64/boot/dts/qcom/ipq9574.dtsi         |   1 +
+>>   drivers/crypto/qce/aead.c                     |   4 +
+>>   drivers/crypto/qce/common.c                   | 142 +++++++----
+>>   drivers/crypto/qce/core.c                     |  13 +-
+>>   drivers/crypto/qce/core.h                     |  12 +
+>>   drivers/crypto/qce/dma.c                      | 232 ++++++++++++++++++
+>>   drivers/crypto/qce/dma.h                      |  26 +-
+>>   drivers/crypto/qce/sha.c                      |   4 +
+>>   drivers/crypto/qce/skcipher.c                 |   4 +
+>>   drivers/dma/qcom/bam_dma.c                    |  14 +-
+>>   include/linux/dmaengine.h                     |   6 +
+>>   14 files changed, 424 insertions(+), 44 deletions(-)
+>>
+> 
 
