@@ -1,205 +1,115 @@
-Return-Path: <linux-kernel+bounces-290043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79EA0954EC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:28:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1482C954EC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:29:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3196728773C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:28:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4DBC286FF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5C51BF30B;
-	Fri, 16 Aug 2024 16:28:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FC16F2F0;
-	Fri, 16 Aug 2024 16:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144C51BE86C;
+	Fri, 16 Aug 2024 16:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SSrcELY+"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C41136E30;
+	Fri, 16 Aug 2024 16:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723825726; cv=none; b=p9YJ//iSVp1C6e/luaoj6SAVHfA5Yuvgav5a2u5HVDH/UTVatXpvDAPooSMOUMCQAA1kdzQ8sfw75BG4Cewmv80zNcA1pjd+h2nprwdGxK69GFIeO2S/vGOGfaFzEYC/jNXmh8dDIZcNlCsD9ErwSyOZaGIutuRkLO7AszLesro=
+	t=1723825737; cv=none; b=lGgp0zWiV9CU+eLcaKjavNyp4qpxjmdrvXazRKGmrtttm7+/6ZW0V4/wr50DJ/IqvjzZiW228sgIP6arUFzdfltc2hRwy+S3SrLWl/H4OQX5SUwK5jOxRxLqNIHzXwlYUpAB6A8z0NkYlSJwOgr8HZVpcNPrbXSgLiuAFJ+2OAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723825726; c=relaxed/simple;
-	bh=LVw0tx1utB3GHkbmshgKd2Ittj3SbfVwKa96NMxP6xk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bace3qbW0OqmsXOMF/F8vCBwBn/gIPIXNyI5clnycS04Y4UzC9jz+zPPDqdN4gwbvXUPgnnsjFZlndTmwfmPTlHB0YTQJ5sy6f+TYulmTIjN/86hWRajylkOk6qOXgfEQjQVuSSnwch+rwcugJ+FBGgn0+fDqpE5/SKW5jafufw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7AA0513D5;
-	Fri, 16 Aug 2024 09:29:08 -0700 (PDT)
-Received: from [10.1.196.28] (eglon.cambridge.arm.com [10.1.196.28])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7CBC13F58B;
-	Fri, 16 Aug 2024 09:28:38 -0700 (PDT)
-Message-ID: <2a65c646-ccd4-4e5e-bd1a-f56e69b1532c@arm.com>
-Date: Fri, 16 Aug 2024 17:28:37 +0100
+	s=arc-20240116; t=1723825737; c=relaxed/simple;
+	bh=0J+rLTMp8kiLZd1JqjyJt5eF9jyu5SOJIppMBhBEPCU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dVhHJu9Z9oFy6966YDxnXiBtXF1vgs6B6KlYs0wml/1HduxvylA3510QApDWmyEiNTH5WBuK6yvTfDvf1lp9fMdiJOLrThSffT/ZWR0aV36U7rK1PxbC97Ua4t/GixZqxvWODSZwWZhftLurOnRAzLXbNnny/DgYfti3jUJfkak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SSrcELY+; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=4yETDy6MieaRsK+UJbUVgFce/NUzNCq0nlWM4sO6NJ0=; b=SSrcELY+pxuudhB8eAMj5Qb8nK
+	ATzqkMhKMU84KnY4hQFZe/qm3oTvOyZN1lblqSbxv4lcyoXTVPEI5bvacTPXqRGOOz46ysRCzfT6R
+	QJjrcUoeoPFoezmHOxIDTuhKPKBtmFl1Fg2DMjEqrS4bz2bEGTT9jzNC+JzTnSlk9ZNJzwjEQBDPG
+	7OJ/oW3J3ahPTGgwidi7KCLBQCACNHdvD7loAIWyGiXn44UMLYqFm1AEqTfEPutpzjJ3kxfJvnqLe
+	nzultZDxbJS44Akl7bNgCJIT75yVLhOssFc2bmdMKUxeXDc3t8QAx3k8mu/0CoT+nAb6xKE+5BTbv
+	rTaKhNQw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sezoi-00000003ois-3CuC;
+	Fri, 16 Aug 2024 16:28:44 +0000
+Date: Fri, 16 Aug 2024 17:28:44 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org,
+	riel@surriel.com, shakeel.butt@linux.dev, roman.gushchin@linux.dev,
+	yuzhao@google.com, david@redhat.com, baohua@kernel.org,
+	ryan.roberts@arm.com, rppt@kernel.org, cerasuolodomenico@gmail.com,
+	corbet@lwn.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH v3 4/6] mm: Introduce a pageflag for partially mapped
+ folios
+Message-ID: <Zr9-PA8xBSJJzmdx@casper.infradead.org>
+References: <20240813120328.1275952-1-usamaarif642@gmail.com>
+ <20240813120328.1275952-5-usamaarif642@gmail.com>
+ <Zr9zx74W6-oRwKXB@casper.infradead.org>
+ <7e9e209b-b6b4-485b-ad43-9e1efbd63a7d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 21/22] x86/resctrl: Introduce interface to list monitor
- states of all the groups
-Content-Language: en-GB
-To: Babu Moger <babu.moger@amd.com>
-Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
- tj@kernel.org, peterz@infradead.org, yanjiewtw@gmail.com,
- kim.phillips@amd.com, lukas.bulwahn@gmail.com, seanjc@google.com,
- jmattson@google.com, leitao@debian.org, jpoimboe@kernel.org,
- rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
- jithu.joseph@intel.com, kai.huang@intel.com, kan.liang@linux.intel.com,
- daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
- ilpo.jarvinen@linux.intel.com, peternewman@google.com,
- maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, eranian@google.com,
- dave.hansen@linux.intel.com, tglx@linutronix.de, corbet@lwn.net,
- fenghua.yu@intel.com, reinette.chatre@intel.com, mingo@redhat.com,
- bp@alien8.de
-References: <cover.1722981659.git.babu.moger@amd.com>
- <821b725e9f00b4d423cc28d777d66d5681e1ba29.1722981659.git.babu.moger@amd.com>
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <821b725e9f00b4d423cc28d777d66d5681e1ba29.1722981659.git.babu.moger@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7e9e209b-b6b4-485b-ad43-9e1efbd63a7d@gmail.com>
 
-Hi Babu,
-
-On 06/08/2024 23:00, Babu Moger wrote:
-> Provide the interface to list the monitor states of all the resctrl
-> groups in ABMC mode.
+On Fri, Aug 16, 2024 at 05:08:35PM +0100, Usama Arif wrote:
+> On 16/08/2024 16:44, Matthew Wilcox wrote:
+> > On Tue, Aug 13, 2024 at 01:02:47PM +0100, Usama Arif wrote:
+> >> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+> >> index a0a29bd092f8..cecc1bad7910 100644
+> >> --- a/include/linux/page-flags.h
+> >> +++ b/include/linux/page-flags.h
+> >> @@ -182,6 +182,7 @@ enum pageflags {
+> >>  	/* At least one page in this folio has the hwpoison flag set */
+> >>  	PG_has_hwpoisoned = PG_active,
+> >>  	PG_large_rmappable = PG_workingset, /* anon or file-backed */
+> >> +	PG_partially_mapped, /* was identified to be partially mapped */
+> > 
+> > No, you can't do this.  You have to be really careful when reusing page
+> > flags, you can't just take the next one.  What made you think it would
+> > be this easy?
+> > 
+> > I'd suggest using PG_reclaim.  You also need to add PG_partially_mapped
+> > to PAGE_FLAGS_SECOND.  You might get away without that if you're
+> > guaranteeing it'll always be clear when you free the folio; I don't
+> > understand this series so I don't know if that's true or not.
 > 
-> Example:
-> $cat /sys/fs/resctrl/info/L3_MON/mbm_control
-> 
-> List follows the following format:
-> 
-> "<CTRL_MON group>/<MON group>/<domain_id>=<flags>"
-> 
-> Format for specific type of groups:
-> 
-> - Default CTRL_MON group:
->   "//<domain_id>=<flags>"
-> 
-> - Non-default CTRL_MON group:
->   "<CTRL_MON group>//<domain_id>=<flags>"
-> 
-> - Child MON group of default CTRL_MON group:
->   "/<MON group>/<domain_id>=<flags>"
-> 
-> - Child MON group of non-default CTRL_MON group:
->   "<CTRL_MON group>/<MON group>/<domain_id>=<flags>"
-> 
-> Flags can be one of the following:
-> t  MBM total event is enabled
-> l  MBM local event is enabled
-> tl Both total and local MBM events are enabled
-> _  None of the MBM events are enabled
+> I am really not sure what the issue is over here.
 
+You've made the code more fragile.  It might happen to work today, but
+you've either done something which is subtly broken today, or might
+break tomorrow when somebody else rearranges the flags without knowing
+about your fragility.
 
-> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> index d15fd1bde5f4..d7aadca5e4ab 100644
-> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> @@ -965,6 +965,75 @@ static int rdtgroup_num_mbm_cntrs_show(struct kernfs_open_file *of,
->  	return 0;
->  }
->  
-> +static char *rdtgroup_mon_state_to_str(struct rdtgroup *rdtgrp,
-> +				       struct rdt_mon_domain *d, char *str)
-> +{
-> +	char *tmp = str;
-> +	int index;
-> +
-> +	/*
-> +	 * Query the monitor state for the domain.
-> +	 * Index 0 for evtid == QOS_L3_MBM_TOTAL_EVENT_ID
-> +	 * Index 1 for evtid == QOS_L3_MBM_LOCAL_EVENT_ID
-> +	 */
-> +	index = mon_event_config_index_get(QOS_L3_MBM_TOTAL_EVENT_ID);
-> +	if (rdtgrp->mon.cntr_id[index] != MON_CNTR_UNSET &&
-> +	    test_bit(rdtgrp->mon.cntr_id[index], d->mbm_cntr_map))
-> +		*tmp++ = 't';
-> +
-> +	index = mon_event_config_index_get(QOS_L3_MBM_LOCAL_EVENT_ID);
-> +	if (rdtgrp->mon.cntr_id[index] != MON_CNTR_UNSET &&
-> +	    test_bit(rdtgrp->mon.cntr_id[index], d->mbm_cntr_map))
-> +		*tmp++ = 'l';
-> +
-> +	if (tmp == str)
-> +		*tmp++ = '_';
-> +
-> +	*tmp = '\0';
-> +	return str;
-> +}
-> +
-> +static int rdtgroup_mbm_control_show(struct kernfs_open_file *of,
-> +				     struct seq_file *s, void *v)
-> +{
-> +	struct rdt_resource *r = of->kn->parent->priv;
+> >From what I see, bits 0-7 of folio->_flags_1 are used for storing folio order, bit 8 for PG_has_hwpoisoned and bit 9 for PG_large_rmappable.
+> Bits 10 and above of folio->_flags_1 are not used any anywhere in the kernel. I am not reusing a page flag of folio->_flags_1, just taking an unused one.
 
-> +	struct rdt_hw_resource *hw_res = resctrl_to_arch_res(r);
+No, wrong.  PG_anon_exclusive is used on every page, including tail
+pages, and that's above bit 10.
 
-This is filesystem code, once it moves to /fs/ you can't grab an architecture specific
-struct like this. (suggestion below).
+> Please have a look at the next few lines of the patch. I have defined the functions as FOLIO_FLAG(partially_mapped, FOLIO_SECOND_PAGE). I believe thats what you are saying in your second paragraph?
+> I am not sure what you meant by using PG_reclaim.
 
+I mean:
 
-> +	struct rdt_mon_domain *dom;
-> +	struct rdtgroup *rdtg;
-> +	char str[10];
-
-Shouldn't new commands that might fail start with rdt_last_cmd_clear()?
-
-
-> +	if (!hw_res->mbm_cntr_assign_enabled) {
-
-I think this should be wrapped up as:
-| resctrl_arch_mbm_cntr_assign_test(r)
-
-as this flag is private to the architecture.
-
-
-> +		rdt_last_cmd_puts("ABMC feature is not enabled\n");
-
-lockdep barks that you need to hold rdtgroup_mutex when calling rdt_last_cmd_puts() -
-otherwise this can run in parallel with another syscall.
-
-
-> +		return -EINVAL;
-> +	}
-> +
-> +	mutex_lock(&rdtgroup_mutex);
-> +
-> +	list_for_each_entry(rdtg, &rdt_all_groups, rdtgroup_list) {
-> +		struct rdtgroup *crg;
-> +
-> +		seq_printf(s, "%s//", rdtg->kn->name);
-> +
-> +		list_for_each_entry(dom, &r->mon_domains, hdr.list)
-> +			seq_printf(s, "%d=%s;", dom->hdr.id,
-> +				   rdtgroup_mon_state_to_str(rdtg, dom, str));
-> +		seq_putc(s, '\n');
-> +
-> +		list_for_each_entry(crg, &rdtg->mon.crdtgrp_list,
-> +				    mon.crdtgrp_list) {
-> +			seq_printf(s, "%s/%s/", rdtg->kn->name, crg->kn->name);
-> +
-> +			list_for_each_entry(dom, &r->mon_domains, hdr.list)
-> +				seq_printf(s, "%d=%s;", dom->hdr.id,
-> +					   rdtgroup_mon_state_to_str(crg, dom, str));
-> +			seq_putc(s, '\n');
-> +		}
-> +	}
-> +
-> +	mutex_unlock(&rdtgroup_mutex);
-> +	return 0;
-> +}
-
-
-Thanks,
-
-James
+-	PG_usama_new_thing,
++	PG_usama_new_thing = PG_reclaim,
 
 
