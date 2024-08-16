@@ -1,64 +1,73 @@
-Return-Path: <linux-kernel+bounces-290438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B0569553D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:42:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E7C29553DA
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:43:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FD3128402C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:42:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91F11B2363D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D27148304;
-	Fri, 16 Aug 2024 23:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866CA14830D;
+	Fri, 16 Aug 2024 23:42:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QDAkDbQz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JqgFDO9H"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0EFA145FEE;
-	Fri, 16 Aug 2024 23:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2173E147C96;
+	Fri, 16 Aug 2024 23:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723851730; cv=none; b=CZL98p1P07Egd9LF0pBDkFsWM2G6X2YsFMY/ZuAnBBYbzZHqPeLG9cuFjvX3hnjE7XdMCm0c1v6rX99IMpFlWoGIlGtamaAK7aeqgiy331WCGE/vCZH7I/5/bBg8ZbpE944pm/7ewp5ZS2+BdrvY1PbHUrUMEAIashGGgFve4kE=
+	t=1723851768; cv=none; b=A5LZOe0wcNoZUS52JVOkAERx8w9qpkcsf6k3+Qr7ZYFX62vtX5JlTpkCzCqKnWej9zhwaSrRc6wElAY2v9QErhYxCa+MfqOvf6wdtjSjDuRXJ8gHaL8bRpL4lRyNS9eP5JeANCJZSK+wSaXNbDiZEv4rOiZ5wz4Rv/iFJyWlJcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723851730; c=relaxed/simple;
-	bh=G60JncDBVFyhl3xMoGYe1WnXKeXowI4N88FhHjdyLNw=;
+	s=arc-20240116; t=1723851768; c=relaxed/simple;
+	bh=Od8uOqD1E0LkGzBeMxbp6AiUK3x8htxNRrjfVi6rVBA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XUhx6iRICDPMrAnZYWOPoNaoOV9BYc94W5GqT4ofgqHlOWUA+Aopf9t2JElpGzNgJOM+4KY3muQHBL72rOHryF8fXmxZz3c+KV9YjN/KURfWzgHaX0gCI+eGK3+MK9xqxzLOiLzmDWsck5yxSkYZUsu3AcqgRW2f38qZPdH7+n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QDAkDbQz; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723851727; x=1755387727;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=G60JncDBVFyhl3xMoGYe1WnXKeXowI4N88FhHjdyLNw=;
-  b=QDAkDbQzGo3soAwIcsmiYJcf+6ncIszjw4StFx08y8G+qm23XTuJ9F3F
-   EJj9rxN3q8xXdwvkgZq8AdtN4wmxFLXMHjeHJmPjw1rkmQPuAIUtxztT4
-   xZ1NvlE0TXceuSq3IuNwu9rMVi4kN4Gm8jbMtwxiLSUV8gnwqdrJO9U0/
-   vQ3jCF0mEniAutPmKrl4gtvEu3wThgdqLD6Y5mLoR/u+XUm50JXpHLykI
-   2OBroUCR9jd0SvaRVzktqMWTWayNukuKJQLkVIpc/Y9Kas+/Sz5y9cJuH
-   LSo7wFRCfK3wTc9ZwtU/FUTypLm6FC9OgLc/P2DV/OlDZotOoIOwEFxDI
-   A==;
-X-CSE-ConnectionGUID: /hEcEV2FQn6aG7or2ZIW9A==
-X-CSE-MsgGUID: Fg9x9qWtR7Sbsj4xcexs9w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="13063641"
-X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
-   d="scan'208";a="13063641"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 16:42:06 -0700
-X-CSE-ConnectionGUID: 6hOFfSD0QWiuQmdHcTDxtA==
-X-CSE-MsgGUID: 0ps8p1hWT5Oa/0gRUBG9AA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
-   d="scan'208";a="59842503"
-Received: from unknown (HELO [10.125.111.71]) ([10.125.111.71])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 16:42:04 -0700
-Message-ID: <8649e30c-a43a-4096-a32f-e31bf3e71d90@intel.com>
-Date: Fri, 16 Aug 2024 16:42:03 -0700
+	 In-Reply-To:Content-Type; b=ATvf+R6yjm6KfRF7odSx0zKAY6oR+ljXNXaLMH9Tx95GGTQk8VYfKVkuiuvcn5ZO0m8D1IPBkpqyeV47rvgpArxmkbZrxwF2GJSK5XHDZsoIugfVR3jhkxqP8KSGhzL+Q80QuHUM5aHpiNHZyV3CWhHf0/O361/i38DXi/qKEcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JqgFDO9H; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7aac70e30dso282848066b.1;
+        Fri, 16 Aug 2024 16:42:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723851765; x=1724456565; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RH/rPI35J13TIcTmDXM4xAWE7+R4US73obFliUuHk8g=;
+        b=JqgFDO9HnePD3FSIVqKOCKL4hQ/bDPRXcX21yc5UQDaEoA680zVrew1MUIodnY9DIZ
+         tqrGZcgrPFSUV8D/lLx0hyfiPf9/GFtF0Ij57UkxZ5tBXAhZTrwpBXZwluq8aQR1O1e+
+         NKsssX4xE1+yGBpF1iylYpeXGg9WmDDxr+q350agiRH72thCQIRZDVx27FXw+6xnLveK
+         feUa2QFI1ehVv+oV4PqhwMiXFhM4UuUyVETF3/qJZX6Yq9XopO5oswZMseaTKvG6bVYu
+         dnjEl1BqNaWAQCxLe/ZqPFjW/LolwF2cUH51UmD2q13aUXrqeOSMy7yky2c1liVK0NCw
+         BXMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723851765; x=1724456565;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RH/rPI35J13TIcTmDXM4xAWE7+R4US73obFliUuHk8g=;
+        b=f6LOK0b+vTfspMeumvK0Fc9KGzP83GoTFYk/xoUZ+Su0N8jQS+Ves1gsMbzKExzxrL
+         +KAttAjQ4/6Viz/aoUhVDgcmK6bT1rS73PeUt+bcW0MvqD5kQm0krQ7yCcbPDLWe7dsI
+         5dLq6jVgLhysyHEiDMF+2UCDRwulQeQJIafMdlwFab10d2xAuttP55kBpustNp9lyxN3
+         4mhmTq6w3rzUgJ1Xisl4IvscDpDvT+AY6NNPUW28OUEZxOACKnzoMRJRMWhl+o/64yA5
+         axVCojyre03eoS62+oqNdPpP/ZxvVD6fQK87pg8Js69d57O5VQP2W5UjyP5GghwhZBf5
+         88qg==
+X-Forwarded-Encrypted: i=1; AJvYcCWhQLiJ8hYTV9klv0R/mVjcIoQiSBVrG2Ql5M8CmZyh22kJYtJnX6cye+02DopHyc7A3Xxo4DoenAPxIiXeKagVr8K5e/iQVs0gqXifcho11THW8OIGVS7Mnbs9AnEts/kCdKjKLIck4DORyw==
+X-Gm-Message-State: AOJu0YzlLoibRqxrjVFZ/2fxSrQR+eM9C0Awjd6MIjQbgvnt9pze4Zxd
+	wEiipz2CnnKEv6pWKrwfSapY/412WD4fqvpycJnOiCTvv0zJAiwf
+X-Google-Smtp-Source: AGHT+IFHh3rJK/WkfcHOF52rAbjLG1pNSReXF3Ompen1dC2c00uCWocEwRcDw+ckHU2wnMDrRLmmaA==
+X-Received: by 2002:a17:907:7fa5:b0:a80:aefa:14d3 with SMTP id a640c23a62f3a-a8392a4128amr351909366b.63.1723851764930;
+        Fri, 16 Aug 2024 16:42:44 -0700 (PDT)
+Received: from [192.168.1.13] (host-95-235-164-146.retail.telecomitalia.it. [95.235.164.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a838393599asm319803166b.132.2024.08.16.16.42.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Aug 2024 16:42:44 -0700 (PDT)
+Message-ID: <78d36089-5a65-41b3-a9fa-102266736d9b@gmail.com>
+Date: Sat, 17 Aug 2024 01:42:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,205 +75,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 11/25] cxl/mem: Expose DCD partition capabilities in
- sysfs
-To: ira.weiny@intel.com, Fan Ni <fan.ni@samsung.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Dan Williams <dan.j.williams@intel.com>,
- Davidlohr Bueso <dave@stgolabs.net>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, linux-btrfs@vger.kernel.org,
- linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, nvdimm@lists.linux.dev
-References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
- <20240816-dcd-type2-upstream-v3-11-7c9b96cba6d7@intel.com>
+Subject: Re: [PATCH 0/7] Preemption support for A7XX
+To: Rob Clark <robdclark@gmail.com>
+Cc: Sean Paul <sean@poorly.run>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Sharat Masetty <smasetty@codeaurora.org>
+References: <20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com>
+ <CAF6AEGsiu2OBbwQJO5nS55CAQtCvKebc59-mu2h0BDiu4C2gxg@mail.gmail.com>
 Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20240816-dcd-type2-upstream-v3-11-7c9b96cba6d7@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Antonino Maniscalco <antomani103@gmail.com>
+In-Reply-To: <CAF6AEGsiu2OBbwQJO5nS55CAQtCvKebc59-mu2h0BDiu4C2gxg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 8/16/24 7:47 PM, Rob Clark wrote:
+> On Thu, Aug 15, 2024 at 11:27 AM Antonino Maniscalco
+> <antomani103@gmail.com> wrote:
+>>
+>> This series implements preemption for A7XX targets, which allows the GPU to
+>> switch to an higher priority ring when work is pushed to it, reducing latency
+>> for high priority submissions.
+>>
+>> This series enables L1 preemption with skip_save_restore which requires
+>> the following userspace patches to function:
+>>
+>> https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/30544
+>>
+>> A flag is added to `msm_gem_submit` to only allow submissions from compatible
+>> userspace to be preempted, therefore maintaining compatibility.
+> 
+> I guess this last para is from an earlier iteration of this series?
+> Looks like instead you are making this a submitqueue flag (which is an
+> approach that I prefer)
+> 
+> BR,
+> -R
+> 
 
+That is correct, I got confused on which one I ended up going with when 
+I wrote that.
 
-On 8/16/24 7:44 AM, ira.weiny@intel.com wrote:
-> From: Navneet Singh <navneet.singh@intel.com>
-> 
-> To properly configure CXL regions on Dynamic Capacity Devices (DCD),
-> user space will need to know the details of the DC partitions available.
-> 
-> Expose dynamic capacity capabilities through sysfs.
-> 
-> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
-> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> 
-> ---
-> Changes:
-> [iweiny: remove review tags]
-> [Davidlohr/Fan/Jonathan: omit 'dc' attribute directory if device is not DC]
-> [Jonathan: update documentation for dc visibility]
-> [Jonathan: Add a comment to DC region X attributes to ensure visibility checks work]
-> [iweiny: push sysfs version to 6.12]
-> ---
->  Documentation/ABI/testing/sysfs-bus-cxl | 12 ++++
->  drivers/cxl/core/memdev.c               | 97 +++++++++++++++++++++++++++++++++
->  2 files changed, 109 insertions(+)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-cxl b/Documentation/ABI/testing/sysfs-bus-cxl
-> index 957717264709..6227ae0ab3fc 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-cxl
-> +++ b/Documentation/ABI/testing/sysfs-bus-cxl
-> @@ -54,6 +54,18 @@ Description:
->  		identically named field in the Identify Memory Device Output
->  		Payload in the CXL-2.0 specification.
->  
-> +What:		/sys/bus/cxl/devices/memX/dc/region_count
-> +		/sys/bus/cxl/devices/memX/dc/regionY_size
+Thanks for spotting it!
 
-Just make it into 2 separate entries?
+>> Some commits from this series are based on a previous series to enable
+>> preemption on A6XX targets:
+>>
+>> https://lkml.kernel.org/1520489185-21828-1-git-send-email-smasetty@codeaurora.org
+>>
+>> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+>> ---
+>> Antonino Maniscalco (7):
+>>        drm/msm: Fix bv_fence being used as bv_rptr
+>>        drm/msm: Add submitqueue setup and close
+>>        drm/msm: Add a `preempt_record_size` field
+>>        drm/msm/A6xx: Implement preemption for A7XX targets
+>>        drm/msm/A6xx: Add traces for preemption
+>>        drm/msm/A6XX: Add a flag to allow preemption to submitqueue_create
+>>        drm/msm/A6xx: Enable preemption for A7xx targets
+>>
+>>   drivers/gpu/drm/msm/Makefile              |   1 +
+>>   drivers/gpu/drm/msm/adreno/a6xx_catalog.c |   3 +
+>>   drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 339 ++++++++++++++++++++++-
+>>   drivers/gpu/drm/msm/adreno/a6xx_gpu.h     | 168 ++++++++++++
+>>   drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 441 ++++++++++++++++++++++++++++++
+>>   drivers/gpu/drm/msm/adreno/adreno_gpu.h   |   1 +
+>>   drivers/gpu/drm/msm/msm_gpu.h             |   7 +
+>>   drivers/gpu/drm/msm/msm_gpu_trace.h       |  28 ++
+>>   drivers/gpu/drm/msm/msm_ringbuffer.h      |   8 +
+>>   drivers/gpu/drm/msm/msm_submitqueue.c     |  10 +
+>>   include/uapi/drm/msm_drm.h                |   5 +-
+>>   11 files changed, 995 insertions(+), 16 deletions(-)
+>> ---
+>> base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+>> change-id: 20240815-preemption-a750-t-fcee9a844b39
+>>
+>> Best regards,
+>> --
+>> Antonino Maniscalco <antomani103@gmail.com>
+>>
 
-DJ
-> +Date:		August, 2024
-> +KernelVersion:	v6.12
-> +Contact:	linux-cxl@vger.kernel.org
-> +Description:
-> +		(RO) Dynamic Capacity (DC) region information.  The dc
-> +		directory is only visible on devices which support Dynamic
-> +		Capacity.
-> +		The region_count is the number of Dynamic Capacity (DC)
-> +		partitions (regions) supported on the device.
-> +		regionY_size is the size of each of those partitions.
->  
->  What:		/sys/bus/cxl/devices/memX/pmem/qos_class
->  Date:		May, 2023
-> diff --git a/drivers/cxl/core/memdev.c b/drivers/cxl/core/memdev.c
-> index 0277726afd04..7da1f0f5711a 100644
-> --- a/drivers/cxl/core/memdev.c
-> +++ b/drivers/cxl/core/memdev.c
-> @@ -101,6 +101,18 @@ static ssize_t pmem_size_show(struct device *dev, struct device_attribute *attr,
->  static struct device_attribute dev_attr_pmem_size =
->  	__ATTR(size, 0444, pmem_size_show, NULL);
->  
-> +static ssize_t region_count_show(struct device *dev, struct device_attribute *attr,
-> +				 char *buf)
-> +{
-> +	struct cxl_memdev *cxlmd = to_cxl_memdev(dev);
-> +	struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlmd->cxlds);
-> +
-> +	return sysfs_emit(buf, "%d\n", mds->nr_dc_region);
-> +}
-> +
-> +static struct device_attribute dev_attr_region_count =
-> +	__ATTR(region_count, 0444, region_count_show, NULL);
-> +
->  static ssize_t serial_show(struct device *dev, struct device_attribute *attr,
->  			   char *buf)
->  {
-> @@ -448,6 +460,90 @@ static struct attribute *cxl_memdev_security_attributes[] = {
->  	NULL,
->  };
->  
-> +static ssize_t show_size_regionN(struct cxl_memdev *cxlmd, char *buf, int pos)
-> +{
-> +	struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlmd->cxlds);
-> +
-> +	return sysfs_emit(buf, "%#llx\n", mds->dc_region[pos].decode_len);
-> +}
-> +
-> +#define REGION_SIZE_ATTR_RO(n)						\
-> +static ssize_t region##n##_size_show(struct device *dev,		\
-> +				     struct device_attribute *attr,	\
-> +				     char *buf)				\
-> +{									\
-> +	return show_size_regionN(to_cxl_memdev(dev), buf, (n));		\
-> +}									\
-> +static DEVICE_ATTR_RO(region##n##_size)
-> +REGION_SIZE_ATTR_RO(0);
-> +REGION_SIZE_ATTR_RO(1);
-> +REGION_SIZE_ATTR_RO(2);
-> +REGION_SIZE_ATTR_RO(3);
-> +REGION_SIZE_ATTR_RO(4);
-> +REGION_SIZE_ATTR_RO(5);
-> +REGION_SIZE_ATTR_RO(6);
-> +REGION_SIZE_ATTR_RO(7);
-> +
-> +/*
-> + * RegionX attributes must be listed in order and first in this array to
-> + * support the visbility checks.
-> + */
-> +static struct attribute *cxl_memdev_dc_attributes[] = {
-> +	&dev_attr_region0_size.attr,
-> +	&dev_attr_region1_size.attr,
-> +	&dev_attr_region2_size.attr,
-> +	&dev_attr_region3_size.attr,
-> +	&dev_attr_region4_size.attr,
-> +	&dev_attr_region5_size.attr,
-> +	&dev_attr_region6_size.attr,
-> +	&dev_attr_region7_size.attr,
-> +	&dev_attr_region_count.attr,
-> +	NULL,
-> +};
-> +
-> +static umode_t cxl_memdev_dc_attr_visible(struct kobject *kobj, struct attribute *a, int n)
-> +{
-> +	struct device *dev = kobj_to_dev(kobj);
-> +	struct cxl_memdev *cxlmd = to_cxl_memdev(dev);
-> +	struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlmd->cxlds);
-> +
-> +	/* Not a memory device */
-> +	if (!mds)
-> +		return 0;
-> +
-> +	if (a == &dev_attr_region_count.attr)
-> +		return a->mode;
-> +
-> +	/*
-> +	 * Show only the regions supported, regionX attributes are first in the
-> +	 * list
-> +	 */
-> +	if (n < mds->nr_dc_region)
-> +		return a->mode;
-> +
-> +	return 0;
-> +}
-> +
-> +static bool cxl_memdev_dc_group_visible(struct kobject *kobj)
-> +{
-> +	struct device *dev = kobj_to_dev(kobj);
-> +	struct cxl_memdev *cxlmd = to_cxl_memdev(dev);
-> +	struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlmd->cxlds);
-> +
-> +	/* No DC regions */
-> +	if (!mds || mds->nr_dc_region == 0)
-> +		return false;
-> +	return true;
-> +}
-> +
-> +DEFINE_SYSFS_GROUP_VISIBLE(cxl_memdev_dc);
-> +
-> +static struct attribute_group cxl_memdev_dc_group = {
-> +	.name = "dc",
-> +	.attrs = cxl_memdev_dc_attributes,
-> +	.is_visible = SYSFS_GROUP_VISIBLE(cxl_memdev_dc),
-> +};
-> +
->  static umode_t cxl_memdev_visible(struct kobject *kobj, struct attribute *a,
->  				  int n)
->  {
-> @@ -528,6 +624,7 @@ static const struct attribute_group *cxl_memdev_attribute_groups[] = {
->  	&cxl_memdev_ram_attribute_group,
->  	&cxl_memdev_pmem_attribute_group,
->  	&cxl_memdev_security_attribute_group,
-> +	&cxl_memdev_dc_group,
->  	NULL,
->  };
->  
-> 
+Best regards,
+-- 
+Antonino Maniscalco <antomani103@gmail.com>
+
 
