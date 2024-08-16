@@ -1,140 +1,297 @@
-Return-Path: <linux-kernel+bounces-290331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2043955252
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:26:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 435F6955254
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:27:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 695F42834B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:26:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B84B11F244F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:27:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3EAC1C463F;
-	Fri, 16 Aug 2024 21:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D35F1C579C;
+	Fri, 16 Aug 2024 21:27:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="UKETg2Fa"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qhwwgOzz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBCF1C460C
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 21:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DE781AD7;
+	Fri, 16 Aug 2024 21:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723843610; cv=none; b=Jhg9Pw9U+UUE9H45R6VBzWcPNDLFTjENm6wtMS/tyECofINbkCYF6OKFWmSCIRmmrcJibqBAZcq5I89d4qYN18qK5nrhsFOdc8eUClZ5gRVc3oFy8/BQxheiJ3X3N2RyoFbZt0Q9y0hhKA+/dQbUA1yokQAqbxu2F7OEJYx71mw=
+	t=1723843662; cv=none; b=J3j4xxyx8OFMvlKmSQdnDmtGnm1b/9RK5VIHcaoMISPOPNeXnc/QE18l7qHTiQY8CGyCQlT3ANyIML2uYbFqTkdjtbRDFczsupbfexx6vGXZYEl+ANmrG9GhEKJmeKrKv64aApVdQPIFfYPpoSwEA/DKwFkAemidJFs+3FvBJCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723843610; c=relaxed/simple;
-	bh=D4cYVKJZMtkqJ9AH3ighYYzvw72p0dCyhKoG69sakaY=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To; b=HdHsrg+W7j9oRwWoWHz/VqlJLBw/ej++wMoV7VwpHUppWLuVN4n0G3K8GBQhW62aVvLFH29rORybo1tHehNiJ2HaH4e6I/d1ySwForLRwUHrDxVANw8WRDxrn/yMQ4SSBy9nfFjrm8PHAFu01/7J+lPpjZc8ombjrKRdGZjNmT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=UKETg2Fa; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [IPV6:2601:646:8002:4641:eb14:ad94:2806:1c1a] ([IPv6:2601:646:8002:4641:eb14:ad94:2806:1c1a])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 47GLQ8Y63454923
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 16 Aug 2024 14:26:09 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 47GLQ8Y63454923
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024071601; t=1723843572;
-	bh=+7Vt5KAXlnvFFbfmtpWyM730Kav07i6jWX89zUHR6os=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UKETg2FaVwLo3nFcfUKzDI9P/uTelW9SBQzhisfB1Vk7ZLRitd7SZa1+BghB7sfFZ
-	 AbqlWGfAToPmtssu7v5et8t1Xo8MSy3hX8S2WXvEa+IJkMpT+DPa1mu48gaWjhA2xR
-	 gJsdlfv5fmdKkvd3ZMczZS1D7/4mSgfmS22QlcXuWlXHvjZ4Qj599PlupjWV/GdUUG
-	 qbzld+AEsDNlNODTf63ep0b6Apzy9LgD6Eytuzw7T295lLZCiL6bXZn0XYeyr+N0qh
-	 vEsvM5SuLjESA9FxDPaTZjZgXRmgL29r18Gexu6cWFQngYY/6ZFesvNrnlt06lGzsz
-	 C+aZmn0nk9xpQ==
-Content-Type: multipart/mixed; boundary="------------eEzwgDqgLY0cwdRptC9Ae9Ma"
-Message-ID: <4f7566b5-a743-4819-b221-88207c132f63@zytor.com>
-Date: Fri, 16 Aug 2024 14:26:03 -0700
+	s=arc-20240116; t=1723843662; c=relaxed/simple;
+	bh=nB7RxrnkIVm50snYE//BPyweHApZH+gsW/nw8YAi54g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tQYksONiNNwGt8uo6sBqUCMisEbOoVrWt+gj5+ehKwOQzQ8zu3fe7WKSsgkvk0mygPYWWOxUn6UYgf2W37WLAt/ifC5T18L77ge+ozIOYzikJfF0XPYYoO/Y8lN72fMmY1Wxpc+yD5rOwVb8owglq+07B/WCaGy6UG+i4T7aT6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qhwwgOzz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56D80C32782;
+	Fri, 16 Aug 2024 21:27:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723843662;
+	bh=nB7RxrnkIVm50snYE//BPyweHApZH+gsW/nw8YAi54g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qhwwgOzzgyCvbZNFrbpRHjV0NoeqojEnmEgM5lHW15QkKUQqX8uIFS420OYRilZ9s
+	 EG5n3wryZ57mVmqVWG8nRW+i0y9Gp+G7v/peqPkLnbfI7poCs5Pj3pI+zhNFtr9BbP
+	 Lw/sH6tKyR/wTvVp1J6XTJBWAcNoq1FjnBLOq4ligugdkQSxKzFVvhEQa4wm0l+Lg3
+	 UUGYkuQoUJgRv7857zSDdVOTF5cgg6adRVtYayanWfSPXXrS6uTvCF9w1ueJpOUDTV
+	 O1NegIWFngk53Zp/roRnaYEG+Tojk/xcmuEPAxavsIB9N+7KVshV9rBinGlmohu+Ei
+	 I35BH0ukCnbng==
+Date: Fri, 16 Aug 2024 15:27:41 -0600
+From: Rob Herring <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"moderated list:ARM/FREESCALE LAYERSCAPE ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v2 1/1] dt-bindings: board: convert fsl-board.txt to yaml
+Message-ID: <20240816212741.GA2225734-robh@kernel.org>
+References: <20240813163638.3889778-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] x86/msr: Switch between WRMSRNS and WRMSR with the
- alternatives mechanism
-To: Andrew Cooper <andrew.cooper3@citrix.com>, Xin Li <xin@zytor.com>,
-        linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, peterz@infradead.org,
-        seanjc@google.com
-References: <20240807054722.682375-1-xin@zytor.com>
- <20240807054722.682375-3-xin@zytor.com>
- <e18cd005-24ef-497d-b39c-74a54d89a969@citrix.com>
- <7c09d124-08f1-40b4-813c-f0f74e19497a@zytor.com>
- <25200a9d-e222-4c40-9c97-b5e5e532db8c@citrix.com>
-Content-Language: en-US
-From: "H. Peter Anvin" <hpa@zytor.com>
-In-Reply-To: <25200a9d-e222-4c40-9c97-b5e5e532db8c@citrix.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240813163638.3889778-1-Frank.Li@nxp.com>
 
-This is a multi-part message in MIME format.
---------------eEzwgDqgLY0cwdRptC9Ae9Ma
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-On 8/16/24 11:40, Andrew Cooper wrote:
->>
->> As the CALL instruction is 5-byte long, and we need to pad nop for both
->> WRMSR and WRMSRNS, what about not using segment prefix at all?
+On Tue, Aug 13, 2024 at 12:36:29PM -0400, Frank Li wrote:
+> Convert binding doc fsl-board.txt to yaml format. split to 3 part
+> fsl,bcsr.yaml, fsl,fpga-qixis.yaml, fsl,fpga-qixis-i2c.yaml
 > 
-
-You can use up to 4 prefixes of any kind (which includes opcode prefixes 
-before 0F) before most decoders start hurting, so we can pad it out to 5 
-bytes by doing 3f 3f .. .. ..
-
+> Additional change for fsl,fpga-qixis.yaml
+> - Add childnode mdio-mux-emi*
+> - Add compatible string fsl,ls1043aqds-fpga, fsl,ls1043ardb-fpga,
+> fsl,ls1046aqds-fpga, fsl,ls1046ardb-fpga, fsl,ls208xaqds-fpga,
+> fsl,ls1043ardb-cpld, fsl,ls1046ardb-cpld, fsl,ls1088aqds-fpga,
+> fsl,ls1088ardb-fpga, fsl,ls2080aqds-fpga, fsl,ls2080ardb-fpga.
+> - Change address to 32bit in example.
 > 
-> My suggestion, not that I've had time to experiment, was to change
-> paravirt to use a non-C ABI and have asm_xen_write_msr() recombine
-> edx:eax into rsi.  That way the top level wrmsr() retains sensible
-> codegen for native even when paravirt is active.
+> Additional change for fsl,fpga-qixis-i2c.yaml
+> - Add mux-controller
+> - Add compatible string fsl,ls1028aqds-fpga, fsl,lx2160aqds-fpga
 > 
+> Fix below warning:
+> 
+> arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dtb: /soc/i2c@2000000/fpga@66: failed to match any schema with compatible: ['fsl,ls1028aqds-fpga', 'fsl,fpga-qixis-i2c', 'simple-mfd']
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Change from v1 to v2
+> - drop description in fsl,bcsr.yaml
+> - bsc9132qds is too old, their dts have not simple-mfd.
+> - split qixis-i2c compatible to two group, one with simple-mfd and the
+> other one without simple-mfd.
+> - Add new full example for ls1028
+> - Remove [0-9], keep @ for mdio-mux-emi. Dts need be update to avoid
+> warning
+> - fix typo dt-binding in subject
+> ---
+>  .../devicetree/bindings/board/fsl,bcsr.yaml   | 32 ++++++++
+>  .../bindings/board/fsl,fpga-qixis-i2c.yaml    | 70 ++++++++++++++++
+>  .../bindings/board/fsl,fpga-qixis.yaml        | 81 +++++++++++++++++++
+>  .../devicetree/bindings/board/fsl-board.txt   | 81 -------------------
+>  .../boot/dts/freescale/fsl-ls1043a-qds.dts    |  2 +-
+>  5 files changed, 184 insertions(+), 82 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/board/fsl,bcsr.yaml
+>  create mode 100644 Documentation/devicetree/bindings/board/fsl,fpga-qixis-i2c.yaml
+>  create mode 100644 Documentation/devicetree/bindings/board/fsl,fpga-qixis.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/board/fsl-board.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/board/fsl,bcsr.yaml b/Documentation/devicetree/bindings/board/fsl,bcsr.yaml
+> new file mode 100644
+> index 0000000000000..df3dd8399671f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/board/fsl,bcsr.yaml
+> @@ -0,0 +1,32 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/board/fsl,bcsr.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Board Control and Status
+> +
+> +maintainers:
+> +  - Frank Li <Frank.Li@nxp.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - fsl,mpc8360mds-bcsr
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    board@f8000000 {
+> +        compatible = "fsl,mpc8360mds-bcsr";
+> +        reg = <0xf8000000 0x8000>;
+> +    };
+> +
+> diff --git a/Documentation/devicetree/bindings/board/fsl,fpga-qixis-i2c.yaml b/Documentation/devicetree/bindings/board/fsl,fpga-qixis-i2c.yaml
+> new file mode 100644
+> index 0000000000000..28b37772fb656
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/board/fsl,fpga-qixis-i2c.yaml
+> @@ -0,0 +1,70 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/board/fsl,fpga-qixis-i2c.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Freescale on-board FPGA connected on I2C bus
+> +
+> +maintainers:
+> +  - Frank Li <Frank.Li@nxp.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - fsl,bsc9132qds-fpga
+> +          - const: fsl,fpga-qixis-i2c
+> +      - items:
+> +          - enum:
+> +              - fsl,ls1028aqds-fpga
+> +              - fsl,lx2160aqds-fpga
+> +          - const: fsl,fpga-qixis-i2c
+> +          - const: simple-mfd
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  mux-controller:
+> +    $ref: /schemas/mux/reg-mux.yaml
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        board-control@66 {
+> +            compatible = "fsl,bsc9132qds-fpga", "fsl,fpga-qixis-i2c";
+> +            reg = <0x66>;
+> +        };
+> +    };
+> +
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        board-control@66 {
+> +            compatible = "fsl,ls1028aqds-fpga", "fsl,fpga-qixis-i2c",
+> +                         "simple-mfd";
+> +            reg = <0x66>;
+> +
+> +            mux-controller {
+> +                compatible = "reg-mux";
+> +                #mux-control-cells = <1>;
+> +                mux-reg-masks = <0x54 0xf0>; /* 0: reg 0x54, bits 7:4 */
+> +            };
+> +        };
+> +    };
+> +
+> diff --git a/Documentation/devicetree/bindings/board/fsl,fpga-qixis.yaml b/Documentation/devicetree/bindings/board/fsl,fpga-qixis.yaml
+> new file mode 100644
+> index 0000000000000..4d4eb45ce64cd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/board/fsl,fpga-qixis.yaml
+> @@ -0,0 +1,81 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/board/fsl,fpga-qixis.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Freescale on-board FPGA/CPLD
+> +
+> +maintainers:
+> +  - Frank Li <Frank.Li@nxp.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - const: fsl,p1022ds-fpga
+> +          - const: fsl,fpga-ngpixis
+> +      - items:
+> +          - enum:
+> +              - fsl,ls1088aqds-fpga
+> +              - fsl,ls1088ardb-fpga
+> +              - fsl,ls2080aqds-fpga
+> +              - fsl,ls2080ardb-fpga
+> +          - const: fsl,fpga-qixis
+> +      - items:
+> +          - enum:
+> +              - fsl,ls1043aqds-fpga
+> +              - fsl,ls1043ardb-fpga
+> +              - fsl,ls1046aqds-fpga
+> +              - fsl,ls1046ardb-fpga
+> +              - fsl,ls208xaqds-fpga
+> +          - const: fsl,fpga-qixis
+> +          - const: simple-mfd
+> +      - enum:
+> +          - fsl,ls1043ardb-cpld
+> +          - fsl,ls1046ardb-cpld
+> +          - fsl,t1040rdb-cpld
+> +          - fsl,t1042rdb-cpld
+> +          - fsl,t1042rdb_pi-cpld
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 1
+> +
+> +  ranges:
+> +    maxItems: 1
+> +
+> +patternProperties:
+> +  '^mdio-mux-emi@[a-f0-9]+$':
 
-I have attached what should be an "obvious" example... famous last words.
+If we're going to update the dts file, this should be 'mdio-mux@'. I'll 
+fix this when applying. The rest looks good.
 
-	-hpa
+Note that p5040ds.dts has 2 nodes at the same reg address, but different 
+bit offsets. The way we handle that is adding the register starting bit 
+offset to the unit-address like this:
 
---------------eEzwgDqgLY0cwdRptC9Ae9Ma
-Content-Type: text/plain; charset=UTF-8; name="xen.S"
-Content-Disposition: attachment; filename="xen.S"
-Content-Transfer-Encoding: base64
+mdio-mux@9,1 (mux-mask 0x6)
+mdio-mux@9,3 (mux-mask 0x78)
 
-LyoKICogSW5wdXQgaW4gJXJheCwgTVNSIG51bWJlciBpbiAlZWN4CiAqICVyZHggaXMgY2xv
-YmJlcmVkLCBhcyB0aGUgbmF0aXZlIHN0dWIgaXMgYXNzdW1lZCB0byBkbwogKgogKiBDaGFu
-Z2UgeGVuX2RvX3dyaXRlX21zciB0byByZXR1cm4gaXRzIGVycm9yIGNvZGUgaW5zdGVhZAog
-KiBvZiBwYXNzaW5nIGEgcG9pbnRlcgktIHRoaXMgZ2l2ZXMgdGhlIGV4dHJhIGJlbmVmaXQg
-dGhhdAogKiB3ZSBjYW4gZ2V0IHRoZSAqYWN0dWFsIGludm9jYXRpb24gYWRkcmVzcyogaW4g
-dGhlIGVycm9yCiAqIG1lc3NhZ2VzLgogKgogKiBleF9oYW5kbGVyX21zcigpIHNob3VsZCBi
-ZSBjaGFuZ2VkIHRvIGdldCB0aGUgTVNSIGRhdGEKICogZnJvbSAlcmF4IHJlZ2FyZGxlc3Mg
-b2YgWGVuIHZzIG5hdGl2ZTsgYWx0ZXJuYXRpdmVseSB0aGUKICogWGVuIGhhbmRsZXIgY2Fu
-IHNldCB1cCAlZWR4IGFzIHdlbGwuCiAqCiAqIExldCB0aGUgbmF0aXZlIHBhdHRlcm4gbG9v
-ayBsaWtlOgogKgogKiA0OCA4OSBjMiAgICAgICAgICAgICAgICBtb3YgICAgJXJheCwlcmR4
-CiAqIDQ4IGMxIGVhIDIwICAgICAgICAgICAgIHNociAgICAkMzIsJXJkeAogKiAzZSAwZiAz
-MCAgICAgICAgICAgICAgICBkcyB3cm1zcgkJPC0tLSB0cmFwIHBvaW50CiAqCiAqIC4uLiB3
-aGljaCBjYW4gYmUgcmVwbGFjZWQgd2l0aCAuLi4KICogNDggODkgYzIgICAgICAgICAgICAg
-ICAgbW92ICAgICVyYXgsJXJkeAogKiA0OCBjMSBlYSAyMCAgICAgICAgICAgICBzaHIgICAg
-JDMyLCVyZHgKICogMGYgMDEgYzYgICAgICAgICAgICAgICAgd3Jtc3JucwkJPC0tLSB0cmFw
-IHBvaW50CiAqCiAqIC4uLiBvciAuLi4KICogZTggeHggeHggeHggeHggICAgICAgICAgY2Fs
-bCBhc21feGVuX3dyaXRlX21zcgogKiA3NCAwMiAgICAgICAgICAgICAgICAgICBqeiAxZgog
-KiAzZSAwZiAwYiAgICAgICAgICAgICAgICBkcyB1ZDIgICAgICAgICAgICAgICAgICA8LS0t
-IHRyYXAgcG9pbnQKICogICAgICAgICAgICAgICAgICAgICAgMToKICogZHMgdWQyIGNhbiBv
-ZiBjb3Vyc2UgYmUgcmVwbGFjZWQgd2l0aCBhbnkgb3RoZXIgMy1ieXRlIHRyYXBwaW5nCiAq
-IGluc3RydWN0aW9uLgogKgogKiBUaGlzIGFsc28gcmVtb3ZlcyB0aGUgbmVlZCBmb3IgWGVu
-IHRvIG1haW50YWluIGRpZmZlcmVudCBzYWZlIGFuZAogKiB1bnNhZmUgTVNSIHJvdXRpbmVz
-LCBhcyB0aGUgZGlmZmVyZW5jZSBpcyBoYW5kbGVkIGJ5IHRoZSBzYW1lCiAqIHRyYXAgaGFu
-ZGxlciBhcyBpcyB1c2VkIG5hdGl2ZWx5LgogKi8KIFNZTV9GVU5DX1NUQVJUKGFzbV94ZW5f
-d3JpdGVfbXNyKQoJRlJBTUVfQkVHSU4KCXB1c2ggJXJheAkJLyogU2F2ZSBpbiBjYXNlIG9m
-IGVycm9yICovCglwdXNoICVyY3gKCXB1c2ggJXJzaQoJcHVzaCAlcmRpCglwdXNoICVyOAoJ
-cHVzaCAlcjkKCXB1c2ggJXIxMAoJcHVzaCAlcjExCgltb3YgJXJheCwlcmRpCgltb3YgJWVj
-eCwlZXNpCgljYWxsIHhlbl9kb193cml0ZV9tc3IKCXRlc3QgJWVheCwlZWF4CQkvKiBaRj0w
-IG9uIGVycm9yICovCglwb3AgJXIxMQoJcG9wICVyMTAKCXBvcCAlcjkKCXBvcCAlcjgKCXBv
-cCAlcmRpCglwb3AgJXJzaQoJcG9wICVyY3gKI2lmZGVmIE9QVElPTkFMCgltb3YgNCglcnNw
-KSwlZWR4CiNlbmRpZgoJcG9wICVyYXgKCUZSQU1FX0VORAoJUkVUClNZTV9GVU5DX0VORChh
-c21feGVuX3dyaXRlX21zcikK
-
---------------eEzwgDqgLY0cwdRptC9Ae9Ma--
+Rob
 
