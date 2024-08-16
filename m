@@ -1,205 +1,147 @@
-Return-Path: <linux-kernel+bounces-290176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BC9495504D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:55:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13C86955051
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CA731F27079
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:55:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3614C1C21A19
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 785071C3F34;
-	Fri, 16 Aug 2024 17:54:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6556A1C3F2F;
-	Fri, 16 Aug 2024 17:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31681C37BE;
+	Fri, 16 Aug 2024 17:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="drtO67jT"
+Received: from nbd.name (nbd.name [46.4.11.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 379771BDABF;
+	Fri, 16 Aug 2024 17:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723830862; cv=none; b=EsM3ZBcbiVRQjT1zmaRJD3BiI1dmT9IsYNjr9AdUdzBCO1wKei08Nuh5LNRjiOt1TAcmBzY9bimCnGV9hiYSPqrVeMBX7xedqj7EO7U9gUz4GR/IT00cpZtB9Jnkre1PGDhybfolY2ibOWb/3yq9neNEnBIZFrJrMCWdVrdOtLA=
+	t=1723830887; cv=none; b=EkFSRbzX+EezKCzpAjlRnWzueS6ROJQ9RcRyvyEk31+OX0tBY17hfqAqjXZ5Otn25QnLVn9zoxP0HoY21iWT6BwaUS/ELXLzrUXA9ivnzRUHnlXdXigRCXpW7F/nZE7y61pO0xzCQP1MGG0pDgLvUT6Tmtr8T/q61Ec+UhD/xWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723830862; c=relaxed/simple;
-	bh=21bmq1wZojonL5BW0KyWR9WylEzTTKYZDupzBC5feD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ok4rveaZbnY49Rddq++k531qBlpK2JYMCz5glYLDwsa826ptJPDIM5QSdHSvDVkGctjZnu5sdQH44w+HfqYfwpj7PJSju54TkAR/tolTukXhK4CORSCk/sDTICHGMD6DLpRr72Df00ZypYvpZcEVjYXV/GNTz/noT5vIq6WisOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6AC8113D5;
-	Fri, 16 Aug 2024 10:54:44 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AFDC83F6A8;
-	Fri, 16 Aug 2024 10:54:16 -0700 (PDT)
-Date: Fri, 16 Aug 2024 18:54:14 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE" <arm-scmi@vger.kernel.org>,
-	"moderated list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE" <linux-arm-kernel@lists.infradead.org>,
-	justin.chen@broadcom.com, opendmb@gmail.com,
-	kapil.hali@broadcom.com, bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH v2 2/2] firmware: arm_scmi: Support 'reg-io-width'
- property for shared memory
-Message-ID: <Zr-SRo10QtSh4G9R@pluto>
-References: <20240813180747.1439034-1-florian.fainelli@broadcom.com>
- <20240813180747.1439034-3-florian.fainelli@broadcom.com>
- <Zr-GJts3Gu6GEkhC@pluto>
- <345aca0f-12f0-4a66-a760-3b8524fda7fe@broadcom.com>
+	s=arc-20240116; t=1723830887; c=relaxed/simple;
+	bh=HMB0d+zljnptTuvZ1g8V5KUfYZO4UpuXN546qJSAXp8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=evC2Ab/dGwfTk3Zi1+tLH5iQ4Fg91oAX43qjtXDmrwfIvqbjcEF6ZbW5KRpLpDIB673yRGPOxAiaQyqILxmgiF+VzB/s76Ppy3OiVOr+vqojE8ck4ND3hLVv6zGXTPsIMk3Aw0+kG8Hm/OOdvfEXwlvNe0y7vY1umzyToxYyE2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=drtO67jT; arc=none smtp.client-ip=46.4.11.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
+	s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ux1Pje6IouuaMV0vQ1FJ2Gn5ipMIE7UWoQgOp5npzjk=; b=drtO67jTe4JWRWo5YsvE0LF9zJ
+	xJPioUbqZb8A1vrMJ9br1FZmcWlJJh0aTDsxFIfC6VgA5gDJDwGcb0UmChB4BuQNRR+S1DcZrr82h
+	f3EUA4yjstdJX+q2pk08eWOPY/qh/FP2aVhX3LIJl2/Ohxv5CZellCQ8O5t9bTVeJ01U=;
+Received: from p54ae95e7.dip0.t-ipconnect.de ([84.174.149.231] helo=nf.local)
+	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96)
+	(envelope-from <nbd@nbd.name>)
+	id 1sf19c-000OvR-1u;
+	Fri, 16 Aug 2024 19:54:24 +0200
+Message-ID: <e7435c73-1d01-40e8-82b3-4e5456fccf2f@nbd.name>
+Date: Fri, 16 Aug 2024 19:54:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <345aca0f-12f0-4a66-a760-3b8524fda7fe@broadcom.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: mac80211: Fix ieee80211_convert_to_unicast() logic
+To: Jeff Johnson <quic_jjohnson@quicinc.com>,
+ =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+ Johannes Berg <johannes@sipsolutions.net>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Michael Braun <michael-dev@fami-braun.de>
+Cc: Harsh Kumar Bijlani <hbijlani@qti.qualcomm.com>,
+ Kalyan Tallapragada <ktallapr@qti.qualcomm.com>,
+ Jyothi Chukkapalli <jchukkap@qti.qualcomm.com>,
+ Anirban Sirkhell <anirban@qti.qualcomm.com>,
+ Johannes Berg <johannes.berg@intel.com>, linux-wireless@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ath12k@lists.infradead.org
+References: <20240815-ieee80211_convert_to_unicast-v1-1-648f0c195474@quicinc.com>
+ <877ccgd7re.fsf@toke.dk> <229bcc37-de76-40ea-a30a-14e54a73265d@quicinc.com>
+From: Felix Fietkau <nbd@nbd.name>
+Content-Language: en-US
+Autocrypt: addr=nbd@nbd.name; keydata=
+ xsDiBEah5CcRBADIY7pu4LIv3jBlyQ/2u87iIZGe6f0f8pyB4UjzfJNXhJb8JylYYRzIOSxh
+ ExKsdLCnJqsG1PY1mqTtoG8sONpwsHr2oJ4itjcGHfn5NJSUGTbtbbxLro13tHkGFCoCr4Z5
+ Pv+XRgiANSpYlIigiMbOkide6wbggQK32tC20QxUIwCg4k6dtV/4kwEeiOUfErq00TVqIiEE
+ AKcUi4taOuh/PQWx/Ujjl/P1LfJXqLKRPa8PwD4j2yjoc9l+7LptSxJThL9KSu6gtXQjcoR2
+ vCK0OeYJhgO4kYMI78h1TSaxmtImEAnjFPYJYVsxrhay92jisYc7z5R/76AaELfF6RCjjGeP
+ wdalulG+erWju710Bif7E1yjYVWeA/9Wd1lsOmx6uwwYgNqoFtcAunDaMKi9xVQW18FsUusM
+ TdRvTZLBpoUAy+MajAL+R73TwLq3LnKpIcCwftyQXK5pEDKq57OhxJVv1Q8XkA9Dn1SBOjNB
+ l25vJDFAT9ntp9THeDD2fv15yk4EKpWhu4H00/YX8KkhFsrtUs69+vZQwc0cRmVsaXggRmll
+ dGthdSA8bmJkQG5iZC5uYW1lPsJgBBMRAgAgBQJGoeQnAhsjBgsJCAcDAgQVAggDBBYCAwEC
+ HgECF4AACgkQ130UHQKnbvXsvgCgjsAIIOsY7xZ8VcSm7NABpi91yTMAniMMmH7FRenEAYMa
+ VrwYTIThkTlQzsFNBEah5FQQCACMIep/hTzgPZ9HbCTKm9xN4bZX0JjrqjFem1Nxf3MBM5vN
+ CYGBn8F4sGIzPmLhl4xFeq3k5irVg/YvxSDbQN6NJv8o+tP6zsMeWX2JjtV0P4aDIN1pK2/w
+ VxcicArw0VYdv2ZCarccFBgH2a6GjswqlCqVM3gNIMI8ikzenKcso8YErGGiKYeMEZLwHaxE
+ Y7mTPuOTrWL8uWWRL5mVjhZEVvDez6em/OYvzBwbkhImrryF29e3Po2cfY2n7EKjjr3/141K
+ DHBBdgXlPNfDwROnA5ugjjEBjwkwBQqPpDA7AYPvpHh5vLbZnVGu5CwG7NAsrb2isRmjYoqk
+ wu++3117AAMFB/9S0Sj7qFFQcD4laADVsabTpNNpaV4wAgVTRHKV/kC9luItzwDnUcsZUPdQ
+ f3MueRJ3jIHU0UmRBG3uQftqbZJj3ikhnfvyLmkCNe+/hXhPu9sGvXyi2D4vszICvc1KL4RD
+ aLSrOsROx22eZ26KqcW4ny7+va2FnvjsZgI8h4sDmaLzKczVRIiLITiMpLFEU/VoSv0m1F4B
+ FtRgoiyjFzigWG0MsTdAN6FJzGh4mWWGIlE7o5JraNhnTd+yTUIPtw3ym6l8P+gbvfoZida0
+ TspgwBWLnXQvP5EDvlZnNaKa/3oBes6z0QdaSOwZCRA3QSLHBwtgUsrT6RxRSweLrcabwkkE
+ GBECAAkFAkah5FQCGwwACgkQ130UHQKnbvW2GgCeMncXpbbWNT2AtoAYICrKyX5R3iMAoMhw
+ cL98efvrjdstUfTCP2pfetyN
+In-Reply-To: <229bcc37-de76-40ea-a30a-14e54a73265d@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 16, 2024 at 10:39:42AM -0700, Florian Fainelli wrote:
-> On 8/16/24 10:02, Cristian Marussi wrote:
-> > On Tue, Aug 13, 2024 at 11:07:47AM -0700, Florian Fainelli wrote:
-> > > Some shared memory areas might only support a certain access width,
-> > > such as 32-bit, which memcpy_{from,to}_io() does not adhere to at least
-> > > on ARM64 by making both 8-bit and 64-bit accesses to such memory.
-> > > 
-> > > Update the shmem layer to support reading from and writing to such
-> > > shared memory area using the specified I/O width in the Device Tree. The
-> > > various transport layers making use of the shmem.c code are updated
-> > > accordingly to pass the I/O accessors that they store.
-> > > 
-> > 
-> > Hi Florian,
-> > 
-
-Hi,
-
-> > I gave it ago at this on a JUNO regarding the mailbox/shmem transport
-> > without any issue. I'll have a go later on an OPTEE/shmem scenario too.
-> > 
-> > This looks fundamentally good to me, since you moved all ops setup at
-> > setup time and you keep the pointers per-channel instead of global...
+On 16.08.24 16:30, Jeff Johnson wrote:
+> On 8/16/2024 4:31 AM, Toke Høiland-Jørgensen wrote:
+>> Jeff Johnson <quic_jjohnson@quicinc.com> writes:
+>> 
+>>> The current logic in ieee80211_convert_to_unicast() uses skb_clone()
+>>> to obtain an skb for each individual destination of a multicast
+>>> frame, and then updates the destination address in the cloned skb's
+>>> data buffer before placing that skb on the provided queue.
+>>>
+>>> This logic is flawed since skb_clone() shares the same data buffer
+>>> with the original and the cloned skb, and hence each time the
+>>> destination address is updated, it overwrites the previous destination
+>>> address in this shared buffer. As a result, due to the special handing
+>>> of the first valid destination, all of the skbs will eventually be
+>>> sent to that first destination.
+>> 
+>> Did you actually observe this happen in practice? ieee80211_change_da()
+>> does an skb_ensure_writable() check on the Ethernet header before
+>> writing it, so AFAICT it does not, in fact, overwrite the data of the
+>> original frame.
 > 
-> Thanks!
->
-
-[snip]
- 
-> > > +
-> > 
-> > There are a bunch of warn/errs from checkpatch --strict, beside the volatile
-> > here and on the previous typedefs, also about args reuse and trailing semicolon
-> > in these macros...
+> I'm proxying this change for our internal team, and they have observed that
+> unicast frames are not being sent to the separate STAs.
 > 
-> I don't think we can silence the volatile ones, checkpatch --strict did not
-> complain about the typedefs in my case, what did it look like in yours?
+> In response to your reply I went through the code again and it seems the
+> manner in which this functionality fails isn't as it was described to me.
+> 
+> Instead this functionality fails because we'd fail on the first
+> ieee80211_change_da() call and hence goto multicast and where only the
+> original skb would be queued and transmitted as a multicast frame
+> 
+> So the original logic is still faulty, only the actual faulty behavior is not
+> being described correctly: instead of sending multiple unicast frames to the
+> same STA we'd send a single multicast frame.
 
-...I dont get warns on new typedefs..only on volatile and macro args
-reuse
+While I agree with switching over to skb_copy (or maybe pskb_copy to 
+reduce realloc on fragmented skbs), it's still not clear to me why 
+ieee80211_change_da fails. It should detect that the packet was cloned, 
+letting pskb_expand_head reallocate the head of the skb.
 
+Please run some more tests to figure out the exact reason for the 
+failure. There might be another hidden bug lurking there, which would 
+get papered over by this change.
 
----8<---
-
-WARNING: Use of volatile is usually wrong: see Documentation/process/volatile-considered-harmful.rst
-#36: FILE: drivers/firmware/arm_scmi/common.h:322:
-+typedef void (*shmem_copy_toio_t)(volatile void __iomem *to, const void *from,
-
-WARNING: Use of volatile is usually wrong: see Documentation/process/volatile-considered-harmful.rst
-#38: FILE: drivers/firmware/arm_scmi/common.h:324:
-+typedef void (*shmem_copy_fromio_t)(void *to, const volatile void __iomem *from,
-
-CHECK: Macro argument reuse 'amt' - possible side-effects?
-#94: FILE: drivers/firmware/arm_scmi/shmem.c:37:
-+#define SHMEM_IO_OPS(w, s, amt)						\
-+static inline void shmem_memcpy_fromio##s(void *to,			\
-+					  const volatile void __iomem *from, \
-+					  size_t count)			\
-+{									\
-+	while (count) {							\
-+		*(u##s *)to = __raw_read##w(from);			\
-+		from += amt;						\
-+		to += amt;						\
-+		count -= amt;						\
-+	}								\
-+}									\
-+static inline void shmem_memcpy_toio##s(volatile void __iomem *to,	\
-+					const void *from,		\
-+					size_t count)			\
-+{									\
-+	while (count) {							\
-+		__raw_write##w(*(u##s *)from, to);			\
-+		from += amt;						\
-+		to += amt;						\
-+		count -= amt;						\
-+	}								\
-+}									\
-+static struct scmi_shmem_io_ops shmem_io_ops##s = {			\
-+	.fromio	= shmem_memcpy_fromio##s,				\
-+	.toio	= shmem_memcpy_toio##s,					\
-+};
-
-WARNING: macros should not use a trailing semicolon
-#94: FILE: drivers/firmware/arm_scmi/shmem.c:37:
-+#define SHMEM_IO_OPS(w, s, amt)						\
-+static inline void shmem_memcpy_fromio##s(void *to,			\
-+					  const volatile void __iomem *from, \
-+					  size_t count)			\
-+{									\
-+	while (count) {							\
-+		*(u##s *)to = __raw_read##w(from);			\
-+		from += amt;						\
-+		to += amt;						\
-+		count -= amt;						\
-+	}								\
-+}									\
-+static inline void shmem_memcpy_toio##s(volatile void __iomem *to,	\
-+					const void *from,		\
-+					size_t count)			\
-+{									\
-+	while (count) {							\
-+		__raw_write##w(*(u##s *)from, to);			\
-+		from += amt;						\
-+		to += amt;						\
-+		count -= amt;						\
-+	}								\
-+}									\
-+static struct scmi_shmem_io_ops shmem_io_ops##s = {			\
-+	.fromio	= shmem_memcpy_fromio##s,				\
-+	.toio	= shmem_memcpy_toio##s,					\
-+};
-
-WARNING: Use of volatile is usually wrong: see Documentation/process/volatile-considered-harmful.rst
-#96: FILE: drivers/firmware/arm_scmi/shmem.c:39:
-+					  const volatile void __iomem *from, \
-
-WARNING: Use of volatile is usually wrong: see Documentation/process/volatile-considered-harmful.rst
-#106: FILE: drivers/firmware/arm_scmi/shmem.c:49:
-+static inline void shmem_memcpy_toio##s(volatile void __iomem *to,	\
-
-WARNING: Use of volatile is usually wrong: see Documentation/process/volatile-considered-harmful.rst
-#128: FILE: drivers/firmware/arm_scmi/shmem.c:71:
-+				       const volatile void __iomem *from,
-
-WARNING: Use of volatile is usually wrong: see Documentation/process/volatile-considered-harmful.rst
-#134: FILE: drivers/firmware/arm_scmi/shmem.c:77:
-+static inline void shmem_memcpy_toio(volatile void __iomem *to,
-
-total: 0 errors, 7 warnings, 1 checks, 312 lines checked
-
-NOTE: For some of the reported defects, checkpatch may be able to
-      mechanically convert to the typical style using --fix or --fix-inplace.
-
-"[PATCH] firmware: arm_scmi: Support 'reg-io-width' property for" has style problems, please review.
-
-NOTE: If any of the errors are false positives, please report
-      them to the maintainer, see CHECKPATCH in MAINTAINERS.
-
----8<----
-
+- Felix
 
