@@ -1,143 +1,178 @@
-Return-Path: <linux-kernel+bounces-289059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9B9D9541AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:25:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8046D9541B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:26:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 833DF285525
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:25:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B35BF1C2389B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD0D129A78;
-	Fri, 16 Aug 2024 06:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B866B81AD7;
+	Fri, 16 Aug 2024 06:26:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BK4tfzQl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eYBLnIjh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDE784A32;
-	Fri, 16 Aug 2024 06:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BE17DA7C;
+	Fri, 16 Aug 2024 06:26:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723789513; cv=none; b=HnZSfKtpqOobD+LXs59e98ZWfc6F1TyUoPxRLDfytuSjY9J3P7FhBgja3qeI0KruaPLx1R87K7icRpZFF2WUQyARBwLSEHOS0Bznrx7z+hFqNcX7niBfL914YIuOituFtvffMjDu6Tz5Ew9OPSkr6oIVxb8Htq1+69ggUDPBI6Y=
+	t=1723789565; cv=none; b=Cx/V7KRdsxr4k6Zw/mzwnSlD9WgWsO5gYQFAjUlaDn4EsaWI6KXC1BtQtEvRSnJztOeTaNCkvbA9BhT49RZw1m5r1mz69fBN8ksKLAzb5snUthNSApneNKNmVPTUtAU3Yrpp9Rbcw3DlSLiyQcehdBnI/r7sU8aLOcN1etBH1Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723789513; c=relaxed/simple;
-	bh=i2n12+ScGrT1bI73kq3wV+iMxq9iQfyx5iyATix3BBI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=njMhp8PUGtByHktkglgmgcElrD5csDmWOYLRpY8Bn3HJTAiJqEKwRdRaVIuNnKHJzjuvLwNJwYrfb0J0GqbvecV5v9yPdtBRWhMM1G2DaTp1Z1pPvfnj3fPrHREhTNCwEao5FBo7sqGGpapxlo9eDM28f+np2oNwlFJ39IZ0v2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BK4tfzQl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4658FC4AF0B;
-	Fri, 16 Aug 2024 06:25:13 +0000 (UTC)
+	s=arc-20240116; t=1723789565; c=relaxed/simple;
+	bh=/ouYOuZVN62/GbxNdOnzqwKp1r/zXa/CHPqoWQ2Ijo8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=DkZ7U6oWcvbq+izYjU/BnGz/qPTVOvqITtbltPkiE9RTYe7sZ/zA0cMS1lUrxhc2JKyYU8N6oVh09B9znMtlC9k6S+3fm78p0zkTVUyTrerBzBr16LA/1f/Q+unM5zSL1p/RKIZa+Jb2JX7rZMPauWKQHRH1jomtbOe6zY5X9YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eYBLnIjh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69DF1C32782;
+	Fri, 16 Aug 2024 06:26:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723789513;
-	bh=i2n12+ScGrT1bI73kq3wV+iMxq9iQfyx5iyATix3BBI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=BK4tfzQlH7GcqzEkJR6Z9AmesVqJWfenV8txB1dGkp+COrkfKjOnMWGIhb0GgO3QU
-	 i039cC7NOs7DCel1Co8XbE7pS6fc0faSvkTBq9EDNriXQK7hvWLRZOihV89hROvmC1
-	 cV5r4coxvc/KyvFXxZ+gjvNjec/mc3LywVxtiUoHZlVsz7qx+w2ljAXqtR7OaQPyPy
-	 QQ8bYg+/k3jInU4mQARzR8i/zuejXWxxBjuRxhQoePLjeDjPtXmIPPfoXEYTWbZKJF
-	 gC3N3+bEagA41JC4SNQGOfT0X0hXL7RcM+fn1IxK+yE/53UPFXcbcLIkuyNUXfWZPb
-	 V2t/KYPyZVcNA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30F09C531DC;
-	Fri, 16 Aug 2024 06:25:13 +0000 (UTC)
-From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
-Date: Fri, 16 Aug 2024 11:55:11 +0530
-Subject: [PATCH v3 2/2] ufs: qcom: Add UFSHCD_QUIRK_BROKEN_LSDBS_CAP for
- SM8550 SoC
+	s=k20201202; t=1723789564;
+	bh=/ouYOuZVN62/GbxNdOnzqwKp1r/zXa/CHPqoWQ2Ijo8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=eYBLnIjhRoYqwf29721h+46Ge3GQfara0lMugYU3R0klbV9M1536QMgyKQdtP7B/5
+	 1XfAh+uvcaJSlh8aO9onjpvS7/F3K+9wceqSVlh3nP84TvKy7klTkwxyLWZVRkRgfV
+	 tHV+d5gowIZMrnySyGw5zWMKiD5OKC+8nQBVFHbt8unGXBV2D8ha2QByQG5mpU5XL+
+	 dmWhRADx3rzWhxisR1aTEnYKq45aE2RH1TmPWZ+eaqtZHuCoNjj1bzIzgjOMy9xWiL
+	 7I3SmUQ6v+CNXIYlKVedi1Vls9VQCjmOKINGZ6i3fx0SN5/ycOMPMPDFObqwMvKwEx
+	 fMR4JJd7kW1QQ==
+From: neeraj.upadhyay@kernel.org
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	paulmck@kernel.org,
+	neeraj.upadhyay@kernel.org,
+	neeraj.upadhyay@amd.com,
+	boqun.feng@gmail.com,
+	joel@joelfernandes.org,
+	urezki@gmail.com,
+	frederic@kernel.org,
+	JP Kobryn <inwardvessel@gmail.com>
+Subject: [PATCH rcu 1/3] srcu: faster gp seq wrap-around
+Date: Fri, 16 Aug 2024 11:55:30 +0530
+Message-Id: <20240816062532.51893-1-neeraj.upadhyay@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240816062445.GA51253@neeraj.linux>
+References: <20240816062445.GA51253@neeraj.linux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240816-ufs-bug-fix-v3-2-e6fe0e18e2a3@linaro.org>
-References: <20240816-ufs-bug-fix-v3-0-e6fe0e18e2a3@linaro.org>
-In-Reply-To: <20240816-ufs-bug-fix-v3-0-e6fe0e18e2a3@linaro.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>, 
- Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, Kyoungrul Kim <k831.kim@samsung.com>, 
- Amit Pundir <amit.pundir@linaro.org>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2162;
- i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
- bh=8PjwyrRDlmmjf4UdCJV0ALAaFI4EcPDr3ooZLdpnWiY=;
- b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBmvvDHWeDACvtMQnNU4By972MH5qzCsZh0VjWPD
- vH6P/OQXiiJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZr7wxwAKCRBVnxHm/pHO
- 9cE8B/9IQhrAOhxrjCY15GSLwWU0aaa1k+sLEV2IJhN8OmrslZGRhjBeYqADFZvtQYJdnGUQshk
- RoaqVyWJb0Ao6GmxQvTyLrOpu3R2hoW6AVMcIyxBk3kerZ3sT5J9CHLnTjbrE8xxljU1SvR5v8q
- UCH/v7fC0ExO7uo2c++S2tIG0/UCOfn4B5nAdhOQjAlp9H4UbhmDmXiSe5o0FmxQlnfQO2ecVDQ
- Dd5lRZZK+OJG9fNdCY8H4IO4Uf9GKjbD+25rBg0QDEf46/+64kMpkDQsx9CGxk0tNeJEPSupDDM
- 8CDi3jL5WL6AwIjeMZAFecb0pILlbI2L0osfL1pr8Uti23AM
-X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
- fpr=C668AEC3C3188E4C611465E7488550E901166008
-X-Endpoint-Received: by B4 Relay for
- manivannan.sadhasivam@linaro.org/default with auth_id=185
-X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reply-To: manivannan.sadhasivam@linaro.org
+Content-Transfer-Encoding: 8bit
 
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+From: JP Kobryn <inwardvessel@gmail.com>
 
-SM8550 SoC has the UFSHCI 4.0 compliant UFS controller and only supports
-legacy single doorbell mode without MCQ. But due to a hardware bug, it
-reports 1 in the 'Legacy Queue & Single Doorbell Support (LSDBS)' field of
-the Controller Capabilities register. This field is supposed to read as 0
-if legacy single doorbell mode is supported and 1 otherwise.
+Using a higher value for the initial gp sequence counters allows for
+wrapping to occur faster. It can help with surfacing any issues that may
+be happening as a result of the wrap around.
 
-Starting with commit 0c60eb0cc320 ("scsi: ufs: core: Check LSDBS cap when
-!mcq"), ufshcd driver is now relying on the LSDBS field to decide when to
-use the legacy doorbell mode if MCQ is not supported. And this ends up
-breaking UFS on SM8550:
-
-ufshcd-qcom 1d84000.ufs: ufshcd_init: failed to initialize (legacy doorbell mode not supported)
-ufshcd-qcom 1d84000.ufs: error -EINVAL: Initialization failed with error -22
-
-So use the UFSHCD_QUIRK_BROKEN_LSDBS_CAP quirk for SM8550 SoC so that the
-ufshcd driver could use legacy doorbell mode correctly.
-
-Fixes: 0c60eb0cc320 ("scsi: ufs: core: Check LSDBS cap when !mcq")
-Tested-by: Amit Pundir <amit.pundir@linaro.org>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: JP Kobryn <inwardvessel@gmail.com>
+Tested-by: Paul E. McKenney <paulmck@kernel.org>
+Signed-off-by: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
 ---
- drivers/ufs/host/ufs-qcom.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ include/linux/rcupdate.h |  3 +++
+ include/linux/srcutree.h | 15 ++++++++++++++-
+ kernel/rcu/rcu.h         |  3 ---
+ kernel/rcu/srcutree.c    |  7 ++++---
+ 4 files changed, 21 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index 810e637047d0..c87fdc849c62 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -857,6 +857,9 @@ static void ufs_qcom_advertise_quirks(struct ufs_hba *hba)
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index 13f6f00aecf9..8d56db70d417 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -34,6 +34,9 @@
+ #define ULONG_CMP_GE(a, b)	(ULONG_MAX / 2 >= (a) - (b))
+ #define ULONG_CMP_LT(a, b)	(ULONG_MAX / 2 < (a) - (b))
  
- 	if (host->hw_ver.major > 0x3)
- 		hba->quirks |= UFSHCD_QUIRK_REINIT_AFTER_MAX_GEAR_SWITCH;
++#define RCU_SEQ_CTR_SHIFT    2
++#define RCU_SEQ_STATE_MASK   ((1 << RCU_SEQ_CTR_SHIFT) - 1)
 +
-+	if (of_device_is_compatible(hba->dev->of_node, "qcom,sm8550-ufshc"))
-+		hba->quirks |= UFSHCD_QUIRK_BROKEN_LSDBS_CAP;
+ /* Exported common interfaces */
+ void call_rcu(struct rcu_head *head, rcu_callback_t func);
+ void rcu_barrier_tasks(void);
+diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
+index 8f3f72480e78..ed57598394de 100644
+--- a/include/linux/srcutree.h
++++ b/include/linux/srcutree.h
+@@ -129,10 +129,23 @@ struct srcu_struct {
+ #define SRCU_STATE_SCAN1	1
+ #define SRCU_STATE_SCAN2	2
+ 
++/*
++ * Values for initializing gp sequence fields. Higher values allow wrap arounds to
++ * occur earlier.
++ * The second value with state is useful in the case of static initialization of
++ * srcu_usage where srcu_gp_seq_needed is expected to have some state value in its
++ * lower bits (or else it will appear to be already initialized within
++ * the call check_init_srcu_struct()).
++ */
++#define SRCU_GP_SEQ_INITIAL_VAL ((0UL - 100UL) << RCU_SEQ_CTR_SHIFT)
++#define SRCU_GP_SEQ_INITIAL_VAL_WITH_STATE (SRCU_GP_SEQ_INITIAL_VAL - 1)
++
+ #define __SRCU_USAGE_INIT(name)									\
+ {												\
+ 	.lock = __SPIN_LOCK_UNLOCKED(name.lock),						\
+-	.srcu_gp_seq_needed = -1UL,								\
++	.srcu_gp_seq = SRCU_GP_SEQ_INITIAL_VAL,							\
++	.srcu_gp_seq_needed = SRCU_GP_SEQ_INITIAL_VAL_WITH_STATE,				\
++	.srcu_gp_seq_needed_exp = SRCU_GP_SEQ_INITIAL_VAL,					\
+ 	.work = __DELAYED_WORK_INITIALIZER(name.work, NULL, 0),					\
  }
  
- static void ufs_qcom_set_phy_gear(struct ufs_qcom_host *host)
-@@ -1847,7 +1850,8 @@ static void ufs_qcom_remove(struct platform_device *pdev)
- }
+diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
+index 38238e595a61..2bfed9855d67 100644
+--- a/kernel/rcu/rcu.h
++++ b/kernel/rcu/rcu.h
+@@ -54,9 +54,6 @@
+  *					grace-period sequence number.
+  */
  
- static const struct of_device_id ufs_qcom_of_match[] __maybe_unused = {
--	{ .compatible = "qcom,ufshc"},
-+	{ .compatible = "qcom,ufshc" },
-+	{ .compatible = "qcom,sm8550-ufshc" },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, ufs_qcom_of_match);
-
+-#define RCU_SEQ_CTR_SHIFT	2
+-#define RCU_SEQ_STATE_MASK	((1 << RCU_SEQ_CTR_SHIFT) - 1)
+-
+ /* Low-order bit definition for polled grace-period APIs. */
+ #define RCU_GET_STATE_COMPLETED	0x1
+ 
+diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+index b24db425f16d..6fd9c914ce64 100644
+--- a/kernel/rcu/srcutree.c
++++ b/kernel/rcu/srcutree.c
+@@ -247,7 +247,7 @@ static int init_srcu_struct_fields(struct srcu_struct *ssp, bool is_static)
+ 	mutex_init(&ssp->srcu_sup->srcu_cb_mutex);
+ 	mutex_init(&ssp->srcu_sup->srcu_gp_mutex);
+ 	ssp->srcu_idx = 0;
+-	ssp->srcu_sup->srcu_gp_seq = 0;
++	ssp->srcu_sup->srcu_gp_seq = SRCU_GP_SEQ_INITIAL_VAL;
+ 	ssp->srcu_sup->srcu_barrier_seq = 0;
+ 	mutex_init(&ssp->srcu_sup->srcu_barrier_mutex);
+ 	atomic_set(&ssp->srcu_sup->srcu_barrier_cpu_cnt, 0);
+@@ -258,7 +258,7 @@ static int init_srcu_struct_fields(struct srcu_struct *ssp, bool is_static)
+ 	if (!ssp->sda)
+ 		goto err_free_sup;
+ 	init_srcu_struct_data(ssp);
+-	ssp->srcu_sup->srcu_gp_seq_needed_exp = 0;
++	ssp->srcu_sup->srcu_gp_seq_needed_exp = SRCU_GP_SEQ_INITIAL_VAL;
+ 	ssp->srcu_sup->srcu_last_gp_end = ktime_get_mono_fast_ns();
+ 	if (READ_ONCE(ssp->srcu_sup->srcu_size_state) == SRCU_SIZE_SMALL && SRCU_SIZING_IS_INIT()) {
+ 		if (!init_srcu_struct_nodes(ssp, GFP_ATOMIC))
+@@ -266,7 +266,8 @@ static int init_srcu_struct_fields(struct srcu_struct *ssp, bool is_static)
+ 		WRITE_ONCE(ssp->srcu_sup->srcu_size_state, SRCU_SIZE_BIG);
+ 	}
+ 	ssp->srcu_sup->srcu_ssp = ssp;
+-	smp_store_release(&ssp->srcu_sup->srcu_gp_seq_needed, 0); /* Init done. */
++	smp_store_release(&ssp->srcu_sup->srcu_gp_seq_needed,
++			SRCU_GP_SEQ_INITIAL_VAL); /* Init done. */
+ 	return 0;
+ 
+ err_free_sda:
 -- 
-2.25.1
-
+2.40.1
 
 
