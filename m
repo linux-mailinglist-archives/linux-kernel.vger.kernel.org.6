@@ -1,92 +1,86 @@
-Return-Path: <linux-kernel+bounces-289238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC9A7954384
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:55:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF11695438B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:58:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 639CC1F21850
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:55:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27C85B27341
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0AE12F38B;
-	Fri, 16 Aug 2024 07:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6493F12D1FA;
+	Fri, 16 Aug 2024 07:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mQsA+kPI"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EoOsEUz1"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2D27DA64
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39717BB17;
+	Fri, 16 Aug 2024 07:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723794858; cv=none; b=Pn99v05uoupWrFtElYp6MVPuE5ncwZcD/G+D6Iep9Zg7+ObqLG4anjVqv2vRSU+6jfRq74UbdLSqnrW9Uw92Foj48+E9l/5XkparQE5ROz49ta0dlhdIJ83V3smdzKmSh+aJ/W3cONMV3ZAerdmu8lsX0pzKv7KS+jg0XYRu0OQ=
+	t=1723795065; cv=none; b=p5fLUwzNklbqpNw0K3I841cSSp3noMrnDlZUs6nyiGcbbs/oxRaukSkhd+6zZelmaOhE/w4j2f9MwkzPnnOpkRyRHLwm7P0xGoPr/cwmQa1mc9vqA9RHr4JWaoCf1yBg/WDFCNI1tmDMxwPZghglWe2D+j2eTbsGQJMPXe6pN9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723794858; c=relaxed/simple;
-	bh=fRFrl2xxLajW7BRlASDFQqs8x0H30DLVpH4SEKpcKME=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=krQSMAOJf8OVtppEMU8znr0vmCaqeKhE3z6iOQ/K4VYeg0VF0cdrfWujJIcbuiX5ebcrdUYBRig9j5otDLsarXUwAXZOxHwJ36YrjGNe/V/wX+SIWeQkQb5Mjb8fSR9mTIxoH5Il/HydfRwma3tE5Pxo6suBv4sfO66bi71Ib5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mQsA+kPI; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4280bbdad3dso11493065e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 00:54:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723794855; x=1724399655; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R3rfqVHruVOGC2FYVz0rFlsxOciO54KGc2d/kghQsw0=;
-        b=mQsA+kPI13RKBFLvR2K94Sea9cG9BePP8h6T3TdgDXuqxAi100wlm4+ixEsEkpk/cf
-         l/zUU+JSnKgOtn15WiFfNQ6F0u6ZPZx4csdoWnSPAMwVg5UFI9eLpl1L6y49ZuBdV/zp
-         iTMGkXzRhOHMcS2Rx1mwX9zy4TaoCRV4f1Z/UysAkt+fRmPTbrBDznOTCv/Isz5mWpwC
-         cBpyswdLOlakwPJ+aZ/fI6yCb/cA2wMHnFqVm5CDaVwlIeRZFi42m94oWT8Bn+3Ihb0+
-         JIzHNiUEqiX4U7Xfvo0jsqIDvZSyKV+4Xi3BW2bV2rKI2oL6I7vvi6K2GR5Cm8pL3UXN
-         hkBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723794855; x=1724399655;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R3rfqVHruVOGC2FYVz0rFlsxOciO54KGc2d/kghQsw0=;
-        b=My8+JNFk3YKYQMEaIJGY42aY2/GmbCI+52uQLQ+XZT7FL+9jQLfbEFVQQ0eAeJpgEL
-         hPX7sHEBjHZWspIrlbLjfNlcOkRyDIiWD0DJpzUE3epoohll+UqM4bapOkuCq9tKq01M
-         v1JSRwbjS5nb1bLznPIaoo6Jq1pqxccVATiTfqxHJ0jKpGegaymR/fjj3VkTLte8RjIf
-         JQOI07Oy1HQhnyqKO3bz1lGEpslLzA1nzBlNe/I9nLUzakOf6Fbl6939sWtGksVRxTD/
-         QM4WxTISrbLV2QUJgn+svKiuPMtvMaRNqDxeNH5EDIjFt6UqybmEU4THyFP51WnxyoSq
-         Dtqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUac1orEk2q5ab7HA161F+TsXfMQGu8NQxiQtL74TrlnR0fEcCXlfIVUxeUuMx12ycPzvMaa+hi/kQirvVUivScmOQHB673vEidCmV2
-X-Gm-Message-State: AOJu0YzBxNuebUxreTncXqHAOjuHxFgOBYL1rd+ePbokOOGR8E82ngZA
-	NUc8tgPZRlG318GrNPkdZAWN1uXt5CzLgycHf7ms7FOZb6WtdqA3sludMF4JUTU=
-X-Google-Smtp-Source: AGHT+IELJsEIdJrzfxRlYTFmph//NPsFzW/KOkCn+6qANqNPjCBjFgoONw7BALUdqn6MkGE37+0afA==
-X-Received: by 2002:a05:6000:dc4:b0:364:6c08:b9b2 with SMTP id ffacd0b85a97d-371946a3dabmr1036836f8f.45.1723794855161;
-        Fri, 16 Aug 2024 00:54:15 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37189863109sm3049587f8f.65.2024.08.16.00.54.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 00:54:14 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Vignesh R <vigneshr@ti.com>,
-	Felipe Balbi <felipe.balbi@linux.intel.com>,
-	Grygorii Strashko <grygorii.strashko@ti.com>,
-	Piyush Mehta <piyush.mehta@amd.com>,
-	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	linux-usb@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	stable@vger.kernel.org
-Subject: [PATCH v2 2/2] usb: dwc3: xilinx: add missing depopulate in probe error path
-Date: Fri, 16 Aug 2024 09:54:09 +0200
-Message-ID: <20240816075409.23080-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240816075409.23080-1-krzysztof.kozlowski@linaro.org>
-References: <20240816075409.23080-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1723795065; c=relaxed/simple;
+	bh=OQzWdqZ/3IvOqnfj3FMf0h9rgx5qBGPc1xuvBFYPAQw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Uk6mqGphbYf9cjOU+IzH6K4GyCEocdt2vKQOmIsl5FjE2l1VPRcVKfhdAk9/OuVXwE1wEgFhJo/N+tYwEhOnqXETCJeEj5xrcIEfOFwXfKrOPhMoMeMDjzqE3hRFHsL6dsnpWR1YmPmUh6YcqyQs94ALxJU672Qafool6nBcxcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EoOsEUz1; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47G09PAB024722;
+	Fri, 16 Aug 2024 07:57:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=aOfNw5ngMFrwUNFHmwlPfwKa7g
+	X3ByCct4tHj+frhdg=; b=EoOsEUz1pjwkNxMoR0C5UFVdN9MfrXr2MuwR4oXQlK
+	Qf8DN9S2dkZDHyZJuK//DAdxnMV02Zb4/xjW/dvrrWQYCilyW8vQOuvTneHa9vX4
+	5btiRmW8eH/7MuXV10Xyn7+WAB6cjnc5/z1ZNE3NeOyXPvzAXOmle90bpGieaERO
+	t+eTpfEhzvlWDssRB5r3OuBxnVzBTy/lLaqy0fG54rsFQCPlKQVpZVf1k7kfyODV
+	LdMT04SOAspVC7sxyfg9oOVcyKL44jAZgrAJ1AgkiijqC+lP42HNi2wq6ayb/kDj
+	iMHOqN+83wVdOpplnBQ+2RJPL2Y2K4Y8NfEovINKkyUQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4111d6ffkw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Aug 2024 07:57:30 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47G7vUQt025347;
+	Fri, 16 Aug 2024 07:57:30 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4111d6ffkt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Aug 2024 07:57:30 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 47G7Q3Kf030516;
+	Fri, 16 Aug 2024 07:57:29 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 40xmrmtdh3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Aug 2024 07:57:29 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47G7vPdg35390080
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 16 Aug 2024 07:57:27 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2285E2006A;
+	Fri, 16 Aug 2024 07:57:25 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D3CB420063;
+	Fri, 16 Aug 2024 07:57:23 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.124.216.104])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 16 Aug 2024 07:57:23 +0000 (GMT)
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+        Kemeng Shi <shikemeng@huaweicloud.com>,
+        syzbot+1ad8bac5af24d01e2cbd@syzkaller.appspotmail.com
+Subject: [PATCH 1/2] ext4: Check stripe size compatibility on remount as well
+Date: Fri, 16 Aug 2024 13:27:14 +0530
+Message-ID: <957d29b85e06f415ee125de141809d2b9e084003.1723794770.git.ojaswin@linux.ibm.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,45 +88,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: F6cIpn62Zv-30G3JH7TGUlSAkgCwu1pC
+X-Proofpoint-GUID: piW_Ipp-PxeBxS0PJW5SLnvSaM7KLqxo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-15_18,2024-08-15_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ phishscore=0 suspectscore=0 impostorscore=0 lowpriorityscore=0
+ mlxlogscore=999 clxscore=1011 adultscore=0 spamscore=0 priorityscore=1501
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408160053
 
-Depopulate device in probe error paths to fix leak of children
-resources.
+We disable stripe size in __ext4_fill_super if it is not a multiple of
+the cluster ratio however this check is missed when trying to remount.
+This can leave us with cases where stripe < cluster_ratio after
+remount:set making EXT4_B2C(sbi->s_stripe) become 0 that can cause some
+unforeseen bugs like divide by 0.
 
-Fixes: 53b5ff83d893 ("usb: dwc3: xilinx: improve error handling for PM APIs")
-Cc: stable@vger.kernel.org
-Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Fix that by adding the check in remount path as well.
 
+Additionally, change the users of EXT4_B2C(sbi->s_stripe) to
+EXT4_NUM_B2C() so that if we ever accidentally hit this again, we can
+avoid the value becoming 0. This should not change existing functionality.
+
+Reported-by: syzbot+1ad8bac5af24d01e2cbd@syzkaller.appspotmail.com
+Tested-by: syzbot+1ad8bac5af24d01e2cbd@syzkaller.appspotmail.com
+Fixes: c3defd99d58c ("ext4: treat stripe in block unit")
+Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 ---
+ fs/ext4/super.c | 29 ++++++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
 
-Changes in v2:
-1. Add goto also on pm_runtime_resume_and_get() failure (Thinh)
-2. Add Rb tag.
----
- drivers/usb/dwc3/dwc3-xilinx.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/usb/dwc3/dwc3-xilinx.c b/drivers/usb/dwc3/dwc3-xilinx.c
-index bb4d894c16e9..f1298b1b4f84 100644
---- a/drivers/usb/dwc3/dwc3-xilinx.c
-+++ b/drivers/usb/dwc3/dwc3-xilinx.c
-@@ -327,9 +327,14 @@ static int dwc3_xlnx_probe(struct platform_device *pdev)
- 		goto err_pm_set_suspended;
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index e72145c4ae5a..9d495d78d262 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -5165,6 +5165,18 @@ static int ext4_block_group_meta_init(struct super_block *sb, int silent)
+ 	return 0;
+ }
  
- 	pm_suspend_ignore_children(dev, false);
--	return pm_runtime_resume_and_get(dev);
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret < 0)
-+		goto err_pm_set_suspended;
++/*
++ * It's hard to get stripe aligned blocks if stripe is not aligned with
++ * cluster, just disable stripe and alert user to simpfy code and avoid
++ * stripe aligned allocation which will rarely successes.
++ */
++static bool ext4_is_stripe_incompatible(struct super_block *sb, unsigned long stripe)
++{
++	struct ext4_sb_info *sbi = EXT4_SB(sb);
++	return (stripe > 0 && sbi->s_cluster_ratio > 1 &&
++		stripe % sbi->s_cluster_ratio != 0);
++}
 +
-+	return 0;
+ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+ {
+ 	struct ext4_super_block *es = NULL;
+@@ -5272,13 +5284,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+ 		goto failed_mount3;
  
- err_pm_set_suspended:
-+	of_platform_depopulate(dev);
- 	pm_runtime_set_suspended(dev);
+ 	sbi->s_stripe = ext4_get_stripe_size(sbi);
+-	/*
+-	 * It's hard to get stripe aligned blocks if stripe is not aligned with
+-	 * cluster, just disable stripe and alert user to simpfy code and avoid
+-	 * stripe aligned allocation which will rarely successes.
+-	 */
+-	if (sbi->s_stripe > 0 && sbi->s_cluster_ratio > 1 &&
+-	    sbi->s_stripe % sbi->s_cluster_ratio != 0) {
++	if (ext4_is_stripe_incompatible(sb, sbi->s_stripe)) {
+ 		ext4_msg(sb, KERN_WARNING,
+ 			 "stripe (%lu) is not aligned with cluster size (%u), "
+ 			 "stripe is disabled",
+@@ -6441,6 +6447,15 @@ static int __ext4_remount(struct fs_context *fc, struct super_block *sb)
  
- err_clk_put:
+ 	}
+ 
++	if ((ctx->spec & EXT4_SPEC_s_stripe) &&
++	    ext4_is_stripe_incompatible(sb, ctx->s_stripe)) {
++		ext4_msg(sb, KERN_WARNING,
++			 "stripe (%lu) is not aligned with cluster size (%u), "
++			 "stripe is disabled",
++			 ctx->s_stripe, sbi->s_cluster_ratio);
++		ctx->s_stripe = 0;
++	}
++
+ 	/*
+ 	 * Changing the DIOREAD_NOLOCK or DELALLOC mount options may cause
+ 	 * two calls to ext4_should_dioread_nolock() to return inconsistent
 -- 
-2.43.0
+2.43.5
 
 
