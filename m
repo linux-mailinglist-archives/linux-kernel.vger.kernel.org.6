@@ -1,134 +1,81 @@
-Return-Path: <linux-kernel+bounces-289996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78C41954E43
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:53:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49616954E45
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED6D01F248E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:53:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7E871F253D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DDF21BE25D;
-	Fri, 16 Aug 2024 15:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WjRJPcpK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367981BCA0B;
-	Fri, 16 Aug 2024 15:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFAF71BDABB;
+	Fri, 16 Aug 2024 15:54:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4B71B86FB
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723823628; cv=none; b=kV0D0PuaYkFqaxg0XcODMBmGma0ZpomPZoYmxThSXTRQdh8Gfpqm7+N6GNj93nDDhM1/+s5ol7PCO5cCqov30eeVjASc4Wkb3pIqOQeUCzmaFH+2woZQpj8ksqhV2l8Cuwi3g9lK8lkQoNwLt0eXG8Ucz0PXurhjQYFL9799jOw=
+	t=1723823693; cv=none; b=QsMOHkwYc08OkXyNPeIweyw8xh3joGnrm7qDkX1ZSun6f4QHfmiwZno6e6gLkZ08nwIbLCgY5BkqkePMDXIDftb5ZbQ83F0VrFpCsVWnPGO+gwWNxIAoY86fN2IaUWdTLSmGrljGJ9UTHq01WdZQFh+vz6C0PNu5oqZVxEpLsMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723823628; c=relaxed/simple;
-	bh=PXs1yvNpXJ4B/80Ijs3pk2Y5EklTN/J2qxy/CEUCfXc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=De8k+OEugV+XuYglanK4IhOYU8vuvKghrHOVjfszZHe7Hr0EOlL4vkVTJUVf2RnuVi7cx9nIA15LOZzpFGtkT3KLx0Tu6XzEj2bG5Gbc+tjZYYjVnwz3Jw75SHo0PcF28MINxWb5584IAq8p5yI5FQZgyWtbCfmjLifPEk0ZlNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WjRJPcpK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DD17C32782;
-	Fri, 16 Aug 2024 15:53:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723823627;
-	bh=PXs1yvNpXJ4B/80Ijs3pk2Y5EklTN/J2qxy/CEUCfXc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WjRJPcpKMxppcvQz+suRPJEnUvDDc6ntt1GjCJbnBTS+pUO187baNazkebgMziGLx
-	 m/1wMEINM48iP2oCElDok3lJX9lw3fTzqmXIJmFXaxqVO1neVB/VS3Nod94/l22k3c
-	 IgOB/jNld6frJEwjHzE7kZxMtOaKzY2IUi78Di2y6tR1U6QFm+826IK4oN4lSe1ghS
-	 kpvMxhiwfK1GshiMoLpm7UwmjWF8cBSxemIJy9u+oy33khErQYj5/Tk5ig9bmn9YKb
-	 380b5QL+E5z7K/T6SHbhXPi4MbWza+VC/r5P1GzixTqwEHyabcqN9gJpRV5ixrxpRy
-	 v5g4qM1+N6jPw==
-Date: Fri, 16 Aug 2024 10:53:44 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Md Sadre Alam <quic_mdalam@quicinc.com>
-Cc: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, konradybcio@kernel.org, thara.gopinath@gmail.com, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, gustavoars@kernel.org, 
-	u.kleine-koenig@pengutronix.de, kees@kernel.org, agross@kernel.org, 
-	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, quic_srichara@quicinc.com, 
-	quic_varada@quicinc.com, quic_utiwari@quicinc.com
-Subject: Re: [PATCH v2 01/16] dt-bindings: dma: qcom,bam: Add bam pipe lock
-Message-ID: <7kgah2aajgyybdmpwfzgd25mi2lc4v6xv2k3mif576wo7bw2wn@i43mt2c34chg>
-References: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
- <20240815085725.2740390-2-quic_mdalam@quicinc.com>
+	s=arc-20240116; t=1723823693; c=relaxed/simple;
+	bh=kjt5QDvru1RweyhCZtLcwu7y4Z0Tlaav4KHtlHsEp94=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=agGSZw1XRWsodVT98p1fL1Zp8rs5D9Xj4Tk2jLcYs2Guz4/CXr13Knn/sPYY5JBc+I5ZUkd+Yr1NLejWbTUxX/G3epRDL6+Lx26k6rK8m58RNmUTbgQYxOarXuV4Eiv6/A/EeR2++0C7RQqmQWQBdATFZFNNONpccSSLtJB07sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 06F1613D5;
+	Fri, 16 Aug 2024 08:55:17 -0700 (PDT)
+Received: from [192.168.181.244] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 931F53F58B;
+	Fri, 16 Aug 2024 08:54:46 -0700 (PDT)
+Message-ID: <9c46d5f0-f4ff-461b-b483-840fab6dfecc@arm.com>
+Date: Fri, 16 Aug 2024 17:54:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240815085725.2740390-2-quic_mdalam@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/4] cpu/SMT: Provide a default
+ topology_is_primary_thread()
+To: Yicong Yang <yangyicong@huawei.com>, catalin.marinas@arm.com,
+ will@kernel.org, sudeep.holla@arm.com, tglx@linutronix.de,
+ peterz@infradead.org, mpe@ellerman.id.au,
+ linux-arm-kernel@lists.infradead.org, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com
+Cc: linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
+ jonathan.cameron@huawei.com, prime.zeng@hisilicon.com, linuxarm@huawei.com,
+ yangyicong@hisilicon.com, xuwei5@huawei.com, guohanjun@huawei.com
+References: <20240806085320.63514-1-yangyicong@huawei.com>
+ <20240806085320.63514-2-yangyicong@huawei.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <20240806085320.63514-2-yangyicong@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 15, 2024 at 02:27:10PM GMT, Md Sadre Alam wrote:
-> BAM having pipe locking mechanism. The Lock and Un-Lock bit
-> should be set on CMD descriptor only. Upon encountering a
-> descriptor with Lock bit set, the BAM will lock all other
-> pipes not related to the current pipe group, and keep
-> handling the current pipe only until it sees the Un-Lock
-> set.
-
-This describes the mechanism for mutual exclusion, but not really what
-the patch does.
-
-https://docs.kernel.org/process/submitting-patches.html#the-canonical-patch-format
-states that you have 75 characters for your commit message, use them.
-
+On 06/08/2024 10:53, Yicong Yang wrote:
+> From: Yicong Yang <yangyicong@hisilicon.com>
 > 
-> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
-> ---
-> 
-> Change in [v2]
-> 
-> * Added initial support for dt-binding
-> 
-> Change in [v1]
-> 
-> * This patch was not included in [v1]
-> 
->  Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml b/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
-> index 3ad0d9b1fbc5..91cc2942aa62 100644
-> --- a/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
-> +++ b/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
-> @@ -77,6 +77,12 @@ properties:
->        Indicates that the bam is powered up by a remote processor but must be
->        initialized by the local processor.
->  
-> +  qcom,bam_pipe_lock:
+> Currently if architectures want to support HOTPLUG_SMT they need to
+> provide a topology_is_primary_thread() telling the framework which
+> thread in the SMT cannot offline. However arm64 doesn't have a
+> restriction on which thread in the SMT cannot offline, a simplest
+> choice is that just make 1st thread as the "primary" thread. So
+> just make this as the default implementation in the framework and
+> let architectures like x86 that have special primary thread to
+> override this function.
 
-'_' is not a valid character in node names or properties.
+IMHO, ARM64 (/ARM), RISCV and PARISC (SMP) use GENERIC_ARCH_TOPOLOGY
+(and drivers/base/arch_topology.c) so they could share
+topology_is_primary_thread() also there?
 
-> +    type: boolean
-> +    description:
-> +      Indicates that the bam pipe needs locking or not based on client driver
-> +      sending the LOCK or UNLOK bit set on command descriptor.
+[...]
 
-Missing 'C'?
-
-Regards,
-Bjorn
-
-> +
->    reg:
->      maxItems: 1
->  
-> @@ -92,6 +98,8 @@ anyOf:
->        - qcom,powered-remotely
->    - required:
->        - qcom,controlled-remotely
-> +  - required:
-> +      - qcom,bam_pipe_lock
->    - required:
->        - clocks
->        - clock-names
-> -- 
-> 2.34.1
-> 
 
