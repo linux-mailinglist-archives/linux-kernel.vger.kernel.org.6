@@ -1,138 +1,83 @@
-Return-Path: <linux-kernel+bounces-289498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 697899546C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:28:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59FDC9546C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:29:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 254FD28279C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:28:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C84F1C21D4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DCF18FDCA;
-	Fri, 16 Aug 2024 10:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="udvAt+ZB";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4rPWYq8F";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="udvAt+ZB";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4rPWYq8F"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025851741D2;
-	Fri, 16 Aug 2024 10:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC3718FDC0;
+	Fri, 16 Aug 2024 10:29:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1953158DC8
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 10:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723804075; cv=none; b=bVarNzdcRF0E/89LDs6BEoMnhPhDo4Fv3DCspOJ5/bPtzi0VS5PoYbmiwmlplKjSALr+HEh8a53BIrIV8wee6194/UcfxdiBjzXPZx3o3OraHtO+taKmq08Iuf0OZW954wcLj7NLXq+0Ppx+jsjkm6azDnR7CQ7YW+NeQuo5hBY=
+	t=1723804157; cv=none; b=DO1jxHcMTuJLLd6n09grmBDgd/oROy1V5ciQCoyLEC/scJKhwzcMM/TMefiOo57wSMKTkqEST2aWhjV1xV1hwKXDlac27dgDkiqAbhqxkywqLSgEvW0Pi+wDhA+K4DP7WnXFz8LsSN58w3Sd2lbC+Z9ofH+MdXR9oscHN+Vz/3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723804075; c=relaxed/simple;
-	bh=YHrptwsZaS9hvW19+MpQbcuCeMwG5IUwM1h+DS+Ust0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a7n/b0d2h2m6K3VKkGmMk6sFZC+FbKVPMbDQ57ENVjgOhtlHFkPNnYGLDO6FQ9lR87QHpQDyVF2mW5eKcBT62vDEr8FyERPCt7Njs7ZkVdwcQfjJ+U3QJGk0zabBt9ks+KYBxIkG0a1aPfVveOFUwaCgae94tXBsxSYj+/6s7Ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=udvAt+ZB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4rPWYq8F; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=udvAt+ZB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4rPWYq8F; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5AA1520093;
-	Fri, 16 Aug 2024 10:27:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723804066; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=42Pd8RLvLd3pYPuxEBwi0XMdktWMsznABFXa0p+lH4o=;
-	b=udvAt+ZBCamB3vqXzN0TR57eIiNpFGWK1te/qECAIJnFSflpqWDV3VZhixPL3HQntA/9sn
-	THhQzMC6uTZYPllX/9UIi+ta9fwJGUh0hwsoT0yLNr+Nmi/NgIMnl/s6vOr29M5AS/SKfW
-	J3dJ7z7mNb+SKrYIL0HGtEFs5gshBBA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723804066;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=42Pd8RLvLd3pYPuxEBwi0XMdktWMsznABFXa0p+lH4o=;
-	b=4rPWYq8FABmPF5cHFQpuF/ReDslpF6Ne5Zd6voeNdN2+SXkrDnTSyb65qmy1v1H9CsDqfu
-	OypRSEjSpkzE1dDw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723804066; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=42Pd8RLvLd3pYPuxEBwi0XMdktWMsznABFXa0p+lH4o=;
-	b=udvAt+ZBCamB3vqXzN0TR57eIiNpFGWK1te/qECAIJnFSflpqWDV3VZhixPL3HQntA/9sn
-	THhQzMC6uTZYPllX/9UIi+ta9fwJGUh0hwsoT0yLNr+Nmi/NgIMnl/s6vOr29M5AS/SKfW
-	J3dJ7z7mNb+SKrYIL0HGtEFs5gshBBA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723804066;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=42Pd8RLvLd3pYPuxEBwi0XMdktWMsznABFXa0p+lH4o=;
-	b=4rPWYq8FABmPF5cHFQpuF/ReDslpF6Ne5Zd6voeNdN2+SXkrDnTSyb65qmy1v1H9CsDqfu
-	OypRSEjSpkzE1dDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 20B761397F;
-	Fri, 16 Aug 2024 10:27:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bLVBBqIpv2YuRAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 16 Aug 2024 10:27:46 +0000
-Date: Fri, 16 Aug 2024 12:28:26 +0200
-Message-ID: <87le0w3gol.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: <perex@perex.cz>,
-	<tiwai@suse.com>,
-	<linux-sound@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH -next] ALSA: oss: Remove unused declarations
-In-Reply-To: <20240816100209.879043-1-yuehaibing@huawei.com>
-References: <20240816100209.879043-1-yuehaibing@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1723804157; c=relaxed/simple;
+	bh=K8dqxeXKA29tN29ULaYL+8szjBEw8jk+eOv9t8Uh5ZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o4fR/Bv6zBHtlFQ+W18tbciGN+Gn3XqL74Pd1hQK0hy/8AgrfTz+ZFSMf8ihjD7yf9pY5fnJewPw8MUPlghuMJev2pSDF/4MlAj2Jk6muJC1MWikjZ8ttIj+orXD94ZFbsjxRPmb156RQOUVLuCZR//ufQErF38f4X8E61I4mKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 18E7C143D;
+	Fri, 16 Aug 2024 03:29:41 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 154F53F73B;
+	Fri, 16 Aug 2024 03:29:13 -0700 (PDT)
+Date: Fri, 16 Aug 2024 11:29:11 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: will@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, ilkka@os.amperecomputing.com
+Subject: Re: [PATCH 6/8] perf/arm-cmn: Refactor DTC PMU register access
+Message-ID: <Zr8p96jwMHepFeq7@J2N7QTR9R3>
+References: <cover.1723229941.git.robin.murphy@arm.com>
+ <e1aac7d482e6f4a75819edcde1fd3198099a658c.1723229941.git.robin.murphy@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -3.30
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,huawei.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e1aac7d482e6f4a75819edcde1fd3198099a658c.1723229941.git.robin.murphy@arm.com>
 
-On Fri, 16 Aug 2024 12:02:09 +0200,
-Yue Haibing wrote:
+On Fri, Aug 09, 2024 at 08:15:45PM +0100, Robin Murphy wrote:
+> Annoyingly, we're soon going to have to cope with PMU registers moving
+> about. This will mostly be straightforward, except for the hard-coding
+> of CMN_PMU_OFFSET for the DTC PMU registers. As a first step, refactor
+> those accessors to allow for encapsulating a variable offset without
+> making a big mess all over.
 > 
-> These functions is never implemented and used.
-> 
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> ---
+>  drivers/perf/arm-cmn.c | 64 ++++++++++++++++++++++++------------------
+>  1 file changed, 36 insertions(+), 28 deletions(-)
 
-Thanks, applied.
+Aside from a minoe comment below this looks fine to me.
 
+>  struct arm_cmn_dtc {
+>  	void __iomem *base;
+> +	void __iomem *pmu_base;
+>  	int irq;
+> -	int irq_friend;
+> +	s8 irq_friend;
 
-Takashi
+Unrelated change?
+
+AFAICT there's no reason for 'irq_friend' to change from 'int' to 's8',
+and nothing in the commit message explains it.
+
+Otherwise this all looks fine to me.
+
+Mark.
 
