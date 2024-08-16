@@ -1,107 +1,132 @@
-Return-Path: <linux-kernel+bounces-289311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92B7B9544A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:42:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AC739544B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B855E1C217C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:42:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 150BEB21732
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBBFE13AD0F;
-	Fri, 16 Aug 2024 08:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TjJabqEq"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F20613B5B3;
+	Fri, 16 Aug 2024 08:44:54 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1873264D;
-	Fri, 16 Aug 2024 08:42:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A63F1DFFC;
+	Fri, 16 Aug 2024 08:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723797757; cv=none; b=LP2qiJ1UlgXK0PLsvdzoZT3ISOVpclCYfNHjrZW+MhmlRq+N0Z8cxOB9wk3DErgLRIMKnW+pZWr7Xq+VQxdHUWhmuOr7zB3pZjTD9v0S1qmbrd/XVg3YuuIJXaLy3zL0cDK6WGI2NuAQHWP62AHqA1Dmu/dj/Sv4/63q2RjyxRw=
+	t=1723797894; cv=none; b=VmRbHFi8F/7bRLfxdAOdiBpTXR8ErboTHCRaaf49NaWsDW8Bzyjzw+SA1G1IiDlmYc2rtg1SxECWSHSM6TNzp6bk16U3wROp6lznB07O3+Dlm2eW5WGoOts5aJQMLL5GW5Y2CQLm4l+UcgajtVgDal7rxO8w2hG8+L+o7Lv3ytA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723797757; c=relaxed/simple;
-	bh=6NDIDdB8PZfIYQxi9ute8BoA2vwt/rOC3YPrs9mp8BI=;
+	s=arc-20240116; t=1723797894; c=relaxed/simple;
+	bh=BRboGjlwfrQPVVn2+h18CtHj+ByyxIEMBAs2xzz/N3Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ya2vx86qY0ZtqcdpIMf7z5QKjVclp1EDBTJeIucZvmietcdybeERGvJjBi2YN+vJBN+n1jEE4iLGdjr4yq/73ehc6tOv8twZnP4/UsQT94dNqeTBEt9DFj1hNr9VkhLfSgcuERubYCduoJAE0en1m/ygVuRLL38R3lVtPv1uJ6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TjJabqEq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAC63C32782;
-	Fri, 16 Aug 2024 08:42:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723797756;
-	bh=6NDIDdB8PZfIYQxi9ute8BoA2vwt/rOC3YPrs9mp8BI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TjJabqEqwjd55SrH84RAMrNWyxiQB3ryGPJIkfEAXQYkj7HnG4L5qJXizZnS6Bxr+
-	 OouHrUvMUOqnw75dWkE17GiksLxYQ7LORG8Zs5n19JuvbH6qdO8rKznKXQCsdEsDsl
-	 0pvwxRiEO/KEL7qdKutoMiV1eA/4hFO+SqR12fq8=
-Date: Fri, 16 Aug 2024 10:42:33 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.10 000/263] 6.10.5-rc1 review
-Message-ID: <2024081644-tipoff-oboe-d72e@gregkh>
-References: <20240812160146.517184156@linuxfoundation.org>
- <8852e518-3867-4802-adea-0c0ee68d1010@roeck-us.net>
- <2024081616-gents-snowcap-0e5f@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XwnorFS4oJE/Svhxm7Qz2zrP0oqvIY0rr0ZDqDrf1/3WczHMX0XuXeUlMYDA+3tIoECiSGuk6B0RlPhSJyhTrJQl0+EN1ZDHfjTV8aDSf1dVSRe0I0n409kVAAi5XLTth/L9UpYOO55XPhyYPUhpdYNKu9CTfnEHHSGtwNcQ3A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5C85C32782;
+	Fri, 16 Aug 2024 08:44:48 +0000 (UTC)
+Date: Fri, 16 Aug 2024 09:44:46 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
+	"broonie@kernel.org" <broonie@kernel.org>,
+	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"debug@rivosinc.com" <debug@rivosinc.com>,
+	"mgorman@suse.de" <mgorman@suse.de>,
+	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+	"fweimer@redhat.com" <fweimer@redhat.com>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"vschneid@redhat.com" <vschneid@redhat.com>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"hpa@zytor.com" <hpa@zytor.com>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"bsegall@google.com" <bsegall@google.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"juri.lelli@redhat.com" <juri.lelli@redhat.com>,
+	"jannh@google.com" <jannh@google.com>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"kees@kernel.org" <kees@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+	"will@kernel.org" <will@kernel.org>
+Subject: Re: [PATCH RFT v8 4/9] fork: Add shadow stack support to clone3()
+Message-ID: <Zr8RfoHZYRWem1K9@arm.com>
+References: <20240808-clone3-shadow-stack-v8-0-0acf37caf14c@kernel.org>
+ <20240808-clone3-shadow-stack-v8-4-0acf37caf14c@kernel.org>
+ <f3a2a564094d05beac2dc5ab657cbc009c465667.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <2024081616-gents-snowcap-0e5f@gregkh>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f3a2a564094d05beac2dc5ab657cbc009c465667.camel@intel.com>
 
-On Fri, Aug 16, 2024 at 10:38:08AM +0200, Greg Kroah-Hartman wrote:
-> On Thu, Aug 15, 2024 at 07:21:00AM -0700, Guenter Roeck wrote:
-> > On 8/12/24 09:00, Greg Kroah-Hartman wrote:
-> > > This is the start of the stable review cycle for the 6.10.5 release.
-> > > There are 263 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > > 
-> > > Responses should be made by Wed, 14 Aug 2024 16:00:26 +0000.
-> > > Anything received after that time might be too late.
-> > > 
-> > 
-> > I see various allmodconfig build failures on v6.10.5.
-> > 
-> > Example from arm:
-> > 
-> > Building arm:allmodconfig ... failed
-> > --------------
-> > Error log:
-> > drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_mst_types.c:1581:13: error: 'is_dsc_common_config_possible' defined but not used [-Werror=unused-function]
-> >  1581 | static bool is_dsc_common_config_possible(struct dc_stream_state *stream,
-> >       |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_mst_types.c:1569:21: error: 'kbps_from_pbn' defined but not used [-Werror=unused-function]
-> >  1569 | static unsigned int kbps_from_pbn(unsigned int pbn)
-> > 
-> > The functions are built and used conditionally in mainline, behind CONFIG_DRM_AMD_DC_FP.
-> > The conditional is missing in v6.10.5 (and v6.10.6-rc1).
+On Thu, Aug 15, 2024 at 12:18:23AM +0000, Edgecombe, Rick P wrote:
+> On Thu, 2024-08-08 at 09:15 +0100, Mark Brown wrote:
+> > +int arch_shstk_post_fork(struct task_struct *t, struct kernel_clone_args
+> > *args)
+[...]
+> > +       /* This should really be an atomic cmpxchg.  It is not. */
+> > +       if (access_remote_vm(mm, addr, &val, sizeof(val),
+> > +                            FOLL_FORCE) != sizeof(val))
+> > +               goto out;
+> > +
+> > +       if (val != expected)
+> > +               goto out;
+> > +       val = 0;
 > 
-> Odd that other allmodconfig builds passed :(
-> 
-> I'll dig up where that conditional showed up, thanks for letting us
-> know....
-> 
-> Ah, looks like it showed up in 00c391102abc ("drm/amd/display: Add misc
-> DC changes for DCN401"), gotta love "fix a bunch of things" type of
-> commits...
+> After a token is consumed normally, it doesn't set it to zero. Instead it sets
+> it to a "previous-ssp token". I don't think we actually want to do that here
+> though because it involves the old SSP, which doesn't really apply in this case.
+> I don't see any problem with zero, but was there any special thinking behind it?
 
-And that commit is crazy, and no way will it backport, so I'll just go
-do this "by hand".  People who approved that commit need to revisit how
-to create changes properly...
+BTW, since it's the parent setting up the shadow stack in its own
+address space before forking, I think at least the read can avoid
+access_remote_vm() and we could do it earlier, even before the new
+process is created.
 
-greg k-h
+> > +       if (access_remote_vm(mm, addr, &val, sizeof(val),
+> > +                            FOLL_FORCE | FOLL_WRITE) != sizeof(val))
+> > +               goto out;
+> 
+> The GUPs still seem a bit unfortunate for a couple reasons:
+>  - We could do a CMPXCHG version and are just not (I see ARM has identical code
+> in gcs_consume_token()). It's not the only race like this though FWIW.
+>  - I *think* this is the only unprivileged FOLL_FORCE that can write to the
+> current process in the kernel. As is, it could be used on normal RO mappings, at
+> least in a limited way. Maybe another point for the VMA check. We'd want to
+> check that it is normal shadow stack?
+>  - Lingering doubts about the wisdom of doing GUPs during task creation.
+
+I don't like the access_remote_vm() either. In the common (practically
+only) case with CLONE_VM, the mm is actually current->mm, so no need for
+a GUP.
+
+We could, in theory, consume this token in the parent before the child
+mm is created. The downside is that if a parent forks multiple
+processes using the same shadow stack, it will have to set the token
+each time. I'd be fine with this, that's really only for the mostly
+theoretical case where one doesn't use CLONE_VM and still want a
+separate stack and shadow stack.
+
+> I don't think they are show stoppers, but the VMA check would be nice to have in
+> the first upstream support.
+
+Good point.
+
+-- 
+Catalin
 
