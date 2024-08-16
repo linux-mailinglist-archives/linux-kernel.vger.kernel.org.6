@@ -1,109 +1,108 @@
-Return-Path: <linux-kernel+bounces-290208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21DFB9550BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:23:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22B69550C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF1DC285D43
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:23:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 550E7286E8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C416F1C3787;
-	Fri, 16 Aug 2024 18:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6281C37BF;
+	Fri, 16 Aug 2024 18:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mn08UjU6"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e5/8dXii"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADCE31C2329
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 18:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F371C0DCF
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 18:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723832627; cv=none; b=NI9vv/30g4bg3mx+z6fTaGn5hkbJuTcrFRFP0dM8JWCu9IQsvVSr2L1/jEkgdiLv1utF2Wlovxb4zrvjwM3XYX9qrcDbS5gTcFcYLCpjyGUJzdnMGUmZEle4LPIjVqATj7Mcn/Fcryz3uKQIhrKKo2WRlvfKkAQa1nKQdZOCGHg=
+	t=1723832679; cv=none; b=U+iVvl6qVUlBb2oHncCTFQIMIwcQwS9cHAjKNTYtR0XxqNTe3tMAO56o8DmGuo0PsymnTAZIkuuBOJ2Bb7pBAr1W+qfBJVBW97HRLKlN6fBW+l38CtZj7+BDXpUFMHpqf/qiceCSBGs836flL0gNI1P19YFX8bWAmY0Ttv8B434=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723832627; c=relaxed/simple;
-	bh=kQ1Uus7lOLPKfEI1znCUipAS8W09PYgHvRFbSeVUxQg=;
+	s=arc-20240116; t=1723832679; c=relaxed/simple;
+	bh=KfdgmwNQlJhITu85hViAhQH2m912GxeX0PW2gdRLWZw=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lfJbgduUGIPQXaVcGz/MD84mlE/Z4X1T6E6c8ntwenGVrp5dMNKG5UGCUqvg67MRPM7joXDK4mBfljJez6oLiXVzzfjTronszP8yuB7Jr7+Eb1UBYaLp8Hw5mlXspzEEZuqtRqE1uqzCh5YmyBSPRkWZ6F7y1GNUh30EEyHfaFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mn08UjU6; arc=none smtp.client-ip=209.85.215.201
+	 To:Cc:Content-Type; b=dHPxVsst+fNeeCylUGWJ4IKxgobvdtB2yzNbtuYGahmbuL6cmH51eiExi2sCCnW8sSRCUbzB64iPHPKwsfwGhUBS7kFMsp6t5u2EI5RvhLNvkz1bT7X3oSoOVl/RzYss8lI5hJmZJzdeY+JwXf5vARJosWXrcpt3sjcMLafWu6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e5/8dXii; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-6818fa37eecso2094432a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 11:23:45 -0700 (PDT)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2d3f948347eso418288a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 11:24:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723832625; x=1724437425; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1723832677; x=1724437477; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=05nSFmbx6P/1DfD7+boXGyw0DEDSw8F82FYswNLhYr4=;
-        b=mn08UjU6r9hN08F6IrD7U5clqCKPyp8RdHTmwIQ3pL/A9tFeDMXujYEeg2V+sgRNzx
-         C3W/NWYzd0uM9KWAU6//GF77JB2B+vmD3Lpn/m7M7RKQ76HCbEoQWZ/9GdXVd3cUqu14
-         FCPqrnDwxmjnHhHtGYKjD/TdnIdwU7rs58pFSFxvBOBO/rU3muyj1biA/tPlydnZoxuJ
-         xqwGPKPXuVcm1aD7/ADXSmlEJhawZVm8fAyoei95QyqHy0VvZfGq7ch5dIFkVRjx638K
-         WbDxmdztga5VOVk84l9GhW0nWX1ZEaKOXs+CeyXrUeLv+7Ge1ynmO3evbAm7PVL5Ig1+
-         eCuA==
+        bh=4RwvB+WPYoDnWK8A0tq8EiazLJfKL2CtNS7fQiVukC0=;
+        b=e5/8dXiiuMVZ22VqZ7YcGmesNeG11fTVq1KX2B9gjOPL0XSpPiiErM3Nm55y+QCGTF
+         t+3p+o2v7oEPv89Z/okNk0MYa6gM3qRVYkM+9dRnP5E16MfQaIUN8/IWrBBm4mJbZ7KE
+         oWSjvlszLq/bp/C2PEAgsAgyMtD5WhnoDpWOZp53HjvfisDMl6h6O3cFaPjLYs7QcVUN
+         HgsNZNW0TpApEDjjA/eczHPr/eksgTFMpAVX3uLEUHc0jfnIp4plgyN4LaK8isA6ESR3
+         DdqNEgBIJ1YUFyBSOox0fHT1WJEMnH8L55RZ90xgSTWdTDV3GypoQhQE35cm4vhCQG6c
+         Q0ZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723832625; x=1724437425;
+        d=1e100.net; s=20230601; t=1723832677; x=1724437477;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=05nSFmbx6P/1DfD7+boXGyw0DEDSw8F82FYswNLhYr4=;
-        b=TeIuIKkpiOdMMwt2Js6rcws0u6xknXjLfY5WbzwCEaoDPXBmfgmfS+kfZGk7LFOlUr
-         7OqyDPEjlFPBI0d1lONL2UszE4KaZZIP1SU67Vp/4gZat0eZ94S5NOuXYc3azRGiAERp
-         d+ZZdBDvteSliXebZ1v2zbl/0jcuCvEGHTPhE1kPEfd9O8zuwzOARKRAZktFhtCQWD8F
-         WQtHW0SzfYVH84sZHh4D6JDrTJMt8k6MPrDU/thOnfkJ52rAFrt9YxGrqWM3kSjpzB2d
-         6IhfVJTSVQ7jAOJfiuh0he08ttPYGVmWJ3RMxtfghf2d3+XvRkc1cDf6+WJwd0NvJY5U
-         ctFg==
-X-Forwarded-Encrypted: i=1; AJvYcCX9EQ2XZcn2wtevjqPo+l/TdothIErMmUcnc3opY1/uXWJkoS/LizqIUCTqVYPkO9yQ0gSIwTNqNVqIiITvuhUDwbsUpQrIAGG3vS3M
-X-Gm-Message-State: AOJu0YygWenSm8gFnJZsUqhHwclstpith4rkqMmrQHbyTS0+xKInBqED
-	AXG20cZmtCGTUETGllzuPXaw5I2MKmNdBGJSxKrWLDknFUOaHX7HBYUNCqp7TMYjOphXIFQtJQ4
-	ARQ==
-X-Google-Smtp-Source: AGHT+IE9H5LQQCH68NcdXMmYnIevmE/u5gJozQKiFZVITwrrnrd7MOM5/NVJLVxUdZgmbRbmnPYElRigQGc=
+        bh=4RwvB+WPYoDnWK8A0tq8EiazLJfKL2CtNS7fQiVukC0=;
+        b=YLldgj0v6ITcwQK4udLT7oZqUX9IfAM/90guobks2XIyDV/YHnSiRvjr3E1mkHJ5vN
+         /+kC52CetgH6efigjbpSht1NZVBeD9xWZ7ff40gEq+6DxwuNEbmMVFH4uHSpsbIXN9DW
+         RaWzoUGumHGPIHvo37NLLssvSibwHsFVE1kCHYIro1AHLTao0XXM/FZRDw3gl7dzr+j6
+         Z+ha//KyJIqergY3D4hNX53WCVtvfBk6jhHQKT6t0gOXnhH6QyqE/btxiDubWU0s4McY
+         GSYtHQ/jkhE1xnjas4Mipw6w0HiD5qWDdv4uoDi5HUbjGtIxRRKUkxMdXnrFZnETZwtY
+         EnKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQNGr6P6FTrVnWq8Qnd9Su5F1Mz9CX7HfeoZISGwmjadQNRouZ89wPJ6JAfOIDZv9OaYwMfwGqDIeSbTR8Iea5inv6UVHLK/FeuKgr
+X-Gm-Message-State: AOJu0YwMIOAyucUAch+1Z/vb2eHtyxad3vFg0H6uyQoBrax3cgzsmkUc
+	edwu9HrQvXSU1lebKnNxwn0G5Z4qQ9TGCe8o3YKyyshXb3O4nglGIra/Ss0E2rxlYhLEnve2WBx
+	iLA==
+X-Google-Smtp-Source: AGHT+IFTs6mafYXYQyMdbVzMHx30DteW5lbCrThkaAk8B3G1fl2Zt7Rvnd8UnKlKrq/X37xDttudYA8SWrg=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a02:60e:b0:75d:16f9:c075 with SMTP id
- 41be03b00d2f7-7c97b8222femr5928a12.9.1723832624835; Fri, 16 Aug 2024 11:23:44
- -0700 (PDT)
-Date: Fri, 16 Aug 2024 11:23:43 -0700
-In-Reply-To: <000000000000d258a006179e07df@google.com>
+ (user=seanjc job=sendgmr) by 2002:a17:90b:1906:b0:2c9:5ca5:4d20 with SMTP id
+ 98e67ed59e1d1-2d3c3723c6amr46011a91.0.1723832677231; Fri, 16 Aug 2024
+ 11:24:37 -0700 (PDT)
+Date: Fri, 16 Aug 2024 11:24:35 -0700
+In-Reply-To: <0000000000006eb03a061b20c079@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <000000000000d258a006179e07df@google.com>
-Message-ID: <Zr-ZL9X87N6XhE60@google.com>
-Subject: Re: [syzbot] [bcachefs?] WARNING in srcu_check_nmi_safety
+References: <0000000000006eb03a061b20c079@google.com>
+Message-ID: <Zr-ZY8HSGfVuoQpl@google.com>
+Subject: Re: [syzbot] [kvm?] general protection fault in get_work_pool (2)
 From: Sean Christopherson <seanjc@google.com>
-To: syzbot <syzbot+62be362ff074b84ca393@syzkaller.appspotmail.com>
-Cc: kent.overstreet@linux.dev, kvm@vger.kernel.org, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, pbonzini@redhat.com, 
-	syzkaller-bugs@googlegroups.com
+To: syzbot <syzbot+0dc211bc2adb944e1fd6@syzkaller.appspotmail.com>
+Cc: Jason@zx2c4.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com, wireguard@lists.zx2c4.com
 Content-Type: text/plain; charset="us-ascii"
 
-On Sat, May 04, 2024, syzbot wrote:
+On Mon, Jun 17, 2024, syzbot wrote:
 > Hello,
 > 
 > syzbot found the following issue on:
 > 
-> HEAD commit:    3d25a941ea50 Merge tag 'block-6.9-20240503' of git://git.k..
+> HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
 > git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1143ae60980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=45d8db3acdc1ccc6
-> dashboard link: https://syzkaller.appspot.com/bug?extid=62be362ff074b84ca393
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16f23146980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=81c0d76ceef02b39
+> dashboard link: https://syzkaller.appspot.com/bug?extid=0dc211bc2adb944e1fd6
 > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 > userspace arch: i386
 > 
 > Unfortunately, I don't have any reproducer for this issue yet.
 > 
 > Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-3d25a941.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/49d9f26b0beb/vmlinux-3d25a941.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/d2c424c14fff/bzImage-3d25a941.xz
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2ccbdf43.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/13cdb5bfbafa/vmlinux-2ccbdf43.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/7a14f5d07f81/bzImage-2ccbdf43.xz
 > 
 > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+62be362ff074b84ca393@syzkaller.appspotmail.com
+> Reported-by: syzbot+0dc211bc2adb944e1fd6@syzkaller.appspotmail.com
 
 See https://lore.kernel.org/all/Zr-Ydj8FBpiqmY_c@google.com for an explanation.
 
