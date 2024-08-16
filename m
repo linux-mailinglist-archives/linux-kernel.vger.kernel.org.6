@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-290020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27FF2954E7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:11:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86F08954E7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 718EFB24525
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:11:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41F8E2878B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A921BE873;
-	Fri, 16 Aug 2024 16:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826601C0DD4;
+	Fri, 16 Aug 2024 16:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="qZjuni5L"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="Hm/VZ4nV"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848017710E
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 16:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84601BF333
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 16:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723824656; cv=none; b=LRziNufe8fyENNmflD8Tzhxz5nv3UZSSRSoXNLWkxe0zSNPIfh5u7SCuIDIY1lbOc+XO851IoJu+Qex7k6rkfA6T9Lj8JUpP86j7tMbVUL/Zw6iOWYrCu7fZ/mjjbbEmX3lxez+F641HzV27/OWNnKbDzr0lVRTtg/heEN7/P08=
+	t=1723824659; cv=none; b=GZwxRVq9REqfsD5CAPFcvmNk3xgoyW1CxwpFCNzfX27J895cnTxDVl7fbAjI+K7Xthueqh5RNY/+Aps6bMUexEDD158fkPCiil+XGDVrIXwKDKdaLw6j8uELG0idWO8pTJ4Cx9poG8TjnKYnRRxfZOQFr1BBgCFcoYUWertmTQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723824656; c=relaxed/simple;
-	bh=yIk80ZRGADSAjYqhqMG31u7sVGYT+56BfhDfvWeKUew=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B0ADZPuLdV4Hfrq+Xpr7/eJbpYdcjkKempMAPoWNnYpI94EeZAC1N2+YQBzbC8PTb60Jl6ePA4RGFycnoKGq9qsRMHbC/CiYO5WAS9pof90LHGrN+jq1TGdcL7DauOHX197ubnalYOIt+YRe01ZeFlzXhBEUT4ze61Xd4HZMubs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=qZjuni5L; arc=none smtp.client-ip=212.227.15.4
+	s=arc-20240116; t=1723824659; c=relaxed/simple;
+	bh=9yY1/BIxl7LoaOkOv2t6qPSu6oiKJ6lC8GdgdrN1Qlw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c8R3xKA54brZ9iWlSd6sEYzbbvL90coyEkGwDNU1n7Lu0suhRr5qTqaSjIi7OfU1QLfA27ZpKf96iNIfNn+kIxjF7ATxL+ouDkthBO3rUGWOn+xlSZi0KfmsoNNm3g7zHgu7nR+L3E8KyYNaQYSLUhX19RTw5IzwT/CmlGUTwRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=Hm/VZ4nV; arc=none smtp.client-ip=217.72.192.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1723824624; x=1724429424; i=spasswolf@web.de;
-	bh=AqH8ZahU0Ew/z25cFE4au3x3zvZRx/o0pPBf330Utj0=;
+	s=s29768273; t=1723824634; x=1724429434; i=spasswolf@web.de;
+	bh=tY1u/l18ICxFndL+rMYHYdlbuL5/Ji75gvQvXubIHqs=;
 	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
 	 MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=qZjuni5LCs4oYuVCZusa6gqTmhASB26+km+807lc16rRQCXxjNmVnGenGI353vWZ
-	 YUaFhqmZxlGsp9npjX3QqYw/U1u8tPFj33qXVOaffgyanCdqmipDqeRa7x6iGXHKV
-	 O9IwLuk8F6hnFzqM4rwY2T8yoLwZsZpJJv3U3zRNf7Ly2l7R27497HXNRSy8vDu2s
-	 DjUrlK0mHhGSggk2WKCVba7PUKnW7JlFVqfQrEH66pZDzriYX95lJF4+w5mlSDEA7
-	 g2jywPtKZRB24Jkap7rpYFsXZmbEvy1ifI8I4UYV7Kyt7i7lwxvM6sIfp4ORqH577
-	 qKHlkvP2kbmKJRzddA==
+	b=Hm/VZ4nVyBdr5dDUQNibfqMELTiimJ+x3CK5jWY5wydb/FCVtPBhUdDFKjewTK0L
+	 utd1GQ4xBY9YI1hBOuxPV74EEEsS0qfuZg8sZsO8ZpYYtWBPBlSsL4rMxZDzPZSYr
+	 R6NZSV55IFL9bNNRUETyp+csYo/R+DUgmuPLp+4XAakp0CRvpA0WvWSZ15soIkBow
+	 7IWy2epJ6itNjOOAI8l9d7dpPsX0fh32xjHfUwitePRCqDJOXLe47Pvym9OJN2r+Y
+	 AUBC4yyBw6kx3VLT1vVvoEGqCCNOndOf76c3N4hTWGy46fFrDfvYrGdwzANuNhoRu
+	 xeTHQuWvh9Y7fSx0jw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from localhost.localdomain ([84.119.92.193]) by smtp.web.de
- (mrweb006 [213.165.67.108]) with ESMTPSA (Nemesis) id
- 1MKuKH-1sswPS2QWr-00Lcmp; Fri, 16 Aug 2024 18:10:23 +0200
+ (mrweb105 [213.165.67.124]) with ESMTPSA (Nemesis) id
+ 1MjgX3-1ru43N0hrf-00dbwl; Fri, 16 Aug 2024 18:10:34 +0200
 From: Bert Karwatzki <spasswolf@web.de>
 To: "Liam R . Howlett" <Liam.Howlett@oracle.com>
 Cc: Bert Karwatzki <spasswolf@web.de>,
@@ -61,10 +61,11 @@ Cc: Bert Karwatzki <spasswolf@web.de>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Kees Cook <kees@kernel.org>,
 	Jeff Xu <jeffxu@chromium.org>,
-	"Liam R . Howlett" <Liam.Howlett@Oracle.com>
-Subject: [PATCH v5.1 18/19] ipc/shm, mm: Drop do_vma_munmap()
-Date: Fri, 16 Aug 2024 18:10:19 +0200
-Message-ID: <20240816161020.2845-1-spasswolf@web.de>
+	"Liam R . Howlett" <Liam.Howlett@Oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Subject: [PATCH v5.1 19/19] mm/mmap: Move may_expand_vm() check in mmap_region()
+Date: Fri, 16 Aug 2024 18:10:27 +0200
+Message-ID: <20240816161029.2865-1-spasswolf@web.de>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,146 +74,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:pG5/9OccDc0jmknnLiMC90N3TcGHFcL+ezavX79zPFVjOUla0KP
- 8ZdVhdU/iTbUmFt/RfpHAzG2yCA9a4ZiOpoksJz7cBSVm85f3uHKhKAIaRorQspNBFnzeGm
- bDzqstp3/21sQy5rU4iBk8fZQbv3hyPxbSvdW25SfKghV/VOT4cFF9eUMZPkEeieMrujo6j
- v/eoITaqZ+PtCqam4e0Rw==
+X-Provags-ID: V03:K1:CpBP6kSbrB8sL8flKl+ECNfHj/Uc35TmetZAHX0QnWtel46XMNb
+ ZiZBIbboeJJ6tVLYcRzceYO1MDLzuDd23AZvXklcX1N5/dSjrmMN5hc8CUFPzWDqomsO6Zj
+ efZvSyAq2qKR3ajjesfQhlBS1V7I1Zo2tl3gcC0mMHjTj4rdN+sSq+wKGpyMPyFIomNU2X5
+ SkFEdwpRClee9hPkap6sQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:eYlzR9waZA8=;X2ciPsgPNvjP5nI2TnpdJPGQpTl
- ZGbpSOwDaVm5k/sSYOr2VTEIHeTvCjtWQ2bvND3mBcq4ssJ4Be+fMKt1Z4bB4RiT2RM4RfsZV
- BuyBUSKFYD47YkkHMm6TqgHiwrQZAEVb8QQXnYl534UVjW4WC09jHMSJVKt6cgaCu6n/jJf9/
- FWa0xEThkn8DjzmmMKgqR8yXouWYgP7O6YToci1pn/Zyimqf6JcN8vzVs8jOKPDFJdw0bUJjX
- 63JiWjWs778Ybdm5x1QJupMw0hYyxAzNbctfeH3rDNuuk/0qTAuF2NMBNnPfl21lF/0UUvUd6
- xewZ8FhVtfAr/A6lUPAS4FAepYzao8RKRaNoYwjQ4eUx+sPj/DQRLr0Q0ZPVNPPKlvSkLWyGa
- o5gtJLqgMr4sSc3SArDITKaGf2N3fbEom82k4iK8q9ILREJVeijK3Mwgmsj8KOh/u2NXOTnWh
- 1G6gJg2RZJZhaINrW5tAn2dLjepplmhCGNdDeSI2XIaZCZZ1lO4JAydRwJ39x9GTME6mpPQtj
- TyFnRYi2Kwf52MKLCLpOWm9eJQ326jKjXQfCUZknw1+IP7meLbuTWxKzdZRd5p7kzfIhTDpkB
- /ZrViptLTW5MuilUD4Z1nNGGeVckAvz7nUiKAMN3WZmIrj3cQ7GeKz9uAzIPltCyTK0hBaTPW
- oIusx3li8L3Dl2ReYZdSAzjDx1t37H2jET/faXZ3xrH7gRe3DbcrC8xMAlQskJseQD6D4JoZI
- DlftLjMzMoH43BGtPbki3ST2Ip5yC281Uy16uPt2qM2kp6eYq7/dBTidKNMBsUxbJvRejE+5+
- nGPF7cZj2glANQ3dcMJAzDHg==
+UI-OutboundReport: notjunk:1;M01:P0:TD/RjrwwdTk=;IQOlooLy+sbkfuRILnJuuPi8E05
+ eTOFKmGrhsyKxUGmTKfbVqPOTXKxrVCFgKtxI9Ge35vs1fZaRTnG2vkZqgesytNioXiXSeaE0
+ QYgatLk2+Y1P18xgsrv6jvAWBcxTIogQn/00Tu4bXu3m+E39ZSE7jnp/UEmARv/W26cfn/5FP
+ BKWdOQr8bNvp85EcYFMpEAtYyfbPsQmkFqrnV4UNWg5tK1TTxyVMx2LeKleR9oNk011/34Hc2
+ jW3UOFZiXz97xpsHUoA09NrJPiK+cvSHbRPFOjLq2wnVM8rysqI4AFlkEA8JlaE4C94quRVlZ
+ ERLXkAGDDBwZx2CY0Tnczw57wBX9eOb2qneQGjhUcQkzsUO2abmTwcqiUBvJluIShOCN98rEb
+ qD1q0EGDRWCciyL7HNr/Vaptu7hTsopiXiSHMqxW4pf+LxqDYgFfri+mVltiQsCkdDw4QB4jz
+ C8jSXFeFsYhBR8HKHaaFBfNQlZApxM+x01QXwvPQWafgZc67ePXg4JsiD3TR0spEkmIHZ2dAe
+ IgLhtupZJXjT3EHG9UsbJ6f73QYd9/46PMukJXTgzPkYKZc2JnEMChXZJnrhAYsxq26p+Fwsi
+ txnXkeneShJYs+QayAhRAhdgfOCfJXqLqw18w368jRPdrtOvIpKtDNyz0m46RRC6m5nJlEwR8
+ 794pRsOvVEYGW+PAcQxu0sEHjdN0hNbQmZ+OrMSp4eUaUFEtCWh/KzEK4iIcJVTwfXZHPUzyj
+ TZm9s7eQbXgP1E8bpkmddo0KD4NN8BUkq+/HB5Vqev6YuwJb36knkUDhAuNxveFacQo5YT/Zd
+ eWjaBNunMLJMmts+0dSNhg3Q==
 
-The do_vma_munmap() wrapper existed for callers that didn't have a vma
-iterator and needed to check the vma mseal status prior to calling the
-underlying munmap().  All callers now use a vma iterator and since the
-mseal check of can_modify_mm() has been moved to do_vmi_align_munmap()
-and the vmas are aligned, this function can just be called instead.
+The may_expand_vm() check requires the count of the pages within the
+munmap range.  Since this is needed for accounting and obtained later,
+the reodering of may_expand_vm() to later in the call stack, after the
+vma munmap struct (vms) is initialised and the gather stage is
+potentially run, will allow for a single loop over the vmas.  The gather
+sage does not commit any work and so everything can be undone in the
+case of a failure.
 
-do_vmi_align_munmap() can no longer be static as ipc/shm is using it and
-it is exported via the mm.h header.
+The MAP_FIXED page count is available after the vms_gather_munmap_vmas()
+call, so use it instead of looping over the vmas twice.
 
 Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 =2D--
- include/linux/mm.h |  6 +++---
- ipc/shm.c          |  8 ++++----
- mm/mmap.c          | 31 ++++---------------------------
- 3 files changed, 11 insertions(+), 34 deletions(-)
+ mm/mmap.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 653287396808..2dccdc7ba09a 100644
-=2D-- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -3292,14 +3292,14 @@ extern unsigned long do_mmap(struct file *file, un=
-signed long addr,
- extern int do_vmi_munmap(struct vma_iterator *vmi, struct mm_struct *mm,
- 			 unsigned long start, size_t len, struct list_head *uf,
- 			 bool unlock);
-+extern int do_vmi_align_munmap(struct vma_iterator *vmi, struct vm_area_s=
-truct *vma,
-+		    struct mm_struct *mm, unsigned long start,
-+		    unsigned long end, struct list_head *uf, bool unlock);
- extern int do_munmap(struct mm_struct *, unsigned long, size_t,
- 		     struct list_head *uf);
- extern int do_madvise(struct mm_struct *mm, unsigned long start, size_t l=
-en_in, int behavior);
-
- #ifdef CONFIG_MMU
--extern int do_vma_munmap(struct vma_iterator *vmi, struct vm_area_struct =
-*vma,
--			 unsigned long start, unsigned long end,
--			 struct list_head *uf, bool unlock);
- extern int __mm_populate(unsigned long addr, unsigned long len,
- 			 int ignore_errors);
- static inline void mm_populate(unsigned long addr, unsigned long len)
-diff --git a/ipc/shm.c b/ipc/shm.c
-index 3e3071252dac..99564c870084 100644
-=2D-- a/ipc/shm.c
-+++ b/ipc/shm.c
-@@ -1778,8 +1778,8 @@ long ksys_shmdt(char __user *shmaddr)
- 			 */
- 			file =3D vma->vm_file;
- 			size =3D i_size_read(file_inode(vma->vm_file));
--			do_vma_munmap(&vmi, vma, vma->vm_start, vma->vm_end,
--				      NULL, false);
-+			do_vmi_align_munmap(&vmi, vma, mm, vma->vm_start,
-+					    vma->vm_end, NULL, false);
- 			/*
- 			 * We discovered the size of the shm segment, so
- 			 * break out of here and fall through to the next
-@@ -1803,8 +1803,8 @@ long ksys_shmdt(char __user *shmaddr)
- 		if ((vma->vm_ops =3D=3D &shm_vm_ops) &&
- 		    ((vma->vm_start - addr)/PAGE_SIZE =3D=3D vma->vm_pgoff) &&
- 		    (vma->vm_file =3D=3D file)) {
--			do_vma_munmap(&vmi, vma, vma->vm_start, vma->vm_end,
--				      NULL, false);
-+			do_vmi_align_munmap(&vmi, vma, mm, vma->vm_start,
-+					    vma->vm_end, NULL, false);
- 		}
-
- 		vma =3D vma_next(&vmi);
 diff --git a/mm/mmap.c b/mm/mmap.c
-index ae74d0674b6d..d2f47cd66650 100644
+index d2f47cd66650..e0c321b7c642 100644
 =2D-- a/mm/mmap.c
 +++ b/mm/mmap.c
-@@ -169,11 +169,12 @@ SYSCALL_DEFINE1(brk, unsigned long, brk)
- 			goto out; /* mapping intersects with an existing non-brk vma. */
- 		/*
- 		 * mm->brk must be protected by write mmap_lock.
--		 * do_vma_munmap() will drop the lock on success,  so update it
--		 * before calling do_vma_munmap().
-+		 * do_vmi_align_munmap() will drop the lock on success,  so
-+		 * update it before calling do_vma_munmap().
- 		 */
- 		mm->brk =3D brk;
--		if (do_vma_munmap(&vmi, brkvma, newbrk, oldbrk, &uf, true))
-+		if (do_vmi_align_munmap(&vmi, brkvma, mm, newbrk, oldbrk, &uf,
-+					/* unlock =3D */ true))
- 			goto out;
-
- 		goto success_unlocked;
-@@ -1747,30 +1748,6 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, st=
-art, unsigned long, size,
- 	return ret;
- }
-
--/*
-- * do_vma_munmap() - Unmap a full or partial vma.
-- * @vmi: The vma iterator pointing at the vma
-- * @vma: The first vma to be munmapped
-- * @start: the start of the address to unmap
-- * @end: The end of the address to unmap
-- * @uf: The userfaultfd list_head
-- * @unlock: Drop the lock on success
-- *
-- * unmaps a VMA mapping when the vma iterator is already in position.
-- * Does not handle alignment.
-- *
-- * Return: 0 on success drops the lock of so directed, error on failure a=
-nd will
-- * still hold the lock.
-- */
--int do_vma_munmap(struct vma_iterator *vmi, struct vm_area_struct *vma,
--		unsigned long start, unsigned long end, struct list_head *uf,
--		bool unlock)
--{
--	struct mm_struct *mm =3D vma->vm_mm;
+@@ -1376,17 +1376,6 @@ unsigned long mmap_region(struct file *file, unsign=
+ed long addr,
+ 	pgoff_t vm_pgoff;
+ 	int error =3D -ENOMEM;
+ 	VMA_ITERATOR(vmi, mm, addr);
+-	unsigned long nr_pages, nr_accounted;
 -
--	return do_vmi_align_munmap(vmi, vma, mm, start, end, uf, unlock);
--}
+-	nr_pages =3D count_vma_pages_range(mm, addr, end, &nr_accounted);
 -
- /*
-  * do_brk_flags() - Increase the brk vma if the flags match.
-  * @vmi: The vma iterator
+-	/*
+-	 * Check against address space limit.
+-	 * MAP_FIXED may remove pages of mappings that intersects with requested
+-	 * mapping. Account for the pages it would unmap.
+-	 */
+-	if (!may_expand_vm(mm, vm_flags, pglen - nr_pages))
+-		return -ENOMEM;
+
+
+ 	/* Find the first overlapping VMA */
+@@ -1414,6 +1403,10 @@ unsigned long mmap_region(struct file *file, unsign=
+ed long addr,
+ 			vma_iter_next_range(&vmi);
+ 	}
+
++	/* Check against address space limit. */
++	if (!may_expand_vm(mm, vm_flags, pglen - vms.nr_pages))
++		goto abort_munmap;
++
+ 	/*
+ 	 * Private writable mapping: check memory availability
+ 	 */
 =2D-
 2.45.2
 
