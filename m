@@ -1,140 +1,123 @@
-Return-Path: <linux-kernel+bounces-289209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C54CD954332
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:47:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AE04954338
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 041CA1C2524C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:47:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 009BA2849F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:48:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F697145340;
-	Fri, 16 Aug 2024 07:42:09 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3AA012C46F;
+	Fri, 16 Aug 2024 07:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z75pRi7s"
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B2E1448EB;
-	Fri, 16 Aug 2024 07:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D01C04F602;
+	Fri, 16 Aug 2024 07:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723794129; cv=none; b=oLCLVtlUhQ0lNUSYKhtCEO+0zNQgJI8kKDgekJLb7DCLSk9rAojLOM2WyB45AUWT0gf+P5bJxEvT34PFY5x91mLcS0Iu7IGdtJQcLUf6BRoxnuPJlJj0bCRU6AhfIfrpXvGOkM4aSJ1SFb/84H0wHevVOYbf7KJvnVCychqq06k=
+	t=1723794213; cv=none; b=T3PVPeCvgejizbVUR19ritBKYW2aDZxoYoQwdnh8iOcSMc5jJcGYMPzqHgQhg+F4oy70rakjKamPlSMP+Ifs0U4EDGroWClZZB3v/erCJPUBeo+LdH5AnFH18462S5yNGlsdl3pbzfi1EI8B25Ck9E/hu7YDQ8Px9JjdIQXQGPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723794129; c=relaxed/simple;
-	bh=71714VbQ+BlxKUx9p0xPBiDs9trNBypsFVhfzoyUX7M=;
-	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=W6OB4I8JFx2XCOoku85PmTFrwVikaP6RPvMk2seO7cv5c0Nf9rNiIdy+REdn7AIED5EvKlMiD8EW07bdxCC7e6//MaQ2GQX2wRq+aJtjHiJWdLCni0J6xatUujhTNwTbjbPsqEfJ63PzXsbgU481dqL7cAB4coAw0EDk8w1Xv4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WlYpL2ddlz1T7Rm;
-	Fri, 16 Aug 2024 15:41:30 +0800 (CST)
-Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8AB7518006C;
-	Fri, 16 Aug 2024 15:42:02 +0800 (CST)
-Received: from [10.67.121.177] (10.67.121.177) by
- kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 16 Aug 2024 15:42:01 +0800
-CC: <yangyicong@hisilicon.com>, Shuai Xue <xueshuai@linux.alibaba.com>, Jing
- Zhang <renyu.zj@linux.alibaba.com>, Will Deacon <will@kernel.org>, Mark
- Rutland <mark.rutland@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Jonathan Corbet
-	<corbet@lwn.net>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <quic_vbadigan@quicinc.com>,
-	<quic_nitegupt@quicinc.com>, <quic_skananth@quicinc.com>,
-	<quic_ramkri@quicinc.com>, <quic_parass@quicinc.com>,
-	<quic_mrana@quicinc.com>
-Subject: Re: [PATCH 3/4] perf/dwc_pcie: Always register for PCIe bus notifier
-To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-References: <20240731-dwc_pmu_fix-v1-0-ca47d153e5b2@quicinc.com>
- <20240731-dwc_pmu_fix-v1-3-ca47d153e5b2@quicinc.com>
- <55303289-bb41-4e67-9912-4cf4335244ca@huawei.com>
- <2d882c88-fd56-c512-0dcc-8825ba920b51@quicinc.com>
-From: Yicong Yang <yangyicong@huawei.com>
-Message-ID: <82a28788-eed8-6cff-c2ee-fb4b421ae53c@huawei.com>
-Date: Fri, 16 Aug 2024 15:42:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+	s=arc-20240116; t=1723794213; c=relaxed/simple;
+	bh=zaApHtQg2oSp+QYGp9b1CE8d7V38jbZLbHqogLU+glc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oh55VpMSlBi7Vj0gtKqFN2gz7ExylnaPmy+BgMEN+27wkX7CH8YbjIDokd+Ud68reeZ7CsRsx/Xw7UXvMYOGO1rhQAybkxQUxioYlE5pqnsMrwLYrf0g1Rqd4FaTkZOkTNiUOTE1v19lnMq4oyu7ylNI2IHFb50BmqLUaSbxVTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z75pRi7s; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-27010ae9815so780596fac.2;
+        Fri, 16 Aug 2024 00:43:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723794210; x=1724399010; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jpU1zDE8vWcy5g8XvrytGvPiuUH7nyo8mC+3JbG9J0k=;
+        b=Z75pRi7skihqgrUhIx3zHYr3LfeAPcQu5pdUuewzXSjdO3WP2HYSZXy8D7i9H9cNmh
+         sOO2KqOt3ZiN+3qYZgK5RK813Ie4oULlaA+gJpdIxTq57ywZSOMpJ2VWOiyZdSGCVLIO
+         XUsMswpMbd/efdw5gtLZ6/W1oAN2vuWBQ6u50Ib8m4rulpK7zIRVqPm0THuPdJzFeQS8
+         xnSO+Jmn7Qhrhu5+cIqgUnAdjQkCqCqFjtm4o5OuycRaZy/DynaU9zrINCumg62ekE9+
+         8oQEkbbz2U+RarWyVNqinPc3SQulIBGij3qN9tvkr+lU0WHXIJEm0PCY2Cwj7b58P/37
+         nqCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723794210; x=1724399010;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jpU1zDE8vWcy5g8XvrytGvPiuUH7nyo8mC+3JbG9J0k=;
+        b=NVF5aOaPLeW4fuNznRLOvLKuEb069L56mkTmKrAQMwQCPOnUuoe69UcJXFIcU974/F
+         DZiACR7hJJOPSDojNlmXJXsrI49y/7KGvV0hU50lg23ZonpUhOSFMpdNTBKoACG8q/2e
+         CMlfZe4s+yICws+NCiEvK/RX3WAZFb3XnLi8avSGUOUYmhVFndNUIfjHR76TSKkbcYNM
+         4vqTvRmlR/V7FX5bVeHlwVA3jBHcMf/vwWN+jaIl/O6ImacikjPcm5w/QX51LK4HrcKy
+         LFnFJK1cqNKXGOjmuMjDdhkc3brPZOLG4Suz9Iy9c6a9C7OBza41IpTVb21LnLInQqca
+         myJg==
+X-Forwarded-Encrypted: i=1; AJvYcCXab/df3yaPwYsdDoCwRFH4z9N1aeH9dyTpGf+ddZfDX2d1664znhMbxzJIqBXlPfCuWy/hIXKPPWLAq+pTwoYYolY0Q56e1ea1Iq+D
+X-Gm-Message-State: AOJu0Yw48/2ayLeV0m/gFSGEXDWqA6ZXa24INYc+QWSi3K5aL2HXBc9u
+	uuG5B3dCokYhlOwXpWe+m4FTvFTT7zh62CHtuH7bX2uFvgUgLK1rxuYDxQ==
+X-Google-Smtp-Source: AGHT+IHSkjb0amXBZJyLteOFF1JfTwiarpRF6PbhvIghe9GeACLdCDy6AyqH/FWVADhs3O2ARwvfqA==
+X-Received: by 2002:a05:6870:5254:b0:261:9c7:a0bb with SMTP id 586e51a60fabf-2701c590a08mr2157662fac.48.1723794210205;
+        Fri, 16 Aug 2024 00:43:30 -0700 (PDT)
+Received: from carrot.. (i222-151-34-139.s42.a014.ap.plala.or.jp. [222.151.34.139])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b61e7c7asm2365971a12.45.2024.08.16.00.43.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 00:43:29 -0700 (PDT)
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-nilfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/8] nilfs2: clean up kernel-doc warnings
+Date: Fri, 16 Aug 2024 16:43:11 +0900
+Message-Id: <20240816074319.3253-1-konishi.ryusuke@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <2d882c88-fd56-c512-0dcc-8825ba920b51@quicinc.com>
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd200014.china.huawei.com (7.221.188.8)
 
-On 2024/8/16 11:51, Krishna Chaitanya Chundru wrote:
-> 
-> 
-> On 8/15/2024 7:19 PM, Yicong Yang wrote:
->> On 2024/7/31 12:23, Krishna chaitanya chundru wrote:
->>> When the PCIe devices are discovered late, the driver can't find
->>> the PCIe devices and returns in the init without registering with
->>> the bus notifier. Due to that the devices which are discovered late
->>> the driver can't register for this.
->>>
->>> Register for bus notifier even if the device is not found in init.
->>>
->>> Fixes: af9597adc2f1 ("drivers/perf: add DesignWare PCIe PMU driver")
->>> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
->>> ---
->>>   drivers/perf/dwc_pcie_pmu.c | 10 +++++-----
->>>   1 file changed, 5 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/perf/dwc_pcie_pmu.c b/drivers/perf/dwc_pcie_pmu.c
->>> index c115348b8d53..aa1010b44bcb 100644
->>> --- a/drivers/perf/dwc_pcie_pmu.c
->>> +++ b/drivers/perf/dwc_pcie_pmu.c
->>> @@ -741,8 +741,6 @@ static int __init dwc_pcie_pmu_init(void)
->>>             found = true;
->>>       }
->>> -    if (!found)
->>> -        return -ENODEV;
->>>         ret = cpuhp_setup_state_multi(CPUHP_AP_ONLINE_DYN,
->>>                         "perf/dwc_pcie_pmu:online",
->>> @@ -753,9 +751,11 @@ static int __init dwc_pcie_pmu_init(void)
->>>         dwc_pcie_pmu_hp_state = ret;
->>>   -    ret = platform_driver_register(&dwc_pcie_pmu_driver);
->>> -    if (ret)
->>> -        goto platform_driver_register_err;
->>> +    if (!found) {
->>> +        ret = platform_driver_register(&dwc_pcie_pmu_driver);
->>> +        if (ret)
->>> +            goto platform_driver_register_err;
->>> +    }
->>>
->>
->> This doesn't match the commit.
->> > If any device is found at this stage, we cannot use them since you don't
->> register a driver.
->>
-> If the device is not found then only we are skipping platform driver
-> register otherwise driver will be registering with the platform driver.
-> 
+Hi Andrew, please add this series to the queue for the next cycle.
 
-think about the case that devices already discovered before module init.
-without the change here we'll register both the platform devices and driver
-but with the change here we'll only register the platform devices without
-the related driver to probe them.
+This series fixes a number of formatting issues in kernel doc comments
+that were detected as warnings by the kernel-doc script, making
+violations more noticeable when adding or modifying kernel doc.
 
-Try to register the driver and notifier unconditionally will solve the issue.
-It'll probe the device and register the PMU if later device is added by
-the bus notifier.
+There are still warnings output by "kernel-doc -Wall", but they are
+widespread, so I plan to fix them at another time while considering
+priorities.
 
-Thanks.
+Thanks,
+Ryusuke Konishi
 
-> - Krishna Chaitanya.
->>>       ret = bus_register_notifier(&pci_bus_type, &dwc_pcie_pmu_nb);
->>>       if (ret)
->>>
-> 
-> .
+Ryusuke Konishi (8):
+  nilfs2: add missing argument description for __nilfs_error()
+  nilfs2: add missing argument descriptions for ioctl-related helpers
+  nilfs2: improve kernel-doc comments for b-tree node helpers
+  nilfs2: fix incorrect kernel-doc declaration of nilfs_palloc_req
+    structure
+  nilfs2: add missing description of nilfs_btree_path structure
+  nilfs2: describe the members of nilfs_bmap_operations structure
+  nilfs2: fix inconsistencies in kernel-doc comments in segment.h
+  nilfs2: fix missing initial short descriptions of kernel-doc comments
+
+ fs/nilfs2/alloc.h   |  2 +-
+ fs/nilfs2/bmap.c    |  2 +-
+ fs/nilfs2/bmap.h    | 15 ++++++++++-
+ fs/nilfs2/btnode.c  | 63 ++++++++++++++++++++++++++++++++++++++-------
+ fs/nilfs2/btree.h   |  1 +
+ fs/nilfs2/cpfile.c  | 32 +++++++++++------------
+ fs/nilfs2/dat.c     | 17 +++++-------
+ fs/nilfs2/ioctl.c   | 17 ++++++++++--
+ fs/nilfs2/segment.h |  7 ++---
+ fs/nilfs2/sufile.c  | 20 ++++++--------
+ fs/nilfs2/super.c   |  4 +++
+ 11 files changed, 125 insertions(+), 55 deletions(-)
+
+-- 
+2.34.1
+
 
