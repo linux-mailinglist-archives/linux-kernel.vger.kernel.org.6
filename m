@@ -1,230 +1,256 @@
-Return-Path: <linux-kernel+bounces-290328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98D98955247
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:20:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF767955249
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:20:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 512EB284B9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:20:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D1A41F22885
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2681C5792;
-	Fri, 16 Aug 2024 21:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="XxBWyddf"
-Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FA91C688D;
+	Fri, 16 Aug 2024 21:20:27 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A901BE87A;
-	Fri, 16 Aug 2024 21:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF031C57B8
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 21:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723843219; cv=none; b=WuASx6bdbYIwjGy+xU8XD+4dz0Vbtz+aaSNUpwmJsrvT3WueYhE34525EJe52nZoREWARuYpU80tX/8zXeur7GTnYn3/JK2irOYsmo19j2aNihfG2JiVvPMWCrknrCkVuGmmD0eYqnarXwbXOVbJ6vCHiIfDi3AFT6nEn48DbzI=
+	t=1723843226; cv=none; b=tK4bAexVPotpnV3k7sVL+iZCi3/O9I8X7YaqnrLfc256xeB0HfuI1DMxXa1i+DZv2RWi6+mnXdZ8QwlK6Pocz13JKT3JWZCZ2yK5Xy0XmEFwpq4cRGbo5pLcIdeu3/gTLJl3diYPL3FplLJXXtHcDHDO1YdbVEId0tFl+AnK2D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723843219; c=relaxed/simple;
-	bh=RsnMdQdxZqF2ortXNgK8m4Eno7YiqvVAhPbPy6YyNWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cbgjiRzvxI1pPeKnzCtpYsjG+eQUnAqMMBlB2lj2Z40m16Gv9rEoN1p24gv4MA9bJvR8IxLdGj4XR2LA9pBb8Y5N+Q3CgwtGkdUan3ExhpWWYZii04RFLnL3Yc+bXQGdBL59Wy7XkvvLrNzjcENqhdwPOScqjuUV1GmaY69pbOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=XxBWyddf; arc=none smtp.client-ip=185.125.25.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Wlvys5SGGz13tW;
-	Fri, 16 Aug 2024 23:20:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1723843205;
-	bh=0w9S8iWKBv9Q934rgCPmMlAKNc73m9LHTITdhR8icLw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XxBWyddfhDcivwuxUJ//c/Uw64C145/x13b57MCGJNrLK+x1umQMBWXj+98KXZ0oJ
-	 w0TJHM4caw8ZXGBykR+9XzqWp0si8WGdahU0nriRiSvKb63LQEkplKEVQKdOuVS+hf
-	 76TYx1SzhjKTjGR6xyjFTsfg0Xb5VnJ9YWxUWcsg=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Wlvyr4WZVzQPg;
-	Fri, 16 Aug 2024 23:20:04 +0200 (CEST)
-Date: Fri, 16 Aug 2024 23:19:58 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v9 1/5] Landlock: Add abstract unix socket connect
- restriction
-Message-ID: <20240816.Bi8EitheeV2o@digikod.net>
-References: <cover.1723615689.git.fahimitahera@gmail.com>
- <603cf546392f0cd35227f696527fd8f1d644cb31.1723615689.git.fahimitahera@gmail.com>
+	s=arc-20240116; t=1723843226; c=relaxed/simple;
+	bh=K69mQLpKnWIefkqGsiGkjEh65f+gebXFvbi0YDFQARs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Z28pXtklq3YYYizBPFyM+vTFAQaFwQtsenjNLD8VO0SaxN51RTvitlMSweBDH6RIuMhhndEKSkhvThilh2HTjkwnQ7xz+LjV1XH5z2oLxHq50MFzXCQIwIUbaplmRX5b6CUcyxBS35a+WnzxtrK/ZboMt1k9VHbTGJplq5hHP+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81f9504974dso237750539f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 14:20:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723843224; x=1724448024;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xF5idcUyx0efuceX9c+lj61TXApcqLvvFQS+bb2yC5E=;
+        b=Tt7Jr4qKf2Fg9a2dT8vksHtBqUc38k5NyNgwcPAhiSHD/hi4XtwpdzJQG8lubkiChH
+         RW9LNBWlPEIVcZg2/MDnJc2g16bB4zPUO9hK8Tvtj1x895NRQU/cbX0I/AAFYFlTKWiX
+         4sP9qRUKVMPZcexHVFign6XOaW4Np31MV3XZowTAS3FL/aW7nit/JrbT7BnJLKPKvEO9
+         eeZuUH5XudGVT93TyhncPc28I+aJ8SQPnpkWlvrl/tjMdoJs+Lq0arQoYVajgA+BEK73
+         qm07ejqYbdAfTo5orvkPuEqbHrlaB+i3uW0B7jP3iR8jPCev09ImY6Pyfw9dbm0MZLI5
+         nRKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWWqUfH/Ni7ceQ0UI0jI3Vg4tFL6AL2jzPHmcPN8VaosGYChWSsU8triPELWnbxxvIiypc9sYmVnR8z9sGRtlQkhNeP/0t5khljncZW
+X-Gm-Message-State: AOJu0YwTXb8DiUOsyqIybfPdF1SV/01tbBawyjGszuJqGV3ibhSkOkDi
+	JzCkseUcUWdxN0H1SH8ubzIUibdKQvOk5Mp6FZDFdyGtRw17So6jMoAMw4WrgCdTSkxNVC3VRW6
+	wi9xKz0jgyKrPyKbpT03dIrbaG1B3cnLzOu60dV3pEpgLkrUZJZ7HeIw=
+X-Google-Smtp-Source: AGHT+IFwu+RN+JZK5RPHgvG/u6na31VOkUHAil1ZREMz8N7ymiPpiFAj6+E5imanpEtDn2pv2bT/A+c6DndywNKA4eHqjIYfu3MW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <603cf546392f0cd35227f696527fd8f1d644cb31.1723615689.git.fahimitahera@gmail.com>
-X-Infomaniak-Routing: alpha
+X-Received: by 2002:a05:6638:12d4:b0:4ca:7128:6c70 with SMTP id
+ 8926c6da1cb9f-4cce1747d52mr219865173.6.1723843223947; Fri, 16 Aug 2024
+ 14:20:23 -0700 (PDT)
+Date: Fri, 16 Aug 2024 14:20:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000031ec6061fd3872e@google.com>
+Subject: [syzbot] [usb?] KASAN: invalid-free in raw_release
+From: syzbot <syzbot+b5e01354ba4aea02654b@syzkaller.appspotmail.com>
+To: andreyknvl@gmail.com, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Aug 14, 2024 at 12:22:19AM -0600, Tahera Fahimi wrote:
-> This patch introduces a new "scoped" attribute to the landlock_ruleset_attr
-> that can specify "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to scope
-> abstract Unix sockets from connecting to a process outside of
-> the same landlock domain. It implements two hooks, unix_stream_connect
-> and unix_may_send to enforce this restriction.
-> 
-> Closes: https://github.com/landlock-lsm/linux/issues/7
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> 
-> ---
-> v9:
-> - Editting inline comments.
-> - Major refactoring in domain_is_scoped() and is_abstract_socket
-> v8:
-> - Code refactoring (improve code readability, renaming variable, etc.) based
->   on reviews by Mickaël Salaün on version 7.
-> - Adding warn_on_once to check (impossible) inconsistencies.
-> - Adding inline comments.
-> - Adding check_unix_address_format to check if the scoping socket is an abstract
->   unix sockets.
-> v7:
->  - Using socket's file credentials for both connected(STREAM) and
->    non-connected(DGRAM) sockets.
->  - Adding "domain_sock_scope" instead of the domain scoping mechanism used in
->    ptrace ensures that if a server's domain is accessible from the client's
->    domain (where the client is more privileged than the server), the client
->    can connect to the server in all edge cases.
->  - Removing debug codes.
-> v6:
->  - Removing curr_ruleset from landlock_hierarchy, and switching back to use
->    the same domain scoping as ptrace.
->  - code clean up.
-> v5:
->  - Renaming "LANDLOCK_*_ACCESS_SCOPE" to "LANDLOCK_*_SCOPE"
->  - Adding curr_ruleset to hierarachy_ruleset structure to have access from
->    landlock_hierarchy to its respective landlock_ruleset.
->  - Using curr_ruleset to check if a domain is scoped while walking in the
->    hierarchy of domains.
->  - Modifying inline comments.
-> V4:
->  - Rebased on Günther's Patch:
->    https://lore.kernel.org/all/20240610082115.1693267-1-gnoack@google.com/
->    so there is no need for "LANDLOCK_SHIFT_ACCESS_SCOPE", then it is removed.
->  - Adding get_scope_accesses function to check all scoped access masks in a ruleset.
->  - Using socket's file credentials instead of credentials stored in peer_cred
->    for datagram sockets. (see discussion in [1])
->  - Modifying inline comments.
-> V3:
->  - Improving commit description.
->  - Introducing "scoped" attribute to landlock_ruleset_attr for IPC scoping
->    purpose, and adding related functions.
->  - Changing structure of ruleset based on "scoped".
->  - Removing rcu lock and using unix_sk lock instead.
->  - Introducing scoping for datagram sockets in unix_may_send.
-> V2:
->  - Removing wrapper functions
-> 
-> [1]https://lore.kernel.org/all/20240610.Aifee5ingugh@digikod.net/
-> ----
+Hello,
 
-Useless "----"
+syzbot found the following issue on:
 
-> ---
->  include/uapi/linux/landlock.h |  27 +++++++
->  security/landlock/limits.h    |   3 +
->  security/landlock/ruleset.c   |   7 +-
->  security/landlock/ruleset.h   |  23 +++++-
->  security/landlock/syscalls.c  |  17 +++--
->  security/landlock/task.c      | 129 ++++++++++++++++++++++++++++++++++
->  6 files changed, 198 insertions(+), 8 deletions(-)
-> 
+HEAD commit:    d74da846046a Merge tag 'platform-drivers-x86-v6.11-3' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15717e6b980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=801d05d1ea4be1b8
+dashboard link: https://syzkaller.appspot.com/bug?extid=b5e01354ba4aea02654b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-> +static bool sock_is_scoped(struct sock *const other,
-> +			   const struct landlock_ruleset *const dom)
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Please rename "dom" to "domain".  Function arguments with full names
-make the API more consistent and easier to understand.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/abf3bd7fae83/disk-d74da846.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ab1df710091d/vmlinux-d74da846.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/de4fcc24c87c/bzImage-d74da846.xz
 
-> +{
-> +	const struct landlock_ruleset *dom_other;
-> +
-> +	/* the credentials will not change */
-> +	lockdep_assert_held(&unix_sk(other)->lock);
-> +	dom_other = landlock_cred(other->sk_socket->file->f_cred)->domain;
-> +	return domain_is_scoped(dom, dom_other,
-> +				LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET);
-> +}
-> +
-> +static bool is_abstract_socket(struct sock *const sock)
-> +{
-> +	struct unix_address *addr = unix_sk(sock)->addr;
-> +
-> +	if (!addr)
-> +		return false;
-> +
-> +	if (addr->len >= offsetof(struct sockaddr_un, sun_path) + 1 &&
-> +	    addr->name[0].sun_path[0] == '\0')
-> +		return true;
-> +
-> +	return false;
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b5e01354ba4aea02654b@syzkaller.appspotmail.com
 
-Much better!
+==================================================================
+BUG: KASAN: double-free in dev_free drivers/usb/gadget/legacy/raw_gadget.c:225 [inline]
+BUG: KASAN: double-free in kref_put+0x4a8/0x7c0 include/linux/kref.h:65
+Free of addr ffff88807ce9ef00 by task syz.1.6138/1440
 
-> +}
-> +
-> +static int hook_unix_stream_connect(struct sock *const sock,
-> +				    struct sock *const other,
-> +				    struct sock *const newsk)
-> +{
-> +	const struct landlock_ruleset *const dom =
-> +		landlock_get_current_domain();
-> +
-> +	/* quick return for non-sandboxed processes */
-> +	if (!dom)
-> +		return 0;
-> +
-> +	if (is_abstract_socket(other))
-> +		if (sock_is_scoped(other, dom))
+CPU: 0 UID: 0 PID: 1440 Comm: syz.1.6138 Not tainted 6.11.0-rc3-syzkaller-00007-gd74da846046a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report_invalid_free+0x11a/0x140 mm/kasan/report.c:563
+ poison_slab_object+0xf4/0x150
+ __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
+ kasan_slab_free include/linux/kasan.h:184 [inline]
+ slab_free_hook mm/slub.c:2252 [inline]
+ slab_free mm/slub.c:4473 [inline]
+ kfree+0x149/0x360 mm/slub.c:4594
+ dev_free drivers/usb/gadget/legacy/raw_gadget.c:225 [inline]
+ kref_put+0x4a8/0x7c0 include/linux/kref.h:65
+ raw_release+0x138/0x1e0 drivers/usb/gadget/legacy/raw_gadget.c:473
+ __fput+0x24a/0x8a0 fs/file_table.c:422
+ __do_sys_close fs/open.c:1566 [inline]
+ __se_sys_close fs/open.c:1551 [inline]
+ __x64_sys_close+0x7f/0x110 fs/open.c:1551
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f256497868a
+Code: 48 3d 00 f0 ff ff 77 48 c3 0f 1f 80 00 00 00 00 48 83 ec 18 89 7c 24 0c e8 13 8b 02 00 8b 7c 24 0c 89 c2 b8 03 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 36 89 d7 89 44 24 0c e8 73 8b 02 00 8b 44 24
+RSP: 002b:00007f25657f0ff0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+RAX: ffffffffffffffda RBX: 00007f2564b16058 RCX: 00007f256497868a
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000009
+RBP: 00007f25649e78ee R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000009 R11: 0000000000000293 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f2564b16058 R15: 00007f2564c3fa38
+ </TASK>
 
-if (is_abstract_socket(other) && sock_is_scoped(other, dom))
+Allocated by task 1440:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:387
+ kasan_kmalloc include/linux/kasan.h:211 [inline]
+ __do_kmalloc_node mm/slub.c:4158 [inline]
+ __kmalloc_node_track_caller_noprof+0x225/0x440 mm/slub.c:4177
+ memdup_user+0x2b/0xc0 mm/util.c:226
+ raw_ioctl_ep_enable drivers/usb/gadget/legacy/raw_gadget.c:847 [inline]
+ raw_ioctl+0xd0f/0x3cd0 drivers/usb/gadget/legacy/raw_gadget.c:1318
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-(We might want to extend this hook in the future but we'll revise this
-notation when needed)
+Freed by task 1419:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
+ __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
+ kasan_slab_free include/linux/kasan.h:184 [inline]
+ slab_free_hook mm/slub.c:2252 [inline]
+ slab_free mm/slub.c:4473 [inline]
+ kfree+0x149/0x360 mm/slub.c:4594
+ dev_free drivers/usb/gadget/legacy/raw_gadget.c:225 [inline]
+ kref_put+0x4a8/0x7c0 include/linux/kref.h:65
+ raw_release+0x138/0x1e0 drivers/usb/gadget/legacy/raw_gadget.c:473
+ __fput+0x24a/0x8a0 fs/file_table.c:422
+ __do_sys_close fs/open.c:1566 [inline]
+ __se_sys_close fs/open.c:1551 [inline]
+ __x64_sys_close+0x7f/0x110 fs/open.c:1551
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-> +			return -EPERM;
-> +
-> +	return 0;
-> +}
-> +
-> +static int hook_unix_may_send(struct socket *const sock,
-> +			      struct socket *const other)
-> +{
-> +	const struct landlock_ruleset *const dom =
-> +		landlock_get_current_domain();
-> +
-> +	if (!dom)
-> +		return 0;
-> +
-> +	if (is_abstract_socket(other->sk))
-> +		if (sock_is_scoped(other->sk, dom))
+The buggy address belongs to the object at ffff88807ce9ef00
+ which belongs to the cache kmalloc-16 of size 16
+The buggy address is located 0 bytes inside of
+ 16-byte region [ffff88807ce9ef00, ffff88807ce9ef10)
 
-ditto
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x7ce9e
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xfdffffff(slab)
+raw: 00fff00000000000 ffff888015841640 dead000000000100 dead000000000122
+raw: 0000000000000000 0000000080800080 00000001fdffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x152cc0(GFP_USER|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 605, tgid 605 (syz-executor), ts 2161207442978, free_ts 2155687277813
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1493
+ prep_new_page mm/page_alloc.c:1501 [inline]
+ get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3442
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4700
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page+0x5f/0x120 mm/slub.c:2321
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2484
+ new_slab mm/slub.c:2537 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3723
+ __slab_alloc+0x58/0xa0 mm/slub.c:3813
+ __slab_alloc_node mm/slub.c:3866 [inline]
+ slab_alloc_node mm/slub.c:4025 [inline]
+ __kmalloc_cache_noprof+0x1d5/0x2c0 mm/slub.c:4184
+ kmalloc_noprof include/linux/slab.h:681 [inline]
+ kzalloc_noprof include/linux/slab.h:807 [inline]
+ apparmor_sk_alloc_security+0x77/0x100 security/apparmor/lsm.c:1065
+ security_sk_alloc+0x75/0xb0 security/security.c:4689
+ sk_prot_alloc+0xfa/0x210 net/core/sock.c:2099
+ sk_alloc+0x38/0x370 net/core/sock.c:2149
+ inet_create+0x652/0xe70 net/ipv4/af_inet.c:326
+ __sock_create+0x490/0x920 net/socket.c:1571
+ sock_create net/socket.c:1622 [inline]
+ __sys_socket_create net/socket.c:1659 [inline]
+ __sys_socket+0x150/0x3c0 net/socket.c:1706
+ __do_sys_socket net/socket.c:1720 [inline]
+ __se_sys_socket net/socket.c:1718 [inline]
+ __x64_sys_socket+0x7a/0x90 net/socket.c:1718
+page last free pid 30679 tgid 30679 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1094 [inline]
+ free_unref_page+0xd22/0xea0 mm/page_alloc.c:2612
+ rcu_do_batch kernel/rcu/tree.c:2569 [inline]
+ rcu_core+0xafd/0x1830 kernel/rcu/tree.c:2843
+ handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
+ __do_softirq kernel/softirq.c:588 [inline]
+ invoke_softirq kernel/softirq.c:428 [inline]
+ __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
+ irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
+ sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
 
-> +			return -EPERM;
-> +
-> +	return 0;
-> +}
-> +
->  static struct security_hook_list landlock_hooks[] __ro_after_init = {
->  	LSM_HOOK_INIT(ptrace_access_check, hook_ptrace_access_check),
->  	LSM_HOOK_INIT(ptrace_traceme, hook_ptrace_traceme),
-> +	LSM_HOOK_INIT(unix_stream_connect, hook_unix_stream_connect),
-> +	LSM_HOOK_INIT(unix_may_send, hook_unix_may_send),
->  };
->  
->  __init void landlock_add_task_hooks(void)
-> -- 
-> 2.34.1
-> 
-> 
+Memory state around the buggy address:
+ ffff88807ce9ee00: fa fb fc fc fa fb fc fc fa fb fc fc fa fb fc fc
+ ffff88807ce9ee80: 00 00 fc fc 00 00 fc fc fa fb fc fc fa fb fc fc
+>ffff88807ce9ef00: fa fb fc fc fa fb fc fc 00 03 fc fc fa fb fc fc
+                   ^
+ ffff88807ce9ef80: fa fb fc fc fa fb fc fc fa fb fc fc fa fb fc fc
+ ffff88807ce9f000: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
