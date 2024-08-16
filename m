@@ -1,384 +1,221 @@
-Return-Path: <linux-kernel+bounces-288978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C01C39540C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:59:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFBF09540CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 155F2B26B43
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:59:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61159281EBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 05:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FDD012DD90;
-	Fri, 16 Aug 2024 04:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C347347C;
+	Fri, 16 Aug 2024 05:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dx6awoqC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bR0YBm2/"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B6E12CDA5;
-	Fri, 16 Aug 2024 04:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E5D59155
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 05:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723784270; cv=none; b=l/4N5kJuTAO06n46/m8DkcZiiQSHtj82LGdEInCwYbvkBflUw4nGVTpZLfurxyrd9AbZmcvPEyhEf+Q0mKLaRrnWYgi8vZ6c3eV0oAFbXPsRmub2Yeuu4c4MBrAj8LHmsfPeGJ6k2pljvbZ4/dkUnL17VKLpL35xzmS619J4lb4=
+	t=1723784436; cv=none; b=DDkxhWrHa7y5r/F2QlMSJbYBj+Zzs1pV19NPAfXPj8Ih82/OF7zHwDxk2BDw7rY1YwI32myZcqpxZjIJ5s43aIVkphTPT26xKTOM1FnmgolX6onkxuIDFrumuHIwdM0j7nRtG7J2JqnVCBGR83BQ8ZyR3bwRMRePkIETF4ffKBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723784270; c=relaxed/simple;
-	bh=zCGhhlgoFKwc+JXxvdpZNVbGA8KNZ1DJ2r4K8LNJFUo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mBEiEJKYR2F2kQiiW9tuiW7jLTwNvXHg241d8FWivm73nsNcLV4weEix6rOfCCDLSe0GYq17jYfla77SyHKhBZvAaAO3wxvP0gEbAoy4P8RViG4M0eZjNKrexQDX6B73IjmqgLE+EaRgRvyOidxFfUFVEG0o8LoR1uOzYFOGjZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dx6awoqC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06702C4AF10;
-	Fri, 16 Aug 2024 04:57:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723784269;
-	bh=zCGhhlgoFKwc+JXxvdpZNVbGA8KNZ1DJ2r4K8LNJFUo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Dx6awoqC7QOsRhGw/CFVSrH2+7AKz4PJ3najGjs2rloBgLoFU867Z6NazjtBA56nK
-	 4XK/VzPxC5FWWC9VzoCCar3a2NzrBnO/4xn5YehyTNvI7LAe8CDql9S9LyMPK5ewpZ
-	 FpP45J57bo0CJ6sMfzub7JuB1ilfKgCuml7BqJW3tNXykCTt8mvg470w9GtbuaQ5M/
-	 S0EBYut0CCHMpcXgkMcmdBc5Gt+D23OI07DbvlNe8JR43oWvMbaCNC748Ouy3VAech
-	 GlzyqhXSD9s4r5dcl63CuEJ1L3/6k6VZu+VuT6yFzqNNv/VQfRykIMzh4RCuFDlzU/
-	 HKWa0ArYIvtLA==
-From: neeraj.upadhyay@kernel.org
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	paulmck@kernel.org,
-	neeraj.upadhyay@kernel.org,
-	neeraj.upadhyay@amd.com,
-	boqun.feng@gmail.com,
-	joel@joelfernandes.org,
-	urezki@gmail.com,
-	frederic@kernel.org
-Subject: [PATCH rcu 11/11] rcu/nocb: Simplify (de-)offloading state machine
-Date: Fri, 16 Aug 2024 10:26:08 +0530
-Message-Id: <20240816045608.30564-12-neeraj.upadhyay@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240816045608.30564-1-neeraj.upadhyay@kernel.org>
-References: <20240816045608.30564-1-neeraj.upadhyay@kernel.org>
+	s=arc-20240116; t=1723784436; c=relaxed/simple;
+	bh=V+5F1oveRmv0pSVGDANeVXah31hJMa43N75rfuBEQ0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SK4nIPZe1ySMPsa0Bwt5W7hKulKOOF7qi4wDBgOARXoePg4aXED54jqgrF0Ao8iy9c3irG1RjrCcur1QCT/KEJe2clTPxt4xfGl6pAguafF9CptNZIfAFNoQRVdcoFfaJJBc8fhU6fX4UsXhmsQpj+Dnc8/VtDFj/VqcE10XBYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bR0YBm2/; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fc569440e1so15771995ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 22:00:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723784434; x=1724389234; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tTlEisHK4yCx7hQg2VMWou4sqTPa4zx/4UhJkv4GXdY=;
+        b=bR0YBm2/MCI+GT/L9wCUWZxyK+o2HhlR1ECVamALamCjFtlfRMLa6sjfT/yGStVYrw
+         PhJ34XqLcBRDCLoV4jfXoIF/Q5rd0seD0gX5ETpc7vfMTE43oQd5Gs6SxAsoZLg2UVpm
+         FFG0E8jBSD/KAf+6tXon1ixcL45IdZ125fo2PpW7sW1jfvXu2efOvA6zasJugwnA4EwB
+         hBZ3HuoUqtbOnFiFsAOFbyIayKbnAx6KTHmicxmBg1JmH3anpifBNtWjpqTjk/B0ER1b
+         jXbNmnWJTCIcd+gBLbL2zKoJsQQxnlOC6YqCWGOFfWb+Zgt5pC4sz1Y+MDuxKOX2wdAu
+         BrRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723784434; x=1724389234;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tTlEisHK4yCx7hQg2VMWou4sqTPa4zx/4UhJkv4GXdY=;
+        b=rZHow+I1G22JJai4FNgUClIP3hzrJoolEjH3grdEjHRtRaXAunZVjK4NHKxPYJD/rs
+         lXXontOcgiowgc1ikPjPmfd9kRTDIwy9HMrWixM5gJWfMSSiz6t/E27dyMgtjIzq0y0q
+         E5mN6ndW9Lzjh5XJmDt/9mfJ6GUiCRA8st+Ie0gTqW2l4/jf1ULI0LuI+Ye93X77bKLG
+         4YklZp78ItuiDIYpzwtqpIxKw/6kED1HOc5HTwdwecpIt2HEdAZiX55s6Mkh6Q+Ngr4J
+         dNHDeLcyFxiEuqDsxqDS3kA4Rcrpny0YRddsK9OkKIT1FkBxJIMz8gf2h5BmKd23QGQ8
+         C5Lw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsb5hbCdaEywmllyg7Z679uzCyNOo5Nm4pzwoRDf9ldlZ4h3uebZvhOvGaOwaWd8YiVYf/2Xw18irLir8toQEGlmQCawhLKDdqwVjQ
+X-Gm-Message-State: AOJu0YxyHpOe+/HNwo2bn7s6ePEiZwkzatODev+4k3ezlrqgF2zAgr1y
+	1oNiIDm9Rxslgmgtd+k7lbxRcV9VyDp3bWbDqjxVjJPAvzga7bjLTkr+Ugmss/BPnbQbg3t8f3U
+	=
+X-Google-Smtp-Source: AGHT+IENkLRreSP3HlZngVQUlgQ00Q+Vublx35vVuWPTimnHvJsxDGPdLY8rLwQcUUZiPo4KftizDQ==
+X-Received: by 2002:a17:903:1c7:b0:1f7:37f:728d with SMTP id d9443c01a7336-20203e4f7edmr19517965ad.10.1723784434271;
+        Thu, 15 Aug 2024 22:00:34 -0700 (PDT)
+Received: from thinkpad ([36.255.17.34])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f03956a8sm17934985ad.234.2024.08.15.22.00.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 22:00:33 -0700 (PDT)
+Date: Fri, 16 Aug 2024 10:30:29 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Vidya Sagar <vidyas@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] PCI: qcom-ep: Move controller cleanups to
+ qcom_pcie_perst_deassert()
+Message-ID: <20240816050029.GA2331@thinkpad>
+References: <20240729122245.33410-1-manivannan.sadhasivam@linaro.org>
+ <20240815224717.GA53536@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240815224717.GA53536@bhelgaas>
 
-From: Frederic Weisbecker <frederic@kernel.org>
+On Thu, Aug 15, 2024 at 05:47:17PM -0500, Bjorn Helgaas wrote:
+> [+cc Vidya, Jon since tegra194 does similar things]
+> 
+> On Mon, Jul 29, 2024 at 05:52:45PM +0530, Manivannan Sadhasivam wrote:
+> > Currently, the endpoint cleanup function dw_pcie_ep_cleanup() and EPF
+> > deinit notify function pci_epc_deinit_notify() are called during the
+> > execution of qcom_pcie_perst_assert() i.e., when the host has asserted
+> > PERST#. But quickly after this step, refclk will also be disabled by the
+> > host.
+> > 
+> > All of the Qcom endpoint SoCs supported as of now depend on the refclk from
+> > the host for keeping the controller operational. Due to this limitation,
+> > any access to the hardware registers in the absence of refclk will result
+> > in a whole endpoint crash. Unfortunately, most of the controller cleanups
+> > require accessing the hardware registers (like eDMA cleanup performed in
+> > dw_pcie_ep_cleanup(), powering down MHI EPF etc...). So these cleanup
+> > functions are currently causing the crash in the endpoint SoC once host
+> > asserts PERST#.
+> > 
+> > One way to address this issue is by generating the refclk in the endpoint
+> > itself and not depending on the host. But that is not always possible as
+> > some of the endpoint designs do require the endpoint to consume refclk from
+> > the host (as I was told by the Qcom engineers).
+> > 
+> > So let's fix this crash by moving the controller cleanups to the start of
+> > the qcom_pcie_perst_deassert() function. qcom_pcie_perst_deassert() is
+> > called whenever the host has deasserted PERST# and it is guaranteed that
+> > the refclk would be active at this point. So at the start of this function,
+> > the controller cleanup can be performed. Once finished, rest of the code
+> > execution for PERST# deassert can continue as usual.
+> 
+> What makes this v6.11 material?  Does it fix a problem we added in
+> v6.11-rc1?
+> 
 
-Now that the (de-)offloading process can only apply to offline CPUs,
-there is no more concurrency between rcu_core and nocb kthreads. Also
-the mutation now happens on empty queues.
+No, this is not a 6.11 material, but the rest of the patches I shared offline.
 
-Therefore the state machine can be reduced to a single bit called
-SEGCBLIST_OFFLOADED. Simplify the transition as follows:
+> Is there a Fixes: commit?
+> 
 
-* Upon offloading: queue the rdp to be added to the rcuog list and
-  wait for the rcuog kthread to set the SEGCBLIST_OFFLOADED bit. Unpark
-  rcuo kthread.
+Hmm, the controller addition commit could be the valid fixes tag.
 
-* Upon de-offloading: Park rcuo kthread. Queue the rdp to be removed
-  from the rcuog list and wait for the rcuog kthread to clear the
-  SEGCBLIST_OFFLOADED bit.
+> This patch essentially does this:
+> 
+>   qcom_pcie_perst_assert
+> -   pci_epc_deinit_notify
+> -   dw_pcie_ep_cleanup
+>     qcom_pcie_disable_resources
+> 
+>   qcom_pcie_perst_deassert
+> +   if (pcie_ep->cleanup_pending)
+> +     pci_epc_deinit_notify(pci->ep.epc);
+> +     dw_pcie_ep_cleanup(&pci->ep);
+>     dw_pcie_ep_init_registers
+>     pci_epc_init_notify
+> 
+> Maybe it makes sense to call both pci_epc_deinit_notify() and
+> pci_epc_init_notify() from the PERST# deassert function, but it makes
+> me question whether we really need both.
+> 
 
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
-Signed-off-by: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
----
- include/linux/rcu_segcblist.h |   4 +-
- kernel/rcu/rcu_segcblist.c    |  11 ---
- kernel/rcu/rcu_segcblist.h    |   2 +-
- kernel/rcu/tree_nocb.h        | 131 ++++++++++++++++------------------
- 4 files changed, 62 insertions(+), 86 deletions(-)
+There is really no need to call pci_epc_deinit_notify() during the first
+deassert (i.e., during the ep boot) because there are no cleanups to be done.
+It is only needed during a successive PERST# assert + deassert.
 
-diff --git a/include/linux/rcu_segcblist.h b/include/linux/rcu_segcblist.h
-index 1ef1bb54853d..2fdc2208f1ca 100644
---- a/include/linux/rcu_segcblist.h
-+++ b/include/linux/rcu_segcblist.h
-@@ -185,9 +185,7 @@ struct rcu_cblist {
-  *  ----------------------------------------------------------------------------
-  */
- #define SEGCBLIST_ENABLED	BIT(0)
--#define SEGCBLIST_LOCKING	BIT(1)
--#define SEGCBLIST_KTHREAD_GP	BIT(2)
--#define SEGCBLIST_OFFLOADED	BIT(3)
-+#define SEGCBLIST_OFFLOADED	BIT(1)
- 
- struct rcu_segcblist {
- 	struct rcu_head *head;
-diff --git a/kernel/rcu/rcu_segcblist.c b/kernel/rcu/rcu_segcblist.c
-index 1693ea22ef1b..298a2c573f02 100644
---- a/kernel/rcu/rcu_segcblist.c
-+++ b/kernel/rcu/rcu_segcblist.c
-@@ -260,17 +260,6 @@ void rcu_segcblist_disable(struct rcu_segcblist *rsclp)
- 	rcu_segcblist_clear_flags(rsclp, SEGCBLIST_ENABLED);
- }
- 
--/*
-- * Mark the specified rcu_segcblist structure as offloaded (or not)
-- */
--void rcu_segcblist_offload(struct rcu_segcblist *rsclp, bool offload)
--{
--	if (offload)
--		rcu_segcblist_set_flags(rsclp, SEGCBLIST_LOCKING | SEGCBLIST_OFFLOADED);
--	else
--		rcu_segcblist_clear_flags(rsclp, SEGCBLIST_OFFLOADED);
--}
--
- /*
-  * Does the specified rcu_segcblist structure contain callbacks that
-  * are ready to be invoked?
-diff --git a/kernel/rcu/rcu_segcblist.h b/kernel/rcu/rcu_segcblist.h
-index 7a0962dfee86..259904075636 100644
---- a/kernel/rcu/rcu_segcblist.h
-+++ b/kernel/rcu/rcu_segcblist.h
-@@ -89,7 +89,7 @@ static inline bool rcu_segcblist_is_enabled(struct rcu_segcblist *rsclp)
- static inline bool rcu_segcblist_is_offloaded(struct rcu_segcblist *rsclp)
- {
- 	if (IS_ENABLED(CONFIG_RCU_NOCB_CPU) &&
--	    rcu_segcblist_test_flags(rsclp, SEGCBLIST_LOCKING))
-+	    rcu_segcblist_test_flags(rsclp, SEGCBLIST_OFFLOADED))
- 		return true;
- 
- 	return false;
-diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
-index 24daf606de0c..c8fc2f37c9ed 100644
---- a/kernel/rcu/tree_nocb.h
-+++ b/kernel/rcu/tree_nocb.h
-@@ -604,37 +604,33 @@ static void call_rcu_nocb(struct rcu_data *rdp, struct rcu_head *head,
- 	}
- }
- 
--static int nocb_gp_toggle_rdp(struct rcu_data *rdp)
-+static void nocb_gp_toggle_rdp(struct rcu_data *rdp_gp, struct rcu_data *rdp)
- {
- 	struct rcu_segcblist *cblist = &rdp->cblist;
- 	unsigned long flags;
--	int ret;
- 
--	rcu_nocb_lock_irqsave(rdp, flags);
--	if (rcu_segcblist_test_flags(cblist, SEGCBLIST_OFFLOADED) &&
--	    !rcu_segcblist_test_flags(cblist, SEGCBLIST_KTHREAD_GP)) {
-+	/*
-+	 * Locking orders future de-offloaded callbacks enqueue against previous
-+	 * handling of this rdp. Ie: Make sure rcuog is done with this rdp before
-+	 * deoffloaded callbacks can be enqueued.
-+	 */
-+	raw_spin_lock_irqsave(&rdp->nocb_lock, flags);
-+	if (!rcu_segcblist_test_flags(cblist, SEGCBLIST_OFFLOADED)) {
- 		/*
- 		 * Offloading. Set our flag and notify the offload worker.
- 		 * We will handle this rdp until it ever gets de-offloaded.
- 		 */
--		rcu_segcblist_set_flags(cblist, SEGCBLIST_KTHREAD_GP);
--		ret = 1;
--	} else if (!rcu_segcblist_test_flags(cblist, SEGCBLIST_OFFLOADED) &&
--		   rcu_segcblist_test_flags(cblist, SEGCBLIST_KTHREAD_GP)) {
-+		list_add_tail(&rdp->nocb_entry_rdp, &rdp_gp->nocb_head_rdp);
-+		rcu_segcblist_set_flags(cblist, SEGCBLIST_OFFLOADED);
-+	} else {
- 		/*
- 		 * De-offloading. Clear our flag and notify the de-offload worker.
- 		 * We will ignore this rdp until it ever gets re-offloaded.
- 		 */
--		rcu_segcblist_clear_flags(cblist, SEGCBLIST_KTHREAD_GP);
--		ret = 0;
--	} else {
--		WARN_ON_ONCE(1);
--		ret = -1;
-+		list_del(&rdp->nocb_entry_rdp);
-+		rcu_segcblist_clear_flags(cblist, SEGCBLIST_OFFLOADED);
- 	}
--
--	rcu_nocb_unlock_irqrestore(rdp, flags);
--
--	return ret;
-+	raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
- }
- 
- static void nocb_gp_sleep(struct rcu_data *my_rdp, int cpu)
-@@ -841,14 +837,7 @@ static void nocb_gp_wait(struct rcu_data *my_rdp)
- 	}
- 
- 	if (rdp_toggling) {
--		int ret;
--
--		ret = nocb_gp_toggle_rdp(rdp_toggling);
--		if (ret == 1)
--			list_add_tail(&rdp_toggling->nocb_entry_rdp, &my_rdp->nocb_head_rdp);
--		else if (ret == 0)
--			list_del(&rdp_toggling->nocb_entry_rdp);
--
-+		nocb_gp_toggle_rdp(my_rdp, rdp_toggling);
- 		swake_up_one(&rdp_toggling->nocb_state_wq);
- 	}
- 
-@@ -1018,16 +1007,11 @@ void rcu_nocb_flush_deferred_wakeup(void)
- }
- EXPORT_SYMBOL_GPL(rcu_nocb_flush_deferred_wakeup);
- 
--static int rdp_offload_toggle(struct rcu_data *rdp,
--			       bool offload, unsigned long flags)
--	__releases(rdp->nocb_lock)
-+static int rcu_nocb_queue_toggle_rdp(struct rcu_data *rdp)
- {
--	struct rcu_segcblist *cblist = &rdp->cblist;
- 	struct rcu_data *rdp_gp = rdp->nocb_gp_rdp;
- 	bool wake_gp = false;
--
--	rcu_segcblist_offload(cblist, offload);
--	rcu_nocb_unlock_irqrestore(rdp, flags);
-+	unsigned long flags;
- 
- 	raw_spin_lock_irqsave(&rdp_gp->nocb_gp_lock, flags);
- 	// Queue this rdp for add/del to/from the list to iterate on rcuog
-@@ -1041,9 +1025,25 @@ static int rdp_offload_toggle(struct rcu_data *rdp,
- 	return wake_gp;
- }
- 
-+static bool rcu_nocb_rdp_deoffload_wait_cond(struct rcu_data *rdp)
-+{
-+	unsigned long flags;
-+	bool ret;
-+
-+	/*
-+	 * Locking makes sure rcuog is done handling this rdp before deoffloaded
-+	 * enqueue can happen. Also it keeps the SEGCBLIST_OFFLOADED flag stable
-+	 * while the ->nocb_lock is held.
-+	 */
-+	raw_spin_lock_irqsave(&rdp->nocb_lock, flags);
-+	ret = !rcu_segcblist_test_flags(&rdp->cblist, SEGCBLIST_OFFLOADED);
-+	raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
-+
-+	return ret;
-+}
-+
- static int rcu_nocb_rdp_deoffload(struct rcu_data *rdp)
- {
--	struct rcu_segcblist *cblist = &rdp->cblist;
- 	unsigned long flags;
- 	int wake_gp;
- 	struct rcu_data *rdp_gp = rdp->nocb_gp_rdp;
-@@ -1059,48 +1059,34 @@ static int rcu_nocb_rdp_deoffload(struct rcu_data *rdp)
- 	rcu_nocb_lock_irqsave(rdp, flags);
- 	WARN_ON_ONCE(rcu_cblist_n_cbs(&rdp->nocb_bypass));
- 	WARN_ON_ONCE(rcu_segcblist_n_cbs(&rdp->cblist));
-+	rcu_nocb_unlock_irqrestore(rdp, flags);
- 
--	wake_gp = rdp_offload_toggle(rdp, false, flags);
-+	wake_gp = rcu_nocb_queue_toggle_rdp(rdp);
- 
- 	mutex_lock(&rdp_gp->nocb_gp_kthread_mutex);
- 	if (rdp_gp->nocb_gp_kthread) {
- 		if (wake_gp)
- 			wake_up_process(rdp_gp->nocb_gp_kthread);
- 
--		swait_event_exclusive(rdp->nocb_state_wq,
--				      !rcu_segcblist_test_flags(cblist,
--								SEGCBLIST_KTHREAD_GP));
- 		if (rdp->nocb_cb_kthread)
- 			kthread_park(rdp->nocb_cb_kthread);
-+
-+		swait_event_exclusive(rdp->nocb_state_wq,
-+				      rcu_nocb_rdp_deoffload_wait_cond(rdp));
- 	} else {
- 		/*
- 		 * No kthread to clear the flags for us or remove the rdp from the nocb list
- 		 * to iterate. Do it here instead. Locking doesn't look stricly necessary
- 		 * but we stick to paranoia in this rare path.
- 		 */
--		rcu_nocb_lock_irqsave(rdp, flags);
--		rcu_segcblist_clear_flags(&rdp->cblist, SEGCBLIST_KTHREAD_GP);
--		rcu_nocb_unlock_irqrestore(rdp, flags);
-+		raw_spin_lock_irqsave(&rdp->nocb_lock, flags);
-+		rcu_segcblist_clear_flags(&rdp->cblist, SEGCBLIST_OFFLOADED);
-+		raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
- 
- 		list_del(&rdp->nocb_entry_rdp);
- 	}
--	mutex_unlock(&rdp_gp->nocb_gp_kthread_mutex);
- 
--	/*
--	 * Lock one last time to acquire latest callback updates from kthreads
--	 * so we can later handle callbacks locally without locking.
--	 */
--	rcu_nocb_lock_irqsave(rdp, flags);
--	/*
--	 * Theoretically we could clear SEGCBLIST_LOCKING after the nocb
--	 * lock is released but how about being paranoid for once?
--	 */
--	rcu_segcblist_clear_flags(cblist, SEGCBLIST_LOCKING);
--	/*
--	 * Without SEGCBLIST_LOCKING, we can't use
--	 * rcu_nocb_unlock_irqrestore() anymore.
--	 */
--	raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
-+	mutex_unlock(&rdp_gp->nocb_gp_kthread_mutex);
- 
- 	return 0;
- }
-@@ -1129,10 +1115,20 @@ int rcu_nocb_cpu_deoffload(int cpu)
- }
- EXPORT_SYMBOL_GPL(rcu_nocb_cpu_deoffload);
- 
--static int rcu_nocb_rdp_offload(struct rcu_data *rdp)
-+static bool rcu_nocb_rdp_offload_wait_cond(struct rcu_data *rdp)
- {
--	struct rcu_segcblist *cblist = &rdp->cblist;
- 	unsigned long flags;
-+	bool ret;
-+
-+	raw_spin_lock_irqsave(&rdp->nocb_lock, flags);
-+	ret = rcu_segcblist_test_flags(&rdp->cblist, SEGCBLIST_OFFLOADED);
-+	raw_spin_unlock_irqrestore(&rdp->nocb_lock, flags);
-+
-+	return ret;
-+}
-+
-+static int rcu_nocb_rdp_offload(struct rcu_data *rdp)
-+{
- 	int wake_gp;
- 	struct rcu_data *rdp_gp = rdp->nocb_gp_rdp;
- 
-@@ -1152,20 +1148,14 @@ static int rcu_nocb_rdp_offload(struct rcu_data *rdp)
- 	WARN_ON_ONCE(rcu_cblist_n_cbs(&rdp->nocb_bypass));
- 	WARN_ON_ONCE(rcu_segcblist_n_cbs(&rdp->cblist));
- 
--	/*
--	 * Can't use rcu_nocb_lock_irqsave() before SEGCBLIST_LOCKING
--	 * is set.
--	 */
--	raw_spin_lock_irqsave(&rdp->nocb_lock, flags);
--
--	wake_gp = rdp_offload_toggle(rdp, true, flags);
-+	wake_gp = rcu_nocb_queue_toggle_rdp(rdp);
- 	if (wake_gp)
- 		wake_up_process(rdp_gp->nocb_gp_kthread);
- 
--	kthread_unpark(rdp->nocb_cb_kthread);
--
- 	swait_event_exclusive(rdp->nocb_state_wq,
--			      rcu_segcblist_test_flags(cblist, SEGCBLIST_KTHREAD_GP));
-+			      rcu_nocb_rdp_offload_wait_cond(rdp));
-+
-+	kthread_unpark(rdp->nocb_cb_kthread);
- 
- 	return 0;
- }
-@@ -1340,8 +1330,7 @@ void __init rcu_init_nohz(void)
- 		rdp = per_cpu_ptr(&rcu_data, cpu);
- 		if (rcu_segcblist_empty(&rdp->cblist))
- 			rcu_segcblist_init(&rdp->cblist);
--		rcu_segcblist_offload(&rdp->cblist, true);
--		rcu_segcblist_set_flags(&rdp->cblist, SEGCBLIST_KTHREAD_GP);
-+		rcu_segcblist_set_flags(&rdp->cblist, SEGCBLIST_OFFLOADED);
- 	}
- 	rcu_organize_nocb_kthreads();
- }
+> pcie-tegra194.c has a similar structure:
+> 
+>   pex_ep_event_pex_rst_assert
+>     pci_epc_deinit_notify
+>     dw_pcie_ep_cleanup
+> 
+>   pex_ep_event_pex_rst_deassert
+>     dw_pcie_ep_init_registers
+>     pci_epc_init_notify
+> 
+> Is there a reason to make them different, or could/should a similar
+> change be made to tegra?
+> 
+
+Design wise both drivers are similar, so it could apply. I didn't spin a patch
+because if testing of tegra driver gets delayed (I've seen this before), then I
+do not want to stall merging the whole series. For Qcom it is important to get
+this merged asap to avoid the crash.
+
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  drivers/pci/controller/dwc/pcie-qcom-ep.c | 12 ++++++++++--
+> >  1 file changed, 10 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> > index 2319ff2ae9f6..e024b4dcd76d 100644
+> > --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> > +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> > @@ -186,6 +186,8 @@ struct qcom_pcie_ep_cfg {
+> >   * @link_status: PCIe Link status
+> >   * @global_irq: Qualcomm PCIe specific Global IRQ
+> >   * @perst_irq: PERST# IRQ
+> > + * @cleanup_pending: Cleanup is pending for the controller (because refclk is
+> > + *                   needed for cleanup)
+> >   */
+> >  struct qcom_pcie_ep {
+> >  	struct dw_pcie pci;
+> > @@ -214,6 +216,7 @@ struct qcom_pcie_ep {
+> >  	enum qcom_pcie_ep_link_status link_status;
+> >  	int global_irq;
+> >  	int perst_irq;
+> > +	bool cleanup_pending;
+> >  };
+> >  
+> >  static int qcom_pcie_ep_core_reset(struct qcom_pcie_ep *pcie_ep)
+> > @@ -389,6 +392,12 @@ static int qcom_pcie_perst_deassert(struct dw_pcie *pci)
+> >  		return ret;
+> >  	}
+> >  
+> > +	if (pcie_ep->cleanup_pending) {
+> 
+> Do we really need this flag?  I assume the cleanup functions could
+> tell whether any previous setup was done?
+> 
+
+Not so. Some cleanup functions may trigger a warning if attempted to do it
+before 'setup'. I think dw_edma_remove() that is part of dw_pcie_ep_cleanup()
+does that IIRC.
+
+- Mani
+
 -- 
-2.40.1
-
+மணிவண்ணன் சதாசிவம்
 
