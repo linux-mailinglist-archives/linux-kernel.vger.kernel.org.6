@@ -1,227 +1,254 @@
-Return-Path: <linux-kernel+bounces-288938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4C03954070
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:11:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98905954071
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:11:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39EFE289185
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:11:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23D0D1F25FE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8576B146591;
-	Fri, 16 Aug 2024 04:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E718146A6B;
+	Fri, 16 Aug 2024 04:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="Qjq05kMy"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2137.outbound.protection.outlook.com [40.107.215.137])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WeY64sdP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8217DA8B;
-	Fri, 16 Aug 2024 04:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.137
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723781214; cv=fail; b=HwSYdl0VBP2/Q7rB7dyCRvhV18wIax1fA6JELe3uG8o0Pr5aDVsLIXwzd+nQPcanZJ0n/OvfxYf/LeShXE9D0zfxJvc2OqjGsQKmuOAl5x4QeuWh4ovITw40QzInDz2NH/pmBH50dOdnkqyNuWCiTUNtOZOWqt0xXU4PeUk7yLY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723781214; c=relaxed/simple;
-	bh=3yX6/WZwBa0W5WEjMPtxbVYxfzZU24Rp0G4ErxmVOdc=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QLM7L2NZ2WYz/Pswt58EatVYgC9/fOWEVV64z7TCgZb588duQEQFr1+usZrC3elkbqXz6gdrhXAHXSdvb5fLQwMPDZDqvyjXqWorDcSvKQM1vzXv3mYNkE1uUzELSi56MODvD2w2Oe2BM8QOpgRSJFyoIoFPnd9ujWYGx2KX8tI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=Qjq05kMy; arc=fail smtp.client-ip=40.107.215.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F5gJc7FPjzXMqzHuo8ggmxMAA5HNu2W6KHqhVk0uUUQHL2ZkJ+Y1X/jmeIHfcrRe5C4nSoqI0BQkVi8wT/vqHh4jpbHeCoGO4VM7sR2aPXhjeApRSHcF00z91KvMpk+jr2cuki+5ACwAsyzhYnd40qvPLP5HYC5g9STbSocCzrS0KtgWquGXfWJoay8Eu0AjCKRutRx60ZeJ008Rhu9ZFOMZ7cHJflrkc8GLEaqy3EkylHAlGDtshdyYbvRc8Hvb6qpRfZtJ8v4V7AiVO3cF3h9dEYNFaLfTLxf1F63ayXydbu0CakaDw5PfTs32Hx4fe+Wp0AD3txyEj62pMXOCFg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3yX6/WZwBa0W5WEjMPtxbVYxfzZU24Rp0G4ErxmVOdc=;
- b=Km/P7U+C0CP4jslZnNmXadGSGJ2W3HGXyh6De47fRd5mXRscFcD5mu/SdjrWZIuVNAgaxSgzx1SjgQkbZ29YY1nxjfB4fL3o69JIOg60vpRQkguiovKghx5Bv9WALS1ivmIQjq4qSQfVCrdhdSpOFkoWwQHr8XoBM/fBHd/5H2S7i/1W8gilTo03mW6cscUkgJtPmYaHaQsRuVHEX/Evrhdcf/ZktgK9tJA4b1UD5yFj5FhkNP5jXGVk9pbo/se6PE/NTrQqkRqjx3O1T+gVySbMEVzmRHKdHCuWW9r6ISucDBfUVCktoW9ngjvB27ve4QJ2pV/5T/9RG0ufeZty4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
- header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3yX6/WZwBa0W5WEjMPtxbVYxfzZU24Rp0G4ErxmVOdc=;
- b=Qjq05kMyeDrAJ1lsK3V7LZozAI8uuIFJCbQGlL3VZeZF3Ouxl9t/uBsuGXDZocIjQihAdDx+2LFMxm9UUHMdKn0qMqFuYjE6RlUDRNAhCbZUM2W0XFww4yHaWadM/0C9qL7zsJHrijTkab7kMrBG+cTKsrCSKwG9j29B0T5NcsaTeiHi1t7oXHdbhJEc9oZTvq1QMBfM/vAMYGByoTqDa0gh6B/9TRR+io4RoS5pG1JkaiQvR5uccHunCFD8AG6tS95BedYCWqa43XDpgpaVwzN1ue0tEbR2VVbylLCwKvZxt+j7m1r0gVRL7wuboZV3KIqqxRCN67MYzy8vxFmFrQ==
-Received: from PSAPR06MB4949.apcprd06.prod.outlook.com (2603:1096:301:ad::9)
- by KL1PR0601MB5510.apcprd06.prod.outlook.com (2603:1096:820:ba::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.18; Fri, 16 Aug
- 2024 04:06:48 +0000
-Received: from PSAPR06MB4949.apcprd06.prod.outlook.com
- ([fe80::7bdd:639a:6b94:37bf]) by PSAPR06MB4949.apcprd06.prod.outlook.com
- ([fe80::7bdd:639a:6b94:37bf%7]) with mapi id 15.20.7875.018; Fri, 16 Aug 2024
- 04:06:48 +0000
-From: Kevin Chen <kevin_chen@aspeedtech.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, "robh@kernel.org"
-	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "joel@jms.id.au"
-	<joel@jms.id.au>, "andrew@codeconstruct.com.au"
-	<andrew@codeconstruct.com.au>, "lee@kernel.org" <lee@kernel.org>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will@kernel.org"
-	<will@kernel.org>, "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net"
-	<olof@lixom.net>, "soc@kernel.org" <soc@kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
-	<sboyd@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>,
-	"geert+renesas@glider.be" <geert+renesas@glider.be>,
-	"dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>, "neil.armstrong@linaro.org"
-	<neil.armstrong@linaro.org>, "m.szyprowski@samsung.com"
-	<m.szyprowski@samsung.com>, "nfraprado@collabora.com"
-	<nfraprado@collabora.com>, "u-kumar1@ti.com" <u-kumar1@ti.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
-	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, BMC-SW <BMC-SW@aspeedtech.com>
-Subject: RE: [PATCH v1 01/10] dt-binding: mfd: aspeed,ast2x00-scu: Add binding
- for ASPEED AST2700 SCU
-Thread-Topic: [PATCH v1 01/10] dt-binding: mfd: aspeed,ast2x00-scu: Add
- binding for ASPEED AST2700 SCU
-Thread-Index: AQHa30uG4RfiWECZjUKlZ41AVxAy57II2jIAgCBt0fA=
-Date: Fri, 16 Aug 2024 04:06:48 +0000
-Message-ID:
- <PSAPR06MB4949851D669EB456677AFC3A89812@PSAPR06MB4949.apcprd06.prod.outlook.com>
-References: <20240726110355.2181563-1-kevin_chen@aspeedtech.com>
- <20240726110355.2181563-2-kevin_chen@aspeedtech.com>
- <e6cb6f26-fef2-49bc-ab25-fdc9a659f593@kernel.org>
-In-Reply-To: <e6cb6f26-fef2-49bc-ab25-fdc9a659f593@kernel.org>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=aspeedtech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PSAPR06MB4949:EE_|KL1PR0601MB5510:EE_
-x-ms-office365-filtering-correlation-id: e7a90690-2924-41d8-eca6-08dcbda8d9f2
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018|921020;
-x-microsoft-antispam-message-info:
- =?utf-8?B?YnJoTE9KUG5QdnBvNis4ZG8vNE1JQlA3SjF1T2R3bUJaOWpvR2I5U0VmZFFx?=
- =?utf-8?B?aTd6a3dSSWdqNU1Wc1ZCZTl4OFpNTHlLc3l5ZlgyOXVxNnlJN08rNTBIUTBz?=
- =?utf-8?B?NTRTTTdRN1NObTJWUVErUTF3cmkydlVKYnBZZTRnVU5aNjdCZUJIQURNY3V4?=
- =?utf-8?B?UkhxRTU0aEZ1MTlLek5CL2ZZRXNrS0J0QzFZSDlkbk56b1pCNi9VNSsrR1Ux?=
- =?utf-8?B?QzdkbW1MM3dscFY5NGIrZmY1cXdCcXl1S3JoK09tSzk5bnZiNktBL1VtYzB3?=
- =?utf-8?B?VjNTMHUrVjBIR0lRQjg4bS9LRFJHSjY5TXVDOWIwZm9XRUtXSzEzbDZtaTg0?=
- =?utf-8?B?V1JhakZDOWhZYzFGWXpPUzhJbXJhUExPaW1jRnRiSlJSTWQ4MVhaKzZ2emRx?=
- =?utf-8?B?VHAyUkhVVWh3a1JubkZ2NFBUZDZ5UTIvRnRrZE52TDNYVnNqb2ovQm1wLzBa?=
- =?utf-8?B?cFdJSjJrL1RRVEpTaldZc2FwRVk5eXloNmRhaHJnbXhXOWhrOXFKU0dOdHlq?=
- =?utf-8?B?ejZyOG00WURKT2lKc0pzaUgrNk1mMndIK1lIUFRLVENkT2k1cENEU3VpeVVP?=
- =?utf-8?B?eEEwanZsZXFoZ3huaFB0VmFXZ3BObUhBZlVYWm9hZ0VjRS8xWVNtK1VVWlI1?=
- =?utf-8?B?cGU5NTM0OE9iNjllVGtIajd3SjdZaEtqUmgvQ1FDVmdrTFFqSDZaczhUb0ht?=
- =?utf-8?B?QjVXaWZWRTZJeUEvOE1kYUJ1WWR3QW15bVBFZXNuY2ZST1RoNnE5RGE3YWVI?=
- =?utf-8?B?K3l6M1hLc1VNcWpkSjZZU2NNYnNLUDMzTWhxMEMvU3lObGFRR3JNanA4RUZ6?=
- =?utf-8?B?eTRxUTJZVkxiMXlMdFJOYjQzWG43bVZacC9TdzVGeVVESWppN3NBUXVUZVpM?=
- =?utf-8?B?UDFJc3hlbHVZZnBFMmVuNTJvNVpEd25WUHBTUURtbDRGbEFZQndKdVd1cEhP?=
- =?utf-8?B?bDk2K2prM1Nia2o3dHZSZFVtRjllNlU4Q2lTMmF4YUlWOSs4M1hmQUs1citC?=
- =?utf-8?B?dWM4TFFhZmREN0NLWDVvcHplNDJnbkQ3eGEzcW80Q1dvY2J5NTU5U0NjMXZk?=
- =?utf-8?B?R3hTbXp1WWsrZWh1c2NLZTFDT2RsY1A0TmpseDZqZlExTU9VRlZCb0tLbUtm?=
- =?utf-8?B?TTZlZmJ0S3ZPNEljYUxtOFpiUzRzVGoxOEVpcXh3UDVRWnh5bnNTRys4MVRP?=
- =?utf-8?B?Snh2UkJTcTN4eThJVVNQRFlyRitXUlpIMWg1bm1VNmNaTFFzcWxSZlpEbXll?=
- =?utf-8?B?OUFzRUtFWkZiRDl6RDN4YkdPb244d29rWmpYczB2a25TdmpYeFljWnVlUXA4?=
- =?utf-8?B?SHRkUk5MQjUweENaT2QwbkxweW5hclE3ZjY0YlZoZEJ5d1BhRU00MGxmNCtn?=
- =?utf-8?B?NmFSVnA3UXQxV1lpbkxkc2dBNlhKc3M2NXoyaGd2ZVVocXBldndwVTdWWmxQ?=
- =?utf-8?B?RVE1aytGOC9PaEE4dlhwTHRzTXI0R0NxTFJXUkt4dzR0Unp6aUw1SGtoSDVk?=
- =?utf-8?B?NWo3dVF0eUEzTUE5SENXWTZEcm5TTlQreDE4YW9MOTJDc1NOVUlLMnBSTkVa?=
- =?utf-8?B?SkxMYUR3REFEajdYNHFuUTdIcWJzTEVlRm55dlg1Y2JFVnNhZWtRVXlCTFps?=
- =?utf-8?B?OC9HUU42YTB2ajBhdTJRME5CVVpNZDYxbk83cDNGZzZ2Q25OL3docnkwU2JW?=
- =?utf-8?B?N3BjMVpQVms2U3hmNURaYzN3d21ENFMxeG5BTWJJVVhmTHA2akthZTFRSzJi?=
- =?utf-8?B?MzdzMTBNWTJzNlR5T1FEZEMxdS84V1ZvZEJhMXBFNmJ1V0RPU0NkZGdqWSt1?=
- =?utf-8?Q?eqGh7mxOKOqn1Baa+HF+qR5hyAbjATQ0OwHBk=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR06MB4949.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018)(921020);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?VGZaL1VwcmRxSWlzenRDaW5BQ0s1R1dKUE5vdC9lWndwLzk1Q0xGeGtaSStW?=
- =?utf-8?B?YmgwaGVUdjEvUTJkbTJyd1d5N29GVkExRTlFVGRoaVhjNUU5dUxoWkZhVllU?=
- =?utf-8?B?VmJuc1U3N1REemljWWl0eEFEODE0Vy9ieUdjWnlNTm9ydkgvNnhEeE5LRTFK?=
- =?utf-8?B?NHNIdjRpaC91YXJOUWhqUmdSTnBDZzdkeEd3QlpPbUF6NDdqK29wTWVsclhX?=
- =?utf-8?B?SUp2eXNQTzdTbVc3ZHlZeFJaMDRDMmw1cW94Q241aElyeHF5UkNwTGUxOUxa?=
- =?utf-8?B?dGRIWUJneGFrSTZtRjNzTG04cXhCcTExcnpqTjJXcDQzaFVFRHJwc3RNRUk0?=
- =?utf-8?B?M3RiL2xiaTVXdWFrTVVkRzM3b0NVNFFVNkdyd25wTjdZNmRVWGM3NlMreFlR?=
- =?utf-8?B?MUJ0Rm1SelZEanU0ejVhSTFCb0hCNFBIRE5EUW12KzBFTG9zK0hJdDJsdnlW?=
- =?utf-8?B?ZVF5czJkbnhyK1Y0aXdNRm80QTVsUXBhc3ZIVm5LK0o2R1V0eW8rWVh1dmQv?=
- =?utf-8?B?NFhhZHAwNExZWnNOVlV4aVJGWEpCMmJyRjlQeTk1bkNXTnVhOGpUYWtmemV5?=
- =?utf-8?B?R0hmUEgrRnBDaEQ3MFZrSHNHWFRTUHBOTUhUUVI5Wm1wck5EVkk2QW1wMnJp?=
- =?utf-8?B?eTNLb1piOFZ1N0c0RWg4MWx0cWZJV1dHelBhMERyeDVVakRPVy8ycnZRYjRR?=
- =?utf-8?B?YlhIZ3pueFBzRzNIdUpiYlZ4NjNnWm5MQVdjWEtlWkZGRkpIb1dnR1BFTTFC?=
- =?utf-8?B?bGt2RE5FSjdRUHlSd3R4RkRPSnlQQ1BDL01qcWpwVWlidGNRejlMV1V5SEJ4?=
- =?utf-8?B?S1dQalJYSDQrcDVIMmFKRjhhelVqcmdkY2hKQldoU2dPT0RNYXNqdkE1Rllv?=
- =?utf-8?B?c1JDOGdZcnZkVFJQSDF6a3FVWFNKOTFoR0h6YXZvUitqRGYvWERTOW1DTlVa?=
- =?utf-8?B?SmNCL0x6RnBBcnpJL2plUThjRTd2ZWpVZDZRWnRHTjQrblZncC9HNVEzS1My?=
- =?utf-8?B?Q1BzTzVwRmYzOVAyZ1ZKZWZTQnhzSVQ0SjNYa2UvQkxLWlZ3SG0rT3hiMyt6?=
- =?utf-8?B?Z1R0ZUdPUGZWQmtQZlZWN21RM3JERVozZURrNFJkbURFZWR2S2tqbHI3SFZq?=
- =?utf-8?B?VjkyUVJXamh6REtSRllhWnN1Z0VkK2VYd1g5WUJ0Tm9mWGUzcG1qc3lHaG1Y?=
- =?utf-8?B?NzZwZm82VEYwVGpJVkIrTG9VMzlpdEpYNTI5WUs2eHpuaERGTFRnWERuMmgr?=
- =?utf-8?B?M0Y3aUxxd3NUZFc2Qm8yMU5xYm1xWTRBQjBMUGRrYnRjMkNhYUhFZ1pNbFBk?=
- =?utf-8?B?YUFHUnJ6bmV6U1UwUnFqWU5QajNQeXBWSm8xNTRXYnd5M1QxbjFPU2NobmNT?=
- =?utf-8?B?TTNzSFg5ZWp2bHptR3FHR2xzMXVxeGJiL1l5ek1KWHFuRExFeHQ3aVFaY3dH?=
- =?utf-8?B?ZmZRYWxkMHNVTDRKZWE3Y010ZUNyVVdvNERuOGIwK3ZHMGlzU0xhSFdyUnZI?=
- =?utf-8?B?NzVnelFkMW5JSlZBUGtIc29vbGJhaHZ5NlV3djVGNkZkdGdaMmJwN1hDdFBi?=
- =?utf-8?B?YWRiZlJFT1lMMmt2aEpyTXVpTmFtWGFjL0hOZVVmZitjS2o3NmdZRGl3SGlC?=
- =?utf-8?B?eE5OVVZadDcvRSthblI4dE1UNTdTWFNLSmpBc2VsTGRseGUrUHIvcVFGRmpK?=
- =?utf-8?B?NklFSUViNmd0Rk5HTjU5eFhtamVFem9EV0ZrakFQRVRJaEZCMlRmUEhBQjFq?=
- =?utf-8?B?d2Fjdk9qQUpsbksxWGV4aFpCOEZ6WFhPMzduT2tFS0xQdXR6ZjhjalRiLzlm?=
- =?utf-8?B?WDZqRXRKUm1yYjMreWxMNnpSVEplZWtJNTZsdlZqSElJUTVxMG5IdCtad0k4?=
- =?utf-8?B?SlpQMGkrQVh3djJsbW1vU0NWc2xwL3N2emliRURadFRKeGVhc3dhYk5hc2pt?=
- =?utf-8?B?V0F5RlA1WklMdVYvU2JqV1o3MndscTkxNDVsUm4wbUw0NlkrUTBwNUVTYi82?=
- =?utf-8?B?VTR3R2ROV09HSlB0K0Q5UVBMWFBTcTRrV2VPUHIwM1I1dXAvMWx0UUJUSkpQ?=
- =?utf-8?B?dFFVSWZ2S2xoNTMwRHphRklaT3htUGZtMEpreXkza3FCaTFwSkc1emNOZ1JM?=
- =?utf-8?Q?5AA5GhY+Mhp67vWa+Ez9Gmdx9?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF71145B3B;
+	Fri, 16 Aug 2024 04:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723781215; cv=none; b=Dq2ty9SE3geUiJhFFqa0zTVKKZ8At0h/rmVVnMMkWIbFdrYu/77iiIV/yeWu8mdGpNVE0sbfg3p35DCJ3fp70ykA6YNDmuI9ljyJfHrpfh8dzprFFU2mUkadPCD9hpIlS7zeOM+6lEvjhLQMcK3+5wzfZqZeKSCI+kZHtqq/zmI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723781215; c=relaxed/simple;
+	bh=ouPlDYXSqC8qv2bsTOk97bxDMz92XjsnjihOFKxZ0kw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hH2gjASgE9mDnQkInum4rXzvjWgsSBIYb805tu5LcXE1hHaFXBQk9fYdr6Kg8EOlK4ui4vcOwezkvfTItaD034kR4KG4QrpSbFceVNiVVeRtpSig3MxrNYGxidEmilxiTMZSvtw+EbXQofJelHNN/Izm3SD2JcJdrNj7/FpwQPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WeY64sdP; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723781213; x=1755317213;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ouPlDYXSqC8qv2bsTOk97bxDMz92XjsnjihOFKxZ0kw=;
+  b=WeY64sdPCLbEYY1Fn6zxFxZCw0k5mFkbdcuOywFPrCbo2lmGBmiIbZP7
+   +Dps22qjNLMKZGEKY+dUBnrgtHeNAqikNo7p5BDF2HhnbJYSMhXSFelF3
+   cja5ltSpghIvQIa0kbHx6u9P27KUgYe6h6KEsoq2RhbU4uLEzyH44969W
+   0rTel4UST5i7FwqhTlKsRyY9C4dsTO5eziHPfv36H9z6yO5/8oVMbozRY
+   hWTD47U1TqKu5scXWDYoTaz32zWiTJroqv1BLxGQqH5X9dICmqMiFckQP
+   MQiweVLGkXAimEhQV4mCE0zJtvLADDwDN31gkGjLh58xe93UFOzIfSexn
+   A==;
+X-CSE-ConnectionGUID: 5+dR4JpjTbyn30PlIclFBg==
+X-CSE-MsgGUID: Khp1VjNtRSyaM5QvkBGkZg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11165"; a="25826247"
+X-IronPort-AV: E=Sophos;i="6.10,150,1719903600"; 
+   d="scan'208";a="25826247"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 21:06:53 -0700
+X-CSE-ConnectionGUID: J6+XkusgRBiCNlVp/D920Q==
+X-CSE-MsgGUID: GcevHyjMTHmp7UJZVpDPrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,150,1719903600"; 
+   d="scan'208";a="59571867"
+Received: from kerandaa-mobl.amr.corp.intel.com (HELO desk) ([10.125.112.221])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 21:06:53 -0700
+Date: Thu, 15 Aug 2024 21:06:51 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
+Cc: daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Brice Goglin <brice.goglin@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <Perry.Yuan@amd.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [PATCH v3 07/10] x86/cpu: Add cpu_type to struct x86_cpu_id
+Message-ID: <20240815-add-cpu-type-v3-7-234162352057@linux.intel.com>
+X-Mailer: b4 0.14.1
+References: <20240815-add-cpu-type-v3-0-234162352057@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: aspeedtech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PSAPR06MB4949.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e7a90690-2924-41d8-eca6-08dcbda8d9f2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Aug 2024 04:06:48.8080
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: AKUELQ14GVZAlub2yudrGsb46PSCL9HKDK9GFT/f2HSM6DLVGWAJP7qqeqmdl/F9D46pit+17ADwtWpLF5rpmf0xyhaW69EotjQWQygI5xA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB5510
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240815-add-cpu-type-v3-0-234162352057@linux.intel.com>
 
-SGkgS3J6aywNCg0KSSB3aWxsIHNlcGFyYXRlIGNsb2NrIHBhcnQgaW4gdGhlIHYzIHBhdGNoIGlu
-dG8gUnlhbidzIGNsb2NrIHNlcmllcy4NCj4NCj4gTWlzc2luZyBjb21taXQgbXNnLg0KPg0KPiBQ
-bGVhc2UgdXNlIHN1YmplY3QgcHJlZml4ZXMgbWF0Y2hpbmcgdGhlIHN1YnN5c3RlbS4gWW91IGNh
-biBnZXQgdGhlbSBmb3INCj4gZXhhbXBsZSB3aXRoIGBnaXQgbG9nIC0tb25lbGluZSAtLSBESVJF
-Q1RPUllfT1JfRklMRWAgb24gdGhlIGRpcmVjdG9yeSB5b3VyDQo+IHBhdGNoIGlzIHRvdWNoaW5n
-LiBGb3IgYmluZGluZ3MsIHRoZSBwcmVmZXJyZWQgc3ViamVjdHMgYXJlIGV4cGxhaW5lZCBoZXJl
-Og0KPiBodHRwczovL3d3dy5rZXJuZWwub3JnL2RvYy9odG1sL2xhdGVzdC9kZXZpY2V0cmVlL2Jp
-bmRpbmdzL3N1Ym1pdHRpbmctcGF0Y2gNCj4gZXMuaHRtbCNpLWZvci1wYXRjaC1zdWJtaXR0ZXJz
-DQo+DQo+IEEgbml0LCBzdWJqZWN0OiBkcm9wIHNlY29uZC9sYXN0LCByZWR1bmRhbnQgImJpbmRp
-bmdzIGZvciIuIFRoZSAiZHQtYmluZGluZ3MiDQo+IHByZWZpeCBpcyBhbHJlYWR5IHN0YXRpbmcg
-dGhhdCB0aGVzZSBhcmUgYmluZGluZ3MuDQo+IFNlZSBhbHNvOg0KPiBodHRwczovL2VsaXhpci5i
-b290bGluLmNvbS9saW51eC92Ni43LXJjOC9zb3VyY2UvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
-L2Jpbg0KPiBkaW5ncy9zdWJtaXR0aW5nLXBhdGNoZXMucnN0I0wxOA0KQWdyZWUsIGFscmVhZHkg
-Zml4ZWQgaW4gYW5vdGhlciBjb21taXQgaW4gUnlhbidzIHNlcmllcy4NCmh0dHBzOi8vcGF0Y2h3
-b3JrLmtlcm5lbC5vcmcvcHJvamVjdC9saW51eC1jbGsvcGF0Y2gvMjAyNDA4MDgwNzU5MzcuMjc1
-NjczMy0yLXJ5YW5fY2hlbkBhc3BlZWR0ZWNoLmNvbS8NCg0KPg0KPg0KPg0KPiBCZXN0IHJlZ2Fy
-ZHMsDQo+IEtyenlzenRvZg0KDQotLQ0KQmVzdCBSZWdhcmRzLA0KS2V2aW4uQ2hlbg0KKioqKioq
-KioqKioqKiBFbWFpbCBDb25maWRlbnRpYWxpdHkgTm90aWNlICoqKioqKioqKioqKioqKioqKioq
-DQrlhY3osqzogbLmmI46DQrmnKzkv6Hku7Yo5oiW5YW26ZmE5Lu2KeWPr+iDveWMheWQq+apn+Wv
-huizh+ioiu+8jOS4puWPl+azleW+i+S/neitt+OAguWmgiDlj7Dnq6/pnZ7mjIflrprkuYvmlLbk
-u7bogIXvvIzoq4vku6Xpm7vlrZDpg7Xku7bpgJrnn6XmnKzpm7vlrZDpg7Xku7bkuYvnmbzpgIHo
-gIUsIOS4puiri+eri+WNs+WIqumZpOacrOmbu+WtkOmDteS7tuWPiuWFtumZhOS7tuWSjOmKt+av
-gOaJgOacieikh+WNsOS7tuOAguisneisneaCqOeahOWQiOS9nCENCg0KRElTQ0xBSU1FUjoNClRo
-aXMgbWVzc2FnZSAoYW5kIGFueSBhdHRhY2htZW50cykgbWF5IGNvbnRhaW4gbGVnYWxseSBwcml2
-aWxlZ2VkIGFuZC9vciBvdGhlciBjb25maWRlbnRpYWwgaW5mb3JtYXRpb24uIElmIHlvdSBoYXZl
-IHJlY2VpdmVkIGl0IGluIGVycm9yLCBwbGVhc2Ugbm90aWZ5IHRoZSBzZW5kZXIgYnkgcmVwbHkg
-ZS1tYWlsIGFuZCBpbW1lZGlhdGVseSBkZWxldGUgdGhlIGUtbWFpbCBhbmQgYW55IGF0dGFjaG1l
-bnRzIHdpdGhvdXQgY29weWluZyBvciBkaXNjbG9zaW5nIHRoZSBjb250ZW50cy4gVGhhbmsgeW91
-Lg0K
+In addition to matching vendor/family/model/feature, for hybrid variants it
+is required to also match cpu-type also. For example some CPU
+vulnerabilities only affect a specific cpu-type. RFDS only affects Intel
+Atom parts.
+
+To be able to also match CPUs based on type add a new field cpu_type to
+struct x86_cpu_id which is used by the CPU-matching tables. Introduce
+X86_CPU_TYPE_ANY for the cases that don't care about the cpu-type.
+
+Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+---
+ arch/x86/include/asm/cpu_device_id.h | 35 ++++++++++++++++++++++++-----------
+ include/linux/mod_devicetable.h      |  2 ++
+ 2 files changed, 26 insertions(+), 11 deletions(-)
+
+diff --git a/arch/x86/include/asm/cpu_device_id.h b/arch/x86/include/asm/cpu_device_id.h
+index 4bdf4baefbc0..fa7bd0c454e7 100644
+--- a/arch/x86/include/asm/cpu_device_id.h
++++ b/arch/x86/include/asm/cpu_device_id.h
+@@ -75,13 +75,14 @@
+  * into another macro at the usage site for good reasons, then please
+  * start this local macro with X86_MATCH to allow easy grepping.
+  */
+-#define X86_MATCH_CPU(_vendor, _family, _model, _steppings, _feature, _data) { \
++#define X86_MATCH_CPU(_vendor, _family, _model, _steppings, _feature, _cpu_type, _data) { \
+ 	.vendor		= _vendor,					\
+ 	.family		= _family,					\
+ 	.model		= _model,					\
+ 	.steppings	= _steppings,					\
+ 	.feature	= _feature,					\
+ 	.flags		= X86_CPU_ID_FLAG_ENTRY_VALID,			\
++	.cpu_type	= _cpu_type,					\
+ 	.driver_data	= (unsigned long) _data				\
+ }
+ 
+@@ -98,7 +99,7 @@
+  */
+ #define X86_MATCH_VENDOR_FAM_MODEL_FEATURE(vendor, family, model, feature, data)	\
+ 	X86_MATCH_CPU(X86_VENDOR_##vendor, family, model, X86_STEPPING_ANY,		\
+-		      feature, data)
++		      feature, X86_CPU_TYPE_ANY, data)
+ 
+ /**
+  * X86_MATCH_VENDOR_FAM_FEATURE - Macro for matching vendor, family and CPU feature
+@@ -112,7 +113,7 @@
+  */
+ #define X86_MATCH_VENDOR_FAM_FEATURE(vendor, family, feature, data)		\
+ 	X86_MATCH_CPU(X86_VENDOR_##vendor, family, X86_MODEL_ANY,		\
+-		      X86_STEPPING_ANY, feature, data)
++		      X86_STEPPING_ANY, feature, X86_CPU_TYPE_ANY, data)
+ 
+ /**
+  * X86_MATCH_VENDOR_FEATURE - Macro for matching vendor and CPU feature
+@@ -125,7 +126,7 @@
+  */
+ #define X86_MATCH_VENDOR_FEATURE(vendor, feature, data)				\
+ 	X86_MATCH_CPU(X86_VENDOR_##vendor, X86_FAMILY_ANY, X86_MODEL_ANY,	\
+-		      X86_STEPPING_ANY, feature, data)
++		      X86_STEPPING_ANY, feature, X86_CPU_TYPE_ANY, data)
+ 
+ /**
+  * X86_MATCH_FEATURE - Macro for matching a CPU feature
+@@ -136,7 +137,7 @@
+  */
+ #define X86_MATCH_FEATURE(feature, data)					\
+ 	X86_MATCH_CPU(X86_VENDOR_ANY, X86_FAMILY_ANY, X86_MODEL_ANY,		\
+-		      X86_STEPPING_ANY, feature, data)
++		      X86_STEPPING_ANY, feature, X86_CPU_TYPE_ANY, data)
+ 
+ /**
+  * X86_MATCH_VENDOR_FAM_MODEL - Match vendor, family and model
+@@ -150,7 +151,7 @@
+  */
+ #define X86_MATCH_VENDOR_FAM_MODEL(vendor, family, model, data)			\
+ 	X86_MATCH_CPU(X86_VENDOR_##vendor, family, model, X86_STEPPING_ANY,	\
+-		      X86_FEATURE_ANY, data)
++		      X86_FEATURE_ANY, X86_CPU_TYPE_ANY, data)
+ 
+ /**
+  * X86_MATCH_VENDOR_FAM - Match vendor and family
+@@ -163,7 +164,7 @@
+  */
+ #define X86_MATCH_VENDOR_FAM(vendor, family, data)				\
+ 	X86_MATCH_CPU(X86_VENDOR_##vendor, family, X86_MODEL_ANY,		\
+-		      X86_STEPPING_ANY, X86_FEATURE_ANY, data)
++		      X86_STEPPING_ANY, X86_FEATURE_ANY, X86_CPU_TYPE_ANY, data)
+ 
+ /**
+  * X86_MATCH_INTEL_FAM6_MODEL - Match vendor INTEL, family 6 and model
+@@ -183,7 +184,7 @@
+ 
+ #define X86_MATCH_INTEL_FAM6_MODEL_STEPPINGS(model, steppings, data)	\
+ 	X86_MATCH_CPU(X86_VENDOR_INTEL, 6, INTEL_FAM6_##model,		\
+-		      steppings, X86_FEATURE_ANY, data)
++		      steppings, X86_FEATURE_ANY, X86_CPU_TYPE_ANY, data)
+ 
+ /**
+  * X86_MATCH_VFM - Match encoded vendor/family/model
+@@ -194,7 +195,7 @@
+  */
+ #define X86_MATCH_VFM(vfm, data)						\
+ 	X86_MATCH_CPU(VFM_VENDOR(vfm), VFM_FAMILY(vfm),	VFM_MODEL(vfm),		\
+-		      X86_STEPPING_ANY, X86_FEATURE_ANY, data)
++		      X86_STEPPING_ANY, X86_FEATURE_ANY, X86_CPU_TYPE_ANY, data)
+ 
+ /**
+  * X86_MATCH_VFM_STEPPINGS - Match encoded vendor/family/model/stepping
+@@ -206,7 +207,7 @@
+  */
+ #define X86_MATCH_VFM_STEPPINGS(vfm, steppings, data)				\
+ 	X86_MATCH_CPU(VFM_VENDOR(vfm), VFM_FAMILY(vfm), VFM_MODEL(vfm),		\
+-		      steppings, X86_FEATURE_ANY, data)
++		      steppings, X86_FEATURE_ANY, X86_CPU_TYPE_ANY, data)
+ 
+ /**
+  * X86_MATCH_VFM_FEATURE - Match encoded vendor/family/model/feature
+@@ -218,7 +219,19 @@
+  */
+ #define X86_MATCH_VFM_FEATURE(vfm, feature, data)				\
+ 	X86_MATCH_CPU(VFM_VENDOR(vfm), VFM_FAMILY(vfm), VFM_MODEL(vfm),		\
+-		      X86_STEPPING_ANY, feature, data)
++		      X86_STEPPING_ANY, feature, X86_CPU_TYPE_ANY, data)
++
++/**
++ * X86_MATCH_VFM_CPU_TYPE - Match encoded vendor/family/model/cpu-type
++ * @vfm:	Encoded 8-bits each for vendor, family, model
++ * @cpu_type:	CPU type e.g. P-core, E-core on Intel
++ * @data:	Driver specific data or NULL. The internal storage
++ *		format is unsigned long. The supplied value, pointer
++ *		etc. is cast to unsigned long internally.
++ */
++#define X86_MATCH_VFM_CPU_TYPE(vfm, cpu_type, data)			\
++	X86_MATCH_CPU(VFM_VENDOR(vfm), VFM_FAMILY(vfm), VFM_MODEL(vfm),	\
++		      X86_STEPPING_ANY, X86_FEATURE_ANY, cpu_type, data)
+ 
+ /*
+  * Match specific microcode revisions.
+diff --git a/include/linux/mod_devicetable.h b/include/linux/mod_devicetable.h
+index 4338b1b4ac44..b8a2e88f966f 100644
+--- a/include/linux/mod_devicetable.h
++++ b/include/linux/mod_devicetable.h
+@@ -692,6 +692,7 @@ struct x86_cpu_id {
+ 	__u16 feature;	/* bit index */
+ 	/* Solely for kernel-internal use: DO NOT EXPORT to userspace! */
+ 	__u16 flags;
++	__u8  cpu_type;
+ 	kernel_ulong_t driver_data;
+ };
+ 
+@@ -701,6 +702,7 @@ struct x86_cpu_id {
+ #define X86_MODEL_ANY  0
+ #define X86_STEPPING_ANY 0
+ #define X86_FEATURE_ANY 0	/* Same as FPU, you can't test for that */
++#define X86_CPU_TYPE_ANY 0
+ 
+ /*
+  * Generic table type for matching CPU features.
+
+-- 
+2.34.1
+
+
 
