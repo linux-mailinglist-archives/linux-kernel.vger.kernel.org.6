@@ -1,246 +1,127 @@
-Return-Path: <linux-kernel+bounces-289446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B34954658
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:00:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D898E95465C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A7661F2247B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:00:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70A5FB250DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE6216FF48;
-	Fri, 16 Aug 2024 10:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ndz1MSWZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0011D1581E1;
-	Fri, 16 Aug 2024 10:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8820F172BD3;
+	Fri, 16 Aug 2024 10:00:12 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2CB170A35
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 10:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723802408; cv=none; b=XW41KXY96t+Fz+dmc/6DTWnKa51WEGQ5yHPjwHpc+t7gpPeALRXqn9wfMjvblDImILiXppGVp6Hhz2dWiKWBH3ruKDfbV3ZstD0IM8qky8WflVh67EFnSI/f6pLG4FZaeXYV4fUYwPSwwXSbNucYK0nvEI/X2vUKBOmRg+i92vU=
+	t=1723802412; cv=none; b=VoJI84rOCGA8tp0oPB2tUsCaNSlCufshPFbkMYJ9I1p6i8w5AtUylHXsu0y+y6or1bGobvvFSWmcq5ZGKvTIJZZQNcdZ594xTVpS+6shpYtl3CUmpyM3kpgRKZfpvrEEiaJTlUx5H85TRlPteL2r+Iog3PcF+RwvRl6TlsWynWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723802408; c=relaxed/simple;
-	bh=iGD3NKOoj/2HsVzfmb91fDoaFzGl1gSpbffaUx8RW/E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EsxdT2wFmFcXR6AaddCXlaStxaQG4PwOTA6hCBT1LiL4PzPmMr2W3weyOJ6KEXbHtPbM4DH6qz3Fj02b1LErIeijz+GAXSTJzLCXX6bw/zSn8Uk12UoMK1nk3BM2Gvg3Bgh2XWAf8D+BQdKnJx2wkfvG8yix0wx3sy/d1xoVIPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ndz1MSWZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A368C32782;
-	Fri, 16 Aug 2024 10:00:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723802407;
-	bh=iGD3NKOoj/2HsVzfmb91fDoaFzGl1gSpbffaUx8RW/E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ndz1MSWZY4lYc5e00Ev45zKuoYRzqqDSmYciSb6lcWkpNjBLGBfk8U3KgpLPyWm7W
-	 8rwa5i0D+/rmeeaTM2isvTMx1kijJf0/Wh1tCeWdArQ1U5WZ5KXX0aGBUhLkWH6ZRb
-	 xS3s1DuTJgnMkLWhTQv/9GXPsknU9bSuOro6PkBCwM6iaYMZztMulyHD4jfUjhtY6a
-	 ueBJ0QFVgS6htZaP1BMkSKHxSPZjBB7ugy01oraKQLbVTu4QCaGnyg6ZqrP8JG/tfj
-	 MQXq7S+gOwDpMuWikMgPcgg1dz5NKp3e3uTcp1vO4FBhqokBcFV7tMOEPoJPzNkbRQ
-	 qyMYfl3kpIkAw==
-Message-ID: <bf5350ec-f722-4188-9e10-da5d5cb93e44@kernel.org>
-Date: Fri, 16 Aug 2024 12:00:00 +0200
+	s=arc-20240116; t=1723802412; c=relaxed/simple;
+	bh=X2ffU21u6Ap0PPxxdBwbgacsHCZnDZy693IcNtn+jUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pHYYSVtfHcTLZxqQbi30/9IKr1EUYXTT4SL7bviXc/CVobz3E870faOT6BpR8CBmp7Qwmi8qUpk422RHHh+0/mBuFlP52wtADV2Lbva6KrXxAL1VooC3ZlIyF0kn4uZvdQAH/8QrmKEYeUyw4bzShyST//7jpGNnFIElDlch73w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6146A143D;
+	Fri, 16 Aug 2024 03:00:35 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 798953F73B;
+	Fri, 16 Aug 2024 03:00:08 -0700 (PDT)
+Date: Fri, 16 Aug 2024 11:00:06 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: will@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, ilkka@os.amperecomputing.com
+Subject: Re: [PATCH 2/8] perf/arm-cmn: Fix CCLA register offset
+Message-ID: <Zr8jJq3l9sfvJuil@J2N7QTR9R3>
+References: <cover.1723229941.git.robin.murphy@arm.com>
+ <e73b31da42a7840d4247fc8a4a3cea805c2ab618.1723229941.git.robin.murphy@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 05/10] power: supply: max77693: Add USB extcon
- detection for enabling charging
-To: Artur Weber <aweber.kernel@gmail.com>,
- Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht, Henrik Grimler <henrik@grimler.se>,
- Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>,
- Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
-References: <20240816-max77693-charger-extcon-v4-0-050a0a9bfea0@gmail.com>
- <20240816-max77693-charger-extcon-v4-5-050a0a9bfea0@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240816-max77693-charger-extcon-v4-5-050a0a9bfea0@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e73b31da42a7840d4247fc8a4a3cea805c2ab618.1723229941.git.robin.murphy@arm.com>
 
-On 16/08/2024 10:19, Artur Weber wrote:
-> 1. Add a function that allows for enabling/disabling charging.
-> 
-> 2. Add a device tree property, "maxim,usb-connector", that can be used to
-> specify a USB connector to use to detect whether a charging cable has
-> been plugged in/out, and enable/disable charging accordingly.
-> 
-> The extcon listener/worker implementation is inspired by the rt5033_charger
-> driver.
-> 
-> Tested-by: Henrik Grimler <henrik@grimler.se>
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+On Fri, Aug 09, 2024 at 08:15:41PM +0100, Robin Murphy wrote:
+> Apparently pmu_event_sel is offset by 8 for all CCLA nodes, not just
+> the CCLA_RNI combination type.
+
+Was there some reason we used to think that was specific to CCLA_RNI
+nodes, or was that just an oversight?
+
+Looking at the CMN-700 TRM and scanning for pmu_event_sel, we have:
+
+	16'h2000	por_ccg_ha_pmu_event_sel
+	16'h2000	por_ccg_ra_pmu_event_sel
+	16'h2008	por_ccla_pmu_event_sel
+	16'h2000	por_dn_pmu_event_sel
+	16'h2000	cmn_hns_pmu_event_sel
+	16'h2000	por_hni_pmu_event_sel
+	16'h2008	por_hnp_pmu_event_sel
+	16'h2000	por_mxp_pmu_event_sel
+	16'h2000	por_rnd_pmu_event_sel
+	16'h2000	por_rni_pmu_event_sel
+	16'h2000	por_sbsx_pmu_event_sel
+
+> Fixes: 23760a014417 ("perf/arm-cmn: Add CMN-700 support")
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 > ---
-> Changes in v4:
-> - Fix missing connector property causing probe deferrals
+>  drivers/perf/arm-cmn.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
+> diff --git a/drivers/perf/arm-cmn.c b/drivers/perf/arm-cmn.c
+> index fd2122a37f22..0e2e12e2f4fb 100644
+> --- a/drivers/perf/arm-cmn.c
+> +++ b/drivers/perf/arm-cmn.c
+> @@ -2393,10 +2393,13 @@ static int arm_cmn_discover(struct arm_cmn *cmn, unsigned int rgn_offset)
+>  			case CMN_TYPE_CXHA:
+>  			case CMN_TYPE_CCRA:
+>  			case CMN_TYPE_CCHA:
+> -			case CMN_TYPE_CCLA:
+>  			case CMN_TYPE_HNS:
+>  				dn++;
+>  				break;
+> +			case CMN_TYPE_CCLA:
+> +				dn->pmu_base += CMN_HNP_PMU_EVENT_SEL;
+> +				dn++;
+> +				break;
 
-Thank you for your patch. There is something to discuss/improve.
+When reading this for the first time, it looks like a copy-paste error
+since CMN_HNP_PMU_EVENT_SEL doesn't have any obvious relationship with
+CCLA nodes.
 
+I reckon it'd be worth adding CMN_CCLA_PMU_EVENT_SEL, and replacing the
+existing comment above the definition of CMN_HNP_PMU_EVENT_SEL, e.g.
 
-> +static void max77693_charger_extcon_work(struct work_struct *work)
-> +{
-> +	struct max77693_charger *chg = container_of(work, struct max77693_charger,
-> +						  cable.work);
-> +	struct extcon_dev *edev = chg->cable.edev;
-> +	int connector, state;
-> +	int ret;
-> +
-> +	for (connector = EXTCON_USB_HOST; connector <= EXTCON_CHG_USB_PD;
-> +	     connector++) {
-> +		state = extcon_get_state(edev, connector);
-> +		if (state == 1)
-> +			break;
-> +	}
-> +
-> +	switch (connector) {
-> +	case EXTCON_CHG_USB_SDP:
-> +	case EXTCON_CHG_USB_DCP:
-> +	case EXTCON_CHG_USB_CDP:
-> +	case EXTCON_CHG_USB_ACA:
-> +	case EXTCON_CHG_USB_FAST:
-> +	case EXTCON_CHG_USB_SLOW:
-> +	case EXTCON_CHG_USB_PD:
-> +		ret = max77693_set_charging(chg, true);
-> +		if (ret) {
-> +			dev_err(chg->dev, "failed to enable charging\n");
-> +			break;
-> +		}
-> +		dev_info(chg->dev, "charging. connector type: %d\n",
-> +			 connector);
+/*
+ * Some nodes place common registers at different offsets from most
+ * other nodes.
+ */
+#define CMN_HNP_PMU_EVENT_SEL		0x008
+#define CMN_CCLA_PMU_EVENT_SEL		0x008
 
-This and next one should be also dev_dbg. It is completely normal
-condition, kind of expected thing to happen, so users do not need to be
-bugged every time they plugs cable.
+That way the switch looks less suspicious, and the comment is a bit more
+helpful to anyone trying to figure out what's going on here.
 
-> +		break;
-> +	default:
-> +		ret = max77693_set_charging(chg, false);
-> +		if (ret) {
-> +			dev_err(chg->dev, "failed to disable charging\n");
-> +			break;
-> +		}
-> +		dev_info(chg->dev, "not charging. connector type: %d\n",
-> +			 connector);
-> +		break;
-> +	}
-> +
-> +	power_supply_changed(chg->charger);
-> +}
-> +
-> +static int max77693_charger_extcon_notifier(struct notifier_block *nb,
-> +					  unsigned long event, void *param)
-> +{
-> +	struct max77693_charger *chg = container_of(nb, struct max77693_charger,
-> +						    cable.nb);
-> +
-> +	schedule_work(&chg->cable.work);
-> +
-> +	return NOTIFY_OK;
-> +}
-> +
->  /*
->   * Sets charger registers to proper and safe default values.
->   */
-> @@ -734,12 +814,34 @@ static int max77693_dt_init(struct device *dev, struct max77693_charger *chg)
->  {
->  	struct device_node *np = dev->of_node;
->  	struct power_supply_battery_info *battery_info;
-> +	struct device_node *np_conn, *np_edev;
->  
->  	if (!np) {
->  		dev_err(dev, "no charger OF node\n");
->  		return -EINVAL;
->  	}
->  
-> +	np_conn = of_parse_phandle(np, "maxim,usb-connector", 0);
+With that:
 
-Where is the reference dropped?
+Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-> +	if (np_conn) {
-> +		np_edev = of_get_parent(np_conn);
+Mark.
 
-Same question
-
-> +
-> +		chg->cable.edev = extcon_find_edev_by_node(np_edev);
-
-You probably need device_link_add() as well. I don't think above extcon
-code cares about it.
-
-> +		if (IS_ERR(chg->cable.edev)) {
-> +			/*
-> +			 * In case of deferred extcon probe, defer our probe as well
-> +			 * until it appears.
-> +			 */
-> +			if (PTR_ERR(chg->cable.edev) == -EPROBE_DEFER)
-> +				return PTR_ERR(chg->cable.edev);
-> +			/*
-> +			 * Otherwise, ignore errors (the charger can run without a
-> +			 * connector provided).
-> +			 */
-> +			dev_warn(dev, "no extcon device found in device-tree (%ld)\n",
-> +				 PTR_ERR(chg->cable.edev));
-> +		}
-> +	}
-
-
-Best regards,
-Krzysztof
-
+>  			/* Nothing to see here */
+>  			case CMN_TYPE_MPAM_S:
+>  			case CMN_TYPE_MPAM_NS:
+> -- 
+> 2.39.2.101.g768bb238c484.dirty
+> 
 
