@@ -1,119 +1,177 @@
-Return-Path: <linux-kernel+bounces-288796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E48EE953ED6
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:22:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD49D953EE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:23:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E19C02846D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:22:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10C74B24C8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F80C1A288;
-	Fri, 16 Aug 2024 01:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67EC3612D;
+	Fri, 16 Aug 2024 01:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nkLW5WhT"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TcPBNpDC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17596BA27
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 01:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37ED2BCFF;
+	Fri, 16 Aug 2024 01:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723771349; cv=none; b=rbeVqoeQuN/w2+1XkjhV2UucUFGkSUJpItsWnwrPy65Il69kN9Gtj0/LstkMm9iqipmRQ9zma1X/N5eY8XGfgqVMbIYRuQm6po5RtyjuHyleoVBIUbbrFzi6jXl0Tl7DD2Npz6h3qI7L+H+dzMTlqhPS7z5Mn7/ms+EQnEdcqBI=
+	t=1723771370; cv=none; b=HHliaLykvjS5QHln6rT75b1KHsOpJJP2q8e6aqOrydJoQ/vNHZCS9x+9GSiJi6et39DAB/zouVTGGuU3NKzJ2cfpfxPtliwdOviG54D4kgoRQv2Rqx0ldcATxsU6nYmf1fAXNWYIgT0BbO7Jjf3C8PTyJFoaIqQdK2lZ3B57+ZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723771349; c=relaxed/simple;
-	bh=8SoY/RcZL5ysEBphgPDWAnEB0sIKwXTAtWX4HJeM9YA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PRwimBIbflY0YaacEY8qWWeAvZjRW5LL/+GLmpj4TgRVRcuzNvBSJjWGXcWbss9We6C8nvtKkcJUQhT+O0syRwOO/orUbvYIOeT7zOmxugvIXYYUvLngGysooULT6Y+pbefGUB4X0VIhgxWL/+NF7JAnmU4UFUtbRVXM04aB2Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nkLW5WhT; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f3aced81ebso1092611fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 18:22:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723771346; x=1724376146; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DI5LZsgOl8aoOKJy/uiScPnu9gA+ziq8FjRrJurEzmo=;
-        b=nkLW5WhToNoLaO1iGQ2XkIEYpKFeBj2LCwjRowJKSLTq2HVIqsjtKBCRiEQCDF+H9g
-         pakMXIatoeaGlyaJ4I1gm0xhkWLu70+O4yjP3ErfskTZM+4iWLyO7DdpdtwGA4R9tQO5
-         E0GysTJ/93xf3eCTiIB6Oo7yg5i+9XslOki9GRv5bnBd+mq8y0IueHmCidieXAq5y/Xh
-         032EP9T5JdpJpccBGDNbNZPNyL8hpSyHuDv4KpDTer3F7U/Xk6h+j5/gjnKoKt8EsWnU
-         kYNFmWPbxsrUrSbU+49CZ4dkuPOq6feKQ5q5U6LV+nd3YB1/8+aQfmHlZbN3XJr/tmrc
-         W4+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723771346; x=1724376146;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DI5LZsgOl8aoOKJy/uiScPnu9gA+ziq8FjRrJurEzmo=;
-        b=N9PgDS7hEfnYq8MMVjFzxlfPMgIZqhnwahKfwBGQuDJPCWAa3dbUbszVKCEnsEagTm
-         jVmmt5C/+HZJ3SYarmVf6HWQb3obY4RzxYd/T72t4Uh2I/v2eXhPwO5c/pAOfmf44q7a
-         dFbFgMi8fTebzvUfX/VmS0hkPhDTs/NJUsDZpbwfa+pGUxHgiIBn+sbVZT6hQl6r8K9y
-         07fSL7bJ31TMq/DwYc8BcaggPC6Uoja/yrno77yhALtGIb9sTsO0eUk1dICoUEZVAroU
-         uFYgR1ukuJU5yqu+UvPVcN/FirRcOmnVBTs3It/iTrey+cIQI4jPIuoWwGLhHBd+0MN3
-         MjLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXIqTpVY915164PUz0bnbu7qL3u9BfrzMmbZJK9priFv+sertIBwy1cLSKLAlcstDnimp8+YAd3Qt7WRog=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOQmqxDlP5LdxvlE7ikFb3XwtikPef3QmksW00yriBlIdPRu5l
-	j0yQmlxcuF4utos+pJiP2llevLVqsdi4zF4tGnQkLw1BH6o6srcS
-X-Google-Smtp-Source: AGHT+IEhcf6HuGbBoQ5gcZ4LtFttdt9jlXEbr+4AsbcDJQ1pi3IgVmWwgOsfgnNH+6dYTWILhQVlNg==
-X-Received: by 2002:a05:651c:2211:b0:2f0:1dfb:9b64 with SMTP id 38308e7fff4ca-2f3be60b118mr4640141fa.7.1723771345553;
-        Thu, 15 Aug 2024 18:22:25 -0700 (PDT)
-Received: from ?IPV6:2a01:4b00:d20e:7300:6f87:1ca5:9107:75? ([2a01:4b00:d20e:7300:6f87:1ca5:9107:75])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded7d5bfsm63699085e9.46.2024.08.15.18.22.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Aug 2024 18:22:25 -0700 (PDT)
-Message-ID: <64ab3938-9c0a-483e-9094-64baa1524d4a@gmail.com>
-Date: Fri, 16 Aug 2024 02:22:23 +0100
+	s=arc-20240116; t=1723771370; c=relaxed/simple;
+	bh=IkxgNU5lZE6GtoPPMNJU9i4n15FLyHYKT67mAHsJDsU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jjXxlA+OcErznBVhV1xxC/pcFs0oBTNVMuFhQQVR89PC29oO7Tm6didaOPDcV/wikNf2pxWyrk/0wkZwXbWNfzcwWO8vluFEGbPsX1MlI1b2sLE/rkTDuFi163eWPHdeEbq1WCEDRpVZlJs4X8mawfGF/5hY2muFK7BFmzdef0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TcPBNpDC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C07B2C4AF09;
+	Fri, 16 Aug 2024 01:22:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723771369;
+	bh=IkxgNU5lZE6GtoPPMNJU9i4n15FLyHYKT67mAHsJDsU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TcPBNpDCRFXY8kGxpg2OnRKk1wK1Dnq5Nh134fk9HH+HXrxS9P35iW+jorPaKYS1N
+	 xAMygGZ/o8VttaAfDJ73kbiQunXv00m488MEt5zFzKx0LmQ+yM91SMEj/TOTfvHriW
+	 5gsmMzKyX4hCr0NdhJXl+6EFrUUTMZlDnL9mk+hbDY69YRrM4P0eypdGanoGEqyjwW
+	 VnKH4FrMCPyOazttbwCRLeHANRE3uJJckxjidvB49sZn2byX+9sHs42dntssCrTNqq
+	 kbYFHxD1BHqZoc/Cao/daL6ihfXWV1GKXL7xuhyFlGg+FRagNIGfP4rt1DbGZ2ks8D
+	 3C5SoToFZwuJg==
+Date: Thu, 15 Aug 2024 18:22:45 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>, Richard Henderson
+ <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+ Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
+ <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>,
+ Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
+ <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, Herbert
+ Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, Willem
+ de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, Sumit
+ Semwal <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Christoph
+ Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>,
+ Taehee Yoo <ap420073@gmail.com>, David Wei <dw@davidwei.uk>, Jason
+ Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, Shailend
+ Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
+ <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
+ Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
+Subject: Re: [PATCH net-next v19 06/13] memory-provider: dmabuf devmem
+ memory provider
+Message-ID: <20240815182245.2b5e3f44@kernel.org>
+In-Reply-To: <31640ff4-25a6-4115-85e6-82092ce57393@gmail.com>
+References: <20240813211317.3381180-7-almasrymina@google.com>
+	<de7daf80-a2e4-4451-b666-2a67ccc3649e@gmail.com>
+	<CAHS8izPMC+XhXKbJOQ3ymizyKuARSOv_cO_xO+q1EG4zoy6Gig@mail.gmail.com>
+	<31640ff4-25a6-4115-85e6-82092ce57393@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kunit/overflow: Fix UB in overflow_allocation_test
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: kees@kernel.org, davidgow@google.com, kunit-dev@googlegroups.com,
- linux-kernel@vger.kernel.org, erhard_f@mailbox.org
-References: <20240815000431.401869-1-ivan.orlov0322@gmail.com>
- <20240815160148.be83228a7804c6389393429a@linux-foundation.org>
-Content-Language: en-US
-From: Ivan Orlov <ivan.orlov0322@gmail.com>
-In-Reply-To: <20240815160148.be83228a7804c6389393429a@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 8/16/24 00:01, Andrew Morton wrote:
-> On Thu, 15 Aug 2024 01:04:31 +0100 Ivan Orlov <ivan.orlov0322@gmail.com> wrote:
+On Wed, 14 Aug 2024 17:32:53 +0100 Pavel Begunkov wrote:
+> > This is where I get a bit confused. Jakub did mention that it is
+> > desirable for core to verify that the driver did the right thing,
+> > instead of trusting that a driver did the right thing without
+> > verifying. Relying on a flag from the driver opens the door for the
+> > driver to say "I support this" but actually not create the mp
+> > page_pool. In my mind the explicit check is superior to getting
+> > feedback from the driver.  
 > 
->> The 'device_name' array doesn't exist out of the
->> 'overflow_allocation_test' function scope. However, it is being used as
->> a driver name when calling 'kunit_driver_create' from
->> 'kunit_device_register'. It produces the kernel panic with KASAN
->> enabled.
->>
->> Since this variable is used in one place only, remove it and pass the
->> device name into kunit_device_register directly as an ascii string.
+> You can apply the same argument to anything, but not like
+> after each for example ->ndo_start_xmit we dig into the
+> interface's pending queue to make sure it was actually queued.
 > 
-> Fixes: ca90800a91ba ("test_overflow: Add memory allocation overflow tests")
-> Cc: <stable@vger.kernel.org>
+> And even if you check that there is a page pool, the driver
+> can just create an empty pool that it'll never use. There
+> are always ways to make it wrong.
 > 
-> yes?
+> Yes, there is a difference, and I'm not against it as a
+> WARN_ON_ONCE after failing it in a more explicit way.
 > 
+> Jakub might have a different opinion on how it should look
+> like, and we can clarify on that, but I do believe it's a
+> confusing interface that can be easily made better.
 
-Ah, yes, sorry, I should've specified the fixes tag in the patch :(
+My queue API RFC patches had configuration arguments, not sure if this
+is the right version but you'll get the idea:
+https://github.com/kuba-moo/linux/blob/qcfg/include/net/netdev_cfg.h#L43-L50
+This way we can _tell_ the driver what the config should be. That part
+got lost somewhere along the way, because perhaps in its embryonic form
+it doesn't make sense.
 
+We can bring it back, add HDS with threshold of 0, to it, and a bit for
+non-readable memory. On top of that "capability bits" in struct
+netdev_queue_mgmt_ops to mark that the driver pays attention to particular
+fields of the config.
+
+Not sure if it should block the series, but that'd be the way I'd do it
+(for now?)
+
+I'd keep the current check with a WARN_ON_ONCE(), tho.
+Given the absence of tests driver developers can use.
+Especially those who _aren't_ supporting the feature.
+
+> > and cons to each approach; I don't see a showstopping reason to go
+> > with one over the other.
+> >   
+> >> And page_pool_check_memory_provider() is not that straightforward,
+> >> it doesn't walk through pools of a queue.  
+> > 
+> > Right, we don't save the pp of a queue, only a netdev. The outer loop
+> > checks all the pps of the netdev to find one with the correct binding,
+> > and the inner loop checks that this binding is attached to the correct
+> > queue.  
 > 
-> I'll grab it now, but perhaps Kees will handle this.
+> That's the thing, I doubt about the second part.
 > 
+> net_devmem_bind_dmabuf_to_queue() {
+> 	err = xa_alloc(&binding->bound_rxqs, &xa_idx, rxq);
+> 	if (err)
+> 		return err;
+> 
+> 	netdev_rx_queue_restart();
+> 
+> 	// page_pool_check_memory_provider
+> 	...
+> 	xa_for_each(&binding->bound_rxqs, xa_idx, binding_rxq) {
+> 		if (rxq == binding_rxq)
+> 			return success;
+> }
+> 
+> Can't b4 the patches for some reason, but that's the highlight
+> from the patchset, correct me if I'm wrong. That xa_for_each
+> check is always true because you put the queue in there right
+> before it, and I don't that anyone could've erased it.
+> 
+> The problem here is that it seems the ->bound_rxqs state doesn't
+> depend on what page pools were actually created and with what mp.
 
-Thanks!
+FWIW I don't understand the point of walking the xa either.
+Just check the queue number of the pp you found matches,
+page pool params are saved in the page pool. No?
 
--- 
-Kind regards,
-Ivan Orlov
 
