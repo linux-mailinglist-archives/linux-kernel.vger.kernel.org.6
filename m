@@ -1,164 +1,124 @@
-Return-Path: <linux-kernel+bounces-289351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6209495452F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:10:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 477AB954533
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CD581C23E11
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:10:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7929B21D35
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFEED13A416;
-	Fri, 16 Aug 2024 09:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D4013D8B8;
+	Fri, 16 Aug 2024 09:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="FeGL0h+s"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AaiFDElG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C067581B
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BB313C801;
+	Fri, 16 Aug 2024 09:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723799417; cv=none; b=AUz1NvZGKSxSf5hTflUUQLGjAz0S+jL4eL58h0fCyShSgBYW3upVf9P3di6hsuoOqPgq1+zBO15qtY0/bsLnGs1gO2Unk1TlQN2IDhT5ucvuoysxtCKev+OJwvjSWTnR/qGZqjThX3aoSTaEsblLInLA3RJYShKSdgYBRMuSImY=
+	t=1723799433; cv=none; b=LewovBDfjnyjeS68Gpa4mtrEaC3/3kq0PhCVSTYK8qZ3GGBsGoBs/AztP1LbdFCakQ2QlaCV0PO5fhi1wlzO2RoF3C1qW035suDTM9+2TuwLrsJUVwf1D79c0dav3RaFVse7hg1KmmraV+GlpWwPBrvtkyRl1cNmNVQQ/pxKJbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723799417; c=relaxed/simple;
-	bh=+447AkOnS1uBqMb8FHGHUkrDqwuwBEyFMUSUD/t7gbU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uob+pckc0glU4i5sH3yoCBKA2KMesDwu6xM8h+R/Ln2s+NSc/lv+J8gdfNucYpu4RgfmNm6CT1YDiNf4neWSBeO/0oSAtKs/6JaQuAKfhvN/HVU5V5/ByZNFo/7NlKytBeqLgaNesSTRYTbFysrgAGUkpwH6vODcsC5TlAq/8Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=FeGL0h+s; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52f04c29588so2488318e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 02:10:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723799412; x=1724404212; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I+OEH4A1p3/H1CuxcdmLsuPBbfALhVq7kSh25EJu5bk=;
-        b=FeGL0h+stBW8BNGOQ1BL/H2ddn8AmxOvTFUTXm5D2Y3u78Oe7eICm+jYY+eqgK1IUt
-         TgRJ4pJ/nZmCixTCmWYuhtSuZ1wQRoYlMs8xyTXW0hreFpcehwjOcBk8zi5W1cdyRe0K
-         5D8Zk4vgcXqIvqBgyo3Sq/srBz48ik3h3RuOhMj0eI3CAgExMLvNtQyYdLMnZ2hV2c22
-         IbenbcX0/iimnmWpe+2eLP4fk9BWLLAONrvi4581MrzagLhWRaUimZnqh0xIJDmR7M8I
-         sIwZOYVeTN3V0DJVTJz3h9g6p6TloDV2I0VMDK+OU6dbfOIkzNG++536vtePoitPAnBB
-         dC5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723799412; x=1724404212;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I+OEH4A1p3/H1CuxcdmLsuPBbfALhVq7kSh25EJu5bk=;
-        b=hHCh/y3X2xk0ROZ/MRCLkVPGOgSrQxQ8ZBCia5yttboAMKU01ZHSSNY5aeUmotYKWd
-         NnBCaXX0roQIt+sKFqFAJsRPb8/Ohz21roJcyzJwyLL9KXbahigbYmKvF0p8ijpGutr8
-         uQOJccAdv2RX0CJavYBNA/DjXNeiSCIKC2Hkz72hHcGFv1Jske/eF13yIV/uVaEJxA3s
-         rKzWdvZyMvbAVorYIVv3WJGUjkjVC5Ww0lCIszFpPZtSgBcL3Tx7N0k3fY7ppp5PNjup
-         dCNnPWPJY93MKWB3A0YwR0RDHDTc/ULO1VEMx3myytp9AT12XG1AmNyptJmJUaausOXm
-         gXQw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5c0wW65NbbUYNpqDroxCPiESlJqkvEFqc6uC/SfBdOTApgfWPfwz2R3u8AwwrU9mcfMV5r3m5Rj0NsT5T4yaRahBHdSazy4t7Zzvc
-X-Gm-Message-State: AOJu0YxQ80AQU3LzlV2JZQoXOiaOTPsXK/tbc8olpJhvrgIN4h+zHqVM
-	G+9ldFL1k5JILNNzxw0cHByzoIFzK5m9UaFqtW/PUyUTdNRarb8RtiWwxhBQsWzitkDvkuDWmBi
-	DnzVShEOfj8fVVqCKzMBTf9R7yzsSJcn5K5mPhw==
-X-Google-Smtp-Source: AGHT+IFB3aIW7Bm+lnja7PhaLnwXaRYjuWrHIHMzFAXmCtoDzMvBJ6bByky6rPgRVOj2x6JwSAi/BLj6VPI7F5SZiP8=
-X-Received: by 2002:a05:6512:2806:b0:530:ae0a:ab7a with SMTP id
- 2adb3069b0e04-5331c6975abmr1399845e87.17.1723799411703; Fri, 16 Aug 2024
- 02:10:11 -0700 (PDT)
+	s=arc-20240116; t=1723799433; c=relaxed/simple;
+	bh=S9r9yGxVBVVt8iz8VZ6BiPMcB2RBNjLI7DiZjXXCPnM=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=bdG+jvkrF7X4mred0YKfl+dOaqlaEpO796/S0DMAuErhsNOKxDlTrlaLI7J0YGJpXp3jGCyUTE6ahfPoAjwQ4nZeqB1AKhsgY8X71SGwzoohhSzUqxxCzZn0f4SYon5IQFYWjtvenq13QF7VtmL9NkJISazjpT3iydqubcpfcvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AaiFDElG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0593AC4AF0E;
+	Fri, 16 Aug 2024 09:10:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723799433;
+	bh=S9r9yGxVBVVt8iz8VZ6BiPMcB2RBNjLI7DiZjXXCPnM=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=AaiFDElGcQlADY2h4llu8sBTpqefXgK+iL4Au8i8jzAi7VXApVT/OCSs+U5Ed6R4/
+	 EF8e9hQa5VysVYQXNdIK7FdMgak7LT6I41P6rC/s/mjdlxNndtc8G9Dzmt8U1ecu6e
+	 hn6NNbonoDUFWHkR28/hzNBMcS4zLEm83xpWcn8BPh1eMs4vx9ONdC3wQ7OsgwpDgC
+	 y8b44M2W9uRrm6VerRZyS5QsBn5H05WrhWG9XBrXsbVRn1aQU35FVWx55Faz6KjWRI
+	 rHgXDoIczxOBL+L3fB1Xqo7fJLEY+UKHeb0En/K6Pg5qrgDOcZN1H7emsCAx10hMzB
+	 Mr2H6Kd3kTQ5g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70FB538231F8;
+	Fri, 16 Aug 2024 09:10:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814082301.8091-1-brgl@bgdev.pl> <87a5hcyite.fsf@kernel.org>
-In-Reply-To: <87a5hcyite.fsf@kernel.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 16 Aug 2024 11:10:00 +0200
-Message-ID: <CAMRc=Mcr7E0dxG09_gYPxg57gYAS4j2+-3x9GCS3wOcM46O=NQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] dt-bindings: net: ath11k: document the inputs
- of the ath11k on WCN6855
-To: Kalle Valo <kvalo@kernel.org>
-Cc: "David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jeff Johnson <jjohnson@kernel.org>, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	ath11k@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net 00/14] VLAN fixes for Ocelot driver
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172379943226.3458201.417541764470956886.git-patchwork-notify@kernel.org>
+Date: Fri, 16 Aug 2024 09:10:32 +0000
+References: <20240815000707.2006121-1-vladimir.oltean@nxp.com>
+In-Reply-To: <20240815000707.2006121-1-vladimir.oltean@nxp.com>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, claudiu.manoil@nxp.com,
+ alexandre.belloni@bootlin.com, atenart@kernel.org,
+ UNGLinuxDriver@microchip.com, hongbo.wang@nxp.com, xiaoliang.yang_1@nxp.com,
+ andrew@lunn.ch, f.fainelli@gmail.com, colin.foster@in-advantage.com,
+ horatiu.vultur@microchip.com, liuhangbin@gmail.com, petrm@nvidia.com,
+ idosch@nvidia.com, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2024 at 10:26=E2=80=AFAM Kalle Valo <kvalo@kernel.org> wrot=
-e:
->
-> Bartosz Golaszewski <brgl@bgdev.pl> writes:
->
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > Describe the inputs from the PMU of the ath11k module on WCN6855.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> > v1 -> v2:
-> > - update the example
-> >
-> >  .../net/wireless/qcom,ath11k-pci.yaml         | 29 +++++++++++++++++++
-> >  1 file changed, 29 insertions(+)
->
-> This goes to ath-next, not net-next.
->
-> > diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath11k=
--pci.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.=
-yaml
-> > index 8675d7d0215c..a71fdf05bc1e 100644
-> > --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.ya=
-ml
-> > +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.ya=
-ml
-> > @@ -50,6 +50,9 @@ properties:
-> >    vddrfa1p7-supply:
-> >      description: VDD_RFA_1P7 supply regulator handle
-> >
-> > +  vddrfa1p8-supply:
-> > +    description: VDD_RFA_1P8 supply regulator handle
-> > +
-> >    vddpcie0p9-supply:
-> >      description: VDD_PCIE_0P9 supply regulator handle
-> >
-> > @@ -77,6 +80,22 @@ allOf:
-> >          - vddrfa1p7-supply
-> >          - vddpcie0p9-supply
-> >          - vddpcie1p8-supply
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: pci17cb,1103
-> > +    then:
-> > +      required:
-> > +        - vddrfacmn-supply
-> > +        - vddaon-supply
-> > +        - vddwlcx-supply
-> > +        - vddwlmx-supply
-> > +        - vddrfa0p8-supply
-> > +        - vddrfa1p2-supply
-> > +        - vddrfa1p8-supply
-> > +        - vddpcie0p9-supply
-> > +        - vddpcie1p8-supply
->
-> Like we discussed before, shouldn't these supplies be optional as not
-> all modules need them?
->
+Hello:
 
-The answer is still the same: the ATH11K inside a WCN6855 does - in
-fact - always need them. The fact that the X13s doesn't define them is
-bad representation of HW and I'm fixing it in a subsequent DTS patch.
+This series was applied to netdev/net.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-Bart
+On Thu, 15 Aug 2024 03:06:53 +0300 you wrote:
+> This is a collection of patches I've gathered over the past several
+> months.
+> 
+> Patches 1-6/14 are supporting patches for selftests.
+> 
+> Patch 9/14 fixes PTP TX from a VLAN upper of a VLAN-aware bridge port
+> when using the "ocelot-8021q" tagging protocol. Patch 7/14 is its
+> supporting selftest.
+> 
+> [...]
 
-> --
-> https://patchwork.kernel.org/project/linux-wireless/list/
->
-> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpa=
-tches
+Here is the summary with links:
+  - [net,01/14] selftests: net: local_termination: refactor macvlan creation/deletion
+    https://git.kernel.org/netdev/net/c/8d019b15ddd5
+  - [net,02/14] selftests: net: local_termination: parameterize sending interface
+    https://git.kernel.org/netdev/net/c/4261fa35185c
+  - [net,03/14] selftests: net: local_termination: parameterize test name
+    https://git.kernel.org/netdev/net/c/df7cf5cc551c
+  - [net,04/14] selftests: net: local_termination: add one more test for VLAN-aware bridges
+    https://git.kernel.org/netdev/net/c/5b8e74182ed3
+  - [net,05/14] selftests: net: local_termination: introduce new tests which capture VLAN behavior
+    https://git.kernel.org/netdev/net/c/5fea8bb00974
+  - [net,06/14] selftests: net: local_termination: don't use xfail_on_veth()
+    https://git.kernel.org/netdev/net/c/9aa3749ca4a8
+  - [net,07/14] selftests: net: local_termination: add PTP frames to the mix
+    https://git.kernel.org/netdev/net/c/237979504264
+  - [net,08/14] selftests: net: bridge_vlan_aware: test that other TPIDs are seen as untagged
+    https://git.kernel.org/netdev/net/c/e29b82ef2761
+  - [net,09/14] net: mscc: ocelot: use ocelot_xmit_get_vlan_info() also for FDMA and register injection
+    https://git.kernel.org/netdev/net/c/67c3ca2c5cfe
+  - [net,10/14] net: mscc: ocelot: fix QoS class for injected packets with "ocelot-8021q"
+    https://git.kernel.org/netdev/net/c/e1b9e80236c5
+  - [net,11/14] net: mscc: ocelot: serialize access to the injection/extraction groups
+    https://git.kernel.org/netdev/net/c/c5e12ac3beb0
+  - [net,12/14] net: dsa: provide a software untagging function on RX for VLAN-aware bridges
+    https://git.kernel.org/netdev/net/c/93e4649efa96
+  - [net,13/14] net: dsa: felix: fix VLAN tag loss on CPU reception with ocelot-8021q
+    https://git.kernel.org/netdev/net/c/f1288fd7293b
+  - [net,14/14] net: mscc: ocelot: treat 802.1ad tagged traffic as 802.1Q-untagged
+    https://git.kernel.org/netdev/net/c/36dd1141be70
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
