@@ -1,75 +1,61 @@
-Return-Path: <linux-kernel+bounces-289517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A21E9546F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:53:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF2AC9546F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:52:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B99D0286E8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:53:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BD6C1F24B10
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E89197A7B;
-	Fri, 16 Aug 2024 10:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="We8WPEkP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE2619E7F5;
+	Fri, 16 Aug 2024 10:52:13 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093D52562E
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 10:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A59C13B783
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 10:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723805607; cv=none; b=MwJddNgHKPev8kIS+LNKpuiphJTo3lFmZDjJ3I1ouHDnccdXBgbZBUAsx+rSUUjsRiPGKP7VBKEP/HToSUE4dSAE9HTes8U3sHDsSadgdOXit9qP27pmoXNDPNLFZJje/Ldi5YhcglyrWRrvqfKl/AuAO4FJyYEHiXRishCRXzk=
+	t=1723805533; cv=none; b=MJiskVON677plAPTasfgdmZsdcwRczxFPEmAs2W9AxRneGyjg5kRW5gdwDPsE66u2j6iZf1sK9qf1ItDE/k0wbouoD+0dQWTcF9hc24dmv71oL614NjHSl/2oueouGf5LfHVSz3QMdyBEpkdNqHx1piBGRviva4+K3AZ1UgHG+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723805607; c=relaxed/simple;
-	bh=LSNCR4l+CeZIKpb6+ufHNdaAsvUEkCZPMk5KTPVDSzY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=b5NLyf3hMj5o6RE7ZzdOcxo/a3LIvBmyy3SmxleqYcgVNDJH8UX67Fdf9hIXiOmLCkRmKIL7LD83nDCjn3TFekU3IUe7G2XcGtK4YlEU2ypiYz+HoUZm8npm4eZEZpiwqLiBs2n7QJL1eUvJ2bRA4LnKI2vmJEq71UgZwdKkBes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=We8WPEkP; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723805604; x=1755341604;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=LSNCR4l+CeZIKpb6+ufHNdaAsvUEkCZPMk5KTPVDSzY=;
-  b=We8WPEkPosPAQ324NdWEYvugZMSYC4lI9BFUXZ6wkIz3KdiY8LITdt5t
-   jf3yUpe2wlwcS3tehulkAooT+FvpbE3cuHBteJqMitS/VUXvD8xackq+S
-   HMCGSv3j/qn3w4tKBMV39BE5/02qc+5ACNs09Cr40kE0CnMHw8nR9B+6Z
-   PBI0L3ltPueKho9JTnY0JTgVSoAyBMui/uG4Mh7u3q4J7vk/tcPWHL8PN
-   uBAd7y9oXYe6M+N71vnTENXDe5rpTF20aKAuTcW8ptK/ZpQVnPmwBA0s4
-   wCqmF28F/nZqPf7DHjZcESXgyt3Ldm+TkB7+7k3RykwjxQYkIllQdkzAe
-   g==;
-X-CSE-ConnectionGUID: oX2HgfDaR8mpeksdNkpe9A==
-X-CSE-MsgGUID: uNhf68HYTsCHpz6fory7Cw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11165"; a="24999892"
-X-IronPort-AV: E=Sophos;i="6.10,151,1719903600"; 
-   d="scan'208";a="24999892"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 03:53:24 -0700
-X-CSE-ConnectionGUID: /f6FDArgTgeLj4kAyZ7nhQ==
-X-CSE-MsgGUID: XvXTu4pwR5utD+K1L2RrYA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,151,1719903600"; 
-   d="scan'208";a="64046038"
-Received: from allen-box.sh.intel.com ([10.239.159.127])
-  by fmviesa005.fm.intel.com with ESMTP; 16 Aug 2024 03:53:21 -0700
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Yi Liu <yi.l.liu@intel.com>
-Cc: iommu@lists.linux.dev,
+	s=arc-20240116; t=1723805533; c=relaxed/simple;
+	bh=C0Lj3s6rGWRY9u7RC0hMC7LlXn1RirJdOgbQEBApXyE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lqXz6H550hdMiKvGR62YcIJ+gB9NOaLf+FjCZ5XpVXbxN1DZbOR4SR7a1nrUYfAU3OeljBkopXeS4fYyP5is4mc14w8CUGMnja7XXybUNTcYXolMsOm4sfNPWtID5ozkp7bZlOXn1kqJc0yN0jO4F4pOcP+xfNJC6rm9ld4FN88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1seuYp-00083g-3U; Fri, 16 Aug 2024 12:51:59 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1seuYn-000okl-F3; Fri, 16 Aug 2024 12:51:57 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1seuYn-007lTq-1G;
+	Fri, 16 Aug 2024 12:51:57 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
 	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH 1/1] iommu/vt-d: Move PCI PASID enablement to probe path
-Date: Fri, 16 Aug 2024 18:49:45 +0800
-Message-Id: <20240816104945.97160-1-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
+	netdev@vger.kernel.org
+Subject: [PATCH net-next v1 1/1] phy: dp83td510: Utilize ALCD for cable length measurement when link is active
+Date: Fri, 16 Aug 2024 12:51:55 +0200
+Message-Id: <20240816105155.1850795-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,81 +63,164 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Currently, PCI PASID is enabled alongside PCI ATS when an iommu domain is
-attached to the device and disabled when the device transitions to block
-translation mode. This approach is inappropriate as PCI PASID is a device
-feature independent of the type of the attached domain.
+In industrial environments where 10BaseT1L PHYs are replacing existing
+field bus systems like CAN, it's often essential to retain the existing
+cable infrastructure. After installation, collecting metrics such as
+cable length is crucial for assessing the quality of the infrastructure.
+Traditionally, TDR (Time Domain Reflectometry) is used for this purpose.
+However, TDR requires interrupting the link, and if the link partner
+remains active, the TDR measurement will fail.
 
-Enable PCI PASID during the IOMMU device probe and disables it during the
-release path.
+Unlike multi-pair systems, where TDR can be attempted during the MDI-X
+switching window, 10BaseT1L systems face greater challenges. The TDR
+sequence on 10BaseT1L is longer and coincides with uninterrupted
+autonegotiation pulses, making TDR impossible when the link partner is
+active.
 
-Suggested-by: Yi Liu <yi.l.liu@intel.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+The DP83TD510 PHY provides an alternative through ALCD (Active Link
+Cable Diagnostics), which allows for cable length measurement without
+disrupting an active link. Since a live link indicates no short or open
+cable states, ALCD can be used effectively to gather cable length
+information.
+
+Enhance the dp83td510 driver by:
+- Leveraging ALCD to measure cable length when the link is active.
+- Bypassing TDR when a link is detected, as ALCD provides the required
+  information without disruption.
+
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- drivers/iommu/intel/iommu.c | 27 +++++++++++++--------------
- 1 file changed, 13 insertions(+), 14 deletions(-)
+ drivers/net/phy/dp83td510.c | 80 ++++++++++++++++++++++++++++++++++---
+ 1 file changed, 74 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index 9ff8b83c19a3..5a8080c71b04 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -1322,15 +1322,6 @@ static void iommu_enable_pci_caps(struct device_domain_info *info)
- 		return;
+diff --git a/drivers/net/phy/dp83td510.c b/drivers/net/phy/dp83td510.c
+index 551e37786c2da..72c33079fc665 100644
+--- a/drivers/net/phy/dp83td510.c
++++ b/drivers/net/phy/dp83td510.c
+@@ -169,6 +169,10 @@ static const u16 dp83td510_mse_sqi_map[] = {
+ #define DP83TD510E_UNKN_030E				0x30e
+ #define DP83TD510E_030E_VAL				0x2520
  
- 	pdev = to_pci_dev(info->dev);
--
--	/* The PCIe spec, in its wisdom, declares that the behaviour of
--	   the device if you enable PASID support after ATS support is
--	   undefined. So always enable PASID support on devices which
--	   have it, even if we can't yet know if we're ever going to
--	   use it. */
--	if (info->pasid_supported && !pci_enable_pasid(pdev, info->pasid_supported & ~1))
--		info->pasid_enabled = 1;
--
- 	if (info->ats_supported && pci_ats_page_aligned(pdev) &&
- 	    !pci_enable_ats(pdev, VTD_PAGE_SHIFT)) {
- 		info->ats_enabled = 1;
-@@ -1352,11 +1343,6 @@ static void iommu_disable_pci_caps(struct device_domain_info *info)
- 		info->ats_enabled = 0;
- 		domain_update_iotlb(info->domain);
- 	}
--
--	if (info->pasid_enabled) {
--		pci_disable_pasid(pdev);
--		info->pasid_enabled = 0;
--	}
++#define DP83TD510E_ALCD_STAT				0xa9f
++#define DP83TD510E_ALCD_COMPLETE			BIT(15)
++#define DP83TD510E_ALCD_CABLE_LENGTH			GENMASK(10, 0)
++
+ static int dp83td510_config_intr(struct phy_device *phydev)
+ {
+ 	int ret;
+@@ -327,6 +331,16 @@ static int dp83td510_cable_test_start(struct phy_device *phydev)
+ {
+ 	int ret;
+ 
++	/* If link partner is active, we won't be able to use TDR, since
++	 * we can't force link partner to be silent. The autonegotiation
++	 * pulses will be too frequent and the TDR sequence will be
++	 * too long. So, TDR will always fail. Since the link is established
++	 * we already know that the cable is working, so we can get some
++	 * extra information line the cable length using ALCD.
++	 */
++	if (phydev->link)
++		return 0;
++
+ 	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_CTRL,
+ 			       DP83TD510E_CTRL_HW_RESET);
+ 	if (ret)
+@@ -402,8 +416,8 @@ static int dp83td510_cable_test_start(struct phy_device *phydev)
  }
  
- static void intel_flush_iotlb_all(struct iommu_domain *domain)
-@@ -4110,6 +4096,16 @@ static struct iommu_device *intel_iommu_probe_device(struct device *dev)
- 		}
- 	}
+ /**
+- * dp83td510_cable_test_get_status - Get the status of the cable test for the
+- *                                   DP83TD510 PHY.
++ * dp83td510_cable_test_get_tdr_status - Get the status of the TDR test for the
++ *                                       DP83TD510 PHY.
+  * @phydev: Pointer to the phy_device structure.
+  * @finished: Pointer to a boolean that indicates whether the test is finished.
+  *
+@@ -411,13 +425,11 @@ static int dp83td510_cable_test_start(struct phy_device *phydev)
+  *
+  * Returns: 0 on success or a negative error code on failure.
+  */
+-static int dp83td510_cable_test_get_status(struct phy_device *phydev,
+-					   bool *finished)
++static int dp83td510_cable_test_get_tdr_status(struct phy_device *phydev,
++					       bool *finished)
+ {
+ 	int ret, stat;
  
-+	/*
-+	 * The PCIe spec, in its wisdom, declares that the behaviour of the
-+	 * device is undefined if you enable PASID support after ATS support.
-+	 * So always enable PASID support on devices which have it, even if
-+	 * we can't yet know if we're ever going to use it.
-+	 */
-+	if (info->pasid_supported &&
-+	    !pci_enable_pasid(pdev, info->pasid_supported & ~1))
-+		info->pasid_enabled = 1;
+-	*finished = false;
+-
+ 	ret = phy_read_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_TDR_CFG);
+ 	if (ret < 0)
+ 		return ret;
+@@ -459,6 +471,62 @@ static int dp83td510_cable_test_get_status(struct phy_device *phydev,
+ 	return phy_init_hw(phydev);
+ }
+ 
++/**
++ * dp83td510_cable_test_get_alcd_status - Get the status of the ALCD test for the
++ * 				      DP83TD510 PHY.
++ * @phydev: Pointer to the phy_device structure.
++ * @finished: Pointer to a boolean that indicates whether the test is finished.
++ *
++ * The function sets the @finished flag to true if the test is complete.
++ * The function reads the cable length and reports it to the user.
++ *
++ * Returns: 0 on success or a negative error code on failure.
++ */
++static int dp83td510_cable_test_get_alcd_status(struct phy_device *phydev,
++						bool *finished)
++{
++	unsigned int location;
++	int ret;
 +
- 	intel_iommu_debugfs_create_dev(info);
- 
- 	return &iommu->iommu;
-@@ -4128,6 +4124,9 @@ static void intel_iommu_release_device(struct device *dev)
- 	struct device_domain_info *info = dev_iommu_priv_get(dev);
- 	struct intel_iommu *iommu = info->iommu;
- 
-+	if (info->pasid_enabled)
-+		pci_disable_pasid(to_pci_dev(dev));
++	ret = phy_read_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_ALCD_STAT);
++	if (ret < 0)
++		return ret;
 +
- 	mutex_lock(&iommu->iopf_lock);
- 	if (dev_is_pci(dev) && pci_ats_supported(to_pci_dev(dev)))
- 		device_rbtree_remove(info);
++	if (!(ret & DP83TD510E_ALCD_COMPLETE))
++		return 0;
++
++	location = FIELD_GET(DP83TD510E_ALCD_CABLE_LENGTH, ret) * 100;
++
++	ethnl_cable_test_fault_length(phydev, ETHTOOL_A_CABLE_PAIR_A, location);
++
++	ethnl_cable_test_result(phydev, ETHTOOL_A_CABLE_PAIR_A,
++				ETHTOOL_A_CABLE_RESULT_CODE_OK);
++	*finished = true;
++
++	return 0;
++}
++
++/**
++ * dp83td510_cable_test_get_status - Get the status of the cable test for the
++ *                                   DP83TD510 PHY.
++ * @phydev: Pointer to the phy_device structure.
++ * @finished: Pointer to a boolean that indicates whether the test is finished.
++ *
++ * The function sets the @finished flag to true if the test is complete.
++ *
++ * Returns: 0 on success or a negative error code on failure.
++ */
++static int dp83td510_cable_test_get_status(struct phy_device *phydev,
++					   bool *finished)
++{
++	*finished = false;
++
++	if (!phydev->link)
++		return dp83td510_cable_test_get_tdr_status(phydev, finished);
++
++	return dp83td510_cable_test_get_alcd_status(phydev, finished);
++}
++
+ static int dp83td510_get_features(struct phy_device *phydev)
+ {
+ 	/* This PHY can't respond on MDIO bus if no RMII clock is enabled.
 -- 
-2.34.1
+2.39.2
 
 
