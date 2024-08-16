@@ -1,81 +1,93 @@
-Return-Path: <linux-kernel+bounces-289565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98A7C9547AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:13:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5B429547DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:18:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54532283A87
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:13:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF8B61F21589
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC29619FA91;
-	Fri, 16 Aug 2024 11:12:55 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39001AC425;
+	Fri, 16 Aug 2024 11:15:32 +0000 (UTC)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2EF1991AA;
-	Fri, 16 Aug 2024 11:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2130C17BEB5;
+	Fri, 16 Aug 2024 11:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723806775; cv=none; b=PDn06zk2Jb+jiOhPoGpJUGF5c7RLIzNYdAcGra8iqU6gnbQ7e9MzUkJHbVl/IfHoBEHN/w0BV0Ji1KAEyHjqLTd+58TzVswss8Y91Y1Oj43JNPXK718amfOrYRT9QWVqClEga9bvZQMQjC8TmHFHmY4B0bImH+ZOM7YVPDog55Y=
+	t=1723806932; cv=none; b=V5ChCAUjzeTRm6gYuOBqp/8r2xYolOQgQ5QMxFvoggbDKrfHpmorGIf+Zm9vPQKvdrn+b7xVZEaJihuUEm75l8TRloQiWNC5OsGTHJUxohuZPOs8dwtUNE4H1mwFMYZfocWC1dnkos9I0wPCQalRZFQZVS1BfsXGqPB+e05zaG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723806775; c=relaxed/simple;
-	bh=6R4O9J3ICVeVbc4+EdLu04NswhU7HbU0el3VJkuKwig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VUBW3o63YmYzhgw7yvhZ8ngrVX8ttOR/so2b4gOOcCtkI07L5xNFYSgSzPZrMOolY/Ib+8TXe0HEC/1gs/Q5btxnE64o7dRjE0ySi69kbscJSg/KOTZQNIUSRcgOz5qR+e86ruM9yi3VYtgO3q1Xb1KfWRd/QAplwfLfMVlwmXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B1F3C4AF0C;
-	Fri, 16 Aug 2024 11:12:49 +0000 (UTC)
-Date: Fri, 16 Aug 2024 12:12:47 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 08/40] arm64/gcs: Provide put_user_gcs()
-Message-ID: <Zr80L7v-kjtGbYzh@arm.com>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-8-699e2bd2190b@kernel.org>
+	s=arc-20240116; t=1723806932; c=relaxed/simple;
+	bh=X/NC8Fn35SuJ+/Zgd8nVnQApdeQjzg11aXOWQ5rYbC0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SlHSxJnmgb+yVyDt7l1iRR1rhFaAU+mskTinExRH6e0eJALMFE0HnZ6eJ6JDpImpFmx/UfFbO74QeGOu7Zkia1u/iJdGCFjPSe05VSCvf074Nmz2TW1qldcZPmoiSPnyiBdAFMaUV7XufRDybTsneNGXIOYxPhAdcFqdT53/vJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 777F4202D02;
+	Fri, 16 Aug 2024 13:15:29 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2D7DA202D07;
+	Fri, 16 Aug 2024 13:15:29 +0200 (CEST)
+Received: from pe-lt8779.in-pnq01.nxp.com (pe-lt8779.in-pnq01.nxp.com [10.17.104.141])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 88B1A181D0FF;
+	Fri, 16 Aug 2024 19:15:27 +0800 (+08)
+From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+To: marcel@holtmann.org,
+	luiz.dentz@gmail.com
+Cc: linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	amitkumar.karwar@nxp.com,
+	rohit.fule@nxp.com,
+	neeraj.sanjaykale@nxp.com,
+	sherry.sun@nxp.com,
+	ziniu.wang_1@nxp.com,
+	haibo.chen@nxp.com,
+	LnxRevLi@nxp.com
+Subject: [PATCH v2 1/2] Bluetooth: hci_h4: Add support for ISO packets in h4_recv.h
+Date: Fri, 16 Aug 2024 16:43:08 +0530
+Message-Id: <20240816111309.287515-1-neeraj.sanjaykale@nxp.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801-arm64-gcs-v10-8-699e2bd2190b@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On Thu, Aug 01, 2024 at 01:06:35PM +0100, Mark Brown wrote:
-> In order for EL1 to write to an EL0 GCS it must use the GCSSTTR instruction
-> rather than a normal STTR. Provide a put_user_gcs() which does this.
-> 
-> Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+This adds ISO packet support in h4_recv.h, which was created before ISO
+packet handling was added to hci_h4.c and hci_uart.c
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+---
+ drivers/bluetooth/h4_recv.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/bluetooth/h4_recv.h b/drivers/bluetooth/h4_recv.h
+index 4f2c89742245..647d37ca4cdd 100644
+--- a/drivers/bluetooth/h4_recv.h
++++ b/drivers/bluetooth/h4_recv.h
+@@ -38,6 +38,13 @@ struct h4_recv_pkt {
+ 	.lsize = 1, \
+ 	.maxlen = HCI_MAX_EVENT_SIZE
+ 
++#define H4_RECV_ISO \
++	.type = HCI_ISODATA_PKT, \
++	.hlen = HCI_ISO_HDR_SIZE, \
++	.loff = 2, \
++	.lsize = 2, \
++	.maxlen = HCI_MAX_FRAME_SIZE
++
+ static inline struct sk_buff *h4_recv_buf(struct hci_dev *hdev,
+ 					  struct sk_buff *skb,
+ 					  const unsigned char *buffer,
+-- 
+2.34.1
+
 
