@@ -1,150 +1,137 @@
-Return-Path: <linux-kernel+bounces-289223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D5A3954353
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:51:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58EB5954357
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:52:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2E8E1F24A7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:51:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00DE81F23D74
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9193113DDDF;
-	Fri, 16 Aug 2024 07:46:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5278014374C;
+	Fri, 16 Aug 2024 07:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="JUb7yDP3"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KGjlAhWc"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3782E13DBBC;
-	Fri, 16 Aug 2024 07:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A22613DBBC;
+	Fri, 16 Aug 2024 07:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723794360; cv=none; b=Q5z1hBcaU65Hl9qhZkeiDtCXMqg33xZFSM2PPTM8FkOC8BAqZvoB9sa0En1qC5RCQfNqOiw70Y1SaDej/xFbg5s6nhmus6SXjk1QfcOrs38bQXp9wC70D++Ew0SZ0OWid9EEcl0KQLHpiq9IrLvYws0k9C6sus+kmVwrLsnAzfA=
+	t=1723794372; cv=none; b=tDBzsNng7xTqxjtKVXHWVM53D+ob0lnXq6ht85QH1l5Y1zJdQJLn6b9MQCyAS+zaptd4rGReZJpBAKhEuNn02ZkxpZwe2qMBO9UjvIpPOB0X9ESZlYs9CaIhXeO2wslWKiwV6gYV7PFQRkGsnZX9ffnhzKz7C947pqv5ascA5ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723794360; c=relaxed/simple;
-	bh=tVPflXbLDBP9NpqaPLzSWTzKxCdCOy2pQJM8Ph5x4sI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G/tPQxPQ2bHoHZ2MaLVpBfSlWN9mVfJGqZdAkJMtuKUNFjPVKFPbnDa4+ZZb5Pmt/8UuIEOch2ECIrg+qQzRnH82O48ElE3bYZYh9a/w4ouILbEw/GZFEMUlf+BrLhhvL4REH82cjmaYHeP7rnPWTRi+8sI4ET89Ec5fuI/zEvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=JUb7yDP3; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=k1rqrEp/hgoHj2qZTKIDmCM8YN6/xOQc45Uuml075HM=; b=JUb7yDP3quBbz3YJPP4izpsuJJ
-	xBdwzYZb1tEl0yUWdPhOXKtLXJRhoqyJ2qV2J8b17nEZTZQGQYfLonDsrWG3sPt6ohw5gRgm3/jdx
-	inS6+iYlt3T/NyETWp+nduY/rSUIyBoLwI31FJfVOOvfPHRnwDmlAjNd+GAkhQ5XjGkvGQhp1MWzA
-	S8tFBrvN6F3ZDFHBEAoOorFn4+THrVzp9WnVwbLi6cW5aeHF60Femlxgpp+dC9IJ4ehNxHDrZf45W
-	9SWea14LpGJwqqzAjB93x8XxcbLZQw/dvXRo6JmlwD1dMBivKsyPz7Z/dYcb+EqtxxxCJv8G4ljn4
-	/AgeigKQ==;
-Received: from i53875a9f.versanet.de ([83.135.90.159] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sereh-0007MW-1Y; Fri, 16 Aug 2024 09:45:51 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: linux-kernel@vger.kernel.org,
- Detlev Casanova <detlev.casanova@collabora.com>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com
-Subject: Re: [PATCH v3 1/3] dt-bindings: mmc: Add support for rk3576 dw-mshc
-Date: Fri, 16 Aug 2024 09:45:49 +0200
-Message-ID: <2504176.W2GruxG5Vl@diego>
-In-Reply-To: <e640cbc4-6870-4607-a91e-0af41dd76df9@kernel.org>
-References:
- <20240814223555.3695-1-detlev.casanova@collabora.com>
- <5057223.82XvGhxQ46@diego> <e640cbc4-6870-4607-a91e-0af41dd76df9@kernel.org>
+	s=arc-20240116; t=1723794372; c=relaxed/simple;
+	bh=961HR25fBK6+U+34IivlTuUdOrvdw5kInN6SiWfWruI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hZcVbTqyEckVddnlGB4bNQ5nN3fdxqObGO2ef57JDycB4Wns54/7XTydoW4DJvBwCl1qONt4BNv7YVsBYlJQcKwHwDVeEX2lmF8qYVZhmPkYRo7HexGyhDo92btUA+PyoHP4jMHYJd5s2qHjWI4GhY+EqH8DiTAA95FeSeQgaB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KGjlAhWc; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47FLTJSM020572;
+	Fri, 16 Aug 2024 07:46:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	i7/Oc25XBlXJTMUNL+LN07bCOIRiR0fvFcEP4h10F+w=; b=KGjlAhWc5CIlvVUh
+	XuTeXr9KgoR1D58k4p8kjaWpJVzqARjPcRo10p0xPnVD25xd9Z5nGUHAXbH05ws8
+	9G0FZir12r/v0m6MWWdnv4WhYBKmHD242wEwMfth2VAqj7bYAFGa96XY+3wXRori
+	83FLHLulp9/JguFQueuy7zeqcRBTA9wfyXJ3HzVujA5zsvO8yKfXoJRe9D39emla
+	PP0u9XytCPypm9/5WvIFhESq0XUnAFmo48NbHlE7tRaT5PZyYIPcOiDNpAj+J7UQ
+	HlTtuqo07b23EWmueoTrWxYPYq3FlaHrdwFKQdIGBMZwKM5WREFulTHXmhQsyI5n
+	r7+HoA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4112r3v2xd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Aug 2024 07:46:03 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47G7k2qf019214
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Aug 2024 07:46:02 GMT
+Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 16 Aug
+ 2024 00:45:54 -0700
+Message-ID: <aa12fd2e-4869-4909-a04f-6bf24f76ed51@quicinc.com>
+Date: Fri, 16 Aug 2024 15:45:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/13] dt-bindings: media: camss: Add qcom,sm8550-camss
+ binding
+To: Krzysztof Kozlowski <krzk@kernel.org>, <rfoss@kernel.org>,
+        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
+        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>, Yongsheng Li <quic_yon@quicinc.com>
+References: <20240812144131.369378-1-quic_depengs@quicinc.com>
+ <20240812144131.369378-8-quic_depengs@quicinc.com>
+ <cb905d5e-6d70-4395-894c-55b3542e2ebe@kernel.org>
+Content-Language: en-US
+From: Depeng Shao <quic_depengs@quicinc.com>
+In-Reply-To: <cb905d5e-6d70-4395-894c-55b3542e2ebe@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: nz1EZt51V966XEKronGAHqNzJZJ9mJDL
+X-Proofpoint-ORIG-GUID: nz1EZt51V966XEKronGAHqNzJZJ9mJDL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-15_18,2024-08-15_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ lowpriorityscore=0 phishscore=0 bulkscore=0 mlxscore=0 suspectscore=0
+ clxscore=1015 priorityscore=1501 malwarescore=0 impostorscore=0
+ mlxlogscore=938 spamscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2408160055
 
-Am Freitag, 16. August 2024, 08:52:04 CEST schrieb Krzysztof Kozlowski:
-> On 15/08/2024 15:49, Heiko St=FCbner wrote:
-> > Am Donnerstag, 15. August 2024, 00:34:00 CEST schrieb Detlev Casanova:
-> >> Add the compatible string for rockchip,rk3576-dw-mshc and add support
-> >> for the rockchip,v2-tuning flag, a new feature of this core.
-> >>
-> >> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> >> ---
-> >>  Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml | 1 +
-> >>  1 file changed, 1 insertion(+)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.ya=
-ml b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
-> >> index 211cd0b0bc5f3..0543cdb51c657 100644
-> >> --- a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
-> >> +++ b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
-> >> @@ -39,6 +39,7 @@ properties:
-> >>                - rockchip,rk3368-dw-mshc
-> >>                - rockchip,rk3399-dw-mshc
-> >>                - rockchip,rk3568-dw-mshc
-> >> +              - rockchip,rk3576-dw-mshc
-> >>                - rockchip,rk3588-dw-mshc
-> >>                - rockchip,rv1108-dw-mshc
-> >>                - rockchip,rv1126-dw-mshc
-> >=20
-> > this would mark the rk3576-dw-mshc as being the "same" as the
->=20
-> Not the same, but compatible.
->=20
-> > core rk3288 variant. rk3288 was the first controller introducing the
-> > clock tuning for higher speeds. with the clocks being part of the CRU.
-> >=20
-> > As we can see in later patches, this rk3576 though changes that
-> > setup with moving the tunable clock configurations into the controller
-> > itself.
-> >=20
-> > So please don't claim to be compatible to the 3288, but instead start
-> > a new block for this new set of controllers:
->=20
-> The question is can new device work with old compatible (without new
-> features)?
+Hi Krzysztof,
 
-the rk3288 and following have their clock phase tuning for hs-modes in
-the main soc's clock controller. Hence you have the "ciu-drive" and
-"ciu-sample" clocks [0].
+On 8/16/2024 3:01 PM, Krzysztof Kozlowski wrote:
 
-On the rk3576 (and probably following) those clock phase settings moved
-inside the mmc controller itself. So there are no external phase clocks
-anymore.
+>> +required:
+>> +  - compatible
+>> +  - clocks
+>> +  - clock-names
+>> +  - interconnects
+>> +  - interconnect-names
+>> +  - interrupts
+>> +  - interrupt-names
+>> +  - iommus
+>> +  - power-domains
+>> +  - power-domain-names
+>> +  - reg
+>> +  - reg-names
+>> +  - vdda-phy-supply
+>> +  - vdda-pll-supply
+> 
+> Order is still not as expected. I already commented on this - keep the
+> same order as in "properties:" block.
+> 
+> With the order fixed:
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
 
-So right now we have two types in the binding, the rk2928 type [1],
-used on the old rk3066 and rk3188 socs, that did not support mmc hs-modes
-and the rk3288-type which introduced phase tuning via clocks from the
-main clock controller.
+Thanks for catching this, the order was correct in my local build, then 
+Vladimir posted a new comment, so I updated it again and forgot to 
+update the required item, I will correct the order in next version series.
 
-The rk3576 now switches to having phase tuning in the mmc controller
-itself. So throwing that on unmodified code for the rk3288 will get you
-degraded functionality, because the tuning won't work because there are
-no "ciu-drive" and "ciu-sample" anymore .
+Vladimir: "I would suggest to put 'compatible', 'reg' and 'reg-names' 
+properties as the first ones. 'clock-names' should follow 'clocks' 
+property in the list."
 
-
-And with that separate compatible we could also "tighten" the binding
-a bit to make those additional clocks more explicit for the rk3288 type.
-
-
-Heiko
-
-
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/arch/arm64/boot/dts/rockchip/rk3399.dtsi#n410
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml#n27
-
-
-
+Thanks,
+Depeng
 
