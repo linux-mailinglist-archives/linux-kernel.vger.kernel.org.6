@@ -1,117 +1,99 @@
-Return-Path: <linux-kernel+bounces-289803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2C0F954BEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:09:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A8D8954BED
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9086F287724
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:09:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D9D81C242A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDB61BCA0B;
-	Fri, 16 Aug 2024 14:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B681BD016;
+	Fri, 16 Aug 2024 14:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ssIkfR4D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DNVnWYJx"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA3F1BD4F9;
-	Fri, 16 Aug 2024 14:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C7F1BD4F4;
+	Fri, 16 Aug 2024 14:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723817214; cv=none; b=agUKIwIjCpAY/Z2+vz7ykLHfS60y/oRYmOc818UojHa1+fFidTDE2Q3Ca0ynLJ2o2uNWW7voSEl+9b2OFA33XHd6/JfF1eFI41sFm6OFfSygElOteIUSe8QmaOGj+dxBDEZrpHX8lGXmScMuu3p8jUCaOPhVSVKf4kPgE3qA0LE=
+	t=1723817232; cv=none; b=pkS9AJGoL1s6/2P+zcgFIqbFj/rw44ksdrXGW2KiFCRjeTTaXRRecosLqCzvLYqBrdZXKZ4GmZsF+y6Mow3kse9AGpR/Qq04nAOQ5wVfYoZjDNy3S6SGJu+hfp0eiP0WfihA5ISHIv8fhLFa3Mak8JAFXYImxzoqCAtq7lQ3ALs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723817214; c=relaxed/simple;
-	bh=OQCasV0qLEorva6+jZCHbOFeu58LkoqzYG8jvCIKmhQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kaqyKthYu3uDuu75iiEQk0sD7KPDfMduQRqZh9Ihe4y+sSr8+g4+h7BLkpRlwf7l5pNY2p+OQWW8B+R3cBy6TuYskws1wwhWaFrzM92z1yhygfuaZGiUzLx4jGvqKp6k7I/M1eAZc1574/poXswRfyO64krPF3Ou8B3PaRYELmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ssIkfR4D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D938C32782;
-	Fri, 16 Aug 2024 14:06:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723817213;
-	bh=OQCasV0qLEorva6+jZCHbOFeu58LkoqzYG8jvCIKmhQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ssIkfR4DI9V0y35FdbbrdGuQoByvzQyc6ztEvRIA6EEtmk53yruZjBXgDTybYzXax
-	 AOsPd0wU9slEv4bN8aKkqZnO+TGhmBzSWmvl0KVwUFDDpoZA71gsAxvnxJ+2WE7RTn
-	 1bVqY716qBtKF/XZiD6nlXN6Mbsg11zj3myax9zzlAhbmZ7V2BJnuolnT2ora6OiTo
-	 sZNS348ryJzaJxu+9KUk3ED8jEoaEWX4NPnu5JSnXzW7Iru8SY5+FENB8r9j3PBRug
-	 uLVBrzX8Wo2yYQkQwet2h+eFaxZiPV6wYymPKMXxivMke55ttXoxgXpPAFFsO0o1+n
-	 GGBqqubT5OuYg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sexbO-004IF8-NS;
-	Fri, 16 Aug 2024 15:06:50 +0100
-Date: Fri, 16 Aug 2024 15:06:50 +0100
-Message-ID: <86ikw0zhmt.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 00/40] arm64/gcs: Provide support for GCS in userspace
-In-Reply-To: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1723817232; c=relaxed/simple;
+	bh=lavjni/R6zo7kSEum2p7tjt4+ZfZq0En81bPlbLQDG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kSVFXU2UeYgNKRPeI9lZsfjHx9EtiY4KZjrwWIMlNncKE/fimw+b9O07lTRzCo7ouQFXJM6QJkINlaYRU2vBeqRy3gk9gBchQSjZrW7X421pIi64qaKKj8MN+PM07e3L1Q78c2L3FowVNfRLpEOR9T9poVK9hBxsMN2CxPsVQMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DNVnWYJx; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70ea2f25bfaso1643021b3a.1;
+        Fri, 16 Aug 2024 07:07:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723817230; x=1724422030; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ytMYhzF2r+ZfWYOrCSEGdROperK0RmUy3S9YImHNj0g=;
+        b=DNVnWYJx743NMHtbKDXjL2d8obItAy9OF2JPl2/pB4zWUGBC8sG9QT4CS8rYhj9Kvp
+         KEcdaIjODMfp+JtosoZZAHILjS/ykes3DeihnJhXriY99/+4TOh7N3Z0AP/6ZxbJHl2g
+         lzzD1Q+gcCEg1jBwnYJ52KL7o3wQxa+2uJBUdgnaHujKTvZuPpfK7HcVHFWU/s4WwzCE
+         J3xY9LEINDPL5pi6IDBI6UC8La4hUeJd3dEnVCnJqCaSIlPxa9T7qgtJavVFzeCU203k
+         jkC++ECsjcRQStpW9CaO3+RiR2KnMcfe8Cj/HN1a/drU2XOTNBnw+A4p0uKmtxC9qgyy
+         DG7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723817230; x=1724422030;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ytMYhzF2r+ZfWYOrCSEGdROperK0RmUy3S9YImHNj0g=;
+        b=RL+Ow2MBpPxKU0QhnrZLTuCSmevLfe1zyAKMAEPiuIts6/1OdeD6tYUQ2xPtI63WkG
+         Ncxjq5/zd5qT0Nm2EIr6vF8KR4qzjRkzgrDj1EmtnLkioEU5n01ODFrjXwLdkpZil0Y1
+         llfs20H9k6Q+YKDIyL8aCi1SOX9OzNNxmDbE7K3aI+pAt3Sdss487HfwzOra0TyVauyV
+         R8KO/9VZsafvFL7DdI7nVQ2aSu0yS/YnEJ6/RhNLJj7bYe0A4nfl9FKrgx4HbzDOQMcC
+         b5OgIF4nKVE9ssZSmtaiEo7PL8MkTT4ZzBGuDp8tRyYMkDTluONVLS4FHF6J0UBCK52u
+         XA4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUT+zvGTzKauyp08ndiItHZSbaRNlAyrnRUh+mCzcZVUcApgH8wL2GL87WVH1z6hnjgPPmSjJMmfvlIK6bw3uBgb3BWWy8dQ39mR3AMmkh8lFcXr3f1TUwhwN3aojtrXC4+3OJpCyWvY0c=
+X-Gm-Message-State: AOJu0YxkSLWJEvXsZPq/KYn2sw0rFEchS/2mXGY1CFgDzfgeuJPJfRjn
+	EL7onSOdyTKduGf64HlzwUoet2GdBDip4DhM0VOZ4QQeksCNg8YG
+X-Google-Smtp-Source: AGHT+IHNNz6Xpf0SmlblE0tVkI6GMJNE9IiLSmkDJPQWv5OqIDeMKHJGipo0caI2k34AOpiCQa5lsw==
+X-Received: by 2002:a05:6a20:438e:b0:1c4:214c:d885 with SMTP id adf61e73a8af0-1c905027f06mr3617080637.36.1723817229971;
+        Fri, 16 Aug 2024 07:07:09 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127ae0e8cfsm2659887b3a.80.2024.08.16.07.07.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 07:07:09 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 16 Aug 2024 07:07:08 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: jdelvare@suse.com, W_Armin@gmx.de, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] hwmon: (sch5627) Remove unused declaration
+ sch56xx_watchdog_unregister()
+Message-ID: <c55a0c8e-d81c-4d71-8d88-8e64d1e8759b@roeck-us.net>
+References: <20240816095740.877729-1-yuehaibing@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, akpm@linux-foundation.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, arnd@arndb.de, oleg@redhat.com, ebiederm@xmission.com, shuah@kernel.org, rick.p.edgecombe@intel.com, debug@rivosinc.com, ardb@kernel.org, Szabolcs.Nagy@arm.com, kees@kernel.org, hjl.tools@gmail.com, paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, fweimer@redhat.com, brauner@kernel.org, thiago.bauermann@linaro.org, ross.burton@arm.com, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240816095740.877729-1-yuehaibing@huawei.com>
 
-On Thu, 01 Aug 2024 13:06:27 +0100,
-Mark Brown <broonie@kernel.org> wrote:
+On Fri, Aug 16, 2024 at 05:57:40PM +0800, Yue Haibing wrote:
+> Commit 2be5f0d75325 ("hwmon: (sch56xx) Use devres functions for watchdog")
+> removed the implementation but leave declaration.
+> 
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 
-[...]
+Applied.
 
-> - Don't change writability of ID_AA64PFR1_EL1 for KVM.
-
-How does it work then?
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Thanks,
+Guenter
 
