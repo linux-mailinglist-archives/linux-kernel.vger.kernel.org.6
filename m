@@ -1,335 +1,235 @@
-Return-Path: <linux-kernel+bounces-289364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 706E3954553
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:23:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 173C295457A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:25:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18A05284500
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:23:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD3652813A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9BB13DDAA;
-	Fri, 16 Aug 2024 09:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30ADB13F45F;
+	Fri, 16 Aug 2024 09:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qJ6GsUdF"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="T/pHHirL"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2051.outbound.protection.outlook.com [40.107.255.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C38712CDA5
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723800184; cv=none; b=lRvRLJmVnhB8QuCfVCBiy51q1YdcggeAcUdroRpdRy6/luodgx3tO/MKa0FjYAiMnkm2JvrXVtxXqpq//MSeHa5Tf4V9zoAUSGU8KvnwKcT4RyUiFxP6jVgSgpGAzmSAuMlI2Url5H/mMQy6RexgvCHOL5xuDQRGIO0Jj48d/4A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723800184; c=relaxed/simple;
-	bh=y/Ufg8tbL4666xoI4ZdID9NsMGGJE6VSVdMuySd39Nw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j+2TENdtzrHSCI+da4zkzy99FXhRCgFHHAdv3kSuV/LJbYijeKsmuhNc8uZTRNRn9nDJq25gw4gbIb6g2jq1Bv4GegMiKoZKdavhfs/Evz3HsNozHTVZ2+bCstJVKlbmxNkqdLC/5ecfL7PQk1M0uMa+hLDIP75QIsF+7li9cMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qJ6GsUdF; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-429da8b5feaso17704015e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 02:23:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723800180; x=1724404980; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lxnIiPj4rgSgy4iPiln/v688IPneiwiyQTCsnmUVp+Q=;
-        b=qJ6GsUdF9DmhtJuP9JjFcedam/b39zteY5SvbdjBIlpNx1zGCZ10JFkpWNzxnuzu6T
-         En8Yyx3IfWGuE1iaIE91z0muXcUhRtWeRnC14ublcuK6yzwqtgH+0POCffVj8JU7wzJD
-         AkvQ5iFTYSKasET6dus8gGjM1bsfhumtMFHvb5ZhVEPQfaG8BpVxCqOZuSZf/kovwh2R
-         ALvvhzkQGpHRJb0Fp4BAvOLklPDq3AMw4O/6UhXce05yN+a9A6szGk/IN7PlX4Dp3zgY
-         13QEtC2FaCv7dCV0uj/tbZFccQpWPnhI9Ew8BIIlnrkUpe8HJOhauRdbP3W+QRXN1Kl7
-         5VAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723800180; x=1724404980;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lxnIiPj4rgSgy4iPiln/v688IPneiwiyQTCsnmUVp+Q=;
-        b=PeKiK3iyNMmtTRrvwfsZnGb1VfUB5Nt7cK5aO4ZeioU145asHRt82d8kT+zqrtQvvQ
-         nvJEBz+0EBLX4nkGplI0wzAgRkVe4W5RkToA+QNNFKDA1D66qIeNiwkOFNcD/qjHSHnU
-         /9jZFlzKVopwgeuadvAWKvQItGbH7xe6uBA9Vrs7SZ9eA6/GjlCFBbRZfE8yAk6RJVPX
-         DY5VH/G18F0bqzCDDYCG7Y4bJO/R5g9T3mMWszgd1dbHOJNS3gn+tP94urzB0PGH/FMe
-         oruKdLscOLI8rJOwXMFFGw1sH0wlHC+LfzuY8jEqrQ3KonqTVwtQ+o8Dg9fqgJuu0mpe
-         A3xw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/mEtiqCUkCYIa7cY1u5iv2KzyTSFZ6GuUN11frT9jPfHmLpfIP4oNfHErkG810yzRKEXAVyUNIgcTooBjS8zwyd9yn/LyfQARvfGl
-X-Gm-Message-State: AOJu0YxlwxpKq+Ha5A6369YvVD2Qm06lOHQs5LmMtgZEmQKHWO0nMZYm
-	RFze2uBCs8S492D98U5NToWg5NdiKAmF7WwyK2gdv6GaXWynq55nZFVihpRhxGE=
-X-Google-Smtp-Source: AGHT+IF+YHNaU9vL6pmPv8W6yXfeti4FATXv6vY1xmFi4uhJwkg/8PS66vkhIP9jsmfqOTwf5yPg6g==
-X-Received: by 2002:a05:600c:4f95:b0:426:690d:d5b7 with SMTP id 5b1f17b1804b1-429ed7d646amr16479995e9.25.1723800179854;
-        Fri, 16 Aug 2024 02:22:59 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718983a57asm3229900f8f.2.2024.08.16.02.22.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Aug 2024 02:22:59 -0700 (PDT)
-Message-ID: <6cbd2f1d-2aea-486c-a3cb-bb6eb08d8bdc@linaro.org>
-Date: Fri, 16 Aug 2024 10:22:58 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD821E492;
+	Fri, 16 Aug 2024 09:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723800280; cv=fail; b=ZpxxaF3dOep2qwXrYW3h0URlqXgEX3R9jEVIdd1u9+DfTtdK+tfxLTpZIjBh6xEbnYmM60J2puhm4pgN5bf9v0DnXU2wzn2X7peBt2IRuG5SMsI7Dw+OhI09jSsUpU3acSxcgvWbpY0sa4nd5BFuRXmTKHet0F/VGeMOxd4AbDU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723800280; c=relaxed/simple;
+	bh=M+GIq2mXkfZgAS6hgltSMoSyRVGLabtZdN5w2XpAmao=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=uwUTndWoxZUqKdsSb03+W5UajAGQ91Vt4u0e6n1+ibUHm2W36YAUWMHQQMSLvlb4CkQyhTOqdRyfqFGYYBjPpacJwGOLm1oavh01xBKTnV/UQToiukSMIpkgBKD0ZwxMZ05kkI4+dWKzcingM7myO8bE+joA2pvMpvqAVb4tlfA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=T/pHHirL; arc=fail smtp.client-ip=40.107.255.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ERdnPKoY5ha3MMGt5NiJoIe+fUqJPyEqSRRybXZ8uBZqYPpaHrc5LZ/I57EJcEkfB2Wo3FDO2TDH2ZSKZqazGNvoEohUoeSq9ItWWTZxn2KQEXACu2+1RDc27Q9QXo7jbNPPgy6viaIcbH2ZMAAh2xEFr2LhxWeSUb9JXnCtcRhNvuF21gjcPVUo1A+Y/mtJyg+gTekwamFJR/TP2qiqjNIAwYHM7Eo3SzAlkkY8Lor2aK4B9+aNNXmV5yCG1iTXNpoFVD8m7rs45+MWKlb7tax3QpZGOtxRmyCPLt4+aYKC5AWMb3cOJV9mfZaUgF9zICnwJdBK2/F2jpySII4Ssw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/d45MbZN7PlvorTo8tdG/2FvNfJPrapsYxhlyovN0R0=;
+ b=FVohwfVfuHwTsPxOomHm/NX+fdbyTd7wUgHS0UP2TFqzJErdDdWj0Bl+jrq8EKOR0aqNNg9UYrQUK51DHnBwQnHLR/PZH6U3yNUzVHrW8b8Nza9eMvETyrh1BRr+/SEPAA61iKYgiTYg7vtcqR9w3i6XSmnLl4kxb2mvX4g02w/Sn/MPYD8g1hPEATuGH1089Yc3leGvOp+a0x+rLytsNen71fp1Cl6a3HaetkCKa6WghkvRYpUSBxwO4Gz8a/UnrOJlGFpjdD1xw7pUI50gxWB8mUDGuoc8Uk7RQ85FN+JeoXyG3t+82Q6YrpDizAAzUC2OgoKlIwdpbBJriSH2jQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
+ (p=quarantine sp=quarantine pct=100) action=quarantine
+ header.from=wiwynn.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/d45MbZN7PlvorTo8tdG/2FvNfJPrapsYxhlyovN0R0=;
+ b=T/pHHirL1Xo3pbXfKWqTYycc9XpxYGdY4dGpHnVZaAv91O2Hh2L/cV+r1ENV+nvDpygWyBEmLDCJzHvbVf7SlynK1q3St5wBoAX6inZmxx9HpolxmmBP2zlCiMxq0Zrk5PRTs7hXQI7X5t4PNQB7GOsu5xbXXH7Ez5Ua23vG4z2z3mQ9UhhZQ2hpiGEQ3xAVtM3wvraWEyWTk4boDullewOfBrlf4hJlfVt3Q6o0JPqFBwMjY44JWffJqw52t8jMgMYQEN50FoWmhcqYb8nNzuc3CRuWhu8ehCYaiD3+GGPB5/eN6CZf9txJcLmQdoQPL8diu+VlknbSQpV9bU5V4g==
+Received: from SI2PR01CA0040.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:193::14) by PUZPR04MB6438.apcprd04.prod.outlook.com
+ (2603:1096:301:fd::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.18; Fri, 16 Aug
+ 2024 09:24:28 +0000
+Received: from HK3PEPF0000021D.apcprd03.prod.outlook.com
+ (2603:1096:4:193:cafe::5a) by SI2PR01CA0040.outlook.office365.com
+ (2603:1096:4:193::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19 via Frontend
+ Transport; Fri, 16 Aug 2024 09:24:28 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
+ smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
+Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
+ designate 211.20.1.79 as permitted sender) receiver=protection.outlook.com;
+ client-ip=211.20.1.79; helo=localhost.localdomain;
+Received: from localhost.localdomain (211.20.1.79) by
+ HK3PEPF0000021D.mail.protection.outlook.com (10.167.8.39) with Microsoft SMTP
+ Server id 15.20.7849.8 via Frontend Transport; Fri, 16 Aug 2024 09:24:27
+ +0000
+From: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+To: patrick@stwcx.xyz
+Cc: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v12 00/28] Add i2c-mux and eeprom devices for Meta Yosemite 4
+Date: Fri, 16 Aug 2024 17:23:47 +0800
+Message-Id: <20240816092417.3651434-1-Delphine_CC_Chiu@wiwynn.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] Perf (userspace) broken on big.LITTLE systems since
- v6.5
-To: Ian Rogers <irogers@google.com>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>,
- Arnaldo Carvalho de Melo <acme@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Linux perf Profiling <linux-perf-users@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- James Clark <james.clark@arm.com>, "cc: Marc Zyngier" <maz@kernel.org>,
- Hector Martin <marcan@marcan.st>, Asahi Linux <asahi@lists.linux.dev>,
- Linux regressions mailing list <regressions@lists.linux.dev>,
- Atish Patra <atishp@rivosinc.com>
-References: <08f1f185-e259-4014-9ca4-6411d5c1bc65@marcan.st>
- <ZV1AnNB2CSbAUFVg@archie.me>
- <a9c14dfd-3269-4758-9174-4710bef07088@leemhuis.info>
- <CAP-5=fXqx_k1miPTkcAmS3z2GBPt2KeDtP5fknmdDghZqxXPew@mail.gmail.com>
- <714ed350-0e6c-4922-bf65-36de48f62879@leemhuis.info>
- <0de3b572-f5f7-42e4-b410-d1e315943a3c@linaro.org>
- <CAP-5=fVSVe=C5dHaOV22+YOZ_JCD0mDoByoubSFY3w4au5zwQg@mail.gmail.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <CAP-5=fVSVe=C5dHaOV22+YOZ_JCD0mDoByoubSFY3w4au5zwQg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: HK3PEPF0000021D:EE_|PUZPR04MB6438:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 7d3c5133-ee6f-4943-3e82-08dcbdd539f2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|7416014|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?znYlumanW/+/EFq56CD4gmb/UjW8MQaCTHFm2/3hoKlCgu36PyrhiS3RGpBy?=
+ =?us-ascii?Q?U7WEF2H12A3rdOZLwgYTD1T5TIvDAuU77A0gVJExeak5l8Cm9rWk/fH+nqwk?=
+ =?us-ascii?Q?mYoHVfvVQNR8C/MuzrdePO0OxHFepWm9ZEmGtavgcJ4OKb04VQgtJ3F8pKlx?=
+ =?us-ascii?Q?lL0pOxhUATxio6EfnE/3y7yBl8e40h9nahd4ysvFJcWv2dgCbamba5PCJ3gE?=
+ =?us-ascii?Q?07y2OyEGk4dF7rFQVfTf38AAtfczX4dOixoMWth2cAFz3hUWWA7FCOG7DR8E?=
+ =?us-ascii?Q?8Y8clJkpDq7xvbGVPBJsHVHIL2r1VGoEG870E7oIjPaQCzSJ5wJXs0czlDui?=
+ =?us-ascii?Q?U8dW42Pvyz2TJSSQiVKUN7WTBT4bViU/CynM+36RbjgYK8fAfzTt+3KWuDiG?=
+ =?us-ascii?Q?gRaAMkLniMoaO6Fbv/A28bB8RnIf7p2puO+MSpaqzkI+NnKyj6lQouWp2duM?=
+ =?us-ascii?Q?iCyR1MjWK4j6qUdsAiKCyO/T+izjpWenj0l4kuaFV9Fu0Bx8OvidyUM8pk6Y?=
+ =?us-ascii?Q?jg08unfnXMf9+2r8dwDdI8Xntzk4P+V9hnY880DwhMtDAIn/TrTsm5Jqq7PD?=
+ =?us-ascii?Q?eY1naFdN4pFMv0VF5V/Go4s96VQZwI8CAXxXTRc5b9eoomkAeidONnINaer/?=
+ =?us-ascii?Q?btgR9FdJluM69nw1D253P3nnG9EOCnPQGbDerU0nytFSJjhDM/O06Ha2z/BT?=
+ =?us-ascii?Q?8GHqBCqqzR6ROaafFINTAK0AGr73E2u4zPAesauAIgltOfHpNt5lMWfkM79B?=
+ =?us-ascii?Q?jMMmOZWR5PIzN7P/vgHe2PxQPNsNuEPJiVaB14O7bQGYfgaDwVH8as83+ONU?=
+ =?us-ascii?Q?1YIfKBlNKxxtxc3Xsa1vmX7IivR4iAZ8FL9xRpb+7lgVjQOhK1Nb1JfYag6j?=
+ =?us-ascii?Q?nadXabUpRNHFTSlBYJCRdDvHfMY6/ZJpKtrJhv21/x4wTqHIjSzz01FugNlC?=
+ =?us-ascii?Q?gE8iI9kZdwgBZZJ+RN5pT2+uoAIw/Hc/I8kArkzlGJ+upzgPFZg2g2A4KJ2K?=
+ =?us-ascii?Q?2yBCw02SQZcqzOuDDa7VzFmKXmHOBYgIIafBQa+mxCnlXS0w6kEU6KZAsCvJ?=
+ =?us-ascii?Q?3T681oYf/U/AXCwyoJpO5ed9UJpfqIjly9XGd+typDk/cAzWg3SFZFicobgr?=
+ =?us-ascii?Q?N8JwkYzhOi5guDGjNSszz0ZjFi9KJSvuLG/FpV7GWDeS/WyMTjWX/WRRDPj1?=
+ =?us-ascii?Q?RSYaPyAUaMBKz/yRugKst9AT1PEYVy/HbCNnCUwWnMRkUKyQJ1pMA6snJ95+?=
+ =?us-ascii?Q?05ZkrAPRygZMAeDcPMNk8xvv4kQJgXSsJnGlHgA6B0YBHqI40jYv8TRBVk6w?=
+ =?us-ascii?Q?ex+LE20BoHOaTxKTJIvQMepvcPH5vItLrG85QdTyGj+h6cvTOgjpKHfw88PO?=
+ =?us-ascii?Q?on5JXRi2AAPewDFc3TfG6VM3i7XuCTfrDEoHsK+qCLP2SH0/LtbPRtOddajh?=
+ =?us-ascii?Q?z5CKRqFi+JCPk0JCt1ZdGrS8aa8GUfbo?=
+X-Forefront-Antispam-Report:
+	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(7416014)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: wiwynn.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2024 09:24:27.5441
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d3c5133-ee6f-4943-3e82-08dcbdd539f2
+X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
+X-MS-Exchange-CrossTenant-AuthSource:
+	HK3PEPF0000021D.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR04MB6438
 
+Changelog:
+  - v12
+    - Fix GPIO linename typo and add missing GPIO pin initial state.
+  - v11
+    - Revise all GPIO line name with bottom line
+  - v10
+    - adjust mgm cpld ioexp bus
+    - add GPIOO7 name
+    - remove mctp driver
+  - v9
+    - add XDP710 support
+    - add RTQ6056 support
+    - add MP5990 support
+  - v8
+    - add fan led config
+  - v7
+    - Revise pca9506 i2c address
+  - v6
+    - Revise i2c duty-cycle for meeting 400khz spec
+  - v5
+    - Support medusa board adc sensors
+    - support NIC eeprom
+  - v4
+    - Re-format gpio linename
+    - Revise i2c device node names
+    - Split patches by logic changes
+  - v3
+    - Correct patch for revising gpio name
+  - v2
+    - Revise mx31790 fan tach config
+    - Add mctp config for NIC
+    - Support mux to cpld
+    - Revise gpio name
+  - v1
+    - Add gpio and eeprom behind i2c-mux
+    - Remove redundant idle-state setting for i2c-mux
+    - Enable adc 15, wdt2,spi gpio for yosemite4 use
+    - Revise quad mode to dual mode to avoid WP pin influnece the SPI
+    - Revise power sensor adm1281 for yosemite4 schematic change
+    - Add gpio pca9506 I/O expander for yosemite4 use
+    - remove space for adm1272 compatible
+    - enable interrupt setting for pca9555
+    - add eeprom for yosemite4 medusa board/BSM use
+    - remove temperature sensor for yosemite4 schematic change
+    - add power sensor for power module reading
+    - Revise adc128d818 adc mode for yosemite4 schematic change
+    - Revise ina233 for yosemite4 schematic change
+    - Remove idle state setting for yosemite4 NIC connection
+    - Initialize bmc gpio state
+    - Revise mx31790 fan tach config
+    - Add mctp config for NIC
+    - Support mux to cpld
+    - Revise gpio name
 
+Delphine CC Chiu (28):
+  ARM: dts: aspeed: yosemite4: Revise i2c-mux devices
+  ARM: dts: aspeed: yosemite4: Enable adc15
+  ARM: dts: aspeed: yosemite4: Enable spi-gpio setting
+  ARM: dts: aspeed: yosemite4: Enable watchdog2
+  ARM: dts: aspeed: yosemite4: Revise quad mode to dual mode
+  ARM: dts: aspeed: yosemite4: Revise power sensor adm1281 for schematic
+    change
+  ARM: dts: aspeed: yosemite4: Add gpio pca9506
+  ARM: dts: aspeed: yosemite4: Remove space for adm1272 compatible
+  ARM: dts: aspeed: yosemite4: Enable interrupt setting for pca9555
+  ARM: dts: aspeed: yosemite4: Add power sensor for power module reading
+  ARM: dts: aspeed: yosemite4: Add eeprom for yosemite4 use
+  ARM: dts: aspeed: yosemite4: Remove temperature sensor for yosemite4
+    schematic change
+  ARM: dts: aspeed: yosemite4: Revise adc128d818 adc mode for yosemite4
+    schematic change
+  ARM: dts: aspeed: yosemite4: Revise ina233 config for yosemite4
+    schematic change
+  ARM: dts: aspeed: yosemite4: Remove idle state setting for yosemite4
+    NIC connection
+  ARM: dts: aspeed: yosemite4: Initialize bmc gpio state
+  ARM: dts: aspeed: yosemite4: Revise mx31790 fan tach config
+  ARM: dts: aspeed: yosemite4: add mctp config for NIC
+  ARM: dts: aspeed: yosemite4: support mux to cpld
+  ARM: dts: aspeed: yosemite4: support medusa board adc sensors
+  ARM: dts: aspeed: yosemite4: support NIC eeprom
+  ARM: dts: aspeed: yosemite4: Revise i2c duty-cycle
+  ARM: dts: aspeed: yosemite4: add fan led config
+  ARM: dts: aspeed: yosemite4: add XDP710
+  ARM: dts: aspeed: yosemite4: add RTQ6056 support
+  ARM: dts: aspeed: yosemite4: add MP5990 support
+  ARM: dts: aspeed: yosemite4: Adjust ioexp bus and remove mctp driver
+  ARM: dts: aspeed: yosemite4: fix GPIO linename typo
 
-On 15/08/2024 6:29 pm, Ian Rogers wrote:
-> On Wed, Aug 14, 2024 at 9:28 AM James Clark <james.clark@linaro.org> wrote:
->> On 07/08/2024 9:54 am, Thorsten Leemhuis wrote:
->>> On 01.08.24 21:05, Ian Rogers wrote:
->>>> On Wed, Dec 6, 2023 at 4:09 AM Linux regression tracking #update
->>>> (Thorsten Leemhuis) <regressions@leemhuis.info> wrote:
->>>>>
->>>>> [TLDR: This mail in primarily relevant for Linux kernel regression
->>>>> tracking. See link in footer if these mails annoy you.]
->>>>>
->>>>> On 22.11.23 00:43, Bagas Sanjaya wrote:
->>>>>> On Tue, Nov 21, 2023 at 09:08:48PM +0900, Hector Martin wrote:
->>>>>>> Perf broke on all Apple ARM64 systems (tested almost everything), and
->>>>>>> according to maz also on Juno (so, probably all big.LITTLE) since v6.5.
->>>>>
->>>>> #regzbot fix: perf parse-events: Make legacy events lower priority than
->>>>> sysfs/JSON
->>>>> #regzbot ignore-activity
->>>>
->>>> Note, this is still broken.
->>>
->>> Hmmm, so all that became somewhat messy. Arnaldo, what's the way out of
->>> this? Or is this a "we are screwed one way or another and someone has to
->>> bite the bullet" situation?
->>>
->>> Ciao, Thorsten
->>>
->>>> The patch changed the priority in the case
->>>> that you do something like:
->>>>
->>>> $ perf stat -e 'armv8_pmuv3_0/cycles/' benchmark
->>>>
->>>> but if you do:
->>>>
->>>> $ perf stat -e 'cycles' benchmark
->>>>
->>>> then the broken behavior will happen as legacy events have priority
->>>> over sysfs/json events in that case. To fix this you need to revert:
->>>> 4f1b067359ac Revert "perf parse-events: Prefer sysfs/JSON hardware
->>>> events over legacy"
->>>>
->>>> This causes some testing issues resolved in this unmerged patch series:
->>>> https://lore.kernel.org/lkml/20240510053705.2462258-1-irogers@google.com/
->>>>
->>>> There is a bug as the arm_dsu PMU advertises an event called "cycles"
->>>> and this PMU is present on Ampere systems. Reverting the commit above
->>>> will cause an issue as the commit 7b100989b4f6 ("perf evlist: Remove
->>>> __evlist__add_default") to fix ARM's BIG.little systems (opening a
->>>> cycles event on all PMUs not just 1) will cause the arm_dsu event to
->>>> be opened by perf record and fail as the event won't support sampling.
->>>>
->>>> The patch https://lore.kernel.org/lkml/20240525152927.665498-1-irogers@google.com/
->>>> fixes this by only opening the cycles event on core PMUs when choosing
->>>> default events.
->>>>
->>>> Rather than take this patch the revert happened as Linus runs the
->>>> command "perf record -e cycles:pp" (ie using a specified event and not
->>>> defaults) and considers it a regression in the perf tool that on an
->>>> Ampere system to need to do "perf record -e
->>>> 'armv8_pmuv3_0/cycles/pp'". It was pointed out that not specifying -e
->>>> will choose the cycles event correctly and with better precision the
->>>> pp for systems that support it, but it was still considered a
->>>> regression in the perf tool so the revert was made to happen. There is
->>>> a lack of perf testing coverage for ARM, in particular as they choose
->>>> to do everything in a different way to x86. The patch in question was
->>>> in the linux-next tree for weeks without issues.
->>>>
->>>> ARM/Ampere could fix this by renaming the event from cycles to
->>>> cpu_cycles, or by following Intel's convention that anything uncore
->>>> uses the name clockticks rather than cycles. This could break people
->>>> who rely on an event called arm_dsu/cycles/ but I imagine such people
->>>> are rare. There has been no progress I'm aware of on renaming the
->>>> event.
->>>>
->>>> Making perf not terminate on opening an event for perf record seems
->>>> like the most likely workaround as that is at least something under
->>>> the tool maintainers control. ARM have discussed doing this on the
->>>> lists:
->>>> https://lore.kernel.org/lkml/f30f676e-a1d7-4d6b-94c1-3bdbd1448887@arm.com/
->>>> but since the revert in v6.10 no patches have appeared for the v6.11
->>>> merge window. Feature work like coresight improvements and ARMv9 are
->>>> being actively pursued by ARM, but feature work won't resolve this
->>>> regression.
->>>>
->>
->> I got some hardware with the DSU PMU so I'm going to have a go at trying
->> to send some fixes for this. My initial idea was to try incorporate the
->> "not terminate on opening" change as discussed in the link directly
->> above. And then do the revert of the "revert of prefer sysfs/json".
-> 
-> Thanks, I think this would be good. The biggest issue is that none of
-> the record logic expects a file descriptor to be not opened, deleting
-> unopened evsels from the evlist breaks all the indexing into the
-> mmaps, etc. Tbh, you probably wouldn't do the code this way if was
-> written afresh. Perhaps a hashmap would map from an evsel to ring
-> buffer mmaps, etc. Trying to avoid having global state and benefitting
-> from encapsulation. I'd focus on just doing the expedient thing in the
-> changes, which probably just means making the record code tolerant of
-> evsels that fail to open and not modifying the evlist due to the risk
-> it breaks the indices.
-> 
+ .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 1749 ++++++++++++++++-
+ 1 file changed, 1653 insertions(+), 96 deletions(-)
 
-Thanks for the tips.
+-- 
+2.25.1
 
-> (To point out the obvious, this work wouldn't be necessary if arm_dsu
-> event were renamed from "cycles" to "cpu_cycles" which would also make
-> it more intention revealing alongside the arm_dsu's "bus_cycles" event
-> name).
-> 
-
-I understand but I can imagine the following conversation if we rename that:
-
-   User: "I updated my kernel and now my (non Perf) tool fails to open
-          the DSU cycles event because it doesn't exist anymore"
-
-   Linus/maintainers: "Oh ok yes that was a userspace breaking change,
-                      lets revert it"
-
-Just because Perf can handle 3 different names for cycles doesn't mean 
-other tools can.
-
->> FWIW I don't think Juno currently is broken if the kernel supports
->> extended type ID? I could have missed some output in this thread but it
->> seems like it's mostly related to Apple M hardware. I'm also a bit
->> confused why the "supports extended type" check fails there, but maybe
->> the v6.9 commit 25412c036 from Mark is missing?
-> 
-> So I think your later emails clarify Arnaldo is probably missing:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/commit/drivers/perf/arm_pmu.c?h=perf-tools-next&id=5c816728651ae425954542fed64d21d40cb75a9f
-> 
-> Fwiw, the Apple M hardware issue came to me by way of Mark Rutland
-> (iirc), this regression report, etc. My understanding is that Apple M
-> has something like a v2 ARM PMU and the legacy events are encoded
-> incorrectly in the driver for this. The regression in v6.5 happened
-
-I'm not sure about that. The M PMU events may be incomplete, but the two 
-that are there have a mapping that looks sane:
-
-   static const unsigned m1_pmu_perf_map[PERF_COUNT_HW_MAX] = {
-	PERF_MAP_ALL_UNSUPPORTED,
-	[PERF_COUNT_HW_CPU_CYCLES]	= M1_PMU_PERFCTR_CPU_CYCLES,
-	[PERF_COUNT_HW_INSTRUCTIONS]	= M1_PMU_PERFCTR_INSTRUCTIONS,
-	/* No idea about the rest yet */
-   };
-
-And they map to the same named events:
-
-   static struct attribute *m1_pmu_event_attrs[] = {
-	M1_PMU_EVENT_ATTR(cycles, M1_PMU_PERFCTR_CPU_CYCLES),
-	M1_PMU_EVENT_ATTR(instructions, M1_PMU_PERFCTR_INSTRUCTIONS),
-	NULL,
-   };
-
-So in this case I can't see using legacy vs sysfs events making a 
-difference. Maybe there is some other case that was mentioned in a 
-previous thread that I missed though.
-
-> because ARM's core PMUs had previously been treated as uncore PMUs,
-> meaning we wouldn't try to program legacy events on them. Fixing the
-> handling of ARM's core PMUs broke Apple M due to the broken legacy
-> event mappings. Why not fix the Apple M PMU driver? Well there was
-> anyway a similar RISC-V issue reported by Atish Patra (iirc) where the
-> RISC-V PMU driver wants to delegate the mapping of legacy events to
-> the perf tool so the driver needn't be aware of all and future RISC-V
-> configurations. The fix discussed with Mark, Atish, etc. has been to
-> swap the priority of legacy and sysfs/json events so that the latter
-> has priority. We need the revert of the revert as currently we only do
-> this if a PMU is specified with an event, not for the general wildcard
-> PMUs case that most people use. There was huge fallout from flipping
-
-Yep makes sense to do the revert if RISC-V isn't going to support any 
-legacy events. Although from what I understand that would technically 
-only require JSON to be the highest priority? Because putting named 
-events in sysfs still requires kernel involvement so doesn't get you any 
-further than supporting the legacy events?
-
-Seems like there is another reason to do the revert though as Mark 
-mentioned: That now directly specifying the PMU eg "-e 
-arm_cortex_a56/cycles/" opens a legacy event if the event matches one, 
-which is not the best thing to do. But the revert fixes this AFAIK, so 
-while having the priority JSON/legacy/sysfs might work for RISC-V it 
-wouldn't work for a platform that wants a slightly different sysfs event 
-than legacy but with the same name. And the priority should be 
-JSON/sysfs/legacy.
-
-> the priority particularly on Intel as all test expectations needed
-> updating. I've sent out similar fixes that need incorporating when the
-> revert is reverted. Ideally tools/perf/tests/parse-events.c would be
-> updated to cover ARM's PMUs that don't follow the normal pattern that
-> the core PMU is called "cpu" (this would mean that we were testing
-> event parsing on ARM was WAI wrt encoding priorities, BIG.little,
-> etc).
-> 
->> I sent a small fix the other day to make perf stat default arguments
->> work on Juno, and didn't notice anything out of the ordinary:
->> https://lore.kernel.org/linux-perf-users/dac6ad1d-5aca-48b4-9dcb-ff7e54ca43f6@linaro.org/T/#t
->> I agree that change is quite narrow but it does incrementally improve
->> things for the time being. It's possible that it would become redundant
->> if I can just include Ian's change to use strings for Perf stat.
-> 
-> I'd prefer we didn't merge this as we'd need to rebase:
-> https://lore.kernel.org/lkml/20240510053705.2462258-4-irogers@google.com/
-> and those changes would then delete the code introduced. I'm fine with
-> adding the tests.
-> 
-> There are more exotic heterogeneous core things upcoming, probably
-> also from ARM, and the thought of duplicating the default attribute
-> logic and event parsing constraints is just something I'd prefer not
-> to have to do.
-> 
-
-Yep I don't have any strong feelings about this. Even if we don't merge 
-it it helped me understand the code and the issue a bit.
-
-I think one thing I assumed about your change was that there was some 
-dependency on these other changes. But the more I look at it I think 
-it's actually fine on it's own?
-
-Using the cycles string actually works today, even on Apple M. The only 
-real remaining issue is softening the error for failure to open, but 
-that's _after_ doing the revert of the revert and is separate.
-
-I will re-test that one today with fresh eyes.
-
->> Of course I only think I have a handle on the issue right now, seems
->> like it has a lot of moving parts and something else always comes up. If
->> I hit a wall at some point I will come back here.
-> 
-> Thanks,
-> Ian
 
