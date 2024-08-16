@@ -1,152 +1,97 @@
-Return-Path: <linux-kernel+bounces-288764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73FC5953E3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 02:20:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32DF3953E40
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 02:21:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CABE285785
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 00:20:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1FB01F21205
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 00:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835DC1E505;
-	Fri, 16 Aug 2024 00:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="jmvbE5J2";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jmMyULGk"
-Received: from fout1-smtp.messagingengine.com (fout1-smtp.messagingengine.com [103.168.172.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AE41E489;
-	Fri, 16 Aug 2024 00:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16DA829CFE;
+	Fri, 16 Aug 2024 00:18:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A91E29CEF;
+	Fri, 16 Aug 2024 00:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723767499; cv=none; b=Bj9GHXy5U+79OH4rrOAzmOGbFWDwjqBNupp5XxvzHeCIVZUi4f5Tb5eKrBXr4aI1q6R/PTfdRnk4QnOKDpumNueG7dvIdWBxzb90IUy8d57nIPaqMYtxeSMsikH4/3kSTq/DVrjB4MxEngoPcW9JE/+07rJnMCnLf5/L5zTc3wE=
+	t=1723767523; cv=none; b=OuQvRB0SJ556WyPcK3EhmfwSOKpBmFuXDYVfYonx3PCORAD1MPdkXD9TnktI7DxDYRKVvbtiejYtQFDRSiotZaTUYtXqjZstzRHg6caGu9Ko7BR+95DUXZdymMTGoGj950XJWqTZ+KaAOSYzc6FR82ny3lE+UedyFoQC2dqMFKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723767499; c=relaxed/simple;
-	bh=xzGcgsCuK3kT2n1AuiXgCrKWOdAcpv/7iav9H+B0Tz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NSbEc3sh5Ea3rUV27UZGEg6DOOkO2FuIa9C2AZd0GtuSWyIW30Ciqe7YLznlvKi0JuhWg9DnghcXCP86bJ2uPuUtlbn+DgBfiPaukT/uUPX4lfanPRK6Mlg34bQPjlYDvlpH1wVhFRxt1rTputVt39VvBSBWOlSElQLI+s+ovGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net; spf=pass smtp.mailfrom=who-t.net; dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b=jmvbE5J2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jmMyULGk; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=who-t.net
-Received: from phl-compute-01.internal (phl-compute-01.nyi.internal [10.202.2.41])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 7C64A138FC70;
-	Thu, 15 Aug 2024 20:18:16 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Thu, 15 Aug 2024 20:18:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1723767496; x=1723853896; bh=cZMQmRSQYv
-	cmILLnCBGLjyBge/6te/j2zOBZUvMmBl0=; b=jmvbE5J2gWnLlzMftrNCq+KQ3F
-	G1+/zXv01Tp6yH0dc/Msbg22VAH4TTxXXDfj8asadgeQY4y5GE63hMAimjWEkuXa
-	E5TuS1miabcmDySgez5H/8CdzGtrQ/LQSbq3x/bjzaJcp276BIuFeptatXjN+5M9
-	gAeMA4PCdNPnOXEdOU9iLWwNx6bA29fI7X1JuS+VtTPNO/FQ+1UmtVpNXe1f8b1F
-	CdDvrmpdNG/Car/saGQQURKK+z3eH3/i4Mr6k9lNGNJXGIv3IQM9KRD0iUsbmlO2
-	sEV5f1SVJJmeUyMLs7wQnL/MTDRqfu7psqeKXN4knMCFA7qrntEfwb2YSUmA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1723767496; x=1723853896; bh=cZMQmRSQYvcmILLnCBGLjyBge/6t
-	e/j2zOBZUvMmBl0=; b=jmMyULGk6dNLBgGZ6CUPqbOee9iFKLOgicYUE6R/qpyc
-	fKWhOnQ76paOfAzO0VXv9uu2TU04c2FCc9GuK49X5IZ4YwYlCLe9/MLHvA464qE3
-	drYtvJDD9nqvBK/IUTY+E6hBE+GGPVTRdwqKFb+jLEUCS7LXyyAcENcC/Y+RxsPV
-	hyKAM61fr/qyLnhr1YKkcjzservxYuL/H2SUSMIjSozvAyfp1zEpCBPblo0pUiPD
-	jLvwZMiRTShggWXBERPhMljqlICxPoKyjBVOECCIjBrdJyrnflk4POWycvC+nKeo
-	LUMijgBxO6/uylrbnm+QQwNkJ1vCa52SaTHZmP7qSA==
-X-ME-Sender: <xms:yJq-ZoCMJh876cGY-u_XYYZVQmmsAdqB6IVozIGgWhlkamiPDEVhsQ>
-    <xme:yJq-ZqjumrNnGuyCY24qq0Cha8NY219RGucC8JAVmSqs4Gb5nQYP8iwTEfzN8gDJl
-    CDluv3FiNw6nopqH34>
-X-ME-Received: <xmr:yJq-ZrnlolVlnhQ04HvTZ2GKwnBtw3ilIvC6rwAMvvCG_8538vW_uWfpV54dOla8W4EnLyLgAuvQQ95uDX0nUu8wQJ9EhU64__D->
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddtjedgfeegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomheprfgvthgvrhcujfhuthhtvghrvghruceophgvthgvrhdrhhhuthhtvghrvg
-    hrseifhhhoqdhtrdhnvghtqeenucggtffrrghtthgvrhhnpeekvdekgeehfeejgfdvudff
-    hfevheejffevgfeigfekhfduieefudfgtedugfetgfenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehpvghtvghrrdhhuhhtthgvrhgvrhesfihh
-    ohdqthdrnhgvthdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtohepughmihhtrhihrdhtohhrohhkhhhovhesghhmrghilhdrtghomhdprhgtphht
-    thhopehlihhnuhigqdhinhhpuhhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
-    htohepjhgvfhhfsehlrggsuhhnugihrdgtohhmpdhrtghpthhtohepsggvnhhtihhsshes
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrh
-    drkhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhguvghgohgvuggvsehrvgguhhgrthdr
-    tghomh
-X-ME-Proxy: <xmx:yJq-ZuxxL0rPfnZUqE5Px7ILDDRIZjkyFEJxjihYZvSxYMj6f5OSgQ>
-    <xmx:yJq-ZtRNYSAR519hiq3JK923a7jkjRkH8ew98f_ydYQQGE1Qvf0reg>
-    <xmx:yJq-ZpY3sU10rZcOP9bxg7OBDzh9OgAZFQbF3K1n6O_vLDzhIexMAQ>
-    <xmx:yJq-ZmQASxGXhTVu24n-Jm5HXP3s8Bw0bxmDhmDSqZRbEJO5gAnhtw>
-    <xmx:yJq-ZsERUItwu2hi8gtXp1JQpaC-PVyuyE3hAOZWhf_DcqIK3vOxh-P9>
-Feedback-ID: i7ce144cd:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 15 Aug 2024 20:18:13 -0400 (EDT)
-Date: Fri, 16 Aug 2024 10:18:05 +1000
-From: Peter Hutterer <peter.hutterer@who-t.net>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, Jeff LaBundy <jeff@labundy.com>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH] Input: evdev - limit amount of data for writes
-Message-ID: <20240816001805.GA232957@quokka>
-References: <Zr5L8TUzkJcB9HcF@google.com>
+	s=arc-20240116; t=1723767523; c=relaxed/simple;
+	bh=pHTFbeiH98+KNvJ6C9XjCRN7soUqfq9CvMzd82mA0H0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=s6cga/xpEpt2D5dYQkD4vb19E7lOzLZwyhiY9i81NiynY5RehzFQ4kwvvu67w/aTfKqUcGxwKaaWq3L4DOdMXAG/GHWvgu8EjdjHdlh4oFAW42XFdbQMITyY6Nzdn49CVSCbAqMln6GZCXhH4sMXukEJhuw9p4CyMEva82edjs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 56C3F14BF;
+	Thu, 15 Aug 2024 17:19:06 -0700 (PDT)
+Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7D08B3F6A8;
+	Thu, 15 Aug 2024 17:18:38 -0700 (PDT)
+From: Andre Przywara <andre.przywara@arm.com>
+To: Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@lists.linux.dev,
+	Chris Morgan <macroalpha82@gmail.com>,
+	John Watts <contact@jookia.org>,
+	Ryan Walklin <ryan@testtoast.com>,
+	Philippe Simons <simons.philippe@gmail.com>
+Subject: [PATCH v3 0/3] regulator: Add AXP717 boost support
+Date: Fri, 16 Aug 2024 01:18:21 +0100
+Message-Id: <20240816001824.6028-1-andre.przywara@arm.com>
+X-Mailer: git-send-email 2.39.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zr5L8TUzkJcB9HcF@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 15, 2024 at 11:41:53AM -0700, Dmitry Torokhov wrote:
-> Limit amount of data that can be written into an evdev instance at
-> a given time to 4096 bytes (170 input events) to avoid holding
-> evdev->mutex for too long and starving other users.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+This is remainder of the AXP717 fix series, containing support for the
+boost regulator. This is meant to increase the battery voltage to the 5
+volts required to provide the USB VBUS power.
+It's the usual trinity of DT bindings patch (1/3), the MFD part
+describing the PMIC registers (2/3) and the final patch to model the
+regulator (3/3).
+Compared to v2, this drops the merged patches, and just retains the
+boost related parts. It also changes the internal name of the register
+to AXP717_MODULE_EN_CONTROL_2, since there is another control register
+we will need later for battery support.
 
-I'd expect anything coming near 170 input events is going to trigger
-SYN_DROPPED anyway, so:
-
-Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
-
-thanks.
+Please have a look and test!
 
 Cheers,
-  Peter
+Andre
 
-> ---
->  drivers/input/evdev.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
-> index a8ce3d140722..eb4906552ac8 100644
-> --- a/drivers/input/evdev.c
-> +++ b/drivers/input/evdev.c
-> @@ -498,6 +498,13 @@ static ssize_t evdev_write(struct file *file, const char __user *buffer,
->  	struct input_event event;
->  	int retval = 0;
->  
-> +	/*
-> +	 * Limit amount of data we inject into the input subsystem so that
-> +	 * we do not hold evdev->mutex for too long. 4096 bytes corresponds
-> +	 * to 170 input events.
-> +	 */
-> +	count = min(count, 4096);
-> +
->  	if (count != 0 && count < input_event_size())
->  		return -EINVAL;
->  
-> -- 
-> 2.46.0.184.g6999bdac58-goog
-> 
-> 
-> -- 
-> Dmitry
+Changelog v2 .. v3:
+- drop already merged fix patches
+- rename control register name to make room for second control register
+- rebase on top of v6.11-rc3
+- add review tags
+
+Andre Przywara (3):
+  dt-bindings: mfd: x-powers,axp152: add boost regulator
+  mfd: axp20x: AXP717: Add support for boost regulator
+  regulator: axp20x: AXP717: Add boost regulator
+
+ Documentation/devicetree/bindings/mfd/x-powers,axp152.yaml | 2 +-
+ drivers/mfd/axp20x.c                                       | 2 ++
+ drivers/regulator/axp20x-regulator.c                       | 4 ++++
+ include/linux/mfd/axp20x.h                                 | 3 +++
+ 4 files changed, 10 insertions(+), 1 deletion(-)
+
+-- 
+2.39.4
+
 
