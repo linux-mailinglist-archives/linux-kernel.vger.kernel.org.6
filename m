@@ -1,130 +1,134 @@
-Return-Path: <linux-kernel+bounces-289596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 557B69547F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:22:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C5E39547F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0561C1F2124A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:22:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA40B1F228E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C731A01DF;
-	Fri, 16 Aug 2024 11:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDD619E825;
+	Fri, 16 Aug 2024 11:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WmXncSKm"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jveqprc1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366FB13C9A7;
-	Fri, 16 Aug 2024 11:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D61313C9A7;
+	Fri, 16 Aug 2024 11:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723807315; cv=none; b=N/BfDz9mDci3MCg/+APf0Lh6PyVVCsiBS5xWUhvzY+y1AHo0JpLAVIzA61H648uKIl+Ly6JPoQ42b/qPgJBBZ2SuMa5o/d8fKNwnXH58oIvXElm6DQK6wA2YyYUFXdwtgHXk++RG5+BM4ODwqDoAz5i0KqtF2hKP/dsi9x+11UE=
+	t=1723807328; cv=none; b=E/Swq4SwjhCOE26Gvi+tDc4yOjzxENeJzQicavF+qKGTjKpdFA/AA36ynomqXrOiTi96dWxfFBAMytc60v4RufBfSpZ/Oe5ezIz/pAndQKCyFM/Qzcu98ofh90GbrSiCGyGdpO3BkjgM1B2ebX+ubvC9VZMVXD0Fo/5bnUUVeIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723807315; c=relaxed/simple;
-	bh=R+Q/8x20X/nTyD+7YQblrqtXOMfPL8BRA30eakhx8MM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fjG/psNinimkHfwJ8H4RZolNcPaEaOWwphmatKZBWMavms4M4rm4cQQmCMgfqu3rbTlPw+few2q/cDFu7rLxJq+OovbPWWAkZALprxmYUwwD6xl7dzKT5qAA83PDZyIdV44kf5PfU84PIfQXeZnnJ06Y6XBjxT3beGz3eHU4GGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WmXncSKm; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-6e7b121be30so1469167a12.1;
-        Fri, 16 Aug 2024 04:21:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723807313; x=1724412113; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=16cQp4jBhIOjJqZLUeHIPz2kWW5Nn4hw6rOt2LtcdoM=;
-        b=WmXncSKm7k3PhGrcr6C6pidXi32e71S7+GRbuQkYgWEw8N2503JVaZeBUuvQ4mZF0l
-         6nfcO1klXtjF58EJE8dgoQ0qKnzKo9qsrFOa02k7drZBxtkC8stBGwxtaWBWY2a98ets
-         EtS4TtJvDBGCHDY81gvK2nD5T1Ben2hXTo3fbZqyEElf46vtybKEHY2xzopR0NILyoFi
-         i2Cz2IMqIjYwx7qt9srozeeHJw7G4c3Bhj1vb4HN9flnLJNF1lsk4KMh2+10yNadBGJ9
-         E9dX77hHhcPZyONugekCxbAzDNvKey09vRxXYXPP/e9WzhsP73wLL735ryZfJ6j9+o3E
-         ExTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723807313; x=1724412113;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=16cQp4jBhIOjJqZLUeHIPz2kWW5Nn4hw6rOt2LtcdoM=;
-        b=xKEhg5lSUrvEE1HDGiUmbwk2KnOeuwLalcDUi2FPPwCCxwVQMczVqdDxESA7hQ/32G
-         WbNVTWv9DT3KfDVT4bNxED8efTb08GJyEZgAzLrL1wbGK0edteOSmAUmc403pERwlZOR
-         cpEaQfKtvfUG1/XO6iwof2nmlkuM2t0bAYe2hbHMAt0Wu7YG+STjZcHuVeZ0suwKRrV9
-         ce9bwySDzI5CCY+u6D9qk8tTXYgAMCqPQRi3MAzNf/QbLX5lTS2YkqiKvrxfdUhwHbkx
-         GRTc2QaMwaooJOT7VOuuVjbUoyoKw8lnfjqousaLmatYMWus9jlJCpFROKZUKcMbnpp3
-         BCPA==
-X-Forwarded-Encrypted: i=1; AJvYcCW4tBHqOK5C0aWTtkqDIDsRTQLfC88SmGoLS0ZxGq2A0tNITJwf65ERVzKYhGuaGs3jdAyKTh86DeiE1RBx45gd0ztoPnF4sR/C628p9vXwFg840fmr17R6Dg26IT5u5zhHRAV0/w==
-X-Gm-Message-State: AOJu0YxmcbarXy+OWOujM1dwL1IkLWxOvXnNOjL0LqWtob6qOtxiIrKR
-	srx20mO1OJLtIVBOYlO4lS5e9EZyeVfSMt7OToaA3JZcnKg4oEjJEwWMfC40mKWQvj8hGt0FPYs
-	wBC+CSvdR3vUwAY7A1Q+L/azw6WTJHQ==
-X-Google-Smtp-Source: AGHT+IFxZCqQ4z81Lrsq2F4ufL/3FdZkEQfI/qgELsMISl0JCjgVx3GI7O1W68t5l7YvPkzi3lDytULPSrVCXZTBOqI=
-X-Received: by 2002:a17:90b:a41:b0:2d3:c675:41e7 with SMTP id
- 98e67ed59e1d1-2d3dfc3a9acmr2730998a91.7.1723807313230; Fri, 16 Aug 2024
- 04:21:53 -0700 (PDT)
+	s=arc-20240116; t=1723807328; c=relaxed/simple;
+	bh=gV2PqQerkGgy/+HK5ajdWorgprSPCXQyQAoB8oo88rk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=rtTYSyJVnnb34eh04BYe0VnNJIn9GbuUZHTB+2ebUuB/zib896abeynYXNnfxwyHyJdxEg4xDPi8S/8nVKIvHD59a+FW1HIf+qk7s9xVY3yEoDsBZ6QdWar9E9jm9AXfnNi+Ez5CGKKIeLy3Atq+3lZF6196MJldnzmO4V7df08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jveqprc1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB10DC32782;
+	Fri, 16 Aug 2024 11:22:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723807328;
+	bh=gV2PqQerkGgy/+HK5ajdWorgprSPCXQyQAoB8oo88rk=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=Jveqprc1i1LHYV6qtBL08bsdgzXefjlh1drYspRjo3Pc7kIhjw730W/Iilznig37j
+	 sq74l0Xoy31GXwIYvl7EKsDZAUsuczbJnDgPgKwDIhvExKHkFhvimJz5DX8cVHjHOn
+	 u8WZojYei71O8DMGl0XY1Rx8fcPCZkZxSnURmusIwH2MP4BxFZrJuvT3wwmoIcnwE0
+	 5HLzLypWYmiiTzxn02IS63nfb2IJCzOx/tyCeqBQFHcwTgUCt2N62+tqZKdTn/4t/q
+	 XA0ADrVDyHSsZuS8Mskt+KlNGNbfliJV3QAz3l/mfwjyjpULNA6rRhMtBak9LNwx/1
+	 DTzeAYYEHOMoQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <CAHC9VhSrPS27KSG1_On8_WqUfR7tokbrmVwfW3+L_-XJiA=WZw@mail.gmail.com>
- <20240816035751.62058-1-aha310510@gmail.com>
-In-Reply-To: <20240816035751.62058-1-aha310510@gmail.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Fri, 16 Aug 2024 07:21:42 -0400
-Message-ID: <CAEjxPJ6gznARkD_jTZUhXJmQ5zvdrwxJOiSC0YQoZekNe76Nug@mail.gmail.com>
-Subject: Re: selinux: support IPPROTO_SMC in socket_type_to_security_class()
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: paul@paul-moore.com, linux-kernel@vger.kernel.org, omosnace@redhat.com, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 16 Aug 2024 14:22:04 +0300
+Message-Id: <D3HAP4O4OVS3.2LOSH5HMQ34OZ@kernel.org>
+Cc: "Ross Philipson" <ross.philipson@oracle.com>,
+ <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+ <linux-integrity@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-crypto@vger.kernel.org>, <kexec@lists.infradead.org>,
+ <linux-efi@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+ <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+ <dave.hansen@linux.intel.com>, <ardb@kernel.org>, <mjg59@srcf.ucam.org>,
+ <James.Bottomley@hansenpartnership.com>, <peterhuewe@gmx.de>,
+ <jgg@ziepe.ca>, <luto@amacapital.net>, <nivedita@alum.mit.edu>,
+ <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <corbet@lwn.net>,
+ <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
+ <kanth.ghatraju@oracle.com>, <trenchboot-devel@googlegroups.com>
+Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
+ early measurements
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Andrew Cooper" <andrew.cooper3@citrix.com>, "Thomas Gleixner"
+ <tglx@linutronix.de>, "Daniel P. Smith" <dpsmith@apertussolutions.com>,
+ "Eric W. Biederman" <ebiederm@xmission.com>, "Eric Biggers"
+ <ebiggers@kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240531010331.134441-1-ross.philipson@oracle.com>
+ <20240531010331.134441-7-ross.philipson@oracle.com>
+ <20240531021656.GA1502@sol.localdomain>
+ <874jaegk8i.fsf@email.froward.int.ebiederm.org>
+ <5b1ce8d3-516d-4dfd-a976-38e5cee1ef4e@apertussolutions.com>
+ <87ttflli09.ffs@tglx> <550d15cd-5c48-4c20-92c2-f09a7e30adc9@citrix.com>
+In-Reply-To: <550d15cd-5c48-4c20-92c2-f09a7e30adc9@citrix.com>
 
-On Thu, Aug 15, 2024 at 11:57=E2=80=AFPM Jeongjun Park <aha310510@gmail.com=
-> wrote:
+On Fri Aug 16, 2024 at 2:01 PM EEST, Andrew Cooper wrote:
+> On 15/08/2024 8:10 pm, Thomas Gleixner wrote:
+> > On Thu, Aug 15 2024 at 13:38, Daniel P. Smith wrote:
+> >> On 5/31/24 09:54, Eric W. Biederman wrote:
+> >>> Eric Biggers <ebiggers@kernel.org> writes:
+> >>>> That paragraph is also phrased as a hypothetical, "Even if we'd pref=
+er to use
+> >>>> SHA-256-only".  That implies that you do not, in fact, prefer SHA-25=
+6 only.  Is
+> >>>> that the case?  Sure, maybe there are situations where you *have* to=
+ use SHA-1,
+> >>>> but why would you not at least *prefer* SHA-256?
+> >>> Yes.  Please prefer to use SHA-256.
+> >>>
+> >>> Have you considered implementing I think it is SHA1-DC (as git has) t=
+hat
+> >>> is compatible with SHA1 but blocks the known class of attacks where
+> >>> sha1 is actively broken at this point?
+> >> We are using the kernel's implementation, addressing what the kernel=
+=20
+> >> provides is beyond our efforts. Perhaps someone who is interested in=
+=20
+> >> improving the kernel's SHA1 could submit a patch implementing/replacin=
+g=20
+> >> it with SHA1-DC, as I am sure the maintainers would welcome the help.
+> > Well, someone who is interested to get his "secure" code merged should
+> > have a vested interested to have a non-broken SHA1 implementation if
+> > there is a sensible requirement to use SHA1 in that new "secure" code,
+> > no?
 >
-> Paul Moore wrote:
-> >
-> > On Thu, Aug 15, 2024 at 4:32=E2=80=AFAM Jeongjun Park <aha310510@gmail.=
-com> wrote:
-> > >
-> > > IPPROTO_SMC feature has been added to net/smc. It is now possible to
-> > > create smc sockets in the following way:
-> > >
-> > >   /* create v4 smc sock */
-> > >   v4 =3D socket(AF_INET, SOCK_STREAM, IPPROTO_SMC);
-> > >
-> > >   /* create v6 smc sock */
-> > >   v6 =3D socket(AF_INET6, SOCK_STREAM, IPPROTO_SMC);
-> > >
-> > > Therefore, we need to add code to support IPPROTO_SMC in
-> > > socket_type_to_security_class().
-> > >
-> > > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> > > ---
-> > >  security/selinux/hooks.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> >
-> > I'm a little concerned that the small patch below might not be all
-> > that is needed to properly support SMC in SELinux.  Can you explain
-> > what testing you've done with SMC on a SELinux system?
+> No.
 >
-> I don't have much knowledge about smc, so I can't tested everything, but
-> I created a socket, performed setsockopt, and tested two sockets
-> communicating with each other. When I tested it, performing smc-related
-> functions worked well without any major problems.
+> The use of SHA-1 is necessary even on modern systems to avoid a
+> vulnerability.
 >
-> And after analyzing it myself, I didn't see any additional patches needed
-> to support IPPROTO_SMC in selinux other than this patch. So you don't
-> have to worry.
+> It is the platform, not Linux, which decides which TPM PCR banks are acti=
+ve.
+>
+> Linux *must* have an algorithm for every active bank (which is the
+> platform's choice), even if the single thing it intends to do is cap the
+> bank and use better ones.
 
-Note that Jeongjun is not introducing SELinux support for SMC sockets
-for the first time here; he is just updating the already existing
-support to correctly map the new IPPROTO_SMC to the already existing
-SECCLASS_SMC_SOCKET. We were already handling such sockets created via
-socket(AF_SMC, ...); what changed was that they added support for
-creating them via socket(AF_INET, SOCK_STREAM, IPPROTO_SMC) too.
+For (any) non-legacy features we can choose, which choices we choose to
+support, and which we do not. This is not an oppositive view just saying
+how it is, and platforms set of choices is not a selling argument.
+
+>
+> Capping a bank requires updating the TPM Log without corrupting it,
+> which requires a hash calculation of the correct type for the bank.
+>
+> ~Andrew
+
+BR, Jarkko
 
