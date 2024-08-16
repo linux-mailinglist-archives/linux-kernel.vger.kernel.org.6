@@ -1,130 +1,94 @@
-Return-Path: <linux-kernel+bounces-289296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0C56954477
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:34:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E7CB954468
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:33:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F301E1C210BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:34:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1369B2368A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9EF014430A;
-	Fri, 16 Aug 2024 08:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hetaaArX"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D0C13DB9B;
+	Fri, 16 Aug 2024 08:32:53 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971EF13AD20;
-	Fri, 16 Aug 2024 08:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB1D137923;
+	Fri, 16 Aug 2024 08:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723797187; cv=none; b=PCMsGxoUQpGbfI28E6XX/c7LGGlIJ/b9yrEwdQuvbj26sdossKVE1XIDSPk9z7BuPbt0k4F7qWFjQsNn3gN7DUU7lfS3titFNwdzhmC+gF697nj65M/oNnhzkNFZH3dtQeE61qK7QQXtO6jmYi1eyofih3nzNR9O8bIXEXc+T3E=
+	t=1723797173; cv=none; b=emAqhKxrndocqWHhG3Nuljgfhqyyig+jymW64uZunFEL4GtT0Qq/zWRnKA3Uo6E9uwGwxzQCaAsieixC3OHFGG/Nrnb8+e1soz+jP0PyBbDGz4hG07OZefXgZyDCQj7sGwTxHrcZT9DVRiUW1S3t3n6nBuop53XZZ1mlJKId9NU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723797187; c=relaxed/simple;
-	bh=DTT9i0kFGKQFmP27WzGtXYunyEaQKmi/i6yT9/b9pv0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=V/4tqCF9jKgVqAt8oZJamT8284jMh/0rrxYs0ejnPEqVjpuW9PWzxAi6ml5xXB1aQS3fzzTZ8VS5x1mRgZGrNy2EL3fjdD/yz8ZFXpf2wPMbgHWymK2BafLJnBRcp49lACMHaPc3dplWKBAa04a5PuTkzMDvFtCJD9mdRQE8Lmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hetaaArX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47FKbxeN017862;
-	Fri, 16 Aug 2024 08:33:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	gikwOoekNiGIPoz8IXJNCegUmcUKIIJTzSrAEoqRmJY=; b=hetaaArX8QTECN4G
-	/hLgo3kwh4new0jScjORXE0HggGXwnusBj0MCDqztqynIKVexOhCCmnCdrujbh6M
-	dN97IoNrrK4IDMLD2/zB6LMPrW71wig0U9PZSI8FhDW4CTiRxDEfRySsWZcvPUDY
-	p1BYJpCEI/6Opa0+8Uk+efQMS4DEMlziTi+oAnoEaxV7+mvfHD3GeO7Sl+gt182N
-	ruvMy5acGkz89kPUsvxJ4K3YLlBj2viA24XDDeaMR5E2CSG+uvqi0MxsX59gCHc1
-	smcdQWL8i7q7ND/7h7SGw+McPCZpsEL6iQ6U0/rH0FbXbYW9arCa4dZG6JUiYs5I
-	PKWzHA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 411rvr98ff-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Aug 2024 08:33:02 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47G8X0CU019409
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Aug 2024 08:33:00 GMT
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 16 Aug 2024 01:32:56 -0700
-From: Taniya Das <quic_tdas@quicinc.com>
-Date: Fri, 16 Aug 2024 14:02:14 +0530
-Subject: [PATCH v2 5/5] arm64: dts: qcom: qcs6490-rb3gen2: Update the LPASS
- audio node
+	s=arc-20240116; t=1723797173; c=relaxed/simple;
+	bh=zvoRoj67iI2jVCgaAAnl5Nf42IVbkNhBjs4gGc3zs7E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AloJ7aGb+EUr1bl+eX21059Kk5C8AXjr0kBd7B/gcRTIkwewpymOOxjPSAXhLaotzhnvG0fvlx5GXdjAKUyA+4c4CSLFJBKsDxdVs0w7BEtv4XLEmKE5tViEXlegTV9uEA7yh+D93LjtTgK7YTT6gDwdynHXVkb7/tmuHGnnBeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.2] (ip5f5af443.dynamic.kabel-deutschland.de [95.90.244.67])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 8115E61E5FE05;
+	Fri, 16 Aug 2024 10:32:30 +0200 (CEST)
+Message-ID: <cd418c7c-20bd-4e6d-8e4c-4bbb1f49c8cb@molgen.mpg.de>
+Date: Fri, 16 Aug 2024 10:32:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] Bluetooth: btnxpuart: Add support for ISO packets
+To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ amitkumar.karwar@nxp.com, rohit.fule@nxp.com, sherry.sun@nxp.com,
+ ziniu.wang_1@nxp.com, haibo.chen@nxp.com, LnxRevLi@nxp.com
+References: <20240816082524.286245-1-neeraj.sanjaykale@nxp.com>
+ <20240816082524.286245-2-neeraj.sanjaykale@nxp.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20240816082524.286245-2-neeraj.sanjaykale@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240816-qcm6490-lpass-reset-v1-5-a11f33cad3c5@quicinc.com>
-References: <20240816-qcm6490-lpass-reset-v1-0-a11f33cad3c5@quicinc.com>
-In-Reply-To: <20240816-qcm6490-lpass-reset-v1-0-a11f33cad3c5@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, <quic_imrashai@quicinc.com>,
-        <quic_jkona@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das
-	<quic_tdas@quicinc.com>
-X-Mailer: b4 0.14-dev-f7c49
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: TICOjIQ4hzrbmbnSZoLxoxJjxHdYJLhT
-X-Proofpoint-ORIG-GUID: TICOjIQ4hzrbmbnSZoLxoxJjxHdYJLhT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-15_18,2024-08-15_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- suspectscore=0 adultscore=0 malwarescore=0 spamscore=0 phishscore=0
- mlxlogscore=916 priorityscore=1501 clxscore=1015 impostorscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408160061
 
-Update the lpassaudio node to support the new compatible as the
-lpassaudio needs to support the reset functionality on the
-QCS6490 RB3Gen2 board and the rest of the Audio functionality would be
-provided from the LPASS firmware.
+Dear Neeraj,
 
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-index 0d45662b8028..6e22c838eaff 100644
---- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-@@ -820,3 +820,8 @@ lt9611_irq_pin: lt9611-irq-state {
- 		bias-disable;
- 	};
- };
-+
-+&lpass_audiocc {
-+	compatible = "qcom,qcm6490-lpassaudiocc";
-+	/delete-property/ power-domains;
-+};
+Thank you for your patch.
 
--- 
-2.45.2
 
+Am 16.08.24 um 10:25 schrieb Neeraj Sanjay Kale:
+> This enables btnxpuart driver to handle ISO packets.
+
+Tested how?
+
+> Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+> ---
+>   drivers/bluetooth/btnxpuart.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
+> index f75b24bd3045..0b52e5505687 100644
+> --- a/drivers/bluetooth/btnxpuart.c
+> +++ b/drivers/bluetooth/btnxpuart.c
+> @@ -1396,6 +1396,7 @@ static const struct h4_recv_pkt nxp_recv_pkts[] = {
+>   	{ H4_RECV_ACL,          .recv = hci_recv_frame },
+>   	{ H4_RECV_SCO,          .recv = hci_recv_frame },
+>   	{ H4_RECV_EVENT,        .recv = hci_recv_frame },
+> +	{ H4_RECV_ISO,		.recv = hci_recv_frame },
+>   	{ NXP_RECV_CHIP_VER_V1, .recv = nxp_recv_chip_ver_v1 },
+>   	{ NXP_RECV_FW_REQ_V1,   .recv = nxp_recv_fw_req_v1 },
+>   	{ NXP_RECV_CHIP_VER_V3, .recv = nxp_recv_chip_ver_v3 },
+
+
+Kind regards,
+
+Paul
 
