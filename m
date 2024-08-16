@@ -1,200 +1,121 @@
-Return-Path: <linux-kernel+bounces-289619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B380954859
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:55:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB5D95485B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD43AB21884
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:55:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 159D61F21EEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639121B29AC;
-	Fri, 16 Aug 2024 11:55:27 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1491AD9F5;
+	Fri, 16 Aug 2024 11:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="WFHHZ5OD"
+Received: from the.earth.li (the.earth.li [93.93.131.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07B316F0E1;
-	Fri, 16 Aug 2024 11:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8586E1AD3EF;
+	Fri, 16 Aug 2024 11:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723809326; cv=none; b=JrBnueB/BBkxfc/vkMNln4jvAPXOHEfBtbxSJpapk+mU+yGmEaVRK2ETJzrB2evtyxEsFs3krOOIUPbR2HXBNb0NQ/S7L/XRuVj9fnebBS3yAHqDLZeq+2Gc93romuvm8ugH4fHr5Zf6sGaCn3cF7qvTuLPxHf8IGN/DhShMjSc=
+	t=1723809359; cv=none; b=XISJ+klktLmPhkBenpMYtbdelLWvJSToYI+t5F5gHXcCswoVLbfxueZspn6qFjpRGaSxtTsiaUdOlIydIq7Z8Fbqaq/0O3IDb5bNSTiaa0tFd5P6XJ7t7sRIzvZ0DPsdGGfXeuEyvgW5riwbiIZOkurnMxsKgGkzRED90RCF05w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723809326; c=relaxed/simple;
-	bh=crRBTb++01BV7AbQhw0YhRZpdM4dL/fl/FxhwOGEdTQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UanqZsKqSYiLZKnlzG2BRZ/ln+Vdwu97d4SRNPtDAxIa/lX5aCK4RWkRY54YA3G5KnMDR2yyxgAAAz5mlXkYQwv7ku1hneaLju5CcSaNkoUqbFs77L8ylOO6THotEq9nTAju6MY3b0DhLsEudieD+y46AX9OS9XwCS9yv3l1lyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WlgQt2dSLzcdVh;
-	Fri, 16 Aug 2024 19:55:02 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 879EA1403D5;
-	Fri, 16 Aug 2024 19:55:19 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 16 Aug 2024 19:55:18 +0800
-Message-ID: <3e069c81-a728-4d72-a5bb-3be00d182107@huawei.com>
-Date: Fri, 16 Aug 2024 19:55:18 +0800
+	s=arc-20240116; t=1723809359; c=relaxed/simple;
+	bh=P1zQUaopEBnPUj03ntwAXsb5a66WDUioes3LPXmeLK8=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S+WDsMaaNhgzVhQQxdCGllZuJDSIO7f/tiCHWtD2gdq7uFHvseYAsa+pwzM1ReImxjmnzNomvgeW8DfyKY1yfiUP8wyEcx5jqbFb+nKkOByA3lVocxqijqYqo41QEy//dx9xvJ+k+mPOb6YXiAy9Mh4TGPTMIxM8Cw3sYC3tf8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=WFHHZ5OD; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
+	To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=Wl3ZHAqgIGZLTckXRyqpTcjRcs19ZwdEjD9GnraGpIQ=; b=WFHHZ5ODphxCrj5bFJ1/Qx94Qh
+	Ii2eCi++8hZZcvTgw0OvHOh35JGxiCkEyOjf9cJHEWhqvS4So7/L0dytvcf05cIJIiBrgOjvfl1eJ
+	EdDjIdUq/Xq22AO6xinXXML8OgebMYMQ4Mh3fkV/DuTahu+QJmyR9T8zDgdDeGAh8Fu047O1IxMKn
+	jxKbe5qfvpzh37ZUKMphsCJIxeq9chMiMLG9t0WOJg/srvWycABjwSdXLqWjnoI9cCnjoq8Vxa3/p
+	U7WBGH7Kl1g3iVRVoLKk6lJNEhHpPM9Uwe3qFN3nI2hkAMpHdcImH+qtGwLSRxOdg1bjg8X7uaunR
+	uOejhPdg==;
+Received: from noodles by the.earth.li with local (Exim 4.96)
+	(envelope-from <noodles@earth.li>)
+	id 1sevYY-00EUiR-2M;
+	Fri, 16 Aug 2024 12:55:46 +0100
+Date: Fri, 16 Aug 2024 12:55:46 +0100
+From: Jonathan McDowell <noodles@earth.li>
+To: Jarkko Sakkinen <jarkko@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] tpm: Clean up TPM space after command failure
+Message-ID: <Zr8-QijwOpDLkol3@earth.li>
+References: <ZrzY_LWIXABkqd-S@earth.li>
+ <D3GPGYHWPGFL.1S13HXY9ALZCU@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v13 04/14] mm: page_frag: add '_va' suffix to
- page_frag API
-To: Alexander Duyck <alexander.duyck@gmail.com>
-CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Subbaraya Sundeep
-	<sbhatta@marvell.com>, Chuck Lever <chuck.lever@oracle.com>, Sagi Grimberg
-	<sagi@grimberg.me>, Jeroen de Borst <jeroendb@google.com>, Praveen
- Kaligineedi <pkaligineedi@google.com>, Shailend Chand <shailend@google.com>,
-	Eric Dumazet <edumazet@google.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Sunil Goutham
-	<sgoutham@marvell.com>, Geetha sowjanya <gakula@marvell.com>, hariprasad
-	<hkelam@marvell.com>, Felix Fietkau <nbd@nbd.name>, Sean Wang
-	<sean.wang@mediatek.com>, Mark Lee <Mark-MC.Lee@mediatek.com>, Lorenzo
- Bianconi <lorenzo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Keith
- Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig
-	<hch@lst.de>, Chaitanya Kulkarni <kch@nvidia.com>, "Michael S. Tsirkin"
-	<mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko
-	<andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard
- Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
-	<yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Stanislav Fomichev
-	<sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>,
-	Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>, Olga
- Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey
-	<tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, Anna Schumaker
-	<anna@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	<intel-wired-lan@lists.osuosl.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-nvme@lists.infradead.org>,
-	<kvm@vger.kernel.org>, <virtualization@lists.linux.dev>,
-	<linux-mm@kvack.org>, <bpf@vger.kernel.org>, <linux-afs@lists.infradead.org>,
-	<linux-nfs@vger.kernel.org>, <linux-kselftest@vger.kernel.org>
-References: <20240808123714.462740-1-linyunsheng@huawei.com>
- <20240808123714.462740-5-linyunsheng@huawei.com>
- <d1a23116d054e2ebb00067227f0cffecefe33e11.camel@gmail.com>
- <676a2a15-d390-48a7-a8d7-6e491c89e200@huawei.com>
- <CAKgT0Uct5ptfs9ZEoe-9u-fOVz4HLf+5MS-YidKV+xELCBHKNw@mail.gmail.com>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <CAKgT0Uct5ptfs9ZEoe-9u-fOVz4HLf+5MS-YidKV+xELCBHKNw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D3GPGYHWPGFL.1S13HXY9ALZCU@kernel.org>
 
-On 2024/8/15 23:00, Alexander Duyck wrote:
-> On Wed, Aug 14, 2024 at 8:00 PM Yunsheng Lin <linyunsheng@huawei.com> wrote:
->>
->> On 2024/8/14 23:49, Alexander H Duyck wrote:
->>> On Thu, 2024-08-08 at 20:37 +0800, Yunsheng Lin wrote:
->>>> Currently the page_frag API is returning 'virtual address'
->>>> or 'va' when allocing and expecting 'virtual address' or
->>>> 'va' as input when freeing.
->>>>
->>>> As we are about to support new use cases that the caller
->>>> need to deal with 'struct page' or need to deal with both
->>>> 'va' and 'struct page'. In order to differentiate the API
->>>> handling between 'va' and 'struct page', add '_va' suffix
->>>> to the corresponding API mirroring the page_pool_alloc_va()
->>>> API of the page_pool. So that callers expecting to deal with
->>>> va, page or both va and page may call page_frag_alloc_va*,
->>>> page_frag_alloc_pg*, or page_frag_alloc* API accordingly.
->>>>
->>>> CC: Alexander Duyck <alexander.duyck@gmail.com>
->>>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
->>>> Reviewed-by: Subbaraya Sundeep <sbhatta@marvell.com>
->>>> Acked-by: Chuck Lever <chuck.lever@oracle.com>
->>>> Acked-by: Sagi Grimberg <sagi@grimberg.me>
->>>> ---
->>>>  drivers/net/ethernet/google/gve/gve_rx.c      |  4 ++--
->>>>  drivers/net/ethernet/intel/ice/ice_txrx.c     |  2 +-
->>>>  drivers/net/ethernet/intel/ice/ice_txrx.h     |  2 +-
->>>>  drivers/net/ethernet/intel/ice/ice_txrx_lib.c |  2 +-
->>>>  .../net/ethernet/intel/ixgbevf/ixgbevf_main.c |  4 ++--
->>>>  .../marvell/octeontx2/nic/otx2_common.c       |  2 +-
->>>>  drivers/net/ethernet/mediatek/mtk_wed_wo.c    |  4 ++--
->>>>  drivers/nvme/host/tcp.c                       |  8 +++----
->>>>  drivers/nvme/target/tcp.c                     | 22 +++++++++----------
->>>>  drivers/vhost/net.c                           |  6 ++---
->>>>  include/linux/page_frag_cache.h               | 21 +++++++++---------
->>>>  include/linux/skbuff.h                        |  2 +-
->>>>  kernel/bpf/cpumap.c                           |  2 +-
->>>>  mm/page_frag_cache.c                          | 12 +++++-----
->>>>  net/core/skbuff.c                             | 16 +++++++-------
->>>>  net/core/xdp.c                                |  2 +-
->>>>  net/rxrpc/txbuf.c                             | 15 +++++++------
->>>>  net/sunrpc/svcsock.c                          |  6 ++---
->>>>  .../selftests/mm/page_frag/page_frag_test.c   | 13 ++++++-----
->>>>  19 files changed, 75 insertions(+), 70 deletions(-)
->>>>
->>>
->>> I still say no to this patch. It is an unnecessary name change and adds
->>> no value. If you insist on this patch I will reject the set every time.
->>>
->>> The fact is it is polluting the git history and just makes things
->>> harder to maintain without adding any value as you aren't changing what
->>> the function does and there is no need for this. In addition it just
->>
->> I guess I have to disagree with the above 'no need for this' part for
->> now, as mentioned in [1]:
->>
->> "There are three types of API as proposed in this patchset instead of
->> two types of API:
->> 1. page_frag_alloc_va() returns [va].
->> 2. page_frag_alloc_pg() returns [page, offset].
->> 3. page_frag_alloc() returns [va] & [page, offset].
->>
->> You seemed to miss that we need a third naming for the type 3 API.
->> Do you see type 3 API as a valid API? if yes, what naming are you
->> suggesting for it? if no, why it is not a valid API?"
-> 
-> I didn't. I just don't see the point in pushing out the existing API
-> to support that. In reality 2 and 3 are redundant. You probably only
-> need 3. Like I mentioned earlier you can essentially just pass a
+From: Jonathan McDowell <noodles@meta.com>
 
-If the caller just expect [page, offset], do you expect the caller also
-type 3 API, which return both [va] and [page, offset]?
+tpm_dev_transmit prepares the TPM space before attempting command
+transmission. However if the command fails no rollback of this
+preparation is done. This can result in transient handles being leaked
+if the device is subsequently closed with no further commands performed.
 
-I am not sure if I understand why you think 2 and 3 are redundant here?
-If you think 2 and 3 are redundant here, aren't 1 and 3 also redundant
-as the similar agrument?
+Fix this by flushing the space in the event of command transmission
+failure.
 
-> page_frag via pointer to the function. With that you could also look
-> at just returning a virtual address as well if you insist on having
-> something that returns all of the above. No point in having 2 and 3 be
-> seperate functions.
+Fixes: 745b361e989a ("tpm: infrastructure for TPM spaces")
+Signed-off-by: Jonathan McDowell <noodles@meta.com>
+---
+v2:
+ - Add 'Fixes:'
+ - Cc James as one of the original authors
+ - Add space sanity check in tpm2_flush_space
 
-Let's be more specific about what are your suggestion here: which way
-is the prefer way to return the virtual address. It seems there are two
-options:
+ drivers/char/tpm/tpm-dev-common.c | 2 ++
+ drivers/char/tpm/tpm2-space.c     | 3 +++
+ 2 files changed, 5 insertions(+)
 
-1. Return the virtual address by function returning as below:
-void *page_frag_alloc_bio(struct page_frag_cache *nc, struct bio_vec *bio);
+diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+index 30b4c288c1bb..c3fbbf4d3db7 100644
+--- a/drivers/char/tpm/tpm-dev-common.c
++++ b/drivers/char/tpm/tpm-dev-common.c
+@@ -47,6 +47,8 @@ static ssize_t tpm_dev_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 
+ 	if (!ret)
+ 		ret = tpm2_commit_space(chip, space, buf, &len);
++	else
++		tpm2_flush_space(chip);
+ 
+ out_rc:
+ 	return ret ? ret : len;
+diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
+index 4892d491da8d..25a66870c165 100644
+--- a/drivers/char/tpm/tpm2-space.c
++++ b/drivers/char/tpm/tpm2-space.c
+@@ -169,6 +169,9 @@ void tpm2_flush_space(struct tpm_chip *chip)
+ 	struct tpm_space *space = &chip->work_space;
+ 	int i;
+ 
++	if (!space)
++		return;
++
+ 	for (i = 0; i < ARRAY_SIZE(space->context_tbl); i++)
+ 		if (space->context_tbl[i] && ~space->context_tbl[i])
+ 			tpm2_flush_context(chip, space->context_tbl[i]);
+-- 
+2.46.0
 
-2. Return the virtual address by double pointer as below:
-int page_frag_alloc_bio(struct page_frag_cache *nc, struct bio_vec *bio,
-		        void **va);
-
-If the above options is what you have in mind, please be more specific
-which one is the prefer option, and why it is the prefer option.
-If the above options is not what you have in mind, please list out the
-declaration of API in your mind.
-
-> 
-> I am going to nack this patch set if you insist on this pointless
-> renaming. The fact is it is just adding noise that adds no value.
 
