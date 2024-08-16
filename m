@@ -1,193 +1,275 @@
-Return-Path: <linux-kernel+bounces-288734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68A73953E1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 02:02:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2770953E1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 02:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4D761F23CB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 00:02:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D0D8B244DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 00:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51ADC372;
-	Fri, 16 Aug 2024 00:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F4A1877;
+	Fri, 16 Aug 2024 00:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jJvjUQbO";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qrq3SxNm";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UBMKlIxB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HllHwf0T"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sgsYE1Mm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD09B1803A;
-	Fri, 16 Aug 2024 00:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2804372;
+	Fri, 16 Aug 2024 00:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723766556; cv=none; b=qleO9TMJO3ewg2dJdgZcyJYazBOc7rlzsNrXOd7fx7k1UO8CX26UCZrc4BNZq+Nh6JiO+PPyKehuVVRTWikv6dG/djPOf/Kbp71EdbVXAw7VkGR4h3OENPrGgEXgatffsBAd59AjxevRocwgXUhw4A9XaUfT8ZTi96KI4MHLjfg=
+	t=1723767147; cv=none; b=BwQsnWWFnOPv7BqIq6kAp7BQerWx3wDTaNEXfUNloPrO53SiMyYHtUZp3AaisLVX8leULn2KUMZWyWZJx+wemrfkbPKTJpGnvdMecWhElQXFWqF4k7DhfO6vJ8qliDjqnX4PVJta511HvyjAvgzTYBnY2hoeCYGO1kf/JGhnCAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723766556; c=relaxed/simple;
-	bh=QW8magj+iBg7jdZR2M7hkUQddbsFq/HnOPIuTzwhki0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tu7mSrg6NnlFTlqcDgr/cBScNaZzA6C/U0hgpROuLMshaB1TaSufxX6Pu4k+cSA3ITE/73rhmwSOXFzBCjNFgzd5GVlyzVrtDmW3rSfshyk61jFJmnIZANjxS6nh8xEqlMiGiPG/xK4o2H7YK4imyo/JO3geDn+AIxb/xTGp+mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jJvjUQbO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qrq3SxNm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UBMKlIxB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HllHwf0T; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C8D371FD75;
-	Fri, 16 Aug 2024 00:02:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723766553;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SoUvm5dLsjWCREcQtqouQfhCgMrPk2DtMelMDP51pes=;
-	b=jJvjUQbOdauoRVn396ehIbAO0R7ByfWjmvuT0MSBaSN7L2QC95qahHfh8N+Vs1Wr5bc+WC
-	CP7rMaRnmwv/S6ap9IGR5/ppZcXCVJYtvXCYFGOV6WBVCdRH0PYLtmMkPo2CPWN3Fbltnf
-	M3P2je+GjE5LmKgR8D7Z5PX/SD571CA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723766553;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SoUvm5dLsjWCREcQtqouQfhCgMrPk2DtMelMDP51pes=;
-	b=qrq3SxNmlM5ETpnchqMpbpOmkepJhAS68Rb1jO4J/OCUYqteLjEbKZhv2pBwP06FMl35Aq
-	6w/qMQ5EH3XsYjDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=UBMKlIxB;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=HllHwf0T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723766552;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SoUvm5dLsjWCREcQtqouQfhCgMrPk2DtMelMDP51pes=;
-	b=UBMKlIxBun7T3SYxJV0JpPdw5i8kRd92cdhk0KjN3PRSzVvE9CoNwcAt/sRG4wRlj+en1Z
-	/P1yHV3zzuhZ3UExUiem6X0JeC9dTlLElh/cqG9LJJEQOuf2suRKJq1hm7DEjVDUYEilRd
-	FKsIp2rv1Xe47kPdG1wblgXcE2s0bM4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723766552;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SoUvm5dLsjWCREcQtqouQfhCgMrPk2DtMelMDP51pes=;
-	b=HllHwf0TdyfIU/WcRw/7WsT3ENwRlXK+PWiv/cWbWpLQZLUd8rrA2eVsKDQmW1kOB27M9o
-	uvvwYIOso5wS8zCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9F8D613894;
-	Fri, 16 Aug 2024 00:02:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id pexxJhiXvma9FgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Fri, 16 Aug 2024 00:02:32 +0000
-Date: Fri, 16 Aug 2024 02:02:31 +0200
-From: David Sterba <dsterba@suse.cz>
-To: intelfx@intelfx.name
-Cc: Filipe Manana <fdmanana@kernel.org>,
-	Jannik =?iso-8859-1?Q?Gl=FCckert?= <jannik.glueckert@gmail.com>,
-	andrea.gelmini@gmail.com, dsterba@suse.com, josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mikhail.v.gavrilov@gmail.com, regressions@lists.linux.dev
-Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted
- increased execution time of the kswapd0 process and symptoms as if there is
- not enough memory
-Message-ID: <20240816000231.GG25962@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <CAL3q7H5zfQNS1qy=jAAZa-7w088Q1K-R7+asj-f++6=N8skWzg@mail.gmail.com>
- <277314c9-c4aa-4966-9fbe-c5c42feed7ef@gmail.com>
- <CAL3q7H4iYRsjG9BvRYh_aB6UN-QFuTCqJdiq6hV_Xh7+U7qJ5A@mail.gmail.com>
- <3df4acd616a07ef4d2dc6bad668701504b412ffc.camel@intelfx.name>
- <95f2c790f1746b6a3623ceb651864778d26467af.camel@intelfx.name>
+	s=arc-20240116; t=1723767147; c=relaxed/simple;
+	bh=GvB4H22h4QOyHHefP0mnM9E2EBFfbvQezXUvW6AQ6SA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rHFVVsbPT9VXn/lPIcKA3W/iL1sQe+lx7O0RUSGK09juLSB0R2GCfJw8VKzNsuF7UUcwVO5YDBiv4OQ9s1qK3ZSdTrFTeTqm0CL7QJwRjZKtep101to/iOd0EU3KAEebAqpbqKIzXMKMx8rFscwNF9t+YnR+MXkBgqiByP0XI14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sgsYE1Mm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21F35C32786;
+	Fri, 16 Aug 2024 00:12:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723767145;
+	bh=GvB4H22h4QOyHHefP0mnM9E2EBFfbvQezXUvW6AQ6SA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sgsYE1Mmtxil7/a6m3cG2btLqmK6ozsLre3AI7CyeIiHtX9LBN44IKFRbbVzuesFM
+	 m91KQjAnMURXZHVKLcJd5TAuc56RLjMB6AYtnLgNTd8S39gtk2qcf4JH41EXoony4i
+	 KJIYCrAHG/so0u3tM/DTzlKwc8sLq6pYIlD6ReygtL88wPLqV17g7/pc1iQucBvc2w
+	 R7Sctawot6rvBA0e9bF3floY/7x69IZcXXFgh6TfaVvTK48aCpR/VfH563Xfur4NJI
+	 OzZ2IgoLxZBM72horxdefwdBcnPpdJYBd7NVBxN8nKew0NJHSz0jkrPLg460NnI5Ex
+	 XGfyXeGFi55eg==
+From: Danilo Krummrich <dakr@kernel.org>
+To: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	wedsonaf@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@samsung.com,
+	aliceryhl@google.com,
+	akpm@linux-foundation.org
+Cc: daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com,
+	boris.brezillon@collabora.com,
+	lina@asahilina.net,
+	mcanal@igalia.com,
+	zhiw@nvidia.com,
+	cjia@nvidia.com,
+	jhubbard@nvidia.com,
+	airlied@redhat.com,
+	ajanulgu@redhat.com,
+	lyude@redhat.com,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-mm@kvack.org,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH v6 00/26] Generic `Allocator` support for Rust
+Date: Fri, 16 Aug 2024 02:10:42 +0200
+Message-ID: <20240816001216.26575-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <95f2c790f1746b6a3623ceb651864778d26467af.camel@intelfx.name>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.71 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,gmail.com,suse.com,toxicpanda.com,vger.kernel.org,lists.linux.dev];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Queue-Id: C8D371FD75
-X-Spam-Flag: NO
-X-Rspamd-Action: no action
-X-Spam-Level: 
-X-Spam-Score: -2.71
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 16, 2024 at 01:17:25AM +0200, intelfx@intelfx.name wrote:
-> On 2024-08-16 at 00:21 +0200, intelfx@intelfx.name wrote:
-> > On 2024-08-11 at 16:33 +0100, Filipe Manana wrote:
-> > > <...>
-> > > This came to my attention a couple days ago in a bugzilla report here:
-> > > 
-> > > https://bugzilla.kernel.org/show_bug.cgi?id=219121
-> > > 
-> > > There's also 2 other recent threads in the mailing about it.
-> > > 
-> > > There's a fix there in the bugzilla, and I've just sent it to the mailing list.
-> > > In case you want to try it:
-> > > 
-> > > https://lore.kernel.org/linux-btrfs/d85d72b968a1f7b8538c581eeb8f5baa973dfc95.1723377230.git.fdmanana@suse.com/
-> > > 
-> > > Thanks.
-> > 
-> > Hello,
-> > 
-> > I confirm that excessive "system" CPU usage by kswapd and btrfs-cleaner
-> > kernel threads is still happening on the latest 6.10 stable with all
-> > quoted patches applied, making the system close to unusable (not to
-> > mention excessive power usage which crosses the line well *into*
-> > "unusable" for low-power systems such as laptops).
-> > 
-> > With just 5 minutes of uptime on a freshly booted 6.10.5 system, the
-> > cumulative CPU time of kswapd is already at 2 minutes.
-> 
-> As a follow-up, after 1 hour of uptime of this system the total CPU
-> time of kswapd0 is exactly 30 minutes. So whatever is the theoretical
-> OOM issue that the extent map shrinker is trying to solve, the solution
-> in its current form is clearly unacceptable.
-> 
-> Can we please have it reverted on the basis of this severe regression,
-> until a better solution is found?
+Hi,
 
-It's not just one patch so a clean revert may not be possible, I'll see
-if there's another possibility to either avoid depending on shrinker to
-free the data or do a different workaround.
+This patch series adds generic kernel allocator support for Rust, which so far
+is limited to `kmalloc` allocations.
+
+In order to abstain from (re-)adding unstable Rust features to the kernel, this
+patch series does not extend the `Allocator` trait from Rust's `alloc` crate,
+nor does it extend the `BoxExt` and `VecExt` extensions.
+
+Instead, this series introduces a kernel specific `Allocator` trait, which is
+implemented by the `Kmalloc`, `Vmalloc` and `KVmalloc` allocators, also
+implemented in the context of this series.
+
+As a consequence we need our own kernel `Box<T, A>` and `Vec<T, A>` types.
+Additionally, this series adds the following type aliases:
+
+```
+pub type KBox<T> = Box<T, Kmalloc>;
+pub type VBox<T> = Box<T, Vmalloc>;
+pub type KVBox<T> = Box<T, KVmalloc>;
+
+
+pub type KVec<T> = Vec<T, Kmalloc>;
+pub type VVec<T> = Vec<T, Vmalloc>;
+pub type KVVec<T> = Vec<T, KVmalloc>;
+```
+
+With that, we can start using the kernel `Box` and `Vec` types throughout the
+tree and remove the now obolete extensions `BoxExt` and `VecExt`.
+
+For a final cleanup, this series removes the last minor dependencies to Rust's
+`alloc` crate and removes it from the entire kernel build.
+
+The series ensures not to break the `rusttest` make target by implementing the
+`allocator_test` module providing a stub implementation for all kernel
+`Allocator`s.
+
+This patch series passes all KUnit tests, including the ones added by this
+series. Additionally, the tests were run with `kmemleak` and `KASAN` enabled,
+without any issues.
+
+This series is based on [1], which hit -mm/mm-unstable, and is also available
+in [2].
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=mm/krealloc
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/mm
+
+Changes in v6:
+ - rebase onto rust-dev
+ - keep compiler annotations for {k,v,kv}realloc()
+ - documentation changes suggested by Alice, Benno
+ - remove `Box::into_pin`
+ - fix typo in `Send` and `Sync` for `Box` and `Vec`
+ - `kvec!` changes suggested by Alice
+ - free `src` after copy in `Cmalloc`
+ - handle `n == 0` in `Vec::extend_with`
+
+Changes in v5:
+ - (safety) comment / documentation fixes suggested by Alice, Benno and Gary
+ - remove `Unique<T>` and implement `Send` and `Sync` for `Box` and `Vec`
+ - use `KMALLOC_MAX_SIZE` for `KVmalloc` test and add a `Kmalloc` test that
+   expects to fail for `KMALLOC_MAX_SIZE`
+ - create use constants `KREALLOC`, `VREALLOC` and `KVREALLOC` for
+   `ReallocFuncs`
+ - drop `Box::drop_contents` for now, will add it again, once I actually rebase
+   on the original patch that introduces it
+ - improve usage of `size_of_val` in `Box`
+ - move `InPlaceInit` and `ForeignOwnable` impls into kbox.rs
+ - fix missing `Box` conversions in rnull.rs
+ - reworked `Cmalloc` to keep track of the size of memory allocations itself
+ - remove `GlobalAlloc` together with the `alloc` crate to avoid a linker error
+ - remove `alloc` from scripts/generate_rust_analyzer.py
+
+Changes in v4:
+ - (safety) comment fixes suggested by Alice and Boqun
+ - remove `Box::from_raw_alloc` and `Box::into_raw_alloc`, we don't need them
+ - in `Box::drop` call `size_of_val` before `drop_in_place`
+ - implement ForeignOwnable for Pin<Box<T>> as suggested by Alice
+ - in `Vec::extend_with`, iterate over `n` instead of `spare.len()`
+ - for `Vmalloc` and `KVmalloc` fail allocation for alignments larger than
+   PAGE_SIZE for now (will add support for larger alignments in a separate
+   series)
+ - implement `Cmalloc` in `allocator_test` and type alias all kernel allocator
+   types to it, such that we can use the kernel's `Box` and `Vec` types in
+   userspace tests (rusttest)
+   - this makes patch "rust: str: test: replace `alloc::format`" rather trivial
+
+Changes in v3:
+ - Box:
+   - minor documentation fixes
+   - removed unnecessary imports in doc tests
+   - dropeed `self` argument from some remaining `Box` methods
+   - implement `InPlaceInit` for Box<T, A> rather than specifically for `KBox<T>`
+ - Vec:
+   - minor documentation fixes
+   - removed useless `Vec::allocator` method
+   - in `Vec::extend_with` use `Vec::spare_capacity_mut` instead of raw pointer operations
+   - added a few missing safety comments
+   - pass GFP flags to `Vec::collect`
+ - fixed a rustdoc warning in alloc.rs
+ - fixed the allocator_test module to implement the `Allocator` trait correctly
+ - rebased to rust-next
+
+Changes in v2:
+  - preserve `impl GlobalAlloc for Kmalloc` and remove it at the end (Benno)
+  - remove `&self` parameter from all `Allocator` functions (Benno)
+  - various documentation fixes for `Allocator` (Benno)
+  - use `NonNull<u8>` for `Allocator::free` and `Option<NonNull<u8>>` for
+    `Allocator::realloc` (Benno)
+  - fix leak of `IntoIter` in `Vec::collect` (Boqun)
+  - always realloc (try to shrink) in `Vec::collect`, it's up the the
+    `Allocator` to provide a heuristic whether it makes sense to actually shrink
+  - rename `KBox<T, A>` -> `Box<T, A>` and `KVec<T, A>` -> `Vec<T, A>` and
+    provide type aliases `KBox<T>`, `VBox<T>`, `KVBox<T>`, etc.
+    - This allows for much cleaner code and, in combination with removing
+      `&self` parameters from `Allocator`s, gets us rid of the need for
+      `Box::new` and `Box::new_alloc` and all other "_alloc" postfixed
+      functions.
+    - Before: `KBox::new_alloc(foo, Vmalloc)?`
+    - After:  `VBox::new(foo)?`, which resolves to
+              `Box::<Foo,  Vmalloc>::new(foo)?;
+
+
+Danilo Krummrich (26):
+  rust: alloc: add `Allocator` trait
+  rust: alloc: separate `aligned_size` from `krealloc_aligned`
+  rust: alloc: rename `KernelAllocator` to `Kmalloc`
+  rust: alloc: implement `Allocator` for `Kmalloc`
+  rust: alloc: add module `allocator_test`
+  rust: alloc: implement `Vmalloc` allocator
+  rust: alloc: implement `KVmalloc` allocator
+  rust: alloc: add __GFP_NOWARN to `Flags`
+  rust: alloc: implement kernel `Box`
+  rust: treewide: switch to our kernel `Box` type
+  rust: alloc: remove `BoxExt` extension
+  rust: alloc: add `Box` to prelude
+  rust: alloc: implement kernel `Vec` type
+  rust: alloc: implement `IntoIterator` for `Vec`
+  rust: alloc: implement `collect` for `IntoIter`
+  rust: treewide: switch to the kernel `Vec` type
+  rust: alloc: remove `VecExt` extension
+  rust: alloc: add `Vec` to prelude
+  rust: error: use `core::alloc::LayoutError`
+  rust: error: check for config `test` in `Error::name`
+  rust: alloc: implement `contains` for `Flags`
+  rust: alloc: implement `Cmalloc` in module allocator_test
+  rust: str: test: replace `alloc::format`
+  rust: alloc: update module comment of alloc.rs
+  kbuild: rust: remove the `alloc` crate and `GlobalAlloc`
+  MAINTAINERS: add entry for the Rust `alloc` module
+
+ MAINTAINERS                         |   7 +
+ drivers/block/rnull.rs              |   4 +-
+ rust/Makefile                       |  44 +-
+ rust/bindings/bindings_helper.h     |   1 +
+ rust/exports.c                      |   1 -
+ rust/helpers.c                      |  15 +
+ rust/kernel/alloc.rs                | 142 ++++-
+ rust/kernel/alloc/allocator.rs      | 173 ++++--
+ rust/kernel/alloc/allocator_test.rs | 185 ++++++
+ rust/kernel/alloc/box_ext.rs        |  80 ---
+ rust/kernel/alloc/kbox.rs           | 480 +++++++++++++++
+ rust/kernel/alloc/kvec.rs           | 891 ++++++++++++++++++++++++++++
+ rust/kernel/alloc/vec_ext.rs        | 185 ------
+ rust/kernel/error.rs                |   6 +-
+ rust/kernel/init.rs                 |  93 +--
+ rust/kernel/init/__internal.rs      |   2 +-
+ rust/kernel/lib.rs                  |   1 -
+ rust/kernel/prelude.rs              |   5 +-
+ rust/kernel/rbtree.rs               |  34 +-
+ rust/kernel/str.rs                  |  35 +-
+ rust/kernel/sync/arc.rs             |  17 +-
+ rust/kernel/sync/condvar.rs         |   4 +-
+ rust/kernel/sync/lock/mutex.rs      |   2 +-
+ rust/kernel/sync/lock/spinlock.rs   |   2 +-
+ rust/kernel/sync/locked_by.rs       |   2 +-
+ rust/kernel/types.rs                |  30 +-
+ rust/kernel/uaccess.rs              |  17 +-
+ rust/kernel/workqueue.rs            |  20 +-
+ rust/macros/lib.rs                  |  12 +-
+ samples/rust/rust_minimal.rs        |   4 +-
+ scripts/Makefile.build              |   7 +-
+ scripts/generate_rust_analyzer.py   |  11 +-
+ 32 files changed, 1973 insertions(+), 539 deletions(-)
+ create mode 100644 rust/kernel/alloc/allocator_test.rs
+ delete mode 100644 rust/kernel/alloc/box_ext.rs
+ create mode 100644 rust/kernel/alloc/kbox.rs
+ create mode 100644 rust/kernel/alloc/kvec.rs
+ delete mode 100644 rust/kernel/alloc/vec_ext.rs
+
+
+base-commit: f005c686d6c1a2e66f2f9d21179d6b6bd45b20e2
+-- 
+2.46.0
+
 
