@@ -1,146 +1,92 @@
-Return-Path: <linux-kernel+bounces-290110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67F58954F84
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:05:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C6FE954F88
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:05:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EDE21F22132
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:05:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D8951C2177C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097811BF33E;
-	Fri, 16 Aug 2024 17:05:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB381C230B;
+	Fri, 16 Aug 2024 17:05:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G4G4Xsrh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gZDxZnYh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458EB6F2F8;
-	Fri, 16 Aug 2024 17:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709C51BDA87;
+	Fri, 16 Aug 2024 17:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723827930; cv=none; b=tnQUM+eObWH4XXBTPGmV6y2rG5lv4hFueoU2gs82RtLF6+kdhREk6KXbr42I8Qzoux84VZ/4vv12bR5CuuXK6gFbonmVZJEhbrp9GBQEUfddK4eEajC3lWouOMIautuYsnfKCs7+Bn6/hYPci4y5Q0Tikfs516np1nvmH9SSb5w=
+	t=1723827940; cv=none; b=mXrgfSgzAgDGe7o4nYAQ7letMZMKe/q/9crZlpnlVJ3acvB3+6oB1wN3VRh3fsLOev+nMmcRjOMv33Em2td/0jXTmcOQahukdGJNolhrG6zErM7RnYyJDaCcJ4RFtwuRM04OLgbDwNLilmKG0KwwjoxS2q7xD3pUbi60eXlO/6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723827930; c=relaxed/simple;
-	bh=V54iIFmbnKqn3uHqs1C4I5uZ8x2fSzpyzRaYB5/dss4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k2t4qukW13YTqh0y/mPYrFlLaizYkGy9fSC78J+1UFWE6JSuy/HyPz7iG7PQvX+NW7jdU32z6zHZBHGt4roCxhxhzUUT7D/jiJHJIYkgWZJSSOBREFhZzwC1SDCg7NhCwuNUCQoTezddbwb2HajfzM/BIml4bhgbseU1GHpHoQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G4G4Xsrh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CB1AC32782;
-	Fri, 16 Aug 2024 17:05:29 +0000 (UTC)
+	s=arc-20240116; t=1723827940; c=relaxed/simple;
+	bh=TKvbI1GAEeItb2bEFwK/yASbak4bQTgxXpY2SIvi1DU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CZ8P1KZ/j68ey9OWs4bOcqKwl/VF8mX1hfeIlwAehWOU60jHfU5lHmLbKguiHlYaUxsEfhiTVpt8CBr8xXPV5TSZgw/+pCYMYsY1gzhEU6UHZpp/YuUoWJs5mAkOFoM5Nbz6XjVY5cPB6Ll/Nbk4zogpripmu8lGYPIOf3Oyebw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gZDxZnYh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9296C32782;
+	Fri, 16 Aug 2024 17:05:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723827929;
-	bh=V54iIFmbnKqn3uHqs1C4I5uZ8x2fSzpyzRaYB5/dss4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G4G4Xsrh1IdESY3gYtocw1Z6JdbvHckeurZlU0fTjuF3mFtk8TToB9jIghWAzLVPa
-	 keremIZwrOL9SjdoJm7zZs5xhJ8MorQCknsfKbD9u0wxFCHVl7zvket7JOZ9Q/ACsq
-	 75a2BznfZtH4VyRfJI8y13FwAbxWHQdQPqTPwwvFXosUkFV7HIxJ5qglTamLu7UBKE
-	 yXLxRonEYeIZuY4gahHhwI4/dgfEiiFcNH1hd7HozW5axpP5GpoCjH8xViwhrCD5U5
-	 rsBn2WbSAtEjJZ2UU+ojWSD2VnRKnh0R17poUM5M/pYCvlk7Wlm0DSDmhshbijbHSH
-	 Ps2FRDm9F/GJg==
-Date: Fri, 16 Aug 2024 10:05:28 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Yang Jihong <yangjihong@bytedance.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf sched timehist: Fixed timestamp error when unable
- to confirm event sched_in time
-Message-ID: <Zr-G2IjXp_W2CkHi@google.com>
-References: <20240806034357.1340216-1-yangjihong@bytedance.com>
+	s=k20201202; t=1723827940;
+	bh=TKvbI1GAEeItb2bEFwK/yASbak4bQTgxXpY2SIvi1DU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gZDxZnYhrb78J/hqA57WOJfo1+Dr08NPTYbnvgLhfkA6+9sAjqEcYIkkQ1z9FjdCZ
+	 zaLcmaacYWaBF+mzuLUc7HKMQkbJri8pgw8wQCbTcSzz1gT+MghqhUazDTnfHxEeLU
+	 UMefPPeouOulIMKPNdJoO57o6H6KIv4yru+q9m3SoEd18E8zL0sWrpRvZTAoEB+tSv
+	 a8dwwqOq2CttymwE8VXN7agwheSuiJ/9VzGwJ87QvE/Kcsw06eyihkzMjaUFlXHwPg
+	 0xGaLJj87Z01LhN3LPVJZC30oaxqSY6yFAcvD0zyoY4mDcMmYvKPftcTMHRM1oW+c1
+	 6gOgigVK8pHcw==
+Date: Fri, 16 Aug 2024 10:05:37 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
+Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+ <horms@kernel.org>, <saeedm@nvidia.com>, <anthony.l.nguyen@intel.com>,
+ <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <andrew@lunn.ch>,
+ <corbet@lwn.net>, <linux-doc@vger.kernel.org>, <robh+dt@kernel.org>,
+ <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+ <devicetree@vger.kernel.org>, <horatiu.vultur@microchip.com>,
+ <ruanjinjie@huawei.com>, <steen.hegelund@microchip.com>,
+ <vladimir.oltean@nxp.com>, <masahiroy@kernel.org>, <alexanderduyck@fb.com>,
+ <krzk+dt@kernel.org>, <robh@kernel.org>, <rdunlap@infradead.org>,
+ <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+ <UNGLinuxDriver@microchip.com>, <Thorsten.Kummermehr@microchip.com>,
+ <Pier.Beruto@onsemi.com>, <Selvamani.Rajagopal@onsemi.com>,
+ <Nicolas.Ferre@microchip.com>, <benjamin.bigler@bernformulastudent.ch>,
+ <linux@bigler.io>, <markku.vorne@kempower.com>
+Subject: Re: [PATCH net-next v6 13/14] microchip: lan865x: add driver
+ support for Microchip's LAN865X MAC-PHY
+Message-ID: <20240816100537.7457ba58@kernel.org>
+In-Reply-To: <20240812102611.489550-14-Parthiban.Veerasooran@microchip.com>
+References: <20240812102611.489550-1-Parthiban.Veerasooran@microchip.com>
+	<20240812102611.489550-14-Parthiban.Veerasooran@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240806034357.1340216-1-yangjihong@bytedance.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 06, 2024 at 11:43:57AM +0800, Yang Jihong wrote:
-> If sched_in event for current task is not recorded, sched_in timestamp
-> will be set to end_time of time window interest, causing an error in
-> timestamp show. In this case, we choose to ignore this event.
-> 
-> Test scenario:
->   perf[1229608] does not record the first sched_in event, run time and sch delay are both 0
-> 
->   # perf sched timehist
->   Samples of sched_switch event do not have callchains.
->              time    cpu  task name                       wait time  sch delay   run time
->                           [tid/pid]                          (msec)     (msec)     (msec)
->   --------------- ------  ------------------------------  ---------  ---------  ---------
->    2090450.763231 [0000]  perf[1229608]                       0.000      0.000      0.000
->    2090450.763235 [0000]  migration/0[15]                     0.000      0.001      0.003
->    2090450.763263 [0001]  perf[1229608]                       0.000      0.000      0.000
->    2090450.763268 [0001]  migration/1[21]                     0.000      0.001      0.004
->    2090450.763302 [0002]  perf[1229608]                       0.000      0.000      0.000
->    2090450.763309 [0002]  migration/2[27]                     0.000      0.001      0.007
->    2090450.763338 [0003]  perf[1229608]                       0.000      0.000      0.000
->    2090450.763343 [0003]  migration/3[33]                     0.000      0.001      0.004
-> 
-> Before:
->   arbitrarily specify a time window of interest, timestamp will be set to an incorrect value
-> 
->   # perf sched timehist --time 100,200
->   Samples of sched_switch event do not have callchains.
->              time    cpu  task name                       wait time  sch delay   run time
->                           [tid/pid]                          (msec)     (msec)     (msec)
->   --------------- ------  ------------------------------  ---------  ---------  ---------
->        200.000000 [0000]  perf[1229608]                       0.000      0.000      0.000
->        200.000000 [0001]  perf[1229608]                       0.000      0.000      0.000
->        200.000000 [0002]  perf[1229608]                       0.000      0.000      0.000
->        200.000000 [0003]  perf[1229608]                       0.000      0.000      0.000
->        200.000000 [0004]  perf[1229608]                       0.000      0.000      0.000
->        200.000000 [0005]  perf[1229608]                       0.000      0.000      0.000
->        200.000000 [0006]  perf[1229608]                       0.000      0.000      0.000
->        200.000000 [0007]  perf[1229608]                       0.000      0.000      0.000
-> 
->  After:
-> 
->   # perf sched timehist --time 100,200
->   Samples of sched_switch event do not have callchains.
->              time    cpu  task name                       wait time  sch delay   run time
->                           [tid/pid]                          (msec)     (msec)     (msec)
->   --------------- ------  ------------------------------  ---------  ---------  ---------
-> 
-> Fixes: 853b74071110 ("perf sched timehist: Add option to specify time window of interest")
-> Signed-off-by: Yang Jihong <yangjihong@bytedance.com>
-> ---
->  tools/perf/builtin-sched.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-> index 8750b5f2d49b..92b1113b22ad 100644
-> --- a/tools/perf/builtin-sched.c
-> +++ b/tools/perf/builtin-sched.c
-> @@ -2683,9 +2683,12 @@ static int timehist_sched_change_event(struct perf_tool *tool,
->  	 * - previous sched event is out of window - we are done
->  	 * - sample time is beyond window user cares about - reset it
->  	 *   to close out stats for time window interest
-> +	 * - If tprev is 0, that is, sched_in event for current task is
-> +	 *   not recorded, cannot determine whether sched_in event is
-> +	 *   within time window interest - ignore it
->  	 */
->  	if (ptime->end) {
-> -		if (tprev > ptime->end)
-> +		if (!tprev || (tprev && tprev > ptime->end))
+On Mon, 12 Aug 2024 15:56:10 +0530 Parthiban Veerasooran wrote:
+> +static void
+> +lan865x_get_drvinfo(struct net_device *netdev, struct ethtool_drvinfo *info)
+> +{
+> +	strscpy(info->driver, DRV_NAME, sizeof(info->driver));
+> +	strscpy(info->bus_info, dev_name(netdev->dev.parent),
+> +		sizeof(info->bus_info));
+> +}
+> +
 
-This can be 'if (!tprev || tprev > ptime->end)'
+Could you check if deleting this function has any effect?
+Core should fill in the basic info automatically, modern
+drivers usually only have to fill in FW version, if at all.
 
-Thanks,
-Namhyung
+If without the callback ethtool -i doesn't report the right
+info, please make sure SET_NETDEV_DEV() gets called.
 
-
->  			goto out;
->  
->  		if (t > ptime->end)
-> -- 
-> 2.25.1
-> 
 
