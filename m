@@ -1,219 +1,190 @@
-Return-Path: <linux-kernel+bounces-290225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C443E9550F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:38:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D7A89550F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:40:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 740AC2842C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:38:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C15F11F2277F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D871C37A1;
-	Fri, 16 Aug 2024 18:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7F31C37B4;
+	Fri, 16 Aug 2024 18:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=netc.fr header.i=@netc.fr header.b="dbZPqTeH"
-Received: from mailo.com (msg-4.mailo.com [213.182.54.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="BLmCyobg"
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F74328FF
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 18:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.182.54.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B4E7DA90
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 18:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723833530; cv=none; b=S5jDgiOPLpZCcSYnbAiCITazeOUgohrONFtQNqOPugGPOvSU+BCJyeF9xT73qbqFRULLLCv+MQBwImbxJyI7tNMz3YXIFG/RzU16RZmejA15MdUDSZ6L+ooyXpPWVWAAoIdpqtWQIr+BaJQVI1hkYUPWL7rQsDdtu01rmQb+62A=
+	t=1723833612; cv=none; b=kcCpQXylcgCASWBbgWsMZP6TfZCj0bPnNHLy5WjkW5hXoETxs25bhUcrpTaa/SXl9JFOMViEzwsCyauXQz/ib+h5SLYt9yDKV6mcTvaMBbjcIM21RBNnFHqD5jsoB0F4bDk5hrwC+7FFXhM0KQ9b85xsxWuPEuTMBzB2W7PKqYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723833530; c=relaxed/simple;
-	bh=w2zNACUIGRSA2xy3BFISwYbfbac4NgwJSaNaM5z6h4Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oQbIVb/hfJ6SCSRHXYo/+hcXHfxsV0zoXSv7O3ZOHrCYHyF6WrGlMVf4u34OS29zSbVrv7TMzcKRH2RoULwBw6An3aBfjOpfz1wEVgTizw3c2g40XiWgKxPqvvdVxyi85T9+ItoWjHSc3QrmiNsxotQEyv4q6DzEPwuR0KynXl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=netc.fr; spf=pass smtp.mailfrom=netc.fr; dkim=pass (1024-bit key) header.d=netc.fr header.i=@netc.fr header.b=dbZPqTeH; arc=none smtp.client-ip=213.182.54.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=netc.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netc.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=netc.fr; s=mailo;
-	t=1723833510; bh=w2zNACUIGRSA2xy3BFISwYbfbac4NgwJSaNaM5z6h4Q=;
-	h=X-EA-Auth:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	b=dbZPqTeHyWNL9zZ5ILjxdDaNj0aJg/56H1ZcdjHwaQv4RwIZDJ/rLpCIbWAkdDQK9
-	 T7lYAfsgS2BWStdGbd65AzfvWV5xMc1rcvsoNptQ6eUKfxJS/IW/LpqoEat9KxJLUL
-	 sd0z7ZkjVZXF0Rp9TiSelvBcEe8zFyQnslAb99ag=
-Received: by b-6.in.mailobj.net [192.168.90.16] with ESMTP
-	via ip-20.mailobj.net [213.182.54.20]
-	Fri, 16 Aug 2024 20:38:30 +0200 (CEST)
-X-EA-Auth: rFYSvjmkmKT6XOrqsjpK0F8VIEGSasceXmh6AWftftw6WYGlQHukrVVnXifgq9RxT1W3ruhPwgjP8xux6C1cAjqHKUSYRUf4VGRcbFMhcC5jKR7+JVc7kg==
-From: =?UTF-8?q?Guillaume=20Lef=C3=A8vre-Crim=C3=A9?= <guillaume.lefevre.crime@netc.fr>
-To: gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	guillaume.lefevre.crime@netc.fr
-Subject: [PATCH] staging: rtl8723bs: add spaces arround operators
-Date: Fri, 16 Aug 2024 20:37:32 +0200
-Message-ID: <20240816183756.59250-1-guillaume.lefevre.crime@netc.fr>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1723833612; c=relaxed/simple;
+	bh=gDHYEQT8Cqhj6IeZ2Y1cCI9cD5rvx4Ka+myG+mT3dfw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nx6oywaGlBJjs5l1euS1nZL3UICW7k/dGfnNTcRGc2+HnB+A93hIkQClBoCVA727YHzsM7jY00PLa/SrOYaUbHr17yhAmnSA5ZJ6widLGfCY902OFgocYhSRbZTBaeQ/znp8E4ibHxndrq/v+n43o5eMOVXqFrKh9qoLhkqVpH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=BLmCyobg; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5d608060241so1403517eaf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 11:40:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1723833609; x=1724438409; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=gDHYEQT8Cqhj6IeZ2Y1cCI9cD5rvx4Ka+myG+mT3dfw=;
+        b=BLmCyobgaNG0QiftBg0wwzGlX4D1Akp7DcYbOTOYZ57ZO9iKhIm46kexLtvqfuFoxv
+         SdFLMpOHuu7FCYZ2qxEP6jJwj8P5FHNt1TJ1SxsavCs1Nr7is2+BQRN98Zub+Zz5qYTz
+         tBbM6w5UcAjqfWdoQWoPEGmqGLcs/V70CYcfk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723833609; x=1724438409;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gDHYEQT8Cqhj6IeZ2Y1cCI9cD5rvx4Ka+myG+mT3dfw=;
+        b=dDIEPtlJKAjw1e0oPOhT1bvqfchgX9ssYlI+0cvnnrSiVDmVds0Kl41C8PUGI1vFhN
+         fjxpolPHtv55raZlakzdy0kC8i+mfJIUP96lDRq5U9MunKsBdz/9d83kXR9eykSAlmR9
+         SqdqsWguJl/tXx/zwqQhurUPoOfyX9qmDluuK0E1+lJgC512C4131WS8EX9X9Y9dyQ/O
+         v9ia/ynkta/bi0NB24sU3ysMwxgIhAaVteCHBGX7Lf9NdmViRnmiolWfdNvYr1GgOZ1x
+         34n375a5CckxBsDQvf7+xAOz1tTeDM6nb0Lx5/3trTx749bm1ewyiqQWH96i/h84Guk/
+         U/gQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHfE9XsDtXOn5xzivtsSQhkIalofBCi/t8Xni0au54j0mcjW/EAyF8iVPq3cKkJkLo1w3st6Gp1DO0u8kpWCfFEP28oETTZDyN3OVp
+X-Gm-Message-State: AOJu0YwitK4ZCK2t4euP12XPQfnXHiNVpfVXO5tzz0ZVB9ibh5aMV0wh
+	gvmXOL3B940XCawGhXqQJNSSP9TPQvzomtIOZu2QTz6j1RH6mCDTgRGEkR7zNoU=
+X-Google-Smtp-Source: AGHT+IHSBX2ozm68XCTxX41BIZlnF5f1sgB55Xdd1xkM4giwsU6lnyS61sBSkN/jIkgvA27cudZvpg==
+X-Received: by 2002:a05:6358:528a:b0:1b1:acf1:3272 with SMTP id e5c5f4694b2df-1b3931c0ce6mr515687355d.18.1723833608731;
+        Fri, 16 Aug 2024 11:40:08 -0700 (PDT)
+Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4ff0e5a1csm203323285a.74.2024.08.16.11.40.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Aug 2024 11:40:07 -0700 (PDT)
+Message-ID: <25200a9d-e222-4c40-9c97-b5e5e532db8c@citrix.com>
+Date: Fri, 16 Aug 2024 19:40:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/3] x86/msr: Switch between WRMSRNS and WRMSR with the
+ alternatives mechanism
+To: Xin Li <xin@zytor.com>, linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ peterz@infradead.org, seanjc@google.com
+References: <20240807054722.682375-1-xin@zytor.com>
+ <20240807054722.682375-3-xin@zytor.com>
+ <e18cd005-24ef-497d-b39c-74a54d89a969@citrix.com>
+ <7c09d124-08f1-40b4-813c-f0f74e19497a@zytor.com>
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <7c09d124-08f1-40b4-813c-f0f74e19497a@zytor.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Adhere to Linux kernel coding style.
-Reported by checkpath :
-CHECK: spaces preferred around that '&' (ctx:VxV)
+On 16/08/2024 6:52 pm, Xin Li wrote:
+> On 8/9/2024 4:07 PM, Andrew Cooper wrote:
+>> On 07/08/2024 6:47 am, Xin Li (Intel) wrote:
+>>> From: Andrew Cooper <andrew.cooper3@citrix.com>
+>>> +/* Instruction opcode for WRMSRNS supported in binutils >= 2.40 */
+>>> +#define WRMSRNS _ASM_BYTES(0x0f,0x01,0xc6)
+>>> +
+>>> +/* Non-serializing WRMSR, when available.  Falls back to a
+>>> serializing WRMSR. */
+>>>   static __always_inline void wrmsrns(u32 msr, u64 val)
+>>>   {
+>>> -    __wrmsrns(msr, val, val >> 32);
+>>> +    /*
+>>> +     * WRMSR is 2 bytes.  WRMSRNS is 3 bytes.  Pad WRMSR with a
+>>> redundant
+>>> +     * DS prefix to avoid a trailing NOP.
+>>> +     */
+>>> +    asm volatile("1: "
+>>> +             ALTERNATIVE("ds wrmsr",
+>>
+>> This isn't the version I presented, and there's no discussion of the
+>> alteration.
+>
+> I'm trying to implement wrmsr() as
+>
+> static __always_inline void wrmsr(u32 msr, u64 val)
+> {
+>     asm volatile("1: " ALTERNATIVE_2("wrmsr", WRMSRNS,
+> X86_FEATURE_WRMSRNS,
+>                      "call asm_xen_write_msr", X86_FEATURE_XENPV)
+>              "2: " _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_WRMSR)
+>              : : "c" (msr), "a" (val), "d" ((u32)(val >> 32)),
+>              "D" (msr), "S" (val));
+> }
+>
+>
+> As the CALL instruction is 5-byte long, and we need to pad nop for both
+> WRMSR and WRMSRNS, what about not using segment prefix at all?
 
-Signed-off-by: Guillaume Lefèvre-Crimé <guillaume.lefevre.crime@netc.fr>
----
- drivers/staging/rtl8723bs/core/rtw_efuse.c | 54 +++++++++++-----------
- 1 file changed, 27 insertions(+), 27 deletions(-)
+The prefix was a minor optimisation to avoid having a trailing nop at
+the end.
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_efuse.c b/drivers/staging/rtl8723bs/core/rtw_efuse.c
-index eb848f9bbf2c..89acb6f290cc 100644
---- a/drivers/staging/rtl8723bs/core/rtw_efuse.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_efuse.c
-@@ -38,7 +38,7 @@ Efuse_Read1ByteFromFakeContent(u16 Offset, u8 *Value)
- 	if (fakeEfuseBank == 0)
- 		*Value = fakeEfuseContent[Offset];
- 	else
--		*Value = fakeBTEfuseContent[fakeEfuseBank-1][Offset];
-+		*Value = fakeBTEfuseContent[fakeEfuseBank - 1][Offset];
- 	return true;
- }
- 
-@@ -50,7 +50,7 @@ Efuse_Write1ByteToFakeContent(u16 Offset, u8 Value)
- 	if (fakeEfuseBank == 0)
- 		fakeEfuseContent[Offset] = Value;
- 	else
--		fakeBTEfuseContent[fakeEfuseBank-1][Offset] = Value;
-+		fakeBTEfuseContent[fakeEfuseBank - 1][Offset] = Value;
- 	return true;
- }
- 
-@@ -206,21 +206,21 @@ u16		Address)
- 	if (Address < contentLen) {/* E-fuse 512Byte */
- 		/* Write E-fuse Register address bit0~7 */
- 		temp = Address & 0xFF;
--		rtw_write8(Adapter, EFUSE_CTRL+1, temp);
--		Bytetemp = rtw_read8(Adapter, EFUSE_CTRL+2);
-+		rtw_write8(Adapter, EFUSE_CTRL + 1, temp);
-+		Bytetemp = rtw_read8(Adapter, EFUSE_CTRL + 2);
- 		/* Write E-fuse Register address bit8~9 */
- 		temp = ((Address >> 8) & 0x03) | (Bytetemp & 0xFC);
--		rtw_write8(Adapter, EFUSE_CTRL+2, temp);
-+		rtw_write8(Adapter, EFUSE_CTRL + 2, temp);
- 
- 		/* Write 0x30[31]= 0 */
--		Bytetemp = rtw_read8(Adapter, EFUSE_CTRL+3);
-+		Bytetemp = rtw_read8(Adapter, EFUSE_CTRL + 3);
- 		temp = Bytetemp & 0x7F;
--		rtw_write8(Adapter, EFUSE_CTRL+3, temp);
-+		rtw_write8(Adapter, EFUSE_CTRL + 3, temp);
- 
- 		/* Wait Write-ready (0x30[31]= 1) */
--		Bytetemp = rtw_read8(Adapter, EFUSE_CTRL+3);
-+		Bytetemp = rtw_read8(Adapter, EFUSE_CTRL + 3);
- 		while (!(Bytetemp & 0x80)) {
--			Bytetemp = rtw_read8(Adapter, EFUSE_CTRL+3);
-+			Bytetemp = rtw_read8(Adapter, EFUSE_CTRL + 3);
- 			k++;
- 			if (k == 1000)
- 				break;
-@@ -253,16 +253,16 @@ bool		bPseudoTest)
- 
- 	/*  -----------------e-fuse reg ctrl --------------------------------- */
- 	/* address */
--	rtw_write8(padapter, EFUSE_CTRL+1, (u8)(addr&0xff));
--	rtw_write8(padapter, EFUSE_CTRL+2, ((u8)((addr>>8) & 0x03)) |
--	(rtw_read8(padapter, EFUSE_CTRL+2)&0xFC));
-+	rtw_write8(padapter, EFUSE_CTRL + 1, (u8)(addr & 0xff));
-+	rtw_write8(padapter, EFUSE_CTRL + 2, ((u8)((addr >> 8) & 0x03)) |
-+	(rtw_read8(padapter, EFUSE_CTRL + 2) & 0xFC));
- 
- 	/* rtw_write8(padapter, EFUSE_CTRL+3,  0x72); read cmd */
- 	/* Write bit 32 0 */
--	readbyte = rtw_read8(padapter, EFUSE_CTRL+3);
--	rtw_write8(padapter, EFUSE_CTRL+3, (readbyte & 0x7f));
-+	readbyte = rtw_read8(padapter, EFUSE_CTRL + 3);
-+	rtw_write8(padapter, EFUSE_CTRL + 3, (readbyte & 0x7f));
- 
--	while (!(0x80 & rtw_read8(padapter, EFUSE_CTRL+3)) && (tmpidx < 1000)) {
-+	while (!(0x80 & rtw_read8(padapter, EFUSE_CTRL + 3)) && (tmpidx < 1000)) {
- 		mdelay(1);
- 		tmpidx++;
- 	}
-@@ -293,9 +293,9 @@ u8 efuse_OneByteWrite(struct adapter *padapter, u16 addr, u8 data, bool bPseudoT
- 
- 
- 	efuseValue = rtw_read32(padapter, EFUSE_CTRL);
--	efuseValue |= (BIT21|BIT31);
-+	efuseValue |= (BIT21 | BIT31);
- 	efuseValue &= ~(0x3FFFF);
--	efuseValue |= ((addr<<8 | data) & 0x3FFFF);
-+	efuseValue |= ((addr << 8 | data) & 0x3FFFF);
- 
- 
- 	/*  <20130227, Kordan> 8192E MP chip A-cut had better not set 0x34[11] until B-Cut. */
-@@ -304,9 +304,9 @@ u8 efuse_OneByteWrite(struct adapter *padapter, u16 addr, u8 data, bool bPseudoT
- 	/* 0x34[11]: SW force PGMEN input of efuse to high. (for the bank selected by 0x34[9:8]) */
- 	/* PHY_SetMacReg(padapter, 0x34, BIT11, 1); */
- 	rtw_write16(padapter, 0x34, rtw_read16(padapter, 0x34) | (BIT11));
--	rtw_write32(padapter, EFUSE_CTRL, 0x90600000|((addr<<8 | data)));
-+	rtw_write32(padapter, EFUSE_CTRL, 0x90600000 | ((addr << 8 | data)));
- 
--	while ((0x80 &  rtw_read8(padapter, EFUSE_CTRL+3)) && (tmpidx < 100)) {
-+	while ((0x80 &  rtw_read8(padapter, EFUSE_CTRL + 3)) && (tmpidx < 100)) {
- 		mdelay(1);
- 		tmpidx++;
- 	}
-@@ -365,19 +365,19 @@ efuse_WordEnableDataRead(u8 word_en,
- 						u8 *sourdata,
- 						u8 *targetdata)
- {
--	if (!(word_en&BIT(0))) {
-+	if (!(word_en & BIT(0))) {
- 		targetdata[0] = sourdata[0];
- 		targetdata[1] = sourdata[1];
- 	}
--	if (!(word_en&BIT(1))) {
-+	if (!(word_en & BIT(1))) {
- 		targetdata[2] = sourdata[2];
- 		targetdata[3] = sourdata[3];
- 	}
--	if (!(word_en&BIT(2))) {
-+	if (!(word_en & BIT(2))) {
- 		targetdata[4] = sourdata[4];
- 		targetdata[5] = sourdata[5];
- 	}
--	if (!(word_en&BIT(3))) {
-+	if (!(word_en & BIT(3))) {
- 		targetdata[6] = sourdata[6];
- 		targetdata[7] = sourdata[7];
- 	}
-@@ -463,7 +463,7 @@ static void efuse_ShadowRead2Byte(struct adapter *padapter, u16 Offset, u16 *Val
- 	struct eeprom_priv *pEEPROM = GET_EEPROM_EFUSE_PRIV(padapter);
- 
- 	*Value = pEEPROM->efuse_eeprom_data[Offset];
--	*Value |= pEEPROM->efuse_eeprom_data[Offset+1]<<8;
-+	*Value |= pEEPROM->efuse_eeprom_data[Offset + 1] << 8;
- 
- }	/*  EFUSE_ShadowRead2Byte */
- 
-@@ -473,9 +473,9 @@ static void efuse_ShadowRead4Byte(struct adapter *padapter, u16 Offset, u32 *Val
- 	struct eeprom_priv *pEEPROM = GET_EEPROM_EFUSE_PRIV(padapter);
- 
- 	*Value = pEEPROM->efuse_eeprom_data[Offset];
--	*Value |= pEEPROM->efuse_eeprom_data[Offset+1]<<8;
--	*Value |= pEEPROM->efuse_eeprom_data[Offset+2]<<16;
--	*Value |= pEEPROM->efuse_eeprom_data[Offset+3]<<24;
-+	*Value |= pEEPROM->efuse_eeprom_data[Offset + 1] << 8;
-+	*Value |= pEEPROM->efuse_eeprom_data[Offset + 2] << 16;
-+	*Value |= pEEPROM->efuse_eeprom_data[Offset + 3] << 24;
- 
- }	/*  efuse_ShadowRead4Byte */
- 
--- 
-2.46.0
+When combined with a call, you need 3 prefixes on WRMSR and 2 prefixes
+on WRMSRNS to make all options be 5 bytes long.
 
+That said, there's already a paravirt hook for this, and if you're
+looking to work around the code gen mess for that, then doing it like
+this by doubling up into rdi and rsi isn't great either.
 
+My suggestion, not that I've had time to experiment, was to change
+paravirt to use a non-C ABI and have asm_xen_write_msr() recombine
+edx:eax into rsi.  That way the top level wrmsr() retains sensible
+codegen for native even when paravirt is active.
 
+~Andrew
 
