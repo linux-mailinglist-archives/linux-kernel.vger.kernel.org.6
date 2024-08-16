@@ -1,111 +1,132 @@
-Return-Path: <linux-kernel+bounces-290416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B5DE95538F
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 00:59:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10E43955393
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 00:59:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C67EB23326
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:59:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 437841C21735
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638E314658C;
-	Fri, 16 Aug 2024 22:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39691487C5;
+	Fri, 16 Aug 2024 22:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ofh8Ed8L"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="AmsXAnYr"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5059E78C9C
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 22:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C195147C71;
+	Fri, 16 Aug 2024 22:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723849156; cv=none; b=JDCdCFM0Je6WXTENhUv6dxZYAgcFcihgV8vrqjsqWgYVVGSsVP/2CszjJj1gYgUjpe+XhlnAIDziUt/GblTiOZBV5WRJiOVhqGWGzErVhQaS8fqfYJoNSfXWZKEgWExUrK/+porArbOOkWk7mwhIirHZ7AX54SLtzuNW2FSoL1I=
+	t=1723849162; cv=none; b=c7Z5PD3kJj83qjGV/Edb7UtDwlCY6dP5VocfNBy7aMz53Cqxcb31OxQEkWGM/bmZym7u6pRRSpm0sijBPjygNHtM8gxY/5J/hy5gDn5M8AJB0+NRzsmqcTFbpoB1CsxKzbYIGKuOzGva624dAICJhd/hk+gDEEM85gDJxB3cijY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723849156; c=relaxed/simple;
-	bh=MJs2a21yAaqbtR36kVTBt+DPGz0l0wyzYftG3vvf3t8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Qd/DkJMkl0T/x9UUpwz5a6FvaZnbTkxI1Bq6H+JW0RJBybqy8ZAzIVWYvDRiuFcGTgxS9/KVM59LCmuQEwyqiOl8uOXZUJpMAA/aR2duxUadyObRF6Vni+IpkrX7JHr4M3MrR8wlNnjqYFOkC7QDuvo4D4q/Q6T9Sjcsnj0mkAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ofh8Ed8L; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ad9ffa0d77so46452747b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:59:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723849154; x=1724453954; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6OigZl0tBlIvn+LyfmlGZPjZ8Rd3zNNzd+iuerO/zdw=;
-        b=ofh8Ed8LtJObjpPNPZwS5rUSfm4TaWr597j443IPNSW58ea/eOXePXdSRBxq5mR6gl
-         0KcG9INyVAUYkabl1R9kktS4U4JAzbWVI8q7YtMXkidR/H8rwYtRQYWF5zfhmorSe/Dc
-         TqGOSTEJ3TrnkPwGm+UcCO/2Gp7NXVNvwn1o53QaA40CL930ivBhbXeHY81Mm8mF6JlL
-         hqTbtRAO4m9Ny9+z9YPNHLfsOQomZVbouO8XqL2N7bF0WUYpWK3eDZKYbH3HNgljRlwR
-         IYaZPedxhQm9b1Er2ZUnC0VdPwMlNuvl5Cbc5eFaPhSP9hDV8jRmPVm4jOnFh681NvQm
-         BLFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723849154; x=1724453954;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6OigZl0tBlIvn+LyfmlGZPjZ8Rd3zNNzd+iuerO/zdw=;
-        b=f0KiV6QsBQrQGJX5a5EXEVaZEshmX7RTH1Ze0zSp0rsoQ23e/sODWO0ZTN5hOAsE1E
-         /j0jQOAWpub/xLgDSNzbbd8E6AYrxAEHDgMrP/LstD7WNmQrij7L+Z7/JzJgKXoUh6Nu
-         P1I0BYywNTr75tL5+dr7hYItObi2cx2xso+g46v4eoNQE6CdwYsXW1B0pA180jP8FWD5
-         tVMAxvPQ48BauyR8cfq2QNG2/x0c8prF6kqu2WbaoKpP6IBVLsnSbNrOJYxccE4EJHTE
-         GGmPhl4VccTvOP56Y6POtp7EXfrthrBrQUpSSL+wxyewt2/2Ho8wkApNJK3+saA+OWtS
-         dB7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUYoCoEOtaXb9uxhcmMrGeYbfnoi9kYNyZrZxVNgim1iqIhrZ6/tHjPHH21UdW+knqlPgrkyF7KEJQTxMg8NiOoI0FgN/BLmVo55WBg
-X-Gm-Message-State: AOJu0Yx7RgdeS1anj0LO3og+YhP7qa1/vTOqY6yUVkfgfIw1byHxgCsr
-	Gtlu8btm5wXsfSNCOny11F/rZrFRp/mCKUZvlq/V/k+NzH/pqlA8C8qTfG2dCCXicIchQ+Jpd4s
-	Afg==
-X-Google-Smtp-Source: AGHT+IEBjklcX/YjjkCqt7TUIQQPn/5VaTiXo1FTpq7Fi5uIK9LBoTkBv7DIWbdiZ7fQsq0WqKSltBd9lwc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:2a87:b0:673:b39a:92ce with SMTP id
- 00721157ae682-6b1b7c6a599mr999877b3.3.1723849153801; Fri, 16 Aug 2024
- 15:59:13 -0700 (PDT)
-Date: Fri, 16 Aug 2024 15:59:12 -0700
-In-Reply-To: <20240802015732.3192877-3-kim.phillips@amd.com>
+	s=arc-20240116; t=1723849162; c=relaxed/simple;
+	bh=MsQ2JWBXJTOT4TDjz8UgKQmbAmGvjsYJNgpqjaaygvQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Kqo//K/fx4LPxFg+aEF4NZc+IsAIQlSPhbAi+U3RictnKFKEdAdGo6BhWBej5gncgyaILWU8e1O+c7xGGCOdH6n+YncGVvAiWN4M+yVS83spO6gXigVZr0YJY/F4gMGKFKQZUKbh3wL3MdhxqiQjtEZikgqXvlPuccPZch9fOIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=AmsXAnYr; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1723849156;
+	bh=roYcbEwUkCK44wHMpRdhuKBnVEwlCVBSQUtDw2Hz8SQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=AmsXAnYrY7hw3WpwHZSqkOCASktJ+k24PxqopHBvkPLi7tL4eqiMGX1vl5Q89z9wP
+	 8tIbivB12uj9UCXGgQtlB41h3EwVZcgoiI/jZTU7cshhYc+tISuLvHlK4M9HkHU0Zg
+	 4i7stxOCnT0f8dxqG0Pzpcb9wlfbRYRiDTMo0U2iUw1RMIrkUflE5zGcIzOhIacfYp
+	 Uk2k/gT7vOuHZieR3s8j4N8v7KmFKFaxCoN4gC64XvSN145UbGNntsdA25H5DQEtyr
+	 jsp9ZnCSVk30IwL5Wp6RZF40Iwak19xzJB+P40Pkhmvvvj99sqDcsAQfGjI2flpb+s
+	 segbiMtOphFnA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wly9G30LYz4wb0;
+	Sat, 17 Aug 2024 08:59:14 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Amit Machhiwal <amachhiw@linux.ibm.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, Rob Herring <robh@kernel.org>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ kvm-ppc@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Lizhi Hou
+ <lizhi.hou@amd.com>, Saravana Kannan <saravanak@google.com>, Vaibhav Jain
+ <vaibhav@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>, Vaidyanathan
+ Srinivasan <svaidy@linux.ibm.com>, Kowshik Jois B S
+ <kowsjois@linux.ibm.com>, Lukas Wunner <lukas@wunner.de>,
+ kernel-team@lists.ubuntu.com, Stefan Bader <stefan.bader@canonical.com>
+Subject: Re: [PATCH v3] PCI: Fix crash during pci_dev hot-unplug on pseries
+ KVM guest
+In-Reply-To: <20240816180441.81f4d694-3b-amachhiw@linux.ibm.com>
+References: <20240806200059.GA74866@bhelgaas> <87h6bm1ngo.fsf@mail.lhotse>
+ <20240816180441.81f4d694-3b-amachhiw@linux.ibm.com>
+Date: Sat, 17 Aug 2024 08:59:13 +1000
+Message-ID: <87o75s2hxa.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240802015732.3192877-1-kim.phillips@amd.com> <20240802015732.3192877-3-kim.phillips@amd.com>
-Message-ID: <Zr_ZwLsqqOTlxGl2@google.com>
-Subject: Re: [PATCH 2/2] KVM: SEV: Configure "ALLOWED_SEV_FEATURES" VMCB Field
-From: Sean Christopherson <seanjc@google.com>
-To: Kim Phillips <kim.phillips@amd.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Michael Roth <michael.roth@amd.com>, 
-	Ashish Kalra <ashish.kalra@amd.com>, Nikunj A Dadhania <nikunj@amd.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Kishon Vijay Abraham I <kvijayab@amd.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Thu, Aug 01, 2024, Kim Phillips wrote:
-> From: Kishon Vijay Abraham I <kvijayab@amd.com>
-> 
-> AMD EPYC 5th generation processors have introduced a feature that allows
-> the hypervisor to control the SEV_FEATURES that are set for or by a
-> guest [1]. The ALLOWED_SEV_FEATURES feature can be used by the hypervisor
-> to enforce that SEV-ES and SEV-SNP guests cannot enable features that the
-> hypervisor does not want to be enabled.
+Amit Machhiwal <amachhiw@linux.ibm.com> writes:
+> On 2024/08/15 01:20 PM, Michael Ellerman wrote:
+>> Bjorn Helgaas <helgaas@kernel.org> writes:
+>> > On Sat, Aug 03, 2024 at 12:03:25AM +0530, Amit Machhiwal wrote:
+>> >> With CONFIG_PCI_DYNAMIC_OF_NODES [1], a hot-plug and hot-unplug sequence
+>> >> of a PCI device attached to a PCI-bridge causes following kernel Oops on
+>> >> a pseries KVM guest:
+>> >
+>> > What is unique about pseries here?  There's nothing specific to
+>> > pseries in the patch, so I would expect this to be a generic problem
+>> > on any arch.
+>> >
+>> >>  RTAS: event: 2, Type: Hotplug Event (229), Severity: 1
+>> >>  Kernel attempted to read user page (10ec00000048) - exploit attempt? (uid: 0)
+>> >>  BUG: Unable to handle kernel data access on read at 0x10ec00000048
+>> >
+>> > Weird address.  I would expect NULL or something.  Where did this
+>> > non-NULL pointer come from?
+>> 
+>> It originally comes from np->data, which is supposed to be an
+>> of_changeset.
+>> 
+>> The powerpc code also uses np->data for the struct pci_dn pointer, see
+>> pci_add_device_node_info().
+>> 
+>> I wonder if that's why it's non-NULL?
+>
+> I'm also looking into the code to figure out where's that value coming from. I
+> will update as soon as I get there.
 
-How does the host communicate to the guest which features are allowed?  And based
-on this blurb:
+Thanks.
+ 
+>> Amit, do we have exact steps to reproduce this? I poked around a bit but
+>> couldn't get it to trigger.
+>
+> Sure, below are the steps:
+>
+> 1. Set CONFIG_PCI_DYNAMIC_OF_NODES=y in the kernel config and compile (Fedora
+>    has it disabled in it's distro config, Ubuntu has it enabled but will have it
+>    disabled in the next update)
+>
+> 2. If you are using Fedora cloud images, make sure you've these packages
+>    installed:
+>     $ rpm -qa | grep -e 'ppc64-diag\|powerpc-utils'
+>     powerpc-utils-core-1.3.11-6.fc40.ppc64le
+>     powerpc-utils-1.3.11-6.fc40.ppc64le
+>     ppc64-diag-rtas-2.7.9-6.fc40.ppc64le
+>     ppc64-diag-2.7.9-6.fc40.ppc64le
+>
+> 3. Hotplug a pci device as follows:
+>     virsh attach-interface <domain_name> bridge --source virbr0
 
-  Some SEV features can only be used if the Allowed SEV Features Mask is enabled,
-  and the mask is configured to permit the corresponding feature. If the Allowed
-  SEV Features Mask is not enabled, these features are not available (see SEV_FEATURES
-  in Appendix B, Table B-4).
+I don't use virsh :)
 
-and the appendix, this only applies to PmcVirtualization and SecureAvic.  Adding
-that info in the changelog would be *very* helpful.
+Any idea how to do it with just qemu monitor commands?
 
-And I see that SVM_SEV_FEAT_DEBUG_SWAP, a.k.a. DebugVirtualization, is a guest
-controlled feature and doesn't honor ALLOWED_SEV_FEATURES.  Doesn't that mean
-sev_vcpu_has_debug_swap() is broken, i.e. that KVM must assume the guest can
-DebugVirtualization on and off at will?  Or am I missing something?
+cheers
 
