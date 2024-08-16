@@ -1,262 +1,298 @@
-Return-Path: <linux-kernel+bounces-290364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E31709552C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:56:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5C0D9552C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B27F283E30
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:56:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48B39B21A3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952F21C6889;
-	Fri, 16 Aug 2024 21:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916B71C57B2;
+	Fri, 16 Aug 2024 21:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gx6W6EXA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mB4bRZ/W"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BB91C57A2;
-	Fri, 16 Aug 2024 21:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1FB31C57A2
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 21:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723845356; cv=none; b=TgrcbKFZC2NxEZgLgLS5Nh9bTr58jIftWhADz0On0PoKFJn+5khAdF2sQj421AFBrhs87r8JEzZbkqveRxisJlR6dlGOO9iZ7+ii3QnsvX+r3pZy1mA00jYVrLclLvjXqf5YPkmH7CkwGPl0enoLX+EsWbW0FRACltx+iPlb1QE=
+	t=1723845379; cv=none; b=r2Z2iP5gI0hHamEI1B1QElfKO4gQA3nqYIawUnj6P/oXImxklskBnptClvmZYJ/Bits+tHuHZ+xfVQQJQSHTX0f3d7Qx4lcgmlEke4syRldyv6kcbncfcvBicpsgF6ErPECJbKH32vi4hatcHPDraPFpX7G2QI85LjrIHLZ9KiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723845356; c=relaxed/simple;
-	bh=IxqlRnOXUIqa7r8bKHY8KpHpr2TCvW8vicEFg+O8oVk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aOJvp2a+vf0n7nPUAX6mvHosFKlkw8UMZVOZK10lMF0woeZkDO7Sz2tUoLx3477Dfn2ZAn6BP4pjOWk7yircCFYNKQ2u9ADc8GBJyJcQn5/tG0vPs0mnMvXDulOguDe4X1mmPVCvJ6hWmT+kWpf9YDhFYcDmhAtY5cb92SfWMWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gx6W6EXA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A4B8C32782;
-	Fri, 16 Aug 2024 21:55:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723845356;
-	bh=IxqlRnOXUIqa7r8bKHY8KpHpr2TCvW8vicEFg+O8oVk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gx6W6EXAnzo6s/zuEpZzbNbyhpVUmkyx4RKab9cXlP619twZi/IDD5TLquJUa1i16
-	 I0eJCD7Mw4kb29YV2NAasEpEJIsAW248cRqcrhaUfHJ8Mwc72rTCe8ySIOCltyWD6d
-	 njGmdAtODbUa1PLSur4B1fyNOyLMThl+Kc2Hb7n16XL6BlOfgkmvP+ZJOuC0v6c6dZ
-	 65kC9yx3nOyLVYoAbRmUaymoQYckMi/I3vJU/+UIiUJQcWIyRoGsQXYnlNrXg5ZgL9
-	 o5s58UBHMuXiAL5AwCHlXXcmHEGM/KC6ZCfHz9E4OO70jacPBDmezv4On+L6Ajt4/z
-	 eBKtm6Z/VxMlw==
-Date: Fri, 16 Aug 2024 15:55:55 -0600
-From: Rob Herring <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	"open list:HARDWARE MONITORING" <linux-hwmon@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: hwmon/regulator: Convert ltc2978.txt to
- yaml
-Message-ID: <20240816215555.GA2302157-robh@kernel.org>
-References: <20240814181727.4030958-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1723845379; c=relaxed/simple;
+	bh=0ChsY6jzj18i3mXydpqy0aCVoGr8Ey5BBOPY7gRGedY=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=jjpQR/QjvNl1Cw6dYMv8RDFiEfijt7ZO62gPV1FXSxwztm1CXnz9E/dUE5cCbPXwbD5pCz3elIRJ6Ds+fNngOGe2mgqHgQ0PGRHQpNt3XqvOKX4IXKGFvduG+kxLRUKpyabFbJ6jSAicioN8HVHo+id8XUpEKAiSu6OLeFNjA/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mB4bRZ/W; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723845378; x=1755381378;
+  h=date:from:to:cc:subject:message-id;
+  bh=0ChsY6jzj18i3mXydpqy0aCVoGr8Ey5BBOPY7gRGedY=;
+  b=mB4bRZ/WHR+c9p/ifY4jEC2XXAxxWJK7Q6RUUSE95PKovALEvMwWv6bG
+   JVhrMdt8Ee5ClFFfYiabMfg+fQkcT/M3RWfNIUgK4neGprB0Y1gH+7pk1
+   GimurbMnfFy9y4FxzP4dVOkJjExjmGCn/kiFXqT6AooPOjnrHIuK82KoT
+   rtexVMrEqsuZ2zhwEZ2q9h6VOcHDDAHMjHb0gZcqblEWugkuwLzYii66D
+   Ee29GirR0YvvBHc8Wizrk6+z6siaNkD2RbJcUua6fVS5F28d/c5EjIgD7
+   qrP1XHyxtcnWn0QpUWVLwxyYQBKjLeCuqI2WaoNeUtpKtrme/fvutx6uT
+   g==;
+X-CSE-ConnectionGUID: 10vdu/TFTdS+J4bfCOSlBA==
+X-CSE-MsgGUID: ALnru/gSQN2cUDbZigKrxw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="13062486"
+X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
+   d="scan'208";a="13062486"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 14:56:17 -0700
+X-CSE-ConnectionGUID: KzcciOeeQWyfnTmzDBJjIg==
+X-CSE-MsgGUID: YWEcUySMQNKcWebTyx2hyA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
+   d="scan'208";a="63967140"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 16 Aug 2024 14:56:16 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sf4ve-0006xR-0D;
+	Fri, 16 Aug 2024 21:56:14 +0000
+Date: Sat, 17 Aug 2024 05:55:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20240815] BUILD SUCCESS
+ e62e44883c682ebd24d89c91b6928b8df18df1a5
+Message-ID: <202408170556.0eaBmWDr-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240814181727.4030958-1-Frank.Li@nxp.com>
 
-On Wed, Aug 14, 2024 at 02:17:26PM -0400, Frank Li wrote:
-> Convert binding doc ltc2978.txt to yaml format.
-> Additional change:
-> - add i2c node.
-> - basic it is regulator according to example, move it under regulator.
-> 
-> Fix below warning:
-> arch/arm64/boot/dts/freescale/fsl-lx2160a-clearfog-cx.dtb: /soc/i2c@2000000/i2c-mux@77/i2c@2/regulator@5c:
-> 	failed to match any schema with compatible: ['lltc,ltc3882']
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../devicetree/bindings/hwmon/ltc2978.txt     | 62 ------------
->  .../bindings/regulator/lltc,ltc2972.yaml      | 94 +++++++++++++++++++
->  2 files changed, 94 insertions(+), 62 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/hwmon/ltc2978.txt
->  create mode 100644 Documentation/devicetree/bindings/regulator/lltc,ltc2972.yaml
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20240815
+branch HEAD: e62e44883c682ebd24d89c91b6928b8df18df1a5  integrity: Use static_assert() to check struct sizes
 
-I'm on the fence whether to move this...
+elapsed time: 1288m
 
-> diff --git a/Documentation/devicetree/bindings/hwmon/ltc2978.txt b/Documentation/devicetree/bindings/hwmon/ltc2978.txt
-> deleted file mode 100644
-> index 4e7f6215a4533..0000000000000
-> --- a/Documentation/devicetree/bindings/hwmon/ltc2978.txt
-> +++ /dev/null
-> @@ -1,62 +0,0 @@
-> -ltc2978
-> -
-> -Required properties:
-> -- compatible: should contain one of:
-> -  * "lltc,ltc2972"
-> -  * "lltc,ltc2974"
-> -  * "lltc,ltc2975"
-> -  * "lltc,ltc2977"
-> -  * "lltc,ltc2978"
-> -  * "lltc,ltc2979"
-> -  * "lltc,ltc2980"
-> -  * "lltc,ltc3880"
-> -  * "lltc,ltc3882"
-> -  * "lltc,ltc3883"
-> -  * "lltc,ltc3884"
-> -  * "lltc,ltc3886"
-> -  * "lltc,ltc3887"
-> -  * "lltc,ltc3889"
-> -  * "lltc,ltc7880"
-> -  * "lltc,ltm2987"
-> -  * "lltc,ltm4664"
-> -  * "lltc,ltm4675"
-> -  * "lltc,ltm4676"
-> -  * "lltc,ltm4677"
-> -  * "lltc,ltm4678"
-> -  * "lltc,ltm4680"
-> -  * "lltc,ltm4686"
-> -  * "lltc,ltm4700"
-> -- reg: I2C slave address
-> -
-> -Optional properties:
-> -- regulators: A node that houses a sub-node for each regulator controlled by
-> -  the device. Each sub-node is identified using the node's name, with valid
-> -  values listed below. The content of each sub-node is defined by the
-> -  standard binding for regulators; see regulator.txt.
-> -
-> -Valid names of regulators depend on number of supplies supported per device:
-> -  * ltc2972 vout0 - vout1
-> -  * ltc2974, ltc2975 : vout0 - vout3
-> -  * ltc2977, ltc2979, ltc2980, ltm2987 : vout0 - vout7
-> -  * ltc2978 : vout0 - vout7
-> -  * ltc3880, ltc3882, ltc3884, ltc3886, ltc3887, ltc3889 : vout0 - vout1
-> -  * ltc7880 : vout0 - vout1
-> -  * ltc3883 : vout0
-> -  * ltm4664 : vout0 - vout1
-> -  * ltm4675, ltm4676, ltm4677, ltm4678 : vout0 - vout1
-> -  * ltm4680, ltm4686 : vout0 - vout1
-> -  * ltm4700 : vout0 - vout1
-> -
-> -Example:
-> -ltc2978@5e {
-> -	compatible = "lltc,ltc2978";
-> -	reg = <0x5e>;
-> -	regulators {
-> -		vout0 {
-> -			regulator-name = "FPGA-2.5V";
-> -		};
-> -		vout2 {
-> -			regulator-name = "FPGA-1.5V";
-> -		};
-> -	};
-> -};
-> diff --git a/Documentation/devicetree/bindings/regulator/lltc,ltc2972.yaml b/Documentation/devicetree/bindings/regulator/lltc,ltc2972.yaml
-> new file mode 100644
-> index 0000000000000..20ae6152a2572
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/regulator/lltc,ltc2972.yaml
-> @@ -0,0 +1,94 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/regulator/lltc,ltc2972.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ltc2978
+configs tested: 206
+configs skipped: 19
 
-I know the original was bad, but we can do better here.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-> +
-> +maintainers:
-> +  - Jean Delvare <jdelvare@suse.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - lltc,ltc2972
-> +      - lltc,ltc2974
-> +      - lltc,ltc2975
-> +      - lltc,ltc2977
-> +      - lltc,ltc2978
-> +      - lltc,ltc2979
-> +      - lltc,ltc2980
-> +      - lltc,ltc3880
-> +      - lltc,ltc3882
-> +      - lltc,ltc3883
-> +      - lltc,ltc3884
-> +      - lltc,ltc3886
-> +      - lltc,ltc3887
-> +      - lltc,ltc3889
-> +      - lltc,ltc7880
-> +      - lltc,ltm2987
-> +      - lltc,ltm4664
-> +      - lltc,ltm4675
-> +      - lltc,ltm4676
-> +      - lltc,ltm4677
-> +      - lltc,ltm4678
-> +      - lltc,ltm4680
-> +      - lltc,ltm4686
-> +      - lltc,ltm4700
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  regulators:
-> +    type: object
-> +    description: |
-> +      list of regulators provided by this controller.
-> +      Valid names of regulators depend on number of supplies supported per device:
-> +      * ltc2972 vout0 - vout1
-> +      * ltc2974, ltc2975 : vout0 - vout3
-> +      * ltc2977, ltc2979, ltc2980, ltm2987 : vout0 - vout7
-> +      * ltc2978 : vout0 - vout7
-> +      * ltc3880, ltc3882, ltc3884, ltc3886, ltc3887, ltc3889 : vout0 - vout1
-> +      * ltc7880 : vout0 - vout1
-> +      * ltc3883 : vout0
-> +      * ltm4664 : vout0 - vout1
-> +      * ltm4675, ltm4676, ltm4677, ltm4678 : vout0 - vout1
-> +      * ltm4680, ltm4686 : vout0 - vout1
-> +      * ltm4700 : vout0 - vout1
-> +
-> +    patternProperties:
-> +      "^vout[0-7]$":
-> +        $ref: regulator.yaml#
-> +        type: object
-> +        unevaluatedProperties: false
-> +
-> +    additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        regulator@5e {
-> +            compatible = "lltc,ltc2978";
-> +            reg = <0x5e>;
-> +
-> +            regulators {
-> +                vout0 {
-> +                     regulator-name = "FPGA-2.5V";
-> +                };
-> +                vout2 {
-> +                     regulator-name = "FPGA-1.5V";
-> +                };
-> +            };
-> +        };
-> +    };
-> +
-> -- 
-> 2.34.1
-> 
+tested configs:
+alpha                             allnoconfig   gcc-13.2.0
+alpha                             allnoconfig   gcc-13.3.0
+alpha                            allyesconfig   gcc-13.3.0
+alpha                               defconfig   gcc-13.2.0
+arc                              allmodconfig   gcc-13.2.0
+arc                               allnoconfig   gcc-13.2.0
+arc                              allyesconfig   gcc-13.2.0
+arc                                 defconfig   gcc-13.2.0
+arc                   randconfig-001-20240816   gcc-13.2.0
+arc                   randconfig-002-20240816   gcc-13.2.0
+arm                              allmodconfig   gcc-13.2.0
+arm                              allmodconfig   gcc-14.1.0
+arm                               allnoconfig   clang-20
+arm                               allnoconfig   gcc-13.2.0
+arm                              allyesconfig   gcc-13.2.0
+arm                              allyesconfig   gcc-14.1.0
+arm                          ixp4xx_defconfig   gcc-14.1.0
+arm                   randconfig-001-20240816   gcc-13.2.0
+arm                   randconfig-002-20240816   gcc-13.2.0
+arm                   randconfig-003-20240816   gcc-13.2.0
+arm                        realview_defconfig   clang-20
+arm                             rpc_defconfig   clang-20
+arm                           tegra_defconfig   clang-20
+arm                           tegra_defconfig   gcc-14.1.0
+arm                    vt8500_v6_v7_defconfig   gcc-14.1.0
+arm64                            allmodconfig   clang-20
+arm64                             allnoconfig   gcc-13.2.0
+arm64                             allnoconfig   gcc-14.1.0
+arm64                               defconfig   gcc-13.2.0
+csky                              allnoconfig   gcc-13.2.0
+csky                              allnoconfig   gcc-14.1.0
+csky                                defconfig   gcc-13.2.0
+csky                  randconfig-001-20240816   gcc-13.2.0
+csky                  randconfig-002-20240816   gcc-13.2.0
+hexagon                          allmodconfig   clang-20
+hexagon                           allnoconfig   clang-20
+hexagon                          allyesconfig   clang-20
+i386                             allmodconfig   clang-18
+i386                             allmodconfig   gcc-12
+i386                              allnoconfig   clang-18
+i386                              allnoconfig   gcc-12
+i386                             allyesconfig   clang-18
+i386                             allyesconfig   gcc-12
+i386         buildonly-randconfig-001-20240816   gcc-12
+i386         buildonly-randconfig-001-20240817   gcc-12
+i386         buildonly-randconfig-002-20240816   gcc-12
+i386         buildonly-randconfig-002-20240817   gcc-12
+i386         buildonly-randconfig-003-20240816   gcc-12
+i386         buildonly-randconfig-003-20240817   gcc-12
+i386         buildonly-randconfig-004-20240817   gcc-12
+i386         buildonly-randconfig-005-20240816   gcc-12
+i386         buildonly-randconfig-005-20240817   gcc-12
+i386         buildonly-randconfig-006-20240816   gcc-12
+i386         buildonly-randconfig-006-20240817   gcc-12
+i386                                defconfig   clang-18
+i386                  randconfig-001-20240817   gcc-12
+i386                  randconfig-002-20240816   gcc-12
+i386                  randconfig-002-20240817   gcc-12
+i386                  randconfig-003-20240816   gcc-12
+i386                  randconfig-003-20240817   gcc-12
+i386                  randconfig-004-20240816   gcc-12
+i386                  randconfig-005-20240817   gcc-12
+i386                  randconfig-006-20240816   gcc-12
+i386                  randconfig-011-20240816   gcc-12
+i386                  randconfig-011-20240817   gcc-12
+i386                  randconfig-012-20240816   gcc-12
+i386                  randconfig-012-20240817   gcc-12
+i386                  randconfig-013-20240816   gcc-12
+i386                  randconfig-013-20240817   gcc-12
+i386                  randconfig-014-20240816   gcc-12
+i386                  randconfig-014-20240817   gcc-12
+i386                  randconfig-015-20240816   gcc-12
+i386                  randconfig-015-20240817   gcc-12
+i386                  randconfig-016-20240816   gcc-12
+i386                  randconfig-016-20240817   gcc-12
+loongarch                        allmodconfig   gcc-14.1.0
+loongarch                         allnoconfig   gcc-13.2.0
+loongarch                         allnoconfig   gcc-14.1.0
+loongarch                           defconfig   gcc-13.2.0
+loongarch             randconfig-001-20240816   gcc-13.2.0
+loongarch             randconfig-002-20240816   gcc-13.2.0
+m68k                             allmodconfig   gcc-14.1.0
+m68k                              allnoconfig   gcc-13.2.0
+m68k                              allnoconfig   gcc-14.1.0
+m68k                             allyesconfig   gcc-14.1.0
+m68k                                defconfig   gcc-13.2.0
+m68k                            mac_defconfig   gcc-14.1.0
+microblaze                       allmodconfig   gcc-14.1.0
+microblaze                        allnoconfig   gcc-13.2.0
+microblaze                        allnoconfig   gcc-14.1.0
+microblaze                       allyesconfig   gcc-14.1.0
+microblaze                          defconfig   gcc-13.2.0
+mips                              allnoconfig   gcc-13.2.0
+mips                              allnoconfig   gcc-14.1.0
+mips                           ci20_defconfig   gcc-14.1.0
+mips                           ip22_defconfig   gcc-14.1.0
+mips                      maltaaprp_defconfig   clang-20
+mips                           mtx1_defconfig   gcc-14.1.0
+mips                        omega2p_defconfig   gcc-14.1.0
+nios2                            alldefconfig   gcc-14.1.0
+nios2                             allnoconfig   gcc-13.2.0
+nios2                             allnoconfig   gcc-14.1.0
+nios2                               defconfig   gcc-13.2.0
+nios2                 randconfig-001-20240816   gcc-13.2.0
+nios2                 randconfig-002-20240816   gcc-13.2.0
+openrisc                          allnoconfig   gcc-14.1.0
+openrisc                         allyesconfig   gcc-14.1.0
+openrisc                            defconfig   gcc-14.1.0
+parisc                           allmodconfig   gcc-14.1.0
+parisc                            allnoconfig   gcc-14.1.0
+parisc                           allyesconfig   gcc-14.1.0
+parisc                              defconfig   gcc-14.1.0
+parisc                randconfig-001-20240816   gcc-13.2.0
+parisc                randconfig-002-20240816   gcc-13.2.0
+parisc64                            defconfig   gcc-13.2.0
+powerpc                          allmodconfig   gcc-14.1.0
+powerpc                           allnoconfig   gcc-14.1.0
+powerpc                          allyesconfig   clang-20
+powerpc                          allyesconfig   gcc-14.1.0
+powerpc                     asp8347_defconfig   clang-20
+powerpc                   bluestone_defconfig   gcc-14.1.0
+powerpc                       eiger_defconfig   clang-20
+powerpc                    gamecube_defconfig   gcc-14.1.0
+powerpc                        icon_defconfig   clang-20
+powerpc                      pcm030_defconfig   gcc-14.1.0
+powerpc               randconfig-002-20240816   gcc-13.2.0
+powerpc                     tqm5200_defconfig   gcc-14.1.0
+powerpc                        warp_defconfig   gcc-14.1.0
+powerpc64             randconfig-001-20240816   gcc-13.2.0
+powerpc64             randconfig-002-20240816   gcc-13.2.0
+powerpc64             randconfig-003-20240816   gcc-13.2.0
+riscv                            allmodconfig   clang-20
+riscv                            allmodconfig   gcc-14.1.0
+riscv                             allnoconfig   gcc-14.1.0
+riscv                            allyesconfig   clang-20
+riscv                            allyesconfig   gcc-14.1.0
+riscv                               defconfig   gcc-14.1.0
+riscv                 randconfig-001-20240816   gcc-13.2.0
+riscv                 randconfig-002-20240816   gcc-13.2.0
+s390                             allmodconfig   clang-20
+s390                              allnoconfig   clang-20
+s390                              allnoconfig   gcc-14.1.0
+s390                             allyesconfig   clang-20
+s390                             allyesconfig   gcc-14.1.0
+s390                                defconfig   gcc-14.1.0
+s390                  randconfig-001-20240816   gcc-13.2.0
+s390                  randconfig-002-20240816   gcc-13.2.0
+sh                               allmodconfig   gcc-14.1.0
+sh                                allnoconfig   gcc-13.2.0
+sh                                allnoconfig   gcc-14.1.0
+sh                               allyesconfig   gcc-14.1.0
+sh                                  defconfig   gcc-14.1.0
+sh                    randconfig-001-20240816   gcc-13.2.0
+sh                    randconfig-002-20240816   gcc-13.2.0
+sh                   sh7770_generic_defconfig   gcc-14.1.0
+sh                        sh7785lcr_defconfig   gcc-14.1.0
+sh                             shx3_defconfig   gcc-14.1.0
+sparc                            allmodconfig   gcc-14.1.0
+sparc64                             defconfig   gcc-14.1.0
+sparc64               randconfig-001-20240816   gcc-13.2.0
+sparc64               randconfig-002-20240816   gcc-13.2.0
+um                               allmodconfig   clang-20
+um                               allmodconfig   gcc-13.3.0
+um                                allnoconfig   clang-17
+um                               allyesconfig   gcc-12
+um                               allyesconfig   gcc-13.3.0
+um                                  defconfig   gcc-14.1.0
+um                             i386_defconfig   gcc-14.1.0
+um                    randconfig-001-20240816   gcc-13.2.0
+um                    randconfig-002-20240816   gcc-13.2.0
+um                           x86_64_defconfig   gcc-14.1.0
+x86_64                            allnoconfig   clang-18
+x86_64                           allyesconfig   clang-18
+x86_64       buildonly-randconfig-001-20240816   clang-18
+x86_64       buildonly-randconfig-002-20240816   clang-18
+x86_64       buildonly-randconfig-003-20240816   clang-18
+x86_64       buildonly-randconfig-004-20240816   clang-18
+x86_64       buildonly-randconfig-005-20240816   clang-18
+x86_64       buildonly-randconfig-006-20240816   clang-18
+x86_64                              defconfig   clang-18
+x86_64                              defconfig   gcc-11
+x86_64                                  kexec   clang-18
+x86_64                randconfig-001-20240816   clang-18
+x86_64                randconfig-002-20240816   clang-18
+x86_64                randconfig-003-20240816   clang-18
+x86_64                randconfig-004-20240816   clang-18
+x86_64                randconfig-005-20240816   clang-18
+x86_64                randconfig-006-20240816   clang-18
+x86_64                randconfig-011-20240816   clang-18
+x86_64                randconfig-012-20240816   clang-18
+x86_64                randconfig-013-20240816   clang-18
+x86_64                randconfig-014-20240816   clang-18
+x86_64                randconfig-015-20240816   clang-18
+x86_64                randconfig-016-20240816   clang-18
+x86_64                randconfig-071-20240816   clang-18
+x86_64                randconfig-072-20240816   clang-18
+x86_64                randconfig-073-20240816   clang-18
+x86_64                randconfig-074-20240816   clang-18
+x86_64                randconfig-075-20240816   clang-18
+x86_64                randconfig-076-20240816   clang-18
+x86_64                          rhel-8.3-rust   clang-18
+x86_64                               rhel-8.3   clang-18
+xtensa                            allnoconfig   gcc-13.2.0
+xtensa                            allnoconfig   gcc-14.1.0
+xtensa                randconfig-001-20240816   gcc-13.2.0
+xtensa                randconfig-002-20240816   gcc-13.2.0
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
