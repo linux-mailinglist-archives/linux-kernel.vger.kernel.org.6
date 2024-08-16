@@ -1,80 +1,85 @@
-Return-Path: <linux-kernel+bounces-289918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C45F4954D53
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:09:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7655A954D55
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B5951F22DAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:09:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A91061C21D57
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C1D1BA868;
-	Fri, 16 Aug 2024 15:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564301BD4F7;
+	Fri, 16 Aug 2024 15:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E5yX+3ch"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A7EqRt58"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA15817
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1731BC9EA
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723820956; cv=none; b=qQSiFVFaTimg/xErh38DjX4Hm6GRHtLSJLIgRHS+wEcDTzbx97X/8O3PfX9J+NGJPIjbYklDfNCwCVzJj0cnSo1WjozckE163TMfIF6jIt7ab4CY982RMGm1fSCawnFpm/hbFvSXVf7+XHcMKLTHwnK659W3xlrYryCSWnqXyCM=
+	t=1723820979; cv=none; b=b+xdCyoLnwFTWWSxwYHDMlENVG/nCdSLPsZGJmRIavOYb3bgcGWfAHgsIsqzmj6b9efCWLspYGlWlr/cYyDQMHkRQl2E3UWIoLwtTWh7eKWrTYsZnJKzVOEIq5ENtpgbPvA6ji8wbO9iAvL+PKhjnapm2NIpft5CURTECsSEfg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723820956; c=relaxed/simple;
-	bh=IPYRS+wlZv7NhDT1X+YeVlOf8QM90aRrnLKsajcqnbI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=baC2ThwJ/5O3Na4hzAJEzI7Csbv04bnbbSCMyieqcpWKrEFZqhaD+ejLtOYCJ8B3n5+jzyAG0AOqtcpr09iXGfrDwCtPc/3tHSkBy3hQgBxOqnRY6bqsz682nHN2sTDRk5D+vgu3cHvC7FYNIjuTRExpgwGs9KUmMLbFa0m7pfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E5yX+3ch; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1723820979; c=relaxed/simple;
+	bh=XzdvY7dTSy94mw2/rQM0iFi1pa3M0LsbqBKyIiUy9+E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ROppLdwxKSDGXJzlAfNWpgWs3FHaIppq3regnf+Yz8MQ/6S4LbiaZ2ksnOBYYHWOSoNiYs5QXvoep0SRKPXNUQcMoBlBNP2o0fxsxIHzRGs3gfxENi+aoulsDktqpVU8HeJ528XQB5FFVUpdzgSMnW40G1DUNFzcobBNEuqBYDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A7EqRt58; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so14548255e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:09:14 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso15486125e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:09:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723820953; x=1724425753; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723820975; x=1724425775; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Y/2/2QPjp2CCrGuI9Ms5NRey/T6m/cyuOy2EaBJqus=;
-        b=E5yX+3chdsCvQDfujrvic+QE8aUGpI4B1J73pEKkrP22nwpIq32HNQLvbaJgf9jUSl
-         g8v/WUDoQECmB8J5sT0MffuKxLIwmDEKbpA41GDbFuT+hIaRvzUNuL38yqx0hqnFvBxJ
-         9lTzPuDmqdNfBbk+bhFlz5cAgZLQhUe+xqhFqdBVl1qU+pEtNAtC+Cn+STIwEUi/8EC6
-         qpU9/xKYi2Oaeer1T4hK5NRa2nRFSIUWhaW1DydTp0n1yMJXH2Md1aJ6nhAqKueRDtJQ
-         3m0IL1J4Vu6afO6DN9YlMdnaB2xbiIUJ/qcZXfQ6zkm15a1yzWtTRW9sro5fVxmrU71Q
-         /7hg==
+        bh=q0sK0ufc7qEbd/mn2fdq4hcobz3MRQ2PN+HK1BuFHRw=;
+        b=A7EqRt58KZpuu8L6OoagPNaPAUwSjSK232MEGaoWfylAW460Vb00U5ZlN17Upgg8VW
+         G33U4BBxwNrucuhDozqGE/8FQzNi5NFPnld1Z31K6AFMbJAOayEhK6nI0MvIMjHsyu37
+         D+LFh/Jl2QvqImFpUYU5TvkQHE9nFy+gVkuZ1BhR/PL3tY3iRE+Uz7T3++Qi+pZ8fdlK
+         ywd6SHF++ACZERowTLSQgiWbquKqWgvf04KA9CkSAh37V+BmIM7/gs00KhKcCJk6+gS5
+         9HAF5BZ483yrDepzc/+ejCdWTvtyVf9Ku86V1yV0edj4hefGl+NOgQ9LKYQoN7no6yGX
+         QB4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723820953; x=1724425753;
+        d=1e100.net; s=20230601; t=1723820975; x=1724425775;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6Y/2/2QPjp2CCrGuI9Ms5NRey/T6m/cyuOy2EaBJqus=;
-        b=eroFrkaiTpgp9GYi8OcVKPoTAdwZzXBvg04LcUSDHa2AVO3Zrt+KaQ/lFiO0xbsgGB
-         6PjjxwpDa022XJYY1aB1r75VtcIQNY4Ggs9/LQdRR8qo4tlubHuxK2w8zaPtYHLVeVWr
-         euFg4x0ZmbToHuGYZ+ATy7aoTgfj/RBqiGsGB1dP4zw+ZkoIXp+vW0HymCZBv6FFLOhS
-         2le2+RbwJba+k0I31EAqpGJBBSylitkJheOJtr2G3ssSaLTLAUpvjDyWyZfdvI4TtDE/
-         Qdpx9swGihbRXZh/p1mPLgHMOq33A3bU+L27tMAA40aytxoYZRIzIm8St8t8kRhTNThO
-         qSOw==
-X-Forwarded-Encrypted: i=1; AJvYcCWZvKgfX+rwkRx+ULVNv7o6ZHElHFLgwhLM6cIQpzU+VeLDIxwNmZfk5uEVnR2609NtNTIm2MgrFlRmK8qxYfSB/qrg5JkbVzQW0Z/D
-X-Gm-Message-State: AOJu0Yz5IBSx/ODPqY06CcdCWmmn4lihmw4jYltNyr73dkGwiRPxsLD0
-	W1+OvtXDwG7gqOeAcsfB0hv46jYYin3AZOaDVPN+NTQ6SR2jHLh7bOiSFcwVxMI=
-X-Google-Smtp-Source: AGHT+IEGE7qid6bcOUge2vf5VRQJCQr3Rw2VNcuneDurrGavxMp9Iq5a+wqkSQwkgJJSGl/zhKx/UA==
-X-Received: by 2002:a05:600c:310f:b0:426:5b21:97fa with SMTP id 5b1f17b1804b1-429ed7e432cmr25613225e9.29.1723820953137;
-        Fri, 16 Aug 2024 08:09:13 -0700 (PDT)
+        bh=q0sK0ufc7qEbd/mn2fdq4hcobz3MRQ2PN+HK1BuFHRw=;
+        b=QNwDVanE/J+pYc9JBTr8cUnFg74xPJd//PJqhdXa5ivxJVCit0dp8GEUTLE76BwNfA
+         3ZQHHv0NzWNQUs41xRqy+Iel3tlIYa2M1015VvE7ACD3yyAviiCS9Qo5Rf4aMODvEQbL
+         7PZuXCj57OaVcw53ZTdRs7THzz3vJUPswiihSsyABFSykOptd7+uV9SmBSGwLVU59fS4
+         NnDHN57ztW1vlNQw7PruDF8kNhB4/uuApPtYHhr3SaC0yD9wE/lkyK4AeRgShsD7R/21
+         tuncPvXOGAYtaJFib/QQHG1uTb4GAvfTeG+eh97k+XX9dCxvpFSs3BLjyccmIqwG1DUA
+         65pg==
+X-Forwarded-Encrypted: i=1; AJvYcCUe/M+KIHrnX4ANTIaS1TxRAfLHqMrbo/NW7OsTbcnQSm+OiSIGYI3olgvyECAPwbRxG9nmnsrfYgRWKPllX9ic6BtRVmNuuQo1YnTb
+X-Gm-Message-State: AOJu0Yyv79TzHARVgIOELdr+rJJfVP1BfvR9QXy0ic3Sy5k/EEroNF6k
+	4It0BLqT9oNjpQFwmodFoifKl9p+waGkEplP+ojd1nnUYji6GM3vLkxc9HlAeLE=
+X-Google-Smtp-Source: AGHT+IFhP/NIsW9PWfnEcWLqi7chpg87KWhwfD8tKVYrnOj6sJddsAiBh6dq11WCBuqo717hp+HeUw==
+X-Received: by 2002:a05:600c:444b:b0:426:6320:7ddf with SMTP id 5b1f17b1804b1-429ed7f944bmr19485875e9.35.1723820975298;
+        Fri, 16 Aug 2024 08:09:35 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed648f3fsm24984675e9.6.2024.08.16.08.09.11
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718984993fsm3808758f8f.31.2024.08.16.08.09.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 08:09:12 -0700 (PDT)
+        Fri, 16 Aug 2024 08:09:34 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Mark Rutland <mark.rutland@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
 	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
+	Anup Patel <anup@brainfault.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	linux-pm@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] clocksource/drivers/arm_arch_timer: Simplify with scoped for each OF child loop
-Date: Fri, 16 Aug 2024 17:09:08 +0200
-Message-ID: <20240816150908.142142-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/4] cpuidle: psci: Simplify with scoped for each OF child loop
+Date: Fri, 16 Aug 2024 17:09:28 +0200
+Message-ID: <20240816150931.142208-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -84,63 +89,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use scoped for_each_available_child_of_node_scoped() when iterating over
-device nodes to make code a bit simpler.
+Use scoped for_each_child_of_node_scoped() when iterating over device
+nodes to make code a bit simpler.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/clocksource/arm_arch_timer.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/cpuidle/cpuidle-psci-domain.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
-index aeafc74181f0..03733101e231 100644
---- a/drivers/clocksource/arm_arch_timer.c
-+++ b/drivers/clocksource/arm_arch_timer.c
-@@ -1594,7 +1594,6 @@ static int __init arch_timer_mem_of_init(struct device_node *np)
+diff --git a/drivers/cpuidle/cpuidle-psci-domain.c b/drivers/cpuidle/cpuidle-psci-domain.c
+index ea28b73ef3fb..146f97068022 100644
+--- a/drivers/cpuidle/cpuidle-psci-domain.c
++++ b/drivers/cpuidle/cpuidle-psci-domain.c
+@@ -142,7 +142,6 @@ static const struct of_device_id psci_of_match[] = {
+ static int psci_cpuidle_domain_probe(struct platform_device *pdev)
  {
- 	struct arch_timer_mem *timer_mem;
- 	struct arch_timer_mem_frame *frame;
--	struct device_node *frame_node;
- 	struct resource res;
- 	int ret = -EINVAL;
- 	u32 rate;
-@@ -1608,33 +1607,29 @@ static int __init arch_timer_mem_of_init(struct device_node *np)
- 	timer_mem->cntctlbase = res.start;
- 	timer_mem->size = resource_size(&res);
+ 	struct device_node *np = pdev->dev.of_node;
+-	struct device_node *node;
+ 	bool use_osi = psci_has_osi_support();
+ 	int ret = 0, pd_count = 0;
  
--	for_each_available_child_of_node(np, frame_node) {
-+	for_each_available_child_of_node_scoped(np, frame_node) {
- 		u32 n;
- 		struct arch_timer_mem_frame *frame;
+@@ -153,15 +152,13 @@ static int psci_cpuidle_domain_probe(struct platform_device *pdev)
+ 	 * Parse child nodes for the "#power-domain-cells" property and
+ 	 * initialize a genpd/genpd-of-provider pair when it's found.
+ 	 */
+-	for_each_child_of_node(np, node) {
++	for_each_child_of_node_scoped(np, node) {
+ 		if (!of_property_present(node, "#power-domain-cells"))
+ 			continue;
  
- 		if (of_property_read_u32(frame_node, "frame-number", &n)) {
- 			pr_err(FW_BUG "Missing frame-number.\n");
--			of_node_put(frame_node);
- 			goto out;
- 		}
- 		if (n >= ARCH_TIMER_MEM_MAX_FRAMES) {
- 			pr_err(FW_BUG "Wrong frame-number, only 0-%u are permitted.\n",
- 			       ARCH_TIMER_MEM_MAX_FRAMES - 1);
--			of_node_put(frame_node);
- 			goto out;
- 		}
- 		frame = &timer_mem->frame[n];
- 
- 		if (frame->valid) {
- 			pr_err(FW_BUG "Duplicated frame-number.\n");
--			of_node_put(frame_node);
- 			goto out;
- 		}
- 
--		if (of_address_to_resource(frame_node, 0, &res)) {
--			of_node_put(frame_node);
-+		if (of_address_to_resource(frame_node, 0, &res))
- 			goto out;
+ 		ret = psci_pd_init(node, use_osi);
+-		if (ret) {
+-			of_node_put(node);
++		if (ret)
+ 			goto exit;
 -		}
-+
- 		frame->cntbase = res.start;
- 		frame->size = resource_size(&res);
  
+ 		pd_count++;
+ 	}
 -- 
 2.43.0
 
