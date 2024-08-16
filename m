@@ -1,78 +1,106 @@
-Return-Path: <linux-kernel+bounces-290321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03D7B955235
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:07:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4066895523B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:08:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 380C01C21EFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:07:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1BFFB23075
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A1F1C57A0;
-	Fri, 16 Aug 2024 21:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F2B1C57AE;
+	Fri, 16 Aug 2024 21:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+Izm+ec"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="H9u3dxFA"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548CD1BF339;
-	Fri, 16 Aug 2024 21:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90396129E93
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 21:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723842443; cv=none; b=btMD1vlFh6d4qfSfkT2eUeqE1bj0AVVdbytwg5kNwwGSKyywrg09kXLFwHMMDjaK0dj6xqlSOKKITLYvXNzgf+59mLEhHArdEk4wxGzHEkgrqPpq9MFU2APmSalutOc969itMBAbcSY6MeqpkvhqnT6dXdAMF/jA6cT3IRdHxKA=
+	t=1723842492; cv=none; b=u5rCnSTe564g9HMc0A9bFVn1Lxb9jgG0vzpw6V+TLhRJ0dCuVjtFLByiNyZTuByvOu+33D8K4BVOIujk+uIcB4EStGUPNSZaUQYr0PRNNYmhgcPzRCcMWWr3JZnF/lIU1VDsLqYg6ZdtZw13GlYrFtbhR5aOyo7NSAIVV62mSaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723842443; c=relaxed/simple;
-	bh=/gRSkYEFMDVDbDqo01ete16dzsu3sk4Fs05af01UGjc=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=slFB7jTFFYvWVmw8iAgx680h2t9iNhac6Wn5G3Yp5Pa14+shlnMch9LsdhFmcAdeSdxCltWw7RKZqVLV87CvHg/xdWHYRwhBfx9pRejWqClDF60r+wdZ6zJl4t9B7w24fhdydwio830t1za/nPM9f1JZ3voiBAp4ItFa/yzmUcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E+Izm+ec; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5160C32782;
-	Fri, 16 Aug 2024 21:07:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723842442;
-	bh=/gRSkYEFMDVDbDqo01ete16dzsu3sk4Fs05af01UGjc=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=E+Izm+ecEdO4IikhAyOAL/1/pVwp+vFwtXgRSv4jcGb8VXLOKjxU12/94vbdK9Rhx
-	 L2DMx07p3HjuxxZpTXZkwERk9wWsknPoxHghElyiwnDm6tDaaKxvVmCYLgsD2uyxdL
-	 8ysaofqnPZDDFcXZYXcDF+ZAylPc+UBzpO6kYKyH6hal8TVpkE9X3oJzIvxD4vvW7H
-	 kKfdqs/Nbp9EUpTuqnwo+LJmG3Nk/uUteMO2Pw/7Uau9ZdzhgJeEpNUZudd07W5ph6
-	 tH6eknkqEhz805ia+3en7jrJy2QYzuCu7jbp9Oe1RwGLZa1zmfGGn9NHUAwfzIy2cm
-	 k1t2eEDoju23A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70EB538232A9;
-	Fri, 16 Aug 2024 21:07:23 +0000 (UTC)
-Subject: Re: [GIT PULL] Devicetree fixes for v6.11, part 2
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240816200824.GA2049154-robh@kernel.org>
-References: <20240816200824.GA2049154-robh@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240816200824.GA2049154-robh@kernel.org>
-X-PR-Tracked-Remote: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/robh/linux.git tags/devicetree-fixes-for-6.11-2
-X-PR-Tracked-Commit-Id: b739dffa5d570b411d4bdf4bb9b8dfd6b7d72305
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2731835f3f2e5b0642ad82a3a0265c98a552283e
-Message-Id: <172384244211.3626293.8409715064643586952.pr-tracker-bot@kernel.org>
-Date: Fri, 16 Aug 2024 21:07:22 +0000
-To: Rob Herring <robh@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Saravana Kannan <saravanak@google.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+	s=arc-20240116; t=1723842492; c=relaxed/simple;
+	bh=RTNTtQPqCNOw1K2uClJ4k44gutay3CqyOn5G6u/uNTI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=t8tcnIOCoPKD578B3Qur1pLNn1H8IjLU4K7pTxRqmFXvWoGr8gp/tnToEidPbkS95X6IzVss2nt+uWhcdjdMwH6EIJRdg9lPrhlLNefZpX1LxzfcHdy5vyx95JIKo2e0lE+z/JFJzjuTt3xEJ9g3Mu2u8hYriKfFtn2f7ptIfDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=H9u3dxFA; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70d2a6e31f1so137375b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 14:08:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1723842489; x=1724447289; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v8NIjnbhYU7a04neJgUoTRfMCQshztceozNqQd56jE4=;
+        b=H9u3dxFAhkwYs2omOU0ICUStt4kHRiV5I+Ew51cYH69jMZJLI7mK9DU1PhH39EHiV+
+         CCsdm71DEnQVtPSoe8GP2VW1jc6NLLk6IKeB5vAhyNPZD8LKBCIOy+nR4hQiMh0+KwN+
+         Z4SCiQflzCe2Q+7SCXk/Wr6UcJ1vAz/z/+u38zvyhR6dDzVXOZuTS1mEbXX9xs4uJ7hO
+         XZB9p5U7XNYvPrae9aAOCWFsz9IPBjETsI2Bum7iCAxx0MnX8FwLE5czRHy5ne0kFRWg
+         27K8MaqiIyfvU+yZ0rpXD7RsCWi+WQqCyMTVhUIU1QZ6R9ktFH+l5w/6GOKg/zt1FnyZ
+         lbyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723842489; x=1724447289;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v8NIjnbhYU7a04neJgUoTRfMCQshztceozNqQd56jE4=;
+        b=R0AL6gol3LoU6i6MCGD4D7mK9Fcs0YBSOALKKq0KaukUJXsf1ywwZxouzasFMI6oNu
+         FEi1MyffRDadK1sw50+o45QnHMTtUxT/+NAquJxMJXQX8jxZA/ZHR5ezo4ov9QpXL+UH
+         xbetAoVCe2fBnE49BVCerhtSpYC2AaVYgbZozyxVrHSBuJweIJUqGrpTWqQzBjytcai3
+         hZSlg3R3cAdyWGuMOcGFttWIzpxzISAvgmPPLYLmyzL9aqNfuJhdpRHzsLQta2KzMfXl
+         Nbf+/uJL4SkfykUInDi4UCu4FiZrreGEB1koP3kD2mm8lRDUXkGOCnOstdXRoCqls7SM
+         Tqyw==
+X-Forwarded-Encrypted: i=1; AJvYcCV07WiVHib/o3Ih19/VS4t5bZaZPWwH1yjRMBIh7je7p23ju+vOTnVprb0w/XrMaY4iSXlEfI23k68qD+0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/OjDEcOtNYKBd2+Ag1/Jw4sZTPsOWPJna2pdW6BdkZFQj2XGk
+	5CyxnkS+pStU4fY3lJ4Jm5WVPVJkCMTRNGC8glwQ7PoGV/PDDaGDWlWJdPzo6qI=
+X-Google-Smtp-Source: AGHT+IED1A84GfSSEC/DQI5fPHxjBprCDdK5M++JNqvS4vAAYy6Dka5cLaX0EYTleULlZDRwl+LvQg==
+X-Received: by 2002:a05:6a00:2d29:b0:70b:705f:8c5d with SMTP id d2e1a72fcca58-713c5287054mr2769750b3a.4.1723842488823;
+        Fri, 16 Aug 2024 14:08:08 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127af1bc1dsm3121001b3a.170.2024.08.16.14.08.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 14:08:08 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240816095821.877842-1-yuehaibing@huawei.com>
+References: <20240816095821.877842-1-yuehaibing@huawei.com>
+Subject: Re: [PATCH -next] blk-cgroup: Remove unused declaration
+ blkg_path()
+Message-Id: <172384248784.90928.18000408712813246725.b4-ty@kernel.dk>
+Date: Fri, 16 Aug 2024 15:08:07 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-The pull request you sent on Fri, 16 Aug 2024 14:08:24 -0600:
 
-> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/robh/linux.git tags/devicetree-fixes-for-6.11-2
+On Fri, 16 Aug 2024 17:58:21 +0800, Yue Haibing wrote:
+> Commit bb7e5a193d8b ("block, bfq: remove blkg_path()") removed the
+> implementation but leave declaration.
+> 
+> 
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2731835f3f2e5b0642ad82a3a0265c98a552283e
+Applied, thanks!
 
-Thank you!
+[1/1] blk-cgroup: Remove unused declaration blkg_path()
+      commit: b2261de75212910e2ca01fa673c8855a535d8c60
 
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Jens Axboe
+
+
+
 
