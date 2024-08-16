@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-289205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C8D8954322
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:46:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FDB0954328
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C18811C25366
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:46:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C04831F246ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BD513E025;
-	Fri, 16 Aug 2024 07:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213CB153835;
+	Fri, 16 Aug 2024 07:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Eb90VByx"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DJi0EE35"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C0313B2A4
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D93114A09D
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723794055; cv=none; b=p20rCoLEJjiQ6IyaXTplKL/7MiI1PevoYFLe6MUn758kngCq7h62A/idbZgcHSjl2PXpEvVQiFXzGk2HmLWe7W7qkCzypLl8856d0xyfJ0FMIUCGu32Vdgvf3wHO0BNcmIvichXfzIefr7QokdlXpTisIZ7VQz1HTwFp88aTBNY=
+	t=1723794057; cv=none; b=RQfsSMjB2zztThFOLisYRrc6qQEO4CEyTNpckTf9yiCmBB/Q/2wPK4/oWgIgYLTKCG0fo2ar+TU0A7nTuJf+saLqVR2h4Td+ua0fxYN8eidovv9m1o0uXJXIY7zLQDtCS05hMRkXkkBdXo2SGz/LbakKgaHyiiSdda4OQtc0VbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723794055; c=relaxed/simple;
-	bh=9M5ntznKTX5NDEFACMt23t7+gXPt/dasJVMFbG8WF/M=;
+	s=arc-20240116; t=1723794057; c=relaxed/simple;
+	bh=PbJeEGZU3UpmozZSCe3r0DvMlYlbAp7Fh7CGsGwwTnk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IvEkGHFz8eLsX79SL1fbb0nRWaLb0BcmZM/HgKmOLoe3jNgPDkbRglENa+AS6CBIoLrfkzaad7FwYNW1rlAFcuU+lX21KBroa7+EtKJInOidFfkxUm5qduXMDXE7Xca/xb3HWWunMAH5KAkgXg4Bw+5aG4y1BbARqH4SU/S7M2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Eb90VByx; arc=none smtp.client-ip=209.85.208.175
+	 In-Reply-To:To:Cc; b=GxLw8MeyVfwAj3Th8/akwpOkqigRdFwEia1GxyAxEBoUyi75ZICBkjT5LtxSlLCcfsDJtHm61COBe1M7NUR/XO65lsdttwG2rZupVDhdmJ4L4/SiVrKCKtw3BFNfO7uNqInIbCn+nTsxy0Wqjeb2LBgda7bf2QvW+Hhr0p82E+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DJi0EE35; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f3b7aba3dbso18965051fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 00:40:53 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42808071810so12091825e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 00:40:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723794052; x=1724398852; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723794053; x=1724398853; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NpiLIHd7RwewW+o/fTDGbmxF9iEJfCFxBRNxKUku6uc=;
-        b=Eb90VByxzOuc3RJPVDMIkIywo54AUDWzqyw10c8rsYAgTbkoyCn3oMqcEZQgFThuU8
-         cG9NIjFey05N119ActgiTtkoIU+BNOE8PoyNdkS+jMJVrU7QZor9+nEzwbhNgHyiDmPS
-         zcYq3jba/8+XAFXBlGxcy36Z/d0T1zJjIbBcioG8hhcCgRTdEt+vgIBy9bIasKqxLejD
-         1tH8hrCDOojaHF/L32Wv5fCqhNYUPbslXaC//G9UhlQ85PnRqjl3KKC0EYLLG7VH1xqV
-         p/fBH6VbVoduWPNiSMdoIvCeZ+rHZbgJ1JDh1ylmGnrlpBF6gT3HjlwlMd2iZ6NqDh5h
-         gmAA==
+        bh=0wMpDkMtET/7aAM65Zz2/Kcs6PKgOPihE5IRKM0OVVc=;
+        b=DJi0EE35vju7zEq3P8l1XDiXS5LlurXhoN3F5GfKoZRfOTA1hittAGKXflAPhDBr9I
+         +DMsl2j90UOMZ1qdaTkm8uX2gNZiDx4yg8nu0lrHrzqbfXhUraKtdZs76ejDNEkBfbV6
+         HNcHkAWz6C+M9St7BBh8cqW8zZmUBn0p82qdihOteK9aLflAf7SvnJJdZt1inP6ZI5jO
+         QvKjnUzVoF2LR7cs+mbJDt1eO0vOd1eLavUW3c86ScsTB1u55Ck1iPL9VrbakiLecovi
+         vz1+iPWCyYiFcXLzji+geuEnnBd4AjXHC7KZ/NHUhKEoaPwj9nnlhl6sB30luGaKm/OV
+         lGbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723794052; x=1724398852;
+        d=1e100.net; s=20230601; t=1723794053; x=1724398853;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NpiLIHd7RwewW+o/fTDGbmxF9iEJfCFxBRNxKUku6uc=;
-        b=VTYCcWI+VDN9a4nE2MdeH4YEoauRFPykDabWJuKXc3NI2/ksT1eMqhos8lv4A+irjc
-         KDmtQ0x31nT0rbGNcvxK3nYFsfWr/eYtULxVilOPo1R12vGQ+QhMoEzkh5Wm2mGNQaCe
-         QJXa2Lu/i7GOYZPkB+tY/9fjKt1a3lddzmFS+f1VNSTxBR/4bWAaiR0kH8LIdazuTcgV
-         bRkmBYMI+mMaXHqcQHuyBWHjgSWOyndxCcxfjkhDgdMmtBwmzzFKxwSGpipx1CEWNmxu
-         GZytgeYUjcDdrNExiBTTFGuyehlCAa1+88gFURFsOfcLbMWk+USkv2mu3vYHAiSXhlJP
-         RiMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXzEa7sphHJhUnAakx5GHm7zTpXUCUr9Fv9xACIHhM2KYczHfBGcPbrhFI6seWmV1E6bT4YBJ5nldaQFB90iGGMsYU3ooImckGe317R
-X-Gm-Message-State: AOJu0Yyxnrwl9J2xRD3qbyweCsH0xHECylhWBt6/RuZTU6RenNMWxPHy
-	2bUBEWUFw5P3kHDouJJDycVrthGepgGSKXo66dHfonpQCmxehO5huH+4VgsdAr8=
-X-Google-Smtp-Source: AGHT+IELCc+OCzcJ/Js9NwPDwHfifOzvE4gl8BthiWmIBR2Eaem8CWHrHiKiF111j3uXtD+30pxdXA==
-X-Received: by 2002:a2e:a99d:0:b0:2ef:2490:46fb with SMTP id 38308e7fff4ca-2f3be5f59femr14797761fa.37.1723794051688;
-        Fri, 16 Aug 2024 00:40:51 -0700 (PDT)
+        bh=0wMpDkMtET/7aAM65Zz2/Kcs6PKgOPihE5IRKM0OVVc=;
+        b=GpBSbmZbrIdv59ffKyrxXiQ1vrDhSaA7GsQg0dw+fp67iFTCVGjogQNeGCEjF2TRR1
+         CLChoycQRFwWHEqkDwoUuaXsfBzQ1pUZMkkeGewsGiLeEmNCYdFRgJ7Iwi85heqw/Vv2
+         ozA+MdTryFHCPLiRfOoEKcEDRWhTjhQr0N/Z9xrlVnwbzbY9Z2JG7nF+tJCZHL54uQCH
+         b7F5YDNvjg9ocA8gpcr+PmEA7F3I9BQ01U065hae092adAGOmaaL/Rr7XCIq06PMtzRY
+         EijgCtIQvGz6LL4D+CS7zZWnwuOQpL4eChINtBYuZl6acBentgbuILm9P9mke0pXP+vH
+         BcLA==
+X-Forwarded-Encrypted: i=1; AJvYcCXKG7IQxXN+JAR7PYRbU/P1zqsO3nN9lTGRxYk0pZcH6skfghDJetrCGNd3uMzy6cOFE1Agczomvfsy40kgMCy6KwZYks/6SQvlj98w
+X-Gm-Message-State: AOJu0YxEC5AuJzQ0GRZ6cDBTOOG9/83PN7VhUGgw6BcoswAuabtYGWPj
+	Kv8k0aHm4VgaeiaZkb3dPIW/p08fReRhBT+6JTq/R0IOUtU25JFl+VMCyCzWx0k=
+X-Google-Smtp-Source: AGHT+IEnXbQO9mmtyvuxjzYjdXQUi2maQz0qIi0DaT7l9WqGJwLWdeuDft0i/qsT1e/F2DXQfswARQ==
+X-Received: by 2002:a05:600c:4f48:b0:426:5b84:86d2 with SMTP id 5b1f17b1804b1-429ed7b9391mr16384705e9.20.1723794053471;
+        Fri, 16 Aug 2024 00:40:53 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded3596esm68549625e9.22.2024.08.16.00.40.50
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded3596esm68549625e9.22.2024.08.16.00.40.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 00:40:51 -0700 (PDT)
+        Fri, 16 Aug 2024 00:40:52 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Fri, 16 Aug 2024 09:40:34 +0200
-Subject: [PATCH v2 4/7] thermal: of: Simplify
- thermal_of_for_each_cooling_maps() with scoped for each OF child loop
+Date: Fri, 16 Aug 2024 09:40:35 +0200
+Subject: [PATCH v2 5/7] thermal: qcom-spmi-adc-tm5: Simplify with scoped
+ for each OF child loop
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240816-b4-cleanup-h-of-node-put-thermal-v2-4-cee9fc490478@linaro.org>
+Message-Id: <20240816-b4-cleanup-h-of-node-put-thermal-v2-5-cee9fc490478@linaro.org>
 References: <20240816-b4-cleanup-h-of-node-put-thermal-v2-0-cee9fc490478@linaro.org>
 In-Reply-To: <20240816-b4-cleanup-h-of-node-put-thermal-v2-0-cee9fc490478@linaro.org>
 To: "Rafael J. Wysocki" <rafael@kernel.org>, 
@@ -96,61 +96,60 @@ Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
  Chen-Yu Tsai <wenst@chromium.org>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1310;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1333;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=9M5ntznKTX5NDEFACMt23t7+gXPt/dasJVMFbG8WF/M=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmvwJ3KbC+CIW/wgMP/qsQhWUwSxbE78dCD5pPL
- pLwIbQ3KvGJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZr8CdwAKCRDBN2bmhouD
- 1wEiD/9ZPNQh9CCdAjJ7tvBzsxq+KQKtvaWC/fQDIECn5V/X2lAA0i7fPqDihwYNGci0qdbP77c
- nGwvi5k79aqQ/K9EHna3OBQR343woYrPjcIQ/3kYcvzY9DdqIXbNaGVHtypT154nMeZysDY1jbd
- ZxM2XiVBivBQvsad9X21O6NKdbP3u6KvuLXNj6aaIJ0gPQYU9/PInP2wU/21gIYSAZTsVLEwxaf
- 9Gb0c87Irgoq1zyV/6LIzngJVoJtQavHuWHgA66hTlAlYhZYAqq/TTUsJzNP2tWmEVUVz7qL8rw
- 8nGc9pL64W+FFW2EvNgZNbFFT42DsghleR66MnBH/hMxcLpyg4lYtAt6Nzd6kHBYzexQzp2Tq3m
- dXNHetyc4N0Qg24s02eeR8eILN/iHrAKJAhYEPuLrRNODZs3yBDSk+ZxJJ78w2B/I7jRDiwTnaj
- fZxW9te26WMReCULmYh/TV3wBj/O2qgl8ZwEogLuB5xZ3fEqfBnHRfT5mIGSzJ4YG85T+K/hJMR
- ayrpjXDymP7W+xnSv8auBecvBDVuTBMeHWvoxaSIf7jqrathAKibinrv5qi8KU2uG4A2i6rQtZ+
- 2QlPWRmMoyiFKZdF+ylcC+RC2TyCdKGZLQFkq7SwSQXMs2KTP358oSRs6MeyTky/OfRLPvq+Xy5
- 52INWgb0WAFW/4Q==
+ bh=PbJeEGZU3UpmozZSCe3r0DvMlYlbAp7Fh7CGsGwwTnk=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmvwJ4R960iiX78E9nbSk6rU3XcRyumrrr+WNwm
+ b9uWv5JL4uJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZr8CeAAKCRDBN2bmhouD
+ 117ID/9EACqKFcFO6/LOiwiOQBgFhDpNJAh5abY1rYNUwH6civPjvKo7M1pZANYtvFOAb1NcY+K
+ L0XUBZ1qUwcnHA4TEelwGC0qKPEU2delRJzqiitq/NS84JtEIZN3EXedyZAEvaGMr8kY5sAQ2Lj
+ ezGPzEZRdSmWeBFbR3R6HgVKuZTmLfXO8g3yCatnh1PQyomIywfLrFk60IFFqiIS2cafdrsv8Wm
+ qSUw2PK2e0cM/4dc4HptXcs+fr/zCC+sSICFfCKZ5LWia8XVwXxopYBK3NHbpD2ndfaFJRamXhA
+ cLqeLQXVXxmTSt4sy2bEMQb/SJRE8Adi6sNdoxQoB2xxCWpRTYRgQmkHmu4qZvfsy5b2DoUg4WA
+ qiWVWtqt8Cfn8i/UHVqlJ7+idqLMCACVEw/6v3LxwJQ0nrQ93wmRHqwiR5QmK/8ndrgBnNPjb5b
+ 3JsQaU8mlC1O/ZHGA34DuII/fv+D8b4cHHSP0IMAR6m6JqIMCmnlNWNWSrxgF31Lgk+D5z8rpYM
+ auRMmfihug05VxVXVoYJ27RBVuRpmN+Rkrp2rvAXYHuddV0DmEL06/ZlF0psI/X7TgNCjWbjPeX
+ bBpNobaS18uO01FwmZbRdjVzYV6G40GYDQT1rbs32LG/aL36N8DPRrkSTdgySwNFEsu5VprtL7J
+ +fC+fPiASEAIR0g==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Use scoped for_each_child_of_node_scoped() when iterating over device
-nodes to make code a bit simpler.
+Use scoped for_each_available_child_of_node_scoped() when iterating over
+device nodes to make code a bit simpler.
 
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/thermal/thermal_of.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/thermal/qcom/qcom-spmi-adc-tm5.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
-index 94cc077ab3a1..ce398fde48bb 100644
---- a/drivers/thermal/thermal_of.c
-+++ b/drivers/thermal/thermal_of.c
-@@ -373,7 +373,7 @@ static int thermal_of_for_each_cooling_maps(struct thermal_zone_device *tz,
- 					    int (*action)(struct device_node *, int, int,
- 							  struct thermal_zone_device *, struct thermal_cooling_device *))
+diff --git a/drivers/thermal/qcom/qcom-spmi-adc-tm5.c b/drivers/thermal/qcom/qcom-spmi-adc-tm5.c
+index 7c9f4023babc..19cdb98c310e 100644
+--- a/drivers/thermal/qcom/qcom-spmi-adc-tm5.c
++++ b/drivers/thermal/qcom/qcom-spmi-adc-tm5.c
+@@ -938,7 +938,6 @@ static const struct adc_tm5_data adc_tm5_gen2_data_pmic = {
+ static int adc_tm5_get_dt_data(struct adc_tm5_chip *adc_tm, struct device_node *node)
  {
--	struct device_node *tz_np, *cm_np, *child;
-+	struct device_node *tz_np, *cm_np;
- 	int ret = 0;
+ 	struct adc_tm5_channel *channels;
+-	struct device_node *child;
+ 	u32 value;
+ 	int ret;
+ 	struct device *dev = adc_tm->dev;
+@@ -982,12 +981,10 @@ static int adc_tm5_get_dt_data(struct adc_tm5_chip *adc_tm, struct device_node *
+ 		adc_tm->avg_samples = VADC_DEF_AVG_SAMPLES;
+ 	}
  
- 	tz_np = thermal_of_zone_get_by_name(tz);
-@@ -386,12 +386,10 @@ static int thermal_of_for_each_cooling_maps(struct thermal_zone_device *tz,
- 	if (!cm_np)
- 		goto out;
- 
--	for_each_child_of_node(cm_np, child) {
-+	for_each_child_of_node_scoped(cm_np, child) {
- 		ret = thermal_of_for_each_cooling_device(tz_np, child, tz, cdev, action);
+-	for_each_available_child_of_node(node, child) {
++	for_each_available_child_of_node_scoped(node, child) {
+ 		ret = adc_tm5_get_dt_channel_data(adc_tm, channels, child);
 -		if (ret) {
 -			of_node_put(child);
 +		if (ret)
- 			break;
+ 			return ret;
 -		}
- 	}
  
- 	of_node_put(cm_np);
+ 		channels++;
+ 	}
 
 -- 
 2.43.0
