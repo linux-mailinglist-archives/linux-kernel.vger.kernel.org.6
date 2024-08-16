@@ -1,184 +1,459 @@
-Return-Path: <linux-kernel+bounces-289546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC2BA95475D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:01:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F359954761
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:02:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 500AA1F2583C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:01:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 707B0B21169
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76EED19D089;
-	Fri, 16 Aug 2024 11:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B4A198A32;
+	Fri, 16 Aug 2024 11:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="G1pjVnaO"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="mwjJWZGF"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013016.outbound.protection.outlook.com [52.101.67.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0881991BB
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 11:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723806081; cv=none; b=uguI7vJIsfoyjCfec6CU3ch43ATI43rpaeQbPC3Rr7ZuyKw1kpPoQgi+rjx7Cb3ILlebieuK/XoxHFgaN9gQEnpxmBb6BDW2eeviZnfXLD9BPRwhqFbYc7urq0Sw+Kt0oLDPSluidvRbEqD65fgJtzYDi1Zvnpk7dkI5wJxz9FI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723806081; c=relaxed/simple;
-	bh=jOVkyCZRwxwfPGY4eymxAuwM3qMtwzLVgjzO31sjmjI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ukKhO1k8KoEpaMFikH+y6MT3STPB1ILwgPyA4ITB3XlZ4/U8sSdtgRomRa4wqMG97Qxpn70C3lBIw7GV7bMSr3C4pD9hvy+l5gLpwFAxCropo/koNEYFlGEY9kyZMStArwPg+OpEGnwGmpxffoGU0T/REyY3XMubmN/9wi1OvgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=G1pjVnaO; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so4141912e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 04:01:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1723806078; x=1724410878; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=4qsz+7mQYKMGsKT5Lq9NXZ6sjzsnZVAWwIJdiaA3GZU=;
-        b=G1pjVnaO1TgbyjtkCz9qqyrWZSXyR7ZOm941OMfE7aKU+U28+4pM3i4wi7GoLOoxga
-         MWr9aA4A62yroM1UkSaxnWs6VY8CoVvkTXH+sRtPYcmuRykSwTCf+4l7qJ82DVQIcLzu
-         Jsdy5PurQQtk/R5eTWQKl6Oyj0fCA75pFEQg4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723806078; x=1724410878;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4qsz+7mQYKMGsKT5Lq9NXZ6sjzsnZVAWwIJdiaA3GZU=;
-        b=F/+Ft4tDoak3PvIU3ZqlSyS4vckLdk2YGHZ6d5TSBawKzVSmHF9BBZp1ed+P9I14f4
-         9Z5yIvzHGWQhbvubvj3136H0kPfxgLBk0JnfH3YsM9XJy0KedGhRh2qhT1qwO9Nmr9ET
-         Xc/+zpz3JxuZB54nChKuSDm+W1X8sJBzvXltlxnncPT63Sq9wayRvOrxSe1ACrvF8Lsp
-         QpuVjOf8Le09B9aZfl1PDDmCXMR3Q2oFhrBwAaGsD2cbp6Bbh8AXIogpVO38FANI5MJr
-         kxY82vZm7P3yLMd8EYsAX+0AH9Nn4jUL4mBB9Upe6NIf1uimer7nPso4AvWxNUgLjYMi
-         z/iA==
-X-Forwarded-Encrypted: i=1; AJvYcCUq7mGjWqZb/Cm2OSFMK4+TWzYbc02vxHHTCyHaTBVFTKHFDVvfv01INZdrNfHOAtJ1qVUDmZsfbnVChVyaXQIB2vaOE9oBgI+MXfXI
-X-Gm-Message-State: AOJu0Yy5XErDuNb9h7tdi7Zyhicq4GaJ3zqcXAZrR9/xLqY7tgoVIpuf
-	sCpDLyPIokDk8QU3hScCphdsER+HdiKi79uQ8ofpw/EqtSV32Q69xz+KD6ec6rg=
-X-Google-Smtp-Source: AGHT+IE4AZiVE7kjprocqnllW5JlMr4sYvdQRlM74n9w7KXPCquuL65elKkFvCQuUxcO79Gv2cLBjw==
-X-Received: by 2002:a05:6512:3d28:b0:52c:8342:6699 with SMTP id 2adb3069b0e04-5331c6e4088mr2153159e87.55.1723806077291;
-        Fri, 16 Aug 2024 04:01:17 -0700 (PDT)
-Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c6ae6sm238812066b.35.2024.08.16.04.01.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Aug 2024 04:01:16 -0700 (PDT)
-Message-ID: <550d15cd-5c48-4c20-92c2-f09a7e30adc9@citrix.com>
-Date: Fri, 16 Aug 2024 12:01:15 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BEA817;
+	Fri, 16 Aug 2024 11:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723806152; cv=fail; b=PiSNvCkSLETcG4nn953MDqkIw8NW2eooU7FQG5Beu+tTDYzWtDQbIn0YcJW6rY+65kgTfUoeWQXHmQjTCYfG5hPx8TFHRjPtajazPQyeUgbltrrlMObM/ogyKA0Q+YcuyJI6cYgWbXV5s5ryM2PQNGvnyVUfhTNH6bd8L8qYN5g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723806152; c=relaxed/simple;
+	bh=amRhJABwkPtC5YDL5eVlTOqrboRhMg0BdrLTW/dRDuU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=MILACA3TDy/FfWOqk/PEyUFqmtUjXQK95i91gQcPAR8wEYoRJW0DE0ohOiHg5f7nLwT79ExxVV6xa3h/Lxqd50MYlTnv0t4cH4Bp7UhBTdxVJtZdCBv2fyKUs5SV1v1LL9XHLq6fm+Yfg1gUbnZ++Z7ezCmr8zbkdHPa++y3x0s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=mwjJWZGF; arc=fail smtp.client-ip=52.101.67.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=blHqc1pqVpJEZkltiJ43Y0yMwTKiLDYLNqpKeXz0xUTijN6uOLZMroHltINwWP1uWyOSkjD9jHAOU9Sz4QxWXBoVBIFsfPMXfOhaxNDgcnzV87KCllJnANosTBuoh7xxTB9ZzZOMESdGKs8Q8mVoKExquKF5GHzc/U+p53ybzUSh245PwxDTPXYb0hc9rz+dVDnJdo5y4xNZNBE2Ov9Xqt56vaUUrx7yDjGfNcjtL2VS8v3rVfrtNjnAyAxWLzTkc/ecW1DNKKzb95rDae/Noxs2nhwK3jO3PdmYrOKXW0Ub90hxPhqclz4nvP6Ygfr9gkrsDvxiCPlRoGjmLsxFug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=//Wjc6uWO03FOy+tOru+Ag7BBr7ZC2bHS9arbsf24Ls=;
+ b=YV2bnV9fHP1boAALvxUFTIC6im8Vvf/KlWQCNtLRw2gRTPNy946FNnkHmflqGacvIgQE6irM49xIM1JS2rJL7zz6fZK/JKIMZ0Bxoz0QaUlCeaY4dDPal7aBmMuHEFj29kAEByZaYcs5W4l28i5x1PoBnKZzjd+34mw5nrU3zEOHYwHpsHtAUxe4Welgj+GK764wL6SxVQcYFAQeR7Q9h/TcdKe/r1DkbmpjzvaRr2vcNsHhg+W9gx4wC4JYRtKuGGWT8IK4v0sAew1sjWWG2BVLOD0qpOw43L5pMyExlHVk92S4rCEMI6Fml4yBrEdn7a7ARPrT+iDp8227G1RcjQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=//Wjc6uWO03FOy+tOru+Ag7BBr7ZC2bHS9arbsf24Ls=;
+ b=mwjJWZGFPLhx7jc4d7cooxnwRH1qmcDx7lpCz6S3f4+At0mNMoaKNjRp0ffxmHarocdr+lxiKRcC4eAZP+4L6TnoPtIICmt3+/p8PSmCiz7mvNZFZQ5yuW+ObEBkjZRHD9a4HJnqparreusCFJG0ZBQIDaC++QFxbgQpzeEMAn64tlGn1/EqLVHqgvExSr5QLdkQqUGgFtN73XssvzKq6y5pZIFFhwjzKh6T+DovhaofhZZQvzY6TKSa+1PWgg40ohHRHRyqReAfJTU8XA9SKYIZ04TWKoRAhBRWjvyzHpfpe4yKpwDtOpTZprygn6JrcaClvYZNmUHcdgwMxNkZ+w==
+Received: from AM9PR04MB8604.eurprd04.prod.outlook.com (2603:10a6:20b:43b::21)
+ by VI1PR04MB9953.eurprd04.prod.outlook.com (2603:10a6:800:1d7::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.18; Fri, 16 Aug
+ 2024 11:02:27 +0000
+Received: from AM9PR04MB8604.eurprd04.prod.outlook.com
+ ([fe80::e751:223e:aa3d:5827]) by AM9PR04MB8604.eurprd04.prod.outlook.com
+ ([fe80::e751:223e:aa3d:5827%2]) with mapi id 15.20.7875.018; Fri, 16 Aug 2024
+ 11:02:26 +0000
+From: Pankaj Gupta <pankaj.gupta@nxp.com>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+CC: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo
+	<shawnguo@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio
+ Estevam <festevam@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [EXT] Re: [PATCH v6 5/5] firmware: imx: adds miscdev
+Thread-Topic: [EXT] Re: [PATCH v6 5/5] firmware: imx: adds miscdev
+Thread-Index: AQHa2/NcuiznhUStfE6qn0+OVrPkAbIEXw0AgADp6iCAGVVjgIAAHXuwgAsjzsA=
+Date: Fri, 16 Aug 2024 11:02:26 +0000
+Message-ID:
+ <AM9PR04MB86042B8CAFCF7D7474BB0DCC95812@AM9PR04MB8604.eurprd04.prod.outlook.com>
+References: <20240722-imx-se-if-v6-0-ee26a87b824a@nxp.com>
+ <20240722-imx-se-if-v6-5-ee26a87b824a@nxp.com>
+ <Zp-8MPdWdAhGG9de@pengutronix.de>
+ <AM9PR04MB860410277C8329271E12963F95B92@AM9PR04MB8604.eurprd04.prod.outlook.com>
+ <ZrXAv79KFCSyB3U_@pengutronix.de>
+ <AM9PR04MB8604068373E25AAA99641F0895BA2@AM9PR04MB8604.eurprd04.prod.outlook.com>
+In-Reply-To:
+ <AM9PR04MB8604068373E25AAA99641F0895BA2@AM9PR04MB8604.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM9PR04MB8604:EE_|VI1PR04MB9953:EE_
+x-ms-office365-filtering-correlation-id: 77175695-3f0d-414e-0336-08dcbde2ea1a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?nZScMzfgjCix0ZI90VpbuMmesMzXELabbf/ch7OPVtGuTk+yCDsdVb422JNy?=
+ =?us-ascii?Q?GRDiQF3AtlFlqS5bUpYCRsjBjrqQsiF2ULlvCfZmIQ4k2aAYEMElvoVNqUOm?=
+ =?us-ascii?Q?y2fwb+rWaVnL1gJQQcuYIb3GpRxSKJTMClBXZnHCX4MCibvdNou3mPBvm6hZ?=
+ =?us-ascii?Q?Y8DgGnNz7lK5NdeSsTNt4/BtztVBZgQrc91JktRpBrbhh7XZr+Mcoj1SYvwH?=
+ =?us-ascii?Q?tey9nnegFSmiQLdvEi4S+Ve2V5+lKkgCd1TuACw6ZJrSwWvKs1XMTiYNWBsK?=
+ =?us-ascii?Q?4lCkaY8QpncVPazs+RgPS9R5i4ybxd8qiHX1tCc0iRpBrq9RzPcMY5LaBtaE?=
+ =?us-ascii?Q?HPioDQeGlvcI0AO1o2vOnyt6yWu9I4a3gcXNLCb+p9sY9RicVzPzqXfsx0wZ?=
+ =?us-ascii?Q?aNdhYGVTFwIKUt8smAjE0ven2H4fLazzIHsB+4Q7ie/AnHd+YrSu6EeCUGms?=
+ =?us-ascii?Q?3JfI2nshVGfllWtS4psEAyOEhQAPCIqXPAhosCRY+V8hBXF9p2y/c7q8fl1z?=
+ =?us-ascii?Q?+e1WQM3A85dDVTLmtcMYcPC5uF9p7b7mYuf30oQc2ItVUgJRGkwu8vI4olEc?=
+ =?us-ascii?Q?J5Qxv4wBCqa5MAziv3FiYqCjeP79u0APrHmjgH1gXNbF3XZn6qklsvlfHsWq?=
+ =?us-ascii?Q?hcodh6cEfFhcBtiu+2dmJTJ/HllKK0JrzTSezfTa1sh+sNQlCAiVdJStW5j1?=
+ =?us-ascii?Q?o6eRmHZls62HoeR5wdBMNCajhzOLHbwQgRcz5T80hi7i+K4ry/TQeyfDPCsl?=
+ =?us-ascii?Q?o0Ox9YmOWzwTj2V1Bvu7CDMDNz6vfqoR5gcpuCM9Zs3ltJJBPzbAeZOrFemL?=
+ =?us-ascii?Q?+jLekPLwyc/TzoOdZjakPf2XSvsJxYPCN4Z4OIIPrV51aGojnMCOOHqTMtcx?=
+ =?us-ascii?Q?zOZsDvAkej/eU6HUHe0aerbOZU7mhfFjjN8sp32E3nwTVRFvleUHD8l//xEB?=
+ =?us-ascii?Q?QLKXIk/EmEgpWLNomsj89Y/DRzzeHCdFnJzG0pxVZU3lH3kbDQMOcAf3JJka?=
+ =?us-ascii?Q?lh0MG6LidS/MjuRpewcGQwo+KXV09NF4t4/uRP1k7d4AgrBj2iJ4qUJwqXEc?=
+ =?us-ascii?Q?tySbupSX9beqfEcnYYFhG3KjTLBsIZzqWFtGRCt7TCrhuvJv12Fcq5dDWxRM?=
+ =?us-ascii?Q?aOfiEZmOo7H9iziNXipcjA2rsiwSvhLUHsHuAFGmCDZLw9PhJuJXY55ulQIF?=
+ =?us-ascii?Q?1xk+31j1Kp/DakcSJHI+xDLb++5ChRUHhYwv6iwl0QwHqq0xGJBGiHbR89qM?=
+ =?us-ascii?Q?EVFlm/o7VEDBiw2o2C7wnzgM2tj60zswLCZywwy0pQsNu4JYw3GENGW19zjh?=
+ =?us-ascii?Q?Lpb/baiOL/C+sBr2QEWmLFGVuAzMik3zLeWsjaApLYyJA3wdE4x6w7z9+mz0?=
+ =?us-ascii?Q?kNfkA7iBw4loOdEMaLXf850Mn+foxAArh1E7FQMESRF6rvRT+A=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8604.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?jxHckoU4L5pTWdM2x7E9CEwd/qFEVc2gbEsDlPUKV2CCMi+7GHSujJ3Ema+w?=
+ =?us-ascii?Q?/0MzLVMyv63U1RrUNoj8hTJWCRN6Lzxv8TLQpRBRHeSxAbuI3WmPSU5QJBLk?=
+ =?us-ascii?Q?Wl+rNpOJRBknm9WTNlUDrI6ChfzTqvSEKZRLnKInzsRUdvfTNefnLzwVCpG4?=
+ =?us-ascii?Q?OZpSXs9w/Jg67TkISh/E9Ur6WC9S/xdsgCrKZxw4eBW9Aa4VVqHj11WS68rB?=
+ =?us-ascii?Q?auggvVqOZJmOgJM3+Q4T9B6Z4puN8vRV2Y9pOcLrTrsbvqpinB3ifJt/1G1P?=
+ =?us-ascii?Q?caSFVK0XRHZgjdK9op7tc9Qt1rcM9y/hJ3rAQEktsQ6IlOlNZPOlzKxe+aZK?=
+ =?us-ascii?Q?1UD6rR6QIUOpk+ph9VnGeGlMB2L6fj5Moal/zmIL9YZEjvPSExhegPsme/Nq?=
+ =?us-ascii?Q?+ja58pi6S2U3crauKxpV62xq/WiQ4ssFH+RIhT9y/YRma+jsfv6KogrgBIJl?=
+ =?us-ascii?Q?2Jp43IxmbP7rLNLN7VLc7fTpYsYAZm7OoiEQrwRnu996saqkSui+zyvD9aAM?=
+ =?us-ascii?Q?rtB1kG2bjO68OMePEPRxQ/lmhFH85UNo6tGF2cTEzTCdgBpOTB60g+cgEYrp?=
+ =?us-ascii?Q?A37FpqGLyq09lnjcgcm/6znhp4D00D5Kx+aGTwNbSkuKn6686+QXDkTI607A?=
+ =?us-ascii?Q?qA2Iz40bv+ED2q918ozwHyA02It4mQFbagE2mhM4zXUDJGexP77+0aEXazzJ?=
+ =?us-ascii?Q?yp8bSBiWZy9EYrYwfrni9D3Cf8qsP5DtvfKR17q18cJvJ6WqHv0EscpaIBjO?=
+ =?us-ascii?Q?t3kCao2PXsTMouGtk865c3pq0Xmdhsn3gL/U4Jdy5Ovf2/fsdZgkKO3Oc/ju?=
+ =?us-ascii?Q?dMsosSgmrMU3PLmXp3OMmIBuHGQlJi215UH3rXar+L7R1xqY9j9I9PFrs6oh?=
+ =?us-ascii?Q?Mags9enq7mh8u53dI0rn6t8NyB0y1XfT0z9TZDtAsqlyepf1Cphzsya+F0MR?=
+ =?us-ascii?Q?W4XE3sw+8NtU4ap3Fz0fCRtpXnuHZwISyFLMNUIKCNSwUMOG0tdnoU8dAEng?=
+ =?us-ascii?Q?s6+UmFIRbbJrrJf0+Pc8OYeue/WcVW2qAlTCHV+J3kvh2RY/vH+6DQmLdHPP?=
+ =?us-ascii?Q?Gqi7l9i0vu3udKMZVQqfVVeJE4kZlY/zZyqTKJfm5DjM4jmvGJeHaBxVREJ4?=
+ =?us-ascii?Q?gUXZpOTpWRRMAXBiC7qNvryyTGMrt6WW1qa0qS0mz/2ilmMHV90AkXwXGMX5?=
+ =?us-ascii?Q?J1LQ4MuFMpHYduvawYHT7wzXDioekMMahFrr44nvYDg9z9wNTj303Y4MZDjP?=
+ =?us-ascii?Q?BFwoaN/s7ZcQS4DA5sHo5j/Cib0yL8SF1OftdqvP5naUFUtEFplUSWOT8O/9?=
+ =?us-ascii?Q?1ESFh1w7eRH29IArR0KH836i6u9wYqg8w9Fpjvv3GtqNkebCmGa+HmjgplIB?=
+ =?us-ascii?Q?MWxfuZR7Y6edd4k6KnluEUSEGasMhgI2VCq7z5OL2WVy/iVkBuahL6Bb9zg0?=
+ =?us-ascii?Q?l/jnKifdlO+X4dcY7lr//H54f4MpS90JbQS30F+gGcPWkA52RxRlNewGxoyq?=
+ =?us-ascii?Q?ROeWmfns/sSCeE0oBM94tLaGCQKbvOyXT01paZIZ42wk2kTpgCV8SGwlw69+?=
+ =?us-ascii?Q?gV7C1WceGajYDkrtShl79UBVvUvAZ3P9+uIwR42f?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
- early measurements
-To: Thomas Gleixner <tglx@linutronix.de>,
- "Daniel P. Smith" <dpsmith@apertussolutions.com>,
- "Eric W. Biederman" <ebiederm@xmission.com>,
- Eric Biggers <ebiggers@kernel.org>
-Cc: Ross Philipson <ross.philipson@oracle.com>, linux-kernel@vger.kernel.org,
- x86@kernel.org, linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
- linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
- mingo@redhat.com, bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
- ardb@kernel.org, mjg59@srcf.ucam.org, James.Bottomley@hansenpartnership.com,
- peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, luto@amacapital.net,
- nivedita@alum.mit.edu, herbert@gondor.apana.org.au, davem@davemloft.net,
- corbet@lwn.net, dwmw2@infradead.org, baolu.lu@linux.intel.com,
- kanth.ghatraju@oracle.com, trenchboot-devel@googlegroups.com
-References: <20240531010331.134441-1-ross.philipson@oracle.com>
- <20240531010331.134441-7-ross.philipson@oracle.com>
- <20240531021656.GA1502@sol.localdomain>
- <874jaegk8i.fsf@email.froward.int.ebiederm.org>
- <5b1ce8d3-516d-4dfd-a976-38e5cee1ef4e@apertussolutions.com>
- <87ttflli09.ffs@tglx>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <87ttflli09.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8604.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 77175695-3f0d-414e-0336-08dcbde2ea1a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Aug 2024 11:02:26.7335
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: qljC1V2K0gHe8dwBWF7LS6emDQ0DnKQMdlSbxkUFhs0xaM4jU0xeiwzjGtNTJkPvePwGA7ILcTue51ZsLghzYg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB9953
 
-On 15/08/2024 8:10 pm, Thomas Gleixner wrote:
-> On Thu, Aug 15 2024 at 13:38, Daniel P. Smith wrote:
->> On 5/31/24 09:54, Eric W. Biederman wrote:
->>> Eric Biggers <ebiggers@kernel.org> writes:
->>>> That paragraph is also phrased as a hypothetical, "Even if we'd prefer to use
->>>> SHA-256-only".  That implies that you do not, in fact, prefer SHA-256 only.  Is
->>>> that the case?  Sure, maybe there are situations where you *have* to use SHA-1,
->>>> but why would you not at least *prefer* SHA-256?
->>> Yes.  Please prefer to use SHA-256.
->>>
->>> Have you considered implementing I think it is SHA1-DC (as git has) that
->>> is compatible with SHA1 but blocks the known class of attacks where
->>> sha1 is actively broken at this point?
->> We are using the kernel's implementation, addressing what the kernel 
->> provides is beyond our efforts. Perhaps someone who is interested in 
->> improving the kernel's SHA1 could submit a patch implementing/replacing 
->> it with SHA1-DC, as I am sure the maintainers would welcome the help.
-> Well, someone who is interested to get his "secure" code merged should
-> have a vested interested to have a non-broken SHA1 implementation if
-> there is a sensible requirement to use SHA1 in that new "secure" code,
-> no?
+Hi Sascha,
 
-No.
+Thanks for the detail review.
+Please find the comments in-line.
 
-The use of SHA-1 is necessary even on modern systems to avoid a
-vulnerability.
+In our last one to one discussion, there is a specific input to have a comm=
+on function "ele_msg_send_rcv( prv, tx_msg, rx_msg)" for:
+- Userspace IOCTL
+- Kernel message exchange.
 
-It is the platform, not Linux, which decides which TPM PCR banks are active.
+As discussed, will try to get back to you with my analysis over it.
 
-Linux *must* have an algorithm for every active bank (which is the
-platform's choice), even if the single thing it intends to do is cap the
-bank and use better ones.
+Thanks.
+Pankaj
 
-Capping a bank requires updating the TPM Log without corrupting it,
-which requires a hash calculation of the correct type for the bank.
+> -----Original Message-----
+> From: Sascha Hauer <s.hauer@pengutronix.de>
+> Sent: Friday, August 9, 2024 12:40 PM
+> To: Pankaj Gupta <pankaj.gupta@nxp.com>
+> Cc: Jonathan Corbet <corbet@lwn.net>; Rob Herring <robh@kernel.org>;=20
+> Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley=20
+> <conor+dt@kernel.org>; Shawn Guo <shawnguo@kernel.org>; Pengutronix=20
+> Kernel Team <kernel@pengutronix.de>; Fabio Estevam=20
+> <festevam@gmail.com>; Rob Herring <robh+dt@kernel.org>; linux-=20
+> doc@vger.kernel.org; linux-kernel@vger.kernel.org;=20
+> devicetree@vger.kernel.org; imx@lists.linux.dev; linux-arm-=20
+> kernel@lists.infradead.org
+> Subject: Re: [EXT] Re: [PATCH v6 5/5] firmware: imx: adds miscdev
+>=20
+> Caution: This is an external email. Please take care when clicking=20
+> links or opening attachments. When in doubt, report the message using=20
+> the 'Report this email' button
+>=20
+>=20
+> On Thu, Aug 08, 2024 at 10:49:33AM +0000, Pankaj Gupta wrote:
+> > > > +     if (tx_msg->header.tag !=3D priv->cmd_tag) {
+> > > > +             err =3D -EINVAL;
+> > > > +             goto exit;
+> > > > +     }
+> > > > +
+> > > > +     guard(mutex)(&priv->se_if_cmd_lock);
+> > > > +     priv->waiting_rsp_dev =3D dev_ctx;
+> > > > +     dev_ctx->temp_resp_size =3D cmd_snd_rcv_rsp_info.rx_buf_sz;
+> > > > +
+> > > > +     /* Device Context that is assigned to be a
+> > > > +      * FW's command receiver, has pre-allocated buffer.
+> > > > +      */
+> > > > +     if (dev_ctx !=3D priv->cmd_receiver_dev)
+> > > > +             dev_ctx->temp_resp =3D rx_msg;
+> > > > +
+> > > > +     err =3D ele_miscdev_msg_send(dev_ctx,
+> > > > +                                tx_msg,
+> > > > +                                cmd_snd_rcv_rsp_info.tx_buf_sz);
+> > > > +     if (err < 0)
+> > > > +             goto exit;
+> > > > +
+> > > > +     cmd_snd_rcv_rsp_info.tx_buf_sz =3D err;
+> > > > +
+> > > > +     err =3D ele_miscdev_msg_rcv(dev_ctx,
+> > > > +                               cmd_snd_rcv_rsp_info.rx_buf,
+> > > > +                               cmd_snd_rcv_rsp_info.rx_buf_sz);
+> > >
+> > > Ok, here you now have serialized sending and receiving messages,
+> > >
+> > > With this you no longer need priv->waiting_rsp_dev,=20
+> > > dev_ctx->temp_resp and dev_ctx->temp_resp_size. Drop these for=20
+> > > further
+> cleanup.
+> >
+> > It is very much needed.
+> > - priv->waiting_rsp_dev, help identify in the callback function that:
+> >       - the message is targeted for dev_ctx(user space) or dev(kernel s=
+pace).
+> >       - the message is targeted for for which dev_ctx.
+> > - dev_ctx->temp_resp, this buffer pointer is needed, to receive the=20
+> > message
+> received in call back.
+> > - dev_ctx->temp_resp_size, is needed to compare the size of=20
+> > in-coming
+> message.
+> >
+> > All the three are needed in callback function.
+>=20
+> I think you should throw away ele_miscdev_msg_send() and
+> ele_miscdev_msg_rcv() and instead use ele_msg_send_rcv() instead.
+>=20
 
-~Andrew
+Both the API(s):  ele_miscdev_msg_send() & ele_miscdev_msg_rcv()are needed.
+- fops_read API, calls the ele_miscdev_msg_send(), &
+- fops_write API, calls the ele_miscdev_msg_rcv()
+
+> This driver contains a whole lot of unneeded complexity up to the=20
+> point where it's not clear what this driver is actually trying to archiev=
+e.
+>=20
+> Please let's do a step back and try to find out the actual usecases.
+>=20
+> What I have found out so far is:
+>=20
+> 1) We can send one message to the ELE and each message is expected to get
+>    one response from the ELE.
+
+For each message,  it is not as simple as to get one response, without any =
+other message exchange.
+Why?
+- In order to deliver the response to that message, FW could be exchanging =
+multiple message with its slave called NVM-daemon running at Userspace.
+- Once enough information is collected from its slave, to prepare the respo=
+nse. It will send the message response.
+
+> 2) We are not allowed to send another message to the ELE while there is a
+>    message in flight that hasn't got a response.
+
+Here "We" means Userspace application sending the command message on a part=
+icular MU.
+
+In the case where ELE can receive message over two MU(s), another userspace=
+ application can send another command message, via different MU.
+
+Hence there can be two command message in flight at a time, via two differe=
+nt MU(s).
+
+> 3) Both Kernel and userspace shall be able to send commands and receive
+>    its responses.
+Yes.
+
+> 4) The ELE is able to send a command itself. Is this true?
+No, rather ELE can send command to its slave, running as a NVM-daemon at us=
+erspace.
+
+> Does this command need a response?=20
+Yes.
+
+> Can we continue sending commands to the ELE
+>    while the ELE waits for the response to the command?
+
+No. "We" (Application that acts as the command sender, over one MU), the mu=
+tex-command-lock is taken by the first command. Hence if "We" tries to send=
+ the second command, the lock is not freed to be acquired.
+
+At this state, ELE can send command to its slave and can wait for the respo=
+nse from its slave.
+After collecting information from its slave, ELE will prepare the response =
+to the command sent by "We", to send the response.
+After the response is received by "We", the mutex-command-lock is freed.
+
+>=20
+>=20
+> 1) and 2) is covered by ele_msg_send_rcv(). 3) is covered by
+> ele_msg_send_rcv() as well, it can be called directly by kernel code=20
+> or via an ioctl from userspace.
+>=20
+> 4) is the most unclear point for me, but 1) 2) and 3) seems straight=20
+> forward and should be solvable with significantly reduced code size.
+>=20
+> Am I missing any features that you need as well?
+
+Yes.  As explained above with each bullet. There is a ELE's slave-daemon ru=
+nning at the userspace, with which ELE exchange messages.
+Now, it must be clear why?
+	Both the API(s):  ele_miscdev_msg_send() & ele_miscdev_msg_rcv()are needed=
+.
+>=20
+>=20
+> >
+> > >
+> > > > +}
+> > > > +
+> > > > +static int se_ioctl_get_mu_info(struct se_if_device_ctx *dev_ctx,
+> > > > +                             u64 arg) {
+> > > > +     struct se_if_priv *priv =3D dev_get_drvdata(dev_ctx->dev);
+> > > > +     struct se_if_node_info *if_node_info;
+> > > > +     struct se_ioctl_get_if_info info;
+> > > > +     int err =3D 0;
+> > > > +
+> > > > +     if_node_info =3D (struct se_if_node_info *)priv->info;
+> > > > +
+> > > > +     info.se_if_id =3D if_node_info->se_if_id;
+> > > > +     info.interrupt_idx =3D 0;
+> > > > +     info.tz =3D 0;
+> > > > +     info.did =3D if_node_info->se_if_did;
+> > > > +     info.cmd_tag =3D if_node_info->cmd_tag;
+> > > > +     info.rsp_tag =3D if_node_info->rsp_tag;
+> > > > +     info.success_tag =3D if_node_info->success_tag;
+> > > > +     info.base_api_ver =3D if_node_info->base_api_ver;
+> > > > +     info.fw_api_ver =3D if_node_info->fw_api_ver;
+> > >
+> > > This really shouldn't be here. You pass cmd_tag and rsp_tag to=20
+> > > userspace just to guide userspace how to construct a message.
+> > >
+> > > This shows that the messages should be constructed in the Kernel=20
+> > > rather than in userspace. Just pass the message content from=20
+> > > userspace to the kernel and let the kernel build the message on=20
+> > > the sender
+> side.
+> >
+> > This will help collecting user-space application logs, with correct tag=
+s.
+> > This is already used by the customers, for debug.
+>=20
+> I don't bother that you provide this information to userspace. My=20
+> point is that it shouldn't be needed by userspace to assemble the=20
+> packets that are sent back to the kernel.
+>=20
+> Really the packet encapsulation should be done in the kernel and=20
+> userspace shouldn't be bothered with it.
+Packet encapsulation cannot be removed from the userspace.
+
+Only, userspace knows that the current API, that is sent, belongs to which =
+set of API(s):
+- Set of API(s) supported by FW code.
+- Set of API(s) supported by ROM Code.
+
+Only thing that can be saved is the encapsulating command tag for "We" and =
+response tag for ELE's slave.
+
+>=20
+> >
+> > >
+> > > > +/* IOCTL entry point of a character device */ static long=20
+> > > > +se_ioctl(struct file *fp, unsigned int cmd, unsigned long arg) {
+> > > > +     struct se_if_device_ctx *dev_ctx =3D container_of(fp->private=
+_data,
+> > > > +                                                     struct se_if_=
+device_ctx,
+> > > > +                                                     miscdev);
+> > > > +     struct se_if_priv *se_if_priv =3D dev_ctx->priv;
+> > > > +     int err =3D -EINVAL;
+> > > > +
+> > > > +     /* Prevent race during change of device context */
+> > > > +     if (down_interruptible(&dev_ctx->fops_lock))
+> > > > +             return -EBUSY;
+> > > > +
+> > > > +     switch (cmd) {
+> > > > +     case SE_IOCTL_ENABLE_CMD_RCV:
+> > > > +             if (!se_if_priv->cmd_receiver_dev) {
+> > > > +                     err =3D 0;
+> > > > +                     se_if_priv->cmd_receiver_dev =3D dev_ctx;
+> > > > +                     dev_ctx->temp_resp =3D=20
+> > > > + kzalloc(MAX_NVM_MSG_LEN,
+> > > GFP_KERNEL);
+> > > > +                     if (!dev_ctx->temp_resp)
+> > > > +                             err =3D -ENOMEM;
+> > > > +             }
+> > >
+> > > cmd_receiver_dev isn't locked by anything, still it can be=20
+> > > accessed by different userspace processes.
+> >
+> > It is not accessed by different Userspace processes. It is a slave to F=
+W.
+> > FW interacts with it when FW receive a command to do any action,=20
+> > from
+> userspace.
+> > Hence, it will be executed under command-lock.
+>=20
+> When two userspace programs have a device instance open, then nothing=20
+> prevents them from calling this ioctl at the same time. You do a
+>=20
+>         if (!se_if_priv->cmd_receiver_dev)
+>                 se_if_priv->cmd_receiver_dev =3D dev_ctx;
+>=20
+> which is executed by two threads simultaneously. It's one of the most=20
+> classic scenarios that need locking.
+
+This IOCTL is not to be called by user-application.
+It is to be called by one application(called ELE's Slave NVM-Daemon) implem=
+ented as part of secure-enclave library code-base.
+This case will never be occurring.
+
+I will update the SE-DEV text file against this ioctl.
+
+>=20
+> Sascha
+>=20
+> --
+> Pengutronix e.K.                           |                             =
+|
+> Steuerwalder Str. 21                       |
+> https://eur01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fwww.
+> pengutronix.de%2F&data=3D05%7C02%7Cpankaj.gupta%40nxp.com%7Ca46d
+> d4dd6a0542c2848608dcb842477e%7C686ea1d3bc2b4c6fa92cd99c5c3016
+> 35%7C0%7C0%7C638587842010417199%7CUnknown%7CTWFpbGZsb3d8
+> eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3
+> D%7C0%7C%7C%7C&sdata=3DmslWc%2F%2Bp4PKtth3htkmdAJ0xHFh5MlCkcj
+> %2FKNw7Tg5U%3D&reserved=3D0  |
+> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    =
+|
+> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 =
+|
 
