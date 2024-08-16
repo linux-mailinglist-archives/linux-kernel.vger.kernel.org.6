@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-290232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53F66955114
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:53:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF2E7955117
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:53:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D54CBB23A22
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:53:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4031EB23D70
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BCD1C3F1D;
-	Fri, 16 Aug 2024 18:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2561C460B;
+	Fri, 16 Aug 2024 18:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m+M9sepS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t6sX9IOe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE6B1C37AE;
-	Fri, 16 Aug 2024 18:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DCE1C3F25;
+	Fri, 16 Aug 2024 18:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723834397; cv=none; b=EkZK63Pd55DEKuF23wVkCMRhjxHMD8g11mRYCG/xBefd/eeRvl6iOzqyjaIgIjSxrJhDSst0ixqriDt2V+Vg+9z48RRmmWYigTup9ld85em80DTnkSp4v8n83PrAMpFzO+xNAUfZOIhHHJauy1MQbGvY1hIkeIGQU/SBmDXcxsA=
+	t=1723834399; cv=none; b=hnDN41eM6jxKyDc+Pq+/2n/zwImeFu0xPMwD0qA9d7qXkgPtBc4+qF1Q/FEiSQX4gvMuYYaKqyEI6jvQDP1HcGi5VgKv8YVZauSGMFzUM5z1R+O+6P8Ord2h9UhfYfgVsEZk9c00xjxsS/X0M13KOY70vqlz8X02aDcJKkcFjSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723834397; c=relaxed/simple;
-	bh=z0ONeofNU8rqXJvlEzskZZ7ldw7sJ6PtHeETuOJhIf8=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Y2hvguH+nnrr3pxY0Edf3ZRSIwmzTw/V1pbNX47SBu4NGFKPVinlLZRU/TYDmJbGr01MdWe6gI//8+Xzu4mgzxDzF9NygC0QGKImJMpxCfCbRK2XXmJ7k3vL+YSs3tOTJn9Rqgh7VEUBiWYYNU4Zk8IC37TeKqxWzKf4VSzgZbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m+M9sepS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B396C32782;
-	Fri, 16 Aug 2024 18:53:17 +0000 (UTC)
+	s=arc-20240116; t=1723834399; c=relaxed/simple;
+	bh=7ZHxtq9LRbEHLeW2L1PlAFzjkOzeMkSahXKG9sHwY7U=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=KJsfAr7gyD8/PD2k2UWXE0LR8MFCXLvrr+Nb+jTEjsdgztXi6SeFHwst9HtTeLQgNkHmdE+Z04VV85GUcHyCWacKZSaxibWW+jc8ROz/CLFvnwBIBi7dYOhzSKoxYknYyaSJQtwp52WQhnPo4qZXhBU/HwGJjn5Byw7iJ6e4+zQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t6sX9IOe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A3B1C32782;
+	Fri, 16 Aug 2024 18:53:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723834397;
-	bh=z0ONeofNU8rqXJvlEzskZZ7ldw7sJ6PtHeETuOJhIf8=;
+	s=k20201202; t=1723834399;
+	bh=7ZHxtq9LRbEHLeW2L1PlAFzjkOzeMkSahXKG9sHwY7U=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=m+M9sepSVsXbhsap7sT33pJ8qgt1VQoEkIK3LHgDzS6d1iwGQCs8iumOgru208MXQ
-	 Tl46gaYVGjrmAYpU/7LPM09YP6pZKS9n6AcflA3Aej9oBlVGBbp32eKiLM7p087j67
-	 h8XzTjO12SKEsSm3Bv8DHpVdPC2xRWJrVrkMcE5j9XPNqJZz3PLL+eQboqoR9SVDXB
-	 fzFt6dS64PpU+O4czv3jdmv+3b8e2WPpy7MZxPi+YmIbmjjpx4seuQBRVJNuDELlm0
-	 mV68dmARfRadvOIxlw0urrSTUfhThpYLBqFPlBRfZuibCz0HkWv3eYpCm1/YzDZ4X+
-	 uIql768pDXg6A==
+	b=t6sX9IOeYbkHOI/kuS28xyBTI36kVA6C7K54McBEBx4/wGNn87TM+FXtuK3hauCY4
+	 2O62uGlATP1RCDKl6iMoyBFdAi21bnQF3+QDFDrfvaPtvxAF52OxkyhlYPqBHxz+ip
+	 w1m0URk3YpYKzrzkl2lZzOjzp8uTWLNKo7IP/M2nRoDlm30p3N6qeirrVJ6S5QNdU5
+	 VlnaSnts3kbFxTX6DacC/x06B3zH8cQX2F7LP0HXIeRiNWj0ruyAsaciP3lC2tizOM
+	 Pn/hM2UGRtlSZ7KqHXebBw+WX0UZKnaTvBwTJsTjZt7Xz7S59Y+smudrLd6iOxHxbL
+	 FtmxwE0m/eZRA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB6C438232A9;
-	Fri, 16 Aug 2024 18:53:17 +0000 (UTC)
-Subject: Re: [GIT PULL] DAX for 6.11
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE82638232A9;
+	Fri, 16 Aug 2024 18:53:19 +0000 (UTC)
+Subject: Re: [GIT PULL] ACPI fix for v6.11-rc4
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <66bf57c7b023f_22218329410@iweiny-mobl.notmuch>
-References: <66bf57c7b023f_22218329410@iweiny-mobl.notmuch>
-X-PR-Tracked-List-Id: <nvdimm.lists.linux.dev>
-X-PR-Tracked-Message-Id: <66bf57c7b023f_22218329410@iweiny-mobl.notmuch>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git/ tags/libnvdimm-fixes-6.11-rc4
-X-PR-Tracked-Commit-Id: d5240fa65db071909e9d1d5adcc5fd1abc8e96fe
+In-Reply-To: <CAJZ5v0g9-phbMjZmrY36p0joOFhJm9-op9uRs3pdE=cpO54cpw@mail.gmail.com>
+References: <CAJZ5v0g9-phbMjZmrY36p0joOFhJm9-op9uRs3pdE=cpO54cpw@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-acpi.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAJZ5v0g9-phbMjZmrY36p0joOFhJm9-op9uRs3pdE=cpO54cpw@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-6.11-rc4
+X-PR-Tracked-Commit-Id: 71bf41b8e913ec9fc91f0d39ab8fb320229ec604
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e4a55b555db6d2a006551605ef4404529e878cd2
-Message-Id: <172383439657.3603929.10117357333455532068.pr-tracker-bot@kernel.org>
-Date: Fri, 16 Aug 2024 18:53:16 +0000
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Zhihao Cheng <chengzhihao1@huawei.com>, Christoph Hellwig <hch@lst.de>, Dave Jiang <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-PR-Merge-Commit-Id: 64ab5e4039cd713afdb7c1b1d6a693efdd2050d8
+Message-Id: <172383439820.3603929.7146026755245619568.pr-tracker-bot@kernel.org>
+Date: Fri, 16 Aug 2024 18:53:18 +0000
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Fri, 16 Aug 2024 08:44:39 -0500:
+The pull request you sent on Fri, 16 Aug 2024 19:35:58 +0200:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git/ tags/libnvdimm-fixes-6.11-rc4
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-6.11-rc4
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e4a55b555db6d2a006551605ef4404529e878cd2
+https://git.kernel.org/torvalds/c/64ab5e4039cd713afdb7c1b1d6a693efdd2050d8
 
 Thank you!
 
