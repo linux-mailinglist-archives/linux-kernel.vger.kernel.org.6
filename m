@@ -1,96 +1,148 @@
-Return-Path: <linux-kernel+bounces-289628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78479954873
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:02:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F21B954878
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAEE21C21B66
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:02:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4200C1C22823
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12301AD3EF;
-	Fri, 16 Aug 2024 12:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B861B012B;
+	Fri, 16 Aug 2024 12:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P2RSKImg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lammGcz+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C235156C62;
-	Fri, 16 Aug 2024 12:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83878156F44;
+	Fri, 16 Aug 2024 12:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723809737; cv=none; b=SUiCf26YyCS0gx+VclLdsHd9N6mXiys8/bQm6fPvXUqOYg7Np2gEWo7tqOi1hcKmYVki0z3Pe97NGjg66Pv9ChsWIpRDiQ6XDtcHgZExmEyoTXx0PweHb1HLOt74JrfUTMTurqxG5E+Ti0DJ/6vcGmRN+I87zQjEaTE97u4teS4=
+	t=1723809752; cv=none; b=f+QLPcCuiXJcGdAHu60XxYHadWy33lav9wNM7+GVqnHYkW1MHFrtgZcspp1PfbOxdHnm+ydnp8t30j8FzwYppuwwckjCnrMTyWk+2uirsJR9Z0cD5WgpbaMsGhdKLOBW+4Wu34iMTDDfe9KfbfAQGagl26QBjvDol1nxkFPCTfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723809737; c=relaxed/simple;
-	bh=NAmwEWrgEf+Xp0/OzBzRsBFn/oVvGfylhZy2WMC9EQ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=nxRgFpD4HQkg86qa7hOYsnukq/ig4LYMMwFzdhC6oZxpPkeOdNdYpmvTmnYKcvrJUZfOUsbG21XFf3/6VflqC3LGnvYt6Q46dKXvH7SGOkCiWJSU7/bKj+siLaijUThBglKvKqc0FTkCw6i3uMFIc/cJK9fRmXDwyFN2W1QTzCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P2RSKImg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98B79C32782;
-	Fri, 16 Aug 2024 12:02:16 +0000 (UTC)
+	s=arc-20240116; t=1723809752; c=relaxed/simple;
+	bh=oPeCvIbifLel6Ow5IZxAJAB7Vu3RJACPj3rWPilHCSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=te5ImRZvugcFy3zuE2UJRPaFLfcVdvhbmAOt5/QcuB8MHwgxjjZSJXeDijX2E38O2Sk9H9OB4ZmHnlmDpd10R99OO4FEGIsoJjsc8GB56ukj4s94RTXlKcy/c/ixpVzXVqJPUdG/g7QYNZm2J3G2cJ0AK5L9ydBuyRoW/Nav4dM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lammGcz+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D3A6C32782;
+	Fri, 16 Aug 2024 12:02:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723809736;
-	bh=NAmwEWrgEf+Xp0/OzBzRsBFn/oVvGfylhZy2WMC9EQ4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=P2RSKImg22nJX7hkwvDhXT7+YEwoUOIAeY9XxL1yg0atED+iYid176F7wK2trLE55
-	 KcxP5X1g99/tgPUO/T+Dr2SloE2Q5RxiY4yX7l8U+6Q/975KOppck+xXN10q7rBgbI
-	 xU5M7Eivqe42ATTqfzhdCrzbEsk1rpAoq3FrSH1TK+qvW5P5h8RqJ/yR0rjeP77us0
-	 cnJ5iU7QICiQkFxQnSftt/jFcrPsEaWDBARXX8BBMcBkiZJRnxSbHUbH97WZdoBJQV
-	 jtRhZG/tXxm50JUoVZHS8RzlYG+YRuW7SAvp8zLLNBc9SboEbCREaIeq6R0kJglJqy
-	 RyGIsIAQ/LxEg==
-Date: Fri, 16 Aug 2024 07:02:14 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: qcom-ep: Do not enable resources during probe()
-Message-ID: <20240816120214.GA65249@bhelgaas>
+	s=k20201202; t=1723809752;
+	bh=oPeCvIbifLel6Ow5IZxAJAB7Vu3RJACPj3rWPilHCSM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lammGcz+t6OGLNs0WJ0Ion4Wo4GhurUkVu9VWiP20uUI84FAGr99BGSEVKLI3fz0A
+	 fdGUkReozzGf4aWRVUznXu1+ekkxTAXKX9asXpNuaMQ1tYN4asJdK2ScKq+YtJngv9
+	 eBTUzZ6sgM4PJfqhUUEouo3q1afG4J2UT9kK9sHh3i6JTPG7VScNqDMPYJjMiJ/yEb
+	 aDHpqxKNlUXj5jxTAw9xe58I5LaYxqrSdwd8JLqUkMgLqODMxadE/yFK1sG8NLIRrS
+	 rF0cmj1k6ZNEaPvijrCCoPuA1yH2NQ+PEC7/6R5P2m1BKIliB/yCGa8WCxE1omVOJe
+	 vrEUxH6ID2hnA==
+Date: Fri, 16 Aug 2024 13:02:22 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 05/40] arm64/gcs: Document the ABI for Guarded
+ Control Stacks
+Message-ID: <7c17b28e-a5d1-4113-9580-9501692af513@sirena.org.uk>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+ <20240801-arm64-gcs-v10-5-699e2bd2190b@kernel.org>
+ <Zr8zTTrJ6M0SCvCV@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="p6v+ZIr+kcIsmhYm"
+Content-Disposition: inline
+In-Reply-To: <Zr8zTTrJ6M0SCvCV@arm.com>
+X-Cookie: A Smith & Wesson beats four aces.
+
+
+--p6v+ZIr+kcIsmhYm
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240816053757.GF2331@thinkpad>
 
-On Fri, Aug 16, 2024 at 11:07:57AM +0530, Manivannan Sadhasivam wrote:
-> On Thu, Aug 15, 2024 at 01:15:57PM -0500, Bjorn Helgaas wrote:
-> > On Sat, Jul 27, 2024 at 02:36:04PM +0530, Manivannan Sadhasivam wrote:
-> > > Starting from commit 869bc5253406 ("PCI: dwc: ep: Fix DBI access failure
-> > > for drivers requiring refclk from host"), all the hardware register access
-> > > (like DBI) were moved to dw_pcie_ep_init_registers() which gets called only
-> > > in qcom_pcie_perst_deassert() i.e., only after the endpoint received refclk
-> > > from host.
-> > > 
-> > > So there is no need to enable the endpoint resources (like clk, regulators,
-> > > PHY) during probe(). Hence, remove the call to qcom_pcie_enable_resources()
-> > > helper from probe(). This was added earlier because dw_pcie_ep_init() was
-> > > doing DBI access, which is not done now.
-> > > 
-> > > While at it, let's also call dw_pcie_ep_deinit() in err path to deinit the
-> > > EP controller in the case of failure.
-> > 
-> > Is this v6.11 material?  If so, we need a little more justification
-> > than "no need to enable".
-> 
-> That's why I asked to merge the comment from Dmitry:
-> 
-> "...moreover his makes PCIe EP fail on some of the platforms as powering on PHY
-> requires refclk from the RC side, which is not enabled at the probe time."
+On Fri, Aug 16, 2024 at 12:09:01PM +0100, Catalin Marinas wrote:
+> On Thu, Aug 01, 2024 at 01:06:32PM +0100, Mark Brown wrote:
 
-The patch was posted and described basically as a cleanup of something
-that was unnecessary but not harmful, which is not post-merge window
-material.
+> > +* EL0 GCS entries with bit 63 set are reserved for use, one such use is defined
 
-If it is in fact a critical fix, that needs to be the central point of
-the commit log, not something tacked on with "moreover" or
-"additionally".  And we need something like a Fixes: tag so we know
-when the problem was introduced and where to backport this.
+> Maybe "reserved for specific uses". The proposed sentenced feels like
+> it's missing something.
 
-Bjorn
+Actually we removed the usage of bit 63 so I'll just drop this.
+
+> > +* When a new thread is created by a thread which has GCS enabled then a
+> > +  new Guarded Control Stack will be allocated for the new thread with
+> > +  half the size of the standard stack.
+
+> Is the half size still the case? It also seems a bit inconsistent to
+> have RLIMIT_STACK when GCS is enabled and half the stack size when a new
+> thread is created.
+
+Yes, this predates the rebase onto clone3() - I'll update.
+
+> [...]
+> > +* When a thread is freed the Guarded Control Stack initially allocated for
+> > +  that thread will be freed.  Note carefully that if the stack has been
+> > +  switched this may not be the stack currently in use by the thread.
+
+> Is this true for shadow stacks explicitly allocated by the user with
+> map_shadow_stack()?
+
+It is only true for the stacks allocaeted by the kernel, if we didn't
+allocate a stack we don't free it.
+
+> > +* The signal handler will use the same GCS as the interrupted context.
+
+> I assume this is true even with sigaltstack. Not easy to have
+> alternative shadow stack without additional ABI.
+
+Yes.
+
+--p6v+ZIr+kcIsmhYm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma/P80ACgkQJNaLcl1U
+h9Dfgwf9EHMFRik1mUwmgRytVPWYPFLCBG8YZtDuO0Wxbs78KN6zc8ji2vFJ8lIJ
+B1hNUxCH6BOhm+AfFVF3zkoXZn+wjlPnLRGOPJUodgh27zecCwTCrwayO8ncECyf
+bIeq0XnjssL7P2A2wNVK0cFXU9W+Gw3OjVUAPUQmdC7lk6w4GwIMnpgQs1Vrueko
+IO1qBTeiV0rySxm/x0E14lq3kpX7eAcrBERnR+wfA17R4CtVClV2S1lT8YyUdYl7
+n81clFcHhylhTBz7napWIOchWjXqicUT7zqHLPKHMVxutUuuT1Mc+obOdDSUsdcl
+8qUKqX887cAFNJNPd+6Nlq+t+MtUZA==
+=6lHH
+-----END PGP SIGNATURE-----
+
+--p6v+ZIr+kcIsmhYm--
 
