@@ -1,54 +1,58 @@
-Return-Path: <linux-kernel+bounces-288770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 683D7953E4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 02:29:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44BDF953E51
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 02:38:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25334288D03
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 00:29:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 722BE1C21111
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 00:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0573B28F4;
-	Fri, 16 Aug 2024 00:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2003263CB;
+	Fri, 16 Aug 2024 00:38:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XuPDTMF4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CHefHL+J"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EC310E4;
-	Fri, 16 Aug 2024 00:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5920723D7;
+	Fri, 16 Aug 2024 00:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723768158; cv=none; b=AYO+/gaIzkoUc96uCZuMEcs5CSOjLAkg6FN1tDca45ruKahjuMLdg2pTThIxQo2VRpJX9Y9veRgZFr8hwMT2xJtKaBOHVmlE5oLka7CzQJeuM9Suedmb6LFqkTTcv6U7EfPkn+05bkFa/kuGexvskqlO+ebdMf3EVgmaxVu2cIo=
+	t=1723768700; cv=none; b=hnmSYvRfgTBRYc/VArDsu49hai4UIATW1SdkdwNa4aes7OdibiVBMLjLRCebJPlrBl2s3hQ1j4482ID5X2g0lo2UIQD9onGpqcEgI1sqxfcI7wZ/VyhFphuqzTybuxQ7tlGGTrbqJ3r9X4Mf1d2ZZ3gULxsa+s7eAzBr655tzo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723768158; c=relaxed/simple;
-	bh=O+Sd2MWOnr5NJTgvYNtdWZBZ6/GH4gLkufhqIXqOLHY=;
+	s=arc-20240116; t=1723768700; c=relaxed/simple;
+	bh=Zrho0SBGhUzoe8hai2/6+FqGYXuq6EYO9JiRXoO2VuM=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T9Ip1OWc8aeMz5nBEk5BpSzNIyqVVzepN7XCNXj2QDqrabxKAKpd0Vy754fQ7Ksu0pUDsOzdP7FHdktUfhCi6qS9T3thhXpLwh1AJRg7dgorUZ1LCYSJ45oXdkU+I7ddmsvxgAmxS7L+2xju+BLyYh94piEtCiLdw1tFUkk8Ek0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XuPDTMF4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79934C32786;
-	Fri, 16 Aug 2024 00:29:17 +0000 (UTC)
+	 MIME-Version:Content-Type; b=QpPXFr7HFYowfuFhOPvyKsobui0MtEJzGzwN9FziKn5IuYqTI4zdgrMDglL0Pbk/HMb6v8GFsova2chHQM4Tp3W1guWtbBz2BdZDlyRLnYXrIP2vYSbXO2vVjM/qx4Qq7bliyXgvubbukGri9T6evQgnQN0NC9UZQiVgBbIwRfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CHefHL+J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77C5BC32786;
+	Fri, 16 Aug 2024 00:38:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723768157;
-	bh=O+Sd2MWOnr5NJTgvYNtdWZBZ6/GH4gLkufhqIXqOLHY=;
+	s=k20201202; t=1723768699;
+	bh=Zrho0SBGhUzoe8hai2/6+FqGYXuq6EYO9JiRXoO2VuM=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XuPDTMF4BxRKgelD87yEpQpi5rjmels+lSRcTgbJ4t7quIWZ5SR4ru4r01STP30XH
-	 OM5Rvz4x2rfriNcnaNl+Q/639Nz2BZrSTC8S99eBiH5+z7AIL7bVzcdgfWRsEyrz+i
-	 is4Jvn/tu9yvw5CqrDOEG6fTw9YvGJWMyaEe+aQuwlRUzuZ1jSqRe+LfCKy+Mrye3F
-	 lvnfWYQdS9HwBL07E7+YKUSmfCPVjZFXrPspNEHqM4BWLag+LQYxCh+tNAsUW5JnSw
-	 OaEcdO07phvpU6kD01NeBVYFWnzcutt/ylJhA+xgGlKcF+Qrk+FX2J1UPNFgni2vt9
-	 lipYxU2zYsCng==
-Date: Thu, 15 Aug 2024 17:29:16 -0700
+	b=CHefHL+JjeERWiPMzKkBhp19y9vO3vZlBQINctqm13uNaJlfHifnHDDIaNJI5u98t
+	 QIubDAK9+l/FS2b4R0iPo3PQ+Jiwu2crb1yD8c1tfZz+oDi6BQ4Dh3zjAE+OkycN+7
+	 53quuAreUnApWjzYCpMtAby7cA/yald3iqGKITngMC8oW154qd0G6gBMCccZKDoOIn
+	 iKstTgZ2RN8XD7e5NXypgctCerHncM6ugvGyYGl7ulXSGcZa7FTY2hKpD4BLSF9Uc6
+	 yGeuNAHF6RTcnukJirZvrNc8nm59vB0UqK9PBigwtUFeqT0KUWJ3GcKxpMs4FPb7HI
+	 CztN3h29bS3vA==
+Date: Thu, 15 Aug 2024 17:38:18 -0700
 From: Jakub Kicinski <kuba@kernel.org>
-To: Moon Yeounsu <yyyynoom@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: ethernet: dlink: replace deprecated macro
-Message-ID: <20240815172916.555a992a@kernel.org>
-In-Reply-To: <20240810141502.175877-1-yyyynoom@gmail.com>
-References: <20240810141502.175877-1-yyyynoom@gmail.com>
+To: Simon Horman <horms@kernel.org>
+Cc: Abhash jha <abhashkumarjha123@gmail.com>,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ shuah@kernel.org, netdev@vger.kernel.org, liuhangbin@gmail.com
+Subject: Re: [PATCH] selftests/net/pmtu.sh: Fix typo in error message
+Message-ID: <20240815173818.12780279@kernel.org>
+In-Reply-To: <20240815174508.GO632411@kernel.org>
+References: <20240814173121.33590-1-abhashkumarjha123@gmail.com>
+	<20240815125321.GA632411@kernel.org>
+	<CAG=0RqKvw58-aN1onSjzc+WwhXk8uh_Ak=Po5gQyOmZUNgvaKg@mail.gmail.com>
+	<20240815174508.GO632411@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,14 +62,24 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Sat, 10 Aug 2024 23:15:02 +0900 Moon Yeounsu wrote:
-> Macro `SIMPLE_DEV_PM_OPS()` is deprecated.
-> This patch replaces `SIMPLE_DEV_PM_OPS()` with
-> `DEFINE_SIMPLE_DEV_PM_OPS()` currently used.
+On Thu, 15 Aug 2024 18:45:08 +0100 Simon Horman wrote:
+> On Thu, Aug 15, 2024 at 10:37:19PM +0530, Abhash jha wrote:
+> > > I agree with the correctness of this change.
+> > > And I verified that with this patch applied,
+> > > coedspell only flags false positives in this file.
+> > >
+> > > Reviewed-by: Simon Horman <horms@kernel.org>  
+> > 
+> > Hi Simon,
+> > Thanks for the review, Should I still send the patch again with the
+> > fixes tag and the target repo for the patch as suggested by
+> > liuhangbin@gmail.com. Or is it fine for now.  
 > 
-> Expanded results are the same since remaining
-> member is initialized as zero (NULL):
+> Sorry for sending my response before I noticed Hangbin's -
+> I didn't mean to send conflicting information.
+> 
+> TBH, I'm not entirely sure this is a fix, for which my
+> rule of thumb is that it resolves a user-visible bug.
 
-FTR this has been merged, commit 2984e69a24af ("net: ethernet: dlink:
-replace deprecated macro") in net-next. Thank you!
++1, same feeling here, I'll apply as is.
 
