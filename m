@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-289032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF56595416D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:54:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7661B95416E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:54:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94E2C28306A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 05:54:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCC1D282D9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 05:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3015D1304AB;
-	Fri, 16 Aug 2024 05:53:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2E52C6BB;
+	Fri, 16 Aug 2024 05:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XrHBsr2T"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f6HYR8on"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7455B12E1E9;
-	Fri, 16 Aug 2024 05:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF59C3C24;
+	Fri, 16 Aug 2024 05:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723787614; cv=none; b=DdrN3eLz1jHaoZQr21CSvO+ONyFM2u/q/AjSaRzGJPxyta3c6KGbtG0XSTNwpKDs+U7QqfKWzp5SLg1eUcj6k3iUONlLUVMZpZaOKG5kg6352hNZ4G9cbjcNylMsgIbMBu6OxKH8fdJeMOOcuPXIDVGyw2+ejgsW/hsyPAqASNA=
+	t=1723787623; cv=none; b=b/9Em6K88RyHnENHVv6FVRQf4P9lpZf0btS98jDwCt2acM7LVZ0zAT1SsHDEjsCN4JETa8/Z9uorUVxM3J3gpYf5cS/erNzB+aZRevjTcKKYnz5ukDJDllaKoJJMO+cV85oLPPIiidd3suiT24wjow/Em5CiG2++Mdu5Vj8GjYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723787614; c=relaxed/simple;
-	bh=J/SOWYNC0DQ9Ec9glAI6uTGfbMLi8t5ZrCUq3XXmHRQ=;
+	s=arc-20240116; t=1723787623; c=relaxed/simple;
+	bh=xJck8nZ7/i2WWJz8ew/0idJPKNfB40Goh/ebcunUtv4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QrNNTbWHdLi6cdQBtLUDLyHSkAIxsKQjuN3n0xWL4Zf7ESpR5MGZYnQUXEBScYUxujLG0U/O1JpGNFhxVAW+SEZUAkfAXwkZn+PjUjPasJXrN5lLQlC40GJFV1iaL/nY3NJYBRj6v8T+YTldiAmy042c/jL35gMo4UWI1Q0fA+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XrHBsr2T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0714DC4AF0B;
-	Fri, 16 Aug 2024 05:53:24 +0000 (UTC)
+	 MIME-Version; b=LW/7JNNYFF+nCBvadC+vPYNprixa9nvCDr6h8V9n3k4oFgT8/Ry3YLmZF4iJDEZAyDH3dPE9f7QitiWNvh8wsYuKd/Wa5VQhPkyLNLYShDps62hzu2LLOrFgE82VE8GNWSTurDejKDMlHmHH8stPJgBIp5ECALCYa1THatEwgok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f6HYR8on; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97D17C32782;
+	Fri, 16 Aug 2024 05:53:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723787614;
-	bh=J/SOWYNC0DQ9Ec9glAI6uTGfbMLi8t5ZrCUq3XXmHRQ=;
+	s=k20201202; t=1723787622;
+	bh=xJck8nZ7/i2WWJz8ew/0idJPKNfB40Goh/ebcunUtv4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XrHBsr2TkfxYYBPD0iiMJ5J08EY/k8QHLR9ZXf9pV7tuu4rkkhVJxaNW5zR7q/7nj
-	 LPQFEu9ZFM8986lrTXnTO8oQNzJK8AndSJZhj/gnbM9bW0VvReyFwTs5UG3382AR6K
-	 lLszUpbbr0hhCG2foPlMuXyhxhK/hVPMSKrolBAgxLw7g4tEIylaeI9S5jW5kyqbot
-	 xmPYDheZwNa4fcmqLCQ9UojPq22gKX+fJBzY2ePU2kdGNyibfbSLsqA2b+ap4ifObj
-	 VJ6v4AX9EfyYjmVVsXpVrYl9pLJ5YPojlRvfEKsMmgUb41gfd1jAtQF3d/5XK+Daq7
-	 hvKZsuKb2dwiA==
+	b=f6HYR8ondYT/rlLhrdTJhbojPJhzbDHiSzsaU9tNQ9sebm3OcpKU17W2knodAlUU+
+	 aZPNsGQvK/UV+bj6iEJxQZy5cy+TtzdD9MPzeSUy2v1CB2SQpDHl1XppY6lYe+2uyB
+	 CrbwkcKCuvP/RvIJnMi1/MSdf/myj3GcMVpxQblrPQbcNowMjH+G1W2l5kjv5RwIgR
+	 boLXIlymnPBhHinL1qZC4Zlwpyz+1RgXWGl0pbK+3Gy7PXLDSoQXmHpVTVMchsWOT0
+	 F+lc1zT9gyGUVAncEIDkOGg354qLUsd60pU0Qc+5hUSXrjI8JjTSiJ9llhtqy5P798
+	 wim5lDFAMxylw==
 From: neeraj.upadhyay@kernel.org
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -52,9 +52,9 @@ Cc: linux-kernel@vger.kernel.org,
 	joel@joelfernandes.org,
 	urezki@gmail.com,
 	frederic@kernel.org
-Subject: [PATCH rcu 5/8] rcutorture: Make rcu_torture_write_types() print number of update types
-Date: Fri, 16 Aug 2024 11:22:00 +0530
-Message-Id: <20240816055203.43784-6-neeraj.upadhyay@kernel.org>
+Subject: [PATCH rcu 6/8] rcutorture: Add rcutree.nohz_full_patience_delay to TREE07
+Date: Fri, 16 Aug 2024 11:22:01 +0530
+Message-Id: <20240816055203.43784-7-neeraj.upadhyay@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240816055203.43784-1-neeraj.upadhyay@kernel.org>
 References: <20240816055203.43784-1-neeraj.upadhyay@kernel.org>
@@ -68,41 +68,25 @@ Content-Transfer-Encoding: 8bit
 
 From: "Paul E. McKenney" <paulmck@kernel.org>
 
-This commit follows the list of update types with their count, resulting
-in console output like this:
+This commit adds the rcutree.nohz_full_patience_delay=1000 kernel boot
+parameter to the TREE07 scenario, on the observation that "if it ain't
+tested, it don't work".
 
-	rcu_torture_write_types: Testing conditional GPs.
-	rcu_torture_write_types: Testing conditional expedited GPs.
-	rcu_torture_write_types: Testing conditional full-state GPs.
-	rcu_torture_write_types: Testing expedited GPs.
-	rcu_torture_write_types: Testing asynchronous GPs.
-	rcu_torture_write_types: Testing polling GPs.
-	rcu_torture_write_types: Testing polling full-state GPs.
-	rcu_torture_write_types: Testing polling expedited GPs.
-	rcu_torture_write_types: Testing polling full-state expedited GPs.
-	rcu_torture_write_types: Testing normal GPs.
-	rcu_torture_write_types: Testing 10 update types
-
-This commit adds the final line giving the count.
-
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Signed-off-by: "Paul E. McKenney" <paulmck@kernel.org>
 Signed-off-by: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
 ---
- kernel/rcu/rcutorture.c | 1 +
+ tools/testing/selftests/rcutorture/configs/rcu/TREE07.boot | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index acf9f9945d2b..9a2ecb8b88ec 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -1324,6 +1324,7 @@ static void rcu_torture_write_types(void)
- 	} else if (gp_sync && !cur_ops->sync) {
- 		pr_alert("%s: gp_sync without primitives.\n", __func__);
- 	}
-+	pr_alert("%s: Testing %d update types.\n", __func__, nsynctypes);
- }
- 
- /*
+diff --git a/tools/testing/selftests/rcutorture/configs/rcu/TREE07.boot b/tools/testing/selftests/rcutorture/configs/rcu/TREE07.boot
+index 979edbf4c820..55ce305b2a3d 100644
+--- a/tools/testing/selftests/rcutorture/configs/rcu/TREE07.boot
++++ b/tools/testing/selftests/rcutorture/configs/rcu/TREE07.boot
+@@ -2,3 +2,4 @@ nohz_full=2-9
+ rcutorture.stall_cpu=14
+ rcutorture.stall_cpu_holdoff=90
+ rcutorture.fwd_progress=0
++rcutree.nohz_full_patience_delay=1000
 -- 
 2.40.1
 
