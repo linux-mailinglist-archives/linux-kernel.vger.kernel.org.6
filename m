@@ -1,121 +1,143 @@
-Return-Path: <linux-kernel+bounces-289620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DB5D95485B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:56:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADED995485D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:56:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 159D61F21EEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:56:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32EDDB22803
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1491AD9F5;
-	Fri, 16 Aug 2024 11:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="WFHHZ5OD"
-Received: from the.earth.li (the.earth.li [93.93.131.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB4D1B29BF;
+	Fri, 16 Aug 2024 11:56:01 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8586E1AD3EF;
-	Fri, 16 Aug 2024 11:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199121AC425;
+	Fri, 16 Aug 2024 11:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723809359; cv=none; b=XISJ+klktLmPhkBenpMYtbdelLWvJSToYI+t5F5gHXcCswoVLbfxueZspn6qFjpRGaSxtTsiaUdOlIydIq7Z8Fbqaq/0O3IDb5bNSTiaa0tFd5P6XJ7t7sRIzvZ0DPsdGGfXeuEyvgW5riwbiIZOkurnMxsKgGkzRED90RCF05w=
+	t=1723809361; cv=none; b=MXRBFwcNh3GQ3BZ2ott7TCXrAIH0MwXwzLiWbgtzkNwdXQP4A3pjIR5ezr+Pd1ACOv5ikDpmTPfVz+QY9KNLHNLYrVZJNDhoOrzIKqi3uGSQsTntrtlRg2v8MT6dDJqWj4r0LRcyGDdAacaP/+nI6WUkolrQSSHkum/8eKYbjp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723809359; c=relaxed/simple;
-	bh=P1zQUaopEBnPUj03ntwAXsb5a66WDUioes3LPXmeLK8=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S+WDsMaaNhgzVhQQxdCGllZuJDSIO7f/tiCHWtD2gdq7uFHvseYAsa+pwzM1ReImxjmnzNomvgeW8DfyKY1yfiUP8wyEcx5jqbFb+nKkOByA3lVocxqijqYqo41QEy//dx9xvJ+k+mPOb6YXiAy9Mh4TGPTMIxM8Cw3sYC3tf8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=WFHHZ5OD; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-	To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=Wl3ZHAqgIGZLTckXRyqpTcjRcs19ZwdEjD9GnraGpIQ=; b=WFHHZ5ODphxCrj5bFJ1/Qx94Qh
-	Ii2eCi++8hZZcvTgw0OvHOh35JGxiCkEyOjf9cJHEWhqvS4So7/L0dytvcf05cIJIiBrgOjvfl1eJ
-	EdDjIdUq/Xq22AO6xinXXML8OgebMYMQ4Mh3fkV/DuTahu+QJmyR9T8zDgdDeGAh8Fu047O1IxMKn
-	jxKbe5qfvpzh37ZUKMphsCJIxeq9chMiMLG9t0WOJg/srvWycABjwSdXLqWjnoI9cCnjoq8Vxa3/p
-	U7WBGH7Kl1g3iVRVoLKk6lJNEhHpPM9Uwe3qFN3nI2hkAMpHdcImH+qtGwLSRxOdg1bjg8X7uaunR
-	uOejhPdg==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1sevYY-00EUiR-2M;
-	Fri, 16 Aug 2024 12:55:46 +0100
-Date: Fri, 16 Aug 2024 12:55:46 +0100
-From: Jonathan McDowell <noodles@earth.li>
-To: Jarkko Sakkinen <jarkko@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] tpm: Clean up TPM space after command failure
-Message-ID: <Zr8-QijwOpDLkol3@earth.li>
-References: <ZrzY_LWIXABkqd-S@earth.li>
- <D3GPGYHWPGFL.1S13HXY9ALZCU@kernel.org>
+	s=arc-20240116; t=1723809361; c=relaxed/simple;
+	bh=SVX+wbwMVGyzqZ9Uy2tRkt4Pwr5gXi5w8kw+OpNVwMw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jUdWcv1oCU9pJyL0rrEiTfeaBKNQ0zV+Ajw2OzJ8BKa7HvUi5EUDZWcNFUKfDUusC1ahhwZ2Uh1wUxjTPwoh3aue4ngaicwxGwiaWU7FXbeiw5XPn/ciHGgWSWlfQrQs7Tv34KLNqWIzotwE5sVzP/qWJWE1H9iKCkENKdgsEk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WlgRJ4L9Pz1T7Mq;
+	Fri, 16 Aug 2024 19:55:24 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0F51F140137;
+	Fri, 16 Aug 2024 19:55:57 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 16 Aug 2024 19:55:56 +0800
+Message-ID: <1a6aab37-2783-45a2-8edd-0990b211ac2d@huawei.com>
+Date: Fri, 16 Aug 2024 19:55:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D3GPGYHWPGFL.1S13HXY9ALZCU@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v13 07/14] mm: page_frag: reuse existing space
+ for 'size' and 'pfmemalloc'
+To: Alexander Duyck <alexander.duyck@gmail.com>
+CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Andrew Morton
+	<akpm@linux-foundation.org>, <linux-mm@kvack.org>
+References: <20240808123714.462740-1-linyunsheng@huawei.com>
+ <20240808123714.462740-8-linyunsheng@huawei.com>
+ <0002cde37fcead62813006ab9516c5b2fdbf113a.camel@gmail.com>
+ <a036abc3-76a0-450c-afea-2db3c10f0ed5@huawei.com>
+ <CAKgT0UfUVJ6FmVgFWv+uCV9Q7eX8s+Mf6cPVCLyHwk5TxtuKgg@mail.gmail.com>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <CAKgT0UfUVJ6FmVgFWv+uCV9Q7eX8s+Mf6cPVCLyHwk5TxtuKgg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-From: Jonathan McDowell <noodles@meta.com>
+On 2024/8/15 23:03, Alexander Duyck wrote:
+> On Wed, Aug 14, 2024 at 8:10 PM Yunsheng Lin <linyunsheng@huawei.com> wrote:
+>>
+>> On 2024/8/15 0:13, Alexander H Duyck wrote:
+>>> On Thu, 2024-08-08 at 20:37 +0800, Yunsheng Lin wrote:
+>>>> Currently there is one 'struct page_frag' for every 'struct
+>>>> sock' and 'struct task_struct', we are about to replace the
+>>>> 'struct page_frag' with 'struct page_frag_cache' for them.
+>>>> Before begin the replacing, we need to ensure the size of
+>>>> 'struct page_frag_cache' is not bigger than the size of
+>>>> 'struct page_frag', as there may be tens of thousands of
+>>>> 'struct sock' and 'struct task_struct' instances in the
+>>>> system.
+>>>>
+>>>> By or'ing the page order & pfmemalloc with lower bits of
+>>>> 'va' instead of using 'u16' or 'u32' for page size and 'u8'
+>>>> for pfmemalloc, we are able to avoid 3 or 5 bytes space waste.
+>>>> And page address & pfmemalloc & order is unchanged for the
+>>>> same page in the same 'page_frag_cache' instance, it makes
+>>>> sense to fit them together.
+>>>>
+>>>> After this patch, the size of 'struct page_frag_cache' should be
+>>>> the same as the size of 'struct page_frag'.
+>>>>
+>>>> CC: Alexander Duyck <alexander.duyck@gmail.com>
+>>>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+>>>> ---
+>>>>  include/linux/mm_types_task.h   | 16 +++++-----
+>>>>  include/linux/page_frag_cache.h | 52 +++++++++++++++++++++++++++++++--
+>>>>  mm/page_frag_cache.c            | 49 +++++++++++++++++--------------
+>>>>  3 files changed, 85 insertions(+), 32 deletions(-)
+>>>>
+>>>> diff --git a/include/linux/mm_types_task.h b/include/linux/mm_types_task.h
+>>>> index b1c54b2b9308..f2610112a642 100644
+>>>> --- a/include/linux/mm_types_task.h
+>>>> +++ b/include/linux/mm_types_task.h
+>>>> @@ -50,18 +50,18 @@ struct page_frag {
+>>>>  #define PAGE_FRAG_CACHE_MAX_SIZE    __ALIGN_MASK(32768, ~PAGE_MASK)
+>>>>  #define PAGE_FRAG_CACHE_MAX_ORDER   get_order(PAGE_FRAG_CACHE_MAX_SIZE)
+>>>>  struct page_frag_cache {
+>>>> -    void *va;
+>>>> -#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
+>>>> +    /* encoded_va consists of the virtual address, pfmemalloc bit and order
+>>>> +     * of a page.
+>>>> +     */
+>>>> +    unsigned long encoded_va;
+>>>> +
+>>>
+>>> Rather than calling this an "encoded_va" we might want to call this an
+>>> "encoded_page" as that would be closer to what we are actually working
+>>> with. We are just using the virtual address as the page pointer instead
+>>> of the page struct itself since we need quicker access to the virtual
+>>> address than we do the page struct.
+>>
+>> Calling it "encoded_page" seems confusing enough when calling virt_to_page()
+>> with "encoded_page" when virt_to_page() is expecting a 'va', no?
+> 
+> It makes about as much sense as calling it an "encoded_va". What you
+> have is essentially a packed page struct that contains the virtual
+> address, pfmemalloc flag, and order. So if you want you could call it
+> "packed_page" too I suppose. Basically this isn't a valid virtual
+> address it is a page pointer with some extra metadata packed in.
 
-tpm_dev_transmit prepares the TPM space before attempting command
-transmission. However if the command fails no rollback of this
-preparation is done. This can result in transient handles being leaked
-if the device is subsequently closed with no further commands performed.
+I think we are all argeed that is not a valid virtual address by adding
+the 'encoded_' part.
+I am not really sure if "encoded_page" or "packed_page" is better than
+'encoded_va' here, as there is no 'page pointer' that is implied by
+"encoded_page" or "packed_page" here. For 'encoded_va', at least there
+is 'virtual address' that is implied by 'encoded_va', and that 'virtual
+address' just happen to be page pointer.
 
-Fix this by flushing the space in the event of command transmission
-failure.
-
-Fixes: 745b361e989a ("tpm: infrastructure for TPM spaces")
-Signed-off-by: Jonathan McDowell <noodles@meta.com>
----
-v2:
- - Add 'Fixes:'
- - Cc James as one of the original authors
- - Add space sanity check in tpm2_flush_space
-
- drivers/char/tpm/tpm-dev-common.c | 2 ++
- drivers/char/tpm/tpm2-space.c     | 3 +++
- 2 files changed, 5 insertions(+)
-
-diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-index 30b4c288c1bb..c3fbbf4d3db7 100644
---- a/drivers/char/tpm/tpm-dev-common.c
-+++ b/drivers/char/tpm/tpm-dev-common.c
-@@ -47,6 +47,8 @@ static ssize_t tpm_dev_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 
- 	if (!ret)
- 		ret = tpm2_commit_space(chip, space, buf, &len);
-+	else
-+		tpm2_flush_space(chip);
- 
- out_rc:
- 	return ret ? ret : len;
-diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-index 4892d491da8d..25a66870c165 100644
---- a/drivers/char/tpm/tpm2-space.c
-+++ b/drivers/char/tpm/tpm2-space.c
-@@ -169,6 +169,9 @@ void tpm2_flush_space(struct tpm_chip *chip)
- 	struct tpm_space *space = &chip->work_space;
- 	int i;
- 
-+	if (!space)
-+		return;
-+
- 	for (i = 0; i < ARRAY_SIZE(space->context_tbl); i++)
- 		if (space->context_tbl[i] && ~space->context_tbl[i])
- 			tpm2_flush_context(chip, space->context_tbl[i]);
--- 
-2.46.0
-
+Yes, you may say the 'pfmemalloc flag and order' part is about page, not
+about 'va', I guess there is trade-off we need to make here if there is
+not a perfect name for it and 'va' does occupy most bits of 'encoded_va'.
 
