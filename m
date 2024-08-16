@@ -1,110 +1,85 @@
-Return-Path: <linux-kernel+bounces-290005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD9EF954E56
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:01:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 992D7954E58
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 458562836F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:01:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2895D283CDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937281BDA94;
-	Fri, 16 Aug 2024 16:01:26 +0000 (UTC)
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B671BE224;
+	Fri, 16 Aug 2024 16:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFtE8rN3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F40B1BD511
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 16:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D49C1BC9FE;
+	Fri, 16 Aug 2024 16:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723824086; cv=none; b=oWyria9B7Lh31A9VrT88OVnLh7mzppWrANe6S+PNbp7ZHGd60WFIzcSWflvas/+QBHuITS+fyZnb+m6wxBLwkUvrrbndEiMub0ACgnxU4d+blQugkoZmE5rCi8l99nSYt9EUXkd+EmakyNOraORRzhjWb2K+TrNYM3c86UtzuRo=
+	t=1723824096; cv=none; b=jPeI7OVBb2/0hjaqY9mFVAlRCXQh8RVEG16QOcEf8gyTuA94lSnORopGEMTMmFnTTh/cfuNSljTFG18ytU7Icq5L5QPLAq1cEAfwgrOY4ouliJYPVNCD4dpITqFp9Qn3fNeHrCCAcFM6/lw1TgjNFPxWlo5JpEjLE38bFQjyrYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723824086; c=relaxed/simple;
-	bh=XOTExpBSgRT+d2Jrmoya1hpT/zcwwCb0IBBXiibVrZo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=BLIvZU00V12VKkn7FMnCjMWmsOf9VIRuk1Kjxq6uShGAm3R/G/oAVE/gdY+/lDla90mtSJZuxrXvQ4anp0rSi0jSO3M7Bso0FMF1KjQMlaH8nfYNiK5oAzElL9PfSyMGwhfA6M4yQVOETUdMsT2VTMkSr6RK+QX8niUmz1s+3mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 643FFFF805;
-	Fri, 16 Aug 2024 16:01:12 +0000 (UTC)
-Message-ID: <18546062-db3e-44a3-b6b9-7164afae3502@ghiti.fr>
-Date: Fri, 16 Aug 2024 18:01:11 +0200
+	s=arc-20240116; t=1723824096; c=relaxed/simple;
+	bh=CiJGKQa+IE+T3ZkcWX/oy178uqrLN1LuLII+8zj3uH4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=XkRQML2NViupRty2Xid4i+Ewaoj9Pd0j69Z2mD21xhTJiX97McnOS4GNoz5snBiEHcM0D1wbuc2yvP6rQJbAP/6o+th/oDu3GorNSUdVSkeWHDIPKTuej75ogQt28It2HHXRMtWVBySB5J/ZbCVPSpd8OU4Wqmz7zVcWInbQ6UM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFtE8rN3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8623AC32782;
+	Fri, 16 Aug 2024 16:01:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723824095;
+	bh=CiJGKQa+IE+T3ZkcWX/oy178uqrLN1LuLII+8zj3uH4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=WFtE8rN3utss1FjmMnm/yg+HGGxXdTddOxmU6eihRE0cAJ2UM54EXfEx2WCmV1tA8
+	 hU+qxnlTzgx5dNfUSn2n8/USL6QMwjH+JDPhwIh06L50cOzqVA54XW5wziX9uqrIeI
+	 r3jTZP0IJDfc+BRVrr+MbY91C7wD6T96DgzQ8DutzgiMUs5ZnuauxGfCfW5o9DSzs9
+	 FKUSC6WJsQUrnR2RX4u0sn4k1gzGPOEOWe0ol+9RTrJ+dalWBSERhwy3+jSbwU+X4R
+	 16DDoWadYBKLSO3LGd1tlKZVT6Maur3beQ5VoJ+OMhDmz0S0aqHOgtuZMCjX1Deuup
+	 EWQcVuIGFpG7w==
+From: Lee Jones <lee@kernel.org>
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Isai Gaspar <isaiezequiel.gaspar@nxp.com>, Marek Vasut <marex@denx.de>, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240807-leds-pca995x-fix-fwnode-usage-v1-1-8057c84dc583@gmail.com>
+References: <20240807-leds-pca995x-fix-fwnode-usage-v1-1-8057c84dc583@gmail.com>
+Subject: Re: (subset) [PATCH] leds: pca995x: Fix device child node usage in
+ pca995x_probe()
+Message-Id: <172382409029.3366296.12169044923782597357.b4-ty@kernel.org>
+Date: Fri, 16 Aug 2024 17:01:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] riscv/fixes test error: can't ssh into the instance
-Content-Language: en-US
-To: syzbot <syzbot+cfbcb82adf6d7279fd35@syzkaller.appspotmail.com>,
- aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, palmer@dabbelt.com,
- paul.walmsley@sifive.com, syzkaller-bugs@googlegroups.com
-References: <00000000000065062c061fcec37b@google.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <00000000000065062c061fcec37b@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On 16/08/2024 17:39, syzbot wrote:
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    32d5f7add080 Merge patch series "RISC-V: hwprobe: Misalign..
+On Wed, 07 Aug 2024 15:37:03 +0200, Javier Carrasco wrote:
+> The current implementation accesses the `child` fwnode handle outside of
+> device_for_each_child_node() without incrementing its refcount.
+> 
+> Add the missing call to `fwnode_handle_get(child)`.
+> 
+> The cleanup process where `child` is accessed is not right either
+> because a single call to `fwnode_handle_put()` is carried out in case of
+> an error, ignoring unasigned nodes at the point when the error happens.
+> 
+> [...]
 
+Applied, thanks!
 
-The failure is not related to this patch since, as discussed with the 
-syzkaller people, it has been broken for several weeks. I'm looking into 
-this.
+[1/1] leds: pca995x: Fix device child node usage in pca995x_probe()
+      commit: 82c5ada1f9d05902a4ccb926c7ce34e2fe699283
 
+--
+Lee Jones [李琼斯]
 
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git fixes
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10e639f3980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e12019db89cebcd1
-> dashboard link: https://syzkaller.appspot.com/bug?extid=cfbcb82adf6d7279fd35
-> compiler:       riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> userspace arch: riscv64
->
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/a741b348759c/non_bootable_disk-32d5f7ad.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/360b3f269693/vmlinux-32d5f7ad.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/c6ef680b5e89/Image-32d5f7ad.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+cfbcb82adf6d7279fd35@syzkaller.appspotmail.com
->
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
