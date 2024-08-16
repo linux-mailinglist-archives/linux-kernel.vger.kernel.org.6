@@ -1,137 +1,333 @@
-Return-Path: <linux-kernel+bounces-289224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58EB5954357
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:52:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F58B95435B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00DE81F23D74
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:52:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B03CD1F25068
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5278014374C;
-	Fri, 16 Aug 2024 07:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C30514B087;
+	Fri, 16 Aug 2024 07:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KGjlAhWc"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S0BJthpU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A22613DBBC;
-	Fri, 16 Aug 2024 07:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A1014A4FB
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723794372; cv=none; b=tDBzsNng7xTqxjtKVXHWVM53D+ob0lnXq6ht85QH1l5Y1zJdQJLn6b9MQCyAS+zaptd4rGReZJpBAKhEuNn02ZkxpZwe2qMBO9UjvIpPOB0X9ESZlYs9CaIhXeO2wslWKiwV6gYV7PFQRkGsnZX9ffnhzKz7C947pqv5ascA5ZU=
+	t=1723794458; cv=none; b=YregLK7gkv3T0kjFfRj3z8G+KknA9Gr/OiZgMdRuADJkG9L/0duJ07FJzbQ2iohP3rrg9icI9fAdZNJG+mbbJ0dFIpeKK3KQNsbhClGTbuS2IrXReb1jkMU5q+V/23lnyFtwiRCqmy3ZYPBVVqR4iWXrdYm+Bbr5v8bvy9ZOGzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723794372; c=relaxed/simple;
-	bh=961HR25fBK6+U+34IivlTuUdOrvdw5kInN6SiWfWruI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hZcVbTqyEckVddnlGB4bNQ5nN3fdxqObGO2ef57JDycB4Wns54/7XTydoW4DJvBwCl1qONt4BNv7YVsBYlJQcKwHwDVeEX2lmF8qYVZhmPkYRo7HexGyhDo92btUA+PyoHP4jMHYJd5s2qHjWI4GhY+EqH8DiTAA95FeSeQgaB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KGjlAhWc; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47FLTJSM020572;
-	Fri, 16 Aug 2024 07:46:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	i7/Oc25XBlXJTMUNL+LN07bCOIRiR0fvFcEP4h10F+w=; b=KGjlAhWc5CIlvVUh
-	XuTeXr9KgoR1D58k4p8kjaWpJVzqARjPcRo10p0xPnVD25xd9Z5nGUHAXbH05ws8
-	9G0FZir12r/v0m6MWWdnv4WhYBKmHD242wEwMfth2VAqj7bYAFGa96XY+3wXRori
-	83FLHLulp9/JguFQueuy7zeqcRBTA9wfyXJ3HzVujA5zsvO8yKfXoJRe9D39emla
-	PP0u9XytCPypm9/5WvIFhESq0XUnAFmo48NbHlE7tRaT5PZyYIPcOiDNpAj+J7UQ
-	HlTtuqo07b23EWmueoTrWxYPYq3FlaHrdwFKQdIGBMZwKM5WREFulTHXmhQsyI5n
-	r7+HoA==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4112r3v2xd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Aug 2024 07:46:03 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47G7k2qf019214
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Aug 2024 07:46:02 GMT
-Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 16 Aug
- 2024 00:45:54 -0700
-Message-ID: <aa12fd2e-4869-4909-a04f-6bf24f76ed51@quicinc.com>
-Date: Fri, 16 Aug 2024 15:45:52 +0800
+	s=arc-20240116; t=1723794458; c=relaxed/simple;
+	bh=qD1OFtO/qJnrvrml5wouhVG92sWSwTSTNw43wCV9uTI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=J7TxVYLNYb6iEhE4Fg56AZwcK75QNTVXQylQSogOJ+O/UiYz7Mo2MzqgNRsFsL+IJy24xM5Nfz1Fy1Oerm63pyXT0VfWdsK1lDLZbsuwugVDBUAS2TIFUt4CynftphY5QZWRozVYu37yzaXs7HDWOJ9WO+mX+3uGYsiBMfW78VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S0BJthpU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723794455;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p3+oGBurxqhUAn+LlCI73zSVN83RLmsnyOF7xPiqQ+Q=;
+	b=S0BJthpULQMIN5oV52yutXh6vJd/N/NnH3VdyIlN1b9Yf6HixciZ058peWMaR3xsYhDD1k
+	+fzmwQ+Q1JHCU8eqGR7RAc8ExIOEDwAPoBMrALvAqcp77OuB76LivUDvQD/N6kreNYHiDf
+	4wPplR7ZLupfuXjTVjbxwCmHLmfOUCA=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-451-2TsM3b78P7ig1F3l4Y7KwA-1; Fri, 16 Aug 2024 03:47:33 -0400
+X-MC-Unique: 2TsM3b78P7ig1F3l4Y7KwA-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4267378f538so2897825e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 00:47:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723794452; x=1724399252;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=p3+oGBurxqhUAn+LlCI73zSVN83RLmsnyOF7xPiqQ+Q=;
+        b=sGF/2HR2ztwZrYFVOWQr2nD2O8/l8CBN5Wflo+8eyDPz78uBuvt3OjwDnR6kBhVrK0
+         QabWE9nbKO2NyuV7InS/IgToqjXH96JKPW6UlJS5nR3agXwkdVfggNaWbwyhpdQ6XMd6
+         14zw3PyCDLbu3eEVLCCP5Sz2W3QKzDnBJnL/n3SNQT3t/7xtcpyg6UAS8aU17DNhtiL7
+         e5s1cHaGgU3jfbnFPUuBDKppvD8C/ty0K9SrybgjAsuWJno5JBXH76J2m7Hq9cIRA9Gt
+         ivUG+unvUaLiBffpYWrD+ATRC64HkNr02o8Fmq6kNwB0GsToMffkBl/86WDtuU+2/R1N
+         Mdug==
+X-Forwarded-Encrypted: i=1; AJvYcCV0Q9QQujQdHLT+W3jxB07Aws1RwjdfB3WjlTaKSPVs84Q3IDTa4guuy/JD9Ow4rQbOg+HrAg28A2NZLIxJmWef48b6WHAzJA3kQLOH
+X-Gm-Message-State: AOJu0YwTj6pVC12+W31bmDSW5gyLSo8dybegNEMrXfp53wirEuYA4Qbn
+	JqWQLFVW3H4FN8AoistbJ4exJ7+mO2nnraoNFmCxugw8ZFEFjbWMrARj8EiACYEOTZMp/7ov1KB
+	WuaGs0evLhuKdNWm5ZruLOCOII+/PDj/MG6XI9bSlk+S9c90cBAth6VZdSLzDsg==
+X-Received: by 2002:a5d:5984:0:b0:367:4d9d:56a6 with SMTP id ffacd0b85a97d-3719431dfc0mr769781f8f.1.1723794451954;
+        Fri, 16 Aug 2024 00:47:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEC4ozEjfAOD0QEHHeHPcUnNdfIQxp3r757L0yb57BkQvFFuPL+ahHJVAq23k76NL2WjLdZVw==
+X-Received: by 2002:a5d:5984:0:b0:367:4d9d:56a6 with SMTP id ffacd0b85a97d-3719431dfc0mr769766f8f.1.1723794451492;
+        Fri, 16 Aug 2024 00:47:31 -0700 (PDT)
+Received: from dhcp-64-16.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718985a35fsm3034918f8f.59.2024.08.16.00.47.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 00:47:31 -0700 (PDT)
+Message-ID: <94a378e6c2d442e0e7ae06fbd496d02983f9baaa.camel@redhat.com>
+Subject: Re: [PATCH] ata: Replace deprecated PCI devres functions
+From: Philipp Stanner <pstanner@redhat.com>
+To: Sergey Shtylyov <s.shtylyov@omp.ru>, Damien Le Moal
+ <dlemoal@kernel.org>,  Niklas Cassel <cassel@kernel.org>, Mikael Pettersson
+ <mikpelinux@gmail.com>
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	pstanner@redhat.com
+Date: Fri, 16 Aug 2024 09:47:29 +0200
+In-Reply-To: <c2d21da0-7fe1-f995-5562-7ff04e9f1b8b@omp.ru>
+References: <20240812084839.37580-2-pstanner@redhat.com>
+	 <c2d21da0-7fe1-f995-5562-7ff04e9f1b8b@omp.ru>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/13] dt-bindings: media: camss: Add qcom,sm8550-camss
- binding
-To: Krzysztof Kozlowski <krzk@kernel.org>, <rfoss@kernel.org>,
-        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
-        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>, Yongsheng Li <quic_yon@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-8-quic_depengs@quicinc.com>
- <cb905d5e-6d70-4395-894c-55b3542e2ebe@kernel.org>
-Content-Language: en-US
-From: Depeng Shao <quic_depengs@quicinc.com>
-In-Reply-To: <cb905d5e-6d70-4395-894c-55b3542e2ebe@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: nz1EZt51V966XEKronGAHqNzJZJ9mJDL
-X-Proofpoint-ORIG-GUID: nz1EZt51V966XEKronGAHqNzJZJ9mJDL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-15_18,2024-08-15_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 phishscore=0 bulkscore=0 mlxscore=0 suspectscore=0
- clxscore=1015 priorityscore=1501 malwarescore=0 impostorscore=0
- mlxlogscore=938 spamscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408160055
 
-Hi Krzysztof,
+On Wed, 2024-08-14 at 20:32 +0300, Sergey Shtylyov wrote:
+> On 8/12/24 11:48 AM, Philipp Stanner wrote:
+>=20
+> > The ata subsystem uses the PCI devres functions pcim_iomap_table()
+> > and
+> > pcim_request_regions(), which have been deprecated in commit
+> > e354bb84a4c1
+> > ("PCI: Deprecate pcim_iomap_table(),
+> > pcim_iomap_regions_request_all()").
+> >=20
+> > These functions internally already use their successors, notably
+> > pcim_request_region(), so they are quite trivial to replace.
+> >=20
+> > However, one thing special about ata is that it stores the iomap
+> > table
+> > provided by pcim_iomap_table() in struct ata_host. This can be
+> > replaced
+> > with a __iomem pointer table, statically allocated with size
+> > PCI_STD_NUM_BARS so it can house the maximum number of PCI BARs.
+> > The
+> > only further modification then necessary is to explicitly fill that
+> > table, whereas before it was filled implicitly by
+> > pcim_request_regions().
+> >=20
+> > Modify the iomap table in struct ata_host.
+> >=20
+> > Replace all calls to pcim_request_region() with ones to
+> > pcim_request_region().
+>=20
+> =C2=A0=C2=A0 Huh? :-)
+> =C2=A0=C2=A0 Besides, I'm not seeing pcim_request_region() anywhere in th=
+is
+> patch...
 
-On 8/16/2024 3:01 PM, Krzysztof Kozlowski wrote:
+Ah, typo. pcim_iomap_regionS() is being replaced.
 
->> +required:
->> +  - compatible
->> +  - clocks
->> +  - clock-names
->> +  - interconnects
->> +  - interconnect-names
->> +  - interrupts
->> +  - interrupt-names
->> +  - iommus
->> +  - power-domains
->> +  - power-domain-names
->> +  - reg
->> +  - reg-names
->> +  - vdda-phy-supply
->> +  - vdda-pll-supply
-> 
-> Order is still not as expected. I already commented on this - keep the
-> same order as in "properties:" block.
-> 
-> With the order fixed:
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
+>=20
+> > Remove all calls to pcim_iomap_table().
+> >=20
+> > Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> [...]
+> > =C2=A0drivers/ata/ata_piix.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 7 ++=
++---
+> > =C2=A0drivers/ata/libata-sff.c=C2=A0=C2=A0=C2=A0 | 50 +++++++++++++++++=
++++++++++++++---
+> > ----
+> > =C2=A0drivers/ata/pata_atp867x.c=C2=A0 | 13 ++++++----
+> > =C2=A0drivers/ata/pata_hpt3x3.c=C2=A0=C2=A0 |=C2=A0 8 +++---
+> > =C2=A0drivers/ata/pata_ninja32.c=C2=A0 | 10 ++++----
+> > =C2=A0drivers/ata/pata_pdc2027x.c | 11 ++++----
+> > =C2=A0drivers/ata/pata_sil680.c=C2=A0=C2=A0 | 11 ++++----
+> > =C2=A0drivers/ata/pdc_adma.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 9 ++=
++----
+> > =C2=A0drivers/ata/sata_inic162x.c | 10 +++-----
+> > =C2=A0drivers/ata/sata_mv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=
+ 8 +++---
+> > =C2=A0drivers/ata/sata_nv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=
+ 8 +++---
+> > =C2=A0drivers/ata/sata_promise.c=C2=A0 |=C2=A0 7 +++---
+> > =C2=A0drivers/ata/sata_qstor.c=C2=A0=C2=A0=C2=A0 |=C2=A0 7 +++---
+> > =C2=A0drivers/ata/sata_sil.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 7 ++=
++---
+> > =C2=A0drivers/ata/sata_sil24.c=C2=A0=C2=A0=C2=A0 | 20 ++++++++-------
+> > =C2=A0drivers/ata/sata_sis.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 8 ++=
++---
+> > =C2=A0drivers/ata/sata_svw.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 9 ++=
+++---
+> > =C2=A0drivers/ata/sata_sx4.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 17 +++++++=
++++---
+> > =C2=A0drivers/ata/sata_via.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 31 +++++++=
++++++++---------
+> > =C2=A0drivers/ata/sata_vsc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 7 ++=
++---
+> > =C2=A0include/linux/libata.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 7 ++=
++++-
+> > =C2=A021 files changed, 163 insertions(+), 102 deletions(-)
+>=20
+> =C2=A0=C2=A0 I did review all the changes, not just PATA drivers.
 
-Thanks for catching this, the order was correct in my local build, then 
-Vladimir posted a new comment, so I updated it again and forgot to 
-update the required item, I will correct the order in next version series.
+Thx
 
-Vladimir: "I would suggest to put 'compatible', 'reg' and 'reg-names' 
-properties as the first ones. 'clock-names' should follow 'clocks' 
-property in the list."
+>=20
+> [...]
+> > diff --git a/drivers/ata/libata-sff.c b/drivers/ata/libata-sff.c
+> > index 250f7dae05fd..d58db8226436 100644
+> > --- a/drivers/ata/libata-sff.c
+> > +++ b/drivers/ata/libata-sff.c
+> [...]
+> > @@ -2172,8 +2173,41 @@ int ata_pci_sff_init_host(struct ata_host
+> > *host)
+> > =C2=A0			continue;
+> > =C2=A0		}
+> > =C2=A0
+> > -		rc =3D pcim_iomap_regions(pdev, 0x3 << base,
+> > -					dev_driver_string(gdev));
+> > +		/*
+> > +		 * In a first loop run, we want to get BARs 0 and
+> > 1.
+> > +		 * In a second run, we want BARs 2 and 3.
+> > +		 */
+> > +		if (i =3D=3D 0) {
+> > +			io_tmp =3D pcim_iomap_region(pdev, 0,
+> > drv_name);
+> > +			if (IS_ERR(io_tmp)) {
+> > +				rc =3D PTR_ERR(io_tmp);
+> > +				goto err;
+> > +			}
+> > +			host->iomap[0] =3D io_tmp;
+> > +
+> > +			io_tmp =3D pcim_iomap_region(pdev, 1,
+> > drv_name);
+> > +			if (IS_ERR(io_tmp)) {
+> > +				rc =3D PTR_ERR(io_tmp);
+> > +				goto err;
+> > +			}
+> > +			host->iomap[1] =3D io_tmp;
+> > +		} else {
+> > +			io_tmp =3D pcim_iomap_region(pdev, 2,
+> > drv_name);
+> > +			if (IS_ERR(io_tmp)) {
+> > +				rc =3D PTR_ERR(io_tmp);
+> > +				goto err;
+> > +			}
+> > +			host->iomap[2] =3D io_tmp;
+> > +
+> > +			io_tmp =3D pcim_iomap_region(pdev, 3,
+> > drv_name);
+> > +			if (IS_ERR(io_tmp)) {
+> > +				rc =3D PTR_ERR(io_tmp);
+> > +				goto err;
+> > +			}
+> > +			host->iomap[3] =3D io_tmp;
+> > +		}
+> > +
+>=20
+> =C2=A0=C2=A0 Ugh... Why you couldn't keep using base (or just i * 2) and =
+avoid
+> such code duplication?
 
-Thanks,
-Depeng
+I mean, this would at least make it perfectly readable what's being
+done.
+
+I guess we could do something like this, maybe with a comment explining
+what is going on:
+
+for_each_set_bit(j, 0x3 << base, PCI_STD_NUM_BARS) {
+	host->iomap[j] =3D pcim_iomap_region(pdev, j, drv_name);
+	if (IS_ERR(host->iomap[j])) {
+		rc =3D PTR_ERR(host->iomap[j]);
+		break;
+	}
+}
+
+if (rc) {
+	dev_warn(gdev,
+
+
+Unless you've got a better idea?
+
+Tell me which version you'd prefer.
+
+>=20
+> [...]
+> > diff --git a/drivers/ata/pata_sil680.c b/drivers/ata/pata_sil680.c
+> > index abe64b5f83cf..8a17df73412e 100644
+> > --- a/drivers/ata/pata_sil680.c
+> > +++ b/drivers/ata/pata_sil680.c
+> > @@ -360,15 +360,16 @@ static int sil680_init_one(struct pci_dev
+> > *pdev, const struct pci_device_id *id)
+> > =C2=A0	/* Try to acquire MMIO resources and fallback to PIO if
+> > =C2=A0	 * that fails
+> > =C2=A0	 */
+> > -	rc =3D pcim_iomap_regions(pdev, 1 << SIL680_MMIO_BAR,
+> > DRV_NAME);
+> > -	if (rc)
+> > +	mmio_base =3D pcim_iomap_region(pdev, SIL680_MMIO_BAR,
+> > DRV_NAME);
+> > +	if (IS_ERR(mmio_base)) {
+> > +		rc =3D PTR_ERR(mmio_base);
+> =C2=A0=C2=A0		goto use_ioports;
+>=20
+> =C2=A0=C2=A0 The code under that label ignores rc, no?
+>=20
+> [...]
+> > diff --git a/drivers/ata/sata_sx4.c b/drivers/ata/sata_sx4.c
+> > index a482741eb181..d115f6f66974 100644
+> > --- a/drivers/ata/sata_sx4.c
+> > +++ b/drivers/ata/sata_sx4.c
+> > @@ -1390,6 +1390,7 @@ static int pdc_sata_init_one(struct pci_dev
+> > *pdev,
+> > =C2=A0	struct ata_host *host;
+> > =C2=A0	struct pdc_host_priv *hpriv;
+> > =C2=A0	int i, rc;
+> > +	void __iomem *io_tmp;
+>=20
+> =C2=A0=C2=A0 I'd suggest to call it base or s/th...
+>=20
+> [...]
+> > diff --git a/drivers/ata/sata_via.c b/drivers/ata/sata_via.c
+> > index 57cbf2cef618..73b78834fa3f 100644
+> > --- a/drivers/ata/sata_via.c
+> > +++ b/drivers/ata/sata_via.c
+> > @@ -457,6 +457,7 @@ static int vt6420_prepare_host(struct pci_dev
+> > *pdev, struct ata_host **r_host)
+> > =C2=A0{
+> > =C2=A0	const struct ata_port_info *ppi[] =3D { &vt6420_port_info,
+> > NULL };
+> > =C2=A0	struct ata_host *host;
+> > +	void __iomem *iomem;
+>=20
+> =C2=A0=C2=A0 Call it base, maybe?
+>=20
+> [...]
+> > @@ -486,6 +488,7 @@ static int vt6421_prepare_host(struct pci_dev
+> > *pdev, struct ata_host **r_host)
+> > =C2=A0	const struct ata_port_info *ppi[] =3D
+> > =C2=A0		{ &vt6421_sport_info, &vt6421_sport_info,
+> > &vt6421_pport_info };
+> > =C2=A0	struct ata_host *host;
+> > +	void __iomem *iomem;
+>=20
+> =C2=A0=C2=A0 Here as well...
+
+ACK, will provide better naming in v2.
+
+
+Regards,
+P.
+
+
+>=20
+> [...]
+>=20
+> MBR, Sergey
+>=20
+
 
