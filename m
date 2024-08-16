@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-289601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82FB7954805
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:25:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2043C954807
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:25:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B62991C237A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:25:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0670283D77
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FBE0191F75;
-	Fri, 16 Aug 2024 11:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA7C1917F1;
+	Fri, 16 Aug 2024 11:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TR7gj1vH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jw+HXZxx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591D54A3E;
-	Fri, 16 Aug 2024 11:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A9C817;
+	Fri, 16 Aug 2024 11:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723807500; cv=none; b=bgITk3SC2gvN/01kn6emAJJ1RkLdUxZeCPgCaC636m5Dt2mMnCXFn5Z5bpncxrQWGjMsdQ135XyMBKoYai+hxj0mWoSvTtjLA/vSES8wkN3kNiy/BsR+aginQ8mBUNeihvW6XxostiiYF4lgH2LKLn58JDACNoZLqhqjNrXTW/o=
+	t=1723807550; cv=none; b=MAr6W0gKHeLon7zNEuIQA3gvjaAsqlXi0bFFFgGZ9qgZoyAu50HjPhO9hNodsqlufXShWjrgNhsERy5pdc8jaGUL+zhvlTpU3Ip/fogTEEWo/piJWNdcCyAJQdRbBy7tALA79MoKJtHVG0HTAP72yYMwZQRVvDa57QaYV3CBYHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723807500; c=relaxed/simple;
-	bh=v3nCRbmuSbwcE+yYidwDnoLtrw6/cMvAkIp205tnkHw=;
+	s=arc-20240116; t=1723807550; c=relaxed/simple;
+	bh=zGBmiufFWB1qORJqE0Y47lGuLk5Hkpu3ssKQ5ejIvps=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HESQb9HjK5Hx3+ZD38eKzM/7P4Zr7YosvDDi4Fic+ZViHVTPWouqUJqFxyx9Xle5u52pCmujj7Gf4pUa1Rz4FI0N+qKQ70ySUxmDBvlukDkNGTNRNiRmZk22tcgwEpYW+kLsU6Igw3950surfMnchsmmtBQnnFBiRnBsLGnYbzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TR7gj1vH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98F85C32782;
-	Fri, 16 Aug 2024 11:24:56 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ES+ws3mr+/Map3w1P327mgn1AZbm8oIe2kO6V4ljmSiVuBPe75JcPUBq43Sand+Ywr48INS6KuKV7YvXtA6hUwqxWHSUFfkFJS1TtsdBKR4o6S4gmlNHGNTv4g9jEbn7UffKCqc+qJrH+GxXBScvu5O7riDVPTZnzd/I5ulsIHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jw+HXZxx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAD59C32782;
+	Fri, 16 Aug 2024 11:25:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723807500;
-	bh=v3nCRbmuSbwcE+yYidwDnoLtrw6/cMvAkIp205tnkHw=;
+	s=k20201202; t=1723807549;
+	bh=zGBmiufFWB1qORJqE0Y47lGuLk5Hkpu3ssKQ5ejIvps=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TR7gj1vH1LXLqWdx0p/m6xpZXWgTc3r6GQp3RGBcRCkWNA6Dm2k6pL/USGmaYZJJn
-	 B0ncvFKRiIJgYARseBJlRu71rMNpoIy9qCqBLj8SqYERmGTtSGJKU9rRhZZEeYWVaE
-	 ix3jpAzSZKZHutTrPUNwrSzBrG5OfV5nI7ZO9l54iK15zBEqb2lrd+L65ZRLEByBb2
-	 Nn/GGrP28QFhgwS3WYF54FmwkCVjq0pvzcfVz88WvGg9GYJ48jmzcyW26M8O1YmYnx
-	 xmfmbWbJoFVuqpb5zq0VVq/IIMQm4WgAJbaP+gy5dfNwTAEDnIg9sfrduBEvRt7DcR
-	 IaWbtHEZOG/uw==
-Date: Fri, 16 Aug 2024 12:24:53 +0100
+	b=Jw+HXZxxi0vBn+UPeR9K+moRgCK/sYBixvT3+lGTlupo8aZHhwXPicpAUUNf38xFB
+	 XW6xufS9Pxsxgb6SjYkm1DH4s5oeRGaEGtJHDdbJ8HQ6tp+7KhyOLOYkuBNC+mZhYP
+	 dNmoHOCqtBiaC26tmFsqAzfVUQljRYHILGEAb5rKJCnc+pNmoEkWCnGJO/XacUGUwl
+	 SKNegtMqBvWZESNXxSB56st+Ntv5sELQ1EMkjEQebmAZW6qOlCaWvPslRg+l57Lnbs
+	 Vg/lMBaAleuzcYYxA20lKVdmENmsFs5kOeWMAwJ+VQqo73UFH53s4pEcRnDIxGzdtn
+	 fTNxQbr+pVjrw==
+Date: Fri, 16 Aug 2024 12:25:45 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com
-Subject: Re: [PATCH 6.1 00/38] 6.1.106-rc1 review
-Message-ID: <6e7e2d13-45cb-41ee-beae-f495f70733d0@sirena.org.uk>
-References: <20240815131832.944273699@linuxfoundation.org>
+To: Bard Liao <yung-chuan.liao@linux.intel.com>
+Cc: linux-sound@vger.kernel.org, vkoul@kernel.org, vinod.koul@linaro.org,
+	linux-kernel@vger.kernel.org, tiwai@suse.de,
+	pierre-louis.bossart@linux.intel.com, bard.liao@intel.com
+Subject: Re: [PATCH 1/3] ALSA/ASoC/SoundWire: Intel: use single definition
+ for SDW_INTEL_MAX_LINKS
+Message-ID: <19ab3bfb-cc7c-4f3d-84bb-ef35d8849064@sirena.org.uk>
+References: <20240816023331.6565-1-yung-chuan.liao@linux.intel.com>
+ <20240816023331.6565-2-yung-chuan.liao@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,38 +58,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9tt/q4mpRTGnnLGZ"
+	protocol="application/pgp-signature"; boundary="Cht0WOIPE29U/xlX"
 Content-Disposition: inline
-In-Reply-To: <20240815131832.944273699@linuxfoundation.org>
+In-Reply-To: <20240816023331.6565-2-yung-chuan.liao@linux.intel.com>
 X-Cookie: A Smith & Wesson beats four aces.
 
 
---9tt/q4mpRTGnnLGZ
+--Cht0WOIPE29U/xlX
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 15, 2024 at 03:25:34PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.106 release.
-> There are 38 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Fri, Aug 16, 2024 at 10:33:29AM +0800, Bard Liao wrote:
+> From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+>=20
+> The definitions are currently duplicated in intel-sdw-acpi.c and
+> sof_sdw.c.  Move the definition to the sdw_intel.h header, and change
+> the prefix to make it Intel-specific.
+>=20
+> No functionality change in this patch.
 
-Tested-by: Mark Brown <broonie@kernel.org>
+Acked-by: Mark Brown <broonie@kernel.org>
 
---9tt/q4mpRTGnnLGZ
+--Cht0WOIPE29U/xlX
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma/NwUACgkQJNaLcl1U
-h9AAmwf9ED6ZycIHzhQYgxWIm9sXoy3iVWoWeBfNodsUNhYscXcL0/buEipfWQvn
-bI/ZB7AFAucvSyH8BQT1KDTzDbmhcAnbafmhxuVdc4FTGpobLUM75V5a0bV6g05G
-QhFUqczwSSCCIzNesuz5vjMro4YsIEJTLGGvU/NwRj3RvpwQz1Xxrakw1NRI1Oj8
-+WXkqWRXtJQ278VWXmeOqvv8HfDAiQ8O10iQcqSQ1HsFnW7cklzxacFJzaN1+LGk
-VjwSzWKA8t2bkiwlo0GC5aiXQL0SKnIDcB+tuT/p8C+pRwPiL/dr8MBUd1Aweewc
-ZYEar77saBCMKKJ+lV3c0Xx1LKLeIA==
-=OSCW
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma/NzgACgkQJNaLcl1U
+h9DnGwf+LUX+JoB8jRWojBPjSAqpLjWlqeTf7t4lBfGo0LaEqSJjURWw+4y9CCWf
+EE1udx0SCAXnD28vHN7vke+tD3POf/Cpo7PyabnOdw2HKA0PSTMTuJgH7i/KuY6K
+EqJLUKMqqVhFhAmCTvcVaXZC3pIiwuLIttI7/c3Fnch2h8VVfaBCleAR3OCN89/Z
+Vba3ddiEJNiENK6s3b4YRPqDLEiDpA63NgmTcNgliSvYL7hLYRAa9uUzkYAOc9OG
+7kkBjhNTBA4pUMhecSaLDoOytPI4i/vivNfu7UH/MUPTSjCuPh/HI9XAEzOLZEpP
+YCe/OmMri0yobpJfLmhTSzm/EJGHUA==
+=7yUI
 -----END PGP SIGNATURE-----
 
---9tt/q4mpRTGnnLGZ--
+--Cht0WOIPE29U/xlX--
 
