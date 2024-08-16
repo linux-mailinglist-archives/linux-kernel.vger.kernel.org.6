@@ -1,174 +1,197 @@
-Return-Path: <linux-kernel+bounces-289699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78F01954AAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:02:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13E16954AB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F82928215E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:02:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76609B22D17
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5011BBBD3;
-	Fri, 16 Aug 2024 13:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985791B86FA;
+	Fri, 16 Aug 2024 13:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e+4qOU86"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xrssL67v"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1F41B8EA1
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 13:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343921B8EA1
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 13:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723813313; cv=none; b=AbaWVdnTGr1QRzoCDUeILf+x70yy1kmjEvprERRoAxjjAuJghgjexHY3NiAEsA8zorDLocnDuj59QPQi6DbJA4Wv7XvPmbAnFS4W3C2H2PkZwC/y/tWBnLNOU6iewYkd3gtZ4eEw6FFl7gibbQzTsZt12Usct8qIDELrgmFVI70=
+	t=1723813321; cv=none; b=KpBiuMh/7bCAL5bcisu3OCfqpp+7ktF+HuZwfVMWqY4ghNYQl6Cx9t67Jh+1LzQw1p6nfMBXSGJYMYDRwNqQ2N8IiRFUfp+myhVyLY3Q5CLajqPGQ3DWWELggl1me+1UhUfr7Qtx0IggGUDPAksyup1myGbeCIA6DL4othuC0i4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723813313; c=relaxed/simple;
-	bh=mEgP2tc3vMFcEK8rKTT6ilkOYcPdY4qHPG0naGjwrf8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BRISwGuFS5xmHExy9W2AVbWr6zAoMkO5hm8whQLvOimzXeN/OjU/6lbrp7XJoKDUvVrlgy4/3IBEWqIH3IPdlm+ZMZ6HgFZojTmKBorazSsKjl1Dk0Hk+B6nMidzYpWLfVkLMCTUuIJZfolO1Zr25DMMguftDSKuMn33hfQKJaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e+4qOU86; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723813311;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pRywQ20dieOYbE4TiZ0Np1Bbhp1CoMBBM+YIuAbOks0=;
-	b=e+4qOU86FS4+oKr25akeEe9qTL8q80Nrr3VYsSqhjZmv6NLlDWU7zZL1Hz3G+16HfUXBbb
-	nqk9XiBj2fg6Gg3tksgRa2YN1y5DTFfp+V+o3OgMqqbuieZLvfpmrLg0ku7Wunnn7lcCor
-	yhWqAeK4TI6lRSL+c9bHWB86cblTW/A=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-101-56EMdacBMvydTfdlKV91-g-1; Fri,
- 16 Aug 2024 09:01:47 -0400
-X-MC-Unique: 56EMdacBMvydTfdlKV91-g-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BE3271955F3B;
-	Fri, 16 Aug 2024 13:01:46 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.45.225.56])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0467F1955F38;
-	Fri, 16 Aug 2024 13:01:44 +0000 (UTC)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: kvm@vger.kernel.org,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] KVM: selftests: Re-enable hyperv_evmcs/hyperv_svm_test on bare metal
-Date: Fri, 16 Aug 2024 15:01:39 +0200
-Message-ID: <20240816130139.286246-3-vkuznets@redhat.com>
-In-Reply-To: <20240816130139.286246-1-vkuznets@redhat.com>
-References: <20240816130139.286246-1-vkuznets@redhat.com>
+	s=arc-20240116; t=1723813321; c=relaxed/simple;
+	bh=khItFkdPe6+8AnUWSIBzujIiebw+Nuk9cyt0caKbISM=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=CSfcoc9ZKTV1eUPBakvCNNaMmWGV/IZGIp5kDjZ8GlvBixmmZpJYamXRaYoxhwsyyL97CvQ7kA8Xzwog++IgkQJJz9ApzYlFyTWi3vFLSPd84bqt30C6wUqvzxmfJArEn6xjRhjlPqQKRIOfZGbah+pyDiM3YuoB7t9ObrfE3Qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xrssL67v; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-710ffaf921fso1291241b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 06:02:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723813319; x=1724418119; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=mPU1rnCHLqIEChVLFEm2mkyxzxBNVaRrpxa3cQaix6w=;
+        b=xrssL67vF8rYvtuOQFq0QaBX2U7KnbvBxTNLUBvBzw8ZX4hLasMTB4mKvRzEmtDfSZ
+         9EokJTSTqgCOa8XQF8wc9VGLoB1j+m2xD++zbgWvc58IUFwHU3sGb+kthrdC7rRIp0/+
+         boUgrSRvcmUDnvP7TLlqx9TeCWc2OslQmwh7nlXayL3jxmUwcrd+VWc/lEnaFBV5gZpO
+         PH0O2Gt2FOX4UO7lBOWUGGaQBurrdV88t2AfG0vkMJsdEpLF/LhYOfLVf+AaWJvMAGG+
+         ZaOxw0InYsDZXiCTUCAhpWy2hgYHGdaOQrxsclOFiLu0iqV05g67URkNFFDgFdCS7FRF
+         Stcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723813319; x=1724418119;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mPU1rnCHLqIEChVLFEm2mkyxzxBNVaRrpxa3cQaix6w=;
+        b=L6HxQdx1JPydDcY/+39zCHe0BccWd2J1XGG1Vgz8HdODulBZdc+wLi6vW99cEVu3B2
+         AuPwlL80Ykzhp1kWWyEyybYUUFOloLxOoSxAj5m/eqC9iU3+pP9sfyjT6YZZDyUWM31u
+         s+St95gn/tv7demyZ9vNladznp26fF4pjp7WzcfUed8LAOo+yum3uEv3SXuvNlmGUpEI
+         Bb3qG1FFhCXhpzoM0VxLen2FYmKCdzXKeLEAoCYt+4vj+Twr92iqhJvw0CeWC+bEB7CB
+         AcEWRliaHQ1leEqHDBVYYzDvJrG+JrLqQyyzpck3iqIkkiVklFtoz3tpALgcoIfSC1Te
+         gdYw==
+X-Forwarded-Encrypted: i=1; AJvYcCWnuJFcvYQvPlkjsXS5bE+IeVVFftq2+g0Y9ivIx/l3cetQvoR1rYMJGw4EmMOV+P/zcArUOmdXXAoIi3+fByf9vXBynFgUAXotCFRG
+X-Gm-Message-State: AOJu0YwJF9hTG0CBqHShYscQOH3uM65SC9YFQP6W0ggpd69gEfNhtef6
+	V+VNt6TKHjz8z/dPZ8A53l4lyuDkNl1JwaG/MMmD6j8fpbSDZ1ugF1sh8evPrzM=
+X-Google-Smtp-Source: AGHT+IEAzyKCcegktmRWULTqmzWKQOEhfSig6I0+YXOYjRvGYuG38xHEoXFzBN1iG/qYhq6ro+penA==
+X-Received: by 2002:a05:6a20:9f0a:b0:1c4:779b:fb02 with SMTP id adf61e73a8af0-1c9aacfbbf5mr3850835637.21.1723813319242;
+        Fri, 16 Aug 2024 06:01:59 -0700 (PDT)
+Received: from [127.0.0.1] ([49.230.136.104])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127add728bsm2580288b3a.33.2024.08.16.06.01.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Aug 2024 06:01:58 -0700 (PDT)
+Date: Fri, 16 Aug 2024 20:01:52 +0700
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, broonie@kernel.org
+CC: perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
+ linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, amit.pundir@linaro.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_ASoC=3A_codecs=3A_lpass-va-macro=3A?=
+ =?US-ASCII?Q?_set_the_default_codec_version_for_sm8250?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <de0a9cf2-c656-430e-8c56-ca2975c73c0e@linaro.org>
+References: <20240815164903.18400-1-srinivas.kandagatla@linaro.org> <F07BF288-66F4-497A-A581-5FE4B7B432BD@linaro.org> <18DCA30B-273D-415A-81EF-EA02CEBDAA94@linaro.org> <de0a9cf2-c656-430e-8c56-ca2975c73c0e@linaro.org>
+Message-ID: <632B6187-5CB7-45E3-8EB1-3C4C932834E1@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-KVM_CAP_HYPERV_DIRECT_TLBFLUSH is only reported when KVM runs on top of
-Hyper-V and hyperv_evmcs/hyperv_svm_test don't need that, these tests check
-that the feature is properly emulated for Hyper-V on KVM guests. There's no
-corresponding CAP for that, the feature is reported in
-KVM_GET_SUPPORTED_HV_CPUID.
+On August 16, 2024 3:59:18 PM GMT+07:00, Srinivas Kandagatla <srinivas=2Eka=
+ndagatla@linaro=2Eorg> wrote:
+>
+>
+>On 15/08/2024 22:22, Dmitry Baryshkov wrote:
+>> On August 16, 2024 4:07:10 AM GMT+07:00, Dmitry Baryshkov <dmitry=2Ebar=
+yshkov@linaro=2Eorg> wrote:
+>>> On August 15, 2024 11:49:03 PM GMT+07:00, srinivas=2Ekandagatla@linaro=
+=2Eorg wrote:
+>>>> From: Srinivas Kandagatla <srinivas=2Ekandagatla@linaro=2Eorg>
+>>>>=20
+>>>> sm8250 and sc7280 have lpass codec version 1=2E0, as these are very o=
+ld
+>>>> platforms, they do not have a reliable way to get the codec version
+>>> >from core_id registers=2E
+>>=20
+>> I wrote that it looked good, but maybe you can also describe, why core_=
+id registers are not reliable? Are they just not present on those platforms=
+ or is there any other issue?
+>>=20
+>Sure, the comment is correct because the registers are available to read =
+however the values of those registers are not fit for dynamically detecting=
+ the version, like what we do in the driver=2E
 
-Hyper-V specific CPUIDs are not reported by KVM_GET_SUPPORTED_CPUID,
-implement dedicated kvm_hv_cpu_has() helper to do the job.
+If I remember correctly, on sm8250 these registers read 0x0 /0xf /0x0=2E A=
+re you saying that there are several revision that will have these values? =
+Do we need to know that it is exactly 1=2E0 or 1=2Ex is going to be enough?
 
-Fixes: 6dac1195181c ("KVM: selftests: Make Hyper-V tests explicitly require KVM Hyper-V support")
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- .../testing/selftests/kvm/include/x86_64/hyperv.h  | 14 ++++++++++++++
- tools/testing/selftests/kvm/lib/x86_64/hyperv.c    |  8 ++++++++
- tools/testing/selftests/kvm/x86_64/hyperv_evmcs.c  |  2 +-
- .../testing/selftests/kvm/x86_64/hyperv_svm_test.c |  2 +-
- 4 files changed, 24 insertions(+), 2 deletions(-)
+>
+>one of the reasons is that the codec evolved over time, I think starting =
+from v2 it has values made more sense to determine the version info from th=
+ese registers=2E This is also evident in the current code=2E
+>
+>
+>Let me add this detail the commit log and send a v2=2E
+>
+>--srini
+>>=20
+>>>>=20
+>>>> Add the version info into of_data, so that it does not need to use
+>>>> core_id registers to get version number=2E
+>>>>=20
+>>>> Fixes: 378918d59181 ("ASoC: codecs: lpass-macro: add helpers to get c=
+odec version")
+>>>> Fixes: dbacef05898d ("ASoC: codec: lpass-rx-macro: prepare driver to =
+accomdate new codec versions")
+>>>> Fixes: 727de4fbc546 ("ASoC: codecs: lpass-wsa-macro: Correct support =
+for newer v2=2E5 version")
+>>>=20
+>>> Which commit introduced the issue? I think having just the first tag i=
+s enough=2E
+>>>=20
+>>> LGTM otherwise=2E
+>>>=20
+>>>> Signed-off-by: Srinivas Kandagatla <srinivas=2Ekandagatla@linaro=2Eor=
+g>
+>>>> ---
+>>>> sound/soc/codecs/lpass-va-macro=2Ec | 11 ++++++++++-
+>>>> 1 file changed, 10 insertions(+), 1 deletion(-)
+>>>>=20
+>>>> diff --git a/sound/soc/codecs/lpass-va-macro=2Ec b/sound/soc/codecs/l=
+pass-va-macro=2Ec
+>>>> index 8454193ed22a=2E=2Ee95d1f29ef18 100644
+>>>> --- a/sound/soc/codecs/lpass-va-macro=2Ec
+>>>> +++ b/sound/soc/codecs/lpass-va-macro=2Ec
+>>>> @@ -228,11 +228,13 @@ struct va_macro {
+>>>> struct va_macro_data {
+>>>> 	bool has_swr_master;
+>>>> 	bool has_npl_clk;
+>>>> +	int version;
+>>>> };
+>>>>=20
+>>>> static const struct va_macro_data sm8250_va_data =3D {
+>>>> 	=2Ehas_swr_master =3D false,
+>>>> 	=2Ehas_npl_clk =3D false,
+>>>> +	=2Eversion =3D LPASS_CODEC_VERSION_1_0,
+>>>> };
+>>>>=20
+>>>> static const struct va_macro_data sm8450_va_data =3D {
+>>>> @@ -1587,7 +1589,14 @@ static int va_macro_probe(struct platform_devi=
+ce *pdev)
+>>>> 			goto err_npl;
+>>>> 	}
+>>>>=20
+>>>> -	va_macro_set_lpass_codec_version(va);
+>>>> +	/**
+>>>> +	 * old version of codecs do not have a reliable way to determine th=
+e
+>>>> +	 * version from registers, get them from soc specific data
+>>>> +	 */
+>>>> +	if (data->version)
+>>>> +		lpass_macro_set_codec_version(data->version);
+>>>> +	else /* read version from register */
+>>>> +		va_macro_set_lpass_codec_version(va);
+>>>>=20
+>>>> 	if (va->has_swr_master) {
+>>>> 		/* Set default CLK div to 1 */
+>>>=20
+>>>=20
+>>=20
+>>=20
 
-diff --git a/tools/testing/selftests/kvm/include/x86_64/hyperv.h b/tools/testing/selftests/kvm/include/x86_64/hyperv.h
-index a2e7cf7ee0ad..6849e2552f1b 100644
---- a/tools/testing/selftests/kvm/include/x86_64/hyperv.h
-+++ b/tools/testing/selftests/kvm/include/x86_64/hyperv.h
-@@ -186,6 +186,18 @@
- #define HV_X64_ENLIGHTENED_VMCS_RECOMMENDED		\
- 	KVM_X86_CPU_FEATURE(HYPERV_CPUID_ENLIGHTMENT_INFO, 0, EAX, 14)
- 
-+/* HYPERV_CPUID_NESTED_FEATURES.EAX */
-+#define HV_X64_NESTED_DIRECT_FLUSH			\
-+	KVM_X86_CPU_FEATURE(HYPERV_CPUID_NESTED_FEATURES, 0, EAX, 17)
-+#define HV_X64_NESTED_GUEST_MAPPING_FLUSH		\
-+	KVM_X86_CPU_FEATURE(HYPERV_CPUID_NESTED_FEATURES, 0, EAX, 18)
-+#define HV_X64_NESTED_MSR_BITMAP			\
-+	KVM_X86_CPU_FEATURE(HYPERV_CPUID_NESTED_FEATURES, 0, EAX, 19)
-+
-+/* HYPERV_CPUID_NESTED_FEATURES.EBX */
-+#define HV_X64_NESTED_EVMCS1_PERF_GLOBAL_CTRL		\
-+	KVM_X86_CPU_FEATURE(HYPERV_CPUID_NESTED_FEATURES, 0, EBX, 0)
-+
- /* HYPERV_CPUID_SYNDBG_PLATFORM_CAPABILITIES.EAX */
- #define HV_X64_SYNDBG_CAP_ALLOW_KERNEL_DEBUGGING	\
- 	KVM_X86_CPU_FEATURE(HYPERV_CPUID_SYNDBG_PLATFORM_CAPABILITIES, 0, EAX, 1)
-@@ -347,4 +359,6 @@ const struct kvm_cpuid2 *kvm_get_supported_hv_cpuid(void);
- const struct kvm_cpuid2 *vcpu_get_supported_hv_cpuid(struct kvm_vcpu *vcpu);
- void vcpu_set_hv_cpuid(struct kvm_vcpu *vcpu);
- 
-+bool kvm_hv_cpu_has(struct kvm_x86_cpu_feature feature);
-+
- #endif /* !SELFTEST_KVM_HYPERV_H */
-diff --git a/tools/testing/selftests/kvm/lib/x86_64/hyperv.c b/tools/testing/selftests/kvm/lib/x86_64/hyperv.c
-index b4a5e4ad7105..15bc8cd583aa 100644
---- a/tools/testing/selftests/kvm/lib/x86_64/hyperv.c
-+++ b/tools/testing/selftests/kvm/lib/x86_64/hyperv.c
-@@ -67,6 +67,14 @@ const struct kvm_cpuid2 *vcpu_get_supported_hv_cpuid(struct kvm_vcpu *vcpu)
- 	return cpuid;
- }
- 
-+bool kvm_hv_cpu_has(struct kvm_x86_cpu_feature feature)
-+{
-+	if (!kvm_has_cap(KVM_CAP_SYS_HYPERV_CPUID))
-+		return false;
-+
-+	return kvm_cpuid_has(kvm_get_supported_hv_cpuid(), feature);
-+}
-+
- struct hyperv_test_pages *vcpu_alloc_hyperv_test_pages(struct kvm_vm *vm,
- 						       vm_vaddr_t *p_hv_pages_gva)
- {
-diff --git a/tools/testing/selftests/kvm/x86_64/hyperv_evmcs.c b/tools/testing/selftests/kvm/x86_64/hyperv_evmcs.c
-index e192720bfe14..74cf19661309 100644
---- a/tools/testing/selftests/kvm/x86_64/hyperv_evmcs.c
-+++ b/tools/testing/selftests/kvm/x86_64/hyperv_evmcs.c
-@@ -242,7 +242,7 @@ int main(int argc, char *argv[])
- 	TEST_REQUIRE(kvm_cpu_has(X86_FEATURE_VMX));
- 	TEST_REQUIRE(kvm_has_cap(KVM_CAP_NESTED_STATE));
- 	TEST_REQUIRE(kvm_has_cap(KVM_CAP_HYPERV_ENLIGHTENED_VMCS));
--	TEST_REQUIRE(kvm_has_cap(KVM_CAP_HYPERV_DIRECT_TLBFLUSH));
-+	TEST_REQUIRE(kvm_hv_cpu_has(HV_X64_NESTED_DIRECT_FLUSH));
- 
- 	vm = vm_create_with_one_vcpu(&vcpu, guest_code);
- 
-diff --git a/tools/testing/selftests/kvm/x86_64/hyperv_svm_test.c b/tools/testing/selftests/kvm/x86_64/hyperv_svm_test.c
-index b987a3d79715..0ddb63229bcb 100644
---- a/tools/testing/selftests/kvm/x86_64/hyperv_svm_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/hyperv_svm_test.c
-@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
- 	int stage;
- 
- 	TEST_REQUIRE(kvm_cpu_has(X86_FEATURE_SVM));
--	TEST_REQUIRE(kvm_has_cap(KVM_CAP_HYPERV_DIRECT_TLBFLUSH));
-+	TEST_REQUIRE(kvm_hv_cpu_has(HV_X64_NESTED_DIRECT_FLUSH));
- 
- 	/* Create VM */
- 	vm = vm_create_with_one_vcpu(&vcpu, guest_code);
--- 
-2.46.0
 
+--=20
+With best wishes
+Dmitry
 
