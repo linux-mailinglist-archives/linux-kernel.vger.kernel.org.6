@@ -1,218 +1,175 @@
-Return-Path: <linux-kernel+bounces-290019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87E92954E7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:11:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F26D3954EFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14A8D1F20CDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:11:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C2661F26C71
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BF41BE250;
-	Fri, 16 Aug 2024 16:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F191BE85F;
+	Fri, 16 Aug 2024 16:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="TEPYnjX1"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ePcj1LDH"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E151BE235
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 16:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB8B1BBBD2
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 16:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723824654; cv=none; b=p0BG/YSwG3rcPbNUyfimaHoNdlMp0jRYwTFI4Z48qEQ8c/PT68cQi+Q4iuvAoV0GyDrnhqBAroskp2YteJ65SaCaTa6Q0+dSvV9c/Oazff2gIZ5PvemXJ7q1L3NuE3gzJpkArTjA6MaLSSsJmM/c4goKyiwyYWZFXQJJBzc7kfw=
+	t=1723826225; cv=none; b=D1CUZyn6Au9s2mRY14NUEnnxGJcQIcixbVGQDl+LVSKqKSDXLsyDrNJGKo9qH0aHYdR5kCSdAgfJXmrh+4Ys8DlDPH9I0TvDb08ib8dH9Z9cwvIjpbPthJI3WqP1TNrQin1IpeLxrCJ8GLd3qYmF+GOq2hm9rAcX22vlcP6qPFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723824654; c=relaxed/simple;
-	bh=0LMgY1vZ6fGXRxFnkCzE+P34DoKZrV+36NlSpw6iXVg=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 MIME-Version:Date; b=j4ixI9MBBUwEbPRQgREBWTsHImwi2AETvNiRHt1ToQ+25xaKwDGxaf9O2nfPu3o7NkLhM6Gso+llHH8LFY4/eOACgiXQeRjjDfeNHu6dHXnGMj/YPIfdywNR6vLNtAUXL0nNz9xnuzNVtDD/4D1hpoS7MkhpI9pDzK4lQYwLWao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=TEPYnjX1; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1723824644; x=1724429444; i=spasswolf@web.de;
-	bh=XHeSc4EmQEyvh1Xp4MeSDRuGugN27ZqCYg6lFm5zXkw=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:In-Reply-To:
-	 References:Content-Type:MIME-Version:Date:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=TEPYnjX1mbsCUnunMTrszooQJtAa50thEBVJeeEzp91TyCHG7jk5Qb+uBdTux1AA
-	 NoU3/hZkZcO1y+aijbNGmNY9USLzLDxGnLEvpBHXy3opNZweoJVhgSlLr8um3/jyC
-	 Au1gQuK+rJnipVSTjYks4IXKu5Q92fTDQ+9aPRWiVAoY2Up3jZreLIqkGAO4abWrO
-	 LzDGuQJhVKvVtGH6XNLEyPtNsTjjfjkRqReFHGf9OdOcr0Mtqp3Sc5jjlYiAm5dRT
-	 L6eJWW2/xVVkU1A5zg1NpVxDVxgYJjQFXrRrYclUujpBbVHQQjhe1vPWsoD0eTUVx
-	 eWrF+u5bSzJLHUIWxQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.0.101] ([84.119.92.193]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MkElP-1rucF31YwT-00eAAr; Fri, 16
- Aug 2024 18:10:44 +0200
-Message-ID: <0d377467c50cf60a4d008d7986d4402eecb8c94a.camel@web.de>
-Subject: Re: [PATCH v5.1 00/19] Rebase v5 patchset to next-20240816
-From: Bert Karwatzki <spasswolf@web.de>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
-In-Reply-To: <5fa31825-e7dc-4d58-b218-d54ed6d86507@lucifer.local>
-References: <20240816111405.11793-1-spasswolf@web.de>
-		 <5fa31825-e7dc-4d58-b218-d54ed6d86507@lucifer.local>
-Content-Type: text/plain; charset="UTF-8"
+	s=arc-20240116; t=1723826225; c=relaxed/simple;
+	bh=cZSUAWeDd5rCM+qAD/LVzIvs5CQlQpQNp66n+o3c3Q4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=RGHJYhp7SksO+i4TCh53Ngz3cPQUfNaX3h7adbk2lD1D99xEeA+nBYujPpVtgAMRSbKcF9SLw5di3EuWwKbo9RvDs8hZwgjL/pKd4aggYD9wdiLKLTdeDT6r+mH1Axh75oupyKVnqgzC7lVzhxoAHTxMEw5wKz7gEwaFgCsFJJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ePcj1LDH; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240816163700epoutp04c40ca9d134726270649a03babd10b8de~sQtB8nziT1193011930epoutp04Q
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 16:37:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240816163700epoutp04c40ca9d134726270649a03babd10b8de~sQtB8nziT1193011930epoutp04Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1723826220;
+	bh=TqPPlQaKUArbuhJTxVDgQq9zqm+9VIp3Ca3AX7bpk+o=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=ePcj1LDHj7HvJ9EzsJG0px2h/UlkKoI4+wiLRbS/0HdBnjnECj6eDCH4yRNB/+DA3
+	 MPvrsa1CoRn2YgjDu2MEmTiTiizJSmi0deiHW4Rn4NFuZI9XUsq0uMRXMICHWn7/Fi
+	 5o9QJg0bwFBz9/lVp4yrBVgJqgWTW1IBzRx5gQnU=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20240816163700epcas5p433ca7d63b0a9f4c98750499f1d36e4e8~sQtBlrTuc2435224352epcas5p4o;
+	Fri, 16 Aug 2024 16:37:00 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4WlnhB45rJz4x9Pp; Fri, 16 Aug
+	2024 16:36:58 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	01.75.09743.A208FB66; Sat, 17 Aug 2024 01:36:58 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240816154312epcas5p3b282d7cba06fe54e1aa9be216452b143~sP_DdiH5h0211602116epcas5p3R;
+	Fri, 16 Aug 2024 15:43:12 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240816154312epsmtrp2c964e674b29bcb79c77d561a0c4c8cf4~sP_Dcsv9x0744807448epsmtrp2E;
+	Fri, 16 Aug 2024 15:43:12 +0000 (GMT)
+X-AuditID: b6c32a4a-14fff7000000260f-12-66bf802ada82
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A4.04.19367.0937FB66; Sat, 17 Aug 2024 00:43:12 +0900 (KST)
+Received: from [107.122.5.126] (unknown [107.122.5.126]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240816154310epsmtip19c177cdfece7ba449e0946e137a2b101~sP_BeXm3l2660326603epsmtip1P;
+	Fri, 16 Aug 2024 15:43:10 +0000 (GMT)
+Message-ID: <4f286780-89a2-496d-9007-d35559f26a21@samsung.com>
+Date: Fri, 16 Aug 2024 21:13:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 16 Aug 2024 13:55:33 +0200
-User-Agent: Evolution 3.53.2-1 
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:KJ/tHxtS9QD8WiaE74h81FWnlfsSwU9ypMpgMZY1ephZteF4pGY
- rJ5ELc/PbkVlq09aa9bWLTgdYa/Me94S6qLDo/0P4AkQRDhNfxkoXY52uxRAjv91hkOMpsw
- IpNWjlpZpDn4U+cJDu3Xu/01Fx638E8HofpnxYV0tOzZmuCOTo3u/PmAIbpF8rNHlmvk3v+
- NPcIM68wM5x5QdzfrMiAA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:VAXjOzJTUWs=;vAmCcuA/HBBM31mr+nugY7mx3zR
- EEXQbBHQj4CI2WtP8grSMQCOP+IbJrXsRg14HAjwAJ8/NY2ZWZ5zFQdDBdZfFAjR2yZJqsNht
- Vs625ib95qMeBYKtGrDvKnpSOSERUZFYOniZRiEupX2uayPfVEVOi7hsntbqXQqh9FSF8XPbF
- agGv3skdZadGcW4MQKG3BgHF8fto6YAV3vUxnU5fAhIDX0S8WYz3sxNuIqobDm9+7IjJ6AUED
- cVn4HFgqMB0LYxkanvAWWodMrw8o84yFJxFRr3jQyiSEPaFx4uHqp2s26yjT/dhS1ZaPgKe5h
- cau/hoTgVYcm1yEj1rcfPMVCPnC13C5jq/0eruwoUD64v7vjLITO7gwiFxJnowz+wZZLhaAZ1
- nVn39A2+VVjhYSVVBIpGmEUlA9oBX6CPc2A1Y1kjTDQFtgjO0egQN+cJ1eDSLVovg1PGKNrd1
- kC2awslXfqS1Kq/40eayQKeho4tUcRzUVCTsQ5LFICM3w8V5sw8pP0fUkJlOjBMzYgZW21CoY
- U3tqBpOY/eEcohPHgqQYb5BiHSHCBr4W2rdMalJQb7s6bwD/TfBN4QJ8oK3o5kn86yHyEnpWu
- +/FmY57pP6tp9SNGSucgqrNLCBfoLrooMZQbDsAdXMgVcsdEbnAYpDXPUaL34Vg13xsOF+Dej
- jCBUoALvjszMA11ZLghiMPecKiNaVaJQQzs/Qchv0vf1//fAXIReNgnDWNvl8sPHiarWHMnMP
- vX9QTIWHX4tX8iu5a4aDvww5f5OjAmwmYdjdrkYixPXXckhX45g2Tn+pGhkP3qVtfx+s753EG
- ecAWWGvifJj5lzIm2xiVxHjg==
-
-Am Freitag, dem 16.08.2024 um 12:33 +0100 schrieb Lorenzo Stoakes:
-> On Fri, Aug 16, 2024 at 01:13:41PM GMT, Bert Karwatzki wrote:
-> > Since the v5 patchset some changes have taken place in the linux-next =
-tree
-> > which make it impossible to cleanly apply that patchset. The most impo=
-rtant
-> > of these changes is the splitting of the mm/mmap.c into mm/mmap.c and =
-mm/vma.c
-> > and the splitting of mm/internal.h into mm/internal.h and mm/vma.h. Al=
-so
-> > arch_unmap() has already been removed from mm/mmap.c in next-20240816 =
-so
-> > there's no need to take care of that.
-> >
-> > When testing this with `stress-ng --vm-segv 1` dmesg show errors like
-> >
-> >  [   T3753] coredump: 3753(stress-ng-vm-se): over coredump resource li=
-mit, skipping core dump
-> >  [   T3753] coredump: 3753(stress-ng-vm-se): coredump has not been cre=
-ated, error -7
-> >  [   T3754] coredump: 3754(stress-ng-vm-se): over coredump resource li=
-mit, skipping core dump
-> >  [   T3754] coredump: 3754(stress-ng-vm-se): coredump has not been cre=
-ated, error -7
-> >  [...]
-> >
-> > this is most likely not a problem of the patchset but instead caused b=
-y
-> > a more verbose coredump introduced in the following patch:
-> > https://lore.kernel.org/all/20240718182743.1959160-3-romank@linux.micr=
-osoft.com/
-> >
-> > Changes since v4:
-> >  - rebase on next-20240816
-> >  - some functions which were static in the original v5 patchset
-> >    are now non-static as they're used in both mmap.c and vma.c
-> >    (an alternative approach to this would have been to leave
-> >    them as "static inline" and put them into vma.h (at least if
-> >    they're only used in mmap.c and vma.c))
-> >
-> > Bert Karwatzki
-> >
-> > Liam R. Howlett (19):
-> >   mm/mmap: Correctly position vma_iterator in __split_vma()
-> >   mm/mmap: Introduce abort_munmap_vmas()
-> >   mm/mmap: Introduce vmi_complete_munmap_vmas()
-> >   mm/mmap: Extract the gathering of vmas from do_vmi_align_munmap()
-> >   mm/mmap: Introduce vma_munmap_struct for use in munmap operations
-> >   mm/mmap: Change munmap to use vma_munmap_struct() for accounting and
-> >     surrounding vmas
-> >   mm/mmap: Extract validate_mm() from vma_complete()
-> >   mm/mmap: Inline munmap operation in mmap_region()
-> >   mm/mmap: Expand mmap_region() munmap call
-> >   mm/mmap: Support vma =3D=3D NULL in init_vma_munmap()
-> >   mm/mmap: Reposition vma iterator in mmap_region()
-> >   mm/mmap: Track start and end of munmap in vma_munmap_struct
-> >   mm/mmap: Clean up unmap_region() argument list
-> >   mm/mmap: Avoid zeroing vma tree in mmap_region()
-> >   mm/mmap: Use PHYS_PFN in mmap_region()
-> >   mm/mmap: Use vms accounted pages in mmap_region()
-> >   mm/mmap: Move can_modify_mm() check down the stack
-> >   ipc/shm, mm: Drop do_vma_munmap()
-> >   mm/mmap: Move may_expand_vm() check in mmap_region()
-> >
-> >  include/linux/mm.h |   6 +-
-> >  ipc/shm.c          |   8 +-
-> >  mm/mmap.c          | 146 ++++++++---------
-> >  mm/vma.c           | 397 +++++++++++++++++++++++++++++++-------------=
--
-> >  mm/vma.h           |  61 ++++++-
-> >  5 files changed, 403 insertions(+), 215 deletions(-)
-> >
-> > --
-> > 2.45.2
-> >
->
-> I appreciate the effort taken in rebasing, but this is quite confusing,
-> it's like you've re-sent the series (with tags...) as if you were
-> submitting it, which I'm sure isn't your intent.
->
-> You've also cc'd Andrew as if it were a submission and everybody else on
-> thread...
->
-> It's probably worth marking the series to make it totally clear you're j=
-ust
-> doing this as a favour or for testing purposes (I know you at least chan=
-ged
-> the title of the series accordingly). At the very least RFC it...
->
-> Also you should mark that this is based on -next, as mm work is based on
-> mm-unstable (for this series, likely the same).
->
-> Liam is working on a rebase/rework of the series in parallel also so we
-> should definitely be careful to avoid any confusion here.
->
-> (Oh and as a side note - please do not send email to my personal address=
-,
-> all kernel mail should go to my Oracle one please).
->
-> To avoid any confusion:
->
-> NAK this whole series in this form (+ wait for Liam's next version...)
->
-> Nacked-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-
-Yes, this done for testing purposes (linux-next had several NULL pointer e=
-rrors
-(unrelated to the patchset) and as these are resolved since next-20240814,=
- I
-wanted to try the patches again, which I last tried on linux-next-20240730=
-).
-
-I should have taken more care in marking this as unofficial testing. (and =
-not CC
-everyone)
-
-> (Oh and as a side note - please do not send email to my personal address=
-,
-> all kernel mail should go to my Oracle one please).
-
-Ok, I just copied it from the Cc of Che old patches (like the other addres=
-ses.)
-
-Also patches 16 to 19 of the set are currently stuck as smtp.web.de curren=
-tly
-refuses to send them.
-
-Bert Karwatzki
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] usb: dwc3: core: Prevent USB core invalid event
+ buffer address access
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Thinh.Nguyen@synopsys.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com,
+	dh10.jung@samsung.com, naushad@samsung.com, akash.m5@samsung.com,
+	rc93.raju@samsung.com, taehyun.cho@samsung.com, hongpooh.kim@samsung.com,
+	eomji.oh@samsung.com, shijie.cai@samsung.com, stable@vger.kernel.org
+Content-Language: en-US
+From: Selvarasu Ganesan <selvarasu.g@samsung.com>
+In-Reply-To: <2024081618-singing-marlin-2b05@gregkh>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOJsWRmVeSWpSXmKPExsWy7bCmlq5Ww/40g7bJshZvrq5itbizYBqT
+	xanlC5ksmhevZ7OYtGcri8Xdhz9YLC7vmsNmsWhZK7PFp6P/WS1Wdc4Bin3fyWyxYOMjRotJ
+	B0UtVi04wO7A57F/7hp2j74tqxg9tuz/zOjxeZNcAEtUtk1GamJKapFCal5yfkpmXrqtkndw
+	vHO8qZmBoa6hpYW5kkJeYm6qrZKLT4CuW2YO0I1KCmWJOaVAoYDE4mIlfTubovzSklSFjPzi
+	Elul1IKUnAKTAr3ixNzi0rx0vbzUEitDAwMjU6DChOyMCWeusxTM4q7Yfn8lWwPjPo4uRk4O
+	CQETic1rtrF1MXJxCAnsZpQ40LmfGcL5xChx9PlHVjhn+45WdpiWj1/aWCASOxklmuc/gqp6
+	yyjx7Pp3FpAqXgE7iad/1gPN4uBgEVCVaNjnDBEWlDg58wlYiaiAvMT9WzPAhgoLxEscub2U
+	FcQWEdCQeHn0FtgCZoGTTBJXly5jAkkwC4hL3HoynwlkJpuAocSzEzYgYU6gg9a032KHKJGX
+	2P52DjPEoWs5JKZszAUplxBwkTh4KxUiLCzx6vgWqF+kJD6/28sGYVdLrL7zERwUEgItjBKH
+	n3yDKrKXeHz0EdgrzAKaEut36UOEZSWmnloHdRmfRO/vJ0wQcV6JHfNgbFWJU42XoeZLS9xb
+	co0VwvaQmPxiC/MERsVZSKEyC8mTs5B8Mwth8wJGllWMkqkFxbnpqcWmBUZ5qeXw+E7Oz93E
+	CE7BWl47GB8++KB3iJGJg/EQowQHs5II79Mve9OEeFMSK6tSi/Lji0pzUosPMZoCY2cis5Ro
+	cj4wC+SVxBuaWBqYmJmZmVgamxkqifO+bp2bIiSQnliSmp2aWpBaBNPHxMEp1cDksDrxnGNZ
+	mw+zwWIP+d9b1SasYuSYfuxXG39Z6NWXgX6fTOcF2YlMscy+ue3WooqY//bskZJ/i56sLLVT
+	sGfm7stqFdWa08v2idPgU8niV3u015ZVTxCN5VghY/x+6UkG5oLf7SEr79+/XN6REu7upnvR
+	LbPRb2mduaq4oKazBePE7dFtf/s4psX0vP3fbncurnRD9KVSZmEZu8/buc/UXRAsnF6tWKW1
+	NSJpRejh2CcMj+UT/M9ven/Z/miEptsFlZrfj/Tzb4kJflDxqeuV2H5CTWPB9JZTuRI3jpTZ
+	n09+UndJZf5Kv+aHny+ZFmzc7/DqlP5qIYuJmUmLXWS0UnMknvxs9z4ZZinEp8RSnJFoqMVc
+	VJwIABHmJ/NKBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAIsWRmVeSWpSXmKPExsWy7bCSnO6E4v1pBpPf8Fq8ubqK1eLOgmlM
+	FqeWL2SyaF68ns1i0p6tLBZ3H/5gsbi8aw6bxaJlrcwWn47+Z7VY1TkHKPZ9J7PFgo2PGC0m
+	HRS1WLXgALsDn8f+uWvYPfq2rGL02LL/M6PH501yASxRXDYpqTmZZalF+nYJXBkTzlxnKZjF
+	XbH9/kq2BsZ9HF2MnBwSAiYSH7+0sXQxcnEICWxnlJj3+SIrREJa4vWsLkYIW1hi5b/n7BBF
+	rxkl9u/sACviFbCTePpnPXMXIwcHi4CqRMM+Z4iwoMTJmU9YQGxRAXmJ+7dmsIPYwgLxEs2T
+	9zOB2CICGhIvj94CW8wscJJJYt+VPmaIBTsZJbof7gHrYBYQl7j1ZD4TyAI2AUOJZydsQMKc
+	QFevab8FVWIm0bUV4lBmoGXb385hnsAoNAvJHbOQTJqFpGUWkpYFjCyrGEVTC4pz03OTCwz1
+	ihNzi0vz0vWS83M3MYIjTStoB+Oy9X/1DjEycTAeYpTgYFYS4X36ZW+aEG9KYmVValF+fFFp
+	TmrxIUZpDhYlcV7lnM4UIYH0xJLU7NTUgtQimCwTB6dUA1NuQyxjo889uexmpZwYD7/pBSK1
+	Nl8VMpYJ2Ldq7LN5Ilict6zW9SfviQtvDTZGGz9h5TxwTD44KoIj/vDirif33bb/kPRIq2L6
+	vkTVyPpF1V4prt1M7SHhFYGnVD03RU82cctZrKnrLBp/XFnqxdzzKz0Of2hcJnlq+rZFGfxO
+	JqwrJiZcnnHzifT16K4jC8+bLDjoLWvHULBQxTgq2P5I5GEtJT3P3XeuHpK9U7Xm4dJVqbcc
+	C2aezOrx/dIbU2Sbo2mvEW68YOc5363feoLLbrWVu0unrq7z7997Tzq3StjtX6qQQF1NkaJ8
+	tMPN033WXQv+nsvO2ajZ9tVO3Kbn6ulb+5Y/+mJy/lSaEktxRqKhFnNRcSIAG2kT3SMDAAA=
+X-CMS-MailID: 20240816154312epcas5p3b282d7cba06fe54e1aa9be216452b143
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240815064918epcas5p1248e4f9084d33fdb11a25fa34e66cdbe
+References: <CGME20240815064918epcas5p1248e4f9084d33fdb11a25fa34e66cdbe@epcas5p1.samsung.com>
+	<20240815064836.1491-1-selvarasu.g@samsung.com>
+	<2024081618-singing-marlin-2b05@gregkh>
 
 
+On 8/16/2024 3:25 PM, Greg KH wrote:
+> On Thu, Aug 15, 2024 at 12:18:31PM +0530, Selvarasu Ganesan wrote:
+>> This commit addresses an issue where the USB core could access an
+>> invalid event buffer address during runtime suspend, potentially causing
+>> SMMU faults and other memory issues in Exynos platforms. The problem
+>> arises from the following sequence.
+>>          1. In dwc3_gadget_suspend, there is a chance of a timeout when
+>>          moving the USB core to the halt state after clearing the
+>>          run/stop bit by software.
+>>          2. In dwc3_core_exit, the event buffer is cleared regardless of
+>>          the USB core's status, which may lead to an SMMU faults and
+>>          other memory issues. if the USB core tries to access the event
+>>          buffer address.
+>>
+>> To prevent this hardware quirk on Exynos platforms, this commit ensures
+>> that the event buffer address is not cleared by software  when the USB
+>> core is active during runtime suspend by checking its status before
+>> clearing the buffer address.
+>>
+>> Cc: stable@vger.kernel.org # v6.1+
+> Any hint as to what commit id this fixes?
+>
+> thanks,
+>
+> greg k-h
+
+
+Hi Greg,
+
+This issue is not related to any particular commit. The given fix is 
+address a hardware quirk on the Exynos platform. And we require it to be 
+backported on stable kernel 6.1 and above all stable kernel.
+
+Thanks,
+Selva
+
+
+>
 
