@@ -1,185 +1,150 @@
-Return-Path: <linux-kernel+bounces-290444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D21E39553F6
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:57:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DFBD9553F8
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10DAD1C220C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:57:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 714851C227AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8589014830C;
-	Fri, 16 Aug 2024 23:57:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40EE8148304;
+	Fri, 16 Aug 2024 23:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lg+L73E7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bt2feJiV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA6AB661;
-	Fri, 16 Aug 2024 23:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D94213D51B;
+	Fri, 16 Aug 2024 23:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723852637; cv=none; b=gmOdWQqK1Yp9Skhi4QnU/H2eFBkhlHwQVCnE/GxoB0nEictuJiS1jZxzJ/LEncENuYxAyAI17PcJnL7xtRbK8cVS07byIVsTKha1B+RflsFSJ47+9PGyY7h79MOZKVJMY/IqLhP7PNelERSxwj3FAhCbM7mid+kemWrTpKV4cDs=
+	t=1723852721; cv=none; b=TZ7Boo3PJ/5bdUZ0BmmFSducqu5i76BOI2ioRCpL7FiO2VQOKsCzCTPGpB01sIqYz+HA6iA8+uSIQ5DEBI4lBZPpUYbfSJYNJ0a42L7S2DOIOb688hh1+mNoL9vFdzEI3A0rmPdYkhFac8aa6gW219TGMf5kZTzshZVA0ejwGWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723852637; c=relaxed/simple;
-	bh=UHlzo5S6DdvUcdhWPCY3lGHMj3T/in1RAfErRbmFYWI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jni2KPrNjx0IBLUaaNABVtmY4Rpt2U5zaWCJ7SWnYzA1BWcNr06vI6cxdC8+YO0S/+s+NNnJs9MMK8fLCthzcAKiqkPbc8UMPeTRS0FdY0/j/NX8+UDKP3o4j/2Fm2OmCMcs5dWrY490tIrTcf59e/21fVE0zr9FQoBpIwcC7po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lg+L73E7; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723852635; x=1755388635;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=UHlzo5S6DdvUcdhWPCY3lGHMj3T/in1RAfErRbmFYWI=;
-  b=lg+L73E7ArGLymrNYcIdt6+EAcHwL/u4UJPdboX4n2ixI91Ru39sfn1s
-   4rhaXF0DFftt5x4LUDD4lCMj1/lENs75bmPVmyWzVsNVPk3xHNxwzYG81
-   zitnuqV20L7FLncn2wEwELXud1fSHuMqlaN2pJjh4CEliazeBXvWloiyX
-   Ea97i86iNXjnq0qU74IONRHdqtnge6jHrembgnwutstdJh95BiODTv0pb
-   XjMjwqYTNcCD928OgWSF1otp9AeYw0/3h+wiTtS7XiIYJOfcKHFYCoTLS
-   8CYeX7UXu08YFNbZcMzKiRPg7q049ojXaqEnRE2ZGngTZXKLD3LPbmr3J
-   g==;
-X-CSE-ConnectionGUID: z88lSqDYSxKX74KUJBby0Q==
-X-CSE-MsgGUID: rbF4DYpQRnuK1L4Wbkt+Cw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="32735549"
-X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
-   d="scan'208";a="32735549"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 16:57:15 -0700
-X-CSE-ConnectionGUID: CnvhQkBcRbqHhNIr/FlI5A==
-X-CSE-MsgGUID: MTXli2OBREurMyd4AIS65Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
-   d="scan'208";a="59973236"
-Received: from unknown (HELO [10.125.111.71]) ([10.125.111.71])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 16:57:14 -0700
-Message-ID: <9a15afbe-409d-4432-8b06-d1f7046c0f7a@intel.com>
-Date: Fri, 16 Aug 2024 16:57:11 -0700
+	s=arc-20240116; t=1723852721; c=relaxed/simple;
+	bh=RYhj6KtyzS/2o9wQDqksLAzI+C8xH/+NxyFHDCV0/34=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K27p0R0TejowSKauZ0IK0xPdO62xfLN8fprbNl0QB+4KNaWnKabM+GjfR+93fStok0F7Isb5c8l3lFGwkxY51PEq2AACbBeZCKSH06o1n1UjHQTOaAnEDpmpeVApByzRm37cKoR8Mm+HPH3IcngDkisPXeRgX7rtuI3NKeKIRjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bt2feJiV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8A41C4AF09;
+	Fri, 16 Aug 2024 23:58:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723852721;
+	bh=RYhj6KtyzS/2o9wQDqksLAzI+C8xH/+NxyFHDCV0/34=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bt2feJiVZtgtFS/rtTdbr3X8OlCIJJ/P0sn667yK3z2qymhYCOWHuCsCNyF5xIyW8
+	 dACCPdfkQqXblq2Ux+jDbGRrUc9Bv7CNShIxCCvy77mrYfITxKJB4PxRcnfvvXFGVL
+	 P3PTaySwbzMX0EQHG2iaqDVIOpqJV9AMQwAjaVUFi8i/qYofCxbV0TdTjTy7E39T/3
+	 Wchk7TPQ9JV4NFKbNqu0f4oR1U4xsBGGPc+jXsr3WSwblt0tvzZ+zpuMPbG/CaTxvW
+	 mG9KcaNB5X3anwinepzTai36ho7gHSvKV3B4021oPDgTEsKGhP916CcHFOx0ofNPPg
+	 CUPzscp8OC9ew==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Subject: [PATCHSET 0/9] perf annotate-data: Update data-type profiling quality (v1)
+Date: Fri, 16 Aug 2024 16:58:30 -0700
+Message-ID: <20240816235840.2754937-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 14/25] cxl/events: Split event msgnum configuration
- from irq setup
-To: Ira Weiny <ira.weiny@intel.com>, Fan Ni <fan.ni@samsung.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Dan Williams <dan.j.williams@intel.com>,
- Davidlohr Bueso <dave@stgolabs.net>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, linux-btrfs@vger.kernel.org,
- linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, nvdimm@lists.linux.dev
-References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
- <20240816-dcd-type2-upstream-v3-14-7c9b96cba6d7@intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20240816-dcd-type2-upstream-v3-14-7c9b96cba6d7@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+
+Hello,
+
+I've found a couple of bugs in the DWARF location handling and had
+some updates to improve the quality of the type resolution.
+
+The current code only checks the first variable it found in the
+closest scope but sometimes it's not good because macro expansions
+like container_of (which is used by many list/rb tree manipulation
+routines) only gives a very limited information (like void *) with
+type cast.  So it needs to lookup other variables in the upper scope.
+See the patch 8 for more details.
+
+Also sometimes it can have more information for the parent type if the
+pointer is for an embedded type.  For example, a list_head is
+typically a part of bigger struct.  Even if it found a variable for
+the list_head, it'd be nice if it can tell which list it is.
+
+To compare two type information in general, I've added a heuristic to
+take a pointer to a bigger data type.
+
+This is an example data, the portion of unknown type went down a bit
+and the atomic_t turned out to be _mapcount in the struct page.
+
+Before:
+  #
+  # Overhead  Data Type
+  # ........  .........
+  #
+      37.24%  (unknown)
+      14.40%  atomic_t 
+       8.81%  (stack operation)
+       5.54%  struct psi_group_cpu
+       3.40%  struct task_struct
+       2.99%  struct pcpu_hot
+       2.99%  struct cfs_rq
+       2.18%  struct audit_krule
+       1.93%  struct psi_group
+       1.62%  struct sched_entity
+
+After:
+  #
+  # Overhead  Data Type
+  # ........  .........
+  #
+      36.87%  (unknown)
+      14.40%  struct page
+       8.81%  (stack operation)
+       6.00%  struct psi_group_cpu
+       3.40%  struct task_struct
+       3.36%  struct cfs_rq
+       2.99%  struct pcpu_hot
+       2.18%  struct audit_krule
+       1.93%  struct psi_group
+       1.62%  struct sched_entity
+
+Also updated the debug message and the statistics to help debugging.
+
+The code is available at 'perf/data-profile-update-v1' branch in
+git://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
 
 
+Thanks,
+Namhyung
 
-On 8/16/24 7:44 AM, Ira Weiny wrote:
-> Dynamic Capacity Devices (DCD) require event interrupts to process
-> memory addition or removal.  BIOS may have control over non-DCD event
-> processing.  DCD interrupt configuration needs to be separate from
-> memory event interrupt configuration.
-> 
-> Split cxl_event_config_msgnums() from irq setup in preparation for
-> separate DCD interrupts configuration.
-> 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> ---
->  drivers/cxl/pci.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
-> index f7f03599bc83..17bea49bbf4d 100644
-> --- a/drivers/cxl/pci.c
-> +++ b/drivers/cxl/pci.c
-> @@ -698,35 +698,31 @@ static int cxl_event_config_msgnums(struct cxl_memdev_state *mds,
->  	return cxl_event_get_int_policy(mds, policy);
->  }
->  
-> -static int cxl_event_irqsetup(struct cxl_memdev_state *mds)
-> +static int cxl_event_irqsetup(struct cxl_memdev_state *mds,
-> +			      struct cxl_event_interrupt_policy *policy)
->  {
->  	struct cxl_dev_state *cxlds = &mds->cxlds;
-> -	struct cxl_event_interrupt_policy policy;
->  	int rc;
->  
-> -	rc = cxl_event_config_msgnums(mds, &policy);
-> -	if (rc)
-> -		return rc;
-> -
-> -	rc = cxl_event_req_irq(cxlds, policy.info_settings);
-> +	rc = cxl_event_req_irq(cxlds, policy->info_settings);
->  	if (rc) {
->  		dev_err(cxlds->dev, "Failed to get interrupt for event Info log\n");
->  		return rc;
->  	}
->  
-> -	rc = cxl_event_req_irq(cxlds, policy.warn_settings);
-> +	rc = cxl_event_req_irq(cxlds, policy->warn_settings);
->  	if (rc) {
->  		dev_err(cxlds->dev, "Failed to get interrupt for event Warn log\n");
->  		return rc;
->  	}
->  
-> -	rc = cxl_event_req_irq(cxlds, policy.failure_settings);
-> +	rc = cxl_event_req_irq(cxlds, policy->failure_settings);
->  	if (rc) {
->  		dev_err(cxlds->dev, "Failed to get interrupt for event Failure log\n");
->  		return rc;
->  	}
->  
-> -	rc = cxl_event_req_irq(cxlds, policy.fatal_settings);
-> +	rc = cxl_event_req_irq(cxlds, policy->fatal_settings);
->  	if (rc) {
->  		dev_err(cxlds->dev, "Failed to get interrupt for event Fatal log\n");
->  		return rc;
-> @@ -745,7 +741,7 @@ static bool cxl_event_int_is_fw(u8 setting)
->  static int cxl_event_config(struct pci_host_bridge *host_bridge,
->  			    struct cxl_memdev_state *mds, bool irq_avail)
->  {
-> -	struct cxl_event_interrupt_policy policy;
-> +	struct cxl_event_interrupt_policy policy = { 0 };
->  	int rc;
->  
->  	/*
-> @@ -773,11 +769,15 @@ static int cxl_event_config(struct pci_host_bridge *host_bridge,
->  		return -EBUSY;
->  	}
->  
-> +	rc = cxl_event_config_msgnums(mds, &policy);
-> +	if (rc)
-> +		return rc;
-> +
->  	rc = cxl_mem_alloc_event_buf(mds);
->  	if (rc)
->  		return rc;
->  
-> -	rc = cxl_event_irqsetup(mds);
-> +	rc = cxl_event_irqsetup(mds, &policy);
->  	if (rc)
->  		return rc;
->  
-> 
+Namhyung Kim (9):
+  perf dwarf-aux: Check allowed location expressions when collecting
+    variables
+  perf annotate-data: Fix off-by-one in location range check
+  perf annotate-data: Add enum type_match_result
+  perf annotate-data: Add variable_state_str()
+  perf annotate-data: Change return type of find_data_type_block()
+  perf annotate-data: Add is_pointer_type() helper
+  perf annotate-data: Add is_better_type() helper
+  perf annotate-data: Check variables in every scope
+  perf annotate-data: Update type stat at the end of
+    find_data_type_die()
+
+ tools/perf/util/annotate-data.c | 359 ++++++++++++++++++++------------
+ tools/perf/util/dwarf-aux.c     |   5 +-
+ 2 files changed, 230 insertions(+), 134 deletions(-)
+
+-- 
+2.46.0.184.g6999bdac58-goog
+
 
