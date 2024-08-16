@@ -1,99 +1,150 @@
-Return-Path: <linux-kernel+bounces-290171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E0DC955041
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:51:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1230E955042
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:53:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD1671C23803
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:51:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9468287273
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7D81C3793;
-	Fri, 16 Aug 2024 17:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715031C2326;
+	Fri, 16 Aug 2024 17:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EBiccx3l"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="kON99rqd"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23BB91AC8BE;
-	Fri, 16 Aug 2024 17:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96A11AD9F9
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 17:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723830689; cv=none; b=s4SqDLcY8g7GZv2huM40m3Q/sVkFYCri3w14aBByp4OIdu2t47Benz+IZhSrnNmNRftl6fJityR+BNqmspo46KQ61GAGnmb4QVmfOOly2zt2dOeDZ1wP2dViewNYwP61bD+WwNEtD5hPALMwQkxZzabmF4RbUAm7cuyNq972Zro=
+	t=1723830812; cv=none; b=s1880DQCB8Q41YQ861oJ64LLO8qyxACwleZtIp47Wtgv5GqNdJV7Lt0gkjWkapme+gs+G/ECF6Uc6kIPKVO+dw1MBDOxjAnrgidCqxtgB9Asd8bXUQZlpVnAcCQUP1SjLyv+YNXeEYvK2rB15+gpD1fafpNZ/gvqPHKqYKaFnUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723830689; c=relaxed/simple;
-	bh=P03NoRPWOew/zEckFq6H56iG7PE+QKUMOpQAR0woiL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fOqg/BP1u9o9fjWKN8IG+/giZZdlIehPsXq06wVMNhvupX2GhjWIk7wTjORoaSSFpW+3//JpgoErAQkMxosqN+Kf9o97bcJxvCxzT0AKY7EdL+TjfLa+tslQVjLxH+ZZgk+80CebTG6SAg8a8OpQHoNZJHdnA9lVpKSdMs4FenU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EBiccx3l; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=IOOLI9WKFRs4gfl6He/jq3lJinZdUeEYeTDVswuAvyo=; b=EBiccx3lTHuQMq/USiLorIxKXp
-	8r340NPpPWyctZD636zkEfIxlBVjjQ217KtE5bAhDsn8TOkGl6hdKtxzP5hQSFWmC5tgbtIMhJEmC
-	ZJud3UHOTuAdA30oTpS8GqNwjw+GZqVV9joZ00mg77PlxhZamSdhF8T/U7BCwmMjPLsrZmZUZ7goh
-	BJmwUY3XeAcw90DUXSRJb05wkwoEElSRS24eXjpM+mu8Yz2cX0t6GhTZgZUiaQpz2VLyQ9hJk9Y64
-	jhJnmOZAQPcT2dYFVtUP7LNQVvF9pV1Cc1MnuRqkgUwDyGwXAb/rYxulil4NqjxRzG+Meh1Eozmr8
-	NllZyL8A==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sf16h-00000003uWG-2dmY;
-	Fri, 16 Aug 2024 17:51:23 +0000
-Date: Fri, 16 Aug 2024 18:51:23 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ying.huang@intel.com,
-	feng.tang@intel.com, fengwei.yin@intel.com,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH] perf: Remove setting of page->index and ->mapping
-Message-ID: <Zr-Rm14B5AHZ4_UB@casper.infradead.org>
-References: <20240809201038.2648058-1-willy@infradead.org>
- <202408161305.a3a5158a-oliver.sang@intel.com>
+	s=arc-20240116; t=1723830812; c=relaxed/simple;
+	bh=tvfMhWGq9uBcP9rk50Bzjk37jaXGPNycXM71rxxvwpw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=le1OzkXfjmFYwByo971YAkJGuVVkFTc52fOobbpIzcGzW9DUSDX75QClZDIfsueomnc8DfFK/GQHWE1gOIfgABg8yl5PHoDS5LnPZrJo2ALfO9GpLvEqtmlKe/heYsMudT3tc1VjqMDJgbvfAUwE4djy+YvvFhS/B1zTlFnWRH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=kON99rqd; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.205] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 47GHqp3q3197859
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Fri, 16 Aug 2024 10:52:52 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 47GHqp3q3197859
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024071601; t=1723830773;
+	bh=JVKMDNcXdz23RlhyDYN2nabLj+dE3eoeUN1rHsNn4rE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kON99rqdXwZP9Bfm9KHYx0NGSdk9JrDHGNCn2HvIEzaLeYfegsI1qyhFZtzSd7t8W
+	 YS+1nWhBGnFlh422RjHRUWUKAEeS4SPC11wEOZ5EF8BE8VCuCmJeraPsGBdt4k4ZmZ
+	 3epY0gv9ETsNd6q9JqUUJBYvovuifJfNgJoAWc3oRButYNXPmJ0L3348LFWySXOoOp
+	 UnISgxsLu1E8As0/Pu7Cu0XEIZNF96vHijyKu/iQUrS+ctb1eA2GViwj1H7G+NTrFh
+	 THukd6UoC4a2G1hqqYy2v3w65CN48/mk18wUJR5g6NRJesCWemGOwkzJBNRlNt4VMd
+	 1IETFliKjxWKw==
+Message-ID: <7c09d124-08f1-40b4-813c-f0f74e19497a@zytor.com>
+Date: Fri, 16 Aug 2024 10:52:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202408161305.a3a5158a-oliver.sang@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/3] x86/msr: Switch between WRMSRNS and WRMSR with the
+ alternatives mechanism
+To: Andrew Cooper <andrew.cooper3@citrix.com>, linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        peterz@infradead.org, seanjc@google.com
+References: <20240807054722.682375-1-xin@zytor.com>
+ <20240807054722.682375-3-xin@zytor.com>
+ <e18cd005-24ef-497d-b39c-74a54d89a969@citrix.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <e18cd005-24ef-497d-b39c-74a54d89a969@citrix.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 16, 2024 at 02:35:39PM +0800, kernel test robot wrote:
-> from commit message, it seems just some useless setting have been removed.
-> but quite some performance regression bisect by our bot finally point to this
-> change (already removed some not so significant changes to avoid this report
-> mail is too long).
+On 8/9/2024 4:07 PM, Andrew Cooper wrote:
+> On 07/08/2024 6:47 am, Xin Li (Intel) wrote:
+>> From: Andrew Cooper <andrew.cooper3@citrix.com>
+>> +/* Instruction opcode for WRMSRNS supported in binutils >= 2.40 */
+>> +#define WRMSRNS _ASM_BYTES(0x0f,0x01,0xc6)
+>> +
+>> +/* Non-serializing WRMSR, when available.  Falls back to a serializing WRMSR. */
+>>   static __always_inline void wrmsrns(u32 msr, u64 val)
+>>   {
+>> -	__wrmsrns(msr, val, val >> 32);
+>> +	/*
+>> +	 * WRMSR is 2 bytes.  WRMSRNS is 3 bytes.  Pad WRMSR with a redundant
+>> +	 * DS prefix to avoid a trailing NOP.
+>> +	 */
+>> +	asm volatile("1: "
+>> +		     ALTERNATIVE("ds wrmsr",
 > 
-> we don't have enough knowledge to explain these, so just report FYI.
-> if you have any suggestion for our tests or need us run more tests, please
-> just let us know. thanks a lot!
+> This isn't the version I presented, and there's no discussion of the
+> alteration.
 
-Can you try this replacement patch?
+I'm trying to implement wrmsr() as
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index c973e3c11e03..bc12f4fb7fa9 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -6221,10 +6221,9 @@ static vm_fault_t perf_mmap_fault(struct vm_fault *vmf)
- 		goto unlock;
- 
- 	get_page(vmf->page);
--	vmf->page->mapping = vmf->vma->vm_file->f_mapping;
--	vmf->page->index   = vmf->pgoff;
-+	lock_page(vmf->page);
- 
--	ret = 0;
-+	ret = VM_FAULT_LOCKED;
- unlock:
- 	rcu_read_unlock();
- 
+static __always_inline void wrmsr(u32 msr, u64 val)
+{
+	asm volatile("1: " ALTERNATIVE_2("wrmsr", WRMSRNS, X86_FEATURE_WRMSRNS,
+					 "call asm_xen_write_msr", X86_FEATURE_XENPV)
+		     "2: " _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_WRMSR)
+		     : : "c" (msr), "a" (val), "d" ((u32)(val >> 32)),
+		     "D" (msr), "S" (val));
+}
+
+
+As the CALL instruction is 5-byte long, and we need to pad nop for both
+WRMSR and WRMSRNS, what about not using segment prefix at all?
+
+
+> The choice of CS over DS was deliberate, and came from Intel:
+> 
+> https://www.intel.com/content/dam/support/us/en/documents/processors/mitigations-jump-conditional-code-erratum.pdf
+> 
+> So unless Intel want to retract that whitepaper, and all the binutils
+> work with it, I'd suggest keeping it as CS like we use elsewhere, and as
+> explicitly instructed by Intel.
 
