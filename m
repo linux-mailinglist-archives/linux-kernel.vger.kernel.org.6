@@ -1,88 +1,87 @@
-Return-Path: <linux-kernel+bounces-289614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A32A4954838
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:47:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED0CA95483D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:48:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A7001F25860
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:47:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 997F1282C6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F414B1ABEC5;
-	Fri, 16 Aug 2024 11:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1951A4F20;
+	Fri, 16 Aug 2024 11:48:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cbBjmOEz"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6OM/Kd2"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8868C194AF6
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 11:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE981547C4;
+	Fri, 16 Aug 2024 11:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723808827; cv=none; b=KFJXwnOhwoUofTB8SiVOcqDRXvVfDVrixxINH7lQklUd/Yc202Am3kZacFtaWVRKvAZiMzMFjfzry5/86iyoBMccczDUmj/3fRCB0ACgZyXsQphL0bVmsdL63ViKrVKMrkYdGDT5VxSUZpYFMcoJsynhQKxm4ECm6G6E/CvXqZs=
+	t=1723808905; cv=none; b=g0W0OiJnCQpfxhL31OhoYRFXJ2DXSoPx3ELsMKijfek+7FrWXlGz8AT7Y0XLObcp7A4sgndF1bxpNpz4VLyUFfy/YzjrNOJ9pscrClabgD2JJ49ANIyxounHcq2xb6o2RAd9HtHLWre78dFsd/+bT4REG2YoBTmbQkEBYTWq8Z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723808827; c=relaxed/simple;
-	bh=BYNOuo7VdELGAZCeJracaEuuvIf7F0bO1297z3Jgw60=;
+	s=arc-20240116; t=1723808905; c=relaxed/simple;
+	bh=mFGmQo3obq248oRCshtEnzGXBHV65xQZPgg9M7+Lrco=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rBHuH4mOfRkjyWIWGckoDVVZt0Zb9iqp6EbGkCGqvWkS9g2TEt3KmqyPn2b0j2xF/Jp7C1wsaszLMK5FUjesUXed2Jt3JnVG4A6qYkTWImSFSXxyInYDe9ZwmmOS34x7ORtAxBF3iNnDvUZraoeGC48hX73AZvMkElqBJZo556o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cbBjmOEz; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f1a7faa4d5so23441321fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 04:47:05 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=IU3/IxAkOtSJLNKHVDXjQ2K71CKz/jZtUBrhYyTdOdgGdqdh8gaELqrRWO21+qd/o+uNEXMLuMksupF+pN56CFJZ/viwHU+sSeww4UjJCoj07zPwnTn5zB/QoEwqxUCms78uGikdh0RXbBf14+pn2z9hxpV5812BQkeG8SjF268=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l6OM/Kd2; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7a94478a4eso516562266b.1;
+        Fri, 16 Aug 2024 04:48:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723808824; x=1724413624; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723808902; x=1724413702; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wV3f3tgXbZ6RS8PMVxuGaxCBTXr8Z51l89FQdcyx9OA=;
-        b=cbBjmOEzsdagCdA7RgQgdfMCNfGkm1QlompTPTii/5qlUNEQD2VwZtitGDD5ml6UdD
-         Dv0wndhGQUZ3IKb7KhsV/5j63j3hq4wdvDVxf/ltBoj0g/uRhTpOwLH3Lza27QvEVnRJ
-         Be7dccccavnXAnMw1z0lykWuMsrmWY87Jp3O3wAwUjFoxfsHBHx2t5pZ3o3Sboo6ztDN
-         ItOfTlORXy8qZ0LArXlliaNrlHGeZiUFTL5FE1lx0L14VouJW2t6lQCIpBALnAdmnm20
-         gyaUYCX7AdUn+ZiblsonXeP/u9l3npO+55Xdhwt7uZUciKgYgDERnbbU5jM97jGZqkej
-         0bUA==
+        bh=IY44BvNIQ8HMdyx0QMRty049Oi1G15aZuupS+GebtAw=;
+        b=l6OM/Kd2T6fVkebJwi+Gc/nt8H+4t5/wFnAMbHKN1UKlAlPxor+KXqS2T3MAClASQg
+         aCGPIkKZ8dbHi16EnmEtp9/hv2KRCh2yvRnv4SNlnZBvydMWJWWEhd3VAL0PyUqO9yre
+         AZ/0sDfgXvsHcNRstdGd0yZHM9YxRYFzHXeTZrJMnWb75/BX70SGBlgQi6AKGyyYqG5H
+         5+yyZ0PQjbHPYemdoMkgYGPtfMPOaEcwqWXnSdZQIOh2XOaJnu1B5eRQVx+RIc5eO2M2
+         Br/uxR7X4FpD7XL3c8hXqkmBE4Zi1WDelR/DsHsqVXM/ifm7vtTnnN/Q+y6RwsSHl1Ac
+         rRHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723808824; x=1724413624;
+        d=1e100.net; s=20230601; t=1723808902; x=1724413702;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wV3f3tgXbZ6RS8PMVxuGaxCBTXr8Z51l89FQdcyx9OA=;
-        b=ZGzc9cmVFZBRrft7oxwQWe+5X52lk2gS6FxnuDclJECJDaJgTYFyrbetqlnaxquAPx
-         0aBOJSg7W5DLbcm1rFhBKpDiMn8WZwaVhO4zR+ZbNG2O1smJqEC6iKrUhLYurleliSvM
-         r1zKYlpB/OHq5D63kneR+MBQFlAFAa8vLLncPBK2Cq1hipDAt7GEz5kcqO1o1zRLKt1F
-         eDekXE01Hl/+p9f7LehtxmUoNph07pwscrpb82aRTQglHBSwhynOIsHCbBsOe3efIkbw
-         XICulvntJeJjFcG6kV4QON9rKZEAQNr1sm7gx4cNgqpfCUeXvEjTfmqzzaaKzeZXKym1
-         15MA==
-X-Forwarded-Encrypted: i=1; AJvYcCWR4A0N1g0/O5so1YNLPjUZakA2wURE2cIEej9cxb+aX+X9pC9xPwiC5nFQUrVpG1IWKHjgXWCcKlknh6KeVae1ft6uQSbq1xLkSMfK
-X-Gm-Message-State: AOJu0YxSXWSuoc5xNYEZKiwG7e+CAWSJ+omBIALSBfr4CpFJzIsu7aAP
-	lrRrb/HWAqHF43fKfhQykR0MeidcBihMG9QT4Sju2up++4ycr2CKFToXEazn+bc=
-X-Google-Smtp-Source: AGHT+IFsJvShCAzHPXv9NfhSPB7MlpUN8gvqY9PXC7ZNR3VQQoCvobHbpuluFO6/2tEVHSxFNSgARA==
-X-Received: by 2002:a05:651c:2224:b0:2f1:6cb1:44c0 with SMTP id 38308e7fff4ca-2f3be577d8emr20100601fa.6.1723808823479;
-        Fri, 16 Aug 2024 04:47:03 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898aada4sm3446023f8f.94.2024.08.16.04.47.02
+        bh=IY44BvNIQ8HMdyx0QMRty049Oi1G15aZuupS+GebtAw=;
+        b=IXyEEfgFk5R8iUcF55/gJ+HEKraFl2dXhJe7rmiLKKJVO7Dts1mpmyZYvaYxf56JpX
+         rarfFciyNkam/bniKX75JU1op3fwop3PiQnNiiElvo1jEFZS7QTQTTuco5ZaGub8lbxd
+         SR90rR8SSo4EVQP1+afSjGK0q9QWRr5xsPL+M1N4Bx8YA1c+yqdvEQgp1qoYzCpbgXl/
+         mqkUM/c7L75n7kv3m0JB85Lm3wg+baghMhKJucKS7aYfQuGqr8yzy5EK64O5DVARYfUi
+         4QoxsWUfFD8iJilWpKhRaPVyvLW1LAUmZ9HAANlGTEkVUv6WUMcTk67UgCAIMIceSTRU
+         x6GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXmjxJpKBLVOa6jjgpd1dEgoxRKWWe/qBdfOjylN6XIisScZa3j8u2KUNr8kNCFgZ3G8lQlKEhZ9k6afUN2EGhRBlEVibl5DtjSWCgRELxZAfcHrC4jkd59Gccsa3G3iw9JrfO
+X-Gm-Message-State: AOJu0Yz2gZSGlNvx6jac8t74l8ihBBg6J1VcMGAsTFKE5AQtd8borkf2
+	TqW+3L5qCBdqpofDDakRw2UKKgCMHQvrhblfbfdJ0r5wbTqGD3RT
+X-Google-Smtp-Source: AGHT+IEMqNZbH50JXVZEb5SoTpw0eEiq2X6PpNhKEqpktgqE6co9AWSShXZz8K636iWMPF7XES4lEA==
+X-Received: by 2002:a17:907:3fa4:b0:a72:64f0:552e with SMTP id a640c23a62f3a-a8394e34235mr243281566b.19.1723808901548;
+        Fri, 16 Aug 2024 04:48:21 -0700 (PDT)
+Received: from skbuf ([188.25.134.29])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839344fdsm244834166b.100.2024.08.16.04.48.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 04:47:02 -0700 (PDT)
-Date: Fri, 16 Aug 2024 14:46:58 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Nitin Rawat <quic_nitirawa@quicinc.com>,
-	Can Guo <quic_cang@quicinc.com>, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] scsi: ufs: ufshcd-pltfrm: Signedness bug in
- ufshcd_parse_clock_info()
-Message-ID: <cd5c2315-1d40-44db-a2d9-c4fd7ab3e7f4@stanley.mountain>
-References: <404a4727-89c6-410b-9ece-301fa399d4db@stanley.mountain>
- <b613d16f-1167-456d-a5cd-807db875adb9@acm.org>
- <6beba3f4-dfa1-4871-829c-ed1e44b5bd39@stanley.mountain>
- <20240816063404.GH2331@thinkpad>
+        Fri, 16 Aug 2024 04:48:20 -0700 (PDT)
+Date: Fri, 16 Aug 2024 14:48:17 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Furong Xu <0x1207@gmail.com>
+Cc: Serge Semin <fancer.lancer@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	xfr@outlook.com, rock.xu@nio.com
+Subject: Re: [PATCH net-next v2 0/7] net: stmmac: FPE via ethtool + tc
+Message-ID: <20240816114817.gp7m6k2rlz7s4e5a@skbuf>
+References: <cover.1723548320.git.0x1207@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,38 +90,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240816063404.GH2331@thinkpad>
+In-Reply-To: <cover.1723548320.git.0x1207@gmail.com>
 
-On Fri, Aug 16, 2024 at 12:04:04PM +0530, Manivannan Sadhasivam wrote:
-> On Fri, Aug 16, 2024 at 12:35:22AM +0300, Dan Carpenter wrote:
-> > On Thu, Aug 15, 2024 at 10:47:30AM -0700, Bart Van Assche wrote:
-> > > On 8/15/24 4:24 AM, Dan Carpenter wrote:
-> > > > The "sz" variable needs to be a signed type for the error handling to
-> > > > work as intended.
-> > > 
-> > > What error handling are you referring to? I haven't found any code that
-> > > assigns a negative value to 'sz' in ufshcd_parse_clock_info(). Did I
-> > > perhaps overlook something?
-> > > 
-> > 
-> > Rob's patch in linux-next.
-> > 
+On Tue, Aug 13, 2024 at 07:47:26PM +0800, Furong Xu wrote:
+> Move the Frame Preemption(FPE) over to the new standard API which uses
+> ethtool-mm/tc-mqprio/tc-taprio.
 > 
-> It would've been helpful if you added 'next' in the patch subject prefix.
-> 
+> Changes in v2:
+>   1. refactor FPE verification processe
+>   2. suspend/resume and kselftest-ethtool_mm, all test cases passed
+>   3. handle TC:TXQ remapping for DWMAC CORE4+
 
-I guess that would helped in this case.  But most of the time when I see this
-question it's because there are two different upstream maintainers modifying the
-same code...  Anyway, sure, I can change my script to add "next" to the subject
-when the FIXES_COMMIT isn't in Linus's tree.
+This is starting to look better and better. I wouldn't be sad if it was
+merged like this, but the locking still looks a little bit wacky to me,
+and it's not 100% clear what priv->mm_lock protects and what it doesn't.
 
-if [ "$FIXES_COMMIT" != "" ] ; then
-    if ! git merge-base --is-ancestor $FIXES_COMMIT origin/master ; then
-        TREE=" next"
-    fi
-fi
-
-regards,
-dan carpenter
-
+I can make a breakdown of how each member of fpe_cfg is used, and thus
+understand exactly what are the locking needs and how they are addressed
+in this version, but most likely not today.
 
