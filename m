@@ -1,105 +1,264 @@
-Return-Path: <linux-kernel+bounces-289914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1090954D47
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:58:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1D59954D4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F464B26902
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:58:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A225285F1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1021BD01F;
-	Fri, 16 Aug 2024 14:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C82A1BD4F1;
+	Fri, 16 Aug 2024 14:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DCiT0ipJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aBdT4xN1"
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1E91B8EA0;
-	Fri, 16 Aug 2024 14:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45672BB0D;
+	Fri, 16 Aug 2024 14:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723820323; cv=none; b=ebNwL7mlz8rQpJpdEe8/z4gnspAxVcK+v4WBI2n1Jhlja1VitO9iSHa04U64vfI+rEE+x/JutFs511jS1qXhUpOEc4lFhJd+LuU74wtwu9ySfGmMNtqJQ6OflINF6OPo/bbR6qGFpuYXJ6GxcyBCZcbznN50Uqzr9BpJEK7PLnU=
+	t=1723820395; cv=none; b=UbD7vQSpuN/4O1SwtRUtozRz2DC2VEllmbyfyy649ixVajUwhKx1ofvdc+9l9AfERJka/drxJR6Pcu7C9iqade5PEv3uGib5FVCeIEB8JdUavA9O5UVn3W3qFUWE95MB57/Tgd46WRhbpyqF1wd7SdsPEuCzBFyf1KFxHVDZkcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723820323; c=relaxed/simple;
-	bh=h2Mxlym2VPEMV8Ydic1LoJsLPgznB/klNI53OAeg7C8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ywsb4DXn7xrThZiQkkBhsoN/bq0exwGKjHfAG1mFYcd22P+1LEZ0zjLuaojhWY/VDPfOzdJnDz49NMAzGrN9Ch5BvbZ/NZ2ZUi0GLLdfuRo1iEq90hy1TOgd7p3TDA4MwYnHYrsB1e/+w/h5lQ/tmRCBqWqLBP7jJpDP/YSnKmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DCiT0ipJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8609C32782;
-	Fri, 16 Aug 2024 14:58:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723820323;
-	bh=h2Mxlym2VPEMV8Ydic1LoJsLPgznB/klNI53OAeg7C8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DCiT0ipJa2L3qpLxaa6VyFiUew1sdUBgmQnxB5FE7ST5vZPaynG2NFiQY69UJOto4
-	 Bgyy4npmxKoOlrfdEp8huKBaH9ZEtTUJDNrecTEqFUPxH75H/yYxA1KpxMkQcUAzyJ
-	 it8srxaSjqUqq8AXXdwcgV1/9O+Zbe+XbiCbgws3xv//eV1SXkA4pHRJD4wgBAwqx5
-	 E+qqQHTI/yyfYPjgWU5nS1LpMteorFv64d++nAoQOFIOxF3opDuW4nIo12hkTgeExP
-	 P/wBNX6/zUK4DF8ZORPzMbnZLcgFpUgesj6Vib47IDB6fX+LSHsxKCP6hLshnUwI0D
-	 /yafgLppdwX8w==
-Date: Fri, 16 Aug 2024 11:58:39 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org,
-	kan.liang@linux.intel.com, namhyung@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 02/10] perf trace: Change some comments
-Message-ID: <Zr9pH1MC3L7Vr1-X@x1>
-References: <20240815013626.935097-1-howardchu95@gmail.com>
- <20240815013626.935097-3-howardchu95@gmail.com>
+	s=arc-20240116; t=1723820395; c=relaxed/simple;
+	bh=9uudIYw7JfGhepxtxZOatr+V5nc/nujXyLaeMxNmwnI=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=AytkqjhtKfnutP3x4aAD9L03On65dGUrR2JoAXpLYVAtW38vdWv+fNsecsMLCombddOBV9Csscavh1g4nRCbHW1fvHcYDIIjBN7dUlXweHWp1DqSUZ2WLn/yjh8jB34YHy1ApGzWbIHfj8EE+xpqMlzPqd3V9xwjwIPNcbyb4EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aBdT4xN1; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7093705c708so2062357a34.1;
+        Fri, 16 Aug 2024 07:59:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723820393; x=1724425193; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9uudIYw7JfGhepxtxZOatr+V5nc/nujXyLaeMxNmwnI=;
+        b=aBdT4xN1tj70NCTRZH2PRAZ0l+dL8UzpPIUvMPVKYuNmnibb0pDGnLSozzn9ny5eGC
+         LRjmQ0sRRt4iTj+CDKk2/3Oo4Q5AGcUzhpFD2KUXV4xgyfGcwnRibV+4l8N6Ag31gGKd
+         8F9Ji/V0jvTH/IJYEofzE40qme64wfS7PQ21eKdrWbtnIAANY5mrwDgFPKsSpL35NbLq
+         FMyGIu0G850gYdD2BR5rhZX1Z3rUYsLij0xFRZl38x+hEkmnBHFYXkjlPwLMlvgSRLZ/
+         8LQGuH1Y1+TSgvP602Wx4PX7mZXMet/GIpY7HioNKMVnNwztV1WILlt63CkCtRHT91Au
+         1k4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723820393; x=1724425193;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=9uudIYw7JfGhepxtxZOatr+V5nc/nujXyLaeMxNmwnI=;
+        b=rE2pqx/p87Xk4Jvs780dFmWWDz/qZq4cmA91AdAdGPjMe1h7YULw4M8KMUmPhKVRad
+         qnK6xF8os1RZxmI4IXFDy09EAmK8n1WNXQGo0V/lK3RbaChl+OG8dFtttUE3kXyhaaUS
+         zKOeJBcPxyEYuC1OjhZSnrMfQkOuhQ2+0ofaWiRUxChOwya9DQurhVZ4+J+hB5A3+7n7
+         GRYEAnw7i4Pw+cJrs8nIEr0qmiOEd0xzkLJ9f2u8OB+QZGi2J/o8R3xIkB6lO/4BjDUD
+         nLZpvuMNRVG+tfquBE69Bh83xKXgzgXZob9RegvGjPgSlM/CZhMSIE27Efep1/DHCQgW
+         5RNA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/owUUaS8xUaDqwbKsl0maNAB3KgxA23YA15162lFeCFP8/S9t86thnFQEc7UZXor3loZOoKdrju93sCl54pc942K74g5rJwA/pDy4QJTeWXwK1GcPYMf42EFqEbD80mkK3ang8J3iUvRzmqowGBhT+/9r9g8Cjlrsx7Pfg3IO2/bhjCsKn2/vlpggizeyAvO6blJjfDCHhQmOc4C8fw==
+X-Gm-Message-State: AOJu0YzoSMpHr/Lw19kPJIgx7VRGGPcaqcTPagEFkbgmKW7VeB9GPfPu
+	+XmG54EvEnsFKUCFyEL1IyI2h0ki2Ppy3E3kuvv3ZDJhpiF+3LjA
+X-Google-Smtp-Source: AGHT+IH8bNKxlLVLRFW31fzvhnrm6P/uFjcbBZfMpnQ0C0jYoE9r99AQRbAKARdhOb9UQlmmh6jTFQ==
+X-Received: by 2002:a05:6830:6e99:b0:708:721b:4077 with SMTP id 46e09a7af769-70cac8af7f8mr3841658a34.23.1723820392605;
+        Fri, 16 Aug 2024 07:59:52 -0700 (PDT)
+Received: from localhost (73.84.86.34.bc.googleusercontent.com. [34.86.84.73])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4536a050f7esm17012891cf.66.2024.08.16.07.59.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 07:59:52 -0700 (PDT)
+Date: Fri, 16 Aug 2024 10:59:51 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Martin Karsten <mkarsten@uwaterloo.ca>, 
+ Samiullah Khawaja <skhawaja@google.com>
+Cc: Stanislav Fomichev <sdf@fomichev.me>, 
+ netdev@vger.kernel.org, 
+ Joe Damato <jdamato@fastly.com>, 
+ amritha.nambiar@intel.com, 
+ sridhar.samudrala@intel.com, 
+ Alexander Lobakin <aleksander.lobakin@intel.com>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Breno Leitao <leitao@debian.org>, 
+ Christian Brauner <brauner@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Jan Kara <jack@suse.cz>, 
+ Jiri Pirko <jiri@resnulli.us>, 
+ Johannes Berg <johannes.berg@intel.com>, 
+ Jonathan Corbet <corbet@lwn.net>, 
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
+ "open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>, 
+ open list <linux-kernel@vger.kernel.org>, 
+ Lorenzo Bianconi <lorenzo@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Message-ID: <66bf696788234_180e2829481@willemb.c.googlers.com.notmuch>
+In-Reply-To: <66bf61d4ed578_17ec4b294ba@willemb.c.googlers.com.notmuch>
+References: <20240812125717.413108-1-jdamato@fastly.com>
+ <ZrpuWMoXHxzPvvhL@mini-arch>
+ <2bb121dd-3dcd-4142-ab87-02ccf4afd469@uwaterloo.ca>
+ <ZrqU3kYgL4-OI-qj@mini-arch>
+ <d53e8aa6-a5eb-41f4-9a4c-70d04a5ca748@uwaterloo.ca>
+ <Zrq8zCy1-mfArXka@mini-arch>
+ <5e52b556-fe49-4fe0-8bd3-543b3afd89fa@uwaterloo.ca>
+ <Zrrb8xkdIbhS7F58@mini-arch>
+ <6f40b6df-4452-48f6-b552-0eceaa1f0bbc@uwaterloo.ca>
+ <CAAywjhRsRYUHT0wdyPgqH82mmb9zUPspoitU0QPGYJTu+zL03A@mail.gmail.com>
+ <d63dd3e8-c9e2-45d6-b240-0b91c827cc2f@uwaterloo.ca>
+ <66bf61d4ed578_17ec4b294ba@willemb.c.googlers.com.notmuch>
+Subject: Re: [RFC net-next 0/5] Suspend IRQs during preferred busy poll
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240815013626.935097-3-howardchu95@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 15, 2024 at 09:36:18AM +0800, Howard Chu wrote:
-> Change them from '//' to '/* */'
+Willem de Bruijn wrote:
+> Martin Karsten wrote:
+> > On 2024-08-14 15:53, Samiullah Khawaja wrote:
+> > > On Tue, Aug 13, 2024 at 6:19=E2=80=AFAM Martin Karsten <mkarsten@uw=
+aterloo.ca> wrote:
+> > >>
+> > >> On 2024-08-13 00:07, Stanislav Fomichev wrote:
+> > >>> On 08/12, Martin Karsten wrote:
+> > >>>> On 2024-08-12 21:54, Stanislav Fomichev wrote:
+> > >>>>> On 08/12, Martin Karsten wrote:
+> > >>>>>> On 2024-08-12 19:03, Stanislav Fomichev wrote:
+> > >>>>>>> On 08/12, Martin Karsten wrote:
+> > >>>>>>>> On 2024-08-12 16:19, Stanislav Fomichev wrote:
+> > >>>>>>>>> On 08/12, Joe Damato wrote:
+> > >>>>>>>>>> Greetings:
+> > =
 
-You didn't state why you did it, is it to follow coding styles? IIRC //
-is acceptable.
+> > [snip]
+> > =
 
-- Arnaldo
- 
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> ---
->  tools/perf/builtin-trace.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> index d6ca541fdc78..97076b962688 100644
-> --- a/tools/perf/builtin-trace.c
-> +++ b/tools/perf/builtin-trace.c
-> @@ -957,17 +957,16 @@ static bool syscall_arg__strtoul_btf_type(char *bf, size_t size, struct syscall_
->  	if (btf == NULL)
->  		return false;
->  
-> -	if (arg->fmt->type == NULL) {
-> -		// See if this is an enum
-> +	/* See if this is an enum */
-> +	if (arg->fmt->type == NULL)
->  		syscall_arg_fmt__cache_btf_enum(arg->fmt, btf, type);
-> -	}
->  
-> -	// Now let's see if we have a BTF type resolved
-> +	/* Now let's see if we have a BTF type resolved */
->  	bt = arg->fmt->type;
->  	if (bt == NULL)
->  		return false;
->  
-> -	// If it is an enum:
-> +	/* If it is an enum: */
->  	if (btf_is_enum(arg->fmt->type))
->  		return syscall_arg__strtoul_btf_enum(bf, size, arg, val);
->  
-> -- 
-> 2.45.2
-> 
+> > >>>>>> Note that napi_suspend_irqs/napi_resume_irqs is needed even fo=
+r the sake of
+> > >>>>>> an individual queue or application to make sure that IRQ suspe=
+nsion is
+> > >>>>>> enabled/disabled right away when the state of the system chang=
+es from busy
+> > >>>>>> to idle and back.
+> > >>>>>
+> > >>>>> Can we not handle everything in napi_busy_loop? If we can mark =
+some napi
+> > >>>>> contexts as "explicitly polled by userspace with a larger defer=
+ timeout",
+> > >>>>> we should be able to do better compared to current NAPI_F_PREFE=
+R_BUSY_POLL
+> > >>>>> which is more like "this particular napi_poll call is user busy=
+ polling".
+> > >>>>
+> > >>>> Then either the application needs to be polling all the time (wa=
+sting cpu
+> > >>>> cycles) or latencies will be determined by the timeout.
+> > > But if I understand correctly, this means that if the application
+> > > thread that is supposed
+> > > to do napi busy polling gets busy doing work on the new data/events=
+ in
+> > > userspace, napi polling
+> > > will not be done until the suspend_timeout triggers? Do you dispatc=
+h
+> > > work to a separate worker
+> > > threads, in userspace, from the thread that is doing epoll_wait?
+> > =
+
+> > Yes, napi polling is suspended while the application is busy between =
+
+> > epoll_wait calls. That's where the benefits are coming from.
+> > =
+
+> > The consequences depend on the nature of the application and overall =
+
+> > preferences for the system. If there's a "dominant" application for a=
+ =
+
+> > number of queues and cores, the resulting latency for other backgroun=
+d =
+
+> > applications using the same queues might not be a problem at all.
+> > =
+
+> > One other simple mitigation is limiting the number of events that eac=
+h =
+
+> > epoll_wait call accepts. Note that this batch size also determines th=
+e =
+
+> > worst-case latency for the application in question, so there is a =
+
+> > natural incentive to keep it limited.
+> > =
+
+> > A more complex application design, like you suggest, might also be an=
+ =
+
+> > option.
+> > =
+
+> > >>>> Only when switching back and forth between polling and interrupt=
+s is it
+> > >>>> possible to get low latencies across a large spectrum of offered=
+ loads
+> > >>>> without burning cpu cycles at 100%.
+> > >>>
+> > >>> Ah, I see what you're saying, yes, you're right. In this case ign=
+ore my comment
+> > >>> about ep_suspend_napi_irqs/napi_resume_irqs.
+> > >>
+> > >> Thanks for probing and double-checking everything! Feedback is imp=
+ortant
+> > >> for us to properly document our proposal.
+> > >>
+> > >>> Let's see how other people feel about per-dev irq_suspend_timeout=
+. Properly
+> > >>> disabling napi during busy polling is super useful, but it would =
+still
+> > >>> be nice to plumb irq_suspend_timeout via epoll context or have it=
+ set on
+> > >>> a per-napi basis imho.
+> > > I agree, this would allow each napi queue to tune itself based on
+> > > heuristics. But I think
+> > > doing it through epoll independent interface makes more sense as St=
+an
+> > > suggested earlier.
+> > =
+
+> > The question is whether to add a useful mechanism (one sysfs paramete=
+r =
+
+> > and a few lines of code) that is optional, but with demonstrable and =
+
+> > significant performance/efficiency improvements for an important clas=
+s =
+
+> > of applications - or wait for an uncertain future?
+> =
+
+> The issue is that this one little change can never be removed, as it
+> becomes ABI.
+> =
+
+> Let's get the right API from the start.
+> =
+
+> Not sure that a global variable, or sysfs as API, is the right one.
+
+Sorry per-device, not global.
+
+My main concern is that it adds yet another user tunable integer, for
+which the right value is not obvious.
+
+If the only goal is to safely reenable interrupts when the application
+stops calling epoll_wait, does this have to be user tunable?
+
+Can it be either a single good enough constant, or derived from
+another tunable, like busypoll_read.
 
