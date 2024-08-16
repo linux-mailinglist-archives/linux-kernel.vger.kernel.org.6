@@ -1,143 +1,131 @@
-Return-Path: <linux-kernel+bounces-289621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADED995485D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:56:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4613595485F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32EDDB22803
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:56:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02BBA284A99
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB4D1B29BF;
-	Fri, 16 Aug 2024 11:56:01 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9851AD9F9;
+	Fri, 16 Aug 2024 11:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b="CCIg1UHf"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199121AC425;
-	Fri, 16 Aug 2024 11:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D448E1AD41D
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 11:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723809361; cv=none; b=MXRBFwcNh3GQ3BZ2ott7TCXrAIH0MwXwzLiWbgtzkNwdXQP4A3pjIR5ezr+Pd1ACOv5ikDpmTPfVz+QY9KNLHNLYrVZJNDhoOrzIKqi3uGSQsTntrtlRg2v8MT6dDJqWj4r0LRcyGDdAacaP/+nI6WUkolrQSSHkum/8eKYbjp8=
+	t=1723809381; cv=none; b=mWrggMFnVLLPD7AHK4AfAqZusSYdtBzMikD3ZuRlxx5IMWnj+37Au/ZPSHz5rr4LsqJz+pPjBOGUphzkjkggoubX+1tFSJUlRLedVuS5wklEgvHpbcNfGCf8WEY1I4E+n9F9y8wXvnGhOcfIv4wVOJPZ6tAUJy7yr+aRq+dCsBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723809361; c=relaxed/simple;
-	bh=SVX+wbwMVGyzqZ9Uy2tRkt4Pwr5gXi5w8kw+OpNVwMw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jUdWcv1oCU9pJyL0rrEiTfeaBKNQ0zV+Ajw2OzJ8BKa7HvUi5EUDZWcNFUKfDUusC1ahhwZ2Uh1wUxjTPwoh3aue4ngaicwxGwiaWU7FXbeiw5XPn/ciHGgWSWlfQrQs7Tv34KLNqWIzotwE5sVzP/qWJWE1H9iKCkENKdgsEk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WlgRJ4L9Pz1T7Mq;
-	Fri, 16 Aug 2024 19:55:24 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0F51F140137;
-	Fri, 16 Aug 2024 19:55:57 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 16 Aug 2024 19:55:56 +0800
-Message-ID: <1a6aab37-2783-45a2-8edd-0990b211ac2d@huawei.com>
-Date: Fri, 16 Aug 2024 19:55:56 +0800
+	s=arc-20240116; t=1723809381; c=relaxed/simple;
+	bh=D4nKS/yjD2pHvtewgQqkHUg/tkdKA3kStDkmEStwIWo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kP9Q776YfWRn+wYOz4CJR2MqwXOe9G8UozSWKMxH+DebFJOXd/mVaXgJhKtefJauTPEkvLcDD/FWvFhiYmz09H/hu+O1wOGwSFAzQ94d/ox0+kf6NJmDRYzywZ4g7MkiMhyIkWJnHPdpaP5mURY98f7ITQplHTgL4kmTsDWhVBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b=CCIg1UHf; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42819654737so12945275e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 04:56:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=futuring-girl-com.20230601.gappssmtp.com; s=20230601; t=1723809378; x=1724414178; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z9suHjmHKgK99ZzlX9eSnvMS4iKAMzmcKW3ySCj8XS8=;
+        b=CCIg1UHfQ9n7MRaC7io+tjWdJnOpIXdJyEbMce+lmU6Ev3OQ8552/fbsXLHn8OCrQh
+         kS1u7kZIELQrXTe2rc7PpXpzIre/UoKmRXBzdcLxI018ShZ7Z6crZEimfjh5QfNbdAJl
+         WXdA7KECu0tCv/XeddM+2rskGKmK9wE25vPO5SCv1cGKx6ez6vmNVsQiM1/aelQBBuD3
+         j/eu9u0u0Qtu71+hNmeKggFAbk/5PQJy9VPPZy5m3nMnsfU8xJ3HNjgckB9OIPvW4j1D
+         TKfEJYj7LfBl8HdGeV8+2ZGBtIIs8f30WMw+z8UpFdQMzjiXyLcA0kr0jgKGTjDSLpbU
+         D09A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723809378; x=1724414178;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z9suHjmHKgK99ZzlX9eSnvMS4iKAMzmcKW3ySCj8XS8=;
+        b=vRBw2w/JAZf8ar069hw4NWIvX5qo9zYI40kLK1DaNRl6g/bOIh+F758K5snx9AOMMZ
+         hxF+AxfWK/nlXp+EuXsfnBEJKcxJK1U2qZxKIIoGEcrxwBAghD3Lol5+efGjek2ri8XE
+         awQRwKd1EaleUD1mEg9Y5GnWJ+UGSc9rYiXJkQ11h+5ZhCQLHXGC/1Xy8AYuXJu4sl61
+         PUpSsmsYk7WCVaZv2k32rgaJQvJ2P3oBFyMEkwKE9oHxaWEoy20tN6fIdC7hsjqylDJG
+         +aG8hhN5fe2CrfG2ne1AF8SXuwzogq0gNRrY+8Kz2+lZhICGDD+PpoYoZQvbGHB81cpB
+         mYiw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnvSgvsm14jqefQBowsM5v4wr2JKtKGzpeo0O68xCMDn9ouHib4aJ8tP5LXTSfCfD08QlnkVmyk4WzfcI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIuUilm1jECjM1pjDBm+1JsmMlhkDCFmbncwLh6FYH8wwsvWZh
+	AN0levFtbosJfegZgVgeAJChgYO8wkQAUvwiUk2vCZg1SWBOBYP+V59LzJ6cM+7DvdaghuiOhmZ
+	Tvw3AHy+JmU3sNbiGyAZvyDZVMPHpLoLQ06tQ8w==
+X-Google-Smtp-Source: AGHT+IHPDhhIr/7vN8snqpMY5o0ZtPpSGQ7K70xweLfVNy26r4EgEucpC8K/BV94ZejpCF7uxoOQQluLQX1kcd4qVEs=
+X-Received: by 2002:a5d:694a:0:b0:368:31c7:19d3 with SMTP id
+ ffacd0b85a97d-3719431e723mr1668359f8f.9.1723809377805; Fri, 16 Aug 2024
+ 04:56:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v13 07/14] mm: page_frag: reuse existing space
- for 'size' and 'pfmemalloc'
-To: Alexander Duyck <alexander.duyck@gmail.com>
-CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Andrew Morton
-	<akpm@linux-foundation.org>, <linux-mm@kvack.org>
-References: <20240808123714.462740-1-linyunsheng@huawei.com>
- <20240808123714.462740-8-linyunsheng@huawei.com>
- <0002cde37fcead62813006ab9516c5b2fdbf113a.camel@gmail.com>
- <a036abc3-76a0-450c-afea-2db3c10f0ed5@huawei.com>
- <CAKgT0UfUVJ6FmVgFWv+uCV9Q7eX8s+Mf6cPVCLyHwk5TxtuKgg@mail.gmail.com>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <CAKgT0UfUVJ6FmVgFWv+uCV9Q7eX8s+Mf6cPVCLyHwk5TxtuKgg@mail.gmail.com>
+References: <20240815131838.311442229@linuxfoundation.org>
+In-Reply-To: <20240815131838.311442229@linuxfoundation.org>
+From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+Date: Fri, 16 Aug 2024 20:56:06 +0900
+Message-ID: <CAKL4bV4f72Fb06ToaahCNKPk7ep2cPOCBPbmLvbgtBE6mz3JCA@mail.gmail.com>
+Subject: Re: [PATCH 6.6 00/67] 6.6.47-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/8/15 23:03, Alexander Duyck wrote:
-> On Wed, Aug 14, 2024 at 8:10 PM Yunsheng Lin <linyunsheng@huawei.com> wrote:
->>
->> On 2024/8/15 0:13, Alexander H Duyck wrote:
->>> On Thu, 2024-08-08 at 20:37 +0800, Yunsheng Lin wrote:
->>>> Currently there is one 'struct page_frag' for every 'struct
->>>> sock' and 'struct task_struct', we are about to replace the
->>>> 'struct page_frag' with 'struct page_frag_cache' for them.
->>>> Before begin the replacing, we need to ensure the size of
->>>> 'struct page_frag_cache' is not bigger than the size of
->>>> 'struct page_frag', as there may be tens of thousands of
->>>> 'struct sock' and 'struct task_struct' instances in the
->>>> system.
->>>>
->>>> By or'ing the page order & pfmemalloc with lower bits of
->>>> 'va' instead of using 'u16' or 'u32' for page size and 'u8'
->>>> for pfmemalloc, we are able to avoid 3 or 5 bytes space waste.
->>>> And page address & pfmemalloc & order is unchanged for the
->>>> same page in the same 'page_frag_cache' instance, it makes
->>>> sense to fit them together.
->>>>
->>>> After this patch, the size of 'struct page_frag_cache' should be
->>>> the same as the size of 'struct page_frag'.
->>>>
->>>> CC: Alexander Duyck <alexander.duyck@gmail.com>
->>>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
->>>> ---
->>>>  include/linux/mm_types_task.h   | 16 +++++-----
->>>>  include/linux/page_frag_cache.h | 52 +++++++++++++++++++++++++++++++--
->>>>  mm/page_frag_cache.c            | 49 +++++++++++++++++--------------
->>>>  3 files changed, 85 insertions(+), 32 deletions(-)
->>>>
->>>> diff --git a/include/linux/mm_types_task.h b/include/linux/mm_types_task.h
->>>> index b1c54b2b9308..f2610112a642 100644
->>>> --- a/include/linux/mm_types_task.h
->>>> +++ b/include/linux/mm_types_task.h
->>>> @@ -50,18 +50,18 @@ struct page_frag {
->>>>  #define PAGE_FRAG_CACHE_MAX_SIZE    __ALIGN_MASK(32768, ~PAGE_MASK)
->>>>  #define PAGE_FRAG_CACHE_MAX_ORDER   get_order(PAGE_FRAG_CACHE_MAX_SIZE)
->>>>  struct page_frag_cache {
->>>> -    void *va;
->>>> -#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
->>>> +    /* encoded_va consists of the virtual address, pfmemalloc bit and order
->>>> +     * of a page.
->>>> +     */
->>>> +    unsigned long encoded_va;
->>>> +
->>>
->>> Rather than calling this an "encoded_va" we might want to call this an
->>> "encoded_page" as that would be closer to what we are actually working
->>> with. We are just using the virtual address as the page pointer instead
->>> of the page struct itself since we need quicker access to the virtual
->>> address than we do the page struct.
->>
->> Calling it "encoded_page" seems confusing enough when calling virt_to_page()
->> with "encoded_page" when virt_to_page() is expecting a 'va', no?
-> 
-> It makes about as much sense as calling it an "encoded_va". What you
-> have is essentially a packed page struct that contains the virtual
-> address, pfmemalloc flag, and order. So if you want you could call it
-> "packed_page" too I suppose. Basically this isn't a valid virtual
-> address it is a page pointer with some extra metadata packed in.
+Hi Greg
 
-I think we are all argeed that is not a valid virtual address by adding
-the 'encoded_' part.
-I am not really sure if "encoded_page" or "packed_page" is better than
-'encoded_va' here, as there is no 'page pointer' that is implied by
-"encoded_page" or "packed_page" here. For 'encoded_va', at least there
-is 'virtual address' that is implied by 'encoded_va', and that 'virtual
-address' just happen to be page pointer.
+On Thu, Aug 15, 2024 at 11:11=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.47 release.
+> There are 67 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 17 Aug 2024 13:18:17 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.6.47-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-Yes, you may say the 'pfmemalloc flag and order' part is about page, not
-about 'va', I guess there is trade-off we need to make here if there is
-not a perfect name for it and 'va' does occupy most bits of 'encoded_va'.
+6.6.47-rc1 tested.
+
+Build successfully completed.
+Boot successfully completed.
+No dmesg regressions.
+Video output normal.
+Sound output normal.
+
+Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
+
+[    0.000000] Linux version 6.6.47-rc1rv
+(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 14.2.1 20240805, GNU ld (GNU
+Binutils) 2.43.0) #1 SMP PREEMPT_DYNAMIC Fri Aug 16 19:48:25 JST 2024
+
+Thanks
 
