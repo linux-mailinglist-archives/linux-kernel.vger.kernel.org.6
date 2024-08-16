@@ -1,131 +1,127 @@
-Return-Path: <linux-kernel+bounces-289409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C78B9545E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:37:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C765F9545ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43DFE1F26014
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:37:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69A081F252F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C441C13CA9C;
-	Fri, 16 Aug 2024 09:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE81B155C80;
+	Fri, 16 Aug 2024 09:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="meElQHqM"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TQVy1hjV";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gXgbqc0g"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A804320E3;
-	Fri, 16 Aug 2024 09:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6BBB155731;
+	Fri, 16 Aug 2024 09:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723801017; cv=none; b=LE83H/Beasb21JQl7NGXmMGu1F36J4hKgBtPEj8/vZoVA16n7PnEsRtducO3LkwRvWZEy78bZcYR65tsiGQaBnqzChNPFcp9vgcJjRZztzROGJTBPBNXW3O/it5O538ueKrqnxeooOD80B9tFukBEEDNIfmB5F+Edy4ipuNOmho=
+	t=1723801181; cv=none; b=Rrt8cioBmzXDvUIvdDv0f2KSBNgRfwx824NKeBusXrhNquPTCMJaCTamTpMTAb8r53LefsR477jN7YkD8SVWYofQpy8l/u3srwtfnuUg6Mi0jSxfSI8eeI1oDX0QHLG+79kHZu7eMRf/ij01fRSYH4dehTpTNSWFcP+0cBrFgM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723801017; c=relaxed/simple;
-	bh=r3gmMajOMo8VTdTFYIotH7psmm327sqr/zDPwXFcatQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iFg1wTljoQzsO3QIGxjYXkad1edYjzH6yaExxO3CZzcE8OHIcFv+piBccMhuuwQpzWYj+j1C3iSg7qExdscFsvw/2liisMFUFsxYQ3QFS9MTyEGLyda/MrM08fSGYQyIqTWtTe4bXS14cRGp8Kkfeuhigw5AZWaaK3kjXsYTInE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=meElQHqM; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-201e64607a5so13282305ad.2;
-        Fri, 16 Aug 2024 02:36:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723801015; x=1724405815; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NdvxhlCkMHRIJStiK9mOuuQNjL800lm6joC3OBAJcWo=;
-        b=meElQHqM2T6LW8uuEB+wwJEyUhqfcWN8DJaWB1BSHvVXh0NBaW0B63Py1orORKyRbl
-         rzQqLWQsTurCsNJJHfefKZeX/IIHnIO146+JXScNMZ6YHLX0DraPNY3maVkLxGwOWISe
-         NyrDzMF/8rwVMy6Y5NjeTqmsGKA0TwcXOPaq/zn3LaMS5Qa/JizNvNjizJsWHgnhbO4m
-         oRUm95KsmmHpXRkTnssFmx50KT9wPlLVleGi+3GDmxUnKO6GqJZmKmRO3K2pj+e2FZoF
-         KZf9bgOD/j54ZielTrM3SzYvjA521SZdy9v5uraxmqQcLwnmHWm1Ri0UaOyqy0URbul1
-         QDYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723801015; x=1724405815;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NdvxhlCkMHRIJStiK9mOuuQNjL800lm6joC3OBAJcWo=;
-        b=XxSWovdTMGQty4MnKxlrKKOlwZjiiWr9UAJ1wF4tmsdfcYelnXgXEaVPhEjkE5cAXA
-         ryZHiOlw9Fv48y1PehggNSRHNDhjqn9kHR13XQhvhVI8KzaJiyi8e5yNc2ByyjFG0unW
-         w4wgpd5R7xFqGWfO4vzKWDV64PeTVdCKnTD+cjR+ZhSD6XRsiPrG1zAMNNljeCTqLM0q
-         fuiOfNrypjYc9gQh0Mc8AU7cAzrhJs60Y/Jm19aqVn/XvLOUNsaV5kz/VsmmLZpHCBcU
-         Vzv8HD+Q6bWrqWLVxWKhN4mLhujX9PF7cdwjocjEdW8dc604eShUG4sYxpxFPM4tVT7/
-         OaUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMVHyQhCWXfaDDDLNAZlphs/p2l1KAUubnMPg8SLq/3M5+TlbKxOzW9MHMWzhdl4+pt4UsJ4Ctn2WtRJZM1gU9MKsyVdtqNhPtuEIYWB5C8HmhfuHDqV8Rg1K2a7KbsYbPT9R7vNkz
-X-Gm-Message-State: AOJu0YzdQwv9C8FoeIPtn3FdIkRt6OCMNCl6K+VxPw+P2vAS22GmY8kK
-	0Qhr+BFfdpGeaEYwSIfHWXL57Gc1ynxTXPJxeoBKB6hbYCRTw2wU
-X-Google-Smtp-Source: AGHT+IFvZsE2iLKLxiKZ0w7O6KWuL7VWOQUBF+uBCgvhKsviF/EHYAvFR09f7ZJytsckUFN8LJ8uBw==
-X-Received: by 2002:a17:902:c946:b0:202:1547:66ad with SMTP id d9443c01a7336-202154770famr1122845ad.65.1723801014717;
-        Fri, 16 Aug 2024 02:36:54 -0700 (PDT)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.. (126-84.iitb.ac.in. [103.21.126.84])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f031bc76sm22277545ad.96.2024.08.16.02.36.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 02:36:54 -0700 (PDT)
-From: SurajSonawane2415 <surajsonawane0215@gmail.com>
-To: linux@leemhuis.info
-Cc: corbet@lwn.net,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	SurajSonawane2415 <surajsonawane0215@gmail.com>
-Subject: [PATCH v3] docs: Fix grammar and phrasing errors in reporting-issues.rst
-Date: Fri, 16 Aug 2024 15:06:46 +0530
-Message-Id: <20240816093646.116091-1-surajsonawane0215@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723801181; c=relaxed/simple;
+	bh=GCA8cQuwEwNBgoj9TYSkK4RVcQzIIkJrc8uQklmoBIc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=gPhSV364nxXOqewH9GY2lsMMPLWmCzov5Q5vIo19EG8UfgpOfulFCMy0ULgEEqSAC6tzGZtHlT3p3f1dzOVVEsnpSAbVoFq96CBh7EvLR5UxU4WYpIIoc2y056LB+wb/BUndC8ExZZdaWmYKoa9CrVETmAbwK6lMJ6EJ8oUZgqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TQVy1hjV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gXgbqc0g; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Kurt Kanzenbach <kurt@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723801178;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GCA8cQuwEwNBgoj9TYSkK4RVcQzIIkJrc8uQklmoBIc=;
+	b=TQVy1hjVZkSV9/q3bVbtCwOGqJrYu9NfXUhRDEcF/rj044n1iOI+D5ozqLxJjTb3wPVS2p
+	Q4NxufMC50XeV8nZw517pExjPCH8dO6lvINlDs/gcF9DZ0xc/KiILYNBDh/Lbnl/sgP5WW
+	oi4BEZ4morJO7xfgRb/eOaX6SE1ZpoRga/ubc+KXJFrLBxHIW08BmdA/qdoIQM1wqZHQjY
+	qfVWZEd7nbhp85hE3hgb5G9MuvFos7NOcE/sNMyNY5RbMMHizvuA0fytWYoh4Zgm80BGQp
+	X8GIy+b4nogTfVweY+YAnbuj0xGFJKwbEZdCpTbQU/aTcbWXo5kDaWHPY7oeQw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723801178;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GCA8cQuwEwNBgoj9TYSkK4RVcQzIIkJrc8uQklmoBIc=;
+	b=gXgbqc0g0YJpJuzLSKYVMtDgr3vTyKl1EcypXECeHHO7pfQGIrqOMhanWq31iqn/dsobvw
+	pe04TNc4f4K8ozCA==
+To: Daiwei Li <daiweili@google.com>, intel-wired-lan@lists.osuosl.org
+Cc: vinicius.gomes@intel.com, anthony.l.nguyen@intel.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+ przemyslaw.kitszel@intel.com, richardcochran@gmail.com,
+ sasha.neftin@intel.com, Daiwei Li <daiweili@google.com>
+Subject: Re: [PATCH iwl-net v3] igb: Fix not clearing TimeSync interrupts
+ for 82580
+In-Reply-To: <20240814045553.947331-1-daiweili@google.com>
+References: <20240814045553.947331-1-daiweili@google.com>
+Date: Fri, 16 Aug 2024 11:39:36 +0200
+Message-ID: <8734n4vmav.fsf@kurt.kurt.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 
-Fix grammatical errors and improve phrasing in the `reporting-issues.rst`
-documentation file. These changes enhance readability and ensure the
-accuracy of the instructions provided.
+--=-=-=
+Content-Type: text/plain
 
-Signed-off-by: SurajSonawane2415 <surajsonawane0215@gmail.com>
----
-V2 -> V3: Re-added the fix for the line: "That's why you might be need to uninstall the".
-V1 -> V2: emoved the unwanted change to the line: "try search terms like".
+On Tue Aug 13 2024, Daiwei Li wrote:
+> 82580 NICs have a hardware bug that makes it
+> necessary to write into the TSICR (TimeSync Interrupt Cause) register
+> to clear it:
+> https://lore.kernel.org/all/CDCB8BE0.1EC2C%25matthew.vick@intel.com/
+>
+> Add a conditional so only for 82580 we write into the TSICR register,
+> so we don't risk losing events for other models.
+>
+> Without this change, when running ptp4l with an Intel 82580 card,
+> I get the following output:
+>
+>> timed out while polling for tx timestamp increasing tx_timestamp_timeout or
+>> increasing kworker priority may correct this issue, but a driver bug likely
+>> causes it
+>
+> This goes away with this change.
+>
+> This (partially) reverts commit ee14cc9ea19b ("igb: Fix missing time sync events").
+>
+> Fixes: ee14cc9ea19b ("igb: Fix missing time sync events")
+> Closes: https://lore.kernel.org/intel-wired-lan/CAN0jFd1kO0MMtOh8N2Ztxn6f7vvDKp2h507sMryobkBKe=xk=w@mail.gmail.com/
+> Tested-by: Daiwei Li <daiweili@google.com>
+> Suggested-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+> Signed-off-by: Daiwei Li <daiweili@google.com>
 
- Documentation/admin-guide/reporting-issues.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Reviewed-by: Kurt Kanzenbach <kurt@linutronix.de>
 
-diff --git a/Documentation/admin-guide/reporting-issues.rst b/Documentation/admin-guide/reporting-issues.rst
-index 2fd5a030235a..07b2c0b20498 100644
---- a/Documentation/admin-guide/reporting-issues.rst
-+++ b/Documentation/admin-guide/reporting-issues.rst
-@@ -56,7 +56,7 @@ developers. It might be all that's needed for people already familiar with
- reporting issues to Free/Libre & Open Source Software (FLOSS) projects. For
- everyone else there is this section. It is more detailed and uses a
- step-by-step approach. It still tries to be brief for readability and leaves
--out a lot of details; those are described below the step-by-step guide in a
-+out a lot of details; those are described below in the step-by-step guide in a
- reference section, which explains each of the steps in more detail.
- 
- Note: this section covers a few more aspects than the TL;DR and does things in
-@@ -299,7 +299,7 @@ face, even if they look small or totally unrelated. That's why you should report
- issues with these kernels to the vendor. Its developers should look into the
- report and, in case it turns out to be an upstream issue, fix it directly
- upstream or forward the report there. In practice that often does not work out
--or might not what you want. You thus might want to consider circumventing the
-+or might not be what you want. You thus might want to consider circumventing the
- vendor by installing the very latest Linux kernel core yourself. If that's an
- option for you move ahead in this process, as a later step in this guide will
- explain how to do that once it rules out other potential causes for your issue.
-@@ -472,7 +472,7 @@ before proceeding.
- Note, you might not be aware that your system is using one of these solutions:
- they often get set up silently when you install Nvidia's proprietary graphics
- driver, VirtualBox, or other software that requires a some support from a
--module not part of the Linux kernel. That why your might need to uninstall the
-+module not part of the Linux kernel. That's why you might be need to uninstall the
- packages with such software to get rid of any 3rd party kernel module.
- 
- 
--- 
-2.34.1
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQJHBAEBCgAxFiEEvLm/ssjDfdPf21mSwZPR8qpGc4IFAma/HlgTHGt1cnRAbGlu
+dXRyb25peC5kZQAKCRDBk9HyqkZzghDCEACx8T5zGnmrBjeSsXzemRWluHVJI6Ub
+7QnBxWCvIfrC8sUUzgsXYa08yMTXjTAkSh9pxTW0oVqpV01J+jd7NKJrz1qdZ1XV
+RDRF178k4DPKLSrP1/XkMaFV5DI+56OzRoZgEudq5rmSVwqcdYNh+wRrO8Oh7ucx
+xgQhXMhvzZruRCzsMNyStuqn3zF51M1YPBfgTLjk8UD9nnXGLRnwLFgv0OjUL89K
+rhD5TXZ3seFW82RelaNorkC2ALLkPAQB7Pd2GVejrcWcj23Una2aPZV44uqV1VMI
+iBnE1idHmJEO8/T4sLxwudHr1WJffb82PxadBdm7NGemqZh4OShc0GOWoWu2OEdY
+UojoM8OGofudAfol8HdUHESETaR3gK5ZIlKEl22nPWN/rDpaUCl+se7Kv7UGpacc
+vXd3AP+V/3oDb21evFjjqlQGsqodcTKD68C7OjvRZT0fSx7V0rnyxm4Lvou1zwWl
+KbWG112CXPgx1YSJNiPfsYNhJMU8wmSjM9PABy1PLLgbesLfKIbj8o1lF54Aq2Nn
+TyvhsWHYCnEPPfo2uRNtWX94h9uBZRo/Ll2kz4H4vVCD87RXkWMgNcdHcYzeiUIL
+NLnNi7PHcQtpclrQVDLyh5c8m9VKCOCFtE2g4IdiMjOV/ecP/iCknnqf3Zxs5Piy
+BTECwLhghJ5GKA==
+=sPWN
+-----END PGP SIGNATURE-----
+--=-=-=--
 
