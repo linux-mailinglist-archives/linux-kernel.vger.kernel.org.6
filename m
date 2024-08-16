@@ -1,164 +1,273 @@
-Return-Path: <linux-kernel+bounces-290205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 551CF9550B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:20:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17A289550CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C87C91F233CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:20:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97B8E1F23BD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBF31C37B2;
-	Fri, 16 Aug 2024 18:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8AD1C3F11;
+	Fri, 16 Aug 2024 18:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UcxQHT6A"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JbYLMWcJ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD547DA90
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 18:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3901C3796;
+	Fri, 16 Aug 2024 18:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723832442; cv=none; b=iBl1dIskqRtjcoT0T816mvWZkEdZl8AH4VoyWF78+B8zqJNb9cDj1kZwObvYEjjHRWFliNFzTTUCRj+t3kJNuzfIm8+RqjVBlQ3ntxT1qWlZHORbhIHDzEXvZgmLXQWum7pWgBLFELUNJanRb9dXGkOTIsKCp1R3iwHkndB4WnI=
+	t=1723832787; cv=none; b=YLf3RdTPWQDLz/vmevD1wS4OXFBkDifEUSTA8i1taNDqHO7RxTzKwQRR2z6SKbGMiQ2TCjgaYZc1IlzOVTi4lWDZOj1EFKt9A30z25vZwV1mIx6+2XiFEGt1U5Ow/ErqLco5u8soU689L9hHvR8Se8I6Y30pYnhgEDt7tagQp1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723832442; c=relaxed/simple;
-	bh=IbVmYFoIxyQulrGV2li59J1UGx7YeDN54yW8QQYBykc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=h8pk1sgFW7vr1eu636iujUH73UwuoWorCsW4xVozKIdyhbu0Z5lTuC/hEBF/PQqQTsQlnDe75imh43ZGBJ++8Kj9ld5OG4BCtmgkl4GtccA/IzBk1FQtlsJcxGRtorfAIMcM0IpXiqg2pErbzD2daJZLVjzY34myCaOdSHA5Zzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UcxQHT6A; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e1173581259so2843372276.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 11:20:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723832439; x=1724437239; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=N3tmSlk8QlfN4jJU+Ovee8DLWMKdOuytFzcWHsW6egI=;
-        b=UcxQHT6AhAMhgRKwkaWv2qwVvCbCIjDZanMpY+imawmgO+Jy84qqB9RqXLiWMh+PR7
-         mjVoZlhSZqm8u+A/3xNbro6CKu+ruI8AaUkfzH0sT9bzkOB6bsWk7W6LRuX2GfbNgvNk
-         A21uDumh7dZmWv04IUE42angsxrhbGYkgeUUfRB9EqhJmtzpKrfrK+aTxgVWR+BFJT05
-         GKJLPHwY+yHb9ZQBQhN4XqJWohTGj4jJpjbDC+AobV1DmoBn9jGZ3gwzCYxz2F3q5OBV
-         /z+GagH5wLXl2thfcFKP3/ibbuQXPf6BzF+X0C7HDQlnb2HbDPWG0cxo+8fNWgchoq+r
-         Jb/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723832439; x=1724437239;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N3tmSlk8QlfN4jJU+Ovee8DLWMKdOuytFzcWHsW6egI=;
-        b=MF80+48jaEq5hrtqwQ/OEPb/IEwQbTvr2puvTGYyl3BIWJd/jsbUuCW5HD2xo7pnIw
-         Qn5GoKYQ4DDilZTbGSZ/wM2C/jEUTarUn3mpcTXww/K10jH3f1A2BxCU6HFNWsMYKhH+
-         +dbcp/xlCYUhGnk4ex1AhwspeDZ3AV8jvDwIwvhEvbVsij+Nfa+3YBHfIE/7G0wprFSP
-         PKcK/dh+Snd7bvNAZtXkVQ8P1+zJ4daueu9vdSFZEjxsYDXK6daSND5msQmR4xUgrZqM
-         wiug4d7T6DgA2urbY2yvIpwtLNMmIZYR+lzOw/tXXh5pd56f63O8KEiB1SKGtFb/TPRx
-         tyGA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0EcjZ1YdtBotNhFYtsh0WSojMu7FGnBZfh5uN8IOLjhixI44vQSPwj2EYatAbedSopb3MProD0umd3v3uFIXrGlFWXAoKxPMtcL2+
-X-Gm-Message-State: AOJu0Yw1Fx35X3ghtSV7G2fIDloseDb8ACY4k5JK0Se9H0zvEXaYGOn4
-	L9IzlWA3cD+G/IPBGmx+dRJYEBjyzfUM8dRFxZi/aVjInE2hC0JimQu5tcxq/RtL8kPHU6VmfaF
-	3rQ==
-X-Google-Smtp-Source: AGHT+IH53F61lOun6gFWjC7pOAiTbzvO9f/I6y3MGI837xE97OoqGPqg4QBoHrpu5k9vU+7gjfC5O97rXuI=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:2943:0:b0:e11:5c41:54e2 with SMTP id
- 3f1490d57ef6-e1180ba7fa8mr6979276.0.1723832439504; Fri, 16 Aug 2024 11:20:39
- -0700 (PDT)
-Date: Fri, 16 Aug 2024 11:20:38 -0700
-In-Reply-To: <000000000000fd4bde061b17c4a0@google.com>
+	s=arc-20240116; t=1723832787; c=relaxed/simple;
+	bh=DPeLOYOagAKnh5ZukpveM96prGndAPIjdk5ydkkOY0o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=iOebxSnHh+n6J0O55yokWg/BnvRO58MB5qej+bSiHEcEjALAHPqTHbO0qgn588AZ+0vujZbTwrfPZjSAoJfvPj6Bj6o4NZSNngEPO8lltPosyqd0/ocTQzy13Ys09UOwX+uwvhf+2bC3qW49tHoCFzme1Fg2rSbcLKK/Xc4Be8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JbYLMWcJ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47GA5lxd028282;
+	Fri, 16 Aug 2024 18:22:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	AAO4g3kLHhH442QaXQyYQqWtZBVUSZQd+XlfgrdodQw=; b=JbYLMWcJ/lblCd5v
+	yHxezmaqrpWdHKsGAyLqJE0W4rUrTz6WvwrRvFVQXY7Jk89ddEjbzB0pe/qvBviF
+	i0Ku/Bh2FNocCRrRK28nshgO5uruSofzLvKJa6mk3AlOYIu/0qPobP0jtiLffn5F
+	Bd59t73QfGUMRb79mVxY3Hth4aMYejly5MJmAnYP04xkH5bY9JQz0CABTTm84ndg
+	5hOkAqB/c38+wkHT5GKcYCHrXU11pdom8b1LEFjvs0uvKPXP/r8D1Fx8YCqEJ0Zi
+	6UybW7knGzfsEntSbeY14JhaEtRWFS1ALO0G96+YBGJag6MO+64U5x1MXjH1Ggyw
+	tZ041Q==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 411s5pjnvu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Aug 2024 18:22:05 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47GIM4as022144
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Aug 2024 18:22:04 GMT
+Received: from [10.216.61.113] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 16 Aug
+ 2024 11:21:57 -0700
+Message-ID: <5bf5c208-f90c-19b1-7006-694d3cd2351a@quicinc.com>
+Date: Fri, 16 Aug 2024 23:51:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <000000000000fd4bde061b17c4a0@google.com>
-Message-ID: <Zr-Ydj8FBpiqmY_c@google.com>
-Subject: Re: [syzbot] [kvm?] WARNING in kvm_put_kvm
-From: Sean Christopherson <seanjc@google.com>
-To: syzbot <syzbot+d8775ae2dbebe5ab16fd@syzkaller.appspotmail.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, pbonzini@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v5 3/4] firmware: psci: Read and use vendor reset types
+Content-Language: en-US
+To: Elliot Berman <quic_eberman@quicinc.com>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Andy Yan
+	<andy.yan@rock-chips.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Bartosz
+ Golaszewski" <bartosz.golaszewski@linaro.org>,
+        Satya Durga Srinivasu Prabhala
+	<quic_satyap@quicinc.com>,
+        Melody Olvera <quic_molvera@quicinc.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Florian Fainelli
+	<florian.fainelli@broadcom.com>,
+        <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_spratap@qucinc.com>
+References: <20240617-arm-psci-system_reset2-vendor-reboots-v5-0-086950f650c8@quicinc.com>
+ <20240617-arm-psci-system_reset2-vendor-reboots-v5-3-086950f650c8@quicinc.com>
+ <ZrOMjomTTWZ91Uzf@lpieralisi>
+ <20240807103245593-0700.eberman@hu-eberman-lv.qualcomm.com>
+ <ZrYZ/i1QFhfmv0zi@lpieralisi>
+ <20240809090339647-0700.eberman@hu-eberman-lv.qualcomm.com>
+ <28c8bc92-4a55-8a07-1ece-333316d78410@quicinc.com>
+ <Zr4Td7PiKhKl3Et3@lpieralisi>
+ <20240815100749641-0700.eberman@hu-eberman-lv.qualcomm.com>
+From: Shivendra Pratap <quic_spratap@quicinc.com>
+In-Reply-To: <20240815100749641-0700.eberman@hu-eberman-lv.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: k339WUc2558CtmYnKtpnI043KslKmbsq
+X-Proofpoint-ORIG-GUID: k339WUc2558CtmYnKtpnI043KslKmbsq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-16_13,2024-08-16_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
+ mlxlogscore=999 suspectscore=0 lowpriorityscore=0 clxscore=1015
+ bulkscore=0 phishscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408160129
 
-On Mon, Jun 17, 2024, syzbot wrote:
-> Hello,
+
+
+On 8/15/2024 11:35 PM, Elliot Berman wrote:
+> On Thu, Aug 15, 2024 at 04:40:55PM +0200, Lorenzo Pieralisi wrote:
+>> On Mon, Aug 12, 2024 at 11:46:08PM +0530, Shivendra Pratap wrote:
+>>>
+>>>
+>>> On 8/9/2024 10:28 PM, Elliot Berman wrote:
+>>>> On Fri, Aug 09, 2024 at 03:30:38PM +0200, Lorenzo Pieralisi wrote:
+>>>>> On Wed, Aug 07, 2024 at 11:10:50AM -0700, Elliot Berman wrote:
+>>>>>
+>>>>> [...]
+>>>>>
+>>>>>>>> +static void psci_vendor_sys_reset2(unsigned long action, void *data)
+>>>>>>>
+>>>>>>> 'action' is unused and therefore it is not really needed.
+>>>>>>>
+>>>>>>>> +{
+>>>>>>>> +	const char *cmd = data;
+>>>>>>>> +	unsigned long ret;
+>>>>>>>> +	size_t i;
+>>>>>>>> +
+>>>>>>>> +	for (i = 0; i < num_psci_reset_params; i++) {
+>>>>>>>> +		if (!strcmp(psci_reset_params[i].mode, cmd)) {
+>>>>>>>> +			ret = invoke_psci_fn(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2),
+>>>>>>>> +					     psci_reset_params[i].reset_type,
+>>>>>>>> +					     psci_reset_params[i].cookie, 0);
+>>>>>>>> +			pr_err("failed to perform reset \"%s\": %ld\n",
+>>>>>>>> +				cmd, (long)ret);
+>>>>>>>> +		}
+>>>>>>>> +	}
+>>>>>>>> +}
+>>>>>>>> +
+>>>>>>>>  static int psci_sys_reset(struct notifier_block *nb, unsigned long action,
+>>>>>>>>  			  void *data)
+>>>>>>>>  {
+>>>>>>>> +	if (data && num_psci_reset_params)
+>>>>>>>
+>>>>>>> So, reboot_mode here is basically ignored; if there is a vendor defined
+>>>>>>> reset, we fire it off.
+>>>>>>>
+>>>>>>> I think Mark mentioned his concerns earlier related to REBOOT_* mode and
+>>>>>>> reset type (granted, the context was different):
+>>>>>>>
+>>>>>>> https://lore.kernel.org/all/20200320120105.GA36658@C02TD0UTHF1T.local/
+>>>>>>>
+>>>>>>> I would like to understand if this is the right thing to do before
+>>>>>>> accepting this patchset.
+>>>>>>>
+>>>>>>
+>>>>>> I don't have any concerns to move this part below checking reboot_mode.
+>>>>>> Or, I could add reboot_mode == REBOOT_COLD check.
+>>>>>
+>>>>> The question is how can we map vendor specific reboot magic to Linux
+>>>>> reboot modes sensibly in generic PSCI code - that's by definition
+>>>>> vendor specific.
+>>>>>
+>>>>
+>>>> I don't think it's a reasonable thing to do. "reboot bootloader" or
+>>>> "reboot edl" don't make sense to the Linux reboot modes.
+>>>>
+>>>> I believe the Linux reboot modes enum is oriented to perspective of
+>>>> Linux itself and the vendor resets are oriented towards behavior of the
+>>>> SoC.
+>>>>
+>>>> Thanks,
+>>>> Elliot
+>>>>
+>>>
+>>> Agree.
+>>>
+>>> from perspective of linux reboot modes, kernel's current
+>>> implementation in reset path is like:
+>>>
+>>> __
+>>> #1 If reboot_mode is WARM/SOFT and PSCI_SYSRESET2 is supported 
+>>>     Call PSCI - SYSTEM_RESET2 - ARCH RESET
+>>> #2 ELSE
+>>>     Call PSCI - SYSTEM_RESET COLD RESET
+>>> ___
+>>>
+>>> ARM SPECS for PSCI SYSTEM_RESET2
+>>> This function extends SYSTEM_RESET. It provides:
+>>> • ARCH RESET: set Bit[31] to 0               = > This is already in place in condition #1.
+>>> • vendor-specific resets: set Bit[31] to 1.  = > current patchset adds this part before kernel's reboot_mode reset at #0.
+>>>
+>>>
+>>> In current patchset, we see a condition added at
+>>> #0-psci_vendor_reset2 being called before kernel’s current
+>>> reboot_mode condition and it can take any action only if all below
+>>> conditions are satisfied.
+>>> - PSCI SYSTEM_RESET2 is supported.
+>>> - psci dt node defines an entry "bootloader" as a reboot-modes.
+>>> - User issues reboot with a command say - (reboot bootloader).
+>>> - If vendor reset fails, default reboot mode will execute as is.
+>>>
+>>> Don't see if we will skip or break the kernel reboot_mode flow with
+>>> this patch.  Also if user issues reboot <cmd> and <cmd> is supported
+>>> on SOC vendor reset psci node, should cmd take precedence over
+>>> kernel reboot mode enum? may be yes? 
+>>>
+>>
+>> Please wrap lines when replying.
+sure. will try to take care.
+>>
+>> I don't think it is a matter of precedence. reboot_mode and the reboot
+>> command passed to the reboot() syscall are there for different (?)
+>> reasons.
+>>
+>> What I am asking is whether it is always safe to execute a PSCI vendor
+>> reset irrispective of the reboot_mode value.
+Valid point, but it depends on how we configure reboot mode and vendor reset.
+If the configuration is conflicting in DT, then reboot_mode and vendor reset
+may conflict and show non-predictable results.
+For instance, on qcs6490, we have have nvmem-reboot-mode driver
+which supports "reboot mode bootloader" function via its current DT as the PMIC
+registers are accessible for write on this soc. If we enable nvmem-reboot-mode
+and then configure vendor_reset2(mode-bootloader) to perform a different
+function on reboot, they will conflict and may result in a non-predictable
+behavior. The developer or soc vendor has to take care of this in any
+case so this may be a invalid scenario?
+
+May be vendor_reset2 gives more flexibility here on how a soc vendor may 
+implement reboot modes and other vendor reset types. In case soc vendor
+wants to keep some reboot mode register as open access, they can still
+use reboot_mode driver and then others reboot/reset modes can be configured
+via vendor_reset2.
+
+For instance, on qcs6490, we can use nvmem-reboot-mode driver for 
+"reboot mode bootloader" and use the current patch-vendor_reset2 for
+"reboot mode edl". This can be configured via DT. Now even if we
+enable both current-patch-vendor_reset2(reboot mode bootloader) 
+and nvmem-reboot-mode (mode-bootloader) at same time on this soc,
+they are harmless to each other and work as desired as both(DT entries)
+align with each other and the PMIC registers are accessible to kernel. The
+same thing can conflict, if we enable both drivers at same time and configure
+them with conflicting parameters in DT for (reboot mode bootloader).
+
 > 
-> syzbot found the following issue on:
+> The only way I see it to be unsafe is we need some other driver using
+> the reboot_mode to configure something and then the PSCI vendor reset
+> being incompatible with whatever that other driver did. I don't see that
+> happens today, so it is up to us to decide what the policy ought to be.
+> The PSCI spec doesn't help us here because the reboot_mode enum is
+> totally a Linux construct. In my opinion, firmware should be able to
+> deal with whatever the driver did or (less ideal) the driver need to be
+> aware of the PSCI vendor resets. Thus, it would be always safe to
+> execute a PSCI vendor reset regardless of the reboot_mode value.
 > 
-> HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1695b7ee980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=b8786f381e62940f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d8775ae2dbebe5ab16fd
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> Thanks,
+> Elliot
 > 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/a4edf8b28d7f/disk-2ccbdf43.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/5f9b0fd6168d/vmlinux-2ccbdf43.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/a2c5f918ca4f/bzImage-2ccbdf43.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+d8775ae2dbebe5ab16fd@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 17017 at kernel/rcu/srcutree.c:653 cleanup_srcu_struct+0x37c/0x520 kernel/rcu/srcutree.c:653
-> Modules linked in:
-> CPU: 0 PID: 17017 Comm: syz-executor.4 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-> RIP: 0010:cleanup_srcu_struct+0x37c/0x520 kernel/rcu/srcutree.c:653
-> Code: 83 c4 20 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc 90 0f 0b 90 48 83 c4 20 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc 90 <0f> 0b 90 e9 35 ff ff ff 90 0f 0b 90 48 b8 00 00 00 00 00 fc ff df
-> RSP: 0018:ffffc90003567d20 EFLAGS: 00010202
-> RAX: 0000000000000001 RBX: ffffc90002d6e000 RCX: 0000000000000002
-> RDX: fffff91ffffab294 RSI: 0000000000000008 RDI: ffffe8ffffd59498
-> RBP: ffff88805b6c0000 R08: 0000000000000000 R09: fffff91ffffab293
-> R10: ffffe8ffffd5949f R11: 0000000000000000 R12: ffffc90002d778a8
-> R13: ffffc90002d77880 R14: ffffc90002d77868 R15: 0000000000000004
-> FS:  00007fa719dec6c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000020078000 CR3: 000000006176a000 CR4: 00000000003526f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  kvm_destroy_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:1351 [inline]
->  kvm_put_kvm+0x8df/0xb80 arch/x86/kvm/../../../virt/kvm/kvm_main.c:1380
->  kvm_vm_release+0x42/0x60 arch/x86/kvm/../../../virt/kvm/kvm_main.c:1403
->  __fput+0x408/0xbb0 fs/file_table.c:422
->  task_work_run+0x14e/0x250 kernel/task_work.c:180
->  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
->  exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
->  exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
->  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
->  syscall_exit_to_user_mode+0x278/0x2a0 kernel/entry/common.c:218
->  do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-syzbot reported a rash of KVM cleanup_srcu_struct() splats, and while they suggest
-that KVM has a rogue SRCU reader, I strongly suspect that something is/was going
-sideways with bcachefs, and KVM is an innocent bystander.  All of the splats have
-bcachefs activity shortly before the failure, and syzbot has never managed to find
-a reproducer.
-
-If if KVM were at fault, e.g. was accessing SRCU after its freed, I would expect
-at least one report to not include bcachefs activity, and I would think we'd have
-at least one reproducer.
-
-Furthermore, except for the __timer_delete_sync() splat, all of the issues
-mysteriously stopped occuring at roughly the same time, and I definitely don't
-recall fixing anything remotely relevant in KVM.
-
-So, I'm going to close all of the stale reports as invalid, and assign the
-__timer_delete_sync() to bcachefs, because again there's nothing in there that
-suggests KVM is at fault.
-
-        general protection fault in detach_if_pending (3) bcachefs kvm		5	52d	52d	
-        general protection fault in get_work_pool (2) kvm			5	59d	59d	
-        WARNING in kvm_put_kvm kvm				                14	51d	60d	
-        KASAN: wild-memory-access Read in __timer_delete_sync kvm		5	14d	81d	<= ???
-        WARNING in srcu_check_nmi_safety kvm				        255	51d	104d	
-        WARNING in cleanup_srcu_struct (4) kvm bcachefs				3567	51d	105d	
-
-#syz invalid
 
