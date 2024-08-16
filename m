@@ -1,167 +1,140 @@
-Return-Path: <linux-kernel+bounces-289484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 264F49546A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:20:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1BD49546AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BC131C21C48
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:20:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BBC8B24FC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9A018FDAA;
-	Fri, 16 Aug 2024 10:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAAE317C9B8;
+	Fri, 16 Aug 2024 10:20:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yf5H/gCi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Srk8N6Ko"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9027618FC91
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 10:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC09157A41;
+	Fri, 16 Aug 2024 10:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723803607; cv=none; b=a3lqcY9mH3pa34qp4L8EipmgJhgKsu5lrDymy39YN0uExqO1DqOFRkkm2i2I+PgvpeSnWZ0v3E9KYQNp36VduAZ8KatnQqC85IVXI+xEH7MviRyNkwXs3brNkVuBfcYhPfKjxCObK+hE9XJlSraRh9iBkNtvnv/fs2GvYv+Rexo=
+	t=1723803647; cv=none; b=uKiVBys35vB5pN89ghEoOLArL9SgZDoAi2EK52AGVcG4RpLijFAJCaDpz9b3aIylx6CMHvvf37GvirMA6sfMGyA7/GqimhXHTcrCHciRFYD2w1cUaPEr141kFMvH0NzqurPPWOrQJDxPynkXlySLX2M6czSXI4urLxaagDlBJF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723803607; c=relaxed/simple;
-	bh=Q7Tx68mXJbhoSFVjsZb3On3tQ69pdQCCGIl59/q6hgI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I03pZJavyObyovY5OVdGzUNX7XV3FKSuoDLJOSeSyjFKq9mxWEZywrbz0JjS3b8PG9mjnQjbfYwZaaeUeTDaxsECAHw39dKw4afPEXRm0bfTN3PgWk8sMm9NERc5/UkQYm4WcGfZS8kq5saXanPe6oOcf7h1QXiMr1PbWzBgX5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yf5H/gCi; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723803604;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GiGH3zeAxa2Jx6Io/k4YdQGBv52I1k5flFPAhWOIYhs=;
-	b=Yf5H/gCi0cHqxgDv+YCBcFSmNHUAOWo/Jz+moMp93EYoqdfFURkau91VmdkH6AqpGINfqz
-	DZEZNedWHlwVLqbzmqKnThJ+C4GRSyn04VoaWiiN5bWo9oqs0TsUqW39Q/Ge5Bfx6aO1ol
-	8WML8SSgsISvJBZpuOnFPisB/PRrSK4=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-37-s9G_opAAOq-dsnuoqD_Dew-1; Fri, 16 Aug 2024 06:20:03 -0400
-X-MC-Unique: s9G_opAAOq-dsnuoqD_Dew-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42816aacabcso13565055e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 03:20:03 -0700 (PDT)
+	s=arc-20240116; t=1723803647; c=relaxed/simple;
+	bh=2nUpSfXQ8VjKDxrrXyZDwfnvJXY5+u+Z/Er3OY388J0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PgtQAyB6ZFaf9FJIAycS3un8KRvoSR46DgwmGD4kaId4TOy2AdrKDyTbx6IHQSA1Zetgu7xdAyDDsLcy5vh2nRMylRcPIL1H+EX/Uq0M2TItLyA7rtJU/WHh+XRLDlGrVECTL0zPp4/5ZTI1zARkynuZtnsQotxrjHTxus9X7ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Srk8N6Ko; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-368440b073bso975000f8f.0;
+        Fri, 16 Aug 2024 03:20:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723803643; x=1724408443; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AAqdFjLwBWAGL5CpBuQGCDM0Jz5SC8n64NSZVNoxjcI=;
+        b=Srk8N6KoHhMUaUtWY9y/4FY74OEeiCpCE9ZuVVZzZ5L1OurMPxYq8M5vIMbZjNlIJS
+         HNum2K8mDpuYyEFL620qKId3LEulwqnLQ5m7MQ2m4QshKZSH+yfW7LDdnpyNTSO8F8/N
+         DAyyuAbmjwBBBj7SOEUL6sxAW3sdf9KQrmFcdPTRBZHCvGJIvEpnv/Q4TYu8S8+YZDlG
+         VdVxNccBayjEsQGUMwZRMTXGPTeWMvP2WHcpUaBtTcqSEHGKozHNOFFGlWktR+qBI44d
+         Fk6z+YNitbEe/pEcF0kUZA6cp6c8V6poL+1qSfUhsUyZmDDJi8XjFDvXSGQkd+sqBuZM
+         Ebgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723803602; x=1724408402;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=GiGH3zeAxa2Jx6Io/k4YdQGBv52I1k5flFPAhWOIYhs=;
-        b=rzLtjS6wfKWoeSo6LOQArjAoCpKXZrh60L2r+eRAUt/Zy+55d+gEHvebS0NYt9rTKJ
-         xQdq0VSQVctKUpSfgmBMJ7cveQ/LeShNN5ee2zjzjbvZYGIvuCk4WLKVimMOVnB84CNt
-         3WGN/V3A6xnwYb2ZD4MX+Q33Q33kaj0mkjzdQ01EtdYW7h1OQ9YYdyjQ69tmE6WlJB69
-         1nqw2BIhYNi1ukli/njW6/PHEBfw+xcm+FAc7KFtHe1/x7pJetAkMycec3txkN1g9PPr
-         1d1ymLQW7yuSLMlNFzM8+/p4Z1MNZ9JrVonH66lDhBUnjrTUolapOqppmoVMvtOZPDYg
-         S9NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXh0b+osgSl8VBHyvXpFQu8QShSD5JCClClosjv1BlVFUshY43R2+MncNJbgHrDmBMA2kV2WpHqroA3gZgVBeNGXyV0HhnSQz+Zo1xJ
-X-Gm-Message-State: AOJu0Yy1lAFy+vtctMCW48XHrAgi7trblCI1sRKUvdtMFLKKrQI0m0ER
-	8T5t0t0Sf7cS4XYwjxi2FyZQT9CHMS+Xiu4QEJAVaip3SRxjOr8ATGlTQvrxVSEQGp3HoKxmqXi
-	hZqgoC7FMxFZiJLBw3jm1tNOg99nNAEY8tIVIImBZjfUBPtEywiGWO6/2pup8yw==
-X-Received: by 2002:a05:600c:444b:b0:426:61f6:2e38 with SMTP id 5b1f17b1804b1-429ed7db64fmr13983975e9.35.1723803602257;
-        Fri, 16 Aug 2024 03:20:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHtu3CY8gsMdmmPJm0qqf1bsZ6Z2KxSJIE505dCeM93i1U3KXLkozWnth9CpOQSrQHaeGOE9A==
-X-Received: by 2002:a05:600c:444b:b0:426:61f6:2e38 with SMTP id 5b1f17b1804b1-429ed7db64fmr13983785e9.35.1723803601759;
-        Fri, 16 Aug 2024 03:20:01 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c721:b900:4f34:b2b7:739d:a650? (p200300cbc721b9004f34b2b7739da650.dip0.t-ipconnect.de. [2003:cb:c721:b900:4f34:b2b7:739d:a650])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded71ef0sm72577445e9.36.2024.08.16.03.20.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Aug 2024 03:20:01 -0700 (PDT)
-Message-ID: <883bf552-f339-474f-805b-4355ef49e526@redhat.com>
-Date: Fri, 16 Aug 2024 12:19:58 +0200
+        d=1e100.net; s=20230601; t=1723803643; x=1724408443;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AAqdFjLwBWAGL5CpBuQGCDM0Jz5SC8n64NSZVNoxjcI=;
+        b=jUf3lxp5E+hV6sh6zuSOnp6MigJv0E52xBhEiEVkc6FnCNRO9ZKk8xRJkv2LhZZ9gd
+         Iq+3Hx5lkt8WtEoKucYEU5OGsDF2l8pwTbF8qLK9WFU9zpwWuAJBdHO15s1LQIWDIKVr
+         eCjDDqqzSaZ1I9N1BKW6Xj93ikQxW1dplARTp0TKORjQiWMs+vUjVLFAm/NCbK8ud/NE
+         d623fzSEaBZfMHEhhQsw7rb9UlYmVtGcx8sEmNsZT8s6cffCx8U9i1u3wKG0o2z+4Kbt
+         PolaJzA+64IucBQKFuKeKZdtAUV0s76+rz+Z29V2ANd82g9if0PbayhlFKcwycOQzyRi
+         5n6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVmSNNGIgqGhSZyyHRFZs42KqrEC+b5E78Evn57RmZA4+gQPIaFRDRAh26qq8mke/tVWN0nrWyk2vAQjvH2cNpf5LW1aVssxWfXfcSM/fKPqRw7OBmJrcK6z1eG7wjUEQ6Oi5qYvccn470Y
+X-Gm-Message-State: AOJu0Yw7PN4ciKF8mfJbPigfCk3r+01SLgxhfhltYX8ch2JbKO4Y1kdO
+	9tTy3Q8UZxjgTXKYbDOye3U/OLMz3XOXt5vZket4VGKpkEXBPRXN
+X-Google-Smtp-Source: AGHT+IHJ5PIwLZxVELLggb0fZ0XcGYWz+omxCFvjcrNyQE7L9vTRxxh8Wu4w3minGDTpekSs2gfQyQ==
+X-Received: by 2002:a5d:47c4:0:b0:371:8327:fdc9 with SMTP id ffacd0b85a97d-37194bb0035mr1728215f8f.11.1723803643180;
+        Fri, 16 Aug 2024 03:20:43 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:908:e842:bf20::c7d2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718983a3a3sm3331332f8f.12.2024.08.16.03.20.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 03:20:42 -0700 (PDT)
+From: Ole Schuerks <ole0811sch@gmail.com>
+To: masahiroy@kernel.org
+Cc: deltaone@debian.org,
+	jan.sollmann@rub.de,
+	jude.gyimah@rub.de,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mcgrof@kernel.org,
+	ole0811sch@gmail.com,
+	thorsten.berger@rub.de
+Subject: Re: [PATCH v4 02/12] kconfig: Add picosat.c (1/3)
+Date: Fri, 16 Aug 2024 12:20:01 +0200
+Message-Id: <20240816102001.21668-1-ole0811sch@gmail.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <CAK7LNAQ9fddijdAJFNYKqA3nQibwiv5jvZs3O9-nDbcRToWS4g@mail.gmail.com>
+References: <CAK7LNAQ9fddijdAJFNYKqA3nQibwiv5jvZs3O9-nDbcRToWS4g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: add lazyfree folio to lru tail
-To: gaoxu <gaoxu2@honor.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Shaohua Li <shli@fb.com>,
- yipengxiang <yipengxiang@honor.com>, fengbaopeng <fengbaopeng@honor.com>,
- Kalesh Singh <kaleshsingh@google.com>
-References: <f29f64e29c08427b95e3df30a5770056@honor.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <f29f64e29c08427b95e3df30a5770056@honor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 16.08.24 09:48, gaoxu wrote:
-> Replace lruvec_add_folio with lruvec_add_folio_tail in the lru_lazyfree_fn:
-> 1. The lazy-free folio is added to the LRU_INACTIVE_FILE list. If it's
->     moved to the LRU tail, it allows for faster release lazy-free folio and
->     reduces the impact on file refault.
-> 2. When mglru is enabled, the lazy-free folio is reclaimabled and should be
->     added using lru_gen_add_folio(lruvec, folio, true) instead of
->     lru_gen_add_folio(lruvec, folio, false) for adding to gen.
-> 
-> With the change in place, workingset_refault_file is reduced by 33% in the
-> continuous startup testing of the applications in the Android system.
-> 
+On 8/12/24 10:41, Masahiro Yamada wrote:
+> On Wed, Jul 10, 2024 at 3:54 PM Ole Schuerks <ole0811sch@gmail.com> wrote:
+>>
+>> PicoSAT is the SAT solver used in this project. picosat.c is the actual
+>> SAT solver. Since the file is too big for a single patch, it needs to be
+>> split up. This patch contains the first part of the file.
+>>
+>> Signed-off-by: Patrick Franz <deltaone@debian.org>
+>> Signed-off-by: Ibrahim Fayaz <phayax@gmail.com>
+>> Signed-off-by: Thorsten Berger <thorsten.berger@rub.de>
+>> Signed-off-by: Ole Schuerks <ole0811sch@gmail.com>
+>> ---
+>>  scripts/kconfig/picosat.c | 3000 +++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 3000 insertions(+)
+>>  create mode 100644 scripts/kconfig/picosat.c
+>
+>
+> I usually tend to avoid adding huge files like this.
+>
+>
+> Is this for avoiding any portability issues across distributions?
+>
+>
+>
+> Debian:
+> https://packages.debian.org/search?keywords=picosat
+>
+>
+> Fedora:
+> https://packages.fedoraproject.org/pkgs/picosat/picosat/
+>
 
-The patch subject does not match what you do in the patch -- at all.
+Thank you for the feedback. If we didn't respond to any feedback
+take that as that an acknowledgement and that we'll implement the changes 
+in v5.
 
-"mm/swap: use lruvec_add_folio_tail() in lru_lazyfree()" ?
+I think that with these packages (and if we additionally provide a 
+repository with a script to compile and install PicoSAT as a library for 
+the other distros) this should be portable enough. We will remove the 
+PicoSAT files in v5.
 
-
--- 
-Cheers,
-
-David / dhildenb
-
+I assume that it should still be possible to use xconfig without PicoSAT 
+though. What's the best way of letting the user know that they need to 
+install PicoSAT if they want to use the conflict resolver? My idea would 
+be to notify the user via the GUI when they try to use the interface of 
+the conflict resolver without having PicoSAT installed. Do you see any 
+issues with that/do you prefer some alternative approach?
 
