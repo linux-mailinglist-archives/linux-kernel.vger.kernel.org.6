@@ -1,88 +1,131 @@
-Return-Path: <linux-kernel+bounces-290313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 499BB955212
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:56:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCCD7955223
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:59:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7342B226E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:56:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CBF1B21E86
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2521C232A;
-	Fri, 16 Aug 2024 20:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9576D1C463F;
+	Fri, 16 Aug 2024 20:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="tzmo23kK"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bakgKZfH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EADB44374;
-	Fri, 16 Aug 2024 20:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F9C10E4;
+	Fri, 16 Aug 2024 20:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723841790; cv=none; b=rHbL35DesSn1gCllrrmib0pWUlwj+4Od6O5FD5lzofvhihXjRSnlDjZhYla4fB+LKclJqNbBX4N4YlAxpo6YmQdHQTeV1sCGk3axRHonLloAwZMC+3vgo1rQHXoCvxZ8tilH7QikDjjqNWUZw8HPnizqqUV6zdCMyOXMyIUQYlg=
+	t=1723841928; cv=none; b=qdrSDthTRT0z6ck6WHBhysh9KxuW/IE7cQIOE1XEqDVigiTcyGolzM9rQQlpMjjOwfU7LkORpSz9dJbSZMZ5AB4gzaXaDiju8EO1a2mAioJqafO0K5IpNQGhpkERFYlKy/znLw3Bm0gv3euQpEyontC0KPy/QpBGUznlYYG/BQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723841790; c=relaxed/simple;
-	bh=xM7a0sjEn5EU7xMgGaRiT2wnAsyzH3IhZm4MDK7tH+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N/jS9QvdMwGEvgMKiD394zqUreyas5+vIXo2Tqjgn68pwxPrMMfDqwczrbtCMxqZ1qPIsSniUe0/1099PBWnYRaGibnTF5Gvwda3CzpRdQczvKYGcVI9CHLjH1npntXaeAH24GMgt0UR4NbaHumRURrMIA6y4/L42OijVud8BIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=tzmo23kK; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=kessJoZEAlIP3wCOgJvS54+BXGLCvL32IvfCD/5qQbM=; b=tzmo23kK1ueDfCkbJcYEZaCLPM
-	VC881F5H0/kDP9m0RH69fXgnpVpb18uu4aXPgQOGsyOmKS2gGBlwy0TFsNZyxy7RIxRCY37i6dgSe
-	DHLbTB3+k19YN4vhywTA7wwdjT9oaVUEzQl6GaaV9qKRVJiTzxWGOb/VNEMk4sTL+Eeo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sf3zc-004xn0-UV; Fri, 16 Aug 2024 22:56:16 +0200
-Date: Fri, 16 Aug 2024 22:56:16 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Divya Koppera <divya.koppera@microchip.com>
-Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com
-Subject: Re: [PATCH net-next v2 2/2] net: phy: microchip_t1: Adds support for
- lan887x phy
-Message-ID: <4956ed49-89b4-46fc-a2e8-8debada5a35c@lunn.ch>
-References: <20240813181515.863208-1-divya.koppera@microchip.com>
- <20240813181515.863208-3-divya.koppera@microchip.com>
+	s=arc-20240116; t=1723841928; c=relaxed/simple;
+	bh=prKEysYXyyWuDvDu9eJZ44qO6cHeJEujNjWHyFKJvT8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nFn7MNzNIQst6F7Tk+yZmgWPp2b/i07Kew+59CjplJe2UAiqyhLjQyBugTag1M4akc3Nw2q7rxlh1ikVo46x8cf0FBx3y5RJ4l3LM2PkSawOMz2qw4Tq17Xps5d67pRUiFuwl+Brwj713zl63nbFJmX1GFkCNhihU7Jtlfks7uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bakgKZfH; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723841927; x=1755377927;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=prKEysYXyyWuDvDu9eJZ44qO6cHeJEujNjWHyFKJvT8=;
+  b=bakgKZfH3QD2r+QafOjSJ1lubuMHElZrnpDlAyEHMgR96rpgd8c2K1YZ
+   Q2i3QcG8plMHBCF7BFhOpnlf2i+rL5nG46hLpTOBGICaCCnhUpY3qN8jL
+   MWCDc4ZYRCBZCrdX9WRpdjaz6/TwgHrEqy+hph/cIfMpPWQ4D9ibb4yXJ
+   xU7dGhgyakXCqm0UScnKROKGc8yjLgFizRV9OuoX6zkz36WfVBqlZDxpY
+   QMdqMhFGuFLpEPcLad1fgOsDDG1lQzsfEXdbUFuJKEvV+bDQu06ix5AXJ
+   PdpsRx/4HoxVPZji0W4xi8RvynSl9g6kRDakKsYUH2ePi1Rw860U9yySz
+   A==;
+X-CSE-ConnectionGUID: zceVZwTFTG62FaHGnQzT3Q==
+X-CSE-MsgGUID: /V2I8uDuQMWlRbYUbOcbYw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="47552982"
+X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
+   d="scan'208";a="47552982"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 13:58:46 -0700
+X-CSE-ConnectionGUID: KyEt2O1KTnaKwGbbUPz49Q==
+X-CSE-MsgGUID: nU4SDx70T0qy2MZzNo7IIg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
+   d="scan'208";a="64730816"
+Received: from unknown (HELO [10.125.111.71]) ([10.125.111.71])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 13:58:45 -0700
+Message-ID: <c39d5638-f72c-4001-85f8-0ba81661638a@intel.com>
+Date: Fri, 16 Aug 2024 13:58:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240813181515.863208-3-divya.koppera@microchip.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 03/25] dax: Document dax dev range tuple
+To: Ira Weiny <ira.weiny@intel.com>, Fan Ni <fan.ni@samsung.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+ Davidlohr Bueso <dave@stgolabs.net>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, linux-btrfs@vger.kernel.org,
+ linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, nvdimm@lists.linux.dev
+References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
+ <20240816-dcd-type2-upstream-v3-3-7c9b96cba6d7@intel.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20240816-dcd-type2-upstream-v3-3-7c9b96cba6d7@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 13, 2024 at 11:45:15PM +0530, Divya Koppera wrote:
-> The LAN887x is a Single-Port Ethernet Physical Layer Transceiver compliant
-> with the IEEE 802.3bw (100BASE-T1) and IEEE 802.3bp (1000BASE-T1)
-> specifications. The device provides 100/1000 Mbit/s transmit and receive
-> capability over a single Unshielded Twisted Pair (UTP) cable. It supports
-> communication with an Ethernet MAC via standard RGMII/SGMII interfaces.
-> 
-> LAN887x supports following features,
-> - Events/Interrupts
-> - LED/GPIO Operation
-> - IEEE 1588 (PTP)
-> - SQI
-> - Sleep and Wakeup (TC10)
-> - Cable Diagnostics
-> 
-> First patch only supports 100Mbps and 1000Mbps force-mode.
-> 
-> Signed-off-by: Divya.Koppera <divya.koppera@microchip.com>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-    Andrew
+On 8/16/24 7:44 AM, Ira Weiny wrote:
+> The device DAX structure is being enhanced to track additional DCD
+> information.
+> 
+> The current range tuple was not fully documented.  Document it prior to
+> adding information for DC.
+> 
+> Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> 
+> ---
+> Changes:
+> [iweiny: move to start of series]
+> ---
+>  drivers/dax/dax-private.h | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dax/dax-private.h b/drivers/dax/dax-private.h
+> index 446617b73aea..ccde98c3d4e2 100644
+> --- a/drivers/dax/dax-private.h
+> +++ b/drivers/dax/dax-private.h
+> @@ -58,7 +58,10 @@ struct dax_mapping {
+>   * @dev - device core
+>   * @pgmap - pgmap for memmap setup / lifetime (driver owned)
+>   * @nr_range: size of @ranges
+> - * @ranges: resource-span + pgoff tuples for the instance
+> + * @ranges: range tuples of memory used
+> + * @pgoff: page offset
+> + * @range: resource-span
+> + * @mapping: device to assist in interrogating the range layout
+>   */
+>  struct dev_dax {
+>  	struct dax_region *region;
+> 
 
