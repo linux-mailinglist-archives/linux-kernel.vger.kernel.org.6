@@ -1,417 +1,202 @@
-Return-Path: <linux-kernel+bounces-290442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B79E9553EF
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:51:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056089553F3
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:53:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90F4F1F23645
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:51:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E723B2288A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57BE14830D;
-	Fri, 16 Aug 2024 23:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38258148304;
+	Fri, 16 Aug 2024 23:53:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VzjtphJl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BbYaKHkF"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B2FB661;
-	Fri, 16 Aug 2024 23:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7365CB661;
+	Fri, 16 Aug 2024 23:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723852298; cv=none; b=nbxjrgMi7gYz5IFFwTrZ57IJDnOWkY2aXtKo1O57sefJbvCaNtzA2xxs3vaN4h21C8M69w2HZWgi8ax8o8V4VRfD1VEUuEsIZ3cVeLiqiSjbFGN9WxagGI+ivuNSJQRVTXBdCSSVzxzGrpTzB+ddlIvQsrB8VORrcGZZycx3ybo=
+	t=1723852383; cv=none; b=rpVyET6+0/vS0IswduA7Alw4S3k/FB11TSo4zOKf7Cwhjh6Grh0Vg0cifrXyqPfXRZbVniZ2Uc7gKCTyjF4MT7Lsq+CHRclpAmhlDZC/kR75dr0tJeHynXwDGnzhE/ft/QdNXQbkKvIBIN0BIYZI1PN7l76uYJRcIZ5m2k14FR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723852298; c=relaxed/simple;
-	bh=Y3R5Xe9PvNt7c9UthSrlFrTLiWzerjmIgm8r/fHprOs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AowU3rh0pdjqP1CVFe50UsMBGoPJu4oBEfQWYAuvs9kHerAw1fYEdvnlNmxAGIh8tQM0q1nN021ujQMaUqNwydyX7qDyXmi8i1iAK22X1/ZG9lnZP1JePVIQjIWm5PXNPMPt+88yk0oF2BZo/h9wBtl2fWvmzxFWNA2LyD3TpTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VzjtphJl; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723852297; x=1755388297;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Y3R5Xe9PvNt7c9UthSrlFrTLiWzerjmIgm8r/fHprOs=;
-  b=VzjtphJln2PfK6wmphasOwX0pvwMKo6B8lhxwtPeQffW8991B9MUEAQV
-   x2v1WbRkQAAqwdXAroL1cn7rQi4EJWq9g/UU/fwA+dO1gH/IrMLYFZUS4
-   N6Cos79TE0Zs6DOyXF7BVQbdsIqXuqS4DoriYY1x/Gjw2dNLZonFJlIl9
-   2L/wLgxnZPQtkH9ZUhYU+rH9ZfoDCtC1kRnSJffUqL9uQWe0gDHNgie0y
-   yxjJp4ReRt1f1LpELYIy7aYHteGS56Fl9wMlsHSd3ACernJBhdiFJWos5
-   e9M3yU0bxwlRyswHMImOaJSEECmMRo47Zntd/7zxwzlvNoUviu4PTpSH4
-   g==;
-X-CSE-ConnectionGUID: Q5lTjgKvTJO6oNijFL5u5A==
-X-CSE-MsgGUID: qeUUdhnfQ5G78vOiHH3spg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="22039852"
-X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
-   d="scan'208";a="22039852"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 16:51:36 -0700
-X-CSE-ConnectionGUID: rP9/veaASJS0L3KH+gZrdw==
-X-CSE-MsgGUID: L1zajP0KRzaC1dfu9MqMrQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
-   d="scan'208";a="60364021"
-Received: from unknown (HELO [10.125.111.71]) ([10.125.111.71])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 16:51:35 -0700
-Message-ID: <b20a64bc-d0c2-4cea-b696-4667cfc9126b@intel.com>
-Date: Fri, 16 Aug 2024 16:51:33 -0700
+	s=arc-20240116; t=1723852383; c=relaxed/simple;
+	bh=DMO57vi9AiJjXnsgH5AIT5Qez88LtNPRhneBZN7cIZ8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HLZX8TEoAHCKUR1WtPUQrKLQ3ezWif6ZSwwk6IyUekugJZDFxsT1eZ3Ry3ExF2+Vqc3AGuVoNnVB5TVGs4BCKkAUtxsogml8ei57qWuHPvKasf0ZEIEztvhoc5ceXcPiYB3dD9cg+47rH0y6IbOVSJndWOWWUhRz8XFeLidC4Q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BbYaKHkF; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47GLbupb003157;
+	Fri, 16 Aug 2024 23:52:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=+JXtY3+Fg/Wm0qnAcs1ijp3a
+	tNHmKpNMITHGUXLSaa4=; b=BbYaKHkFmQ2/B1FGTdE06tTqPjMRo3i2YJFQoG6F
+	cuz1EydEBnnUN86NVgY08eDD+VOV2lv+2opRktK1gZ18DYA/08SlibgfMBFGOmc8
+	ASUma4kF9TYkJ4U1tsjFCZTGWmHOGtjLJT4IWcpoPs+5E78YrSvAx53eY6ukxJ7c
+	yqXuI6fchBgLWJDYtOdjI0nHlNV1Y1eptkk4MpooloMCUx5jI94GaZHUltCyJfID
+	IfxgZqgPHMX3WBvFY8YpJzU3Vpq31Dlxc+f3Olc0bKGbpQgZT4pCYKPMbRAYjCYF
+	S9fE0zPJtH1ownlsu/m5Zj1QEs1UcwujJRCFH4oRbQ1AeQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4123cuj22g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Aug 2024 23:52:48 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47GNql0s025394
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Aug 2024 23:52:47 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 16 Aug 2024 16:52:47 -0700
+Date: Fri, 16 Aug 2024 16:52:46 -0700
+From: Elliot Berman <quic_eberman@quicinc.com>
+To: David Hildenbrand <david@redhat.com>
+CC: Ackerley Tng <ackerleytng@google.com>, Fuad Tabba <tabba@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paolo Bonzini
+	<pbonzini@redhat.com>,
+        Sean Christopherson <seanjc@google.com>,
+        Patrick Roy
+	<roypat@amazon.co.uk>, <qperret@google.com>,
+        <linux-coco@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <kvm@vger.kernel.org>
+Subject: Re: [PATCH RFC 4/4] mm: guest_memfd: Add ability for mmap'ing pages
+Message-ID: <20240816164546141-0700.eberman@hu-eberman-lv.qualcomm.com>
+References: <20240805-guest-memfd-lib-v1-0-e5a29a4ff5d7@quicinc.com>
+ <20240805-guest-memfd-lib-v1-4-e5a29a4ff5d7@quicinc.com>
+ <4cdd93ba-9019-4c12-a0e6-07b430980278@redhat.com>
+ <CA+EHjTxNNinn7EzV_o1X1d0kwhEwrbj_O7H8WgDtEy2CwURZFQ@mail.gmail.com>
+ <aa3b5be8-2c8a-4fe8-8676-a40a9886c715@redhat.com>
+ <diqzjzggmkf7.fsf@ackerleytng-ctop.c.googlers.com>
+ <94c5d735-821c-40ba-ae85-1881c6f4445d@redhat.com>
+ <diqz4j7km8yu.fsf@ackerleytng-ctop.c.googlers.com>
+ <93a010dd-d938-4c49-8643-047c7c1b33b9@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 13/25] cxl/region: Add sparse DAX region support
-To: ira.weiny@intel.com, Fan Ni <fan.ni@samsung.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Dan Williams <dan.j.williams@intel.com>,
- Davidlohr Bueso <dave@stgolabs.net>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, linux-btrfs@vger.kernel.org,
- linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, nvdimm@lists.linux.dev
-References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
- <20240816-dcd-type2-upstream-v3-13-7c9b96cba6d7@intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20240816-dcd-type2-upstream-v3-13-7c9b96cba6d7@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <93a010dd-d938-4c49-8643-047c7c1b33b9@redhat.com>
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: mtiFw9e4dNNfIlhdJ9ghNLDPswiUrfD6
+X-Proofpoint-ORIG-GUID: mtiFw9e4dNNfIlhdJ9ghNLDPswiUrfD6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-16_17,2024-08-16_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ clxscore=1015 mlxlogscore=999 priorityscore=1501 spamscore=0 bulkscore=0
+ adultscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408160171
 
+On Sat, Aug 17, 2024 at 12:03:50AM +0200, David Hildenbrand wrote:
+> On 16.08.24 23:52, Ackerley Tng wrote:
+> > David Hildenbrand <david@redhat.com> writes:
+> > 
+> > > On 16.08.24 19:45, Ackerley Tng wrote:
+> > > > 
+> > > > <snip>
+> > > > 
+> > > > IIUC folio_lock() isn't a prerequisite for taking a refcount on the
+> > > > folio.
+> > > 
+> > > Right, to do folio_lock() you only have to guarantee that the folio
+> > > cannot get freed concurrently. So you piggyback on another reference
+> > > (you hold indirectly).
+> > > 
+> > > > 
+> > > > Even if we are able to figure out a "safe" refcount, and check that the
+> > > > current refcount == "safe" refcount before removing from direct map,
+> > > > what's stopping some other part of the kernel from taking a refcount
+> > > > just after the check happens and causing trouble with the folio's
+> > > > removal from direct map?
+> > > 
+> > > Once the page was unmapped from user space, and there were no additional
+> > > references (e.g., GUP, whatever), any new references can only be
+> > > (should, unless BUG :) ) temporary speculative references that should
+> > > not try accessing page content, and that should back off if the folio is
+> > > not deemed interesting or cannot be locked. (e.g., page
+> > > migration/compaction/offlining).
+> > 
+> > I thought about it again - I think the vmsplice() cases are taken care
+> > of once we check that the folios are not mapped into userspace, since
+> > vmsplice() reads from a mapping.
+> > 
+> > splice() reads from the fd directly, but that's taken care since
+> > guest_memfd doesn't have a .splice_read() handler.
+> > 
+> > Reading /proc/pid/mem also requires the pages to first be mapped, IIUC,
+> > otherwise the pages won't show up, so checking that there are no more
+> > mappings to userspace takes care of this.
+> 
+> You have a misconception.
+> 
+> You can map pages to user space, GUP them, and then unmap them from user
+> space. A GUP reference can outlive your user space mappings, easily.
+> 
+> So once there is a raised refcount, it could as well just be from vmsplice,
+> or a pending reference from /proc/pid/mem, O_DIRECT, ...
+> 
+> > 
+> > > 
+> > > Of course, there are some corner cases (kgdb, hibernation, /proc/kcore),
+> > > but most of these can be dealt with in one way or the other (make these
+> > > back off and not read/write page content, similar to how we handled it
+> > > for secretmem).
+> > 
+> > Does that really leave us with these corner cases? And so perhaps we
+> > could get away with just taking the folio_lock() to keep away the
+> > speculative references? So something like
+> > 
+> >    1. Check that the folio is not mapped and not pinned.
+> 
+> To do that, you have to lookup the folio first. That currently requires a
+> refcount increment, even if only temporarily. Maybe we could avoid that, if
+> we can guarantee that we are the only one modifying the pageache here, and
+> we sync against that ourselves.
+> 
+> >    2. folio_lock() all the folios about to be removed from direct map
+> >    -- With the lock, all other accesses should be speculative --
+> >    3. Check that the refcount == "safe" refcount
+> >        3a. Unlock and return to userspace with -EAGAIN
+> >    4. Remove from direct map
+> >    5. folio_unlock() all those folios
+> > 
+> > Perhaps a very naive question: can the "safe" refcount be statically
+> > determined by walking through the code and counting where refcount is
+> > expected to be incremented?
+> 
+> 
+> Depends on how we design it. But if you hand out "safe" references to KVM
+> etc, you'd have to track that -- and how often -- somehow. At which point we
+> are at "increment/decrement" safe reference to track that for you.
+>
 
+Just a status update: I've gotten the "safe" reference counter
+implementation working for Gunyah now. It feels a bit flimsy because
+we're juggling 3 reference counters*, but it seems like the right thing
+to do after all the discussions here. It's passing all the Gunyah unit
+tests I have which have so far been pretty good at finding issues.
 
-On 8/16/24 7:44 AM, ira.weiny@intel.com wrote:
-> From: Navneet Singh <navneet.singh@intel.com>
-> 
-> Dynamic Capacity CXL regions must allow memory to be added or removed
-> dynamically.  In addition to the quantity of memory available the
-> location of the memory within a DC partition is dynamic based on the
-> extents offered by a device.  CXL DAX regions must accommodate the
-> sparseness of this memory in the management of DAX regions and devices.
-> 
-> Introduce the concept of a sparse DAX region.  Add a create_dc_region()
-> sysfs entry to create such regions.  Special case DC capable regions to
-> create a 0 sized seed DAX device to maintain compatibility which
-> requires a default DAX device to hold a region reference.
-> 
-> Indicate 0 byte available capacity until such time that capacity is
-> added.
-> 
-> Sparse regions complicate the range mapping of dax devices.  There is no
-> known use case for range mapping on sparse regions.  Avoid the
-> complication by preventing range mapping of dax devices on sparse
-> regions.
-> 
-> Interleaving is deferred for now.  Add checks.
-> 
-> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
-> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+I need to clean up the patches now and I'm aiming to have it out for RFC
+next week.
 
-> 
-> ---
-> Changes:
-> [Fan: use single function for dc region store]
-> [djiang: avoid setting dev_size twice]
-> [djbw: Check DCD support and interleave restriction on region creation]
-> [iweiny: squash patch : dax/region: Prevent range mapping allocation on sparse regions]
-> [iwieny: remove reviews]
-> [iweiny: rebase to master]
-> [iweiny: push sysfs version to 6.12]
-> [iweiny: make cxled_to_mds inline]
-> ---
->  Documentation/ABI/testing/sysfs-bus-cxl | 22 ++++++++--------
->  drivers/cxl/core/core.h                 | 12 +++++++++
->  drivers/cxl/core/port.c                 |  1 +
->  drivers/cxl/core/region.c               | 46 +++++++++++++++++++++++++++++++--
->  drivers/dax/bus.c                       | 10 +++++++
->  drivers/dax/bus.h                       |  1 +
->  drivers/dax/cxl.c                       | 16 ++++++++++--
->  7 files changed, 93 insertions(+), 15 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-cxl b/Documentation/ABI/testing/sysfs-bus-cxl
-> index 6227ae0ab3fc..3a5ee88e551b 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-cxl
-> +++ b/Documentation/ABI/testing/sysfs-bus-cxl
-> @@ -406,20 +406,20 @@ Description:
->  		interleave_granularity).
->  
->  
-> -What:		/sys/bus/cxl/devices/decoderX.Y/create_{pmem,ram}_region
-> -Date:		May, 2022, January, 2023
-> -KernelVersion:	v6.0 (pmem), v6.3 (ram)
-> +What:		/sys/bus/cxl/devices/decoderX.Y/create_{pmem,ram,dc}_region
-> +Date:		May, 2022, January, 2023, August 2024
-> +KernelVersion:	v6.0 (pmem), v6.3 (ram), v6.12 (dc)
->  Contact:	linux-cxl@vger.kernel.org
->  Description:
->  		(RW) Write a string in the form 'regionZ' to start the process
-> -		of defining a new persistent, or volatile memory region
-> -		(interleave-set) within the decode range bounded by root decoder
-> -		'decoderX.Y'. The value written must match the current value
-> -		returned from reading this attribute. An atomic compare exchange
-> -		operation is done on write to assign the requested id to a
-> -		region and allocate the region-id for the next creation attempt.
-> -		EBUSY is returned if the region name written does not match the
-> -		current cached value.
-> +		of defining a new persistent, volatile, or Dynamic Capacity
-> +		(DC) memory region (interleave-set) within the decode range
-> +		bounded by root decoder 'decoderX.Y'. The value written must
-> +		match the current value returned from reading this attribute.
-> +		An atomic compare exchange operation is done on write to assign
-> +		the requested id to a region and allocate the region-id for the
-> +		next creation attempt.  EBUSY is returned if the region name
-> +		written does not match the current cached value.
->  
->  
->  What:		/sys/bus/cxl/devices/decoderX.Y/delete_region
-> diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
-> index 72a506c9dbd0..15b6cf1c19ef 100644
-> --- a/drivers/cxl/core/core.h
-> +++ b/drivers/cxl/core/core.h
-> @@ -4,15 +4,27 @@
->  #ifndef __CXL_CORE_H__
->  #define __CXL_CORE_H__
->  
-> +#include <cxlmem.h>
-> +
->  extern const struct device_type cxl_nvdimm_bridge_type;
->  extern const struct device_type cxl_nvdimm_type;
->  extern const struct device_type cxl_pmu_type;
->  
->  extern struct attribute_group cxl_base_attribute_group;
->  
-> +static inline struct cxl_memdev_state *
-> +cxled_to_mds(struct cxl_endpoint_decoder *cxled)
-> +{
-> +	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
-> +	struct cxl_dev_state *cxlds = cxlmd->cxlds;
-> +
-> +	return container_of(cxlds, struct cxl_memdev_state, cxlds);
-> +}
-> +
->  #ifdef CONFIG_CXL_REGION
->  extern struct device_attribute dev_attr_create_pmem_region;
->  extern struct device_attribute dev_attr_create_ram_region;
-> +extern struct device_attribute dev_attr_create_dc_region;
->  extern struct device_attribute dev_attr_delete_region;
->  extern struct device_attribute dev_attr_region;
->  extern const struct device_type cxl_pmem_region_type;
-> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
-> index 222aa0aeeef7..44e1e203173d 100644
-> --- a/drivers/cxl/core/port.c
-> +++ b/drivers/cxl/core/port.c
-> @@ -320,6 +320,7 @@ static struct attribute *cxl_decoder_root_attrs[] = {
->  	&dev_attr_qos_class.attr,
->  	SET_CXL_REGION_ATTR(create_pmem_region)
->  	SET_CXL_REGION_ATTR(create_ram_region)
-> +	SET_CXL_REGION_ATTR(create_dc_region)
->  	SET_CXL_REGION_ATTR(delete_region)
->  	NULL,
->  };
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index f85b26b39b2f..35c4a1f4f9bd 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -496,6 +496,11 @@ static ssize_t interleave_ways_store(struct device *dev,
->  	if (rc)
->  		return rc;
->  
-> +	if (cxlr->mode == CXL_REGION_DC && val != 1) {
-> +		dev_err(dev, "Interleaving and DCD not supported\n");
-> +		return -EINVAL;
-> +	}
-> +
->  	rc = ways_to_eiw(val, &iw);
->  	if (rc)
->  		return rc;
-> @@ -2174,6 +2179,7 @@ static size_t store_targetN(struct cxl_region *cxlr, const char *buf, int pos,
->  	if (sysfs_streq(buf, "\n"))
->  		rc = detach_target(cxlr, pos);
->  	else {
-> +		struct cxl_endpoint_decoder *cxled;
->  		struct device *dev;
->  
->  		dev = bus_find_device_by_name(&cxl_bus_type, NULL, buf);
-> @@ -2185,8 +2191,13 @@ static size_t store_targetN(struct cxl_region *cxlr, const char *buf, int pos,
->  			goto out;
->  		}
->  
-> -		rc = attach_target(cxlr, to_cxl_endpoint_decoder(dev), pos,
-> -				   TASK_INTERRUPTIBLE);
-> +		cxled = to_cxl_endpoint_decoder(dev);
-> +		if (cxlr->mode == CXL_REGION_DC &&
-> +		    !cxl_dcd_supported(cxled_to_mds(cxled))) {
-> +			dev_dbg(dev, "DCD unsupported\n");
-> +			return -EINVAL;
-> +		}
-> +		rc = attach_target(cxlr, cxled, pos, TASK_INTERRUPTIBLE);
->  out:
->  		put_device(dev);
->  	}
-> @@ -2534,6 +2545,7 @@ static struct cxl_region *__create_region(struct cxl_root_decoder *cxlrd,
->  	switch (mode) {
->  	case CXL_REGION_RAM:
->  	case CXL_REGION_PMEM:
-> +	case CXL_REGION_DC:
->  		break;
->  	default:
->  		dev_err(&cxlrd->cxlsd.cxld.dev, "unsupported mode %s\n",
-> @@ -2587,6 +2599,20 @@ static ssize_t create_ram_region_store(struct device *dev,
->  }
->  DEVICE_ATTR_RW(create_ram_region);
->  
-> +static ssize_t create_dc_region_show(struct device *dev,
-> +				     struct device_attribute *attr, char *buf)
-> +{
-> +	return __create_region_show(to_cxl_root_decoder(dev), buf);
-> +}
-> +
-> +static ssize_t create_dc_region_store(struct device *dev,
-> +				      struct device_attribute *attr,
-> +				      const char *buf, size_t len)
-> +{
-> +	return create_region_store(dev, buf, len, CXL_REGION_DC);
-> +}
-> +DEVICE_ATTR_RW(create_dc_region);
-> +
->  static ssize_t region_show(struct device *dev, struct device_attribute *attr,
->  			   char *buf)
->  {
-> @@ -3168,6 +3194,11 @@ static int devm_cxl_add_dax_region(struct cxl_region *cxlr)
->  	struct device *dev;
->  	int rc;
->  
-> +	if (cxlr->mode == CXL_REGION_DC && cxlr->params.interleave_ways != 1) {
-> +		dev_err(&cxlr->dev, "Interleaving DC not supported\n");
-> +		return -EINVAL;
-> +	}
-> +
->  	cxlr_dax = cxl_dax_region_alloc(cxlr);
->  	if (IS_ERR(cxlr_dax))
->  		return PTR_ERR(cxlr_dax);
-> @@ -3260,6 +3291,16 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
->  		return ERR_PTR(-EINVAL);
->  
->  	mode = cxl_decoder_to_region_mode(cxled->mode);
-> +	if (mode == CXL_REGION_DC) {
-> +		if (!cxl_dcd_supported(cxled_to_mds(cxled))) {
-> +			dev_err(&cxled->cxld.dev, "DCD unsupported\n");
-> +			return ERR_PTR(-EINVAL);
-> +		}
-> +		if (cxled->cxld.interleave_ways != 1) {
-> +			dev_err(&cxled->cxld.dev, "Interleaving and DCD not supported\n");
-> +			return ERR_PTR(-EINVAL);
-> +		}
-> +	}
->  	do {
->  		cxlr = __create_region(cxlrd, mode,
->  				       atomic_read(&cxlrd->region_id));
-> @@ -3467,6 +3508,7 @@ static int cxl_region_probe(struct device *dev)
->  	case CXL_REGION_PMEM:
->  		return devm_cxl_add_pmem_region(cxlr);
->  	case CXL_REGION_RAM:
-> +	case CXL_REGION_DC:
->  		/*
->  		 * The region can not be manged by CXL if any portion of
->  		 * it is already online as 'System RAM'
-> diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
-> index fde29e0ad68b..d8cb5195a227 100644
-> --- a/drivers/dax/bus.c
-> +++ b/drivers/dax/bus.c
-> @@ -178,6 +178,11 @@ static bool is_static(struct dax_region *dax_region)
->  	return (dax_region->res.flags & IORESOURCE_DAX_STATIC) != 0;
->  }
->  
-> +static bool is_sparse(struct dax_region *dax_region)
-> +{
-> +	return (dax_region->res.flags & IORESOURCE_DAX_SPARSE_CAP) != 0;
-> +}
-> +
->  bool static_dev_dax(struct dev_dax *dev_dax)
->  {
->  	return is_static(dev_dax->region);
-> @@ -301,6 +306,9 @@ static unsigned long long dax_region_avail_size(struct dax_region *dax_region)
->  
->  	lockdep_assert_held(&dax_region_rwsem);
->  
-> +	if (is_sparse(dax_region))
-> +		return 0;
-> +
->  	for_each_dax_region_resource(dax_region, res)
->  		size -= resource_size(res);
->  	return size;
-> @@ -1373,6 +1381,8 @@ static umode_t dev_dax_visible(struct kobject *kobj, struct attribute *a, int n)
->  		return 0;
->  	if (a == &dev_attr_mapping.attr && is_static(dax_region))
->  		return 0;
-> +	if (a == &dev_attr_mapping.attr && is_sparse(dax_region))
-> +		return 0;
->  	if ((a == &dev_attr_align.attr ||
->  	     a == &dev_attr_size.attr) && is_static(dax_region))
->  		return 0444;
-> diff --git a/drivers/dax/bus.h b/drivers/dax/bus.h
-> index cbbf64443098..783bfeef42cc 100644
-> --- a/drivers/dax/bus.h
-> +++ b/drivers/dax/bus.h
-> @@ -13,6 +13,7 @@ struct dax_region;
->  /* dax bus specific ioresource flags */
->  #define IORESOURCE_DAX_STATIC BIT(0)
->  #define IORESOURCE_DAX_KMEM BIT(1)
-> +#define IORESOURCE_DAX_SPARSE_CAP BIT(2)
->  
->  struct dax_region *alloc_dax_region(struct device *parent, int region_id,
->  		struct range *range, int target_node, unsigned int align,
-> diff --git a/drivers/dax/cxl.c b/drivers/dax/cxl.c
-> index 9b29e732b39a..367e86b1c22a 100644
-> --- a/drivers/dax/cxl.c
-> +++ b/drivers/dax/cxl.c
-> @@ -13,19 +13,31 @@ static int cxl_dax_region_probe(struct device *dev)
->  	struct cxl_region *cxlr = cxlr_dax->cxlr;
->  	struct dax_region *dax_region;
->  	struct dev_dax_data data;
-> +	resource_size_t dev_size;
-> +	unsigned long flags;
->  
->  	if (nid == NUMA_NO_NODE)
->  		nid = memory_add_physaddr_to_nid(cxlr_dax->hpa_range.start);
->  
-> +	flags = IORESOURCE_DAX_KMEM;
-> +	if (cxlr->mode == CXL_REGION_DC)
-> +		flags |= IORESOURCE_DAX_SPARSE_CAP;
-> +
->  	dax_region = alloc_dax_region(dev, cxlr->id, &cxlr_dax->hpa_range, nid,
-> -				      PMD_SIZE, IORESOURCE_DAX_KMEM);
-> +				      PMD_SIZE, flags);
->  	if (!dax_region)
->  		return -ENOMEM;
->  
-> +	if (cxlr->mode == CXL_REGION_DC)
-> +		/* Add empty seed dax device */
-> +		dev_size = 0;
-> +	else
-> +		dev_size = range_len(&cxlr_dax->hpa_range);
-> +
->  	data = (struct dev_dax_data) {
->  		.dax_region = dax_region,
->  		.id = -1,
-> -		.size = range_len(&cxlr_dax->hpa_range),
-> +		.size = dev_size,
->  		.memmap_on_memory = true,
->  	};
->  
-> 
+* folio refcount, "accessible" refcount, and "safe" refcount
+
+Thanks,
+Elliot
+
 
