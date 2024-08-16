@@ -1,141 +1,97 @@
-Return-Path: <linux-kernel+bounces-290219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B24249550DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:29:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32A079550DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 701CC285CC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:29:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E30DD287032
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4B11C37B7;
-	Fri, 16 Aug 2024 18:29:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5001C37B8;
+	Fri, 16 Aug 2024 18:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uS7y/KyZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rrzrWI+w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FBE1BE258;
-	Fri, 16 Aug 2024 18:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1D41BD51F;
+	Fri, 16 Aug 2024 18:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723832971; cv=none; b=UHlUPwFa95pca/rWl7w3mycZa6VKujyw/sbK6VSpcZQKc2vFTaPaRFow8UeCiwHRdytG4CWkF9C/m8HTQTftl28kjeVg4rgQLUaFGDKOeKDMcTzzk1Rw+91oJXzPbVyy2qbJXv4KI9OVZfr8AtFiQswYACN/ReXRhfFF75vBS5w=
+	t=1723833031; cv=none; b=RX6zx431CipZrifmYfLXMo6CpvpvGOq3LZa0o3kxVMyCLGElBKhJJfzW0DafJsNlK6KlK/+/V8M1uUDDv157xb9bxHMEhYkPRbvy1Y7ZE0/DgKcam7H19H6CHPzLPoeA9GXQUMyqhuZ1/negJZLO6Tr1MpCDKgxnyKyqLRoACUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723832971; c=relaxed/simple;
-	bh=MEnY5dW4BizxQHSga1Zlxnjl7jRyw2lRpBPUuQnt3L8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SrjcmLCBSlguBCrS+bLSM+Fua0bIHtPECdXaJpwtVoKniKIyTqzjPxQWAt8eb6oDCh4S6gZq/B4mfEnZCq1rogn2ygYBf04Rp5hIh7s/w6bn9Ic2iC/+BuWD9nzmI1hdAR1/CAKGOt3C8aJkM4Jvmg7P2bUUDjoxN2n4gyxDUbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uS7y/KyZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 860A5C4AF0C;
-	Fri, 16 Aug 2024 18:29:31 +0000 (UTC)
+	s=arc-20240116; t=1723833031; c=relaxed/simple;
+	bh=UxDpM3SHEArLzOCozwwNyeM8qDoerGueObJ3gi67Fzc=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=nu8AXWELi2NoT/qjkZLfITOt51yEfbR5Y1Q4PCMGXhe/wnAXXwz8JwaEyKyQilDJ/8yHelMjkl0wW7vXBG+FaUz0OC9regJzDF6g8AxhB9XKedS99Y2DAWgOHJ/vQBXeo0xVqbjI2kXplJVYual/FfBxcmtGaY0bjfMOoopxDc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rrzrWI+w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6556C4AF0F;
+	Fri, 16 Aug 2024 18:30:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723832971;
-	bh=MEnY5dW4BizxQHSga1Zlxnjl7jRyw2lRpBPUuQnt3L8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=uS7y/KyZXlRijF3o9ceCHJPXPE11rMuJwUEaJLAFd7YjEf7vCckXUK9zoQ44eFrDJ
-	 zO0ucI14dhHGShenGp0Vhe27e0714oplQfhVgaY/yItZEMKvSTEWTFuyPSGTQwA6TP
-	 ES7kWZ02qRk9yK2nX/ws+iau4WpOgMVIHqj5OdQy7Azfx6m07pCjLfnCAxCKt7sZH+
-	 vi+6h1mX1fJCRCdST0JdWLOWnTyyjg4aErIJFqDnkZopWyVwRc/PC4ao/f5J9ya9YP
-	 H815+Y9bQKw36couhgiGgrKCt2SBZyr34xWhnqeWfTBzaN4t7rA4SG5gM8SEp50Rt9
-	 FyScAN1GxhF2A==
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5d5bcccb372so320484eaf.3;
-        Fri, 16 Aug 2024 11:29:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVPsESp4YNX2QD/4xWRuOIVBEvNxYBpSWEqVd9j+Wz1+c8c5dgA2dlwl/N5UZIQ4ygRZWw0Aw+3S1IFT4paiFTLx8KgDrz506j0aHMDHlWxZY1wJ3P8j851LPBfThvCmNWtE5ec0sL9ag==
-X-Gm-Message-State: AOJu0YyIXmXdPTMfBaR6E/cQB/AckWudPMcRCsKmw2RZV8YLyp1U/MlJ
-	SFTj7qWc3ONS2/YKAqaamO3uMgfP9U9W7wxaTKRBXtDyUGcaz5rvHzTNtLQkykVltoZ4H8NQRll
-	H8OjAmJnIgTzEcQaIqSdLa4zcC4k=
-X-Google-Smtp-Source: AGHT+IEQDtDifU/ay61Nag/OTb/NwAraSufQacFl3Jwy2M6bzQypfkwBuAVU6h0dCTMxUWcXykK68NNUvQD7CXN0GAY=
-X-Received: by 2002:a05:6870:b4a4:b0:268:2075:a41d with SMTP id
- 586e51a60fabf-2701c5235a6mr2356726fac.6.1723832970816; Fri, 16 Aug 2024
- 11:29:30 -0700 (PDT)
+	s=k20201202; t=1723833031;
+	bh=UxDpM3SHEArLzOCozwwNyeM8qDoerGueObJ3gi67Fzc=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=rrzrWI+wrDimo6Vlic0ruw6aYYO/scKHPCQrOadZZniQKfoELAcmVQsgp4Iq3JMLB
+	 TeAJliYtE3DxqH1F82uDVGrTlfMVjBpEDZTq7Ev713O+gL8WMBGvWPoJpiVPiPz3A5
+	 vQblMvsb2G3ULDr2cgazBnf2D5jSTxedcTnRky51RjkixG6Jrgdqdb4aHO8TDxEkrM
+	 mmVcNvMPArUrzyk4fdbBlPIxd4dq7PI4ZcJzKc2up5pO/YTASeEmQ0QWPFoY0gwLt4
+	 24v7TQhiTNGuN8yTmhDNDB/1Hu4rEyTPj5ZqNhhl6lP1A8WCHauIAshZ9xdbJEfEyI
+	 AyDpNo60x0zng==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DD638232A9;
+	Fri, 16 Aug 2024 18:30:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <60ac8988-ace4-4cf0-8c44-028ca741c0a1@kernel.org> <bd149809-f670-4b5d-a18a-f1f63624265f@kernel.org>
-In-Reply-To: <bd149809-f670-4b5d-a18a-f1f63624265f@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 16 Aug 2024 20:29:18 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jrgC+cvjDfw+vQ1jyVz1oj28uTf9k+-Kk2EAPJj3VmdQ@mail.gmail.com>
-Message-ID: <CAJZ5v0jrgC+cvjDfw+vQ1jyVz1oj28uTf9k+-Kk2EAPJj3VmdQ@mail.gmail.com>
-Subject: Re: ACPI IRQ storm with 6.10
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, 
-	Linux kernel mailing list <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2 0/3] use more devm for ag71xx
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172383303025.3598282.2567158642009588521.git-patchwork-notify@kernel.org>
+Date: Fri, 16 Aug 2024 18:30:30 +0000
+References: <20240813170516.7301-1-rosenp@gmail.com>
+In-Reply-To: <20240813170516.7301-1-rosenp@gmail.com>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, linux@armlinux.org.uk,
+ linux-kernel@vger.kernel.org, o.rempel@pengutronix.de
 
-On Wed, Aug 14, 2024 at 8:48=E2=80=AFAM Jiri Slaby <jirislaby@kernel.org> w=
-rote:
->
-> On 14. 08. 24, 7:22, Jiri Slaby wrote:
-> > Hi,
-> >
-> > one openSUSE's user reported that with 6.10, he sees one CPU under an
-> > IRQ storm from ACPI (sci_interrupt):
-> >     9:   20220768          ...  IR-IO-APIC    9-fasteoi   acpi
-> >
-> > At:
-> > https://bugzilla.suse.com/show_bug.cgi?id=3D1229085
-> >
-> > 6.9 was OK.
-> >
-> > With acpi.debug_level=3D0x08000000 acpi.debug_layer=3D0xffffffff, there=
- is a
-> > repeated load of:
-> >> evgpe-0673 ev_detect_gpe         : Read registers for GPE 6D:
-> >> Status=3D20, Enable=3D00, RunEnable=3D4A, WakeEnable=3D00
->
-> 0x6d seems to count excessively (10 snapshots every 1 second):
-> > /sys/firmware/acpi/interrupts/gpe6D:   82066  EN STS enabled      unmas=
-ked
-> > /sys/firmware/acpi/interrupts/gpe6D:   86536  EN STS enabled      unmas=
-ked
-> > /sys/firmware/acpi/interrupts/gpe6D:   90990     STS enabled      unmas=
-ked
-> > /sys/firmware/acpi/interrupts/gpe6D:   95468  EN STS enabled      unmas=
-ked
-> > /sys/firmware/acpi/interrupts/gpe6D:  100282  EN STS enabled      unmas=
-ked
-> > /sys/firmware/acpi/interrupts/gpe6D:  105187     STS enabled      unmas=
-ked
-> > /sys/firmware/acpi/interrupts/gpe6D:  110014     STS enabled      unmas=
-ked
-> > /sys/firmware/acpi/interrupts/gpe6D:  114852     STS enabled      unmas=
-ked
-> > /sys/firmware/acpi/interrupts/gpe6D:  119682     STS enabled      unmas=
-ked
-> > /sys/firmware/acpi/interrupts/gpe6D:  124194     STS enabled      unmas=
-ked
-> > /sys/firmware/acpi/interrupts/gpe6D:  128641  EN STS enabled      unmas=
-ked
->
-> acpidump:
-> https://bugzilla.suse.com/attachment.cgi?id=3D876677
->
-> DSDT:
-> https://bugzilla.suse.com/attachment.cgi?id=3D876678
->
-> > Any ideas?
+Hello:
 
-GPE 6D is listed in _PRW for some devices, so maybe one of them
-continues to trigger wakeup events?
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-You can ask the reporter to mask that GPE via "echo mask >
-/sys/firmware/acpi/interrupts/gpe6D" and see if the storm goes away
-then.
+On Tue, 13 Aug 2024 10:04:56 -0700 you wrote:
+> Some of these were introduced after the driver got introduced. In any
+> case, using more devm allows removal of the remove function and overall
+> simplifies the code. All of these were tested on a TP-LINK Archer C7v2.
+> 
+> Rosen Penev (3):
+>   net: ag71xx: devm_clk_get_enabled
+>   net: ag71xx: use devm for of_mdiobus_register
+>   net: ag71xx: use devm for register_netdev
+> 
+> [...]
 
-The only ACPI core issue introduced between 6.9 and 6.10 I'm aware of
-is the one addressed by this series
+Here is the summary with links:
+  - [net-next,v2,1/3] net: ag71xx: devm_clk_get_enabled
+    https://git.kernel.org/netdev/net-next/c/df37fcf58f2a
+  - [net-next,v2,2/3] net: ag71xx: use devm for of_mdiobus_register
+    https://git.kernel.org/netdev/net-next/c/8ef34bea8cad
+  - [net-next,v2,3/3] net: ag71xx: use devm for register_netdev
+    https://git.kernel.org/netdev/net-next/c/cc20a4791641
 
-https://lore.kernel.org/linux-acpi/22385894.EfDdHjke4D@rjwysocki.net/
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-but this is about the EC and the problem here doesn't appear to be
-EC-related.  It may be worth trying anyway, though.
+
 
