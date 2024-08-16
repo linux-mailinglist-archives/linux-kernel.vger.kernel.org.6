@@ -1,247 +1,187 @@
-Return-Path: <linux-kernel+bounces-290428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29A419553B2
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:12:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1440D9553B6
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:14:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D60B72883A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:12:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C381B218BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BE3146A89;
-	Fri, 16 Aug 2024 23:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77AA5146D53;
+	Fri, 16 Aug 2024 23:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZLMMweeP";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="cG/db0A5"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=lixom-net.20230601.gappssmtp.com header.i=@lixom-net.20230601.gappssmtp.com header.b="10MusjK7"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27082145A07;
-	Fri, 16 Aug 2024 23:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723849970; cv=fail; b=d8/GCma2DRviHRWPV2j0tm36K2mioEPeslSvds+Q2t3jDkDS/4Wy7W1s9gsTRT3aYEasHzC3cbny1ORvQk8KwdqyReWSTZIpRRA96bLCwRBenjweqmybvy3H43UOXH3GLfDJOE7WuTW4HZJNztCTFZGicG4GdQ0v3aar3T7ob9w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723849970; c=relaxed/simple;
-	bh=haudEAiM7Uw0d+VmdzDh7DEcuCBOuZ59ZMFM2ezegzg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 Content-Type:MIME-Version; b=gdMqg7db8kmwexkB5eEqcAipxfcST/BR0RNceI3AnQH2RgPXiL39eHNCot2p1V9j7f6X4L/UEgcGxWCBrOXlCNZ4XK70VWcmCdvveX5QyDXCKkSoHbtYYgA5EqGzKPDN0sp146W9J6KX/uFjRnVQAY+/+Fvt869J+icgF/cxf5c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ZLMMweeP; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=cG/db0A5; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47GLBvQa024871;
-	Fri, 16 Aug 2024 23:12:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:in-reply-to:references:date:message-id
-	:content-type:mime-version; s=corp-2023-11-20; bh=zq/oo1yXY1DflT
-	HhdhFcpKIyZ2V+XGuYvXJVukGRejw=; b=ZLMMweePXQiY6BvrWFefh2RxTEWJwU
-	SnxdUlrAhAgXfC/udduZ718kbtMFMe33d0VEEc6zjvCIG5F7iC4MiDPsb3TDE7ZH
-	2qocKdXg/t4PB0AfqdGWk+VPhYD1q7V9EGl5O2AYvO386Xz5HL61v6ppva2Q3B3T
-	wVV47hYfPKYgtF/EirHzUFgW5ZhoXmLt3+Tu0yD70gOMdkGGKuHFc7b/CuzOmhjA
-	6kz+0PXn9W/G7DXeIPo1FnjiH7zH0/nyiFSRF2yGETBuULbDSCtAmcpGG4+qtGwb
-	caS/3Xf6XHRKXvfalpY8HWeFgJBvjzHWSpSja1s1mZgMp4Hbo2gH9Pow==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4104garggn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 16 Aug 2024 23:12:38 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47GM8aZQ003805;
-	Fri, 16 Aug 2024 23:12:38 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2168.outbound.protection.outlook.com [104.47.57.168])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40wxndxh5m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 16 Aug 2024 23:12:38 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qx4ruxH+aqE4s9xC9wqv02RID0NGlSEn8TZFq6sOaKwCPqy11BBvh51Fxp+cFPZwFu8mVQnBFQ8SEDMPRIdPeU96Tjzxuaytw5CcP41kMgBUPWxAdHj81aBvT9rdD80jhMDGAg2BdwhJq574PsWSkKO8tYSDoZ5PoKZN3dowvT99/lSYgbK/V1rjsch9blPoVMvme5E4HE5h8mjVyq0P65VNgb427pyMF3jKiioOBQ6me4lIgOdPd8pxdMQonRkrogjdBya8xa6zL4IgVch923rBNCsejC4vO2fYU0saCnZGN175vY/VueqbGsR34uMsbDPjrWkKjJz0OhUqrHkAEQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zq/oo1yXY1DflTHhdhFcpKIyZ2V+XGuYvXJVukGRejw=;
- b=ZeN0kQtzzb6mPhMSiWKh3WMbBYf/Os0ILiLtNWZ3S9dzuLqO3MhrYXmCbxBUTvdltLncu/isU+ZAEFxHz6ZUR4ObqKlCx2NCvEvW8m+4/8SV/OJyfV8JRO3+wDEoIhvUrjz7gTxO08+Q4Ux8wFZg1YzavZ4yqbeW156+ECVZLkrMSHM65BdFTxKUo3+syexlh6mj4w2JAbm9srIvqEkvGbJVsXxBUwHI07CzhgfXedPtExvgkqD12Dj+b1wZtbF2Fi2J8oNfdj2zRtHySSPCdfFd4uMnXC6jW0SUpRwPaJODBOBztizgGFI1Pbu/9+CyxkuVTMvvg939ZgJIHDc71g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C47F12C46D
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 23:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723850080; cv=none; b=KXosnH9Fu4jAo+bpjBXN0gto05fzsM47sQu8r4LSyEx9YP74jbeDXWIni+QsZGW7c4YKJX40Grp1cuGAcEKcvYRHO4S/ghS/heDwypRnvmdHHdv6ThnM4/5qUVSVvZ/6cFDqQ1RupzK4FJOTA+gmGnLM2KBbGoo3cmstTN8Wxgk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723850080; c=relaxed/simple;
+	bh=CqGF+vIIR37/TO1jmzSxW7Ztfy1Ee1V06lXhLznk3pU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L4oKU45yS8jkb6QSpRXrsJrs7KZqA7d6nd38q2inWCjtg9fs0QrthaXYwEw3USstXal19dZ1R2hJKIwSPyIB9fiwcSG4p8pT4c4MeHHv1xq6aREBYR5eBYGZ6ktIIPwF8KejAY4DXid9BnAD0Tk3x29/3TeZ7w8csPEf5bEe9Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net; spf=none smtp.mailfrom=lixom.net; dkim=pass (2048-bit key) header.d=lixom-net.20230601.gappssmtp.com header.i=@lixom-net.20230601.gappssmtp.com header.b=10MusjK7; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=lixom.net
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-450059a25b9so23802251cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 16:14:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zq/oo1yXY1DflTHhdhFcpKIyZ2V+XGuYvXJVukGRejw=;
- b=cG/db0A5qr6ZZNg8jh6OSUjcwJnoexur50bBph0O0wlwWKD9ztZId4eLJSGMsh05cslBLGQggp0/thWZcR10TwWt3K5eqXdMSTOZXKoHi3Iy41gYQ/LH19sVM9NDf9CPgUp+yS5LRG2mUM9FHwi/QZLCIrJrADR7OaQJDwsnIAY=
-Received: from PH8PR10MB6597.namprd10.prod.outlook.com (2603:10b6:510:226::20)
- by LV3PR10MB8154.namprd10.prod.outlook.com (2603:10b6:408:290::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.11; Fri, 16 Aug
- 2024 23:12:36 +0000
-Received: from PH8PR10MB6597.namprd10.prod.outlook.com
- ([fe80::6874:4af6:bf0a:6ca]) by PH8PR10MB6597.namprd10.prod.outlook.com
- ([fe80::6874:4af6:bf0a:6ca%4]) with mapi id 15.20.7897.009; Fri, 16 Aug 2024
- 23:12:36 +0000
-From: Stephen Brennan <stephen.s.brennan@oracle.com>
-To: NeilBrown <neilb@suse.de>
-Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
-        Tom Talpey <tom@talpey.com>, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-debuggers@vger.kernel.org,
-        Dai Ngo
- <Dai.Ngo@oracle.com>, Jeff Layton <jlayton@kernel.org>,
-        Chuck Lever
- <chuck.lever@oracle.com>
-Subject: Re: [PATCH 1/1] SUNRPC: convert RPC_TASK_* constants to enum
-In-Reply-To: <172384934590.6062.4979843897031230836@noble.neil.brown.name>
-References: <20240816220604.2688389-1-stephen.s.brennan@oracle.com>
- <20240816220604.2688389-2-stephen.s.brennan@oracle.com>
- <172384934590.6062.4979843897031230836@noble.neil.brown.name>
-Date: Fri, 16 Aug 2024 16:12:35 -0700
-Message-ID: <87ttfkoye4.fsf@oracle.com>
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR13CA0221.namprd13.prod.outlook.com
- (2603:10b6:a03:2c1::16) To PH8PR10MB6597.namprd10.prod.outlook.com
- (2603:10b6:510:226::20)
+        d=lixom-net.20230601.gappssmtp.com; s=20230601; t=1723850078; x=1724454878; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ueNzYl5S7O1PRoMwwd5P/GZe77RoSlXmg5l4LsdO/TU=;
+        b=10MusjK7VPy78wF7+m6RiXOuxGPP4Dr02hzW4PBEsIcTmwLrI9XXV4UDB23J4AnmBm
+         +MUXzcyhg1irerW2d8vKrR3AYLJJlfBw0ssUZe92d9IzA7SEiTHyvCYRwx3aAHpyGQQC
+         sP1UoUhyEJvqf6IAS67EgFmthp6UTaQEdjxCiPs5X2K86NtdoMV5gbv2shxQsWoNKY1Y
+         3poLS7A3vtI4lvSPvTLPeolDsIXA/PRN0GftAaJK3pSDjVoCPJHcGAkP/zdti85y0wtQ
+         jUyFpZ1vc91qLU03X9SH33vv9uLkBW4UxjjWEtedhH/6qnf69+GyEeYsKMNbf3HveiVN
+         gEQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723850078; x=1724454878;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ueNzYl5S7O1PRoMwwd5P/GZe77RoSlXmg5l4LsdO/TU=;
+        b=Z68wMv7wSyuDhnmLLrco7uyEbs8qr4gka30HtG8zfk57FV0y5p8OXr0HLfAqIDuh15
+         OHpxjDlnX5d2iTKM/OBq5iL5Q4sTJSQ4dv7AC4Gb98O2CZg/jbfamXiG355Mm/xX52qK
+         Bt8XoQVqMGU6JL0fUco0t2svDiA3owk8FohUd41yFQURmgOeJhj+OvkQfxTZUrY7nO0S
+         fz2IWBi/pw8Dd56urwqmTg4L7ZVkqOO4/LhrYl2xDdTomYtDpNQHcfTOBgAFtROdkcjG
+         uq3H2WU+d7MziPh5ZL595eakAsmjSbslmxVd9unAuWTHu+XCyoIYwZwEX2wZHOfN78vL
+         ds5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWdF4rl9P0MHsgmIairYSZoGRE/YObRuTH9fPs4T3/UJVLQ5ZRRUb7O/RGuLvsrBp933CKiMfampKydJQQFJhOzWrQAEKL8VSIiUokv
+X-Gm-Message-State: AOJu0Yz/ojPJwJbx+WQ4FGmqcquWVUIP6mLDYMWHaTA0WjcTC16GmdA1
+	SAVSQWQ4xS29UA6JSH/bA63xth05o167flrMKh80dXdN4dXlyoi9NVbNxxTNsMgXwjGavskyiLt
+	XxoWbhl0gvQbHQ599/PZl8+9C4kYkiJv9XqNG0w==
+X-Google-Smtp-Source: AGHT+IF49VekPZCw/4NwZB0RcuzNygPEhsTRH8TcXdf45Xfzx0CgPlfWgMUjL+tdTNoBeYol1xBY8xm7kkQpO93mfF4=
+X-Received: by 2002:a05:622a:14d:b0:44f:ff65:97be with SMTP id
+ d75a77b69052e-4536787bea2mr152143891cf.14.1723850077946; Fri, 16 Aug 2024
+ 16:14:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR10MB6597:EE_|LV3PR10MB8154:EE_
-X-MS-Office365-Filtering-Correlation-Id: d3dca931-21f9-4be5-5d24-08dcbe48ea62
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?GL2K8tpVh4dU+a4SxvVFzeusSU09VSGzPhoPe95IunBTTArLyGgFHI1Ok3cd?=
- =?us-ascii?Q?mEb2wyPdhwexD7y6temiUct9UUUL4clzLDkl4Mnsd0ih3Dkwqx5ayxmUwNRf?=
- =?us-ascii?Q?krW7tmSwhySTeckN+zSIloejVTDiHL13lIiroww4BW6em5bCEvsngYQucbIi?=
- =?us-ascii?Q?cDWv1gG7EGfPRlWSBY1GLwAVkCCVk1BDWfE4I5s+ZM9Hoawrtjtn6qHSDEyu?=
- =?us-ascii?Q?elbgDw6oDcKycNbsf95v7988KCHkCob0lXqpUjZLKwAU5jyfmpcOWSbNZbMW?=
- =?us-ascii?Q?x+hEP2HuoLcPBZ6F3+ed4wYg8I/a+Hz2E0nSvUtwUhI/duPdpfqHKoMg/blu?=
- =?us-ascii?Q?I/2r1ZDvWJ85cDmCjPT33KJdddAW/OGU2mhCTHcpuOjDdd8/F7YrS7AGDMSC?=
- =?us-ascii?Q?9yXTzGv6l8ox7k9oCm3PWUe73YazpBKPLcwS8EpYxeANq/dJqv75EQF7P2Wc?=
- =?us-ascii?Q?i5SaSQDfG2tsxj6QX9NMa3cK7UESGeHtuqMJUTnu+dQ6r6OcTtq3vuWSde1a?=
- =?us-ascii?Q?vhKBrIv3yCQ6LFaLuivrcb3DKTfimTFmnM905SJxDLa9nLUQSfhL/U0rIeZd?=
- =?us-ascii?Q?1InwMSeNJGVlknlccPBsxcwppPYFoVBaFL8HVIU5jIwWIs+X0rPdmSl8GwDv?=
- =?us-ascii?Q?hy8khf4d6pVnSjAM+Z/ynESN9vSFs9NvqxICkjaSqqYoSw147z7fHBs5S6EC?=
- =?us-ascii?Q?McrzTmXPu6Iq6l/nEuBX1dUntEB0yvLEoljDpxC6fEtzbpw4ig+ZhoMz3P7g?=
- =?us-ascii?Q?nLUfflvdJLKmf8W+IZBAPbEZJRl2sYEWXdW4bC/M6TnkEXps7iF9G1RquCAv?=
- =?us-ascii?Q?4Ho8owCkDbzTLEphbkTIhFw2t2L83AnR9wcZTrUS4rWpSqEjY0CVvb+rALRF?=
- =?us-ascii?Q?u3Prz6u5FxXthwI4epay9vXHrJvX7pFo1eH8+Z+xqPii3nNupZ+1D0mBBNJS?=
- =?us-ascii?Q?trgHmE9ftLoiitznj7fVpOg8Az94/HYKFjG0eCmK4wM+jFBuqsXgxmqFykGG?=
- =?us-ascii?Q?FTctPJZ07xCe5DjopItFYdhqLbRO4xkG2zHfcebX9UnKWQB432yvZUCJTfx+?=
- =?us-ascii?Q?6Exl7dcEtPSe2qkcmTmHtBsC+IUgDaBJgc7ZKU/0AuOhPR7JTT6HeM9EyE/R?=
- =?us-ascii?Q?OAqycS9rdZhE1bepxOyf+Hre3NNUiVqW12K3pyDUJ6vMJPP7d+U+L3EXJ5RZ?=
- =?us-ascii?Q?yU2eHXcYpTlTskfA5kS6E8Dxj8lKPx19fNQGbKxS+Q9EMtr05CEk6TjRn6kC?=
- =?us-ascii?Q?o8RxbmwPA63/mpmDPLXS+j9IUnUdbrGE1S45pq9yGEMYmb8DgpeQ043IKpzt?=
- =?us-ascii?Q?aE9zUpA7zRt3FvXtksONJyQEHJyQBFRJBCXvI7aBpeDwnA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR10MB6597.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?iLNOIJsTaYl9uw2HJyyVqdJUiL5wxhPVn3fVnYwBoJSTfx9pI8O4vTFsmXRJ?=
- =?us-ascii?Q?Auo4DftkiGiSmcO74pTsi+TdgTy7EWtKthKzVbGFfQBZJfoOlimmdC+Wsc5C?=
- =?us-ascii?Q?HRTM8RfBU9IRbMRT4pEYD2UnsSr2yWP2xFS3/lVq0qGmzjiyROiMDdEB0VGs?=
- =?us-ascii?Q?HdA5Bg+omGjXsnRDT8bytqjKJckqbaOmB0IELQv/JTTAZ5UsKCExZJyRVEU3?=
- =?us-ascii?Q?GW0/9WeJXRwGxus+XllxowEnVQQ2caH7K8LtuN8vGboZktHC6et2gQFodDmx?=
- =?us-ascii?Q?C1JABunkCalbvZx7dW5vXzgjBIfttkp8QLf8TIrWUiY1ddz2GUqz/9Zw6QrL?=
- =?us-ascii?Q?WaFvrkMl/3R3zfolu7sCizE+AJchukdDVNyfqVdFqX71xEBVgE4x+Q7pjgsb?=
- =?us-ascii?Q?mHY66FfGrmkAtiMzOU49tXifjfBlGcwCaPzdBQhmarqIrendpRP1FbIqtGFR?=
- =?us-ascii?Q?Qxgnqmsdwb5bd0hLIiYveBkL8SJXBadAQEYpPPBEhrBzVXJEmqnupNlYmE41?=
- =?us-ascii?Q?14zcmxEOMuTNwT/5CgSzT2Zm6iECLTw7rKpdAXJ+11EymRtS2AsZRQjK8bwj?=
- =?us-ascii?Q?K+kTEQbc+icsFm8csGXcdG8LiLRC3uZxB3YaKeFgTP8qGz2dC6Zu4xeLIZC0?=
- =?us-ascii?Q?WaASLtyaNUlSi4o6ovpFJUCngFGKBAqlGXHMdK1SItMX0tA0lQ03AQQMgUZa?=
- =?us-ascii?Q?BmP7I/dNrzjxbxghGGl3Q+f58csmrAu1JSGfCeQDxps7nj9eOKxJTdECC5k7?=
- =?us-ascii?Q?mK3Oc+XyGwKsXDhLCD8TJDryUm9A/wbkeI9qg8xepvDmIBiRg1geBGCe4gYu?=
- =?us-ascii?Q?0V7gQ/9+d2EgHALo9S/7gjKJ15w/zooL/xBKaa8SH1TG5UuajcxvHO8WBBbj?=
- =?us-ascii?Q?DuHR2h2IIni4GS+/YQK/roAj0IxTYP7UpugdA0zq//KHN6GLfFDl+3OIdb4k?=
- =?us-ascii?Q?nDxp66qAOyB8kMTDG+ao/VJipfy9OCNtZL3T5DrMZcmXB4WIA3JUihA3ovi8?=
- =?us-ascii?Q?+yEZ+R0EHiTyOD1baqxR3jhAIEMsJBmS5dH8hTqeCJcEs/Q6Oo4ijgVyCKNr?=
- =?us-ascii?Q?wtTq9oc16AiVTUv4jUCfCnziGOwkmB7sGGeXAoEhTdOB10Fky0qEYcdYgmlM?=
- =?us-ascii?Q?QbiVuOKBC9tx+4dS1UplaxmiRR+Zpbd9CzdhBibq7mj/3PBq2bkNmtlhxs42?=
- =?us-ascii?Q?p8WlfRwlswJEOZKJKL9+bAXPeuTAAuiSe46XOCQABZ3TTvtj8TK1/hbomglE?=
- =?us-ascii?Q?SHC9rR3f3pisOLRkVLHhxtnAVeDWJOEjnmql28MDWaYXr0o19/lCPeut7zEo?=
- =?us-ascii?Q?OEKNteO9UGWxcdYlIG2sehVqWtqSfjVGuQcHe422UH52QwOnx/txD+e7XwB3?=
- =?us-ascii?Q?hNmWdqOUpiURc0npAbDbSwiSWZQZ6mb4o6rb8O0idDtRdk+is9EXFhBu30/Q?=
- =?us-ascii?Q?4NMPDCryqD0A+aUWBxZpdIybKwn+Ikw9xiGG3hjHFkmV81MeDhH62aX7CCee?=
- =?us-ascii?Q?lL0S90QpjiScj+yKb0xZ9c+2xn6AmNr3/kf/oLMwzoG2LP241OLf7z2ksFdH?=
- =?us-ascii?Q?Bas8LkiSwwn/4rj2UJGw6oDBrhi18qK8f/jGa9npfu1Bd4L989Tg5ocSqX2Y?=
- =?us-ascii?Q?5w=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	usEqlkTZBvzCZgeCCTjudeiKEsHT4zOCoZ/dvwBABJ0gJetBOlkWkgEqMsV8k1Nec0KOXbN6MWQLlyYQGpzozV12OXWrldiTq7SLBIwix0MpbpwHh0yPmLs/ArCUyDfYOQ8vgcBPseKtQa23CRGLuhK99m5aHWDaCpOLQF3YeEt9DJ7rKlv5vaSiQVPc/1LA7LYa3N1kJv/SIjIQwDqKK653fYMLSefc30B60EytrdYZ8bAdEdnHsupdjNJOKBhnLRhzNs6Ih9jhOuu1ZsC936B+TNj+uWpGqkrcwjDiC8heUiZI7XlQnWidjSx1ydzChAqxv5yedZqzyfWanEWLZmC2YpCLo3/AKDcbSg8FXSEmh6EfrAwAw4TcxgSv4zFEKgscNv21cr4fSEzBbuCrbOQwL4hhJDRaScwLGPGXL7cO+WOBzcvZi63qGVuD6EXuDgRMXS0FeOqhfh8HGAet/dvbfjtUD9nEJS3YVemP7OErdi9hcEWHlZMng1gH8S31RlHqJlEE/opWOO/PuoPcpkr5UQSXLg4m8DBmnEGT2lgq2qvCudk3IPXSFICoFBkeyxva5FqqUbASfJV81mEm9JRgFq+jGB9wOHdfAEOSLLY=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d3dca931-21f9-4be5-5d24-08dcbe48ea62
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR10MB6597.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2024 23:12:36.0256
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: d1pqWfYlzGCIsflZQcYldmbQ2HcyjnyHT7e6D2wzwlDN//11syMH55qJfhS79iM7d7Fh9yMYnAzRrm4Q5WEsDcBtXae3jnVa2ANoU/uTTy8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR10MB8154
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-16_16,2024-08-16_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 adultscore=0
- suspectscore=0 mlxlogscore=999 phishscore=0 spamscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408160165
-X-Proofpoint-GUID: R9UuiADBHdEFjZ9gL1DhFdI_tbKOV4H6
-X-Proofpoint-ORIG-GUID: R9UuiADBHdEFjZ9gL1DhFdI_tbKOV4H6
+References: <Zr+H3gHZ/B7zTKBW@lizhi-Precision-Tower-5810> <20240816181500.GA69082@bhelgaas>
+ <Zr+lslEn4cfBJ0A3@lizhi-Precision-Tower-5810>
+In-Reply-To: <Zr+lslEn4cfBJ0A3@lizhi-Precision-Tower-5810>
+From: Olof Johansson <olof@lixom.net>
+Date: Fri, 16 Aug 2024 16:14:27 -0700
+Message-ID: <CAOesGMi9F2S4LP5pp0tR4Ax0uf3z5cOgG6UKB3r3hAmjrC9gFQ@mail.gmail.com>
+Subject: Re: [PATCH 4/4] MAINTAINERS: drop NXP LAYERSCAPE GEN4 CONTROLLER
+To: Frank Li <Frank.li@nxp.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Zhiqiang.Hou@nxp.com, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-"NeilBrown" <neilb@suse.de> writes:
-> On Sat, 17 Aug 2024, Stephen Brennan wrote:
->> The RPC_TASK_* constants are defined as macros, which means that most
->> kernel builds will not contain their definitions in the debuginfo.
->> However, it's quite useful for debuggers to be able to view the task
->> state constant and interpret it correctly. Conversion to an enum will
->> ensure the constants are present in debuginfo and can be interpreted by
->> debuggers without needing to hard-code them and track their changes.
->> 
->> Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
->> ---
->>  include/linux/sunrpc/sched.h | 16 +++++++++-------
->>  1 file changed, 9 insertions(+), 7 deletions(-)
->> 
->> diff --git a/include/linux/sunrpc/sched.h b/include/linux/sunrpc/sched.h
->> index 0c77ba488bbae..177220524eb5d 100644
->> --- a/include/linux/sunrpc/sched.h
->> +++ b/include/linux/sunrpc/sched.h
->> @@ -151,13 +151,15 @@ struct rpc_task_setup {
->>  #define RPC_WAS_SENT(t)		((t)->tk_flags & RPC_TASK_SENT)
->>  #define RPC_IS_MOVEABLE(t)	((t)->tk_flags & RPC_TASK_MOVEABLE)
->>  
->> -#define RPC_TASK_RUNNING	0
->> -#define RPC_TASK_QUEUED		1
->> -#define RPC_TASK_ACTIVE		2
->> -#define RPC_TASK_NEED_XMIT	3
->> -#define RPC_TASK_NEED_RECV	4
->> -#define RPC_TASK_MSG_PIN_WAIT	5
->> -#define RPC_TASK_SIGNALLED	6
->> +enum {
->> +	RPC_TASK_RUNNING	= 0,
->> +	RPC_TASK_QUEUED		= 1,
->> +	RPC_TASK_ACTIVE		= 2,
->> +	RPC_TASK_NEED_XMIT	= 3,
->> +	RPC_TASK_NEED_RECV	= 4,
->> +	RPC_TASK_MSG_PIN_WAIT	= 5,
->> +	RPC_TASK_SIGNALLED	= 6,
->> +};
+On Fri, Aug 16, 2024 at 12:17=E2=80=AFPM Frank Li <Frank.li@nxp.com> wrote:
 >
-> I am strongly in favour of converting these #defines to an enum, but
-> having the explicit assignments in the enum is pure noise adding no
-> value at all.
+> On Fri, Aug 16, 2024 at 01:15:00PM -0500, Bjorn Helgaas wrote:
+> > On Fri, Aug 16, 2024 at 01:09:50PM -0400, Frank Li wrote:
+> > > On Fri, Aug 16, 2024 at 11:12:31AM +0530, Manivannan Sadhasivam wrote=
+:
+> > > > On Thu, Aug 15, 2024 at 03:15:52PM -0600, Rob Herring wrote:
+> > > > > On Thu, Aug 15, 2024 at 9:53=E2=80=AFAM Manivannan Sadhasivam
+> > > > > <manivannan.sadhasivam@linaro.org> wrote:
+> > > > > > On Thu, Aug 08, 2024 at 12:02:17PM -0400, Frank Li wrote:
+> > > > > > > LX2160 Rev1 use mobivel PCIe controller, but Rev2 switch to d=
+esignware
+> > > > > > > PCIe controller. Rev2 is mass production chip. Rev1 will not =
+be maintained
+> > > > > > > so drop maintainer information for that.
+> > > > > >
+> > > > > > Instead of suddenly removing the code and breaking users, you c=
+an just mark the
+> > > > > > driver as 'Obsolete' in MAINTAINERS. Then after some point of t=
+ime, we could
+> > > > > > hopefully remove.
+> > > > >
+> > > > > Is anyone really going to pay attention to that? It doesn't sound=
+ like
+> > > > > there's anyone to really care, and it is the company that made th=
+e h/w
+> > > > > asking to remove it. The only thing people use pre-production h/w=
+ for
+> > > > > once there's production h/w is as a dust collector.
+> > > > >
+> > > > > If anyone complains, it's simple enough to revert these patches.
+> > > >
+> > > > My comment was based on the fact that Bjorn was not comfortable in =
+removing the
+> > > > driver [1] unless no Rev1 boards are not in use and Frank said that=
+ he was not
+> > > > sure about that [2].
+> > > >
+> > > > But I think if Frank can atleast guarantee that the chip never made=
+ into mass
+> > > > production or shared with customers, then we can remove the driver =
+IMO. But that
+> > > > is up to the discretion of Bjorn.
+> > >
+> > > I think Bjorn's request is impossible task. Generally chip company se=
+nd
+> > > out some evaluted sample to parter, which use these sample to built u=
+p
+> > > some small quantity production. Chip company have not responsibility =
+to
+> > > call back this samples. There are always some reasons to drop mobivel=
+ and
+> > > switch designware, it may be caused by some IP issues which can't mat=
+ch
+> > > mass production's requirememnt. Such informaiton already removed from
+> > > nxp.com. Only Rev2 left.
+> >
+> > If you're reasonably confident that nobody will notice the removal of
+> > support for Rev1, we can include that in the commit log and just
+> > remove it.
+> >
+> > The original commit log basically said "we don't want to support Rev1"
+> > without any indication of where those parts went or whether anybody
+> > might care about them.  But if Rev1 only went to partners for
+> > evaluation and we don't expect end users to have them, I think it's
+> > reasonable to say that and remove the code.
+>
+> Thanks, I just find 2020 Yang li try to drop dts part in below thread:
+>
+> https://lore.kernel.org/all/CAOesGMhz8PYNG_bgMX-6gka77k1hJOZUv6xqJRqATaJ6=
+mFbk6A@mail.gmail.com/
+>
+> Olof Johansson raise concern about their HoneyComb.
+>
+> I added Olof Johansson in this thread. I think HoneyComb use evaluation
+> chip to build some small quaitity boards.
+>
+> As my best knowledge, rev1 should have some big problem. I can't find any
+> detail about these because rev1 informaion already cleanup totally. I don=
+'t
+> prefer continue use risking rev1 chip.
 
-I agree, I only included it in case reviewers would prefer to be able to
-see the values, as they were with the #defines. But I think it's common
-knowledge that enums start at 0 and increment by 1.
+I paid good money for my HoneyComb, and while it was an early system,
+I certainly wouldn't expect it to stop working because some maintainer
+is bored of supporting it. It's clearly been commercially sold as
+systems.
 
-> Would you consider resubmiting as a simple enum that uses the default
-> values?
+Mind you, I can't remember last time I powered on my system any more,
+since I mostly use the Ampere board or VMs on my Mac for ARM linux
+work when needed, but that doesn't mean I want to send off the
+HoneyComb to recycling.
 
-Definitely!
+Don't regress your users. Thanks.
 
-Thanks,
-Stephen
+
+-Olof
 
