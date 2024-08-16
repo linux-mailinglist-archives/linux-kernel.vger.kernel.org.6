@@ -1,207 +1,154 @@
-Return-Path: <linux-kernel+bounces-290008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E8C954E5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:02:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF13954E65
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14AAB284FA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:02:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 690BC1C21A3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73BE71BE242;
-	Fri, 16 Aug 2024 16:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4411BF322;
+	Fri, 16 Aug 2024 16:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KZ5BjdJY"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6XS9IMV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897D31BB68E
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 16:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F921BB68E;
+	Fri, 16 Aug 2024 16:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723824168; cv=none; b=EvYjST1jSb+RgUd2Np8Zzoy4iCmBo6MjJzt7kzCeEl5z/+i03dAeGgINVGFt+Y8FB2CBN3Joso2AcAquZStM0CflF7TLFZDj8riWf5D4Uwq6eGpgFeSE8BHxePBbGhH0EW3f8VzO46rjQp6lw3uOgYXaZinV1K8GZo5rrHug2iE=
+	t=1723824176; cv=none; b=rfzYoWa6u/hcV39OKDSwoRyQDzSwDi8xEmpdSpzJPAvEqD2ZBMvldnLpWUAb+ts1m9aBJkdmWbVE2Zf0gJAL2oCX+RyneJIivCtlbV6YWymqsrvy1ytaA/tjLObfOFPsxtkgxQrWD42clFbZ80/S+cMac4lmIzQ4OTZHYFFVXqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723824168; c=relaxed/simple;
-	bh=L8Gio1lKEf6ScjWD+hvMyeDe/0qL5kpCnp2TfQU8btU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uUqewLQzYtl/Q/p9AK+dn4jJ8UYO2qFJ0rpkvnPEBeDNxquIzWvo7e3pqiH07tqMSaXuPKPVIAUDodqP0DvBlDksCfEYxdHHWSiXsvM4iH3CfVBtOALvKbaFOIb6NeIQLIVC4UnewCeffyyXTtyUxSi8EnrtJOvUvvp2nAnVH4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KZ5BjdJY; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7b2dbd81e3so321961366b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:02:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1723824165; x=1724428965; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+59+r4nVPaGYn60uFGeWEcerq53321A8XpZYq36YoFE=;
-        b=KZ5BjdJYy3+q4S8v21Ahy4AptDT2oZ0FluDT8BJ/1vSWP2OAvh2jqDG0Un5J9veUPe
-         jGJOMLxQGbs/aYDH2LXkEdHc8AcxCcomFU4LJzz1//R+Z8xvC9HSCwSMDTqpN2X8JRqp
-         0bTkwZC/zHb5awUMRR4DOE2VAlfnDYo6cHFfHyREmnp+ZZi9UejBoYWqSDqbIj3uYSF+
-         e5IFb8l6AzbE82NQ6VF2mNoVZgjFGmA76TEMWWdKeRJG+1ITR3XnnTuBQQ72TTDoBG4a
-         ilEbCzl65aIKLPQQJm8Vk4bq79FsrFuX7BWFzCO5kEgnqhRcguWQpCxXNzvGcR7s5E6O
-         kXcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723824165; x=1724428965;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+59+r4nVPaGYn60uFGeWEcerq53321A8XpZYq36YoFE=;
-        b=wS+rUkNRS/CNR5Vu/nh5CizAWmjmX+wnrdhy1iGC5buIVoVPgnL++6KHdJMm9i8O4v
-         Jq7YUQEG2kLrlkRkVD5g/aiLrvsoSVme3XMupHI/GDNBipDq/mLTsIsP8D47Q+WvLiVQ
-         IVDWsGdg8bhAKfuTiJntVqH6ka5BryJD5n7OMZMPLY5ePGmrunv9eGHV+AL7y4QDonKQ
-         4KONid88pPmCQzN3+moXWj4JVMo8GUMmUj5P59RixJbdlCxyAG5VWdrqCoXhLUbq8vgc
-         fTFleMeWlh7FaIXHwoE4QFdWst4EP6LgBgzVK2Mvg3m8ENy0trTMPmTM0xf0Wa7aPipL
-         NbfA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1/uXQ02UODFpHY6kPMFquvimMXT2bLU4sMxC6iyd0lSL9OSywYToECuVd2OXOayNMtUf91DfgWv7qf3QzjTpt0RZNWFuDBarwwDFI
-X-Gm-Message-State: AOJu0YwzG3KHHhhjZW2yZdAfo2UgglqN5kV/l+F7beMqDhVK0lcmESkr
-	AA+3vKo3L01RtlByEcZTSMkl00gkqMwPumKinO7+nCf72rJgE9behwafvbMKJhI=
-X-Google-Smtp-Source: AGHT+IG6GfcQCc6qS1Tf6UMdMwBMR1h8V/kjKhBjDxeM3vw9QJvQ8VaMgJdw6yG0tZp3rI37wfsQJQ==
-X-Received: by 2002:a17:907:e6e2:b0:a7d:a25b:31be with SMTP id a640c23a62f3a-a839295925fmr243898966b.39.1723824164697;
-        Fri, 16 Aug 2024 09:02:44 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838d00f0sm272387466b.87.2024.08.16.09.02.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 09:02:44 -0700 (PDT)
-Date: Fri, 16 Aug 2024 18:02:42 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Miroslav Benes <mbenes@suse.cz>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	Nicolai Stange <nstange@suse.de>, live-patching@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [POC 3/7] livepatch: Use per-state callbacks in state API tests
-Message-ID: <Zr94Iu7_wSdLgz9S@pathway.suse.cz>
-References: <20231110170428.6664-1-pmladek@suse.com>
- <20231110170428.6664-4-pmladek@suse.com>
- <alpine.LSU.2.21.2407251343160.21729@pobox.suse.cz>
+	s=arc-20240116; t=1723824176; c=relaxed/simple;
+	bh=ojxinrOLcNbVPPySpuUlMDM4K5NF51Th8jrtqoS20cg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AQ1D3IvDccgXugaXcYO8d6H19Ok6QE9JomNqNsGQNMrBIU5Ynr7OIJr6Y/hXEMAWeys54L/vOg7eM+y3mZEeNVNIz57uMGfj22Y6LlN6Hv3l8OkEjsgX8mjVd+y3yWs1zh2pXkyVsT1Hxa+wGaocqRensXEy82iTxqf+flqsNgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6XS9IMV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C280BC4AF0B;
+	Fri, 16 Aug 2024 16:02:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723824175;
+	bh=ojxinrOLcNbVPPySpuUlMDM4K5NF51Th8jrtqoS20cg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=U6XS9IMVKC34MPnxz65HHLOwwDzDPs4pNteWmVXQo2fPky2z5uchrNhUtqKX5EK7h
+	 +sU1R//EFZ0eTQR58kQNLdk0PqUwS1ZojjwsGn0/TpOGvCp4YCEO9i5KhiNGiFr/zN
+	 zh6WuM5cAFleSAlas8PDfIxjS1kOSzxGdMwmCmsRCmbYXZuhydcBiVB5gWYa9JuwRK
+	 b4uD0O+mCaJrWIQqJF1pNHFiUSz6Gbo3gQ4VoftrMjTi8GDGq1USfK50Oj8rLHZcux
+	 qAJSoCGmjIp/LeqmBg3iaqNxTFHrk29CT2YOmOjpP8DPnP90jnmUEXRlh1TYeeU/H2
+	 K80AU49JkwQOg==
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2610c095ea1so299616fac.3;
+        Fri, 16 Aug 2024 09:02:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVSPf7tkgyTdw/98ehGJFzNLc7yPTlUSkdTzljf412j+SVJX7UgVM0r2nQkRR7Im0Jcmno5jby37qI=@vger.kernel.org, AJvYcCVuvr7pBxb/FpBstRgazoaxSxAqH6Go4A3YLf6zL4FEMX36rqxPZ+sKWdsy7DSfwFz7F86fcO7kJGJrzOx2@vger.kernel.org, AJvYcCWIhfybxHA+sBNqk3EBlFNybfyIIk6Z9gyvxo3vM7wgQ0X2QnW628Vf9B+6xo2QFEyy4d/7WIZZfh1Ai7PE@vger.kernel.org, AJvYcCXa9xdD8AbA90uMYekMZPRIHJ0mKAXmhJ4gZkTE2F/k+UpAG8OLtAM97mueIm3ZEsheEbRln8/MVdyaNbg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2Y2js8Dd1Lv9VVoh7OT+b4FOyRVrCipscHBnVYQ9rwqlcnzgD
+	HyV9DnE13yx8RmtMQFuPRS63hlfyK/mQKM5DdKa7yZOO/z2jwRwq3Lg4kDp/xq98pWMH2lZuZ1k
+	o9WIEUlLaOjTCX1rQ0vf7kDxEyj0=
+X-Google-Smtp-Source: AGHT+IEDPxTrNj6EFPbZPOKHv1diO/kM3WHBW6ox5eiR/xox4p4nBVhdyxkPOCjWMWDzftuYBn/6jRnxKDNjx57c3Zg=
+X-Received: by 2002:a05:6870:b253:b0:25f:401a:2ec3 with SMTP id
+ 586e51a60fabf-2701c0a7b6fmr2095254fac.0.1723824174920; Fri, 16 Aug 2024
+ 09:02:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.21.2407251343160.21729@pobox.suse.cz>
+References: <20240816-b4-cleanup-h-of-node-put-thermal-v2-0-cee9fc490478@linaro.org>
+ <20240816-b4-cleanup-h-of-node-put-thermal-v2-4-cee9fc490478@linaro.org>
+ <CAJZ5v0j9WTzd5qg3bLLB6Y41xu1zoJMy7TV1xhFxEzW-x=b5=w@mail.gmail.com> <3b33d0b0-ae9f-4afe-af2f-9596394bcc4f@linaro.org>
+In-Reply-To: <3b33d0b0-ae9f-4afe-af2f-9596394bcc4f@linaro.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 16 Aug 2024 18:02:43 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ix+mJy6snyYuYg711ERmbJ8cNYV6DtmK1WZGur-Pd2-A@mail.gmail.com>
+Message-ID: <CAJZ5v0ix+mJy6snyYuYg711ERmbJ8cNYV6DtmK1WZGur-Pd2-A@mail.gmail.com>
+Subject: Re: [PATCH v2 4/7] thermal: of: Simplify thermal_of_for_each_cooling_maps()
+ with scoped for each OF child loop
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Vasily Khoruzhick <anarsoul@gmail.com>, Yangtao Li <tiny.windzz@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, Chen-Yu Tsai <wenst@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 2024-07-25 13:48:06, Miroslav Benes wrote:
-> Hi,
-> 
-> On Fri, 10 Nov 2023, Petr Mladek wrote:
-> 
-> > Recent changes in the livepatch core have allowed to connect states,
-> > shadow variables, and callbacks. Use these new features in
-> > the state tests.
-> > 
-> > Use the shadow variable API to store the original loglevel. It is
-> > better suited for this purpose than directly accessing the .data
-> > pointer in state klp_state.
-> > 
-> > Another big advantage is that the shadow variable is preserved
-> > when the current patch is replaced by a new version. As a result,
-> > there is not need to copy the pointer.
-> > 
-> > Finally, the lifetime of the shadow variable is connected with
-> > the lifetime of the state. It is freed automatically when
-> > it is not longer supported.
-> > 
-> > This results into the following changes in the code:
-> > 
-> >   + Rename CONSOLE_LOGLEVEL_STATE -> CONSOLE_LOGLEVEL_FIX_ID
-> >     because it will be used also the for shadow variable
-> > 
-> >   + Remove the extra code for module coming and going states
-> >     because the new callback are per-state.
-> > 
-> >   + Remove callbacks needed to transfer the pointer between
-> >     states.
-> > 
-> >   + Keep the versioning of the state to prevent downgrade.
-> >     The problem is artificial because no callbacks are
-> >     needed to transfer or free the shadow variable anymore.
-> > 
-> > Signed-off-by: Petr Mladek <pmladek@suse.com>
-> 
-> it is much cleaner now.
-> 
-> [...]
-> 
-> >  static int allocate_loglevel_state(void)
-> >  {
-> > -	struct klp_state *loglevel_state;
-> > +	int *shadow_console_loglevel;
-> >  
-> > -	loglevel_state = klp_get_state(&patch, CONSOLE_LOGLEVEL_STATE);
-> > -	if (!loglevel_state)
-> > -		return -EINVAL;
-> > +	/* Make sure that the shadow variable does not exist yet. */
-> > +	shadow_console_loglevel =
-> > +		klp_shadow_alloc(&console_loglevel, CONSOLE_LOGLEVEL_FIX_ID,
-> > +				 sizeof(*shadow_console_loglevel), GFP_KERNEL,
-> > +				 NULL, NULL);
-> >  
-> > -	loglevel_state->data = kzalloc(sizeof(console_loglevel), GFP_KERNEL);
-> > -	if (!loglevel_state->data)
-> > +	if (!shadow_console_loglevel) {
-> > +		pr_err("%s: failed to allocated shadow variable for storing original loglevel\n",
-> > +		       __func__);
-> >  		return -ENOMEM;
-> > +	}
-> >  
-> >  	pr_info("%s: allocating space to store console_loglevel\n",
-> >  		__func__);
-> > +
-> >  	return 0;
-> >  }
-> 
-> Would it make sense to set is_shadow to 1 here? I mean you would pass
-> klp_state down to allocate_loglevel_state() from setup callback and set
-> its is_shadow member here. Because then...
+On Fri, Aug 16, 2024 at 2:22=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 16/08/2024 13:30, Rafael J. Wysocki wrote:
+> > On Fri, Aug 16, 2024 at 9:40=E2=80=AFAM Krzysztof Kozlowski
+> > <krzysztof.kozlowski@linaro.org> wrote:
+> >>
+> >> Use scoped for_each_child_of_node_scoped() when iterating over device
+> >> nodes to make code a bit simpler.
+> >>
+> >> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+> >> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> >> ---
+> >>  drivers/thermal/thermal_of.c | 8 +++-----
+> >>  1 file changed, 3 insertions(+), 5 deletions(-)
+> >>
+> >> diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of=
+.c
+> >> index 94cc077ab3a1..ce398fde48bb 100644
+> >> --- a/drivers/thermal/thermal_of.c
+> >> +++ b/drivers/thermal/thermal_of.c
+> >> @@ -373,7 +373,7 @@ static int thermal_of_for_each_cooling_maps(struct=
+ thermal_zone_device *tz,
+> >>                                             int (*action)(struct devic=
+e_node *, int, int,
+> >>                                                           struct therm=
+al_zone_device *, struct thermal_cooling_device *))
+> >>  {
+> >> -       struct device_node *tz_np, *cm_np, *child;
+> >> +       struct device_node *tz_np, *cm_np;
+> >>         int ret =3D 0;
+> >>
+> >>         tz_np =3D thermal_of_zone_get_by_name(tz);
+> >> @@ -386,12 +386,10 @@ static int thermal_of_for_each_cooling_maps(stru=
+ct thermal_zone_device *tz,
+> >>         if (!cm_np)
+> >>                 goto out;
+> >>
+> >> -       for_each_child_of_node(cm_np, child) {
+> >> +       for_each_child_of_node_scoped(cm_np, child) {
+> >>                 ret =3D thermal_of_for_each_cooling_device(tz_np, chil=
+d, tz, cdev, action);
+> >> -               if (ret) {
+> >> -                       of_node_put(child);
+> >> +               if (ret)
+> >>                         break;
+> >> -               }
+> >>         }
+> >>
+> >>         of_node_put(cm_np);
+> >>
+> >> --
+> >
+> > This clashes with
+> >
+> > https://lore.kernel.org/linux-pm/1758256.QkHrqEjB74@rjwysocki.net/
+> >
+> > which I would prefer to go in first if you don't mind.
+>
+> My other patchset which fixes bugs here, could go in before:
+> https://lore.kernel.org/all/20240814195823.437597-1-krzysztof.kozlowski@l=
+inaro.org/
 
-Right.
+Right, but these don't clash significantly if I'm not mistaken.
 
-> >  static void free_loglevel_state(void)
-> >  {
-> > -	struct klp_state *loglevel_state;
-> > +	int *shadow_console_loglevel;
-> >  
-> > -	loglevel_state = klp_get_state(&patch, CONSOLE_LOGLEVEL_STATE);
-> > -	if (!loglevel_state)
-> > +	shadow_console_loglevel =
-> > +		(int *)klp_shadow_get(&console_loglevel, CONSOLE_LOGLEVEL_FIX_ID);
-> > +	if (!shadow_console_loglevel)
-> >  		return;
-> >  
-> >  	pr_info("%s: freeing space for the stored console_loglevel\n",
-> >  		__func__);
-> > -	kfree(loglevel_state->data);
-> > +	klp_shadow_free(&console_loglevel, CONSOLE_LOGLEVEL_FIX_ID, NULL);
-> >  }
-> 
-> would not be needed. And release callback neither.
-> 
-> Or am I wrong?
+It may make sense to push them for 6.11-rc even.
 
-No, you are perfectly right.
+> so it will be backported. Other than that, I am fine with rebasing my
+> changes. There is no point in refactoring the code if it is being
+> removed/reshuffled :)
 
-> We can even have both ways implemented to demonstrate different 
-> approaches...
-
-I have implemented only your approach ;-)
-
-That said, I am going to keep the callback so that the selftest could
-check that it is called at the right time. But the callback will
-only print the message. And a comment would explain that is not
-really needed.
-
-Also I am going to add a .state_dtor callback so that we could test
-the shadow variable is freed. The callback will only print a message.
-It is a simple shadow variable and the memory is freed automatically
-together with the struct klp_shadow.
-
-Best Regards,
-Petr
+OK
 
