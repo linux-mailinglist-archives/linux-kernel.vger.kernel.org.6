@@ -1,102 +1,135 @@
-Return-Path: <linux-kernel+bounces-288863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEA18953FC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:37:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58E66953FC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE2C51C215D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 02:37:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 875C31C22531
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 02:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A054EB45;
-	Fri, 16 Aug 2024 02:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3E34AEE5;
+	Fri, 16 Aug 2024 02:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bSvSh/J2"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="F0muKMew"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BE33BBF0;
-	Fri, 16 Aug 2024 02:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D4840855
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 02:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723775837; cv=none; b=rXfO3ZpB8SYwtWjZlSa6m3eiedwI3fA7zMS2D3dyIzRUkenAgo2HNPcv/eBf0mdrCt4ecxpIkCVFLPlbAoy4MsEE2YwcMuULfjSEyH/IQHtHS4CMiZ7neNdNY4eAeLQByevah9l5C4+1MUTkLR5iod5R3vsECBwZKU3sfHN5IC8=
+	t=1723775918; cv=none; b=o1t4uh81ye3h7HAt28JoU0j51fhol+nrWr2jTwbGD3M43zmfXTq55QMKlBye7Reb4Aq6kXte36J8GDNCOqwHGwyhouqcC1w7VBOZFiWmepJqwNuYNcudlIQXLBwVTxuyM4kaz6XXTy8QxiTYfMhXsCxO9xaIRv2ui2cNS40UXEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723775837; c=relaxed/simple;
-	bh=vggDPjbhV3B731uzAW1Ngq9NG5Q490vhaIBLHRvNpfw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=VY4IfAq7z78VQ6QvveI3id6S1O7O7hOQhtPUY9K8Hnh7VP7tsAJy2x4/qUvLrWxZl5GPnxBKDm3u5jQAagOixTt7q/7BOVNg62aI692y8tw1EuosH8BZ9Jqxrbe95HFdDurNvD7ARVQyDvnA4CHZvMH9p2sVZ2VUMRSOr8wmCFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=bSvSh/J2; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1723775829;
-	bh=7s/vjw87jUi3EyQnj3hLWyZPai0CczgO0DX3b1l3Htc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=bSvSh/J2hb2N2BsyUm5oi3rsPtyBIt6zbT5QKfLawC/fO7n3Zq4pEoBClkI7+5ojT
-	 g3R42UXj0YsMn5f5Ttpd9b0ple7I1fggKgdBS/kZyFqt9TzF+H8I2BcFr8/3QiIovz
-	 Ty0GvXBU0HpgwHWdy3tnToIV8I/GpY1n7iSCnoD7kdJlhCGq6qFbKXBMGk2LCcIXG6
-	 1a/JE8pfAuDt0BnnlEx3EqlHG3wHdBnOtP1KyXK2gjS8pMKwOLs7NOMzFl0QTGZDTh
-	 bph39iWbSTsZ4jMepi/+VlzWCt5sq8+laNlC5tpRgJt6ID6mBfMI0dzFu/1kNmqnir
-	 LAt749e4LiRzw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WlR395xqyz4wd6;
-	Fri, 16 Aug 2024 12:37:09 +1000 (AEST)
-Date: Fri, 16 Aug 2024 12:37:09 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Greg KH <greg@kroah.com>, Andy Gross <agross@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the usb tree
-Message-ID: <20240816123709.3fbfef5d@canb.auug.org.au>
+	s=arc-20240116; t=1723775918; c=relaxed/simple;
+	bh=P78B+OYBGqEJQl4cyhbCurfcxBY2SL9cXnCHcM08L+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TrZsSua1Ic/qFGuxG4lXGQP3kQYYLm5pw6G+r2XL00dz6SjvwGRAhS61MIAS0fzFIA6Eoc/SUrx+MhdauLwXi2rjc0U1PwqPpuEcD96IslwfzJThtN/JqHtEH6H1Vg+L+XN1uJpHgdLhw+oiKA6v5y1exOFSD2wJbYbD1bENc4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=F0muKMew; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7c3d9a5e050so1121503a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 19:38:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1723775916; x=1724380716; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8nkeK/grZEPp6IQRQFIGhpI12QpEXAYnL1RbISrkxAw=;
+        b=F0muKMewCaZuG5ph1Fd/qL1l/XHlK+85N87DtikUnke8GtDTGp9Kn/bon1qTgOfwwu
+         Phly24lfk3fgDsYg9VLwVgL0cS6YJJE1+5mbM9UbdRAnu0agNQ/MXWnHSajli+flCIAx
+         yfQNC99GWxWqqD6i9SdHHEzEgC//xuyKIxyEU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723775916; x=1724380716;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8nkeK/grZEPp6IQRQFIGhpI12QpEXAYnL1RbISrkxAw=;
+        b=YNb7ZAxDheQC+Y++XdTFHcVi5y6mkJe1wm4V/ypRl1O6Vx469uKi+qZh47d1WOWjqL
+         ZZKxh1lyx20wLr9OhuvXi1mZlJhpqt8qT/KgMx2/KPQ7Y4i51C9Zb80Mpe34f1AaZ7ua
+         Lzsh0rJHFYg7q52FDK4PHcBAVur63YeG9XCnftdzXnBbQ+vPUOs9DlzkQSEXA6Obxlcd
+         AkGtPBmlg4EtiWcREp8fbPMrJU/jdT9+T1SP0uZO5aE27hruFjkV31rpKVRbhmWMA5e8
+         cjH5I11BSEr8BTJGkGMjZcjpzi+mSxTH2lDZYk7nC8h25yYk7HvtIo6oU9tfDyJKcb/4
+         8Zog==
+X-Forwarded-Encrypted: i=1; AJvYcCXMfck68j3JXBMyqfTkAL3/pK+TzIw+y+E88qz8QbG/PhhJmCKPcwrnsPJHoELyzzRTl0DZud6IohrpWdZ1MFSalCJJqTbjKtABv3+K
+X-Gm-Message-State: AOJu0Ywa22K/KO7eyAplzB0mJt42PcPiye6j20DiNNTkrgIHvLSMjQyV
+	49/yBKusoZk+B0U2V3pO4Yz99V2dURsGFfCF2y/gZ00kDGx4sB7kgNcX2ZMa5g==
+X-Google-Smtp-Source: AGHT+IGegcpN6PTlCQdus+u+voVSTHi7JDqFrQQctnE1TWePFTgJ0CP8SHDsrEvJSNpF3jUTY4JSCA==
+X-Received: by 2002:a05:6a20:d493:b0:1c4:81ab:1f5e with SMTP id adf61e73a8af0-1c90503036amr2025225637.38.1723775915977;
+        Thu, 15 Aug 2024 19:38:35 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:fe02:865:f677:1481])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f02fb465sm16522355ad.51.2024.08.15.19.38.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 19:38:35 -0700 (PDT)
+Date: Fri, 16 Aug 2024 11:38:31 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Matthew Brost <matthew.brost@intel.com>, Tejun Heo <tj@kernel.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] workqueue: fix null-ptr-deref on __alloc_workqueue()
+ error
+Message-ID: <20240816023831.GD12106@google.com>
+References: <20240815070339.346160-1-senozhatsky@chromium.org>
+ <20240815070900.GB12106@google.com>
+ <20240815072427.GC12106@google.com>
+ <Zr4lN63t25Og5/0G@DUT025-TGLU.fm.intel.com>
+ <Zr4rosIiK2a0sGhc@DUT025-TGLU.fm.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Ve+44h0LhE=v4GlSvcK3nXi";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zr4rosIiK2a0sGhc@DUT025-TGLU.fm.intel.com>
 
---Sig_/Ve+44h0LhE=v4GlSvcK3nXi
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Matthew,
 
-Hi all,
+On (24/08/15 16:24), Matthew Brost wrote:
+[..]
+> diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
+> index 8ccbf510880b..5e818eae092d 100644
+> --- a/include/linux/workqueue.h
+> +++ b/include/linux/workqueue.h
+> @@ -534,7 +534,7 @@ alloc_workqueue_lockdep_map(const char *fmt, unsigned int flags, int max_active,
+>   * @fmt: printf format for the name of the workqueue
+>   * @flags: WQ_* flags (only WQ_FREEZABLE and WQ_MEM_RECLAIM are meaningful)
+>   * @lockdep_map: user-defined lockdep_map
+> - * @args: args for @fmt
+> + * @...: args for @fmt
+>   *
+>   * Same as alloc_ordered_workqueue but with the a user-define lockdep_map.
+>   * Useful for workqueues created with the same purpose and to avoid leaking a
+> @@ -543,20 +543,9 @@ alloc_workqueue_lockdep_map(const char *fmt, unsigned int flags, int max_active,
+>   * RETURNS:
+>   * Pointer to the allocated workqueue on success, %NULL on failure.
+>   */
+> -__printf(1, 4) static inline struct workqueue_struct *
+> -alloc_ordered_workqueue_lockdep_map(const char *fmt, unsigned int flags,
+> -                                   struct lockdep_map *lockdep_map, ...)
+> -{
+> -       struct workqueue_struct *wq;
+> -       va_list args;
+> -
+> -       va_start(args, lockdep_map);
+> -       wq = alloc_workqueue_lockdep_map(fmt, WQ_UNBOUND | __WQ_ORDERED | flags,
+> -                                        1, lockdep_map, args);
+> -       va_end(args);
+> +#define alloc_ordered_workqueue_lockdep_map(fmt, flags, lockdep_map, args...)  \
+> +       alloc_workqueue_lockdep_map(fmt, WQ_UNBOUND | __WQ_ORDERED | (flags), 1, lockdep_map, ##args)
+> 
+> -       return wq;
+> -}
+>  #endif
 
-The following commit is also in the qcom tree as a different commit
-(but the same patch):
+Oh, I haven't checked the workqueue header.  Yes, you are right.
+A macro should work.
 
-  3c2360f1a50e ("dt-bindings: usb: qcom,dwc3: Update ipq5332 clock details")
 
-This is commit
-
-  34b8dbef668a ("dt-bindings: usb: qcom,dwc3: Update ipq5332 clock details")
-
-in the qcom tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Ve+44h0LhE=v4GlSvcK3nXi
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma+u1UACgkQAVBC80lX
-0Gz5fAf/VC4+LPcpETCzuACb0mCtf1pGW76tVCKHxVlTRGsspKgLbrhUhuIgZowi
-Oj9N0bs0t67aED0qXwqrQG1/rI3v5zJn8sKu2FVjFzILsf6RZMhYyD6xzs2K2vte
-a+5LQzu0r7MIkV85ourBubao2pc+hnFGOjkEo+aNJtREtkRGMcR38WkgU1COM3/H
-8gHH7j2jUaEIUj8I8B+zH3ySrP+7AOTlIS9K1oPqUkDXrrhK2PYTOWquDR1T9bpX
-aSLe4XGR2+0iHB6ZweLkbWpaOISv61EIJDub07pwnN/BAvr74yssq7bXbZ5cybh6
-+WKPkF9raBDqk68SPRsmNRk97CFJdA==
-=Hc1l
------END PGP SIGNATURE-----
-
---Sig_/Ve+44h0LhE=v4GlSvcK3nXi--
+Tejun, how do you plan to handle this?  Would it be possible to
+drop current series from your tree so that Matthew can send an
+updated version (with all the fixes squashed)?
 
