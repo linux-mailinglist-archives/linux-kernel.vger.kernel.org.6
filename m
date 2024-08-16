@@ -1,164 +1,161 @@
-Return-Path: <linux-kernel+bounces-289234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB076954372
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:54:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7F29954379
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D060C1C21F19
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:54:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 596DD1F210B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598E514600D;
-	Fri, 16 Aug 2024 07:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0066313DBB1;
+	Fri, 16 Aug 2024 07:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PMSdsoqS"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eXh16FHM"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59DE13CAA5;
-	Fri, 16 Aug 2024 07:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D338B770FB;
+	Fri, 16 Aug 2024 07:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723794688; cv=none; b=nvakIqL9aFQpYnm3kKIWpVYeaL8og0v7K1euiO8CsjQY4MtVCtiEsP+MoQirw6jPgFH/SVYFxnuymNF/nEYsBQXUAktaTKoWmfsgaulbLpcJxTL54nAwG/ZiBaZuqre/7QQiHLUTUTP4/TYeLY/5sEUI74AulkUOyV4cmMIZURM=
+	t=1723794774; cv=none; b=TCCsWm1OJSqyQzscLfGYXBEUJgKqEFiI1Jq1Vq4ck8b+2beW49x0MajrBIqUUSvQmZcEtMe4yXYB6tud6uKHQ128dszLqWi9YjiINfjCr7HSU7FXQPX3V1FXcgN+LDQ9Q1BDlz4K4/EAhrI6VeTJLpjHuhqdyCtp4so0iYJMfoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723794688; c=relaxed/simple;
-	bh=QbDGTrOuqa+9JhAPdZB7MbiB7g0LqwVmKKAqqQeXAR8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oDS/c95E2SeIdIEqWMFf84P0PS5EwZe5A2TAUdIUjqWaz6/Bh+Kqcpxo7GsXpqaMM24p80lBTrUma54AdF1OcP0mhfHCRPxRe+iAzl3aCrXnHU90xuy1awIvpj5yC+gGWyHwkwrCYK0zTaPoW73FcXfvo/HSu/dhOll3QLbrV5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PMSdsoqS; arc=none smtp.client-ip=209.85.221.53
+	s=arc-20240116; t=1723794774; c=relaxed/simple;
+	bh=tfZn2p8RWXsTl4oUausz/H/NOrc1d5GvPHxwW131Bcg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UWRUj7BAPcnLyVPORrQBetlDzljY48gCfEjJ8iCzfacxGmY4LJMh+4OKHTPl67W/m+5rhSNFqUltn2tObDj/LtWtHW2u4tJthmkYU3OsGa4Te84ubkqvGikwi7jKgFEqHmDwX12RoWFpwxVNhyHbPfLhuswMr/GaUD6petNQLxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eXh16FHM; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-36dd8a35722so902379f8f.1;
-        Fri, 16 Aug 2024 00:51:26 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-710ce81bf7dso1384604b3a.0;
+        Fri, 16 Aug 2024 00:52:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723794685; x=1724399485; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ftpauJHvJu+xnhEvp7WCn3mWm6mJ6dwVq2EMLSHYt5k=;
-        b=PMSdsoqS+GkoQv2eo3xQHb9OK9DWtO9wiQP7xhU/0FQU2RvOfAsFoABzMxJtk6xpT1
-         83pvkxAmbKI+gHezxfvNUcPrFMjsk9OSdy9tVwaDbv+wG5FKDL896GRTwT3qnMU3fUZy
-         2HsqseBwzYckWD1tjcQHCXKysvUaSjcfoO4ELICDku8Wc4EDkQcfYx6PPQI/T/gT0baG
-         m4DizQaRfQo0Bs+/oTZcIx42aSxYbRvO4kL8Hmpt690w7xktcdJwYRkoGTS1Fq2tiwWN
-         aW6KXhFTsT8c2KbF81Fchde15fj5eGhDBIGIwZQmqu06mxT7cLZ2TCVxOANgzmeSFZET
-         UX4g==
+        d=gmail.com; s=20230601; t=1723794772; x=1724399572; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=yCqitL2vC4TIDXevMyjj4uRZNh6ztGM5H4Qtombp2RM=;
+        b=eXh16FHM+xPFKJ+lb2ZIrnldHi2Nhpil6r4USgqqLGTi8rsBouamXJ0AjJNVbR3eoR
+         R3UAVogvmhK2RSS5l+LlWXm+YE8M/NVEVf8oeCeZ9oJJ8VeB2LP/pS4TuhtnJO1IaBkf
+         e+I74kZOtD9eF0WiUMHcoT8FAYCmjuJgbc1MEMLWztiJJpURZTyDrGPjbYzJTjh5hug8
+         29LluBkIh2GEXpP5ulLId66MLLSnpWPcgANhRLBtm+BVxQnpBuET0mpzBYSHVIuLgZex
+         clLCqVi+F0QnLr5DmBOJx6w0aCNFyGSSNyPHIXbF9cRVTK6jjzOdnto5RddasXiAoZ5d
+         kkUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723794685; x=1724399485;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ftpauJHvJu+xnhEvp7WCn3mWm6mJ6dwVq2EMLSHYt5k=;
-        b=mcSI+6wJLT/u/ObGb9FrR3TPuZbQ66XBNRV3hk+5CiYp2Z+AI3SujsWOOYJlbAcuCt
-         D4Y0fNMB1Xh6FSquCt6cRB8HGuZW8vFQve07dgiqm0P4VG9fFq7Rdnj0cu09gAgGT5FH
-         EvjY64euz8if6/HsCD59ZFe62L/p2VSaDPBZY40VP3qjl6+p8EO6/cqKCwQyieWjsGsP
-         7UuinUZTW+xUew8AdNR6IqzblWis4lxN4Ix4f7wgWcWwb5gLrJfFgCxLcBePsBMJBg0v
-         pFbR6H0lAPDuEy+//jQVDOHdmfqx7WlWcUTrxl9f1NwmLJs77yYICyW3GpJQYwtHLsMj
-         MrTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQrbqmEHicxgRZTlkb/NQ5W3mSWSRTt3TTBoW00qvsJG5PpUcHPH1yhWzzfuC0VHFxOXmiShBiJRnWADVrj92wMGLAf9YaSoyGv63PM+XPVQzMSLK4T5hBZhn/2QxfwLj5VIxVpPvOUw2S3uHmSSHir6hmnKgrpAX2UrmxtAG+W0gxgVSR5AXkGOJJyQ==
-X-Gm-Message-State: AOJu0Yyy3RlEt3qg0oD7Z6SJLBeNVA/FnXi9bwWM3zUVbUxezOjSVYIY
-	i3ovLclNr2JcNhCcYXWR0Jq+TRcFCcqg0kFTfndOjE61hJUzHlbL
-X-Google-Smtp-Source: AGHT+IFcWSg7R6ZOrgOTbSp4WTq9l/KTHzuMWJwWrtjUMZDFfV6LDRMvpsDKBTTz+8GRTCWba44Jpg==
-X-Received: by 2002:adf:fa50:0:b0:367:9881:7d5e with SMTP id ffacd0b85a97d-3719431e648mr969068f8f.8.1723794685161;
-        Fri, 16 Aug 2024 00:51:25 -0700 (PDT)
-Received: from tablet.my.domain ([37.30.8.221])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718985a6c4sm3026201f8f.52.2024.08.16.00.51.23
+        d=1e100.net; s=20230601; t=1723794772; x=1724399572;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yCqitL2vC4TIDXevMyjj4uRZNh6ztGM5H4Qtombp2RM=;
+        b=OyhQ0ZPKH1yhvoB21Sho59ALJXXVPjVvecZj74GMuNNp78kuqqE8cWokzD8Utqx5Ib
+         1zAheg6KRcnqhiEDYkNjePLbfQZ6hhFBR0RCrgMhF2lxQpAu9F9Q28hVAoa3bwFHQXtb
+         w6tOfe+EGB887NYEYGEjuEisgM/n9MA3e3DEzg1DtpRMZL1NR60/i4PhVrmfYzKqIunV
+         xnib068rpUlFvuKNNIAb9XJZ+53U6ni87Oipg6tqrF8OvVlzRoGIcrmiPawgO81dBJB/
+         3UPig1BEKJG6rZ6LI0hjn5vlvf85qWDCJEnka6u/+ZTCrA3IImcB7JM06KU4kGcIKDDp
+         DlKw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/KLh4xn/+um8Xw53uOKOECONlo4olpK1uZiwphHS0zmtQjHL2oOUmSqu0+pSp0A1WQ30rksm1CQC8RP87A5nODJokadY2nglAwFxG8xLrDBTCLEU+KKNhr+nO3ts7KsURvYjb+B3Bddr2/4iCHXerW3hkSi0RWFF2G9iWbA1XZCiOIc4=
+X-Gm-Message-State: AOJu0Yzl4aYj5EiRcNactxUQsbUBuAotPfWOkbMO1fXmZDE2bEZgFub9
+	Esfx1Hj0cauLEPH1EFqymb9tcy+14r0IOP2Ji+osg37UKO3YV+7i
+X-Google-Smtp-Source: AGHT+IHdnjMLFDrXUew2brTPTbI8QrOzvSdpXJjVxuaYGbaPyCkKr6kIrNP/oBcqOANohn4tjt9yJw==
+X-Received: by 2002:a05:6a20:ce48:b0:1c3:ea28:3c0e with SMTP id adf61e73a8af0-1c90502fa13mr2781425637.33.1723794772163;
+        Fri, 16 Aug 2024 00:52:52 -0700 (PDT)
+Received: from thinkpad ([36.255.17.34])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f02fa4d5sm20764945ad.41.2024.08.16.00.52.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 00:51:24 -0700 (PDT)
-From: Artur Weber <aweber.kernel@gmail.com>
-Date: Fri, 16 Aug 2024 09:51:03 +0200
-Subject: [PATCH RESEND v2 6/6] ARM: dts: samsung: exynos4212-tab3: Drop
- dummy mic bias regulators
+        Fri, 16 Aug 2024 00:52:51 -0700 (PDT)
+Date: Fri, 16 Aug 2024 13:22:44 +0530
+From: Manivannan Sadhasivam <manisadhasivam.linux@gmail.com>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Avri Altman <avri.altman@wdc.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	YiFeng Zhao <zyf@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
+	linux-scsi@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] scsi: ufs: rockchip: init support for UFS
+Message-ID: <20240816075244.sbul4gsaem4skon4@thinkpad>
+References: <1723089163-28983-4-git-send-email-shawn.lin@rock-chips.com>
+ <20240809062813.GC2826@thinkpad>
+ <421d48b7-4aa7-4202-8b5f-9c60916f6ef6@rock-chips.com>
+ <20240810092817.GA147655@thinkpad>
+ <3b2617f5-acb1-45c6-993c-33249fd19888@rock-chips.com>
+ <20240812041051.GA2861@thinkpad>
+ <49659932-5caf-433b-a140-664b61617c43@rock-chips.com>
+ <20240812165504.GB6003@thinkpad>
+ <b91b18fa-7af0-46c0-a3f7-550676b7a222@rock-chips.com>
+ <9fd536a9-b0bf-46a6-92c2-503ea16f7fcd@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240816-midas-audio-tab3-v2-6-48ee7f2293b3@gmail.com>
-References: <20240816-midas-audio-tab3-v2-0-48ee7f2293b3@gmail.com>
-In-Reply-To: <20240816-midas-audio-tab3-v2-0-48ee7f2293b3@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-sound@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- Artur Weber <aweber.kernel@gmail.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1778;
- i=aweber.kernel@gmail.com; h=from:subject:message-id;
- bh=QbDGTrOuqa+9JhAPdZB7MbiB7g0LqwVmKKAqqQeXAR8=;
- b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBmvwTnloZNW8WuZLkNUngAi1UB8gAHT75XHcj2c
- tku/+yxd1GJAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCZr8E5wAKCRCzu/ihE6BR
- aEYfD/0X5RW1LxXFB1Mj5dXgnFZv0jcjZjmJMmmqXCSEU5pWFlL3B9cgA1TTpj/Uc8goGZE4niC
- oZXdJJWsLU8pmJ21p5ntE7KeN9cPCezRa2Pvh+Rwaimx1SYyZS4Pv7SVuYcyRq/u8daN7Cyay2y
- vbVqEzuwd7Vnjq7PjL7hVSRO2uqm55Nhxd2MW/HLVCDH7m6Kkxwcf+9bLuUPtlEgU4G2XNHmWlw
- 9A3yNFd8Al3As+WBAxkegsxgAzIWeec0J+QZ59lUHipaqx3mcwyINrWXCWqoMe+4XsCKmdqN39h
- IS2MyC/FDZF7cZq/s18BkOf7rb0CUuA9yfkkqhgiaajxpRftKSWoQgEnIc7SXQ5UfWd9Awni1iX
- zCoThh47d5DwlLuvqCn6hNin+x10y/ZxPmjl+hab10Hwm5ZyxupCGzgGTfcenFtsCoUVd3Rj7Q8
- k6QEjCrzVPgTv+eIv0JqDnMOW8SU96UimCL5C4fnLHEEJ3y4VXY54szWAXWM/2fwvEH4n+WJ9Pz
- ae8fM3CQKDC+W1S/BrfrIDVON3AduYhpHtjdBGxt8bdYqr3HegtZfMGreIkpTjCogFX7NTtWt5l
- F66ewVkEvh4O5SU3KHMu4CzwXQ0ZBJMC6x/x832hBc8kJOsEPZeYL/YQ078cMPqFOuAvDiImaKd
- heg8dTSdgvuuS1Q==
-X-Developer-Key: i=aweber.kernel@gmail.com; a=openpgp;
- fpr=E663000EAC1DECCD6AD2890DB3BBF8A113A05168
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9fd536a9-b0bf-46a6-92c2-503ea16f7fcd@rock-chips.com>
 
-Add the samsung,tab3-audio compatible that makes mic bias regulators
-non-required, and drop the dummy main/sub mic bias regulators that
-don't exist in hardware.
+On Tue, Aug 13, 2024 at 03:22:45PM +0800, Shawn Lin wrote:
 
-Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
----
-Changes in v2:
-- Rename earmic bias reg node to voltage-regulator-4
----
- arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi | 20 ++------------------
- 1 file changed, 2 insertions(+), 18 deletions(-)
+[...]
 
-diff --git a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-index 70e3091062f9..553ddc3d42da 100644
---- a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-+++ b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-@@ -286,21 +286,7 @@ display_3v3_supply: voltage-regulator-3 {
- 		enable-active-high;
- 	};
- 
--	mic_bias_reg: voltage-regulator-4 {
--		compatible = "regulator-fixed";
--		regulator-name = "MICBIAS_LDO_2.8V";
--		regulator-min-microvolt = <2800000>;
--		regulator-max-microvolt = <2800000>;
--	};
--
--	submic_bias_reg: voltage-regulator-5 {
--		compatible = "regulator-fixed";
--		regulator-name = "SUB_MICBIAS_LDO_2.8V";
--		regulator-min-microvolt = <2800000>;
--		regulator-max-microvolt = <2800000>;
--	};
--
--	earmic_bias_reg: voltage-regulator-6 {
-+	earmic_bias_reg: voltage-regulator-4 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "EAR_MICBIAS_LDO_2.8V";
- 		regulator-min-microvolt = <2800000>;
-@@ -310,10 +296,8 @@ earmic_bias_reg: voltage-regulator-6 {
- 	};
- 
- 	sound: sound {
--		compatible = "samsung,midas-audio";
-+		compatible = "samsung,tab3-audio", "samsung,midas-audio";
- 		model = "TAB3";
--		mic-bias-supply = <&mic_bias_reg>;
--		submic-bias-supply = <&submic_bias_reg>;
- 
- 		lineout-sel-gpios = <&gpj1 2 GPIO_ACTIVE_HIGH>;
- 
+> > > > For runtime PM case, it's the power-domain driver will power down the
+> > > > controller and PHY if UFS stack is not active any more（autosuspend）.
+> > > > 
+> > > > For system PM case, it's the SoC's firmware to cutting of all the power
+> > > > for controller/PHY and device.
+> > > > 
+> > > 
+> > > Both cases are not matching the expectations of {rpm/spm}_lvl. So
+> > > the platform
+> > > (power domain or the firmware) should be fixed. What if the user sets the
+> > > {rpm/spm}_lvl to 1? Will the platform power down the controller even
+> > > then? If
+> > > so, then I'd say that the platform is broken and should be fixed.
+> > 
+> > Ok, it seems I need to set {rpm/spm}_lvl = 6 if I want platform to power
+> > down the controller for ultra power-saving. But I still need to add my
+> > own system PM callback in that case to recovery the link first. Do I
+> > misunderstand it?
+> > 
+> > And for the user who sets the rpm/spm level via
+> > ufs_sysfs_pm_lvl_store(), I think there is no way to block it currently,
+> > except that we need to fix the power-domain driver and Firmware to
+> > respect the level and choose correct policy.
+> > 
+> > 
+> > So in summary for what the next step I should to:
+> > (1) Set {rpm/spm}_lvl = 6 in host driver to reflect the expectation
+> > (2) Add own PM callbacks to recovery the link to meet the expectation
+> > (3) Fix the broken behaviour of PD or Firmware to respect the actual
+> > desired pm level if user changes the pm level.
+> > 
+> > 
+> 
+> Sorry, I misunderstood your comment, so the action should be
+> (1) Set {rpm/spm}_lvl = 5 in host driver to reflect the expectation
+> (2) Use ufshcd_system_suspend/resume, but keep our own runtime PM
+> callbacks as we need a extra step to gate refclk.
+
+Ok.
+
+> (3) Fix the broken behaviour of PD or Firmware to respect the actual
+> desired pm level if user changes the pm level.
+
+If you do this, then you don't need (1), don't you?
+
+- Mani
 
 -- 
-2.46.0
-
+மணிவண்ணன் சதாசிவம்
 
