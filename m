@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-289930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5737B954D71
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:16:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFD51954D72
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D8191F2313A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:16:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDBA41C22924
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2821BDA9F;
-	Fri, 16 Aug 2024 15:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B338F1BE221;
+	Fri, 16 Aug 2024 15:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fro6VY66"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qQVmu7j8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AAB1BDA8D
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B9D1BDAAF
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:16:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723821374; cv=none; b=TOCkthEx8Mv2eeKZKVOxy2dkXHIJ0si8Uw7MAdnoN9EpDP5yXYY0XOtCSpfEOHTe0UY4HyqQ6XMGsbwJljhfqkMfwQIPqJttXXw17ygT8zPv+7OhCt+Rqa9EdnBKTHM/5yXYljRCcjqUIolwBNuZXGM5Zd2uPVxtQ4vWpt3XcCE=
+	t=1723821376; cv=none; b=b6u3P5V59xT2A0l0pUIod+Q9ivoRkd8Lh3IsO2mD05lk+T/DHIEYBhLkzFNEwOriqskBFwWj4Jg3QOXbsk6Iaia7B3+64qe51dVaxWNo25iTryLjfDBC2McM2725DHXeH7auJ1VWzju+3LEBYosAVxnR4+5CgM8hqmjRYAzLJk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723821374; c=relaxed/simple;
-	bh=Xsn/3V8HAsaSr8+jJTpvmwUPP1YaWFhuA3vlnt3b5JM=;
+	s=arc-20240116; t=1723821376; c=relaxed/simple;
+	bh=/TCiUdpUtUAWWSgqxG0aVXkx54503kY4wFwBTtIoSvc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b/TrQ3NJcDvuDQVoCZMrjxnsZgQm1sENTaMdd9a6NdbqyJYdR/1NaMZGqq+I7TALQw5lD2c2CppGV0S+TsfwodshOM78RDA6IDFLBcLaaRwrLjH0A1GHdhzBzZM130VEvlGpDfTsXk/w6MmW8c4pPkJtklyAY8IS7p4iTpVqxAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fro6VY66; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B498C4AF0C;
-	Fri, 16 Aug 2024 15:16:12 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ZR6Lv8sd/zO48jqmyjQUt8BECZOxWmCUjgNa4Bpmh2iNzhn86iGpR3rzLYfjhaWHXxeLkTxGHAnYmb88IlUmT9I+A1mjeYN7hwn6BLFymWevQ7nQ9Xz1Y6qMrXDpcG//zF8TF6E2tJE01T+o2CcpQR8d0+jxYFF1ICcYFcdOJ9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qQVmu7j8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C09EC4AF09;
+	Fri, 16 Aug 2024 15:16:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723821373;
-	bh=Xsn/3V8HAsaSr8+jJTpvmwUPP1YaWFhuA3vlnt3b5JM=;
+	s=k20201202; t=1723821375;
+	bh=/TCiUdpUtUAWWSgqxG0aVXkx54503kY4wFwBTtIoSvc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Fro6VY66JOAvZZWN/ack5RhT8lSuzmI62uQrlePh4uxCwLenfSu1HrOoSWmHtC4ig
-	 V7lpQqgdganaO5jsrRnb1+fhIRVOytpesUb7avfMDa7UmODMJck82XR538t1mxMNKh
-	 6GLhu6zIKUmLyvNQ2IM07eIu0QaWqfhlKVZ5alDDFoEls8r5aRUfJ+KPvA88U/HLVf
-	 3eyGJvfMc/3IGVWQSEL4+gmoJes/goPOm89YZe+jj9UR5z4BrCaRrkRrMvMeEL8QaL
-	 9qLmywmdE++yk9Z788cYI5rontbkZVKAqR8A/3Wb72843Gg/CrlfyR6EJSXkGjZ/Mu
-	 XVNH/t7LusSAQ==
+	b=qQVmu7j8/ch3SIz6Pi6G+AbNbGw2mnr/W2EhmCm9lPV16QiDS8MxCgfgdxVNcz+CG
+	 sO7fG8mCTPGC+BehUrP7Mi0D+ZYVfTLpfDKuA9I6xyZ7h4PpUtqmbRIeQY6Qecdcmd
+	 FS6an+D+LdET6TO+dUZ2avOV+MpeGFLePYyKzjA0z51/7UVFhcPOUMPK6V1OgEToMj
+	 OaCcWkzEa9rfV3n6XSaBv2Kf4Msc7XaZ2QuGij1UhVR3G3hJ0NNTKSpOh0aZ4/javo
+	 gkTSAp6wnGF1+I0QkqGtqs3G2ra7SP8hhnJCRKgB7wYeXPvBJElvUl608gBzBj8ODt
+	 eJN6ggO3CFZGQ==
 From: Will Deacon <will@kernel.org>
 To: linux-arm-kernel@lists.infradead.org,
 	Anshuman Khandual <anshuman.khandual@arm.com>
@@ -48,12 +48,12 @@ Cc: catalin.marinas@arm.com,
 	Will Deacon <will@kernel.org>,
 	Ryan Roberts <ryan.roberts@arm.com>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64/mm: Drop PMD_SECT_VALID
-Date: Fri, 16 Aug 2024 16:15:51 +0100
-Message-Id: <172380381358.1159450.414153868649059752.b4-ty@kernel.org>
+Subject: Re: [PATCH] arm64/mm: Drop TCR_SMP_FLAGS
+Date: Fri, 16 Aug 2024 16:15:52 +0100
+Message-Id: <172380389611.1159869.2327634530338895264.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20240724044712.602210-1-anshuman.khandual@arm.com>
-References: <20240724044712.602210-1-anshuman.khandual@arm.com>
+In-Reply-To: <20240724041428.573748-1-anshuman.khandual@arm.com>
+References: <20240724041428.573748-1-anshuman.khandual@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,17 +63,17 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Wed, 24 Jul 2024 10:17:12 +0530, Anshuman Khandual wrote:
-> This just drops off the macro PMD_SECT_VALID which remains unused. Because
-> macro PMD_TYPE_SECT with same value (_AT(pmdval_t, 1) << 0), gets used for
-> creating or updating given block mappings.
+On Wed, 24 Jul 2024 09:44:28 +0530, Anshuman Khandual wrote:
+> Earlier TCR_SMP_FLAGS gets conditionally set as TCR_SHARED with CONFIG_SMP.
+> Currently CONFIG_SMP is always enabled on arm64 platforms, hence drop this
+> indirection via TCR_SMP_FLAGS and instead always directly use TCR_SHARED.
 > 
 > 
 
 Applied to arm64 (for-next/misc), thanks!
 
-[1/1] arm64/mm: Drop PMD_SECT_VALID
-      https://git.kernel.org/arm64/c/4b6049b643f4
+[1/1] arm64/mm: Drop TCR_SMP_FLAGS
+      https://git.kernel.org/arm64/c/6ac96d6f9a8e
 
 Cheers,
 -- 
