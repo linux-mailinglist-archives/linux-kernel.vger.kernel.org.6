@@ -1,73 +1,45 @@
-Return-Path: <linux-kernel+bounces-289242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0CDD95438E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:58:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40DE5954390
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:58:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70C3D28616A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:58:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7339E1C2293F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2747E139566;
-	Fri, 16 Aug 2024 07:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36A181AD7;
+	Fri, 16 Aug 2024 07:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f1XR5SrA"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="yw7SDA5P"
+Received: from out187-14.us.a.mail.aliyun.com (out187-14.us.a.mail.aliyun.com [47.90.187.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B469712C465;
-	Fri, 16 Aug 2024 07:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B578112C474
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.187.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723795067; cv=none; b=ErhzussS7r+vLMK5p87HcIN4F1FEL6/2Xnk9kgXr3prCA9sYcRHu15te+6L2nP/IIoakajh8wiw+gs+09xjQZ57v8JOfVfR0pFGXk9bJhi8P0BNEgfcuSp+dgvx2F8DQr/qTd0Uxgd41EgG01Mu+ccb2zLHbTVWmREj3HjqhtaM=
+	t=1723795113; cv=none; b=eoiickM5FQOTnz9cy6FeGyTbOFnXH/AS1jHHDcUEyF+dHJbl5a5EX6GVkDLrIYnPIcbMZAwrUEp+4shbN2Pg6/8Ea4AL5Yt+GLEFXzLgTv8ue+xmbXTDI0LpYoAL+gCwPW6dCdRWP7Lp0TulkX0qoDKFdmop///gJg+fytDkKrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723795067; c=relaxed/simple;
-	bh=G2jlt/Zahw0uvrixwlEmuFXlOjRYk/7lnomRN/YsPXM=;
+	s=arc-20240116; t=1723795113; c=relaxed/simple;
+	bh=JPrziY53lmIaRZNj3oni7Sa9qL5xtqYp4oJ7Z9QfGoA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YGC3JivvGIP49rv0+L/+mcWCaLlezD9kF/KawlvP2z3L7WMPfOMwv6EutTkwbNICmhzH6Hce9INF3TUgbcBGMZn8b7danMC/pl/1MOJiKueAAT+EblNfEqoYHxjyViVcm+nMsDhB7WdAQfLNRlXkzzT8GKrG2wPbBIP8zU/BhDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f1XR5SrA; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4281ca54fd3so12131835e9.2;
-        Fri, 16 Aug 2024 00:57:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723795064; x=1724399864; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/hpKq9oPj8Y9788s3d9UlaZGkOn+HemVqrY+6SPwvT8=;
-        b=f1XR5SrAARb0vevCMsfMTiYW3uAcFQ+tOUx0vh4JMe1ia+SJKQaVf4kMCzc1MKMysv
-         WgwJDhr+KA4qQKnGRfGchC9E4gm+fU5giRCZiF8nLgFDh/T7T1t2O5y1BcfXWNG0vljD
-         FlBlRwJd9Eoubey6rTScGI4LmZk/Z8h4bCmjP+GSG6QrBaOUlyIOJd4EYEcs+8Y/3v1x
-         zGcWl3l5KFJHSFq2oXmGN/+PYQHGa0O43sQ+q58FhIDnQUp3T8E3pMoaE5QcYPqTcKjP
-         +Ypd6tpzjP75d7a3awng93gS3pnBI1cIiwOoClrvfaksc5vppf7czKNZF/unQpLujUy/
-         VZ5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723795064; x=1724399864;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/hpKq9oPj8Y9788s3d9UlaZGkOn+HemVqrY+6SPwvT8=;
-        b=XVRIHJgGa1Wa7sND2ViKfB7N4N9JTMiSnddpR9LAs+iXTpUK1cNWNEx0z/Krvl80Xc
-         wGgo1mUuixMRYNHkGMto+LqdS1I3LVjEoxSrjwTjpfow2DOCb4vgcqIlgdXCFntpH4D5
-         Rn+HcG8Io1WyjUHBzlrpWHkMsXLQWAQ/4MJoepGmR2ZLTHeJ36sLoWXzIfNfXs7S5C4y
-         sctx064YDeZCwTVl6TFRYqx8j8lBDPbOEJxIzsD5CUW0DQfhov+btgQXpa0p6ONMWiij
-         mORXARD324kWGIw6/tgvc75Cq5ypHWIi98GA2lsDLcaUEIxAbfx3jvdMWcTllGIXw11M
-         6zFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsB9+MemBkUa00JjuJjg5tMOvfPoG7DAxCPMvDmsii00/Cf/3r1FKEdOALXZ6uWffrByPgUWsm+2zKx1FXurrHwJdSpr5QOZHKnTrZeZFYUSK6QkbswMTuwquXDx77DwsV5DoyGGzAtJWWbfySs7mTXOdYZIDssKaFOiExKlkiF44jiDHzlmhaNH2WyA==
-X-Gm-Message-State: AOJu0YwvDphb9pgP+BaT+NARhU8eVVDIZ3XUptrID79ikwkHQKYUXMzG
-	KHkJ3Kaiu33ptoNLxXCZrLBZIXyFzi8a2RCsFLcEqW6LMA7DbAKG
-X-Google-Smtp-Source: AGHT+IFkYuIDGhTHJIU5UPzFH2tdVmRDBc3T9L7x3l6nhQIU5VxzrBn2oDAa71sjqZDhgmvmU0RlLw==
-X-Received: by 2002:a05:600c:1e0c:b0:426:6f17:531 with SMTP id 5b1f17b1804b1-429ed79dda1mr13171385e9.13.1723795063630;
-        Fri, 16 Aug 2024 00:57:43 -0700 (PDT)
-Received: from [192.168.252.55] ([37.30.8.221])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898abf2csm3022392f8f.107.2024.08.16.00.57.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Aug 2024 00:57:43 -0700 (PDT)
-Message-ID: <8513b07f-ed64-497e-9881-3666983154ae@gmail.com>
-Date: Fri, 16 Aug 2024 09:57:40 +0200
+	 In-Reply-To:Content-Type; b=ed3Ld3q3Q3VMdNIJvjHyxZfZJv07JGsaSol3LtJhWlZlMy2zgwh8v0D8M5NjHowbpa6DtnyWwIW8nL7hFoYxwVlK0BoLOZIu7z9BTbsIKg0CJDA9ss/YPLCYsoGs/R9qp5deGe321MjFVsYLduDNPSs8kVLK7K0L5lmRFa/RLwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=yw7SDA5P; arc=none smtp.client-ip=47.90.187.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=antgroup.com; s=default;
+	t=1723795097; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=LExdO87mry8HyL7SOp36JtNIHE4EzuqTMVIvTdhoH/s=;
+	b=yw7SDA5PqZ8MZnkEFDluBTYptkTHUvMzcsjUZCKFwc8nrwEv+LvHb9Hw1jO1KZc6GzC3uMSxG5mVfYF7Zov8lFq3mfC4WjG4pYAZgUQ5Hi4rIz6C8OzECW4ZEojMpFsPHV1Zneaemcj6nWUQUBP0jwgKY1pwrEC7QdSKVkzwnIs=
+Received: from 30.236.48.76(mailfrom:tiwei.btw@antgroup.com fp:SMTPD_---.Ytc8sKJ_1723795088)
+          by smtp.aliyun-inc.com;
+          Fri, 16 Aug 2024 15:58:16 +0800
+Message-ID: <8caaf7d5-a0a0-4888-b467-d8fc84830f8a@antgroup.com>
+Date: Fri, 16 Aug 2024 15:58:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,93 +47,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v2 1/6] ASoC: dt-bindings: midas-audio: Declare
- required properties for GPIO jack det
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-References: <20240816-midas-audio-tab3-v2-0-48ee7f2293b3@gmail.com>
- <20240816-midas-audio-tab3-v2-1-48ee7f2293b3@gmail.com>
+Subject: Re: [PATCH 4/6] um: Remove unused mm_fd field from mm_id
+To: Benjamin Berg <benjamin@sipsolutions.net>, richard@nod.at,
+ anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net
+Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240816015447.320394-1-tiwei.btw@antgroup.com>
+ <20240816015447.320394-5-tiwei.btw@antgroup.com>
+ <3be8448cfb2aeb39e0e73856a701101dc8a0f04f.camel@sipsolutions.net>
 Content-Language: en-US
-From: Artur Weber <aweber.kernel@gmail.com>
-In-Reply-To: <20240816-midas-audio-tab3-v2-1-48ee7f2293b3@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "Tiwei Bie" <tiwei.btw@antgroup.com>
+In-Reply-To: <3be8448cfb2aeb39e0e73856a701101dc8a0f04f.camel@sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 16.08.2024 09:50, Artur Weber wrote:
-> GPIO jack detection requires an IIO channel and the detection threshold
-> to work. Explicitly declare the requirement in DT schema.
+Hi Benjamin,
+
+On 2024/8/16 13:59, Benjamin Berg wrote:
+> Hi Tiwei,
 > 
-> Fixes: 0a590ecc672a ("ASoC: dt-bindings: samsung,midas-audio: Add GPIO-based headset jack detection")
-
-Sorry, looks like the Reviewed-by tag from Rob Herring[1] didn't apply:
-
- > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
-Best regards
-Artur
-
-[1] 
-https://lore.kernel.org/all/172235554875.1349313.9208770866983277057.robh@kernel.org/
-
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> ---
-> Changes in v2:
-> - Use anyOf instead of oneOf in headset-detect-gpios/headset-key-gpios
->    if: statement
-> ---
->   .../bindings/sound/samsung,midas-audio.yaml        | 29 +++++++++++++++++++---
->   1 file changed, 26 insertions(+), 3 deletions(-)
+> On Fri, 2024-08-16 at 09:54 +0800, Tiwei Bie wrote:
+>> It's no longer used since the removal of the SKAS3/4 support.
+>>
+>> Signed-off-by: Tiwei Bie <tiwei.btw@antgroup.com>
+>> ---
+>>  arch/um/include/shared/skas/mm_id.h | 1 -
+>>  1 file changed, 1 deletion(-)
+>>
+>> diff --git a/arch/um/include/shared/skas/mm_id.h
+>> b/arch/um/include/shared/skas/mm_id.h
+>> index 1e76ba40feba..b3571a8afec9 100644
+>> --- a/arch/um/include/shared/skas/mm_id.h
+>> +++ b/arch/um/include/shared/skas/mm_id.h
+>> @@ -8,7 +8,6 @@
+>>  
+>>  struct mm_id {
+>>  	union {
+>> -		int mm_fd;
+>>  		int pid;
+>>  	} u;
+>>  	unsigned long stack;
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-> index 69ddfd4afdcd..5483421a6fd3 100644
-> --- a/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-> +++ b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-> @@ -9,9 +9,6 @@ title: Samsung Midas audio complex with WM1811 codec
->   maintainers:
->     - Sylwester Nawrocki <s.nawrocki@samsung.com>
->   
-> -allOf:
-> -  - $ref: sound-card-common.yaml#
-> -
->   properties:
->     compatible:
->       const: samsung,midas-audio
-> @@ -102,6 +99,32 @@ required:
->     - mic-bias-supply
->     - submic-bias-supply
->   
-> +allOf:
-> +  - $ref: sound-card-common.yaml#
-> +
-> +  - if:
-> +      anyOf:
-> +        - required: [ headset-detect-gpios ]
-> +        - required: [ headset-key-gpios ]
-> +    then:
-> +      required:
-> +        - io-channels
-> +        - io-channel-names
-> +
-> +  - if:
-> +      required:
-> +        - headset-detect-gpios
-> +    then:
-> +      required:
-> +        - samsung,headset-4pole-threshold-microvolt
-> +
-> +  - if:
-> +      required:
-> +        - headset-key-gpios
-> +    then:
-> +      required:
-> +        - samsung,headset-button-threshold-microvolt
-> +
->   unevaluatedProperties: false
->   
->   examples:
+> Maybe we should also remove the union here while at it? It is pretty
+> pointless after all.
+
+That makes sense. Will do. Thanks!
+
+Regards,
+Tiwei
+
 > 
+> Benjamin
 
 
