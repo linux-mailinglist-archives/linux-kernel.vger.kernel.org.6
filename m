@@ -1,145 +1,159 @@
-Return-Path: <linux-kernel+bounces-288899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D3BB95402E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 05:58:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DDCA954030
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:00:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F9DA1C2227E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:58:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD5011C2258C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0453B74076;
-	Fri, 16 Aug 2024 03:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7BF6F077;
+	Fri, 16 Aug 2024 04:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IK86jJiG"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j/AA5gUk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0060A5F873;
-	Fri, 16 Aug 2024 03:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49F9266A7;
+	Fri, 16 Aug 2024 04:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723780678; cv=none; b=pXHNlVY0XX8XNQ1Ef5GuquW69VNi20fFWwN62GIT5sES76rStpqUVsrHo4HdKiBwgcO6bg9Oi9eJID6LnweyQE7yfC3JT/+DwTkq45sJK5cR0pMa7nVb80U9FqIFO2GFaQhG2Vmy8N+GqLu2MP/HXQKFFk9YOD9Lpj2aZwfgYgY=
+	t=1723780841; cv=none; b=K3nKEFhtGeQIL/gT9k78+3Q8kwwhnBGCFSPOOYduC3yDKuUabullMQovGYNuhrLn/CXqsAcfKzHo1EeEkbG793UPxk7kQdO7rUGlTswnxJ4A0N+48uMt+lVG0aVD5D59GT5W7sUreLbmc8fJeTP+QQJx2LuPKGzDnGLnyXwP5ME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723780678; c=relaxed/simple;
-	bh=YakldiVOnu6xnTAnFekuzC5NS6HjKH7e6eWh7KI0/uQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QaHvMnXpcdLuF78oJd0Np1ZTAyO47KrfSFOVQHTp1GudqGGIF+UG2u7Fv0dlwUcnvPuc5Yw9TRY/NJhTrsRoNIIkanWfnVqZr7mD4O0oYqiXqitPJidnvANmdnbXg6m9kpQ/YuokS9KhNysrXq5ubR9jIlMyMQ6qi30N+uUFP4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IK86jJiG; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-710e39961f4so1198169b3a.3;
-        Thu, 15 Aug 2024 20:57:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723780676; x=1724385476; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RtpoYBv6vUMp+t2dHSsWXB2QO2RkHYzYdABqbr1nJLk=;
-        b=IK86jJiGcXaSQNqwuMK/3jIYXkgRKEHWdKIs916b5QXNEHMVe3tw/c/x9lfd1U6gk4
-         dzKo5nYsyIpE9VN0cFszAWlLLEd27k7F9UcnNg9W9NRZg038lowCVY4pM9j5Q94ax9PX
-         uiZxWtUks1U7/MXdC2Emz6oChCbHGd5WErwAd5o2u+eMrB43sKo8isgBg7rccxRBCnpw
-         oRy9y03qDtYSkmLXmNKbp5c2jomrDcHfZNvZyMyS82jxEnRmEB8N+hHEE6jbgqSzmr5a
-         vmWb+aGDqSadjXy47QjnPIOQ33Ky0069sCO5QpsbPTe3CF6iaQDyLN8zowITOkDCg0wU
-         AOnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723780676; x=1724385476;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RtpoYBv6vUMp+t2dHSsWXB2QO2RkHYzYdABqbr1nJLk=;
-        b=IHGApGRWmKVs8+XnYCTpaypKccYsG/HabkDZPtdTpoxCXECwkTgFdn3FijhxokdLqZ
-         IS24w0sBeLG2OATcCtQ9jZT1tW/p9Y5e2hJPVdobIfOjsel8lQ64Lq3DVcMGybWnFL4t
-         yVHL4UdNvU6pERgv9jUekkxAMgtT5e+OOPoPSb1jCNZEi8wnRxVmgJ8F05eKI1V9bBr6
-         DaoLX+wP+CIfh9kZ0o42KbpjwZGHTWKKVmn8Xw/f6t4VLK6Tz+APbz/+d9dczD3f0iNi
-         omCKKIdM2U7ADLAdqntVGdVzW6Bsba+VQwgynFHmeciYdNsQ/UoeFtwTjkCWBHBu/u58
-         eTYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtgaFMK9JTqKXUkj6N2zDlpamRgrJ77DTmEN+ZMKzbV+Cw3CRuBBRbZWX3vbY6AhcxjodGG6PqJ1Y9CSimXedagUrg0kP9rrWD4OZ6nfnDdUCt0G2XGjIOtqF2fhA7ioTGx4LUEg==
-X-Gm-Message-State: AOJu0YxGHY7/ewGq0RImTwwHjDn5zLUPBPbhWg66vcdE7vydtJUkDU+S
-	3wA9f0mMjkILmP4BBpROGMjR467zODE4PBAQh4KgNF+elvD5fhdn
-X-Google-Smtp-Source: AGHT+IG0AXORZ9AtrC3wtFs0x7MqUifhK1TPZlUUYJekfn7hWzUdtpHr6NQqJ3g6Pya7dO8KydvJmw==
-X-Received: by 2002:a05:6a21:3a44:b0:1c2:912f:ca70 with SMTP id adf61e73a8af0-1c9050261bbmr1989262637.42.1723780676121;
-        Thu, 15 Aug 2024 20:57:56 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127af3d155sm1749225b3a.215.2024.08.15.20.57.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 20:57:55 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: paul@paul-moore.com
-Cc: aha310510@gmail.com,
-	linux-kernel@vger.kernel.org,
-	omosnace@redhat.com,
-	selinux@vger.kernel.org,
-	stephen.smalley.work@gmail.com
-Subject: Re: selinux: support IPPROTO_SMC in socket_type_to_security_class()
-Date: Fri, 16 Aug 2024 12:57:51 +0900
-Message-Id: <20240816035751.62058-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CAHC9VhSrPS27KSG1_On8_WqUfR7tokbrmVwfW3+L_-XJiA=WZw@mail.gmail.com>
-References: <CAHC9VhSrPS27KSG1_On8_WqUfR7tokbrmVwfW3+L_-XJiA=WZw@mail.gmail.com>
+	s=arc-20240116; t=1723780841; c=relaxed/simple;
+	bh=14bO23BFaENGsNPHz7uqU+Sqcoq2xGm6aqCoPV+kIYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=JSXYZoXZ6Ir2v1xpZ6qyQ9YzFZa5Mb7r0RJXZsbWhn4vJWJ+43UEzd2jLfBWNvgyO9spLviVlNmY9YpqkTEe3P9xV67CoiKmlJ79EUONv6RmhwF4T1B0T9iyGkg0tC7cyPBoqffC87zlHJV4LXrBN7Vu1yMlk93L+QwaNRte40c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j/AA5gUk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42DFAC32782;
+	Fri, 16 Aug 2024 04:00:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723780841;
+	bh=14bO23BFaENGsNPHz7uqU+Sqcoq2xGm6aqCoPV+kIYc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=j/AA5gUkZ94FvU5x19njMDP+foM42R/XXhON7CxXcJ9TUwIcFuS731gf9oitxsxDe
+	 +RRvL0m1HIa70gMK60p3OBhJvAhvQFw62obzFD08GLCUypyxaq0Mhx9mZuqDyNh4aC
+	 Ab5kA369iSMzuVshXYoeal1UlYReDeoEX5WQXtuPwQTj2chycFa9w6SETkzBjK+g0D
+	 Ms7+dT6ddWdbO9SkWlDJ5nchKgWUNUcZxfIK9xjiv6aBBrHzo35+pUxmpriNgHRC9E
+	 yXEZg8K8Fal5ddgA7QRH0Wn1dL5FKM8TlE5l6+AdNBQx7c1ctGji3gaAlcVjZ8awdR
+	 ofUGsu2MCBNGg==
+Date: Fri, 16 Aug 2024 09:30:30 +0530
+From: Neeraj Upadhyay <Neeraj.Upadhyay@kernel.org>
+To: rcu@vger.kernel.org
+Cc: paulmck@kernel.org, joel@joelfernandes.org, frederic@kernel.org,
+	boqun.feng@gmail.com, urezki@gmail.com,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org, seanjc@google.com, vschneid@redhat.com
+Subject: [PATCH rcu 0/26] Context tracking updates for v6.12
+Message-ID: <20240816040030.GA16986@neeraj.linux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=y
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Paul Moore wrote:
->
-> On Thu, Aug 15, 2024 at 4:32 AM Jeongjun Park <aha310510@gmail.com> wrote:
-> >
-> > IPPROTO_SMC feature has been added to net/smc. It is now possible to
-> > create smc sockets in the following way:
-> >
-> >   /* create v4 smc sock */
-> >   v4 = socket(AF_INET, SOCK_STREAM, IPPROTO_SMC);
-> >
-> >   /* create v6 smc sock */
-> >   v6 = socket(AF_INET6, SOCK_STREAM, IPPROTO_SMC);
-> >
-> > Therefore, we need to add code to support IPPROTO_SMC in
-> > socket_type_to_security_class().
-> >
-> > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> > ---
-> >  security/selinux/hooks.c | 2 ++
-> >  1 file changed, 2 insertions(+)
->
-> I'm a little concerned that the small patch below might not be all
-> that is needed to properly support SMC in SELinux.  Can you explain
-> what testing you've done with SMC on a SELinux system?
+Hello,
 
-I don't have much knowledge about smc, so I can't tested everything, but 
-I created a socket, performed setsockopt, and tested two sockets 
-communicating with each other. When I tested it, performing smc-related 
-functions worked well without any major problems.
+This patch series contains following updates to the context
+tracking code (rebased on v6.11-rc1):
 
-And after analyzing it myself, I didn't see any additional patches needed 
-to support IPPROTO_SMC in selinux other than this patch. So you don't 
-have to worry.
+1. Renaming of context tracking state related symbols and removal of
+   references to "dynticks" in various context tracking state variables
+   and related helpers, courtesy of Valentin Schneider.
 
-Regards,
-Jeongjun Park
+2. Tagging context_tracking_enabled_this_cpu() __always_inline, courtesy of
+   Sean Christopherson.
 
->
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index bfa61e005aac..36f951f0c574 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -1176,6 +1176,8 @@ static inline u16 socket_type_to_security_class(int family, int type, int protoc
-> >                                 return SECCLASS_TCP_SOCKET;
-> >                         else if (extsockclass && protocol == IPPROTO_SCTP)
-> >                                 return SECCLASS_SCTP_SOCKET;
-> > +                       else if (extsockclass && protocol == IPPROTO_SMC)
-> > +                               return SECCLASS_SMC_SOCKET;
-> >                         else
-> >                                 return SECCLASS_RAWIP_SOCKET;
-> >                 case SOCK_DGRAM:
->
-> --
-> paul-moore.com
+
+Git tree is at https://git.kernel.org/pub/scm/linux/kernel/git/neeraj.upadhyay/linux-rcu.git/log/?h=context_tracking.15.08.24a
+
+
+- Neeraj
+
+
+Sean Christopherson (1):
+  context_tracking: Tag context_tracking_enabled_this_cpu()
+    __always_inline
+
+Valentin Schneider (25):
+  treewide: context_tracking: Rename CONTEXT_* into CT_STATE_*
+  context_tracking, rcu: Rename RCU_DYNTICKS_IDX into CT_RCU_WATCHING
+  context_tracking, rcu: Rename ct_dynticks() into ct_rcu_watching()
+  context_tracking, rcu: Rename ct_dynticks_cpu() into
+    ct_rcu_watching_cpu()
+  context_tracking, rcu: Rename ct_dynticks_cpu_acquire() into
+    ct_rcu_watching_cpu_acquire()
+  context_tracking, rcu: Rename struct context_tracking
+    .dynticks_nesting into .nesting
+  context_tracking, rcu: Rename ct_dynticks_nesting() into ct_nesting()
+  context_tracking, rcu: Rename ct_dynticks_nesting_cpu() into
+    ct_nesting_cpu()
+  context_tracking, rcu: Rename struct context_tracking
+    .dynticks_nmi_nesting into .nmi_nesting
+  context_tracking, rcu: Rename ct_dynticks_nmi_nesting() into
+    ct_nmi_nesting()
+  context_tracking, rcu: Rename ct_dynticks_nmi_nesting_cpu() into
+    ct_nmi_nesting_cpu()
+  context_tracking, rcu: Rename DYNTICK_IRQ_NONIDLE into
+    CT_NESTING_IRQ_NONIDLE
+  context_tracking, rcu: Rename rcu_dynticks_task*() into rcu_task*()
+  context_tracking, rcu: Rename rcu_dynticks_curr_cpu_in_eqs() into
+    rcu_is_watching_curr_cpu()
+  rcu: Rename rcu_dynticks_eqs_online() into rcu_watching_online()
+  rcu: Rename rcu_dynticks_in_eqs() into rcu_watching_snap_in_eqs()
+  rcu: Rename rcu_dynticks_in_eqs_since() into
+    rcu_watching_snap_stopped_since()
+  rcu: Rename rcu_dynticks_zero_in_eqs() into rcu_watching_zero_in_eqs()
+  rcu: Rename struct rcu_data .dynticks_snap into .watching_snap
+  rcu: Rename struct rcu_data .exp_dynticks_snap into .exp_watching_snap
+  rcu: Rename dyntick_save_progress_counter() into
+    rcu_watching_snap_save()
+  rcu: Rename rcu_implicit_dynticks_qs() into
+    rcu_watching_snap_recheck()
+  rcu: Rename rcu_momentary_dyntick_idle() into rcu_momentary_eqs()
+  rcu: Update stray documentation references to rcu_dynticks_eqs_{enter,
+    exit}()
+  context_tracking, rcu: Rename rcu_dyntick trace event into
+    rcu_watching
+
+ .../Data-Structures/Data-Structures.rst       |  28 ++--
+ .../Tree-RCU-Memory-Ordering.rst              |   8 +-
+ .../Memory-Ordering/TreeRCU-dyntick.svg       |   8 +-
+ .../Design/Memory-Ordering/TreeRCU-gp-fqs.svg |   8 +-
+ .../RCU/Design/Memory-Ordering/TreeRCU-gp.svg |   8 +-
+ .../Memory-Ordering/TreeRCU-hotplug.svg       |   4 +-
+ arch/Kconfig                                  |   2 +-
+ arch/arm64/kernel/entry-common.c              |   2 +-
+ arch/powerpc/include/asm/interrupt.h          |   6 +-
+ arch/powerpc/kernel/interrupt.c               |   6 +-
+ arch/powerpc/kernel/syscall.c                 |   2 +-
+ arch/x86/entry/common.c                       |   2 +-
+ include/linux/context_tracking.h              |  32 ++--
+ include/linux/context_tracking_state.h        |  60 ++++----
+ include/linux/entry-common.h                  |   2 +-
+ include/linux/rcutiny.h                       |   2 +-
+ include/linux/rcutree.h                       |   2 +-
+ include/trace/events/rcu.h                    |  20 +--
+ kernel/context_tracking.c                     | 140 +++++++++---------
+ kernel/entry/common.c                         |   2 +-
+ kernel/rcu/rcu.h                              |   4 +-
+ kernel/rcu/rcutorture.c                       |   4 +-
+ kernel/rcu/tasks.h                            |   2 +-
+ kernel/rcu/tree.c                             | 111 +++++++-------
+ kernel/rcu/tree.h                             |   4 +-
+ kernel/rcu/tree_exp.h                         |   8 +-
+ kernel/rcu/tree_nocb.h                        |   2 +-
+ kernel/rcu/tree_plugin.h                      |   6 +-
+ kernel/rcu/tree_stall.h                       |   6 +-
+ kernel/sched/core.c                           |   4 +-
+ kernel/stop_machine.c                         |   2 +-
+ kernel/trace/trace_osnoise.c                  |   4 +-
+ 32 files changed, 258 insertions(+), 243 deletions(-)
+
 
