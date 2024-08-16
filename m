@@ -1,87 +1,61 @@
-Return-Path: <linux-kernel+bounces-289615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED0CA95483D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:48:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CCFB95484D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 997F1282C6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:48:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 153B32848EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1951A4F20;
-	Fri, 16 Aug 2024 11:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265531AD9F9;
+	Fri, 16 Aug 2024 11:52:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6OM/Kd2"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XoCrIZQa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE981547C4;
-	Fri, 16 Aug 2024 11:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8A7143757;
+	Fri, 16 Aug 2024 11:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723808905; cv=none; b=g0W0OiJnCQpfxhL31OhoYRFXJ2DXSoPx3ELsMKijfek+7FrWXlGz8AT7Y0XLObcp7A4sgndF1bxpNpz4VLyUFfy/YzjrNOJ9pscrClabgD2JJ49ANIyxounHcq2xb6o2RAd9HtHLWre78dFsd/+bT4REG2YoBTmbQkEBYTWq8Z8=
+	t=1723809173; cv=none; b=Oc1ItTJ387CymusC/t//1HXF6qZQaqJAq8wIFZGGdRB5W0VkGicFa2nznBb0w+0HxnIXXg0IV3ojaGyVe8zy52PdmLSNfub3hTSlyoibdUTWInI2WBmyxJ1PPmmnLk8PynkBjzG3XB5od14V25ZVW9BWgz1IMemNHPYd58YaAiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723808905; c=relaxed/simple;
-	bh=mFGmQo3obq248oRCshtEnzGXBHV65xQZPgg9M7+Lrco=;
+	s=arc-20240116; t=1723809173; c=relaxed/simple;
+	bh=edZGKTdhd+JKc9rRo5Mb349EFlR6r0Ya6roKnVmRgy4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IU3/IxAkOtSJLNKHVDXjQ2K71CKz/jZtUBrhYyTdOdgGdqdh8gaELqrRWO21+qd/o+uNEXMLuMksupF+pN56CFJZ/viwHU+sSeww4UjJCoj07zPwnTn5zB/QoEwqxUCms78uGikdh0RXbBf14+pn2z9hxpV5812BQkeG8SjF268=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l6OM/Kd2; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7a94478a4eso516562266b.1;
-        Fri, 16 Aug 2024 04:48:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723808902; x=1724413702; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IY44BvNIQ8HMdyx0QMRty049Oi1G15aZuupS+GebtAw=;
-        b=l6OM/Kd2T6fVkebJwi+Gc/nt8H+4t5/wFnAMbHKN1UKlAlPxor+KXqS2T3MAClASQg
-         aCGPIkKZ8dbHi16EnmEtp9/hv2KRCh2yvRnv4SNlnZBvydMWJWWEhd3VAL0PyUqO9yre
-         AZ/0sDfgXvsHcNRstdGd0yZHM9YxRYFzHXeTZrJMnWb75/BX70SGBlgQi6AKGyyYqG5H
-         5+yyZ0PQjbHPYemdoMkgYGPtfMPOaEcwqWXnSdZQIOh2XOaJnu1B5eRQVx+RIc5eO2M2
-         Br/uxR7X4FpD7XL3c8hXqkmBE4Zi1WDelR/DsHsqVXM/ifm7vtTnnN/Q+y6RwsSHl1Ac
-         rRHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723808902; x=1724413702;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IY44BvNIQ8HMdyx0QMRty049Oi1G15aZuupS+GebtAw=;
-        b=IXyEEfgFk5R8iUcF55/gJ+HEKraFl2dXhJe7rmiLKKJVO7Dts1mpmyZYvaYxf56JpX
-         rarfFciyNkam/bniKX75JU1op3fwop3PiQnNiiElvo1jEFZS7QTQTTuco5ZaGub8lbxd
-         SR90rR8SSo4EVQP1+afSjGK0q9QWRr5xsPL+M1N4Bx8YA1c+yqdvEQgp1qoYzCpbgXl/
-         mqkUM/c7L75n7kv3m0JB85Lm3wg+baghMhKJucKS7aYfQuGqr8yzy5EK64O5DVARYfUi
-         4QoxsWUfFD8iJilWpKhRaPVyvLW1LAUmZ9HAANlGTEkVUv6WUMcTk67UgCAIMIceSTRU
-         x6GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXmjxJpKBLVOa6jjgpd1dEgoxRKWWe/qBdfOjylN6XIisScZa3j8u2KUNr8kNCFgZ3G8lQlKEhZ9k6afUN2EGhRBlEVibl5DtjSWCgRELxZAfcHrC4jkd59Gccsa3G3iw9JrfO
-X-Gm-Message-State: AOJu0Yz2gZSGlNvx6jac8t74l8ihBBg6J1VcMGAsTFKE5AQtd8borkf2
-	TqW+3L5qCBdqpofDDakRw2UKKgCMHQvrhblfbfdJ0r5wbTqGD3RT
-X-Google-Smtp-Source: AGHT+IEMqNZbH50JXVZEb5SoTpw0eEiq2X6PpNhKEqpktgqE6co9AWSShXZz8K636iWMPF7XES4lEA==
-X-Received: by 2002:a17:907:3fa4:b0:a72:64f0:552e with SMTP id a640c23a62f3a-a8394e34235mr243281566b.19.1723808901548;
-        Fri, 16 Aug 2024 04:48:21 -0700 (PDT)
-Received: from skbuf ([188.25.134.29])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839344fdsm244834166b.100.2024.08.16.04.48.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 04:48:20 -0700 (PDT)
-Date: Fri, 16 Aug 2024 14:48:17 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Furong Xu <0x1207@gmail.com>
-Cc: Serge Semin <fancer.lancer@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ej0JaGcL9Rrw8uLEm6/vqzFhRfgj/8maxtB5tCsRnxqmQcPyPtgkdwVP+jmtWge7svKPwHWh0ReEpLzfV9OrCqdcLx6DahwsNmjZAgwXT96UA9sIxKCu8KxavoR++icNw8TuIIpuy+ye+DHRCMg7Dx3iw1S6CJluqzMYGm3wdnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XoCrIZQa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 926AFC32782;
+	Fri, 16 Aug 2024 11:52:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723809172;
+	bh=edZGKTdhd+JKc9rRo5Mb349EFlR6r0Ya6roKnVmRgy4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XoCrIZQaaMoPTy/QY3fFLsXEYVVOsv/rkKX/K07OWS1jIY9LvRwg/IuJteDPq6i0p
+	 NQhrXbHFhAghu6o3X18y2OsbE6hiFdkD1XtfgBB1TcFGS2bIqAPvTNjuWqjm2MUImY
+	 ti0FklwG/EhlO3RkmzmRXnO1t53XD1yqD6Jve/Emycm2LUl0GwSuOOBy64ooLB2QAR
+	 Zjik+HKBMwG0e9ftVWZsHHlRsA+mR4ObONv8AYCoihtphAJTUdgTe04uVXD8ij3SZO
+	 s6B3TnxsMzNqVLFjEugrvUOK70KJdpv4CqwjLP7mU2LNeEWg2EG5pDGeHT3j5I2t+M
+	 N7bUUHDGX/LFg==
+Date: Fri, 16 Aug 2024 12:52:47 +0100
+From: Will Deacon <will@kernel.org>
+To: Baruch Siach <baruch@tkos.co.il>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	xfr@outlook.com, rock.xu@nio.com
-Subject: Re: [PATCH net-next v2 0/7] net: stmmac: FPE via ethtool + tc
-Message-ID: <20240816114817.gp7m6k2rlz7s4e5a@skbuf>
-References: <cover.1723548320.git.0x1207@gmail.com>
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+	Petr =?utf-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>,
+	Ramon Fried <ramon@neureality.ai>,
+	Elad Nachman <enachman@marvell.com>
+Subject: Re: [PATCH v6 RESED 1/2] dma: replace zone_dma_bits by zone_dma_limit
+Message-ID: <20240816115246.GA24137@willie-the-truck>
+References: <cover.1723359916.git.baruch@tkos.co.il>
+ <17c067618b93e5d71f19c37826d54db4299621a3.1723359916.git.baruch@tkos.co.il>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,22 +64,94 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1723548320.git.0x1207@gmail.com>
+In-Reply-To: <17c067618b93e5d71f19c37826d54db4299621a3.1723359916.git.baruch@tkos.co.il>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Tue, Aug 13, 2024 at 07:47:26PM +0800, Furong Xu wrote:
-> Move the Frame Preemption(FPE) over to the new standard API which uses
-> ethtool-mm/tc-mqprio/tc-taprio.
+On Sun, Aug 11, 2024 at 10:09:35AM +0300, Baruch Siach wrote:
+> From: Catalin Marinas <catalin.marinas@arm.com>
 > 
-> Changes in v2:
->   1. refactor FPE verification processe
->   2. suspend/resume and kselftest-ethtool_mm, all test cases passed
->   3. handle TC:TXQ remapping for DWMAC CORE4+
+> Hardware DMA limit might not be power of 2. When RAM range starts above
+> 0, say 4GB, DMA limit of 30 bits should end at 5GB. A single high bit
+> can not encode this limit.
+> 
+> Use plain address for DMA zone limit.
+> 
+> Since DMA zone can now potentially span beyond 4GB physical limit of
+> DMA32, make sure to use DMA zone for GFP_DMA32 allocations in that case.
+> 
+> Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+> Co-developed-by: Baruch Siach <baruch@tkos.co.il>
+> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+> ---
+>  arch/arm64/mm/init.c       | 30 +++++++++++++++---------------
+>  arch/powerpc/mm/mem.c      |  5 ++++-
+>  arch/s390/mm/init.c        |  2 +-
+>  include/linux/dma-direct.h |  2 +-
+>  kernel/dma/direct.c        |  6 +++---
+>  kernel/dma/pool.c          |  4 ++--
+>  kernel/dma/swiotlb.c       |  6 +++---
+>  7 files changed, 29 insertions(+), 26 deletions(-)
+> 
+> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+> index 9b5ab6818f7f..c45e2152ca9e 100644
+> --- a/arch/arm64/mm/init.c
+> +++ b/arch/arm64/mm/init.c
+> @@ -115,35 +115,35 @@ static void __init arch_reserve_crashkernel(void)
+>  }
+>  
+>  /*
+> - * Return the maximum physical address for a zone accessible by the given bits
+> - * limit. If DRAM starts above 32-bit, expand the zone to the maximum
+> + * Return the maximum physical address for a zone given its limit.
+> + * If DRAM starts above 32-bit, expand the zone to the maximum
+>   * available memory, otherwise cap it at 32-bit.
+>   */
+> -static phys_addr_t __init max_zone_phys(unsigned int zone_bits)
+> +static phys_addr_t __init max_zone_phys(phys_addr_t zone_limit)
+>  {
+> -	phys_addr_t zone_mask = DMA_BIT_MASK(zone_bits);
+>  	phys_addr_t phys_start = memblock_start_of_DRAM();
+>  
+>  	if (phys_start > U32_MAX)
+> -		zone_mask = PHYS_ADDR_MAX;
+> -	else if (phys_start > zone_mask)
+> -		zone_mask = U32_MAX;
+> +		zone_limit = PHYS_ADDR_MAX;
+> +	else if (phys_start > zone_limit)
+> +		zone_limit = U32_MAX;
+>  
+> -	return min(zone_mask, memblock_end_of_DRAM() - 1) + 1;
+> +	return min(zone_limit, memblock_end_of_DRAM() - 1) + 1;
 
-This is starting to look better and better. I wouldn't be sad if it was
-merged like this, but the locking still looks a little bit wacky to me,
-and it's not 100% clear what priv->mm_lock protects and what it doesn't.
+Why do we need to adjust +-1 now that we're no longer using a mask?
 
-I can make a breakdown of how each member of fpe_cfg is used, and thus
-understand exactly what are the locking needs and how they are addressed
-in this version, but most likely not today.
+>  }
+>  
+>  static void __init zone_sizes_init(void)
+>  {
+>  	unsigned long max_zone_pfns[MAX_NR_ZONES]  = {0};
+> -	unsigned int __maybe_unused acpi_zone_dma_bits;
+> -	unsigned int __maybe_unused dt_zone_dma_bits;
+> -	phys_addr_t __maybe_unused dma32_phys_limit = max_zone_phys(32);
+> +	phys_addr_t __maybe_unused acpi_zone_dma_limit;
+> +	phys_addr_t __maybe_unused dt_zone_dma_limit;
+> +	phys_addr_t __maybe_unused dma32_phys_limit =
+> +		max_zone_phys(DMA_BIT_MASK(32));
+>  
+>  #ifdef CONFIG_ZONE_DMA
+> -	acpi_zone_dma_bits = fls64(acpi_iort_dma_get_max_cpu_address());
+> -	dt_zone_dma_bits = fls64(of_dma_get_max_cpu_address(NULL));
+> -	zone_dma_bits = min3(32U, dt_zone_dma_bits, acpi_zone_dma_bits);
+> -	arm64_dma_phys_limit = max_zone_phys(zone_dma_bits);
+> +	acpi_zone_dma_limit = acpi_iort_dma_get_max_cpu_address();
+> +	dt_zone_dma_limit = of_dma_get_max_cpu_address(NULL);
+> +	zone_dma_limit = min(dt_zone_dma_limit, acpi_zone_dma_limit);
+> +	arm64_dma_phys_limit = max_zone_phys(zone_dma_limit);
+>  	max_zone_pfns[ZONE_DMA] = PFN_DOWN(arm64_dma_phys_limit);
+>  #endif
+
+Maybe move this block into a helper function so we can avoid three
+__maybe_unused variables?
+
+Will
 
