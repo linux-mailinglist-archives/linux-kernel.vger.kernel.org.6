@@ -1,84 +1,78 @@
-Return-Path: <linux-kernel+bounces-288809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1933B953F01
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:40:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47BB2953EFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:40:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6115281AB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:40:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CB771C222DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15DA39ADD;
-	Fri, 16 Aug 2024 01:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4FC2868D;
+	Fri, 16 Aug 2024 01:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G/QR4Wdr"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VfK2bovy"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C39B29CFE
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 01:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1571729CF0;
+	Fri, 16 Aug 2024 01:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723772441; cv=none; b=VtSMZCp3DOWTr22hW9vdh/4DF3uaYBV1JRT/0TMqkMrkgGYRGggpckQIncU1yi1mAHowyRpyDIub27msiTEF0XWvXcThVMUYjP73fhp+AZJ7tE8mIEAM6bdn0Uu4opcDMvBU9oWOGeLPNcSOnCgjD0IOvs2yneu1EeAFjJroLgM=
+	t=1723772440; cv=none; b=iaszb6pNvNvIqJmWs3ZvYLF2iSSj+m7Y2sofbGHXlsEgrTawqODP5ZsIbCC1nl5eZgvfVtZMcBRrMnlnivdBakpNfrRN+HHWUdZkicZyIu1LQFXb84Zons6YvznugqIK3jv39PEyGNCMkBrJubKZAf8iy4U9u3xp7tBn4Tt/ZB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723772441; c=relaxed/simple;
-	bh=FHJRwW+7bRBSKWk7JuaJ+Xkom00qKybRQe8ByoTp8xM=;
+	s=arc-20240116; t=1723772440; c=relaxed/simple;
+	bh=TxVgBYYWN/3kYg/XenduJ5cBNArWEosbc8sM/EqhRJc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ReLPnvK5k3DATECm3rIUyPNdYbe9Hy/CewTc1yU7hVHWtHUCsFzCQTotT/WXlCvMB6T1hqsrxIkP2pkvqNsLZ9p6T/3Mk3p/L68Hv4cnVKxKuA7sVMvPswl6c8If0lhYh9D8KCm878nGdBNnXBUmj2EOvZknDRxxBBkn3VAlWrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G/QR4Wdr; arc=none smtp.client-ip=192.198.163.9
+	 Content-Type:Content-Disposition:In-Reply-To; b=i3s2VFsbTzKm07f7zTBYd/xy8Ns5auV+0nWISQSczFWeePPCgRT91V3BWN8zF1/QE/bqOTwT0VFLQlHHb/ASlu5JtNhT/3OoHUiYmIgO2eJm1oAwnCj0UeXnmTKCgHxRWnJDL8lZi3m+6k8DncJo2wdO/EWDcQMKg5UudZS++O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VfK2bovy; arc=none smtp.client-ip=192.198.163.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723772439; x=1755308439;
+  t=1723772438; x=1755308438;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=FHJRwW+7bRBSKWk7JuaJ+Xkom00qKybRQe8ByoTp8xM=;
-  b=G/QR4WdrBXvt9h2oa/e7eO/QG99tpH7FTVsKteBmqrJM+ODkGvGuTBf4
-   CdmTMasvr5YRvA0zoZqXPJw4YgjSqP6MXsmuZpacSCIn+tvwHRK5oOLUF
-   LpMc2uQ8M8IepbBGPOSRUJyLJhNQ9DD6ZF+aTijgQIOwSQ7hsfOA1+eG+
-   5p/CJyng9dNTMlnL4osU2jwJzuVYapEqQ1WcgkJnH20wLEvYBR0kuJ1mm
-   KVbBo+5knyNbni5VjzH5Vtm9Uw1U2l8Za4K2AWZgOe0lVF31gstWTLM08
-   9c6O/pYRjWzT2gFr0ar0/GhbK15j1BW4ObuIWWTXjd1wTsQzcjIGjum52
-   w==;
-X-CSE-ConnectionGUID: 8g2+riahRTKZYa0vQXIy0Q==
-X-CSE-MsgGUID: fyDFrhmWRd2PglU6RKR2Pw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11165"; a="32730636"
+  bh=TxVgBYYWN/3kYg/XenduJ5cBNArWEosbc8sM/EqhRJc=;
+  b=VfK2bovyIuxFifgrg0zmfIhg5w+KBZvm0NQPTiurfBF3pDfpVuvGx2xf
+   thizQhnmpJoSKJ6UwqD365G/WYQMvNYRC0iXuwrl1rv5mJ0FRq9K7XfUF
+   8X+qsvvg1WsY5uYKqFZiR8pQhIaYBXSsVyYjmG4NHYEsJ9kdmNL6rMnzS
+   fE1RDthfKtdHrAg8TDTJ3AbyugI/opQKUNzmU8xR0JAVMI931JRxSB2h1
+   UqF5qwN/0KXsy47tbCgVDinAL8UPm5sBFTnpSswrfogYSaycrpQLnNqgL
+   FsFyL4002h+rXSi09LmoOpVT9RVRK6GwhMUoU75h1MWoUuq5w3qqHqPGx
+   g==;
+X-CSE-ConnectionGUID: 8Hbfl3WMQkOxtqEDWx7RmQ==
+X-CSE-MsgGUID: oqsrwJXGTt+4GP7NMMglSw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11165"; a="32730631"
 X-IronPort-AV: E=Sophos;i="6.10,150,1719903600"; 
-   d="scan'208";a="32730636"
+   d="scan'208";a="32730631"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 18:40:39 -0700
-X-CSE-ConnectionGUID: okgIv29iR2C0m373nz4+0A==
-X-CSE-MsgGUID: lgC3fOkuQpWCFIwLNk6d5g==
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 18:40:38 -0700
+X-CSE-ConnectionGUID: sfn6/XgtQKCUHNIjJxz2xA==
+X-CSE-MsgGUID: MgntSaxjQ0+PbFVhh0EtkA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,150,1719903600"; 
-   d="scan'208";a="64472897"
+   d="scan'208";a="64472928"
 Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
   by orviesa004.jf.intel.com with ESMTP; 15 Aug 2024 18:40:33 -0700
 Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1selx8-0005n0-2f;
+	id 1selx8-0005mw-2T;
 	Fri, 16 Aug 2024 01:40:30 +0000
-Date: Fri, 16 Aug 2024 09:39:40 +0800
+Date: Fri, 16 Aug 2024 09:39:48 +0800
 From: kernel test robot <lkp@intel.com>
-To: Jason Andryuk <jason.andryuk@amd.com>, Juergen Gross <jgross@suse.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Brian Gerst <brgerst@gmail.com>
+To: Ma Ke <make24@iscas.ac.cn>, kristo@kernel.org, bp@alien8.de,
+	tony.luck@intel.com, james.morse@arm.com, mchehab@kernel.org,
+	rric@kernel.org, akpm@linux-foundation.org
 Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-	Jason Andryuk <jason.andryuk@amd.com>
-Subject: Re: [PATCH v2 5/5] x86/pvh: Add 64bit relocation page tables
-Message-ID: <202408160955.iKtoU4kP-lkp@intel.com>
-References: <20240814195053.5564-6-jason.andryuk@amd.com>
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>, stable@vger.kernel.org
+Subject: Re: [PATCH v4 RESEND] EDAC/ti: Fix possible null pointer dereference
+ in _emif_get_id()
+Message-ID: <202408160935.A6QFliqt-lkp@intel.com>
+References: <20240815014511.147065-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,254 +81,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240814195053.5564-6-jason.andryuk@amd.com>
+In-Reply-To: <20240815014511.147065-1-make24@iscas.ac.cn>
 
-Hi Jason,
+Hi Ma,
 
 kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on tip/x86/core]
-[also build test WARNING on xen-tip/linux-next tip/master linus/master v6.11-rc3 next-20240815]
-[cannot apply to tip/auto-latest]
+[auto build test WARNING on ras/edac-for-next]
+[also build test WARNING on linus/master v6.11-rc3 next-20240815]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jason-Andryuk/xen-sync-elfnote-h-from-xen-tree/20240815-035238
-base:   tip/x86/core
-patch link:    https://lore.kernel.org/r/20240814195053.5564-6-jason.andryuk%40amd.com
-patch subject: [PATCH v2 5/5] x86/pvh: Add 64bit relocation page tables
-config: i386-randconfig-011-20240815 (https://download.01.org/0day-ci/archive/20240816/202408160955.iKtoU4kP-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240816/202408160955.iKtoU4kP-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Ma-Ke/EDAC-ti-Fix-possible-null-pointer-dereference-in-_emif_get_id/20240815-094801
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git edac-for-next
+patch link:    https://lore.kernel.org/r/20240815014511.147065-1-make24%40iscas.ac.cn
+patch subject: [PATCH v4 RESEND] EDAC/ti: Fix possible null pointer dereference in _emif_get_id()
+config: arm-randconfig-002-20240816 (https://download.01.org/0day-ci/archive/20240816/202408160935.A6QFliqt-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project f86594788ce93b696675c94f54016d27a6c21d18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240816/202408160935.A6QFliqt-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408160955.iKtoU4kP-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408160935.A6QFliqt-lkp@intel.com/
 
 All warnings (new ones prefixed by >>):
 
-   In file included from arch/x86/platform/pvh/head.S:19:
-   In file included from arch/x86/include/asm/pgtable_64.h:6:
->> arch/x86/include/asm/pgtable_64_types.h:49:9: warning: 'SHARED_KERNEL_PMD' macro redefined [-Wmacro-redefined]
-      49 | #define SHARED_KERNEL_PMD       0
-         |         ^
-   arch/x86/include/asm/pgtable-3level_types.h:30:9: note: previous definition is here
-      30 | #define SHARED_KERNEL_PMD       (!static_cpu_has(X86_FEATURE_PTI))
-         |         ^
-   In file included from arch/x86/platform/pvh/head.S:19:
-   In file included from arch/x86/include/asm/pgtable_64.h:6:
-   arch/x86/include/asm/pgtable_64_types.h:75:9: warning: 'PGDIR_SHIFT' macro redefined [-Wmacro-redefined]
-      75 | #define PGDIR_SHIFT             39
-         |         ^
-   arch/x86/include/asm/pgtable-3level_types.h:37:9: note: previous definition is here
-      37 | #define PGDIR_SHIFT     30
-         |         ^
-   In file included from arch/x86/platform/pvh/head.S:19:
-   In file included from arch/x86/include/asm/pgtable_64.h:6:
->> arch/x86/include/asm/pgtable_64_types.h:76:9: warning: 'PTRS_PER_PGD' macro redefined [-Wmacro-redefined]
-      76 | #define PTRS_PER_PGD            512
-         |         ^
-   arch/x86/include/asm/pgtable-3level_types.h:38:9: note: previous definition is here
-      38 | #define PTRS_PER_PGD    4
-         |         ^
-   In file included from arch/x86/platform/pvh/head.S:19:
-   In file included from arch/x86/include/asm/pgtable_64.h:6:
-   arch/x86/include/asm/pgtable_64_types.h:99:9: warning: 'PMD_SIZE' macro redefined [-Wmacro-redefined]
-      99 | #define PMD_SIZE        (_AC(1, UL) << PMD_SHIFT)
-         |         ^
-   arch/x86/include/asm/pgtable_32_types.h:12:10: note: previous definition is here
-      12 | # define PMD_SIZE       (1UL << PMD_SHIFT)
-         |          ^
-   In file included from arch/x86/platform/pvh/head.S:19:
-   In file included from arch/x86/include/asm/pgtable_64.h:6:
-   arch/x86/include/asm/pgtable_64_types.h:103:9: warning: 'PGDIR_SIZE' macro redefined [-Wmacro-redefined]
-     103 | #define PGDIR_SIZE      (_AC(1, UL) << PGDIR_SHIFT)
-         |         ^
-   arch/x86/include/asm/pgtable_32_types.h:20:9: note: previous definition is here
-      20 | #define PGDIR_SIZE      (1UL << PGDIR_SHIFT)
-         |         ^
-   In file included from arch/x86/platform/pvh/head.S:19:
-   In file included from arch/x86/include/asm/pgtable_64.h:6:
->> arch/x86/include/asm/pgtable_64_types.h:210:9: warning: 'PGD_KERNEL_START' macro redefined [-Wmacro-redefined]
-     210 | #define PGD_KERNEL_START        ((PAGE_SIZE / 2) / sizeof(pgd_t))
-         |         ^
-   arch/x86/include/asm/pgtable-3level_types.h:53:9: note: previous definition is here
-      53 | #define PGD_KERNEL_START        (CONFIG_PAGE_OFFSET >> PGDIR_SHIFT)
-         |         ^
-   6 warnings generated.
-   /tmp/head-582305.s:252:51: error: expression could not be evaluated
-   L4_PAGE_OFFSET = (((__PAGE_OFFSET_BASE_L4) >> 39) & 511)
-                                                     ^
+   In file included from drivers/edac/ti_edac.c:28:
+   In file included from drivers/edac/edac_module.h:15:
+   In file included from drivers/edac/edac_mc.h:30:
+   In file included from include/linux/pci.h:1646:
+   In file included from include/linux/dmapool.h:14:
+   In file included from include/linux/scatterlist.h:8:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/edac/ti_edac.c:214:14: warning: result of comparison of constant 18446744073709551615 with expression of type 'u32' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+     214 |         if (my_addr == OF_BAD_ADDR)
+         |             ~~~~~~~ ^  ~~~~~~~~~~~
+   drivers/edac/ti_edac.c:226:12: warning: result of comparison of constant 18446744073709551615 with expression of type 'u32' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+     226 |                 if (addr == OF_BAD_ADDR)
+         |                     ~~~~ ^  ~~~~~~~~~~~
+   3 warnings generated.
 
 
-vim +/PTRS_PER_PGD +76 arch/x86/include/asm/pgtable_64_types.h
+vim +214 drivers/edac/ti_edac.c
 
-54321d947ae9d6 Jeremy Fitzhardinge 2009-02-11   48  
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08  @49  #define SHARED_KERNEL_PMD	0
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   50  
-b8504058a06bd1 Kirill A. Shutemov  2017-03-30   51  #ifdef CONFIG_X86_5LEVEL
-b8504058a06bd1 Kirill A. Shutemov  2017-03-30   52  
-b8504058a06bd1 Kirill A. Shutemov  2017-03-30   53  /*
-b8504058a06bd1 Kirill A. Shutemov  2017-03-30   54   * PGDIR_SHIFT determines what a top-level page table entry can map
-b8504058a06bd1 Kirill A. Shutemov  2017-03-30   55   */
-c65e774fb3f6af Kirill A. Shutemov  2018-02-14   56  #define PGDIR_SHIFT	pgdir_shift
-b8504058a06bd1 Kirill A. Shutemov  2017-03-30   57  #define PTRS_PER_PGD	512
-b8504058a06bd1 Kirill A. Shutemov  2017-03-30   58  
-b8504058a06bd1 Kirill A. Shutemov  2017-03-30   59  /*
-b8504058a06bd1 Kirill A. Shutemov  2017-03-30   60   * 4th level page in 5-level paging case
-b8504058a06bd1 Kirill A. Shutemov  2017-03-30   61   */
-b8504058a06bd1 Kirill A. Shutemov  2017-03-30   62  #define P4D_SHIFT		39
-c65e774fb3f6af Kirill A. Shutemov  2018-02-14   63  #define MAX_PTRS_PER_P4D	512
-c65e774fb3f6af Kirill A. Shutemov  2018-02-14   64  #define PTRS_PER_P4D		ptrs_per_p4d
-b8504058a06bd1 Kirill A. Shutemov  2017-03-30   65  #define P4D_SIZE		(_AC(1, UL) << P4D_SHIFT)
-b8504058a06bd1 Kirill A. Shutemov  2017-03-30   66  #define P4D_MASK		(~(P4D_SIZE - 1))
-b8504058a06bd1 Kirill A. Shutemov  2017-03-30   67  
-02390b87a94599 Kirill A. Shutemov  2018-02-14   68  #define MAX_POSSIBLE_PHYSMEM_BITS	52
-02390b87a94599 Kirill A. Shutemov  2018-02-14   69  
-b8504058a06bd1 Kirill A. Shutemov  2017-03-30   70  #else /* CONFIG_X86_5LEVEL */
-b8504058a06bd1 Kirill A. Shutemov  2017-03-30   71  
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   72  /*
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   73   * PGDIR_SHIFT determines what a top-level page table entry can map
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   74   */
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   75  #define PGDIR_SHIFT		39
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08  @76  #define PTRS_PER_PGD		512
-c65e774fb3f6af Kirill A. Shutemov  2018-02-14   77  #define MAX_PTRS_PER_P4D	1
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   78  
-b8504058a06bd1 Kirill A. Shutemov  2017-03-30   79  #endif /* CONFIG_X86_5LEVEL */
-b8504058a06bd1 Kirill A. Shutemov  2017-03-30   80  
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   81  /*
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   82   * 3rd level page
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   83   */
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   84  #define PUD_SHIFT	30
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   85  #define PTRS_PER_PUD	512
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   86  
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   87  /*
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   88   * PMD_SHIFT determines the size of the area a middle-level
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   89   * page table can map
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   90   */
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   91  #define PMD_SHIFT	21
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   92  #define PTRS_PER_PMD	512
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   93  
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   94  /*
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   95   * entries per page directory level
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   96   */
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   97  #define PTRS_PER_PTE	512
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   98  
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08   99  #define PMD_SIZE	(_AC(1, UL) << PMD_SHIFT)
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08  100  #define PMD_MASK	(~(PMD_SIZE - 1))
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08  101  #define PUD_SIZE	(_AC(1, UL) << PUD_SHIFT)
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08  102  #define PUD_MASK	(~(PUD_SIZE - 1))
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08  103  #define PGDIR_SIZE	(_AC(1, UL) << PGDIR_SHIFT)
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08  104  #define PGDIR_MASK	(~(PGDIR_SIZE - 1))
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08  105  
-1dddd25125112b Thomas Gleixner     2018-01-04  106  /*
-ff61f0791ce969 Jonathan Corbet     2023-03-14  107   * See Documentation/arch/x86/x86_64/mm.rst for a description of the memory map.
-1dddd25125112b Thomas Gleixner     2018-01-04  108   *
-1dddd25125112b Thomas Gleixner     2018-01-04  109   * Be very careful vs. KASLR when changing anything here. The KASLR address
-1dddd25125112b Thomas Gleixner     2018-01-04  110   * range must not overlap with anything except the KASAN shadow area, which
-1dddd25125112b Thomas Gleixner     2018-01-04  111   * is correct as KASAN disables KASLR.
-1dddd25125112b Thomas Gleixner     2018-01-04  112   */
-162434e7f58b21 Kirill A. Shutemov  2018-02-14  113  #define MAXMEM			(1UL << MAX_PHYSMEM_BITS)
-92a0f81d89571e Thomas Gleixner     2017-12-20  114  
-16877a5570e0c5 Kirill A. Shutemov  2018-11-30  115  #define GUARD_HOLE_PGD_ENTRY	-256UL
-16877a5570e0c5 Kirill A. Shutemov  2018-11-30  116  #define GUARD_HOLE_SIZE		(16UL << PGDIR_SHIFT)
-16877a5570e0c5 Kirill A. Shutemov  2018-11-30  117  #define GUARD_HOLE_BASE_ADDR	(GUARD_HOLE_PGD_ENTRY << PGDIR_SHIFT)
-16877a5570e0c5 Kirill A. Shutemov  2018-11-30  118  #define GUARD_HOLE_END_ADDR	(GUARD_HOLE_BASE_ADDR + GUARD_HOLE_SIZE)
-16877a5570e0c5 Kirill A. Shutemov  2018-11-30  119  
-d52888aa2753e3 Kirill A. Shutemov  2018-10-26  120  #define LDT_PGD_ENTRY		-240UL
-5c7919bb1994f8 Kirill A. Shutemov  2018-02-14  121  #define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
-8195d869d118bc Joerg Roedel        2018-07-18  122  #define LDT_END_ADDR		(LDT_BASE_ADDR + PGDIR_SIZE)
-5c7919bb1994f8 Kirill A. Shutemov  2018-02-14  123  
-14d12bb8582e15 Jiri Kosina         2018-04-12  124  #define __VMALLOC_BASE_L4	0xffffc90000000000UL
-14d12bb8582e15 Jiri Kosina         2018-04-12  125  #define __VMALLOC_BASE_L5 	0xffa0000000000000UL
-a7412546d8cb5a Kirill A. Shutemov  2018-02-14  126  
-a7412546d8cb5a Kirill A. Shutemov  2018-02-14  127  #define VMALLOC_SIZE_TB_L4	32UL
-a7412546d8cb5a Kirill A. Shutemov  2018-02-14  128  #define VMALLOC_SIZE_TB_L5	12800UL
-a7412546d8cb5a Kirill A. Shutemov  2018-02-14  129  
-14d12bb8582e15 Jiri Kosina         2018-04-12  130  #define __VMEMMAP_BASE_L4	0xffffea0000000000UL
-14d12bb8582e15 Jiri Kosina         2018-04-12  131  #define __VMEMMAP_BASE_L5	0xffd4000000000000UL
-92a0f81d89571e Thomas Gleixner     2017-12-20  132  
-eedb92abb9bb03 Kirill A. Shutemov  2018-02-14  133  #ifdef CONFIG_DYNAMIC_MEMORY_LAYOUT
-a95ae27c2ee1cb Thomas Garnier      2016-06-21  134  # define VMALLOC_START		vmalloc_base
-ed7588d5dc6f5e Kirill A. Shutemov  2018-05-18  135  # define VMALLOC_SIZE_TB	(pgtable_l5_enabled() ? VMALLOC_SIZE_TB_L5 : VMALLOC_SIZE_TB_L4)
-25dfe478533272 Thomas Garnier      2016-07-27  136  # define VMEMMAP_START		vmemmap_base
-a95ae27c2ee1cb Thomas Garnier      2016-06-21  137  #else
-a7412546d8cb5a Kirill A. Shutemov  2018-02-14  138  # define VMALLOC_START		__VMALLOC_BASE_L4
-a7412546d8cb5a Kirill A. Shutemov  2018-02-14  139  # define VMALLOC_SIZE_TB	VMALLOC_SIZE_TB_L4
-9b46a051e43461 Kirill A. Shutemov  2018-02-14  140  # define VMEMMAP_START		__VMEMMAP_BASE_L4
-eedb92abb9bb03 Kirill A. Shutemov  2018-02-14  141  #endif /* CONFIG_DYNAMIC_MEMORY_LAYOUT */
-92a0f81d89571e Thomas Gleixner     2017-12-20  142  
-1a167ddd3c561b Alexander Potapenko 2022-09-15  143  /*
-1a167ddd3c561b Alexander Potapenko 2022-09-15  144   * End of the region for which vmalloc page tables are pre-allocated.
-1a167ddd3c561b Alexander Potapenko 2022-09-15  145   * For non-KMSAN builds, this is the same as VMALLOC_END.
-1a167ddd3c561b Alexander Potapenko 2022-09-15  146   * For KMSAN builds, VMALLOC_START..VMEMORY_END is 4 times bigger than
-1a167ddd3c561b Alexander Potapenko 2022-09-15  147   * VMALLOC_START..VMALLOC_END (see below).
-1a167ddd3c561b Alexander Potapenko 2022-09-15  148   */
-1a167ddd3c561b Alexander Potapenko 2022-09-15  149  #define VMEMORY_END		(VMALLOC_START + (VMALLOC_SIZE_TB << 40) - 1)
-1a167ddd3c561b Alexander Potapenko 2022-09-15  150  
-1a167ddd3c561b Alexander Potapenko 2022-09-15  151  #ifndef CONFIG_KMSAN
-1a167ddd3c561b Alexander Potapenko 2022-09-15  152  #define VMALLOC_END		VMEMORY_END
-1a167ddd3c561b Alexander Potapenko 2022-09-15  153  #else
-1a167ddd3c561b Alexander Potapenko 2022-09-15  154  /*
-1a167ddd3c561b Alexander Potapenko 2022-09-15  155   * In KMSAN builds vmalloc area is four times smaller, and the remaining 3/4
-1a167ddd3c561b Alexander Potapenko 2022-09-15  156   * are used to keep the metadata for virtual pages. The memory formerly
-1a167ddd3c561b Alexander Potapenko 2022-09-15  157   * belonging to vmalloc area is now laid out as follows:
-1a167ddd3c561b Alexander Potapenko 2022-09-15  158   *
-1a167ddd3c561b Alexander Potapenko 2022-09-15  159   * 1st quarter: VMALLOC_START to VMALLOC_END - new vmalloc area
-1a167ddd3c561b Alexander Potapenko 2022-09-15  160   * 2nd quarter: KMSAN_VMALLOC_SHADOW_START to
-1a167ddd3c561b Alexander Potapenko 2022-09-15  161   *              VMALLOC_END+KMSAN_VMALLOC_SHADOW_OFFSET - vmalloc area shadow
-1a167ddd3c561b Alexander Potapenko 2022-09-15  162   * 3rd quarter: KMSAN_VMALLOC_ORIGIN_START to
-1a167ddd3c561b Alexander Potapenko 2022-09-15  163   *              VMALLOC_END+KMSAN_VMALLOC_ORIGIN_OFFSET - vmalloc area origins
-1a167ddd3c561b Alexander Potapenko 2022-09-15  164   * 4th quarter: KMSAN_MODULES_SHADOW_START to KMSAN_MODULES_ORIGIN_START
-1a167ddd3c561b Alexander Potapenko 2022-09-15  165   *              - shadow for modules,
-1a167ddd3c561b Alexander Potapenko 2022-09-15  166   *              KMSAN_MODULES_ORIGIN_START to
-1a167ddd3c561b Alexander Potapenko 2022-09-15  167   *              KMSAN_MODULES_ORIGIN_START + MODULES_LEN - origins for modules.
-1a167ddd3c561b Alexander Potapenko 2022-09-15  168   */
-1a167ddd3c561b Alexander Potapenko 2022-09-15  169  #define VMALLOC_QUARTER_SIZE	((VMALLOC_SIZE_TB << 40) >> 2)
-1a167ddd3c561b Alexander Potapenko 2022-09-15  170  #define VMALLOC_END		(VMALLOC_START + VMALLOC_QUARTER_SIZE - 1)
-1a167ddd3c561b Alexander Potapenko 2022-09-15  171  
-1a167ddd3c561b Alexander Potapenko 2022-09-15  172  /*
-1a167ddd3c561b Alexander Potapenko 2022-09-15  173   * vmalloc metadata addresses are calculated by adding shadow/origin offsets
-1a167ddd3c561b Alexander Potapenko 2022-09-15  174   * to vmalloc address.
-1a167ddd3c561b Alexander Potapenko 2022-09-15  175   */
-1a167ddd3c561b Alexander Potapenko 2022-09-15  176  #define KMSAN_VMALLOC_SHADOW_OFFSET	VMALLOC_QUARTER_SIZE
-1a167ddd3c561b Alexander Potapenko 2022-09-15  177  #define KMSAN_VMALLOC_ORIGIN_OFFSET	(VMALLOC_QUARTER_SIZE << 1)
-1a167ddd3c561b Alexander Potapenko 2022-09-15  178  
-1a167ddd3c561b Alexander Potapenko 2022-09-15  179  #define KMSAN_VMALLOC_SHADOW_START	(VMALLOC_START + KMSAN_VMALLOC_SHADOW_OFFSET)
-1a167ddd3c561b Alexander Potapenko 2022-09-15  180  #define KMSAN_VMALLOC_ORIGIN_START	(VMALLOC_START + KMSAN_VMALLOC_ORIGIN_OFFSET)
-1a167ddd3c561b Alexander Potapenko 2022-09-15  181  
-1a167ddd3c561b Alexander Potapenko 2022-09-15  182  /*
-1a167ddd3c561b Alexander Potapenko 2022-09-15  183   * The shadow/origin for modules are placed one by one in the last 1/4 of
-1a167ddd3c561b Alexander Potapenko 2022-09-15  184   * vmalloc space.
-1a167ddd3c561b Alexander Potapenko 2022-09-15  185   */
-1a167ddd3c561b Alexander Potapenko 2022-09-15  186  #define KMSAN_MODULES_SHADOW_START	(VMALLOC_END + KMSAN_VMALLOC_ORIGIN_OFFSET + 1)
-1a167ddd3c561b Alexander Potapenko 2022-09-15  187  #define KMSAN_MODULES_ORIGIN_START	(KMSAN_MODULES_SHADOW_START + MODULES_LEN)
-1a167ddd3c561b Alexander Potapenko 2022-09-15  188  #endif /* CONFIG_KMSAN */
-92a0f81d89571e Thomas Gleixner     2017-12-20  189  
-6145cfe394a7f1 Kees Cook           2013-10-10  190  #define MODULES_VADDR		(__START_KERNEL_map + KERNEL_IMAGE_SIZE)
-f06bdd4001c257 Thomas Garnier      2017-03-14  191  /* The module sections ends with the start of the fixmap */
-14df3267029158 Thomas Gleixner     2020-11-18  192  #ifndef CONFIG_DEBUG_KMAP_LOCAL_FORCE_MAP
-f5a40711fa58f1 Andrey Ryabinin     2017-12-28  193  # define MODULES_END		_AC(0xffffffffff000000, UL)
-14df3267029158 Thomas Gleixner     2020-11-18  194  #else
-14df3267029158 Thomas Gleixner     2020-11-18  195  # define MODULES_END		_AC(0xfffffffffe000000, UL)
-14df3267029158 Thomas Gleixner     2020-11-18  196  #endif
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08  197  #define MODULES_LEN		(MODULES_END - MODULES_VADDR)
-92a0f81d89571e Thomas Gleixner     2017-12-20  198  
-3891a04aafd668 H. Peter Anvin      2014-04-29  199  #define ESPFIX_PGD_ENTRY	_AC(-2, UL)
-1d33b219563fb9 Kirill A. Shutemov  2017-03-30  200  #define ESPFIX_BASE_ADDR	(ESPFIX_PGD_ENTRY << P4D_SHIFT)
-92a0f81d89571e Thomas Gleixner     2017-12-20  201  
-f2078904810373 Thomas Gleixner     2018-01-04  202  #define CPU_ENTRY_AREA_PGD	_AC(-4, UL)
-92a0f81d89571e Thomas Gleixner     2017-12-20  203  #define CPU_ENTRY_AREA_BASE	(CPU_ENTRY_AREA_PGD << P4D_SHIFT)
-92a0f81d89571e Thomas Gleixner     2017-12-20  204  
-8266e31ed0fedb Mathias Krause      2014-09-21  205  #define EFI_VA_START		( -4 * (_AC(1, UL) << 30))
-8266e31ed0fedb Mathias Krause      2014-09-21  206  #define EFI_VA_END		(-68 * (_AC(1, UL) << 30))
-fb3551491b2044 Jeremy Fitzhardinge 2009-02-08  207  
-8170e6bed465b4 H. Peter Anvin      2013-01-24  208  #define EARLY_DYNAMIC_PAGE_TABLES	64
-8170e6bed465b4 H. Peter Anvin      2013-01-24  209  
-76e258add7b653 Joerg Roedel        2018-07-18 @210  #define PGD_KERNEL_START	((PAGE_SIZE / 2) / sizeof(pgd_t))
-76e258add7b653 Joerg Roedel        2018-07-18  211  
+   201	
+   202	static int _emif_get_id(struct device_node *node)
+   203	{
+   204		struct device_node *np;
+   205		const __be32 *addrp;
+   206		u32 addr, my_addr;
+   207		int my_id = 0;
+   208	
+   209		addrp = of_get_address(node, 0, NULL, NULL);
+   210		if (!addrp)
+   211			return -EINVAL;
+   212	
+   213		my_addr = (u32)of_translate_address(node, addrp);
+ > 214		if (my_addr == OF_BAD_ADDR)
+   215			return -EINVAL;
+   216	
+   217		for_each_matching_node(np, ti_edac_of_match) {
+   218			if (np == node)
+   219				continue;
+   220	
+   221			addrp = of_get_address(np, 0, NULL, NULL);
+   222			if (!addrp)
+   223				return -EINVAL;
+   224	
+   225			addr = (u32)of_translate_address(np, addrp);
+   226			if (addr == OF_BAD_ADDR)
+   227				return -EINVAL;
+   228	
+   229			edac_printk(KERN_INFO, EDAC_MOD_NAME,
+   230				    "addr=%x, my_addr=%x\n",
+   231				    addr, my_addr);
+   232	
+   233			if (addr < my_addr)
+   234				my_id++;
+   235		}
+   236	
+   237		return my_id;
+   238	}
+   239	
 
 -- 
 0-DAY CI Kernel Test Service
