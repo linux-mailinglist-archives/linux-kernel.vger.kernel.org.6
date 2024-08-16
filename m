@@ -1,125 +1,100 @@
-Return-Path: <linux-kernel+bounces-289108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AE3D95421C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:53:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2092B95421B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2E791F2631E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:53:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C65171F2347A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F4B13A276;
-	Fri, 16 Aug 2024 06:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E071F136671;
+	Fri, 16 Aug 2024 06:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jbGtZ28N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="DtUekxEa"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FBE13777F;
-	Fri, 16 Aug 2024 06:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2909512D758;
+	Fri, 16 Aug 2024 06:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723791109; cv=none; b=jPiSODnJX6E7r4A0x2HCybWld/AbsmyhqaLpMh3vhKWMk/GVslFoSavIbVfSubAb7IhTwyYtqvV21WISOavzGn0ZbkfOe0vTZuM/xT1JXew94QHXDUO42Pahc36bU7jDYgGu+TuaQ5k1LYSau+ek8UZMLN1dp6VJl2z+qliQS+g=
+	t=1723791107; cv=none; b=qUgYhPybpxbqtkQm6HaY6GNlYWuqtuO66QW8sTsJt8ZK5Xf43gMVvvKThJx4RvvztUUVuKNN4rR9RM+pP2sLDdC9AxVTQSwghLgHsbSLX5nNkSQsc2WlKztQPcAbr3UZ5Nn0P910BGVeD8RCr3QYu81UE2C2vlMNWlEZ6PyN8ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723791109; c=relaxed/simple;
-	bh=D8s5bN3jgVM8JPbRgvLUs8ZVTdCwr1h49SMsmogsp08=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YumHu4TzzXclsGM1wsthdrKeF70kQ2ISWMs9jnR2lUptpT+6V893m/WHroa9n33XNomgJGgGFfw4LlvwnklY6Va2C4LwNcVTYYYNCmGifi65rdYKpEbt7S9LgALDXh3WpSWJ8IIX4BKRwzewiVaui8OlXoyDal/fourcSlcM+QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jbGtZ28N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09E1CC32782;
-	Fri, 16 Aug 2024 06:51:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723791109;
-	bh=D8s5bN3jgVM8JPbRgvLUs8ZVTdCwr1h49SMsmogsp08=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jbGtZ28NtVnsK3IecxIH0GNuFtvvK8noARrlYH8vqERTjYRg/J9DTVcG6a+i8PeMK
-	 WbVjnCdRcKwu4GlmCjjNzX1UP2GQcubhd0A5vx40WxEwMlRT2Ra6FcUmLiTFnbXxlb
-	 3EJr5jRtwB3ev8/ZI15CoSSyKCkf92j70vJ21b6eYqRrC6RepL06H7twsMsYXpr5SE
-	 2/+l7XsEjKD+q3GePzoH8AqMHHoVsDjwwF773rQEQ3F1TJ31uPi7JjslId1Wx1Blf0
-	 VcKcVe8zaAxn5gGeQ9R9SdA5EIlVBz8q7DeXDRy+MtyDZBNiXzcwkXwa4Sdz9sVJmP
-	 KFUgU8bEauLLw==
-From: neeraj.upadhyay@kernel.org
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	paulmck@kernel.org,
-	neeraj.upadhyay@kernel.org,
-	neeraj.upadhyay@amd.com,
-	boqun.feng@gmail.com,
-	joel@joelfernandes.org,
-	urezki@gmail.com,
-	frederic@kernel.org
-Subject: [PATCH rcu 12/12] rcu/tasks: Add rcu_barrier_tasks*() start time to diagnostics
-Date: Fri, 16 Aug 2024 12:19:21 +0530
-Message-Id: <20240816064921.57645-12-neeraj.upadhyay@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240816064730.GA56949@neeraj.linux>
-References: <20240816064730.GA56949@neeraj.linux>
+	s=arc-20240116; t=1723791107; c=relaxed/simple;
+	bh=+hVS3W3MEkjPt32QKq233gBf8FSSn1/LzNSGlcg+J7E=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=VtnyD9zqAnL8UECoX5wqOIrMeagjO/a8Atrqq8s3PgkY2Tw/MGNvrMHlqb2lXaSDHUMKrCkWqbCOJoLLROI8m+KsPKtNCUhpfftLsJs5GN9Fmk38Jd2n13XKfWkZyaWaW00pch6jJ6K3IxyGSxml3QxXMo45VeMCdiohRNlXWmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=DtUekxEa; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1723791101;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=erdeOGfMKnjJZthRQ74ZwqFW9cbRAdXya4HEE8czlZo=;
+	b=DtUekxEajDyHcJ1DEsY/8VEsO+N6NYgruSKHNHe0ivJpXlj9DQu/LRb+Eg3kHDi0x6mIBo
+	gS+Hsibva5U/JDu847lT27TVtlRnMf3tPXALDAvVk9XVa3rpxkalsV6HUL/2mKXzy/Acj0
+	fBUWYKfvvG1Fj3JeXQ1WVgXmp5uKvu/ApsuYIYdHC1qLx1bbE5yxTMQ9pps75Wxy1pWhmJ
+	2SxOAuk5zOVSCMtwajBHCL+wo26g84iFVAenQILZzc9ci2KZTYz0cWmlwfmuwXHkNbrv7K
+	a6BQHUXj0mIZy7QY/5HRbx+MobPTlxrzJsjrGI2xGFXw4H0HmSfso3pHUyFk4Q==
+Date: Fri, 16 Aug 2024 08:51:40 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Sergey Bostandzhyan <jin@mediatomb.cc>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ heiko@sntech.de, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] arm64: dts: rockchip: improve eMMC speed on NanoPi
+ R2S Plus
+In-Reply-To: <20240814170048.23816-4-jin@mediatomb.cc>
+References: <20240814170048.23816-1-jin@mediatomb.cc>
+ <20240814170048.23816-4-jin@mediatomb.cc>
+Message-ID: <002107db3dcf3f1d1d1a767f049b5b79@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-From: "Paul E. McKenney" <paulmck@kernel.org>
+Hello Sergey,
 
-This commit adds the start time, in jiffies, of the most recently started
-rcu_barrier_tasks*() operation to the diagnostic output used by rcuscale.
-This information can be helpful in distinguishing a hung barrier operation
-from a long series of barrier operations.
+On 2024-08-14 19:00, Sergey Bostandzhyan wrote:
+> This change has been suggested by Daniel Golle during patch review,
+> adding mmc-hs200-1_8v; makes sure that eMMC gets detected as HS200
+> which improves it's performance.
 
-Signed-off-by: "Paul E. McKenney" <paulmck@kernel.org>
-Signed-off-by: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
----
- kernel/rcu/tasks.h | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Describing who suggested the patch in the patch description looks
+out of place.  Instead, you should add a Suggested-by tag, whose
+purpose is exactly to describe who suggested the patch.
 
-diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
-index 5f6d80ce1e47..36be92efb0da 100644
---- a/kernel/rcu/tasks.h
-+++ b/kernel/rcu/tasks.h
-@@ -87,6 +87,7 @@ struct rcu_tasks_percpu {
-  * @barrier_q_count: Number of queues being waited on.
-  * @barrier_q_completion: Barrier wait/wakeup mechanism.
-  * @barrier_q_seq: Sequence number for barrier operations.
-+ * @barrier_q_start: Most recent barrier start in jiffies.
-  * @name: This flavor's textual name.
-  * @kname: This flavor's kthread name.
-  */
-@@ -122,6 +123,7 @@ struct rcu_tasks {
- 	atomic_t barrier_q_count;
- 	struct completion barrier_q_completion;
- 	unsigned long barrier_q_seq;
-+	unsigned long barrier_q_start;
- 	char *name;
- 	char *kname;
- };
-@@ -430,6 +432,7 @@ static void __maybe_unused rcu_barrier_tasks_generic(struct rcu_tasks *rtp)
- 		mutex_unlock(&rtp->barrier_q_mutex);
- 		return;
- 	}
-+	rtp->barrier_q_start = jiffies;
- 	rcu_seq_start(&rtp->barrier_q_seq);
- 	init_completion(&rtp->barrier_q_completion);
- 	atomic_set(&rtp->barrier_q_count, 2);
-@@ -785,8 +788,9 @@ static void rcu_tasks_torture_stats_print_generic(struct rcu_tasks *rtp, char *t
- 		pr_cont(".\n");
- 	else
- 		pr_cont(" (none).\n");
--	pr_alert("\tBarrier seq %lu count %d holdout CPUs ",
--		 data_race(rtp->barrier_q_seq), atomic_read(&rtp->barrier_q_count));
-+	pr_alert("\tBarrier seq %lu start %lu count %d holdout CPUs ",
-+		 data_race(rtp->barrier_q_seq), j - data_race(rtp->barrier_q_start),
-+		 atomic_read(&rtp->barrier_q_count));
- 	if (cpumask_available(cm) && !cpumask_empty(cm))
- 		pr_cont(" %*pbl.\n", cpumask_pr_args(cm));
- 	else
--- 
-2.40.1
-
+> Signed-off-by: Sergey Bostandzhyan <jin@mediatomb.cc>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts
+> b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts
+> index 12eabdbf8fe8..146b1da198b8 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts
+> @@ -23,6 +23,7 @@
+>  	cap-mmc-highspeed;
+>  	supports-emmc;
+>  	disable-wp;
+> +	mmc-hs200-1_8v;
+>  	non-removable;
+>  	num-slots = <1>;
+>  	pinctrl-names = "default";
 
