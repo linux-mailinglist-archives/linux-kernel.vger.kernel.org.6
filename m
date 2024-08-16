@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-289206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FDB0954328
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:46:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ABA495432A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:47:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C04831F246ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:46:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F9821C214CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213CB153835;
-	Fri, 16 Aug 2024 07:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D1A15530F;
+	Fri, 16 Aug 2024 07:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DJi0EE35"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sRFDflZe"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D93114A09D
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072EB14EC5B
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723794057; cv=none; b=RQfsSMjB2zztThFOLisYRrc6qQEO4CEyTNpckTf9yiCmBB/Q/2wPK4/oWgIgYLTKCG0fo2ar+TU0A7nTuJf+saLqVR2h4Td+ua0fxYN8eidovv9m1o0uXJXIY7zLQDtCS05hMRkXkkBdXo2SGz/LbakKgaHyiiSdda4OQtc0VbE=
+	t=1723794059; cv=none; b=Iw9m1ucvO1gMnvjHaOBGMWc79XHSF+Kemb9v5AlFgTW4B1Xv9CDoO4DDdxXFjUs2v6YZ9qIKOANioF78b9Xc+7/wTPKXtSR42ZrntvswonUeEHLRYnwvb9LiZfvnaLoujzVOoVeWvtPxUcfpRL9NX45sPNvrywYInRHLPk6yE7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723794057; c=relaxed/simple;
-	bh=PbJeEGZU3UpmozZSCe3r0DvMlYlbAp7Fh7CGsGwwTnk=;
+	s=arc-20240116; t=1723794059; c=relaxed/simple;
+	bh=IirK1kH8ZFaYK+Qd1HN3sx/SR5DeUZclZQLJnYIcqp8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GxLw8MeyVfwAj3Th8/akwpOkqigRdFwEia1GxyAxEBoUyi75ZICBkjT5LtxSlLCcfsDJtHm61COBe1M7NUR/XO65lsdttwG2rZupVDhdmJ4L4/SiVrKCKtw3BFNfO7uNqInIbCn+nTsxy0Wqjeb2LBgda7bf2QvW+Hhr0p82E+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DJi0EE35; arc=none smtp.client-ip=209.85.128.48
+	 In-Reply-To:To:Cc; b=S5ueJD/PFnlVGvRJtDr57RyOhEC8S6iTKGEtVb69xOslWladvhWmZCrx/b9lqGx1w5NfsIYARl/8ULJN1qlMXlfq7RWk2Rfo3q0EX4btAjFNwVEFkTuC8FAstgPGW1MvwKhqOWMphZhK+k9AEnXv8Z4yXA/t5SEr2SHs2WGeReo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sRFDflZe; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42808071810so12091825e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 00:40:55 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f15790b472so21248741fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 00:40:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723794053; x=1724398853; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723794055; x=1724398855; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0wMpDkMtET/7aAM65Zz2/Kcs6PKgOPihE5IRKM0OVVc=;
-        b=DJi0EE35vju7zEq3P8l1XDiXS5LlurXhoN3F5GfKoZRfOTA1hittAGKXflAPhDBr9I
-         +DMsl2j90UOMZ1qdaTkm8uX2gNZiDx4yg8nu0lrHrzqbfXhUraKtdZs76ejDNEkBfbV6
-         HNcHkAWz6C+M9St7BBh8cqW8zZmUBn0p82qdihOteK9aLflAf7SvnJJdZt1inP6ZI5jO
-         QvKjnUzVoF2LR7cs+mbJDt1eO0vOd1eLavUW3c86ScsTB1u55Ck1iPL9VrbakiLecovi
-         vz1+iPWCyYiFcXLzji+geuEnnBd4AjXHC7KZ/NHUhKEoaPwj9nnlhl6sB30luGaKm/OV
-         lGbA==
+        bh=oOnuVPSEiv2AcMdh6RSWf26c7BxWtZXwLCBzhkW1eTQ=;
+        b=sRFDflZelQqLh2GzBncplbSib1SK1tJ/h6i36pCkAQErUXZCF6NCh3CFoJRQ8VfCQC
+         FjBiSUkYCpiH3kjdcY/C3v3IHCc4seQ0Deq2o0CKTDGxsT2FCtzsEvgerHlE2kZegpIZ
+         Gxagtb47e4R23zS9AymrLM786jKhKyQ5IaeFcNoT3qlk5rlfoHRuEQ+coD4FqVD56nEn
+         HGSwJOaSn2fHnkxCLJYplwJPytTaubkrd/T1/KMaunsoIPXrZ6B//SaXfjEmfuVL0xZ2
+         U4iLBpZpG6V4rJHHKLTuXLUlNRDS6dGQGeDEBYW+iiT67Opc0OSf5PYzvpbUhkQ7xxPg
+         l7xA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723794053; x=1724398853;
+        d=1e100.net; s=20230601; t=1723794055; x=1724398855;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0wMpDkMtET/7aAM65Zz2/Kcs6PKgOPihE5IRKM0OVVc=;
-        b=GpBSbmZbrIdv59ffKyrxXiQ1vrDhSaA7GsQg0dw+fp67iFTCVGjogQNeGCEjF2TRR1
-         CLChoycQRFwWHEqkDwoUuaXsfBzQ1pUZMkkeGewsGiLeEmNCYdFRgJ7Iwi85heqw/Vv2
-         ozA+MdTryFHCPLiRfOoEKcEDRWhTjhQr0N/Z9xrlVnwbzbY9Z2JG7nF+tJCZHL54uQCH
-         b7F5YDNvjg9ocA8gpcr+PmEA7F3I9BQ01U065hae092adAGOmaaL/Rr7XCIq06PMtzRY
-         EijgCtIQvGz6LL4D+CS7zZWnwuOQpL4eChINtBYuZl6acBentgbuILm9P9mke0pXP+vH
-         BcLA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKG7IQxXN+JAR7PYRbU/P1zqsO3nN9lTGRxYk0pZcH6skfghDJetrCGNd3uMzy6cOFE1Agczomvfsy40kgMCy6KwZYks/6SQvlj98w
-X-Gm-Message-State: AOJu0YxEC5AuJzQ0GRZ6cDBTOOG9/83PN7VhUGgw6BcoswAuabtYGWPj
-	Kv8k0aHm4VgaeiaZkb3dPIW/p08fReRhBT+6JTq/R0IOUtU25JFl+VMCyCzWx0k=
-X-Google-Smtp-Source: AGHT+IEnXbQO9mmtyvuxjzYjdXQUi2maQz0qIi0DaT7l9WqGJwLWdeuDft0i/qsT1e/F2DXQfswARQ==
-X-Received: by 2002:a05:600c:4f48:b0:426:5b84:86d2 with SMTP id 5b1f17b1804b1-429ed7b9391mr16384705e9.20.1723794053471;
-        Fri, 16 Aug 2024 00:40:53 -0700 (PDT)
+        bh=oOnuVPSEiv2AcMdh6RSWf26c7BxWtZXwLCBzhkW1eTQ=;
+        b=tenItnMCIyYWhVe/pCJnyo5O59R/QUaR4b9IofIMPyGBwjBOtdpztG3c26+SNvi0wN
+         0OIUTAEyH/9SxpvqVJyfbGGjzUWri0G31CigZP82dedPi47ymBqjK9749zNhNPjygX38
+         KZpA2q/kHqAkWeIlLszQBif2S1EZC+BM3CRJFZDdSQs6Wm7zheridwg+aGbkjqVwgwLt
+         kk0eHZ4hc68YOKTh0L2OT9uJInfqecci4DgwRyAkYO2xWdta7zDY6R8eugVwCM6x+VE5
+         Af4/HXsE6Zl/ecMZu9SsxK2/ihOARLmeY1+6wLbOgRzkwYh3iHC5E455vLuv2hFxIPQM
+         pkTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUR4LNItQXAoQLXFGbK5pdYxKwWfI4Z/2C1gj55cVeoCbjSoep2vI25633uQdGwopKUDFFG0P3Zii/k00NCBQq9m5U67iwX/VZ2SaKt
+X-Gm-Message-State: AOJu0YxFoVI6BGh/MuSYtEPBih3M1SEwW8KPTCInsIjWpP3LU1tFv+Y/
+	d4NHt1dsN8TLsEUYsgg1zyv0BtYScjag/WoCViRJqBIljjeak6yZR+WW5CY26tM=
+X-Google-Smtp-Source: AGHT+IGm5wS69TxUWTKg0DzxkZwTJea1xUpbHE65rKz/zhe5yL4AjAz5VVHvzlDKSEanOGu6NzifNg==
+X-Received: by 2002:a05:6512:2346:b0:52d:582e:4117 with SMTP id 2adb3069b0e04-5331c6e979dmr1102171e87.54.1723794055062;
+        Fri, 16 Aug 2024 00:40:55 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded3596esm68549625e9.22.2024.08.16.00.40.51
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded3596esm68549625e9.22.2024.08.16.00.40.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 00:40:52 -0700 (PDT)
+        Fri, 16 Aug 2024 00:40:54 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Fri, 16 Aug 2024 09:40:35 +0200
-Subject: [PATCH v2 5/7] thermal: qcom-spmi-adc-tm5: Simplify with scoped
- for each OF child loop
+Date: Fri, 16 Aug 2024 09:40:36 +0200
+Subject: [PATCH v2 6/7] thermal: tegra: Simplify with scoped for each OF
+ child loop
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240816-b4-cleanup-h-of-node-put-thermal-v2-5-cee9fc490478@linaro.org>
+Message-Id: <20240816-b4-cleanup-h-of-node-put-thermal-v2-6-cee9fc490478@linaro.org>
 References: <20240816-b4-cleanup-h-of-node-put-thermal-v2-0-cee9fc490478@linaro.org>
 In-Reply-To: <20240816-b4-cleanup-h-of-node-put-thermal-v2-0-cee9fc490478@linaro.org>
 To: "Rafael J. Wysocki" <rafael@kernel.org>, 
@@ -96,60 +96,63 @@ Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
  Chen-Yu Tsai <wenst@chromium.org>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1333;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1360;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=PbJeEGZU3UpmozZSCe3r0DvMlYlbAp7Fh7CGsGwwTnk=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmvwJ4R960iiX78E9nbSk6rU3XcRyumrrr+WNwm
- b9uWv5JL4uJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZr8CeAAKCRDBN2bmhouD
- 117ID/9EACqKFcFO6/LOiwiOQBgFhDpNJAh5abY1rYNUwH6civPjvKo7M1pZANYtvFOAb1NcY+K
- L0XUBZ1qUwcnHA4TEelwGC0qKPEU2delRJzqiitq/NS84JtEIZN3EXedyZAEvaGMr8kY5sAQ2Lj
- ezGPzEZRdSmWeBFbR3R6HgVKuZTmLfXO8g3yCatnh1PQyomIywfLrFk60IFFqiIS2cafdrsv8Wm
- qSUw2PK2e0cM/4dc4HptXcs+fr/zCC+sSICFfCKZ5LWia8XVwXxopYBK3NHbpD2ndfaFJRamXhA
- cLqeLQXVXxmTSt4sy2bEMQb/SJRE8Adi6sNdoxQoB2xxCWpRTYRgQmkHmu4qZvfsy5b2DoUg4WA
- qiWVWtqt8Cfn8i/UHVqlJ7+idqLMCACVEw/6v3LxwJQ0nrQ93wmRHqwiR5QmK/8ndrgBnNPjb5b
- 3JsQaU8mlC1O/ZHGA34DuII/fv+D8b4cHHSP0IMAR6m6JqIMCmnlNWNWSrxgF31Lgk+D5z8rpYM
- auRMmfihug05VxVXVoYJ27RBVuRpmN+Rkrp2rvAXYHuddV0DmEL06/ZlF0psI/X7TgNCjWbjPeX
- bBpNobaS18uO01FwmZbRdjVzYV6G40GYDQT1rbs32LG/aL36N8DPRrkSTdgySwNFEsu5VprtL7J
- +fC+fPiASEAIR0g==
+ bh=IirK1kH8ZFaYK+Qd1HN3sx/SR5DeUZclZQLJnYIcqp8=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmvwJ5VFTD7jL8T2C8EqxXgCoZt3AMXm79PgzLr
+ sTjGUCyw1CJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZr8CeQAKCRDBN2bmhouD
+ 185yEACQBjW7Xgteb2o2laP/JQ0q3JXG2b2i0GZGwB62iEyDcJl4EGxBEYWTcrT46Hu2ROUiWQp
+ w1q3LqVeSLyeTgJBHMJsSkkjhfuUxKQWw56DNwzQKUAyh4Fdvghc2CKYG+cwcEqTJQL7tSdDgZw
+ KYLGFFrEkyk3wlvOtQakEetOfeo25JvN7cRrlsXV3PoH7YO17+UAPON1ou4KYLlykgmm/ppYxUd
+ zfql28aKU4u9B2AymcC5MR22oqSwFYKHVjQee4HAkz8S8v3VxD+I3eOrdmsVTiEukprVNg1i6TZ
+ xDhx4+YF1Js9VHiz2UVhiS1WNClUjtIuJRk+FxwL1cfiMLo43nZA2J326D9ZW5/QTY1wQDRshq8
+ pYZv/BwvC3nqcvQ1L7hQdwtGEH/p3B6EqwVyNuTsVQIMWdU2WxbS9n9ema0tyKKRmhXFNiKERvg
+ Jtbbz3Nn2TjOjTzxxSVJJESFTZ565vyBN4moKHimhY2oMLxrSrX7af74T4DSE8QQYtOuOPRhHaG
+ YURgdAWhPOrQxyXTmWnTKOsanvyYzCnnmD4G+PoRKKH0ukZbLede20bOFqANr+ARvzEvAPEKL/0
+ Ot1U/iyTkPXgGJFg9NJxZCHrGHulNvz47ruEPfYLGRTO/XsI7D2CInaZbbbJqzrSxTFMgr/2Tnl
+ OIS185LIZoedfSg==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Use scoped for_each_available_child_of_node_scoped() when iterating over
-device nodes to make code a bit simpler.
+Use scoped for_each_child_of_node_scoped() when iterating over device
+nodes to make code a bit simpler.
 
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/thermal/qcom/qcom-spmi-adc-tm5.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/thermal/tegra/soctherm.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/thermal/qcom/qcom-spmi-adc-tm5.c b/drivers/thermal/qcom/qcom-spmi-adc-tm5.c
-index 7c9f4023babc..19cdb98c310e 100644
---- a/drivers/thermal/qcom/qcom-spmi-adc-tm5.c
-+++ b/drivers/thermal/qcom/qcom-spmi-adc-tm5.c
-@@ -938,7 +938,6 @@ static const struct adc_tm5_data adc_tm5_gen2_data_pmic = {
- static int adc_tm5_get_dt_data(struct adc_tm5_chip *adc_tm, struct device_node *node)
+diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+index a023c948afbd..ff4eedb553fb 100644
+--- a/drivers/thermal/tegra/soctherm.c
++++ b/drivers/thermal/tegra/soctherm.c
+@@ -1651,7 +1651,7 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
  {
- 	struct adc_tm5_channel *channels;
--	struct device_node *child;
- 	u32 value;
- 	int ret;
- 	struct device *dev = adc_tm->dev;
-@@ -982,12 +981,10 @@ static int adc_tm5_get_dt_data(struct adc_tm5_chip *adc_tm, struct device_node *
- 		adc_tm->avg_samples = VADC_DEF_AVG_SAMPLES;
+ 	struct device *dev = &pdev->dev;
+ 	struct tegra_soctherm *ts = dev_get_drvdata(dev);
+-	struct device_node *np_stc, *np_stcc;
++	struct device_node *np_stc;
+ 	const char *name;
+ 	int i;
+ 
+@@ -1668,7 +1668,7 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
+ 		return;
  	}
  
--	for_each_available_child_of_node(node, child) {
-+	for_each_available_child_of_node_scoped(node, child) {
- 		ret = adc_tm5_get_dt_channel_data(adc_tm, channels, child);
--		if (ret) {
--			of_node_put(child);
-+		if (ret)
- 			return ret;
--		}
+-	for_each_child_of_node(np_stc, np_stcc) {
++	for_each_child_of_node_scoped(np_stc, np_stcc) {
+ 		struct soctherm_throt_cfg *stc;
+ 		struct thermal_cooling_device *tcd;
+ 		int err;
+@@ -1683,7 +1683,6 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
  
- 		channels++;
- 	}
+ 		if (stc->init) {
+ 			dev_err(dev, "throttle-cfg: %s: redefined!\n", name);
+-			of_node_put(np_stcc);
+ 			break;
+ 		}
+ 
 
 -- 
 2.43.0
