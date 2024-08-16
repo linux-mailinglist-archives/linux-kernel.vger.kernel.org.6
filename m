@@ -1,97 +1,105 @@
-Return-Path: <linux-kernel+bounces-288858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA2B9953FB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:33:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322D4953FBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:33:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD3B01C217D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 02:33:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E52992854ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 02:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D204F20E;
-	Fri, 16 Aug 2024 02:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5054EB45;
+	Fri, 16 Aug 2024 02:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="3sM9HNf8"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UUjZSkya"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69DDF6F2E0;
-	Fri, 16 Aug 2024 02:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACB147F7A;
+	Fri, 16 Aug 2024 02:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723775593; cv=none; b=tfBTouvGX/1ughPGa5HWcZwqNAX6PLhTyHxwX4GNfxwPoxTNQ+pCG8W8hC135ewNtIzglCorQuUA6QglNxGvWH13KUfATnTeI0oQAgFoCa7lbXPzM5bnfOly3itO4XyiVIwXO6vvxdZuhV0d/Fl+KAELIW6b0cQuQqCrzCTcf7A=
+	t=1723775628; cv=none; b=q42vKeG8bVmuMSSmRpucA3GaXiYrPhT3SrTymnQx900eysF93APZ0eQ4C1vtyLLPQAhi6HMY3oGoSiLTjHs6kBLkHJWf5oCBTrHWLS/5SjYWEGisRP9yYegC2c8xzYIWgBARksF8cZLgSZ76iAHxfBIxr9Nt9/W0NTLmWMKPtqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723775593; c=relaxed/simple;
-	bh=+hycJpFn+kf6fMVa9crjYGSDMXzfCWIVHI5hZ35K6IA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jrRBtjULS7B2E5Q+/BXQMXYrauUJk44u+xbU5qnmZ8mMaVO2vCm+OClIPx5HEUzaEBymLV4OBbRj7iMtnqJNwSe+gdU1HLlnlPDEb1a8h9ZszvBHRQZ5nT/if5DuiEn6NDyGjWwlXP89DU30rdaAG9V0XIzQ9vJuPO8FQCoGtz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=3sM9HNf8; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=qVyYTHbtuwYjWfo8L+O8hoLZSEsYgsRh9cZGjypJx3E=; b=3sM9HNf8jlpA4tKW2w1fsRcvef
-	PulRJVAF4MxPK+V4kiqr369qFnFdrlMiG5zcf5m+t362SSE7ICydtCemHnUR2maP1pDmxgHEd9bpV
-	drh/wuZtmhA82aawX0r6svERJkA06X1WNGxaYYGWpSdpeQ16N349FMgxY+KIiCFMSFOY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1semlv-004tPx-BM; Fri, 16 Aug 2024 04:32:59 +0200
-Date: Fri, 16 Aug 2024 04:32:59 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"Andrei Botila (OSS)" <andrei.botila@oss.nxp.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 1/3] dt-bindings: net: tja11xx: use reverse-mode
- to instead of rmii-refclk-in
-Message-ID: <dba3139c-8224-4515-9147-6ba97c36909d@lunn.ch>
-References: <20240815055126.137437-1-wei.fang@nxp.com>
- <20240815055126.137437-2-wei.fang@nxp.com>
- <7aabe196-6d5a-4207-ba75-20187f767cf9@lunn.ch>
- <PAXPR04MB85108770DAF2E69C969FD24288812@PAXPR04MB8510.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1723775628; c=relaxed/simple;
+	bh=j/Tmxz2nOBApFpWXdFs4/pzneW3wrT151GdufwbfMjo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jqsmm5Lt1keied+y9wyrQXw1n5M10VA/kYllFok1yKhnQyKt9tph61gFmzvcgUD/RHiOWx3kZz8AuoTPvGWWmzsfrUdWYvAoE/ee9+piYyS4lbxXnhait+nbrqvJ4C9AT3VQSboVKZJpV2hfvfXnOGgEE9hvtYcUrmbw4kZIt4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UUjZSkya; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723775626; x=1755311626;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=j/Tmxz2nOBApFpWXdFs4/pzneW3wrT151GdufwbfMjo=;
+  b=UUjZSkyaJV5mAenSVheHiQxpUXGZvHt3vBmc72RKUOmubYo5eT/i/wL4
+   njtARIrDcwcf0rQe+Zrf6bAodYVkfCSiLY8FHXUcNuc2mgef1J6ll7WO7
+   ZjdotPwJetD9YlcbhAJYDcINzv4j2w/j9K/Ojh4oOYkRboFHmpc2Qc/BC
+   AGOYNL93QfdnkBPVYp6OcdM1DkjCGkz+9tz9E1fQTKsFXnR2OYbdRUNun
+   xvbuf6PcTqowB7Qo//g/B3E4VOMsEN7GG/nli3VNGuCfQq+oE1On7Bknz
+   YSuaCB7XBo80smvqiI8MaOeVyuTyfqP8+rHXHf19ek/W1bq9zm6JnTOA4
+   A==;
+X-CSE-ConnectionGUID: GkwNZMyaS122eOZQDQmJ+g==
+X-CSE-MsgGUID: YihQ6oKqQjCav3KZFaDK2g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11165"; a="22203550"
+X-IronPort-AV: E=Sophos;i="6.10,150,1719903600"; 
+   d="scan'208";a="22203550"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 19:33:45 -0700
+X-CSE-ConnectionGUID: Ytw8eBn9R5yMw1IpmiG5Ug==
+X-CSE-MsgGUID: DnSk4vkXT8SNIkUEWZYueA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,150,1719903600"; 
+   d="scan'208";a="63949173"
+Received: from unknown (HELO yungchua-desk.intel.com) ([10.247.119.176])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 19:33:42 -0700
+From: Bard Liao <yung-chuan.liao@linux.intel.com>
+To: linux-sound@vger.kernel.org,
+	vkoul@kernel.org
+Cc: vinod.koul@linaro.org,
+	linux-kernel@vger.kernel.org,
+	tiwai@suse.de,
+	broonie@kernel.org,
+	pierre-louis.bossart@linux.intel.com,
+	bard.liao@intel.com
+Subject: [PATCH 0/3] ALSA/ASoC/SoundWire: Intel: update maximum number of links
+Date: Fri, 16 Aug 2024 10:33:28 +0800
+Message-ID: <20240816023331.6565-1-yung-chuan.liao@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB85108770DAF2E69C969FD24288812@PAXPR04MB8510.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-> According to the commit message c858d436be8b ("net: phy: introduce
-> PHY_INTERFACE_MODE_REVRMII"), my understanding is that
-> PHY_INTERFACE_MODE_REVRMII and PHY_INTERFACE_MODE_REVMII
-> are used for MAC to MAC connections, which means the MAC behaves
-> link an RMII/MII PHY. For the MAC to PHY connection, I think these two
-> macros are not applicable.
+Intel new platforms can have up to 5 SoundWire links.
+This series does not apply to SoundWire tree due to recent changes in
+machine driver. Can we go via ASoC tree with Vinod's Acked-by tag?
 
-In MAC to MAC connections, REVRMII means that end plays the role of a
-PHY, even though it is a MAC.
+Pierre-Louis Bossart (3):
+  ALSA/ASoC/SoundWire: Intel: use single definition for
+    SDW_INTEL_MAX_LINKS
+  soundwire: intel: increase maximum number of links
+  soundwire: intel: add probe-time check on link id
 
-What is actually happening when you use these properties/register
-setting on the PHY?  It is playing the role of a MAC? In order to have
-a working link, do you need to tell the MAC to play the role of the
-PHY?
+ drivers/soundwire/intel.h               |  7 +++++++
+ drivers/soundwire/intel_ace2x.c         | 20 ++++++++++++++++++++
+ drivers/soundwire/intel_auxdevice.c     | 14 ++++++++++++++
+ include/linux/soundwire/sdw_intel.h     |  8 ++++++++
+ sound/hda/intel-sdw-acpi.c              |  5 ++---
+ sound/soc/intel/boards/sof_sdw.c        |  4 +++-
+ sound/soc/intel/boards/sof_sdw_common.h |  4 +---
+ sound/soc/intel/boards/sof_sdw_hdmi.c   |  2 ++
+ 8 files changed, 57 insertions(+), 7 deletions(-)
 
-	Andrew
 
-
+-- 
+2.43.0
 
 
