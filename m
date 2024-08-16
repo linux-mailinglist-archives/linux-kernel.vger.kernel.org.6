@@ -1,226 +1,131 @@
-Return-Path: <linux-kernel+bounces-289516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF2AC9546F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:52:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2172B9546F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:52:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BD6C1F24B10
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:52:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02F8CB2194C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE2619E7F5;
-	Fri, 16 Aug 2024 10:52:13 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C69198E7E;
+	Fri, 16 Aug 2024 10:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mJEYDkMn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A59C13B783
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 10:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D1C198A08;
+	Fri, 16 Aug 2024 10:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723805533; cv=none; b=MJiskVON677plAPTasfgdmZsdcwRczxFPEmAs2W9AxRneGyjg5kRW5gdwDPsE66u2j6iZf1sK9qf1ItDE/k0wbouoD+0dQWTcF9hc24dmv71oL614NjHSl/2oueouGf5LfHVSz3QMdyBEpkdNqHx1piBGRviva4+K3AZ1UgHG+4=
+	t=1723805525; cv=none; b=GluNMFwO4aCa3kdX3LxLdb3YtxhNy3T9ckMCAzuwjs3irGy1P/EWVWH/JFQiZCn5kY6Z/DpClECiSCyRjhYTizgz6wKbUt5tdTpruem41IBHk76UxoUjh4S3Ja2rGoiKxTJ2n6KSGWe3UH2/s9QI5oVtGTHtm24eTlZkLsECp50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723805533; c=relaxed/simple;
-	bh=C0Lj3s6rGWRY9u7RC0hMC7LlXn1RirJdOgbQEBApXyE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lqXz6H550hdMiKvGR62YcIJ+gB9NOaLf+FjCZ5XpVXbxN1DZbOR4SR7a1nrUYfAU3OeljBkopXeS4fYyP5is4mc14w8CUGMnja7XXybUNTcYXolMsOm4sfNPWtID5ozkp7bZlOXn1kqJc0yN0jO4F4pOcP+xfNJC6rm9ld4FN88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1seuYp-00083g-3U; Fri, 16 Aug 2024 12:51:59 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1seuYn-000okl-F3; Fri, 16 Aug 2024 12:51:57 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1seuYn-007lTq-1G;
-	Fri, 16 Aug 2024 12:51:57 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next v1 1/1] phy: dp83td510: Utilize ALCD for cable length measurement when link is active
-Date: Fri, 16 Aug 2024 12:51:55 +0200
-Message-Id: <20240816105155.1850795-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1723805525; c=relaxed/simple;
+	bh=sfpft34+Q7KpSTmp1/eLWQvAOdHVfxQX2RrOjfaV45k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YZUr0BxxLG5uDHW4bw8c0vdduprW/H4YkSEkKtvurdhwNb3SjIvS+Mnhx7dpPHOxN9aKbRVdjUHZ/XfGv1YLbk4bABAfa+qd+T/e4O3QcDj6hWfClNYsw5iRMUN1x+DCu27q9i9RqhKCxAlrmpv/2NHb6608tE4zx06HAG9OwV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mJEYDkMn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3F32C32782;
+	Fri, 16 Aug 2024 10:51:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723805525;
+	bh=sfpft34+Q7KpSTmp1/eLWQvAOdHVfxQX2RrOjfaV45k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mJEYDkMn6TmebfPerm4lk8VIradWKYkDFTfBkB3nBlBrG0s2NxeCKW4Uru7OP+lJO
+	 S60xtYkMNFVa4RAHS5ex196JjVqVtVU+YGpNBO0aWkd7QEKEJLcUsVHQovN2hQcj5S
+	 Qy2pAnjUl59oh9a47he0OEsvr6RHugCPTd4YgYYNKsiQgk5frJsVgayxKexR2wQUEZ
+	 1S5NFaHNXMEBtgun4D8CFftUN3DxO+OO/gMiBQ+Hl/dmX3XmJUP073d6AMMFSDAoLP
+	 3tti3ZDhfgMpleaEHZSOJl58kral88OJV9PfsSJba4DWgEaO/7gHe/tTvWjDaD1B7h
+	 1s68AyoGy6djQ==
+Date: Fri, 16 Aug 2024 11:51:57 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+	"dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
+	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"debug@rivosinc.com" <debug@rivosinc.com>,
+	"mgorman@suse.de" <mgorman@suse.de>,
+	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+	"fweimer@redhat.com" <fweimer@redhat.com>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"vschneid@redhat.com" <vschneid@redhat.com>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"hpa@zytor.com" <hpa@zytor.com>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"bsegall@google.com" <bsegall@google.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"juri.lelli@redhat.com" <juri.lelli@redhat.com>,
+	"jannh@google.com" <jannh@google.com>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"kees@kernel.org" <kees@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+	"will@kernel.org" <will@kernel.org>
+Subject: Re: [PATCH RFT v8 4/9] fork: Add shadow stack support to clone3()
+Message-ID: <c644d64b-f7d0-47de-b5ba-ae2ac1b46e1b@sirena.org.uk>
+References: <20240808-clone3-shadow-stack-v8-0-0acf37caf14c@kernel.org>
+ <20240808-clone3-shadow-stack-v8-4-0acf37caf14c@kernel.org>
+ <f3a2a564094d05beac2dc5ab657cbc009c465667.camel@intel.com>
+ <Zr8RfoHZYRWem1K9@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="i+AGODBgwk+YiNog"
+Content-Disposition: inline
+In-Reply-To: <Zr8RfoHZYRWem1K9@arm.com>
+X-Cookie: A Smith & Wesson beats four aces.
 
-In industrial environments where 10BaseT1L PHYs are replacing existing
-field bus systems like CAN, it's often essential to retain the existing
-cable infrastructure. After installation, collecting metrics such as
-cable length is crucial for assessing the quality of the infrastructure.
-Traditionally, TDR (Time Domain Reflectometry) is used for this purpose.
-However, TDR requires interrupting the link, and if the link partner
-remains active, the TDR measurement will fail.
 
-Unlike multi-pair systems, where TDR can be attempted during the MDI-X
-switching window, 10BaseT1L systems face greater challenges. The TDR
-sequence on 10BaseT1L is longer and coincides with uninterrupted
-autonegotiation pulses, making TDR impossible when the link partner is
-active.
+--i+AGODBgwk+YiNog
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The DP83TD510 PHY provides an alternative through ALCD (Active Link
-Cable Diagnostics), which allows for cable length measurement without
-disrupting an active link. Since a live link indicates no short or open
-cable states, ALCD can be used effectively to gather cable length
-information.
+On Fri, Aug 16, 2024 at 09:44:46AM +0100, Catalin Marinas wrote:
 
-Enhance the dp83td510 driver by:
-- Leveraging ALCD to measure cable length when the link is active.
-- Bypassing TDR when a link is detected, as ALCD provides the required
-  information without disruption.
+> We could, in theory, consume this token in the parent before the child
+> mm is created. The downside is that if a parent forks multiple
+> processes using the same shadow stack, it will have to set the token
+> each time. I'd be fine with this, that's really only for the mostly
+> theoretical case where one doesn't use CLONE_VM and still want a
+> separate stack and shadow stack.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/net/phy/dp83td510.c | 80 ++++++++++++++++++++++++++++++++++---
- 1 file changed, 74 insertions(+), 6 deletions(-)
+I originally implemented things that way but people did complain about
+the !CLONE_VM case, which does TBH seem reasonable.  Note that the
+parent won't as standard be able to set the token again - since the
+shadow stack is not writable to userspace by default it'd instead need
+to allocate a whole new shadow stack for each child.
 
-diff --git a/drivers/net/phy/dp83td510.c b/drivers/net/phy/dp83td510.c
-index 551e37786c2da..72c33079fc665 100644
---- a/drivers/net/phy/dp83td510.c
-+++ b/drivers/net/phy/dp83td510.c
-@@ -169,6 +169,10 @@ static const u16 dp83td510_mse_sqi_map[] = {
- #define DP83TD510E_UNKN_030E				0x30e
- #define DP83TD510E_030E_VAL				0x2520
- 
-+#define DP83TD510E_ALCD_STAT				0xa9f
-+#define DP83TD510E_ALCD_COMPLETE			BIT(15)
-+#define DP83TD510E_ALCD_CABLE_LENGTH			GENMASK(10, 0)
-+
- static int dp83td510_config_intr(struct phy_device *phydev)
- {
- 	int ret;
-@@ -327,6 +331,16 @@ static int dp83td510_cable_test_start(struct phy_device *phydev)
- {
- 	int ret;
- 
-+	/* If link partner is active, we won't be able to use TDR, since
-+	 * we can't force link partner to be silent. The autonegotiation
-+	 * pulses will be too frequent and the TDR sequence will be
-+	 * too long. So, TDR will always fail. Since the link is established
-+	 * we already know that the cable is working, so we can get some
-+	 * extra information line the cable length using ALCD.
-+	 */
-+	if (phydev->link)
-+		return 0;
-+
- 	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_CTRL,
- 			       DP83TD510E_CTRL_HW_RESET);
- 	if (ret)
-@@ -402,8 +416,8 @@ static int dp83td510_cable_test_start(struct phy_device *phydev)
- }
- 
- /**
-- * dp83td510_cable_test_get_status - Get the status of the cable test for the
-- *                                   DP83TD510 PHY.
-+ * dp83td510_cable_test_get_tdr_status - Get the status of the TDR test for the
-+ *                                       DP83TD510 PHY.
-  * @phydev: Pointer to the phy_device structure.
-  * @finished: Pointer to a boolean that indicates whether the test is finished.
-  *
-@@ -411,13 +425,11 @@ static int dp83td510_cable_test_start(struct phy_device *phydev)
-  *
-  * Returns: 0 on success or a negative error code on failure.
-  */
--static int dp83td510_cable_test_get_status(struct phy_device *phydev,
--					   bool *finished)
-+static int dp83td510_cable_test_get_tdr_status(struct phy_device *phydev,
-+					       bool *finished)
- {
- 	int ret, stat;
- 
--	*finished = false;
--
- 	ret = phy_read_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_TDR_CFG);
- 	if (ret < 0)
- 		return ret;
-@@ -459,6 +471,62 @@ static int dp83td510_cable_test_get_status(struct phy_device *phydev,
- 	return phy_init_hw(phydev);
- }
- 
-+/**
-+ * dp83td510_cable_test_get_alcd_status - Get the status of the ALCD test for the
-+ * 				      DP83TD510 PHY.
-+ * @phydev: Pointer to the phy_device structure.
-+ * @finished: Pointer to a boolean that indicates whether the test is finished.
-+ *
-+ * The function sets the @finished flag to true if the test is complete.
-+ * The function reads the cable length and reports it to the user.
-+ *
-+ * Returns: 0 on success or a negative error code on failure.
-+ */
-+static int dp83td510_cable_test_get_alcd_status(struct phy_device *phydev,
-+						bool *finished)
-+{
-+	unsigned int location;
-+	int ret;
-+
-+	ret = phy_read_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_ALCD_STAT);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (!(ret & DP83TD510E_ALCD_COMPLETE))
-+		return 0;
-+
-+	location = FIELD_GET(DP83TD510E_ALCD_CABLE_LENGTH, ret) * 100;
-+
-+	ethnl_cable_test_fault_length(phydev, ETHTOOL_A_CABLE_PAIR_A, location);
-+
-+	ethnl_cable_test_result(phydev, ETHTOOL_A_CABLE_PAIR_A,
-+				ETHTOOL_A_CABLE_RESULT_CODE_OK);
-+	*finished = true;
-+
-+	return 0;
-+}
-+
-+/**
-+ * dp83td510_cable_test_get_status - Get the status of the cable test for the
-+ *                                   DP83TD510 PHY.
-+ * @phydev: Pointer to the phy_device structure.
-+ * @finished: Pointer to a boolean that indicates whether the test is finished.
-+ *
-+ * The function sets the @finished flag to true if the test is complete.
-+ *
-+ * Returns: 0 on success or a negative error code on failure.
-+ */
-+static int dp83td510_cable_test_get_status(struct phy_device *phydev,
-+					   bool *finished)
-+{
-+	*finished = false;
-+
-+	if (!phydev->link)
-+		return dp83td510_cable_test_get_tdr_status(phydev, finished);
-+
-+	return dp83td510_cable_test_get_alcd_status(phydev, finished);
-+}
-+
- static int dp83td510_get_features(struct phy_device *phydev)
- {
- 	/* This PHY can't respond on MDIO bus if no RMII clock is enabled.
--- 
-2.39.2
+I change back to parsing the token in the parent but I don't want to end
+up in a cycle of bouncing between the two implementations depending on
+who's reviewed the most recent version.
 
+--i+AGODBgwk+YiNog
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma/L0wACgkQJNaLcl1U
+h9BKkQf/Tb1CjJ0TFb/grSaBzz9tUOVm5wq48R7CEnmXCbox1sbTUCqom9wLNkPk
+04SjExLevPi/NB9b2P70iBfZzfEiqmrbZEUZZHb7PSLK5xF1QJ6gDlx2wmjXMQP+
+C275u0W6zVCNLpnxBYAxNKWWq+X0eIoch+hzpEk3yHzjUQEFqYjkAJsLhS/qU5dZ
+vRF1DDm1mcxTdV5m4gkMkOgkSDw97s330FFYhL8iSzP05/oQGp5NGX2S9IwJz6OK
+01FwbU/7olCBDK/ZbvUil6Gv42+Z14WLQUTPyEk9a2xzhaJkDjIMo1NFfqIxhbZ0
+hVUF+d4yVftBABef8rjNaQpAClsqiw==
+=JqPA
+-----END PGP SIGNATURE-----
+
+--i+AGODBgwk+YiNog--
 
