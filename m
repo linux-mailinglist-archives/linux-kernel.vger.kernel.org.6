@@ -1,106 +1,121 @@
-Return-Path: <linux-kernel+bounces-288800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BAFA953EE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:28:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1EBE953EEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:30:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30AF3285EB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:28:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2082A1C218D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6591E4AD;
-	Fri, 16 Aug 2024 01:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D791F1E864;
+	Fri, 16 Aug 2024 01:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HM/ECHIC"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="IJRCrFGc"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE6E1AC8A7
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 01:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538B720E3;
+	Fri, 16 Aug 2024 01:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723771684; cv=none; b=YbaWQZfvZD0CZNKye8Rz6KmyVQjsVzRsw382cHvwnA0f/Ds3dFguGDAn+4XQp2khHujuyyJpzpRS47O671ZplfaL9c6FD0wDuTvhutbxhXMPl9kWTU3OrOdt9XnYIBB8kWEzuJMCjSWi0FaYkhYwPGyooBKPyxWpkMyHz/X0MOU=
+	t=1723771796; cv=none; b=EUlfyRCCIPesFtYuJcKL/EpD9kX7ArCkMNIrv/bkOVP6fagXgOZgfbiz1rF8HJ6Oe8Ja5USB5PJgwnQHD8GTfT/GSNf3h3UVFiJHZwozCiu57YeEMJ3w0kjdeBI+a8jO6eroJovrJOb5d0P45DN3h4npF/IXMuZuiOoOoenS8zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723771684; c=relaxed/simple;
-	bh=Ut7lC5iFPm5Fje9rAyZCdC9bIDlMKTn3vK45pWSJSVQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KOPkGrWGNAYY+Nh0RgctqF0ZVTUQ4xpjI8GBaBGsh5m8ZBNkZBYbwf9tD3QIJiSMim2+NQ3kgfEBXmkwQBDaMQgXlkujfaSb/l2qIDiANWdmXvnsaMSV20EXk/Ogufs4E/0NxJbM+ym4Dvr0mxvodoAOCownEb6dBNEoA2lAoMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HM/ECHIC; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4280692835dso1704245e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 18:28:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723771681; x=1724376481; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0CgEy7hfKFthFZZPBDQD7SjHIdc0mQHaJOdB41dxLuI=;
-        b=HM/ECHICyTbUba5PjDaIlILtH7Ghzk0JxrrR3/jUxmEVtbLlRj9bRbM9X6RF9fwL6N
-         rfZIwPIM+/LidOaiBzV3I23pNfEH2UREp25hn+QCyy924XphmFEuhevlOjBoKmr5WYhh
-         19EmVMR6jTsEb5AujOFPBf9UQtyq8SGY9xszOln9c/qelpy0s0OAA32e15DtQoADyPyl
-         Vy9Be+6hjAgX39XXW/LzAf2x5pSPCXtI7t0MC0M9dDKw9wwGcBgWcylM0Wub+OqKxFe1
-         Mg1wYcut49TRi3tA+3r6heqtsKTL0xxIGDl56i971k0/BwUBn+jrVPpfsSgZmmBu+IBK
-         Afpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723771681; x=1724376481;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0CgEy7hfKFthFZZPBDQD7SjHIdc0mQHaJOdB41dxLuI=;
-        b=rSZr03+k/temECi4jHUOLiy4Tvf8Wf15jts7gDOImuQmm9dR6yVnNFRLuJVfTULpMJ
-         mAtKoYo4niQFqTLgGD+8JXltzpI8Sn8GVODqPW73Ygop6ygz6GogneBjpJgtHtirIgmT
-         65JvZY3svLaqRXpWeUZmzP4oQNMNf+pWEhBCdHAY7SogGrf1oX+FhUl0L7eWLnUYaB5+
-         MCTqb7NNjWxunv10rt34OUxW/ILICyxvgMb2UsDV9H9+FOTCkqfmhJEfi8iVPmyFGRm6
-         dZFFcsvkNzyNDN0Wo7XFnUoilic+n49gmBaDAWuTe3gI6PQJwUv3OJow22qndFiOjrzr
-         rPSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXxvKW1hx6KtMz4DkBxzAP5CdbEjS/4IlL8te5kONYme62OedWZjDZBsouZXqgdKAOcnrIYNPduATgKbNY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4Gbg21Qr+e+VOEUxA1gTIP3G9+TPNHyUQE9y66WSHmIcsrPlT
-	89VvTO5K857xJEsEfWtETv8kY7uOdD7LhLUrJ9FQR/GkUkOqIfY3
-X-Google-Smtp-Source: AGHT+IEaAGUdf0B+yyqrMnf/sPShcs+9+3IiKqzlWh/vF+IdGr9Icjy5lRRuPG0lV39sl16jyCVS9Q==
-X-Received: by 2002:a05:600c:1d0b:b0:426:6ecc:e5c4 with SMTP id 5b1f17b1804b1-429ed7f95cemr4215905e9.4.1723771680572;
-        Thu, 15 Aug 2024 18:28:00 -0700 (PDT)
-Received: from ?IPV6:2a01:4b00:d20e:7300:6f87:1ca5:9107:75? ([2a01:4b00:d20e:7300:6f87:1ca5:9107:75])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed649019sm8768855e9.8.2024.08.15.18.27.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Aug 2024 18:28:00 -0700 (PDT)
-Message-ID: <393fbdf0-7e56-486b-b932-3c7561e83740@gmail.com>
-Date: Fri, 16 Aug 2024 02:27:58 +0100
+	s=arc-20240116; t=1723771796; c=relaxed/simple;
+	bh=IKN1KI1HOhFsGdjfdZE98WtlUGfSO/KE6OFu/nqp+yo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PssO6UEvF6LPoJJY4acym9t2RUaD2GkKHAvKoIFF7hlD44wjGHpkwgYgPdFP7+yVtMJd0/q8UKq9ObZu7g4cP0sPwrTSot+l9DVqJI2x4U018EsAG6Ycng/m0tKyikYQMw9Y7EuhNpVduYfwBb4w+LqfD2rRxO9YRJFl6DvQWNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=IJRCrFGc; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1723771780;
+	bh=WFq9OLooRceg9aUlrPvdcvhjWX6Ym6Z+ATEt+nRgojw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IJRCrFGcdp9QD5deGYGUuhf9Zn2t8+1yu8wY58vKYC7xvvShmAwNFCHoBiajgADu1
+	 yBteSXQ8uTO6aFpjM3UyCm1v0A0Z42JUOnrTXeSdWqNEEaCmisq8O3PqNHedUXv9Fd
+	 wAHpQ4v7YLbH/WKnwEDfn4LbZTwTKkFXMnjMdD5xrcab46If1OGBx0+YhnkIgK6HGU
+	 FkcqF6Toab8RWSNxWMu6AxidZETyjjtwe31O8mNv27HaZGJkSEIE1OaI+8ccqd+zq7
+	 gJF/VkX0jH5prhTGQIclWgCDJZsStOXmFGCRGOg8AKtuhLYDxrcpoWsbsIXoPl35FC
+	 tzi+OxvIhZiUg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WlPYJ36Rkz4w2N;
+	Fri, 16 Aug 2024 11:29:40 +1000 (AEST)
+Date: Fri, 16 Aug 2024 11:29:39 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the mm tree
+Message-ID: <20240816112920.55d293bf@oak>
+In-Reply-To: <CAFULd4byjR7fF2wBUJMH=8_p5sE2vK9SkG=O4sUOjS4x9MUyRw@mail.gmail.com>
+References: <20240815093829.275058c7@canb.auug.org.au>
+	<CAFULd4byjR7fF2wBUJMH=8_p5sE2vK9SkG=O4sUOjS4x9MUyRw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kunit/overflow: Fix UB in overflow_allocation_test
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: kees@kernel.org, davidgow@google.com, kunit-dev@googlegroups.com,
- linux-kernel@vger.kernel.org, erhard_f@mailbox.org
-References: <20240815000431.401869-1-ivan.orlov0322@gmail.com>
- <20240815160402.a4c80b075082f537853fe2d0@linux-foundation.org>
-Content-Language: en-US
-From: Ivan Orlov <ivan.orlov0322@gmail.com>
-In-Reply-To: <20240815160402.a4c80b075082f537853fe2d0@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/+1t+iBdkgm1NK2f=ZKsco.j";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 8/16/24 00:04, Andrew Morton wrote:
-> On Thu, 15 Aug 2024 01:04:31 +0100 Ivan Orlov <ivan.orlov0322@gmail.com> wrote:
-> 
->> Subject: [PATCH] kunit/overflow: Fix UB in overflow_allocation_test
-> 
-> What's "UB", btw?
+--Sig_/+1t+iBdkgm1NK2f=ZKsco.j
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-UB in the patch title stands for "undefined behavior", since passing a 
-pointer with such a short lifetime to kunit_device_register causes one.
+Hi Uros,
 
-I was not sure about how to call this type of issues (misallocation, 
-probably?), so I decided to give it a generic name :)
+On Thu, 15 Aug 2024 09:42:51 +0200 Uros Bizjak <ubizjak@gmail.com> wrote:
+>
+> > Caused by commit
+> >
+> >   8e53757638ec ("err.h: add ERR_PTR_PCPU(), PTR_ERR_PCPU() and IS_ERR_P=
+CPU() functions")
+> >
+> > Does include/linux/err.h really need to include asm/percpu.h?  __percpu=
+ is
+> > defined in compiler_types.h which is included in every c code compile. =
+=20
+>=20
+> Currently it is not needed, but with the proposed patch [1]
+>=20
+> [1] https://lore.kernel.org/lkml/20240812115945.484051-4-ubizjak@gmail.co=
+m/
+>=20
+> that repurposes __percpu to also include percpu named address
+> qualifier, it will be needed, because per_cpu_qual will be defined in
+> include/asm-generic/percpu.h.
 
--- 
-Kind regards,
-Ivan Orlov
+How about putting these new functions in a new header file
+(err_percpu.h?) and including that where needed?  Are there going to be
+many places that need these new functions?
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/+1t+iBdkgm1NK2f=ZKsco.j
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma+q4MACgkQAVBC80lX
+0GzHzQf+PlMuymnx+AKcIY2EnKdjjkYY9iBPF7t4F8yQw8NBfJ4UFQ6DEVxZmoJH
+eoimbAA83wV/MSq/cOorm+UeVAw+LcmkTxz7FtDWAeFdAWJXKzKXPt27LrS5dESw
+79ilMVRjgd83ADH9DyEzA2lM0t36fKWtpMhwIWZgD1Dd5u7k51H9aR1BA4XiPKh3
+1X82p/genUaliAillQIEGY8gdbhSY2lOxv1b9kqdnvAZpagEJ9G4Ze/5geix3XXG
+iO3nnESJm4SmXP7G8y6KaAYqaTrLYr5lH5sUf9Q8l6JFD8aUNT4370AcO4VM8Fd6
+Zao6P1oLFnJftem3wNLCEa9g5uhhiw==
+=mDhS
+-----END PGP SIGNATURE-----
+
+--Sig_/+1t+iBdkgm1NK2f=ZKsco.j--
 
