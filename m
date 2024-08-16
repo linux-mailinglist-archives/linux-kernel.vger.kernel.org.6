@@ -1,470 +1,261 @@
-Return-Path: <linux-kernel+bounces-289415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8FB4954600
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:44:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C808954603
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:44:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 092081C2193D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:44:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40AFE1C216EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99CB15B135;
-	Fri, 16 Aug 2024 09:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823F415B113;
+	Fri, 16 Aug 2024 09:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QW6i46El"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="WS6k9xfM"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2083.outbound.protection.outlook.com [40.107.241.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CC915B10F
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723801461; cv=none; b=PFTzdugdRKU5S8S5p0CKqfcipUOeF6sUfEMFCLNHeF4Zaaclu/pRuRu51+FI/ERWng0Urpjrodq/D0t9/k3Mer1m1cFTT7mT5oyicOSDDFJIaOt4IEinqiRCnVfrBNzo+L1WTIk6/VaZA7AZnYVRUDgQSWBQ1T4ZBRMQmn3ErS8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723801461; c=relaxed/simple;
-	bh=bpdHZItT7kGsB/quPsKp5bXGCQUkA0wJAjq1q935bz0=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=RsUHpgyvhay+4qjfwiPWGR1KmQTUVLjiitcHgLd7iRs/zaY2bRbjpPhwEQrgmuavPntOaNn3Wslu9l2FvduL0YQ9TPo6KL7DyIGb24/eicCbDzh+ks/bEGjYScz2APZ8N39U+QGByZkpwbI0vTygEvZOfEJG5RlSPc1PaOLAQ/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QW6i46El; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2d3b785d8b1so1223283a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 02:44:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723801459; x=1724406259; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=RhwimweyctqEw0Y2ri8PJ/wCwW9otgIBcTxBsW+Tuqs=;
-        b=QW6i46ElTld5zcOCKsb+qqWIpD//Xgtuhf9i5Trn7UxV/OH40xcUav1iXj2Zhmhts6
-         al0rgDtHLPM+J3UcejS69Zo6/S1w/w5ayeSnVzWEZF2QmbKgWcdGLhnouINbmJ+PCBMk
-         Y5g7Zpuy1F2wDBml0uMAgJilEA7pnllFHNoj7+7GB/Zcq5z0o/hBp702fmD8n0nFOSp0
-         BPBRcy8TtgELnI8/LkGBckiMaaTT9YgeH5YYhI22Ji/andiPwCXZQRH2edzp31vdVMQI
-         WjcH32Y3NFmYSbT8ks4rXnAcV4wJJmrZywaxEa9rOMdqSKHDEnHNQlmP1lZBobDgUVGQ
-         RAmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723801459; x=1724406259;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RhwimweyctqEw0Y2ri8PJ/wCwW9otgIBcTxBsW+Tuqs=;
-        b=vrVD3UCQp/ca9uOk+rZ0Bhtn00u4oni0MybWaQ9XPTb9zMnB9C8OfarRvWV4uGrtxc
-         LleLCpWpykr2kmEHTDpJeu8uWoWFmWr2QnVlUayOJtJOx+GBKmAllAGs7IqpJ+vAM3lw
-         wotJ2C1hDIIAxF8b6gChey19pp9e0DK3c3Mo0en5KcddryJqt9oM0iXwhAnkrYuL82Ny
-         0ceqpH90ZF6SVvv379VgKhk/kreQbAZyY9UScuUqP01hEmj6awWPPPfVOFtk8SZdZOWY
-         TDpDEbahdfOaiKTnn/WipVzJHYpktHHrB05g0cq6M+L4jHCRJOBXE4n6e9M097LPPfic
-         a62g==
-X-Forwarded-Encrypted: i=1; AJvYcCW22PzR1XiL6xp/Rbjoj57tFdpiVJNLr28+jn52ChD4SpASCN8Ps+UK7xeC7toosIpeNRDtP3yzrGbuSMw4VCFGC48h85ZRho3Zz4w8
-X-Gm-Message-State: AOJu0YyEZWiP86l3LLGpV5PGbcUdbdJfQ0hJs+AHt01/NbsSuo4DKCR0
-	9kEt+LU/oGWd3dzW+8Q2s1SKQDfuSFNfa3+dt1ui1aGTvOKSri4OIK9NlcEWJJUirWLx5X2eFZM
-	pkW7yDFoLlC9o1csCgWfFpXrQXI0=
-X-Google-Smtp-Source: AGHT+IEQohNPw/DmoD1HUpf44RoZQyg4HU7O7LTFf43+lfOqkLb9JiL6rGkvfvNABWXszM/1EHT0cczscdNURNTXWXE=
-X-Received: by 2002:a17:90a:2f42:b0:2c9:90fa:b9f8 with SMTP id
- 98e67ed59e1d1-2d3e4552325mr3078746a91.10.1723801458856; Fri, 16 Aug 2024
- 02:44:18 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0B215B13B;
+	Fri, 16 Aug 2024 09:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723801476; cv=fail; b=YGxos23AuA2o0uomLY/VKzjkocspQi53oMrJX7/J6i+gMOSC5hNcHBmR+tfEPfSVjx2pHgyR/gkkEg3rtxm3rjcnAxcWPIMqsJMjsHQeDopFl/qMRK0bsYs7iz0CYo5WC4Ogg+C1evJu+LtoVL2GJC1Q+pKFzGch8hk8LTBG14U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723801476; c=relaxed/simple;
+	bh=drRwN1AtDrFuVWZiPzJEU/KOPBx6Kqe8u+PDozMwwn8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=mA4cwNIcx8q77RJH32+ysLSlucqmjkDD5md3LHUGs7zBcDNE5dHvokAwwMLenDks8EXxVoiFfx3KzEj+Tk0Yv44oOfVcXQ5GDCDfPK6tSEPEidP11HTA9+x3ReuuZtZRFGRc462uLXzUmfAXIKFozd3NyLVya46EEXLddB4Bhhc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=WS6k9xfM; arc=fail smtp.client-ip=40.107.241.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cYvRl4AelckJi6WvN53nSXtwAigNjsppcZhdA81zS4L80l3/8RtgyrWjvmg58uFiG1JDVeu5NN80saBGmE2Frcxq7MDBaCabfjuS3N9An5qqbw3TKRmiy5GZaZu4osja3Q14Pic94GI0q/yh6rtMOEJ/hr3M4QFWJbN48SgdGJzXPbj2uA9/K1xJyZCkCIt2gxyi/za/rZa2oNS8U34zHQHghrJslxKUmsdqWSQJ97W8uy1HTHoX5o4encfW3NPOniepJLM/1mMDnmB7VEoRfco2DLvO5MiZvM1f7tahZ5QrH9RctwDJBaeCd0ai14VWkH4zMiqyrldKqvNp000+Sg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UT3Zkud/mE+wQ8ne/+xKHHtxHt8yIh5jjdtSMNW7KA8=;
+ b=V5TajV6BlW1pc8fD3EYOqx1L+J+6mmST+rnzCxQw+Cze5IMCuDbtO+ZhUUn8PBsc3jvBKtwZd46Gn37YKKBECnsRTXA4z0p9/osmlOOWf3UWYBBu67Vt7sNN+MKQK/yH+LMeX1mFvrggz6irJTKV5GEaHBhaRbMX/JWVOr2VOqzsWr8lhEMj7Jo2n+RpWTjTURjWMT26mS4bR422YONehaUuM/gslJCEDoybReF29ZQvIBMHM7tGa2oEi4AhUpa0VDWgjMaBSqdWVeDqZgdFT/pc+Er7YUp28Oj0yaBe19RVIpINow1x7OIYGWoxR38RUzmtCNvYypHjPBttuUqLoA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UT3Zkud/mE+wQ8ne/+xKHHtxHt8yIh5jjdtSMNW7KA8=;
+ b=WS6k9xfMW3NiLFXxsBGk2luUH8LixmTmbnYowoQTu9IaP+eZf+SIL7SjSIm0z/QpWE35hVHHXDUZa/9v2/ZAS6o9AUM1c3PVmOSHazmxaZDs9RUCZRI+0PcklH1CBsWnq1W9FJWze9Zx3dQaiJCOmat2eJEjRbqgoTouOtOsXCx4ydz8Njq5WYABjMtkJg3qX9lbSiRXSglsKWvZJ9EV2WQYObxHI14OjRMdNprIoSiY2Z6Q5hP9oTuzDVRSQPZVLVxMr1H2CwNSyhvJbSwDpDohjBwdnyjTfLhsRLPO0jgS2qspkM2bvPP85S8yFAz3tYl+rVqHaUfm+KHDgIQ0DQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by DBBPR04MB7625.eurprd04.prod.outlook.com (2603:10a6:10:202::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Fri, 16 Aug
+ 2024 09:44:30 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%2]) with mapi id 15.20.7875.018; Fri, 16 Aug 2024
+ 09:44:30 +0000
+Message-ID: <613b4eb4-dbac-48a9-bcdd-79b4e94a7b66@nxp.com>
+Date: Fri, 16 Aug 2024 17:44:56 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 RESEND 2/2] drm/bridge: imx: Add i.MX93 parallel
+ display format configuration support
+To: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com, andrzej.hajda@intel.com, neil.armstrong@linaro.org,
+ rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+ peng.fan@nxp.com
+References: <20240816080933.440594-1-victor.liu@nxp.com>
+ <20240816080933.440594-3-victor.liu@nxp.com>
+ <faf56b73-2143-4f5d-8e35-5cfe5f8d72d5@kernel.org>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <faf56b73-2143-4f5d-8e35-5cfe5f8d72d5@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR02CA0020.apcprd02.prod.outlook.com
+ (2603:1096:4:195::7) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: lee bruce <xrivendell7@gmail.com>
-Date: Fri, 16 Aug 2024 17:44:07 +0800
-Message-ID: <CABOYnLx_dnqzpCW99G81DmOr+2UzdmZMk=T3uxwNxwz+R1RAwg@mail.gmail.com>
-Subject: WARNING in get_pat_info
-To: dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org, luto@kernel.org, 
-	peterz@infradead.org
-Cc: bp@alien8.de, hpa@zytor.com, mingo@redhat.com, 
-	Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org, wang1315768607@163.com, 
-	syzkaller@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DBBPR04MB7625:EE_
+X-MS-Office365-Filtering-Correlation-Id: d606aa4a-c542-462b-0088-08dcbdd806de
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?Y1FKMlhOeDdlclNzTk9ETDZJL1lyRFJKRjhpQVRMMnVMS2pmc3lMOUpObjdk?=
+ =?utf-8?B?d3lUekdHSU1ieWNaTzF4Nzhma2paQ1hhU2JlQTNpV2dqUUN2NUQ4eUU2ZkNo?=
+ =?utf-8?B?TVRKUWQzUElFbnR4bGFUNDNnK2RMb3M1dm1DRnVLanY0TDJZRHJuMGRQdE1Z?=
+ =?utf-8?B?QklrN3FyUmJlaHJnY2lWOFVFeklpdXBiVmU0UFkwZjQ1S0hpUzJqR0ZHa3Ex?=
+ =?utf-8?B?UjNNWlh5RTlwZE9lYXMrRXhTSS82eituZjBYNG9QMlhNL091cHdNZlJaMDlw?=
+ =?utf-8?B?UnpVeTIvTnAzaVNJUTRyam5lZ3ZhNzkyNVlaWXBwTWhuQjN0NGtXRnBxVml6?=
+ =?utf-8?B?N2FzNEJWaHJXMWFaV082aUFFUmJkM1Z6dlFUcGlxeFI3QzgycFhCR0hIZ21M?=
+ =?utf-8?B?dDE2dUNuMnA0TkVxN25NVEc4RVFKd05za0gybFN0dTRkNDVFeFZlYkVYT2lo?=
+ =?utf-8?B?OEVTcklXdGlyTExqZWdpOHVnWlM0NkhUcTBSTG84YS95b2tKMGt5U0pNbXhn?=
+ =?utf-8?B?Z2RvSC9jU0RsZzN5MG1JMi96WVp3eTAva0U2eitibTk0T0tPZ0ZNRXhZM0o5?=
+ =?utf-8?B?b1JXdkRJOWswMlIvdWduRzdMeHo5Z0tROXZLNWtGSnhST3RnT2k5c28wOWVC?=
+ =?utf-8?B?N2ZnZ1RDVEg4N2J4Qm8yYU0vTXVNM09UNlpvbG5oMkpWU1N6ME5xTFUrMXJP?=
+ =?utf-8?B?N1RheUZidjBjNTlVS28yZjFLcG9US1RaK09ka3hESVJpUjl5WkorR29RaElQ?=
+ =?utf-8?B?cUpqVEZPUGJic2RlZW1xdnZsR3RWalZISVc3NGZNQ2hKaHpiY21uSkdiN0ht?=
+ =?utf-8?B?TW5hdmVrL2pPVHpaazBjTlBFcWo3Z1JnNXNGVFFLUEhzTFRjYm13YXNTZE5G?=
+ =?utf-8?B?YVI3c2txdm1BVjRQR3VRcUc4ZU82b1hmaVpTODR2S1lvelpSZXZVVnltZ09y?=
+ =?utf-8?B?aHZ1a3BLWEI2alRsdGJySFlXbHNUdVhwakNyVEc3UEJXK21HQlE2ZkRWVUFq?=
+ =?utf-8?B?V2tFZ3poZndJSElOS2twcXRaVTlOMzRseE56ZVJNcjJsVDhkeEE0VlVKZ0lz?=
+ =?utf-8?B?THRkUHozOFZRWHkvNXZKTnBUc1dDRWVaK3NLNmsvQXZCc05ubXcxMThUOUlM?=
+ =?utf-8?B?bGI1cHFMNHpoSHdZdXkzZGx4RTVnbjF0aS83UStsMTRpcDAzMzRVWUpFM2pK?=
+ =?utf-8?B?Rml3cXQ3Q2U5a3RnTVBBM2wwVmx4YU5acXJuNVltcFpQQ1RGVWVTWmc3alV4?=
+ =?utf-8?B?bGt2eGJPK2EyblBhNENMejBpbWprVFVGcFRGd1F4amhVdkVWSGtDMko5b0lX?=
+ =?utf-8?B?Y3JybGhiRUtiWFZTd01lanltTGRpTUpDMzV3WWtSeFRXR01vV0hTbjdiNmJK?=
+ =?utf-8?B?Y2IxSGwxMjZ2TGxHMUFENzcxcWU2MzZnUnBIV1phNkNtV2NpRVIvTzdoTk9W?=
+ =?utf-8?B?L3FDWnVLU1I4bTlXMFpwS2xvK2FhazIxMm9jbzZrTk9lNnNHT3pFODZOQ24y?=
+ =?utf-8?B?dExqTFpROEdnUklyUU1CbTJITCtiL2ZzNXBaRWQwNXQxL3pBTk51Yk00UWRv?=
+ =?utf-8?B?aEY4UjdWTTNHNmUvN2VNazdJNXlIelFPWnRqd2dVT2lUbUlBTkRTYzgrTHAw?=
+ =?utf-8?B?QVh3UTlEcmlSakFyN2FyMlNqdjhRMGE1UldRa0xFZ0d1eG5OU1p6cktkUDZk?=
+ =?utf-8?B?aU5LNEdib3lMcGRtbmUwdVVjQ0lRREZjc0pycWxJV2JVV3pNNGdWMlVwU3Q2?=
+ =?utf-8?B?akR6TlcwVC9FemlUbVlNT0E1V1hzYmVmQURtcmJoMTJsQVJDMFFMRWh1VkJk?=
+ =?utf-8?B?ak9LTVlGVjVuVk1YK0M4dz09?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?UnhKdktGTWpmbUJ6b2FZOU5LYzRYS2ZkSTdYQmVXNkRYTVY1aElqdHNQWmxB?=
+ =?utf-8?B?VWx2bU9ldGtqaDhWeXo1bEZabEZpVkdCeUxKVUlKd2VYYVBGL0ZQa2NzQysr?=
+ =?utf-8?B?RGRhVFU5aDhqdXJmZUlKTG9NTmp1VjNuZWttc3dzcXJRWHdqV0FQMUR4UEth?=
+ =?utf-8?B?RUQ2RG5IRHgxVlVTclNLSlFZMTZ1RTZXRmkvbzc2bHBjMHBUK2d2bnJtS3ha?=
+ =?utf-8?B?OXUxdDJMUFFmZlFYdWZQOVNVU1JsL3BoRlF6ZEVlMHFtMnpLYjNoOUVCaFN4?=
+ =?utf-8?B?Z2tDVUxNeGZ0OWoyR3hLYXFVbnJZMGxVWUE5cWZpc1NZa1NsWEsrYjlBMk1F?=
+ =?utf-8?B?eEhIeWV1bTV5K1VWY0YxYldRNWx5Nm9ibHV2d0JHaVZNNEFwYmJYcFpiYTRY?=
+ =?utf-8?B?WVlqTjFJRkdRK1FkVTdoaElvU1Y2MmZlNGxKODdKYUNrVHZGaHNBeXdSeWRL?=
+ =?utf-8?B?V1d1d05FVy80N1dKSXFaeEhKL0RFVHkvcm9MUk1hK2d3RS8wZTFFWDZoT051?=
+ =?utf-8?B?TFc5OE93WW5UZEg2TzQwZmNabVNJMFFwSmlIWnJycEx1RVZXM0RqbHpnaGlD?=
+ =?utf-8?B?djhzVkZNdys0WUdVVlFKUmFjSU5CcHQrZzF3ck1HakU4R1pZNm82aUExR3RH?=
+ =?utf-8?B?bFlSR3Y5SWp5dU91ZmFmNFBzeVUxeEFFd1gyRnZ1QmljK00wZkltWGN4NUtQ?=
+ =?utf-8?B?Ym9HZXVRTU1XaUhDN2pnNWEvR2p2WnhyVzkvS2ozTHBHcDYyL25OL2ZPd1Fq?=
+ =?utf-8?B?UW1oSng3THc2UHV4bERUd2hNUG9EZ28wcmVYbUxpMU5pcXNPS0cwUUJHVlUy?=
+ =?utf-8?B?cDV3Mmd5eldOSUNpUVMwMEUydCtTV1diMGl1NjFGOCtteVkvQmM3VExES1VS?=
+ =?utf-8?B?YUppcUo5bmNNdTZUZGM5VWJtTHBIcDJ0YnpPYTRIM2FodENiRmhqVXExQXBq?=
+ =?utf-8?B?WDlKWWdFSGNldnJCWXg2Mk13Wk92OGlTSjkxeWNYVzBoNisxa21vcUpBNC9J?=
+ =?utf-8?B?TDhtT21Oc01sNmduL3ROdjIwNGFxd0JWakUvWi92cWptMk5ud0h0SkJaazIr?=
+ =?utf-8?B?OXFnU1RWT3ZHa1ByelhaUVJNMzR6bytLNWwzTVJSY0VIdzNQbkJ5R0psNFc1?=
+ =?utf-8?B?MmhXeS9PQ2o4blRsdE5kQXQweWlBSmxwS0lmNUJhYUUyVlFFbTQvaU1NVGpG?=
+ =?utf-8?B?dzdqZXdRWjd6cHpqT21YUndsVStmcDR6SWZVRkRLdWFtRVBZME0wd05XcUFj?=
+ =?utf-8?B?cmR2emszS0ZwSEdPcmFSN2NLamZzQ1VxM2ZyQ0FjdVpSOVdsckszOWs3b0g4?=
+ =?utf-8?B?dlhud0RoYTlHS20weEw1R3M4dk1HYS9WT3M2RzJkbW9YaE5JRHZCYTRqL2RU?=
+ =?utf-8?B?V09BK3BFVlNrTGxLb0tSQTI1b1hsNTV1emlNTjFpaldZS1BPS0Y4aU9uK1BB?=
+ =?utf-8?B?WlcvbG9PcGd4UjdpdGEySHF6T0FjQkVTb0Y3bE11OWhtOHFZZERaWmFFUWth?=
+ =?utf-8?B?NldZMkM5SnhEbWRIYmQ3a0J1NkM1TmtpWkpJMHBRVENVNTEyM3Q5MHlJWmZL?=
+ =?utf-8?B?RWJlakNIUS9kd2lCc3AwSFZ0TXhML0JTK2JNdU0zRkhhSW9TVVB5SFFFNWJm?=
+ =?utf-8?B?SVZwWC9UcnowNTVNay95TU1pQWJYakYrMmFjcGFWNG83UmphUld6RThEMkV3?=
+ =?utf-8?B?b0Z0RkY4N1JFZHVWZ0hEY3hCejVJM0NUbzRNVFdBSDVsMW1lSDdaTXZPVGVo?=
+ =?utf-8?B?MmMxS0lOU1MyL3k0Q2tqRDVDejAvQlluU1ZkaFVzZlF2YkFTRWdXQWdRamMr?=
+ =?utf-8?B?RnRzRFU4S3BlRkJoVnBvTWx4L2ZLM2x6T2d2d2ZlZnRmcUJwSjFhU3dOTU5n?=
+ =?utf-8?B?eUxHVFRFL05SNVh2SWs1ckc5VWhERVlseUFyeDJuaFRCOEowNkZVZjJxd1hm?=
+ =?utf-8?B?L1JqeXNvem5FdTF2UStTQlJoa1g3NTFLODNVb3F2THM0N2xZUFhDeDZBeUVk?=
+ =?utf-8?B?SmxhOEdFeG9idmJGcUNTaUNZSFk2MWFJdE5Tbk0rd0JvRmRPWjNlMm90WC9k?=
+ =?utf-8?B?eTQzRUFxYmVFNnljSXpJYXBTUWdRVUNIUkF2QmNoTzFOdFFONGRmZnJBUW5V?=
+ =?utf-8?Q?uwneyCT2R09+/EaIKV9p1exLt?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d606aa4a-c542-462b-0088-08dcbdd806de
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2024 09:44:30.8177
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1AstTrz/IX9BrMzAFl32DHdRyi/59pTOW6Oirw8PgBfHaOeeG1hSkQJJNkhq1S/2sRrnvlhIv5TNye1SZbEL6w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7625
 
-Hello, I found a bug titled "WARNING in get_pat_info" with modified
-syzkaller in the lasted upstream and lasted mm branches.
+On 08/16/2024, Krzysztof Kozlowski wrote:
+> On 16/08/2024 10:09, Liu Ying wrote:
+>> NXP i.MX93 mediamix blk-ctrl contains one DISPLAY_MUX register which
+>> configures parallel display format by using the "PARALLEL_DISP_FORMAT"
+>> field. Add a DRM bridge driver to support the display format configuration.
+>>
+>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+>> ---
+> 
+> ...
+> 
+>> +
+>> +static int imx93_pdfc_bridge_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct imx93_pdfc *pdfc;
+>> +	int ret;
+>> +
+>> +	pdfc = devm_kzalloc(dev, sizeof(*pdfc), GFP_KERNEL);
+>> +	if (!pdfc)
+>> +		return -ENOMEM;
+>> +
+>> +	pdfc->regmap = syscon_node_to_regmap(dev->of_node->parent);
+>> +	if (IS_ERR(pdfc->regmap)) {
+>> +		ret = PTR_ERR(pdfc->regmap);
+>> +		if (ret != -EPROBE_DEFER)
+>> +			DRM_DEV_ERROR(dev, "failed to get regmap: %d\n", ret);
+>> +		return ret;
+> 
+> Nope, you just open-coded dev_err_probe. Syntax is - return
+> dev_err_probe(). if you need wrapper for DRM, add such.
 
-If you fix this issue, please add the following tag to the commit:
-Reported-by: xingwei lee <xrivendell7@gmail.com>
-Reported-by: yuxin wang <wang1315768607@163.com>
+Will use dev_err_probe().
 
-TITLE: WARNING in get_pat_info
-------------[ cut here ]------------
-WARNING: CPU: 2 PID: 12458 at arch/x86/mm/pat/memtype.c:1002
-get_pat_info+0x4b6/0x5c0 arch/x86/mm/pat/memtype.c:1002
-arch/x86/mm/pat/memtype.c:1002
-Modules linked in:
-CPU: 2 PID: 12458 Comm: syz-executor.0 Not tainted 6.10.0 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:get_pat_info+0x4b6/0x5c0 arch/x86/mm/pat/memtype.c:1002
-arch/x86/mm/pat/memtype.c:1002
-Code: 00 00 00 48 89 de e8 79 28 54 00 48 83 fb 20 75 11 48 83 7c 24
-18 00 74 6e 31 ff e8 74 23 54 00 eb 0b 31 ff e8 6b 23 54 00 90 <0f> 0b
-90 bb ea ff ff ff 48 c7 44 24 40 0e 36 e0 45 4b c7 44 25 00
-RSP: 0018:ffffc9000f3ff2a0 EFLAGS: 00010246
-RAX: ffffffff81453f35 RBX: 0000000000000000 RCX: ffffc90013051000
-RDX: ffffffff81453f35 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc9000f3ff3b0 R08: 000000000001fcbe R09: 000000000001fcbf
-R10: dffffc0000000000 R11: fffffbfff1fdc6f6 R12: 1ffff92001e7fe5c
-R13: dffffc0000000000 R14: 1ffff92001e7fe64 R15: 1ffff92001e7fe68
-FS: 00007fb3403356c0(0000) GS:ffff888063500000(0000) knlGS:0000000000000000
-CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f74b7104000 CR3: 000000001c1ce000 CR4: 0000000000752ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-PKRU: 55555554
-Call Trace:
-<TASK>
-untrack_pfn+0x338/0x660 arch/x86/mm/pat/memtype.c:1104
-arch/x86/mm/pat/memtype.c:1104
-unmap_single_vma+0x20c/0x2c0 mm/memory.c:1819 mm/memory.c:1819
-unmap_vmas+0x3d7/0x600 mm/memory.c:1885 mm/memory.c:1885
-exit_mmap+0x279/0xce0 mm/mmap.c:3341 mm/mmap.c:3341
-__mmput+0x120/0x3a0 kernel/fork.c:1343 kernel/fork.c:1343
-mmput kernel/fork.c:1365 [inline]
-dup_mm kernel/fork.c:1687 [inline]
-mmput kernel/fork.c:1365 [inline] kernel/fork.c:1720
-dup_mm kernel/fork.c:1687 [inline] kernel/fork.c:1720
-copy_mm+0x1a5b/0x1fe0 kernel/fork.c:1720 kernel/fork.c:1720
-copy_process+0x1cc7/0x3f70 kernel/fork.c:2373 kernel/fork.c:2373
-kernel_clone+0x236/0x910 kernel/fork.c:2780 kernel/fork.c:2780
-__do_sys_clone kernel/fork.c:2923 [inline]
-__se_sys_clone kernel/fork.c:2907 [inline]
-__do_sys_clone kernel/fork.c:2923 [inline] kernel/fork.c:2907
-__se_sys_clone kernel/fork.c:2907 [inline] kernel/fork.c:2907
-__x64_sys_clone+0x25d/0x2b0 kernel/fork.c:2907 kernel/fork.c:2907
-do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-do_syscall_x64 arch/x86/entry/common.c:52 [inline] arch/x86/entry/common.c:83
-do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83 arch/x86/entry/common.c:83
-entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb33f67dde9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48
-89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
-01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fb340335078 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
-RAX: ffffffffffffffda RBX: 00007fb33f7abf80 RCX: 00007fb33f67dde9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 00007fb340335120 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
-R13: 000000000000000b R14: 00007fb33f7abf80 R15: 00007ffd35a9fb48
-</TASK>
+> 
+>> +	}
+>> +
+>> +	pdfc->next_bridge = devm_drm_of_get_bridge(dev, dev->of_node, 1, 0);
+>> +	if (IS_ERR(pdfc->next_bridge)) {
+>> +		ret = PTR_ERR(pdfc->next_bridge);
+>> +		if (ret != -EPROBE_DEFER)
+>> +			DRM_DEV_ERROR(dev, "failed to get next bridge: %d\n", ret);
+>> +		return ret;
+> 
+> Ditto
 
+Will use dev_err_probe().
 
-I use the same kernel as syzbot instance
-git tree: upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=122bfdb8980000
-kernel config: https://syzkaller.appspot.com/text?tag=KernelConfig&x=8e5f5ae13ab96e5e
-compiler: clang version 15.0.6
+> 
+> 
+>> +	}
+>> +
+> 
+> ...
+> 
+>> +MODULE_DESCRIPTION("NXP i.MX93 parallel display format configuration driver");
+>> +MODULE_AUTHOR("Liu Ying <victor.liu@nxp.com>");
+>> +MODULE_LICENSE("GPL v2");
+>> +MODULE_ALIAS("platform:" DRIVER_NAME);
+> 
+> Which other driver needs this platform alias?
 
-=* repro.c =*
-#define _GNU_SOURCE
+Quote include/linux/module.h:
 
-#include <dirent.h>
-#include <endian.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <linux/capability.h>
-#include <sched.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/mount.h>
-#include <sys/prctl.h>
-#include <sys/resource.h>
-#include <sys/stat.h>
-#include <sys/syscall.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <time.h>
-#include <unistd.h>
+"
+/* For userspace: you can also call me... */                                     
+#define MODULE_ALIAS(_alias) MODULE_INFO(alias, _alias)   
+"
 
-static void sleep_ms(uint64_t ms) { usleep(ms * 1000); }
+Anything wrong with using MODULE_ALIAS() here?
 
-static uint64_t current_time_ms(void) {
-struct timespec ts;
-if (clock_gettime(CLOCK_MONOTONIC, &ts)) exit(1);
-return (uint64_t)ts.tv_sec * 1000 + (uint64_t)ts.tv_nsec / 1000000;
-}
+> 
+> Best regards,
+> Krzysztof
+> 
 
-static bool write_file(const char* file, const char* what, ...) {
-char buf[1024];
-va_list args;
-va_start(args, what);
-vsnprintf(buf, sizeof(buf), what, args);
-va_end(args);
-buf[sizeof(buf) - 1] = 0;
-int len = strlen(buf);
-int fd = open(file, O_WRONLY | O_CLOEXEC);
-if (fd == -1) return false;
-if (write(fd, buf, len) != len) {
-int err = errno;
-close(fd);
-errno = err;
-return false;
-}
-close(fd);
-return true;
-}
+-- 
+Regards,
+Liu Ying
 
-#define MAX_FDS 30
-
-static void setup_common() {
-if (mount(0, "/sys/fs/fuse/connections", "fusectl", 0, 0)) {
-}
-}
-
-static void setup_binderfs() {
-if (mkdir("/dev/binderfs", 0777)) {
-}
-if (mount("binder", "/dev/binderfs", "binder", 0, NULL)) {
-}
-if (symlink("/dev/binderfs", "./binderfs")) {
-}
-}
-
-static void loop();
-
-static void sandbox_common() {
-prctl(PR_SET_PDEATHSIG, SIGKILL, 0, 0, 0);
-setsid();
-struct rlimit rlim;
-rlim.rlim_cur = rlim.rlim_max = (200 << 20);
-setrlimit(RLIMIT_AS, &rlim);
-rlim.rlim_cur = rlim.rlim_max = 32 << 20;
-setrlimit(RLIMIT_MEMLOCK, &rlim);
-rlim.rlim_cur = rlim.rlim_max = 136 << 20;
-setrlimit(RLIMIT_FSIZE, &rlim);
-rlim.rlim_cur = rlim.rlim_max = 1 << 20;
-setrlimit(RLIMIT_STACK, &rlim);
-rlim.rlim_cur = rlim.rlim_max = 128 << 20;
-setrlimit(RLIMIT_CORE, &rlim);
-rlim.rlim_cur = rlim.rlim_max = 256;
-setrlimit(RLIMIT_NOFILE, &rlim);
-if (unshare(CLONE_NEWNS)) {
-}
-if (mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, NULL)) {
-}
-if (unshare(CLONE_NEWIPC)) {
-}
-if (unshare(0x02000000)) {
-}
-if (unshare(CLONE_NEWUTS)) {
-}
-if (unshare(CLONE_SYSVSEM)) {
-}
-typedef struct {
-const char* name;
-const char* value;
-} sysctl_t;
-static const sysctl_t sysctls[] = {
-{"/proc/sys/kernel/shmmax", "16777216"},
-{"/proc/sys/kernel/shmall", "536870912"},
-{"/proc/sys/kernel/shmmni", "1024"},
-{"/proc/sys/kernel/msgmax", "8192"},
-{"/proc/sys/kernel/msgmni", "1024"},
-{"/proc/sys/kernel/msgmnb", "1024"},
-{"/proc/sys/kernel/sem", "1024 1048576 500 1024"},
-};
-unsigned i;
-for (i = 0; i < sizeof(sysctls) / sizeof(sysctls[0]); i++)
-write_file(sysctls[i].name, sysctls[i].value);
-}
-
-static int wait_for_loop(int pid) {
-if (pid < 0) exit(1);
-int status = 0;
-while (waitpid(-1, &status, __WALL) != pid) {
-}
-return WEXITSTATUS(status);
-}
-
-static void drop_caps(void) {
-struct __user_cap_header_struct cap_hdr = {};
-struct __user_cap_data_struct cap_data[2] = {};
-cap_hdr.version = _LINUX_CAPABILITY_VERSION_3;
-cap_hdr.pid = getpid();
-if (syscall(SYS_capget, &cap_hdr, &cap_data)) exit(1);
-const int drop = (1 << CAP_SYS_PTRACE) | (1 << CAP_SYS_NICE);
-cap_data[0].effective &= ~drop;
-cap_data[0].permitted &= ~drop;
-cap_data[0].inheritable &= ~drop;
-if (syscall(SYS_capset, &cap_hdr, &cap_data)) exit(1);
-}
-
-static int do_sandbox_none(void) {
-if (unshare(CLONE_NEWPID)) {
-}
-int pid = fork();
-if (pid != 0) return wait_for_loop(pid);
-setup_common();
-sandbox_common();
-drop_caps();
-if (unshare(CLONE_NEWNET)) {
-}
-write_file("/proc/sys/net/ipv4/ping_group_range", "0 65535");
-setup_binderfs();
-loop();
-exit(1);
-}
-
-static int inject_fault(int nth) {
-int fd;
-fd = open("/proc/thread-self/fail-nth", O_RDWR);
-if (fd == -1) exit(1);
-char buf[16];
-sprintf(buf, "%d", nth);
-if (write(fd, buf, strlen(buf)) != (ssize_t)strlen(buf)) exit(1);
-return fd;
-}
-
-static void kill_and_wait(int pid, int* status) {
-kill(-pid, SIGKILL);
-kill(pid, SIGKILL);
-for (int i = 0; i < 100; i++) {
-if (waitpid(-1, status, WNOHANG | __WALL) == pid) return;
-usleep(1000);
-}
-DIR* dir = opendir("/sys/fs/fuse/connections");
-if (dir) {
-for (;;) {
-struct dirent* ent = readdir(dir);
-if (!ent) break;
-if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)
-continue;
-char abort[300];
-snprintf(abort, sizeof(abort), "/sys/fs/fuse/connections/%s/abort",
-ent->d_name);
-int fd = open(abort, O_WRONLY);
-if (fd == -1) {
-continue;
-}
-if (write(fd, abort, 1) < 0) {
-}
-close(fd);
-}
-closedir(dir);
-} else {
-}
-while (waitpid(-1, status, __WALL) != pid) {
-}
-}
-
-static void setup_test() {
-prctl(PR_SET_PDEATHSIG, SIGKILL, 0, 0, 0);
-setpgrp();
-write_file("/proc/self/oom_score_adj", "1000");
-}
-
-static void close_fds() {
-for (int fd = 3; fd < MAX_FDS; fd++) close(fd);
-}
-
-static void setup_fault() {
-static struct {
-const char* file;
-const char* val;
-bool fatal;
-} files[] = {
-{"/sys/kernel/debug/failslab/ignore-gfp-wait", "N", true},
-{"/sys/kernel/debug/fail_futex/ignore-private", "N", false},
-{"/sys/kernel/debug/fail_page_alloc/ignore-gfp-highmem", "N", false},
-{"/sys/kernel/debug/fail_page_alloc/ignore-gfp-wait", "N", false},
-{"/sys/kernel/debug/fail_page_alloc/min-order", "0", false},
-};
-unsigned i;
-for (i = 0; i < sizeof(files) / sizeof(files[0]); i++) {
-if (!write_file(files[i].file, files[i].val)) {
-if (files[i].fatal) exit(1);
-}
-}
-}
-
-#define USLEEP_FORKED_CHILD (3 * 50 * 1000)
-
-static long handle_clone_ret(long ret) {
-if (ret != 0) {
-return ret;
-}
-usleep(USLEEP_FORKED_CHILD);
-syscall(__NR_exit, 0);
-while (1) {
-}
-}
-
-static long syz_clone(volatile long flags, volatile long stack,
-volatile long stack_len, volatile long ptid,
-volatile long ctid, volatile long tls) {
-long sp = (stack + stack_len) & ~15;
-long ret = (long)syscall(__NR_clone, flags & ~CLONE_VM, sp, ptid, ctid, tls);
-return handle_clone_ret(ret);
-}
-
-static void execute_one(void);
-
-#define WAIT_FLAGS __WALL
-
-static void loop(void) {
-int iter = 0;
-for (;; iter++) {
-int pid = fork();
-if (pid < 0) exit(1);
-if (pid == 0) {
-setup_test();
-execute_one();
-close_fds();
-exit(0);
-}
-int status = 0;
-uint64_t start = current_time_ms();
-for (;;) {
-if (waitpid(-1, &status, WNOHANG | WAIT_FLAGS) == pid) break;
-sleep_ms(1);
-if (current_time_ms() - start < 5000) continue;
-kill_and_wait(pid, &status);
-break;
-}
-}
-}
-
-uint64_t r[1] = {0xffffffffffffffff};
-
-void execute_one(void) {
-intptr_t res = 0;
-memcpy((void*)0x20000080, "/dev/hpet\000", 10);
-res = syscall(__NR_openat, /*fd=*/0xffffffffffffff9cul, /*file=*/0x20000080ul,
-/*flags=*/0ul, /*mode=*/0ul);
-if (res != -1) r[0] = res;
-syscall(__NR_mmap, /*addr=*/0x20ffa000ul, /*len=*/0x1000ul, /*prot=*/4ul,
-/*flags=*/0x2a051ul, /*fd=*/r[0], /*offset=*/0ul);
-inject_fault(32);
-syz_clone(/*flags=*/0, /*stack=*/0, /*stack_len=*/0, /*parentid=*/0,
-/*childtid=*/0, /*tls=*/0);
-}
-int main(void) {
-syscall(__NR_mmap, /*addr=*/0x1ffff000ul, /*len=*/0x1000ul, /*prot=*/0ul,
-/*flags=*/0x32ul, /*fd=*/-1, /*offset=*/0ul);
-syscall(__NR_mmap, /*addr=*/0x20000000ul, /*len=*/0x1000000ul, /*prot=*/7ul,
-/*flags=*/0x32ul, /*fd=*/-1, /*offset=*/0ul);
-syscall(__NR_mmap, /*addr=*/0x21000000ul, /*len=*/0x1000ul, /*prot=*/0ul,
-/*flags=*/0x32ul, /*fd=*/-1, /*offset=*/0ul);
-setup_fault();
-do_sandbox_none();
-return 0;
-}
-
-
-=* repro.txt =*
-r0 = openat$hpet(0xffffffffffffff9c, &(0x7f0000000080), 0x0, 0x0)
-mmap$IORING_OFF_SQ_RING(&(0x7f0000ffa000/0x1000)=nil, 0x1000, 0x4,
-0x2a051, r0, 0x0)
-syz_clone(0x0, 0x0, 0x0, 0x0, 0x0, 0x0) (fail_nth: 32)
-
-and see also  https://gist.github.com/xrivendell7/37a37163f25eaee5133174f2a3d507b4.
-
-I hope it helps.
-Best regards
-xingwei lee
 
