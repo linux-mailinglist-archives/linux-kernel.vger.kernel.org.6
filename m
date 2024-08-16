@@ -1,86 +1,61 @@
-Return-Path: <linux-kernel+bounces-289164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D1DE954298
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:20:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F7F095429D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DD501C22B41
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:20:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8A8FB260D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC677DA96;
-	Fri, 16 Aug 2024 07:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBDF312C552;
+	Fri, 16 Aug 2024 07:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RgJlKmQ5"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XQUaSq50"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010C56BB4B
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB80286131;
+	Fri, 16 Aug 2024 07:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723792804; cv=none; b=FoAVYgLJGQzT9ac1fIO2Q8FZRQS5oBKgHtUzmK34P00o16wuMG0duvH9TiiHBxot3uFfadrOPOyIUrXLtMp5ziGHGtwGzdLtdHfFOW6wMHg2Oh/HsOOZB3qQdDaq5edcfK/KFV+Qdf8yDLY4m5yfXxu8JLxdT267EuzyIg90XEY=
+	t=1723792822; cv=none; b=HS6ocbfBCr9eRN1apdMFOmnAcUKyGOtyiLtXEDzLbANdfsHBtw4QjTJpjYaQtN9rB1IGjKFEddVLD+6zTH9jJU8Jmb5jtc2KjUroLsykMyrY4V9DuKeUF86q/3fq9Q2Fu1EqMqwXnIjHNHlvfe15PhP2Q05K5z4khJnSh3tC9uQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723792804; c=relaxed/simple;
-	bh=VEqTAJPgsNARp2Du6ejO+UCli3M4KHViVW7AcfPGMCc=;
+	s=arc-20240116; t=1723792822; c=relaxed/simple;
+	bh=ljscXbotnhYskEj8hpcUc/0M9uoUIrVHHpbd44KFbs4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pG6oF/6ny3SL8u0+gov42NjHn0FmjAvrrVIYeNUq7PrGtmBHnDadHgVQfGY8o4fj1x2820Lr7XIM3QLlLqyAnOLuNovtA0KWk8vbW9CnAC+Zk6xAw+qY5ICBgl8Ro2zumAi5BfKDQ9E0JDmtUwXqt/h3kAxz0tV+b7A4nb50Ovg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RgJlKmQ5; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4280bca3960so12854275e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 00:20:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1723792800; x=1724397600; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3qwLWNfklFp9yOWm7oGFyBx/KIEHr2G+mY1Na9aaN9U=;
-        b=RgJlKmQ5uR3R04amZbLqw9OXAmmEwdgXDQKvmR1RMnKSH0+abeZnMa1KCRQ615YWBh
-         Njlml3hVVBMdFvRLSAlRJUA64ahVPwmgJxT9LK/Qgn/e6Pmr6wnqxWfK8yvCVAcb0KSX
-         GrLsaayNr4sx3oLnnTnWZNjd8KnagQ8RuXE6UZomgdyiutM70hLI7ZOuEgq6QBaRo2TY
-         gi9PKzPw5ABJx2hnxKSFq/fzr90jYSJJwd5TI6B0hB8tyVTy/KXS3iEOa6F2hl21z8mD
-         v+GAQ+DuRZTaXZMSD9ld+N04CIa4KuAJHMUk67LhYDezw+uRV7ZftDPeyrofUAcSwfTo
-         cPFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723792800; x=1724397600;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3qwLWNfklFp9yOWm7oGFyBx/KIEHr2G+mY1Na9aaN9U=;
-        b=vBSJEZfrXvD+WmQij/Dx4pFRweZM7mZi4kFF2VftCmKSs0PbCMHJISewqsgL0Ld9N9
-         S1IiatouD4GYcHdfc8GVP3wiDrHIcYiSbN63LmmfDY2AxrPefJ/Niy3nSpPpHEyFD/h8
-         hDcIuQoSuzlAtm/8Fm7qs+E3fVCgWqehupuyWqByxLVHjxBNmXVuPDXBEpV0kOjsDqJ5
-         zjB2rsYozorO2+rC3CQn0pvHLyb6hiNWj6Wr+kmkQe6ENQe/rd0NUfDcABWwk2+Mqsv3
-         9ScocXpEh1ykrZd9C4DHac41gImG7FV+xQMwYKJzhbJeId+4f/GM/U9vcOGm0Xq2YEO9
-         VqwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5gkUg09AlraH1Fuuft6Jk9/g8YJ77lMj97txdDGo2H/2UoNZVsxtG0x8qNur/8VtRWId05fwS5DP4/s9uLKyTXQzq+HmKlhVq0m5L
-X-Gm-Message-State: AOJu0YyiPmreB3rPvH5EWq7DU0tm5z5KCIHsa6rTrSHe0UH7llEPKB0i
-	g3MIS33AoUrsl9lfdiYqxRcDKwjAYjPJJabPe76df1yRSVLToZSuiXXpARjwgHA=
-X-Google-Smtp-Source: AGHT+IGSGKGz2LWvosgQ2pPQmkG+F/+eo0+mfnvEknWQwEK+nvehSTgdu/Y1V/NAFngK0xSmE4eguQ==
-X-Received: by 2002:adf:ec83:0:b0:371:8cc1:2024 with SMTP id ffacd0b85a97d-371942a060cmr1420459f8f.0.1723792799996;
-        Fri, 16 Aug 2024 00:19:59 -0700 (PDT)
-Received: from localhost (109-81-92-77.rct.o2.cz. [109.81.92.77])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37189849cdbsm3025635f8f.28.2024.08.16.00.19.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 00:19:59 -0700 (PDT)
-Date: Fri, 16 Aug 2024 09:19:58 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	"T . J . Mercier" <tjmercier@google.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org
-Subject: Re: [PATCH v2] memcg: replace memcg ID idr with xarray
-Message-ID: <Zr79nrBAkfSdI4e5@tiehlicka>
-References: <20240815155402.3630804-1-shakeel.butt@linux.dev>
- <Zr5Xn45wEJytFTl8@google.com>
- <Zr5wK7oUcUoB44OF@casper.infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QWChBR3W4fpFIir6Nu6eFQ/Gu3GPHWrZkC9K9Cf2D9/lrjexs3PB/uav9+zIvh6j9JALnRHAY2Y2ikzHZ1gcdEo623BXZTW+g2WFxgrgTCIBF7/mQCUoGiDPKctxYiO7lNW0ltsv3du/iwBjm50YjUwfgqUwr2FcemOeikse440=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XQUaSq50; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EE90C32782;
+	Fri, 16 Aug 2024 07:20:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723792821;
+	bh=ljscXbotnhYskEj8hpcUc/0M9uoUIrVHHpbd44KFbs4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XQUaSq50R0+gNek21T/8KjbTcPvtBXOPia9QUYZkmp44CL+uVNWkfyZ3bjTT2hPVZ
+	 6uG8qweT8X17vLqhJN3yIAo9YSvSPWvsBq6gtjKbx0LrePLRbebVhcdIYrdj8R1n23
+	 7MS0LsidH9r2dQi1cnc1IhelTG4MGetPanloD36I=
+Date: Fri, 16 Aug 2024 09:20:19 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Matthew Maurer <mmaurer@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>,
+	Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>,
+	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved
+ structure fields
+Message-ID: <2024081600-grub-deskwork-4bae@gregkh>
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-37-samitolvanen@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,26 +64,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zr5wK7oUcUoB44OF@casper.infradead.org>
+In-Reply-To: <20240815173903.4172139-37-samitolvanen@google.com>
 
-On Thu 15-08-24 22:16:27, Matthew Wilcox wrote:
-> On Thu, Aug 15, 2024 at 07:31:43PM +0000, Roman Gushchin wrote:
-> > There is another subtle change here: xa_alloc() returns -EBUSY in the case
-> > of the address space exhaustion, while the old code returned -ENOSPC.
-> > It's unlikely a big practical problem.
+On Thu, Aug 15, 2024 at 05:39:20PM +0000, Sami Tolvanen wrote:
+> Distributions that want to maintain a stable kABI need the ability to
+> add reserved fields to kernel data structures that they anticipate
+> will be modified during the ABI support timeframe, either by LTS
+> updates or backports.
 > 
-> I decided that EBUSY was the right errno for this situation;
+> With genksyms, developers would typically hide changes to the reserved
+> fields from version calculation with #ifndef __GENKSYMS__, which would
+> result in the symbol version not changing even though the actual type
+> of the reserved field changes. When we process precompiled object
+> files, this is again not an option.
 > 
-> #define EBUSY           16      /* Device or resource busy */
-> #define ENOSPC          28      /* No space left on device */
+> To support stable symbol versions for reserved fields, change the
+> union type processing to recognize field name prefixes, and if the
+> union contains a field name that starts with __kabi_reserved, only use
+> the type of that field for computing symbol versions. In other words,
+> let's assume we have a structure where we want to reserve space for
+> future changes:
 > 
-> ENOSPC seemed wrong; the device isn't out of space.
+>   struct struct1 {
+>     long a;
+>     long __kabi_reserved_0; /* reserved for future use */
+>   };
+>   struct struct1 exported;
+> 
+> gendwarfksyms --debug produces the following output:
+> 
+>   variable structure_type struct1 {
+>     member base_type long int byte_size(8) encoding(5) data_member_location(0),
+>     member base_type long int byte_size(8) encoding(5) data_member_location(8),
+>   } byte_size(16);
+>   #SYMVER exported 0x67997f89
+> 
+> To take the reserved field into use, a distribution would replace it
+> with a union, with one of the fields keeping the __kabi_reserved name
+> prefix for the original type:
+> 
+>   struct struct1 {
+>     long a;
+>     union {
+>       long __kabi_reserved_0;
+>       struct {
+>           int b;
+>           int v;
+>       };
+>     };
+> 
 
-The thing is that this is observable by userspace - mkdir would return a
-different and potentially unexpected errno. We can try and see whether
-anybody complains or just translate the error.
+Ah, ignore my previous email, here's the --stable stuff.
 
--- 
-Michal Hocko
-SUSE Labs
+But this all needs to go into some documentation somewhere, trying to
+dig it out of a changelog is going to be impossible to point people at.
+
+> +/* See dwarf.c:process_reserved */
+> +#define RESERVED_PREFIX "__kabi_reserved"
+
+Seems semi-sane, I can live with this.
+
+I don't know if you want to take the next step and provide examples of
+how to use this in "easy to use macros" for it all, but if so, that
+might be nice.  Especially as I have no idea how you are going to do
+this with the rust side of things, this all will work for any structures
+defined in .rs code, right?
+
+thanks,
+
+greg k-h
 
