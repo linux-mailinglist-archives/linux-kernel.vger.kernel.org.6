@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-288803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7734D953EF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:37:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5E1D953EF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:37:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A3591C222E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:37:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C08B1F249DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:37:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782AC1EA91;
-	Fri, 16 Aug 2024 01:37:30 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB091EB39;
+	Fri, 16 Aug 2024 01:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Ip4BUHA5"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03472372;
-	Fri, 16 Aug 2024 01:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EADE5372;
+	Fri, 16 Aug 2024 01:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723772249; cv=none; b=lZsSvKGpt2EsKBtLSFLkyc1HUbHzbxghcpm60dIaQUcNb7zdoe0XkwkNP3shBqQtjihP+vddNnRISEM0J+nC4bzvBWO8Rbwln6YfxjbicZJJiaHctVj/xMaUhRNE7nOSEXig/M7Vq+NXGfPsR3EEfnJ8EwisuXPrIBQrJciNLdc=
+	t=1723772264; cv=none; b=JSY6ZZcvCMs5wlEVTQhpaY4ETR3xSdiHp85HbOg0PwUIY76n0FW/2stP9BEKTYXnTd7PxghsyH6On+TMMEeELaonm8h3KmSfqyhW+/O2mQb3Zy47zefJC17qJ+ickpO9YbyaXDSIDmtN3dvHkM9CWEYSWDhc3B3YWHvYYaPQFqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723772249; c=relaxed/simple;
-	bh=z+lsAwsip94Z2fFceHUQZ/+28SOZl6Dhef5zkAGCVBo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GAvfbuMhloRygLxDuaC8CC+FBcFwJfGJ//9oRz/aYeSDGi9RIN3V1FINOk9dyuS3NbK83huYPCOjZLYqH+X6TDDcy2KGUcwekmNHJVk5lT8V4V6mpbY0J1xwJvNT0/y3898SKzmmh7mcQtPp3r36u9vFrJTGxNFHb+lClHyg/G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WlPcS1Vmzz1j6Sb;
-	Fri, 16 Aug 2024 09:32:24 +0800 (CST)
-Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1B7D41A0188;
-	Fri, 16 Aug 2024 09:37:18 +0800 (CST)
-Received: from [10.174.176.88] (10.174.176.88) by
- kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 16 Aug 2024 09:37:17 +0800
-Message-ID: <35611fba-98b7-4fa3-8108-ee0785d29cef@huawei.com>
-Date: Fri, 16 Aug 2024 09:37:16 +0800
+	s=arc-20240116; t=1723772264; c=relaxed/simple;
+	bh=eSEX0L/kTyNNiKf5/CN+KF3pOWq1+Ywm15UUyqxPc4I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gpJW8dQruuAxIrwhzkexu+vYF2jBy8PqZY1tlQMJ+o66W6WB0frSK+KDGUWRuTRjmdR8nPddl23Q8muQUFgNh8RM/eP5ouRjEkbGXjM5eAcctkzVqPbAyGBw0bZw//wBH32TsYyXRiJYmFFBOm0PJLuAzFdyuMoMYn3U0PHKAls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Ip4BUHA5; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1723772254; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=ODIoDXtqIR9nG/u+Ap00gMwKchJFzCxYojA3PWyNLgk=;
+	b=Ip4BUHA559Cp04zlZVKMK6/PnJrXQRbGxaAucppzmwLpHEhfW+N85WqmuWMsYeY7f9MUWrUewaaZPORia+zu48pznhm4GEEPWfg+LhiOGhLRbmXDKdL8hIA1y2GQXtlJ6xtbR3CZxlUT/N3hkm511S8eXl7f7qy+lLy8/AyUf3g=
+Received: from 30.97.56.60(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WCyBb01_1723772252)
+          by smtp.aliyun-inc.com;
+          Fri, 16 Aug 2024 09:37:33 +0800
+Message-ID: <75f18fcb-4058-4c93-a012-09a7a62298e3@linux.alibaba.com>
+Date: Fri, 16 Aug 2024 09:37:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,170 +47,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 2/2] xfs: Fix missing interval for missing_owner in xfs
- fsmap
-To: "Darrick J. Wong" <djwong@kernel.org>
-CC: <chandan.babu@oracle.com>, <dchinner@redhat.com>, <osandov@fb.com>,
-	<john.g.garry@oracle.com>, <linux-xfs@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <yangerkun@huawei.com>
-References: <20240812011505.1414130-1-wozizhi@huawei.com>
- <20240812011505.1414130-3-wozizhi@huawei.com>
- <20240815174229.GI865349@frogsfrogsfrogs>
-From: Zizhi Wo <wozizhi@huawei.com>
-In-Reply-To: <20240815174229.GI865349@frogsfrogsfrogs>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemf100017.china.huawei.com (7.202.181.16)
+Subject: Re: [PATCH 1/3] arm64: dts: sprd: sp9860g-1h10: fix
+ constant-charge-voltage-max-microvolt property
+To: Stanislav Jakubek <stano.jakubek@gmail.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1723716331.git.stano.jakubek@gmail.com>
+ <94f68d0a2b56c8a1dcd2a2f027eb6053c91f7796.1723716331.git.stano.jakubek@gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <94f68d0a2b56c8a1dcd2a2f027eb6053c91f7796.1723716331.git.stano.jakubek@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
-在 2024/8/16 1:42, Darrick J. Wong 写道:
-> On Mon, Aug 12, 2024 at 09:15:05AM +0800, Zizhi Wo wrote:
->> In the fsmap query of xfs, there is an interval missing problem:
->> [root@fedora ~]# xfs_io -c 'fsmap -vvvv' /mnt
->>   EXT: DEV    BLOCK-RANGE           OWNER              FILE-OFFSET      AG AG-OFFSET             TOTAL
->>     0: 253:16 [0..7]:               static fs metadata                  0  (0..7)                    8
->>     1: 253:16 [8..23]:              per-AG metadata                     0  (8..23)                  16
->>     2: 253:16 [24..39]:             inode btree                         0  (24..39)                 16
->>     3: 253:16 [40..47]:             per-AG metadata                     0  (40..47)                  8
->>     4: 253:16 [48..55]:             refcount btree                      0  (48..55)                  8
->>     5: 253:16 [56..103]:            per-AG metadata                     0  (56..103)                48
->>     6: 253:16 [104..127]:           free space                          0  (104..127)               24
->>     ......
->>
->> BUG:
->> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 104 107' /mnt
->> [root@fedora ~]#
->> Normally, we should be able to get [104, 107), but we got nothing.
->>
->> The problem is caused by shifting. The query for the problem-triggered
->> scenario is for the missing_owner interval (e.g. freespace in rmapbt/
->> unknown space in bnobt), which is obtained by subtraction (gap). For this
->> scenario, the interval is obtained by info->last. However, rec_daddr is
->> calculated based on the start_block recorded in key[1], which is converted
->> by calling XFS_BB_TO_FSBT. Then if rec_daddr does not exceed
->> info->next_daddr, which means keys[1].fmr_physical >> (mp)->m_blkbb_log
->> <= info->next_daddr, no records will be displayed. In the above example,
->> 104 >> (mp)->m_blkbb_log = 12 and 107 >> (mp)->m_blkbb_log = 12, so the two
->> are reduced to 0 and the gap is ignored:
->>
->>   before calculate ----------------> after shifting
->>   104(st)  107(ed)		      12(st/ed)
->>    |---------|				  |
->>    sector size			      block size
->>
->> Resolve this issue by introducing the "end_daddr" field in
->> xfs_getfsmap_info. This records |key[1].fmr_physical + key[1].length| at
->> the granularity of sector. If the current query is the last, the rec_daddr
->> is end_daddr to prevent missing interval problems caused by shifting. We
->> only need to focus on the last query, because xfs disks are internally
->> aligned with disk blocksize that are powers of two and minimum 512, so
->> there is no problem with shifting in previous queries.
->>
->> After applying this patch, the above problem have been solved:
->> [root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 104 107' /mnt
->>   EXT: DEV    BLOCK-RANGE      OWNER            FILE-OFFSET      AG AG-OFFSET        TOTAL
->>     0: 253:16 [104..106]:      free space                        0  (104..106)           3
->>
->> Fixes: e89c041338ed ("xfs: implement the GETFSMAP ioctl")
->> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
->> ---
->>   fs/xfs/xfs_fsmap.c | 12 +++++++++++-
->>   1 file changed, 11 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/xfs/xfs_fsmap.c b/fs/xfs/xfs_fsmap.c
->> index d346acff7725..4ae273b54129 100644
->> --- a/fs/xfs/xfs_fsmap.c
->> +++ b/fs/xfs/xfs_fsmap.c
->> @@ -162,6 +162,7 @@ struct xfs_getfsmap_info {
->>   	xfs_daddr_t		next_daddr;	/* next daddr we expect */
->>   	/* daddr of low fsmap key when we're using the rtbitmap */
->>   	xfs_daddr_t		low_daddr;
->> +	xfs_daddr_t		end_daddr;	/* daddr of high fsmap key */
+On 2024/8/15 18:12, Stanislav Jakubek wrote:
+> This property has hyphens/dashes, not underscores.
 > 
-> This ought to be initialized to an obviously impossible value (e.g.
-> -1ULL) in xfs_getfsmap before we start walking btrees.
-> 
+> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
 
-This really makes the semantics clearer. So the assignment condition for
-rec_daddr = info->end_daddr also needs to be changed.
+Thanks for the fixing.
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
->>   	u64			missing_owner;	/* owner of holes */
->>   	u32			dev;		/* device id */
->>   	/*
->> @@ -294,6 +295,13 @@ xfs_getfsmap_helper(
->>   		return 0;
->>   	}
->>   
->> +	/*
->> +	 * To prevent missing intervals in the last query, consider using
->> +	 * sectors as the granularity.
->> +	 */
->> +	if (info->last && info->end_daddr)
->> +		rec_daddr = info->end_daddr;
+> ---
+>   arch/arm64/boot/dts/sprd/sp9860g-1h10.dts | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> I think this needs a better comment.  How about:
-> 
-> 	/*
-> 	 * For an info->last query, we're looking for a gap between the
-> 	 * last mapping emitted and the high key specified by userspace.
-> 	 * If the user's query spans less than 1 fsblock, then
-> 	 * info->high and info->low will have the same rm_startblock,
-> 	 * which causes rec_daddr and next_daddr to be the same.
-> 	 * Therefore, use the end_daddr that we calculated from
-> 	 * userspace's high key to synthesize the record.  Note that if
-> 	 * the btree query found a mapping, there won't be a gap.
-> 	 */
-> 
-
-A more detailed explanation, indeed. As for my previous description, I
-simply explained that it would be missed, but did not say the specific
-reason. I will adopt it in the next patch, thanks.
-
->> +
->>   	/* Are we just counting mappings? */
->>   	if (info->head->fmh_count == 0) {
->>   		if (info->head->fmh_entries == UINT_MAX)
->> @@ -973,8 +981,10 @@ xfs_getfsmap(
->>   		 * low key, zero out the low key so that we get
->>   		 * everything from the beginning.
->>   		 */
->> -		if (handlers[i].dev == head->fmh_keys[1].fmr_device)
->> +		if (handlers[i].dev == head->fmh_keys[1].fmr_device) {
->>   			dkeys[1] = head->fmh_keys[1];
->> +			info.end_daddr = dkeys[1].fmr_physical + dkeys[1].fmr_length;
-> 
-> dkeys[1].fmr_length is never used by anything in the fsmap code --
-> __xfs_getfsmap_datadev sets end_fsb using only dkeys[1].fmr_physical.
-> You shouldn't add it to end_daddr here because then they won't be
-> describing the same thing.
-> 
-
-I actually have a question here. We set info->low.rm_blockcount with
-keys[0].fmr_length to indicate if this is the first fsmap query. But I'm
-not sure what keys[1].fmr_length does. When fsmap is invoked in user
-mode, keys[1].fmr_physical is only set. In view of this, I hope to get
-your answer.
-
-Anyway, I will send the next patch as soon as possible, thanks for your
-comments.
-
-Thanks,
-Zizhi Wo
-
-> Anyway I'll figure out a reproducer for fstests and send the whole pile
-> back to the mailing list once it passes QA.  Thanks for finding the bug
-> and attempting a fix. :)
-> 
-> --D
-> 
->> +		}
->>   		if (handlers[i].dev > head->fmh_keys[0].fmr_device)
->>   			memset(&dkeys[0], 0, sizeof(struct xfs_fsmap));
->>   
->> -- 
->> 2.39.2
->>
->>
+> diff --git a/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts b/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts
+> index 095b24a31313..cd8b1069e387 100644
+> --- a/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts
+> +++ b/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts
+> @@ -71,7 +71,7 @@ bat: battery {
+>   		compatible = "simple-battery";
+>   		charge-full-design-microamp-hours = <1900000>;
+>   		charge-term-current-microamp = <120000>;
+> -		constant_charge_voltage_max_microvolt = <4350000>;
+> +		constant-charge-voltage-max-microvolt = <4350000>;
+>   		internal-resistance-micro-ohms = <250000>;
+>   		ocv-capacity-celsius = <20>;
+>   		ocv-capacity-table-0 = <4185000 100>, <4113000 95>, <4066000 90>,
 
