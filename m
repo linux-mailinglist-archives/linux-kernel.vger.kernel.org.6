@@ -1,174 +1,237 @@
-Return-Path: <linux-kernel+bounces-289331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CB7C9544F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:59:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DFFC9544FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB99C1F2306C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:59:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2E361C239C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC5A13D297;
-	Fri, 16 Aug 2024 08:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64300127B57;
+	Fri, 16 Aug 2024 09:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IBjZURWF"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QgWdo6NO"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E73A13DBBB
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B894F883;
+	Fri, 16 Aug 2024 09:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723798764; cv=none; b=N2wTWa+P/L1p+c5ZQrIFdlAbRmZgzEvIFcDW1tkgxpYO9MmZXOKTGlqu3e6TFGpeB0dWCl3Xg3mtFi4o7mzyo+GwMuSGh9FcG8gkKPPExyuzzGxyNlMweuM8Q1cKqC2xnAbtRvCOCYCZyQxuk8ZP041DAg07h5MFh1HcXGzQ+PI=
+	t=1723798909; cv=none; b=UuIU37343wmWzxuWpe92LKAqy2UfNwF/pbtJy0ujqeA/cE+QNCUtKEd1u+favvoAToLtExRJWyb8ask9y02Dc2KTAhAheI8VJPrtAZTMhts6Tkr56sEedDCnSNy8efd8rjkMbxufihYvYGC5cl/cWYTaCFui4iOccml/IjaPgiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723798764; c=relaxed/simple;
-	bh=LfWhagoS1pzhxx1zEMgk9yX693yvb5P3agLUzpS+cLo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ry3VXlQTC4NjaQflinMAjy+m+vpy0uH8/5PcnEDQKbGg48NOCxcOL/wPoEiXTF2rpxcAAQvCPv6xc+8Am7FedGDHjSzuCyCT2zIhPjZpcGBb2+j2aQq4i2kAqzBtWpMriqvioV3T0Prm5hUIlk9fKosF9CA68+l2lPCtcy9hZmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IBjZURWF; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3683329f787so984874f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 01:59:22 -0700 (PDT)
+	s=arc-20240116; t=1723798909; c=relaxed/simple;
+	bh=W3tlIos9wm9zluB5RC6mOx5GY+1+/oLRlai18pKgSOs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=C0Ejp+N1uJAlclNvUStBg+Oge+zVDLU9dVtQmeO81fH3qx4Yq1qlr4FPR1/CTY6ABxJvWBcPMV31+QLgZBDH7ZsyowMgApl07E4j+E9DoobZ4w4EPSAhZ6grKBV3vFxa7+94KJkToQheS8HC35UncjF09DQotK028usC6qIMjek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QgWdo6NO; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fdd6d81812so18440175ad.1;
+        Fri, 16 Aug 2024 02:01:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723798761; x=1724403561; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2AmXrAopEZ7cvd5ZME2fjOsPUxShdExph5aHyt4+s1I=;
-        b=IBjZURWFen0PSDsziWXzQe8D3ubokxRZiHB7Ohv1u9l8Nv4ZFeBrwHZjD9bP47Jy8w
-         KMEGUTu4MkfR8l8k9HrA2u2eDFrPYbaO5nlgS3IOV/ercMrcNSElMNbDxnoV91phoO8x
-         A/iMaLRTXZFlfPIFeL/e6nPfruQYSVcACBVvFOsyVIi0rH0SqAWCeCrQJ/nxSLJRxM/M
-         hrmh/wsT3Ze1UlstU2LtySJX/fT8RaJCNM74dHEI2y3L0Rlijo+IT9M0bEGKv9T9MQP5
-         aYAkvwaNJziigQc49sFSRgiI/9DHOZ1DgA6EO4WVzSfDFwRc/xCVGebNYyLleuHUH00k
-         i1ig==
+        d=gmail.com; s=20230601; t=1723798907; x=1724403707; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=P1HmecyUvtp06bV4nFVvKeXY3H6FSUCPmIpY5aV1k+s=;
+        b=QgWdo6NO7GxqE7v7lKBQ+8qhE5U5tuCWiClONcDgkh6lm5ZbMzX9TOCLCiRVB8Tgrn
+         tbN1DN8Af69CYFdnNSZkHULVB2sUaAOX4VHQ+IFLIB+aV+svY/aWgYw6b7QXPcX3IJs6
+         yGIeQ/MYJJsXcwTp0IzjnoHYPtkTNAXQ2kfRXIRGO9FXRJi5mJN1u77zVpZNgxkamgiX
+         DlaERHvnR/M6NAW+Zc3cprcUJewcXKHPUzNLgSYZckCtknrhfPw4+iQWFLXLullc1Lno
+         lLcjSJ+hNC1yduIgw9eYbRb1T5Hy02ZDBzrHch/9IFhcB9SRQAUlk6ykon2mmQ4xtlJf
+         vLCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723798761; x=1724403561;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2AmXrAopEZ7cvd5ZME2fjOsPUxShdExph5aHyt4+s1I=;
-        b=XbCxFwiHs6Fp3pNg7m88bjR5m2IgimTr0ufw1mExcxdl3IdXA5W+s3RMVqdEL+N1Gr
-         QSJHnbMx+AQN3/RN2Q9nraDzAoHd/BoLFsrxyurcF3nDrwJfPqmOuyI8vyZZzOD+vXOl
-         sxtYDJ+K6RDy9p2l5uMq/9rQqAMsHhcjTCKEUD+YnQMprAMtDYDs22TW/IsiHx7Zv9mr
-         4S4XsJlG3UU6/U3rd5MS37GzPjjuWep77jKSkZGLbhU8kf44EM4SVIDtnXgVGcz2zcQl
-         zng9sojEHq9Gi0IjEd1kUqrcZCpCW/L6rSNfqBD823FWZQUmnNTnjB79xKGXSeE5BoWs
-         nOeg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJJXsYU0be45ziBn6O1G8vFYO2D+nBZ9kkYuTHNNEnrkhU2b7yR+0UmvPee/MSgcQL7cyTuDAiKfnkgdc7EscwB/tLvY2p6Cs0fa+j
-X-Gm-Message-State: AOJu0YwgXjZxqEfc6hAUkm3wP7nyNh1BxtydiR0UYrUot0NRZKWN5SnK
-	WZlDPphMKt1ywyuwBGcTLk7rK/mxTUfZnLrcr62wpriL9JfcVBcarA7Im6f4jgY=
-X-Google-Smtp-Source: AGHT+IHVCiR8NTXQ5hS9+VCoex9bI3QB+qewq7KwuHB78ooUCG5gvzIThlb20x3W7WtZMN1AJE5+pQ==
-X-Received: by 2002:adf:b307:0:b0:371:8c76:4ecc with SMTP id ffacd0b85a97d-371946a358cmr1367713f8f.46.1723798760507;
-        Fri, 16 Aug 2024 01:59:20 -0700 (PDT)
-Received: from [192.168.68.116] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-429ed658d32sm16997105e9.25.2024.08.16.01.59.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Aug 2024 01:59:20 -0700 (PDT)
-Message-ID: <de0a9cf2-c656-430e-8c56-ca2975c73c0e@linaro.org>
-Date: Fri, 16 Aug 2024 09:59:18 +0100
+        d=1e100.net; s=20230601; t=1723798907; x=1724403707;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P1HmecyUvtp06bV4nFVvKeXY3H6FSUCPmIpY5aV1k+s=;
+        b=MJI+ScL+RUBLOPBWovTUrFedyDOIlmwQglQXAPY4OQ4To0rNsQkhXlW+RokE2VyrPx
+         owIRRySP93Oz/AbOrfqQjrR7KwVL03k6wTo5VYPAGz2JAnRXFWzp2CelICKWF/cj2mrQ
+         UVaJYNr5gcQQadhZpEMvEUU6Qg60CY7gRJtq1o9Bqwdz3lP041hSezTJ0GHpl6mEhtL8
+         JOYWneV669ow8JLTjSA/AEbew5NTo0hfWVdSwgqZ2wRS3kJcb83F91etEu1gVrmR00SS
+         RC2AC1kXr4eleJ3jM7MEgIsVhM0I1USEP1/0wON+A56TkX7wk26/4OvHX/gPRP2mkRWn
+         vpbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2LhnjDtlfeMcA19sWCCdDzw+osmYbz+YcBDm+qv8c+lpcTM1AYPqqqi+WJckc1AHggINij+ZmNz53hS6TMwpzfW63j97jrBqFAp1U
+X-Gm-Message-State: AOJu0YxXW+8FV/+/VGHZi/9/YH8/+zb+kPSMiSs3fo6fXXsi7TRwPqvq
+	6TrlDoeLCcRZ6OjzcENv5R5xef5ZBryIK1/Gie/ZbxUS/AD6H7wryEVPxg==
+X-Google-Smtp-Source: AGHT+IG1zCZyt8nAkJxQ7ghwjwiyGU4t6ixokK+TeaG4B8/XEyf61YKiRdKCJMLpKVRg20dEQbcxrg==
+X-Received: by 2002:a17:902:f544:b0:1f9:d0da:5b2f with SMTP id d9443c01a7336-20203ed8c92mr27194715ad.39.1723798906974;
+        Fri, 16 Aug 2024 02:01:46 -0700 (PDT)
+Received: from carrot.. (i222-151-34-139.s42.a014.ap.plala.or.jp. [222.151.34.139])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f02fb470sm21790195ad.9.2024.08.16.02.01.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 02:01:46 -0700 (PDT)
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-nilfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] nilfs2: do not output warnings when clearing dirty buffers
+Date: Fri, 16 Aug 2024 18:01:28 +0900
+Message-Id: <20240816090128.4561-1-konishi.ryusuke@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: codecs: lpass-va-macro: set the default codec
- version for sm8250
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, broonie@kernel.org
-Cc: perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
- linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, amit.pundir@linaro.org
-References: <20240815164903.18400-1-srinivas.kandagatla@linaro.org>
- <F07BF288-66F4-497A-A581-5FE4B7B432BD@linaro.org>
- <18DCA30B-273D-415A-81EF-EA02CEBDAA94@linaro.org>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <18DCA30B-273D-415A-81EF-EA02CEBDAA94@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+After detecting file system corruption and degrading to a read-only
+mount, dirty folios and buffers in the page cache are cleared, and a
+large number of warnings are output at that time, often filling up
+the kernel log.
 
+In this case, since the degrading to a read-only mount is output to
+the kernel log, these warnings are not very meaningful, and are
+rather a nuisance in system management and debugging.
 
-On 15/08/2024 22:22, Dmitry Baryshkov wrote:
-> On August 16, 2024 4:07:10 AM GMT+07:00, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
->> On August 15, 2024 11:49:03 PM GMT+07:00, srinivas.kandagatla@linaro.org wrote:
->>> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->>>
->>> sm8250 and sc7280 have lpass codec version 1.0, as these are very old
->>> platforms, they do not have a reliable way to get the codec version
->> >from core_id registers.
-> 
-> I wrote that it looked good, but maybe you can also describe, why core_id registers are not reliable? Are they just not present on those platforms or is there any other issue?
-> 
-Sure, the comment is correct because the registers are available to read 
-however the values of those registers are not fit for dynamically 
-detecting the version, like what we do in the driver.
+The related nilfs2-specific page/folio routines have a silent argument
+that suppresses the warning output, but since it is not currently used
+meaningfully, remove both the silent argument and the warning output.
 
-one of the reasons is that the codec evolved over time, I think starting 
-from v2 it has values made more sense to determine the version info from 
-these registers. This is also evident in the current code.
+Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+---
+Andrew, please add this to the queue for the next cycle.
 
+This prevents the kernel log from being filled with counterproductive
+messages warning about dirty buffers being cleared when a file system
+corruption is detected.
 
-Let me add this detail the commit log and send a v2.
+Thanks,
+Ryusuke Konishi
 
---srini
-> 
->>>
->>> Add the version info into of_data, so that it does not need to use
->>> core_id registers to get version number.
->>>
->>> Fixes: 378918d59181 ("ASoC: codecs: lpass-macro: add helpers to get codec version")
->>> Fixes: dbacef05898d ("ASoC: codec: lpass-rx-macro: prepare driver to accomdate new codec versions")
->>> Fixes: 727de4fbc546 ("ASoC: codecs: lpass-wsa-macro: Correct support for newer v2.5 version")
->>
->> Which commit introduced the issue? I think having just the first tag is enough.
->>
->> LGTM otherwise.
->>
->>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->>> ---
->>> sound/soc/codecs/lpass-va-macro.c | 11 ++++++++++-
->>> 1 file changed, 10 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/sound/soc/codecs/lpass-va-macro.c b/sound/soc/codecs/lpass-va-macro.c
->>> index 8454193ed22a..e95d1f29ef18 100644
->>> --- a/sound/soc/codecs/lpass-va-macro.c
->>> +++ b/sound/soc/codecs/lpass-va-macro.c
->>> @@ -228,11 +228,13 @@ struct va_macro {
->>> struct va_macro_data {
->>> 	bool has_swr_master;
->>> 	bool has_npl_clk;
->>> +	int version;
->>> };
->>>
->>> static const struct va_macro_data sm8250_va_data = {
->>> 	.has_swr_master = false,
->>> 	.has_npl_clk = false,
->>> +	.version = LPASS_CODEC_VERSION_1_0,
->>> };
->>>
->>> static const struct va_macro_data sm8450_va_data = {
->>> @@ -1587,7 +1589,14 @@ static int va_macro_probe(struct platform_device *pdev)
->>> 			goto err_npl;
->>> 	}
->>>
->>> -	va_macro_set_lpass_codec_version(va);
->>> +	/**
->>> +	 * old version of codecs do not have a reliable way to determine the
->>> +	 * version from registers, get them from soc specific data
->>> +	 */
->>> +	if (data->version)
->>> +		lpass_macro_set_codec_version(data->version);
->>> +	else /* read version from register */
->>> +		va_macro_set_lpass_codec_version(va);
->>>
->>> 	if (va->has_swr_master) {
->>> 		/* Set default CLK div to 1 */
->>
->>
-> 
-> 
+ fs/nilfs2/inode.c |  4 ++--
+ fs/nilfs2/mdt.c   |  6 +++---
+ fs/nilfs2/page.c  | 19 +++----------------
+ fs/nilfs2/page.h  |  4 ++--
+ 4 files changed, 10 insertions(+), 23 deletions(-)
+
+diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
+index 7340a01d80e1..c39bc940e6f2 100644
+--- a/fs/nilfs2/inode.c
++++ b/fs/nilfs2/inode.c
+@@ -162,7 +162,7 @@ static int nilfs_writepages(struct address_space *mapping,
+ 	int err = 0;
+ 
+ 	if (sb_rdonly(inode->i_sb)) {
+-		nilfs_clear_dirty_pages(mapping, false);
++		nilfs_clear_dirty_pages(mapping);
+ 		return -EROFS;
+ 	}
+ 
+@@ -186,7 +186,7 @@ static int nilfs_writepage(struct page *page, struct writeback_control *wbc)
+ 		 * have dirty pages that try to be flushed in background.
+ 		 * So, here we simply discard this dirty page.
+ 		 */
+-		nilfs_clear_folio_dirty(folio, false);
++		nilfs_clear_folio_dirty(folio);
+ 		folio_unlock(folio);
+ 		return -EROFS;
+ 	}
+diff --git a/fs/nilfs2/mdt.c b/fs/nilfs2/mdt.c
+index 4f792a0ad0f0..ceb7dc0b5bad 100644
+--- a/fs/nilfs2/mdt.c
++++ b/fs/nilfs2/mdt.c
+@@ -411,7 +411,7 @@ nilfs_mdt_write_page(struct page *page, struct writeback_control *wbc)
+ 		 * have dirty folios that try to be flushed in background.
+ 		 * So, here we simply discard this dirty folio.
+ 		 */
+-		nilfs_clear_folio_dirty(folio, false);
++		nilfs_clear_folio_dirty(folio);
+ 		folio_unlock(folio);
+ 		return -EROFS;
+ 	}
+@@ -638,10 +638,10 @@ void nilfs_mdt_restore_from_shadow_map(struct inode *inode)
+ 	if (mi->mi_palloc_cache)
+ 		nilfs_palloc_clear_cache(inode);
+ 
+-	nilfs_clear_dirty_pages(inode->i_mapping, true);
++	nilfs_clear_dirty_pages(inode->i_mapping);
+ 	nilfs_copy_back_pages(inode->i_mapping, shadow->inode->i_mapping);
+ 
+-	nilfs_clear_dirty_pages(ii->i_assoc_inode->i_mapping, true);
++	nilfs_clear_dirty_pages(ii->i_assoc_inode->i_mapping);
+ 	nilfs_copy_back_pages(ii->i_assoc_inode->i_mapping,
+ 			      NILFS_I(shadow->inode)->i_assoc_inode->i_mapping);
+ 
+diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
+index 14e470fb8870..7797903e014e 100644
+--- a/fs/nilfs2/page.c
++++ b/fs/nilfs2/page.c
+@@ -357,9 +357,8 @@ void nilfs_copy_back_pages(struct address_space *dmap,
+ /**
+  * nilfs_clear_dirty_pages - discard dirty pages in address space
+  * @mapping: address space with dirty pages for discarding
+- * @silent: suppress [true] or print [false] warning messages
+  */
+-void nilfs_clear_dirty_pages(struct address_space *mapping, bool silent)
++void nilfs_clear_dirty_pages(struct address_space *mapping)
+ {
+ 	struct folio_batch fbatch;
+ 	unsigned int i;
+@@ -380,7 +379,7 @@ void nilfs_clear_dirty_pages(struct address_space *mapping, bool silent)
+ 			 * was acquired.  Skip processing in that case.
+ 			 */
+ 			if (likely(folio->mapping == mapping))
+-				nilfs_clear_folio_dirty(folio, silent);
++				nilfs_clear_folio_dirty(folio);
+ 
+ 			folio_unlock(folio);
+ 		}
+@@ -392,20 +391,13 @@ void nilfs_clear_dirty_pages(struct address_space *mapping, bool silent)
+ /**
+  * nilfs_clear_folio_dirty - discard dirty folio
+  * @folio: dirty folio that will be discarded
+- * @silent: suppress [true] or print [false] warning messages
+  */
+-void nilfs_clear_folio_dirty(struct folio *folio, bool silent)
++void nilfs_clear_folio_dirty(struct folio *folio)
+ {
+-	struct inode *inode = folio->mapping->host;
+-	struct super_block *sb = inode->i_sb;
+ 	struct buffer_head *bh, *head;
+ 
+ 	BUG_ON(!folio_test_locked(folio));
+ 
+-	if (!silent)
+-		nilfs_warn(sb, "discard dirty page: offset=%lld, ino=%lu",
+-			   folio_pos(folio), inode->i_ino);
+-
+ 	folio_clear_uptodate(folio);
+ 	folio_clear_mappedtodisk(folio);
+ 
+@@ -419,11 +411,6 @@ void nilfs_clear_folio_dirty(struct folio *folio, bool silent)
+ 		bh = head;
+ 		do {
+ 			lock_buffer(bh);
+-			if (!silent)
+-				nilfs_warn(sb,
+-					   "discard dirty block: blocknr=%llu, size=%zu",
+-					   (u64)bh->b_blocknr, bh->b_size);
+-
+ 			set_mask_bits(&bh->b_state, clear_bits, 0);
+ 			unlock_buffer(bh);
+ 		} while (bh = bh->b_this_page, bh != head);
+diff --git a/fs/nilfs2/page.h b/fs/nilfs2/page.h
+index 7e1a2c455a10..64521a03a19e 100644
+--- a/fs/nilfs2/page.h
++++ b/fs/nilfs2/page.h
+@@ -41,8 +41,8 @@ void nilfs_folio_bug(struct folio *);
+ 
+ int nilfs_copy_dirty_pages(struct address_space *, struct address_space *);
+ void nilfs_copy_back_pages(struct address_space *, struct address_space *);
+-void nilfs_clear_folio_dirty(struct folio *, bool);
+-void nilfs_clear_dirty_pages(struct address_space *, bool);
++void nilfs_clear_folio_dirty(struct folio *folio);
++void nilfs_clear_dirty_pages(struct address_space *mapping);
+ unsigned int nilfs_page_count_clean_buffers(struct page *, unsigned int,
+ 					    unsigned int);
+ unsigned long nilfs_find_uncommitted_extent(struct inode *inode,
+-- 
+2.34.1
+
 
