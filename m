@@ -1,177 +1,179 @@
-Return-Path: <linux-kernel+bounces-288797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD49D953EE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:23:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA298953EE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:24:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10C74B24C8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:23:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A5381F264AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67EC3612D;
-	Fri, 16 Aug 2024 01:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFE91E4A2;
+	Fri, 16 Aug 2024 01:24:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TcPBNpDC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FGFgFba2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37ED2BCFF;
-	Fri, 16 Aug 2024 01:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5968472
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 01:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723771370; cv=none; b=HHliaLykvjS5QHln6rT75b1KHsOpJJP2q8e6aqOrydJoQ/vNHZCS9x+9GSiJi6et39DAB/zouVTGGuU3NKzJ2cfpfxPtliwdOviG54D4kgoRQv2Rqx0ldcATxsU6nYmf1fAXNWYIgT0BbO7Jjf3C8PTyJFoaIqQdK2lZ3B57+ZE=
+	t=1723771488; cv=none; b=FqSc93yrq0E8uZI/W+KeSEmpl5iGqZUX+pzhbqLXDUtSatsvlCGjpFN33c5TUC9OrN1Vtgdm+SQfV5bw0E0D9BICdsebgVsNZK9C9pW62Kutcw01NhwyEWDRknJj82eCQ3ahO+EUc9Vf8a/YA4+/L4dU5S/w3eLSQKkjEnl6jfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723771370; c=relaxed/simple;
-	bh=IkxgNU5lZE6GtoPPMNJU9i4n15FLyHYKT67mAHsJDsU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jjXxlA+OcErznBVhV1xxC/pcFs0oBTNVMuFhQQVR89PC29oO7Tm6didaOPDcV/wikNf2pxWyrk/0wkZwXbWNfzcwWO8vluFEGbPsX1MlI1b2sLE/rkTDuFi163eWPHdeEbq1WCEDRpVZlJs4X8mawfGF/5hY2muFK7BFmzdef0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TcPBNpDC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C07B2C4AF09;
-	Fri, 16 Aug 2024 01:22:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723771369;
-	bh=IkxgNU5lZE6GtoPPMNJU9i4n15FLyHYKT67mAHsJDsU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TcPBNpDCRFXY8kGxpg2OnRKk1wK1Dnq5Nh134fk9HH+HXrxS9P35iW+jorPaKYS1N
-	 xAMygGZ/o8VttaAfDJ73kbiQunXv00m488MEt5zFzKx0LmQ+yM91SMEj/TOTfvHriW
-	 5gsmMzKyX4hCr0NdhJXl+6EFrUUTMZlDnL9mk+hbDY69YRrM4P0eypdGanoGEqyjwW
-	 VnKH4FrMCPyOazttbwCRLeHANRE3uJJckxjidvB49sZn2byX+9sHs42dntssCrTNqq
-	 kbYFHxD1BHqZoc/Cao/daL6ihfXWV1GKXL7xuhyFlGg+FRagNIGfP4rt1DbGZ2ks8D
-	 3C5SoToFZwuJg==
-Date: Thu, 15 Aug 2024 18:22:45 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>, Richard Henderson
- <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
- Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
- <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>,
- Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
- <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, Herbert
- Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, Willem
- de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, Sumit
- Semwal <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
- <christian.koenig@amd.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Christoph
- Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>,
- Taehee Yoo <ap420073@gmail.com>, David Wei <dw@davidwei.uk>, Jason
- Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, Shailend
- Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
- <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
- Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
-Subject: Re: [PATCH net-next v19 06/13] memory-provider: dmabuf devmem
- memory provider
-Message-ID: <20240815182245.2b5e3f44@kernel.org>
-In-Reply-To: <31640ff4-25a6-4115-85e6-82092ce57393@gmail.com>
-References: <20240813211317.3381180-7-almasrymina@google.com>
-	<de7daf80-a2e4-4451-b666-2a67ccc3649e@gmail.com>
-	<CAHS8izPMC+XhXKbJOQ3ymizyKuARSOv_cO_xO+q1EG4zoy6Gig@mail.gmail.com>
-	<31640ff4-25a6-4115-85e6-82092ce57393@gmail.com>
+	s=arc-20240116; t=1723771488; c=relaxed/simple;
+	bh=YH1iFlaj7TZ8p7fNpGbv6sSN1+ULedKoFhzJIl3cZbs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t50GBtE6FTnFo+NH+99q/MnVkxQXp/n4DhIoeCqR7Cu/CjuRQ9g521GWvvq5bkWFlSUQQetv8AaAq3itOi2oZ0j3kxsqizaeHQ4aOl46lxstF8qK9DT8n+nSg8kNnsRahEe0boLQiSG0YDRVRFwkr0JOUB2zV1ugoiVJc0SNs14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FGFgFba2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723771485;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fwaojnf9E3UluBzU+MZkkrEKEZcYZi4FcKEhRi/CrDs=;
+	b=FGFgFba24N469n/BpEazqIH6HjwgqYyZyApQxoZntmErfFcZ+2w/IH9ZSEQ20XC3BoDn+3
+	KVMc82TO1wF1y0MbZS+50yEyUUiOfMByGrfolWW3SOjtN9XMbnyX1B+sRn5eLwti+R6Del
+	kGX25R18gOyzcVM658QWWIXGHdGcmOQ=
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
+ [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-611-hJsYEPE0P-ewfPwSjNYTOQ-1; Thu, 15 Aug 2024 21:24:43 -0400
+X-MC-Unique: hJsYEPE0P-ewfPwSjNYTOQ-1
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-70d2ab42082so2282660b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 18:24:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723771483; x=1724376283;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fwaojnf9E3UluBzU+MZkkrEKEZcYZi4FcKEhRi/CrDs=;
+        b=whWjzhfvZDgSDXG3Jh237plGSJYCIMJtcnfr4Hwi4lP1MylQie7M5ZjGkctnq5/h3w
+         PekY5n9KZgk1fR8doOvOyAyS1sCkWN9Vklk7cUoGegWgZ3AO/Fnwb3PWej4LJe4SETfT
+         PH8K0Jmh3UqpUe2A53oJsgxnGyq4LqpPPp+w8EMH7VJFMTG0nPsNc8oDw4KXxtx8tr74
+         SpYakiLrCdzsvEsZQ+PnnHE2ly51fIWahye+Zd0ZU1TvDDkz8jlIKoLXxlXwUONCUT6Q
+         xobmvNbhWnMhOKIl9MAiX3+rSPQlRlA+rLKihHJQZZxOmD6UvaeRmMqCr1xBxBMnNsig
+         mphQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXO5NnssoygIUtUn69K7MT6vPCCTL5TTb0zDFVRyq9xKT0fMKi9gyYQ3b2Bi71s27gyG26aShO9X99bjuRTunw4H2O3432BXQQMvhDe
+X-Gm-Message-State: AOJu0YzhyWvBJx1MqOOS5OfGvHl2Gf4WJXkjORVpFKnJ6s91+Cft7+vY
+	CX8P4r4TomKEZF5HBo3HQw6LuyKMD0PqvVERz7bC2WeReuyLzhufKedZkzP+8ua4YfxbcYxsDsH
+	t43WGfzkmqsc8F43v8Ty4oMLA2iA6aAh0gaKfx0+cS7UNslms5opv+1FDHIrbz1EggbXAV8oTcP
+	p0xTkwoMuxUhBYN393SpsXK+G9c8bxcNHOtA+u
+X-Received: by 2002:a05:6a20:6d07:b0:1ca:991:5ab0 with SMTP id adf61e73a8af0-1ca09915bf6mr907570637.1.1723771482683;
+        Thu, 15 Aug 2024 18:24:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE2W7if9lwjRG2kNQheYzxy8p06RPF3Sab4WD0l36KTQ1ZsM5FA1pamFcIyhy7TLUbIgdVTJyTESC9lRMpJDaQ=
+X-Received: by 2002:a05:6a20:6d07:b0:1ca:991:5ab0 with SMTP id
+ adf61e73a8af0-1ca09915bf6mr907554637.1.1723771482281; Thu, 15 Aug 2024
+ 18:24:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240809191020.1142142-1-pasha.tatashin@soleen.com>
+ <20240809191020.1142142-4-pasha.tatashin@soleen.com> <d28059a0-25af-6d0c-3f6d-7e7bc208a0da@google.com>
+In-Reply-To: <d28059a0-25af-6d0c-3f6d-7e7bc208a0da@google.com>
+From: Yi Zhang <yi.zhang@redhat.com>
+Date: Fri, 16 Aug 2024 09:24:30 +0800
+Message-ID: <CAHj4cs_-Qh2O9dUrcdVSPSZas-YYcfMYSpAWbm8C3Z=G3FZWsQ@mail.gmail.com>
+Subject: Re: [PATCH v5 3/3] mm: don't account memmap per-node
+To: David Rientjes <rientjes@google.com>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-cxl@vger.kernel.org, 
+	cerasuolodomenico@gmail.com, hannes@cmpxchg.org, j.granados@samsung.com, 
+	lizhijian@fujitsu.com, muchun.song@linux.dev, nphamcs@gmail.com, 
+	rppt@kernel.org, souravpanda@google.com, vbabka@suse.cz, willy@infradead.org, 
+	dan.j.williams@intel.com, alison.schofield@intel.com, david@redhat.com, 
+	yosryahmed@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 14 Aug 2024 17:32:53 +0100 Pavel Begunkov wrote:
-> > This is where I get a bit confused. Jakub did mention that it is
-> > desirable for core to verify that the driver did the right thing,
-> > instead of trusting that a driver did the right thing without
-> > verifying. Relying on a flag from the driver opens the door for the
-> > driver to say "I support this" but actually not create the mp
-> > page_pool. In my mind the explicit check is superior to getting
-> > feedback from the driver.  
-> 
-> You can apply the same argument to anything, but not like
-> after each for example ->ndo_start_xmit we dig into the
-> interface's pending queue to make sure it was actually queued.
-> 
-> And even if you check that there is a page pool, the driver
-> can just create an empty pool that it'll never use. There
-> are always ways to make it wrong.
-> 
-> Yes, there is a difference, and I'm not against it as a
-> WARN_ON_ONCE after failing it in a more explicit way.
-> 
-> Jakub might have a different opinion on how it should look
-> like, and we can clarify on that, but I do believe it's a
-> confusing interface that can be easily made better.
+Thanks for the fix.
+Tested-by: Yi Zhang <yi.zhang@redhat.com>
 
-My queue API RFC patches had configuration arguments, not sure if this
-is the right version but you'll get the idea:
-https://github.com/kuba-moo/linux/blob/qcfg/include/net/netdev_cfg.h#L43-L50
-This way we can _tell_ the driver what the config should be. That part
-got lost somewhere along the way, because perhaps in its embryonic form
-it doesn't make sense.
+On Mon, Aug 12, 2024 at 4:26=E2=80=AFAM David Rientjes <rientjes@google.com=
+> wrote:
+>
+> On Fri, 9 Aug 2024, Pasha Tatashin wrote:
+>
+> > Fix invalid access to pgdat during hot-remove operation:
+> > ndctl users reported a GPF when trying to destroy a namespace:
+> > $ ndctl destroy-namespace all -r all -f
+> >  Segmentation fault
+> >  dmesg:
+> >  Oops: general protection fault, probably for
+> >  non-canonical address 0xdffffc0000005650: 0000 [#1] PREEMPT SMP KASAN
+> >  PTI
+> >  KASAN: probably user-memory-access in range
+> >  [0x000000000002b280-0x000000000002b287]
+> >  CPU: 26 UID: 0 PID: 1868 Comm: ndctl Not tainted 6.11.0-rc1 #1
+> >  Hardware name: Dell Inc. PowerEdge R640/08HT8T, BIOS
+> >  2.20.1 09/13/2023
+> >  RIP: 0010:mod_node_page_state+0x2a/0x110
+> >
+> > cxl-test users report a GPF when trying to unload the test module:
+> > $ modrpobe -r cxl-test
+> >  dmesg
+> >  BUG: unable to handle page fault for address: 0000000000004200
+> >  #PF: supervisor read access in kernel mode
+> >  #PF: error_code(0x0000) - not-present page
+> >  PGD 0 P4D 0
+> >  Oops: Oops: 0000 [#1] PREEMPT SMP PTI
+> >  CPU: 0 UID: 0 PID: 1076 Comm: modprobe Tainted: G O N 6.11.0-rc1 #197
+> >  Tainted: [O]=3DOOT_MODULE, [N]=3DTEST
+> >  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/1=
+5
+> >  RIP: 0010:mod_node_page_state+0x6/0x90
+> >
+> > Currently, when memory is hot-plugged or hot-removed the accounting is
+> > done based on the assumption that memmap is allocated from the same nod=
+e
+> > as the hot-plugged/hot-removed memory, which is not always the case.
+> >
+> > In addition, there are challenges with keeping the node id of the memor=
+y
+> > that is being remove to the time when memmap accounting is actually
+> > performed: since this is done after remove_pfn_range_from_zone(), and
+> > also after remove_memory_block_devices(). Meaning that we cannot use
+> > pgdat nor walking though memblocks to get the nid.
+> >
+> > Given all of that, account the memmap overhead system wide instead.
+> >
+> > For this we are going to be using global atomic counters, but given tha=
+t
+> > memmap size is rarely modified, and normally is only modified either
+> > during early boot when there is only one CPU, or under a hotplug global
+> > mutex lock, therefore there is no need for per-cpu optimizations.
+> >
+> > Also, while we are here rename nr_memmap to nr_memmap_pages, and
+> > nr_memmap_boot to nr_memmap_boot_pages to be self explanatory that the
+> > units are in page count.
+> >
+> > Reported-by: Yi Zhang <yi.zhang@redhat.com>
+> > Closes: https://lore.kernel.org/linux-cxl/CAHj4cs9Ax1=3DCoJkgBGP_+sNu6-=
+6=3D6v=3D_L-ZBZY0bVLD3wUWZQg@mail.gmail.com
+> > Reported-by: Alison Schofield <alison.schofield@intel.com>
+> > Closes: https://lore.kernel.org/linux-mm/Zq0tPd2h6alFz8XF@aschofie-mobl=
+2/#t
+> >
+> > Fixes: 15995a352474 ("mm: report per-page metadata information")
+> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> > Tested-by: Dan Williams <dan.j.williams@intel.com>
+> > Tested-by: Alison Schofield <alison.schofield@intel.com>
+> > Acked-by: David Hildenbrand <david@redhat.com>
+>
+> Acked-by: David Rientjes <rientjes@google.com>
+>
 
-We can bring it back, add HDS with threshold of 0, to it, and a bit for
-non-readable memory. On top of that "capability bits" in struct
-netdev_queue_mgmt_ops to mark that the driver pays attention to particular
-fields of the config.
 
-Not sure if it should block the series, but that'd be the way I'd do it
-(for now?)
-
-I'd keep the current check with a WARN_ON_ONCE(), tho.
-Given the absence of tests driver developers can use.
-Especially those who _aren't_ supporting the feature.
-
-> > and cons to each approach; I don't see a showstopping reason to go
-> > with one over the other.
-> >   
-> >> And page_pool_check_memory_provider() is not that straightforward,
-> >> it doesn't walk through pools of a queue.  
-> > 
-> > Right, we don't save the pp of a queue, only a netdev. The outer loop
-> > checks all the pps of the netdev to find one with the correct binding,
-> > and the inner loop checks that this binding is attached to the correct
-> > queue.  
-> 
-> That's the thing, I doubt about the second part.
-> 
-> net_devmem_bind_dmabuf_to_queue() {
-> 	err = xa_alloc(&binding->bound_rxqs, &xa_idx, rxq);
-> 	if (err)
-> 		return err;
-> 
-> 	netdev_rx_queue_restart();
-> 
-> 	// page_pool_check_memory_provider
-> 	...
-> 	xa_for_each(&binding->bound_rxqs, xa_idx, binding_rxq) {
-> 		if (rxq == binding_rxq)
-> 			return success;
-> }
-> 
-> Can't b4 the patches for some reason, but that's the highlight
-> from the patchset, correct me if I'm wrong. That xa_for_each
-> check is always true because you put the queue in there right
-> before it, and I don't that anyone could've erased it.
-> 
-> The problem here is that it seems the ->bound_rxqs state doesn't
-> depend on what page pools were actually created and with what mp.
-
-FWIW I don't understand the point of walking the xa either.
-Just check the queue number of the pp you found matches,
-page pool params are saved in the page pool. No?
+--=20
+Best Regards,
+  Yi Zhang
 
 
