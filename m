@@ -1,169 +1,253 @@
-Return-Path: <linux-kernel+bounces-290440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 005F09553DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:43:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 050BD9553E6
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:46:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E7B61F22DD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:43:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86BC81F23654
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362EB1482FE;
-	Fri, 16 Aug 2024 23:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC4F14601F;
+	Fri, 16 Aug 2024 23:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nb0wQJ4W"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="qvaoaxNg"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90914145FEE;
-	Fri, 16 Aug 2024 23:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F5378C8F;
+	Fri, 16 Aug 2024 23:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723851790; cv=none; b=kALuSCQYpY0VkoHubdichpiUdck7f1G1e409/l7BBOQQv9JjQvjjBKjyemp8ISvuLETVyWd5MYhloFiwcJpm6mpDzzvBgJCjVdgaWJW7+dkIFp21/p2he8ac9yTlNRCsWfj3tSXaE+9A3eQwSUX77l6/pWzsatZSa/ueDk9ptZY=
+	t=1723851999; cv=none; b=sF9PVsM0fbXMiXoPYe2HhCTl0Rp9Mlg2KrtCwbOPfF33ZcLxfmQzZiu+iskRA8qyJw0I2gtJ5aWgTyjySnaCOskRVlK9gdXcTFc89NV7EJU7ir9yo0CaQ/54BxZShalbAayBmpi69RPrTQDdVorCzruQy8uw6SFl/g7lOTugdYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723851790; c=relaxed/simple;
-	bh=beYeNlxIPK9w8xuSxdQ/6Grv4kIGkfjA0BnlbGC+1r8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YqNd2hNJwLtIgDO0TF70LX0HCu0XE+Fm2M91ffCH4KF4xWAQ9JRNR95Awp7z7RDAHcxVzGWtXF39XCJzAT8LYU+2cZ1FwrxthuIcWjTmF0yGKypGBfXXExM9IvpUDzPl7fInSjATtiPKkYg9zNCBfVAV7izDYnICvNWepxu80JY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nb0wQJ4W; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723851789; x=1755387789;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=beYeNlxIPK9w8xuSxdQ/6Grv4kIGkfjA0BnlbGC+1r8=;
-  b=nb0wQJ4W/gQOouvGmRTZxAyUYuRPvxi+dcnpDBM3tFcqfCXm9GzBqVVk
-   bAT28JpJkBTC1S/EkEOEP7NhJpc1QXZ9/QaJX/DP9mh7UjGZ3aWHuutWD
-   FYdb66AkqYIstLDiJ/vmXWAedVvOd7tbZmMlsI5FBnABYGG3M2Rlvac/W
-   jGGOOALuSqfceQlFaAS3yqb2rSKIlQkG2DH3UhGNJSESXw8LcsE4n4TbF
-   VmJqTHFtLmdKB0JbhT8N5nVvWWk+StEOnZDU6Rg3mMfmRaapO86cp29Q0
-   0GD5nPh3GcadlDvTU6vCE8fLGYd03kUXDcFJr868881r9qiQrlLClkKDV
-   w==;
-X-CSE-ConnectionGUID: v1Ms/Qh4SUmX/M8wNlrEUw==
-X-CSE-MsgGUID: x5SqDUECToGK44IWS1MaJQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="13063657"
-X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
-   d="scan'208";a="13063657"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 16:43:08 -0700
-X-CSE-ConnectionGUID: vq/orHWdTz2gVCT3RIU/Tg==
-X-CSE-MsgGUID: TCalvPG1SyOQwnnUMzHcFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
-   d="scan'208";a="59842897"
-Received: from unknown (HELO [10.125.111.71]) ([10.125.111.71])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 16:43:06 -0700
-Message-ID: <fcfbae13-9c6b-460d-ab10-e739caf86a06@intel.com>
-Date: Fri, 16 Aug 2024 16:43:05 -0700
+	s=arc-20240116; t=1723851999; c=relaxed/simple;
+	bh=feUvX9V8w+NhXqTyhRt7l6bICwVKyQyAXpz2P6isYSc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=H1mNH9mdLUeL/A1bL6+bRzttznqp/jL8yM0rljTuGZM7mGvFEPBP2TOa33FObhK7HHn+YafoAgF7DltZGCsFYUFhH1lBDmq6vNQHqOqX2bUhM7gHRCN4Z4BGUQhLOiC32x5fP4G+q0VX2hxFlJxLBpnk++DgRt0fzLVxIck+hHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=qvaoaxNg; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1723851995;
+	bh=ZMZbIojl7FpylGqV64BXYP8kTFTEQ6oAfPllyZLp8pc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=qvaoaxNgnv80fP+qTi+04woa7oNYPquPEU+WRub/c0MGgl9zPp1W+4OFzEggYu46V
+	 ANnVvM8wRX3epbmhWOYHYH8l04YQmQI9HOi/O0oIj9i42OWzizVB1WVR/6PiQNd1wY
+	 p4L0JYcFEhFhUy8DB24+siBSOREdJ9G9wUI6XMPm/K9tRxWTFSU/PTwTqa9lChz6SE
+	 0hUiT+r1J0aSZ6bVsxrSkIOO1nB12ziOq5cN+Ic+SdtCJfrbeFZqQzl2Csrcyi2AK9
+	 SfDx/+GzR04Weu7clsaXqnlzqPEe/WTRqIMwyDCK/qZetxgWBT2ClXjltE9qct0SkP
+	 E30jx5sVURs0A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WlzCq3ZT0z4wbv;
+	Sat, 17 Aug 2024 09:46:31 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: =?utf-8?Q?Kolbj=C3=B8rn?= Barmen <linux-ppc@kolla.no>,
+ linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org, =?utf-8?B?Sm9u?=
+ =?utf-8?B?w6HFoQ==?= Vidra
+ <vidra@ufal.mff.cuni.cz>, Christoph Hellwig <hch@lst.de>,
+ linux@roeck-us.net
+Subject: Re: Since 6.10 - kernel oops/panics on G4 macmini due to change in
+ drivers/ata/pata_macio.c
+In-Reply-To: <Zry58qB80V80uS38@ryzen.lan>
+References: <62d248bb-e97a-25d2-bcf2-9160c518cae5@kolla.no>
+ <3b6441b8-06e6-45da-9e55-f92f2c86933e@ufal.mff.cuni.cz>
+ <Zrstcei9WN9sRfdX@x1-carbon.wireless.wdc> <87sev81u3f.fsf@mail.lhotse>
+ <Zrt028rSVT5hVPbU@ryzen.lan> <87jzgj1ejc.fsf@mail.lhotse>
+ <Zry58qB80V80uS38@ryzen.lan>
+Date: Sat, 17 Aug 2024 09:46:31 +1000
+Message-ID: <87jzgg2fqg.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 12/25] cxl/region: Refactor common create region code
-To: Ira Weiny <ira.weiny@intel.com>, Fan Ni <fan.ni@samsung.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Dan Williams <dan.j.williams@intel.com>,
- Davidlohr Bueso <dave@stgolabs.net>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, linux-btrfs@vger.kernel.org,
- linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, nvdimm@lists.linux.dev
-References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
- <20240816-dcd-type2-upstream-v3-12-7c9b96cba6d7@intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20240816-dcd-type2-upstream-v3-12-7c9b96cba6d7@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+Niklas Cassel <cassel@kernel.org> writes:
+> On Wed, Aug 14, 2024 at 10:20:55PM +1000, Michael Ellerman wrote:
+>> Niklas Cassel <cassel@kernel.org> writes:
+>> > On Tue, Aug 13, 2024 at 10:32:36PM +1000, Michael Ellerman wrote:
+>> >> Niklas Cassel <cassel@kernel.org> writes:
+>> >> > On Tue, Aug 13, 2024 at 07:49:34AM +0200, Jon=C3=A1=C5=A1 Vidra wro=
+te:
+>> ...
+>> >> >> ------------[ cut here ]------------
+>> >> >> kernel BUG at drivers/ata/pata_macio.c:544!
+>> >> >
+>> >> > https://github.com/torvalds/linux/blob/v6.11-rc3/drivers/ata/pata_m=
+acio.c#L544
+>> >> >
+>> >> > It seems that the
+>> >> > while (sg_len) loop does not play nice with the new .max_segment_si=
+ze.
+>> >>=20
+>> >> Right, but only for 4KB kernels for some reason. Is there some limit
+>> >> elsewhere that prevents the bug tripping on 64KB kernels, or is it ju=
+st
+>> >> luck that no one has hit it?
+>> >
+>> > Have your tried running fio (flexible I/O tester), with reads with a v=
+ery
+>> > large block sizes?
+>> >
+>> > I would be surprised if it isn't possible to trigger the same bug with
+>> > 64K page size.
+>> >
+>> > max segment size =3D 64K
+>> > MAX_DCMDS =3D 256
+>> > 256 * 64K =3D 16 MiB
+>> > What happens if you run fio with a 16 MiB blocksize?
+>> >
+>> > Something like:
+>> > $ sudo fio --name=3Dtest --filename=3D/dev/sdX --direct=3D1 --runtime=
+=3D60 --ioengine=3Dio_uring --rw=3Dread --iodepth=3D4 --bs=3D16M
+>>=20
+>> Nothing interesting happens, fio succeeds.
+>>=20
+>> The largest request that comes into pata_macio_qc_prep() is 1280KB,
+>> which results in 40 DMA list entries.
+>>=20
+>> I tried with a larger block size but it doesn't change anything. I guess
+>> there's some limit somewhere else in the stack?
+>>=20
+>> That was testing on qemu, but I don't think it should matter?
+>>=20
+>> I guess there's no way to run the fio test against a file, ie. without a
+>> raw partition? My real G5 doesn't have any spare disks/partitions in it.
+>
+>
+> You can definitely run fio against a file.
+>
+> e.g.
+> $ dd if=3D/dev/random of=3D/tmp/my_file bs=3D1M count=3D1024
+>
+> $ sudo fio --name=3Dtest --filename=3D/tmp/my_file --direct=3D1 --runtime=
+=3D60 --ioengine=3Dio_uring --rw=3Dread --iodepth=3D4 --bs=3D16M
+>
+>
+> Perhaps try with 32M block size, so that it is larger than
+> max segment size =3D 64K
+> MAX_DCMDS =3D 256
+> 256 * 64K =3D 16 MiB
+>
+> Perhaps also try with and without --direct.
+> It could be interesting to use the page cache if you do --rw=3Dreadwrite
+> that might possibly result in larger bios.
 
+Changing the fio settings didn't help.
 
-On 8/16/24 7:44 AM, Ira Weiny wrote:
-> create_pmem_region_store() and create_ram_region_store() are identical
-> with the exception of the region mode.  With the addition of DC region
-> mode this would end up being 3 copies of the same code.
-> 
-> Refactor create_pmem_region_store() and create_ram_region_store() to use
-> a single common function to be used in subsequent DC code.
-> 
-> Suggested-by: Fan Ni <fan.ni@samsung.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+I did some tracing and noticed it was always splitting the bio in
+__bio_split_to_limits() based on get_max_io_size().
 
-> ---
->  drivers/cxl/core/region.c | 28 +++++++++++-----------------
->  1 file changed, 11 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 650fe33f2ed4..f85b26b39b2f 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -2553,9 +2553,8 @@ static struct cxl_region *__create_region(struct cxl_root_decoder *cxlrd,
->  	return devm_cxl_add_region(cxlrd, id, mode, CXL_DECODER_HOSTONLYMEM);
->  }
->  
-> -static ssize_t create_pmem_region_store(struct device *dev,
-> -					struct device_attribute *attr,
-> -					const char *buf, size_t len)
-> +static ssize_t create_region_store(struct device *dev, const char *buf,
-> +				   size_t len, enum cxl_region_mode mode)
->  {
->  	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(dev);
->  	struct cxl_region *cxlr;
-> @@ -2565,31 +2564,26 @@ static ssize_t create_pmem_region_store(struct device *dev,
->  	if (rc != 1)
->  		return -EINVAL;
->  
-> -	cxlr = __create_region(cxlrd, CXL_REGION_PMEM, id);
-> +	cxlr = __create_region(cxlrd, mode, id);
->  	if (IS_ERR(cxlr))
->  		return PTR_ERR(cxlr);
->  
->  	return len;
->  }
-> +
-> +static ssize_t create_pmem_region_store(struct device *dev,
-> +					struct device_attribute *attr,
-> +					const char *buf, size_t len)
-> +{
-> +	return create_region_store(dev, buf, len, CXL_REGION_PMEM);
-> +}
->  DEVICE_ATTR_RW(create_pmem_region);
->  
->  static ssize_t create_ram_region_store(struct device *dev,
->  				       struct device_attribute *attr,
->  				       const char *buf, size_t len)
->  {
-> -	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(dev);
-> -	struct cxl_region *cxlr;
-> -	int rc, id;
-> -
-> -	rc = sscanf(buf, "region%d\n", &id);
-> -	if (rc != 1)
-> -		return -EINVAL;
-> -
-> -	cxlr = __create_region(cxlrd, CXL_REGION_RAM, id);
-> -	if (IS_ERR(cxlr))
-> -		return PTR_ERR(cxlr);
-> -
-> -	return len;
-> +	return create_region_store(dev, buf, len, CXL_REGION_RAM);
->  }
->  DEVICE_ATTR_RW(create_ram_region);
->  
-> 
+That eventually lead me to max_sectors_kb in sysfs, which is by default
+(on my system at least) 1280 (KB) - which is exactly the size I see in
+pata-macio.
+
+Increasing max_sectors_kb with:
+
+  # echo 16384 > /sys/devices/pci0000:f0/0000:f0:0c.0/0.80000000:mac-io/0.0=
+0020000:ata-3/ata1/host0/target0:0:0/0:0:0:0/block/sda/queue/max_sectors_kb
+
+Allows me to trip the bug (I turned it into a WARN to keep the system alive=
+):
+
+  [ 1804.988552] ------------[ cut here ]------------
+  [ 1804.988963] DMA table overflow!
+  [ 1804.989781] WARNING: CPU: 0 PID: 299 at drivers/ata/pata_macio.c:546 p=
+ata_macio_qc_prep+0x27c/0x2a4
+  [ 1804.991157] Modules linked in:
+  [ 1804.991945] CPU: 0 PID: 299 Comm: iou-wrk-298 Not tainted 6.10.4-dirty=
+ #242
+  [ 1804.992688] Hardware name: PowerMac3,1 PPC970FX 0x3c0301 PowerMac
+  [ 1804.993512] NIP:  c0000000008bcfb4 LR: c0000000008bcfb0 CTR: 000000000=
+0000000
+  [ 1804.994244] REGS: c0000000052d6fb0 TRAP: 0700   Not tainted  (6.10.4-d=
+irty)
+  [ 1804.994998] MSR:  800000000202b032 <SF,VEC,EE,FP,ME,IR,DR,RI>  CR: 444=
+84240  XER: 00000000
+  [ 1804.996178] IRQMASK: 1
+  [ 1804.996178] GPR00: c0000000008bcfb0 c0000000052d7250 c000000000f50b00 =
+0000000000000013
+  [ 1804.996178] GPR04: 0000000100000282 c0000000014806c0 fffffffffffec230 =
+000000003ed10000
+  [ 1804.996178] GPR08: 0000000000000027 c00000003fe02410 0000000000000001 =
+0000000044484240
+  [ 1804.996178] GPR12: c0000000014806a8 c0000000017b0000 c0000000006c9488 =
+c000000005026b40
+  [ 1804.996178] GPR16: 0000000000000000 0000000002000000 c000000000cecaa8 =
+c000000000e44ac8
+  [ 1804.996178] GPR20: 0000000000800000 0000000000000080 000000000000ff00 =
+c000000000d12730
+  [ 1804.996178] GPR24: c000000000e20788 c00000000330eae8 0000000000000000 =
+0000000000000020
+  [ 1804.996178] GPR28: c0000000036c8130 0000000000000100 0000000000000000 =
+c000000003fb1000
+  [ 1805.003085] NIP [c0000000008bcfb4] pata_macio_qc_prep+0x27c/0x2a4
+  [ 1805.003715] LR [c0000000008bcfb0] pata_macio_qc_prep+0x278/0x2a4
+  [ 1805.004564] Call Trace:
+  [ 1805.004963] [c0000000052d7250] [c0000000008bcfb0] pata_macio_qc_prep+0=
+x278/0x2a4 (unreliable)
+  [ 1805.005974] [c0000000052d7310] [c00000000089840c] ata_qc_issue+0x170/0=
+x390
+  [ 1805.006719] [c0000000052d7390] [c0000000008a5160] __ata_scsi_queuecmd+=
+0x220/0x7d4
+  [ 1805.007472] [c0000000052d7410] [c000000000 8a5778] ata_scsi_queuecmd+0=
+x64/0xe8
+  [ 1805.008194] [c0000000052d7450] [c00000000085b450] scsi_queue_rq+0x408/=
+0xd74
+  [ 1805.008904] [c0000000052d7500] [c00000000067bfc8] blk_mq_dispatch_rq_l=
+ist+0x160/0x914
+  [ 1805.009696] [c0000000052d75b0] [c000000000683d50] __blk_mq_sched_dispa=
+tch_requests+0x5fc/0x77c
+  [ 1805.010551] [c0000000052d7680] [c000000000683f68] blk_mq_sched_dispatc=
+h_requests+0x44/0x90
+  [ 1805.011371] [c0000000052d76b0] [c000000000677328] blk_mq_run_hw_queue+=
+0x220/0x240
+  [ 1805.012138] [c0000000052d76f0] [c00000000067b084] blk_mq_flush_plug_li=
+st.part.0+0x214/0x75c
+  [ 1805.012975] [c0000000052d77a0] [c00000000067b664] blk_add_rq_to_plug+0=
+x98/0x1f0
+  [ 1805.013717] [c0000000052d77e0] [c00000000067cd4c] blk_mq_submit_bio+0x=
+5b0/0x888
+  [ 1805.014457] [c0000000052d7890] [c000000000667bf0] __submit_bio+0xa4/0x=
+2e4
+  [ 1805.015149] [c0000000052d7910] [c0000000006680bc] submit_bio_noacct_no=
+check+0x28c/0x404
+  [ 1805.015952] [c0000000052d7980] [c00000000065bf68] blkdev_direct_IO+0x6=
+3c/0x824
+  [ 1805.016688] [c0000000052d7aa0] [c00000000065c614] blkdev_read_iter+0x1=
+0c/0x1c8
+  [ 1805.017423] [c0000000052d7af0] [c0000000006b2cdc] __io_read+0xe0/0x5a0
+  [ 1805.018091] [c0000000052d7b50] [c0000000006b3a70] io_read+0x30/0x74
+  [ 1805.018733] [c0000000052d7b80] [c0000000006a9040] io_issue_sqe+0x8c/0x=
+768
+  [ 1805.019419] [c0000000052d7c00] [c0000000006a9850] io_wq_submit_work+0x=
+118/0x518
+  [ 1805.020153] [c0000000052d7c60] [c0000000006c8ebc] io_worker_handle_wor=
+k+0x23c/0x800
+  [ 1805.020923] [c0000000052d7d00] [c0000000006c95f8] io_wq_worker+0x178/0=
+x51c
+  [ 1805.021621] [c0000000052d7e50] [c00000000000bd94] ret_from_kernel_user=
+_thread+0x14/0x1c
+=20=20
+
+Same behaviour on a kernel with PAGE_SIZE =3D 4KB.
+
+I don't know why max_sectors_kb starts out with a different value on my
+system, but anyway the bug is lurking there, even if it doesn't trip by
+default in some configurations.
+
+I'll clean up and send my patch from earlier in the thread.
+
+cheers
 
