@@ -1,138 +1,132 @@
-Return-Path: <linux-kernel+bounces-290135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C549A954FDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:17:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11ADF954FDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C24EA1C23B90
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:17:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 320FA1C22B99
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76C81C233D;
-	Fri, 16 Aug 2024 17:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835EB1C2303;
+	Fri, 16 Aug 2024 17:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DCq0Mz+P"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nwDWNcbf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC9713D890;
-	Fri, 16 Aug 2024 17:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5A252F62;
+	Fri, 16 Aug 2024 17:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723828616; cv=none; b=KyOwU1Lw5BAYC+nHp5bvuqcaqADechduBYU2bzth+8H9Ex6EfCYlifqmgR4lwLvmNIwTa1Npbphx4kpb+35xilacCTlv+W+XxqgiTK6wcCqylKQ1u7hzt5xGncuoCHwEIMUGqbsNwHXr2hstveplTLGJWFLTHG5060lOZ/fZ2yI=
+	t=1723828646; cv=none; b=YZrgl4uL8lQXP8NaQ3M1s6HhNK664fox/cNHhfqajhItJ9fZbXNtlHgf8MsGEyJWKFi4X2fU8NhRXM3iyAD3ujK8KUL4zVoOKwbLhlzP+fR+A1efguHNCNJf6OvyRWOUEjU96Mc0NUbljRprQvRGJ5Ftv1oKHoYL98Mehd3EiwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723828616; c=relaxed/simple;
-	bh=9kUaEkBKVrddA6ehNI5rt8ivnb+VNnbtDi1g/tdPzEw=;
+	s=arc-20240116; t=1723828646; c=relaxed/simple;
+	bh=f6rhxUbGkna0A4tQqq0M7QOGZpze5pUfC7gMEiQv5pk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZVhopwpeflMPQC00tCwhTbEpCabVSOaMxRjIPNsw3cWuN7radveckUT8mXvz9NEvUCPwMMIGWTn01xyTCwGmIWb6H7au0nprXzdAwMgyk/JiG3z9QJjtuekgyPIyTjLa4Fmh9E+p4VgwgVbGxHvB1crzJtNq88OU3meBDScRoKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DCq0Mz+P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C17AC32782;
-	Fri, 16 Aug 2024 17:16:55 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xu/uwDqigOrEBe4Mqu1UYQ277hnhaKY4oS5Nyss3NqPKiBsDDcRUHUYHeCJYR1xOMUaXn4gALYOhu/ZkedBHjdz1IGJAl+ywVo6o+9Gcz7Kga3v5AM4/FwdjPKBQDGC6f71fvuGzoolCAgkM3yWwzUslWOcn6L80ndH4A2VBkas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nwDWNcbf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBBDAC32782;
+	Fri, 16 Aug 2024 17:17:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723828615;
-	bh=9kUaEkBKVrddA6ehNI5rt8ivnb+VNnbtDi1g/tdPzEw=;
+	s=k20201202; t=1723828646;
+	bh=f6rhxUbGkna0A4tQqq0M7QOGZpze5pUfC7gMEiQv5pk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DCq0Mz+Px5ji1b8//XtfqVqrt7o0FE16snOY6bew0PsSuOY7s/D9AzD2PkJQEQ24e
-	 kmyAKxwVmJOzmFBA+xLOQ+HydSLE5X/ZRH/aKMoEKXT2UrNfaIbs8lTzr8zbtU0uft
-	 dWCZAUvrHzlhChbSZUpm9POoS/GaEPmD+2Eak92nEaCH8IX2v3Ir8tLhOP2u6R/i8g
-	 LgyXSdRaW+XOxrxQnPyXMnWrs/TWZwx8iP6MCTYoRn1XPOXaGNXJt6668FYqWoOcOY
-	 TSoaiPeq6usam1WqlO/SaB2sdjM5f5gwhAiBkovPwnJN0RU4YswAhDUkh66l8R8cmU
-	 m0eL4l8YH2GAA==
-Received: by pali.im (Postfix)
-	id 38AD87B7; Fri, 16 Aug 2024 19:16:51 +0200 (CEST)
-Date: Fri, 16 Aug 2024 19:16:51 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Andres Salomon <dilinger@queued.net>
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-	Matthew Garrett <mjg59@srcf.ucam.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	linux-pm@vger.kernel.org, Dell.Client.Kernel@dell.com
-Subject: Re: [PATCH v3 1/2] platform/x86:dell-laptop: Add knobs to change
- battery charge settings
-Message-ID: <20240816171651.jmqa7tmfkc3jmsm4@pali>
-References: <20240815192848.3489d3e1@5400>
+	b=nwDWNcbf0WhAKB/1Sey3fhK9Unh+hORFNV6xSrJclhBN39jfXtwlpUdDFMILdEbJ9
+	 6pUrndOsuQlFY6IcBdl7UkprPWLQSNqihWoQuG4evj2PVlSIsbKCgprxzCOfBqUJQO
+	 ee0ahc8v+PiWiEU0DoAxqlVU4/SI7wgV9m939/e7Jw7lCSKuRTFRlWWCGB1gxvjEV7
+	 2gSQwADXIxo/p+KilC+oao8i8PIY7G8QduXJtBl+IhgJ7bXIzuuzA6JKsQWEsovKbq
+	 E90tx0qpazFUzgnZUtxpuqIDz4wRUXD3FQFACkuuQTurgFtEsGIx1q1E0a1dOPPzeu
+	 6+A9oRcRFZDzQ==
+Date: Fri, 16 Aug 2024 18:17:17 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Jann Horn <jannh@google.com>
+Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+	"dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
+	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"debug@rivosinc.com" <debug@rivosinc.com>,
+	"mgorman@suse.de" <mgorman@suse.de>,
+	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+	"fweimer@redhat.com" <fweimer@redhat.com>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"vschneid@redhat.com" <vschneid@redhat.com>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"hpa@zytor.com" <hpa@zytor.com>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"bsegall@google.com" <bsegall@google.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"juri.lelli@redhat.com" <juri.lelli@redhat.com>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"kees@kernel.org" <kees@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+	"will@kernel.org" <will@kernel.org>
+Subject: Re: [PATCH RFT v8 4/9] fork: Add shadow stack support to clone3()
+Message-ID: <830e96b4-8e35-4b80-a32f-1b500febaee5@sirena.org.uk>
+References: <20240808-clone3-shadow-stack-v8-0-0acf37caf14c@kernel.org>
+ <20240808-clone3-shadow-stack-v8-4-0acf37caf14c@kernel.org>
+ <f3a2a564094d05beac2dc5ab657cbc009c465667.camel@intel.com>
+ <CAG48ez2z5bRdKNddG+kEGz9A_m=66r38OHjyg6CapFTcjT9aRg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="I/XN2wQCb9TUbBWS"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240815192848.3489d3e1@5400>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAG48ez2z5bRdKNddG+kEGz9A_m=66r38OHjyg6CapFTcjT9aRg@mail.gmail.com>
+X-Cookie: A Smith & Wesson beats four aces.
 
-Hello Andres,
 
-I have just comments for this change. It looks good. After resolving
-them you can add my tag: Reviewed-by: Pali Rohár <pali@kernel.org>
+--I/XN2wQCb9TUbBWS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thursday 15 August 2024 19:28:48 Andres Salomon wrote:
-> The Dell BIOS allows you to set custom charging modes, which is useful
-> in particular for extending battery life. This adds support for tweaking
-> those various settings from Linux via sysfs knobs. One might, for
-> example, have their laptop plugged into power at their desk the vast
-> majority of the time and choose fairly aggressive battery-saving
-> settings (eg, only charging once the battery drops below 50% and only
-> charging up to 80%). When leaving for a trip, it would be more useful
-> to instead switch to a standard charging mode (top off at 100%, charge
-> any time power is available). Rebooting into the BIOS to change the
-> charging mode settings is a hassle.
-> 
-> For the Custom charging type mode, we reuse the common
-> charge_control_{start,end}_threshold sysfs power_supply entries. The
-> BIOS also has a bunch of other charging modes (with varying levels of
-> usefulness), so this also adds a 'charge_type' sysfs entry that maps the
-> standard values to Dell-specific ones and documents those mappings in
-> sysfs-class-power-dell.
-> 
-> This work is based on a patch by Perry Yuan <perry_yuan@dell.com> and
-> Limonciello Mario <Mario_Limonciello@Dell.com> submitted back in 2020:
+On Fri, Aug 16, 2024 at 07:08:09PM +0200, Jann Horn wrote:
 
-I think that the information below is not needed to have in commit
-message. We also do not include links or information about previous
-version of patch sent by you.
+> Yeah, having a FOLL_FORCE write in clone3 would be a weakness for
+> userspace CFI and probably make it possible to violate mseal()
+> restrictions that are supposed to enforce that address space regions
+> are read-only.
 
-> https://lore.kernel.org/all/20200729065424.12851-1-Perry_Yuan@Dell.com/
-> Both of their email addresses bounce, so I'm assuming they're no longer
-> with the company. I've reworked most of the patch to make it smaller and
-> cleaner.
+Note that this will only happen for shadow stack pages (with the new
+version) and only for a valid token at the specific address.  mseal()ing
+a shadow stack to be read only is hopefully not going to go terribly
+well for userspace.
 
-...
+> Though, did anyone in the thread yet suggest that you could do this
+> before the child process has fully materialized but after the child MM
+> has been set up? Somewhere in copy_process() between copy_mm() and the
+> "/* No more failure paths after this point. */" comment?
 
-> +static ssize_t charge_type_store(struct device *dev,
-> +		struct device_attribute *attr,
-> +		const char *buf, size_t size)
-> +{
-> +	bool matched = false;
-> +	int err, i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(battery_modes); i++) {
-> +		if (!(battery_supported_modes & BIT(i)))
-> +			continue;
-> +
-> +		if (sysfs_streq(battery_modes[i].label, buf)) {
-> +			matched = true;
-> +			break;
-> +		}
-> +	}
-> +	if (!matched || !(battery_supported_modes & BIT(i)))
-> +		return -EINVAL;
+Yes, I'e got a version that does that waiting to go pending some
+discussion on if we even do the check for the token in the child mm.
 
-Check for "!(battery_supported_modes & BIT(i))" is redundant here.
-"matched" can be true only in case if the i-th mode is supported and was
-specified in buffer.
+--I/XN2wQCb9TUbBWS
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +
-> +	err = dell_battery_set_mode(battery_modes[i].token);
-> +	if (err)
-> +		return err;
-> +
-> +	return size;
-> +}
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma/iZwACgkQJNaLcl1U
+h9Ak9Qf9HJIADvs9ieo6Jr3RV46KHtcZIzFxA9BCkPw8LpBAJ59KlPIeeT0xaxEj
+sDNNXkqoaBWXl0DS6WIl+5XhvpfINtoiXEo5C+/iqZLaRsIrEfWCmS8zz8H9serN
+md71fk+NTzJs33AlSZ/IN/lO4uxLvgPHKXtiTaWLw+Wml1Ft2KPAzcRG39L2tJdx
+P9Gz/XwzpxLkFalXTL46VOvsDwBHXIgbIVaehb160+HjfAFA9Rf9fI1Geq4Rb3BT
+mB3iCoXjExtw6e5pJqSqb5NzdT8yfDsGkApTnFYulyBpofGGvpGkZH0wOir5+FqE
+LeAqMTG3sOCju9kxOu/8UEs3LSE6gA==
+=GX/V
+-----END PGP SIGNATURE-----
+
+--I/XN2wQCb9TUbBWS--
 
