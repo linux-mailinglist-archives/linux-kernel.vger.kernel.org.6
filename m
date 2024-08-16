@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-289958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24498954DB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:32:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7511D954DB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:33:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C255E1F23886
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:32:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A6011C21AFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930671BF32B;
-	Fri, 16 Aug 2024 15:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6831C0DCC;
+	Fri, 16 Aug 2024 15:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DDuPN+5R"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lh1YLS8b"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7BE1BE259
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A0C1BF317
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723822323; cv=none; b=YWNnQ2Hyn5HlF9c9LqlM7t4NPTUV+DH8LD1LnNaBBnVVeRvuB72pM6p712MmumWVNF76NCcYkYWEWQf7TwYpMkqsQoGbJ9fu5/aEbrZr2VrgUHA0aKhGZYOlbt6VxuF80zFMkEiCjaRTl0LItXLPsOkEDuTAHmZ9Z87TXNNK9gg=
+	t=1723822325; cv=none; b=iT5d2qvEesnbuDQ/iczFkhewOKAIcjAF/xXDyYAhGh498XwgfnpzpLhKRoR4XzKZZbAHbyvVXR12bwWccjRHaa+lx6a1MyG3JKl9GbmrhjBQW4inVeTOoWvmCz2bnFvCr2vZyLCSPrCDU3HG8TIT9epW+AfR9NdLeEbCMqF6FVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723822323; c=relaxed/simple;
-	bh=haphcDVabNY+m5Vrc9+jwTzdz2gW4B9j++QCcBv7uus=;
+	s=arc-20240116; t=1723822325; c=relaxed/simple;
+	bh=OVXsaLaHpAF5uH0owWFBXjKO4nS2BM2WznX7TKsIhSw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Xjxms0hrxoHM+tPmTG8RzQsO5y76sZ95fy8e3Bip5nWROIrGnhfWCLCCiJ5si7PmdTori030xdp8g5u+6wW6aX7OKquDInOBZivBWV/p4R9wbbDPf+r4085WtiJMQIsrYvDpWblhLQBmx7FbojRVKuqTwxeHaLhzMz9SzIeWUBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DDuPN+5R; arc=none smtp.client-ip=209.85.221.43
+	 In-Reply-To:To:Cc; b=ZcCcfu3YOyBjzEze3gS2k0GdyNNVabV3TZTEJmnYc48aU/RGcGYXqVxzogu243u0p3x7MiSaMQSRaLGzwZpioikDe8cQh111/uMSKxwMBISFJjyMqmhVvi/bXWpDrJhPNBzGvECW+KK+8jh9Q3di5Vjztyy9l9RuiFyDi5t+fFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lh1YLS8b; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-367963ea053so1486223f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:32:01 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-530c2e5f4feso2130946e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:32:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723822320; x=1724427120; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723822322; x=1724427122; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JmSp/tI6/cAsvRbhfMHRpQD46ohRd+mOrBdZEg+M/0c=;
-        b=DDuPN+5RUhLuKELNtFzqxEBL9OAmgy7IyE9eanUVDFCWRTuw/BWFzniyJOlEdMR+0u
-         /jFYIGgqzIGQoGzPX/0RYbyEH2lL4pcM8eB8f1uoEtEVZ0MB2UBNCWHtYuH9HFfiu0me
-         AXbP779P6I1A3gF333nvC8wGwDLwbIB9F8MA7uFPrZTzsgxd3HMYlL1vFBoZJDO1stP3
-         b8WqkUuq+Xg5p63c/2C2nG1e2sp85AlBrZAMKMwGGzbsTqSAYTqlZCfXVktcbbwiRPrc
-         OM9H1gyInE8TqW1PfChABXeDppBE0Nhe7bgTGS9gIxHc2j7AClnSTbn0cm//kLDQ816S
-         p+UA==
+        bh=LbHR44bLM4FZ52+TjzVnIlbfMCn5qE1DnTHfiWLJ7c8=;
+        b=lh1YLS8bjJKZJXIrtXwsmiZPpTP5u3UMZnex1ZCgckt+7MJ8jxolT8fsv6yP3sJBg/
+         cXTaIoycNrGbT1cgzcIJcQvsCf+j3fPjGP2Ods5haTWDiSwu75A47LvsJWXoS6YdINHe
+         RrUI5OfN2tnrk+aAtOy9PTszzKZSXEeHZtmiZcG87qFGX1X9pnUlPrZ4tEO3Qur3rGeh
+         2GA1AGRgvQivnI+KvChqTIO/0/iZHs7IOjROFQVujbJTcl9HbE3d6UV2xHNFJf2wLOPz
+         5CWSBTf1dseQ1PMCjRXlHbpkeaAF+HmoWZoNMgQMjS2Ypi9j7W0RZZgkVLhV2TmYs6yG
+         /a6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723822320; x=1724427120;
+        d=1e100.net; s=20230601; t=1723822322; x=1724427122;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JmSp/tI6/cAsvRbhfMHRpQD46ohRd+mOrBdZEg+M/0c=;
-        b=TGJmkNDG61MisUmdsX8CDmiFkRsKFg566T+3yFwTagsMAdzCoXVHZeim9izqUw+6mD
-         Mb8Uc+Vh3Fy5Odv2mKHJ10LDwE4/Z7Ends+cWGkny1Hte5cxu7HTsd2HKp7HLqM5Qt26
-         v6a5t0a8zvlh8vlwR3aEEKsw5ekqFORWEz71H6zCYhCH6WA143fZe7cw4ePEdg1tfkdZ
-         H0qlIR+a/Mu7U47PQLNRYTMwA/L7Jz6YklPuIsIe/GcVEzf+NX22wh0fMr00UvKDWYCE
-         IBgerMWc8HBBluPoKTcJCL0YSdQvexqn5simvypBByVeXUtR8jxlG+6zPTbBkq3GpCny
-         Wkgg==
-X-Forwarded-Encrypted: i=1; AJvYcCWqJykp5+cL0Di/67EquAU712K0M6679FAgcYy5+d9hsvq9w9ZrTLdUoOg0uIhBeil6c2L/0+RE1PUG48UNefUeprtdIu1253sCF33X
-X-Gm-Message-State: AOJu0YzcQMeONT9l/nIQwP4RzhJ1Si0rjHYagpBGwNhlaP8xMUw5fk3+
-	ZGOjDeyZMxDssAa97vqk16h7+kd8XOujvrVnndTXiscVFFGHL9OAuWTdlyjbI9U=
-X-Google-Smtp-Source: AGHT+IENvgflPrCRLHnfFtaGxKPmZxIFqASabhejGrvVmiQr8wKujrxn8UdnFq1rYdKsHedXwj+CoA==
-X-Received: by 2002:adf:a443:0:b0:368:7f8f:ca68 with SMTP id ffacd0b85a97d-3719464e70fmr2963005f8f.30.1723822320474;
-        Fri, 16 Aug 2024 08:32:00 -0700 (PDT)
+        bh=LbHR44bLM4FZ52+TjzVnIlbfMCn5qE1DnTHfiWLJ7c8=;
+        b=m9PUxkt9ReCYDPechH2x4R5EhH6n8ZOR6uKKAJnC04+gVyiNG7q9mCQtkOqmwtzQqD
+         obKE27mOMAg+IegyE2ToQh34EwdIQwvbLVx/L9ZPQ44XZDYh/eC9540e3bFhCqWnl0qI
+         kHzNtsxS2YAoqeTWRmUesvk/KOaf+I3MfCXuh1Gjn7bFTs1Rb9xjDby9EUzwB2r6KxXD
+         p26JTYeWC1UN7J0rftyBCwCu8vtMZzCND+SvvaPWH9GvJxROduSd0kKBSm6Nmpxh8Uvx
+         9zelVX1wQ2QlXsCh/z50YIQwCn0fsisQLCuRO2f5/u5ds3eYeb0sxIogYDygyhaysN/o
+         5HTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWFwmY2CqvYeSvgA6yULU38SZwn34Cv75xTJfoWHXkPz9c/MAOhIhBATGrM3fi8ma07c5nd9CkfyLnMxfqwmO609E8ZEt00NGwy/qoS
+X-Gm-Message-State: AOJu0YxJ6a3KMDWXnpJrOOPE1lnfPsI7Kk5gFkx7IEvmS/FVluLm7Qk9
+	ST2KbaO4I0qB3I5U7d1cM4A+7x6VtrHDw+yraZ8g7smeU15CWXhm0jCh3dhGqek=
+X-Google-Smtp-Source: AGHT+IHxActLiG1YjVcFGYIn8S8tpL7GYn5YjKZvtEnowQwIDKLJw+P78NbSRNVlVr9yhYxdj5YjcA==
+X-Received: by 2002:a05:6512:3a8d:b0:533:966:72cb with SMTP id 2adb3069b0e04-5331c6e324bmr2378225e87.48.1723822321846;
+        Fri, 16 Aug 2024 08:32:01 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898497f0sm3853661f8f.39.2024.08.16.08.31.59
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898497f0sm3853661f8f.39.2024.08.16.08.32.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 08:32:00 -0700 (PDT)
+        Fri, 16 Aug 2024 08:32:01 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Fri, 16 Aug 2024 17:31:36 +0200
-Subject: [PATCH 04/17] leds: max77693: Simplify with scoped for each OF
+Date: Fri, 16 Aug 2024 17:31:37 +0200
+Subject: [PATCH 05/17] leds: 88pm860x: Simplify with scoped for each OF
  child loop
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240816-cleanup-h-of-node-put-var-v1-4-1d0292802470@linaro.org>
+Message-Id: <20240816-cleanup-h-of-node-put-var-v1-5-1d0292802470@linaro.org>
 References: <20240816-cleanup-h-of-node-put-var-v1-0-1d0292802470@linaro.org>
 In-Reply-To: <20240816-cleanup-h-of-node-put-var-v1-0-1d0292802470@linaro.org>
 To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
@@ -93,21 +93,21 @@ Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2297;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1266;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=haphcDVabNY+m5Vrc9+jwTzdz2gW4B9j++QCcBv7uus=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmv3DcFsjEVoUNxcpg4fNpAtVDyd+JTLcgwo8Hw
- k/LlBeAdrSJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZr9w3AAKCRDBN2bmhouD
- 17zkD/0b5uHnjnzjPvy7kRfLttY9Q5sWPLsfyEq6CLUzPTCBewXF8K27CAlQIluNVr9MosDCghO
- U7QGtLk8uSvJj9KQ02Yig2QWAcy/s5wRX+ONqPYRue6VOXglHUB0PaP/hurfyKbriRaOUyg3bm3
- Ffad+VfZ46D5xsiEVre/lHkn2amNZE4K2cYDi73IjaGDH4+rdGn/xY4GWlBlA0sDiFaaZbq9mE9
- 1bHtk3cykDUdm2ykX4X+1ycApN5D9e0drHjadREgiSLjd8NQmMWPwb9yroUwjZSfEPsFZzXEiGH
- ESatJmodVxi+VpuKSU6tN+pn36jp7Uvo8oJLg2ciIqkhH7l/8f26PToam8oq0III9BmKa7K+WE2
- SA2i561NmARvZKIb7ov2/YXtvUFPzgn/7ENHvP3gnz3QrvNmc6UPPaGIWeENQnPPlEqh9VDOciQ
- GtOI3WZtohFdCug3984yJMuJtGZ2lScEuevzxO0cF2t1KI8+qhrQ4yog1t0e/OS5HQT8Iz4fa8g
- XzXe3ZIxRQQ4cV9Dazp74uPSEkMMyN8EKzdftcVEuL48b9NbqZBencwcIcjhkt6pPpRXBMgLvu4
- weZ7WS3MKriAVqcl2tPp4IjWatK/agobg3xKELYxOlZDdKiHQJc6uUI665Mi9MamHNKIXUMmcyo
- ejGSHUPPEivrccw==
+ bh=OVXsaLaHpAF5uH0owWFBXjKO4nS2BM2WznX7TKsIhSw=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmv3DdGtKK9vF/Igsn3otgQXRhwFYgtdI8zMghG
+ N6WWewQV0WJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZr9w3QAKCRDBN2bmhouD
+ 19gEEACXTE/Bt5Piq+7QmHZKIKxE1e5XsrbSqm+4ImFiwaVig9kbXgGQLSXRH5UEENiLqiPpXwb
+ cGBK827MslxTx5lvc0eqR0xGw5V0SUzmr24svS0ymsfjoLQvv0gpM5IIT8/j9xELhWXIvzDq9Eq
+ NxoLtGrjXoWOkh2UU6ivt+4pSlksA3XINGNsi/nJBBe+x05EcF0F/Xhkrp8eaz0B3eYuQ7y/xIM
+ ijNujYDLau798JvaH9MxCHeJykRB6NgKBBae8AzwIQamvrRPgKQM+KwzMVvEGCOohOrgibC49Mh
+ 231FWX5ZK/ciy22x3L13xDzYEAfAtuZLNAPGLovVhPGnAkeTBnJLHrPLa26Ab1+t1O8oYSL5SoB
+ +Cu4/Hegu3x+oE4M/EugmWJlSuSXJCIYcPDXv37kaN6dNfUfCI2r6WR6yyOgpb3yGtIMdNrCZiv
+ kNFB7MweAhEoln+tKaWZtathfLXF2PMhC6ikSGMWp17TLFwxy3nO5PARn/xkUj2OgHgjGy24ZVb
+ OBobeUnbLjcKLj6LZcBbcKRadYhL5H1xYV9W3aGmCX/LIwvQGNrKQ2dNpaVgX+bPie592yDYuJP
+ n2mb05+YBpkWuLztzlqcQAWqhRVggciLTuzTJZXz9fe1mGRy3B5l8npgdzp5ZHx7IvTCqjYKS7t
+ QMf28Mjz4M4dbnA==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
@@ -116,66 +116,36 @@ device nodes to make code a bit simpler.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/leds/flash/leds-max77693.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/leds/leds-88pm860x.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/leds/flash/leds-max77693.c b/drivers/leds/flash/leds-max77693.c
-index 16b169e658de..90d78b3d22f8 100644
---- a/drivers/leds/flash/leds-max77693.c
-+++ b/drivers/leds/flash/leds-max77693.c
-@@ -599,7 +599,7 @@ static int max77693_led_parse_dt(struct max77693_led_device *led,
+diff --git a/drivers/leds/leds-88pm860x.c b/drivers/leds/leds-88pm860x.c
+index 033ab5fed38a..81238376484b 100644
+--- a/drivers/leds/leds-88pm860x.c
++++ b/drivers/leds/leds-88pm860x.c
+@@ -115,7 +115,7 @@ static int pm860x_led_set(struct led_classdev *cdev,
+ static int pm860x_led_dt_init(struct platform_device *pdev,
+ 			      struct pm860x_led *data)
  {
- 	struct device *dev = &led->pdev->dev;
- 	struct max77693_sub_led *sub_leds = led->sub_leds;
--	struct device_node *node = dev_of_node(dev), *child_node;
-+	struct device_node *node = dev_of_node(dev);
- 	struct property *prop;
- 	u32 led_sources[2];
- 	int i, ret, fled_id;
-@@ -608,7 +608,7 @@ static int max77693_led_parse_dt(struct max77693_led_device *led,
- 	of_property_read_u32(node, "maxim,boost-mvout", &cfg->boost_vout);
- 	of_property_read_u32(node, "maxim,mvsys-min", &cfg->low_vsys);
+-	struct device_node *nproot, *np;
++	struct device_node *nproot;
+ 	int iset = 0;
  
--	for_each_available_child_of_node(node, child_node) {
-+	for_each_available_child_of_node_scoped(node, child_node) {
- 		prop = of_find_property(child_node, "led-sources", NULL);
- 		if (prop) {
- 			const __be32 *srcs = NULL;
-@@ -622,7 +622,6 @@ static int max77693_led_parse_dt(struct max77693_led_device *led,
- 		} else {
- 			dev_err(dev,
- 				"led-sources DT property missing\n");
--			of_node_put(child_node);
- 			return -EINVAL;
- 		}
- 
-@@ -638,14 +637,12 @@ static int max77693_led_parse_dt(struct max77693_led_device *led,
- 		} else {
- 			dev_err(dev,
- 				"Wrong led-sources DT property value.\n");
--			of_node_put(child_node);
- 			return -EINVAL;
- 		}
- 
- 		if (sub_nodes[fled_id]) {
- 			dev_err(dev,
- 				"Conflicting \"led-sources\" DT properties\n");
--			of_node_put(child_node);
- 			return -EINVAL;
- 		}
- 
-@@ -681,10 +678,8 @@ static int max77693_led_parse_dt(struct max77693_led_device *led,
- 
- 		if (++cfg->num_leds == 2 ||
- 		    (max77693_fled_used(led, FLED1) &&
--		     max77693_fled_used(led, FLED2))) {
--			of_node_put(child_node);
-+		     max77693_fled_used(led, FLED2)))
- 			break;
--		}
+ 	if (!dev_of_node(pdev->dev.parent))
+@@ -125,12 +125,11 @@ static int pm860x_led_dt_init(struct platform_device *pdev,
+ 		dev_err(&pdev->dev, "failed to find leds node\n");
+ 		return -ENODEV;
  	}
- 
- 	if (cfg->num_leds == 0) {
+-	for_each_available_child_of_node(nproot, np) {
++	for_each_available_child_of_node_scoped(nproot, np) {
+ 		if (of_node_name_eq(np, data->name)) {
+ 			of_property_read_u32(np, "marvell,88pm860x-iset",
+ 					     &iset);
+ 			data->iset = PM8606_LED_CURRENT(iset);
+-			of_node_put(np);
+ 			break;
+ 		}
+ 	}
 
 -- 
 2.43.0
