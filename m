@@ -1,195 +1,398 @@
-Return-Path: <linux-kernel+bounces-289759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3B5A954B5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:47:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B118954B60
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:48:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33131B22ED5
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:47:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2BB71F2469F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC7F1BD4EA;
-	Fri, 16 Aug 2024 13:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19461BBBFD;
+	Fri, 16 Aug 2024 13:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GfnoTSEm"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="v4yVnjSS"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561601BF32F
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 13:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9028A1BC076
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 13:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723815935; cv=none; b=QRPYdTWi8vbU+sEA37QVegcFFztv0jgBvBzaXeqVvBFSmRQACB2BDfxZec0HsVuRm7ddN6JASybv7fFsLeKNR6AaI3DPsug6NlakhvNNS05+bgN0oEZ+fthRXjlpTd1um2D7vVSZqN9xv+NHilqrQ2EgtSd5uUbD6axjuoy90zM=
+	t=1723815958; cv=none; b=mssRoaRiq4CdtVTD7eJsR9I/ZfDuEPMzjynuh4+zC9nG0X65QEJ9qfIo8QO6jwPAykW3aBG9PLL86+aOkRkZCrVG/tbhV4t79AbnEbZPZq+PeHamXYJZT2MSvwnyqagaczQJ2v75vSWAyEldHTICmVOaBpWig/5u7Y09nS9V3Mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723815935; c=relaxed/simple;
-	bh=IgZeBEc3jzEvnzkGG3pWc342VNR8qaLJYk94l4KKzAM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=De6GV1rz3tXvp3LNiemd2+TOkNfzDPDbNiG0eX6XNEZCZ1SNLFh7d3PfvZhUiE1g2hGz4jFyVw8it53P2wbJEoM3ErbMaR49gitKYdKivPBSb3sjw2IvqWX572wu/jQPWKJ9QgJyGDlN2EhOdmqLx/r+dFg7p3GKdBkBnisdAsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GfnoTSEm; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6b3fec974e5so1275677b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 06:45:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723815932; x=1724420732; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=G85pWzgAjDzHJOUxuuipVYtZwpIJzJ8wQdXPRG+9C/o=;
-        b=GfnoTSEmk5qxTE3i5/KgMcDH/WZVbevLMF4CyU6V72gYLO8ySri9N2AS7/1Q1ca1uP
-         hjbcz95nGevwYLTanXunSNkk9jDR3Mn5PHoyDTXmc++Z2XYDCdWTqKhCG48UY3PVgoTa
-         pesH0P50qkQzI0p8C4khxrXl09cHyK2pB0CftGKiOwc8bm5qF9ObW4FS7RsrtucQvOf5
-         kl2i5cx5mhxHMiGleC8HcNvo62KcbuCO62xWyETHitR2hpD+wzQSmY9lLW7m/8iyb8Cu
-         Hi0TILCojeADewxef7gQlAtu+vdWZQZw18RoOeiZQRhG2YM9tUTWHsGCVh3eyEr3aLEu
-         ueBQ==
+	s=arc-20240116; t=1723815958; c=relaxed/simple;
+	bh=YjnkaqEjeiZJjCJ4SMEE+H6vOrJ3/vbOxyVXkygsqlQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lLyqBFtm6eXAxwzgPkuA/MHmp1MWVRX7o1IFMXitpGUizvOkvWqnUB9I+wJgYwc/NQLeTP5cddySw7G7crIEyFQ3XsbZcaZo+ICEhloyPGPqTHQFowEYtLS55KIUjlzVsdOcvXXrYdLpqrbL+skoi3WFEdyyKyDlIMSEVTamf2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=v4yVnjSS; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-vk1-f197.google.com (mail-vk1-f197.google.com [209.85.221.197])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id BEDE845966
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 13:45:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1723815947;
+	bh=AgeewcS5kqKeOP856aRXSh6oiDU1aOWalQ4gW9NNbXg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=v4yVnjSSlaMKDFj1GojuNvTRJlyATdi1l6XwO5BSO0iJ/vScvHMZK7Jeaoz6PfpQO
+	 1oPFbJIQZIndS6sQPDbQXT6PSFIMS6NEk9FvjyGmUfs9+KJJ5XNLzhYhKDGnhsG9xi
+	 jx9bc1OszUzqGlPsJ6QL5obVJRtmqtvlgRJ5NAPsLcsfdq2JCJ13QM5dpX1CJVrsox
+	 PIamANS3ZhVNnoPkNKIwSUTvoLdIA/bR3k9KnACkgbdCTZaLEwS3A2vgQKbPNeP14y
+	 Jz7qe0V6Q3mOcpqUkyPdRie0TCFyU/YcL/zS6qys5on/7A1oIF+BIZFXB4B54FAZpb
+	 VnHy21Zp9PXZg==
+Received: by mail-vk1-f197.google.com with SMTP id 71dfb90a1353d-4f6a669e1f7so1057604e0c.0
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 06:45:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723815932; x=1724420732;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G85pWzgAjDzHJOUxuuipVYtZwpIJzJ8wQdXPRG+9C/o=;
-        b=g6AUa1DEuqss54EmazGmj/PezaYsQN8LXbfrDGwLsY74CSPHhSQHQxeAslkh5jNzxQ
-         bkqqC02i2yizElBeiG4H4gnuAifnEd5RCePekx1C72K5Eqz2y+zQmnN2I1pKRpCkRWEA
-         xCOMT4fMExyKDIcXsd3F8r0ax5ncVn5FBO5rjDLtgYu1eNozSLxPCwmSC2qQclp5fjHQ
-         N+wwH1WYGHVYlEL4o0KefbY+ZUljnOyyYtYDGTV1+TFmGyEvGtsK2+YqUGrcr55teLUf
-         suzlbEYNgaMAsAPp1/tzCY6dGtInjVisLWPt/0pqXOdcoL4e9O4uvukYn6/kkzk4sU3r
-         Y1jw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfWoPajasbj+7PHue4wmiQhhCVf35yiW6uCVO5G8pVvzBnE+H/1yJsfq/PNhZUuhNsNeAIF62FK5jyrZmzrswJmVMqBKfdwPtiImBu
-X-Gm-Message-State: AOJu0YxAFqCq2raDCFf5DRBHNepyjbK8rJqmPs+O9174AHSGUdeoofXQ
-	ns7oZdgSDZgdMnvh7Myot9+LfhiQn+ejbFImYGN4FzJZvbRVoDanylqO3G/uqDO5Trdj4nAHCEb
-	UbA==
-X-Google-Smtp-Source: AGHT+IFxTi/w4NwmmEulgecgXhpEeAJRtdL2wE03PZ6n2HXJbG4Pi8//pjifBnclwhl2cdQ13xp4iA6hJFg=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:11:b0:e0b:fe07:1e22 with SMTP id
- 3f1490d57ef6-e1180e61040mr14467276.1.1723815932258; Fri, 16 Aug 2024 06:45:32
- -0700 (PDT)
-Date: Fri, 16 Aug 2024 06:45:31 -0700
-In-Reply-To: <20240709143906.1040477-10-jacob.jun.pan@linux.intel.com>
+        d=1e100.net; s=20230601; t=1723815947; x=1724420747;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AgeewcS5kqKeOP856aRXSh6oiDU1aOWalQ4gW9NNbXg=;
+        b=g+hD5SJN52jJme3GqjLzx8jAdWnb+rkzbk574cfjztFRm7NwxFFlYDJ+CDI/Loham4
+         KG6ZBVKLi6tDHJQlyTwrrPaC+44dkolXQo6CWZkbmh/d/wfPPQJuReWLrfK9A7TzT8NG
+         jgx6RlTV8T++TR7Qds+YsKg/PuDYhDVfJupMp8cm3ONSIZdTsK8p8UmtYDPYtJCDGE1u
+         hHiIw7W8t7G3fAcUEq+zg9MiyfW7YxJgVDgHAlSVEtAMG8V/4wYqj84uv3IqgYGnn9jM
+         51Ob4tAGNJy90vu+ZVAWzgJiHJU1+LZUvNYZB4IL2LdAmcz0njQ7IejztFJzZy2B5QHw
+         SbIg==
+X-Forwarded-Encrypted: i=1; AJvYcCXY0MTmw8HgaaEZX6RbGI7kXexPYTZZCQiTxZ7/vUbudY1OOq9oxPwQFdBUwubosildUSP6BcR2G4YH/NE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySgHYBXTbEPCiVpjV1LcVFkWFP/HN9d+v5i10Lhckdzz/eKtqt
+	/2AZN3gKWQWVkC9L6H3olg1bwmPiYk0ddV/ZM4f2nkDNB8BHiHwOdRRMInLJMFCK4WDQcCkO5cQ
+	9eQR0kiO3ganujP7MT3s4eTXh7MtYm+Yb3YvjJgIfwC4sbBQ/aZaydqs2hp/OCcd0F0Dkr1jHoC
+	HclhfnOAhoK63ZJlmTDHhKK3DprSFQt538jd+ikZtXOTL4L+uBPvFN
+X-Received: by 2002:a05:6122:3124:b0:4f5:261a:bdc4 with SMTP id 71dfb90a1353d-4fc6c5e2d57mr3552252e0c.2.1723815946489;
+        Fri, 16 Aug 2024 06:45:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGHRRxgu1guXj0GfP5BNcgezp0uyDf7mr44vUMoChBSarxeu0X/lOyOo5YhWYYzIk9CCFqxf70d/aEV1D6sotU=
+X-Received: by 2002:a05:6122:3124:b0:4f5:261a:bdc4 with SMTP id
+ 71dfb90a1353d-4fc6c5e2d57mr3552208e0c.2.1723815946058; Fri, 16 Aug 2024
+ 06:45:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240709143906.1040477-1-jacob.jun.pan@linux.intel.com> <20240709143906.1040477-10-jacob.jun.pan@linux.intel.com>
-Message-ID: <Zr9X-08zsOKFlvkB@google.com>
-Subject: Re: [PATCH v4 09/11] x86/irq: Enable NMI source on IPIs delivered as NMI
-From: Sean Christopherson <seanjc@google.com>
-To: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: X86 Kernel <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Dave Hansen <dave.hansen@intel.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Xin Li <xin3.li@intel.com>, linux-perf-users@vger.kernel.org, 
-	Peter Zijlstra <peterz@infradead.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Tony Luck <tony.luck@intel.com>, Andy Lutomirski <luto@kernel.org>, acme@kernel.org, 
-	kan.liang@linux.intel.com, Andi Kleen <andi.kleen@intel.com>, 
-	Nikolay Borisov <nik.borisov@suse.com>, Sohil Mehta <sohil.mehta@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20240815092429.103356-1-aleksandr.mikhalitsyn@canonical.com>
+ <20240815-ehemaligen-duftstoffe-a5f2ab60ddc9@brauner> <CAEivzxf2qH8XBXA2a+U4bQeeVC+eB8m9tDC08jxT=trFEzLpTA@mail.gmail.com>
+In-Reply-To: <CAEivzxf2qH8XBXA2a+U4bQeeVC+eB8m9tDC08jxT=trFEzLpTA@mail.gmail.com>
+From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date: Fri, 16 Aug 2024 15:45:35 +0200
+Message-ID: <CAEivzxe2fdT1fPhbT4XUWLsR7LyTxv5oUmExyrq7QP4QfeDWyw@mail.gmail.com>
+Subject: Re: [PATCH v3 00/11] fuse: basic support for idmapped mounts
+To: Christian Brauner <brauner@kernel.org>
+Cc: mszeredi@redhat.com, stgraber@stgraber.org, linux-fsdevel@vger.kernel.org, 
+	Seth Forshee <sforshee@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, Vivek Goyal <vgoyal@redhat.com>, 
+	German Maglione <gmaglione@redhat.com>, Amir Goldstein <amir73il@gmail.com>, 
+	Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 09, 2024, Jacob Pan wrote:
-> Program designated NMI source vectors for all NMI delivered IPIs
-> such that their handlers can be selectively invoked.
-> 
-> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> ---
-> v4: Enhance comments, no functional changes (Li Xin)
-> ---
->  arch/x86/include/asm/irq_vectors.h | 10 ++++++++++
->  arch/x86/kernel/apic/hw_nmi.c      |  3 ++-
->  arch/x86/kernel/apic/ipi.c         |  4 ++--
->  arch/x86/kernel/apic/local.h       | 18 ++++++++++++------
->  arch/x86/kernel/cpu/mce/inject.c   |  2 +-
->  arch/x86/kernel/kgdb.c             |  2 +-
->  arch/x86/kernel/nmi_selftest.c     |  2 +-
->  arch/x86/kernel/reboot.c           |  2 +-
->  arch/x86/kernel/smp.c              |  2 +-
->  9 files changed, 31 insertions(+), 14 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/irq_vectors.h b/arch/x86/include/asm/irq_vectors.h
-> index 4f767c3940d6..9b7241e7faa3 100644
-> --- a/arch/x86/include/asm/irq_vectors.h
-> +++ b/arch/x86/include/asm/irq_vectors.h
-> @@ -135,6 +135,16 @@
->  #define NMI_SOURCE_VEC_IPI_TEST		8	/* For remote and local IPIs */
->  #define NR_NMI_SOURCE_VECTORS		9
->  
-> +/*
-> + * When programming the local APIC, IDT NMI vector and NMI-source vector
-> + * are encoded in a single 32 bit variable. The top 16 bits contain
-> + * the NMI-source vector and the bottom 16 bits contain NMI_VECTOR (2)
-> + * The top 16 bits are always zero when NMI-source reporting feature
-> + * is not enabled or the caller does not use NMI-source reporting.
+On Fri, Aug 16, 2024 at 10:58=E2=80=AFAM Aleksandr Mikhalitsyn
+<aleksandr.mikhalitsyn@canonical.com> wrote:
+>
+> On Fri, Aug 16, 2024 at 10:02=E2=80=AFAM Christian Brauner <brauner@kerne=
+l.org> wrote:
+> >
+> > On Thu, Aug 15, 2024 at 11:24:17AM GMT, Alexander Mikhalitsyn wrote:
+> > > Dear friends,
+> > >
+> > > This patch series aimed to provide support for idmapped mounts
+> > > for fuse & virtiofs. We already have idmapped mounts support for almo=
+st all
+> > > widely-used filesystems:
+> > > * local (ext4, btrfs, xfs, fat, vfat, ntfs3, squashfs, f2fs, erofs, Z=
+FS (out-of-tree))
+> > > * network (ceph)
+> > >
+> > > Git tree (based on torvalds/master):
+> > > v3: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts.v=
+3
+> > > current: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mou=
+nts
+> > >
+> > > Changelog for version 3:
+> > > - introduce and use a new SB_I_NOIDMAP flag (suggested by Christian)
+> > > - add support for virtiofs (+user space virtiofsd conversion)
+> > >
+> > > Changelog for version 2:
+> > > - removed "fs/namespace: introduce fs_type->allow_idmap hook" and sim=
+plified logic
+> > > to return -EIO if a fuse daemon does not support idmapped mounts (sug=
+gested
+> > > by Christian Brauner)
+> > > - passed an "idmap" in more cases even when it's not necessary to sim=
+plify things (suggested
+> > > by Christian Brauner)
+> > > - take ->rename() RENAME_WHITEOUT into account and forbid it for idma=
+pped mount case
+> > >
+> > > Links to previous versions:
+> > > v2: https://lore.kernel.org/linux-fsdevel/20240814114034.113953-1-ale=
+ksandr.mikhalitsyn@canonical.com
+> > > tree: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts=
+.v2
+> > > v1: https://lore.kernel.org/all/20240108120824.122178-1-aleksandr.mik=
+halitsyn@canonical.com/#r
+> > > tree: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts=
+.v1
+> > >
+> > > Having fuse (+virtiofs) supported looks like a good next step. At the=
+ same time
+> > > fuse conceptually close to the network filesystems and supporting it =
+is
+> > > a quite challenging task.
+> > >
+> > > Let me briefly explain what was done in this series and which obstacl=
+es we have.
+> > >
+> > > With this series, you can use idmapped mounts with fuse if the follow=
+ing
+> > > conditions are met:
+> > > 1. The filesystem daemon declares idmap support (new FUSE_INIT respon=
+se feature
+> > > flags FUSE_OWNER_UID_GID_EXT and FUSE_ALLOW_IDMAP)
+> > > 2. The filesystem superblock was mounted with the "default_permission=
+s" parameter
+> > > 3. The filesystem fuse daemon does not perform any UID/GID-based chec=
+ks internally
+> > > and fully trusts the kernel to do that (yes, it's almost the same as =
+2.)
+> > >
+> > > I have prepared a bunch of real-world examples of the user space modi=
+fications
+> > > that can be done to use this extension:
+> > > - libfuse support
+> > > https://github.com/mihalicyn/libfuse/commits/idmap_support
+> > > - fuse-overlayfs support:
+> > > https://github.com/mihalicyn/fuse-overlayfs/commits/idmap_support
+> > > - cephfs-fuse conversion example
+> > > https://github.com/mihalicyn/ceph/commits/fuse_idmap
+> > > - glusterfs conversion example (there is a conceptual issue)
+> > > https://github.com/mihalicyn/glusterfs/commits/fuse_idmap
+> > > - virtiofsd conversion example
+> > > https://gitlab.com/virtio-fs/virtiofsd/-/merge_requests/245
+> >
+> > So I have no further comments on this and from my perspective this is:
+> >
+> > Reviewed-by: Christian Brauner <brauner@kernel.org>
+>
+> Thanks, Christian! ;-)
+>
+> >
+> > I would really like to see tests for this feature as this is available
+> > to unprivileged users.
+>
+> Sure. I can confirm that this thing passes xfstests for virtiofs.
+>
+> My setup:
+>
+> - host machine
+>
+> Virtiofsd options:
+>
+> [ virtiofsd sources from
+> https://gitlab.com/virtio-fs/virtiofsd/-/merge_requests/245 ]
+> ./target/debug/virtiofsd --socket-path=3D/tmp/vfsd.sock --shared-dir
+> /home/alex/Documents/dev/tmp --announce-submounts
+> --inode-file-handles=3Dmandatory --posix-acl
+>
+> QEMU options:
+>         -object memory-backend-memfd,id=3Dmem,size=3D$RAM,share=3Don \
+>         -numa node,memdev=3Dmem \
+>         -chardev socket,id=3Dchar0,path=3D/tmp/vfsd.sock \
+>         -device vhost-user-fs-pci,queue-size=3D1024,chardev=3Dchar0,tag=
+=3Dmyfs \
+>
+> - guest
+>
+> xfstests version:
+>
+> root@ubuntu:/home/ubuntu/xfstests-dev# git log | head -n 3
+> commit f5ada754d5838d29fd270257003d0d123a9d1cd2
+> Author: Darrick J. Wong <djwong@kernel.org>
+> Date:   Fri Jul 26 09:51:07 2024 -0700
+>
+> root@ubuntu:/home/ubuntu/xfstests-dev# cat local.config
+> export TEST_DEV=3Dmyfs
+> export TEST_DIR=3D/mnt/test
+> export FSTYP=3Dvirtiofs
+>
+> root@ubuntu:/home/ubuntu/xfstests-dev# ./check -g idmapped
+> FSTYP         -- virtiofs
+> PLATFORM      -- Linux/x86_64 ubuntu 6.11.0-rc3+ #2 SMP
+> PREEMPT_DYNAMIC Fri Aug 16 10:23:41 CEST 2024
+>
+> generic/633 1s ...  0s
+> generic/644 0s ...  1s
+> generic/645 18s ...  18s
+> generic/656       [not run] fsgqa user not defined.
+> generic/689       [not run] fsgqa user not defined.
+> generic/696       [not run] this test requires a valid $SCRATCH_DEV
+> generic/697 0s ...  1s
+> generic/698       [not run] this test requires a valid $SCRATCH_DEV
+> generic/699       [not run] this test requires a valid $SCRATCH_DEV
+> Ran: generic/633 generic/644 generic/645 generic/656 generic/689
+> generic/696 generic/697 generic/698 generic/699
+> Not run: generic/656 generic/689 generic/696 generic/698 generic/699
+> Passed all 9 tests
+>
+> I'll try to do more tests, for example with fuse-overlayfs and get
+> back with results.
 
-This is *extremely* misleading, bordering on being an outright lie.  The vectors
-are not encoded in a single 32-bit variable when programming the _local APIC_,
-that is 100% an arbitrary software construct.  The actually write to APIC.ICR
-morphs bits 15:0 into the TYPE, and the bits 31:16 into the VECTOR.
+Ok, it wasn't smooth to make xfstests to run with overlayfs-fuse.
 
-> + */
-> +#define NMI_VECTOR_WITH_SOURCE(src)	(NMI_VECTOR | (src << 16))
+It only started to live after I commented out a bunch of checks in
+_check_if_dev_already_mounted/_check_mounted_on:
+https://git.kernel.org/pub/scm/linux/kernel/git/brauner/xfstests-dev.git/tr=
+ee/common/rc#n1613
+https://git.kernel.org/pub/scm/linux/kernel/git/brauner/xfstests-dev.git/tr=
+ee/common/rc#n1635
+https://git.kernel.org/pub/scm/linux/kernel/git/brauner/xfstests-dev.git/tr=
+ee/common/rc#n1644
 
-Why require callers to use NMI_VECTOR_WITH_SOURCE instead of having macros to
-directly encode each source NMI, a la APIC_PERF_NMI?
+I think we have some space for improvements for xfstests+fuse combination. =
+:-)
 
-To me, this:
+$ cat /sbin/mount.fuse.overlayfs
+#!/bin/bash
+ulimit -n 1048576
+exec /mnt/fuse-overlayfs/fuse-overlayfs -o $4 $1 $2
 
-				__apic_send_IPI(cpu, NMI_VECTOR_WITH_SOURCE(NMI_SOURCE_VEC_IPI_SMP_STOP));
+$ cat local.config
+export TEST_DEV=3Dnon1
+export TEST_DIR=3D/mnt2
+export FSTYP=3Dfuse
+export FUSE_SUBTYP=3D.overlayfs
+export MOUNT_OPTIONS=3D"-olowerdir=3D/home/ubuntu/fuse_tmp/scratch_lower,up=
+perdir=3D/home/ubuntu/fuse_tmp/scratch_upper,workdir=3D/home/ubuntu/fuse_tm=
+p/scratch_work,allow_other,default_permissions"
+export TEST_FS_MOUNT_OPTS=3D"-olowerdir=3D/home/ubuntu/fuse_tmp/lower,upper=
+dir=3D/home/ubuntu/fuse_tmp/upper,workdir=3D/home/ubuntu/fuse_tmp/work,allo=
+w_other,default_permissions"
 
-is *way* harder to read/parse than:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D without idmapped mou=
+nts support =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-				__apic_send_IPI(cpu, NMI_VECTOR_SMP_STOP);
+# ./check -g idmapped
+FSTYP         -- fuse
+PLATFORM      -- Linux/x86_64 ubuntu 6.11.0-rc3+ #2 SMP
+PREEMPT_DYNAMIC Fri Aug 16 10:23:41 CEST 2024
 
-especially since that first one blasts way past 80 chars (yeah, I know 80 is now
-a soft limit, but it's still nice to keep line lengths short when possible).
+generic/633 0s ... [failed, exit status 1]- output mismatch (see
+/home/ubuntu/xfstests-dev/results//generic/633.out.bad)
+    --- tests/generic/633.out    2023-06-07 12:19:04.309062045 +0000
+    +++ /home/ubuntu/xfstests-dev/results//generic/633.out.bad
+2024-08-16 13:30:20.471569848 +0000
+    @@ -1,2 +1,4 @@
+     QA output created by 633
+     Silence is golden
+    +vfstest.c: 1561: setgid_create - Success - failure: is_setgid
+    +vfstest.c: 2418: run_test - Success - failure: create operations
+in directories with setgid bit set
+    ...
+    (Run 'diff -u /home/ubuntu/xfstests-dev/tests/generic/633.out
+/home/ubuntu/xfstests-dev/results//generic/633.out.bad'  to see the
+entire diff)
+generic/644 0s ... [not run] vfstest not support by fuse
+generic/645 10s ... [not run] vfstest not support by fuse
+generic/656 0s ... [not run] vfstest not support by fuse
+generic/689 0s ... [not run] vfstest not support by fuse
+generic/696       [not run] this test requires a valid $SCRATCH_DEV
+generic/697 1s ... - output mismatch (see
+/home/ubuntu/xfstests-dev/results//generic/697.out.bad)
+    --- tests/generic/697.out    2023-06-07 12:19:04.313062164 +0000
+    +++ /home/ubuntu/xfstests-dev/results//generic/697.out.bad
+2024-08-16 13:30:21.919598831 +0000
+    @@ -1,2 +1,4 @@
+     QA output created by 697
+    +vfstest.c: 2018: setgid_create_acl - Success - failure: is_setgid
+    +vfstest.c: 2418: run_test - Success - failure: create operations
+in directories with setgid bit set under posix acl
+     Silence is golden
+    ...
+    (Run 'diff -u /home/ubuntu/xfstests-dev/tests/generic/697.out
+/home/ubuntu/xfstests-dev/results//generic/697.out.bad'  to see the
+entire diff)
 
-> +#define NMI_SOURCE_VEC_MASK		GENMASK(15, 0)
+HINT: You _MAY_ be missing kernel fix:
+      1639a49ccdce fs: move S_ISGID stripping into the vfs_*() helpers
 
-IMO, this is an absolutely awful encoding scheme.  Vectors are 8-bit values, so
-why on earth use 16 bits?  And @vector is passed along as a _signed_ integer,
-which means 32-bit kernels could end up observing negative values, which probably
-isn't problematic in practice, but it's unnecessarily confusing.
+generic/698       [not run] this test requires a valid $SCRATCH_DEV
+generic/699       [not run] this test requires a valid $SCRATCH_DEV
+Ran: generic/633 generic/644 generic/645 generic/656 generic/689
+generic/696 generic/697 generic/698 generic/699
+Not run: generic/644 generic/645 generic/656 generic/689 generic/696
+generic/698 generic/699
+Failures: generic/633 generic/697
+Failed 2 of 9 tests
 
-All this FRED stuff is hard enough to follow given the specs have been rolled out
-piecemeal (someone at Intel must get paid based on how many specs they publish),
-using a software-defined scheme when FRED is already overloading a decades old
-hardware-defined encoding is just mean.
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D with idmapped mounts=
+ support =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-Why not encode APIC_DM_NMI straightaway?  You're already making it a hard
-requirement that the backend (__prepare_ICR()) be able to handle a @vector that
-has bits 31:8!=0.  I don't see how the above scheme provides any value.
+# ./check -g idmapped
+FSTYP         -- fuse
+PLATFORM      -- Linux/x86_64 ubuntu 6.11.0-rc3+ #2 SMP
+PREEMPT_DYNAMIC Fri Aug 16 10:23:41 CEST 2024
 
-Side topic, APIC_DM_FIXED_MASK should really be APIC_DM_MASK, that "FIXED" part
-is completely wrong.
+generic/633 0s ... [failed, exit status 1]- output mismatch (see
+/home/ubuntu/xfstests-dev/results//generic/633.out.bad)
+    --- tests/generic/633.out    2023-06-07 12:19:04.309062045 +0000
+    +++ /home/ubuntu/xfstests-dev/results//generic/633.out.bad
+2024-08-16 13:29:30.358557063 +0000
+    @@ -1,2 +1,4 @@
+     QA output created by 633
+     Silence is golden
+    +vfstest.c: 1561: setgid_create - Success - failure: is_setgid
+    +vfstest.c: 2418: run_test - Success - failure: create operations
+in directories with setgid bit set
+    ...
+    (Run 'diff -u /home/ubuntu/xfstests-dev/tests/generic/633.out
+/home/ubuntu/xfstests-dev/results//generic/633.out.bad'  to see the
+entire diff)
+generic/644 0s ...  0s
+generic/645 10s ...  10s
+generic/656        0s
+generic/689        0s
+generic/696       [not run] this test requires a valid $SCRATCH_DEV
+generic/697 1s ... - output mismatch (see
+/home/ubuntu/xfstests-dev/results//generic/697.out.bad)
+    --- tests/generic/697.out    2023-06-07 12:19:04.313062164 +0000
+    +++ /home/ubuntu/xfstests-dev/results//generic/697.out.bad
+2024-08-16 13:29:41.466783240 +0000
+    @@ -1,2 +1,4 @@
+     QA output created by 697
+    +vfstest.c: 2018: setgid_create_acl - Success - failure: is_setgid
+    +vfstest.c: 2418: run_test - Success - failure: create operations
+in directories with setgid bit set under posix acl
+     Silence is golden
+    ...
+    (Run 'diff -u /home/ubuntu/xfstests-dev/tests/generic/697.out
+/home/ubuntu/xfstests-dev/results//generic/697.out.bad'  to see the
+entire diff)
 
-E.g.
+HINT: You _MAY_ be missing kernel fix:
+      1639a49ccdce fs: move S_ISGID stripping into the vfs_*() helpers
 
-static inline unsigned int __prepare_ICR(unsigned int shortcut, int vector,
-					 unsigned int dest)
-{
-	unsigned int icr = shortcut | dest;
+generic/698       [not run] this test requires a valid $SCRATCH_DEV
+generic/699       [not run] this test requires a valid $SCRATCH_DEV
+Ran: generic/633 generic/644 generic/645 generic/656 generic/689
+generic/696 generic/697 generic/698 generic/699
+Not run: generic/696 generic/698 generic/699
+Failures: generic/633 generic/697
+Failed 2 of 9 tests
 
-	/*
-	 * Callers are allowed to encode the NMI delivery mode directly, which
-	 * allows using the vector field to provide the NMI source (FRED only).
-	 */
-	if ((vector & APIC_DM_MASK) == APIC_DM_NMI) {
-		icr |= vector;
+As we can see it's clearly not related to idmapped mounts, as I
+compare two cases, overlayfs-fuse compiled *without* support for
+idmapped
+mounts and *with*.
 
-		/*
-		 * Pre-FRED, the actual vector is ignored for NMIs, but zero it
-		 * if NMI source reporting is unsupported so as not to risk
-		 * breakage on misbehaving hardware/hypervisors.
-		 */
-		if (!cpu_feature_enabled(X86_FEATURE_NMI_SOURCE))
-			icr &= ~APIC_VECTOR_MASK;
-	} else if (vector == NMI_VECTOR) {
-		icr |= APIC_DM_NMI;
-	} else {
-		icr |= APIC_DM_FIXED | vector;
-	}
-
-	return icr;
-}
-
-and then NMI_VECTOR_SMP_STOP would be (APIC_DM_NMI | NMI_SOURCE_VEC_IPI_SMP_STOP).
+>
+> Kind regards,
+> Alex
 
