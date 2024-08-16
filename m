@@ -1,123 +1,141 @@
-Return-Path: <linux-kernel+bounces-289080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D72069541F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:43:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E45F9541F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:45:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F1DB1F2235F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:43:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8BA92879F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5CB84E16;
-	Fri, 16 Aug 2024 06:43:07 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B70984037;
+	Fri, 16 Aug 2024 06:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="g0ofoxm5"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15FF84DE0;
-	Fri, 16 Aug 2024 06:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C326F2E7;
+	Fri, 16 Aug 2024 06:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723790587; cv=none; b=KceJGRQT6uHKpc0bbGV/gktvbiuHZaLldI/RR3FQs1STN+ivtLTiOnKiFpXXi+Ttx/DXKxnkQuXwXpcfdzQNzaViH8Zlz8pbhTNADxnRUiuYkMeIBsCEYZijuDQCng21+wUsb/EEMDYxqY3sKqp5QL/D0D//gbc0rTYBUZAW4Q0=
+	t=1723790709; cv=none; b=WiJiovlZtBFBrzedVKd0nt3qkBBMmUii1BbjQUItWcqNYRD90n1EEurRUiIkGulhMcFoijcOwX0RShQ/x5jYGlS6BVJzxNSS+b4+tZlGVQYCCNwY/VZeIz/xoj4ZjBinIQy+SabcfYTpBtmS+Iqa6YmmCzw3BI/9Rlz9KxY3Cp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723790587; c=relaxed/simple;
-	bh=A7XUGVo4bLb36C2A9FMtN1T5FMonrDrgrw/tjiSER3Q=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ID6JPcWOV2uMx9lEG2torfP1uOGR+32Ib+fzgPV2aCWQw3gcocmitfTwAJ/rWaPpo9bCqBMkdjixvZ9vXbX7n/cjAP0qOol/hLvs88sQHMroYpfDe41plsJ5e8EZGJ3Q/kLJMIQOQSldOzZ9GEt08P70eu6y86SvwzQHsxHEcFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WlXVY6Nfzz4f3jZ1;
-	Fri, 16 Aug 2024 14:42:45 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 5160C1A1316;
-	Fri, 16 Aug 2024 14:42:55 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgAXPoTt9L5mFo1UBw--.63231S3;
-	Fri, 16 Aug 2024 14:42:55 +0800 (CST)
-Subject: Re: [PATCH -next] ata: libata: Fix memory leak for error path in
- ata_host_alloc()
-To: Zheng Qixing <zhengqixing@huawei.com>, dlemoal@kernel.org,
- cassel@kernel.org
-Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20240816035820.2055747-1-zhengqixing@huawei.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <3dfa5352-01d3-dc16-5a75-0b38e5893246@huaweicloud.com>
-Date: Fri, 16 Aug 2024 14:42:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1723790709; c=relaxed/simple;
+	bh=eChf9Dbv5tEia+uyccONUrYBhMWFrthByY8RFvh9+ws=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ql5d76SYLXjEdVvxL0w7+aO7nB5Erb07np5OMNX3iEYErQprc3qnLrmDPxgWfG2TEIHzbqwpUj4rFo43JPm4c5VlNrYNyKxiny3HoDdtTKQnS99i/ZK4lK3TAF2VtdzG64YBwqQvz8qtJBtFQh0B7X15QmnkBnzjMdatZkJsdiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=g0ofoxm5; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 47G6iHGY1762028, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1723790657; bh=eChf9Dbv5tEia+uyccONUrYBhMWFrthByY8RFvh9+ws=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=g0ofoxm5y+iP7PGadGiErhNakNi8ZesBYNblKYSkyfi71QIeFvySpDKwAK58jVJlk
+	 Big0pTo40mXmj55eIpcBptc0wHaJlt+JYyNtH+Om5dAP/0A0v8OEplNqgebKlogdsR
+	 Zte0oykYs+YJ/bpmi6KPGOz7UbtT9dXt/entILrjuaAVBCF6KgVpdqVDagVJnfcDvs
+	 a+ObMsZhQku4LD/tXEVtYlnpGfWiIJ3KA1DDpueXTAnD7CZOsD6t6wkyHksqOmpT3W
+	 NXMqjvhQxYRK91Wzjh6/5Wr9ciU39ac8dZvp17SJgOfEhHZTa/FjdNQATpljE+FfZK
+	 LPTMBzEYjEFhQ==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 47G6iHGY1762028
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 16 Aug 2024 14:44:17 +0800
+Received: from RTEXDAG01.realtek.com.tw (172.21.6.100) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 16 Aug 2024 14:44:18 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXDAG01.realtek.com.tw (172.21.6.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Fri, 16 Aug 2024 14:44:17 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f]) by
+ RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f%11]) with mapi id
+ 15.01.2507.035; Fri, 16 Aug 2024 14:44:17 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: Jakub Kicinski <kuba@kernel.org>
+CC: "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com"
+	<edumazet@google.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "andrew@lunn.ch"
+	<andrew@lunn.ch>,
+        "jiri@resnulli.us" <jiri@resnulli.us>,
+        "horms@kernel.org"
+	<horms@kernel.org>,
+        "rkannoth@marvell.com" <rkannoth@marvell.com>,
+        "jdamato@fastly.com" <jdamato@fastly.com>,
+        Ping-Ke Shih <pkshih@realtek.com>, Larry Chiu <larry.chiu@realtek.com>
+Subject: RE: [PATCH net-next v27 10/13] rtase: Implement ethtool function
+Thread-Topic: [PATCH net-next v27 10/13] rtase: Implement ethtool function
+Thread-Index: AQHa7IKZgu9hD1qOPUSyRfG55mQZDLIonR+AgADXX9A=
+Date: Fri, 16 Aug 2024 06:44:17 +0000
+Message-ID: <ff91f4dd147f4493bd25a16c641f1806@realtek.com>
+References: <20240812063539.575865-1-justinlai0215@realtek.com>
+	<20240812063539.575865-11-justinlai0215@realtek.com>
+ <20240815184635.4c074130@kernel.org>
+In-Reply-To: <20240815184635.4c074130@kernel.org>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240816035820.2055747-1-zhengqixing@huawei.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXPoTt9L5mFo1UBw--.63231S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7tFW7Wr4xJFW8AFy5Xr4xZwb_yoW8Gry8pa
-	nrWayrCrZ8Grs7ur1Dua1xZFWSga15GrW5urWxW34Svr43Ar18GrZ8Cas8X3Wakr4vga45
-	JFW8tFy8CFWDZa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
-	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHD
-	UUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-ÔÚ 2024/08/16 11:58, Zheng Qixing Ð´µÀ:
-> In ata_host_alloc(), if ata_port_alloc(host) fails to allocate memory
-> for a port, the allocated 'host' structure is not freed before returning
-> from the function. This results in a potential memory leak.
-> 
-> This patch adds a kfree(host) before the error handling code is executed
-> to ensure that the 'host' structure is properly freed in case of an
-> allocation failure.
-> 
-> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
-> ---
->   drivers/ata/libata-core.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-> index e4023fc288ac..f27a18990c38 100644
-> --- a/drivers/ata/libata-core.c
-> +++ b/drivers/ata/libata-core.c
-> @@ -5663,8 +5663,10 @@ struct ata_host *ata_host_alloc(struct device *dev, int n_ports)
->   	}
->   
->   	dr = devres_alloc(ata_devres_release, 0, GFP_KERNEL);
-> -	if (!dr)
-> +	if (!dr) {
-> +		kfree(host);
->   		goto err_out;
-> +	}
+> On Mon, 12 Aug 2024 14:35:36 +0800 Justin Lai wrote:
+> > +static void rtase_get_drvinfo(struct net_device *dev,
+> > +                           struct ethtool_drvinfo *info) {
+> > +     const struct rtase_private *tp =3D netdev_priv(dev);
+> > +
+> > +     strscpy(info->driver, KBUILD_MODNAME, sizeof(info->driver));
+> > +     strscpy(info->bus_info, pci_name(tp->pdev),
+> > +sizeof(info->bus_info)); }
+>=20
+> This shouldn't be necessary, can you delete this function from the driver=
+ and
+> check if the output of ethtool -i changes?
+> ethtool_get_drvinfo() should fill this in for you.
 
-Looks correct, dev_set_drvdata(dev, host) is not called yet.
-ata_devres_release won't free host in this case.
+Thank you for your response. As you mentioned, ethtool_get_drvinfo()
+will indeed populate the relevant information. I will remove
+rtase_get_drvinfo().
 
-I'll suggest to return NULL directly here, and then the 'err_out'
-tag can be removed as well.
+>=20
+> > +static void rtase_get_pauseparam(struct net_device *dev,
+> > +                              struct ethtool_pauseparam *pause) {
+> > +     const struct rtase_private *tp =3D netdev_priv(dev);
+> > +     u16 value =3D rtase_r16(tp, RTASE_CPLUS_CMD);
+> > +
+> > +     pause->autoneg =3D AUTONEG_DISABLE;
+> > +
+> > +     if ((value & (RTASE_FORCE_TXFLOW_EN |
+> RTASE_FORCE_RXFLOW_EN)) =3D=3D
+> > +         (RTASE_FORCE_TXFLOW_EN | RTASE_FORCE_RXFLOW_EN)) {
+> > +             pause->rx_pause =3D 1;
+> > +             pause->tx_pause =3D 1;
+> > +     } else if (value & RTASE_FORCE_TXFLOW_EN) {
+> > +             pause->tx_pause =3D 1;
+> > +     } else if (value & RTASE_FORCE_RXFLOW_EN) {
+> > +             pause->rx_pause =3D 1;
+> > +     }
+>=20
+> This 3 if statements can be replaced with just two lines:
+>=20
+>         pause->rx_pause =3D !!(value & RTASE_FORCE_RXFLOW_EN);
+>         pause->tx_pause =3D !!(value & RTASE_FORCE_TXFLOW_EN);
 
-Anyway, with or without the cleanup:
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+Ok, I will modify it.
 
-Thanks!
->   
->   	devres_add(dev, dr);
->   	dev_set_drvdata(dev, host);
-> 
-
+Thanks
+Justin
 
