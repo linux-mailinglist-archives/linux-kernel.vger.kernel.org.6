@@ -1,115 +1,107 @@
-Return-Path: <linux-kernel+bounces-289310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AF329544A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:42:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92B7B9544A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:42:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 105C81F23315
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:42:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B855E1C217C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07FC13C9A9;
-	Fri, 16 Aug 2024 08:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBBFE13AD0F;
+	Fri, 16 Aug 2024 08:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nmbP91de"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TjJabqEq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB5D137923
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1873264D;
+	Fri, 16 Aug 2024 08:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723797739; cv=none; b=X34LN3u49828pkyI+RVuNqNDOjOkOhYS+yzIm9Jl5VBV7OanNQGZhxojXkkczK9OL7jcFQfAXPe7F3KiN0Nm0xJuLs9vreNMG2aNGIBgZ8eI36X/QgaqQVtnwnvEROONPcREjSARds2ewbRvPZDDclOT/RjzREpPbMiQYdv08ko=
+	t=1723797757; cv=none; b=LP2qiJ1UlgXK0PLsvdzoZT3ISOVpclCYfNHjrZW+MhmlRq+N0Z8cxOB9wk3DErgLRIMKnW+pZWr7Xq+VQxdHUWhmuOr7zB3pZjTD9v0S1qmbrd/XVg3YuuIJXaLy3zL0cDK6WGI2NuAQHWP62AHqA1Dmu/dj/Sv4/63q2RjyxRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723797739; c=relaxed/simple;
-	bh=0oLem+Qw7ToSbyPqLYeM0bwsjJ18/XCGqteG7JrZBqM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=InIzlQ6LQ4q+MTQ2pK+uZbNq1G5v5Gc/K3Wnde7pzXQLNIK3DHsJnM7Lnzzc4wHEQ4p3ecF4cjKvgDpwcCVWhBZ93t17Ecgv2T9eN1OqIt6OtHBuYQpP86bt2wipf1mtE60MYiB7LoSBHAUBK/RTs5Nxyp6ZibEllH4GkG1SDII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nmbP91de; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-429ec9f2155so6485555e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 01:42:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723797735; x=1724402535; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4Mf1jwtU1IEC5inSpAw3zK8tivE5WAs13EhnH9rtxkM=;
-        b=nmbP91deSlmVc53sNgg2P288kTYh0BaMgP+CjpUxSbQIJB/axrKoeml6ZMMh44QSY2
-         B8I8kQ/83DdrvnhP9lKpOOr1oKWQkYGH52FKZJ9A0B/90eu2QsxTZFRGUCBCiZNwqe+t
-         DLrjvfZoh/FTfSmFyLexxlHuVNiOSkavWoAp7gqsmX4YdsR6HlzLFUpPVT31VoRUSjBr
-         14QMvIJBLnd7HsZ0I1pZFTpUfuxh5dfRv2GFpi8XrWj4+ot7vF4IK24Khq5qn+YAF/gz
-         bIbiQxG7Wkx5Yufr+xUS1mzxKxPNthP9lu2oCvB9bAMUBX/lT8c6tAm4qpoh3AviBwvM
-         ygrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723797735; x=1724402535;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4Mf1jwtU1IEC5inSpAw3zK8tivE5WAs13EhnH9rtxkM=;
-        b=wi8NnUoXDibG38O20RvSNpnN25unPfBav/c5HC2qRERlqbuuhokge1PgNsSlsVwywq
-         o6rlsEpUBkWcXI+5baGu+4fnDTKxGvsYCCk6jTyebFacpnBZ7nSh6+02onzWP1takIKb
-         dkVfcMdcjiB0hBWP/vBRR+CnAjLQLtEBk7oJjvuDkk9ZNqJeDTwZ4MOTgwUPD+XSyQkD
-         Uk5F7y7dWy4McOqVFiUdiE15D6PrDcw0HtcDCkCrbZBhHlfCzJ69+EDcxrf9mCfV5fj8
-         qZYsETTOQmgFHMqm6CncRn0HjRbqsUiiUjg5IkqbqVy3S9/bpgKnfXax9CEYPoZMDccp
-         u9Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCVomi3bkqq7rgk0UUHGaE6iwRvoNT7YmEmclOmpFYjApMn4V+IMEmlH7TflVdyoi6YZZzLs0N4UH8h6JWGU/PZFRBIaaJ4e6La8DJBS
-X-Gm-Message-State: AOJu0Yz3tTWs7OY4zAG/5eByEtYxGrEaRdChINxjBEvSYUwI8Y0Ktbs1
-	IbQJM4Gi6AThluK7a4+lIwnHUUV/rfsEwnrNIpQ35lTFgn6eNMQKr363U1R7qXQ=
-X-Google-Smtp-Source: AGHT+IEf7cfbN+gD7oBAopP7fq2DDt7WFnAIqgbBVgGTKPU7rB9hSONbmM2OmELOKV6w4B7AP104YQ==
-X-Received: by 2002:a05:600c:4f4f:b0:426:64a2:5375 with SMTP id 5b1f17b1804b1-429ed77da5fmr14056025e9.1.1723797735389;
-        Fri, 16 Aug 2024 01:42:15 -0700 (PDT)
-Received: from [192.168.68.116] ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37189849831sm3134341f8f.30.2024.08.16.01.42.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 01:42:14 -0700 (PDT)
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: Amol Maheshwari <amahesh@qti.qualcomm.com>, 
- Arnd Bergmann <arnd@arndb.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Dan Carpenter <dan.carpenter@linaro.org>, Abel Vesa <abel.vesa@linaro.org>, 
- Sukrut Bellary <sukrut.bellary@linux.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20230602113602.1271695-1-sukrut.bellary@linux.com>
-References: <20230602113602.1271695-1-sukrut.bellary@linux.com>
-Subject: Re: [PATCH v2] misc: fastrpc: Fix double free of 'buf' in error
- path
-Message-Id: <172379773428.48571.12712764336372215330.b4-ty@linaro.org>
-Date: Fri, 16 Aug 2024 09:42:14 +0100
+	s=arc-20240116; t=1723797757; c=relaxed/simple;
+	bh=6NDIDdB8PZfIYQxi9ute8BoA2vwt/rOC3YPrs9mp8BI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ya2vx86qY0ZtqcdpIMf7z5QKjVclp1EDBTJeIucZvmietcdybeERGvJjBi2YN+vJBN+n1jEE4iLGdjr4yq/73ehc6tOv8twZnP4/UsQT94dNqeTBEt9DFj1hNr9VkhLfSgcuERubYCduoJAE0en1m/ygVuRLL38R3lVtPv1uJ6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TjJabqEq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAC63C32782;
+	Fri, 16 Aug 2024 08:42:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723797756;
+	bh=6NDIDdB8PZfIYQxi9ute8BoA2vwt/rOC3YPrs9mp8BI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TjJabqEqwjd55SrH84RAMrNWyxiQB3ryGPJIkfEAXQYkj7HnG4L5qJXizZnS6Bxr+
+	 OouHrUvMUOqnw75dWkE17GiksLxYQ7LORG8Zs5n19JuvbH6qdO8rKznKXQCsdEsDsl
+	 0pvwxRiEO/KEL7qdKutoMiV1eA/4hFO+SqR12fq8=
+Date: Fri, 16 Aug 2024 10:42:33 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.10 000/263] 6.10.5-rc1 review
+Message-ID: <2024081644-tipoff-oboe-d72e@gregkh>
+References: <20240812160146.517184156@linuxfoundation.org>
+ <8852e518-3867-4802-adea-0c0ee68d1010@roeck-us.net>
+ <2024081616-gents-snowcap-0e5f@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024081616-gents-snowcap-0e5f@gregkh>
 
-
-On Fri, 02 Jun 2023 04:36:02 -0700, Sukrut Bellary wrote:
-> smatch warning:
-> drivers/misc/fastrpc.c:1926 fastrpc_req_mmap() error: double free of 'buf'
+On Fri, Aug 16, 2024 at 10:38:08AM +0200, Greg Kroah-Hartman wrote:
+> On Thu, Aug 15, 2024 at 07:21:00AM -0700, Guenter Roeck wrote:
+> > On 8/12/24 09:00, Greg Kroah-Hartman wrote:
+> > > This is the start of the stable review cycle for the 6.10.5 release.
+> > > There are 263 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > > 
+> > > Responses should be made by Wed, 14 Aug 2024 16:00:26 +0000.
+> > > Anything received after that time might be too late.
+> > > 
+> > 
+> > I see various allmodconfig build failures on v6.10.5.
+> > 
+> > Example from arm:
+> > 
+> > Building arm:allmodconfig ... failed
+> > --------------
+> > Error log:
+> > drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_mst_types.c:1581:13: error: 'is_dsc_common_config_possible' defined but not used [-Werror=unused-function]
+> >  1581 | static bool is_dsc_common_config_possible(struct dc_stream_state *stream,
+> >       |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_mst_types.c:1569:21: error: 'kbps_from_pbn' defined but not used [-Werror=unused-function]
+> >  1569 | static unsigned int kbps_from_pbn(unsigned int pbn)
+> > 
+> > The functions are built and used conditionally in mainline, behind CONFIG_DRM_AMD_DC_FP.
+> > The conditional is missing in v6.10.5 (and v6.10.6-rc1).
 > 
-> In fastrpc_req_mmap() error path, the fastrpc buffer is freed in
-> fastrpc_req_munmap_impl() if unmap is successful.
+> Odd that other allmodconfig builds passed :(
 > 
-> But in the end, there is an unconditional call to fastrpc_buf_free().
-> So the above case triggers the double free of fastrpc buf.
+> I'll dig up where that conditional showed up, thanks for letting us
+> know....
 > 
-> [...]
+> Ah, looks like it showed up in 00c391102abc ("drm/amd/display: Add misc
+> DC changes for DCN401"), gotta love "fix a bunch of things" type of
+> commits...
 
-Applied, thanks!
+And that commit is crazy, and no way will it backport, so I'll just go
+do this "by hand".  People who approved that commit need to revisit how
+to create changes properly...
 
-[1/1] misc: fastrpc: Fix double free of 'buf' in error path
-      commit: b056e4e23acbbbf12fa011caa781f7cecbd5b311
-
-Best regards,
--- 
-Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-
+greg k-h
 
