@@ -1,140 +1,130 @@
-Return-Path: <linux-kernel+bounces-289595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D0819547F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:22:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 557B69547F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAC74B20CF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:22:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0561C1F2124A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C404194124;
-	Fri, 16 Aug 2024 11:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C731A01DF;
+	Fri, 16 Aug 2024 11:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iAcdshcm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WmXncSKm"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAC113C9A7;
-	Fri, 16 Aug 2024 11:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366FB13C9A7;
+	Fri, 16 Aug 2024 11:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723807307; cv=none; b=pbXqisy+/5b2TiJJMG9SmD1S50uqTx7aYiUbWHL8A0cFtQY041o0d58D/tyofx+9Xv2qKx9a8wHLJquvczg/jtnrjURNDxiIK5XLODd1+C62m50SlnEX8t2K830x4v15xsuTLGE3VQq5+mO37lBZMsHzO/UrbI+E2KjqfKMdnGY=
+	t=1723807315; cv=none; b=N/BfDz9mDci3MCg/+APf0Lh6PyVVCsiBS5xWUhvzY+y1AHo0JpLAVIzA61H648uKIl+Ly6JPoQ42b/qPgJBBZ2SuMa5o/d8fKNwnXH58oIvXElm6DQK6wA2YyYUFXdwtgHXk++RG5+BM4ODwqDoAz5i0KqtF2hKP/dsi9x+11UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723807307; c=relaxed/simple;
-	bh=csDIzgE5Fo8O3NTtmM3Siwl0BrCEESS5Z7eBCxTTfvk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mxnj7Wu9XFGtFdYJF3RSmMHby6hSFFVYELV8/WVssFOZcIDwXGv4/4J6+eIzTycpbsbXX5KuxY6YAggrwvg27xJ23fYcqxGvv8V3I74MTmrvLj0lp3rgzS3e7AHOfwpYbVPZZDIWj5EE2eADuh6c1detLWQHcmd3/r0Ypi3mUYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iAcdshcm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0BE6C32782;
-	Fri, 16 Aug 2024 11:21:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723807307;
-	bh=csDIzgE5Fo8O3NTtmM3Siwl0BrCEESS5Z7eBCxTTfvk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iAcdshcmQ0DQ/KFST3pG6eAM+5z/SDFeJ7UYAK3mAsskSW4Za/efCpZkJ7JLdYpJa
-	 LKIYtQ24hCBkWFYQDt32QJ5odBZIeSCNFPS1JbwHAZKgJgqRyMX2Dmn4lrNGCuvMiJ
-	 0s2L11Mfc50yNmXzcq5DXd/0++haErneW3o3ehXhEMaY/VHEviTnYPdM2qzQ0TyZPA
-	 hx8oJ8Y+XIOADwA8MlStoMtIvgBIDLuR5PmzQvRpuRbYPfI3alRJl0wSL6czc0+rFu
-	 MPDa6PkjkEK9+Z86YiqNadbCxZ1CW3MRhATwRXfXxy8Xkq6YAz3KdXNREyNI4Dl8Sg
-	 RKiPjpXhIi/eQ==
-Message-ID: <c0af2eec-c289-4147-aca2-aac438451f5e@kernel.org>
-Date: Fri, 16 Aug 2024 13:21:41 +0200
+	s=arc-20240116; t=1723807315; c=relaxed/simple;
+	bh=R+Q/8x20X/nTyD+7YQblrqtXOMfPL8BRA30eakhx8MM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fjG/psNinimkHfwJ8H4RZolNcPaEaOWwphmatKZBWMavms4M4rm4cQQmCMgfqu3rbTlPw+few2q/cDFu7rLxJq+OovbPWWAkZALprxmYUwwD6xl7dzKT5qAA83PDZyIdV44kf5PfU84PIfQXeZnnJ06Y6XBjxT3beGz3eHU4GGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WmXncSKm; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-6e7b121be30so1469167a12.1;
+        Fri, 16 Aug 2024 04:21:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723807313; x=1724412113; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=16cQp4jBhIOjJqZLUeHIPz2kWW5Nn4hw6rOt2LtcdoM=;
+        b=WmXncSKm7k3PhGrcr6C6pidXi32e71S7+GRbuQkYgWEw8N2503JVaZeBUuvQ4mZF0l
+         6nfcO1klXtjF58EJE8dgoQ0qKnzKo9qsrFOa02k7drZBxtkC8stBGwxtaWBWY2a98ets
+         EtS4TtJvDBGCHDY81gvK2nD5T1Ben2hXTo3fbZqyEElf46vtybKEHY2xzopR0NILyoFi
+         i2Cz2IMqIjYwx7qt9srozeeHJw7G4c3Bhj1vb4HN9flnLJNF1lsk4KMh2+10yNadBGJ9
+         E9dX77hHhcPZyONugekCxbAzDNvKey09vRxXYXPP/e9WzhsP73wLL735ryZfJ6j9+o3E
+         ExTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723807313; x=1724412113;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=16cQp4jBhIOjJqZLUeHIPz2kWW5Nn4hw6rOt2LtcdoM=;
+        b=xKEhg5lSUrvEE1HDGiUmbwk2KnOeuwLalcDUi2FPPwCCxwVQMczVqdDxESA7hQ/32G
+         WbNVTWv9DT3KfDVT4bNxED8efTb08GJyEZgAzLrL1wbGK0edteOSmAUmc403pERwlZOR
+         cpEaQfKtvfUG1/XO6iwof2nmlkuM2t0bAYe2hbHMAt0Wu7YG+STjZcHuVeZ0suwKRrV9
+         ce9bwySDzI5CCY+u6D9qk8tTXYgAMCqPQRi3MAzNf/QbLX5lTS2YkqiKvrxfdUhwHbkx
+         GRTc2QaMwaooJOT7VOuuVjbUoyoKw8lnfjqousaLmatYMWus9jlJCpFROKZUKcMbnpp3
+         BCPA==
+X-Forwarded-Encrypted: i=1; AJvYcCW4tBHqOK5C0aWTtkqDIDsRTQLfC88SmGoLS0ZxGq2A0tNITJwf65ERVzKYhGuaGs3jdAyKTh86DeiE1RBx45gd0ztoPnF4sR/C628p9vXwFg840fmr17R6Dg26IT5u5zhHRAV0/w==
+X-Gm-Message-State: AOJu0YxmcbarXy+OWOujM1dwL1IkLWxOvXnNOjL0LqWtob6qOtxiIrKR
+	srx20mO1OJLtIVBOYlO4lS5e9EZyeVfSMt7OToaA3JZcnKg4oEjJEwWMfC40mKWQvj8hGt0FPYs
+	wBC+CSvdR3vUwAY7A1Q+L/azw6WTJHQ==
+X-Google-Smtp-Source: AGHT+IFxZCqQ4z81Lrsq2F4ufL/3FdZkEQfI/qgELsMISl0JCjgVx3GI7O1W68t5l7YvPkzi3lDytULPSrVCXZTBOqI=
+X-Received: by 2002:a17:90b:a41:b0:2d3:c675:41e7 with SMTP id
+ 98e67ed59e1d1-2d3dfc3a9acmr2730998a91.7.1723807313230; Fri, 16 Aug 2024
+ 04:21:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: misc: qcom,fastrpc: document new domain
- ID
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Amol Maheshwari <amahesh@qti.qualcomm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Tengfei Fan <quic_tengfan@quicinc.com>, Ling Xu <quic_lxu5@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20240816102345.16481-1-brgl@bgdev.pl>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240816102345.16481-1-brgl@bgdev.pl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CAHC9VhSrPS27KSG1_On8_WqUfR7tokbrmVwfW3+L_-XJiA=WZw@mail.gmail.com>
+ <20240816035751.62058-1-aha310510@gmail.com>
+In-Reply-To: <20240816035751.62058-1-aha310510@gmail.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Fri, 16 Aug 2024 07:21:42 -0400
+Message-ID: <CAEjxPJ6gznARkD_jTZUhXJmQ5zvdrwxJOiSC0YQoZekNe76Nug@mail.gmail.com>
+Subject: Re: selinux: support IPPROTO_SMC in socket_type_to_security_class()
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: paul@paul-moore.com, linux-kernel@vger.kernel.org, omosnace@redhat.com, 
+	selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 16/08/2024 12:23, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Add "cdsp1" as the new supported label for the CDSP1 fastrpc domain.
-> 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml b/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
-> index c27a8f33d8d7..2a5b18982804 100644
-> --- a/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
-> +++ b/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
-> @@ -26,6 +26,7 @@ properties:
->        - mdsp
->        - sdsp
->        - cdsp
-> +      - cdsp1
+On Thu, Aug 15, 2024 at 11:57=E2=80=AFPM Jeongjun Park <aha310510@gmail.com=
+> wrote:
+>
+> Paul Moore wrote:
+> >
+> > On Thu, Aug 15, 2024 at 4:32=E2=80=AFAM Jeongjun Park <aha310510@gmail.=
+com> wrote:
+> > >
+> > > IPPROTO_SMC feature has been added to net/smc. It is now possible to
+> > > create smc sockets in the following way:
+> > >
+> > >   /* create v4 smc sock */
+> > >   v4 =3D socket(AF_INET, SOCK_STREAM, IPPROTO_SMC);
+> > >
+> > >   /* create v6 smc sock */
+> > >   v6 =3D socket(AF_INET6, SOCK_STREAM, IPPROTO_SMC);
+> > >
+> > > Therefore, we need to add code to support IPPROTO_SMC in
+> > > socket_type_to_security_class().
+> > >
+> > > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> > > ---
+> > >  security/selinux/hooks.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> >
+> > I'm a little concerned that the small patch below might not be all
+> > that is needed to properly support SMC in SELinux.  Can you explain
+> > what testing you've done with SMC on a SELinux system?
+>
+> I don't have much knowledge about smc, so I can't tested everything, but
+> I created a socket, performed setsockopt, and tested two sockets
+> communicating with each other. When I tested it, performing smc-related
+> functions worked well without any major problems.
+>
+> And after analyzing it myself, I didn't see any additional patches needed
+> to support IPPROTO_SMC in selinux other than this patch. So you don't
+> have to worry.
 
-Are there more than one cdsp domains? Why adding suffixes? Driver source
-code does not have "cdsp1" domain, so this is confusing.
-
-Best regards,
-Krzysztof
-
+Note that Jeongjun is not introducing SELinux support for SMC sockets
+for the first time here; he is just updating the already existing
+support to correctly map the new IPPROTO_SMC to the already existing
+SECCLASS_SMC_SOCKET. We were already handling such sockets created via
+socket(AF_SMC, ...); what changed was that they added support for
+creating them via socket(AF_INET, SOCK_STREAM, IPPROTO_SMC) too.
 
