@@ -1,101 +1,131 @@
-Return-Path: <linux-kernel+bounces-289825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20642954C05
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:13:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC7F6954C07
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:14:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB7DD1F255D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:13:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8B3A2831D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C1B1BC08B;
-	Fri, 16 Aug 2024 14:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zrkw6cz8"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9841BD016;
+	Fri, 16 Aug 2024 14:10:35 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070931BB6B7;
-	Fri, 16 Aug 2024 14:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3081BC09F;
+	Fri, 16 Aug 2024 14:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723817395; cv=none; b=beqhP0wrb7N/W5av/6dGkSBepK7DVyzQ4IdSGmNIjWAvY5xATX0nuRdjEYU0L8JqNrs2LCZW1ilcj6ok6C2uCmnyu3pdo4G/uyGe1ur7DkZaNXKOl85Tf3bDyhcVyQYSE9QK0yRcCvPPT4seFjJ8EEHxIkBOhUNMmXcidkfN/J0=
+	t=1723817435; cv=none; b=nUlhaPQFaQMUlWAEmSzNmoOznVfeevtGYukv0f7RYvuZZjEIn/5zBDgvBXlowIOvcGf1sJz0IY8AiHb1y0x2mB2H6Mj6PggRIDONmo79MTEIbgjphBp8H/2Qwa0ZNL0PRhIvbOqLmgn1a9+69a54oXCY60jitm/Vmxbq3HxCvtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723817395; c=relaxed/simple;
-	bh=TPglCHD6GXr7VSwk2w4UE2JB3Jt6KJwdzfObrsWUDj8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OaxYKR3KrD/23qubnTLMxSRsEN1vtCx5OtVyqXtEC1v0DNT5ACPVtBFBWzuV7VjwL5IElmb/aRt/B+JK7KL3ZqV1bClTDxdapPv8LnLlowMvRJJS9p+pK+j07GBz63/81UKou1dKyILsf9lQ8R9RHqrzs17K6JZ2D86UGs6z8vI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zrkw6cz8; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-710ece280b6so1657310b3a.2;
-        Fri, 16 Aug 2024 07:09:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723817393; x=1724422193; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jW6UsTzpcNVunHocOm+NPEsNYY2zYdNm0/7cMdCJFzQ=;
-        b=Zrkw6cz8K/3f6AlPprt6p2DieXGmgOJRfISWOvfRnMIgbenhh/9MJnYK82pnYi6bzY
-         83/XN4vN5HA7nLEAZgRzhsmkKd8ing6Rh4NJlTHsNYKtnfixSuIDivEbWdDe/bjqzaJ9
-         YmH6Oss73dNr00qRgzmuMDeycpsbQ5ej3ta5qxn1AFUmDCGmO08iSoDS0w3YmdGX13TG
-         Z6Tj7XP5gW980arDSfmd/BeiZXpN+cT4eiUHpJ5gqCvBC+7sMkjZVT5YKojfAtmbS2ja
-         QKrVSOD2a8N/WVy42S4wYn1Ajb3nxKIw9mH65T2LOt2+Hdqcer++cCmrr+y4JC1re/R1
-         jToA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723817393; x=1724422193;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jW6UsTzpcNVunHocOm+NPEsNYY2zYdNm0/7cMdCJFzQ=;
-        b=Ch1F+kAm52a23qFskU+/WTgeYlG0Bolv+lLvmjYRevCncuX/avDBMdD5YH3moLZCxC
-         SIj1dG+42Uz053luUaqKzltMI1UidikenqYmcIGfHsvIjFDICRDsXzN4yf9sJflYRUEt
-         RpNCjt/6rf95UptBd79Ceb468Ls1bQX8bQqCZDi89d7HmkcO1lrHai14WdUTQSP5iZBo
-         gNTBN2Q/ZuQj1SXSss66OHnWMfVAd5Vb8mAlm8uDDYSjQjaUr/4RaDGWy/+jJezGtW2Z
-         qwj7ZXftZFiBuAejw073Z4HcFfbvyi3axMyzybGw1hZhEJOuUtRdKB8L0ayEf7ARuD8T
-         MlqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUu4SwdZ8h5/feS2wUVeW8sws2rUNAmPSlF5A3Ce5mlysfpi++1+YMFSD52cKwTOYfdSCYkOqlprnkG8g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVz8CWEjemC+amFBJH7dfrXWpu1ga9oF0oggRaApq+4iPdWTsW
-	BWYJpJbM+UpGOe2Ztu+JV/4RQRndTsHcJG//6vM6txwkZseZ6kw8
-X-Google-Smtp-Source: AGHT+IGXnffljGXsKDgtAUto3MX8lDgpiSW227SgAd4sSIqfNYWjoTzG1i8kJ3GYfWdY8mu+y2OHeQ==
-X-Received: by 2002:a05:6a20:9d92:b0:1c4:a49b:403 with SMTP id adf61e73a8af0-1c90505281amr3633591637.46.1723817393084;
-        Fri, 16 Aug 2024 07:09:53 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127addde5asm2757748b3a.13.2024.08.16.07.09.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 07:09:52 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Fri, 16 Aug 2024 07:09:51 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Yuntao Liu <liuyuntao12@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	ch.naveen@samsung.com, jdelvare@suse.com
-Subject: Re: [PATCH] hwmon: ntc_thermistor: fix module autoloading
-Message-ID: <473681fd-17b8-4fb1-a482-1053448a89fc@roeck-us.net>
-References: <20240815083021.756134-1-liuyuntao12@huawei.com>
+	s=arc-20240116; t=1723817435; c=relaxed/simple;
+	bh=87SzsDRbL6xxSmRijTCJnf5oPTeax2odjliZBG9cjSI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qUorDPQ65Hu1LuZOgcBF/oj4N1l8wgJyyQdy/9hjLhkoadGuWQGWAGLkVXrGbe6SRugMQcgRE+3LryRaxrPN1UbkgNn/A275VeW6ts6/OTVcXZANxl09OvygsSNLrKFYGTDORex3gZeQus7pE6gFuonXfElqtRTWpK8Cr3Ugaxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC932C32782;
+	Fri, 16 Aug 2024 14:10:33 +0000 (UTC)
+Date: Fri, 16 Aug 2024 10:10:31 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Juri Lelli <juri.lelli@redhat.com>, bpf
+ <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Artem Savkov
+ <asavkov@redhat.com>, "Jose E. Marchesi" <jose.marchesi@oracle.com>
+Subject: Re: NULL pointer deref when running BPF monitor program
+ (6.11.0-rc1)
+Message-ID: <20240816101031.6dd1361b@rorschach.local.home>
+In-Reply-To: <CAADnVQL2ChR5hGAXoV11QdMjN2WwHTLizfiAjRQfz3ekoj2iqg@mail.gmail.com>
+References: <ZrCZS6nisraEqehw@jlelli-thinkpadt14gen4.remote.csb>
+	<ZrECsnSJWDS7jFUu@krava>
+	<CAADnVQLMPPavJQR6JFsi3dtaaLHB816JN4HCV_TFWohJ61D+wQ@mail.gmail.com>
+	<ZrIj9jkXqpKXRuS7@krava>
+	<CAADnVQ+NpPtFOrvD0o2F8npCpZwPrLf4dX8h8Rt96uwM+crQcQ@mail.gmail.com>
+	<ZrSh8AuV21AKHfNg@krava>
+	<CAADnVQLYxdKn-J2-2iXKKKTg=o6xkKWzV2WyYrnmQ-j62b9STA@mail.gmail.com>
+	<Zr3q8ihbe8cUdpfp@krava>
+	<CAADnVQL2ChR5hGAXoV11QdMjN2WwHTLizfiAjRQfz3ekoj2iqg@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240815083021.756134-1-liuyuntao12@huawei.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 15, 2024 at 08:30:21AM +0000, Yuntao Liu wrote:
-> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
-> based on the alias from of_device_id table.
+On Thu, 15 Aug 2024 14:37:18 +0200
+Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+
+> > I checked bit more and there are more tracepoints with the same issue,
+> > the first diff stat looks like:
+> >
+> >          include/trace/events/afs.h                            | 44 ++++++++++++++++++++++----------------------
+> >          include/trace/events/cachefiles.h                     | 96 ++++++++++++++++++++++++++++++++++++++++++++++++------------------------------------------------
+> >          include/trace/events/ext4.h                           |  6 +++---
+> >          include/trace/events/fib.h                            | 16 ++++++++--------
+> >          include/trace/events/filelock.h                       | 38 +++++++++++++++++++-------------------
+> >          include/trace/events/host1x.h                         | 10 +++++-----
+> >          include/trace/events/huge_memory.h                    | 24 ++++++++++++------------
+> >          include/trace/events/kmem.h                           | 18 +++++++++---------
+> >          include/trace/events/netfs.h                          | 16 ++++++++--------
+> >          include/trace/events/power.h                          |  6 +++---
+> >          include/trace/events/qdisc.h                          |  8 ++++----
+> >          include/trace/events/rxrpc.h                          | 12 ++++++------
+> >          include/trace/events/sched.h                          | 12 ++++++------
+> >          include/trace/events/sunrpc.h                         |  8 ++++----
+> >          include/trace/events/tcp.h                            | 14 +++++++-------
+> >          include/trace/events/tegra_apb_dma.h                  |  6 +++---
+> >          include/trace/events/timer_migration.h                | 10 +++++-----
+> >          include/trace/events/writeback.h                      | 16 ++++++++--------
+> >
+> > plus there's one case where pointer needs to be checked with IS_ERR in
+> > include/trace/events/rdma_core.h trace_mr_alloc/mr_integ_alloc
+> >
+> > I'm not excited about the '_nullable' argument suffix, because it's lot
+> > of extra changes/renames in TP_fast_assign and it does not solve the
+> > IS_ERR case above
+> >
+> > I checked on the type tag and with llvm build we get the TYPE_TAG info
+> > nicely in BTF:
+> >
+> >         [119148] TYPEDEF 'btf_trace_sched_pi_setprio' type_id=119149
+> >         [119149] PTR '(anon)' type_id=119150
+> >         [119150] FUNC_PROTO '(anon)' ret_type_id=0 vlen=3
+> >                 '(anon)' type_id=27
+> >                 '(anon)' type_id=678
+> >                 '(anon)' type_id=119152
+> >         [119151] TYPE_TAG 'nullable' type_id=679
+> >         [119152] PTR '(anon)' type_id=119151
+> >
+> >         [679] STRUCT 'task_struct' size=15424 vlen=277
+> >
+> > which we can easily check in verifier.. the tracepoint definition would look like:
+> >
+> >         -       TP_PROTO(struct task_struct *tsk, struct task_struct *pi_task),
+> >         +       TP_PROTO(struct task_struct *tsk, struct task_struct __nullable *pi_task),
+> >
+> > and no other change in TP_fast_assign is needed
+> >
+> > I think using the type tag for this is nicer, but I'm not sure where's
+> > gcc at with btf_type_tag implementation, need to check on that  
 > 
-> Fixes: 9e8269de100dd (hwmon: (ntc_thermistor) Add DT with IIO support to NTC thermistor driver)
-> Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
+> Unfortunately last time I heard gcc was still far.
+> So we cannot rely on decl_tag or type_tag yet.
+> Aside from __nullable we would need another suffix to indicate is_err.
+> 
+> Maybe we can do something with the TP* macro?
+> So the suffix only seen one place instead of search-and-replace
+> through the body?
+> 
+> but imo above diff stat doesn't look too bad.
 
-Applied.
+I'm fine with annotation of parameters, but I really don't want this
+being part of the TP_fast_assign() content. What would that look like
+anyway?
 
-In the future, please run checkpatch on your patches. Your Fixes: tag is wrong.
-
-Thanks,
-Guenter
+-- Steve
 
