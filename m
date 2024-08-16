@@ -1,293 +1,139 @@
-Return-Path: <linux-kernel+bounces-289167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A72EE95429F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:21:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 324839542A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1B131C2562A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:21:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9EF31F24AF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9A68563E;
-	Fri, 16 Aug 2024 07:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8ADA12C491;
+	Fri, 16 Aug 2024 07:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="Jh+rY8yf"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OwMsmJKv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE59139579
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7BD20E3;
+	Fri, 16 Aug 2024 07:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723792829; cv=none; b=kdXtT8UjBbolrteb4HZu9ckadWquN6L5Vh2MPjPp77JU7GKHLX9IFvbwXMNYioN7nfugU9+cBI9Z5Hh00iDGzPZgFeTldMnOlgFQQNvEDQ2Xy0urqBZpEJso7LjkuFwPG2NuU+SOp/0HENn2M7HGn8t6huaKcsTQaEWoxWWf6js=
+	t=1723792871; cv=none; b=nMSbbDTHXzhkzX5H7lIdgZ3OEAVg/PWiSwsf14/0uZh1DJ+2he9qd8hTokl7zlXRUhI5ASDchwNncMjNJPAjemciJ/zGX2QU9G6TKUFOaTVwrJfo9RyPt4JNm1qD+b8yxU0CRXFbxFet6mbxXkMx9nYNbhDlbQwwY/ihtmpPK3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723792829; c=relaxed/simple;
-	bh=FBdsxbZkd/XyWzqhUS+S8phQd/eB6ljWnJRZVKicTlA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mXXaIWmwLDlS+2TpxWxDFMwpnEzfkgWduuc3TXk5NZdnV95DD3AS0Bb+oDWN0NdNq1I1YFeyomnG+u3gcRywfowkF1fxOA7XcSR5cfDkYZDknNeVfXPWdU2Neeh23AgTem+XJpHaNGRdqFTeofbGC9olKCeSYoHNN63GtljYidA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=Jh+rY8yf; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4280bca3960so12856655e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 00:20:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1723792823; x=1724397623; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3snyla+eJmB32kFu1uE1ex9HKSxBtPWetc+mZ58IGKM=;
-        b=Jh+rY8yfUTnHBa0GOBafif9rMkOrJ1rN0T1egXDGKyXDislvXXNQcW4rKaK2ZWSJF7
-         A7b1115eIi0ABtGYK3Z2niI/7x67zGEwOYpOJF2O8PCOSwxc74ERTQeF11wz9Jf/perB
-         3WFVBuaevhZtS2mlAmqfnDlqEeoY8UISAj9Gf/n0e30hKPF9W68XZqZ3kSsp+xi34uqk
-         Fxs7BBfOIkGAbFQ8GHG+fB4wc9bTb8rCwZx/IHNPv9pEmBUTKm3GRM4dL8QLzFLBiNsH
-         g43RwqKl+oZeXoG1RarXOcW2CyK2LcKqe3+sTB7Cimc9jDuzjfMvtlYPiUBii9R4NobY
-         BHXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723792823; x=1724397623;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3snyla+eJmB32kFu1uE1ex9HKSxBtPWetc+mZ58IGKM=;
-        b=lGmc6RivT48ZLOB5iAR/gOmyEC92wNuQFK+SZ5aZ/5FZPPpmwMKnQM/IL2Rqd8Xl0V
-         AWv6GriVGwmi/OXj/R4ZyiaE32Cw/aexICtXBpaj9ehdO9E9CP/F9Y2a1/F9rhDzzQpl
-         /qwJqTjSSAq3tHu6fQVtNAXIqDVazHrpfOg22Zx8fuqY+Eds0LCxQfjk1pDQu/qDTdAJ
-         2XFb21kRHTJPSb7WhOlRVR4QgE78MeVHRGc8dGl+i9aS0uLCU+OM4g4GRMQ1LwRNwYgT
-         EXRVcBoDNdqzU7SW4OmT1eojIcQ8J4f8WOAp9JCCkPOjSQUvP3UH9Tm8gRqaFOiATFik
-         5Esw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkdiGp94O46H3nRbpSz0Z6JRwYutw84RwncALnF+AB7H7hm8hY3qhK1DIZDEYb0PP+1nGuxhEJHKX9TZOOJhXdcjEjAF9Ze0tFldpp
-X-Gm-Message-State: AOJu0Yw7+l6dOeauPQFMv00V4tPtWtIx1pynJCTxRmNy49d7vyZEYxYF
-	mEPFXk6LVwqecwPTKcO6iXJdoytAwUmU8KyV29/dbVkoTfgBs9K3PVlkD8sYPjk=
-X-Google-Smtp-Source: AGHT+IFoaRPNnOwLK9w6p8NpJI6HT5xaUSv9rvEcER9vXxKKPqyNl34k5Tu5tjMQYgTIRY0FLlJm1Q==
-X-Received: by 2002:a05:6000:12c7:b0:368:7583:54c7 with SMTP id ffacd0b85a97d-3719431519fmr945821f8f.8.1723792822997;
-        Fri, 16 Aug 2024 00:20:22 -0700 (PDT)
-Received: from localhost ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898497f0sm2999669f8f.39.2024.08.16.00.20.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 00:20:22 -0700 (PDT)
-Date: Fri, 16 Aug 2024 09:20:19 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: yangzhuorao <alex000young@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, jhs@mojatatu.com,
-	xiyou.wangcong@gmail.com, davem@davemloft.net, security@kernel.org,
-	xkaneiki@gmail.com, hackerzheng666@gmail.com
-Subject: Re: [PATCH] net: sched: use-after-free in tcf_action_destroy
-Message-ID: <Zr79s6C-2FoLhoWj@nanopsycho.orion>
-References: <20240816015355.688153-1-alex000young@gmail.com>
+	s=arc-20240116; t=1723792871; c=relaxed/simple;
+	bh=J310qZ2qpxZZq8Rr1H8C1GtLOu1i0+pf8yBnzK7S7/E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GtrTbqxsm9+t0lSHExo6i5OeVqvpTx7T9k3n6J/yBw+bVQQlc1kfD4MR+44i0bVEexB21M1s+Nu2BKEASaZYdWrcNBr4lnucJSVKazHRKT5zjTbFEwvtOqKiAY8+J4R9QeSwKz77yAD3tSG+OJo7PmFHUdgk9Yu1uNRwW22gWCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OwMsmJKv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14F74C4AF0B;
+	Fri, 16 Aug 2024 07:21:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723792870;
+	bh=J310qZ2qpxZZq8Rr1H8C1GtLOu1i0+pf8yBnzK7S7/E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OwMsmJKv0wYSwJoZsCpawaT0zLh3r4UOrIMhsVrLdCxS4p2lt2zjeTiO7NPeUT2nz
+	 mP3fKCmlAd1FGAh+A/RIUkCCZOIHTa3n5s/FTIVhU7dOHqzQ79prUenFgT1zjxDoDm
+	 vAbsNEQ6tVgobwK8wmQj96wymmf1RFfmLYyoKaFs19ombwCIaw/G52FTntuxLKp9TP
+	 TWu1OT/rZmI8WmEUzZf1yvIvrmoTq88eHr71yGCPwsHH/h0zle38gFatXuxaM/dYJA
+	 vLSZNlYdDQifErYZ1fja6VidX2YBrJUj8mH+wIYYxoDGsfwxYKZpznKoI6QTbpLZQV
+	 78w1voo5M6ORQ==
+Message-ID: <70214a1a-82b9-4839-b95b-b75abf467eca@kernel.org>
+Date: Fri, 16 Aug 2024 09:21:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240816015355.688153-1-alex000young@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/6] arm64: dts: qcom: Add UFS node
+To: Marcus Glocker <marcus@nazgul.ch>, Bjorn Andersson
+ <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
+ Johan Hovold <johan@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+References: <v2iah5yrne4u6uzrnzg36tvtxzqrpiez6io2gyyfrht2x42umw@5ribqndiavxv>
+ <ejeph4wspggkmvhl7qmpvw5jlojyvma7epqd67i6vk5p6fncrk@de56nvgi6vzi>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ejeph4wspggkmvhl7qmpvw5jlojyvma7epqd67i6vk5p6fncrk@de56nvgi6vzi>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Fri, Aug 16, 2024 at 03:53:55AM CEST, alex000young@gmail.com wrote:
->There is a uaf bug in net/sched/act_api.c.
->When Thread1 call [1] tcf_action_init_1 to alloc act which saves
->in actions array. If allocation failed, it will go to err path.
->Meanwhile thread2 call tcf_del_walker to delete action in idr.
->So thread 1 in err path [3] tcf_action_destroy will cause
->use-after-free read bug.
->
->Thread1                            Thread2
-> tcf_action_init
->  for(i;i<TCA_ACT_MAX_PRIO;i++)
->   act=tcf_action_init_1 //[1]
->   if(IS_ERR(act))
->    goto err
->   actions[i] = act
->                                   tcf_del_walker
->                                    idr_for_each_entry_ul(idr,p,id)
->                                     __tcf_idr_release(p,false,true)
->                                      free_tcf(p) //[2]
->  err:
->   tcf_action_destroy
->    a=actions[i]
->    ops = a->ops //[3]
->
->We add lock and unlock in tcf_action_init and tcf_del_walker function
-
-Who's "we"? Be imperative, tell the codebase what to do in order to fix
-this bug.
-
-
->to aviod race condition.
->
->==================================================================
->BUG: KASAN: use-after-free in tcf_action_destroy+0x138/0x150
->Read of size 8 at addr ffff88806543e100 by task syz-executor156/295
->
->CPU: 0 PID: 295 Comm: syz-executor156 Not tainted 4.19.311 #2
->Call Trace:
-> __dump_stack lib/dump_stack.c:77 [inline]
-> dump_stack+0xcd/0x110 lib/dump_stack.c:118
-> print_address_description+0x60/0x224 mm/kasan/report.c:255
-> kasan_report_error mm/kasan/report.c:353 [inline]
-> kasan_report mm/kasan/report.c:411 [inline]
-> kasan_report.cold+0x9e/0x1c6 mm/kasan/report.c:395
-> tcf_action_destroy+0x138/0x150 net/sched/act_api.c:664
-> tcf_action_init+0x252/0x330 net/sched/act_api.c:961
-> tcf_action_add+0xdb/0x370 net/sched/act_api.c:1326
-> tc_ctl_action+0x327/0x410 net/sched/act_api.c:1381
-> rtnetlink_rcv_msg+0x79e/0xa40 net/core/rtnetlink.c:4793
-> netlink_rcv_skb+0x156/0x420 net/netlink/af_netlink.c:2459
-> netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
-> netlink_unicast+0x4d6/0x690 net/netlink/af_netlink.c:1357
-> netlink_sendmsg+0x6ce/0xce0 net/netlink/af_netlink.c:1907
-> sock_sendmsg_nosec net/socket.c:652 [inline]
-> __sock_sendmsg+0x126/0x160 net/socket.c:663
-> ___sys_sendmsg+0x7f2/0x920 net/socket.c:2258
-> __sys_sendmsg+0xec/0x1b0 net/socket.c:2296
-> do_syscall_64+0xbd/0x360 arch/x86/entry/common.c:293
-> entry_SYSCALL_64_after_hwframe+0x5c/0xc1
->RIP: 0033:0x7fc19796b10d
->RSP: 002b:00007fc197910d78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
->RAX: ffffffffffffffda RBX: 00007fc1979fe2e0 RCX: 00007fc19796b10d
->RDX: 0000000000000000 RSI: 0000000020000480 RDI: 0000000000000004
->RBP: 00007fc1979fe2e8 R08: 0000000000000000 R09: 0000000000000000
->R10: 0000000000000002 R11: 0000000000000246 R12: 00007fc1979fe2ec
->R13: 00007fc1979fc010 R14: 5c56ebd45a42de31 R15: 00007fc1979cb008
->
->Allocated by task 295:
-> __kmalloc+0x89/0x1d0 mm/slub.c:3808
-> kmalloc include/linux/slab.h:520 [inline]
-> kzalloc include/linux/slab.h:709 [inline]
-> tcf_idr_create+0x59/0x5e0 net/sched/act_api.c:361
-> tcf_nat_init+0x4b7/0x850 net/sched/act_nat.c:63
-> tcf_action_init_1+0x981/0xc90 net/sched/act_api.c:879
-> tcf_action_init+0x216/0x330 net/sched/act_api.c:945
-> tcf_action_add+0xdb/0x370 net/sched/act_api.c:1326
-> tc_ctl_action+0x327/0x410 net/sched/act_api.c:1381
-> rtnetlink_rcv_msg+0x79e/0xa40 net/core/rtnetlink.c:4793
-> netlink_rcv_skb+0x156/0x420 net/netlink/af_netlink.c:2459
-> netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
-> netlink_unicast+0x4d6/0x690 net/netlink/af_netlink.c:1357
-> netlink_sendmsg+0x6ce/0xce0 net/netlink/af_netlink.c:1907
-> sock_sendmsg_nosec net/socket.c:652 [inline]
-> __sock_sendmsg+0x126/0x160 net/socket.c:663
-> ___sys_sendmsg+0x7f2/0x920 net/socket.c:2258
-> __sys_sendmsg+0xec/0x1b0 net/socket.c:2296
-> do_syscall_64+0xbd/0x360 arch/x86/entry/common.c:293
-> entry_SYSCALL_64_after_hwframe+0x5c/0xc1
->
->Freed by task 275:
-> slab_free_hook mm/slub.c:1391 [inline]
-> slab_free_freelist_hook mm/slub.c:1419 [inline]
-> slab_free mm/slub.c:2998 [inline]
-> kfree+0x8b/0x1a0 mm/slub.c:3963
-> __tcf_action_put+0x114/0x160 net/sched/act_api.c:112
-> __tcf_idr_release net/sched/act_api.c:142 [inline]
-> __tcf_idr_release+0x52/0xe0 net/sched/act_api.c:122
-> tcf_del_walker net/sched/act_api.c:266 [inline]
-> tcf_generic_walker+0x66a/0x9c0 net/sched/act_api.c:292
-> tca_action_flush net/sched/act_api.c:1154 [inline]
-> tca_action_gd+0x8b6/0x15b0 net/sched/act_api.c:1260
-> tc_ctl_action+0x26d/0x410 net/sched/act_api.c:1389
-> rtnetlink_rcv_msg+0x79e/0xa40 net/core/rtnetlink.c:4793
-> netlink_rcv_skb+0x156/0x420 net/netlink/af_netlink.c:2459
-> netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
-> netlink_unicast+0x4d6/0x690 net/netlink/af_netlink.c:1357
-> netlink_sendmsg+0x6ce/0xce0 net/netlink/af_netlink.c:1907
-> sock_sendmsg_nosec net/socket.c:652 [inline]
-> __sock_sendmsg+0x126/0x160 net/socket.c:663
-> ___sys_sendmsg+0x7f2/0x920 net/socket.c:2258
-> __sys_sendmsg+0xec/0x1b0 net/socket.c:2296
-> do_syscall_64+0xbd/0x360 arch/x86/entry/common.c:293
-> entry_SYSCALL_64_after_hwframe+0x5c/0xc1
->
->The buggy address belongs to the object at ffff88806543e100
-> which belongs to the cache kmalloc-192 of size 192
->The buggy address is located 0 bytes inside of
-> 192-byte region [ffff88806543e100, ffff88806543e1c0)
->The buggy address belongs to the page:
->flags: 0x100000000000100(slab)
->page dumped because: kasan: bad access detected
->
->Memory state around the buggy address:
-> ffff88806543e000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff88806543e080: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
->>ffff88806543e100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                   ^
-> ffff88806543e180: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-> ffff88806543e200: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->
-
-You are missing tags. "Fixes" at least.
-
-
->Signed-off-by: yangzhuorao <alex000young@gmail.com>
-
-Usually, name starts with capital letter and most often it is multiple
-words, yours is different?
-
-
->---
-> net/sched/act_api.c | 9 ++++++---
-> 1 file changed, 6 insertions(+), 3 deletions(-)
->
->diff --git a/net/sched/act_api.c b/net/sched/act_api.c
->index ad0773b20d83..d29ea69ba312 100644
->--- a/net/sched/act_api.c
->+++ b/net/sched/act_api.c
->@@ -261,7 +261,7 @@ static int tcf_del_walker(struct tcf_idrinfo *idrinfo, struct sk_buff *skb,
-> 		goto nla_put_failure;
-> 	if (nla_put_string(skb, TCA_KIND, ops->kind))
-> 		goto nla_put_failure;
->-
->+	rcu_read_lock();
-> 	idr_for_each_entry_ul(idr, p, id) {
-> 		ret = __tcf_idr_release(p, false, true);
-> 		if (ret == ACT_P_DELETED) {
->@@ -271,12 +271,14 @@ static int tcf_del_walker(struct tcf_idrinfo *idrinfo, struct sk_buff *skb,
-> 			goto nla_put_failure;
-> 		}
-> 	}
->+	rcu_read_unlock();
-> 	if (nla_put_u32(skb, TCA_FCNT, n_i))
-> 		goto nla_put_failure;
-> 	nla_nest_end(skb, nest);
+On 15/08/2024 12:42, Marcus Glocker wrote:
+> Add the UFS Host Controller node.  This was basically copied from the
+> arch/arm64/boot/dts/qcom/sc7180.dtsi file.
 > 
-> 	return n_i;
-> nla_put_failure:
->+	rcu_read_unlock();
-> 	nla_nest_cancel(skb, nest);
-> 	return ret;
-> }
->@@ -940,7 +942,7 @@ int tcf_action_init(struct net *net, struct tcf_proto *tp, struct nlattr *nla,
-> 	err = nla_parse_nested(tb, TCA_ACT_MAX_PRIO, nla, NULL, extack);
-> 	if (err < 0)
-> 		return err;
->-
->+	rcu_read_lock();
-> 	for (i = 1; i <= TCA_ACT_MAX_PRIO && tb[i]; i++) {
-> 		act = tcf_action_init_1(net, tp, tb[i], est, name, ovr, bind,
-> 					rtnl_held, extack);
->@@ -953,11 +955,12 @@ int tcf_action_init(struct net *net, struct tcf_proto *tp, struct nlattr *nla,
-> 		/* Start from index 0 */
-> 		actions[i - 1] = act;
-> 	}
->-
->+	rcu_read_unlock();
+> Signed-off-by: Marcus Glocker <marcus@nazgul.ch>
 
 
-Can you please describe in details, how exactly you fix this issue. I'm
-asking because the rcu_read_lock section here looks to me very
-suspicious.
+> +
+> +		ufs_mem_phy: phy@1d87000 {
+> +			compatible = "qcom,x1e80100-qmp-ufs-phy";
+> +			reg = <0 0x01d87000 0 0x1000>;
+> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>;
+> +			clock-names = "ref",
+> +				      "ref_aux",
+> +				      "qref";
 
+One does not match the other.
 
+It does not look like you tested the DTS against bindings. Please run
+`make dtbs_check W=1` (see
+Documentation/devicetree/bindings/writing-schema.rst or
+https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+for instructions).
 
-> 	*attr_size = tcf_action_full_attrs_size(sz);
-> 	return i - 1;
-> 
-> err:
->+	rcu_read_lock();
-> 	tcf_action_destroy(actions, bind);
-> 	return err;
-> }
->-- 
->2.25.1
->
+Best regards,
+Krzysztof
+
 
