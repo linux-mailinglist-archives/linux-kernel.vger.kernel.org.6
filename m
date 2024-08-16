@@ -1,315 +1,89 @@
-Return-Path: <linux-kernel+bounces-289980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD6FC954E0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:44:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97E22954E0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A9291F22531
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:44:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46DA21F21765
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B421BDA94;
-	Fri, 16 Aug 2024 15:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E86F1BE242;
+	Fri, 16 Aug 2024 15:44:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2oyeo8w5"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2043.outbound.protection.outlook.com [40.107.212.43])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="o8BVWbV2"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBB71BDAB3
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723823050; cv=fail; b=TKxuOrjnd6V+cPy38Ia1pPyOeIZ4sBgnrZyYlpWkgwoOpePoRlLC7MIbYC9ZoIPX3iy3NHlfCvEqjljR9cDgYuQNQsXxdlJFHR61eqnJtVsXV0VeqJJe0FZazIyssy2Z2we2Qx1wZ5DzOPnMQEVLFUOmb8kQBzW26g/Y/xymXu8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723823050; c=relaxed/simple;
-	bh=JELhRd9QSrIkuxEqKqWgkG+SkJi3xVWPH2/tGUfyL8Q=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MII5NFS89XdYE5FEZ9HOX9P9TXU3sdD94BkjnsSkE4JQzaazP0hv8uY7Q/6RrvyJzwXIubVFojHSA/21xxSpc3Ems4MATJ6zg6Vm1henqukKrr2pP6PuXtWaWNOqcx+1Ho2LS9Hkx+LRe4zoykTlncxrLzzoC8X1CcIjQtcTGEI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2oyeo8w5; arc=fail smtp.client-ip=40.107.212.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BwJLX761MQEvgpQmxTI3vDTMk7wuOvUeXS6/A95oJm1DRqT5hmwnyckQ0r9v+6YTiZBBzFZC9dZMJ8CPeE2yF8QiGiHHPB4TnDhaPoE2UmzgL+W4dscK3wtMD551TqrYYFiCQ/7wcZw0IDC09GeY3xpV1zbBYGRTDZcnws00NHY4suXcYpLZVieqIo0XlSC1EhnnVZ6H1ZaYMFgWw1AZmj+x5kDJLBr1NKMsL90FiqaWEPi76SoBU84EQvs/bXjsNoKnzn4JMNkKRcMhmq4y+Xfr64fnM1ZH//CehneHh6xqfnsJ+Y4e2B35lLQdFQJRT1r5E/lzH4bTxNL+N6clrg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=40gJ53B/ZJu0TsgYOR4Naa8eA81os0MWIjTu5HPrisY=;
- b=Jtm/ZS8m5epxFoE8r6awgd1xroKI4Nhzjng7gBWru5Efhcho+Y3nT06+yFYds7h9t/yQ+PiWXuTSxWdPZBhH7QYK0fTmR9j6ULBl6aXKHy5D1F0z/QpOt7HgWREn0b6Hci9YqEsh9RryadICynH5A2ge+3lV7uoLRWFOf/OXwJqAzpO4prQl3DyxPma1JKIEhRALcTlFE379sgTKkitamDg85QovpAQCk9bRs8QrIDB/yErNVV64pX5X4ay0zU7JMsci1x2C3mP18qiR3d2azo0/Cu6vFSZ1ooqU8stZrUW0tnpZwhMEX3TKdONUoV4jR3qVj4aMPAjNSnf9XqljHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=40gJ53B/ZJu0TsgYOR4Naa8eA81os0MWIjTu5HPrisY=;
- b=2oyeo8w5WAA/bT2YMhfl/8lmaACE8N0EPf4XYE7uke5NIIisRl4zAId1cSuMhA7wE23XzhPpYX39JwFek+QRTjEQfpDNhCMiiOb2Wdo/y1d7PeSKYTyWbZUuoZHH2lqKPoWmTYmqAIiTD/5AZdMUm6NE4pm3oViYHHR1hHWKyog=
-Received: from PH0PR07CA0034.namprd07.prod.outlook.com (2603:10b6:510:e::9) by
- DS0PR12MB6560.namprd12.prod.outlook.com (2603:10b6:8:d0::22) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7875.19; Fri, 16 Aug 2024 15:44:02 +0000
-Received: from MWH0EPF000A6732.namprd04.prod.outlook.com
- (2603:10b6:510:e:cafe::88) by PH0PR07CA0034.outlook.office365.com
- (2603:10b6:510:e::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.24 via Frontend
- Transport; Fri, 16 Aug 2024 15:44:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- MWH0EPF000A6732.mail.protection.outlook.com (10.167.249.24) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7849.8 via Frontend Transport; Fri, 16 Aug 2024 15:44:01 +0000
-Received: from purico-ed03host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 16 Aug
- 2024 10:43:57 -0500
-From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-To: <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
-CC: <joro@8bytes.org>, <robin.murphy@arm.com>, <vasant.hegde@amd.com>,
-	<jon.grimm@amd.com>, <santosh.shukla@amd.com>, <pandoh@google.com>,
-	<kumaranand@google.com>, Suravee Suthikulpanit
-	<suravee.suthikulpanit@amd.com>
-Subject: [PATCH 2/2] iommu/amd: Refactor set_dte_entry to simplify GCR3 Table Root Pointer programming
-Date: Fri, 16 Aug 2024 15:43:31 +0000
-Message-ID: <20240816154331.5003-3-suravee.suthikulpanit@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240816154331.5003-1-suravee.suthikulpanit@amd.com>
-References: <20240816154331.5003-1-suravee.suthikulpanit@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4501BDAB5;
+	Fri, 16 Aug 2024 15:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723823073; cv=none; b=B3H7rjRLe7afw8vzDWPio5Oa3tfEbJnS4c/24oolp+vpLA0RRrIDNxf41q4SRuxlMy8hx/DKXsjfunVH8gleIFO0IuE8ZA+qkLqOaXl/k27ckQoMYI2UqJJuvJH+PJ0eEQwzFUzEZzUd1HVweQWrpkynHkx0owveCbZtoe6ntUg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723823073; c=relaxed/simple;
+	bh=KOTIU21F5fyuTV5MN3PTTpuJ+JEbCQXr9Fl4lQaTqdk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FKEqe7COB89vB0d69q4RUgns8dGPvjnr9hljhcKUpL+c5Hwf32g+MjFG6vGjkmNf1v17EW+a0HcnX9xodhz3Q+TSHBrSVP2W1bMPfzwpjggaYn3920QFqv2yFiU9vC5UD0pQc7B+KajJvXCeMUw/SKAVLo4MBOP5eKjrPjrkYxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=o8BVWbV2; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=tgmySbRwp3I0v4k+W+elsCxx/kQc/3jwf7sA3HlVR7E=; b=o8BVWbV2qPTU0QptJvu+e5wG2g
+	vZWxPPmF+etUOMaJeF4OEbn2tBGjPvBT2KkkZ089V9vh4jcBnju0+V6YXMns7tBwJttNpPuN7OYoO
+	/m3b/GT3XBzV4UcktvdRqKOQ7+el+CYIY9Ep3RN0DObJqEKA69Mdw3wid7QfhLTgx8gyXrDLmDHeZ
+	2++oQtMglbMSXqUsqYTqiPo9gIoSW4xtI8PSWk3HeETkH1RgFcLhBAvrlakOdyziwQrNgJnn5s5XP
+	Ta0lzB8CSVymbMA6oEkMwXcvLg+BkPviW43ai1H5bzTt16qYqUBZ5tZzR63jbxX4/at0nE7VcWA6P
+	iRy0XdJw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sez7X-00000003lSD-1DSr;
+	Fri, 16 Aug 2024 15:44:07 +0000
+Date: Fri, 16 Aug 2024 16:44:07 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org,
+	riel@surriel.com, shakeel.butt@linux.dev, roman.gushchin@linux.dev,
+	yuzhao@google.com, david@redhat.com, baohua@kernel.org,
+	ryan.roberts@arm.com, rppt@kernel.org, cerasuolodomenico@gmail.com,
+	corbet@lwn.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH v3 4/6] mm: Introduce a pageflag for partially mapped
+ folios
+Message-ID: <Zr9zx74W6-oRwKXB@casper.infradead.org>
+References: <20240813120328.1275952-1-usamaarif642@gmail.com>
+ <20240813120328.1275952-5-usamaarif642@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000A6732:EE_|DS0PR12MB6560:EE_
-X-MS-Office365-Filtering-Correlation-Id: d1a8cccd-9173-4722-8b4b-08dcbe0a4068
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ScKrp2jtLqkfwY7uPgjiiY9Z/XatIFGtUxVV7WtASV8OxEzD4LId+IO5M8le?=
- =?us-ascii?Q?Dxi+6DjLTt3sPfHaSogEH/nyhh2qquhAsTL2amJNdCZzlOfoH4BhJiLFNT0r?=
- =?us-ascii?Q?Zx+hAfDsIXIlRfLWkqEZQ77SnXvsZgs3NzfNmWElSA8nA3lo/mXH5accBw96?=
- =?us-ascii?Q?yEJaA9I+J2E1JKHHnuF6oD5wqy+HnlrF96cYkTtEMCmnTpv25/B+fDHsd7He?=
- =?us-ascii?Q?58Uqq/Sm2xTQQmMtJnrrVf7UcjCM7wThIl9KteahCjuirQnneRBArzKYw8DQ?=
- =?us-ascii?Q?nq7VM/TIM0Bs92zErcvG02bpU83yc9sJR5wLiYzb4kTToQF4cAPUxvczq3vi?=
- =?us-ascii?Q?wx4HBcPYDdj8sDz9HwOEbqEaOabBMNI6vIhalMU7jLU4junVZDdawGWIX+lx?=
- =?us-ascii?Q?9ai+Fn9Gc6Hw3BszpnHAonnBHxAV+NxXA5MsLBt5aojKiL4kt0Lh/mXNsQ41?=
- =?us-ascii?Q?7xZc1GUFqw9HiYZZ5m6Uc3kiPp0XrR05A8xPF62cyVXsX1YNEfMc+j+DJezn?=
- =?us-ascii?Q?4DlTe9F6kitgItUXcOplPn1eGHhzQZfLxII7GQeUrKpvJ92jOYRKM7zM0gda?=
- =?us-ascii?Q?kQOHVSeOamd2oDuxbNrvNq8ptBnM/rBpROHKlgQ0EEWZs+uytxbTa43kJqky?=
- =?us-ascii?Q?DBb1I9sbCsvjvNQTWRP6A861hcjvZC9FTsjfC8zOcc/Nb+kBp3uPbNdIfkDf?=
- =?us-ascii?Q?7hy5sZZB7CXkdzx+yL2LbmMWboCe3ENlc5tjwhRxhdWcNtHxvf+ftJxPuMSd?=
- =?us-ascii?Q?MVNoPZkiKtrcvVXxOVMVAewY9y1jgN4yuLqUGiryeZxcu8zsEgG7b86/AJS5?=
- =?us-ascii?Q?fhGEtIWC3Q2yz5B8whYh9DhRbAU9Gw3F0dCz0hhoTfNKC1l7r1PWD/NlPqkC?=
- =?us-ascii?Q?ReSJgpk3vzT6hIRxpzh8JvluuluAsV13B7LT9v8pQaJHLTpgUjPgQXPifGzy?=
- =?us-ascii?Q?3jG865c6K5VHigvTzkwz9bdp47xtTxOISnvDCB8oq/SHuJ4T1KWlJf541o8v?=
- =?us-ascii?Q?nnH0rz8fnQxz+0u+ch19cnUoh9n7UFcvne/0ISDah0mx4VWimVPSn5ipD8Aj?=
- =?us-ascii?Q?2yiC+kTh+mkhl2e5eQO5NIhUTqG5gnXTvoomGbwuaApYp20z4xV9Y2bqYo6/?=
- =?us-ascii?Q?aHikLQQnjgAW453AU6olpqUNiQqAu4jrRVWFCs/lLVlVr+bsCrHnaWS+n0Y+?=
- =?us-ascii?Q?gAtmRbUGPptw+84iJu5HjfzilReoCX27GUAeFIJGSkhH9OJ58KEVvkC36hST?=
- =?us-ascii?Q?Gf4rD/NFebNPZg5m4Uc5vfnokY7KUwHn57N3ba0pDTjkZXr+GNGQJt27GXb4?=
- =?us-ascii?Q?rhYrixisyqzt5jJ279a2XT1eJDx/t9QfSqe4ua6Lu6TaIvRZdd2Aszb9BArC?=
- =?us-ascii?Q?vT3wUGvTKi9FffFzpfCzxTy3pgzSrx5ojxN78WJJvaeKMdcob4LQgh2CIlZd?=
- =?us-ascii?Q?LMfYnGMC0ZiGt+D/AKK5DGznsei9M1ls?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2024 15:44:01.7436
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d1a8cccd-9173-4722-8b4b-08dcbe0a4068
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000A6732.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6560
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240813120328.1275952-5-usamaarif642@gmail.com>
 
-Separate logic for setting DTE[GCR3 Table Root Pointer] into a helper
-function set_dte_gcr3_table().
+On Tue, Aug 13, 2024 at 01:02:47PM +0100, Usama Arif wrote:
+> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+> index a0a29bd092f8..cecc1bad7910 100644
+> --- a/include/linux/page-flags.h
+> +++ b/include/linux/page-flags.h
+> @@ -182,6 +182,7 @@ enum pageflags {
+>  	/* At least one page in this folio has the hwpoison flag set */
+>  	PG_has_hwpoisoned = PG_active,
+>  	PG_large_rmappable = PG_workingset, /* anon or file-backed */
+> +	PG_partially_mapped, /* was identified to be partially mapped */
 
-Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
----
- drivers/iommu/amd/iommu.c | 121 +++++++++++++++++++++-----------------
- 1 file changed, 68 insertions(+), 53 deletions(-)
+No, you can't do this.  You have to be really careful when reusing page
+flags, you can't just take the next one.  What made you think it would
+be this easy?
 
-diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-index 4667b6c4906f..8fc496db5560 100644
---- a/drivers/iommu/amd/iommu.c
-+++ b/drivers/iommu/amd/iommu.c
-@@ -1851,90 +1851,105 @@ int amd_iommu_clear_gcr3(struct iommu_dev_data *dev_data, ioasid_t pasid)
- 	return ret;
- }
- 
-+static void set_dte_gcr3_table(struct amd_iommu *iommu,
-+			       struct iommu_dev_data *dev_data,
-+			       struct dev_table_entry *target)
-+{
-+	struct gcr3_tbl_info *gcr3_info = &dev_data->gcr3_info;
-+	u64 tmp, gcr3;
-+
-+	if (!gcr3_info->gcr3_tbl)
-+		return;
-+
-+	pr_debug("%s: devid=%#x, glx=%#x, giov=%#x, gcr3_tbl=%#llx\n",
-+		 __func__, dev_data->devid, gcr3_info->glx, gcr3_info->giov,
-+		 (unsigned long long)gcr3_info->gcr3_tbl);
-+
-+	tmp = gcr3_info->glx;
-+	target->data[0] |= (tmp & DTE_GLX_MASK) << DTE_GLX_SHIFT;
-+	if (gcr3_info->giov)
-+		target->data[0] |= DTE_FLAG_GIOV;
-+	target->data[0] |= DTE_FLAG_GV;
-+
-+	/* First mask out possible old values for GCR3 table */
-+	tmp = DTE_GCR3_VAL_A(~0ULL) << DTE_GCR3_SHIFT_A;
-+	target->data[0] &= ~tmp;
-+	tmp = DTE_GCR3_VAL_B(~0ULL) << DTE_GCR3_SHIFT_B;
-+	tmp |= DTE_GCR3_VAL_C(~0ULL) << DTE_GCR3_SHIFT_C;
-+	target->data[1] &= ~tmp;
-+
-+	gcr3 = iommu_virt_to_phys(gcr3_info->gcr3_tbl);
-+
-+	/* Encode GCR3 table into DTE */
-+	tmp = DTE_GCR3_VAL_A(gcr3) << DTE_GCR3_SHIFT_A;
-+	target->data[0] |= tmp;
-+	tmp = DTE_GCR3_VAL_B(gcr3) << DTE_GCR3_SHIFT_B;
-+	tmp |= DTE_GCR3_VAL_C(gcr3) << DTE_GCR3_SHIFT_C;
-+	target->data[1] |= tmp;
-+
-+	/* Use system default */
-+	tmp = amd_iommu_gpt_level;
-+
-+	/* Mask out old values for GuestPagingMode */
-+	target->data[2] &= ~(0x3ULL << DTE_GPT_LEVEL_SHIFT);
-+	target->data[2] |= (tmp << DTE_GPT_LEVEL_SHIFT);
-+}
-+
- static void set_dte_entry(struct amd_iommu *iommu,
- 			  struct iommu_dev_data *dev_data)
- {
--	u64 pte_root = 0;
--	u64 flags = 0;
--	u32 old_domid;
--	u16 devid = dev_data->devid;
- 	u16 domid;
-+	u16 devid = dev_data->devid;
- 	struct protection_domain *domain = dev_data->domain;
-+	struct dev_table_entry target = {.data = {0, 0, 0, 0}};
- 	struct dev_table_entry *dev_table = get_dev_table(iommu);
- 	struct gcr3_tbl_info *gcr3_info = &dev_data->gcr3_info;
-+	u32 old_domid = dev_table[devid].data[1] & DEV_DOMID_MASK;
- 
--	if (gcr3_info && gcr3_info->gcr3_tbl)
-+	if (gcr3_info->gcr3_tbl)
- 		domid = dev_data->gcr3_info.domid;
- 	else
- 		domid = domain->id;
- 
-+	/*
-+	 * Need to get the current value in dte[1,2] because they contain
-+	 * interrupt-remapping settings, which has been programmed earlier.
-+	 */
-+	target.data[1] = dev_table[devid].data[1];
-+	target.data[2] = dev_table[devid].data[2];
-+
- 	if (domain->iop.mode != PAGE_MODE_NONE)
--		pte_root = iommu_virt_to_phys(domain->iop.root);
-+		target.data[0] = iommu_virt_to_phys(domain->iop.root);
- 
--	pte_root |= (domain->iop.mode & DEV_ENTRY_MODE_MASK)
-+	target.data[0] |= (domain->iop.mode & DEV_ENTRY_MODE_MASK)
- 		    << DEV_ENTRY_MODE_SHIFT;
- 
--	pte_root |= DTE_FLAG_IR | DTE_FLAG_IW | DTE_FLAG_V;
-+	target.data[0] |= DTE_FLAG_IR | DTE_FLAG_IW | DTE_FLAG_V;
- 
- 	/*
- 	 * When SNP is enabled, Only set TV bit when IOMMU
- 	 * page translation is in use.
- 	 */
- 	if (!amd_iommu_snp_en || (domid != 0))
--		pte_root |= DTE_FLAG_TV;
--
--	flags = dev_table[devid].data[1];
-+		target.data[0] |= DTE_FLAG_TV;
- 
- 	if (dev_data->ats_enabled)
--		flags |= DTE_FLAG_IOTLB;
-+		target.data[1] |= DTE_FLAG_IOTLB;
- 
- 	if (dev_data->ppr)
--		pte_root |= 1ULL << DEV_ENTRY_PPR;
-+		target.data[0] |= 1ULL << DEV_ENTRY_PPR;
- 
- 	if (domain->dirty_tracking)
--		pte_root |= DTE_FLAG_HAD;
--
--	if (gcr3_info && gcr3_info->gcr3_tbl) {
--		u64 gcr3 = iommu_virt_to_phys(gcr3_info->gcr3_tbl);
--		u64 glx  = gcr3_info->glx;
--		u64 tmp;
--
--		pte_root |= DTE_FLAG_GV;
--		pte_root |= (glx & DTE_GLX_MASK) << DTE_GLX_SHIFT;
--
--		/* First mask out possible old values for GCR3 table */
--		tmp = DTE_GCR3_VAL_B(~0ULL) << DTE_GCR3_SHIFT_B;
--		flags    &= ~tmp;
-+		target.data[0] |= DTE_FLAG_HAD;
- 
--		tmp = DTE_GCR3_VAL_C(~0ULL) << DTE_GCR3_SHIFT_C;
--		flags    &= ~tmp;
--
--		/* Encode GCR3 table into DTE */
--		tmp = DTE_GCR3_VAL_A(gcr3) << DTE_GCR3_SHIFT_A;
--		pte_root |= tmp;
--
--		tmp = DTE_GCR3_VAL_B(gcr3) << DTE_GCR3_SHIFT_B;
--		flags    |= tmp;
--
--		tmp = DTE_GCR3_VAL_C(gcr3) << DTE_GCR3_SHIFT_C;
--		flags    |= tmp;
--
--		if (amd_iommu_gpt_level == PAGE_MODE_5_LEVEL) {
--			dev_table[devid].data[2] |=
--				((u64)GUEST_PGTABLE_5_LEVEL << DTE_GPT_LEVEL_SHIFT);
--		}
--
--		/* GIOV is supported with V2 page table mode only */
--		if (pdom_is_v2_pgtbl_mode(domain))
--			pte_root |= DTE_FLAG_GIOV;
--	}
-+	target.data[1] &= ~DEV_DOMID_MASK;
-+	target.data[1] |= domid;
- 
--	flags &= ~DEV_DOMID_MASK;
--	flags |= domid;
-+	set_dte_gcr3_table(iommu, dev_data, &target);
- 
--	old_domid = dev_table[devid].data[1] & DEV_DOMID_MASK;
--	dev_table[devid].data[1]  = flags;
--	dev_table[devid].data[0]  = pte_root;
-+	dev_table[devid].data[0] = target.data[0];
-+	dev_table[devid].data[1] = target.data[1];
-+	dev_table[devid].data[2] = target.data[2];
- 
- 	/*
- 	 * A kdump kernel might be replacing a domain ID that was copied from
--- 
-2.34.1
-
+I'd suggest using PG_reclaim.  You also need to add PG_partially_mapped
+to PAGE_FLAGS_SECOND.  You might get away without that if you're
+guaranteeing it'll always be clear when you free the folio; I don't
+understand this series so I don't know if that's true or not.
 
