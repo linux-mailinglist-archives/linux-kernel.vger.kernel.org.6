@@ -1,70 +1,47 @@
-Return-Path: <linux-kernel+bounces-289797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A708954BD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:07:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E4DD954BDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:08:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 889212856DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:07:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 489F31F25503
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCAD1BCA1D;
-	Fri, 16 Aug 2024 14:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303871BE250;
+	Fri, 16 Aug 2024 14:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LgJJazgh"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iYc5adX2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC19B1BC090
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 14:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BF91E495;
+	Fri, 16 Aug 2024 14:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723817085; cv=none; b=ft3e8n0ra+/i1r1rRJQhvOKN8RUXCAuQgLWcGEk4YPyNf26gOwpCpzNUQ4e+tIAF1mfJfaGbjy6xRlLWgwv4VyCl99k9Io1yqWx/YO0+pwA4UFfCU+Fn97z8ECeXSEEUWStj3z456UhW7v8NOEHiCQqYM0alzhlVjC/9PTygMZg=
+	t=1723817142; cv=none; b=PRwW9dPYbvBpwJGqV7LqGZA+cuiJ0fqoLNo3soJHZ2x/CrUNGceQf+f11sqNINF8VtZj7DbJHsz4WEQpKmOtm/8epYtma9qYQukCPilXDzR3C2QKlVb8nVdj5FN1git8amENpVicPEk53qK85Hsbqge7+zBnZf7vV3eND6yPb4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723817085; c=relaxed/simple;
-	bh=DKdtCQNn1Ae1ClNw9sfwALxFvuUJ0xe9hgH7+K7WQNI=;
+	s=arc-20240116; t=1723817142; c=relaxed/simple;
+	bh=5B+KtYZvyF6QxYfxPpQIVBG0PNxfFcRQ4s0rKDMjriI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VUlOAAwtpfuOBPoYPNMG6RwGWtx4mdUPL0EwziiSSZBMTKn5U3MjGDnPzpJZrI0sthhI0IhfjnBA2B9GeA8xG5d8qgoW5yVlohE8jqFy6c/jifbF3Jj5KPQRAkN8y79n1aFEYOZ196l5oLPqsVtoH/Q+INT0ENofXBK/D5EdWLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LgJJazgh; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fdb28b1c16so1300725ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:04:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1723817083; x=1724421883; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LJx6+ABJszFBmRQz7LIBes/dgvF9i5l9+CDarpSPbAA=;
-        b=LgJJazghTbBqbF3Mgv8hTOL2D+w+tefrDzZkIfq5b1Tdy2Bxh4sDz1fJPMi4EN946u
-         UAgtk9dHXL6yfgmRiJXW4Ir042h8cWFrJA0DCWbb30Ac7DDvtqRuvvGknFADCTyDk/zQ
-         SFMHpZRUV72LD5YneAvIRr6mCgGyWNHWGX7s4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723817083; x=1724421883;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LJx6+ABJszFBmRQz7LIBes/dgvF9i5l9+CDarpSPbAA=;
-        b=QXQOrGPVFINoB2fFfMJTJgT5YxYrMQGyXXhDVGAKbQIJS0GNOv7DLs9x2GV4nqdnOt
-         O8+ZxXyViv0gNTKGwl7tkvDqRXZq4WEXnAtGDESlzmqTznuKB3rlMRVrSHho2kDJc7JQ
-         /uuRumH0WNyTYE11FuanT80the7yzURZvPuLX42hmC/fhRSI0VckI+ZEd6gIfV5wkjYT
-         5CRLpKArA3OM4yTBmZyHkh6W5V/050VEg8gSt8CUWrIsjx2QMj3urjVA0oOlP8RT7nFv
-         F89e492cHCG5x7LbBLF3YsKARgQie4h2zi4tBsCw31c/GIt0jZbsFBZE0hvkHI0jJZiq
-         p5yg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8PPkg+WucjOPPxTxkdJphEaMCIgCKbpKMoM+6A24VQi8pflnXOUYgZhEK3aHlk+m5hkVZ+CVa/5MZVqU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUJn5owsDK9aRjK9jhKgFr4WREP6rNZ1ySxxikryOWQA9nL+Q1
-	NkGZmZEDqEN/qb5qV8f2BGZWgfUxAFyUOzBLvian1XbmG9OuDUm6d4OueQI2fss=
-X-Google-Smtp-Source: AGHT+IHRjCaeXF3zQ9rBloJkIn9HWEdDyDwMW64ZBBRl6S4m9hTKrEeF/N+BLY3ZO8uBXzbJ9eEvxg==
-X-Received: by 2002:a17:903:52:b0:202:c94:1462 with SMTP id d9443c01a7336-2020c941a8amr10299505ad.5.1723817082576;
-        Fri, 16 Aug 2024 07:04:42 -0700 (PDT)
-Received: from [192.168.23.95] ([126.249.175.210])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b636b07fsm3035053a12.86.2024.08.16.07.04.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Aug 2024 07:04:41 -0700 (PDT)
-Message-ID: <fdd141e8-337b-4f6c-a721-7d20dc63b50d@linuxfoundation.org>
-Date: Fri, 16 Aug 2024 08:04:41 -0600
+	 In-Reply-To:Content-Type; b=HX/ParAu4fFkoC9goOa7oxKkvrp839MEuNovp0Z9OHBESuAqIrs2VmZNKb/4bfMoBYpKnAX1Xj1iQODcVjjP0dyEiPE63ASuPr/o1FsDNWQI1crby7fuv5CYZN0xqzs3SN4KwfOF+ZdI43Kx9POs83/8FPXJApyezL4VnE0uS1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iYc5adX2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2003FC32782;
+	Fri, 16 Aug 2024 14:05:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723817141;
+	bh=5B+KtYZvyF6QxYfxPpQIVBG0PNxfFcRQ4s0rKDMjriI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iYc5adX20RPqzjolC3YIly+hMGENPjEstYNqLJ9swM4HAn7nCvq3hzWJv9QYn2+FT
+	 AT3hQQP/QXxOnOAp1Y4MwVhhWwXoFshWHYYesJvqrD+epgW/QM9rDlSBQx9S1eStkC
+	 kr/bQUmN15TYLtD1U8AeAIm+x26RGo3J9x0VpLb4qBGf8seQ84G1d3jhzb3fSKqYzD
+	 2VHn3aPpbyfOaPh5r8/D2vr6PQ5Yn5L1N6HPUS1yHQBpF8UwlqCkcXBxT1hQpTIQyw
+	 IBCLrEU0655s8qGQagHT++K4NfleoA5JQqJe6ZHIvMLsA6wcdzoWlE473+9Y3039E9
+	 tcHTGr6z5TYrw==
+Message-ID: <9113fd98-f58c-485b-8d7a-1ac0c541c04a@kernel.org>
+Date: Fri, 16 Aug 2024 16:05:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,138 +49,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] selftests/tracing: Add hist poll() support test
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Steven Rostedt <rostedt@goodmis.org>, Shuah Khan <shuah@kernel.org>
-Cc: Tom Zanussi <zanussi@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <172377544331.67914.7474878424159759789.stgit@devnote2>
- <172377547205.67914.494998437883733530.stgit@devnote2>
+Subject: Re: [PATCH 1/2] dt-bindings: misc: qcom,fastrpc: document new domain
+ ID
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Amol Maheshwari <amahesh@qti.qualcomm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Tengfei Fan <quic_tengfan@quicinc.com>, Ling Xu <quic_lxu5@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20240816102345.16481-1-brgl@bgdev.pl>
+ <c0af2eec-c289-4147-aca2-aac438451f5e@kernel.org>
+ <CAMRc=MdmgcRUfYGo25spPOKqjpebiaZUP34B7PuuoAxMAupAYA@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <172377547205.67914.494998437883733530.stgit@devnote2>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CAMRc=MdmgcRUfYGo25spPOKqjpebiaZUP34B7PuuoAxMAupAYA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 8/15/24 20:31, Masami Hiramatsu (Google) wrote:
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On 16/08/2024 14:29, Bartosz Golaszewski wrote:
+> On Fri, Aug 16, 2024 at 1:21 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 16/08/2024 12:23, Bartosz Golaszewski wrote:
+>>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>>
+>>> Add "cdsp1" as the new supported label for the CDSP1 fastrpc domain.
+>>>
+>>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>> ---
+>>>  Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml b/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
+>>> index c27a8f33d8d7..2a5b18982804 100644
+>>> --- a/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
+>>> +++ b/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
+>>> @@ -26,6 +26,7 @@ properties:
+>>>        - mdsp
+>>>        - sdsp
+>>>        - cdsp
+>>> +      - cdsp1
+>>
+>> Are there more than one cdsp domains? Why adding suffixes? Driver source
+>> code does not have "cdsp1" domain, so this is confusing.
+>>
+>> Best regards,
+>> Krzysztof
+>>
 > 
-> Add a testcase for poll() on hist file. This introduces a helper binary
-> to the ftracetest, because there is no good way to reliably execute
-> poll() on hist file.
-> 
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> ---
->   Changes in v4:
->    - Use getopt() in poll.c (command options are changed)
->    - Update test code according to the new command options.
->   Changes in v2:
->    - Update poll command to support both of POLLIN and POLLPRI, and timeout.
->    - Identify unsupported stable kernel if poll-in returns soon.
->    - Test both of POLLIN and POLLPRI.
-> ---
->   tools/testing/selftests/ftrace/Makefile            |    2 +
->   tools/testing/selftests/ftrace/poll.c              |   74 ++++++++++++++++++++
->   .../ftrace/test.d/trigger/trigger-hist-poll.tc     |   74 ++++++++++++++++++++
->   3 files changed, 150 insertions(+)
->   create mode 100644 tools/testing/selftests/ftrace/poll.c
->   create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc
-> 
-> diff --git a/tools/testing/selftests/ftrace/Makefile b/tools/testing/selftests/ftrace/Makefile
-> index a1e955d2de4c..49d96bb16355 100644
-> --- a/tools/testing/selftests/ftrace/Makefile
-> +++ b/tools/testing/selftests/ftrace/Makefile
-> @@ -6,4 +6,6 @@ TEST_PROGS := ftracetest-ktap
->   TEST_FILES := test.d settings
->   EXTRA_CLEAN := $(OUTPUT)/logs/*
->   
-> +TEST_GEN_PROGS = poll
-> +
->   include ../lib.mk
-> diff --git a/tools/testing/selftests/ftrace/poll.c b/tools/testing/selftests/ftrace/poll.c
-> new file mode 100644
-> index 000000000000..584f159654b1
-> --- /dev/null
-> +++ b/tools/testing/selftests/ftrace/poll.c
-> @@ -0,0 +1,74 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Simple poll on a file.
-> + *
-> + * Copyright (c) 2024 Google LLC.
-> + */
-> +
-> +#include <errno.h>
-> +#include <fcntl.h>
-> +#include <poll.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <string.h>
-> +#include <unistd.h>
-> +
-> +#define BUFSIZE 4096
-> +
-> +/*
-> + * Usage:
-> + *  poll [-I|-P] [-t timeout] FILE
-> + */
-> +int main(int argc, char *argv[])
-> +{
-> +	struct pollfd pfd = {.events = POLLIN};
-> +	char buf[BUFSIZE];
-> +	int timeout = -1;
-> +	int ret, opt;
-> +
-> +	while ((opt = getopt(argc, argv, "IPt:")) != -1) {
-> +		switch (opt) {
-> +		case 'I':
-> +			pfd.events = POLLIN;
-> +			break;
-> +		case 'P':
-> +			pfd.events = POLLPRI;
-> +			break;
-> +		case 't':
-> +			timeout = atoi(optarg);
-> +			break;
-> +		default:
-> +			fprintf(stderr, "Usage: %s [-I|-P] [-t timeout] FILE\n",
-> +				argv[0]);
-> +			return -1;
-> +		}
-> +	}
-> +	if (optind >= argc) {
-> +		fprintf(stderr, "Error: Polling file is not specified\n");
-> +		return -1;
-> +	}
-> +
-> +	pfd.fd = open(argv[optind], O_RDONLY);
-> +	if (pfd.fd < 0) {
-> +		fprintf(stderr, "failed to open %s", argv[optind]);
-> +		perror("open");
-> +		return -1;
-> +	}
-> +
-> +	/* Reset poll by read if POLLIN is specified. */
-> +	if (pfd.events & POLLIN)
-> +		do {} while (read(pfd.fd, buf, BUFSIZE) == BUFSIZE);
-> +
-> +	ret = poll(&pfd, 1, timeout);
-> +	if (ret < 0 && errno != EINTR) {
-> +		perror("poll");
-> +		return -1;
-> +	}
-> +	close(pfd.fd);
-> +
-> +	/* If timeout happned, return code is 0 */
+> It does, Srini picked up this patch earlier today. I'm not an expert
+> in fast RPC but it looks like the domain ID number matters here.
 
-Looks like you missed this one :) Otherwise looks good to me.
+Ah, ok, I did not see driver change here so it was a bit confusing.
 
-With this fixed
+Best regards,
+Krzysztof
 
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
-
-thanks,
--- Shuah
 
