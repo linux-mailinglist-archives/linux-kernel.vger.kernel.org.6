@@ -1,45 +1,47 @@
-Return-Path: <linux-kernel+bounces-288994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA7F954102
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:17:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA664954108
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89CECB2162B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 05:17:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 319EA28A7D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 05:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E116082899;
-	Fri, 16 Aug 2024 05:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070FA83CD9;
+	Fri, 16 Aug 2024 05:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LNu3KoHX"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BkoxRxH4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6B478C8F
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 05:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E1A74E26;
+	Fri, 16 Aug 2024 05:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723785431; cv=none; b=O3elwNrPCaan93N05/Odvz4BCFea2qq7kkz+zZtDkKTFKxvfRpm6rXa0b53FAViIWdyqaWrrS74PwW/5r7aZaZ/Vvoz+M5P+6BviKZH7/PQaq9+TrGOFYV8IF7hy+/MSkrXzuysT3xDTbxX2vMtM3lofqXUQZkLfVGk+Sd61NF4=
+	t=1723785446; cv=none; b=LzLNDgyXz6mGaWsNWUQJiyAthV8c2iZZKCWZOQiGyVqFifDlJsrR8xw4ySa6xXUehb86R41A6ap1sjZ9fV8c4RUhbJ6enWutRHtUZaVojUE7kjWf1QitZGbqjQYlqEyune2slxmWbewqmYxLMsdsijXDfFeyjfZvE1/dY7k7GPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723785431; c=relaxed/simple;
-	bh=nRAfanlxUVlZDEHmgrm3fNjyplH4PjupK7li4GlesnM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=W4w/TfXEID+VkhVqSqqWsjvmls5C/QhwunhUGMPbPCH8ku2Id4RHLASh7iVCcVvk3q1MOtKR4A3AfC4EGTF6mK8arB1w0CTzebb4g14yO8P8MNc+d0SDKz2HrJ3LM4fJpGuPqzyOmUT3LEyEK08W0bLjqLgoz9hZnVOLW/kjgQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LNu3KoHX; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1723785426; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
-	bh=MIt4+z4yVxnBi0/X+/xarmiTleVh8KRAyG6uQFIHiP4=;
-	b=LNu3KoHXz0RmeBDRsI3n+38o1jIQ/GAqZrOzOPxIn7kJPyCXbRDwAOGQaKulsVEKQu+gfYr8fFWjT5Qztos9bzrJEkSfocOesBsZnWJJ0Tm5UJPjoYip9XmqTyEyFBpsoFhaQaTesowrpb56WXchtOpr5B6IG2cJZkjYkalCVfs=
-Received: from 30.221.129.229(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WCzBcHy_1723785425)
-          by smtp.aliyun-inc.com;
-          Fri, 16 Aug 2024 13:17:06 +0800
-Message-ID: <fc4981c1-b7f1-4295-a0f8-a293b5610f79@linux.alibaba.com>
-Date: Fri, 16 Aug 2024 13:17:04 +0800
+	s=arc-20240116; t=1723785446; c=relaxed/simple;
+	bh=ozzdcoy2xSO92hku54o19Kw+VhOgFTn5OSHHpjVAkc8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=qQaWVwJ7h/YERV14LSNhUS81jLNh3aN1jCpUhZVoAeewidkC/JbrsbT2oRyWf9tQxEeb4jZhL6TIQ6zPrhfCyLKDq+IJQFHOLPHAh8tdZ/DVy7RgBNyRQ0bCkwYTzvoAT9v0UhElPpMKZvKAnCIUZugaZr82+hgPoMjOOu34beI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BkoxRxH4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97D50C32782;
+	Fri, 16 Aug 2024 05:17:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723785445;
+	bh=ozzdcoy2xSO92hku54o19Kw+VhOgFTn5OSHHpjVAkc8=;
+	h=Date:Subject:List-Id:To:References:From:In-Reply-To:From;
+	b=BkoxRxH4lt4T3RPVtPlAA/eyBulUWozHnxTJsney2NrXw9wP0z+Y2kDH63rpXnIoa
+	 ENMIbswb19SBzRlbzf65r900VGWzydebYFaQKI7lXTVcLEkZGxxxug+mj+yxw6KtgU
+	 xWZ5wKYLSeQshC0tDSGHuCw/gJ9CVrOq9AqgWeyqQVk43sxbe1tlESxtIDFRGgFtKd
+	 Tf21CHWTY0Gvxo//qv91j0YnsmAigNhFDmRChrH/Jpq6Jb2Hl/1c6Ru8+VH3qafFPH
+	 FA37NRCYzrnEJemjI9naljcHcvxQb47vJQc2OgJnYantxsvALPVeFj/62FqVQYS/kM
+	 7SDuXMBrVjVmg==
+Message-ID: <2b40d7e4-10f5-406a-9ac9-f9292a52a659@kernel.org>
+Date: Fri, 16 Aug 2024 07:17:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,81 +49,124 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/migrate: fix deadlock in migrate_pages_batch() on
- large folios
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Huang, Ying" <ying.huang@intel.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Gao Xiang <xiang@kernel.org>
-References: <20240728154913.4023977-1-hsiangkao@linux.alibaba.com>
- <87plqx0yh2.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <d93b06a5-20f2-41bd-a7f5-d06906d88ba4@linux.alibaba.com>
- <20240815220224.d7970835d5c12b4833bd04dc@linux-foundation.org>
- <aa5ac560-1dcc-45b6-8e24-0e9cb59feb18@linux.alibaba.com>
-In-Reply-To: <aa5ac560-1dcc-45b6-8e24-0e9cb59feb18@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v1 06/10] dt-bindings: arm: aspeed: Add aspeed,ast2700-evb
+ compatible string
+To: Kevin Chen <kevin_chen@aspeedtech.com>, "robh@kernel.org"
+ <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>, "joel@jms.id.au"
+ <joel@jms.id.au>, "andrew@codeconstruct.com.au"
+ <andrew@codeconstruct.com.au>, "lee@kernel.org" <lee@kernel.org>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>, "arnd@arndb.de" <arnd@arndb.de>,
+ "olof@lixom.net" <olof@lixom.net>, "soc@kernel.org" <soc@kernel.org>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
+ "shawnguo@kernel.org" <shawnguo@kernel.org>,
+ "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
+ "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+ "nfraprado@collabora.com" <nfraprado@collabora.com>,
+ "u-kumar1@ti.com" <u-kumar1@ti.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ BMC-SW <BMC-SW@aspeedtech.com>
+References: <20240726110355.2181563-1-kevin_chen@aspeedtech.com>
+ <20240726110355.2181563-7-kevin_chen@aspeedtech.com>
+ <371a7c7b-de32-4f97-b4c7-3c0ad0732e1a@kernel.org>
+ <PSAPR06MB4949F7F617DB4A371567EB4789812@PSAPR06MB4949.apcprd06.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <PSAPR06MB4949F7F617DB4A371567EB4789812@PSAPR06MB4949.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On 2024/8/16 13:12, Gao Xiang wrote:
+On 16/08/2024 06:08, Kevin Chen wrote:
+> Hi Krzk,
 > 
-> Hi Andrew,
-> 
-> On 2024/8/16 13:02, Andrew Morton wrote:
->> On Mon, 29 Jul 2024 09:58:02 +0800 Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
->>
->>>> For the fix, I think that we should still respect migrate_mode because
->>>> users may prefer migration success over blocking.
->>>>
->>>> @@ -1492,11 +1492,17 @@ static int unmap_and_move_huge_page(new_folio_t get_new_folio,
->>>>        return rc;
->>>>    }
->>>> -static inline int try_split_folio(struct folio *folio, struct list_head *split_folios)
->>>> +static inline int try_split_folio(struct folio *folio, struct list_head *split_folios,
->>>> +                  enum migrate_mode mode)
->>>>    {
->>>>        int rc;
->>>> -    folio_lock(folio);
->>>> +    if (mode == MIGRATE_ASYNC) {
->>>> +        if (!folio_trylock(folio))
->>>> +            return -EAGAIN;
->>>> +    } else {
->>>> +        folio_lock(folio);
->>>> +    }
->>>>        rc = split_folio_to_list(folio, split_folios);
->>>>        folio_unlock(folio);
->>>>        if (!rc)
+>>> ---
+>>>  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 5 +++++
+>>>  1 file changed, 5 insertions(+)
 >>>
->>> Okay, yeah it looks better since it seems I missed the fallback
->>> part in migrate_pages_sync().
+>>> diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+>>> b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+>>> index 71c31c08a8ad..b21551817f44 100644
+>>> --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+>>> +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+>>> @@ -99,4 +99,9 @@ properties:
+>>>                - ufispace,ncplite-bmc
+>>>            - const: aspeed,ast2600
 >>>
->>> Let me send the next version to follow your advice, thanks.
+>>> +      - description: AST2700 based boards
+>>> +        items:
+>>> +          - enum:
+>>> +              - aspeed,ast2700-evb
 >>
->> The author seems to have disappeared.  Should we merge this as-is or
->> does someone want to take a look at developing a v2?
-> 
-> I've replied your email last week, I'm not sure why it has not
-> been addressed?
-> 
-> https://lore.kernel.org/linux-mm/20240729021306.398286-1-hsiangkao@linux.alibaba.com/
-> 
-> The patch in your queue is already v2? No?
+>> NAK, this cannot be alone. Look at all other examples. Why are you doing
+>> things differently?
+> Disagree, ast2700-evb is 7th generation IC in ASPEED.
 
-Really confused about this, since the comment above was about v1.
-and v2 is already sent (in July 29) and in -next for two weeks
-with
+I gave you argument and you just respond "disagree" with unrelated
+statement?
+> It not in the sub-set of AST2400/AST2500/AST2600 based boards.
 
-Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
-Acked-by: David Hildenbrand <david@redhat.com>
 
-What else I need to do to resolve this already resolved comment
-so that I could enable large folios without deadlocks anymore?
+? That does not answer at all my concerns. Bring me any example doing
+this that way: single board compatible.
 
-Thanks,
-Gao Xiang
+Answer to the argument, instead of bringing useless text "ast is a
+board". Yeah, of course it is. What else could it be? A ship? A car?
 
-> 
-> Thanks,
-> Gao Xiang
+Best regards,
+Krzysztof
+
 
