@@ -1,101 +1,151 @@
-Return-Path: <linux-kernel+bounces-288852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A741E953FA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:30:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22311953FAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C9C31F22EB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 02:30:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF56F286183
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 02:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E38F47F7A;
-	Fri, 16 Aug 2024 02:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C45842AA3;
+	Fri, 16 Aug 2024 02:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N51vbFM+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oU/rC2ij"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7AC226AEC;
-	Fri, 16 Aug 2024 02:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596DF2BCFF;
+	Fri, 16 Aug 2024 02:30:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723775430; cv=none; b=rMhorextXK5OsDyWLEw3cYVg2Ui5kbbFs3DyUvMzb59zCI2TgIEQHow1kCb3pmg+MR4owjv4smuiKOg439JtnmelYNErWVB/DywLM9kJXv/blLJjhNraOltdltEeJXMz6F/if9q2K1kviZ0psCKl7NP+ycL8PoNlW5jc3UfyCEs=
+	t=1723775448; cv=none; b=myz94hzpJaiL+dNwwZRyl0+fIo5LykeK2jc73ilbFhCgznTdNzSj2o+V+XlD5DdT48NqVqEy8VJIAtBjN7p3uboeLAirEy5b+mnV0qEUm39mO7QRQE2FF6HK86VUEb8zgpsZNx4EzKi71fQqTJv2pvGNIGNbQD8KHkEzmu0PqWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723775430; c=relaxed/simple;
-	bh=hzUJ/E2eUKeArWi0F2V9BHPbmRWaVSw9I47k+z0KSIQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=K6LjIKNAYCCxemzdmrrSfncuNJWmV7jrmMWF/sp0pMaQzk/LW6lzjgLDi6qh7I8tncJUeN39A1tafRVlOTatSHmSKCwoymiVJ0AQpvy87CPXod6/anTIyjDuGBs71RK8j2UH2e0KoLP84da3sDh4qrB/VDqWDfy79ZlF5izdwMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N51vbFM+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34585C32786;
-	Fri, 16 Aug 2024 02:30:30 +0000 (UTC)
+	s=arc-20240116; t=1723775448; c=relaxed/simple;
+	bh=6sTPTHmCqB521M+gs5j5T2U6Eqy5Os/J32FMSdEHQwY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Sdo+hcb+rZCAqMwg2cjDRdiahOQ3Ge81d9t/Kn0NELHnZTLOyaGLr9qbKnyUX34bnDFUTwswkktZ72gfNJtcS5v2Pl5pfM9yzIMOOhyBT3d6melKyN7jVM/Ya8zkiOtli+AMAXdYL8bxsCPjnNQWkPM9kD7OAYLsVULMq430dWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oU/rC2ij; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECAE4C32786;
+	Fri, 16 Aug 2024 02:30:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723775430;
-	bh=hzUJ/E2eUKeArWi0F2V9BHPbmRWaVSw9I47k+z0KSIQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=N51vbFM+burVcbcX0eUAQuB4jYwayU465oQ1beIs9J55/doOCcPr2zDPHRRLWdOOD
-	 aVJtsrEqCMFqWMF4pv8mfIAZhIuctMOKmQY/ZAkmTNb8GxIb8NXFslXVyuEH8o935z
-	 vNN9XdoJzHVZQ5jGp/QwGQx531B3PGCBcdhf8wIkqX4hie2+k5Aa8Ilzz8MH6kZwlI
-	 RdF3aeopCh4MmJBTo1ZxeASeaZxrQbwjgU6vR9AQWrLI42gzrbS3ckXgcrf+2oHkVr
-	 /Yo+1KzUMUImcGGfrWjop+aUUKqde90P35ReXB1YUGH/cQ7yIIsdh/edeTfSzwwvHW
-	 ozj1Ako3I+7Eg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD18382327A;
-	Fri, 16 Aug 2024 02:30:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1723775447;
+	bh=6sTPTHmCqB521M+gs5j5T2U6Eqy5Os/J32FMSdEHQwY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=oU/rC2ijUo3o5kDBnNfb9x2sbpqrjeyYftu5ssZyDQsd/qs10T1QTsQgSP4OMDIXi
+	 Raoi0cxKYneLHyjQTzIF1DAyuz4g8xF8ZF07sMa1Z2vIZ27sUcR8o4HTsLgYHwqMvZ
+	 CrNWecMxIAF5Qs63jrlWwZ2HWjOdbDIiCIOyv29+K7QqHjC2pFjIBsvF8dn8KqeIHU
+	 YjlPoLITG8c3cgXd00zVCaTDIGmZsaUI0VdJTpdyVz9o4Z2y5kAD3CVFXfePvWp5yi
+	 dzggA12KOtMehGasaHMSbr2a4LC8z6oRFRQQf1Ewk+0p6ai1AX9MGgV1PO5FuBagpe
+	 BE7XQLRwaWq3w==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Shuah Khan <shuah@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Tom Zanussi <zanussi@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH v4 0/3] tracing: Support poll on event hist file
+Date: Fri, 16 Aug 2024 11:30:43 +0900
+Message-Id: <172377544331.67914.7474878424159759789.stgit@devnote2>
+X-Mailer: git-send-email 2.34.1
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v7 0/4] virtio-net: synchronize op/admin state
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172377542949.3096750.12975894410138970761.git-patchwork-notify@kernel.org>
-Date: Fri, 16 Aug 2024 02:30:29 +0000
-References: <20240814052228.4654-1-jasowang@redhat.com>
-In-Reply-To: <20240814052228.4654-1-jasowang@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- virtualization@lists.linux.dev, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, venkat.x.venkatsubra@oracle.com,
- gia-khanh.nguyen@oracle.com
 
-Hello:
+Hi,
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Here is the v4 patch to support polling on event 'hist' file.
+The previous version is here;
 
-On Wed, 14 Aug 2024 13:22:24 +0800 you wrote:
-> Hi All:
-> 
-> This series tries to synchronize the operstate with the admin state
-> which allows the lower virtio-net to propagate the link status to the
-> upper devices like macvlan.
-> 
-> This is done by toggling carrier during ndo_open/stop while doing
-> other necessary serialization about the carrier settings during probe.
-> 
-> [...]
+https://lore.kernel.org/all/172359427367.323666.6446548762874507863.stgit@devnote2/
 
-Here is the summary with links:
-  - [net-next,v7,1/4] virtio: rename virtio_config_enabled to virtio_config_core_enabled
-    https://git.kernel.org/netdev/net-next/c/0cb70ee4a6ee
-  - [net-next,v7,2/4] virtio: allow driver to disable the configure change notification
-    https://git.kernel.org/netdev/net-next/c/224de6f886f8
-  - [net-next,v7,3/4] virtio-net: synchronize operstate with admin state on up/down
-    https://git.kernel.org/netdev/net-next/c/df28de7b0050
-  - [net-next,v7,4/4] virtio-net: synchronize probe with ndo_set_features
-    https://git.kernel.org/netdev/net-next/c/c392d6019398
+This version uses getopt() in poll test command in [3/3] according to
+Shuah's comment in the previous thread.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Background
+----------
+There has been interest in allowing user programs to monitor kernel
+events in real time. Ftrace provides `trace_pipe` interface to wait
+on events in the ring buffer, but it is needed to wait until filling
+up a page with events in the ring buffer. We can also peek the
+`trace` file periodically, but that is inefficient way to monitor
+a randomely happening event.
+
+Overview
+--------
+This patch set allows user to `poll`(or `select`, `epoll`) on event
+histogram interface. As you know each event has its own `hist` file
+which shows histograms generated by trigger action. So user can set
+a new hist trigger on any event you want to monitor, and poll on the
+`hist` file until it is updated.
+
+There are 2 poll events are supported, POLLIN and POLLPRI. POLLIN
+means that there are any readable update on `hist` file and this
+event will be flashed only when you call read(). So, this is
+useful if you want to read the histogram periodically.
+The other POLLPRI event is for monitoring trace event. Like the
+POLLIN, this will be returned when the histogram is updated, but
+you don't need to read() the file and use poll() again.
+
+Note that this waits for histogram update (not event arrival), thus
+you must set a histogram on the event at first.
+
+Usage
+-----
+Here is an example usage:
+
+----
+TRACEFS=/sys/kernel/tracing
+EVENT=$TRACEFS/events/sched/sched_process_free
+
+# setup histogram trigger and enable event
+echo "hist:key=comm" >> $EVENT/trigger
+echo 1 > $EVENT/enable
+
+# Wait for update
+poll pri $EVENT/hist
+
+# Event arrived.
+echo "process free event is comming"
+tail $TRACEFS/trace
+----
+
+The 'poll' command is in the selftest patch.
+
+You can take this series also from here;
+
+https://git.kernel.org/pub/scm/linux/kernel/git/mhiramat/linux.git/log/?h=topic/event-hist-poll
+
+Thank you,
+
+---
+
+Masami Hiramatsu (Google) (3):
+      tracing/hist: Add poll(POLLIN) support on hist file
+      tracing/hist: Support POLLPRI event for poll on histogram
+      selftests/tracing: Add hist poll() support test
 
 
+ include/linux/trace_events.h                       |    5 +
+ kernel/trace/trace_events.c                        |   18 ++++
+ kernel/trace/trace_events_hist.c                   |  101 +++++++++++++++++++-
+ tools/testing/selftests/ftrace/Makefile            |    2 
+ tools/testing/selftests/ftrace/poll.c              |   74 +++++++++++++++
+ .../ftrace/test.d/trigger/trigger-hist-poll.tc     |   74 +++++++++++++++
+ 6 files changed, 271 insertions(+), 3 deletions(-)
+ create mode 100644 tools/testing/selftests/ftrace/poll.c
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc
+
+--
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
