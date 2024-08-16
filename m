@@ -1,278 +1,226 @@
-Return-Path: <linux-kernel+bounces-289885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99A33954CDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:48:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9D44954CBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D98BB21860
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:48:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62C1A1F23A62
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336731C57B6;
-	Fri, 16 Aug 2024 14:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66681BF32E;
+	Fri, 16 Aug 2024 14:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UGrlwPPT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b="JjTQLGGi"
+Received: from mail-4323.proton.ch (mail-4323.proton.ch [185.70.43.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD081C579B;
-	Fri, 16 Aug 2024 14:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3C21BE236
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 14:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723819493; cv=none; b=A/gV+Yw5MT69J7R0C+8EgWMW6dsyQZDH8X1h6TNZMxCCXCZLufgM3hS5qds2IrYFeHTHEHTjIzJHI1AoG93LjBlgBM2CFRZFKFTj9HgKKc5VgZnmh9ckN2pZom0xcvUK5CSlc0qEgV1Jv0cfZvhfvH0jzSbpTMRIWer/6ktGgCc=
+	t=1723819468; cv=none; b=vAfU4limIqOsn8+zrt8PMXtPlY/ISw8ol0zXOdO4ICHbMXnD+NXR4oKZhZSAc09gw2E4MsYMuyV6Zuif9GHD+9c0bhF3HC++3lYLjSP4/NiUk1qCGsqby60dj9g8HPXn8GuBn1t7ItoF6yeK4wQ7zFpiBu6Sg0ghyXm6yxl9pGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723819493; c=relaxed/simple;
-	bh=oy8Qxz9d7zPSmigFAM/yo7+9bCW3Y82VCZ4bNKpEe2Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=H0T2QyUlsLlKe3tiUyWA+L6olg13Abk6AMlA2jnIlOllkzVW/O9t2JLeLd1z5gS518kIKcHXnWoKWUu3SUsyELtLgyebnC28qoX9Xha500ilhIMANXzsWe/P75io0ubBjdzP5r7a+OKU5VsYHx1/IUCjRJM7SlTiaICFaLrlqs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UGrlwPPT; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723819491; x=1755355491;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:references:in-reply-to:to:cc;
-  bh=oy8Qxz9d7zPSmigFAM/yo7+9bCW3Y82VCZ4bNKpEe2Y=;
-  b=UGrlwPPT553GIsbeg++cMq4NPWdSlguuEVVKRu1wu9syQ67KqvuFSRxc
-   0adAh5+C9kKlzFxKWCzEzuX7VwxjZDGglFqDNXnnng0AoDnwB1Eh5Tjxi
-   2JLPuDTqbzsr6Z74vc4oaTJl/Q3vmcZqshQxxvgWP8FRMm4T2Q8wPU6F0
-   2nw18o8Uj830ffpCRIqJE5qlfn2jHqRBmTiR77a19LbqcsFf0D24L5MAZ
-   fckcBFAwEcvbT6K+d8Z6IwhsuLYgkW4SzagnhnxmlSlf2Vqd9ksqox0SD
-   OD6Kt4zDclBkSuIipveCCG4n0FlXXniuvMcIQYUZUTtQN5mpFHwIJ0e0s
-   g==;
-X-CSE-ConnectionGUID: V42n2+24Rfi68XyvpTNm2A==
-X-CSE-MsgGUID: GySDoMcPRKyBgF/VNmPh9g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="32753146"
-X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
-   d="scan'208";a="32753146"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 07:44:51 -0700
-X-CSE-ConnectionGUID: o896BSopTgCGEeut9RtcVQ==
-X-CSE-MsgGUID: csUaTJbWTkqD2cEzUChZNg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
-   d="scan'208";a="64086985"
-Received: from iweiny-mobl.amr.corp.intel.com (HELO localhost) ([10.125.111.52])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 07:44:50 -0700
-From: ira.weiny@intel.com
-Date: Fri, 16 Aug 2024 09:44:18 -0500
-Subject: [PATCH v3 10/25] cxl/port: Add endpoint decoder DC mode support to
- sysfs
+	s=arc-20240116; t=1723819468; c=relaxed/simple;
+	bh=Gc1o9cTUJaR+h1yUcosk0h+kJQ8Gs/QU31qzG4T87Rw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n0kP9w5NdQHsTXGzS7YCuSqAqOE5VCyF8+qDGDd3oFlWOmPyLgyTisaPYhDDRWmPdBB8aZ6V3i0u9iDcIw0Puet/+otFzoiPnIyoyi6HCqHp1yubEgLk1l29bBcjlNbUQ0+RyTV/OLYzUM/8R/hgtFaztDhmxpEKszDQx/1A/Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com; spf=pass smtp.mailfrom=yhndnzj.com; dkim=pass (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b=JjTQLGGi; arc=none smtp.client-ip=185.70.43.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yhndnzj.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yhndnzj.com;
+	s=protonmail; t=1723819464; x=1724078664;
+	bh=Gc1o9cTUJaR+h1yUcosk0h+kJQ8Gs/QU31qzG4T87Rw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=JjTQLGGikdm9o1KJKl5Wy2RXkAkVAlk2WRhuTLS+tj2GTKMACiDWbyLVz+xj5DUeF
+	 yt7pXmuEFlIYlNMzMEg+cGwYiWqMA5qAVlTITTF0XKbIQ5bKA536tY8eJOBysCVcOX
+	 iN5TQTWzMmSQgFJToxGs+tVNbJ08ko0Y4HgUhpcj+UMfQm9nQS22iX+BCZH5wp4eMk
+	 wIX232jFNlAit5iD1RqUbaV/x3J/sHvB3eCWXkh3NMFfWfkgRXfoTB/2t3P8WKlZ1w
+	 Yq2ALMWShSWVJdsLoOgTvMveUsPrV5ghncW41HIkScRxSTa9hu+b4iqTc4Lt6SmpHN
+	 awwDbuBpyTBzg==
+Date: Fri, 16 Aug 2024 14:44:19 +0000
+To: linux-kernel@vger.kernel.org
+From: Mike Yuan <me@yhndnzj.com>
+Cc: Mike Yuan <me@yhndnzj.com>, linux-mm@kvack.org, cgroups@vger.kernel.org, Nhat Pham <nphamcs@gmail.com>, Yosry Ahmed <yosryahmed@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Andrew Morton <akpm@linux-foundation.org>, Muchun Song <muchun.song@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, Roman Gushchin <roman.gushchin@linux.dev>, Michal Hocko <mhocko@kernel.org>
+Subject: [PATCH v2 2/2] selftests: test_zswap: add test for hierarchical zswap.writeback
+Message-ID: <20240816144344.18135-2-me@yhndnzj.com>
+In-Reply-To: <20240816144344.18135-1-me@yhndnzj.com>
+References: <20240816144344.18135-1-me@yhndnzj.com>
+Feedback-ID: 102487535:user:proton
+X-Pm-Message-ID: 98424e4be63cbb1cd3dc1512fd5d74a155ca5d44
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240816-dcd-type2-upstream-v3-10-7c9b96cba6d7@intel.com>
-References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
-In-Reply-To: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
-To: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, 
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>, 
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
- Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
- Sergey Senozhatsky <senozhatsky@chromium.org>, 
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Dan Williams <dan.j.williams@intel.com>, 
- Davidlohr Bueso <dave@stgolabs.net>, 
- Alison Schofield <alison.schofield@intel.com>, 
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
- linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
- nvdimm@lists.linux.dev
-X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723819455; l=6094;
- i=ira.weiny@intel.com; s=20221211; h=from:subject:message-id;
- bh=eL2Cjy9eq507v8CxJssOAbmuGsrUdtv05y9iWM/ZS+M=;
- b=KBUle4yEc+AMa+grT7fQqAKMuocYuV1HQZdcda7Mm/W2EC0ezVZlgEaQIqtSe9mdDchawuFjn
- ImzwibIzCjSDzlQ8bzOdF/C1ws4SFKmQcqhDtWhfGUmDptqeAl8hxNM
-X-Developer-Key: i=ira.weiny@intel.com; a=ed25519;
- pk=noldbkG+Wp1qXRrrkfY1QJpDf7QsOEthbOT7vm0PqsE=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Navneet Singh <navneet.singh@intel.com>
+Ensure that zswap.writeback check goes up the cgroup tree.
 
-Endpoint decoder mode is used to represent the partition the decoder
-points to such as ram or pmem.
-
-Expand the mode to allow a decoder to point to a specific DC partition
-(Region).
-
-Signed-off-by: Navneet Singh <navneet.singh@intel.com>
-Co-developed-by: Ira Weiny <ira.weiny@intel.com>
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-
+Signed-off-by: Mike Yuan <me@yhndnzj.com>
 ---
-Changes:
-[Fan: change mode range logic]
-[Fan: use !resource_size()]
-[djiang: use the static mode name string array in mode_store()]
-[Jonathan: remove rc check from mode to region index]
-[Jonathan: clarify decoder mode 'mixed']
-[djbw: drop cleanup patch and just follow the convention in cxl_dpa_set_mode()]
-[fan: make dcd resource size check similar to other partitions]
-[djbw, jonathan, fan: remove mode range check from dc_mode_to_region_index]
-[iweiny: push sysfs versions to 6.12]
----
- Documentation/ABI/testing/sysfs-bus-cxl | 21 ++++++++++----------
- drivers/cxl/core/hdm.c                  | 10 ++++++++++
- drivers/cxl/core/port.c                 | 10 +++++-----
- drivers/cxl/cxl.h                       | 35 ++++++++++++++++++---------------
- 4 files changed, 45 insertions(+), 31 deletions(-)
+ tools/testing/selftests/cgroup/test_zswap.c | 69 ++++++++++++++-------
+ 1 file changed, 48 insertions(+), 21 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-cxl b/Documentation/ABI/testing/sysfs-bus-cxl
-index 3f5627a1210a..957717264709 100644
---- a/Documentation/ABI/testing/sysfs-bus-cxl
-+++ b/Documentation/ABI/testing/sysfs-bus-cxl
-@@ -316,23 +316,24 @@ Description:
- 
- 
- What:		/sys/bus/cxl/devices/decoderX.Y/mode
--Date:		May, 2022
--KernelVersion:	v6.0
-+Date:		May, 2022, October 2024
-+KernelVersion:	v6.0, v6.12 (dcY)
- Contact:	linux-cxl@vger.kernel.org
- Description:
- 		(RW) When a CXL decoder is of devtype "cxl_decoder_endpoint" it
- 		translates from a host physical address range, to a device local
- 		address range. Device-local address ranges are further split
--		into a 'ram' (volatile memory) range and 'pmem' (persistent
--		memory) range. The 'mode' attribute emits one of 'ram', 'pmem',
--		'mixed', or 'none'. The 'mixed' indication is for error cases
--		when a decoder straddles the volatile/persistent partition
--		boundary, and 'none' indicates the decoder is not actively
--		decoding, or no DPA allocation policy has been set.
-+		into a 'ram' (volatile memory) range, 'pmem' (persistent
-+		memory) range, or Dynamic Capacity (DC) range. The 'mode'
-+		attribute emits one of 'ram', 'pmem', 'dcY', 'mixed', or
-+		'none'. The 'mixed' indication is for error cases when a
-+		decoder straddles partition boundaries, and 'none' indicates
-+		the decoder is not actively decoding, or no DPA allocation
-+		policy has been set.
- 
- 		'mode' can be written, when the decoder is in the 'disabled'
--		state, with either 'ram' or 'pmem' to set the boundaries for the
--		next allocation.
-+		state, with 'ram', 'pmem', or 'dcY' to set the boundaries for
-+		the next allocation.
- 
- 
- What:		/sys/bus/cxl/devices/decoderX.Y/dpa_resource
-diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
-index b4a517c6d283..ceca0b3d3e5c 100644
---- a/drivers/cxl/core/hdm.c
-+++ b/drivers/cxl/core/hdm.c
-@@ -551,6 +551,7 @@ int cxl_dpa_set_mode(struct cxl_endpoint_decoder *cxled,
- 	switch (mode) {
- 	case CXL_DECODER_RAM:
- 	case CXL_DECODER_PMEM:
-+	case CXL_DECODER_DC0 ... CXL_DECODER_DC7:
- 		break;
- 	default:
- 		dev_dbg(dev, "unsupported mode: %d\n", mode);
-@@ -578,6 +579,15 @@ int cxl_dpa_set_mode(struct cxl_endpoint_decoder *cxled,
- 		goto out;
- 	}
- 
-+	if (mode >= CXL_DECODER_DC0 && mode <= CXL_DECODER_DC7) {
-+		rc = dc_mode_to_region_index(mode);
-+		if (!resource_size(&cxlds->dc_res[rc])) {
-+			dev_dbg(dev, "no available dynamic capacity\n");
-+			rc = -ENXIO;
-+			goto out;
-+		}
-+	}
-+
- 	cxled->mode = mode;
- 	rc = 0;
- out:
-diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
-index 8054cbaac9f6..222aa0aeeef7 100644
---- a/drivers/cxl/core/port.c
-+++ b/drivers/cxl/core/port.c
-@@ -205,11 +205,11 @@ static ssize_t mode_store(struct device *dev, struct device_attribute *attr,
- 	enum cxl_decoder_mode mode;
- 	ssize_t rc;
- 
--	if (sysfs_streq(buf, "pmem"))
--		mode = CXL_DECODER_PMEM;
--	else if (sysfs_streq(buf, "ram"))
--		mode = CXL_DECODER_RAM;
--	else
-+	for (mode = CXL_DECODER_RAM; mode < CXL_DECODER_MIXED; mode++)
-+		if (sysfs_streq(buf, cxl_decoder_mode_names[mode]))
-+			break;
-+
-+	if (mode >= CXL_DECODER_MIXED)
- 		return -EINVAL;
- 
- 	rc = cxl_dpa_set_mode(cxled, mode);
-diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-index 53b666ef4097..16861c867537 100644
---- a/drivers/cxl/cxl.h
-+++ b/drivers/cxl/cxl.h
-@@ -365,6 +365,9 @@ struct cxl_decoder {
- /*
-  * CXL_DECODER_DEAD prevents endpoints from being reattached to regions
-  * while cxld_unregister() is running
-+ *
-+ * NOTE: CXL_DECODER_RAM must be second and CXL_DECODER_MIXED must be last.
-+ *	 See mode_store()
-  */
- enum cxl_decoder_mode {
- 	CXL_DECODER_NONE,
-@@ -382,25 +385,25 @@ enum cxl_decoder_mode {
- 	CXL_DECODER_DEAD,
- };
- 
-+static const char * const cxl_decoder_mode_names[] = {
-+	[CXL_DECODER_NONE] = "none",
-+	[CXL_DECODER_RAM] = "ram",
-+	[CXL_DECODER_PMEM] = "pmem",
-+	[CXL_DECODER_DC0] = "dc0",
-+	[CXL_DECODER_DC1] = "dc1",
-+	[CXL_DECODER_DC2] = "dc2",
-+	[CXL_DECODER_DC3] = "dc3",
-+	[CXL_DECODER_DC4] = "dc4",
-+	[CXL_DECODER_DC5] = "dc5",
-+	[CXL_DECODER_DC6] = "dc6",
-+	[CXL_DECODER_DC7] = "dc7",
-+	[CXL_DECODER_MIXED] = "mixed",
-+};
-+
- static inline const char *cxl_decoder_mode_name(enum cxl_decoder_mode mode)
+diff --git a/tools/testing/selftests/cgroup/test_zswap.c b/tools/testing/se=
+lftests/cgroup/test_zswap.c
+index 190096017f80..7da6f9dc1066 100644
+--- a/tools/testing/selftests/cgroup/test_zswap.c
++++ b/tools/testing/selftests/cgroup/test_zswap.c
+@@ -263,15 +263,13 @@ static int test_zswapin(const char *root)
+ static int attempt_writeback(const char *cgroup, void *arg)
  {
--	static const char * const names[] = {
--		[CXL_DECODER_NONE] = "none",
--		[CXL_DECODER_RAM] = "ram",
--		[CXL_DECODER_PMEM] = "pmem",
--		[CXL_DECODER_DC0] = "dc0",
--		[CXL_DECODER_DC1] = "dc1",
--		[CXL_DECODER_DC2] = "dc2",
--		[CXL_DECODER_DC3] = "dc3",
--		[CXL_DECODER_DC4] = "dc4",
--		[CXL_DECODER_DC5] = "dc5",
--		[CXL_DECODER_DC6] = "dc6",
--		[CXL_DECODER_DC7] = "dc7",
--		[CXL_DECODER_MIXED] = "mixed",
--	};
--
- 	if (mode >= CXL_DECODER_NONE && mode <= CXL_DECODER_MIXED)
--		return names[mode];
-+		return cxl_decoder_mode_names[mode];
- 	return "mixed";
+ =09long pagesize =3D sysconf(_SC_PAGESIZE);
+-=09char *test_group =3D arg;
+ =09size_t memsize =3D MB(4);
+ =09char buf[pagesize];
+ =09long zswap_usage;
+-=09bool wb_enabled;
++=09bool wb_enabled =3D *(bool *) arg;
+ =09int ret =3D -1;
+ =09char *mem;
+=20
+-=09wb_enabled =3D cg_read_long(test_group, "memory.zswap.writeback");
+ =09mem =3D (char *)malloc(memsize);
+ =09if (!mem)
+ =09=09return ret;
+@@ -288,12 +286,12 @@ static int attempt_writeback(const char *cgroup, void=
+ *arg)
+ =09=09memcpy(&mem[i], buf, pagesize);
+=20
+ =09/* Try and reclaim allocated memory */
+-=09if (cg_write_numeric(test_group, "memory.reclaim", memsize)) {
++=09if (cg_write_numeric(cgroup, "memory.reclaim", memsize)) {
+ =09=09ksft_print_msg("Failed to reclaim all of the requested memory\n");
+ =09=09goto out;
+ =09}
+=20
+-=09zswap_usage =3D cg_read_long(test_group, "memory.zswap.current");
++=09zswap_usage =3D cg_read_long(cgroup, "memory.zswap.current");
+=20
+ =09/* zswpin */
+ =09for (int i =3D 0; i < memsize; i +=3D pagesize) {
+@@ -303,7 +301,7 @@ static int attempt_writeback(const char *cgroup, void *=
+arg)
+ =09=09}
+ =09}
+=20
+-=09if (cg_write_numeric(test_group, "memory.zswap.max", zswap_usage/2))
++=09if (cg_write_numeric(cgroup, "memory.zswap.max", zswap_usage/2))
+ =09=09goto out;
+=20
+ =09/*
+@@ -312,7 +310,7 @@ static int attempt_writeback(const char *cgroup, void *=
+arg)
+ =09 * If writeback is disabled, memory reclaim will fail as zswap is limit=
+ed and
+ =09 * it can't writeback to swap.
+ =09 */
+-=09ret =3D cg_write_numeric(test_group, "memory.reclaim", memsize);
++=09ret =3D cg_write_numeric(cgroup, "memory.reclaim", memsize);
+ =09if (!wb_enabled)
+ =09=09ret =3D (ret =3D=3D -EAGAIN) ? 0 : -1;
+=20
+@@ -321,12 +319,38 @@ static int attempt_writeback(const char *cgroup, void=
+ *arg)
+ =09return ret;
  }
- 
+=20
++static int test_zswap_writeback_one(const char *cgroup, bool wb)
++{
++=09long zswpwb_before, zswpwb_after;
++
++=09zswpwb_before =3D get_cg_wb_count(cgroup);
++=09if (zswpwb_before !=3D 0) {
++=09=09ksft_print_msg("zswpwb_before =3D %ld instead of 0\n", zswpwb_before=
+);
++=09=09return -1;
++=09}
++
++=09if (cg_run(cgroup, attempt_writeback, (void *) &wb))
++=09=09return -1;
++
++=09/* Verify that zswap writeback occurred only if writeback was enabled *=
+/
++=09zswpwb_after =3D get_cg_wb_count(cgroup);
++=09if (zswpwb_after < 0)
++=09=09return -1;
++
++=09if (wb !=3D !!zswpwb_after) {
++=09=09ksft_print_msg("zswpwb_after is %ld while wb is %s",
++=09=09=09=09zswpwb_after, wb ? "enabled" : "disabled");
++=09=09return -1;
++=09}
++
++=09return 0;
++}
++
+ /* Test to verify the zswap writeback path */
+ static int test_zswap_writeback(const char *root, bool wb)
+ {
+-=09long zswpwb_before, zswpwb_after;
+ =09int ret =3D KSFT_FAIL;
+-=09char *test_group;
++=09char *test_group, *test_group_child =3D NULL;
+=20
+ =09test_group =3D cg_name(root, "zswap_writeback_test");
+ =09if (!test_group)
+@@ -336,29 +360,32 @@ static int test_zswap_writeback(const char *root, boo=
+l wb)
+ =09if (cg_write(test_group, "memory.zswap.writeback", wb ? "1" : "0"))
+ =09=09goto out;
+=20
+-=09zswpwb_before =3D get_cg_wb_count(test_group);
+-=09if (zswpwb_before !=3D 0) {
+-=09=09ksft_print_msg("zswpwb_before =3D %ld instead of 0\n", zswpwb_before=
+);
++=09if (test_zswap_writeback_one(test_group, wb))
+ =09=09goto out;
+-=09}
+=20
+-=09if (cg_run(test_group, attempt_writeback, (void *) test_group))
++=09if (cg_write(test_group, "memory.zswap.max", "max"))
++=09=09goto out;
++=09if (cg_write(test_group, "cgroup.subtree_control", "+memory"))
+ =09=09goto out;
+=20
+-=09/* Verify that zswap writeback occurred only if writeback was enabled *=
+/
+-=09zswpwb_after =3D get_cg_wb_count(test_group);
+-=09if (zswpwb_after < 0)
++=09test_group_child =3D cg_name(test_group, "zswap_writeback_test_child");
++=09if (!test_group_child)
++=09=09goto out;
++=09if (cg_create(test_group_child))
++=09=09goto out;
++=09if (cg_write(test_group_child, "memory.zswap.writeback", "1"))
+ =09=09goto out;
+=20
+-=09if (wb !=3D !!zswpwb_after) {
+-=09=09ksft_print_msg("zswpwb_after is %ld while wb is %s",
+-=09=09=09=09zswpwb_after, wb ? "enabled" : "disabled");
++=09if (test_zswap_writeback_one(test_group_child, wb))
+ =09=09goto out;
+-=09}
+=20
+ =09ret =3D KSFT_PASS;
+=20
+ out:
++=09if (test_group_child) {
++=09=09cg_destroy(test_group_child);
++=09=09free(test_group_child);
++=09}
+ =09cg_destroy(test_group);
+ =09free(test_group);
+ =09return ret;
+--=20
+2.46.0
 
--- 
-2.45.2
 
 
