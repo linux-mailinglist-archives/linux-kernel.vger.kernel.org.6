@@ -1,69 +1,94 @@
-Return-Path: <linux-kernel+bounces-288840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78D18953F5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:09:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDC7E953F62
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:10:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3640D288DE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 02:09:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6818AB263CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 02:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8127B26AC3;
-	Fri, 16 Aug 2024 02:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D61482D8;
+	Fri, 16 Aug 2024 02:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AbgH4V8T"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QK2OCfZm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2752BCFF;
-	Fri, 16 Aug 2024 02:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696B03A1BF;
+	Fri, 16 Aug 2024 02:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723774107; cv=none; b=JXoye0ZSbwT1STMHywr/TUnEneWt3gJ5CS1XwTuO6CvANg+Q51v8gMfDNvihdX6BSvZIw/38sF+Z+oTuaqZTI9Hupu5jjBOr+U3PptCD++HGguM30IWtod4K99N1lgAXpOGiZci2OMJ8jZhhtLhRFcJ/+6rqA2TUlKmIP+bYG+4=
+	t=1723774233; cv=none; b=H2Rl64wuw5ur7lBcowYS+4IKG1TgA2f187dXGPfPUtE70KakLlinSGqc2+nJt1l0H+8RcbG9A4e6l2Xhl737L2UgWxot7FdTVDaTy77bnvCsFNzswV28o/nhESnHhnzIMqcF1A7RfiFpcpeX+eZCiIXYUeLguebTrcA+qTrmwbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723774107; c=relaxed/simple;
-	bh=cIrhdi39QhQ4i5z/+k9PT/2FC+Gsfhw4E9FmG2nYGEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fb+M+H84nNpZXoQqDp3SXsQUBV7fZB+4S7u1A1r5cGbVRy8EvKjbysj9JJKpmEeGEbhehVW2G83848Wj6lPOZXgCVU/hbwzB+0ejET7SPIJ3SalNRAHc5x9msg6aidI9FF4hGNtfIcdHoq0TBpQU7BApyqHwF2TShlNBioV80Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AbgH4V8T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5939DC4AF0D;
-	Fri, 16 Aug 2024 02:08:27 +0000 (UTC)
+	s=arc-20240116; t=1723774233; c=relaxed/simple;
+	bh=QhK6hhEu469h4qlv0tmDK1GAhAtGSWaNW81HxBUvmZM=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=o+M4+Bj8vt3dA8s4Fce37T1oUT/WGs+kGMilYuGrigwP1M12/1i3EZpqLz7/v5y71itlI9gji90vv99eZJ6ybx/fCHLdnbMZJmsKOxAEqvqJxwEBzFqVJagfvmdUACTFVhqMqHHL2Li9cjmUT/DUCZwIBmu41ujl0Gagg3kiE7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QK2OCfZm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C631C32786;
+	Fri, 16 Aug 2024 02:10:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723774107;
-	bh=cIrhdi39QhQ4i5z/+k9PT/2FC+Gsfhw4E9FmG2nYGEY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AbgH4V8TsKNl7XLHx4SXwsCiixI/xwgVeWEK6nOljaJMk0TQfPGeca5ACoNRjpeHp
-	 6GCbVXNixQ88IVrV9hxHrEBFH3ZC9mGX+HsOPFwkJaAMjGGgcaQjRYeAK36kWLrvZj
-	 HgJOLgDp32sr0iHjpEbKgI+gsxPvOeY3U5Yp2sYNU7XPHzgMvuEEIzRLWW9fAIj/52
-	 +nMdApXuzNGIBZYjMo+jFy7vlYRRJ+QI1j8ln6lWvrlLwNX0a4hCV5faC5185KTimN
-	 P0R1UXnNjE2vcJ2LQJ31i4Rvek9N+RTwif5RP4DV04pD+gZcuD0Eb9K7nVf4HlMCaT
-	 aNa2CKxxhsGZw==
-Date: Thu, 15 Aug 2024 19:08:26 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] nfc: mrvl: use scoped device node handling to
- simplify cleanup
-Message-ID: <20240815190826.076b7373@kernel.org>
-In-Reply-To: <20240813103904.75978-1-krzysztof.kozlowski@linaro.org>
-References: <20240813103904.75978-1-krzysztof.kozlowski@linaro.org>
+	s=k20201202; t=1723774233;
+	bh=QhK6hhEu469h4qlv0tmDK1GAhAtGSWaNW81HxBUvmZM=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=QK2OCfZms8midELVJZDDEbNOLhICby/VLnQgdT1Uaa4Hjt5KVd4017q5ZqppEI3so
+	 39AEjQVUV93bFOtsyDllcmqACVbFCnl3e5DWdEI8M0rS/TU9myaAsLrDffttZ4ROz2
+	 mClbzn8HXgcOyO2g0PnnMB7ojqIl9zayN/Md0hva3WAUItrhHlM7UPfUY3rawOG0bE
+	 ba3N+Q0bcdGfusmNnOxFhDusdtM9frb4TCvIwqjexUGtXmqiOYcFVZdYyytk2iiMjx
+	 XEOABVRFkXIltKpJtnKLmPrz+3qP1CkokftH/Ekbe+Ry92xpH1r3QTi8tmPZj19jpU
+	 RqXpx7EZIot6g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE098382327A;
+	Fri, 16 Aug 2024 02:10:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net/mlx5: Use cpumask_local_spread() instead of custom code
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172377423224.3091787.3606516160819864635.git-patchwork-notify@kernel.org>
+Date: Fri, 16 Aug 2024 02:10:32 +0000
+References: <20240812082244.22810-1-e.velu@criteo.com>
+In-Reply-To: <20240812082244.22810-1-e.velu@criteo.com>
+To: Erwan Velu <erwanaliasr1@gmail.com>
+Cc: e.velu@criteo.com, saeedm@nvidia.com, leon@kernel.org, tariqt@nvidia.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Tue, 13 Aug 2024 12:39:04 +0200 Krzysztof Kozlowski wrote:
-> -	matched_node = of_get_compatible_child(node, "marvell,nfc-uart");
-> +	struct device_node *matched_node __free(device_node) = of_get_compatible_child(node,
-> +										       "marvell,nfc-uart");
+Hello:
 
-The 100+ character line mixing declaration and code is more than 
-I can bear. Sorry.
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Mon, 12 Aug 2024 10:22:42 +0200 you wrote:
+> Commit 2acda57736de ("net/mlx5e: Improve remote NUMA preferences used for the IRQ affinity hints")
+> removed the usage of cpumask_local_spread().
+> 
+> The issue explained in this commit was fixed by
+> commit 406d394abfcd ("cpumask: improve on cpumask_local_spread() locality").
+> 
+> Since this commit, mlx5_cpumask_default_spread() is having the same
+> behavior as cpumask_local_spread().
+> 
+> [...]
+
+Here is the summary with links:
+  - net/mlx5: Use cpumask_local_spread() instead of custom code
+    https://git.kernel.org/netdev/net-next/c/e5efc2311cc4
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
