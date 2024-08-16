@@ -1,268 +1,326 @@
-Return-Path: <linux-kernel+bounces-290102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75582954F70
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:01:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D01DB954F74
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:02:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A16E1C20FA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:01:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 879362839F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDEB1BF33D;
-	Fri, 16 Aug 2024 17:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABD61BD4EA;
+	Fri, 16 Aug 2024 17:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UxniWOFc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aWX1aWb/"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F9A558A5;
-	Fri, 16 Aug 2024 17:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723827698; cv=fail; b=UdQc7+ferGMSWQd2HZkwVhnwAFQQILxM+GbCxbgefvc3tAnal4pExa2isTwjUMcpyBsjOecj+kwrppg/wK0BQZdtknG/uXEVrj2kT33cjMz3fHdNSVhiAS621nSkNK1ozD2P2zeDbPUnFA6tg+P9VN711XyguevVZdKTGC0Ojxs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723827698; c=relaxed/simple;
-	bh=I3eqPPXqquZXfWF8FArUmdsCDDk0hsvTSgLpOUAxwH8=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=C3K4o3vgI6oTDKvJIg331V2QR3OAVONZTjr+YShCWnpoNpLsUAiRjTfNvEZfcwx6cq2UTixEg7UXg7BBJBPUUVslHjvU0JJRj0HYw095wY81lkzOcnFEfma5HlT0w9HqXWgXiAY4FloNAUEJd4Mh046/j1hkjvR6H76dQ+fgPwk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UxniWOFc; arc=fail smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723827698; x=1755363698;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=I3eqPPXqquZXfWF8FArUmdsCDDk0hsvTSgLpOUAxwH8=;
-  b=UxniWOFchWO06EJjrPk7Z813tEr4ifYVGMY1Fc6Rn1bbROvtbH+3EFgK
-   h0wmD0O4W97TgY7o42knybXUlZI5NI8B/+vxePDS8kZgtvLXbfwhA0UGv
-   lvCdrU895ayWOKsSvZSbt5dSIO0SsJFI5BphNa0KHHQIdfQ30pF+TTvNO
-   kkS408F0fTsIrVCskybU2NZLXYzaARcndXTXSRfFPETizBeilvsTD/GCO
-   JVNhqyPKuNHi5SxzABNmMWfT08tUd6zoWbMvzE8AvOV6M3vPRNmDAWSc3
-   fo6KOAp2qZN6JOYOa4MTtuPZunx4uCRJ8slvJWJLpJh7m8cYOR4zNLo59
-   Q==;
-X-CSE-ConnectionGUID: NgvelMnUSQuQQm/GQtHnkg==
-X-CSE-MsgGUID: Ak+k/mflS6Gs+J6jbLn3iw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="25887663"
-X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
-   d="scan'208";a="25887663"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 10:01:37 -0700
-X-CSE-ConnectionGUID: qigkTmDrSva31ZBCZw20dw==
-X-CSE-MsgGUID: EqqUv/snQRiv8n961jXF+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
-   d="scan'208";a="59358865"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Aug 2024 10:01:35 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 16 Aug 2024 10:01:35 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 16 Aug 2024 10:01:35 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 16 Aug 2024 10:01:35 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.174)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 16 Aug 2024 10:01:35 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qp9icH2drIi2bi8YBcMpm7nsKL6OUZKp6+W25uvyzKte/1AG2ttjdgbzXBRSv5S3wHdLrOTsbk7MiRPJZ4jVQNcygVusrwu1vmZTR3RZm2WCeSSWrU71Vl9YJkFg7Qr5o5qKwVqkeW0vCfD5s45Eiyei5bHzbXa8PbhV+KBryXkP897g+i43cOZhm5/1c0ZVVN1BYoCWZDmmN9db2dg9GZiMalF9R1Z1lDeCz7Wp/9YPZxxs2aUa2iH2QZu5+7VV9BTcmDzXUTHvX5L26sMt6/eMfuKyJwXVf2quBaMm05Wxt1Cj7vBzgJ+kWzp1XINM9BwewdvRhxPddATLpjjxnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DxqMFEoDUQ8CvzA0VfD3KQQCNOi5Pv/pcMptr2jcnHg=;
- b=iHWbsK3J+a3FEuNgjvko+zC6ma0nmPBZbtVLBO4db3nisIvw1rCIGz5Srv2i41bx1gcjNKmeKhvXPh34qKQKSc+JXmh+Dj32lnIQ9CDf9loYntjY2JqMPn7FoueESRMtMHG9JL0LX30SdOYu+dC/CHPCAuxdqBkvTF71BOV7GtXPf2paj5RUX3bmRP7bd57/Jj5afOd9wOulGtqJpuekxzfNK2wklDQwHQT6yI1A5o0tATv840H0qdkkSYUPEV2uwzNLrBuUN4f+dtAUG8PG/TBiyGGSE1aZDH61HZqC216gu2J1VAKn/8aHuqpo9B9bvAsICsBeOgKbMZwABK0emA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by SA1PR11MB8473.namprd11.prod.outlook.com (2603:10b6:806:3a7::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Fri, 16 Aug
- 2024 17:01:32 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7875.016; Fri, 16 Aug 2024
- 17:01:32 +0000
-Message-ID: <8c93c091-39b3-4219-b892-9df2747eb91a@intel.com>
-Date: Fri, 16 Aug 2024 10:01:27 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 19/22] x86/resctrl: Introduce the interface to switch
- between monitor modes
-To: James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>
-CC: <x86@kernel.org>, <hpa@zytor.com>, <paulmck@kernel.org>,
-	<rdunlap@infradead.org>, <tj@kernel.org>, <peterz@infradead.org>,
-	<yanjiewtw@gmail.com>, <kim.phillips@amd.com>, <lukas.bulwahn@gmail.com>,
-	<seanjc@google.com>, <jmattson@google.com>, <leitao@debian.org>,
-	<jpoimboe@kernel.org>, <rick.p.edgecombe@intel.com>,
-	<kirill.shutemov@linux.intel.com>, <jithu.joseph@intel.com>,
-	<kai.huang@intel.com>, <kan.liang@linux.intel.com>,
-	<daniel.sneddon@linux.intel.com>, <pbonzini@redhat.com>,
-	<sandipan.das@amd.com>, <ilpo.jarvinen@linux.intel.com>,
-	<peternewman@google.com>, <maciej.wieczor-retman@intel.com>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<eranian@google.com>, <mingo@redhat.com>, <bp@alien8.de>, <corbet@lwn.net>,
-	<dave.hansen@linux.intel.com>, <fenghua.yu@intel.com>, <tglx@linutronix.de>
-References: <cover.1722981659.git.babu.moger@amd.com>
- <784eaa900b9e0778ddc534c04c7ded9466bfd19b.1722981659.git.babu.moger@amd.com>
- <983fded5-48f8-439d-8afe-45b60841985a@arm.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <983fded5-48f8-439d-8afe-45b60841985a@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0225.namprd04.prod.outlook.com
- (2603:10b6:303:87::20) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B08558A5;
+	Fri, 16 Aug 2024 17:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723827706; cv=none; b=TkaeAyxyi0FGqRQF3j4phVK7g2gxKBxMhjgnkFB/q4q8qMJT8kJFWU6SesMS9m2YAOtW/oRQ4/u45xePXjKfIlq05c2fDDzIRJr4AIBhzvxKO09bNjdKfLYWHpqtdBvf6K7kUdc9o0qFfS2NyaMFw7CcertoJCJ4s3FkF9K3OPE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723827706; c=relaxed/simple;
+	bh=wtqGZiDectN+F/2/mxoLuM1XsFhhc+wGSAV5cI5J0eM=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=pOqs8/hNIUCxGgatj01DQ6FRhrqu9+M0l6XDgflOTEoJVU/GXSZgEe4b149lYzv3kma7da2NnvSxMH7p9cONlW07GXv+3vvzTYCP2Q9DZzzIwnwWfsHC4eqGIi51B/eTqy/KJ5b/ueI4+36Kt5ctlRRuceIvGy+G6qoJNVZ7dSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aWX1aWb/; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a1d3874c1eso136205085a.2;
+        Fri, 16 Aug 2024 10:01:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723827703; x=1724432503; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tv8TAzirmAB9ZYNm4E7DiO13V7tV1XD5jIFjpoelYkw=;
+        b=aWX1aWb/08Zlxe5w/P7ucJVxhTZ86mMQf/PCkLLuJyrb0JxVUQpzAqi/WmLd7L98OD
+         vbk24FyE8oO4jjkz5sAwhwxEq2VC3sPRRv9wbdX6Wc14AuylEeTF2p66E2APuy+lj4je
+         b9tgDFn8Y4UNGJDyLdWGQPN05SM9dGxr/4nx517866B8oOBLdPQpb/w9zu87ugpxsacR
+         QraYbwzPZgE4rzcsg6GKif5utrQD/96xPiVM1dmtzCp28UI+cr4UHEM8/2kehQawwpWB
+         Q4NZ7+hMUb4JShX/op007BnFY+woZOInYCJ7RYWg9f3anjo5c3guu6RUDSiAlBu2VQYE
+         SKrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723827703; x=1724432503;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Tv8TAzirmAB9ZYNm4E7DiO13V7tV1XD5jIFjpoelYkw=;
+        b=V9n+3Me4fhNVOsQk5v7phP4eal58ZgpoQBCY3DE/3amHosAIzYjEvaHliFB1NZIn2T
+         noEtm6H1jMj5jYagaQCQVwwD5GzhRJxuy74IJigCvulOG1C7598vnJ+vj4D2QKj3R2NE
+         tQoMSx+8dlIKwXmhUXTxx2e+MZ9TGh5aJh8wu/sTUJHvtVQY8QGXSxpU8WIZzfv3Onvf
+         bGWBypIvskCheVHa0XnZT4Cjc6ZkKvkc0+uQ3wV5T5VWSAcpqjwvTlyvo739SmseCuS1
+         awqGJR0xqUvTE2VR9QkD5o5Mc0WENjbukLiauWcCC9baFq2EKyWEJJpKRtNxw8aEjQj1
+         nPYA==
+X-Forwarded-Encrypted: i=1; AJvYcCWyhmC4vKJCQXQxeMrXCCPso9AlGY4lyFFLb3jiwL0sxwaGG4+VhGhgVVgkjbhq4f2vhE/g2yGspZ6K8AsPXcqu4gLDWXvEHvKtx6g/5QayOSTHjY0u6irP2O+J/rN3EoaMlGF/Dnj8/Dq8u+9pJfSD2zTCXth/LJ2Nz/YVC7TMlxIQc/6VbyCtC0IKdyQG9zgKEyD1ps4M69I2Kq5Cgg==
+X-Gm-Message-State: AOJu0Yx+U8S8/aA1Z0x/Mr6UnkmQIAT5NmzI90q1Aa6r/CW74BLnynCE
+	tOigZc4CvFrL8p2G7Y3CaBlYqcqqATyUvHlAez7EyBXYi+0WbIWHVAORUg==
+X-Google-Smtp-Source: AGHT+IHZKZPnBdi6rEz+5Ly8m7fMLZlAAS0dpEdJUuYWej00PVqNYc2WCSUsxifBsAZ70bRm4RaReA==
+X-Received: by 2002:a05:620a:4687:b0:79f:a2f:a673 with SMTP id af79cd13be357-7a5069e74a5mr467513985a.68.1723827703145;
+        Fri, 16 Aug 2024 10:01:43 -0700 (PDT)
+Received: from localhost (73.84.86.34.bc.googleusercontent.com. [34.86.84.73])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4ff0524eesm195300485a.40.2024.08.16.10.01.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 10:01:42 -0700 (PDT)
+Date: Fri, 16 Aug 2024 13:01:42 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Joe Damato <jdamato@fastly.com>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: Martin Karsten <mkarsten@uwaterloo.ca>, 
+ Samiullah Khawaja <skhawaja@google.com>, 
+ Stanislav Fomichev <sdf@fomichev.me>, 
+ netdev@vger.kernel.org, 
+ amritha.nambiar@intel.com, 
+ sridhar.samudrala@intel.com, 
+ Alexander Lobakin <aleksander.lobakin@intel.com>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Breno Leitao <leitao@debian.org>, 
+ Christian Brauner <brauner@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Jan Kara <jack@suse.cz>, 
+ Jiri Pirko <jiri@resnulli.us>, 
+ Johannes Berg <johannes.berg@intel.com>, 
+ Jonathan Corbet <corbet@lwn.net>, 
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
+ "open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>, 
+ open list <linux-kernel@vger.kernel.org>, 
+ Lorenzo Bianconi <lorenzo@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Message-ID: <66bf85f635b2e_184d66294b9@willemb.c.googlers.com.notmuch>
+In-Reply-To: <Zr9vavqD-QHD-JcG@LQ3V64L9R2>
+References: <ZrqU3kYgL4-OI-qj@mini-arch>
+ <d53e8aa6-a5eb-41f4-9a4c-70d04a5ca748@uwaterloo.ca>
+ <Zrq8zCy1-mfArXka@mini-arch>
+ <5e52b556-fe49-4fe0-8bd3-543b3afd89fa@uwaterloo.ca>
+ <Zrrb8xkdIbhS7F58@mini-arch>
+ <6f40b6df-4452-48f6-b552-0eceaa1f0bbc@uwaterloo.ca>
+ <CAAywjhRsRYUHT0wdyPgqH82mmb9zUPspoitU0QPGYJTu+zL03A@mail.gmail.com>
+ <d63dd3e8-c9e2-45d6-b240-0b91c827cc2f@uwaterloo.ca>
+ <66bf61d4ed578_17ec4b294ba@willemb.c.googlers.com.notmuch>
+ <66bf696788234_180e2829481@willemb.c.googlers.com.notmuch>
+ <Zr9vavqD-QHD-JcG@LQ3V64L9R2>
+Subject: Re: [RFC net-next 0/5] Suspend IRQs during preferred busy poll
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SA1PR11MB8473:EE_
-X-MS-Office365-Filtering-Correlation-Id: a511c999-0692-46ae-be88-08dcbe1513f3
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?SDJCVVFDOU5aTEtOUWN4a3VwOUtnVFk4eDRoMVArRWxQaXN1ejVhK2R0eFJh?=
- =?utf-8?B?aTZrbHBpSXZObHNudkFINVZBaUZPQnNVZ0s2NFhhbzFxS01mMmFJaXpkQVRZ?=
- =?utf-8?B?ZUI1MmRpSVN0eitlSGZDQnMrdlFEd1R4ajZNbTkyS3QyajZiOWEzZXFidldl?=
- =?utf-8?B?em82dDNod2wzY3l4aTA5N1lWRWJkaGVUa2dXOGFvOHRlaEYwdk9XbU4wZXNm?=
- =?utf-8?B?Mk5abjVRTi8vY1pKb3cyUTdTQ0R1T0xmakR2SlRYaERwRmxMMGhsb1gxam9E?=
- =?utf-8?B?TTdwNUY4YjJ4SlMxNjhNUEFlYTNoWlNEOUd1NUdRTklKVjhIWkczUE5Yamh2?=
- =?utf-8?B?R1BFYVpoTmNaU3FCSkNnVDZuSlNma2Z1RmV6RjJxY2VKNWo5QVpMUWZmQlF6?=
- =?utf-8?B?RG9OVFhvMm1heU1QOUdKZ1NBRHpWd2RmaitCbGhFK0VBWmdHTVZZUVBWMmUx?=
- =?utf-8?B?YUwzUS9ldnBNWEpjcW8yUVkvM0ZvY0FxbUR1c2FsL2k3Q0lMN3dYMmxjWHEy?=
- =?utf-8?B?VkthTUFYb0dhYXlsVlVrZWQvakEvK093L2trR3VZR003OVp6aEtPUE9HUkVk?=
- =?utf-8?B?NUptQk8rWDVnL0tnU3k2ZThwYUpHdlZOSG1PWTF5bU1TeHhUVzR6eG5LQ1ox?=
- =?utf-8?B?VS9jenVISVY1Q3F3U3RyVmw5VE5YeS84OVlZdjRac3ZDRnptQUlWMGpnSjZ3?=
- =?utf-8?B?RTJBcFR3aGZJbExFcFA3UlJwNzkwMXdpSFFxOHZObzJNUFFQQ3ZSWlZTUzMz?=
- =?utf-8?B?NmlQTDFUbWZBS01ON1ZYeXhsdDNaRkRYMm0vZ0UvSzZUUTVZK3JGQ0EwZ1Jw?=
- =?utf-8?B?bUdSNDM1UzVTSzUrRU0zMDhSTTdIWlVvemxGbjNpZGUvbkNBMnZnbGRuWEEw?=
- =?utf-8?B?SkZJQzVGUllxMXpGbGxEMGF6dVdiZjlZdnVCOWhzUE13S1ZaNElSSmRtTTJ3?=
- =?utf-8?B?MVpuamdha1QxZ0YyMkhPaEdUbm5xZmZxN3A2bnFPSEcvUTF5cTlVQ05DT0hn?=
- =?utf-8?B?Ukc1TkJFTTJHdERoQTJGRk1NS3FYSTRFNDZFQis0MUNXUGhEdWhnWFE5WmFI?=
- =?utf-8?B?ZjZXaVVFT0QvRkpkZnd2cW1aa0V3RGk4ZVpPVWhpakpEWHhTSTVsRGN5b1gv?=
- =?utf-8?B?OFZLdEdjTHNLTXlLMkJmdEJzeEVGQmFKRWh0RGVlaHhOcGxjdjFRQ1FTUHUy?=
- =?utf-8?B?ZXNYY1c2U2VTeG96QkorZnpaS28wMEhoU2tDZTZzNVJMay90Mmk0MWNpbktB?=
- =?utf-8?B?Y0Y4SEdKd3E5U1VWU3R4SGdrTUJWazhQNjRaRTJLck8yU20vMGdSaVRBbDJI?=
- =?utf-8?B?YnhPL0VhbkwrWkxybHA3dGZxWC96QTNHOCtVTzZLR1lPQU1mSkhDeHEybC9j?=
- =?utf-8?B?YXRMWk52OVhhcjlMdXBaMmoyMFRYTHpGL1RUeUJ0TkF0eWxzY1MralZrV3JW?=
- =?utf-8?B?c3VRYmQvcE9LY0JZbGQzWStvcFhsWlJyNU51cUZaL3JORHpCTzR6SEFwdDNC?=
- =?utf-8?B?eXRIVVYvTEtrOHNuK1k0bUJzalJLUW55ZUhCOGFDclJrSXBqcTlXazNFdEEx?=
- =?utf-8?B?T0FGWExVRG9palVHVTlLWm85U0NIMURZTFZyVHpaTldxN1Z5U2k4emJraFp6?=
- =?utf-8?B?ZmJDeHUvTG9MUmI0R3ExN2U3SXJRaXVzWC84OXRqalRPMzhJVHZzb2p5Uy9i?=
- =?utf-8?B?SSttUGxjczZYWTZHVjd5dUVNMkJLdzFQUXFxOVlHVXV1YnhYQjNiOGVqRlVn?=
- =?utf-8?B?ZSsvRFNuYnRUUHNxSTMzK2RpeitJSEJMZEtmNXNZQllLNWNaWlR6Y1BxOVU4?=
- =?utf-8?B?Tys2eVcwcE1Dc1RvRldyQT09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SVpSVU1qTTczUXMwUzR2Uysyc0VYcWtXSCtnY0piQ1Fva2lJb2k0SmtnSXBK?=
- =?utf-8?B?cllDV3ByNXdhbWdHLzM5R0swNmxnbjA3WWlUS1lVWXM3cDFyZlFxaFJoaC9S?=
- =?utf-8?B?aHQraFkyUlkrN1QvVG1ZWWs0RENzYUxZR1FsaS9JWlh5a0VLK1hZMTRtZ3Vz?=
- =?utf-8?B?UVFhRjdmN05meXpmaEppTFhGbUNzQXlGcGVHR21zN1J0Q2JpWDZUWkZpYTRu?=
- =?utf-8?B?VnlHQ2JRQ0Z0VFJ1ZnVEWExScnRYNU9wMVZ1a091SFhmZjliZXFKUXY1VjJQ?=
- =?utf-8?B?WXhVSHZYMDZHdGp4cWZTVldRNDluR0FBbWkvbE9uUVl4L2NYVzVmTkZzOEdN?=
- =?utf-8?B?dS9JelBQSzdNSUUrc21lMXY5SUthbGdhUkNjdzNHODIrVGNmbUhoSGZJYmtm?=
- =?utf-8?B?L3RTWmhBNm1IK3g3di9rTnlEZVk5MnRieDZSZHk5akZKME1Ram1QaXk2djFs?=
- =?utf-8?B?M3ZZTUdnMjl0SUxzV1F1b3Q3alRURXhkMnVDeUozcitrdTQzTDQzVEhCWHFE?=
- =?utf-8?B?eHdZZWNPNDI0d2F4ayszaHlFam1NcHhpcWZDMXNzc0E5TUxRS3M1RmRkVHg4?=
- =?utf-8?B?VHR3M2E1MGNlcXFSRVhsNzd6aTFia1BuZENpRS9seHM3QlFUU2VwZVFDeUQ2?=
- =?utf-8?B?NUduUWRQczJncFRaeXJTU0hIU3VJbjNwWFRCQTI1WkdDVlJoZEk0eCtlT0t2?=
- =?utf-8?B?bnNDcXJWM0xXTnVjMDBDcnZTeXVPNzBkcU4yOXF0STdpK0phM2tlZUFOTzRv?=
- =?utf-8?B?YWMzWFgrWUMvalppYzFJQ3NKYW1DYlFqaG0yV0JKZkdjM0N5VlIyNGh5L0ZB?=
- =?utf-8?B?b3RxaVo5M2NTNC9sK2plSDh4UWFjYVRsWXhEVVRJeGU4TjNoL0JkVFZTejlL?=
- =?utf-8?B?UmZnZEIxU2dVNDA4ck5XWVFFRXo0dWpYM3cycWFaSWJMVTdVU043V0pJSDh3?=
- =?utf-8?B?a2RSMDZzd2F3TmtLUDF5TmF3MmNyUk1wKzlLbkJSRC9Xajlta2RoYVJSeVcx?=
- =?utf-8?B?SENLMTUrNEV4YWdsekljUERYVHQ3TGVRRDRmUGlmT1pKaXduVW1MY1d5RWNE?=
- =?utf-8?B?UEtVQjY3OWhjVXVuczdWZzVhOS85NEdaNFNIUGlTZFN6SmhTR093L2VNWW9x?=
- =?utf-8?B?ZDBUN0hjUmRyemQyL2FoRE4rUTZKb3pDekFZdEZsdGpuUy8zaGZkOEZpNTgy?=
- =?utf-8?B?R0lBd1p2ZTVhTzZxdm5PSU0ycEJBNlB4MGphY3pJNkdnUS92MlpmdDNFd3Zn?=
- =?utf-8?B?cFdiVlF6a0hEeUNlZDFOZ1RzMmo3TzFyV1o4V2thZ3ZQV0xQVzBjcU1VM24v?=
- =?utf-8?B?anJnbVVnaThQRG1OMWlISVl2ekdzTFVPMFp6ellBdTNWTGk0K2R2TTVNZUQy?=
- =?utf-8?B?RytsT0tpSUZXNnEwcGhjZlJCK0kzTkt1aHNGaVJTSDJDTzV3Tk1RSEtldWRp?=
- =?utf-8?B?V2JyQTRVdWVQUm53RDU1SVJXcEtwQlNFNExLV1ZxcE1SVHdRcGRRWmp3UnRq?=
- =?utf-8?B?QUZabHZmSWZVZnVZUzFUOW81Y2VGYzlCTytxTVVXNU8ySFppVnUrNE1pOVh6?=
- =?utf-8?B?MkQvQkY5bWJNREhhZ0NvYllENGxOWmJxOEtWTkdIaG1ZcWNlUTFQL2FITjVM?=
- =?utf-8?B?aysyUkg4cUp2a2ROdW51ZysxZjJuaUdPV0NGeWtLTlNNRkxpdy9QN2IyR0pJ?=
- =?utf-8?B?bmI3MWtLTi9rbTdUaGFndjV6clZMWGt0RmRabmw1TFExc3o0WllJdzUwQ3Iy?=
- =?utf-8?B?Z0pkSFBseDV1allvMk5LcUJ1U3g3SWo0R1JzVnUzMDFUZDlIdmJzeTRxa3hL?=
- =?utf-8?B?UHNuR1JXWE11aURXd2lQbXhHM3Z3bWF5WkMxTlB5MHJucEhVSFJseFBZTmdn?=
- =?utf-8?B?aXJQeDZYSU9wMndPL2FlcHNEZ0crUGVNSytHeEVFeHNLRWxFNjFIWE1VcG16?=
- =?utf-8?B?U0VoTVdzMi9HdTcySXYvWmQzbDd6bDgxdU5SWG10VGJXSlhCM0dSZjBqRXp2?=
- =?utf-8?B?NEtYenBrcHlKZTFZbWd3U1V5b0FQMjd6U2hWbDlzYzUyeXdjWmlhZmQvQ2Va?=
- =?utf-8?B?RytNaXc5bzY0MWNBNkNBWU9NQkRGYXkvbjJzUHhHUE1RWG9kb3psSVU4d2M4?=
- =?utf-8?B?bFhTdSsyT2JSNzI5dnp2TXUraWZkeEEwMHprQldWYWpYcVl5azZZcEZ2dEQ3?=
- =?utf-8?B?bWc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: a511c999-0692-46ae-be88-08dcbe1513f3
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2024 17:01:31.9837
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6ugtX1foPr9lP54pSGj8ftL3akmNEItetUWTX8gCjECwuvlsu6dkuQDTlmJv8lofYDqFpJ2yHR2tg6qaU+PF/2vPiCIIlDAQ2sqDB5SFVHw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8473
-X-OriginatorOrg: intel.com
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+Joe Damato wrote:
+> On Fri, Aug 16, 2024 at 10:59:51AM -0400, Willem de Bruijn wrote:
+> > Willem de Bruijn wrote:
+> > > Martin Karsten wrote:
+> > > > On 2024-08-14 15:53, Samiullah Khawaja wrote:
+> > > > > On Tue, Aug 13, 2024 at 6:19=E2=80=AFAM Martin Karsten <mkarste=
+n@uwaterloo.ca> wrote:
+> > > > >>
+> > > > >> On 2024-08-13 00:07, Stanislav Fomichev wrote:
+> > > > >>> On 08/12, Martin Karsten wrote:
+> > > > >>>> On 2024-08-12 21:54, Stanislav Fomichev wrote:
+> > > > >>>>> On 08/12, Martin Karsten wrote:
+> > > > >>>>>> On 2024-08-12 19:03, Stanislav Fomichev wrote:
+> > > > >>>>>>> On 08/12, Martin Karsten wrote:
+> > > > >>>>>>>> On 2024-08-12 16:19, Stanislav Fomichev wrote:
+> > > > >>>>>>>>> On 08/12, Joe Damato wrote:
+> > > > >>>>>>>>>> Greetings:
+> > > > =
 
-On 8/16/24 9:31 AM, James Morse wrote:
-> Hi Babu,
-> 
-> On 06/08/2024 23:00, Babu Moger wrote:
->> Introduce interface to switch between ABMC and legacy modes.
->>
->> By default ABMC is enabled on boot if the feature is available.
->> Provide the interface to go back to legacy mode if required.
-> 
-> I may have missed it on an earlier version ... why would anyone want the non-ABMC
-> behaviour on hardware that requires it: counters randomly reset and randomly return
-> 'Unavailable'... is that actually useful?
-> 
-> You default this to on, so there isn't a backward compatibility argument here.
-> 
-> It seems like being able to disable this is a source of complexity - is it needed?
+> > > > [snip]
+> > > > =
 
-The ability to go back to legacy was added while looking ahead to support the next
-"assignable counter" feature that is software based ("soft-RMID" .. "soft-ABMC"?).
+> > > > >>>>>> Note that napi_suspend_irqs/napi_resume_irqs is needed eve=
+n for the sake of
+> > > > >>>>>> an individual queue or application to make sure that IRQ s=
+uspension is
+> > > > >>>>>> enabled/disabled right away when the state of the system c=
+hanges from busy
+> > > > >>>>>> to idle and back.
+> > > > >>>>>
+> > > > >>>>> Can we not handle everything in napi_busy_loop? If we can m=
+ark some napi
+> > > > >>>>> contexts as "explicitly polled by userspace with a larger d=
+efer timeout",
+> > > > >>>>> we should be able to do better compared to current NAPI_F_P=
+REFER_BUSY_POLL
+> > > > >>>>> which is more like "this particular napi_poll call is user =
+busy polling".
+> > > > >>>>
+> > > > >>>> Then either the application needs to be polling all the time=
+ (wasting cpu
+> > > > >>>> cycles) or latencies will be determined by the timeout.
+> > > > > But if I understand correctly, this means that if the applicati=
+on
+> > > > > thread that is supposed
+> > > > > to do napi busy polling gets busy doing work on the new data/ev=
+ents in
+> > > > > userspace, napi polling
+> > > > > will not be done until the suspend_timeout triggers? Do you dis=
+patch
+> > > > > work to a separate worker
+> > > > > threads, in userspace, from the thread that is doing epoll_wait=
+?
+> > > > =
 
-This series adds support for ABMC on recent AMD hardware to address the issue described
-in cover letter. This issue also exists on earlier AMD hardware that does not have the ABMC
-feature and Peter is working on a software solution to address the issue on non-ABMC hardware.
-This software solution is expected to have the same interface as the hardware solution but
-earlier discussions revealed that it may introduce extra latency that users may only want to
-accept during periods of active monitoring. Thus the option to disable the counter assignment
-mode.
+> > > > Yes, napi polling is suspended while the application is busy betw=
+een =
 
-Your point about users returning to "legacy" mode on ABMC hardware is valid. I do not know
-if that is useful. Here I can only speculate since monitoring with ABMC is
-more accurate but also requires more user space involvement to assign counters while legacy
-mode is less accurate while requiring less user space involvement.
+> > > > epoll_wait calls. That's where the benefits are coming from.
+> > > > =
 
-> For MPAM I'm looking at enabling this on any platform that is short of monitors. If
-> user-space disables it I don't have a "at random" hardware behaviour to fall back on - its
-> extra work to invent a behaviour I'm not sure is useful...
+> > > > The consequences depend on the nature of the application and over=
+all =
 
-It should not be required for MPAM to have a "legacy" mode. resctrl fs can expose only one
-mode that is always enabled. Noting this now is important so that we can get the wording right
-in the documentation.
+> > > > preferences for the system. If there's a "dominant" application f=
+or a =
 
-Thanks for chiming in on MPAM's plans for this work.
+> > > > number of queues and cores, the resulting latency for other backg=
+round =
 
-Reinette
+> > > > applications using the same queues might not be a problem at all.=
+
+> > > > =
+
+> > > > One other simple mitigation is limiting the number of events that=
+ each =
+
+> > > > epoll_wait call accepts. Note that this batch size also determine=
+s the =
+
+> > > > worst-case latency for the application in question, so there is a=
+ =
+
+> > > > natural incentive to keep it limited.
+> > > > =
+
+> > > > A more complex application design, like you suggest, might also b=
+e an =
+
+> > > > option.
+> > > > =
+
+> > > > >>>> Only when switching back and forth between polling and inter=
+rupts is it
+> > > > >>>> possible to get low latencies across a large spectrum of off=
+ered loads
+> > > > >>>> without burning cpu cycles at 100%.
+> > > > >>>
+> > > > >>> Ah, I see what you're saying, yes, you're right. In this case=
+ ignore my comment
+> > > > >>> about ep_suspend_napi_irqs/napi_resume_irqs.
+> > > > >>
+> > > > >> Thanks for probing and double-checking everything! Feedback is=
+ important
+> > > > >> for us to properly document our proposal.
+> > > > >>
+> > > > >>> Let's see how other people feel about per-dev irq_suspend_tim=
+eout. Properly
+> > > > >>> disabling napi during busy polling is super useful, but it wo=
+uld still
+> > > > >>> be nice to plumb irq_suspend_timeout via epoll context or hav=
+e it set on
+> > > > >>> a per-napi basis imho.
+> > > > > I agree, this would allow each napi queue to tune itself based =
+on
+> > > > > heuristics. But I think
+> > > > > doing it through epoll independent interface makes more sense a=
+s Stan
+> > > > > suggested earlier.
+> > > > =
+
+> > > > The question is whether to add a useful mechanism (one sysfs para=
+meter =
+
+> > > > and a few lines of code) that is optional, but with demonstrable =
+and =
+
+> > > > significant performance/efficiency improvements for an important =
+class =
+
+> > > > of applications - or wait for an uncertain future?
+> > > =
+
+> > > The issue is that this one little change can never be removed, as i=
+t
+> > > becomes ABI.
+> > > =
+
+> > > Let's get the right API from the start.
+> > > =
+
+> > > Not sure that a global variable, or sysfs as API, is the right one.=
+
+> > =
+
+> > Sorry per-device, not global.
+> > =
+
+> > My main concern is that it adds yet another user tunable integer, for=
+
+> > which the right value is not obvious.
+> =
+
+> This is a feature for advanced users just like SO_INCOMING_NAPI_ID
+> and countless other features.
+> =
+
+> The value may not be obvious, but guidance (in the form of
+> documentation) can be provided.
+
+Okay. Could you share a stab at what that would look like?
+
+> > If the only goal is to safely reenable interrupts when the applicatio=
+n
+> > stops calling epoll_wait, does this have to be user tunable?
+> > =
+
+> > Can it be either a single good enough constant, or derived from
+> > another tunable, like busypoll_read.
+> =
+
+> I believe you meant busy_read here, is that right?
+> =
+
+> At any rate:
+> =
+
+>   - I don't think a single constant is appropriate, just as it
+>     wasn't appropriate for the existing mechanism
+>     (napi_defer_hard_irqs/gro_flush_timeout), and
+> =
+
+>   - Deriving the value from a pre-existing parameter to preserve the
+>     ABI, like busy_read, makes using this more confusing for users
+>     and complicates the API significantly.
+> =
+
+> I agree we should get the API right from the start; that's why we've
+> submit this as an RFC ;)
+> =
+
+> We are happy to take suggestions from the community, but, IMHO,
+> re-using an existing parameter for a different purpose only in
+> certain circumstances (if I understand your suggestions) is a much
+> worse choice than adding a new tunable that clearly states its
+> intended singular purpose.
+
+Ack. I was thinking whether an epoll flag through your new epoll
+ioctl interface to toggle the IRQ suspension (and timer start)
+would be preferable. Because more fine grained.
+
+Also, the value is likely dependent more on the expected duration
+of userspace processing? If so, it would be the same for all
+devices, so does a per-netdev value make sense?
+
 
