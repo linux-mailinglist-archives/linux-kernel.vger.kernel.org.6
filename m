@@ -1,131 +1,123 @@
-Return-Path: <linux-kernel+bounces-289668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA019548F7
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D4D69548F6
 	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:42:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 467F02873EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:42:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CB981C2404D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00BBD1AC425;
-	Fri, 16 Aug 2024 12:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF3E1B3F08;
+	Fri, 16 Aug 2024 12:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="NVr6JfYf"
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kidgWAr1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EDA72E859
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 12:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF47416F839;
+	Fri, 16 Aug 2024 12:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723812134; cv=none; b=OLUg0JPc5CYCI+LcXnCZRx4ygt94dRvGWNUVjFtCjMUP89+qZKmRcoAtaZwxKjeGoDss+XBB1OLYBFr2NwkA/J2Ys69wl5HBoMIqQqzCku6LJkcw/8HY8bhjaWwT8VcXnKH7mWeb9yMliO7HycQMANo5/0gm0+PJDYCL7Yzfz+8=
+	t=1723812153; cv=none; b=q9EYCy52aBoq3hV+wff9njk0A5OsTC4OkTSVV/GYyF62oKqxMx44fF1vDJ6YQCjnmYeiiJMqG3G+X6f2VJBI/LTRaxlQH5e51nyVJhhRyoHhg5+MmqffKy+QT/t2Ehx5C81E/GgoY8shUvM9oq4LkcWoAdwaoPtXhg8knMiKilw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723812134; c=relaxed/simple;
-	bh=sF0dNzfSIqtPCamjjg4ICQJcK0LPVhHebOf5ZflD/uM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BzLPA4JoER1V15KgKxCukSKYo7uODVTrUM9soTk35kzxBGtZ+niJ1O47zXDmrqu+vyDVRTltNvTQIXw540tUNX+CzjcLKmfHniidtdgpZ1KwHVnfAALG+yvCNITNhhpOXwCFEEuou0FZXn575c3RGYSxf6jv3PJjtagRETNf6+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=NVr6JfYf; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1723812119; x=1726404119;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=sF0dNzfSIqtPCamjjg4ICQJcK0LPVhHebOf5ZflD/uM=;
-	b=NVr6JfYfnr+7nlk6pHbl79ehkJx5e1GgvoXS4t430vE6qjPLaUizGbSWF9zKWrgx
-	7yWEmKUDgbm6/uVT/I/XO3CpE1WH3SUN/Uxmrxc0991beUoMIT/4xHV4oSYlsZFd
-	F0aB1H/EFuSWgBGQRT2y1SEPfFJHLmnXY8N7N+DG7Kk=;
-X-AuditID: ac14000a-03251700000021bc-70-66bf49175b97
-Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 1E.21.08636.7194FB66; Fri, 16 Aug 2024 14:41:59 +0200 (CEST)
-Received: from augenblix2.phytec.de (172.25.0.11) by Berlix.phytec.de
- (172.25.0.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Fri, 16 Aug
- 2024 14:41:59 +0200
-From: Wadim Egorov <w.egorov@phytec.de>
-To: <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>
-CC: <upstream@lists.phytec.de>, <heikki.krogerus@linux.intel.com>,
-	<gregkh@linuxfoundation.org>, <javier.carrasco@wolfvision.net>,
-	<abdelalkuor@geotab.com>, <harshit.m.mogalapalli@oracle.com>
-Subject: [PATCH] usb: typec: tipd: Free IRQ only if it was requested before
-Date: Fri, 16 Aug 2024 14:41:50 +0200
-Message-ID: <20240816124150.608125-1-w.egorov@phytec.de>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1723812153; c=relaxed/simple;
+	bh=+ru+RPAUuulu0jmH4Fzkx3GT7ksvWqMG2TKyXNLGXl0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=As5Trd+UUBi4UhDaCYKn3lrPgMAkT6Rqz1hfhRHyGJOHEBtmWhUSLAZF9vFK9CVMNXG7X6FR5IxVQTjMPaZECCvs3JOr23ElWWazY69KeDrBMo9G0FwHWjq14Hk4lt/8qkv4soqBkbZlzuapocvK2NN7EDtyHL34J/CldgV/7Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kidgWAr1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57F3BC32782;
+	Fri, 16 Aug 2024 12:42:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723812153;
+	bh=+ru+RPAUuulu0jmH4Fzkx3GT7ksvWqMG2TKyXNLGXl0=;
+	h=From:Subject:Date:To:Cc:From;
+	b=kidgWAr178BPZRQ3uDwHDL0LAPNMVtMp1nXk9eYJElM0TmHMEEcMr7bDgEBbK6FkD
+	 kka7U7AFeguJFWaONmbREMcB73s8gMSc6/FVGrgCrTSZ6grC5H45OE4T7KJZGnpCPZ
+	 q0JWS5yzdiOo5qv49VV0Ya0HrFSdM8Z44yLy2nRKCcbtv9XBYGYqRMN/6aujIQgUTz
+	 EE6fdVEbfEclsiLhtDqsoxHyvYLE1XpT1sWkAYehQ1OJJ/NZJq/gobw8WQ5Ne1PvjP
+	 hHVqtSlwWTkRk6zkyPUePNxGKZ17JWvoJKdZ0EiwiNBTE+Hk2LfKfGpNdoIXWX4CkN
+	 v6Bmx+QhaFArg==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH 0/3] nfsd: implement OPEN_XOR_DELEGATION part of delstid
+ draft
+Date: Fri, 16 Aug 2024 08:42:06 -0400
+Message-Id: <20240816-delstid-v1-0-c221c3dc14cd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Berlix.phytec.de (172.25.0.12) To Berlix.phytec.de
- (172.25.0.12)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGLMWRmVeSWpSXmKPExsWyRpKBR1fcc3+awbyX2hanzu1ltmhevJ7N
-	4v7JDUwWXat3slj8bTa1uLxrDpvFomWtzBbd79QdODwmLLrK7DHvZKDH/rlr2D36u1tYPT4+
-	vcXi8XmTnMf8348ZA9ijuGxSUnMyy1KL9O0SuDK6Z1xlLpjMU3GkYR1TA+Nmri5GTg4JAROJ
-	w/v3soLYQgJLmCRWNPF0MXIB2Y8ZJdYvvcMIkmATUJe4s+EbWJGIgL3ElclfWECKmAUOM0pc
-	3dzI3MXIwSEs4C3x+7IPSA2LgKrE+6vXWEBsXgELiWl9C9kglslLzLz0nR0iLihxcuYTsBpm
-	oHjz1tnMELaExMEXL5ghDpKXeHFpOQtM77Rzr5kh7FCJrV+2M01gFJiFZNQsJKNmIRm1gJF5
-	FaNQbmZydmpRZrZeQUZlSWqyXkrqJkZQ2IswcO1g7JvjcYiRiYPxEKMEB7OSCO/TL3vThHhT
-	EiurUovy44tKc1KLDzFKc7AoifOu7ghOFRJITyxJzU5NLUgtgskycXBKNTAuNDvIvt7kwz3V
-	g2n8bt8DLl7Lu6GlP0mhzCqnQ7HFhGVx9FahqEa7mm53drX87YU1W7a1cz/y3CL/p6dXalHU
-	rB67X6f1npfpMYuvvLl6h255dGRnwQG1JamNlc33T/W+l1Pc1My07MUmrR/Pwqz07j80Dai1
-	Ofe5cVPFrROZcXef3ReoMFBiKc5INNRiLipOBACbb3VsaQIAAA==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAB5Jv2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDC0NT3ZTUnOKSzBRdS2MjSwMzS8PEFENDJaDqgqLUtMwKsEnRsbW1AAi
+ 8iMVZAAAA
+To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+ Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, 
+ Anna Schumaker <anna@kernel.org>
+Cc: Tom Haynes <loghyr@gmail.com>, linux-kernel@vger.kernel.org, 
+ linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1589; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=+ru+RPAUuulu0jmH4Fzkx3GT7ksvWqMG2TKyXNLGXl0=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmv0kxTqKDXRkAwNjz4U90vjAQTVHNwkLYzx60F
+ OJTOP0f65qJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZr9JMQAKCRAADmhBGVaC
+ FbVaEAC/J2GP5mWAENPl5N/rrAjiHhtfb+rd/7hmMYHTXZ3o66u0LLXtR18yTWVrbGmdBa4Dhlk
+ qgiShaG/2eOyszCyTEn7mIJ0BJgIX+6kSXe2wzZ+S8kZxKqO4EkAshPd52t2wVTIEH/BfRZiUGc
+ u57syd+MLbgsdEKZKkZCEAErCkibdnsYZFhMgMZMQmAccHMxPy+YOh8UnWmq8q1nQ9Ik3UpwWRJ
+ T1HCzqR4PI/SWQYGo3M/Rai2c9CROjnStYMYQcWq2XhBk9ttPUdALWViXlaaljF6vCMpBzDtHyX
+ 8uZ5XWunp4SyN9jj/fWKkV6vyTTDQAq3Y1GT/saosMbhHNeQxqQiEoEYoRLgqB4EETFofkscpOP
+ Jf0kAm84w4/7mJsGI3ZaonTfiPnivsaE+RyPu9s3GVT/UHc2bWCXRos4RODLUt7wpSqY8BzXs/c
+ K2rqh/ew+73Qa1Oo/Dcjaalicp7dyzi7pp5U+NPzPj3o25SXNXWYZeHNsbxx2YnZgbkerq9vbfA
+ SAdY830EbnVTyH+EmlKaS1c3fcgnvhjm/zTsTA3vDGeWUjXbeVkW48WyNkUSi9MDc+Vozuqgugj
+ AzUE+zt91RBGUdDDHkZOn9o9UOq/YWChxnLmFDXWKvtY9/YM5dR6XFVSop7+NisNXVF4ZfuJtse
+ Ug9x/DkOrcQpGmA==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-In polling mode, if no IRQ was requested there is no need to free it.
-Call devm_free_irq() only if client->irq is set. This fixes the warning
-caused by the tps6598x module removal:
+This adds support for part of the "delstid" draft:
 
-WARNING: CPU: 2 PID: 333 at kernel/irq/devres.c:144 devm_free_irq+0x80/0x8c
-...
-...
-Call trace:
-  devm_free_irq+0x80/0x8c
-  tps6598x_remove+0x28/0x88 [tps6598x]
-  i2c_device_remove+0x2c/0x9c
-  device_remove+0x4c/0x80
-  device_release_driver_internal+0x1cc/0x228
-  driver_detach+0x50/0x98
-  bus_remove_driver+0x6c/0xbc
-  driver_unregister+0x30/0x60
-  i2c_del_driver+0x54/0x64
-  tps6598x_i2c_driver_exit+0x18/0xc3c [tps6598x]
-  __arm64_sys_delete_module+0x184/0x264
-  invoke_syscall+0x48/0x110
-  el0_svc_common.constprop.0+0xc8/0xe8
-  do_el0_svc+0x20/0x2c
-  el0_svc+0x28/0x98
-  el0t_64_sync_handler+0x13c/0x158
-  el0t_64_sync+0x190/0x194
+    https://datatracker.ietf.org/doc/draft-ietf-nfsv4-delstid/05/
 
-Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+Specifically, this adds support for the OPEN_XOR_DELEGATION part of the
+draft. That allows the client to avoid issuing CLOSE compounds when it
+holds a delegation.
+
+For the XDR handling, I used Chuck's new lkxdrgen tool to generate the
+relevant boilerplate, and then hand tweaked it in places to work around
+bugs in the decoder, naming conflicts, etc.
+
+I've left the encoders and decoders for the delegated timestamp handling
+in the XDR patch, but I'm still studying that piece and it isn't
+implemented yet. That may require some timestamp handling surgery at the
+VFS layer. I think it's doable and may actually be simpler to implement
+on top of the multigrain work.
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- drivers/usb/typec/tipd/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Jeff Layton (3):
+      nfsd: bring in support for delstid draft XDR encoding
+      nfsd: add support for FATTR4_OPEN_ARGUMENTS
+      nfsd: implement OPEN_ARGS_SHARE_ACCESS_WANT_OPEN_XOR_DELEGATION
 
-diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
-index dd51a25480bf..256b0c054e9a 100644
---- a/drivers/usb/typec/tipd/core.c
-+++ b/drivers/usb/typec/tipd/core.c
-@@ -1465,8 +1465,9 @@ static void tps6598x_remove(struct i2c_client *client)
- 
- 	if (!client->irq)
- 		cancel_delayed_work_sync(&tps->wq_poll);
-+	else
-+		devm_free_irq(tps->dev, client->irq, tps);
- 
--	devm_free_irq(tps->dev, client->irq, tps);
- 	tps6598x_disconnect(tps, 0);
- 	typec_unregister_port(tps->port);
- 	usb_role_switch_put(tps->role_sw);
+ fs/nfsd/Makefile          |   2 +-
+ fs/nfsd/delstid_xdr.c     | 464 ++++++++++++++++++++++++++++++++++++++++++++++
+ fs/nfsd/delstid_xdr.h     | 105 +++++++++++
+ fs/nfsd/nfs4state.c       |  29 ++-
+ fs/nfsd/nfs4xdr.c         |  57 +++++-
+ fs/nfsd/nfsd.h            |   3 +-
+ include/uapi/linux/nfs4.h |   7 +-
+ 7 files changed, 658 insertions(+), 9 deletions(-)
+---
+base-commit: 6d0cd2727ed2cf725b1f20dc4e2d0d138c1cf117
+change-id: 20240815-delstid-93290691ad11
+
+Best regards,
 -- 
-2.34.1
+Jeff Layton <jlayton@kernel.org>
 
 
