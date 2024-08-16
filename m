@@ -1,300 +1,155 @@
-Return-Path: <linux-kernel+bounces-289908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20962954D32
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:56:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96E0B954D38
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:57:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 721A7B26330
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:56:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39BB028847F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855DC1C2335;
-	Fri, 16 Aug 2024 14:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BCF61C37BC;
+	Fri, 16 Aug 2024 14:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f0NsqmR8"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BeF+YsDn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46A41C233B
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 14:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CF91BE25A;
+	Fri, 16 Aug 2024 14:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723819890; cv=none; b=E9Z2ST1XJh95Iri51X9ySh/VAEjvcwKN5zv/qtrCFRr4knIdQSgGlvZVuR31ZLcL9ebMBsmjynOPdWMZCT/SjQvmsB7BYrvzTZ37Q3kNKGTnyX7L5QntHCOJ7SFGEIpWEY4wQyM1TyPx7kHpunkhI1rlCanEfDajdzvQ2xHCzF4=
+	t=1723819924; cv=none; b=taLGIpD/2cO1KUpixPmRyb5f0h3nWdRsSGNRVgjbbKYq/7DlmKw3YWq/UdlrcVKPwkvq3ku255zt91IsRNy7walpHfrbC6y9KFeyXAYs16GTIY/j/UcHM9tH/C873WtUXn3jBHZeu5kYectEz95jX34AjvL2WtM2MWvgcuujzOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723819890; c=relaxed/simple;
-	bh=jyUGdhrTULZrS+9zkU2sOUI+gmKfwKfiCoRCVeWvTTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EAzTq32Y9dgS6LK1wtASwRWgLmyjDPf0JxxD233X0JCV8jw6F/jVLx0O5ja4+fPU+L9vXjjMPoNGGvdlH+P7H1sp3/+kqXkULby0TIoz+HFvhapAhFhUdEv2VUwpy/jlWwUXs72osY/bHqpNsagarEtXybjjzBTiez8dw9AUNwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f0NsqmR8; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-201e64607a5so15269235ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:51:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723819888; x=1724424688; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Vi9DTEaNngBIJgilvaS4bFwRiZJnLAe82n9Td5urRpE=;
-        b=f0NsqmR8sNtFIIz+iHGPzsqJ2c6k0qIOl35En/7j/PCLXuu05QlOb6BQffy8VnfzJu
-         M8AdHdg2dxYq1cFzPGnc4Esng/mXzhnWe/qS5Oj7K1O0xqrEW+caLvcsmCJQc/1fKxR3
-         /ucmx8Reth2CfeXwLN+43Hknb925c0zmyxrTICEvIN1EejGXp3z1fw92n7coJa7X8hp9
-         XrWw+xDOIEc3s0I1+GQwOC1biyg1WTVOOzLc3Ca+dEgABSsIHEoBGqQjTGNC6PZWVSsz
-         ZwaXvaSHsz5HX97HzNYUZ2j0wkdbgKkcFzMi4GebLxyFxuJt+/++k3FZe7rqKyXjNWSz
-         EKRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723819888; x=1724424688;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vi9DTEaNngBIJgilvaS4bFwRiZJnLAe82n9Td5urRpE=;
-        b=LAkWiTShkAuSeEnBmsxY33GAprLx0GAwM1fbrSq4nV9F5qhSgWoRKFUnX2Lrdi3jYI
-         n5wegSzMZIBiAOUGAcoANLEkqBVQqHw7GXdnLsxDgHW9H+GWLQGAljRpEb4I14xcuTvd
-         6Z1kIOqbvLgumSuUmXqZ0Zi2vui69UYmJeMhKOXtmpjGWstasMdxTZlZuyKcInpm2fZo
-         ewDgRflWBdBTxtaLS2YWxaJOHCp73IiRAZh3Z4b7pRmzYoNIEyBs/leuPdIxrqyQRtiQ
-         I5YPe0XWWBWglnJnWVHkjcgt/RTuYjKEwG4Ts3EEhC7cJESwNs0LvpnrCJ1bp1o+fRj2
-         YfCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVNM5lKgfqEj/5jFf98CEWhb5yI5ULb+7WD7/4oTzBVkYz1FBnCLh59Ub3vm1cW5kCAFJ5r0ecGfndqPuw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbUISHXy8dIzCX/h/AJHa7kwSubWaRua0wGmtc8txiqOMqEv0e
-	KjFXH/uVNeQMQNkwczxho32TbjyqkgZKUzAq3hYWY7bFLVY3hMHNcwv18cL1Z5M=
-X-Google-Smtp-Source: AGHT+IF2gieWmbM13dSbOj8NS0LTGa6f3bTQe8OSxzV2qX88ELtOmHe1zAy7hVSZfKm784j8Gc07og==
-X-Received: by 2002:a17:903:4288:b0:201:e65b:500b with SMTP id d9443c01a7336-2020404cdf2mr30458175ad.63.1723819887861;
-        Fri, 16 Aug 2024 07:51:27 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:b343:9a6:583a:ddcd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f031979asm26610285ad.81.2024.08.16.07.51.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 07:51:27 -0700 (PDT)
-Date: Fri, 16 Aug 2024 08:51:25 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Beleswar Prasad Padhi <b-padhi@ti.com>
-Cc: andersson@kernel.org, afd@ti.com, hnagalla@ti.com, u-kumar1@ti.com,
-	s-anna@ti.com, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] remoteproc: k3-r5: Acquire mailbox handle during
- probe routine
-Message-ID: <Zr9nbWnADDB+ZOlg@p14s>
-References: <20240808074127.2688131-1-b-padhi@ti.com>
- <20240808074127.2688131-3-b-padhi@ti.com>
- <ZrzSxdxt64UkgVS3@p14s>
- <d0fea480-1682-48ec-99dd-73deaff99d7d@ti.com>
+	s=arc-20240116; t=1723819924; c=relaxed/simple;
+	bh=aCsAMYNwuNLSPVHVux3H7Fr1gU8Y/2OHAz58FNdjFh4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LTlocXFzinosb+wsNAbQEewIxmWveFZGEfrGiJj015JQukUWz7Hxaj8g/+i/g4h+RM2tL4YL/cMVNHpTlBibq+7PkoYAsC4DftVlfMksVcxBUJHHZm03vqd4Q3tLI2Bjw+3P7EiIERsRd5JjSEIYncRjR5zpKLqdkc0on8fjVlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BeF+YsDn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D69DBC32782;
+	Fri, 16 Aug 2024 14:52:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723819923;
+	bh=aCsAMYNwuNLSPVHVux3H7Fr1gU8Y/2OHAz58FNdjFh4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BeF+YsDnIob191w0ZGxINOu0jYhGxn63hEvhpdwFa5jW6Ni9L1j5zNVOpziP8Me0j
+	 VdJs4rtfVWtbONAJ2r0/x3uS1uJZc2XPYoBcdPMqJrUCV+x88lcdwCaKqSzjILyxCl
+	 pPqLCIIfO0T4TVHG0cB1VAhMSqMnUKLz0cQF1rYeVUgRmF3ySFmVl5HH9P3APi/JdA
+	 OGvydVVsY9YgrNN5+mf6fbDIFAeE2+9CGNMViKsCCCrgA8yjKVqwuBgIuodAtGnMB+
+	 bJ1HDN0++jB7l7MXDZDd5l+5rR7YSeKr9kXUadrtaZSXP/sile1fdjzQVOwoK02sNK
+	 pOQwo0zbUdYjg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1seyJ7-004JCN-Lr;
+	Fri, 16 Aug 2024 15:52:01 +0100
+Date: Fri, 16 Aug 2024 15:52:00 +0100
+Message-ID: <86frr4zfjj.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+	Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	joey.gouly@arm.com
+Subject: Re: [PATCH v10 14/40] KVM: arm64: Manage GCS access and registers for guests
+In-Reply-To: <8c1e8fb6-0152-42f7-ab6d-93f6fe70b4aa@sirena.org.uk>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+	<20240801-arm64-gcs-v10-14-699e2bd2190b@kernel.org>
+	<86h6bkzh8o.wl-maz@kernel.org>
+	<8c1e8fb6-0152-42f7-ab6d-93f6fe70b4aa@sirena.org.uk>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d0fea480-1682-48ec-99dd-73deaff99d7d@ti.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, akpm@linux-foundation.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, arnd@arndb.de, oleg@redhat.com, ebiederm@xmission.com, shuah@kernel.org, rick.p.edgecombe@intel.com, debug@rivosinc.com, ardb@kernel.org, Szabolcs.Nagy@arm.com, kees@kernel.org, hjl.tools@gmail.com, paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, fweimer@redhat.com, brauner@kernel.org, thiago.bauermann@linaro.org, ross.burton@arm.com, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, joey.gouly@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Fri, Aug 16, 2024 at 01:23:59PM +0530, Beleswar Prasad Padhi wrote:
-> Hi Mathieu,
+On Fri, 16 Aug 2024 15:40:33 +0100,
+Mark Brown <broonie@kernel.org> wrote:
 > 
-> On 14-08-2024 21:22, Mathieu Poirier wrote:
-> > Hi Beleswar, On Thu, Aug 08, 2024 at 01: 11: 26PM +0530, Beleswar Padhi
-> > wrote: > Acquire the mailbox handle during device probe and do not
-> > release handle > in stop/detach routine or error paths. This removes the
-> > redundant > requests for
-> > ZjQcmQRYFpfptBannerStart
-> > Report Suspicious
-> > <https://us-phishalarm-ewt.proofpoint.com/EWT/v1/G3vK!vldnVV7DH2eSIoaksHjpMPogloWUPfAcp2-dEVbMoE1YA3kGFXdJXGAJUKJm$>
-> > 
-> > ZjQcmQRYFpfptBannerEnd
-> > Hi Beleswar,
-> > 
-> > On Thu, Aug 08, 2024 at 01:11:26PM +0530, Beleswar Padhi wrote:
-> > > Acquire the mailbox handle during device probe and do not release handle
-> > > in stop/detach routine or error paths. This removes the redundant
-> > > requests for mbox handle later during rproc start/attach. This also
-> > > allows to defer remoteproc driver's probe if mailbox is not probed yet.
-> > > > Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> > > ---
-> > >  drivers/remoteproc/ti_k3_r5_remoteproc.c | 78 +++++++++---------------
-> > >  1 file changed, 30 insertions(+), 48 deletions(-)
-> > > > diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> > b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> > > index 57067308b3c0..8a63a9360c0f 100644
-> > > --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> > > +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> > > @@ -194,6 +194,10 @@ static void k3_r5_rproc_mbox_callback(struct mbox_client *client, void *data)
-> > >  	const char *name = kproc->rproc->name;
-> > >  	u32 msg = omap_mbox_message(data);
-> > >  > +	/* Do not forward message from a detached core */
-> > > +	if (kproc->rproc->state == RPROC_DETACHED)
-> > > +		return;
-> > > +
-> > >  	dev_dbg(dev, "mbox msg: 0x%x\n", msg);
-> > >  >  	switch (msg) {
-> > > @@ -229,6 +233,10 @@ static void k3_r5_rproc_kick(struct rproc *rproc, int vqid)
-> > >  	mbox_msg_t msg = (mbox_msg_t)vqid;
-> > >  	int ret;
-> > >  > +	/* Do not forward message to a detached core */
-> > > +	if (kproc->rproc->state == RPROC_DETACHED)
-> > > +		return;
-> > > +
-> > >  	/* send the index of the triggered virtqueue in the mailbox payload */
-> > >  	ret = mbox_send_message(kproc->mbox, (void *)msg);
-> > >  	if (ret < 0)
-> > > @@ -399,12 +407,9 @@ static int k3_r5_rproc_request_mbox(struct rproc *rproc)
-> > >  	client->knows_txdone = false;
-> > >  >  	kproc->mbox = mbox_request_channel(client, 0);
-> > > -	if (IS_ERR(kproc->mbox)) {
-> > > -		ret = -EBUSY;
-> > > -		dev_err(dev, "mbox_request_channel failed: %ld\n",
-> > > -			PTR_ERR(kproc->mbox));
-> > > -		return ret;
-> > > -	}
-> > > +	if (IS_ERR(kproc->mbox))
-> > > +		return dev_err_probe(dev, PTR_ERR(kproc->mbox),
-> > > +				     "mbox_request_channel failed\n");
-> > >  >  	/*
-> > >  	 * Ping the remote processor, this is only for sanity-sake for now;
-> > > @@ -552,10 +557,6 @@ static int k3_r5_rproc_start(struct rproc *rproc)
-> > >  	u32 boot_addr;
-> > >  	int ret;
-> > >  > -	ret = k3_r5_rproc_request_mbox(rproc);
-> > > -	if (ret)
-> > > -		return ret;
-> > > -
-> > >  	boot_addr = rproc->bootaddr;
-> > >  	/* TODO: add boot_addr sanity checking */
-> > >  	dev_dbg(dev, "booting R5F core using boot addr = 0x%x\n", boot_addr);
-> > > @@ -564,7 +565,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
-> > >  	core = kproc->core;
-> > >  	ret = ti_sci_proc_set_config(core->tsp, boot_addr, 0, 0);
-> > >  	if (ret)
-> > > -		goto put_mbox;
-> > > +		return ret;
-> > >  >  	/* unhalt/run all applicable cores */
-> > >  	if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
-> > > @@ -580,13 +581,12 @@ static int k3_r5_rproc_start(struct rproc *rproc)
-> > >  		if (core != core0 && core0->rproc->state == RPROC_OFFLINE) {
-> > >  			dev_err(dev, "%s: can not start core 1 before core 0\n",
-> > >  				__func__);
-> > > -			ret = -EPERM;
-> > > -			goto put_mbox;
-> > > +			return -EPERM;
-> > >  		}
-> > >  >  		ret = k3_r5_core_run(core);
-> > >  		if (ret)
-> > > -			goto put_mbox;
-> > > +			return ret;
-> > >  	}
-> > >  >  	return 0;
-> > > @@ -596,8 +596,6 @@ static int k3_r5_rproc_start(struct rproc *rproc)
-> > >  		if (k3_r5_core_halt(core))
-> > >  			dev_warn(core->dev, "core halt back failed\n");
-> > >  	}
-> > > -put_mbox:
-> > > -	mbox_free_channel(kproc->mbox);
-> > >  	return ret;
-> > >  }
-> > >  > @@ -658,8 +656,6 @@ static int k3_r5_rproc_stop(struct rproc
-> > *rproc)
-> > >  			goto out;
-> > >  	}
-> > >  > -	mbox_free_channel(kproc->mbox);
-> > > -
-> > >  	return 0;
-> > >  >  unroll_core_halt:
-> > > @@ -674,42 +670,22 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
-> > >  /*
-> > >   * Attach to a running R5F remote processor (IPC-only mode)
-> > >   *
-> > > - * The R5F attach callback only needs to request the mailbox, the remote
-> > > - * processor is already booted, so there is no need to issue any TI-SCI
-> > > - * commands to boot the R5F cores in IPC-only mode. This callback is invoked
-> > > - * only in IPC-only mode.
-> > > + * The R5F attach callback is a NOP. The remote processor is already booted, and
-> > > + * all required resources have been acquired during probe routine, so there is
-> > > + * no need to issue any TI-SCI commands to boot the R5F cores in IPC-only mode.
-> > > + * This callback is invoked only in IPC-only mode and exists because
-> > > + * rproc_validate() checks for its existence.
-> > 
-> > Excellent documentation.
+> [1  <text/plain; us-ascii (7bit)>]
+> On Fri, Aug 16, 2024 at 03:15:19PM +0100, Marc Zyngier wrote:
+> > Mark Brown <broonie@kernel.org> wrote:
 > 
+> > > +	{ SYS_DESC(SYS_GCSCR_EL1), NULL, reset_val, GCSCR_EL1, 0 },
+> > > +	{ SYS_DESC(SYS_GCSPR_EL1), NULL, reset_unknown, GCSPR_EL1 },
+> > > +	{ SYS_DESC(SYS_GCSCRE0_EL1), NULL, reset_val, GCSCRE0_EL1, 0 },
 > 
-> Thanks!
+> > Global visibility for these registers? Why should we expose them to
+> > userspace if the feature is neither present nor configured?
 > 
-> > 
-> > >   */
-> > > -static int k3_r5_rproc_attach(struct rproc *rproc)
-> > > -{
-> > > -	struct k3_r5_rproc *kproc = rproc->priv;
-> > > -	struct device *dev = kproc->dev;
-> > > -	int ret;
-> > > -
-> > > -	ret = k3_r5_rproc_request_mbox(rproc);
-> > > -	if (ret)
-> > > -		return ret;
-> > > -
-> > > -	dev_info(dev, "R5F core initialized in IPC-only mode\n");
-> > > -	return 0;
-> > > -}
-> > > +static int k3_r5_rproc_attach(struct rproc *rproc) { return 0; }
-> > >  >  /*
-> > >   * Detach from a running R5F remote processor (IPC-only mode)
-> > >   *
-> > > - * The R5F detach callback performs the opposite operation to attach callback
-> > > - * and only needs to release the mailbox, the R5F cores are not stopped and
-> > > - * will be left in booted state in IPC-only mode. This callback is invoked
-> > > - * only in IPC-only mode.
-> > > + * The R5F detach callback is a NOP. The R5F cores are not stopped and will be
-> > > + * left in booted state in IPC-only mode. This callback is invoked only in
-> > > + * IPC-only mode and exists for sanity sake.
-> > 
-> > I would add the part about detach() being a NOP to attach() above...
-> > 
-> > >   */
-> > > -static int k3_r5_rproc_detach(struct rproc *rproc)
-> > > -{
-> > > -	struct k3_r5_rproc *kproc = rproc->priv;
-> > > -	struct device *dev = kproc->dev;
-> > > -
-> > > -	mbox_free_channel(kproc->mbox);
-> > > -	dev_info(dev, "R5F core deinitialized in IPC-only mode\n");
-> > > -	return 0;
-> > > -}
-> > > +static int k3_r5_rproc_detach(struct rproc *rproc) { return 0; }
-> > 
-> > ... and just remove this.
+> ...
 > 
+> > > +	if (!kvm_has_feat(kvm, ID_AA64PFR1_EL1, GCS, IMP))
+> > > +		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nGCS_EL0 |
+> > > +						HFGxTR_EL2_nGCS_EL1);
 > 
-> Thanks for the comments. But dropping k3_r5_rproc_detach() would mean we
-> would get -EINVAL[1] while trying to detach the core from sysfs[0]. Is it
-> expected?
->
+> > How can this work if you don't handle ID_AA64PFR_EL1 being written to?
+> > You are exposing GCS to all guests without giving the VMM an
+> > opportunity to turn it off. This breaks A->B->A migration, which is
+> > not acceptable.
+> 
+> This was done based on your positive review of the POE series which
+> follows the same pattern:
+> 
+>    https://lore.kernel.org/linux-arm-kernel/20240503130147.1154804-8-joey.gouly@arm.com/
+>    https://lore.kernel.org/linux-arm-kernel/864jagmxn7.wl-maz@kernel.org/
+> 
+> in which you didn't note any concerns about the handling for the
+> sysregs.
+> 
+> If your decisions have changed then you'll need to withdraw your review
+> there, I'd figured that given the current incompleteness of the
+> writability conversions and there being a bunch of existing registers
+> exposed unconditionally you'd decided to defer until some more general
+> cleanup of the situation.
 
-You are correct.  I have applied your patch.
+Thanks for pointing out that I missed this crucial detail in the POE
+series. I'll immediately go and point that out.
 
-> [0]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/remoteproc/remoteproc_sysfs.c#n202
-> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/remoteproc/remoteproc_core.c#n1752
-> 
-> > 
-> > Otherwise this patch looks good.
-> > 
-> > >  >  /*
-> > >   * This function implements the .get_loaded_rsc_table() callback and is used
-> > > @@ -1278,6 +1254,10 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
-> > >  		kproc->rproc = rproc;
-> > >  		core->rproc = rproc;
-> > >  > +		ret = k3_r5_rproc_request_mbox(rproc);
-> > > +		if (ret)
-> > > +			return ret;
-> > > +
-> > >  		ret = k3_r5_rproc_configure_mode(kproc);
-> > >  		if (ret < 0)
-> > >  			goto out;
-> > > @@ -1392,6 +1372,8 @@ static void k3_r5_cluster_rproc_exit(void *data)
-> > >  			}
-> > >  		}
-> > >  > +		mbox_free_channel(kproc->mbox);
-> > > +
-> > >  		rproc_del(rproc);
-> > >  >  		k3_r5_reserved_mem_exit(kproc);
-> > > -- > 2.34.1
-> > >
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
