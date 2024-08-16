@@ -1,105 +1,85 @@
-Return-Path: <linux-kernel+bounces-290403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9199695535E
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 00:35:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD995955361
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 00:35:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BD571F21A19
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:35:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A097283A11
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93410145B12;
-	Fri, 16 Aug 2024 22:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0109145FEE;
+	Fri, 16 Aug 2024 22:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="cagOpNgc"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iYi38Wfl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FA7BA33;
-	Fri, 16 Aug 2024 22:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F0512C478;
+	Fri, 16 Aug 2024 22:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723847709; cv=none; b=j9lmkJnniafSCQn3Napa/uh5EhEgzB71S/Mxh95WdxMVGPZSkiyBT4Qi+yi+obWNm2JfuR4Q2bGk35Z8xQFOatGJirY6Pc0NsXUueypJuYB7CR01RqeP/Ot924/YWdor/SHZba6t3tuY2C/hG/8TjUbCHXY6dlApr1D2RCHIKI8=
+	t=1723847728; cv=none; b=I46aRp1qlIWMWSax30xd3Y4IWOu9ls4u2WcmVuZhP9ZrWht+V+SgH2r0DtSt68b68+D/INywRX7kNLsMU6Jcz+i+92gH98WNIyCKzVeU/UUwgevOfOBb2jbXgRsNmudPfy73DmCRogOIG8HsjM31fPujcNVfeR21R+rXJhUsNiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723847709; c=relaxed/simple;
-	bh=ehLTjwjDdh9blb3CqGfEr+2DDQvrpcXGzOlnOBLI5ec=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=P96GR+JpBqERjtsnDWD1A4iArJdHrjuQHf76TtMUrewLMNwrIkV/XVLrArBYL1OHVjTqBjj8jeWq0ze9tLtmmkm4V22tHlInYm3/x7f+rVi1gTWcOhI5gtXF1KpxskU6Oj1/LHAfdJHJN8BeJ1P8reGv1Cso4MJSFRyou0MsxqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=cagOpNgc; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 0C938418AB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1723847708; bh=kSkA2qMealWsON4N+tqutzsgMm8VvYqfVjBrQ4vneoo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=cagOpNgcuEcNSIOt8oidoDU33zfM15DxR6dv4HdK+JVSpaLIC8gxAT/537Lrx6oBP
-	 EaUWEU5qNvh+scDUb+xW00OyqOEbvas/xznEyFB243PPEWX+pjDEyYfPDt8ZsTVZja
-	 R9raz7WpC0PWW4mws6l5azkysDJv4QLNSYlZiMN/I5g8HVQ4zzlksr70U2BFStOAlz
-	 m0c4ZyljxGFbGUZmaA05vZ3VZnfK2dkiRNzXqtR4TiY6Gfu8ucid/H3SOTuckOWYLd
-	 JV9gWlNpTW+abb5CiCBWxH/14ME0OohbDH4dPY9ajRj+s/kONHKUiQmsjIkiEE8U+H
-	 6pKrpXEN3ZFIg==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 0C938418AB;
-	Fri, 16 Aug 2024 22:35:07 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: David Hunter <david.hunter.linux@gmail.com>, david.hunter.linux@gmail.com
-Cc: javier.carrasco.cruz@gmail.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux@roeck-us.net, skhan@linuxfoundation.org, wim@linux-watchdog.org
-Subject: Re: [PATCH v3] Documentation: Capitalize Fahrenheit in
- watchdog-api.rst
-In-Reply-To: <20240807185332.61624-1-david.hunter.linux@gmail.com>
-References: <20240723131849.264939-1-david.hunter.linux@gmail.com>
- <20240807185332.61624-1-david.hunter.linux@gmail.com>
-Date: Fri, 16 Aug 2024 16:35:07 -0600
-Message-ID: <87ikw0hzac.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1723847728; c=relaxed/simple;
+	bh=ZpURkNGLjZcch2KIiqIa70/RNtpmwkxMErm8qyGuQFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T8ipEl0bG62nxIp7gPFPnaqWxb6RXqA8f3/fhgqWv1qSUt3KXqz3vfKE8Vt5H2tVroDAKFS3RnveGF9sVoIQI5l1i23dNJyjZF5sz1ouveP4ZmdRLOx4dVqN3WzU15fjLnJjEye6ZPGflrkA5kKqPXiSdGkEP62NMAVctzi3iIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iYi38Wfl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EF39C32782;
+	Fri, 16 Aug 2024 22:35:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723847727;
+	bh=ZpURkNGLjZcch2KIiqIa70/RNtpmwkxMErm8qyGuQFY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iYi38Wfl/U2v6Jbjh7y172hdiSELq5TqjuQoewoMF17UnTS/swFCZ2dA+QseFMNqD
+	 9sXeXhaAKtbBJ6bjy0PtSJIzLnrvTJXQl1dUbFe6tPb7Tka+W4aOuUtOAbtubY8arW
+	 dM302WQdKBgBR6QHFObHb07z/FxZPtmuGANmKzkkHflAsIlJS6oAuxFlX/9qQlTXpq
+	 0gYfLp9yG8phFst452Xj9kEeH6+c+KtPB0Hxg+7cyvB186aeJ/Sq8Z9Uo/0e7EGfEX
+	 bfkVvRUpeskCUpedUXUKIpnZ1vFfN7yzZW3IWP9LJ4/BjYf0E3HvRpxhh2TOuYwrjM
+	 MwOikIp/NU10Q==
+Date: Fri, 16 Aug 2024 16:35:26 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org,
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-sound@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH RESEND v2 1/6] ASoC: dt-bindings: midas-audio: Declare
+ required properties for GPIO jack det
+Message-ID: <172384771813.2392611.5123924124525265715.robh@kernel.org>
+References: <20240816-midas-audio-tab3-v2-0-48ee7f2293b3@gmail.com>
+ <20240816-midas-audio-tab3-v2-1-48ee7f2293b3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240816-midas-audio-tab3-v2-1-48ee7f2293b3@gmail.com>
 
-David Hunter <david.hunter.linux@gmail.com> writes:
 
-> Capitalize "fahrenheit," a spelling mistake.
->
-> Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
+On Fri, 16 Aug 2024 09:50:58 +0200, Artur Weber wrote:
+> GPIO jack detection requires an IIO channel and the detection threshold
+> to work. Explicitly declare the requirement in DT schema.
+> 
+> Fixes: 0a590ecc672a ("ASoC: dt-bindings: samsung,midas-audio: Add GPIO-based headset jack detection")
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 > ---
-> V2 -> V3:
->  - Fixed misspelling of "Capitalize" in commit message. 
->  - Put Tags and Kernel Subsystem in subject
->  - Put changelog after commit message
->
-> V1 -> V2: 
->  - Fixed imperative mood 
->  - Fixed misspelling of "Fahrenheit" in Subject
->
-> V2: https://lore.kernel.org/lkml/7b7ca7e0-6bd2-45ab-bd9b-40331a8e6fdd@roeck-us.net/
->
-> V1: https://lore.kernel.org/lkml/20240723131849.264939-1-david.hunter.linux@gmail.com/
->
->  Documentation/watchdog/watchdog-api.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Changes in v2:
+> - Use anyOf instead of oneOf in headset-detect-gpios/headset-key-gpios
+>   if: statement
 > ---
-> diff --git a/Documentation/watchdog/watchdog-api.rst b/Documentation/watchdog/watchdog-api.rst
-> index 800dcd7586f2..78e228c272cf 100644
-> --- a/Documentation/watchdog/watchdog-api.rst
-> +++ b/Documentation/watchdog/watchdog-api.rst
-> @@ -249,7 +249,7 @@ Note that not all devices support these two calls, and some only
->  support the GETBOOTSTATUS call.
->  
->  Some drivers can measure the temperature using the GETTEMP ioctl.  The
-> -returned value is the temperature in degrees fahrenheit::
-> +returned value is the temperature in degrees Fahrenheit::
+>  .../bindings/sound/samsung,midas-audio.yaml        | 29 +++++++++++++++++++---
+>  1 file changed, 26 insertions(+), 3 deletions(-)
+> 
 
-Applied, thanks.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-jon
 
