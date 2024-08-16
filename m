@@ -1,201 +1,335 @@
-Return-Path: <linux-kernel+bounces-289509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E4169546E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:45:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11DCD9546E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31CFB1C22A4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:45:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 843E01F21CC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 701BB1922FB;
-	Fri, 16 Aug 2024 10:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C81D192B97;
+	Fri, 16 Aug 2024 10:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="sFzt+JB5"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A086319755B
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 10:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="shqfAB4X"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3BE12562E;
+	Fri, 16 Aug 2024 10:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723805108; cv=none; b=GABhdv97I3H3596Tl96RGyntX4aYLMfzeRO+EbVbmlTmCbhTB0VX3Rgz2ZmsdxFF0LzELG+cxGyIIBJOHBW/fG/Dic3mKKZiqXtVqeETy1AJId59lfbhb9o15K9C/07wqfOUjHzzqNgPUiLviQOnghmgma1DlH3J1nKqA5RjZVk=
+	t=1723805309; cv=none; b=Man4F27g2tLwWxics7xZPIMrGUJreZMY6Kzr3HCoql1RObkfKxNa4QPIbs29EcGFp1G1oFbHH0NEvTMUMCrlbYeTPQby7b62Xn4T49XvfQXlAz05onMv1qn3eJ1Yr5i7+AWEVzqlBldHCrKDMFi7/0sCc05Dk1LP5XqWeSZs9NM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723805108; c=relaxed/simple;
-	bh=TuI+3JNN/KVJjGPeIeWqNHx4YCm3oM0eyYi9XN8BW70=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ayui2O+rCzrx9hwaeFfPKgZE9EH8kcUpOlcKTJMFqoACPNlorttDzgQOcBZnUlEFxpmW9mwve3pJwHNUjGwg1QBNiLVhxK4JmEPxgYKFN9lDceg6mFr2fjRrjrt0zyDOd0mddaxa7Uw8i77N9i6kX5lzTAf+JvzaoYZggMNLU9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=sFzt+JB5; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-39b06af1974so7000125ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 03:45:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1723805105; x=1724409905; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BQ76OrJ+D6EglboDmRkksAWPF9+ReWU1C7wwydHo8w8=;
-        b=sFzt+JB5dOy/z6wotrdK40bk0nTjIwec9kRqhIvAHWT8YL4YOxHYx+VXuEuUYy6Pyj
-         4wbrkngvQLViFABtEa2FaBEci0eYQka/jTrAlLdy09l13bifEmIMSCZDopW5Ns0+Sj1k
-         PDO2nEQ34iQ8/bPpN3kvf7GyEnC8ucRPodtyZb+EFMZnNgCStMGZvqm+spcfIYAZmnIj
-         SpYX+SSkS6AaeooJAbc6BTME7y25/8CowLwEIT/Mt2qW6cf0vJR880KuBlEmpaAqWyUv
-         LggzE49BQtlmeJ/c6Zy2sbvhhncHUde2Zd13LU8CLI0egWbFJEzL6k5Mu+IbjGL87sPv
-         Gcbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723805105; x=1724409905;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BQ76OrJ+D6EglboDmRkksAWPF9+ReWU1C7wwydHo8w8=;
-        b=U60Ri6cI1xwj6R5RLofdlctz+G/Zr/ceA/0YUCDHGLtp8AGGpFmvU6dAdIzl4XZMJn
-         V0DR71V+k1KySe60M/qCpRpDIa/4q299J/LAKnL61LsGyd6O5FNdUEorGbBAwomeylBV
-         SqOcWfDWW6E7almgbfY0Kc5b4FZytOzCGBYlBIaZRwOPK4mDUtX0Y0K10sMTSr8v3ObD
-         j1hKe+stogYa4wZBSow/fr8jK6B0IIvVYfLhyQaQijq2+s4DB6ZKdbx/a3us0nXK2d9x
-         lk2jb0g6IG3u+LxlklgDHIFNxu5H/8BarPrRzCLMzBNA/DMiVAIXv9wsubNWhKXp8ztb
-         5P5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUc2/KcNG7zK98FFlr50P+q2Mzde8Z4ctoPpAVtiEAJIdrR/5QE4o3Pazpnx7fyfDMIk+b65pvTqxrdcLV9iA79cJglzmT394ZcOzTJ
-X-Gm-Message-State: AOJu0Yx5sbHyi7ISNCI6tVh8y+NbkH7lqZyd/gPDtZDXes+QQe+/lbV8
-	GyujssJNGTvg4au+rAxEjpibUO2J5OshwENF1P+3ALD1I4/xnSgtnvBcAkfA45pNTqCPJR8JxvO
-	0j0dfoP8neiuo5YqBmqO24wFBGTvYyvaLYXnq+g==
-X-Google-Smtp-Source: AGHT+IGOY2wZxg3oQyKstZDxzeAo3jAK3M41BK/FipMiQ0FhdiHyS6sxut/JjEf5JetJ4eJZeTSIb18KGPl1+eyfyBU=
-X-Received: by 2002:a05:6e02:13a6:b0:39a:ea20:bf7f with SMTP id
- e9e14a558f8ab-39d26d791ccmr34640735ab.25.1723805104686; Fri, 16 Aug 2024
- 03:45:04 -0700 (PDT)
+	s=arc-20240116; t=1723805309; c=relaxed/simple;
+	bh=TEdbfNZp2hjwoe5a8Nmhicwu/mh7KYdCq+sOQK4CIe4=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=hy+bW5fgch6HXoLxA5Tao95DefSHp7kk2XdeG1Mm+iwtbeaFeVQLbSgVcTVpPqteEd+lLV/ABbTfAbeKhVpHmSuGCYYzY8dCY9ekw8TGEms/PZiujDqeHvyd7BbCND+kE4TV8NgMNP+1dntxLxuXdRAQFl5tba1vMookcVEar2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=shqfAB4X; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1134)
+	id D10B220B7165; Fri, 16 Aug 2024 03:48:24 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D10B220B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1723805304;
+	bh=TOuunp7HkfC0hel3jvjPklTbyr/AA+WT5ddtnxbsEF0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=shqfAB4Xy5AlgdMmK3bfp8zFJUtJ7lNQV1LzCxQ7o1d0P5RbRPuWKcwp+UZjHkdUx
+	 WGguHdYxN4AelcRN7ZFjA1S5d9zAKmliyQ+6HXO3zwJGh09Kg5bF7QSW/WPpLwyGL5
+	 y8TYp6BrXrxIgvgSBN3kWU72wrT5625B5EPnSrzo=
+From: Shradha Gupta <shradhagupta@linux.microsoft.com>
+To: linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org
+Cc: Shradha Gupta <shradhagupta@linux.microsoft.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Long Li <longli@microsoft.com>,
+	Ajay Sharma <sharmaajay@microsoft.com>,
+	Simon Horman <horms@kernel.org>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+	Erick Archer <erick.archer@outlook.com>,
+	Pavan Chebbi <pavan.chebbi@broadcom.com>,
+	Ahmed Zaki <ahmed.zaki@intel.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Shradha Gupta <shradhagupta@microsoft.com>
+Subject: [PATCH net-next v3] net: mana: Implement get_ringparam/set_ringparam for mana
+Date: Fri, 16 Aug 2024 03:48:23 -0700
+Message-Id: <1723805303-11432-1-git-send-email-shradhagupta@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240816095520.96348-2-ajones@ventanamicro.com>
-In-Reply-To: <20240816095520.96348-2-ajones@ventanamicro.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Fri, 16 Aug 2024 16:14:52 +0530
-Message-ID: <CAAhSdy0wxpDXoUmGyuQOeMfNCubdp9_iYdBOSN=EcweG1nkwwg@mail.gmail.com>
-Subject: Re: [PATCH] of/irq: Support #msi-cells=<0> in of_msi_get_domain
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org, maz@kernel.org, 
-	mark.rutland@arm.com, robh@kernel.org, saravanak@google.com, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	Anup Patel <apatel@ventanamicro.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 16, 2024 at 3:25=E2=80=AFPM Andrew Jones <ajones@ventanamicro.c=
-om> wrote:
->
-> An 'msi-parent' property with a single entry and no accompanying
-> '#msi-cells' property is considered the legacy definition as opposed
-> to its definition after being expanded with commit 126b16e2ad98
-> ("Docs: dt: add generic MSI bindings"). However, the legacy
-> definition is completely compatible with the current definition and,
-> since of_phandle_iterator_next() tolerates missing and present-but-
-> zero *cells properties since commit e42ee61017f5 ("of: Let
-> of_for_each_phandle fallback to non-negative cell_count"), there's no
-> need anymore to special case the legacy definition in
-> of_msi_get_domain().
->
-> Indeed, special casing has turned out to be harmful, because, as of
-> commit 7c025238b47a ("dt-bindings: irqchip: Describe the IMX MU block
-> as a MSI controller"), MSI controller DT bindings have started
-> specifying '#msi-cells' as a required property (even when the value
-> must be zero) as an effort to make the bindings more explicit. But,
-> since the special casing of 'msi-parent' only uses the existence of
-> '#msi-cells' for its heuristic, and not whether or not it's also
-> nonzero, the legacy path is not taken. Furthermore, the path to
-> support the new, broader definition isn't taken either since that
-> path has been restricted to the platform-msi bus.
->
-> But, neither the definition of 'msi-parent' nor the definition of
-> '#msi-cells' is platform-msi-specific (the platform-msi bus was just
-> the first bus that needed '#msi-cells'), so remove both the special
-> casing and the restriction. This not only simplifies the code but
-> also resolves an issue with PCI devices finding their MSI controllers
-> on riscv, as the riscv,imsics binding requires '#msi-cells=3D<0>'.
->
-> Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
-> ---
->  drivers/of/irq.c | 37 +++++++++++--------------------------
->  1 file changed, 11 insertions(+), 26 deletions(-)
->
-> diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-> index c94203ce65bb..026b52c8ee63 100644
-> --- a/drivers/of/irq.c
-> +++ b/drivers/of/irq.c
-> @@ -709,8 +709,7 @@ struct irq_domain *of_msi_map_get_device_domain(struc=
-t device *dev, u32 id,
->   * @np: device node for @dev
->   * @token: bus type for this domain
->   *
-> - * Parse the msi-parent property (both the simple and the complex
-> - * versions), and returns the corresponding MSI domain.
-> + * Parse the msi-parent property and returns the corresponding MSI domai=
-n.
->   *
->   * Returns: the MSI domain for this device (or NULL on failure).
->   */
-> @@ -718,33 +717,19 @@ struct irq_domain *of_msi_get_domain(struct device =
-*dev,
->                                      struct device_node *np,
->                                      enum irq_domain_bus_token token)
->  {
-> -       struct device_node *msi_np;
-> +       struct of_phandle_args args;
->         struct irq_domain *d;
-> +       int index =3D 0;
->
-> -       /* Check for a single msi-parent property */
-> -       msi_np =3D of_parse_phandle(np, "msi-parent", 0);
-> -       if (msi_np && !of_property_read_bool(msi_np, "#msi-cells")) {
-> -               d =3D irq_find_matching_host(msi_np, token);
-> -               if (!d)
-> -                       of_node_put(msi_np);
-> -               return d;
-> -       }
+Currently the values of WQs for RX and TX queues for MANA devices
+are hardcoded to default sizes.
+Allow configuring these values for MANA devices as ringparam
+configuration(get/set) through ethtool_ops.
+Pre-allocate buffers at the beginning of set operation, to
+prevent complete network loss in low-memory conditions.
 
-Dropping this special case of single msi-parent property breaks
-RISC-V KVM guest created using KVMTOOl with AIA available
-on the host.
+Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+Reviewed-by: Long Li <longli@microsoft.com>
+---
+ Changes in v3:
+ * pre-allocate buffers before changing the queue sizes
+ * rebased to latest net-next
+ * Improved the commit message
+---
+ Changes in v2:
+ * Removed unnecessary validations in mana_set_ringparam()
+ * Fixed codespell error
+ * Improved error message to indicate issue with the parameter
+---
+ drivers/net/ethernet/microsoft/mana/mana_en.c | 24 ++++---
+ .../ethernet/microsoft/mana/mana_ethtool.c    | 71 +++++++++++++++++++
+ include/net/mana/mana.h                       | 23 +++++-
+ 3 files changed, 105 insertions(+), 13 deletions(-)
 
-Let's not drop this special case.
+diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
+index d2f07e179e86..4e3ade5926bc 100644
+--- a/drivers/net/ethernet/microsoft/mana/mana_en.c
++++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
+@@ -511,7 +511,7 @@ static u16 mana_select_queue(struct net_device *ndev, struct sk_buff *skb,
+ }
+ 
+ /* Release pre-allocated RX buffers */
+-static void mana_pre_dealloc_rxbufs(struct mana_port_context *mpc)
++void mana_pre_dealloc_rxbufs(struct mana_port_context *mpc)
+ {
+ 	struct device *dev;
+ 	int i;
+@@ -604,7 +604,7 @@ static void mana_get_rxbuf_cfg(int mtu, u32 *datasize, u32 *alloc_size,
+ 	*datasize = mtu + ETH_HLEN;
+ }
+ 
+-static int mana_pre_alloc_rxbufs(struct mana_port_context *mpc, int new_mtu)
++int mana_pre_alloc_rxbufs(struct mana_port_context *mpc, int new_mtu)
+ {
+ 	struct device *dev;
+ 	struct page *page;
+@@ -618,7 +618,7 @@ static int mana_pre_alloc_rxbufs(struct mana_port_context *mpc, int new_mtu)
+ 
+ 	dev = mpc->ac->gdma_dev->gdma_context->dev;
+ 
+-	num_rxb = mpc->num_queues * RX_BUFFERS_PER_QUEUE;
++	num_rxb = mpc->num_queues * mpc->rx_queue_size;
+ 
+ 	WARN(mpc->rxbufs_pre, "mana rxbufs_pre exists\n");
+ 	mpc->rxbufs_pre = kmalloc_array(num_rxb, sizeof(void *), GFP_KERNEL);
+@@ -1899,14 +1899,15 @@ static int mana_create_txq(struct mana_port_context *apc,
+ 		return -ENOMEM;
+ 
+ 	/*  The minimum size of the WQE is 32 bytes, hence
+-	 *  MAX_SEND_BUFFERS_PER_QUEUE represents the maximum number of WQEs
++	 *  apc->tx_queue_size represents the maximum number of WQEs
+ 	 *  the SQ can store. This value is then used to size other queues
+ 	 *  to prevent overflow.
++	 *  Also note that the txq_size is always going to be MANA_PAGE_ALIGNED,
++	 *  as tx_queue_size is always a power of 2.
+ 	 */
+-	txq_size = MAX_SEND_BUFFERS_PER_QUEUE * 32;
+-	BUILD_BUG_ON(!MANA_PAGE_ALIGNED(txq_size));
++	txq_size = apc->tx_queue_size * 32;
+ 
+-	cq_size = MAX_SEND_BUFFERS_PER_QUEUE * COMP_ENTRY_SIZE;
++	cq_size = apc->tx_queue_size * COMP_ENTRY_SIZE;
+ 	cq_size = MANA_PAGE_ALIGN(cq_size);
+ 
+ 	gc = gd->gdma_context;
+@@ -2145,10 +2146,11 @@ static int mana_push_wqe(struct mana_rxq *rxq)
+ 
+ static int mana_create_page_pool(struct mana_rxq *rxq, struct gdma_context *gc)
+ {
++	struct mana_port_context *mpc = netdev_priv(rxq->ndev);
+ 	struct page_pool_params pprm = {};
+ 	int ret;
+ 
+-	pprm.pool_size = RX_BUFFERS_PER_QUEUE;
++	pprm.pool_size = mpc->rx_queue_size;
+ 	pprm.nid = gc->numa_node;
+ 	pprm.napi = &rxq->rx_cq.napi;
+ 	pprm.netdev = rxq->ndev;
+@@ -2180,13 +2182,13 @@ static struct mana_rxq *mana_create_rxq(struct mana_port_context *apc,
+ 
+ 	gc = gd->gdma_context;
+ 
+-	rxq = kzalloc(struct_size(rxq, rx_oobs, RX_BUFFERS_PER_QUEUE),
++	rxq = kzalloc(struct_size(rxq, rx_oobs, apc->rx_queue_size),
+ 		      GFP_KERNEL);
+ 	if (!rxq)
+ 		return NULL;
+ 
+ 	rxq->ndev = ndev;
+-	rxq->num_rx_buf = RX_BUFFERS_PER_QUEUE;
++	rxq->num_rx_buf = apc->rx_queue_size;
+ 	rxq->rxq_idx = rxq_idx;
+ 	rxq->rxobj = INVALID_MANA_HANDLE;
+ 
+@@ -2734,6 +2736,8 @@ static int mana_probe_port(struct mana_context *ac, int port_idx,
+ 	apc->ndev = ndev;
+ 	apc->max_queues = gc->max_num_queues;
+ 	apc->num_queues = gc->max_num_queues;
++	apc->tx_queue_size = DEF_TX_BUFFERS_PER_QUEUE;
++	apc->rx_queue_size = DEF_RX_BUFFERS_PER_QUEUE;
+ 	apc->port_handle = INVALID_MANA_HANDLE;
+ 	apc->pf_filter_handle = INVALID_MANA_HANDLE;
+ 	apc->port_idx = port_idx;
+diff --git a/drivers/net/ethernet/microsoft/mana/mana_ethtool.c b/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
+index 146d5db1792f..dff186811b25 100644
+--- a/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
++++ b/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
+@@ -369,6 +369,75 @@ static int mana_set_channels(struct net_device *ndev,
+ 	return err;
+ }
+ 
++static void mana_get_ringparam(struct net_device *ndev,
++			       struct ethtool_ringparam *ring,
++			       struct kernel_ethtool_ringparam *kernel_ring,
++			       struct netlink_ext_ack *extack)
++{
++	struct mana_port_context *apc = netdev_priv(ndev);
++
++	ring->rx_pending = apc->rx_queue_size;
++	ring->tx_pending = apc->tx_queue_size;
++	ring->rx_max_pending = MAX_RX_BUFFERS_PER_QUEUE;
++	ring->tx_max_pending = MAX_TX_BUFFERS_PER_QUEUE;
++}
++
++static int mana_set_ringparam(struct net_device *ndev,
++			      struct ethtool_ringparam *ring,
++			      struct kernel_ethtool_ringparam *kernel_ring,
++			      struct netlink_ext_ack *extack)
++{
++	struct mana_port_context *apc = netdev_priv(ndev);
++	u32 new_tx, new_rx;
++	u32 old_tx, old_rx;
++	int err;
++
++	old_tx = apc->tx_queue_size;
++	old_rx = apc->rx_queue_size;
++	new_tx = clamp_t(u32, ring->tx_pending, MIN_TX_BUFFERS_PER_QUEUE, MAX_TX_BUFFERS_PER_QUEUE);
++	new_rx = clamp_t(u32, ring->rx_pending, MIN_RX_BUFFERS_PER_QUEUE, MAX_RX_BUFFERS_PER_QUEUE);
++
++	if (!is_power_of_2(new_tx)) {
++		netdev_err(ndev, "%s:Tx:%d not supported. Needs to be a power of 2\n",
++			   __func__, new_tx);
++		return -EINVAL;
++	}
++
++	if (!is_power_of_2(new_rx)) {
++		netdev_err(ndev, "%s:Rx:%d not supported. Needs to be a power of 2\n",
++			   __func__, new_rx);
++		return -EINVAL;
++	}
++
++	/* pre-allocating new buffers to prevent failures in mana_attach() later */
++	apc->rx_queue_size = new_rx;
++	err = mana_pre_alloc_rxbufs(apc, ndev->mtu);
++	apc->rx_queue_size = old_rx;
++	if (err) {
++		netdev_err(ndev, "Insufficient memory for new allocations\n");
++		return err;
++	}
++
++	err = mana_detach(ndev, false);
++	if (err) {
++		netdev_err(ndev, "mana_detach failed: %d\n", err);
++		goto out;
++	}
++
++	apc->tx_queue_size = new_tx;
++	apc->rx_queue_size = new_rx;
++
++	err = mana_attach(ndev);
++	if (err) {
++		netdev_err(ndev, "mana_attach failed: %d\n", err);
++		apc->tx_queue_size = old_tx;
++		apc->rx_queue_size = old_rx;
++	}
++out:
++	mana_pre_dealloc_rxbufs(apc);
++	return err;
++}
++
+ const struct ethtool_ops mana_ethtool_ops = {
+ 	.get_ethtool_stats	= mana_get_ethtool_stats,
+ 	.get_sset_count		= mana_get_sset_count,
+@@ -380,4 +449,6 @@ const struct ethtool_ops mana_ethtool_ops = {
+ 	.set_rxfh		= mana_set_rxfh,
+ 	.get_channels		= mana_get_channels,
+ 	.set_channels		= mana_set_channels,
++	.get_ringparam          = mana_get_ringparam,
++	.set_ringparam          = mana_set_ringparam,
+ };
+diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
+index 6439fd8b437b..80a1e53471a6 100644
+--- a/include/net/mana/mana.h
++++ b/include/net/mana/mana.h
+@@ -38,9 +38,21 @@ enum TRI_STATE {
+ 
+ #define COMP_ENTRY_SIZE 64
+ 
+-#define RX_BUFFERS_PER_QUEUE 512
++/* This Max value for RX buffers is derived from __alloc_page()'s max page
++ * allocation calculation. It allows maximum 2^(MAX_ORDER -1) pages. RX buffer
++ * size beyond this value gets rejected by __alloc_page() call.
++ */
++#define MAX_RX_BUFFERS_PER_QUEUE 8192
++#define DEF_RX_BUFFERS_PER_QUEUE 512
++#define MIN_RX_BUFFERS_PER_QUEUE 128
+ 
+-#define MAX_SEND_BUFFERS_PER_QUEUE 256
++/* This max value for TX buffers is derived as the maximum allocatable
++ * pages supported on host per guest through testing. TX buffer size beyond
++ * this value is rejected by the hardware.
++ */
++#define MAX_TX_BUFFERS_PER_QUEUE 16384
++#define DEF_TX_BUFFERS_PER_QUEUE 256
++#define MIN_TX_BUFFERS_PER_QUEUE 128
+ 
+ #define EQ_SIZE (8 * MANA_PAGE_SIZE)
+ 
+@@ -285,7 +297,7 @@ struct mana_recv_buf_oob {
+ 	void *buf_va;
+ 	bool from_pool; /* allocated from a page pool */
+ 
+-	/* SGL of the buffer going to be sent has part of the work request. */
++	/* SGL of the buffer going to be sent as part of the work request. */
+ 	u32 num_sge;
+ 	struct gdma_sge sgl[MAX_RX_WQE_SGL_ENTRIES];
+ 
+@@ -437,6 +449,9 @@ struct mana_port_context {
+ 	unsigned int max_queues;
+ 	unsigned int num_queues;
+ 
++	unsigned int rx_queue_size;
++	unsigned int tx_queue_size;
++
+ 	mana_handle_t port_handle;
+ 	mana_handle_t pf_filter_handle;
+ 
+@@ -472,6 +487,8 @@ struct bpf_prog *mana_xdp_get(struct mana_port_context *apc);
+ void mana_chn_setxdp(struct mana_port_context *apc, struct bpf_prog *prog);
+ int mana_bpf(struct net_device *ndev, struct netdev_bpf *bpf);
+ void mana_query_gf_stats(struct mana_port_context *apc);
++int mana_pre_alloc_rxbufs(struct mana_port_context *apc, int mtu);
++void mana_pre_dealloc_rxbufs(struct mana_port_context *apc);
+ 
+ extern const struct ethtool_ops mana_ethtool_ops;
+ 
+-- 
+2.34.1
 
-> -
-> -       if (token =3D=3D DOMAIN_BUS_PLATFORM_MSI) {
-> -               /* Check for the complex msi-parent version */
-> -               struct of_phandle_args args;
-> -               int index =3D 0;
-> +       while (!of_parse_phandle_with_args(np, "msi-parent",
-> +                                          "#msi-cells",
-> +                                          index, &args)) {
-> +               d =3D irq_find_matching_host(args.np, token);
-> +               if (d)
-> +                       return d;
->
-> -               while (!of_parse_phandle_with_args(np, "msi-parent",
-> -                                                  "#msi-cells",
-> -                                                  index, &args)) {
-> -                       d =3D irq_find_matching_host(args.np, token);
-> -                       if (d)
-> -                               return d;
-> -
-> -                       of_node_put(args.np);
-> -                       index++;
-> -               }
-> +               of_node_put(args.np);
-> +               index++;
->         }
->
->         return NULL;
-> --
-> 2.45.2
->
->
-
-Regards,
-Anup
 
