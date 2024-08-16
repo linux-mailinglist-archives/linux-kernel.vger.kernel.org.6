@@ -1,148 +1,244 @@
-Return-Path: <linux-kernel+bounces-289326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C5DE9544EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:57:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF6E9544ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E01B1F2462B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:57:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 208182848A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDDC13B286;
-	Fri, 16 Aug 2024 08:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960C613CFA6;
+	Fri, 16 Aug 2024 08:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rXn2nUSQ"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="aLay6emV"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECBD13AD3F
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D0A12E1E9
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723798664; cv=none; b=Ow4ic6Jry0zjXNvxQ3ShXR7tcj9rdP9NiF1m4uz8YTkO/Catoa9tuegoRkuaFuyoQRu3MVJu/KFmpwCp9J5L0QIvJ/BPbxqi9T/ZkDV3et1l59xX4uKg92ZzBxXvzBEtjJdkvtFg/GLPfh1WEvDKjZ6UbYuagGW2FBDjMpuDbCA=
+	t=1723798719; cv=none; b=cSvgSc3MlbAF6Lr4Wv5ojIPYlRfEJdfo44hU2zIS4j8724T4srRQZpBo+OOjLarKV2GwiZ5b3irDeIxHJrfGCYt/9mp8MXn2gELKi9DmfKIrLN3HisOVnasyX+CkF5VtgchjAXglCbw0QsV4C1M1TvUjbfC2EphXKlcl69ECp8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723798664; c=relaxed/simple;
-	bh=fETSMc2hQRMfQ2Q133dwwdGv+eoSJjlO71/zUgfQKn8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bd4EBsGS2S9dvIhbWi3SkdxkLMts1EyBkXz6ZypGvRrcORTpH2lIzDIiKv+R+FEHUTNEYW/DYjP1jCwQYacOcg2z0gKGyM3VDhgmzIEl8Q13NEUG7xt//qBmLQjNaK7HPFQRhD2k3EiY3GVvo2fA+4nf6gaEY6je5d1OtRzbWsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rXn2nUSQ; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso12694855e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 01:57:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723798661; x=1724403461; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pp9E1jzP/7LqcZV9OE83mHHXcT7BGqq4jDbXGUvR/tE=;
-        b=rXn2nUSQqmqKpy1Z9/NPWXV4hYgLUVBwmHPzUrJrGWFZ1G7FaTZy3Hcaqba2GXuzEX
-         ARJsHSGLBU9IDaAzSc+h4U7FFmQWslTYgHpEGt5pwFx1Wu8PpPuBZ1Chy5fE0ccl+Gi2
-         L9TXW9P4BQucz++ASBpNaFhbF6VYrbossASXGxohtB5eIvnrJMbEOuFroxlYUd+Nk0dt
-         /t79lgid2wLNv4mDtMYKsEl03qF1NPfS4FFKIOqV+fbrOlOZU09Kli3Wloid39uwF5Sb
-         DUJ4bjrzo8M+WCsok2W4bM58CWb/ddxkpo1h6GZDKoI8lJMJxA4wiqVGHZ1kYfAT/o0b
-         P0Cw==
+	s=arc-20240116; t=1723798719; c=relaxed/simple;
+	bh=FzefXXQGvADrPX65XM5Hb5IRP3b/EgwpELN18Ulxmwc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dtFiixDHz1Zw9/HmzN33B45le6s0pgWg4awcCmF2kTCcmfCi4+b2yVfCJbs9KPQGV74mSrQpcLQfTH3+n6Bg8Kl9PM9nVKFiMRt95vyzzrAb6tUpx40VFH63m+nvQPIsTKOqxDrVplI4KdYwsgDL0FJ92BYzuaS2BjiukxjgA7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=aLay6emV; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ua1-f69.google.com (mail-ua1-f69.google.com [209.85.222.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 47C723FB60
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:58:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1723798714;
+	bh=yqmTRLvnibvEjRY5HqDeK9lvfyHgdzJpnHG6YayP6Ho=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=aLay6emVLj8qyFVsO7aawsTeu6G9QUICztqP0eJBZQp2tur8Mun+0uHJh9WuNtbv6
+	 fKM33aQszMEPCkSYnp0/gYyOho9dgAK4XzufwY3e/V0rqVtekuULZiO5S7u05bMMYr
+	 SIDOjLEa2y6Hq5dLMKjclwPFgdd/GFuBXMjvvPkkdJBnSB5DRzsjcIaE9Gvv+rRyS2
+	 Yuidy7BKwzpvsvntysKn4O1DLuJIlnNjazZ+0n2cNHMCyoutfsZv0Vu90b59YcSR4q
+	 Vyeh4e2keA6mPrNctaYDz3/QkqrfgfTdO+WTNaD3ZAA3PLEeopkYOC/Wzu7J8wXils
+	 /h4zhfmMrWLUA==
+Received: by mail-ua1-f69.google.com with SMTP id a1e0cc1a2514c-842ef8c3d4fso288385241.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 01:58:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723798661; x=1724403461;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pp9E1jzP/7LqcZV9OE83mHHXcT7BGqq4jDbXGUvR/tE=;
-        b=ZyiNs+sjQM4LlLI4dbodk1eR1DLBkLLWF8Fp/bwT6phDTOBlTrOvjhRlZU/97lPOL0
-         JyLbR2UXce0/4hVg4gjVNoHJn7FXdus8w8cagq5N9LlsM4nnJKPb5fYMoe8UBmswFAfE
-         BrIZuMbOcdZOd+UTWhEZz1hgnUEN9EZhwM5IYM1lZqujO1/rxzlD8Fdzc0LMNiDxjffq
-         Pu1GN6SglvxJxX+aq+fC2DiORR3ohtTFtk/flnxY46LPEpQfbOtwK6i+82htRFFqhlhX
-         txUjK/O8RQZ0Fjulo9egeufcTErIKtPEn/ofyDflHvMYLMdfOkVK7Yf58wTnpBE+Zefa
-         La3g==
-X-Forwarded-Encrypted: i=1; AJvYcCV9f9QCyi2O36lURRH0Jua1ylcZj/hjbQ39LPz4OzaSq2s5GUc7fZTLidVUyne8WfzWF9Horwsxx5OGbLuflRq7JYDTInnUO+TSC+dI
-X-Gm-Message-State: AOJu0YyJKKeuX626zytVynD4lKdygf0qsptlU4ZjVnDxdn4zwyU3Ngh4
-	MEr166TKH7rgo/zkEtclrPBYi546jmxgIrvTMs2+9R55awFgnQjI6yg1DH4FLgo=
-X-Google-Smtp-Source: AGHT+IGz56bQpjBbGo0uOLNED6Eyr940dKNOhXmrjPU5vtmy0ylGk957l6Yh8SHw3K/Bcwg+P9nRjQ==
-X-Received: by 2002:a05:600c:1f90:b0:426:6960:34b0 with SMTP id 5b1f17b1804b1-429ed7bab7fmr13192735e9.14.1723798660662;
-        Fri, 16 Aug 2024 01:57:40 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed794640sm16916315e9.41.2024.08.16.01.57.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Aug 2024 01:57:40 -0700 (PDT)
-Message-ID: <88cea92d-98ee-4a1e-8a44-a7c6a247ba2e@linaro.org>
-Date: Fri, 16 Aug 2024 09:57:39 +0100
+        d=1e100.net; s=20230601; t=1723798713; x=1724403513;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yqmTRLvnibvEjRY5HqDeK9lvfyHgdzJpnHG6YayP6Ho=;
+        b=huyGylcaCrx31q+8AEoiAB0blji/3TERHOSgLVH0AriV7slmS49desKeAJola9t9Kz
+         q1ATbz9IjA2Q+msrBJlqGTFptF7n8/aIk9Nc1F/wY2vKMQAjIihI8VwGDbg9+tUVeGF7
+         soen1zWtVrnER5rTFDqeYNp1dHd6qL7COx41fs41cAufTIJyrD25om9eZkdytdLsuqE2
+         R2HyPv6AwNxU804jvXpS//m5hQsiaGj20Gg4KlWsvUQ7FvHzoyaOuO2EEw4gRi7wRhAk
+         qKLsGk96s8tpiM9b6hbKo1CxV9aV63n+gzBWXJdmtFyg4G4L+/S2XIniAYCFnZkWzjo5
+         G8zA==
+X-Forwarded-Encrypted: i=1; AJvYcCWuFepp1f8IAWiZ5OGZPfzZWnxqrU05LyJUK2f9ndKWT9qM7QQVdzav48+biUqCM6XKPBBpsKz0jWV344Trx/kiCe7WEyI2/bjTbpa0
+X-Gm-Message-State: AOJu0Ywkot/aHpllDy57TVjQrSLzJH4C598MZm9XvKGKuaqZ+BHvU+IB
+	f0p4tza9viWcfAM0moHGj8zUZPue479ngUMxTP2jSnZ42rQ7mou0iiBlT/zM0A6fe7yjF0+cJxj
+	xSLHx6EbXWTbaZoFsfehWTRpbkJPn3f7wop2nDoYsS6lb41B9C4rT3OPZzaipoQFe98gK/p9ufR
+	Mv0+a0cJPPv6CFYQXAgJxofA/l7wqyWAVbB3rkGHoHy0YPvNgcoI7z
+X-Received: by 2002:a05:6102:304e:b0:493:b719:efaf with SMTP id ada2fe7eead31-497799b587emr2756138137.20.1723798713074;
+        Fri, 16 Aug 2024 01:58:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHhm27UN+fvyUuV5qkttHqILelIWDdRu2C3dzSzTnUDhviB8NPlkf46skhX5kIE0oEuyi6tM3DeJDok5XJti8c=
+X-Received: by 2002:a05:6102:304e:b0:493:b719:efaf with SMTP id
+ ada2fe7eead31-497799b587emr2756127137.20.1723798712758; Fri, 16 Aug 2024
+ 01:58:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] Perf (userspace) broken on big.LITTLE systems since
- v6.5
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>,
- Arnaldo Carvalho de Melo <acme@redhat.com>, Ian Rogers <irogers@google.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Linux perf Profiling <linux-perf-users@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- James Clark <james.clark@arm.com>, "cc: Marc Zyngier" <maz@kernel.org>,
- Hector Martin <marcan@marcan.st>, Asahi Linux <asahi@lists.linux.dev>,
- Linux regressions mailing list <regressions@lists.linux.dev>
-References: <08f1f185-e259-4014-9ca4-6411d5c1bc65@marcan.st>
- <ZV1AnNB2CSbAUFVg@archie.me>
- <a9c14dfd-3269-4758-9174-4710bef07088@leemhuis.info>
- <CAP-5=fXqx_k1miPTkcAmS3z2GBPt2KeDtP5fknmdDghZqxXPew@mail.gmail.com>
- <714ed350-0e6c-4922-bf65-36de48f62879@leemhuis.info>
- <0de3b572-f5f7-42e4-b410-d1e315943a3c@linaro.org> <ZrzeRM3ekLl9zp3z@x1>
- <348ea015-eccf-4f44-a332-a1d9d8baf81f@linaro.org> <Zr4eWd6HWLHDcpC9@x1>
- <Zr4kZTxgvD6bmi37@x1>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <Zr4kZTxgvD6bmi37@x1>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240815092429.103356-1-aleksandr.mikhalitsyn@canonical.com> <20240815-ehemaligen-duftstoffe-a5f2ab60ddc9@brauner>
+In-Reply-To: <20240815-ehemaligen-duftstoffe-a5f2ab60ddc9@brauner>
+From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date: Fri, 16 Aug 2024 10:58:21 +0200
+Message-ID: <CAEivzxf2qH8XBXA2a+U4bQeeVC+eB8m9tDC08jxT=trFEzLpTA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/11] fuse: basic support for idmapped mounts
+To: Christian Brauner <brauner@kernel.org>
+Cc: mszeredi@redhat.com, stgraber@stgraber.org, linux-fsdevel@vger.kernel.org, 
+	Seth Forshee <sforshee@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, Vivek Goyal <vgoyal@redhat.com>, 
+	German Maglione <gmaglione@redhat.com>, Amir Goldstein <amir73il@gmail.com>, 
+	Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 15/08/2024 4:53 pm, Arnaldo Carvalho de Melo wrote:
-> On Thu, Aug 15, 2024 at 12:27:21PM -0300, Arnaldo Carvalho de Melo wrote:
->> On Thu, Aug 15, 2024 at 04:15:41PM +0100, James Clark wrote:
->>> In one of your investigations here
->>> https://lore.kernel.org/lkml/Zld3dlJHjFMFG02v@x1/ comparing "cycles",
->>> "cpu-cycles" and "cpu_cycles" events on Arm you say only some of them open
->>> events on both core types. I wasn't able to reproduce that on
->>> perf-tools-next (27ac597c0e) or v6.9 (a38297e3fb) for perf record or stat. I
->>> guessed the 6.9 tag because you only mentioned it was on tip and it was 29th
->>> May. For me they all open exactly the same two legacy events with the
->>> extended type ID set.
->>>
->>> It looks like the behavior you see would be caused by either missing this
->>> kernel change:
->>>
->>>    5c81672865 ("arm_pmu: Add PERF_PMU_CAP_EXTENDED_HW_TYPE capability")
->>>     (v6.6 release)
-> 
-> What I have now is:
-> 
-> 6.1.92-15907-gf36fd2695db3
-> 
-> It was a bit older, but 6.1 ish as well, I'll try to either get a new
-> kernel from Libre Computer or build one myself.
-> 
-> - Arnaldo
+On Fri, Aug 16, 2024 at 10:02=E2=80=AFAM Christian Brauner <brauner@kernel.=
+org> wrote:
 >
+> On Thu, Aug 15, 2024 at 11:24:17AM GMT, Alexander Mikhalitsyn wrote:
+> > Dear friends,
+> >
+> > This patch series aimed to provide support for idmapped mounts
+> > for fuse & virtiofs. We already have idmapped mounts support for almost=
+ all
+> > widely-used filesystems:
+> > * local (ext4, btrfs, xfs, fat, vfat, ntfs3, squashfs, f2fs, erofs, ZFS=
+ (out-of-tree))
+> > * network (ceph)
+> >
+> > Git tree (based on torvalds/master):
+> > v3: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts.v3
+> > current: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mount=
+s
+> >
+> > Changelog for version 3:
+> > - introduce and use a new SB_I_NOIDMAP flag (suggested by Christian)
+> > - add support for virtiofs (+user space virtiofsd conversion)
+> >
+> > Changelog for version 2:
+> > - removed "fs/namespace: introduce fs_type->allow_idmap hook" and simpl=
+ified logic
+> > to return -EIO if a fuse daemon does not support idmapped mounts (sugge=
+sted
+> > by Christian Brauner)
+> > - passed an "idmap" in more cases even when it's not necessary to simpl=
+ify things (suggested
+> > by Christian Brauner)
+> > - take ->rename() RENAME_WHITEOUT into account and forbid it for idmapp=
+ed mount case
+> >
+> > Links to previous versions:
+> > v2: https://lore.kernel.org/linux-fsdevel/20240814114034.113953-1-aleks=
+andr.mikhalitsyn@canonical.com
+> > tree: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts.v=
+2
+> > v1: https://lore.kernel.org/all/20240108120824.122178-1-aleksandr.mikha=
+litsyn@canonical.com/#r
+> > tree: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts.v=
+1
+> >
+> > Having fuse (+virtiofs) supported looks like a good next step. At the s=
+ame time
+> > fuse conceptually close to the network filesystems and supporting it is
+> > a quite challenging task.
+> >
+> > Let me briefly explain what was done in this series and which obstacles=
+ we have.
+> >
+> > With this series, you can use idmapped mounts with fuse if the followin=
+g
+> > conditions are met:
+> > 1. The filesystem daemon declares idmap support (new FUSE_INIT response=
+ feature
+> > flags FUSE_OWNER_UID_GID_EXT and FUSE_ALLOW_IDMAP)
+> > 2. The filesystem superblock was mounted with the "default_permissions"=
+ parameter
+> > 3. The filesystem fuse daemon does not perform any UID/GID-based checks=
+ internally
+> > and fully trusts the kernel to do that (yes, it's almost the same as 2.=
+)
+> >
+> > I have prepared a bunch of real-world examples of the user space modifi=
+cations
+> > that can be done to use this extension:
+> > - libfuse support
+> > https://github.com/mihalicyn/libfuse/commits/idmap_support
+> > - fuse-overlayfs support:
+> > https://github.com/mihalicyn/fuse-overlayfs/commits/idmap_support
+> > - cephfs-fuse conversion example
+> > https://github.com/mihalicyn/ceph/commits/fuse_idmap
+> > - glusterfs conversion example (there is a conceptual issue)
+> > https://github.com/mihalicyn/glusterfs/commits/fuse_idmap
+> > - virtiofsd conversion example
+> > https://gitlab.com/virtio-fs/virtiofsd/-/merge_requests/245
+>
+> So I have no further comments on this and from my perspective this is:
+>
+> Reviewed-by: Christian Brauner <brauner@kernel.org>
 
-Thanks for the confirmation. In that case you may not even need to 
-retest. I was only wondering if it was broken from v6.6 onwards, but 6.1 
-not working is expected. And I'm certain that you'll find any later 
-versions working.
+Thanks, Christian! ;-)
 
->>> Or this userspace change, but unlikely as it was a fix for Apple M hardware:
->>>
->>>    25412c036 ("perf print-events: make is_event_supported() more robust")
->>>     (v6.9 release)
->>>
->>> Do you remember if you were using a new kernel or only testing a new Perf?
->>
->> I normally use the distro/SoC provided kernel, didn't I add the 'uname
->> -a' output in those investigations (/me slaps himself in the face
->> speculatively...)?
+>
+> I would really like to see tests for this feature as this is available
+> to unprivileged users.
+
+Sure. I can confirm that this thing passes xfstests for virtiofs.
+
+My setup:
+
+- host machine
+
+Virtiofsd options:
+
+[ virtiofsd sources from
+https://gitlab.com/virtio-fs/virtiofsd/-/merge_requests/245 ]
+./target/debug/virtiofsd --socket-path=3D/tmp/vfsd.sock --shared-dir
+/home/alex/Documents/dev/tmp --announce-submounts
+--inode-file-handles=3Dmandatory --posix-acl
+
+QEMU options:
+        -object memory-backend-memfd,id=3Dmem,size=3D$RAM,share=3Don \
+        -numa node,memdev=3Dmem \
+        -chardev socket,id=3Dchar0,path=3D/tmp/vfsd.sock \
+        -device vhost-user-fs-pci,queue-size=3D1024,chardev=3Dchar0,tag=3Dm=
+yfs \
+
+- guest
+
+xfstests version:
+
+root@ubuntu:/home/ubuntu/xfstests-dev# git log | head -n 3
+commit f5ada754d5838d29fd270257003d0d123a9d1cd2
+Author: Darrick J. Wong <djwong@kernel.org>
+Date:   Fri Jul 26 09:51:07 2024 -0700
+
+root@ubuntu:/home/ubuntu/xfstests-dev# cat local.config
+export TEST_DEV=3Dmyfs
+export TEST_DIR=3D/mnt/test
+export FSTYP=3Dvirtiofs
+
+root@ubuntu:/home/ubuntu/xfstests-dev# ./check -g idmapped
+FSTYP         -- virtiofs
+PLATFORM      -- Linux/x86_64 ubuntu 6.11.0-rc3+ #2 SMP
+PREEMPT_DYNAMIC Fri Aug 16 10:23:41 CEST 2024
+
+generic/633 1s ...  0s
+generic/644 0s ...  1s
+generic/645 18s ...  18s
+generic/656       [not run] fsgqa user not defined.
+generic/689       [not run] fsgqa user not defined.
+generic/696       [not run] this test requires a valid $SCRATCH_DEV
+generic/697 0s ...  1s
+generic/698       [not run] this test requires a valid $SCRATCH_DEV
+generic/699       [not run] this test requires a valid $SCRATCH_DEV
+Ran: generic/633 generic/644 generic/645 generic/656 generic/689
+generic/696 generic/697 generic/698 generic/699
+Not run: generic/656 generic/689 generic/696 generic/698 generic/699
+Passed all 9 tests
+
+I'll try to do more tests, for example with fuse-overlayfs and get
+back with results.
+
+Kind regards,
+Alex
 
