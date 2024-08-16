@@ -1,133 +1,91 @@
-Return-Path: <linux-kernel+bounces-290011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF586954E69
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:04:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C28D7954E6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED6A91C224BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:04:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DDC71F2590E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A161BE85F;
-	Fri, 16 Aug 2024 16:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E337D1BE250;
+	Fri, 16 Aug 2024 16:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJEtdsG0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mQi/QKKE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FED31BB68D;
-	Fri, 16 Aug 2024 16:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336CE1DDF5;
+	Fri, 16 Aug 2024 16:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723824279; cv=none; b=D7Z/VyEw8+l2bbfHsCUg6XqGee6GaxU0g9wx0hheQfog96DbVGk4ohYjD3RFY3rA5zeGaGz/FPY9KuyaDx0wart/PrUfZurQuwIBK3DQud3pI6D0Bwn8L15IOyoiQ0ysLi4kfu3qcsDb7talWxlIUTm57kr0fo/D+M7dCrD9Ykg=
+	t=1723824314; cv=none; b=NH1dtwMq2YsdzuVH/Jxk1z8RGyDyhsu9cp+25C0gLw6Q4wKauV1TTVWjug/64AJr3+CwVcrolYEuDOCQFNobB9Z1l8ZmKa3Cb+zSfw951ka+rb3QSEnhwaQMT/UjIGq5BwhnsXY7ledpNcTNGZrjnhAaAYYl4DMje7HY5MpXURw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723824279; c=relaxed/simple;
-	bh=EPuQ2Nh1roM0N2s8I0Ls0NSMzC1GbSyB3GEWBTBguSE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NoiibVe4oevHWYnjHJ8jEYVBm9dbdVDuAbBhmSqw7lLM+ZBe3ONew/aavzdolL1qE/TWIqKUHsdXAhfj6Pi/XG6fIDSqlQS7tGTrEDSdVS+dTcGIGmVt7LfK53Vy/SJFdf2g2/A0v5zFz33m244bqIFp7/aJRoVqg1DEgVvU+Nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FJEtdsG0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48CFDC32782;
-	Fri, 16 Aug 2024 16:04:36 +0000 (UTC)
+	s=arc-20240116; t=1723824314; c=relaxed/simple;
+	bh=LDgOP9WVQfCrcitYGsxy1oplgK09T8t98MEAyrYzjYc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=mG+RP3xZBr/minu0ymE06dzlRCKK10stSjH3gf0xwlcrjekWUO8LzkGdi4T+aM0KcoF8TIlRX7W/8F/xUas3wi/GfNYqcErM66JryKPeK8TRFcwi75jJwu+Lm/bYva1nTbyA1zzGOK8fj3mYvPNEpHnQZmXMMHSS5vySI1D22eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mQi/QKKE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E58C6C32782;
+	Fri, 16 Aug 2024 16:05:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723824278;
-	bh=EPuQ2Nh1roM0N2s8I0Ls0NSMzC1GbSyB3GEWBTBguSE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FJEtdsG0vhlBjP+YaxfIfo6ESwYNVAYYNjiDRgScyXLluWnBOQUJmupTpGka3kTCU
-	 eXFOGR6mBmD3PkZnCUThKrCJh89wknjtz3zGsrcoeUojbjcqrfbgBUTBzH1EbyEokm
-	 3HDqNXRvTFhRMnSUh6Zs4AezX+naz+Bt7jMKFjWi6XCwp9zZB0Pj/igN5Pl5h+g6Tn
-	 bWGnCSMHvLNPR7BKfSkc7TfMYfVtmbb3FzqoVpmq6ukWpzDRS0ofmtsMvr37yb20qR
-	 EbfB1nkh5UQVSsZZ4p5VJPLg3iObPIM3MuhiHiIbxqn4iqDQZyVhts5Pt+2gyCK0B8
-	 hUHapenwRazPQ==
-Date: Fri, 16 Aug 2024 17:04:34 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Stanislav Jakubek <stano.jakubek@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: power: supply: sc27xx-fg: add low voltage
- alarm IRQ
-Message-ID: <20240816-licorice-dealing-b67197d3f88f@spud>
-References: <Zr3SAHlq5A78QvrW@standask-GA-A55M-S2HP>
- <20240815-winnings-waving-1ec5561f90e7@spud>
- <Zr74o7/4uurJeRnF@standask-GA-A55M-S2HP>
+	s=k20201202; t=1723824313;
+	bh=LDgOP9WVQfCrcitYGsxy1oplgK09T8t98MEAyrYzjYc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=mQi/QKKE8oU7Jg2fnhqtL81/RqIzt6ILgXxAZlL1BF1MPE36Ex3zzE69h0h4btzkj
+	 LFXUEflc+zOTv7i/wfPoOH25S78tFmQmMDDJIbjipfk4LGHpSMnMH+8OVeJrQrYVsp
+	 6Uke3DWbf9ICVgUev+QDtGoO2b5Mb4UkvRU1lyZRGLd1o4xQOHHdmEh/gcPpgxBY46
+	 x0fiLY3T5xa9CZDFg4DxsPqQIAtPqH1gaaQGXyHE5kRCRHSiXLpb2imtlxFlJV1dxw
+	 poj13hFj3XwExqxByhaDcceORlwOWO6BfSLIYBBw0o7dl+dgcNqcz0gweVVStK5TlT
+	 NqV70FycIpA/g==
+From: Lee Jones <lee@kernel.org>
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Joseph Strauss <jstrauss@mailbox.org>, Arnd Bergmann <arnd@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+ Christian Marangi <ansuelsmth@gmail.com>, 
+ Patrick Rudolph <patrick.rudolph@9elements.com>, 
+ George Stark <gnstark@salutedevices.com>, linux-leds@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240807075614.2118068-1-arnd@kernel.org>
+References: <20240807075614.2118068-1-arnd@kernel.org>
+Subject: Re: (subset) [PATCH] leds: blinkm: fix
+ CONFIG_LEDS_CLASS_MULTICOLOR dependency
+Message-Id: <172382430351.3368067.16878264408726300501.b4-ty@kernel.org>
+Date: Fri, 16 Aug 2024 17:05:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="iSN+i34vU373tBO4"
-Content-Disposition: inline
-In-Reply-To: <Zr74o7/4uurJeRnF@standask-GA-A55M-S2HP>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
+On Wed, 07 Aug 2024 09:55:53 +0200, Arnd Bergmann wrote:
+> With CONFIG_LEDS_CLASS_MULTICOLOR=m, a builtin leds-blinkm driver causes
+> a link failure:
+> 
+> arm-linux-gnueabi-ld: drivers/leds/leds-blinkm.o: in function `blinkm_set_mc_brightness':
+> leds-blinkm.c:(.text.blinkm_set_mc_brightness+0xc): undefined reference to `led_mc_calc_color_components'
+> 
+> Add a more specific dependency that only allows multicoler mode to
+> be enabled for blinkm if it can build and link.
+> 
+> [...]
 
---iSN+i34vU373tBO4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied, thanks!
 
-On Fri, Aug 16, 2024 at 08:58:43AM +0200, Stanislav Jakubek wrote:
-> Hi Conor,
->=20
-> On Thu, Aug 15, 2024 at 03:46:18PM +0100, Conor Dooley wrote:
-> > On Thu, Aug 15, 2024 at 12:01:36PM +0200, Stanislav Jakubek wrote:
-> > > The SC27XX fuel gauge supports a low voltage alarm IRQ, which is used
-> > > for more accurate battery capacity measurements with lower voltages.
-> > >=20
-> > > This was unfortunately never documented in bindings, do so now.
-> > >=20
-> > > Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
-> > > ---
-> > > Initial Linux driver submission adding this feature:
-> > > https://lore.kernel.org/lkml/ee1dd39f126bd03fb88381de9663d32df994d341=
-=2E1542185618.git.baolin.wang@linaro.org/
-> > >=20
-> > > The only in-tree user (sc2731.dtsi) has had interrupts specified sinc=
-e its
-> > > initial fuel-gauge submission:
-> > > https://lore.kernel.org/lkml/4f66af3b47ba241380f8092e08879aca6d7c35b3=
-=2E1548052878.git.baolin.wang@linaro.org/
-> >=20
-> > This context could go into the commit message I think, as justification
-> > for making the interrupt required.
->=20
-> TBH I'm not 100% sure that the interrupt is required, I just looked at
-> the Linux driver, and that it returns from probe if it doesn't get the IR=
-Q.
->=20
-> >=20
-> > Also, this binding is odd in that it has several compatibles in an enum,
-> > but the driver (added at the same time) only has one compatible in it.
->=20
-> I think the intent was to document the entire sc27xx series of PMICs, as
-> they're supposedly very similar (this is just my guess), while initially
-> adding support only for sc2731.
->=20
-> > Are you using the sc2731 in your device?
->=20
-> No, I do not have any such device.
+[1/1] leds: blinkm: fix CONFIG_LEDS_CLASS_MULTICOLOR dependency
+      commit: 17c40f3c94bc2279b879ea9ceb3eea973bcd1ac4
 
-No worries.
+--
+Lee Jones [李琼斯]
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---iSN+i34vU373tBO4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZr94kgAKCRB4tDGHoIJi
-0vpUAP9/LGLlbZaexYAUrcsXDwmy4v19apWfDrSJIyQ5JkbDUwD/dXPvd5xOVdio
-mNhHQWgiVWlpF6IdZk+8Hu8UlcfVBwM=
-=7TZU
------END PGP SIGNATURE-----
-
---iSN+i34vU373tBO4--
 
