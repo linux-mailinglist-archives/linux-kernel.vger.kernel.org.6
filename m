@@ -1,184 +1,223 @@
-Return-Path: <linux-kernel+bounces-290228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CB849550FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:43:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33F10955105
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:46:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E111728427C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:43:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B566A1F2249E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016181C3F36;
-	Fri, 16 Aug 2024 18:43:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825E21C3F21;
+	Fri, 16 Aug 2024 18:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lVEypLZD"
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mel8xu9a"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26461B5825
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 18:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D1E4174C;
+	Fri, 16 Aug 2024 18:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723833787; cv=none; b=u3uYOMOP1OEcFkjEx6bTd+i+//Jg3WbKJ1TD+a1jUXeCmTtOwEMbWrVt0krDaLXZt8MpCXMQ8f8KY3Kv0Wbc6Bjy5hK8cL5ujhMQ/x7AoGvngInknuJ5bW6xte4eWhWfNBQwwayLO7e6zoR+KpiBulP4UplQR0R/stJH75ollZ0=
+	t=1723833975; cv=none; b=m0H49tRWsiFr9ANxXVReSMKu9a7yEGu45/uAWvudbog7qA+5E2qmIQTp+HytJtZYGGcUtSauilweWg5X3pfx4+RJ3RaXncW5OgTJ7xZL3JyGGheiFpPPNV3DOk0ScR4avnXNyNONmahV41ZFPQt6Mh2GK0Bk/Abr6mizaJzKsNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723833787; c=relaxed/simple;
-	bh=f/lj35os5qXh/9+h4n3Es0pASBkLzdPRQpPfVJE4KEI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UE9Wg4+OAS5axPgoKejhnSL5/qvuhxYMmDIK2nuZYDSOgYP5ZzRn41IUznlP7mxByJU286lmEcGmVO/pPAkP8EbxZsM4gdZI2xZazh1Mp3mjonjy4c1V2fhzIGOomDqa8gmu+q1YV9yxv2AwGpKxjdogaNJK5oluclawj5fzEe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lVEypLZD; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2702ed1054fso208496fac.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 11:43:05 -0700 (PDT)
+	s=arc-20240116; t=1723833975; c=relaxed/simple;
+	bh=Fio/CJS4C99XjUj8Ec+0YexuwKVI/7sHNgTQy6j+uNw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PZNDgtTdDLYWbQrLt090ljHyEmP+SsabKO0XFwFaV9EasGO+jwvAwj/9nrisC/e5oDEESvolkOrjD3jYyuXek0Dwa0KK2j+roRgqHdhwPJn4Yo/xkQyVdfhYN3j5TCmEsF0u113cIzDo0NJ2H+QdEJIMu70Ql+szG4lrUV4OlK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mel8xu9a; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2eeb1ba040aso32318841fa.1;
+        Fri, 16 Aug 2024 11:46:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723833785; x=1724438585; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7w+w1c74f+1d3M1TPYvu6zM80KBCv4i0JfxRRa+Nwnc=;
-        b=lVEypLZDQC5qDUhncNZ5lZqvo/QqFHatKJ1Q+X+hZgoodyeiZGB/MkTpCTuoBnnGZG
-         4kxkHGUSu9YBK48Yq5gtBlZPlD6PY+dUs9bCFx3q3JewfhTVM0ZRlEpiC9qQ3lp3IirE
-         STWV1jvS5wfFfLy/OuQaPQPFmxuLLpG9lXP1E=
+        d=gmail.com; s=20230601; t=1723833972; x=1724438772; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GR4ikPPWol9ep3eUe0jkCvtintspPHLufmBMOxuSaZA=;
+        b=mel8xu9al95OlwFw65/eHHYK62SrL9AskPj85TXsMPcKpJ6SpN2ORrBphBhXDxeo2I
+         661cSvZovR3FqWLQR5xGBypChbEVxjYWG6IRW6NTdcBURtv9yUmKN62eQRxEwdxu5oHj
+         fZ1DQ2/xUPRSzBwodj9TzkYO7jlvDG9lhpAU6ac3NjeulyDNgG3b3BnxwSBxV5rM6tfT
+         O6F/wX5ayoq3JrjCztEinYdBHAuecdF5b4bq6qUF9wryn3pXrOzrZ6FXqaZPtRXce64a
+         Rv49ai9CETX7YLlI5cHwskF4IEkaIyWRWtfqFMTBKekSWDpfNJHJBCgsDMDMYs9UUcS4
+         hZjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723833785; x=1724438585;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7w+w1c74f+1d3M1TPYvu6zM80KBCv4i0JfxRRa+Nwnc=;
-        b=ZyMwbTXc0rS6qXInGG9fEX+PAcpJn4n/lGBM3sOcysjGQJSphQFqo4Ez0bdQRG0dwG
-         RgU8LIyenU2A6KgiZTg8pOkboCIslcWl8I6plW3cfW5u33R/GEI7PhxaZ4LrkJh8lYiH
-         OpW9OSOcMic3+s3acBzYdoe5uC42kaoe3pmiyWvlgVh4y3qmErPAaik6QXnoHxlk7MHt
-         22200Hmb1Xz/7LspPtrhFwdQyhqWvhMSloVOEWF0HCBUs7qdUzhenTBXD9P7oHUKwLrU
-         OWexhP+b8c67pns9RvnMhB0zXzg/q1Tkyhbej7OaQlQqqjOD10izLC/wzHFlTkY2C/c9
-         5YHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKZzgzT3HEuGCqqcGqTJ2ndkRd1dprxNJGrHaOE1Rfe0mY3UY+nxdHKOVkU3l6+TSmTZ5nvZddkzWoKWvc0jFmLo+J63FmyhLvEyLB
-X-Gm-Message-State: AOJu0Yypnn4U/Asxzwn42x5PJaQs3mQub34/RF38RxcwHxqYGuEdfEwP
-	W4/G+iFGzBuClgLH+MxjsmFlZIY2kRqk8gXJOJlwnZKCHSGZNDDERilRWIESGloi3OLz6gYp6zG
-	oQnFkPS0jdfPku8k8/suHOkqGS6f51CqxwkDF
-X-Google-Smtp-Source: AGHT+IEb9nVsoMnqEjofIHu2YYl869A1a2zA2NEvY38PukHL8QPgfqV7UILDW8gwQXnbjf6Pn9EQdZiQCl3TjHz66d0=
-X-Received: by 2002:a05:6871:42c6:b0:270:2c7:e19c with SMTP id
- 586e51a60fabf-2701c095fd0mr4658566fac.0.1723833784751; Fri, 16 Aug 2024
- 11:43:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723833972; x=1724438772;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GR4ikPPWol9ep3eUe0jkCvtintspPHLufmBMOxuSaZA=;
+        b=q64S9AvHXkdxf0ioIhJ3TWdSWjcIePibwlDxF8oy5SJ0kljMloZcWMgHDC7R7u2ODO
+         UkBxxBPAaS+/0W3JJN8UKj1YzJqEWXYsEnsNrUwYm/2k320VOkITtcxsXpCgB5Gs5/XX
+         qWTe4Y8MmNdUyRUTqRa7G5EGOKnezO3fnNzcDRpaNv/dGhJzieRZPU6bZK/bq+MMX1A0
+         AbSbkdh9oELO6Fq9hOLnHBLwDqjldBl7C05JCriKhmLlu7C63EJ42N9CoIe3KzzYKl+c
+         bx08D76yWMmuaS3OscBPKooCDyl+ofTyR7mXPx9QwKGCSkdX/5b22KrbjORwSpmb+qdP
+         UThQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXbSlXDGZcu0oREyiJnJ1iEBPYM7VooHLxxoazHLQF3XbGV+OaGOlJF4AvzDAMex2QECiSCbgUNxvQ6PbbocQUKgpOKFjB/LQqTWoy8U2uExd3ePvPs0LbGYBg02Lkz/vC5
+X-Gm-Message-State: AOJu0YzVtLW1WSxNZiDbMlS57TA0ke3h9AcGTes4TyEJ3LAkb8sVVYqP
+	Bqgw93z/tYz3NY+LXAakp+KE3C8+/gJ1tBmthjuoj8DlPRV9WjDy
+X-Google-Smtp-Source: AGHT+IH5KhGUQnH9Joun4vIZh1odDxIkkjfXbFhlAGMBPBeYBvb0XZeIIU7MeMHFMyTdtaiRFqTk8A==
+X-Received: by 2002:a2e:be1c:0:b0:2ef:2c91:502a with SMTP id 38308e7fff4ca-2f3be575bf6mr35545871fa.3.1723833971285;
+        Fri, 16 Aug 2024 11:46:11 -0700 (PDT)
+Received: from mobilestation ([178.176.56.174])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f3b746cd25sm6429871fa.9.2024.08.16.11.46.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 11:46:10 -0700 (PDT)
+Date: Fri, 16 Aug 2024 21:46:07 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: jitendra.vegiraju@broadcom.com
+Cc: netdev@vger.kernel.org, alexandre.torgue@foss.st.com, 
+	joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, mcoquelin.stm32@gmail.com, bcm-kernel-feedback-list@broadcom.com, 
+	richardcochran@gmail.com, ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org, 
+	john.fastabend@gmail.com, rmk+kernel@armlinux.org.uk, ahalaney@redhat.com, 
+	xiaolei.wang@windriver.com, rohan.g.thomas@intel.com, Jianheng.Zhang@synopsys.com, 
+	leong.ching.swee@intel.com, linux-kernel@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org, 
+	andrew@lunn.ch, linux@armlinux.org.uk, horms@kernel.org, 
+	florian.fainelli@broadcom.com
+Subject: Re: [net-next v4 0/5] net: stmmac: Add PCI driver support for
+ BCM8958x
+Message-ID: <pajh2btfch2a5nmjuup4djtv4l3ofref5tjx7ocs7ofwnjfej6@n3gf36v37liz>
+References: <20240814221818.2612484-1-jitendra.vegiraju@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807211309.2729719-1-pedro.falcato@gmail.com>
- <20240808161226.b853642c0ecf530b5cef2ecc@linux-foundation.org>
- <CAKbZUD0_BSv6KOgaRuqjLWGnttzcprcUu5WysSZeX8FXAvui5w@mail.gmail.com>
- <CALmYWFs0v07z5vheDt1h3hD+3--yr6Va0ZuQeaATo+-8MuRJ-g@mail.gmail.com>
- <CABi2SkUYAc557wwOriwUW3tfTc_U9MDPQ4bE-Q+tTdNgGT3UuQ@mail.gmail.com>
- <CAKbZUD3_3KN4fAyQsD+=p3PV8svAvVyS278umX40Ehsa+zkz3w@mail.gmail.com>
- <CABi2SkVrEHbWa4AsffX9RXv_a-KjwZajkscZ3Bi4JWzJ4fr6wQ@mail.gmail.com>
- <CAKbZUD0ZA8q0QdSs_OwbdfSvM3Ze+0MaMQsn2dKM2pN6nn3J4g@mail.gmail.com>
- <CABi2SkVj8c7Cw_4DQ-U55Nkv5YCYR4WhjU3U_cw-cU2o7MAhMQ@mail.gmail.com> <CAKbZUD31EK2ah=vWJ46y4nL9OygzAa6ZxPnPHmWYO-sop5t+5Q@mail.gmail.com>
-In-Reply-To: <CAKbZUD31EK2ah=vWJ46y4nL9OygzAa6ZxPnPHmWYO-sop5t+5Q@mail.gmail.com>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Fri, 16 Aug 2024 11:42:52 -0700
-Message-ID: <CABi2SkX01E9hF7vDvRK3D=A-0_XGx-oJoYR20f8VmSF-aGZfpw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] mm: Optimize mseal checks
-To: Pedro Falcato <pedro.falcato@gmail.com>
-Cc: Jeff Xu <jeffxu@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, oliver.sang@intel.com, 
-	torvalds@linux-foundation.org, Michael Ellerman <mpe@ellerman.id.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240814221818.2612484-1-jitendra.vegiraju@broadcom.com>
 
-On Fri, Aug 16, 2024 at 11:26=E2=80=AFAM Pedro Falcato <pedro.falcato@gmail=
-.com> wrote:
->
-> On Fri, Aug 16, 2024 at 7:20=E2=80=AFPM Jeff Xu <jeffxu@chromium.org> wro=
-te:
-> >
-> > On Fri, Aug 16, 2024 at 11:09=E2=80=AFAM Pedro Falcato <pedro.falcato@g=
-mail.com> wrote:
-> > >
-> > > On Fri, Aug 16, 2024 at 6:07=E2=80=AFPM Jeff Xu <jeffxu@chromium.org>=
- wrote:
-> > > > Please run this test on the latest kernel branch to verify:
-> > > >
-> > > > static void test_munmap_free_multiple_ranges(bool seal)
-> > > > {
-> > > >         void *ptr;
-> > > >         unsigned long page_size =3D getpagesize();
-> > > >         unsigned long size =3D 8 * page_size;
-> > > >         int ret;
-> > > >         int prot;
-> > > >
-> > > >         setup_single_address(size, &ptr);
-> > > >         FAIL_TEST_IF_FALSE(ptr !=3D (void *)-1);
-> > > >
-> > > >         /* unmap one page from beginning. */
-> > > >         ret =3D sys_munmap(ptr, page_size);
-> > > >         FAIL_TEST_IF_FALSE(!ret);
-> > > >
-> > > >         /* unmap one page from middle. */
-> > > >         ret =3D sys_munmap(ptr + 4 * page_size, page_size);
-> > > >         FAIL_TEST_IF_FALSE(!ret);
-> > > >
-> > > >         /* seal the last page */
-> > > >         if (seal) {
-> > > >                 ret =3D sys_mseal(ptr + 7 * page_size, page_size);
-> > > >                 FAIL_TEST_IF_FALSE(!ret);
-> > > >         }
-> > > >
-> > > >         /* munmap all 8  pages from beginning */
-> > > >         ret =3D sys_munmap(ptr, 8 * page_size);
-> > > >         if (seal) {
-> > > >                 FAIL_TEST_IF_FALSE(ret < 0);
-> > > >
-> > > >                 /* verify none of existing pages in  the range are =
-unmapped */
-> > > >                 size =3D get_vma_size(ptr + page_size, &prot);
-> > > >                 FAIL_TEST_IF_FALSE(size =3D=3D 3 * page_size);
-> > > >                 FAIL_TEST_IF_FALSE(prot =3D=3D 4);
-> > > >
-> > > >                 size =3D get_vma_size(ptr +  5 * page_size, &prot);
-> > > >                 FAIL_TEST_IF_FALSE(size =3D=3D 2 * page_size);
-> > > >                 FAIL_TEST_IF_FALSE(prot =3D=3D 4);
-> > > >
-> > > >                 size =3D get_vma_size(ptr +  7 * page_size, &prot);
-> > > >                 FAIL_TEST_IF_FALSE(size =3D=3D 1 * page_size);
-> > > >                 FAIL_TEST_IF_FALSE(prot =3D=3D 4);
-> > > >         } else {
-> > > >                 FAIL_TEST_IF_FALSE(!ret);
-> > > >
-> > > >                 /* verify all pages are unmapped */
-> > > >                 for (int i =3D 0; i < 8; i++) {
-> > > >                         size =3D get_vma_size(ptr, &prot);
-> > > >                         FAIL_TEST_IF_FALSE(size =3D=3D 0);
-> > > >                 }
-> > > >         }
-> > > >
-> > > >         REPORT_TEST_PASS();
-> > > > }
-> > > >
-> > >
-> > > FWIW this test does not work correctly on my end due to sealed VMAs
-> > > getting merged. I hacked up setup_single_address to work around that,
-> > > and the test does pass on both 6.10.5 and my local mseal changes
-> > > branch.
-> > Yes. you would need to comment out other tests and run this test only,
-> > it didn't consider the case that sealed vma will merge with another
-> > sealed vma (created from another test)
-> >
-> > The test didn't pass with the V2 patch (the seal =3D true) case.
->
-> Because we... found a bug in my munmap changes. The fixed v3 I'm
-> planning to send out does indeed pass.
->
-OK, I think you got my point.
-Glad to hear that you are doing more testing.
+Hi Jitendra
 
-Thanks
--Jeff
+On Wed, Aug 14, 2024 at 03:18:13PM -0700, jitendra.vegiraju@broadcom.com wrote:
+> From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
+> 
+> This patchset adds basic PCI ethernet device driver support for Broadcom
+> BCM8958x Automotive Ethernet switch SoC devices.
+> 
+> This SoC device has PCIe ethernet MAC attached to an integrated ethernet
+> switch using XGMII interface. The PCIe ethernet controller is presented to
+> the Linux host as PCI network device.
+> 
+> The following block diagram gives an overview of the application.
+>              +=================================+
+>              |       Host CPU/Linux            |
+>              +=================================+
+>                         || PCIe
+>                         ||
+>         +==========================================+
+>         |           +--------------+               |
+>         |           | PCIE Endpoint|               |
+>         |           | Ethernet     |               |
+>         |           | Controller   |               |
+>         |           |   DMA        |               |
+>         |           +--------------+               |
+>         |           |   MAC        |   BCM8958X    |
+>         |           +--------------+   SoC         |
+>         |               || XGMII                   |
+>         |               ||                         |
+>         |           +--------------+               |
+>         |           | Ethernet     |               |
+>         |           | switch       |               |
+>         |           +--------------+               |
+>         |             || || || ||                  |
+>         +==========================================+
+>                       || || || || More external interfaces
+> 
+> The MAC block on BCM8958x is based on Synopsis XGMAC 4.00a core. This
+> MAC IP introduces new DMA architecture called Hyper-DMA for virtualization
+> scalability.
+> 
+> Driver functionality specific to new MAC (DW25GMAC) is implemented in
+> new file dw25gmac.c.
+> 
+> Management of integrated ethernet switch on this SoC is not handled by
+> the PCIe interface.
+> This SoC device has PCIe ethernet MAC directly attached to an integrated
+> ethernet switch using XGMII interface.
+> 
+> v3->v4:
+>    Based on Serge's questions, received a confirmation from Synopsis that
+>    the MAC IP is indeed the new 25GMAC design.
+>    Renamed all references of XGMAC4 to 25GMAC.
+>    The patch series is rearranged slightly as follows.
+>    Patch1 (new): Define HDMA mapping data structure in kernel's stmmac.h
+>    Patch2 (v3 Patch1): Adds dma_ops for dw25gmac in stmmac core
+>        Renamed new files dwxgmac4.* to dw25gmac.* - Serge Semin
+>        Defined new Synopsis version and device id macros for DW25GMAC.
+>        Coverted bit operations to FIELD_PREP macros - Russell King
+>        Moved hwif.h to this patch, Sparse flagged warning - Simon Horman
+>        Defined macros for hardcoded values TDPS etc - Serge Semin
+>        Read number of PDMAs/VDMAs from hardware - Serge Semin
+>    Patch3 (v3 Patch2): Hooks in hardware interface handling for dw25gmac
+>        Resolved user_version quirks questions - Serge, Russell, Andrew
+>        Added new stmmac_hw entry for DW25GMAC. - Serge
+>        Added logic to override synopsis_dev_id by glue driver.
+>    Patch4 (v3 Patch3): Adds PCI driver for BCM8958x device
+>        Define bitmmap macros for hardcoded values - Andrew Lunn
+>        Added per device software node - Andrew Lunn
+>    Patch5(new/split): Adds BCM8958x driver to build system
 
-> --
-> Pedro
+Thanks for the series update and I'm sorry for abandoning the
+v3 discussion. I had to work on another urgent task. I'll get back to
+reviewing your patch set on the next week.
+
+-Serge(y)
+
+>    
+> v2->v3:
+>    Addressed v2 comments from Andrew, Jakub, Russel and Simon.
+>    Based on suggestion by Russel and Andrew, added software node to create
+>    phylink in fixed-link mode.
+>    Moved dwxgmac4 specific functions to new files dwxgmac4.c and dwxgmac4.h
+>    in stmmac core module.
+>    Reorganized the code to use the existing glue logic support for xgmac in
+>    hwif.c and override ops functions for dwxgmac4 specific functions.
+>    The patch is split into three parts.
+>      Patch#1 Adds dma_ops for dwxgmac4 in stmmac core
+>      Patch#2 Hooks in the hardware interface handling for dwxgmac4
+>      Patch#3 Adds PCI driver for BCM8958x device
+>    https://lore.kernel.org/netdev/20240802031822.1862030-1-jitendra.vegiraju@broadcom.com/
+> 
+> v1->v2:
+>    Minor fixes to address coding style issues.
+>    Sent v2 too soon by mistake, without waiting for review comments.
+>    Received feedback on this version.
+>    https://lore.kernel.org/netdev/20240511015924.41457-1-jitendra.vegiraju@broadcom.com/
+> 
+> v1:  
+>    https://lore.kernel.org/netdev/20240510000331.154486-1-jitendra.vegiraju@broadcom.com/
+> 
+> Jitendra Vegiraju (5):
+>   Add HDMA mapping for dw25gmac support
+>   Add basic dw25gmac support to stmmac core
+>   Integrate dw25gmac into stmmac hwif handling
+>   Add PCI driver support for BCM8958x
+>   Add BCM8958x driver to build system
+> 
+>  MAINTAINERS                                   |   8 +
+>  drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 +
+>  drivers/net/ethernet/stmicro/stmmac/Makefile  |   3 +-
+>  drivers/net/ethernet/stmicro/stmmac/common.h  |   2 +
+>  .../net/ethernet/stmicro/stmmac/dw25gmac.c    | 173 ++++++
+>  .../net/ethernet/stmicro/stmmac/dw25gmac.h    |  90 +++
+>  .../net/ethernet/stmicro/stmmac/dwmac-brcm.c  | 530 ++++++++++++++++++
+>  .../ethernet/stmicro/stmmac/dwxgmac2_dma.c    |  31 +
+>  drivers/net/ethernet/stmicro/stmmac/hwif.c    |  25 +-
+>  drivers/net/ethernet/stmicro/stmmac/hwif.h    |   1 +
+>  drivers/net/ethernet/stmicro/stmmac/stmmac.h  |   1 +
+>  include/linux/stmmac.h                        |  50 ++
+>  12 files changed, 922 insertions(+), 3 deletions(-)
+>  create mode 100644 drivers/net/ethernet/stmicro/stmmac/dw25gmac.c
+>  create mode 100644 drivers/net/ethernet/stmicro/stmmac/dw25gmac.h
+>  create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-brcm.c
+> 
+> -- 
+> 2.34.1
+> 
 
