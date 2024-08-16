@@ -1,80 +1,73 @@
-Return-Path: <linux-kernel+bounces-289363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31E80954550
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:22:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 706E3954553
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:23:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A77CD1F224FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:22:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18A05284500
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6BD13D890;
-	Fri, 16 Aug 2024 09:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9BB13DDAA;
+	Fri, 16 Aug 2024 09:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wqew1i6N"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qJ6GsUdF"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B1083CD4
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C38712CDA5
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723800144; cv=none; b=umdpNTa7UrswDlQbUGAP4YBSpxzYo61h6rlxnIBnW2fHC+wgyG3a3FkhCbvkqlO4eEUrDaJ3dgcUILbODhxercTIy4lE69Jx8ndZl0PrBmRtCqhaIArBJtfb7lMdVUUubV3TnajW2hYHmgmD3Ns2JdfP3G6x4kbtjgoLXk8QSjg=
+	t=1723800184; cv=none; b=lRvRLJmVnhB8QuCfVCBiy51q1YdcggeAcUdroRpdRy6/luodgx3tO/MKa0FjYAiMnkm2JvrXVtxXqpq//MSeHa5Tf4V9zoAUSGU8KvnwKcT4RyUiFxP6jVgSgpGAzmSAuMlI2Url5H/mMQy6RexgvCHOL5xuDQRGIO0Jj48d/4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723800144; c=relaxed/simple;
-	bh=IQJ03Nz43v4K4vXCa4qyRaXmWeLTNfKCB+EtsJYagvY=;
+	s=arc-20240116; t=1723800184; c=relaxed/simple;
+	bh=y/Ufg8tbL4666xoI4ZdID9NsMGGJE6VSVdMuySd39Nw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z5YoYh4s8seRxZXFYxsaXy0BueZfRjrNcJJDXFJSxyEPG+pJJ4hDWK6BhdvYCHhTecSWMXvSwNYPonUI8JOXSbhL8fftvEXsh/xWOzPOZ2k+hJy9EGFmX4P1hAz8U/QvtrUrwc1LTcAdYDjP4H7Jw868DznrV0gzgwd36+4VupA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wqew1i6N; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723800141;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=M1nw3TI/x8xm8G5ToDEc03hFzXIhWW679Aa76Rk3KUA=;
-	b=Wqew1i6NA8KDvldPVSdlPcsTVm4plPcgl3QXhZgiQipI/b6PUjJaU3F47yvIJaCH3fcBHp
-	YfMhSoq93Ht274yRFNQkGWYOe/NthDxidcIFGlkN9yp0pDUhlDdaGusCyxzh+YYZlf1bls
-	6FF0axjkw485MGli/UlMLqJMC1gdJv0=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-670-FfTZqBqOOl2sj7g0jFAMyw-1; Fri, 16 Aug 2024 05:22:19 -0400
-X-MC-Unique: FfTZqBqOOl2sj7g0jFAMyw-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4281310bf7aso12763335e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 02:22:19 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=j+2TENdtzrHSCI+da4zkzy99FXhRCgFHHAdv3kSuV/LJbYijeKsmuhNc8uZTRNRn9nDJq25gw4gbIb6g2jq1Bv4GegMiKoZKdavhfs/Evz3HsNozHTVZ2+bCstJVKlbmxNkqdLC/5ecfL7PQk1M0uMa+hLDIP75QIsF+7li9cMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qJ6GsUdF; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-429da8b5feaso17704015e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 02:23:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723800180; x=1724404980; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lxnIiPj4rgSgy4iPiln/v688IPneiwiyQTCsnmUVp+Q=;
+        b=qJ6GsUdF9DmhtJuP9JjFcedam/b39zteY5SvbdjBIlpNx1zGCZ10JFkpWNzxnuzu6T
+         En8Yyx3IfWGuE1iaIE91z0muXcUhRtWeRnC14ublcuK6yzwqtgH+0POCffVj8JU7wzJD
+         AkvQ5iFTYSKasET6dus8gGjM1bsfhumtMFHvb5ZhVEPQfaG8BpVxCqOZuSZf/kovwh2R
+         ALvvhzkQGpHRJb0Fp4BAvOLklPDq3AMw4O/6UhXce05yN+a9A6szGk/IN7PlX4Dp3zgY
+         13QEtC2FaCv7dCV0uj/tbZFccQpWPnhI9Ew8BIIlnrkUpe8HJOhauRdbP3W+QRXN1Kl7
+         5VAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723800138; x=1724404938;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=M1nw3TI/x8xm8G5ToDEc03hFzXIhWW679Aa76Rk3KUA=;
-        b=uyRxVDwWNrMtSqmrJdowbgKgBDKusGx4J+Yu4gA0Uom7FX6clsSsmyBFFcu2lxgkjS
-         EOXIVf9HYw/rXTYddPZc0VqZUtQNf+79ihIECwUROI75RbuUsWE03daq/4HGh1Tnzy9o
-         qIFR20fpQcDuuKj6H1iMWs3r0HftVK/m4Sn0UcUwFPiYAwE6tL0dhrbhvuPsSkGbt5bp
-         zlLTD6l5ASZnfRMwSTM/WmELtAivalw7NHMwmzSsi2Bz1Dy3UQ+oumfZFQNQW5VFbpiY
-         WZhQjQXMFp8qGrVHLfnfIUrDqN08OjJEJBVkQ8CxmtfA1IszqZ3h6zcLVHCNocxzGUqR
-         8KhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMZ4tv9QA+thdt9eMJNLJqiWxr9RJSEae8Ix9MeeWW3x8dPSYtffiN/ie3GJr6h4HyHXrFTT05ptZesjB9RMHEJnAMRH0DwO8Z10Bw
-X-Gm-Message-State: AOJu0YzF9COGU8spyeFzlzKooilSyoeNpW3hiRLeDrpAD2qycJyh1+3g
-	80Hr3Gh9ZzFVKtpA60om9P8kJAznUszFy/Byzvj/q6IUNlVsGfiKIwhuiegu+jC2A/nqGVZJuTJ
-	kwU8ksobU/XFvf/NOV/txyl+R/0stAwHJ0v+eJtM79Y5lBMtd+H/hCTbr5tpNzQ==
-X-Received: by 2002:a05:600c:3587:b0:426:51dc:f6cd with SMTP id 5b1f17b1804b1-429ed7b8883mr15414245e9.18.1723800138025;
-        Fri, 16 Aug 2024 02:22:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IES7VluZXtLEQDwH6+FARixLjnpngjcVpPeq9bi09avGW2l9mXuFy0bHMVDdzJU44v4iQRgZw==
-X-Received: by 2002:a05:600c:3587:b0:426:51dc:f6cd with SMTP id 5b1f17b1804b1-429ed7b8883mr15413965e9.18.1723800137454;
-        Fri, 16 Aug 2024 02:22:17 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c721:b900:4f34:b2b7:739d:a650? (p200300cbc721b9004f34b2b7739da650.dip0.t-ipconnect.de. [2003:cb:c721:b900:4f34:b2b7:739d:a650])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded18468sm70216805e9.2.2024.08.16.02.22.16
+        d=1e100.net; s=20230601; t=1723800180; x=1724404980;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lxnIiPj4rgSgy4iPiln/v688IPneiwiyQTCsnmUVp+Q=;
+        b=PeKiK3iyNMmtTRrvwfsZnGb1VfUB5Nt7cK5aO4ZeioU145asHRt82d8kT+zqrtQvvQ
+         nvJEBz+0EBLX4nkGplI0wzAgRkVe4W5RkToA+QNNFKDA1D66qIeNiwkOFNcD/qjHSHnU
+         /9jZFlzKVopwgeuadvAWKvQItGbH7xe6uBA9Vrs7SZ9eA6/GjlCFBbRZfE8yAk6RJVPX
+         DY5VH/G18F0bqzCDDYCG7Y4bJO/R5g9T3mMWszgd1dbHOJNS3gn+tP94urzB0PGH/FMe
+         oruKdLscOLI8rJOwXMFFGw1sH0wlHC+LfzuY8jEqrQ3KonqTVwtQ+o8Dg9fqgJuu0mpe
+         A3xw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/mEtiqCUkCYIa7cY1u5iv2KzyTSFZ6GuUN11frT9jPfHmLpfIP4oNfHErkG810yzRKEXAVyUNIgcTooBjS8zwyd9yn/LyfQARvfGl
+X-Gm-Message-State: AOJu0YxlwxpKq+Ha5A6369YvVD2Qm06lOHQs5LmMtgZEmQKHWO0nMZYm
+	RFze2uBCs8S492D98U5NToWg5NdiKAmF7WwyK2gdv6GaXWynq55nZFVihpRhxGE=
+X-Google-Smtp-Source: AGHT+IF+YHNaU9vL6pmPv8W6yXfeti4FATXv6vY1xmFi4uhJwkg/8PS66vkhIP9jsmfqOTwf5yPg6g==
+X-Received: by 2002:a05:600c:4f95:b0:426:690d:d5b7 with SMTP id 5b1f17b1804b1-429ed7d646amr16479995e9.25.1723800179854;
+        Fri, 16 Aug 2024 02:22:59 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718983a57asm3229900f8f.2.2024.08.16.02.22.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Aug 2024 02:22:17 -0700 (PDT)
-Message-ID: <b0b39543-498d-4b08-a864-b05be45f617d@redhat.com>
-Date: Fri, 16 Aug 2024 11:22:15 +0200
+        Fri, 16 Aug 2024 02:22:59 -0700 (PDT)
+Message-ID: <6cbd2f1d-2aea-486c-a3cb-bb6eb08d8bdc@linaro.org>
+Date: Fri, 16 Aug 2024 10:22:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,219 +75,261 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 4/7] mm: pgtable: try to reclaim empty PTE pages in
- zap_page_range_single()
-To: Qi Zheng <zhengqi.arch@bytedance.com>
-Cc: hughd@google.com, willy@infradead.org, mgorman@suse.de,
- muchun.song@linux.dev, vbabka@kernel.org, akpm@linux-foundation.org,
- zokeefe@google.com, rientjes@google.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <cover.1722861064.git.zhengqi.arch@bytedance.com>
- <9fb3dc75cb7f023750da2b4645fd098429deaad5.1722861064.git.zhengqi.arch@bytedance.com>
- <2659a0bc-b5a7-43e0-b565-fcb93e4ea2b7@redhat.com>
- <42942b4d-153e-43e2-bfb1-43db49f87e50@bytedance.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [REGRESSION] Perf (userspace) broken on big.LITTLE systems since
+ v6.5
+To: Ian Rogers <irogers@google.com>
+Cc: Thorsten Leemhuis <regressions@leemhuis.info>,
+ Arnaldo Carvalho de Melo <acme@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Linux perf Profiling <linux-perf-users@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ James Clark <james.clark@arm.com>, "cc: Marc Zyngier" <maz@kernel.org>,
+ Hector Martin <marcan@marcan.st>, Asahi Linux <asahi@lists.linux.dev>,
+ Linux regressions mailing list <regressions@lists.linux.dev>,
+ Atish Patra <atishp@rivosinc.com>
+References: <08f1f185-e259-4014-9ca4-6411d5c1bc65@marcan.st>
+ <ZV1AnNB2CSbAUFVg@archie.me>
+ <a9c14dfd-3269-4758-9174-4710bef07088@leemhuis.info>
+ <CAP-5=fXqx_k1miPTkcAmS3z2GBPt2KeDtP5fknmdDghZqxXPew@mail.gmail.com>
+ <714ed350-0e6c-4922-bf65-36de48f62879@leemhuis.info>
+ <0de3b572-f5f7-42e4-b410-d1e315943a3c@linaro.org>
+ <CAP-5=fVSVe=C5dHaOV22+YOZ_JCD0mDoByoubSFY3w4au5zwQg@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <42942b4d-153e-43e2-bfb1-43db49f87e50@bytedance.com>
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <CAP-5=fVSVe=C5dHaOV22+YOZ_JCD0mDoByoubSFY3w4au5zwQg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 07.08.24 05:58, Qi Zheng wrote:
-> Hi David,
-> 
 
-Really sorry for the slow replies, I'm struggling with a mixture of 
-public holidays, holiday and too many different discussions (well, and 
-some stuff I have to finish myself).
 
-> On 2024/8/6 22:40, David Hildenbrand wrote:
->> On 05.08.24 14:55, Qi Zheng wrote:
->>> Now in order to pursue high performance, applications mostly use some
->>> high-performance user-mode memory allocators, such as jemalloc or
->>> tcmalloc. These memory allocators use madvise(MADV_DONTNEED or MADV_FREE)
->>> to release physical memory, but neither MADV_DONTNEED nor MADV_FREE will
->>> release page table memory, which may cause huge page table memory usage.
+On 15/08/2024 6:29 pm, Ian Rogers wrote:
+> On Wed, Aug 14, 2024 at 9:28 AM James Clark <james.clark@linaro.org> wrote:
+>> On 07/08/2024 9:54 am, Thorsten Leemhuis wrote:
+>>> On 01.08.24 21:05, Ian Rogers wrote:
+>>>> On Wed, Dec 6, 2023 at 4:09 AM Linux regression tracking #update
+>>>> (Thorsten Leemhuis) <regressions@leemhuis.info> wrote:
+>>>>>
+>>>>> [TLDR: This mail in primarily relevant for Linux kernel regression
+>>>>> tracking. See link in footer if these mails annoy you.]
+>>>>>
+>>>>> On 22.11.23 00:43, Bagas Sanjaya wrote:
+>>>>>> On Tue, Nov 21, 2023 at 09:08:48PM +0900, Hector Martin wrote:
+>>>>>>> Perf broke on all Apple ARM64 systems (tested almost everything), and
+>>>>>>> according to maz also on Juno (so, probably all big.LITTLE) since v6.5.
+>>>>>
+>>>>> #regzbot fix: perf parse-events: Make legacy events lower priority than
+>>>>> sysfs/JSON
+>>>>> #regzbot ignore-activity
+>>>>
+>>>> Note, this is still broken.
 >>>
->>> The following are a memory usage snapshot of one process which actually
->>> happened on our server:
+>>> Hmmm, so all that became somewhat messy. Arnaldo, what's the way out of
+>>> this? Or is this a "we are screwed one way or another and someone has to
+>>> bite the bullet" situation?
 >>>
->>>           VIRT:  55t
->>>           RES:   590g
->>>           VmPTE: 110g
+>>> Ciao, Thorsten
 >>>
->>> In this case, most of the page table entries are empty. For such a PTE
->>> page where all entries are empty, we can actually free it back to the
->>> system for others to use.
->>>
->>> As a first step, this commit attempts to synchronously free the empty PTE
->>> pages in zap_page_range_single() (MADV_DONTNEED etc will invoke this). In
->>> order to reduce overhead, we only handle the cases with a high
->>> probability
->>> of generating empty PTE pages, and other cases will be filtered out, such
->>> as:
+>>>> The patch changed the priority in the case
+>>>> that you do something like:
+>>>>
+>>>> $ perf stat -e 'armv8_pmuv3_0/cycles/' benchmark
+>>>>
+>>>> but if you do:
+>>>>
+>>>> $ perf stat -e 'cycles' benchmark
+>>>>
+>>>> then the broken behavior will happen as legacy events have priority
+>>>> over sysfs/json events in that case. To fix this you need to revert:
+>>>> 4f1b067359ac Revert "perf parse-events: Prefer sysfs/JSON hardware
+>>>> events over legacy"
+>>>>
+>>>> This causes some testing issues resolved in this unmerged patch series:
+>>>> https://lore.kernel.org/lkml/20240510053705.2462258-1-irogers@google.com/
+>>>>
+>>>> There is a bug as the arm_dsu PMU advertises an event called "cycles"
+>>>> and this PMU is present on Ampere systems. Reverting the commit above
+>>>> will cause an issue as the commit 7b100989b4f6 ("perf evlist: Remove
+>>>> __evlist__add_default") to fix ARM's BIG.little systems (opening a
+>>>> cycles event on all PMUs not just 1) will cause the arm_dsu event to
+>>>> be opened by perf record and fail as the event won't support sampling.
+>>>>
+>>>> The patch https://lore.kernel.org/lkml/20240525152927.665498-1-irogers@google.com/
+>>>> fixes this by only opening the cycles event on core PMUs when choosing
+>>>> default events.
+>>>>
+>>>> Rather than take this patch the revert happened as Linus runs the
+>>>> command "perf record -e cycles:pp" (ie using a specified event and not
+>>>> defaults) and considers it a regression in the perf tool that on an
+>>>> Ampere system to need to do "perf record -e
+>>>> 'armv8_pmuv3_0/cycles/pp'". It was pointed out that not specifying -e
+>>>> will choose the cycles event correctly and with better precision the
+>>>> pp for systems that support it, but it was still considered a
+>>>> regression in the perf tool so the revert was made to happen. There is
+>>>> a lack of perf testing coverage for ARM, in particular as they choose
+>>>> to do everything in a different way to x86. The patch in question was
+>>>> in the linux-next tree for weeks without issues.
+>>>>
+>>>> ARM/Ampere could fix this by renaming the event from cycles to
+>>>> cpu_cycles, or by following Intel's convention that anything uncore
+>>>> uses the name clockticks rather than cycles. This could break people
+>>>> who rely on an event called arm_dsu/cycles/ but I imagine such people
+>>>> are rare. There has been no progress I'm aware of on renaming the
+>>>> event.
+>>>>
+>>>> Making perf not terminate on opening an event for perf record seems
+>>>> like the most likely workaround as that is at least something under
+>>>> the tool maintainers control. ARM have discussed doing this on the
+>>>> lists:
+>>>> https://lore.kernel.org/lkml/f30f676e-a1d7-4d6b-94c1-3bdbd1448887@arm.com/
+>>>> but since the revert in v6.10 no patches have appeared for the v6.11
+>>>> merge window. Feature work like coresight improvements and ARMv9 are
+>>>> being actively pursued by ARM, but feature work won't resolve this
+>>>> regression.
+>>>>
 >>
->> It doesn't make particular sense during munmap() where we will just
->> remove the page tables manually directly afterwards. We should limit it
->> to the !munmap case -- in particular MADV_DONTNEED.
+>> I got some hardware with the DSU PMU so I'm going to have a go at trying
+>> to send some fixes for this. My initial idea was to try incorporate the
+>> "not terminate on opening" change as discussed in the link directly
+>> above. And then do the revert of the "revert of prefer sysfs/json".
 > 
-> munmap directly calls unmap_single_vma() instead of
-> zap_page_range_single(), so the munmap case has already been excluded
-> here. On the other hand, if we try to reclaim in zap_pte_range(), we
-> need to identify the munmap case.
+> Thanks, I think this would be good. The biggest issue is that none of
+> the record logic expects a file descriptor to be not opened, deleting
+> unopened evsels from the evlist breaks all the indexing into the
+> mmaps, etc. Tbh, you probably wouldn't do the code this way if was
+> written afresh. Perhaps a hashmap would map from an evsel to ring
+> buffer mmaps, etc. Trying to avoid having global state and benefitting
+> from encapsulation. I'd focus on just doing the expedient thing in the
+> changes, which probably just means making the record code tolerant of
+> evsels that fail to open and not modifying the evlist due to the risk
+> it breaks the indices.
 > 
-> Of course, we could just modify the MADV_DONTNEED case instead of all
-> the callers of zap_page_range_single(), perhaps we could add a new
-> parameter to identify the MADV_DONTNEED case?
 
-See below, zap_details might come in handy.
+Thanks for the tips.
 
+> (To point out the obvious, this work wouldn't be necessary if arm_dsu
+> event were renamed from "cycles" to "cpu_cycles" which would also make
+> it more intention revealing alongside the arm_dsu's "bus_cycles" event
+> name).
 > 
->>
->> To minimze the added overhead, I further suggest to only try reclaim
->> asynchronously if we know that likely all ptes will be none, that is,
+
+I understand but I can imagine the following conversation if we rename that:
+
+   User: "I updated my kernel and now my (non Perf) tool fails to open
+          the DSU cycles event because it doesn't exist anymore"
+
+   Linus/maintainers: "Oh ok yes that was a userspace breaking change,
+                      lets revert it"
+
+Just because Perf can handle 3 different names for cycles doesn't mean 
+other tools can.
+
+>> FWIW I don't think Juno currently is broken if the kernel supports
+>> extended type ID? I could have missed some output in this thread but it
+>> seems like it's mostly related to Apple M hardware. I'm also a bit
+>> confused why the "supports extended type" check fails there, but maybe
+>> the v6.9 commit 25412c036 from Mark is missing?
 > 
-> asynchronously? What you probably mean to say is synchronously, right?
+> So I think your later emails clarify Arnaldo is probably missing:
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/commit/drivers/perf/arm_pmu.c?h=perf-tools-next&id=5c816728651ae425954542fed64d21d40cb75a9f
 > 
->> when we just zapped *all* ptes of a PTE page table -- our range spans
->> the complete PTE page table.
->>
->> Just imagine someone zaps a single PTE, we really don't want to start
->> scanning page tables and involve an (rather expensive) walk_page_range
->> just to find out that there is still something mapped.
+> Fwiw, the Apple M hardware issue came to me by way of Mark Rutland
+> (iirc), this regression report, etc. My understanding is that Apple M
+> has something like a v2 ARM PMU and the legacy events are encoded
+> incorrectly in the driver for this. The regression in v6.5 happened
+
+I'm not sure about that. The M PMU events may be incomplete, but the two 
+that are there have a mapping that looks sane:
+
+   static const unsigned m1_pmu_perf_map[PERF_COUNT_HW_MAX] = {
+	PERF_MAP_ALL_UNSUPPORTED,
+	[PERF_COUNT_HW_CPU_CYCLES]	= M1_PMU_PERFCTR_CPU_CYCLES,
+	[PERF_COUNT_HW_INSTRUCTIONS]	= M1_PMU_PERFCTR_INSTRUCTIONS,
+	/* No idea about the rest yet */
+   };
+
+And they map to the same named events:
+
+   static struct attribute *m1_pmu_event_attrs[] = {
+	M1_PMU_EVENT_ATTR(cycles, M1_PMU_PERFCTR_CPU_CYCLES),
+	M1_PMU_EVENT_ATTR(instructions, M1_PMU_PERFCTR_INSTRUCTIONS),
+	NULL,
+   };
+
+So in this case I can't see using legacy vs sysfs events making a 
+difference. Maybe there is some other case that was mentioned in a 
+previous thread that I missed though.
+
+> because ARM's core PMUs had previously been treated as uncore PMUs,
+> meaning we wouldn't try to program legacy events on them. Fixing the
+> handling of ARM's core PMUs broke Apple M due to the broken legacy
+> event mappings. Why not fix the Apple M PMU driver? Well there was
+> anyway a similar RISC-V issue reported by Atish Patra (iirc) where the
+> RISC-V PMU driver wants to delegate the mapping of legacy events to
+> the perf tool so the driver needn't be aware of all and future RISC-V
+> configurations. The fix discussed with Mark, Atish, etc. has been to
+> swap the priority of legacy and sysfs/json events so that the latter
+> has priority. We need the revert of the revert as currently we only do
+> this if a PMU is specified with an event, not for the general wildcard
+> PMUs case that most people use. There was huge fallout from flipping
+
+Yep makes sense to do the revert if RISC-V isn't going to support any 
+legacy events. Although from what I understand that would technically 
+only require JSON to be the highest priority? Because putting named 
+events in sysfs still requires kernel involvement so doesn't get you any 
+further than supporting the legacy events?
+
+Seems like there is another reason to do the revert though as Mark 
+mentioned: That now directly specifying the PMU eg "-e 
+arm_cortex_a56/cycles/" opens a legacy event if the event matches one, 
+which is not the best thing to do. But the revert fixes this AFAIK, so 
+while having the priority JSON/legacy/sysfs might work for RISC-V it 
+wouldn't work for a platform that wants a slightly different sysfs event 
+than legacy but with the same name. And the priority should be 
+JSON/sysfs/legacy.
+
+> the priority particularly on Intel as all test expectations needed
+> updating. I've sent out similar fixes that need incorporating when the
+> revert is reverted. Ideally tools/perf/tests/parse-events.c would be
+> updated to cover ARM's PMUs that don't follow the normal pattern that
+> the core PMU is called "cpu" (this would mean that we were testing
+> event parsing on ARM was WAI wrt encoding priorities, BIG.little,
+> etc).
 > 
-> In the munmap path, we first execute unmap and then reclaim the page
-> tables:
+>> I sent a small fix the other day to make perf stat default arguments
+>> work on Juno, and didn't notice anything out of the ordinary:
+>> https://lore.kernel.org/linux-perf-users/dac6ad1d-5aca-48b4-9dcb-ff7e54ca43f6@linaro.org/T/#t
+>> I agree that change is quite narrow but it does incrementally improve
+>> things for the time being. It's possible that it would become redundant
+>> if I can just include Ian's change to use strings for Perf stat.
 > 
-> unmap_vmas
-> free_pgtables
+> I'd prefer we didn't merge this as we'd need to rebase:
+> https://lore.kernel.org/lkml/20240510053705.2462258-4-irogers@google.com/
+> and those changes would then delete the code introduced. I'm fine with
+> adding the tests.
 > 
-> Therefore, I think doing something similar in zap_page_range_single()
-> would be more consistent:
+> There are more exotic heterogeneous core things upcoming, probably
+> also from ARM, and the thought of duplicating the default attribute
+> logic and event parsing constraints is just something I'd prefer not
+> to have to do.
 > 
-> unmap_single_vma
-> try_to_reclaim_pgtables
+
+Yep I don't have any strong feelings about this. Even if we don't merge 
+it it helped me understand the code and the issue a bit.
+
+I think one thing I assumed about your change was that there was some 
+dependency on these other changes. But the more I look at it I think 
+it's actually fine on it's own?
+
+Using the cycles string actually works today, even on Apple M. The only 
+real remaining issue is softening the error for failure to open, but 
+that's _after_ doing the revert of the revert and is separate.
+
+I will re-test that one today with fresh eyes.
+
+>> Of course I only think I have a handle on the issue right now, seems
+>> like it has a lot of moving parts and something else always comes up. If
+>> I hit a wall at some point I will come back here.
 > 
-> And I think that the main overhead should be in flushing TLB and freeing
-> the pages. Of course, I will do some performance testing to see the
-> actual impact.
-> 
->>
->> Last but not least, would there be a way to avoid the walk_page_range()
->> and simply trigger it from zap_pte_range(), possibly still while holding
->> the PTE table lock?
-> 
-> I've tried doing it that way before, but ultimately I did not choose to
-> do it that way because of the following reasons:
-
-I think we really should avoid another page table walk if possible.
-
-> 
-> 1. need to identify the munmap case
-
-We already have "struct zap_details". Maybe we can extend that to 
-specify what our intention are (either where we come from or whether we 
-want to try ripping out apge tables directly).
-
-> 2. trying to record the count of pte_none() within the original
->      zap_pte_range() loop is not very convenient. The most convenient
->      approach is still to loop 512 times to scan the PTE page.
-
-Right, the code might need some reshuffling. As we might temporary drop 
-the PTL (break case), fully relying on everything being pte_none() 
-doesn't always work.
-
-We could either handle it in zap_pmd_range(), after we processed a full 
-PMD range. zap_pmd_range() knows for sure whether the full PMD range was 
-covered, even if multiple zap_pte_range() calls were required.
-
-Or we could indicate to zap_pte_range() the original range. Or we could 
-make zap_pte_range() simply handle the retrying itself, and not get 
-called multiple times for a single PMD range.
-
-So the key points are:
-
-(a) zap_pmd_range() should know for sure whether the full range is
-     covered by the zap.
-(b) zap_pte_range() knows whether it left any entries being (IOW, it n
-     never ran into the "!should_zap_folio" case)
-(c) we know whether we temporarily had to drop the PTL and someone might
-     have converted pte_none() to something else.
-
-Teaching zap_pte_range() to handle a full within-PMD range itself sounds 
-cleanest.
-
-Then we can handle it fully in zap_pte_range():
-
-(a) if we had to leave entries behind (!pte_none()), no need to try
-     ripping out the page table.
-
-(b) if we didn't have to drop the PTL, we can remove the page table
-     without even re-verifying whether the entries are pte_none(). We
-     know they are. If we had to drop the PTL, we have to re-verify at
-    least the PTEs that were not zapped in the last iteration.
-
-
-So there is the chance to avoid pte_none() checks completely, or minimze 
-them if we had to drop the PTL.
-
-Anything I am missing? Please let me know if anything is unclear.
-
-Reworking the retry logic for zap_pte_range(), to be called for a single 
-PMD only once is likely the first step.
-
-> 3. still need to release the pte lock, and then re-acquire the pmd lock
->      and pte lock.
-
-Yes, if try-locking the PMD fails.
-
--- 
-Cheers,
-
-David / dhildenb
-
+> Thanks,
+> Ian
 
