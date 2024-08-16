@@ -1,155 +1,90 @@
-Return-Path: <linux-kernel+bounces-289038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CFEE95417B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:06:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F99954182
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:09:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8245E1C21EAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:06:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E5681F24EE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9AE68063C;
-	Fri, 16 Aug 2024 06:06:06 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E97481ACB;
+	Fri, 16 Aug 2024 06:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m+Ir0vfK"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B024923D7
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 06:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853AB75817;
+	Fri, 16 Aug 2024 06:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723788366; cv=none; b=G6Yiwpjd9YO6nYrGEHFD3SGms3CzsVAvVJixJD0Bv7IBDKfOZBMj1aLA8uCaj4rWKRWMxB57NvzwOWSiv99gT6Jjr+p1IHIArXGboPagyQ8AlU2OD1/VgJz7GHuyKuauX/PNKgndwdP1ErMMe1RJaq7znf3Tw8e1CspLYApie5I=
+	t=1723788535; cv=none; b=aAwCbH5YbGngdrG/iPsO3i+rlpBoi1+8hrzDWVMGtqESxEQY0yiIMBgn9zh1F0tnwWHXf+DB8nsv2SPOL1yMNbWQGJfqGNWJws3QWHQZX12FIGrPn1Dx2FSBMblDr3W7zGZifAVHV5X351oL3BsaAEu3wT8XEayvh3I9/EHsQN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723788366; c=relaxed/simple;
-	bh=tvM4V+kFWSTNw4g92Gi2qnR7RZ8JO/RPvvGYsXMVHlQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=FM62Apr/qNUdw5By1KnC8SyyGAOfuErVXHZXbT3qFrM3zVZ1KG17DqUymSQA6s5hThdZ0W/c5Xs/9fciZQ+RsEA4ck0kmyQNqnEhbyCEB3ovYfGq20vb0tbn33OW50EFQRmdYxG2XOPF+TfBmAq2EFLF2h36d0XbTg0asCPpBUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81f99a9111fso174801439f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 23:06:04 -0700 (PDT)
+	s=arc-20240116; t=1723788535; c=relaxed/simple;
+	bh=6vEqT34sXONcN+h8n7GFxvTvC61LkDaA17QipPFMyO8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TIG9kiqutmz7D3FFG/YtAqVwqFUvYP39dNUB7Mie01sS3TCc/J+/ypcGSUPLbkHYEn5HhOewVpzE1/zzvcsXVzKEi2yHEbsmWVSDO0BRYp2SoxOqX8U4bz38MPrsd7Lphm6LRNrQBoa1l7qvdCqaGi3LXrfLbj2i962axdSItyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m+Ir0vfK; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-654cf0a069eso15867887b3.1;
+        Thu, 15 Aug 2024 23:08:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723788533; x=1724393333; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6vEqT34sXONcN+h8n7GFxvTvC61LkDaA17QipPFMyO8=;
+        b=m+Ir0vfKItO6StWKSt4mnfr3Nax9KOQ19VgIl7gAIpKNRKsL1o4KnPAQPtphh9eaB8
+         f/JWJe9nI0H64WSjJlk5yezz9amcNrfn+sTeGnO+eb+JwAQ3W1qQQSaBhH14p2q6XJ8V
+         6ibqEstGDDhUDzvIndGwsCOHp3MW1gm+3k5aZST/XXE8ofzIGdKRbbQ7K7g+aKXA1LLA
+         ZOR7rRJcLowvHARwp/CPGeKQfw5r4jYG5WlA3LKy89pTMMO011uszapdkvwnkE7ce4bo
+         iGj5vt52IiWMr5KaJt11VGdi15yrXQqkcWSd3D7CZaqecjfLMw0LvRNYTHxkJWhUJhDR
+         HsGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723788364; x=1724393164;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GwSCLpnT9T89QDSxCCihzkUT34TsLa28jxgLL89hK+M=;
-        b=YCoLEODYsAOr+EoBRiEnyvtR85w7M8oM6+YHU1uZKevDLdXM9HWToJ4mh4aZHbhiQr
-         pe/C+pg6po6gWb8AcuRSq/a6byMnq6NgomfOgO4RWk9zFBv97dpax3vfuNUj4gIy8rqc
-         6WKGtjnLlRsKbWJJG314mDsRkqurWXS5UlOTTDp2/jfwNbliv02kzNlKZybN9q0Ae1Pp
-         S7ij3HjBUkPaYi7TQ3aS5ezdkfVvxoVnWrxNck6PfTNMUsRtYy0OGv44oYJfCCtvmm3s
-         Tn/OZ+gcg+cIHx0SdCS20otAh9lb+r/EXlNWOrFv7cJjFkMlDgpd6omHJAIRFTFevbdc
-         TP6g==
-X-Gm-Message-State: AOJu0Yxn33cWtXxr4pBylmPCjKT+j4U1PgwLgmLCqI7bmDHX9LuxqMY/
-	OTIODEtjl+XcWl0Mc3v/6GwT+ZRkIaALJbsSrohAUGbrDQvJXgopMgWU4i1n0KMCaGjK9XN7muc
-	Ce/IGvqlJYET6TnRIqBJF2FKfDMqdj9eDpEBwQc1CQS5PW1KZBk5Q2mQ=
-X-Google-Smtp-Source: AGHT+IEmbm0FmQV7Jt1raM/EFAjgWD1uN1OujxRCYs1Ym9fwbV+qcJH7cRBKmLCq0V5SRiYh99dq1QvJCBmMC1w58ZP170rSBgbr
+        d=1e100.net; s=20230601; t=1723788533; x=1724393333;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6vEqT34sXONcN+h8n7GFxvTvC61LkDaA17QipPFMyO8=;
+        b=WGXTAwvVs/6jPQGQvrOQdCaSMaNkljLkd01hehWdZZpCJlm0ALkC0PlCuHFK0pg4fD
+         gtJpjQGfhDzmxRxzYGlXY9fZzqrP//Mr/SCXEfBx0pX90k1VXe3W6LASF3/I8XQC1zKM
+         hA+UpzGT9V6/dkuXCK3CVdyO6lo0KYx54o7UAJeADDZ15DMHt1y+11Q+Oj9tNu5gu3Pl
+         teKW/wLdWHAdUVLCZZ8qmO7daqep778Ictqu9bfT31+ACH9LTiigkYWY8yO6DUTIAdBF
+         eiw5tn7pcx9ZrfcrCgHKqDJasewAbR/+k02aoxhxhpmdyT73TC5dYlPkGcBYs2D629DX
+         SwXw==
+X-Forwarded-Encrypted: i=1; AJvYcCUP/3EUDY5r3UhbOcRzqrw/AE0qTdLHZpsBsnDtghSvrtL1uKeoHCN6lSQI+PHEClTxw1qlTznj6wLJa+anqnp/eQEirwI0zm4ZEFf2WdamGI2PyCkcPcmPdtQXa4udyxTFrFDFUnlacg==
+X-Gm-Message-State: AOJu0YzETCMz+EW2Su5xIBIp3aO7ylgLq+dlYaMhgo/JPu4fAByN1rlc
+	S9Q1G5Uw1kMh6ncq+VJ1y6UdoFmuDWNis2dZGSH/ODr2PI2R9vdkay3dfqjcpDc7gQCaAOwYbTO
+	Nb3eXLgpBXhjNfxVrrEkG6kLXsUQ=
+X-Google-Smtp-Source: AGHT+IHl+FkKq7UakatGyPIPNGjN/fraqzL1pp3fdrre1Wa3ZdQzIeS27HHAZuZLNJp/aMExskiiQtJoa6jken3/ZIs=
+X-Received: by 2002:a05:690c:6482:b0:6af:6762:eba1 with SMTP id
+ 00721157ae682-6b1b91bcc62mr20634577b3.20.1723788533419; Thu, 15 Aug 2024
+ 23:08:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:2182:b0:4c2:7f96:6f2 with SMTP id
- 8926c6da1cb9f-4cce16ce235mr38339173.4.1723788363139; Thu, 15 Aug 2024
- 23:06:03 -0700 (PDT)
-Date: Thu, 15 Aug 2024 23:06:03 -0700
-In-Reply-To: <20240816054904.4016904-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000d9d23061fc6c1ad@google.com>
-Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_iget
-From: syzbot <syzbot+5bdd4953bc58c8fbd6eb@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
+References: <Zrog4DYXrirhJE7P@debian.local> <yq1ikw1qg49.fsf@ca-mkp.ca.oracle.com>
+In-Reply-To: <yq1ikw1qg49.fsf@ca-mkp.ca.oracle.com>
+From: Chris Bainbridge <chris.bainbridge@gmail.com>
+Date: Fri, 16 Aug 2024 07:08:42 +0100
+Message-ID: <CAP-bSRYC6sGJMRXYbHDKwgN9ve15hccw_HK-7Mdd9c70788RvA@mail.gmail.com>
+Subject: Re: [REGRESSION] critical target error, bisected
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: fengli@smartx.com, hch@lst.de, axboe@kernel.dk, linux-scsi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Fri, 16 Aug 2024 at 04:56, Martin K. Petersen
+<martin.petersen@oracle.com> wrote:
+> I would appreciate if you could test the following patch.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-INFO: task hung in ocfs2_read_blocks_sync
+Works for me.
 
-INFO: task syz.0.15:5591 blocked for more than 143 seconds.
-      Not tainted 6.11.0-rc3-syzkaller-00060-gd07b43284ab3-dirty #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.0.15        state:D stack:22832 pid:5591  tgid:5590  ppid:5536   flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5188 [inline]
- __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
- __schedule_loop kernel/sched/core.c:6606 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6621
- io_schedule+0x8d/0x110 kernel/sched/core.c:7401
- bit_wait_io+0x12/0xd0 kernel/sched/wait_bit.c:209
- __wait_on_bit+0xb0/0x2f0 kernel/sched/wait_bit.c:49
- out_of_line_wait_on_bit+0x1d5/0x260 kernel/sched/wait_bit.c:64
- wait_on_buffer include/linux/buffer_head.h:415 [inline]
- ocfs2_read_blocks_sync+0xc51/0xfe0 fs/ocfs2/buffer_head_io.c:183
- ocfs2_read_locked_inode fs/ocfs2/inode.c:503 [inline]
- ocfs2_iget+0xa3a/0x2120 fs/ocfs2/inode.c:159
- ocfs2_init_global_system_inodes+0xc6/0x730 fs/ocfs2/super.c:437
- ocfs2_initialize_super fs/ocfs2/super.c:2250 [inline]
- ocfs2_fill_super+0x3068/0x5880 fs/ocfs2/super.c:994
- mount_bdev+0x20a/0x2d0 fs/super.c:1679
- legacy_get_tree+0xee/0x190 fs/fs_context.c:662
- vfs_get_tree+0x90/0x2a0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3472
- do_mount fs/namespace.c:3812 [inline]
- __do_sys_mount fs/namespace.c:4020 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7eff18d7b0ba
-RSP: 002b:00007eff19a76e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007eff19a76ef0 RCX: 00007eff18d7b0ba
-RDX: 0000000020004480 RSI: 00000000200044c0 RDI: 00007eff19a76eb0
-RBP: 0000000020004480 R08: 00007eff19a76ef0 R09: 0000000002800400
-R10: 0000000002800400 R11: 0000000000000246 R12: 00000000200044c0
-R13: 00007eff19a76eb0 R14: 0000000000004481 R15: 00000000200001c0
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/25:
- #0: ffffffff8e9382e0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
- #0: ffffffff8e9382e0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
- #0: ffffffff8e9382e0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6626
-2 locks held by kswapd0/72:
-2 locks held by getty/4888:
- #0: ffff88801b6c10a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc9000039b2f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6ac/0x1e00 drivers/tty/n_tty.c:2211
-1 lock held by syz.0.15/5591:
- #0: ffff8880429de0e0 (&type->s_umount_key#52/1){+.+.}-{3:3}, at: alloc_super+0x221/0x9d0 fs/super.c:344
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 25 Comm: khungtaskd Not tainted 6.11.0-rc3-syzkaller-00060-gd07b43284ab3-dirty #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xfee/0x1030 kernel/hung_task.c:379
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
-Tested on:
-
-commit:         d07b4328 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=12e04605980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
-dashboard link: https://syzkaller.appspot.com/bug?extid=5bdd4953bc58c8fbd6eb
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14c516d5980000
-
+Tested-by: Chris Bainbridge <chris.bainbridge@gmail.com>
 
