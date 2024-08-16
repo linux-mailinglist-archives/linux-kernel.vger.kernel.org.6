@@ -1,92 +1,124 @@
-Return-Path: <linux-kernel+bounces-290118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F154954FA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:11:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40963954FCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E9B3B21442
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:11:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72E801C24245
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410A81C2301;
-	Fri, 16 Aug 2024 17:11:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05081C68A4;
+	Fri, 16 Aug 2024 17:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iXo60pj2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gcmX9i4V"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846CF558A5;
-	Fri, 16 Aug 2024 17:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3F01C232B;
+	Fri, 16 Aug 2024 17:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723828279; cv=none; b=Ls00My870cipzvNseoUzH3y5O4HO27cc5vtyn8k9md0MaREE/NnwpDvOAlDL0NOX9P7TVLXuhqRnI7zxkhl1mCtqvUcd8aqXmhRq+/PEuJ2AFzWZb9GfACRBF//I6a6plT62fAC2PsU8cE0Xoo1xu7l3OiiUhxecJfbca1xYt50=
+	t=1723828369; cv=none; b=unhdPFTi8i+hCQuaGgzSCIT1ERgrDolMJAeQ+u7KPR2CicaIN6pTcBFPirbomyAjqLyf6LKBkkLvN4C4WXCQza2eIopTseY4WOW5dlneSEFhgcxg+IkVRIS2+y+0NbZPtKUc1S2bI9XfeaITLy7akaAoSP+5CrSyw/RPWQvHotg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723828279; c=relaxed/simple;
-	bh=7ZCSSBpkj+vLMJqv+wX282n8HXJDJam7GZ7W+EmumiE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hUyO1iNo5uin1iD8Y7sg2vScIwKDpNnXX2Xne1BS+HoYoXtoQJrdqgbe/P0jpSMGJ/Jk8cGjxnSPfyQccRvG8Fa/MgeLJ7c5WFsFNvIXy5CS50cZKaq8MAl94AnuDmF8hGO5x8W1XHuQM6YWKXLRoxOAwks5vpO2q3NMVxQFQbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iXo60pj2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3A09C32782;
-	Fri, 16 Aug 2024 17:11:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723828279;
-	bh=7ZCSSBpkj+vLMJqv+wX282n8HXJDJam7GZ7W+EmumiE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iXo60pj2VY3Gva9TUtIWFPPu4lOEkpfd7KP17pIT/WKi7qEtQGuF41WJLLhFQCI38
-	 JKkmP5NPY+xWbm2ptxxy/f8uQobX277WngPGA5EqxxwUGNreLrLMR7QXD75H+9sdf6
-	 PE1oD3eppCqHAuqfzTg2IlmfR2UU6zqZpb0C2dv/xdTgyhwaZPjG5Luc8FX1ZX0wPE
-	 UFVqjNYkhvJyBmdm/fTGwBeJQZKIAbczOsYpZRthmiOGtLyrR3Yk3G/K1N9GPB2sOa
-	 zrWqlrgx5WhTMGTOMOW5w/jugI4Ds5STmNv49tLExhiUvNp3xxi1NgHQeHYS81NfgF
-	 PFAhUIwJqP8rg==
-Date: Fri, 16 Aug 2024 10:11:16 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Russell King <linux@armlinux.org.uk>, davem@davemloft.net,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- linux-arm-kernel@lists.infradead.org, Herve Codina
- <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Heiner
- Kallweit <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Jesse Brandeburg
- <jesse.brandeburg@intel.com>, Marek =?UTF-8?B?QmVow7pu?=
- <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
- <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
- mwojtas@chromium.org, Nathan Chancellor <nathan@kernel.org>, Antoine Tenart
- <atenart@kernel.org>, Marc Kleine-Budde <mkl@pengutronix.de>, Dan Carpenter
- <dan.carpenter@linaro.org>, Romain Gantois <romain.gantois@bootlin.com>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH net-next v17 00/14] Introduce PHY listing and
- link_topology tracking
-Message-ID: <20240816101116.0e8e4d6d@kernel.org>
-In-Reply-To: <a1231b3a-cd4d-4e74-9266-95350f880449@csgroup.eu>
-References: <20240709063039.2909536-1-maxime.chevallier@bootlin.com>
-	<20240715083106.479093a6@kernel.org>
-	<20240716101626.3d54a95d@fedora-2.home>
-	<20240717082658.247939de@kernel.org>
-	<a1231b3a-cd4d-4e74-9266-95350f880449@csgroup.eu>
+	s=arc-20240116; t=1723828369; c=relaxed/simple;
+	bh=BJbAOhfmR88tLFChbQZVoqdcx/W/pQUrC9UyjkKSkb4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LKyXRyK76rTaD4bNRXOZi24W8irPhM4KG9tiwfYHN210pyZ8Hp26YAQb7/7kM/uBOFjpxxyZLtIJsH8EDrN/KRGHVVS6oVQBt4VWcNdpd3Cu3/zpvY/ht0HWULktvdAaO75Ter4q2yEuSzjJjAAP1WNGRGtkOte31eCWfMQ6S/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gcmX9i4V; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-710e39961f4so1637691b3a.3;
+        Fri, 16 Aug 2024 10:12:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723828367; x=1724433167; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gdy9zSqWjuC2tMQ6qbmA2POy13/um9sPqP+u934ObRk=;
+        b=gcmX9i4VWsQHnwwqBYhwh/2dobUpeSQgxxiGByaV2XySJvOUMSIriP057yF3HRhgKZ
+         0VwS8bQgzRc5v1iPsgsW1bCamSGIBE/FkBg8S/DskmcQyEk53PIrjkGzGaWGUGQ8fmLH
+         TKveqoPC5lj/iIoXwwLzgnUmFCb/puAliG2K7VvmKZznUB4SZ+qirqoFxfcWoT1tW4WE
+         0G1H/TnoOCXVv3P4divU7zzm8eDe+lp8tdnNvslpGb7e7c75qw/vPNALBd4oS/erKf3E
+         joijdOzqBuoySWtEN31lgimfuqAQueRdGHN83w+DGdADzSLBxjrw22FOMSualBbqacjD
+         rbPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723828367; x=1724433167;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gdy9zSqWjuC2tMQ6qbmA2POy13/um9sPqP+u934ObRk=;
+        b=lEs5DvU2EOKVR0cHfUMMEpZvwr9/fvAykzeyv6l3gaC/FWQdXF6g+Vav/GO+GS3lsp
+         lhXSvDou8X/A91BDqqjJlB+bnv8+VdK+3ZI9n01uyxq+wCW6Hm2KcwkaAUN61640TakY
+         wJTNtSJ+y/uiJ77RcrEl8Ok5iQEMhKeiU5dZthJ4EPWha2hUyaXT1PAFBbcNeSvI7Ps2
+         Iq58LJ1YVeJqhXWs0nsrDMLwJsTGOCiz0NSSQTUC8NiRK8jlrS9pU4aWTXCZlISz5qBl
+         5Es8ZBSxSHUFF4s//Sn9TbP6O1zXAxmLL0RFJH+noTuIDJ/B3jvhX1lHHtUcmoYB2LMr
+         aZ/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVKjUmM339wn/xjDsKf4WIb+niGC78iszYdOy20KZieWN7N8RCwoXDV1EpFFNKO7dZDkegZqupzDqsfJd5JO66eeckra6RzM8nILWCi
+X-Gm-Message-State: AOJu0YwvZmIYJTE8J+E1WpC6v9zZWjEcMgZ3kwZkus8eJiAz4NXwRyoz
+	DOFfGdpk7Yu1EVy2G6dgR1eeFaQGLl9hS5pLfWOETf4BUJClUE2I
+X-Google-Smtp-Source: AGHT+IGksQuXa1bgiFvGegX5wQp8wdValbEh0BdyCcOBVJ1wMLE2USqtsc8QY2Gh0jFU6u6YMS+NPw==
+X-Received: by 2002:a05:6a20:6f8a:b0:1c6:a83c:d5db with SMTP id adf61e73a8af0-1c904fb49b2mr4408239637.31.1723828366480;
+        Fri, 16 Aug 2024 10:12:46 -0700 (PDT)
+Received: from embed-PC.. ([106.222.235.192])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127add3ea3sm2955952b3a.16.2024.08.16.10.12.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 10:12:45 -0700 (PDT)
+From: Abhishek Tamboli <abhishektamboli9@gmail.com>
+To: pavel@ucw.cz,
+	lee@kernel.org,
+	wens@csie.org,
+	jernej.skrabec@gmail.com,
+	samuel@sholland.org
+Cc: linux-leds@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	skhan@linuxfoundation.org,
+	rbmarliere@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] leds: sun50i-a100: Replace msleep() with usleep_range()
+Date: Fri, 16 Aug 2024 22:41:29 +0530
+Message-Id: <20240816171129.6411-1-abhishektamboli9@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Fri, 16 Aug 2024 19:02:20 +0200 Christophe Leroy wrote:
-> So it would be great if the series could be merged for v6.12, and I 
-> guess the earliest it is merged into net-next the more time it spends in 
-> linux-next before the merge window. Any chance to get it merged anytime 
-> soon even without a formal feedback from Russell ? We are really looking 
-> forward to getting that series merged and step forward with all the work 
-> that depends on it and is awaiting.
+Replace msleep() with usleep_range() in sun50i_a100_ledc_suspend()
+to address the checkpatch.pl warning. msleep() for such short delay
+can lead to inaccurate sleep times. Switch to usleep_range()
+provide more precise delay.
 
-Give Russell a few days to respond, then repost. 
-Russell said his ability to review code right now may be limited.
-I'm not sure whether he would like us to wait for him or just do
-our best. In the absence of an opinion - we'll do the latter.
+Fix the following warning from checkpatch.pl:
+
+WARNING: msleep < 20ms can sleep for up to 20ms;
+see Documentation/timers/timers-howto.rst
++		msleep(1);
+
+Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
+---
+ drivers/leds/leds-sun50i-a100.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/leds/leds-sun50i-a100.c b/drivers/leds/leds-sun50i-a100.c
+index 119eff9471f0..4c468d487486 100644
+--- a/drivers/leds/leds-sun50i-a100.c
++++ b/drivers/leds/leds-sun50i-a100.c
+@@ -368,7 +368,7 @@ static int sun50i_a100_ledc_suspend(struct device *dev)
+ 		if (!xfer_active)
+ 			break;
+
+-		msleep(1);
++		usleep_range(1000, 1100);
+ 	}
+
+ 	clk_disable_unprepare(priv->mod_clk);
+--
+2.34.1
+
 
