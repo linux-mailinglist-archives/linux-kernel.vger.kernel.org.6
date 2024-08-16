@@ -1,308 +1,210 @@
-Return-Path: <linux-kernel+bounces-288952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95B5F954091
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:14:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDD27954094
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:15:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E8821F21E2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:14:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 099D31C231CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B719876F17;
-	Fri, 16 Aug 2024 04:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5867A76F17;
+	Fri, 16 Aug 2024 04:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GQC/7diN"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QBPygkPN"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6E06F303
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 04:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D550D433BB
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 04:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723781383; cv=none; b=W7lR1cWYL2QWpbageWNQjcrepBmxXpFwAkGZgK3hAeEUPv9ovx2Hf+i2MTF897hEb/yh+VxA7KAzQAkFWv/UqH66cnS7NChdZvz7urdqgjB/hlpqYD9gWUJCVC8THI3BkLa26Zs+RUXDR3TofDupK3yUVGVJkz0W1JP8KUzJ3R8=
+	t=1723781690; cv=none; b=NJfnDzzrGabtpJdNXlWD0n89XrYkDxUlQF26wrqsmpgDdstAK2aHAiaEENdQ/yf7CsEL3AGezTzfsCl3qGb3h69OQG9w36O8qM6wS5c9fimnYeEuriGRS36l5m3cXub2D4cJ9NZM9XpD0X1CZWUseyTw3Hg0XvSb0KmbFvhPrUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723781383; c=relaxed/simple;
-	bh=dpm7FWqMTArJQbAChX3Th+Plp1kUvnqpzg8UuqqOVeg=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=p9UtoxWMb3jrpxh5kZn5vCCfIQ5lj8UhTfcCsF3rcnKRy2rQJ+/k4vNXp494UCeBwiujJck8Inn29UbMbtT486oYPIdpfWFgY/zMnqolgZGZM7HQva6tueyDUl+IbzuSq+Ooeh7p28+KmR427qo/1gbifAKEGF7DqWrZZiL/+8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GQC/7diN; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7d2a9a23d9so193881166b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 21:09:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723781380; x=1724386180; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=J9FB5ZtYyx1upxRdGOB5sK2UwyMxegssFSy87xK3ELM=;
-        b=GQC/7diNDA6dUTYPFK5cURXCyKw8SGv+ul1xctqf2c+7QzHXz4EuQ/r0kKS+7UwlXo
-         WdnAdJUs5x8131w71KhMNqVCS3jadnMV3XHqPrnhozCGpC62D5GQhcoLl8UatYgKneTp
-         Djj+e/aXSVpc9hhLuUioGBcuFB5cyIRQH2/pPcHPtYvpN4sHp9m6cX8O/iGE0sifVbR4
-         NPHddDaICkVt6IxwTjHkj9WyndcQUjyWWDlyKCszhlAiA8I6PDCZzJJ/lkYyTDKec/cJ
-         oRwMgJfJEG6t0tY2bfzMKiaNBDIiPtIOwl8+NdzbSzt0JV6HNSy7TVsRBjWjKfJdWSbV
-         3Khw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723781380; x=1724386180;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=J9FB5ZtYyx1upxRdGOB5sK2UwyMxegssFSy87xK3ELM=;
-        b=czGxYPg9TG+0L44fkV3RTnxq46ZWakL9xs5Op4zm6k1jLshzOfSeMCZ4PORRPCmLJ9
-         yjdNVw1CBQloXJjNcLBs1aNihTmjEialVH5DBlNFpbuflk2IzU2ZWplF3ryvHkN7vhkB
-         lmh5+glnGKw2vzMG2ZXgpvCT37tKmTVHfauQEKAFAULVAbix1Rv+Gm5EbI3cLt9JiCr0
-         e0P1NfFmXW6biOQdOfkB84US6gAbnTkQW8Y5rbJfIGFwjL8Djc72sgxdtFq1hvcSyUJT
-         YfoW+ACotx8C2k3sGNrIGT7kgOFlWAqJrE9L7OMKCpe9gLt7htF5YyZEDpIDOFwvrZhV
-         fpvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpLnpvQHHH+wx4oOKIlPvKPXuLvrhzwhT0yEETkaNeOWZ0lKFk1rnvjnd4j4IJMYg79OTQaEryyGbmmHIU0fXelG1dzmNH4Zj8yKM5
-X-Gm-Message-State: AOJu0YxXk9VlEchqVaV15QhqczlM0OWBEpoHVwk8N1iWp/BLw9UzDzho
-	cGprNVkjF1d4qn9p4y05BabCzd+HMKVAE4eUhf1IBsQrTF/VKWgg/cLVCS1g1EFnFRLUHBzaMwx
-	4OP2dqsAC9fzB3nVcVve0PR9n2pJWETMG
-X-Google-Smtp-Source: AGHT+IEmy+T4Ij7z6geiw2IBenuEOQ/aHEiJ6n1kf3YGpoNd78pVlQpuHTqmaAJOo9UAZ5yp8xu+p8EazorYl02G9lE=
-X-Received: by 2002:a17:906:d7d0:b0:a7a:ab1a:2d67 with SMTP id
- a640c23a62f3a-a83928aa0e9mr114603566b.1.1723781379680; Thu, 15 Aug 2024
- 21:09:39 -0700 (PDT)
+	s=arc-20240116; t=1723781690; c=relaxed/simple;
+	bh=duP1vGoMzbxS5yPzOCkcyW2w2y8wOULGNGndCchHmjE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b9oRfDqprMmHuJZq5jEx9cC3lp7z1cBBcIUmNi7IoyoblcgtCZYXe1ZXNdKuuRhL5eLNZpkozpvRsTWCv2iBYz9njmd6QoRsU8Ttz4HVGpuAKklBog/LPv+dfjAtQv9Q21jzOHEKxG9TSBVZMl2S1he0Pi+u46WCCzHjv4TriGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QBPygkPN; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c64a2f6e-ea18-4e8d-b808-0f1732c6d004@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723781684;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FOF2e68xaqjE/W7EPQ4FvwPwmf0ekZO2W737iTABuiA=;
+	b=QBPygkPNMYDiEaHoml+SLakdrKd6VTxWsSgKPnveOlt6NigKye3zhcMP89T4IxO0WImcID
+	pGPrG4aDQZvuVFerNrLU60JN2FJJN0Q22tNmou1p2Wf2nIc0d4i6fAt/okVUe2LLAA/NMI
+	P+LhGweZdrDrE+FkdQGgy8PQhOVcj70=
+Date: Fri, 16 Aug 2024 12:14:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Dave Airlie <airlied@gmail.com>
-Date: Fri, 16 Aug 2024 14:09:28 +1000
-Message-ID: <CAPM=9tx8NORNyjwOMapLrZwGEVxgVxYDmChmkLOwz1vyYUgoGw@mail.gmail.com>
-Subject: [git pull] drm fixes for 6.11-rc4
-To: Linus Torvalds <torvalds@linux-foundation.org>, Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [linus:master] [RDMA/iwcm] aee2424246:
+ WARNING:at_kernel/workqueue.c:#check_flush_dependency
+To: kernel test robot <oliver.sang@intel.com>,
+ Bart Van Assche <bvanassche@acm.org>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+ Leon Romanovsky <leon@kernel.org>,
+ Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+ linux-rdma@vger.kernel.org
+References: <202408151633.fc01893c-oliver.sang@intel.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <202408151633.fc01893c-oliver.sang@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Linus,
 
-Weekly drm fixes, mostly amdgpu and xe. The larger amdgpu fix is for a
-new IP block introduced in rc1, so should be fine. The xe fixes
-contain some missed fixes from the end of the previous round along
-with some fixes which required precursor changes, but otherwise
-everything seems fine,
+在 2024/8/16 9:07, kernel test robot 写道:
+>
+> Hello,
+>
+> kernel test robot noticed "WARNING:at_kernel/workqueue.c:#check_flush_dependency" on:
+>
+> commit: aee2424246f9f1dadc33faa78990c1e2eb7826e4 ("RDMA/iwcm: Fix a use-after-free related to destroying CM IDs")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+>
+> [test failed on linus/master      5189dafa4cf950e675f02ee04b577dfbbad0d9b1]
+> [test failed on linux-next/master 61c01d2e181adfba02fe09764f9fca1de2be0dbe]
+>
+> in testcase: blktests
+> version: blktests-x86_64-775a058-1_20240702
+> with following parameters:
+>
+> 	disk: 1SSD
+> 	test: nvme-group-01
+> 	nvme_trtype: rdma
 
-Dave.
+Hi, Bart && Jason && Leon
 
-drm-fixes-2024-08-16:
-drm fixes for 6.11-rc4
+It seems that it is related with WQ_MEM_RECLAIM.
 
-mediatek:
-- fix cursor crash
+Not sure if adding WQ_MEM_RECLAIM to iw_cm_wq can fix this or not.
 
-amdgpu:
-- Fix MES ring buffer overflow
-- DCN 3.5 fix
-- DCN 3.2.1 fix
-- DP MST fix
-- Cursor fixes
-- JPEG fixes
-- Context ops validation
-- MES 12 fixes
-- VCN 5.0 fix
-- HDP fix
+Best Regards,
 
-panel:
-- dt bindings style fix
-- orientation quirks
+Zhu Yanjun
 
-rockchip:
-- inno-hdmi: fix infoframe upload
+>
+>
+>
+> compiler: gcc-12
+> test machine: 224 threads 2 sockets Intel(R) Xeon(R) Platinum 8480+ (Sapphire Rapids) with 256G memory
+>
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+>
+>
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202408151633.fc01893c-oliver.sang@intel.com
+>
+>
+> [  125.048981][ T1430] ------------[ cut here ]------------
+> [  125.056856][ T1430] workqueue: WQ_MEM_RECLAIM nvme-reset-wq:nvme_rdma_reset_ctrl_work [nvme_rdma] is flushing !WQ_MEM_RECLAIM iw_cm_wq:0x0
+> [ 125.056873][ T1430] WARNING: CPU: 2 PID: 1430 at kernel/workqueue.c:3706 check_flush_dependency (kernel/workqueue.c:3706 (discriminator 9))
+> [  125.085014][ T1430] Modules linked in: siw ib_uverbs nvmet_rdma nvmet nvme_rdma nvme_fabrics rdma_cm iw_cm ib_cm ib_core dimlib dm_multipath btrfs blake2b_generic intel_rapl_msr xor intel_rapl_common zstd_compress intel_uncore_frequency intel_uncore_frequency_common raid6_pq libcrc32c x86_pkg_temp_thermal intel_powerclamp coretemp nvme nvme_core ast t10_pi kvm_intel qat_4xxx drm_shmem_helper mei_me kvm crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel sha512_ssse3 rapl intel_cstate intel_uncore dax_hmem intel_th_gth intel_qat crc64_rocksoft_generic dh_generic intel_th_pci idxd crc8 i2c_i801 crc64_rocksoft mei intel_vsec idxd_bus drm_kms_helper intel_th authenc crc64 i2c_smbus i2c_ismt ipmi_ssif wmi acpi_power_meter ipmi_si acpi_ipmi ipmi_devintf ipmi_msghandler acpi_pad binfmt_misc loop fuse drm dm_mod ip_tables [last unloaded: ib_uverbs]
+> [  125.176472][ T1430] CPU: 2 PID: 1430 Comm: kworker/u898:26 Not tainted 6.10.0-rc1-00015-gaee2424246f9 #1
+> [  125.188840][ T1430] Workqueue: nvme-reset-wq nvme_rdma_reset_ctrl_work [nvme_rdma]
+> [ 125.199152][ T1430] RIP: 0010:check_flush_dependency (kernel/workqueue.c:3706 (discriminator 9))
+> [ 125.207527][ T1430] Code: fa 48 c1 ea 03 80 3c 02 00 0f 85 a8 00 00 00 49 8b 54 24 18 49 8d b5 c0 00 00 00 49 89 e8 48 c7 c7 20 46 08 84 e8 ed 8b f9 ff <0f> 0b e9 93 fd ff ff e8 a1 bf 82 00 e9 80 fd ff ff e8 97 bf 82 00
+> All code
+> ========
+>     0:	fa                   	cli
+>     1:	48 c1 ea 03          	shr    $0x3,%rdx
+>     5:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
+>     9:	0f 85 a8 00 00 00    	jne    0xb7
+>     f:	49 8b 54 24 18       	mov    0x18(%r12),%rdx
+>    14:	49 8d b5 c0 00 00 00 	lea    0xc0(%r13),%rsi
+>    1b:	49 89 e8             	mov    %rbp,%r8
+>    1e:	48 c7 c7 20 46 08 84 	mov    $0xffffffff84084620,%rdi
+>    25:	e8 ed 8b f9 ff       	callq  0xfffffffffff98c17
+>    2a:*	0f 0b                	ud2    		<-- trapping instruction
+>    2c:	e9 93 fd ff ff       	jmpq   0xfffffffffffffdc4
+>    31:	e8 a1 bf 82 00       	callq  0x82bfd7
+>    36:	e9 80 fd ff ff       	jmpq   0xfffffffffffffdbb
+>    3b:	e8 97 bf 82 00       	callq  0x82bfd7
+>
+> Code starting with the faulting instruction
+> ===========================================
+>     0:	0f 0b                	ud2
+>     2:	e9 93 fd ff ff       	jmpq   0xfffffffffffffd9a
+>     7:	e8 a1 bf 82 00       	callq  0x82bfad
+>     c:	e9 80 fd ff ff       	jmpq   0xfffffffffffffd91
+>    11:	e8 97 bf 82 00       	callq  0x82bfad
+> [  125.231266][ T1430] RSP: 0018:ffa000001375fb88 EFLAGS: 00010282
+> [  125.239626][ T1430] RAX: 0000000000000000 RBX: ff11000341233c00 RCX: 0000000000000027
+> [  125.250304][ T1430] RDX: 0000000000000027 RSI: 0000000000000004 RDI: ff110017fc930b08
+> [  125.260878][ T1430] RBP: 0000000000000000 R08: 0000000000000001 R09: ffe21c02ff926161
+> [  125.271664][ T1430] R10: ff110017fc930b0b R11: 0000000000000010 R12: ff1100208d2a4000
+> [  125.282387][ T1430] R13: ff1100020d87a000 R14: 0000000000000000 R15: ff11000341233c00
+> [  125.292984][ T1430] FS:  0000000000000000(0000) GS:ff110017fc900000(0000) knlGS:0000000000000000
+> [  125.304552][ T1430] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  125.313446][ T1430] CR2: 00007fa84066aa1c CR3: 000000407c85a005 CR4: 0000000000f71ef0
+> [  125.324080][ T1430] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [  125.334584][ T1430] DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 0000000000000400
+> [  125.345252][ T1430] PKRU: 55555554
+> [  125.350876][ T1430] Call Trace:
+> [  125.356281][ T1430]  <TASK>
+> [ 125.361285][ T1430] ? __warn (kernel/panic.c:693)
+> [ 125.367640][ T1430] ? check_flush_dependency (kernel/workqueue.c:3706 (discriminator 9))
+> [ 125.375689][ T1430] ? report_bug (lib/bug.c:180 lib/bug.c:219)
+> [ 125.382505][ T1430] ? handle_bug (arch/x86/kernel/traps.c:239)
+> [ 125.388987][ T1430] ? exc_invalid_op (arch/x86/kernel/traps.c:260 (discriminator 1))
+> [ 125.395831][ T1430] ? asm_exc_invalid_op (arch/x86/include/asm/idtentry.h:621)
+> [ 125.403125][ T1430] ? check_flush_dependency (kernel/workqueue.c:3706 (discriminator 9))
+> [ 125.410984][ T1430] ? check_flush_dependency (kernel/workqueue.c:3706 (discriminator 9))
+> [ 125.418764][ T1430] __flush_workqueue (kernel/workqueue.c:3970)
+> [ 125.426021][ T1430] ? __pfx___might_resched (kernel/sched/core.c:10151)
+> [ 125.433431][ T1430] ? destroy_cm_id (drivers/infiniband/core/iwcm.c:375) iw_cm
+> [  125.440844][ T2411] /usr/bin/wget -q --timeout=3600 --tries=1 --local-encoding=UTF-8 http://internal-lkp-server:80/~lkp/cgi-bin/lkp-jobfile-append-var?job_file=/lkp/jobs/scheduled/lkp-spr-2sp1/blktests-1SSD-rdma-nvme-group-01-debian-12-x86_64-20240206.cgz-aee2424246f9-20240809-69442-1dktaed-4.yaml&job_state=running -O /dev/null
+> [ 125.441209][ T1430] ? __pfx___flush_workqueue (kernel/workqueue.c:3910)
+> [  125.441215][ T2411]
+> [ 125.473900][ T1430] ? _raw_spin_lock_irqsave (arch/x86/include/asm/atomic.h:107 include/linux/atomic/atomic-arch-fallback.h:2170 include/linux/atomic/atomic-instrumented.h:1302 include/asm-generic/qspinlock.h:111 include/linux/spinlock.h:187 include/linux/spinlock_api_smp.h:111 kernel/locking/spinlock.c:162)
+> [ 125.473909][ T1430] ? __pfx__raw_spin_lock_irqsave (kernel/locking/spinlock.c:161)
+> [  125.480265][ T2411] target ucode: 0x2b0004b1
+> [ 125.482537][ T1430] _destroy_id (drivers/infiniband/core/cma.c:2044) rdma_cm
+> [  125.488511][ T2411]
+> [ 125.495072][ T1430] nvme_rdma_free_queue (drivers/nvme/host/rdma.c:656 drivers/nvme/host/rdma.c:650) nvme_rdma
+> [  125.500747][ T2411] LKP: stdout: 2876: current_version: 2b0004b1, target_version: 2b0004b1
+> [ 125.505827][ T1430] nvme_rdma_reset_ctrl_work (drivers/nvme/host/rdma.c:2180) nvme_rdma
+> [ 125.505831][ T1430] process_one_work (kernel/workqueue.c:3231)
+> [  125.508377][ T2411]
+> [ 125.515122][ T1430] worker_thread (kernel/workqueue.c:3306 kernel/workqueue.c:3393)
+> [ 125.515127][ T1430] ? __pfx_worker_thread (kernel/workqueue.c:3339)
+> [  125.524642][ T2411] check_nr_cpu
+> [ 125.531837][ T1430] kthread (kernel/kthread.c:389)
+> [  125.537327][ T2411]
+> [ 125.539864][ T1430] ? __pfx_kthread (kernel/kthread.c:342)
+> [  125.545392][ T2411] CPU(s):                               224
+> [ 125.550628][ T1430] ret_from_fork (arch/x86/kernel/process.c:147)
+> [  125.554342][ T2411]
+> [ 125.558840][ T1430] ? __pfx_kthread (kernel/kthread.c:342)
+> [ 125.558844][ T1430] ret_from_fork_asm (arch/x86/entry/entry_64.S:257)
+> [  125.561843][ T2411] On-line CPU(s) list:                  0-223
+> [  125.566487][ T1430]  </TASK>
+> [  125.566488][ T1430] ---[ end trace 0000000000000000 ]---
+>
+>
+>
+> The kernel config and materials to reproduce are available at:
+> https://download.01.org/0day-ci/archive/20240815/202408151633.fc01893c-oliver.sang@intel.com
+>
+>
+>
+-- 
+Best Regards,
+Yanjun.Zhu
 
-v3d:
-- fix OOB access in v3d_csd_job_run()
-
-xe:
-- Validate user fence during creation
-- Fix use after free when client stats are captured
-- SRIOV fixes
-- Runtime PM fixes
-The following changes since commit 7c626ce4bae1ac14f60076d00eafe71af30450ba=
-:
-
-  Linux 6.11-rc3 (2024-08-11 14:27:14 -0700)
-
-are available in the Git repository at:
-
-  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2024-08-16
-
-for you to fetch changes up to fee9d135e2fd5963a7f466cd1ef2060731a1ab29:
-
-  Merge tag 'mediatek-drm-fixes-20240805' of
-https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux
-into drm-fixes (2024-08-16 13:16:47 +1000)
-
-----------------------------------------------------------------
-drm fixes for 6.11-rc4
-
-mediatek:
-- fix cursor crash
-
-amdgpu:
-- Fix MES ring buffer overflow
-- DCN 3.5 fix
-- DCN 3.2.1 fix
-- DP MST fix
-- Cursor fixes
-- JPEG fixes
-- Context ops validation
-- MES 12 fixes
-- VCN 5.0 fix
-- HDP fix
-
-panel:
-- dt bindings style fix
-- orientation quirks
-
-rockchip:
-- inno-hdmi: fix infoframe upload
-
-v3d:
-- fix OOB access in v3d_csd_job_run()
-
-xe:
-- Validate user fence during creation
-- Fix use after free when client stats are captured
-- SRIOV fixes
-- Runtime PM fixes
-
-----------------------------------------------------------------
-Alex Bee (1):
-      drm/rockchip: inno-hdmi: Fix infoframe upload
-
-Alex Deucher (2):
-      drm/amdgpu/jpeg2: properly set atomics vmid field
-      drm/amdgpu/jpeg4: properly set atomics vmid field
-
-AngeloGioacchino Del Regno (1):
-      drm/mediatek: Set sensible cursor width/height values to fix crash
-
-Bas Nieuwenhuizen (1):
-      drm/amdgpu: Actually check flags for all context ops.
-
-Bouke Sybren Haarsma (2):
-      drm: panel-orientation-quirks: Add quirk for Ayn Loki Zero
-      drm: panel-orientation-quirks: Add quirk for Ayn Loki Max
-
-Dave Airlie (4):
-      Merge tag 'amd-drm-fixes-6.11-2024-08-14' of
-https://gitlab.freedesktop.org/agd5f/linux into drm-fixes
-      Merge tag 'drm-misc-fixes-2024-08-15' of
-https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
-      Merge tag 'drm-xe-fixes-2024-08-15' of
-https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
-      Merge tag 'mediatek-drm-fixes-20240805' of
-https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux
-into drm-fixes
-
-David (Ming Qiang) Wu (1):
-      drm/amd/amdgpu: command submission parser for JPEG
-
-Douglas Anderson (1):
-      dt-bindings: display: panel: samsung,atna45dc02: Fix indentation
-
-Fangzhi Zuo (1):
-      drm/amd/display: Fix MST BW calculation Regression
-
-Hamza Mahfooz (1):
-      drm/amd/display: fix s2idle entry for DCN3.5+
-
-Jack Xiao (9):
-      drm/amdgpu/mes: fix mes ring buffer overflow
-      drm/amdgpu/mes12: update mes_v12_api_def.h
-      drm/amdgpu/mes: add multiple mes ring instances support
-      drm/amdgpu/mes12: load unified mes fw on pipe0 and pipe1
-      drm/amdgpu/mes12: add mes pipe switch support
-      drm/amdgpu/mes12: adjust mes12 sw/hw init for multiple pipes
-      drm/amdgpu/mes12: configure two pipes hardware resources
-      drm/amdgpu/mes12: sw/hw fini for unified mes
-      drm/amdgpu/mes12: fix suspend issue
-
-Kenneth Feng (1):
-      drm/amd/amdgpu: add HDP_SD support on gc 12.0.0/1
-
-Loan Chen (1):
-      drm/amd/display: Enable otg synchronization logic for DCN321
-
-Matthew Brost (5):
-      drm/xe: Validate user fence during creation
-      drm/xe: Build PM into GuC CT layer
-      drm/xe: Add xe_gt_tlb_invalidation_fence_init helper
-      drm/xe: Drop xe_gt_tlb_invalidation_wait
-      drm/xe: Hold a PM ref when GT TLB invalidations are inflight
-
-Ma=C3=ADra Canal (1):
-      drm/v3d: Fix out-of-bounds read in `v3d_csd_job_run()`
-
-Melissa Wen (1):
-      drm/amd/display: fix cursor offset on rotation 180
-
-Michal Wajdeczko (2):
-      drm/xe/vf: Fix register value lookup
-      drm/xe/pf: Fix VF config validation on multi-GT platforms
-
-Rodrigo Siqueira (1):
-      drm/amd/display: Adjust cursor position
-
-Umesh Nerlige Ramappa (4):
-      drm/xe: Move part of xe_file cleanup to a helper
-      drm/xe: Add ref counting for xe_file
-      drm/xe: Take a ref to xe file when user creates a VM
-      drm/xe: Fix use after free when client stats are captured
-
-Yinjie Yao (1):
-      drm/amdgpu: Update kmd_fw_shared for VCN5
-
- .../bindings/display/panel/samsung,atna33xc20.yaml |  12 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c             |   3 +
- drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c            |   8 +
- drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c            |  26 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c            |   5 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c            |  83 +++---
- drivers/gpu/drm/amd/amdgpu/amdgpu_mes.h            |  16 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c           |   2 +
- drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.h            |   5 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c           |   2 +-
- drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c             |  27 +-
- drivers/gpu/drm/amd/amdgpu/gmc_v11_0.c             |   2 +-
- drivers/gpu/drm/amd/amdgpu/gmc_v12_0.c             |   2 +-
- drivers/gpu/drm/amd/amdgpu/jpeg_v2_0.c             |   4 +-
- drivers/gpu/drm/amd/amdgpu/jpeg_v4_0_3.c           |  63 ++++-
- drivers/gpu/drm/amd/amdgpu/jpeg_v4_0_3.h           |   7 +-
- drivers/gpu/drm/amd/amdgpu/jpeg_v5_0_0.c           |   1 +
- drivers/gpu/drm/amd/amdgpu/mes_v11_0.c             |  59 ++--
- drivers/gpu/drm/amd/amdgpu/mes_v12_0.c             | 296 +++++++++++------=
-----
- drivers/gpu/drm/amd/amdgpu/soc15d.h                |   6 +
- drivers/gpu/drm/amd/amdgpu/soc24.c                 |   2 +
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |   3 +
- .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    |  33 ++-
- .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.h    |   3 +
- .../drm/amd/display/dc/hwss/dcn10/dcn10_hwseq.c    |   4 +-
- .../display/dc/resource/dcn321/dcn321_resource.c   |   3 +
- drivers/gpu/drm/amd/include/mes_v12_api_def.h      |   7 +-
- drivers/gpu/drm/drm_panel_orientation_quirks.c     |  12 +
- drivers/gpu/drm/mediatek/mtk_drm_drv.c             |   4 +-
- drivers/gpu/drm/rockchip/inno_hdmi.c               |   4 +-
- drivers/gpu/drm/v3d/v3d_sched.c                    |  14 +-
- drivers/gpu/drm/xe/xe_device.c                     |  59 +++-
- drivers/gpu/drm/xe/xe_device.h                     |   3 +
- drivers/gpu/drm/xe/xe_device_types.h               |   3 +
- drivers/gpu/drm/xe/xe_drm_client.c                 |   5 +-
- drivers/gpu/drm/xe/xe_exec_queue.c                 |  10 +-
- drivers/gpu/drm/xe/xe_exec_queue_types.h           |   7 +-
- drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c         |  11 +-
- drivers/gpu/drm/xe/xe_gt_sriov_vf.c                |   2 +-
- drivers/gpu/drm/xe/xe_gt_tlb_invalidation.c        | 201 +++++++-------
- drivers/gpu/drm/xe/xe_gt_tlb_invalidation.h        |  12 +-
- drivers/gpu/drm/xe/xe_gt_tlb_invalidation_types.h  |   4 +
- drivers/gpu/drm/xe/xe_guc_ct.c                     |  10 +-
- drivers/gpu/drm/xe/xe_guc_submit.c                 |   4 +
- drivers/gpu/drm/xe/xe_pt.c                         |  26 +-
- drivers/gpu/drm/xe/xe_sync.c                       |  12 +-
- drivers/gpu/drm/xe/xe_vm.c                         |  38 +--
- 47 files changed, 699 insertions(+), 426 deletions(-)
 
