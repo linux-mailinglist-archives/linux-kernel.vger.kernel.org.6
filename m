@@ -1,96 +1,99 @@
-Return-Path: <linux-kernel+bounces-289480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3C0E9546A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:19:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC54395469B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:17:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B8CD288FBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:19:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82BCE1F21D84
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F9818005B;
-	Fri, 16 Aug 2024 10:19:20 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A5618D64B;
+	Fri, 16 Aug 2024 10:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="LtSknKU6"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF5286AE3;
-	Fri, 16 Aug 2024 10:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA1116F85E;
+	Fri, 16 Aug 2024 10:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723803559; cv=none; b=QaecSNcOFRVqE1ZeAgtbHgQ46P7OPBOiO9aArPEsnzzp+oGkSxpuB/8OGNOtj5oPuLpjQy7fDSzmfjAqao++oRhPueu3eVl5Cn7C1kd4wYeOoU51qyfVSvWxV0bc5Ih6IIwp8FjuDX9C/f0KnpHy+mQ4+PhLIaF6GZ5Utsn6Pac=
+	t=1723803422; cv=none; b=IZHxXbfFAgAPu2fcCERcuQ5QtfxG2q+thrPdsClS0RNUrXf+max2jHfe4qMzxAl9zUzYyyn9d3w81+3a+U9huSel0Un2ERINhDmKkmf6l5TELiDPERLJXsYeBKMG3rY9mWx7SYMcdXxbHUBe0ZFag+ySCjag96/XVjAYzndvao8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723803559; c=relaxed/simple;
-	bh=lHvh/TYydCQsGfepag95UKf9lGjJV8D5KrJ6gGluzUs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Z0b+U8Go7guBrHism1L4a5HBmFUUCHxryCRsQmxFFvr6FW38hpyIsLfMYuSX6A4ZQefaTwLzGVfrrDG1ya68q4Nus4v+bWbngTbqZFFIpWJP1QNO7LG4oiD2Z0TaF+Lun45N6CgYq9Bj9nYUWFNMSsn45mdw1lxlAix4aBELaMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WldG32Y6FzhY0l;
-	Fri, 16 Aug 2024 18:17:15 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 846511401E9;
-	Fri, 16 Aug 2024 18:19:13 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 16 Aug
- 2024 18:19:12 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <anthony.l.nguyen@intel.com>, <przemyslaw.kitszel@intel.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <olga.zaborska@intel.com>, <yuehaibing@huawei.com>
-CC: <intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next] igbvf: Remove two unused declarations
-Date: Fri, 16 Aug 2024 18:16:38 +0800
-Message-ID: <20240816101638.882072-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723803422; c=relaxed/simple;
+	bh=UJlNBvivWgb0cdk3h7CCw0C2sTxDVM53ZCye4avukrs=;
+	h=From:To:Cc:Subject:Date:Message-ID:References:MIME-Version:
+	 Content-Type; b=hJFaK8Rn5Ev2Fuj2pz3v/ZMebdFrph2k43ZcQE8IgCJGslgK4Uek9k7jOgKjpc6Gr+KATCXMkUdhyUuLt7smoAagJHMipDkIYUppWs81Zyy7+0K17l1NCXtUOCRuf2VogIRpJiLtnyjQRB83m6jcmZphLi1JfmNO7LFfkShG4do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=LtSknKU6; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=1srJQU9Lp6EXV/TNHEJRaeCIzq3POh/wVkC52KKLehw=; b=LtSknKU6PVF+UNOREKxl+Fdrhv
+	aUDPr8I0BJhIZJ8DHgpwTASmCUS4B+wu8mAQ9PC0iie9WRb4KMyxO7b9uQ8MDwHokGeLczF/kbggL
+	s2+TqXK2OOAMAUe0SX0rEg2cIdWYZWkLUgtQDk/S2GB2qkxOwV1Y8MmJUSddbMSkpaMtBFIZv22WZ
+	Imj9fvkx3boMFdA6MFjOqI8zayDdiQ57rJbAGNZlF6piK/tB9wcFcuVti+mMGMDfd8/Sw5UPUQ7Z5
+	xT+oG/a6B4hGZa3VDYeAVupo/V++pzLXqg2JEo3qmN0JRXW5XcVm+8OL532zVpBBels9DoQrcG8ez
+	gloZEYtg==;
+Received: from i53875a9f.versanet.de ([83.135.90.159] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1seu0m-0000Ra-Ag; Fri, 16 Aug 2024 12:16:48 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Dragan Simic <dsimic@manjaro.org>,
+ Sergey 'Jin' Bostandzhyan <jin@mediatomb.cc>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v3 3/3] arm64: dts: rockchip: improve eMMC speed on NanoPi R2S
+ Plus
+Date: Fri, 16 Aug 2024 12:16:47 +0200
+Message-ID: <2743124.mvXUDI8C0e@diego>
+References:
+ <20240814170048.23816-1-jin@mediatomb.cc>
+ <002107db3dcf3f1d1d1a767f049b5b79@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-There is no caller and implementations in tree.
+Am Freitag, 16. August 2024, 12:10:18 CEST schrieb Sergey 'Jin' Bostandzhyan:
+> Hi,
+> 
+> On Fri, Aug 16, 2024 at 08:51:40AM +0200, Dragan Simic wrote:
+> > On 2024-08-14 19:00, Sergey Bostandzhyan wrote:
+> > >This change has been suggested by Daniel Golle during patch review,
+> > >adding mmc-hs200-1_8v; makes sure that eMMC gets detected as HS200
+> > >which improves it's performance.
+> > 
+> > Describing who suggested the patch in the patch description looks
+> > out of place.  Instead, you should add a Suggested-by tag, whose
+> > purpose is exactly to describe who suggested the patch.
+> 
+> thank you for the pointer, I guess I missed that, I generally had a hard time to 
+> come to grips with the hole process as there are so many details and nuances.
+> 
+> Heiko, I guess it is too late to fix that now, sine you wrote that the
+> patch has been applied?
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- drivers/net/ethernet/intel/igbvf/igbvf.h | 1 -
- drivers/net/ethernet/intel/igbvf/mbx.h   | 1 -
- 2 files changed, 2 deletions(-)
+correct ... and also folded into the first devicetree patch.
+So no worries :-) .
 
-diff --git a/drivers/net/ethernet/intel/igbvf/igbvf.h b/drivers/net/ethernet/intel/igbvf/igbvf.h
-index 7b83678ba83a..6ad35a00a287 100644
---- a/drivers/net/ethernet/intel/igbvf/igbvf.h
-+++ b/drivers/net/ethernet/intel/igbvf/igbvf.h
-@@ -282,7 +282,6 @@ enum igbvf_state_t {
- 
- extern char igbvf_driver_name[];
- 
--void igbvf_check_options(struct igbvf_adapter *);
- void igbvf_set_ethtool_ops(struct net_device *);
- 
- int igbvf_up(struct igbvf_adapter *);
-diff --git a/drivers/net/ethernet/intel/igbvf/mbx.h b/drivers/net/ethernet/intel/igbvf/mbx.h
-index e5b31818d565..7637d21445bf 100644
---- a/drivers/net/ethernet/intel/igbvf/mbx.h
-+++ b/drivers/net/ethernet/intel/igbvf/mbx.h
-@@ -49,7 +49,6 @@
- 
- #define E1000_PF_CONTROL_MSG	0x0100 /* PF control message */
- 
--void e1000_init_mbx_ops_generic(struct e1000_hw *hw);
- s32 e1000_init_mbx_params_vf(struct e1000_hw *);
- 
- #endif /* _E1000_MBX_H_ */
--- 
-2.34.1
+
+Heiko
+
 
 
