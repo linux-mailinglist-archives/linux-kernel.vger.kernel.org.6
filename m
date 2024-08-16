@@ -1,95 +1,168 @@
-Return-Path: <linux-kernel+bounces-289534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8F02954747
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:58:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC6AB954749
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BFF6280E9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:58:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56BF61F256A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48D6817;
-	Fri, 16 Aug 2024 10:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GPYcjOZU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6316D198A2F;
+	Fri, 16 Aug 2024 10:58:40 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87BC198A32;
-	Fri, 16 Aug 2024 10:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1151198A2A;
+	Fri, 16 Aug 2024 10:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723805786; cv=none; b=To3z2jm4wXKUz9ROkSRIJE8e8PX0T7nZjNFXZroqCQso7r3MSqVW/bRo23ILWRzcAJXaDvpa14BLa3d2s9C52g5jBowH5atYDYPapkmzVD7OSj8/vZX/+w6Ofvp8b8GKJSgQUULKKJZoLn4+ACmt+fu6QNAY8LaMtL8cGmbJLPc=
+	t=1723805919; cv=none; b=Pjm5MMgs07XE9xKNFf2Q6/RCDzyvVkcealTm72vZYODwOXzyJPj8uSS7azQk7Hvlq0Z16cWAPGifW/WwD5nPuqZbqNJgFkXfuoO+NmYGf0ATFh8OlFviKWjOyRA1PNExwnusbkpYfyOfjDkCiQusf3QELFgRLmII7DFNmtii4TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723805786; c=relaxed/simple;
-	bh=pyTa9dPu9oVB1p3RNRYnO3QSsfYU06JEbFq4M8hqeSg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VaiXtue+NenHMytXdVxtKl/LS+LsvXaEMOfUG/cdCe3Artr/wirKeaZHjzLjoxdyKHBelbE97HQ6HtoYbb+BbkDnf0v5mKPfovHU6EljshkgAXruaCGLXfMafCh9uiS+f0w4D8Z4lbPtxPB50fMRxY8fxNDC6CCxcPum5AFeec0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GPYcjOZU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D66F1C4AF09;
-	Fri, 16 Aug 2024 10:56:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723805786;
-	bh=pyTa9dPu9oVB1p3RNRYnO3QSsfYU06JEbFq4M8hqeSg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GPYcjOZUmB2gvdr/szNvHsWamcM41r23Bppsd4bOVDn7u6v1fLGyRBsXfeSN2UHVt
-	 iJSFSqml+SgLhpx149krPYfMHltvzkVrmS3g34VVCWIJJq/drgGEYcpxsKahVDVXUC
-	 XclowKSUngpHB3V5U+j+GHj/JYk1sHqnp3x86hEzOcVRw+HwK4FikS8wNouhpBxB3x
-	 TGluFfljV3dZHDHGBf8+DP3j9eov+coAzWuRqtnKjZq+oVGD1VMEob06rrbnqU0Bvj
-	 hvGfJgcm13nHm+FpTPOs11WmqfMv/u2HLLAULawQPpkwi9MuXjWSknXtY7ejsXuneQ
-	 cTkHzIAubtcLw==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs: elide smp_mb in iversion handling in the common case
-Date: Fri, 16 Aug 2024 12:56:19 +0200
-Message-ID: <20240816-wertarbeit-steil-90ff676fb2d1@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240815083310.3865-1-mjguzik@gmail.com>
-References: <20240815083310.3865-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1723805919; c=relaxed/simple;
+	bh=5MKMiHqNYxOWYkERmuriknP4XxB271ms588YEXuYO9I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BeNPoRQGMNV2IU37b19UM0yOvF+ENpMmDosmNz10uI5qcTE9Dpe3VqlQw9oDng4fWxoX+Gz5hXyj2b5hTDFwBXeE99ixDFmVfNzlq80ncle2j49F6kaRXp4PIwisBgzdmOoF1jrmyy/FIlKgqTU7Jdo//kxfKxgoU285rWYv1ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Wlf4309Sxz1S82c;
+	Fri, 16 Aug 2024 18:53:39 +0800 (CST)
+Received: from kwepemd100011.china.huawei.com (unknown [7.221.188.204])
+	by mail.maildlp.com (Postfix) with ESMTPS id E5471180019;
+	Fri, 16 Aug 2024 18:58:33 +0800 (CST)
+Received: from M910t.huawei.com (10.110.54.157) by
+ kwepemd100011.china.huawei.com (7.221.188.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 16 Aug 2024 18:58:32 +0800
+From: Changbin Du <changbin.du@huawei.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
+	<namhyung@kernel.org>, Nathan Chancellor <nathan@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
+ Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, "Liang,
+ Kan" <kan.liang@linux.intel.com>, Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<llvm@lists.linux.dev>, Hui Wang <hw.huiwang@huawei.com>, Changbin Du
+	<changbin.du@huawei.com>
+Subject: [RESEND PATCH v6 0/8] perf: Support searching local debugging vdso or specify vdso path in cmdline
+Date: Fri, 16 Aug 2024 18:58:03 +0800
+Message-ID: <20240816105811.1812897-1-changbin.du@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1249; i=brauner@kernel.org; h=from:subject:message-id; bh=pyTa9dPu9oVB1p3RNRYnO3QSsfYU06JEbFq4M8hqeSg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTtNwjmntNp6Nt+6+/npw98fpz/HB4Q9nuxd8jKvysLP A3u6Fzv7ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhIqSMjw2nv84oWz6Il0le8 k2i+JfGph/+J68EnZ5VmS/2vPbrcqpOR4cry7DU8l9TCGL8FWZ37mXjisEiqcKXtWYG+1SIxdde +8gIA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd100011.china.huawei.com (7.221.188.204)
 
-On Thu, 15 Aug 2024 10:33:10 +0200, Mateusz Guzik wrote:
-> According to bpftrace on these routines most calls result in cmpxchg,
-> which already provides the same guarantee.
-> 
-> In inode_maybe_inc_iversion elision is possible because even if the
-> wrong value was read due to now missing smp_mb fence, the issue is going
-> to correct itself after cmpxchg. If it appears cmpxchg wont be issued,
-> the fence + reload are there bringing back previous behavior.
-> 
-> [...]
+The vdso dumped from process memory (in buildid-cache) lacks debugging
+info. To annotate vdso symbols with source lines we need a debugging
+version.
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+For x86, we can find them from your local build as
+'arch/x86/entry/vdso/vdso{32,64}.so.dbg'. Or they may resides in
+'/lib/modules/<version>/vdso/vdso{32,64}.so' on Ubuntu. But notice that the
+builid has to match.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+If user doesn't specify the path, perf will search them internally as long
+as vmlinux when recording samples. The searched debugging vdso will add to
+buildid cache as ~/.debug/[vdso]/debug.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Below samples are captured on my local build kernel. perf succesfully
+find debugging version vdso and we can annotate with source without
+specifying vdso path.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+$ sudo perf record -a
+$ sudo perf report --objdump=llvm-objdump
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
+Samples: 17K of event 'cycles:P', 4000 Hz, Event count (approx.): 1760
+__vdso_clock_gettime  /work/linux-host/arch/x86/entry/vdso/vdso64.so.d
+Percent│       movq    -48(%rbp),%rsi
+       │       testq   %rax,%rax
+       │     ;               return vread_hvclock();
+       │       movq    %rax,%rdx
+       │     ;               if (unlikely(!vdso_cycles_ok(cycles)))
+       │     ↑ js      eb
+       │     ↑ jmp     74
+       │     ;               ts->tv_sec = vdso_ts->sec;
+  0.02 │147:   leaq    2(%rbx),%rax
+       │       shlq    $4, %rax
+       │       addq    %r10,%rax
+       │     ;               while ((seq = READ_ONCE(vd->seq)) & 1) {
+  9.38 │152:   movl    (%r10),%ecx
 
-[1/1] vfs: elide smp_mb in iversion handling in the common case
-      https://git.kernel.org/vfs/vfs/c/5570f04d0bb1
+When doing cross platform analysis, we need to specify the vdso path manually if
+we are interested in its symbols, because they are not installed on local
+machine. At most two vdso can be given. Also you can pack your buildid cache with
+perf-archive if the debugging vdso can be found on the sampled machine.
+
+$ sudo perf report --objdump=llvm-objdump \
+      --vdso arch/x86/entry/vdso/vdso64.so.dbg,arch/x86/entry/vdso/vdso32.so.dbg
+
+I also improved perf-buildid-cache command to recognize vdso when adding files,
+then place it at correct place.
+
+$ sudo perf buildid-cache --add /work/linux/arch/x86/entry/vdso/vdso64.so.dbg
+
+Then it will be copied to ~/.debug/[vdso]/debug.
+
+v6:
+  - split "perf: build-id: try to search debugging vdso and add to cache" 
+    by functional logical. (suggested by Adrian)
+v5:
+  - Searching the vdso in record stage instead of report. So the debugging
+    vdso will be in build-id cache. This is friendly for cross-machine analysis.
+  - Improve perf-buildid-cache command recognize vdso when adding files
+v4:
+  - split the refactoring from the actual change.
+v3:
+  - update documentation.
+v2:
+  - now search vdso automatically as long as vmlinux, as suggested by Adrian.
+  - remove change 'prefer symsrc_filename for filename'.
+
+Changbin Du (8):
+  perf: support specify vdso path in cmdline
+  perf: disasm: refactor function dso__disassemble_filename
+  perf: disasm: use build_id_path if fallback failed
+  perf: symbol: generalize vmlinux path searching
+  perf: build-id: add support for build-id cache vdso debug
+  perf: build-id: extend build_id_cache__find_debug() to find local
+    debugging vdso
+  perf: disasm: prefer debugging files in build-id cache
+  perf buildid-cache: recognize vdso when adding files
+
+ tools/perf/Documentation/perf-annotate.txt |   3 +
+ tools/perf/Documentation/perf-c2c.txt      |   3 +
+ tools/perf/Documentation/perf-inject.txt   |   3 +
+ tools/perf/Documentation/perf-report.txt   |   3 +
+ tools/perf/Documentation/perf-script.txt   |   3 +
+ tools/perf/Documentation/perf-top.txt      |   3 +
+ tools/perf/builtin-annotate.c              |   2 +
+ tools/perf/builtin-buildid-cache.c         |  26 ++-
+ tools/perf/builtin-c2c.c                   |   2 +
+ tools/perf/builtin-inject.c                |   2 +
+ tools/perf/builtin-report.c                |   2 +
+ tools/perf/builtin-script.c                |   2 +
+ tools/perf/builtin-top.c                   |   2 +
+ tools/perf/util/build-id.c                 |  57 +++++-
+ tools/perf/util/disasm.c                   | 131 ++++++++-----
+ tools/perf/util/machine.c                  |   4 +-
+ tools/perf/util/symbol.c                   | 209 ++++++++++++++++-----
+ tools/perf/util/symbol.h                   |   9 +-
+ tools/perf/util/symbol_conf.h              |   5 +
+ 19 files changed, 359 insertions(+), 112 deletions(-)
+
+-- 
+2.34.1
+
 
