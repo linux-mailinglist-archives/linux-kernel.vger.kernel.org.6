@@ -1,93 +1,100 @@
-Return-Path: <linux-kernel+bounces-288887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB8E795400C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 05:28:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87768954010
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 05:35:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 494C3B2434E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:28:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A9C41F22B79
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD906CDAB;
-	Fri, 16 Aug 2024 03:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="D4facMP/"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56B05F873;
+	Fri, 16 Aug 2024 03:35:42 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CBC1877;
-	Fri, 16 Aug 2024 03:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3E31AC88A;
+	Fri, 16 Aug 2024 03:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723778899; cv=none; b=evuEtqAQ5yZcArnjTiTLJMF22KfIstnhQT8nXShYNCvZEQFjZjHB8oaKk3x6oTBeAIC1mNeuwqXg8IsO/lpCp3edOsUkZyPaHaXWz9n+GH3tyguiGnvTess3PoNK+qdVzhCfzvWgnKQGf7bpQLiGMtUQEZXg+6T/nEdMDVRzS5Y=
+	t=1723779342; cv=none; b=qU0r9EhpVTUKgA6RuAf7JDGmQoPCsqfeGuuBNtG6U1rNMNUkyB9ZJOsp2BlYpLDaYyI5/jSjVPDUAcBx+XM8Yrk0B2FrnOwjodkExj9GUUe0ez+ai5CAaJ1jdRdqf8bhQAmP+KiOvGJ6OilY+5t1YA65pTBJwitJTP/rGJWme3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723778899; c=relaxed/simple;
-	bh=bE1k2xABhVL+V7BEWHafJOj/zxazAkjyhmPpLGfqL/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fbFPHU0nhNNol9dpxnvIj48pq/UeTWAxuJ2SqLQvIaixWCqD/fpcPtIWBzFD/4Q4K/BfMIifGFIqWN2n7eTyi9gu5ZkUZOX8UmffR/13cpXMA1wYNevR8hjan4+SuFvD2JbjT8XVIQ75Fw9MlhMhBU0r506IMzFtDRyLZR7bzIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=D4facMP/; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=y+Gxe46x0e2FCrVOFCYCcT5Oj90T8dZoy+0yxj4iqOo=; b=D4facMP/U4YmD41M+Hagy/ijda
-	gXpWGyCNYKJ/H7/cuayZrjsRpTvZJ+sfeDno4sDbW1gKI++XXtJRuIoAQ8iIVw0rWEGaa7SolYhIF
-	PzJZElXEZVvvDUuNbROd3Wu1m7UnFFBR5yXOxx1sMDZ9opGWwIRxI4QQPexa3ZMia7HM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sendG-004tau-AW; Fri, 16 Aug 2024 05:28:06 +0200
-Date: Fri, 16 Aug 2024 05:28:06 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"Andrei Botila (OSS)" <andrei.botila@oss.nxp.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 1/3] dt-bindings: net: tja11xx: use reverse-mode
- to instead of rmii-refclk-in
-Message-ID: <718ad27e-ae17-4cb6-bb86-51d00a1b72df@lunn.ch>
-References: <20240815055126.137437-1-wei.fang@nxp.com>
- <20240815055126.137437-2-wei.fang@nxp.com>
- <7aabe196-6d5a-4207-ba75-20187f767cf9@lunn.ch>
- <PAXPR04MB85108770DAF2E69C969FD24288812@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <dba3139c-8224-4515-9147-6ba97c36909d@lunn.ch>
- <PAXPR04MB8510FBC63D4C924B13F26BD988812@PAXPR04MB8510.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1723779342; c=relaxed/simple;
+	bh=MEM4vfjf4cg16A6d5wJ6RKjnIXItvPddOYfhtmgM2h8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jij9GOCTNzbuwC3qbEIdDhgvyn0LrjWLYPtGULbos26gzEzeox2GI75VjwX8OLCW77GleTtN7a+aaYzzf+7ilgB1w239J+qTvB3nRuvon7/qo39ZUU3BONTprP2f6+y0sB/qbPWzDyrgQYRDecgra2PpTPQAPaMMlrhJRnLNJyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WlSDy2n4fz1j6Rs;
+	Fri, 16 Aug 2024 11:30:42 +0800 (CST)
+Received: from kwepemd500012.china.huawei.com (unknown [7.221.188.25])
+	by mail.maildlp.com (Postfix) with ESMTPS id 62C5E1A016C;
+	Fri, 16 Aug 2024 11:35:36 +0800 (CST)
+Received: from [10.67.111.176] (10.67.111.176) by
+ kwepemd500012.china.huawei.com (7.221.188.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 16 Aug 2024 11:35:35 +0800
+Message-ID: <340d85f3-ece3-45b8-b482-bfeac04e6ab4@huawei.com>
+Date: Fri, 16 Aug 2024 11:35:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8510FBC63D4C924B13F26BD988812@PAXPR04MB8510.eurprd04.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] bcachefs: support iopoll method
+To: Kent Overstreet <kent.overstreet@linux.dev>
+CC: <linux-bcachefs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240815142034.1561661-1-lizetao1@huawei.com>
+ <rqt2hvqaukziy5pzg3v7conihbjwa2icej23qbay3zm5b5kn5s@cvccny7kpz7p>
+From: Li Zetao <lizetao1@huawei.com>
+In-Reply-To: <rqt2hvqaukziy5pzg3v7conihbjwa2icej23qbay3zm5b5kn5s@cvccny7kpz7p>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggpeml500024.china.huawei.com (7.185.36.10) To
+ kwepemd500012.china.huawei.com (7.221.188.25)
 
-> Based on the TJA data sheet, like TJA1103/TJA1104, if the reverse mode
-> is set. If XMII_MODE is set to MII, the device operates in revMII mode
-> (TXCLK and RXCLK are input). If XMII_MODE is set to RMII, the device
-> operates in revRMII mode (REF_CLK is output). So it's just that the input
-> and output directions of xx_CLK are reversed.
-> we don't need to tell the MAC to play the role of the PHY, in our case, we
-> just need the PHY to provide the reference clock in RMII mode.
+Hi,
 
-If this is purely about providing a reference clock, normally 25Mhz,
-there are a few PHY drivers which support this. Find one and copy
-it. There is no need to invent something new.
+在 2024/8/15 22:16, Kent Overstreet 写道:
+> On Thu, Aug 15, 2024 at 10:20:34PM GMT, Li Zetao wrote:
+>> When bcachefs uses io_uring, implement the iopoll method to support
+>> IORING_SETUP_IOPOLL.
+>>
+>> Signed-off-by: Li Zetao <lizetao1@huawei.com>
+> 
+> tested?
+I have tested with fio:
 
-	Andrew
+[root]# vi bcachefs.fio
+[global]
+direct=1
+thread=1
+norandommap=1
+group_reporting=1
+time_based=1
+ioengine=io_uring
+
+rw=randwrite
+bs=4096
+runtime=20
+numjobs=1
+fixedbufs=1
+hipri=1
+registerfiles=1
+sqthread_poll=1
+
+[filename0]
+size=1G
+iodepth=1
+cpus_allowed=20
+filename=/mnt/bcachefs/test
+
+The option "hipri=1" need to support IORING_SETUP_IOPOLL for io_uring 
+engine.
 
