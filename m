@@ -1,89 +1,127 @@
-Return-Path: <linux-kernel+bounces-289289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E8DF954458
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:31:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8541C954454
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 507111C21354
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:31:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F25F2B23A5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2521448E7;
-	Fri, 16 Aug 2024 08:27:50 +0000 (UTC)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8B813F428;
+	Fri, 16 Aug 2024 08:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RgtbtAOp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6561F143873;
-	Fri, 16 Aug 2024 08:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C09E13DBA5;
+	Fri, 16 Aug 2024 08:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723796869; cv=none; b=mx8XUZz05p2D66M2oVqsYQ5cOf4MI6Ps/9Lt5VWcDrXyfgAnXV6wQTmZ7G4G31QhTSIbmBc2vJ0r6OWoLvtf1jt1NgPnLyb9isQE5z5ViygAPWnPItkqPZvvm08NutB+JnaepOb/mv93cGa3jkCzmHCLWuNpC+zMJsSPu6gjGXw=
+	t=1723796803; cv=none; b=IRWyrb/4ibY2mzkUOE5+HKdsAjN2MUx/83vBNVrpoQusBZRRtW2ncHCG+0LV4u5j1+/Lu7epHF/bRj1zO9xaaHhf1wPgfw7ndW3Ii04H65YyB4ooRauvZoJw6RtJ+6Bat+0N6Cs3K6DBdKjQupxtbC8vj7eGTa6+RKf2YjXVPqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723796869; c=relaxed/simple;
-	bh=/x7LFb4LrOciivV1kVUK7gY0Gm8F8suaP/n+NQUB8Xc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IcFs550Kk/550hdtgzTDH6rU/QWWjQpWwecZAGZcqAYeyu1D3O+80ssPyAwrjsVz6A428VM9yPnncsTKbk5ZuGT2PzOksRjAIXXG5sHi5TdYlVvziqXQfG8oaaJW8q9xX9qj62sNss/3wG2zcXY15mhfjlGnvBSsaUGYKEz93NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9EA9020179E;
-	Fri, 16 Aug 2024 10:27:46 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 52FE9200DC0;
-	Fri, 16 Aug 2024 10:27:46 +0200 (CEST)
-Received: from pe-lt8779.in-pnq01.nxp.com (pe-lt8779.in-pnq01.nxp.com [10.17.104.141])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id ADE18181D0FD;
-	Fri, 16 Aug 2024 16:27:44 +0800 (+08)
-From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-To: marcel@holtmann.org,
-	luiz.dentz@gmail.com
-Cc: linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	amitkumar.karwar@nxp.com,
-	rohit.fule@nxp.com,
-	neeraj.sanjaykale@nxp.com,
-	sherry.sun@nxp.com,
-	ziniu.wang_1@nxp.com,
-	haibo.chen@nxp.com,
-	LnxRevLi@nxp.com
-Subject: [PATCH v1 2/2] Bluetooth: btnxpuart: Add support for ISO packets
-Date: Fri, 16 Aug 2024 13:55:24 +0530
-Message-Id: <20240816082524.286245-2-neeraj.sanjaykale@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240816082524.286245-1-neeraj.sanjaykale@nxp.com>
-References: <20240816082524.286245-1-neeraj.sanjaykale@nxp.com>
+	s=arc-20240116; t=1723796803; c=relaxed/simple;
+	bh=5ikcztOYc3gzW8Il3p4V24J5xZfO6EdqRiPvi15rElM=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=coYgqlTqgYDRNXlR2liZPRHaNJGe5IOfkh8FBN2tcxUNR/lXUdV5MbRkLIv6Qf32IWB9PDDfXRgqdViPouAT9YZxiMANwA6TqIIzUYdzb7xAGjLRDSYor4ayBecO29yJy4E7mMiAZYisIjPMRqqBLCFKHWwPea8JB+Q2TCsbVxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RgtbtAOp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFAE0C4AF09;
+	Fri, 16 Aug 2024 08:26:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723796802;
+	bh=5ikcztOYc3gzW8Il3p4V24J5xZfO6EdqRiPvi15rElM=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=RgtbtAOpiH+y/spQ6gWgAnLqBhhg9cXWVihT2rfsZDpCBEfYfdNBpShYeRutSCBEF
+	 LwNKg5MkRKzDrtXirB7v6jeF5X3b5A2fT1XA1xcxtKNzBhBkVpKIzQnZUPo45m33Fl
+	 l6/jHEZnnDgbaIOzQH9YLRNUx1Rsojw1Btw8HjXbiJwdCNRPiZ2HFwUt0os+YpSPJ0
+	 2BGnPOAjeBi3yMYWsilO7e128zHSVFMDKl+S4G0XnYj/8XgXO5dx15tjhcmS4+RBuA
+	 h7BUSakYiPQwCmc57V+h01UDRJHzMzv+qlOS+nForN4LU/06WLCkn7FdFcxpFYV+wx
+	 VB4oBtniP5xNg==
+From: Kalle Valo <kvalo@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: "David S . Miller" <davem@davemloft.net>,  Eric Dumazet
+ <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo Abeni
+ <pabeni@redhat.com>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Jeff Johnson
+ <jjohnson@kernel.org>,  linux-wireless@vger.kernel.org,
+  netdev@vger.kernel.org,  devicetree@vger.kernel.org,
+  ath11k@lists.infradead.org,  linux-kernel@vger.kernel.org,  Bartosz
+ Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH net-next v2] dt-bindings: net: ath11k: document the
+ inputs of the ath11k on WCN6855
+References: <20240814082301.8091-1-brgl@bgdev.pl>
+Date: Fri, 16 Aug 2024 11:26:37 +0300
+In-Reply-To: <20240814082301.8091-1-brgl@bgdev.pl> (Bartosz Golaszewski's
+	message of "Wed, 14 Aug 2024 10:23:01 +0200")
+Message-ID: <87a5hcyite.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain
 
-This enables btnxpuart driver to handle ISO packets.
+Bartosz Golaszewski <brgl@bgdev.pl> writes:
 
-Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
----
- drivers/bluetooth/btnxpuart.c | 1 +
- 1 file changed, 1 insertion(+)
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Describe the inputs from the PMU of the ath11k module on WCN6855.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+> v1 -> v2:
+> - update the example
+>
+>  .../net/wireless/qcom,ath11k-pci.yaml         | 29 +++++++++++++++++++
+>  1 file changed, 29 insertions(+)
 
-diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
-index f75b24bd3045..0b52e5505687 100644
---- a/drivers/bluetooth/btnxpuart.c
-+++ b/drivers/bluetooth/btnxpuart.c
-@@ -1396,6 +1396,7 @@ static const struct h4_recv_pkt nxp_recv_pkts[] = {
- 	{ H4_RECV_ACL,          .recv = hci_recv_frame },
- 	{ H4_RECV_SCO,          .recv = hci_recv_frame },
- 	{ H4_RECV_EVENT,        .recv = hci_recv_frame },
-+	{ H4_RECV_ISO,		.recv = hci_recv_frame },
- 	{ NXP_RECV_CHIP_VER_V1, .recv = nxp_recv_chip_ver_v1 },
- 	{ NXP_RECV_FW_REQ_V1,   .recv = nxp_recv_fw_req_v1 },
- 	{ NXP_RECV_CHIP_VER_V3, .recv = nxp_recv_chip_ver_v3 },
+This goes to ath-next, not net-next.
+
+> diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.yaml
+> index 8675d7d0215c..a71fdf05bc1e 100644
+> --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.yaml
+> +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.yaml
+> @@ -50,6 +50,9 @@ properties:
+>    vddrfa1p7-supply:
+>      description: VDD_RFA_1P7 supply regulator handle
+>  
+> +  vddrfa1p8-supply:
+> +    description: VDD_RFA_1P8 supply regulator handle
+> +
+>    vddpcie0p9-supply:
+>      description: VDD_PCIE_0P9 supply regulator handle
+>  
+> @@ -77,6 +80,22 @@ allOf:
+>          - vddrfa1p7-supply
+>          - vddpcie0p9-supply
+>          - vddpcie1p8-supply
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: pci17cb,1103
+> +    then:
+> +      required:
+> +        - vddrfacmn-supply
+> +        - vddaon-supply
+> +        - vddwlcx-supply
+> +        - vddwlmx-supply
+> +        - vddrfa0p8-supply
+> +        - vddrfa1p2-supply
+> +        - vddrfa1p8-supply
+> +        - vddpcie0p9-supply
+> +        - vddpcie1p8-supply
+
+Like we discussed before, shouldn't these supplies be optional as not
+all modules need them?
+
 -- 
-2.34.1
+https://patchwork.kernel.org/project/linux-wireless/list/
 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
