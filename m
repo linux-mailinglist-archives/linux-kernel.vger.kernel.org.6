@@ -1,216 +1,113 @@
-Return-Path: <linux-kernel+bounces-289124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A90954247
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:03:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE1BE95425C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF6C728A1DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:03:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71F951F232D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DABD884D12;
-	Fri, 16 Aug 2024 07:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B6212B169;
+	Fri, 16 Aug 2024 07:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="UpXwTMji"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2070.outbound.protection.outlook.com [40.107.243.70])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kfPWJs8z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23CA678C76;
-	Fri, 16 Aug 2024 07:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723791830; cv=fail; b=kWGjib7sMQCSavMYivBia+A3tPq2N7ASAVXQ40rH23aIN++vtHtxkmBY1OD0dUOVxVGZGYqLwJ9cxNkAanU4Gatk+l4YMN7LW9Setj++fuUoy+6vvAWBtXVkzeGbfxCmF0fE0+XVprzn+RCYJP/1n1u35jz/dE0YVdqJRuhq3k4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723791830; c=relaxed/simple;
-	bh=jSL9nMJYuRlFdb8sQpOSPAhBFE+rd2nbvNWdpqe+qvQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BgUOywGEMUF8jxfWorGKVZMyrlh/G8lmVfyL2vEqyeXuCUUSR4at2+DmQcRO8d0upDJfyWILCCNV7uK2MnXydpBMK/lLSyVH+QwxfOj3J8LOx0nlLpV0r3LxfIui6yH38qQLOwCgUt+SIngc63ZTLMpb1HVth6XLl9Jh2xlzIIE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=UpXwTMji; arc=fail smtp.client-ip=40.107.243.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QQ8JCE/+4T9jsAPjhgD+WVyfcLYIrdCmMsciqI/ERSj8NYPjh+OpnuC7DmIWaaryFbRVDCfZfFezt1hQk8mkEUrHh0qIaOJOS28eudRboyL6F5ILdo0j4TrV6zTX+kaLDfl7X/8aDvWZjOnFkecB3HLbnoaFdoKGX6JIhUfFrTmITj5/YaI6sMTK6o6X2RoZaSYjdgIK0wRf4nAno8PW3OuLB/OqomS8WIjFas6gPPB+Z/PufFjeLX9ss0c7Ezkrh5VyeXIdHlXiYjavVebh06wAMYMNnk+ET29COM8B0XUinRndqRqnHi61H/cZw5WZsVcqnzJvBBHJVGneEmsLQA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kjFOvJCQJsBjNYzDiMS0+9mMb+lqIJW/BRuYNKoMBbI=;
- b=jePnGp/pQLu+4eDLivOmxbep7Af/UAu05H20LzbWFkcujiJlm2FB4cuP2Ji9ZC+JPDmGvdvXqAByAn9uU8B/fkSy1Dmg9uKN0aTBt7+SBhZqKZrT52wlI4WtxElAhRiB8LkWPKBK6/JfpIB0V1U9p4/u6Y4OipcLVP9AcVITcpD+imEJdJgCrBZhh4M/XmUf3Zn8pj+LeQ9QwJjIL+hQ1ABY5l2bWs0iRlz//WRQdx4Yo6uowASAulTXMAR1Y1d3s9YVJFHzVmXG7XD2iS0ObJbag8hfnbIOEctxcOBbrbBy4V+8YB6uxbwhuoKdZNJZsXf1TzUSxe8l6TbsSFqW3A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kjFOvJCQJsBjNYzDiMS0+9mMb+lqIJW/BRuYNKoMBbI=;
- b=UpXwTMjioiyoVdfDBkLfXwBZcEWiYfVY5R6ez3lR/IpmJ5sy6NCMoxKmYs0o0M/nKjTLcrLblNR3RVHHt1TmyiusimPMvhspHEpp7tiJT3Ptq+ZbBP+Fn45LzL3BbqCt8LGgEM1ZTcnjLbG5OEGsHeyMcUDidTrDH7sLUH+s9eg=
-Received: from BL0PR0102CA0066.prod.exchangelabs.com (2603:10b6:208:25::43) by
- PH7PR12MB5903.namprd12.prod.outlook.com (2603:10b6:510:1d7::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Fri, 16 Aug
- 2024 07:03:46 +0000
-Received: from BN3PEPF0000B370.namprd21.prod.outlook.com
- (2603:10b6:208:25:cafe::65) by BL0PR0102CA0066.outlook.office365.com
- (2603:10b6:208:25::43) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.23 via Frontend
- Transport; Fri, 16 Aug 2024 07:03:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN3PEPF0000B370.mail.protection.outlook.com (10.167.243.167) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7897.4 via Frontend Transport; Fri, 16 Aug 2024 07:03:45 +0000
-Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 16 Aug 2024 02:03:40 -0500
-From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-To: <broonie@kernel.org>
-CC: <alsa-devel@alsa-project.org>, <pierre-louis.bossart@linux.intel.com>,
-	<yung-chuan.liao@linux.intel.com>, <ranjani.sridharan@linux.intel.com>,
-	<lgirdwood@gmail.com>, <perex@perex.cz>, <tiwai@suse.com>,
-	<Basavaraj.Hiregoudar@amd.com>, <Sunil-kumar.Dommati@amd.com>,
-	<venkataprasad.potturu@amd.com>, <cristian.ciocaltea@collabora.com>,
-	<linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Vijendar
- Mukunda" <Vijendar.Mukunda@amd.com>
-Subject: [PATCH] ASoC: SOF: amd: Fix for acp init sequence
-Date: Fri, 16 Aug 2024 12:33:28 +0530
-Message-ID: <20240816070328.610360-1-Vijendar.Mukunda@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34DE078C68;
+	Fri, 16 Aug 2024 07:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723792000; cv=none; b=Oou9XUrHZdtHN8tpvQsmo2zg76IqnpYZGwtwcw+RovvlMDP4cTZxVcPtEEKy6LxNREcQYUPLN4rJZsXpkenmWyNhtsYkWRAfQYLV0ORzL6KaDhUEuDHTR4a9WBmJry9P7su/k8VY0YfhaY+4YI4ew3yBJ2WloCK0vLzvCilaBYQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723792000; c=relaxed/simple;
+	bh=3J0NRytEsTukDgVOmZIAUw6cxnJT3AnHuFYMxFXR5/4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JlSoQyu8MuMHxQ2CzQVW3gJNAFcn14mY+CDoyyJhFoUMesv/fjCJ6xawBnQ5veXy6wKf0y5ThfK3WDJpjpvV9/uwiGZ7yzXJpH/ev38bcs94qa0XE8EAFAbourbCR0zUYPh9aieeLJzNKI2sxMQZiAqpH2R7lImLqTDN3BqyRqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kfPWJs8z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F8D4C32782;
+	Fri, 16 Aug 2024 07:06:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723791999;
+	bh=3J0NRytEsTukDgVOmZIAUw6cxnJT3AnHuFYMxFXR5/4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kfPWJs8zN3LV+ovFZqYb0GyUraQ71cmPjiIK6tzsmYps0Y3h8KC8jP0BSNEGa85If
+	 PA1nwWfnYzoUpg4qZOog9cj+0KVJ5pan7CmMu9PFVrSCwwleavd29aHezUmAHAezBV
+	 S0637v2hVxRNlGTV4O6/xJtFEo3ERTxShj5VhqMM=
+Date: Fri, 16 Aug 2024 09:06:36 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Pierre Gondois <pierre.gondois@arm.com>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+	Robert Moore <robert.moore@intel.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Thomas Bertschinger <tahbertschinger@gmail.com>,
+	Danilo Krummrich <dakr@redhat.com>, linux-acpi@vger.kernel.org,
+	linux-pm@vger.kernel.org, acpica-devel@lists.linux.dev,
+	rust-for-linux@vger.kernel.org, Metin Kaya <metin.kaya@arm.com>
+Subject: Re: [RFC PATCH 6/6] rust: cpufreq: Add rust implementation of
+ cppc_cpufreq driver
+Message-ID: <2024081634-excluding-squeezing-c386@gregkh>
+References: <20240815082916.1210110-1-pierre.gondois@arm.com>
+ <20240815082916.1210110-7-pierre.gondois@arm.com>
+ <CANiq72mjvE7h_aH5tYnuuzdPHAzDUpioMi-h44HNCro8qFfDSw@mail.gmail.com>
+ <1605d622-faf5-4535-bd71-ba514ee102dd@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B370:EE_|PH7PR12MB5903:EE_
-X-MS-Office365-Filtering-Correlation-Id: 35b2329b-3b3d-4ce5-1261-08dcbdc191f8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?IgG5yt2VmKsz+oIF+n3WkUyhSQ4oZNtY1FtPvLsfHK2qswxg3Q4l1xN6Y3PF?=
- =?us-ascii?Q?93MnZVMYRaJXDaHhMarC0Hlsco+L1P5U6s8QuKYgiOeCu/kMrWhzgwb0beEb?=
- =?us-ascii?Q?PJfQGlcgADtR6hb7c6IfsSbONr9+ONUmIKsaGkpKZUz678YR6MHIp2GcQHav?=
- =?us-ascii?Q?CxNuEVZgQXDacV/llHJZRPtw2FNzeWJWDoenzwjwkwDTffMWqIL2Dps5Y9SD?=
- =?us-ascii?Q?X4cTV8cZXs7MM5cMI7mq9WrqJzvMGPsJWgzLRicSvp+Aq5WicV3LBQxaKRJ1?=
- =?us-ascii?Q?RnKL7w7EFSQRIz8vVLOgrpnJ/PuciU7HXpElcGeMJFOo0Lj9rwC37tz05+cF?=
- =?us-ascii?Q?5nzf6ecfHGl/lK0M+bpfLMv+AzJPgtgn5qtCZ+CP32G+uuD7xNeIgZjgduQq?=
- =?us-ascii?Q?dWPSogQTR0R4cKcZwXL3rOIL7vRifOaNlR9zkVQQvO7WLY3N+Zo9dP7xbtHa?=
- =?us-ascii?Q?gHvJ9ylY0eQ0PwozG1sAdG+Qyx0JN5DC735h5ZsLtpaZdy72Mmq+BDSMtvC2?=
- =?us-ascii?Q?Zg9MsvQg/r941iCZn+URiG7lMQq1M+eh6XyOy8NorydLbx/IWhRaA8wQm6tH?=
- =?us-ascii?Q?KoUMnPYjbCstnGNYHjpwNY2nKyDt3oGwTEIZIkuLNejRd2VM/JOE3cYMNE9x?=
- =?us-ascii?Q?dt2/AEY0pmmpyYsJaNA01wTFRmSgZ4L9OsUOJAFH4KQ9Pg5Ov+vVASDx8l/7?=
- =?us-ascii?Q?jnwLXrdAnq9J3bvEtqOd5ibUN/azEtKr0w01Xxkb/kMZizC5dUWMnGEmqkLY?=
- =?us-ascii?Q?jl4JZ67zZp3Ize/6wLVD1woaiOBXy4FeaDq/J//sIsInHo/FNTO0q5tclb0/?=
- =?us-ascii?Q?d0fcjt4HcbbjudTa4LPjFFaEzQ/7+aL8SbIwE8IIJr8t2BmMLZhG1QZMVhyp?=
- =?us-ascii?Q?dsr5mMhdNS+GHYqLgf25HAIAFrZBdI+gRWsytFWasW2+rCIVj4gLJsaYCwZ2?=
- =?us-ascii?Q?/hoDtPqqxi1aO5d4qkCgMD1SA3KHWK+WtLoCg4Nf/N/dNL0qhSxc3ZUnpsjs?=
- =?us-ascii?Q?nxBtg3OPZ25PktSXYGQoljrVzwtq1mPp7huLiObuRMe8U5jnB44RvILtv+41?=
- =?us-ascii?Q?zWn7X2sDM5a/wiIShLVkLGOmgBNOj7bF2jTTa+DGB9Q1LBMr9eqG90zbmAfJ?=
- =?us-ascii?Q?oDwhVLrPtJmPUW+drMXnW+G5x/sT68DrOeUInxQbPdUHYEbA3R6BDh1MfGAu?=
- =?us-ascii?Q?yNkNWcZ4h87WWKyI6AqxNmIPcA+JS7VlfFfkZR4NOFRL632xV1NFuv+g52o3?=
- =?us-ascii?Q?UNheqMRPQM52oHnYzpBdMx4Xp1EXyP+Dn2myaZ5blOUyBC0iQ5sVo12ONFEx?=
- =?us-ascii?Q?VbXo5j+RFVdtnQ9ab856JJReciZxtd4xhm8BP4elJ0k5bMWW6Y1wsFRK7Th4?=
- =?us-ascii?Q?SRcKETinKw/mm9KQfEHNfrjKpjBB8pZQtvp3yvf0jQ9SLqn/ZLc9lgFhWNUp?=
- =?us-ascii?Q?v9+BRb7f4uRIB5OyFGWe2AteEmj7cv/Q?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2024 07:03:45.4434
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 35b2329b-3b3d-4ce5-1261-08dcbdc191f8
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B370.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5903
+In-Reply-To: <1605d622-faf5-4535-bd71-ba514ee102dd@arm.com>
 
-When ACP is not powered on by default, acp power on sequence explicitly
-invoked by programming pgfsm control mask. The existing implementation
-checks the same PGFSM status mask and programs the same PGFSM control mask
-in all ACP variants which breaks acp power on sequence for ACP6.0 and
-ACP6.3 variants. So to fix this issue, update ACP pgfsm control mask and
-status mask based on acp descriptor rev field, which will vary based on
-acp variant.
+On Fri, Aug 16, 2024 at 08:59:22AM +0200, Pierre Gondois wrote:
+> Hello Greg, Miguel,
+> 
+> On 8/15/24 15:04, Miguel Ojeda wrote:
+> > On Thu, Aug 15, 2024 at 10:31 AM Pierre Gondois <pierre.gondois@arm.com> wrote:
+> > > 
+> > > In an effort to add test/support the cpufreq framework in rust,
+> > > add a rust implementation of the cppc_cpufreq driver named:
+> > > `rcppc_cpufreq`.
+> > 
+> > Similar to what Greg said -- is this intended to be something like a
+> > "Rust reference driver" [1] for the subsystem?
+> 
+> The initial intent was to review/test Viresh's patchset [1]. I then
+> thought it would be a good idea to implement another cpufreq driver
+> to see if the provided interface would work.
+> As the cpufreq-dt driver is re-implemented in Viresh's patchset,
+> I thought it was also ok to have this driver.
 
-Fixes: 846aef1d7cc0 ("ASoC: SOF: amd: Add Renoir ACP HW support")
-Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
----
- sound/soc/sof/amd/acp.c | 19 +++++++++++++++++--
- sound/soc/sof/amd/acp.h |  7 +++++--
- 2 files changed, 22 insertions(+), 4 deletions(-)
+Duplicate drivers for the same hardware are never a good idea, we need
+to learn from our past mistakes when we have done this before (hint, it
+did not work out and we ended up dropping the duplicates.)
 
-diff --git a/sound/soc/sof/amd/acp.c b/sound/soc/sof/amd/acp.c
-index 35e56d22930f..0f6115c8b005 100644
---- a/sound/soc/sof/amd/acp.c
-+++ b/sound/soc/sof/amd/acp.c
-@@ -433,6 +433,7 @@ static int acp_power_on(struct snd_sof_dev *sdev)
- 	const struct sof_amd_acp_desc *desc = get_chip_info(sdev->pdata);
- 	unsigned int base = desc->pgfsm_base;
- 	unsigned int val;
-+	unsigned int acp_pgfsm_status_mask, acp_pgfsm_cntl_mask;
- 	int ret;
- 
- 	val = snd_sof_dsp_read(sdev, ACP_DSP_BAR, base + PGFSM_STATUS_OFFSET);
-@@ -440,9 +441,23 @@ static int acp_power_on(struct snd_sof_dev *sdev)
- 	if (val == ACP_POWERED_ON)
- 		return 0;
- 
--	if (val & ACP_PGFSM_STATUS_MASK)
-+	switch (desc->rev) {
-+	case 3:
-+	case 5:
-+		acp_pgfsm_status_mask = ACP3X_PGFSM_STATUS_MASK;
-+		acp_pgfsm_cntl_mask = ACP3X_PGFSM_CNTL_POWER_ON_MASK;
-+		break;
-+	case 6:
-+		acp_pgfsm_status_mask = ACP6X_PGFSM_STATUS_MASK;
-+		acp_pgfsm_cntl_mask = ACP6X_PGFSM_CNTL_POWER_ON_MASK;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	if (val & acp_pgfsm_status_mask)
- 		snd_sof_dsp_write(sdev, ACP_DSP_BAR, base + PGFSM_CONTROL_OFFSET,
--				  ACP_PGFSM_CNTL_POWER_ON_MASK);
-+				  acp_pgfsm_cntl_mask);
- 
- 	ret = snd_sof_dsp_read_poll_timeout(sdev, ACP_DSP_BAR, base + PGFSM_STATUS_OFFSET, val,
- 					    !val, ACP_REG_POLL_INTERVAL, ACP_REG_POLL_TIMEOUT_US);
-diff --git a/sound/soc/sof/amd/acp.h b/sound/soc/sof/amd/acp.h
-index f6f0fcfeb691..321c40cc6d50 100644
---- a/sound/soc/sof/amd/acp.h
-+++ b/sound/soc/sof/amd/acp.h
-@@ -25,8 +25,11 @@
- #define ACP_REG_POLL_TIMEOUT_US                 2000
- #define ACP_DMA_COMPLETE_TIMEOUT_US		5000
- 
--#define ACP_PGFSM_CNTL_POWER_ON_MASK		0x01
--#define ACP_PGFSM_STATUS_MASK			0x03
-+#define ACP3X_PGFSM_CNTL_POWER_ON_MASK		0x01
-+#define ACP3X_PGFSM_STATUS_MASK			0x03
-+#define ACP6X_PGFSM_CNTL_POWER_ON_MASK		0x07
-+#define ACP6X_PGFSM_STATUS_MASK			0x0F
-+
- #define ACP_POWERED_ON				0x00
- #define ACP_ASSERT_RESET			0x01
- #define ACP_RELEASE_RESET			0x00
--- 
-2.34.1
+However, if the subsystem maintainer agrees, they are free to have
+duplicate drivers, as long as the maintainer of the "new" one will be
+there to help out with all of the confusion and problems that users and
+distros will have :)
 
+good luck!
+
+greg k-h
 
