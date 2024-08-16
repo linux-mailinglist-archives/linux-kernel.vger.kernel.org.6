@@ -1,213 +1,114 @@
-Return-Path: <linux-kernel+bounces-289042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5AF0954188
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:11:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5358A95418B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:11:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 655BC1F24DA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:11:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86CA81C256F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1155E85283;
-	Fri, 16 Aug 2024 06:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="CJICe07b"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32B18405D;
+	Fri, 16 Aug 2024 06:10:44 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31AB781741
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 06:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723788632; cv=pass; b=s+0vX7UHbc4aiAJprDTqZWNz1LeMuwh1hV/BjPJVSlyMUaKv3GosWmhJ67D5Nuxjph/+3BpSXGcsDUhrl3uGpDeN9uStzvJb8qIb1xaF2uUJVUTbG85mNuXOUWcjIJc8Japa5THo5zgQkt/BiDFGSCUF79XmKYfFPrD6UAlkmqY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723788632; c=relaxed/simple;
-	bh=hcSGRbUU39H4+aPq6230lrePyX9/aHkH59blGuwBUeE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bjreFXFohohpU+WMcog93VMdLf0EWSmdj739YwessgBwgX7nX3sVFLS5gz68/u2BrFxRHVxepkWawOah2cVenaqw1YMeeeF5xhXvOXd5hQnmsslkJnbYdLsziex/CDtj8s+XLcWA7Kq8dmvu2sYskgfXW5S3+PIh8fnBB9e6bIc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=CJICe07b; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1723788606; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=P3pWPXD8rUFdVwHpPsItVKycREgekzseH2ccvogBTJ0Z9cHBknTqEBPbpPDpdVq15uRp/sfKEXnE0Svo52x+Q/82Er5FxXuI1EwGNWNeUsyvQMNgBLA0Xe5uHZTOAwy42ORJrRXNNyfYnJA+ctQlNa4Z8YVrDivrMIiNZTtJxZs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1723788606; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=hcSGRbUU39H4+aPq6230lrePyX9/aHkH59blGuwBUeE=; 
-	b=VsPZy/BqHpdUoXcS5azY7IrVRbWYjFNB5odQH0CsT5ly3Wm4zVGeSAIslAtS7n2jSENfmlwJuG5rRJh9o2TBBShZbp4JY4B5+Mec/weoodFFg9AHo8rdlrMfUbITyrKGyaqFjih4Ys5FN6Nq+13C06ZStR4QZ7APQUXqtWWJnPM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723788606;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=hcSGRbUU39H4+aPq6230lrePyX9/aHkH59blGuwBUeE=;
-	b=CJICe07bvpnF7gUM6cxv7f3TmmyPJ6b7op/BUo+rdbDKdOLpfJ+xPj3/Dv1OgUfq
-	WYLKpgY5fiH9opkHbZCP4GkUcT0KbAYUtAif0tF75vcTapAA4zF3AKWFtO9/rrVxCzN
-	IwU2UbECnOixNyuGF4LMbMbCyQAqLgfVIFkrvqgkplxB25YZV6w4xbjdr0A3ANrE5w2
-	lhrrdoRtq786+MiIp9/lefT5x4u4jhHooV4mGpRnYN6cF5UDaJdweJPDHgMQBxJJsSr
-	oJH/zV6hezMuUN6a7c3mOESGC1/ykz4fahfvhSE0md02ucvR5sVFgBens5Gt3pOP88v
-	vF5JJ3+zFA==
-Received: by mx.zohomail.com with SMTPS id 1723788604231899.4893413463349;
-	Thu, 15 Aug 2024 23:10:04 -0700 (PDT)
-Message-ID: <ce7d2ebb2a82935c68bd41d6379f8f20591c2539.camel@icenowy.me>
-Subject: Re: [PATCH v1 0/9] Fix Allwinner D1 boot regression
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Anup Patel <apatel@ventanamicro.com>, Samuel Holland
-	 <samuel.holland@sifive.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Emil Renner Berthing
- <emil.renner.berthing@canonical.com>, linux-kernel@vger.kernel.org, 
- linux-riscv@lists.infradead.org, Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Daniel Lezcano <daniel.lezcano@linaro.org>
-Date: Fri, 16 Aug 2024 14:09:58 +0800
-In-Reply-To: <CAK9=C2VHfPnYx8gMjodJNLu9+yR4KvuPXeQZiyZcbu1Mvze-0Q@mail.gmail.com>
-References: <20240814145642.344485-1-emil.renner.berthing@canonical.com>
-	 <87jzgjnh9z.ffs@tglx>
-	 <CAJM55Z8WERQgs=QMyFGWvAHOpwcnOAudBqovaEuDudPSXCvL5Q@mail.gmail.com>
-	 <87ttfmm2ns.ffs@tglx>
-	 <CAJM55Z88H635Crc-Aeq+K0qcAk7NC89WVTAFdXDd2aQKQ7QmEg@mail.gmail.com>
-	 <CAJM55Z_qQX7n8tAeOFqrAH1BFjA9vaWA8rtsPG2BcKmiO88m=Q@mail.gmail.com>
-	 <87plqalyd4.ffs@tglx> <686d61c4-e7ac-4dca-a7fd-decdd72e84d9@sifive.com>
-	 <CAK9=C2VHfPnYx8gMjodJNLu9+yR4KvuPXeQZiyZcbu1Mvze-0Q@mail.gmail.com>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7B282890;
+	Fri, 16 Aug 2024 06:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723788644; cv=none; b=U2XyRGikVpbqdeZAJQEWmI6t0MyKD52qqWe9+C6dHKoWzexJK6Par2JNtvcjsX/Nf8EDKO56d0eu/IzYVoAd44purJIkqMabpjOcJtq6vtaK/SseGAz+4PuOhD+KRqPksHl7MwYUl1Nfc/+QOs+VnxlT5tBAnOGDfc0O2QP3DX0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723788644; c=relaxed/simple;
+	bh=f5I40ueG+GA6DczC0K//AvWMSZ9tmjRqZd2y2qq7HtY=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=aryc1QHoWbteg8xCJJm7KdwIJ6zKOjpZJXGTB7gsIjNx/Bzzy/Csfa7/UWQtOfo80NJUFwDB/Q/AKRRsmGOAijLLy1YQQFia/Czo1Br/DZhFurCo+vwS3Gpd18IQxFyJ6i4dfd/cynZRrTEvSC1OAd2tyFrSjsXWt1iAC5vGKi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4WlWgq35zCz1S823;
+	Fri, 16 Aug 2024 14:05:43 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id 175F014010C;
+	Fri, 16 Aug 2024 14:10:38 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 16 Aug 2024 14:10:37 +0800
+Message-ID: <1ff7ba7c-3a25-46b5-a9de-a49d96926e64@huawei.com>
+Date: Fri, 16 Aug 2024 14:10:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, <yisen.zhuang@huawei.com>,
+	<salil.mehta@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
+	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
+	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
+	<jdamato@fastly.com>, <jonathan.cameron@huawei.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH V2 net-next 03/11] net: hibmcge: Add mdio and hardware
+ configuration supported in this module
+To: Andrew Lunn <andrew@lunn.ch>
+References: <20240813135640.1694993-1-shaojijie@huawei.com>
+ <20240813135640.1694993-4-shaojijie@huawei.com>
+ <79122634-093b-44a3-bbcd-479d6692affc@lunn.ch>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <79122634-093b-44a3-bbcd-479d6692affc@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
-=E5=9C=A8 2024-08-15=E6=98=9F=E6=9C=9F=E5=9B=9B=E7=9A=84 20:00 +0530=EF=BC=
-=8CAnup Patel=E5=86=99=E9=81=93=EF=BC=9A
-> On Thu, Aug 15, 2024 at 7:02=E2=80=AFPM Samuel Holland
-> <samuel.holland@sifive.com> wrote:
-> >=20
-> > Hi Thomas, Emil,
-> >=20
-> > On 2024-08-15 8:16 AM, Thomas Gleixner wrote:
-> > > On Thu, Aug 15 2024 at 05:14, Emil Renner Berthing wrote:
-> > > > Emil Renner Berthing wrote:
-> > > > > 6.11-rc3 + these reverts:=C2=A0
-> > > > > https://us01.z.antigena.com/l/Er4kZWDmvL5-bLzHHJoZv0k71iwW2jCD5qN=
-piz0x0XdYY6oORF_nXh7U7jw6oubhi~32HI4i71jUW9v8~NvSvPeUWrdYx3WJBr2GPDUjOu6LYP=
-COBfR2dVQuMWvlNj4tDjXFp3QEQAmeawZflD4JrIJjtSYIbKfe6v-tgH7SEuHMeSSriU633Lv
-> > > > > 6.11-rc3 + Samuel's patch:
-> > > > > https://us01.z.antigena.com/l/EULtAYky6ZvgqZ49KGS-WBsYTg~Ht1NoQtE=
-YmUVb56ymS9jDagqYHLK90WDjnVt69GfB4IX5NSRQXmSfkNsTzB8lJmFvDihHQmGrsCv9FzlorD=
-9yGfXDlQ6rG6vmn5BNDwlipmssGaOGfh9yko8n9ArWR4TLhEf~f9ODqme~NXXwA9DLLc9p
-> > > >=20
-> > > > I think this confirms what Charlie found here:
-> > > > https://lore.kernel.org/linux-riscv/ZoydV7vad5JWIcZb@ghost/
-> > >=20
-> > > Yes. So the riscv timer is not working on this thing or it stops
-> > > somehow.
-> >=20
-> > That's correct. With the (firmware) devicetree that Emil is using,
-> > the OpenSBI
-> > firmware does not have a timer device, so it does not expose the
-> > (optional[1])
-> > SBI time extension, and sbi_set_timer() does nothing.
->=20
-> OpenSBI uses platform specific M-mode timer (mtime and mtimecmp) to
-> provide SBI time extension to Linux.
->=20
-> The RISC-V privileged specification (v1.10 or higher) requires
-> platform to
-> provide a M-mode timer (mtime and mtimecmp).
 
-The T-Head cores' design is weird, and because of its source code is
-available (as OpenC906), we can investigate it further in the RTL
-level:
+on 2024/8/16 10:25, Andrew Lunn wrote:
+>> +struct hbg_mdio_command {
+>> +	union {
+>> +		struct {
+>> +			u32 mdio_devad : 5;
+>> +			u32 mdio_prtad :5;
+>> +			u32 mdio_op : 2;
+>> +			u32 mdio_st : 2;
+>> +			u32 mdio_start : 1;
+>> +			u32 mdio_clk_sel : 1;
+>> +			u32 mdio_auto_scan : 1;
+>> +			u32 mdio_clk_sel_exp : 1;
+>> +			u32 rev : 14;
+>> +		};
+>> +		u32 bits;
+>> +	};
+>> +};
+> This is generally not the way to do this. Please look at the macros in
+> include/linux/bitfield.h. FIELD_PREP, GENMASK, BIT, FIELD_GET
+> etc. These are guaranteed to work for both big and little endian, and
+> you avoid issues where the compiler decides to add padding in your
+> bitfields.
+>
+> 	Andrew
 
-- From software perspective, it has no mtime mmap'ed register, but it
-has mtimecmp, which compares with time CSR (a CSR R/O in all priv
-levels).
-- From SoC integration perspective, the value of the time CSR is
-sourced from an external input, pad_cpu_sys_cnt[63:0] [1].
+Thanks, I already know about macros like FIELD_PREP or FIELD_GET.
+and these macros are already used in parts of this patch set.
 
-BTW I already added support for this kind of non-standard CLINT to
-OpenSBI [2], however I don't think the current firmware DT of D1
-utilizes it; and this is also a quite new SBI version I think.
+But I think this writing style in here very convenient.
+Although padding needs to be added during definition,
+but you can use command.mdio_start or command->mdio_start
+to access specific bitfields.
 
-[1]
-https://github.com/XUANTIE-RV/openc906/blob/main/C906_RTL_FACTORY/gen_rtl/c=
-pu/rtl/openC906.v#L84
-[2]
-https://github.com/riscv-software-src/opensbi/commit/b848d8763a737de44b64bf=
-c036c8f51200226440
+Although FIELD_PREP/FIELD_GET is convenient,
+But it also needs to define the mask using BIT or GENMASK,
+and the mask can only be a static constant,
+which makes it difficult to use sometimes.
 
->=20
-> This platform not having any M-mode timer is yet another RISC-V spec
-> violation by this platform.
->=20
-> Regards,
-> Anup
->=20
-> >=20
-> > I wrote a patch (not submitted) to skip registering
-> > riscv_clock_event when the
-> > SBI time extension is unavailable, but this doesn't fully solve the
-> > issue
-> > either, because then we have no clockevent at all when
-> > check_unaligned_access_all_cpus() is called.
-> >=20
-> > How early in the boot process are we "required" to have a
-> > functional clockevent?
-> > Do we need to refactor check_unaligned_access_all_cpus() so it
-> > works on systems
-> > where the only clockevent is provided by a platform device?
-> >=20
-> > Regards,
-> > Samuel
-> >=20
-> > [1]
-> > https://github.com/riscv-non-isa/riscv-sbi-doc/blob/master/src/intro.ad=
-oc
-> >=20
-> > > Can you apply the debug patch below and check whether you see the
-> > > 'J: ....' output at all and if so whether it stops at some point.
-> > >=20
-> > > Thanks,
-> > >=20
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tglx
-> > >=20
-> > > ---
-> > > --- a/kernel/time/timer.c
-> > > +++ b/kernel/time/timer.c
-> > > @@ -2459,6 +2459,9 @@ static void run_local_timers(void)
-> > > =C2=A0{
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct timer_base *base =3D
-> > > this_cpu_ptr(&timer_bases[BASE_LOCAL]);
-> > >=20
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 if (!(jiffies & 0xFF))
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 pr_info("J: %lx\n", jiffies);
-> > > +
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 hrtimer_run_queues();
-> > >=20
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (int i =3D 0; i < NR_BASES; i++, b=
-ase++) {
-> > >=20
-> > >=20
-> > >=20
-> > > _______________________________________________
-> > > linux-riscv mailing list
-> > > linux-riscv@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/linux-riscv
-> > >=20
-> >=20
->=20
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Thanks a lot!
+	
+	Jijie Shao
 
 
