@@ -1,72 +1,54 @@
-Return-Path: <linux-kernel+bounces-289094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4732F95420A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:48:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71507954207
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:48:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AC141C245DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:48:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4F971C2493E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:48:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1123712D744;
-	Fri, 16 Aug 2024 06:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8303083A14;
+	Fri, 16 Aug 2024 06:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YIL/BL1U"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aPlcbiWZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C753812DD90
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 06:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB7683CDA;
+	Fri, 16 Aug 2024 06:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723790873; cv=none; b=OFmkvJLhVLfYVVghlQu4w5MczVV/p9BOKw3n/cLFZebBJfDNdIFpSNKQkXeu35k+r0VjRq6ElfbGCnb77m1IsotA1aMshk65NZIjphHjoZHkixZanSAzcWqkLMdXZzheHEb9uvIv7ElVbg+jDQALpsmicfZHvLYx6N5Cb8nLJK0=
+	t=1723790862; cv=none; b=EMaqINW1uKqbj0vH7VPMm1CDVnRjOT/xtuOpRPJoiImERz52yaVY17q2NJAezJOiS9+5R+WqRQ+wXynnKeiqrFdVYY5tkB+zHXtXuMhRIDXEzJht3F9KYGI5vs6BML2JuPUBdokWW/ZFc3qCSECk35XbmMD3FlRchvkYmNGLegU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723790873; c=relaxed/simple;
-	bh=hSxmOP0ybrbjuaLqUnecScg7nLy0PWDySBWg/BmX878=;
+	s=arc-20240116; t=1723790862; c=relaxed/simple;
+	bh=bknvr7IDkDIglLnjUd8I48/sh3vZ3Fw6ZwBwLol2Qg4=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RmVA8WcYUrqPiXqJyUvwW2hqjyQsLw9/A/B4bv93mwmT+5PItaNHzCPmIYN9bfifwp/sVS4m1KZzA4kRgkaCQfvnrfh02j3tHuPgLnYk6dcunoCbE9kPghSv00WFve08tzKVPKnYAUCzcgHWhmG03jNqQh0tNmSXK6d1PWvNzsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YIL/BL1U; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723790872; x=1755326872;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=hSxmOP0ybrbjuaLqUnecScg7nLy0PWDySBWg/BmX878=;
-  b=YIL/BL1UneOHuQO3yNDd4OBM0/h4SRX5RDZ25f/6+7UIRn4LNcCJTgu0
-   Iz8vmKZbYqPP6eg3kruMlqMnoZZBHjZ1jdXqRrNPBsaZw/3XngvbzpRqA
-   wwaO3mJj9rE++CXESQxvFUjLpjDpci4L458tll7q9+7yw5KTpsES9KMF0
-   hJhE/+cSv8eT3hdvaPrBDh0uBoDHQp980sqo8na3cRI3rmZLdgG2O87vC
-   9qLNpymAwvOSu6DzO7C6mtm+SFcKo6TW5qblPKqvlYR6DT5px8T8owinI
-   FtKSee+3RiRRq/uea9+yC/8a/TBSaz+zNCHoCYzQInaueGf0gXJ3eR8kq
-   w==;
-X-CSE-ConnectionGUID: N/ZkKPzuRjKkuY5Va0nXTg==
-X-CSE-MsgGUID: /OH8E4CkSyGi75DXmPUVuA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11165"; a="32752319"
-X-IronPort-AV: E=Sophos;i="6.10,150,1719903600"; 
-   d="scan'208";a="32752319"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 23:47:49 -0700
-X-CSE-ConnectionGUID: PFEwBKYURh2WMGZGH/9iNA==
-X-CSE-MsgGUID: xrKMzg3mRFOC8hw6msqNIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,150,1719903600"; 
-   d="scan'208";a="82790721"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 15 Aug 2024 23:47:48 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1seqkU-000658-0R;
-	Fri, 16 Aug 2024 06:47:46 +0000
-Date: Fri, 16 Aug 2024 14:47:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alexander Shiyan <shc_work@mail.ru>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Lee Jones <lee@kernel.org>
-Subject: intel_panel.c:undefined reference to `backlight_device_register'
-Message-ID: <202408161408.9pyW8nFp-lkp@intel.com>
+	 Content-Disposition; b=JEd7WqcZC2DeqEtiMQrGYdOlsvYqv8MmbrqDtHlZh3zdi6JNXvsSWbMi5xPfQz1Hz/z1GHRmKTRVc5xPIjeiK5lqLRD5H9xI3a9WYi+Syx3qV6HbnyREZdmn4xj3yRGoAD8oz+QlH+I/K922ihQ9JNh+4fYK4ge5YXbJi49GXSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aPlcbiWZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71EEAC32782;
+	Fri, 16 Aug 2024 06:47:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723790862;
+	bh=bknvr7IDkDIglLnjUd8I48/sh3vZ3Fw6ZwBwLol2Qg4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=aPlcbiWZbKYDoADdVdZjo4/xf4jgIA5COc1G0NWTl6SarPHw3iHzsfMp22i7rc/kD
+	 hPj6lTKkyBsb8j4VvTyph5w2W0qh9tuX1mJtIjOssWw5cHe9z7bttm/3TUpwE7HqBd
+	 kPbRa187PeWlpbBozftet7pm4mlS/b/9BK3hnl4yniooGwEdeeX+LNpW821qrGz6Rh
+	 oASiIOTWV8tchuj7484TzpEwkoesHUNpcmi2P670l+fgg+JYfIf/zaEZavotFTaYFf
+	 UpfpAjmNCL/yOqXWatP/ixVTinOq5MgNf8m+o4DGGFUHNYKAdQO8yZy8g9x2CFupsB
+	 NkSl/salVXf7g==
+Date: Fri, 16 Aug 2024 12:17:30 +0530
+From: Neeraj Upadhyay <Neeraj.Upadhyay@kernel.org>
+To: rcu@vger.kernel.org
+Cc: paulmck@kernel.org, joel@joelfernandes.org, frederic@kernel.org,
+	boqun.feng@gmail.com, urezki@gmail.com,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org, qiang.zhang1211@gmail.com
+Subject: [PATCH rcu 00/12] RCU tasks updates for v6.12
+Message-ID: <20240816064730.GA56949@neeraj.linux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,32 +58,57 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   d7a5aa4b3c007fae50405ca75c40258d90300e96
-commit: 8c5dc8d9f19c7992b5ed557b865127a80149041b video: backlight: Remove useless BACKLIGHT_LCD_SUPPORT kernel symbol
-date:   5 years ago
-config: x86_64-buildonly-randconfig-002-20240816 (https://download.01.org/0day-ci/archive/20240816/202408161408.9pyW8nFp-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240816/202408161408.9pyW8nFp-lkp@intel.com/reproduce)
+1.      Remove RCU Tasks Rude asynchronous APIs from rcu-updaters.sh,
+        courtesy of Paul E. McKenney.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408161408.9pyW8nFp-lkp@intel.com/
+2.      Remove RCU Tasks Rude asynchronous APIs, courtesy of
+        Paul E. McKenney.
 
-All errors (new ones prefixed by >>):
+3.      Stop testing RCU Tasks Rude asynchronous APIs, courtesy of
+        Paul E. McKenney.
 
-   ld: warning: arch/x86/lib/csum-copy_64.o: missing .note.GNU-stack section implies executable stack
-   ld: NOTE: This behaviour is deprecated and will be removed in a future version of the linker
-   ld: warning: arch/x86/lib/csum-copy_64.o: missing .note.GNU-stack section implies executable stack
-   ld: NOTE: This behaviour is deprecated and will be removed in a future version of the linker
-   ld: warning: .tmp_vmlinux1 has a LOAD segment with RWX permissions
-   ld: drivers/gpu/drm/i915/intel_panel.o: in function `intel_backlight_device_register':
->> intel_panel.c:(.text+0x4e08): undefined reference to `backlight_device_register'
-   ld: drivers/gpu/drm/i915/intel_panel.o: in function `intel_backlight_device_unregister':
->> intel_panel.c:(.text+0x4ea6): undefined reference to `backlight_device_unregister'
+4.      Stop testing RCU Tasks Rude asynchronous APIs, courtesy of
+        Paul E. McKenney.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+5.      Remove RCU Tasks Rude asynchronous APIs, courtesy of
+        Paul E. McKenney.
+
+6.      Fix access non-existent percpu rtpcp variable in rcu_tasks_need_gpcb(),
+        courtesy of Zqiang.
+
+7.      Check processor-ID assumptions, courtesy of Paul E. McKenney.
+
+8.      Update rtp->tasks_gp_seq comment, courtesy of Paul E. McKenney.
+
+9.      Provide rcu_barrier_cb_is_done() to check rcu_barrier() CBs,
+        courtesy of Paul E. McKenney.
+
+10.     Mark callbacks not currently participating in barrier
+        operation, courtesy of Paul E. McKenney.
+
+11.     Add detailed grace-period and barrier diagnostics, courtesy of
+        Paul E. McKenney.
+
+12.     Add rcu_barrier_tasks*() start time to diagnostics, courtesy of
+        Paul E. McKenney.
+
+
+Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/neeraj.upadhyay/linux-rcu.git/log/?h=rcu.tasks.14.08.24a
+
+
+- Neeraj
+
+------------------------------------------------------------------------
+
+ .../RCU/Design/Requirements/Requirements.rst  |   3 +-
+ Documentation/RCU/checklist.rst               |  61 +++--
+ Documentation/RCU/whatisRCU.rst               |   2 +-
+ .../admin-guide/kernel-parameters.txt         |   8 -
+ include/linux/rcupdate.h                      |   5 +-
+ kernel/rcu/rcu.h                              |   5 +
+ kernel/rcu/rcuscale.c                         |   2 -
+ kernel/rcu/rcutorture.c                       |   8 -
+ kernel/rcu/tasks.h                            | 212 ++++++++++++------
+ tools/rcu/rcu-updaters.sh                     |   2 -
+ 10 files changed, 180 insertions(+), 128 deletions(-)
 
