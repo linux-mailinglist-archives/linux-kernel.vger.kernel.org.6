@@ -1,75 +1,60 @@
-Return-Path: <linux-kernel+bounces-289936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 238D7954D7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:17:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56F61954D7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:18:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C311286F28
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:17:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D1611F251B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532041C0DD5;
-	Fri, 16 Aug 2024 15:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFFA1BE228;
+	Fri, 16 Aug 2024 15:16:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g0ow7PZC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzjFTtOH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4661BDAB8;
-	Fri, 16 Aug 2024 15:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52BC1C0DF3
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723821400; cv=none; b=Iay5nC+4wRKCKTzK4C/qIF/UjUeVHxIhObEzLNuAwXO85KaSjglAHbCUNGl0i9BoeS9bgL5IVP4g6DMHgDAg+MWpiSNYlRrgeu1OwuOmk1jBW2M+uLbZoqCOS94w5LyQtkCK1BVCfKNxv1+qqf0ms8Mm/XGQ8xCZAtxUiFVWLDA=
+	t=1723821403; cv=none; b=f66K283u+fmMq5ITkVdRZGC5m98srAYq9tM5CPMfMLfsDjPdWLYA6q9jvP1C9ZREkiSJY1W3fq+4/thYx5zDuEo/TKYiFcvVZS1zrP6CUSk7YLd1OhMbsWp6K9nGgi0tkBxeIT5OEMldaNrPkkaMvZzkImGDap4gYZFUHfy1bR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723821400; c=relaxed/simple;
-	bh=HrCbWr5sE7d1FSdM7OLBHJqb9SmFXoXZLsUxeMJ23UI=;
+	s=arc-20240116; t=1723821403; c=relaxed/simple;
+	bh=/hVd5ORiPPhhJ2kcUPJhtXGPSis/LyoL3hp4MKPlADA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OLzeYLLxKHAOrY1uGjiDrp8lkpG/tX/nYT+oc/v5ZapGRxVNhGD6T3v+zm1IwdjVSEIJoJOShJz8yFVjCci+UAflcnF0opJ2rb/Qlq1WXnFzxVpBIf/lv+vlbRte4qKcq0I9isuCWmuoxHOtno0iUU4Y2bRUA8CwyroW8R1g2/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g0ow7PZC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB04DC4AF15;
-	Fri, 16 Aug 2024 15:16:33 +0000 (UTC)
+	 MIME-Version:Content-Type; b=nFEzKz77SPOhaVOjGEn6ji/cSOt0MAmZH9NBNTqy9sRMccNvfda5zPVwiVCQsfJTwQOwj1/GKlPcuKuBgF8k0/7hjZ2F2+EcvOaaCDIX4vdXn0hllGQ+7E4FL8gwwWNRceT8dzT/53vNROUKdTWZ4MPWVVbBHWI+ZHWEDFaEEO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bzjFTtOH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15B2CC4AF0B;
+	Fri, 16 Aug 2024 15:16:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723821397;
-	bh=HrCbWr5sE7d1FSdM7OLBHJqb9SmFXoXZLsUxeMJ23UI=;
+	s=k20201202; t=1723821403;
+	bh=/hVd5ORiPPhhJ2kcUPJhtXGPSis/LyoL3hp4MKPlADA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=g0ow7PZCEAeb1DhfX64PhHghH8VhkFKmrwqQMgR9rLVNBmd43SIIOtS9FOi0qX87X
-	 cUiRlvGtXuTGsgtYcFxohdKZmuHSSd8c4sbESFF3D2QK8pmWOM4qwKXL1NT30h/UeD
-	 r9jE65tOX6EtKYQVm7Juj2voDjuY3UmN6jAqmm+/jGos7P78CW0+3m329QJ9u8+oiO
-	 5EX+MbrCoGy0qHv8iKYxH1LVj4feBTxQknCiQP5DAY0q+bNYvaaY66dBc4GksU7tIS
-	 HZ5dRigI+gtE7jjSrTaKl0+kr2arqwy7vaMbtoKd0Ftf3BHovRC5UBvE+qga02mZTt
-	 ur8Qgvx40jshg==
+	b=bzjFTtOHFY88f/8B/exKoaGQTCPfblhcQh/mf6WAX2p0Bq7oQQLVwrSxoJLNJPYab
+	 29PJ6FVlgtoEGooTUzAAMQUWd8vNf+CLSN9ygiYET2aeE7UicJsFGDDNzbqN70onoC
+	 KnIS6j2V9+2ySVm5w/LPdAUpqV9fGw8FGHT+ODlBfbFCNwGFD7ZsCq7iGWnyMCKQxi
+	 TUXUxt6q/4INzTOnbVkISDKjYuKItW2VGDzhewVnUd+/YZ4f/3Rgk0vd7h0IwjeLvf
+	 4WlT7ojIDbbUcdoYzUxvGBqElm7awP0u+D41hELHMiRQObFKEkfClN3hK9bKfjUc5i
+	 2tEQ8IVh5z4Rw==
 From: Will Deacon <will@kernel.org>
-To: Marc Zyngier <maz@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	James Clark <james.clark@linaro.org>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	"Rob Herring (Arm)" <robh@kernel.org>
+To: catalin.marinas@arm.com,
+	ardb@kernel.org,
+	msalter@redhat.com,
+	Yue Haibing <yuehaibing@huawei.com>
 Cc: kernel-team@android.com,
 	Will Deacon <will@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v3 0/7] arm64: Add support for Armv9.4 PMU fixed instruction counter
-Date: Fri, 16 Aug 2024 16:16:00 +0100
-Message-Id: <172381015369.134151.12311687013802000544.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] arm64: mm: Remove unused declaration early_io_map()
+Date: Fri, 16 Aug 2024 16:16:02 +0100
+Message-Id: <172380414438.1160828.14404207342386712346.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20240731-arm-pmu-3-9-icntr-v3-0-280a8d7ff465@kernel.org>
-References: <20240731-arm-pmu-3-9-icntr-v3-0-280a8d7ff465@kernel.org>
+In-Reply-To: <20240805140038.1366033-1-yuehaibing@huawei.com>
+References: <20240805140038.1366033-1-yuehaibing@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,32 +64,16 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Wed, 31 Jul 2024 10:51:17 -0600, Rob Herring (Arm) wrote:
-> This series adds support for the optional fixed instruction counter
-> added in Armv9.4 PMU. Most of the series is a refactoring to remove the
-> index to counter number conversion which dates back to the Armv7 PMU
-> driver. Removing it is necessary in order to support more than 32
-> counters without a bunch of conditional code further complicating the
-> conversion.
+On Mon, 05 Aug 2024 22:00:38 +0800, Yue Haibing wrote:
+> Commit bf4b558eba92 ("arm64: add early_ioremap support") removed the
+> implementation but leave declaration.
 > 
-> [...]
+> 
 
-Applied to will (for-next/perf), thanks!
+Applied to arm64 (for-next/misc), thanks!
 
-[1/7] perf: arm_pmu: Remove event index to counter remapping
-      https://git.kernel.org/will/c/bf5ffc8c80e0
-[2/7] perf: arm_pmuv3: Prepare for more than 32 counters
-      https://git.kernel.org/will/c/a4a6e2078d85
-[3/7] KVM: arm64: pmu: Use arm_pmuv3.h register accessors
-      https://git.kernel.org/will/c/741ee5284551
-[4/7] KVM: arm64: pmu: Use generated define for PMSELR_EL0.SEL access
-      https://git.kernel.org/will/c/f9b11aa00708
-[5/7] arm64: perf/kvm: Use a common PMU cycle counter define
-      https://git.kernel.org/will/c/126d7d7cce5e
-[6/7] KVM: arm64: Refine PMU defines for number of counters
-      https://git.kernel.org/will/c/2f62701fa5b0
-[7/7] perf: arm_pmuv3: Add support for Armv9.4 PMU instruction counter
-      https://git.kernel.org/will/c/d8226d8cfbaf
+[1/1] arm64: mm: Remove unused declaration early_io_map()
+      https://git.kernel.org/arm64/c/4960f9a5a5ac
 
 Cheers,
 -- 
