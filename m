@@ -1,218 +1,207 @@
-Return-Path: <linux-kernel+bounces-289612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB61F954830
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:42:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C997A954834
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B304B22E02
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:42:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66F7E282078
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEE51AE84C;
-	Fri, 16 Aug 2024 11:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3EB19D089;
+	Fri, 16 Aug 2024 11:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZKfX+cDL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="Kl52zXl0"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2081.outbound.protection.outlook.com [40.107.117.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E822954BD4;
-	Fri, 16 Aug 2024 11:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723808553; cv=none; b=pUqfLrmuS3UPGdMbFP6v3BIDAz6yFdJFP0gQhrLnXP3I+2KduoZgO4Vg8Upm51V47P8+BI0gpVdn1XzKQdqsRsbsV72O/IxeBIE3ZgfrvcqnLJ8tuEwTaCN3sYCZqn/NMD0ktlj8RI5c7HckBD55r1cF+SzERQZS6lcli+rPIzQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723808553; c=relaxed/simple;
-	bh=J+GSTdLpJEZfAk/f/yXm2p8gFmA0yCS+q76KUgXiJdQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZfR+WWv6y0ZTJIlm/Td1zD/Wo+WR9vfTg72sRpzqC2C3lqeeyfV/vUacQZFqZaOI4ZH0Ll9uSTU+FScgpU4APIBfxNnQQbYYOLXOAFcxmCTQh+jjU5p+KHyP1o4UPLD8JU+R0siptEQ1wL4+oqdsZIwzMrFPaatF4ZZJdCv9Kko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZKfX+cDL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42484C4AF0D;
-	Fri, 16 Aug 2024 11:42:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723808552;
-	bh=J+GSTdLpJEZfAk/f/yXm2p8gFmA0yCS+q76KUgXiJdQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZKfX+cDLe9cWJg0Jsc/3IFVH4xssQrIdWDyXAdVBkooWS2TBxzTytsXYgh+KarcPq
-	 SOdGJvmrOoHFMr1br8qx8sAr7lIAl8AMBgau8VodV9yQXD98IDOzQaEOMEEQwOXTFi
-	 BVGM6D+6SEc3sh/DaeqzG5IOCMeUfE8n+fn3velhWq2ju0ry0LjdIUkyMnwz8mmI1M
-	 SO8/UYZ7360FyeDOgQk65crCXPbEVqp+59srpUbtAW+vsLBetnOdpDXoLV1KIde5pp
-	 7Kkq4r+M8kdWWjbQ+cGA2oqDi19LN14UpktOzg+AbJ8cZwkymF2msZHXuXAZ6HHYH+
-	 IWFG7sEs1rG+w==
-Date: Fri, 16 Aug 2024 13:42:26 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-man@vger.kernel.org, x86@kernel.org, bpf@vger.kernel.org, 
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, "Borislav Petkov (AMD)" <bp@alien8.de>, 
-	Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>, 
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, Deepak Gupta <debug@rivosinc.com>
-Subject: Re: [PATCHv8 9/9] man2: Add uretprobe syscall page
-Message-ID: <ygpwfyjvhuctug2bsibvc7exbirahojuivglcfjusw4rrqeqhc@44h23muvk3xb>
-References: <20240611112158.40795-1-jolsa@kernel.org>
- <20240611112158.40795-10-jolsa@kernel.org>
- <20240611233022.82e8abfa2ff0e43fd36798b2@kernel.org>
- <3pc746tolavkbac4n62ku5h4qqkbcinvttvcnkib6nxvzzfzym@k6vozf6totdw>
- <20240807162734.100d3b55@gandalf.local.home>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F0F155726;
+	Fri, 16 Aug 2024 11:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723808798; cv=fail; b=CEJ//tSl5y04AdvT5t5y8vrHaQul+s/2rGObQgLnWcK2SsLGv5nnLggK+F4H6ioc+NqpGGc4mM0cay9zfH0ZY6vQZ8HK8J8QzhR3aufiLjArHPhKuOPDzZjMS8ZxaMjuI1zdUeMGVhCC+1K9BaCVIhwynzYjbr8/l1cI0tuvf4E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723808798; c=relaxed/simple;
+	bh=RpKQsJzhrXy/tWkzsi4WuU9mSJJ5u8FAj9iaY16rgWM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QLC+nmPA0o62yIAckiA6QhCK3IY8JeJyQTuonNm5OfT+6hzCe6tWvUvwaS6VSnG0YKIpHpH7SeT2bHQyzn+l/zP0ebPRWJ+49LxildXb6SxkTu06YpF7RKW/VSu13bFsWWHlMd6MBF752ZjdE0wy45MMGET2lJQ2bZ3Jwev99N8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=Kl52zXl0; arc=fail smtp.client-ip=40.107.117.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lrbeLYRh30U1t6D3Smiy7bxAk067g1GwSlYDczSan8dmUni4II4RiCS2aa/NNJud0wT/itnNlyYDy0wS0/IKb/lw/1xYqbxN4qasFAjYkFP21jJejDJcwZSIj1aqjncgWAqwUY28hiiWkPgmBsFmIc8gQJosIGDmrskVxPO2HO43sbvWfxWIGy5q4KNZ9TasTsJE+Ifv1l//iteIc/6xRxh1NmnvO9t+v7zBACUeMzdKa6GFtjgpElCVMKllLjsy2mvIBqZlu3W+NaqbGjrLO3YVOSI3SiSsCN70XAlZijJFTXP51PaABrVK8uHBsmUcrQQqyJegIo6mFIc1Hc38ag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dZeS7C0dSse1jmhHclyd8W2Th58WHVg3vNviRVZGArE=;
+ b=JNMKU91H/mtLSz/RsQHgTP3p3caB2P3+JkXgHNpAAGXaTaRTMl/JGJmmcebcRs26gw3jQPtXYDWvFWCqCWCsADARR7DZ+owR+859Kzd/MMOPGeopNUE7uSCh3R4TxSQ3joA/6LhoqZNuHOmr1RkBu2ENyh+r5EQhu0JNVkLqM0ktE+Vsl7tAeOVZgbaGkU/IX2CkBP6BzCWijE0OlP60+m6TAaNq9bFUYtxE0vO5tsII3IREWQ3X1P82jftYroFguOyPLM6orpAGE0EgmiAXrHAvQlE3ahZZH9AwOOltZdneVq3DzocD8fC6wj+wDE1S946LZ9ts+7u4Uu7IPvK+NQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 58.252.5.68) smtp.rcpttodomain=gmail.com smtp.mailfrom=oppo.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=oppo.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dZeS7C0dSse1jmhHclyd8W2Th58WHVg3vNviRVZGArE=;
+ b=Kl52zXl05Y7a/GkqMLjAciSkTimaTgn1bw4miRqPruh1vmB1CI9OD18a8abfKAPRm5ERO/kaVmGWMeVrioTxgpY3yMwgxYlJCsK10hfoRXx5IxBOBfJ+be8fT+u7wIM8HOASLqwtICqVxbrqL1nIVNgRybmyQNkyWC8N8ioRQko=
+Received: from PSBPR02CA0007.apcprd02.prod.outlook.com (2603:1096:301::17) by
+ TYSPR02MB7578.apcprd02.prod.outlook.com (2603:1096:405:32::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7875.19; Fri, 16 Aug 2024 11:46:33 +0000
+Received: from HK2PEPF00006FB2.apcprd02.prod.outlook.com
+ (2603:1096:301:0:cafe::9b) by PSBPR02CA0007.outlook.office365.com
+ (2603:1096:301::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19 via Frontend
+ Transport; Fri, 16 Aug 2024 11:46:33 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
+ smtp.mailfrom=oppo.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=oppo.com;
+Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
+ 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
+ client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
+Received: from mail.oppo.com (58.252.5.68) by
+ HK2PEPF00006FB2.mail.protection.outlook.com (10.167.8.8) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7849.8 via Frontend Transport; Fri, 16 Aug 2024 11:46:33 +0000
+Received: from oppo.com (172.16.40.118) by mailappw31.adc.com (172.16.56.198)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 16 Aug
+ 2024 19:46:32 +0800
+Date: Fri, 16 Aug 2024 19:46:26 +0800
+From: Hailong Liu <hailong.liu@oppo.com>
+To: Uladzislau Rezki <urezki@gmail.com>
+CC: Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>,
+	Barry Song <21cnbao@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Tangquan Zheng <zhengtangquan@oppo.com>,
+	<stable@vger.kernel.org>, Baoquan He <bhe@redhat.com>, Matthew Wilcox
+	<willy@infradead.org>, <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [RESEND PATCH v1] mm/vmalloc: fix page mapping if
+ vm_area_alloc_pages() with high order fallback to order 0
+Message-ID: <20240816114626.jmhqh5ducbk7qeur@oppo.com>
+References: <20240808122019.3361-1-hailong.liu@oppo.com>
+ <CAGsJ_4z4+CCDoPR7+dPEhemBQN60Cj84rCeqRY7-xvWapY4LGg@mail.gmail.com>
+ <ZrXiUvj_ZPTc0yRk@tiehlicka>
+ <ZrXkVhEg1B0yF5_Q@pc636>
+ <20240815220709.47f66f200fd0a072777cc348@linux-foundation.org>
+ <20240816091232.fsliktqgza5o5x6t@oppo.com>
+ <Zr8mQbc3ETdeOMIK@pc636>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="o547xbwl3zxtiyuh"
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240807162734.100d3b55@gandalf.local.home>
+In-Reply-To: <Zr8mQbc3ETdeOMIK@pc636>
+X-ClientProxiedBy: mailappw30.adc.com (172.16.56.197) To mailappw31.adc.com
+ (172.16.56.198)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB2:EE_|TYSPR02MB7578:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9b12c48a-cddb-4dfd-b2cc-08dcbde91391
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?xx98F02asHyAzZ/xEZ7Qk0aM1GC+6BF9S93o7WMmWWBby0Kv4/hkCiRcxL2t?=
+ =?us-ascii?Q?FxFEw67ehTWq2/WXtONGcA1cVGMyiDHWavDNn/i+WosL2IFdIu3og3uH/Klb?=
+ =?us-ascii?Q?TxCaBKoBs+QVxsbs1+FVZy8pcuP517SeS3JHncjUsS8nCGX55bI3EN2b7Yaf?=
+ =?us-ascii?Q?0qxU6GhHXM5j5umGUNkDb5j99xXchd9rYqY20bN9kWTy90c2CI0r34IUF7TX?=
+ =?us-ascii?Q?Hf5k6L946XoKxcRRsNwdBX+gk095JK1/Ye0xe7z6kYvjtZD90ZNenCBByHqD?=
+ =?us-ascii?Q?RUJlnlk93FObKoTUCA1bKj36FzQQqZhoK7n60i2G2XkXInmkW8XB6/ylv9fD?=
+ =?us-ascii?Q?nIU2jX9TDMzuG97j3n1mgnaD3ARsVyAOFgrVS6dQvrkaoXWYsNwk8htbwATn?=
+ =?us-ascii?Q?VcCoYOBR9fOsUkHcCgJa2P61Vib3GKdAD0wMfBtfpyc2XUxgfdg9dPAWCn1A?=
+ =?us-ascii?Q?ZnrjN0MkozGydhKrRBKWn2V5u8DXqlOyB4M/yZc9jMiKKx78LWFJIohG578H?=
+ =?us-ascii?Q?K4fPvGE53gY/H+cNUOhSEBvopyBNWDkXH84XS7w32QsfmxbAHoHBG17nqPm1?=
+ =?us-ascii?Q?IZ1yy7NDMQV1nKZWhmjoHzk5Zpz3nGUXYlxh9h7CwNmIFoASG+c2HkWUDzCZ?=
+ =?us-ascii?Q?N3vpu7jSoAPcR2dTHYxCzB5YrZdOm+NXbn7F/xpbPoczIKzNu0apOnGUIDjA?=
+ =?us-ascii?Q?aQYr4bMgyj6Ek4ySM10P2tPjEIJc7qmI1Bfb0sqPZ4KsnzwxyOXkCkikSCws?=
+ =?us-ascii?Q?uwxY6g7SlOrY876hbir7pi/sMxbNfMCz5gPdeatyihPTbjhkYkcgKKJA5GoK?=
+ =?us-ascii?Q?BafHbx/d4WIolRR9aJn65COCVdndbOa5Ewx3rjCc3ujKAG5UHfoV5Cj+dBqj?=
+ =?us-ascii?Q?DmZcqVwbrS3SM377e0zpo7uqOugHRkh5+xvkEYdgp4qgD7FYLD+iNrMdSJ3w?=
+ =?us-ascii?Q?te2+aOwZGJNJ9jXzVVp+TIY9ezKRJjKCZ6T/ZI+0k335Py17RElr9NeqR5tT?=
+ =?us-ascii?Q?eZJ3pUIxhKmuXFWGoXrMMP43UfJKwcPx7U4rpuPVvrsEvI2ZPIE8UtoTEPf3?=
+ =?us-ascii?Q?u3nQ9kghg/wSgsQhKE4AIEcLOJQI82q6x8PJUEaHuKdHjVui0QeRbg+a8r0z?=
+ =?us-ascii?Q?OyL9kMSl1evTSSCPZh1ZBcl/0fregPICsUe+qnns6COpdTO8WpkppLocFPOP?=
+ =?us-ascii?Q?fECGLfI0RK1XiBA6Dzvm7l0SLZ3bS2/GDFvRrEDwf8fmxD17oP7NTT7UFPXn?=
+ =?us-ascii?Q?sn/dzLsBqgPkSfeEB2S+6TX/jiccOx6F8Qy222DUqvATVOLxzJ+d18wJClZ5?=
+ =?us-ascii?Q?rk2oIcnqt+aOkk5uFFNjaTOriNngKc5cA8GLU21r2tq17XCPYXgbPVjI0JQR?=
+ =?us-ascii?Q?nTXOUBT28YfH6BgJyuvDxChHqGjheVvX2VIqSxaWYGRBmFrUfFfF9CeCRhVw?=
+ =?us-ascii?Q?lWnmZnQArZCJFiGI58u4tLYmALFKR7PB?=
+X-Forefront-Antispam-Report:
+	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2024 11:46:33.1394
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9b12c48a-cddb-4dfd-b2cc-08dcbde91391
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	HK2PEPF00006FB2.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR02MB7578
 
+On Fri, 16. Aug 12:13, Uladzislau Rezki wrote:
+> On Fri, Aug 16, 2024 at 05:12:32PM +0800, Hailong Liu wrote:
+> > On Thu, 15. Aug 22:07, Andrew Morton wrote:
+> > > On Fri, 9 Aug 2024 11:41:42 +0200 Uladzislau Rezki <urezki@gmail.com> wrote:
+> > >
+> > > > > > Acked-by: Barry Song <baohua@kernel.org>
+> > > > > >
+> > > > > > because we already have a fallback here:
+> > > > > >
+> > > > > > void *__vmalloc_node_range_noprof :
+> > > > > >
+> > > > > > fail:
+> > > > > >         if (shift > PAGE_SHIFT) {
+> > > > > >                 shift = PAGE_SHIFT;
+> > > > > >                 align = real_align;
+> > > > > >                 size = real_size;
+> > > > > >                 goto again;
+> > > > > >         }
+> > > > >
+> > > > > This really deserves a comment because this is not really clear at all.
+> > > > > The code is also fragile and it would benefit from some re-org.
+> > > > >
+> > > > > Thanks for the fix.
+> > > > >
+> > > > > Acked-by: Michal Hocko <mhocko@suse.com>
+> > > > >
+> > > > I agree. This is only clear for people who know the code. A "fallback"
+> > > > to order-0 should be commented.
+> > >
+> > > It's been a week.  Could someone please propose a fixup patch to add
+> > > this comment?
+> >
+> > Hi Andrew:
+> >
+> > Do you mean that I need to send a v2 patch with the the comments included?
+> >
+> It is better to post v2.
+Got it.
 
---o547xbwl3zxtiyuh
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-man@vger.kernel.org, x86@kernel.org, bpf@vger.kernel.org, 
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, "Borislav Petkov (AMD)" <bp@alien8.de>, 
-	Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>, 
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, Deepak Gupta <debug@rivosinc.com>
-Subject: Re: [PATCHv8 9/9] man2: Add uretprobe syscall page
-References: <20240611112158.40795-1-jolsa@kernel.org>
- <20240611112158.40795-10-jolsa@kernel.org>
- <20240611233022.82e8abfa2ff0e43fd36798b2@kernel.org>
- <3pc746tolavkbac4n62ku5h4qqkbcinvttvcnkib6nxvzzfzym@k6vozf6totdw>
- <20240807162734.100d3b55@gandalf.local.home>
-MIME-Version: 1.0
-In-Reply-To: <20240807162734.100d3b55@gandalf.local.home>
+>
+> But before, could you please comment on:
+>
+> in case of order-0, bulk path may easily fail and fallback to the single
+> page allocator. If an request is marked as NO_FAIL, i am talking about
+> order-0 request, your change breaks GFP_NOFAIL for !order.
+>
+> Am i missing something obvious?
+For order-0, alloc_pages(GFP_X | __GFP_NOFAIL, 0), buddy allocator will handle
+the flag correctly. IMO we don't need to handle the flag here.
 
-Hi Steven, Jiri,
+>
+> Thanks!
+>
+> --
+> Uladzsislau Rezki
 
-On Wed, Aug 07, 2024 at 04:27:34PM GMT, Steven Rostedt wrote:
-> Just in case nobody pinged you, the rest of the series is now in Linus's
-> tree.
-
-Thanks for the ping!
-
-I have prepared some tweaks to the patch (see below).
-Also, I have some doubts.  The prototype shows that it has no arguments
-(void), but the text said that arguments, if any, are arch-specific.
-Does any arch have arguments?  Should we use a variadic prototype (...)?
-
-Please add the changes proposed below to your patch, tweak anything if
-you consider it appropriate) and send it as v10.
-
-Have a lovely day!
-Alex
-
-
-diff --git i/man/man2/uretprobe.2 w/man/man2/uretprobe.2
-index cf1c2b0d8..51b566998 100644
---- i/man/man2/uretprobe.2
-+++ w/man/man2/uretprobe.2
-@@ -7,50 +7,43 @@ .SH NAME
- uretprobe \- execute pending return uprobes
- .SH SYNOPSIS
- .nf
--.B int uretprobe(void)
-+.B int uretprobe(void);
- .fi
- .SH DESCRIPTION
--The
- .BR uretprobe ()
--system call is an alternative to breakpoint instructions for triggering re=
-turn
--uprobe consumers.
-+is an alternative to breakpoint instructions
-+for triggering return uprobe consumers.
- .P
- Calls to
- .BR uretprobe ()
--system call are only made from the user-space trampoline provided by the k=
-ernel.
-+are only made from the user-space trampoline provided by the kernel.
- Calls from any other place result in a
- .BR SIGILL .
--.SH RETURN VALUE
--The
-+.P
-+Details of the arguments (if any) passed to
- .BR uretprobe ()
--system call return value is architecture-specific.
-+are architecture-specific.
-+.SH RETURN VALUE
-+The return value is architecture-specific.
- .SH ERRORS
- .TP
- .B SIGILL
--The
- .BR uretprobe ()
--system call was called by a user-space program.
-+was called by a user-space program.
- .SH VERSIONS
--Details of the
--.BR uretprobe ()
--system call behavior vary across systems.
-+The behavior varies across systems.
- .SH STANDARDS
- None.
- .SH HISTORY
--TBD
--.SH NOTES
--The
-+Linux 6.11.
-+.P
- .BR uretprobe ()
--system call was initially introduced for the x86_64 architecture
-+was initially introduced for the x86_64 architecture
- where it was shown to be faster than breakpoint traps.
- It might be extended to other architectures.
--.P
--The
-+.SH CAVEATS
- .BR uretprobe ()
--system call exists only to allow the invocation of return uprobe consumers.
-+exists only to allow the invocation of return uprobe consumers.
- It should
- .B never
- be called directly.
--Details of the arguments (if any) passed to
--.BR uretprobe ()
--and the return value are architecture-specific.
-
---=20
-<https://www.alejandro-colomar.es/>
-
---o547xbwl3zxtiyuh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAma/OyEACgkQnowa+77/
-2zJDCxAAhQ1Ra2KloypCCqkmA4dXbkaqQJyIuJ1Nmls+E5zYqiF2zKYI6OZ9njtq
-Ev/Fx+c59cm2r0DQtu04LfbzrymBLncErRofjceDWAU7Z28hYtFtVEs+Rx4Mdrxu
-5LwnSiLgTv0rwjj3rz91liRasAxBRmDBx/llAHrwO3fYQk2Zp2Y0UrT3GT02moSG
-f/LXSx/DihVQzoZJPvDC0hy+sYix6Lkr/hZRdlBSclfQJJsm1xv79N0qG6lKCgP9
-Au4DW4Pvjfw1xeYtfHAHLvw2cyvHUcHvLyH2uvX5F+33kk1hLGf81DjraL3wFsyj
-z0uDA/TkNHrLiMu8fxNnG6CBxasaZYk8U7EsUFqtC3gVMleDZFxLzuSrRI4xprBe
-rxJ/SxkVl0pLOGMMlj+Q3yjilgPQqBklZK1fOwqdNQ7fWAKR2K7vRXj+fRb84Xck
-O3LJg02hlH8Oquh3QmlGFl9QaMZn8FHV16Rpk4Vl3q+Y3I48rg8n+bhT7vuhOK+H
-4G5yEMLB5BfmQ5DSDlpSmN7jQlK9NVoPgk9yV09LkBtlW29pDvJXaTth9H0Is3ci
-DxTJySu/USezOarYS/AUjbTGJT943EtGj5KMHwcixS6ub+CsufI6CAnyXkfJMvzt
-CdseNjZW7MfslXPlP3fpVehUSUXSA36CDIH754UV4xZLoxrOHs0=
-=J420
------END PGP SIGNATURE-----
-
---o547xbwl3zxtiyuh--
+--
+help you, help me,
+Hailong.
 
