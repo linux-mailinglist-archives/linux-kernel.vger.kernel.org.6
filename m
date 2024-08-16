@@ -1,138 +1,135 @@
-Return-Path: <linux-kernel+bounces-290263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACE5A95517E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:30:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA43E95517F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:31:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E06AF1C2309F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:30:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 184DEB241E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE39F1C4600;
-	Fri, 16 Aug 2024 19:30:43 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441511C3F16;
+	Fri, 16 Aug 2024 19:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dJpZQJBf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423B410E4;
-	Fri, 16 Aug 2024 19:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B8685283
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 19:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723836643; cv=none; b=qIcDjkblPDA1MtI3rx3t+nH1T2UdeWus7jjv3J46QPLOzvf6GO+SdQcajk3r9CsPwMPZXl5Vjc2pEAbs2vELe4muobNziDhKR9HxQjFXKC7ze7QHy8JMxoYvZCPWGsHE/Pz+FSc3XCHaCLFW6QevGh0Ee2getCSb8HwaTe6P7NU=
+	t=1723836682; cv=none; b=UkI6sQAmEtj7oorVxlZkOPXIniJYaWml16Zl9/6bFYaQF77luJmTiEtvgJ4lXi7eOF3YH/AxpvOqXY+09kt0OnJoVW/yVieHpKbMq6bGgskv05vWJfgwzyVmcLYvEh00NGdtb1SU9en1KmkmSSIC6HwGG9UCjvl9CZiTwAjfYUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723836643; c=relaxed/simple;
-	bh=iN7A7inr48pTV1DSy1aigzEmKF2n/mAt4X+XCaxE0Xo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=evgxLnan5CNqEOlEYFCMft0Po8l+ZQ0J50oFt55L1perXEyKJmzTFPO5GO0O72YrhyTTvtR+hRwHFweg3rX0VYTzY8MItvjD+Y4nT9/PfzAlsKbiypUB2hhMhKdKNe6h7I8EOdV8Ga+W/hZ+AJwpkbxrYG1Q0zjH5f1MXLwblo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB1DCC32782;
-	Fri, 16 Aug 2024 19:30:41 +0000 (UTC)
-Date: Fri, 16 Aug 2024 15:30:40 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Juri Lelli
- <juri.lelli@redhat.com>, bpf <bpf@vger.kernel.org>, LKML
- <linux-kernel@vger.kernel.org>, Artem Savkov <asavkov@redhat.com>, "Jose E.
- Marchesi" <jose.marchesi@oracle.com>
-Subject: Re: NULL pointer deref when running BPF monitor program
- (6.11.0-rc1)
-Message-ID: <20240816153040.14d36c77@rorschach.local.home>
-In-Reply-To: <Zr-ho0ncAk__sZiX@krava>
-References: <ZrCZS6nisraEqehw@jlelli-thinkpadt14gen4.remote.csb>
-	<ZrECsnSJWDS7jFUu@krava>
-	<CAADnVQLMPPavJQR6JFsi3dtaaLHB816JN4HCV_TFWohJ61D+wQ@mail.gmail.com>
-	<ZrIj9jkXqpKXRuS7@krava>
-	<CAADnVQ+NpPtFOrvD0o2F8npCpZwPrLf4dX8h8Rt96uwM+crQcQ@mail.gmail.com>
-	<ZrSh8AuV21AKHfNg@krava>
-	<CAADnVQLYxdKn-J2-2iXKKKTg=o6xkKWzV2WyYrnmQ-j62b9STA@mail.gmail.com>
-	<Zr3q8ihbe8cUdpfp@krava>
-	<CAADnVQL2ChR5hGAXoV11QdMjN2WwHTLizfiAjRQfz3ekoj2iqg@mail.gmail.com>
-	<20240816101031.6dd1361b@rorschach.local.home>
-	<Zr-ho0ncAk__sZiX@krava>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1723836682; c=relaxed/simple;
+	bh=a3UBjcnOVg9NQFsbusket7qF4bskI8OeVBv1Iky1Ikk=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=H+9+d96+bP4Sd2FqLHzi9vMFq5WPxy4HSL/2CSfS+Io9kQHZJCuA/eupEvCozjnZDYS3Y/SSnAVfEYRuIvPGeIkuMRE9gcKybrRCPahcrxO9LiqSjPz6rUAjpYT1s+jFVEd9kXTauzwwjmwGg7th04aVFVc8yH1DdikV+t4XYOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dJpZQJBf; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723836680;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dAUVeRgH13oxbvE6MJ/L04r2yM6YzE3o8WtEBRvyajM=;
+	b=dJpZQJBfDpIzNZeNg7xhMv38uX3AaauGuvUI21LmjBqZm95lWbvnKt+oe0VpQoZpHj2o1L
+	7gHY3dqrUFGiOb7S350FOs/PA+aWt61gV1lIyZxYQdQ/n/Y9ILm6MyYumPMRNrqY5CGLR+
+	DqPfEtlft7c31qaZUC6CQklteKg2obM=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-610-KiX_NkxMM_erpn1TlFqLZQ-1; Fri,
+ 16 Aug 2024 15:31:15 -0400
+X-MC-Unique: KiX_NkxMM_erpn1TlFqLZQ-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CBF101955F45;
+	Fri, 16 Aug 2024 19:31:10 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6593719560A3;
+	Fri, 16 Aug 2024 19:31:04 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240815090849.972355-1-kernel@pankajraghav.com>
+References: <20240815090849.972355-1-kernel@pankajraghav.com>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: dhowells@redhat.com, brauner@kernel.org, akpm@linux-foundation.org,
+    chandan.babu@oracle.com, linux-fsdevel@vger.kernel.org,
+    djwong@kernel.org, hare@suse.de, gost.dev@samsung.com,
+    linux-xfs@vger.kernel.org, hch@lst.de, david@fromorbit.com,
+    Zi Yan <ziy@nvidia.com>, yang@os.amperecomputing.com,
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+    willy@infradead.org, john.g.garry@oracle.com,
+    cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
+    ryan.roberts@arm.com
+Subject: Re: [PATCH v12 00/10] enable bs > ps in XFS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2924796.1723836663.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 16 Aug 2024 20:31:03 +0100
+Message-ID: <2924797.1723836663@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Fri, 16 Aug 2024 20:59:47 +0200
-Jiri Olsa <olsajiri@gmail.com> wrote:
+Hi Pankaj,
 
-> so far the only working solution I have is adding '__nullable' suffix
-> to argument name:
-> 
-> 	diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-> 	index 9ea4c404bd4e..fc46f0b42741 100644
-> 	--- a/include/trace/events/sched.h
-> 	+++ b/include/trace/events/sched.h
-> 	@@ -559,9 +559,9 @@ DEFINE_EVENT(sched_stat_runtime, sched_stat_runtime,
-> 	  */
-> 	 TRACE_EVENT(sched_pi_setprio,
-> 	 
-> 	-	TP_PROTO(struct task_struct *tsk, struct task_struct *pi_task),
-> 	+	TP_PROTO(struct task_struct *tsk, struct task_struct *pi_task__nullable),
-> 	 
-> 	-	TP_ARGS(tsk, pi_task),
-> 	+	TP_ARGS(tsk, pi_task__nullable),
-> 	 
-> 		TP_STRUCT__entry(
-> 			__array( char,	comm,	TASK_COMM_LEN	)
-> 	@@ -574,8 +574,8 @@ TRACE_EVENT(sched_pi_setprio,
-> 			memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
-> 			__entry->pid		= tsk->pid;
-> 			__entry->oldprio	= tsk->prio;
-> 	-		__entry->newprio	= pi_task ?
-> 	-				min(tsk->normal_prio, pi_task->prio) :
-> 	+		__entry->newprio	= pi_task__nullable ?
-> 	+				min(tsk->normal_prio, pi_task__nullable->prio) :
-> 					tsk->normal_prio;
-> 			/* XXX SCHED_DEADLINE bits missing */
-> 		),
-> 
-> 
-> now I'm trying to make work something like:
-> 
-> 	diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-> 	index 9ea4c404bd4e..4e4aae2d5700 100644
-> 	--- a/include/trace/events/sched.h
-> 	+++ b/include/trace/events/sched.h
-> 	@@ -559,9 +559,9 @@ DEFINE_EVENT(sched_stat_runtime, sched_stat_runtime,
-> 	  */
-> 	 TRACE_EVENT(sched_pi_setprio,
-> 	 
-> 	-	TP_PROTO(struct task_struct *tsk, struct task_struct *pi_task),
-> 	+	TP_PROTO(struct task_struct *tsk, struct task_struct *__nullable(pi_task)),
-> 	 
-> 	-	TP_ARGS(tsk, pi_task),
-> 	+	TP_ARGS(tsk, __nullable(pi_task)),
-> 	 
-> 		TP_STRUCT__entry(
-> 			__array( char,	comm,	TASK_COMM_LEN	)
+I applied the first five patches and set minimum folio size for afs files =
+to
+8K (see attached patch) and ran some tests.
 
-Hmm, that's really ugly though. Both versions.
+With simple tests, I can see in the trace log that it is definitely creati=
+ng
+8K folios where it would previously create 4K folios.
 
-Now when Alexei said:
+However, with 'xfstests -g quick', generic/075 generic/112 generic/393 fai=
+l
+where they didn't previously.  I won't be able to look into this more till
+Monday.
 
-> > > > > We cannot make all tracepoint pointers to be PTR_TRUSTED | PTR_MAYBE_NULL
-> > > > > by default, since it will break a bunch of progs.
-> > > > > Instead we can annotate this tracepoint arg as __nullable and
-> > > > > teach the verifier to recognize such special arguments of tracepoints. 
+If you want to try using afs for yourself, install the kafs-client package
+(available on Fedora and Debian), do 'systemctl start afs.mount' and then =
+you
+can, say, do:
 
-I'm not familiar with the verifier, so I don't know how the above is
-implemented, and why it would break a bunch of progs.
+	ls /afs/openafs.org/www/docs.openafs.org/
 
-If you had a macro around the parameter:
+and browse the publicly accessible files under there.
 
-		TP_PROTO(struct task_struct *tsk, struct task_struct *__nullable(pi_task)),
+David
+---
+commit d676df787baee3b710b9f0d284b21518473feb3c
+Author: David Howells <dhowells@redhat.com>
+Date:   Fri Aug 16 19:54:25 2024 +0100
 
-Could having that go through another macro pass in trace_events.h work?
-That is, could we associate the trace event with "nullable" parameters
-that could be stored someplace else for you?
+    afs: [DEBUGGING] Set min folio order
 
--- Steve
+diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+index 3acf5e050072..c3842cba92e7 100644
+--- a/fs/afs/inode.c
++++ b/fs/afs/inode.c
+@@ -104,6 +104,7 @@ static int afs_inode_init_from_status(struct afs_opera=
+tion *op,
+ 		inode->i_fop	=3D &afs_file_operations;
+ 		inode->i_mapping->a_ops	=3D &afs_file_aops;
+ 		mapping_set_large_folios(inode->i_mapping);
++		mapping_set_folio_min_order(inode->i_mapping, 1);
+ 		break;
+ 	case AFS_FTYPE_DIR:
+ 		inode->i_mode	=3D S_IFDIR |  (status->mode & S_IALLUGO);
+
 
