@@ -1,224 +1,227 @@
-Return-Path: <linux-kernel+bounces-289361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60E8095454A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:16:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71B2B95454F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE3BAB24E40
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:16:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E1711C20F99
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862E613D531;
-	Fri, 16 Aug 2024 09:16:30 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B3313D89D;
+	Fri, 16 Aug 2024 09:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="aWebtcI3"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF44139579
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C6E83CD4
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723799789; cv=none; b=IEixn8Wwm/Sp3EgS4B3NQud7aw1PVDa8TIxhnkmTQj9N1S+8SGi6Cu7kn6GyO1M+PWecXbatVaU0B++qD+dZNUAC2hyV3g32ZsfCX9E45FYCqIoq2/LIbxnPVrOfuJBd/9PxSjAHwQ3/qvQuZwUa1AVv80ZZRTw5Z2A2mNd061o=
+	t=1723800127; cv=none; b=kNtooPL9EiCvMGzu5q0IrdJTRr0kdxaEOOnf7Nkfo823c/o5n+aGbtMEWZCYHd/kkb9rbhPLhLSLCoV00U7nC1/beoQtTp9VtSWy5NRYLgLZSc7KpgmZeRHH+j3zvoeAV6mkgsHGPYWE1CeYHGbJb8E80ejNhWYllndop4Ob6ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723799789; c=relaxed/simple;
-	bh=3povJbsWSBMrB5YtLVGQb1AIbHXA6N2jOlDNGDwkVjA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PMaLbie4bdrhUe/c3ywJfMAa6dnkwArN7SZ2nsPKA7FGxSy/Wikxa2HCjsn9l59mKZA6ksmVzR21X5Eox+xIj7YI6sYL1OW00FboQjQ6YnLqAX23acImkiOLOylMzNKItwxxhmTNCJqbn0fG8GKJd2urBozhDgncsPVJCykuwgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d2dee9722so1222625ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 02:16:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723799787; x=1724404587;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1723800127; c=relaxed/simple;
+	bh=oakmK+aKmPzzkbmwITb5Ei5wXJ8szQVTQ7c7wCs5K34=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QX4FuGmA65E3n0qpyzyrvIrF2z201E5DMZuzo+G+nN1AT9Hs1x4ERHAu6u8RJYuG2UT4XZySmWTXEgg8D+HsLuCkWdatWaQzs2/T0+ZcPoH5cFAdNzS8+pdjVO21GDYRQv/4Q4QT4NrpTzdT1nG/WNOxwlvypDQ+rMB7RM9yBIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=aWebtcI3; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7c2595f5c35so231466a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 02:22:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1723800124; x=1724404924; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=6swvxELE9u/ROCNrGiOGtPOS2/V8W+8x5poLYagfG/U=;
-        b=r2QGbgqkTMs/b3znsG5jZE7ARDCw9/58uWGHsBJWnKXlbOnBmy2vwYUeAxBFNBj0hE
-         jJUMRIky+Em10LsHV+SI7/CTAgWOdD9HtOcjbkpk3Me8hARcK2eS9gR7VbU9s9Bu5G6s
-         k54Ydzf/9FvqffCfhq1KdulxwhYuSr7q6R4fSNfbiZLmvPofM+o3PIyion9c5Zcu6KX3
-         hpEaaYtG7DTp7cq50GuMwVYE71ugvyUpapS6my89z1bvoI6tdTLfd9P4euoaSZ2UMUiF
-         3VnL9OzN1KVgiIL9R3345hdJkmWLbVbMsbWc9Rw0cwMkLKELt4C/ymeHkI816PM4DrJx
-         eAng==
-X-Forwarded-Encrypted: i=1; AJvYcCVBSrneKPJCM5jCkU4MkpBMKJJFSuHTPzFACZqB9T/AmlwD5SE5XgXdGpLTq2VLdUHAlmhKmrLBjUoajC9PWHceHYm/dY+7PrUQ5qHU
-X-Gm-Message-State: AOJu0YwqeYJPbgoGeSu5KJYduM5CttgsTVmVKL5Y1l6L+9f+DJnlIaym
-	31KB/p1MLgbSTX/mhiG55+S1Xnt22NE/t82MivhXyMMyek8hW/RBTBzrLtEXt+8AJ0CZRFFJVmZ
-	VUvuNbnib9djQGGnZQYqauHxCCi+OqrfFgZNEgUWR5dJedx+m+KgEQbo=
-X-Google-Smtp-Source: AGHT+IE7nxGoospNfrrmGFS4Yo1bV3G5STW9uGeQHjxGcZVaotYpQNeztay2IhdijG+Xp0E9GsAsgUKkMOX0RKJpIqqEwCnWjXvX
+        bh=xtCmVrlxGAafWsgKl5/YAKGcZ+iOciR4h5L3r6w+vzE=;
+        b=aWebtcI3ZzRzgtF6gbigdK3xKIczQO+jlaEpAL0spPM657ekiOIHgzoxwUtM2kh3Ae
+         l+Q9ir5T1uTh+J249Y26Kl9g58rb1oFjL5dVHT6+ntMbIFdkgQT49BSqSxArLaGK238L
+         mIMZ5OWcJqhDKOJ9diDabE6PYcuu8JUqYbH0OzKIiG4Dt7GC6GOkk4/rwcFIoPaCdJL/
+         dmYSqHWQvoJ0Om8x4rnxo7pvCenN1Af3D1XSzqfD2+3OP7oIDK3L1HAjM3AOhpfgZNgQ
+         sgiA3OAI3UssOtyiSsbh70y+rqriP+xXJGzVpl1+6Qd3Z+hxX7vFSn6e8WEqzunGN+oe
+         Hhww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723800124; x=1724404924;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xtCmVrlxGAafWsgKl5/YAKGcZ+iOciR4h5L3r6w+vzE=;
+        b=wBq6QJTfR7FML8L2cQWAelQnucIk+vnCCvuT8nR4IHonyUUTBxvaf9mW8i5TYAW+kC
+         HHjRmLpAJLXTQnhGQYzbsvt59RILEha+Fk70J1D18diRMgUX4ycL5jLUakoR9eGzkORr
+         Npnk4Gfos1JuSxACTC1n8tJ8AcIB1dPPfvibVoWCMCH/s6XhS/Vt7sBeQsLCUXJvDgiS
+         ETV7EKDwA0awE2TQxhdEVQd2taVWYRvGINGnSxjETJARfBIp6+YQZWVV7AFX7a5Jxo60
+         nsGVrGXkmBXG4zrvbgwYOX14MH3wEqDwAuhKcQzSG00JzGiYW+FOhwIg0y2qsEGc78/Y
+         53ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7uo1U6yvyUq1q/kMagJ0E0XfqQkecZljZ6n9Ut+LWxYUHbJdeQsHrz0xzQShMnZL/f7X9NaeX+fcEXSg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsTf2CGcWtQesS3HsrSoAlPffxc8voftamMKGwq3mA9Mq2/2uq
+	voIlhNSAm43dQixNqcVfQyP7C5KlvU51Umdrwh9jk3dcqRk3sPZNWMldCaXFp4w=
+X-Google-Smtp-Source: AGHT+IGT9XwetaYpGzKxUO2gEEcbAPqXHSAiilZKZwdN/lLLvJXKcLaqrWJkuf3lLTP329x8W0xo8w==
+X-Received: by 2002:a05:6a21:3282:b0:1c4:c4cc:fa49 with SMTP id adf61e73a8af0-1c905075655mr1544270637.7.1723800124099;
+        Fri, 16 Aug 2024 02:22:04 -0700 (PDT)
+Received: from [10.4.217.215] ([139.177.225.242])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f03795edsm21965795ad.153.2024.08.16.02.21.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Aug 2024 02:22:03 -0700 (PDT)
+Message-ID: <a3862b3f-ef26-46f8-a09e-5484fe3c495b@bytedance.com>
+Date: Fri, 16 Aug 2024 17:21:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c7:b0:397:35d4:3811 with SMTP id
- e9e14a558f8ab-39d26d7aa3dmr1413475ab.3.1723799787099; Fri, 16 Aug 2024
- 02:16:27 -0700 (PDT)
-Date: Fri, 16 Aug 2024 02:16:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f963fc061fc96998@google.com>
-Subject: [syzbot] [f2fs?] possible deadlock in f2fs_release_file (2)
-From: syzbot <syzbot+9aff3b6811f0a00daffa@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 1/7] mm: pgtable: make pte_offset_map_nolock()
+ return pmdval
+Content-Language: en-US
+To: David Hildenbrand <david@redhat.com>
+Cc: hughd@google.com, willy@infradead.org, mgorman@suse.de,
+ muchun.song@linux.dev, vbabka@kernel.org, akpm@linux-foundation.org,
+ zokeefe@google.com, rientjes@google.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, the arch/x86 maintainers <x86@kernel.org>
+References: <cover.1722861064.git.zhengqi.arch@bytedance.com>
+ <d101b185eb55438b18faa2029e4303b7453bd5f5.1722861064.git.zhengqi.arch@bytedance.com>
+ <0e8e0503-5796-4b61-bb5b-249e285f5d21@redhat.com>
+ <39281a4d-d896-46fd-80a5-8cd547d1625f@bytedance.com>
+ <0f467510-a0d0-4a98-8517-43813fa4c131@redhat.com>
+ <f6c05526-5ac9-4597-9e80-099ea22fa0ae@bytedance.com>
+ <f79bbfc9-bb4c-4da4-9902-2e73817dd135@redhat.com>
+ <3e8253c4-9181-4027-84ee-28e1fc488f61@bytedance.com>
+ <ebb35909-1c12-48e0-8788-824c5f7f629e@redhat.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <ebb35909-1c12-48e0-8788-824c5f7f629e@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Hi David,
 
-syzbot found the following issue on:
+On 2024/8/16 16:59, David Hildenbrand wrote:
+> On 12.08.24 08:21, Qi Zheng wrote:
+>> Hi David,
+>>
+>> On 2024/8/10 00:54, David Hildenbrand wrote:
+>>> On 07.08.24 05:08, Qi Zheng wrote:
+>>>> Hi David,
+>>>>
+>>>> On 2024/8/6 22:16, David Hildenbrand wrote:
+>>>>> On 06.08.24 04:40, Qi Zheng wrote:
+>>>>>> Hi David,
+>>>>>>
+>>>>>> On 2024/8/5 22:43, David Hildenbrand wrote:
+>>>>>>> On 05.08.24 14:55, Qi Zheng wrote:
+>>>>>>>> Make pte_offset_map_nolock() return pmdval so that we can 
+>>>>>>>> recheck the
+>>>>>>>> *pmd once the lock is taken. This is a preparation for freeing 
+>>>>>>>> empty
+>>>>>>>> PTE pages, no functional changes are expected.
+>>>>>>>
+>>>>>>> Skimming the patches, only patch #4 updates one of the callsites
+>>>>>>> (collapse_pte_mapped_thp).
+>>>>>>
+>>>>>> In addition, retract_page_tables() and reclaim_pgtables_pmd_entry()
+>>>>>> also used the pmdval returned by pte_offset_map_nolock().
+>>>>>
+>>>>> Right, and I am questioning if only touching these two is sufficient,
+>>>>> and how we can make it clearer when someone actually has to recheck 
+>>>>> the
+>>>>> PMD.
+>>>>>
+>>>>>>
+>>>>>>>
+>>>>>>> Wouldn't we have to recheck if the PMD val changed in more cases 
+>>>>>>> after
+>>>>>>> taking the PTL?
+>>>>>>>
+>>>>>>> If not, would it make sense to have a separate function that
+>>>>>>> returns the
+>>>>>>> pmdval and we won't have to update each and every callsite?
+>>>>>>
+>>>>>> pte_offset_map_nolock() had already obtained the pmdval previously,
+>>>>>> just
+>>>>>> hadn't returned it. And updating those callsite is simple, so I think
+>>>>>> there may not be a need to add a separate function.
+>>>>>
+>>>>> Let me ask this way: why is retract_page_tables() and
+>>>>> reclaim_pgtables_pmd_entry() different to the other ones, and how 
+>>>>> would
+>>>>> someone using pte_offset_map_nolock() know what's to do here?
+>>>>
+>>>> If we acuqire the PTL (PTE or PMD lock) after calling
+>>>> pte_offset_map_nolock(), it means we may be modifying the corresponding
+>>>> pte or pmd entry. In that case, we need to perform a pmd_same() check
+>>>> after holding the PTL, just like in pte_offset_map_lock(), to prevent
+>>>> the possibility of the PTE page being reclaimed at that time.
+>>>
+>>> Okay, what I thought.
+>>>
+>>>>
+>>>> If we call pte_offset_map_nolock() and do not need to acquire the PTL
+>>>> afterwards, it means we are only reading the PTE page. In this case, 
+>>>> the
+>>>> rcu_read_lock() in pte_offset_map_nolock() will ensure that the PTE 
+>>>> page
+>>>> cannot be reclaimed.
+>>>>
+>>>>>
+>>>>> IIUC, we must check the PMDVAL after taking the PTL in case
+>>>>>
+>>>>> (a) we want to modify the page table to turn pte_none() entries to
+>>>>>        !pte_none(). Because it could be that the page table was
+>>>>> removed and
+>>>>>        now is all pte_none()
+>>>>>
+>>>>> (b) we want to remove the page table ourselves and want to check if it
+>>>>>        has already been removed.
+>>>>>
+>>>>> Is that it?
+>>>>
+>>>> Yes.
+>>>>
+>>>>>
+>>>>> So my thinking is if another function variant can make that clearer.
+>>>>
+>>>> OK, how about naming it pte_offset_map_before_lock?
+>>>
+>>> That's the issue with some of the code: for example in
+>>> filemap_fault_recheck_pte_none() we'll call pte_offset_map_nolock() and
+>>> conditionally take the PTL. But we won't be modifying the pages tables.
+>>>
+>>> Maybe something like:
+>>>
+>>> pte_offset_map_readonly_nolock()
+>>>
+>>> and
+>>>
+>>> pte_offset_map_maywrite_nolock()
+>>>
+>>> The latter would require you to pass the PMD pointer such that you have
+>>> to really mess up to ignore what to do with it (check PMD same or not
+>>> check PMD same if you really know what you are douing).
+>>>
+>>> The first would not take a PMD pointer at all, because there is no 
+>>> need to.
+>>
+>> These two function names LGTM. Will do in the next version.
+> 
+> That is probably something you can send as a separate patch independent 
+> of this full series.
 
-HEAD commit:    9e6869691724 Add linux-next specific files for 20240812
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1203caf3980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=61ba6f3b22ee5467
-dashboard link: https://syzkaller.appspot.com/bug?extid=9aff3b6811f0a00daffa
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+I think it makes sense. I am analyzing whether the existing path of
+calling pte_offset_map_nolock + spin_lock will be concurrent with
+the path of reclaiming PTE pages in THP. If so, it actually needs to
+be fixed first.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Then we might also get more review+thoughts from other folks!
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f1b086192f50/disk-9e686969.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b457920fb52e/vmlinux-9e686969.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e63ba9cce98a/bzImage-9e686969.xz
+I hope so!
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9aff3b6811f0a00daffa@syzkaller.appspotmail.com
+Thanks,
+Qi
 
-F2FS-fs (loop0): Try to recover 1th superblock, ret: 0
-F2FS-fs (loop0): Mounted with checkpoint version = 48b305e5
-syz.0.98: attempt to access beyond end of device
-loop0: rw=2049, sector=45096, nr_sectors = 8 limit=40427
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-rc3-next-20240812-syzkaller #0 Not tainted
-------------------------------------------------------
-syz.0.98/5917 is trying to acquire lock:
-ffff88807896ad30 (&sb->s_type->i_mutex_key#26){++++}-{3:3}, at: inode_lock include/linux/fs.h:799 [inline]
-ffff88807896ad30 (&sb->s_type->i_mutex_key#26){++++}-{3:3}, at: f2fs_release_file+0x9b/0x100 fs/f2fs/file.c:1940
-
-but task is already holding lock:
-ffff88807896b308 (&fi->i_gc_rwsem[WRITE]){++++}-{3:3}, at: f2fs_down_write fs/f2fs/f2fs.h:2196 [inline]
-ffff88807896b308 (&fi->i_gc_rwsem[WRITE]){++++}-{3:3}, at: f2fs_commit_atomic_write+0x105/0x1510 fs/f2fs/segment.c:388
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&fi->i_gc_rwsem[WRITE]){++++}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5762
-       down_write+0x99/0x220 kernel/locking/rwsem.c:1579
-       f2fs_down_write fs/f2fs/f2fs.h:2196 [inline]
-       f2fs_setattr+0xb80/0x12d0 fs/f2fs/file.c:1060
-       notify_change+0xb9d/0xe70 fs/attr.c:535
-       do_truncate+0x220/0x310 fs/open.c:65
-       handle_truncate fs/namei.c:3395 [inline]
-       do_open fs/namei.c:3745 [inline]
-       path_openat+0x2ced/0x3470 fs/namei.c:3900
-       do_filp_open+0x235/0x490 fs/namei.c:3927
-       do_sys_openat2+0x13e/0x1d0 fs/open.c:1416
-       do_sys_open fs/open.c:1431 [inline]
-       __do_sys_creat fs/open.c:1507 [inline]
-       __se_sys_creat fs/open.c:1501 [inline]
-       __x64_sys_creat+0x123/0x170 fs/open.c:1501
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&sb->s_type->i_mutex_key#26){++++}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3136 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3255 [inline]
-       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3871
-       __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5145
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5762
-       down_write+0x99/0x220 kernel/locking/rwsem.c:1579
-       inode_lock include/linux/fs.h:799 [inline]
-       f2fs_release_file+0x9b/0x100 fs/f2fs/file.c:1940
-       __fput+0x24a/0x8a0 fs/file_table.c:425
-       task_work_run+0x24f/0x310 kernel/task_work.c:228
-       get_signal+0x16ad/0x1810 kernel/signal.c:2690
-       arch_do_signal_or_restart+0x96/0x830 arch/x86/kernel/signal.c:337
-       exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
-       exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
-       __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
-       syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
-       do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&fi->i_gc_rwsem[WRITE]);
-                               lock(&sb->s_type->i_mutex_key#26);
-                               lock(&fi->i_gc_rwsem[WRITE]);
-  lock(&sb->s_type->i_mutex_key#26);
-
- *** DEADLOCK ***
-
-1 lock held by syz.0.98/5917:
- #0: ffff88807896b308 (&fi->i_gc_rwsem[WRITE]){++++}-{3:3}, at: f2fs_down_write fs/f2fs/f2fs.h:2196 [inline]
- #0: ffff88807896b308 (&fi->i_gc_rwsem[WRITE]){++++}-{3:3}, at: f2fs_commit_atomic_write+0x105/0x1510 fs/f2fs/segment.c:388
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5917 Comm: syz.0.98 Not tainted 6.11.0-rc3-next-20240812-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2189
- check_prev_add kernel/locking/lockdep.c:3136 [inline]
- check_prevs_add kernel/locking/lockdep.c:3255 [inline]
- validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3871
- __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5145
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5762
- down_write+0x99/0x220 kernel/locking/rwsem.c:1579
- inode_lock include/linux/fs.h:799 [inline]
- f2fs_release_file+0x9b/0x100 fs/f2fs/file.c:1940
- __fput+0x24a/0x8a0 fs/file_table.c:425
- task_work_run+0x24f/0x310 kernel/task_work.c:228
- get_signal+0x16ad/0x1810 kernel/signal.c:2690
- arch_do_signal_or_restart+0x96/0x830 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1c8c1779f9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f1c8d01f038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: fffffffffffffffb RBX: 00007f1c8c305f80 RCX: 00007f1c8c1779f9
-RDX: 0000000000000000 RSI: 000000000000f502 RDI: 0000000000000004
-RBP: 00007f1c8c1e58ee R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f1c8c305f80 R15: 00007ffdbf6238f8
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> 
 
