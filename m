@@ -1,115 +1,104 @@
-Return-Path: <linux-kernel+bounces-290196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E288095509C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:15:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E89C95509E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:15:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21EA21C2177B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:15:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2942E287939
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0211C2319;
-	Fri, 16 Aug 2024 18:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D1D1C233D;
+	Fri, 16 Aug 2024 18:15:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ISzqxNJY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LelS2RTi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310C71C37AD;
-	Fri, 16 Aug 2024 18:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6028288C;
+	Fri, 16 Aug 2024 18:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723832103; cv=none; b=aEjG8WkN9dS0a0nVdmXIoTydIE8+4B433m+CVlagriGQ1gHKnMco6SQKmBQCM97Zva+sSW0zmjIkalJrxn01ddTCy35oRG5L2dAVHmo2J5xYhi2ssN3tXh5/Tbwn1CZyZqHsLA2Y27FAlv/3BfcZ0/QP5MhwPSeV5qIvGeTXNuc=
+	t=1723832138; cv=none; b=N+KUjvqz+LFLvu/Ma3sVLITfEZdN/9NiTp7khxteCuHR13ynHepN5scDLpW9PzRfDbKJH6QojZRy7VUEMGQrLkugV8aq/yw0s1IAOCJJA3QgEDgspYMrXTUh/DYJJQMwwN8IbUAuCHrk9m5Qf9cR/HIRNruUVUnD/CyLvB71nY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723832103; c=relaxed/simple;
-	bh=MPaxgKSJ0dt6fc/76U2yEOjWmyHDvuaEFwK8jMqY6Gk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=mbDbOh+tsDlAleEn80ajfRVnFmAK5Qy/dPWRh+nPIJZ8J9GfpKSezLHdsNuJ2ooQcnd7Ly8Q1PojceaGu8TxiVfNS5ziqRGsgH/C3mRqjrJMvJ0JUskVnZCwwB9K601QV1eP6MSp392n3R8l+OtoAEsue50hhES/eavFPnDqQm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ISzqxNJY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69FD3C32782;
-	Fri, 16 Aug 2024 18:15:02 +0000 (UTC)
+	s=arc-20240116; t=1723832138; c=relaxed/simple;
+	bh=YUt2/pe6iAs+TkYT8g42GYFWjweeJHYBiqNpeTfkS6A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mb06qtqfYSpjrrf/aaF7R8qQRA3lfFcEzaz3FYGiWGOcZ2ZyFvDOvUgS73u5NbDRk166mfGI5/tMhKw15itdwz1JV9lTcbUWkC1Hz4uNcnXXjqft+U9c1FurjcI1jkB1W2xvetgiuYtGZECN46iXLgGDzXhvH074xOzAZMXm9aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LelS2RTi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DAC4C32782;
+	Fri, 16 Aug 2024 18:15:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723832102;
-	bh=MPaxgKSJ0dt6fc/76U2yEOjWmyHDvuaEFwK8jMqY6Gk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=ISzqxNJYddmRWWWiNmH7cMLSjANJyDrivO8wJDXMuVVuqj2jtgp/Qr33wI8nm5wDI
-	 zHexfalc9MWdVwBL3gcSaBX5jdcx3Pz9akPNDm4S67LPyksTXHNNFN27sOUtNfAjq6
-	 QbJOa5SFLHPaa4cXAsVvvHE146kFPJgW1RCx9exo9sNwonNru9a8KNUth3lFwIIOed
-	 suv2K1HTSKv3WUsG4cK6Yp+4C3lBXgrOaG8t82XfMebhn4hofJUY2bmvI2UZabDuok
-	 FgwWjZr8K14cul9KcH6+2aOfP6BG4i2OgWFymioROOXvA8gJiCMZtRROBrH8gprnL7
-	 Rf5KdYqECP7JA==
-Date: Fri, 16 Aug 2024 13:15:00 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Zhiqiang.Hou@nxp.com,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH 4/4] MAINTAINERS: drop NXP LAYERSCAPE GEN4 CONTROLLER
-Message-ID: <20240816181500.GA69082@bhelgaas>
+	s=k20201202; t=1723832137;
+	bh=YUt2/pe6iAs+TkYT8g42GYFWjweeJHYBiqNpeTfkS6A=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LelS2RTi1k6RhhtqjK28hT4t35xW3pAEw82mK1CW1aBULknwHg33a/iV2TGt+QD+R
+	 BHTIJACdb5zA+o2Ip92hASf5hLn5XmC0hfhGV/Yx/uuhUVR12X8icoEfrA1FBXPCP7
+	 dVXmVbWiDDEjh6cGabXhv6HbSJ4doJBKxLuV41kI0M2Xm07Oa8PDXgJDrLcsOrYipk
+	 nyLckwsRs2swE/skSzMwyUk/nLm74Bu+9JIEFxBjnZgoYITcz2Opzm+bEAQmTva0r8
+	 gzOKUZbKi+xF4T4Y7j2HnebIgrDWIaKTuu4n2TKcOgm5dkxeW17MiBnmtFPG7z0H41
+	 wklIE06Ab2uXQ==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	=?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <debian@fabian.gruenbichler.email>
+Subject: [PATCH] docs: rust: quick-start: add Debian Testing
+Date: Fri, 16 Aug 2024 20:15:14 +0200
+Message-ID: <20240816181514.45696-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zr+H3gHZ/B7zTKBW@lizhi-Precision-Tower-5810>
 
-On Fri, Aug 16, 2024 at 01:09:50PM -0400, Frank Li wrote:
-> On Fri, Aug 16, 2024 at 11:12:31AM +0530, Manivannan Sadhasivam wrote:
-> > On Thu, Aug 15, 2024 at 03:15:52PM -0600, Rob Herring wrote:
-> > > On Thu, Aug 15, 2024 at 9:53 AM Manivannan Sadhasivam
-> > > <manivannan.sadhasivam@linaro.org> wrote:
-> > > > On Thu, Aug 08, 2024 at 12:02:17PM -0400, Frank Li wrote:
-> > > > > LX2160 Rev1 use mobivel PCIe controller, but Rev2 switch to designware
-> > > > > PCIe controller. Rev2 is mass production chip. Rev1 will not be maintained
-> > > > > so drop maintainer information for that.
-> > > >
-> > > > Instead of suddenly removing the code and breaking users, you can just mark the
-> > > > driver as 'Obsolete' in MAINTAINERS. Then after some point of time, we could
-> > > > hopefully remove.
-> > >
-> > > Is anyone really going to pay attention to that? It doesn't sound like
-> > > there's anyone to really care, and it is the company that made the h/w
-> > > asking to remove it. The only thing people use pre-production h/w for
-> > > once there's production h/w is as a dust collector.
-> > >
-> > > If anyone complains, it's simple enough to revert these patches.
-> >
-> > My comment was based on the fact that Bjorn was not comfortable in removing the
-> > driver [1] unless no Rev1 boards are not in use and Frank said that he was not
-> > sure about that [2].
-> >
-> > But I think if Frank can atleast guarantee that the chip never made into mass
-> > production or shared with customers, then we can remove the driver IMO. But that
-> > is up to the discretion of Bjorn.
-> 
-> I think Bjorn's request is impossible task. Generally chip company send
-> out some evaluted sample to parter, which use these sample to built up
-> some small quantity production. Chip company have not responsibility to
-> call back this samples. There are always some reasons to drop mobivel and
-> switch designware, it may be caused by some IP issues which can't match
-> mass production's requirememnt. Such informaiton already removed from
-> nxp.com. Only Rev2 left.
+Debian Testing is now also providing recent Rust releases (outside of
+the freeze period), like Debian Unstable (Sid).
 
-If you're reasonably confident that nobody will notice the removal of
-support for Rev1, we can include that in the commit log and just
-remove it.
+Thus add it to the list.
 
-The original commit log basically said "we don't want to support Rev1"
-without any indication of where those parts went or whether anybody
-might care about them.  But if Rev1 only went to partners for
-evaluation and we don't expect end users to have them, I think it's
-reasonable to say that and remove the code.
+Cc: Fabian Grünbichler <debian@fabian.gruenbichler.email>
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+Debian Testing is now providing a very recent Rust release (1.79), which
+is good enough for us, and as far as I understand, it is the intention
+to keep Debian Testing (outside the freeze period) close to the latest
+release of Rust upstream. If that is correct, then we should add it to
+the list. Thanks Fabian!
 
-Bjorn
+ Documentation/rust/quick-start.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/rust/quick-start.rst b/Documentation/rust/quick-start.rst
+index d06a36106cd4..ed5af2b5339a 100644
+--- a/Documentation/rust/quick-start.rst
++++ b/Documentation/rust/quick-start.rst
+@@ -39,8 +39,8 @@ of the box, e.g.::
+ Debian
+ ******
+
+-Debian Unstable (Sid), outside of the freeze period, provides recent Rust
+-releases and thus it should generally work out of the box, e.g.::
++Debian Testing and Debian Unstable (Sid), outside of the freeze period, provide
++recent Rust releases and thus they should generally work out of the box, e.g.::
+
+ 	apt install rustc rust-src bindgen rustfmt rust-clippy
+
+
+base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+--
+2.46.0
 
