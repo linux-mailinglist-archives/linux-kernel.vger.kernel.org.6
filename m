@@ -1,315 +1,118 @@
-Return-Path: <linux-kernel+bounces-289406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E3F9545DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:35:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DEEE9545DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E474EB24250
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:35:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40A031C2438F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6C41422D5;
-	Fri, 16 Aug 2024 09:33:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BE913FD84
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E0420E3;
+	Fri, 16 Aug 2024 09:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Zsj9ssTr"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75542143C72
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723800833; cv=none; b=gW7s8TMuf75gUYjbpchuiyN8YV7jtPj8499QZiEgPK+6DrcCt1mWM7cYv+cS6zumm6Vyorxo4QsNyRxzAEq6wNTDgm5/O+eBUpCfMZIlIE2xJ4XyLn+CEm5dLPuC/Oov9CGgY7Ab86relJfwlL6zVZam9uERzOXpj2lXsH7lKbo=
+	t=1723800871; cv=none; b=gqD36gM29rPTKtqFycKnacdjaFquv0z63jbZ3RBDZaSHlPt1zhmLpdWhRElHwVYbrgqGnJgfU84ho37L1iY232j9XH6W08kmXRrICbPGgHScJ6GsQU/3KxpZAlCf+zXSojqtTTARModacYsbSf+asJXrs2E1mCcfM4uKRtgnpHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723800833; c=relaxed/simple;
-	bh=/E68lFjNzV6ltDRHWuvNLn/gm86QnV1FpVXxReq7Ln0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DFTLSZ+aEpDrxGo9pwRh1a3AdguLQzf86StIFzLBAGHODhDTFFZF0dcnyxaPb/HTWhZO1AB+QsvlEXS2qT7hmB/BU6eEiwvF8TNc2pHLLFw+jbljIu/afO7wLrl7NfHL2EuZ/9B2dUf9eNd3iHQuos1YYSQOC24HbXlvJVUKc7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 17F1D143D;
-	Fri, 16 Aug 2024 02:34:17 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 412CF3F58B;
-	Fri, 16 Aug 2024 02:33:50 -0700 (PDT)
-Date: Fri, 16 Aug 2024 10:33:45 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: will@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, ilkka@os.amperecomputing.com
-Subject: Re: [PATCH 1/8] perf/arm-cmn: Refactor node ID handling. Again.
-Message-ID: <Zr8c-eL1rDFDG7_O@J2N7QTR9R3>
-References: <cover.1723229941.git.robin.murphy@arm.com>
- <998064aa2bdb0e39f91b4f1fea2f428689978ea9.1723229941.git.robin.murphy@arm.com>
+	s=arc-20240116; t=1723800871; c=relaxed/simple;
+	bh=G+FeStMU2scmZhdWu0qFXGPtfM2I8vVu2NtqTriWF/A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rhFRperxIOSyZ/bISD1wO1VH7BXlpwfMbeo8RPHei0YhlihzxKVYvYjWII5bEnnr8v6NKSl814dMMp36K9OCeetAsE1ElLkXL+ht6Idd1qe4t6aJ5JW58j5oHNjFV5Tnz945GI2qWTEdl3Jb4nkpjfcAabSCm1/hAMT3FfWbLvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Zsj9ssTr; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-36dd8a35722so946761f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 02:34:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723800867; x=1724405667; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vX9qDv+2qVxfqHPc5bssG0UIDXBfDyrqbrBJRY4zjpE=;
+        b=Zsj9ssTr4NXverPgL/1SD2t/C+/XXFm+YIoM3YoJ1/V3InpEVEQAPUJTM84OEYP65Z
+         4ifwHjwck/Y4qOLfhdCHUxivApzp8cJG04bQ9oE/kDcFkvAVHo/O4/F9eaXD++4mzYMo
+         /TAtQDTAjAJBZpo2l1Vy4fdP68vZHa8Hjp0vh27VhLdRG+BIgvAni+3YPb/khUn11hPR
+         pa2CVrfVrB366iFVcft4u7ZDa55RIWDKIkhInWb/Jwpi5MRkCr5O5NmxAOJLlZBp8fFr
+         DFeq9BWjUvSLEKmk3w7hTSLl1Bby+/iF7Lg2D5hUmA/lvIyUcSGVnG6p8b7HXgNLytIB
+         fpyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723800867; x=1724405667;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vX9qDv+2qVxfqHPc5bssG0UIDXBfDyrqbrBJRY4zjpE=;
+        b=lzZlLjbcSdlPNfhAV2btCY+FemCHRNfspxwkzY+KMUjRkG8BTuor7BKH/gdMJmWXD9
+         027oqd6Puy7I7Wa3zn7rAmO0CnaqNsb2NHiiCalZ0W9NNd2C03oqijkwDGgg/rQkefB2
+         B2Dl7gAYZgFXkBtCArV0qRk7bbr0iHI5YJ8QBz8rxmW+WTLRXAhNg5/QOyGDlE1IOuY7
+         1ZPRz2Iu7k+P+H07Sey9rcj2gQE8YbTBzjF9lQNDzFGmrBK2A5hqIEkC+N37aV6IOC5A
+         Wr0C3DsWqM6ha7/HJOIaCICYAC5FJqyNWQcRzkRQIFME8KAuLqdouW8V2gQr1yJWp6ci
+         Iheg==
+X-Forwarded-Encrypted: i=1; AJvYcCWb1mCDEn6q7Uojel6IzSp2GkCtAmcRzS9GojIy9FM1/d7k0/ASDf6g5EVXJ2M/dIUZ94ankw/l9HVCOZdCX383vWn3Zj18h7N28EX6
+X-Gm-Message-State: AOJu0YwrM17iBLAm35zJwnzMjZicY+zhjclp0UpWZH13smKwbtqVGnMr
+	o+7vV4XCmn3Sk3X303oRfKrhT6R/jsB7a/waHRta2I9XZ8Docu+nLtGI79K6H9c8mLfYBQsMJ7c
+	De50=
+X-Google-Smtp-Source: AGHT+IGgtC2cxTMbZif7IqcMevbWdY6uWFHd/nzCSbeVPSEnWDm3kqpPbo059EvqeLFokloCeitP0g==
+X-Received: by 2002:a5d:51c9:0:b0:360:9cf4:58ce with SMTP id ffacd0b85a97d-371946a44c7mr1123283f8f.46.1723800866069;
+        Fri, 16 Aug 2024 02:34:26 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:aff3:cc35:cd8f:c520])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718985d9d6sm3212232f8f.64.2024.08.16.02.34.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 02:34:25 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] gpio fixes for v6.11-rc4
+Date: Fri, 16 Aug 2024 11:34:23 +0200
+Message-ID: <20240816093423.12622-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <998064aa2bdb0e39f91b4f1fea2f428689978ea9.1723229941.git.robin.murphy@arm.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Robin,
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-On Fri, Aug 09, 2024 at 08:15:40PM +0100, Robin Murphy wrote:
-> It transpires that despite the explicit example to the contrary in the
-> CMN-700 TRM, the "extra device ports" config is in fact a per-XP thing
-> rather than a global one. To that end, rework node IDs yet again to
-> carry around the additional data necessary to decode them properly. At
-> this point the notion of fully decomposing an ID becomes more
-> impractical than it's worth, so unabstracting the XY mesh coordinates
-> (where 2/3 users were just debug anyway) ends up leaving things a bit
-> simpler overall.
-> 
-> Fixes: 60d1504070c2 ("perf/arm-cmn: Support new IP features")
+Linus,
 
-Does this fix an observable functional issue? It's difficult to tell
-what the impact of this is from the commit message.
+Please pull the following fix for one of the GPIO drivers for the next RC.
 
-i.e. what is the impact:
+Bartosz
 
-* On the CMN-700 programmers model?
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-* As observed by a user of the PMU driver?
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
-... and is there anything in the manual that spells out that this is a
-per-XP property? I'm struggling to find that in the CMN-700 TRM, as it
-seems to talk about "mesh configuration(s) with extra device ports".
+are available in the Git repository at:
 
-Mark.
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.11-rc4
 
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-> ---
->  drivers/perf/arm-cmn.c | 94 ++++++++++++++++++------------------------
->  1 file changed, 40 insertions(+), 54 deletions(-)
-> 
-> diff --git a/drivers/perf/arm-cmn.c b/drivers/perf/arm-cmn.c
-> index c932d9d355cf..fd2122a37f22 100644
-> --- a/drivers/perf/arm-cmn.c
-> +++ b/drivers/perf/arm-cmn.c
-> @@ -24,14 +24,6 @@
->  #define CMN_NI_NODE_ID			GENMASK_ULL(31, 16)
->  #define CMN_NI_LOGICAL_ID		GENMASK_ULL(47, 32)
->  
-> -#define CMN_NODEID_DEVID(reg)		((reg) & 3)
-> -#define CMN_NODEID_EXT_DEVID(reg)	((reg) & 1)
-> -#define CMN_NODEID_PID(reg)		(((reg) >> 2) & 1)
-> -#define CMN_NODEID_EXT_PID(reg)		(((reg) >> 1) & 3)
-> -#define CMN_NODEID_1x1_PID(reg)		(((reg) >> 2) & 7)
-> -#define CMN_NODEID_X(reg, bits)		((reg) >> (3 + (bits)))
-> -#define CMN_NODEID_Y(reg, bits)		(((reg) >> 3) & ((1U << (bits)) - 1))
-> -
->  #define CMN_CHILD_INFO			0x0080
->  #define CMN_CI_CHILD_COUNT		GENMASK_ULL(15, 0)
->  #define CMN_CI_CHILD_PTR_OFFSET		GENMASK_ULL(31, 16)
-> @@ -280,8 +272,11 @@ struct arm_cmn_node {
->  	u16 id, logid;
->  	enum cmn_node_type type;
->  
-> +	/* XP properties really, but replicated to children for convenience */
->  	u8 dtm;
->  	s8 dtc;
-> +	u8 portid_bits:4;
-> +	u8 deviceid_bits:4;
->  	/* DN/HN-F/CXHA */
->  	struct {
->  		u8 val : 4;
-> @@ -357,49 +352,33 @@ struct arm_cmn {
->  static int arm_cmn_hp_state;
->  
->  struct arm_cmn_nodeid {
-> -	u8 x;
-> -	u8 y;
->  	u8 port;
->  	u8 dev;
->  };
->  
->  static int arm_cmn_xyidbits(const struct arm_cmn *cmn)
->  {
-> -	return fls((cmn->mesh_x - 1) | (cmn->mesh_y - 1) | 2);
-> +	return fls((cmn->mesh_x - 1) | (cmn->mesh_y - 1));
->  }
->  
-> -static struct arm_cmn_nodeid arm_cmn_nid(const struct arm_cmn *cmn, u16 id)
-> +static struct arm_cmn_nodeid arm_cmn_nid(const struct arm_cmn_node *dn)
->  {
->  	struct arm_cmn_nodeid nid;
->  
-> -	if (cmn->num_xps == 1) {
-> -		nid.x = 0;
-> -		nid.y = 0;
-> -		nid.port = CMN_NODEID_1x1_PID(id);
-> -		nid.dev = CMN_NODEID_DEVID(id);
-> -	} else {
-> -		int bits = arm_cmn_xyidbits(cmn);
-> -
-> -		nid.x = CMN_NODEID_X(id, bits);
-> -		nid.y = CMN_NODEID_Y(id, bits);
-> -		if (cmn->ports_used & 0xc) {
-> -			nid.port = CMN_NODEID_EXT_PID(id);
-> -			nid.dev = CMN_NODEID_EXT_DEVID(id);
-> -		} else {
-> -			nid.port = CMN_NODEID_PID(id);
-> -			nid.dev = CMN_NODEID_DEVID(id);
-> -		}
-> -	}
-> +	nid.dev = dn->id & ((1U << dn->deviceid_bits) - 1);
-> +	nid.port = (dn->id >> dn->deviceid_bits) & ((1U << dn->portid_bits) - 1);
->  	return nid;
->  }
->  
->  static struct arm_cmn_node *arm_cmn_node_to_xp(const struct arm_cmn *cmn,
->  					       const struct arm_cmn_node *dn)
->  {
-> -	struct arm_cmn_nodeid nid = arm_cmn_nid(cmn, dn->id);
-> -	int xp_idx = cmn->mesh_x * nid.y + nid.x;
-> +	int id = dn->id >> (dn->portid_bits + dn->deviceid_bits);
-> +	int bits = arm_cmn_xyidbits(cmn);
-> +	int x = id > bits;
-> +	int y = id & ((1U << bits) - 1);
->  
-> -	return cmn->xps + xp_idx;
-> +	return cmn->xps + cmn->mesh_x * y + x;
->  }
->  static struct arm_cmn_node *arm_cmn_node(const struct arm_cmn *cmn,
->  					 enum cmn_node_type type)
-> @@ -485,13 +464,13 @@ static const char *arm_cmn_device_type(u8 type)
->  	}
->  }
->  
-> -static void arm_cmn_show_logid(struct seq_file *s, int x, int y, int p, int d)
-> +static void arm_cmn_show_logid(struct seq_file *s, const struct arm_cmn_node *xp, int p, int d)
->  {
->  	struct arm_cmn *cmn = s->private;
->  	struct arm_cmn_node *dn;
-> +	u16 id = xp->id | d | (p << xp->deviceid_bits);
->  
->  	for (dn = cmn->dns; dn->type; dn++) {
-> -		struct arm_cmn_nodeid nid = arm_cmn_nid(cmn, dn->id);
->  		int pad = dn->logid < 10;
->  
->  		if (dn->type == CMN_TYPE_XP)
-> @@ -500,7 +479,7 @@ static void arm_cmn_show_logid(struct seq_file *s, int x, int y, int p, int d)
->  		if (dn->type < CMN_TYPE_HNI)
->  			continue;
->  
-> -		if (nid.x != x || nid.y != y || nid.port != p || nid.dev != d)
-> +		if (dn->id != id)
->  			continue;
->  
->  		seq_printf(s, " %*c#%-*d  |", pad + 1, ' ', 3 - pad, dn->logid);
-> @@ -521,6 +500,7 @@ static int arm_cmn_map_show(struct seq_file *s, void *data)
->  	y = cmn->mesh_y;
->  	while (y--) {
->  		int xp_base = cmn->mesh_x * y;
-> +		struct arm_cmn_node *xp = cmn->xps + xp_base;
->  		u8 port[CMN_MAX_PORTS][CMN_MAX_DIMENSION];
->  
->  		for (x = 0; x < cmn->mesh_x; x++)
-> @@ -528,16 +508,14 @@ static int arm_cmn_map_show(struct seq_file *s, void *data)
->  
->  		seq_printf(s, "\n%-2d   |", y);
->  		for (x = 0; x < cmn->mesh_x; x++) {
-> -			struct arm_cmn_node *xp = cmn->xps + xp_base + x;
-> -
->  			for (p = 0; p < CMN_MAX_PORTS; p++)
-> -				port[p][x] = arm_cmn_device_connect_info(cmn, xp, p);
-> +				port[p][x] = arm_cmn_device_connect_info(cmn, xp + x, p);
->  			seq_printf(s, " XP #%-3d|", xp_base + x);
->  		}
->  
->  		seq_puts(s, "\n     |");
->  		for (x = 0; x < cmn->mesh_x; x++) {
-> -			s8 dtc = cmn->xps[xp_base + x].dtc;
-> +			s8 dtc = xp[x].dtc;
->  
->  			if (dtc < 0)
->  				seq_puts(s, " DTC ?? |");
-> @@ -554,10 +532,10 @@ static int arm_cmn_map_show(struct seq_file *s, void *data)
->  				seq_puts(s, arm_cmn_device_type(port[p][x]));
->  			seq_puts(s, "\n    0|");
->  			for (x = 0; x < cmn->mesh_x; x++)
-> -				arm_cmn_show_logid(s, x, y, p, 0);
-> +				arm_cmn_show_logid(s, xp + x, p, 0);
->  			seq_puts(s, "\n    1|");
->  			for (x = 0; x < cmn->mesh_x; x++)
-> -				arm_cmn_show_logid(s, x, y, p, 1);
-> +				arm_cmn_show_logid(s, xp + x, p, 1);
->  		}
->  		seq_puts(s, "\n-----+");
->  	}
-> @@ -1815,10 +1793,7 @@ static int arm_cmn_event_init(struct perf_event *event)
->  	}
->  
->  	if (!hw->num_dns) {
-> -		struct arm_cmn_nodeid nid = arm_cmn_nid(cmn, nodeid);
-> -
-> -		dev_dbg(cmn->dev, "invalid node 0x%x (%d,%d,%d,%d) type 0x%x\n",
-> -			nodeid, nid.x, nid.y, nid.port, nid.dev, type);
-> +		dev_dbg(cmn->dev, "invalid node 0x%x type 0x%x\n", nodeid, type);
->  		return -EINVAL;
->  	}
->  
-> @@ -1921,7 +1896,7 @@ static int arm_cmn_event_add(struct perf_event *event, int flags)
->  			arm_cmn_claim_wp_idx(dtm, event, d, wp_idx, i);
->  			writel_relaxed(cfg, dtm->base + CMN_DTM_WPn_CONFIG(wp_idx));
->  		} else {
-> -			struct arm_cmn_nodeid nid = arm_cmn_nid(cmn, dn->id);
-> +			struct arm_cmn_nodeid nid = arm_cmn_nid(dn);
->  
->  			if (cmn->multi_dtm)
->  				nid.port %= 2;
-> @@ -2168,10 +2143,12 @@ static int arm_cmn_init_dtcs(struct arm_cmn *cmn)
->  			continue;
->  
->  		xp = arm_cmn_node_to_xp(cmn, dn);
-> +		dn->portid_bits = xp->portid_bits;
-> +		dn->deviceid_bits = xp->deviceid_bits;
->  		dn->dtc = xp->dtc;
->  		dn->dtm = xp->dtm;
->  		if (cmn->multi_dtm)
-> -			dn->dtm += arm_cmn_nid(cmn, dn->id).port / 2;
-> +			dn->dtm += arm_cmn_nid(dn).port / 2;
->  
->  		if (dn->type == CMN_TYPE_DTC) {
->  			int err = arm_cmn_init_dtc(cmn, dn, dtc_idx++);
-> @@ -2341,18 +2318,27 @@ static int arm_cmn_discover(struct arm_cmn *cmn, unsigned int rgn_offset)
->  		arm_cmn_init_dtm(dtm++, xp, 0);
->  		/*
->  		 * Keeping track of connected ports will let us filter out
-> -		 * unnecessary XP events easily. We can also reliably infer the
-> -		 * "extra device ports" configuration for the node ID format
-> -		 * from this, since in that case we will see at least one XP
-> -		 * with port 2 connected, for the HN-D.
-> +		 * unnecessary XP events easily, and also infer the per-XP
-> +		 * part of the node ID format.
->  		 */
->  		for (int p = 0; p < CMN_MAX_PORTS; p++)
->  			if (arm_cmn_device_connect_info(cmn, xp, p))
->  				xp_ports |= BIT(p);
->  
-> -		if (cmn->multi_dtm && (xp_ports & 0xc))
-> +		if (cmn->num_xps == 1) {
-> +			xp->portid_bits = 3;
-> +			xp->deviceid_bits = 2;
-> +		} else if (xp_ports > 0x3) {
-> +			xp->portid_bits = 2;
-> +			xp->deviceid_bits = 1;
-> +		} else {
-> +			xp->portid_bits = 1;
-> +			xp->deviceid_bits = 2;
-> +		}
-> +
-> +		if (cmn->multi_dtm && (xp_ports > 0x3))
->  			arm_cmn_init_dtm(dtm++, xp, 1);
-> -		if (cmn->multi_dtm && (xp_ports & 0x30))
-> +		if (cmn->multi_dtm && (xp_ports > 0xf))
->  			arm_cmn_init_dtm(dtm++, xp, 2);
->  
->  		cmn->ports_used |= xp_ports;
-> -- 
-> 2.39.2.101.g768bb238c484.dirty
-> 
+for you to fetch changes up to aad41832326723627ad8ac9ee8a543b6dca4454d:
+
+  gpio: mlxbf3: Support shutdown() function (2024-08-10 21:35:16 +0200)
+
+----------------------------------------------------------------
+gpio fixes for v6.11-rc4
+
+- add the shutdown() callback to gpio-mlxbf3 in order to disable
+  interrupts during graceful reboot
+
+----------------------------------------------------------------
+Asmaa Mnebhi (1):
+      gpio: mlxbf3: Support shutdown() function
+
+ drivers/gpio/gpio-mlxbf3.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
