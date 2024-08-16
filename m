@@ -1,161 +1,305 @@
-Return-Path: <linux-kernel+bounces-289236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7F29954379
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:55:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 542D6954387
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 596DD1F210B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:55:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79B271C228E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0066313DBB1;
-	Fri, 16 Aug 2024 07:52:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5887B13A868;
+	Fri, 16 Aug 2024 07:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eXh16FHM"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="v+8L5RTS"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D338B770FB;
-	Fri, 16 Aug 2024 07:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1703E12C460;
+	Fri, 16 Aug 2024 07:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723794774; cv=none; b=TCCsWm1OJSqyQzscLfGYXBEUJgKqEFiI1Jq1Vq4ck8b+2beW49x0MajrBIqUUSvQmZcEtMe4yXYB6tud6uKHQ128dszLqWi9YjiINfjCr7HSU7FXQPX3V1FXcgN+LDQ9Q1BDlz4K4/EAhrI6VeTJLpjHuhqdyCtp4so0iYJMfoI=
+	t=1723794860; cv=none; b=VP3ipTQj9HRShOPpC4drDrp4Mdwyha3+HM7z5Ko/P3yLxxrZmQ9pbyN7RdtoyFEFIi7lpB+pAEylgMo+URZNMFRxTxHzq4v9cQCyVUEzTae39ckklb+OCDFGeo9f9Ki06vpX2DzcO4zNJX3Jh2nLOitihExlY6u2Me/E1vH3APY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723794774; c=relaxed/simple;
-	bh=tfZn2p8RWXsTl4oUausz/H/NOrc1d5GvPHxwW131Bcg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UWRUj7BAPcnLyVPORrQBetlDzljY48gCfEjJ8iCzfacxGmY4LJMh+4OKHTPl67W/m+5rhSNFqUltn2tObDj/LtWtHW2u4tJthmkYU3OsGa4Te84ubkqvGikwi7jKgFEqHmDwX12RoWFpwxVNhyHbPfLhuswMr/GaUD6petNQLxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eXh16FHM; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-710ce81bf7dso1384604b3a.0;
-        Fri, 16 Aug 2024 00:52:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723794772; x=1724399572; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yCqitL2vC4TIDXevMyjj4uRZNh6ztGM5H4Qtombp2RM=;
-        b=eXh16FHM+xPFKJ+lb2ZIrnldHi2Nhpil6r4USgqqLGTi8rsBouamXJ0AjJNVbR3eoR
-         R3UAVogvmhK2RSS5l+LlWXm+YE8M/NVEVf8oeCeZ9oJJ8VeB2LP/pS4TuhtnJO1IaBkf
-         e+I74kZOtD9eF0WiUMHcoT8FAYCmjuJgbc1MEMLWztiJJpURZTyDrGPjbYzJTjh5hug8
-         29LluBkIh2GEXpP5ulLId66MLLSnpWPcgANhRLBtm+BVxQnpBuET0mpzBYSHVIuLgZex
-         clLCqVi+F0QnLr5DmBOJx6w0aCNFyGSSNyPHIXbF9cRVTK6jjzOdnto5RddasXiAoZ5d
-         kkUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723794772; x=1724399572;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yCqitL2vC4TIDXevMyjj4uRZNh6ztGM5H4Qtombp2RM=;
-        b=OyhQ0ZPKH1yhvoB21Sho59ALJXXVPjVvecZj74GMuNNp78kuqqE8cWokzD8Utqx5Ib
-         1zAheg6KRcnqhiEDYkNjePLbfQZ6hhFBR0RCrgMhF2lxQpAu9F9Q28hVAoa3bwFHQXtb
-         w6tOfe+EGB887NYEYGEjuEisgM/n9MA3e3DEzg1DtpRMZL1NR60/i4PhVrmfYzKqIunV
-         xnib068rpUlFvuKNNIAb9XJZ+53U6ni87Oipg6tqrF8OvVlzRoGIcrmiPawgO81dBJB/
-         3UPig1BEKJG6rZ6LI0hjn5vlvf85qWDCJEnka6u/+ZTCrA3IImcB7JM06KU4kGcIKDDp
-         DlKw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/KLh4xn/+um8Xw53uOKOECONlo4olpK1uZiwphHS0zmtQjHL2oOUmSqu0+pSp0A1WQ30rksm1CQC8RP87A5nODJokadY2nglAwFxG8xLrDBTCLEU+KKNhr+nO3ts7KsURvYjb+B3Bddr2/4iCHXerW3hkSi0RWFF2G9iWbA1XZCiOIc4=
-X-Gm-Message-State: AOJu0Yzl4aYj5EiRcNactxUQsbUBuAotPfWOkbMO1fXmZDE2bEZgFub9
-	Esfx1Hj0cauLEPH1EFqymb9tcy+14r0IOP2Ji+osg37UKO3YV+7i
-X-Google-Smtp-Source: AGHT+IHdnjMLFDrXUew2brTPTbI8QrOzvSdpXJjVxuaYGbaPyCkKr6kIrNP/oBcqOANohn4tjt9yJw==
-X-Received: by 2002:a05:6a20:ce48:b0:1c3:ea28:3c0e with SMTP id adf61e73a8af0-1c90502fa13mr2781425637.33.1723794772163;
-        Fri, 16 Aug 2024 00:52:52 -0700 (PDT)
-Received: from thinkpad ([36.255.17.34])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f02fa4d5sm20764945ad.41.2024.08.16.00.52.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 00:52:51 -0700 (PDT)
-Date: Fri, 16 Aug 2024 13:22:44 +0530
-From: Manivannan Sadhasivam <manisadhasivam.linux@gmail.com>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	YiFeng Zhao <zyf@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
-	linux-scsi@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] scsi: ufs: rockchip: init support for UFS
-Message-ID: <20240816075244.sbul4gsaem4skon4@thinkpad>
-References: <1723089163-28983-4-git-send-email-shawn.lin@rock-chips.com>
- <20240809062813.GC2826@thinkpad>
- <421d48b7-4aa7-4202-8b5f-9c60916f6ef6@rock-chips.com>
- <20240810092817.GA147655@thinkpad>
- <3b2617f5-acb1-45c6-993c-33249fd19888@rock-chips.com>
- <20240812041051.GA2861@thinkpad>
- <49659932-5caf-433b-a140-664b61617c43@rock-chips.com>
- <20240812165504.GB6003@thinkpad>
- <b91b18fa-7af0-46c0-a3f7-550676b7a222@rock-chips.com>
- <9fd536a9-b0bf-46a6-92c2-503ea16f7fcd@rock-chips.com>
+	s=arc-20240116; t=1723794860; c=relaxed/simple;
+	bh=bhryEJoTl5GL1UD0luwSHefebQdolxnc4qJmQ/14J2c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZOCXF37cjusnSRY4oM1xkjGzUy7Mt7AEhEGhpHHr4MFBa0IOB6JMf24g52c972SB5wTdtRRyxUAa/fNWLmaGxlxM2Nf+Zp0mjl25GaL0GwIFuHeehqgRqOnirrKKVPBvnRzHsMWqbjNCTiA3DtEvNlz7Ey9t8uWfmHwzJz888wY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=v+8L5RTS; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47G7sDvC052102;
+	Fri, 16 Aug 2024 02:54:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723794853;
+	bh=Ik/ZdRimZKjsbKzIm3/uG54pWJF/rEJY10bDBLHSQc4=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=v+8L5RTS5POTalqW46O70vH7fwkYOwzAu0FHOYFeB0lQ1fWgr8FnS9FJjWO3ZUH0Z
+	 5htHbNpWp7xfTSbb2msMr9yyw8KGoD2/LpXXZQEb35oM6MMh38yOoy/DTQJpPJnSGQ
+	 VoMvDs1PjR+2wFVt9NCwo9mvQFas0vY/Figlr8WQ=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47G7sDUp105958
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 16 Aug 2024 02:54:13 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 16
+ Aug 2024 02:54:04 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 16 Aug 2024 02:54:04 -0500
+Received: from [10.249.130.61] ([10.249.130.61])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47G7s0hv100175;
+	Fri, 16 Aug 2024 02:54:01 -0500
+Message-ID: <d0fea480-1682-48ec-99dd-73deaff99d7d@ti.com>
+Date: Fri, 16 Aug 2024 13:23:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] remoteproc: k3-r5: Acquire mailbox handle during
+ probe routine
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: <andersson@kernel.org>, <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>,
+        <s-anna@ti.com>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240808074127.2688131-1-b-padhi@ti.com>
+ <20240808074127.2688131-3-b-padhi@ti.com> <ZrzSxdxt64UkgVS3@p14s>
+Content-Language: en-US
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+In-Reply-To: <ZrzSxdxt64UkgVS3@p14s>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9fd536a9-b0bf-46a6-92c2-503ea16f7fcd@rock-chips.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, Aug 13, 2024 at 03:22:45PM +0800, Shawn Lin wrote:
+Hi Mathieu,
 
-[...]
-
-> > > > For runtime PM case, it's the power-domain driver will power down the
-> > > > controller and PHY if UFS stack is not active any more（autosuspend）.
-> > > > 
-> > > > For system PM case, it's the SoC's firmware to cutting of all the power
-> > > > for controller/PHY and device.
-> > > > 
-> > > 
-> > > Both cases are not matching the expectations of {rpm/spm}_lvl. So
-> > > the platform
-> > > (power domain or the firmware) should be fixed. What if the user sets the
-> > > {rpm/spm}_lvl to 1? Will the platform power down the controller even
-> > > then? If
-> > > so, then I'd say that the platform is broken and should be fixed.
+On 14-08-2024 21:22, Mathieu Poirier wrote:
+> Hi Beleswar, On Thu, Aug 08, 2024 at 01: 11: 26PM +0530, Beleswar 
+> Padhi wrote: > Acquire the mailbox handle during device probe and do 
+> not release handle > in stop/detach routine or error paths. This 
+> removes the redundant > requests for
+> ZjQcmQRYFpfptBannerStart
+> Report Suspicious
+> <https://us-phishalarm-ewt.proofpoint.com/EWT/v1/G3vK!vldnVV7DH2eSIoaksHjpMPogloWUPfAcp2-dEVbMoE1YA3kGFXdJXGAJUKJm$> 
+>
+> ZjQcmQRYFpfptBannerEnd
+> Hi Beleswar,
+>
+> On Thu, Aug 08, 2024 at 01:11:26PM +0530, Beleswar Padhi wrote:
+> > Acquire the mailbox handle during device probe and do not release handle
+> > in stop/detach routine or error paths. This removes the redundant
+> > requests for mbox handle later during rproc start/attach. This also
+> > allows to defer remoteproc driver's probe if mailbox is not probed yet.
 > > 
-> > Ok, it seems I need to set {rpm/spm}_lvl = 6 if I want platform to power
-> > down the controller for ultra power-saving. But I still need to add my
-> > own system PM callback in that case to recovery the link first. Do I
-> > misunderstand it?
+> > Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+> > ---
+> >  drivers/remoteproc/ti_k3_r5_remoteproc.c | 78 +++++++++---------------
+> >  1 file changed, 30 insertions(+), 48 deletions(-)
 > > 
-> > And for the user who sets the rpm/spm level via
-> > ufs_sysfs_pm_lvl_store(), I think there is no way to block it currently,
-> > except that we need to fix the power-domain driver and Firmware to
-> > respect the level and choose correct policy.
+> > diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> > index 57067308b3c0..8a63a9360c0f 100644
+> > --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> > +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> > @@ -194,6 +194,10 @@ static void k3_r5_rproc_mbox_callback(struct mbox_client *client, void *data)
+> >  	const char *name = kproc->rproc->name;
+> >  	u32 msg = omap_mbox_message(data);
+> >  
+> > +	/* Do not forward message from a detached core */
+> > +	if (kproc->rproc->state == RPROC_DETACHED)
+> > +		return;
+> > +
+> >  	dev_dbg(dev, "mbox msg: 0x%x\n", msg);
+> >  
+> >  	switch (msg) {
+> > @@ -229,6 +233,10 @@ static void k3_r5_rproc_kick(struct rproc *rproc, int vqid)
+> >  	mbox_msg_t msg = (mbox_msg_t)vqid;
+> >  	int ret;
+> >  
+> > +	/* Do not forward message to a detached core */
+> > +	if (kproc->rproc->state == RPROC_DETACHED)
+> > +		return;
+> > +
+> >  	/* send the index of the triggered virtqueue in the mailbox payload */
+> >  	ret = mbox_send_message(kproc->mbox, (void *)msg);
+> >  	if (ret < 0)
+> > @@ -399,12 +407,9 @@ static int k3_r5_rproc_request_mbox(struct rproc *rproc)
+> >  	client->knows_txdone = false;
+> >  
+> >  	kproc->mbox = mbox_request_channel(client, 0);
+> > -	if (IS_ERR(kproc->mbox)) {
+> > -		ret = -EBUSY;
+> > -		dev_err(dev, "mbox_request_channel failed: %ld\n",
+> > -			PTR_ERR(kproc->mbox));
+> > -		return ret;
+> > -	}
+> > +	if (IS_ERR(kproc->mbox))
+> > +		return dev_err_probe(dev, PTR_ERR(kproc->mbox),
+> > +				     "mbox_request_channel failed\n");
+> >  
+> >  	/*
+> >  	 * Ping the remote processor, this is only for sanity-sake for now;
+> > @@ -552,10 +557,6 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+> >  	u32 boot_addr;
+> >  	int ret;
+> >  
+> > -	ret = k3_r5_rproc_request_mbox(rproc);
+> > -	if (ret)
+> > -		return ret;
+> > -
+> >  	boot_addr = rproc->bootaddr;
+> >  	/* TODO: add boot_addr sanity checking */
+> >  	dev_dbg(dev, "booting R5F core using boot addr = 0x%x\n", boot_addr);
+> > @@ -564,7 +565,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+> >  	core = kproc->core;
+> >  	ret = ti_sci_proc_set_config(core->tsp, boot_addr, 0, 0);
+> >  	if (ret)
+> > -		goto put_mbox;
+> > +		return ret;
+> >  
+> >  	/* unhalt/run all applicable cores */
+> >  	if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
+> > @@ -580,13 +581,12 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+> >  		if (core != core0 && core0->rproc->state == RPROC_OFFLINE) {
+> >  			dev_err(dev, "%s: can not start core 1 before core 0\n",
+> >  				__func__);
+> > -			ret = -EPERM;
+> > -			goto put_mbox;
+> > +			return -EPERM;
+> >  		}
+> >  
+> >  		ret = k3_r5_core_run(core);
+> >  		if (ret)
+> > -			goto put_mbox;
+> > +			return ret;
+> >  	}
+> >  
+> >  	return 0;
+> > @@ -596,8 +596,6 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+> >  		if (k3_r5_core_halt(core))
+> >  			dev_warn(core->dev, "core halt back failed\n");
+> >  	}
+> > -put_mbox:
+> > -	mbox_free_channel(kproc->mbox);
+> >  	return ret;
+> >  }
+> >  
+> > @@ -658,8 +656,6 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+> >  			goto out;
+> >  	}
+> >  
+> > -	mbox_free_channel(kproc->mbox);
+> > -
+> >  	return 0;
+> >  
+> >  unroll_core_halt:
+> > @@ -674,42 +670,22 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+> >  /*
+> >   * Attach to a running R5F remote processor (IPC-only mode)
+> >   *
+> > - * The R5F attach callback only needs to request the mailbox, the remote
+> > - * processor is already booted, so there is no need to issue any TI-SCI
+> > - * commands to boot the R5F cores in IPC-only mode. This callback is invoked
+> > - * only in IPC-only mode.
+> > + * The R5F attach callback is a NOP. The remote processor is already booted, and
+> > + * all required resources have been acquired during probe routine, so there is
+> > + * no need to issue any TI-SCI commands to boot the R5F cores in IPC-only mode.
+> > + * This callback is invoked only in IPC-only mode and exists because
+> > + * rproc_validate() checks for its existence.
+>
+> Excellent documentation.
+
+
+Thanks!
+
+>
+> >   */
+> > -static int k3_r5_rproc_attach(struct rproc *rproc)
+> > -{
+> > -	struct k3_r5_rproc *kproc = rproc->priv;
+> > -	struct device *dev = kproc->dev;
+> > -	int ret;
+> > -
+> > -	ret = k3_r5_rproc_request_mbox(rproc);
+> > -	if (ret)
+> > -		return ret;
+> > -
+> > -	dev_info(dev, "R5F core initialized in IPC-only mode\n");
+> > -	return 0;
+> > -}
+> > +static int k3_r5_rproc_attach(struct rproc *rproc) { return 0; }
+> >  
+> >  /*
+> >   * Detach from a running R5F remote processor (IPC-only mode)
+> >   *
+> > - * The R5F detach callback performs the opposite operation to attach callback
+> > - * and only needs to release the mailbox, the R5F cores are not stopped and
+> > - * will be left in booted state in IPC-only mode. This callback is invoked
+> > - * only in IPC-only mode.
+> > + * The R5F detach callback is a NOP. The R5F cores are not stopped and will be
+> > + * left in booted state in IPC-only mode. This callback is invoked only in
+> > + * IPC-only mode and exists for sanity sake.
+>
+> I would add the part about detach() being a NOP to attach() above...
+>
+> >   */
+> > -static int k3_r5_rproc_detach(struct rproc *rproc)
+> > -{
+> > -	struct k3_r5_rproc *kproc = rproc->priv;
+> > -	struct device *dev = kproc->dev;
+> > -
+> > -	mbox_free_channel(kproc->mbox);
+> > -	dev_info(dev, "R5F core deinitialized in IPC-only mode\n");
+> > -	return 0;
+> > -}
+> > +static int k3_r5_rproc_detach(struct rproc *rproc) { return 0; }
+>
+> ... and just remove this.
+
+
+Thanks for the comments. But dropping k3_r5_rproc_detach() would mean we 
+would get -EINVAL[1] while trying to detach the core from sysfs[0]. Is 
+it expected?
+
+[0]: 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/remoteproc/remoteproc_sysfs.c#n202
+[1]: 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/remoteproc/remoteproc_core.c#n1752
+
+>
+> Otherwise this patch looks good.
+>
+> >  
+> >  /*
+> >   * This function implements the .get_loaded_rsc_table() callback and is used
+> > @@ -1278,6 +1254,10 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+> >  		kproc->rproc = rproc;
+> >  		core->rproc = rproc;
+> >  
+> > +		ret = k3_r5_rproc_request_mbox(rproc);
+> > +		if (ret)
+> > +			return ret;
+> > +
+> >  		ret = k3_r5_rproc_configure_mode(kproc);
+> >  		if (ret < 0)
+> >  			goto out;
+> > @@ -1392,6 +1372,8 @@ static void k3_r5_cluster_rproc_exit(void *data)
+> >  			}
+> >  		}
+> >  
+> > +		mbox_free_channel(kproc->mbox);
+> > +
+> >  		rproc_del(rproc);
+> >  
+> >  		k3_r5_reserved_mem_exit(kproc);
+> > -- 
+> > 2.34.1
 > > 
-> > 
-> > So in summary for what the next step I should to:
-> > (1) Set {rpm/spm}_lvl = 6 in host driver to reflect the expectation
-> > (2) Add own PM callbacks to recovery the link to meet the expectation
-> > (3) Fix the broken behaviour of PD or Firmware to respect the actual
-> > desired pm level if user changes the pm level.
-> > 
-> > 
-> 
-> Sorry, I misunderstood your comment, so the action should be
-> (1) Set {rpm/spm}_lvl = 5 in host driver to reflect the expectation
-> (2) Use ufshcd_system_suspend/resume, but keep our own runtime PM
-> callbacks as we need a extra step to gate refclk.
-
-Ok.
-
-> (3) Fix the broken behaviour of PD or Firmware to respect the actual
-> desired pm level if user changes the pm level.
-
-If you do this, then you don't need (1), don't you?
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
 
