@@ -1,41 +1,42 @@
-Return-Path: <linux-kernel+bounces-289288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCEEE954456
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:31:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E8DF954458
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 546D3B22B0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:31:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 507111C21354
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9575A142E90;
-	Fri, 16 Aug 2024 08:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2521448E7;
+	Fri, 16 Aug 2024 08:27:50 +0000 (UTC)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB271369BB;
-	Fri, 16 Aug 2024 08:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6561F143873;
+	Fri, 16 Aug 2024 08:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723796867; cv=none; b=LLvL66PKPhrmTEYLLHSfc8opUgzX/htDI62czhgquYcpspCoweLPp7dR1yd8zrwwWoS9t6bPVps0U4n246IEdkXa7H5ngkrp1HS4wl8ZHGVfxZ3TfsyAFzVH/5qWMSzMbYoBuTvADBq5nQPzkuE4sOzP+j7PL4vw4dY/kSiTwhw=
+	t=1723796869; cv=none; b=mx8XUZz05p2D66M2oVqsYQ5cOf4MI6Ps/9Lt5VWcDrXyfgAnXV6wQTmZ7G4G31QhTSIbmBc2vJ0r6OWoLvtf1jt1NgPnLyb9isQE5z5ViygAPWnPItkqPZvvm08NutB+JnaepOb/mv93cGa3jkCzmHCLWuNpC+zMJsSPu6gjGXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723796867; c=relaxed/simple;
-	bh=X/NC8Fn35SuJ+/Zgd8nVnQApdeQjzg11aXOWQ5rYbC0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NjRxBcccnUQ8x/pvVjTTUAla9JdMadZf1Rdra+s0iLZG+nlGNFcRdfeLmuj86QLn8oEa+tRHPVOLxQBfV2Vt7jXVqhW04Jb7hsJzw6PI5k5Q5fOufKlDiNK2aJ2SOL+2ZPLundY8zg4gnzjLAAlJKm9fZjph8KiX0KU1LMxY3i0=
+	s=arc-20240116; t=1723796869; c=relaxed/simple;
+	bh=/x7LFb4LrOciivV1kVUK7gY0Gm8F8suaP/n+NQUB8Xc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=IcFs550Kk/550hdtgzTDH6rU/QWWjQpWwecZAGZcqAYeyu1D3O+80ssPyAwrjsVz6A428VM9yPnncsTKbk5ZuGT2PzOksRjAIXXG5sHi5TdYlVvziqXQfG8oaaJW8q9xX9qj62sNss/3wG2zcXY15mhfjlGnvBSsaUGYKEz93NM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A2C5D2017B0;
-	Fri, 16 Aug 2024 10:27:43 +0200 (CEST)
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9EA9020179E;
+	Fri, 16 Aug 2024 10:27:46 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5761420179E;
-	Fri, 16 Aug 2024 10:27:43 +0200 (CEST)
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 52FE9200DC0;
+	Fri, 16 Aug 2024 10:27:46 +0200 (CEST)
 Received: from pe-lt8779.in-pnq01.nxp.com (pe-lt8779.in-pnq01.nxp.com [10.17.104.141])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id B259C181D0FD;
-	Fri, 16 Aug 2024 16:27:41 +0800 (+08)
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id ADE18181D0FD;
+	Fri, 16 Aug 2024 16:27:44 +0800 (+08)
 From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
 To: marcel@holtmann.org,
 	luiz.dentz@gmail.com
@@ -48,10 +49,12 @@ Cc: linux-bluetooth@vger.kernel.org,
 	ziniu.wang_1@nxp.com,
 	haibo.chen@nxp.com,
 	LnxRevLi@nxp.com
-Subject: [PATCH v1 1/2] Bluetooth: hci_h4: Add support for ISO packets in h4_recv.h
-Date: Fri, 16 Aug 2024 13:55:23 +0530
-Message-Id: <20240816082524.286245-1-neeraj.sanjaykale@nxp.com>
+Subject: [PATCH v1 2/2] Bluetooth: btnxpuart: Add support for ISO packets
+Date: Fri, 16 Aug 2024 13:55:24 +0530
+Message-Id: <20240816082524.286245-2-neeraj.sanjaykale@nxp.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240816082524.286245-1-neeraj.sanjaykale@nxp.com>
+References: <20240816082524.286245-1-neeraj.sanjaykale@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,32 +64,25 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: ClamAV using ClamSMTP
 
-This adds ISO packet support in h4_recv.h, which was created before ISO
-packet handling was added to hci_h4.c and hci_uart.c
+This enables btnxpuart driver to handle ISO packets.
 
 Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
 ---
- drivers/bluetooth/h4_recv.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/bluetooth/btnxpuart.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/bluetooth/h4_recv.h b/drivers/bluetooth/h4_recv.h
-index 4f2c89742245..647d37ca4cdd 100644
---- a/drivers/bluetooth/h4_recv.h
-+++ b/drivers/bluetooth/h4_recv.h
-@@ -38,6 +38,13 @@ struct h4_recv_pkt {
- 	.lsize = 1, \
- 	.maxlen = HCI_MAX_EVENT_SIZE
- 
-+#define H4_RECV_ISO \
-+	.type = HCI_ISODATA_PKT, \
-+	.hlen = HCI_ISO_HDR_SIZE, \
-+	.loff = 2, \
-+	.lsize = 2, \
-+	.maxlen = HCI_MAX_FRAME_SIZE
-+
- static inline struct sk_buff *h4_recv_buf(struct hci_dev *hdev,
- 					  struct sk_buff *skb,
- 					  const unsigned char *buffer,
+diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
+index f75b24bd3045..0b52e5505687 100644
+--- a/drivers/bluetooth/btnxpuart.c
++++ b/drivers/bluetooth/btnxpuart.c
+@@ -1396,6 +1396,7 @@ static const struct h4_recv_pkt nxp_recv_pkts[] = {
+ 	{ H4_RECV_ACL,          .recv = hci_recv_frame },
+ 	{ H4_RECV_SCO,          .recv = hci_recv_frame },
+ 	{ H4_RECV_EVENT,        .recv = hci_recv_frame },
++	{ H4_RECV_ISO,		.recv = hci_recv_frame },
+ 	{ NXP_RECV_CHIP_VER_V1, .recv = nxp_recv_chip_ver_v1 },
+ 	{ NXP_RECV_FW_REQ_V1,   .recv = nxp_recv_fw_req_v1 },
+ 	{ NXP_RECV_CHIP_VER_V3, .recv = nxp_recv_chip_ver_v3 },
 -- 
 2.34.1
 
