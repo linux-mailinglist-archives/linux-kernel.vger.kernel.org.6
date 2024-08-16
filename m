@@ -1,80 +1,47 @@
-Return-Path: <linux-kernel+bounces-289460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14DB6954671
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:03:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4517954676
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF5502886BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:03:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09211288BE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B03816F0E4;
-	Fri, 16 Aug 2024 10:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A50616F0D2;
+	Fri, 16 Aug 2024 10:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dRo9eGmf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vv+NuVBc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B9313212B
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 10:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E4213212B;
+	Fri, 16 Aug 2024 10:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723802613; cv=none; b=M/LKtPhJZ2qQGyG/d0HX7tQjr4qGwtg6EOTvsprj9HD1rn1wiSQQfidKau1sRPhiNI/Gq26niNP01aCfZb+9hxT9q+1n+wQ/0VndpeDy5kjz8ztZ9nfJHzfiV/sQ9kxnhTViFuzKviSn3PZWOV/n92Cp9+w0sN9eMsC4DFK60hU=
+	t=1723802621; cv=none; b=WzOSdZfMzyrsI2zRjiKdq8rG/sWdHs/hrUo5KNIfrOPb6o29zKbSajYItPNsk8U5MXmAltOlpMskNKv2AvcCCWzkVtbj4V2l4pm5BnsQD5ZFodc9/YYDxjP4MjfAr6R1YVH3hM8KryEfY+iqvDBADn65XvnQZXxx92e4rbylm6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723802613; c=relaxed/simple;
-	bh=dFV2xXpzCSqLKMv+RqYrQmtXh/Q8qYxxSKiWRcfq0RE=;
+	s=arc-20240116; t=1723802621; c=relaxed/simple;
+	bh=RGIPzVWl06fJV3uUR3Z44ir/+J0AmSpWgve/PeqCXrI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BOJViSIF9DLTv+T3jyfmvpSVVPmH/+qDial0G2BY1Im9DJ8+DsFsuwsL65540vglyzSdtoLFoEBoH3mekihjAu3x0LOulQFTylvWE37GtX3JXwhbT7n9cG4OvyBvXHrffQaEcUXZTqUYwnYYAgR8RGtRYBQs3DNMadXGAY+e0W0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dRo9eGmf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723802610;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=bv6JgxmPLtyRzlbyORAKaq3kd+Y6V2I7i4+A+vo1K+8=;
-	b=dRo9eGmfe0Z/iEQLnlwQ5ncWXfp+yuuMBnQDLO4mni+BrPok80xkSsIga80/SBohNtzqzQ
-	lh9X/UayT/xFvE+jUy+Qj2eJbl5cIOZzVXPsc8zBhx7ClmACySQ6fm7G+w/2jJbVMsRidr
-	uhbGIfIytoyU6L3Z3o79MIweoQopzMk=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-534-OEl4R2VEM-KP-TXU7iDIqA-1; Fri, 16 Aug 2024 06:03:29 -0400
-X-MC-Unique: OEl4R2VEM-KP-TXU7iDIqA-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3688010b3bfso1199011f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 03:03:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723802608; x=1724407408;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bv6JgxmPLtyRzlbyORAKaq3kd+Y6V2I7i4+A+vo1K+8=;
-        b=jlvOCMd/azqLG1rTZwH9PXKukU0/7WsdCvW9JenSS08NEKHnhSO94Ull23r6VqYbwQ
-         xi7tbgxqN0f/vOpAsgbnCYIu31a3+tNnnNFT+C8TAqUeFOFKz7MAqVFiGlyfnfDAODNs
-         7tkxvBDrsryawMYyE5AwgQyvjXg7/2OXGazbiKiIMlZ5bBDIStJurfco5AMkwe0cR/cV
-         KbvBaM5X0pdJHu9HiQGp0615KrCydlQsQr5oJ7CvGxa78i825vNhhI9NI+pH+jbYfpgf
-         PpWG9EtOVjBTHzd8vcp65oCnQ+7FlXrwcU7D0hvRrat0DZCgviYGMY7fiaut5F97W/Wn
-         aD9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWFlBjlw21rbkFjfdvrUAIYDCtMDYxcRe+qYyGRki+VfLa/BMnBweqOAJbNTPl0RmTI2owMpRn0Ky5JDQqdszsc3qtKnlh3Wpmtgt/0
-X-Gm-Message-State: AOJu0YyznIsizsUJgYMxRGH1dhq2fMVdJ7lHnhbCbMPe6H9NALVeRIL6
-	sG88uahfL8bQSUS9iny2fIonMmMOtHtxtuYPDEskk87MZHgOcS5JUYZyqudc7ocHMErye0xMW+F
-	nl4R6xSCUwcCL+lMVZrGaXcQQRvd294pIV0x7018qI7DNyELCmVLul0WoiubiCQ==
-X-Received: by 2002:a5d:560d:0:b0:368:6b56:641b with SMTP id ffacd0b85a97d-3719469f928mr1509445f8f.47.1723802607843;
-        Fri, 16 Aug 2024 03:03:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IETi46kqfEBkFh4u49j/5op4vzbNMLN9Z3tAoQyciXdDZKygQwBSvR46xbaomGg9eGCApAc9g==
-X-Received: by 2002:a5d:560d:0:b0:368:6b56:641b with SMTP id ffacd0b85a97d-3719469f928mr1509421f8f.47.1723802607348;
-        Fri, 16 Aug 2024 03:03:27 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c721:b900:4f34:b2b7:739d:a650? (p200300cbc721b9004f34b2b7739da650.dip0.t-ipconnect.de. [2003:cb:c721:b900:4f34:b2b7:739d:a650])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded19670sm72644465e9.9.2024.08.16.03.03.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Aug 2024 03:03:26 -0700 (PDT)
-Message-ID: <2d757ddb-cd20-4695-a978-ea413881d9b2@redhat.com>
-Date: Fri, 16 Aug 2024 12:03:25 +0200
+	 In-Reply-To:Content-Type; b=Dr3SkOZZr5V6AUxAfxjvOJZ4ytiRQo2lrQt4DlKIvmIjmiggQCEkrJVkotMDefop8xjedpa2MKm3vwH240NdftUTaxnIX2RZsDrUqQWdEUxx1cHQFeRXitSpJi9VwSmY139Q8yaFI3E745Dha8BMERGWeRb1l+QyO7WWnGozNs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vv+NuVBc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAC0BC4AF09;
+	Fri, 16 Aug 2024 10:03:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723802621;
+	bh=RGIPzVWl06fJV3uUR3Z44ir/+J0AmSpWgve/PeqCXrI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Vv+NuVBcCknHh2os6a+XRCj/ab/vbxzLlHyEjtyTvRoaw+CinmNCohIpBprSeYmi8
+	 TSSPG4SjV79+VPs1z4DelrbV3Thrkgg2ivqGNaY4scohGKjlonjlvosjxP/1djEZyJ
+	 jnLrbLuAXRGBkdGqaOUY2Q96pHinNOYBQkBDkZv44bLNcG9uThF/n+iaYl7umL6mwK
+	 Hb3uqJqRGZrKZCBJhojiOcUiYCKvsATLTfTKntsvBMqOd4vFWziu6+/sjn7u0o5L3p
+	 /DsjRDTkB5Pp8VY1amcrOi34XBTrbzrmoMaZJXXAG2vZpJHRqfKFuH4xtFmPgyIfKk
+	 qLa2ZCxJ9/nyQ==
+Message-ID: <f2d19e20-9177-4b30-9781-6904cc1d1638@kernel.org>
+Date: Fri, 16 Aug 2024 12:03:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,86 +49,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 4/7] mm: pgtable: try to reclaim empty PTE pages in
- zap_page_range_single()
-To: Qi Zheng <zhengqi.arch@bytedance.com>
-Cc: hughd@google.com, willy@infradead.org, mgorman@suse.de,
- muchun.song@linux.dev, vbabka@kernel.org, akpm@linux-foundation.org,
- zokeefe@google.com, rientjes@google.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <cover.1722861064.git.zhengqi.arch@bytedance.com>
- <9fb3dc75cb7f023750da2b4645fd098429deaad5.1722861064.git.zhengqi.arch@bytedance.com>
- <2659a0bc-b5a7-43e0-b565-fcb93e4ea2b7@redhat.com>
- <42942b4d-153e-43e2-bfb1-43db49f87e50@bytedance.com>
- <b0b39543-498d-4b08-a864-b05be45f617d@redhat.com>
- <860f45d7-4d75-4d67-bf2a-51f6000cd185@bytedance.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v4 08/10] ARM: dts: samsung: exynos4212-tab3: Add battery
+ node with charge current value
+To: Artur Weber <aweber.kernel@gmail.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht, Henrik Grimler <henrik@grimler.se>,
+ Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>,
+ Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
+References: <20240816-max77693-charger-extcon-v4-0-050a0a9bfea0@gmail.com>
+ <20240816-max77693-charger-extcon-v4-8-050a0a9bfea0@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <860f45d7-4d75-4d67-bf2a-51f6000cd185@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240816-max77693-charger-extcon-v4-8-050a0a9bfea0@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
->>
->> (b) if we didn't have to drop the PTL, we can remove the page table
->>       without even re-verifying whether the entries are pte_none(). We
+On 16/08/2024 10:19, Artur Weber wrote:
+> This value was verified by comparing register dumps of the MAX77693
+> charger with on mainline with a downstream kernel under Android; the
+> value on downstream was set to 1.8 amps when charging with a proper
+> charger.
 > 
-> If we want to remove the PTE page, we must hold the pmd lock (for
-> clearing pmd entry). To prevent ABBA deadlock, we must first release the
-> pte lock and then re-acquire the pmd lock + pte lock. Right? If so, then
-> rechecking pte_none() is unavoidable. Unless we hold the pmd lock + pte
-> lock in advance to execute the original code loop.
+> Add it to a new battery node and pass it to the MAX77693 charger
+> so that the fast charge current setting can be used for charging.
+> 
+> Tested-by: Henrik Grimler <henrik@grimler.se>
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> ---
+> Changes in v2:
+> - Switched to monitored-battery
+> ---
+>  arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-Try-locking the PMD should work, and succeed in many cases, right? And 
-if that fails, we could fallback to what you describe.
+For next version, please split DTS into separate patchset and provide in
+changelog (---) lore link to power supply patchset with bindings. It
+will be easier for Sebastian to apply entire set for psy.
 
--- 
-Cheers,
-
-David / dhildenb
+Best regards,
+Krzysztof
 
 
