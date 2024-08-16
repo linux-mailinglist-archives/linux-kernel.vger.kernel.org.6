@@ -1,145 +1,232 @@
-Return-Path: <linux-kernel+bounces-289637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6E80954896
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:18:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FE1E9548A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0120284BCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:18:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58072284C4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA9519DFBB;
-	Fri, 16 Aug 2024 12:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944601B3F2D;
+	Fri, 16 Aug 2024 12:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YrCNdUHD"
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vepJIgQv"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14723156C5F
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 12:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799D919DFBB
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 12:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723810691; cv=none; b=mRRk4GKQp3B/9YJ2/8ckZVUCwlK5QgyRlzfgWKZBORM5Zp6OaveR/ObnTEPwqZgnowLDHxzHZzokvcQw7oWxpytryHX/Bne7z7MhJGZJVlMYBSRp6PM/auaYCpyTysPoz/aUw1KVgX80pDX6skNhdLCGHoIopTRAJKYkdttEi1U=
+	t=1723810860; cv=none; b=hlugfOq16LVNBTRg20OGaDfUjmPnUaflR5tjSOPpawo3azr2U2MUAk47tS53DD6IBehfpCvrAtX9N55VzDS3NV3qkreB2ZTZxtiHkfOfoppijr16oq9Y7ga0ZA10gElkUy/3FfuRwHwsLMbw68fIrMJJQUv6+b6FqE0xlxxd5OQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723810691; c=relaxed/simple;
-	bh=tcJZoZvIvPmmMwu4y2I37jbMl9NI6oAn20IMGSWs88Y=;
+	s=arc-20240116; t=1723810860; c=relaxed/simple;
+	bh=uDHRwF0otXkj+agrQEA0lwHEUq1GTb5X3dySo2OqWmA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pS14L51CooUGHT8VQbctKmEqQu9jzjuDp/tP5BbKHIVjlIxB1Zh2thU+2nq2kVkkCCaG1HxSB/0FZgdkc2WKpIyIKpQfVWpHCJutcqOwT8OF6MIBp0+LQlZKqqejRBaLrrm2Cfr209ooZCjRtoFTVlrgnWfLW4hMZuEhEn5J2wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YrCNdUHD; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-842f95d3501so1071792241.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 05:18:09 -0700 (PDT)
+	 To:Cc:Content-Type; b=i1Vsg9p70T//TdeNm2RxqX65kcLC2FXKFTQmA6smHuc00KzC0ug1BZMh66yYxJv/EN3u1aDudvxDrjDVvDafgG61VJTvYWHFqRCoLZHK1e4FnwDgDy1IGS0Ejw+dvO8bW0JmqtfE5m8OQ2Ma6N5d0SIIt3vq3DBKXM2MjXMItgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vepJIgQv; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7a1e31bc1efso121070685a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 05:20:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723810689; x=1724415489; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1723810857; x=1724415657; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ypdZtxVWZEvMrrAE4BHjMdvp8EAGZSUhh00ZRWVJC6s=;
-        b=YrCNdUHDktrr2HmQwWnmG1ylEmVQeMgAsW5wov+pEous6cVNCdjLLd+of+l/bOrVrD
-         DGJmcpZ5TzXvanxZQY/7mv/DvBumduywJlvXpjt3/v/Y+WzXCzWvPtsTN04dp7h06qQM
-         1xH0iEJTMsJoB/aNszDTWmSY5Wu1Gap4En/OuxyPYh3RuqPZ7qbpxh7hZx5UTPOcAsfX
-         EHRxby7hx0qUGKGRTmfFexgG1FnqbSCteu+VSWxMmqb3/nBNm5eANLo4++Jw5jMkcNaY
-         AIjnyccdzgRhO1MqSpdZEbpdDv0BfA8oDJe+uvPmvTLScd8nBO8LYOqqphr5h0KWpv2r
-         IUig==
+        bh=60gFb7YBVOLPqGwy/Oc6xhCaH/QA9b9t6B6yBp4eA0s=;
+        b=vepJIgQvm2wUGg7wPKHnb+cadQKMpOzbWijLOw8Y601NGnc5kVVQQPvwKuFuHmO9dT
+         MJgiqk3ifseVfRq/1H89bggOm/n7pq2Mm8dmsp81hGSa5WPe8joH83P6y+SfpVSL5VCH
+         lZLxAXq0w4X5pjPxczK8MnzECXq4GfetXQZQfQsE1q5cckXfkWtkW5TRvbSxcOYtVr4U
+         /ROBZ3uaTofnbmaov+YziEU4mN5Jx1qhndecyk+dDXswFTYJQF2zRTdUbbakad1/rIsM
+         DwzU5Muj2HTFtxM1/A66Nbfr3az4ejPZ29MAKl9DO+8SgPw7kWqtxMFRF8n5JpvPCqFk
+         yYhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723810689; x=1724415489;
+        d=1e100.net; s=20230601; t=1723810857; x=1724415657;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ypdZtxVWZEvMrrAE4BHjMdvp8EAGZSUhh00ZRWVJC6s=;
-        b=ClJJgCEX0oghJnUtpuZOLqSNfqtvLpxaLUCeWMu0FqDbLOHd5HoN+hHhZadriHonMK
-         FVDgKHygGBhfeyRMpYKLGHmX1Bhp5PGE+9VjQjizqCANDBBDkMmClZxE9BSYP1DtpYUr
-         0tfyQwRvC+EKAoLkE5Gq3AE3ThFNtgitp0r9DmIQIEprqWHDo5FzIn34D30kopIEEZI4
-         2ZWOV32k2Hrk7RajaKh8i2uu3+rYeTN0R0KmNHwTA2RahYzDZxNv6pgZFAhZc4X8KZ1w
-         PhFDEwW/3rvgXbC6NJ3ZlNPG/jQAGRHMChGoZ2elfm7Un/4n06sXS74TC2U24n9SjGpL
-         K7wg==
-X-Forwarded-Encrypted: i=1; AJvYcCWkV0ry5oCogEklOY5MPQEyZS+B4vLhlOcKof0z1CWQl5e9wtQycRHEawKk1VJn5xtSFLe5FaqnXMoDU94CgTtvREM2qAvvGo3yss58
-X-Gm-Message-State: AOJu0Yx+/WkhVc6QqpQetz8GiKh6qxXnAIIO+Y1fNOhQj0AyWbrT040h
-	lu9n1Zaa9JMqrC/MZH3gcf6AXUsvKj54GvK5jdfY2gDpMxzkdqpD126R7uk+vzTje9h+VxZ1Ntg
-	ZVMQWT+zn7hbUN3EdN1jiltwqgMU=
-X-Google-Smtp-Source: AGHT+IHTIZxa99PI8Ipkj4HN42Y2mN/Pzb2xMa/vh4157p3qAiTKSC5msI7Nb9OD7IhyyHOKOO5SzAJG64Fla4dlsfc=
-X-Received: by 2002:a05:6102:cd4:b0:48f:3b56:a184 with SMTP id
- ada2fe7eead31-4976a56fff8mr3493717137.5.1723810688717; Fri, 16 Aug 2024
- 05:18:08 -0700 (PDT)
+        bh=60gFb7YBVOLPqGwy/Oc6xhCaH/QA9b9t6B6yBp4eA0s=;
+        b=ltLZmGxP5hHMluQKdZkJrOYmHLjCPOdT/eB0r6uOSly4JC5jpb/m3tD/Vb/qvI/dKD
+         1+HEs+I9Qq52P74AQQ9un3A8feQGKIB2lJ9sxLcxjLeg8l1qb/voX0bjI2hxFy+/GAnK
+         QzXqph6CTrzcT2UY5RKhyHkilQ0xaihPIFHVUt53kgylbB2s/MV8D0zknr1hs39FR9JB
+         QtyjBpG+/WnruKrpKFWEF/tJJF0d3xww6dXhN117zCYwVOHul+ARx+NMUsCdm1uAF8Br
+         2h50uj5N7dizxoCVn5/xnlL1G8FpEsLfu6xb+SwvgvWtxVuECv0I4m8KB1lK46bIveEv
+         qkCg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBUk2uuCb8pCLTM6yQP4mRj+tUo4eCld+qdhD06Ac4zQvp8sTs63CSRA6SOmdJ5LI3kkxta0egyFgCVMCxCxTGe0dc5dkmGk4HOa+D
+X-Gm-Message-State: AOJu0YwAO3Y2jjQUm7vF0wHtWAVzxwmTLJGVxoApI3iH5XQXZTz8zqPy
+	80QsBiZKN3UrI9kgSd9JzeD9Y40RezCSpOqucNMUvwK/Dks3ri0gy1RKPnlKifoY30mufeSB7tM
+	h/RvjlD6VmdfMmg7z2ox/1Ju+hhWg9eS4KTtv
+X-Google-Smtp-Source: AGHT+IGZmdSIKsIbNLMCWhDr7siS0fg53Dzm3mUEgRlOmZUGtYHuIW2VVl49SrIQcFwsu42Q03aJr/PwI9drpzidh7Q=
+X-Received: by 2002:a05:6214:5713:b0:6bf:7c34:e419 with SMTP id
+ 6a1803df08f44-6bf7cdcb101mr38991616d6.5.1723810857192; Fri, 16 Aug 2024
+ 05:20:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807090746.2146479-1-pedro.falcato@gmail.com>
- <cdfc5a08-c0ee-30a3-d6c5-22d4cfddc3a4@google.com> <CAKbZUD1e5nvmrQ5XZ=xV1eYbh5eeSLBQEeDT=KBx1C5T1Bjjzg@mail.gmail.com>
- <aab45188-d34c-93c6-cfab-3c0cd1326a53@google.com>
-In-Reply-To: <aab45188-d34c-93c6-cfab-3c0cd1326a53@google.com>
-From: Pedro Falcato <pedro.falcato@gmail.com>
-Date: Fri, 16 Aug 2024 13:17:57 +0100
-Message-ID: <CAKbZUD293X0hOaqHRKpERpmsMKvvOLqRcQoKyB9mssg41Dhxtw@mail.gmail.com>
-Subject: Re: [PATCH v2] slab: Warn on duplicate cache names when DEBUG_VM=y
-To: David Rientjes <rientjes@google.com>
-Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20240813211317.3381180-7-almasrymina@google.com>
+ <de7daf80-a2e4-4451-b666-2a67ccc3649e@gmail.com> <CAHS8izPMC+XhXKbJOQ3ymizyKuARSOv_cO_xO+q1EG4zoy6Gig@mail.gmail.com>
+ <31640ff4-25a6-4115-85e6-82092ce57393@gmail.com> <20240815182245.2b5e3f44@kernel.org>
+In-Reply-To: <20240815182245.2b5e3f44@kernel.org>
+From: Mina Almasry <almasrymina@google.com>
+Date: Fri, 16 Aug 2024 08:20:44 -0400
+Message-ID: <CAHS8izO9LDM9rLVnJPgp6QXb4YLW5+3ziGOHTqScy-SKOLejYA@mail.gmail.com>
+Subject: Re: [PATCH net-next v19 06/13] memory-provider: dmabuf devmem memory provider
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, 
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
+	Nikolay Aleksandrov <razor@blackwall.org>, Taehee Yoo <ap420073@gmail.com>, David Wei <dw@davidwei.uk>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, 
+	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
+	Praveen Kaligineedi <pkaligineedi@google.com>, Willem de Bruijn <willemb@google.com>, 
+	Kaiyuan Zhang <kaiyuanz@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 12, 2024 at 1:55=E2=80=AFAM David Rientjes <rientjes@google.com=
-> wrote:
+On Thu, Aug 15, 2024 at 9:22=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
 >
-> On Sun, 11 Aug 2024, Pedro Falcato wrote:
-> > > > +     if (kmem_cache_is_duplicate_name(name)) {
-> > > > +             /* Duplicate names will confuse slabtop, et al */
-> > > > +             pr_warn("%s: name %s already exists as a cache\n", __=
-func__, name);
+> On Wed, 14 Aug 2024 17:32:53 +0100 Pavel Begunkov wrote:
+> > > This is where I get a bit confused. Jakub did mention that it is
+> > > desirable for core to verify that the driver did the right thing,
+> > > instead of trusting that a driver did the right thing without
+> > > verifying. Relying on a flag from the driver opens the door for the
+> > > driver to say "I support this" but actually not create the mp
+> > > page_pool. In my mind the explicit check is superior to getting
+> > > feedback from the driver.
+> >
+> > You can apply the same argument to anything, but not like
+> > after each for example ->ndo_start_xmit we dig into the
+> > interface's pending queue to make sure it was actually queued.
+> >
+> > And even if you check that there is a page pool, the driver
+> > can just create an empty pool that it'll never use. There
+> > are always ways to make it wrong.
+> >
+> > Yes, there is a difference, and I'm not against it as a
+> > WARN_ON_ONCE after failing it in a more explicit way.
+> >
+> > Jakub might have a different opinion on how it should look
+> > like, and we can clarify on that, but I do believe it's a
+> > confusing interface that can be easily made better.
+>
+> My queue API RFC patches had configuration arguments, not sure if this
+> is the right version but you'll get the idea:
+> https://github.com/kuba-moo/linux/blob/qcfg/include/net/netdev_cfg.h#L43-=
+L50
+> This way we can _tell_ the driver what the config should be. That part
+> got lost somewhere along the way, because perhaps in its embryonic form
+> it doesn't make sense.
+>
+> We can bring it back, add HDS with threshold of 0, to it, and a bit for
+> non-readable memory. On top of that "capability bits" in struct
+> netdev_queue_mgmt_ops to mark that the driver pays attention to particula=
+r
+> fields of the config.
+>
+> Not sure if it should block the series, but that'd be the way I'd do it
+> (for now?)
+>
+
+I'm not sure I want to go into a rabbit hole of adding configuration
+via the queue API, blocking this series . We had discussed this months
+back and figured that it's a significant undertaking on its own. I'm
+not sure GVE has HDS threshold capability for example, and I'm also
+not sure how to coexist header split negotiability via the queue API
+when an ethtool API exists alongside it. I think this is worthy of
+separating in its own follow up series.
+
+For now detecting that the driver was able to create the page_pool
+with the correct memory provider in core should be sufficient. Also
+asking the driver to set a
+netdev_rx_queue->unreadable_netmem_supported flag should also be
+sufficient. I've implemented both locally and they work well.
+
+> I'd keep the current check with a WARN_ON_ONCE(), tho.
+> Given the absence of tests driver developers can use.
+> Especially those who _aren't_ supporting the feature.
+>
+
+Yes what I have locally is the driver setting
+netdev_rx_queue->unreadable_netmem_supported when header split is
+turned on, and additionally a WARN_ON_ONCE around the check in core. I
+was about to send that when I read your email. I'm hoping we don't
+have to go through the scope creep of adding configuration via the
+queue API, which I think is a very significant undertaking.
+
+> > > and cons to each approach; I don't see a showstopping reason to go
+> > > with one over the other.
 > > >
+> > >> And page_pool_check_memory_provider() is not that straightforward,
+> > >> it doesn't walk through pools of a queue.
 > > >
-> > > Shouldn't this be a full WARN_ON() instead of pr_warn()?  I assume we=
-'ll
-> > > be interested in who is adding the cache when the name already exists=
-.
+> > > Right, we don't save the pp of a queue, only a netdev. The outer loop
+> > > checks all the pps of the netdev to find one with the correct binding=
+,
+> > > and the inner loop checks that this binding is attached to the correc=
+t
+> > > queue.
 > >
-> > panic_on_warn? :)
+> > That's the thing, I doubt about the second part.
 > >
->
-> Would get the problem fixed up pretty fast, no? :)
->
-> > Personally I don't have anything against WARN_ON, but we've seen that
-> > panic_on_warn is a real thing on real systems, and DEBUG_VM is also
-> > set on real prod configs (like Fedora does/used to do). I've sent out
-> > one or two loose patches for problems I did find in my own testing
-> > around, but there may be many more (e.g some drivers may call
-> > kmem_cache_create repeatedly in some sort of callback, like 9pfs was
-> > doing when mounting; this is not greppable). And I'd guess grepping
-> > for cache names tends to be easy enough?
+> > net_devmem_bind_dmabuf_to_queue() {
+> >       err =3D xa_alloc(&binding->bound_rxqs, &xa_idx, rxq);
+> >       if (err)
+> >               return err;
 > >
+> >       netdev_rx_queue_restart();
+> >
+> >       // page_pool_check_memory_provider
+> >       ...
+> >       xa_for_each(&binding->bound_rxqs, xa_idx, binding_rxq) {
+> >               if (rxq =3D=3D binding_rxq)
+> >                       return success;
+> > }
+> >
+> > Can't b4 the patches for some reason, but that's the highlight
+> > from the patchset, correct me if I'm wrong. That xa_for_each
+> > check is always true because you put the queue in there right
+> > before it, and I don't that anyone could've erased it.
+> >
+> > The problem here is that it seems the ->bound_rxqs state doesn't
+> > depend on what page pools were actually created and with what mp.
 >
-> Can we add a dump_stack() to make this way easier instead of hiding who i=
-s
-> creating the duplicate name?
+> FWIW I don't understand the point of walking the xa either.
+> Just check the queue number of the pp you found matches,
+> page pool params are saved in the page pool. No?
+>
 
+Yes, I changed this check to check pool->p.queue, and it works fine.
 
-Bah, sorry for the delay.
-
-I'm fully in favour of adding a dump_stack(), but it seems like hand
-coding WARN_ON a bit. Oh well.
-If y'all agree, please squash this in (praying gmail doesn't mangle
-this diff, in any case it's a trivial change):
-
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 1abe6a577d52..d183655e4b1b 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -111,6 +111,7 @@ static int kmem_cache_sanity_check(const char
-*name, unsigned int size)
-       if (kmem_cache_is_duplicate_name(name)) {
-               /* Duplicate names will confuse slabtop, et al */
-               pr_warn("%s: name %s already exists as a cache\n",
-__func__, name);
-+               dump_stack_lvl(KERN_WARNING);
-       }
-
-       WARN_ON(strchr(name, ' '));     /* It confuses parsers */
+--=20
+Thanks,
+Mina
 
