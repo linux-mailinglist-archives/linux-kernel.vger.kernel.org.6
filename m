@@ -1,97 +1,209 @@
-Return-Path: <linux-kernel+bounces-290141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F255954FEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:20:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FB91954FF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:24:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0A3C282093
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:20:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BA9D28764C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5460A1C2319;
-	Fri, 16 Aug 2024 17:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA121BF32B;
+	Fri, 16 Aug 2024 17:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OItPG6Eu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QAlZrUEJ"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974221BC067;
-	Fri, 16 Aug 2024 17:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF492BB0D;
+	Fri, 16 Aug 2024 17:24:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723828829; cv=none; b=fXmUGH4Fg8U4wNQisJZun053ZX0EQDiCQTLFrvKnU0xOBPSndVvCYS7jz1zznCbSedxMfnqVhDyTNfzl4vUi7ahjK7lgbx4GHqs8/5vuyFac904ba64QqRPQjdx4ghXaTN1+sXLEERNoSC+QDFg9Ci7aIQHs5dZ5YpPY2cxNF+Q=
+	t=1723829061; cv=none; b=QQK9Vln2FBBsMdgkjyZ/uvxvpldzFgdbPqphR9VUD/0Gc6JQ9RTdd1XgLYJsYPURoCoCSpB1LFBytyTvxCfPf6yeTVxE6953a/lP7z0Wz4IeiejV2t/7woYxjquUaYGl5BsmNJXgwXXmIv5NQnk+5naAoO90ruT73yi5KFee5+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723828829; c=relaxed/simple;
-	bh=NgeD9K+2viO7KQbnL95/lv4jMPlBpse0VSH6VZ3Y5RI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=GNGyZ0q4IqIdO63Z1yLyedBQFZkA+Bk5ayXtvcvXamnD0KbFT8FhL9FcVYvEeh4Sc/btorHDfLKCIu3JhmRfDcszMpA4ea7aM7oWBpltYR+VTAzK09NQqNjjB4ww2S55JpjxrDnb44HA7nLlVICmFpBD2F5dJ05i0drvjyVmVb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OItPG6Eu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D1F4C32782;
-	Fri, 16 Aug 2024 17:20:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723828829;
-	bh=NgeD9K+2viO7KQbnL95/lv4jMPlBpse0VSH6VZ3Y5RI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=OItPG6Eu7SD1hm6KXc9Y0RYMiL5nx52lnoxN58cYID0sZX2e/kzyCN0pw36+2brFn
-	 JYOHacRXAd1ItPy5Zbuzrzuwecg5+kxhDdWttkVpd+t7cQC6bYYhzbYNA3zVfaGr8k
-	 EZDiejUFU789S51F+cF4WU1/X4bYT8NKMUZERle/N+Ah1kjFdjay8D80N0nzpDwZBf
-	 3SKAg7d/N+u68EFGBJg/Luh5sQk8StLdz8IDw25OGpnX4bs0fTtKXm/kXRRV2GfI9Y
-	 moXfmpHr6bbd73nac2EiiYhtcf2h7WmFvo/OScRZogwB3HUFnLS35Uf/7fFF4EZ+h/
-	 pf7jJDr2if1Ig==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE2C238231F8;
-	Fri, 16 Aug 2024 17:20:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1723829061; c=relaxed/simple;
+	bh=gfs8VaCiqUCC8u5QXEZrwy0/UJQHHtDJhlCueki9qRw=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=k4Vn44qT6qYJ9zUxhiIXebkLc228OrU/B7bdyaDRDP6YaRjhv9doVIE0NUf/Wr4ETJkq5ANvVaeAKzNOpEHdfNjeY29caNC7YPzCGkWUUA4qOl3upYyYHiY/YVZx/5LbSLe26B742sKRKZUVdFwS82nxoqhhXTBuUboTb77FjoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QAlZrUEJ; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-201f7fb09f6so14838605ad.2;
+        Fri, 16 Aug 2024 10:24:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723829059; x=1724433859; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N/dmrRqqXj2v9b4YTwmz0D6SlhuRLFNEyjT4EiFc8HE=;
+        b=QAlZrUEJIKF5IuV8uYbXtTCoVUmJ9w3sooxwM5VzDE9ak/SEuar+dWKxo1yvK4f3Wc
+         YMoRs7en5+dT8asEBrUMR1O9UC1moUeIFbcX0yjwjMqh+1MEKYnvcCJ1u69QfrR3nof9
+         pcNOENdfOY489LoTOnYOXHu2sY4/sK+pi1uVhHPnQdwEe1E52KxyWEAEVtxrmY+iAo1k
+         EScmc9eXEFu1OinHqc8SmkO9Hgm0T6uXTLPlaxwjHzcMTEkGFx3oYCNpeVpdor9FnpJH
+         1TX7vuFKq/jjTZRi0//1iaXLtzJNBeZ7G4K27HhEd6vKFq7GimnleE5wnso2u/vQqYSo
+         UNGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723829059; x=1724433859;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N/dmrRqqXj2v9b4YTwmz0D6SlhuRLFNEyjT4EiFc8HE=;
+        b=g9VdInS+TB6liQqEN9e8mDHfvviEUqzW28IIfzU2DSam5q9duYn1e0dObmzf6Vhcyj
+         jxPBHjoA9Q54Ca5bdRStJx5vq3DdsN8Gobm8oPV/SPhCxHAI3l6Z9I7f6Sp03tIrHQkP
+         +wFBHuV31cJphniXjMQfczfETYkBVwyraoNriUfBoWE5lG6X0ps+UV6hD4UK6eMcKvDr
+         FDAbj9egtJxKfcQXXrjddJroiBPiiIKx2S499sSGo6JMc8T08cOVDZYD8omwJJ5vSlzU
+         ELSaqMgZN3c8kwN0c2upnSyy0snwaP5Op+T4KWBYsyVk+Ls0UmsA4la8TRe+Ogy0Os0B
+         ljkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCGODQWBdeGgkdqN9IRUvWPsxoYhodya8oZUnz+rYP9286yeRpfiEe3TRucZ9Ow22qLv3LS3ip4N1i79OGsLL795VzoAFwTCsg0qvdJMR+kcjipxSBuLdXV24UV1koHzQCAhxgsESHODHCXdT8
+X-Gm-Message-State: AOJu0YzvjvXVCZ0YdysKqCssnWG8yYB2nRQtcc+tb6H1RTBvNGU2MPbh
+	tZXze763lbLMtjv3tMh/dHapZAa9Ie4t0/RidAshIEZ5i+9uQAs00C05spkl
+X-Google-Smtp-Source: AGHT+IGuHnGEDCRtfNvw9KKo4hDVg4qVJqRvhyCt1ml1QtQrt/cBiuDQmT43rzSeWvqOmG2vgLyyKQ==
+X-Received: by 2002:a17:902:d50f:b0:1fd:a503:88f0 with SMTP id d9443c01a7336-20203eefb29mr44980425ad.34.1723829059518;
+        Fri, 16 Aug 2024 10:24:19 -0700 (PDT)
+Received: from localhost ([27.6.216.27])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f02fa2d5sm27913985ad.49.2024.08.16.10.24.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 10:24:19 -0700 (PDT)
+Date: Fri, 16 Aug 2024 22:51:02 +0530
+From: Aryabhatta Dey <aryabhattadey35@gmail.com>
+To: akpm@linux-foundation.org, shuah@kernel.org, linux-mm@kvack.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] selftests/mm: compaction_test: Move often used filepaths
+ to strings
+Message-ID: <al5jalqx6ng4w2qyf7nctxpm7u6cdjrazcixcemzi5mbvyluoo@rc5e7gqrwby7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v5 1/3] ethtool: Add new result codes for TDR
- diagnostics
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172382882852.3581432.14168373432882305680.git-patchwork-notify@kernel.org>
-Date: Fri, 16 Aug 2024 17:20:28 +0000
-References: <20240812073046.1728288-1-o.rempel@pengutronix.de>
-In-Reply-To: <20240812073046.1728288-1-o.rempel@pengutronix.de>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- kernel@pengutronix.de, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello:
+Add defines for file path names to avoid duplicate strings
+in print messages and make it easier to maintain.
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Signed-off-by: Aryabhatta Dey <aryabhattadey35@gmail.com>
+---
+ tools/testing/selftests/mm/compaction_test.c | 46 ++++++++++----------
+ 1 file changed, 24 insertions(+), 22 deletions(-)
 
-On Mon, 12 Aug 2024 09:30:44 +0200 you wrote:
-> Add new result codes to support TDR diagnostics in preparation for
-> Open Alliance 1000BaseT1 TDR support:
-> 
-> - ETHTOOL_A_CABLE_RESULT_CODE_NOISE: TDR not possible due to high noise
->   level.
-> - ETHTOOL_A_CABLE_RESULT_CODE_RESOLUTION_NOT_POSSIBLE: TDR resolution not
->   possible / out of distance.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next,v5,1/3] ethtool: Add new result codes for TDR diagnostics
-    https://git.kernel.org/netdev/net-next/c/2140e63cd87f
-  - [net-next,v5,2/3] phy: Add Open Alliance helpers for the PHY framework
-    https://git.kernel.org/netdev/net-next/c/9e7c1a9b9033
-  - [net-next,v5,3/3] net: phy: dp83tg720: Add cable testing support
-    https://git.kernel.org/netdev/net-next/c/20f77dc72471
-
-You are awesome, thank you!
+diff --git a/tools/testing/selftests/mm/compaction_test.c b/tools/testing/selftests/mm/compaction_test.c
+index e140558e6f53..541ac0373258 100644
+--- a/tools/testing/selftests/mm/compaction_test.c
++++ b/tools/testing/selftests/mm/compaction_test.c
+@@ -21,6 +21,9 @@
+ #define MAP_SIZE_MB	100
+ #define MAP_SIZE	(MAP_SIZE_MB * 1024 * 1024)
+ 
++#define COMPACT_UNEVICTABLE_ALLOWED "/proc/sys/vm/compact_unevictable_allowed"
++#define NR_HUGEPAGES "/proc/sys/vm/nr_hugepages"
++
+ struct map_list {
+ 	void *map;
+ 	struct map_list *next;
+@@ -59,17 +62,16 @@ int prereq(void)
+ 	char allowed;
+ 	int fd;
+ 
+-	fd = open("/proc/sys/vm/compact_unevictable_allowed",
+-		  O_RDONLY | O_NONBLOCK);
++	fd = open(COMPACT_UNEVICTABLE_ALLOWED, O_RDONLY | O_NONBLOCK);
+ 	if (fd < 0) {
+-		ksft_print_msg("Failed to open /proc/sys/vm/compact_unevictable_allowed: %s\n",
+-			       strerror(errno));
++		ksft_print_msg("Failed to open %s: %s\n",
++			       COMPACT_UNEVICTABLE_ALLOWED, strerror(errno));
+ 		return -1;
+ 	}
+ 
+ 	if (read(fd, &allowed, sizeof(char)) != sizeof(char)) {
+-		ksft_print_msg("Failed to read from /proc/sys/vm/compact_unevictable_allowed: %s\n",
+-			       strerror(errno));
++		ksft_print_msg("Failed to read from %s: %s\n",
++			       COMPACT_UNEVICTABLE_ALLOWED, strerror(errno));
+ 		close(fd);
+ 		return -1;
+ 	}
+@@ -97,10 +99,10 @@ int check_compaction(unsigned long mem_free, unsigned long hugepage_size,
+ 	   in to play */
+ 	mem_free = mem_free * 0.8;
+ 
+-	fd = open("/proc/sys/vm/nr_hugepages", O_RDWR | O_NONBLOCK);
++	fd = open(NR_HUGEPAGES, O_RDWR | O_NONBLOCK);
+ 	if (fd < 0) {
+-		ksft_print_msg("Failed to open /proc/sys/vm/nr_hugepages: %s\n",
+-			       strerror(errno));
++		ksft_print_msg("Failed to open %s: %s\n",
++			       NR_HUGEPAGES, strerror(errno));
+ 		ret = -1;
+ 		goto out;
+ 	}
+@@ -108,16 +110,16 @@ int check_compaction(unsigned long mem_free, unsigned long hugepage_size,
+ 	/* Request a large number of huge pages. The Kernel will allocate
+ 	   as much as it can */
+ 	if (write(fd, "100000", (6*sizeof(char))) != (6*sizeof(char))) {
+-		ksft_print_msg("Failed to write 100000 to /proc/sys/vm/nr_hugepages: %s\n",
+-			       strerror(errno));
++		ksft_print_msg("Failed to write 100000 to %s: %s\n",
++			       NR_HUGEPAGES, strerror(errno));
+ 		goto close_fd;
+ 	}
+ 
+ 	lseek(fd, 0, SEEK_SET);
+ 
+ 	if (read(fd, nr_hugepages, sizeof(nr_hugepages)) <= 0) {
+-		ksft_print_msg("Failed to re-read from /proc/sys/vm/nr_hugepages: %s\n",
+-			       strerror(errno));
++		ksft_print_msg("Failed to re-read from %s: %s\n",
++			       NR_HUGEPAGES, strerror(errno));
+ 		goto close_fd;
+ 	}
+ 
+@@ -134,8 +136,8 @@ int check_compaction(unsigned long mem_free, unsigned long hugepage_size,
+ 
+ 	if (write(fd, init_nr_hugepages, strlen(init_nr_hugepages))
+ 	    != strlen(init_nr_hugepages)) {
+-		ksft_print_msg("Failed to write value to /proc/sys/vm/nr_hugepages: %s\n",
+-			       strerror(errno));
++		ksft_print_msg("Failed to write value to %s: %s\n",
++			       NR_HUGEPAGES, strerror(errno));
+ 		goto close_fd;
+ 	}
+ 
+@@ -162,15 +164,15 @@ int set_zero_hugepages(unsigned long *initial_nr_hugepages)
+ 	int fd, ret = -1;
+ 	char nr_hugepages[20] = {0};
+ 
+-	fd = open("/proc/sys/vm/nr_hugepages", O_RDWR | O_NONBLOCK);
++	fd = open(NR_HUGEPAGES, O_RDWR | O_NONBLOCK);
+ 	if (fd < 0) {
+-		ksft_print_msg("Failed to open /proc/sys/vm/nr_hugepages: %s\n",
+-			       strerror(errno));
++		ksft_print_msg("Failed to open %s: %s\n",
++			       NR_HUGEPAGES, strerror(errno));
+ 		goto out;
+ 	}
+ 	if (read(fd, nr_hugepages, sizeof(nr_hugepages)) <= 0) {
+-		ksft_print_msg("Failed to read from /proc/sys/vm/nr_hugepages: %s\n",
+-			       strerror(errno));
++		ksft_print_msg("Failed to read from %s: %s\n",
++			       NR_HUGEPAGES, strerror(errno));
+ 		goto close_fd;
+ 	}
+ 
+@@ -178,8 +180,8 @@ int set_zero_hugepages(unsigned long *initial_nr_hugepages)
+ 
+ 	/* Start with the initial condition of 0 huge pages */
+ 	if (write(fd, "0", sizeof(char)) != sizeof(char)) {
+-		ksft_print_msg("Failed to write 0 to /proc/sys/vm/nr_hugepages: %s\n",
+-			       strerror(errno));
++		ksft_print_msg("Failed to write 0 to %s: %s\n",
++			       NR_HUGEPAGES, strerror(errno));
+ 		goto close_fd;
+ 	}
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.46.0
 
 
