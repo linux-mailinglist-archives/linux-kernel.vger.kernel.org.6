@@ -1,102 +1,93 @@
-Return-Path: <linux-kernel+bounces-290374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEE6195530C
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 00:04:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 968EE95530E
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 00:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 971EE1F253EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:04:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 413D41F23072
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A353514430B;
-	Fri, 16 Aug 2024 22:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82DE145B10;
+	Fri, 16 Aug 2024 22:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iH/cg8XL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lBNIKBTH"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9111127E37;
-	Fri, 16 Aug 2024 22:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D736F1448FF
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 22:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723845857; cv=none; b=T93BwjuYnqel+fH45/O3leLFe02EkkWaFWR0QBbYplcES3t/YLCLymtdM+v9485LjSLEaZeOezpr4MUACCk13Ldn7D4AQlzL4z8b4SVt2K/OjQEiw5I2Amh4/5W4IXNvDA4io6EYF2xtARB9U7e/7bSsMQ6W+JOTJmgQLR2hbwQ=
+	t=1723845860; cv=none; b=u1oM6Wcc827EHLdUG5n3Wh4mSoc2Y07aWmUd2xuN+UCY2enFCY1NcgG/trc48jsSK4omXnHS/0q3bbemZyIOZ4ukzTRT8wY4mVaLDIwJhuK0EuQBVTftfUhLiX8AQxrx2gTWaT4aoMuLqVlP4N/2c8IPtNn4wGHj/EKguhN2Efc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723845857; c=relaxed/simple;
-	bh=r4GtqUj6kBdjANlbyOr+H1EYTQ7FL4x488m+b6yI/2w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LGnrDMSyrOrGCsKWlpBZsb58vb15E2gOdlO/xu816OXHLxCkIjPjNnEROTkX1jJ5vYPPoBiNB4wEOwHKRH6SLxGxOvwcKQrgYtWvCWe2bbPhMekK5s8Je+Tm3cTvq++E0891es+gx1rbg5N9MLhZZGiDQLS3h3uq7Epsxab/SDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iH/cg8XL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0562BC32782;
-	Fri, 16 Aug 2024 22:04:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723845856;
-	bh=r4GtqUj6kBdjANlbyOr+H1EYTQ7FL4x488m+b6yI/2w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iH/cg8XLoPBi0umTni6czQKlR9x3Xk0F8Jz4FXvs/N8SMu4nX1eTe3HcU+JF5rpyP
-	 EIAFIl0ChvwuAwhMIKnFTKaen/XxSrbZwmTN/jhNw+r3leeFaXDdFIn6BHeq6/VWEy
-	 HZAep2fek+GYfcQ+KSoRHQGg18HniLBTQmtPey9SbSvaOzTd2zny/2H0vR+O4y6PAA
-	 UaC+oLLHZAsXAlRFgQVzDpdjxmMVqana3FZXlwS0ZG6DakO7etVYHdO4wmr8XVtkFA
-	 xh8SYL1OzGDomZ/RzCMAU/ezkifh2r/rFVKLNujrLUAWdQSl3UrV+GSUmM8oMCLwCR
-	 z3hRYd/ZnFuCQ==
-Date: Fri, 16 Aug 2024 23:04:11 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Frank Li <Frank.Li@nxp.com>, Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	"open list:HARDWARE MONITORING" <linux-hwmon@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: hwmon/regulator: Convert ltc2978.txt to
- yaml
-Message-ID: <eb247611-f034-48af-9ee2-d9e68bc30d85@sirena.org.uk>
-References: <20240814181727.4030958-1-Frank.Li@nxp.com>
- <20240816215555.GA2302157-robh@kernel.org>
+	s=arc-20240116; t=1723845860; c=relaxed/simple;
+	bh=KW9D5wVU77tNQ3/L82+SRnU+J+FVG21c6UL2U3LRiFQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Qk7DGNSyo6MuPWY25AGsMkG5C5cunaInw0kxMCIieAvB45KfHOS3UtEJbeZWDogDHlURtVNe7PfGRbrjGoG1A6u47z83+gOox/Q4Zp9l7MnhfBfVqbWHafHKbdSlRcClfTs515co09juw725MsNV70UYBPYQ7CobDMjf/j5bVig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lBNIKBTH; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6b3825748c2so11792217b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:04:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723845858; x=1724450658; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KW9D5wVU77tNQ3/L82+SRnU+J+FVG21c6UL2U3LRiFQ=;
+        b=lBNIKBTHJ7DidOsalBFxEAycAcM7jaPXzMjoATR5hrBeGGaV9Kghuvd5FRj16yXQUz
+         V9WjlUSlSxNcfjmzxT3ueZnOTuV9oZ1t8k6AonBuoQkPMyYf9T6m8sFO73mjdE8nHHUv
+         EBnpw9Yk2Qxlp7euzzlT+XHPy7MwCjRLz4sztwnnjynt5GlvkUv7lHtmqXY9BwMY78CX
+         HFKXu9Mmqokm1TdhAUmASowna2pec6tig0boDgz5UAbyUPAxXEjU+WvPqmufWK3FcEeX
+         c+B5D1bDxQGQKl+Xhj8YrJJr7+g81BqZbsikODV4HRtMchsALvvNICUY1DdsgJjcXYgG
+         BMLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723845858; x=1724450658;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KW9D5wVU77tNQ3/L82+SRnU+J+FVG21c6UL2U3LRiFQ=;
+        b=cWeBpy+O7tiGVSbOP9tcKVxA64I8Ejj3yy1zOEdgbC2rhShiW/7muik/b/m2zdRW5S
+         7fqgeFOOQNZTEO2YItM4g01d50D8pw2mW12IX0gE+NeIZcyrpjzkcQ3ybqbCw5x3CmMN
+         Ugn4AJcPm/q2d7tbbyfxTZo3goZDx5khCEshLBoj9i2NIST0GjtMLoJMfy+huYvMJusc
+         Vw9mKe6R8Dmjt6nJIZeXb2+ABKXuH+WMcufern2NMmkRaICRbC84AuQFCCQZvuMRW6z0
+         NOcJSbJPqDInKrWVcZvw1+N9vrs8qN1zf4ajKITfANfNxX68zkbOIgq0optmulBR5IDM
+         udPg==
+X-Forwarded-Encrypted: i=1; AJvYcCXbAOhoDgyX2Kjp2bjnKWiOTBMj+ae/yGFl+zvwkN3oDUGeiLiCNGLpFkE8IHAgKQV0X71pXTfy8D/SM/hOhk/T6Umx7FXdltPEQ1/q
+X-Gm-Message-State: AOJu0YxBQOxHmXh2YgWGj5Li754oI2ORlF5PfgWoWgQQPhgegqY/XeIT
+	9rCRZtRXF932z+hefzKuy3RYELFVe8TqzyzHkPOFTmYZunQNGcApGqQ93sQughDZ4QzMVTpVOln
+	nfQ==
+X-Google-Smtp-Source: AGHT+IGiXCTmOHYZrpZ5ro3nY0FBiXL9B2iTr8Z2RNZbiKrDwiWMXpDu7b0F/AQ1zuqdMV5L0qIZpi7Rif8=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:3141:b0:6af:623c:7694 with SMTP id
+ 00721157ae682-6b1b213ae21mr1025967b3.0.1723845857802; Fri, 16 Aug 2024
+ 15:04:17 -0700 (PDT)
+Date: Fri, 16 Aug 2024 15:04:16 -0700
+In-Reply-To: <20240815123349.729017-5-mlevitsk@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fJWPX8QIRrCKJsjj"
-Content-Disposition: inline
-In-Reply-To: <20240816215555.GA2302157-robh@kernel.org>
-X-Cookie: Are we running light with overbyte?
+Mime-Version: 1.0
+References: <20240815123349.729017-1-mlevitsk@redhat.com> <20240815123349.729017-5-mlevitsk@redhat.com>
+Message-ID: <Zr_M4Gp9oEXx4hzW@google.com>
+Subject: Re: [PATCH v3 4/4] KVM: SVM: fix emulation of msr reads/writes of
+ MSR_FS_BASE and MSR_GS_BASE
+From: Sean Christopherson <seanjc@google.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: kvm@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, x86@kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="us-ascii"
 
+On Thu, Aug 15, 2024, Maxim Levitsky wrote:
+> If these msrs are read by the emulator (e.g due to 'force emulation'
+> prefix), SVM code currently fails to extract the corresponding segment
+> bases, and return them to the emulator.
 
---fJWPX8QIRrCKJsjj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Aug 16, 2024 at 03:55:55PM -0600, Rob Herring wrote:
-> On Wed, Aug 14, 2024 at 02:17:26PM -0400, Frank Li wrote:
-
-> >  delete mode 100644 Documentation/devicetree/bindings/hwmon/ltc2978.txt
-> >  create mode 100644 Documentation/devicetree/bindings/regulator/lltc,ltc2972.yaml
-
-> I'm on the fence whether to move this...
-
-I don't really have feelings either way, I'm perfectly happy to move it.
-
---fJWPX8QIRrCKJsjj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma/zNoACgkQJNaLcl1U
-h9AObwf+LcMBNpccR4GUSCMZRhOCTwpyv1F05eZmjnJ7PIobeRGh1RPwSu9gkEhc
-8t4obp7grz/n8UJwdWv54u9IeU0j7HoFyGUrWOKqUSeOj4Ak2UPQdL1Z7awjUsyY
-8yASx7OJEbDXOPfOkhhWpNdEwL6jr4n0jZTKY7Lqe8bbyR4BN6+ju05HTdAWQcJm
-oVux/WS1QZHMiJO/ZepQ8V8T+o8G+C7weCVrCRoi4Q1OM9GtbhfxTFAiDKCHJ9zh
-PAcx0Zwjbv9H44ldy9DctMB88ivHreS4qutbZryszKPh1mUxK33/Mnn5fmUaOgis
-AHdZyoRmo3MJJXuIvoMVOXVx+lLfpA==
-=roy+
------END PGP SIGNATURE-----
-
---fJWPX8QIRrCKJsjj--
+I'll apply this one for 6.11 and tag it for stable, i.e. no need to include this
+patch in v4.
 
