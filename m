@@ -1,113 +1,82 @@
-Return-Path: <linux-kernel+bounces-289514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E3E19546F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:52:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AD659546FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:54:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57A9528370D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:52:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 838FC1C236AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F52B198851;
-	Fri, 16 Aug 2024 10:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DE0A198A2A;
+	Fri, 16 Aug 2024 10:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M/Q293h/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KTdvBD+i"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C125B13DBB7;
-	Fri, 16 Aug 2024 10:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E135413FD66;
+	Fri, 16 Aug 2024 10:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723805524; cv=none; b=P1lhppFTbPBaOUu6VzQwyXk0qVU6bb3JBm1SyWwXf/gf8l/+pS0ZYaieP/xDEMzuIQcT+6OdJFTs6Y3FdpQxKF8smq3tJn/zsFAUgKRsWCmxyUsaASS1mF5VnSy+k+42lOs+VpAF/IShHvYJCUXs/Y7uVD4b+LSjHCIbtWwAFXI=
+	t=1723805644; cv=none; b=LHYPRrGQxoqQNtC3Sr5vloue1gSCVvlyajwe9Sj28g7FE7tPR+H5V2vg5hyj2GBz1gl1UHvHsiaxIXqqGHUuq9JrQlpmnRa4qauGugEZoTeTSSA64mgz4bojYeoGxZcf1ze4/C9zXApE98V6SLF1jEnPhQ31qwkl+GtElDsnecQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723805524; c=relaxed/simple;
-	bh=1sR3kzfqGCPk6o6xpt/iBSsdvNffZQycm96/GnQwgFQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=kAAr9xT8sGBFy1pTDHD9OspM9cBFc6pMKQ7pezH1HjkFVfO7mygXyHBLBVNN6LkTRgJOyrcChxWpQEcaFfRphXpUukV8FkN3Ykw8mJE/H33l/SD3v+p0kt3Z6cgi74P9Q6W035Euuvj9GVcAJCrrOg/GZvgPtjxcdoJfJX1cRLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M/Q293h/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4294C4AF09;
-	Fri, 16 Aug 2024 10:52:03 +0000 (UTC)
+	s=arc-20240116; t=1723805644; c=relaxed/simple;
+	bh=z8KAd6oGpQtM5ZxhmLPomGG+old40kpeYuvpDVxvokw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pm0rZ/M8B3/YyEAWmOOuvSWDGclo4PjPWE9UTpfMIxz7CRhnmPpGkEkcjaDspIDznJOq3A0wiPedjFLimhr49FfcbLtLta4K6bcv+K9Qo+LJNylw7kuxjMsuLPDJa1NYp/6luVNpm0ATpejMSq97i0FikypWrdi9McfBgigGUbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KTdvBD+i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF6B2C32782;
+	Fri, 16 Aug 2024 10:54:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723805524;
-	bh=1sR3kzfqGCPk6o6xpt/iBSsdvNffZQycm96/GnQwgFQ=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=M/Q293h/7CNIPdkkW/W0u/9moWvk6RkJxcXowaU3rwpsD4R2Je1UfPslzhChK6F9v
-	 /mnXbPGzPQIwpGhvtj9PlQ29hK29YCR/wYhLWGkcLkbUpWHK1E8lsfSU7nK+qh9gWR
-	 DR/5Fjw1B3arA2dG8TkxYArMdGmzuesv3KQBH40Ye/6eCMg9SJonMISSQgqoDWT9X1
-	 9mEt6MC5gd+/oNLnyIqx1puxhGQ8zjtGAYOEJN2Hns+hHmPX0dF6X7nd266XtMzoa1
-	 ZaSX9OwZJYheW4TvwFFTcufk622HKPIg4/oC1f52yUto7qP/4ueex54ie4apjbcDw0
-	 Pk7PXF+BtJZHQ==
+	s=k20201202; t=1723805643;
+	bh=z8KAd6oGpQtM5ZxhmLPomGG+old40kpeYuvpDVxvokw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KTdvBD+iKvXlkUY8GPWtkJ098FmWvm78kfw7LSZo9mQ2KW6pTSRGN6wBduwWLmvT2
+	 BxxO/pUmXv2m4837aBipi0C5LIND9MpI4GlOFkQacnQUEm2UwRKWA3v8lSiTbSIWBK
+	 AYojbE2S6HDkDAHpJnqTBWBbTVhgRal45PDGMF9fjPSYYYFjaq09aO9EJDG79Iqutj
+	 XsLQiGKHdhl3TLW40UX4lj+P73VxYy439DKgfoWAUnsjG4jsD2ywNoVM98nPRIb2xE
+	 Qmti+h1+e30ncGgrRLjCZQHsRof2VelaeI385yvmEW9t+GEeSInWwELeRYYlQ+ArKt
+	 LmWIyPIyuA4Ww==
+Date: Fri, 16 Aug 2024 11:53:57 +0100
+From: Simon Horman <horms@kernel.org>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Andrew Lunn <andrew@lunn.ch>, linux-arm-kernel@lists.infradead.org,
+	Michal Simek <michal.simek@amd.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	linux-kernel@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH net-next v2 3/5] net: xilinx: axienet: Don't print if we
+ go into promiscuous mode
+Message-ID: <20240816105357.GR632411@kernel.org>
+References: <20240815193614.4120810-1-sean.anderson@linux.dev>
+ <20240815193614.4120810-4-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 16 Aug 2024 13:52:00 +0300
-Message-Id: <D3HA23RMEIJ8.2AHOMIYR3J6F3@kernel.org>
-Cc: "Jeffrey Altman" <jaltman@auristor.com>, <openafs-devel@openafs.org>,
- "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, "John Johansen"
- <john.johansen@canonical.com>, =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>, =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- "Stephen Smalley" <stephen.smalley.work@gmail.com>, "Ondrej Mosnacek"
- <omosnace@redhat.com>, "Casey Schaufler" <casey@schaufler-ca.com>,
- <linux-afs@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>, <apparmor@lists.ubuntu.com>,
- <keyrings@vger.kernel.org>, <selinux@vger.kernel.org>
-Subject: Re: Can KEYCTL_SESSION_TO_PARENT be dropped entirely? -- was Re:
- [PATCH v2 1/2] KEYS: use synchronous task work for changing parent
- credentials
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jann Horn" <jannh@google.com>, "David Howells" <dhowells@redhat.com>
-X-Mailer: aerc 0.17.0
-References: <20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com>
- <20240805-remove-cred-transfer-v2-1-a2aa1d45e6b8@google.com>
- <2494949.1723751188@warthog.procyon.org.uk>
- <CAG48ez2LBmS91fQVLYRYEaBHssj22NyUjB0HVtkDHUXDvDZ6EA@mail.gmail.com>
-In-Reply-To: <CAG48ez2LBmS91fQVLYRYEaBHssj22NyUjB0HVtkDHUXDvDZ6EA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240815193614.4120810-4-sean.anderson@linux.dev>
 
-On Thu Aug 15, 2024 at 10:59 PM EEST, Jann Horn wrote:
-> On Thu, Aug 15, 2024 at 9:46=E2=80=AFPM David Howells <dhowells@redhat.co=
-m> wrote:
-> > Jann Horn <jannh@google.com> wrote:
-> >
-> > > Rewrite keyctl_session_to_parent() to run task work on the parent
-> > > synchronously, so that any errors that happen in the task work can be
-> > > plumbed back into the syscall return value in the child.
-> >
-> > The main thing I worry about is if there's a way to deadlock the child =
-and the
-> > parent against each other.  vfork() for example.
->
-> Yes - I think it would work fine for scenarios like using
-> KEYCTL_SESSION_TO_PARENT from a helper binary against the shell that
-> launched the helper (which I think is the intended usecase?), but
-> there could theoretically be constellations where it would cause an
-> (interruptible) hang if the parent is stuck in
-> uninterruptible/killable sleep.
->
-> I think vfork() is rather special in that it does a killable wait for
-> the child to exit or execute; and based on my understanding of the
-> intended usecase of KEYCTL_SESSION_TO_PARENT, I think normally
-> KEYCTL_SESSION_TO_PARENT would only be used by a child that has gone
-> through execve?
+On Thu, Aug 15, 2024 at 03:36:12PM -0400, Sean Anderson wrote:
+> A message about being in promiscuous mode is printed every time each
+> additional multicast address beyond four is added. Suppress this message
+> like is done in other drivers.
+> 
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> ---
+> 
+> Changes in v2:
+> - Split off IFF_PROMISC change
 
-Could this encapsulated to a kselftest? Like having host process
-that forks the payload and send SIGINT. That could be deployed e.g
-to tools/testing/selftests/keys. Would be nice to be able to try
-this out with a low barrier.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Doing this type of testing is different axis than keyutils test suite
-IMHO. That would be also great starting point for adding concurrency
-tests in future.
-
-Could be done either in C or Python.
-
-BR, Jarkko
 
