@@ -1,162 +1,119 @@
-Return-Path: <linux-kernel+bounces-288795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98206953ECF
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:13:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E48EE953ED6
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD96E1C2182B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:13:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E19C02846D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E9D1D69E;
-	Fri, 16 Aug 2024 01:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F80C1A288;
+	Fri, 16 Aug 2024 01:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jSK9fb93"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nkLW5WhT"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1737CBE6F
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 01:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17596BA27
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 01:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723770829; cv=none; b=XWja1gEPqGp9Q59oX69T8bOnHpbxVLIjlHTVMjHfjXtyBQPl+q3X2/3KcW7okdCSEhMYLNr6lYMB9mOt9FhUq+ZcsS/YzQFT4Ex46CjdoMfT5bgDYq6whVaYnJwhHGQGDKqGeP32bDcOnVw/dRZUIV1Pjj66xRQl7K+soRBP3bg=
+	t=1723771349; cv=none; b=rbeVqoeQuN/w2+1XkjhV2UucUFGkSUJpItsWnwrPy65Il69kN9Gtj0/LstkMm9iqipmRQ9zma1X/N5eY8XGfgqVMbIYRuQm6po5RtyjuHyleoVBIUbbrFzi6jXl0Tl7DD2Npz6h3qI7L+H+dzMTlqhPS7z5Mn7/ms+EQnEdcqBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723770829; c=relaxed/simple;
-	bh=dqNp+7QcCFd8ngmu/YJqLLqUCV4q4RdV9c4aq2gfp8o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=an4fwpCQ36+OvbruY+5fh6sxhZuXEg9wltpT8SFiee04ppreqw9AEiuaiIBk7LHGJ3PDE4xsfix84mdqXnsBsukk7USKubsLdQx7y3rUfz7HjAW+ckZth464oQh9o5o2SIfm++yB3BtddC7kmX+diZSD/BhziuViVfDmK7OyYLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jSK9fb93; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3B2AC32786;
-	Fri, 16 Aug 2024 01:13:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723770828;
-	bh=dqNp+7QcCFd8ngmu/YJqLLqUCV4q4RdV9c4aq2gfp8o=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jSK9fb93LNBqWP6KNKV29n5TCXTrEJC3QcIRkG0jPUp9xpf5LovWm3wybV4ca0YHL
-	 BBSRAXt/hphsyUhXcK5qA1Ak1WziNgtOa3BAVl8yyPLonJt3hxgJsVtVZKq5pfXnf5
-	 tDlhEnx50GtnwU9EE/kaKav2WlD/n02t9/4JskBPjguJD3VKSyWgGtxHVZLfJ81s09
-	 KDvWCeAynMp+OhQApqu849Arz1iUJ8YzMaT/jLAz9JmJ076l72vVrRjSO0FFG7ppTx
-	 8bKuDQ+w2OHnRNqYZL1tqL/dvDn42bU3EwiqWKlFRAghsP58mk6HMgN4/Sav7+8kAf
-	 XyuLzrbAgTnAA==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH v2 4/4] f2fs: atomic: fix to forbid dio in atomic_file
-Date: Fri, 16 Aug 2024 09:13:42 +0800
-Message-Id: <20240816011342.1668666-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1723771349; c=relaxed/simple;
+	bh=8SoY/RcZL5ysEBphgPDWAnEB0sIKwXTAtWX4HJeM9YA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PRwimBIbflY0YaacEY8qWWeAvZjRW5LL/+GLmpj4TgRVRcuzNvBSJjWGXcWbss9We6C8nvtKkcJUQhT+O0syRwOO/orUbvYIOeT7zOmxugvIXYYUvLngGysooULT6Y+pbefGUB4X0VIhgxWL/+NF7JAnmU4UFUtbRVXM04aB2Rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nkLW5WhT; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f3aced81ebso1092611fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 18:22:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723771346; x=1724376146; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DI5LZsgOl8aoOKJy/uiScPnu9gA+ziq8FjRrJurEzmo=;
+        b=nkLW5WhToNoLaO1iGQ2XkIEYpKFeBj2LCwjRowJKSLTq2HVIqsjtKBCRiEQCDF+H9g
+         pakMXIatoeaGlyaJ4I1gm0xhkWLu70+O4yjP3ErfskTZM+4iWLyO7DdpdtwGA4R9tQO5
+         E0GysTJ/93xf3eCTiIB6Oo7yg5i+9XslOki9GRv5bnBd+mq8y0IueHmCidieXAq5y/Xh
+         032EP9T5JdpJpccBGDNbNZPNyL8hpSyHuDv4KpDTer3F7U/Xk6h+j5/gjnKoKt8EsWnU
+         kYNFmWPbxsrUrSbU+49CZ4dkuPOq6feKQ5q5U6LV+nd3YB1/8+aQfmHlZbN3XJr/tmrc
+         W4+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723771346; x=1724376146;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DI5LZsgOl8aoOKJy/uiScPnu9gA+ziq8FjRrJurEzmo=;
+        b=N9PgDS7hEfnYq8MMVjFzxlfPMgIZqhnwahKfwBGQuDJPCWAa3dbUbszVKCEnsEagTm
+         jVmmt5C/+HZJ3SYarmVf6HWQb3obY4RzxYd/T72t4Uh2I/v2eXhPwO5c/pAOfmf44q7a
+         dFbFgMi8fTebzvUfX/VmS0hkPhDTs/NJUsDZpbwfa+pGUxHgiIBn+sbVZT6hQl6r8K9y
+         07fSL7bJ31TMq/DwYc8BcaggPC6Uoja/yrno77yhALtGIb9sTsO0eUk1dICoUEZVAroU
+         uFYgR1ukuJU5yqu+UvPVcN/FirRcOmnVBTs3It/iTrey+cIQI4jPIuoWwGLhHBd+0MN3
+         MjLg==
+X-Forwarded-Encrypted: i=1; AJvYcCXIqTpVY915164PUz0bnbu7qL3u9BfrzMmbZJK9priFv+sertIBwy1cLSKLAlcstDnimp8+YAd3Qt7WRog=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOQmqxDlP5LdxvlE7ikFb3XwtikPef3QmksW00yriBlIdPRu5l
+	j0yQmlxcuF4utos+pJiP2llevLVqsdi4zF4tGnQkLw1BH6o6srcS
+X-Google-Smtp-Source: AGHT+IEhcf6HuGbBoQ5gcZ4LtFttdt9jlXEbr+4AsbcDJQ1pi3IgVmWwgOsfgnNH+6dYTWILhQVlNg==
+X-Received: by 2002:a05:651c:2211:b0:2f0:1dfb:9b64 with SMTP id 38308e7fff4ca-2f3be60b118mr4640141fa.7.1723771345553;
+        Thu, 15 Aug 2024 18:22:25 -0700 (PDT)
+Received: from ?IPV6:2a01:4b00:d20e:7300:6f87:1ca5:9107:75? ([2a01:4b00:d20e:7300:6f87:1ca5:9107:75])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded7d5bfsm63699085e9.46.2024.08.15.18.22.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Aug 2024 18:22:25 -0700 (PDT)
+Message-ID: <64ab3938-9c0a-483e-9094-64baa1524d4a@gmail.com>
+Date: Fri, 16 Aug 2024 02:22:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kunit/overflow: Fix UB in overflow_allocation_test
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: kees@kernel.org, davidgow@google.com, kunit-dev@googlegroups.com,
+ linux-kernel@vger.kernel.org, erhard_f@mailbox.org
+References: <20240815000431.401869-1-ivan.orlov0322@gmail.com>
+ <20240815160148.be83228a7804c6389393429a@linux-foundation.org>
+Content-Language: en-US
+From: Ivan Orlov <ivan.orlov0322@gmail.com>
+In-Reply-To: <20240815160148.be83228a7804c6389393429a@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-atomic write can only be used via buffered IO, let's fail direct IO on
-atomic_file and return -EOPNOTSUPP.
+On 8/16/24 00:01, Andrew Morton wrote:
+> On Thu, 15 Aug 2024 01:04:31 +0100 Ivan Orlov <ivan.orlov0322@gmail.com> wrote:
+> 
+>> The 'device_name' array doesn't exist out of the
+>> 'overflow_allocation_test' function scope. However, it is being used as
+>> a driver name when calling 'kunit_driver_create' from
+>> 'kunit_device_register'. It produces the kernel panic with KASAN
+>> enabled.
+>>
+>> Since this variable is used in one place only, remove it and pass the
+>> device name into kunit_device_register directly as an ascii string.
+> 
+> Fixes: ca90800a91ba ("test_overflow: Add memory allocation overflow tests")
+> Cc: <stable@vger.kernel.org>
+> 
+> yes?
+> 
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-v2:
-- fix error path handling.
- fs/f2fs/file.c | 36 ++++++++++++++++++++++++------------
- 1 file changed, 24 insertions(+), 12 deletions(-)
+Ah, yes, sorry, I should've specified the fixes tag in the patch :(
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 6b4f417f3474..b50ebebbbaab 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2162,6 +2162,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
- 		goto out;
- 
- 	f2fs_down_write(&fi->i_gc_rwsem[WRITE]);
-+	f2fs_down_write(&fi->i_gc_rwsem[READ]);
- 
- 	/*
- 	 * Should wait end_io to count F2FS_WB_CP_DATA correctly by
-@@ -2171,10 +2172,8 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
- 		f2fs_warn(sbi, "Unexpected flush for atomic writes: ino=%lu, npages=%u",
- 			  inode->i_ino, get_dirty_pages(inode));
- 	ret = filemap_write_and_wait_range(inode->i_mapping, 0, LLONG_MAX);
--	if (ret) {
--		f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
--		goto out;
--	}
-+	if (ret)
-+		goto out_unlock;
- 
- 	/* Check if the inode already has a COW inode */
- 	if (fi->cow_inode == NULL) {
-@@ -2183,10 +2182,8 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
- 		struct inode *dir = d_inode(dentry->d_parent);
- 
- 		ret = f2fs_get_tmpfile(idmap, dir, &fi->cow_inode);
--		if (ret) {
--			f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
--			goto out;
--		}
-+		if (ret)
-+			goto out_unlock;
- 
- 		set_inode_flag(fi->cow_inode, FI_COW_FILE);
- 		clear_inode_flag(fi->cow_inode, FI_INLINE_DATA);
-@@ -2200,10 +2197,8 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
- 		invalidate_mapping_pages(fi->cow_inode->i_mapping, 0, -1);
- 
- 		ret = f2fs_do_truncate_blocks(fi->cow_inode, 0, true);
--		if (ret) {
--			f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
--			goto out;
--		}
-+		if (ret)
-+			goto out_unlock;
- 	}
- 
- 	f2fs_write_inode(inode, NULL);
-@@ -2222,7 +2217,11 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
- 	}
- 	f2fs_i_size_write(fi->cow_inode, isize);
- 
-+out_unlock:
-+	f2fs_up_write(&fi->i_gc_rwsem[READ]);
- 	f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
-+	if (ret)
-+		goto out;
- 
- 	f2fs_update_time(sbi, REQ_TIME);
- 	fi->atomic_write_task = current;
-@@ -4567,6 +4566,13 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 		f2fs_down_read(&fi->i_gc_rwsem[READ]);
- 	}
- 
-+	/* dio is not compatible w/ atomic file */
-+	if (f2fs_is_atomic_file(inode)) {
-+		f2fs_up_read(&fi->i_gc_rwsem[READ]);
-+		ret = -EOPNOTSUPP;
-+		goto out;
-+	}
-+
- 	/*
- 	 * We have to use __iomap_dio_rw() and iomap_dio_complete() instead of
- 	 * the higher-level function iomap_dio_rw() in order to ensure that the
-@@ -4982,6 +4988,12 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	/* Determine whether we will do a direct write or a buffered write. */
- 	dio = f2fs_should_use_dio(inode, iocb, from);
- 
-+	/* dio is not compatible w/ atomic write */
-+	if (dio && f2fs_is_atomic_file(inode)) {
-+		ret = -EOPNOTSUPP;
-+		goto out_unlock;
-+	}
-+
- 	/* Possibly preallocate the blocks for the write. */
- 	target_size = iocb->ki_pos + iov_iter_count(from);
- 	preallocated = f2fs_preallocate_blocks(iocb, from, dio);
+> 
+> I'll grab it now, but perhaps Kees will handle this.
+> 
+
+Thanks!
+
 -- 
-2.40.1
-
+Kind regards,
+Ivan Orlov
 
