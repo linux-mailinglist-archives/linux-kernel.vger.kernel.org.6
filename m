@@ -1,173 +1,128 @@
-Return-Path: <linux-kernel+bounces-289395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66EE29545CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:32:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 818E09545CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:32:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F065286E1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:32:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25A1528356F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6511A1459FD;
-	Fri, 16 Aug 2024 09:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FACA1494D9;
+	Fri, 16 Aug 2024 09:27:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sRwvUPPm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RQrKBENF"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8564E78297;
-	Fri, 16 Aug 2024 09:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA71A145B37
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723800463; cv=none; b=Oqn6ap5cLX2WzIf3qM6OG0Opw335r6J7lndweffjGZtM9TonxgOjtcrUjmMw6BMSCE2257a2BkRMd5mSNrgCV9Zl6nA1h0vk0XtEfkNvUCo7Oy3NN/94CpJLJFj7/1J4gHfGK53inGQ82JTrCo+EWjTu1cKhiwf3p1I8p/N6zAo=
+	t=1723800476; cv=none; b=JIB9FCLjUlVHyAL8sFTMgGcZF8VrMIg4aA5Iwjeb5OtJ73xX2aVDo19uHSE5K5QuTlHdbMuVNyFBOSSFcimjwGPnSD1uRP6l+4mhWfeWybmAjZAWf3Bn+A0L3AYiS+tCGcuaZprASe2jOmvN3wXfw2UMxfTdgqzTNtfQJdCxwak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723800463; c=relaxed/simple;
-	bh=tDR89ak2l2SPfJ+mx0sQVNnqXSp+xVYft90d0/lUyQQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TW9b/sCnxG/laDhU0e8F5cYVu4IYGN0EPdk05y+lz9gCgj9pOfkBO3TcZtPb8/KsYDb6jdCtjmsz8NNIzAoUfJa9//votnJ+Ie2bU+GDtIaeUcgiFom8Vi9WlCveT+yS0yc9lXVPCk/NhoEt9hWfaf9Y5NmsmyLxRA0oX6SzwLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sRwvUPPm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87492C4AF0E;
-	Fri, 16 Aug 2024 09:27:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723800463;
-	bh=tDR89ak2l2SPfJ+mx0sQVNnqXSp+xVYft90d0/lUyQQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sRwvUPPmh9bXjc46bjyA8Kwopv0dTV9T0zkI3UDuxImvam3FzzI6GPAcLLRpP344b
-	 X0I5TIUhUoaFUym2Y+037JUMtUxMml5NrnZ4j0f9yA5xkNuW/LsX01hx7tbrOIXj9g
-	 sbtICvo3h9k0FAL6SKgFRtImZLyxm+P/BHr6Tf5PeMXq+ZQfFMtXYTm88cXzgZ52JK
-	 pJ6EY2O4kiAAa2LbFWgDJJi6hXweFfYbDTnzzgZLHpdBZNbrZ3WdGdzFv70dFGRhDe
-	 Y/1KZFkaA58d1k1FawSOvpDtQJ4Exdlukg6YEqClcEpF5PxP9U/krm5l560tu6gdhk
-	 L+9MmbGUwKraw==
-Message-ID: <faf56b73-2143-4f5d-8e35-5cfe5f8d72d5@kernel.org>
-Date: Fri, 16 Aug 2024 11:27:33 +0200
+	s=arc-20240116; t=1723800476; c=relaxed/simple;
+	bh=71Anzhd8qVhBEmGgR7riqlO8oM50F9GfELnryKuMfuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lQIv/ZDQMjFBgcWET/IpDQ/ua4U3+WP0BWLYdX/MOWJ3o+Clw3QJ2vc4D0sak8kOLy6N6mp7q4p1nswxtdXJDQSxU8b2b7PY8dJ1cjjp5DxVlGLGyPXR9an2wTX/Q4FEg8FPJDxcTRAxGMN7MlHBRJKD93IaD1hmQGKPXuFH0RY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RQrKBENF; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53212e0aa92so1971659e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 02:27:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723800473; x=1724405273; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7ezHfPbQtKZ/Nw2mLq7nbBPF6a7L0xlFdhWHwqipVgg=;
+        b=RQrKBENFIkvSmtohlQVC/6OrO1/2aCDIA0Hq9J8OxJN1a1fyFSFtnqhwUw21yS+SUA
+         NqrCQH8YsLqq10siuh/sYZX2xYWV3dTmpt6UpFYGBWLV6+Xty7g8Ik8NA7OHJOl/d3mO
+         5S7hy1O4MHf9hMEym54xv06w9To3hvVNRHpgVq2YZOIFwY+3yWWgG+hXimXARIyKMt80
+         y75oKxOWrbGZuOxGqt4bcdqGFji43nQ/FhRHK6XHDRP2QOf4Dzy9fLSwk1DdeuYkCXP7
+         dEZ95Oh/l2kliTacMTMaZn/5l5EbOImHyK8jhcXM40Yt1RbTZM5TqZvceCRTlvHC0Pfy
+         9Z7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723800473; x=1724405273;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7ezHfPbQtKZ/Nw2mLq7nbBPF6a7L0xlFdhWHwqipVgg=;
+        b=ahILgAOHS5S3HP974+o2tlSToJp/eNmOzKs1C6CkinbTjwKByxT9u51uxMkQvX2rh8
+         WAwJ3ymaK73UtIlswhgNj1mCevxsbG6mD3bdv0jJ857ll2oN4jK7JjZdfm7BuYhLUjz0
+         NpBF3cp8NTS/ZXeOgtp+y4Cyh5DEE0l6dmBnZugr9Jo31Whn72EiN1oyXMH4QyaDMEPZ
+         ACZfOrZQ0ckCGqvytyxxcIAG4MlLeSOBjSnBVTw7iFB1CAr2SXDts3smA/EYmrzF2vS0
+         F8veYP9WT+X52VwIkOJPJXiEaKwYHZEZybSiZ757yyNHr3B7hccD88ofIQeVv/9LUUh9
+         D+cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJJAYABn2QMAFSM5r6z5NPmMn9RicGMrO1K5dnRvKqHfm3+Bg5Tzv5zEo44kcBap5iJwNyKJTZZ7tTF3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTN9mUOHNIN9bSaN67Bwm221ZHqtjMgsoKQSEZ1QnnNeKuc8z6
+	XD2uPvzsd7NabB6jxwq/PVTdYI9650Peeoua1G2fSMw5DZOSSi09
+X-Google-Smtp-Source: AGHT+IHtIobWpDyR/wNfIlTck6cEiVCePFpUoJf2/QSPMUvcyXdOt66tyYIYXM5IChI9qAvRRZJ/sw==
+X-Received: by 2002:a05:6512:158b:b0:530:9d86:6322 with SMTP id 2adb3069b0e04-5331c6d9db4mr1616048e87.41.1723800472213;
+        Fri, 16 Aug 2024 02:27:52 -0700 (PDT)
+Received: from andrea ([151.76.20.39])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded7dae0sm71435195e9.44.2024.08.16.02.27.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 02:27:51 -0700 (PDT)
+Date: Fri, 16 Aug 2024 11:27:47 +0200
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Atish Patra <atishp@rivosinc.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] riscv: Eagerly flush in flush_icache_deferred()
+Message-ID: <Zr8bk4WR24XHt5jp@andrea>
+References: <20240813-fix_fencei_optimization-v1-0-2aadc2cdde95@rivosinc.com>
+ <20240813-fix_fencei_optimization-v1-2-2aadc2cdde95@rivosinc.com>
+ <Zr1NC7GBQHfqqplf@andrea>
+ <Zr6MjWLD5VQAQHAV@ghost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 RESEND 2/2] drm/bridge: imx: Add i.MX93 parallel
- display format configuration support
-To: Liu Ying <victor.liu@nxp.com>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, andrzej.hajda@intel.com, neil.armstrong@linaro.org,
- rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
- peng.fan@nxp.com
-References: <20240816080933.440594-1-victor.liu@nxp.com>
- <20240816080933.440594-3-victor.liu@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240816080933.440594-3-victor.liu@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zr6MjWLD5VQAQHAV@ghost>
 
-On 16/08/2024 10:09, Liu Ying wrote:
-> NXP i.MX93 mediamix blk-ctrl contains one DISPLAY_MUX register which
-> configures parallel display format by using the "PARALLEL_DISP_FORMAT"
-> field. Add a DRM bridge driver to support the display format configuration.
-> 
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> ---
+> I should have added some memory barriers. I want to have the stores to
+> task->mm->context.force_icache_flush and
+> task->mm->context.icache_stale_mask in riscv_set_icache_flush_ctx() from
+> one hart to be visible by another hart that is observing the values in
+> flush_icache_deferred() and switch_to_should_flush_icache(). Then also
+> for the changes to those variables in flush_icache_deferred() and
+> switch_to_should_flush_icache() to be visible in future invocations of
+> those functions.
 
-...
-
-> +
-> +static int imx93_pdfc_bridge_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct imx93_pdfc *pdfc;
-> +	int ret;
-> +
-> +	pdfc = devm_kzalloc(dev, sizeof(*pdfc), GFP_KERNEL);
-> +	if (!pdfc)
-> +		return -ENOMEM;
-> +
-> +	pdfc->regmap = syscon_node_to_regmap(dev->of_node->parent);
-> +	if (IS_ERR(pdfc->regmap)) {
-> +		ret = PTR_ERR(pdfc->regmap);
-> +		if (ret != -EPROBE_DEFER)
-> +			DRM_DEV_ERROR(dev, "failed to get regmap: %d\n", ret);
-> +		return ret;
-
-Nope, you just open-coded dev_err_probe. Syntax is - return
-dev_err_probe(). if you need wrapper for DRM, add such.
-
-> +	}
-> +
-> +	pdfc->next_bridge = devm_drm_of_get_bridge(dev, dev->of_node, 1, 0);
-> +	if (IS_ERR(pdfc->next_bridge)) {
-> +		ret = PTR_ERR(pdfc->next_bridge);
-> +		if (ret != -EPROBE_DEFER)
-> +			DRM_DEV_ERROR(dev, "failed to get next bridge: %d\n", ret);
-> +		return ret;
-
-Ditto
+[...]
 
 
-> +	}
-> +
+> Oh okay so we will need to do a memory barrier before the fence.i in the
+> userspace program. I don't believe a memory barrier will be necessary in
+> the kernel though while this prctl is active, will the kernel ensure
+> memory coherence upon migration?
 
-...
+Yes, the kernel enforces coherence upon migration:(*) in the example
+at stake, this means that T1 will have a coherent view of memory when
+migrating from CPU1 to CPU3.
 
-> +MODULE_DESCRIPTION("NXP i.MX93 parallel display format configuration driver");
-> +MODULE_AUTHOR("Liu Ying <victor.liu@nxp.com>");
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_ALIAS("platform:" DRIVER_NAME);
+To leverage this property, we (or the user application) would need to
+provide some synchronization between T2 (that modifies the code) and
+T1.  This typically involves some form of barrier pairing.
 
-Which other driver needs this platform alias?
+Feel free to reach out, here on the list or in private chats, for any
+related memory-barrier doubts I might be able to clarify.
 
-Best regards,
-Krzysztof
+  Andrea
 
+(*) A malicious/buggy hypervisor could migrate (virtual)CPU X, and all
+its threads, at any time and way allowed by Murphy's law.  :-) I take
+it as that goes beyond the scope of this series...
 
