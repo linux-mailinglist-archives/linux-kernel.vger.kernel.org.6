@@ -1,132 +1,80 @@
-Return-Path: <linux-kernel+bounces-290136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11ADF954FDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:17:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B063F954FE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:17:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 320FA1C22B99
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:17:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DCBA2824CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835EB1C2303;
-	Fri, 16 Aug 2024 17:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F741C2339;
+	Fri, 16 Aug 2024 17:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nwDWNcbf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jHNFoFzV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5A252F62;
-	Fri, 16 Aug 2024 17:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62BE11BF30D;
+	Fri, 16 Aug 2024 17:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723828646; cv=none; b=YZrgl4uL8lQXP8NaQ3M1s6HhNK664fox/cNHhfqajhItJ9fZbXNtlHgf8MsGEyJWKFi4X2fU8NhRXM3iyAD3ujK8KUL4zVoOKwbLhlzP+fR+A1efguHNCNJf6OvyRWOUEjU96Mc0NUbljRprQvRGJ5Ftv1oKHoYL98Mehd3EiwY=
+	t=1723828660; cv=none; b=k54lS+hhxOzBYKY9A8nDJJE7J4m1EfUhtigsSYZ0daKYgCS4QqZ4dfRoSO0leQwDWOgJ/GG/T2EMVK4GKWac3vAhdmIhT59+8ox9VT7J53wsVJh6kxhIUyYgV6r3hLkrzlYlZbQKeC9QmQ0UpEnWZN8cbclOuIr+5jHsIH01m/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723828646; c=relaxed/simple;
-	bh=f6rhxUbGkna0A4tQqq0M7QOGZpze5pUfC7gMEiQv5pk=;
+	s=arc-20240116; t=1723828660; c=relaxed/simple;
+	bh=SCysCikpEHkWiIKi7R82/tANYG4pvbyF053vPv6s01M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xu/uwDqigOrEBe4Mqu1UYQ277hnhaKY4oS5Nyss3NqPKiBsDDcRUHUYHeCJYR1xOMUaXn4gALYOhu/ZkedBHjdz1IGJAl+ywVo6o+9Gcz7Kga3v5AM4/FwdjPKBQDGC6f71fvuGzoolCAgkM3yWwzUslWOcn6L80ndH4A2VBkas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nwDWNcbf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBBDAC32782;
-	Fri, 16 Aug 2024 17:17:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=BoDLzvBN2OfHJSPkhEdaSXQUBEBiKCsl1fa6yw27oj60eiaK5mLsFVbqJ7YNU3wgA0vH5E+CqB7wHmT3nkCI+voD7tgYO6Oi/m6QQ87OZt7skeAngwPKgjUv96wdon8IznO+KwaPm18VBVIceIxBAxEeydjdp/Q3ZdGuMfK9ptA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jHNFoFzV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05143C32782;
+	Fri, 16 Aug 2024 17:17:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723828646;
-	bh=f6rhxUbGkna0A4tQqq0M7QOGZpze5pUfC7gMEiQv5pk=;
+	s=k20201202; t=1723828659;
+	bh=SCysCikpEHkWiIKi7R82/tANYG4pvbyF053vPv6s01M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nwDWNcbf0WhAKB/1Sey3fhK9Unh+hORFNV6xSrJclhBN39jfXtwlpUdDFMILdEbJ9
-	 6pUrndOsuQlFY6IcBdl7UkprPWLQSNqihWoQuG4evj2PVlSIsbKCgprxzCOfBqUJQO
-	 ee0ahc8v+PiWiEU0DoAxqlVU4/SI7wgV9m939/e7Jw7lCSKuRTFRlWWCGB1gxvjEV7
-	 2gSQwADXIxo/p+KilC+oao8i8PIY7G8QduXJtBl+IhgJ7bXIzuuzA6JKsQWEsovKbq
-	 E90tx0qpazFUzgnZUtxpuqIDz4wRUXD3FQFACkuuQTurgFtEsGIx1q1E0a1dOPPzeu
-	 6+A9oRcRFZDzQ==
-Date: Fri, 16 Aug 2024 18:17:17 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Jann Horn <jannh@google.com>
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	"dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
-	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"debug@rivosinc.com" <debug@rivosinc.com>,
-	"mgorman@suse.de" <mgorman@suse.de>,
-	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
-	"fweimer@redhat.com" <fweimer@redhat.com>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"vschneid@redhat.com" <vschneid@redhat.com>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"bsegall@google.com" <bsegall@google.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"juri.lelli@redhat.com" <juri.lelli@redhat.com>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"kees@kernel.org" <kees@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-	"will@kernel.org" <will@kernel.org>
-Subject: Re: [PATCH RFT v8 4/9] fork: Add shadow stack support to clone3()
-Message-ID: <830e96b4-8e35-4b80-a32f-1b500febaee5@sirena.org.uk>
-References: <20240808-clone3-shadow-stack-v8-0-0acf37caf14c@kernel.org>
- <20240808-clone3-shadow-stack-v8-4-0acf37caf14c@kernel.org>
- <f3a2a564094d05beac2dc5ab657cbc009c465667.camel@intel.com>
- <CAG48ez2z5bRdKNddG+kEGz9A_m=66r38OHjyg6CapFTcjT9aRg@mail.gmail.com>
+	b=jHNFoFzVUU4u9LJt0gzwClxGMMAhF3YAiKBHsapDnvKJs9lwe1iLKwKHp5aMZz98D
+	 QSjJxZrJJsyJPQxYSjLkwaZNMs5pDyhkOx2sgqDZU/6Ng3y3ogzsrc0EN9w0bs329q
+	 zMcGGNGBxQQKVCJtdMFrxFal4gm9E++dV5q0Raz7Vw2jSeeLOZ983++OTSukK7EKrU
+	 /DYFu0Hg5AkVtDUNCu9RjeDJHvwmZWS2ypYD/NAuHOAhuYfv6/9VQJNVecHsXS/Y4D
+	 ABj2QaTqU4/oNRqNG0tv42w/pUElBLpzzg1mnU2jRfAJm+rUz4olovBNsckg8g00Rt
+	 kKz7oKfDR12nQ==
+Date: Fri, 16 Aug 2024 18:17:34 +0100
+From: Simon Horman <horms@kernel.org>
+To: Bharat Bhushan <bbhushan2@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
+	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, jerinj@marvell.com,
+	lcherian@marvell.com, ndabilpuram@marvell.com,
+	bharatb.linux@gmail.com
+Subject: Re: [net PATCH] octeontx2-af: Fix CPT AF register offset calculation
+Message-ID: <20240816171734.GD632411@kernel.org>
+References: <20240816103822.2091922-1-bbhushan2@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="I/XN2wQCb9TUbBWS"
-Content-Disposition: inline
-In-Reply-To: <CAG48ez2z5bRdKNddG+kEGz9A_m=66r38OHjyg6CapFTcjT9aRg@mail.gmail.com>
-X-Cookie: A Smith & Wesson beats four aces.
-
-
---I/XN2wQCb9TUbBWS
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240816103822.2091922-1-bbhushan2@marvell.com>
 
-On Fri, Aug 16, 2024 at 07:08:09PM +0200, Jann Horn wrote:
+On Fri, Aug 16, 2024 at 04:08:22PM +0530, Bharat Bhushan wrote:
+> Some CPT AF registers are per LF and others are global.
+> Translation of PF/VF local LF slot number to actual LF slot
+> number is required only for accessing perf LF registers.
+> CPT AF global registers access does not requires any LF
+> slot number.
+> 
+> Also there is no reason CPT PF/VF to know actual lf's register
+> offset.
+> 
+> Fixes: bc35e28af789 ("octeontx2-af: replace cpt slot with lf id on reg write")
+> Signed-off-by: Bharat Bhushan <bbhushan2@marvell.com>
 
-> Yeah, having a FOLL_FORCE write in clone3 would be a weakness for
-> userspace CFI and probably make it possible to violate mseal()
-> restrictions that are supposed to enforce that address space regions
-> are read-only.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Note that this will only happen for shadow stack pages (with the new
-version) and only for a valid token at the specific address.  mseal()ing
-a shadow stack to be read only is hopefully not going to go terribly
-well for userspace.
-
-> Though, did anyone in the thread yet suggest that you could do this
-> before the child process has fully materialized but after the child MM
-> has been set up? Somewhere in copy_process() between copy_mm() and the
-> "/* No more failure paths after this point. */" comment?
-
-Yes, I'e got a version that does that waiting to go pending some
-discussion on if we even do the check for the token in the child mm.
-
---I/XN2wQCb9TUbBWS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma/iZwACgkQJNaLcl1U
-h9Ak9Qf9HJIADvs9ieo6Jr3RV46KHtcZIzFxA9BCkPw8LpBAJ59KlPIeeT0xaxEj
-sDNNXkqoaBWXl0DS6WIl+5XhvpfINtoiXEo5C+/iqZLaRsIrEfWCmS8zz8H9serN
-md71fk+NTzJs33AlSZ/IN/lO4uxLvgPHKXtiTaWLw+Wml1Ft2KPAzcRG39L2tJdx
-P9Gz/XwzpxLkFalXTL46VOvsDwBHXIgbIVaehb160+HjfAFA9Rf9fI1Geq4Rb3BT
-mB3iCoXjExtw6e5pJqSqb5NzdT8yfDsGkApTnFYulyBpofGGvpGkZH0wOir5+FqE
-LeAqMTG3sOCju9kxOu/8UEs3LSE6gA==
-=GX/V
------END PGP SIGNATURE-----
-
---I/XN2wQCb9TUbBWS--
 
