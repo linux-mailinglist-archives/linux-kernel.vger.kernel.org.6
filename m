@@ -1,116 +1,113 @@
-Return-Path: <linux-kernel+bounces-289078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 648969541EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:40:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3C8B9541F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1523282738
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:40:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEBB11C23453
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B528289E;
-	Fri, 16 Aug 2024 06:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E9D83A14;
+	Fri, 16 Aug 2024 06:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="loK2DQeQ"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JzkVZwtQ"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C757E3F9D5;
-	Fri, 16 Aug 2024 06:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69F482866;
+	Fri, 16 Aug 2024 06:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723790424; cv=none; b=ecdEybAx+Jiz6DSIwwUInFT//rMzs/OgVwiOoW+JfPeFI5e7I0srykhEND6uj7sVp1MqOXM6RF9yuKSICKuc/0hMX1aaMDavKgjNAVWKAT+kNUKQRqN7M189WQn3ep6dZSy/xxf5qGVEvzKugGnQ7RXk2nKYutyPRL4gonWQ2XU=
+	t=1723790582; cv=none; b=lRUrdVf2d+JejVAZEOPAGjStUUOjnNzVF8Z5N9HCW4zqOugEHKD3h2bTPNM9aW6lBEBxHsDlOrr1SSYZYPSRwFOkYkqIU/lXOwD1tl0TknuBjXI3wR79+FEuvn8jjkyeOg2nLNZynuKBqvmxSke2j2fTNpNfe+sstYixXbR4PvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723790424; c=relaxed/simple;
-	bh=+d3XRUf7fgNNMkPhiBADu1Mygie2bfYXkkG+stkBDbU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pa56ezdBcvODkES2am2Akl9mFZQrodNGa5ZRG6A+O2xnpJ6zwK2lKUs7ZVx4578uR19QukDzVyF5Jo5BUZ2T4Umjwp5MVJW2cNLAwd/b4npeG4vbyvxWMD+yG6LuYpDJ7YnY544OPZMicED+3ZbDVtmZAwo2zj3EJ+yQv96jGCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=loK2DQeQ; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from localhost (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 30FA841A4C;
-	Fri, 16 Aug 2024 08:40:13 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
-	by localhost (disroot.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id FE_tVLB1Jtg9; Fri, 16 Aug 2024 08:40:12 +0200 (CEST)
-Date: Fri, 16 Aug 2024 14:39:38 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1723790412; bh=+d3XRUf7fgNNMkPhiBADu1Mygie2bfYXkkG+stkBDbU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=loK2DQeQIcnGWc14T58cYt6F3lIPFvHEUxGbwKVUWvORBCWX6XEMF52h3WmB2kCUx
-	 hlm8Lxh88wonxf3bvyTY+IjDfE3k5X6TMIAtTLnLkooLmwPEQvokft9EOfdcjKwZ7M
-	 ZVCDQARu5buW+9uVxxFe+790ijbIy341vAk/TdTekKVr8Md0XTi/U7d7F7lzfx+Ic+
-	 81LG7Jb0VL8kG7ckXVWA2sLYlzC3iU+eq0bBZPFxggE/OFna+HfMyvvCBQV3Dma7Ey
-	 wrjIWEbh4P+L1ywrnrSsJDeuWMT+64mOLh6xuenU7HIPIS3W2Lco/i3hVqk4AYnHCY
-	 YGNaMbU2z5LdA==
-From: Yao Zi <ziyao@disroot.org>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
-	Andy Yan <andyshrk@163.com>,
-	Muhammed Efe Cetin <efectn@protonmail.com>,
-	Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>,
-	Ondrej Jirman <megi@xff.cz>
-Cc: Celeste Liu <CoelacanthusHex@gmail.com>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] arm64: dts: rockchip: Add base DT for rk3528 SoC
-Message-ID: <Zr7z-SOFIgcuplq-@ziyaolaptop.my.domain>
-References: <20240814155014.18097-1-ziyao@disroot.org>
- <20240814155014.18097-4-ziyao@disroot.org>
- <10324095.IZOipudI63@diego>
+	s=arc-20240116; t=1723790582; c=relaxed/simple;
+	bh=9MzRT6MQhoASRVKxtLl6TLviFlnQnH0RbQCnybUc2go=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=chUyrlNoAek88k1Hx7GwFn+LJislVu5zwIdFjkb1WMjsU0nUuKK00nK3cYJR0om4tZ0BYDczkuczXQzKsVa1NzdwhD7QlIMKbdqOEHk/WQc9IXaNQuDw84qGlchWL6Qm69Kw1LqlLvnWQyun7bwwNd7Zzp15pLFjussqT02vftM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JzkVZwtQ; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-69483a97848so17093797b3.2;
+        Thu, 15 Aug 2024 23:43:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723790579; x=1724395379; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9984CAS7CNIQxBvvTikDkZZTlOsU6w6r8X2XroTC3V8=;
+        b=JzkVZwtQ/tuT9AXT0oa8KELY2buQY+jP74ikg6bkA4hcY1SUmmsc8mlI3HNg71Sm2Q
+         fURijlSYZ10TpM/zJfcWyjO6JOklo3oxlmoJqNlBfgOa8yK5hFq+LgwH1qOToI8iQLAH
+         yl76ufT5L1WdJa74tYG1bm6ipH1IkqnrCbHsuwux5rJCHyZxPcRVp6bPDyScioG/zmOl
+         I+8mhMalExzQzf8EZeE2YNuIT/Drkur4nsAnAhaUvrU0Tn652g5sit/9gTdfdorzt5uh
+         +fOU5BQChk8jo41GUZnvX6BmlIpAQ0gEE5nY5sfbVMiu8ZnOPNsTKExpLNVMoSaPIr61
+         DaQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723790579; x=1724395379;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9984CAS7CNIQxBvvTikDkZZTlOsU6w6r8X2XroTC3V8=;
+        b=XD6RyTFzU71kgm5wHowQQIEyPndAiIFiD5UmnNzFf6uw19C36b+YPgEHxWJ//Wm8/u
+         mtzTRGg467cXhXUjznwAcqELIwLrIZ3zM2bdIqnDTg5YdbOZwRSM+5nR1Hv8xO6xJicL
+         BbULxv7T4dq7aB/f1PLyFdnoQn/YLtBssdfU4S/qrKnZvsM2pviSzCMGhHgK5jQdNfuU
+         p7Geav2aG4Vmheue1k6zp//X69wf3BBJ29wSak53krUEyOlCe5KOMJRcoN2DgKIFHiBE
+         YSfKqEfgD2DdzJ2BYQ7CSsdY8RNj6UiEYJ5CWWtmf3WEbNSeA3BCqWwX0mD0S9BhPzJq
+         74gw==
+X-Forwarded-Encrypted: i=1; AJvYcCXivrFk7DxGLlhUn3vqUpUrOCjqsBzwJOBFOPyJZdryxBCZ14On2Iw6oLMC7dsyCaC+wKiaPxNRN+uEcf6aSZJtmWZK07USHOe7AeRKhucg/rwdq1PQ9MzFW3zg9jqVacTx76ymmH4R7UI=
+X-Gm-Message-State: AOJu0Yylv0Z0rTVdXVWMefqgvNDEyg3AY3VSroIwFfvIRLt2iXgjaLre
+	5Q/KqQArZ8NAh5oIqDv+jlAGdfWjXRn1Xrw/3kGAh511TaVZFSQx6z4CtWb+gjGHiLoP95lVfGW
+	W8cxZWYUpwAJdPpuwegcALKlSDWg=
+X-Google-Smtp-Source: AGHT+IFwaUdjqwZ0EpK280Y4+BayIVwVmptraNcFRsFUCRRzajjVCxtXiorbxlU3aWf+0BDjO9tNnEDrqszN/MseIaw=
+X-Received: by 2002:a05:690c:438a:b0:6b0:70fc:f6d3 with SMTP id
+ 00721157ae682-6b1bcf8ec67mr14579087b3.45.1723790579487; Thu, 15 Aug 2024
+ 23:42:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <10324095.IZOipudI63@diego>
+References: <CAL3q7H5zfQNS1qy=jAAZa-7w088Q1K-R7+asj-f++6=N8skWzg@mail.gmail.com>
+ <277314c9-c4aa-4966-9fbe-c5c42feed7ef@gmail.com> <CAL3q7H4iYRsjG9BvRYh_aB6UN-QFuTCqJdiq6hV_Xh7+U7qJ5A@mail.gmail.com>
+ <3df4acd616a07ef4d2dc6bad668701504b412ffc.camel@intelfx.name> <95f2c790f1746b6a3623ceb651864778d26467af.camel@intelfx.name>
+In-Reply-To: <95f2c790f1746b6a3623ceb651864778d26467af.camel@intelfx.name>
+From: Andrea Gelmini <andrea.gelmini@gmail.com>
+Date: Fri, 16 Aug 2024 08:42:43 +0200
+Message-ID: <CAK-xaQaPbmZ+pcqFvfgtwTyMnHbMcs6j8KjgVOYBxGzGgoAJ7Q@mail.gmail.com>
+Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
+ execution time of the kswapd0 process and symptoms as if there is not enough memory
+To: intelfx@intelfx.name
+Cc: Filipe Manana <fdmanana@kernel.org>, =?UTF-8?Q?Jannik_Gl=C3=BCckert?= <jannik.glueckert@gmail.com>, 
+	dsterba@suse.com, josef@toxicpanda.com, linux-btrfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mikhail.v.gavrilov@gmail.com, 
+	regressions@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 15, 2024 at 06:43:20PM +0200, Heiko Stübner wrote:
-> Hi,
-> 
-> Am Mittwoch, 14. August 2024, 17:50:13 CEST schrieb Yao Zi:
-> > This initial device tree describes CPU, interrupts and UART on the chip
-> > and is able to boot into basic kernel with only UART. Cache information
-> > is omitted for now as there is no precise documentation. Support for
-> > other features will be added later.
-> > 
-> > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> 
-> not sure if you have seen Krzysztof's comment yesterday, that he found
-> the soc node getting documented in 2019 [0].
+Il giorno ven 16 ago 2024 alle ore 01:17 <intelfx@intelfx.name> ha scritto:
+> Can we please have it reverted on the basis of this severe regression,
+> until a better solution is found?
 
-Oops, I don't read that before sending the series.
+To disable the shrinker I simply remove two items:
 
-> I guess that counts as a strong suggestion. Not sure how you're feeling
-> about that, but I guess we could move to that scheme for new socs.
-> 
-> So would you be willing to move the mmio-devices to a soc node?
-> (stuff with mmio addresses in the node name)
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index f05cce7c8b8d..4f958ba61e0e 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -2410,8 +2410,6 @@ static const struct super_operations btrfs_super_ops = {
+       .statfs         = btrfs_statfs,
+       .freeze_fs      = btrfs_freeze,
+       .unfreeze_fs    = btrfs_unfreeze,
+-   .nr_cached_objects = btrfs_nr_cached_objects,
+-   .free_cached_objects = btrfs_free_cached_objects,
+};
 
-I'm willing to, there will be patch v4.
+static const struct file_operations btrfs_ctl_fops = {
 
-> 
-> Thanks
-> Heiko
-> 
-> [0] https://lore.kernel.org/all/6320e4f3-e737-4787-8a72-7bd314ba883c@kernel.org/
-> 
+This is from my thread with Filipe about same topic you can find in
+the mailing list archive.
 
-Best regards,
-Yao Zi
+Ciao,
+Gelma
 
