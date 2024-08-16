@@ -1,317 +1,281 @@
-Return-Path: <linux-kernel+bounces-289553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA56095476A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:06:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89EE695476E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3639F1F266B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:06:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F00E1F26711
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940F7198A2F;
-	Fri, 16 Aug 2024 11:06:30 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E3A19B59C;
+	Fri, 16 Aug 2024 11:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1JnPA4x+"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB97C191473
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 11:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6934117BEB5
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 11:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723806389; cv=none; b=WCyr7XqbjIXWt6BstQrtrDGS5I2Z1L9+Tib9h+LbOdF3VPZtgsGPyLwePNu53UNI/fyXFb02O5GVE3s7XKgLpa0RfVGwErhanCRmZ1GdjwwDxkLZkAbN/JFExVW/46fzLtEXi6qwA8eNyQkDR9aLz1fMcmnvc063Eh/ofRRDedQ=
+	t=1723806501; cv=none; b=oKzOTKTyCDdmjFC6fyWpFMsvf/4squuV2317slAik//9SNF0kzkoNRxmWFQdhmhH2RVuCoA3T6VdEgsJSeXVupYxMyKGD53wcyOjySzckSVg5z8F704jBZF2dATT+Trw/i6jYaJ4QvGaAIeLOubcXZsBiKk91tY+hQGiNUtd+1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723806389; c=relaxed/simple;
-	bh=gukHqRr33l0vxjtchqo+X+IITvPxS94NgFNd0ueDoDE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=l3zthuLC1a0kcbxKB5GgT0PcZWk4ZM0S7HJ1SC13Rvea396Obi7K7joYx+k3I0MRG9IcNCBgQpA77JdHymZlQIdEbV66K7JszHvJXUmXtL694aXc1/MsZ00TYDK7Nm251vBkcOiNj5jBxZBpTcwOYGKide9GVPNsNCz4Vgx5nr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39b0bee2173so17382315ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 04:06:27 -0700 (PDT)
+	s=arc-20240116; t=1723806501; c=relaxed/simple;
+	bh=4pZVFpJRO3MHz/DoPuIAKSdqaAhQNfTKgM2dcrTjI3I=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=nYFF8K1Qlx84/pEcUTfLAeNUjpJ8Hy7Di8UE7axE3Mer2KmNxqfGz0+z6rIEIpzXDjuJqt1Y5MO9UOMBmOtc5I1Vf9bN44DC5r7ay2VQE2c47lWOT7jSCpvkX/nS0UXF8sTejWdjcAe6zyeGSk/Jow0kZ3F2vB5giOmunEC009Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1JnPA4x+; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ad97b9a0fbso38017047b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 04:08:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723806498; x=1724411298; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=GBSVjeF7/vjpC1dXeVG0LVGAvDGvE8sdoN+9xc5O6HU=;
+        b=1JnPA4x+OhWLv0zVSp8dZGeI9ycre6Qguv9ZG6Srt2lBheu44ZUdwconNZpBl3qoZP
+         4/HEyPhVuW59tPYD3mZoehPWJvDo4Pvk/x0N63VtW00dOKOA6KN9rIZA8dGHKWM/uxt1
+         YsggWflBjo0SlsQOQupF92dkiH1N0n/RqTZ8RCqZAWWbJ1Rtdy9HmeuOi/bcIHi9jyWn
+         te0QyUKic6wg36tMC5AQuvyYJ8l2RSSoCwcZFXL5RahsAfTRKnkmUB4OOQVGwEKQXJae
+         rhjHlzHftp8ofJpcv9pq7timv7lfQ6FLxW7b5KrAooYUDR8HH0mRohX7TC3cHKXFuPbA
+         rsIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723806387; x=1724411187;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+        d=1e100.net; s=20230601; t=1723806498; x=1724411298;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=h++Y0J1RJSpy/WXrmtYTzWU8qMOhjabLz05/9Ewdu20=;
-        b=A9cMTiPWcx4U/qmCISWllJVGS5eRhPQqCUD+0yGYAQ80YNduwJ7ui+8f78nbDhb1le
-         TJEPvWqr3vd5Qaux7ayqGlSCiMwBmGI/6slr3DpaaqsgKEMBkasB4FhFaCSisVEeylv0
-         glgYjlPM5RaW5URzdamclGBjdDNk+0WcC0qpYOdUdWMJ/9+1495LVFPRtV1de2C8iwSz
-         HnllFgcprri3w76n/uWNoQVd0rRgX5sbcmPp3ivRXZ+KuKIlLvRH6s4a06AdmM3pM7P2
-         y6Z0JzYVxMeYEvOZUxySBjSa/3JCJh0tqi814c1IcaXxaDTyGVZPBZbxelSXYw5TDRXn
-         sT7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUKfs+Qp67F3DkVrYsyCReYwk8CKyOp19dewx9V4eJ4YvtQIu8CeL5q5a4clSYsAGh1P4HYxkUNWpPAdYfCiVcFdbgI2UvUTKksWB9/
-X-Gm-Message-State: AOJu0YwU4kdTEqTSrJ4oPvoHsDTizELx2eJIrCfP6iwHcCxiN88bebrs
-	98q9NAVZUJT6Y0QGzKGa5xV5FiFZoFz+PLvXM24rxa4EKT7/dZKYJrdZM9VziC0QDmNX0Kf1Gwz
-	sitlo7b53+9uE5xosWoXAnx88PJ58zlxDVYd7OyWGjfrG2yEzH3Nq0BA=
-X-Google-Smtp-Source: AGHT+IF6ZVtP8bPslnfvviyx268xom8xvO+1bEJRTXkUPa0EYgcJfrbdp+ml+sQPxVjGfiMw1S1I2JJkC+UiQl9mZbQkJyPW7YOy
+        bh=GBSVjeF7/vjpC1dXeVG0LVGAvDGvE8sdoN+9xc5O6HU=;
+        b=la+Lms5You60TR1/r2thRmc2tEEm3eLWqlrlzdbntHVr+ZkSLGI5E2yzm1BHBQFuM7
+         bRJ9UCnaCWEEldgxJCyWongqdwZj8MtyTZNYnrhfF52z+ZRhoyonpzbu68t5pbmqkH2X
+         y2hI45oPdQkLBv3D/3QtcYUc4QIHpk0M2XGnQNFoihi9Rj/kAon7Ygj1wGxq7zdwms/s
+         UyVImlk1w+3FUztjgrY0dHhbopP8hgC42Rf+CqrmalxrQmYtOjJBVu8pS7bGnTqetFdi
+         H1oa2wWNcDZCDN/UlQcLA1rgKB+H09qvpL6s7K/6o8u/rSNsIQ4aOKZwza0QNzF+bIu4
+         JzBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOubKdYQ/+hhp+7TFvnkpM6A+4hcGjKcoK94TjF2xgB4wXMtGTo9JkQdT9FV/3uYKAV6FoHo5dp4EnfnEKxZ+iOmJYb7nyNZ3nnXxJ
+X-Gm-Message-State: AOJu0YyoJPV8PfY2C2OEZcrsOYa+Nd7Mvu6c5skNybYbZlLp40DcYsIZ
+	vO3PzDXlSj6YSRF9BmpehqU0WT8/RT43Fm6lzUitZVts9Jo2drEbi6N8pkQ8e0kT0Po4LoNBagZ
+	GtMJzXOTIqkahIw==
+X-Google-Smtp-Source: AGHT+IHxFvy1KqAYn0MvS6oUKrhauQESgORV1h/F83xZuq+N5sGLBg0AYPrvpVQZa7Oof89hGa3nC7SROwJGVts=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a5b:c44:0:b0:e0b:cce3:45c7 with SMTP id
+ 3f1490d57ef6-e1180f5614dmr4437276.9.1723806498310; Fri, 16 Aug 2024 04:08:18
+ -0700 (PDT)
+Date: Fri, 16 Aug 2024 11:07:37 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b2c:b0:39d:1144:e784 with SMTP id
- e9e14a558f8ab-39d26d6ee1emr1647265ab.4.1723806387077; Fri, 16 Aug 2024
- 04:06:27 -0700 (PDT)
-Date: Fri, 16 Aug 2024 04:06:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005d16fe061fcaf338@google.com>
-Subject: [syzbot] [kasan?] [mm?] INFO: task hung in hugetlb_wp
-From: syzbot <syzbot+c391aebb8e8e8cd95c55@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, kasan-dev@googlegroups.com, 
-	keescook@chromium.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	muchun.song@linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAPkyv2YC/23PQW7EIAwF0KuMWJcKAyZkVr1H1QUQk0Fqw4hEU
+ atR7l4mmwaly2/pfdsPNlNJNLPr5cEKrWlOeaqhe7mwcHPTSDwNNTMppBZGGL4UF+ie07RwBQT
+ oe0G6A1bBvVBM33vZ+0fNtzQvufzs3Ss8p//WrMAFN4hgZOcjgn8bcx4/6TXkL/bsWeXBgmisr
+ DY68m6w4BXiyaqDldBYVW1PWhORk96erT5a21hdrUI1oFSuD3C2+GetkI3F/WYHRuteD+H8rzn adq+p1kkVrRARwPaN3bbtFzZxMCLRAQAA
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6427; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=4pZVFpJRO3MHz/DoPuIAKSdqaAhQNfTKgM2dcrTjI3I=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmvzMAqI6madHbK+l0LjW2ZBvrusxLNCk6x5EZ7
+ WANKcWB+32JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZr8zAAAKCRAEWL7uWMY5
+ Rqn6EACyr/SU1Cs0JgS1mWu3IE4tKJlLJ7t8RzY9m/fnuo+2ZYJ6uHwfQgOsBGxb2JzzwZil4z7
+ jO3XGovFP0HdmRKVeByL3LsRh9S97IsqWkqDNK2TIODg1iYw/6CNSEfetZeAdUihQeKi7iIQdhs
+ 2DGQsWFhgwNsVPCuZOMwM1Gmmw5oFN/KVNyAaNKrVJM7X7qwqUVD8odlBtgfxpFKkoHk6N35L5x
+ Ocp3Z6taLtD/DugADvFcAR+MasYiF1AJIkqkaxobWlO8wcPV6eY4BDjtHJoIP+7O/lRitkUlvBP
+ qciD6i59r8k9Zc5+BdVGadx8kHWQ74LrdVQTSXgw9VfSCsGmTwew1Zbkh7zqI/oqTjVpHpBee4c
+ 6WIXRSHmJKmYpdqQbqpfJdpzQNjr6V6eXgHjA1iAQlaLPUXXL7ri3zXOH/t9m9iQ2dtzpMQpiuA
+ y37vprsoWs75OBHsiO+uiqdDImGQnvJswCk8ZZpHXqtBMGwIfZkNCy85wKpkavMnXqjOqFvnU8E
+ wKcsDU6bbKOdkHJTDs0DDAdCzpB8eFi+wpzSmkh+PK8AQOec7WWRMyvkvfGnFgdj32mwlAsIqQ7
+ hmbIzTMzBWI2WzBM5Zxr5jtwcGokL6zADXDbs6N+MXML9wAakwurMhv7SWG9+eB47zHgIcXNm83 Ry8aemcFhD4M8Ug==
+X-Mailer: b4 0.13.0
+Message-ID: <20240816-tracepoint-v7-0-d609b916b819@google.com>
+Subject: [PATCH v7 0/5] Tracepoints and static branch in Rust
+From: Alice Ryhl <aliceryhl@google.com>
+To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>
+Cc: linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>, 
+	linux-arm-kernel@lists.infradead.org, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
+	Conor Dooley <conor.dooley@microchip.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	linux-riscv@lists.infradead.org, Huacai Chen <chenhuacai@kernel.org>, 
+	WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>, 
+	Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton <akpm@linux-foundation.org>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev, 
+	Alice Ryhl <aliceryhl@google.com>, Carlos Llamas <cmllamas@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-Hello,
+An important part of a production ready Linux kernel driver is
+tracepoints. So to write production ready Linux kernel drivers in Rust,
+we must be able to call tracepoints from Rust code. This patch series
+adds support for calling tracepoints declared in C from Rust.
 
-syzbot found the following issue on:
+To use the tracepoint support, you must:
 
-HEAD commit:    6b0f8db921ab Merge tag 'execve-v6.11-rc4' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16509e8d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=801d05d1ea4be1b8
-dashboard link: https://syzkaller.appspot.com/bug?extid=c391aebb8e8e8cd95c55
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+1. Declare the tracepoint in a C header file as usual.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+2. Add #define CREATE_RUST_TRACE_POINTS next to your
+   #define CREATE_TRACE_POINTS.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/8e1d5e5016fb/disk-6b0f8db9.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0487df01ffef/vmlinux-6b0f8db9.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/cc8e8e0932d5/bzImage-6b0f8db9.xz
+3. Make sure that the header file is visible to bindgen.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c391aebb8e8e8cd95c55@syzkaller.appspotmail.com
+4. Use the declare_trace! macro in your Rust code to generate Rust
+   functions that call into the tracepoint.
 
-INFO: task syz.3.186:6037 blocked for more than 143 seconds.
-      Not tainted 6.11.0-rc3-syzkaller-00013-g6b0f8db921ab #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.3.186       state:D stack:25688 pid:6037  tgid:6037  ppid:5773   flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5188 [inline]
- __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
- __schedule_loop kernel/sched/core.c:6606 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6621
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
- hugetlb_wp+0x104d/0x3a90 mm/hugetlb.c:6027
- hugetlb_fault+0x26de/0x3780 mm/hugetlb.c:6579
- handle_mm_fault+0x173f/0x1980 mm/memory.c:5831
- do_user_addr_fault arch/x86/mm/fault.c:1338 [inline]
- handle_page_fault arch/x86/mm/fault.c:1481 [inline]
- exc_page_fault+0x459/0x8c0 arch/x86/mm/fault.c:1539
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-RIP: 0033:0x7f31cf341498
-RSP: 002b:00007f31cf63fb98 EFLAGS: 00010246
-RAX: 0000000020000080 RBX: 0000000000000004 RCX: 0070616d65676170
-RDX: 0000000000000008 RSI: 0070616d65676170 RDI: 0000000020000080
-RBP: 00007f31cf63fc70 R08: 00007f31cf200000 R09: 0000000000000001
-R10: 0000000000000001 R11: 0000000000000009 R12: 0000000000000032
-R13: 00007f31cf63fc90 R14: 00007f31cf63fcb0 R15: fffffffffffffffe
- </TASK>
-INFO: task syz.3.186:6038 blocked for more than 143 seconds.
-      Not tainted 6.11.0-rc3-syzkaller-00013-g6b0f8db921ab #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.3.186       state:D stack:22360 pid:6038  tgid:6037  ppid:5773   flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5188 [inline]
- __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
- __schedule_loop kernel/sched/core.c:6606 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6621
- io_schedule+0x8d/0x110 kernel/sched/core.c:7401
- folio_wait_bit_common+0x882/0x12b0 mm/filemap.c:1307
- __filemap_get_folio+0xb7/0xc10 mm/filemap.c:1898
- hugetlb_fault+0x1b10/0x3780 mm/hugetlb.c:6531
- handle_mm_fault+0x173f/0x1980 mm/memory.c:5831
- do_user_addr_fault arch/x86/mm/fault.c:1389 [inline]
- handle_page_fault arch/x86/mm/fault.c:1481 [inline]
- exc_page_fault+0x2b9/0x8c0 arch/x86/mm/fault.c:1539
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-RIP: 0010:__put_user_8+0x11/0x20 arch/x86/lib/putuser.S:107
-Code: 84 00 00 00 00 00 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 48 89 cb 48 c1 fb 3f 48 09 d9 0f 01 cb <48> 89 01 31 c9 0f 01 ca c3 cc cc cc cc 66 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc9000317f778 EFLAGS: 00050202
-RAX: 0000000000800000 RBX: 0000000000000000 RCX: 0000000020000020
-RDX: 0000000000000000 RSI: ffffffff8c0ae6e0 RDI: ffffffff8c606400
-RBP: ffffc9000317fec8 R08: ffffffff9017ce2f R09: 1ffffffff202f9c5
-R10: dffffc0000000000 R11: fffffbfff202f9c6 R12: 1ffff9200062ff7d
-R13: 1ffff9200062ff08 R14: 0000000020800000 R15: 0000000000800000
- userfaultfd_copy fs/userfaultfd.c:1735 [inline]
- userfaultfd_ioctl+0x28e7/0x70a0 fs/userfaultfd.c:2133
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f31cf3799f9
-RSP: 002b:00007f31d00e5038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f31cf515f80 RCX: 00007f31cf3799f9
-RDX: 0000000020000000 RSI: 00000000c028aa03 RDI: 0000000000000004
-RBP: 00007f31cf3e78ee R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f31cf515f80 R15: 00007f31cf63fa38
- </TASK>
+For example, the kernel has a tracepoint called `sched_kthread_stop`. It
+is declared like this:
 
-Showing all locks held in the system:
-3 locks held by kworker/1:0/25:
-1 lock held by khungtaskd/30:
- #0: ffffffff8e9382e0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
- #0: ffffffff8e9382e0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
- #0: ffffffff8e9382e0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6626
-3 locks held by kworker/u8:2/35:
-3 locks held by kworker/1:1/46:
- #0: ffff888015880948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
- #0: ffff888015880948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
- #1: ffffc90000b67d00 ((work_completion)(&data->fib_event_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
- #1: ffffc90000b67d00 ((work_completion)(&data->fib_event_work)){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
- #2: ffff888062701240 (&data->fib_lock){+.+.}-{3:3}, at: nsim_fib_event_work+0x2d1/0x4130 drivers/net/netdevsim/fib.c:1489
-3 locks held by kworker/u8:3/52:
- #0: ffff888015889148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
- #0: ffff888015889148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
- #1: ffffc90000bc7d00 ((linkwatch_work).work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
- #1: ffffc90000bc7d00 ((linkwatch_work).work){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
- #2: ffffffff8fc82308 (rtnl_mutex){+.+.}-{3:3}, at: linkwatch_event+0xe/0x60 net/core/link_watch.c:276
-4 locks held by kworker/u8:10/2503:
- #0: ffff8880166e5948 ((wq_completion)netns){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
- #0: ffff8880166e5948 ((wq_completion)netns){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
- #1: ffffc90008c67d00 (net_cleanup_work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
- #1: ffffc90008c67d00 (net_cleanup_work){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
- #2: ffffffff8fc75790 (pernet_ops_rwsem){++++}-{3:3}, at: cleanup_net+0x16a/0xcc0 net/core/net_namespace.c:594
- #3: ffffffff8fc82308 (rtnl_mutex){+.+.}-{3:3}, at: fib_net_exit_batch+0x20/0x90 net/ipv4/fib_frontend.c:1638
-1 lock held by dhcpcd/4896:
- #0: ffffffff8fc82308 (rtnl_mutex){+.+.}-{3:3}, at: devinet_ioctl+0x2ce/0x1bc0 net/ipv4/devinet.c:1101
-2 locks held by getty/4983:
- #0: ffff88802af030a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002f062f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6ac/0x1e00 drivers/tty/n_tty.c:2211
-1 lock held by syz-executor/5218:
-3 locks held by kworker/0:4/5282:
- #0: ffff888015880948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
- #0: ffff888015880948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
- #1: ffffc90004017d00 ((fqdir_free_work).work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
- #1: ffffc90004017d00 ((fqdir_free_work).work){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
- #2: ffffffff8e93d580 (rcu_state.barrier_mutex){+.+.}-{3:3}, at: rcu_barrier+0x4c/0x530 kernel/rcu/tree.c:4486
-2 locks held by syz.3.186/6037:
- #0: ffff888063f3fd18 (&vma->vm_lock->lock){++++}-{3:3}, at: vma_start_read include/linux/mm.h:690 [inline]
- #0: ffff888063f3fd18 (&vma->vm_lock->lock){++++}-{3:3}, at: lock_vma_under_rcu+0x2f9/0x6e0 mm/memory.c:5999
- #1: ffff88801baea0f8 (&hugetlb_fault_mutex_table[i]){+.+.}-{3:3}, at: hugetlb_wp+0x104d/0x3a90 mm/hugetlb.c:6027
-3 locks held by syz.3.186/6038:
- #0: ffff88805a331e18 (&mm->mmap_lock){++++}-{3:3}, at: mmap_read_trylock include/linux/mmap_lock.h:163 [inline]
- #0: ffff88805a331e18 (&mm->mmap_lock){++++}-{3:3}, at: get_mmap_lock_carefully mm/memory.c:5870 [inline]
- #0: ffff88805a331e18 (&mm->mmap_lock){++++}-{3:3}, at: lock_mm_and_find_vma+0x32/0x2f0 mm/memory.c:5930
- #1: ffff88801baea0f8 (&hugetlb_fault_mutex_table[i]){+.+.}-{3:3}, at: hugetlb_fault+0x575/0x3780 mm/hugetlb.c:6451
- #2: ffff888028c88ce8 (&resv_map->rw_sema){.+.+}-{3:3}, at: hugetlb_fault+0x67b/0x3780 mm/hugetlb.c:6458
-2 locks held by syz.3.425/7080:
- #0: ffff88801cf73b68 (&vma->vm_lock->lock){++++}-{3:3}, at: vma_start_read include/linux/mm.h:690 [inline]
- #0: ffff88801cf73b68 (&vma->vm_lock->lock){++++}-{3:3}, at: lock_vma_under_rcu+0x2f9/0x6e0 mm/memory.c:5999
- #1: ffff88801baea0f8 (&hugetlb_fault_mutex_table[i]){+.+.}-{3:3}, at: hugetlb_fault+0x575/0x3780 mm/hugetlb.c:6451
-2 locks held by syz-executor/7564:
- #0: ffffffff8fc82308 (rtnl_mutex){+.+.}-{3:3}, at: tun_detach drivers/net/tun.c:698 [inline]
- #0: ffffffff8fc82308 (rtnl_mutex){+.+.}-{3:3}, at: tun_chr_close+0x3e/0x1b0 drivers/net/tun.c:3510
- #1: ffffffff8e93d6b8 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:296 [inline]
- #1: ffffffff8e93d6b8 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x381/0x830 kernel/rcu/tree_exp.h:958
-1 lock held by syz-executor/8404:
- #0: ffffffff8fc82308 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
- #0: ffffffff8fc82308 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6644
-1 lock held by syz.2.726/8553:
- #0: ffffffff8fc82308 (rtnl_mutex){+.+.}-{3:3}, at: dev_ioctl+0x639/0x1340 net/core/dev_ioctl.c:737
+	TRACE_EVENT(sched_kthread_stop,
+		TP_PROTO(struct task_struct *t),
+		TP_ARGS(t),
+		TP_STRUCT__entry(
+			__array(	char,	comm,	TASK_COMM_LEN	)
+			__field(	pid_t,	pid			)
+		),
+		TP_fast_assign(
+			memcpy(__entry->comm, t->comm, TASK_COMM_LEN);
+			__entry->pid	= t->pid;
+		),
+		TP_printk("comm=%s pid=%d", __entry->comm, __entry->pid)
+	);
 
-=============================================
+To call the above tracepoint from Rust code, you must first ensure that
+the Rust helper for the tracepoint is generated. To do this, you would
+modify kernel/sched/core.c by adding #define CREATE_RUST_TRACE_POINTS.
 
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.11.0-rc3-syzkaller-00013-g6b0f8db921ab #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xfee/0x1030 kernel/hung_task.c:379
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 46 Comm: kworker/1:1 Not tainted 6.11.0-rc3-syzkaller-00013-g6b0f8db921ab #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Workqueue: events nsim_dev_trap_report_work
-RIP: 0010:get_current arch/x86/include/asm/current.h:49 [inline]
-RIP: 0010:__sanitizer_cov_trace_pc+0x8/0x70 kernel/kcov.c:215
-Code: 8b 3d 7c db 95 0c 48 89 de 5b e9 03 94 5b 00 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 48 8b 04 24 <65> 48 8b 0c 25 40 d7 03 00 65 8b 15 a0 5f 70 7e 81 e2 00 01 ff 00
-RSP: 0018:ffffc90000b67498 EFLAGS: 00000202
-RAX: ffffffff81413211 RBX: ffffffff909bed9c RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffffc90000b67670
-RBP: ffffc90000b675e0 R08: ffffffff8141454b R09: ffffffff814130bf
-R10: 0000000000000003 R11: ffff88801becbc00 R12: ffffc90000b67678
-R13: dffffc0000000000 R14: ffffc90000b67630 R15: 1ffff9200016cebc
-FS:  0000000000000000(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000110c2a2c5c CR3: 0000000022eec000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <NMI>
- </NMI>
- <TASK>
- unwind_next_frame+0x1ac1/0x2a00 arch/x86/kernel/unwind_orc.c:648
- __unwind_start+0x641/0x7c0 arch/x86/kernel/unwind_orc.c:760
- unwind_start arch/x86/include/asm/unwind.h:64 [inline]
- arch_stack_walk+0x103/0x1b0 arch/x86/kernel/stacktrace.c:24
- stack_trace_save+0x118/0x1d0 kernel/stacktrace.c:122
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
- __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
- kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2252 [inline]
- slab_free mm/slub.c:4473 [inline]
- kfree+0x149/0x360 mm/slub.c:4594
- skb_kfree_head net/core/skbuff.c:1084 [inline]
- skb_free_head net/core/skbuff.c:1096 [inline]
- skb_release_data+0x676/0x880 net/core/skbuff.c:1123
- skb_release_all net/core/skbuff.c:1188 [inline]
- __kfree_skb net/core/skbuff.c:1202 [inline]
- consume_skb+0xb1/0x160 net/core/skbuff.c:1426
- nsim_dev_trap_report drivers/net/netdevsim/dev.c:821 [inline]
- nsim_dev_trap_report_work+0x765/0xaa0 drivers/net/netdevsim/dev.c:850
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-vkms_vblank_simulate: vblank timer overrun
+Next, you would include include/trace/events/sched.h in
+rust/bindings/bindings_helper.h so that the exported C functions are
+visible to Rust, and then you would declare the tracepoint in Rust:
 
+	declare_trace! {
+	    fn sched_kthread_stop(task: *mut task_struct);
+	}
+
+This will define an inline Rust function that checks the static key,
+calling into rust_do_trace_##name if the tracepoint is active. Since
+these tracepoints often take raw pointers as arguments, it may be
+convenient to wrap it in a safe wrapper:
+
+	mod raw {
+	    declare_trace! {
+	    	/// # Safety
+		/// `task` must point at a valid task for the duration
+		/// of this call.
+	        fn sched_kthread_stop(task: *mut task_struct);
+	    }
+	}
+	
+	#[inline]
+	pub fn trace_sched_kthread_stop(task: &Task) {
+	    // SAFETY: The pointer to `task` is valid.
+	    unsafe { raw::sched_kthread_stop(task.as_raw()) }
+	}
+
+A future expansion of the tracepoint support could generate these safe
+versions automatically, but that is left as future work for now.
+
+This is intended for use in the Rust Binder driver, which was originally
+sent as an RFC [1]. The RFC did not include tracepoint support, but you
+can see how it will be used in Rust Binder at [2]. The author has
+verified that the tracepoint support works on Android devices.
+
+This implementation implements support for static keys in Rust so that
+the actual static branch happens in the Rust object file. However, the
+__DO_TRACE body remains in C code. See v1 for an implementation where
+__DO_TRACE is also implemented in Rust.
+
+Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba9197f637@google.com/ [1]
+Link: https://r.android.com/3119993 [2]
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Changes in v7:
+- Fix spurious file included in first patch.
+- Fix issue with riscv asm.
+- Fix tags on fourth patch to match fifth patch.
+- Add Reviewed-by/Acked-by tags where appropriate.
+- Link to v6: https://lore.kernel.org/r/20240808-tracepoint-v6-0-a23f800f1189@google.com
+
+Changes in v6:
+- Add support for !CONFIG_JUMP_LABEL.
+- Add tracepoint to rust_print sample.
+- Deduplicate inline asm.
+- Require unsafe inside `declare_trace!`.
+- Fix bug on x86 due to use of intel syntax.
+- Link to v5: https://lore.kernel.org/r/20240802-tracepoint-v5-0-faa164494dcb@google.com
+
+Changes in v5:
+- Update first patch regarding inline asm duplication.
+- Add __rust_do_trace helper to support conditions.
+- Rename DEFINE_RUST_DO_TRACE_REAL to __DEFINE_RUST_DO_TRACE.
+- Get rid of glob-import in tracepoint macro.
+- Address safety requirements on tracepoints in docs.
+- Link to v4: https://lore.kernel.org/rust-for-linux/20240628-tracepoint-v4-0-353d523a9c15@google.com
+
+Changes in v4:
+- Move arch-specific code into rust/kernel/arch.
+- Restore DEFINE_RUST_DO_TRACE at end of define_trace.h
+- Link to v3: https://lore.kernel.org/r/20240621-tracepoint-v3-0-9e44eeea2b85@google.com
+
+Changes in v3:
+- Support for Rust static_key on loongarch64 and riscv64.
+- Avoid failing compilation on architectures that are missing Rust
+  static_key support when the archtectures does not actually use it.
+- Link to v2: https://lore.kernel.org/r/20240610-tracepoint-v2-0-faebad81b355@google.com
+
+Changes in v2:
+- Call into C code for __DO_TRACE.
+- Drop static_call patch, as it is no longer needed.
+- Link to v1: https://lore.kernel.org/r/20240606-tracepoint-v1-0-6551627bf51b@google.com
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Alice Ryhl (5):
+      rust: add generic static_key_false
+      rust: add tracepoint support
+      rust: samples: add tracepoint to Rust sample
+      jump_label: adjust inline asm to be consistent
+      rust: add arch_static_branch
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ MAINTAINERS                             |  1 +
+ arch/arm/include/asm/jump_label.h       | 14 +++--
+ arch/arm64/include/asm/jump_label.h     | 20 +++++---
+ arch/loongarch/include/asm/jump_label.h | 16 +++---
+ arch/riscv/include/asm/jump_label.h     | 50 ++++++++++--------
+ arch/x86/include/asm/jump_label.h       | 38 ++++++--------
+ include/linux/tracepoint.h              | 22 +++++++-
+ include/trace/define_trace.h            | 12 +++++
+ include/trace/events/rust_sample.h      | 31 +++++++++++
+ rust/Makefile                           |  5 +-
+ rust/bindings/bindings_helper.h         |  3 ++
+ rust/helpers.c                          |  9 ++++
+ rust/kernel/.gitignore                  |  3 ++
+ rust/kernel/arch_static_branch_asm.rs.S |  7 +++
+ rust/kernel/jump_label.rs               | 91 +++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs                      | 32 ++++++++++++
+ rust/kernel/tracepoint.rs               | 49 ++++++++++++++++++
+ samples/rust/Makefile                   |  3 +-
+ samples/rust/rust_print.rs              | 18 +++++++
+ samples/rust/rust_print_events.c        |  8 +++
+ scripts/Makefile.build                  |  9 +++-
+ 21 files changed, 374 insertions(+), 67 deletions(-)
+---
+base-commit: 65ae9c6348cc15f77e2ce2ff41c2bb14de9460d6
+change-id: 20240606-tracepoint-31e15b90e471
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
