@@ -1,146 +1,123 @@
-Return-Path: <linux-kernel+bounces-289256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13B6B9543C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:18:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2035E9543CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:19:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD6721F2307E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:18:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6480281C15
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DA112F375;
-	Fri, 16 Aug 2024 08:18:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031A212FF9C;
+	Fri, 16 Aug 2024 08:18:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fvJcOChx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Ni852PVs"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29D71AC8BE;
-	Fri, 16 Aug 2024 08:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8A182866
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723796321; cv=none; b=CN2oXZrH1T6Sg83Hf6T7XCg1tiz9xHeARoW66ZyqkKg+KW3aHdSe7HhYm+opyyvMYM1VjkXA2kCFya8qGpgkt2pDjY3dNazUE7WoLfyOLvVMwpQuQjPB72x5Gj2JCdD1cXJjPOTDUxRnagV3xg1VYrCm2NmrZKG4OfC54U6NQb4=
+	t=1723796338; cv=none; b=jbd2CW+cQ6KdFm1Pg4Re3N6yAqVmkWtIAheQ/iz/pAtM5Y+3vcZNtXsmtlOksmt5b4loLIYGgx0Ry1iMjOQ2wFG+MSzYbj3+clUrtXdpmS7tcJQC6KPuB7JfXQyOs6/xKtXenpyQ0DKQLL7Mj7pq0H332bT1wCpKc5XNUYkz4W0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723796321; c=relaxed/simple;
-	bh=GonFGzxM4BBjGyFw4yrLw/w1GcbIfc11E9GHQPxxnGM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AZfb0a74HGG3E53QjaRdxZGyE8fq+Vk7CTsMCan2eKSsKpygvN4Q7jvF1UPc2rFulz0j6lpcbdizaTDCnV26mkjKBuEOrdZZ3gN59jEPjy3/c/+s7aGE2lXeSuklCCHhfs3qUDpPin6Lt9l52D19O2qS24cjqNY+QNUyUtF1hHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fvJcOChx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A23FC4AF0C;
-	Fri, 16 Aug 2024 08:18:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723796321;
-	bh=GonFGzxM4BBjGyFw4yrLw/w1GcbIfc11E9GHQPxxnGM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fvJcOChx3U/+8g/XPJc5nDucCdoEejHqfKrfp7SvniPXp+rz1IthxHo7dLrkvRgBG
-	 6xsftIbYaMNGLrJZXMsxLHuhoIUnhhoBXJRzhsa6o79w79fA+8XARgrSJnxhjWEFzB
-	 lHi1XT5nXg38zMrZ9xIjmySqTsxBItU9Ug4B3PpN+TcziIDxgq83G0DMMEPOWoef/2
-	 +0t/ib/e9AuSN395HLxVasidrhQCJkuj/5KsCRgAco3yMp8S3GjCCuqkraXSXyP81b
-	 77tl4nktYNSYEMNgTl/lrgHIOFqu6whLshr+UYwYcmRzC09d9nooL236ZqClCykxWH
-	 aVbC2Ywn2cO0A==
-Message-ID: <525e1561-367b-4890-958b-872bf4922355@kernel.org>
-Date: Fri, 16 Aug 2024 10:18:30 +0200
+	s=arc-20240116; t=1723796338; c=relaxed/simple;
+	bh=/FSCZwMWDBvL2pdVUDCcXybfvMINgHHjI88FNgz9Ybc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qip3Q4w/xztlLr0nj8wrNiTZnDdcUGQhuuY8Y9EDoJOBUMLp2+xFAyqDBgs/65HElTeJJpXFIfRc0JtuOxC0dkwKvWsqa/Q3lFk5gqW5YOs13sv+WWCbCh89jBBopdBFnur5cnMhQ/kNYk3aO0PcoNbjLVnn2UXrFi7ZRnFG8go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Ni852PVs; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3719896b7c8so80329f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 01:18:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1723796334; x=1724401134; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zHLNBtu3gOxyQPcoDoB7/UuHac6loGYyqpNQ9W8K+0Q=;
+        b=Ni852PVsDn4amVV2eHoEnsKLAWMmBATbjIrthiqIxTXB3L3sAong9loqMu8FR0WDQf
+         EiHRsWrG7fk8lNn87YVF1ySB0QGWPov4RoebLzQZgTEnGEbhLwW1CTdaMik3L+r8pxv5
+         lPDLPMjX1MBYX0VvGr8+dmyBBQVxfcieqWnA4MVFWLj4CBAFOMkcAOyQUQf1saaizXMf
+         zhG2LZ3o3y+ah1SMwg4x9hpXAMZZ2RgobNLL8sISOZjjxuPOK4NtuC3V11HDwLfke7+K
+         fOfZq4XRwWLVtMzAsOKPwXiUoRBdoyQN7xW8r+qNC3wMN1kmXH7sTCuASbwYwSdAStnQ
+         0ppg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723796334; x=1724401134;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zHLNBtu3gOxyQPcoDoB7/UuHac6loGYyqpNQ9W8K+0Q=;
+        b=O/AIbDAvlH7rv60lofr4Np2NEHMVhT+3nY535Bd40VEi/GcqTxUOafM0JVihj6iN/m
+         9/sNAKBx6LTg9S+8rkJlUpSZrtj+mkNFsGRv9u+6thIEa2w82JZ4oZZY2TblWO8sctlF
+         ZUZY2PBm8SDgfiA4z9QEbagTNRhFwj7DduSLnA7+mAOH6oXC4qaTtMeNdf+/snB0NFdg
+         hTsRNE6+vT3kDdhpXWLeMv/asyKzPUw6x8fUrTT8LobusX9yBo3Zl5sRwmL9CAAlRIUy
+         f2llJzkJuIduT0mxUvsKDxQoc6f2Mmu/AyaRP1R93IrE3XmnY1jr2/ytoBKd92CBc3NF
+         x53g==
+X-Forwarded-Encrypted: i=1; AJvYcCU1arQC/2CsptP6Tew8OrljWTTpAaWFXxqthDQGoDCIILDt+y16JMcdBdNtdeFCgtLm8KWFaHkI0pN4/wp1llBBLjSVa6wo355NybYb
+X-Gm-Message-State: AOJu0YzHA4cHhMC55Ya4YUMIzuXXA0FUg10xCYTftkqw1KIFRBUh7rW1
+	EYH+VbGS9tLvneN+y/zTW6jzbFzSsT0X3dNyXiUsfGjcqVOjg1y8G9TvAS8LDkM=
+X-Google-Smtp-Source: AGHT+IFdBske6NMqguLo6M58gZVPz/3hhle42cAyCb4RiH4ciuwNcbDyYr/kztrq34Zlbgm0uutPxA==
+X-Received: by 2002:adf:ed04:0:b0:371:8c09:dd9a with SMTP id ffacd0b85a97d-371946cba59mr1501747f8f.62.1723796334388;
+        Fri, 16 Aug 2024 01:18:54 -0700 (PDT)
+Received: from localhost (109-81-92-77.rct.o2.cz. [109.81.92.77])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37189896d74sm3086190f8f.68.2024.08.16.01.18.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 01:18:54 -0700 (PDT)
+Date: Fri, 16 Aug 2024 10:18:53 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	"T . J . Mercier" <tjmercier@google.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org
+Subject: Re: [PATCH v2] memcg: replace memcg ID idr with xarray
+Message-ID: <Zr8LbVe8IGd1JSQo@tiehlicka>
+References: <20240815155402.3630804-1-shakeel.butt@linux.dev>
+ <Zr5Xn45wEJytFTl8@google.com>
+ <Zr5wK7oUcUoB44OF@casper.infradead.org>
+ <Zr79nrBAkfSdI4e5@tiehlicka>
+ <20240816004334.41ce3acf52ba082399a76d88@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: eeprom: at24: Add compatible for Giantec
- GT24C04A
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, ukleinek@debian.org, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-References: <20240810211438.286441-1-heiko@sntech.de>
- <20240810211438.286441-2-heiko@sntech.de>
- <172340442666.7060.12608274118090495917.b4-ty@linaro.org>
- <12584345.NizCu2HIMA@diego>
- <CACMJSesFVdJDkJXyC4o5NZxeDB8kkg6Ks0_x6G1Bywr+_ONZVw@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CACMJSesFVdJDkJXyC4o5NZxeDB8kkg6Ks0_x6G1Bywr+_ONZVw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240816004334.41ce3acf52ba082399a76d88@linux-foundation.org>
 
-On 16/08/2024 10:03, Bartosz Golaszewski wrote:
->>>
->>> Applied, thanks!
->>>
->>> [1/2] dt-bindings: eeprom: at24: Add compatible for Giantec GT24C04A
->>>       commit: a825dea2cd27a30e49816f18b7bc16545d5f0f89
->>
->> just for my understanding, where is this commit living now?
->>
->> Because linux next seems to know it [0], but also says that
->> "Notice: this object is not reachable from any branch."
->>
->>
->> Thanks
->> Heiko
->>
->> [0] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=a825dea2cd27a30e49816f18b7bc16545d5f0f89
->>
->>
+On Fri 16-08-24 00:43:34, Andrew Morton wrote:
+> On Fri, 16 Aug 2024 09:19:58 +0200 Michal Hocko <mhocko@suse.com> wrote:
 > 
-> It lives in my kernel.org tree[1]. You can get that information from
-> the MAINTAINERS file.
+> > On Thu 15-08-24 22:16:27, Matthew Wilcox wrote:
+> > > On Thu, Aug 15, 2024 at 07:31:43PM +0000, Roman Gushchin wrote:
+> > > > There is another subtle change here: xa_alloc() returns -EBUSY in the case
+> > > > of the address space exhaustion, while the old code returned -ENOSPC.
+> > > > It's unlikely a big practical problem.
+> > > 
+> > > I decided that EBUSY was the right errno for this situation;
+> > > 
+> > > #define EBUSY           16      /* Device or resource busy */
+> > > #define ENOSPC          28      /* No space left on device */
+> > > 
+> > > ENOSPC seemed wrong; the device isn't out of space.
+> > 
+> > The thing is that this is observable by userspace - mkdir would return a
+> > different and potentially unexpected errno. We can try and see whether
+> > anybody complains or just translate the error.
+> 
+> The mkdir(2) manpage doesn't list EBUSY.  Maybe ENOMEM is close enough.
 
-Or use simple template - only one entry needed:
-b4.thanks-commit-url-mask = https://git.kernel.org/MR_FOO/linux/c/%s
+it used to report ENOSPC with xarray.
 
-page 44 of PDF:
-https://lpc.events/event/17/contributions/1498/#preview:2452
-
-Best regards,
-Krzysztof
-
+-- 
+Michal Hocko
+SUSE Labs
 
