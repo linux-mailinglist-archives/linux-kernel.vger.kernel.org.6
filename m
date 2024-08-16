@@ -1,150 +1,139 @@
-Return-Path: <linux-kernel+bounces-289179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03DA29542CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:34:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC599542D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:38:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B9D4B23CBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:34:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61D141F2725F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3DF84A22;
-	Fri, 16 Aug 2024 07:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA4412C478;
+	Fri, 16 Aug 2024 07:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UHnL4kf0"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bANrtMWn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A131F76056;
-	Fri, 16 Aug 2024 07:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5519E12AAC6
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723793682; cv=none; b=pw8DBGYveOucYtq5cAPJGnM0oPk/rNii+Py8XlJuK7HW38Lbs2yIeUvAh97R0OHT0m7mKP+i7jykHFs0b18MRiiIWLW4byOwKyIYdcYotzFFc/dq8G9OHOUYsXWWQzETRpDT7EmjUokjQ4EWLH6exP0vjnIUfWWHfMNsgzxK97A=
+	t=1723793822; cv=none; b=QNi/TfpI/5kTigxODo1nHJK+tAwwUG+8ML4lQOpIx+bwEFLM2egwE/uCvWHJ8iJ0A8ErCaXVYO39liIWnGPJ6MSZUMQofBsxaru6vYq7MEFMiR2Hj+5SUwq6r3RN/TwAatqK6oKfY1M1i0A5lxoh2eehUc0sEqg3ALOt9NxtDGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723793682; c=relaxed/simple;
-	bh=nnyYYh/iyb9sGXw7mInNjvZMUZLdh3n2Y0wdyaMuEd0=;
+	s=arc-20240116; t=1723793822; c=relaxed/simple;
+	bh=uzuJfTXPe7neM6t/yzL0dWNGEP8CEt+SIWppqKHzaes=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fH7CNfSICv4P6bo+bSl5sYjeIJnz5zHuIYSyaUUQpb0mXCJJ1QcqksHBOZjsz1IcEgMjUWhfZBHAL+5otxNWdXAtIKvY4ZUV4DQUf37G2dGOL3dcxN6HO390Zi4FzEnOTxEn1OJtYx/WaBeiIFneNrjX+QVR0xkOk6QQlMcz36s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UHnL4kf0; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-26ff21d8382so1225420fac.1;
-        Fri, 16 Aug 2024 00:34:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723793679; x=1724398479; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6A1abrd8F2BkjqsMfwBx1yo38CYby9aZLUmCJJXibuk=;
-        b=UHnL4kf0XZGp4EI/PAW8IdiZ6DpO90WKRzGzxpsZcxeHYIKH+rdQII4tw5FE47Kr36
-         aztjL7M9dCimBrL4BgUstccIB81uu9G4CygFwvo2/5o87k8hdy66aORbk8T8qbazoXn2
-         tGpGYcI1qSoC5rYIMQB8LvLBPLhnjCRSRw6rXWapBUHyjEjpK6LEQL/VOXbn1a5GYAkj
-         k3FJCbZSm6VM2aYu2iHXH6LJDnkGuNarExmZvTVb7L9HqekwsJ7IkaUV0wjyfBJiB/8n
-         8q9xUsAFNT3b3vqBk8kKgAVK/uWjDErw8KKtLmt99HHXAkv3VfYk7pmXfcT1akXLLOLO
-         q21w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723793679; x=1724398479;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6A1abrd8F2BkjqsMfwBx1yo38CYby9aZLUmCJJXibuk=;
-        b=N6GBCYCk9C3SWaBWVPAezHcKXMxG/57VkqcIRixdOGOR83mzOOW7ulC7iNa9FNlI23
-         UJvhIpDh60HkXXtVyH0SLkP72Rr1HEhVoJwVr8nZtlnywPO9W+83jlvjorcACvc3C2Cr
-         JDvCyXo9DjLalOMbx+M1MsVZoo1G7tJcHvi5SSGrVBvwqW1aQYFUD8Gl/4SIhg3JQWv3
-         1lVDagVeD0c3kE4dj0T2vWUYd+PyMTm5I+540QfssoBG2Xca6HIYLuzJZxzyhpXliplz
-         BrSBN2jOeVZlH/QDU8pr+wQFsjhtxMXTcImIfoJ/uKJB/i95sZwKktMRqvb3DBVydisQ
-         es0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUoPmsX2UDgLvWjHAzZ5PNPB2ibur7YAnP9+3AhgNR1fZftuqGPsNXjW/Kf7024CwLlq/KHMimkbTX1lBFQDaFHPAaswrUzx6B1QiYAqfkX34VTbSj/guAl6E92fwqP+uJ6Z9AagPlKZA==
-X-Gm-Message-State: AOJu0Yx2VGHLoOo7x2jxjP+n/xmVFj3vTGlI7inGotjn08jBmL/UNMcc
-	c5++8eWxs+0slPOw/d4P74zqQ/upauhRPbIKrtZ0PZHOUjdbMkyn+NOharmiflhlOclNm+3Mgh7
-	UbCptWsxL4eKFNC4kT24rsXomdxA=
-X-Google-Smtp-Source: AGHT+IErkm8a3ZmVpZeSRHvMjsFrb31XkxJm3L+puP10f+nfzp4cF7Jg8YzIHHZBOX+OUh/x+baczAOAXeaRrnNLgHk=
-X-Received: by 2002:a05:6871:611:b0:270:1fc6:18 with SMTP id
- 586e51a60fabf-2701fc610c2mr1829067fac.3.1723793679657; Fri, 16 Aug 2024
- 00:34:39 -0700 (PDT)
+	 To:Cc:Content-Type; b=qNG2DB80z3unRwkjIZIoaVlRS6QBJgm+c7Xan64J4ex2OO75SITboUgesV1GkFoXPo/IMK2pNP3tZJbt38clXa2BeWz55BEgVj+CUdqMeR0jlyjoPy07SNrEpArr0WDnq1HLKW63Hn9vclfnucrblM0gH0o+Qylu2vcL78KywmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bANrtMWn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5572C4AF0B
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:37:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723793821;
+	bh=uzuJfTXPe7neM6t/yzL0dWNGEP8CEt+SIWppqKHzaes=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bANrtMWnXhse6awDD8O6xOJSQCsp+s1gI9ha2zGs9gx6SoIKn1hfNUPloeM9Ib5B3
+	 JHnmd8FnEMcFyPusaLbZceR2SY5CL+nIw1gF5ID+TYDu5tgyd8Mtzzt2muUuwSoxR1
+	 w1UyFP0IZR9NLbjiSY4WV97l0aTPkj6/gBK2SSt1pns4GrBmv7Y/1HIBEMUH7EEaid
+	 l6pPDo2JwGHYhDYCPwrXZbqPesa4aySioQY9sdMyaHSosioBUwO7sLje6l454lt0NR
+	 mIOumSZh/6AJK9ucUuW58Aj1Apb+WXeVDFa5Djlf84PPvCy+fjHiuN5/GZIyauCQOu
+	 iGqnmvBvaQg0A==
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6510c0c8e29so17317727b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 00:37:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU2+hpRVAkx+gdYnWi8meSafnWRPLYnvXYboTMJLTLZlC91JhKUQB6Y+4GiIC2QDzX0oGayKD0FCI5soLjO3VhslWbqqLcolhI+lf2p
+X-Gm-Message-State: AOJu0YxHkOpWNj3K53yRHPzEFPF09V4l3AOsp55N1xGlIyqt/qH844T5
+	Fec/kEB/BKrctEsBeFGRig7B/nqUyv9b50jUXIS/gmhD77mw9sQDQ7AGMqhzItjoILa+tNYZ/Fi
+	lyxXlEbnrjAmTc7xFv8EqwMMfDTyX9tD/j5BkXg==
+X-Google-Smtp-Source: AGHT+IH750XFcbd3RlLlGRypRDvl9yZV+Lcv0nO3OSNd4+FHM7UHtJv3wC7eYlkX6F3NpWWbXqA9Pt+z/HqB40SHDYM=
+X-Received: by 2002:a05:690c:7489:b0:6b1:9dc9:23d6 with SMTP id
+ 00721157ae682-6b1bc019d96mr26833207b3.41.1723793821164; Fri, 16 Aug 2024
+ 00:37:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814033415.3800889-1-yuehaibing@huawei.com> <12c6204822cbff71338d0e2bab2f90d155b3cb63.camel@kernel.org>
-In-Reply-To: <12c6204822cbff71338d0e2bab2f90d155b3cb63.camel@kernel.org>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Fri, 16 Aug 2024 09:34:00 +0200
-Message-ID: <CAOi1vP8Pritbc3YTKAtCRKc1fviKtzau6FH=-LvpOKq3L4Mqbw@mail.gmail.com>
-Subject: Re: [PATCH -next] ceph: Remove unused declarations
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Yue Haibing <yuehaibing@huawei.com>, xiubli@redhat.com, mchangir@redhat.com, 
-	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240730-swap-allocator-v5-0-cb9c148b9297@kernel.org>
+ <3c79021a-e9a0-4669-a4e7-7060edf12d58@redhat.com> <CAMgjq7CWwK75_2Zi5P40K08pk9iqOcuWKL6khu=x4Yg_nXaQag@mail.gmail.com>
+ <87le17z9zr.fsf@yhuang6-desk2.ccr.corp.intel.com>
+In-Reply-To: <87le17z9zr.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Fri, 16 Aug 2024 00:36:50 -0700
+X-Gmail-Original-Message-ID: <CACePvbX1EWQk03YcC47s7+vn40kEFb_3wp3D_GmJV-8Fn2j+=Q@mail.gmail.com>
+Message-ID: <CACePvbX1EWQk03YcC47s7+vn40kEFb_3wp3D_GmJV-8Fn2j+=Q@mail.gmail.com>
+Subject: Re: [PATCH v5 0/9] mm: swap: mTHP swap allocator base on swap cluster order
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Kairui Song <ryncsn@gmail.com>, David Hildenbrand <david@redhat.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Kalesh Singh <kaleshsingh@google.com>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Barry Song <baohua@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 14, 2024 at 1:56=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
-ote:
+On Thu, Aug 8, 2024 at 1:40=E2=80=AFAM Huang, Ying <ying.huang@intel.com> w=
+rote:
 >
-> On Wed, 2024-08-14 at 11:34 +0800, Yue Haibing wrote:
-> > These functions is never implemented and used.
-> >
-> > Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-> > ---
-> >  fs/ceph/mds_client.h            | 3 ---
-> >  fs/ceph/super.h                 | 2 --
-> >  include/linux/ceph/osd_client.h | 2 --
-> >  3 files changed, 7 deletions(-)
-> >
-> > diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> > index 9bcc7f181bfe..585ab5a6d87d 100644
-> > --- a/fs/ceph/mds_client.h
-> > +++ b/fs/ceph/mds_client.h
-> > @@ -559,9 +559,6 @@ extern struct ceph_mds_session *
-> >  ceph_get_mds_session(struct ceph_mds_session *s);
-> >  extern void ceph_put_mds_session(struct ceph_mds_session *s);
-> >
-> > -extern int ceph_send_msg_mds(struct ceph_mds_client *mdsc,
-> > -                          struct ceph_msg *msg, int mds);
-> > -
-> >  extern int ceph_mdsc_init(struct ceph_fs_client *fsc);
-> >  extern void ceph_mdsc_close_sessions(struct ceph_mds_client *mdsc);
-> >  extern void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc);
-> > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> > index 6e817bf1337c..c88bf53f68e9 100644
-> > --- a/fs/ceph/super.h
-> > +++ b/fs/ceph/super.h
-> > @@ -1056,8 +1056,6 @@ extern int ceph_fill_trace(struct super_block *sb=
-,
-> >  extern int ceph_readdir_prepopulate(struct ceph_mds_request *req,
-> >                                   struct ceph_mds_session *session);
-> >
-> > -extern int ceph_inode_holds_cap(struct inode *inode, int mask);
-> > -
-> >  extern bool ceph_inode_set_size(struct inode *inode, loff_t size);
-> >  extern void __ceph_do_pending_vmtruncate(struct inode *inode);
-> >
-> > diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_c=
-lient.h
-> > index f66f6aac74f6..d7941478158c 100644
-> > --- a/include/linux/ceph/osd_client.h
-> > +++ b/include/linux/ceph/osd_client.h
-> > @@ -449,8 +449,6 @@ extern int ceph_osdc_init(struct ceph_osd_client *o=
-sdc,
-> >  extern void ceph_osdc_stop(struct ceph_osd_client *osdc);
-> >  extern void ceph_osdc_reopen_osds(struct ceph_osd_client *osdc);
-> >
-> > -extern void ceph_osdc_handle_reply(struct ceph_osd_client *osdc,
-> > -                                struct ceph_msg *msg);
-> >  extern void ceph_osdc_handle_map(struct ceph_osd_client *osdc,
-> >                                struct ceph_msg *msg);
-> >  void ceph_osdc_update_epoch_barrier(struct ceph_osd_client *osdc, u32 =
-eb);
+> Kairui Song <ryncsn@gmail.com> writes:
 >
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> [snip]
+>
+> > --- a/mm/swapfile.c
+> > +++ b/mm/swapfile.c
+> > @@ -450,7 +450,10 @@ static void __free_cluster(struct swap_info_struct=
+ *si, struct swap_cluster_info
+> >       lockdep_assert_held(&si->lock);
+> >       lockdep_assert_held(&ci->lock);
+> >
+> > -     list_move_tail(&ci->list, &si->free_clusters);
+> > +     if (ci->flags)
+> > +             list_move_tail(&ci->list, &si->free_clusters);
+> > +     else
+> > +             list_add_tail(&ci->list, &si->free_clusters);
+>
+> If we use list_del_init() to delete the cluster, we can always use
+> list_move_tail()?  If so, the logic can be simplified.
 
-Applied.
+Thanks for the suggestion.
 
-Thanks,
+I feel that list_del_init() generates more instruction than necessary.
+It is my bad that I leave the discard list without not a list flag bit
+for it.
 
-                Ilya
+I do want to clean this up. While we are at it, because the cluster
+can only belong to one list at a time. We can use a list indicator as
+integer rather than bits mask. If we give the discard list the same
+treatment, that should remove the special condition to add a cluster
+to another list as well.
+
+Chris
+
+> >       ci->flags =3D CLUSTER_FLAG_FREE;
+> >       ci->order =3D 0;
+> >  }
+> > @@ -474,7 +477,6 @@ static void swap_do_scheduled_discard(struct swap_i=
+nfo_struct *si)
+> >                               SWAPFILE_CLUSTER);
+> >
+> >               spin_lock(&si->lock);
+> > -
+> >               spin_lock(&ci->lock);
+> >               __free_cluster(si, ci);
+> >               memset(si->swap_map + idx * SWAPFILE_CLUSTER,
+> > @@ -666,7 +668,7 @@ static void cluster_alloc_range(struct swap_info_st=
+ruct *si, struct swap_cluster
+> >               if (ci->flags & CLUSTER_FLAG_FRAG)
+> >                       si->frag_cluster_nr[ci->order]--;
+> >               list_move_tail(&ci->list, &si->full_clusters);
+> > -             ci->flags =3D 0;
+> > +             ci->flags =3D CLUSTER_FLAG_FULL;
+> >       }
+> >  }
+>
+> --
+> Best Regards,
+> Huang, Ying
 
