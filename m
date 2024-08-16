@@ -1,136 +1,132 @@
-Return-Path: <linux-kernel+bounces-289462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3B7895467A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:05:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9C3A95467E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9120E288ED2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:04:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86DE62895BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288DE170A35;
-	Fri, 16 Aug 2024 10:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C671F170A3C;
+	Fri, 16 Aug 2024 10:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BoAPaKIj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aNcffg5b"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5590F12DD90;
-	Fri, 16 Aug 2024 10:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459FF16F27C
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 10:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723802689; cv=none; b=LwHiCMlZktq6VI1UeSw4ZiKuh/oj6RUHkvybXVOQMo25GE9WA7LCK6BDqoXQj8tRohehbwzb/BDZc/3SbxdvfT0KUQ/0PNujZ+lEO0Uv4BvmtieI9Ar8dN4XvQQDtDkq4s21Nb50cA3V1ZgxA1yH2ceZ+BqdxZTc2Y+Ek6L5Vh0=
+	t=1723802836; cv=none; b=g6i0FMHXlOXAMGXWQB48GHSkt9LLKuYTWnONwOXm/uVhEP/tqW/a7VHt97Xb7QBP+kYRlgeJiMOB4UH1um58RxqY/w7cIdt4W+D/7kPtxPOOVFJ+mtfVPlLsyaRYkInedn80Y3z4G4pfYAyzpz1JB+DSBDEKyK/rlsofKsvzHlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723802689; c=relaxed/simple;
-	bh=75ykFYsn6vb7+zjbteiqwrpGk8pWdExh/tRAlBMPX9o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lln7F1B7IZXvWR4xro/f5dbUARZ1eVEbPEhVGjYjsTCTO7k8gW1FXEMbo+fojU3pTYsFvfSUAhziRDXPrpl5wYWM/DP1FzwG0P2MFUc6ONCqVpHzJbD8jwRDWORs4orbQ2pAVOCMYLZVYdrprB+GxKZ7c+vzYoBPQasv71kju58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BoAPaKIj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F69EC32782;
-	Fri, 16 Aug 2024 10:04:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723802688;
-	bh=75ykFYsn6vb7+zjbteiqwrpGk8pWdExh/tRAlBMPX9o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BoAPaKIjYogneHkNbGwZBP09n0m2yrGDBAypAV38lRGt6IO37jQVVBar9n9g8NEMj
-	 Y0XKOXCnCdiJpGrj3Jx5l59LD0y4xR3aFnDbUbTSHboucXfVpqB8yKkOZlQC+K1WAp
-	 3gUwTviDcl+tPpXI8tl0sjdMZ/jYRRa2VRnFag0SkB6Ofqk9QGZxVVC2eOU/wjSFyO
-	 fX3UB2pRCO+QGprZPa5oe3eoB6SVosrhi14eoNx/3kf203NGEB6WGQS4sO4sZJkM6B
-	 iEGFG0we/K8Dsx/LemSjPCVhb5yJxKjQu4z1uGCi2PtlGFr1Y1WM3M+noJC7FMtrFi
-	 UzPfV0TOBRoFQ==
-Message-ID: <17b56e8f-15ed-4442-9975-10c16af02105@kernel.org>
-Date: Fri, 16 Aug 2024 12:04:41 +0200
+	s=arc-20240116; t=1723802836; c=relaxed/simple;
+	bh=kkeurzW1y+5hb6c8UxDc61+XVWJTLKGpYqVjRXZ8cMI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fYYcQFLNyUnQG7trY2xOrKx0QPs3f8ZZigtVtRTKgYYrG+4irnNOdrEsUuNFHGjNEVGf67xgRdzFmOdj4Qgo7+iMvogohlClL+sEKN/LbYRjLX5KqmiTDpeLcCkDm6F7Y67CUebT0/mbekoSWQQRYO+1+XXHhShRDVplszr2bmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aNcffg5b; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47G7TnfF031047;
+	Fri, 16 Aug 2024 10:06:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=NHJ6WJjM4DIScQtkRLyT+I
+	4AAQ8AX5dzgiRjHLnx5EQ=; b=aNcffg5b/L8nmyMM+RiRl+jR1uf2maZ7SYu6GQ
+	6c2MhBZXbFEyx5W4ZvGfejSfMBgfDjY/1eudmGJZK0IeQrPuXq6vhvpjD1UdaEfK
+	pShCA3hECEhVSFup4RELWKSuQ2Rtf05puhXUtiF+TN8jcQeeymsEwGfX6q47ZGdP
+	46rt7DV62ONxhbbo39n91oq6Lq1BeD89VZqfPGLLPLs5D56INQ8Jc1hry6XHa5B5
+	1yqN8keyOEdT5sHeeZptP3kd1imvrXIGyXuWy9MIoK1rOAE2mhiYopJj8RC22Q+/
+	6XY2ObhaVfTTI2v+N/c62HS0v8OYagtlS3tJsWej26+XAwcA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4103wsa0q0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Aug 2024 10:06:56 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47GA6uQn005110
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Aug 2024 10:06:56 GMT
+Received: from zhonhan-gv.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 16 Aug 2024 03:06:53 -0700
+From: Zhongqiu Han <quic_zhonhan@quicinc.com>
+To: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
+        <vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+        <rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+        <vschneid@redhat.com>
+CC: <linux-kernel@vger.kernel.org>, <quic_zhonhan@quicinc.com>
+Subject: [PATCH RESEND] sched: idle: Optimize the generic idle loop by removing needless memory barrier
+Date: Fri, 16 Aug 2024 18:06:21 +0800
+Message-ID: <20240816100621.2518365-1-quic_zhonhan@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 10/10] ARM: dts: samsung: exynos4212-tab3: Drop CHARGER
- regulator
-To: Artur Weber <aweber.kernel@gmail.com>,
- Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht, Henrik Grimler <henrik@grimler.se>,
- Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>,
- Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
-References: <20240816-max77693-charger-extcon-v4-0-050a0a9bfea0@gmail.com>
- <20240816-max77693-charger-extcon-v4-10-050a0a9bfea0@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240816-max77693-charger-extcon-v4-10-050a0a9bfea0@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 7DMEQPNgffvVY3k35Bc3N9J9_8IiMlfu
+X-Proofpoint-ORIG-GUID: 7DMEQPNgffvVY3k35Bc3N9J9_8IiMlfu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-16_01,2024-08-15_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 malwarescore=0 mlxscore=0 lowpriorityscore=0 spamscore=0
+ mlxlogscore=561 bulkscore=0 adultscore=0 priorityscore=1501 clxscore=1015
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408160073
 
-On 16/08/2024 10:19, Artur Weber wrote:
-> We don't use it for managing charging, and it interferes with the
-> extcon-based charging mode switching.
-> 
-> Tested-by: Henrik Grimler <henrik@grimler.se>
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> ---
-> Changes in v3:
-> - Added this commit
-> ---
->  arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi | 7 -------
->  1 file changed, 7 deletions(-)
+The memory barrier rmb() in generic idle loop do_idle() function is not
+needed, it doesn't order any load instruction, just remove it as needless
+rmb() can cause performance impact.
 
-This probably should be squashed with previous commit. The previous
-commit re-implements charger, right? Or you want to keep it for some
-other release, after driver code reaches Linus' tree?
+the rmb() was introduced by the tglx/history.git commit f2f1b44c75c4
+("[PATCH] Remove RCU abuse in cpu_idle()") to order the loads between
+cpu_idle_map and pm_idle. It pairs with wmb() in function cpu_idle_wait().
 
-Best regards,
-Krzysztof
+And then with the removal of cpu_idle_state in function cpu_idle() and
+wmb() in function cpu_idle_wait() in commit 783e391b7b5b ("x86: Simplify
+cpu_idle_wait"), rmb() no longer has a reason to exist.
+
+After that, commit d16699123434 ("idle: Implement generic idle function")
+implemented a generic idle function cpu_idle_loop() which resembles the
+functionality found in arch/. And it retained the rmb() in generic idle
+loop in file kernel/cpu/idle.c.
+
+And at last, commit cf37b6b48428 ("sched/idle: Move cpu/idle.c to
+sched/idle.c") moved cpu/idle.c to sched/idle.c. And commit c1de45ca831a
+("sched/idle: Add support for tasks that inject idle") renamed function
+cpu_idle_loop() to do_idle().
+
+Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
+History Tree: https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
+---
+ kernel/sched/idle.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
+index e53e2da04ba4..712c1ce16c8b 100644
+--- a/kernel/sched/idle.c
++++ b/kernel/sched/idle.c
+@@ -271,7 +271,6 @@ static void do_idle(void)
+ 	tick_nohz_idle_enter();
+ 
+ 	while (!need_resched()) {
+-		rmb();
+ 
+ 		/*
+ 		 * Interrupts shouldn't be re-enabled from that point on until
+-- 
+2.25.1
 
 
