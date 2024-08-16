@@ -1,209 +1,136 @@
-Return-Path: <linux-kernel+bounces-290143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FB91954FF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:24:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C82E954FF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BA9D28764C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:24:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 014B31F260BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA121BF32B;
-	Fri, 16 Aug 2024 17:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QAlZrUEJ"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62DA1C2300;
+	Fri, 16 Aug 2024 17:21:24 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF492BB0D;
-	Fri, 16 Aug 2024 17:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C7F2BB0D
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 17:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723829061; cv=none; b=QQK9Vln2FBBsMdgkjyZ/uvxvpldzFgdbPqphR9VUD/0Gc6JQ9RTdd1XgLYJsYPURoCoCSpB1LFBytyTvxCfPf6yeTVxE6953a/lP7z0Wz4IeiejV2t/7woYxjquUaYGl5BsmNJXgwXXmIv5NQnk+5naAoO90ruT73yi5KFee5+w=
+	t=1723828884; cv=none; b=EwgsKeSs/1UlBbUBqXFGKa9Jx4bC8BJiHmJCGwTP/91UyrsXzr5tEn5+fIgbFcga7wt0IOfGmizo8PN4y6V4cm/jkt1v3SeC8C13ia5mLY717x01rTOJJCOZtc3+8uFD3XIAGwzQr8ItGBHpA3vGg/WWcUeoHx4KuvF0yEhSPnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723829061; c=relaxed/simple;
-	bh=gfs8VaCiqUCC8u5QXEZrwy0/UJQHHtDJhlCueki9qRw=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=k4Vn44qT6qYJ9zUxhiIXebkLc228OrU/B7bdyaDRDP6YaRjhv9doVIE0NUf/Wr4ETJkq5ANvVaeAKzNOpEHdfNjeY29caNC7YPzCGkWUUA4qOl3upYyYHiY/YVZx/5LbSLe26B742sKRKZUVdFwS82nxoqhhXTBuUboTb77FjoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QAlZrUEJ; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-201f7fb09f6so14838605ad.2;
-        Fri, 16 Aug 2024 10:24:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723829059; x=1724433859; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=N/dmrRqqXj2v9b4YTwmz0D6SlhuRLFNEyjT4EiFc8HE=;
-        b=QAlZrUEJIKF5IuV8uYbXtTCoVUmJ9w3sooxwM5VzDE9ak/SEuar+dWKxo1yvK4f3Wc
-         YMoRs7en5+dT8asEBrUMR1O9UC1moUeIFbcX0yjwjMqh+1MEKYnvcCJ1u69QfrR3nof9
-         pcNOENdfOY489LoTOnYOXHu2sY4/sK+pi1uVhHPnQdwEe1E52KxyWEAEVtxrmY+iAo1k
-         EScmc9eXEFu1OinHqc8SmkO9Hgm0T6uXTLPlaxwjHzcMTEkGFx3oYCNpeVpdor9FnpJH
-         1TX7vuFKq/jjTZRi0//1iaXLtzJNBeZ7G4K27HhEd6vKFq7GimnleE5wnso2u/vQqYSo
-         UNGQ==
+	s=arc-20240116; t=1723828884; c=relaxed/simple;
+	bh=D9d3dbMjwN0iTzVGsM0oPrwGpdHliQeSUy2aKT3aoyI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=JhqYYKIlrMd2Tmq18QpJ8WLc0UKAtS7C3iwxl9S3YsYoGKQSC9e+o3CBOI1g9+OXYdiWR7iqQi2K+X6BC/YoG8u4xn3DNa5JqEe2vteUAJrGDc1aCZxiumsuqNJ93HUqq4j03NWiIxUovue491+Q7RWbpS945nTY8rYAyZwR/wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f9053ac4dso228824439f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 10:21:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723829059; x=1724433859;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
+        d=1e100.net; s=20230601; t=1723828882; x=1724433682;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N/dmrRqqXj2v9b4YTwmz0D6SlhuRLFNEyjT4EiFc8HE=;
-        b=g9VdInS+TB6liQqEN9e8mDHfvviEUqzW28IIfzU2DSam5q9duYn1e0dObmzf6Vhcyj
-         jxPBHjoA9Q54Ca5bdRStJx5vq3DdsN8Gobm8oPV/SPhCxHAI3l6Z9I7f6Sp03tIrHQkP
-         +wFBHuV31cJphniXjMQfczfETYkBVwyraoNriUfBoWE5lG6X0ps+UV6hD4UK6eMcKvDr
-         FDAbj9egtJxKfcQXXrjddJroiBPiiIKx2S499sSGo6JMc8T08cOVDZYD8omwJJ5vSlzU
-         ELSaqMgZN3c8kwN0c2upnSyy0snwaP5Op+T4KWBYsyVk+Ls0UmsA4la8TRe+Ogy0Os0B
-         ljkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCGODQWBdeGgkdqN9IRUvWPsxoYhodya8oZUnz+rYP9286yeRpfiEe3TRucZ9Ow22qLv3LS3ip4N1i79OGsLL795VzoAFwTCsg0qvdJMR+kcjipxSBuLdXV24UV1koHzQCAhxgsESHODHCXdT8
-X-Gm-Message-State: AOJu0YzvjvXVCZ0YdysKqCssnWG8yYB2nRQtcc+tb6H1RTBvNGU2MPbh
-	tZXze763lbLMtjv3tMh/dHapZAa9Ie4t0/RidAshIEZ5i+9uQAs00C05spkl
-X-Google-Smtp-Source: AGHT+IGuHnGEDCRtfNvw9KKo4hDVg4qVJqRvhyCt1ml1QtQrt/cBiuDQmT43rzSeWvqOmG2vgLyyKQ==
-X-Received: by 2002:a17:902:d50f:b0:1fd:a503:88f0 with SMTP id d9443c01a7336-20203eefb29mr44980425ad.34.1723829059518;
-        Fri, 16 Aug 2024 10:24:19 -0700 (PDT)
-Received: from localhost ([27.6.216.27])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f02fa2d5sm27913985ad.49.2024.08.16.10.24.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 10:24:19 -0700 (PDT)
-Date: Fri, 16 Aug 2024 22:51:02 +0530
-From: Aryabhatta Dey <aryabhattadey35@gmail.com>
-To: akpm@linux-foundation.org, shuah@kernel.org, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] selftests/mm: compaction_test: Move often used filepaths
- to strings
-Message-ID: <al5jalqx6ng4w2qyf7nctxpm7u6cdjrazcixcemzi5mbvyluoo@rc5e7gqrwby7>
+        bh=IZaiE4/CykC4CjI1jiArqwDBbga3NJxhQD4fGAV/tik=;
+        b=Ud7Gr1eUkkiiRBBnhy1xVzxaQrkoqFBPaeRmvr3zXISvW8goC+l2Py14OKqvWY/UsK
+         /Y/B552j36ggWXL1QvypOCnAMgm2V2n7IKQSFxBFJ0ySzhfl1baE4cKmBE5T83qqrroY
+         ChV/vNCIG8yjrGqIVfEdgQQtHOK/ztlnV5IvGL6iaFr1SJtcfUHwAc0mIoCD+7oDn+8f
+         s3PQXvSoMa7f8ixqQ7PCbadFhRkmUnftFb0hARuvejFGS5PLX0UGUImls6ytHUfiC5tc
+         iAi75NOm5omfSPv0dHH0lVHmSiVvNjcBHVaD/oekO0d5Gk2lMGVg4mehZk9ljSmdOJHn
+         /g1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUj/eAIN0BPfa16oQe1d8LJiT7qsZjkK2HBmISCzVdubU4UD9Ib6NifLVTdLRYTiUTbzVEfZh+oKaB3z+79xUPKUp+NmSUrBetk4+oY
+X-Gm-Message-State: AOJu0Yxp7iJoA9+mph9cBruNG7dFbtTea9ouUtSZOvHqzLLrErl+fK5/
+	PPscfBBeOrf20TGQVyKAxh9iBIUqhQQEVlsfbdPw++uMZkPyAEv3/tb38n62VGu2U1HmmAWcN61
+	8k3ave/ppbMSP7LVku3LTlORQ/FmqNQgZRq+fA8M3BhghDl79n7a/rOo=
+X-Google-Smtp-Source: AGHT+IEHNmA2K9MgZUoJypFuF47vnlsMQgCY50I0s+wuC/4g9V92thL7XdfT6WQ/lAS0ocTyO+bDBDEYAjFizW6B8xOZkEefe5fn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Received: by 2002:a05:6638:8903:b0:4b9:26f5:3632 with SMTP id
+ 8926c6da1cb9f-4cce1735129mr137692173.6.1723828882088; Fri, 16 Aug 2024
+ 10:21:22 -0700 (PDT)
+Date: Fri, 16 Aug 2024 10:21:22 -0700
+In-Reply-To: <000000000000d1e1180618b99e10@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002bb47c061fd030c7@google.com>
+Subject: Re: [syzbot] [jfs?] UBSAN: array-index-out-of-bounds in dbAdjTree (2)
+From: syzbot <syzbot+412dea214d8baa3f7483@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add defines for file path names to avoid duplicate strings
-in print messages and make it easier to maintain.
+syzbot has found a reproducer for the following issue on:
 
-Signed-off-by: Aryabhatta Dey <aryabhattadey35@gmail.com>
+HEAD commit:    d7a5aa4b3c00 Merge tag 'perf-tools-fixes-for-v6.11-2024-08..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=109f2df3980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=92c0312151c4e32e
+dashboard link: https://syzkaller.appspot.com/bug?extid=412dea214d8baa3f7483
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12114991980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11422f5d980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/64022429061b/disk-d7a5aa4b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f4aba88f7db8/vmlinux-d7a5aa4b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/120456a2d9dc/bzImage-d7a5aa4b.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/947fb73311a3/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+412dea214d8baa3f7483@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 32768
+------------[ cut here ]------------
+UBSAN: array-index-out-of-bounds in fs/jfs/jfs_dmap.c:2902:18
+index -3 is out of range for type 's8[1365]' (aka 'signed char[1365]')
+CPU: 0 UID: 0 PID: 5217 Comm: syz-executor310 Not tainted 6.11.0-rc3-syzkaller-00156-gd7a5aa4b3c00 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_out_of_bounds+0x121/0x150 lib/ubsan.c:429
+ dbAdjTree+0x377/0x520 fs/jfs/jfs_dmap.c:2902
+ dbAllocBits+0x4ea/0x990 fs/jfs/jfs_dmap.c:2193
+ dbAllocDmap+0x6d/0x150 fs/jfs/jfs_dmap.c:2034
+ dbAlloc+0x509/0xca0 fs/jfs/jfs_dmap.c:816
+ extBalloc fs/jfs/jfs_extent.c:326 [inline]
+ extAlloc+0x4f8/0x1010 fs/jfs/jfs_extent.c:122
+ jfs_get_block+0x41b/0xe60 fs/jfs/inode.c:248
+ __block_write_begin_int+0x50c/0x1a70 fs/buffer.c:2125
+ __block_write_begin fs/buffer.c:2174 [inline]
+ block_write_begin+0x9b/0x1e0 fs/buffer.c:2235
+ jfs_write_begin+0x31/0x70 fs/jfs/inode.c:299
+ generic_perform_write+0x399/0x840 mm/filemap.c:4019
+ generic_file_write_iter+0xaf/0x310 mm/filemap.c:4147
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0xa72/0xc90 fs/read_write.c:590
+ ksys_write+0x1a0/0x2c0 fs/read_write.c:643
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8ed0fe9e99
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffed45f7398 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f8ed1033095 RCX: 00007f8ed0fe9e99
+RDX: 00000000fffffdef RSI: 00000000200000c0 RDI: 0000000000000004
+RBP: 00007f8ed10645f0 R08: 00005555618f94c0 R09: 00005555618f94c0
+R10: 0000000000006289 R11: 0000000000000246 R12: 00007ffed45f73c0
+R13: 00007ffed45f75e8 R14: 431bde82d7b634db R15: 00007f8ed103303b
+ </TASK>
+---[ end trace ]---
+
+
 ---
- tools/testing/selftests/mm/compaction_test.c | 46 ++++++++++----------
- 1 file changed, 24 insertions(+), 22 deletions(-)
-
-diff --git a/tools/testing/selftests/mm/compaction_test.c b/tools/testing/selftests/mm/compaction_test.c
-index e140558e6f53..541ac0373258 100644
---- a/tools/testing/selftests/mm/compaction_test.c
-+++ b/tools/testing/selftests/mm/compaction_test.c
-@@ -21,6 +21,9 @@
- #define MAP_SIZE_MB	100
- #define MAP_SIZE	(MAP_SIZE_MB * 1024 * 1024)
- 
-+#define COMPACT_UNEVICTABLE_ALLOWED "/proc/sys/vm/compact_unevictable_allowed"
-+#define NR_HUGEPAGES "/proc/sys/vm/nr_hugepages"
-+
- struct map_list {
- 	void *map;
- 	struct map_list *next;
-@@ -59,17 +62,16 @@ int prereq(void)
- 	char allowed;
- 	int fd;
- 
--	fd = open("/proc/sys/vm/compact_unevictable_allowed",
--		  O_RDONLY | O_NONBLOCK);
-+	fd = open(COMPACT_UNEVICTABLE_ALLOWED, O_RDONLY | O_NONBLOCK);
- 	if (fd < 0) {
--		ksft_print_msg("Failed to open /proc/sys/vm/compact_unevictable_allowed: %s\n",
--			       strerror(errno));
-+		ksft_print_msg("Failed to open %s: %s\n",
-+			       COMPACT_UNEVICTABLE_ALLOWED, strerror(errno));
- 		return -1;
- 	}
- 
- 	if (read(fd, &allowed, sizeof(char)) != sizeof(char)) {
--		ksft_print_msg("Failed to read from /proc/sys/vm/compact_unevictable_allowed: %s\n",
--			       strerror(errno));
-+		ksft_print_msg("Failed to read from %s: %s\n",
-+			       COMPACT_UNEVICTABLE_ALLOWED, strerror(errno));
- 		close(fd);
- 		return -1;
- 	}
-@@ -97,10 +99,10 @@ int check_compaction(unsigned long mem_free, unsigned long hugepage_size,
- 	   in to play */
- 	mem_free = mem_free * 0.8;
- 
--	fd = open("/proc/sys/vm/nr_hugepages", O_RDWR | O_NONBLOCK);
-+	fd = open(NR_HUGEPAGES, O_RDWR | O_NONBLOCK);
- 	if (fd < 0) {
--		ksft_print_msg("Failed to open /proc/sys/vm/nr_hugepages: %s\n",
--			       strerror(errno));
-+		ksft_print_msg("Failed to open %s: %s\n",
-+			       NR_HUGEPAGES, strerror(errno));
- 		ret = -1;
- 		goto out;
- 	}
-@@ -108,16 +110,16 @@ int check_compaction(unsigned long mem_free, unsigned long hugepage_size,
- 	/* Request a large number of huge pages. The Kernel will allocate
- 	   as much as it can */
- 	if (write(fd, "100000", (6*sizeof(char))) != (6*sizeof(char))) {
--		ksft_print_msg("Failed to write 100000 to /proc/sys/vm/nr_hugepages: %s\n",
--			       strerror(errno));
-+		ksft_print_msg("Failed to write 100000 to %s: %s\n",
-+			       NR_HUGEPAGES, strerror(errno));
- 		goto close_fd;
- 	}
- 
- 	lseek(fd, 0, SEEK_SET);
- 
- 	if (read(fd, nr_hugepages, sizeof(nr_hugepages)) <= 0) {
--		ksft_print_msg("Failed to re-read from /proc/sys/vm/nr_hugepages: %s\n",
--			       strerror(errno));
-+		ksft_print_msg("Failed to re-read from %s: %s\n",
-+			       NR_HUGEPAGES, strerror(errno));
- 		goto close_fd;
- 	}
- 
-@@ -134,8 +136,8 @@ int check_compaction(unsigned long mem_free, unsigned long hugepage_size,
- 
- 	if (write(fd, init_nr_hugepages, strlen(init_nr_hugepages))
- 	    != strlen(init_nr_hugepages)) {
--		ksft_print_msg("Failed to write value to /proc/sys/vm/nr_hugepages: %s\n",
--			       strerror(errno));
-+		ksft_print_msg("Failed to write value to %s: %s\n",
-+			       NR_HUGEPAGES, strerror(errno));
- 		goto close_fd;
- 	}
- 
-@@ -162,15 +164,15 @@ int set_zero_hugepages(unsigned long *initial_nr_hugepages)
- 	int fd, ret = -1;
- 	char nr_hugepages[20] = {0};
- 
--	fd = open("/proc/sys/vm/nr_hugepages", O_RDWR | O_NONBLOCK);
-+	fd = open(NR_HUGEPAGES, O_RDWR | O_NONBLOCK);
- 	if (fd < 0) {
--		ksft_print_msg("Failed to open /proc/sys/vm/nr_hugepages: %s\n",
--			       strerror(errno));
-+		ksft_print_msg("Failed to open %s: %s\n",
-+			       NR_HUGEPAGES, strerror(errno));
- 		goto out;
- 	}
- 	if (read(fd, nr_hugepages, sizeof(nr_hugepages)) <= 0) {
--		ksft_print_msg("Failed to read from /proc/sys/vm/nr_hugepages: %s\n",
--			       strerror(errno));
-+		ksft_print_msg("Failed to read from %s: %s\n",
-+			       NR_HUGEPAGES, strerror(errno));
- 		goto close_fd;
- 	}
- 
-@@ -178,8 +180,8 @@ int set_zero_hugepages(unsigned long *initial_nr_hugepages)
- 
- 	/* Start with the initial condition of 0 huge pages */
- 	if (write(fd, "0", sizeof(char)) != sizeof(char)) {
--		ksft_print_msg("Failed to write 0 to /proc/sys/vm/nr_hugepages: %s\n",
--			       strerror(errno));
-+		ksft_print_msg("Failed to write 0 to %s: %s\n",
-+			       NR_HUGEPAGES, strerror(errno));
- 		goto close_fd;
- 	}
- 
--- 
-2.46.0
-
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
