@@ -1,175 +1,132 @@
-Return-Path: <linux-kernel+bounces-290014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4682954E70
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:06:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B752954E75
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:08:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B9FD285599
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:06:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D2171F25929
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E9E1BE871;
-	Fri, 16 Aug 2024 16:06:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5581BDA87;
-	Fri, 16 Aug 2024 16:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2841BE85F;
+	Fri, 16 Aug 2024 16:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VO9vpP9x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268EC2BB0D;
+	Fri, 16 Aug 2024 16:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723824391; cv=none; b=Xobx+jOWS3DzBpzdGt7lV/tTYrqnyJriLLe+QnRSgIFckzhc7Ha5pH0QAky7UN3wyryjz6q7sEF6+wPMXL3OcYI7Y+b3ciwcOtrl1Yrf8g056c5/PlnEfmOrZou/R/OUt3CoaIE/9ftDYYQR23uH+tlbyk9LjjpdTWVcjIhdPPY=
+	t=1723824509; cv=none; b=RzlE6nK2bP1PflvhmpOKcR5fTBHyONHla9Z+D4ErnCMQpZ+Qgwvquifj+qxQuZJZvVKO/2KFkzQt+TIV3pH30jviTI3XuGZQ2EGl2p9PM70YGIXlgXCx9aQ8hkTYLAEoqmBid6OtYV04Eveuq/391Q89YROxiXKk6M4XqYjblpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723824391; c=relaxed/simple;
-	bh=37h/oRDfh6L4BPlZhucfApa/80jVTHA6BUgyGnnHCjs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qJauXQkuIrP1lxYLPJbOHtyX/Cu5wl978Sk4e6qjHGn0TogQXGqT624agarnH5v6DIol8HUvCPXV2s6PJoTXyBoH+smBvjl2+gG8JhS1L8oNrf0dkkBMJYm3JHcMX2fDvYkTwISuHrGmuy8aIUC5hrZkEaRgah/oumMAR+VQIJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C928013D5;
-	Fri, 16 Aug 2024 09:06:54 -0700 (PDT)
-Received: from [10.1.34.14] (e122027.cambridge.arm.com [10.1.34.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 44E003F58B;
-	Fri, 16 Aug 2024 09:06:26 -0700 (PDT)
-Message-ID: <27c942e0-0e7c-4e71-b1df-1a8f70df5411@arm.com>
-Date: Fri, 16 Aug 2024 17:06:24 +0100
+	s=arc-20240116; t=1723824509; c=relaxed/simple;
+	bh=zo8q/X1fSRtsBnuH8fxiwu/3UwY5gwODpqavldS2UHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XkoexLFBnIAyRC2s7CTKWmPS0mUHBpfW39iBCq3ayPgsTcH9QkJMy6FSBW8+mRkXs4TO4YFRuxEU2ye2ku9tU0ajvJQ759cgAuElOK3M/3TNd1TqUUAqKZ8arTgwmrZTGhTpjR4jhMf1puyDOEcU2lSd4HebSjLhtS+zfxyh58w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VO9vpP9x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8972C32782;
+	Fri, 16 Aug 2024 16:08:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723824508;
+	bh=zo8q/X1fSRtsBnuH8fxiwu/3UwY5gwODpqavldS2UHU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VO9vpP9xmM/M4DdRO1plyue8kafzxyFSCc9GpectRLdvDmmyQAYmSwbjUAhOC5k2u
+	 mda0Ufu18I5DD1TqpWZZgMnTthB3uJZnmmpqRMM353hDyt0fxS/9WkmUtNTsItuYxg
+	 mA58CQtkXF+9MmmW96kdUSxpXnuvRdxWdCe3XKgohcurM60wffbalFSybwWp75XJ1a
+	 8Q8I4INVGfovM90LqwJbh+9HG+ba+90Z8QBHA9vfOB6H06ciZ1rBRHsiEoOCje5L5H
+	 cq4W7bEuWgbeKKSlhbI3uYtFqCiRtOxZGoecJLP7WnJHc4TXIWdRZ3y+KqkGqHrBMW
+	 u8Re3VX4L+fsg==
+Date: Fri, 16 Aug 2024 17:08:15 +0100
+From: Lee Jones <lee@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Pavel Machek <pavel@ucw.cz>, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] leds: as3645a: use device_* to iterate over
+ device child nodes
+Message-ID: <20240816160815.GD5853@google.com>
+References: <20240808-device_child_node_access-v2-0-fc757cc76650@gmail.com>
+ <20240808-device_child_node_access-v2-3-fc757cc76650@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/15] arm64: Support for running as a guest in Arm CCA
-To: Shanker Donthineni <sdonthineni@nvidia.com>,
- Matias Ezequiel Vara Larsen <mvaralar@redhat.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
- Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-References: <20240701095505.165383-1-steven.price@arm.com>
- <ZpDvTXMDq6i+4O0m@fedora> <09fdebd7-32a0-4a88-9002-0f24eebe00a8@nvidia.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <09fdebd7-32a0-4a88-9002-0f24eebe00a8@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240808-device_child_node_access-v2-3-fc757cc76650@gmail.com>
 
-On 15/08/2024 23:16, Shanker Donthineni wrote:
-> Hi Steven,
+On Thu, 08 Aug 2024, Javier Carrasco wrote:
+
+> Drop the manual access to the fwnode of the device to iterate over its
+> child nodes. `device_for_each_child_node` macro provides direct access
+> to the child nodes, and given that the `child` variable is only required
+> within the loop, the scoped variant of the macro can be used.
 > 
-> On 7/12/24 03:54, Matias Ezequiel Vara Larsen wrote:
->> On Mon, Jul 01, 2024 at 10:54:50AM +0100, Steven Price wrote:
->>> This series adds support for running Linux in a protected VM under the
->>> Arm Confidential Compute Architecture (CCA). This has been updated
->>> following the feedback from the v3 posting[1]. Thanks for the feedback!
->>> Individual patches have a change log. But things to highlight:
->>>
->>>   * a new patch ("firmware/psci: Add psci_early_test_conduit()") to
->>>     prevent SMC calls being made on systems which don't support them -
->>>     i.e. systems without EL2/EL3 - thanks Jean-Philippe!
->>>
->>>   * two patches dropped (overriding set_fixmap_io). Instead
->>>     FIXMAP_PAGE_IO is modified to include PROT_NS_SHARED. When support
->>>     for assigning hardware devices to a realm guest is added this will
->>>     need to be brought back in some form. But for now it's just adding
->>>     complixity and confusion for no gain.
->>>
->>>   * a new patch ("arm64: mm: Avoid TLBI when marking pages as valid")
->>>     which avoids doing an extra TLBI when doing the break-before-make.
->>>     Note that this changes the behaviour in other cases when making
->>>     memory valid. This should be safe (and saves a TLBI for those
->>> cases),
->>>     but it's a separate patch in case of regressions.
->>>
->>>   * GIC ITT allocation now uses a custom genpool-based allocator. I
->>>     expect this will be replaced with a generic way of allocating
->>>     decrypted memory (see [4]), but for now this gets things working
->>>     without wasting too much memory.
->>>
->>> The ABI to the RMM from a realm (the RSI) is based on the final RMM v1.0
->>> (EAC 5) specification[2]. Future RMM specifications will be backwards
->>> compatible so a guest using the v1.0 specification (i.e. this series)
->>> will be able to run on future versions of the RMM without modification.
->>>
->>> This series is based on v6.10-rc1. It is also available as a git
->>> repository:
->>>
->>> https://gitlab.arm.com/linux-arm/linux-cca cca-guest/v4
+> Use the `device_for_each_child_node_scoped` macro to iterate over the
+> direct child nodes of the device.
 > 
-> Which cca-host branch should I use for testing cca-guest/v4?
+> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> ---
+>  drivers/leds/flash/leds-as3645a.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
 > 
-> I'm getting compilation errors with cca-host/v3 and cca-guest/v4, is there
-> any known WAR or fix to resolve this issue?
+> diff --git a/drivers/leds/flash/leds-as3645a.c b/drivers/leds/flash/leds-as3645a.c
+> index 2c6ef321b7c8..8e6abedf6e00 100644
+> --- a/drivers/leds/flash/leds-as3645a.c
+> +++ b/drivers/leds/flash/leds-as3645a.c
+> @@ -478,14 +478,12 @@ static int as3645a_detect(struct as3645a *flash)
+>  	return as3645a_write(flash, AS_BOOST_REG, AS_BOOST_CURRENT_DISABLE);
+>  }
+>  
+> -static int as3645a_parse_node(struct as3645a *flash,
+> -			      struct fwnode_handle *fwnode)
+> +static int as3645a_parse_node(struct as3645a *flash, struct device *dev)
 
-cca-host/v3 should work with cca-guest/v4. I've been working on
-rebasing/updating the branches and should be able to post v4/v5 series
-next week.
+Please swap the parameters to have the more senior one (dev) at the start.
 
+>  {
+>  	struct as3645a_config *cfg = &flash->cfg;
+> -	struct fwnode_handle *child;
+>  	int rval;
+>  
+> -	fwnode_for_each_child_node(fwnode, child) {
+> +	device_for_each_child_node_scoped(dev, child) {
+>  		u32 id = 0;
+>  
+>  		fwnode_property_read_u32(child, "reg", &id);
+> @@ -686,7 +684,7 @@ static int as3645a_probe(struct i2c_client *client)
+>  
+>  	flash->client = client;
+>  
+> -	rval = as3645a_parse_node(flash, dev_fwnode(&client->dev));
+> +	rval = as3645a_parse_node(flash, &client->dev);
+>  	if (rval < 0)
+>  		return rval;
+>  
 > 
-> arch/arm64/kvm/rme.c: In function ‘kvm_realm_reset_id_aa64dfr0_el1’:
-> ././include/linux/compiler_types.h:487:45: error: call to
-> ‘__compiletime_assert_650’ declared with attribute error: FIELD_PREP:
-> value too large for the field
->   487 |         _compiletime_assert(condition, msg,
-> __compiletime_assert_, __COUNTER__)
->       |                                             ^
-> ././include/linux/compiler_types.h:468:25: note: in definition of macro
-> ‘__compiletime_assert’
->   468 |                         prefix ##
-> suffix();                             \
->       |                         ^~~~~~
-> ././include/linux/compiler_types.h:487:9: note: in expansion of macro
-> ‘_compiletime_assert’
->   487 |         _compiletime_assert(condition, msg,
-> __compiletime_assert_, __COUNTER__)
->       |         ^~~~~~~~~~~~~~~~~~~
-> ./include/linux/build_bug.h:39:37: note: in expansion of macro
-> ‘compiletime_assert’
->    39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond),
-> msg)
->       |                                     ^~~~~~~~~~~~~~~~~~
-> ./include/linux/bitfield.h:68:17: note: in expansion of macro
-> ‘BUILD_BUG_ON_MSG’
->    68 |                 BUILD_BUG_ON_MSG(__builtin_constant_p(_val)
-> ?           \
->       |                 ^~~~~~~~~~~~~~~~
-> ./include/linux/bitfield.h:115:17: note: in expansion of macro
-> ‘__BF_FIELD_CHECK’
->   115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP:
-> ");    \
->       |                 ^~~~~~~~~~~~~~~~
-> arch/arm64/kvm/rme.c:315:16: note: in expansion of macro ‘FIELD_PREP’
->   315 |         val |= FIELD_PREP(ID_AA64DFR0_EL1_BRPs_MASK, bps - 1) |
->       |                ^~~~~~~~~~
-> make[5]: *** [scripts/Makefile.build:244: arch/arm64/kvm/rme.o] Error 1
-> make[4]: *** [scripts/Makefile.build:485: arch/arm64/kvm] Error 2
-> make[3]: *** [scripts/Makefile.build:485: arch/arm64] Error 2
-> make[3]: *** Waiting for unfinished jobs....
+> -- 
+> 2.43.0
 > 
-> I'm using gcc-13.3.0 compiler and cross-compiling on X86 machine.
+> 
 
-I'm not sure quite how this happens. The 'value' (bps - 1) shouldn't be
-considered constant, so I don't see how the compiler has decided to
-complain here - the __builtin_constant_p() should really be evaluating to 0.
-
-The only thing I can think of is if the compiler has somehow determined
-that rmm_feat_reg0 is 0 - which in theory it could do if it knew that
-kvm_init_rme() cannot succeed (rmi_features() would never be called, so
-the variable will never be set). Which makes me wonder if you're
-building with a PAGE_SIZE other than 4k?
-
-Obviously the code should still build if that's the case (so this would
-be a bug) but we don't currently support CCA with PAGE_SIZE != 4k.
-
-Steve
-
+-- 
+Lee Jones [李琼斯]
 
