@@ -1,52 +1,72 @@
-Return-Path: <linux-kernel+bounces-290231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76636955111
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:52:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 511B9955116
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B5821C21BA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:52:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0AA1B23C9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC301C3F1C;
-	Fri, 16 Aug 2024 18:52:51 +0000 (UTC)
-Received: from spindle.queued.net (spindle.queued.net [45.33.49.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C50B1BDAA0;
-	Fri, 16 Aug 2024 18:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.33.49.30
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723834370; cv=none; b=XZFXh4fK2LI+obgm49m2SyACpt6hvtlPmRwK/9hvvLPcccy6t0ebpyn5lkSqyx6zbZDvlNrzV5tMC3M7retZXPbnChWEufVur5Fbu1Gj8QxNlo7xSVHFsFbzohcFM6JmLvvDSK9/a+YwrqeF2BSkLgp2gmWSJZlXSQWjnMmx4jw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723834370; c=relaxed/simple;
-	bh=o6AUSx2rTVk7/Bxl+I8kUpI492MWX+uEdMokR5FMjFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LCUFeSV3ytq0vqXjI/tw8lx5kHIlFeN5mdHKxBl4uwwm9i26BGbjWsmXaFhoaeujnGClI8IrcoNECZZzw7WBwdFVVPWhxggPG5mOgAkSiCizJf9Guo3VXe8BJpKbkduEo+moj4h/5ZZf2K1InKu8MwR037FruvSDfkGYJ8wEYkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=queued.net; spf=pass smtp.mailfrom=queued.net; arc=none smtp.client-ip=45.33.49.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=queued.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queued.net
-Received: by spindle.queued.net (Postfix, from userid 1001)
-	id 7AE6611611E; Fri, 16 Aug 2024 14:52:48 -0400 (EDT)
-Received: from 5400 (unknown [172.56.34.244])
-	by spindle.queued.net (Postfix) with ESMTPSA id 2E7DB116115;
-	Fri, 16 Aug 2024 14:52:46 -0400 (EDT)
-Date: Fri, 16 Aug 2024 14:52:44 -0400
-From: Andres Salomon <dilinger@queued.net>
-To: Pali =?UTF-8?B?Um9ow6Fy?= <pali@kernel.org>
-Cc: Ilpo =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, LKML
- <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org,
- Matthew Garrett <mjg59@srcf.ucam.org>, Sebastian Reichel <sre@kernel.org>,
- Hans de Goede <hdegoede@redhat.com>, linux-pm@vger.kernel.org,
- Dell.Client.Kernel@dell.com
-Subject: Re: [PATCH v3 1/2] platform/x86:dell-laptop: Add knobs to change
- battery charge settings
-Message-ID: <20240816145244.7de8c4c7@5400>
-In-Reply-To: <20240816163341.fesk7afikv3n3yer@pali>
-References: <20240815192848.3489d3e1@5400>
-	<2feb1cf1-7597-9762-0864-87dc9c2c5559@linux.intel.com>
-	<20240816163341.fesk7afikv3n3yer@pali>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1DB1C37AB;
+	Fri, 16 Aug 2024 18:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="RphIE0n/"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842DB2BB0D
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 18:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723834399; cv=pass; b=B9r6UbXH+IfTqNqjxPkvVuZueIYINoGjljNPWsaAZti/cME6x0hj1CKlYzlPDb/OZ0thpH5U9NClTscjOLWaIm2zKFcaz8QLDJW94oqa7KxyzVXtVYyCVXrZVtzE0pxUfr6Po2hbtWUNDvB6r2RbCYv+Dv/VqEx6z7LMMBF01dU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723834399; c=relaxed/simple;
+	bh=Riot/9YGwvrBP6OyDIahKW/x5RMIBTQFUNJ7h3lw4ls=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j4pT5t19ujiOlfHy971Pl/Ni70bF8UzEFRlA6Rf437e0X0b4b6UDmcFG2ee3Zb+TiUIj103138ojH1mLkFns35Hha9dUTOYX3OWytrVUuexHytRsXePpy385qHBiC71+Zp0AglNMVyaYnkHw0A6JAdfLm6n6DFMfLUcm4ejXO6Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=RphIE0n/; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: boris.brezillon@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1723834385; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=PvjJLdJGrEwGkNxiG1NN0bediiICmKLJEmiksHZksCtL82OQXZKQDJuYZ7ynwVsAcT8WIdc1POVTKM0doCFK4HOxfGnVyeaEMkGnLKI87yZx+aTwwR4hLvsIXCq5MPvDUJoSivDF15IT/WCSm7idGV6wbDfZCf76/ca8VEsUGIA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1723834385; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ztxF76TZgv+brVRtCdzY0Nv6BgqovuZ4B6bXmanbuPU=; 
+	b=J6EemvsK5sLdNa6WAmnPmPpW7drPukskC6zUJifF0bglGNR049dRhjMhOPOazJPX7bUocGCU1H85S6VsIRted2wiSWwB9AYRk0NyE8JIzMIdF9GSsbvNjWSR47uvxRDEF09aoV1QSuCRuhzHUmk9+IWZtORWtqHG7eAb+3FHlaY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723834385;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=ztxF76TZgv+brVRtCdzY0Nv6BgqovuZ4B6bXmanbuPU=;
+	b=RphIE0n/lgyC6M88Ej/FBUfrrvNnKpg1yxCCKN0ywfX/RZ+WQKhzmQxmnL7YHjV+
+	3Hs/HoVT+fzRsTUUQppWUH7Ak1jX+PshN6oDNTkLCpkS+jK2VyeKQZ79/yKeee37Jlg
+	UTlLABgh+99a+4fFigTcRa/ghK0HTBZfd4N7pi6Q=
+Received: by mx.zohomail.com with SMTPS id 1723834383348713.5360808921143;
+	Fri, 16 Aug 2024 11:53:03 -0700 (PDT)
+From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Cc: kernel@collabora.com,
+	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/panthor: flush FW AS caches in slow reset path
+Date: Fri, 16 Aug 2024 19:52:49 +0100
+Message-ID: <20240816185250.344080-1-adrian.larumbe@collabora.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,291 +74,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bogosity: Ham, tests=bogofilter, spamicity=0.000000, version=1.2.5
+Content-Transfer-Encoding: 8bit
 
-On Fri, 16 Aug 2024 18:33:41 +0200
-Pali Roh=C3=A1r <pali@kernel.org> wrote:
+In the off-chance that waiting for the firmware to signal its booted status
+timed out in the fast reset path, one must flush the cache lines for the
+entire FW VM address space before reloading the regions, otherwise stale
+values eventually lead to a scheduler job timeout.
 
-> On Friday 16 August 2024 16:56:24 Ilpo J=C3=A4rvinen wrote:
-> > On Thu, 15 Aug 2024, Andres Salomon wrote:
-> >  =20
-> > > The Dell BIOS allows you to set custom charging modes, which is useful
-> > > in particular for extending battery life. This adds support for tweak=
-ing
-> > > those various settings from Linux via sysfs knobs. One might, for
-> > > example, have their laptop plugged into power at their desk the vast
-> > > majority of the time and choose fairly aggressive battery-saving
-> > > settings (eg, only charging once the battery drops below 50% and only
-> > > charging up to 80%). When leaving for a trip, it would be more useful
-> > > to instead switch to a standard charging mode (top off at 100%, charge
-> > > any time power is available). Rebooting into the BIOS to change the
-> > > charging mode settings is a hassle.
-> > >=20
-> > > For the Custom charging type mode, we reuse the common
-> > > charge_control_{start,end}_threshold sysfs power_supply entries. The
-> > > BIOS also has a bunch of other charging modes (with varying levels of
-> > > usefulness), so this also adds a 'charge_type' sysfs entry that maps =
-the
-> > > standard values to Dell-specific ones and documents those mappings in
-> > > sysfs-class-power-dell.
-> > >=20
-> > > This work is based on a patch by Perry Yuan <perry_yuan@dell.com> and
-> > > Limonciello Mario <Mario_Limonciello@Dell.com> submitted back in 2020:
-> > > https://lore.kernel.org/all/20200729065424.12851-1-Perry_Yuan@Dell.co=
-m/
-> > > Both of their email addresses bounce, so I'm assuming they're no long=
-er
-> > > with the company. I've reworked most of the patch to make it smaller =
-and
-> > > cleaner.
-> > >=20
-> > > Signed-off-by: Andres Salomon <dilinger@queued.net>
-> > > ---
-> > > Changes in v3:
-> > >     - switch tokenid and class types
-> > >     - be stricter with results from both userspace and BIOS
-> > >     - no longer allow failed BIOS reads
-> > >     - rename/move dell_send_request_by_token_loc, and add helper func=
-tion
-> > >     - only allow registration for BAT0
-> > >     - rename charge_type modes to match power_supply names
-> > > Changes in v2, based on extensive feedback from Pali Roh=C3=A1r <pali=
-@kernel.org>:
-> > >     - code style changes
-> > >     - change battery write API to use token->value instead of passed =
-value
-> > >     - stop caching current mode, instead querying SMBIOS as needed
-> > >     - drop the separate list of charging modes enum
-> > >     - rework the list of charging mode strings
-> > >     - query SMBIOS for supported charging modes
-> > >     - split dell_battery_custom_set() up
-> > > ---
-> > >  .../ABI/testing/sysfs-class-power-dell        |  33 ++
-> > >  drivers/platform/x86/dell/Kconfig             |   1 +
-> > >  drivers/platform/x86/dell/dell-laptop.c       | 316 ++++++++++++++++=
-++
-> > >  drivers/platform/x86/dell/dell-smbios.h       |   7 +
-> > >  4 files changed, 357 insertions(+)
-> > >  create mode 100644 Documentation/ABI/testing/sysfs-class-power-dell
-> > >=20
-> > > diff --git a/Documentation/ABI/testing/sysfs-class-power-dell b/Docum=
-entation/ABI/testing/sysfs-class-power-dell
-> > > new file mode 100644
-> > > index 000000000000..d8c542177558
-> > > --- /dev/null
-> > > +++ b/Documentation/ABI/testing/sysfs-class-power-dell
-> > > @@ -0,0 +1,33 @@
-> > > +What:		/sys/class/power_supply/<supply_name>/charge_type
-> > > +Date:		August 2024
-> > > +KernelVersion:	6.12
-> > > +Contact:	linux-pm@vger.kernel.org
-> > > +Description:
-> > > +		Select the charging algorithm to use for the (primary)
-> > > +		battery.
-> > > +
-> > > +		Standard:
-> > > +			Fully charge the battery at a moderate rate.
-> > > +		Fast:
-> > > +			Quickly charge the battery using fast-charge
-> > > +			technology. This is harder on the battery than
-> > > +			standard charging and may lower its lifespan.
-> > > +			The Dell BIOS calls this ExpressCharge=E2=84=A2.
-> > > +		Trickle:
-> > > +			Users who primarily operate the system while
-> > > +			plugged into an external power source can extend
-> > > +			battery life with this mode. The Dell BIOS calls
-> > > +			this "Primarily AC Use".
-> > > +		Adaptive:
-> > > +			Automatically optimize battery charge rate based
-> > > +			on typical usage pattern.
-> > > +		Custom:
-> > > +			Use the charge_control_* properties to determine
-> > > +			when to start and stop charging. Advanced users
-> > > +			can use this to drastically extend battery life.
-> > > +
-> > > +		Access: Read, Write
-> > > +		Valid values:
-> > > +			      "Standard", "Fast", "Trickle",
-> > > +			      "Adaptive", "Custom"
-> > > +
-> > > diff --git a/drivers/platform/x86/dell/Kconfig b/drivers/platform/x86=
-/dell/Kconfig
-> > > index 85a78ef91182..02405793163c 100644
-> > > --- a/drivers/platform/x86/dell/Kconfig
-> > > +++ b/drivers/platform/x86/dell/Kconfig
-> > > @@ -49,6 +49,7 @@ config DELL_LAPTOP
-> > >  	default m
-> > >  	depends on DMI
-> > >  	depends on BACKLIGHT_CLASS_DEVICE
-> > > +	depends on ACPI_BATTERY
-> > >  	depends on ACPI_VIDEO || ACPI_VIDEO =3D n
-> > >  	depends on RFKILL || RFKILL =3D n
-> > >  	depends on DELL_WMI || DELL_WMI =3D n
-> > > diff --git a/drivers/platform/x86/dell/dell-laptop.c b/drivers/platfo=
-rm/x86/dell/dell-laptop.c
-> > > index 6552dfe491c6..8cc05f0fab91 100644
-> > > --- a/drivers/platform/x86/dell/dell-laptop.c
-> > > +++ b/drivers/platform/x86/dell/dell-laptop.c
-> > > @@ -22,11 +22,13 @@
-> > >  #include <linux/io.h>
-> > >  #include <linux/rfkill.h>
-> > >  #include <linux/power_supply.h>
-> > > +#include <linux/sysfs.h>
-> > >  #include <linux/acpi.h>
-> > >  #include <linux/mm.h>
-> > >  #include <linux/i8042.h>
-> > >  #include <linux/debugfs.h>
-> > >  #include <linux/seq_file.h>
-> > > +#include <acpi/battery.h>
-> > >  #include <acpi/video.h>
-> > >  #include "dell-rbtn.h"
-> > >  #include "dell-smbios.h"
-> > > @@ -99,6 +101,18 @@ static bool force_rfkill;
-> > >  static bool micmute_led_registered;
-> > >  static bool mute_led_registered;
-> > > =20
-> > > +static const struct {
-> > > +	int token;
-> > > +	const char *label;
-> > > +} battery_modes[] =3D { =20
-> >=20
-> > Please don't try to do this in one go but split it into two (define and=
-=20
-> > then declaration of the variable). =20
->=20
-> Why? Splitting definition of this anonymous structure and definition of
-> variable would leak definition of anonymous structure of out the scope
-> where it is used.
+Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+---
+ drivers/gpu/drm/panthor/panthor_fw.c  |  8 +++++++-
+ drivers/gpu/drm/panthor/panthor_mmu.c | 19 ++++++++++++++++---
+ drivers/gpu/drm/panthor/panthor_mmu.h |  1 +
+ 3 files changed, 24 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
+index 857f3f11258a..ef232c0c2049 100644
+--- a/drivers/gpu/drm/panthor/panthor_fw.c
++++ b/drivers/gpu/drm/panthor/panthor_fw.c
+@@ -1089,6 +1089,12 @@ int panthor_fw_post_reset(struct panthor_device *ptdev)
+ 		panthor_fw_stop(ptdev);
+ 		ptdev->fw->fast_reset = false;
+ 		drm_err(&ptdev->base, "FW fast reset failed, trying a slow reset");
++
++		ret = panthor_vm_flush_all(ptdev->fw->vm);
++		if (ret) {
++			drm_err(&ptdev->base, "FW slow reset failed (couldn't flush FW's AS l2cache)");
++			return ret;
++		}
+ 	}
+ 
+ 	/* Reload all sections, including RO ones. We're not supposed
+@@ -1099,7 +1105,7 @@ int panthor_fw_post_reset(struct panthor_device *ptdev)
+ 
+ 	ret = panthor_fw_start(ptdev);
+ 	if (ret) {
+-		drm_err(&ptdev->base, "FW slow reset failed");
++		drm_err(&ptdev->base, "FW slow reset failed (couldn't start the FW )");
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+index d47972806d50..a77ee5ce691d 100644
+--- a/drivers/gpu/drm/panthor/panthor_mmu.c
++++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+@@ -874,14 +874,27 @@ static int panthor_vm_flush_range(struct panthor_vm *vm, u64 iova, u64 size)
+ 	if (!drm_dev_enter(&ptdev->base, &cookie))
+ 		return 0;
+ 
+-	/* Flush the PTs only if we're already awake */
+-	if (pm_runtime_active(ptdev->base.dev))
+-		ret = mmu_hw_do_operation(vm, iova, size, AS_COMMAND_FLUSH_PT);
++	/*
++	 * If we made it this far, that means the device is awake, because
++	 * upon device suspension, all active VMs are given an AS id of -1
++	 */
++	ret = mmu_hw_do_operation(vm, iova, size, AS_COMMAND_FLUSH_PT);
+ 
+ 	drm_dev_exit(cookie);
+ 	return ret;
+ }
+ 
++/**
++ * panthor_vm_flush_all() - Flush L2 caches for the entirety of a VM's AS
++ * @vm: VM whose cache to flush
++ *
++ * Return: 0 on success, a negative error code if flush failed.
++ */
++int panthor_vm_flush_all(struct panthor_vm *vm)
++{
++	return panthor_vm_flush_range(vm, vm->base.mm_start, vm->base.mm_range);
++}
++
+ static int panthor_vm_unmap_pages(struct panthor_vm *vm, u64 iova, u64 size)
+ {
+ 	struct panthor_device *ptdev = vm->ptdev;
+diff --git a/drivers/gpu/drm/panthor/panthor_mmu.h b/drivers/gpu/drm/panthor/panthor_mmu.h
+index f3c1ed19f973..6788771071e3 100644
+--- a/drivers/gpu/drm/panthor/panthor_mmu.h
++++ b/drivers/gpu/drm/panthor/panthor_mmu.h
+@@ -31,6 +31,7 @@ panthor_vm_get_bo_for_va(struct panthor_vm *vm, u64 va, u64 *bo_offset);
+ int panthor_vm_active(struct panthor_vm *vm);
+ void panthor_vm_idle(struct panthor_vm *vm);
+ int panthor_vm_as(struct panthor_vm *vm);
++int panthor_vm_flush_all(struct panthor_vm *vm);
+ 
+ struct panthor_heap_pool *
+ panthor_vm_get_heap_pool(struct panthor_vm *vm, bool create);
+-- 
+2.46.0
 
-Also, it's two different arrays that we then have to keep synced as we
-add new modes. That's the main reason I went for the combined struct.
-
-
->=20
-> > > +	{ BAT_STANDARD_MODE_TOKEN, "Standard" },
-> > > +	{ BAT_EXPRESS_MODE_TOKEN, "Fast" },
-> > > +	{ BAT_PRI_AC_MODE_TOKEN, "Trickle" },
-> > > +	{ BAT_ADAPTIVE_MODE_TOKEN, "Adaptive" },
-> > > +	{ BAT_CUSTOM_MODE_TOKEN, "Custom" }, =20
-> >=20
-> > I suggest aligning the strings with tabs for better readability. =20
->=20
-> For aligning something for better readability in "git diff" and
-> "git show" (which includes also git format-patch and emails) is better
-> to use spaces and not tabs. tab-alignment in git makes worse readability
-> (due to name of the token).
->=20
-
-Okay, so I'm hearing to align them, but to use spaces? I'll line everything
-up with where "Standard" and "Adaptive" are.
-
-[...]
-> > > +
-> > > +/*
-> > > + * The rules: the minimum start charging value is 50%. The maximum
-> > > + * start charging value is 95%. The minimum end charging value is
-> > > + * 55%. The maximum end charging value is 100%. And finally, there
-> > > + * has to be at least a 5% difference between start & end values.
-> > > + */
-> > > +#define CHARGE_START_MIN	50
-> > > +#define CHARGE_START_MAX	95
-> > > +#define CHARGE_END_MIN		55
-> > > +#define CHARGE_END_MAX		100
-> > > +#define CHARGE_MIN_DIFF		5
-> > > +
-> > > +static int dell_battery_set_custom_charge_start(int start)
-> > > +{
-> > > +	struct calling_interface_buffer buffer;
-> > > +	int end;
-> > > +
-> > > +	if (start < CHARGE_START_MIN)
-> > > +		start =3D CHARGE_START_MIN;
-> > > +	else if (start > CHARGE_START_MAX)
-> > > +		start =3D CHARGE_START_MAX; =20
-> >=20
-> > We have clamp().
-
-Thanks, I'll use that.
-
-> >  =20
-> > > +
-> > > +	end =3D dell_battery_read(BAT_CUSTOM_CHARGE_END);
-> > > +	if (end < 0)
-> > > +		return end;
-> > > +	if ((end - start) < CHARGE_MIN_DIFF) =20
-> >=20
-> > Extra parenthesis. =20
->=20
-> I pointed about this in previous version and from the discussion the
-> conclusion was that there is no reason to remove extra parenthesis.
->=20
-> > > +		start =3D end - CHARGE_MIN_DIFF;
-> > > +
-> > > +	return dell_set_std_token_value(&buffer, BAT_CUSTOM_CHARGE_START,
-> > > +			start);
-> > > +}
-> > > +
-> > > +static int dell_battery_set_custom_charge_end(int end)
-> > > +{
-> > > +	struct calling_interface_buffer buffer;
-> > > +	int start;
-> > > +
-> > > +	if (end < CHARGE_END_MIN)
-> > > +		end =3D CHARGE_END_MIN;
-> > > +	else if (end > CHARGE_END_MAX)
-> > > +		end =3D CHARGE_END_MAX; =20
-> >=20
-> > clamp.
-> >=20
-
-+1
-
- =20
-> > > +	start =3D dell_battery_read(BAT_CUSTOM_CHARGE_START);
-> > > +	if (start < 0)
-> > > +		return start;
-> > > +	if ((end - start) < CHARGE_MIN_DIFF) =20
-> >=20
-> > Extra parenthesis.
-> >  =20
-> > > +		end =3D start + CHARGE_MIN_DIFF;
-> > > +
-> > > +	return dell_set_std_token_value(&buffer, BAT_CUSTOM_CHARGE_END, end=
-);
-> > > +}
-> > > +
-> > > +static ssize_t charge_type_show(struct device *dev,
-> > > +		struct device_attribute *attr,
-> > > +		char *buf)
-> > > +{
-> > > +	ssize_t count =3D 0;
-> > > +	int i;
-> > > +
-> > > +	for (i =3D 0; i < ARRAY_SIZE(battery_modes); i++) {
-> > > +		bool active;
-> > > +
-> > > +		if (!(battery_supported_modes & BIT(i))) =20
-> >=20
-> > Why not store this supported information into battery_modes itself? =20
->=20
-> Same style is already used in other parts in this driver / source file.
->=20
-> > What's the benefit of obfuscation it with the extra variable & BIT()? =
-=20
->=20
-> In my opinion, this is not obfuscation but clear and common style how to
-> check which values of some enumeration are supported.
->=20
-> Storing this kind of information into battery_modes is not possible
-> because battery_modes is constant array with constant data.
->=20
-
-Yep. It's not a given that all modes will be supported by the BIOS.
-
-
---=20
-I'm available for contract & employment work, please contact me if
-interested.
 
