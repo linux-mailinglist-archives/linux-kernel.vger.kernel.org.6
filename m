@@ -1,196 +1,207 @@
-Return-Path: <linux-kernel+bounces-290010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 672D6954E66
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:03:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E8C954E5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:02:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C81C9B24142
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:03:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14AAB284FA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40C51BE85F;
-	Fri, 16 Aug 2024 16:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73BE71BE242;
+	Fri, 16 Aug 2024 16:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ad3exU48"
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KZ5BjdJY"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B540C1BB68D
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 16:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897D31BB68E
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 16:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723824189; cv=none; b=AOwOhX2BkJbMu7HBhUfYMySwg3lYCrTUTLytxEfu8psCZUAP8k8+vUvL6mwIFCjO7hX3B2rfKMZp8mYSvgxw54saylj0lsHKareAu+5xgLAVbI+rUpENwTfPcNF5Vy/PhTad/+5hP7cBsuEsKvHf8Z9uYimi6fFBeKFIu3Xks3k=
+	t=1723824168; cv=none; b=EvYjST1jSb+RgUd2Np8Zzoy4iCmBo6MjJzt7kzCeEl5z/+i03dAeGgINVGFt+Y8FB2CBN3Joso2AcAquZStM0CflF7TLFZDj8riWf5D4Uwq6eGpgFeSE8BHxePBbGhH0EW3f8VzO46rjQp6lw3uOgYXaZinV1K8GZo5rrHug2iE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723824189; c=relaxed/simple;
-	bh=dKR2RxE5Ng0EWSWYHKTrPIV6ivOcjtQIElndmAd6Kck=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gpm9oSkUSs/GNsdnwLqW+83nItSJw7ScySq0GNjbnAsHnD9QjrcGKoccimGFelxPQ1wVw8fRxHEZ1lLvrldyNPaBfDM+NlThw+N5qE2QwNxmzAMBau24UsZ90a/nVGZUedDHendkNDqnIKuxpnlLzjIneteyNxHDJadtKKU8Xxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ad3exU48; arc=none smtp.client-ip=209.85.161.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5d8060662a1so1301577eaf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:03:07 -0700 (PDT)
+	s=arc-20240116; t=1723824168; c=relaxed/simple;
+	bh=L8Gio1lKEf6ScjWD+hvMyeDe/0qL5kpCnp2TfQU8btU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uUqewLQzYtl/Q/p9AK+dn4jJ8UYO2qFJ0rpkvnPEBeDNxquIzWvo7e3pqiH07tqMSaXuPKPVIAUDodqP0DvBlDksCfEYxdHHWSiXsvM4iH3CfVBtOALvKbaFOIb6NeIQLIVC4UnewCeffyyXTtyUxSi8EnrtJOvUvvp2nAnVH4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KZ5BjdJY; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7b2dbd81e3so321961366b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:02:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723824187; x=1724428987; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X65EJtJyFY0R89syK4EYIOpaQGYFNCKJzH2qnsOU58k=;
-        b=Ad3exU48hIroECq0q7bnNFG3aDfAylxMCQNxknNP2J1oRk+NoaYof+PHVPtdei6Nod
-         VZJ1eZ6S59ST9IQjc5XnwaJ/VBl/c20r/uLvGiP1AjNlw1TnoRzoZHH9dc6OUQpbaHA4
-         uM7QTnnDr9dp3bw6k68Vz/nyHGu77X3ox9KwrG/bUfRPlGqjOTv8TO/1Orq/ZcuzsGMH
-         1O5QFJLwllCuSN1gvyyz2egZNx6W2BPALNaQE49iyXqZHIaWwmHM6aqI38XrNFxOAJ/z
-         g5Ir2lNiqQY+Tk78O1MkYFvaZPlIUSsmhHQ50NK426xYNUD/zQDzw+wdBCCfGDHMHdWF
-         8mNw==
+        d=suse.com; s=google; t=1723824165; x=1724428965; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+59+r4nVPaGYn60uFGeWEcerq53321A8XpZYq36YoFE=;
+        b=KZ5BjdJYy3+q4S8v21Ahy4AptDT2oZ0FluDT8BJ/1vSWP2OAvh2jqDG0Un5J9veUPe
+         jGJOMLxQGbs/aYDH2LXkEdHc8AcxCcomFU4LJzz1//R+Z8xvC9HSCwSMDTqpN2X8JRqp
+         0bTkwZC/zHb5awUMRR4DOE2VAlfnDYo6cHFfHyREmnp+ZZi9UejBoYWqSDqbIj3uYSF+
+         e5IFb8l6AzbE82NQ6VF2mNoVZgjFGmA76TEMWWdKeRJG+1ITR3XnnTuBQQ72TTDoBG4a
+         ilEbCzl65aIKLPQQJm8Vk4bq79FsrFuX7BWFzCO5kEgnqhRcguWQpCxXNzvGcR7s5E6O
+         kXcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723824187; x=1724428987;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X65EJtJyFY0R89syK4EYIOpaQGYFNCKJzH2qnsOU58k=;
-        b=K3v5p9Rerrp5BkAO9msMTTxVR+gNv28KUGAYi28lS7U2qeOnenWE3PHOsGzpHNA3CM
-         njNca8A2JCyNCXp+EBvCSqTTcS39zXt2jIlOqm6BJnTrJJVATlAccw7AXv7xxNO3SlEy
-         UckUv2XRqusyUXnZRGHqMoF7Tvn4bOjc0IFdBtQMyR+CK00Nh0pZ8A/cCbNZVmdr3DCJ
-         duplRTMfPG/NxOAwlKshBbXZJWWW5dHzLnKRiIqMKYfNDkxTYdvcw6/KpuB+cvF+1QCf
-         RCOaDVJzWFuc/vGwVHJKhu4iPOeVOJBZwVrnTqBluuoALgD76+m7eNp4gHVecGzFQh1q
-         7e2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXjw04OiaUl9KezhKw3TO7+E8EisGMlYSvyiiT0GebZnVGFmse26zHHCr1R9EQLiBATV7StoZBRqalI7brBVpf4JVgw1kWgwOGWvz2j
-X-Gm-Message-State: AOJu0YznGFghSAC94ah64S23sF/mTBSrVnMkJJdSFmsXWxK2MYrEwMRN
-	uZlPsc3fKUA4WzA3suF5npKiAFPIYcBktTtZ8r8zcS7gfF0u0MogBzUGKvLIS77U42aiolwFaZk
-	MqYGkjvELVapw/bH8G9hUyZ7YoYxNOp0770gChM+kTgj5EC264w==
-X-Google-Smtp-Source: AGHT+IH4gXpKHrfK8PJUzF2nfK2W+3TaIwmLMb1gIN8cptX1X6N4v/s24z7BCqP+wvr39GL0wpqwuhQGQaVQLPBDjbU=
-X-Received: by 2002:a05:6358:88c:b0:1aa:d4a3:3d58 with SMTP id
- e5c5f4694b2df-1b3a3bfcee8mr15948155d.29.1723824186264; Fri, 16 Aug 2024
- 09:03:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723824165; x=1724428965;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+59+r4nVPaGYn60uFGeWEcerq53321A8XpZYq36YoFE=;
+        b=wS+rUkNRS/CNR5Vu/nh5CizAWmjmX+wnrdhy1iGC5buIVoVPgnL++6KHdJMm9i8O4v
+         Jq7YUQEG2kLrlkRkVD5g/aiLrvsoSVme3XMupHI/GDNBipDq/mLTsIsP8D47Q+WvLiVQ
+         IVDWsGdg8bhAKfuTiJntVqH6ka5BryJD5n7OMZMPLY5ePGmrunv9eGHV+AL7y4QDonKQ
+         4KONid88pPmCQzN3+moXWj4JVMo8GUMmUj5P59RixJbdlCxyAG5VWdrqCoXhLUbq8vgc
+         fTFleMeWlh7FaIXHwoE4QFdWst4EP6LgBgzVK2Mvg3m8ENy0trTMPmTM0xf0Wa7aPipL
+         NbfA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1/uXQ02UODFpHY6kPMFquvimMXT2bLU4sMxC6iyd0lSL9OSywYToECuVd2OXOayNMtUf91DfgWv7qf3QzjTpt0RZNWFuDBarwwDFI
+X-Gm-Message-State: AOJu0YwzG3KHHhhjZW2yZdAfo2UgglqN5kV/l+F7beMqDhVK0lcmESkr
+	AA+3vKo3L01RtlByEcZTSMkl00gkqMwPumKinO7+nCf72rJgE9behwafvbMKJhI=
+X-Google-Smtp-Source: AGHT+IG6GfcQCc6qS1Tf6UMdMwBMR1h8V/kjKhBjDxeM3vw9QJvQ8VaMgJdw6yG0tZp3rI37wfsQJQ==
+X-Received: by 2002:a17:907:e6e2:b0:a7d:a25b:31be with SMTP id a640c23a62f3a-a839295925fmr243898966b.39.1723824164697;
+        Fri, 16 Aug 2024 09:02:44 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838d00f0sm272387466b.87.2024.08.16.09.02.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 09:02:44 -0700 (PDT)
+Date: Fri, 16 Aug 2024 18:02:42 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Miroslav Benes <mbenes@suse.cz>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Nicolai Stange <nstange@suse.de>, live-patching@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [POC 3/7] livepatch: Use per-state callbacks in state API tests
+Message-ID: <Zr94Iu7_wSdLgz9S@pathway.suse.cz>
+References: <20231110170428.6664-1-pmladek@suse.com>
+ <20231110170428.6664-4-pmladek@suse.com>
+ <alpine.LSU.2.21.2407251343160.21729@pobox.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814035451.773331-1-yuzhao@google.com> <20240814035451.773331-4-yuzhao@google.com>
- <24CDA80A-1CC1-4AD7-A35C-D1919DAA707D@nvidia.com>
-In-Reply-To: <24CDA80A-1CC1-4AD7-A35C-D1919DAA707D@nvidia.com>
-From: Yu Zhao <yuzhao@google.com>
-Date: Fri, 16 Aug 2024 10:02:27 -0600
-Message-ID: <CAOUHufY65h356h3oyZgXQM-2PjxEkBnMvkweXS6y5AKxR8oN1g@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable v2 3/3] mm/hugetlb: use __GFP_COMP for
- gigantic folios
-To: Zi Yan <ziy@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Muchun Song <muchun.song@linux.dev>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Frank van der Linden <fvdl@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.2407251343160.21729@pobox.suse.cz>
 
-On Fri, Aug 16, 2024 at 9:23=E2=80=AFAM Zi Yan <ziy@nvidia.com> wrote:
->
-> On 13 Aug 2024, at 23:54, Yu Zhao wrote:
->
-> > Use __GFP_COMP for gigantic folios to greatly reduce not only the
-> > amount of code but also the allocation and free time.
-> >
-> > LOC (approximately): +60, -240
-> >
-> > Allocate and free 500 1GB hugeTLB memory without HVO by:
-> >   time echo 500 >/sys/kernel/mm/hugepages/hugepages-1048576kB/nr_hugepa=
-ges
-> >   time echo 0 >/sys/kernel/mm/hugepages/hugepages-1048576kB/nr_hugepage=
-s
-> >
-> >        Before  After
-> > Alloc  ~13s    ~10s
-> > Free   ~15s    <1s
-> >
-> > The above magnitude generally holds for multiple x86 and arm64 CPU
-> > models.
-> >
-> > Signed-off-by: Yu Zhao <yuzhao@google.com>
-> > Reported-by: Frank van der Linden <fvdl@google.com>
-> > ---
-> >  include/linux/hugetlb.h |   9 +-
-> >  mm/hugetlb.c            | 293 ++++++++--------------------------------
-> >  2 files changed, 62 insertions(+), 240 deletions(-)
-> >
-> > diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-> > index 3100a52ceb73..98c47c394b89 100644
-> > --- a/include/linux/hugetlb.h
-> > +++ b/include/linux/hugetlb.h
-> > @@ -896,10 +896,11 @@ static inline bool hugepage_movable_supported(str=
-uct hstate *h)
-> >  /* Movability of hugepages depends on migration support. */
-> >  static inline gfp_t htlb_alloc_mask(struct hstate *h)
+On Thu 2024-07-25 13:48:06, Miroslav Benes wrote:
+> Hi,
+> 
+> On Fri, 10 Nov 2023, Petr Mladek wrote:
+> 
+> > Recent changes in the livepatch core have allowed to connect states,
+> > shadow variables, and callbacks. Use these new features in
+> > the state tests.
+> > 
+> > Use the shadow variable API to store the original loglevel. It is
+> > better suited for this purpose than directly accessing the .data
+> > pointer in state klp_state.
+> > 
+> > Another big advantage is that the shadow variable is preserved
+> > when the current patch is replaced by a new version. As a result,
+> > there is not need to copy the pointer.
+> > 
+> > Finally, the lifetime of the shadow variable is connected with
+> > the lifetime of the state. It is freed automatically when
+> > it is not longer supported.
+> > 
+> > This results into the following changes in the code:
+> > 
+> >   + Rename CONSOLE_LOGLEVEL_STATE -> CONSOLE_LOGLEVEL_FIX_ID
+> >     because it will be used also the for shadow variable
+> > 
+> >   + Remove the extra code for module coming and going states
+> >     because the new callback are per-state.
+> > 
+> >   + Remove callbacks needed to transfer the pointer between
+> >     states.
+> > 
+> >   + Keep the versioning of the state to prevent downgrade.
+> >     The problem is artificial because no callbacks are
+> >     needed to transfer or free the shadow variable anymore.
+> > 
+> > Signed-off-by: Petr Mladek <pmladek@suse.com>
+> 
+> it is much cleaner now.
+> 
+> [...]
+> 
+> >  static int allocate_loglevel_state(void)
 > >  {
-> > -     if (hugepage_movable_supported(h))
-> > -             return GFP_HIGHUSER_MOVABLE;
-> > -     else
-> > -             return GFP_HIGHUSER;
-> > +     gfp_t gfp =3D __GFP_COMP | __GFP_NOWARN;
+> > -	struct klp_state *loglevel_state;
+> > +	int *shadow_console_loglevel;
+> >  
+> > -	loglevel_state = klp_get_state(&patch, CONSOLE_LOGLEVEL_STATE);
+> > -	if (!loglevel_state)
+> > -		return -EINVAL;
+> > +	/* Make sure that the shadow variable does not exist yet. */
+> > +	shadow_console_loglevel =
+> > +		klp_shadow_alloc(&console_loglevel, CONSOLE_LOGLEVEL_FIX_ID,
+> > +				 sizeof(*shadow_console_loglevel), GFP_KERNEL,
+> > +				 NULL, NULL);
+> >  
+> > -	loglevel_state->data = kzalloc(sizeof(console_loglevel), GFP_KERNEL);
+> > -	if (!loglevel_state->data)
+> > +	if (!shadow_console_loglevel) {
+> > +		pr_err("%s: failed to allocated shadow variable for storing original loglevel\n",
+> > +		       __func__);
+> >  		return -ENOMEM;
+> > +	}
+> >  
+> >  	pr_info("%s: allocating space to store console_loglevel\n",
+> >  		__func__);
 > > +
-> > +     gfp |=3D hugepage_movable_supported(h) ? GFP_HIGHUSER_MOVABLE : G=
-FP_HIGHUSER;
-> > +
-> > +     return gfp;
+> >  	return 0;
 > >  }
-> >
-> >  static inline gfp_t htlb_modify_alloc_mask(struct hstate *h, gfp_t gfp=
-_mask)
-> > diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> > index 71d469c8e711..efa77ce87dcc 100644
-> > --- a/mm/hugetlb.c
-> > +++ b/mm/hugetlb.c
-> > @@ -56,16 +56,6 @@ struct hstate hstates[HUGE_MAX_HSTATE];
-> >  #ifdef CONFIG_CMA
-> >  static struct cma *hugetlb_cma[MAX_NUMNODES];
-> >  static unsigned long hugetlb_cma_size_in_node[MAX_NUMNODES] __initdata=
-;
-> > -static bool hugetlb_cma_folio(struct folio *folio, unsigned int order)
-> > -{
-> > -     return cma_pages_valid(hugetlb_cma[folio_nid(folio)], &folio->pag=
-e,
-> > -                             1 << order);
-> > -}
-> > -#else
-> > -static bool hugetlb_cma_folio(struct folio *folio, unsigned int order)
-> > -{
-> > -     return false;
-> > -}
-> >  #endif
-> >  static unsigned long hugetlb_cma_size __initdata;
-> >
-> > @@ -100,6 +90,17 @@ static void hugetlb_unshare_pmds(struct vm_area_str=
-uct *vma,
-> >               unsigned long start, unsigned long end);
-> >  static struct resv_map *vma_resv_map(struct vm_area_struct *vma);
-> >
-> > +static void hugetlb_free_folio(struct folio *folio)
-> > +{
-> > +#ifdef CONFIG_CMA
-> > +     int nid =3D folio_nid(folio);
-> > +
-> > +     if (cma_free_folio(hugetlb_cma[nid], folio))
-> > +             return;
-> > +#endif
-> > +     folio_put(folio);
-> > +}
-> > +
->
-> It seems that we no longer use free_contig_range() to free gigantic
-> folios from alloc_contig_range().
+> 
+> Would it make sense to set is_shadow to 1 here? I mean you would pass
+> klp_state down to allocate_loglevel_state() from setup callback and set
+> its is_shadow member here. Because then...
 
-We switched to two pairs of extern (to the allocator) APIs in this patch:
-  folio_alloc_gigantic()
-  folio_put()
-and
-  cma_alloc_folio()
-  cma_free_folio()
+Right.
 
-> Will it work? Or did I miss anything?
+> >  static void free_loglevel_state(void)
+> >  {
+> > -	struct klp_state *loglevel_state;
+> > +	int *shadow_console_loglevel;
+> >  
+> > -	loglevel_state = klp_get_state(&patch, CONSOLE_LOGLEVEL_STATE);
+> > -	if (!loglevel_state)
+> > +	shadow_console_loglevel =
+> > +		(int *)klp_shadow_get(&console_loglevel, CONSOLE_LOGLEVEL_FIX_ID);
+> > +	if (!shadow_console_loglevel)
+> >  		return;
+> >  
+> >  	pr_info("%s: freeing space for the stored console_loglevel\n",
+> >  		__func__);
+> > -	kfree(loglevel_state->data);
+> > +	klp_shadow_free(&console_loglevel, CONSOLE_LOGLEVEL_FIX_ID, NULL);
+> >  }
+> 
+> would not be needed. And release callback neither.
+> 
+> Or am I wrong?
 
-alloc_contig_range and free_contig_range() also works with __GFP_COMP
-/ large folios, but this pair is internal (to the allocator) and
-shouldn't be used directly except to implement external APIs like
-above.
+No, you are perfectly right.
+
+> We can even have both ways implemented to demonstrate different 
+> approaches...
+
+I have implemented only your approach ;-)
+
+That said, I am going to keep the callback so that the selftest could
+check that it is called at the right time. But the callback will
+only print the message. And a comment would explain that is not
+really needed.
+
+Also I am going to add a .state_dtor callback so that we could test
+the shadow variable is freed. The callback will only print a message.
+It is a simple shadow variable and the memory is freed automatically
+together with the struct klp_shadow.
+
+Best Regards,
+Petr
 
