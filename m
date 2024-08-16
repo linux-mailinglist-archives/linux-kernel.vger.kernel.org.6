@@ -1,274 +1,97 @@
-Return-Path: <linux-kernel+bounces-288965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A2059540B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:51:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D45979540BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:53:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35F61287C77
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:51:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81DCC1F23583
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:53:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC6178C67;
-	Fri, 16 Aug 2024 04:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C29D77111;
+	Fri, 16 Aug 2024 04:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fiAwYtQs"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="v6VR5slJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFDE10E4
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 04:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487A06F076;
+	Fri, 16 Aug 2024 04:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723783906; cv=none; b=gXhqljxG/CkFoI3Qfd3apV+1LmuhaRKT0ySQAiOxSIqGqg408aShLmdWnbnnygtPuSr2wlM1za8c9IAYQ7V/yGLJtfXTVfT4CpBmfzmzq6t5d53EvfKX5S6UDJNKXPLJ/IkbtSg9WbB6OJ/Nl1Etd4lQfFMi0fgAK8hqxmUB+k4=
+	t=1723783984; cv=none; b=iA1HNjfyRg3XC9iz6RxRSnvePRl/CpgXMsj7EwRijHZbf7tywhJ+gap8tnOHitp0dzgGkjyo9ZbzDL3h6Idebab+YepwgWMHzNARPbYotptAtc/UQAPq6cnGk+odEbFK7BXy3/vXAZmWfFwxAw+1aT/XXK+Kg8ZpjqqdVCW3wbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723783906; c=relaxed/simple;
-	bh=A/KfasNRi0g5XvdGj/po0279FLZSvsWIP8hmy4Qr3cw=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=po0CjLu2kPJutlCoUuOg3EVHelWSNrakCEZDDf1zWUfuFj3utk1Aq6k8Hd5zO9ZtCsVPyTpbU0tb0tfVhHSABB4TNDGTjNe5eLez+SPtxeKDHIc71JcHb6aMm3zRsBdWOGG6grecXAsuErtiIY5ig8yz8sJc2tFcxal/VZxcC/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fiAwYtQs; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e02b5792baaso2519063276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 21:51:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723783903; x=1724388703; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=DhTgaG8i8OC9CKXcSkFlxGY34/XHKFb19/JSnEJ2u0M=;
-        b=fiAwYtQsvQXVpW3ebSpJSvIquTKfLDEyQc3ATQafOFP7G2P28C/Un1vuc6V1z+h34C
-         mehSbucuZDjYhjQIZ3XaEicD3MEoqCRYEJTWg4HSrdCStF+jjj7jpaxsckbea9btsx2M
-         mAMzfdOvEZ+AzJR0itKIDH3rHfSncQLw505GkVjBRL6WT6MRvtgKeUhD75LOJJGb0+cQ
-         jKSJHBpAAthA6kRrxI9TEzctuiExQlIcQoGr1LN0zD9UMBAXbSa4RBp539r24dYBfFOs
-         /iu2Ixf9CsrciSkGk6+HKY7g3uA78xEaBVYK3qaFQKUajMUcrd1bQjZ22ZJ1sHCtYvVz
-         NOXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723783903; x=1724388703;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DhTgaG8i8OC9CKXcSkFlxGY34/XHKFb19/JSnEJ2u0M=;
-        b=T3VeoyGymTxBvIz+fF8A8dC3zI0bypTo9iChiyEunJMgXDKMp3/xK8/TtReIOLp3/4
-         20yJ6PC/UMHnzM56tOErgv0WYg5kBkXvJLAlAWs9BiIdQQnPcTqdJGdgBD++Lb3Bw7Yu
-         zIzCm+YKNvHG0v+gIEg37pEO1Gi5yb1bZQuhDandaOBCh/uCqKdrYtoAprjhRYWEX66D
-         TZIzQnEohQG/CRBOgypWVgzc8Ul8SKetL8k7fU6Yhht0GQ/or2T2vAAgxxnLiNPn+n2E
-         GzhrsVaZkbsJk40XritF7jP8H2IpiH6Wn6lpVL6gf550Cp0wSBMPqTxE2pnAjQye7/jr
-         D3Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCXW8fqCTJ6xfcUYZWSXFioEqbgZpVIw8uGlNONqd0F5zzYTVD1nqkl3ymeaNP2MUeK/DqjdXSuyPcKIG3GA3nrMDWeNL8hLf3CizfTk
-X-Gm-Message-State: AOJu0Yxy1aOTBk5e31AAwBmLcAMH/RfsKFyz4Ros0irxrktCTK277xbA
-	QZfJ3WZKCAk0965+K/aR8Uiw4fITUPhkzGGVwpSWLSbb0tUWe2OppKs3x6ACIS7ysdGeJiVrB+V
-	oDIGuqblrDw==
-X-Google-Smtp-Source: AGHT+IFfrDRpqPxG6V89G/9xGljq5m4jX1zEjkDMzFQgw42PzAbdt0C893N+Ot4519M06eCP0IwzsIvp0hltgA==
-X-Received: from slicestar.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:20a1])
- (user=davidgow job=sendgmr) by 2002:a25:8751:0:b0:e0b:af9b:fb79 with SMTP id
- 3f1490d57ef6-e1180e45104mr75687276.3.1723783903487; Thu, 15 Aug 2024 21:51:43
- -0700 (PDT)
-Date: Fri, 16 Aug 2024 12:51:22 +0800
+	s=arc-20240116; t=1723783984; c=relaxed/simple;
+	bh=zdLM0KIP970E4GbthIkogSEpCsJYb5OSpA3ofPumAe8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=N9KNfN7Ax1P6aQt7zPv2O5A1giIJMl94zCXT3qtD5LIEp2uMl/rpRAZ5LM2c92LHeaLlQBGyGWGTGvxnIe8RsVRz6PGIAQAqa6jFeSRP8/8ah+OVNcHCZ+JlFN4HKk1J3X+RkmJ2mUQnwPabZ9idq7Yyn5VDCroH/004wPY7pWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=v6VR5slJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63512C32782;
+	Fri, 16 Aug 2024 04:53:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1723783983;
+	bh=zdLM0KIP970E4GbthIkogSEpCsJYb5OSpA3ofPumAe8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=v6VR5slJWMCcwANxphEdf8OCr/x0DfvnAW8+cGd7YvQYL6QlzHHQ+dZmxVcPAOhOd
+	 w0IW1eMdj59ZslsO9qhyIUCzIII6iLICD1gDYuRwi2DKpOoebyGbtUO4H9tUKcvKHb
+	 dYkUQhgKWSj3O4jfEUOoqvcTR0yAs2gVWaPdER/Q=
+Date: Thu, 15 Aug 2024 21:53:02 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Huang Ying <ying.huang@intel.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-cxl@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+ Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron
+ <jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>, Alison
+ Schofield <alison.schofield@intel.com>, Vishal Verma
+ <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Alistair
+ Popple <apopple@nvidia.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Baoquan He <bhe@redhat.com>
+Subject: Re: [PATCH] Resource: fix region_intersects() for CXL memory
+Message-Id: <20240815215302.5ed29b99e94a48aea49269ce@linux-foundation.org>
+In-Reply-To: <20240816020723.771196-1-ying.huang@intel.com>
+References: <20240816020723.771196-1-ying.huang@intel.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
-Message-ID: <20240816045123.1934387-2-davidgow@google.com>
-Subject: [PATCH v2] kunit: Device wrappers should also manage driver name
-From: David Gow <davidgow@google.com>
-To: Kees Cook <kees@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	Rae Moar <rmoar@google.com>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Nico Pache <npache@redhat.com>, Ivan Orlov <ivan.orlov0322@gmail.com>, 
-	Erhard Furtner <erhard_f@mailbox.org>
-Cc: David Gow <davidgow@google.com>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Maxime Ripard <mripard@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-kunit_driver_create() accepts a name for the driver, but does not copy
-it, so if that name is either on the stack, or otherwise freed, we end
-up with a use-after-free when the driver is cleaned up.
+On Fri, 16 Aug 2024 10:07:23 +0800 Huang Ying <ying.huang@intel.com> wrote:
 
-Instead, strdup() the name, and manage it as another KUnit allocation.
-As there was no existing kunit_kstrdup(), we add one. Further, add a
-kunit_ variant of strdup_const() and kfree_const(), so we don't need to
-allocate and manage the string in the majority of cases where it's a
-constant.
+> On a system with CXL memory installed, the resource tree (/proc/iomem)
+> related to CXL memory looks like something as follows.
+> 
+> 490000000-50fffffff : CXL Window 0
+>   490000000-50fffffff : region0
+>     490000000-50fffffff : dax0.0
+>       490000000-50fffffff : System RAM (kmem)
+> 
+> When the following command line is run to try writing some memory in
+> CXL memory range,
+> 
+>  $ dd if=data of=/dev/mem bs=1k seek=19136512 count=1
+>  dd: error writing '/dev/mem': Bad address
+>  1+0 records in
+>  0+0 records out
+>  0 bytes copied, 0.0283507 s, 0.0 kB/s
+> 
+> the command fails as expected.  However, the error code is wrong.  It
+> should be "Operation not permitted" instead of "Bad address".  And,
+> the following warning is reported in kernel log.
+> 
+>  ioremap on RAM at 0x0000000490000000 - 0x0000000490000fff
+>  WARNING: CPU: 2 PID: 416 at arch/x86/mm/ioremap.c:216 __ioremap_caller.constprop.0+0x131/0x35d
+> ...
+>
 
-However, these are inline functions, and is_kernel_rodata() only works
-for built-in code. This causes problems in two cases:
-- If kunit is built as a module, __{start,end}_rodata is not defined.
-- If a kunit test using these functions is built as a module, it will
-  suffer the same fate.
-
-This fixes a KASAN splat with overflow.overflow_allocation_test, when
-built as a module.
-
-Restrict the is_kernel_rodata() case to when KUnit is built as a module,
-which fixes the first case, at the cost of losing the optimisation.
-
-Also, make kunit_{kstrdup,kfree}_const non-inline, so that other modules
-using them will not accidentally depend on is_kernel_rodata(). If KUnit
-is built-in, they'll benefit from the optimisation, if KUnit is not,
-they won't, but the string will be properly duplicated.
-
-Fixes: d03c720e03bd ("kunit: Add APIs for managing devices")
-Reported-by: Nico Pache <npache@redhat.com>
-Closes: https://groups.google.com/g/kunit-dev/c/81V9b9QYON0
-Reviewed-by: Kees Cook <kees@kernel.org>
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
-Reviewed-by: Rae Moar <rmoar@google.com>
-Signed-off-by: David Gow <davidgow@google.com>
----
-
-This is a combination of the previous version of this patch with the
-follow-up fix "kunit: Fix kunit_kstrdup_const() with modules".
-
-kunit_kstrdup_const() now falls back to kstrdup() if KUnit is built as a
-module, and is no longer inlined. This should fix the issues we'd seen
-before.
-
-I've not tried doing something fancy by looking at module rodata
-sections: it might be a possible optimisation, but it seems like it'd
-overcomplicate things for this initial change. If we hit a KUnit test
-where this is a bottleneck (or if I have some more spare time), we can
-look into it.
-
-The overflow_kunit test has been fixed independently to not rely on this
-anyway, so there shouldn't be any current cases of this causing issues,
-but it's worth making the API robust regardless.
-
-Changes since previous version:
-https://lore.kernel.org/linux-kselftest/20240731070207.3918687-1-davidgow@google.com/
-- Fix module support by integrating:
-  https://lore.kernel.org/linux-kselftest/20240806020136.3481593-1-davidgow@google.com/
-
----
- include/kunit/test.h | 48 ++++++++++++++++++++++++++++++++++++++++++++
- lib/kunit/device.c   |  7 +++++--
- lib/kunit/test.c     | 19 ++++++++++++++++++
- 3 files changed, 72 insertions(+), 2 deletions(-)
-
-diff --git a/include/kunit/test.h b/include/kunit/test.h
-index e2a1f0928e8b..5ac237c949a0 100644
---- a/include/kunit/test.h
-+++ b/include/kunit/test.h
-@@ -28,6 +28,7 @@
- #include <linux/types.h>
- 
- #include <asm/rwonce.h>
-+#include <asm/sections.h>
- 
- /* Static key: true if any KUnit tests are currently running */
- DECLARE_STATIC_KEY_FALSE(kunit_running);
-@@ -480,6 +481,53 @@ static inline void *kunit_kcalloc(struct kunit *test, size_t n, size_t size, gfp
- 	return kunit_kmalloc_array(test, n, size, gfp | __GFP_ZERO);
- }
- 
-+
-+/**
-+ * kunit_kfree_const() - conditionally free test managed memory
-+ * @x: pointer to the memory
-+ *
-+ * Calls kunit_kfree() only if @x is not in .rodata section.
-+ * See kunit_kstrdup_const() for more information.
-+ */
-+void kunit_kfree_const(struct kunit *test, const void *x);
-+
-+/**
-+ * kunit_kstrdup() - Duplicates a string into a test managed allocation.
-+ *
-+ * @test: The test context object.
-+ * @str: The NULL-terminated string to duplicate.
-+ * @gfp: flags passed to underlying kmalloc().
-+ *
-+ * See kstrdup() and kunit_kmalloc_array() for more information.
-+ */
-+static inline char *kunit_kstrdup(struct kunit *test, const char *str, gfp_t gfp)
-+{
-+	size_t len;
-+	char *buf;
-+
-+	if (!str)
-+		return NULL;
-+
-+	len = strlen(str) + 1;
-+	buf = kunit_kmalloc(test, len, gfp);
-+	if (buf)
-+		memcpy(buf, str, len);
-+	return buf;
-+}
-+
-+/**
-+ * kunit_kstrdup_const() - Conditionally duplicates a string into a test managed allocation.
-+ *
-+ * @test: The test context object.
-+ * @str: The NULL-terminated string to duplicate.
-+ * @gfp: flags passed to underlying kmalloc().
-+ *
-+ * Calls kunit_kstrdup() only if @str is not in the rodata section. Must be freed with
-+ * kunit_kfree_const() -- not kunit_kfree().
-+ * See kstrdup_const() and kunit_kmalloc_array() for more information.
-+ */
-+const char *kunit_kstrdup_const(struct kunit *test, const char *str, gfp_t gfp);
-+
- /**
-  * kunit_vm_mmap() - Allocate KUnit-tracked vm_mmap() area
-  * @test: The test context object.
-diff --git a/lib/kunit/device.c b/lib/kunit/device.c
-index 25c81ed465fb..520c1fccee8a 100644
---- a/lib/kunit/device.c
-+++ b/lib/kunit/device.c
-@@ -89,7 +89,7 @@ struct device_driver *kunit_driver_create(struct kunit *test, const char *name)
- 	if (!driver)
- 		return ERR_PTR(err);
- 
--	driver->name = name;
-+	driver->name = kunit_kstrdup_const(test, name, GFP_KERNEL);
- 	driver->bus = &kunit_bus_type;
- 	driver->owner = THIS_MODULE;
- 
-@@ -192,8 +192,11 @@ void kunit_device_unregister(struct kunit *test, struct device *dev)
- 	const struct device_driver *driver = to_kunit_device(dev)->driver;
- 
- 	kunit_release_action(test, device_unregister_wrapper, dev);
--	if (driver)
-+	if (driver) {
-+		const char *driver_name = driver->name;
- 		kunit_release_action(test, driver_unregister_wrapper, (void *)driver);
-+		kunit_kfree_const(test, driver_name);
-+	}
- }
- EXPORT_SYMBOL_GPL(kunit_device_unregister);
- 
-diff --git a/lib/kunit/test.c b/lib/kunit/test.c
-index e8b1b52a19ab..089c832e3cdb 100644
---- a/lib/kunit/test.c
-+++ b/lib/kunit/test.c
-@@ -874,6 +874,25 @@ void kunit_kfree(struct kunit *test, const void *ptr)
- }
- EXPORT_SYMBOL_GPL(kunit_kfree);
- 
-+void kunit_kfree_const(struct kunit *test, const void *x)
-+{
-+#if !IS_MODULE(CONFIG_KUNIT)
-+	if (!is_kernel_rodata((unsigned long)x))
-+#endif
-+		kunit_kfree(test, x);
-+}
-+EXPORT_SYMBOL_GPL(kunit_kfree_const);
-+
-+const char *kunit_kstrdup_const(struct kunit *test, const char *str, gfp_t gfp)
-+{
-+#if !IS_MODULE(CONFIG_KUNIT)
-+	if (is_kernel_rodata((unsigned long)str))
-+		return str;
-+#endif
-+	return kunit_kstrdup(test, str, gfp);
-+}
-+EXPORT_SYMBOL_GPL(kunit_kstrdup_const);
-+
- void kunit_cleanup(struct kunit *test)
- {
- 	struct kunit_resource *res;
--- 
-2.46.0.184.g6999bdac58-goog
-
+Presumably we want to fix earlier kernels?  If so, are you able to
+identify a suitable Fixes: target?  Possibly 974854ab0728 ("cxl/acpi:
+Track CXL resources in iomem_resource")?
 
