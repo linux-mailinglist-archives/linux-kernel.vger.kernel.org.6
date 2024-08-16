@@ -1,39 +1,71 @@
-Return-Path: <linux-kernel+bounces-290001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A811954E4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:56:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98A1E954E4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:57:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51CF9286100
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:56:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC6BF1C24731
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6627E1BE25D;
-	Fri, 16 Aug 2024 15:56:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9981B86FB;
-	Fri, 16 Aug 2024 15:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E108B1BDAA6;
+	Fri, 16 Aug 2024 15:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="BivX3hPe"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81021BCA0B
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723823791; cv=none; b=Bgn5WXDoQc/aXxeOMHgwctR8m7+zkToCUPq3qZKeS0s8Q8D+dt9rfST8GEOnNJHX9P8qkOiv7W2B0J4T79h3PltydQsvokLE5tSdX0HjWLJxIpznkdjAsZ66jMhSFacpcOc9QnTayC4hI/mbE6MV4GbAL/SXBZHC/L4MI20Hv0c=
+	t=1723823855; cv=none; b=laXeO0hsyqm4ipAB/bv0EzokQA9V8VR+OhdOZV7bFOdUnbl8qt+cqgvO9QtS7ckqo44gt/fhNPJObDigPx93vmT/TCwNL9WZDpd5qT8nQzGm7tM5gjlgEx84b7qIkWYSw154HF4CVFW8RXZEWdE80WYnDbhEKV3Jv5+O5ZtW18Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723823791; c=relaxed/simple;
-	bh=LJSlKhDs2xULF9oOdsbFHOVL0MfKa7F/Jn4NmxHc14Y=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=HlaIB+hJBWOJbeVrdjPNHZyW4xG214pgLJ190J7zAdLRvRU3tUmDn+rCvD75vLRBQ4kBUTTBlv5cnQQLrWqTApCcRMwzRJgt1nACBA/sAXIs1jwYwpv+OVWOE/Z8Jqt3v/ouME9a0eYNHXKRK6uAdGZYayWUTA/vz0KMj3rYf7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 02A8A13D5;
-	Fri, 16 Aug 2024 08:56:54 -0700 (PDT)
-Received: from [10.1.34.14] (e122027.cambridge.arm.com [10.1.34.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF0D33F58B;
-	Fri, 16 Aug 2024 08:56:24 -0700 (PDT)
-Message-ID: <38fa2fd0-c03c-4dcb-814c-c7a397affc62@arm.com>
-Date: Fri, 16 Aug 2024 16:56:22 +0100
+	s=arc-20240116; t=1723823855; c=relaxed/simple;
+	bh=oKkzxTE6PCh6zCvNqI3xjIum0brj9Oln1zK98TYbJ4k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hMvn2Jtp/AH6vGs2pJ/39A19E44WlVsOqGy9AgI5TrahJk3PmB6ummwHVbkcVuCDY6yW7xfdUtze8pWrKFNKteKUjZUSPSeGALAVA1t3n0arHqDUTOgM6+jSrh9crMdK+l/bTlVmf4/R0ygTxN7+/2WIBtRo24epOyCJYXWykhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=BivX3hPe; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7a1d436c95fso129702585a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:57:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1723823852; x=1724428652; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=sUGHwqhYqpjDlUITg75R9KKmClaANAw0Rx5XRr3vzv0=;
+        b=BivX3hPe3rFzkQGqB2nIVnA8+sUG0TIEcYRBMar1EZ9Vam6PZBh7PPVIt9fjdSnxKl
+         ikzyZHDMdCIREvN2JEWreZOY2NjcvVGljqkOazi1cMfGeGiE7dJF8+b4J9t7R4xlhgFw
+         VDD0KLI/7N7Je1MFdhKwkXrKRJLJFhzG6gTLo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723823852; x=1724428652;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sUGHwqhYqpjDlUITg75R9KKmClaANAw0Rx5XRr3vzv0=;
+        b=TCYBIBvtS74jzNOh0Z3N/ZTYU0lwvGLTXtcgCgN2A3MIoO+hWxDRBNyJplo7eLYcOW
+         dLPKVfu6RnyCG+9X637hbOP7KUwXe2rGKvO2ywZi88i58ngp3+0iKNarD/6ILpVKY466
+         5lb73TS5vf+5+0g9/99fG1SnDIn++Q7L18+MN6usPxmmbTxCNNt5tv8Yl4XGb9rsoVEu
+         bK2bA3WE6szvEUM0zdih19F0FzMMLInDnJON2CGXFvv20eLQ7eOZFXRHCC8Z0GGqU4Ik
+         F9h/6Bt9nM4dv+pQ/+3bIEdjb8U4/BU6FdudziDczzcAHggYAexYpUHzzIF+vwSY5CpI
+         KOhA==
+X-Forwarded-Encrypted: i=1; AJvYcCV7OzS1r8JEnRXn6FZP8yhvEuJrUvV1F4PsCfkwV5sdEKLjmHRkM78e/B4SYVCECvIxTIKZ2DEwsq8II/LPLLdgH+kJfW6PwyhdV3W0
+X-Gm-Message-State: AOJu0YwcOb278stBlPCCotsbviv4qy1fPlORyNqvoj4NmcZxIsKULJEo
+	eKoxqC5cve+9mVurgR6au64//m6lHY+AVfpv1mVzrK6uHMj3nG2h8j1tjIqxBg==
+X-Google-Smtp-Source: AGHT+IHvapdKyGGOp3HZoGS/hLT120KMKY0Kt7Y7wf+SPAz1vNoPRDqQzLWAT+Vc2+hoIwTfOXHMvg==
+X-Received: by 2002:a05:6214:3d9c:b0:6b7:97d1:9a94 with SMTP id 6a1803df08f44-6bf7ce5f138mr38419496d6.36.1723823852405;
+        Fri, 16 Aug 2024 08:57:32 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fe278ccsm18693916d6.62.2024.08.16.08.57.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Aug 2024 08:57:31 -0700 (PDT)
+Message-ID: <cbf7d2f6-fbbb-4e4c-9832-d639f171f6a8@broadcom.com>
+Date: Fri, 16 Aug 2024 08:57:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,364 +73,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Steven Price <steven.price@arm.com>
-Subject: Re: [PATCH v4 01/15] arm64: rsi: Add RSI definitions
-To: Gavin Shan <gshan@redhat.com>, kvm@vger.kernel.org, kvmarm@lists.linux.dev
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
- <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
- Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-References: <20240701095505.165383-1-steven.price@arm.com>
- <20240701095505.165383-2-steven.price@arm.com>
- <a119ad47-11b7-42e5-a1e2-2706660c93d9@redhat.com>
-Content-Language: en-GB
-In-Reply-To: <a119ad47-11b7-42e5-a1e2-2706660c93d9@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v6 10/13] PCI: brcmstb: Refactor for chips with many
+ regular inbound windows
+To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240815225731.40276-1-james.quinlan@broadcom.com>
+ <20240815225731.40276-11-james.quinlan@broadcom.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20240815225731.40276-11-james.quinlan@broadcom.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Gavin,
-
-Sorry for the slow reply, I realised I'd never replied to this email.
-
-On 23/07/2024 07:22, Gavin Shan wrote:
-> On 7/1/24 7:54 PM, Steven Price wrote:
->> From: Suzuki K Poulose <suzuki.poulose@arm.com>
->>
->> The RMM (Realm Management Monitor) provides functionality that can be
->> accessed by a realm guest through SMC (Realm Services Interface) calls.
->>
->> The SMC definitions are based on DEN0137[1] version A-eac5.
->>
->> [1] https://developer.arm.com/documentation/den0137/latest
->>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> Signed-off-by: Steven Price <steven.price@arm.com>
->> ---
->> Changes since v3:
->>   * Drop invoke_rsi_fn_smc_with_res() function and call arm_smccc_smc()
->>     directly instead.
->>   * Rename header guard in rsi_smc.h to be consistent.
->> Changes since v2:
->>   * Rename rsi_get_version() to rsi_request_version()
->>   * Fix size/alignment of struct realm_config
->> ---
->>   arch/arm64/include/asm/rsi_cmds.h |  38 ++++++++
->>   arch/arm64/include/asm/rsi_smc.h  | 142 ++++++++++++++++++++++++++++++
->>   2 files changed, 180 insertions(+)
->>   create mode 100644 arch/arm64/include/asm/rsi_cmds.h
->>   create mode 100644 arch/arm64/include/asm/rsi_smc.h
->>
+On 8/15/24 15:57, Jim Quinlan wrote:
+> Provide support for new chips with multiple inbound windows while
+> keeping the legacy support for the older chips.
 > 
-> Some nits and questions like below.
+> In existing chips there are three inbound windows with fixed purposes: the
+> first was for mapping SoC internal registers, the second was for memory,
+> and the third was for memory but with the endian swapped.  Typically, only
+> one window was used.
 > 
->> diff --git a/arch/arm64/include/asm/rsi_cmds.h
->> b/arch/arm64/include/asm/rsi_cmds.h
->> new file mode 100644
->> index 000000000000..89e907f3af0c
->> --- /dev/null
->> +++ b/arch/arm64/include/asm/rsi_cmds.h
->> @@ -0,0 +1,38 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
->> +/*
->> + * Copyright (C) 2023 ARM Ltd.
->> + */
->> +
->> +#ifndef __ASM_RSI_CMDS_H
->> +#define __ASM_RSI_CMDS_H
->> +
->> +#include <linux/arm-smccc.h>
->> +
->> +#include <asm/rsi_smc.h>
->> +
->> +static inline unsigned long rsi_request_version(unsigned long req,
->> +                        unsigned long *out_lower,
->> +                        unsigned long *out_higher)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_smc(SMC_RSI_ABI_VERSION, req, 0, 0, 0, 0, 0, 0, &res);
->> +
->> +    if (out_lower)
->> +        *out_lower = res.a1;
->> +    if (out_higher)
->> +        *out_higher = res.a2;
->> +
->> +    return res.a0;
->> +}
->> +
->> +static inline unsigned long rsi_get_realm_config(struct realm_config
->> *cfg)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_smc(SMC_RSI_REALM_CONFIG, virt_to_phys(cfg),
->> +              0, 0, 0, 0, 0, 0, &res);
->> +    return res.a0;
->> +}
->> +
->> +#endif
+> Complicating the inbound window usage was the fact that the PCIe HW would
+> do a baroque internal mapping of system memory, and concatenate the regions
+> of multiple memory controllers.
 > 
-> #endif /* __ASM_RSI_CMDS_H */
+> Newer chips such as the 7712 and Cable Modem SOCs take a step forward and
+> drop the internal mapping while providing for multiple inbound windows.
+> This works in concert with the dma-ranges property, where each provided
+> range becomes an inbound window.
 > 
->> diff --git a/arch/arm64/include/asm/rsi_smc.h
->> b/arch/arm64/include/asm/rsi_smc.h
->> new file mode 100644
->> index 000000000000..b3b3aff88f71
->> --- /dev/null
->> +++ b/arch/arm64/include/asm/rsi_smc.h
->> @@ -0,0 +1,142 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
->> +/*
->> + * Copyright (C) 2023 ARM Ltd.
->> + */
->> +
->> +#ifndef __ASM_RSI_SMC_H_
->> +#define __ASM_RSI_SMC_H_
->> +
->> +/*
->> + * This file describes the Realm Services Interface (RSI) Application
->> Binary
->> + * Interface (ABI) for SMC calls made from within the Realm to the
->> RMM and
->> + * serviced by the RMM.
->> + */
->> +
->> +#define SMC_RSI_CALL_BASE        0xC4000000
->> +
->> +/*
->> + * The major version number of the RSI implementation.  Increase this
->> whenever
->> + * the binary format or semantics of the SMC calls change.
->> + */
->> +#define RSI_ABI_VERSION_MAJOR        1
->> +
->> +/*
->> + * The minor version number of the RSI implementation.  Increase this
->> when
->> + * a bug is fixed, or a feature is added without breaking binary
->> compatibility.
->> + */
->> +#define RSI_ABI_VERSION_MINOR        0
->> +
->> +#define RSI_ABI_VERSION            ((RSI_ABI_VERSION_MAJOR << 16) | \
->> +                     RSI_ABI_VERSION_MINOR)
->> +
->> +#define RSI_ABI_VERSION_GET_MAJOR(_version) ((_version) >> 16)
->> +#define RSI_ABI_VERSION_GET_MINOR(_version) ((_version) & 0xFFFF)
->> +
->> +#define RSI_SUCCESS            0
->> +#define RSI_ERROR_INPUT            1
->> +#define RSI_ERROR_STATE            2
->> +#define RSI_INCOMPLETE            3
->> +
-> 
-> I think these return values are copied from
-> tf-rmm/lib/smc/include/smc-rsi.h, but
-> UL() prefix has been missed. It's still probably worthy to have it to
-> indicate the
-> width of the return values. Besides, it seems that RSI_ERROR_COUNT is
-> also missed
-> here.
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
 
-The source of all these defines is the RMM spec[1], tf-rmm obviously
-also has similar defines but I haven't been copying from there because
-this code is intended to work with any RMM that complies with the spec.
-
-In particular RSI_ERROR_COUNT isn't defined by the spec and we
-(currently at least) have no use for it in Linux.
-
-I'm not sure how much benefit the UL() prefix brings, but I've no
-objection so I'll add it.
-
-[1] https://developer.arm.com/documentation/den0137/latest
-
->> +#define SMC_RSI_FID(_x)            (SMC_RSI_CALL_BASE + (_x))
->> +
->> +#define SMC_RSI_ABI_VERSION            SMC_RSI_FID(0x190)
->> +
->> +/*
->> + * arg1 == Challenge value, bytes:  0 -  7
->> + * arg2 == Challenge value, bytes:  7 - 15
->> + * arg3 == Challenge value, bytes: 16 - 23
->> + * arg4 == Challenge value, bytes: 24 - 31
->> + * arg5 == Challenge value, bytes: 32 - 39
->> + * arg6 == Challenge value, bytes: 40 - 47
->> + * arg7 == Challenge value, bytes: 48 - 55
->> + * arg8 == Challenge value, bytes: 56 - 63
->> + * ret0 == Status / error
->> + * ret1 == Upper bound of token size in bytes
->> + */
->> +#define SMC_RSI_ATTESTATION_TOKEN_INIT        SMC_RSI_FID(0x194)
->> +
-> 
-> In tf-rmm/lib/smc/include/smc-rsi.h, it is SMC_RSI_ATTEST_TOKEN_INIT
-> instead
-> of SMC_RSI_ATTESTATION_TOKEN_INIT. The short description for all SMC
-
-Here tf-rmm is deviating from the spec, the specification gives the long
-form, so I'd prefer to stick to the spec unless we have a good reason
-for deviating.
-
-> calls have
-> been dropped and I think they're worthy to be kept. At least, it helps
-> readers
-> to understand what the SMC call does. For this particular SMC call, the
-> short
-> description is something like below:
-> 
-> /*
->  * Initialize the operation to retrieve an attestation token.
->  * :
->  */
-
-Fair point, I'll include the one-line descriptions from the spec
-(although in most cases that level of detail is obvious from the name).
-
->> +/*
->> + * arg1 == The IPA of token buffer
->> + * arg2 == Offset within the granule of the token buffer
->> + * arg3 == Size of the granule buffer
->> + * ret0 == Status / error
->> + * ret1 == Length of token bytes copied to the granule buffer
->> + */
->> +#define SMC_RSI_ATTESTATION_TOKEN_CONTINUE    SMC_RSI_FID(0x195)
->> +
-> 
-> SMC_RSI_ATTEST_TOKEN_CONTINUE as defined in tf-rmm.
-
-As above, the abbreviation isn't used in the spec.
-
->> +/*
->> + * arg1  == Index, which measurements slot to extend
->> + * arg2  == Size of realm measurement in bytes, max 64 bytes
->> + * arg3  == Measurement value, bytes:  0 -  7
->> + * arg4  == Measurement value, bytes:  7 - 15
->> + * arg5  == Measurement value, bytes: 16 - 23
->> + * arg6  == Measurement value, bytes: 24 - 31
->> + * arg7  == Measurement value, bytes: 32 - 39
->> + * arg8  == Measurement value, bytes: 40 - 47
->> + * arg9  == Measurement value, bytes: 48 - 55
->> + * arg10 == Measurement value, bytes: 56 - 63
->> + * ret0  == Status / error
->> + */
->> +#define SMC_RSI_MEASUREMENT_EXTEND        SMC_RSI_FID(0x193)
->> +
->> +/*
->> + * arg1 == Index, which measurements slot to read
->> + * ret0 == Status / error
->> + * ret1 == Measurement value, bytes:  0 -  7
->> + * ret2 == Measurement value, bytes:  7 - 15
->> + * ret3 == Measurement value, bytes: 16 - 23
->> + * ret4 == Measurement value, bytes: 24 - 31
->> + * ret5 == Measurement value, bytes: 32 - 39
->> + * ret6 == Measurement value, bytes: 40 - 47
->> + * ret7 == Measurement value, bytes: 48 - 55
->> + * ret8 == Measurement value, bytes: 56 - 63
->> + */
->> +#define SMC_RSI_MEASUREMENT_READ        SMC_RSI_FID(0x192)
->> +
-> 
-> The order of these SMC call definitions are sorted based on their
-> corresponding
-> function IDs. For example, SMC_RSI_MEASUREMENT_READ would be appearing
-> prior to
-> SMC_RSI_MEASUREMENT_EXTEND.
-
-Good spot - the spec annoyingly sorts alphabetically so I do struggle to
-keep everything in the right order. Will fix.
-
->> +#ifndef __ASSEMBLY__
->> +
->> +struct realm_config {
->> +    union {
->> +        struct {
->> +            unsigned long ipa_bits; /* Width of IPA in bits */
->> +            unsigned long hash_algo; /* Hash algorithm */
->> +        };
->> +        u8 pad[0x1000];
->> +    };
->> +} __aligned(0x1000);
->> +
-> 
-> This describes the argument to SMC call RSI_REALM_CONFIG and its address
-> needs to
-> be aligned to 0x1000. Otherwise, RSI_ERROR_INPUT is returned. This maybe
-> worthy
-> a comment to explain it why we need 0x1000 alignment here.
-
-Will add.
-
-> It seems the only 4KB page size (GRANULE_SIZE) is supported by tf-rmm at
-> present.
-> The fixed alignment (0x1000) becomes broken if tf-rmm is extended to
-> support
-> 64KB in future. Maybe tf-rmm was designed to work with the minimal page
-> size (4KB).
-
-Again this is a specification requirement. The size of a granule is
-always 4k - even if the host, guest or RMM choose to use a different
-page size - the specification requires that the alignment is 4k. If a
-larger page size is used in the RMM then it must jump through whatever
-hoops are required to support the config address being only 4k aligned.
-
-In practice there is a distinction between page size (which could vary
-between the different components in the system) and granule size which
-is the size which the physical memory can be switched between the
-different PA spaces. The RMM specification defines the granule size as
-4k (and doesn't provide any configurability of this), see section A2.2.
-The system is expected to have a "GPT MMU" which controls which physical
-address spaces each granule is visible in. There's quite a good
-document[2] on the Arm website explaining this in more detail.
-
-[2]
-https://developer.arm.com/documentation/den0126/0100/Granule-Protection-Checks
-
-Thanks,
-Steve
-
->> +#endif /* __ASSEMBLY__ */
->> +
->> +/*
->> + * arg1 == struct realm_config addr
->> + * ret0 == Status / error
->> + */
->> +#define SMC_RSI_REALM_CONFIG            SMC_RSI_FID(0x196)
->> +
->> +/*
->> + * arg1 == Base IPA address of target region
->> + * arg2 == Top of the region
->> + * arg3 == RIPAS value
->> + * arg4 == flags
->> + * ret0 == Status / error
->> + * ret1 == Top of modified IPA range
->> + */
->> +#define SMC_RSI_IPA_STATE_SET            SMC_RSI_FID(0x197)
->> +
->> +#define RSI_NO_CHANGE_DESTROYED            0
->> +#define RSI_CHANGE_DESTROYED            1
->> +
->> +/*
->> + * arg1 == IPA of target page
->> + * ret0 == Status / error
->> + * ret1 == RIPAS value
->> + */
->> +#define SMC_RSI_IPA_STATE_GET            SMC_RSI_FID(0x198)
->> +
->> +/*
->> + * arg1 == IPA of host call structure
->> + * ret0 == Status / error
->> + */
->> +#define SMC_RSI_HOST_CALL            SMC_RSI_FID(0x199)
->> +
->> +#endif /* __ASM_RSI_SMC_H_ */
-> 
-> Thanks,
-> Gavin
-> 
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
 
