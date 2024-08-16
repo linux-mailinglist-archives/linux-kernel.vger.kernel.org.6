@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-289755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 475AB954B58
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:46:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 464C5954B59
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:47:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E49151F23FCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:46:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7075E1C242A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E47A1BD003;
-	Fri, 16 Aug 2024 13:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614601BD015;
+	Fri, 16 Aug 2024 13:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rLVrfZ3R"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WHud0r+o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BADF11BCA0F;
-	Fri, 16 Aug 2024 13:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4CED1BD016;
+	Fri, 16 Aug 2024 13:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723815918; cv=none; b=SDwSWNCGGf9CcGF2sp92EEjM4R85vDemufqDkLNgdkcVlV0IQ0dVil/BAdDZ0Pt4osgSDDVQoOyOAoLlroQF7MButS62wumDiG2JLztDJGBOTz1DWn/wPdF2icsIl4TiUvXF3YJGUE2bBiiSXLo8o4ImFJpl4/oMg0xmdVGUy00=
+	t=1723815922; cv=none; b=uezrNj4ui/8TQS6e1E+yGYbMa2koTf2MMfWO7a6n0R9o8ESmR75lFx3WI5t6aoxuX058VvPPTKb5lizXQI8j3cXsffftkp1QyWIgz4VSkxLs6VebC9Az7oXSZ0aG+qVFHa8KZTkcNzoJpFmn41ZZ2USQzsgX1plG2/YJyDMEPlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723815918; c=relaxed/simple;
-	bh=P2CiZHuj4n0wzBrGJeq7xdgx8UuuSPVLHbtVZzRm6cM=;
+	s=arc-20240116; t=1723815922; c=relaxed/simple;
+	bh=Ts5tF9pWXXxmeyRHAlmbZkS/2Bgc9tMgGvi92mLtYz4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dXXeNoQV4Xwl2J3zjoRBOuOM2YEhZKbE3SHiyt9GdbZ+nkfL717cdv51h69A4Eo98Ofo8oAw1PKlgJ9YC8CXCaOimKBmrjxLkqhxVDjdxJ0yTKutJqkqNsQ0YAXDYVemNkuqk1SZVPvmK1nHEgbDN7lpxjB7bzSU0TnhGaeUmb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rLVrfZ3R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF185C4AF09;
-	Fri, 16 Aug 2024 13:45:13 +0000 (UTC)
+	 MIME-Version; b=HGjuPll2D0+oaosZ53HU+dKiVEdXI+ZE/ClnlcKM6mVhTYBixksTt1SdCKBfxW/T9phxYH6znMZ47rguL9f4+fGtWxh2ifJ9H7Fr9bYGrPl7dWN/pMyCjAFav9m7yJKdkLSF/HsaOxLvj4MqH4ekCn/x9Q1Ik4RMVUDy9aeqtm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WHud0r+o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADB2FC4AF0C;
+	Fri, 16 Aug 2024 13:45:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723815918;
-	bh=P2CiZHuj4n0wzBrGJeq7xdgx8UuuSPVLHbtVZzRm6cM=;
+	s=k20201202; t=1723815922;
+	bh=Ts5tF9pWXXxmeyRHAlmbZkS/2Bgc9tMgGvi92mLtYz4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rLVrfZ3RCQJY48FPpnHaSf248JkZQZNJFlsMdKa69x6kAZjmJs6VwIQYzGK5eewXG
-	 seav76X05XpPe01S3Wj43mBfTVsm18RCtDA3T0YiwOTkxrHwgo7DkWUzhHdCsmKIsN
-	 pH1+bhc93xNgWdGqWR8LdYoSnjB4gIvAOD2cHS0tEL3anMdTJdXYSGYxhwTS85SkgC
-	 fK1ya7EJoKmX5AnmJXNB4oM5yVZh2vRj33RKu4kMG/mSLgODNNhYM0Le9nYnJrY2Es
-	 fD2igF4fIySpwIKyX1SQnDDyHeG/iCtd4pwNFJ/5zkNIjGTjeVemkRGomHZyhD3APU
-	 Hs2MbuZLBCQIg==
+	b=WHud0r+okm3N6FjkCgg/XwzOemV7DxbyOQXvcaQ86HbygRd13vVeAVkzMaUE26uq2
+	 onckVAxD3tGdSKBh89EFmLOuzIapFX+kXZhuTC1EPsuDn8irjLWazBrunkjNpNdcQk
+	 zq7XHRzz/9rNtIzl4AbT6xhsAiZGzVjHhxA54MSJ6vvD2wBM/ojNNicBh52s5W786a
+	 1mORVj2CQ/yC7XGYeAVUWrv9HyF/AlPnNmRvtlMWsSt7vTqCnEobK+TzPGV0TSR6kT
+	 l/lhsem30/0kIKqg4m8cTdikbKrPg68oQxRnPuGqWzqR7xMUtkyj3RVw8C5fn7U/T9
+	 0k3ItHB92eKHA==
 From: Alexey Gladkov <legion@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	linux-coco@lists.linux.dev
@@ -57,15 +57,12 @@ Cc: "Alexey Gladkov (Intel)" <legion@kernel.org>,
 	Kai Huang <kai.huang@intel.com>,
 	Baoquan He <bhe@redhat.com>,
 	Oleg Nesterov <oleg@redhat.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Kevin Loughlin <kevinloughlin@google.com>,
-	Nikunj A Dadhania <nikunj@amd.com>,
 	cho@microsoft.com,
 	decui@microsoft.com,
 	John.Starks@microsoft.com
-Subject: [PATCH v3 06/10] x86/sev: Avoid crossing the page boundary
-Date: Fri, 16 Aug 2024 15:43:56 +0200
-Message-ID: <56607a180717a4196738224c995fa2c16af44da2.1723807851.git.legion@kernel.org>
+Subject: [PATCH v3 07/10] x86/umip: Avoid crossing the page boundary
+Date: Fri, 16 Aug 2024 15:43:57 +0200
+Message-ID: <5bb84bce0c798a76a318a38e1bb827af10ecaefd.1723807851.git.legion@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <cover.1723807851.git.legion@kernel.org>
 References: <cover.1722862355.git.legion@kernel.org> <cover.1723807851.git.legion@kernel.org>
@@ -84,45 +81,34 @@ next page belongs to another VMA.
 
 Signed-off-by: Alexey Gladkov (Intel) <legion@kernel.org>
 ---
- arch/x86/coco/sev/core.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ arch/x86/kernel/umip.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-index 082d61d85dfc..b0e8e4264464 100644
---- a/arch/x86/coco/sev/core.c
-+++ b/arch/x86/coco/sev/core.c
-@@ -311,17 +311,16 @@ static int vc_fetch_insn_kernel(struct es_em_ctxt *ctxt,
- 
- static enum es_result __vc_decode_user_insn(struct es_em_ctxt *ctxt)
- {
--	char buffer[MAX_INSN_SIZE];
--	int insn_bytes;
-+	int ret;
- 
--	insn_bytes = insn_fetch_from_user_inatomic(ctxt->regs, buffer);
--	if (insn_bytes == 0) {
-+	ret = insn_fetch_decode_from_user_inatomic(&ctxt->insn, ctxt->regs);
-+	if (ret == -EFAULT) {
- 		/* Nothing could be copied */
- 		ctxt->fi.vector     = X86_TRAP_PF;
- 		ctxt->fi.error_code = X86_PF_INSTR | X86_PF_USER;
- 		ctxt->fi.cr2        = ctxt->regs->ip;
- 		return ES_EXCEPTION;
--	} else if (insn_bytes == -EINVAL) {
-+	} else if (ret == -EINVAL) {
- 		/* Effective RIP could not be calculated */
- 		ctxt->fi.vector     = X86_TRAP_GP;
- 		ctxt->fi.error_code = 0;
-@@ -329,9 +328,6 @@ static enum es_result __vc_decode_user_insn(struct es_em_ctxt *ctxt)
- 		return ES_EXCEPTION;
- 	}
- 
--	if (!insn_decode_from_regs(&ctxt->insn, ctxt->regs, buffer, insn_bytes))
--		return ES_DECODE_FAILED;
+diff --git a/arch/x86/kernel/umip.c b/arch/x86/kernel/umip.c
+index 5a4b21389b1d..e85c3cafc258 100644
+--- a/arch/x86/kernel/umip.c
++++ b/arch/x86/kernel/umip.c
+@@ -338,7 +338,6 @@ bool fixup_umip_exception(struct pt_regs *regs)
+ 	int nr_copied, reg_offset, dummy_data_size, umip_inst;
+ 	/* 10 bytes is the maximum size of the result of UMIP instructions */
+ 	unsigned char dummy_data[10] = { 0 };
+-	unsigned char buf[MAX_INSN_SIZE];
+ 	unsigned long *reg_addr;
+ 	void __user *uaddr;
+ 	struct insn insn;
+@@ -350,11 +349,7 @@ bool fixup_umip_exception(struct pt_regs *regs)
+ 	 * Give up on emulation if fetching the instruction failed. Should a
+ 	 * page fault or a #GP be issued?
+ 	 */
+-	nr_copied = insn_fetch_from_user(regs, buf);
+-	if (nr_copied <= 0)
+-		return false;
 -
- 	if (ctxt->insn.immediate.got)
- 		return ES_OK;
- 	else
+-	if (!insn_decode_from_regs(&insn, regs, buf, nr_copied))
++	if (insn_fetch_decode_from_user(&insn, regs))
+ 		return false;
+ 
+ 	umip_inst = identify_insn(&insn);
 -- 
 2.45.2
 
