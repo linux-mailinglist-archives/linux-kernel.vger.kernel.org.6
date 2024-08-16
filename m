@@ -1,147 +1,85 @@
-Return-Path: <linux-kernel+bounces-289055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DA7F9541A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:20:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A614C9541A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:23:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C7271C213E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:20:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A5851F217EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A46182490;
-	Fri, 16 Aug 2024 06:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XGXHU2gE"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC5E80045;
+	Fri, 16 Aug 2024 06:23:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF74034CD8;
-	Fri, 16 Aug 2024 06:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52A210E6
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 06:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723789241; cv=none; b=UTEnPsoxTJVXY85MF1ZdW+IGPWB2y0ByNE4yFwX/FT0rmji9EGseLMUz026Ifuzv7mX2TgqhWaOgz/UXU6mdFtD/gxIDPKc6WEMZRpmqbdBs+1eMILgTHlPeH76PMOLHZ+2lsoqLdi02drVGtko9NvBrYxlp9p6mKB6KZcGNhsQ=
+	t=1723789386; cv=none; b=uYwUkuIrvgCnkwzV2xC1CFwMx5XE8OslV+1Ia1HNMD+SlsUqkcYizyDOp5lbuzGkHfp5ZB6Wjc04+HDpf2rXQ6llzD0wk1TlLE0flq+lVRhJ9Ia9fJ8mSxwfksrTx1CYGk7Ro0iJUmNsySlAoO+TMOLOBxLv0BGU+cwWJyXY368=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723789241; c=relaxed/simple;
-	bh=kVuTMKHMeIFr5A7ZvDLmKBOh3Us/hBW2O7R11SpOyVw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Pa9hDe9270sAR/tFw/sdVNjOXIR3fZUZYQTstw+d+xOGO9aD6E63iOJnMIWGvqZ8NtN8DaILOnB5x0tMiHg2IUyWZKGOo4KoMSC4fyZsid5rEOb9/baZVMlvtA//mO+sFWSZt2leaDDXFPU9cVIDj+T92EFE1dLw2gaZ6Vz/vNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XGXHU2gE; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47FKwO39026844;
-	Fri, 16 Aug 2024 06:20:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=GU4RTXFaRm7bLUEgi7WuOl
-	0ugb1/6wDQmyPMD5AVWnA=; b=XGXHU2gEG/+ko4w0PJoVeoQf4FAUSWV5h5Kfkb
-	33GZxLdB9eXUg1tHgvrNL3W1L4AKWKOD8gpVNfGPs7URPw30C+Q1zjmd1z31NyTY
-	qlBCx4WQAh9LN9q3iCRX34s3FJqxSf6sNlGoUV72OAwuIIhGoFzhgBxe/HELINSr
-	9z+41PlVxKVft1b92HwAqg8LtqSSzT0h2FkeiqDR89v54LSojRhIBM0vAFoxpTOE
-	j8/8shcuzUaTuKDG3ExmyjcU/t0THBwustio1Yp++rhD+kokizkNGcmOoLXjRupQ
-	CdAldVMblA2/uz3TnLxuF36DlzfyOajlrEmQsIZf4ijE/qsw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 411s5pgvjf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Aug 2024 06:20:36 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47G6KZad024646
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Aug 2024 06:20:35 GMT
-Received: from hu-prashk-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 15 Aug 2024 23:20:32 -0700
-From: Prashanth K <quic_prashk@quicinc.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thinh Nguyen
-	<Thinh.Nguyen@synopsys.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        Prashanth K
-	<quic_prashk@quicinc.com>, <stable@vger.kernel.org>
-Subject: [v2] usb: dwc3: Avoid waking up gadget during startxfer
-Date: Fri, 16 Aug 2024 11:50:17 +0530
-Message-ID: <20240816062017.970364-1-quic_prashk@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1723789386; c=relaxed/simple;
+	bh=VAZr77K3DpeVmF5rZsbz+0vXvS3OrvUSACABlM42ycc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=VO3dIVHZ5K5Zx7z7WDkZBXg2Cw9yTx2Nx81BR80RCoOXeDJdKWg/YN7SHpUmyT7rNDojmlRkYL13oeThSs3dwPeSPnvGBhz+fNLUjh5LZnq1zWdzokWwkxvjSqpllmAk9LL0yHBnjCeFA4YNS9mrPuzp4iUuTTV5MAKgAPR8OWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39d244820edso11091905ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 23:23:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723789383; x=1724394183;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b9obx0888loJh6S82jNJRsT62Bnobgbfq82pcsMeyn0=;
+        b=Wus1RFeFNXWKF26IqP2tQdv+M1+cBzfJ8ns1RUR0OzgG6pkkPVTpwahQegoiSpHyVq
+         bVHOFTug+Ma3030aonzrI0hdAvdV+PK9x3j+Vi3XcNIyk7UJAKr18mK93S8FLYuo60k4
+         f3PThJi1RoNhjrORYLNLdNWVbxo/rMtdcepcRqegQ8BuaKqdjguPhgMIbH19QJIMBrVg
+         zMBeIFkZVq6UeH3+fvWa+bmdaQqRpDWYQ2cgJEeKeoGlUE/psq/3hTFIS5cGJLGk+KBh
+         1oCIylZxaGLTDg8ze7JYeXvXKBlQJSCETNbCpJo684JsXovS/5tA8ZYNhxC68bxJlgqH
+         YoPA==
+X-Gm-Message-State: AOJu0YzByUSGP9AABpgi7zG81EAFEXxNcAwdRPBzDdy4GccI5/q+TaYQ
+	hzKHt4UZPOzxVir7QbR8yA6uNDHGEbj+qcLzoJLTgOcTNcRQwgBxEeKqdjx1q27Hm6Ueug6jb8k
+	nZLCBzwuy9W1iXlTAgu9QhFd9r14fLEkgaYCbCXAVasrOxKDmW1hUmHM=
+X-Google-Smtp-Source: AGHT+IFbTKE3GEBEE5Gc/ab+dJxwlILRNSXwgQxSghAEARQgG9kmscNGLS0W4WjhYouFDTpW3Ntt9k2Gj2I8sXulow3TtHmZVz75
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 6zPB1cE4UgM3yPjRWYQk81sQzaXci-sR
-X-Proofpoint-ORIG-GUID: 6zPB1cE4UgM3yPjRWYQk81sQzaXci-sR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-15_18,2024-08-15_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
- mlxlogscore=299 suspectscore=0 lowpriorityscore=0 clxscore=1015
- bulkscore=0 phishscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408160044
+X-Received: by 2002:a05:6e02:b2c:b0:39d:1144:e784 with SMTP id
+ e9e14a558f8ab-39d26d6ee1emr1175535ab.4.1723789382768; Thu, 15 Aug 2024
+ 23:23:02 -0700 (PDT)
+Date: Thu, 15 Aug 2024 23:23:02 -0700
+In-Reply-To: <20240816061835.50652-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d3eb64061fc6fd21@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_iget
+From: syzbot <syzbot+5bdd4953bc58c8fbd6eb@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-When operating in High-Speed, it is observed that DSTS[USBLNKST] doesn't
-update link state immediately after receiving the wakeup interrupt. Since
-wakeup event handler calls the resume callbacks, there is a chance that
-function drivers can perform an ep queue, which in turn tries to perform
-remote wakeup from send_gadget_ep_cmd(STARTXFER). This happens because
-DSTS[[21:18] wasn't updated to U0 yet, it's observed that the latency of
-DSTS can be in order of milli-seconds. Hence avoid calling gadget_wakeup
-during startxfer to prevent unnecessarily issuing remote wakeup to host.
+Hello,
 
-Fixes: c36d8e947a56 ("usb: dwc3: gadget: put link to U0 before Start Transfer")
-Cc: <stable@vger.kernel.org>
-Suggested-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Signed-off-by: Prashanth K <quic_prashk@quicinc.com>
----
-v2:  Refactored the patch as suggested in v1 discussion.
+syzbot tried to test the proposed patch but the build/boot failed:
 
- drivers/usb/dwc3/gadget.c | 24 ------------------------
- 1 file changed, 24 deletions(-)
+./include/linux/buffer_head.h:414:10: error: no member named 'i_state' in 'struct buffer_head'; did you mean 'b_state'?In file included from 
+./include/linux/buffer_head.h:414:10: error: no member named 'i_state' in 'struct buffer_head'; did you mean 'b_state'?
 
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 89fc690fdf34..3f634209c5b8 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -327,30 +327,6 @@ int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned int cmd,
- 			dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(0), reg);
- 	}
- 
--	if (DWC3_DEPCMD_CMD(cmd) == DWC3_DEPCMD_STARTTRANSFER) {
--		int link_state;
--
--		/*
--		 * Initiate remote wakeup if the link state is in U3 when
--		 * operating in SS/SSP or L1/L2 when operating in HS/FS. If the
--		 * link state is in U1/U2, no remote wakeup is needed. The Start
--		 * Transfer command will initiate the link recovery.
--		 */
--		link_state = dwc3_gadget_get_link_state(dwc);
--		switch (link_state) {
--		case DWC3_LINK_STATE_U2:
--			if (dwc->gadget->speed >= USB_SPEED_SUPER)
--				break;
--
--			fallthrough;
--		case DWC3_LINK_STATE_U3:
--			ret = __dwc3_gadget_wakeup(dwc, false);
--			dev_WARN_ONCE(dwc->dev, ret, "wakeup failed --> %d\n",
--					ret);
--			break;
--		}
--	}
--
- 	/*
- 	 * For some commands such as Update Transfer command, DEPCMDPARn
- 	 * registers are reserved. Since the driver often sends Update Transfer
--- 
-2.25.1
+
+Tested on:
+
+commit:         d07b4328 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
+dashboard link: https://syzkaller.appspot.com/bug?extid=5bdd4953bc58c8fbd6eb
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12f5e18d980000
 
 
