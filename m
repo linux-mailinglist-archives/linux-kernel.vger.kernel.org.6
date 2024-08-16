@@ -1,166 +1,310 @@
-Return-Path: <linux-kernel+bounces-290262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AEEB95517A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:28:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29E7F955173
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 304821C23139
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:28:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D44B92898BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659FB1C460F;
-	Fri, 16 Aug 2024 19:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089F81C3F3E;
+	Fri, 16 Aug 2024 19:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vtimothy.com header.i=@vtimothy.com header.b="jb917UCN"
-Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V2JQXclu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C851C3F3C
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 19:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.77.79.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A58378C7D;
+	Fri, 16 Aug 2024 19:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723836494; cv=none; b=UC7p/KuZMthDVAE+oUARIAusdsJqy8aRs0bjhiHAwjUOFMRK8lm6ZnEVePl4CPwkoX6Hpr2F+WHq6OGonEVI0Fl/HjKF+nrRGcDjwx9fOqF21Nbj0box4nqVo0Pis+RI2ijB0ZxXVYvwBLc0Le3UvSMfiSV90ozpLgmKZ5j6PHY=
+	t=1723836436; cv=none; b=qiZBqEwMJSmTQKKjCHE3RimGHqaIuEHYL0MF3aaX9ABO/kD7E7UVobIpT3Y3O7wMP/AGj5f+w2ShvXDrlVqGv5Nwe7iIL+oQ0QEpF+ntwHfpB/Qsi7LyKHa6oa2V0Fq15f9pjH5+qs9IiqYzk5rGGTqkHS8MX9bYTL7gx6qfYNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723836494; c=relaxed/simple;
-	bh=O6mzyL7xKu1MY9cqmZeVStxQtxMoAMbvocNe+lKzux0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WcMEe3gI2mYeFCnv5s06qMf9M0gOJsLYUZ9NB7+Lh3IZTlkSuDJwsu6W2EbU/vG9HetsGYPT95EqI/jO4FmsBrRm8toY5qcsRqJFi8pPV+uU9+CItAr/nrHeAF1i4+IC3wchEQ33caSoQqdzh7FNuZS88cI/sDUaFKXLBz4Q8+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=vtimothy.com; spf=pass smtp.mailfrom=vtimothy.com; dkim=pass (2048-bit key) header.d=vtimothy.com header.i=@vtimothy.com header.b=jb917UCN; arc=none smtp.client-ip=51.77.79.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=vtimothy.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vtimothy.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vtimothy.com;
-	s=protonmail; t=1723836476; x=1724095676;
-	bh=tTkOD+tbanlBDXETUZCRAs2rYgp1pBquWtd/axPjhUo=;
-	h=From:To:Cc:Subject:Date:Message-ID:From:To:Cc:Date:Subject:
-	 Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=jb917UCNFzje5oThUt77wlPGq9iHVDNzeHKjINZy31HhBrHVEq8Sh2TCdMJ2EmPro
-	 77u+xVjkKKQjUkE2jXqVSk7RqNXKiCCq/hsjBdlaycHzPnlCtEP9ReWD2wV171gaZA
-	 eURz45Jt8HsfiPwdxHgS3elXlVGgWN8yHF5TqtcurvdDAjq5gZjHoQYEIhkXDSRPzl
-	 Dg6U5j3uFo+eNJ3/c4rc/JM1PrYiXuqTKNwa5pVsQFFmC/DXVweCrjSyjHOWNoD9sg
-	 mF1UXSeY060RHXETS/W0AOZnQ9kxggWXPGH3SbxVE7MFK/hNa2Z3yZP7j6SAn9eS1k
-	 RjnCbuMxbQLpw==
-X-Pm-Submission-Id: 4WlsTH3R6Lz4wwdW
-From: Victor Timofei <victor@vtimothy.com>
-To: linkinjeon@kernel.org,
-	sfrench@samba.org,
-	corbet@lwn.net
-Cc: linux-cifs@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	skhan@linuxfoundation.org,
-	Victor Timofei <victor@vtimothy.com>
-Subject: [PATCH] ksmdb: fix spelling mistakes in documentation
-Date: Fri, 16 Aug 2024 22:24:52 +0300
-Message-ID: <20240816192452.38211-1-victor@vtimothy.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1723836436; c=relaxed/simple;
+	bh=oBM7Ofa7OHDkP8yklvZowNZEXSSnN7/4X344QkoiaWA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=epUxaNXtAE5tUZAik/1nsXbXlcJBncWp7b0jqphxCyjlsErcTh7ALuhH6STdTEswg9pzGOchtboDiRIgO9yc6BS5/Dbq2jhB0Z8kMqlfH4E9BOC1T996CDKKc/ljQOmfTObJRzFAVN1j817zF9bBHA1MbS7wHtT4Qmn32y93UAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V2JQXclu; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723836434; x=1755372434;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=oBM7Ofa7OHDkP8yklvZowNZEXSSnN7/4X344QkoiaWA=;
+  b=V2JQXclurKBBdCU2eBS+NKMECPHDLIPzFKcvFnPCK6WCBrdclyNg5WmP
+   RRhZwBSWRRXVKo8cztIXonF/7C2qif34cn1GJVUqA7Y9Akw9jUSjyC3B9
+   ppJtFtDkvtLz20Itid9Z9FRrmSxANhIpG9q6/kLj9AlkRGfEnJD9/utz2
+   ttFMNP9cMJD9Wm8prfy8aUrHkRx6EArCFsn4rrgGeRIM4NFMpUS3Qeilc
+   cZT0rDeM+ElAnc5vLjtDuZs/9A8J2wyVetoNsPVsKjCHfp8xjzRiLvVxA
+   olFCRLqTT8YJ8zyzm9soR2hd5EvfrqxlQiBFwi+k/YoDjDergJd0nkN7I
+   Q==;
+X-CSE-ConnectionGUID: 5CH1hI1CTBS8yTi9FRvwyw==
+X-CSE-MsgGUID: ttwN4inKTpCCEjy6OlRu8Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="22284390"
+X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
+   d="scan'208";a="22284390"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 12:27:13 -0700
+X-CSE-ConnectionGUID: 1cG+eiw+QpGWwWA7UCC5GA==
+X-CSE-MsgGUID: 0YHeI16JQS2E05y6KtEPIw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
+   d="scan'208";a="90495462"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 12:27:13 -0700
+Received: from [10.212.50.43] (kliang2-mobl1.ccr.corp.intel.com [10.212.50.43])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 4434120CFED0;
+	Fri, 16 Aug 2024 12:27:11 -0700 (PDT)
+Message-ID: <705dc2fe-7ab3-458a-9b5a-7ea0b30756b8@linux.intel.com>
+Date: Fri, 16 Aug 2024 15:27:10 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf/x86/intel: Restrict period on Haswell
+To: Thomas Gleixner <tglx@linutronix.de>, Li Huafei <lihuafei1@huawei.com>,
+ peterz@infradead.org, mingo@redhat.com
+Cc: acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ adrian.hunter@intel.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ x86@kernel.org, hpa@zytor.com, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+ Vince Weaver <vincent.weaver@maine.edu>
+References: <87sev7nom4.ffs@tglx>
+ <a42a3e35-2166-4539-930b-21ea0921e8d8@linux.intel.com> <87frr7nd28.ffs@tglx>
+ <70657c5e-f771-456b-a5ac-3df590249288@linux.intel.com> <875xs2oh69.ffs@tglx>
+ <166fdbdf-b24d-4267-b42d-f11348b87b1b@linux.intel.com> <87wmkhlk1l.ffs@tglx>
+ <059d6217-10a5-4d2a-b639-90806c04a13b@linux.intel.com> <87plq9l5d2.ffs@tglx>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <87plq9l5d2.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-There are a couple of spelling mistakes in the documentation. This patch
-fixes them.
+Hi Thomas,
 
-Signed-off-by: Victor Timofei <victor@vtimothy.com>
----
- Documentation/filesystems/smb/ksmbd.rst | 26 ++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+On 2024-08-15 7:43 p.m., Thomas Gleixner wrote:
+> On Thu, Aug 15 2024 at 16:15, Kan Liang wrote:
+>> On 2024-08-15 2:26 p.m., Thomas Gleixner wrote:
+>>>> Implication: When this erratum occurs, the fixed-function performance
+>>>> counter IA32_FIXED_CTR0 may over count by up to 32.
+>>>
+>>> Sure. That's only explaining half of the problem.
+>>>
+>>> As I demonstrated in the non-contended case even with a count of 2 (I
+>>> tried 1 too) the status bit is never set on the second check.
+>>>
+>>
+>> Do you mean the below example? The status bit (32) of the fixed counter
+>> 0 is always set.
+> 
+> When HT is off or the threads are not running the handler concurrently
+> then there is zero looping. Once they start do fiddle concurrently the
+> looping starts and potentially never ends.
+> 
+>> 65.147782: x86_perf_event_set_period: idx:    32 period:         1 left:  2
+>> 65.147783: intel_pmu_handle_irq:      loops: 001 status: 100000000
+>>
+>> 65.147784: x86_perf_event_set_period: idx:    32 period:         1 left:  2
+>> 65.147784: intel_pmu_handle_irq:      loops: 002 status: 100000000
+> 
+> So in the non-concurrent (which includes !HT) case the status check
+> after handling the event is always 0. This never gets into a loop, not
+> even once.
+> 
+>>>> It should explains that the issue is gone with the magic number 32 or
+>>>> disabling the Hyper-Threading.
+>>>
+>>> It explains only half of it. If you use 32, then the counter is set to
+>>> -32 so the overcount of 32 will still bring it to 0, which should set
+>>> the status bit, no?
+>>
+>> I think it's up to 32, not always 32.
+>> I don't have more details regarding the issue. The architect of HSW has
+>> left. I'm asking around internally to find the original bug report of
+>> the erratum. Hope there are more details in the report.
+> 
+> See below.
+> 
+>>>> I also found a related discussion about 9 years ago.
+>>>> https://lore.kernel.org/lkml/alpine.DEB.2.11.1505181343090.32481@vincent-weaver-1.umelst.maine.edu/
+>>>> Vince tried the workaround but it seems not work.
+>>>
+>>> Let me play with that. :)
+>>
+>> Appreciate it.
+> 
+> I got it actually working. The inital sequence which "worked" is:
+> 
+>     1) Clear bit 32  in IA32_PERF_GLOBAL_CTRL
+>     2) Clear bit 0/1 in IA32_PERF_FIXED_CTR_CTRL
+>     3) Zero the IA32_FIXED_CTR0 MSR
+>     4) Set IA32_FIXED_CTR0 to (-left) & mask;
+>     5) Set bit 0/1 in IA32_PERF_FIXED_CTR_CTRL
+>     6) Set bit 32  in IA32_PERF_GLOBAL_CTRL
+> 
+> If I omit #3 it does not work. If I flip #5 and #6 it does not work.
+> 
+> So the initial "working" variant I had was hacking this sequence into
+> x86_perf_event_set_period() (omitting the fixed counter 0 conditionals
+> for readability):
+> 
+> 	rdmsrl(MSR_CORE_PERF_GLOBAL_CTRL, cglbl);
+> 	wrmsrl(MSR_CORE_PERF_GLOBAL_CTRL, cglbl & ~(1ULL << 32));
+> 
+> 	rdmsrl(MSR_ARCH_PERFMON_FIXED_CTR_CTRL, cfixd);
+> 	wrmsrl(MSR_ARCH_PERFMON_FIXED_CTR_CTRL, cfixd & ~3ULL);
+> 
+> 	wrmsrl(hwc->event_base, 0);
+> 	wrmsrl(hwc->event_base, (u64)(-left) & x86_pmu.cntval_mask);
+> 
+> 	wrmsrl(MSR_ARCH_PERFMON_FIXED_CTR_CTRL, cfixd);
+> 	wrmsrl(MSR_CORE_PERF_GLOBAL_CTRL, cglbl);
+> 
+> Now I thought, that needs to be in intel/core.c and implemented a proper
+> quirk. And of course being smart I decided it's a brilliant idea to use
+> the cached values instead of the rdmsrl()s.
+> 
+> 	cglbl = hybrid(cpuc->pmu, intel_ctrl) & ~cpuc->intel_ctrl_guest_mask;
+> 	wrmsrl(MSR_CORE_PERF_GLOBAL_CTRL, cglbl & ~(1ULL << 32));
+> 
+>         cfixd = cpuc->fixed_ctrl_val;
+> 	wrmsrl(MSR_ARCH_PERFMON_FIXED_CTR_CTRL, cfixd & ~3ULL);
+> 
+> 	wrmsrl(hwc->event_base, 0);
+> 	wrmsrl(hwc->event_base, (u64)(-left) & x86_pmu.cntval_mask);
+> 
+> 	wrmsrl(MSR_ARCH_PERFMON_FIXED_CTR_CTRL, cfixd);
+> 	wrmsrl(MSR_CORE_PERF_GLOBAL_CTRL, cglbl);
+> 
+> Surprise, surprise, that does not work. So I went back and wanted to
+> know which rdmslr() is curing it:
+> 
+> 	rdmsrl(MSR_CORE_PERF_GLOBAL_CTRL, cglbl);
+> 	wrmsrl(MSR_CORE_PERF_GLOBAL_CTRL, cglbl & ~(1ULL << 32));
+> 
+>         cfixd = cpuc->fixed_ctrl_val;
+> 	wrmsrl(MSR_ARCH_PERFMON_FIXED_CTR_CTRL, cfixd & ~3ULL);
+> 
+> 	wrmsrl(hwc->event_base, 0);
+> 	wrmsrl(hwc->event_base, (u64)(-left) & x86_pmu.cntval_mask);
+> 
+> 	wrmsrl(MSR_ARCH_PERFMON_FIXED_CTR_CTRL, cfixd);
+> 	wrmsrl(MSR_CORE_PERF_GLOBAL_CTRL, cglbl);
+> 
+> This worked. Using the rdmsrl() only for MSR_ARCH_PERFMON_FIXED_CTR_CTRL
+> did not.
+> 
+> Now I got bold and boiled it down to:
+> 
+> 	rdmsrl(MSR_CORE_PERF_GLOBAL_CTRL, cglbl);
+> 
+> 	wrmsrl(hwc->event_base, 0);
+> 	wrmsrl(hwc->event_base, (u64)(-left) & x86_pmu.cntval_mask);
+> 
+> and the whole thing still worked. *BLINK*
+> 
+> Exactly zero loop entries in the trace when running 100 instances of
+> that cve test case, which otherwise spams the trace with entries and
+> ends up in the loop > 100 path within a split second.
+> 
+> Removing the zeroing of the counter makes it come back, but reducing the
+> whole nonsense to:
+> 
+> 	wrmsrl(hwc->event_base, 0);
+> 	wrmsrl(hwc->event_base, (u64)(-left) & x86_pmu.cntval_mask);
+> 
 
-diff --git a/Documentation/filesystems/smb/ksmbd.rst b/Documentation/filesystems/smb/ksmbd.rst
-index 6b30e43a0d11..8f00b2f3da31 100644
---- a/Documentation/filesystems/smb/ksmbd.rst
-+++ b/Documentation/filesystems/smb/ksmbd.rst
-@@ -13,7 +13,7 @@ KSMBD architecture
- The subset of performance related operations belong in kernelspace and
- the other subset which belong to operations which are not really related with
- performance in userspace. So, DCE/RPC management that has historically resulted
--into number of buffer overflow issues and dangerous security bugs and user
-+into a number of buffer overflow issues and dangerous security bugs and user
- account management are implemented in user space as ksmbd.mountd.
- File operations that are related with performance (open/read/write/close etc.)
- in kernel space (ksmbd). This also allows for easier integration with VFS
-@@ -24,8 +24,8 @@ ksmbd (kernel daemon)
- 
- When the server daemon is started, It starts up a forker thread
- (ksmbd/interface name) at initialization time and open a dedicated port 445
--for listening to SMB requests. Whenever new clients make request, Forker
--thread will accept the client connection and fork a new thread for dedicated
-+for listening to SMB requests. Whenever new clients make a request, the Forker
-+thread will accept the client connection and fork a new thread for a dedicated
- communication channel between the client and the server. It allows for parallel
- processing of SMB requests(commands) from clients as well as allowing for new
- clients to make new connections. Each instance is named ksmbd/1~n(port number)
-@@ -34,12 +34,12 @@ thread can decide to pass through the commands to the user space (ksmbd.mountd),
- currently DCE/RPC commands are identified to be handled through the user space.
- To further utilize the linux kernel, it has been chosen to process the commands
- as workitems and to be executed in the handlers of the ksmbd-io kworker threads.
--It allows for multiplexing of the handlers as the kernel take care of initiating
-+It allows for multiplexing of the handlers as the kernel takes care of initiating
- extra worker threads if the load is increased and vice versa, if the load is
--decreased it destroys the extra worker threads. So, after connection is
--established with client. Dedicated ksmbd/1..n(port number) takes complete
-+decreased it destroys the extra worker threads. So, after the connection is
-+established with the client. Dedicated ksmbd/1..n(port number) takes complete
- ownership of receiving/parsing of SMB commands. Each received command is worked
--in parallel i.e., There can be multiple clients commands which are worked in
-+in parallel i.e., There can be multiple client commands which are worked in
- parallel. After receiving each command a separated kernel workitem is prepared
- for each command which is further queued to be handled by ksmbd-io kworkers.
- So, each SMB workitem is queued to the kworkers. This allows the benefit of load
-@@ -49,9 +49,9 @@ performance by handling client commands in parallel.
- ksmbd.mountd (user space daemon)
- --------------------------------
- 
--ksmbd.mountd is userspace process to, transfer user account and password that
-+ksmbd.mountd is a userspace process to, transfer the user account and password that
- are registered using ksmbd.adduser (part of utils for user space). Further it
--allows sharing information parameters that parsed from smb.conf to ksmbd in
-+allows sharing information parameters that are parsed from smb.conf to ksmbd in
- kernel. For the execution part it has a daemon which is continuously running
- and connected to the kernel interface using netlink socket, it waits for the
- requests (dcerpc and share/user info). It handles RPC calls (at a minimum few
-@@ -124,7 +124,7 @@ How to run
- 1. Download ksmbd-tools(https://github.com/cifsd-team/ksmbd-tools/releases) and
-    compile them.
- 
--   - Refer README(https://github.com/cifsd-team/ksmbd-tools/blob/master/README.md)
-+   - Refer to README(https://github.com/cifsd-team/ksmbd-tools/blob/master/README.md)
-      to know how to use ksmbd.mountd/adduser/addshare/control utils
- 
-      $ ./autogen.sh
-@@ -133,7 +133,7 @@ How to run
- 
- 2. Create /usr/local/etc/ksmbd/ksmbd.conf file, add SMB share in ksmbd.conf file.
- 
--   - Refer ksmbd.conf.example in ksmbd-utils, See ksmbd.conf manpage
-+   - Refer to ksmbd.conf.example in ksmbd-utils, See ksmbd.conf manpage
-      for details to configure shares.
- 
-         $ man ksmbd.conf
-@@ -145,7 +145,7 @@ How to run
-      $ man ksmbd.adduser
-      $ sudo ksmbd.adduser -a <Enter USERNAME for SMB share access>
- 
--4. Insert ksmbd.ko module after build your kernel. No need to load module
-+4. Insert the ksmbd.ko module after you build your kernel. No need to load the module
-    if ksmbd is built into the kernel.
- 
-    - Set ksmbd in menuconfig(e.g. $ make menuconfig)
-@@ -175,7 +175,7 @@ Each layer
- 1. Enable all component prints
- 	# sudo ksmbd.control -d "all"
- 
--2. Enable one of components (smb, auth, vfs, oplock, ipc, conn, rdma)
-+2. Enable one of the components (smb, auth, vfs, oplock, ipc, conn, rdma)
- 	# sudo ksmbd.control -d "smb"
- 
- 3. Show what prints are enabled.
--- 
-2.46.0
+Thanks for all the testing. So the trick is to clear the counter before
+writing to it. That sounds like a usual way to trigger some ucode magic.
 
+
+> makes the loop problem go away, but it "works" so well that the stupid
+> frequency adjustment algorithm keeps the left == 1, i.e count == 2 case
+> stay long enough around to trigger 'hung task messages' ....
+> 
+> Now I looked more at the dmesg output of all the experiments. In all
+> "working" cases except one running these 100 instances of cve... results
+> in a varying cascade of
+> 
+>    perf: interrupt took too long (2503 > 2500), lowering ...
+> 
+> messages.
+> 
+> The one case where this does not happen is when the limit is
+> unconditionally set to 32. But when I apply this limit only for the
+> fixed counter 0 it comes back.
+
+
+Yes, that sounds there is something wrong with < 32 as well.
+
+> 
+> Now I looked at when these 'took too long' problems surface aside of the
+> obvious case of extensive looping. They are unrelated to the hyper
+> threading issue as I can reproduce with smt=off too.
+> 
+> They always happen when a counter was armed with a count < 32 and two
+> events expired in the same NMI. The test case uses fixed counter 0 and
+> general counter 0 for the other event.
+> 
+> So that erratum is a good hint, but that hardware does have more issues
+> than it tells.
+> 
+> So I think we should just apply that limit patch with a proper change
+> log and also make it:
+> 
+> hsw_limit(...)
+> {
+> 	*left = max(*left, erratum_hsw11(event) ? 128 : 32;);
+> }
+>
+
+The HSW11 is also BDM11. It sounds like we need the trick from both bdw
+and nhm.
+
+How about this?
+
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index e8bd45556c30..42f557a128b9 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -4664,6 +4664,12 @@ static void nhm_limit_period(struct perf_event
+*event, s64 *left)
+ 	*left = max(*left, 32LL);
+ }
+
++static void hsw_limit_period(struct perf_event *event, s64 *left)
++{
++	nhm_limit_period(event, left);
++	bdw_limit_period(event, left);
++}
+ static void glc_limit_period(struct perf_event *event, s64 *left)
+ {
+ 	if (event->attr.precise_ip == 3)
+
+Do you plan to post the "limit" patch for HSW?
+Or should I send the patch?
+
+> or such.
+> 
+> That limit won't cure the overcount issue from that HSM154 erratum, but
+> *SHRUG*.
+> 
+
+The code is there without the fixed for ~10 years. I didn't find
+complains. I guess it should be fine to leave it as is.
+
+Thanks,
+Kan
 
