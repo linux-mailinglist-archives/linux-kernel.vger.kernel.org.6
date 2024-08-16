@@ -1,93 +1,100 @@
-Return-Path: <linux-kernel+bounces-288816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 040C0953F14
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:47:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF9BB953F12
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B701B2347B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:47:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76A3F1F249ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02CB547F4D;
-	Fri, 16 Aug 2024 01:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F71F2AF07;
+	Fri, 16 Aug 2024 01:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="fDmD3Ku+"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+KJRsXY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512541EB39;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A41B1D69E;
 	Fri, 16 Aug 2024 01:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723772800; cv=none; b=b49+Vzu1HXj+F5KX/kRWOJRQaLb7ttpf712YtBIynDNXW5LnPO4CoPJACly2jW8RtB9qGYgAFYsoEe2iMZXIsrJocBnfsvXN1gDxTJlrEJDrys7p5XZSiv2eMxgSfG/IqkFWnP0vYPHAwRVoICdd/lQw01+4kDfNaJq8gd2X0Lo=
+	t=1723772797; cv=none; b=JyZfgXlbdg6GZVZuXQSMiTB0rrrDhB2sEi/nC2ni9f08blcEyanxaBuVs9CUSLUNx9HDQeSIZArmS7mP6zyGdk75gAfppW6T7p6HWhZTCmk6/gPuE9eH/HVeHfm+9D1JcnZjaefJ+4C/yz9N7UNvCgg5fImkB3MZIqclyX5ai3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723772800; c=relaxed/simple;
-	bh=Ru5iuNDTVif7wSYu2AzUGd6Bg0oLZK9k/q6uaa2VOy8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZZS9vAYsFbiOZqOXm8MbfXJQJ62Oo+8qGigb9HtX4sSQUzlWhVuu8aWA45eycVL/9/lQa/D2DrYu5dBF3ZAtl/mODVTOsb1wgmI9JDAIzvNnM9nIVCXo82rdIBHg2UJDK9bXTRyr6dpWfclc0riU0OtP2XwfrUkDRrC4kG19hMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=fDmD3Ku+; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1723772789; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=bufOPjvqjiwGLr7KaLP+0J3WLdW8Uk9jXivVhZPs3dY=;
-	b=fDmD3Ku+JLXnQYHfM+6oWEmIZBb5E9MyQPX35Vhw44ZC+q6ycteuzK0/p4tB1ZcR4AoVOQwXlcNPBj070Ubcvo6Vg/ze/5ngr2sWc6asHwjTmEdH/rWRQIJXnv88F6Di3wDXNCOrUpcOv4nvQDBDeCbrR7WqBDkF+CWm12Fo5JE=
-Received: from 30.97.56.60(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WCyNzlF_1723772787)
-          by smtp.aliyun-inc.com;
-          Fri, 16 Aug 2024 09:46:28 +0800
-Message-ID: <3030518f-7d67-4837-8640-ffc354551e87@linux.alibaba.com>
-Date: Fri, 16 Aug 2024 09:46:27 +0800
+	s=arc-20240116; t=1723772797; c=relaxed/simple;
+	bh=W5RlR6IOzzkUiWZtCi1XNt5G8fjNo236VeXd2ClDJUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tC8txRlaHLwhz2AAODji31rrVyOUbuUW/TnY1XQ8PynuB2o+78OO5tz+lKbqxN01zc1LWmY7keP5gbSClUoJm2Cgg2/y6V/XjvkLqO4bjBrT+9C04z9WN+JqfpLhgFxYWLKTUjoHxQA0ABI8s1YyXmQggeSaahZqKJrk2PiJ1Bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+KJRsXY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C338C32786;
+	Fri, 16 Aug 2024 01:46:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723772796;
+	bh=W5RlR6IOzzkUiWZtCi1XNt5G8fjNo236VeXd2ClDJUE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=D+KJRsXYRlCEjPXztVWNO/Wi3OJBvrB4jPzXZhFLUWzKKazBRaw63hbuQEVd5xZCG
+	 +MEGurA+ZDBbfZJqEAA6RbMsmhL6RnEIR5j1vcPUUg5s47AcESqlIq6uS2NJy87tYU
+	 Oa9ZB1aM+N9VX5vERk6GfHXMJa2UlnZqyAACHcdoh4xszAXVHQ9ovdNuel2H9PHyty
+	 xBV31wdoNvrPxFlNxoKeb5t3qoexY51ejvfbRtAVVf0893WjPsvYw5Jfhnw+C4bWyl
+	 4oCyd9LY65pKhhU4LQs20tnPWm4CfmQaB0gbOHyw23wYbMrwxE6OX1E56M0uz1MEHP
+	 v0/tAYrrOlokQ==
+Date: Thu, 15 Aug 2024 18:46:35 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Justin Lai <justinlai0215@realtek.com>
+Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+ <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, <andrew@lunn.ch>,
+ <jiri@resnulli.us>, <horms@kernel.org>, <rkannoth@marvell.com>,
+ <jdamato@fastly.com>, <pkshih@realtek.com>, <larry.chiu@realtek.com>
+Subject: Re: [PATCH net-next v27 10/13] rtase: Implement ethtool function
+Message-ID: <20240815184635.4c074130@kernel.org>
+In-Reply-To: <20240812063539.575865-11-justinlai0215@realtek.com>
+References: <20240812063539.575865-1-justinlai0215@realtek.com>
+	<20240812063539.575865-11-justinlai0215@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] arm64: dts: sprd: sc2731: fix bat-detect-gpios
- property
-To: Stanislav Jakubek <stano.jakubek@gmail.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <cover.1723716331.git.stano.jakubek@gmail.com>
- <e57ee9b94f128753d156d77015f6cc3dc24fd9e8.1723716331.git.stano.jakubek@gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <e57ee9b94f128753d156d77015f6cc3dc24fd9e8.1723716331.git.stano.jakubek@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+On Mon, 12 Aug 2024 14:35:36 +0800 Justin Lai wrote:
+> +static void rtase_get_drvinfo(struct net_device *dev,
+> +			      struct ethtool_drvinfo *info)
+> +{
+> +	const struct rtase_private *tp = netdev_priv(dev);
+> +
+> +	strscpy(info->driver, KBUILD_MODNAME, sizeof(info->driver));
+> +	strscpy(info->bus_info, pci_name(tp->pdev), sizeof(info->bus_info));
+> +}
 
+This shouldn't be necessary, can you delete this function from the
+driver and check if the output of ethtool -i changes?
+ethtool_get_drvinfo() should fill this in for you.
 
-On 2024/8/15 18:13, Stanislav Jakubek wrote:
-> According to DT bindings, the property is called bat-detect-gpios, not
-> bat-detect-gpio. Update the property as such.
-> 
-> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+> +static void rtase_get_pauseparam(struct net_device *dev,
+> +				 struct ethtool_pauseparam *pause)
+> +{
+> +	const struct rtase_private *tp = netdev_priv(dev);
+> +	u16 value = rtase_r16(tp, RTASE_CPLUS_CMD);
+> +
+> +	pause->autoneg = AUTONEG_DISABLE;
+> +
+> +	if ((value & (RTASE_FORCE_TXFLOW_EN | RTASE_FORCE_RXFLOW_EN)) ==
+> +	    (RTASE_FORCE_TXFLOW_EN | RTASE_FORCE_RXFLOW_EN)) {
+> +		pause->rx_pause = 1;
+> +		pause->tx_pause = 1;
+> +	} else if (value & RTASE_FORCE_TXFLOW_EN) {
+> +		pause->tx_pause = 1;
+> +	} else if (value & RTASE_FORCE_RXFLOW_EN) {
+> +		pause->rx_pause = 1;
+> +	}
 
-Thanks.
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+This 3 if statements can be replaced with just two lines:
 
-> ---
->   arch/arm64/boot/dts/sprd/sc2731.dtsi | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/sprd/sc2731.dtsi b/arch/arm64/boot/dts/sprd/sc2731.dtsi
-> index 12136e68dada..c8b30c0479fd 100644
-> --- a/arch/arm64/boot/dts/sprd/sc2731.dtsi
-> +++ b/arch/arm64/boot/dts/sprd/sc2731.dtsi
-> @@ -97,7 +97,7 @@ pmic_adc: adc@480 {
->   		fuel-gauge@a00 {
->   			compatible = "sprd,sc2731-fgu";
->   			reg = <0xa00>;
-> -			bat-detect-gpio = <&pmic_eic 9 GPIO_ACTIVE_HIGH>;
-> +			bat-detect-gpios = <&pmic_eic 9 GPIO_ACTIVE_HIGH>;
->   			io-channels = <&pmic_adc 3>, <&pmic_adc 6>;
->   			io-channel-names = "bat-temp", "charge-vol";
->   			monitored-battery = <&bat>;
+	pause->rx_pause = !!(value & RTASE_FORCE_RXFLOW_EN);
+	pause->tx_pause = !!(value & RTASE_FORCE_TXFLOW_EN);
 
