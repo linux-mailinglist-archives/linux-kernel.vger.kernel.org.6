@@ -1,164 +1,86 @@
-Return-Path: <linux-kernel+bounces-290366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7EAB9552CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:56:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F6399552DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BCEB2852B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:56:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 526911C24304
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25A31C57B2;
-	Fri, 16 Aug 2024 21:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FE51C6889;
+	Fri, 16 Aug 2024 21:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sM2HJ8Gf"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="MPspsmwH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293EB1C57B4;
-	Fri, 16 Aug 2024 21:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBE1839E3;
+	Fri, 16 Aug 2024 21:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723845406; cv=none; b=BhVuyn+WpG3hh8K/iMI3FB355tEcJXnmNzU3juap8DeyPCoj6N8v4WPpgqqzudiibgqitJSMFvXxlUrXrfLoZNPG/8joQwpqdcKUAJkMfWlOK3VPFQY1je2RUk3np8RMTcu5pN/UHLZ8TwZ/KwrdGUZxionn7rHZAuoRcDGweZc=
+	t=1723845471; cv=none; b=RXguFJ0P2y+Y5GtMlKjqggcpmMM547QxoxTB+KCA2a6Wm7rYC10DrgPBZq486Xxr7ahBQZqMC8rDvlMZJ8lANn4QM7lILwAV61OrChQgCDXU3vnFd26qXDR8A41po/CyUs7W6pVjn8U1mVqN6+xIlrubnDGd1TV6AxbKGkqRJ5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723845406; c=relaxed/simple;
-	bh=iDFw77pu0YUWQ2wI2VHQzi76pQTpMJz3zqKX0bgLUgA=;
+	s=arc-20240116; t=1723845471; c=relaxed/simple;
+	bh=XIPn/yR2C2fDGrt8rtyiq9Bwcr5TQEUAaaWm4AYnEIY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n0L6QmA2djdJPoiZZ1qW41aysotQ+Rxl0weMVLGng/45UUqjFNpjlGfkyyZCi6Thi0CjWdN2sHK0mmFz3iRU6N3C83h9tEKOgupYHVXXQ6JuF8AY7YttcrtFdcCSBbqrKHryNg5YqPLxcCScqK0xUKQbhhGW5oNN1miJsRU/jOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sM2HJ8Gf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95121C32782;
-	Fri, 16 Aug 2024 21:56:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723845405;
-	bh=iDFw77pu0YUWQ2wI2VHQzi76pQTpMJz3zqKX0bgLUgA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sM2HJ8GfFXS0+FJtifnI0dbBBuJKDmYfeZLUV9JjkRaqV0T8oJaPfpyT696ASzWYU
-	 yh+/eqSivlRIAUlBDCWvajswyJHITfN7X3P3sdK59YfU9ZVd/GItyGpI3NnixbATJ8
-	 zYSewzkJqq8giure+UCdOdh9Lh/hiy2p3ApKLnmij9D2fux3jz8K87L2GHdhVxB2U4
-	 DA60itAY11CNxjfO4t+1MwlG6szzcfU/nlaugb3AT9MALQMP4MQoWhC4OCVWZMbzR2
-	 vxpPX9SjMz5gmbH1Tmf4n38fb/uNrJDt7cN6cZ3Svwsv48T7g1BvHBde04nO+zGoeQ
-	 F41brTy75WumQ==
-Date: Fri, 16 Aug 2024 23:56:39 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-api@vger.kernel.org, linux-man@vger.kernel.org, x86@kernel.org, bpf@vger.kernel.org, 
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, "Borislav Petkov (AMD)" <bp@alien8.de>, 
-	Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>, 
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, Deepak Gupta <debug@rivosinc.com>
-Subject: Re: [PATCHv8 9/9] man2: Add uretprobe syscall page
-Message-ID: <ht6hc5dbvgx3ny22pvhiazs7vxjhiockr6glpho5bpp6hrwn4f@oew3iu7a62j2>
-References: <20240611112158.40795-1-jolsa@kernel.org>
- <20240611112158.40795-10-jolsa@kernel.org>
- <20240611233022.82e8abfa2ff0e43fd36798b2@kernel.org>
- <3pc746tolavkbac4n62ku5h4qqkbcinvttvcnkib6nxvzzfzym@k6vozf6totdw>
- <20240807162734.100d3b55@gandalf.local.home>
- <ygpwfyjvhuctug2bsibvc7exbirahojuivglcfjusw4rrqeqhc@44h23muvk3xb>
- <Zr-Gf3EEganRSzGM@krava>
- <c7v4einpsvpswvj3rqn5esap2e5lpeiwacylqlzwdcp7slsgvg@jfmchkiqru4u>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hr0/BIDusuqzWXz41PARLaUsbbMqi0VEFSJWny92Ru+YNqMzs1Qo2ZFMe3lG7Ry2AjLVz0tXiXW33HEblPTJ/fW935Zi60YkarsnBiJdB4I5gLb0qDWK7AXR/Ls3r0bLQdOyaEN2EMBbZgYcx9559WgGaSLv2v60PyFyaEEdAyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=MPspsmwH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D287FC32782;
+	Fri, 16 Aug 2024 21:57:48 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="MPspsmwH"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1723845467;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XIPn/yR2C2fDGrt8rtyiq9Bwcr5TQEUAaaWm4AYnEIY=;
+	b=MPspsmwHM9KZ0tUmARAs+LER2NMFSSi18O6cosfSzmUZjc/CkbjjAzRoAf3k1ENrmUjKyr
+	yBin64Qo6E8FhIJdrCB/Mb6okEo+xqb1nIWGoJFNgeXhgsDbMbQf6BpNLn/s2iSjykKT0G
+	cS7IHUC6dacuhUOWQG4TRPErifqrD9Q=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id ba18aae2 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Fri, 16 Aug 2024 21:57:45 +0000 (UTC)
+Date: Fri, 16 Aug 2024 21:57:37 +0000
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+	Andy Lutomirski <luto@kernel.org>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH 0/9] Wire up getrandom() vDSO implementation on powerpc
+Message-ID: <Zr_LUQzb6KB6I448@zx2c4.com>
+References: <cover.1723817900.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="plljbzi2pasmdt6h"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <c7v4einpsvpswvj3rqn5esap2e5lpeiwacylqlzwdcp7slsgvg@jfmchkiqru4u>
+In-Reply-To: <cover.1723817900.git.christophe.leroy@csgroup.eu>
 
+Hi Christophe,
 
---plljbzi2pasmdt6h
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-api@vger.kernel.org, linux-man@vger.kernel.org, x86@kernel.org, bpf@vger.kernel.org, 
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, "Borislav Petkov (AMD)" <bp@alien8.de>, 
-	Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>, 
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, Deepak Gupta <debug@rivosinc.com>
-Subject: Re: [PATCHv8 9/9] man2: Add uretprobe syscall page
-References: <20240611112158.40795-1-jolsa@kernel.org>
- <20240611112158.40795-10-jolsa@kernel.org>
- <20240611233022.82e8abfa2ff0e43fd36798b2@kernel.org>
- <3pc746tolavkbac4n62ku5h4qqkbcinvttvcnkib6nxvzzfzym@k6vozf6totdw>
- <20240807162734.100d3b55@gandalf.local.home>
- <ygpwfyjvhuctug2bsibvc7exbirahojuivglcfjusw4rrqeqhc@44h23muvk3xb>
- <Zr-Gf3EEganRSzGM@krava>
- <c7v4einpsvpswvj3rqn5esap2e5lpeiwacylqlzwdcp7slsgvg@jfmchkiqru4u>
-MIME-Version: 1.0
-In-Reply-To: <c7v4einpsvpswvj3rqn5esap2e5lpeiwacylqlzwdcp7slsgvg@jfmchkiqru4u>
+Thanks for this series. I'm looking forward to taking a close look at
+it. I'm currently traveling until the 26th without a laptop and no
+email except for lore+lei+mutt on my phone. So I'll review this in about
+1 week. But I'm very happy to see it here.
 
-Hi Jiri, Steven,
+On first glance, patch number 7 isn't okay. If you want this to work on
+32bit, find an available bit for VM_DROPPABLE. Otherwise, just do this
+64bit-only like many new features.
 
-On Fri, Aug 16, 2024 at 08:55:47PM GMT, Alejandro Colomar wrote:
-> > hi,
-> > there are no args for x86.. it's there just to note that it might
-> > be different on other archs, so not sure what man page should say
-> > in such case.. keeping (void) is fine with me
->=20
-> Hmmm, then I'll remove that paragraph.  If that function is implemented
-> in another arch and the args are different, we can change the manual
-> page then.
->=20
-> >=20
-> > >=20
-> > > Please add the changes proposed below to your patch, tweak anything if
-> > > you consider it appropriate) and send it as v10.
-> >=20
-> > it looks good to me, thanks a lot
-> >=20
-> > Acked-by: From: Jiri Olsa <jolsa@kernel.org>
-
-I have applied your patch with the tweaks I mentioned, and added several
-tags to the commit message.
-
-It's currently here:
-<https://www.alejandro-colomar.es/src/alx/linux/man-pages/man-pages.git/com=
-mit/?h=3Dcontrib&id=3D977e3eecbb81b7398defc4e4f41810ca31d63c1b>
-
-and will $soon be pushed to master.
-
-Have a lovely night!
-Alex
-
-
---=20
-<https://www.alejandro-colomar.es/>
-
---plljbzi2pasmdt6h
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAma/yxcACgkQnowa+77/
-2zK97A//WrXlVppm6sreVtUPEfxfYfGTPE4VAT4lYZRcQ2HboHlCPNMLRXu9kv0G
-wDgwW3P5KiI5XqGtB/oVo9osSWqt2yAQg5JHe2iUAnBjWpN4oDnpMgqFAw00j6J4
-WqV6rsmm81NPfXi3G2ReSBarakNscIRk+IGrF3wso9zu3yLfVUrus80aATLD18vA
-cnEXaJCKrk/gi4S4zeF/YDZsd6CTx6HYpYR4kI8Cgdu5Qhsj1cEN4SOzuRPg1wYB
-tLQ9CWKnpJPOvt0x//7Iwj1dHwSEt69sRUmFs/Gwnapj+lRcRmc2Li3N3xn9oJCq
-RUM0c4i9GAESo5UL6Mps96QZa9MRIHUHQDE7LTSz9Qm66vZt7GyOtHm28xgfrzGZ
-syFEcocjr7viVkf8mCg3wX9o3KGkev+e7r8qQglBlIcn7ycSGnu5qq+qxKiFkbGp
-leB1BXF0uTr6OHrOC2DKC2GcwdpkQjHxwNoOxyFSaDFb+5AWZLwu3JbmcqkGP6TX
-0Xt+pEGTKLEDwV+IMa8v69L8DOM4Mf97SFvmbQjPbzm+0x0ZigzNnxpq7HeYdcV7
-/x0FIG69F7zlEQUoTF8HMfl8fI9YBOdQ2cNzLIcpRdrtvt7Ap6GGKoKfNFMSr+4t
-Rf8AS/JcqJqexPlBbSIuCBOW8P+4BnxCVI/mlmF3vu5SkZv+p8U=
-=bM7I
------END PGP SIGNATURE-----
-
---plljbzi2pasmdt6h--
+Jason
 
