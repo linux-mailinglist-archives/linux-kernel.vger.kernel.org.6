@@ -1,87 +1,83 @@
-Return-Path: <linux-kernel+bounces-288829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9052A953F35
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:00:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EEEF953F28
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C21551C2251A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 02:00:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C11C11C21ADE
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1BF629CFE;
-	Fri, 16 Aug 2024 02:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A562C2E859;
+	Fri, 16 Aug 2024 01:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="nzTK8B9y"
-Received: from out187-13.us.a.mail.aliyun.com (out187-13.us.a.mail.aliyun.com [47.90.187.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="de4Xg+jK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22506BE4E
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 02:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.187.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E687429CFE;
+	Fri, 16 Aug 2024 01:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723773628; cv=none; b=M543auuj6Dt3aznrr2/n4oNlvLsavdnVf5JS57ZgtvR/z3Axe4eURR9a6GsdujDVefmkYLjhdS666FXzAUQIU7+jx6iBQqmQodPy5dyJ/fPUXBlgtDgklMQeQPfPs3MwPFtPU1wTorpmH2EuG5W+qunnjDBh+A3Do12Qw+zIiak=
+	t=1723773295; cv=none; b=UkwKebVLnqA4kYr/4QcNrcKQBpitjpaa73ocfNFURPpvFYsOGgfLcRu9A3H4IYcVh7DJRx2XOr0dSfOmi7Z6SirYrP7fAVXyKuUsajgrONvvwMV1fK2hhJin6JusK0eXVqmn/qAG4wxrr1hQNEi3h1U/EopW+ycGISVHTkpb9uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723773628; c=relaxed/simple;
-	bh=h3ektH89VgKUm1hFQf4tNGITO8lwB8WYpEAS6FRb3Pk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OJa50NdWkc8RNmDtTRMqvjpQiCdGN7zGU4YI0ppNoA06qZxEv9sGo/EJu45jmW7nmSX5RpmdtcHBbmUya3eUZ3tdgQuJgV31YXRt4ByEgs4Kdj63BVBxBRl1x753X2mIAPZcN7KGEn2TUzsKnYDZ48HhzkGzLEnWYtwkh32/pKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=nzTK8B9y; arc=none smtp.client-ip=47.90.187.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1723773614; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=LTmj84zcrMSG/7oxdcFgD9iQDmdedlra1IBnqpPooqs=;
-	b=nzTK8B9yz9GZXmJ6gCBhMUeO2GYm2/obI399ESkjXuq24ZCOTfnXfQVqL/im9XzlVEzr3Y/J2eiaIWob3nP/BvY1ZI/LtO856bBYsXRZiU4B5xCFVPEXrIZC00IwCUKCMJsbmTqy5ZI1W+tVRwfpc+EvCv9dbOTDrHpjBTEeIRw=
-Received: from ubuntu..(mailfrom:tiwei.btw@antgroup.com fp:SMTPD_---.YtEBokR_1723773297)
-          by smtp.aliyun-inc.com;
-          Fri, 16 Aug 2024 09:54:57 +0800
-From: "Tiwei Bie" <tiwei.btw@antgroup.com>
-To: richard@nod.at,
-	anton.ivanov@cambridgegreys.com,
-	johannes@sipsolutions.net
-Cc:  <linux-um@lists.infradead.org>,
-   <linux-kernel@vger.kernel.org>,
-  "Tiwei Bie" <tiwei.btw@antgroup.com>
-Subject: [PATCH 6/6] um: Remove declarations of undefined functions
-Date: Fri, 16 Aug 2024 09:54:47 +0800
-Message-Id: <20240816015447.320394-7-tiwei.btw@antgroup.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240816015447.320394-1-tiwei.btw@antgroup.com>
-References: <20240816015447.320394-1-tiwei.btw@antgroup.com>
+	s=arc-20240116; t=1723773295; c=relaxed/simple;
+	bh=85OslUvDlZYNElnxXbO39jZzvIIMRhCg/1UC+cEB+Qk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BDyifyw/oW9/8YucaA3xuhBZkuCyO3NufkzZooeH2JRJTDFYiWOocNVRcXdihsLLYnd2C5OWfc4kXexLCYuONFpUQMxzbaj6pzs+5tikxWvN51GXbRsrgTZWN5A89QgLdfvMS1CsAraSucnkEc4ZiqKKLOcC0uvJihJFtm2zNWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=de4Xg+jK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEF14C32786;
+	Fri, 16 Aug 2024 01:54:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723773294;
+	bh=85OslUvDlZYNElnxXbO39jZzvIIMRhCg/1UC+cEB+Qk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=de4Xg+jKWbP51DbAJRjkamTYKaLdzN8P+jbvjjvd19R7CxcV605YIYM11uWkRMqto
+	 WorSHr+7zAUU25t70+eTj0szmhlgnzYHN3C5qvQlxz2GlDck8uuERwJ0tFqMoEdc6f
+	 Hzpc6lse+FT8Btwm0DLadgYQY67pCsgaam7D0z57MdaXNhlkyb/js+x53pgLRaA3dM
+	 a6S11rJDxwrDGXuLbk5cJsOhhSJrRRNZe9pmIYYocw2kkl4XSEKIPy9LsjsIVWdfPn
+	 1n+96d4juz8T+ZLBSQ0Luip0d4m0LZsIrbQKVNL+Be+jRpXCtkWmpflhhCau4R0UNy
+	 OjrjdSBOVX9Dg==
+Date: Thu, 15 Aug 2024 18:54:52 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Justin Lai <justinlai0215@realtek.com>
+Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+ <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, <andrew@lunn.ch>,
+ <jiri@resnulli.us>, <horms@kernel.org>, <rkannoth@marvell.com>,
+ <jdamato@fastly.com>, <pkshih@realtek.com>, <larry.chiu@realtek.com>
+Subject: Re: [PATCH net-next v27 07/13] rtase: Implement a function to
+ receive packets
+Message-ID: <20240815185452.3df3eea9@kernel.org>
+In-Reply-To: <20240812063539.575865-8-justinlai0215@realtek.com>
+References: <20240812063539.575865-1-justinlai0215@realtek.com>
+	<20240812063539.575865-8-justinlai0215@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The definitions of these functions do not exist anymore.
+On Mon, 12 Aug 2024 14:35:33 +0800 Justin Lai wrote:
+> +	if (!delta && workdone)
+> +		netdev_info(dev, "no Rx buffer allocated\n");
+> +
+> +	ring->dirty_idx += delta;
+> +
+> +	if ((ring->dirty_idx + RTASE_NUM_DESC) == ring->cur_idx)
+> +		netdev_emerg(dev, "Rx buffers exhausted\n");
 
-Signed-off-by: Tiwei Bie <tiwei.btw@antgroup.com>
----
- arch/um/include/shared/skas/skas.h | 2 --
- 1 file changed, 2 deletions(-)
+Memory allocation failures happen, we shouldn't risk spamming the logs.
+I mean these two messages and the one in rtase_alloc_rx_data_buf(),
+the should be removed.
 
-diff --git a/arch/um/include/shared/skas/skas.h b/arch/um/include/shared/skas/skas.h
-index ebaa116de30b..85c50122ab98 100644
---- a/arch/um/include/shared/skas/skas.h
-+++ b/arch/um/include/shared/skas/skas.h
-@@ -10,10 +10,8 @@
- 
- extern int userspace_pid[];
- 
--extern int user_thread(unsigned long stack, int flags);
- extern void new_thread_handler(void);
- extern void handle_syscall(struct uml_pt_regs *regs);
--extern long execute_syscall_skas(void *r);
- extern unsigned long current_stub_stack(void);
- extern struct mm_id *current_mm_id(void);
- extern void current_mm_sync(void);
--- 
-2.34.1
-
+There is a alloc_fail statistic defined in include/net/netdev_queues.h
+that's the correct way to report buffer allocation failures.
+And you should have a periodic service task / work which checks for
+buffers being exhausted, and if they are schedule NAPI so that it tries
+to allocate.
 
