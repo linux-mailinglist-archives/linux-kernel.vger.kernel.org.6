@@ -1,209 +1,101 @@
-Return-Path: <linux-kernel+bounces-290387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FDDF955330
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 00:15:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B7A955335
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 00:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83DC01F22299
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:15:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23D741C219D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:16:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E2D145A0A;
-	Fri, 16 Aug 2024 22:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D802B144D39;
+	Fri, 16 Aug 2024 22:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JPYo0ft+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="mQ0ktfPa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CAF13D882;
-	Fri, 16 Aug 2024 22:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1EEBA33;
+	Fri, 16 Aug 2024 22:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723846501; cv=none; b=pS0nDK/vcVR0a4gv44IqsbKLR+yBi8k5W4M4EJLTmWddIf50k/xs91pW1lOGlXX1sMvqatuaZxTFGW1RB5fbAkQBc/LNah+/XseuLsjBTg3XlbDj91xT2JT4YwsZIEWgS/Zt7GH7LQC+I2ESNr7sXezA/SHxOTRCTJEJvcElEko=
+	t=1723846573; cv=none; b=FR7Ul1wHQnr50arOkXjji0D2P/EpaMvuh6M+zxxPsWO6nZWMx5NsTgOW2Q1uif8fNREwKP1w5voyfT3LmmGdSvyHrirXuL2/yoHxdk0rsU9tup4LSUDneoPZiT5MbEbehaTqBsP295WnJcXoO6ENbBdn8vGWzbXnL6te0NKCdLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723846501; c=relaxed/simple;
-	bh=5J1GuYUnbG2FOnw0lH0OF0aLsKFIEl0BmHGJA/QgCPA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z4WnG575UxFv6WyaCNBt5WpCns31+slpW7LkvGjXi9tQdR/DHd0RA7ifE4PVDllKVwURzyvyOsYBex9pgE9eYPEqbHqnvCalUhqT+30sFDD9lVQtwIXA0X8BMlFDFBFwhMeOp5fssv6l7WmaCEm6cLcIQOWdHtL7i/peEx4KntQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JPYo0ft+; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723846500; x=1755382500;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=5J1GuYUnbG2FOnw0lH0OF0aLsKFIEl0BmHGJA/QgCPA=;
-  b=JPYo0ft+A4jV8mXz1XYAQUBPogR2Dj7pZgvLQvab0C95isylHsG5AK/l
-   wxKZfp0wkJXV7Wwr67f7LjjiwB1Clc1cZULVZv71WOlgaUapONvgeoXTW
-   wH6f3V49s83Nc6mXRYSMVKlYzQhmsd6OBjtEhAGztF7SQANSmfMoEoPK4
-   4MsQZQTovIFV5CvrDhSmigBa56LFmWn8TrxS2z1iqf766yMWeA55RoHEo
-   3PXYBTDyci+TGgOnmn91mAKlXxRyhVxwoP/VNQAByVFYHIkMS9ZpEWsLd
-   /8oLhr+xJmEA9aWwxB4JQhwNslZ+bLXUwWI4Jr3BbbGQqyr3QOR1UzRpc
-   Q==;
-X-CSE-ConnectionGUID: /7Y5ycuDRmGmXcIhaneV+w==
-X-CSE-MsgGUID: Cr1zSisET3C4ob33dpVZew==
-X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="25951003"
-X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
-   d="scan'208";a="25951003"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 15:14:59 -0700
-X-CSE-ConnectionGUID: QmtEyer7QfW6tcMUMNur7A==
-X-CSE-MsgGUID: J0cnrZfCQ/OktFaxHpW/0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
-   d="scan'208";a="90527847"
-Received: from unknown (HELO [10.125.111.71]) ([10.125.111.71])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 15:14:57 -0700
-Message-ID: <fe15b551-d22f-4d46-88e0-162cacc507a7@intel.com>
-Date: Fri, 16 Aug 2024 15:14:56 -0700
+	s=arc-20240116; t=1723846573; c=relaxed/simple;
+	bh=M+NRfJND15DgXXHSYtlJHCFyMUTY/cbt4gOqY0fSQKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CMCcQ8NnVH3TCsYEPXOxu0Uajxz3BeHT45RqU5hmVua6/HGMfclm6QYajA6oKNqY76+AZkmZg87iqNrABbwf+DWRF42XbBdVOrgKe7zMvZv8qjGzfTfXsdjfHyYJ0amQAiC9PaKMIDoYwm4yFc6vNnHVvzFG6JnLfq3Qsdbuhbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=mQ0ktfPa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DF1FC32782;
+	Fri, 16 Aug 2024 22:16:11 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="mQ0ktfPa"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1723846569;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S0q5my1Gxzq5sbks3fTcsMFKFgho8smshyrb0IyHeLE=;
+	b=mQ0ktfPaKJsESX8PGs+iJxyLhHMGhfX7ELVZWdMlnGzpmLCL5qUJa0seVqE5J/uuPZV7IL
+	2Kb+ri7T0cvXYDAm6nzX/fHuKW++B9UzLHgg5VE3YFOetb4/pXxYKgCu8OaOtV9HBcbV1e
+	bL+me1+63vABwBzimD/a1Rz4d3ze6Yc=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 1169246f (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Fri, 16 Aug 2024 22:16:08 +0000 (UTC)
+Date: Fri, 16 Aug 2024 22:16:03 +0000
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: syzbot <syzbot+0dc211bc2adb944e1fd6@syzkaller.appspotmail.com>,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, pabeni@redhat.com,
+	syzkaller-bugs@googlegroups.com, wireguard@lists.zx2c4.com
+Subject: Re: [syzbot] [kvm?] general protection fault in get_work_pool (2)
+Message-ID: <Zr_Po5Rj7wsDj_BX@zx2c4.com>
+References: <0000000000006eb03a061b20c079@google.com>
+ <Zr-ZY8HSGfVuoQpl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/25] cxl/region: Add dynamic capacity decoder and
- region modes
-To: ira.weiny@intel.com, Fan Ni <fan.ni@samsung.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Dan Williams <dan.j.williams@intel.com>,
- Davidlohr Bueso <dave@stgolabs.net>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, linux-btrfs@vger.kernel.org,
- linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, nvdimm@lists.linux.dev
-References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
- <20240816-dcd-type2-upstream-v3-8-7c9b96cba6d7@intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20240816-dcd-type2-upstream-v3-8-7c9b96cba6d7@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zr-ZY8HSGfVuoQpl@google.com>
 
+On Fri, Aug 16, 2024 at 11:24:35AM -0700, Sean Christopherson wrote:
+> On Mon, Jun 17, 2024, syzbot wrote:
+> > Hello,
+> > 
+> > syzbot found the following issue on:
+> > 
+> > HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=16f23146980000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=81c0d76ceef02b39
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=0dc211bc2adb944e1fd6
+> > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> > userspace arch: i386
+> > 
+> > Unfortunately, I don't have any reproducer for this issue yet.
+> > 
+> > Downloadable assets:
+> > disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2ccbdf43.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/13cdb5bfbafa/vmlinux-2ccbdf43.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/7a14f5d07f81/bzImage-2ccbdf43.xz
+> > 
+> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > Reported-by: syzbot+0dc211bc2adb944e1fd6@syzkaller.appspotmail.com
+> 
+> See https://lore.kernel.org/all/Zr-Ydj8FBpiqmY_c@google.com for an explanation.
+> 
+> #syz invalid
 
+Oh. Thanks very much for following up on this. I spent some time puzzling
+over it and didn't find a wireguard bug. Glad that turned out to be so.
 
-On 8/16/24 7:44 AM, ira.weiny@intel.com wrote:
-> From: Navneet Singh <navneet.singh@intel.com>
-> 
-> One or more decoders each pointing to a Dynamic Capacity (DC) partition
-> form a CXL software region.  The region mode reflects composition of
-> that entire software region.  Decoder mode reflects a specific DC
-> partition.  DC partitions are also known as DC regions per CXL
-> specification r3.1.
-> 
-> Define the new modes and helper functions required to make the
-> association between these new modes.
-> 
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Reviewed-by: Fan Ni <fan.ni@samsung.com>
-> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
-> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> 
-> ---
-> Changes:
-> [iweiny: keep tags on simple patch]
-> [Fan: s/partitions/partition/]
-> [djiang: New wording for the commit message]
-> [iweiny: reword commit message more]
-> ---
->  drivers/cxl/core/region.c |  4 ++++
->  drivers/cxl/cxl.h         | 23 +++++++++++++++++++++++
->  2 files changed, 27 insertions(+)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 796e5a791e44..650fe33f2ed4 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -1870,6 +1870,8 @@ static bool cxl_modes_compatible(enum cxl_region_mode rmode,
->  		return true;
->  	if (rmode == CXL_REGION_PMEM && dmode == CXL_DECODER_PMEM)
->  		return true;
-> +	if (rmode == CXL_REGION_DC && cxl_decoder_mode_is_dc(dmode))
-> +		return true;
->  
->  	return false;
->  }
-> @@ -3239,6 +3241,8 @@ cxl_decoder_to_region_mode(enum cxl_decoder_mode mode)
->  		return CXL_REGION_RAM;
->  	case CXL_DECODER_PMEM:
->  		return CXL_REGION_PMEM;
-> +	case CXL_DECODER_DC0 ... CXL_DECODER_DC7:
-> +		return CXL_REGION_DC;
->  	case CXL_DECODER_MIXED:
->  	default:
->  		return CXL_REGION_MIXED;
-> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-> index f766b2a8bf53..d2674ab46f35 100644
-> --- a/drivers/cxl/cxl.h
-> +++ b/drivers/cxl/cxl.h
-> @@ -370,6 +370,14 @@ enum cxl_decoder_mode {
->  	CXL_DECODER_NONE,
->  	CXL_DECODER_RAM,
->  	CXL_DECODER_PMEM,
-> +	CXL_DECODER_DC0,
-> +	CXL_DECODER_DC1,
-> +	CXL_DECODER_DC2,
-> +	CXL_DECODER_DC3,
-> +	CXL_DECODER_DC4,
-> +	CXL_DECODER_DC5,
-> +	CXL_DECODER_DC6,
-> +	CXL_DECODER_DC7,
->  	CXL_DECODER_MIXED,
->  	CXL_DECODER_DEAD,
->  };
-> @@ -380,6 +388,14 @@ static inline const char *cxl_decoder_mode_name(enum cxl_decoder_mode mode)
->  		[CXL_DECODER_NONE] = "none",
->  		[CXL_DECODER_RAM] = "ram",
->  		[CXL_DECODER_PMEM] = "pmem",
-> +		[CXL_DECODER_DC0] = "dc0",
-> +		[CXL_DECODER_DC1] = "dc1",
-> +		[CXL_DECODER_DC2] = "dc2",
-> +		[CXL_DECODER_DC3] = "dc3",
-> +		[CXL_DECODER_DC4] = "dc4",
-> +		[CXL_DECODER_DC5] = "dc5",
-> +		[CXL_DECODER_DC6] = "dc6",
-> +		[CXL_DECODER_DC7] = "dc7",
->  		[CXL_DECODER_MIXED] = "mixed",
->  	};
->  
-> @@ -388,10 +404,16 @@ static inline const char *cxl_decoder_mode_name(enum cxl_decoder_mode mode)
->  	return "mixed";
->  }
->  
-> +static inline bool cxl_decoder_mode_is_dc(enum cxl_decoder_mode mode)
-> +{
-> +	return (mode >= CXL_DECODER_DC0 && mode <= CXL_DECODER_DC7);
-> +}
-> +
->  enum cxl_region_mode {
->  	CXL_REGION_NONE,
->  	CXL_REGION_RAM,
->  	CXL_REGION_PMEM,
-> +	CXL_REGION_DC,
->  	CXL_REGION_MIXED,
->  };
->  
-> @@ -401,6 +423,7 @@ static inline const char *cxl_region_mode_name(enum cxl_region_mode mode)
->  		[CXL_REGION_NONE] = "none",
->  		[CXL_REGION_RAM] = "ram",
->  		[CXL_REGION_PMEM] = "pmem",
-> +		[CXL_REGION_DC] = "dc",
->  		[CXL_REGION_MIXED] = "mixed",
->  	};
->  
-> 
+Jason
 
