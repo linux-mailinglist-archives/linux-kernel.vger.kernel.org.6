@@ -1,110 +1,204 @@
-Return-Path: <linux-kernel+bounces-288811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D78DA953F07
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:44:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6652C953F09
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:44:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 946F2283B43
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:44:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE188B24079
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DF229D06;
-	Fri, 16 Aug 2024 01:44:12 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812D42868D;
+	Fri, 16 Aug 2024 01:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MS26H0sg"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D922E1DFFC;
-	Fri, 16 Aug 2024 01:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E28540855
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 01:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723772652; cv=none; b=kdfgY68/c0T/W099OOhHT7ORf5nVVlKK1kc+t2hbQppi/e3YYk/+zn8v3S4QAxAujEQaguEdIxvrPNyIVyPfutepmchBAigY8fFv0bI1f+Tr2vKJNPGM61418KiC3wwSY6syJ5JgBPy/ny69aItsnM1Zu+IsxsDAyH+Z1SS2UbU=
+	t=1723772673; cv=none; b=TVpZYcHLjjdq5PbL3lHuhB2+wsgJJsXm7zthMsAVQGO/7sL75CoZFaST5pU7GSppCR8ZYc2yY+mxn9staaqIrSSyJGXJmHoovjCu4W4TqB08ubV8FDq+hzS7eyZYimwFAxdt5dWoQVcwpPeVnW+a4rtD2GekZ7a/QIbn10n6LsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723772652; c=relaxed/simple;
-	bh=XJp+Jb3dve6kiWKebsssb6P1PqxlbemB2ygfIkOkhs8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=eQfdw8c7lySJkMEn8BkD4A80VDPkhq10uZsP3/78pFq38+FoX/sbH9feeFN2Xw1fwRyCrDteUSNfd3sawr7tQMfdLdw3mn/pr25BPeoO5Legpotdaljmhw9lwNVTgs063dHA9ESQAIT0zaTinpW+EngIcGGlsyypM1PIY+4id4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WlPsh1Fswz4f3jsD;
-	Fri, 16 Aug 2024 09:43:52 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 092791A0568;
-	Fri, 16 Aug 2024 09:44:06 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgBHboTkrr5miBBBBw--.52648S3;
-	Fri, 16 Aug 2024 09:44:05 +0800 (CST)
-Subject: Re: [PATCH v2 3/6] iomap: advance the ifs allocation if we have more
- than one blocks per folio
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, djwong@kernel.org, brauner@kernel.org,
- david@fromorbit.com, jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com
-References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
- <20240812121159.3775074-4-yi.zhang@huaweicloud.com>
- <ZrxBfKi_DpThYo94@infradead.org>
- <b098d15b-4b80-2b73-d05b-f4dbb5d4631a@huaweicloud.com>
- <Zr2Zd-fjb96D3ZQi@infradead.org>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <ff66af8c-2b56-aa72-2470-00ff097fc6a6@huaweicloud.com>
-Date: Fri, 16 Aug 2024 09:44:04 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1723772673; c=relaxed/simple;
+	bh=1dfiGJ4Qk7BRYdV4JK+x/5lvkLf/9dzCkNgb/+E6w8M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=i4WQ8QXawz6F53/ss/2YfLtD4JpBNnForyXqphH70gazkLQiOGH5FhUVAGbqx47PdZcEk9CWgkKzZqrxcKUiIKKoXNifi6FdXwOgEm6DbVOCL5eE7Aif+daRQ4dB+dg/5717v/WUxmCgtsTWGrFz/Vb/o0SfpnKkaFkzqF4J420=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MS26H0sg; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-39d2a107aebso11585ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 18:44:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723772671; x=1724377471; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8twJfhd3sS2HobMeTQcR36OUJZaXUCElEDF81H5IZI0=;
+        b=MS26H0sgE+NlgfWQOb8y0KFrA9PSbMn8xCMaRs7ta3PQOaDEOkg2XlTWKwj1EUzEKf
+         gEYVSh/v8Mcm+RslwaoGFFgN5QtiPUA9S/CdPWV27qJv6F1Gx2zpiMPPL/J6woHCyV79
+         yM9redX9EnVjVEkfzo03HkvybM7rpxAl6qhLLFghRw60YbvNqrmXVb0d3YwbblCx4zjs
+         +5H9plPRN948xla46mFfz4HlYx2RWL8m/XMIXcvaeTVkgu4cOnhPhXOYRMEN9t6EXCo4
+         Kcjta+klc/wgwXuABWCXy/sSXja7+I80sm5MkEESbO2nxU15f4ywL3E3tCYk6lNy52n3
+         A0jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723772671; x=1724377471;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8twJfhd3sS2HobMeTQcR36OUJZaXUCElEDF81H5IZI0=;
+        b=omd4P08VSkk6s4EavgqEdFH5+UtAIBzBmNcTcPuDqVP2CyxyqPPOH3XFuaFMu4LPao
+         S/LnuIu7ZTF7/Z4xbWETkQOcKrnrOqyxywhvD81zSX4B5j9kyPpBitJmlK/1dpyP2HBc
+         oGMwx1b6P9YKxc2Lke52FwIfxauRfsAe3vs49luuLLq5jH9eUDfsyHSecj3s/GfAyXa4
+         vcey6WX84bDfAl3j3SVsyo9kJ5pNrNOeu9Vm1fIKqWuS9xPh0k3TDnwBu3cE5BxbhKyT
+         YBfC68gJQOiUjWxVZP+7wocSJ1si4uYrnUhfgh3MYSyHnbAFdDKINGDqMhQdC4tOUcmJ
+         dFgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLhYRQl3srEHrbYfFQEJSTP51PYZCLaXm4uD5TuiLLKmCiM0ll3XpNBsUUeKd8tJMEC46nqOG7oxBItoyX6tB3PmniknR7TLds7p9F
+X-Gm-Message-State: AOJu0Yx3pl8/a4mMC1ynxIAFjXGw2FLR3xboyD6hLL0ctIYpqsIxe5Xy
+	KP20sY6OJpeMPNs5FIWZ6zzrFKRMdupfV7n4DoJTk9MzsvX/omNzR1cmxW8Y5culsqgGx39AZq9
+	QJI7Td77x1q/HiGEW6gx9K8G90I7ZJjAv/nN3
+X-Google-Smtp-Source: AGHT+IF+quMNdEKT8lYZYH4gRkbN45Ew4a7Q/13cilnxi7cwwZgdLrISpONk1culVBzv/V10IKuRkyamMvv98+s6Aq8=
+X-Received: by 2002:a05:6e02:148c:b0:376:3026:9dfc with SMTP id
+ e9e14a558f8ab-39d27a964a2mr1011235ab.24.1723772670803; Thu, 15 Aug 2024
+ 18:44:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Zr2Zd-fjb96D3ZQi@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgBHboTkrr5miBBBBw--.52648S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrKFW3ArWxZFy3XrWrKr15Jwb_yoWxAFc_uF
-	4v9r4kur95Way5A3W2g3Z8JrZagrZ0yF18XrZ8GFZ3Wa98Aa9aqr1vkrZYvFy2yFZF9Fnx
-	WFy2gay5XryagjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbaxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+References: <20240813043439.933329-1-irogers@google.com>
+In-Reply-To: <20240813043439.933329-1-irogers@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 15 Aug 2024 18:44:19 -0700
+Message-ID: <CAP-5=fVvzthsR4G=aT8kTjR6c-xT=HAB9QhVdLR_Lo0LfMcTug@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] perf build-id: Align records to 8 rather than 64 bytes
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Sun Haiyong <sunhaiyong@loongson.cn>, 
+	Yanteng Si <siyanteng@loongson.cn>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/8/15 14:00, Christoph Hellwig wrote:
-> On Wed, Aug 14, 2024 at 03:08:25PM +0800, Zhang Yi wrote:
->>> iomap_invalidate_folio when it actually is needed?
->>>
->>
->> Therefore, you mean current strategy of allocating ifs is to try to delay
->> the allocation time as much as possible?
-> 
-> Yes.
-> 
->> The advantage is that it could
->> avoid some unnecessary allocation operations if the whole folio are
->> invalidated before write back. right?
-> 
-> Yes.  And hopefully we can also get to the point where we don't need
-> to actually allocate it for writeback.  I've been wanting to do that
-> for a while but never got it.
-> 
+On Mon, Aug 12, 2024 at 9:34=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
+te:
+>
+> Events are 8-byte aligned in perf.data files, NAME_ALIGN is 64-bytes
+> which is excessive given the alignment needs. Move the addition the
+> sizeof so that the alignment considers that the rest of the event is
+> 4-byte aligned.
+>
+> ```
+> struct perf_record_header_build_id {
+>         struct perf_event_header   header;               /*     0     8 *=
+/
+>         pid_t                      pid;                  /*     8     4 *=
+/
+>         union {
+>                 __u8               build_id[24];         /*    12    24 *=
+/
+>                 struct {
+>                         __u8       data[20];             /*    12    20 *=
+/
+>                         __u8       size;                 /*    32     1 *=
+/
+>                         __u8       reserved1__;          /*    33     1 *=
+/
+>                         __u16      reserved2__;          /*    34     2 *=
+/
+>                 };                                       /*    12    24 *=
+/
+>         };                                               /*    12    24 *=
+/
+>         char                       filename[];           /*    36     0 *=
+/
+>
+>         /* size: 36, cachelines: 1, members: 4 */
+>         /* last cacheline: 36 bytes */
+> };
+> ```
+>
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/build-id.c         | 6 +++---
+>  tools/perf/util/synthetic-events.c | 6 +++---
+>  2 files changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
+> index 83a1581e8cf1..8fea17d04468 100644
+> --- a/tools/perf/util/build-id.c
+> +++ b/tools/perf/util/build-id.c
+> @@ -309,8 +309,8 @@ static int write_buildid(const char *name, size_t nam=
+e_len, struct build_id *bid
+>         struct perf_record_header_build_id b;
+>         size_t len;
+>
+> -       len =3D name_len + 1;
+> -       len =3D PERF_ALIGN(len, NAME_ALIGN);
+> +       len =3D sizeof(b) + name_len + 1;
+> +       len =3D PERF_ALIGN(len, sizeof(u64));
+>
+>         memset(&b, 0, sizeof(b));
+>         memcpy(&b.data, bid->data, bid->size);
+> @@ -318,7 +318,7 @@ static int write_buildid(const char *name, size_t nam=
+e_len, struct build_id *bid
+>         misc |=3D PERF_RECORD_MISC_BUILD_ID_SIZE;
+>         b.pid =3D pid;
+>         b.header.misc =3D misc;
+> -       b.header.size =3D sizeof(b) + len;
+> +       b.header.size =3D len;
+>
+>         err =3D do_write(fd, &b, sizeof(b));
+>         if (err < 0)
+> diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthet=
+ic-events.c
+> index 5498048f56ea..a52b85bcb6b6 100644
+> --- a/tools/perf/util/synthetic-events.c
+> +++ b/tools/perf/util/synthetic-events.c
+> @@ -2236,14 +2236,14 @@ int perf_event__synthesize_build_id(struct perf_t=
+ool *tool, struct dso *pos, u16
+>
+>         memset(&ev, 0, sizeof(ev));
+>
+> -       len =3D dso__long_name_len(pos) + 1;
+> -       len =3D PERF_ALIGN(len, NAME_ALIGN);
+> +       len =3D sizeof(ev.build_id) + dso__long_name_len(pos) + 1;
+> +       len =3D PERF_ALIGN(len, sizeof(u64));
+>         ev.build_id.size =3D min(dso__bid(pos)->size, sizeof(dso__bid(pos=
+)->data));
+>         memcpy(&ev.build_id.build_id, dso__bid(pos)->data, ev.build_id.si=
+ze);
+>         ev.build_id.header.type =3D PERF_RECORD_HEADER_BUILD_ID;
+>         ev.build_id.header.misc =3D misc | PERF_RECORD_MISC_BUILD_ID_SIZE=
+;
+>         ev.build_id.pid =3D machine->pid;
+> -       ev.build_id.header.size =3D sizeof(ev.build_id) + len;
+> +       ev.build_id.header.size =3D len;
+>         memcpy(&ev.build_id.filename, dso__long_name(pos), dso__long_name=
+_len(pos));
 
-Yeah, this sounds like a good idea.
+So I think there is a bigger issue here and I'm working on a better
+fix. The issue is that the synthesized build_id event doesn't have a
+sample id inserted afterward (note, no adding of id_hdr_size above).
+By over aligning the filename it is quite likely the sample id reading
+is just reading zeros in particular for the time stamp. Not having a
+sample id means the build_id events are unordered, this will break if
+the data file has two dsos with the same filename but different build
+ids - as happens when a file is replaced. The better fix is to 8 byte
+align the event and insert a sample id.
 
 Thanks,
-Yi.
+Ian
 
+>         return process(tool, &ev, NULL, machine);
+> --
+> 2.46.0.76.ge559c4bf1a-goog
+>
 
