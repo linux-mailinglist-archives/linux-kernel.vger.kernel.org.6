@@ -1,388 +1,307 @@
-Return-Path: <linux-kernel+bounces-289830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE38954C0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:15:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0197954C18
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F2191C2445F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:15:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FD601F25445
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9891BC9F0;
-	Fri, 16 Aug 2024 14:15:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26461BD4FC;
+	Fri, 16 Aug 2024 14:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ii+L9pyz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JxVO7wAt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E861AD9D6;
-	Fri, 16 Aug 2024 14:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8872197554;
+	Fri, 16 Aug 2024 14:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723817716; cv=none; b=ndv9mnslq1EWBNqExFA3jt+0EHU1KQHJYHz3D3Kw/djbGyCWI22TSdj6vQ9JpaYvEqfXn7h2SE0sD+oDlU/eYYGhKs0neWge+38diHCWJxR0Q0RAL1+mN999FLWhBHGkefBB4ryTCIZO0Ab40LP5yEHj7Sn2KyB2CG2uH0adThc=
+	t=1723817724; cv=none; b=PoBeLIsg2O91juX6OGs6WGcuS2ScpG33q9wOTd5b30jlVS8u6Ol4z2YutyuKRU47UBfUonEPN56gqBN4+CUkqtk0qPMriv2VLAywfGM7EpGoEI2+3U1c2/N+mcLSEsZFJThSo2c/vXzcT24wjDiGippdnJuzQpu39uFUfe0yk9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723817716; c=relaxed/simple;
-	bh=kxQ8LdJsE9TFVX22ZLXdxRAkZCbvjNZRZjxJVwJD5G8=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ZSjJtBRLUQ/Jd5SuFzjeIQ4oXUSKs/U1Ar84qwwAeBCsMqKQr/MBo26LH/rHy4D1P7Th28ZO2n+XvAqoOqQ4cvIysLufcVAnlc0ZdCjUKHnB1SmyEWy6PfncKhNS1G/tkS5KICZMHY/7TAXlZA84yVMz3oKRf2Mp1OLUMnBBio0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ii+L9pyz; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723817715; x=1755353715;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=kxQ8LdJsE9TFVX22ZLXdxRAkZCbvjNZRZjxJVwJD5G8=;
-  b=Ii+L9pyzXpwWpcjjL1pfUuYL7MLkVDKWn/TjQHRbVJ6KGuvh93faNtjM
-   ofE1hI2TPlm8y4Lb3S61JPgwD+LlA0ES7FoxwtYLGA16KEjNiJBZPoZMI
-   2DQKRLqeOcGg++OoPXK2W+rULGffaSX6CNYMkSQa4eLKsbJ/ZqOzNlZGP
-   hLVxvhH7TN/hMT7E1kemdSHoDGWaJ94prkmVptDxKaO33cTF66nlL+Sg3
-   S4331txxo00ozXN7GzmszmKdpEXcbipiEqNjJpDZJ9Uzqo6gd9RT99Ecf
-   S/f3MsRMaA8lNvJyfgb5biSFQldzLv7poRejUhshkvY9qLUvDgy1znN3X
-   A==;
-X-CSE-ConnectionGUID: lLtHnH/rREWDsmQ+yjFg0A==
-X-CSE-MsgGUID: yQqE68ZNRUOOMP67ML7oHQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="32748830"
-X-IronPort-AV: E=Sophos;i="6.10,151,1719903600"; 
-   d="scan'208";a="32748830"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 07:15:14 -0700
-X-CSE-ConnectionGUID: Q6NfC0G6RaWw2d3Q3weuzQ==
-X-CSE-MsgGUID: mLHjXzO3QrOvlSqjg/nRZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,151,1719903600"; 
-   d="scan'208";a="64081123"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.28])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 07:15:11 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 16 Aug 2024 17:15:07 +0300 (EEST)
-To: Matthias Fetzer <kontakt@matthias-fetzer.de>
-cc: hmh@hmh.eng.br, Hans de Goede <hdegoede@redhat.com>, 
-    ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] platform/x86: thinkpad_acpi: Add Thinkpad Edge E531
- fan support
-In-Reply-To: <20240816141228.134529-1-kontakt@matthias-fetzer.de>
-Message-ID: <212dd31b-7506-31ae-afde-7ebb93b24e24@linux.intel.com>
-References: <e1fe661c-281d-9d59-be53-968f7a0bc18a@linux.intel.com> <20240816141228.134529-1-kontakt@matthias-fetzer.de>
+	s=arc-20240116; t=1723817724; c=relaxed/simple;
+	bh=Vz/Wd2ZHxd37E7Z0jSyjIj1PL80f2VReLdIf3pbBvs8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Iegcd3/RL/KgryHJr1a8sw2KTEOfWj7YmEeeiCsjUaN8WgObxp52OSp9L1yIDUFc3xvWpCoMBZTm22DP7zF2QvIdYGFddB7HVbSQ5gcM8OX/aafOLXZvDSulhBcIxWJW2BkPQ0j0sJ302u4BwPrZLHaChOxUKhcKRKobl2BTxoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JxVO7wAt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB462C32782;
+	Fri, 16 Aug 2024 14:15:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723817723;
+	bh=Vz/Wd2ZHxd37E7Z0jSyjIj1PL80f2VReLdIf3pbBvs8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JxVO7wAtRgR3wjIOsJUIjXS2USfhU7zrVsQm/fbKiR8FAWdQgsH64NTt9c+ih7wP+
+	 2Z/pzjMIJyO642Ql97Q0NCnFMlw4ZezSUjP4I+QLOOvzWJ2cftmh5LiHoPu1ZmCgQT
+	 jylgxGPKmN05Qy5EVkQGFATEvXd5MjadYxB5SC5YqHY82zxZzUENZIIjq6CyGowaiq
+	 wp88L/pVHpgwDYmlrOhaaZ4U5jgLPl/75SlAnmwnieaKsjlXzU9UcosG+sZbdVwqU2
+	 r4YzyaIq+wVNKDJrfAq4FnDKN32n3O0Fz0SXI6oRbbfpmWl2fopnM1N1exUamVEiHi
+	 hixkCwa4jfzVA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sexjc-004IRp-BE;
+	Fri, 16 Aug 2024 15:15:20 +0100
+Date: Fri, 16 Aug 2024 15:15:19 +0100
+Message-ID: <86h6bkzh8o.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+	Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 14/40] KVM: arm64: Manage GCS access and registers for guests
+In-Reply-To: <20240801-arm64-gcs-v10-14-699e2bd2190b@kernel.org>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+	<20240801-arm64-gcs-v10-14-699e2bd2190b@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-239761419-1723817707=:1024"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, akpm@linux-foundation.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, arnd@arndb.de, oleg@redhat.com, ebiederm@xmission.com, shuah@kernel.org, rick.p.edgecombe@intel.com, debug@rivosinc.com, ardb@kernel.org, Szabolcs.Nagy@arm.com, kees@kernel.org, hjl.tools@gmail.com, paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, fweimer@redhat.com, brauner@kernel.org, thiago.bauermann@linaro.org, ross.burton@arm.com, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323328-239761419-1723817707=:1024
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-
-On Fri, 16 Aug 2024, Matthias Fetzer wrote:
-
-> Fan control on the E531 is done using the ACPI methods FANG and
-> FANW. The correct parameters and register values were found by
-> analyzing EC firmware as well as DSDT. This has been tested on
-> my Thinkpad Edge E531 (6885CTO, BIOS HEET52WW 1.33).
->=20
-> Signed-off-by: Matthias Fetzer <kontakt@matthias-fetzer.de>
-
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-
---=20
- i.
-
+On Thu, 01 Aug 2024 13:06:41 +0100,
+Mark Brown <broonie@kernel.org> wrote:
+> 
+> GCS introduces a number of system registers for EL1 and EL0, on systems
+> with GCS we need to context switch them and expose them to VMMs to allow
+> guests to use GCS.
+> 
+> In order to allow guests to use GCS we also need to configure
+> HCRX_EL2.GCSEn, if this is not set GCS instructions will be noops and
+> CHKFEAT will report GCS as disabled.  Also enable fine grained traps for
+> access to the GCS registers by guests which do not have the feature
+> enabled.
+> 
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 > ---
->=20
-> Changes in v4:
->     - Remove unnecessary variable
-> Changes in v3:
->     - Add missing newline
->     - Remove redundant code
-> Changes in v2:
->     - Fix typo in EC memory description
->     - Split plausibilty check for better readability
->=20
->  drivers/platform/x86/thinkpad_acpi.c | 143 ++++++++++++++++++++++++++-
->  1 file changed, 142 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/=
-thinkpad_acpi.c
-> index 397b409064c9..96c58bc59018 100644
-> --- a/drivers/platform/x86/thinkpad_acpi.c
-> +++ b/drivers/platform/x86/thinkpad_acpi.c
-> @@ -7751,6 +7751,28 @@ static struct ibm_struct volume_driver_data =3D {
->   * =09EC 0x2f (HFSP) might be available *for reading*, but do not use
->   * =09it for writing.
->   *
-> + * TPACPI_FAN_RD_ACPI_FANG:
-> + * =09ACPI FANG method: returns fan control register
-> + *
-> + *=09Takes one parameter which is 0x8100 plus the offset to EC memory
-> + *=09address 0xf500 and returns the byte at this address.
-> + *
-> + *=090xf500:
-> + *=09=09When the value is less than 9 automatic mode is enabled
-> + *=090xf502:
-> + *=09=09Contains the current fan speed from 0-100%
-> + *=090xf506:
-> + *=09=09Bit 7 has to be set in order to enable manual control by
-> + *=09=09writing a value >=3D 9 to 0xf500
-> + *
-> + * TPACPI_FAN_WR_ACPI_FANW:
-> + * =09ACPI FANG method: sets fan control registers
-> + *
-> + * =09Takes 0x8100 plus the offset to EC memory address 0xf500 and the
-> + * =09value to be written there as parameters.
-> + *
-> + *=09see TPACPI_FAN_RD_ACPI_FANG
-> + *
->   * TPACPI_FAN_WR_TPEC:
->   * =09ThinkPad EC register 0x2f (HFSP): fan control loop mode
->   * =09Supported on almost all ThinkPads
-> @@ -7884,6 +7906,7 @@ enum {=09=09=09=09=09/* Fan control constants */
->  enum fan_status_access_mode {
->  =09TPACPI_FAN_NONE =3D 0,=09=09/* No fan status or control */
->  =09TPACPI_FAN_RD_ACPI_GFAN,=09/* Use ACPI GFAN */
-> +=09TPACPI_FAN_RD_ACPI_FANG,=09/* Use ACPI FANG */
->  =09TPACPI_FAN_RD_TPEC,=09=09/* Use ACPI EC regs 0x2f, 0x84-0x85 */
->  =09TPACPI_FAN_RD_TPEC_NS,=09=09/* Use non-standard ACPI EC regs (eg: L13=
- Yoga gen2 etc.) */
->  };
-> @@ -7891,6 +7914,7 @@ enum fan_status_access_mode {
->  enum fan_control_access_mode {
->  =09TPACPI_FAN_WR_NONE =3D 0,=09=09/* No fan control */
->  =09TPACPI_FAN_WR_ACPI_SFAN,=09/* Use ACPI SFAN */
-> +=09TPACPI_FAN_WR_ACPI_FANW,=09/* Use ACPI FANW */
->  =09TPACPI_FAN_WR_TPEC,=09=09/* Use ACPI EC reg 0x2f */
->  =09TPACPI_FAN_WR_ACPI_FANS,=09/* Use ACPI FANS and EC reg 0x2f */
->  };
-> @@ -7924,9 +7948,13 @@ TPACPI_HANDLE(fans, ec, "FANS");=09/* X31, X40, X4=
-1 */
->  TPACPI_HANDLE(gfan, ec, "GFAN",=09/* 570 */
->  =09   "\\FSPD",=09=09/* 600e/x, 770e, 770x */
->  =09   );=09=09=09/* all others */
-> +TPACPI_HANDLE(fang, ec, "FANG",=09/* E531 */
-> +=09   );=09=09=09/* all others */
->  TPACPI_HANDLE(sfan, ec, "SFAN",=09/* 570 */
->  =09   "JFNS",=09=09/* 770x-JL */
->  =09   );=09=09=09/* all others */
-> +TPACPI_HANDLE(fanw, ec, "FANW",=09/* E531 */
-> +=09   );=09=09=09/* all others */
-> =20
->  /*
->   * Unitialized HFSP quirk: ACPI DSDT and EC fail to initialize the
-> @@ -8033,6 +8061,23 @@ static int fan_get_status(u8 *status)
-> =20
->  =09=09break;
->  =09}
-> +=09case TPACPI_FAN_RD_ACPI_FANG: {
-> +=09=09/* E531 */
-> +=09=09int mode, speed;
+>  arch/arm64/include/asm/kvm_host.h          |  8 +++++
+>  arch/arm64/include/asm/vncr_mapping.h      |  2 ++
+>  arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h | 49 ++++++++++++++++++++++++------
+>  arch/arm64/kvm/sys_regs.c                  | 12 ++++++++
+>  4 files changed, 61 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index a33f5996ca9f..5818e4a1c2d1 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -446,6 +446,10 @@ enum vcpu_sysreg {
+>  	GCR_EL1,	/* Tag Control Register */
+>  	TFSRE0_EL1,	/* Tag Fault Status Register (EL0) */
+>  
+> +	/* Guarded Control Stack registers */
+> +	GCSCRE0_EL1,	/* Guarded Control Stack Control (EL0) */
+> +	GCSPR_EL0,	/* Guarded Control Stack Pointer (EL0) */
 > +
-> +=09=09if (unlikely(!acpi_evalf(fang_handle, &mode, NULL, "dd", 0x8100)))
-> +=09=09=09return -EIO;
-> +=09=09if (unlikely(!acpi_evalf(fang_handle, &speed, NULL, "dd", 0x8102))=
-)
-> +=09=09=09return -EIO;
+>  	/* 32bit specific registers. */
+>  	DACR32_EL2,	/* Domain Access Control Register */
+>  	IFSR32_EL2,	/* Instruction Fault Status Register */
+> @@ -517,6 +521,10 @@ enum vcpu_sysreg {
+>  	VNCR(PIR_EL1),	 /* Permission Indirection Register 1 (EL1) */
+>  	VNCR(PIRE0_EL1), /*  Permission Indirection Register 0 (EL1) */
+>  
+> +	/* Guarded Control Stack registers */
+> +	VNCR(GCSPR_EL1),	/* Guarded Control Stack Pointer (EL1) */
+> +	VNCR(GCSCR_EL1),	/* Guarded Control Stack Control (EL1) */
 > +
-> +=09=09if (likely(status)) {
-> +=09=09=09*status =3D speed * 7 / 100;
-> +=09=09=09if (mode < 9)
-> +=09=09=09=09*status |=3D TP_EC_FAN_AUTO;
-> +=09=09}
+>  	VNCR(HFGRTR_EL2),
+>  	VNCR(HFGWTR_EL2),
+>  	VNCR(HFGITR_EL2),
+> diff --git a/arch/arm64/include/asm/vncr_mapping.h b/arch/arm64/include/asm/vncr_mapping.h
+> index df2c47c55972..5e83e6f579fd 100644
+> --- a/arch/arm64/include/asm/vncr_mapping.h
+> +++ b/arch/arm64/include/asm/vncr_mapping.h
+> @@ -88,6 +88,8 @@
+>  #define VNCR_PMSIRR_EL1         0x840
+>  #define VNCR_PMSLATFR_EL1       0x848
+>  #define VNCR_TRFCR_EL1          0x880
+> +#define VNCR_GCSPR_EL1		0x8C0
+> +#define VNCR_GCSCR_EL1		0x8D0
+>  #define VNCR_MPAM1_EL1          0x900
+>  #define VNCR_MPAMHCR_EL2        0x930
+>  #define VNCR_MPAMVPMV_EL2       0x938
+> diff --git a/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
+> index 4c0fdabaf8ae..ac29352e225a 100644
+> --- a/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
+> +++ b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
+> @@ -16,6 +16,27 @@
+>  #include <asm/kvm_hyp.h>
+>  #include <asm/kvm_mmu.h>
+>  
+> +static inline struct kvm_vcpu *ctxt_to_vcpu(struct kvm_cpu_context *ctxt)
+> +{
+> +	struct kvm_vcpu *vcpu = ctxt->__hyp_running_vcpu;
 > +
-> +=09=09break;
-> +=09}
->  =09case TPACPI_FAN_RD_TPEC:
->  =09=09/* all except 570, 600e/x, 770e, 770x */
->  =09=09if (unlikely(!acpi_ec_read(fan_status_offset, &s)))
-> @@ -8147,6 +8192,17 @@ static int fan2_get_speed(unsigned int *speed)
->  =09=09if (speed)
->  =09=09=09*speed =3D lo ? FAN_RPM_CAL_CONST / lo : 0;
->  =09=09break;
-> +=09case TPACPI_FAN_RD_ACPI_FANG: {
-> +=09=09/* E531 */
-> +=09=09int speed_tmp;
+> +	if (!vcpu)
+> +		vcpu = container_of(ctxt, struct kvm_vcpu, arch.ctxt);
 > +
-> +=09=09if (unlikely(!acpi_evalf(fang_handle, &speed_tmp, NULL, "dd", 0x81=
-02)))
-> +=09=09=09return -EIO;
+> +	return vcpu;
+> +}
 > +
-> +=09=09if (likely(speed))
-> +=09=09=09*speed =3D  speed_tmp * 65535 / 100;
-> +=09=09break;
-> +=09}
-> =20
->  =09default:
->  =09=09return -ENXIO;
-> @@ -8206,6 +8262,32 @@ static int fan_set_level(int level)
->  =09=09=09tp_features.fan_ctrl_status_undef =3D 0;
->  =09=09break;
-> =20
-> +=09case TPACPI_FAN_WR_ACPI_FANW:
-> +=09=09if (!(level & TP_EC_FAN_AUTO) && (level < 0 || level > 7))
-> +=09=09=09return -EINVAL;
-> +=09=09if (level & TP_EC_FAN_FULLSPEED)
-> +=09=09=09return -EINVAL;
+> +static inline bool ctxt_has_gcs(struct kvm_cpu_context *ctxt)
+> +{
+> +	struct kvm_vcpu *vcpu;
 > +
-> +=09=09if (level & TP_EC_FAN_AUTO) {
-> +=09=09=09if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x05)) =
-{
-> +=09=09=09=09return -EIO;
-> +=09=09=09}
-> +=09=09=09if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8100, 0x00)) =
-{
-> +=09=09=09=09return -EIO;
-> +=09=09=09}
-> +=09=09} else {
-> +=09=09=09if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x45)) =
-{
-> +=09=09=09=09return -EIO;
-> +=09=09=09}
-> +=09=09=09if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8100, 0xff)) =
-{
-> +=09=09=09=09return -EIO;
-> +=09=09=09}
-> +=09=09=09if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8102, level *=
- 100 / 7)) {
-> +=09=09=09=09return -EIO;
-> +=09=09=09}
-> +=09=09}
-> +=09=09break;
+> +	if (!cpus_have_final_cap(ARM64_HAS_GCS))
+> +		return false;
 > +
->  =09default:
->  =09=09return -ENXIO;
->  =09}
-> @@ -8284,6 +8366,19 @@ static int fan_set_enable(void)
->  =09=09=09rc =3D 0;
->  =09=09break;
-> =20
-> +=09case TPACPI_FAN_WR_ACPI_FANW:
-> +=09=09if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x05)) {
-> +=09=09=09rc =3D -EIO;
-> +=09=09=09break;
-> +=09=09}
-> +=09=09if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8100, 0x00)) {
-> +=09=09=09rc =3D -EIO;
-> +=09=09=09break;
-> +=09=09}
+> +	vcpu = ctxt_to_vcpu(ctxt);
+> +	return kvm_has_feat(kern_hyp_va(vcpu->kvm), ID_AA64PFR1_EL1, GCS, IMP);
+> +}
 > +
-> +=09=09rc =3D 0;
-> +=09=09break;
+>  static inline void __sysreg_save_common_state(struct kvm_cpu_context *ctxt)
+>  {
+>  	ctxt_sys_reg(ctxt, MDSCR_EL1)	= read_sysreg(mdscr_el1);
+> @@ -25,16 +46,10 @@ static inline void __sysreg_save_user_state(struct kvm_cpu_context *ctxt)
+>  {
+>  	ctxt_sys_reg(ctxt, TPIDR_EL0)	= read_sysreg(tpidr_el0);
+>  	ctxt_sys_reg(ctxt, TPIDRRO_EL0)	= read_sysreg(tpidrro_el0);
+> -}
+> -
+> -static inline struct kvm_vcpu *ctxt_to_vcpu(struct kvm_cpu_context *ctxt)
+> -{
+> -	struct kvm_vcpu *vcpu = ctxt->__hyp_running_vcpu;
+> -
+> -	if (!vcpu)
+> -		vcpu = container_of(ctxt, struct kvm_vcpu, arch.ctxt);
+> -
+> -	return vcpu;
+> +	if (ctxt_has_gcs(ctxt)) {
+> +		ctxt_sys_reg(ctxt, GCSPR_EL0) = read_sysreg_s(SYS_GCSPR_EL0);
+> +		ctxt_sys_reg(ctxt, GCSCRE0_EL1)	= read_sysreg_s(SYS_GCSCRE0_EL1);
+> +	}
+>  }
+>  
+>  static inline bool ctxt_has_mte(struct kvm_cpu_context *ctxt)
+> @@ -79,6 +94,10 @@ static inline void __sysreg_save_el1_state(struct kvm_cpu_context *ctxt)
+>  		if (ctxt_has_s1pie(ctxt)) {
+>  			ctxt_sys_reg(ctxt, PIR_EL1)	= read_sysreg_el1(SYS_PIR);
+>  			ctxt_sys_reg(ctxt, PIRE0_EL1)	= read_sysreg_el1(SYS_PIRE0);
+> +			if (ctxt_has_gcs(ctxt)) {
+> +				ctxt_sys_reg(ctxt, GCSPR_EL1)	= read_sysreg_el1(SYS_GCSPR);
+> +				ctxt_sys_reg(ctxt, GCSCR_EL1)	= read_sysreg_el1(SYS_GCSCR);
+> +			}
+>  		}
+>  	}
+>  	ctxt_sys_reg(ctxt, ESR_EL1)	= read_sysreg_el1(SYS_ESR);
+> @@ -126,6 +145,11 @@ static inline void __sysreg_restore_user_state(struct kvm_cpu_context *ctxt)
+>  {
+>  	write_sysreg(ctxt_sys_reg(ctxt, TPIDR_EL0),	tpidr_el0);
+>  	write_sysreg(ctxt_sys_reg(ctxt, TPIDRRO_EL0),	tpidrro_el0);
+> +	if (ctxt_has_gcs(ctxt)) {
+> +		write_sysreg_s(ctxt_sys_reg(ctxt, GCSPR_EL0), SYS_GCSPR_EL0);
+> +		write_sysreg_s(ctxt_sys_reg(ctxt, GCSCRE0_EL1),
+> +			       SYS_GCSCRE0_EL1);
+> +	}
+>  }
+>  
+>  static inline void __sysreg_restore_el1_state(struct kvm_cpu_context *ctxt)
+> @@ -157,6 +181,11 @@ static inline void __sysreg_restore_el1_state(struct kvm_cpu_context *ctxt)
+>  		if (ctxt_has_s1pie(ctxt)) {
+>  			write_sysreg_el1(ctxt_sys_reg(ctxt, PIR_EL1),	SYS_PIR);
+>  			write_sysreg_el1(ctxt_sys_reg(ctxt, PIRE0_EL1),	SYS_PIRE0);
 > +
->  =09default:
->  =09=09rc =3D -ENXIO;
->  =09}
-> @@ -8326,6 +8421,22 @@ static int fan_set_disable(void)
->  =09=09=09fan_control_desired_level =3D 0;
->  =09=09break;
-> =20
-> +=09case TPACPI_FAN_WR_ACPI_FANW:
-> +=09=09if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x45)) {
-> +=09=09=09rc =3D -EIO;
-> +=09=09=09break;
-> +=09=09}
-> +=09=09if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8100, 0xff)) {
-> +=09=09=09rc =3D -EIO;
-> +=09=09=09break;
-> +=09=09}
-> +=09=09if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8102, 0x00)) {
-> +=09=09=09rc =3D -EIO;
-> +=09=09=09break;
-> +=09=09}
-> +=09=09rc =3D 0;
-> +=09=09break;
+> +			if (ctxt_has_gcs(ctxt)) {
+> +				write_sysreg_el1(ctxt_sys_reg(ctxt, GCSPR_EL1),	SYS_GCSPR);
+> +				write_sysreg_el1(ctxt_sys_reg(ctxt, GCSCR_EL1),	SYS_GCSCR);
+> +			}
+>  		}
+>  	}
+>  	write_sysreg_el1(ctxt_sys_reg(ctxt, ESR_EL1),	SYS_ESR);
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index c90324060436..ac98d3237130 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -2446,6 +2446,10 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+>  	PTRAUTH_KEY(APDB),
+>  	PTRAUTH_KEY(APGA),
+>  
+> +	{ SYS_DESC(SYS_GCSCR_EL1), NULL, reset_val, GCSCR_EL1, 0 },
+> +	{ SYS_DESC(SYS_GCSPR_EL1), NULL, reset_unknown, GCSPR_EL1 },
+> +	{ SYS_DESC(SYS_GCSCRE0_EL1), NULL, reset_val, GCSCRE0_EL1, 0 },
 > +
->  =09default:
->  =09=09rc =3D -ENXIO;
->  =09}
-> @@ -8359,6 +8470,23 @@ static int fan_set_speed(int speed)
->  =09=09=09rc =3D -EINVAL;
->  =09=09break;
-> =20
-> +=09case TPACPI_FAN_WR_ACPI_FANW:
-> +=09=09if (speed >=3D 0 && speed <=3D 65535) {
-> +=09=09=09if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x45)) =
-{
-> +=09=09=09=09rc =3D -EIO;
-> +=09=09=09=09break;
-> +=09=09=09}
-> +=09=09=09if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8100, 0xff)) =
-{
-> +=09=09=09=09rc =3D -EIO;
-> +=09=09=09=09break;
-> +=09=09=09}
-> +=09=09=09if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd",
-> +=09=09=09=09=090x8102, speed * 100 / 65535))
-> +=09=09=09=09rc =3D -EIO;
-> +=09=09} else
-> +=09=09=09rc =3D -EINVAL;
-> +=09=09break;
+
+Global visibility for these registers? Why should we expose them to
+userspace if the feature is neither present nor configured?
+
+>  	{ SYS_DESC(SYS_SPSR_EL1), access_spsr},
+>  	{ SYS_DESC(SYS_ELR_EL1), access_elr},
+>  
+> @@ -2535,6 +2539,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+>  			     CTR_EL0_IDC_MASK |
+>  			     CTR_EL0_DminLine_MASK |
+>  			     CTR_EL0_IminLine_MASK),
+> +	{ SYS_DESC(SYS_GCSPR_EL0), NULL, reset_unknown, GCSPR_EL0 },
+>  	{ SYS_DESC(SYS_SVCR), undef_access },
+>  
+>  	{ PMU_SYS_REG(PMCR_EL0), .access = access_pmcr, .reset = reset_pmcr,
+> @@ -4560,6 +4565,9 @@ void kvm_calculate_traps(struct kvm_vcpu *vcpu)
+>  
+>  		if (kvm_has_feat(kvm, ID_AA64MMFR3_EL1, TCRX, IMP))
+>  			vcpu->arch.hcrx_el2 |= HCRX_EL2_TCR2En;
 > +
->  =09default:
->  =09=09rc =3D -ENXIO;
->  =09}
-> @@ -8701,6 +8829,10 @@ static int __init fan_init(struct ibm_init_struct =
-*iibm)
->  =09=09TPACPI_ACPIHANDLE_INIT(gfan);
->  =09=09TPACPI_ACPIHANDLE_INIT(sfan);
->  =09}
-> +=09if (tpacpi_is_lenovo()) {
-> +=09=09TPACPI_ACPIHANDLE_INIT(fang);
-> +=09=09TPACPI_ACPIHANDLE_INIT(fanw);
-> +=09}
-> =20
->  =09quirks =3D tpacpi_check_quirks(fan_quirk_table,
->  =09=09=09=09     ARRAY_SIZE(fan_quirk_table));
-> @@ -8720,6 +8852,9 @@ static int __init fan_init(struct ibm_init_struct *=
-iibm)
->  =09if (gfan_handle) {
->  =09=09/* 570, 600e/x, 770e, 770x */
->  =09=09fan_status_access_mode =3D TPACPI_FAN_RD_ACPI_GFAN;
-> +=09} else if (fang_handle) {
-> +=09=09/* E531 */
-> +=09=09fan_status_access_mode =3D TPACPI_FAN_RD_ACPI_FANG;
->  =09} else {
->  =09=09/* all other ThinkPads: note that even old-style
->  =09=09 * ThinkPad ECs supports the fan control register */
-> @@ -8766,6 +8901,11 @@ static int __init fan_init(struct ibm_init_struct =
-*iibm)
->  =09=09fan_control_access_mode =3D TPACPI_FAN_WR_ACPI_SFAN;
->  =09=09fan_control_commands |=3D
->  =09=09    TPACPI_FAN_CMD_LEVEL | TPACPI_FAN_CMD_ENABLE;
-> +=09} else if (fanw_handle) {
-> +=09=09/* E531 */
-> +=09=09fan_control_access_mode =3D TPACPI_FAN_WR_ACPI_FANW;
-> +=09=09fan_control_commands |=3D
-> +=09=09    TPACPI_FAN_CMD_LEVEL | TPACPI_FAN_CMD_SPEED | TPACPI_FAN_CMD_E=
-NABLE;
->  =09} else {
->  =09=09if (!gfan_handle) {
->  =09=09=09/* gfan without sfan means no fan control */
-> @@ -8917,6 +9057,7 @@ static int fan_read(struct seq_file *m)
-> =20
->  =09case TPACPI_FAN_RD_TPEC_NS:
->  =09case TPACPI_FAN_RD_TPEC:
-> +=09case TPACPI_FAN_RD_ACPI_FANG:
->  =09=09/* all except 570, 600e/x, 770e, 770x */
->  =09=09rc =3D fan_get_status_safe(&status);
->  =09=09if (rc)
-> @@ -8937,7 +9078,7 @@ static int fan_read(struct seq_file *m)
->  =09=09=09 * No other levels settings available
->  =09=09=09 */
->  =09=09=09seq_printf(m, "level:\t\t%s\n", status & FAN_NS_CTRL ? "unknown=
-" : "auto");
-> -=09=09} else {
-> +=09=09} else if (fan_status_access_mode =3D=3D TPACPI_FAN_RD_TPEC) {
->  =09=09=09if (status & TP_EC_FAN_FULLSPEED)
->  =09=09=09=09/* Disengaged mode takes precedence */
->  =09=09=09=09seq_printf(m, "level:\t\tdisengaged\n");
->=20
---8323328-239761419-1723817707=:1024--
+> +		if (kvm_has_feat(kvm, ID_AA64PFR1_EL1, GCS, IMP))
+> +			vcpu->arch.hcrx_el2 |= HCRX_EL2_GCSEn;
+>  	}
+>  
+>  	if (test_bit(KVM_ARCH_FLAG_FGU_INITIALIZED, &kvm->arch.flags))
+> @@ -4604,6 +4612,10 @@ void kvm_calculate_traps(struct kvm_vcpu *vcpu)
+>  		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nPIRE0_EL1 |
+>  						HFGxTR_EL2_nPIR_EL1);
+>  
+> +	if (!kvm_has_feat(kvm, ID_AA64PFR1_EL1, GCS, IMP))
+> +		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nGCS_EL0 |
+> +						HFGxTR_EL2_nGCS_EL1);
+
+How can this work if you don't handle ID_AA64PFR_EL1 being written to?
+You are exposing GCS to all guests without giving the VMM an
+opportunity to turn it off. This breaks A->B->A migration, which is
+not acceptable.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
