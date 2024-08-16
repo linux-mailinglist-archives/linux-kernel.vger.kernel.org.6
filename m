@@ -1,108 +1,128 @@
-Return-Path: <linux-kernel+bounces-290149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4498E955003
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:30:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D30D955005
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1951B25041
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:30:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F9501C2084B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1C51C231B;
-	Fri, 16 Aug 2024 17:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78DC31BE248;
+	Fri, 16 Aug 2024 17:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q+RJWxvz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="srUeYDKj"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A225F4AEE5;
-	Fri, 16 Aug 2024 17:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DDE28FF
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 17:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723829432; cv=none; b=KRw2s/LwsvOgWA37OBqkASQ0m7izxDHnS0+y6r9wvKGhwgXbvVfKrtmjl7MhUucIi1QRcrKR+CUjZ1VbOgcTyEtmmFTdR5rYy7bVT10zbMtt6QnsWTZ25MZkKbw2RXQQvqBe+93GcQuYKjfUQ1S5hvBfQ5w1gBbwznnHnHLLvZQ=
+	t=1723829476; cv=none; b=GzjYXp08X7g42b9Fx8nlVABXAvSSrGpYdxhaqWuqinqMOSvWx55vKor46+g8tOir0wzVrciGHT7442KepqeLWaZwtVEVnQ17qsLlXRCA7y57czS5oZcRN4IL7lYqYXsmHMerpUKd4bx39pee6iS5v1+9CMUMgpduJnlPkSgDe3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723829432; c=relaxed/simple;
-	bh=JaXZdxvF0nAJddX1aXf3wtQLWu28jEQt1m9rfw8bTrw=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=m3F+nFLde9Au9/j2e8MQAgIBt1DHlAgyhf8KKYTvWz4nYYzuPgiCrKs+tZHWpK0ZozU4ey6CFapzyPvfpWCWTo7cImcld7BYv47pJ78hlV9xiI7j18SKzToO97A8xmvgFrfsh4Arlhr27OqkYJ67wxcQWcMWazHyhI364n5XngU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q+RJWxvz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 322DBC4AF0C;
-	Fri, 16 Aug 2024 17:30:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723829432;
-	bh=JaXZdxvF0nAJddX1aXf3wtQLWu28jEQt1m9rfw8bTrw=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=q+RJWxvzYNIUt0B78tCDYLG+JfLVDTuMaT60Nchze714XISTy6z5djviY6HAhHhYT
-	 us/xc/TCoqm8CxIbu8RljRGFKKspOsI4Dm4QUkYYkSsQABM13EyWnBnl/oX7I7DGya
-	 c1WSsZmwfpY+emvoM/4CWsZbJhv5/L2y0WRMAkCRZiRKqVVNFbCTshPzVSAF9Bkmet
-	 pZHjHNFDq23cf60yJCRn7+6IjEWwh0+Y9UNyje8nAmYFspXfdGAT0xz8Pfkwxwci5y
-	 hXPPgBryNlzadAu9y1SHx8AS5frkOMgSYpdr002o9mDeXqzqtAJ3el0M2ru78lYgoW
-	 wGnEL6zBDahpA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE6B238231F8;
-	Fri, 16 Aug 2024 17:30:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1723829476; c=relaxed/simple;
+	bh=C4ChMrlmR4SCYUoSS51oOWEYKzN8OTpaOktFdHWEj/g=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=chgwjHaQJTPfrpbByxaBNy6dWAbI7J4LJcAjuuYyKvAyR2MEBMxDPoH32PBmOzYHQACgK/OLR4cBZnYWAZYt7TZYJ6npgBzlCSbMqasGuQs51oGaYPmyrNhNg+SNQHfgyGwleHBLPPgnzjO6fOHjZgEPYVHJbA48JGAg2qLqlrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=srUeYDKj; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5d82eb2c4feso1422596eaf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 10:31:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723829472; x=1724434272; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=c0btoFnPYk+qNzMwKHS5SY2OrE4TJjZMmUV+2C7SJP0=;
+        b=srUeYDKj0rxVad704Nr/MKGdPTRFjCGw1u0ePsMbotLVBxKzqKgFxHEsvXFpisw3gb
+         hDxXFdKOK2enlZ4oX4jhGxb0FZWaCBQTrWZBo3Z2zHQwirvk5edSkgVQuQKhyMUDoU+K
+         3zSkhhZzFDrv1FoqvXNIiJz2/ew/g2z7s107p6S1i3yyw2aFbofjiHcwryTszXagaZdX
+         dwWbSJ6daMNEEpMGBCwDptat6ZTdV2MFxpz39vVNBw/HienWcJWPy6mrbSOFmwTmvXpL
+         vNFEa1Sj0HMnqJ39/sexTxFMeJvN4Yj5i1NWXogqKrQDDcGZJUzmT08TLrdJySGGl/Sl
+         UcNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723829472; x=1724434272;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c0btoFnPYk+qNzMwKHS5SY2OrE4TJjZMmUV+2C7SJP0=;
+        b=hApcSDMCoHgNDBalMO00D2Vvta2qGRWE7lXGYdrEjDLqbHhKMshT0zsiRZRIZkCY/7
+         PxxBVOnLO9IVvSjCBTGA02xDuP/puwIfGfLMY5n2Y6MWICuxjan8mShXUe1uWkrn4+8t
+         i/tGjBcO7TwWcKEz4O/B5LdzjNcaleU0gIh6aEGtZtx2g5A6of1H9uT7LI2AqWoaswRo
+         M0lbv3S4kJy14VHvNkeyhgsGI5rfLRnFvgP+SjKzMlQqXtAnpwAlkSMSFneBxXdczsQB
+         0ngVEiqG5oJh46v1fpGi5siOECesfV9EdevtPX8GFzI8E/Scgk5qe2quPwPd8a7vocEu
+         WVdw==
+X-Forwarded-Encrypted: i=1; AJvYcCVDuanYPC9Dxkmq04NxUbhWCCGT80Nr7Xk8grFyNpSQjkYISngw7xIo7YtpbftyM6ejfgf01mLxzKK26mqHb77hruFIqTlBsCf9HDOB
+X-Gm-Message-State: AOJu0YwASQH3cnKlduLIuaX3HkCXTi9lmhDVKLan2qBOWBHDx8ec/YIc
+	ngtfvjdxgfvlcr2z4Vy1EjFoPPkouLxeYJiIJUi2TLY7BJ3gvCMqfuojMRh2t4bEas4ky71MSKU
+	g
+X-Google-Smtp-Source: AGHT+IHFUwh5sGqr/mezM8yIRxrOYMu7KqUUpC+VZEPvcRIv81ksTjrelEo8+qGrvG3cx3YCh4pYKQ==
+X-Received: by 2002:a05:6820:514:b0:5d6:ae6:a852 with SMTP id 006d021491bc7-5da98052f1cmr4644034eaf.6.1723829472327;
+        Fri, 16 Aug 2024 10:31:12 -0700 (PDT)
+Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5da8cd699dfsm759453eaf.5.2024.08.16.10.31.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 10:31:11 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Fri, 16 Aug 2024 12:30:58 -0500
+Subject: [PATCH] pwm: axi-pwmgen: use shared macro for version reg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v6 0/6]  net: dsa: microchip: ksz8795: add Wake on
- LAN support
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172382943150.3583497.14805648315334646638.git-patchwork-notify@kernel.org>
-Date: Fri, 16 Aug 2024 17:30:31 +0000
-References: <20240813142750.772781-1-vtpieter@gmail.com>
-In-Reply-To: <20240813142750.772781-1-vtpieter@gmail.com>
-To: Pieter <vtpieter@gmail.com>
-Cc: woojung.huh@microchip.com, UNGLinuxDriver@microchip.com, andrew@lunn.ch,
- f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, marex@denx.de,
- Woojung.Huh@microchip.com, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- pieter.van.trappen@cern.ch
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240816-pwm-axi-pwmgen-use-shared-macro-v1-1-994153ebc3a7@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIANGMv2YC/x2NywqDMBAAf0X23IUkBh/9leIhmI3uwSi7tBXEf
+ zd6GuYyc4CSMCm8qwOEfqy85iL2VcE4hzwRciwOzjhvOtvg9l8w7HxzooxfJdQ5CEVcwigr9nV
+ vWp+8jS5BqWxCiffn8BnO8wLbn6HMcQAAAA==
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Michael Hennerich <michael.hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, linux-pwm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.0
 
-Hello:
+The linux/fpga/adi-axi-common.h header already defines a macro for the
+version register offset. Use this macro in the axi-pwmgen driver instead
+of defining it again.
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+ drivers/pwm/pwm-axi-pwmgen.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-On Tue, 13 Aug 2024 16:27:34 +0200 you wrote:
-> From: Pieter Van Trappen <pieter.van.trappen@cern.ch>
-> 
-> Add WoL support for KSZ8795 family of switches. This code was tested
-> with a KSZ8794 chip.
-> 
-> Strongly based on existing KSZ9477 code which has now been moved to
-> ksz_common instead of duplicating, as proposed during the review of
-> the v1 version of this patch.
-> 
-> [...]
+diff --git a/drivers/pwm/pwm-axi-pwmgen.c b/drivers/pwm/pwm-axi-pwmgen.c
+index 3ad60edf20a5..b5477659ba18 100644
+--- a/drivers/pwm/pwm-axi-pwmgen.c
++++ b/drivers/pwm/pwm-axi-pwmgen.c
+@@ -29,7 +29,6 @@
+ #include <linux/regmap.h>
+ #include <linux/slab.h>
+ 
+-#define AXI_PWMGEN_REG_CORE_VERSION	0x00
+ #define AXI_PWMGEN_REG_ID		0x04
+ #define AXI_PWMGEN_REG_SCRATCHPAD	0x08
+ #define AXI_PWMGEN_REG_CORE_MAGIC	0x0C
+@@ -145,7 +144,7 @@ static int axi_pwmgen_setup(struct regmap *regmap, struct device *dev)
+ 			"failed to read expected value from register: got %08x, expected %08x\n",
+ 			val, AXI_PWMGEN_REG_CORE_MAGIC_VAL);
+ 
+-	ret = regmap_read(regmap, AXI_PWMGEN_REG_CORE_VERSION, &val);
++	ret = regmap_read(regmap, ADI_AXI_REG_VERSION, &val);
+ 	if (ret)
+ 		return ret;
+ 
 
-Here is the summary with links:
-  - [net-next,v6,1/6] dt-bindings: net: dsa: microchip: add microchip,pme-active-high flag
-    https://git.kernel.org/netdev/net-next/c/6a66873d820b
-  - [net-next,v6,2/6] net: dsa: microchip: move KSZ9477 WoL functions to ksz_common
-    https://git.kernel.org/netdev/net-next/c/f3ac6198a719
-  - [net-next,v6,3/6] net: dsa: microchip: generalize KSZ9477 WoL functions at ksz_common
-    https://git.kernel.org/netdev/net-next/c/fd250fed1f88
-  - [net-next,v6,4/6] net: dsa: microchip: add WoL support for KSZ87xx family
-    https://git.kernel.org/netdev/net-next/c/90b06ac06529
-  - [net-next,v6,5/6] net: dsa: microchip: fix KSZ87xx family structure wrt the datasheet
-    https://git.kernel.org/netdev/net-next/c/0d3edc90c4a0
-  - [net-next,v6,6/6] net: dsa: microchip: fix tag_ksz egress mask for KSZ8795 family
-    https://git.kernel.org/netdev/net-next/c/6f2b72c04d58
+---
+base-commit: 861a4272660ac0ff51aa4e2dbfbc3276c06b35eb
+change-id: 20240816-pwm-axi-pwmgen-use-shared-macro-939074f41d2f
 
-You are awesome, thank you!
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+David Lechner <dlechner@baylibre.com>
 
 
