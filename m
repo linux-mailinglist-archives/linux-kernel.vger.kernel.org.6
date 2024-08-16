@@ -1,123 +1,206 @@
-Return-Path: <linux-kernel+bounces-289639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD3889548A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:21:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A623F9548A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:22:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FE941F24237
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:21:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB73E1C22C37
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CB11B0122;
-	Fri, 16 Aug 2024 12:21:37 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6224B1B32A8;
+	Fri, 16 Aug 2024 12:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rcD8lH/0"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18D812AAC6;
-	Fri, 16 Aug 2024 12:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB221A01CF
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 12:21:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723810896; cv=none; b=sTEAJP0SdHrUVABzel/d9lvGQaVBWBmaNUXGeVj+8yEP3edqUzCrjeruBFnmdbhCGYYADticCDiY+l3z02LnY7Q1ceslLA9WQXUHFWjOrUmyuCT/Mzt2hV7olEA/nwCPTmN8n6CXiBE56Z6RhfBnoea2uZlPbclWSvXhDd8qWnM=
+	t=1723810921; cv=none; b=VZMPXmYGDbTBi5G3jWk5fYqIZZXOA5LPukNLBEhJUokC5OFrKhAo2htESOgZq62WuLWQjDsRsSIl0awiV8dWXLJBj/wn8OMm0OMB2Rz3oWF4CMsRyVRAECBD6fUBqhJWw3dffgyD0D4hpYJfZLp/4NM/UHwwjNQ7EE0pCt4EK4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723810896; c=relaxed/simple;
-	bh=TkX6qWziGg4Tt4r7MEJjYTjrsF+fQMQK1CuUPADhI3s=;
+	s=arc-20240116; t=1723810921; c=relaxed/simple;
+	bh=1dqD0dtTcUNg9RO7E2uwpZIgtvaNNmK0XfxDHrpuWTQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OCAPQWpzufN8IZKYMuqfojTcElBe6v/JEGLxja+Xy66JkFR1g0BVZBH5N9ki9Z9IacBe//NaeHJQX3c4LmsICqd2PJ2T+y/tZmTDcf0x0/OcwDi4Aux3JMt7haO7UeR2v+u+FXbtf600DRhkw8MOqYbkBkiwuFRbA6mjRadCNQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Wlh122nyrz4f3jMP;
-	Fri, 16 Aug 2024 20:21:10 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 451631A0359;
-	Fri, 16 Aug 2024 20:21:24 +0800 (CST)
-Received: from [10.174.177.210] (unknown [10.174.177.210])
-	by APP4 (Coremail) with SMTP id gCh0CgBnj4VCRL9mJ4dqBw--.4895S3;
-	Fri, 16 Aug 2024 20:21:24 +0800 (CST)
-Message-ID: <9de82d23-902f-cb18-7688-f5e687e86d14@huaweicloud.com>
-Date: Fri, 16 Aug 2024 20:21:22 +0800
+	 In-Reply-To:Content-Type; b=dfMJsw43qpiFtyOqq6NE1jrPdbT2YrPu13KJ/F76OjugCe3ULZUBHa9smUq1D0g5tUM4tb4HK+e649Z8uG3iy5rTqtH2L4MUsdEik+OaQGcK60zaSsJHUInsAgCw7hjh0U+1t18hSKShkQ+DuYel0va5hsrwjwqdUZdnE2K9K4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rcD8lH/0; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42812945633so15073445e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 05:21:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723810918; x=1724415718; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=fjFP4C61WocPjkajJuVaho6oIV1iErl+yoVXsVqET1o=;
+        b=rcD8lH/0EPsGRx3N7yPJSecWnVbtKV5txVVbgm9GSV6dCvmH+ZIpuTtRau3pqh/f1r
+         D3iatIQiGtOLoQlmPXygPvBRhowo9o4U9h40idE0iw3lVshxjH365eOm0zy5QYpgL2Y3
+         9bo7eUpAUQRvOI8XiMP4pHKvEPrtOGh9LMdEF4JvYket1iaqOAmcieJWdHdjhu1k1hgh
+         2XqzG57wps43nJdxrZ1fkOlZevgl+8J6skEkuC1RpE2ui+arcKxvCeQQgUQtgwwH5G3C
+         tFRIhTgo8phKsHuTDGSdxdyF2psJvJB/78IPie7tezU77JEfDcWhxDD2qbMpaQUmxhqb
+         CH+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723810918; x=1724415718;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fjFP4C61WocPjkajJuVaho6oIV1iErl+yoVXsVqET1o=;
+        b=eD5Hza6xeTTZm7p4b29QZphtfuz4y0ym0e/GjSf+E7g0yNLFsV8bHmxYdBNxk9Hs5q
+         3KDvPhrobf6zE2ZYUfqZ9Y/vMsDGnaemYRr9XMbmuRax5Okt4ynOO2TXyHI6j7lWcD5R
+         UWXzUQYMuJu0ClKHYjgw9ZceMR0oxk8MVqXUpjCR8DhStvueg1jfrqWe6Y6N3QSOEHkg
+         Y4FmrbNlV97NkUxy4c4/jyuaF6BNrSm1U7y2ehzX2l2cYK3gXBYdHoC/c49HIXT8qNw3
+         EpJA5WBuan/0k4Fhv94kfzw6ivPXBvHgaz+96jmorXwVQLndNJ49lJl8fgCSwMdQ/6ik
+         buYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVkDWDc1fQQg9mCTWLPU+V3zppiEIdOs6YCGg48HqpSXe47vQVwhB8eZBIrYb+7MRYJoRFwJIO1KuDniFh+75KmXCK5wdYIBtwf3c+f
+X-Gm-Message-State: AOJu0YxgfIU9Y5yyp65zRofXzrP/BBHnL9V0heE0jt4E81Yaf3w7dz7j
+	eDvkXthDoPHbvITpYwBeLHbuWZRFHphrDwdaCmYDrW4N0Z6Q6nnLDNSuJKa9qQY=
+X-Google-Smtp-Source: AGHT+IE2TLLs/9Zl6ejokD58XO7erF76l7ktGamO60Z5JhzKy25TCvycKd91UaHRAfCQqDkf3zYh1A==
+X-Received: by 2002:a05:600c:3547:b0:426:5416:67e0 with SMTP id 5b1f17b1804b1-429ed7da283mr18773555e9.31.1723810917679;
+        Fri, 16 Aug 2024 05:21:57 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.215.209])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded35991sm75064915e9.21.2024.08.16.05.21.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Aug 2024 05:21:57 -0700 (PDT)
+Message-ID: <3b33d0b0-ae9f-4afe-af2f-9596394bcc4f@linaro.org>
+Date: Fri, 16 Aug 2024 14:21:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH] ext4: disambiguate the return value of
- ext4_dio_write_end_io()
-To: alexjlzheng@gmail.com, tytso@mit.edu, adilger.kernel@dilger.ca
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jinliang Zheng <alexjlzheng@tencent.com>
-References: <20240815112746.18570-1-alexjlzheng@tencent.com>
-From: yangerkun <yangerkun@huaweicloud.com>
-In-Reply-To: <20240815112746.18570-1-alexjlzheng@tencent.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/7] thermal: of: Simplify
+ thermal_of_for_each_cooling_maps() with scoped for each OF child loop
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+ Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Vasily Khoruzhick <anarsoul@gmail.com>, Yangtao Li <tiny.windzz@gmail.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, Chen-Yu Tsai <wenst@chromium.org>
+References: <20240816-b4-cleanup-h-of-node-put-thermal-v2-0-cee9fc490478@linaro.org>
+ <20240816-b4-cleanup-h-of-node-put-thermal-v2-4-cee9fc490478@linaro.org>
+ <CAJZ5v0j9WTzd5qg3bLLB6Y41xu1zoJMy7TV1xhFxEzW-x=b5=w@mail.gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <CAJZ5v0j9WTzd5qg3bLLB6Y41xu1zoJMy7TV1xhFxEzW-x=b5=w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBnj4VCRL9mJ4dqBw--.4895S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7tr1rtFWfGFyDZr1UKw4Uurg_yoW8XF1kpr
-	s0kasFyryqv342k397KF1DZr18ua18G3y5XF909w17ZrZFvrn5KF1Utas0vF10yrZ7Ww4F
-	qa1ktr9Ivw1jy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
-	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHD
-	UUUUU==
-X-CM-SenderInfo: 51dqwvhunx0q5kxd4v5lfo033gof0z/
 
-
-
-在 2024/8/15 19:27, alexjlzheng@gmail.com 写道:
-> From: Jinliang Zheng <alexjlzheng@tencent.com>
+On 16/08/2024 13:30, Rafael J. Wysocki wrote:
+> On Fri, Aug 16, 2024 at 9:40 AM Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
+>>
+>> Use scoped for_each_child_of_node_scoped() when iterating over device
+>> nodes to make code a bit simpler.
+>>
+>> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>>  drivers/thermal/thermal_of.c | 8 +++-----
+>>  1 file changed, 3 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
+>> index 94cc077ab3a1..ce398fde48bb 100644
+>> --- a/drivers/thermal/thermal_of.c
+>> +++ b/drivers/thermal/thermal_of.c
+>> @@ -373,7 +373,7 @@ static int thermal_of_for_each_cooling_maps(struct thermal_zone_device *tz,
+>>                                             int (*action)(struct device_node *, int, int,
+>>                                                           struct thermal_zone_device *, struct thermal_cooling_device *))
+>>  {
+>> -       struct device_node *tz_np, *cm_np, *child;
+>> +       struct device_node *tz_np, *cm_np;
+>>         int ret = 0;
+>>
+>>         tz_np = thermal_of_zone_get_by_name(tz);
+>> @@ -386,12 +386,10 @@ static int thermal_of_for_each_cooling_maps(struct thermal_zone_device *tz,
+>>         if (!cm_np)
+>>                 goto out;
+>>
+>> -       for_each_child_of_node(cm_np, child) {
+>> +       for_each_child_of_node_scoped(cm_np, child) {
+>>                 ret = thermal_of_for_each_cooling_device(tz_np, child, tz, cdev, action);
+>> -               if (ret) {
+>> -                       of_node_put(child);
+>> +               if (ret)
+>>                         break;
+>> -               }
+>>         }
+>>
+>>         of_node_put(cm_np);
+>>
+>> --
 > 
-> The commit 91562895f803 ("ext4: properly sync file size update after O_SYNC
-> direct IO") causes confusion about the meaning of the return value of
-> ext4_dio_write_end_io().
+> This clashes with
 > 
-> Specifically, when the ext4_handle_inode_extension() operation succeeds,
-> ext4_dio_write_end_io() directly returns count instead of 0.
+> https://lore.kernel.org/linux-pm/1758256.QkHrqEjB74@rjwysocki.net/
 > 
-> This does not cause a bug in the current kernel, but the semantics of the
-> return value of the ext4_dio_write_end_io() function are wrong, which is
-> likely to introduce bugs in the future code evolution.
-> 
-> Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
-> ---
->   fs/ext4/file.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index c89e434db6b7..6df5a92cec2b 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -392,8 +392,9 @@ static int ext4_dio_write_end_io(struct kiocb *iocb, ssize_t size,
->   	 */
->   	if (pos + size <= READ_ONCE(EXT4_I(inode)->i_disksize) &&
->   	    pos + size <= i_size_read(inode))
-> -		return size;
-> -	return ext4_handle_inode_extension(inode, pos, size);
-> +		return 0;
-> +	error = ext4_handle_inode_extension(inode, pos, size);
-> +	return error < 0 ? error : 0;
+> which I would prefer to go in first if you don't mind.
 
-Why?
+My other patchset which fixes bugs here, could go in before:
+https://lore.kernel.org/all/20240814195823.437597-1-krzysztof.kozlowski@linaro.org/
 
-iomap_dio_complete can use the return value directly without any bug. 
-And I think the code now seems more clearly...
+so it will be backported. Other than that, I am fine with rebasing my
+changes. There is no point in refactoring the code if it is being
+removed/reshuffled :)
 
->   }
->   
->   static const struct iomap_dio_ops ext4_dio_write_ops = {
+Best regards,
+Krzysztof
 
 
