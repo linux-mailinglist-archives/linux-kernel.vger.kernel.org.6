@@ -1,135 +1,185 @@
-Return-Path: <linux-kernel+bounces-288864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58E66953FC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:38:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DE48953FC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:39:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 875C31C22531
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 02:38:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 115EC1F259EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 02:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3E34AEE5;
-	Fri, 16 Aug 2024 02:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465FE61674;
+	Fri, 16 Aug 2024 02:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="F0muKMew"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aQwF2aqv"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D4840855
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 02:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED04E40855
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 02:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723775918; cv=none; b=o1t4uh81ye3h7HAt28JoU0j51fhol+nrWr2jTwbGD3M43zmfXTq55QMKlBye7Reb4Aq6kXte36J8GDNCOqwHGwyhouqcC1w7VBOZFiWmepJqwNuYNcudlIQXLBwVTxuyM4kaz6XXTy8QxiTYfMhXsCxO9xaIRv2ui2cNS40UXEU=
+	t=1723775926; cv=none; b=OSNUSYA1TptrQIYyqglHRzTIFN0SUX7jfY6Q7ZrMsCmSkJJUqVSgHkuul2GJOLb2fkUgzNSnh599cBXZ+fMjOS2RU/LFWD+MQmQ4Q39sCcZPLOe9eIV3bQ8ZALj0GzVhuM7hxvMqGYqOb3WLctasvoSqms7iaK/Xd/h4d8oVEe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723775918; c=relaxed/simple;
-	bh=P78B+OYBGqEJQl4cyhbCurfcxBY2SL9cXnCHcM08L+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TrZsSua1Ic/qFGuxG4lXGQP3kQYYLm5pw6G+r2XL00dz6SjvwGRAhS61MIAS0fzFIA6Eoc/SUrx+MhdauLwXi2rjc0U1PwqPpuEcD96IslwfzJThtN/JqHtEH6H1Vg+L+XN1uJpHgdLhw+oiKA6v5y1exOFSD2wJbYbD1bENc4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=F0muKMew; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7c3d9a5e050so1121503a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 19:38:36 -0700 (PDT)
+	s=arc-20240116; t=1723775926; c=relaxed/simple;
+	bh=Tg/mUA7GfRDkY08pK/TnN/m2P6YZYX8pzUAgRlRhh2Q=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=PToHrCPjMINAAiAX6Z5DItJIsnOE9hNBFT+Rm86kCfZTI65FdOuQTGXyoinVuYg12D1LTNu8C9mDQN2G98xjV2Xi8JSkxBFoeGkkK8qCt+hHHlg6Z5fs7BRKfeKxwwpgGZeUvQjlcvxm54FyhDBYO7q3zxpjgjzy06dy+dJTzM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aQwF2aqv; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6af8f7a30dbso23518697b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 19:38:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723775916; x=1724380716; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8nkeK/grZEPp6IQRQFIGhpI12QpEXAYnL1RbISrkxAw=;
-        b=F0muKMewCaZuG5ph1Fd/qL1l/XHlK+85N87DtikUnke8GtDTGp9Kn/bon1qTgOfwwu
-         Phly24lfk3fgDsYg9VLwVgL0cS6YJJE1+5mbM9UbdRAnu0agNQ/MXWnHSajli+flCIAx
-         yfQNC99GWxWqqD6i9SdHHEzEgC//xuyKIxyEU=
+        d=google.com; s=20230601; t=1723775924; x=1724380724; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LyjbohY2C3uhRTrXGup/3TN9AtJjgG7LMPSUPTUSkaA=;
+        b=aQwF2aqv3cVokNoWV+pRbB6kEfNaJ59JQZLURZi+hITnc7ZwIgx0tC5TdlMqQjQER8
+         69tpwghC/A8DJGuSHRZvOattzykbYnv/jdyVf0DZsLcsScVqJfVPWGT1wLElK83Fu0iE
+         28m24ok/lubY9gW0azB0TbXPLEP9ml0j4bDiudLeqnrLlTMlHnM2gb+jxm68t5fCEdNt
+         PPsxcttjqAqCvZin8qZiF6ZuXjzPyBtcQH6JaDyS8NHFZwvOklr7mtwz3kDr9DU/toSN
+         0kKTBNIc0EHvPy/4ReTte2uV7W0UPhZWjB8mTTFGD+9dATLR5Kukc21lzcIOx5MXmLJG
+         /T4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723775916; x=1724380716;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8nkeK/grZEPp6IQRQFIGhpI12QpEXAYnL1RbISrkxAw=;
-        b=YNb7ZAxDheQC+Y++XdTFHcVi5y6mkJe1wm4V/ypRl1O6Vx469uKi+qZh47d1WOWjqL
-         ZZKxh1lyx20wLr9OhuvXi1mZlJhpqt8qT/KgMx2/KPQ7Y4i51C9Zb80Mpe34f1AaZ7ua
-         Lzsh0rJHFYg7q52FDK4PHcBAVur63YeG9XCnftdzXnBbQ+vPUOs9DlzkQSEXA6Obxlcd
-         AkGtPBmlg4EtiWcREp8fbPMrJU/jdT9+T1SP0uZO5aE27hruFjkV31rpKVRbhmWMA5e8
-         cjH5I11BSEr8BTJGkGMjZcjpzi+mSxTH2lDZYk7nC8h25yYk7HvtIo6oU9tfDyJKcb/4
-         8Zog==
-X-Forwarded-Encrypted: i=1; AJvYcCXMfck68j3JXBMyqfTkAL3/pK+TzIw+y+E88qz8QbG/PhhJmCKPcwrnsPJHoELyzzRTl0DZud6IohrpWdZ1MFSalCJJqTbjKtABv3+K
-X-Gm-Message-State: AOJu0Ywa22K/KO7eyAplzB0mJt42PcPiye6j20DiNNTkrgIHvLSMjQyV
-	49/yBKusoZk+B0U2V3pO4Yz99V2dURsGFfCF2y/gZ00kDGx4sB7kgNcX2ZMa5g==
-X-Google-Smtp-Source: AGHT+IGegcpN6PTlCQdus+u+voVSTHi7JDqFrQQctnE1TWePFTgJ0CP8SHDsrEvJSNpF3jUTY4JSCA==
-X-Received: by 2002:a05:6a20:d493:b0:1c4:81ab:1f5e with SMTP id adf61e73a8af0-1c90503036amr2025225637.38.1723775915977;
-        Thu, 15 Aug 2024 19:38:35 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:fe02:865:f677:1481])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f02fb465sm16522355ad.51.2024.08.15.19.38.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 19:38:35 -0700 (PDT)
-Date: Fri, 16 Aug 2024 11:38:31 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Matthew Brost <matthew.brost@intel.com>, Tejun Heo <tj@kernel.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] workqueue: fix null-ptr-deref on __alloc_workqueue()
- error
-Message-ID: <20240816023831.GD12106@google.com>
-References: <20240815070339.346160-1-senozhatsky@chromium.org>
- <20240815070900.GB12106@google.com>
- <20240815072427.GC12106@google.com>
- <Zr4lN63t25Og5/0G@DUT025-TGLU.fm.intel.com>
- <Zr4rosIiK2a0sGhc@DUT025-TGLU.fm.intel.com>
+        d=1e100.net; s=20230601; t=1723775924; x=1724380724;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LyjbohY2C3uhRTrXGup/3TN9AtJjgG7LMPSUPTUSkaA=;
+        b=v3Mr7B8WgUVTscGUslQ4tTe0jmZfktk/d7BrCIOJQp03VQIaA96NTXm0CeD3E2IC9L
+         bMGL5+QOCOK2TYrWrmkySe2YVc1lFaWxVFcA9GH6fgk/kwZ/hEsRJx87MBmYNjMMVO13
+         rz0Qd3KLwCYA4HZRma1jQsvi5RtKFDW7LTbdwNL0Ct0yDs7XJVEpeP+F0wtK8DTSEIEg
+         3wSxvS5/xZPC+vCRc0V39OlJhkQ5gfP4RaWopAoIMYS7tW2tUKmMMAf+uFNX1f61MY0n
+         eoBw+6PkqrqeDmBEXEPHWUzXNInWIlp9b21BEEAF/cJ0PuWRgMeET7s7EabGIAVi4DQG
+         Xv3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWNC9g4YxONS27AQ6n+wdF6r+bL4heds5grYprLVqYry9jfPwOYuhD5nzH0F/b9ElU5HV7Py5Kw0YYlo5/S+7rv9+3tgPEZfLuyI5Le
+X-Gm-Message-State: AOJu0Yx4Wf4PE2xWPFFp6FBX7j2hJN5lNGH8bZv+qigviIlZ1DRxnt2V
+	E+8AjkEyqA1qTKk+RdZkxZG7wQMiu2B/7+TPaYwuUYZcKkzkYCuFPzTP/EVL30o3hYGDDPHv9oQ
+	EqA==
+X-Google-Smtp-Source: AGHT+IE5aoR8QpfQBshABkJAvxMCtGn+ogdjhA8YhzRHzo0dzawE7uFYL81H+c5VKis6QxoS/7e7UbDurxE=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:6784:b0:681:8b2d:81ae with SMTP id
+ 00721157ae682-6b1bb85ee4bmr800067b3.9.1723775923786; Thu, 15 Aug 2024
+ 19:38:43 -0700 (PDT)
+Date: Thu, 15 Aug 2024 19:38:36 -0700
+In-Reply-To: <20240522001817.619072-16-dwmw2@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zr4rosIiK2a0sGhc@DUT025-TGLU.fm.intel.com>
+Mime-Version: 1.0
+References: <20240522001817.619072-1-dwmw2@infradead.org> <20240522001817.619072-16-dwmw2@infradead.org>
+Message-ID: <Zr67rPxxSDYTYPYV@google.com>
+Subject: Re: [RFC PATCH v3 15/21] KVM: x86: Allow KVM master clock mode when
+ TSCs are offset from each other
+From: Sean Christopherson <seanjc@google.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Paul Durrant <paul@xen.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jalliste@amazon.co.uk, sveith@amazon.de, zide.chen@intel.com, 
+	Dongli Zhang <dongli.zhang@oracle.com>, Chenyi Qiang <chenyi.qiang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Matthew,
-
-On (24/08/15 16:24), Matthew Brost wrote:
-[..]
-> diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
-> index 8ccbf510880b..5e818eae092d 100644
-> --- a/include/linux/workqueue.h
-> +++ b/include/linux/workqueue.h
-> @@ -534,7 +534,7 @@ alloc_workqueue_lockdep_map(const char *fmt, unsigned int flags, int max_active,
->   * @fmt: printf format for the name of the workqueue
->   * @flags: WQ_* flags (only WQ_FREEZABLE and WQ_MEM_RECLAIM are meaningful)
->   * @lockdep_map: user-defined lockdep_map
-> - * @args: args for @fmt
-> + * @...: args for @fmt
->   *
->   * Same as alloc_ordered_workqueue but with the a user-define lockdep_map.
->   * Useful for workqueues created with the same purpose and to avoid leaking a
-> @@ -543,20 +543,9 @@ alloc_workqueue_lockdep_map(const char *fmt, unsigned int flags, int max_active,
->   * RETURNS:
->   * Pointer to the allocated workqueue on success, %NULL on failure.
->   */
-> -__printf(1, 4) static inline struct workqueue_struct *
-> -alloc_ordered_workqueue_lockdep_map(const char *fmt, unsigned int flags,
-> -                                   struct lockdep_map *lockdep_map, ...)
-> -{
-> -       struct workqueue_struct *wq;
-> -       va_list args;
-> -
-> -       va_start(args, lockdep_map);
-> -       wq = alloc_workqueue_lockdep_map(fmt, WQ_UNBOUND | __WQ_ORDERED | flags,
-> -                                        1, lockdep_map, args);
-> -       va_end(args);
-> +#define alloc_ordered_workqueue_lockdep_map(fmt, flags, lockdep_map, args...)  \
-> +       alloc_workqueue_lockdep_map(fmt, WQ_UNBOUND | __WQ_ORDERED | (flags), 1, lockdep_map, ##args)
+On Wed, May 22, 2024, David Woodhouse wrote:
+> From: David Woodhouse <dwmw@amazon.co.uk>
 > 
-> -       return wq;
-> -}
->  #endif
+> There is no reason why the KVM clock cannot be in masterclock mode when
+> the TSCs are not in sync, as long as they are at the same *frequency*.
 
-Oh, I haven't checked the workqueue header.  Yes, you are right.
-A macro should work.
+Yes there is.  KVM sets PVCLOCK_TSC_STABLE_BIT when the master clock is enabled:
 
+	if (use_master_clock)
+		pvclock_flags |= PVCLOCK_TSC_STABLE_BIT;
 
-Tejun, how do you plan to handle this?  Would it be possible to
-drop current series from your tree so that Matthew can send an
-updated version (with all the fixes squashed)?
+which tells the guest its safe to skip the cross-(v)CPU forced monotonicty goo:
+
+	if ((valid_flags & PVCLOCK_TSC_STABLE_BIT) &&
+		(flags & PVCLOCK_TSC_STABLE_BIT))
+		return ret;
+
+	/*
+	 * Assumption here is that last_value, a global accumulator, always goes
+	 * forward. If we are less than that, we should not be much smaller.
+	 * We assume there is an error margin we're inside, and then the correction
+	 * does not sacrifice accuracy.
+	 *
+	 * For reads: global may have changed between test and return,
+	 * but this means someone else updated poked the clock at a later time.
+	 * We just need to make sure we are not seeing a backwards event.
+	 *
+	 * For updates: last_value = ret is not enough, since two vcpus could be
+	 * updating at the same time, and one of them could be slightly behind,
+	 * making the assumption that last_value always go forward fail to hold.
+	 */
+	last = raw_atomic64_read(&last_value);
+	do {
+		if (ret <= last)
+			return last;
+	} while (!raw_atomic64_try_cmpxchg(&last_value, &last, ret));
+
+	return ret;
+
+As called out by commit b48aa97e3820 ("KVM: x86: require matched TSC offsets for
+master clock"), that was the motivation for requiring matched offsets.
+
+As an aside, Marcelo's assertion that "its obvious" was anything but to me.  Took
+me forever to piece together the PVCLOCK_TSC_STABLE_BIT angle.
+
+    KVM: x86: require matched TSC offsets for master clock
+    
+    With master clock, a pvclock clock read calculates:
+    
+    ret = system_timestamp + [ (rdtsc + tsc_offset) - tsc_timestamp ]
+    
+    Where 'rdtsc' is the host TSC.
+    
+    system_timestamp and tsc_timestamp are unique, one tuple
+    per VM: the "master clock".
+    
+    Given a host with synchronized TSCs, its obvious that
+    guest TSC must be matched for the above to guarantee monotonicity.
+    
+    Allow master clock usage only if guest TSCs are synchronized.
+    
+    Signed-off-by: Marcelo Tosatti <mtosatti@redhat.com>
+
+> Running at a different frequency would lead to a systemic skew between
+> the clock(s) as observed by different vCPUs due to arithmetic precision
+> in the scaling. So that should indeed force the clock to be based on the
+> host's CLOCK_MONOTONIC_RAW instead of being in masterclock mode where it
+> is defined by the (or 'a') guest TSC.
+> 
+> But when the vCPUs merely have a different TSC *offset*, that's not a
+> problem. The offset is applied to that vCPU's kvmclock->tsc_timestamp
+> field, and it all comes out in the wash.
+> 
+> So, remove ka->nr_vcpus_matched_tsc and replace it with a new field
+> ka->all_vcpus_matched_tsc which is not only changed to a boolean, but
+> also now tracks that the *frequency* matches, not the precise offset.
+> 
+> Using a *count* was always racy because a new vCPU could be being
+> created *while* kvm_track_tsc_matching() was running and comparing with
+> kvm->online_vcpus. That variable is only atomic with respect to itself.
+> In particular, kvm_arch_vcpu_create() runs before kvm->online_vcpus is
+> incremented for the new vCPU, and kvm_arch_vcpu_postcreate() runs later.
+> 
+> Repurpose kvm_track_tsc_matching() to be called from kvm_set_tsc_khz(),
+> and kill the cur_tsc_generation/last_tsc_generation fields which tracked
+> the precise TSC matching.
+
+If this goes anywhere, it needs to be at least three patches:
+
+  1. Bulk code movement
+  2. Chaning from a count to a bool/flag
+  3. Eliminating the offset matching
 
