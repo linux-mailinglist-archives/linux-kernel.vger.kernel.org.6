@@ -1,76 +1,105 @@
-Return-Path: <linux-kernel+bounces-288807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 592A3953EFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:40:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7394D953F04
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:41:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BFD01C22513
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:40:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B4091F24108
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC212B9C6;
-	Fri, 16 Aug 2024 01:39:54 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7433C1EB31;
+	Fri, 16 Aug 2024 01:41:49 +0000 (UTC)
+Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CE629408
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 01:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A0F1DFFC
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 01:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723772393; cv=none; b=UdS/MNxXgJcExOpB0JVEOJMZb+J/SgxjL255ikNSSvLwYALy/J8gzEu/Xt0xPp/3uPPyytUpD/T7nd9G5p4vQnQObsQhfBzoD2UvF0ENXjMbxf1cZ/t7x2fApLQ4wAniW9FNJ4QfXbh6Q+IJ2TkTXx+CQ6JIjW2bcfQZkrf4KxI=
+	t=1723772509; cv=none; b=BC9C7kQtltffn9o8IUasVxFMFNzWXXLS9tTh9p3SFd0frUnCBPbOQiSCmQBS6V27tt0YbInoAftCx0rl5YH+oiMxm1k54Whnu7Fasf16Xkk/G20tb4Il9k4pSFw7xiRZ8uEZa699/GjGV1/u3v3qSFiqroFE25ZYbQGTNvI9qCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723772393; c=relaxed/simple;
-	bh=0WmrG3qaWmTF1jIsNuK+nXeko/G3CtlMDvPl4ax5BMY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=AaSsZQL9tJJvd4vLab77hoLCgMQ4DrZIx4R8GIbTrkj7xxmeztHa09WzLF2bsOskxxgJgY9/W59PrBpL6CwGav7LaydVHOsHGy6rXnKpwsyoeFztgDAP4rNkP4aUm08MLVkBDujww3wvgG4O2mxp7wvBLMP+u7REPbBigh5VQHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f8d1720ebso158102539f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 18:39:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723772391; x=1724377191;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0WmrG3qaWmTF1jIsNuK+nXeko/G3CtlMDvPl4ax5BMY=;
-        b=fP/QokYDqCHOHU9DdcA8LfL5tcSCISc5fNDDKNrZ+i6Yo69VEnYxbuprYmWUzk91IA
-         qVH3lOT3UfUoaA7Fjn2Qz0yHc9C0cw+ae2m4NWv3lN6O4CXwzLjJ3rvWJ35If7gI9hhk
-         IbeirIakMK5K96cYCUOtoVW/FqVInVGHlmGty5YDFRY5RFsmmGx1SWde14jVbVifCY3o
-         /5HTLwwWcX+gA0Kl0hv7vSmbSZ40LRs0ubvQTgsgdx0yYudJ6kCjc75GV7xVn2D77Q4Y
-         42ddrWaURxsMr11up/QvYHZCxbehyuapcw4FexqEvloateoOjjde/HgVRW2R5gIxi60+
-         wzIA==
-X-Gm-Message-State: AOJu0Yw+I9T0RC3qecod/TmmoKBmvzSjEWloZEJkj23FOsUl7LypBxs1
-	5aQWpCpuIJfdeKs9raBKqDukuqlqJUvmzfONBDAIDC+h9cj7mKuQr9HH8z8ZVw22JwDUSGE62jz
-	IM5bDbeyBdHZZ4PrmQDchRUSF/hLkntVGdIRLSB25vk/eXnmWzi0ILP4=
-X-Google-Smtp-Source: AGHT+IGgqqgUMhP/730cFBMuVkh66GRDrSC2+Dn+tSxKMaGtumK3EcH/7KjOWxqzKVR6M3AjqKj47zjcexELAT7ffNRLnXshYZkX
+	s=arc-20240116; t=1723772509; c=relaxed/simple;
+	bh=cIFEptHDKhWbRMlTceUW9tJyF1zOrDqmgxDJ9GRJxmo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=NYeTXsDe8LwY5ivBQ5V5ySchwLG+w/0T8Ex3D+/lnWY/0IynIJnZ/OrKOBxq+2wGsz6ZW5hLtjHbhyPV8suFhKqcOoJnPhpuU4A7Jvy7HQ67v/lr6rJhw2dZip0qspMg8sBnL+BtaP0rzFh1RPwLwHdjERCOvux5aX5k2QPXNBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.192.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w002.hihonor.com (unknown [10.68.28.120])
+	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4WlPmY4vNTzYlK9K;
+	Fri, 16 Aug 2024 09:39:25 +0800 (CST)
+Received: from a009.hihonor.com (10.68.30.244) by w002.hihonor.com
+ (10.68.28.120) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 16 Aug
+ 2024 09:41:44 +0800
+Received: from a007.hihonor.com (10.68.22.31) by a009.hihonor.com
+ (10.68.30.244) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 16 Aug
+ 2024 09:41:43 +0800
+Received: from a007.hihonor.com ([fe80::4407:dd67:71d7:ea82]) by
+ a007.hihonor.com ([fe80::4407:dd67:71d7:ea82%10]) with mapi id
+ 15.02.1544.011; Fri, 16 Aug 2024 09:41:43 +0800
+From: gaoxu <gaoxu2@honor.com>
+To: Yu Zhao <yuzhao@google.com>, Kalesh Singh <kaleshsingh@google.com>
+CC: Andrew Morton <akpm@linux-foundation.org>, "linux-mm@kvack.org"
+	<linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+	Shaohua Li <shli@fb.com>, yipengxiang <yipengxiang@honor.com>, fengbaopeng
+	<fengbaopeng@honor.com>
+Subject: =?utf-8?B?5Zue5aSNOiBbUEFUQ0hdIG1tOiBhZGQgbGF6eWZyZWUgZm9saW8gdG8gbHJ1?=
+ =?utf-8?Q?_tail?=
+Thread-Topic: [PATCH] mm: add lazyfree folio to lru tail
+Thread-Index: AdrvDo5mhFpHwjY+TGSie/L6+cGQzf//2ZUA//7+IPA=
+Date: Fri, 16 Aug 2024 01:41:43 +0000
+Message-ID: <86738d19f97843efbfa0f83a2d85115a@honor.com>
+References: <37bbf461e81342a7b5798923b783e349@honor.com>
+ <CAOUHufZzmUU6YxOfQ7-v6AMj29uoMOLKMz0RWk9MRA4DkDSXAQ@mail.gmail.com>
+In-Reply-To: <CAOUHufZzmUU6YxOfQ7-v6AMj29uoMOLKMz0RWk9MRA4DkDSXAQ@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1541:b0:7f9:3fd9:ccf with SMTP id
- ca18e2360f4ac-824f26fb839mr3616139f.2.1723772391396; Thu, 15 Aug 2024
- 18:39:51 -0700 (PDT)
-Date: Thu, 15 Aug 2024 18:39:51 -0700
-In-Reply-To: <000000000000e64ead061fb68def@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000102921061fc309c3@google.com>
-Subject: Re: [syzbot] [PATCH] ocfs2: Fix shift-out-of-bounds UBSAN bug in ocfs2_verify_volume()
-From: syzbot <syzbot+f3fff775402751ebb471@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
-
-***
-
-Subject: [PATCH] ocfs2: Fix shift-out-of-bounds UBSAN bug in ocfs2_verify_volume()
-Author: qasdev00@gmail.com
-
-#syz test
+PiANCj4gT24gVGh1LCBBdWcgMTUsIDIwMjQgYXQgNjozM+KAr0FNIGdhb3h1IDxnYW94dTJAaG9u
+b3IuY29tPiB3cm90ZToNCj4gPg0KPiA+IFJlcGxhY2UgbHJ1dmVjX2FkZF9mb2xpbyB3aXRoIGxy
+dXZlY19hZGRfZm9saW9fdGFpbCBpbiB0aGUgbHJ1X2xhenlmcmVlX2ZuOg0KPiA+IDEuIFRoZSBs
+YXp5LWZyZWUgZm9saW8gaXMgYWRkZWQgdG8gdGhlIExSVV9JTkFDVElWRV9GSUxFIGxpc3QuIElm
+IGl0J3MNCj4gPiAgICBtb3ZlZCB0byB0aGUgTFJVIHRhaWwsIGl0IGFsbG93cyBmb3IgZmFzdGVy
+IHJlbGVhc2UgbGF6eS1mcmVlIGZvbGlvIGFuZA0KPiA+ICAgIHJlZHVjZXMgdGhlIGltcGFjdCBv
+biBmaWxlIHJlZmF1bHQuDQo+ID4gMi4gV2hlbiBtZ2xydSBpcyBlbmFibGVkLCB0aGUgbGF6eS1m
+cmVlIGZvbGlvIGlzIHJlY2xhaW1hYmxlZCBhbmQgc2hvdWxkIGJlDQo+ID4gICAgYWRkZWQgdXNp
+bmcgbHJ1X2dlbl9hZGRfZm9saW8obHJ1dmVjLCBmb2xpbywgdHJ1ZSkgaW5zdGVhZCBvZg0KPiA+
+ICAgIGxydV9nZW5fYWRkX2ZvbGlvKGxydXZlYywgZm9saW8sIGZhbHNlKSBmb3IgYWRkaW5nIHRv
+IGdlbi4NCj4gPg0KPiA+IFdpdGggdGhlIGNoYW5nZSBpbiBwbGFjZSwgd29ya2luZ3NldF9yZWZh
+dWx0X2ZpbGUgaXMgcmVkdWNlZCBieSAzMyUgaW4gdGhlDQo+ID4gY29udGludW91cyBzdGFydHVw
+IHRlc3Rpbmcgb2YgdGhlIGFwcGxpY2F0aW9ucyBpbiB0aGUgQW5kcm9pZCBzeXN0ZW0uDQo+ID4N
+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBnYW8geHUgPGdhb3h1MkBoaWhvbm9yLmNvbT4NCj4gPiAtLS0N
+Cj4gPiAgbW0vc3dhcC5jIHwgMiArLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24o
+KyksIDEgZGVsZXRpb24oLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9tbS9zd2FwLmMgYi9tbS9z
+d2FwLmMNCj4gPiBpbmRleCA2Nzc4NmNiNzcuLmVkNDk2NDNlYyAxMDA2NDQNCj4gPiAtLS0gYS9t
+bS9zd2FwLmMNCj4gPiArKysgYi9tbS9zd2FwLmMNCj4gPiBAQCAtNjM1LDcgKzYzNSw3IEBAIHN0
+YXRpYyB2b2lkIGxydV9sYXp5ZnJlZV9mbihzdHJ1Y3QgbHJ1dmVjICpscnV2ZWMsIHN0cnVjdA0K
+PiBmb2xpbyAqZm9saW8pDQo+IA0KPiBQbGVhc2Ugd29yayBhZ2FpbnN0IHRoZSBsYXRlc3QgbW0t
+dW5zdGFibGUuDQpUaGlzIHdhcyBteSBtaXN0YWtlLiBUaGFuayB5b3UgZm9yIHRoZSByZW1pbmRl
+ci4NCkkgd2lsbCByZXNlbmQgdGhlIHBhdGNoIGJhc2VkIG9uIHRoZSBtbS11bnN0YWJsZSBicmFu
+Y2gNCj4gDQo+ID4gICAgICAgICAgICAgICAgICAqIGFub255bW91cyBmb2xpb3MNCj4gPiAgICAg
+ICAgICAgICAgICAgICovDQo+ID4gICAgICAgICAgICAgICAgIGZvbGlvX2NsZWFyX3N3YXBiYWNr
+ZWQoZm9saW8pOw0KPiA+IC0gICAgICAgICAgICAgICBscnV2ZWNfYWRkX2ZvbGlvKGxydXZlYywg
+Zm9saW8pOw0KPiA+ICsgICAgICAgICAgICAgICBscnV2ZWNfYWRkX2ZvbGlvX3RhaWwobHJ1dmVj
+LCBmb2xpbyk7DQo+ID4NCj4gPiAgICAgICAgICAgICAgICAgX19jb3VudF92bV9ldmVudHMoUEdM
+QVpZRlJFRSwgbnJfcGFnZXMpOw0KPiA+ICAgICAgICAgICAgICAgICBfX2NvdW50X21lbWNnX2V2
+ZW50cyhscnV2ZWNfbWVtY2cobHJ1dmVjKSwNCj4gUEdMQVpZRlJFRSwNCj4gDQo+IEthbGVzaCBo
+YXMgYmVlbiB3b3JraW5nIG9uIHNvbWV0aGluZyBzaW1pbGFyIGZvciBscnVfZGVhY3RpdmF0ZSgp
+LCBhbmQNCj4gaGUgY2FuIGhlbHAgdGVzdCBhbmQgcmV2aWV3IHRoaXMgcGF0Y2guDQo=
 
