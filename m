@@ -1,114 +1,121 @@
-Return-Path: <linux-kernel+bounces-289174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45BB89542B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:24:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34E859542D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:36:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7EFB2881CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:24:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4B1BB209ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD138136E30;
-	Fri, 16 Aug 2024 07:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D94312D1EA;
+	Fri, 16 Aug 2024 07:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d0XzHVcx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="Umztj2RG";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qTNKSldc"
+Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DDBB12D758;
-	Fri, 16 Aug 2024 07:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B278248C;
+	Fri, 16 Aug 2024 07:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723793036; cv=none; b=NL8qopQF7nirYSV9zV+TkjuxNdAa2PYGTnixdb6mxSr8iLv/oHVUi859tpv7vFdidewakjxrTvk2jY23RCnOwDfEJymLZebYGJHO0WBFTqJGBlLsLvC8AMnK+bnUKF/ce02rxgNTb1TYwDrPujteoRopN6MBrX7MSUoHvfXIOVw=
+	t=1723793775; cv=none; b=kk7eDm8vsT4W2dVTQZwW6AN9ODcTizv16Flks/CW5j0mOdTMzypqrlwfQGH6v3umLEHWwKUN3qR6yk/4689NNCLs2D1nvw3iX/qAcnkj7OvnAVVI9bRfzEYZ/62K6H9PIBaiZ39ZOQ62ZAMemHPwy2wYRd6VIHic67hQcLv1qhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723793036; c=relaxed/simple;
-	bh=eGmgAaZh6wSDvQDRjeeZIys0lYofLe7O5SLfEHYjDpk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=omQ9lc9TYaI/BSjyh4kcSijsZkEi+0k5YirY0dgjIHxrWQmanfPPYvt8Ttefm9frtkYkZxREL1U40qJq/KWp5s0tDkTEy63cJ5nvu4oqXjz54QwL8/vRpXV8QiSgHu9kW1Yd5E4S/8UnLWTaGjeSYDHMNnzRgBkU69O5LlUD86M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d0XzHVcx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1211EC32782;
-	Fri, 16 Aug 2024 07:23:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723793035;
-	bh=eGmgAaZh6wSDvQDRjeeZIys0lYofLe7O5SLfEHYjDpk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=d0XzHVcx8eso+SzlLhod7g/ZK8KJGMOJvNiR8rZI+vm7vAqrL0IgFSnddRJenK5NH
-	 UKZJC10sYLpY0kfForJv43RFjcNuZ8QafXOe+RCrTuDD3/E/QDieg9OuF3mv/vSVLt
-	 wUcPeMtMmRz7Oxo4V+Buiq1WbYX93maqUWajlDzNJ1vnh0r/eGbo4plM6YJU15Gg+n
-	 rhvLnJMVy9CsZ5xHCQb3rgCWkOlwgJMf/rjONOP9tPlvYiorQml1O+2V8JSIYWCy5x
-	 fz/rZGG6LLv8HS7F2MvdTerMdEod8ErJhZ6odE1a0Sms/qgHmseO279KZ9ZmTFUIhA
-	 ZLgF3nndg7YrQ==
-From: neeraj.upadhyay@kernel.org
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	paulmck@kernel.org,
-	neeraj.upadhyay@kernel.org,
-	neeraj.upadhyay@amd.com,
-	boqun.feng@gmail.com,
-	joel@joelfernandes.org,
-	urezki@gmail.com,
-	frederic@kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>
-Subject: [PATCH rcu 3/3] rcu: Annotate struct kvfree_rcu_bulk_data with __counted_by()
-Date: Fri, 16 Aug 2024 12:52:54 +0530
-Message-Id: <20240816072254.65928-3-neeraj.upadhyay@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240816072210.GA65644@neeraj.linux>
-References: <20240816072210.GA65644@neeraj.linux>
+	s=arc-20240116; t=1723793775; c=relaxed/simple;
+	bh=n1L6r8KrOD/h/tSsNlfxD0fvyZThkR3abO1tZsDXJYs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Si4Z5RscnB3wA3GG53+zSXuUw1BHkAPxU/7SmfVNvNtOIOhjM2zDWXZ2tRyVXPCKsoTghaJLDPpsu22+e88vm1lw8fq/bhzYPt/xFZssNUcRqf/kBCROupOOdc7hXTrfnT2k0fJQm9jP/jdE9ztQ5jmzde8oQ2+YDG1TjjNKl+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=Umztj2RG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qTNKSldc; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-05.internal (phl-compute-05.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 58537138FF6A;
+	Fri, 16 Aug 2024 03:23:07 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Fri, 16 Aug 2024 03:23:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1723792987; x=1723879387; bh=otW7NOXTBR
+	CiGM3bO6PN502kUbF4o9ycxmrdasNJxp4=; b=Umztj2RGdZePX0AqsMqOBUseQ5
+	rJ7sSDxi6EpoSaIYezB7qqduuyjlVHXygt2Pt6eVTagfeW+W15+CtZsWsV+Q1JPE
+	5kmCk+c2U2XwS/qKczrbClXtbYHNucHJ8esDnTX6MWLeo9KXwpAMimbPJQTo7lP9
+	gK1rO+SMX1fxlgTn2py9IHokwixjWVtIRVJUAtz2okDbQN5w8n3QMFar3KskkFOt
+	oUi0SiM3wID9jvvnkFzbUHqEVh8QIRWs14HJWX1n5cFNyk5XiSWKCs4fIRt8zQo7
+	WcV/V5Opg4ufjcxDV9jw/DwxrnfAyinFVGIyA59r3wQpoEN7NHU/uAdTEdgA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1723792987; x=1723879387; bh=otW7NOXTBRCiGM3bO6PN502kUbF4
+	o9ycxmrdasNJxp4=; b=qTNKSldcY+ZQGZRhNy+V/PL012WSy/WF/NpN10S7K0vJ
+	rq7dlMXIpdvENYXrC4hORxueQmZrZtO5akxFJ/i9WQIFv6xRpt8SL/xt8Ii08D3E
+	BrZAtX9AjtSU21q6UO9YPY7Zn+6ghf2ckkWs/IheOJX6G00DZgVePAGarMrNUAzr
+	LN7DQCTBnF1e0K5WMhmEO0xKYHGl7uZBF4A1BIeUgcBH295E+cG8zlcxh/juDP6O
+	OUSya8j1TkDUF/sTW9Z8iukIzu0bPrBf0zTx7NrnSue6ut4W2FaPVnIYaLvGHqIT
+	MG8qhudG66kKIpS2xct34P3l5UHEc7ZzrcuGeJAEzw==
+X-ME-Sender: <xms:W_6-ZhGudhXnMYwREFOxMAxDiNb0VAmfAVA95kge8s7i8fU1rFQCbA>
+    <xme:W_6-ZmV_jUGpZo0biVQ91YgNSCrdhraodZB4QFNR_OcZfq6qb-b9oG9g7xHRoPGLi
+    cPcZAfoL4ur4Q>
+X-ME-Received: <xmr:W_6-ZjJUMAisFAYmb-vRpKrwu2ep9UccTqkyjvTeVhQRAXMl_rG_pEW6Tw-KIZSIh3yhaINxQXD9wbROpaW3gSRnMcpaxoh_UUNrLA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddtjedguddvtdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
+    necuhfhrohhmpefirhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtf
+    frrghtthgvrhhnpeehgedvvedvleejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueef
+    hffgheekteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehgrhgvgheskhhrohgrhhdrtghomhdpnhgspghrtghpthhtohepkedpmhhouggvpehs
+    mhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhughdrohhrghdrrghupd
+    hrtghpthhtoheprghgrhhoshhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
+    uhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
+    hnuhigqdhnvgigthesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:W_6-ZnExNCd18HrT3LPQf0a0Ybyc4yjogZJHLZXnj68GSEl5gj472Q>
+    <xmx:W_6-ZnVXFGTUGudglhRjHPYPJHccnAlQ0ybjNQXvhfMwzPodUXL4WQ>
+    <xmx:W_6-ZiP3_nkiBAlbNZ9GlcgRILR-eA8o3uUl2aRKHX4-qJArpx-hqQ>
+    <xmx:W_6-Zm09eqRnDhcUg4hYl4x_AZacR8RUsEUmeHYQ46xnBvHsirdkPQ>
+    <xmx:W_6-ZjqtRJN8ft2QckoLnSdnQsAypaELmKIZi8M31TRmcEBdoawMe5D6>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 16 Aug 2024 03:23:06 -0400 (EDT)
+Date: Fri, 16 Aug 2024 09:23:04 +0200
+From: Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andy Gross <agross@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patch in the usb tree
+Message-ID: <2024081658-broaden-roulette-21bc@gregkh>
+References: <20240816123709.3fbfef5d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240816123709.3fbfef5d@canb.auug.org.au>
 
-From: Thorsten Blum <thorsten.blum@toblux.com>
+On Fri, Aug 16, 2024 at 12:37:09PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> The following commit is also in the qcom tree as a different commit
+> (but the same patch):
+> 
+>   3c2360f1a50e ("dt-bindings: usb: qcom,dwc3: Update ipq5332 clock details")
+> 
+> This is commit
+> 
+>   34b8dbef668a ("dt-bindings: usb: qcom,dwc3: Update ipq5332 clock details")
+> 
+> in the qcom tree.
 
-Add the __counted_by compiler attribute to the flexible array member
-records to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-CONFIG_FORTIFY_SOURCE.
+Should be fine, thanks!
 
-Increment nr_records before adding a new pointer to the records array.
-
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-Reviewed-by: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Reviewed-by: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
-Signed-off-by: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
----
- kernel/rcu/tree.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 0f41a81138dc..d5bf824159da 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -3227,7 +3227,7 @@ struct kvfree_rcu_bulk_data {
- 	struct list_head list;
- 	struct rcu_gp_oldstate gp_snap;
- 	unsigned long nr_records;
--	void *records[];
-+	void *records[] __counted_by(nr_records);
- };
- 
- /*
-@@ -3767,7 +3767,8 @@ add_ptr_to_bulk_krc_lock(struct kfree_rcu_cpu **krcp,
- 	}
- 
- 	// Finally insert and update the GP for this page.
--	bnode->records[bnode->nr_records++] = ptr;
-+	bnode->nr_records++;
-+	bnode->records[bnode->nr_records - 1] = ptr;
- 	get_state_synchronize_rcu_full(&bnode->gp_snap);
- 	atomic_inc(&(*krcp)->bulk_count[idx]);
- 
--- 
-2.40.1
-
+greg k-h
 
