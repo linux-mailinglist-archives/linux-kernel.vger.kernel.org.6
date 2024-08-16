@@ -1,146 +1,105 @@
-Return-Path: <linux-kernel+bounces-289866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 932CB954C9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:40:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB51E954C9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46FB71F26937
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:40:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78F53288159
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:42:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E6D1BD4E3;
-	Fri, 16 Aug 2024 14:40:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20931BD01F;
+	Fri, 16 Aug 2024 14:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ayq31Px+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MuUyvOcM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B457191473;
-	Fri, 16 Aug 2024 14:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28527191473;
+	Fri, 16 Aug 2024 14:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723819247; cv=none; b=CsxkRbk0fWTnICmDhA8J5dh5KcvlSbBQ8uxMb3WuWVIDtjfhRqPegNw4JUp2h+XI0XEh5p7Qj/fpImyVfV9P8OyOObWO3EIOIWfKEyt1T15xhlsMnRCY050UkWzixo0SoRjtZ9iAOV2xAjhnQJrpycOqHHqgqfsGcLlvD+V6dfM=
+	t=1723819335; cv=none; b=EroWNTwBkKCREE18V1JE83tsNgPu/lYRkRvEWBelcDc5e5CgcnT8HJwW9A3Sw5X4V1Fi2KSybzPHRf0i7woPn2ArQ+lv5+3wDiyrGPuPdFV1T+o7YETyFTMHYEzcPOGcZYx0JQZbSBSaVCSzKVZrnSeVuc0OEPQJtKCsuRV3cbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723819247; c=relaxed/simple;
-	bh=UzDJBf86ETc8UZTa5b4UELQHYAFgRcESJ7jTnyf0ZwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wa4lt09QjCwh29D7k4ViAY2ntbyfiVUyvQo/OB1764AEqX5hVriPIU65kq0LYoL5fYdHZl1m66WKC3a3MRZXzR9CivEerPxSA/VEjvCQ3bAbsC+yg4V3B2GD9kd2Z0M7WtfVDAP30v2ovSErKLbVPp343K9J6u4jNhhnd8xtZTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ayq31Px+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19210C32782;
-	Fri, 16 Aug 2024 14:40:36 +0000 (UTC)
+	s=arc-20240116; t=1723819335; c=relaxed/simple;
+	bh=7TGuegKZbNzPtsJjymQhdPwGEn/Vab/BwE8qKh95Wgg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=R/jHyKLrlPWjNBJp7P6sfs9EGYSwsgdglWDRQlJSlDhmwf6cEuzavp8Ck0zEfQzGXujetwSSUCuZci4rT8cjufqFd1f+AB/UKQxEM2PwCcLtsChJLrf0+aVjKL8mNlHrnc8mzprnsA/75mANJUboC5UbwGZ0PXz8zNCy6o1xVXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MuUyvOcM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B975EC32782;
+	Fri, 16 Aug 2024 14:42:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723819246;
-	bh=UzDJBf86ETc8UZTa5b4UELQHYAFgRcESJ7jTnyf0ZwM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ayq31Px++sqKgYH6KIIEfzP9t8l7YzSD7GuJ5qmVc4DKeok71ex+gt8p6GXQrin0A
-	 FMv1eKs/V3igtiQsqzoKNRGY+vydPlJjsnnKO+K1utHrSAE5nJ47/kWP2P3hXvjhOw
-	 8vEjWx/dU/C0TnCX962O46QCERiC7GU9AJryrZV+7/2dJDsGItKkMAj7UaHl47sl4W
-	 v9sA63+/ybob+fDBXeRr2eiO0MIYZ5vbql1dY6Q5I+ccEVg2igJ9JkeO501cnqMHKH
-	 GjTuEJ//TuTnk5PuY4xNxD9ZEeux/z7OctdL2wDddo21XP0TYtjEzdJy6qH/qPzfQc
-	 cKnhkuzu5vfhA==
-Date: Fri, 16 Aug 2024 15:40:33 +0100
+	s=k20201202; t=1723819334;
+	bh=7TGuegKZbNzPtsJjymQhdPwGEn/Vab/BwE8qKh95Wgg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=MuUyvOcMDsHWUrm7QvhhQqvro+LQqyCCLtoq7e/dnIDNs7Ge4iNH4ULEHf0WqL9PP
+	 O934GIwYW9fDE3Sn9MBNTIQLbOpQUcqdIxzUpXoEzgIjp35TyfizY4kWtPCyBr7QxH
+	 C/dHz+7T9ViDG57XAee5lEsvnaY/UG/u7pXQ/L9urDWHfWxPHmdGrdn20JYE97yrmV
+	 1Ry5gDafPO9GPQHEBBz897IPJfKF+3HlD2KGTl91fz/HYpAsdFgMDaea1vJUD4YSOJ
+	 tmAgqtnuDjihRLcPRwGosNM2BMjg1IyRa4k8fKxK5D+oGSXhomvVOqgbzzYg9zr0Cp
+	 vOqm2LAdFNk2g==
 From: Mark Brown <broonie@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, joey.gouly@arm.com
-Subject: Re: [PATCH v10 14/40] KVM: arm64: Manage GCS access and registers
- for guests
-Message-ID: <8c1e8fb6-0152-42f7-ab6d-93f6fe70b4aa@sirena.org.uk>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-14-699e2bd2190b@kernel.org>
- <86h6bkzh8o.wl-maz@kernel.org>
+To: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+Cc: alsa-devel@alsa-project.org, pierre-louis.bossart@linux.intel.com, 
+ yung-chuan.liao@linux.intel.com, ranjani.sridharan@linux.intel.com, 
+ lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+ Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com, 
+ venkataprasad.potturu@amd.com, cristian.ciocaltea@collabora.com, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240816070328.610360-1-Vijendar.Mukunda@amd.com>
+References: <20240816070328.610360-1-Vijendar.Mukunda@amd.com>
+Subject: Re: [PATCH] ASoC: SOF: amd: Fix for acp init sequence
+Message-Id: <172381933148.65490.13739657424123950336.b4-ty@kernel.org>
+Date: Fri, 16 Aug 2024 15:42:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="DUpDdNL7GPA6ROUr"
-Content-Disposition: inline
-In-Reply-To: <86h6bkzh8o.wl-maz@kernel.org>
-X-Cookie: A Smith & Wesson beats four aces.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
+On Fri, 16 Aug 2024 12:33:28 +0530, Vijendar Mukunda wrote:
+> When ACP is not powered on by default, acp power on sequence explicitly
+> invoked by programming pgfsm control mask. The existing implementation
+> checks the same PGFSM status mask and programs the same PGFSM control mask
+> in all ACP variants which breaks acp power on sequence for ACP6.0 and
+> ACP6.3 variants. So to fix this issue, update ACP pgfsm control mask and
+> status mask based on acp descriptor rev field, which will vary based on
+> acp variant.
+> 
+> [...]
 
---DUpDdNL7GPA6ROUr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied to
 
-On Fri, Aug 16, 2024 at 03:15:19PM +0100, Marc Zyngier wrote:
-> Mark Brown <broonie@kernel.org> wrote:
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-> > +	{ SYS_DESC(SYS_GCSCR_EL1), NULL, reset_val, GCSCR_EL1, 0 },
-> > +	{ SYS_DESC(SYS_GCSPR_EL1), NULL, reset_unknown, GCSPR_EL1 },
-> > +	{ SYS_DESC(SYS_GCSCRE0_EL1), NULL, reset_val, GCSCRE0_EL1, 0 },
+Thanks!
 
-> Global visibility for these registers? Why should we expose them to
-> userspace if the feature is neither present nor configured?
+[1/1] ASoC: SOF: amd: Fix for acp init sequence
+      commit: a42db293e5983aa1508d12644f23d73f0553b32c
 
-...
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-> > +	if (!kvm_has_feat(kvm, ID_AA64PFR1_EL1, GCS, IMP))
-> > +		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nGCS_EL0 |
-> > +						HFGxTR_EL2_nGCS_EL1);
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-> How can this work if you don't handle ID_AA64PFR_EL1 being written to?
-> You are exposing GCS to all guests without giving the VMM an
-> opportunity to turn it off. This breaks A->B->A migration, which is
-> not acceptable.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-This was done based on your positive review of the POE series which
-follows the same pattern:
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-   https://lore.kernel.org/linux-arm-kernel/20240503130147.1154804-8-joey.gouly@arm.com/
-   https://lore.kernel.org/linux-arm-kernel/864jagmxn7.wl-maz@kernel.org/
+Thanks,
+Mark
 
-in which you didn't note any concerns about the handling for the
-sysregs.
-
-If your decisions have changed then you'll need to withdraw your review
-there, I'd figured that given the current incompleteness of the
-writability conversions and there being a bunch of existing registers
-exposed unconditionally you'd decided to defer until some more general
-cleanup of the situation.
-
---DUpDdNL7GPA6ROUr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma/ZOAACgkQJNaLcl1U
-h9AqVAf+My4ZnSnvRQhvDgit0vtodchlwobno2H2GE7edIRFmlg3k4goJ7BXcmJp
-HS9AzX6BzfrFZrvDxZIfwrvfIp3wCTp95dOSfLGENuWQV7IByIKHIHZdU4DYr/Xt
-3xJTwzDiJx19EK8R6usMaaQDarxQ9gozKbteWUt761o+iCKU6SGOvoN+2TkScTkA
-jmS+wMgm75FpHNpFm/wUixbuKoldXbagTgo9Wgly4xIW+11Rzpz/btXniVTM07BR
-XrnBaW2kdCXjr2C71bZGVBmg14aQCRh72D4xikY8k214GwuzeQbQber+iLP4io82
-23ty1aim7XcdSmNPpDiJfoiXcJ1yYw==
-=CjJp
------END PGP SIGNATURE-----
-
---DUpDdNL7GPA6ROUr--
 
