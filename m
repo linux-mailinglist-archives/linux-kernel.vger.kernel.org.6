@@ -1,167 +1,163 @@
-Return-Path: <linux-kernel+bounces-288881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0387E953FF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 05:08:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FCE4953FFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 05:11:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B53E92859F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:08:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78281B218D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9B160B96;
-	Fri, 16 Aug 2024 03:07:56 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525956BB4B;
+	Fri, 16 Aug 2024 03:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="29V0ypQP"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61F726AC3;
-	Fri, 16 Aug 2024 03:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5E84F20E
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 03:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723777676; cv=none; b=eOdf9I4AkEhguaQey9Mdswn2Bs7/Pt8vl8PVCBJsZepNmAebEfmkHivc4YodiMKKURbrRJlIr94tDn98H2Fz5yyS2zCqk5/nQ3+z7Qtg1wacyPUNZVRCy8oDKNcrpWmxtecyz8yOv3uaAPQdOjSQNO+XTwPxC7u1oPG1xwlYKrA=
+	t=1723777855; cv=none; b=j6pzLLK8SRE1jeXmNlUG4hdebJoAg09pfwtGkGWQuLdveKYjqy4p7FdRLmP9VrQksR/BI2LZpmEvcBY6DOL19Ui2YYdNuZYPCNiP07cOZa8lW4CXVjwZUbRgnis96PZNPzZOTbFsGERKmfWcTvTNH7Fz2DJqvl8/wGzJ5+8Kv6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723777676; c=relaxed/simple;
-	bh=42Ex2w0YjMRF4l9wkWayqm3p5gVhG1sDc7q+lu+PB0w=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=k2mNlw3UrcsIWi1DwECuZzyRwaasIa6usc5OJuhnjcdAGzhZSSUpVghWh6OowTZOW4B59mdrWNJKAWrLNfDcQ/Uo77mPJ2IengaPioubSTJmiEYmWXdz/fVDCocHmL7l8eckEzk0Dp/sXr1V/kUgDpAANvHTelO4qtn7ydDTNAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WlRct29X3z2CmgC;
-	Fri, 16 Aug 2024 11:02:54 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7299C14010C;
-	Fri, 16 Aug 2024 11:07:48 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 16 Aug 2024 11:07:45 +0800
-Message-ID: <e2f0e003-b5a4-4068-b923-eda6f7accd63@huawei.com>
-Date: Fri, 16 Aug 2024 11:07:45 +0800
+	s=arc-20240116; t=1723777855; c=relaxed/simple;
+	bh=pDkx8ngnUQRjIclWtfWHA39LO7XC/50Owe9Vmjxe8yY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QEXorpf29Wv/l5vz/cFwD3f5OrIEdbtL8hJegEv3kG8ejZYAF7jwnBXqMA5ljxVfYY3jf9ZYNha8Xtjc3qRlIDYnsyXAeYKiwcqpSJ3mWAizilinMEZDXemalACy0JUTueOdreHOXkrU8I6RjzBiJgdmjaXukl9vRTrmNlrVE2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=29V0ypQP; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-201fed75b38so29135ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 20:10:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723777853; x=1724382653; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TksdukPAgZv3CISxfFNPNoWEfe+SnBkoBwJZG9NR5no=;
+        b=29V0ypQPCK02vMOCwAzezmndAahVmclJuzQG1OmBOhVmjS8EBVVzfwYQf0RdHlgRvN
+         H8a/8ruoukofjP4KKcpEF3uAGOsOw9rBUGav8O20xX7/7aMr1AbB6jn1S+q208UMCcYk
+         27CCwjzweIKNvsyzX8KTgaIxH0f8uaCBtGZeAyeGESg+moO566xjbxaUkOXa7glYz7fE
+         sreGy/cUPP15OVdQ6yGvergZ4jZ/46cSwcP8+BdMH+kEty5smDS/2zHCUmq9IosTnS2c
+         vzVH0IpkZ2/JDfds8f6a8T559YPQ9VjXWHT6YqVf5wIL8NOrOWzo6SotO7Tpan9gKJos
+         Tlhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723777853; x=1724382653;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TksdukPAgZv3CISxfFNPNoWEfe+SnBkoBwJZG9NR5no=;
+        b=ax7VISsxGvWY5mzi9SXYf2Y21wSIQtHQxdAPMispNnSDfurlR2pcZ60JRDHBOY11lT
+         91lBNbJM6EEFZ0Td32OCpZXBLnGadUIfakofJ0fBvJlmyJDDwHjjZyrAte37zkCUo8Np
+         aRLWz2jEVzIemFaAGp1K15FvhFAJQrDmr3Usb6BKeehTZqRkN3HycdqERJyLyrqpFnN2
+         vD8p3CixUkegxkoAJz2atDEwB8qARVEeLdTTT6YJ/rptcFrfwWhC4qQFPJIghOeUqeJT
+         ysas2heqKUP9VtndeCISOl7KesRIBaxznxTxW8xdf30o+q/4lZMyO4ozqlgdsSrbRp/X
+         8spQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5YA/MOfolXJPvMEVQj9jnAPXpz1ajxwa1dvuffhzezrMBCshdB8kq+MSD0Y5Z3p/md24D41DIk0z1p7A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGAxxga1dUi7+0btg0MYTDtG/lMmVM8KhbFqDiBT5N2HpRPmFG
+	nxw8A55D80rMOReVRq0he+vg/8qmMY5ehXp5NIi+l6Nxkly/AHHfJPIBBemLOfTlpTKGm8CMZip
+	EvP7d3X4dZEC6RQHEa7gf68r7vU2iNH04Bhpq
+X-Google-Smtp-Source: AGHT+IGZLeBKv3CMMAwWol2fV8fxptjq88r8Yrtm01DrODCf8SauDZd7ISG+PN303isiBbUK4suCZa1K107RgC107lI=
+X-Received: by 2002:a17:902:e5d0:b0:1eb:3f4f:6f02 with SMTP id
+ d9443c01a7336-2020600ae4dmr794735ad.12.1723777852732; Thu, 15 Aug 2024
+ 20:10:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <yisen.zhuang@huawei.com>,
-	<salil.mehta@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
-	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
-	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
-	<jdamato@fastly.com>, <jonathan.cameron@huawei.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH V2 net-next 03/11] net: hibmcge: Add mdio and hardware
- configuration supported in this module
-To: Andrew Lunn <andrew@lunn.ch>
-References: <20240813135640.1694993-1-shaojijie@huawei.com>
- <20240813135640.1694993-4-shaojijie@huawei.com>
- <23628b1a-d3ea-47ed-8289-60e455a90b72@lunn.ch>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <23628b1a-d3ea-47ed-8289-60e455a90b72@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+References: <20240815142212.3834625-1-matt@readmodwrite.com>
+In-Reply-To: <20240815142212.3834625-1-matt@readmodwrite.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 15 Aug 2024 20:10:40 -0700
+Message-ID: <CAP-5=fU4Lv76Yv5HdhPZz4woZuZ-WMemEC3vGpKJgKhwqrE_rg@mail.gmail.com>
+Subject: Re: [PATCH] perf hist: Update hist symbol when updating maps
+To: Matt Fleming <matt@readmodwrite.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, kernel-team@cloudflare.com, 
+	Namhyung Kim <namhyung@kernel.org>, Yunzhao Li <yunzhao@cloudflare.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-on 2024/8/16 10:14, Andrew Lunn wrote:
->> +int hbg_hw_adjust_link(struct hbg_priv *priv, u32 speed, u32 duplex)
->> +{
->> +	if (speed != HBG_PORT_MODE_SGMII_10M &&
->> +	    speed != HBG_PORT_MODE_SGMII_100M &&
->> +	    speed != HBG_PORT_MODE_SGMII_1000M)
->> +		return -EOPNOTSUPP;
->> +
->> +	if (duplex != DUPLEX_FULL && duplex != DUPLEX_HALF)
->> +		return -EOPNOTSUPP;
+On Thu, Aug 15, 2024 at 7:22=E2=80=AFAM Matt Fleming <matt@readmodwrite.com=
+> wrote:
 >
-> Can this happen? We try to avoid defensive code, preferring to ensure
-> it can never happen. So long as you have told phylib the limits of
-> your hardware, it should enforce these.
-
-Ok, I'll delete these.
-
+> AddressSanitizer found a use-after-free bug in the symbol code which
+> manifested as perf top segfaulting.
 >
->> @@ -26,11 +27,11 @@ static int hbg_init(struct hbg_priv *priv)
->>   		return dev_err_probe(dev, PTR_ERR(regmap), "failed to init regmap\n");
->>   
->>   	priv->regmap = regmap;
->> -	ret = hbg_hw_event_notify(priv, HBG_HW_EVENT_INIT);
->> +	ret = hbg_hw_init(priv);
->>   	if (ret)
->>   		return ret;
->>   
->> -	return hbg_hw_dev_specs_init(priv);
->> +	return hbg_mdio_init(priv);
-> I've not read the previous patches, but that looks odd. Why is code
-> you just added in previous patches getting replaced?
-
-In previous patch, we did not introduce the hbg_hw_init().
-In this patch, the hbg_hw_init() is introduced,
-and the hbg_hw_event_notify() and hbg_hw_dev_specs_init() functions are moved to hbg_hw_init().
-
-
-hbg_hw_init() can be moved to the previous patch.
-
+>   =3D=3D1238389=3D=3DERROR: AddressSanitizer: heap-use-after-free on addr=
+ess 0x60b00c48844b at pc 0x5650d8035961 bp 0x7f751aaecc90 sp 0x7f751aaecc80
+>   READ of size 1 at 0x60b00c48844b thread T193
+>       #0 0x5650d8035960 in _sort__sym_cmp util/sort.c:310
+>       #1 0x5650d8043744 in hist_entry__cmp util/hist.c:1286
+>       #2 0x5650d8043951 in hists__findnew_entry util/hist.c:614
+>       #3 0x5650d804568f in __hists__add_entry util/hist.c:754
+>       #4 0x5650d8045bf9 in hists__add_entry util/hist.c:772
+>       #5 0x5650d8045df1 in iter_add_single_normal_entry util/hist.c:997
+>       #6 0x5650d8043326 in hist_entry_iter__add util/hist.c:1242
+>       #7 0x5650d7ceeefe in perf_event__process_sample /home/matt/src/linu=
+x/tools/perf/builtin-top.c:845
+>       #8 0x5650d7ceeefe in deliver_event /home/matt/src/linux/tools/perf/=
+builtin-top.c:1208
+>       #9 0x5650d7fdb51b in do_flush util/ordered-events.c:245
+>       #10 0x5650d7fdb51b in __ordered_events__flush util/ordered-events.c=
+:324
+>       #11 0x5650d7ced743 in process_thread /home/matt/src/linux/tools/per=
+f/builtin-top.c:1120
+>       #12 0x7f757ef1f133 in start_thread nptl/pthread_create.c:442
+>       #13 0x7f757ef9f7db in clone3 ../sysdeps/unix/sysv/linux/x86_64/clon=
+e3.S:81
 >
->> +static int hbg_phy_connect(struct hbg_priv *priv)
->> +{
->> +	struct phy_device *phydev = priv->mac.phydev;
->> +	struct device *dev = &priv->pdev->dev;
->> +	struct hbg_mac *mac = &priv->mac;
->> +	int ret;
->> +
->> +	ret = phy_connect_direct(priv->netdev, mac->phydev, hbg_phy_adjust_link,
->> +				 PHY_INTERFACE_MODE_SGMII);
->> +	if (ret)
->> +		return dev_err_probe(dev, -ENOMEM, "failed to connect phy\n");
-> Don't replace the error code. Doing so actually makes dev_err_probe()
-> pointless because it is not going to see the EPROBE_DEFER.
+> When updating hist maps it's also necessary to update the hist symbol
+> reference because the old one gets freed in map__put().
 >
-Sorry, It is a mistake.
-I'll fix it in the next version.
-
->> +int hbg_mdio_init(struct hbg_priv *priv)
->> +{
->> +	struct device *dev = &priv->pdev->dev;
->> +	struct hbg_mac *mac = &priv->mac;
->> +	struct phy_device *phydev;
->> +	struct mii_bus *mdio_bus;
->> +	int ret;
->> +
->> +	mac->phy_addr = priv->dev_specs.phy_addr;
->> +	mdio_bus = devm_mdiobus_alloc(dev);
->> +	if (!mdio_bus)
->> +		return dev_err_probe(dev, -ENOMEM, "failed to alloc MDIO bus\n");
->> +
->> +	mdio_bus->parent = dev;
->> +	mdio_bus->priv = priv;
->> +	mdio_bus->phy_mask = ~(1 << mac->phy_addr);
->> +	mdio_bus->name = "hibmcge mii bus";
->> +	mac->mdio_bus = mdio_bus;
->> +
->> +	mdio_bus->read = hbg_mdio_read22;
->> +	mdio_bus->write = hbg_mdio_write22;
->> +	snprintf(mdio_bus->id, MII_BUS_ID_SIZE, "%s-%s", "mii", dev_name(dev));
->> +
->> +	ret = devm_mdiobus_register(dev, mdio_bus);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret, "failed to register MDIO bus\n");
->> +
->> +	phydev = mdiobus_get_phy(mdio_bus, mac->phy_addr);
->> +	if (!phydev)
->> +		return dev_err_probe(dev, -EIO, "failed to get phy device\n");
-> ENODEV is probably better, since the device does not exist.
+> While this bug was probably introduced with 5c24b67aae72 ("perf tools:
+> Replace map->referenced & maps->removed_maps with map->refcnt"), the
+> symbol objects were leaked until c087e9480cf3 ("perf machine: Fix
+> refcount usage when processing PERF_RECORD_KSYMBOL") was merged so the
+> bug was masked.
 >
-> 	Andrew
+> Fixes: c087e9480cf3 ("perf machine: Fix refcount usage when processing PE=
+RF_RECORD_KSYMBOL")
+> Signed-off-by: Matt Fleming (Cloudflare) <matt@readmodwrite.com>
+> Reported-by: Yunzhao Li <yunzhao@cloudflare.com>
+> Cc: stable@vger.kernel.org # v5.13+
+> ---
+>  tools/perf/util/hist.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
+> index 0f554febf9a1..0f9ce2ee2c31 100644
+> --- a/tools/perf/util/hist.c
+> +++ b/tools/perf/util/hist.c
+> @@ -639,6 +639,11 @@ static struct hist_entry *hists__findnew_entry(struc=
+t hists *hists,
+>                          * the history counter to increment.
+>                          */
+>                         if (he->ms.map !=3D entry->ms.map) {
+> +                               if (he->ms.sym) {
+> +                                       u64 addr =3D he->ms.sym->start;
 
-Thanks a lot!
+nit: we normally put a newline between a variable and the first
+non-variable line of code.
 
-	Jijie Shao
+Acked-by: Ian Rogers <irogers@google.com>
 
+Thanks,
+Ian
+
+> +                                       he->ms.sym =3D map__find_symbol(e=
+ntry->ms.map, addr);
+> +                               }
+> +
+>                                 map__put(he->ms.map);
+>                                 he->ms.map =3D map__get(entry->ms.map);
+>                         }
+> --
+> 2.34.1
+>
 
