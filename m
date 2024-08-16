@@ -1,204 +1,102 @@
-Return-Path: <linux-kernel+bounces-288862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 179FA953FC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:34:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEA18953FC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A811B24AA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 02:34:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE2C51C215D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 02:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1DA6F077;
-	Fri, 16 Aug 2024 02:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A054EB45;
+	Fri, 16 Aug 2024 02:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UqU120tC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bSvSh/J2"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA1576056;
-	Fri, 16 Aug 2024 02:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BE33BBF0;
+	Fri, 16 Aug 2024 02:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723775636; cv=none; b=VPtr8JIt+OInbDnHwsVXdTgb36xlZXOF/nllw8reHfg3uex25fW8oJRKO34gXjyv5i2CBa4vi1E0TGdX+AMwLcKA8J9Ci+JNcyGQf47GOQnD4B0G0TPe7qYReVHBvIvR0XokH/Ul/fRBxsMwHqy3Ytv1N7q0klKXfEWHQxhm93Y=
+	t=1723775837; cv=none; b=rXfO3ZpB8SYwtWjZlSa6m3eiedwI3fA7zMS2D3dyIzRUkenAgo2HNPcv/eBf0mdrCt4ecxpIkCVFLPlbAoy4MsEE2YwcMuULfjSEyH/IQHtHS4CMiZ7neNdNY4eAeLQByevah9l5C4+1MUTkLR5iod5R3vsECBwZKU3sfHN5IC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723775636; c=relaxed/simple;
-	bh=Jr4/OGLQnK9gpgUHkut0m6qsxTOqjervLSR11XEpo40=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mtX5yavsBEBYPiK5LXip8QCwiWfPkm4u/QmY7tLRQZtsRhkDXhzZjXOGmHnwVaZlHUq+Pc/myr8D5UJMz+TwCYEtZX22qWp/3z/Jne4fnagPOme24yLAHpB4EtgNWSq5cE5sa/pD12/ervFuDowe/SXOp3jE2o5PY2NBNqtH3/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UqU120tC; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723775635; x=1755311635;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Jr4/OGLQnK9gpgUHkut0m6qsxTOqjervLSR11XEpo40=;
-  b=UqU120tCApfhHCeR/CNrSU4mBxAG/FyAez9E4MANXwsTWnrbGAyI35iz
-   IEQOBskU0nNAfo2CHXJnGo9Ctbhmrj9BF7mNhE4oAz1Wq7gX8xWhKCzj1
-   kum3kD4oNCrUEP22pCySHszCZCW8tDcHWpRAsM6QRS2Z8lql+hi+pTeYs
-   7q2REIkgh5n6cuW4Gw1g7FZ/2qKO403dyWZuJcHFtHTIzOUO8QFeB3zQx
-   y/tD+O0OAqJw/gXDeYtObd+wvVSlk3G/pgq8Vr2EgR6ND4lEc+t224fOT
-   RF42uOI67aWacNHox7OK6mZSIGSaxU2sTA/I6CTAaTJz6ZFDLiS3FmNmM
-   A==;
-X-CSE-ConnectionGUID: AOtKSm/vRHeB13cg8I1/yA==
-X-CSE-MsgGUID: tEMhfP/6TGKXKYwk9gh4Cg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11165"; a="22203581"
-X-IronPort-AV: E=Sophos;i="6.10,150,1719903600"; 
-   d="scan'208";a="22203581"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 19:33:54 -0700
-X-CSE-ConnectionGUID: skpkR3DzRfiAirew3dejpg==
-X-CSE-MsgGUID: mKh35jl6R0G9O2rZFFPW2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,150,1719903600"; 
-   d="scan'208";a="63949220"
-Received: from unknown (HELO yungchua-desk.intel.com) ([10.247.119.176])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 19:33:51 -0700
-From: Bard Liao <yung-chuan.liao@linux.intel.com>
-To: linux-sound@vger.kernel.org,
-	vkoul@kernel.org
-Cc: vinod.koul@linaro.org,
-	linux-kernel@vger.kernel.org,
-	tiwai@suse.de,
-	broonie@kernel.org,
-	pierre-louis.bossart@linux.intel.com,
-	bard.liao@intel.com
-Subject: [PATCH 3/3] soundwire: intel: add probe-time check on link id
-Date: Fri, 16 Aug 2024 10:33:31 +0800
-Message-ID: <20240816023331.6565-4-yung-chuan.liao@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240816023331.6565-1-yung-chuan.liao@linux.intel.com>
-References: <20240816023331.6565-1-yung-chuan.liao@linux.intel.com>
+	s=arc-20240116; t=1723775837; c=relaxed/simple;
+	bh=vggDPjbhV3B731uzAW1Ngq9NG5Q490vhaIBLHRvNpfw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=VY4IfAq7z78VQ6QvveI3id6S1O7O7hOQhtPUY9K8Hnh7VP7tsAJy2x4/qUvLrWxZl5GPnxBKDm3u5jQAagOixTt7q/7BOVNg62aI692y8tw1EuosH8BZ9Jqxrbe95HFdDurNvD7ARVQyDvnA4CHZvMH9p2sVZ2VUMRSOr8wmCFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=bSvSh/J2; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1723775829;
+	bh=7s/vjw87jUi3EyQnj3hLWyZPai0CczgO0DX3b1l3Htc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=bSvSh/J2hb2N2BsyUm5oi3rsPtyBIt6zbT5QKfLawC/fO7n3Zq4pEoBClkI7+5ojT
+	 g3R42UXj0YsMn5f5Ttpd9b0ple7I1fggKgdBS/kZyFqt9TzF+H8I2BcFr8/3QiIovz
+	 Ty0GvXBU0HpgwHWdy3tnToIV8I/GpY1n7iSCnoD7kdJlhCGq6qFbKXBMGk2LCcIXG6
+	 1a/JE8pfAuDt0BnnlEx3EqlHG3wHdBnOtP1KyXK2gjS8pMKwOLs7NOMzFl0QTGZDTh
+	 bph39iWbSTsZ4jMepi/+VlzWCt5sq8+laNlC5tpRgJt6ID6mBfMI0dzFu/1kNmqnir
+	 LAt749e4LiRzw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WlR395xqyz4wd6;
+	Fri, 16 Aug 2024 12:37:09 +1000 (AEST)
+Date: Fri, 16 Aug 2024 12:37:09 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>, Andy Gross <agross@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the usb tree
+Message-ID: <20240816123709.3fbfef5d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/Ve+44h0LhE=v4GlSvcK3nXi";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+--Sig_/Ve+44h0LhE=v4GlSvcK3nXi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-In older platforms, the number of links was constant and hard-coded to
-4. Newer platforms can have varying number of links, so we need to add
-a probe-time check to make sure the ACPI-reported information with
-_DSD properties is aligned with hardware capabilities reported in the
-SoundWire LCAP register.
+Hi all,
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Reviewed-by: Péter Ujfalusi <peter.ujfalusi@linux.intel.com>
-Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
----
- drivers/soundwire/intel.h           |  7 +++++++
- drivers/soundwire/intel_ace2x.c     | 20 ++++++++++++++++++++
- drivers/soundwire/intel_auxdevice.c | 14 ++++++++++++++
- include/linux/soundwire/sdw_intel.h |  3 +++
- 4 files changed, 44 insertions(+)
+The following commit is also in the qcom tree as a different commit
+(but the same patch):
 
-diff --git a/drivers/soundwire/intel.h b/drivers/soundwire/intel.h
-index 68838e843b54..1db4d9d3a3ba 100644
---- a/drivers/soundwire/intel.h
-+++ b/drivers/soundwire/intel.h
-@@ -222,6 +222,13 @@ static inline bool sdw_intel_sync_check_cmdsync_unlocked(struct sdw_intel *sdw)
- 	return false;
- }
- 
-+static inline int sdw_intel_get_link_count(struct sdw_intel *sdw)
-+{
-+	if (SDW_INTEL_CHECK_OPS(sdw, get_link_count))
-+		return SDW_INTEL_OPS(sdw, get_link_count)(sdw);
-+	return 4; /* default on older generations */
-+}
-+
- /* common bus management */
- int intel_start_bus(struct sdw_intel *sdw);
- int intel_start_bus_after_reset(struct sdw_intel *sdw);
-diff --git a/drivers/soundwire/intel_ace2x.c b/drivers/soundwire/intel_ace2x.c
-index 781fe0aefa68..fff312c6968d 100644
---- a/drivers/soundwire/intel_ace2x.c
-+++ b/drivers/soundwire/intel_ace2x.c
-@@ -706,10 +706,30 @@ static void intel_program_sdi(struct sdw_intel *sdw, int dev_num)
- 			__func__, sdw->instance, dev_num);
- }
- 
-+static int intel_get_link_count(struct sdw_intel *sdw)
-+{
-+	int ret;
-+
-+	ret = hdac_bus_eml_get_count(sdw->link_res->hbus, true, AZX_REG_ML_LEPTR_ID_SDW);
-+	if (!ret) {
-+		dev_err(sdw->cdns.dev, "%s: could not retrieve link count\n", __func__);
-+		return -ENODEV;
-+	}
-+
-+	if (ret > SDW_INTEL_MAX_LINKS) {
-+		dev_err(sdw->cdns.dev, "%s: link count %d exceed max %d\n", __func__, ret, SDW_INTEL_MAX_LINKS);
-+		return -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+
- const struct sdw_intel_hw_ops sdw_intel_lnl_hw_ops = {
- 	.debugfs_init = intel_ace2x_debugfs_init,
- 	.debugfs_exit = intel_ace2x_debugfs_exit,
- 
-+	.get_link_count = intel_get_link_count,
-+
- 	.register_dai = intel_register_dai,
- 
- 	.check_clock_stop = intel_check_clock_stop,
-diff --git a/drivers/soundwire/intel_auxdevice.c b/drivers/soundwire/intel_auxdevice.c
-index 8807e01cbf7c..d110f2b587d5 100644
---- a/drivers/soundwire/intel_auxdevice.c
-+++ b/drivers/soundwire/intel_auxdevice.c
-@@ -317,6 +317,20 @@ static int intel_link_probe(struct auxiliary_device *auxdev,
- 	bus->link_id = auxdev->id;
- 	bus->clk_stop_timeout = 1;
- 
-+	/*
-+	 * paranoia check: make sure ACPI-reported number of links is aligned with
-+	 * hardware capabilities.
-+	 */
-+	ret = sdw_intel_get_link_count(sdw);
-+	if (ret < 0) {
-+		dev_err(dev, "%s: sdw_intel_get_link_count failed: %d\n", __func__, ret);
-+		return ret;
-+	}
-+	if (ret <= sdw->instance) {
-+		dev_err(dev, "%s: invalid link id %d, link count %d\n", __func__, auxdev->id, ret);
-+		return -EINVAL;
-+	}
-+
- 	sdw_cdns_probe(cdns);
- 
- 	/* Set ops */
-diff --git a/include/linux/soundwire/sdw_intel.h b/include/linux/soundwire/sdw_intel.h
-index edbe1d4af8f8..37ae69365fe2 100644
---- a/include/linux/soundwire/sdw_intel.h
-+++ b/include/linux/soundwire/sdw_intel.h
-@@ -388,6 +388,7 @@ struct sdw_intel;
- /* struct intel_sdw_hw_ops - SoundWire ops for Intel platforms.
-  * @debugfs_init: initialize all debugfs capabilities
-  * @debugfs_exit: close and cleanup debugfs capabilities
-+ * @get_link_count: fetch link count from hardware registers
-  * @register_dai: read all PDI information and register DAIs
-  * @check_clock_stop: throw error message if clock is not stopped.
-  * @start_bus: normal start
-@@ -412,6 +413,8 @@ struct sdw_intel_hw_ops {
- 	void (*debugfs_init)(struct sdw_intel *sdw);
- 	void (*debugfs_exit)(struct sdw_intel *sdw);
- 
-+	int (*get_link_count)(struct sdw_intel *sdw);
-+
- 	int (*register_dai)(struct sdw_intel *sdw);
- 
- 	void (*check_clock_stop)(struct sdw_intel *sdw);
--- 
-2.43.0
+  3c2360f1a50e ("dt-bindings: usb: qcom,dwc3: Update ipq5332 clock details")
 
+This is commit
+
+  34b8dbef668a ("dt-bindings: usb: qcom,dwc3: Update ipq5332 clock details")
+
+in the qcom tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Ve+44h0LhE=v4GlSvcK3nXi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma+u1UACgkQAVBC80lX
+0Gz5fAf/VC4+LPcpETCzuACb0mCtf1pGW76tVCKHxVlTRGsspKgLbrhUhuIgZowi
+Oj9N0bs0t67aED0qXwqrQG1/rI3v5zJn8sKu2FVjFzILsf6RZMhYyD6xzs2K2vte
+a+5LQzu0r7MIkV85ourBubao2pc+hnFGOjkEo+aNJtREtkRGMcR38WkgU1COM3/H
+8gHH7j2jUaEIUj8I8B+zH3ySrP+7AOTlIS9K1oPqUkDXrrhK2PYTOWquDR1T9bpX
+aSLe4XGR2+0iHB6ZweLkbWpaOISv61EIJDub07pwnN/BAvr74yssq7bXbZ5cybh6
++WKPkF9raBDqk68SPRsmNRk97CFJdA==
+=Hc1l
+-----END PGP SIGNATURE-----
+
+--Sig_/Ve+44h0LhE=v4GlSvcK3nXi--
 
