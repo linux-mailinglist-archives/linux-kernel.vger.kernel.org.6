@@ -1,238 +1,230 @@
-Return-Path: <linux-kernel+bounces-289737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C0F1954B32
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:37:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC583954B3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:38:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30B2F1C222C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:37:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E24F51C22627
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4031BD001;
-	Fri, 16 Aug 2024 13:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B931BB692;
+	Fri, 16 Aug 2024 13:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="FNKguG6N"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="NqbCeoB2"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D58138F91;
-	Fri, 16 Aug 2024 13:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.148.174
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723815415; cv=fail; b=i6wNMVq7Z3eJjijg4oktSbh7ebCA9wB0bAbGspAq7yy99E8K1nkWdH+LgcC7Av64C1+DlM14fiJgNNjgPGopgktDs4aX9rHJ3n5ZqlaZkahGYZ9jF5ecTLtjiT31WaF6v8wPgLI3i2ZNVJOBh1K+l8IQuBEq3Cc/GVydSLCfmmc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723815415; c=relaxed/simple;
-	bh=ZX6HLlsOE1o4dvgxOG/5oljcydr5ZnhMY8Ef9W9OXMw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Fi1bCY2QDaEsjT4LBQ0OimsHkNgBAdtxE2s/OBXVNAYaowtuUM4Jx37PJCuD22EgQX+4ne+J2ErBsq7MjE4Q7bvMdwnv6FvZXQFbgo9XBdQ6y1ypiiU7kePLaLA+qeDs3sTank0Mwi3Ilph5xyXm5pWnHLxXRfsGnaI+TxpyPDk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=FNKguG6N; arc=fail smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47GDMx8E011502;
-	Fri, 16 Aug 2024 06:36:47 -0700
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2175.outbound.protection.outlook.com [104.47.58.175])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4127khg2aw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Aug 2024 06:36:46 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Bn8usqsEWlO9HHPZwszCB5Tgwkxu/wIqOgWZJi1WkAkl7E1YMj6FkNBIMLyYsNUYfcMA1qX0KQCHHttamKy/DdAvz3owIg36KUAps7DsdZ9qHbCuvHyGB75gGMSr/AqesnSTg5z2YtZjXY8varWes35zpqv1/ALnwjBTqoJtpGpIas2dpEq9SqJzLQX/5+kU2stFtNWnz/kLBZH8VqeyjBjjkBhHmsQ9OQiXZ3b6VuvBGtYmXEqGu17rrZ0pVkhmtH+ilNsuzFdDzM+UanNZGZE8dtMXLrz7L4lLTypBunRMVJioZJxEqh5X8t9XRyPPMMki1qo7NtQ+RP70vfeaGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZX6HLlsOE1o4dvgxOG/5oljcydr5ZnhMY8Ef9W9OXMw=;
- b=MCi6l+dkzVIQsC75hmh8fhoD5xUp4YpSJwNtDrHxG30ot83HhvbogDGEFez2CaJg7aanW/uM/uY5mCGUI3SFHFSMxCoS0prs0L25Vn2yZqetkmIX71gJY0mvOiFlC7wENE/X9M2Q/26UNw1sLpR23Dy5+RZHLo33e4zz4afs0zW8QxHI2p53FknNm9MvdUdcftEeijn4Fgpnrf0PhfTnqjQoTABwKEDt9OigevO/BWwMkQnU4TMe8bSjjcNdeIANHuOhgst4+4ghEitb8+T1Jorj1iiDxELgLeXYHMac5INlUPMldohdoyRyi93VkY4hRKcEa5ICZI6yZ/7cz5E8OQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZX6HLlsOE1o4dvgxOG/5oljcydr5ZnhMY8Ef9W9OXMw=;
- b=FNKguG6NcF02xB9tIhhCBdofwRTjhthNe6Mg3XZfwGeCzKLgko8KeSexSPCNNV3IH+PT8Xx4x655YwEgRLMxCOuQGqn8nO/mUOIkEZsOdqo1uL68KnzW+yE0M1903RouINK484AYD6PROzQh6xtS1xHzoSMQF6lV/lH31wGwH6Y=
-Received: from CH0PR18MB4339.namprd18.prod.outlook.com (2603:10b6:610:d2::17)
- by PH7PR18MB5667.namprd18.prod.outlook.com (2603:10b6:510:2e8::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Fri, 16 Aug
- 2024 13:36:41 +0000
-Received: from CH0PR18MB4339.namprd18.prod.outlook.com
- ([fe80::61a0:b58d:907c:16af]) by CH0PR18MB4339.namprd18.prod.outlook.com
- ([fe80::61a0:b58d:907c:16af%5]) with mapi id 15.20.7875.019; Fri, 16 Aug 2024
- 13:36:41 +0000
-From: Geethasowjanya Akula <gakula@marvell.com>
-To: Jiri Pirko <jiri@resnulli.us>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kuba@kernel.org" <kuba@kernel.org>,
-        "davem@davemloft.net"
-	<davem@davemloft.net>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "edumazet@google.com" <edumazet@google.com>,
-        Sunil Kovvuri Goutham
-	<sgoutham@marvell.com>,
-        Subbaraya Sundeep Bhatta <sbhatta@marvell.com>,
-        Hariprasad Kelam <hkelam@marvell.com>
-Subject: RE: [EXTERNAL] Re: [net-next PATCH v10 01/11] octeontx2-pf:
- Refactoring RVU driver
-Thread-Topic: [EXTERNAL] Re: [net-next PATCH v10 01/11] octeontx2-pf:
- Refactoring RVU driver
-Thread-Index: AQHa5z16bLt3siVov02ZB0iTBLEH/bIdhGaAgAxb6aA=
-Date: Fri, 16 Aug 2024 13:36:41 +0000
-Message-ID:
- <CH0PR18MB4339720BC03E2E4E6FAC0251CD812@CH0PR18MB4339.namprd18.prod.outlook.com>
-References: <20240805131815.7588-1-gakula@marvell.com>
- <20240805131815.7588-2-gakula@marvell.com>
- <ZrTnK78ITIGU-7qj@nanopsycho.orion>
-In-Reply-To: <ZrTnK78ITIGU-7qj@nanopsycho.orion>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH0PR18MB4339:EE_|PH7PR18MB5667:EE_
-x-ms-office365-filtering-correlation-id: 1b10cfe0-880e-4100-960d-08dcbdf87641
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?NGhuVm9seXFoSlpUY2dTWVYybmtNbEpqdERsdVJtMjBIZHlBU3gxaUkxdkUx?=
- =?utf-8?B?VmZib3grNHVEVmVOaCtKbFF5UmF1ZE5wWHlBVXowd3hzVnRVTWRaSE9tYUFi?=
- =?utf-8?B?UlVwRTViblpOZ0ltaXEvTlBRWjlzY1VHNG4yelRnRzRBbWxoRUYzcGNBR1Js?=
- =?utf-8?B?MG5EMnBCUkppQ2xzSEQzVU1rR08wa3lKbS9PNkNXOG9IVEFzZUVwV1hsWHd6?=
- =?utf-8?B?czNGNC9rNy8rb3M3dmkvQTdsVDdHTkF5VlBkNmZvanA1aUM4U09LSWt1UitU?=
- =?utf-8?B?OU9KWmZBeUZRYmR0QjZmNFpKRjN0empMZHJndXlmZlJyTWxJQ2J0dUNvNzN0?=
- =?utf-8?B?R3JiNFNOMmxGL1RDSUpGVFpDSzVOMlNhV1hhSjZFc2FWb2dERkZ5SWhXcnNS?=
- =?utf-8?B?a091MnZHejRISkdLbVRiUGhUR2VLdXdFSTUwNlUwcmtwUnFEQ1U4VFc0bits?=
- =?utf-8?B?REdkQ0ZGbDVIYmJveXhrSU9hS0VBTnlYZnhJUFZ5aVROSWd1RmJVYkJmbGhD?=
- =?utf-8?B?V01NTVhiY3NNKzMrSnYyTmV2S1lqdmRPSWYzS1VoWUpvbThMQzNQZG5kRUdR?=
- =?utf-8?B?WU9KUGJZVFhWb1ZCTjIvVUJKSlliNVRqVE54Y1lJUFZFVWNnQ2lxRkhVYzhk?=
- =?utf-8?B?VzYxUVErbFo1RGhuNHM2cm1EVHcxdkdseVpRaFB0TGFDUlFSdElWZXhlM3Ny?=
- =?utf-8?B?cTV3RG5oREJEOEhDQVlBUExtV3ZVYVBpbGZpSnBuOUtuRE1uRS9PUVRjWkR3?=
- =?utf-8?B?WGxvbWdoUHBpbURwQStpMnBtdFc1WTFIdThzaHUwUGgxK29lZis0OHZnbURX?=
- =?utf-8?B?NW9OMGxPMVgwYXI0cHlldHJHMjRJNzZGWk1XM1h4SVRJa2h0RHRGK3FCRWw4?=
- =?utf-8?B?eUhoV3d4eE53YnFNU0VJeERTWXBkUm5PQkFLZmJVVFQwQmh2YUtTaTlwS0ls?=
- =?utf-8?B?SGtGMUcyREhEZ0dHQ2ZYNVk4ZUNGZXhReTF0Y3Y4RCtRaDJMVEt4RElKdlh0?=
- =?utf-8?B?RjV5c3pIdmJ3WlhTaXNpZ3I0cXRTME0zWmNhZ3l2bHFHSXZuMURJK2t3YWFm?=
- =?utf-8?B?RzNCSk1jQ0hxdmZ3djZ6Sm9PVVhlWGwrdWF2NHVSRmtPUXJtSUlQYlRIdUVk?=
- =?utf-8?B?MXJkRi9KYzdSZFJxRkY5S25PdURlU3lDdERGMVpjdjE2eW1IUEdtY3NjM2pX?=
- =?utf-8?B?TTM5bzZZNHljTGZoYjQ4VjhBY1AyeUh6VEk4MHl4cVdFOC9BckdPS1hXeWZW?=
- =?utf-8?B?VVF2bjhmSmNoTlN3UU9Ecy9oTi8xcDRvNUdsczZkMDh0cUJEVjBHQXpJWlFN?=
- =?utf-8?B?bVh4Ky9XRlk1YThlR2Y5eTJ2TmtEZ2l4VWh3YkZWZEpJWDM2M254dnFUVW1K?=
- =?utf-8?B?dEN5bElqdm00SWpSRDJmbzBqbUYzWmdHNTgyN2JId1hmZnFSbHVtVVcxUlpt?=
- =?utf-8?B?eEF5K2JYYUxBZkhGbUZVQ1JwUjdTdFlUeU5Mc2VVd2IwZ1JGK2Y4OEs2aVd0?=
- =?utf-8?B?UGxQMkZhcUFnanczTVUzdEcycHdGb3Rkenc4SUVlelh3Qk1qRTBzc0I5ckli?=
- =?utf-8?B?WUpIcnR2d3lZVmZ1eGxuRlliNExJaXpJUkFLQzdRc1ZqVlZGa3VOdUZzSDRs?=
- =?utf-8?B?MU9sdkltUU4rZGFxaitxcmplZW1pZ3FUR05zNGM3Y0EwUjdoY0Nqdys1YTBV?=
- =?utf-8?B?MHczRU5tLzBhRlhUMzBkQTNMTFRYREpJRS9zMHg2MUhFbEtzL3lJZmlGUmpI?=
- =?utf-8?B?V3R4cVFxUzUyMURhZXBKUHBJN0tvdm13aGt4b3FPQU1SbEFnQkNkMnNNQzE5?=
- =?utf-8?B?ajFlRkFrM0t3NXQwZENzYmY3am91Qml3QzJ0ZHk1U1lZZXpocUpJYUpqMTVV?=
- =?utf-8?B?VDg2U09jRmRkOU5WdklQdGkxaWdyUzViQWJGa2Jod1RNS0E9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR18MB4339.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?VW03eUdjbDdmZTZMclRXSkpvWlBGUUhFYWY3dmdDVVRNc1BsYmFiUkkvVm9U?=
- =?utf-8?B?NGlZZnJvT3M4aitHSzU4UlczSFpvdDFDeFhQRVpSZURuZVAxVSs1ODlVSnM1?=
- =?utf-8?B?NTdrL2pxb2JjRlJ6cnh3NHVBbkFTRUt5NlJOQURIR0ZhMlUya1ZLZTdJSHl1?=
- =?utf-8?B?ZlZWZk9sNXgzSlY3WVVSUXVpK3MyaWZCMHdrVnhrM3NPZE9NUXZOK25YeCto?=
- =?utf-8?B?TGpCM2hMU2x6cjYrOHllQ0ErRm1ZcU1CUVlOR3psM2ZQVC9Wd1EwNjFZaWlY?=
- =?utf-8?B?cS9YYnUzMFg5VjkwclNpUENqV2ppM2FMQVgxdEUyazg0OTUyR29EM0dwQzJU?=
- =?utf-8?B?ZGZEVUU3OXFLT0hiSHFtUGlmV3ZTQUdmSzJ0QXVMbHh3UFRUOWt0ZGRWYm83?=
- =?utf-8?B?aHRWU3VrUmV3T1VqWTBzaXFzQ2lqSDk5a0k5Z1g0YjB2UWdXN1NHRHA2Q001?=
- =?utf-8?B?a1pnQ1NjRSt2cHppWGVtMlU1VjdIcGtUMjlkV2ZGSFZwWUIxcGdEaUgrZURJ?=
- =?utf-8?B?V1o5Q2ROYzQydEVXK2o1LzJndUlqcU9rTnFXdWFvaCt4cnZpMGg0bWViMjRV?=
- =?utf-8?B?bSt5b1lTaVFXOURvdkt4VkRwNEdjVW5GY0M4dDRhQTZ6SlhlRnJLd0poSE45?=
- =?utf-8?B?dmVoRjZ1TDlLWWErQmtpSTZSOE1YUENWNFJwVFA1UU9zQk5GdFNFMDNKbGQ4?=
- =?utf-8?B?SFhPN3JqNnNhaHpwQi8yY0R0dTJxMksvLy9ibXFkbUlCRVNRaThEeDd2VG5X?=
- =?utf-8?B?cXNGTXZTeEtJb0MvdUVKYStMOStnUTZvYzI0TCtvRTNmdHJaOFV1RGVXdFhk?=
- =?utf-8?B?cXdTblFXTEVRcUEyRlJNRWl6blUzLzhRVkRFRmhGelhaZzF0V2p0NEwvWWt3?=
- =?utf-8?B?cFd1bmxib01kWmdZbkhuUmhUZlNUNmprTFlFZUVkblFrTzkvOGJ3a1crY3J1?=
- =?utf-8?B?NTBlWWxzNHNaeWE0eHhxM0d2eTBtNVMrc3ZEMW9lTlVDMDZVNExvYlZxejlN?=
- =?utf-8?B?eEhmOFU5WjViNUlwaHA3LzByZXFXaUlhVCtFM0t1QlRleW1PRDFJeVdyVHFy?=
- =?utf-8?B?U2w4cFIvQUtXTm1FRDBad09MdWtYd0g1eGRJYXNTMkdSZUp3NEsvMnJhV2M1?=
- =?utf-8?B?QVZIbUFIdWM2TnRDZ3YxVTlpY3RhaEpNdHdveVR1bmxnQklibFBGZlNEYXVo?=
- =?utf-8?B?NGwvRi9MOENGaktBTERlU29keU51N21pSzhZRlV5UC9wVE5mYlB0TTA5Z2dy?=
- =?utf-8?B?elVXRlNyNml6Yk1OZGYxSFJVM1MycXdaNVdZekZVWHZnd1pWOHFYd0FqQldp?=
- =?utf-8?B?TFNSZDBBU2FZRFlrSCtRc3UvdVVEc0YxeElvUlI0YTFPZ0VkcEhHRnpTZmdn?=
- =?utf-8?B?S2NUc29oZi9zOVhVVEhIRzlrWEl6TVJDNEdYbzJIV0g0MWpPc0J2SFcwRGV3?=
- =?utf-8?B?MlFsMVZaM0RIbjZNU0g3MGdjKytEQnJ5d0NjOFo4bzlnL3ROdkQzZm8vMFp2?=
- =?utf-8?B?b2tvZVAxU0d6QTBvUWlRRUlCampEeUM4REVXTzFsaEtRbnlyRVlIc1FWQ3Ns?=
- =?utf-8?B?NDhYbUZncGZydmV2QzBwNnplTXoxcVNkVG00THJPVmlNZVRJVEhVRjhlcEhF?=
- =?utf-8?B?ZG5ycmV2MXNxVzBDNzBpem9RRkMzai84NzQwbE9NV1JkejhDRjVrdXFSRkg4?=
- =?utf-8?B?TzVVZ1crbFhRRFdYRUE3MVp3d1hGS1hMV2hNekp2Q29JR2pMTDJFWWVMblV2?=
- =?utf-8?B?TzFFV1VjSjBiM3JtdW9FaXpQbXpOWVRVTG8zWFo1OC9UV2NEa2llWEE5c0hT?=
- =?utf-8?B?UGh5Vml2RXV1WVBmL0VBSVVKUTVHbXlTbEU0djl5VFB1ZjNMMTRPTDBnbjVw?=
- =?utf-8?B?OTNrZ3VKRmZTT0k2dFEzSFV0TTVFaXFFQkVrT0xVTVlYVCtRQmxRNEZMZnV5?=
- =?utf-8?B?K1c2TlpQL2ZEOHoxNGkvT3hWdlp5Q3NkUzRJQWxPaXk2alc1VGVMUnoxYzFK?=
- =?utf-8?B?M3Z1QzVlR2w4eCtjN3kwbll0bXdSOWZ5WU1kenFIcHBjbE5NbVBzbk52a3hM?=
- =?utf-8?B?Y1NrSEJjcWlPUUhtZ3FIS3RlUjNsbTNPSUxldVdUbFJjWVp0amcybHZRY3Nh?=
- =?utf-8?Q?iOpk=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B041B9B2A
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 13:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723815504; cv=none; b=ugoZi8UwIyIQ2KBrilKiagUzYsf4dJUyaVB11VAA1ime/2OgQOGH58g8E/qpLE0U0TawMAO0l0AfOixrevEA/1IofSYabX8mpvaEF9o4vUrfHTTbRRu03394KqIIQBiCJtaD90XBegVe1f3zmoWTe1V2N0jUYXpCUo7+ATI9RPQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723815504; c=relaxed/simple;
+	bh=QCAlw2oghjkltEmxv5i9Ilzo1xh2iP+HaMnE05qA5zE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tp+oyKFwABDVWRDJgEt9zOPFB2IeWCbC3JAvDCY12aFGgR80lnKZrLy0kihzhYP1RCLxSJKJsP7PGYpdUWolAU3EkF9SDLfZwboRN1ELtM5ak+YNEN0Y6ixUSdgYMpimGzWwqOdkmoIvMr5fUuCpmzsTzGP1mI2eDxeb4BctZEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=NqbCeoB2; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa69dso2003559a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 06:38:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1723815501; x=1724420301; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=862XZmQiMW9Oj4bvDULTbAVEBtndO7jJky7jaB+8yC0=;
+        b=NqbCeoB2RudqjJuE7YOGrfgKvJdGx8LNwEHdEAiHMciVYEFv1M8Jv0RmvAT9VYGyH1
+         OLikEmUNOId2FQfqWOLHRKxJEK7pHESr6wm3SUylg9fJiE91PRPdJ/6XhpR/mE+L44q4
+         7mTO2slVUfkCti9OXstt1V504vhpaDdA3m8uc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723815501; x=1724420301;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=862XZmQiMW9Oj4bvDULTbAVEBtndO7jJky7jaB+8yC0=;
+        b=OOpeDXTNHjlOfIT3KVe9sOmQh1DGpCfK47MNSOt/sUP8K3CJLWb4IG2mqw0y18SgEv
+         gFAczr83FInqPBDbkooyJO4GApa0SaNCxM528ogfULeHBWC45evbvY9K2J6uJOuVIMCS
+         dD/gYZly0VmgoSALM0+/g7SLyLbq2vOR2yxYM+O8pzC6R6W6Q0znpHFSQ2BLZrFRG4+H
+         e9KLU+ocz8I+ByLNCr9EPnowxTTXII6tzQuraQgcUkOd5vmJljtRCaA4E8ZlFZhIdTqj
+         Sgnp33rnJm+6fGHTQhaQwJ8Xqq03dO65xyWxDpRIpPLhd+fWYF5Jyj//Dj+H7YCd/wGD
+         xZ9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVkdezgLkk6SmtIvzTDVPOlLTH20/hW67sAxfvvldaBj4+iTByJlVzew/cGc0CHxe75HomoaPn7T4N4LPidtDgkSHhlyII0VFAq3Ic8
+X-Gm-Message-State: AOJu0YxLhbEt1ipi6RswkriIGwX90eEg8wFrGjUWzPuTNDRi3btM5Vel
+	g7HJCZNF8wC4qd9oQLJVwgnEtJg1kgB6p50Lw+o1SrDscq3Je2KtvYCwzvSlK1egjHU247Jb69N
+	XDd069dc1aYlKNpXDvQ+OsHJ2OvMLRMmdZFzmRg==
+X-Google-Smtp-Source: AGHT+IF8kkkqnFsB29nYi5J4Z/UxfYBK80tqZbvVdIA7iIMe4cls3oVhjg9SRgUTjeT8phaUAJ1KjDqBV0NsaWpyK/k=
+X-Received: by 2002:a17:907:3d8c:b0:a7a:c812:36c5 with SMTP id
+ a640c23a62f3a-a8392a11128mr196622766b.46.1723815500788; Fri, 16 Aug 2024
+ 06:38:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR18MB4339.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b10cfe0-880e-4100-960d-08dcbdf87641
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Aug 2024 13:36:41.2812
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: BQ5RvOkGHHS20ipmmUui/Mlgtn2kCfAADP6JPYlTIHgySJMaANLkIIdQj6mf++Xv028WU0xIzacHvpRS2qBuhQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR18MB5667
-X-Proofpoint-ORIG-GUID: NLw6rKbOd9Q9ORsZk1PsF_xqtj40WdJ4
-X-Proofpoint-GUID: NLw6rKbOd9Q9ORsZk1PsF_xqtj40WdJ4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-16_05,2024-08-16_01,2024-05-17_01
+References: <TYUPR06MB62177737F0054278B489962BD2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <2024081608-punch-coherent-d29e@gregkh> <CAOf5uwnsgcJjp1=RLa7qx9ScQY5rZvwX-Zu6BOqxBBhBCz+CFQ@mail.gmail.com>
+ <TYUPR06MB62177BCD4AB43C19E38990D3D2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
+In-Reply-To: <TYUPR06MB62177BCD4AB43C19E38990D3D2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
+From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Date: Fri, 16 Aug 2024 15:38:10 +0200
+Message-ID: <CAOf5uwm65Cw-V+td_=6QAGUF+Uisueqcm0z=1zFaNTisAJnSFQ@mail.gmail.com>
+Subject: Re: [PATCH v1] usb: gadget: u_serial: check Null pointer in EP callback
+To: =?UTF-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
+	"quic_prashk@quicinc.com" <quic_prashk@quicinc.com>, 
+	"quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>, 
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"opensource.kernel" <opensource.kernel@vivo.com>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IEppcmkgUGlya28gPGppcmlA
-cmVzbnVsbGkudXM+DQo+U2VudDogVGh1cnNkYXksIEF1Z3VzdCA4LCAyMDI0IDk6MTIgUE0NCj5U
-bzogR2VldGhhc293amFueWEgQWt1bGEgPGdha3VsYUBtYXJ2ZWxsLmNvbT4NCj5DYzogbmV0ZGV2
-QHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsga3ViYUBrZXJu
-ZWwub3JnOw0KPmRhdmVtQGRhdmVtbG9mdC5uZXQ7IHBhYmVuaUByZWRoYXQuY29tOyBlZHVtYXpl
-dEBnb29nbGUuY29tOyBTdW5pbA0KPktvdnZ1cmkgR291dGhhbSA8c2dvdXRoYW1AbWFydmVsbC5j
-b20+OyBTdWJiYXJheWEgU3VuZGVlcCBCaGF0dGENCj48c2JoYXR0YUBtYXJ2ZWxsLmNvbT47IEhh
-cmlwcmFzYWQgS2VsYW0gPGhrZWxhbUBtYXJ2ZWxsLmNvbT4NCj5TdWJqZWN0OiBbRVhURVJOQUxd
-IFJlOiBbbmV0LW5leHQgUEFUQ0ggdjEwIDAxLzExXSBvY3Rlb250eDItcGY6IFJlZmFjdG9yaW5n
-DQo+UlZVIGRyaXZlcg0KPg0KPk1vbiwgQXVnIDA1LCAyMDI0IGF0IDAzOjE4OjA1UE0gQ0VTVCwg
-Z2FrdWxhQG1hcnZlbGwuY29tIHdyb3RlOg0KPj5SZWZhY3RvcmluZyBhbmQgZXhwb3J0IGxpc3Qg
-b2Ygc2hhcmVkIGZ1bmN0aW9ucyBzdWNoIHRoYXQgdGhleSBjYW4gYmUNCj4+dXNlZCBieSBib3Ro
-IFJWVSBOSUMgYW5kIHJlcHJlc2VudG9yIGRyaXZlci4NCj4+DQo+PlNpZ25lZC1vZmYtYnk6IEdl
-ZXRoYSBzb3dqYW55YSA8Z2FrdWxhQG1hcnZlbGwuY29tPg0KPj5SZXZpZXdlZC1ieTogU2ltb24g
-SG9ybWFuIDxob3Jtc0BrZXJuZWwub3JnPg0KPj4tLS0NCj4+IC4uLi9ldGhlcm5ldC9tYXJ2ZWxs
-L29jdGVvbnR4Mi9hZi9jb21tb24uaCAgICB8ICAgMiArDQo+PiAuLi4vbmV0L2V0aGVybmV0L21h
-cnZlbGwvb2N0ZW9udHgyL2FmL21ib3guaCAgfCAgIDIgKw0KPj4gLi4uL25ldC9ldGhlcm5ldC9t
-YXJ2ZWxsL29jdGVvbnR4Mi9hZi9ucGMuaCAgIHwgICAxICsNCj4+IC4uLi9uZXQvZXRoZXJuZXQv
-bWFydmVsbC9vY3Rlb250eDIvYWYvcnZ1LmMgICB8ICAxMSArDQo+PiAuLi4vbmV0L2V0aGVybmV0
-L21hcnZlbGwvb2N0ZW9udHgyL2FmL3J2dS5oICAgfCAgIDEgKw0KPj4gLi4uL21hcnZlbGwvb2N0
-ZW9udHgyL2FmL3J2dV9kZWJ1Z2ZzLmMgICAgICAgIHwgIDI3IC0tDQo+PiAuLi4vZXRoZXJuZXQv
-bWFydmVsbC9vY3Rlb250eDIvYWYvcnZ1X25peC5jICAgfCAgNDcgKystLQ0KPj4gLi4uL21hcnZl
-bGwvb2N0ZW9udHgyL2FmL3J2dV9ucGNfZnMuYyAgICAgICAgIHwgICA1ICsNCj4+IC4uLi9ldGhl
-cm5ldC9tYXJ2ZWxsL29jdGVvbnR4Mi9hZi9ydnVfcmVnLmggICB8ICAgNCArDQo+PiAuLi4vbWFy
-dmVsbC9vY3Rlb250eDIvYWYvcnZ1X3N0cnVjdC5oICAgICAgICAgfCAgMjYgKysNCj4+IC4uLi9t
-YXJ2ZWxsL29jdGVvbnR4Mi9hZi9ydnVfc3dpdGNoLmMgICAgICAgICB8ICAgMiArLQ0KPj4gLi4u
-L21hcnZlbGwvb2N0ZW9udHgyL25pYy9vdHgyX2NvbW1vbi5jICAgICAgIHwgICA2ICstDQo+PiAu
-Li4vbWFydmVsbC9vY3Rlb250eDIvbmljL290eDJfY29tbW9uLmggICAgICAgfCAgNDMgKystLQ0K
-Pj4gLi4uL2V0aGVybmV0L21hcnZlbGwvb2N0ZW9udHgyL25pYy9vdHgyX3BmLmMgIHwgMjQwICsr
-KysrKysrKysrLS0tLS0tLQ0KPj4gLi4uL21hcnZlbGwvb2N0ZW9udHgyL25pYy9vdHgyX3R4cngu
-YyAgICAgICAgIHwgIDE3ICstDQo+PiAuLi4vbWFydmVsbC9vY3Rlb250eDIvbmljL290eDJfdHhy
-eC5oICAgICAgICAgfCAgIDMgKy0NCj4+IC4uLi9ldGhlcm5ldC9tYXJ2ZWxsL29jdGVvbnR4Mi9u
-aWMvb3R4Ml92Zi5jICB8ICAgNyArLQ0KPj4gMTcgZmlsZXMgY2hhbmdlZCwgMjY2IGluc2VydGlv
-bnMoKyksIDE3OCBkZWxldGlvbnMoLSkNCj4NCj5Ib3cgY2FuIGFueW9uZSByZXZpZXcgdGhpcz8N
-Cj4NCj5JZiB5b3UgbmVlZCB0byByZWZhY3RvciB0aGUgY29kZSBpbiBwcmVwYXJhdGlvbiBmb3Ig
-YSBmZWF0dXJlLCB5b3UgY2FuIGRvIGluIGluIGENCj5zZXBhcmF0ZSBwYXRjaHNldCBzZW50IGJl
-Zm9yZSB0aGUgZmVhdHVyZSBhcHBlYXJzLiBUaGlzIHBhdGNoIHNob3VsZCBiZSBzcGxpdA0KPmlu
-dG8gWCBwYXRjaGVzLiBPbmUgbG9naWNhbCBjaGFuZ2UgcGVyIHBhdGNoLg0KSWYgdGhlc2UgY2hh
-bmdlcyBhcmUgbW92ZWQgaW50byBhIHNlcGFyYXRlIHBhdGNoc2V0LiAgSG93IGNhbiBzb21lb25l
-IHVuZGVyc3RhbmQgYW5kIHJldmlldyANCnRoZW0gd2l0aG91dCBrbm93aW5nIHdoZXJlIHRoZXkg
-Z2V0IHJldXNlZC4NCg==
+Hi
+
+On Fri, Aug 16, 2024 at 3:30=E2=80=AFPM =E8=83=A1=E8=BF=9E=E5=8B=A4 <hulian=
+qin@vivo.com> wrote:
+>
+> Hello linux community expert:
+>
+> Q: Are you running a mainline kernel?
+> A: Yes.
+
+You should reply without top posting (refer to [1]). I'm trying to be
+helpful to you but it's not easy. The question was
+if your on some 6.10.y or older version of the kernel, the step to
+reproduce it, and if you have any automation to test it
+
+Michael
+
+[1] https://subspace.kernel.org/etiquette.html
+
+>
+> Thanks
+>
+> -----=E9=82=AE=E4=BB=B6=E5=8E=9F=E4=BB=B6-----
+> =E5=8F=91=E4=BB=B6=E4=BA=BA: Michael Nazzareno Trimarchi <michael@amarula=
+solutions.com>
+> =E5=8F=91=E9=80=81=E6=97=B6=E9=97=B4: 2024=E5=B9=B48=E6=9C=8816=E6=97=A5 =
+20:17
+> =E6=94=B6=E4=BB=B6=E4=BA=BA: gregkh@linuxfoundation.org
+> =E6=8A=84=E9=80=81: =E8=83=A1=E8=BF=9E=E5=8B=A4 <hulianqin@vivo.com>; qui=
+c_prashk@quicinc.com; quic_jjohnson@quicinc.com; linux-usb@vger.kernel.org;=
+ linux-kernel@vger.kernel.org; opensource.kernel <opensource.kernel@vivo.co=
+m>; akpm@linux-foundation.org
+> =E4=B8=BB=E9=A2=98: Re: [PATCH v1] usb: gadget: u_serial: check Null poin=
+ter in EP callback
+>
+> [=E4=BD=A0=E9=80=9A=E5=B8=B8=E4=B8=8D=E4=BC=9A=E6=94=B6=E5=88=B0=E6=9D=A5=
+=E8=87=AA michael@amarulasolutions.com =E7=9A=84=E7=94=B5=E5=AD=90=E9=82=AE=
+=E4=BB=B6=E3=80=82=E8=AF=B7=E8=AE=BF=E9=97=AE https://aka.ms/LearnAboutSend=
+erIdentification=EF=BC=8C=E4=BB=A5=E4=BA=86=E8=A7=A3=E8=BF=99=E4=B8=80=E7=
+=82=B9=E4=B8=BA=E4=BB=80=E4=B9=88=E5=BE=88=E9=87=8D=E8=A6=81]
+>
+> Hi Lianqin Hu
+>
+> On Fri, Aug 16, 2024 at 1:58=E2=80=AFPM gregkh@linuxfoundation.org <gregk=
+h@linuxfoundation.org> wrote:
+> >
+> > On Fri, Aug 16, 2024 at 11:21:24AM +0000, =E8=83=A1=E8=BF=9E=E5=8B=A4 w=
+rote:
+> > > From: Lianqin Hu <hulianqin@vivo.com>
+> > >
+> > > Added null pointer check to avoid system crash.
+> > >
+> > > Unable to handle kernel NULL pointer dereference at virtual address
+> > > 00000000000001a8 pc : gs_read_complete+0x58/0x240 lr :
+> > > usb_gadget_giveback_request+0x40/0x160
+> > > sp : ffffffc00f1539c0
+> > > x29: ffffffc00f1539c0 x28: ffffff8002a30000 x27: 0000000000000000
+> > > x26: ffffff8002a30000 x25: 0000000000000000 x24: ffffff8002a30000
+> > > x23: ffffff8002ff9a70 x22: ffffff898e7a7b00 x21: ffffff803c9af9d8
+> > > x20: ffffff898e7a7b00 x19: 00000000000001a8 x18: ffffffc0099fd098
+> > > x17: 0000000000001000 x16: 0000000080000000 x15: 0000000ac1200000
+> > > x14: 0000000000000003 x13: 000000000000d5e8 x12: 0000000355c314ac
+> > > x11: 0000000000000015 x10: 0000000000000012 x9 : 0000000000000008
+> > > x8 : 0000000000000000 x7 : 0000000000000000 x6 : ffffff887cd12000
+> > > x5 : 0000000000000002 x4 : ffffffc00f9b07f0 x3 : ffffffc00f1538d0
+> > > x2 : 0000000000000001 x1 : 0000000000000000 x0 : 00000000000001a8
+> > > Call trace:
+> > > gs_read_complete+0x58/0x240
+> > > usb_gadget_giveback_request+0x40/0x160
+> > > dwc3_remove_requests+0x170/0x484
+> > > dwc3_ep0_out_start+0xb0/0x1d4
+> > > __dwc3_gadget_start+0x25c/0x720
+> > > kretprobe_trampoline.cfi_jt+0x0/0x8
+> > > kretprobe_trampoline.cfi_jt+0x0/0x8
+> > > udc_bind_to_driver+0x1d8/0x300
+> > > usb_gadget_probe_driver+0xa8/0x1dc
+>
+> Are you running a mainline kernel?
+>
+> Michael
+>
+> > > gadget_dev_desc_UDC_store+0x13c/0x188
+> > > configfs_write_iter+0x160/0x1f4
+> > > vfs_write+0x2d0/0x40c
+> > > ksys_write+0x7c/0xf0
+> > > __arm64_sys_write+0x20/0x30
+> > > invoke_syscall+0x60/0x150
+> > > el0_svc_common+0x8c/0xf8
+> > > do_el0_svc+0x28/0xa0
+> > > el0_svc+0x24/0x84
+> > > el0t_64_sync_handler+0x88/0xec
+> > > el0t_64_sync+0x1b4/0x1b8
+> > > Code: aa1f03e1 aa1303e0 52800022 2a0103e8 (88e87e62) ---[ end trace
+> > > 938847327a739172 ]--- Kernel panic - not syncing: Oops: Fatal
+> > > exception
+> > >
+> > > Signed-off-by: Lianqin Hu <hulianqin@vivo.com>
+> > > ---
+> > > v1:
+> > >   - Optimize code comments, delete log printing
+> >
+> > This is "v2" not "v1".
+> >
+> > Also, same comment as before, what:
+> >   - causes port to be NULL
+> >   - prevents it from changing to NULL right after you check it
+> >
+> > Both need to be answered before we can take this change.
+> >
+> > thanks,
+> >
+> > greg k-h
+> >
+>
+>
+> --
+> Michael Nazzareno Trimarchi
+> Co-Founder & Chief Executive Officer
+> M. +39 347 913 2170
+> michael@amarulasolutions.com
+> __________________________________
+>
+> Amarula Solutions BV
+> Joop Geesinkweg 125, 1114 AB, Amsterdam, NL T. +31 (0)85 111 9172 info@am=
+arulasolutions.com
+> http://www.amarulasolutions.com/
+
+
+
+--=20
+Michael Nazzareno Trimarchi
+Co-Founder & Chief Executive Officer
+M. +39 347 913 2170
+michael@amarulasolutions.com
+__________________________________
+
+Amarula Solutions BV
+Joop Geesinkweg 125, 1114 AB, Amsterdam, NL
+T. +31 (0)85 111 9172
+info@amarulasolutions.com
+www.amarulasolutions.com
 
