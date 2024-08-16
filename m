@@ -1,190 +1,108 @@
-Return-Path: <linux-kernel+bounces-290040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C22F954EB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:22:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA9A954EC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:27:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E7691C225F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:22:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00FFD1F22DA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B411BE87D;
-	Fri, 16 Aug 2024 16:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77416817;
+	Fri, 16 Aug 2024 16:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pv+7Pmd1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WpWw8I0E"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BBC817;
-	Fri, 16 Aug 2024 16:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE37136E30
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 16:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723825353; cv=none; b=GFueE1piu6Q5/jGuMb/CN1bXfU85dqgMaJIRrUQNtbC3s/jnP97asAAX9MP/zvAtSBEHozkELRIYe9poWVGfQKD5QYai8L29yW9gZy8jX697AR9q5ZuBczn9yH0m9iGfb5R/Nl5ZTdiNWxc+ls3SHdpSHZy9SZ0a6dmTFO+e5X4=
+	t=1723825660; cv=none; b=M1mpI16qBIdTnuTP0cHdfmkbpnKhXyJ7iZ9y1n5oNi3P84LqqMNb1akrflXSU9blh2DGLK8SGpPg1AuJvWb1USUxlTr2/f0kn1covqKdtO6fhSBaxMRFfITYi9UKHddMbPNY3UFG4CeCaPG0xgyNAqd1zYPpE9EUVy1DtT1U7aU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723825353; c=relaxed/simple;
-	bh=5bM/+gMH6YeK6p9UWhTLUC1eR9DgYt1YNPoIMImSiO8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rX4k1Ec1Eh8gZjtpgDOjNVK5k3qZvfTVsoQ02le456hLT8ylibd1NL+fHQvlbtyO8cQp6P5ppWj4qpwSUDSXRwXqJyNens3n+/LShmRp3DeFNiKq/VRDtS7wHDVhRA9CQu2Tm2Zch1EiuutnERL9UBs9fNQg67uPEqkUIVsaFac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pv+7Pmd1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC01AC32782;
-	Fri, 16 Aug 2024 16:22:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723825353;
-	bh=5bM/+gMH6YeK6p9UWhTLUC1eR9DgYt1YNPoIMImSiO8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pv+7Pmd1kACFZxzIUAdZ2un+e62Xi6DceMWdZeVLaXPqhsbZX4WK1ZXHcYUiDGMtM
-	 6EeCw5L7Pnqtq1MLPX3+HkMSxWkf9AP2AmDVMfbsp7MzrcwXrb2NNoHiwdpH6oap75
-	 3CD+R0wvp4rySmpKLgobsF0Dan7f/MSQGEREW8QbaO9oPrD6bysk9mwWN2U67Inkhi
-	 Bebk/NWgCSLYUNlli/Zw/vHsRyR8FyUXSspKnWhIP1IAtOKJe6bQjmKwFqliAl/q7O
-	 3tVs5IjFW3Bl0XaoW95SZNLDfSMObrqMn5VCpJ5zFT2HeIxaT5K8CTVjtjkbzfnb51
-	 DDmjuclRg7Jtg==
-Date: Fri, 16 Aug 2024 11:22:29 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Md Sadre Alam <quic_mdalam@quicinc.com>
-Cc: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, konradybcio@kernel.org, thara.gopinath@gmail.com, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, gustavoars@kernel.org, 
-	u.kleine-koenig@pengutronix.de, kees@kernel.org, agross@kernel.org, 
-	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, quic_srichara@quicinc.com, 
-	quic_varada@quicinc.com, quic_utiwari@quicinc.com
-Subject: Re: [PATCH v2 03/16] dmaengine: qcom: bam_dma: add LOCK & UNLOCK
- flag support
-Message-ID: <knhqbj2pyluwrvr2f4h6zgpfosa6o2qgnhtl4qltadpuyfexgu@kk5knurc4v7h>
-References: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
- <20240815085725.2740390-4-quic_mdalam@quicinc.com>
+	s=arc-20240116; t=1723825660; c=relaxed/simple;
+	bh=9+ilsaccI6ixtMBw1fHh/3BZ/A+5/QbvLWcuyZ8wu5s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jHZOR1JmHcI2rxz7mq69tTT/y4cSameex+Wj6JudsCBfKW3vdwEYHmJQVOlO+siH6OhuqHhrNod4iL0fT7nDHlPW8+2ug8DbTqpJpEQstagBdjJQ3nhqveBsAUgJG6gi7J2Lnc4r44gSZYQ6e/AMW2t4o4ymnP9F0IrEFcrn6yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WpWw8I0E; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-699ac6dbf24so21086187b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:27:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723825658; x=1724430458; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A7WwxLAS0ZUy5wWtJOP42rw5b2Ueq8dEn+7WiJY79gY=;
+        b=WpWw8I0EaxGbXSkks2sj8hEi1emWjyKLSNT5yEdWgqO4VNFR+2wpcDcDWTyFqlNWXY
+         TwrcBWvfV2rl+Ggzn2+ux1Xgoz4qnbxYOjYY9RzYmXfORrXhQegMTSoLkBOxCSU1Ny97
+         d14i33Q4SL2xjTh/3gAYsazZg9tenMzSHuuk7kTaIfJA/IIOKgoCFVizfAkjaLXxjHKh
+         TTGT6x9fD8Hm/B2PH+bGJoX7UTGP9ZWd4HhIZnunih9NVttSqdJ4AaWIFN+Z5/Rt3ANI
+         LwS3C+WevtvIcpkL2TrI+BRc22HiQLwZs+hCf9I4tVmdiBufrOD6b1NBa/Pl6WGBCg0p
+         3zoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723825658; x=1724430458;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A7WwxLAS0ZUy5wWtJOP42rw5b2Ueq8dEn+7WiJY79gY=;
+        b=nqLfsL2IQnksdcJscXIxgjrhxzlp7DDc1NxB1iUwVZl+BbIlXJVPJy7382y4qUnEnw
+         8Shc9V+AKJA+IBcLd+0AElvLCoDNWJ3QCJnEhK9EnW1BnSueTNdU1584lQLZnlxcXJ1d
+         RM2kvbKSptuClNJwDOgeby+7a4KqeCjAG5WPJdi9WXPDBwgpsC1s9yYYuzyHFsQijDpK
+         Iy+zeCtAV/3W+yDiOiG44627AYNHnLkaNUdiJ6v127rOXCop/yBNUrcBRJ0UwYeHEJss
+         nor0OFH+qPunBU4uqvUvPu9fKcN1chJfdVEOQRdsWUh0MmYS7KeQkQzh31ZG5N3+RLqU
+         GSqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUyN+00Chb5FopYbHhditu1zRcYB5giGY1fsFpTBrJaj5D1VPsELXlR78GBPrzDg6jTFP+AsY7IqDdqN6yMR7Pf1+FsiBuwpdmeeScx
+X-Gm-Message-State: AOJu0Yw4aVfCJCCBjvKzqB+v90rl7mfdPKGoeCn0lc0qwGOmn74DnJ9q
+	VaTBhV5AkhcAQ4WN+jYOlv1av3c3yKiYi5v3JfwfiNWWUuwMFGeiImRKF19dvl/C4z/Rlz+ZWRK
+	FrxBCKs7idMcMNUM8EzuZ/veiPvYejM7/Cfbq
+X-Google-Smtp-Source: AGHT+IFS42kfS4NEIV9e6Cd6qxnCl6eGj9iWg4DjB95brRzDynPcHRqhZmevD3bVnTKtacXx9wDPy2RuXbvwtewuVaM=
+X-Received: by 2002:a05:690c:3085:b0:647:e079:da73 with SMTP id
+ 00721157ae682-6b1b7a6cbadmr33163627b3.10.1723825658162; Fri, 16 Aug 2024
+ 09:27:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240815085725.2740390-4-quic_mdalam@quicinc.com>
+References: <20240813204716.842811-1-kinseyho@google.com> <20240813204716.842811-5-kinseyho@google.com>
+ <zh4ccaje54qbi6a62rvlhclysyaymw76bona4qtd53k4ogjuv7@tppv2q4zgyjk>
+In-Reply-To: <zh4ccaje54qbi6a62rvlhclysyaymw76bona4qtd53k4ogjuv7@tppv2q4zgyjk>
+From: Kinsey Ho <kinseyho@google.com>
+Date: Fri, 16 Aug 2024 12:27:27 -0400
+Message-ID: <CAF6N3nXmQ=+j5VNf16KL6Ma8RaO0o-Nv=C7reJKQOzdpHzWOsg@mail.gmail.com>
+Subject: Re: [PATCH mm-unstable v2 4/5] mm: restart if multiple traversals raced
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	Yosry Ahmed <yosryahmed@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 15, 2024 at 02:27:12PM GMT, Md Sadre Alam wrote:
-> Add lock and unlock flag support on command descriptor.
-> Once lock set in requester pipe, then the bam controller
-> will lock all others pipe and process the request only
-> from requester pipe. Unlocking only can be performed from
-> the same pipe.
-> 
+Hi Michal,
 
-Is the lock per channel, or for the whole BAM instance?
+> I may be missing (literal) context but I'd suggest not moving the memcg
+> assignment and leverage
+>         if (memcg !=3D NULL)
+>                 css_put(memcg->css)
+> so that the is-root comparison needn't be repeated.
 
-> If DMA_PREP_LOCK flag passed in command descriptor then requester
-> of this transaction wanted to lock the BAM controller for this
-> transaction so BAM driver should set LOCK bit for the HW descriptor.
+I might also be misunderstanding you with respect to the is-root
+comparison =E2=80=93 the reason the memcg assignment is moved is because it=
+ is
+possible that on the restart added in this patch, css could be NULL.
+In that case, memcg won't be assigned and could be left with a
+previous, invalid value. By moving the assignment out, it ensures that
+memcg is a valid value.
 
-You use the expression "this transaction" here, but if I understand the
-calling code the lock is going to be held over multiple DMA operations
-and even across asynchronous operations in the crypto driver.
-
-DMA_PREP_LOCK indicates that this is the beginning of a transaction,
-consisting of multiple operations that needs to happen while other EEs
-are being locked out, and DMA_PREP_UNLOCK marks the end of the
-transaction.
-
-That said, I'm not entirely fond of the fact that these flags are not
-just used on first and last operation in one sequence, but spread out.
-
-Locking is hard, when you spread the responsibility of locking and
-unlocking across different entities it's made harder...
-
-> 
-> If DMA_PREP_UNLOCK flag passed in command descriptor then requester
-> of this transaction wanted to unlock the BAM controller.so BAM driver
-> should set UNLOCK bit for the HW descriptor.
-> 
-> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
-> ---
-> 
-> Change in [v2]
-> 
-> * Added LOCK and UNLOCK flag in bam driver
-> 
-> Change in [v1]
-> 
-> * This patch was not included in [v1]
-
-v1 can be found here:
-https://lore.kernel.org/all/20231214114239.2635325-7-quic_mdalam@quicinc.com/
-
-And it was also posted once before that:
-https://lore.kernel.org/all/1608215842-15381-1-git-send-email-mdalam@codeaurora.org/
-
-In particular during the latter (i.e. first post) we had a rather long
-discussion about this feature, so that's certainly worth linking to.
-
-Looks like this series provides some answers to the questions we had
-back then.
-
-Regards,
-Bjorn
-
-> 
->  drivers/dma/qcom/bam_dma.c | 10 +++++++++-
->  include/linux/dmaengine.h  |  6 ++++++
->  2 files changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/dma/qcom/bam_dma.c b/drivers/dma/qcom/bam_dma.c
-> index 1ac7e250bdaa..ab3b5319aa68 100644
-> --- a/drivers/dma/qcom/bam_dma.c
-> +++ b/drivers/dma/qcom/bam_dma.c
-> @@ -58,6 +58,8 @@ struct bam_desc_hw {
->  #define DESC_FLAG_EOB BIT(13)
->  #define DESC_FLAG_NWD BIT(12)
->  #define DESC_FLAG_CMD BIT(11)
-> +#define DESC_FLAG_LOCK BIT(10)
-> +#define DESC_FLAG_UNLOCK BIT(9)
->  
->  struct bam_async_desc {
->  	struct virt_dma_desc vd;
-> @@ -692,9 +694,15 @@ static struct dma_async_tx_descriptor *bam_prep_slave_sg(struct dma_chan *chan,
->  		unsigned int curr_offset = 0;
->  
->  		do {
-> -			if (flags & DMA_PREP_CMD)
-> +			if (flags & DMA_PREP_CMD) {
->  				desc->flags |= cpu_to_le16(DESC_FLAG_CMD);
->  
-> +				if (bdev->bam_pipe_lock && flags & DMA_PREP_LOCK)
-> +					desc->flags |= cpu_to_le16(DESC_FLAG_LOCK);
-> +				else if (bdev->bam_pipe_lock && flags & DMA_PREP_UNLOCK)
-> +					desc->flags |= cpu_to_le16(DESC_FLAG_UNLOCK);
-> +			}
-> +
->  			desc->addr = cpu_to_le32(sg_dma_address(sg) +
->  						 curr_offset);
->  
-> diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
-> index b137fdb56093..70f23068bfdc 100644
-> --- a/include/linux/dmaengine.h
-> +++ b/include/linux/dmaengine.h
-> @@ -200,6 +200,10 @@ struct dma_vec {
->   *  transaction is marked with DMA_PREP_REPEAT will cause the new transaction
->   *  to never be processed and stay in the issued queue forever. The flag is
->   *  ignored if the previous transaction is not a repeated transaction.
-> + *  @DMA_PREP_LOCK: tell the driver that there is a lock bit set on command
-> + *  descriptor.
-> + *  @DMA_PREP_UNLOCK: tell the driver that there is a un-lock bit set on command
-> + *  descriptor.
->   */
->  enum dma_ctrl_flags {
->  	DMA_PREP_INTERRUPT = (1 << 0),
-> @@ -212,6 +216,8 @@ enum dma_ctrl_flags {
->  	DMA_PREP_CMD = (1 << 7),
->  	DMA_PREP_REPEAT = (1 << 8),
->  	DMA_PREP_LOAD_EOT = (1 << 9),
-> +	DMA_PREP_LOCK = (1 << 10),
-> +	DMA_PREP_UNLOCK = (1 << 11),
->  };
->  
->  /**
-> -- 
-> 2.34.1
-> 
+Best,
+Kinsey
 
