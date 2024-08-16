@@ -1,109 +1,124 @@
-Return-Path: <linux-kernel+bounces-290206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64FC79550B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:23:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FCB09550BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9704C1C210A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:23:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93E461C210A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9CE21C379A;
-	Fri, 16 Aug 2024 18:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994F81C37B5;
+	Fri, 16 Aug 2024 18:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CyiR2xY0"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BXjI6/u/"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35892F43
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 18:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442FC2F43;
+	Fri, 16 Aug 2024 18:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723832582; cv=none; b=Hojtqc/e9hzM5F6MiWTtddxDP1EnLF3yg3L8aRLy3QhTuM0WOtaIy8k94Lsa/9nlI7vykGlyyXd9zlMgIeYw6wgIHCzsoakrTTEsw4dnbLRj1zg1Ucs7fIdq30scF4lGC1XLDpWonKoDyh92D6PiPQhC7XIHdPzkEcvlnDP5muU=
+	t=1723832598; cv=none; b=jUXJvs8Nna+QdBoNcPDv63nJUh4BSqWGW4pEswlTZaZkopNgW04oQFWmxpNwREfJVIWtt2D+qIggKp+/yBzQR885w8FgSZSN8cm7VZh+YYcpLRsT0CvGbf25XUyf6BCVRsW5ziwwEiPEH1Z3RYPDuOP+/RRQHBnoW/REk7QfAw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723832582; c=relaxed/simple;
-	bh=C/KPVQOdL61r1aj+fFYyQJ8nYW6G4L9oj+F7eqj0zxE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WIwc0EpHY+nGcdVuwQLBmi1DF98sK4jk+K6n4/VjeovLXq23VliEFuDyoBJkQwSEXzII3yYYDXUo6i/1HWRNN5f56m8V5Huo0aCYcXmgdPdk15hml2jlDV/zXRn6toRjWgZ6vhsI6jx9jiVTMhwltFtLd42njVS+4fypTtz+wn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CyiR2xY0; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6acf8ac7569so43561667b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 11:23:00 -0700 (PDT)
+	s=arc-20240116; t=1723832598; c=relaxed/simple;
+	bh=9nBk+OVqT2U6ithIdAtJd6yyta5mV3miRfL5OUOo/Uw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p02zA/QGYjgc4MgCL24CUCERnKL/Hi7MKE7MUZscnXT104Soo69ys1PoNmuyyfMPAYk5oehH0DTLdFRlg2FWjChvXDhyZNw+qIJUrZTtkes8Fnug6BTvADPHxldNwlj+2OeDdhwHjg0C0sITf0B+x7sL5eQvpQpXUS5wP0greK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BXjI6/u/; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-428243f928cso16554225e9.3;
+        Fri, 16 Aug 2024 11:23:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723832579; x=1724437379; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Da+yOGUnAi9BrtxeKlOOzLVm+rCdCeLa2u69ZA1xPsY=;
-        b=CyiR2xY0EqnCnwW5KUW0XZybvLPrnwZhEQH2T8zpbM7G6dOFUC92b0Jkj34jFfgJdI
-         shYO1g0lX15CFBxLsw8nduXNJhHJDSEvuE8/fU/L7SZWPZyzDjo3Z+ZIf4YtL2tXkbl+
-         eg9halxd/w28aSUXWxtXdXMG61yHN/ltToZ8//GQ8qDZBQ8qJsZaszW0dSSzdbFtvGgi
-         gAAEsL2tQowcv1uxVbLPtNaBJEl9imscdeaUdzLH1yvOGeBjF5O+2haPHNxwD+PTi8ek
-         7Immfc4GWmnzClq1y2mT2WSHYTpZSOu7+yPswSYz1t7O+Mj1QR+1Nn4CqJbgFx7E5IzU
-         vrbg==
+        d=gmail.com; s=20230601; t=1723832595; x=1724437395; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tt1M3N9em0+Z01XyYhLmbINqjYflUEk+VUJQL5UpS3Q=;
+        b=BXjI6/u/B0bv1FsM1LeJkdIypUl8J1D7nm3Yt9p8PwASQ4TJQQSe6lv9E6zhfcvVcS
+         ISR0QkxuU4Ce0R4WYwobdZp2RIKjxxXXTsjLFZ9ZErGZuChKW0p7fB04Orb2zy41YgaO
+         YEXtNc6Cy+4vUWv33XEPUgwDSU0nEVnT8SoJ3ffO1Aq741WFAYXPlQO7bbcjJeqi105Q
+         nX+BpCCDPACMdU/BjifTS5kBRQJBb9zfYkGsnlNOnV0q8n/MdmOCcPuOmNS76JReMvlI
+         byKVik5y7Z+yWrFqYGL3jglGBGJZYO+My6anfUgwOUPG81D3DLhNHuzC8wgedPLMVOVv
+         6sqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723832579; x=1724437379;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Da+yOGUnAi9BrtxeKlOOzLVm+rCdCeLa2u69ZA1xPsY=;
-        b=ubGH6WLDzXvlksM7I/MAjUNdRf4H7MbZF2WavPzJLoTaBsGCsLOKu0eDj+2/GoEzHV
-         L+McijGQ7Td8T8kzkuN6zCu4JMM0G14JlP60AYv9124qKZzJe0jeXFSvXd7LiIHdWIHp
-         +aidTydH5RgPCEgpb37XgLfnjqUVPlamr3xR7dj/pE7LKgSV6REs9LXWHoXAQoteBVZ3
-         Hvu8pZixH0axaxGtVdrj2+kJ11b5hXF5bzin7UX5bQrscYjklJnWcVyV49MseWBW/Pp3
-         /ArVpcawy0c3I5Y8e3dVOfgsCDT+BWgs2ygJ9ku1eLERcrYEekWPGDceVAedy7VaCNmV
-         XwTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXXen8a3bIsr2JuwzzPjwsikXFCPqlhYOWXJihTRxhr+BGMlOOWd3GN/dVad4gvz7fKZOhlHjiEiKHuSao2ZKQ2cbh7/j16L15f2Lb9
-X-Gm-Message-State: AOJu0YzDm4O1Kjxue8YJz9N/6JmOBBgq8SLWKrvirYS5n+V5mY5FM76a
-	Vezj+6HFGKfRmMFWz+/qi7syLHQWrnQWL37g8UVMzAbda9Sor+GqJ1Mcp5r11gHdRKOmciuKIqP
-	n1w==
-X-Google-Smtp-Source: AGHT+IFfcTETiulkEGd1KSTGEzd2S0thNDH+lgRaKyP+72dCCah4oHM6tDo0fs41jUmb4XdaXCTSKTwY22o=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:68ca:0:b0:e03:3cfa:1aa7 with SMTP id
- 3f1490d57ef6-e1180e4a917mr5430276.1.1723832579587; Fri, 16 Aug 2024 11:22:59
- -0700 (PDT)
-Date: Fri, 16 Aug 2024 11:22:58 -0700
-In-Reply-To: <000000000000fbce8506178da1e8@google.com>
+        d=1e100.net; s=20230601; t=1723832595; x=1724437395;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tt1M3N9em0+Z01XyYhLmbINqjYflUEk+VUJQL5UpS3Q=;
+        b=ksKvWRz2esc5ivfXMcXX9s4JrDpbOE3TN6NjpVLV46lef1YEOS7bc+a7/2M03kU6t2
+         T8baLvvAZzjnwOpKP/K5SafYoHXTwwjxsmzclH4cEyssXzipFEzkAnR41IxMgcjqb4fJ
+         3+US6/Tm+y0nXpAVX+pwVo3yM57fC9AcJsoc75N+XYgN7gLc/qQpsHOzAwaFI2MUJOoA
+         J6Y7YZs5nv8x3S9NYBRmoS1k4spwFmhryY1I9S3vwf0QSVQicA5rOO04Zu0/ooD2V8vV
+         RNI1XzXind0soats61fU1bwrq0k4l0YZxRhCm67X9a8b0BbOe+pbHXbcKZvaLd1uIxPB
+         KxJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0yQdrAJ5pfi3P4Xy7l+wM8EFKBaJcdtAgcd/JPOCGZyge8swI2e7CV/klvrST+TIv9VHNpwVN9kfOuTEpb77s7WtQSG4D/mR2y/NWB6YDG17tFJDCaWFU/ZNHcg8puFVW7h+8kWQ4l8qvIJqJeO52/uJnLvwxxu/OfXbhCk37NQF0sYzbK+W0hlH0KN0zAHIsHg/57JCSPbC4mIyXHY/xCRWqsy27tocg4v24A0BAQkLlvl89HCYvH+cMTkiW0ujQsYGd/iSw
+X-Gm-Message-State: AOJu0YzToEltElSQjxUsh+r4rZTly1PpfGfeh/Bog4yH2HkKAOQorEk8
+	i4fIVuKpL7AurwMDt+6THSASnTNvZ8GbesGwCFbW6a0T5j1FtcsC
+X-Google-Smtp-Source: AGHT+IGe7kGpO1ikYBDLyoCv4FPzIfHwsornnyTjsVTL0wNifZExOmpdSgtf+WuYd8hTh3t/puS2HA==
+X-Received: by 2002:a05:600c:5029:b0:426:59fc:cdec with SMTP id 5b1f17b1804b1-429ed7af8f1mr28923365e9.21.1723832595196;
+        Fri, 16 Aug 2024 11:23:15 -0700 (PDT)
+Received: from ?IPV6:2a02:8071:b783:140:927c:82ba:d32d:99c1? ([2a02:8071:b783:140:927c:82ba:d32d:99c1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded35991sm82383415e9.21.2024.08.16.11.23.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Aug 2024 11:23:14 -0700 (PDT)
+Message-ID: <03af1025-f946-4eb2-a41e-28f0436e60e6@gmail.com>
+Date: Fri, 16 Aug 2024 20:23:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <000000000000fbce8506178da1e8@google.com>
-Message-ID: <Zr-ZAsFVFiQuys7K@google.com>
-Subject: Re: [syzbot] [bcachefs?] WARNING in cleanup_srcu_struct (4)
-From: Sean Christopherson <seanjc@google.com>
-To: syzbot <syzbot+6cf577c8ed4e23fe436b@syzkaller.appspotmail.com>
-Cc: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] platform/surface: Add OF support
+To: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Len Brown <lenb@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <quic_kdybcio@quicinc.com>
+References: <20240814-topic-sam-v3-0-a84588aad233@quicinc.com>
+ <20240814-topic-sam-v3-3-a84588aad233@quicinc.com>
+Content-Language: en-US
+From: Maximilian Luz <luzmaximilian@gmail.com>
+In-Reply-To: <20240814-topic-sam-v3-3-a84588aad233@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 03, 2024, syzbot wrote:
-> Hello,
+On 8/14/24 12:27 PM, Konrad Dybcio wrote:
+> From: Konrad Dybcio <quic_kdybcio@quicinc.com>
 > 
-> syzbot found the following issue on:
+> Add basic support for registering the aggregator module on Device Tree-
+> based platforms. These include at least three generations of Qualcomm
+> Snapdragon-based Surface devices:
 > 
-> HEAD commit:    f03359bca01b Merge tag 'for-6.9-rc6-tag' of git://git.kern..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14004498980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3310e643b6ef5d69
-> dashboard link: https://syzkaller.appspot.com/bug?extid=6cf577c8ed4e23fe436b
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> - SC8180X / SQ1 / SQ2: Pro X,
+> - SC8280XP / SQ3: Devkit 2023, Pro 9
+> - X Elite: Laptop 7 / Pro11
 > 
-> Unfortunately, I don't have any reproducer for this issue yet.
+> Thankfully, the aggregators on these seem to be configured in an
+> identical way, which allows for using these settings as defaults and
+> no DT properties need to be introduced (until that changes, anyway).
 > 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/1b4deeb2639b/disk-f03359bc.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/f3c3d98db8ef/vmlinux-f03359bc.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/6f79ee1ae20f/bzImage-f03359bc.xz
+> Based on the work done by Maximilian Luz, largely rewritten.
 > 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+6cf577c8ed4e23fe436b@syzkaller.appspotmail.com
+> Signed-off-by: Konrad Dybcio <quic_kdybcio@quicinc.com>
+> ---
 
-See https://lore.kernel.org/all/Zr-Ydj8FBpiqmY_c@google.com for an explanation.
+Looks good to me and works without issues on my Surface Pro X.
 
-#syz invalid
+Thanks again for picking this up!
+
+Reviewed-by: Maximilian Luz <luzmaximilian@gmail.com>
+Tested-by: Maximilian Luz <luzmaximilian@gmail.com>
 
