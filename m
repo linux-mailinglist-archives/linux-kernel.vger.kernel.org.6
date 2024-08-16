@@ -1,83 +1,111 @@
-Return-Path: <linux-kernel+bounces-290104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D63BD954F78
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:02:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CDA9954FB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 919D0282672
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:02:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A1B92850D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96FC1C378B;
-	Fri, 16 Aug 2024 17:01:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB571C2304;
+	Fri, 16 Aug 2024 17:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HxyHRms0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T1vzmDHU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 253211C2326;
-	Fri, 16 Aug 2024 17:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE709558A5;
+	Fri, 16 Aug 2024 17:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723827710; cv=none; b=uhjjRg1DFjapL4bMWp27BCCuD/S3FsNYfxzZS2Fp78fl1hC0X2qTfTneHpKfb1PZrrD4uwm0ObRwa+sq7gm24I3BAfIv3lsEvafUMjnA8E9Q3xQYLlhUO8Gasv9XAotkVK92RFQGtvfgwMcGmkvphdRaXG9th/2Xb7DPYPgl0Kg=
+	t=1723828359; cv=none; b=R+eFQBcUBWB6SnOt7VSRqNDU79yQwhAWT6/a+CnqgEBIUXJ3ophidoCgsfwUwjiZytTKw7p9A/tFo2HDGECm16TyOTLaHfhlZefwywGHAR9lnhoJN+k4mp8g1EzbyTf4JQ7YRW/RSTlOMNj4Qvp8mirvs81MiDMnRADsJAJxrUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723827710; c=relaxed/simple;
-	bh=v2kzBBRptVNV1+RRu9YabyIo3w1DpQo+MXl8LfNqrJ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QCcC+Glc7lyJq6x1rceJlYzdqAF8kZySypQGHWN/eNfnB1pKWn04hRcIxqmAsmi/MxJEIE9Fzwpd6DdreXsGfiXlMiiFNrmE6Q00p1EI5DofCF3irZ8Y1PgPV/hamT2Is8iIVVbvkZc9Yqb/5gPRXuMLXfJSbjNCp1qDcFyjGQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HxyHRms0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79017C32782;
-	Fri, 16 Aug 2024 17:01:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723827709;
-	bh=v2kzBBRptVNV1+RRu9YabyIo3w1DpQo+MXl8LfNqrJ4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HxyHRms02cXyeyBA58z6wZs9gc3eDrmeqd24c5QHmiPb+hAPF2oiTRbWfVzCC7Req
-	 aYrIRd4qJlFUgspUgOhFqvxqpE/AtiiQ+0j7I9oCnK1SIli3k5vOiHo1tt9MfK1MR9
-	 xEQ81a0f5oB9ZdVyruib4cT6ERamzxV8/CD3pk7Ay3lLOJuYXRuR8xNaJNGryJRw6+
-	 3CWux7fP29iLay+xHdH3eiLFPtUjVOPeAjx1MdU8iIX+PNal1M5dAFgayMywPXxOld
-	 yC+FAJjQpj9uAG7pkeiWGosncboF/u+tpbnw3wV+3g7DbuzmM0jht7kg1tWtH/7+ce
-	 QjHSA5rnZmmGw==
-Date: Fri, 16 Aug 2024 10:01:47 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
-Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
- <horms@kernel.org>, <saeedm@nvidia.com>, <anthony.l.nguyen@intel.com>,
- <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <andrew@lunn.ch>,
- <corbet@lwn.net>, <linux-doc@vger.kernel.org>, <robh+dt@kernel.org>,
- <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
- <devicetree@vger.kernel.org>, <horatiu.vultur@microchip.com>,
- <ruanjinjie@huawei.com>, <steen.hegelund@microchip.com>,
- <vladimir.oltean@nxp.com>, <masahiroy@kernel.org>, <alexanderduyck@fb.com>,
- <krzk+dt@kernel.org>, <robh@kernel.org>, <rdunlap@infradead.org>,
- <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
- <UNGLinuxDriver@microchip.com>, <Thorsten.Kummermehr@microchip.com>,
- <Pier.Beruto@onsemi.com>, <Selvamani.Rajagopal@onsemi.com>,
- <Nicolas.Ferre@microchip.com>, <benjamin.bigler@bernformulastudent.ch>,
- <linux@bigler.io>, <markku.vorne@kempower.com>
-Subject: Re: [PATCH net-next v6 10/14] net: ethernet: oa_tc6: implement
- receive path to receive rx ethernet frames
-Message-ID: <20240816100147.0ed4acb6@kernel.org>
-In-Reply-To: <20240812102611.489550-11-Parthiban.Veerasooran@microchip.com>
-References: <20240812102611.489550-1-Parthiban.Veerasooran@microchip.com>
-	<20240812102611.489550-11-Parthiban.Veerasooran@microchip.com>
+	s=arc-20240116; t=1723828359; c=relaxed/simple;
+	bh=tRnRN8ENBDuDZ999a8CEzdjR6w8o5Zi1KFulJFuTB0M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QA+4gkLyxuJwTR1jReGSV2rdwEeUOJD0U76hbSJidhufIT7bSE+bYP0aMUP4+KV3xaRKcSz6pfmMwxk6YTMkw2KA9v+RfiE3L/Y+S6NkUvzGP7eyKtIIO+4xJ4i38GcHzbIpc8+/coCCArVnupOPyJYqANOc1kIdaDi40slyda0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T1vzmDHU; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723828357; x=1755364357;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=tRnRN8ENBDuDZ999a8CEzdjR6w8o5Zi1KFulJFuTB0M=;
+  b=T1vzmDHUTeXT7T15wpZSwqYIz6xaNxO1UQ4smkYOU3YmLhRr44O543m1
+   t3Q2M7QxjmMA/1d+6Y5WBVx6zg9NjcELWaqt0aSJCt0ZJDgEQChONNOpn
+   aNbrdg8h1c+RHLXpX39PIj54A8H1iC/H3oCHePrwiZxFcGOrEX6hhK9jn
+   2W0qZ0DPN3BXZXZLBkxmVcbEzS1eoGxpfSqJRLDlVUIZLbfuLTSQb/Lwg
+   p03uo0rn1690Ngdg9hApENfn9cH9P1jpnWj+YrSwzRyRVsVnDtSB59A+H
+   WAl2+12qCVZ9ab+ou9w5huQmW1oncmj8M6ENG7LBXmBIGUzpUdjc46Aie
+   g==;
+X-CSE-ConnectionGUID: vj6nA6pOSguCpGfAeMFOmA==
+X-CSE-MsgGUID: G9Dsyl00T3exH2EvRJUesQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="25888869"
+X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
+   d="scan'208";a="25888869"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 10:12:36 -0700
+X-CSE-ConnectionGUID: xAegudwXTsii1DlUF51Igg==
+X-CSE-MsgGUID: vRw0PeVpSXywuUzAg+0Q3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
+   d="scan'208";a="59360355"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa006.fm.intel.com with ESMTP; 16 Aug 2024 10:12:33 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 6381324F; Fri, 16 Aug 2024 20:12:32 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andi Shyti <andi.shyti@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>,
+	Narasimhan.V@amd.com,
+	Borislav Petkov <bp@alien8.de>,
+	Kim Phillips <kim.phillips@amd.com>
+Subject: [PATCH v1 0/7] i2c: designware: Cleanups (part 1)
+Date: Fri, 16 Aug 2024 20:01:58 +0300
+Message-ID: <20240816171225.3506844-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 12 Aug 2024 15:56:07 +0530 Parthiban Veerasooran wrote:
-> +	if (netif_rx(tc6->rx_skb) == NET_RX_DROP)
-> +		tc6->netdev->stats.rx_dropped++;
+This is the subset of the patches [1] that should not affect any
+functionality. Here is the unification of ID tables, a couple of
+function prototypes, and other small cleanups.
 
-This is a bit unusual. If the core decides to drop the packet it will
-count the drop towards the appropriate statistic. The drivers generally
-only count their own drops, and call netif_rx() without checking the
-return value.
+In any case this is Cc'ed to AMD who reported a problem in [1]
+presumably in the patch that is *not* included here.
+
+Link: https://lore.kernel.org/linux-i2c/20231207141653.2785124-1-andriy.shevchenko@linux.intel.com/ [1]
+
+Andy Shevchenko (7):
+  i2c: designware: Replace a while-loop by for-loop
+  i2c: designware: Let PCI core to take care about interrupt vectors
+  i2c: designware: Add missing 'c' into PCI IDs variable name
+  i2c: designware: Unify terminator in device ID tables
+  i2c: designware: Always provide device ID tables
+  i2c: designware: Drop return value from i2c_dw_acpi_configure()
+  i2c: designware: Drop return value from dw_i2c_of_configure()
+
+ drivers/i2c/busses/i2c-designware-common.c  |  4 +-
+ drivers/i2c/busses/i2c-designware-core.h    |  4 +-
+ drivers/i2c/busses/i2c-designware-pcidrv.c  | 22 +++------
+ drivers/i2c/busses/i2c-designware-platdrv.c | 50 +++++++++++++--------
+ 4 files changed, 42 insertions(+), 38 deletions(-)
+
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
+
 
