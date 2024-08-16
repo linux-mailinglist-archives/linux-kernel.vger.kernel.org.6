@@ -1,106 +1,151 @@
-Return-Path: <linux-kernel+bounces-289701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E600E954AB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:04:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA593954ABF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:07:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F8141F2354F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:04:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 095FF1C232AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798711B86DE;
-	Fri, 16 Aug 2024 13:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9631B9B5A;
+	Fri, 16 Aug 2024 13:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nEf0lCrx"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ab76XYGA"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475E01AE03E
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 13:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A407C16EC0E;
+	Fri, 16 Aug 2024 13:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723813486; cv=none; b=NZhrTocGejSrqP+1+tCu4xXZzi135Ny3A2bmCPtFyriw1xjm8yJe4rNfIWXRIbsjLV2lpwS7imBQLXin9AvGMTxfh3jrnma4L+N0V/C8u1PWOVaBk0r/UfEoeqWgT43/wxac2PMFNxRzKUK35UmqEmZJ8YBX7RhvvvDQodw3l2Y=
+	t=1723813648; cv=none; b=U3gtXQos59IqpOaaeVKP+LBicGV1klPYJAG0246PtMYvGlQJEnL9aPfC3ldnbDGAbdnuVFTX3mx0Ei5G6pa4z3cXyId0Vrck4HJXq+EMeu2/gaIToKt+f6MsZRszrb3BEyh6R3g5wIkuFmCgki7/EedO0iBV7JqovzAOYRC7csI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723813486; c=relaxed/simple;
-	bh=xCA+fzmmUO/Z2zZ9By4jXpGmtLk1cHqcR8WLtleZB8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ffNvtens9S5xda1941/My4L2Uj1mhmX3yTZO63Vn9hJdhi7sPz9vLi0mAW9GfrAdst1FA1qsI8ksrO4WI9w6ez3MokjRxbAisWeEA98OZckQhGO04cieliVmYtzkzrLBwNmt4fSS8hdCe/uBn593KSdS8n79sOMCZ8HkWHxCdug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nEf0lCrx; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-428163f7635so15408085e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 06:04:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723813483; x=1724418283; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LwH+A7WJGbb7oRUSLGU41BUJqJ7C+LPqpHnCCWzrpI8=;
-        b=nEf0lCrx3Kt4mlN6xR1MexJZxfnHRhy/WfA3SZTAczhesCZcfQpJxg0ogCdQR/5nk7
-         xJ561IRVDVEle6Xq/zxD3vzqYoD9ca0cEUP7FSh55BwIy/mHOEF5QjD0iq3NJlU7+tCI
-         OgtIlFg2tA7QM/YrUe3Uxru4aWawBmw+Ie8Wujz0nKnTd1t1k40DEGRD9/nNDPHiqEpb
-         irStWVJaI6HHWkkBa288EGMme2RYiBwkTVsCOar+AlCT61n8rt/dKvC/of14owjqhNUS
-         k58S1hrnFLMupfjlqZspJgEKRsSkEuiLAh4dEHBnWhP/pnzjmXZ+ZKcE8EckOpBlDBAD
-         rWrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723813483; x=1724418283;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LwH+A7WJGbb7oRUSLGU41BUJqJ7C+LPqpHnCCWzrpI8=;
-        b=U0DbgHguoFdPOOnL4C5/Qkxe14mWhYfEjXtcZXYVowDer6A/xmXadnExSE3jYxRoXT
-         +7BYJTPx0uD/nnlJ8PP2VbsDQTySDbkZft6bZE86r9wJnmMWGs6opTkcGVHKLtajnN0e
-         NKcSxo9fG8p2BuXC7Jc0YQ3mfSkrVfI/XZwca4UpvHNNUBSBVBOV4DLx8fqfBE0ySgu+
-         LKnXyEDC+MrKXUGTUYe1bQizsHUmOk8EWsDzlD1pHcuVIHSRbs3MqijRYWnv9weWm3yV
-         3ZoskjuX7VqaJiG07/xVqF+9B1uBHfQwcvWqkmoqDrEjX6b8CfyvtDJ6eslc4MxN4U8D
-         HpKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVRTVscegkC8rms5gWj1kQJogu9qTAwp4MB0Ssp8YuqEut0tp4bC7GsP/+Hq/9eQRiECkLT1RYkjQEA9Q8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwV7fa39FOLuQs1Oa1nY9mWwXlaZoeO0pEWyjq8Lkc3V7bsywfR
-	bhMhWCEwWNSlfpjRLeucc66gPtaW3fZcAqPXt+FkmmG3bAIZ876QCftKZBtGZFs=
-X-Google-Smtp-Source: AGHT+IGfiKnlklC0Ei5PXNRVvsnbaf8I+4iFsT9ypdhWM+np2PgwPcKV7gjfF++N+9WO7Z0ipv8AUw==
-X-Received: by 2002:a05:600c:500d:b0:426:5e91:391e with SMTP id 5b1f17b1804b1-429ed7cf0f0mr17537005e9.26.1723813483555;
-        Fri, 16 Aug 2024 06:04:43 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898aabdesm3610389f8f.99.2024.08.16.06.04.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 06:04:42 -0700 (PDT)
-Date: Fri, 16 Aug 2024 16:04:38 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Jack Zhu <jack.zhu@starfivetech.com>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [v2] staging: media: starfive: Add the dynamic resolution support
-Message-ID: <0680445d-1108-4400-b150-4804da63ddba@stanley.mountain>
-References: <20240816125132.514488-1-changhuang.liang@starfivetech.com>
+	s=arc-20240116; t=1723813648; c=relaxed/simple;
+	bh=aHmlo+Dbc1Z0u/nYBM1wNCmoOZz46YLSFIhrM1zuVr4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tuxuq1nG4kf6OZ+k+vpowqj5bgeg7DOEYjGENZoeQ/bXgcXlrz5hOO2/diktAwmJ1AhMyhjrQBFldnSoZq3DvUs2u8Ka0sBpmyHJn1UI8yWEen/TUd1ZjbbQ8FQ9jAMNC7UPyHQ5ISo2cr1NzNXDKPbUzTgangtU4+GyYJGs4y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ab76XYGA; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47G8Yu9G008091;
+	Fri, 16 Aug 2024 13:07:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	oXaxTCzkH8hCgVclclwqkZp4TiIqcSzHkeLF/0XME28=; b=ab76XYGAcd4EPxHM
+	6S5imYIVAZMM/3u2YM3NlMKnMAPXx90Y29qyjYjIltQKC1PLJHLE5QkAx/+41o8/
+	cclLUVo8M87FlyD1zlS9yjKQppiviU5lx9WHdQA8tpG/ku058Id7crysUIa0Wt97
+	DioJb8+kyAKg7xZqUlEzRl8KDgnCMfxXRPMacKc4xsWxeLMc9F3uYt3xxj+9SKK0
+	0X7Kib2qOyivu1kby3VebNjBIUBM7zZ8Kvz3eoGxFB6lbT8S0bFRwgD8gOlLWT4K
+	/OLGSPpXf71xRbbRMNBQakwNLBWTImVxZybXn9MVUErsizea0bqYjRCsbkBY0NP2
+	WaoEUw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4123cugp5j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Aug 2024 13:07:20 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47GD7Jbq026094
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Aug 2024 13:07:19 GMT
+Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 16 Aug
+ 2024 06:07:14 -0700
+Message-ID: <cb665eab-ffeb-486a-bdaa-a69bdb681139@quicinc.com>
+Date: Fri, 16 Aug 2024 21:07:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240816125132.514488-1-changhuang.liang@starfivetech.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/13] media: qcom: camss: vfe: Move common code into vfe
+ core
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <rfoss@kernel.org>,
+        <todor.too@gmail.com>, <mchehab@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>
+References: <20240812144131.369378-1-quic_depengs@quicinc.com>
+ <20240812144131.369378-10-quic_depengs@quicinc.com>
+ <0611458d-b508-4e52-bafe-7f5612c63b72@linaro.org>
+Content-Language: en-US
+From: Depeng Shao <quic_depengs@quicinc.com>
+In-Reply-To: <0611458d-b508-4e52-bafe-7f5612c63b72@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: VszRDPjk9uutn6tywO1YEUjSWRZIqLN0
+X-Proofpoint-ORIG-GUID: VszRDPjk9uutn6tywO1YEUjSWRZIqLN0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-16_05,2024-08-16_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ clxscore=1015 mlxlogscore=741 priorityscore=1501 spamscore=0 bulkscore=0
+ adultscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408160095
 
-On Fri, Aug 16, 2024 at 05:51:32AM -0700, Changhuang Liang wrote:
-> Add the dynamic resolution support for video "capture_raw" device.
+Hi Bryan,
+
+On 8/15/2024 8:09 AM, Bryan O'Donoghue wrote:
+
+>> +
+>> +/*
+>> + * vfe_enable_v2 - Enable streaming on VFE line
+>> + * @line: VFE line
+>> + *
+>> + * Return 0 on success or a negative error code otherwise
+>> + */
+>> +int vfe_enable_v2(struct vfe_line *line)
+>> +{
+>> +    struct vfe_device *vfe = to_vfe(line);
+>> +    int ret;
+>> +
+>> +    mutex_lock(&vfe->stream_lock);
+>> +
+>> +    if (vfe->res->hw_ops->enable_irq)
+>> +        vfe->res->hw_ops->enable_irq(vfe);
+> 
+> Right so generally speaking I don't believe we should have any null 
+> function pointers.
+> 
+> We just mandate that to be comitted, an impelmentation must provide a 
+> dummy but, in this case when do we ever want a dummy function anyway 
+> surely enable_irq() is a fundamental operation that is core to the logic.
+> 
+> Also a style nit-pick if you get a hw_ops pointer you don't have to jump 
+> through so -> many -> indirection -> hoops.
 > 
 
-What does this change look like from a use perspective if a user is reading the
-git log?
+Ok, I will declare the hw_ops first.
 
-> Fixes: e080f339c80a ("media: staging: media: starfive: camss: Add capture driver")
+> Code will look neater that way.
+> 
+> I'll go through the vfe_enable() stuff in more detail on your next drop.
+> 
+> Please ensure again with the hw_version() that you have equivalent logic 
+> before and after => no behaviour change similarly with vfe_enable() and 
+> friends.
+> 
+> The objective is to remove code duplication, not to change logical 
+> behaviors at all, no matter how seemingly trival that change might be -> 
+> hw_version 0xsomenumber instea of 0xX, 0xY 0xZ
+> 
+> It probably sounds dogmatic but, its safer that way.
 > 
 
-This looks like a new feature and not a bugfix.  Please describe the bug more
-clearly if it's really a bugfix.
+Sure, I won't change the original code.
 
-regards,
-dan carpenter
-
+Thanks,
+Depeng
 
