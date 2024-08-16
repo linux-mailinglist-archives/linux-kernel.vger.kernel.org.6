@@ -1,158 +1,120 @@
-Return-Path: <linux-kernel+bounces-289154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9608095427D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:15:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EF89954280
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:15:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFA6D28E19D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:15:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 423431F21D4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7E812CD89;
-	Fri, 16 Aug 2024 07:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9E912BEBE;
+	Fri, 16 Aug 2024 07:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jhEhrDR1"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cgAx8Gq8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45422127B57
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1C820E3;
+	Fri, 16 Aug 2024 07:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723792483; cv=none; b=lmDNEI+F94K77DuQ2TY4qUQWtsFGjgagu1fvKLUNe4cpme71OijyqD7SiY06zbwQiRJWQCG4LhvG4CGEP/P85kkI0Ti8J2ZgPtQfrcQNExXb+LyKMwxRBxqtXUYys56nvOpMZRUeDwNL6A9jBLT0P2DNcOhgIkIvlY0GNkmzJ6M=
+	t=1723792514; cv=none; b=eU7I1ujkOPaP9GKf9hZY8bmRD6emiyf89OfO//vqtB/aHd1ZHIMccx/PL7k5d9qlDjjD1N0E0pANxY3zCcA1jcOnfEPsLpxWwmcrkb11xsQrzpXOPvBlrbLFz5CzTYxFQoIjfSdTDWg+4ntvLnNbJMn7iK/V8j8rVpYFreqOLeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723792483; c=relaxed/simple;
-	bh=Tye5lc15FhyuFHWJS52ywhOiKNMq2cc7/bt+U8IvG+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GSQ0P7E+L/ywitH9Fsx017XVv18q4xMvCYSg/bKTjZJUuJJtMJA4cTTZhKyUPNzcUoDZXu4V9GZmcFnVKdBaaBxIpxtXdz5WhFzpQxLI/wL5ZLLGO3iAKpaWzxxI2WAoEAEOyDQdU8/Qgtf6707SiUddn38U6M+qOD+iPn26A7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jhEhrDR1; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-710ffaf921fso1120485b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 00:14:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723792479; x=1724397279; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1go7sx0ECg3Nrbun5bUntSM8dbrApaP82pTFnxOeNLY=;
-        b=jhEhrDR1Yo1HaB0zifEI+fZaGoTfwkphLH07ieo+VmtnTXBw/jULms0N2n7YAK4JOx
-         +RxiZCEX5osZRViU2A4MPHRVn/hgzQ6c8XO0YAb7zUlyjfSdSl2ZrP5GEixy6lhekpdJ
-         vZfoMdgVngkEavGSazWrv/YAPF0Ybt315smv+W8xeWJtNnK70r6VJu6kynjNN6EUG0dp
-         BlNMcLjoZZCUhRuTunyPqs7TZvmc8/IZAm7Mxv8lPPOE99Up3xqYbP+3lTc4U8eQTpwd
-         RUXniizs8ZCi1IvYJWJryH+h+WspAaqtsEjQSrB/1ss6/Qog5JDYPI4jitm3J7xC8hgt
-         n7YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723792479; x=1724397279;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1go7sx0ECg3Nrbun5bUntSM8dbrApaP82pTFnxOeNLY=;
-        b=NvPWsp3ikMuAVfZa3UWD94M4vmFG5A6LoJlwwqBcmwZNxWacBBPzsBIjC6/dgNbLbx
-         ToVIEKRZlw8vcUFfWff6ny9BHLwWnnQR7WVQjLPW/RSfh3kNrMlLIUZW0eCDVPlJozA0
-         PySAWPzVSfEfVmTXXHmh8coh3qTO7gSN5x24h0BI8NX4JQKdCXZXd8zw3HNCidmzjal3
-         HSIBXHQ/qetPM08Sr6db/LrVn9cU+Dki/9T6wzFADRhffgJ8g7jEAcMXEkFRHNbupxQk
-         VNAiqg5CWiLHNYTDv3G+UwQWY6KPkgq7pT0F+dRraj4y3WmGGucCX9j1SCDk2dKeTWuH
-         VvRg==
-X-Forwarded-Encrypted: i=1; AJvYcCU39FzJgk4AA4w1d1dg1TUIdVLr6L050e/eUdau78+fnvH6iqX7UkOUZVejE2lg19AhirO6mrBYN/KQmjI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx78Ffa2l9k6JQvEgN3kOYT4erqufosjqVo4VSkLeQAzBeZCVV0
-	PghOiVJVOy+g7+OdwDnJGDXbyb7tc/fXpbB1hb7upQQ6ZvqKqftz2+u5MLcYFg==
-X-Google-Smtp-Source: AGHT+IEs7skbPukuQ+QD2T4e30incfTrK+bKIykg7J49EQF5T/hlK5KpRQ9P3b2QajFbL/ijk8kb7g==
-X-Received: by 2002:a05:6a00:6803:b0:706:938a:5d49 with SMTP id d2e1a72fcca58-71277094499mr6925763b3a.14.1723792479465;
-        Fri, 16 Aug 2024 00:14:39 -0700 (PDT)
-Received: from thinkpad ([36.255.17.34])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127ae07e41sm2054202b3a.65.2024.08.16.00.14.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 00:14:39 -0700 (PDT)
-Date: Fri, 16 Aug 2024 12:44:33 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Cyril Brulebois <kibi@debian.org>,
-	Stanimir Varbanov <svarbanov@suse.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 11/13] PCI: brcmstb: Check return value of all
- reset_control_xxx calls
-Message-ID: <20240816071433.GM2331@thinkpad>
-References: <20240815225731.40276-1-james.quinlan@broadcom.com>
- <20240815225731.40276-12-james.quinlan@broadcom.com>
+	s=arc-20240116; t=1723792514; c=relaxed/simple;
+	bh=lol7kTtNyIMAKOPg9Q6lR/exIrBORfb4Eafh5/hRXEY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kOARehzKzr2nknjEizpX2xKWx/IBtxApKpa41mOmQbRUd01+pSAfv7CWMbJ3AEIxFhRmHH5L+XgmAOUOJtxowQ8YU3Aga/mvK3XWL8v/QvZt0wbFf5dHLG+QGrcwoxFav5So8Nt76/V6LMu7fdqZapaaZiZhnmYIoo611UUEbYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cgAx8Gq8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9949CC32782;
+	Fri, 16 Aug 2024 07:15:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723792513;
+	bh=lol7kTtNyIMAKOPg9Q6lR/exIrBORfb4Eafh5/hRXEY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cgAx8Gq8QNgT/VEqlDOU6Z6Z5G14FVT9UYW/jiTIKRl4RgRSBsK0f9HLTz56ypxG2
+	 wn2gwJNoyQt4dsuSEP3o38Wt6RfVUPxAnZ+QmnHaRT83NqMs0Ni1oJQDr/uLxos5kV
+	 bKa9TJPGDCV/rljOhVrs5ZoDN6zJBo+VRxSlxyMs9zFkBrvw3lWXyYHCcgKnaePx2i
+	 TqfhQQUyGiG1g77l3Oby7bMorE/YHkC0krEYeNrQPJ8Mrl0eIv7NuXdXlZ/dDnLKee
+	 /JDwaRxIb2hnTqUj25+5O9OPeQ7bFV4fbrYTbnUFLDomNwWTgBUcURnfaJbNj4Imag
+	 soAnN7ge9qVMQ==
+Message-ID: <4b0cf051-2df0-44ad-bfc2-1bb7171a3ee5@kernel.org>
+Date: Fri, 16 Aug 2024 09:15:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240815225731.40276-12-james.quinlan@broadcom.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/6] dt-bindings: ufs: Add X1E80100 UFS
+To: Marcus Glocker <marcus@nazgul.ch>, Bjorn Andersson
+ <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
+ Johan Hovold <johan@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+References: <v2iah5yrne4u6uzrnzg36tvtxzqrpiez6io2gyyfrht2x42umw@5ribqndiavxv>
+ <3mjmyo45td4zpnzntphwqdbc6rogs7c7q6jkjvqgvyzxl2l7ie@wkusfdalqwj5>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <3mjmyo45td4zpnzntphwqdbc6rogs7c7q6jkjvqgvyzxl2l7ie@wkusfdalqwj5>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 15, 2024 at 06:57:24PM -0400, Jim Quinlan wrote:
-> Always check the return value for invocations of reset_control_xxx() and
-> propagate the error to the next level.  Although the current functions
-> in reset-brcmstb.c cannot fail, this may someday change.
-> 
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+On 15/08/2024 12:41, Marcus Glocker wrote:
+> Add the UFS Host Controller binding.
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Also incomplete and actually not matching the patch at all. You do not
+add new UFS Controller binding here.
 
-But one comment below.
+Best regards,
+Krzysztof
 
-> Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
-> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> ---
->  drivers/pci/controller/pcie-brcmstb.c | 102 ++++++++++++++++++--------
->  1 file changed, 73 insertions(+), 29 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-> index c5d3a5e9e0fc..d19eeeed623b 100644
-> --- a/drivers/pci/controller/pcie-brcmstb.c
-> +++ b/drivers/pci/controller/pcie-brcmstb.c
-
-[...]
-
->  static int pci_dev_may_wakeup(struct pci_dev *dev, void *data)
-> @@ -1479,9 +1515,12 @@ static int brcm_pcie_suspend_noirq(struct device *dev)
->  {
->  	struct brcm_pcie *pcie = dev_get_drvdata(dev);
->  	struct pci_host_bridge *bridge = pci_host_bridge_from_priv(pcie);
-> -	int ret;
-> +	int ret, rret;
-> +
-> +	ret = brcm_pcie_turn_off(pcie);
-> +	if (ret)
-> +		return ret;
->  
-> -	brcm_pcie_turn_off(pcie);
->  	/*
->  	 * If brcm_phy_stop() returns an error, just dev_err(). If we
->  	 * return the error it will cause the suspend to fail and this is a
-> @@ -1510,7 +1549,10 @@ static int brcm_pcie_suspend_noirq(struct device *dev)
->  						     pcie->sr->supplies);
->  			if (ret) {
->  				dev_err(dev, "Could not turn off regulators\n");
-> -				reset_control_reset(pcie->rescal);
-> +				rret = reset_control_reset(pcie->rescal);
-> +				if (rret)
-> +					dev_err(dev, "failed to reset 'rascal' controller ret=%d\n",
-
-Do you really mean to say 'rascal'? ;)
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
 
