@@ -1,862 +1,218 @@
-Return-Path: <linux-kernel+bounces-289940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B368F954D82
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:18:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02E84954D80
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 696F1284130
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:18:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FAD128467C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B751BE221;
-	Fri, 16 Aug 2024 15:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BB61BDA91;
+	Fri, 16 Aug 2024 15:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="m285FUQX";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="bXXmvgH1"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="TpPZHELI"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2055.outbound.protection.outlook.com [40.107.255.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25EA1BDAAE;
-	Fri, 16 Aug 2024 15:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0C01BC9F6;
+	Fri, 16 Aug 2024 15:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.55
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723821489; cv=fail; b=gJZGlVFpnHXNjD/mf0IXwmNAjs8aunsXFxpxE5AvkJWIHf0bvU62yImAHMMNhEb8OyEKGuyUlvaoy/11Z+iMP9MYPCgIfhrDpBycDpXmrgHo1UqtBMNxZPwtSmD+2kYBxeS1+7N/f/hu4QfQpdK0uwkgAuBsn3AHIOvencOqQCQ=
+	t=1723821471; cv=fail; b=lWmxD1ZcZlrpnQpWnfpuONajnm+WXiG8YyEsXYGBFfZkRc2+H+pAdOFm//Mh+Ht6OiXVlgzKQAda7XTgn3oJD83wZID4gpcqwAOTLvbmJcQ1ISOmPplDVZS6+K8psbnUoqcBhO8qv7LpvaG1OXL6zOJIXaLaD8+xOdJb6b+NpTg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723821489; c=relaxed/simple;
-	bh=WJbhCFyxvNvqkIjyqVqn56nmqxwlCtvfYFLRunBoqCM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=PnPEFJGS67O6lXZ7zF7w1soHIWv0qesl5yNItVLqpJF7TRoQ6uL0pz5VjvEG6oGs7cRADx+1f9UvH83IztCW/AeoVa+XaRQliTIXwM6H7S+9nRoRzQiOSzsSHpY4aWzU2DvqdS8lz+Gdzkx2KrLm6HhkMmHeO2I6Rt4M9IAykDY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=m285FUQX; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=bXXmvgH1; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47GC8sBk007038;
-	Fri, 16 Aug 2024 15:17:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=qUi6MzuZeHYgk5n
-	nnygiRrekxrkd/RLWzbSRzTpWRDk=; b=m285FUQX/v5Yk7WcB1k2kZi0nYPjt6J
-	IEKi/JQA7xTwT5t2dnhru5/d8VH5owkkKzhVfnjtxGIq4rJST2HxfOD7tTHfLfQA
-	mkk9tqC927FN898Ws/uwQY397ZDgf/LhJ+l9b0jBpAds92ssi9OV4LsNoyTW6dK2
-	qoOna4dlMs4vBb541D71ZFNNGqelHLH84A8dCrVRm9bVS/W92ywQHRRO4HD04myR
-	E6jN4WyQqw3dYkuXt/y9qrxSNs7PZpTf2BjSEaGq0+MyYduXCOtKmu/Eu6HsPdiI
-	5i0uWwkdfKm4rEBXKW9rXbS7SFzh/mx1wRT/RAhrPvJrA3LLC87hKbQ==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40wy034xbe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 16 Aug 2024 15:17:31 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47GFH3XG010584;
-	Fri, 16 Aug 2024 15:17:31 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2100.outbound.protection.outlook.com [104.47.58.100])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40wxncgtdv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 16 Aug 2024 15:17:30 +0000
+	s=arc-20240116; t=1723821471; c=relaxed/simple;
+	bh=nfGfy9s832ccDLBtM/YbyBk4Toqlv45eREVrtFQJ7NA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=mHmXn31i04RqDinAkuHGTUlXIk0UaSaQH0QvetJ7bt9T515CTszk53EQ23ixyff62F9G4HCxGIF4dtS+yiQufd4uuaSKwNidrvjNIEJEVJe78SMX9lPJ5fO38vBn7DUndiWWhAizxQBpXbklIsfzObFS3fdtRiZkHKnwtwV3b8o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=TpPZHELI; arc=fail smtp.client-ip=40.107.255.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MmmHPzYv6epgUftQtPC20CS/FPH0uQWbQBaWJICZSGZIbSEkuJSYEjBaTZn+HwNZ3QzX2AJguHlPjf8PK8Uwseptbhws4X6+T4oUP9GXe+2CXbpo3cbukSCqKwriPNWp4i0GDruFau13sL1kKeoABFGxTBVFmxzaWVcVyntA4Dd/Z6bK22QN7BIH4C+lHKVR7c9Q4aZNDuIeNo6pe/IYzKNm7K6aywSSAvErYkF/y0xb1xx5wOlS5PoaN3teXR/NtCg+jrULuDA0MEb6asA+VciaDmv3zxgtRsALnPfwKpCAIprsMCCe/0b3KGcKK78vfMWZ42NMSSx1lYvMkR/RUg==
+ b=T+tVRDfeI8h6dCXwHX20oe3XvggUXsC3Or4ERVdoB1kyXJ4Motrs1uwOZolkzl9lKBxgYW1gt60HSMYdhz1n3HqYuguziEt9B7W1tU2SspPk5C0f2l+wq0CizVQLc1HN+x9LsznREZmrbU+WimcT7Rt+coE3tT4sGjmzdEmtucD/RbvKfBiBb5NWiGnttPDoqL4OsMEHPeCxkuE18sNZnF08DSMV6iuRQIDZ4ecfaQO58dDgJ0PmPqx7akG5ksZYJyYEBac2mOrd5L+AtTMRNyZv3EyDKanKxZONoVqckFF1ZPutw+02Q5cGdgKTCARHCnrQP9CTWd+5LLd/pPL8vw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qUi6MzuZeHYgk5nnnygiRrekxrkd/RLWzbSRzTpWRDk=;
- b=ebD+9UmYG2UjK6rkC0zTaITqg+TjyPQpvheGor4XxS0ecDMIa2/eGNYjMI6iostMGa1fO4sC541n8S58QyIIIqLlAEfmEooVN94h8NUrGLAqsTjxRbRJES+QxqcUh4iybE7u43eUjhu3omLETOzKBflAeQJByQbhhtK2K8pN7EHOdkMYIARdHE/MrT93xmgwy2GGFPG/T3hDm47fB+5MzUZ/OoRqOVTzNne6DrRVVY4rjbM3PzmhQDJWdqPcLWylRT/gKcN6fKmj4nK346+Il4ESKOe75iQk3Ghh2NcL1iAEJsYX5Xm8gos9t5eK5GYVjNtE2eZmMw4N1TOf+ms9wQ==
+ bh=nfGfy9s832ccDLBtM/YbyBk4Toqlv45eREVrtFQJ7NA=;
+ b=A2rkpPAwmBmqaliUfxvQeyAuTQ6NfKLY4AaJL0EcpDO6lNNjILMf3QEnfWDP8iTNzaDOJLDp5nPDDXNKM0iEAMq4GF1kGlIga/SXYcfQDH/e5yJPhUjMd53S/4Q741XlzacfAX1dauHY5je6V8w689KiUhxDmxpNk34koY5kRNULGOlzO2hz3cqWJsPm3shb5mQFdo0FL8lLcJ/AbA7GZNDzsXJZIdThKZ6efeQ3Eckn6mkMSd8yJfKPYN8JcPbgGBV7aCAzw+VV6EBtwiKJF78SaKktg8LjTQSMHc4dqZMrXpQOvBrusH8T91zlDAcR1/RN8BfLkBxMnsBGfjwFew==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qUi6MzuZeHYgk5nnnygiRrekxrkd/RLWzbSRzTpWRDk=;
- b=bXXmvgH1oij4ylQw6ETkxu2atAwzdFJFI+QHZy/vP5SLn5gbVwerajSaYfExv7QXW3UrOxZ7m+xiazJf3YpF6jeehf8FMkIBEA5zcXkxqYKlPCVZQyxN/4+lb722V1J9GLCEMsTToFwGhX+kmBUT0DxU5adaPMMLE27Zc7PvVGo=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by SN7PR10MB6570.namprd10.prod.outlook.com (2603:10b6:806:2a9::21) with
+ bh=nfGfy9s832ccDLBtM/YbyBk4Toqlv45eREVrtFQJ7NA=;
+ b=TpPZHELIa5Cjd+3dXcMA+xIGs1/vMiesqtFmvOOBGmbn3ojEj/19Dd+9HWBSMXj2+ciDNT2RU7UUSvGnpKslb/bVR7gG84FvlJsFSuvGYEacHJhSg/lQj4Vbxo38Ljc1d9ttG3PNw+f0TBqbClVSfCuTJv9oGZQX661b65huUhUdv92LzUa/FvqDszpPLN+n4Zt77ja3s/nieBJm4OQpRhhjreITN8OmaSbbPXMOeyY4XRcJFKPtAOdGlpE6MvIAF8FlbAHLs9s+OWVWCHGBshh16zaqChdtsMXjdPjBS9VDEJTIYbaygI9zecjciMD3VWvkxVmev+g3Go7YRUTnhQ==
+Received: from TYUPR06MB6217.apcprd06.prod.outlook.com (2603:1096:400:358::7)
+ by SEZPR06MB5271.apcprd06.prod.outlook.com (2603:1096:101:7a::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.11; Fri, 16 Aug
- 2024 15:17:27 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90%6]) with mapi id 15.20.7897.009; Fri, 16 Aug 2024
- 15:17:27 +0000
-Date: Fri, 16 Aug 2024 11:17:24 -0400
-From: Chuck Lever <chuck.lever@oracle.com>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Neil Brown <neilb@suse.de>, Olga Kornievskaia <kolga@netapp.com>,
-        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-        Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
-        Tom Haynes <loghyr@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 1/3] nfsd: bring in support for delstid draft XDR encoding
-Message-ID: <Zr9thPcPcqYQuXed@tissot.1015granger.net>
-References: <20240816-delstid-v1-0-c221c3dc14cd@kernel.org>
- <20240816-delstid-v1-1-c221c3dc14cd@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240816-delstid-v1-1-c221c3dc14cd@kernel.org>
-X-ClientProxiedBy: CH2PR08CA0024.namprd08.prod.outlook.com
- (2603:10b6:610:5a::34) To BN0PR10MB5128.namprd10.prod.outlook.com
- (2603:10b6:408:117::24)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.20; Fri, 16 Aug
+ 2024 15:17:43 +0000
+Received: from TYUPR06MB6217.apcprd06.prod.outlook.com
+ ([fe80::c18d:f7c6:7590:64fe]) by TYUPR06MB6217.apcprd06.prod.outlook.com
+ ([fe80::c18d:f7c6:7590:64fe%4]) with mapi id 15.20.7875.016; Fri, 16 Aug 2024
+ 15:17:43 +0000
+From: =?gb2312?B?uvrBrMfa?= <hulianqin@vivo.com>
+To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+	"quic_prashk@quicinc.com" <quic_prashk@quicinc.com>,
+	"quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	opensource.kernel <opensource.kernel@vivo.com>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>
+Subject:
+ =?gb2312?B?tPC4tDogtPC4tDogW1BBVENIIHYxXSB1c2I6IGdhZGdldDogdV9zZXJpYWw6?=
+ =?gb2312?Q?_check_Null_pointer_in_EP_callback?=
+Thread-Topic:
+ =?gb2312?B?tPC4tDogW1BBVENIIHYxXSB1c2I6IGdhZGdldDogdV9zZXJpYWw6IGNoZWNr?=
+ =?gb2312?Q?_Null_pointer_in_EP_callback?=
+Thread-Index:
+ AdrvzihtFNSOcxRwTAOIHI6tveAOMAABV00AAACqLAAAAoTOwAAAUcYAAAD4WnAAAUYXgAAAwgzw
+Date: Fri, 16 Aug 2024 15:17:43 +0000
+Message-ID:
+ <TYUPR06MB6217D1798DBC41C7DB2A1DEDD2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
+References:
+ <TYUPR06MB62177737F0054278B489962BD2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <2024081608-punch-coherent-d29e@gregkh>
+ <CAOf5uwnsgcJjp1=RLa7qx9ScQY5rZvwX-Zu6BOqxBBhBCz+CFQ@mail.gmail.com>
+ <TYUPR06MB62177BCD4AB43C19E38990D3D2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <CAOf5uwm65Cw-V+td_=6QAGUF+Uisueqcm0z=1zFaNTisAJnSFQ@mail.gmail.com>
+ <TYUPR06MB6217877B31A08356241CAB38D2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <2024081652-unify-unlucky-28d2@gregkh>
+In-Reply-To: <2024081652-unify-unlucky-28d2@gregkh>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYUPR06MB6217:EE_|SEZPR06MB5271:EE_
+x-ms-office365-filtering-correlation-id: b3d4f15b-f495-448f-3a6f-08dcbe069388
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?gb2312?B?RFR4WGlSQmVkOHdkUGtJdXZXOEhJL1ZaUCt2SFd5SVk4WXNWYmpTNFpqcUhv?=
+ =?gb2312?B?TnRXK2UvWVZYOTFDRmlzREtkUWp4NWJVNkY2d1J3cDlpZkdEaVJzdWZDOUpO?=
+ =?gb2312?B?aEhQVmM1OXFuTDRsWERLcmZXdjFOclI5Z1hCNmo0WEVxWG5ta0dBWHBobjY3?=
+ =?gb2312?B?N0RvTEY1RVVoM25RUVlzNXdZaWxkYnV1VDl5ZHdKWEN5b05MV29SNGUvNHE3?=
+ =?gb2312?B?WmlvakJCS29jRlhkU0NNc1h3SG1xWUUzZVFibTBLZEluLzh4cTlHYWpLM0NN?=
+ =?gb2312?B?cHlpeHR3NWg5OHNrdHBva0dzc3N4YkorQkNUVko3R0NZZnJQOEhMRXJWM0JU?=
+ =?gb2312?B?Y0h2amR2ZURnK3JnK0xBUlkyd0s2WkgvQUJLcGJUbi9RL3NhVUZhODdYaHJX?=
+ =?gb2312?B?SnlFT0plNUVxQUhnc0I2ZUJkLzdoWW1kb2FoSXFEQVlLTnZXWEJtUEM5QUVj?=
+ =?gb2312?B?OWZhTzJCQkcyNjJoVm5qKzhDTDQ1NlRLK3E0YTNydUNKUkRGeXA0aG1nV1h3?=
+ =?gb2312?B?QUd3QlFMY2tJSDVaV2pXWTYzRVNDQkxzZ2x1RjJqNFlFbTBvSVpGcndZb3I2?=
+ =?gb2312?B?b1F2OHJkclc0Ry81QzRyREM2K0srVlNGMFlOejBpUDQ1dUc1MXlDcmFKOGJk?=
+ =?gb2312?B?ZGtZcGlYL2ZJUHo0K3JaVTg5ZjU0UFdwSTBxV0V1VU1HMHBoMWorYzVVOHhu?=
+ =?gb2312?B?blM4TnlPeTFUanNraVBzdVc2RGRKQm4wcjhmVEllRUh1bEpOaDJMZEFzakZj?=
+ =?gb2312?B?YmllTFRiSklnSG1nVGhoUzBncmJCSXR5ckZwakpSV3hxeDV3TGhWOU5vUita?=
+ =?gb2312?B?allnOW5ONHNEbkp6VlFCcmExc3R3U1J2YmhUczZhUVJnNWRZZEVXbG1SV05r?=
+ =?gb2312?B?VVpsd1hvQm5Ic2FPZFNlMmNSWWpaY3NLbVlZNjBWUis2Z3Nub3ZMVFFjR0Iw?=
+ =?gb2312?B?V3RUY29vakpRMWdNbmtqbm41Vk1NcDlCa0JxNG0vd05aOEdKMU9FdWpwUXN3?=
+ =?gb2312?B?YlJpL2RqaWNjRm8vcm54c0ZyVFpLRTBueXVwdjgvZlVTVS9rNGhBVEoydmVz?=
+ =?gb2312?B?Y3Z3ZDc1WHR2RUVJeUNFdkp1V2lTRkJadVVUYm1CT05INGlIbk9JVDdnb2d0?=
+ =?gb2312?B?ZnBBRlBDZldvS0dHRDloWWtEeERlNjM5ckg0V0tKZWI1SHR5a3VJVUd4bktQ?=
+ =?gb2312?B?emZmRzF1a25WWUJocDFPa0ZWdTFucXFoT0pNSy9qRFhZSEdnWklhb05rVFhL?=
+ =?gb2312?B?ZEkwTzdTVXIyZkFwSWJScEZiem1iejV2eHYrcjlyK2FTN0xCaUp0NFBqNklj?=
+ =?gb2312?B?VXJKcXMvZHN6ODVpdHJNam92a05ZVHZBNzZkZzNteDdxYW8xWWE2TUFtckV2?=
+ =?gb2312?B?WW9NZ3hhbXVXWmduQmFHVjBFQ1cwMnYwM3hKVG1CWXN5U2RlT2dsc1RsR1RS?=
+ =?gb2312?B?VllrTTMrMGpPRXVZZng1TzNwVnFtUXJUZ0lWK1IveU5VdDhTOEd2MUVXOVV4?=
+ =?gb2312?B?eFcwbm1xWi9jcmVGRXhxRitrZVNkdGdEVmgzQmJ0bUpwYzkwclFhemlIWFVH?=
+ =?gb2312?B?bFRPOUNnZmNSRmIveU5YbXBTMDZ1QTFaUjFEMllTU29zYUdyZDZseFVsd3Jj?=
+ =?gb2312?B?eFRLck9mdXVnYmN6WURkUXd4SURYMWZSZDFrY1RHODZrWWdDUG91bWw4OW0r?=
+ =?gb2312?B?K2xXQi8vY2VPQ2YyV0dINEFJMzI0ZkwzNS9zODlEVWlWZkxPT2tsTTRVZkdB?=
+ =?gb2312?B?dE4reFdybW5POW5DNWFVL2Z0OHV4OVg3RmtvMzVaNlNBUVYwS2RsMG9JUS9o?=
+ =?gb2312?B?QzA2TkgrSXFwM3M1bHExVE1ocTRQZWhEcnlzakRFWlN4REk2dTJ4akxoano1?=
+ =?gb2312?B?dVQ3NFJLMUxraEVrUTdBZll5SVl1NmVXSjJFamZYNFU2c3c9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYUPR06MB6217.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?gb2312?B?M2t5Y2MreENGQ3FtbjhvV01CKzRXTWhEdDFPR0k0SU5uQkRWalU0R3pwS09Z?=
+ =?gb2312?B?T2ZYbHRqNmFxTk5HVFJmbUpoUHNlTzJzMXp4RW5CdHBXOUtqSkVlZkRIK2tY?=
+ =?gb2312?B?NE9HTXNmUG02bTVLN28zbkZKYmtqY3VxMDRwT2xiV1g0cW9DWm4zVmh4cEhh?=
+ =?gb2312?B?ZmRjVm56MnlJVjlRMmEvbE1obUFVYVl0Tkx0RDFYRzhDbXFzMnpWL3lBVzM3?=
+ =?gb2312?B?TGthVWhWMVA4SHlNUi9xdldWUlJwdVg5QTc0Zm84UnVhT1ZMRHNGOERCWU9W?=
+ =?gb2312?B?RFE4SUtWcEFDMmpXL1ZXZk85clNXNm13U1JBR0ZRN1o2MUhxTzV6QTF2YmFv?=
+ =?gb2312?B?M3NYYzduS0VINnFNT2gwNkZyRjNPM0Y2NWFoaGhnSmdZdGkvZ1JWSlJNZzBY?=
+ =?gb2312?B?R0F6V0N4Lzh4cVRjOFlPRWE4V0c0VDVsQ0o5UXBNM1lNTytvczBIYnFmQ1g2?=
+ =?gb2312?B?eTc2cjJla25SM0FkMmFSUzdreC9zWDhjQ1crYU9CYzBETzNVVndudGtSem5J?=
+ =?gb2312?B?T3RQMDNYVXBGUVRRS3Q3bVNWclpPWWVaTjBpMmxtUHQ2eEc2RXBNdlUrVUF5?=
+ =?gb2312?B?OSsxclNNUGNFOVl6UFk3d1o4ZmIzYTJvZ3R4TEtxQ1RsL25tRVVmNGVyYjNZ?=
+ =?gb2312?B?bHNCc1F5aUhFc21kTjhRK2dHOVNwdWt0Y09RNTBDaCtyY0t1QW9walA3VzU4?=
+ =?gb2312?B?RDVqVEMzQ0l4TlR4Z3hJYTJxb2NLTXlUMUcrSzJnR0dZTTdzWHhhbmZWbzUx?=
+ =?gb2312?B?Tkt0Y1Z6K244OHV1SmZkcjYvVkhsMmIwV0NYZndiTGNXVFZ4RmMvNE5FM0Fh?=
+ =?gb2312?B?M2NORnk1SkIreHpjZFkrNGEwSHBjQXlVRVFPaTRpN01Zdk9taVVaVGdlU1l2?=
+ =?gb2312?B?WXpTemFwYS92UkRTTkdUVkZEYm1OZmFLanRLRHViVkNXaUNEVmFHMEg0MGVW?=
+ =?gb2312?B?L1AxWXYwbWI0Y3ZPOHVQQXJCODVBMWUwR0hGUHR4eDhuRFR2RG9HRWM5RDhP?=
+ =?gb2312?B?WGpKTE1oUExqaTdEVlkwN2pEZzJJV0NuSmRqaWNpKzgrUGF2YlFyWWxzTlk2?=
+ =?gb2312?B?dmxhYThvb3A3cThONmtVVXp1NlRTUFRIelUyRUhDVzR3cVFTZmVONTNUVDI1?=
+ =?gb2312?B?NU4vQVYwaW5qWHpKTGY0cmxEa0JyajJLSmRBV1FuTXFiV2NkNm4xZ3lBVHln?=
+ =?gb2312?B?S3RuQTc2M0RjYXk4OUJJd1RnOThhSVFndnpjbGY5SndibnNURGwwMEttdzNZ?=
+ =?gb2312?B?Sk1QZ0FITGJtUUIrUjJ1TTNhZ2RBU28yd1FXaEU5emhwRFBrWlFKTHZtTWt6?=
+ =?gb2312?B?QXdYcldCRUNVM1Q0aWNoaHg4eWZrd0ltbGo1UlIzVWdrWnZrMVJhbXM1SXNP?=
+ =?gb2312?B?NE5UYVRBN2dHcnZUZFAybXcrRzM0SEpFRnlMTE5TV3RyOFBjYU1zeko0WnFv?=
+ =?gb2312?B?ZVppUmFqN1JsQSs0QUxkZHJtWDJzbi9rTjZYd1NlS3Q0a295cTc2UDZOdzh4?=
+ =?gb2312?B?dWcvSCs2YkRqdkJVVU0rblBmZFpKV0lQM0hxTVpsbTNDUEo3MzBGbXRjTENq?=
+ =?gb2312?B?TC8vWnNqWFhoTDNOQk4rRUV5dEN0RXJEaHI3c0hEQkErMXJZdmdnTW5ub21L?=
+ =?gb2312?B?eXZhQllLK0Vmc1k1OW9zZFcrT2tYR1NoUHJ1QUU3dk5mNnVLSGx3ekFQYXV6?=
+ =?gb2312?B?WFFiQkN0dHFCNDFWNWNnclhaU0k4VEJJRlRnVGdDQ1NHbjFpZ0NYWFdMdU1q?=
+ =?gb2312?B?S0c4L2QzMndIRXBPZ25aMkFTSDV3bEdCbUZiWmh5aGFWT3VKRmFVUXYzbE5j?=
+ =?gb2312?B?c2E1VlpjbkV5TGxtdGpxV2RFN2dWYnNxN3NQejFlalgzUEJTT2FRc3FLU2s0?=
+ =?gb2312?B?cW9mbi9hNmlQdE15QmtwZmpGNFdPR09Pa1ZPemlMTFhJMCszTk14b0lEWTZK?=
+ =?gb2312?B?dm16NDIrdnJaOU1neDBPZVVUb0hyeWRjZ2RRaFgzUzNyeU5WbmhYZVFSSG1l?=
+ =?gb2312?B?d3dqc0d5TFFYdmxrekRZU09zNW9mT0FZMUoxbXdRaWtGYWRNcjFYajlwS0p0?=
+ =?gb2312?B?K0ZPM3k2M05ETmRNMDhHdXJtMnlzeGJDVzNuNnZ2QnR4MWw3SFNRbm4xTGJy?=
+ =?gb2312?Q?rqiY=3D?=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|SN7PR10MB6570:EE_
-X-MS-Office365-Filtering-Correlation-Id: a4214840-9c14-464b-76bb-08dcbe0689f7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?oiLEr1gzJgzAH3rHP3dXHbXmdS2dsH3B5tIz6LOhfzZ+REEkt4T7hLKKWY8k?=
- =?us-ascii?Q?2Kv22VVHVze/pw5BU1RWAKUra/Y/ObASm7GKXtp6soDJIyz/7guLA2QdqfFo?=
- =?us-ascii?Q?4/TcuNLQlDOO4W13tvzSSt/ogqrmakHLrdoswZWyeLzZnY2xLzQT7YU+FZUi?=
- =?us-ascii?Q?MAEgT8fqGJehVWFOmJCJFL3AIUjAOeHdd7XUvrv0sP06lepyfHK3IZKVjOan?=
- =?us-ascii?Q?GZ+ubDA4oRKP7RDi4dCwIN0dBFXysMetJEqMzUFSJTG8b3W1h/C8Ky2a8Cwv?=
- =?us-ascii?Q?z4Qj7HTGUqcKLjZ5lFN8oGFnAWGxaqdLUeszW79Jqoy3McR+gSIoyqprWGbh?=
- =?us-ascii?Q?DnvX/jag6zqlxSNN1khf0garV7DvbmzIRqfF01Z3QAU3v87XpSdnufF9Cniw?=
- =?us-ascii?Q?D1eB6vtM8TZYKLQB7NWssGGZDbw+l2o3UF/lqddyk5iq1tDAqBfecrrTvtd9?=
- =?us-ascii?Q?LaQna0gCOCkFHZA0/uVh0z+EkE/QfnqOy7DKv6oLHlHkx8Cin/a436pyEcIW?=
- =?us-ascii?Q?CnTLBNe/auwCWJkrTmxSM3tVKbs9u/56dZhnYNifHCyD3Yy+YUxNsuG2HUkz?=
- =?us-ascii?Q?LnbsBjIGIkR663j5Rjj06xdVkCwyRainX18S+emT80eoHmPjpa6uurVfZkin?=
- =?us-ascii?Q?B/s/UwOUVYepR/pctXaiCwTAZv4M/+Ajei7XGcorLJ5dVQTvEHX7nukxB6X5?=
- =?us-ascii?Q?nkuZgILppMas+c43x63Aa5VqfJBQoE0yF0rL6zYx8gZIA+5bcMRSaL/QaLFQ?=
- =?us-ascii?Q?0Vv2BDNCCo764Yu7Pbexmz05Tm6MW67iM+pmUumFnusSt/3FEIMnR1m15B8K?=
- =?us-ascii?Q?GwNy+CUI3I3MMkGy81E9CzS1UMN0GtpKL9Cn6ig2HclUOOrlH2YPmKu4Ke9D?=
- =?us-ascii?Q?bVO1yYL7nIoCh2ykYvXDLSLzhPdngb2A46kMKxYTU/epJ2a7hq99lPBR4+Q3?=
- =?us-ascii?Q?VsCr8YjUb/zWgaEs9SPilwzZLbqWuL/vSLa47fLwN/Q9Xj3DyWp8AuPT1iKn?=
- =?us-ascii?Q?H3NEA5FSIcCt+O7Mb5gtX9ZkhJ7lO38lrb3/lvzgTLz6Acp/Hhopt07ly++D?=
- =?us-ascii?Q?bppQ1dxwbFU5zwbjngQ6fufVmD64UcPvLi8NNkYggoqYJJI7rEmtCYPpdKu7?=
- =?us-ascii?Q?NC3bQAkAJAiaTM5sbKTg845UU8/K1L7IOqBzgZsWD+xK0QgEofZac983e35c?=
- =?us-ascii?Q?WWz27mS+9pNeYh+0Y6U4tqS4wZurBIrNuJQv0/SPDNJS5RFpw/4whJgq46Zw?=
- =?us-ascii?Q?PvhwcLvQEhDydGRvACKW7BttxK9TP4CjgWUfSlO/KCOti1GdorOzOExlmd0T?=
- =?us-ascii?Q?hd+QAxGVMHesVdKa6+MsXtfOYM/WfjNLwfR1g7VWMBRx5gPpQ+6ds2H4NOHy?=
- =?us-ascii?Q?eqiXWdw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?EknchEUQ0QKP2OuZnmKRB6EozPkYvkrp7Bv7BS8D0almeXVNtRlQMFnbsxAy?=
- =?us-ascii?Q?gS8J4+WQGsk0ICfG1hSCAkTZ107fVQqbg2aSTe/X5CAmF3baQCHkXmuEMhne?=
- =?us-ascii?Q?7CqbEdEz2DIkAcVsqosTN53hb3r361tgwBdXg5vLJ1KebEX/xFIJJhwB+aIn?=
- =?us-ascii?Q?bgkPaM+hxM3VkXO8UuaVf3ERSijXOgoesffYDluL1Yqwi4BW4ieUaQixNGaZ?=
- =?us-ascii?Q?qtJ081uLO9/C+ee47m1+jp8ozbSc4QK97MSeOVF5hFK9Wd+VhfN7ZeHUrJtq?=
- =?us-ascii?Q?SNBQoaMr89CaKF8LV+xrGxEBoYuZIDu8okwPSw2Jv28wD2ODEZhSInpb8igU?=
- =?us-ascii?Q?6svU9Q8+04Aj5Kl9VJoFzaZsvmDax2CxMb+OB1BlOqeugD2YPhKu/ACKPVgd?=
- =?us-ascii?Q?zTF3JAXByoxTwCuX815TcedoKQKj/CLWjbnCDbHrzT1l3GyLdw4LIY+672F6?=
- =?us-ascii?Q?Kf8QA+9jlq/maoOFD7wbYL7SxcTA0x7mKE195inHBm5oGfQVNsYp9JEdkMD0?=
- =?us-ascii?Q?s+IepGPxv4t6Oq0X/BnO/WkhHV51Zelg+1vZBNTrGlfdML3JjK1AU/gWo4Xy?=
- =?us-ascii?Q?VXFWl0+nmovD5VkfaaCb3lEc6nRXYKK/jCucstJ8McAQA1Blxh4p3sFiN7nC?=
- =?us-ascii?Q?K4+7nVBKe3SLbOmtQPKSkBtoHwXL0oeMFaxGD9bt1Qmu+D5Ac/LA92V6u3aH?=
- =?us-ascii?Q?E+5Fx7Xwtzxfu6/KajJrD8A9tVKQfvQqCXBv/8+SQd63T+dk/q9ZUAEfy3Vx?=
- =?us-ascii?Q?9dfjWILamcigBYVczgpztyzoaXt2Av1JGuX/l3kHlbgVww71CtAYNv33FsJo?=
- =?us-ascii?Q?Qai7KqGKoPfMATY7tS72+qYnA2504Ru5ItiQz38ersAZET3dPOmNmDH3U3ve?=
- =?us-ascii?Q?ZIsUljfPS8HCkOXq3nQ8C3yq87COIfuPR+V9XJj70t8YHTFIklUqYPJtBC9t?=
- =?us-ascii?Q?ShNM0ZQwdjVwIkQVUKgIAI93Vgx+p5VK0oY7OiAU1Oqs28yU5YyHDcGjPq5Q?=
- =?us-ascii?Q?ElflUCJda2aQzvQ7kiYM5CcHvV5KCk+lsq4UAWdvCMzNgHE51qFSNm8Um53u?=
- =?us-ascii?Q?nCXY4zl48NVevYJ+E/MrWNJOrdN9SuLAvcnuHTNB0dDoRRGZI8+7oP/CN2h5?=
- =?us-ascii?Q?aZTiSsmMrdnXj4hymho9vFlQVRvkTe/3lupXgvmKG/3P7B1SeWC61jN3djKY?=
- =?us-ascii?Q?7Ox8OBd0IvCiO0rRbeO3d/TcNtfiBXt1uBlF/z/6yCv+knbpwt9uTZL70cZq?=
- =?us-ascii?Q?jFr5ZadlYBLeXmsI1MJvzYBwIQyS4OseZasYO4nt5wGJQuoNOYNPtbb0gwnJ?=
- =?us-ascii?Q?1xYDC6nCsnUpxOXmTYv/2kDNDuW0Ir4gNCdQPmVuYUFRm2zgk40koApdITun?=
- =?us-ascii?Q?SQiew/+ak2ZQU6bialmqyS5sJaUcJlQxGLMcxa8CkrMhWQcJcVbrerUo6uLc?=
- =?us-ascii?Q?+/JgjZp1Fm2FvlHxz4WmNC91X0TCS7HiOi6qgrBfLGQMaMy3efknre7RBRPo?=
- =?us-ascii?Q?APyEYOU+k16Ld9c62sVtK6+QchKu2zXPHpKo8MgWAzOEQXVBWaLOj2iVplzF?=
- =?us-ascii?Q?qssEzt7WFKdPAywBGzkmhtdAwzLwYho5YlTB2stH?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	RH2giVKK5cQ+1Tv+ihYV0x/M9VDTrNfcFbSoLhavz1ni9QCgbgI3LC6iEUiOTcMoFfDVeBWSaFcQxf8TD0pcDmetQ+tKlMOyQPUh+Jn5yDKafSDC0ab4Q9NCCkaGDwB0sbbMj7kHBymFBe00Y36Jp8BxC85YShy05ba2qH/msotQDiGqHO8Glw8X9F17nIWgjbMo712ueXEEJ91kIOUQQNktxWFv6NqH6DV75NwvPYHqdwhQE1JtK4JjqeWGleb4NjoNlLsFO9Twzi0zc38VLva9zYKM9iXddQlQdiD9nXc0em+zvC50Mwtjig+qD+EBVMbx+MSiqnQkWhnvdDoZatwtk6UR2mKVTuNOTY1FIzgsZhR7nMZMyNp6AV9uShj66ri8hc3ghouKEHn0jtfiIWIAzNPfJ/kSMGlxpm0vpB1AxzKdboMajCbDj6+cZPv/z9L7JeGdMT0Bv9cu6oHHKTFfDEPSqdwny/TxeX/wxPTTRkmUgZ3UwPfi7x6OKN/9Iq6unK2gXy5hrzc0OKNpI8z8q326L+ssd6TTVh44bVb5ZYCgdnHPydSbWGDaz1jXfDobIs2o14LMDKKgl27vVur/Ao3V99ovrewKaC8s5+Q=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4214840-9c14-464b-76bb-08dcbe0689f7
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+X-OriginatorOrg: vivo.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2024 15:17:27.5670
+X-MS-Exchange-CrossTenant-AuthSource: TYUPR06MB6217.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3d4f15b-f495-448f-3a6f-08dcbe069388
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Aug 2024 15:17:43.3778
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ePHJ0EgRUmEcnPWa4uaQADtio4Kx3kdHOWHSy9IlzpzIjs6ABj7nEWFI9nc8F7dCXY/+wehwnWoykwPbTGxCcw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR10MB6570
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-16_09,2024-08-16_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 bulkscore=0
- adultscore=0 suspectscore=0 mlxlogscore=921 phishscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408160110
-X-Proofpoint-GUID: nyZ9Plh0iu17OSS243Cq4SXtP2Up7c7p
-X-Proofpoint-ORIG-GUID: nyZ9Plh0iu17OSS243Cq4SXtP2Up7c7p
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: c3IqLOIiir/l/euNEYrz3XZNnYRB3gBPcKK0OQxTuguZ8BTMnsAfof3AibKiIDozq/52RA92kO3lzJki1ZgSwA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5271
 
-On Fri, Aug 16, 2024 at 08:42:07AM -0400, Jeff Layton wrote:
-> This adds support for the "delstid" draft:
-> 
->     https://datatracker.ietf.org/doc/draft-ietf-nfsv4-delstid/05/
-> 
-> Most of this was autogenerated using Chuck's lkxdrgen tool with some
-> by-hand tweaks to work around some symbol conflicts, and to add some
-> missing pieces that were needed from nfs4_1.x.
-
-I haven't read delstid closely enough to comment on the approach
-you've taken in 3/3, but I do have some thoughts about code
-organization here. I will try to study that draft soon.
-
-And, I'm assuming you are continuing to evolve support for the draft
-and will be growing this series. So I will hold off on careful
-inspection of 3/3 for the moment.
-
-First, I'm pleased that you found xdrgen useful for rapid
-prototyping. That's not something I had envisioned when I created
-the tool, but it's a good match, looks like.
-
-Here you add a separate set of source files for delstid XDR...  That
-approach might not be scalable for adding subsequent new features in
-general, it occurs to me.
-
-We might end up with a bunch of these little code blurbs with no
-clear understanding of how they inter-relate.  Thoughts about how to
-manage these are welcome: xdrgen could generate only header files
-and then we would #include them where needed, for example.
-
-For now, I suggest folding the new generated XDR code into the
-existing NFSv4 "open" XDR code in fs/nfsd/nfs4xdr.c, when you have
-some time for cleaning up the patches. An alternative would be to
-leave it and I can fold these together before committing.
-
-(The long term, of course, will hopefully be generating all XDR code
-automatically, but we're a ways out from that, IMO).
-
-The generator adds __maybe_unused to some of these functions to
-avoid having to reason about which encoders/decoders are not needed.
-It assumes the C compiler will simply not generate machine code for
-unused functions.
-
-But that clutters the source code if you plan to mix it with hand-
-written code. You might remove that decorator to identify the
-functions that are actually not used by your implementation.
-
-----
-
-On an unrelated note, do you know of a plan to add delstid-related
-unit tests to pynfs ?
-
-
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/nfsd/Makefile      |   2 +-
->  fs/nfsd/delstid_xdr.c | 464 ++++++++++++++++++++++++++++++++++++++++++++++++++
->  fs/nfsd/delstid_xdr.h | 102 +++++++++++
->  fs/nfsd/nfs4xdr.c     |   1 +
->  4 files changed, 568 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/nfsd/Makefile b/fs/nfsd/Makefile
-> index b8736a82e57c..187fa45640e6 100644
-> --- a/fs/nfsd/Makefile
-> +++ b/fs/nfsd/Makefile
-> @@ -18,7 +18,7 @@ nfsd-$(CONFIG_NFSD_V2) += nfsproc.o nfsxdr.o
->  nfsd-$(CONFIG_NFSD_V2_ACL) += nfs2acl.o
->  nfsd-$(CONFIG_NFSD_V3_ACL) += nfs3acl.o
->  nfsd-$(CONFIG_NFSD_V4)	+= nfs4proc.o nfs4xdr.o nfs4state.o nfs4idmap.o \
-> -			   nfs4acl.o nfs4callback.o nfs4recover.o
-> +			   nfs4acl.o nfs4callback.o nfs4recover.o delstid_xdr.o
->  nfsd-$(CONFIG_NFSD_PNFS) += nfs4layouts.o
->  nfsd-$(CONFIG_NFSD_BLOCKLAYOUT) += blocklayout.o blocklayoutxdr.o
->  nfsd-$(CONFIG_NFSD_SCSILAYOUT) += blocklayout.o blocklayoutxdr.o
-> diff --git a/fs/nfsd/delstid_xdr.c b/fs/nfsd/delstid_xdr.c
-> new file mode 100644
-> index 000000000000..63494d14f5d2
-> --- /dev/null
-> +++ b/fs/nfsd/delstid_xdr.c
-> @@ -0,0 +1,464 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Generated by lkxdrgen, with hand-edits.
-> +// XDR specification modification time: Wed Aug 14 13:35:03 2024
-> +
-> +#include "delstid_xdr.h"
-> +
-> +static inline bool
-> +xdrgen_decode_void(struct xdr_stream *xdr)
-> +{
-> +	return true;
-> +}
-> +
-> +static inline bool
-> +xdrgen_decode_bool(struct xdr_stream *xdr, bool *ptr)
-> +{
-> +	__be32 *p = xdr_inline_decode(xdr, XDR_UNIT);
-> +
-> +	if (unlikely(!p))
-> +		return false;
-> +	*ptr = (*p != xdr_zero);
-> +	return true;
-> +}
-> +
-> +static inline bool
-> +xdrgen_decode_int(struct xdr_stream *xdr, s32 *ptr)
-> +{
-> +	__be32 *p = xdr_inline_decode(xdr, XDR_UNIT);
-> +
-> +	if (unlikely(!p))
-> +		return false;
-> +	*ptr = be32_to_cpup(p);
-> +	return true;
-> +}
-> +
-> +static inline bool
-> +xdrgen_decode_unsigned_int(struct xdr_stream *xdr, u32 *ptr)
-> +{
-> +	__be32 *p = xdr_inline_decode(xdr, XDR_UNIT);
-> +
-> +	if (unlikely(!p))
-> +		return false;
-> +	*ptr = be32_to_cpup(p);
-> +	return true;
-> +}
-> +
-> +static inline bool
-> +xdrgen_decode_uint32_t(struct xdr_stream *xdr, u32 *ptr)
-> +{
-> +	return xdrgen_decode_unsigned_int(xdr, ptr);
-> +}
-> +
-> +static inline bool
-> +xdrgen_decode_long(struct xdr_stream *xdr, s32 *ptr)
-> +{
-> +	__be32 *p = xdr_inline_decode(xdr, XDR_UNIT);
-> +
-> +	if (unlikely(!p))
-> +		return false;
-> +	*ptr = be32_to_cpup(p);
-> +	return true;
-> +}
-> +
-> +static inline bool
-> +xdrgen_decode_unsigned_long(struct xdr_stream *xdr, u32 *ptr)
-> +{
-> +	__be32 *p = xdr_inline_decode(xdr, XDR_UNIT);
-> +
-> +	if (unlikely(!p))
-> +		return false;
-> +	*ptr = be32_to_cpup(p);
-> +	return true;
-> +}
-> +
-> +static inline bool
-> +xdrgen_decode_hyper(struct xdr_stream *xdr, s64 *ptr)
-> +{
-> +	__be32 *p = xdr_inline_decode(xdr, XDR_UNIT * 2);
-> +
-> +	if (unlikely(!p))
-> +		return false;
-> +	*ptr = get_unaligned_be64(p);
-> +	return true;
-> +}
-> +
-> +static inline bool
-> +xdrgen_decode_int64_t(struct xdr_stream *xdr, s64 *ptr)
-> +{
-> +	return xdrgen_decode_hyper(xdr, ptr);
-> +}
-> +
-> +static inline bool
-> +xdrgen_decode_unsigned_hyper(struct xdr_stream *xdr, u64 *ptr)
-> +{
-> +	__be32 *p = xdr_inline_decode(xdr, XDR_UNIT * 2);
-> +
-> +	if (unlikely(!p))
-> +		return false;
-> +	*ptr = get_unaligned_be64(p);
-> +	return true;
-> +}
-> +
-> +static bool __maybe_unused
-> +xdrgen_decode_opaque(struct xdr_stream *xdr, opaque *ptr, u32 maxlen)
-> +{
-> +	__be32 *p;
-> +	u32 len;
-> +
-> +	if (unlikely(xdr_stream_decode_u32(xdr, &len) != XDR_UNIT))
-> +		return false;
-> +	if (unlikely(maxlen && len > maxlen))
-> +		return false;
-> +	if (len != 0) {
-> +		p = xdr_inline_decode(xdr, len);
-> +		if (unlikely(!p))
-> +			return false;
-> +		ptr->data = (u8 *)p;
-> +	}
-> +	ptr->len = len;
-> +	return true;
-> +}
-> +
-> +static bool __maybe_unused
-> +xdrgen_decode_string(struct xdr_stream *xdr, string *ptr, u32 maxlen)
-> +{
-> +	__be32 *p;
-> +	u32 len;
-> +
-> +	if (unlikely(xdr_stream_decode_u32(xdr, &len) != XDR_UNIT))
-> +		return false;
-> +	if (unlikely(maxlen && len > maxlen))
-> +		return false;
-> +	if (len != 0) {
-> +		p = xdr_inline_decode(xdr, len);
-> +		if (unlikely(!p))
-> +			return false;
-> +		ptr->data = (unsigned char *)p;
-> +	}
-> +	ptr->len = len;
-> +	return true;
-> +}
-> +
-> +static inline bool
-> +xdrgen_encode_void(struct xdr_stream *xdr)
-> +{
-> +	return true;
-> +}
-> +
-> +static inline bool
-> +xdrgen_encode_bool(struct xdr_stream *xdr, bool val)
-> +{
-> +	__be32 *p = xdr_reserve_space(xdr, XDR_UNIT);
-> +
-> +	if (unlikely(!p))
-> +		return false;
-> +	*p = val ? xdr_one : xdr_zero;
-> +	return true;
-> +}
-> +
-> +static inline bool
-> +xdrgen_encode_int(struct xdr_stream *xdr, s32 val)
-> +{
-> +	__be32 *p = xdr_reserve_space(xdr, XDR_UNIT);
-> +
-> +	if (unlikely(!p))
-> +		return false;
-> +	*p = cpu_to_be32(val);
-> +	return true;
-> +}
-> +
-> +static inline bool
-> +xdrgen_encode_unsigned_int(struct xdr_stream *xdr, u32 val)
-> +{
-> +	__be32 *p = xdr_reserve_space(xdr, XDR_UNIT);
-> +
-> +	if (unlikely(!p))
-> +		return false;
-> +	*p = cpu_to_be32(val);
-> +	return true;
-> +}
-> +
-> +static inline bool
-> +xdrgen_encode_uint32_t(struct xdr_stream *xdr, u32 val)
-> +{
-> +	return xdrgen_encode_unsigned_int(xdr, val);
-> +}
-> +
-> +static inline bool
-> +xdrgen_encode_long(struct xdr_stream *xdr, s32 val)
-> +{
-> +	__be32 *p = xdr_reserve_space(xdr, XDR_UNIT);
-> +
-> +	if (unlikely(!p))
-> +		return false;
-> +	*p = cpu_to_be32(val);
-> +	return true;
-> +}
-> +
-> +static inline bool
-> +xdrgen_encode_unsigned_long(struct xdr_stream *xdr, u32 val)
-> +{
-> +	__be32 *p = xdr_reserve_space(xdr, XDR_UNIT);
-> +
-> +	if (unlikely(!p))
-> +		return false;
-> +	*p = cpu_to_be32(val);
-> +	return true;
-> +}
-> +
-> +static inline bool
-> +xdrgen_encode_hyper(struct xdr_stream *xdr, s64 val)
-> +{
-> +	__be32 *p = xdr_reserve_space(xdr, XDR_UNIT * 2);
-> +
-> +	if (unlikely(!p))
-> +		return false;
-> +	put_unaligned_be64(val, p);
-> +	return true;
-> +}
-> +
-> +static inline bool
-> +xdrgen_encode_int64_t(struct xdr_stream *xdr, s64 val)
-> +{
-> +	return xdrgen_encode_hyper(xdr, val);
-> +}
-> +
-> +static inline bool
-> +xdrgen_encode_unsigned_hyper(struct xdr_stream *xdr, u64 val)
-> +{
-> +	__be32 *p = xdr_reserve_space(xdr, XDR_UNIT * 2);
-> +
-> +	if (unlikely(!p))
-> +		return false;
-> +	put_unaligned_be64(val, p);
-> +	return true;
-> +}
-> +
-> +static bool __maybe_unused
-> +xdrgen_encode_opaque(struct xdr_stream *xdr, opaque val)
-> +{
-> +	__be32 *p = xdr_reserve_space(xdr, XDR_UNIT + xdr_align_size(val.len));
-> +
-> +	if (unlikely(!p))
-> +		return false;
-> +	xdr_encode_opaque(p, val.data, val.len);
-> +	return true;
-> +}
-> +
-> +static bool __maybe_unused
-> +xdrgen_encode_string(struct xdr_stream *xdr, string val, u32 maxlen)
-> +{
-> +	__be32 *p = xdr_reserve_space(xdr, XDR_UNIT + xdr_align_size(val.len));
-> +
-> +	if (unlikely(!p))
-> +		return false;
-> +	xdr_encode_opaque(p, val.data, val.len);
-> +	return true;
-> +}
-> +
-> +static bool __maybe_unused
-> +xdrgen_decode_fattr4_offline(struct xdr_stream *xdr, fattr4_offline *ptr)
-> +{
-> +	return xdrgen_decode_bool(xdr, ptr);
-> +};
-> +
-> +static bool __maybe_unused
-> +xdrgen_decode_bitmap4(struct xdr_stream *xdr, bitmap4 *ptr)
-> +{
-> +	if (xdr_stream_decode_u32(xdr, &ptr->count) < 0)
-> +		return false;
-> +	for (u32 i = 0; i < ptr->count; i++)
-> +		if (!xdrgen_decode_uint32_t(xdr, &ptr->element[i]))
-> +			return false;
-> +	return true;
-> +};
-> +
-> +static bool __maybe_unused
-> +xdrgen_decode_open_arguments4(struct xdr_stream *xdr, struct open_arguments4 *ptr)
-> +{
-> +	if (!xdrgen_decode_bitmap4(xdr, &ptr->oa_share_access))
-> +		return false;
-> +	if (!xdrgen_decode_bitmap4(xdr, &ptr->oa_share_deny))
-> +		return false;
-> +	if (!xdrgen_decode_bitmap4(xdr, &ptr->oa_share_access_want))
-> +		return false;
-> +	if (!xdrgen_decode_bitmap4(xdr, &ptr->oa_open_claim))
-> +		return false;
-> +	if (!xdrgen_decode_bitmap4(xdr, &ptr->oa_create_mode))
-> +		return false;
-> +	return true;
-> +};
-> +
-> +static bool __maybe_unused
-> +xdrgen_decode_open_args_share_access4(struct xdr_stream *xdr, enum open_args_share_access4 *ptr)
-> +{
-> +	u32 val;
-> +
-> +	if (xdr_stream_decode_u32(xdr, &val) < 0)
-> +		return false;
-> +	*ptr = val;
-> +	return true;
-> +}
-> +
-> +static bool __maybe_unused
-> +xdrgen_decode_open_args_share_deny4(struct xdr_stream *xdr, enum open_args_share_deny4 *ptr)
-> +{
-> +	u32 val;
-> +
-> +	if (xdr_stream_decode_u32(xdr, &val) < 0)
-> +		return false;
-> +	*ptr = val;
-> +	return true;
-> +}
-> +
-> +static bool __maybe_unused
-> +xdrgen_decode_open_args_share_access_want4(struct xdr_stream *xdr, enum open_args_share_access_want4 *ptr)
-> +{
-> +	u32 val;
-> +
-> +	if (xdr_stream_decode_u32(xdr, &val) < 0)
-> +		return false;
-> +	*ptr = val;
-> +	return true;
-> +}
-> +
-> +static bool __maybe_unused
-> +xdrgen_decode_open_args_open_claim4(struct xdr_stream *xdr, enum open_args_open_claim4 *ptr)
-> +{
-> +	u32 val;
-> +
-> +	if (xdr_stream_decode_u32(xdr, &val) < 0)
-> +		return false;
-> +	*ptr = val;
-> +	return true;
-> +}
-> +
-> +static bool __maybe_unused
-> +xdrgen_decode_open_args_createmode4(struct xdr_stream *xdr, enum open_args_createmode4 *ptr)
-> +{
-> +	u32 val;
-> +
-> +	if (xdr_stream_decode_u32(xdr, &val) < 0)
-> +		return false;
-> +	*ptr = val;
-> +	return true;
-> +}
-> +
-> +static bool __maybe_unused
-> +xdrgen_decode_fattr4_open_arguments(struct xdr_stream *xdr, fattr4_open_arguments *ptr)
-> +{
-> +	return xdrgen_decode_open_arguments4(xdr, ptr);
-> +};
-> +
-> +static bool __maybe_unused
-> +xdrgen_decode_nfstime4(struct xdr_stream *xdr, struct _nfstime4 *ptr)
-> +{
-> +	if (!xdrgen_decode_int64_t(xdr, &ptr->seconds))
-> +		return false;
-> +	if (!xdrgen_decode_uint32_t(xdr, &ptr->nseconds))
-> +		return false;
-> +	return true;
-> +};
-> +
-> +static bool __maybe_unused
-> +xdrgen_decode_fattr4_time_deleg_access(struct xdr_stream *xdr, fattr4_time_deleg_access *ptr)
-> +{
-> +	return xdrgen_decode_nfstime4(xdr, ptr);
-> +};
-> +
-> +static bool __maybe_unused
-> +xdrgen_decode_fattr4_time_deleg_modify(struct xdr_stream *xdr, fattr4_time_deleg_modify *ptr)
-> +{
-> +	return xdrgen_decode_nfstime4(xdr, ptr);
-> +};
-> +
-> +static bool __maybe_unused
-> +xdrgen_encode_fattr4_offline(struct xdr_stream *xdr, const fattr4_offline value)
-> +{
-> +	return xdrgen_encode_bool(xdr, value);
-> +};
-> +
-> +static bool __maybe_unused
-> +xdrgen_encode_bitmap4(struct xdr_stream *xdr, const bitmap4 value)
-> +{
-> +	if (xdr_stream_encode_u32(xdr, value.count) != XDR_UNIT)
-> +		return false;
-> +	for (u32 i = 0; i < value.count; i++)
-> +		if (!xdrgen_encode_uint32_t(xdr, value.element[i]))
-> +			return false;
-> +	return true;
-> +};
-> +
-> +static bool __maybe_unused
-> +xdrgen_encode_open_arguments4(struct xdr_stream *xdr, const struct open_arguments4 *value)
-> +{
-> +	if (!xdrgen_encode_bitmap4(xdr, value->oa_share_access))
-> +		return false;
-> +	if (!xdrgen_encode_bitmap4(xdr, value->oa_share_deny))
-> +		return false;
-> +	if (!xdrgen_encode_bitmap4(xdr, value->oa_share_access_want))
-> +		return false;
-> +	if (!xdrgen_encode_bitmap4(xdr, value->oa_open_claim))
-> +		return false;
-> +	if (!xdrgen_encode_bitmap4(xdr, value->oa_create_mode))
-> +		return false;
-> +	return true;
-> +};
-> +
-> +static bool __maybe_unused
-> +xdrgen_encode_open_args_share_access4(struct xdr_stream *xdr, enum open_args_share_access4 value)
-> +{
-> +	return xdr_stream_encode_u32(xdr, value) == XDR_UNIT;
-> +}
-> +
-> +static bool __maybe_unused
-> +xdrgen_encode_open_args_share_deny4(struct xdr_stream *xdr, enum open_args_share_deny4 value)
-> +{
-> +	return xdr_stream_encode_u32(xdr, value) == XDR_UNIT;
-> +}
-> +
-> +static bool __maybe_unused
-> +xdrgen_encode_open_args_share_access_want4(struct xdr_stream *xdr, enum open_args_share_access_want4 value)
-> +{
-> +	return xdr_stream_encode_u32(xdr, value) == XDR_UNIT;
-> +}
-> +
-> +static bool __maybe_unused
-> +xdrgen_encode_open_args_open_claim4(struct xdr_stream *xdr, enum open_args_open_claim4 value)
-> +{
-> +	return xdr_stream_encode_u32(xdr, value) == XDR_UNIT;
-> +}
-> +
-> +static bool __maybe_unused
-> +xdrgen_encode_open_args_createmode4(struct xdr_stream *xdr, enum open_args_createmode4 value)
-> +{
-> +	return xdr_stream_encode_u32(xdr, value) == XDR_UNIT;
-> +}
-> +
-> +static bool __maybe_unused
-> +xdrgen_encode_fattr4_open_arguments(struct xdr_stream *xdr, const fattr4_open_arguments *value)
-> +{
-> +	return xdrgen_encode_open_arguments4(xdr, value);
-> +};
-> +
-> +static bool __maybe_unused
-> +xdrgen_encode_nfstime4(struct xdr_stream *xdr, const struct _nfstime4 *value)
-> +{
-> +	if (!xdrgen_encode_int64_t(xdr, value->seconds))
-> +		return false;
-> +	if (!xdrgen_encode_uint32_t(xdr, value->nseconds))
-> +		return false;
-> +	return true;
-> +};
-> +
-> +static bool __maybe_unused
-> +xdrgen_encode_fattr4_time_deleg_access(struct xdr_stream *xdr, const fattr4_time_deleg_access value)
-> +{
-> +	return xdrgen_encode_nfstime4(xdr, &value);
-> +};
-> +
-> +static bool __maybe_unused
-> +xdrgen_encode_fattr4_time_deleg_modify(struct xdr_stream *xdr, const fattr4_time_deleg_modify value)
-> +{
-> +	return xdrgen_encode_nfstime4(xdr, &value);
-> +};
-> diff --git a/fs/nfsd/delstid_xdr.h b/fs/nfsd/delstid_xdr.h
-> new file mode 100644
-> index 000000000000..3ca8d0cc8569
-> --- /dev/null
-> +++ b/fs/nfsd/delstid_xdr.h
-> @@ -0,0 +1,102 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/* Generated by lkxdrgen, with hand edits. */
-> +/* XDR specification modification time: Wed Aug 14 13:35:03 2024 */
-> +
-> +#ifndef _DELSTID_H
-> +#define _DELSTID_H
-> +
-> +#include <linux/types.h>
-> +#include <linux/sunrpc/xdr.h>
-> +#include <linux/sunrpc/svc.h>
-> +
-> +typedef struct {
-> +	u32 len;
-> +	unsigned char *data;
-> +} string;
-> +
-> +typedef struct {
-> +	u32 len;
-> +	u8 *data;
-> +} opaque;
-> +
-> +typedef struct {
-> +	u32 count;
-> +	uint32_t *element;
-> +} bitmap4;
-> +
-> +typedef struct _nfstime4 {
-> +	int64_t seconds;
-> +	uint32_t nseconds;
-> +} nfstime4;
-> +
-> +typedef bool fattr4_offline;
-> +
-> +#define FATTR4_OFFLINE (83)
-> +
-> +typedef struct open_arguments4 {
-> +	bitmap4 oa_share_access;
-> +	bitmap4 oa_share_deny;
-> +	bitmap4 oa_share_access_want;
-> +	bitmap4 oa_open_claim;
-> +	bitmap4 oa_create_mode;
-> +} open_arguments4;
-> +
-> +enum open_args_share_access4 {
-> +	OPEN_ARGS_SHARE_ACCESS_READ = 1,
-> +	OPEN_ARGS_SHARE_ACCESS_WRITE = 2,
-> +	OPEN_ARGS_SHARE_ACCESS_BOTH = 3,
-> +};
-> +
-> +enum open_args_share_deny4 {
-> +	OPEN_ARGS_SHARE_DENY_NONE = 0,
-> +	OPEN_ARGS_SHARE_DENY_READ = 1,
-> +	OPEN_ARGS_SHARE_DENY_WRITE = 2,
-> +	OPEN_ARGS_SHARE_DENY_BOTH = 3,
-> +};
-> +
-> +enum open_args_share_access_want4 {
-> +	OPEN_ARGS_SHARE_ACCESS_WANT_ANY_DELEG = 3,
-> +	OPEN_ARGS_SHARE_ACCESS_WANT_NO_DELEG = 4,
-> +	OPEN_ARGS_SHARE_ACCESS_WANT_CANCEL = 5,
-> +	OPEN_ARGS_SHARE_ACCESS_WANT_SIGNAL_DELEG_WHEN_RESRC_AVAIL = 17,
-> +	OPEN_ARGS_SHARE_ACCESS_WANT_PUSH_DELEG_WHEN_UNCONTENDED = 18,
-> +	OPEN_ARGS_SHARE_ACCESS_WANT_DELEG_TIMESTAMPS = 20,
-> +	OPEN_ARGS_SHARE_ACCESS_WANT_OPEN_XOR_DELEGATION = 21,
-> +};
-> +
-> +enum open_args_open_claim4 {
-> +	OPEN_ARGS_OPEN_CLAIM_NULL = 0,
-> +	OPEN_ARGS_OPEN_CLAIM_PREVIOUS = 1,
-> +	OPEN_ARGS_OPEN_CLAIM_DELEGATE_CUR = 2,
-> +	OPEN_ARGS_OPEN_CLAIM_DELEGATE_PREV = 3,
-> +	OPEN_ARGS_OPEN_CLAIM_FH = 4,
-> +	OPEN_ARGS_OPEN_CLAIM_DELEG_CUR_FH = 5,
-> +	OPEN_ARGS_OPEN_CLAIM_DELEG_PREV_FH = 6,
-> +};
-> +
-> +enum open_args_createmode4 {
-> +	OPEN_ARGS_CREATEMODE_UNCHECKED4 = 0,
-> +	OPEN_ARGS_CREATE_MODE_GUARDED = 1,
-> +	OPEN_ARGS_CREATEMODE_EXCLUSIVE4 = 2,
-> +	OPEN_ARGS_CREATE_MODE_EXCLUSIVE4_1 = 3,
-> +};
-> +
-> +typedef open_arguments4 fattr4_open_arguments;
-> +
-> +#define FATTR4_OPEN_ARGUMENTS (86)
-> +
-> +#define OPEN4_SHARE_ACCESS_WANT_OPEN_XOR_DELEGATION (0x200000)
-> +
-> +#define OPEN4_RESULT_NO_OPEN_STATEID (0x00000010)
-> +
-> +typedef nfstime4 fattr4_time_deleg_access;
-> +
-> +typedef nfstime4 fattr4_time_deleg_modify;
-> +
-> +#define FATTR4_TIME_DELEG_ACCESS (84)
-> +
-> +#define FATTR4_TIME_DELEG_MODIFY (85)
-> +
-> +#define OPEN4_SHARE_ACCESS_WANT_DELEG_TIMESTAMPS (0x100000)
-> +
-> +#endif /* _DELSTID_H */
-> diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-> index 643ca3f8ebb3..b3d2000c8a08 100644
-> --- a/fs/nfsd/nfs4xdr.c
-> +++ b/fs/nfsd/nfs4xdr.c
-> @@ -55,6 +55,7 @@
->  #include "netns.h"
->  #include "pnfs.h"
->  #include "filecache.h"
-> +#include "delstid_xdr.h"
->  
->  #include "trace.h"
->  
-> 
-> -- 
-> 2.46.0
-> 
-
--- 
-Chuck Lever
+SGVsbG8gbGludXggY29tbXVuaXR5IGV4cGVydDoNCg0KPj4gPiA+IFE6IEFyZSB5b3UgcnVubmlu
+ZyBhIG1haW5saW5lIGtlcm5lbD8NCj4+ID4gPiBBOiBZZXMuDQo+PiA+DQo+PiA+IFlvdSBzaG91
+bGQgcmVwbHkgd2l0aG91dCB0b3AgcG9zdGluZyAocmVmZXIgdG8gWzFdKS4gSSdtIHRyeWluZyB0
+bw0KPj4gPiBiZSBoZWxwZnVsIHRvIHlvdSBidXQgaXQncyBub3QgZWFzeS4gVGhlIHF1ZXN0aW9u
+IHdhcyBpZiB5b3VyIG9uDQo+PiA+IHNvbWUgNi4xMC55IG9yIG9sZGVyIHZlcnNpb24gb2YgdGhl
+IGtlcm5lbCwgdGhlIHN0ZXAgdG8gcmVwcm9kdWNlDQo+PiA+IGl0LCBhbmQgaWYgeW91IGhhdmUg
+YW55IGF1dG9tYXRpb24gdG8gdGVzdCBpdA0KPj4gICBUaGUga2VybmVsIHZlcnNpb24gdGhhdCBo
+YXMgdGhlIHByb2JsZW0gaXMgNS4xNS4NCg0KPldoaWNoIHNwZWNpZmljIDUuMTUga2VybmVsPyAg
+VGhlIGxhdGVzdCBvbmUgb3Igc29tZSByYW5kb20gQW5kcm9pZC1wcm92aWRlZCA1LjE1IGtlcm5l
+bD8NCiBBbmRyb2lkIDEzLTUuMTUuDQogVGhlIHByb2JsZW0gb2NjdXJzIHJhbmRvbWx5IG9uIGtl
+cm5lbCA1LjE1Lg0KDQo+RG9lcyB0aGlzIGFsc28gc2hvdyB1cCBvbiA2LjExLXJjMz8NCiBLZXJu
+ZWwgNi4xMSBpcyBzdGlsbCB1bmRlciBkZXZlbG9wbWVudCBhbmQgaGFzIG5vdCB5ZXQgYmVlbiB0
+ZXN0ZWQgb24gYSBsYXJnZSBzY2FsZSwgc28gdGhpcyBwcm9ibGVtIGhhcyBub3QgeWV0IGJlZW4g
+ZW5jb3VudGVyZWQuDQoNCj4+ICAgVG8gcmVwcm9kdWNlLCB0dXJuIG9uIHRoZSBjb21iaW5hdGlv
+biBtb2RlIG9mIHRoZSBtb2JpbGUgcGhvbmUgVVNCLCBzdWNoIGFzIGFkYitkaWFnK3NlcmlhbF90
+dHkrcm1uZXRfaXBhK3NlcmlhbF9jZGV2IHdoZW4gcnVubmluZyB0aGUgbW9ua2V5IHRlc3QuDQoN
+Cj5XaGF0IGlzICJtb25rZXkgdGVzdCI/DQogUnVuIHRoZSBhcGssIGFuZCBhZnRlciBpdCBydW5z
+LCBjbGljayByYW5kb21seSBvbiB0aGUgbW9iaWxlIHBob25lIGludGVyZmFjZSB3aXRob3V0IGFu
+eSBwYXR0ZXJuLCBkZWZhdWx0IHVzZXIgdXNhZ2Ugc2NlbmFyaW8uDQoNCj5JIHRoaW5rIHRoaXMg
+aGFzIGJlZW4gcmVwb3J0ZWQgcHJldmlvdXNseSwgYW5kIGRpZmZlcmVudCBwYXRjaGVzIGhhdmUg
+YmVlbiBwcm9wb3NlZCwgaGF2ZSB5b3Ugc2VhcmNoZWQgdGhlIGFyY2hpdmVzPw0KIEkgaGF2ZW4n
+dCBzZWVuIHRoZSBwYXRjaCBnaXZlbiBiZWxvdyBiZWZvcmUsIEkgd2lsbCByZWFkIGl0IGNhcmVm
+dWxseS4NCiBJIHNlYXJjaGVkIGZvciBMaW51eCBtYWlubGluZSBjb21taXRzIGJlZm9yZSBzdWJt
+aXR0aW5nLCBidXQgSSBvbmx5IGNvbXBhcmVkIHRoZW0gYWNjb3JkaW5nIHRvIHRoZSBjcmFzaCBz
+dGFjayBpbmZvcm1hdGlvbiBhbmQgZGlkIG5vdCBub3RpY2UgdGhlIGZvbGxvd2luZyBjb21taXQu
+DQoNCj5TcGVjaWZpY2FsbHksIHRha2UgYSBsb29rIGF0Og0KPiAgICAgICBodHRwczovL2xvcmUu
+a2VybmVsLm9yZy9yLzIwMjQwMTE2MTQxODAxLjM5NjM5OC0xLWtodHNhaUBnb29nbGUuY29tDQoN
+ClRoYW5rcw0K
 
