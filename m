@@ -1,111 +1,154 @@
-Return-Path: <linux-kernel+bounces-289732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 735A2954B1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:32:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF7D954B23
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:35:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75E7F284157
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:32:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1008F1F22C4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C311B86DE;
-	Fri, 16 Aug 2024 13:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B211BBBE5;
+	Fri, 16 Aug 2024 13:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="cUNVVc/g"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NZkYzPNg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC76938F91
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 13:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD481B86DE
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 13:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723815163; cv=none; b=dksKaxGH4dhC4igMglTl10/rEd4uGO3q3OKJ6V7DsMMV9WF5vZbvATI1nZzxbWCH3BaqS95KQgSDtzkYK4WzwLuvPs2Mx+dOvUkfXxlLn1kxB6IleEKqTnwdAtDPdYcevBtWu2IV0iI9VyMh8pSnbInmPHyABIvvmf0zg+3W1BQ=
+	t=1723815311; cv=none; b=DEpeSS0TawJddwcCejlNAw/MsBvaYnRyxQG1gbC32HxzDW7VgPCz5TYBy60ZSg5Wx/NVaB0UoZlVgduTDzUmC7phrD1jHIIQYDbBPWARFLWgawWmHVd/R7qC2lHeDvXNHENmUJj2+8bA2o+KCgLFz30kAPdrpA4C4nu7KE3gtAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723815163; c=relaxed/simple;
-	bh=qcTAVK6EItOoSO1Q3tgK65Y7zRc5MBErrU82rC1VqJ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QxZu5EfDtA9YkVsF6tL/EDT6Yihj4mwFJKujFNRzW/G7eDZpeEwWofwReqsE3vcWJP/DXGMZlqYHTCRpRB8af+0pZ8sJLkWGCrdmkBR5lAG/LV+0AilpcjpSNqv4HTzyKviRvfp+eDEfGr4yGT5qurhH2b3UEq0bBTITJPFsCdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=cUNVVc/g; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6bf6beda0c0so11552096d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 06:32:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1723815161; x=1724419961; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hcNVKD9ArkalzemGS28H2A8RRoS7UHu4ogyyEqaz7QQ=;
-        b=cUNVVc/gDMbWlxUG+oWYRWN361eb91ZyinCcJPMZLEn2ctsz+ThSzkcTSV3jwy6byh
-         8ye73/ow4htzyxw4fdHFqnqGb2ROgi/LVnoh6aqBE6D2JYR3mFD9b51dA+UHAAxJ7O5b
-         kV6zR4evefMQTs9JEQFOWZf75H5kegTRsf9H77woGu9a1Q/Jb/4hpqzeTDX7Ze8mUCzN
-         gzZc0BjOYj17vcyxcwy4pa+OXLyZaB/1wE6IaAWK1ABQVDhDah06EQ8lNsXr2yA824iA
-         njk8sn2ErAbdNa9v9JVtNNsWGSo+mkHX1lLUWb8yRKtfZokF9xrFdPFIdmHR3SSZk/kM
-         Fowg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723815161; x=1724419961;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hcNVKD9ArkalzemGS28H2A8RRoS7UHu4ogyyEqaz7QQ=;
-        b=SL4y0oLErdnfPHYggDX3QyzfQNlelQf2wSBXSwXxgOkn/t8uADtZlg72/NC6wlevn4
-         4keQ7w0Lcyeb6Fo4cNNMNMz0D1/TIKpBE1nWdLx9nxtiZqcKvXHWwn/5bp58Ym58ngNz
-         9GTqoMzwAgwi6/TSthadq55MlXIdkUR25StTiXis39kimAxKB4PzlnfJs+pjN8Ie/58O
-         RVsATKKfjvNg+1THauebAMPZR1OH7emIIYlgkSUWsuCQ3mM/hywROFiPK14q0M6j5qIR
-         B8gBN6sSMUV3hK1bKODhggoH5y2ZQU3EWGnR3YJvv5Tqkbf9kM1bjiTsJKke5Wt7Qlgi
-         sTsA==
-X-Forwarded-Encrypted: i=1; AJvYcCXV98JIxrUopJlt6wrl6OTgfvGQiBG/v/agktggvLwsCG9zbpvs2fW8jBBY86wOsrUnceNSY30A3Ezipkvt4Fq+lNroKKi7GR3MAQyU
-X-Gm-Message-State: AOJu0YwbE0uC4nii30Wz0F7thB5/isnbfQfXfSuKO6IzItW+yQi3npWq
-	xH1Hud8n4cQhi0axlZLRanmR1YSNKkkN7eNEBkL17T1tOGnnxcEydmKXRPMI6lI=
-X-Google-Smtp-Source: AGHT+IFWZiZFILtEO3eQGWudldVtkY+zYk/91TK19t9S7myPrK6cUMb0pkmDP2UYPZcLYzFykUvR3g==
-X-Received: by 2002:a05:6214:4893:b0:6bd:6f1e:3303 with SMTP id 6a1803df08f44-6bf7cd9dff9mr33711496d6.13.1723815160843;
-        Fri, 16 Aug 2024 06:32:40 -0700 (PDT)
-Received: from ziepe.ca ([128.77.69.90])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fe2748csm17322026d6.63.2024.08.16.06.32.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 06:32:40 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sex3a-009kPY-NK;
-	Fri, 16 Aug 2024 10:31:54 -0300
-Date: Fri, 16 Aug 2024 10:31:54 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: Vasant Hegde <vasant.hegde@amd.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>, Yi Liu <yi.l.liu@intel.com>,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] iommu/vt-d: Move PCI PASID enablement to probe path
-Message-ID: <20240816133154.GQ3468552@ziepe.ca>
-References: <20240816104945.97160-1-baolu.lu@linux.intel.com>
- <6650ce02-ac85-4cb6-941c-cc7e8b6effc4@amd.com>
- <92b55591-e106-4366-ba5b-0588af50770f@linux.intel.com>
+	s=arc-20240116; t=1723815311; c=relaxed/simple;
+	bh=lDar9DmTlw3ePp5Q6kmmihzaxbm6I0P3DPXryScVANs=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=l3T7gs8hTkuLGMOyzDDfgTXqYjdtz794tl3jTqN053BD8c8kTPX6BxpOhNF/AjHZb72Q2Z9BUhR1kChPuHIHUHcN8+Wm26ZrtHh4fGtXMVcKEyJyAl/2w+qA9R5hwLnKAr0D15rxlGqVbhMNWePyjerufmnIS5VhtMmB75HoYLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NZkYzPNg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723815308;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mDOEDproV6IdIvTfwNaoQVF0QCH62QV3M+COrHMBt9A=;
+	b=NZkYzPNgaL6OYM67uFODVRO74rHdDTvaCFPVQYA71U0gWxr12lPCJFiSYMesTfNpljGbK+
+	R6inLPyFo4OGMOt3S7gHqdS7gF8NOhgjzxlPHdocZogVj9jtHvD5PhzFmJsqICYg7gXOFy
+	/bYbda8V0xH12xcnnC9szcRgR1NZXZ4=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-125-HGvqPeTXPKC2fZi24A5kRA-1; Fri,
+ 16 Aug 2024 09:35:05 -0400
+X-MC-Unique: HGvqPeTXPKC2fZi24A5kRA-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7FB19193E8F7;
+	Fri, 16 Aug 2024 13:35:03 +0000 (UTC)
+Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D9AB91956054;
+	Fri, 16 Aug 2024 13:35:02 +0000 (UTC)
+Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
+	id A6B7E30C1C1E; Fri, 16 Aug 2024 13:35:01 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id A1F8B3FB48;
+	Fri, 16 Aug 2024 15:35:01 +0200 (CEST)
+Date: Fri, 16 Aug 2024 15:35:01 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Paul Moore <paul@paul-moore.com>
+cc: Mike Snitzer <snitzer@kernel.org>, Alasdair Kergon <agk@redhat.com>, 
+    linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, 
+    linux-security-module@vger.kernel.org, fsverity@lists.linux.dev, 
+    linux-block@vger.kernel.org, dm-devel@lists.linux.dev, 
+    audit@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v20 12/20] dm verity: expose root hash digest and signature
+ data to LSMs
+In-Reply-To: <CAHC9VhQrnu8Sj=XnDvg=wGTBxacvMSW6OJyG3-tpwrsbGat6vA@mail.gmail.com>
+Message-ID: <88695db-efc0-6cc6-13ee-fd7c2abe61c@redhat.com>
+References: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com> <1722665314-21156-13-git-send-email-wufan@linux.microsoft.com> <9dc30ca6-486c-4fa9-910d-ed1dc6da0e95@linux.microsoft.com>
+ <CAHC9VhQrnu8Sj=XnDvg=wGTBxacvMSW6OJyG3-tpwrsbGat6vA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <92b55591-e106-4366-ba5b-0588af50770f@linux.intel.com>
+Content-Type: multipart/mixed; BOUNDARY="185210117-1569210666-1723814889=:1417825"
+Content-ID: <5538cf-7394-958-6f84-c8dc4adbca47@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Fri, Aug 16, 2024 at 09:09:04PM +0800, Baolu Lu wrote:
-> On 2024/8/16 20:16, Vasant Hegde wrote:
-> > On 8/16/2024 4:19 PM, Lu Baolu wrote:
-> > > Currently, PCI PASID is enabled alongside PCI ATS when an iommu domain is
-> > > attached to the device and disabled when the device transitions to block
-> > > translation mode. This approach is inappropriate as PCI PASID is a device
-> > > feature independent of the type of the attached domain.
-> > Reading through other thread, I thought we want to enable both PASID and PRI in
-> > device probe path. Did I miss something?
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--185210117-1569210666-1723814889=:1417825
+Content-Type: text/plain; CHARSET=UTF-8
+Content-Transfer-Encoding: 8BIT
+Content-ID: <e38cf2c9-a8f2-b095-bdda-7ca01566581a@redhat.com>
+
+
+
+On Thu, 15 Aug 2024, Paul Moore wrote:
+
+> On Thu, Aug 8, 2024 at 6:38 PM Fan Wu <wufan@linux.microsoft.com> wrote:
+> >
+> > Hi Mikulas,
+> >
+> > I hope you’re doing well. I wanted to thank you again for your thorough
+> > review for the last version. I’ve since made some minor updates for this
+> > version, including adding more comments and refactoring the way the hash
+> > algorithm name is obtained due to recent changes in dm-verity.
+> >
+> > Would you mind if we keep the Review-by tag on the latest version since
+> > the changes are minor? Your feedback is greatly valued, and I’d
+> > appreciate it if you could take a quick look when you have a moment.
 > 
-> PRI is different. PRI should be enabled when the first iopf-capable
-> domain is attached to device or its PASID, and disabled when the last
-> such domain is detached.
+> To add a bit more to this, this patchset now looks like it is in a
+> state where we would like to merge it into the LSM tree for the
+> upcoming merge window, but I would really like to make sure that the
+> device-mapper folks are okay with these changes; an
+> Acked-by/Reviewed-by on this patch would be appreciated, assuming you
+> are still okay with this patch.
+> 
+> For those who may be missing the context, the full patchset can be
+> found on lore at the link below:
+> 
+> https://lore.kernel.org/linux-security-module/1722665314-21156-1-git-send-email-wufan@linux.microsoft.com
 
-+1
+Hi
 
-Jason
+I'm not an expert in Linux security subsystems. I skimmed through the 
+dm-verity patch, didn't find anything wrong with it, so you can add
+
+Reviewed-by: Mikulas Patocka <mpatocka@redhat.com>
+
+> > >
+> > > +#ifdef CONFIG_SECURITY
+> > > +     u8 *root_digest_sig;    /* signature of the root digest */
+> > > +#endif /* CONFIG_SECURITY */
+> > >       unsigned int salt_size;
+> > >       sector_t data_start;    /* data offset in 512-byte sectors */
+> > >       sector_t hash_start;    /* hash start in blocks */
+> > > @@ -58,6 +61,9 @@ struct dm_verity {
+> > >       bool hash_failed:1;     /* set if hash of any block failed */
+> > >       bool use_bh_wq:1;       /* try to verify in BH wq before normal work-queue */
+> > >       unsigned int digest_size;       /* digest size for the current hash algorithm */
+> > > +#ifdef CONFIG_SECURITY
+> > > +     unsigned int sig_size;  /* root digest signature size */
+> > > +#endif /* CONFIG_SECURITY */
+> > >       unsigned int hash_reqsize; /* the size of temporary space for crypto */
+> > >       enum verity_mode mode;  /* mode for handling verification errors */
+> > >       unsigned int corrupted_errs;/* Number of errors for corrupted blocks */
+
+Just nit-picking: I would move "unsigned int sig_size" up, after "u8 
+*root_digest_sig" entry.
+
+Mikulas
+--185210117-1569210666-1723814889=:1417825--
+
 
