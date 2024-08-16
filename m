@@ -1,61 +1,56 @@
-Return-Path: <linux-kernel+bounces-290316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AE1095522A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:59:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C678695522C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B41991F2339A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:59:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D1371F23634
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A751C68BF;
-	Fri, 16 Aug 2024 20:58:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33487129E93;
+	Fri, 16 Aug 2024 21:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kw1iIC2z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XhbPqNzZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E301C68A3;
-	Fri, 16 Aug 2024 20:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9016BB39;
+	Fri, 16 Aug 2024 21:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723841936; cv=none; b=iSAoaEfkXbs5L4vOS5MlMMVDd6koGKXUpnRjOOhjSlK/550tLbuKpvTgfyTpiXF2hyLH6XpWrJjKFR0FVoi02s52rUxFuj5sDTw6QHCFPAdjl6EJvDOgHiJYbw9OeecYts3SFNXqWzvTamOocutwnZQj3EAnsvvf3hGTOfMPXsA=
+	t=1723842015; cv=none; b=irQ8tFWIlerpsWnydolqHe0kMqZhjFhSpViRMv8K8j7Fz1UQBasFykXu4KH54R3+5U5F+8IM0jx9cFX5oOyhvg4cNrYXXwwWBvLbx6VXXlS6tQXh4/CaMbvXtPqnLTiThEmMnf65mydj9feYdAtD8mQcWu4iPWqtJr9agcLP0cM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723841936; c=relaxed/simple;
-	bh=d/gXKV+rzSeF81+qiKEmv3B6KI33JDPBB1EQCC/niTM=;
+	s=arc-20240116; t=1723842015; c=relaxed/simple;
+	bh=ze9RuKlloztfH30hjiWNZ17Y8Wic2CNG135cUm76z1Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mwKDu4sOcjFF7nRaTDwBUr6mKkspJcMAB/q7zYPI4IHU1DT536SXatn+OQksv8KrC5thKSgw+yNUjUBt4Y4GXsFwZlcOLFiakstBOUIrH3vcl5QrnZZA4aHAdgvRrtMPktNFCsZ4iY9eC+dDIaX0tZEdA2tJ/ddcb9Zv45670gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kw1iIC2z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 457AEC32782;
-	Fri, 16 Aug 2024 20:58:55 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=DKqusIshrRl7jsvfw0ibE6w8OSm/0FZOKOsECSpabEH2ofphJu0vPg/Ov/93+XDEXPxObJ41Fx129H1JaeRWZgHI4/1+2eMFKDiSRESnScKk1P9WtMXvsxnjJSR9IEzWAPrYPo4L1WObbNwHrAlntsdm2FWsly7MVCSXdxYWKxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XhbPqNzZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9531EC32782;
+	Fri, 16 Aug 2024 21:00:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723841935;
-	bh=d/gXKV+rzSeF81+qiKEmv3B6KI33JDPBB1EQCC/niTM=;
+	s=k20201202; t=1723842015;
+	bh=ze9RuKlloztfH30hjiWNZ17Y8Wic2CNG135cUm76z1Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kw1iIC2zcVH425XaIRUmdpEBpaUSjqCwZYku3c7DZ5vF1vOdaC+XZAnCgtle39qlk
-	 /Ci2/W9Jx60laZCU4o5S9mVXxj5U1Asy7xZbMio8ay2z/QPfLmMQ1Bionk4fkF1cOt
-	 d3HPfhxnl/98Y9sFOHR4CCpXPegQHg0lLIRBrBLnAnfzuCk+6rkzVD5Wt3YrXjl98k
-	 zgSpJrwoWz/xl1WbpAYJIfp3Oqz1NsIZKOHWIgAG0IO2uL6WAZhoxsygt9mYOZm8Ra
-	 yLJa3llWeTZLioq72YQi0Cnx3LftF6/Ck3p0/VIMzjxtdzGCffdO21fLydL+lwL6fH
-	 4OyK8mud/e4og==
-Date: Fri, 16 Aug 2024 14:58:54 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
-	devicetree@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Paolo Abeni <pabeni@redhat.com>, Conor Dooley <conor+dt@kernel.org>,
-	imx@lists.linux.dev, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH v4 1/1] dt-bindings: net: mdio: change nodename match
- pattern
-Message-ID: <172384193319.2153392.2293896904577787066.robh@kernel.org>
-References: <20240815163408.4184705-1-Frank.Li@nxp.com>
+	b=XhbPqNzZksShjHclp0eNuMnvUzs2vRUXWTXAVAEfnaQND0y+STUkWJQaEmazRk2Cz
+	 vOvbyzQeHtQpXTn9iPESRaBvs2QZrLPcypnKTxtLTZgJaUji7+ECBfxPxULlnH6xGT
+	 c5AVvHy6Y8bf4QS++2U3wR82XSc+KAF8OZIC+E4/qQZDaN0QvCSusrcDyMYaxy/H0c
+	 Vxyoyc7Yld2kU0QujvBr1KmvHtvvXcDYJI7VtIAAvGUM4UKckwl34brG/empUlzVn4
+	 t750H9o1pzmXLsQpXzz9wmz/k2rL/iVZODGfmBs6ud+DASLk//zWnS3G7wg8Hhus9u
+	 B6EyYETdEHG3Q==
+Date: Fri, 16 Aug 2024 14:00:12 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Christian Heusel <christian@heusel.eu>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Subject: Re: [PATCH 1/2] kbuild: pacman-pkg: move common commands to a
+ separate function
+Message-ID: <20240816210012.GC3870443@thelio-3990X>
+References: <20240816141844.1217356-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,64 +59,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240815163408.4184705-1-Frank.Li@nxp.com>
+In-Reply-To: <20240816141844.1217356-1-masahiroy@kernel.org>
 
+On Fri, Aug 16, 2024 at 11:18:14PM +0900, Masahiro Yamada wrote:
+> All build and package functions share the following commands:
+> 
+>   export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+>   cd "${objtree}"
+> 
+> Factor out the common code.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 
-On Thu, 15 Aug 2024 12:34:07 -0400, Frank Li wrote:
-> Change mdio.yaml nodename match pattern to
-> 	'^mdio(-(bus|external))?(@.+|-([0-9]+))$'
-> 
-> Fix mdio.yaml wrong parser mdio controller's address instead phy's address
-> when mdio-mux exista.
-> 
-> For example:
-> mdio-mux-emi1@54 {
-> 	compatible = "mdio-mux-mmioreg", "mdio-mux";
-> 
->         mdio@20 {
-> 		reg = <0x20>;
-> 		       ^^^ This is mdio controller register
-> 
-> 		ethernet-phy@2 {
-> 			reg = <0x2>;
->                               ^^^ This phy's address
-> 		};
-> 	};
-> };
-> 
-> Only phy's address is limited to 31 because MDIO bus definition.
-> 
-> But CHECK_DTBS report below warning:
-> 
-> arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dtb: mdio-mux-emi1@54:
-> 	mdio@20:reg:0:0: 32 is greater than the maximum of 31
-> 
-> The reason is that "mdio-mux-emi1@54" match "nodename: '^mdio(@.*)?'" in
-> mdio.yaml.
-> 
-> Change to '^mdio(-(bus|external))?(@.+|-([0-9]+))?$' to avoid wrong match
-> mdio mux controller's node.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+
 > ---
-> Change from v3 to v4
-> - add ? in end of pattern to allow mdio{}. not touch mdio-gpio.yaml.
 > 
-> Change from v2 to v3
-> - update mdio-gpio.yaml node name mdio to mdio-0 to fix dt_binding_check
-> error foud by rob's bot.
+>  scripts/package/PKGBUILD | 17 ++++++++++-------
+>  1 file changed, 10 insertions(+), 7 deletions(-)
 > 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/mdio-gpio.example.dtb: mdio: $nodename:0: 'mdio' does not match '^mdio(-(bus|external))?(@.+|-([0-9]+))$'
-> 	from schema $id: http://devicetree.org/schemas/net/mdio-gpio.yaml#
+> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> index fbd7eb10a52c..e2d9c2601ca9 100644
+> --- a/scripts/package/PKGBUILD
+> +++ b/scripts/package/PKGBUILD
+> @@ -36,11 +36,15 @@ makedepends=(
+>  )
+>  options=(!debug !strip !buildflags !makeflags)
+>  
+> -build() {
+> +_prologue() {
+>  	# MAKEFLAGS from makepkg.conf override the ones inherited from kbuild.
+>  	# Bypass this override with a custom variable.
+>  	export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+>  	cd "${objtree}"
+> +}
+> +
+> +build() {
+> +	_prologue
+>  
+>  	${MAKE} KERNELRELEASE="${KERNELRELEASE}" KBUILD_BUILD_VERSION="${pkgrel}"
+>  }
+> @@ -48,10 +52,10 @@ build() {
+>  _package() {
+>  	pkgdesc="The ${pkgdesc} kernel and modules"
+>  
+> -	export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+> -	cd "${objtree}"
+>  	local modulesdir="${pkgdir}/usr/${MODLIB}"
+>  
+> +	_prologue
+> +
+>  	echo "Installing boot image..."
+>  	# systemd expects to find the kernel here to allow hibernation
+>  	# https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab8128dcf99161d2344
+> @@ -76,10 +80,10 @@ _package() {
+>  _package-headers() {
+>  	pkgdesc="Headers and scripts for building modules for the ${pkgdesc} kernel"
+>  
+> -	export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+> -	cd "${objtree}"
+>  	local builddir="${pkgdir}/usr/${MODLIB}/build"
+>  
+> +	_prologue
+> +
+>  	if grep -q CONFIG_MODULES=y include/config/auto.conf; then
+>  		echo "Installing build files..."
+>  		"${srctree}/scripts/package/install-extmod-build" "${builddir}"
+> @@ -100,8 +104,7 @@ _package-api-headers() {
+>  	provides=(linux-api-headers)
+>  	conflicts=(linux-api-headers)
+>  
+> -	export MAKEFLAGS="${KBUILD_MAKEFLAGS}"
+> -	cd "${objtree}"
+> +	_prologue
+>  
+>  	${MAKE} headers_install INSTALL_HDR_PATH="${pkgdir}/usr"
+>  }
+> -- 
+> 2.43.0
 > 
-> Change from v1 to v2
-> - use rob's suggest to fix node name pattern.
-> ---
->  Documentation/devicetree/bindings/net/mdio.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
 
