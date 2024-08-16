@@ -1,100 +1,87 @@
-Return-Path: <linux-kernel+bounces-289589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C7809547DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:18:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EC229547B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:14:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0714C2854D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:18:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 925011C228E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B503F1BDA95;
-	Fri, 16 Aug 2024 11:15:33 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B5319FA91;
+	Fri, 16 Aug 2024 11:13:35 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6D91974EA;
-	Fri, 16 Aug 2024 11:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5961991BB;
+	Fri, 16 Aug 2024 11:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723806933; cv=none; b=AVcyVeqg/tP/bNQ/zXlAxU1eb9xIEjxKnffl+TaYVlgQSlYPwShvJPfjBxExMEWAb4Qrpq46DgEhFOjtZNM5hg5QGcMqfc9tUmPWvksa6/cmc+aD6HA31+W4l2I4dvuHmGWScBsEYQgBbB+5wKMwhgn0is+WA2Y9n/nxC1mkgik=
+	t=1723806814; cv=none; b=J/kPfpRpDcmP/2ggP9Dq8T0vM0f3JrNcMq+igOhm+HMUpgYFN3rK1mzrd9Nabe0zwfu87/yR8eh4Arx1O0TLfijIa2YjsAnK2nNS7elcuhCQIhvfdFaCPNOj8flEh4hnzRyEkQ/mutnRbHTKs7Y8QA6Tt1nxzYvOlaJasapqZ7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723806933; c=relaxed/simple;
-	bh=CmWm5Wz5/zD6YgQrWDv+Px8V/U0u8vGYCng4QqoEvhI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VI2t49VPr02lvSfKYz8/EYbQG7qeL9Awqxgq2mLqJnvVwotrzQpye9k2IM6eNFL+6lX9P1mFySObpXOk7/H4KYkP3KNGEC0PkgaaKPB2ZUTKOG7R4YiiicgiCcIZLEzHeqs9aOeFn/OEr3QE6or42sIOvY4pN3Kjj/kB7gg0Wko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 535591A0DB0;
-	Fri, 16 Aug 2024 13:15:30 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0A6621A0734;
-	Fri, 16 Aug 2024 13:15:30 +0200 (CEST)
-Received: from pe-lt8779.in-pnq01.nxp.com (pe-lt8779.in-pnq01.nxp.com [10.17.104.141])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 6C4AA181D0FD;
-	Fri, 16 Aug 2024 19:15:28 +0800 (+08)
-From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-To: marcel@holtmann.org,
-	luiz.dentz@gmail.com
-Cc: linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	amitkumar.karwar@nxp.com,
-	rohit.fule@nxp.com,
-	neeraj.sanjaykale@nxp.com,
-	sherry.sun@nxp.com,
-	ziniu.wang_1@nxp.com,
-	haibo.chen@nxp.com,
-	LnxRevLi@nxp.com
-Subject: [PATCH v2 2/2] Bluetooth: btnxpuart: Add support for ISO packets
-Date: Fri, 16 Aug 2024 16:43:09 +0530
-Message-Id: <20240816111309.287515-2-neeraj.sanjaykale@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240816111309.287515-1-neeraj.sanjaykale@nxp.com>
-References: <20240816111309.287515-1-neeraj.sanjaykale@nxp.com>
+	s=arc-20240116; t=1723806814; c=relaxed/simple;
+	bh=64cM9bclDSiB1iWfcpkQfUsDnt/GE+0NUolbKcBVzv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=azNd8/O5ZXDXP288RafUh2Hki45an05vqYT0bE5t++IERAfbjbipYvBX98yTmhV9yzCkPWjuX8sxXR0vVBJqXHypRScZYCgvWyp9Pd+BaLZX+SlR92wS8Np/AZBeARa5GkuipH6ZeEyli8MAEqSpjI01p1JAGTXL9s7p6/hXKBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B2CEC32782;
+	Fri, 16 Aug 2024 11:13:28 +0000 (UTC)
+Date: Fri, 16 Aug 2024 12:13:27 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 09/40] arm64/gcs: Provide basic EL2 setup to allow
+ GCS usage at EL0 and EL1
+Message-ID: <Zr80V8zbb_C5pTGI@arm.com>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+ <20240801-arm64-gcs-v10-9-699e2bd2190b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240801-arm64-gcs-v10-9-699e2bd2190b@kernel.org>
 
-This enables btnxpuart driver to handle ISO RX packet when DUT is
-configured as audio sink.
+On Thu, Aug 01, 2024 at 01:06:36PM +0100, Mark Brown wrote:
+> There is a control HCRX_EL2.GCSEn which must be set to allow GCS
+> features to take effect at lower ELs and also fine grained traps for GCS
+> usage at EL0 and EL1.  Configure all these to allow GCS usage by EL0 and
+> EL1.
+> 
+> We also initialise GCSCR_EL1 and GCSCRE0_EL1 to ensure that we can
+> execute function call instructions without faulting regardless of the
+> state when the kernel is started.
+> 
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 
-Tested IW612 on iMX8MMini platform and BlueZ-5.77 as follows:
-1) Configured DUT with bap_bcast_sink role in pipewire configuration file.
-2) Started pipewire and DUT is able to sync with Broadcast source through
-pipewire.
-3) ISO data RX is seen in btmon.
-4) Audio/Music is heard on audio jack.
-
-Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-Tested-by: Sarveshwar Bajaj <sarveshwar.bajaj@nxp.com>
----
-v2: Add test steps to commit message. (Paul Menzel)
----
- drivers/bluetooth/btnxpuart.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
-index f75b24bd3045..0b52e5505687 100644
---- a/drivers/bluetooth/btnxpuart.c
-+++ b/drivers/bluetooth/btnxpuart.c
-@@ -1396,6 +1396,7 @@ static const struct h4_recv_pkt nxp_recv_pkts[] = {
- 	{ H4_RECV_ACL,          .recv = hci_recv_frame },
- 	{ H4_RECV_SCO,          .recv = hci_recv_frame },
- 	{ H4_RECV_EVENT,        .recv = hci_recv_frame },
-+	{ H4_RECV_ISO,		.recv = hci_recv_frame },
- 	{ NXP_RECV_CHIP_VER_V1, .recv = nxp_recv_chip_ver_v1 },
- 	{ NXP_RECV_FW_REQ_V1,   .recv = nxp_recv_fw_req_v1 },
- 	{ NXP_RECV_CHIP_VER_V3, .recv = nxp_recv_chip_ver_v3 },
--- 
-2.34.1
-
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
