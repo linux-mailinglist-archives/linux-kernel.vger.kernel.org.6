@@ -1,105 +1,110 @@
-Return-Path: <linux-kernel+bounces-288810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7394D953F04
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:41:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D78DA953F07
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 03:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B4091F24108
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:41:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 946F2283B43
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7433C1EB31;
-	Fri, 16 Aug 2024 01:41:49 +0000 (UTC)
-Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DF229D06;
+	Fri, 16 Aug 2024 01:44:12 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A0F1DFFC
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 01:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D922E1DFFC;
+	Fri, 16 Aug 2024 01:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723772509; cv=none; b=BC9C7kQtltffn9o8IUasVxFMFNzWXXLS9tTh9p3SFd0frUnCBPbOQiSCmQBS6V27tt0YbInoAftCx0rl5YH+oiMxm1k54Whnu7Fasf16Xkk/G20tb4Il9k4pSFw7xiRZ8uEZa699/GjGV1/u3v3qSFiqroFE25ZYbQGTNvI9qCU=
+	t=1723772652; cv=none; b=kdfgY68/c0T/W099OOhHT7ORf5nVVlKK1kc+t2hbQppi/e3YYk/+zn8v3S4QAxAujEQaguEdIxvrPNyIVyPfutepmchBAigY8fFv0bI1f+Tr2vKJNPGM61418KiC3wwSY6syJ5JgBPy/ny69aItsnM1Zu+IsxsDAyH+Z1SS2UbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723772509; c=relaxed/simple;
-	bh=cIFEptHDKhWbRMlTceUW9tJyF1zOrDqmgxDJ9GRJxmo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=NYeTXsDe8LwY5ivBQ5V5ySchwLG+w/0T8Ex3D+/lnWY/0IynIJnZ/OrKOBxq+2wGsz6ZW5hLtjHbhyPV8suFhKqcOoJnPhpuU4A7Jvy7HQ67v/lr6rJhw2dZip0qspMg8sBnL+BtaP0rzFh1RPwLwHdjERCOvux5aX5k2QPXNBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.192.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w002.hihonor.com (unknown [10.68.28.120])
-	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4WlPmY4vNTzYlK9K;
-	Fri, 16 Aug 2024 09:39:25 +0800 (CST)
-Received: from a009.hihonor.com (10.68.30.244) by w002.hihonor.com
- (10.68.28.120) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 16 Aug
- 2024 09:41:44 +0800
-Received: from a007.hihonor.com (10.68.22.31) by a009.hihonor.com
- (10.68.30.244) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 16 Aug
- 2024 09:41:43 +0800
-Received: from a007.hihonor.com ([fe80::4407:dd67:71d7:ea82]) by
- a007.hihonor.com ([fe80::4407:dd67:71d7:ea82%10]) with mapi id
- 15.02.1544.011; Fri, 16 Aug 2024 09:41:43 +0800
-From: gaoxu <gaoxu2@honor.com>
-To: Yu Zhao <yuzhao@google.com>, Kalesh Singh <kaleshsingh@google.com>
-CC: Andrew Morton <akpm@linux-foundation.org>, "linux-mm@kvack.org"
-	<linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Suren Baghdasaryan <surenb@google.com>,
-	Shaohua Li <shli@fb.com>, yipengxiang <yipengxiang@honor.com>, fengbaopeng
-	<fengbaopeng@honor.com>
-Subject: =?utf-8?B?5Zue5aSNOiBbUEFUQ0hdIG1tOiBhZGQgbGF6eWZyZWUgZm9saW8gdG8gbHJ1?=
- =?utf-8?Q?_tail?=
-Thread-Topic: [PATCH] mm: add lazyfree folio to lru tail
-Thread-Index: AdrvDo5mhFpHwjY+TGSie/L6+cGQzf//2ZUA//7+IPA=
-Date: Fri, 16 Aug 2024 01:41:43 +0000
-Message-ID: <86738d19f97843efbfa0f83a2d85115a@honor.com>
-References: <37bbf461e81342a7b5798923b783e349@honor.com>
- <CAOUHufZzmUU6YxOfQ7-v6AMj29uoMOLKMz0RWk9MRA4DkDSXAQ@mail.gmail.com>
-In-Reply-To: <CAOUHufZzmUU6YxOfQ7-v6AMj29uoMOLKMz0RWk9MRA4DkDSXAQ@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1723772652; c=relaxed/simple;
+	bh=XJp+Jb3dve6kiWKebsssb6P1PqxlbemB2ygfIkOkhs8=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=eQfdw8c7lySJkMEn8BkD4A80VDPkhq10uZsP3/78pFq38+FoX/sbH9feeFN2Xw1fwRyCrDteUSNfd3sawr7tQMfdLdw3mn/pr25BPeoO5Legpotdaljmhw9lwNVTgs063dHA9ESQAIT0zaTinpW+EngIcGGlsyypM1PIY+4id4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WlPsh1Fswz4f3jsD;
+	Fri, 16 Aug 2024 09:43:52 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 092791A0568;
+	Fri, 16 Aug 2024 09:44:06 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgBHboTkrr5miBBBBw--.52648S3;
+	Fri, 16 Aug 2024 09:44:05 +0800 (CST)
+Subject: Re: [PATCH v2 3/6] iomap: advance the ifs allocation if we have more
+ than one blocks per folio
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, djwong@kernel.org, brauner@kernel.org,
+ david@fromorbit.com, jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com
+References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
+ <20240812121159.3775074-4-yi.zhang@huaweicloud.com>
+ <ZrxBfKi_DpThYo94@infradead.org>
+ <b098d15b-4b80-2b73-d05b-f4dbb5d4631a@huaweicloud.com>
+ <Zr2Zd-fjb96D3ZQi@infradead.org>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <ff66af8c-2b56-aa72-2470-00ff097fc6a6@huaweicloud.com>
+Date: Fri, 16 Aug 2024 09:44:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <Zr2Zd-fjb96D3ZQi@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgBHboTkrr5miBBBBw--.52648S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrKFW3ArWxZFy3XrWrKr15Jwb_yoWxAFc_uF
+	4v9r4kur95Way5A3W2g3Z8JrZagrZ0yF18XrZ8GFZ3Wa98Aa9aqr1vkrZYvFy2yFZF9Fnx
+	WFy2gay5XryagjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbaxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
+	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
+	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
+	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
+	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-PiANCj4gT24gVGh1LCBBdWcgMTUsIDIwMjQgYXQgNjozM+KAr0FNIGdhb3h1IDxnYW94dTJAaG9u
-b3IuY29tPiB3cm90ZToNCj4gPg0KPiA+IFJlcGxhY2UgbHJ1dmVjX2FkZF9mb2xpbyB3aXRoIGxy
-dXZlY19hZGRfZm9saW9fdGFpbCBpbiB0aGUgbHJ1X2xhenlmcmVlX2ZuOg0KPiA+IDEuIFRoZSBs
-YXp5LWZyZWUgZm9saW8gaXMgYWRkZWQgdG8gdGhlIExSVV9JTkFDVElWRV9GSUxFIGxpc3QuIElm
-IGl0J3MNCj4gPiAgICBtb3ZlZCB0byB0aGUgTFJVIHRhaWwsIGl0IGFsbG93cyBmb3IgZmFzdGVy
-IHJlbGVhc2UgbGF6eS1mcmVlIGZvbGlvIGFuZA0KPiA+ICAgIHJlZHVjZXMgdGhlIGltcGFjdCBv
-biBmaWxlIHJlZmF1bHQuDQo+ID4gMi4gV2hlbiBtZ2xydSBpcyBlbmFibGVkLCB0aGUgbGF6eS1m
-cmVlIGZvbGlvIGlzIHJlY2xhaW1hYmxlZCBhbmQgc2hvdWxkIGJlDQo+ID4gICAgYWRkZWQgdXNp
-bmcgbHJ1X2dlbl9hZGRfZm9saW8obHJ1dmVjLCBmb2xpbywgdHJ1ZSkgaW5zdGVhZCBvZg0KPiA+
-ICAgIGxydV9nZW5fYWRkX2ZvbGlvKGxydXZlYywgZm9saW8sIGZhbHNlKSBmb3IgYWRkaW5nIHRv
-IGdlbi4NCj4gPg0KPiA+IFdpdGggdGhlIGNoYW5nZSBpbiBwbGFjZSwgd29ya2luZ3NldF9yZWZh
-dWx0X2ZpbGUgaXMgcmVkdWNlZCBieSAzMyUgaW4gdGhlDQo+ID4gY29udGludW91cyBzdGFydHVw
-IHRlc3Rpbmcgb2YgdGhlIGFwcGxpY2F0aW9ucyBpbiB0aGUgQW5kcm9pZCBzeXN0ZW0uDQo+ID4N
-Cj4gPiBTaWduZWQtb2ZmLWJ5OiBnYW8geHUgPGdhb3h1MkBoaWhvbm9yLmNvbT4NCj4gPiAtLS0N
-Cj4gPiAgbW0vc3dhcC5jIHwgMiArLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24o
-KyksIDEgZGVsZXRpb24oLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9tbS9zd2FwLmMgYi9tbS9z
-d2FwLmMNCj4gPiBpbmRleCA2Nzc4NmNiNzcuLmVkNDk2NDNlYyAxMDA2NDQNCj4gPiAtLS0gYS9t
-bS9zd2FwLmMNCj4gPiArKysgYi9tbS9zd2FwLmMNCj4gPiBAQCAtNjM1LDcgKzYzNSw3IEBAIHN0
-YXRpYyB2b2lkIGxydV9sYXp5ZnJlZV9mbihzdHJ1Y3QgbHJ1dmVjICpscnV2ZWMsIHN0cnVjdA0K
-PiBmb2xpbyAqZm9saW8pDQo+IA0KPiBQbGVhc2Ugd29yayBhZ2FpbnN0IHRoZSBsYXRlc3QgbW0t
-dW5zdGFibGUuDQpUaGlzIHdhcyBteSBtaXN0YWtlLiBUaGFuayB5b3UgZm9yIHRoZSByZW1pbmRl
-ci4NCkkgd2lsbCByZXNlbmQgdGhlIHBhdGNoIGJhc2VkIG9uIHRoZSBtbS11bnN0YWJsZSBicmFu
-Y2gNCj4gDQo+ID4gICAgICAgICAgICAgICAgICAqIGFub255bW91cyBmb2xpb3MNCj4gPiAgICAg
-ICAgICAgICAgICAgICovDQo+ID4gICAgICAgICAgICAgICAgIGZvbGlvX2NsZWFyX3N3YXBiYWNr
-ZWQoZm9saW8pOw0KPiA+IC0gICAgICAgICAgICAgICBscnV2ZWNfYWRkX2ZvbGlvKGxydXZlYywg
-Zm9saW8pOw0KPiA+ICsgICAgICAgICAgICAgICBscnV2ZWNfYWRkX2ZvbGlvX3RhaWwobHJ1dmVj
-LCBmb2xpbyk7DQo+ID4NCj4gPiAgICAgICAgICAgICAgICAgX19jb3VudF92bV9ldmVudHMoUEdM
-QVpZRlJFRSwgbnJfcGFnZXMpOw0KPiA+ICAgICAgICAgICAgICAgICBfX2NvdW50X21lbWNnX2V2
-ZW50cyhscnV2ZWNfbWVtY2cobHJ1dmVjKSwNCj4gUEdMQVpZRlJFRSwNCj4gDQo+IEthbGVzaCBo
-YXMgYmVlbiB3b3JraW5nIG9uIHNvbWV0aGluZyBzaW1pbGFyIGZvciBscnVfZGVhY3RpdmF0ZSgp
-LCBhbmQNCj4gaGUgY2FuIGhlbHAgdGVzdCBhbmQgcmV2aWV3IHRoaXMgcGF0Y2guDQo=
+On 2024/8/15 14:00, Christoph Hellwig wrote:
+> On Wed, Aug 14, 2024 at 03:08:25PM +0800, Zhang Yi wrote:
+>>> iomap_invalidate_folio when it actually is needed?
+>>>
+>>
+>> Therefore, you mean current strategy of allocating ifs is to try to delay
+>> the allocation time as much as possible?
+> 
+> Yes.
+> 
+>> The advantage is that it could
+>> avoid some unnecessary allocation operations if the whole folio are
+>> invalidated before write back. right?
+> 
+> Yes.  And hopefully we can also get to the point where we don't need
+> to actually allocate it for writeback.  I've been wanting to do that
+> for a while but never got it.
+> 
+
+Yeah, this sounds like a good idea.
+
+Thanks,
+Yi.
+
 
