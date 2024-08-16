@@ -1,131 +1,132 @@
-Return-Path: <linux-kernel+bounces-289163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D126954296
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:20:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1684195429A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 604CC1C22894
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:20:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13AED28F725
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0030127E3A;
-	Fri, 16 Aug 2024 07:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4D2132117;
+	Fri, 16 Aug 2024 07:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EpRkOqhi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f5AWzoFz"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143CE6BB4B;
-	Fri, 16 Aug 2024 07:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFDC83CA3;
+	Fri, 16 Aug 2024 07:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723792795; cv=none; b=ThR0S/FAGd9n1SdC8MxaRYEvDZsGnUExWHD3x/k+mmdKr+j6jL9J1WL9eoAf/xpxfU4tg//DM3vu4hbLrUK367euihXEKMzOPMFcSAMU+0w12Ph/Zghp9/D3+ud5XX1032ITUOTIbGEonsmnl1ylFlzHehblcP+qsXnshLY4vMw=
+	t=1723792805; cv=none; b=ngPpvSuHz3QIG7CN3pScF8I3IZs4kfA2cOepXv5MrF0qjvUJYv3nt1deifDYfZscSfP4zvYdGbNsjLmYATmIfO8eH/XkhBZR2ONmt18tKALFRTkN3mgXijanSadkk9PWGLKuQ+2XhH3f0aucipB+3Hs9fc5w2OqDe0s/3QX2cwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723792795; c=relaxed/simple;
-	bh=zgidBTve9KoJU0+q1W5qPUCW1LJqMTwASb4EhZ/yRgM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ux3lKzF+J1IBBr8Gd1Q2GIg3qK6/t2PgSWk6+pSdTT7XXVeZjgI1MQBfAPic0V3Y1QPi4zIC/Bp3KNQTAv2bz08o/C4Yvn3NheVF563f2u3oqxs2NAI4wxFY0TDUA7ZWPMNmYDVHFCaRhMD8XTGcsM3FKZeVaBVor/Gfqv2Wj7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EpRkOqhi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 667F0C32782;
-	Fri, 16 Aug 2024 07:19:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723792794;
-	bh=zgidBTve9KoJU0+q1W5qPUCW1LJqMTwASb4EhZ/yRgM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EpRkOqhinUEZhD722B6UJyvhZJq/09VZVRFDboawCfsZAGtnwfyURo0U+aaQU6ygZ
-	 3y6vW1AeaL8TAjmAxiGXEV/9jZ0J7mBi6ehg0leaZ6dLvNvRAcvl0yu6bdvqUhyz72
-	 bPaF1URFwnMJgWGJxxPXZnX7BKypdrI6YPQh5CRVDc3QqCaeAPtwqD2ovSs6GjzuUo
-	 mNYk/sjaxNrUUYQU9X5JbV16pyV+hNzwiL6u6zQOde7jXFNq6mIZ5lF0kGSmn7aWfR
-	 0x6cPvvNZOBLWupfd0lQRMPHMQ4WIx6l2sYi4mwqYXCf6f1VquU49rwbfzoEFDFypF
-	 OxSQN0Hss+LnA==
-Message-ID: <1c39c220-1cc6-4909-bcb0-8b643a7c9c92@kernel.org>
-Date: Fri, 16 Aug 2024 09:19:47 +0200
+	s=arc-20240116; t=1723792805; c=relaxed/simple;
+	bh=XltBR+DchOvuAWXNxQkJOKqCiETtmFdDHwpmtwucYFI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XPIu9jYnRkDCnK/NRERQwJMLFSB/h1nDlWBSFsGtSRI8UNp6fOhXwMEBoomjRmZItZp8PRT3n4CMo/B1AuXarcTEtUGAk9BN+xBKoHY7JzCb78Ch4Et9p7bB9l5eCZIUNAW4T9t+7eTTUO6lNkYKJoxXrk0PJ0BNpH711/L0ILE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f5AWzoFz; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-530e062217eso2219874e87.1;
+        Fri, 16 Aug 2024 00:20:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723792801; x=1724397601; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BCDYMfGySc443px3vz4IJgiNfp6ypozgyP4rObiGgj0=;
+        b=f5AWzoFzV1zkIWBpZnOrvgQwWBIdUwYFZVbdQNn+9ze68KQzQz7ZRvE2up26pWxzdp
+         DxXVHhLm+xFJ8m7VQYrmbu9A5Jb4npIb0t0enHPi/6bScNP7sOr8NhK8H4un4tC4tMzD
+         plzNZzeZMit8PeGHi8oqfn7xaLEiKWFowe5CGEwengRFZ7g+6HIH5C3l0Ona81WGUelx
+         W3CTUXYm8/Snhv8Qxpf2ZV/hpsKl2ezT2qXMEElTZkk2e6ArICBeXlG2MmYr+6+Rz8cQ
+         NV1KaGitlt12dBE+NU2fP9I5Iov5UlGwxA6N30p+ksDpmlMmojp41jU+lBp8IAKsVMZv
+         YmqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723792801; x=1724397601;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BCDYMfGySc443px3vz4IJgiNfp6ypozgyP4rObiGgj0=;
+        b=f3hTztkhNO82jJFLPbncInJ9wiZbn36qAGTggvnArG4srZ/EiQCWnxP6myyPI3evle
+         XgZ+2Em3p+oJv3YIqFvM6o/FrpmzmtiSljIaFRLSOG2xJx4VIhX0VrsPGGunw5G9jPk4
+         EEi32WFKFHdsBeByt+ESJYEfOEtSZNl2UJlteXSWu2m5VTzVPWvriJtQVKk+NPrJVtuA
+         MWsqsi/Py4weuTMQ1mgiAzJ7TDlymOlyKve/JqtOAyV0/hiuEOnV+Gdf5Qz9NauU9v74
+         RpvNPyiwH64SEOtjP1jQL9r/9eotdoTz7gTtwqztHL6mpATeq+yqVmvm4fFGvj3MNizm
+         XBIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUoV32EcXeE1iNRHa0QfPzHyNRnkg09lQlnYk17h7qGZryGMuKv25VuLXVlIJklx8Ae+veNpSMxjf09dyR0cehnWO1GYKnqalAwrC6bJ/p7VCtO5aO0wcgyEW2AkQ7eqlKg0LDk
+X-Gm-Message-State: AOJu0YzggaT/0mIewOS96M1OR+yxGtsxuQQV1e4/UPkl4pa9mr57mWpp
+	H5J7B6yXvVHzUEO/90cA/Q6Es5Lldm1qKNboqqVV8mT0c6nJySUT
+X-Google-Smtp-Source: AGHT+IEMNiMu907jG2oLMbP8LWHs6njbuCrNw+PDgwS8M4Ji8B1T0eTn7Bss8F5WwbXir0Y0aKTrzQ==
+X-Received: by 2002:a05:6512:124b:b0:52c:e170:9d38 with SMTP id 2adb3069b0e04-5331c6b027bmr1363916e87.31.1723792800401;
+        Fri, 16 Aug 2024 00:20:00 -0700 (PDT)
+Received: from pc636 (host-90-233-214-145.mobileonline.telia.com. [90.233.214.145])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5330d3af9b5sm471263e87.14.2024.08.16.00.19.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 00:19:59 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Fri, 16 Aug 2024 09:19:52 +0200
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Uladzislau Rezki <urezki@gmail.com>, Michal Hocko <mhocko@suse.com>,
+	Barry Song <21cnbao@gmail.com>, Hailong Liu <hailong.liu@oppo.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Tangquan Zheng <zhengtangquan@oppo.com>, stable@vger.kernel.org,
+	Baoquan He <bhe@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH v1] mm/vmalloc: fix page mapping if
+ vm_area_alloc_pages() with high order fallback to order 0
+Message-ID: <Zr79mKLTtum-rRKF@pc636>
+References: <20240808122019.3361-1-hailong.liu@oppo.com>
+ <CAGsJ_4z4+CCDoPR7+dPEhemBQN60Cj84rCeqRY7-xvWapY4LGg@mail.gmail.com>
+ <ZrXiUvj_ZPTc0yRk@tiehlicka>
+ <ZrXkVhEg1B0yF5_Q@pc636>
+ <20240815220709.47f66f200fd0a072777cc348@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/6] arm64: dts: qcom: Add Samsung Galaxy Book4 Edge
- DTS
-To: Marcus Glocker <marcus@nazgul.ch>, Bjorn Andersson
- <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
- Johan Hovold <johan@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-References: <v2iah5yrne4u6uzrnzg36tvtxzqrpiez6io2gyyfrht2x42umw@5ribqndiavxv>
- <ndshdkgfwsjfxtxulefaavksechrzr4kxnjjjskcjnfmea4qhj@od2nffuwhxgj>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ndshdkgfwsjfxtxulefaavksechrzr4kxnjjjskcjnfmea4qhj@od2nffuwhxgj>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240815220709.47f66f200fd0a072777cc348@linux-foundation.org>
 
-On 15/08/2024 12:45, Marcus Glocker wrote:
-> Add the initial DTS file for the Samsung Galaxy Book4 Edge laptop.
-> This was a copy of the arch/arm64/boot/dts/qcom/x1e80100-crd.dts file and
-> adapted to our needs.
+On Thu, Aug 15, 2024 at 10:07:09PM -0700, Andrew Morton wrote:
+> On Fri, 9 Aug 2024 11:41:42 +0200 Uladzislau Rezki <urezki@gmail.com> wrote:
 > 
-> Signed-off-by: Marcus Glocker <marcus@nazgul.ch>
-> ---
->  arch/arm64/boot/dts/qcom/Makefile             |   1 +
->  .../x1e80100-samsung-galaxy-book4-edge.dts    | 959 ++++++++++++++++++
->  2 files changed, 960 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/x1e80100-samsung-galaxy-book4-edge.dts
+> > > > Acked-by: Barry Song <baohua@kernel.org>
+> > > > 
+> > > > because we already have a fallback here:
+> > > > 
+> > > > void *__vmalloc_node_range_noprof :
+> > > > 
+> > > > fail:
+> > > >         if (shift > PAGE_SHIFT) {
+> > > >                 shift = PAGE_SHIFT;
+> > > >                 align = real_align;
+> > > >                 size = real_size;
+> > > >                 goto again;
+> > > >         }
+> > > 
+> > > This really deserves a comment because this is not really clear at all.
+> > > The code is also fragile and it would benefit from some re-org.
+> > > 
+> > > Thanks for the fix.
+> > > 
+> > > Acked-by: Michal Hocko <mhocko@suse.com>
+> > > 
+> > I agree. This is only clear for people who know the code. A "fallback"
+> > to order-0 should be commented.
 > 
+> It's been a week.  Could someone please propose a fixup patch to add
+> this comment?
+>
+I will send the patch. This is week i have a vacation, thus i am a bit
+slow.
 
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+--
+Uladzislau Rezki
 
