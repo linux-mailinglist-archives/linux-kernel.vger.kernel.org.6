@@ -1,90 +1,79 @@
-Return-Path: <linux-kernel+bounces-289039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9F99954182
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:09:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D7E5954184
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E5681F24EE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:09:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19E8A286DC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E97481ACB;
-	Fri, 16 Aug 2024 06:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m+Ir0vfK"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDED781AD7;
+	Fri, 16 Aug 2024 06:10:21 +0000 (UTC)
+Received: from out28-99.mail.aliyun.com (out28-99.mail.aliyun.com [115.124.28.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853AB75817;
-	Fri, 16 Aug 2024 06:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A93981741;
+	Fri, 16 Aug 2024 06:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723788535; cv=none; b=aAwCbH5YbGngdrG/iPsO3i+rlpBoi1+8hrzDWVMGtqESxEQY0yiIMBgn9zh1F0tnwWHXf+DB8nsv2SPOL1yMNbWQGJfqGNWJws3QWHQZX12FIGrPn1Dx2FSBMblDr3W7zGZifAVHV5X351oL3BsaAEu3wT8XEayvh3I9/EHsQN8=
+	t=1723788621; cv=none; b=URCY78xlmqpzdXC5M20CzHDNaCZHkxxwoiEN2p9uV3Ty0zdYacGldR+D4/CXGB3pErHXa+H/x8jhOk33ug4NvPGQVPZAZTHv/zDl8aHfxi8GsMuudA8Qlh4G8VglQYZ6cS1I0pjyD6QgQ+85CZtdmrJI9Ikp+Y8+VFUfFZsshnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723788535; c=relaxed/simple;
-	bh=6vEqT34sXONcN+h8n7GFxvTvC61LkDaA17QipPFMyO8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TIG9kiqutmz7D3FFG/YtAqVwqFUvYP39dNUB7Mie01sS3TCc/J+/ypcGSUPLbkHYEn5HhOewVpzE1/zzvcsXVzKEi2yHEbsmWVSDO0BRYp2SoxOqX8U4bz38MPrsd7Lphm6LRNrQBoa1l7qvdCqaGi3LXrfLbj2i962axdSItyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m+Ir0vfK; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-654cf0a069eso15867887b3.1;
-        Thu, 15 Aug 2024 23:08:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723788533; x=1724393333; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6vEqT34sXONcN+h8n7GFxvTvC61LkDaA17QipPFMyO8=;
-        b=m+Ir0vfKItO6StWKSt4mnfr3Nax9KOQ19VgIl7gAIpKNRKsL1o4KnPAQPtphh9eaB8
-         f/JWJe9nI0H64WSjJlk5yezz9amcNrfn+sTeGnO+eb+JwAQ3W1qQQSaBhH14p2q6XJ8V
-         6ibqEstGDDhUDzvIndGwsCOHp3MW1gm+3k5aZST/XXE8ofzIGdKRbbQ7K7g+aKXA1LLA
-         ZOR7rRJcLowvHARwp/CPGeKQfw5r4jYG5WlA3LKy89pTMMO011uszapdkvwnkE7ce4bo
-         iGj5vt52IiWMr5KaJt11VGdi15yrXQqkcWSd3D7CZaqecjfLMw0LvRNYTHxkJWhUJhDR
-         HsGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723788533; x=1724393333;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6vEqT34sXONcN+h8n7GFxvTvC61LkDaA17QipPFMyO8=;
-        b=WGXTAwvVs/6jPQGQvrOQdCaSMaNkljLkd01hehWdZZpCJlm0ALkC0PlCuHFK0pg4fD
-         gtJpjQGfhDzmxRxzYGlXY9fZzqrP//Mr/SCXEfBx0pX90k1VXe3W6LASF3/I8XQC1zKM
-         hA+UpzGT9V6/dkuXCK3CVdyO6lo0KYx54o7UAJeADDZ15DMHt1y+11Q+Oj9tNu5gu3Pl
-         teKW/wLdWHAdUVLCZZ8qmO7daqep778Ictqu9bfT31+ACH9LTiigkYWY8yO6DUTIAdBF
-         eiw5tn7pcx9ZrfcrCgHKqDJasewAbR/+k02aoxhxhpmdyT73TC5dYlPkGcBYs2D629DX
-         SwXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUP/3EUDY5r3UhbOcRzqrw/AE0qTdLHZpsBsnDtghSvrtL1uKeoHCN6lSQI+PHEClTxw1qlTznj6wLJa+anqnp/eQEirwI0zm4ZEFf2WdamGI2PyCkcPcmPdtQXa4udyxTFrFDFUnlacg==
-X-Gm-Message-State: AOJu0YzETCMz+EW2Su5xIBIp3aO7ylgLq+dlYaMhgo/JPu4fAByN1rlc
-	S9Q1G5Uw1kMh6ncq+VJ1y6UdoFmuDWNis2dZGSH/ODr2PI2R9vdkay3dfqjcpDc7gQCaAOwYbTO
-	Nb3eXLgpBXhjNfxVrrEkG6kLXsUQ=
-X-Google-Smtp-Source: AGHT+IHl+FkKq7UakatGyPIPNGjN/fraqzL1pp3fdrre1Wa3ZdQzIeS27HHAZuZLNJp/aMExskiiQtJoa6jken3/ZIs=
-X-Received: by 2002:a05:690c:6482:b0:6af:6762:eba1 with SMTP id
- 00721157ae682-6b1b91bcc62mr20634577b3.20.1723788533419; Thu, 15 Aug 2024
- 23:08:53 -0700 (PDT)
+	s=arc-20240116; t=1723788621; c=relaxed/simple;
+	bh=WCZ0VPZmzft7dgXDPQZ/7MWqy5F2cmcms4XEO5DF0Ag=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iemjkgLgOd8Bbuvgcdx2jPwfMsZYJd0tj7C2CQEqwqWQGUDHuMB5mw8sIiYQt/o5ZjMLlcFkC8QKCh7e04eMH7BGOCmYyANbjUx9OzoyvGEa03WUmX6bPAdOuZ0CowxYYv7G5z/tPceaQ19O3/dHaQpQteanC2uD/7t88aAQxLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com; spf=pass smtp.mailfrom=motor-comm.com; arc=none smtp.client-ip=115.124.28.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motor-comm.com
+Received: from ubuntu.localdomain(mailfrom:Frank.Sae@motor-comm.com fp:SMTPD_---.YtTOKJz_1723788598)
+          by smtp.aliyun-inc.com;
+          Fri, 16 Aug 2024 14:10:11 +0800
+From: Frank Sae <Frank.Sae@motor-comm.com>
+To: Frank.Sae@motor-comm.com,
+	andrew@lunn.ch,
+	hkallweit1@gmail.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux@armlinux.org.uk
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yuanlai.cui@motor-comm.com,
+	hua.sun@motor-comm.com,
+	xiaoyong.li@motor-comm.com,
+	suting.hu@motor-comm.com,
+	jie.han@motor-comm.com
+Subject: [PATCH net-next v2 0/2] Add driver for Motorcomm yt8821 2.5G ethernet phy
+Date: Thu, 15 Aug 2024 23:09:53 -0700
+Message-Id: <20240816060955.47076-1-Frank.Sae@motor-comm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zrog4DYXrirhJE7P@debian.local> <yq1ikw1qg49.fsf@ca-mkp.ca.oracle.com>
-In-Reply-To: <yq1ikw1qg49.fsf@ca-mkp.ca.oracle.com>
-From: Chris Bainbridge <chris.bainbridge@gmail.com>
-Date: Fri, 16 Aug 2024 07:08:42 +0100
-Message-ID: <CAP-bSRYC6sGJMRXYbHDKwgN9ve15hccw_HK-7Mdd9c70788RvA@mail.gmail.com>
-Subject: Re: [REGRESSION] critical target error, bisected
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: fengli@smartx.com, hch@lst.de, axboe@kernel.dk, linux-scsi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 16 Aug 2024 at 04:56, Martin K. Petersen
-<martin.petersen@oracle.com> wrote:
-> I would appreciate if you could test the following patch.
+yt8521 and yt8531s as Gigabit transiver use bit15:14(bit9 reserved default
+0) as phy speed mask, yt8821 as 2.5G transiver uses bit9 bit15:14 as phy
+speed mask.
 
-Works for me.
+Be compatible to yt8821, reform phy speed mask and phy speed macro.
 
-Tested-by: Chris Bainbridge <chris.bainbridge@gmail.com>
+Based on update above, add yt8821 2.5G phy driver.
+
+Frank Sae (2):
+  net: phy: Optimize phy speed mask to be compatible to yt8821
+  net: phy: Add driver for Motorcomm yt8821 2.5G ethernet phy
+
+ drivers/net/phy/motorcomm.c | 693 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 681 insertions(+), 12 deletions(-)
+
+-- 
+2.25.1
+
 
