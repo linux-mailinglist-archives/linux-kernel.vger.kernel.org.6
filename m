@@ -1,72 +1,71 @@
-Return-Path: <linux-kernel+bounces-289656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C65C99548D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:33:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 551429548D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:33:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23F8CB23CB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:33:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88CDC1C22782
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20921BBBF1;
-	Fri, 16 Aug 2024 12:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA7B1AC425;
+	Fri, 16 Aug 2024 12:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jzXEh/oC"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RxoY7XtA"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8F41B86F5
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 12:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C6B1B8EA8
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 12:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723811529; cv=none; b=BOzQSdm1GuLVgyAm/VS3VFvpbakKWWmyywqCK5CCZEVd7Onfq/yHQq8GCiIdLiq35t8m5hpBsXG73tnlxiCajOsVlGNvlH4wowMQQEiWiECIRMKdyeT7LUV2vi9HLCo5J9MUIFIKshx/jnpLb+usYyZI1upBqHKe5dQiWrvZdlQ=
+	t=1723811530; cv=none; b=C7CbGPRH8y665I15J1deorPWQ65N9FK9GR1CsdD3P/UUhcaLn0xl3QWbRy/fNGDDKsvLIiwAAVQmu0v+iimP2/ihceku0VA70O27KzUjdnP1NzzbieoMembX40ue2RYDGgKapGg5T61YVOCl7U1XpO278EjlppyVvoaC6QaqrmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723811529; c=relaxed/simple;
-	bh=/us7e90fGibDZ7iRi3+d7f5fxC4Ub6dpRW24VMBvk0w=;
+	s=arc-20240116; t=1723811530; c=relaxed/simple;
+	bh=EucDhSv61CuFfP11sjE8SXVP+6M/bqH4uWFxl+dPrlw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pSFx+9tb+4JBJHP1SfgwBCDTjrIUEXErejOpuLbEqhTkw/Nb3ccXROcuTFcwaUqUUkqrAIAm/lXkRJX4Sb/Txk/RL5IhESEzL2pXP2IRX1z/LppOGefU66Pz1F577SJPzGCnu42ErrU0YAFdwEN7Y26ivPgmWWLNs8oFN1uF28A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jzXEh/oC; arc=none smtp.client-ip=209.85.219.47
+	 In-Reply-To:To:Cc; b=GCBH+rQFa89ZX+tuxWwsORDprs2hA9v0Jhbry8yQdo8nJ87uAg3CMs1khC8rbiMklFp+FhgSHo+eZLvdFUZ9mKAYovLwxiSTkO+1kgShWomrTxPy9G0qrmDjMpJ2oUyBI4vFYoL5TwMtfbFNxVMTqZfHBo6NIEuxSzn0D6kk/xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RxoY7XtA; arc=none smtp.client-ip=209.85.219.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6b78c980981so9612496d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 05:32:07 -0700 (PDT)
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6bf6beda038so11430396d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 05:32:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google; t=1723811527; x=1724416327; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mnNFu46JmywYP9gLg0BBlkiX4LJAIV8Vvr47+Nzo0m8=;
-        b=jzXEh/oCCzUXUp2+i/7PzG2iVdVqJP0FXXpnjDK3t3X5gVpccDMF+Gi6ODZHuvtVKj
-         6i0vXiFBxeWoOK7jtCEJQmjLxkR4MXWTqNHMbL656EidFKXKIpJxHDirDXtD9wyJzdj0
-         iiFMKoYRR31+f44X27hbzdx21b0SZintQjW/o=
+        bh=M3LNSQjxs6knu07oTqqXD2vtqpOl0khzecMqHctA770=;
+        b=RxoY7XtApnJKWlHkPGcL5/0zb29zp/BcEtSQnI1OwybBUIi3FPhv5NY31knAw6AMSg
+         TUNyw9wd+iMR65blqSWmSxe4PC4d8tZjQaGHbgcXB3InmDAQoDNKA06GdEY0QqyAAKuK
+         0iWJIG9tJPQjLmaHr6M96GWqX86ERko0wY8HI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1723811527; x=1724416327;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mnNFu46JmywYP9gLg0BBlkiX4LJAIV8Vvr47+Nzo0m8=;
-        b=pziyGZ+6BA8bQPubVcsb3HtiJk7I28oxhNHdaK/A78eFiV2XnXR+4grNNDwLqae71s
-         nHiHRZ2yOH9BCFT7iMBFVp7Yl7iREsjuBjm1FkPOicbszVdyEOhvTLzlIKqNWHh8hbUC
-         V1Wrjq/qF1A8gdnPmaNu2DiuQoltANjv9v6RWZZVAWk7EHDeF8/GsdS8tD8Ci8XSy7TZ
-         4oHAuI52NWBmWyAXoyxkgKAVkhsCRSz024UtyHyR5DfaYgplE45c3a/z0yV1cWuMQW/L
-         jOfKw+3SPyH8vJDsCMhV2psicm1zp2dq1H5PfAg44eLuKHTT50vz9Mi72dzzMR5AuPli
-         MmpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtHU8L1ZhYUiJW4MTqK4TYAQi6lTtYfvtW6XZJYB4JEVfeTH4+gCnAlF3hbDy527UzJn4J3vc1dwOBRHM1+iVZFv7ONQfHsdflBtO3
-X-Gm-Message-State: AOJu0YyGY0WBVttEHcih2d6KXcUPdzA/0q+1+COI7B5YdVwFxKOr7Ds9
-	Rzr4eIBNO6J6U/kCxK5dmHTVmrNe6MwkH/FaC6NfksU+uVFQMId+QPXJ86LGMw==
-X-Google-Smtp-Source: AGHT+IEXSYQZCNIKPB9LFR6rX4AtZ6JNPVrFndATYre1U0wDC52xZRkYWs1UJ+Wy8jMyb2SytEJSUQ==
-X-Received: by 2002:a05:6214:a67:b0:6bf:7f5b:1d3 with SMTP id 6a1803df08f44-6bf7f5b0255mr17407566d6.16.1723811526538;
-        Fri, 16 Aug 2024 05:32:06 -0700 (PDT)
+        bh=M3LNSQjxs6knu07oTqqXD2vtqpOl0khzecMqHctA770=;
+        b=JUR5vGdmYfaABFoH+W/x4vyJUE06L/Mg72my1tTYU222PMx0E6Y0tvhhwZcBQxvhoj
+         NSDYgqgwNwvRlugIPIUPqFA7avRbxq3tud5cZDLjKn0y7+Nb3Y2q3hyr8d6ZRd8TF3DA
+         InPfbd4vKIK7T84fFbTMutbaExI+tyxfAjyPYj2bckHiI/4rAI+ymfQSoOS8Puuf7bUK
+         dTJaV4fM0JU/gGO84y4iQuZwV/re0nb48zE2iLHO3FwwNf68Tdt0FhV+gsp8bDNn56TY
+         UBzvKael2y1XsRTkIlqjNWYuzpoqLLTR50M7DGLDceJ3KGJvAJNSXnhqxpTQx8Vyw5+G
+         P0Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCWaego8rGT/NJ5/IBJ7NJeq80RXzq3xNdjGgLG/nwiheDhLVittmgin3qWqZ3JFEQq+rVZ+whqNCz3sV7FhOn0qC3ULPv3bWBcSwGol
+X-Gm-Message-State: AOJu0Yyw5WXC3UM4og1ZzJJ//xVj549mO1KPQIORbUUkdShZh1jjGo83
+	h62ZnPLkBJuFudS74CJhht/MhTvdK1BdnAsWUwsnbSD4VKKPn07LcRSCDS3Txw==
+X-Google-Smtp-Source: AGHT+IHYD7aRmKGXgp+t/Ifehq3d65H0DR+M710hdZy/In2eSfy3ZYdXCjNDHAYDxXFnFLaObLyDlQ==
+X-Received: by 2002:a05:6214:3d9c:b0:6bd:83cb:1b8f with SMTP id 6a1803df08f44-6bf7ce5a411mr36042536d6.36.1723811527255;
+        Fri, 16 Aug 2024 05:32:07 -0700 (PDT)
 Received: from denia.c.googlers.com (123.178.145.34.bc.googleusercontent.com. [34.145.178.123])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fef3107sm16881426d6.121.2024.08.16.05.32.05
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fef3107sm16881426d6.121.2024.08.16.05.32.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 16 Aug 2024 05:32:06 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 16 Aug 2024 12:32:02 +0000
-Subject: [PATCH v2 4/6] media: tc358746: Move clk_prepare to its own
- function
+Date: Fri, 16 Aug 2024 12:32:03 +0000
+Subject: [PATCH v2 5/6] media: meson: vdec_1: Refactor vdec_1_stop()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240816-smatch-clock-v2-4-c63105db07e8@chromium.org>
+Message-Id: <20240816-smatch-clock-v2-5-c63105db07e8@chromium.org>
 References: <20240816-smatch-clock-v2-0-c63105db07e8@chromium.org>
 In-Reply-To: <20240816-smatch-clock-v2-0-c63105db07e8@chromium.org>
 To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
@@ -93,47 +92,63 @@ Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org,
  Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.13.0
 
-Smatch is very confused by a clk_prepare_enable() being called in an
-error-path. Fix this warning by moving the clk_prepare_enable() to its
-own function.
+Factor out all the power off logic, except the clk_disable_unprepare(),
+to a new function __vdec_1_stop().
 
-drivers/media/i2c/tc358746.c:1631 tc358746_suspend() warn: 'tc358746->refclk' from clk_prepare_enable() not released on lines: 1631.
+This allows vdec_1_start() to explicitly clean-out the clock during the
+error-path.
+
+The following smatch warning is fixed:
+drivers/staging/media/meson/vdec/vdec_1.c:239 vdec_1_start() warn: 'core->vdec_1_clk' from clk_prepare_enable() not released on lines: 239.
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/i2c/tc358746.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/staging/media/meson/vdec/vdec_1.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/i2c/tc358746.c b/drivers/media/i2c/tc358746.c
-index edf79107adc5..389582420ba7 100644
---- a/drivers/media/i2c/tc358746.c
-+++ b/drivers/media/i2c/tc358746.c
-@@ -1616,6 +1616,16 @@ static void tc358746_remove(struct i2c_client *client)
- 	pm_runtime_dont_use_autosuspend(sd->dev);
+diff --git a/drivers/staging/media/meson/vdec/vdec_1.c b/drivers/staging/media/meson/vdec/vdec_1.c
+index 3fe2de0c9331..a65cb4959446 100644
+--- a/drivers/staging/media/meson/vdec/vdec_1.c
++++ b/drivers/staging/media/meson/vdec/vdec_1.c
+@@ -129,7 +129,7 @@ static u32 vdec_1_vififo_level(struct amvdec_session *sess)
+ 	return amvdec_read_dos(core, VLD_MEM_VIFIFO_LEVEL);
  }
  
-+/*
-+ * This function has been created just to avoid a smatch warning,
-+ * please do not merge it into tc358746_suspend until you have
-+ * confirmed that it does not introduce a new warning.
-+ */
-+static void tc358746_clk_enable(struct tc358746 *tc358746)
-+{
-+	clk_prepare_enable(tc358746->refclk);
+-static int vdec_1_stop(struct amvdec_session *sess)
++static void __vdec_1_stop(struct amvdec_session *sess)
+ {
+ 	struct amvdec_core *core = sess->core;
+ 	struct amvdec_codec_ops *codec_ops = sess->fmt_out->codec_ops;
+@@ -158,10 +158,17 @@ static int vdec_1_stop(struct amvdec_session *sess)
+ 		regmap_update_bits(core->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
+ 				   GEN_PWR_VDEC_1, GEN_PWR_VDEC_1);
+ 
+-	clk_disable_unprepare(core->vdec_1_clk);
+-
+ 	if (sess->priv)
+ 		codec_ops->stop(sess);
 +}
 +
- static int tc358746_suspend(struct device *dev)
- {
- 	struct tc358746 *tc358746 = dev_get_drvdata(dev);
-@@ -1626,7 +1636,7 @@ static int tc358746_suspend(struct device *dev)
- 	err = regulator_bulk_disable(ARRAY_SIZE(tc358746_supplies),
- 				     tc358746->supplies);
- 	if (err)
--		clk_prepare_enable(tc358746->refclk);
-+		tc358746_clk_enable(tc358746);
++static int vdec_1_stop(struct amvdec_session *sess)
++{
++	struct amvdec_core *core = sess->core;
++
++	__vdec_1_stop(sess);
++
++	clk_disable_unprepare(core->vdec_1_clk);
  
- 	return err;
+ 	return 0;
  }
+@@ -235,7 +242,8 @@ static int vdec_1_start(struct amvdec_session *sess)
+ 	return 0;
+ 
+ stop:
+-	vdec_1_stop(sess);
++	__vdec_1_stop(sess);
++	clk_disable_unprepare(core->vdec_1_clk);
+ 	return ret;
+ }
+ 
 
 -- 
 2.46.0.184.g6999bdac58-goog
