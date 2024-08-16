@@ -1,129 +1,226 @@
-Return-Path: <linux-kernel+bounces-289605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48FAC954818
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:31:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E8E795481A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7A2B1F2359B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:31:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C66631F234F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB9D1A4F20;
-	Fri, 16 Aug 2024 11:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BTA1Cice"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF74198851
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 11:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A811A01AE;
+	Fri, 16 Aug 2024 11:32:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348BD143757;
+	Fri, 16 Aug 2024 11:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723807869; cv=none; b=W5ehI4N0VlzpV6ID2m/us7vanUU5SX+WzUSPlUYqtX558Lh2+kDYhDanybrICpriTRNSBrdPahRYyjUN1vATqmYO5vG5aq189ky57j3nNuLUsan9ULdaC/4IzQruX/RVEXMsNxrYWKftXcYuCPl3m8GgD+J2fHwKw4K/2f2aCiY=
+	t=1723807947; cv=none; b=RaoIhoVmXUSeFO/x0ZeYzsPmZt2IWgs4bKI8UT/zH3F7gJhAEzbULKZPPZnTZpLYj1i4GPTK+Beb9ic4pa+Sv+TSnglqlRzOYm39uPRyqNticardkUU0z26WjkMIirU4Dn1iHY42+uvx0UCmq0gpCig13LRKOE8eF5O1K0GA+WY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723807869; c=relaxed/simple;
-	bh=1bktqQayWYWtMAKqssvWuw4y7zQFT4lfZb54Csz+S70=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cfxFTORoPvLMzzFDIvPAC6zJgc8m4VqVB/if+yZHuUJ1102XW7Kz5HNkXsVIS3G0MyddeasQtWJR2sjHpZ1/08a+mynPDbJNm6HZWW+o5gi7ZwPeXZ9d+03DcbFGX/0hYuKvDGaVyOHIvhyD7qJi9C96vn3KgbdusOMPjEgOC3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BTA1Cice; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723807866;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1bktqQayWYWtMAKqssvWuw4y7zQFT4lfZb54Csz+S70=;
-	b=BTA1CicesdoeBZfvBi/GX3WIjMnlu+PPMbNr2Jh5hoPfxBS7A6n68dxdlQ4lpM1kPUzOWZ
-	rlt8P3axtssCw9b+umnHbttUsSBAaCHo+Gq8KimrWe75Egz+wxhgnCYIvd8o8blTYOacno
-	ORE7uD2OToZI7dfGNAzgG8P5K3tYwnU=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-677-Gnp3NQ1kOWSTKU-Yqi8DhQ-1; Fri, 16 Aug 2024 07:31:04 -0400
-X-MC-Unique: Gnp3NQ1kOWSTKU-Yqi8DhQ-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-37189fc2977so864404f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 04:31:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723807863; x=1724412663;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1bktqQayWYWtMAKqssvWuw4y7zQFT4lfZb54Csz+S70=;
-        b=GU6JcOUCzOYu3jNTL9Pj075xvg9h7UpVvW/76uv9qNQ3mtIytjl7I3a3a4TIHaXmtt
-         Xjb8vFKV2SzJaj4oYHuQNwST2p85WhJRk73YP8w8/aqt6DJI6bRs4VcvRnaOggeFl1ee
-         nIQKF5pYUJGINqOD8KiGuQqnf0Fgjr+k/vSlgDFykMo6ZuPg9Vd3BMsrMWw4DqdjipgD
-         jZsckV1WMUSZ40KmaDfrg/qwVrv8/cLlgGywLR6iY/Jv7nz6kSykiQmOxzZEq80fKjbc
-         p5271cZuMD8nSQNoWlbX7fh8TuF/XSlYBVKd+5PZhIxN5WJp/cvG4zHIcaugvHo36O8M
-         SSQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUzFj4t3uBD6X7vlDZKCL1ohNPQShLRbVyNAfid+U5CDpYaygDWTz9xjLNFu/AqE+nnyFnp1O0GfASoTFuNBPqd6nVxtxNdfL711uF3
-X-Gm-Message-State: AOJu0YwiS/FJp3/HYXX3j9v+B95YYMVCbJ5c/8MYKvc6HdSKQpheMqXO
-	82EzxNEsUbK2tN5tSH/0oaR7nghfKGyESMZZgAy8wArGYA81w/U/WiUSJBSjTB7WmHH2yTqAdpP
-	LLnmZaW/C7kkKBFp/r/JhIoGeblTIEssdyHXWfueU30om++Lxt+syVQUzEuftIw==
-X-Received: by 2002:a5d:5110:0:b0:34d:ae98:4e7 with SMTP id ffacd0b85a97d-3719469531fmr1542923f8f.41.1723807863422;
-        Fri, 16 Aug 2024 04:31:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGSxwNIUjnAJ8rcUcO6moPhGgsuq5H2/SGprZmmZkrEska1ZBtlsqGNAmMt0ivJktdwkOTeew==
-X-Received: by 2002:a5d:5110:0:b0:34d:ae98:4e7 with SMTP id ffacd0b85a97d-3719469531fmr1542903f8f.41.1723807862844;
-        Fri, 16 Aug 2024 04:31:02 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded7dae0sm74202835e9.44.2024.08.16.04.31.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 04:31:02 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id DD75114AE084; Fri, 16 Aug 2024 13:31:01 +0200 (CEST)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, Johannes Berg
- <johannes@sipsolutions.net>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Michael Braun <michael-dev@fami-braun.de>
-Cc: Harsh Kumar Bijlani <hbijlani@qti.qualcomm.com>, Kalyan Tallapragada
- <ktallapr@qti.qualcomm.com>, Jyothi Chukkapalli
- <jchukkap@qti.qualcomm.com>, Anirban Sirkhell <anirban@qti.qualcomm.com>,
- Johannes Berg <johannes.berg@intel.com>, linux-wireless@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- ath12k@lists.infradead.org, Jeff Johnson <quic_jjohnson@quicinc.com>
-Subject: Re: [PATCH] wifi: mac80211: Fix ieee80211_convert_to_unicast() logic
-In-Reply-To: <20240815-ieee80211_convert_to_unicast-v1-1-648f0c195474@quicinc.com>
-References: <20240815-ieee80211_convert_to_unicast-v1-1-648f0c195474@quicinc.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Fri, 16 Aug 2024 13:31:01 +0200
-Message-ID: <877ccgd7re.fsf@toke.dk>
+	s=arc-20240116; t=1723807947; c=relaxed/simple;
+	bh=DcAr1LM613+w6gacouPLhNyWDh1IYyY3lg276oYgw8g=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=anMeWW3hGaxkHfsa+/oAmNnBqxzIsr+czFt7BAUqpy84duSGZCjia8oZHAXRLnoUlsbCx2naNrpvIpGNzHU2bx3DjzQfjuzAC9KcIlJ5j+7RJaBL4WSU4yPd7fijl0ORY3mcv1urZK3PaGhsMGQ8PdeuauOIyoTW6llGgFcIwsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A117143D;
+	Fri, 16 Aug 2024 04:32:50 -0700 (PDT)
+Received: from [10.163.86.101] (unknown [10.163.86.101])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 609373F73B;
+	Fri, 16 Aug 2024 04:32:13 -0700 (PDT)
+Message-ID: <c40de4d7-e37e-4d2f-bd7a-a2a5497a2419@arm.com>
+Date: Fri, 16 Aug 2024 17:01:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] mm: Retry migration earlier upon refcount mismatch
+From: Dev Jain <dev.jain@arm.com>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: akpm@linux-foundation.org, shuah@kernel.org, david@redhat.com,
+ willy@infradead.org, ryan.roberts@arm.com, anshuman.khandual@arm.com,
+ catalin.marinas@arm.com, cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com,
+ apopple@nvidia.com, osalvador@suse.de, baolin.wang@linux.alibaba.com,
+ dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
+ ioworker0@gmail.com, gshan@redhat.com, mark.rutland@arm.com,
+ kirill.shutemov@linux.intel.com, hughd@google.com, aneesh.kumar@kernel.org,
+ yang@os.amperecomputing.com, peterx@redhat.com, broonie@kernel.org,
+ mgorman@techsingularity.net, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org
+References: <20240809103129.365029-1-dev.jain@arm.com>
+ <20240809103129.365029-2-dev.jain@arm.com>
+ <87frrauwwv.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <15dbe4ac-a036-4029-ba08-e12a236f448a@arm.com>
+ <87bk1yuuzu.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <95b72817-5444-4ced-998a-1cb90f42bf49@arm.com>
+ <8734naurhm.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <9d84e4e8-ac54-4eb1-a113-3f32aea864c9@arm.com>
+ <fe76204d-4cef-4f06-a5bc-e016a513f783@arm.com>
+ <391d4f4f-e642-4c11-a36b-190874963f8a@arm.com>
+Content-Language: en-US
+In-Reply-To: <391d4f4f-e642-4c11-a36b-190874963f8a@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Jeff Johnson <quic_jjohnson@quicinc.com> writes:
 
-> The current logic in ieee80211_convert_to_unicast() uses skb_clone()
-> to obtain an skb for each individual destination of a multicast
-> frame, and then updates the destination address in the cloned skb's
-> data buffer before placing that skb on the provided queue.
+On 8/13/24 12:52, Dev Jain wrote:
 >
-> This logic is flawed since skb_clone() shares the same data buffer
-> with the original and the cloned skb, and hence each time the
-> destination address is updated, it overwrites the previous destination
-> address in this shared buffer. As a result, due to the special handing
-> of the first valid destination, all of the skbs will eventually be
-> sent to that first destination.
+> On 8/13/24 10:30, Dev Jain wrote:
+>>
+>> On 8/12/24 17:38, Dev Jain wrote:
+>>>
+>>> On 8/12/24 13:01, Huang, Ying wrote:
+>>>> Dev Jain <dev.jain@arm.com> writes:
+>>>>
+>>>>> On 8/12/24 11:45, Huang, Ying wrote:
+>>>>>> Dev Jain <dev.jain@arm.com> writes:
+>>>>>>
+>>>>>>> On 8/12/24 11:04, Huang, Ying wrote:
+>>>>>>>> Hi, Dev,
+>>>>>>>>
+>>>>>>>> Dev Jain <dev.jain@arm.com> writes:
+>>>>>>>>
+>>>>>>>>> As already being done in __migrate_folio(), wherein we backoff 
+>>>>>>>>> if the
+>>>>>>>>> folio refcount is wrong, make this check during the unmapping 
+>>>>>>>>> phase, upon
+>>>>>>>>> the failure of which, the original state of the PTEs will be 
+>>>>>>>>> restored and
+>>>>>>>>> the folio lock will be dropped via migrate_folio_undo_src(), 
+>>>>>>>>> any racing
+>>>>>>>>> thread will make progress and migration will be retried.
+>>>>>>>>>
+>>>>>>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>>>>>>>>> ---
+>>>>>>>>>     mm/migrate.c | 9 +++++++++
+>>>>>>>>>     1 file changed, 9 insertions(+)
+>>>>>>>>>
+>>>>>>>>> diff --git a/mm/migrate.c b/mm/migrate.c
+>>>>>>>>> index e7296c0fb5d5..477acf996951 100644
+>>>>>>>>> --- a/mm/migrate.c
+>>>>>>>>> +++ b/mm/migrate.c
+>>>>>>>>> @@ -1250,6 +1250,15 @@ static int 
+>>>>>>>>> migrate_folio_unmap(new_folio_t get_new_folio,
+>>>>>>>>>         }
+>>>>>>>>>           if (!folio_mapped(src)) {
+>>>>>>>>> +        /*
+>>>>>>>>> +         * Someone may have changed the refcount and maybe 
+>>>>>>>>> sleeping
+>>>>>>>>> +         * on the folio lock. In case of refcount mismatch, 
+>>>>>>>>> bail out,
+>>>>>>>>> +         * let the system make progress and retry.
+>>>>>>>>> +         */
+>>>>>>>>> +        struct address_space *mapping = folio_mapping(src);
+>>>>>>>>> +
+>>>>>>>>> +        if (folio_ref_count(src) != 
+>>>>>>>>> folio_expected_refs(mapping, src))
+>>>>>>>>> +            goto out;
+>>>>>>>>>             __migrate_folio_record(dst, old_page_state, 
+>>>>>>>>> anon_vma);
+>>>>>>>>>             return MIGRATEPAGE_UNMAP;
+>>>>>>>>>         }
+>>>>>>>> Do you have some test results for this?  For example, after 
+>>>>>>>> applying the
+>>>>>>>> patch, the migration success rate increased XX%, etc.
+>>>>>>> I'll get back to you on this.
+>>>>>>>
+>>>>>>>> My understanding for this issue is that the migration success 
+>>>>>>>> rate can
+>>>>>>>> increase if we undo all changes before retrying. This is the 
+>>>>>>>> current
+>>>>>>>> behavior for sync migration, but not for async migration.  If 
+>>>>>>>> so, we can
+>>>>>>>> use migrate_pages_sync() for async migration too to increase 
+>>>>>>>> success
+>>>>>>>> rate?  Of course, we need to change the function name and 
+>>>>>>>> comments.
+>>>>>>> As per my understanding, this is not the current behaviour for sync
+>>>>>>> migration. After successful unmapping, we fail in 
+>>>>>>> migrate_folio_move()
+>>>>>>> with -EAGAIN, we do not call undo src+dst (rendering the loop 
+>>>>>>> around
+>>>>>>> migrate_folio_move() futile), we do not push the failed folio 
+>>>>>>> onto the
+>>>>>>> ret_folios list, therefore, in _sync(), _batch() is never tried 
+>>>>>>> again.
+>>>>>> In migrate_pages_sync(), migrate_pages_batch(,MIGRATE_ASYNC) will be
+>>>>>> called first, if failed, the folio will be restored to the original
+>>>>>> state (unlocked).  Then migrate_pages_batch(,_SYNC*) is called 
+>>>>>> again.
+>>>>>> So, we unlock once.  If it's necessary, we can unlock more times via
+>>>>>> another level of loop.
+>>>>> Yes, that's my point. We need to undo src+dst and retry.
+>>>> For sync migration, we undo src+dst and retry now, but only once.  You
+>>>> have shown that more retrying increases success rate.
+>>>>
+>>>>> We will have
+>>>>> to decide where we want this retrying to be; do we want to change the
+>>>>> return value, end up in the while loop wrapped around _sync(), and 
+>>>>> retry
+>>>>> there by adding another level of loop, or do we want to make use 
+>>>>> of the
+>>>>> existing retry loops, one of which is wrapped around _unmap(); the 
+>>>>> latter
+>>>>> is my approach. The utility I see for the former approach is that, 
+>>>>> in case
+>>>>> of a large number of page migrations (which should usually be the 
+>>>>> case),
+>>>>> we are giving more time for the folio to get retried. The latter 
+>>>>> does not
+>>>>> give much time and discards the folio if it did not succeed under 
+>>>>> 7 times.
+>>>> Because it's a race, I guess that most folios will be migrated
+>>>> successfully in the first pass.
+>>>>
+>>>> My concerns of your method are that it deal with just one case
+>>>> specially.  While retrying after undoing all appears more general.
+>>>
+>>>
+>>> Makes sense. Also, please ignore my "change the return value"
+>>> thing, I got confused between unmap_folios, ret_folios, etc.
+>>> Now I think I understood what the lists are doing :)
+>>>
+>>>>
+>>>> If it's really important to retry after undoing all, we can either
+>>>> convert two retying loops of migrate_pages_batch() into one loop, or
+>>>> remove retry loop in migrate_pages_batch() and retry in its caller
+>>>> instead.
+>>>
+>>> And if I implemented this correctly, the following makes the test
+>>> pass always:
+>>> https://www.codedump.xyz/diff/Zrn7EdxzNXmXyNXe
+>>
+>>
+>> Okay, I did mess up with the implementation, leading to a false
+>> positive. Let me try again :)
+>
+>
+> Hopefully this should do the job:
+> https://www.codedump.xyz/diff/ZrsIV8JSOPYx5V_u
+>
+> But the result is worse than the patch proposed; I rarely hit
+> a 3 digit number of successes of move_pages(). But, on a
+> base kernel without any changes, when I apply David's
+> suggestion to change the test, if I choose 7 as the number
+> of retries (= NR_MAX_MIGRATE_SYNC_RETRY) in the test, I
+> can touch even 4 digits. I am puzzled.
+> We can also try merging the for loops of unmap and move...
 
-Did you actually observe this happen in practice? ieee80211_change_da()
-does an skb_ensure_writable() check on the Ethernet header before
-writing it, so AFAICT it does not, in fact, overwrite the data of the
-original frame.
 
-> Fix this issue by using skb_copy() instead of skb_clone(). This will
-> result in a duplicate data buffer being allocated for each
-> destination, and hence each skb will be transmitted to the proper
-> destination.
+If people are okay with this change, I guess I can send it as
+a v2? I concur with your assessment that my initial approach
+is solving a specific case; the above approach does give me
+a slight improvement on arm64 and should be an improvement
+in general, since it makes sense to defer retrying the failed folio
+as much as we can.
 
-Cf the above, it seems this change will just lead to more needless
-copying.
-
--Toke
-
+>
 
