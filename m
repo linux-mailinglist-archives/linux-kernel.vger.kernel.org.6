@@ -1,387 +1,173 @@
-Return-Path: <linux-kernel+bounces-289718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1409954AF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:22:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64DFE954B0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:25:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 247851F2385D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:22:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2F4E1F21DC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:25:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654FA1BB69D;
-	Fri, 16 Aug 2024 13:21:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93A1198851
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 13:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723814518; cv=none; b=qjSmJjQIJDFfUQ4Bf7cWKyF1yHb5ks9B4UPi40y6F9N7PKgxMRysat2kEHcPS7GVZtAfgmYJEi00lofuNpVz2p5OyJbxo3EWH0TtDNVg1mMBjuDBUnGXVC00zCapAxwlb+ZpsIFmmIY5joAHDErBhXCwPGaPSLN1tOEW+IDJVls=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723814518; c=relaxed/simple;
-	bh=+ur4AjLDWgHgxkpsDSRqiaJ4I71IFqXM08mwjYc7XVM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AYMStiqm+aDJhyaUItlAGBcWrqq0JDy6dIgQCuMhQ5JYher2RZ9AocS+W7CUrxGF+NrpGze38ijcYrfl0BhgUn4OsProPiOMw9YWynoxWwMlOEED/6EvW/0Pwg4c89Jh46hFYNnvKO5n3+VIkZNcXBRZCRCkXy/buP9gSGjD/zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1F6B143D;
-	Fri, 16 Aug 2024 06:22:20 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 22CD63F58B;
-	Fri, 16 Aug 2024 06:21:54 -0700 (PDT)
-Message-ID: <ae674391-c8b1-47f9-b92f-748bf376b4a5@arm.com>
-Date: Fri, 16 Aug 2024 14:21:52 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC821BB694;
+	Fri, 16 Aug 2024 13:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="foCai1ZX"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazolkn19012037.outbound.protection.outlook.com [52.103.32.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9D41991AA;
+	Fri, 16 Aug 2024 13:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.32.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723814695; cv=fail; b=FC0KkvkcnkoTwUZEKzg0ZoTw3nVBnB2gpT329LsUftm/DxfNtOokZuhz84ONvdNLNTYSstLBN/XhzJwQ0gc+JXw24gJq/i2pi2iMnIJruk1qcPiMKgffRXcZ7oVVeonQCQSEodEIDzR8Z+HOrnZMEg1RFejipokzio+wNa/YIHU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723814695; c=relaxed/simple;
+	bh=DIPaif9KOnQCMu4st9jInd6mAz04X2wRYi3ybIXxK8s=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=MkSFU/rZDI7qNkxmt1Vg6UvggcwQKwwKKHDufosp2Ug2OjYHZ8Rd/6erZW6V7gcXoGzGG3P2fUWJnrdzqfTRtbPM3oMDsKFv6TkGEKuCyWjHZ/5ZcnceXQFoj3H5fw5fLVz9rXnfZPvDUtIDMiBalE5QHvtLd7sKGoXZL0cfQFU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=foCai1ZX; arc=fail smtp.client-ip=52.103.32.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dCcD+7rSSWKeHjypyw+JLYcqTa5DKpSpggDu/6ZAmwEChGgb1/M4z2uk0wkn5PrWZhiOINSZqjxipQcYtUKDmhGaUC6yxDOdxG/ckptfhyECYivh121T8sgYLNjdiHjixalBIRooCOI8iRHtcuXPTWqpWmNtqKHUuPpnXGTTQvFcexhbqvcFvS0e9Gv5UcCfZ3DVICPiDOyA4yrxPSQSbZJpSw5sExs7/kWiHb/ZEIeIdRJIb3G/DQ/tQYI3Qv+P414b9XXzEy/MFKJujqxBLeleOUtktTc1sqP9y8ethOCxfQ1R9tL9pdrARUkonkHlxxqHrdMftdwLRzvu3bvEmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=j/XQ47pUxDZdsoP4M7Icy3OjxlBgUE7ZciSA7rr6XPQ=;
+ b=Kru/YLk8mZPmlXYBxz94KdarraMv0D1fr9quYZr+e5MsL/2gT8YkP7rbOYliRXqAiM4bX2Rk1/kCWAr7MLmilv4DkNEIbHU7HyP8QIo+6/zQaFb5WFIwabLhbVQ4mdKlj/WdgYRwVcYRlfZ9LXYDPVlOorMAkxciig1eO2JghQm9WNVNDPR/Cs9eD+DVfUKqTtsXLwY8bEWzgRtjyMbL7hfKqwuU5UW8T5WF99FFz+Ebf2bDNpsERCEztOHpne3PqlGmSVov/VZl2A4pmbIvhzhObsd0JzezTWSutPT8MQCiGcM/kZ9v2LOgXtI9zf7lAD15lqwfpudDG8TRn+737w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=j/XQ47pUxDZdsoP4M7Icy3OjxlBgUE7ZciSA7rr6XPQ=;
+ b=foCai1ZXvnWv/LZX3NVSIj0CGt7THC9xrZ6pcgf9jP4IeFMorVlkJ08TPxnZZ3/+Ti7iwNX4d/bEAjy8cWaEZvKXbRG6hCemB3I4bHYESWlOPsum36enIOleBkJSDZkyPDQuasYfY7TiZyUU8p8IbSyf006OCELPS0YXT98Ql99sgBnm7rcOI3kKQ4NllcYjH81G3aXwaq8YGGhQ6B6Jw6IoTMDWbM0+dTOA9af3h9P5XxeGDz+TUqQcKV+FN3Ynta19GgkORdNYaMsOURH9wBIkOzyKkWWKInm01rsteu1T0lXsa9QvgExSpafpmVVWWR4w6FV2pCw4Wnn6UxOixg==
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com (2603:10a6:20b:e4::10)
+ by PA6PR03MB10532.eurprd03.prod.outlook.com (2603:10a6:102:3d9::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Fri, 16 Aug
+ 2024 13:24:51 +0000
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7]) by AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7%6]) with mapi id 15.20.7875.016; Fri, 16 Aug 2024
+ 13:24:50 +0000
+From: Juntong Deng <juntong.deng@outlook.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next 1/2] bpf: Relax KF_ACQUIRE kfuncs strict type matching constraint on non-zero offset pointers
+Date: Fri, 16 Aug 2024 14:23:17 +0100
+Message-ID:
+ <AM6PR03MB584837A72DB98E45AE595A9799812@AM6PR03MB5848.eurprd03.prod.outlook.com>
+X-Mailer: git-send-email 2.39.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [wyO3448nLk3qM8VrpKpIF1KMGgHcIb9n]
+X-ClientProxiedBy: SG2PR04CA0188.apcprd04.prod.outlook.com
+ (2603:1096:4:14::26) To AM6PR03MB5848.eurprd03.prod.outlook.com
+ (2603:10a6:20b:e4::10)
+X-Microsoft-Original-Message-ID:
+ <20240816132317.87475-1-juntong.deng@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] perf/arm-cmn: Refactor node ID handling. Again.
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: will@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, ilkka@os.amperecomputing.com
-References: <cover.1723229941.git.robin.murphy@arm.com>
- <998064aa2bdb0e39f91b4f1fea2f428689978ea9.1723229941.git.robin.murphy@arm.com>
- <Zr8c-eL1rDFDG7_O@J2N7QTR9R3> <14686473-de4a-4d43-a3d1-0df750662ca8@arm.com>
- <Zr9J1YfnPFfmS6jn@J2N7QTR9R3>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <Zr9J1YfnPFfmS6jn@J2N7QTR9R3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM6PR03MB5848:EE_|PA6PR03MB10532:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8a5b9045-dbb0-49a8-67b6-08dcbdf6cd96
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|8060799006|461199028|15080799003|19110799003|5072599009|440099028|3412199025;
+X-Microsoft-Antispam-Message-Info:
+	f9ehTovk8rXCQOg89CjJ7NcO9iiW6fLRwOqA03ajZq10XQy0p6fk8aqy6lVrnvteajhqb41z2vQKM33fymDxfJfJ4cT+o9//3qiXfv96givuIeY1u6/Js979Vn8PWmAK7DrtWGj0wLso9Gwo30TPpAtCSRPbF6oMJ9LbKxezPDkkJexcaRAh75LYppAFTXWiY5ytBkIS+6wIPrqtVaGrCLMOE6Ys6ujCql/rLYQ45+mqav9hNgc6SyUC/IXFj3HKVfdHwhrfuR9X7dP5v+OMhSzbzLyhVT7rOImvgKSFgQjl5B9+vj/29AStMNuSsKkl6NnRw+pkMc7JGIXef/bMZPObgxh1ks1M64jBLnaJfV6NQ3/3Uwq6+KClvouYVl2EDFGmJURgNkabVp8m/YpjOvsRaZbfwsBiwKR2OVcFJO4z/XroHs7KsUrQsiDi28ErEbZoyj2VOyO7g+LTIyt7ZQH8Kzhzig+MLSrQJD1LoafZQAOrZ0rPqGL579/uIRVkrDEdH1FXGJmDYxPgzU1oL3UKdgqMgBUrYdl6pCpfnC6LxPF0aOpoSTihIrFLAIS68Brbs2cGFDxN7d2F1UTShWLLwmvmQ0ohWdAu4b64KcL3dPiehkPx9vH6ph9Q4WPqNxLH6Zjgv0OHyvTtl1UQW5CDjyJL80bgsRvStcJcmh2jqXVbh6Qi7zYMj4BsAZrTO+D3qaiuMU+RalxMIhrFeMpOOadgJFGCh1KavHHeiVHooyIihC+BoswcfFcYJvmE
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?8KeGSgEGp8ZQaZsSThId6HNqhMza6cco1+ap7bK3JDxoZi3XWazVfSjCkNmz?=
+ =?us-ascii?Q?mcnYsNa+p0QocZS2NzTiSz2XKi/rHU3J+chME0doYc8CwSmokrE90X66BAXr?=
+ =?us-ascii?Q?qVdnkU9I6WJtwrMu06L1ktLdXv4Y/trkS4XapSL4uvExUTuIif+fnAxQ5Xnt?=
+ =?us-ascii?Q?rt5Jip01qwtc7E3C0j1CRVClfRT2Y13TU8juGUplNrFMO6dTRXo4vuJm6HVe?=
+ =?us-ascii?Q?Nz0/oPXtZsmbES6JizlV6nRajlx+Bme+ybqc3sHRFTFrPAbuJqpJuprpXs9H?=
+ =?us-ascii?Q?NK+CxTLGYETjhmhS54dGcFl6stp0n/2WW3wQw2dkoJ18i2h8hi3ikpEZyq+a?=
+ =?us-ascii?Q?WIgO9RjUK4kO9WEsxo5iFmcDKiliViO2ywFgraBs+osAEmtI9QK8IbXZl0rQ?=
+ =?us-ascii?Q?EF5c0GeVGAwihGJWXXvtAl07cFyW3ckH47rLU38ar/EL4LrttZT9IsBk6OLo?=
+ =?us-ascii?Q?yawgmn1v9gFZayMfjtGk5WYiHP8bdf3+2+cseiw8AuS7ZhWND3MLE/hUrhJF?=
+ =?us-ascii?Q?Ioh/PGTEqmjrhUu1L5nESCoETezB46CPY0odphmg9uoTdL+i645209srFlOl?=
+ =?us-ascii?Q?DAROcmA2TpxOeM6C8Z5PuiAGg4ZkiJTUUJbC8Na/IbzttZQ5/vrQtkGD2m70?=
+ =?us-ascii?Q?CdoILKpa6U0/rX3FYD7z+Nvb0LW61Y1z8TX9aDIJp4pJH3Shc2nw9KTjgKKe?=
+ =?us-ascii?Q?bYKkSkhULd1xSTson/HAvoTio1yh74e6QCIvD1Q+1ixj3y5BrSH3rYdAY9ys?=
+ =?us-ascii?Q?aCBvtEUsc9CWuyRfbXvcO0DEgRv2KmnI5r8BfaBKuxxFeeK+QEQp+8XOZHxZ?=
+ =?us-ascii?Q?7p8LmazBZ5fcF3088EZErwlc5UHqXCD6vZ0Y+bfYY6IHvUPnHDbC+Hk3Cv8I?=
+ =?us-ascii?Q?5cWqzwkSw8miNWN43PoSPrqcSDkymM5c1I91Py1h+M5cRPPIP1jaBYdrqTuD?=
+ =?us-ascii?Q?nfupcD2gpLYtIhP9Xhu4WODhmRyiR0aXBHdCxegB+X0Lh0NxUx/eG4+TVJvu?=
+ =?us-ascii?Q?5dBL6GgKLp48H46ONb9MmNXPK7K8zMJ6ru08QtGXn7FRyDqCFI+Dfr5i2syw?=
+ =?us-ascii?Q?EetvunsexT41WUaWDgb1jtV9sxBiKadnXUWw5BG/WrWWwuxlEm7TcGLqr4YN?=
+ =?us-ascii?Q?ThG0q5TKSMEwTWps4U2lON1m+W6OQClYPqApW0/+6HRFmL/yIaL30p1agfBZ?=
+ =?us-ascii?Q?7cl8z0ryy8o1nMu2Hlqjvd4f39Fjt29BLyjOSTHytbbppspjfmpdES1UDaQ8?=
+ =?us-ascii?Q?oVl2Ys3XaVgk/+c2g6ak?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a5b9045-dbb0-49a8-67b6-08dcbdf6cd96
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5848.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2024 13:24:50.6718
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA6PR03MB10532
 
-On 16/08/2024 1:45 pm, Mark Rutland wrote:
-> On Fri, Aug 16, 2024 at 12:56:48PM +0100, Robin Murphy wrote:
->> On 2024-08-16 10:33 am, Mark Rutland wrote:
->>> Hi Robin,
->>>
->>> On Fri, Aug 09, 2024 at 08:15:40PM +0100, Robin Murphy wrote:
->>>> It transpires that despite the explicit example to the contrary in the
->>>> CMN-700 TRM, the "extra device ports" config is in fact a per-XP thing
->>>> rather than a global one. To that end, rework node IDs yet again to
->>>> carry around the additional data necessary to decode them properly. At
->>>> this point the notion of fully decomposing an ID becomes more
->>>> impractical than it's worth, so unabstracting the XY mesh coordinates
->>>> (where 2/3 users were just debug anyway) ends up leaving things a bit
->>>> simpler overall.
->>>>
->>>> Fixes: 60d1504070c2 ("perf/arm-cmn: Support new IP features")
->>>
->>> Does this fix an observable functional issue? It's difficult to tell
->>> what the impact of this is from the commit message.
->>>
->>> i.e. what is the impact:
->>>
->>> * On the CMN-700 programmers model?
->>>
->>> * As observed by a user of the PMU driver?
->>
->> Yes, there are two areas where we functionally depend on decoding the bottom
->> 3 bits of a node ID to the individual port/device numbers. One is just for
->> the debugfs nicety, but the other is in arm_cmn_event_add() for setting
->> input_sel to the appropriate event source.
-> 
-> Cool; and does treating this wrong just result in getting bad values out
-> in sysfs/perf, or is it possible that we have something like memory
-> corruption?
+Currently the non-zero offset pointer constraint for KF_TRUSTED_ARGS
+kfuncs has been relaxed in commit 605c96997d89 ("bpf: relax zero fixed
+offset constraint on KF_TRUSTED_ARGS/KF_RCU"), which means that non-zero
+offset does not affect whether a pointer is valid.
 
-Yup, it just means we'll configure the DTM to count an event input which 
-most likely doesn't exist, and thus get 0, plus debugfs looks a little 
-wonky, e.g.:
+But currently we still cannot pass non-zero offset pointers to
+KF_ACQUIRE kfuncs. This is because KF_ACQUIRE kfuncs requires strict
+type matching, but non-zero offset does not change the type of pointer,
+which causes the ebpf program to be rejected by the verifier.
 
-     1|        |
------+--------+--------
-0    | XP #0  | XP #1
-      | DTC 0  | DTC 0
-      |........|........
-   0  |  RN-I  |  RN-D
-     0|   #0   |   #0
-     1|        |
-   1  |  HN-T  |
-     0|        |
-     1|        |
-   2  |        |
-     0|   #1   |
-     1|        |
-   3  |        |
-     0|        |
-     1|        |
------+--------+--------
+This can cause some problems, one example is that bpf_skb_peek_tail
+kfunc [0] cannot be implemented by just passing in non-zero offset
+pointers.
 
-(the HN-T node type still shows up in the right place since that comes 
-directly from the per-port connect_info registers, but its corresponding 
-logical ID is looked up via the node ID, thus mistakenly decoded as 
-belonging to port 2 and output on the wrong line)
+This patch makes KF_ACQUIRE kfuncs not require strict type matching
+on non-zero offset pointers.
 
->> This was revealed once some hardware turned up with a mix of 3-port and
->> 2-port XPs, and events from a node at port 1 device 0 on a 2-porter were not
->> counting. It took a while to get to the "hang on, why does that ID end in
->> 0x4 not 0x2?" moment...
-> 
-> I see; so we were mislead by the documentation, then saw HW which
-> demonstrated this.
-> 
-> It'd be nice to say something like:
-> 
->    The CMN-700 TRM implies that the "extra device ports" configuration is
->    global to a CMN instance and the CMN PMU driver currently assumes
->    this. Unfortunately this is not correct as this configuration is
->    per-XP, and hardware exists where some XPs have extra device ports
->    while others do not.
-> 
->    The presence of extra decice ports affects how the bottom 3 bits of a
->    node ID map to individual port/device numbers, and when the driver
->    misinterprets this, it may expose incorrect information in syfs, and
->    arm_cmn_event_add() may configure input_sel incorrectly, resulting in
->    incorrect performance counter numbers.
-> 
->    Fix this by reworking node IDs to carry the additional data necessary
->    to decode them properly. At this point the notion of fully decomposing
->    an ID becomes more impractical than it's worth, so unabstracting the
->    XY mesh coordinates (where 2/3 users were just debug anyway) ends up
->    leaving things a bit simpler overall.
-> 
-> With that wording (or something very similar), this looks good to me,
-> and with that:
+[0]: https://lore.kernel.org/bpf/AM6PR03MB5848CA39CB4B7A4397D380B099B12@AM6PR03MB5848.eurprd03.prod.outlook.com/
 
-Sure, I'll spell out the implications properly - I do tend to forget 
-that the people reading these won't just be those working on the driver 
-itself, but also those assessing for backports in general.
+Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+---
+ kernel/bpf/verifier.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cheers,
-Robin.
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index ebec74c28ae3..3a14002d24a0 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -11484,7 +11484,7 @@ static int process_kf_arg_ptr_to_btf_id(struct bpf_verifier_env *env,
+ 	 * btf_struct_ids_match() to walk the struct at the 0th offset, and
+ 	 * resolve types.
+ 	 */
+-	if (is_kfunc_acquire(meta) ||
++	if ((is_kfunc_acquire(meta) && !reg->off) ||
+ 	    (is_kfunc_release(meta) && reg->ref_obj_id) ||
+ 	    btf_type_ids_nocast_alias(&env->log, reg_btf, reg_ref_id, meta->btf, ref_id))
+ 		strict_type_match = true;
+-- 
+2.39.2
 
-> 
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
-> 
-> Mark.
-> 
->>> ... and is there anything in the manual that spells out that this is a
->>> per-XP property? I'm struggling to find that in the CMN-700 TRM, as it
->>> seems to talk about "mesh configuration(s) with extra device ports".
->>
->> That's the thing, the only suggestion is where example 3-4 strongly implies
->> it's global by going out of its way to demonstrate the 3-port format on a
->> 2-port XP, despite that being the opposite of reality. (And yes, this has
->> been raised with the documentation folks as well.)
->>
->> Thansk,
->> Robin.
->>
->>>
->>> Mark.
->>>
->>>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
->>>> ---
->>>>    drivers/perf/arm-cmn.c | 94 ++++++++++++++++++------------------------
->>>>    1 file changed, 40 insertions(+), 54 deletions(-)
->>>>
->>>> diff --git a/drivers/perf/arm-cmn.c b/drivers/perf/arm-cmn.c
->>>> index c932d9d355cf..fd2122a37f22 100644
->>>> --- a/drivers/perf/arm-cmn.c
->>>> +++ b/drivers/perf/arm-cmn.c
->>>> @@ -24,14 +24,6 @@
->>>>    #define CMN_NI_NODE_ID			GENMASK_ULL(31, 16)
->>>>    #define CMN_NI_LOGICAL_ID		GENMASK_ULL(47, 32)
->>>> -#define CMN_NODEID_DEVID(reg)		((reg) & 3)
->>>> -#define CMN_NODEID_EXT_DEVID(reg)	((reg) & 1)
->>>> -#define CMN_NODEID_PID(reg)		(((reg) >> 2) & 1)
->>>> -#define CMN_NODEID_EXT_PID(reg)		(((reg) >> 1) & 3)
->>>> -#define CMN_NODEID_1x1_PID(reg)		(((reg) >> 2) & 7)
->>>> -#define CMN_NODEID_X(reg, bits)		((reg) >> (3 + (bits)))
->>>> -#define CMN_NODEID_Y(reg, bits)		(((reg) >> 3) & ((1U << (bits)) - 1))
->>>> -
->>>>    #define CMN_CHILD_INFO			0x0080
->>>>    #define CMN_CI_CHILD_COUNT		GENMASK_ULL(15, 0)
->>>>    #define CMN_CI_CHILD_PTR_OFFSET		GENMASK_ULL(31, 16)
->>>> @@ -280,8 +272,11 @@ struct arm_cmn_node {
->>>>    	u16 id, logid;
->>>>    	enum cmn_node_type type;
->>>> +	/* XP properties really, but replicated to children for convenience */
->>>>    	u8 dtm;
->>>>    	s8 dtc;
->>>> +	u8 portid_bits:4;
->>>> +	u8 deviceid_bits:4;
->>>>    	/* DN/HN-F/CXHA */
->>>>    	struct {
->>>>    		u8 val : 4;
->>>> @@ -357,49 +352,33 @@ struct arm_cmn {
->>>>    static int arm_cmn_hp_state;
->>>>    struct arm_cmn_nodeid {
->>>> -	u8 x;
->>>> -	u8 y;
->>>>    	u8 port;
->>>>    	u8 dev;
->>>>    };
->>>>    static int arm_cmn_xyidbits(const struct arm_cmn *cmn)
->>>>    {
->>>> -	return fls((cmn->mesh_x - 1) | (cmn->mesh_y - 1) | 2);
->>>> +	return fls((cmn->mesh_x - 1) | (cmn->mesh_y - 1));
->>>>    }
->>>> -static struct arm_cmn_nodeid arm_cmn_nid(const struct arm_cmn *cmn, u16 id)
->>>> +static struct arm_cmn_nodeid arm_cmn_nid(const struct arm_cmn_node *dn)
->>>>    {
->>>>    	struct arm_cmn_nodeid nid;
->>>> -	if (cmn->num_xps == 1) {
->>>> -		nid.x = 0;
->>>> -		nid.y = 0;
->>>> -		nid.port = CMN_NODEID_1x1_PID(id);
->>>> -		nid.dev = CMN_NODEID_DEVID(id);
->>>> -	} else {
->>>> -		int bits = arm_cmn_xyidbits(cmn);
->>>> -
->>>> -		nid.x = CMN_NODEID_X(id, bits);
->>>> -		nid.y = CMN_NODEID_Y(id, bits);
->>>> -		if (cmn->ports_used & 0xc) {
->>>> -			nid.port = CMN_NODEID_EXT_PID(id);
->>>> -			nid.dev = CMN_NODEID_EXT_DEVID(id);
->>>> -		} else {
->>>> -			nid.port = CMN_NODEID_PID(id);
->>>> -			nid.dev = CMN_NODEID_DEVID(id);
->>>> -		}
->>>> -	}
->>>> +	nid.dev = dn->id & ((1U << dn->deviceid_bits) - 1);
->>>> +	nid.port = (dn->id >> dn->deviceid_bits) & ((1U << dn->portid_bits) - 1);
->>>>    	return nid;
->>>>    }
->>>>    static struct arm_cmn_node *arm_cmn_node_to_xp(const struct arm_cmn *cmn,
->>>>    					       const struct arm_cmn_node *dn)
->>>>    {
->>>> -	struct arm_cmn_nodeid nid = arm_cmn_nid(cmn, dn->id);
->>>> -	int xp_idx = cmn->mesh_x * nid.y + nid.x;
->>>> +	int id = dn->id >> (dn->portid_bits + dn->deviceid_bits);
->>>> +	int bits = arm_cmn_xyidbits(cmn);
->>>> +	int x = id > bits;
->>>> +	int y = id & ((1U << bits) - 1);
->>>> -	return cmn->xps + xp_idx;
->>>> +	return cmn->xps + cmn->mesh_x * y + x;
->>>>    }
->>>>    static struct arm_cmn_node *arm_cmn_node(const struct arm_cmn *cmn,
->>>>    					 enum cmn_node_type type)
->>>> @@ -485,13 +464,13 @@ static const char *arm_cmn_device_type(u8 type)
->>>>    	}
->>>>    }
->>>> -static void arm_cmn_show_logid(struct seq_file *s, int x, int y, int p, int d)
->>>> +static void arm_cmn_show_logid(struct seq_file *s, const struct arm_cmn_node *xp, int p, int d)
->>>>    {
->>>>    	struct arm_cmn *cmn = s->private;
->>>>    	struct arm_cmn_node *dn;
->>>> +	u16 id = xp->id | d | (p << xp->deviceid_bits);
->>>>    	for (dn = cmn->dns; dn->type; dn++) {
->>>> -		struct arm_cmn_nodeid nid = arm_cmn_nid(cmn, dn->id);
->>>>    		int pad = dn->logid < 10;
->>>>    		if (dn->type == CMN_TYPE_XP)
->>>> @@ -500,7 +479,7 @@ static void arm_cmn_show_logid(struct seq_file *s, int x, int y, int p, int d)
->>>>    		if (dn->type < CMN_TYPE_HNI)
->>>>    			continue;
->>>> -		if (nid.x != x || nid.y != y || nid.port != p || nid.dev != d)
->>>> +		if (dn->id != id)
->>>>    			continue;
->>>>    		seq_printf(s, " %*c#%-*d  |", pad + 1, ' ', 3 - pad, dn->logid);
->>>> @@ -521,6 +500,7 @@ static int arm_cmn_map_show(struct seq_file *s, void *data)
->>>>    	y = cmn->mesh_y;
->>>>    	while (y--) {
->>>>    		int xp_base = cmn->mesh_x * y;
->>>> +		struct arm_cmn_node *xp = cmn->xps + xp_base;
->>>>    		u8 port[CMN_MAX_PORTS][CMN_MAX_DIMENSION];
->>>>    		for (x = 0; x < cmn->mesh_x; x++)
->>>> @@ -528,16 +508,14 @@ static int arm_cmn_map_show(struct seq_file *s, void *data)
->>>>    		seq_printf(s, "\n%-2d   |", y);
->>>>    		for (x = 0; x < cmn->mesh_x; x++) {
->>>> -			struct arm_cmn_node *xp = cmn->xps + xp_base + x;
->>>> -
->>>>    			for (p = 0; p < CMN_MAX_PORTS; p++)
->>>> -				port[p][x] = arm_cmn_device_connect_info(cmn, xp, p);
->>>> +				port[p][x] = arm_cmn_device_connect_info(cmn, xp + x, p);
->>>>    			seq_printf(s, " XP #%-3d|", xp_base + x);
->>>>    		}
->>>>    		seq_puts(s, "\n     |");
->>>>    		for (x = 0; x < cmn->mesh_x; x++) {
->>>> -			s8 dtc = cmn->xps[xp_base + x].dtc;
->>>> +			s8 dtc = xp[x].dtc;
->>>>    			if (dtc < 0)
->>>>    				seq_puts(s, " DTC ?? |");
->>>> @@ -554,10 +532,10 @@ static int arm_cmn_map_show(struct seq_file *s, void *data)
->>>>    				seq_puts(s, arm_cmn_device_type(port[p][x]));
->>>>    			seq_puts(s, "\n    0|");
->>>>    			for (x = 0; x < cmn->mesh_x; x++)
->>>> -				arm_cmn_show_logid(s, x, y, p, 0);
->>>> +				arm_cmn_show_logid(s, xp + x, p, 0);
->>>>    			seq_puts(s, "\n    1|");
->>>>    			for (x = 0; x < cmn->mesh_x; x++)
->>>> -				arm_cmn_show_logid(s, x, y, p, 1);
->>>> +				arm_cmn_show_logid(s, xp + x, p, 1);
->>>>    		}
->>>>    		seq_puts(s, "\n-----+");
->>>>    	}
->>>> @@ -1815,10 +1793,7 @@ static int arm_cmn_event_init(struct perf_event *event)
->>>>    	}
->>>>    	if (!hw->num_dns) {
->>>> -		struct arm_cmn_nodeid nid = arm_cmn_nid(cmn, nodeid);
->>>> -
->>>> -		dev_dbg(cmn->dev, "invalid node 0x%x (%d,%d,%d,%d) type 0x%x\n",
->>>> -			nodeid, nid.x, nid.y, nid.port, nid.dev, type);
->>>> +		dev_dbg(cmn->dev, "invalid node 0x%x type 0x%x\n", nodeid, type);
->>>>    		return -EINVAL;
->>>>    	}
->>>> @@ -1921,7 +1896,7 @@ static int arm_cmn_event_add(struct perf_event *event, int flags)
->>>>    			arm_cmn_claim_wp_idx(dtm, event, d, wp_idx, i);
->>>>    			writel_relaxed(cfg, dtm->base + CMN_DTM_WPn_CONFIG(wp_idx));
->>>>    		} else {
->>>> -			struct arm_cmn_nodeid nid = arm_cmn_nid(cmn, dn->id);
->>>> +			struct arm_cmn_nodeid nid = arm_cmn_nid(dn);
->>>>    			if (cmn->multi_dtm)
->>>>    				nid.port %= 2;
->>>> @@ -2168,10 +2143,12 @@ static int arm_cmn_init_dtcs(struct arm_cmn *cmn)
->>>>    			continue;
->>>>    		xp = arm_cmn_node_to_xp(cmn, dn);
->>>> +		dn->portid_bits = xp->portid_bits;
->>>> +		dn->deviceid_bits = xp->deviceid_bits;
->>>>    		dn->dtc = xp->dtc;
->>>>    		dn->dtm = xp->dtm;
->>>>    		if (cmn->multi_dtm)
->>>> -			dn->dtm += arm_cmn_nid(cmn, dn->id).port / 2;
->>>> +			dn->dtm += arm_cmn_nid(dn).port / 2;
->>>>    		if (dn->type == CMN_TYPE_DTC) {
->>>>    			int err = arm_cmn_init_dtc(cmn, dn, dtc_idx++);
->>>> @@ -2341,18 +2318,27 @@ static int arm_cmn_discover(struct arm_cmn *cmn, unsigned int rgn_offset)
->>>>    		arm_cmn_init_dtm(dtm++, xp, 0);
->>>>    		/*
->>>>    		 * Keeping track of connected ports will let us filter out
->>>> -		 * unnecessary XP events easily. We can also reliably infer the
->>>> -		 * "extra device ports" configuration for the node ID format
->>>> -		 * from this, since in that case we will see at least one XP
->>>> -		 * with port 2 connected, for the HN-D.
->>>> +		 * unnecessary XP events easily, and also infer the per-XP
->>>> +		 * part of the node ID format.
->>>>    		 */
->>>>    		for (int p = 0; p < CMN_MAX_PORTS; p++)
->>>>    			if (arm_cmn_device_connect_info(cmn, xp, p))
->>>>    				xp_ports |= BIT(p);
->>>> -		if (cmn->multi_dtm && (xp_ports & 0xc))
->>>> +		if (cmn->num_xps == 1) {
->>>> +			xp->portid_bits = 3;
->>>> +			xp->deviceid_bits = 2;
->>>> +		} else if (xp_ports > 0x3) {
->>>> +			xp->portid_bits = 2;
->>>> +			xp->deviceid_bits = 1;
->>>> +		} else {
->>>> +			xp->portid_bits = 1;
->>>> +			xp->deviceid_bits = 2;
->>>> +		}
->>>> +
->>>> +		if (cmn->multi_dtm && (xp_ports > 0x3))
->>>>    			arm_cmn_init_dtm(dtm++, xp, 1);
->>>> -		if (cmn->multi_dtm && (xp_ports & 0x30))
->>>> +		if (cmn->multi_dtm && (xp_ports > 0xf))
->>>>    			arm_cmn_init_dtm(dtm++, xp, 2);
->>>>    		cmn->ports_used |= xp_ports;
->>>> -- 
->>>> 2.39.2.101.g768bb238c484.dirty
->>>>
 
