@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-289388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BAB29545BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:30:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23E139545BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D1F328281F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:30:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C16F1281C50
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41BE015B143;
-	Fri, 16 Aug 2024 09:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25431482FE;
+	Fri, 16 Aug 2024 09:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="nxitIW53"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2069.outbound.protection.outlook.com [40.107.255.69])
+	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="OeHPLFuR"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2085.outbound.protection.outlook.com [40.107.215.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE95D1448E7;
-	Fri, 16 Aug 2024 09:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0A61411FD;
+	Fri, 16 Aug 2024 09:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.85
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723800374; cv=fail; b=JZ2x53ZIGAiNhYESTU2zzWl104fN5Bqm9Mcnue3IaXP0UokLdPXp87jRJ79Qu8g7Vu3ZkA9X8fA474cnAb4ZbQmR0a9ES2Ja3UYGmUbTgtLDHck4EMdsAACMoBFKyMQDxNrCjeTbLsH21hyknXPIho0lJ9kHiQIOi3jigouJRGI=
+	t=1723800385; cv=fail; b=qW0wKG8MJa2JOUDpN31vfs0Fl1ZrEXx3LD4H8Dm21g6kbyo9xxbQ7Qf4YTNz0RIierlMLmDAetJnhMCCfLrpElJoODwaN+uZq7Hon+SJ2LWTw7Uh63hoxxVl0J4P5XCdnmT5Vd8rrqSaypnQqRnf0Uszh13Rzi8A0M7Sv8Nv6eg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723800374; c=relaxed/simple;
-	bh=bJyTPwQ6HLIm9WpJFkRqKJv3EdjekWxcOSacyOXtKik=;
+	s=arc-20240116; t=1723800385; c=relaxed/simple;
+	bh=008+v/O2Jqnp6k+93ZsuoXW1iys2wSbe6kzenP4szZ8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I5ZPVPXclPibSXHJMQARIPykPziiYujn/y8ztfKI9R56hTNobBzBu7/Jr/J8Zl8H14p7OSp7/bu0tucDd0vP0eivbH1abFliZRVgJyGWL9dOI1aI0plDDafjRlaCu+ccYPHnamco8IKEeVJF/wVZemit0rnDstqOWqVp86cZwQw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=nxitIW53; arc=fail smtp.client-ip=40.107.255.69
+	 MIME-Version:Content-Type; b=iqITl6shLC2T0dGK1HZkbipB9x7/sihcbVdSQvOIggqD1/dPFec9O11/QSuMraqmOidsHEV0qU2krVMuJCM2eWibbPCtCl5QqFwV/Yqlcoa899knWk2e7+nlFNTlVMt/5wOs9vYLYOEJyHaNVcyMhkXPbswZWExlE63RQCGSTtM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=OeHPLFuR; arc=fail smtp.client-ip=40.107.215.85
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iLBT4RM5j1y0f7Ig54sGF2GLbQmL9X0tOq7ssBORr/3kj01SHs2hhtRmiQAPWNMtWomm1ckdxU6vJSiOOldlifUmEpE/G1IB7R8xO/gx8y3sdROUBl+e9RKqLVUXlo3cgvPmuRyis92a1e5+QXrj7TCDDH2IA6BCMsPs4zE50ANO96db69oVzyAnMVeaCCxMxzX+BXrz3e7HEeeuBgCKUxA24859RZ5bhX8RX2tLOrNmJld6bdi1fQElKHJzVZ+D+WKsxoSjcdKOiGkHgAzFzA6rx+p/C+47bQcmbhybSXASn6dh9OJnu94HpEkPWzfJfWPMcHP1iwwcu1RhEQighw==
+ b=DIp0FpF9RlyV3Rhf85OCJI1Mmfr22JZtuOVXGYMlehV6rq9tRU40ugj6umKHULmlNfwze0DoUY1vlfZHM0x+eGTbVxt1SeRcCBXPB0BzAz6xJhdvgPaRVKSOHyjKGQGhS0XOlhCa0qFErxCbYeexwE+iH73Ztr/iZKby3J9JMqtcW02qxTrxAO4NwtDz/0wHLytvWNUTeiQ9RHRZwGWYGJ/ufRR/VXbCt/YID4OptLE79ylmPdJ+zV4vJALAzDZYy47BZ/acYc78chFpEL4eleJmzYQsbiVQsBINmYuFzQI2CHAuLYYugNYUjOePrGWId5wTjkeC2Zkfud11yMrg4g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SQFQ2bKjxnUV6R0l0iLzwvLwa8mKW3x6TIVY3QTprt8=;
- b=zQ78KNeCxzQDJyD1ogF5fP7GwaNU0BL9Ww7tu0mb1TZl8ojunsQjx3ILrTlDKSTPd7O5gFIjeCuOY/C/BMNL0EBkQeMu1mup1Cfnu6NK9bmASDIi0vnYPAxFbiTc4ztXykkWFOIg1//SIq9zFQg450/Qc1dii57DykYK+FwSECFX5eolbmNVAvBKgFeKj5hEzGwMTj2K0ZZ9XkLYnf7xVLn1xffMzTjTX2naAhS6hadMzpkXzhbxUJIXkuruE6DVd6g9Kd8tVf/V4GFb3EjMeFleJ5Fe2zADC/4llFSnD8J1oq28+O1DobOyjFTjY/XnioFPjLSlXvmtnoUL1ek+qw==
+ bh=QU+JZ1MSglaWLSUKc8QjBu76ufZkEOMMNsu7ns+mPuQ=;
+ b=hrZX7gNiPzd02SozpmeX9z9Dj9TI11aVoY6vYduLISbTSE1EcFd3+O1X3cY9TGoDw2PWE76uCClEvmkEGqb3Qp1MyhEVZDsPxH+5gxpgCCurScuaxBsA8I6Cteqa0g+6z4hhbJGayxOSxV7IaEjCPwlifhiKFYWSCG5d1MFsGXqNbFGI8SGPzZEujNFM57Yrxf49BXTAoDMhWcrgGKD0UiuO1kSXifXnFxLUREtemkKauCrCuT3S9zFh5dXrrzZl5SuM2rjmG19w1glHGVbSyC472bLNaw0VmiU/gDwxhu5zPJ1BpYAnDjHaH26VEglX+5T+DmibPcc37IMk93swdg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
  (p=quarantine sp=quarantine pct=100) action=quarantine
@@ -44,18 +44,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SQFQ2bKjxnUV6R0l0iLzwvLwa8mKW3x6TIVY3QTprt8=;
- b=nxitIW53gEDSuT4ZmPq61OO8zxgNhj9FzRru+x0XUbkYg2pe/mpw7onoZ9iPtDA3aUSnmPTKYyFPza/QPpCV+vla6+ibACVJncr0iMuz0+TqGGFYx0JBy+xVR4V+wELyr/9MJCAvRTmjolsrBOlV9gUFuVkObhW76weNztcKOojQAYSoBPT+Dp2TcUXtXV6flIkJfbyuFM7Ennt5elrcS8+XjQWH4BK18w6k+nYNYldYr0+w4Y5jTUuNIvgF5EQ7v/e+NFd8WxhO5ezP5eMGExA/jGSFjIMfxOdNZ1+GJtec2wGfi/JNusa82UIyH95gL2qAdF1px2uqoNimzb9AOw==
-Received: from SI2PR01CA0054.apcprd01.prod.exchangelabs.com
- (2603:1096:4:193::22) by PUZPR04MB6351.apcprd04.prod.outlook.com
- (2603:1096:301:eb::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Fri, 16 Aug
- 2024 09:26:06 +0000
+ bh=QU+JZ1MSglaWLSUKc8QjBu76ufZkEOMMNsu7ns+mPuQ=;
+ b=OeHPLFuRnNqOpsuS0j6JyFwrUUKlmjuhWfWJSfsyTU01xBfwKycbadNUlJT4lmIJsEWUQpteVP6au2puYD3P8gbUDDqhK3cz2Ij4s7Wc4r4vn4tTadNcDHTeJGRyjWzh69ozcgjfuwaOUFydP2aBUwArsJ/vHdC6tX2Pc3Rp6hSW5GlK1RwJ6m20TYj10gQEn7P1pQWeXgGk1XpfuUbkdGWbr07b9cXmuP9Zyz4/CyxwZW7FV+xOwxyTf2c76gl2jI1wKJXZ0F3ZO3Khh5wwXy364Sc9fQXkX3aHv/ccwB2sNgGMQ0hWcFi6MPnXnm/94KTUOGmArQySEtwsYVLBww==
+Received: from SI2PR01CA0042.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:193::23) by OS8PR04MB8277.apcprd04.prod.outlook.com
+ (2603:1096:604:2b1::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.16; Fri, 16 Aug
+ 2024 09:26:12 +0000
 Received: from HK3PEPF0000021D.apcprd03.prod.outlook.com
- (2603:1096:4:193:cafe::bc) by SI2PR01CA0054.outlook.office365.com
- (2603:1096:4:193::22) with Microsoft SMTP Server (version=TLS1_2,
+ (2603:1096:4:193:cafe::53) by SI2PR01CA0042.outlook.office365.com
+ (2603:1096:4:193::23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19 via Frontend
- Transport; Fri, 16 Aug 2024 09:26:06 +0000
+ Transport; Fri, 16 Aug 2024 09:26:11 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
  smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
@@ -64,7 +64,7 @@ Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
  client-ip=211.20.1.79; helo=localhost.localdomain;
 Received: from localhost.localdomain (211.20.1.79) by
  HK3PEPF0000021D.mail.protection.outlook.com (10.167.8.39) with Microsoft SMTP
- Server id 15.20.7849.8 via Frontend Transport; Fri, 16 Aug 2024 09:26:05
+ Server id 15.20.7849.8 via Frontend Transport; Fri, 16 Aug 2024 09:26:10
  +0000
 From: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
 To: patrick@stwcx.xyz,
@@ -78,9 +78,9 @@ Cc: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-aspeed@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v12 22/28] ARM: dts: aspeed: yosemite4: Revise i2c duty-cycle
-Date: Fri, 16 Aug 2024 17:24:09 +0800
-Message-Id: <20240816092417.3651434-23-Delphine_CC_Chiu@wiwynn.com>
+Subject: [PATCH v12 23/28] ARM: dts: aspeed: yosemite4: add fan led config
+Date: Fri, 16 Aug 2024 17:24:10 +0800
+Message-Id: <20240816092417.3651434-24-Delphine_CC_Chiu@wiwynn.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240816092417.3651434-1-Delphine_CC_Chiu@wiwynn.com>
 References: <20240816092417.3651434-1-Delphine_CC_Chiu@wiwynn.com>
@@ -93,81 +93,237 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK3PEPF0000021D:EE_|PUZPR04MB6351:EE_
+X-MS-TrafficTypeDiagnostic: HK3PEPF0000021D:EE_|OS8PR04MB8277:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 1aa63a05-6a1a-4425-da7b-08dcbdd57499
+X-MS-Office365-Filtering-Correlation-Id: 5e780fe4-93cd-4b77-8fe8-08dcbdd57799
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|7416014|376014|82310400026|1800799024;
+	BCL:0;ARA:13230040|1800799024|36860700013|7416014|82310400026|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VXwRpea+kfHf4aaQ7wGFrEbHw7CUAtEX5BAS7JTXcYuhiqCcIfX2LSE/8dl6?=
- =?us-ascii?Q?+JxzbAxAtApZLLph9tWl5+v0GWufuqJwWlz+lzzaVVDciXdWB4oBxMj1Znr3?=
- =?us-ascii?Q?vdQVgC9K/KKfVXWpRAitwpJk7gtzhLfQ1Fvu3aquDakICOqKDPs7HYwpqT8z?=
- =?us-ascii?Q?FX95OAqVKy8o9+D4BJXc9wEB46637AOL6wR+9WdkxjkcfwG/pebTfoiUNNO4?=
- =?us-ascii?Q?SEa0TdoE7cbI6WLAppCB9cmr+ZLBBLbgf1vTuQImKSmsFSboX46RpYqTlzuL?=
- =?us-ascii?Q?M2bxzOWzlvSW/gZZxhcuxZdQgmr/WgT8Gfn+eN9nkAVGAuT+gCjnTSz5TyHE?=
- =?us-ascii?Q?2pSdGwFB753+Fo/Osp79VnxFLPgNMvL+2hG1pPUW6qb3mvJWOUgXhb4ednuJ?=
- =?us-ascii?Q?I6080opsC5zRvPfJQmWwH45iWRjJlahVMA1CTIiMuBiDtg22m9rAdaN0K3GF?=
- =?us-ascii?Q?phLtQl6mnFxNuoqqO6kTn4KDH8f+YRcGK0JxI2rlBet/WB/vTvG5G/fjukuw?=
- =?us-ascii?Q?WpiA3TIQ2sVC2dPutkb4lZlOV/GZzEkRWwQyiBol1fiqtUXtXVLAkV3nxyYj?=
- =?us-ascii?Q?jOY7W5jdLKOVC4faSWlt7l4jiI73DZGTD4ok2UJgKAWIBG+j94R2qitPfToh?=
- =?us-ascii?Q?3Z4RlJurAANRKdH5QhCZZlJnhdhJmv29cjGU7rWq6w7RLEU6VeDdvaPX1JYd?=
- =?us-ascii?Q?r4dPCAxj+ZQ8QjuwnxuGt0NNJU+xqkz2yaSmXg7cCml9/hlA6Y7V4PHa56gu?=
- =?us-ascii?Q?l246sVq10zY5/KDPDFPn83HZMq1X4GwrAEo07PTNTscy6CcEeXxiPqVUsKIi?=
- =?us-ascii?Q?0CBLcmCZ9wQ16GLux9hr8d+wOkIoj+IDadX3Ao6bUTEc45OAKiGacbsfrmJ3?=
- =?us-ascii?Q?5HOs1vmzONdikOylRdvTZDJeHMGUL7cUJTsQj/8xJ2ynudh3KCSN+q+/Xwh7?=
- =?us-ascii?Q?kCdjhzZVyodCU9Hpy5bw4rPr3jlH2+A/pRIC0ezkVxlC4v8Y7mIF4yIrVHyq?=
- =?us-ascii?Q?8D2uMBqugdrjWZWkzJOr50DnMWb4w5j1Cx6PeV5Hm2PWRhXox12tbUjcC38/?=
- =?us-ascii?Q?pC+uAyOneyDX6Z3FfrlxjkqKlNpmviEi/XUY65cz3nzIq1lmk+BBm7vSRx5i?=
- =?us-ascii?Q?lrisF7VNAgacv+L1/YOHrILcGBGHa1uldUfSWjw8LWvyJIlnnfcQ0sKy0/ro?=
- =?us-ascii?Q?bFyEZOu3EL8SOIIpzJ/wrqVVbiorpYoaeIGkGZ7cQwzP36iODfpqR1DTMtV0?=
- =?us-ascii?Q?8r1ap903TN/unBQt1raUg1Zr/IMyJgBil+I/P4GX235FqRY1aTsrGfXE3mVw?=
- =?us-ascii?Q?l1QtyRhP16CK4/6HZv01qBjUnWxmEHqa5l+VI4575UvOLTRxan0cgLWlHLSE?=
- =?us-ascii?Q?iNunhHp2QERHM9zalX339fSo/w71/duAZCKi5DHItXrfewZTGTk7ft8W4CpQ?=
- =?us-ascii?Q?w8RV5Rdxnu8YSvpKXItC/awpWATEC6Mh?=
+	=?us-ascii?Q?IxkUa27tSr+nvSJFa1fwuiOXo2F+S+KDHuc//6GHZKLVusjAoQpkw0dSYEEK?=
+ =?us-ascii?Q?y5+VkPYIDj7TXSXzqb/SvkzRXAUf7I2SIs2RTEV21DkLdSm+3n+nqt72zisF?=
+ =?us-ascii?Q?XUeHHL7/EW+wTkn63f5BSXgj7ODRAQfwbTDYJCzpI8xmvjL8kXVw+94SikLr?=
+ =?us-ascii?Q?HZn7H+5VRlDucpCE2g+ykuKersMWxMls4zYgeS1wY5n5pBQJ7x/zp0RwazWN?=
+ =?us-ascii?Q?8s07tEZOCQ7oVGMBmnSne17jHe5WTRZ5HxskwEFlUA/AFBNNdTUTflzegaXK?=
+ =?us-ascii?Q?vX9dXk6ALG8pS9YUqJscsKKQc/Vk6RmLLfuD7lpmAFcRxF1eMYQX6wGekI8C?=
+ =?us-ascii?Q?KYLGBN40r18yHoopj+14HXf4wLvz4Bifd/6A7P1iEjyLg4IYvh8yNCrr5ywp?=
+ =?us-ascii?Q?5GI0rrGvWMomXnY6MVHiG3UPaTm3Feexb2S0M5OAoeWMFcm/ZH2h8vZQ/hmr?=
+ =?us-ascii?Q?XlzJUg+owuHSpGRk30KHjP8sFyVXfmVtdahQ9ZNL8FWBZTXWKde0ylrqNOaf?=
+ =?us-ascii?Q?WXiflu8MmBH6bzZzvY1l426dKkw/+0gi87/xIdL7MJiINkU0cauF2jZJa8vj?=
+ =?us-ascii?Q?4fD21d2vv7vEBHo5ZSEbm+eXrbCIbdz8Io4K612dWAysCAjiOPn70yux2kYQ?=
+ =?us-ascii?Q?lac9flsx9MgimPFgsyFYdFhAqNMP0apDZY6/WrzNgD2HtnGko3qliRJDhcST?=
+ =?us-ascii?Q?roSkSE02QHXdSLyKh9nNSLZJlrDxBIIjUcmggHOZnWkrtjoMmlcwsDwRKEHD?=
+ =?us-ascii?Q?o22NUgtZd/7GpxhukfWT73H2XBb6RIQd7ds9FzCC56XK/s2mX9ncfChAIUE5?=
+ =?us-ascii?Q?L6OJc9v8MVeAB7vd9o7DAm44cV2LNizeImcGRD5XakWDHa+cXHgpnGaLLWMe?=
+ =?us-ascii?Q?Lz9ef4obd7mYVgFaP19MPbGsDdgNs0qOHErt8+TqlIXIOGdW8/rSeubMUnk1?=
+ =?us-ascii?Q?pv7ZlmqTuOys4Hv02MafUqd9f63XXaSM35VZW8LoYh5J2kMeqZQo8bQTCiJk?=
+ =?us-ascii?Q?a4O6wlL1RyZ9jVK4PgOe/9NvCc5hx/VF5uRB/7z7R7B09+1sOudzTTwxgYsj?=
+ =?us-ascii?Q?NT7MCuoO4nzIX1FWPpi4qBBLZ7DNYGu1AiL0JpFn78V3OYKSXTUmSVnMIabb?=
+ =?us-ascii?Q?iaU5LIbWvdPoDDUBZFWulD0yMJOmi979Mr04nzFE5CC4kTQv8Mz5n7xBzI6J?=
+ =?us-ascii?Q?kTAMwtVuOPg5cMSoWV0kt/tLknKxPhLUAvgGUJEbu4stzb92vTvx/7WKAQID?=
+ =?us-ascii?Q?gkdyFUUQ7091CNhqbUn1sBxj1Cne+qcUaKJifclcxtoqR+Hh8obHEiXrDLWb?=
+ =?us-ascii?Q?eC9FEP1eK781/99wot9iOwqak/obeTSekmN8OIePhW+q3Ow+zicXKMQG2PFy?=
+ =?us-ascii?Q?t5th4dRee2RhQFjFoSFkv+W9I4BDjAqTfCSk1CZRktGhAK+XDAbHdZdiPtaR?=
+ =?us-ascii?Q?nSPh4QeQJHfTubvGGg/+eTeNDGHW4OSd?=
 X-Forefront-Antispam-Report:
-	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(7416014)(82310400026)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: wiwynn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2024 09:26:05.9191
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2024 09:26:10.9816
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1aa63a05-6a1a-4425-da7b-08dcbdd57499
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e780fe4-93cd-4b77-8fe8-08dcbdd57799
 X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource:
 	HK3PEPF0000021D.apcprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR04MB6351
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS8PR04MB8277
 
-Revise duty cycle SMB11 and SMB16 to high: 40%, low: 60%,
-to meet 400kHz-i2c clock low time spec (> 1.3 us) from EE request
+Set fan led config in yosemite4 DTS.
 
 Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
 ---
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts | 2 ++
- 1 file changed, 2 insertions(+)
+ .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 152 +++++++++++++++++-
+ 1 file changed, 150 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-index c2994651e747..c940d23c8a4b 100644
+index c940d23c8a4b..2f4e9c5edd5a 100644
 --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
 +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-@@ -761,6 +761,7 @@ eeprom@54 {
- &i2c10 {
- 	status = "okay";
- 	bus-frequency = <400000>;
-+	i2c-clk-high-min-percent = <40>;
- 	i2c-mux@74 {
- 		compatible = "nxp,pca9544";
- 		i2c-mux-idle-disconnect;
-@@ -1314,6 +1315,7 @@ &i2c15 {
- 	mctp-controller;
- 	multi-master;
- 	bus-frequency = <400000>;
-+	i2c-clk-high-min-percent = <40>;
+@@ -75,6 +75,154 @@ tpmdev@0 {
+ 			reg = <0>;
+ 		};
+ 	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		fan0_blue {
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio0 4 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan0_amber {
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio0 5 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan1_blue {
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio0 10 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan1_amber {
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio0 11 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan2_blue {
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio1 4 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan2_amber {
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio1 5 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan3_blue {
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio1 10 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan3_amber {
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio1 11 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan4_blue {
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio0 2 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan4_amber {
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio0 3 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan5_blue {
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio0 8 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan5_amber {
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio0 9 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan6_blue {
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio1 2 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan6_amber {
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio1 3 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan7_blue {
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio1 8 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan7_amber {
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio1 9 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan8_blue {
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio0 0 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan8_amber {
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio0 1 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan9_blue {
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio0 6 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan9_amber {
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio0 7 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan10_blue {
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio1 0 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan10_amber {
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio1 1 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan11_blue {
++			retain-state-shutdown;
++			default-state = "on";
++			gpios = <&led_gpio1 6 GPIO_ACTIVE_HIGH>;
++		};
++
++		fan11_amber {
++			retain-state-shutdown;
++			default-state = "off";
++			gpios = <&led_gpio1 7 GPIO_ACTIVE_HIGH>;
++		};
++	};
+ };
  
- 	mctp@10 {
- 		compatible = "mctp-i2c-controller";
+ &uart1 {
+@@ -1198,7 +1346,7 @@ eeprom@52 {
+ 				reg = <0x52>;
+ 			};
+ 
+-			gpio@61 {
++			led_gpio0: gpio@61 {
+ 				compatible = "nxp,pca9552";
+ 				reg = <0x61>;
+ 				#address-cells = <1>;
+@@ -1268,7 +1416,7 @@ eeprom@52 {
+ 				reg = <0x52>;
+ 			};
+ 
+-			gpio@61 {
++			led_gpio1: gpio@61 {
+ 				compatible = "nxp,pca9552";
+ 				reg = <0x61>;
+ 				#address-cells = <1>;
 -- 
 2.25.1
 
