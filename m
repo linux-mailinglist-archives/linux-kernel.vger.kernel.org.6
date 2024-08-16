@@ -1,169 +1,99 @@
-Return-Path: <linux-kernel+bounces-290285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35F329551C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:19:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7719F9551CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F8A01F2324C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:19:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AB1D1F23026
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBA11C4631;
-	Fri, 16 Aug 2024 20:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91EE61C4631;
+	Fri, 16 Aug 2024 20:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dwuw5OBs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="E0bkcHva"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC379137747;
-	Fri, 16 Aug 2024 20:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C74C1BD006
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 20:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723839536; cv=none; b=iCQYE0tcs2RmEKwGRRyDirogcIB7uCf1gVmPui6yj5rjj+DGh9jgSySm8mricywZdQHJDkWq4EsfX12VsOBFlDZ25DKyKndxyy41FGzxm9rl1KXfk5N2h17xWx4Q8g/r3cPpZmzIhlRDDB8a9Vr4H2tU2+TTxBapMBA1DdK7Cqs=
+	t=1723839851; cv=none; b=QF65VIPy4uxO2fTgozzBviJKUkxCMOGwOSxlG1DmCFmZYiJfgy8uYWJCNVsxy5Y73lD9HhD7nXQg5axyg7gl1D56VDcdTFn8Sc5AcYG8+n2IMiTdxmb1bK4M8MWlVnodDEhcSfqUjtT99LphH6STMIx+4KcGyMijzeMUfFNlhSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723839536; c=relaxed/simple;
-	bh=7o0QpYyR6WCcVBZa39lqMIGPmqBnk3rj+kLrqFXcxDU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IfMjB9pcAUcLowcajGILIo84OE/5yQ/K3k1Tz8/G2/me75Epha09V4DBTYjXxNayMzyHB8fgPGJU2jLGhiqD/2wHutD/BVP9qpr1laxAi3mxwEUNnCFQYUBmxyDYUKUcudsLbKGm53UlQDz5F4JkcLP5W2RkZIOztgRaDrOz0Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dwuw5OBs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DE64C4AF0C;
-	Fri, 16 Aug 2024 20:18:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723839536;
-	bh=7o0QpYyR6WCcVBZa39lqMIGPmqBnk3rj+kLrqFXcxDU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Dwuw5OBsYcOdZ9QcwFSqqa+YtaFEFhDaO0x/1ylQQW2LTkbjDIewJL30bMsE4f//m
-	 18CK/N6+TzmzxH4XsRPBltfWntUIDfGFEdOkJrEd+NFufIBSOFcQmzUrBjckxwyW87
-	 +p0TBonGxOFzu/sR9DZVuxdusdnQrF1FU47t4WTuzgo1hirNWUkdKv0GlyRDy6RpoG
-	 3pA4ZXM+xePE9uqgIUzv0mkJjXig9wlJAlakUitmXMUvx1+4t81cp6kRQmyUhzOs1z
-	 HBqXNJdo3+/DUXhfO4siuuzHkOi7bA//PPRWqdblEa9lodp+TY/lhzZ1QzhEk9MMSz
-	 pzOD4llJSpkKg==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52f025ab3a7so3185862e87.2;
-        Fri, 16 Aug 2024 13:18:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVEpiS4pQIbjOg3sBQhqb03eEkVVvhsiPtuEdY4c3Ff9C4+QhGSljfVKXC5wQeYk6kmxGc1WgdchzpYXFXfKEh3YrCkSNYB8TMDlqtZoTCau7vm9jSt8SA/A+PinQdXqIMZRc9vGVRXKQ==
-X-Gm-Message-State: AOJu0Yzy4nWi6+/5daSZtCc68kpfBOeXZsWpq5Z1TcuZ9rJM8YFjbCCQ
-	sQN8bVQMcM4fq5PSrJmY2Wmvuomk5oGiG3it5wGPVZtTDCLPDJxLPx1OT6IoHUoh/a4TcbPEOac
-	esZVaQ1T/9s+pZ6JxbBa+bsk6nQ==
-X-Google-Smtp-Source: AGHT+IHmyRZ4clxGPJquhu23wu/3UXIx0sRx/uOqLud9h9oe+/y36kFFb69u57DKWH7vH6u9ARgZ9iqQUCozE+a2iDo=
-X-Received: by 2002:a05:6512:3b95:b0:52e:7444:162e with SMTP id
- 2adb3069b0e04-5332e07fb8dmr303150e87.55.1723839534429; Fri, 16 Aug 2024
- 13:18:54 -0700 (PDT)
+	s=arc-20240116; t=1723839851; c=relaxed/simple;
+	bh=WIYuYFHWdCQrD1vc4jBbvWdC6Mea0hURnFAGiSCYhC0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VyUGX8TgyO6xRKcYMSNw2eWVlGI1YHmeZJ1GQjELDYRvyTKHaINUNHWeOJpxBEGtlLfPvZRi2tWhfS8P+xhB6FQuOo/lyeNPt9ZtnWs1C9YrwQJQWtRYTEwhdtJ28NwF3bF2uawR3AYDq1BrukiSUoKXDy+NVysoxoSq3PYHdcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=E0bkcHva; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Wltk76Mlqz9smd;
+	Fri, 16 Aug 2024 22:23:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1723839839;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y2a5uwxoWmK4hGq387/Bj9tHFW7u7XNQSFK7pAHa9AI=;
+	b=E0bkcHvajiOa+ioQ9d6R959bOkg5yCiLLrj9cjdg22FWipTMe/cDKtzPFs0GeP26UVcMgX
+	ziqA8k/nCKxqCXVYu+rc39h9GqoEmH9UOWiL4bL8Oo0TcWCHyafPo1RdhHlGRiTNZwQlSr
+	SFAkQqhX24A8N1xSK6VhLU4h6RQQjSPjfQTPYdB6PUxPnczeMTTFNN3HVHJy6y8pgGUjH1
+	mppCFhVBQ2AX6Fes1RKvRKiHE04DD6YiQ7mdZ8DqeAuBQg0EAtIpW5hp1X2qTOalhv/Rhf
+	Tpf67i9nUlR7y9LUS19Y0HhIxQKtpbkCZ9c4s0T7BqFTCxEvLZjE3mLbW9X0wg==
+Message-ID: <e345252b-9370-4491-ac5d-d2dbe1005451@mailbox.org>
+Date: Fri, 16 Aug 2024 22:23:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240816124957.130017-2-ajones@ventanamicro.com>
-In-Reply-To: <20240816124957.130017-2-ajones@ventanamicro.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 16 Aug 2024 14:18:41 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+0fXJarCjLA1ZYOiHbM_qn3dtG00Xz+Z8qGCg8Wu=dgA@mail.gmail.com>
-Message-ID: <CAL_Jsq+0fXJarCjLA1ZYOiHbM_qn3dtG00Xz+Z8qGCg8Wu=dgA@mail.gmail.com>
-Subject: Re: [PATCH v2] of/irq: Support #msi-cells=<0> in of_msi_get_domain
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org, maz@kernel.org, 
-	mark.rutland@arm.com, saravanak@google.com, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	Anup Patel <apatel@ventanamicro.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [REGRESSION][BISECTED] vmwgfx crashes with command buffer error
+ after update
+To: Zack Rusin <zack.rusin@broadcom.com>
+Cc: bcm-kernel-feedback-list@broadcom.com, christian@heusel.eu,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ maaz.mombasawala@broadcom.com, martin.krastev@broadcom.com,
+ rdkehn@gmail.com, regressions@lists.linux.dev, spender@grsecurity.net
+References: <CABQX2QM09V=+G=9T6Ax8Ad3F85hU0Cg4WqD82hTN=yhktXNDaQ@mail.gmail.com>
+ <40cf01ab-73ad-4243-b851-a02c377bdbde@mailbox.org>
+ <CABQX2QM1A9yWCuOHV6kgi3YbPvPHz-zazkOXM6Up9RWrZ-CgPQ@mail.gmail.com>
+Content-Language: en-US
+From: Andreas Piesk <a.piesk@mailbox.org>
+In-Reply-To: <CABQX2QM1A9yWCuOHV6kgi3YbPvPHz-zazkOXM6Up9RWrZ-CgPQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: jjckur8ysfr994hsbwpexesbwirt7yay
+X-MBO-RS-ID: 970057b013337eca572
 
-On Fri, Aug 16, 2024 at 6:50=E2=80=AFAM Andrew Jones <ajones@ventanamicro.c=
-om> wrote:
->
-> An 'msi-parent' property with a single entry and no accompanying
-> '#msi-cells' property is considered the legacy definition as opposed
-> to its definition after being expanded with commit 126b16e2ad98
-> ("Docs: dt: add generic MSI bindings"). However, the legacy
-> definition is completely compatible with the current definition and,
-> since of_phandle_iterator_next() tolerates missing and present-but-
-> zero *cells properties since commit e42ee61017f5 ("of: Let
-> of_for_each_phandle fallback to non-negative cell_count"), there's no
-> need anymore to special case the legacy definition in
-> of_msi_get_domain().
->
-> Indeed, special casing has turned out to be harmful, because, as of
-> commit 7c025238b47a ("dt-bindings: irqchip: Describe the IMX MU block
-> as a MSI controller"), MSI controller DT bindings have started
-> specifying '#msi-cells' as a required property (even when the value
-> must be zero) as an effort to make the bindings more explicit. But,
-> since the special casing of 'msi-parent' only uses the existence of
-> '#msi-cells' for its heuristic, and not whether or not it's also
-> nonzero, the legacy path is not taken. Furthermore, the path to
-> support the new, broader definition isn't taken either since that
-> path has been restricted to the platform-msi bus.
->
-> But, neither the definition of 'msi-parent' nor the definition of
-> '#msi-cells' is platform-msi-specific (the platform-msi bus was just
-> the first bus that needed '#msi-cells'), so remove both the special
-> casing and the restriction. The code removal also requires changing
-> to of_parse_phandle_with_optional_args() in order to ensure the
-> legacy (but compatible) use of 'msi-parent' remains supported. This
-> not only simplifies the code but also resolves an issue with PCI
-> devices finding their MSI controllers on riscv, as the riscv,imsics
-> binding requires '#msi-cells=3D<0>'.
->
-> Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
-> ---
-> v2:
->  - switch to of_parse_phandle_with_optional_args() to ensure the
->    absence of #msi-cells means count=3D0
->
->  drivers/of/irq.c | 37 +++++++++++--------------------------
->  1 file changed, 11 insertions(+), 26 deletions(-)
->
-> diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-> index c94203ce65bb..690df4b71ab9 100644
-> --- a/drivers/of/irq.c
-> +++ b/drivers/of/irq.c
-> @@ -709,8 +709,7 @@ struct irq_domain *of_msi_map_get_device_domain(struc=
-t device *dev, u32 id,
->   * @np: device node for @dev
->   * @token: bus type for this domain
->   *
-> - * Parse the msi-parent property (both the simple and the complex
-> - * versions), and returns the corresponding MSI domain.
-> + * Parse the msi-parent property and returns the corresponding MSI domai=
-n.
->   *
->   * Returns: the MSI domain for this device (or NULL on failure).
->   */
-> @@ -718,33 +717,19 @@ struct irq_domain *of_msi_get_domain(struct device =
-*dev,
->                                      struct device_node *np,
->                                      enum irq_domain_bus_token token)
->  {
-> -       struct device_node *msi_np;
-> +       struct of_phandle_args args;
->         struct irq_domain *d;
-> +       int index =3D 0;
->
-> -       /* Check for a single msi-parent property */
-> -       msi_np =3D of_parse_phandle(np, "msi-parent", 0);
-> -       if (msi_np && !of_property_read_bool(msi_np, "#msi-cells")) {
-> -               d =3D irq_find_matching_host(msi_np, token);
-> -               if (!d)
-> -                       of_node_put(msi_np);
-> -               return d;
-> -       }
-> -
-> -       if (token =3D=3D DOMAIN_BUS_PLATFORM_MSI) {
-> -               /* Check for the complex msi-parent version */
-> -               struct of_phandle_args args;
-> -               int index =3D 0;
-> +       while (!of_parse_phandle_with_optional_args(np, "msi-parent",
-> +                                                   "#msi-cells",
-> +                                                   index, &args)) {
+Am 16.08.24 um 20:56 schrieb Zack Rusin:
+> 
+> Thanks! I see. I have a patch out that fixes it, but in general I
+> think those vm's with 16mb for graphics are very risky and I'd suggest
+> bumping them to at least 32mb. The vram portion can stay at 16mb, but
+> the graphicsMemoryKB can be safely set to fourth or even half of
+> memsize (in your config 256mb or even 512mb), which will make the vm's
+> a lot safer and allow actual ui usage because with console being
+> pinned we just don't have a lot of wiggle room otherwise and we just
+> can't migrate pinned framebuffers.
+> The patch that "regressed" this makes dumb buffers surface that
+> actually respect pinning, but as long as you don't have gpu host side
+> things will be ok. Otherwise we can't make a config with 16mb of
+> available graphics memory and graphics acceleration work.
 
-I guess you just maintained essentially what was here, but
-of_for_each_phandle() should work here. It's a bit more efficient too
-because of_parse_phandle_with_optional_args() is implemented using
-of_for_each_phandle().
+Thanks for the looking into it and fixing it.
+The explanation with details is much appreciated and I will keep your suggestions in mind.
+I just used the VMware defaults for Linux 6.x+ in ESXi 8, maybe they should be bumped up a little bit.
 
-Rob
+Best,
+-ap
+
 
