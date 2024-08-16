@@ -1,91 +1,110 @@
-Return-Path: <linux-kernel+bounces-288849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52617953F7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:20:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A72953F81
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 04:26:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D9481C20F58
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 02:20:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2F9528489E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 02:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9732359155;
-	Fri, 16 Aug 2024 02:20:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7734AED1;
+	Fri, 16 Aug 2024 02:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fnkFK1t5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="zte0afA0"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5001EA91;
-	Fri, 16 Aug 2024 02:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274DE46BF;
+	Fri, 16 Aug 2024 02:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723774834; cv=none; b=H759J2S6PY6s8B2W5JyR0qzvGQXjsT7NaAFn8YQBMCigNzN+BW+o/RspAAjLbJi4EpHqH3rDcVRP4qm66yH5u4XnkKAM9s4NvpSlvGHlobNr+0akpFmfA/EOj/VEx0dwQKgUpKIvnZwkr7k5WmuOO0Epw61yczd/tXYy2NqXP80=
+	t=1723775151; cv=none; b=ngrjer0zAcM0cO0VGzBbR1Bs70Bc/X0mwrVo4HK5eICXMeX2H/9upuRMNFVUFpSt3BcxDvgZhS9kjhY3PcGRVCxq/yhJ5AP1u4lcuMKbS84pXHkxLJZb2N3urGqAuWqTrXOrOTJetMZzR8DbK2Xuc6g6AYS8fbRN/Pq4hPHoTMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723774834; c=relaxed/simple;
-	bh=WFDDmGHe813zo8X90eIi1XVLr7puad3fxBiv+nCdVGM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Pdn/T6pHtZ9yuvOezsaGIfyE9j3ylWd5K4xaUDaEsCSoAKRwPgias3C9yQeNYo9lybYoyxwmt/Y2iUsxrZ1DHyl9VFIP2pdaIsXycjTBNrrUfg/HhTY3XndCQn2nJvYpNrGXj2zSXNYmLIGIjfZEFqHanm6ieUmSJquRwLTu130=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fnkFK1t5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76604C4AF09;
-	Fri, 16 Aug 2024 02:20:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723774834;
-	bh=WFDDmGHe813zo8X90eIi1XVLr7puad3fxBiv+nCdVGM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=fnkFK1t5iswbnuifhC79zGkIufL2WthmwNzEFv6/Zm9yH++kA6Mu2+KAphVyPa0Pu
-	 PbrhKedHi25b8uFY6D6fsSJSsedhgRvXbCnq6fieUk6qP+GRZ4oDOVEYVOrKqWPreu
-	 3D6XKiGDFiuSIY/PQzfSjkLpcoaHX/4X5urew6YEWkC4QnVMcJfQF922PJLx2q+mOs
-	 5EvK3Id3ik2IxWS2Z6Z3psvP20avRIbZvFnJaJxGUvbtEMoB6F9zdwKyQP92as5sA5
-	 cIgSY87sP2ds6g11VpnzYXZOIPiITKUyhGiD0HKZAsFSj21VADTo8zqi+p27so4gd0
-	 kIoG68LesK0sQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB017382327A;
-	Fri, 16 Aug 2024 02:20:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1723775151; c=relaxed/simple;
+	bh=P1q9UmMSPCsJGuJgfVnYe7tRhAKHplezoADX9uQvZw0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XCAtKDS9nZdB0EZPlOj7uUxSYCMGj6LiFB6oCBxx1xp7VhBOT4IukL/SeqLRqcAhI3wumoOmawuK4IIYcqh7FqiikD4XJnyDQ9Q7AO2GG/menHXeEpSZWiHfJJviFAbfI+79srKlCGqh/txBP304yhkL/tvkoqYE2XNKFCNPrmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=zte0afA0; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=yFFM4clhArtjOmMiVfF3lMvOsNQtCbAiTavA3XrtCIQ=; b=zte0afA0nW6k0iXOTgym3m9XQ0
+	2vmg6d4RaTnK1sxhIY2v+e1C7UOA98aKCzWzKH4VzUwh/9ihhcSchKF/NdD/gyAAFx7aolP/E0JFX
+	ud6xu4f5QsTkX0RHSPGEKZ6YNlGxqggeqbWQMc1rWqatAgxLyBZRv0wK+Cx2PnheFmRQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1semep-004tOO-Ca; Fri, 16 Aug 2024 04:25:39 +0200
+Date: Fri, 16 Aug 2024 04:25:39 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: yisen.zhuang@huawei.com, salil.mehta@huawei.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	horms@kernel.org, shenjian15@huawei.com, wangpeiyang1@huawei.com,
+	liuyonglong@huawei.com, sudongming1@huawei.com,
+	xujunsheng@huawei.com, shiyongbang@huawei.com, jdamato@fastly.com,
+	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH V2 net-next 03/11] net: hibmcge: Add mdio and
+ hardware configuration supported in this module
+Message-ID: <79122634-093b-44a3-bbcd-479d6692affc@lunn.ch>
+References: <20240813135640.1694993-1-shaojijie@huawei.com>
+ <20240813135640.1694993-4-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] netdev: Add missing __percpu qualifier to a cast
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172377483348.3093813.9126625283048482034.git-patchwork-notify@kernel.org>
-Date: Fri, 16 Aug 2024 02:20:33 +0000
-References: <20240814070748.943671-1-ubizjak@gmail.com>
-In-Reply-To: <20240814070748.943671-1-ubizjak@gmail.com>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240813135640.1694993-4-shaojijie@huawei.com>
 
-Hello:
+> +static int hbg_mdio_cmd_send(struct hbg_mac *mac, u32 prt_addr, u32 dev_addr,
+> +			     u32 type, u32 op_code)
+> +{
+> +	struct hbg_mdio_command mdio_cmd;
+> +
+> +	hbg_mdio_get_command(mac, &mdio_cmd);
+> +	mdio_cmd.mdio_st = type;
+> +	/* if auto scan enabled, this value need fix to 0 */
+> +	mdio_cmd.mdio_start = 0x1;
+> +	mdio_cmd.mdio_op = op_code;
+> +	mdio_cmd.mdio_prtad = prt_addr;
+> +	mdio_cmd.mdio_devad = dev_addr;
+> +	hbg_mdio_set_command(mac, &mdio_cmd);
+> +
+> +	/* wait operation complete and check the result */
+> +	return hbg_mdio_check_send_result(mac);
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+> +struct hbg_mdio_command {
+> +	union {
+> +		struct {
+> +			u32 mdio_devad : 5;
+> +			u32 mdio_prtad :5;
+> +			u32 mdio_op : 2;
+> +			u32 mdio_st : 2;
+> +			u32 mdio_start : 1;
+> +			u32 mdio_clk_sel : 1;
+> +			u32 mdio_auto_scan : 1;
+> +			u32 mdio_clk_sel_exp : 1;
+> +			u32 rev : 14;
+> +		};
+> +		u32 bits;
+> +	};
+> +};
 
-On Wed, 14 Aug 2024 09:06:38 +0200 you wrote:
-> Add missing __percpu qualifier to a (void *) cast to fix
-> 
-> dev.c:10863:45: warning: cast removes address space '__percpu' of expression
-> 
-> sparse warning. Also remove now unneeded __force sparse directives.
-> 
-> Found by GCC's named address space checks.
-> 
-> [...]
+This is generally not the way to do this. Please look at the macros in
+include/linux/bitfield.h. FIELD_PREP, GENMASK, BIT, FIELD_GET
+etc. These are guaranteed to work for both big and little endian, and
+you avoid issues where the compiler decides to add padding in your
+bitfields.
 
-Here is the summary with links:
-  - netdev: Add missing __percpu qualifier to a cast
-    https://git.kernel.org/netdev/net-next/c/d440af37ba6f
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+	Andrew
 
