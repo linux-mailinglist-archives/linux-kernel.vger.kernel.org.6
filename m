@@ -1,133 +1,142 @@
-Return-Path: <linux-kernel+bounces-289903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B496C954D28
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:55:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4C88954D2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:55:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E85791C231EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:55:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EAEB2860B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7405B1BE228;
-	Fri, 16 Aug 2024 14:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8FA1C0DC2;
+	Fri, 16 Aug 2024 14:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="itzaq5nW"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A3ghxTJa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65661BC088
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 14:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A981BF334;
+	Fri, 16 Aug 2024 14:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723819798; cv=none; b=ZnuzfYUZZGY9zUKeT90SB7UVvS87i4jK/q+q1IPEq/V9Tl0OfXeUXgl7wQYxp1XuxnUKQ3UuvOXcXkByUN9w2iy8ld50FW+AGIlXwR4F5hsuyAFRDPfuO4kktWiNyZwJu+DZYOjz5lx3ulcAhr0GWyey/a/Zi/fxN35feOAFniA=
+	t=1723819803; cv=none; b=KpC/pXXf3iNmGhgDXZeWqaG62nJFqovyuJbr75dTfk2WCkHAMuqiJHI7DpjBmEQ5BB1kR3JBiOoOLyEgGwwEO/YpNbYtKkfIvj3YgD30cju3LPNJ2Fv6B2UU41ZR99Gz3HCrXDE9Ay6eVeQ3Sk0IBc1AJLkfm5ECtEVY1KjUqU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723819798; c=relaxed/simple;
-	bh=2enB8saFSGepNC89tanu4rWlGuVIw0JTN3tAWwfyX1s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZapxFGeUhQNngZU4JvKMr9hyP/ZBCYhE8qX8tNIgSBkAbtvXO/3qF7QZqXXUdkXc4tlYANQsvju3Gw9+sNCpNgQTGLVSkJkh8nOMn2ri2BkyaEzrkdcqrRCbDwpYfn5pUFdRNiuJGoXbd9geaj8taf2ar9+D2EoX3CGcEDxgW+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=itzaq5nW; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-428243f928cso15122335e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:49:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723819795; x=1724424595; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Pw4iidM3Iet1Iv8rE86QFCvc2BvOF4+YOePGFlWP7mk=;
-        b=itzaq5nW3tIUTsKK7P3ZOd5xOOWldiUmAtZirtAVHdtN966bUpEO0peGXsQx4s1NP0
-         gcdC87x3Kvq8aRfxO714oQ2bilBpLDHCNOCCXw7tM64Ft7diKVbGl2jxJefweOdkRcDy
-         esYxu8zEbscA6Edy85QF8fCcvXME0C1QEG1bELAy6dv7JHfQm1nZGOhyy5u+6UH1BdEI
-         sG1z9UGtl2aMH18NAD/EX9fMb+vvKD0xPwsBNy0oVkcGf56NnOTGI54wg3GYkV/wDu2y
-         9RYAtG19GkI6vd17cTInjnzuXzESpN32lhggCZ5dL5Uil38K7OvB8hZmdtm8gRdmRl+Z
-         NRYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723819795; x=1724424595;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pw4iidM3Iet1Iv8rE86QFCvc2BvOF4+YOePGFlWP7mk=;
-        b=La2fdMVyf3gc0Q/RXutBVwqxhBfo/SAtR6My+Ei5JjpAnYF5U9asRq5We/A+PJRm0V
-         msXkMp/aL7nzAcAkeAVGSqqPhYNWQK5V9oTVuSQhoPTTi50DBsRW4C0hBgX6tnsTDxPV
-         be/6KnAbUqhn/dx9H55mbDcxpfgsk6zw8L83uWdTtRV7osyQEOWFo3SwdoOenDbSxEPI
-         SgoeS3oc71fCZdCreHNul2VqJ/Nd4YvdfQSfUQypy4sV4kHoU8qtpUzHd4hhneABS0qD
-         qS+yeoj/uSghWep+S5NzNloV+F2z/ZjhylXdBweMqicghs47L/sk2022hwrswVGi6Hvt
-         Z99Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUZqnGkZ6XgsPBeaRc82x5aOdXhc2Uqaue4g3FIITvPPCFzkafiR884lO6+2Ex0riNVRvxZJY/UMLTy/2WE5VmXfZvv07hRyI4qEUG6
-X-Gm-Message-State: AOJu0YybAIob3GnykkEfdbLVvagmjrFuBLNbjKTmwWJ8lUzJoXEZKUYv
-	A0BfG7TVGoGHTJOO3p0k1OHv1Pfpwwe++cARgAoAYa9PDokAYxS0hkYSUC1Mnyw=
-X-Google-Smtp-Source: AGHT+IGL3TqYk6Ij32SQRJwqCUgOZPNuyaMk+Z/Wcbzpeq7we1ONZ1kpKcda432RVQqoLyc+8z/i+w==
-X-Received: by 2002:a05:600c:4f4f:b0:426:64a2:5375 with SMTP id 5b1f17b1804b1-429ed77da5fmr22292515e9.1.1723819795005;
-        Fri, 16 Aug 2024 07:49:55 -0700 (PDT)
-Received: from [192.168.0.25] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded180dcsm78486735e9.4.2024.08.16.07.49.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Aug 2024 07:49:54 -0700 (PDT)
-Message-ID: <4bd0c70f-f425-4cb1-af77-17faa6af2fd6@linaro.org>
-Date: Fri, 16 Aug 2024 15:49:53 +0100
+	s=arc-20240116; t=1723819803; c=relaxed/simple;
+	bh=TVvyNQ4JTKhP8ZePQ5yHX8ZJ1kIfRyWT6dFWdabi0qI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LkoqTC5uld14F8gKB4wqyF5X0JYJF8kQoxLTJLsC3Hl6622JhNJQjLUA6KOmaNnPc7WWxhMSWAXB1LQ7IqTW2+opaW2qH/U7+91ocacRmYkgshAeyT42hKJa4gjrJWK7wIPVY38LmsoGIgxbtBS89dhJoQvg0Lt5Jyf4k46ywk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A3ghxTJa; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723819802; x=1755355802;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TVvyNQ4JTKhP8ZePQ5yHX8ZJ1kIfRyWT6dFWdabi0qI=;
+  b=A3ghxTJaHjMp531bZRFgk9ZtPBpcly9zucMUfKh4ijobVnlhLm9vAWGS
+   /3SwudyxWBKCYCma5F24OSTq/0+31PkUTifggb1CCX4J0iL5xdzGj6TgU
+   BKDNjZBx0nGUfBZn3qtShl3n/ixJoy9nwkfu8c1Uh+a0tgLLvPrXX5l3z
+   4tsomWtJ9ep1pTcBEYJ1t/M9pxTahuC+ZCC1ILhBlfUU9MS8arhYzv6p5
+   CrE2iH9xWPd7CQNCNZvRI6oMJ+TRU40nS5lNKwhJvGSfpUoPsgwhxenQr
+   7ogdIu2SsAz2WLbdA6NXosS7D/5d/7tqNTkaVQ9DJlMve8nSbCBPYyupi
+   w==;
+X-CSE-ConnectionGUID: jt6wUZZyRtqI37rFzM6esQ==
+X-CSE-MsgGUID: P9ZXfkHxSLaK053lL/bQJg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="33503009"
+X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
+   d="scan'208";a="33503009"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 07:50:01 -0700
+X-CSE-ConnectionGUID: dsiHfzOXRpSjcW2ydIHECg==
+X-CSE-MsgGUID: RzONDTMJQxGm4uNL4lGqjQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
+   d="scan'208";a="60247348"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 16 Aug 2024 07:49:59 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1seyH6-0006Wg-1g;
+	Fri, 16 Aug 2024 14:49:56 +0000
+Date: Fri, 16 Aug 2024 22:49:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>,
+	linux-input@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Stuart Hayhurst <stuart.a.hayhurst@gmail.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: corsair-void: Add Corsair Void headset family driver
+Message-ID: <202408162236.nuV8tt6o-lkp@intel.com>
+References: <20240813153819.840275-3-stuart.a.hayhurst@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/13] media: qcom: camss: Add CSID Gen3 support for
- sm8550
-To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@quicinc.com, Yongsheng Li <quic_yon@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-13-quic_depengs@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20240812144131.369378-13-quic_depengs@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240813153819.840275-3-stuart.a.hayhurst@gmail.com>
 
-On 12/08/2024 15:41, Depeng Shao wrote:
-> +	writel(1, csid->base + CSID_TOP_IRQ_CLEAR);
-> +	writel(1, csid->base + CSID_IRQ_CMD);
+Hi Stuart,
 
-CSID_IRQ_CMD bit(0) = CMD_CLEAR
+kernel test robot noticed the following build warnings:
 
-> +	writel(1, csid->base + CSID_TOP_IRQ_MASK);
-> +
-> +	for (i = 0; i < MSM_CSID_MAX_SRC_STREAMS; i++)
-> +		if (csid->phy.en_vc & BIT(i)) {
-> +			writel(BIT(BUF_DONE_IRQ_STATUS_RDI_OFFSET + i),
-> +						csid->base + CSID_BUF_DONE_IRQ_CLEAR);
-> +			writel(0x1 << IRQ_CMD_CLEAR, csid->base + CSID_IRQ_CMD);
+[auto build test WARNING on hid/for-next]
+[also build test WARNING on linus/master v6.11-rc3 next-20240816]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-CSID_IRQ_CMD bit(0) = CMD_CLEAR
+url:    https://github.com/intel-lab-lkp/linux/commits/Stuart-Hayhurst/HID-corsair-void-Add-Corsair-Void-headset-family-driver/20240815-004208
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
+patch link:    https://lore.kernel.org/r/20240813153819.840275-3-stuart.a.hayhurst%40gmail.com
+patch subject: [PATCH] HID: corsair-void: Add Corsair Void headset family driver
+config: parisc-randconfig-r131-20240816 (https://download.01.org/0day-ci/archive/20240816/202408162236.nuV8tt6o-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 14.1.0
+reproduce: (https://download.01.org/0day-ci/archive/20240816/202408162236.nuV8tt6o-lkp@intel.com/reproduce)
 
-and again here.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408162236.nuV8tt6o-lkp@intel.com/
 
-> +			writel(BIT(BUF_DONE_IRQ_STATUS_RDI_OFFSET + i),
-> +						csid->base + CSID_BUF_DONE_IRQ_MASK);
-> +		}
+sparse warnings: (new ones prefixed by >>)
+>> drivers/hid/hid-corsair-void.c:405:23: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned short [usertype] send_sidetone @@     got restricted __le16 [usertype] @@
+   drivers/hid/hid-corsair-void.c:405:23: sparse:     expected unsigned short [usertype] send_sidetone
+   drivers/hid/hid-corsair-void.c:405:23: sparse:     got restricted __le16 [usertype]
 
-re: previous comments
+vim +405 drivers/hid/hid-corsair-void.c
 
-1. Please define bits so that'd be
+   395	
+   396	static int corsair_void_send_sidetone_wired(struct device *dev, const char *buf,
+   397						    unsigned int sidetone)
+   398	{
+   399		struct usb_interface *usb_if = to_usb_interface(dev->parent);
+   400		struct usb_device *usb_dev = interface_to_usbdev(usb_if);
+   401		u16 send_sidetone;
+   402		int ret = 0;
+   403	
+   404		/* Packet format to set sidetone for wired headsets */
+ > 405		send_sidetone = cpu_to_le16(sidetone);
+   406		ret = usb_control_msg_send(usb_dev, 0,
+   407					   CORSAIR_VOID_USB_SIDETONE_REQUEST,
+   408					   CORSAIR_VOID_USB_SIDETONE_REQUEST_TYPE,
+   409					   CORSAIR_VOID_USB_SIDETONE_VALUE,
+   410					   CORSAIR_VOID_USB_SIDETONE_INDEX,
+   411					   &send_sidetone, 2, USB_CTRL_SET_TIMEOUT,
+   412					   GFP_KERNEL);
+   413	
+   414		return ret;
+   415	}
+   416	
 
-#define CSID_IRQ_CMD_CLEAR	BIT(0)
-writel(CSID_IRQ_CMD_CLEAR, csid->base + CSID_IRQ_CMD);
-
-There's no value in circumscribing the meaning of bitfields in upstream 
-code, we just make our own lives easier by having self-documenting code.
-
-TL;DR please name your bits - a blanket statement for the series.
-
-2. And as mentioned above, you don't need to execute that clear n times 
-in a loop. Just do it once at the top of the routine.
-
----
-bod
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
