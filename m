@@ -1,95 +1,274 @@
-Return-Path: <linux-kernel+bounces-290430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 599429553B9
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:17:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE1BF9553BD
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:17:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFF7BB20D12
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:17:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B0A0B20E4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB60A145A16;
-	Fri, 16 Aug 2024 23:17:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7A613E8AE;
+	Fri, 16 Aug 2024 23:17:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="JhDfl4w/"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j/mTFMZG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050C0B664
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 23:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432B61474D9;
+	Fri, 16 Aug 2024 23:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723850221; cv=none; b=NlBpjApuaPsQaqMp8t6ZHR0R/rTMWMsPRkvekA/hw03ofRwdvBYlaRvVyO+LQQzXdcUBdcjX3DIFwa2fo4/MwCfoOAuk6PVAonf8u+XgO3zS4MbOPFCLypJ9SSh3eSKJl8X9LGB3W9IuBI92naZ5ddv+e9haZ+w7hnYYPovDy6U=
+	t=1723850226; cv=none; b=dNSHGBPNM7RR71XyLl5O2ma2lwNSMtHEJBKnXPj43bSCHZF0jEnW+sxRcdxSSkLKyxLWxi6MTVB0DxyfcR4arF+3wDiFAyyi1dZ3a2PpnNbbhPpfh3kbhv1IhFVmOsF3ei1B1kXT3OjhVMzTZlHRoMrtXMRsFCJ8Z83OvpoT9EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723850221; c=relaxed/simple;
-	bh=roRvnMwEWZWDsXSMqVQw0j/j8y20FwYSvEpuhG751tI=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=KAbiqHL1AJenpiJKCGsWync2TUOASs6Cq8+KNe6i1xPt0ROm7GYtuC8uVCUBhsjYkHEOxdtBZ5M3RSuCd+RUmFJtuPf9DmcOJeLiEHAW+uL6eyqOlCmXh2WMRWxH34ojIoWvV28p6acfCSnNqaUST7o8fYbuOVQU0r+anct4LlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=JhDfl4w/; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1723850207; bh=w4EDB6xIbYl4sweb0Ucwmvlm9pLvdkiDIhy2X+d1Y8E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=JhDfl4w/Hy/7Y13LGHkFSKR5j87ngJaLGSvc46AJNC9nv3aY07ezgOVf7Bhlj4PL9
-	 Kej5lzEnSrZXbO1sPWD0WdCKls+3jEsC1xu9k8jPmgS8eLNxjy5wMMoF/ihKIzzFr8
-	 IahknQmF6qGwW1rY8l7WKvqFxN+znDfaLJM+LpBE=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
-	id 42D3322D; Sat, 17 Aug 2024 07:16:45 +0800
-X-QQ-mid: xmsmtpt1723850205tivmd9kqf
-Message-ID: <tencent_656E089498E91AEFC2CFEC78566F042E410A@qq.com>
-X-QQ-XMAILINFO: OdIVOfqOaVcrVz7lZ/6IcCsTq2d26SvflW5o0awemGjQOH5Az4hS9HNnlUilSS
-	 HnyCxTJPGEFSTeK7CHOOndnrlrsAF06Ve22lESdKmdlLcVBvErSlgCrlFnkULoAJFFxU4GxMxgs2
-	 AzIhqUxa8mT+5FWPZUflwHEHAVkH0PJyeAVzo7c7fEblAHLZ7ny+ZPRv9xZfNSGY07MxT8I7m++P
-	 KhCvDj01dFgqfiexJLwMnZcxges0mpJPQ/aWF9xG/yZsnJ+i5j9xDGVF+Pev6aqkT8M6BPhy2S5z
-	 cDpvLa8WaKk0JrDMPN4hK1Zryk/nFazZIrK3Gr+EeH5Qik6/DKdU8TK8/3L5S3gYFygR0sdHpUdA
-	 B1hwJWjd3sdocGwwdFiKQny4auwCYY0o1/qb8xROI7DYOJx5tW9k2dYfnc+ETBl1LStBYH6XtDqX
-	 xjzKATItC8F2TEx7fffgc6Ye4oI+i8jfvy27fy3B39QbKNe4zmpArWr9sAmWldf9a2yf02lTZDvT
-	 pGfKA4LPTZFPhEY7PZxIMC6dCYcS+vA3bGUCise9o2QX+J4ZTcK8JI/I6h0dzVPk1bcZwFPZB9TJ
-	 4G/je0dQtwKN4t25Gms7sOx9IQCMgb8RdlJZ0QP6M9hQ9/4zq1JhBTsQ52IpnyFPKwza0Vbuxt3L
-	 jP6mMZMdYGUW4JRDI8wiIvUfP6Jq+lRQcgRtuT7do6UzU+MAt3utlSYS/8N0OJmOu7oPt+2Vzroc
-	 DjrVf4f7At5EKSuutTHvqKNHiMQ3v24TBUPqu6mwHlzDT+ZkaGlNntIA35Zu5hKeknBAONJQJtZY
-	 dvUy6CkGDMzGTZ9pRs7C+cLTgpXLVxlBkuzYwqVsmzfAJHDV0iLoLhdBCYSIv+bEOr01zdnZMKzn
-	 DderMZEIZMv2LLKdwsk5tnXoUAq0kDiTI2XbbVwCa4
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+3c010e21296f33a5dc16@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [syzbot] [jfs?] KASAN: slab-use-after-free Read in dbFreeBits
-Date: Sat, 17 Aug 2024 07:16:44 +0800
-X-OQ-MSGID: <20240816231643.1446092-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <00000000000012a63d061fccab65@google.com>
-References: <00000000000012a63d061fccab65@google.com>
+	s=arc-20240116; t=1723850226; c=relaxed/simple;
+	bh=BjhcSPzeBEf/CdWo/sx979xbojPHN02o91ghPixBfqQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W5810m0oDJdC8JTyd20hFpTkQrVAjl766XThw2Dk9s7Mb6gZ91M65rf38Dn24FLrP4GwI+KzfkoTKgVd/voG/W9rFwaOlkdrChtwH3uB5C7Z/lL1pl5xel0tOPkDGE7yhxZCK/yiddwDmNwjBgDBiOV0VzeoibC+aieqSE1JuxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j/mTFMZG; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723850224; x=1755386224;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=BjhcSPzeBEf/CdWo/sx979xbojPHN02o91ghPixBfqQ=;
+  b=j/mTFMZGM+pbj6nqBhA9yLFF3qx30kWwc81uUS2psGQDHYFWWCtwqKJs
+   V+02gbNQOli/Q2F3NDhLX5yif3caqdL5LwNN5hFBOLHNB6ka/78ORY+ma
+   scLIGBf7o1TZzef+mAXoHb0cTvfL7rnLPP7apo7fB43ZNNp57PVMNFItc
+   Axf/lSDUvxLd2OZuUCC1dJPR+NHbVX3+a/IAuNISl9H+8+IIqC2p5oDWi
+   lTJdk04fdPKQF+qKNqTRHIq1IZ6MGPPWwOPsRL6qn7vaQ/Qxs86360HQC
+   /DaXZDOcty9uYYsuwYJoNrLmUnep+WmwmkYvxRQnquTFxkTZ6l/SQQeeh
+   Q==;
+X-CSE-ConnectionGUID: FcT7sex9SxWI7BPE86Zsvw==
+X-CSE-MsgGUID: mryEbVuYQO+A0M12ccoYXA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="22130305"
+X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
+   d="scan'208";a="22130305"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 16:17:03 -0700
+X-CSE-ConnectionGUID: 8Z81hDAeQjuXBZiyQbk+Xw==
+X-CSE-MsgGUID: H7rNfao5SK6kxxSd+9uuVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
+   d="scan'208";a="59447719"
+Received: from unknown (HELO [10.125.111.71]) ([10.125.111.71])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 16:17:02 -0700
+Message-ID: <07f637e3-5539-4bbd-bc0f-e2b1d131640d@intel.com>
+Date: Fri, 16 Aug 2024 16:17:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 10/25] cxl/port: Add endpoint decoder DC mode support
+ to sysfs
+To: ira.weiny@intel.com, Fan Ni <fan.ni@samsung.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+ Davidlohr Bueso <dave@stgolabs.net>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, linux-btrfs@vger.kernel.org,
+ linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, nvdimm@lists.linux.dev
+References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
+ <20240816-dcd-type2-upstream-v3-10-7c9b96cba6d7@intel.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20240816-dcd-type2-upstream-v3-10-7c9b96cba6d7@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-sync jfs remount and  jfs ioctrl with s_umount
 
-#syz test: upstream master
 
-diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
-index cb3cda1390ad..a409ae18454a 100644
---- a/fs/jfs/jfs_dmap.c
-+++ b/fs/jfs/jfs_dmap.c
-@@ -1645,7 +1645,9 @@ s64 dbDiscardAG(struct inode *ip, int agno, s64 minlen)
- 		 * call jfs_issue_discard() itself */
- 		if (!(JFS_SBI(sb)->flag & JFS_DISCARD))
- 			jfs_issue_discard(ip, tt->blkno, tt->nblocks);
-+		down_read(&sb->s_umount);
- 		dbFree(ip, tt->blkno, tt->nblocks);
-+		up_read(&sb->s_umount);
- 		trimmed += tt->nblocks;
- 	}
- 	kfree(totrim);
+On 8/16/24 7:44 AM, ira.weiny@intel.com wrote:
+> From: Navneet Singh <navneet.singh@intel.com>
+> 
+> Endpoint decoder mode is used to represent the partition the decoder
+> points to such as ram or pmem.
+> 
+> Expand the mode to allow a decoder to point to a specific DC partition
+> (Region).
+> 
+> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
+> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> 
+> ---
+> Changes:
+> [Fan: change mode range logic]
+> [Fan: use !resource_size()]
+> [djiang: use the static mode name string array in mode_store()]
+> [Jonathan: remove rc check from mode to region index]
+> [Jonathan: clarify decoder mode 'mixed']
+> [djbw: drop cleanup patch and just follow the convention in cxl_dpa_set_mode()]
+> [fan: make dcd resource size check similar to other partitions]
+> [djbw, jonathan, fan: remove mode range check from dc_mode_to_region_index]
+> [iweiny: push sysfs versions to 6.12]
+> ---
+>  Documentation/ABI/testing/sysfs-bus-cxl | 21 ++++++++++----------
+>  drivers/cxl/core/hdm.c                  | 10 ++++++++++
+>  drivers/cxl/core/port.c                 | 10 +++++-----
+>  drivers/cxl/cxl.h                       | 35 ++++++++++++++++++---------------
+>  4 files changed, 45 insertions(+), 31 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-cxl b/Documentation/ABI/testing/sysfs-bus-cxl
+> index 3f5627a1210a..957717264709 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-cxl
+> +++ b/Documentation/ABI/testing/sysfs-bus-cxl
+> @@ -316,23 +316,24 @@ Description:
+>  
+>  
+>  What:		/sys/bus/cxl/devices/decoderX.Y/mode
+> -Date:		May, 2022
+> -KernelVersion:	v6.0
+> +Date:		May, 2022, October 2024
+> +KernelVersion:	v6.0, v6.12 (dcY)
+>  Contact:	linux-cxl@vger.kernel.org
+>  Description:
+>  		(RW) When a CXL decoder is of devtype "cxl_decoder_endpoint" it
+>  		translates from a host physical address range, to a device local
+>  		address range. Device-local address ranges are further split
+> -		into a 'ram' (volatile memory) range and 'pmem' (persistent
+> -		memory) range. The 'mode' attribute emits one of 'ram', 'pmem',
+> -		'mixed', or 'none'. The 'mixed' indication is for error cases
+> -		when a decoder straddles the volatile/persistent partition
+> -		boundary, and 'none' indicates the decoder is not actively
+> -		decoding, or no DPA allocation policy has been set.
+> +		into a 'ram' (volatile memory) range, 'pmem' (persistent
+> +		memory) range, or Dynamic Capacity (DC) range. The 'mode'
+> +		attribute emits one of 'ram', 'pmem', 'dcY', 'mixed', or
+> +		'none'. The 'mixed' indication is for error cases when a
+> +		decoder straddles partition boundaries, and 'none' indicates
+> +		the decoder is not actively decoding, or no DPA allocation
+> +		policy has been set.
+>  
+>  		'mode' can be written, when the decoder is in the 'disabled'
+> -		state, with either 'ram' or 'pmem' to set the boundaries for the
+> -		next allocation.
+> +		state, with 'ram', 'pmem', or 'dcY' to set the boundaries for
+> +		the next allocation.
+>  
+>  
+>  What:		/sys/bus/cxl/devices/decoderX.Y/dpa_resource
+> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
+> index b4a517c6d283..ceca0b3d3e5c 100644
+> --- a/drivers/cxl/core/hdm.c
+> +++ b/drivers/cxl/core/hdm.c
+> @@ -551,6 +551,7 @@ int cxl_dpa_set_mode(struct cxl_endpoint_decoder *cxled,
+>  	switch (mode) {
+>  	case CXL_DECODER_RAM:
+>  	case CXL_DECODER_PMEM:
+> +	case CXL_DECODER_DC0 ... CXL_DECODER_DC7:
+>  		break;
+>  	default:
+>  		dev_dbg(dev, "unsupported mode: %d\n", mode);
+> @@ -578,6 +579,15 @@ int cxl_dpa_set_mode(struct cxl_endpoint_decoder *cxled,
+>  		goto out;
+>  	}
+>  
+> +	if (mode >= CXL_DECODER_DC0 && mode <= CXL_DECODER_DC7) {
+> +		rc = dc_mode_to_region_index(mode);
+> +		if (!resource_size(&cxlds->dc_res[rc])) {
+> +			dev_dbg(dev, "no available dynamic capacity\n");
+> +			rc = -ENXIO;
+> +			goto out;
+> +		}
+> +	}
+> +
+>  	cxled->mode = mode;
+>  	rc = 0;
+>  out:
+> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+> index 8054cbaac9f6..222aa0aeeef7 100644
+> --- a/drivers/cxl/core/port.c
+> +++ b/drivers/cxl/core/port.c
+> @@ -205,11 +205,11 @@ static ssize_t mode_store(struct device *dev, struct device_attribute *attr,
+>  	enum cxl_decoder_mode mode;
+>  	ssize_t rc;
+>  
+> -	if (sysfs_streq(buf, "pmem"))
+> -		mode = CXL_DECODER_PMEM;
+> -	else if (sysfs_streq(buf, "ram"))
+> -		mode = CXL_DECODER_RAM;
+> -	else
+> +	for (mode = CXL_DECODER_RAM; mode < CXL_DECODER_MIXED; mode++)
+> +		if (sysfs_streq(buf, cxl_decoder_mode_names[mode]))
+> +			break;
+> +
+> +	if (mode >= CXL_DECODER_MIXED)
+>  		return -EINVAL;
+>  
+>  	rc = cxl_dpa_set_mode(cxled, mode);
+> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+> index 53b666ef4097..16861c867537 100644
+> --- a/drivers/cxl/cxl.h
+> +++ b/drivers/cxl/cxl.h
+> @@ -365,6 +365,9 @@ struct cxl_decoder {
+>  /*
+>   * CXL_DECODER_DEAD prevents endpoints from being reattached to regions
+>   * while cxld_unregister() is running
+> + *
+> + * NOTE: CXL_DECODER_RAM must be second and CXL_DECODER_MIXED must be last.
+> + *	 See mode_store()
+>   */
+>  enum cxl_decoder_mode {
+>  	CXL_DECODER_NONE,
+> @@ -382,25 +385,25 @@ enum cxl_decoder_mode {
+>  	CXL_DECODER_DEAD,
+>  };
+>  
+> +static const char * const cxl_decoder_mode_names[] = {
+> +	[CXL_DECODER_NONE] = "none",
+> +	[CXL_DECODER_RAM] = "ram",
+> +	[CXL_DECODER_PMEM] = "pmem",
+> +	[CXL_DECODER_DC0] = "dc0",
+> +	[CXL_DECODER_DC1] = "dc1",
+> +	[CXL_DECODER_DC2] = "dc2",
+> +	[CXL_DECODER_DC3] = "dc3",
+> +	[CXL_DECODER_DC4] = "dc4",
+> +	[CXL_DECODER_DC5] = "dc5",
+> +	[CXL_DECODER_DC6] = "dc6",
+> +	[CXL_DECODER_DC7] = "dc7",
+> +	[CXL_DECODER_MIXED] = "mixed",
+> +};
+> +
+>  static inline const char *cxl_decoder_mode_name(enum cxl_decoder_mode mode)
+>  {
+> -	static const char * const names[] = {
+> -		[CXL_DECODER_NONE] = "none",
+> -		[CXL_DECODER_RAM] = "ram",
+> -		[CXL_DECODER_PMEM] = "pmem",
+> -		[CXL_DECODER_DC0] = "dc0",
+> -		[CXL_DECODER_DC1] = "dc1",
+> -		[CXL_DECODER_DC2] = "dc2",
+> -		[CXL_DECODER_DC3] = "dc3",
+> -		[CXL_DECODER_DC4] = "dc4",
+> -		[CXL_DECODER_DC5] = "dc5",
+> -		[CXL_DECODER_DC6] = "dc6",
+> -		[CXL_DECODER_DC7] = "dc7",
+> -		[CXL_DECODER_MIXED] = "mixed",
+> -	};
+> -
+>  	if (mode >= CXL_DECODER_NONE && mode <= CXL_DECODER_MIXED)
+> -		return names[mode];
+> +		return cxl_decoder_mode_names[mode];
+>  	return "mixed";
+>  }
+>  
+> 
 
