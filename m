@@ -1,89 +1,86 @@
-Return-Path: <linux-kernel+bounces-289165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1684195429A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:20:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D1DE954298
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:20:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13AED28F725
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:20:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DD501C22B41
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4D2132117;
-	Fri, 16 Aug 2024 07:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC677DA96;
+	Fri, 16 Aug 2024 07:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f5AWzoFz"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RgJlKmQ5"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFDC83CA3;
-	Fri, 16 Aug 2024 07:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010C56BB4B
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723792805; cv=none; b=ngPpvSuHz3QIG7CN3pScF8I3IZs4kfA2cOepXv5MrF0qjvUJYv3nt1deifDYfZscSfP4zvYdGbNsjLmYATmIfO8eH/XkhBZR2ONmt18tKALFRTkN3mgXijanSadkk9PWGLKuQ+2XhH3f0aucipB+3Hs9fc5w2OqDe0s/3QX2cwA=
+	t=1723792804; cv=none; b=FoAVYgLJGQzT9ac1fIO2Q8FZRQS5oBKgHtUzmK34P00o16wuMG0duvH9TiiHBxot3uFfadrOPOyIUrXLtMp5ziGHGtwGzdLtdHfFOW6wMHg2Oh/HsOOZB3qQdDaq5edcfK/KFV+Qdf8yDLY4m5yfXxu8JLxdT267EuzyIg90XEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723792805; c=relaxed/simple;
-	bh=XltBR+DchOvuAWXNxQkJOKqCiETtmFdDHwpmtwucYFI=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XPIu9jYnRkDCnK/NRERQwJMLFSB/h1nDlWBSFsGtSRI8UNp6fOhXwMEBoomjRmZItZp8PRT3n4CMo/B1AuXarcTEtUGAk9BN+xBKoHY7JzCb78Ch4Et9p7bB9l5eCZIUNAW4T9t+7eTTUO6lNkYKJoxXrk0PJ0BNpH711/L0ILE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f5AWzoFz; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-530e062217eso2219874e87.1;
-        Fri, 16 Aug 2024 00:20:02 -0700 (PDT)
+	s=arc-20240116; t=1723792804; c=relaxed/simple;
+	bh=VEqTAJPgsNARp2Du6ejO+UCli3M4KHViVW7AcfPGMCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pG6oF/6ny3SL8u0+gov42NjHn0FmjAvrrVIYeNUq7PrGtmBHnDadHgVQfGY8o4fj1x2820Lr7XIM3QLlLqyAnOLuNovtA0KWk8vbW9CnAC+Zk6xAw+qY5ICBgl8Ro2zumAi5BfKDQ9E0JDmtUwXqt/h3kAxz0tV+b7A4nb50Ovg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RgJlKmQ5; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4280bca3960so12854275e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 00:20:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723792801; x=1724397601; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1723792800; x=1724397600; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BCDYMfGySc443px3vz4IJgiNfp6ypozgyP4rObiGgj0=;
-        b=f5AWzoFzV1zkIWBpZnOrvgQwWBIdUwYFZVbdQNn+9ze68KQzQz7ZRvE2up26pWxzdp
-         DxXVHhLm+xFJ8m7VQYrmbu9A5Jb4npIb0t0enHPi/6bScNP7sOr8NhK8H4un4tC4tMzD
-         plzNZzeZMit8PeGHi8oqfn7xaLEiKWFowe5CGEwengRFZ7g+6HIH5C3l0Ona81WGUelx
-         W3CTUXYm8/Snhv8Qxpf2ZV/hpsKl2ezT2qXMEElTZkk2e6ArICBeXlG2MmYr+6+Rz8cQ
-         NV1KaGitlt12dBE+NU2fP9I5Iov5UlGwxA6N30p+ksDpmlMmojp41jU+lBp8IAKsVMZv
-         YmqA==
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3qwLWNfklFp9yOWm7oGFyBx/KIEHr2G+mY1Na9aaN9U=;
+        b=RgJlKmQ5uR3R04amZbLqw9OXAmmEwdgXDQKvmR1RMnKSH0+abeZnMa1KCRQ615YWBh
+         Njlml3hVVBMdFvRLSAlRJUA64ahVPwmgJxT9LK/Qgn/e6Pmr6wnqxWfK8yvCVAcb0KSX
+         GrLsaayNr4sx3oLnnTnWZNjd8KnagQ8RuXE6UZomgdyiutM70hLI7ZOuEgq6QBaRo2TY
+         gi9PKzPw5ABJx2hnxKSFq/fzr90jYSJJwd5TI6B0hB8tyVTy/KXS3iEOa6F2hl21z8mD
+         v+GAQ+DuRZTaXZMSD9ld+N04CIa4KuAJHMUk67LhYDezw+uRV7ZftDPeyrofUAcSwfTo
+         cPFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723792801; x=1724397601;
+        d=1e100.net; s=20230601; t=1723792800; x=1724397600;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BCDYMfGySc443px3vz4IJgiNfp6ypozgyP4rObiGgj0=;
-        b=f3hTztkhNO82jJFLPbncInJ9wiZbn36qAGTggvnArG4srZ/EiQCWnxP6myyPI3evle
-         XgZ+2Em3p+oJv3YIqFvM6o/FrpmzmtiSljIaFRLSOG2xJx4VIhX0VrsPGGunw5G9jPk4
-         EEi32WFKFHdsBeByt+ESJYEfOEtSZNl2UJlteXSWu2m5VTzVPWvriJtQVKk+NPrJVtuA
-         MWsqsi/Py4weuTMQ1mgiAzJ7TDlymOlyKve/JqtOAyV0/hiuEOnV+Gdf5Qz9NauU9v74
-         RpvNPyiwH64SEOtjP1jQL9r/9eotdoTz7gTtwqztHL6mpATeq+yqVmvm4fFGvj3MNizm
-         XBIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUoV32EcXeE1iNRHa0QfPzHyNRnkg09lQlnYk17h7qGZryGMuKv25VuLXVlIJklx8Ae+veNpSMxjf09dyR0cehnWO1GYKnqalAwrC6bJ/p7VCtO5aO0wcgyEW2AkQ7eqlKg0LDk
-X-Gm-Message-State: AOJu0YzggaT/0mIewOS96M1OR+yxGtsxuQQV1e4/UPkl4pa9mr57mWpp
-	H5J7B6yXvVHzUEO/90cA/Q6Es5Lldm1qKNboqqVV8mT0c6nJySUT
-X-Google-Smtp-Source: AGHT+IEMNiMu907jG2oLMbP8LWHs6njbuCrNw+PDgwS8M4Ji8B1T0eTn7Bss8F5WwbXir0Y0aKTrzQ==
-X-Received: by 2002:a05:6512:124b:b0:52c:e170:9d38 with SMTP id 2adb3069b0e04-5331c6b027bmr1363916e87.31.1723792800401;
-        Fri, 16 Aug 2024 00:20:00 -0700 (PDT)
-Received: from pc636 (host-90-233-214-145.mobileonline.telia.com. [90.233.214.145])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5330d3af9b5sm471263e87.14.2024.08.16.00.19.58
+        bh=3qwLWNfklFp9yOWm7oGFyBx/KIEHr2G+mY1Na9aaN9U=;
+        b=vBSJEZfrXvD+WmQij/Dx4pFRweZM7mZi4kFF2VftCmKSs0PbCMHJISewqsgL0Ld9N9
+         S1IiatouD4GYcHdfc8GVP3wiDrHIcYiSbN63LmmfDY2AxrPefJ/Niy3nSpPpHEyFD/h8
+         hDcIuQoSuzlAtm/8Fm7qs+E3fVCgWqehupuyWqByxLVHjxBNmXVuPDXBEpV0kOjsDqJ5
+         zjB2rsYozorO2+rC3CQn0pvHLyb6hiNWj6Wr+kmkQe6ENQe/rd0NUfDcABWwk2+Mqsv3
+         9ScocXpEh1ykrZd9C4DHac41gImG7FV+xQMwYKJzhbJeId+4f/GM/U9vcOGm0Xq2YEO9
+         VqwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5gkUg09AlraH1Fuuft6Jk9/g8YJ77lMj97txdDGo2H/2UoNZVsxtG0x8qNur/8VtRWId05fwS5DP4/s9uLKyTXQzq+HmKlhVq0m5L
+X-Gm-Message-State: AOJu0YyiPmreB3rPvH5EWq7DU0tm5z5KCIHsa6rTrSHe0UH7llEPKB0i
+	g3MIS33AoUrsl9lfdiYqxRcDKwjAYjPJJabPe76df1yRSVLToZSuiXXpARjwgHA=
+X-Google-Smtp-Source: AGHT+IGSGKGz2LWvosgQ2pPQmkG+F/+eo0+mfnvEknWQwEK+nvehSTgdu/Y1V/NAFngK0xSmE4eguQ==
+X-Received: by 2002:adf:ec83:0:b0:371:8cc1:2024 with SMTP id ffacd0b85a97d-371942a060cmr1420459f8f.0.1723792799996;
+        Fri, 16 Aug 2024 00:19:59 -0700 (PDT)
+Received: from localhost (109-81-92-77.rct.o2.cz. [109.81.92.77])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37189849cdbsm3025635f8f.28.2024.08.16.00.19.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 16 Aug 2024 00:19:59 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Fri, 16 Aug 2024 09:19:52 +0200
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Uladzislau Rezki <urezki@gmail.com>, Michal Hocko <mhocko@suse.com>,
-	Barry Song <21cnbao@gmail.com>, Hailong Liu <hailong.liu@oppo.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Tangquan Zheng <zhengtangquan@oppo.com>, stable@vger.kernel.org,
-	Baoquan He <bhe@redhat.com>, Matthew Wilcox <willy@infradead.org>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v1] mm/vmalloc: fix page mapping if
- vm_area_alloc_pages() with high order fallback to order 0
-Message-ID: <Zr79mKLTtum-rRKF@pc636>
-References: <20240808122019.3361-1-hailong.liu@oppo.com>
- <CAGsJ_4z4+CCDoPR7+dPEhemBQN60Cj84rCeqRY7-xvWapY4LGg@mail.gmail.com>
- <ZrXiUvj_ZPTc0yRk@tiehlicka>
- <ZrXkVhEg1B0yF5_Q@pc636>
- <20240815220709.47f66f200fd0a072777cc348@linux-foundation.org>
+Date: Fri, 16 Aug 2024 09:19:58 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	"T . J . Mercier" <tjmercier@google.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org
+Subject: Re: [PATCH v2] memcg: replace memcg ID idr with xarray
+Message-ID: <Zr79nrBAkfSdI4e5@tiehlicka>
+References: <20240815155402.3630804-1-shakeel.butt@linux.dev>
+ <Zr5Xn45wEJytFTl8@google.com>
+ <Zr5wK7oUcUoB44OF@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,41 +89,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240815220709.47f66f200fd0a072777cc348@linux-foundation.org>
+In-Reply-To: <Zr5wK7oUcUoB44OF@casper.infradead.org>
 
-On Thu, Aug 15, 2024 at 10:07:09PM -0700, Andrew Morton wrote:
-> On Fri, 9 Aug 2024 11:41:42 +0200 Uladzislau Rezki <urezki@gmail.com> wrote:
+On Thu 15-08-24 22:16:27, Matthew Wilcox wrote:
+> On Thu, Aug 15, 2024 at 07:31:43PM +0000, Roman Gushchin wrote:
+> > There is another subtle change here: xa_alloc() returns -EBUSY in the case
+> > of the address space exhaustion, while the old code returned -ENOSPC.
+> > It's unlikely a big practical problem.
 > 
-> > > > Acked-by: Barry Song <baohua@kernel.org>
-> > > > 
-> > > > because we already have a fallback here:
-> > > > 
-> > > > void *__vmalloc_node_range_noprof :
-> > > > 
-> > > > fail:
-> > > >         if (shift > PAGE_SHIFT) {
-> > > >                 shift = PAGE_SHIFT;
-> > > >                 align = real_align;
-> > > >                 size = real_size;
-> > > >                 goto again;
-> > > >         }
-> > > 
-> > > This really deserves a comment because this is not really clear at all.
-> > > The code is also fragile and it would benefit from some re-org.
-> > > 
-> > > Thanks for the fix.
-> > > 
-> > > Acked-by: Michal Hocko <mhocko@suse.com>
-> > > 
-> > I agree. This is only clear for people who know the code. A "fallback"
-> > to order-0 should be commented.
+> I decided that EBUSY was the right errno for this situation;
 > 
-> It's been a week.  Could someone please propose a fixup patch to add
-> this comment?
->
-I will send the patch. This is week i have a vacation, thus i am a bit
-slow.
+> #define EBUSY           16      /* Device or resource busy */
+> #define ENOSPC          28      /* No space left on device */
+> 
+> ENOSPC seemed wrong; the device isn't out of space.
 
---
-Uladzislau Rezki
+The thing is that this is observable by userspace - mkdir would return a
+different and potentially unexpected errno. We can try and see whether
+anybody complains or just translate the error.
+
+-- 
+Michal Hocko
+SUSE Labs
 
