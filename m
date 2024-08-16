@@ -1,540 +1,370 @@
-Return-Path: <linux-kernel+bounces-289829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FB37954C0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:14:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 465E9954C3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1774628141B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:14:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F156C28206F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:19:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E987817;
-	Fri, 16 Aug 2024 14:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 253AC1BD4E3;
+	Fri, 16 Aug 2024 14:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="hMzavM7a"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=matthias-fetzer.de header.i=@matthias-fetzer.de header.b="L6Rzcmkj"
+Received: from relay.yourmailgateway.de (relay.yourmailgateway.de [194.59.206.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E031BDABC
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 14:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874051BC083;
+	Fri, 16 Aug 2024 14:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.59.206.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723817551; cv=none; b=Urb5M7F+qWF7zZlXAeYrQn4dmmM0RMFu/0ZxcybXFlYPQhkWDb0Qux/wtVl74OmhG9ybhkMApI/JYd0xh8vb9UuZnYpoqFC1opQRvv0c2+inqeNzosZYECvhydZdQLWDOF+AWjmhBo+X6psQqvpKi9F2Bzf4vriSBPmLDTLHAY0=
+	t=1723817972; cv=none; b=pmAavPERm1vL2NMiEPJ0akxOpeeoJ5Mh+bTTQaPxlbyOoqx394Euopsp5eIMxbKDajC6rLgOS0/p6Wxf+lDb1c7MYzrkyK5vbdJsYQY4G5JF2JGO/8Kt/5YiWDdSbk5dPxi9xxT2lhQ3n248T1wue3kUnC5Hisxvk66pUBv/UKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723817551; c=relaxed/simple;
-	bh=fQFhWoVSmpUF9ly6XoVOF0ONdUwOUBi3G4WwTmZDQGc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oYqCs726VwyYBx8Kj9haOKJkuz+Bk97SWRJOEsGCLaToBfP5EWpkcJnj/wTcsSFFEjRYeMBOYzAGMSE2t/ABIR0no/IC9jTnZ2b1GVd1rsSspLQK776Kmk7G52XF32e2erDmxJpUcCfQp4vCWMD27w1OYp9gPq4Yp8WEX7iG8U4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=hMzavM7a; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-428e0d18666so14264205e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:12:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1723817547; x=1724422347; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GyGt4H5G87nM/JrzVzEQPqo0MePAd3uj1Sp3fHu5gLM=;
-        b=hMzavM7amzaSSS6dk52Bz1cX51UcwIk2SHZnz94Q0Z1H0cjMOYWFgSD9kpA/AMwUpr
-         AafKxWT8PlwdNeRE8/+QomZdOQi2ttMqHnGPXHEwNUqLzX/f8RyOzq8E/Q44faIdRF3l
-         2librUTf58G8hKtw0r6C0gfEll5MAv4dna4zM7si5kPaUkx+vgkqllndIjFSRWt3IDRY
-         pwOujA8RS33vkAsJNP+gEJq4TYhDtPPwp2wRUDq6zNFKwStT6WRg4rcxjiOm905iIGdE
-         BHfiv4CD5SBbdrVY1rQayK6I1N2w8VRMNy+po9Kx6KpT8GuAN7LNqmHq0e1UScJ+HOjP
-         7SJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723817547; x=1724422347;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GyGt4H5G87nM/JrzVzEQPqo0MePAd3uj1Sp3fHu5gLM=;
-        b=fnM/+jaRDMGDXaRftmhFSPel7fidojj3+vkS7xvNqq/9rxX3jNyPIkaTOi06queJkm
-         q8IKmJbOhxoy8guYEJdHZtILFQ/ZCkq6+rVniHZ8zF2P6hc9s4xPeo17GTStwcA85dM8
-         BAhEpbrhynRfODISJlVxzH7Axnb8vEOrvu0bEMUKpOyJagIj+SNYLRuOuHgvBtaLCqBu
-         A/ed510hpAMBVHhV+lI9IzywqAGUl3Ti3kCZXz1goFAjjZiLFaWXYT9NvNQiVNTMyCa3
-         KCYuHunDt6POtcuWUthBKAHpedVGXC/1uHohTPZMotNjUf6fCQXV+l2i1pdXQlq8byaG
-         5xZg==
-X-Forwarded-Encrypted: i=1; AJvYcCVMAJKWeZzIrpO1B4ywzyelaqOntePtluJQTtx3AuGrPmsBA38ZiIkfSTOuv1Ca9vr2I6fxDS3/h9rvDyKRyAJC3NgKMi/UY/37iwi8
-X-Gm-Message-State: AOJu0YywBRnKQlPKt0Uwf88bbvQFgs5SOIgUkmDe/iniTwv6R+A++naf
-	ucj8423ktCsWWFc+uslXRypUgAnuc06wSrgVbLJjSJnkS6wO7TI/nb1Ie3gNSLMrteikUBtBXMs
-	F
-X-Google-Smtp-Source: AGHT+IFRN0AyiQhfX1vQdLK55yNZedaIQIiGKzxg95O/JBwyM5ONSGW/mQtqnzVDZE5Ytgk3LM9+KA==
-X-Received: by 2002:adf:b1c3:0:b0:36d:297d:53c1 with SMTP id ffacd0b85a97d-37194651752mr2135560f8f.25.1723817547158;
-        Fri, 16 Aug 2024 07:12:27 -0700 (PDT)
-Received: from localhost ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898ab480sm3714932f8f.103.2024.08.16.07.12.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 07:12:26 -0700 (PDT)
-Date: Fri, 16 Aug 2024 16:12:22 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Geethasowjanya Akula <gakula@marvell.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"edumazet@google.com" <edumazet@google.com>,
-	Sunil Kovvuri Goutham <sgoutham@marvell.com>,
-	Subbaraya Sundeep Bhatta <sbhatta@marvell.com>,
-	Hariprasad Kelam <hkelam@marvell.com>
-Subject: Re: [EXTERNAL] Re: [net-next PATCH v10 03/11] octeontx2-pf: Create
- representor netdev
-Message-ID: <Zr9eRo-TcTW4GP_8@nanopsycho.orion>
-References: <20240805131815.7588-1-gakula@marvell.com>
- <20240805131815.7588-4-gakula@marvell.com>
- <ZrTpgw9tmQprbuNk@nanopsycho.orion>
- <CH0PR18MB43394EFE61924E12055B07E3CD812@CH0PR18MB4339.namprd18.prod.outlook.com>
+	s=arc-20240116; t=1723817972; c=relaxed/simple;
+	bh=wBcZNU9aE90hNwgxil9ewMeuuwCsk/jDZ+3232K7xDA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OQtpanpO6AHYWe5ryX//EPU2tbvxB4EYRJhfofAuktoY9FirQM05x0LAazYwuUEbKfUYTCEZK924RZbGyR+J9UyFzoxJv7EJKS2TfdpkjjTY87KwJ3cLqqJGapE9sP6meQ6SNS4C0IYLvFndzeJvOG4fylhBwjrpNPKV1OpS4rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=matthias-fetzer.de; spf=pass smtp.mailfrom=matthias-fetzer.de; dkim=pass (2048-bit key) header.d=matthias-fetzer.de header.i=@matthias-fetzer.de header.b=L6Rzcmkj; arc=none smtp.client-ip=194.59.206.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=matthias-fetzer.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matthias-fetzer.de
+Received: from relay02-mors.netcup.net (localhost [127.0.0.1])
+	by relay02-mors.netcup.net (Postfix) with ESMTPS id 4WlkVK3ld3z43Vf;
+	Fri, 16 Aug 2024 16:13:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=matthias-fetzer.de;
+	s=key2; t=1723817593;
+	bh=wBcZNU9aE90hNwgxil9ewMeuuwCsk/jDZ+3232K7xDA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=L6Rzcmkj+EkkhU1LqKmkMIviKjB58NWIZtRA98H4AwnZTJ5B70eUNK5yW4TIPk09w
+	 bZKcEBwEveOcKhjHHYrbOt2OsJAhcuyZrNxkl3BOa6ei3k6txML0x3v4CqQL++IweK
+	 +pnQxuRoCDXSbADVstWR+BKaUhKzgc40WcCG47v2gtr1kujHVHa+l9QxlHu2ElezRb
+	 G8IEWa74Ei5KAnzGdHb6k+1loXq60Mp7QcknfXnIvt6HS4WsHosH+uvJdc1csCTwMQ
+	 CyauJD/T5Y7jPjxyizXtBiT71T9RZMYJPYvMG3xB0cIHWYVeuAJoQiCmSWQZtLlfEo
+	 MNWrIr6yOlK8w==
+Received: from policy01-mors.netcup.net (unknown [46.38.225.35])
+	by relay02-mors.netcup.net (Postfix) with ESMTPS id 4WlkVK3N0lz7xmH;
+	Fri, 16 Aug 2024 16:13:13 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at policy01-mors.netcup.net
+X-Spam-Flag: NO
+X-Spam-Score: -2.898
+X-Spam-Level: 
+Received: from mxf9a3.netcup.net (unknown [10.243.12.53])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by policy01-mors.netcup.net (Postfix) with ESMTPS id 4WlkVJ5JDtz8tX9;
+	Fri, 16 Aug 2024 16:13:12 +0200 (CEST)
+Received: from matthias-pc.lan (unknown [IPv6:2001:9e8:1a67:f900:35e9:fc85:b739:f147])
+	by mxf9a3.netcup.net (Postfix) with ESMTPSA id B22AA40449;
+	Fri, 16 Aug 2024 16:13:07 +0200 (CEST)
+Authentication-Results: mxf9a3;
+	spf=pass (sender IP is 2001:9e8:1a67:f900:35e9:fc85:b739:f147) smtp.mailfrom=kontakt@matthias-fetzer.de smtp.helo=matthias-pc.lan
+Received-SPF: pass (mxf9a3: connection is authenticated)
+From: Matthias Fetzer <kontakt@matthias-fetzer.de>
+To: hmh@hmh.eng.br,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	ibm-acpi-devel@lists.sourceforge.net,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Matthias Fetzer <kontakt@matthias-fetzer.de>
+Subject: [PATCH v4] platform/x86: thinkpad_acpi: Add Thinkpad Edge E531 fan
+ support
+Date: Fri, 16 Aug 2024 16:12:28 +0200
+Message-ID: <20240816141228.134529-1-kontakt@matthias-fetzer.de>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <e1fe661c-281d-9d59-be53-968f7a0bc18a@linux.intel.com>
+References: <e1fe661c-281d-9d59-be53-968f7a0bc18a@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CH0PR18MB43394EFE61924E12055B07E3CD812@CH0PR18MB4339.namprd18.prod.outlook.com>
+Content-Transfer-Encoding: 7bit
+X-PPP-Message-ID: <172381758817.19318.18441275666050904621@mxf9a3.netcup.net>
+X-Rspamd-Queue-Id: B22AA40449
+X-Rspamd-Server: rspamd-worker-8404
+X-NC-CID: KBWO2iVf6kPuH49a6YGAPPkkt6o9lZS/acW0uLZu9RvF68iNn5eFy4dy
 
-Fri, Aug 16, 2024 at 03:36:12PM CEST, gakula@marvell.com wrote:
->
->
->>-----Original Message-----
->>From: Jiri Pirko <jiri@resnulli.us>
->>Sent: Thursday, August 8, 2024 9:22 PM
->>To: Geethasowjanya Akula <gakula@marvell.com>
->>Cc: netdev@vger.kernel.org; linux-kernel@vger.kernel.org; kuba@kernel.org;
->>davem@davemloft.net; pabeni@redhat.com; edumazet@google.com; Sunil
->>Kovvuri Goutham <sgoutham@marvell.com>; Subbaraya Sundeep Bhatta
->><sbhatta@marvell.com>; Hariprasad Kelam <hkelam@marvell.com>
->>Subject: [EXTERNAL] Re: [net-next PATCH v10 03/11] octeontx2-pf: Create
->>representor netdev
->>
->>Mon, Aug 05, 2024 at 03:18:07PM CEST, gakula@marvell.com wrote:
->>>Adds initial devlink support to set/get the switchdev mode.
->>>Representor netdevs are created for each rvu devices when the switch
->>>mode is set to 'switchdev'. These netdevs are be used to control and
->>>configure VFs.
->>>
->>>Signed-off-by: Geetha sowjanya <gakula@marvell.com>
->>>Reviewed-by: Simon Horman <horms@kernel.org>
->>>---
->>> .../ethernet/marvell/octeontx2.rst            |  85 +++++++++
->>> .../marvell/octeontx2/nic/otx2_devlink.c      |  49 ++++++
->>> .../net/ethernet/marvell/octeontx2/nic/rep.c  | 165 ++++++++++++++++++
->>> .../net/ethernet/marvell/octeontx2/nic/rep.h  |   3 +
->>> 4 files changed, 302 insertions(+)
->>>
->>>diff --git
->>>a/Documentation/networking/device_drivers/ethernet/marvell/octeontx2.rs
->>>t
->>>b/Documentation/networking/device_drivers/ethernet/marvell/octeontx2.rs
->>>t index 1e196cb9ce25..4eb4e6788ffc 100644
->>>---
->>>a/Documentation/networking/device_drivers/ethernet/marvell/octeontx2.rs
->>>t
->>>+++ b/Documentation/networking/device_drivers/ethernet/marvell/octeontx
->>>+++ 2.rst
->>>@@ -14,6 +14,7 @@ Contents
->>> - `Basic packet flow`_
->>> - `Devlink health reporters`_
->>> - `Quality of service`_
->>>+- `RVU representors`_
->>>
->>> Overview
->>> ========
->>>@@ -340,3 +341,87 @@ Setup HTB offload
->>>         # tc class add dev <interface> parent 1: classid 1:2 htb rate
->>>10Gbit prio 2 quantum 188416
->>>
->>>         # tc class add dev <interface> parent 1: classid 1:3 htb rate
->>> 10Gbit prio 2 quantum 32768
->>>+
->>>+
->>>+RVU Representors
->>>+================
->>>+
->>>+RVU representor driver adds support for creation of representor
->>>+devices for RVU PFs' VFs in the system. Representor devices are
->>>+created when user enables the switchdev mode.
->>>+Switchdev mode can be enabled either before or after setting up SRIOV
->>numVFs.
->>>+All representor devices share a single NIXLF but each has a dedicated
->>>+queue (ie RQ/SQ. RVU PF representor driver registers a separate netdev
->>>+for each RQ/SQ queue pair.
->>>+
->>>+HW doesn't have a in-built switch which can do L2 learning and forward
->>>+pkts between representee and representor. Hence packet patch between
->>>+representee and it's representor is achieved by setting up appropriate NPC
->>MCAM filters.
->>>+Transmit packets matching these filters will be loopbacked through
->>>+hardware loopback channel/interface (ie instead of sending them out of
->>MAC interface).
->>>+Which will again match the installed filters and will be forwarded.
->>>+This way representee => representor and representor => representee
->>>+packet path is achieved.These rules get installed when representors
->>>+are created and gets active/deactivate based on the representor/representee
->>interface state.
->>>+
->>>+Usage example:
->>>+
->>>+ - List of devices on the system before vfs are created::
->>>+
->>>+	# devlink dev
->>>+	pci/0002:02:00.0
->>>+	pci/0002:1c:00.0
->>>+
->>>+- Change device to switchdev mode::
->>>+	# devlink dev eswitch set pci/0002:1c:00.0 mode switchdev
->>>+
->>>+ - List the devices on the system::
->>>+
->>>+	# ip link show
->>>+
->>>+Sample output::
->>>+
->>>+	# ip link show
->>>+	eth0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN
->>mode DEFAULT group default qlen 1000 link/ether 7e:58:2d:b6:97:51 brd
->>ff:ff:ff:ff:ff:ff
->>>+	r0p1v0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN
->>mode DEFAULT group default qlen 1000 link/ether 7e:5a:66:ea:fe:d6 brd
->>ff:ff:ff:ff:ff:ff
->>>+	r1p1v1: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN
->>mode DEFAULT group default qlen 1000 link/ether de:29:be:10:9e:bf brd
->>ff:ff:ff:ff:ff:ff
->>>+	r2p1v2: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN
->>mode DEFAULT group default qlen 1000 link/ether 4a:12:c7:a2:66:ad brd
->>ff:ff:ff:ff:ff:ff
->>>+	r3p1v3: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN
->>mode
->>>+DEFAULT group default qlen 1000 link/ether c2:b8:a8:0e:73:fd brd
->>>+ff:ff:ff:ff:ff:ff
->>>+
->>>+
->>>+RVU representors can be managed using devlink ports (see
->>>+:ref:`Documentation/networking/devlink/devlink-port.rst <devlink_port>`)
->>interface.
->>>+
->>>+ - Show devlink ports of representors::
->>>+
->>>+	# devlink port
->>>+
->>>+Sample output::
->>>+
->>>+	pci/0002:1c:00.0/0: type eth netdev r0p1v0 flavour pcipf controller 0
->>pfnum 1 vfnum 0 external false splittable false
->>>+	pci/0002:1c:00.0/1: type eth netdev r1p1v1 flavour pcivf controller 0
->>pfnum 1 vfnum 1 external false splittable false
->>>+	pci/0002:1c:00.0/2: type eth netdev r2p1v2 flavour pcivf controller 0
->>pfnum 1 vfnum 2 external false splittable false
->>>+	pci/0002:1c:00.0/3: type eth netdev r3p1v3 flavour pcivf controller 0
->>>+pfnum 1 vfnum 3 external false splittable false
->>>+
->>>+Function attributes
->>>+===================
->>>+
->>>+The RVU representor support function attributes for representors Port
->>>+function configuration of the representors are supported through devlink
->>eswitch port.
->>>+
->>>+MAC address setup
->>>+-----------------
->>>+
->>>+RVU representor driver support devlink port function attr mechanism to
->>>+setup MAC address. (refer to
->>>+Documentation/networking/devlink/devlink-port.rst)
->>>+
->>>+ - To setup MAC address for port 2::
->>>+
->>>+	# devlink port function set  pci/0002:1c:00.0/2 hw_addr
->>>+5c:a1:1b:5e:43:11 state active
->>
->>Why you pass "state active" here? That is no-op for VFs.
->>
->>
->>>+
->>>+
->>>+To remove the representors from the system. Change the device to legacy
->>mode.
->>>+
->>>+ - Change device to legacy mode::
->>>+
->>>+	# devlink dev eswitch set pci/0002:1c:00.0 mode legacy
->>>diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_devlink.c
->>>b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_devlink.c
->>>index 53f14aa944bd..33ec9a7f7c03 100644
->>>--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_devlink.c
->>>+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_devlink.c
->>>@@ -141,7 +141,56 @@ static const struct devlink_param otx2_dl_params[] =
->>{
->>> 			     otx2_dl_ucast_flt_cnt_validate),  };
->>>
->>>+#ifdef CONFIG_RVU_ESWITCH
->>>+static int otx2_devlink_eswitch_mode_get(struct devlink *devlink, u16
->>>+*mode) {
->>>+	struct otx2_devlink *otx2_dl = devlink_priv(devlink);
->>>+	struct otx2_nic *pfvf = otx2_dl->pfvf;
->>>+
->>>+	if (!otx2_rep_dev(pfvf->pdev))
->>>+		return -EOPNOTSUPP;
->>>+
->>>+	*mode = pfvf->esw_mode;
->>>+
->>>+	return 0;
->>>+}
->>>+
->>>+static int otx2_devlink_eswitch_mode_set(struct devlink *devlink, u16 mode,
->>>+					 struct netlink_ext_ack *extack)
->>>+{
->>>+	struct otx2_devlink *otx2_dl = devlink_priv(devlink);
->>>+	struct otx2_nic *pfvf = otx2_dl->pfvf;
->>>+	int ret = 0;
->>>+
->>>+	if (!otx2_rep_dev(pfvf->pdev))
->>>+		return -EOPNOTSUPP;
->>>+
->>>+	if (pfvf->esw_mode == mode)
->>>+		return 0;
->>>+
->>>+	switch (mode) {
->>>+	case DEVLINK_ESWITCH_MODE_LEGACY:
->>>+		rvu_rep_destroy(pfvf);
->>>+		break;
->>>+	case DEVLINK_ESWITCH_MODE_SWITCHDEV:
->>>+		ret = rvu_rep_create(pfvf, extack);
->>>+		break;
->>>+	default:
->>>+		return -EINVAL;
->>>+	}
->>>+
->>>+	if (!ret)
->>>+		pfvf->esw_mode = mode;
->>>+
->>>+	return ret;
->>>+}
->>>+#endif
->>>+
->>> static const struct devlink_ops otx2_devlink_ops = {
->>>+#ifdef CONFIG_RVU_ESWITCH
->>>+	.eswitch_mode_get = otx2_devlink_eswitch_mode_get,
->>>+	.eswitch_mode_set = otx2_devlink_eswitch_mode_set, #endif
->>> };
->>>
->>> int otx2_register_dl(struct otx2_nic *pfvf) diff --git
->>>a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
->>>b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
->>>index b0a0080e50d7..6ea5b4904a7c 100644
->>>--- a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
->>>+++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
->>>@@ -28,6 +28,164 @@ MODULE_DESCRIPTION(DRV_STRING);
->>>MODULE_LICENSE("GPL");  MODULE_DEVICE_TABLE(pci, rvu_rep_id_table);
->>>
->>>+static int rvu_rep_napi_init(struct otx2_nic *priv,
->>>+			     struct netlink_ext_ack *extack) {
->>>+	struct otx2_qset *qset = &priv->qset;
->>>+	struct otx2_cq_poll *cq_poll = NULL;
->>>+	struct otx2_hw *hw = &priv->hw;
->>>+	int err = 0, qidx, vec;
->>>+	char *irq_name;
->>>+
->>>+	qset->napi = kcalloc(hw->cint_cnt, sizeof(*cq_poll), GFP_KERNEL);
->>>+	if (!qset->napi)
->>>+		return -ENOMEM;
->>>+
->>>+	/* Register NAPI handler */
->>>+	for (qidx = 0; qidx < hw->cint_cnt; qidx++) {
->>>+		cq_poll = &qset->napi[qidx];
->>>+		cq_poll->cint_idx = qidx;
->>>+		cq_poll->cq_ids[CQ_RX] =
->>>+			(qidx <  hw->rx_queues) ? qidx : CINT_INVALID_CQ;
->>>+		cq_poll->cq_ids[CQ_TX] = (qidx < hw->tx_queues) ?
->>>+					  qidx + hw->rx_queues :
->>>+					  CINT_INVALID_CQ;
->>>+		cq_poll->cq_ids[CQ_XDP] = CINT_INVALID_CQ;
->>>+		cq_poll->cq_ids[CQ_QOS] = CINT_INVALID_CQ;
->>>+
->>>+		cq_poll->dev = (void *)priv;
->>>+		netif_napi_add(priv->reps[qidx]->netdev, &cq_poll->napi,
->>>+			       otx2_napi_handler);
->>>+		napi_enable(&cq_poll->napi);
->>>+	}
->>>+	/* Register CQ IRQ handlers */
->>>+	vec = hw->nix_msixoff + NIX_LF_CINT_VEC_START;
->>>+	for (qidx = 0; qidx < hw->cint_cnt; qidx++) {
->>>+		irq_name = &hw->irq_name[vec * NAME_SIZE];
->>>+
->>>+		snprintf(irq_name, NAME_SIZE, "rep%d-rxtx-%d", qidx, qidx);
->>>+
->>>+		err = request_irq(pci_irq_vector(priv->pdev, vec),
->>>+				  otx2_cq_intr_handler, 0, irq_name,
->>>+				  &qset->napi[qidx]);
->>>+		if (err) {
->>>+			NL_SET_ERR_MSG_FMT_MOD(extack,
->>>+					       "RVU REP IRQ registration failed for
->>CQ%d",
->>>+					       qidx);
->>>+			goto err_free_cints;
->>>+		}
->>>+		vec++;
->>>+
->>>+		/* Enable CQ IRQ */
->>>+		otx2_write64(priv, NIX_LF_CINTX_INT(qidx), BIT_ULL(0));
->>>+		otx2_write64(priv, NIX_LF_CINTX_ENA_W1S(qidx), BIT_ULL(0));
->>>+	}
->>>+	priv->flags &= ~OTX2_FLAG_INTF_DOWN;
->>>+	return 0;
->>>+
->>>+err_free_cints:
->>>+	otx2_free_cints(priv, qidx);
->>>+	otx2_disable_napi(priv);
->>>+	return err;
->>>+}
->>>+
->>>+static void rvu_rep_free_cq_rsrc(struct otx2_nic *priv) {
->>>+	struct otx2_qset *qset = &priv->qset;
->>>+	struct otx2_cq_poll *cq_poll = NULL;
->>>+	int qidx, vec;
->>>+
->>>+	/* Cleanup CQ NAPI and IRQ */
->>>+	vec = priv->hw.nix_msixoff + NIX_LF_CINT_VEC_START;
->>>+	for (qidx = 0; qidx < priv->hw.cint_cnt; qidx++) {
->>>+		/* Disable interrupt */
->>>+		otx2_write64(priv, NIX_LF_CINTX_ENA_W1C(qidx),
->>BIT_ULL(0));
->>>+
->>>+		synchronize_irq(pci_irq_vector(priv->pdev, vec));
->>>+
->>>+		cq_poll = &qset->napi[qidx];
->>>+		napi_synchronize(&cq_poll->napi);
->>>+		vec++;
->>>+	}
->>>+	otx2_free_cints(priv, priv->hw.cint_cnt);
->>>+	otx2_disable_napi(priv);
->>>+}
->>>+
->>>+void rvu_rep_destroy(struct otx2_nic *priv) {
->>>+	struct rep_dev *rep;
->>>+	int rep_id;
->>>+
->>>+	priv->flags |= OTX2_FLAG_INTF_DOWN;
->>>+	rvu_rep_free_cq_rsrc(priv);
->>>+	for (rep_id = 0; rep_id < priv->rep_cnt; rep_id++) {
->>>+		rep = priv->reps[rep_id];
->>>+		unregister_netdev(rep->netdev);
->>>+		free_netdev(rep->netdev);
->>>+	}
->>>+	kfree(priv->reps);
->>>+}
->>>+
->>>+int rvu_rep_create(struct otx2_nic *priv, struct netlink_ext_ack
->>>+*extack) {
->>>+	int rep_cnt = priv->rep_cnt;
->>>+	struct net_device *ndev;
->>>+	struct rep_dev *rep;
->>>+	int rep_id, err;
->>>+	u16 pcifunc;
->>>+
->>>+	priv->reps = kcalloc(rep_cnt, sizeof(struct rep_dev *), GFP_KERNEL);
->>>+	if (!priv->reps)
->>>+		return -ENOMEM;
->>>+
->>>+	for (rep_id = 0; rep_id < rep_cnt; rep_id++) {
->>>+		ndev = alloc_etherdev(sizeof(*rep));
->>>+		if (!ndev) {
->>>+			NL_SET_ERR_MSG_FMT_MOD(extack,
->>>+					       "PFVF representor:%d creation
->>failed",
->>>+					       rep_id);
->>>+			err = -ENOMEM;
->>>+			goto exit;
->>>+		}
->>>+
->>>+		rep = netdev_priv(ndev);
->>>+		priv->reps[rep_id] = rep;
->>>+		rep->mdev = priv;
->>>+		rep->netdev = ndev;
->>>+		rep->rep_id = rep_id;
->>>+
->>>+		ndev->min_mtu = OTX2_MIN_MTU;
->>>+		ndev->max_mtu = priv->hw.max_mtu;
->>>+		pcifunc = priv->rep_pf_map[rep_id];
->>>+		rep->pcifunc = pcifunc;
->>>+
->>>+		snprintf(ndev->name, sizeof(ndev->name), "r%dp%d", rep_id,
->>>+			 rvu_get_pf(pcifunc));
->>>+
->>>+		eth_hw_addr_random(ndev);
->>>+		err = register_netdev(ndev);
->>
->>I don't follow. You just create netdevices, no devlink ports. That is inconsistent
->>with your documentation above.
->Creation on devlink port is implemented in patch 10 " octeontx2-pf: Add devlink port support".
+Fan control on the E531 is done using the ACPI methods FANG and
+FANW. The correct parameters and register values were found by
+analyzing EC firmware as well as DSDT. This has been tested on
+my Thinkpad Edge E531 (6885CTO, BIOS HEET52WW 1.33).
 
-So adjust the docs here to be consistent with the code and add the parts
-of documentation alonside with the support in patch 10.
+Signed-off-by: Matthias Fetzer <kontakt@matthias-fetzer.de>
+---
 
+Changes in v4:
+    - Remove unnecessary variable
+Changes in v3:
+    - Add missing newline
+    - Remove redundant code
+Changes in v2:
+    - Fix typo in EC memory description
+    - Split plausibilty check for better readability
 
->>
->>
->>>+		if (err) {
->>>+			NL_SET_ERR_MSG_MOD(extack,
->>>+					   "PFVF reprentator registration
->>failed");
->>>+			free_netdev(ndev);
->>>+			goto exit;
->>>+		}
->>>+	}
->>>+	err = rvu_rep_napi_init(priv, extack);
->>>+	if (err)
->>>+		goto exit;
->>>+
->>>+	return 0;
->>>+exit:
->>>+	while (--rep_id >= 0) {
->>>+		rep = priv->reps[rep_id];
->>>+		unregister_netdev(rep->netdev);
->>>+		free_netdev(rep->netdev);
->>>+	}
->>>+	kfree(priv->reps);
->>>+	return err;
->>>+}
->>>+
->>> static void rvu_rep_rsrc_free(struct otx2_nic *priv)  {
->>> 	struct otx2_qset *qset = &priv->qset; @@ -167,6 +325,10 @@ static int
->>>rvu_rep_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->>> 	if (err)
->>> 		goto err_detach_rsrc;
->>>
->>>+	err = otx2_register_dl(priv);
->>>+	if (err)
->>>+		goto err_detach_rsrc;
->>>+
->>> 	return 0;
->>>
->>> err_detach_rsrc:
->>>@@ -188,6 +350,9 @@ static void rvu_rep_remove(struct pci_dev *pdev)  {
->>> 	struct otx2_nic *priv = pci_get_drvdata(pdev);
->>>
->>>+	otx2_unregister_dl(priv);
->>>+	if (!(priv->flags & OTX2_FLAG_INTF_DOWN))
->>>+		rvu_rep_destroy(priv);
->>> 	rvu_rep_rsrc_free(priv);
->>> 	otx2_detach_resources(&priv->mbox);
->>> 	if (priv->hw.lmt_info)
->>>diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/rep.h
->>>b/drivers/net/ethernet/marvell/octeontx2/nic/rep.h
->>>index 565e75628df2..c04874c4d4c6 100644
->>>--- a/drivers/net/ethernet/marvell/octeontx2/nic/rep.h
->>>+++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.h
->>>@@ -28,4 +28,7 @@ static inline bool otx2_rep_dev(struct pci_dev *pdev)
->>>{
->>> 	return pdev->device == PCI_DEVID_RVU_REP;  }
->>>+
->>>+int rvu_rep_create(struct otx2_nic *priv, struct netlink_ext_ack
->>>+*extack); void rvu_rep_destroy(struct otx2_nic *priv);
->>> #endif /* REP_H */
->>>--
->>>2.25.1
->>>
->>>
+ drivers/platform/x86/thinkpad_acpi.c | 143 ++++++++++++++++++++++++++-
+ 1 file changed, 142 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+index 397b409064c9..96c58bc59018 100644
+--- a/drivers/platform/x86/thinkpad_acpi.c
++++ b/drivers/platform/x86/thinkpad_acpi.c
+@@ -7751,6 +7751,28 @@ static struct ibm_struct volume_driver_data = {
+  * 	EC 0x2f (HFSP) might be available *for reading*, but do not use
+  * 	it for writing.
+  *
++ * TPACPI_FAN_RD_ACPI_FANG:
++ * 	ACPI FANG method: returns fan control register
++ *
++ *	Takes one parameter which is 0x8100 plus the offset to EC memory
++ *	address 0xf500 and returns the byte at this address.
++ *
++ *	0xf500:
++ *		When the value is less than 9 automatic mode is enabled
++ *	0xf502:
++ *		Contains the current fan speed from 0-100%
++ *	0xf506:
++ *		Bit 7 has to be set in order to enable manual control by
++ *		writing a value >= 9 to 0xf500
++ *
++ * TPACPI_FAN_WR_ACPI_FANW:
++ * 	ACPI FANG method: sets fan control registers
++ *
++ * 	Takes 0x8100 plus the offset to EC memory address 0xf500 and the
++ * 	value to be written there as parameters.
++ *
++ *	see TPACPI_FAN_RD_ACPI_FANG
++ *
+  * TPACPI_FAN_WR_TPEC:
+  * 	ThinkPad EC register 0x2f (HFSP): fan control loop mode
+  * 	Supported on almost all ThinkPads
+@@ -7884,6 +7906,7 @@ enum {					/* Fan control constants */
+ enum fan_status_access_mode {
+ 	TPACPI_FAN_NONE = 0,		/* No fan status or control */
+ 	TPACPI_FAN_RD_ACPI_GFAN,	/* Use ACPI GFAN */
++	TPACPI_FAN_RD_ACPI_FANG,	/* Use ACPI FANG */
+ 	TPACPI_FAN_RD_TPEC,		/* Use ACPI EC regs 0x2f, 0x84-0x85 */
+ 	TPACPI_FAN_RD_TPEC_NS,		/* Use non-standard ACPI EC regs (eg: L13 Yoga gen2 etc.) */
+ };
+@@ -7891,6 +7914,7 @@ enum fan_status_access_mode {
+ enum fan_control_access_mode {
+ 	TPACPI_FAN_WR_NONE = 0,		/* No fan control */
+ 	TPACPI_FAN_WR_ACPI_SFAN,	/* Use ACPI SFAN */
++	TPACPI_FAN_WR_ACPI_FANW,	/* Use ACPI FANW */
+ 	TPACPI_FAN_WR_TPEC,		/* Use ACPI EC reg 0x2f */
+ 	TPACPI_FAN_WR_ACPI_FANS,	/* Use ACPI FANS and EC reg 0x2f */
+ };
+@@ -7924,9 +7948,13 @@ TPACPI_HANDLE(fans, ec, "FANS");	/* X31, X40, X41 */
+ TPACPI_HANDLE(gfan, ec, "GFAN",	/* 570 */
+ 	   "\\FSPD",		/* 600e/x, 770e, 770x */
+ 	   );			/* all others */
++TPACPI_HANDLE(fang, ec, "FANG",	/* E531 */
++	   );			/* all others */
+ TPACPI_HANDLE(sfan, ec, "SFAN",	/* 570 */
+ 	   "JFNS",		/* 770x-JL */
+ 	   );			/* all others */
++TPACPI_HANDLE(fanw, ec, "FANW",	/* E531 */
++	   );			/* all others */
+ 
+ /*
+  * Unitialized HFSP quirk: ACPI DSDT and EC fail to initialize the
+@@ -8033,6 +8061,23 @@ static int fan_get_status(u8 *status)
+ 
+ 		break;
+ 	}
++	case TPACPI_FAN_RD_ACPI_FANG: {
++		/* E531 */
++		int mode, speed;
++
++		if (unlikely(!acpi_evalf(fang_handle, &mode, NULL, "dd", 0x8100)))
++			return -EIO;
++		if (unlikely(!acpi_evalf(fang_handle, &speed, NULL, "dd", 0x8102)))
++			return -EIO;
++
++		if (likely(status)) {
++			*status = speed * 7 / 100;
++			if (mode < 9)
++				*status |= TP_EC_FAN_AUTO;
++		}
++
++		break;
++	}
+ 	case TPACPI_FAN_RD_TPEC:
+ 		/* all except 570, 600e/x, 770e, 770x */
+ 		if (unlikely(!acpi_ec_read(fan_status_offset, &s)))
+@@ -8147,6 +8192,17 @@ static int fan2_get_speed(unsigned int *speed)
+ 		if (speed)
+ 			*speed = lo ? FAN_RPM_CAL_CONST / lo : 0;
+ 		break;
++	case TPACPI_FAN_RD_ACPI_FANG: {
++		/* E531 */
++		int speed_tmp;
++
++		if (unlikely(!acpi_evalf(fang_handle, &speed_tmp, NULL, "dd", 0x8102)))
++			return -EIO;
++
++		if (likely(speed))
++			*speed =  speed_tmp * 65535 / 100;
++		break;
++	}
+ 
+ 	default:
+ 		return -ENXIO;
+@@ -8206,6 +8262,32 @@ static int fan_set_level(int level)
+ 			tp_features.fan_ctrl_status_undef = 0;
+ 		break;
+ 
++	case TPACPI_FAN_WR_ACPI_FANW:
++		if (!(level & TP_EC_FAN_AUTO) && (level < 0 || level > 7))
++			return -EINVAL;
++		if (level & TP_EC_FAN_FULLSPEED)
++			return -EINVAL;
++
++		if (level & TP_EC_FAN_AUTO) {
++			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x05)) {
++				return -EIO;
++			}
++			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8100, 0x00)) {
++				return -EIO;
++			}
++		} else {
++			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x45)) {
++				return -EIO;
++			}
++			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8100, 0xff)) {
++				return -EIO;
++			}
++			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8102, level * 100 / 7)) {
++				return -EIO;
++			}
++		}
++		break;
++
+ 	default:
+ 		return -ENXIO;
+ 	}
+@@ -8284,6 +8366,19 @@ static int fan_set_enable(void)
+ 			rc = 0;
+ 		break;
+ 
++	case TPACPI_FAN_WR_ACPI_FANW:
++		if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x05)) {
++			rc = -EIO;
++			break;
++		}
++		if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8100, 0x00)) {
++			rc = -EIO;
++			break;
++		}
++
++		rc = 0;
++		break;
++
+ 	default:
+ 		rc = -ENXIO;
+ 	}
+@@ -8326,6 +8421,22 @@ static int fan_set_disable(void)
+ 			fan_control_desired_level = 0;
+ 		break;
+ 
++	case TPACPI_FAN_WR_ACPI_FANW:
++		if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x45)) {
++			rc = -EIO;
++			break;
++		}
++		if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8100, 0xff)) {
++			rc = -EIO;
++			break;
++		}
++		if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8102, 0x00)) {
++			rc = -EIO;
++			break;
++		}
++		rc = 0;
++		break;
++
+ 	default:
+ 		rc = -ENXIO;
+ 	}
+@@ -8359,6 +8470,23 @@ static int fan_set_speed(int speed)
+ 			rc = -EINVAL;
+ 		break;
+ 
++	case TPACPI_FAN_WR_ACPI_FANW:
++		if (speed >= 0 && speed <= 65535) {
++			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x45)) {
++				rc = -EIO;
++				break;
++			}
++			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8100, 0xff)) {
++				rc = -EIO;
++				break;
++			}
++			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd",
++					0x8102, speed * 100 / 65535))
++				rc = -EIO;
++		} else
++			rc = -EINVAL;
++		break;
++
+ 	default:
+ 		rc = -ENXIO;
+ 	}
+@@ -8701,6 +8829,10 @@ static int __init fan_init(struct ibm_init_struct *iibm)
+ 		TPACPI_ACPIHANDLE_INIT(gfan);
+ 		TPACPI_ACPIHANDLE_INIT(sfan);
+ 	}
++	if (tpacpi_is_lenovo()) {
++		TPACPI_ACPIHANDLE_INIT(fang);
++		TPACPI_ACPIHANDLE_INIT(fanw);
++	}
+ 
+ 	quirks = tpacpi_check_quirks(fan_quirk_table,
+ 				     ARRAY_SIZE(fan_quirk_table));
+@@ -8720,6 +8852,9 @@ static int __init fan_init(struct ibm_init_struct *iibm)
+ 	if (gfan_handle) {
+ 		/* 570, 600e/x, 770e, 770x */
+ 		fan_status_access_mode = TPACPI_FAN_RD_ACPI_GFAN;
++	} else if (fang_handle) {
++		/* E531 */
++		fan_status_access_mode = TPACPI_FAN_RD_ACPI_FANG;
+ 	} else {
+ 		/* all other ThinkPads: note that even old-style
+ 		 * ThinkPad ECs supports the fan control register */
+@@ -8766,6 +8901,11 @@ static int __init fan_init(struct ibm_init_struct *iibm)
+ 		fan_control_access_mode = TPACPI_FAN_WR_ACPI_SFAN;
+ 		fan_control_commands |=
+ 		    TPACPI_FAN_CMD_LEVEL | TPACPI_FAN_CMD_ENABLE;
++	} else if (fanw_handle) {
++		/* E531 */
++		fan_control_access_mode = TPACPI_FAN_WR_ACPI_FANW;
++		fan_control_commands |=
++		    TPACPI_FAN_CMD_LEVEL | TPACPI_FAN_CMD_SPEED | TPACPI_FAN_CMD_ENABLE;
+ 	} else {
+ 		if (!gfan_handle) {
+ 			/* gfan without sfan means no fan control */
+@@ -8917,6 +9057,7 @@ static int fan_read(struct seq_file *m)
+ 
+ 	case TPACPI_FAN_RD_TPEC_NS:
+ 	case TPACPI_FAN_RD_TPEC:
++	case TPACPI_FAN_RD_ACPI_FANG:
+ 		/* all except 570, 600e/x, 770e, 770x */
+ 		rc = fan_get_status_safe(&status);
+ 		if (rc)
+@@ -8937,7 +9078,7 @@ static int fan_read(struct seq_file *m)
+ 			 * No other levels settings available
+ 			 */
+ 			seq_printf(m, "level:\t\t%s\n", status & FAN_NS_CTRL ? "unknown" : "auto");
+-		} else {
++		} else if (fan_status_access_mode == TPACPI_FAN_RD_TPEC) {
+ 			if (status & TP_EC_FAN_FULLSPEED)
+ 				/* Disengaged mode takes precedence */
+ 				seq_printf(m, "level:\t\tdisengaged\n");
+-- 
+2.46.0
+
 
