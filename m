@@ -1,157 +1,211 @@
-Return-Path: <linux-kernel+bounces-289742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C27B0954B42
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:43:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 234B9954B45
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C55FB238EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:42:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83EC7B23EE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD9D1BBBF4;
-	Fri, 16 Aug 2024 13:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B091BBBE8;
+	Fri, 16 Aug 2024 13:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fJ1OBWOO"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="S6HmrXdp"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02olkn2014.outbound.protection.outlook.com [40.92.48.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207F41BBBC4
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 13:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723815771; cv=none; b=F8bitRBdi9Opx6fkt+zrRp/mNDmq9abjU50sMZQjQ8yzVZgQZLX5PoS6Gd7Fkne/IFGxm4wrdHfK/h/iA1SjYad13UCAN84FsP2Y06KsDrsBZquIu2W7XbcDtO9IGFyjhc3mI5SFDe6J3E6Pe/Ai51lM/as159CSca/S6OKGJ2Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723815771; c=relaxed/simple;
-	bh=vw2ZCwtyOPdQeIflLimMaEJlMbp8BH5R4xTrwPwX5fA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LK7p6rI8A+2HKwbWzknoHQ3eouVWFI+OfOTEFHsH785Xv6vfugoqDk+vxVl93KuyNl7bgztIGPGaISSG1vcz9KjA+1MgMowwQFy7a1/2aJwKsOirhEsYcz05KWK/OGXBlwD47pcHNHGhWv8dxoNso17iBU/Lpba2lYMc7jSJ5xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fJ1OBWOO; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37193ef72a4so517526f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 06:42:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1723815767; x=1724420567; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pLCF5LuBRNid1ph8VpWew5JdUYU2SKcQIpoYivOki1Q=;
-        b=fJ1OBWOOR2xTePYfUFdrdxIq4Nd1bY6uNt7B1adIWVkELpCDCkgewR7Qq/1Yx24ZhM
-         Yw+V9EfGQQOGD6FgeMvo5zAJTQpbDF/UL3B+ky5TE2jUlcfnTaLl+fs4kTyadpdcem7Q
-         bPZUOCMSea5L2nltl3hVO4Reqc9UL/f/MYTnenw4ST00oDi4OhubK7LotSi0wLFHgsVx
-         Rski/Q22QGWCnpHx34N+PKe8nST1kETdDii2KXNmaG/SA0uldXMUIcP37/IzNZoEYBH5
-         s5MhDzkmK/yhLGq/a+KT9w8Nma/6HB4TENFAjH342aplcYZMfZJa+OOtmOUSGqz/zWV6
-         yIoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723815767; x=1724420567;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pLCF5LuBRNid1ph8VpWew5JdUYU2SKcQIpoYivOki1Q=;
-        b=FCo5NaW4NL/Ogxi9o32GfMTETuvMs/htWRseCTtkPMYu3+UKtCsOBh+RE8LlbtN4Iz
-         lbPxfcV93nd721D9lypCAAruhIURzP79tsL4ZfnQeSviGGq/RruR4mQyfr0fB+9rb2ef
-         3+RulFT4myCFVX0T6RvG+sgeAnxAWya4Z9CKFH0hFOG4W/UNckwjCZJ2B8AzmCybbz+u
-         NucmKymqs0P8q1v84PTvyOM2vHLtIkogpVVvO1Z+jnXVYApHjmMd27FdKyweMgVUOYDd
-         hXKlJEUiz1rjOgTQw/Hl45EyISH3A8iymgZGXlxrO8DH6qq4osEHiSbqOcEp5D9Ftrn4
-         v1ug==
-X-Forwarded-Encrypted: i=1; AJvYcCWSTFoytXjLNUzOB9XnG444aDfBBHhPRuL+B3SlAqRtaGmdvn8+CyOl8N2yKLbj6rFPIst7bFj25O+9NJvwUAQi1jmpfofEboRXp5q3
-X-Gm-Message-State: AOJu0YwEfR+4h6aVqYEti73reWUq1JYqLXZ5R6Z7cINbl9jEyFp18H+G
-	65+VKtcJ6WPCiqihC16ikqt3YqSVULBLHrXavfCnvRwcSwG4a6LjfOJaXE+SykU=
-X-Google-Smtp-Source: AGHT+IFNVKnwuIUOPuv3ZrPl1FG+tWKvn6OKTQc52FrxiDlLaNduFSc/ZMM2EMM9M2yXsi6HZ20zpw==
-X-Received: by 2002:adf:b347:0:b0:368:3b21:6643 with SMTP id ffacd0b85a97d-371946a1372mr2097767f8f.48.1723815766880;
-        Fri, 16 Aug 2024 06:42:46 -0700 (PDT)
-Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718984c0d0sm3665507f8f.38.2024.08.16.06.42.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 06:42:46 -0700 (PDT)
-Date: Fri, 16 Aug 2024 15:42:44 +0200
-From: Petr Tesarik <ptesarik@suse.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Sourabh Jain <sourabhjain@linux.ibm.com>, Hari Bathini
- <hbathini@linux.ibm.com>, Baoquan He <bhe@redhat.com>, Andrew Morton
- <akpm@linux-foundation.org>, Eric DeVolder <eric_devolder@yahoo.com>,
- kexec@lists.infradead.org (open list:KEXEC), linux-kernel@vger.kernel.org
- (open list), stable@kernel.org
-Subject: Re: [PATCH 1/1] kexec_file: fix elfcorehdr digest exclusion when
- CONFIG_CRASH_HOTPLUG=y
-Message-ID: <20240816154244.0c6271a6@mordecai.tesarici.cz>
-In-Reply-To: <871q2oy6eb.fsf@email.froward.int.ebiederm.org>
-References: <20240805150750.170739-1-petr.tesarik@suse.com>
-	<871q2oy6eb.fsf@email.froward.int.ebiederm.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36F31BB69B;
+	Fri, 16 Aug 2024 13:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.48.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723815783; cv=fail; b=YQeXBntWa1RdRGpCid2x+GEy88uW6Sixl6NBNwsew8OtfeWZjFcxSu1/2q8r8aP1xzTq7+8rsmNwQxhTXq1c2EzifS4g7HxB0UKe4k5nw1y6wXQe8aHtS8ELTVcMYU1LWGiTWsZ4dcbncE31n6vEoo+AL5ciX2fRHQkI6u9aGyU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723815783; c=relaxed/simple;
+	bh=q4Rn5QSMdItAp+Wz+HTGiGbMtaox8C2UerqvcDp+71U=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Gp+pL7TkBombiC7/+omFa8YAJXmXaNHq3l1eH2Og1y6ek3tGFcdRxbcpr5k1+cY77ggYbuaG2IgeMJSiwhqROEZ/YhhmYJWX3JnidVHigx02+QSo/l49rUbuYbz5ZtiQpJ/7pI8dCTWJPQAZ/Z1uGxRtgbXjHxNw4mK+Ldr2I/s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=S6HmrXdp; arc=fail smtp.client-ip=40.92.48.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rvPfA2Xv3tosV9sF2LhISzx9cwdNTZTL3yOUb08ym/giD8+CmVR1ygp2qYjDxKnyWaZqBR5O89QrRj0zu3m1IqlN2xN6QdH/QBPb3hMTJS8G0RWVBVHasKloZUyuvLBl0p7CWiMxPt+DMzQBi1hywqlBKs/E3uZ5yLMgBETqxqbgqhLBRH3yssGdfmLSNSavn8aWhGe99K8H+b4CUkU+87WwQGv+tULzkeVF8P5E+vUXgE+5VV8QhqG94GM9+9n+bVKsIpmDXaK+W0nn27VMyBx4L87Dxc6o5oK791XKtz2iZenJLIivMzwbHev9bp/fzfl1iWhsxLElxTRraV8nOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Q+gIvZVrf7/RhFmuSUzGxIDq04XUwBtHLF/o+dF87eU=;
+ b=NsvnUvF5oJfDZpsDlp8BhwYL1MAEhW+KXcMGmrq7/T1J0U0EQHV0zNf/vNsCK18mq97BX2BqJVRGZuVmuG87YTaT+I+mpfMF3kR8qHcMz/3EDsIeQjXARTSyFxnIlByVl+yhBf7G0kQbwsgq5uJnNW5MR+4YI5UGMcoyE1tuVTEFGXJzOTtZjs9mxOEff4mdg1AXdtCrZfxaFNIinWPRL6amuolaEH/NwAEiuk0SGgfN8CyFU48XTb7/jPyfzzMx4oWo2ze8WqeyaEpOuBK32qN4Fb2jIpVrCkqBhloWlaleiOmNDYGIwWCObMGLPgdBdPjjuuMj1I2ypG3qyCVN1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Q+gIvZVrf7/RhFmuSUzGxIDq04XUwBtHLF/o+dF87eU=;
+ b=S6HmrXdp+JkM8NXwCNjycO54L7hUsoEyz3rRNReomRFYW6Pp6M8NkjntrMRE1yd1/MZHeyGfp1ktOCsfYHkwBhEUjdqGTKyqeDnTbKhpbILAj1kUGg5eEFE5sTaDq/UVqVloQD50g6P7/FAGrIPuj8UzJEMtIOfENYQ/qKALpfsuDTV6lDBpHHlZJno83gBft+I77i38a6k5YNL+23dCscF3GrrB8YVPtjx2s1WWatbUgga/QKiAQ9wqpKvYD+mgeBEW8V+HiVVkG4YAvjI0lmd9Jp5wNxoBK8mfQr1pCj5tUs5JQp3jeWZ5hhNy8hh8n0yMT1JIxaJddX6kG3aL/g==
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com (2603:10a6:20b:e4::10)
+ by AM9PR03MB6788.eurprd03.prod.outlook.com (2603:10a6:20b:2de::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Fri, 16 Aug
+ 2024 13:42:58 +0000
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7]) by AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7%6]) with mapi id 15.20.7875.016; Fri, 16 Aug 2024
+ 13:42:58 +0000
+Message-ID:
+ <AM6PR03MB584807BFB29105F1D7FDC89E99812@AM6PR03MB5848.eurprd03.prod.outlook.com>
+Date: Fri, 16 Aug 2024 14:42:47 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next 1/2] bpf: Make the pointer returned by iter next
+ method valid
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Kumar Kartikeya Dwivedi <memxor@gmail.com>
+References: <AM6PR03MB58489794C158C438B04FD0E599802@AM6PR03MB5848.eurprd03.prod.outlook.com>
+ <CAEf4Bzb3XbGx+N5yrYELNAkaABP9fyifAQhTP1VHSvVycG36TQ@mail.gmail.com>
+Content-Language: en-US
+From: Juntong Deng <juntong.deng@outlook.com>
+In-Reply-To: <CAEf4Bzb3XbGx+N5yrYELNAkaABP9fyifAQhTP1VHSvVycG36TQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TMN: [es2+0vLxHA9sMl5K1jA+MUEdJiIdJCcJ]
+X-ClientProxiedBy: SI1PR02CA0013.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::7) To AM6PR03MB5848.eurprd03.prod.outlook.com
+ (2603:10a6:20b:e4::10)
+X-Microsoft-Original-Message-ID:
+ <20116758-cf42-4e34-aa8c-15710c464396@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM6PR03MB5848:EE_|AM9PR03MB6788:EE_
+X-MS-Office365-Filtering-Correlation-Id: a03d6622-e7f0-4c98-5a3e-08dcbdf956e3
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|15080799003|19110799003|5072599009|8060799006|461199028|1602099012|3412199025|4302099013|440099028;
+X-Microsoft-Antispam-Message-Info:
+	zbEjetON5DafrLHG2jngjAKtBx6H7rFcSz6hag+rAl7Hdqi3Hj1cP2abgWVRZbnZSq+IEFvLLrG1xRsnTnX5tBgRsukmvlm6nfWmiLmnfbf1+ufcMeD54EoGw/3N60QGwCbjAqF0UZqSL5g4cqDa7rPAGnfVzQj8Oy5aIfHb83yyIoJsvymHwH19y87bxwqmUGB78DgjC0ycaNyX9yKOgMltv4L7Qe530w1+dwg3WWjkKTjblXG32hfMD3ODmH7ubflGzh3foqWlG3ao1OKK+rbF+gFSwvK432yB1D56436L03gguXdE7MAQWySi3GBSHuFAxXvs+5ffFP6pBpqmpnZunqzhR6UHNOPHz3IyM9FKuCuQAMNjkb7NA+HSxnmDEQ/XkT3VqGBrZk71Zekxdy2webRFkF5fBvv4UiB9wuaf3Z3AzDebpHC6dJjUAcsV2+oF6vskXWxvoJeJmxez/3kPQ4EJhDcRu4RNhm6dM7nlnFthNcGIQlZ+rY9lLvSUqXGutpHe6oJATXW3lS2l4Q0CK4y5qgBYzFCCpXWbKanq/P6Hv5ToJqRkTNyBg0o/gZAMUJMWilFvNkwBe8uee9H134FNYJwgdZa/vR5/UFW2WzcecT2jjcDRqzdT7CVFxgivunvU9SH3yVrZeTVP2kH5WKuduh/6mD+ejw7l/AEYLjQI8K8sVWExl9XrtTSOYpZ3t+V+A8emxexGsXKRwNODfcmKYH+v86p0daAbTlFUfBOeus1m/f+lqCwZG0T+C4DhLFCtapvDsFMDttR7ru3ZA7foVlVD1nA8HzWfOuUSGc1odmIcdPneKgGjtIV1
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QmV3T2I3Ujdpb014RzREVmJRdUZFbXFSZXdGSDhFbTZsRDRiVFhkRFVjeFRL?=
+ =?utf-8?B?djF1YjBXV25jU3BpbFNUTWJ5Z1hUeEc2ZDd1aGlFME5oWWRZcFMyWTFhOE10?=
+ =?utf-8?B?bU1ZOEFubFFqajdZelpacHZ5UGI5SnZPeEg3ajJCVU51bS9tQkZuMGZESkto?=
+ =?utf-8?B?TVhEWW10eUdvWXVuVEF4dUlNSy9MeXVBeXNXYzRUbkg1cG11VGdQOHVqVXlu?=
+ =?utf-8?B?WG45YU4rMU9zWU1VbDNjcU9BclE0eDBjWk5yY041MmJ1SHJXR3NlSGR4cHFL?=
+ =?utf-8?B?UW5NVytUQjlvZGJ0dWliT296SGNGaVRkVHZYM2dEN0JoQmljTTVWcjdDaHBP?=
+ =?utf-8?B?NzUxUzRZQTBEcW8yOTF3MmNKWGFDdWJYYVRrN1B0ZjBaVHpONlhoWmgyaHJq?=
+ =?utf-8?B?V1VSdU5HSHMzcEttWWZwTXVNYTZZeXNXb1ZEaHh2Ry9CUStjTjdKSUoxV0Qw?=
+ =?utf-8?B?ZzRIR25DZlZLa1JOaTZsYlJJaHR0ZkZua2dvTm9NTFp4T1ZFUHNvb25xRms5?=
+ =?utf-8?B?dDcwZlZ4b0Rwd2Y5WG5tR3ZDM05xNnNSOFBkQnlsOElEWGU5ZmQ2TlVzTFFJ?=
+ =?utf-8?B?Q2tySlk4cG8xRzJTTkxEQlQvQ1FtS0wwcDRkTTF3S28zWWtuZVJRZ1FXZDd4?=
+ =?utf-8?B?S2hYMWdFNGZ6ZGlEOGd2M2haTmdaR2t0NVZ6Z0dGMGFCSmc2YkpVYm8wbkM1?=
+ =?utf-8?B?RWs5djNSYjg1WlhpTGN4S3VSdXMrZnBKVmpZNGQ4ZEJMdHVqb1ZjbXBNZkhJ?=
+ =?utf-8?B?aStBS1krK0FhQUxKWDFDSUtTRmZYZlJXb0daeTh2WTYzdXllZEVIeGNQNnVl?=
+ =?utf-8?B?SXdxUjB0ekJtS1NWY1lTZW9NL2RIaFI3SzM4UkRoakVIYUpxTkN2RVA3ZVZU?=
+ =?utf-8?B?WHF3N2FiZkRSV1hQb0JPbzBTL0FIaldoY2JFRFY4T0orL1BTeGlScTBJOC9O?=
+ =?utf-8?B?anVGNzJQRjhNSWlPVlRSWitPcjFRUTBNbUhvT245Q0hsTk4xQnEzTWhGanRB?=
+ =?utf-8?B?YVg3dElWUTV1ZStXMzlNTzFPMEYxaDY1MjhOUUNSWS92eVZSdys4OVUzek9J?=
+ =?utf-8?B?UFFTZmRGYS91UDQ5QWkrbmV5WGdsZ2gzTjdFNTFOZGxrbmI1bE5JOGpHTHA5?=
+ =?utf-8?B?N2IrSmdTK1g0SDRZTFBMdzdpWGUwckpCNjAzaEVPa0hlL3VsL0JXTzJGM1JM?=
+ =?utf-8?B?WnlxajZtUjlTRjd0S1EzTDJmU2RaOXJ4TUtqR0JTdCt2TjRvbUVnejAvS3Vz?=
+ =?utf-8?B?WUlVemQrSk1lcldEMmw3NGVDZndoUG9idUN3LzEvYTRITEtVVmNnaWozTm1S?=
+ =?utf-8?B?M1hJaDlhVFVoNEZHd1Z2UzUvU1cvS3lOaHBSdkd2Ukg5QTJ1WFdJdTBnbWl2?=
+ =?utf-8?B?S1VrdjduUTllNGlDUFVkNmpYSEkzdHNGNytodlNhc0h0NjJHWVc2dGRZUW52?=
+ =?utf-8?B?NTQ2N0ZuODc2QksrbnltUFl5a3NPVlc1dmFDNUdHbDR0Z081UTZ3Q3F3MEtq?=
+ =?utf-8?B?Z2R6RDBzMGRLd0hJdGtFbFZFUGJxRzlWd0FVTmhYYkYzMnZRSkdlVkh2a2Vk?=
+ =?utf-8?B?L1UzWkVKdndLak51cEEvQ1pub3FKeGNJdmhDR29UQ1BrVXlVMXVyYzhmVFV3?=
+ =?utf-8?B?dm1iK3pjQzFQWmxMdnZLVFlVWUdmKzRGSG83YWNGU2M5OTdoaWlHWUlQVnFF?=
+ =?utf-8?Q?pXmEQP8vMRrN37IZjNF/?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a03d6622-e7f0-4c98-5a3e-08dcbdf956e3
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5848.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2024 13:42:58.4228
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR03MB6788
 
-On Fri, 16 Aug 2024 07:54:52 -0500
-"Eric W. Biederman" <ebiederm@xmission.com> wrote:
+On 8/15/24 18:15, Andrii Nakryiko wrote:
+> On Thu, Aug 15, 2024 at 9:11 AM Juntong Deng <juntong.deng@outlook.com> wrote:
+>>
+>> Currently we cannot pass the pointer returned by iter next method as
+>> argument to KF_TRUSTED_ARGS kfuncs, because the pointer returned by
+>> iter next method is not "valid".
+>>
+>> This patch sets the pointer returned by iter next method to be valid.
+>>
+>> This is based on the fact that if the iterator is implemented correctly,
+>> then the pointer returned from the iter next method should be valid.
+>>
+>> This does not make NULL pointer valid. If the iter next method has
+>> KF_RET_NULL flag, then the verifier will ask the ebpf program to
+>> check NULL pointer.
+>>
+>> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+>> ---
+>>   kernel/bpf/verifier.c | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+>> index ebec74c28ae3..35a7b7c6679c 100644
+>> --- a/kernel/bpf/verifier.c
+>> +++ b/kernel/bpf/verifier.c
+>> @@ -12832,6 +12832,10 @@ static int check_kfunc_call(struct bpf_verifier_env *env, struct bpf_insn *insn,
+>>                          /* For mark_ptr_or_null_reg, see 93c230e3f5bd6 */
+>>                          regs[BPF_REG_0].id = ++env->id_gen;
+>>                  }
+>> +
+>> +               if (is_iter_next_kfunc(&meta))
+>> +                       regs[BPF_REG_0].type |= PTR_TRUSTED;
+>> +
+> 
+> It seems a bit too generic to always assign PTR_TRUSTED to anything
+> returned from any iterator. Let's maybe add KF_RET_TRUSTED or
+> KF_ITER_TRUSTED or something along those lines to mark such iter_next
+> kfuncs explicitly?
+> 
+> For the numbers iterator, for instance, this PTR_TRUSTED makes no sense.
+> 
 
-> Petr Tesarik <petr.tesarik@suse.com> writes:
-> 
-> > From: Petr Tesarik <ptesarik@suse.com>
-> >
-> > Fix the condition to exclude the elfcorehdr segment from the SHA digest
-> > calculation.
-> >
-> > The j iterator is an index into the output sha_regions[] array, not into
-> > the input image->segment[] array. Once it reaches image->elfcorehdr_index,
-> > all subsequent segments are excluded. Besides, if the purgatory segment
-> > precedes the elfcorehdr segment, the elfcorehdr may be wrongly included in
-> > the calculation.  
-> 
-> I would rather make CONFIG_CRASH_HOTPLUG depend on broken.
-> 
-> The hash is supposed to include everything we depend upon so when
-> a borken machine corrupts something we can detect that corruption
-> and not attempt to take a crash dump.
-> 
-> The elfcorehdr is definitely something that needs to be part of the
-> hash.
-> 
-> So please go back to the drawing board and find a way to include the
-> program header in the hash even with CONFIG_CRASH_HOTPLUG.
+I had the same idea (KF_RET_TRUSTED) before, but Kumar thought it should
+be avoided and pointers returned by iter next method should be trusted
+by default [0].
 
-I'm not trying to argue with your opinion, but it seems you're
-complaining to the wrong person. My present patch merely fixes an
-obvious trivial mistake in commit f7cc804a9fd4 ("kexec: exclude
-elfcorehdr from the segment digest") to exclude _only_ the elfcorehdr
-segment from the hash (which was intended) and not any _other_ segments
-(which was not intended but is what currently happens).
+The following are previous related discussions:
 
-If you want to change the direction of kexec hotplug support, feel free
-to revert commit f7cc804a9fd4 instead. That would also fix the bug and
-make me happy.
+ >> For iter_next(), I currently have an idea to add new flags to allow
+ >> iter_next() to decide whether the return value is trusted or not,
+ >> such as KF_RET_TRUSTED.
+ >>
+ >> What do you think?
+ >
+ > Why shouldn't the return value always be trusted?
+ > We eventually want to switch over to trusted by default everywhere.
+ > It would be nice not to go further in the opposite direction (i.e.
+ > having to manually annotate trusted) if we can avoid it.
 
-Petr T
+[0]: 
+https://lore.kernel.org/bpf/CAP01T75na=fz7EhrP4Aw0WZ33R7jTbZ4BcmY56S1xTWczxHXWw@mail.gmail.com/
 
-> Eric
-> 
-> 
-> > Fixes: f7cc804a9fd4 ("kexec: exclude elfcorehdr from the segment digest")
-> > Cc: stable@kernel.org
-> > Signed-off-by: Petr Tesarik <ptesarik@suse.com>
-> > ---
-> >  kernel/kexec_file.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> > index 3d64290d24c9..3eedb8c226ad 100644
-> > --- a/kernel/kexec_file.c
-> > +++ b/kernel/kexec_file.c
-> > @@ -752,7 +752,7 @@ static int kexec_calculate_store_digests(struct kimage *image)
-> >  
-> >  #ifdef CONFIG_CRASH_HOTPLUG
-> >  		/* Exclude elfcorehdr segment to allow future changes via hotplug */
-> > -		if (j == image->elfcorehdr_index)
-> > +		if (i == image->elfcorehdr_index)
-> >  			continue;
-> >  #endif  
+Maybe we can have more discussion?
+
+(This email has been CC Kumar)
+
+>>                  mark_btf_func_reg_size(env, BPF_REG_0, sizeof(void *));
+>>                  if (is_kfunc_acquire(&meta)) {
+>>                          int id = acquire_reference_state(env, insn_idx);
+>> --
+>> 2.39.2
+>>
 
 
