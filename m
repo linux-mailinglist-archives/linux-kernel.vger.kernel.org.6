@@ -1,148 +1,127 @@
-Return-Path: <linux-kernel+bounces-289119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A01095423D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:01:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25639954242
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:02:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA28CB23885
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:01:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE7071F26B46
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8BA084DE4;
-	Fri, 16 Aug 2024 07:01:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4273112BEBE;
+	Fri, 16 Aug 2024 07:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bff/nJb4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l48LXP++"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6B76FBF;
-	Fri, 16 Aug 2024 07:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC5C85626;
+	Fri, 16 Aug 2024 07:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723791703; cv=none; b=NF+eoionoZYSpzURgoQBGFBqUv0hupbqpbEDiZAokvdeycAHRTQONlTXitTZXFpXIRLo1CLLj8QqjfkVcg767HDV+xygxXVWjUlrW4nmqjd3gHLe+8CsDt04TU05ctpYXR4rTnjJzTc2gkUM9aTKhUemZIXZ4sXxMTbI6TurF9k=
+	t=1723791744; cv=none; b=HgPVUQzIoaR8V+q1bAC5f3uTJiH/XufAFN9Qim1QCd3MAmuGGgSJDxEBzo5sdgvsebzPIPEGdyMDSjbJpWduvt2T8QRxa34xyZPvZJOjI21EJ9EvT4EyJBUX/MCQFJNBIKYFWUZUvYBR0Uvg6SHTxRvyx7uAqXka9VP6g5svKDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723791703; c=relaxed/simple;
-	bh=Kb8xr+L+9CIfFoqHX933aD9sf4I0wfxGgUypWNbliQ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GINWNlY60EfMdiunIWAM+aVMakf1Q6rVGwpWrLf1ASbJSr1PITTytbUyPa+zPybjzwKrdNJtoGHd7qRW4CUhv6z+NdkFSg37Ky2oTQ+Ne/So4kZ9Cf4/XyyioW1b6J2v5FBS9jh180y98LwCJQLYU0VyWhG33dZigeYHCPXTNrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bff/nJb4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87A4FC32782;
-	Fri, 16 Aug 2024 07:01:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723791701;
-	bh=Kb8xr+L+9CIfFoqHX933aD9sf4I0wfxGgUypWNbliQ0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bff/nJb4JpMYDLowlQ9pJ02rs+w/jQzWxySJG1NsTVu4j73tgbEONFWDPirpmpTXS
-	 Nd4mJ/Tfmi9foJ8GGnDJq7vvfxBL9tz78gKl2ch6K5C2PRQvu/ElXaqS19nL+y7TTN
-	 6W9kbcLYXFPrebnEL3LTcLHFjgrK9Z/DVi9YYlxnHXOMlinxzB9B7ppVSQq/Fp48Ga
-	 e78RfZEM3WmYPDH2OFjgdKLQCs6OhWM5Uv/ou24Qk4owtUbLgvmYba+odKEiDfmjh2
-	 ZNhNxwE/XcDIB1NvDQW/W1l7vhLAiiWnCtQvgmhrY/CV5FOw3EdNWH1clHo6xj5e5g
-	 5rbJoCvL9kFIQ==
-Message-ID: <cb905d5e-6d70-4395-894c-55b3542e2ebe@kernel.org>
-Date: Fri, 16 Aug 2024 09:01:34 +0200
+	s=arc-20240116; t=1723791744; c=relaxed/simple;
+	bh=ZJas41ppseSW2EpIGy/CPYlNdVZswpcnnaanve53xsA=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=gBbLr7OKVcCabBV/AaIyC7550zvWoQ2c3e2exjY2QxXI4gTOxiIMYcZmNiZSFATxGHT5zyfzJZuxofbQsSCaDj1xFFtm46IrhfF3tOnFHGuzZ/y2uS6vEX/kAwayPPzXjn2adbkB5J/iukrgCDCXRlu02dkOpY5FOBHFAm6917s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l48LXP++; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5bec4e00978so1175197a12.0;
+        Fri, 16 Aug 2024 00:02:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723791741; x=1724396541; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lzev+Mzi7834P4z5pu8ad44NPYLLbytP5rCZIlHC56I=;
+        b=l48LXP++B4cHV14m71/7aC1gX8cuJ+FvGhN9+2JmbsTmaOGdMnz6I6M8n6XWG2eDHI
+         H26l7IE//XGoas5/mUxGprtZswcdkhkZjyzlwgC9qHldUyW6t3fdg9zHrxJUUAReK6Oh
+         fKXuV/KXiZoOnsijP4n2CwK0zkTQbzhzohl8BOVlQmmMiUbZsdE3L1c7sv8hI7YZ62LN
+         2I5CcZh9AfseWN3DJ5r89s5tCKd4VwYBDMy/1DemYi6aNOgaflJpRhyS9QTF8/DAeb8m
+         1bzfvsUrNkr1vDBKBXB68jwLVapIo2tzrwJYMfqbb4vQ4VNsrjp1B1+yYPT15WMX0Ag7
+         nKdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723791741; x=1724396541;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lzev+Mzi7834P4z5pu8ad44NPYLLbytP5rCZIlHC56I=;
+        b=MPB1EJHDa/YjQnADJneW8vXwqpHzAQT+SdCacj0xcEMhMw9nE8fp2flkLWggd9kwhe
+         kX1d//81NAagb+/LwD5bwlIa8lTZ8wg1mUIbR2oGRFO8LWIh/Snlih/j1nbYsGnSg0bG
+         eH5HXFVpWFl0jC29QXhbplQp/nRq913COFxeTPcVkleeECK8rfIOft83DNokAtxZ4/y+
+         dbH9/HY5EDgaZlmfsSgi6a37dESrE9Xr4GeCkWI41wywzG7uIM60W0Ajo737m6MG2MEL
+         8x2cQLHufH7cOR5/fru+4rV6cP+ZvsUC1ZZAV/zQq9TlJ25rpTQNS2TSW/EazRm0h36c
+         CNHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULahNAUJOJLW352QGNrNJ8Ev52degaslJZQQ4v5DIq0xC+Ew4yceSc2n061FZ2z4qOnjldqzP/hfPhxXCQ2ckkwxd5JB1P07fLM+DHA+EulsEFOKGPq2Ao+zoIlnYnD38mzEJz+SkZ
+X-Gm-Message-State: AOJu0YzADZvXcLYlx8QE2UxQvwsYP8dmWsrVzSCqynH6ZrZIGhoi29N9
+	/iInrI1yWjTwovZG6nCVnawqXNXoExesxD51uSPz2jBYllltgR0lHxcsKPTL
+X-Google-Smtp-Source: AGHT+IEXmA1eKlUggNe9Hxgxrj3Q4KATYAc2SIw05ICsYmkvrCeRG137tY7DydonojO5UnUZDm4MrA==
+X-Received: by 2002:a17:907:1c22:b0:a77:b516:3023 with SMTP id a640c23a62f3a-a83928a6444mr134157766b.4.1723791740476;
+        Fri, 16 Aug 2024 00:02:20 -0700 (PDT)
+Received: from localhost (85.64.140.6.dynamic.barak-online.net. [85.64.140.6])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c6a58sm214392166b.17.2024.08.16.00.02.19
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 16 Aug 2024 00:02:20 -0700 (PDT)
+From: Eli Billauer <eli.billauer@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: arnd@arndb.de,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	Eli Billauer <eli.billauer@gmail.com>
+Subject: [PATCH 1/2] char: xillybus: Refine workqueue handling
+Date: Fri, 16 Aug 2024 10:01:59 +0300
+Message-Id: <20240816070200.50695-1-eli.billauer@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/13] dt-bindings: media: camss: Add qcom,sm8550-camss
- binding
-To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@quicinc.com, Yongsheng Li <quic_yon@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-8-quic_depengs@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240812144131.369378-8-quic_depengs@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 12/08/2024 16:41, Depeng Shao wrote:
-> Add bindings for qcom,sm8550-camss in order to support the camera
-> subsystem for sm8550.
-> 
-> Co-developed-by: Yongsheng Li <quic_yon@quicinc.com>
-> Signed-off-by: Yongsheng Li <quic_yon@quicinc.com>
-> Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
+As the wakeup work item now runs on a separate workqueue, it needs to be
+flushed separately along with flushing the device's workqueue.
 
-...
+Also, move the destroy_workqueue() call to the end of the exit method,
+so that deinitialization is done in the opposite order of
+initialization.
 
-> +
-> +required:
-> +  - compatible
-> +  - clocks
-> +  - clock-names
-> +  - interconnects
-> +  - interconnect-names
-> +  - interrupts
-> +  - interrupt-names
-> +  - iommus
-> +  - power-domains
-> +  - power-domain-names
-> +  - reg
-> +  - reg-names
-> +  - vdda-phy-supply
-> +  - vdda-pll-supply
+Fixes: ccbde4b128ef ("char: xillybus: Don't destroy workqueue from work item running on it")
+Signed-off-by: Eli Billauer <eli.billauer@gmail.com>
+---
+ drivers/char/xillybus/xillyusb.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-Order is still not as expected. I already commented on this - keep the
-same order as in "properties:" block.
-
-With the order fixed:
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+diff --git a/drivers/char/xillybus/xillyusb.c b/drivers/char/xillybus/xillyusb.c
+index 33ca0f4af390..e12d359194f8 100644
+--- a/drivers/char/xillybus/xillyusb.c
++++ b/drivers/char/xillybus/xillyusb.c
+@@ -2093,9 +2093,11 @@ static int xillyusb_discovery(struct usb_interface *interface)
+ 	 * just after responding with the IDT, there is no reason for any
+ 	 * work item to be running now. To be sure that xdev->channels
+ 	 * is updated on anything that might run in parallel, flush the
+-	 * workqueue, which rarely does anything.
++	 * device's workqueue and the wakeup work item. This rarely
++	 * does anything.
+ 	 */
+ 	flush_workqueue(xdev->workq);
++	flush_work(&xdev->wakeup_workitem);
+ 
+ 	xdev->num_channels = num_channels;
+ 
+@@ -2274,9 +2276,9 @@ static int __init xillyusb_init(void)
+ 
+ static void __exit xillyusb_exit(void)
+ {
+-	destroy_workqueue(wakeup_wq);
+-
+ 	usb_deregister(&xillyusb_driver);
++
++	destroy_workqueue(wakeup_wq);
+ }
+ 
+ module_init(xillyusb_init);
+-- 
+2.17.1
 
 
