@@ -1,133 +1,159 @@
-Return-Path: <linux-kernel+bounces-289506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C076D9546DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:42:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96B3E9546DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53B8A283ECE
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:42:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4053B1F23626
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB27C191F83;
-	Fri, 16 Aug 2024 10:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NB193JTX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E3C1917FC;
+	Fri, 16 Aug 2024 10:42:41 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA0013C689;
-	Fri, 16 Aug 2024 10:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BEF18FC83
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 10:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723804937; cv=none; b=MdYNST8h/GfcIXe0/iShAezR1yFpnnOJ+fyKz6CQUyiq7r2PFCMP+fYlbSbG1kb5bRIIm+tyYvq5AK7VzD2NfTZHfJHS8KrD9aCKYilH7t45a1h8wBEgCbueTQsS99Xk6y0B4AqJhGa26Ln2nYieBeyfYQ3Mj8DazO4N3xjBosk=
+	t=1723804961; cv=none; b=JvtSuoPJ5w1X5XGjHI0vqqfDCVvw9lMtQGXXzZJJMJe3GM0wiYOtscOpJ7wXmS9VToK+KEyX9Ntd2iXjwKHihkWIYBZsnbydDCR6p4PYdI3c2LYwEu0YTE9TONNsjcO8FN6F+TiY5EcptErL86jm/1nBryugem2HAtiQcPN2NmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723804937; c=relaxed/simple;
-	bh=zg3dRit0opyHfuuTVglW5AtRP4DAPWyWCTz/Rq9Op8U=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=evReghtF/PyMWhycixiJ1Y9lhdOP6USlZoILb1Lhw3x212RREC3pNPtkOT8viU1WzgE4xVTxy0VNE7fst7LmcDDpPKtLDP7OBBvxyLbgB/QhUQpoxDMqAy2ycdMxf19SuHh/2DInZmjtQIdAYrM1vAOf9sNUjLWLdRBhHp30H5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NB193JTX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C679C32782;
-	Fri, 16 Aug 2024 10:42:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723804936;
-	bh=zg3dRit0opyHfuuTVglW5AtRP4DAPWyWCTz/Rq9Op8U=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=NB193JTXK3JRQ7RSKkOV16g8BU8FoDpFZ9LrZZP3Mr/3BsNpE4kWT2iUeatduZZUe
-	 42iqfmX+LeVxQUsdm8vSGspHkZbszI5FZ3EPXdHy9uQPwn8HkZlPSmKdcwx8DF+wtm
-	 nFt0M7aq8L1mzCPQPuZUhVBGGOjDBOkbMum9ikJr/AVq3DkDb/koO8d8n6IgkN9f59
-	 BexA35uQhGZv4ph6LKZoSbT0wspZgo7Ff6avGvl0r8QC8Apl3M1iwrQYf4L1yhr7W4
-	 bYYTtbhcN8kgzIAFe1rQAe/rM0UYJS0HEr2bRTvySuQwtTKcLGMqksaTknDYo3S8qi
-	 6uwqFaJIb34bw==
+	s=arc-20240116; t=1723804961; c=relaxed/simple;
+	bh=2gQUb4xpYueo47eiH779suL6H3eFVak5XnEmjinlyBs=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VrO3gNWniK0b7TOdKKat6KWUGQ1BVY9YyZiQIer8RgBxXUWzZwmSyxlYA/FjsEzEoiexSHxhItE/oSCdHXXFYozpsQn00GrqRiBWXzK/Kkt4WSITiy4vzGiBUe5VMiOXGKz9l5mn7AYOV5uHOl+/mie6Zsrbphg4trfPUw9xdzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wldm80kfqz67pJF;
+	Fri, 16 Aug 2024 18:39:52 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id B247F140119;
+	Fri, 16 Aug 2024 18:42:35 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 16 Aug
+ 2024 11:42:35 +0100
+Date: Fri, 16 Aug 2024 11:42:33 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Shiju Jose <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+	Ani Sinha <anisinha@redhat.com>, Igor Mammedov <imammedo@redhat.com>,
+	<linux-kernel@vger.kernel.org>, <qemu-devel@nongnu.org>
+Subject: Re: [PATCH v7 01/10] acpi/generic_event_device: add an APEI error
+ device
+Message-ID: <20240816114233.00003805@Huawei.com>
+In-Reply-To: <20240816075324.19d13670@foz.lan>
+References: <cover.1723591201.git.mchehab+huawei@kernel.org>
+	<0be6db8d06b3abab551f24dcc645d46d72d3f668.1723591201.git.mchehab+huawei@kernel.org>
+	<20240814133321.00006401@Huawei.com>
+	<20240816075324.19d13670@foz.lan>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 16 Aug 2024 13:42:13 +0300
-Message-Id: <D3H9ULV1NH4M.1A8EKXWZFTEF2@kernel.org>
-Cc: "Ross Philipson" <ross.philipson@oracle.com>,
- <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
- <linux-integrity@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-crypto@vger.kernel.org>, <kexec@lists.infradead.org>,
- <linux-efi@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
- <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
- <dave.hansen@linux.intel.com>, <ardb@kernel.org>, <mjg59@srcf.ucam.org>,
- <James.Bottomley@hansenpartnership.com>, <peterhuewe@gmx.de>,
- <jgg@ziepe.ca>, <luto@amacapital.net>, <nivedita@alum.mit.edu>,
- <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <corbet@lwn.net>,
- <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
- <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
- <trenchboot-devel@googlegroups.com>
-Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
- early measurements
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Thomas Gleixner" <tglx@linutronix.de>, "Daniel P. Smith"
- <dpsmith@apertussolutions.com>, "Eric W. Biederman"
- <ebiederm@xmission.com>, "Eric Biggers" <ebiggers@kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240531010331.134441-1-ross.philipson@oracle.com>
- <20240531010331.134441-7-ross.philipson@oracle.com>
- <20240531021656.GA1502@sol.localdomain>
- <874jaegk8i.fsf@email.froward.int.ebiederm.org>
- <5b1ce8d3-516d-4dfd-a976-38e5cee1ef4e@apertussolutions.com>
- <87ttflli09.ffs@tglx>
-In-Reply-To: <87ttflli09.ffs@tglx>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Thu Aug 15, 2024 at 10:10 PM EEST, Thomas Gleixner wrote:
-> On Thu, Aug 15 2024 at 13:38, Daniel P. Smith wrote:
-> > On 5/31/24 09:54, Eric W. Biederman wrote:
-> >> Eric Biggers <ebiggers@kernel.org> writes:
-> >>> That paragraph is also phrased as a hypothetical, "Even if we'd prefe=
-r to use
-> >>> SHA-256-only".  That implies that you do not, in fact, prefer SHA-256=
- only.  Is
-> >>> that the case?  Sure, maybe there are situations where you *have* to =
-use SHA-1,
-> >>> but why would you not at least *prefer* SHA-256?
-> >>=20
-> >> Yes.  Please prefer to use SHA-256.
-> >>=20
-> >> Have you considered implementing I think it is SHA1-DC (as git has) th=
-at
-> >> is compatible with SHA1 but blocks the known class of attacks where
-> >> sha1 is actively broken at this point?
-> >
-> > We are using the kernel's implementation, addressing what the kernel=20
-> > provides is beyond our efforts. Perhaps someone who is interested in=20
-> > improving the kernel's SHA1 could submit a patch implementing/replacing=
-=20
-> > it with SHA1-DC, as I am sure the maintainers would welcome the help.
+On Fri, 16 Aug 2024 07:53:24 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-Git also has a bit more wide than secure launch, and the timeline is
-also completely different. Git maintains legacy, while has also
-introduced SHA-256 support in 2018. This as a new feature in the kernel
-stack.
+> Em Wed, 14 Aug 2024 13:33:21 +0100
+> Jonathan Cameron <Jonathan.Cameron@Huawei.com> escreveu:
+> 
+> > On Wed, 14 Aug 2024 01:23:23 +0200
+> > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> >   
+> > > Adds a generic error device to handle generic hardware error
+> > > events as specified at ACPI 6.5 specification at 18.3.2.7.2:
+> > > https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#event-notification-for-generic-error-sources
+> > > using HID PNP0C33.
+> > > 
+> > > The PNP0C33 device is used to report hardware errors to
+> > > the guest via ACPI APEI Generic Hardware Error Source (GHES).
+> > > 
+> > > Co-authored-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > > Co-authored-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > > Reviewed-by: Igor Mammedov <imammedo@redhat.com>
+> > > ---
+> > >  hw/acpi/aml-build.c                    | 10 ++++++++++
+> > >  hw/acpi/generic_event_device.c         |  8 ++++++++
+> > >  include/hw/acpi/acpi_dev_interface.h   |  1 +
+> > >  include/hw/acpi/aml-build.h            |  2 ++
+> > >  include/hw/acpi/generic_event_device.h |  1 +
+> > >  5 files changed, 22 insertions(+)
+> > > 
+> > > diff --git a/hw/acpi/aml-build.c b/hw/acpi/aml-build.c
+> > > index 6d4517cfbe3d..cb167523859f 100644
+> > > --- a/hw/acpi/aml-build.c
+> > > +++ b/hw/acpi/aml-build.c
+> > > @@ -2520,3 +2520,13 @@ Aml *aml_i2c_serial_bus_device(uint16_t address, const char *resource_source)
+> > >  
+> > >      return var;
+> > >  }
+> > > +
+> > > +/* ACPI 5.0: 18.3.2.6.2 Event Notification For Generic Error Sources */    
+> > 
+> > Given this section got a rename maybe the comment should mention old
+> > name and current name for the section?  
+> 
+> ACPI 6.5 has the same name for the section:
 
-The purpose of SHA1-DC has obviously been to extend the lifespan, not
-fix SHA-1.
+We did a bit of digging after an offline discussion.
+It's only there in Errata B of ACPI 5.0.  So need to update this reference
+to be more specific if we want to avoid confusion.
 
-Linux will be better of not adding anything new related to SHA-1 or
-TPM 1.2. They still have a maintenance cost and I think that time
-would be better spent of for almost anything else (starting from
-taking your trashes out or boiling coffee) ;-)
-
->
-> Well, someone who is interested to get his "secure" code merged should
-> have a vested interested to have a non-broken SHA1 implementation if
-> there is a sensible requirement to use SHA1 in that new "secure" code,
-> no?
->
-> Just for the record. The related maintainers can rightfully decide to
-> reject known broken "secure" code on a purely technical argument.
->
+> 
+> 	18.3.2.7.2. Event Notification For Generic Error Sources
+> 
+> 	An event notification is recommended for corrected errors where latency 
+> 	in processing error reports is not critical to proper system operation. 
+> 	The implementation of Event notification requires the platform to define
+> 	a device with PNP ID PNP0C33 in the ACPI namespace, referred to as the
+> 	error device. 
+> 
+> Just section number changed. IMO, it is still good enough to seek for
+> it at the docs.
+> 
+> Btw, in this specific case, the best is to use the search box of
+> Sphinx html output and seek for PNP0C33 ;-)
+> 
+> >   
+> > > +Aml *aml_error_device(void)
+> > > +{
+> > > +    Aml *dev = aml_device(ACPI_APEI_ERROR_DEVICE);
+> > > +    aml_append(dev, aml_name_decl("_HID", aml_string("PNP0C33")));
+> > > +    aml_append(dev, aml_name_decl("_UID", aml_int(0)));
+> > > +
+> > > +    return dev;
+> > > +}
+> > > diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
+> > > index 15b4c3ebbf24..1673e9695be3 100644
+> > > --- a/hw/acpi/generic_event_device.c
+> > > +++ b/hw/acpi/generic_event_device.c
+> > > @@ -26,6 +26,7 @@ static const uint32_t ged_supported_events[] = {
+> > >      ACPI_GED_PWR_DOWN_EVT,
+> > >      ACPI_GED_NVDIMM_HOTPLUG_EVT,
+> > >      ACPI_GED_CPU_HOTPLUG_EVT,
+> > > +    ACPI_GED_ERROR_EVT    
+> > 
+> > trailing comma missing.  
+> 
+> I'll add.
+> 
 > Thanks,
->
->         tglx
+> Mauro
 
-BR, Jarkko
 
