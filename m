@@ -1,96 +1,92 @@
-Return-Path: <linux-kernel+bounces-290117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05E55954F98
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:10:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F154954FA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:11:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87F45B216FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:10:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E9B3B21442
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE2B1C2304;
-	Fri, 16 Aug 2024 17:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410A81C2301;
+	Fri, 16 Aug 2024 17:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="wNDZPZZc"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iXo60pj2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9801BDAB3;
-	Fri, 16 Aug 2024 17:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846CF558A5;
+	Fri, 16 Aug 2024 17:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723828221; cv=none; b=nIIQRCkImkUTYmxJxd9no/1ozNiL3dzz/JSJ4X5wQz9LM6CrK2vXOC/z4xl5eoVWtBkFs2pEPyBlHZKUTyRK3oTUwHd0HKPlEI/hoXiN2zljpCTIYAN18HGi2gqEGJIePvfMn4GoX09mGpK5Bfgo0qnhfu05r5HiynB1veGh2/s=
+	t=1723828279; cv=none; b=Ls00My870cipzvNseoUzH3y5O4HO27cc5vtyn8k9md0MaREE/NnwpDvOAlDL0NOX9P7TVLXuhqRnI7zxkhl1mCtqvUcd8aqXmhRq+/PEuJ2AFzWZb9GfACRBF//I6a6plT62fAC2PsU8cE0Xoo1xu7l3OiiUhxecJfbca1xYt50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723828221; c=relaxed/simple;
-	bh=nw06WkzHqUhCs9XA+U6TwdclHGU4IUDbSVBxWHsVP3E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZwJAvf09Qj/TSXFp+g9L11NmEnFZ5h8F5Fk2Epm23FidloI7rX7IliUuKqNDv/PCCv2t+/nB7QcfmenWs0x1szVij78bziG6RWYBUScNrBD2fIv6G9mOvMBGuqqZ9w2z1I22o8u10fXllMsUW9YPyEC5gT1HONeb2m++1B0D4HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=wNDZPZZc; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WlpQg5cJdzlgMVQ;
-	Fri, 16 Aug 2024 17:10:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1723828217; x=1726420218; bh=nsyBi0d5vmkpkWIxsABPwjBz
-	rMnHygjf1ygvaZFGSJo=; b=wNDZPZZcZtk93U4cg2C2dwhCSsqFuXh4tMTZgqjp
-	CUlUpVE7uvrxjre9B4Nmy432XLhEoZZbqNmBoJhNyT5dGAr6aUZfppEgjy1WKzBX
-	PqvWdiyiV+4ZKa0thAW439Uvz0KgKTWy9FhyRPW+Vo6dChVFptDdT3NC/hfN4a9B
-	53OyLU1R/oPyjjx6paVr2oCEaVtjUQtBQ8lb+bwT/HHgcQ7GGkUIZO+516pDaQ5Z
-	RmC4ncAxA8cF6EciJxLiJZVPo0T/oPOnah02eOrYhhkceBk0QBYJqx0CSnFZVJyQ
-	ejTw95ESkEO5vvp4raKNWgjeFS5yoqQWh1hvFe1OaRhOLQ==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id deLSP4MbBMAF; Fri, 16 Aug 2024 17:10:17 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WlpQc61dHzlgT1H;
-	Fri, 16 Aug 2024 17:10:16 +0000 (UTC)
-Message-ID: <3411d2cd-1aa5-4648-9c30-3ea5228f111f@acm.org>
-Date: Fri, 16 Aug 2024 10:10:16 -0700
+	s=arc-20240116; t=1723828279; c=relaxed/simple;
+	bh=7ZCSSBpkj+vLMJqv+wX282n8HXJDJam7GZ7W+EmumiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hUyO1iNo5uin1iD8Y7sg2vScIwKDpNnXX2Xne1BS+HoYoXtoQJrdqgbe/P0jpSMGJ/Jk8cGjxnSPfyQccRvG8Fa/MgeLJ7c5WFsFNvIXy5CS50cZKaq8MAl94AnuDmF8hGO5x8W1XHuQM6YWKXLRoxOAwks5vpO2q3NMVxQFQbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iXo60pj2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3A09C32782;
+	Fri, 16 Aug 2024 17:11:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723828279;
+	bh=7ZCSSBpkj+vLMJqv+wX282n8HXJDJam7GZ7W+EmumiE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iXo60pj2VY3Gva9TUtIWFPPu4lOEkpfd7KP17pIT/WKi7qEtQGuF41WJLLhFQCI38
+	 JKkmP5NPY+xWbm2ptxxy/f8uQobX277WngPGA5EqxxwUGNreLrLMR7QXD75H+9sdf6
+	 PE1oD3eppCqHAuqfzTg2IlmfR2UU6zqZpb0C2dv/xdTgyhwaZPjG5Luc8FX1ZX0wPE
+	 UFVqjNYkhvJyBmdm/fTGwBeJQZKIAbczOsYpZRthmiOGtLyrR3Yk3G/K1N9GPB2sOa
+	 zrWqlrgx5WhTMGTOMOW5w/jugI4Ds5STmNv49tLExhiUvNp3xxi1NgHQeHYS81NfgF
+	 PFAhUIwJqP8rg==
+Date: Fri, 16 Aug 2024 10:11:16 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Russell King <linux@armlinux.org.uk>, davem@davemloft.net,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ linux-arm-kernel@lists.infradead.org, Herve Codina
+ <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Heiner
+ Kallweit <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Jesse Brandeburg
+ <jesse.brandeburg@intel.com>, Marek =?UTF-8?B?QmVow7pu?=
+ <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+ Oleksij Rempel <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
+ <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
+ mwojtas@chromium.org, Nathan Chancellor <nathan@kernel.org>, Antoine Tenart
+ <atenart@kernel.org>, Marc Kleine-Budde <mkl@pengutronix.de>, Dan Carpenter
+ <dan.carpenter@linaro.org>, Romain Gantois <romain.gantois@bootlin.com>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH net-next v17 00/14] Introduce PHY listing and
+ link_topology tracking
+Message-ID: <20240816101116.0e8e4d6d@kernel.org>
+In-Reply-To: <a1231b3a-cd4d-4e74-9266-95350f880449@csgroup.eu>
+References: <20240709063039.2909536-1-maxime.chevallier@bootlin.com>
+	<20240715083106.479093a6@kernel.org>
+	<20240716101626.3d54a95d@fedora-2.home>
+	<20240717082658.247939de@kernel.org>
+	<a1231b3a-cd4d-4e74-9266-95350f880449@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linus:master] [RDMA/iwcm] aee2424246:
- WARNING:at_kernel/workqueue.c:#check_flush_dependency
-To: Zhu Yanjun <yanjun.zhu@linux.dev>,
- kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
- Leon Romanovsky <leon@kernel.org>,
- Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
- linux-rdma@vger.kernel.org
-References: <202408151633.fc01893c-oliver.sang@intel.com>
- <c64a2f6e-ea18-4e8d-b808-0f1732c6d004@linux.dev>
- <4254277c-2037-44bc-9756-c32b41c01bdf@linux.dev>
- <717ccc9e-87e0-49da-a26c-d8a0d3c5d8f8@linux.dev>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <717ccc9e-87e0-49da-a26c-d8a0d3c5d8f8@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 8/16/24 5:49 AM, Zhu Yanjun wrote:
-> Hi, kernel test robot
-> 
-> Please help to make tests with the following commits.
-> 
-> Please let us know the result.
-I don't think that the kernel test robot understands the above request.
+On Fri, 16 Aug 2024 19:02:20 +0200 Christophe Leroy wrote:
+> So it would be great if the series could be merged for v6.12, and I 
+> guess the earliest it is merged into net-next the more time it spends in 
+> linux-next before the merge window. Any chance to get it merged anytime 
+> soon even without a formal feedback from Russell ? We are really looking 
+> forward to getting that series merged and step forward with all the work 
+> that depends on it and is awaiting.
 
-Thanks,
-
-Bart.
+Give Russell a few days to respond, then repost. 
+Russell said his ability to review code right now may be limited.
+I'm not sure whether he would like us to wait for him or just do
+our best. In the absence of an opinion - we'll do the latter.
 
