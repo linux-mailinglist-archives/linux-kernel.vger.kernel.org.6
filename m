@@ -1,216 +1,130 @@
-Return-Path: <linux-kernel+bounces-289412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60DA09545F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:42:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFE529545FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:44:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3AB2B22F23
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:42:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 763D01F223B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29EBB15B140;
-	Fri, 16 Aug 2024 09:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B52715B138;
+	Fri, 16 Aug 2024 09:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="j+d7xG9e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0WLgtebd";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ff5FpV2J"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A2F15B137;
-	Fri, 16 Aug 2024 09:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CDE15B113;
+	Fri, 16 Aug 2024 09:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723801343; cv=none; b=YimcGqD3V9odnVapQEm4RT70pHmzpDh5EiCBZJoP6wMe02E5svEnbKI1sfhKJYJINougLs6ZkhCmOYs6ndvXwiCupdgWYSIn/M0P1j1gXFoz2Pef6YHiy+AFVk6L6CgpE5HaSL3lnPUVY3KWrDzjlTKwjZlpo5XVg19Xs1Am62g=
+	t=1723801432; cv=none; b=m/Z+dlq+Cq5EVBCDt3z83RjiONeba3RzGhzBWJ2ntzVDkYe+iRDgHHXsoB7zMr3aXP9LwXRUwowHX9X10B2eKQDNRTQpJWyQokKYBvzIiVjMzj24j81V8Rrg6450y8m6PkK63i3hTBMZKp5pEFJN1NAWVYpbe3O8lkng9BOOhu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723801343; c=relaxed/simple;
-	bh=OYqwcZqnZpNks8CzBZ7ajhgFTlIh+5nhXDp5hCIfGNc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LrqsZ8HGJQVly+d7wA8oCErMBxIhp7qT7i4OT+FOp/E2Kj4fEZb4O8pA7u+f3/I0pZFHxgFH93f4a7J/9AAw4ZIN4zBXWh/oVePt63J/Fmpw/V9ZYB92EKkNHA2/rVqi0P4Q4aRexcTXJLydQKWq2Hogp8q/IrhdYfCaK3dvVTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=j+d7xG9e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B80BC4AF0E;
-	Fri, 16 Aug 2024 09:42:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723801342;
-	bh=OYqwcZqnZpNks8CzBZ7ajhgFTlIh+5nhXDp5hCIfGNc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=j+d7xG9eJiw8fNq2+w+a+XmxxOgbloU4quQskdNHj6sxhi4Gbzo/SDN+yWniGRd6a
-	 j/QWQ78aei4KqLC0bFD60g1Vhog+atHBpN+LF/NTwZu7jT7KkZPeHQ/INxI1pHvyh7
-	 VtLhyzTyl0VdiWlLdGJiDw0dEdY9CU1gQ9sP14yY=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	allen.lkml@gmail.com,
-	broonie@kernel.org
-Subject: [PATCH 6.10 00/25] 6.10.6-rc2 review
-Date: Fri, 16 Aug 2024 11:42:18 +0200
-Message-ID: <20240816085226.888902473@linuxfoundation.org>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1723801432; c=relaxed/simple;
+	bh=ngEnFU1tuCQqgX2VqoVA+THQmDNWi+l3KHO5927zEW8=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=N0X/QSsDUDHurbAHtp09JVU8UQjG1ox5NxmsBNVPBJBYIMT/I82g8WdCJXg+i5oBSsI1MyEzszjR83PSv9304MUxdJZUQpKPokDeR8kAlG95dMGvrgKkiXNCNEXA0FSSTk1eRB9kmDv3OUavgoZZZl9uyC5RrKFs6uDoN1utHRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0WLgtebd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ff5FpV2J; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 16 Aug 2024 09:43:48 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723801429;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Yzj458T5jYc0hmWLivay4aqLc5Jd/2q5uWJE9WQFPmE=;
+	b=0WLgtebdEGwze+tQFLLrNGZHL9m7+n2ujZirs66LKKV6DdhyT5wnvChimzjIRUf/stfr7b
+	asEoDoXaoNnK64XC5LbhTFEPxJJaTisqbKLOu3hU7gptlb35aC8x4ahhInaWeimTyVxWnZ
+	66baQLkOUvGnudBl8irUiyJgPAqGLZHaBQ6OPGDqW3BVv4UfxqQP9HTeDsD9wGYXb3V6RT
+	4u+WiKAUxWhVB+ChfHmi51OozbjGPv3aXbDKzfrCLo+DwDRNL98jV3msp1UFsGLk3gb5WM
+	HxXU8f5xqWNe1vu+mxGruKtb835fMMcgl5KGgoRpTOeA1Vi1FjuhlAzmfikczg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723801429;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Yzj458T5jYc0hmWLivay4aqLc5Jd/2q5uWJE9WQFPmE=;
+	b=ff5FpV2J26rwOj7yPj9zvK9ANlGLA85SU1Cr5y0u7PyEcLm+7PprTmKsI2Lc20kVI83K1K
+	WFXHGmZdGtSOPdCA==
+From: "tip-bot2 for Max Ramanouski" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/ioremap: Use is_ioremap_addr() in iounmap()
+Cc: Max Ramanouski <max8rr8@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Christoph Hellwig <hch@lst.de>, Alistair Popple <apopple@nvidia.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240815205606.16051-2-max8rr8@gmail.com>
+References: <20240815205606.16051-2-max8rr8@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.6-rc2.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-6.10.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 6.10.6-rc2
-X-KernelTest-Deadline: 2024-08-18T08:52+00:00
-Content-Transfer-Encoding: 8bit
+Message-ID: <172380142877.2215.11720831620589167404.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-This is the start of the stable review cycle for the 6.10.6 release.
-There are 25 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+The following commit has been merged into the x86/urgent branch of tip:
 
-Responses should be made by Sun, 18 Aug 2024 08:52:13 +0000.
-Anything received after that time might be too late.
+Commit-ID:     7b02ad32d83c16abd4961d79f3154b734d1d5d9c
+Gitweb:        https://git.kernel.org/tip/7b02ad32d83c16abd4961d79f3154b734d1d5d9c
+Author:        Max Ramanouski <max8rr8@gmail.com>
+AuthorDate:    Thu, 15 Aug 2024 23:56:07 +03:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Fri, 16 Aug 2024 11:33:33 +02:00
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.6-rc2.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-and the diffstat can be found below.
+x86/ioremap: Use is_ioremap_addr() in iounmap()
 
-thanks,
+Restrict iounmap() to memory allocated in the ioremap region, by using
+is_ioremap_addr(). Similarly to the generic iounmap() implementation.
 
-greg k-h
+Additionally, add a warning in case there is an attempt to iounmap()
+invalid memory, instead of silently exiting, thus helping to avoid
+incorrect usage of iounmap().
 
--------------
-Pseudo-Shortlog of commits:
+Signed-off-by: Max Ramanouski <max8rr8@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Alistair Popple <apopple@nvidia.com>
+Link: https://lore.kernel.org/all/20240815205606.16051-2-max8rr8@gmail.com
+---
+ arch/x86/mm/ioremap.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 6.10.6-rc2
-
-Aurabindo Pillai <aurabindo.pillai@amd.com>
-    drm/amd/display: Add misc DC changes for DCN401
-
-Niklas Cassel <cassel@kernel.org>
-    Revert "ata: libata-scsi: Honor the D_SENSE bit for CK_COND=1 and no error"
-
-Sean Young <sean@mess.org>
-    media: Revert "media: dvb-usb: Fix unexpected infinite loop in dvb_usb_read_remote_control()"
-
-Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>
-    drm/amdgpu/display: Fix null pointer dereference in dc_stream_program_cursor_position
-
-Wayne Lin <Wayne.Lin@amd.com>
-    drm/amd/display: Solve mst monitors blank out problem after resume
-
-Kees Cook <kees@kernel.org>
-    binfmt_flat: Fix corruption when not offsetting data start
-
-Gergo Koteles <soyer@irl.hu>
-    platform/x86: ideapad-laptop: add a mutex to synchronize VPC commands
-
-Gergo Koteles <soyer@irl.hu>
-    platform/x86: ideapad-laptop: move ymc_trigger_ec from lenovo-ymc
-
-Gergo Koteles <soyer@irl.hu>
-    platform/x86: ideapad-laptop: introduce a generic notification chain
-
-Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-    platform/x86/amd/pmf: Fix to Update HPD Data When ALS is Disabled
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: usb: Fix UBSAN warning in parse_audio_unit()
-
-Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-    fs/ntfs3: Do copy_to_user out of run_lock
-
-Pei Li <peili.dev@gmail.com>
-    jfs: Fix shift-out-of-bounds in dbDiscardAG
-
-Edward Adam Davis <eadavis@qq.com>
-    jfs: fix null ptr deref in dtInsertEntry
-
-Willem de Bruijn <willemb@google.com>
-    fou: remove warn in gue_gro_receive on unsupported protocol
-
-Chao Yu <chao@kernel.org>
-    f2fs: fix to cover read extent cache access with lock
-
-Chao Yu <chao@kernel.org>
-    f2fs: fix to do sanity check on F2FS_INLINE_DATA flag in inode during GC
-
-yunshui <jiangyunshui@kylinos.cn>
-    bpf, net: Use DEV_STAT_INC()
-
-Simon Trimmer <simont@opensource.cirrus.com>
-    ASoC: cs35l56: Patch CS35L56_IRQ1_MASK_18 to the default value
-
-WangYuli <wangyuli@uniontech.com>
-    nvme/pci: Add APST quirk for Lenovo N60z laptop
-
-Huacai Chen <chenhuacai@kernel.org>
-    LoongArch: Define __ARCH_WANT_NEW_STAT in unistd.h
-
-Fangzhi Zuo <jerry.zuo@amd.com>
-    drm/amd/display: Prevent IPX From Link Detect and Set Mode
-
-Harry Wentland <harry.wentland@amd.com>
-    drm/amd/display: Separate setting and programming of cursor
-
-Wayne Lin <wayne.lin@amd.com>
-    drm/amd/display: Defer handling mst up request in resume
-
-Kees Cook <kees@kernel.org>
-    exec: Fix ToCToU between perm check and set-uid/gid usage
-
-
--------------
-
-Diffstat:
-
- Makefile                                           |   4 +-
- arch/loongarch/include/uapi/asm/unistd.h           |   1 +
- drivers/ata/libata-scsi.c                          |  15 ++-
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  14 +-
- .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    |   6 +
- .../drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c    |   6 +-
- drivers/gpu/drm/amd/display/dc/core/dc_stream.c    |  94 ++++++++-----
- drivers/gpu/drm/amd/display/dc/dc_stream.h         |   8 ++
- .../drm/amd/display/dc/hwss/dcn30/dcn30_hwseq.c    |   2 +-
- drivers/media/usb/dvb-usb/dvb-usb-init.c           |  35 +----
- drivers/nvme/host/pci.c                            |   7 +
- drivers/platform/x86/Kconfig                       |   1 +
- drivers/platform/x86/amd/pmf/spc.c                 |  32 ++---
- drivers/platform/x86/ideapad-laptop.c              | 148 ++++++++++++++++++---
- drivers/platform/x86/ideapad-laptop.h              |   9 ++
- drivers/platform/x86/lenovo-ymc.c                  |  60 +--------
- fs/binfmt_flat.c                                   |   4 +-
- fs/exec.c                                          |   8 +-
- fs/f2fs/extent_cache.c                             |  50 +++----
- fs/f2fs/f2fs.h                                     |   2 +-
- fs/f2fs/gc.c                                       |  10 ++
- fs/f2fs/inode.c                                    |  10 +-
- fs/jfs/jfs_dmap.c                                  |   2 +
- fs/jfs/jfs_dtree.c                                 |   2 +
- fs/ntfs3/frecord.c                                 |  75 ++++++++++-
- net/core/filter.c                                  |   8 +-
- net/ipv4/fou_core.c                                |   2 +-
- sound/soc/codecs/cs35l56-shared.c                  |   1 +
- sound/usb/mixer.c                                  |   7 +
- 29 files changed, 411 insertions(+), 212 deletions(-)
-
-
+diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+index aa7d279..70b02fc 100644
+--- a/arch/x86/mm/ioremap.c
++++ b/arch/x86/mm/ioremap.c
+@@ -11,6 +11,7 @@
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/ioport.h>
++#include <linux/ioremap.h>
+ #include <linux/slab.h>
+ #include <linux/vmalloc.h>
+ #include <linux/mmiotrace.h>
+@@ -457,7 +458,7 @@ void iounmap(volatile void __iomem *addr)
+ {
+ 	struct vm_struct *p, *o;
+ 
+-	if ((void __force *)addr <= high_memory)
++	if (WARN_ON_ONCE(!is_ioremap_addr((void __force *)addr)))
+ 		return;
+ 
+ 	/*
 
