@@ -1,122 +1,141 @@
-Return-Path: <linux-kernel+bounces-290241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D929995512A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:01:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD61995512D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:03:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96DEF285427
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:01:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E90361C2208D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CFB1C0DE1;
-	Fri, 16 Aug 2024 19:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9BA1C3792;
+	Fri, 16 Aug 2024 19:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="j9IDgbA9"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="eExozbHz"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6061C27;
-	Fri, 16 Aug 2024 19:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF1B1C27
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 19:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723834870; cv=none; b=QBiNQxKG+puupc4b8TuLsL5TtY8tUJOQYPeGYVaQ0zMDDawTHQPHsLH9p3Ugd5r7/4trK4ic7nJyfZfPRayOjKXkbpIYxumFxDMaVwKC1IWrGVHCKLYRszZhPXUtPiLex8i2zTEWSL6dTd/uKesJCYCSjDSAPhS0uqmN4Jhzj0c=
+	t=1723835032; cv=none; b=CR4a5W8DEvvZaHbZ/Asil8+luwCjEi6qG5FNQnh1FiyAjedux0TPRLuO/2cizsBoMKmHvc4cEf0qpYdbtEQE8hihW9ZEEbFkuIZQd2xgiXylZorFfUXNEjHbPPR8XexalF8VNrjKvkv/xTY899eE7hFG5274a5I/Cp7iR+RUqQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723834870; c=relaxed/simple;
-	bh=Y7iG7kndNsaQxhGLsSPmbX9+y172qeuvSpqwF//M2EM=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=m0zP/4v8XwA4VQsS/THciwDCSHzrEOTYsHDjxPkcXoqGVXhMLJWS7pRfbvs0hg3Ez5xkgMVJRAh3ft2a3ErbybimX2ievKkL+PsU3j7aoEk+x6f8Ydr2tdYtoq51kwN+bHNcY0JjYZKdO48e6E0gVOTpcdBlZTx+/mmsToqqozE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=j9IDgbA9; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1723834864;
-	bh=Y7iG7kndNsaQxhGLsSPmbX9+y172qeuvSpqwF//M2EM=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=j9IDgbA9MFKnr14EpN0+AqQ3JPwF38iAPOiYlACxQtkHr9pj6/vo9taUIcQtgrC0J
-	 N2sAVOgBUcD/2LjJ074u9S0g5BjWePv3kjUiT4ipnzc7Jeqx3b5mIhD3ESQghGVOZQ
-	 oiOkjbNArBtCY8KDRPFDZ+NUOpBNGNkS3MhNAeTY=
-Date: Fri, 16 Aug 2024 21:01:02 +0200 (GMT+02:00)
-From: linux@weissschuh.net
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Christian Heusel <christian@heusel.eu>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Message-ID: <72f2bb7f-8f4a-4dec-ae41-f87cef6182b3@weissschuh.net>
-In-Reply-To: <20240816141844.1217356-2-masahiroy@kernel.org>
-References: <20240816141844.1217356-1-masahiroy@kernel.org> <20240816141844.1217356-2-masahiroy@kernel.org>
-Subject: Re: [PATCH 2/2] kbuild: pacman-pkg: do not override objtree
+	s=arc-20240116; t=1723835032; c=relaxed/simple;
+	bh=Mc4T9iIXjOcQFUOiud3CnyHPyMK9EQB6qvuWeFQkTig=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=odV4FVFaZzbf91Wjjm++FsP+WRv+8UnLPvfVmRYynl3Z3j1HU6A/2+0Xll7b2I91znG+lIcE1sQ3dFqcQyRKaqKBcKbD1gTIaPqFGnZr9fhefDwTgTEy7QoRBN6bMnjYjZNKCpPUYid8+KewVfpD1YN+1DiwER/JMT8UJ4QLOwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=eExozbHz; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7aa212c1c9so279206266b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 12:03:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1723835029; x=1724439829; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BrBxZgECaC7/1MG5XVHMQd0NOSd+rm2Uh6YDq8DhIA8=;
+        b=eExozbHzfoIDwtFw3j6aQjiB4h/wU0i4MBQCXDtWSsky7eFOtV4032DzXhnrgzVNCg
+         8P43bjgTxKj+SOcLKXRzHVlYkyQTdY5luJs/nkFc+L/evg5VmOra1/auX6BlizUKyKZE
+         EgzyGCX18VOMDx1yV0GOYPctAHc4eG8DyRiJbnV7Jbr42VvDTME4ynTIQYKs93FAr0AG
+         Yll0tLK9NObr0inJYMK368Ie5TpnHB09q6009n+PXjIeBkNliPRtvBkECKgHvYurV2ZM
+         KRE031Ym15fZlUVKBZbj6DFtURTYVEF371ONMMiFNVtAXJvMSCBmesBTnrFjXrCivOnW
+         AxoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723835029; x=1724439829;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BrBxZgECaC7/1MG5XVHMQd0NOSd+rm2Uh6YDq8DhIA8=;
+        b=UDFzsACl0vVAQLzn1UpOsmRQTz8B+S07T17HC13wLxgW+cSEzlYM7BJes/xSetnwDQ
+         lOgnqp0kvncRMKJfGYpo0UBSDl8ks/Ima2NN9ABNcUF14SnQhT4RvA40vF79yKHBJ+Lr
+         lTJ5Un8YeD8MrnYGApB0g+AwQOfD3Tmm3KHkCk2eRVK8rvIBFvCGjBzH/X3OqOfIkyKr
+         SPTygbXSqTbk4L7oTtOBAifiUQ6cGeRxml911W0yJtFayktYg31DxhNSDGH9E3C9f6OP
+         +VLbOb024OEJrfSR7jTiCYh0ikTIe32H2siRRQLM91CNbkX53Gzz3+8GL0XNSABhfTar
+         xtEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUg1b/2EzBSXFws9kSyjnc7Wrh3asgBWXcMwLLdU3tHFETjnwdTH+X6/ickGhDfgvfQy71ZDeyRiALP4lFU7JJDfWmahGbLwpOSdJzl
+X-Gm-Message-State: AOJu0YwaSZ+FdrwIzXh9r/076WKkgxoal1cz6k42sn/KqzC6Jh19j/Lt
+	Dm6luGDfta0SwKCdc1FBvnGqwsc/eXJ9Si495ASybecAP6vJ72NzEeSU5CRW8fs=
+X-Google-Smtp-Source: AGHT+IGl5+6tEP5wmb8EU87stkIU+j/Z2sdmdIPv5B1ko18jC6BAETYUa9tR1wBvVnp8+UoFJbraUg==
+X-Received: by 2002:a17:907:c7dc:b0:a6f:8265:8f2 with SMTP id a640c23a62f3a-a8392955fcemr321176066b.37.1723835028599;
+        Fri, 16 Aug 2024 12:03:48 -0700 (PDT)
+Received: from cloudflare.com ([2a09:bac5:5063:2432::39b:29])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838cfd5esm293566766b.78.2024.08.16.12.03.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 12:03:47 -0700 (PDT)
+From: Jakub Sitnicki <jakub@cloudflare.com>
+To: Michal Luczaj <mhal@rbox.co>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>
+Cc: Eduard Zingerman <eddyz87@gmail.com>,  Mykola Lysenko <mykolal@fb.com>,
+  Alexei Starovoitov <ast@kernel.org>,  Daniel Borkmann
+ <daniel@iogearbox.net>, Song Liu <song@kernel.org>,  Yonghong Song
+ <yonghong.song@linux.dev>,  John Fastabend <john.fastabend@gmail.com>,  KP
+ Singh <kpsingh@kernel.org>,  Stanislav Fomichev <sdf@fomichev.me>,  Hao
+ Luo <haoluo@google.com>,  Jiri Olsa <jolsa@kernel.org>,  Shuah Khan
+ <shuah@kernel.org>,  bpf@vger.kernel.org,
+  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next v2 0/6] selftests/bpf: Various sockmap-related
+ fixes
+In-Reply-To: <42939687-20f9-4a45-b7c2-342a0e11a014@rbox.co> (Michal Luczaj's
+	message of "Wed, 14 Aug 2024 18:14:56 +0200")
+References: <20240731-selftest-sockmap-fixes-v2-0-08a0c73abed2@rbox.co>
+	<87y159yi5m.fsf@cloudflare.com>
+	<249a7dc3-34e2-4579-aae7-8b38b145e4bb@rbox.co>
+	<87ttfxy28s.fsf@cloudflare.com>
+	<42939687-20f9-4a45-b7c2-342a0e11a014@rbox.co>
+User-Agent: mu4e 1.12.4; emacs 29.1
+Date: Fri, 16 Aug 2024 21:03:46 +0200
+Message-ID: <871q2o5lyl.fsf@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Correlation-ID: <72f2bb7f-8f4a-4dec-ae41-f87cef6182b3@weissschuh.net>
+Content-Type: text/plain
 
-Aug 16, 2024 16:18:56 Masahiro Yamada <masahiroy@kernel.org>:
-
-> objtree is defined and exported by the top-level Makefile. I prefer
-> not to override it.
+On Wed, Aug 14, 2024 at 06:14 PM +02, Michal Luczaj wrote:
+> On 8/6/24 19:45, Jakub Sitnicki wrote:
+>> On Tue, Aug 06, 2024 at 07:18 PM +02, Michal Luczaj wrote:
+>>> Great, thanks for the review. With this completed, I guess we can unwind
+>>> the (mail) stack to [1]. Is that ingress-to-local et al. something you
+>>> wanted to take care of yourself or can I give it a try?
+>>> [1] https://lore.kernel.org/netdev/87msmqn9ws.fsf@cloudflare.com/
+>> 
+>> I haven't stated any work on. You're welcome to tackle that.
+>> 
+>> All I have is a toy test that I've used to generate the redirect matrix.
+>> Perhaps it can serve as inspiration:
+>> 
+>> https://github.com/jsitnicki/sockmap-redir-matrix
 >
-> There is no need to pass the absolute pass of objtree. PKGBUILD can
+> All right, please let me know if this is more or less what you meant and
+> I'll post the whole series for a review (+patch to purge sockmap_listen of
+> redir tests, fix misnomers). Mostly I've just copypasted your code
+> (mangling it terribly along the way), so I feel silly claiming the
+> authorship. Should I assign you as an author?
 
-s/pass/path/g
+Don't worry about it. I appreciate the help.
 
-> detect it by itself.
+I will take a look at the redirect tests this weekend.
+
+> Note that the patches are based on [2], which has not reached bpf-next
+> (patchwork says: "Needs ACK").
 >
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> [2] [PATCH bpf-next v2 0/6] selftests/bpf: Various sockmap-related fixes
+>     https://lore.kernel.org/bpf/20240731-selftest-sockmap-fixes-v2-0-08a0c73abed2@rbox.co/
 
-Acked-by:=C2=A0 Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+Might have slipped throught the cracks...
 
 
-> ---
->
-> scripts/Makefile.package | 3 +--
-> scripts/package/PKGBUILD | 4 +++-
-> 2 files changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/scripts/Makefile.package b/scripts/Makefile.package
-> index 4a80584ec771..2c261a0d42b0 100644
-> --- a/scripts/Makefile.package
-> +++ b/scripts/Makefile.package
-> @@ -147,8 +147,7 @@ snap-pkg:
-> PHONY +=3D pacman-pkg
-> pacman-pkg:
-> =C2=A0=C2=A0=C2=A0 @ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree=
-)/PKGBUILD
-> -=C2=A0=C2=A0 +objtree=3D"$(realpath $(objtree))" \
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BUILDDIR=3D"$(realpath $(objtree))/=
-pacman" \
-> +=C2=A0=C2=A0 BUILDDIR=3D"$(realpath $(objtree))/pacman" \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CARCH=3D"$(UTS_MACHINE)" \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 KBUILD_MAKEFLAGS=3D"$(MAKEFLAG=
-S)" \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 KBUILD_REVISION=3D"$(shell $(s=
-rctree)/scripts/build-version)" \
-> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
-> index e2d9c2601ca9..839cd5e634d2 100644
-> --- a/scripts/package/PKGBUILD
-> +++ b/scripts/package/PKGBUILD
-> @@ -40,7 +40,9 @@ _prologue() {
-> =C2=A0=C2=A0=C2=A0 # MAKEFLAGS from makepkg.conf override the ones inheri=
-ted from kbuild.
-> =C2=A0=C2=A0=C2=A0 # Bypass this override with a custom variable.
-> =C2=A0=C2=A0=C2=A0 export MAKEFLAGS=3D"${KBUILD_MAKEFLAGS}"
-> -=C2=A0=C2=A0 cd "${objtree}"
-> +
-> +=C2=A0=C2=A0 # Kbuild works in the output directory, where this PKGBUILD=
- is located.
-> +=C2=A0=C2=A0 cd "$(dirname "${BASH_SOURCE[0]}")"
-> }
->
-> build() {
-> --
-> 2.43.0
+Andrii, Martin,
 
+The patch set still applies cleanly to bpf-next.
+
+Would you be able to a look at this series? Anything we need to do?
+
+Thanks,
+(the other) Jakub
 
