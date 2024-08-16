@@ -1,58 +1,60 @@
-Return-Path: <linux-kernel+bounces-290389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68B44955339
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 00:17:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F050295533D
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 00:20:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BC841C21450
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:17:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A707B1F21CCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5166F1448E4;
-	Fri, 16 Aug 2024 22:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BD4145B12;
+	Fri, 16 Aug 2024 22:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NQ46Rvr/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nNBUsMgI"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9028885283;
-	Fri, 16 Aug 2024 22:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490EE145348;
+	Fri, 16 Aug 2024 22:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723846642; cv=none; b=jSqwSXV3PK8htigzZevlRWY5cVOqLLOQjUOMDvh2Eqgt7eLXBXrRNwPHaRirFhvaSe01tjGtOj+EgBzKsJ6AxI7t3v1sPBOdaqUKwSc6yL5ve75u7sDJ/VgiTO5fhyMInwSVOcYKnBJLeXMrP7bESyVnG6K/AA7SKa0D80IO6uU=
+	t=1723846823; cv=none; b=QKvRfg+bv3NXTXMLjfqb2hhLsaH74LKxwJbmYka82oOrqvaAnWYvH8qG5f+jFyTKr5/OPDREc7P4tqO9Z7inblOBuNAVZ2Cy/d7UUpUxGtTx5MAohsU7E+N4HAFxwtfoWkMlrq9ClCNBXONHkxJE7DSsKthzuQ7C7VaTixOmzIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723846642; c=relaxed/simple;
-	bh=YFXyLRdTdKL+XGNnS6T/ngMPukIr3Puqfais+ydAetM=;
+	s=arc-20240116; t=1723846823; c=relaxed/simple;
+	bh=tiIqd3ZTo0VQlD1ZGjaX6/NkFoCtKN18i8iG4oM/NuQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=spF+z0pIbotVk/iFAxOfEJuGds16evaDnj1c/dhSEV9i63f94zB4Iu8fa5yWsFwwjV+kHM+6epnyNY941DnStu2uPz2GDamOZt9xfGvLWQvlAmhoQez8UEPBKZKdeoLDO3fPySy4DbQ93jdwZ5GBvuq5vEw0ZPbnPYIaGGyPtUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NQ46Rvr/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D80B9C32782;
-	Fri, 16 Aug 2024 22:17:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723846642;
-	bh=YFXyLRdTdKL+XGNnS6T/ngMPukIr3Puqfais+ydAetM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NQ46Rvr/lioZMLsm92COpmjfnKW0ZP3KhambKoTbdNLlAXs5P1wNYOtiUhj7cAFym
-	 uDoelhzBC3ka6JZdJNJB4bJgGA2l4oaTodC4bL1+vo5d0x0aszxz9EpGE0a6Didlad
-	 Wn+qOod8UznAN9htBGUwApuZV4gqmsJmtMABegeBJ69E+TCl+BPRnlp4yJ4sJsIzF3
-	 afpobyZCOam1dDgyA2FGBsePytJltND+5r87jAXsaXIOriJiedIaYxgxaqAXlpDY0v
-	 uICzEnQbkHGL88wRpRw7PcWiR94u80KRLUmq6ACqLXQf8yomdjTuTxDDuYA9QxYWDI
-	 JcV5wlClebpOw==
-Date: Fri, 16 Aug 2024 16:17:21 -0600
-From: Rob Herring <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:NXP PTN5150A CC LOGIC AND EXTCON DRIVER" <linux-kernel@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v2 1/1] dt-bindings: extcon: ptn5150: add child node port
-Message-ID: <20240816221721.GA2362530-robh@kernel.org>
-References: <20240815203244.96963-1-Frank.Li@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fXXAtK/uVvJTblKqQnMqVm2USbYJVjnofEOcE0KyFXfrQOiWQhq9uJs1cAHAHH1MrFuD9hrpgeeC1ePlYZsDaI0SCTVRjnMUXFm1n06fSWcHxtRf/REFrIsA8WvgteR5YKdgBfC3UhG6VNAZ0VCsFAASV+NK4pIY9+LSpLAGaDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nNBUsMgI; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=julBlAj/xD2CErpPyxrVQd2GReW019eIF3ipPkI0unw=; b=nNBUsMgISEZeV0Rix+jYbH1VzK
+	mbKx5sGoDkQg8Bipa1Kzv5F2YFqiFyImc/+ZfncgZnuKSP4FDAB7T5RheiTKO1GQUTDUqC5B8S99q
+	J052mznoCJfZc8X9jhz6FX/SDiqh6dBtULcuVk+kZ0rb8gzymR25WXg0zolnQ/jzq5Os=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sf5In-004y96-Lp; Sat, 17 Aug 2024 00:20:09 +0200
+Date: Sat, 17 Aug 2024 00:20:09 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Frank Sae <Frank.Sae@motor-comm.com>
+Cc: hkallweit1@gmail.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, linux@armlinux.org.uk,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yuanlai.cui@motor-comm.com, hua.sun@motor-comm.com,
+	xiaoyong.li@motor-comm.com, suting.hu@motor-comm.com,
+	jie.han@motor-comm.com
+Subject: Re: [PATCH net-next v2 1/2] net: phy: Optimize phy speed mask to be
+ compatible to yt8821
+Message-ID: <a34b1141-b104-4f02-a6e6-7cd363b06815@lunn.ch>
+References: <20240816060955.47076-1-Frank.Sae@motor-comm.com>
+ <20240816060955.47076-2-Frank.Sae@motor-comm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,95 +63,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240815203244.96963-1-Frank.Li@nxp.com>
+In-Reply-To: <20240816060955.47076-2-Frank.Sae@motor-comm.com>
 
-On Thu, Aug 15, 2024 at 04:32:44PM -0400, Frank Li wrote:
-> Add child node 'port' to allow connect to usb controller to do role-switch.
-> Add example for id pin of ptn5150 have not connect to main chip's usb id
-> pin.
+On Thu, Aug 15, 2024 at 11:09:54PM -0700, Frank Sae wrote:
+> yt8521 and yt8531s as Gigabit transiver use bit15:14(bit9 reserved default
+> 0) as phy speed mask, yt8821 as 2.5G transiver uses bit9 bit15:14 as phy
+> speed mask.
 > 
-> Fix below warning:
-> arch/arm64/boot/dts/freescale/imx8mn-var-som-symphony.dtb: typec@3d: 'port' does not match any of the regexes: 'pinctrl-[0-9]+'
->         from schema $id: http://devicetree.org/schemas/extcon/extcon-ptn5150.yaml
+> Be compatible to yt8821, reform phy speed mask and phy speed macro.
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Change from v1 to v2
-> - add example for id pin have not connect to main chip's id example.
-> - commit 095b96b2b fix "port" warning, but add new warning "connector" is
-> not exist. And follow commit revert this change.
-> 690085d866f08 Revert "arm64: dts: imx8mn-var-som-symphony: Describe the USB-C connector
-> - I have not board in hand to debug why "connector" is not work.
-> ---
->  .../bindings/extcon/extcon-ptn5150.yaml       | 46 +++++++++++++++++++
->  1 file changed, 46 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/extcon/extcon-ptn5150.yaml b/Documentation/devicetree/bindings/extcon/extcon-ptn5150.yaml
-> index d5cfa32ea52dd..39231f9952826 100644
-> --- a/Documentation/devicetree/bindings/extcon/extcon-ptn5150.yaml
-> +++ b/Documentation/devicetree/bindings/extcon/extcon-ptn5150.yaml
-> @@ -37,6 +37,11 @@ properties:
->        GPIO pin (output) used to control VBUS. If skipped, no such control
->        takes place.
->  
-> +  port:
-> +    $ref: /schemas/graph.yaml#/properties/port
-> +    description:
-> +      A port node to link the usb controller for the dual role switch.
-> +
->  required:
->    - compatible
->    - interrupts
-> @@ -60,3 +65,44 @@ examples:
->              vbus-gpios = <&msmgpio 148 GPIO_ACTIVE_HIGH>;
->          };
->      };
-> +
-> +  - |
-> +    /* id pin of ptn5150 have not connected to chip's id pin */
-> +    #include <dt-bindings/clock/imx8mn-clock.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/gpio/gpio.h>
+> Signed-off-by: Frank Sae <Frank.Sae@motor-comm.com>
 
-Just add 'port' to the existing example if you want to. Don't need a 
-whole other example just for that.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-> +
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        ptn5150@1d {
-> +            compatible = "nxp,ptn5150";
-> +            reg = <0x1d>;
-> +            interrupt-parent = <&msmgpio>;
-> +            interrupts = <78 IRQ_TYPE_LEVEL_HIGH>;
-> +            vbus-gpios = <&msmgpio 148 GPIO_ACTIVE_HIGH>;
-> +
-> +            port {
-> +                    typec1_dr_sw: endpoint {
-> +                    remote-endpoint = <&usb1_drd_sw>;
-> +                 };
-> +            };
-> +        };
-> +    };
-> +
-> +    usb@32e40000 {
-> +        compatible = "fsl,imx8mn-usb", "fsl,imx7d-usb", "fsl,imx27-usb";
-> +        reg = <0x32e40000 0x200>;
-> +        interrupts = <&gic GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&clk IMX8MN_CLK_USB1_CTRL_ROOT>;
-> +        usb-role-switch;
-> +
-> +        port {
-> +             usb1_drd_sw: endpoint {
-> +                  remote-endpoint = <&typec1_dr_sw>;
-> +             };
-> +        };
-> +    };
-> +
-> -- 
-> 2.34.1
-> 
+    Andrew
 
