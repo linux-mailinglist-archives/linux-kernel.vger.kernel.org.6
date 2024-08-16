@@ -1,125 +1,152 @@
-Return-Path: <linux-kernel+bounces-289199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D443D95430C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:44:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80116954312
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:44:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 748321F27390
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:44:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A590A1C22FD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:44:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF77413BC11;
-	Fri, 16 Aug 2024 07:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5142F13D882;
+	Fri, 16 Aug 2024 07:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BJWaR4fc"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d+xduW+5"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B7B13AA41;
-	Fri, 16 Aug 2024 07:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990617BB17
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723793996; cv=none; b=SEQRLBTg2xGgmIXj65WbGtsdhQf7GR1Aq3NZwqua6i8DRGnp9GZdxbXP+85ts8Mf+XsLkZ672c3RQw8qSlshtFYg92GAFwLjTdFtY+7gew5H2LRbanSONj7sQwb8JK9ldlSBK9vKhFKPmzrWzL1HwM47zWC5qUiBOmgt44tST8c=
+	t=1723794048; cv=none; b=R330nwZS0LtEzPdE6YcEs7PjHTEhOzTfwY3P1bYJne46mAhB6hXU8Svm+U9DsRF4svYJz54NqQYdnouyaiet7HusA7pugzcL5f1eMPens2MzKvlStaERPmsTwyrBIrOMHi7Hh3NRGHVH8DfMju10+8pmxmQ+Ds+/YJSx3e2f/os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723793996; c=relaxed/simple;
-	bh=ZJ7lrLzvcDig0hBY8818ZNy9SjCMGs31S92wZcY35FE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PT/Bqy/GXEj1mJMj1avYA42j9AJcezwxTFHAFAeBKjRNma/TFH87UYcRtoxgfHqJ7ar4gls4IA/SUb1b4ChH5jJ+driVuWcXQ5IGeC1+EAJc2qymA1KNrrY+dB3Clm2e9ILfLPfY3E/OMMAUaWEB6KvCh+iKCnnKMZCPccmk//4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BJWaR4fc; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47G7dZ9D017237;
-	Fri, 16 Aug 2024 02:39:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723793975;
-	bh=GUCmNJqb30F4gDC30agJLTZEXP8542HoVYQwdO/3GX0=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=BJWaR4fcc+h/biTcRfVzBVfnmlM/70fz854X1wcI4HWfdFtYrpp/aUFUeTkxZlzCK
-	 3KIkfEyBk97ePfkJIjJvj43Tcq0FaiTWr2qt1k2ohFREBn2114E7jnvJly3LlorOxJ
-	 mYYpJCETsRu9fbyyCzBce0zXiQKHhb9HdnNAlV0I=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47G7dZCe098573
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 16 Aug 2024 02:39:35 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 16
- Aug 2024 02:39:34 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 16 Aug 2024 02:39:34 -0500
-Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47G7d9Tu084976;
-	Fri, 16 Aug 2024 02:39:30 -0500
-From: Beleswar Padhi <b-padhi@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <u-kumar1@ti.com>, <tony@atomide.com>, <bb@ti.com>, <d-gole@ti.com>,
-        <afd@ti.com>, <hnagalla@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 5/5] arm64: dts: ti: k3-j722s: Change timer nodes status to reserved
-Date: Fri, 16 Aug 2024 13:09:08 +0530
-Message-ID: <20240816073908.2343650-6-b-padhi@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240816073908.2343650-1-b-padhi@ti.com>
-References: <20240816073908.2343650-1-b-padhi@ti.com>
+	s=arc-20240116; t=1723794048; c=relaxed/simple;
+	bh=wuCXCMKv9neHue5RT03UZNAev0xxb0NHHLIG6HZkums=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mBs80Q8hbqrW13AciUHLKrkS49WROn+qiA09cs5PD7EzM0q0jcTug3c9f2suAOw843e8XMvkyKHzoQAvmXyb1m8zUik6CtQo9MVT4eOuBvvprJmx0bQvLoqEkFECnGH6iugK0iilxlsfhYZanTmNWUT0oLrZbgrHs8CBlFkswQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d+xduW+5; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52f025bc147so1997297e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 00:40:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723794045; x=1724398845; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oLYARa5Ui+tGIF4Drvfs6StvA2ztWhGcrNefYFJRi04=;
+        b=d+xduW+5BiHkJmPSIhVGTDCJogl1+6N6pcyX5lsZTJ4+SDwuwmIEEVKH2vNApuNcSQ
+         wO+15R+A5zO8sq0mQnaPYn7m+Wf+bfZdMyLJxDrCz9iyDQ8joMmRw+iF+25pAkexxfiv
+         fEoHYCJSXd9TadPbKP77zcXNyqgoOZEiaZRUXaavbApYxxR+81znAHz+blQ9VKyvv3uz
+         PZ3yNzmshVJlD5isk2t+oPQmqxWKgYR/YpiG22MetNTZ5Wh8yGlDfZnmpoPj0KuVKWPO
+         ERCfKWcIOoohQeJphWd1Zlxylnz+eejtr8J9Shmnu5lrZyqnO+mytP/UATS6cOMNQqm9
+         pTxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723794045; x=1724398845;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oLYARa5Ui+tGIF4Drvfs6StvA2ztWhGcrNefYFJRi04=;
+        b=Zjr1SB1fIq7tsfnTf+Fk2GcceF0IdfcCWcdP9GHIWpv87kZlty1bfPE78kc7IGhMkV
+         cqCDJ/0gNIGxvD7JbBcnl807cZ4h4Y85Ko/lEPCQN8aEfeYP7bEZBGWcDUnHtCw36ce2
+         tHrESMkGs9XTbTr3vr+tMgSscOFCWhegadcC37JDEQvcJSSt2TnU6xu/617FadO9xxym
+         tRUdjAv+iuonZy5+9/tyxPZfECCTtsXfTM3DJHPBBvvWSboFW6Kz8AJK9cx7Q0hP+gOs
+         DWTYnJ138j+V40fOCMIjAdMP33GfIpzIwiqXJzCQABhdzrUvrH5u3nmi0cHQBag3FhA0
+         fQqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVk45daWKMVWSQzhcvr8K+XfHHAtT6bpY4M27ELy+QMKOugtb9V5zJgj5IFK92V9DhkSZ0DdMFOUQeqMfnh0gBY1yVtH0LyVvz5icVf
+X-Gm-Message-State: AOJu0Yxtd3IoplseuZApw0BNFrnykAnjRQFQGhMDPt1mDSaKnYpYGjzR
+	jBX38+s01GMqS0J1aHatx7XpqDLN8H4mW7CFSwmGxZJ0LoT43c5IZxLlV1Jz1H1y17peFgX6a0k
+	3mPk=
+X-Google-Smtp-Source: AGHT+IECMU95MInedHm3gbs2CHg4muyRBBX1uWExaMf/N75tHvOw4wx/iPeO0uthtOMnMi5peo1F6A==
+X-Received: by 2002:a05:6512:2243:b0:52e:7542:f471 with SMTP id 2adb3069b0e04-5331c6ae178mr1434653e87.29.1723794044597;
+        Fri, 16 Aug 2024 00:40:44 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.215.209])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded3596esm68549625e9.22.2024.08.16.00.40.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 00:40:44 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 0/7] thermal: scope/cleanup.h improvements
+Date: Fri, 16 Aug 2024 09:40:30 +0200
+Message-Id: <20240816-b4-cleanup-h-of-node-put-thermal-v2-0-cee9fc490478@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAG4Cv2YC/5WNQQ6CMBAAv2L27Jq2NkA8+Q/DoZaFboIt2QLRE
+ P5u5QceZw4zG2QSpgy30wZCK2dOsYA5n8AHFwdC7gqDUcaqRlt8WvQjubhMGDD1GFNHOC0zzoH
+ k5UY0pmqsVd5XfQ0lMwn1/D4Wj7Zw4Dwn+RzHVf/sH/FVo8La6WujSVempvvI0Um6JBmg3ff9C
+ 8Khm5nRAAAA
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, Amit Kucheria <amitk@kernel.org>, 
+ Thara Gopinath <thara.gopinath@gmail.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Vasily Khoruzhick <anarsoul@gmail.com>, Yangtao Li <tiny.windzz@gmail.com>, 
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+ Chen-Yu Tsai <wenst@chromium.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1525;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=wuCXCMKv9neHue5RT03UZNAev0xxb0NHHLIG6HZkums=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmvwJxjlTKJcUNuxE8Zfq158zszP22govEMhUHg
+ fY+uH8/VraJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZr8CcQAKCRDBN2bmhouD
+ 1wF+D/9hn91FpwFdRVcHZWu6wnT364nzLzQQH5lm7ypWYurQPKsmy5wCaMYqmuXWG/kIIrbpmTR
+ JUZGGUmY8GwfsZr2cH5hEy4MmHdoq3SjkotIkGanVjqy9xIYWQVbA+M5OqK2ccUBXMDJfXDO4zI
+ 1t9QO2GslHt4f3RA+omwit8PVKGGsh6ggn3PfWPmpajExMzJK8S3uIKxVcao9x4orr4HJ9MpZ7z
+ yjd9XPJScq54oB8w7EfDTwxQCNI5G/oFWYsuigh8e+3jFh9OuWwmkio2Qo6mlm+J54PcbmrtFnc
+ qfhZRdQKqlBoSfaAKZsX6aooFB/uyLCxyek0SJBo3BPOkAnWrXsibpkuLzBsJn6iGb4bENdzkcv
+ bE38ZWujL1WltBof3/+lFW2Izcq2PkSNgoHR/WRmDV6TD0LShM03DqBx/DG0CrkcqypS0bObiGQ
+ BhHtuP2hOXLwV9u+S0/5xkin0svFYO4NZiwlLenQYPdq1W0U9birYpQ/S5IhvbsjjZF+dRmaSsg
+ v64snsoeFskgdv/BtgULWh2ja5pGB5MZJ+cutoTqzmdBWoWrEmCpZfdXOmFIp9iVS7ExGULbhNS
+ kdLR94qkdKYE99rYyVne6Smn/Wc1h/g/bJ+qbGmBFpYGwQ2B4eRTHdy45v0r0PGT6wYtLfIvKFu
+ 76SkMH3Jr+b3r7g==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-The remoteproc firmware like of R5F and DSPs in the MAIN voltage domain
-use timers. Therefore, change the status of the timer nodes to
-"reserved" to avoid any clash. Usage is described as below:
+Changes in v2:
+- Drop left-over of_node_put in regular exit path (Chen-Yu)
+- Link to v1: https://lore.kernel.org/r/20240814-b4-cleanup-h-of-node-put-thermal-v1-0-7a1381e1627e@linaro.org
 
-	+===================+=============+
-	|  Remoteproc Node  | Timer Node  |
-	+===================+=============+
-	| main_r5fss0_core0 | main_timer0 |
-	+-------------------+-------------+
-	| c7x_0             | main_timer1 |
-	+-------------------+-------------+
-	| c7x_1             | main_timer2 |
-	+-------------------+-------------+
+Few code simplifications with scope/cleanup.h.
 
-Fixes: 29075cc09f43 ("arm64: dts: ti: Introduce AM62P5 family of SoCs")
-Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+One of thermal_of.c patches depends on my earlier fixes:
+https://lore.kernel.org/all/20240814195823.437597-1-krzysztof.kozlowski@linaro.org/
+
+Best regards,
+Krzysztof
+
 ---
- arch/arm64/boot/dts/ti/k3-j722s-evm.dts | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Krzysztof Kozlowski (7):
+      thermal: of: Use scoped device node handling to simplify of_find_trip_id()
+      thermal: of: Use scoped device node handling to simplify thermal_of_trips_init()
+      thermal: of: Use scoped device node handling to simplify of_thermal_zone_find()
+      thermal: of: Simplify thermal_of_for_each_cooling_maps() with scoped for each OF child loop
+      thermal: qcom-spmi-adc-tm5: Simplify with scoped for each OF child loop
+      thermal: tegra: Simplify with scoped for each OF child loop
+      thermal: sun8i: Use scoped device node handling to simplify error paths
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-index dd3b5f7039d7..e03beb0b5aad 100644
---- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-@@ -566,3 +566,16 @@ &mcasp1 {
- 	       0 0 0 0
- 	>;
- };
-+
-+/* Timers are used by Remoteproc firmware */
-+&main_timer0 {
-+	status = "reserved";
-+};
-+
-+&main_timer1 {
-+	status = "reserved";
-+};
-+
-+&main_timer2 {
-+	status = "reserved";
-+};
+ drivers/thermal/qcom/qcom-spmi-adc-tm5.c |  7 ++--
+ drivers/thermal/sun8i_thermal.c          | 11 +++---
+ drivers/thermal/tegra/soctherm.c         |  5 ++-
+ drivers/thermal/thermal_of.c             | 62 ++++++++++----------------------
+ 4 files changed, 28 insertions(+), 57 deletions(-)
+---
+base-commit: aef749dad7ff4c301e91b21fadf30776c1495fa8
+change-id: 20240814-b4-cleanup-h-of-node-put-thermal-2268440cc6f7
+
+Best regards,
 -- 
-2.34.1
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
