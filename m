@@ -1,487 +1,179 @@
-Return-Path: <linux-kernel+bounces-290310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9225E95520A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:49:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A07695520C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:49:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 130D01F22C3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:49:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EB4F1F22C5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A461C823C;
-	Fri, 16 Aug 2024 20:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4B11C57A6;
+	Fri, 16 Aug 2024 20:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PmAsoPfd"
-Received: from mail-qt1-f202.google.com (mail-qt1-f202.google.com [209.85.160.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VrfXfV2S"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2088.outbound.protection.outlook.com [40.107.223.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195FC1C7B68
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 20:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723841292; cv=none; b=h+yGAnEv3T5+EyQ7q00YFBQSP1I0XtahJoqen7lF84xDX+gIru3ngpQVO03wm21tFrDPjLyW+bmwA3jX5PxDOcwedewqaZ37rNi13qg4AetAh120wgWEJdAhFI+6EVb3cbw/Sd6LBfcBLxYuvLjzNEnxiQnLlxqCEtnbDN1Vsg0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723841292; c=relaxed/simple;
-	bh=yULzxhgqabfFUTtoN2cYbJ23pCpjO4bznnV2x8i2jxY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=S1pUD4WQdoAmIJBdb099dT7ptgY91vBM9eQ6IYA6xJxL4+vI88kmYm4PguVZwPGkg0emNdkthGWrarTqCHCHSEXFVvv8pl4v0QgJ9dmloCu/Soihv8CkZDXONNQ879+m/iN58fJHutdTP+Bmwl31xxPMoBmnDm06t855GkQ0xhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mattgilbride.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PmAsoPfd; arc=none smtp.client-ip=209.85.160.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mattgilbride.bounces.google.com
-Received: by mail-qt1-f202.google.com with SMTP id d75a77b69052e-44fe49fa389so26305091cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 13:48:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723841289; x=1724446089; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ho9lWkBHrnP95w04SuuVC92kMJhRKmYkeES5lEDr4BM=;
-        b=PmAsoPfdLorZxvR7xXpVEyzlByXFqovFBYs4KylYr+GGvLjApUosYGNrDF6740QOWq
-         Um8k6ivl8/si6ZuTYWvbvDbC1OChuWODHMntz5c6xtPIb2pINqR3LysjprxLlXl8TdWB
-         fqtw3dwJflElX85r+THYLKyZUw7wWBH6ZTgwjMxILcT9Iwai/8u3drH4YEMdHxQQgEvZ
-         wlNJjjsxHOulf0pnx03EIaOevZ0fDHq1dWx3lggLjZ2J2bIrSvcYvoyOkBBzbHMI/UjK
-         IHQ7cqbXW8jYJM/ufD7/lMMFQO4CceE0192zpzilicdiShPvdvMKuO5RZo4/SljSDEI1
-         n6nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723841289; x=1724446089;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ho9lWkBHrnP95w04SuuVC92kMJhRKmYkeES5lEDr4BM=;
-        b=jDS5qlMiezA0rJoqwtnhEMNzjBEjIJUxY5gJNjEU29pou4n94HfOfHQ5+kEQ2BXIOi
-         MNM4G1NXzwrUv/A5BkLLEleYe1i51d5N3vE68YtnrMr3M9Z4J+9lu9IxwezJb8ZV4hpp
-         M+O15YQxoAe58vsvjMVJfnnrgAio4mglpnLifwoISNpGzHFwyG57lnSQjze4sonPK3Zd
-         xz8fyq3HHA7Ag7mBRmPNNKlm0VCzfDDBOGdF1xTRo2WyKjcRULOklBwf4j4NkEc9+3pi
-         xIvgnAaE2LUEG/LDlPVynHyFkgDhQYJS6M5/5/tpuRusBdEiacfjJYj3DmK1LScJ7z2x
-         9lxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVM3Ptfw1zwh4YXzlMSYeU+HUlN9cjcMwEFwKsjHN5TcUaG09qUUoUi5HxAEkD8XmOfhXWoje+yoMlFNv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywv5cJwEExBLZ+DiyYcjUeFB2mJpPlsFdA90yM7lZvY9bEh50GT
-	MeYGU5N4yEgj8SmoPj3bVn2KocVCutM6ErmljZ+IW4QIkGC0i+X63zlg5VFbm4D/NrgLA12bqT9
-	J8EGhKdhtaN5fMZcv9e8p2hyqCA==
-X-Google-Smtp-Source: AGHT+IGzibue8TsIUWRL+qhi6B5W05Dd47mKDrVidFplIuoWqSwdC9qTzWn4M7P5Eb4ln4v8Ax+ffaT4L+6NmYuMAww=
-X-Received: from mattgilbride.c.googlers.com ([fda3:e722:ac3:cc00:2b:7d90:c0a8:2ac5])
- (user=mattgilbride job=sendgmr) by 2002:ac8:7450:0:b0:451:cf70:4a28 with SMTP
- id d75a77b69052e-45374271414mr69511cf.9.1723841289005; Fri, 16 Aug 2024
- 13:48:09 -0700 (PDT)
-Date: Fri, 16 Aug 2024 20:48:03 +0000
-In-Reply-To: <20240816-b4-rbtree-v9-0-425b442af7e5@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47A01C578F;
+	Fri, 16 Aug 2024 20:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.88
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723841314; cv=fail; b=DYmC+fqON59wmpLqj7XHmldqL3y1EPEecolhbOdQU61KlJKrKW/EebFdx6wjckocWOd+0j76LDcW8XKJt5XFQg2UHO1svPzUdKYly+azA9UGaSXeijv3xT/8/44wLBRLhNCcvx9idaOWvrwS2xukRX0hbP/KZVYSYiUdSoVFgEo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723841314; c=relaxed/simple;
+	bh=9VR8aCjOfNeddn/s+7+YcSjMloDCSSjtPUTUjtUfYno=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Zy01ukugaQY50FMeTcHLJoSY9f00POt8B9quG4ZZbUqpMUI9iXI33HMMOtqtrIcBI6k70rtCc605kXdLyIkKd8rV+LPzlkhxDLku/L8Zs/DhIxcY9yrzKvQRDknl+WMyImysZgWfe0e+Y64lQZ3u1PIkJYHkHoLiVmk9Dgr7am0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VrfXfV2S; arc=fail smtp.client-ip=40.107.223.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DHWvVipgxb6UqO6hs5pFBawjKwcdOqc5xh46pqiLBaMdaJY5EHiqFk9e3AGYjoGBIm4HudlhnNBLzFUDjQtic1b+OllFjy0fmAA3TmoPp8jTcYzeynQI58wTpESdmVPt63Lcna1P8pYea6yaViIS+2vmfzrC+srIhj+j/OsID9rnrJ/q+fNxmD7KF4eQwXx8ysfoUODQEDe/Qgwi2pMiGZfXI0YJEXFaRz2xAJUpvjup0YZbuyEeynABaox1r0rPi9VBnB3G5l8fT2oGeXnn0Y4YffwviENG8AOL4kk9R62xwmpK3poWn8vLnavlvtDsOeq3PWpk7lpmsHqL4Bhy3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zaJYPzzvkmruqXrAemQTLZ0LFEa64UATLtNMhowwbr4=;
+ b=Ia+A5Y6SOrmKNV7EOzvVvEMnSV2LKi2omQJ/zQeOK/IlbYmlk6w078Xyx58Oun3begVpHYywEiAz2RcvkUW9x2Q3MpPwYwlAy2ySe8F4Vp7b2ErJw1tUtphTdwOVFWSOVik8HeKQeVWAgUZ9G14eruzsrz+Yv47HnDrLKpd4kL0Z+/rIHU2HzurCUW5KVgjUIQi3u+hfZOsYO4RWvGTiq/w+j7KIhRL+5PaN0YrN4azj433czmzMSdpE5P++XHWCGh/lJ4CS8B3b3lI+IPT37Cdq2ji/jsucX2Pd1keWw91Se9ZGt/f6yDhL2vM54UjKzMLC2rPYjXpldcS4PsfeAw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=davemloft.net smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zaJYPzzvkmruqXrAemQTLZ0LFEa64UATLtNMhowwbr4=;
+ b=VrfXfV2SCxTcy5a1diQyCEFPlFf3rtndskZ4txMeqAuM+pL2uPTYPQYuZdlGz9NRbMeAkNgVDejeRCyewyk0spmmUIagVefyEQO0VxRFCzW/CZFHfyogy+SdRF8prMlCWIcK+fLPMLY1SVuxJhz0iQFjoPp/42ciFOpAm8kZCDUQw+5K6h/tCYujQvNj+j7rO9UiHqwJANRucGeH5GWNkuE2O2CdEg+0H9QSWg41HmAD2fGpt18oLxl3bahRsNYYaZGab2VTLGgsf6AU2L3Fi719kDigOj4D0kwia3hSgFuV8MmDyj3b6R3SU7aRYajXWq8Snmjce4iRmsIC5JzEcQ==
+Received: from MW2PR16CA0016.namprd16.prod.outlook.com (2603:10b6:907::29) by
+ IA1PR12MB7735.namprd12.prod.outlook.com (2603:10b6:208:421::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7875.20; Fri, 16 Aug 2024 20:48:26 +0000
+Received: from SJ5PEPF000001CD.namprd05.prod.outlook.com
+ (2603:10b6:907:0:cafe::7c) by MW2PR16CA0016.outlook.office365.com
+ (2603:10b6:907::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.20 via Frontend
+ Transport; Fri, 16 Aug 2024 20:48:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SJ5PEPF000001CD.mail.protection.outlook.com (10.167.242.42) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.8 via Frontend Transport; Fri, 16 Aug 2024 20:48:25 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 16 Aug
+ 2024 13:48:11 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 16 Aug
+ 2024 13:48:11 -0700
+Received: from vdi.nvidia.com (10.127.8.9) by mail.nvidia.com (10.129.68.9)
+ with Microsoft SMTP Server id 15.2.1544.4 via Frontend Transport; Fri, 16 Aug
+ 2024 13:48:10 -0700
+From: David Thompson <davthompson@nvidia.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <andriy.shevchenko@linux.intel.com>,
+	<u.kleine-koenig@pengutronix.de>
+CC: <asmaa@nvidia.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, David Thompson <davthompson@nvidia.com>
+Subject: [PATCH net v1] mlxbf_gige: disable port during stop()
+Date: Fri, 16 Aug 2024 16:48:08 -0400
+Message-ID: <20240816204808.30359-1-davthompson@nvidia.com>
+X-Mailer: git-send-email 2.30.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240816-b4-rbtree-v9-0-425b442af7e5@google.com>
-X-Mailer: b4 0.13.0
-Message-ID: <20240816-b4-rbtree-v9-6-425b442af7e5@google.com>
-Subject: [PATCH v9 6/6] rust: rbtree: add `RBTree::entry`
-From: Matt Gilbride <mattgilbride@google.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Christian Brauner <brauner@kernel.org>
-Cc: Rob Landley <rob@landley.net>, Davidlohr Bueso <dave@stgolabs.net>, 
-	Michel Lespinasse <michel@lespinasse.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Matt Gilbride <mattgilbride@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CD:EE_|IA1PR12MB7735:EE_
+X-MS-Office365-Filtering-Correlation-Id: bf57452b-0ccf-41df-a6ce-08dcbe34c6b4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?+GgLcaPJosYWKnTP72s7U3EqZcqY20Cv2nFa2FLatO//iSiGxN3PifxfVxgu?=
+ =?us-ascii?Q?t3r9l6eeOM1DaaiAWPgRnngmKvmsH9sq8zQKZJZ3ozm3JU0kX2DuZx8Npn5G?=
+ =?us-ascii?Q?Ne44uZw3W6fCoHXGzxirFW2imqk+BS1Epq+S1U71gRVqbjyIIutJIIyYKrHw?=
+ =?us-ascii?Q?xbVguqtMjbO7cdzVaF3CkGPt/jO4eRqM48Vnv1jtp7ijBkNCzcMQotoxCaTc?=
+ =?us-ascii?Q?HzHAIDs99iint6We7ihUb0R91v9NLWELJDrG+S+UpsS9IAEVEd0Z19Du2zpq?=
+ =?us-ascii?Q?9RdkOPjmcbR1L9mTvUrqX9qN7OAQvSAU0AyZayb+3nYQkqMHp5HZ4lP0w5qP?=
+ =?us-ascii?Q?yNBKfTPzGMQ0zdA3cGn4JAaomOpxLxHaLno9ES79Qyb3/KuAxSsQu6SqZCw5?=
+ =?us-ascii?Q?gX3Mt2bbZPjZXjnYq4y59/+qJOHqEIYu4aHns0KCJcTLt2rcBBK/69FW+Z1f?=
+ =?us-ascii?Q?FNlELSAbRRDTXZAPM2C3+Wk2sSdflsyCeZQaHXo0i6xwNF6N1dn/eJjbmHtB?=
+ =?us-ascii?Q?j5qHPCOZRvl/YtVS1GdI6H2OdaaGZHWPQk+/ASJBXkV3R8YEKHnssh6ivR0R?=
+ =?us-ascii?Q?1qE174VKEl/ZcbuOTEnGNrTiipkl+qx/dFpIIQtkZb73fJuwYGafVVRCGJhp?=
+ =?us-ascii?Q?88tgXF+H1R1DZwgpbU3OzMzidZivrMFwGAcSehKrJP6JdyGHYK+cO15XyRah?=
+ =?us-ascii?Q?jqy4z0gCKms9ztvfuaE1QgnGIxBSwfiNlH+juL/5xUVMagBOerTQ7i48WpLx?=
+ =?us-ascii?Q?D/Z4XRR0s8d/iVDj3Z+/h40Fs/nqeumgjkn5jfMir4I/KW/g3luKW3EwUJIF?=
+ =?us-ascii?Q?sXSS0Ts25AteZKpmhUrHKyEqcoCq4bqUC25f3NLdYihFdsajBu9wRWw3ZtQD?=
+ =?us-ascii?Q?c4NDsi4TNJvv1+ueIeVw91Ave+mNViD3WhhVFBFVGbA5UrZ6/L1hVodn8yh9?=
+ =?us-ascii?Q?wTmZ9zObPqfLxp1OP/8yM4hhwYSInwbtdn3x77kO6IU7R5n4dLHBfuRlGmPb?=
+ =?us-ascii?Q?ODljEz39mVUBLj7dAjeBya0zL91dJzCC074HHBoKzUdDjuJmzyDFUgxlHrnF?=
+ =?us-ascii?Q?l+kZP8VMtlK8PCuQed83huTVGTTv2B4MvUx9f5KQjioP3LsW9rhGthX3IJ7/?=
+ =?us-ascii?Q?bdud9fsz6Ovo2ZNMqYjC2vc0LDq2y0vY7C9nfYTovHisVibkJ86rqF9hl8as?=
+ =?us-ascii?Q?I7UqRigvhlSLNVCueclVvFC1iiCXCKYwVRWMDIh/hq0j1WM/QSqqy9nQe825?=
+ =?us-ascii?Q?rT57WDqGHp6qPi/9WtlxyefRXfP4UtHXRoFud66juiB/kuylc1KZnJ9qHY53?=
+ =?us-ascii?Q?a7XQTkVkxHWgXaZmmCGwSrL9Nlw7E0fp6644GeZ0hvA8Eoa4LYp+Uq2ji9AT?=
+ =?us-ascii?Q?/evMADH+N9FNFR7QSVzPCeXI0TYXJJ0WBxitfdpTFIQVvCdcFqp3IGJolqBx?=
+ =?us-ascii?Q?UXaje6wNPnKr+3dFPGnytkSscWwdFQLH?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2024 20:48:25.9510
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf57452b-0ccf-41df-a6ce-08dcbe34c6b4
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001CD.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7735
 
-From: Alice Ryhl <aliceryhl@google.com>
+The mlxbf_gige_open() routine initializes and enables the
+Gigabit Ethernet port from a hardware point of view. The
+mlxbf_gige_stop() routine must disable the port hardware
+to fully quiesce it.
 
-This mirrors the entry API [1] from the Rust standard library on
-`RBTree`. This API can be used to access the entry at a specific key and
-make modifications depending on whether the key is vacant or occupied.
-This API is useful because it can often be used to avoid traversing the
-tree multiple times.
-
-This is used by binder to look up and conditionally access or insert a
-value, depending on whether it is there or not [2].
-
-Link: https://doc.rust-lang.org/stable/std/collections/btree_map/enum.Entry.html [1]
-Link: https://android-review.googlesource.com/c/kernel/common/+/2849906 [2]
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-Tested-by: Alice Ryhl <aliceryhl@google.com>
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-Signed-off-by: Matt Gilbride <mattgilbride@google.com>
+Fixes: f92e1869d74e ("Add Mellanox BlueField Gigabit Ethernet driver")
+Reviewed-by: Asmaa Mnebhi <asmaa@nvidia.com>
+Signed-off-by: David Thompson <davthompson@nvidia.com>
 ---
- rust/kernel/rbtree.rs | 310 ++++++++++++++++++++++++++++++++++++++------------
- 1 file changed, 235 insertions(+), 75 deletions(-)
+ drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_main.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
-index 754af0db86b5..db185b6b3c65 100644
---- a/rust/kernel/rbtree.rs
-+++ b/rust/kernel/rbtree.rs
-@@ -297,12 +297,19 @@ pub fn try_create_and_insert(
-     /// key/value pair). Returns [`None`] if a node with the same key didn't already exist.
-     ///
-     /// This function always succeeds.
--    pub fn insert(&mut self, RBTreeNode { node }: RBTreeNode<K, V>) -> Option<RBTreeNode<K, V>> {
--        let node = Box::into_raw(node);
--        // SAFETY: `node` is valid at least until we call `Box::from_raw`, which only happens when
--        // the node is removed or replaced.
--        let node_links = unsafe { addr_of_mut!((*node).links) };
-+    pub fn insert(&mut self, node: RBTreeNode<K, V>) -> Option<RBTreeNode<K, V>> {
-+        match self.raw_entry(&node.node.key) {
-+            RawEntry::Occupied(entry) => Some(entry.replace(node)),
-+            RawEntry::Vacant(entry) => {
-+                entry.insert(node);
-+                None
-+            }
-+        }
-+    }
+diff --git a/drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_main.c b/drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_main.c
+index 385a56ac7348..12942a50e1bb 100644
+--- a/drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_main.c
++++ b/drivers/net/ethernet/mellanox/mlxbf_gige/mlxbf_gige_main.c
+@@ -205,8 +205,14 @@ static int mlxbf_gige_open(struct net_device *netdev)
+ static int mlxbf_gige_stop(struct net_device *netdev)
+ {
+ 	struct mlxbf_gige *priv = netdev_priv(netdev);
++	u64 control;
++
++	control = readq(priv->base + MLXBF_GIGE_CONTROL);
++	control &= ~MLXBF_GIGE_CONTROL_PORT_EN;
++	writeq(control, priv->base + MLXBF_GIGE_CONTROL);
  
-+    fn raw_entry(&mut self, key: &K) -> RawEntry<'_, K, V> {
-+        let raw_self: *mut RBTree<K, V> = self;
-+        // The returned `RawEntry` is used to call either `rb_link_node` or `rb_replace_node`.
-         // The parameters of `bindings::rb_link_node` are as follows:
-         // - `node`: A pointer to an uninitialized node being inserted.
-         // - `parent`: A pointer to an existing node in the tree. One of its child pointers must be
-@@ -321,62 +328,56 @@ pub fn insert(&mut self, RBTreeNode { node }: RBTreeNode<K, V>) -> Option<RBTree
-         // in the subtree of `parent` that `child_field_of_parent` points at. Once
-         // we find an empty subtree, we can insert the new node using `rb_link_node`.
-         let mut parent = core::ptr::null_mut();
--        let mut child_field_of_parent: &mut *mut bindings::rb_node = &mut self.root.rb_node;
--        while !child_field_of_parent.is_null() {
--            parent = *child_field_of_parent;
-+        let mut child_field_of_parent: &mut *mut bindings::rb_node =
-+            // SAFETY: `raw_self` is a valid pointer to the `RBTree` (created from `self` above).
-+            unsafe { &mut (*raw_self).root.rb_node };
-+        while !(*child_field_of_parent).is_null() {
-+            let curr = *child_field_of_parent;
-+            // SAFETY: All links fields we create are in a `Node<K, V>`.
-+            let node = unsafe { container_of!(curr, Node<K, V>, links) };
- 
--            // We need to determine whether `node` should be the left or right child of `parent`,
--            // so we will compare with the `key` field of `parent` a.k.a. `this` below.
--            //
--            // SAFETY: By the type invariant of `Self`, all non-null `rb_node` pointers stored in `self`
--            // point to the links field of `Node<K, V>` objects.
--            let this = unsafe { container_of!(parent, Node<K, V>, links) };
--
--            // SAFETY: `this` is a non-null node so it is valid by the type invariants. `node` is
--            // valid until the node is removed.
--            match unsafe { (*node).key.cmp(&(*this).key) } {
--                // We would like `node` to be the left child of `parent`.  Move to this child to check
--                // whether we can use it, or continue searching, at the next iteration.
--                //
--                // SAFETY: `parent` is a non-null node so it is valid by the type invariants.
--                Ordering::Less => child_field_of_parent = unsafe { &mut (*parent).rb_left },
--                // We would like `node` to be the right child of `parent`.  Move to this child to check
--                // whether we can use it, or continue searching, at the next iteration.
--                //
--                // SAFETY: `parent` is a non-null node so it is valid by the type invariants.
--                Ordering::Greater => child_field_of_parent = unsafe { &mut (*parent).rb_right },
-+            // SAFETY: `node` is a non-null node so it is valid by the type invariants.
-+            match key.cmp(unsafe { &(*node).key }) {
-+                // SAFETY: `curr` is a non-null node so it is valid by the type invariants.
-+                Ordering::Less => child_field_of_parent = unsafe { &mut (*curr).rb_left },
-+                // SAFETY: `curr` is a non-null node so it is valid by the type invariants.
-+                Ordering::Greater => child_field_of_parent = unsafe { &mut (*curr).rb_right },
-                 Ordering::Equal => {
--                    // There is an existing node in the tree with this key, and that node is
--                    // `parent`. Thus, we are replacing parent with a new node.
--                    //
--                    // INVARIANT: We are replacing an existing node with a new one, which is valid.
--                    // It remains valid because we "forgot" it with `Box::into_raw`.
--                    // SAFETY: All pointers are non-null and valid.
--                    unsafe { bindings::rb_replace_node(parent, node_links, &mut self.root) };
--
--                    // INVARIANT: The node is being returned and the caller may free it, however,
--                    // it was removed from the tree. So the invariants still hold.
--                    return Some(RBTreeNode {
--                        // SAFETY: `this` was a node in the tree, so it is valid.
--                        node: unsafe { Box::from_raw(this.cast_mut()) },
--                    });
-+                    return RawEntry::Occupied(OccupiedEntry {
-+                        rbtree: self,
-+                        node_links: curr,
-+                    })
-                 }
-             }
-+            parent = curr;
-         }
- 
--        // INVARIANT: We are linking in a new node, which is valid. It remains valid because we
--        // "forgot" it with `Box::into_raw`.
--        // SAFETY: All pointers are non-null and valid (`*child_field_of_parent` is null, but `child_field_of_parent` is a
--        // mutable reference).
--        unsafe { bindings::rb_link_node(node_links, parent, child_field_of_parent) };
-+        RawEntry::Vacant(RawVacantEntry {
-+            rbtree: raw_self,
-+            parent,
-+            child_field_of_parent,
-+            _phantom: PhantomData,
-+        })
-+    }
- 
--        // SAFETY: All pointers are valid. `node` has just been inserted into the tree.
--        unsafe { bindings::rb_insert_color(node_links, &mut self.root) };
--        None
-+    /// Gets the given key's corresponding entry in the map for in-place manipulation.
-+    pub fn entry(&mut self, key: K) -> Entry<'_, K, V> {
-+        match self.raw_entry(&key) {
-+            RawEntry::Occupied(entry) => Entry::Occupied(entry),
-+            RawEntry::Vacant(entry) => Entry::Vacant(VacantEntry { raw: entry, key }),
-+        }
-     }
- 
--    /// Returns a node with the given key, if one exists.
--    fn find(&self, key: &K) -> Option<NonNull<Node<K, V>>> {
-+    /// Used for accessing the given node, if it exists.
-+    pub fn find_mut(&mut self, key: &K) -> Option<OccupiedEntry<'_, K, V>> {
-+        match self.raw_entry(key) {
-+            RawEntry::Occupied(entry) => Some(entry),
-+            RawEntry::Vacant(_entry) => None,
-+        }
-+    }
-+
-+    /// Returns a reference to the value corresponding to the key.
-+    pub fn get(&self, key: &K) -> Option<&V> {
-         let mut node = self.root.rb_node;
-         while !node.is_null() {
-             // SAFETY: By the type invariant of `Self`, all non-null `rb_node` pointers stored in `self`
-@@ -388,47 +389,30 @@ fn find(&self, key: &K) -> Option<NonNull<Node<K, V>>> {
-                 Ordering::Less => unsafe { (*node).rb_left },
-                 // SAFETY: `node` is a non-null node so it is valid by the type invariants.
-                 Ordering::Greater => unsafe { (*node).rb_right },
--                Ordering::Equal => return NonNull::new(this.cast_mut()),
-+                // SAFETY: `node` is a non-null node so it is valid by the type invariants.
-+                Ordering::Equal => return Some(unsafe { &(*this).value }),
-             }
-         }
-         None
-     }
- 
--    /// Returns a reference to the value corresponding to the key.
--    pub fn get(&self, key: &K) -> Option<&V> {
--        // SAFETY: The `find` return value is a node in the tree, so it is valid.
--        self.find(key).map(|node| unsafe { &node.as_ref().value })
--    }
--
-     /// Returns a mutable reference to the value corresponding to the key.
-     pub fn get_mut(&mut self, key: &K) -> Option<&mut V> {
--        // SAFETY: The `find` return value is a node in the tree, so it is valid.
--        self.find(key)
--            .map(|mut node| unsafe { &mut node.as_mut().value })
-+        self.find_mut(key).map(|node| node.into_mut())
-     }
- 
-     /// Removes the node with the given key from the tree.
-     ///
-     /// It returns the node that was removed if one exists, or [`None`] otherwise.
--    fn remove_node(&mut self, key: &K) -> Option<RBTreeNode<K, V>> {
--        let mut node = self.find(key)?;
--
--        // SAFETY: The `find` return value is a node in the tree, so it is valid.
--        unsafe { bindings::rb_erase(&mut node.as_mut().links, &mut self.root) };
--
--        // INVARIANT: The node is being returned and the caller may free it, however, it was
--        // removed from the tree. So the invariants still hold.
--        Some(RBTreeNode {
--            // SAFETY: The `find` return value was a node in the tree, so it is valid.
--            node: unsafe { Box::from_raw(node.as_ptr()) },
--        })
-+    pub fn remove_node(&mut self, key: &K) -> Option<RBTreeNode<K, V>> {
-+        self.find_mut(key).map(OccupiedEntry::remove_node)
-     }
- 
-     /// Removes the node with the given key from the tree.
-     ///
-     /// It returns the value that was removed if one exists, or [`None`] otherwise.
-     pub fn remove(&mut self, key: &K) -> Option<V> {
--        self.remove_node(key).map(|node| node.node.value)
-+        self.find_mut(key).map(OccupiedEntry::remove)
-     }
- 
-     /// Returns a cursor over the tree nodes based on the given key.
-@@ -1136,6 +1120,182 @@ unsafe impl<K: Send, V: Send> Send for RBTreeNode<K, V> {}
- // [`RBTreeNode`] without synchronization.
- unsafe impl<K: Sync, V: Sync> Sync for RBTreeNode<K, V> {}
- 
-+impl<K, V> RBTreeNode<K, V> {
-+    /// Drop the key and value, but keep the allocation.
-+    ///
-+    /// It then becomes a reservation that can be re-initialised into a different node (i.e., with
-+    /// a different key and/or value).
-+    ///
-+    /// The existing key and value are dropped in-place as part of this operation, that is, memory
-+    /// may be freed (but only for the key/value; memory for the node itself is kept for reuse).
-+    pub fn into_reservation(self) -> RBTreeNodeReservation<K, V> {
-+        RBTreeNodeReservation {
-+            node: Box::drop_contents(self.node),
-+        }
-+    }
-+}
-+
-+/// A view into a single entry in a map, which may either be vacant or occupied.
-+///
-+/// This enum is constructed from the [`RBTree::entry`].
-+///
-+/// [`entry`]: fn@RBTree::entry
-+pub enum Entry<'a, K, V> {
-+    /// This [`RBTree`] does not have a node with this key.
-+    Vacant(VacantEntry<'a, K, V>),
-+    /// This [`RBTree`] already has a node with this key.
-+    Occupied(OccupiedEntry<'a, K, V>),
-+}
-+
-+/// Like [`Entry`], except that it doesn't have ownership of the key.
-+enum RawEntry<'a, K, V> {
-+    Vacant(RawVacantEntry<'a, K, V>),
-+    Occupied(OccupiedEntry<'a, K, V>),
-+}
-+
-+/// A view into a vacant entry in a [`RBTree`]. It is part of the [`Entry`] enum.
-+pub struct VacantEntry<'a, K, V> {
-+    key: K,
-+    raw: RawVacantEntry<'a, K, V>,
-+}
-+
-+/// Like [`VacantEntry`], but doesn't hold on to the key.
-+///
-+/// # Invariants
-+/// - `parent` may be null if the new node becomes the root.
-+/// - `child_field_of_parent` is a valid pointer to the left-child or right-child of `parent`. If `parent` is
-+///     null, it is a pointer to the root of the [`RBTree`].
-+struct RawVacantEntry<'a, K, V> {
-+    rbtree: *mut RBTree<K, V>,
-+    /// The node that will become the parent of the new node if we insert one.
-+    parent: *mut bindings::rb_node,
-+    /// This points to the left-child or right-child field of `parent`, or `root` if `parent` is
-+    /// null.
-+    child_field_of_parent: *mut *mut bindings::rb_node,
-+    _phantom: PhantomData<&'a mut RBTree<K, V>>,
-+}
-+
-+impl<'a, K, V> RawVacantEntry<'a, K, V> {
-+    /// Inserts the given node into the [`RBTree`] at this entry.
-+    ///
-+    /// The `node` must have a key such that inserting it here does not break the ordering of this
-+    /// [`RBTree`].
-+    fn insert(self, node: RBTreeNode<K, V>) -> &'a mut V {
-+        let node = Box::into_raw(node.node);
-+
-+        // SAFETY: `node` is valid at least until we call `Box::from_raw`, which only happens when
-+        // the node is removed or replaced.
-+        let node_links = unsafe { addr_of_mut!((*node).links) };
-+
-+        // INVARIANT: We are linking in a new node, which is valid. It remains valid because we
-+        // "forgot" it with `Box::into_raw`.
-+        // SAFETY: The type invariants of `RawVacantEntry` are exactly the safety requirements of `rb_link_node`.
-+        unsafe { bindings::rb_link_node(node_links, self.parent, self.child_field_of_parent) };
-+
-+        // SAFETY: All pointers are valid. `node` has just been inserted into the tree.
-+        unsafe { bindings::rb_insert_color(node_links, addr_of_mut!((*self.rbtree).root)) };
-+
-+        // SAFETY: The node is valid until we remove it from the tree.
-+        unsafe { &mut (*node).value }
-+    }
-+}
-+
-+impl<'a, K, V> VacantEntry<'a, K, V> {
-+    /// Inserts the given node into the [`RBTree`] at this entry.
-+    pub fn insert(self, value: V, reservation: RBTreeNodeReservation<K, V>) -> &'a mut V {
-+        self.raw.insert(reservation.into_node(self.key, value))
-+    }
-+}
-+
-+/// A view into an occupied entry in a [`RBTree`]. It is part of the [`Entry`] enum.
-+///
-+/// # Invariants
-+/// - `node_links` is a valid, non-null pointer to a tree node in `self.rbtree`
-+pub struct OccupiedEntry<'a, K, V> {
-+    rbtree: &'a mut RBTree<K, V>,
-+    /// The node that this entry corresponds to.
-+    node_links: *mut bindings::rb_node,
-+}
-+
-+impl<'a, K, V> OccupiedEntry<'a, K, V> {
-+    /// Gets a reference to the value in the entry.
-+    pub fn get(&self) -> &V {
-+        // SAFETY:
-+        // - `self.node_links` is a valid pointer to a node in the tree.
-+        // - We have shared access to the underlying tree, and can thus give out a shared reference.
-+        unsafe { &(*container_of!(self.node_links, Node<K, V>, links)).value }
-+    }
-+
-+    /// Gets a mutable reference to the value in the entry.
-+    pub fn get_mut(&mut self) -> &mut V {
-+        // SAFETY:
-+        // - `self.node_links` is a valid pointer to a node in the tree.
-+        // - We have exclusive access to the underlying tree, and can thus give out a mutable reference.
-+        unsafe {
-+            &mut (*(container_of!(self.node_links, Node<K, V>, links) as *mut Node<K, V>)).value
-+        }
-+    }
-+
-+    /// Converts the entry into a mutable reference to its value.
-+    ///
-+    /// If you need multiple references to the `OccupiedEntry`, see [`self#get_mut`].
-+    pub fn into_mut(self) -> &'a mut V {
-+        // SAFETY:
-+        // - `self.node_links` is a valid pointer to a node in the tree.
-+        // - This consumes the `&'a mut RBTree<K, V>`, therefore it can give out a mutable reference that lives for `'a`.
-+        unsafe {
-+            &mut (*(container_of!(self.node_links, Node<K, V>, links) as *mut Node<K, V>)).value
-+        }
-+    }
-+
-+    /// Remove this entry from the [`RBTree`].
-+    pub fn remove_node(self) -> RBTreeNode<K, V> {
-+        // SAFETY: The node is a node in the tree, so it is valid.
-+        unsafe { bindings::rb_erase(self.node_links, &mut self.rbtree.root) };
-+
-+        // INVARIANT: The node is being returned and the caller may free it, however, it was
-+        // removed from the tree. So the invariants still hold.
-+        RBTreeNode {
-+            // SAFETY: The node was a node in the tree, but we removed it, so we can convert it
-+            // back into a box.
-+            node: unsafe {
-+                Box::from_raw(container_of!(self.node_links, Node<K, V>, links) as *mut Node<K, V>)
-+            },
-+        }
-+    }
-+
-+    /// Takes the value of the entry out of the map, and returns it.
-+    pub fn remove(self) -> V {
-+        self.remove_node().node.value
-+    }
-+
-+    /// Swap the current node for the provided node.
-+    ///
-+    /// The key of both nodes must be equal.
-+    fn replace(self, node: RBTreeNode<K, V>) -> RBTreeNode<K, V> {
-+        let node = Box::into_raw(node.node);
-+
-+        // SAFETY: `node` is valid at least until we call `Box::from_raw`, which only happens when
-+        // the node is removed or replaced.
-+        let new_node_links = unsafe { addr_of_mut!((*node).links) };
-+
-+        // SAFETY: This updates the pointers so that `new_node_links` is in the tree where
-+        // `self.node_links` used to be.
-+        unsafe {
-+            bindings::rb_replace_node(self.node_links, new_node_links, &mut self.rbtree.root)
-+        };
-+
-+        // SAFETY:
-+        // - `self.node_ptr` produces a valid pointer to a node in the tree.
-+        // - Now that we removed this entry from the tree, we can convert the node to a box.
-+        let old_node = unsafe {
-+            Box::from_raw(container_of!(self.node_links, Node<K, V>, links) as *mut Node<K, V>)
-+        };
-+
-+        RBTreeNode { node: old_node }
-+    }
-+}
-+
- struct Node<K, V> {
-     links: bindings::rb_node,
-     key: K,
-
+ 	writeq(0, priv->base + MLXBF_GIGE_INT_EN);
++	mb();
+ 	netif_stop_queue(netdev);
+ 	napi_disable(&priv->napi);
+ 	netif_napi_del(&priv->napi);
 -- 
-2.46.0.184.g6999bdac58-goog
+2.30.1
 
 
