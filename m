@@ -1,89 +1,219 @@
-Return-Path: <linux-kernel+bounces-290003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0D0E954E51
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:59:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13BDB954E55
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EE782887EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:59:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AA67B23B4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79FD1BE23E;
-	Fri, 16 Aug 2024 15:59:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A771BDA84;
+	Fri, 16 Aug 2024 16:00:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="VAl1AtmU"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fip9Zxlr"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2053.outbound.protection.outlook.com [40.107.236.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6332F1B86FB;
-	Fri, 16 Aug 2024 15:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723823963; cv=none; b=HSun7iLWKmOhdq9xk4IGkw7M/+xctgt0+BaIPWYRDZ2LW8gYnkCRVS5JPblhw7DQnxBb/vKJ9xNCEne9bXFpI+iUWpjrQnPzsyHv4NPwLNxHy9hO0yVRLT9BTREh8dB5fne9FLxs60UwVcpKRVsYKNIYiRQmD3l1iRC8zwZFPRs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723823963; c=relaxed/simple;
-	bh=PwFCq4HA+VM/TqeJYVTNwOwEiSG7asgzKeswyfcvfxM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JLf6zpR1padTcTBK7Mh8DT5d1Hu3CKsPhqloDsA5uagVR/VQuXY22UIbdwtEft33HX9dVnyJgpm1s0W8BQ5CMnt45AVR4l9D28mzC4LDyuXwRXB5i2nTzwJnOqRlHjyy/mwzttpZdWhmK5hjx73lLzzKPyncjSA5OkQGQ8ClWiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=VAl1AtmU; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1723823958; x=1724083158;
-	bh=B+BumcKHKtkyfAWPcUH/EmOHcEtK+9Bi+uQxd+QCyJ0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=VAl1AtmUAav1AzMGX/4K2lD4e5JFaNIqlHpQAXb3ulC29Cb5oK1f9lTc10CtYk9Pb
-	 SpP2NXLrx4pnvLCZSQXtEUsXrHbdjJaR+XCkowvWqa1IuMjC5ztFNI4xaHkzUO0het
-	 mLgCtB8AKrya29B24hUz3UCy4NBwxkh7To2bBHNlz2muFHZtw93DEiY8bPECPvVHFZ
-	 clp8x51J/xQYHYW9L3TkhETQcIswgELjJt+kfwbM99yjQlC019um+HvlrP0hK54f42
-	 Q9dZSUJxWf73Q6D+9W/GNURoa0EvwXrLpEAQQU1blURBsQU0EvcT/+00m44386dEds
-	 DynKbZhL0rjpA==
-Date: Fri, 16 Aug 2024 15:59:10 +0000
-To: Andreas Hindborg <nmi@metaspace.dk>, Jens Axboe <axboe@kernel.dk>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Andreas Hindborg <a.hindborg@samsung.com>, "Behme Dirk (XC-CP/ESB5)" <Dirk.Behme@de.bosch.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] rust: block: fix wrong usage of lockdep API
-Message-ID: <34282f40-d6a1-4354-8fd5-24239ada15ed@proton.me>
-In-Reply-To: <20240815074519.2684107-3-nmi@metaspace.dk>
-References: <20240815074519.2684107-1-nmi@metaspace.dk> <20240815074519.2684107-3-nmi@metaspace.dk>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 3599b4c02900e339b0a6f8e36171634a4a326f53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14D51BB68E
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 16:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723824053; cv=fail; b=SveV75l0oj9fb5min6AL1D/EB0DE4mXSwit34f9RFsRoJ/uVSdBDafCwHwJ6OTA7l4rgtxiMoz0UWIbQ8Q2QGta0QhkDteEZ9NQrSnFJQYLxnS8Ra1X/pQ2VwiTo/8br7gp0JIuvn9mbjOfqx4SOi86+hpuenLMFnfoClvOjy3s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723824053; c=relaxed/simple;
+	bh=t+IL+ZZWxLM50wjZFqVMTL0rkgHCLnmO97Qr9VWkAyo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pNG9lFF25ICk1WzFuiZybRRgsPZN/GCW9pX9y0iw+L85NknqWZLDgeB3bPNj24NW0xENpxltkuaCilGKXWF09MePJ3VvM8feuHbatc6+KbLBNY+QmMRxH/tlmMWSCOs7rHGvdbTh3Op8D0jtw67oVN4TNaCHwj6/Z7Df41bwU+8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fip9Zxlr; arc=fail smtp.client-ip=40.107.236.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hiO9oZK6abq5P7WtXHk7/nQgbyeBM9r6LvcjPmHznrduauRlFQZzBvjMl+d9Wwkkj94N0LRhMY4Ec//Ss70Ogni18UNkyYuKSJ3ZCq03xj8ZoUB7Ii1OuVtqXJoI0mVWhCWknosLq9GN5ehcQAe3vWF/T4wQBdppkzWasDTyfsS8u1QPP+343L6MjNIvHvGrXjUlc2FoKnFK5+TKJyNVfi7OC0uneWle+ZDzp72f2RoQgNAKfTB0lLIAcbCZzTyjwOzwhJ9mouso2Y1rcqakw1B379jI0UqWi5t8VPNwLz6YwhVTSfVBRUoMxB0o91t/u3qVdj6TPDa+KSt9yXgTpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yMZo8itQNpP3L052tRLB9M4IvUt3u6lyWubzTo8BPkU=;
+ b=lrnEcX2e6iDK2Z6Yr183UK1kAscIq3eemNmeTJlAaZSfn8DaaBbZnkTndlpFl94ssFzeBlFEn8TlZGct5yW4rEdZo2JkxiFJQAqB2b5YKf4G+0AsOO4kmof7pWk0DivPshriYcYE+vDnb5g5hIBMzJkSioTsZsL0PJD5LgNkh13zwcf8s2DamtEBXDnhZJw72zmV9LmUJLi5OTrD4Pp86J2coar4HIdccoZeM9siaVC68fy1jmTAPeBAhzgiomXLWNnmudDdvu/+gKluQmI5mVNmb+nM9fpjSCPRhz/ZsmOK+Jtr7GUSBXG8T7AUUf8y8sd/7oHgcAKLAB2J5xwk8A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yMZo8itQNpP3L052tRLB9M4IvUt3u6lyWubzTo8BPkU=;
+ b=fip9Zxlr3pUnxiUOVZBogf2DcEFwpOylHOOI9LgDskY8G4x9e7n7o+yKE9HndVRPSd4MHThmiq7BCpJWhOMCJLRPB8pYg1P2M1oL4iSkHPJqvCBhaGgyHDPUlnDTqRoP58JAqaUplsdkYBqvaOpAbkOYbAcSumKCHcuoRkqt938=
+Received: from DM6PR07CA0063.namprd07.prod.outlook.com (2603:10b6:5:74::40) by
+ SJ0PR12MB8166.namprd12.prod.outlook.com (2603:10b6:a03:4e2::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Fri, 16 Aug
+ 2024 16:00:46 +0000
+Received: from DS2PEPF00003446.namprd04.prod.outlook.com
+ (2603:10b6:5:74:cafe::8a) by DM6PR07CA0063.outlook.office365.com
+ (2603:10b6:5:74::40) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.23 via Frontend
+ Transport; Fri, 16 Aug 2024 16:00:46 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DS2PEPF00003446.mail.protection.outlook.com (10.167.17.73) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7849.8 via Frontend Transport; Fri, 16 Aug 2024 16:00:46 +0000
+Received: from purico-ed03host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 16 Aug
+ 2024 11:00:42 -0500
+From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+To: <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
+CC: <joro@8bytes.org>, <robin.murphy@arm.com>, <vasant.hegde@amd.com>,
+	<jon.grimm@amd.com>, <santosh.shukla@amd.com>, Suravee Suthikulpanit
+	<suravee.suthikulpanit@amd.com>
+Subject: [PATCH] iommu/amd: Update PASID, GATS, and GLX feature related macros
+Date: Fri, 16 Aug 2024 16:00:20 +0000
+Message-ID: <20240816160020.5525-1-suravee.suthikulpanit@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003446:EE_|SJ0PR12MB8166:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9b7c2130-2703-4175-f97f-08dcbe0c9709
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?m3W+BmrStUNekhmNn4gus22Yp1ZhvWuWH4X35iQWsfeOxMSwV7MRZIiP9f9a?=
+ =?us-ascii?Q?XbiFxWff8Vao5k4yrbdH4IETWyVz801w47I7FZ22b0XWFRc7knbJbQRxcCJp?=
+ =?us-ascii?Q?9MXSZVOd6LFO4Mc567nHVOl7qcyJLtg6vAUO3LpL0qaY6D5Hb5GqVSIwpAT9?=
+ =?us-ascii?Q?2v/1sX/HdueJacLbEL/CMAmNNaie5teqbuWLg4A+5eKWxkRO1jY2zJKqpRlX?=
+ =?us-ascii?Q?jA1kfqq39cF8s2B1+OmdJ4CIYJ3lgJMDGYj70Ke7rSC77L+ixltfLL7bLVCA?=
+ =?us-ascii?Q?j1y6mrwCRn86ZN1TUTjlWGmwUEGuu0eZwFirwePJXBZvIgyADL0JCTY1TNHO?=
+ =?us-ascii?Q?dkq01u+xaK32aKMybyZfEDWTyajNx0Z6dVmdmJBBts8IxJl199+EICwmW20w?=
+ =?us-ascii?Q?JQn8eqJ4Fkqrk2Ks1pwt/BQ+XwTJddL85ddA9TrhXvUuKDKqap8j2w/GZEqU?=
+ =?us-ascii?Q?Hdnebhbtf0AETLE8GAK8lRHDBAfdnnjA4blt1ZJvf9assOIpHUGz2pqBVwmW?=
+ =?us-ascii?Q?24Qz7yfcXR9aLM5JrNubqVtzV0xaT4aPhCIQO5Zf0U36Df8aZ/OwFssNNWBH?=
+ =?us-ascii?Q?oH0+7O5SkE0qnf6kS6P6kFf5kMG36Zm2Vn0dANPs3/FEt4t7+XxpkUvbPJWk?=
+ =?us-ascii?Q?TmuqoM2kME1KC6gFZf0V6nCFaUCEkXrILRLRCaiYdT7BElwJnDOLpWCSeJwU?=
+ =?us-ascii?Q?qF6bSQSkDRGKa8+wOv2ER/bSYjpSQ2oP31eaTILu9jyYQNsaNR2muJccWAW6?=
+ =?us-ascii?Q?ug42KTu9I2tS3F9+/HVZGkv1GJmRev8NKPgJsBb1NALO9dmG32zQJ6a0nVRD?=
+ =?us-ascii?Q?43WDr6mUh6V5VQ+YZzEiYXuyjGMRNqxjV7jF5HvQKyaWJSDwM9YySrNcPq1f?=
+ =?us-ascii?Q?Eom1jIu7+JoDto4BpNLQIw5BB4DKOfs6DBTCSGldBIhxkJFS1aYX53TciQdC?=
+ =?us-ascii?Q?qr02gSOr4B7C1FnZSsQxOPoLo6lT62gjm/MQj1ZveqkY474QN+Ci755EBK/c?=
+ =?us-ascii?Q?53WzG1iQtCIjTdF7IUHw7D8Fz2DNw5FM9QcUnyBaPNhutJSY/T6V2IWzS/f2?=
+ =?us-ascii?Q?l/OiAROo7DGoZFSd2STt0ntF2UBrtYNL0g5VyAmtdYV/P/UnILpAG7AD9O35?=
+ =?us-ascii?Q?UOzgjI8PMet8CGMD2rEhkekFLEEx5U4Frxozz+yDSSSqbnDh7BupAAKkojXv?=
+ =?us-ascii?Q?ZK2fz+KRCFzIy2Wi5KZhY3ucM05JeeUcZJ6IJYrApfhgjVkl2Tn8n/fpZzzI?=
+ =?us-ascii?Q?49SovWArR7N5MbnkaHTPFeqwX+AD+5KBnPneHPEFCKQQFPz3+LPgt+24+1RD?=
+ =?us-ascii?Q?ta5yKWssBFs7iQ1J2oVK2UitrpInHPy2fcbbawwJviax2s8E0weUM0cSnckJ?=
+ =?us-ascii?Q?0IvfyWMIrbA0hX6EcZtCoCvmWZQU0tKzh9e9qsZdojUhT2iEH9jeLphRmVlC?=
+ =?us-ascii?Q?bI/vgUplLg7IZDhPnf/NVPZXHbUgJeFH?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2024 16:00:46.1103
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9b7c2130-2703-4175-f97f-08dcbe0c9709
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF00003446.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB8166
 
-On 15.08.24 09:49, Andreas Hindborg wrote:
-> From: Andreas Hindborg <a.hindborg@samsung.com>
->=20
-> When allocating `struct gendisk`, `GenDiskBuilder` is using a dynamic loc=
-k
-> class key without registering the key. This is incorrect use of the API,
-> which causes a `WARN` trace. This patch fixes the issue by using a static
-> lock class key, which is more appropriate for the situation anyway.
->=20
-> Fixes: 3253aba3408a ("rust: block: introduce `kernel::block::mq` module")
-> Reported-by: "Behme Dirk (XC-CP/ESB5)" <Dirk.Behme@de.bosch.com>
-> Closes: https://rust-for-linux.zulipchat.com/#narrow/stream/288089-Genera=
-l/topic/6.2E11.2E0-rc1.3A.20rust.2Fkernel.2Fblock.2Fmq.2Ers.3A.20doctest.20=
-lock.20warning
-> Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
-> ---
->  rust/kernel/block/mq/gen_disk.rs | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+Clean up and reorder them according to the bit index. There is no
+functional change.
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-
+Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
 ---
-Cheers,
-Benno
+ drivers/iommu/amd/amd_iommu.h       |  2 +-
+ drivers/iommu/amd/amd_iommu_types.h | 13 +++++++------
+ drivers/iommu/amd/init.c            |  8 ++++----
+ 3 files changed, 12 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/iommu/amd/amd_iommu.h b/drivers/iommu/amd/amd_iommu.h
+index 2d5945c982bd..478b4e7b4bf2 100644
+--- a/drivers/iommu/amd/amd_iommu.h
++++ b/drivers/iommu/amd/amd_iommu.h
+@@ -123,7 +123,7 @@ static inline bool check_feature2(u64 mask)
+ 
+ static inline int check_feature_gpt_level(void)
+ {
+-	return ((amd_iommu_efr >> FEATURE_GATS_SHIFT) & FEATURE_GATS_MASK);
++	return ((amd_iommu_efr & FEATURE_GATS_MASK) >> FEATURE_GATS_SHIFT);
+ }
+ 
+ static inline bool amd_iommu_gt_ppr_supported(void)
+diff --git a/drivers/iommu/amd/amd_iommu_types.h b/drivers/iommu/amd/amd_iommu_types.h
+index 9be761ba0214..c6350a764d8f 100644
+--- a/drivers/iommu/amd/amd_iommu_types.h
++++ b/drivers/iommu/amd/amd_iommu_types.h
+@@ -95,8 +95,6 @@
+ #define FEATURE_GA		BIT_ULL(7)
+ #define FEATURE_HE		BIT_ULL(8)
+ #define FEATURE_PC		BIT_ULL(9)
+-#define FEATURE_GATS_SHIFT	(12)
+-#define FEATURE_GATS_MASK	(3ULL)
+ #define FEATURE_GAM_VAPIC	BIT_ULL(21)
+ #define FEATURE_GIOSUP		BIT_ULL(48)
+ #define FEATURE_HASUP		BIT_ULL(49)
+@@ -104,11 +102,14 @@
+ #define FEATURE_HDSUP		BIT_ULL(52)
+ #define FEATURE_SNP		BIT_ULL(63)
+ 
+-#define FEATURE_PASID_SHIFT	32
+-#define FEATURE_PASID_MASK	(0x1fULL << FEATURE_PASID_SHIFT)
++#define FEATURE_GATS_SHIFT	12
++#define FEATURE_GATS_MASK	(0x03ULL << FEATURE_GATS_SHIFT)
+ 
+-#define FEATURE_GLXVAL_SHIFT	14
+-#define FEATURE_GLXVAL_MASK	(0x03ULL << FEATURE_GLXVAL_SHIFT)
++#define FEATURE_GLX_SHIFT	14
++#define FEATURE_GLX_MASK	(0x03ULL << FEATURE_GLX_SHIFT)
++
++#define FEATURE_PASMAX_SHIFT	32
++#define FEATURE_PASMAX_MASK	(0x1FULL << FEATURE_PASMAX_SHIFT)
+ 
+ /* Extended Feature 2 Bits */
+ #define FEATURE_SNPAVICSUP_SHIFT	5
+diff --git a/drivers/iommu/amd/init.c b/drivers/iommu/amd/init.c
+index c89d85b54a1a..39c6b59c0fa7 100644
+--- a/drivers/iommu/amd/init.c
++++ b/drivers/iommu/amd/init.c
+@@ -2042,14 +2042,14 @@ static int __init iommu_init_pci(struct amd_iommu *iommu)
+ 		int glxval;
+ 		u64 pasmax;
+ 
+-		pasmax = amd_iommu_efr & FEATURE_PASID_MASK;
+-		pasmax >>= FEATURE_PASID_SHIFT;
++		pasmax = amd_iommu_efr & FEATURE_PASMAX_MASK;
++		pasmax >>= FEATURE_PASMAX_SHIFT;
+ 		iommu->iommu.max_pasids = (1 << (pasmax + 1)) - 1;
+ 
+ 		BUG_ON(iommu->iommu.max_pasids & ~PASID_MASK);
+ 
+-		glxval   = amd_iommu_efr & FEATURE_GLXVAL_MASK;
+-		glxval >>= FEATURE_GLXVAL_SHIFT;
++		glxval   = amd_iommu_efr & FEATURE_GLX_MASK;
++		glxval >>= FEATURE_GLX_SHIFT;
+ 
+ 		if (amd_iommu_max_glx_val == -1)
+ 			amd_iommu_max_glx_val = glxval;
+-- 
+2.34.1
 
 
