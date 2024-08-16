@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-289969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E917954DCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:35:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C57954DCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4A951F21589
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:35:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9658FB221AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5D81C463B;
-	Fri, 16 Aug 2024 15:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B0E1C57A8;
+	Fri, 16 Aug 2024 15:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M5Wq6bGl"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zvQIZ+Lo"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8681C4602
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7D11C462B
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723822339; cv=none; b=ueASKoS8UeW0zBnVznWIi12efYCgU9BW/7izXQaqKKXdUonEJs7sP22su9q4q0SVruo+gDjHg+1IeYhMyFpr8Of4yCKyy5fiHDA+WtGZSUL2mbxpcMvGvp8IQW7OPimDuDc3lOLEd1TCdAC4yzXQO02ouTm8dK1Nr8it/CoW7IA=
+	t=1723822341; cv=none; b=kuQsGbBgQ2PAhou9IrJhwXxi71lnd7Xq/ggqZufMHY+fp48emjKHYdPVnM3e/v4xRhJnEfptjFqdKVILudgrKSPQ3wNcwFyuMQSpjs/G2kBnNZah5lDzngCPlwQbxah5OfPgSOejdqhI4oSLMM1iEcayRK6z55/rOwEAK4F1Lwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723822339; c=relaxed/simple;
-	bh=P/bMkN6MpG1hpAYn2CS2V4doNmtsHBv2dg+qwQSz6uY=;
+	s=arc-20240116; t=1723822341; c=relaxed/simple;
+	bh=HqurU8v6FoUuPIeHjxpMhqt9yfUTtSWFQuHadg1beqc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kU+wqxruPZPnd0uDEUtAHqIusfESFVW8iMExjdm65LuAOkUkQBBCENPP5Md7O7hAijYv8CJt0dJPXU/2uYwd76ldOUBn7BzmtJ+uXX5rPfRZX3nWY8oVal75EN4G2PhIi0+1KSAdLnynanmmThTKypbnQDju9Zy+vLyZCHJimUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M5Wq6bGl; arc=none smtp.client-ip=209.85.128.46
+	 In-Reply-To:To:Cc; b=LGQ8HL6sNIUiV66lNaF6045Cph9266amZxgK5dRvaqo+Vwrp1zV7sCIae2eNItrhY9IdBD+7+6UArhT8qpBWA/CpwwEQZjgB0Q7KL/hyoGF412X+hmythecFpTZdf33vHJGuRQqyzAyUImeLZ+oJRwrYADFiAmGau/DLxcDsN4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zvQIZ+Lo; arc=none smtp.client-ip=209.85.208.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-428243f928cso15422565e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:32:17 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ef27bfd15bso24848621fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:32:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723822336; x=1724427136; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723822338; x=1724427138; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=82u0aLxCOMmAENgy1g3HMnv8Q8OUR/q6nxVGVYKir68=;
-        b=M5Wq6bGlzKHiX/nRBnmIYHjJ1DoteqazCN3RhFOOxAVrUbIkuapXgRjDRQB5HaOqRt
-         O82Vb4QsyeKOC4QRYEpQn/DyP7C/vo0SOwiZAZvA17C2R9z5NHjfNkhr8YMo6Ox+8bSx
-         pt8LgWboGLo5TiUEKpLXSFKxXb+MQ+POa/StDqAtH0PGpmxUvnVL19kcjHvNsPx6JcdF
-         4a6p0RAxMoA92yQLxGsF8u1Xqqap90P6xkr2/25A32eCxsjthNVhFwe85OPqHGiKd30q
-         HJ4C42QWqUXG8tQO3WfsoLDNX5vp9wuuy1gXB5ODVE6gc0oTKH9utDsPlrO2gtBLHPeX
-         fFmQ==
+        bh=d4o6NVK+5RxP9AE82dc0tQeAqHho4Q+RR5k5EOL8qCE=;
+        b=zvQIZ+LoqGoAcqg0sNzRFRvXKZgqvUzwF1f2upOBw9un894jr8Zd8hwXWdCRwDl7Ak
+         pR+tElq70vPTpFKtIaZD1fcTdDW5Dt5vscOvaELgsAwRMIp/Xz7WKveNYwD7YfgOMz87
+         yXBSSk9cEC1qhzPTf3VFXgeWR7KYzCtzN0aWZiaCkfKjZQCxwXj2ZrvpcZx6v9WPUI8j
+         tN6snZAhAdqZ+S80ySbiTDAoOADgREpb2D5YoJfBdfyOf9s3+eaaI9JILNvdd6hckkZ3
+         gAILUzH12CVQrOSFTb/fzVC91YRwXEsvyJ0NQtrKQ0DWv7rbDakiJRJ2wXnVc37oluBP
+         UTeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723822336; x=1724427136;
+        d=1e100.net; s=20230601; t=1723822338; x=1724427138;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=82u0aLxCOMmAENgy1g3HMnv8Q8OUR/q6nxVGVYKir68=;
-        b=kHptff2w3pw/6sUNRxz+IfggPUuIq5mlszV+EzfSQwBWuIvqyZVyqrMCRnR+X6owIo
-         SSm4ZIKnG/+hNX7HF3ZypnKRrXjWPXZV2z9OJgCiEC3kEdTVd3Ox14ryhfW3PplCKidK
-         FXKguBpl5JrsabiNAUb8UC3xC5PEw+nXrmjtLn5OJ+czJqen5ZYSEaQqgiPhEijpqGZE
-         JZ0WD3Poi+3PwvOIfFdwOqOJebkx3saf7Fdy+Xfq8CW02rgivES35RrwbgHQ69pUozer
-         r4U9CXfg9P9CH3yN8hb8cE28v3osCetEDnxu+xWm44XyNMBVC0XeHW8cBjzzvn4sKNiZ
-         TVsA==
-X-Forwarded-Encrypted: i=1; AJvYcCXJRpHntVqKRBO3PNEJlbSVEujzjQk/w9Jzg8Eg65zJ08i8F+HqwfTjRl2oZywBtr5AOygfATJrk115gIE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPAxJT6/iGRGJ6i4ReQCq9sw8Vh/b5G8NeKIcuagosEQYe+GCZ
-	lY4NLbMNrn1Jz0LY6n8m/vBINbth8s0+FCkFgq+8aEFeQ/Zq9hMqiY5slo3bdYQ=
-X-Google-Smtp-Source: AGHT+IFoty7tTAPOCyav/M+yMTn7h/aGTkjK2dWYaVz5fLcCWS//Y230cKvMHPE242A86aP9/IgluA==
-X-Received: by 2002:a05:600c:46cf:b0:426:64f4:7793 with SMTP id 5b1f17b1804b1-429ed7af3d8mr25468635e9.22.1723822336156;
-        Fri, 16 Aug 2024 08:32:16 -0700 (PDT)
+        bh=d4o6NVK+5RxP9AE82dc0tQeAqHho4Q+RR5k5EOL8qCE=;
+        b=qEcyA4SJ6at3S7QRWjdT9ieUl7lIjK6M5A5+xj57pYJKdq6YnMSmQyDH132GJrVOkW
+         rtffH+gGyAoZGKsowTCxhD6NnZqdj/v7lzhSLd1W2lA4fQLT/zIFj6nYc6UD/MKK1Vr0
+         L220Eas/SDk5LVb+2sOD+XHQzgmq7LKDPTl1DX+ERmHoKNCgxxF71RCfR57PYaFuQk3k
+         vp2WGXYAP/Ah3Xo9F7zhVqQe6rG23f1TLBJ9U9d0xx2uC1ZdYbIuaX5j6ch9CqGtkyFn
+         yVvKk/FYsbjdrDEkDSLu70sAPNO5ACXla7vDFiA2+6YFoGr6dR+C9r956n6xRcSIqrq5
+         v3lg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3XxnIIdlEEjMjaKq9OPds3IwuRc8/e5Es/uPxEEu3xiX+kvGSXSCcgGHd8ZHHwDj/Rfb+TbUhZQMtONeMWjyT2R8nWCi0KES4TPGc
+X-Gm-Message-State: AOJu0Yz6ZB7xUVxoqphp4W3fX5BLYn80Vy0RSyeERwuYz6ijnmzzVVCk
+	8SR14oBtfL42VImlz/T3Kb0lYFTjOCfkQzvB0SonEhU92hg6OdMuV9fuQeFxwQo=
+X-Google-Smtp-Source: AGHT+IET/CjplVHoqhJT1dgGbpnM7bOR/IOJJFLcUpaq7hdaaWtUXfMeQ9ArJ1WuxrwkKCsQRRpLyg==
+X-Received: by 2002:a05:6512:3d1e:b0:533:d7d:a34e with SMTP id 2adb3069b0e04-5331c695987mr2342012e87.7.1723822337538;
+        Fri, 16 Aug 2024 08:32:17 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898497f0sm3853661f8f.39.2024.08.16.08.32.14
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898497f0sm3853661f8f.39.2024.08.16.08.32.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 08:32:15 -0700 (PDT)
+        Fri, 16 Aug 2024 08:32:17 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Fri, 16 Aug 2024 17:31:47 +0200
-Subject: [PATCH 15/17] leds: sc27xx: Simplify with scoped for each OF child
- loop
+Date: Fri, 16 Aug 2024 17:31:48 +0200
+Subject: [PATCH 16/17] leds: turris-omnia: Simplify with scoped for each OF
+ child loop
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240816-cleanup-h-of-node-put-var-v1-15-1d0292802470@linaro.org>
+Message-Id: <20240816-cleanup-h-of-node-put-var-v1-16-1d0292802470@linaro.org>
 References: <20240816-cleanup-h-of-node-put-var-v1-0-1d0292802470@linaro.org>
 In-Reply-To: <20240816-cleanup-h-of-node-put-var-v1-0-1d0292802470@linaro.org>
 To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
@@ -93,21 +93,21 @@ Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1485;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1244;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=P/bMkN6MpG1hpAYn2CS2V4doNmtsHBv2dg+qwQSz6uY=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmv3Dm8noI8EzoG5LCskKgbLFVnnrv1PYZVipeX
- tFmNsyKbeGJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZr9w5gAKCRDBN2bmhouD
- 180EEACar4IcrZlsd3xk9bIpi0NxSlkXiLAuI8nxmW6mz+cNcfhPQWr4juEKIKU8SWq8Bcjuz0A
- RA0/Qwpgh/ThAWVSamp8X55go6COy9pVnFY/WIozfcjxLDmnjQc2rNa03f5aknsPajDOz2WoySW
- vV/UYxxrb2GFPccA/TJERMXE5GeOfqMzjLmOmv2GvpLO6MLT77aVmgva9B55Rg8FG2SyQx0J7pE
- Lo3Sb5LhsPgASPhBfGo1CNKh/s7c0mO4IhaZIY9gT/M+cJ3k5+2F+tBX95He9It9KNZkpBRh8mF
- qMOxPToh9G+2XWQbtx7/6RT1NWgXf0xEbwhed0/huc3VhD3QRluxkKuxaUuWrVlS+mRbjiCqm4z
- pKWcD56pWCpwCxStIm4WVykqOfcDFy7YZTDuSt3s5rxPTEkWutlE/sag3C3XQ8DXw76QWs8k3YE
- Aj5VT+19zWwY9Gsa7lvRt/KKMZpWgL2FZA+YPZHGspCt0j2sSimeiy3R0rUMnY7U+yVbXXAy1R7
- ely/fkQQKsGD6yfysPNqnHAvqiH4vxarsInC0k7iVnm8T8hj1Kd+axD2KUF+Ap1hUF8wvNRJY9O
- +8lEqFLj2LocXZuxPu+xEX1QvniXbD8I0kYayTZoa+jVonEkM36vST9pM1G2uzlrWhIDTSKn7S7
- mTyIm3ENeFrPMCA==
+ bh=HqurU8v6FoUuPIeHjxpMhqt9yfUTtSWFQuHadg1beqc=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmv3Dn/4FodrZqZy9l8ymKC3RzvyZz5qUjuY2CL
+ I8dXCHswfSJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZr9w5wAKCRDBN2bmhouD
+ 1/k9D/9UMNk7RM3WQGHAruhcdLJVhguE7sJuyHNKcv0JiIT7rLqrxgI0kl0TXtijoBLQifUtmXZ
+ n35/z2TOA0jMGVqDPqGfeNVLVubMwH2nrI2Ni5HcdxRIcVmOI5Qx8hGIAXD8y0+OJYkM+e9+MMW
+ 09hTenPhrVmvb8M7YhycHH1JSDV9cQj5pWdYrcf9X259N9O2dQzVfpdI4UA9GtQqSNLEkbuW9Hp
+ y74zqYk3zBvM3xAlvg43roVpp4MqjH45PtJ11CNOOpMNAVh4KO+73Sx7Y/Zxhc/iHv18ky49WfS
+ lGjmWX7aYivBbwfKDQrc1uuJsio9CXHKui9IFVREXod3XAW8dFzQmBJhlmrhp2ppVcf3wqOCd/g
+ v2zH8BG+SM+ulHja62+nlUfuD6B6vDBpNLRKLkHC0jKuhUb2yXe4OFT17v8Vwkzs6/t0vCbKIoW
+ idbzDQf82L1WtL+yWv/brsico0O/8/FBiODTt15BMAZ4wYOG5YrOem6kGbv8kSxea9vP+S7vpdO
+ 9JpanPlCJQ8Z4xlCm3uumDcswywrJ9FhFvqonNLpVQfBwk6gcMt7q1GkAsIB0P6LjEgEHgdm3qD
+ ZGlGjHkSWXHGIFYWFg5IYbAYfEzX3nOZJAkkSKxMA+DQOjYqzxql8WnOoHOeUfh0p5rdk1Os5pI
+ C3oB8c3EPtY7V/g==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
@@ -116,43 +116,37 @@ device nodes to make code a bit simpler.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/leds/leds-sc27xx-bltc.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ drivers/leds/leds-turris-omnia.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
-index f04db793e8d6..cca98c644aa6 100644
---- a/drivers/leds/leds-sc27xx-bltc.c
-+++ b/drivers/leds/leds-sc27xx-bltc.c
-@@ -276,7 +276,7 @@ static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
- static int sc27xx_led_probe(struct platform_device *pdev)
+diff --git a/drivers/leds/leds-turris-omnia.c b/drivers/leds/leds-turris-omnia.c
+index 39f740be058f..1ef942b5cefa 100644
+--- a/drivers/leds/leds-turris-omnia.c
++++ b/drivers/leds/leds-turris-omnia.c
+@@ -452,7 +452,7 @@ static int omnia_mcu_get_features(const struct i2c_client *client)
+ static int omnia_leds_probe(struct i2c_client *client)
  {
- 	struct device *dev = &pdev->dev;
+ 	struct device *dev = &client->dev;
 -	struct device_node *np = dev_of_node(dev), *child;
 +	struct device_node *np = dev_of_node(dev);
- 	struct sc27xx_led_priv *priv;
- 	u32 base, count, reg;
- 	int err;
-@@ -304,17 +304,13 @@ static int sc27xx_led_probe(struct platform_device *pdev)
- 		return err;
+ 	struct omnia_leds *leds;
+ 	struct omnia_led *led;
+ 	int ret, count;
+@@ -497,12 +497,10 @@ static int omnia_leds_probe(struct i2c_client *client)
  	}
  
+ 	led = &leds->leds[0];
 -	for_each_available_child_of_node(np, child) {
 +	for_each_available_child_of_node_scoped(np, child) {
- 		err = of_property_read_u32(child, "reg", &reg);
--		if (err) {
+ 		ret = omnia_led_register(client, led, child);
+-		if (ret < 0) {
 -			of_node_put(child);
-+		if (err)
- 			return err;
++		if (ret < 0)
+ 			return ret;
 -		}
  
--		if (reg >= SC27XX_LEDS_MAX || priv->leds[reg].active) {
--			of_node_put(child);
-+		if (reg >= SC27XX_LEDS_MAX || priv->leds[reg].active)
- 			return -EINVAL;
--		}
- 
- 		priv->leds[reg].fwnode = of_fwnode_handle(child);
- 		priv->leds[reg].active = true;
+ 		led += ret;
+ 	}
 
 -- 
 2.43.0
