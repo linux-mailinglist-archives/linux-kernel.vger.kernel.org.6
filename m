@@ -1,127 +1,170 @@
-Return-Path: <linux-kernel+bounces-289144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C76E0954266
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:09:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 969BC954260
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 062301C2346D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:09:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89EB828D971
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4DE136E23;
-	Fri, 16 Aug 2024 07:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4840285626;
+	Fri, 16 Aug 2024 07:08:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="3fUmAGb9"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LfSCbz79"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B490B129E93
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21ECE81AB6
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723792128; cv=none; b=ofu8Jzt33WcGNsclSvDyLEgscPRIN2l+PbXWhW+SGJAh9EuomGygq3Ckzo8igMKr7szodSNti2AxitEi89noITnLqBaqWYLoa4OHFnAkgSKPbf29XiPksoONb1RmXweuX1J9oCQP34GLZrc3LBEAHpa3UDz0mjoarmQRAy78Kes=
+	t=1723792108; cv=none; b=S9FgEAGSVol7O4JOLb/jtsWSOmibOxq0YbOMYCaWVKaSx8q9WzC7+6N36LG9uQGVI5rSMUaobVZc8fwQpR4OTY8CqE7E8fDuLalxqXWBIm/nPXlHHqiYlpQQ/yz4nu7/5cLCVCct3GPB7IRQjXPbHbxrcMDv+LAEJWiCI/Hv8CE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723792128; c=relaxed/simple;
-	bh=CZ69ixTJ13HXS+S3ulrEg8gSIWyr0fCR/AmVgmn5v7Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BbLMpJwk/4oCZrZrKqI3/Tt56z28+YjIH6EwsUAeJF3alR+9rX5CxZ6Q50tKX6c+xFBnyxTLIpcF9Jruhgz7cIIfCY8GBLhmHKG1F+e8lzW61jJ0m3is/Tz821TCDr1MtvjMzzf0m2Bwsv4E1+InFnElHFdKAh8WVDvRQaKdljU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=3fUmAGb9; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70d1d6369acso1813645b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 00:08:46 -0700 (PDT)
+	s=arc-20240116; t=1723792108; c=relaxed/simple;
+	bh=Rv/OHUhc5LdbTPeulj3MUNAxvxPKVylBO6YuH/ft0gk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MfwMCpPH4Ab7gdFiR2C9e/Hyxn8Fb9JH1FOfe8n0x9rp9O4mwvW5VjfKENRvE3fiAJk9UWoQCp7CBPZkjLm1Bn9zjrddb1SfMTbedPFOMP/hdK6tEx+Y5Pz6VnjL8ZtDLAUGHcCsQWwxJ8URUsVaClmH/8fhKOtV6CqefHFm64A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LfSCbz79; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7bb75419123so1349939a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 00:08:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1723792125; x=1724396925; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pw60AMQmDUGOq7sBB5Z5rKu5bDKRw5A77nRIXJhY5Ak=;
-        b=3fUmAGb94wUm7RJckuykwdufiwHQK90BN9qEXO1t2LZt/56F/r++zN7K1CvbC4mOUO
-         yIksmgzh2frMgoGX97VXS7Kb9rstHOZjWkp0rnxHS8s1fv8isnDAoj46GhfbionvJVlD
-         3NbxVt8yWVvfnqRcNbCmxjxmEMVpzC6PoBYHe97P7MEj7eMntjVRnLaLSI81zJfrLgNM
-         c5ewS60AlkglnAmEug5DiWYvpZ70OBx3vb6GnUYlCLd+Kvw4fPtIambPNxoUzLZ3ZgIv
-         ZFsjUa2k1DV7nol4DSq83i9LhpWLQWFy5CJ73haZJ5sdcQ9YuJuLIXPTANVpoQ+X3ZIq
-         I5zA==
+        d=linaro.org; s=google; t=1723792106; x=1724396906; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Ve53LZasd5GhenfxsqknMts/Bqu17WdDe0sjGg3VIPI=;
+        b=LfSCbz79sZQDTvX7EpQW9ts+snaKHB4tpH7V9zoRG1irexyZtTzmaQkJJ+U9MY4uvO
+         Oedkj8PXmZgUmQT23SzvPOJnQn7MXtNgA1CxT/lnn5j5fEGWMYFWJAD7mkx8zOc8SWnf
+         1iixwNnwlAf609YLrdQJZNDH5FRWPoUKj4WOgGDAd9inu51ObVdjpGYexXccjYQyj4E9
+         nR16fzcfzQzdih5udexsvcC583moIXpKjlbQ2dTnfENN6QgSNDBinru6Z7wcFQIepuaU
+         1fvYwYb/D+xR4A3vGil1KRmSZ0ukuiafh88M6BnGHWwQycPoMa+WFdNAWA+UnD6KLaVf
+         zwIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723792125; x=1724396925;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pw60AMQmDUGOq7sBB5Z5rKu5bDKRw5A77nRIXJhY5Ak=;
-        b=E/xtVG9hAd54S5eavGb+Rsp77kRFlQKobYsFivxOaC8ixq0IW1sf4g1VZhlqhVxwFY
-         egygp77fzTx/DrQQ7NP5BHMQf6ih416aPcu0DLNegDo51SwO4xPcsyxWxExtaYVuAVqX
-         Fh/mUAPwezqhu/ksFiUgJuHeaBdviYIexBk8lpx811IncW23jwngB0CbUYH3bz4Z/zDD
-         kBx7jyTLR+R7wcmAVil8xEaY2HY//Mlgs0TkQ9/z7VMOCM/gwkp3ehAMUVp3yVwuq/WK
-         3QZK2XJL6LtxjFck68VVoyBIqq1IiZwdF5MP2F+urwwDzv2u1koaw6B2k/S2wnVGiITm
-         Ws/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVhO1pOS6GtllglTF3QTr5YUmtK9CNqYdYz84/uQAEbZ1RWvNc2Uvpn991fL+k7p4wVhrz9x9yY6j2WrgM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9kjAka4nAYfDRAJhHjg0qBwUT/UrA46D9hl+dQeGSeZ3pImFz
-	entelnaw4n53TLu709Fx8ZpDrOfUXKj/wa84lElW0gd6U/IhhDaMynoi8DMB46KAiVPybADm/Ma
-	S
-X-Google-Smtp-Source: AGHT+IGfPiFtzcHt7xqywSUtWik5isvNee8OUxNOoMhtzMTbtl8SwHVtQ2tadLTbV6ViRAikB2BvDQ==
-X-Received: by 2002:a05:6a20:244b:b0:1c8:aa88:f10a with SMTP id adf61e73a8af0-1c8f85f45e0mr7807946637.10.1723792125575;
-        Fri, 16 Aug 2024 00:08:45 -0700 (PDT)
-Received: from atishp.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b636bcabsm2293792a12.90.2024.08.16.00.08.44
+        d=1e100.net; s=20230601; t=1723792106; x=1724396906;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ve53LZasd5GhenfxsqknMts/Bqu17WdDe0sjGg3VIPI=;
+        b=YbSkCVA9CcmhmxNVY6AC/idVClhzfY/vf/l21vpUK4/IzuF+7eTDs3ujxlBC3w9j/9
+         Un0RX4wNc8qdpcew3PN6935KtXQ6NAPkZKSWNfKtdIOWBUdCyaHQ8dl0nOLemOpQlz7u
+         Gf+npIyDRkkba6kNAeV7x2QGD7hw4elk8HnNZbxlPy0skFEXtfMSgRvSuQp0rc9B9czS
+         W8/WjR7occHJ5F8cHsUiBkEX7lFSa57vAwk9ncYZjiZpcEhOQaS8pG+cYIjsLacwYyAs
+         Kywv02VmiUs181xJbLi47nqISBoPoSD8AhrGnyL64/uAY9QUgDYUnKAN5riRhvPzTeqv
+         +U/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWnY9eV4ugZrbj6XW21fwitAND1VTRlBke4DAO34DSHs036wH1gkAd5ThK4paF5Negl+Xg9jEVN3BypYZfZMar8Vy+UeR9BDnjIdk6G
+X-Gm-Message-State: AOJu0YwAJ37jegzKgro1lpiNorxP0E16CQQJUSakTDHM1f72pvL+aV6+
+	8CDBl4khOXRSecTJxcGPuu2x1VhnTPEshYuPF0gL8JkLYrVhTGMQLlzvSx14xg==
+X-Google-Smtp-Source: AGHT+IFIhu3GdVi4RmTqJVC1P3RARmFgEfcXYer0ZF+yIp/ekUj9mGEbkpI/lQd4eLxaKU5b1ekuHA==
+X-Received: by 2002:a05:6a20:c896:b0:1c0:f26e:2296 with SMTP id adf61e73a8af0-1c905059c78mr2221508637.48.1723792106317;
+        Fri, 16 Aug 2024 00:08:26 -0700 (PDT)
+Received: from thinkpad ([36.255.17.34])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3e3c74e33sm1058237a91.39.2024.08.16.00.08.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 00:08:45 -0700 (PDT)
-From: Atish Patra <atishp@rivosinc.com>
-Date: Fri, 16 Aug 2024 00:08:09 -0700
-Subject: [PATCH 2/2] RISC-V: KVM: Fix to allow hpmcounter31 from the guest
+        Fri, 16 Aug 2024 00:08:25 -0700 (PDT)
+Date: Fri, 16 Aug 2024 12:38:19 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Stanimir Varbanov <svarbanov@suse.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 06/13] PCI: brcmstb: Use swinit reset if available
+Message-ID: <20240816070819.GK2331@thinkpad>
+References: <20240815225731.40276-1-james.quinlan@broadcom.com>
+ <20240815225731.40276-7-james.quinlan@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240816-kvm_pmu_fixes-v1-2-cdfce386dd93@rivosinc.com>
-References: <20240816-kvm_pmu_fixes-v1-0-cdfce386dd93@rivosinc.com>
-In-Reply-To: <20240816-kvm_pmu_fixes-v1-0-cdfce386dd93@rivosinc.com>
-To: Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Andrew Jones <ajones@ventanamicro.com>
-Cc: kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Atish Patra <atishp@rivosinc.com>
-X-Mailer: b4 0.15-dev-13183
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240815225731.40276-7-james.quinlan@broadcom.com>
 
-The csr_fun defines a count parameter which defines the total number
-CSRs emulated in KVM starting from the base. This value should be
-equal to total number of counters possible for trap/emulation (32).
+On Thu, Aug 15, 2024 at 06:57:19PM -0400, Jim Quinlan wrote:
+> The 7712 SOC adds a software init reset device for the PCIe HW.
+> If found in the DT node, use it.
+> 
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
 
-Fixes: a9ac6c37521f ("RISC-V: KVM: Implement trap & emulate for hpmcounters")
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Signed-off-by: Atish Patra <atishp@rivosinc.com>
----
- arch/riscv/include/asm/kvm_vcpu_pmu.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+- Mani
 
-diff --git a/arch/riscv/include/asm/kvm_vcpu_pmu.h b/arch/riscv/include/asm/kvm_vcpu_pmu.h
-index c309daa2d75a..1d85b6617508 100644
---- a/arch/riscv/include/asm/kvm_vcpu_pmu.h
-+++ b/arch/riscv/include/asm/kvm_vcpu_pmu.h
-@@ -65,11 +65,11 @@ struct kvm_pmu {
- 
- #if defined(CONFIG_32BIT)
- #define KVM_RISCV_VCPU_HPMCOUNTER_CSR_FUNCS \
--{.base = CSR_CYCLEH,	.count = 31,	.func = kvm_riscv_vcpu_pmu_read_hpm }, \
--{.base = CSR_CYCLE,	.count = 31,	.func = kvm_riscv_vcpu_pmu_read_hpm },
-+{.base = CSR_CYCLEH,	.count = 32,	.func = kvm_riscv_vcpu_pmu_read_hpm }, \
-+{.base = CSR_CYCLE,	.count = 32,	.func = kvm_riscv_vcpu_pmu_read_hpm },
- #else
- #define KVM_RISCV_VCPU_HPMCOUNTER_CSR_FUNCS \
--{.base = CSR_CYCLE,	.count = 31,	.func = kvm_riscv_vcpu_pmu_read_hpm },
-+{.base = CSR_CYCLE,	.count = 32,	.func = kvm_riscv_vcpu_pmu_read_hpm },
- #endif
- 
- int kvm_riscv_vcpu_pmu_incr_fw(struct kvm_vcpu *vcpu, unsigned long fid);
+> ---
+>  drivers/pci/controller/pcie-brcmstb.c | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index af14debd81d0..aa21c4c7b7f7 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -266,6 +266,7 @@ struct brcm_pcie {
+>  	struct reset_control	*rescal;
+>  	struct reset_control	*perst_reset;
+>  	struct reset_control	*bridge_reset;
+> +	struct reset_control	*swinit_reset;
+>  	int			num_memc;
+>  	u64			memc_size[PCIE_BRCM_MAX_MEMC];
+>  	u32			hw_rev;
+> @@ -1633,12 +1634,35 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+>  	if (IS_ERR(pcie->bridge_reset))
+>  		return PTR_ERR(pcie->bridge_reset);
+>  
+> +	pcie->swinit_reset = devm_reset_control_get_optional_exclusive(&pdev->dev, "swinit");
+> +	if (IS_ERR(pcie->swinit_reset))
+> +		return PTR_ERR(pcie->swinit_reset);
+> +
+>  	ret = clk_prepare_enable(pcie->clk);
+>  	if (ret)
+>  		return dev_err_probe(&pdev->dev, ret, "could not enable clock\n");
+>  
+>  	pcie->bridge_sw_init_set(pcie, 0);
+>  
+> +	if (pcie->swinit_reset) {
+> +		ret = reset_control_assert(pcie->swinit_reset);
+> +		if (ret) {
+> +			clk_disable_unprepare(pcie->clk);
+> +			return dev_err_probe(&pdev->dev, ret,
+> +					     "could not assert reset 'swinit'\n");
+> +		}
+> +
+> +		/* HW team recommends 1us for proper sync and propagation of reset */
+> +		udelay(1);
+> +
+> +		ret = reset_control_deassert(pcie->swinit_reset);
+> +		if (ret) {
+> +			clk_disable_unprepare(pcie->clk);
+> +			return dev_err_probe(&pdev->dev, ret,
+> +					     "could not de-assert reset 'swinit'\n");
+> +		}
+> +	}
+> +
+>  	ret = reset_control_reset(pcie->rescal);
+>  	if (ret) {
+>  		clk_disable_unprepare(pcie->clk);
+> -- 
+> 2.17.1
+> 
 
 -- 
-2.34.1
-
+மணிவண்ணன் சதாசிவம்
 
