@@ -1,80 +1,74 @@
-Return-Path: <linux-kernel+bounces-290391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F050295533D
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 00:20:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41C49955344
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 00:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A707B1F21CCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:20:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4EE81F222CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BD4145B12;
-	Fri, 16 Aug 2024 22:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E4F145A14;
+	Fri, 16 Aug 2024 22:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nNBUsMgI"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hy3hphux"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490EE145348;
-	Fri, 16 Aug 2024 22:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002D61448E0;
+	Fri, 16 Aug 2024 22:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723846823; cv=none; b=QKvRfg+bv3NXTXMLjfqb2hhLsaH74LKxwJbmYka82oOrqvaAnWYvH8qG5f+jFyTKr5/OPDREc7P4tqO9Z7inblOBuNAVZ2Cy/d7UUpUxGtTx5MAohsU7E+N4HAFxwtfoWkMlrq9ClCNBXONHkxJE7DSsKthzuQ7C7VaTixOmzIU=
+	t=1723846907; cv=none; b=Swj8s8+9ljmBlH761DeANM1yaWoMaVntLd67vr78F+9cLre1wXefU3rzwv28j34jQyvAGFMqkXKuvooXk+1KyMwhQkZPEGHmZVhibrIh8jXRkYKjuMnfZC/hf2KsMWXLvzXRc3okr7v30rfIsKJslQcMbygtYW9E/2QmVKhsVHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723846823; c=relaxed/simple;
-	bh=tiIqd3ZTo0VQlD1ZGjaX6/NkFoCtKN18i8iG4oM/NuQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fXXAtK/uVvJTblKqQnMqVm2USbYJVjnofEOcE0KyFXfrQOiWQhq9uJs1cAHAHH1MrFuD9hrpgeeC1ePlYZsDaI0SCTVRjnMUXFm1n06fSWcHxtRf/REFrIsA8WvgteR5YKdgBfC3UhG6VNAZ0VCsFAASV+NK4pIY9+LSpLAGaDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nNBUsMgI; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=julBlAj/xD2CErpPyxrVQd2GReW019eIF3ipPkI0unw=; b=nNBUsMgISEZeV0Rix+jYbH1VzK
-	mbKx5sGoDkQg8Bipa1Kzv5F2YFqiFyImc/+ZfncgZnuKSP4FDAB7T5RheiTKO1GQUTDUqC5B8S99q
-	J052mznoCJfZc8X9jhz6FX/SDiqh6dBtULcuVk+kZ0rb8gzymR25WXg0zolnQ/jzq5Os=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sf5In-004y96-Lp; Sat, 17 Aug 2024 00:20:09 +0200
-Date: Sat, 17 Aug 2024 00:20:09 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Frank Sae <Frank.Sae@motor-comm.com>
-Cc: hkallweit1@gmail.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, linux@armlinux.org.uk,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yuanlai.cui@motor-comm.com, hua.sun@motor-comm.com,
-	xiaoyong.li@motor-comm.com, suting.hu@motor-comm.com,
-	jie.han@motor-comm.com
-Subject: Re: [PATCH net-next v2 1/2] net: phy: Optimize phy speed mask to be
- compatible to yt8821
-Message-ID: <a34b1141-b104-4f02-a6e6-7cd363b06815@lunn.ch>
-References: <20240816060955.47076-1-Frank.Sae@motor-comm.com>
- <20240816060955.47076-2-Frank.Sae@motor-comm.com>
+	s=arc-20240116; t=1723846907; c=relaxed/simple;
+	bh=WgvoYVzCifcvYTm7L2k4XdMOnnqYb0WGXGPEg/mZ/v8=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=cC0IBxhXK0FLWavwArPRLrQFQfZruMFWYN4dkOxVpyxv6EdTY3OPQDTnKZFjKBJ3T4ZNYVK9BN7PZ6JJtkbO9J08blRc8uIYGClixVnQQozsTJw+BIxnwNmeNgmDejFxxGN3x6PyxM58soFX3I2p0HEgSlsgj4WlP/6pbUngeF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hy3hphux; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B384C32782;
+	Fri, 16 Aug 2024 22:21:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723846906;
+	bh=WgvoYVzCifcvYTm7L2k4XdMOnnqYb0WGXGPEg/mZ/v8=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=hy3hphuxMb54saXn66CHIaJezinIkNWYULZBqley/oeS/hSXmKxatpOAIJkK2LNXH
+	 A/9/u1X6VWBo5yq/1iV4YXOSrg0L6VNxojGRp7w4QUodFIuRXI/iUGwSauJto3gO6I
+	 1jG752fFt9Gm5nzPRBykDKLol1t2yEGlME0Y8AgHVQ77JKIQdHwdyqjW5tM3ginEQX
+	 iNTDEKTwhOuO/NDI89q5az6W8osZTttHhoxjedVtqIaEo50cMpj0wo6wUgpTYrsEPF
+	 vj0mG1oKq3b7a6YWc/nI7CpMbW/nvMPH3EQXaJW4yi8sf09SG0qWYw8UJoLnu77Zyl
+	 hDOZ/nEhHy7Aw==
+Message-ID: <679c72b4ee50f66054a90aebe391b4c9.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240816060955.47076-2-Frank.Sae@motor-comm.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240804-clk-u64-v4-2-8e55569f39a4@nxp.com>
+References: <20240804-clk-u64-v4-0-8e55569f39a4@nxp.com> <20240804-clk-u64-v4-2-8e55569f39a4@nxp.com>
+Subject: Re: [PATCH v4 2/2] clk: clk-conf: support assigned-clock-rates-u64
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>, Michael Turquette <mturquette@baylibre.com>, Peng Fan (OSS) <peng.fan@oss.nxp.com>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>
+Date: Fri, 16 Aug 2024 15:21:44 -0700
+User-Agent: alot/0.10
 
-On Thu, Aug 15, 2024 at 11:09:54PM -0700, Frank Sae wrote:
-> yt8521 and yt8531s as Gigabit transiver use bit15:14(bit9 reserved default
-> 0) as phy speed mask, yt8821 as 2.5G transiver uses bit9 bit15:14 as phy
-> speed mask.
-> 
-> Be compatible to yt8821, reform phy speed mask and phy speed macro.
-> 
-> Signed-off-by: Frank Sae <Frank.Sae@motor-comm.com>
+Quoting Peng Fan (OSS) (2024-08-04 05:32:56)
+> From: Peng Fan <peng.fan@nxp.com>
+>=20
+> i.MX95 System Management Control Firmware(SCMI) manages the clock
+> function, it exposes PLL VCO which could support up to 5GHz rate that
+> exceeds UINT32_MAX. So add assigned-clock-rates-u64 support
+> to set rate that exceeds UINT32_MAX.
+>=20
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
+The patch doesn't compile because of missing slab.h include. I added it
+and applied to clk-next.
 
