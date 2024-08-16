@@ -1,127 +1,104 @@
-Return-Path: <linux-kernel+bounces-289398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B2E9545D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:33:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92ABD9545D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:33:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA74C1C24376
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:33:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 484AB1F29711
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:33:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8F0150990;
-	Fri, 16 Aug 2024 09:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a+tYWzJ6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A40614658C;
-	Fri, 16 Aug 2024 09:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1BF213FD84;
+	Fri, 16 Aug 2024 09:29:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3E313E05C;
+	Fri, 16 Aug 2024 09:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723800496; cv=none; b=s1CDI4eWAUNY6PzU3vx5vjIKZfzFvVeht6xP99lu0+jrO9P5AA7+L10q6ImIGOA00dh1N7oJ/dHrf1fnO8HmrlLn+i4hLdpvsMy4JILcdJd1NhoUTF9ECRReZ046z3/b5fw/5nhRWNwBcz+p90xWiqP0+CRLsi1evzYnuorSqqE=
+	t=1723800553; cv=none; b=GSsRZM7usPveI4BsNNUbxgeWQ37iI8IJnGjl6O9Tf7BugSuzBb/8S2sQ0tCauflbGXvLBmhtlfXScmomda685k3Xc7ujHIgXkQQQHD9eKVyfDpgAFnbMXP146085P/2+CrLoXB4uDe8XNqscPoWdesjP3q277n+ebRrFSIiM7TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723800496; c=relaxed/simple;
-	bh=AuimXfUTiQgApyci6+abdXRJ2G3kLinLtAqHP+vtiPk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TP1+hSfhaXf394QwKxm0iLUXifFXWB+m8BFNLgA1KIhHEhVk2UHmETza4QmJ6nMXgOcxH2OnODrCNKueRagaGTsMUA/8NCeY1tRnB4dCAsBGgJdkGTahYtdkQEPf/BsFKY9N6aQP8iZCD8CNUWrtMScZd4/KYaU4kWRSeXbAT+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a+tYWzJ6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57119C32782;
-	Fri, 16 Aug 2024 09:28:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723800495;
-	bh=AuimXfUTiQgApyci6+abdXRJ2G3kLinLtAqHP+vtiPk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=a+tYWzJ6tCyOsrv+rK0n0tiRTplOM0hRY8xfaS+vB6ljvdezSJ/e51Er8AAF97+pa
-	 vUjXXLX5pqu1UXytAsPgWbewYGE0YAFxRV3jE9L2a+Eli2ZE6Oy3bWWDdRC9ArMHZF
-	 Z+762RedN9sncxqvpQEguuWP/Y0WIm+C2se38ZMZkFKDdaellOmCFywnGlAcCoFT1E
-	 6dBLU24sOEeMbAC3ZDSDizWOSm6Ol0Uw/umHpRM/7GWPiagn37ImyHgrqpf0Qpl97h
-	 N/eSCiJb+VdM46iAeFEEGf5SPqdRtbJCK7rWOGqs5aELDQB4VfAG76NghaHY1Lazbf
-	 T3eZsa4PXXmTg==
-Message-ID: <5f372884-8499-40a8-9c60-5f49b29a1792@kernel.org>
-Date: Fri, 16 Aug 2024 11:28:07 +0200
+	s=arc-20240116; t=1723800553; c=relaxed/simple;
+	bh=SltS1dKKb/LcApjDUP+DakymbXkrn0zHOj37EbtWeBM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cB3DsHtGT+L6BFcGeB7VKN6+rnV6BQap9rhVNnXJrIa0F84X3oAlIq6HaOTARg9DstLCBO6+zeu05aMi79QLHwL1NkFGnZ1AwVbjOMs3/suzQzZQ3hKq1e/KGlQZFkFCAvzcjfO+fS44CJx2uofuFpTJG+kVJiy5fZ85VB81wCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 61898143D;
+	Fri, 16 Aug 2024 02:29:36 -0700 (PDT)
+Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7FF6E3F58B;
+	Fri, 16 Aug 2024 02:29:08 -0700 (PDT)
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org,
+	Cristian Marussi <cristian.marussi@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	james.quinlan@broadcom.com,
+	f.fainelli@gmail.com,
+	vincent.guittot@linaro.org,
+	etienne.carriere@st.com,
+	peng.fan@oss.nxp.com,
+	michal.simek@amd.com,
+	quic_sibis@quicinc.com,
+	quic_nkela@quicinc.com,
+	ptosi@google.com,
+	dan.carpenter@linaro.org,
+	souvik.chakravarty@arm.com
+Subject: Re: [PATCH v4 0/9] Make SCMI transport as standalone drivers
+Date: Fri, 16 Aug 2024 10:29:04 +0100
+Message-ID: <172380049401.784912.12689493595058820686.b4-ty@arm.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240812173340.3912830-1-cristian.marussi@arm.com>
+References: <20240812173340.3912830-1-cristian.marussi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: display: panel-simple: Add On Tat
- Industrial Company KD50G21-40NT-A1
-To: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, daniel@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, thierry.reding@gmail.com, sam@ravnborg.org
-References: <20240816085004.491494-1-victor.liu@nxp.com>
- <20240816085004.491494-2-victor.liu@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240816085004.491494-2-victor.liu@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 16/08/2024 10:50, Liu Ying wrote:
-> Document On Tat Industrial Company KD50G21-40NT-A1 5" WVGA TFT LCD panel.
+On Mon, 12 Aug 2024 18:33:31 +0100, Cristian Marussi wrote:
+> Till now the SCMI transport layer was being built embedded into in the core
+> SCMI stack.
 > 
-> The LCD module specification can be found at:
-> https://cdn-shop.adafruit.com/datasheets/KD50G21-40NT-A1.pdf
+> Some of these transports, despite being currently part of the main SCMI
+> module, are indeed also registered with different subsystems like optee or
+> virtio, and actively probed also by those: this led to a few awkward and
+> convoluted tricks to properly handle such interactions at boot time in the
+> SCMI stack.
 > 
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> ---
->  .../devicetree/bindings/display/panel/panel-simple.yaml         | 2 ++
->  1 file changed, 2 insertions(+)
+> [...]
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Applied to sudeep.holla/linux (for-linux-next), thanks!
 
-Best regards,
-Krzysztof
+[1/9] firmware: arm_scmi: Fix double free in OPTEE transport
+      https://git.kernel.org/sudeep.holla/c/e98dba934b2f
+[2/9] firmware: arm_scmi: Introduce setup_shmem_iomap
+      https://git.kernel.org/sudeep.holla/c/1ebc28e9357c
+[3/9] firmware: arm_scmi: Introduce packet handling helpers
+      https://git.kernel.org/sudeep.holla/c/b6b7c77c988a
+[4/9] firmware: arm_scmi: Add support for standalone transport drivers
+      https://git.kernel.org/sudeep.holla/c/8b76a8c95930
+[5/9] firmware: arm_scmi: Make MBOX transport a standalone driver
+      https://git.kernel.org/sudeep.holla/c/b53515fa177c
+[6/9] firmware: arm_scmi: Make SMC transport a standalone driver
+      https://git.kernel.org/sudeep.holla/c/a41759500b71
+[7/9] firmware: arm_scmi: Make OPTEE transport a standalone driver
+      https://git.kernel.org/sudeep.holla/c/db9cc5e67778
+[8/9] firmware: arm_scmi: Make VirtIO transport a standalone driver
+      https://git.kernel.org/sudeep.holla/c/20bda12a0ea0
+[9/9] firmware: arm_scmi: Remove legacy transport-layer code
+      https://git.kernel.org/sudeep.holla/c/fc789363c9f0
+
+--
+Regards,
+Sudeep
 
 
