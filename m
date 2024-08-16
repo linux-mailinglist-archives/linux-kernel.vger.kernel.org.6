@@ -1,114 +1,133 @@
-Return-Path: <linux-kernel+bounces-289505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF4389546D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:41:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C076D9546DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:42:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFEBC1C221EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:41:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53B8A283ECE
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F61191F74;
-	Fri, 16 Aug 2024 10:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB27C191F83;
+	Fri, 16 Aug 2024 10:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tjmJMktD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NB193JTX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D205113C689;
-	Fri, 16 Aug 2024 10:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA0013C689;
+	Fri, 16 Aug 2024 10:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723804899; cv=none; b=YGheySBNoKXFoWPZwhKTRTe0cuPAhyymwCF5zinv/KWQWBP91kFELMQ9h0AWAL4PYS+IZCIFdEU6TZVK6dErnqXsGYWieVWwA+yZye84T6usriiD8/mBJpmJ/ei8r5TDMwcDEMXSGjP4IbQ4KKhwA5a5ANSbxg5/1zbIVk6ruI8=
+	t=1723804937; cv=none; b=MdYNST8h/GfcIXe0/iShAezR1yFpnnOJ+fyKz6CQUyiq7r2PFCMP+fYlbSbG1kb5bRIIm+tyYvq5AK7VzD2NfTZHfJHS8KrD9aCKYilH7t45a1h8wBEgCbueTQsS99Xk6y0B4AqJhGa26Ln2nYieBeyfYQ3Mj8DazO4N3xjBosk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723804899; c=relaxed/simple;
-	bh=m7F3trX3Iy+tmgN/SeUmcnfUZs8twzxG5ul00EHwQYw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WnQVtuG+b7j8c6APvoJKfQPlbDmeIdmhe2RnGudr4ED4SG4Y69bI1WozYMDLM6YT+HrEZ+ehQh1TqnGdsqPzIgvXgyjQUwK8CMUM0Xq5pn5irbqkmcKifvpL1QPEgtpcZEXa4CRq11uId7qELklUaC6k8bTWZiTtV1pOZ5nToqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tjmJMktD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13D42C32782;
-	Fri, 16 Aug 2024 10:41:35 +0000 (UTC)
+	s=arc-20240116; t=1723804937; c=relaxed/simple;
+	bh=zg3dRit0opyHfuuTVglW5AtRP4DAPWyWCTz/Rq9Op8U=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=evReghtF/PyMWhycixiJ1Y9lhdOP6USlZoILb1Lhw3x212RREC3pNPtkOT8viU1WzgE4xVTxy0VNE7fst7LmcDDpPKtLDP7OBBvxyLbgB/QhUQpoxDMqAy2ycdMxf19SuHh/2DInZmjtQIdAYrM1vAOf9sNUjLWLdRBhHp30H5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NB193JTX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C679C32782;
+	Fri, 16 Aug 2024 10:42:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723804899;
-	bh=m7F3trX3Iy+tmgN/SeUmcnfUZs8twzxG5ul00EHwQYw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tjmJMktDJqlIRAxYHz/45AlfkAdYqkYdbnZFKKXlDkqoKq8yf7tWz4evzWfdQGcHs
-	 hPuC+KR+aBPbtV3Y14+QBxUZku7WWqXMe8TJp+dF5x1ynT6Q51hQ38lUygJmQUyRTd
-	 ARv9EWWlCAK+7hQRfMBefdkeaLZTsYXbUstIHJGLhkHUokQbycHp1UJAXutMgKMrUF
-	 y2khSdAxejyNtaUvirNnHIQgRzpEoOOXy3Bpl8sgX4pmxO/n2+IwJv7Bb0WV3efkGj
-	 A2FyaIw7OnjR8glxZ5xpGABLUx6eYI5LwJUg26MXasHYKZj/eH/1O3wPVchvItcxHS
-	 pHvcTraoy5+mA==
-Date: Fri, 16 Aug 2024 11:41:32 +0100
-From: Will Deacon <will@kernel.org>
-To: Jann Horn <jannh@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH] runtime constants: move list of constants to
- vmlinux.lds.h
-Message-ID: <20240816104132.GB23304@willie-the-truck>
-References: <20240730-runtime-constants-refactor-v1-1-90c2c884c3f8@google.com>
+	s=k20201202; t=1723804936;
+	bh=zg3dRit0opyHfuuTVglW5AtRP4DAPWyWCTz/Rq9Op8U=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=NB193JTXK3JRQ7RSKkOV16g8BU8FoDpFZ9LrZZP3Mr/3BsNpE4kWT2iUeatduZZUe
+	 42iqfmX+LeVxQUsdm8vSGspHkZbszI5FZ3EPXdHy9uQPwn8HkZlPSmKdcwx8DF+wtm
+	 nFt0M7aq8L1mzCPQPuZUhVBGGOjDBOkbMum9ikJr/AVq3DkDb/koO8d8n6IgkN9f59
+	 BexA35uQhGZv4ph6LKZoSbT0wspZgo7Ff6avGvl0r8QC8Apl3M1iwrQYf4L1yhr7W4
+	 bYYTtbhcN8kgzIAFe1rQAe/rM0UYJS0HEr2bRTvySuQwtTKcLGMqksaTknDYo3S8qi
+	 6uwqFaJIb34bw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730-runtime-constants-refactor-v1-1-90c2c884c3f8@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 16 Aug 2024 13:42:13 +0300
+Message-Id: <D3H9ULV1NH4M.1A8EKXWZFTEF2@kernel.org>
+Cc: "Ross Philipson" <ross.philipson@oracle.com>,
+ <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+ <linux-integrity@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-crypto@vger.kernel.org>, <kexec@lists.infradead.org>,
+ <linux-efi@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+ <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+ <dave.hansen@linux.intel.com>, <ardb@kernel.org>, <mjg59@srcf.ucam.org>,
+ <James.Bottomley@hansenpartnership.com>, <peterhuewe@gmx.de>,
+ <jgg@ziepe.ca>, <luto@amacapital.net>, <nivedita@alum.mit.edu>,
+ <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <corbet@lwn.net>,
+ <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
+ <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
+ <trenchboot-devel@googlegroups.com>
+Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
+ early measurements
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Thomas Gleixner" <tglx@linutronix.de>, "Daniel P. Smith"
+ <dpsmith@apertussolutions.com>, "Eric W. Biederman"
+ <ebiederm@xmission.com>, "Eric Biggers" <ebiggers@kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240531010331.134441-1-ross.philipson@oracle.com>
+ <20240531010331.134441-7-ross.philipson@oracle.com>
+ <20240531021656.GA1502@sol.localdomain>
+ <874jaegk8i.fsf@email.froward.int.ebiederm.org>
+ <5b1ce8d3-516d-4dfd-a976-38e5cee1ef4e@apertussolutions.com>
+ <87ttflli09.ffs@tglx>
+In-Reply-To: <87ttflli09.ffs@tglx>
 
-On Tue, Jul 30, 2024 at 10:15:16PM +0200, Jann Horn wrote:
-> Refactor the list of constant variables into a macro.
-> This should make it easier to add more constants in the future.
-> 
-> Signed-off-by: Jann Horn <jannh@google.com>
-> ---
-> I'm not sure whose tree this has to go through - I guess Arnd's?
-> ---
->  arch/arm64/kernel/vmlinux.lds.S   | 3 +--
->  arch/s390/kernel/vmlinux.lds.S    | 3 +--
->  arch/x86/kernel/vmlinux.lds.S     | 3 +--
->  include/asm-generic/vmlinux.lds.h | 4 ++++
->  4 files changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
-> index 55a8e310ea12..58d89d997d05 100644
-> --- a/arch/arm64/kernel/vmlinux.lds.S
-> +++ b/arch/arm64/kernel/vmlinux.lds.S
-> @@ -261,14 +261,13 @@ SECTIONS
->  		*(.init.altinstructions .init.bss)	/* from the EFI stub */
->  	}
->  	.exit.data : {
->  		EXIT_DATA
->  	}
->  
-> -	RUNTIME_CONST(shift, d_hash_shift)
-> -	RUNTIME_CONST(ptr, dentry_hashtable)
-> +	RUNTIME_CONST_VARIABLES
->  
->  	PERCPU_SECTION(L1_CACHE_BYTES)
->  	HYPERVISOR_PERCPU_SECTION
->  
->  	HYPERVISOR_RELOC_SECTION
+On Thu Aug 15, 2024 at 10:10 PM EEST, Thomas Gleixner wrote:
+> On Thu, Aug 15 2024 at 13:38, Daniel P. Smith wrote:
+> > On 5/31/24 09:54, Eric W. Biederman wrote:
+> >> Eric Biggers <ebiggers@kernel.org> writes:
+> >>> That paragraph is also phrased as a hypothetical, "Even if we'd prefe=
+r to use
+> >>> SHA-256-only".  That implies that you do not, in fact, prefer SHA-256=
+ only.  Is
+> >>> that the case?  Sure, maybe there are situations where you *have* to =
+use SHA-1,
+> >>> but why would you not at least *prefer* SHA-256?
+> >>=20
+> >> Yes.  Please prefer to use SHA-256.
+> >>=20
+> >> Have you considered implementing I think it is SHA1-DC (as git has) th=
+at
+> >> is compatible with SHA1 but blocks the known class of attacks where
+> >> sha1 is actively broken at this point?
+> >
+> > We are using the kernel's implementation, addressing what the kernel=20
+> > provides is beyond our efforts. Perhaps someone who is interested in=20
+> > improving the kernel's SHA1 could submit a patch implementing/replacing=
+=20
+> > it with SHA1-DC, as I am sure the maintainers would welcome the help.
 
-Acked-by: Will Deacon <will@kernel.org>
+Git also has a bit more wide than secure launch, and the timeline is
+also completely different. Git maintains legacy, while has also
+introduced SHA-256 support in 2018. This as a new feature in the kernel
+stack.
 
-I'm assuming Arnd will pick this up.
+The purpose of SHA1-DC has obviously been to extend the lifespan, not
+fix SHA-1.
 
-Will
+Linux will be better of not adding anything new related to SHA-1 or
+TPM 1.2. They still have a maintenance cost and I think that time
+would be better spent of for almost anything else (starting from
+taking your trashes out or boiling coffee) ;-)
+
+>
+> Well, someone who is interested to get his "secure" code merged should
+> have a vested interested to have a non-broken SHA1 implementation if
+> there is a sensible requirement to use SHA1 in that new "secure" code,
+> no?
+>
+> Just for the record. The related maintainers can rightfully decide to
+> reject known broken "secure" code on a purely technical argument.
+>
+> Thanks,
+>
+>         tglx
+
+BR, Jarkko
 
