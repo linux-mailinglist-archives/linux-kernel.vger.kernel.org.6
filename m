@@ -1,172 +1,100 @@
-Return-Path: <linux-kernel+bounces-289323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FFB29544E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:53:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8A5C9544E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:55:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 058651F240BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:53:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36E9A1F246D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3509D13D504;
-	Fri, 16 Aug 2024 08:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D21413C90F;
+	Fri, 16 Aug 2024 08:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xWCC/X2T"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mPYfIWi5"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891FA13C3E4
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E11412E1CA;
+	Fri, 16 Aug 2024 08:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723798371; cv=none; b=e1l4GUFTcivyfGlgW5KCp7NDbNFq9NBaCkREnCZQRE8n5KTJoPl4W6coSUQmXZiqwjK/Iqxq2JvHqOCTzsffgv6vqNTTvmWcIPUWD9UmxhBsRKuejy9D6hJ4q57VPCCO5oW22/YpH4NTJMyv1wY2GjyWX8hmDGAtqKM8IBS+nSk=
+	t=1723798498; cv=none; b=ndYSpz+2Hzn7TvdXtSW9fSaRjt2SRgfCjfQVTO1gNw437hD2jDYPqbP6skYg6OVCzbPlDF65GWhfaQ+P90E+rXaxw3hd4DhXOteIEuHTXOoD+jhB1ZfcT1OETJ0WhdUMkqVEBlOrN/yKrl7g9wyEzHFNCRkjW/MRbfJXjljEqWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723798371; c=relaxed/simple;
-	bh=b5VjYZomUq4QLo7azRFOK7rbYbpMDyOD2BeliqnLSEk=;
+	s=arc-20240116; t=1723798498; c=relaxed/simple;
+	bh=WvPNUZCEHPz9cJaVSTq2oelh/edt3sSSDWtHYvoDZ0c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IoaYVb16fmxvItY0KEhLMd3ByMKEq1jBYKdv+zCZA3xevk2tg6g1uxzd0cOPvjvwh9KfcZirBRjzWrZOUbYS+irIy9wckkQWnJJJiUnGs1DtWAYqVD9hwuA3RXGNUceygnklX1NdrgYdRmYoiozpKXfM/9UpMjGt1g6M8cKE838=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xWCC/X2T; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7aabb71bb2so209373066b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 01:52:49 -0700 (PDT)
+	 To:Cc:Content-Type; b=YtE3xHfWhOPwLgwZSn1HIwW6EtY3QoZtfXIYa1oUo4I5CFaktZGGxGNQv/ULmZBU3C4zzgXJM0tN2WQaZF6F7c2Up8UHGFwH8FLNkfi1F6QZtuerUT6HABQUcsIYscF4w5gDf2qhua9Ovdi8yOxWharR3BmNZ2QYy/41qYG+i04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mPYfIWi5; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2d1fe3754f4so1337540a91.1;
+        Fri, 16 Aug 2024 01:54:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723798368; x=1724403168; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=e65/T9qUroc+GcaiwE/lqgYH/wsQj1WvG1P77AhxpUg=;
-        b=xWCC/X2TpwmjIGipfFEpDxv5y1El9y+qODbwZVJ64dgOSQgeeS5Z7VvVZomsvtWBdU
-         T5YylnDciDMHHKv7GRxtmMll06j9S5I5JbTTuB0emU6XJiFuTJctr2fZ16L/iL+XIsqJ
-         +rp9oivjrOg8Zpk8U+W3Dol529jMZuIPiy2p3g8bMBz5l3iGA1mZGEYJ05REljLz+DpY
-         jMit/aBrJHbypMlyS1hu+mmX0tnGVH+NYYBSVhu/z5jczL095mVQ0t32HBeREzEFhGf4
-         q9BUeXFg4jjeV2itzdCjQ86kTc9FwYrTpntSovLSblwcaNl8F7KtT7VWqDFT04wGnErh
-         GT7A==
+        d=gmail.com; s=20230601; t=1723798496; x=1724403296; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WvPNUZCEHPz9cJaVSTq2oelh/edt3sSSDWtHYvoDZ0c=;
+        b=mPYfIWi5LcgIEULDWuttMW6aBNVGCS0rSxwgV5TqMGIudnmrKILleiGFPrKMT4SABP
+         KnggxEr9dq1daZK9O4HTLH7YSJY/ftX5/L5YtysdKvaJGREIzxCZTvn4j6PYKfmC7lCS
+         THwQgO+BN0WwbKSrEg2o2PQhyl+8qUKy8ebFAHZr3wZXPXfwWvqJqqed2Wft5Lmh57xa
+         aO7xvJRBU2O9Em+6NqR151Lk+kofxs6A4KO+1Y6uT/y1YY4aG5NhIY4fjYO8OhTgfSKV
+         BW4NI/HKYWrnVTqq2dnoN3VkPf4tm4kVTxlOLr12TcmG5f+BSz3HBnuEht+tYPLNMhgH
+         iMAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723798368; x=1724403168;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e65/T9qUroc+GcaiwE/lqgYH/wsQj1WvG1P77AhxpUg=;
-        b=I3IcW//Bo1bgQn+We7TZGkwNTWC9+14D6WoxjiplNWVmxXb6MFGex5WiBtDGlpl/TU
-         EUYCOEYaMX3sPxsYNSEv2E6KsUyS9AVL7aeiOKSi/svcLKyB31NV4c3FPH7Lr+OYQQwE
-         izctXVb3a3xmqeU53Z1AyGJeF3iByX4tPAMdZqghDvxc39W/9olLzRtzGAcL88pp+9La
-         HESBfWP6O8YeIcYSoYiV68rUvY5XiAxe02jic2YSIZnBe3SLBDCPGN94BRq8Q3kVmr1W
-         ZAqy93Cfqu/YmqhrEJWNXHhL/cxetfLOTbG86d+nCczy+Gd6FbrllshEAZ3csQPvvKaY
-         CvOw==
-X-Forwarded-Encrypted: i=1; AJvYcCWI0z5Abuc8JOL1gPWqeIbn4vXh2ohdEafMkvaVqsh6IqvMcFxLqFrvm4IVq0Yg2qqXohfvbNufDL1WKYxqv+uoVNEGordbbNfopUHr
-X-Gm-Message-State: AOJu0YwE8YRqT5SwTtrRDsUafkmoD5mD5CyjQR3xaxQkbAnzsgrSgcFQ
-	XUXNKYyYYxBxAN3Hc2AFtxVLjAoGyaafvbedxgePJ0SFlhcNXg3Rqp8tUmq9CzdEIupuxuNnJXc
-	L1rtfkrHX+ajUnz2OE8ZVD16Q3dC4715FGDRLXg==
-X-Google-Smtp-Source: AGHT+IEiGLOupo2idMEIYgeBEEhwpy74x2AZzsa9raRzuh+5+yX/DVQkWeGNuYisVyq0HUy+LQnKGZPFddeuMn+7bKg=
-X-Received: by 2002:a17:907:e25e:b0:a7a:a892:8e0b with SMTP id
- a640c23a62f3a-a8392930f95mr145350566b.19.1723798367668; Fri, 16 Aug 2024
- 01:52:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723798496; x=1724403296;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WvPNUZCEHPz9cJaVSTq2oelh/edt3sSSDWtHYvoDZ0c=;
+        b=nwAvQ4kC1wiA5m+bKpDyQufgc3pNRZ5ZN+gsljproWD8guhTAeivGBBUcVWzoXIcbW
+         GrMT+ULSh1SS9cP92wQIIuMWRChck0R2C+nO5JcYvsoQh8npXP3CzHyZFPm+B43YNtz7
+         ILaXAwwQHGqo7DjVNSDvglnMT+d6dZv4cgmFUsWZaloGcLauNBrXpmKWZjJV/CIImvrg
+         zvJRS1B4Xf/EEHNonziT1+wPXTNmrxMrHTMN+q6Uvb/uPnVm+Q+xyMf7Ib+yCFgx+91c
+         uh+5WKRptyU4PI/1N5NSAY9g5ZDo7gCSD2rVJUXbl9PdeRMHh7H2vUYoJyo1LX2/2yzd
+         FyMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUefukM3cpqaUZZsYyuXkKDipa+zBccXRVobLXaoenewCRZzZfOeFFZClcpZei/a5O2L6KEWXObR+Jj0DsHyuQygcVmKVULpk3K6SmPuFIVisZWdFUPYgGmSvLvKSiz0UbflFfn0CcIOGoHvO+F1ZuITnqFCyI3DKIa1uRCuPp5bIK3BCRvr9e/+w==
+X-Gm-Message-State: AOJu0YwE0d2qPH0+tUiRbpK0HrYdOkP0wPEk7z+q16HLdkrEBKNJ5HKC
+	oPDYPYD16FZs/jWYWFimkJKOgr5jU5CbXkpiGpzRNU3PoNDXQeIWiBTEc+MPq6RXIShpLueOmos
+	noi4lxa3WurvCi/xdB8erJcwmFkPYjJ1Y1H289A==
+X-Google-Smtp-Source: AGHT+IE7yL6G6QasJpooel4RglmlOwxtA9DF7E3JRSEVNLtiI4zHZMP3L5AMXjAgpclhClTu8I2H7q5pVDI74BDsaS0=
+X-Received: by 2002:a17:90a:1f88:b0:2cf:2ab6:a157 with SMTP id
+ 98e67ed59e1d1-2d3dfc682camr2429776a91.12.1723798496317; Fri, 16 Aug 2024
+ 01:54:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815131941.255804951@linuxfoundation.org>
-In-Reply-To: <20240815131941.255804951@linuxfoundation.org>
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Fri, 16 Aug 2024 10:52:35 +0200
-Message-ID: <CADYN=9LRUpKMbBebjkcy3qo3O_1UFevA=x90SGZQ7ja5FXHG3w@mail.gmail.com>
-Subject: Re: [PATCH 5.15 000/484] 5.15.165-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org, Claudio Imbrenda <imbrenda@linux.ibm.com>, linux-s390@vger.kernel.org
+References: <20240815074519.2684107-1-nmi@metaspace.dk> <172373175849.6989.2668092199011403509.b4-ty@kernel.dk>
+ <CANiq72kFXihVGDGmRyuc0LkODYOv2jX3shP-dEHjV3k1sqFEKg@mail.gmail.com> <622e155f-2ad0-4f62-a6a7-c9c88903db82@kernel.dk>
+In-Reply-To: <622e155f-2ad0-4f62-a6a7-c9c88903db82@kernel.dk>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 16 Aug 2024 10:54:43 +0200
+Message-ID: <CANiq72m-o=3FW2ve_GRHrT91go4OMt6tH3oQtOT6UBzwLutiqg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] rust: fix erranous use of lock class key in rust
+ block device bindings
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Andreas Hindborg <nmi@metaspace.dk>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	"Behme Dirk (XC-CP/ESB5)" <Dirk.Behme@de.bosch.com>, linux-block@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 15 Aug 2024 at 15:40, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Thu, Aug 15, 2024 at 6:00=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
 >
-> This is the start of the stable review cycle for the 5.15.165 release.
-> There are 484 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 17 Aug 2024 13:18:17 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.165-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+> Go ahead and take them, I'll just kill the one I have. Thanks!
 
-The following S390 build failed on stable-rc 5.15.y with gcc-12 and clang due
-to following warnings and errors [1].
+Thanks, will do!
 
-s390:
-  build:
-    * gcc-8-defconfig-fe40093d
-    * gcc-12-defconfig
-    * clang-18-defconfig
-
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-Bisect point to 85cf9455e504 ("KVM: s390: pv: avoid stalls when making
-pages secure")
-as the problematic commit [ Upstream commit
-f0a1a0615a6ff6d38af2c65a522698fb4bb85df6 ].
-
-Build log:
-------
-arch/s390/kernel/uv.c: In function 'expected_folio_refs':
-arch/s390/kernel/uv.c:184:15: error: implicit declaration of function
-'folio_mapcount'; did you mean 'total_mapcount'?
-[-Werror=implicit-function-declaration]
-  184 |         res = folio_mapcount(folio);
-      |               ^~~~~~~~~~~~~~
-      |               total_mapcount
-arch/s390/kernel/uv.c:185:13: error: implicit declaration of function
-'folio_test_swapcache' [-Werror=implicit-function-declaration]
-  185 |         if (folio_test_swapcache(folio)) {
-      |             ^~~~~~~~~~~~~~~~~~~~
-arch/s390/kernel/uv.c:187:20: error: implicit declaration of function
-'folio_mapping'; did you mean 'no_idmapping'?
-[-Werror=implicit-function-declaration]
-  187 |         } else if (folio_mapping(folio)) {
-      |                    ^~~~~~~~~~~~~
-      |                    no_idmapping
-arch/s390/kernel/uv.c:189:26: error: invalid use of undefined type
-'struct folio'
-  189 |                 if (folio->private)
-      |                          ^~
-
-
-Build log link:
--------
- [1] https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.15.y/build/v5.15.164-485-g0a33b8afe07a/testrun/24869919/suite/build/test/gcc-12-defconfig/log
-
-metadata:
---------
-* kernel: 5.15.165-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-* git commit: 0a33b8afe07a366222228559e4dd1de564dbdf13
-* git describe: v5.15.164-485-g0a33b8afe07a
-* Test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.15.y/build/v5.15.164-485-g0a33b8afe07a
-* arch: s390
-* toolchain: gcc-12 and clang-18
-* config: https://storage.tuxsuite.com/public/linaro/lkft/builds/2khLvf8Vv5pS66ldvXrSWZd6CHa/config
-* download_url:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2khLvf8Vv5pS66ldvXrSWZd6CHa/
-
---
-Linaro LKFT
-https://lkft.linaro.org
+Cheers,
+Miguel
 
