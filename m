@@ -1,144 +1,96 @@
-Return-Path: <linux-kernel+bounces-289762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABCC3954B65
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:52:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3808954B68
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:53:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E3351F24934
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:52:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0245286AE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A811B9B27;
-	Fri, 16 Aug 2024 13:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8638F1B8EA0;
+	Fri, 16 Aug 2024 13:53:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4iKDHoXK"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n6vdj1Qe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233AC1B583F
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 13:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE1E1E505;
+	Fri, 16 Aug 2024 13:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723816323; cv=none; b=b6QMEjweh3hY79Sc3fNBU497fyK4ZZqJge39Gurc7Wpc00rt982K8aQqMBmDhEMZr+OYgggJmTB+YuEfesrzFB/vTxvSPanNoNqUVT/bP8KzVhZciJNAl6py7XkCrnMosKZHiqS3A4l6XxX2YON6STI18iMV97g13u/tkRTt8n4=
+	t=1723816417; cv=none; b=d8uSCF7vC0xonOcR7iPoRJ18JyzrBIsbA/HUV3uc4UaiF8oaGGkPmM7LpC6r504A+aI+gfcAqQoCUPpeXjOWKp+7w2WnJUdzomQtmrS9ZA0YbFdc0meRxpI7WAguTTTEVcLbRuOFa2PA3PRtVkBtpEofQcn2mT+QV9f58iVV8f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723816323; c=relaxed/simple;
-	bh=0vMnJeItITEKUhZ+4B6u6aLPzmgxLi8GhPQvynlgOeQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=o3vrSlvckwQTt7UNV+1o1PJwgw+dnef7Ao7RUWCjvOFR87HF/rQBShRdeFgr7u0nJOM8pvF8tKqG8j4WLE3mtft/pYRlwJC4X9SqX1MCF/ITISpIw+p/Zv0j7ARRqc/YprZgDwi9c9YxHwea/r2aqIbUZPiJ4jwDXyJ/1uWhD3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4iKDHoXK; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-70d24aead3eso1724386b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 06:52:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723816321; x=1724421121; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1BIM/YN0EFHp0lGV/J6CAgo0gM9QaqgZeNQr3CGSECg=;
-        b=4iKDHoXKZJ47WrKMiK0STaS6i/UpnXZN96uI1sbN0giA2KfJ7+DuVsQyuOpNLitKyb
-         UqUrbzHqWDAaQbSA8mt+nnWu5/w78QrOn1wI7e0+wWQVX86EAuCJbD90sszD7Oc4m4Gv
-         /7lOQLUYsl9JZoPSZKSxJqSkWYE9G/EObA0SSQjjxI/U9ehUrB1o+I4+6s3iLl6AVXVG
-         dRynkg0S1x7j7rm3QQGkhJnxC4566EI+Y85YrhF6dCyc57qD6FEVX8ZfQpUv05syZzXn
-         N2igHw9rhM6/5iZm7u7/VXTGfJYggZBkV7lVizeg6QcqsxzJtOpa5UW69VuYx+6XqcF5
-         tdEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723816321; x=1724421121;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1BIM/YN0EFHp0lGV/J6CAgo0gM9QaqgZeNQr3CGSECg=;
-        b=IRIyx4oHOqBHlSYM4AMuA3XY1P9NMUgDrHbQI2UkCcmLGErNbywTgoUR/2yy85K7Ri
-         YPfCBi8lTdVjF32gyh0PXlGYuCt41aW9hW6gR/Qn8j2miGt5MIRIVgQ0g+UaRj0nPjXn
-         96RcZBy6YTWa2Bj0sdqbs0sL2EnOGEYbuc4uK2GjRQZJmAICEcnpFZpDz9KYLnCK0gE6
-         FTShApZJkV7zFhUqpOlpsTWBWqPyV2fIgT9YC8lL1slbDzTH5fwXmrNp2jkFn8IbnLQh
-         w6bIvRMh2nljaEjVxdZIfdAOEdXKzYB867tx8CcbA6krh9MjSz9TGTvEmPqN+gB953bA
-         y6Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCXytIOVFcGR/524rnZ8+6yoK+LYdcI6Djt+TlolAotCKetBN5EKrzVYkgHRTIk1nae1a5YGwmf3VbIOIvYbLZJsgaR22wNhMPURvxoc
-X-Gm-Message-State: AOJu0YzDAcdTYA8pcJffV+XDc6qcU0jt/nChrg8LCqXZiMOBSGT3ojqJ
-	KgvfcJbj5CkTx9/Bj1/RwcmLDKRjXSiETci2ui5U+knxGkmopaFNtC2ttwQui2zIHS3pXMWiyYF
-	2GA==
-X-Google-Smtp-Source: AGHT+IH8a8qcXJJW+Qp3bJP39BsD1Cyr84EbX9y+L3n28Q1J2pBP/8qUIq8u5YL+mnRxlhFVVdYB1lvysvs=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a62:aa1a:0:b0:70d:2547:44a with SMTP id
- d2e1a72fcca58-713c528e49cmr11004b3a.5.1723816321203; Fri, 16 Aug 2024
- 06:52:01 -0700 (PDT)
-Date: Fri, 16 Aug 2024 06:52:00 -0700
-In-Reply-To: <20240709143906.1040477-12-jacob.jun.pan@linux.intel.com>
+	s=arc-20240116; t=1723816417; c=relaxed/simple;
+	bh=I1cI1Ny0H4g/lNQvAGQgRTIrokQ8aivqsHqBmdZtkDo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=me0mNu7n+8uaJTNjq79u85PoMeK5t3KnQRMvnFdkmGtY9EgdZ5aTPQnEuPnHd01nmrjbixMKAFhMAmyj85C8cPDujHOiFNLUZ9LepoDqzikYC9RUErPyNDbCQc5IaS7NCNvrl305JgVwsJBZQedLAeKl7bf0Ft0mGQ0A+ADviVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n6vdj1Qe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61E0FC32782;
+	Fri, 16 Aug 2024 13:53:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723816417;
+	bh=I1cI1Ny0H4g/lNQvAGQgRTIrokQ8aivqsHqBmdZtkDo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n6vdj1Qe8EJeh7ovIB7iyFJcQaCK5HfYlEQ9XsIKQITWDoRtRuFk/0/hfK3r0/ZDd
+	 cL8JspC0xYQHo95NlSkbij8J/tHt2Yfzs1y9JJ9ifOwfBCi5f1t67rNqVrvXpEMl4t
+	 QLsewN20p7WqfrmTd07QUCBZEfAFl0XsvRfou+wDAz5/V6GbWEH9jUvGp+sm6OGe76
+	 WRv4Gbve+Ku95td0x2FP6S1IhxkMwN6diWBkPk9r6PAk2oQI5JSnG05h+0lnu9eHrs
+	 OmtVF3C/nrAQNzNtj4t3yo7dYtSDf6P8V9TTJSWNJnxYxBaN0K7nc/zMTYGwo/kiQS
+	 0ExjyvSlkXJcQ==
+Date: Fri, 16 Aug 2024 14:53:31 +0100
+From: Will Deacon <will@kernel.org>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: robin.murphy@arm.com, joro@8bytes.org, jgg@nvidia.com,
+	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v11 2/9] iommu/arm-smmu-v3: Enforce
+ arm_smmu_cmdq_build_sync_cmd
+Message-ID: <20240816135331.GA24607@willie-the-truck>
+References: <cover.1722993435.git.nicolinc@nvidia.com>
+ <9e59a460c969357a98b3434ed5007ddf9381899b.1722993435.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240709143906.1040477-1-jacob.jun.pan@linux.intel.com> <20240709143906.1040477-12-jacob.jun.pan@linux.intel.com>
-Message-ID: <Zr9ZgDIhUEzUlOFa@google.com>
-Subject: Re: [PATCH v4 11/11] KVM: X86: Use common code for PV IPIs in linux guest
-From: Sean Christopherson <seanjc@google.com>
-To: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: X86 Kernel <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Dave Hansen <dave.hansen@intel.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Xin Li <xin3.li@intel.com>, linux-perf-users@vger.kernel.org, 
-	Peter Zijlstra <peterz@infradead.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Tony Luck <tony.luck@intel.com>, Andy Lutomirski <luto@kernel.org>, acme@kernel.org, 
-	kan.liang@linux.intel.com, Andi Kleen <andi.kleen@intel.com>, 
-	Nikolay Borisov <nik.borisov@suse.com>, Sohil Mehta <sohil.mehta@intel.com>, 
-	Zeng Guang <guang.zeng@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9e59a460c969357a98b3434ed5007ddf9381899b.1722993435.git.nicolinc@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-"x86/kvm:" for the scope.  "KVM: x86:" is for host-side KVM, this is guest code.
-
-On Tue, Jul 09, 2024, Jacob Pan wrote:
-> The paravirtual APIC hooks in KVM, some of which are used for sending PV
-> IPIs, can reuse common code for ICR preparation. This shared code also
-> encompasses NMI-source reporting when in effect.
-
-Please state what the patch actually does, not what it can do.  For folks that
-aren't intimately familiar with FRED (read: me), that second sentence in particular
-is wildly unhelpful.  I had to download yet another version of the FRED spec, and
-decipher the poorly documented software-defined encoding scheme introduced by this
-series just to understand what this patch does.
-
-And the order of patches in this series is broken.  Overloading the vector *before*
-switching the PV IPI code to __prepare_ICR() will result in KVM sending garbage
-to the host.  I.e. _all_ IPI implementations need to be made safe before the NMI
-source reporting code can be introduced.
-
-> Originally-by: Zeng Guang <guang.zeng@intel.com>
-> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> ---
-> v4: Refine comments, no functional change.
-> ---
->  arch/x86/kernel/kvm.c | 10 +---------
->  1 file changed, 1 insertion(+), 9 deletions(-)
+On Tue, Aug 06, 2024 at 07:11:47PM -0700, Nicolin Chen wrote:
+> There is an existing arm_smmu_cmdq_build_sync_cmd() so the driver should
+> call it at all places other than going through arm_smmu_cmdq_build_cmd()
+> separately. This helps the following patch that adds a CS_NONE option.
 > 
-> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> index 263f8aed4e2c..a45d60aa0302 100644
-> --- a/arch/x86/kernel/kvm.c
-> +++ b/arch/x86/kernel/kvm.c
-> @@ -516,15 +516,7 @@ static void __send_ipi_mask(const struct cpumask *mask, int vector)
->  
->  	local_irq_save(flags);
->  
-> -	switch (vector) {
-> -	default:
-> -		icr = APIC_DM_FIXED | vector;
-> -		break;
-> -	case NMI_VECTOR:
-> -		icr = APIC_DM_NMI;
-> -		break;
-> -	}
-> -
-> +	icr = __prepare_ICR(0, vector, 0);
+> Note that this changes the type of CMD_SYNC in __arm_smmu_cmdq_skip_err,
+> in ARM_SMMU_OPT_MSIPOLL=true case, from previously a non-MSI one to now
+> an MSI one that is proven to still work using a hacking test:
+>   nvme: Adding to iommu group 10
+>   nvme: --------hacking-----------
+>   arm-smmu-v3: unexpected global error reported (0x00000001),
+>                this could be serious
+>   arm-smmu-v3: CMDQ error (cons 0x01000022): Illegal command
+>   arm-smmu-v3: skipping command in error state:
+>   arm-smmu-v3:  0x0000000000000000
+>   arm-smmu-v3:  0x0000000000000000
+>   nvme: -------recovered----------
+>   nvme nvme0: 72/0/0 default/read/poll queues
+>    nvme0n1: p1 p2
 
-Rather than force KVM to throw in junk dest+shorthand, what about adding a
-__prepare_ICR_vector()?  Then KVM doesn't need to arbitrarily pass zeroes, and
-even __prepare_ICR() itself benefits (IMO), e.g. this is nice and easy to read:
+Hmm, I'm still a little wary of this. The only reason we emit a CMD_SYNC
+in __arm_smmu_cmdq_skip_err() is because the SMMU doesn't have a NOP
+command. So I'd really like the SYNC to have as little functionality
+as possible in this case.
 
-static inline unsigned int __prepare_ICR(unsigned int shortcut, int vector,
-					 unsigned int dest)
-{
-	return shortcut | dest | __prepare_ICR_vector(vector);
-}
+I think we could either propapate the 'cs' field down to
+arm_smmu_cmdq_build_cmd() or just open-code the command-creation in
+__arm_smmu_cmdq_skip_err().
+
+Will
 
