@@ -1,53 +1,58 @@
-Return-Path: <linux-kernel+bounces-290302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AA0F9551FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:45:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D34C5955201
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 22:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB117286923
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:45:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C92D1F24082
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BC513A899;
-	Fri, 16 Aug 2024 20:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DC41BF339;
+	Fri, 16 Aug 2024 20:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m25jHj7Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVD/b/AU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B800A8063C;
-	Fri, 16 Aug 2024 20:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 645BE12A177;
+	Fri, 16 Aug 2024 20:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723841119; cv=none; b=fShhbxARYevDQLrkt2o/HBQ0Lry8FppMtXaQQdx61+Up16XwHmuoksZwmzFasTwiD3brkomG3RlaeHarrv8jO3loZo/nuSKYcdCEAltKiYxNly79T+/59X4LxI7liymxT5DbdHsWzkS/+0etyj4NrWj18P6Un7KDosPhnHHNRfM=
+	t=1723841142; cv=none; b=lYaHWguifTU5D5L3nbYLu20pHZ9xV5mvOZ2RFyisx7zx5y7Wnm9IxPWa2uHlgGrbE5UZVZTd4nSkuQjW4EC091fAmU56TET1qmKY9wj5wQZJAOUwronrUvvWYl8fzf+zv/Io0amD/PY++oQEeOXeBZxQiSEGPotYDKP0NgiZOeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723841119; c=relaxed/simple;
-	bh=N/JyokGH+tPr2BMzeR+H499TQsBvQFqmDh7BFpQM2co=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=myC2zp5FTMr3EJjT9vSoVycoiHQ9qF6i2I/BVArTQlc1t4hD4PWJKa+1MSge4uRXk9fodcwGEPvp9GFrhGpqhPNh+vpkp9BYwgtBfwEsUkD/nc86uPrWhxY+y9BDzHxOGUBexeoH/LlV8lMAUpETkuGuzoKKyz/sWXz9y5THXZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m25jHj7Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07F75C32782;
-	Fri, 16 Aug 2024 20:45:18 +0000 (UTC)
+	s=arc-20240116; t=1723841142; c=relaxed/simple;
+	bh=oey1uJwMO65z17ZUgy7+gOJgyBWHGuTpjRJ7SJ+e0ds=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=TJDTXobiyafsJqzEIutsSu8mUdpAWUyzTfK+t6vLSPcU8D58+oR5L1ea2WkggB7UNb5vj3SRzwGb409U8wBZ6o/IGLjrV+ikdeo7Re6oFRAARaQzknPAf68Or6O0Fiao0IS0LChdWHxhA5dgmRBlve6M2WNmhGAT9uJ4ApbC5jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iVD/b/AU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9797CC32782;
+	Fri, 16 Aug 2024 20:45:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723841119;
-	bh=N/JyokGH+tPr2BMzeR+H499TQsBvQFqmDh7BFpQM2co=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m25jHj7YDUN2OC6zQnru9WMygOq1Ip1iWJJ3FCGHwHn/MqND6xcxFTkBJNBVssmNs
-	 gSNX7Pab+3mmF088QAAbrFOItbCktrSoaWixa1bD3S9CcenINLurwMorAqARrSY4y6
-	 tqR98wnGJ8EK6kApoP//31gSBhj73/7FG7dF3j3/zMcCOSSY5zvsBl0AQs22l33wmd
-	 tRQ5nMSoBfgr8ORCW9XJUnPVz/9HiW9+PlExRywDcro2Vt7nraICdJyX13SC42MkDt
-	 YLeWCer2kf7tcfdzkFOj5HEdkc80WKIZaL0V+jHIad1CRu10Q6LNeEKKWxvir070oD
-	 mnDzcxMUFy86w==
-Date: Fri, 16 Aug 2024 13:45:17 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nicolas Schier <nicolas@fjasle.eu>
-Subject: Re: [PATCH v2] modpost: simplify modpost_log()
-Message-ID: <20240816204517.GB3870443@thelio-3990X>
-References: <20240816134443.1183732-1-masahiroy@kernel.org>
+	s=k20201202; t=1723841141;
+	bh=oey1uJwMO65z17ZUgy7+gOJgyBWHGuTpjRJ7SJ+e0ds=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=iVD/b/AU/aVSErTcqPQk5uiFdEzaEfwj0ij/p0yeOSMopt2jzn8AWwi2nyk0+M82Y
+	 GV//N5U0+9YNyyf0E2pzaxpTC86QBFSQnIrGmW1pV9Z2gCIRtU2sEqN1cZScrROh2Y
+	 pZojj1FvGhS1SNJ/PPSR6BuCXkQicZzwxq9/T3eLPaZQzbuClzgZ+CPCE6Y3rPhhS3
+	 kGnA1RDtBOE2IgIgvSv8QFIYFjsDApm6hdI87BM6cw0UXbC48RHvOUvq1HFMLTVu7Y
+	 IMLEIA8uSI2cmcNJNDXsffs3NE3g3pXasmOE8oSVl0dWHYnWJ4p93eiLrbEtGa5mKq
+	 CTbnLZn/PvhFA==
+Date: Fri, 16 Aug 2024 15:45:39 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	quic_vbadigan@quicinc.com, quic_ramkri@quicinc.com,
+	quic_nitegupt@quicinc.com, quic_skananth@quicinc.com,
+	quic_parass@quicinc.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Mayank Rana <quic_mrana@quicinc.com>,
+	Markus Elfring <Markus.Elfring@web.de>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v4] PCI: Enable runtime pm of the host bridge
+Message-ID: <20240816204539.GA73302@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,102 +61,114 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240816134443.1183732-1-masahiroy@kernel.org>
+In-Reply-To: <20240708-runtime_pm-v4-1-c02a3663243b@quicinc.com>
 
-On Fri, Aug 16, 2024 at 10:44:29PM +0900, Masahiro Yamada wrote:
-> With commit cda5f94e88b4 ("modpost: avoid using the alias attribute"),
-> only two log levels remain: LOG_WARN and LOG_ERROR. Simplify this by
-> making it a boolean variable.
+[+cc Rafael, Mayank, Markus (when people have commented on previous
+versions, please cc them on new versions).  I'm still hoping Rafael
+will have a chance to chime in]
+
+On Mon, Jul 08, 2024 at 10:19:40AM +0530, Krishna chaitanya chundru wrote:
+> The Controller driver is the parent device of the PCIe host bridge,
+> PCI-PCI bridge and PCIe endpoint as shown below.
 > 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+>         PCIe controller(Top level parent & parent of host bridge)
+>                         |
+>                         v
+>         PCIe Host bridge(Parent of PCI-PCI bridge)
+>                         |
+>                         v
+>         PCI-PCI bridge(Parent of endpoint driver)
+>                         |
+>                         v
+>                 PCIe endpoint driver
+> 
+> Now, when the controller device goes to runtime suspend, PM framework
+> will check the runtime PM state of the child device (host bridge) and
+> will find it to be disabled.
 
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+I guess "will find it to be disabled"  means the child (host bridge)
+has runtime PM disabled, not that the child device is disabled, right?
 
+> So it will allow the parent (controller
+> device) to go to runtime suspend. Only if the child device's state was
+> 'active' it will prevent the parent to get suspended.
+
+Can we include a hint like the name of the function where the PM
+framework decides this?  Maybe this is rpm_check_suspend_allowed()?
+
+rpm_check_suspend_allowed()  checks ".ignore_children", which sounds
+like it could be related, and AFAICS .ignore_children == false here,
+so .child_count should be relevant.
+
+But I'm still confused about why we can runtime suspend a bridge that
+leads to devices that are not suspended.
+
+> Since runtime PM is disabled for host bridge, the state of the child
+> devices under the host bridge is not taken into account by PM framework
+> for the top level parent, PCIe controller. So PM framework, allows
+> the controller driver to enter runtime PM irrespective of the state
+> of the devices under the host bridge. And this causes the topology
+> breakage and also possible PM issues like controller driver goes to
+> runtime suspend while endpoint driver is doing some transfers.
+
+What does "topology breakage" mean?  Do you mean something other than
+the fact that an endpoint DMA might fail if the controller is
+suspended?
+
+> So enable runtime PM for the host bridge, so that controller driver
+> goes to suspend only when all child devices goes to runtime suspend.
+
+IIUC, the one-sentence description here is that previously, the PCI
+host controller could be runtime suspended even while an endpoint was
+active, which caused DMA failures.  And this patch changes that so the
+host controller is only runtime suspended after the entire hierarchy
+below it is runtime suspended?  Is that right?
+
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> ---
+> Changes in v4:
+
+(Note: v4 applies cleanly to v6.10-rc1 and to v6.11-rc1 with a small
+offset).
+
+> - Changed pm_runtime_enable() to devm_pm_runtime_enable() (suggested by mayank)
+> - Link to v3: https://lore.kernel.org/lkml/20240609-runtime_pm-v3-1-3d0460b49d60@quicinc.com/
+> Changes in v3:
+> - Moved the runtime API call's from the dwc driver to PCI framework
+>   as it is applicable for all (suggested by mani)
+> - Updated the commit message.
+> - Link to v2: https://lore.kernel.org/all/20240305-runtime_pm_enable-v2-1-a849b74091d1@quicinc.com
+> Changes in v2:
+> - Updated commit message as suggested by mani.
+> - Link to v1: https://lore.kernel.org/r/20240219-runtime_pm_enable-v1-1-d39660310504@quicinc.com
 > ---
 > 
-> Changes in v2:
->  - Fix reversed logics
+> ---
+>  drivers/pci/probe.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
->  scripts/mod/modpost.c | 17 ++++++-----------
->  scripts/mod/modpost.h | 11 +++--------
->  2 files changed, 9 insertions(+), 19 deletions(-)
-> 
-> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> index 3e474291258c..a27d1b5ce3c6 100644
-> --- a/scripts/mod/modpost.c
-> +++ b/scripts/mod/modpost.c
-> @@ -67,20 +67,15 @@ static unsigned int nr_unresolved;
->  
->  #define MODULE_NAME_LEN (64 - sizeof(Elf_Addr))
->  
-> -void modpost_log(enum loglevel loglevel, const char *fmt, ...)
-> +void modpost_log(bool is_error, const char *fmt, ...)
->  {
->  	va_list arglist;
->  
-> -	switch (loglevel) {
-> -	case LOG_WARN:
-> -		fprintf(stderr, "WARNING: ");
-> -		break;
-> -	case LOG_ERROR:
-> +	if (is_error) {
->  		fprintf(stderr, "ERROR: ");
->  		error_occurred = true;
-> -		break;
-> -	default: /* invalid loglevel, ignore */
-> -		break;
-> +	} else {
-> +		fprintf(stderr, "WARNING: ");
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index 8e696e547565..fd49563a44d9 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -3096,6 +3096,10 @@ int pci_host_probe(struct pci_host_bridge *bridge)
 >  	}
 >  
->  	fprintf(stderr, "modpost: ");
-> @@ -1697,7 +1692,7 @@ static void check_exports(struct module *mod)
->  		exp = find_symbol(s->name);
->  		if (!exp) {
->  			if (!s->weak && nr_unresolved++ < MAX_UNRESOLVED_REPORTS)
-> -				modpost_log(warn_unresolved ? LOG_WARN : LOG_ERROR,
-> +				modpost_log(!warn_unresolved,
->  					    "\"%s\" [%s.ko] undefined!\n",
->  					    s->name, mod->name);
->  			continue;
-> @@ -1720,7 +1715,7 @@ static void check_exports(struct module *mod)
->  			basename = mod->name;
->  
->  		if (!contains_namespace(&mod->imported_namespaces, exp->namespace)) {
-> -			modpost_log(allow_missing_ns_imports ? LOG_WARN : LOG_ERROR,
-> +			modpost_log(!allow_missing_ns_imports,
->  				    "module %s uses symbol %s from namespace %s, but does not import it.\n",
->  				    basename, exp->name, exp->namespace);
->  			add_namespace(&mod->missing_namespaces, exp->namespace);
-> diff --git a/scripts/mod/modpost.h b/scripts/mod/modpost.h
-> index f756e6578b9e..6f418f0afd04 100644
-> --- a/scripts/mod/modpost.h
-> +++ b/scripts/mod/modpost.h
-> @@ -184,13 +184,8 @@ char *read_text_file(const char *filename);
->  char *get_line(char **stringp);
->  void *sym_get_data(const struct elf_info *info, const Elf_Sym *sym);
->  
-> -enum loglevel {
-> -	LOG_WARN,
-> -	LOG_ERROR,
-> -};
-> -
->  void __attribute__((format(printf, 2, 3)))
-> -modpost_log(enum loglevel loglevel, const char *fmt, ...);
-> +modpost_log(bool is_error, const char *fmt, ...);
->  
->  /*
->   * warn - show the given message, then let modpost continue running, still
-> @@ -205,6 +200,6 @@ modpost_log(enum loglevel loglevel, const char *fmt, ...);
->   * fatal - show the given message, and bail out immediately. This should be
->   *         used when there is no point to continue running modpost.
->   */
-> -#define warn(fmt, args...)	modpost_log(LOG_WARN, fmt, ##args)
-> -#define error(fmt, args...)	modpost_log(LOG_ERROR, fmt, ##args)
-> +#define warn(fmt, args...)	modpost_log(false, fmt, ##args)
-> +#define error(fmt, args...)	modpost_log(true, fmt, ##args)
->  #define fatal(fmt, args...)	do { error(fmt, ##args); exit(1); } while (1)
+>  	pci_bus_add_devices(bus);
+> +
+> +	pm_runtime_set_active(&bridge->dev);
+> +	devm_pm_runtime_enable(&bridge->dev);
+> +
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(pci_host_probe);
+> 
+> ---
+> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+> change-id: 20240708-runtime_pm-978ccbca6130
+> 
+> Best regards,
 > -- 
-> 2.43.0
+> Krishna chaitanya chundru <quic_krichai@quicinc.com>
 > 
 
