@@ -1,228 +1,118 @@
-Return-Path: <linux-kernel+bounces-290198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4A859550A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:16:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 168939550A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 20:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C275287967
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:16:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C69FA287A7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3931C37B3;
-	Fri, 16 Aug 2024 18:15:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A06F1C460F;
+	Fri, 16 Aug 2024 18:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YFOaKbqd"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2085.outbound.protection.outlook.com [40.107.94.85])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVycFNK8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62AC81C2329;
-	Fri, 16 Aug 2024 18:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723832155; cv=fail; b=mVjzd4zybcWw6wYoiSSksJFNwT9Ti2x4Kxi7DCk7QsvqKWSl4CX1eBBgWfv2yJ6wUJgUdgqEGJE1HvAvQ+Xc9MF4B2UBKDDRWN/EdX/4lfdcWGNJ43edvEE2LfXZ7RtBth/yZYsm9MwoLu7P8XrSoqOt/FRFca9F90BmSJ6BQDM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723832155; c=relaxed/simple;
-	bh=nCha+yEtvSsHSvHJIdMdq6j4aU7mkwQHMLrVnhtfXkU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=be91zMze/ZDcVLzkOcGobsM1u1h9aSEuMRbhSE6sZZTzOfVEOVx14sKmtOWdS7s1GyGlZgOB32FwdWUUjVPjow/D5Ngh6A3GmTDKh7w2rSewXttEV7s6uu8DCDE5cnxIATEY0oR5wR/I0AwN9xl86FL1yAUDnlBNVqDUJvyXdXA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YFOaKbqd; arc=fail smtp.client-ip=40.107.94.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TdLBkaKGm6prpr0VTgt1Ld5kN9nuyDXA16cSR6HT76LXtcLirxZTGuqV1OvOmIyTW7RI6cCUBrUEQJJkTmtkyjjIQ6r9G0veotclddzPvx9tLb8DSd93LK3vCv1eIT+Ib3bjkq35H/3zik7rAptea/0/DZ2SqbkSy8JhFixdj3hE0b/CHzcoSkNdWpS0WnS/EoDJGL8sNg++NM9UUiz+E3AZDWXNvKCiNQb6tEZIxeUYjxZ220pgaYpojmf6eLUj3Xaqft+Owk9zNkvmcKqq4KUxfoG+qhXzmrV3T1zNqMTPDU1Hjv/ZaAHkdqahQAReTbbU04Mreoxt5Uv7kFEX4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mBBFdNcoaThaSVRn01Ez4JInw2KWWyI7jAru1xrdyrE=;
- b=UQnJNgAsoSSGrjNlsH0NTsbO2xgNVINzTGY12P1qzKQc1yEpfFrdDLJJ1yjl17I6Weq3pMGe1/FJb8LsdreuEiFk+IEMCn8gYQzXbC1n/tDVsgCTxjpzgRdipqJheXOsxLIxe+hMnNd3b+nbdEwfSzajZyp3uFv9dLtkl1UDjCNXGb9MHVt5Mtobyh+60CbEGHYB2Ow+mfSKKjZJmMZM4nMsy3znsmhDjL7fmt/jv6W0H+wAvkTZdaJBTAM1wvX5hDCSVfegnE8fm72h6RDVfXLFSKXy6jDoyp5TBYnZ4WdGgRdxGUSBpLsd0+fd+/ticCRALaMfeoLDcdE41ADRmQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mBBFdNcoaThaSVRn01Ez4JInw2KWWyI7jAru1xrdyrE=;
- b=YFOaKbqd18JV1+Ct1utlvLNmbEO5xv2s3SNhUpFMLT/CUK/kVWnd9ImfbTEuSH2ulF7He21Am2THkngsiVrMFURjyUe1rFBeNtxLVD2rnssFS1g07a/J+zK/sZhJQTeoNeBlZ+aoOm57Cpfn9Q2rjBzWa+S3GRCtMcnB6eRgccP3uROSM2U0Wfj5cGlQwryya90nKKVX8Hvp1F+wVSeihtHEZE8V5/tA+cACsG+Mu5YCZEtIEDHtnyhUsdXIOw/LsEwUqCtBaFCGl3PFAnhM0U6G9zpGQfbO0d7of+fOBmKDzj41I7jDwONNXMuakQeQ+IU0EDguxkz4IDIevmeHAg==
-Received: from CH2PR08CA0024.namprd08.prod.outlook.com (2603:10b6:610:5a::34)
- by DS0PR12MB6415.namprd12.prod.outlook.com (2603:10b6:8:cc::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Fri, 16 Aug
- 2024 18:15:49 +0000
-Received: from CH2PEPF0000013B.namprd02.prod.outlook.com
- (2603:10b6:610:5a:cafe::f9) by CH2PR08CA0024.outlook.office365.com
- (2603:10b6:610:5a::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.23 via Frontend
- Transport; Fri, 16 Aug 2024 18:15:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- CH2PEPF0000013B.mail.protection.outlook.com (10.167.244.68) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7849.8 via Frontend Transport; Fri, 16 Aug 2024 18:15:48 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 16 Aug
- 2024 11:15:32 -0700
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 16 Aug 2024 11:15:31 -0700
-Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Fri, 16 Aug 2024 11:15:31 -0700
-Date: Fri, 16 Aug 2024 11:15:29 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Will Deacon <will@kernel.org>
-CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <jgg@nvidia.com>,
-	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v11 9/9] iommu/tegra241-cmdqv: Limit CMDs for guest owned
- VINTF
-Message-ID: <Zr+XQfzje2YWIOEo@Asurada-Nvidia>
-References: <cover.1722993435.git.nicolinc@nvidia.com>
- <153fb887cf4bf6318c6f313a4be9b40a25a24e7d.1722993435.git.nicolinc@nvidia.com>
- <20240816132103.GA24411@willie-the-truck>
- <Zr+Nmq6LyrBTY6eR@Asurada-Nvidia>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964351BF32C;
+	Fri, 16 Aug 2024 18:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723832163; cv=none; b=fdMr68sdHmZuqOcqYyOvLAq6CxSgDj7dAvoub6Ur/pnd8N2VFZWuX1MEKypGtG695+qDt3lglY0rY+qKKMEW9M+30jgxHqKIB0HYO1usCN+EM54dnRrXeYTLTcD/2WlVCCO+Fwc8NsI019SWGsYO0T8usCx5dkBDjaplcqFBK3A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723832163; c=relaxed/simple;
+	bh=s13dFs+2zXKyXsfVO3/wT4TtdOpwfmNUKmCcTjIlGKk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tzKA3BQG5yxv1Xghpt2C/cicjeGYwSF7sHAh+M/aiChkG3N3Zatj6megne5ToqphUMlbkB9ftFOEJwF8H3P9EOdmkI3Xvkk2WZ8M5VyeLUCgrnFUfn6kmXXt2JiStWkFyfWywW/W1b1lxExBcPcdDDUvjjn5ekACUWoCZnlYDUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SVycFNK8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE8D2C32782;
+	Fri, 16 Aug 2024 18:15:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723832163;
+	bh=s13dFs+2zXKyXsfVO3/wT4TtdOpwfmNUKmCcTjIlGKk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=SVycFNK8rNFB0ited7aUBZ0GFv7uMM71RSmL1X5INtj3zCzCRMYN1QeoKCdFzjsXD
+	 FnbjCxDyHEl0OPq2vxraMuW8Jm7E8rt2aeuiP66KirlMHtdNFCzDeHQ7GEPGiMkz6y
+	 /5bCKgosMJrg8TbifmyX0V7zh67Cf2Jy4lj9r5J+ikOFitL8yTr1uAClQau9Yw2G7q
+	 poUuD9sVbFBikHvvIOgA7DPWvSgO9a1RIO/iDoDGNg4dPPS/Izolqlbdg6mdhXN31V
+	 6bid/Mia8aQnTkHNgPgeCAqtkQ4PUSPK6nnLa3qtWMyQjY2WYYNNmqzkhrEFKYbZlZ
+	 FEUgrKWz9sLxQ==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Zixing Liu <zixing.liu@canonical.com>,
+	William Grant <wgrant@ubuntu.com>,
+	Kees Cook <kees@kernel.org>
+Subject: [RFC PATCH] docs: rust: quick-start: add Ubuntu
+Date: Fri, 16 Aug 2024 20:15:45 +0200
+Message-ID: <20240816181545.45789-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <Zr+Nmq6LyrBTY6eR@Asurada-Nvidia>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000013B:EE_|DS0PR12MB6415:EE_
-X-MS-Office365-Filtering-Correlation-Id: a4665b36-2e0e-4404-cef1-08dcbe1f74b0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?eeF59Za3Uej4GZ4L37h/1c+5yir4rOhFesmzqYUQ3ntkHtVqdsWeEZmAVlya?=
- =?us-ascii?Q?jgv3wcTMq7kyQlpkpvGw7HVco7eMSAcxcan50xqYmX4KjZPVOIQGcqsMtH9x?=
- =?us-ascii?Q?LA2Oy0QY0wkjG/tvof2b85PcBac88GKhE4L9uE9Le1dCysrxU9wYeqPws3MM?=
- =?us-ascii?Q?TkamC6e6CCu0HRrB32ld6f2Uyb9AZSaVJhp3meCSbz7Mso4sDAzb718dLy5K?=
- =?us-ascii?Q?2aZDr2OnONU0kZArdHMsdkUI8rF0JGCkBmc3cnSPQvumyJKEX2kvcySFq1W7?=
- =?us-ascii?Q?8leUcyeB4zIk+p4n2p8EcInBbSug9X89SIAL/TcOSKY6OtO5hwr20S6Ud6Ma?=
- =?us-ascii?Q?gV6B3D4RlhGv2hwNbUedUp+vWoqNShsgppnByGxOW8qakKcYDOww6IaFhsa3?=
- =?us-ascii?Q?zNHCh943MbfYl89TsVRYWn2mBWTHPprRw1Lw9OJcaheD0tioozyQoU0C0HqU?=
- =?us-ascii?Q?+d+6p1sQGpeNVg+l65NqsdFK/zffZtK9n9cU+QHKLXPaCqUT3ls78cyq2MIN?=
- =?us-ascii?Q?vXixKwa/wPs/eVVovVDbvTkdUBhj/HGXpurd5lRIkmtn9XcerJZDzj3CGilG?=
- =?us-ascii?Q?4J+3KofgOAuGbPlHJ8uUnJVhHponW0f3T3J3liSDOaHwbnwFP7bFyEU72HOt?=
- =?us-ascii?Q?aXvWyZbvucSpMLSssjMwoyNxXzE6iil6fvGqQpud+H8/6EHG1pmZZrlZGmND?=
- =?us-ascii?Q?9cJbe4GzoHWahRENgAxckhGosq25ChGFGJA1H5jYivvmkAD6A8Wk/gbxcwqY?=
- =?us-ascii?Q?Z/LzzC1qjnheIoH2VnXUzEvmMaLqmdrrHX0rAe823QK/ffDhc4p8c83aXWpF?=
- =?us-ascii?Q?PuxOTwnqDSg2MmR82Zt7Py9Jc6l/w+B3KOhWX+AVlu97Q9ZTr7o/7RVO3sNv?=
- =?us-ascii?Q?brmguLxYIkifYoXAQUMnKle68lXbUo0gQnI7p0LSW0BGnw0kKXDvNYB8UBn8?=
- =?us-ascii?Q?rYfLyYYRgiT5POZy02ExN1+gbDrCFshKaiHQEN8MCSDC7nQ0MIvtTf7oY6nL?=
- =?us-ascii?Q?nFH3qaFOm8ZTR9L7ddZrbm4epz5KbPaZNcWN01U3P8tZuCOei2kZFdl4L3jC?=
- =?us-ascii?Q?v0TSFlQ9qb4a8oth8EtedMkslXtaSNc34zcy5omi8kU1qLN973FM/WQLRX57?=
- =?us-ascii?Q?6RMO86/7Fo47gSV415JzQx32HfWOsOx2BYcrudDJrx+kn6rPAaafPXnCo/VP?=
- =?us-ascii?Q?UtqZ6lu11eJI3tE6r/s4wgBV7LwWarAvKRuU90drECN2CPBwPjDmwRCVWXVM?=
- =?us-ascii?Q?Ni7cy9HU1hTHipsfXoSCOCP6AKN1h1+ruwdUC5hmTmLzNt9QcdZBmBEfIxRx?=
- =?us-ascii?Q?OuqOZA0dUuvW/49EJBOdUqoD269+XZD8KUgNUM1j5uyjfIiQCNKupU+pkaMc?=
- =?us-ascii?Q?3SuaC9MbmDAHXFRMG9i/5VDEStmVZzjrUqfGnWYTRaujsBtMThg1vQusx0vH?=
- =?us-ascii?Q?+Of/GuUDWXWMg+NtbY0tHGJCaVuhXXRy?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2024 18:15:48.9213
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4665b36-2e0e-4404-cef1-08dcbe1f74b0
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF0000013B.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6415
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 16, 2024 at 10:34:24AM -0700, Nicolin Chen wrote:
-> On Fri, Aug 16, 2024 at 02:21:03PM +0100, Will Deacon wrote:
-> 
-> > >  static void arm_smmu_cmdq_batch_init(struct arm_smmu_device *smmu,
-> > > -                                  struct arm_smmu_cmdq_batch *cmds)
-> > > +                                  struct arm_smmu_cmdq_batch *cmds,
-> > > +                                  u8 opcode)
-> > >  {
-> > > +     WARN_ON_ONCE(!opcode);
-> > 
-> > This seems like a fairly arbitrary warning. Remove it?
-> 
-> OK.
-> 
-> > > +
-> > >       cmds->num = 0;
-> > > -     cmds->cmdq = arm_smmu_get_cmdq(smmu);
-> > > +     cmds->cmdq = arm_smmu_get_cmdq(smmu, opcode);
-> > 
-> > If we stashed the opcode here, we could actually just enforce that all
-> > commands in the batch are the same type in arm_smmu_cmdq_batch_add().
-> > 
-> > Would that work better for you or not?
-> 
-> A guested-owned queue is okay to mix different command types:
-> 	CMDQ_OP_TLBI_NH_ASID
-> 	CMDQ_OP_TLBI_NH_VA
-> 	CMDQ_OP_ATC_INV
-> 
-> So, limiting a batch to one single opcode isn't ideal. Instead,
-> if we really have to apply an enforcement to every batch_add(),
-> I think the cmdq structure would need a scan function pointer:
-> 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> index d0d7c75c030a..1a83ad5ebadc 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> @@ -918,2 +918,10 @@ static void arm_smmu_cmdq_batch_init(struct arm_smmu_device *smmu,
->  
-> +static bool arm_smmu_cmdq_supports_cmd(struct arm_smmu_cmdq *cmdq,
-> +				       struct arm_smmu_cmdq_ent *ent)
-> +{
-> +	if (!cmdq->supports_cmd)
-> +		return true;
-> +	return cmdq->supports_cmd(ent);
-> +}
-> +
->  static void arm_smmu_cmdq_batch_add(struct arm_smmu_device *smmu,
-> @@ -924,4 +932,5 @@ static void arm_smmu_cmdq_batch_add(struct arm_smmu_device *smmu,
->  
-> -	if (cmds->num == CMDQ_BATCH_ENTRIES - 1 &&
-> -	    (smmu->options & ARM_SMMU_OPT_CMDQ_FORCE_SYNC)) {
-> +	if ((cmds->num == CMDQ_BATCH_ENTRIES - 1 &&
-> +	     (smmu->options & ARM_SMMU_OPT_CMDQ_FORCE_SYNC)) ||
-> +	    !arm_smmu_cmdq_supports_cmd(cmds->cmdq, cmd)) {
->  		arm_smmu_cmdq_issue_cmdlist(smmu, cmds->cmdq, cmds->cmds,
+Ubuntu has changed their maintenance model for Rust toolchains and is
+now providing recent Rust releases in their releases, including both
+LTS and non-LTS (interim) releases.
 
-We'd need re-init the batch after this too..
+Therefore, add instructions to the Quick Start guide for Ubuntu like
+for the other distributions.
 
-Nicolin
+Cc: Zixing Liu <zixing.liu@canonical.com>
+Cc: William Grant <wgrant@ubuntu.com>
+Cc: Kees Cook <kees@kernel.org>
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+This is a potential patch for the future -- Ubuntu Oracular (future
+release) works today, but the Rust versioned releases are not backported
+(yet?). If Ubuntu ends up deciding to backport them, which would be
+amazing, or at least when they start to appear in an actual release,
+then we can apply this. Thanks William & Zixing!
 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> index e131d8170b90..c4872af6232c 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> @@ -616,2 +616,3 @@ struct arm_smmu_cmdq {
->  	atomic_t			lock;
-> +	bool                            (*supports_cmd)(struct arm_smmu_cmdq_ent *ent);
->  };
-> 
-> That being said, the whole thing doesn't seem to have a lot value
-> at this moment, since the SMMU driver doesn't mix commands?
-> 
-> Thanks
-> Nicolin
+ Documentation/rust/quick-start.rst | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/Documentation/rust/quick-start.rst b/Documentation/rust/quick-start.rst
+index d06a36106cd4..af39c8e13558 100644
+--- a/Documentation/rust/quick-start.rst
++++ b/Documentation/rust/quick-start.rst
+@@ -87,6 +87,19 @@ they should generally work out of the box, e.g.::
+ 	zypper install rust rust1.79-src rust-bindgen clang
+
+
++Ubuntu
++******
++
++Ubuntu LTS and non-LTS (interim) releases provide recent Rust releases and thus
++they should generally work out of the box, e.g.::
++
++	apt install rustc-1.80 rust-1.80-src bindgen-0.65 rustfmt-1.80 rust-1.80-clippy
++
++``RUST_LIB_SRC`` needs to be set when using the versioned packages, e.g.::
++
++	RUST_LIB_SRC=/usr/src/rustc-$(rustc-1.80 --version | cut -d' ' -f2)/library
++
++
+ Requirements: Building
+ ----------------------
+
+
+base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+--
+2.46.0
 
