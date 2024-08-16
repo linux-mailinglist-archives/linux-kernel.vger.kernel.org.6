@@ -1,252 +1,374 @@
-Return-Path: <linux-kernel+bounces-289770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A8B6954B98
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:59:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5100954B9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F26052820A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:59:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B71271C24241
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3ACA1BCA1E;
-	Fri, 16 Aug 2024 13:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CAEE1BC9EC;
+	Fri, 16 Aug 2024 13:59:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GCJTneti"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LOqVqTjr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60441BC08C;
-	Fri, 16 Aug 2024 13:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723816759; cv=fail; b=HJ2lFnlrlPug8JHH0TV7hqdxRDCwMW8F6+AknMDk87pxaazQes9hgI+Ikkk5nSFgWn9Q06cH3Wb0v2J5Z+IOJMhbXmVkpisQZuonyKB/Z1Z88FbdXQ0y8+quCDPOTEtF6yoyf3ygYp1XZVtGld4FNhFvWFDT2wriKbrD7QDQ5pQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723816759; c=relaxed/simple;
-	bh=GoynHsdnG4k72j2B1kI3w8vSQhFIXi47Q2FPr1AHzSY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Z8a/qnHrIwFyi0wNyOOoLu8FWRCeZLDsskg01gDUKy+0yke3XgcDgF1uNbc4+RjuJFCTAZy4M8ZSZ6KPaH7dpCIBY0whfb6ob1A+9nfnxNtqAVjmEtriNw95kAcwgWbM9N7Kp0VYyw57QoLoI0/SSVl0xvex8K04PW3h2PUKNds=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GCJTneti; arc=fail smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F541BB684;
+	Fri, 16 Aug 2024 13:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723816796; cv=none; b=ZhT0Z1R9o81+FgaynOgBAvX/qqelYyXkbxX8u+SJlrq7b5ZIp1hucPoqc/qOMkNgstDyse1sTrnuQWpo6cQqnhH78UsGwHKPP5x2w+q4ouerwbglFQnndIUf8LDOSMSplDD0KaiWNXWR7k8ufi8342EZzeWlzGnt89hHld1ykJE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723816796; c=relaxed/simple;
+	bh=RhJ8/bX0Gvi+ayp0+c3aj0UfkDltF3nONaVThv5PVHY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fqhs9iJDkMaexy61veBa1kekBlRPZxlPhwzKR0/gXZ1nBxcm7hVkPKZkpJ5bN5sx2jybP2Jg7MX7XF15QsLTsS8oqiVU8QVzze0tMpdPPrcmpe2acAsJUBk9m7RLTxaahuR3sBU7HNmPO4dsHEVgHTxxH5GlRHhU4NU3agPLfl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LOqVqTjr; arc=none smtp.client-ip=192.198.163.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723816758; x=1755352758;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=GoynHsdnG4k72j2B1kI3w8vSQhFIXi47Q2FPr1AHzSY=;
-  b=GCJTnetiqUui8ENLhsg/gxdF57V6rFUO6oLEnIODRV1Dptg9uDBufNb3
-   JCPd9auRQWjfJL+EGFGHfnv4VEutYd7OeC+eSnbFaAHetXJkvS0dy75Gx
-   hqsr7NGrvW2kTw7COxTKHPdNMeUPL5YpZrt58T64L/MnQ92UXMoc7UWBo
-   OkwnVG6B3Du0/3gSa1/Nx6tvrTMjNRDuYiiYYQ5pPkk/a9Gfd6cHMyF/t
-   K8OTT6yb2LddyX2uY1d/BKyYCFzbHrm5cY2wAkgTRLg2FH+36gS3MoW/9
-   I3kqaTkVm+WCkQShiCMG9fb/pDor8onZKrg6AFs1T7y++4jqVFyb5Q8KU
-   g==;
-X-CSE-ConnectionGUID: 8X+qiXQmQ7CLnkC7mGWUGQ==
-X-CSE-MsgGUID: buulw0xsRR6hN0LgnyGEsA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="22083712"
+  t=1723816794; x=1755352794;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=RhJ8/bX0Gvi+ayp0+c3aj0UfkDltF3nONaVThv5PVHY=;
+  b=LOqVqTjr06V5DyPFxIuZDh+ktMOeeShh5118uCVLf0gLavkr1T+ynhuP
+   D0tYc+Ql396wx8eTd0hZbvgaI4CeNypIyFcblbWe66Z3lvOUa38Ky1eVI
+   OmEihY/C4LbDsgaGCRs4pyK1c2RDU0e6JmR2jnn0Mv7Y3aW38DrP5rrqF
+   l7LWQ+6EqDs6g04bs3Be49EgnnmTCx259pTjV0DIqkwvjSXo7A+5pgDnV
+   URh85Gdekt7g4KwJjivqXfgAyQFf7etP0cKNbYDNuzry8OK7m/lTHjKX4
+   PtQaroq/vDIhqHMoSDA+DLJH0uBfVfF/b6+6br1KEp1/yqCyyZN/5oMBo
+   Q==;
+X-CSE-ConnectionGUID: 2E/gtRKDQKKCI/Jhw7sl+A==
+X-CSE-MsgGUID: jfmyiWF4QrSGPoBqIepwLQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="22272713"
 X-IronPort-AV: E=Sophos;i="6.10,151,1719903600"; 
-   d="scan'208";a="22083712"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 06:59:17 -0700
-X-CSE-ConnectionGUID: EpZ8HQ+VR6W0X+0W1ueKtA==
-X-CSE-MsgGUID: 8FxvSvCFSnOqanuRKyoyyA==
+   d="scan'208";a="22272713"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 06:59:53 -0700
+X-CSE-ConnectionGUID: PIfFPdNbSEWvHaKs2XWzjw==
+X-CSE-MsgGUID: 7fk/7cAdRw2aB3hpeWvAVg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,151,1719903600"; 
-   d="scan'208";a="64569906"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Aug 2024 06:59:16 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 16 Aug 2024 06:59:16 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 16 Aug 2024 06:59:16 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.174)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 16 Aug 2024 06:59:16 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ITflLPERkA4AVZBj9IkIIKkmxBBRDAoh9xhyjyF0MrIenOQPAM/QtzETE9HN9NmQpaw2J+haNZhl6XfbIb34EM336k78tQAzG7r29jGbc/JEhCIDRin8fj1KbDZSjgGnAp7WQiGfIE3c6IL0cJVqmVleIGq+bou8+TvWd0qVs37cdqBbL9LtsJ7yrTn4eG8x71Z33mHkTR4L+JgYgsLnSwdV9qwCWtOdx/IpxqmM0vcwLMIA2MqV8rRoJT69MwgwXPiscKH02hi3Emd308wSbiFPJAN8dpRAlcUsoic01aiPOb3UqXfCVCHY7xOcEU/uHqpwAtVQyx0TCiXYTNkz0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GoynHsdnG4k72j2B1kI3w8vSQhFIXi47Q2FPr1AHzSY=;
- b=ZggRQ8d7eKZ6GziGNCqW2IZS0yTEtI016RYmpJhYu6KHpbvNWlOB2iL45pfKt5kewiZ4OPEFpfIoyMFOuXfunz23sTLOuwhG6rVsVrcyHStvSjin2hDrMtAI6HqTNLtOpp34kql/tZvFTWx48IcdcoMNkBUepw5x5mElh7vLa81MA+bZpkOWgsw2RndBaY8AgA5eHeKjhHJPsNC5CguSBP9vvEAQL8Eoo23dOX8oSm+cOt2B/fJDIsS0HpTA0KKO0yjSTHbaBupIiwR9TiJQgNSxNAU1Xv+dwGYXzQBULQc9CkaI7/RwR9QMpH8RT/Y9QaUYj++Xrz5QJHDfi1ARHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
- by DM6PR11MB4721.namprd11.prod.outlook.com (2603:10b6:5:2a3::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Fri, 16 Aug
- 2024 13:59:14 +0000
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9%4]) with mapi id 15.20.7875.018; Fri, 16 Aug 2024
- 13:59:14 +0000
-From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To: "broonie@kernel.org" <broonie@kernel.org>
-CC: "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-	"ross.burton@arm.com" <ross.burton@arm.com>, "suzuki.poulose@arm.com"
-	<suzuki.poulose@arm.com>, "Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, "corbet@lwn.net"
-	<corbet@lwn.net>, "kees@kernel.org" <kees@kernel.org>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, "palmer@dabbelt.com"
-	<palmer@dabbelt.com>, "debug@rivosinc.com" <debug@rivosinc.com>,
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, "shuah@kernel.org"
-	<shuah@kernel.org>, "arnd@arndb.de" <arnd@arndb.de>, "maz@kernel.org"
-	<maz@kernel.org>, "oleg@redhat.com" <oleg@redhat.com>, "fweimer@redhat.com"
-	<fweimer@redhat.com>, "thiago.bauermann@linaro.org"
-	<thiago.bauermann@linaro.org>, "james.morse@arm.com" <james.morse@arm.com>,
-	"ebiederm@xmission.com" <ebiederm@xmission.com>, "will@kernel.org"
-	<will@kernel.org>, "brauner@kernel.org" <brauner@kernel.org>,
-	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, "ardb@kernel.org"
-	<ardb@kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-mm@kvack.org"
-	<linux-mm@kvack.org>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v10 12/40] mm: Define VM_SHADOW_STACK for arm64 when we
- support GCS
-Thread-Topic: [PATCH v10 12/40] mm: Define VM_SHADOW_STACK for arm64 when we
- support GCS
-Thread-Index: AQHa5BKUVD7wI5NTNUm62iFzIM90d7IohUeAgAABngCAABRGAIAAFLaAgAAHSQCAAUmjgA==
-Date: Fri, 16 Aug 2024 13:59:14 +0000
-Message-ID: <6e246375ed9e798906c9de59692d4b10f089c98e.camel@intel.com>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
-	 <20240801-arm64-gcs-v10-12-699e2bd2190b@kernel.org>
-	 <34f7a5378447b1a8d5a9561594b37cfeaa6bd2b1.camel@intel.com>
-	 <3a7d9b69-e9df-4271-a3f0-8e8683c2654f@sirena.org.uk>
-	 <68ec09da-fb4a-4d59-9c8c-6fae4c48ea68@sirena.org.uk>
-	 <e6c8618a1585006dde44c17192a3bb7ae8ec5c0b.camel@intel.com>
-	 <9949a344-be8e-40ed-b483-02ff95175072@sirena.org.uk>
-In-Reply-To: <9949a344-be8e-40ed-b483-02ff95175072@sirena.org.uk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.44.4-0ubuntu2 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|DM6PR11MB4721:EE_
-x-ms-office365-filtering-correlation-id: 8aa42662-7562-47c9-66f8-08dcbdfb9c9d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?RFU4YW5tT0ZBMDJodnd5bi9ZampraFVubTNINVpBWHQ4QnZxUkI4WWljb0xo?=
- =?utf-8?B?OXJ2Zm9ZMTBqbjEvbzNVNU1RSzMxdk1GUUQ0TmNaaU9GK0V2WGlhUm5qSURR?=
- =?utf-8?B?WkdZYXUzYmRRa3JhY2dUZVFBOGNBNysvbzFVR1ZMM0VSZGZaajRVTkpONUZF?=
- =?utf-8?B?K24rc29JWk5OSjNKMU0yUU51RkxjVHFBZ3RHdzFtR21ldmMvVmVQVy9MWEF2?=
- =?utf-8?B?dFdhYm9wM2Z4d3JReS9QYnhUUk0vaE5QcEdqUjVHdkZmM1oyTjZ1OUM1NWEx?=
- =?utf-8?B?R01aeU9sb3VyMEtvQUNiVHhBVUQ3clRxaGszMU1MQkR0YU56NGJiTEtVZ2xM?=
- =?utf-8?B?WUpITjQyK05jNU5VNVpXb3ZMWG1wTE40QWcxVmpPaUlqUUwxRW0xczRJdTdI?=
- =?utf-8?B?QkorbXNqdlZXTEJZOFQ0eHhxdjdIOE1ocTEzT0paODVEQjlBRHp4K1NIcGVs?=
- =?utf-8?B?YmVTb29xNi9pN3FTTUIxa1FYTDFWdmI2ejc1TWZsd0ppYnkwc1VZY1RmTW94?=
- =?utf-8?B?TCtmY2M3RmhacVltSVNOUTQwcUVVZzVFazRRMEp4NEN5OGNMOEp4RWtoNDd4?=
- =?utf-8?B?ZXYrTHZ0eU1yNjliT0FXZjlXUkFFajYwZkEvOHE1QWR1azV4R0oyVXB3WS9r?=
- =?utf-8?B?WFRvYm1wbUVzRlhpQXRyNGJiZ0picjF6UUFuMTBHV2V1OG1LK1NUSVZad3NB?=
- =?utf-8?B?c0E2WVkrRjZEMTJ3eWw0d1kvNTBiTFl5OGYzbk1ZU3A0UThwY1p6UkpWVjlK?=
- =?utf-8?B?R0pacmJZQUdidVBNZngxd2pFeERnY0RPQjZXSzR3Y1BaTUY1aWlRL29qR2Zo?=
- =?utf-8?B?N2k3ZHdHMHlCdGJVQkVlcVc2SlE3RjVkd1c2ejdTekZjeWF2Y1ZaajB1S3ZK?=
- =?utf-8?B?MzhxOEUrRW51eFBhSndGWElPN0lBQVNZOXZyNjF5cWYvb0tUMDc2VlV5SEEw?=
- =?utf-8?B?UlBuWStuMm5yMXJaVS9lSlZ2K2Y1Q0xuZVlOeEZ6TTlzRWUwN0RrbTRXUFFE?=
- =?utf-8?B?KzZLT2N1Z3Q0RnFQQW9US2VjbDh6cWY3Qm9mWFMrbzBRc1F5V0dDMjlDTmFr?=
- =?utf-8?B?M2tScGF5Q1ZEMWNITXl4K245YUh1WFVua0Njc3BCVTVuZ1F4dC9ycm9PS09H?=
- =?utf-8?B?bDBJM2dDY2R6dC9yeFJtZFhEdlpyWnNtSVFOZEtOZ1M2aVgvL0UvK2FpL3pI?=
- =?utf-8?B?QjlySTRKWTdRRHJnU3JQWldzcm9VUktESi8wTlB4RGxOc1ZqWXlmSlRuQW16?=
- =?utf-8?B?OUgva1RZV3RXQitiVk9wMFBxZ01qWmRGejRhcFdORlRUTUx1bWdTZ0wwN3Ey?=
- =?utf-8?B?VGhydCt6SmEwdTMwSzdNZnk1a0lkTy85N0Nyays5RXhtS3c5bjE0QkY1R2lv?=
- =?utf-8?B?OFNTMUpmQUdQZVVjNjV4U0lYdWRRc0t2dUl1cWJEOHlXQnBpVHQxOHFkNGhU?=
- =?utf-8?B?amxudjFXZVU3MFY1dzBSbHM0UzlUMmhZVkliNEYxU0JuVWhheW0rZmhWcFlL?=
- =?utf-8?B?VlgwbkJaSmtHa25HRVhPazBDeE45WmYyWEpoZmFJajFYZ0pGRy9kejVpS1pm?=
- =?utf-8?B?NzJaY3hxdEVtWWRBSFBXWWU0QW9XSllnQXhxQ0hIRlJYRStkOHJvbjFsaWVk?=
- =?utf-8?B?YzdRWnd1TjJwZ0xLTjZyVXVMY2FXM1VMRXN2VnFTZVB3MHpXdDdOVndua0dN?=
- =?utf-8?B?R1FHOGFQWWRDSlJ4d2FvYXRPWm9qdFRxS1hCckw4ei92RVlyNTFKbFBTUUYw?=
- =?utf-8?B?QW1lblgwdHZQT1R2Wit6UU1ma0Y5TlJSdlZKa2NnZVpzU0x5UWRkRXZrU0Nu?=
- =?utf-8?B?dnFnNE4rUUxTcVNwL1pQWGcvNkZ4YXY5VDArcEFjMWNpb25WVW9kMnBTMXdp?=
- =?utf-8?B?RE1GOUdpWk4vMENIc1IveTJIUjlYSjRiRmRhWU5idEx3SEE9PQ==?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?dW9yVkNFZVNaVzdtd3F0Ukk0R1ByNTlmMWlYVzlYL1VFMGoxMysrcjlvUGs5?=
- =?utf-8?B?SHNvbjZDTVBzTkpUWGh6QS9EV1dIcVBwZXROeWUxTFN1dEhxbWMwNGwxbWth?=
- =?utf-8?B?OTlGSmw1aEx6VTJOZzVnWnZiWG9BblZCbkdUOHM0TzlhZ2pWbk0rckErVlBN?=
- =?utf-8?B?aTVlcVlHVFk4empRZnpvc3dPNWpDVWpiUDZvcHBwUE5DdHBpbllzSXJ1eHJi?=
- =?utf-8?B?WllvRVJzTFRXOEZZVWFSTGxkZmZtZUhqLzhoWXFReE45VGhPWFpvTUROcWVQ?=
- =?utf-8?B?anJFVVhucEhobFprVDE3dUZpZHBUTlFDQWdPck1PRzUrbzRoODBuOXdML2Nz?=
- =?utf-8?B?UlRlaWZIeHAybGZ3aGYwSTJQeTA5NC9TOUc2aEpOUWkzL3VOM1F5dmZyWUlH?=
- =?utf-8?B?bS9kSkVWbHY2TkpITk13NXJDemhTbG96Z0RQcVlEUTFkSGdHZjFZcHRqT0Rm?=
- =?utf-8?B?RXNYOW9Hbkg2MWZ4SzA1b0pkSUFCQ01kZUI0WndJY25yNXYzbzNqUHNMWm9U?=
- =?utf-8?B?elVaa3dxZ0RhT0toL1VIRmhmbTEyOEJPUjIvS0hFVWE1UmhWWUdUTUxCZlNq?=
- =?utf-8?B?cUxiSkFaWkVKRDVUYjRSNmRjYVRrNENud0ZielRSUVJLQ1phcmpSOG1aQXJD?=
- =?utf-8?B?VkRxTjBUY2lIZTA0a0NaR1RMMjNzMGNEa3JiQUlaRHFvOG1zV3JzL3JEOHpI?=
- =?utf-8?B?U0Z3cFRZT0hqZXZPSVNpd0ZFYzJtSnlGV3h4b3ZlM1hSOHMwelJJTjdQZ0Rw?=
- =?utf-8?B?cDZmaFAzK1VzN0xqM0pNQngxbmlobTZpRzg5UEJLSUw5aWNPOWhpSDhkL1lX?=
- =?utf-8?B?M3llWk9LN1hBbHZ1ZTduUWtUcW5zU2hVV0E5U2x5clF3ZHNpNkhKVjNoVU1q?=
- =?utf-8?B?ZzlramVhZHdRdFZ3emk2c00yOEJiaFdSK3ZIbXFUMFFlR2ZSV0lsTVhvcEw1?=
- =?utf-8?B?YURtdUl1SUlPbjIzNEo4dXRhVXlONmdvTXlMYm9oblJiV2g2eTJGeUhKWk83?=
- =?utf-8?B?NGQ0WUZxMVpSeWdUaWk3T2VqZStmdUp1SGFnSmE5a3cyejhkUTVSMGYzVnpD?=
- =?utf-8?B?eXcvWlhFZFUvKzZiUzMyMmd3THVpelFzSXlnQmxvbkFEbEhJakxNRG5lVmFk?=
- =?utf-8?B?cEFsb1lNQ1NYRW1tbHlPdU5UUklHTlVHdWtkdWN0K1UxYWNja2t4SFlIREdS?=
- =?utf-8?B?Wmppa2pMSGduRmt1Z2xJZnFjeU9NMmxVL0w4bDBEN2RMWXVyQWE5My9VcVc0?=
- =?utf-8?B?Q20rWHRIZFNjQmRwTU1pQi9QZWxLb2g1YnBpVGJ3QUppTldFTHVuSGdsY3Ju?=
- =?utf-8?B?UDNKcDJrd0l2eWVWQVNTa0NWS3lhamV2dzRKZEdSTG5ZL1hGMUZoMzlJOVRZ?=
- =?utf-8?B?VExiVjYrWWNKWEcwTHdQOTdMQ3N2N3ZDdFFXc1l6dDlqL25EL3J1RFgyQUkw?=
- =?utf-8?B?MjU4RVMrS3hHYis3UTRVdXlBKzFEcHRIS1lBMnVnQ2N4emxFOEVrUVJVc2pG?=
- =?utf-8?B?bU05eEtvVDROdU9tUytuV01UQ3I4Ni9YZzh2cWhHSi95aUdDVExoR0lheHZB?=
- =?utf-8?B?d3gvdFFCTTF2dng0aS94ekphS2pKZ2JNS2ZtVGxpYklEQndYZkhRMFBiRi9l?=
- =?utf-8?B?S2trTnpkbWh6YTQ5cEgwQzR1TWhOK0lDR2ZDa085VExkeldUOFFNQmRLa0s2?=
- =?utf-8?B?cDV2NTdQSzl0cmhWb0dGZkF5YTVYcXRLazA4a3o4Qk0vMHE4MWVudTkza3lY?=
- =?utf-8?B?NWhLOHF6NlZMbkwwNi80RTAvME5SUjBMUjFjem5zbTNKRTVtbC9aTFZNZWt4?=
- =?utf-8?B?ZWdxQjFHdVo1bjVwa2VzSCtLRlR4VHMwTnpKcFVVWmVmWEJkdy9KMlNUQVBw?=
- =?utf-8?B?dWloeTR3bWgxV3Z5OUFiMndWZUg4cFBJMmFJazJBRHV3UnRMemRjVDNvaFBt?=
- =?utf-8?B?clhDYUF2dTA4ZzROOTl6SEF3RDZHZ0VRdVNEZnBxeVEyWXJKZE84a3d5MFoz?=
- =?utf-8?B?OXdQSjVpMXFVMTE4alJ2eVlsTTI3VVBSZWJBdVJnNVdKTUY2UW8vdHNmejBK?=
- =?utf-8?B?Z3dseG0vVXpLcXNlV0xyL2xzZDFrRnhuNHVPZlF0MG1NeWNLbDRhZmM1MG1Y?=
- =?utf-8?B?ZzlnNFBSWXdaZWtLKzkzQWVGM0poUUxYOTF1Y2VBMWEzQmtManB2Y0NRcHNK?=
- =?utf-8?Q?J3qb1qUGQKD4rQ/XsC/cJHk=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0C53E84EC3B9E042A86E55E4DE4DDDEB@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+   d="scan'208";a="90410970"
+Received: from iweiny-mobl.amr.corp.intel.com (HELO localhost) ([10.125.111.52])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 06:59:52 -0700
+From: Ira Weiny <ira.weiny@intel.com>
+Subject: [PATCH v2 00/25] DCD: Add support for Dynamic Capacity Devices
+ (DCD)
+Date: Fri, 16 Aug 2024 08:59:48 -0500
+Message-Id: <20240816-dcd-type2-upstream-v2-0-20189a10ad7d@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8aa42662-7562-47c9-66f8-08dcbdfb9c9d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Aug 2024 13:59:14.1165
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 5ujkp7BUYvBDerYLDPdSv+wEvYrR8p61LAjaAoi6BAFXPVmUVICQWb5TS6aKmC6sD3o5C6Tt9c5BtN9SsODZDXRVC9D/1ihN6Rg/22U9s0Q=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4721
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFVbv2YC/4WOzQ6CMBCEX8X0bM12KW305HsYD/1ZpIkCaZFIC
+ O9u4YQH9TiT+WZmYolioMROu4lFGkIKbZMF7nfM1aa5EQ8+a4aABSiQ3DvP+7Ej5M8u9ZHMg4P
+ zoqwUClV5lkFrEnEbTePqBf1ML4EuUhVe6+rlmnUdUt/GcT0xiMX9uTcIDlwLqwoprKFSnkPT0
+ /3g2rU9oxIK/I5abQG8wkJhuUGXJwP+X8dcUWkJTmrSR6G2FfM8vwHHXVq6UwEAAA==
+To: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ Navneet Singh <navneet.singh@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, 
+ Davidlohr Bueso <dave@stgolabs.net>, 
+ Alison Schofield <alison.schofield@intel.com>, 
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+ linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Chris Mason <clm@fb.com>, 
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+ Johannes Thumshirn <johannes.thumshirn@wdc.com>, 
+ Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+ Jonathan Corbet <corbet@lwn.net>, 
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
+ "Li, Ming" <ming4.li@intel.com>, 
+ Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+X-Mailer: b4 0.13-dev-2d940
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723816790; l=12740;
+ i=ira.weiny@intel.com; s=20221211; h=from:subject:message-id;
+ bh=RhJ8/bX0Gvi+ayp0+c3aj0UfkDltF3nONaVThv5PVHY=;
+ b=YbzulL59alQZ9QMP3mnJG05vxAYhO9U6brBF56lRmOPsijlykR3StdaDx/HKnbzj9cEOIUAds
+ sRKvpdQXUzACTwC/nVl9C7PEIhKa9u7bnL3i0rS0txZqlaBfuXfwrz0
+X-Developer-Key: i=ira.weiny@intel.com; a=ed25519;
+ pk=noldbkG+Wp1qXRrrkfY1QJpDf7QsOEthbOT7vm0PqsE=
 
-T24gVGh1LCAyMDI0LTA4LTE1IGF0IDE5OjE5ICswMTAwLCBNYXJrIEJyb3duIHdyb3RlOg0KPiA+
-IFRoZSBzZXJpZXMgaXMgYWxyZWFkeSB1cHN0cmVhbS4gWW91IGp1c3QgbmVlZCB0byBhZGQgYW4g
-YXJtIHZlcnNpb24gb2YgdGhhdA0KPiA+IGxpbmtlZCBwYXRjaC4gQnV0IHVwIHRvIHlvdS4NCj4g
-DQo+IFlvdXIgc2VyaWVzIG1vZGlmaWVkIHRoZSBleGlzdGluZyB4ODYgY3VzdG9tIGFyY2hfZ2V0
-X3VubWFwcGVkX2FyZWEqKCkNCj4gZnVuY3Rpb25zLCBhcm02NCB1c2VzIHRoZSBnZW5lcmljIGlt
-cGxlbWVudGF0aW9uIG9mIHRob3NlIHNvIEknZCBoYXZlIHRvDQo+IGVpdGhlciBhZGQgY3VzdG9t
-IGltcGxlbWVudGF0aW9ucyAod2hpY2ggSSBjYW4ndCBpbWFnaW5lIHdvdWxkIGJlIG1ldA0KPiB3
-aXRoIGdyZWF0IGVudGh1c2lhc20pIG9yIHVwZGF0ZSB0aGUgZ2VuZXJpYyBvbmVzLsKgIEEgZ2Vu
-ZXJpYw0KPiBpbXBsZW1lbnRhdGlvbiBzZWVtcyByZWFzb25hYmxlIGFuZCBpdCBsb29rcyBsaWtl
-IFJJU0MtViB3b3VsZCBhbHNvIGVuZA0KPiB1cCB1c2luZyBpdCBzbyB3aGlsZSBpdCdzIGEgYml0
-IGludmFzaXZlIGl0IGRvZXMgc2VlbSBtb3JlIHNlbnNpYmxlIHRvDQo+IGRvIHRoZSBjaGFuZ2Ug
-dGhlcmUuDQoNCkFoLCBJIG1pc3VuZGVyc3Rvb2QuIE1ha2VzIHNlbnNlLg0K
+A git tree of this series can be found here:
+
+	https://github.com/weiny2/linux-kernel/tree/dcd-v4-2024-08-15
+
+This series requires the CXL memory notifier lock change:
+
+	https://lore.kernel.org/all/20240814-fix-notifiers-v2-1-6bab38192c7c@intel.com/
+
+Background
+==========
+
+A Dynamic Capacity Device (DCD) (CXL 3.1 sec 9.13.3) is a CXL memory
+device that allows memory capacity within a region to change
+dynamically without the need for resetting the device, reconfiguring
+HDM decoders, or reconfiguring software DAX regions.
+
+One of the biggest use cases for Dynamic Capacity is to allow hosts to
+share memory dynamically within a data center without increasing the
+per-host attached memory.
+
+The general flow for the addition or removal of memory is to have an
+orchestrator coordinate the use of the memory.  Generally there are 5
+actors in such a system, the Orchestrator, Fabric Manager, the Logical
+device, the Host Kernel, and a Host User.
+
+Typical work flows are shown below.
+
+Orchestrator      FM         Device       Host Kernel    Host User
+
+    |             |           |            |              |
+    |-------------- Create region ----------------------->|
+    |             |           |            |              |
+    |             |           |            |<-- Create ---|
+    |             |           |            |    Region    |
+    |<------------- Signal done --------------------------|
+    |             |           |            |              |
+    |-- Add ----->|-- Add --->|--- Add --->|              |
+    |  Capacity   |  Extent   |   Extent   |              |
+    |             |           |            |              |
+    |             |<- Accept -|<- Accept  -|              |
+    |             |   Extent  |   Extent   |              |
+    |             |           |            |<- Create --->|
+    |             |           |            |   DAX dev    |-- Use memory
+    |             |           |            |              |   |
+    |             |           |            |              |   |
+    |             |           |            |<- Release ---| <-+
+    |             |           |            |   DAX dev    |
+    |             |           |            |              |
+    |<------------- Signal done --------------------------|
+    |             |           |            |              |
+    |-- Remove -->|- Release->|- Release ->|              |
+    |  Capacity   |  Extent   |   Extent   |              |
+    |             |           |            |              |
+    |             |<- Release-|<- Release -|              |
+    |             |   Extent  |   Extent   |              |
+    |             |           |            |              |
+    |-- Add ----->|-- Add --->|--- Add --->|              |
+    |  Capacity   |  Extent   |   Extent   |              |
+    |             |           |            |              |
+    |             |<- Accept -|<- Accept  -|              |
+    |             |   Extent  |   Extent   |              |
+    |             |           |            |<- Create ----|
+    |             |           |            |   DAX dev    |-- Use memory
+    |             |           |            |              |   |
+    |             |           |            |<- Release ---| <-+
+    |             |           |            |   DAX dev    |
+    |<------------- Signal done --------------------------|
+    |             |           |            |              |
+    |-- Remove -->|- Release->|- Release ->|              |
+    |  Capacity   |  Extent   |   Extent   |              |
+    |             |           |            |              |
+    |             |<- Release-|<- Release -|              |
+    |             |   Extent  |   Extent   |              |
+    |             |           |            |              |
+    |-- Add ----->|-- Add --->|--- Add --->|              |
+    |  Capacity   |  Extent   |   Extent   |              |
+    |             |           |            |<- Create ----|
+    |             |           |            |   DAX dev    |-- Use memory
+    |             |           |            |              |   |
+    |-- Remove -->|- Release->|- Release ->|              |   |
+    |  Capacity   |  Extent   |   Extent   |              |   |
+    |             |           |            |              |   |
+    |             |           |     (Release Ignored)     |   |
+    |             |           |            |              |   |
+    |             |           |            |<- Release ---| <-+
+    |             |           |            |   DAX dev    |
+    |<------------- Signal done --------------------------|
+    |             |           |            |              |
+    |             |- Release->|- Release ->|              |
+    |             |  Extent   |   Extent   |              |
+    |             |           |            |              |
+    |             |<- Release-|<- Release -|              |
+    |             |   Extent  |   Extent   |              |
+    |             |           |            |<- Destroy ---|
+    |             |           |            |   Region     |
+    |             |           |            |              |
+
+Previous versions of this series[0] resulted in architectural comments
+as well as confusion on the architecture based on the organization of
+patch series itself.
+
+This version has reordered the patches to clarify the architecture.
+It also streamlines extent handling more.
+
+The series still requires the creation of regions and DAX devices to be
+synchronized with the Orchestrator and Fabric Manager.  The host kernel
+will reject an add extent event if the region is not created yet.  It
+will also ignore a release if the DAX device is created and referencing
+an extent.
+
+These synchronizations are not anticipated to be an issue with real
+applications.
+
+In order to allow for capacity to be added and removed a new concept of
+a sparse DAX region is introduced.  A sparse DAX region may have 0 or
+more bytes of available space.  The total space depends on the number
+and size of the extents which have been added.
+
+Initially it is anticipated that users of the memory will carefully
+coordinate the surfacing of additional capacity with the creation of DAX
+devices which use that capacity.  Therefore, the allocation of the
+memory to DAX devices does not allow for specific associations between
+DAX device and extent.  This keeps allocations very similar to existing
+DAX region behavior.
+
+Great care was taken to keep the extent tracking simple.  Some xarray's
+needed to be added but extra software objects were kept to a minimum.
+
+Region extents continue to be tracked as sub-devices of the DAX region.
+This ensures that region destruction cleans up all extent allocations
+properly.
+
+Due to these major changes all reviews were removed from the larger
+patches.  A few of the straight forward patches have kept the tags.
+
+In summary the major functionality of this series includes:
+
+- Getting the dynamic capacity (DC) configuration information from cxl
+  devices
+
+- Configuring the DC partitions reported by hardware
+
+- Enhancing the CXL and DAX regions for dynamic capacity support
+	a. Maintain a logical separation between hardware extents and
+	   software managed region extents.  This provides an
+	   abstraction between the layers and should allow for
+	   interleaving in the future
+
+- Get hardware extent lists for endpoint decoders upon
+  region creation.
+
+- Adjust extent/region memory available on the following events.
+        a. Add capacity Events
+	b. Release capacity events
+
+- Host response for add capacity
+	a. do not accept the extent if:
+		If the region does not exist
+		or an error occurs realizing the extent
+	b. If the region does exist
+		realize a DAX region extent with 1:1 mapping (no
+		interleave yet)
+	c. Support the more bit by processing a list of extents marked
+	   with the more bit together before setting up a response.
+
+- Host response for remove capacity
+	a. If no DAX device references the extent; release the extent
+	b. If a reference does exist, ignore the request.
+	   (Require FM to issue release again.)
+
+- Modify DAX device creation/resize to account for extents within a
+  sparse DAX region
+
+- Trace Dynamic Capacity events for debugging
+
+- Add cxl-test infrastructure to allow for faster unit testing
+  (See new ndctl branch for cxl-dcd.sh test[1])
+
+Fan Ni's upstream of Qemu DCD was used for testing.
+
+Remaining work:
+
+	1) Integrate the QoS work from Dave Jiang
+	2) Interleave support
+
+Possible additional work depending on requirements:
+
+	1) Allow mapping to specific extents (perhaps based on
+	   label/tag)
+	2) Release extents when DAX devices are released if a release
+	   was previously seen from the device
+	3) Accept a new extent which extends (but overlaps) an existing
+	   extent(s)
+	4) Rework DAX device interfaces, memfd has been explored a bit
+
+[0] v1: https://lore.kernel.org/all/20240324-dcd-type2-upstream-v1-0-b7b00d623625@intel.com/
+[1] https://github.com/weiny2/ndctl/tree/dcd-region2-2024-08-15
+
+---
+Major changes:
+- Jonathan: support the more bit
+- djbw: Allow more than 1 region per DC partition
+- All: Address the many comments on the series.
+- iweiny: rebase
+- iweiny: Rework the series to make it easier to review and understand
+          the flow
+- Link to v1: https://lore.kernel.org/r/20240324-dcd-type2-upstream-v1-0-b7b00d623625@intel.com
+
+---
+Ira Weiny (13):
+      range: Add range_overlaps()
+      printk: Add print format (%par) for struct range
+      dax: Document dax dev range tuple
+      cxl/pci: Delay event buffer allocation
+      cxl/region: Refactor common create region code
+      cxl/events: Split event msgnum configuration from irq setup
+      cxl/pci: Factor out interrupt policy check
+      cxl/core: Return endpoint decoder information from region search
+      dax/bus: Factor out dev dax resize logic
+      dax/region: Create resources on sparse DAX regions
+      cxl/region: Read existing extents on region creation
+      tools/testing/cxl: Make event logs dynamic
+      tools/testing/cxl: Add DC Regions to mock mem data
+
+Navneet Singh (12):
+      cxl/mbox: Flag support for Dynamic Capacity Devices (DCD)
+      cxl/mem: Read dynamic capacity configuration from the device
+      cxl/core: Separate region mode from decoder mode
+      cxl/region: Add dynamic capacity decoder and region modes
+      cxl/hdm: Add dynamic capacity size support to endpoint decoders
+      cxl/port: Add endpoint decoder DC mode support to sysfs
+      cxl/mem: Expose DCD partition capabilities in sysfs
+      cxl/region: Add sparse DAX region support
+      cxl/mem: Configure dynamic capacity interrupts
+      cxl/extent: Process DCD events and realize region extents
+      cxl/region/extent: Expose region extent information in sysfs
+      cxl/mem: Trace Dynamic capacity Event Record
+
+ Documentation/ABI/testing/sysfs-bus-cxl   |  68 ++-
+ Documentation/core-api/printk-formats.rst |  14 +
+ drivers/cxl/core/Makefile                 |   2 +-
+ drivers/cxl/core/core.h                   |  33 +-
+ drivers/cxl/core/extent.c                 | 467 ++++++++++++++
+ drivers/cxl/core/hdm.c                    | 206 ++++++-
+ drivers/cxl/core/mbox.c                   | 578 +++++++++++++++++-
+ drivers/cxl/core/memdev.c                 | 101 ++-
+ drivers/cxl/core/port.c                   |  13 +-
+ drivers/cxl/core/region.c                 | 173 ++++--
+ drivers/cxl/core/trace.h                  |  65 ++
+ drivers/cxl/cxl.h                         | 122 +++-
+ drivers/cxl/cxlmem.h                      | 128 +++-
+ drivers/cxl/pci.c                         | 123 +++-
+ drivers/dax/bus.c                         | 352 +++++++++--
+ drivers/dax/bus.h                         |   4 +-
+ drivers/dax/cxl.c                         |  73 ++-
+ drivers/dax/dax-private.h                 |  39 +-
+ drivers/dax/hmem/hmem.c                   |   2 +-
+ drivers/dax/pmem.c                        |   2 +-
+ fs/btrfs/ordered-data.c                   |  10 +-
+ include/linux/cxl-event.h                 |  32 +
+ include/linux/range.h                     |   7 +
+ lib/vsprintf.c                            |  37 ++
+ tools/testing/cxl/Kbuild                  |   3 +-
+ tools/testing/cxl/test/mem.c              | 981 ++++++++++++++++++++++++++----
+ 26 files changed, 3327 insertions(+), 308 deletions(-)
+---
+base-commit: 3cef9316df4cda21b5bf25e4230221b02050dfa1
+change-id: 20230604-dcd-type2-upstream-0cd15f6216fd
+
+Best regards,
+-- 
+Ira Weiny <ira.weiny@intel.com>
+
 
