@@ -1,144 +1,118 @@
-Return-Path: <linux-kernel+bounces-289924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D0F954D60
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:12:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C047F954D64
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC9E4B2177B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:12:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E30A2869D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523E11BD034;
-	Fri, 16 Aug 2024 15:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3231BD4EA;
+	Fri, 16 Aug 2024 15:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="zDbroRxF"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s0aSfQci"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E992817
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A1C198A3E
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723821117; cv=none; b=d3yn0cm5zgFq5utXK3yEPZt4mJ/9+AT6csXy0o3XfwmKPWcr2I2jo62G2jYmpsj2gKv/AG30gcHRhzhRHJNvi9yUeJFEBqVMA2jSLrzHNtFc6xwlqNQsEw6Gvtk6uhIOPnTMk/QeEwOaryAsthQ+vYZYkZ+Vq8spS9H4joXnNTc=
+	t=1723821228; cv=none; b=dFNZmckaxE4EqFAO7RKEssMRmmvCxXKCk+iNo5NDTGD9uPu0y9shWb+o4BSx/EGFJrqNpbq7gHBTb/0Sra9pInE3tGPryhBfhJpVPPtQmo5Zi7xf+JYResQvEutekCi6LWIPhA+F3h9Ds/vjBc6NBWbmnoNjr0s+8AnP1ZnTZwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723821117; c=relaxed/simple;
-	bh=i/gie7XLHA+VfpxfRdy5Seq89aVjFlrrX0L1jgd+j3g=;
-	h=Date:Subject:CC:From:To:Message-ID; b=f8ig7a4PJS0EOPVmnUkOmg3lnz3RihwCNxF7jwk20MSJVJVkHrwNS2uZ+HFSvgjfr+7FP3XOMKDtB7Ep8mvMybdp0tkRxXKu0lYXZuwjEkQponSc72KpVrc9l6GrJ5RMWT+4dxI/TUSVqqS9OH252TEmglkNYO8p9PudQTRgyoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=zDbroRxF; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70eaf5874ddso1763431b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:11:54 -0700 (PDT)
+	s=arc-20240116; t=1723821228; c=relaxed/simple;
+	bh=XdX9TFTmAztBFpprLFXuMb8FszwPT5OGoKC3R6HmiE0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D8SrVzC7Nq6ZmVj6BSTDUOxsNVxIzCgwDBKLtjP0FaK7lr+EII8kQNH5TaXP8j+0zpKa0g9gXMiUA9GxBJjh8kteDHWFQpUHGnWeX8F03KpFFXvJQ4Pe0yS3pFk9Jl+YexB+gX+QXPEMhUmFs32XOQrE347d573ocbV8z7zpAa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s0aSfQci; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f032cb782dso19439241fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:13:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1723821114; x=1724425914; darn=vger.kernel.org;
-        h=message-id:to:from:cc:subject:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U51afq1GcqS7tRTdX3ZRrcbEDTDfhIP6UB/LI3wW288=;
-        b=zDbroRxFytU9TTbOBuHFJRBuWGTZgOTiup80t+yfTjo8ZGfchMH5Z89roUOREz6P2F
-         f/S9NeMutqFy8qMc+WT/Gtf0hf1QVE+cxTV/QusjTMM7Snd87cn1HTQLahGEYrXsUPjB
-         sd8V0T2Iq95ydQJVBpYK3DCwM2Mb3E9OApzDXDiGN9CqSkFJLfn2lDUCFdrYEGycupAp
-         fG8WQS5EgWG5a2SNDd1OaW6R8ABSz47sqPxaaGD+LLzY0ku2x5epuuHqrMavIF/xDIaP
-         UDlK2wxVnFlxs/0Z2AbL6VIjKpH78UAIi0pItSZTLsBMvBFhC6cV/vzJN9xhGxCZO3WP
-         T/aw==
+        d=linaro.org; s=google; t=1723821224; x=1724426024; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ss5iRyP+GViMYSXSV6/9YpYWRY4hwPc+O4Zp1rAHqvE=;
+        b=s0aSfQci58PxvrSQy152ZVpO+6OOIon7eZLJssFRxBXFdRwKwrgkW/AbJuC9cqNw5D
+         fTnRaHHzN3zWDBZDMyiLawaDlU/1cmVtVbo1rfoJ+HCPndXdu+C9LGAUgnXDpa1CM8PU
+         m9SzDCveqnGnX833dDvpFu0o8phFQlStarXAEX/2mVHxp55FbmMTMg7+kMoer/e+4kGO
+         TRyW8eVF1L8mMKW55vo6E6sfOEZk2bHAQbAlFPyIm+8LMnyZNGmQc+vXWrMWHD3WO+/4
+         aLZXUDWamPLZiaUEO8RjEnSWsdcMFNKB3vIsuSGmwutHTAzJ7GBAuWoBfnbAgBZG347b
+         /YVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723821114; x=1724425914;
-        h=message-id:to:from:cc:subject:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U51afq1GcqS7tRTdX3ZRrcbEDTDfhIP6UB/LI3wW288=;
-        b=l+siwQWnQ9Io9o/BtAAmFyGxaVKqkim5TefHZlAAdlVk4CddbSFYiJ6rruKlX75aW3
-         60GxDqb2FOuEMYwcgjUsRaiATSaTutBk2wRFB22wsGOz2gV39bOXYv6t3LFN4UFtf0ww
-         q6uvIWwrBM6CJwNIzdznyhBFZ1HPwM2F34H9fbmJERcTXnsC9FiIATrS0nkayx8bXAlf
-         92t9g4o5Iofl9urfSMN0e513pmo23hrkVVnYj4fazNaS07ecTjVbPBrzJes04/hcqIZz
-         fmqKrromB86sE6W0vAjPii5Nrdc01q3YhTqTAAlxL42vtL3XtLhPcVtGoHzp6Qi+OkOy
-         wt6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWbhz2HeMjkWttZdVvlU2YfnHPiz00hm0WkdDuzVei8z7fp29+D+hJXA5imcegUsSrKoi+kC0sbF6SmRG6yvKbNyUuD/Dst2/fCK1Iu
-X-Gm-Message-State: AOJu0YzqIQvMoUrfNtl9OgNtgGNQu2SukR6pGL7ERT+saBP2mgTjZ5oz
-	Ctfy3EU5n3AH16iJuuCPil/g772uc+v1btMMUFMk0sqhV6Ul2Bt984J9ilP9JVdxisze5clCo/6
-	N6W8=
-X-Google-Smtp-Source: AGHT+IEy5yhZVIs6cM7owrtaBFt5rLmWtQZjJHxSSdpXthgYQ3WZ3aHXHDT3905Vpuvu9zWimg0ghA==
-X-Received: by 2002:a05:6a20:9d91:b0:1c0:f2d9:a44a with SMTP id adf61e73a8af0-1c904f91ce9mr4384814637.22.1723821113945;
-        Fri, 16 Aug 2024 08:11:53 -0700 (PDT)
-Received: from localhost ([192.184.165.199])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127add6e46sm2823512b3a.17.2024.08.16.08.11.53
+        d=1e100.net; s=20230601; t=1723821224; x=1724426024;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ss5iRyP+GViMYSXSV6/9YpYWRY4hwPc+O4Zp1rAHqvE=;
+        b=xSZ3tldFkjNf77F3I/vK0XBYaiUxzWS1tOSBocmf/bGIXUcRNSOQMwqznxh+cB0uN4
+         fZFEmw+aneZSxblxbGyGu8vE+2lolJD1clPA89wDccbMemWW1IRM/GjE1Aukv4mI1kTg
+         qFgsARMLRMwdoly8DzNBdSyiWPB6cLw6mbpfesvOO+GBgN6ySrb+FS5ccUKXf2q58ac8
+         uJriK7RdDqvl01FbfZAWg6wEG72JU8v2evcbDLEkF5RsP+AfeGYscoq35DLMDm5SyMz4
+         OKfjWc8rsueeki6/009uYfLZYos9NrSHRnkPvzQJgwB7Hmw7z4QYk86eL7IvBoYvZR8g
+         xGCA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvhc7Nk4F82yPwG4kYLcZg1ZES/hoZdZYIW7RO6MnNKTXtVeAmEO7gDr/L/mjny9I8D2m3byJIsrVc/ScgCPns4jxC5lxq4tB7pIFL
+X-Gm-Message-State: AOJu0YzPC7sMwUV+UX0N8R6gzcksM8Z1JDNHU2DJP3EWKo2QGx7fNRCt
+	9t2oP0JkIR2UaQFsfGnRMPkZ9bXFje+IM1gkaL+86CbUi6Io6lTDuL35WKvu9772KI10amF3J4r
+	o
+X-Google-Smtp-Source: AGHT+IENaJHmCWMCAiFDXiDCFYY5vetxC5fst5EKVjwRV83jh6OIzG2gQxGx/vK6egR/TndNLUxLUQ==
+X-Received: by 2002:a2e:a990:0:b0:2ef:23ec:9357 with SMTP id 38308e7fff4ca-2f3be3df688mr30264741fa.0.1723821224246;
+        Fri, 16 Aug 2024 08:13:44 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.215.209])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed649019sm25425415e9.8.2024.08.16.08.13.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 08:11:53 -0700 (PDT)
-Date: Fri, 16 Aug 2024 08:11:53 -0700 (PDT)
-X-Google-Original-Date: Fri, 16 Aug 2024 08:11:48 PDT (-0700)
-Subject: [GIT PULL] RISC-V Fixes for 6.11-rc4
-CC:         linux-riscv@lists.infradead.org,        linux-kernel@vger.kernel.org
-From: Palmer Dabbelt <palmer@rivosinc.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Message-ID: <mhng-24597fb0-2ef5-4a27-ac81-cd0aa42fdd56@palmer-ri-x1c9>
+        Fri, 16 Aug 2024 08:13:43 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] i2c: simplify with scoped for each OF child loop
+Date: Fri, 16 Aug 2024 17:13:40 +0200
+Message-ID: <20240816151340.154939-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The following changes since commit de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed:
+Use scoped for_each_child_of_node_scoped() when iterating over device
+nodes to make code a bit simpler.
 
-  Linux 6.11-rc2 (2024-08-04 13:50:53 -0700)
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/i2c/i2c-core-slave.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-are available in the Git repository at:
+diff --git a/drivers/i2c/i2c-core-slave.c b/drivers/i2c/i2c-core-slave.c
+index e3765e12f93b..faefe1dfa8e5 100644
+--- a/drivers/i2c/i2c-core-slave.c
++++ b/drivers/i2c/i2c-core-slave.c
+@@ -109,15 +109,12 @@ EXPORT_SYMBOL_GPL(i2c_slave_event);
+ bool i2c_detect_slave_mode(struct device *dev)
+ {
+ 	if (IS_BUILTIN(CONFIG_OF) && dev->of_node) {
+-		struct device_node *child;
+ 		u32 reg;
+ 
+-		for_each_child_of_node(dev->of_node, child) {
++		for_each_child_of_node_scoped(dev->of_node, child) {
+ 			of_property_read_u32(child, "reg", &reg);
+-			if (reg & I2C_OWN_SLAVE_ADDRESS) {
+-				of_node_put(child);
++			if (reg & I2C_OWN_SLAVE_ADDRESS)
+ 				return true;
+-			}
+ 		}
+ 	} else if (IS_BUILTIN(CONFIG_ACPI) && ACPI_HANDLE(dev)) {
+ 		dev_dbg(dev, "ACPI slave is not supported yet\n");
+-- 
+2.43.0
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-linus-6.11-rc4
-
-for you to fetch changes up to 32d5f7add080a936e28ab4142bfeea6b06999789:
-
-  Merge patch series "RISC-V: hwprobe: Misaligned scalar perf fix and rename" (2024-08-15 13:12:21 -0700)
-
-----------------------------------------------------------------
-RISC-V Fixes for 6.11-rc4
-
-* The text patching global icache flush has been reintroduced.
-* A fix for the syscall entry code to correctly initialize a0, which
-  manifests as a bug in strace.
-* XIP kernels now map the entire kernel, which fixes boot under at least
-  DEBUG_VIRTUAL=y.
-* The acpi_early_node_map initializer now initializes all nodes.
-* A fix for a OOB access in the Andes vendor extension probing code.
-* A new key for scalar misaligned access performance in hwprobe, which
-  correctly treat the values as an enum (as opposed to a bitmap).
-
-----------------------------------------------------------------
-That last patch set (for hwprobe) is sort of feature-smelling, but I think it's
-sane to call it a fix -- it's kind of a grey area as to whether we even need a
-new key, but we're playing it safe as hwprobe is such a compatibility-focused
-interface.
-
-----------------------------------------------------------------
-Alexandre Ghiti (2):
-      riscv: Re-introduce global icache flush in patch_text_XXX()
-      riscv: Fix out-of-bounds when accessing Andes per hart vendor extension array
-
-Celeste Liu (1):
-      riscv: entry: always initialize regs->a0 to -ENOSYS
-
-Evan Green (2):
-      RISC-V: hwprobe: Add MISALIGNED_PERF key
-      RISC-V: hwprobe: Add SCALAR to misaligned perf defines
-
-Haibo Xu (1):
-      RISC-V: ACPI: NUMA: initialize all values of acpi_early_node_map to NUMA_NO_NODE
-
-Nam Cao (1):
-      riscv: change XIP's kernel_map.size to be size of the entire kernel
-
-Palmer Dabbelt (1):
-      Merge patch series "RISC-V: hwprobe: Misaligned scalar perf fix and rename"
-
- Documentation/arch/riscv/hwprobe.rst       | 36 ++++++++++++++++++------------
- arch/riscv/include/asm/hwprobe.h           |  2 +-
- arch/riscv/include/uapi/asm/hwprobe.h      |  6 +++++
- arch/riscv/kernel/acpi_numa.c              |  2 +-
- arch/riscv/kernel/patch.c                  |  4 ++++
- arch/riscv/kernel/sys_hwprobe.c            | 11 ++++-----
- arch/riscv/kernel/traps.c                  |  4 ++--
- arch/riscv/kernel/traps_misaligned.c       |  6 ++---
- arch/riscv/kernel/unaligned_access_speed.c | 12 +++++-----
- arch/riscv/kernel/vendor_extensions.c      |  2 +-
- arch/riscv/mm/init.c                       |  4 ++--
- 11 files changed, 54 insertions(+), 35 deletions(-)
 
