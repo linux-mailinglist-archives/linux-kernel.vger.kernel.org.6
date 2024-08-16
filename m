@@ -1,65 +1,65 @@
-Return-Path: <linux-kernel+bounces-289436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2FAE954630
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:51:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83E3B954632
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:51:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D71B1F21CCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:51:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FDD3285424
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E70E1741DC;
-	Fri, 16 Aug 2024 09:50:26 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F6B175D35;
+	Fri, 16 Aug 2024 09:50:27 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A251714A6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22B416EB63
 	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723801825; cv=none; b=EF5aMMzQ8KWHfYV/D8wp4sok4juqaBJnrrIf0yOP+4EVcNyZD+ntJ4GrSmvZ6oyLobQnmf28WmObZmeV9n/C+dmw3Ys0o1I5R+QxXRB0cwrMBBI8qN5FCqxMKsfSYyvCg9JFqTVrbcNCzXFYMQyDJqnXLqP+43v3mmhGpZ//h0w=
+	t=1723801826; cv=none; b=nEs5w5p0KlCrPYmyIHruFAJ76yOFTv7GXTEvllFRzXB7+WMWz1F+e8y447eWN7zd04v2guEyVdsomNREn/wcn3g+2ySrLMn5x1eAZwPepZAv41hXFx3oq78MTRvWAUZrvlBpgUOiGofPNvVUnYRuMtKSvNwEUwYguct/VjktSzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723801825; c=relaxed/simple;
-	bh=NN/91hkMKagCjzztsZVJRxvLvku0Mz9HbC8Gn6Q9ekg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dNkx3XY3aJqcPcKuR334BSAvp6q94iNSKei+b8c/6aSRZS+pfwMml+k2WDPx7dJ0GuN55A5A9AbE8UwAQ+rOzesFUWecyHWc5uFaeG6eKR6c0Lu2scCV7d6lsRrNVJOih+MNeMvMwomJWQqlGjC3fEjjTpGQZwAgcYE9oe2ks6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+	s=arc-20240116; t=1723801826; c=relaxed/simple;
+	bh=YMlRIfpgLWfzMnUxUOnXs045GiCUCvfInjRCzY39Xdc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dMG4zycrjwvxFiTdnP3ZP3vTZ9c8su+T4HvCkFJ36QWYPm+JfLt6alJORX1uwn8ITWoiAH1gwDQe94vhcy2FXDQB5B0fMjgrMEAbBSkewAToO8UBV5zAPbQgS890jR7oijsz4m0U0mV+eUiDRzcOrAPvCzyg/8nWDEdRICYa9r0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81f8edd7370so195323339f.1
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-396c41de481so18742015ab.3
         for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 02:50:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723801823; x=1724406623;
+        d=1e100.net; s=20230601; t=1723801824; x=1724406624;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=9oTjHn5Pdwbl5l6qiMqGJ8O01dU04mrK77hAuS/Y0H8=;
-        b=RPsnEiPrj/p3C98Ht6F8YpptnU4knCGabN/UFePrw5fE65QbK/MyeXNHSNbiBIdltO
-         jAgN3gAf9JwAxsbVHVgDNdHMDtGwCHRFncuw5dZIznsV6rhIrYzM0tSJzwmyZHUiQiWE
-         MVZ/yxW536SiAva0Nm6AKf75P+pUJHt+vbKGesBCqs5FMHWfi0OgTihWi6bP0YW/S4Lx
-         nneJFNQsQqwPuK3M6m0QlyRcImg5WW3coXDyn3Im8kGMg9t6TeQuvQfaNn/VcLbe+xCQ
-         3/wm9ecQ91eKK7gcgHI67KCnPvObodgCEyEn3wwzlKflWpAGNOVdS1wpwaQLq7WgzicI
-         D9BA==
-X-Forwarded-Encrypted: i=1; AJvYcCVc8tIw5OxrI+7Ox/+0NWT68bihZ8Q76lAAMQ5SuFPpVoANI92L7YgQqnTDKudxaArGbHZ1GmWsrde2mbvR+6nXB5yhId8IKlug36Sj
-X-Gm-Message-State: AOJu0Yy+GT1f0bf6OTr8RKw+LqaV/xPwrOf9fW02KxgUrp5JlnEoQoSA
-	CfYYKHb6pC/hHMf9J9gssFHbmDkDRdmFN/zI7Sjrd9/PleN+YsQBO86l0jynWVLCPkKC6Fzoq18
-	W07siF+1FNsrnZhzcfrysHfU/su45Cd/xo1E29BPac2hVF+n6iFtbIho=
-X-Google-Smtp-Source: AGHT+IF3R9obd6LzAY7LUOIqJlXr00TCRXswukkibjLN+n8WnX9GUSTD01VeLZkTTeaTRaL2PJPh2PzzW6e/mZb+lTYJvOxmdGWR
+        bh=RGL9FQmB5nbopldCpt+u4K2VdFzYz6hmq4pNpCAgyHY=;
+        b=Aj7XY0+oIEBpn+hzLMXfbjPWrmZRop14sSYDZRMi65RSR1iHLmt/62ocs0yGjg7B5s
+         T5OYJ9AosKTsShXfWi3z6jyG49xbXHfTM557np4onSHC3/gRfHmRrRDB0iFit9n6iVmy
+         y5eRLw8ytd4tQvEF/NXbgKdThMaGtODa3+ninWlkF1lcjdmBcJiY/E66zvySPXZgBmNJ
+         gw/LYxWSIZK9qbxIypQUCE/UK/HxzYikGBzEGbS8AMn784tYFdfkLULEHyB/q0JpMsZy
+         YJY8MeYKeYBLNFDH/yxKMBJcTaGcF9Kxc839cUxvzGTMpTNuX1gywAsZ+0zGk8V5ok55
+         mTOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMpeEh/xscHudJDrN8TCyC/itakHcR8u9GIWeMOOXu65fJVeSyVDliirLhAZiJa75/iFOSb3GRG/KM+LlwTcdaP59lCswosuXokfIj
+X-Gm-Message-State: AOJu0YwPGMNB/Bvzn3vA6BnIAusCCUqMQ86hCWse5WSQJgbYK43fy8jY
+	F1Oap2hsxIJWoGFp0NCFBdtNkxqVa1RgQUzgH9EuBMViLCUgt/Y80RRsJjDV0V9+tMPcrwCi5sI
+	Mt5GAy82VIVi/T1Z1j7Fg2fWlwar+cG11cqky28fLY4FrhCB29gRFOSI=
+X-Google-Smtp-Source: AGHT+IERcO2HqACqr41RDkKB2vxzlsKnEPdx3dkn9e3rFXNcfYP9pF4V9ffVljmUSusg+ZMOLbun+sdOCOHRDMgIRAW34M2ISA/p
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:860b:b0:4b7:c9b5:6765 with SMTP id
- 8926c6da1cb9f-4cce16eb89dmr105310173.5.1723801823586; Fri, 16 Aug 2024
+X-Received: by 2002:a05:6e02:1a25:b0:380:9233:96e6 with SMTP id
+ e9e14a558f8ab-39d26d856dcmr1543855ab.4.1723801823791; Fri, 16 Aug 2024
  02:50:23 -0700 (PDT)
 Date: Fri, 16 Aug 2024 02:50:23 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005bb657061fc9e31e@google.com>
-Subject: [syzbot] [bcachefs?] WARNING in discard_new_inode
-From: syzbot <syzbot+95e40eae71609e40d851@syzkaller.appspotmail.com>
+Message-ID: <0000000000005ee2e9061fc9e38c@google.com>
+Subject: [syzbot] [bcachefs?] kernel BUG in bch2_lru_change (2)
+From: syzbot <syzbot+510b0b28f8e6de64d307@syzkaller.appspotmail.com>
 To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
@@ -68,70 +68,93 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    d7a5aa4b3c00 Merge tag 'perf-tools-fixes-for-v6.11-2024-08..
+HEAD commit:    1fb918967b56 Merge tag 'for-6.11-rc3-tag' of git://git.ker..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=131e27c5980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17d08bc5980000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
-dashboard link: https://syzkaller.appspot.com/bug?extid=95e40eae71609e40d851
+dashboard link: https://syzkaller.appspot.com/bug?extid=510b0b28f8e6de64d307
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=150be3c5980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=165c93cb980000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=145916d5980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=134f55f3980000
 
 Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-d7a5aa4b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/af15738cca6c/vmlinux-d7a5aa4b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/62dacb1384ee/bzImage-d7a5aa4b.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/92de1b01cc1a/mount_0.gz
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-1fb91896.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/cd6e8883313a/vmlinux-1fb91896.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/87b718d2d1df/bzImage-1fb91896.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/4878c2c54d9c/mount_0.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+95e40eae71609e40d851@syzkaller.appspotmail.com
+Reported-by: syzbot+510b0b28f8e6de64d307@syzkaller.appspotmail.com
 
-R13: 00007f7d2a233210 R14: 0000000000000001 R15: 0032656c69662f2e
- </TASK>
 ------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5116 at fs/inode.c:1143 discard_new_inode+0x217/0x2a0 fs/inode.c:1143
-Modules linked in:
-CPU: 0 UID: 0 PID: 5116 Comm: syz-executor345 Not tainted 6.11.0-rc3-syzkaller-00156-gd7a5aa4b3c00 #0
+kernel BUG at fs/bcachefs/lru.h:19!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5085 Comm: syz-executor267 Not tainted 6.11.0-rc3-syzkaller-00066-g1fb918967b56 #0
 Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:discard_new_inode+0x217/0x2a0 fs/inode.c:1143
-Code: 00 e8 ad d7 59 ff 4c 89 f7 e8 e5 98 ad 09 4c 89 e7 48 83 c4 08 5b 41 5c 41 5d 41 5e 41 5f 5d e9 9f 00 00 00 e8 ba 6e 80 ff 90 <0f> 0b 90 42 80 3c 2b 00 75 ae eb b4 44 89 e1 80 e1 07 fe c1 38 c1
-RSP: 0018:ffffc90002d1f1e0 EFLAGS: 00010293
-RAX: ffffffff82131c36 RBX: 1ffff110078521f2 RCX: ffff888018a94880
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff82131bdd R09: fffff520005a3e2c
-R10: dffffc0000000000 R11: fffff520005a3e2c R12: ffff88803c290ec0
-R13: dffffc0000000000 R14: ffff88803c290f40 R15: ffff88803c290f90
-FS:  00007f7d2a2336c0(0000) GS:ffff888020800000(0000) knlGS:0000000000000000
+RIP: 0010:lru_pos fs/bcachefs/lru.h:19 [inline]
+RIP: 0010:__bch2_lru_set fs/bcachefs/lru.c:48 [inline]
+RIP: 0010:bch2_lru_del fs/bcachefs/lru.c:54 [inline]
+RIP: 0010:bch2_lru_change+0x65c/0x680 fs/bcachefs/lru.c:69
+Code: 80 e1 07 38 c1 0f 8c 47 fd ff ff be 14 00 00 00 48 8b 7c 24 10 e8 14 d9 c2 fd e9 33 fd ff ff e8 3a 62 7e 07 e8 65 92 5b fd 90 <0f> 0b e8 5d 92 5b fd 90 0f 0b e8 55 92 5b fd 90 0f 0b e8 4d 92 5b
+RSP: 0018:ffffc9000aece6e0 EFLAGS: 00010293
+RAX: ffffffff8437f70b RBX: 1ffff920015d9cf2 RCX: ffff8880001fc880
+RDX: 0000000000000000 RSI: 0100000001000000 RDI: 0000ffffffffffff
+RBP: ffffc9000aece810 R08: ffffffff8437f253 R09: ffffffff8404216f
+R10: 0000000000000003 R11: ffff8880001fc880 R12: 0000ffffffffffff
+R13: 1ffff920015d9ce4 R14: 0100000001000000 R15: ffff000001000000
+FS:  0000555576dd6380(0000) GS:ffff888020800000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f4c62ac2440 CR3: 000000003a4be000 CR4: 0000000000350ef0
+CR2: 00007f6d9100bd97 CR3: 00000000122b8000 CR4: 0000000000350ef0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
  <TASK>
- bch2_inode_insert+0x35b/0x3d0 fs/bcachefs/fs.c:203
- bch2_lookup_trans fs/bcachefs/fs.c:465 [inline]
- bch2_lookup+0x1014/0x16c0 fs/bcachefs/fs.c:483
- lookup_open fs/namei.c:3556 [inline]
- open_last_lookups fs/namei.c:3647 [inline]
- path_openat+0x11cc/0x3470 fs/namei.c:3883
- do_filp_open+0x235/0x490 fs/namei.c:3913
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1416
- do_sys_open fs/open.c:1431 [inline]
- __do_sys_openat fs/open.c:1447 [inline]
- __se_sys_openat fs/open.c:1442 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1442
+ bch2_trigger_alloc+0x1745/0x3f80 fs/bcachefs/alloc_background.c:877
+ bch2_key_trigger fs/bcachefs/bkey_methods.h:88 [inline]
+ run_one_trans_trigger fs/bcachefs/btree_trans_commit.c:507 [inline]
+ run_btree_triggers+0xc91/0x1270 fs/bcachefs/btree_trans_commit.c:540
+ bch2_trans_commit_run_triggers fs/bcachefs/btree_trans_commit.c:583 [inline]
+ __bch2_trans_commit+0x542/0x9030 fs/bcachefs/btree_trans_commit.c:1058
+ bch2_trans_commit fs/bcachefs/btree_update.h:184 [inline]
+ bch2_extent_update+0x4c0/0xbb0 fs/bcachefs/io_write.c:325
+ bch2_fpunch_at+0x87c/0x1020 fs/bcachefs/io_misc.c:184
+ bch2_fpunch+0x412/0x690 fs/bcachefs/io_misc.c:203
+ bchfs_fpunch+0x282/0x7a0 fs/bcachefs/fs-io.c:538
+ bch2_fallocate_dispatch+0x3e7/0x540 fs/bcachefs/fs-io.c:792
+ vfs_fallocate+0x553/0x6c0 fs/open.c:334
+ do_vfs_ioctl+0x2592/0x2e50 fs/ioctl.c:886
+ __do_sys_ioctl fs/ioctl.c:905 [inline]
+ __se_sys_ioctl+0x81/0x170 fs/ioctl.c:893
  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7d2a2861a9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 71 1d 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f7d2a233208 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007f7d2a30c6a8 RCX: 00007f7d2a2861a9
-RDX: 0000000000000000 RSI: 0000000020004280 RDI: ffffffffffffff9c
-RBP: 00007f7d2a30c6a0 R08: 00007f7d2a232fa7 R09: 0000000000000038
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f7d2a2d9090
-R13: 00007f7d2a233210 R14: 0000000000000001 R15: 0032656c69662f2e
+RIP: 0033:0x7fad0bc1ab99
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc8d92bed8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0031656c69662f2e RCX: 00007fad0bc1ab99
+RDX: 0000000020000180 RSI: 0000000040305829 RDI: 0000000000000004
+RBP: 00007fad0bc935f0 R08: 0000555576dd74c0 R09: 0000555576dd74c0
+R10: 0000555576dd74c0 R11: 0000000000000246 R12: 00007ffc8d92bf00
+R13: 00007ffc8d92c128 R14: 431bde82d7b634db R15: 00007fad0bc6303b
  </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:lru_pos fs/bcachefs/lru.h:19 [inline]
+RIP: 0010:__bch2_lru_set fs/bcachefs/lru.c:48 [inline]
+RIP: 0010:bch2_lru_del fs/bcachefs/lru.c:54 [inline]
+RIP: 0010:bch2_lru_change+0x65c/0x680 fs/bcachefs/lru.c:69
+Code: 80 e1 07 38 c1 0f 8c 47 fd ff ff be 14 00 00 00 48 8b 7c 24 10 e8 14 d9 c2 fd e9 33 fd ff ff e8 3a 62 7e 07 e8 65 92 5b fd 90 <0f> 0b e8 5d 92 5b fd 90 0f 0b e8 55 92 5b fd 90 0f 0b e8 4d 92 5b
+RSP: 0018:ffffc9000aece6e0 EFLAGS: 00010293
+RAX: ffffffff8437f70b RBX: 1ffff920015d9cf2 RCX: ffff8880001fc880
+RDX: 0000000000000000 RSI: 0100000001000000 RDI: 0000ffffffffffff
+RBP: ffffc9000aece810 R08: ffffffff8437f253 R09: ffffffff8404216f
+R10: 0000000000000003 R11: ffff8880001fc880 R12: 0000ffffffffffff
+R13: 1ffff920015d9ce4 R14: 0100000001000000 R15: ffff000001000000
+FS:  0000555576dd6380(0000) GS:ffff888020800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffab111bad5 CR3: 00000000122b8000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
 ---
