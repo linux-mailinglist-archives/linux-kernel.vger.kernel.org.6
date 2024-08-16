@@ -1,134 +1,200 @@
-Return-Path: <linux-kernel+bounces-289618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB2C3954850
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:54:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B380954859
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:55:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 654EFB21EFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:54:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD43AB21884
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA071AD3EF;
-	Fri, 16 Aug 2024 11:53:57 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639121B29AC;
+	Fri, 16 Aug 2024 11:55:27 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8A6143757;
-	Fri, 16 Aug 2024 11:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07B316F0E1;
+	Fri, 16 Aug 2024 11:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723809236; cv=none; b=DvCdlDrsADh4rGKvcd9yHGeMyNGiskUWLPIs3ZNuX6GG9bPwqu/muoP81pysdrOcuTSKIPwEZa20Zz4NBYblym7vasnzpYBpbV6Z7ZUd8y56mmw/9/TnKOBAc7OmbWigpbdL31EzB7hUN1CSHjhNBrX/k8MbiyMi++5VdwWmbOQ=
+	t=1723809326; cv=none; b=JrBnueB/BBkxfc/vkMNln4jvAPXOHEfBtbxSJpapk+mU+yGmEaVRK2ETJzrB2evtyxEsFs3krOOIUPbR2HXBNb0NQ/S7L/XRuVj9fnebBS3yAHqDLZeq+2Gc93romuvm8ugH4fHr5Zf6sGaCn3cF7qvTuLPxHf8IGN/DhShMjSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723809236; c=relaxed/simple;
-	bh=eojZLNJ54T7C1telZ/KLrA0gUmF3UJrn5dZ7ljL4lTs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WeT+aaVBBl5XlLROWN3KATDXcxQZ65aPrwlb7mWCgbjvEQDL99RXX41RjXjD184JTXwUKHoBgCM8OiVYn1F9GN7u7NFSugvVFIQGFf5+SLT1mAV1FZxTGm2gcSPQetBztIiaqXbrxdRhaU0HWMLo3t646rPNn6WFQcY9qlpv5MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4Wlfzg42L7z9v7NK;
-	Fri, 16 Aug 2024 19:34:55 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id C0BA514037F;
-	Fri, 16 Aug 2024 19:53:50 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwAn98PHPb9mV9RPAQ--.34928S2;
-	Fri, 16 Aug 2024 12:53:50 +0100 (CET)
-Message-ID: <3cd8019f03dae99c4e43b7613df869499ec72e66.camel@huaweicloud.com>
-Subject: Re: [PATCH] evm: stop avoidably reading i_writecount in
- evm_file_release
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Mateusz Guzik <mjguzik@gmail.com>, zohar@linux.ibm.com, 
- roberto.sassu@huawei.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com
-Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Date: Fri, 16 Aug 2024 13:53:39 +0200
-In-Reply-To: <20240806133607.869394-1-mjguzik@gmail.com>
-References: <20240806133607.869394-1-mjguzik@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1723809326; c=relaxed/simple;
+	bh=crRBTb++01BV7AbQhw0YhRZpdM4dL/fl/FxhwOGEdTQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UanqZsKqSYiLZKnlzG2BRZ/ln+Vdwu97d4SRNPtDAxIa/lX5aCK4RWkRY54YA3G5KnMDR2yyxgAAAz5mlXkYQwv7ku1hneaLju5CcSaNkoUqbFs77L8ylOO6THotEq9nTAju6MY3b0DhLsEudieD+y46AX9OS9XwCS9yv3l1lyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WlgQt2dSLzcdVh;
+	Fri, 16 Aug 2024 19:55:02 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 879EA1403D5;
+	Fri, 16 Aug 2024 19:55:19 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 16 Aug 2024 19:55:18 +0800
+Message-ID: <3e069c81-a728-4d72-a5bb-3be00d182107@huawei.com>
+Date: Fri, 16 Aug 2024 19:55:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwAn98PHPb9mV9RPAQ--.34928S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KFW3Zw1xuF43Jry8Ary7ZFb_yoW8Zr43pF
-	Wftan7JFn5tryfCF92y3W7uFyru340qr18Zas5WF12vFn8JrZYqr48tr1jgFnxKrZ5Cr1f
-	X3yIka45A3WDuaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrPEfUUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgARBGa+tfgI+QAAsz
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v13 04/14] mm: page_frag: add '_va' suffix to
+ page_frag API
+To: Alexander Duyck <alexander.duyck@gmail.com>
+CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Subbaraya Sundeep
+	<sbhatta@marvell.com>, Chuck Lever <chuck.lever@oracle.com>, Sagi Grimberg
+	<sagi@grimberg.me>, Jeroen de Borst <jeroendb@google.com>, Praveen
+ Kaligineedi <pkaligineedi@google.com>, Shailend Chand <shailend@google.com>,
+	Eric Dumazet <edumazet@google.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Sunil Goutham
+	<sgoutham@marvell.com>, Geetha sowjanya <gakula@marvell.com>, hariprasad
+	<hkelam@marvell.com>, Felix Fietkau <nbd@nbd.name>, Sean Wang
+	<sean.wang@mediatek.com>, Mark Lee <Mark-MC.Lee@mediatek.com>, Lorenzo
+ Bianconi <lorenzo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Keith
+ Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig
+	<hch@lst.de>, Chaitanya Kulkarni <kch@nvidia.com>, "Michael S. Tsirkin"
+	<mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Alexei Starovoitov <ast@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko
+	<andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard
+ Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
+	<yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Stanislav Fomichev
+	<sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>,
+	Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>, Olga
+ Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey
+	<tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, Anna Schumaker
+	<anna@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	<intel-wired-lan@lists.osuosl.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-nvme@lists.infradead.org>,
+	<kvm@vger.kernel.org>, <virtualization@lists.linux.dev>,
+	<linux-mm@kvack.org>, <bpf@vger.kernel.org>, <linux-afs@lists.infradead.org>,
+	<linux-nfs@vger.kernel.org>, <linux-kselftest@vger.kernel.org>
+References: <20240808123714.462740-1-linyunsheng@huawei.com>
+ <20240808123714.462740-5-linyunsheng@huawei.com>
+ <d1a23116d054e2ebb00067227f0cffecefe33e11.camel@gmail.com>
+ <676a2a15-d390-48a7-a8d7-6e491c89e200@huawei.com>
+ <CAKgT0Uct5ptfs9ZEoe-9u-fOVz4HLf+5MS-YidKV+xELCBHKNw@mail.gmail.com>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <CAKgT0Uct5ptfs9ZEoe-9u-fOVz4HLf+5MS-YidKV+xELCBHKNw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-On Tue, 2024-08-06 at 15:36 +0200, Mateusz Guzik wrote:
-> The EVM_NEW_FILE flag is unset if the file already existed at the time
-> of open and this can be checked without looking at i_writecount.
+On 2024/8/15 23:00, Alexander Duyck wrote:
+> On Wed, Aug 14, 2024 at 8:00 PM Yunsheng Lin <linyunsheng@huawei.com> wrote:
+>>
+>> On 2024/8/14 23:49, Alexander H Duyck wrote:
+>>> On Thu, 2024-08-08 at 20:37 +0800, Yunsheng Lin wrote:
+>>>> Currently the page_frag API is returning 'virtual address'
+>>>> or 'va' when allocing and expecting 'virtual address' or
+>>>> 'va' as input when freeing.
+>>>>
+>>>> As we are about to support new use cases that the caller
+>>>> need to deal with 'struct page' or need to deal with both
+>>>> 'va' and 'struct page'. In order to differentiate the API
+>>>> handling between 'va' and 'struct page', add '_va' suffix
+>>>> to the corresponding API mirroring the page_pool_alloc_va()
+>>>> API of the page_pool. So that callers expecting to deal with
+>>>> va, page or both va and page may call page_frag_alloc_va*,
+>>>> page_frag_alloc_pg*, or page_frag_alloc* API accordingly.
+>>>>
+>>>> CC: Alexander Duyck <alexander.duyck@gmail.com>
+>>>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+>>>> Reviewed-by: Subbaraya Sundeep <sbhatta@marvell.com>
+>>>> Acked-by: Chuck Lever <chuck.lever@oracle.com>
+>>>> Acked-by: Sagi Grimberg <sagi@grimberg.me>
+>>>> ---
+>>>>  drivers/net/ethernet/google/gve/gve_rx.c      |  4 ++--
+>>>>  drivers/net/ethernet/intel/ice/ice_txrx.c     |  2 +-
+>>>>  drivers/net/ethernet/intel/ice/ice_txrx.h     |  2 +-
+>>>>  drivers/net/ethernet/intel/ice/ice_txrx_lib.c |  2 +-
+>>>>  .../net/ethernet/intel/ixgbevf/ixgbevf_main.c |  4 ++--
+>>>>  .../marvell/octeontx2/nic/otx2_common.c       |  2 +-
+>>>>  drivers/net/ethernet/mediatek/mtk_wed_wo.c    |  4 ++--
+>>>>  drivers/nvme/host/tcp.c                       |  8 +++----
+>>>>  drivers/nvme/target/tcp.c                     | 22 +++++++++----------
+>>>>  drivers/vhost/net.c                           |  6 ++---
+>>>>  include/linux/page_frag_cache.h               | 21 +++++++++---------
+>>>>  include/linux/skbuff.h                        |  2 +-
+>>>>  kernel/bpf/cpumap.c                           |  2 +-
+>>>>  mm/page_frag_cache.c                          | 12 +++++-----
+>>>>  net/core/skbuff.c                             | 16 +++++++-------
+>>>>  net/core/xdp.c                                |  2 +-
+>>>>  net/rxrpc/txbuf.c                             | 15 +++++++------
+>>>>  net/sunrpc/svcsock.c                          |  6 ++---
+>>>>  .../selftests/mm/page_frag/page_frag_test.c   | 13 ++++++-----
+>>>>  19 files changed, 75 insertions(+), 70 deletions(-)
+>>>>
+>>>
+>>> I still say no to this patch. It is an unnecessary name change and adds
+>>> no value. If you insist on this patch I will reject the set every time.
+>>>
+>>> The fact is it is polluting the git history and just makes things
+>>> harder to maintain without adding any value as you aren't changing what
+>>> the function does and there is no need for this. In addition it just
+>>
+>> I guess I have to disagree with the above 'no need for this' part for
+>> now, as mentioned in [1]:
+>>
+>> "There are three types of API as proposed in this patchset instead of
+>> two types of API:
+>> 1. page_frag_alloc_va() returns [va].
+>> 2. page_frag_alloc_pg() returns [page, offset].
+>> 3. page_frag_alloc() returns [va] & [page, offset].
+>>
+>> You seemed to miss that we need a third naming for the type 3 API.
+>> Do you see type 3 API as a valid API? if yes, what naming are you
+>> suggesting for it? if no, why it is not a valid API?"
+> 
+> I didn't. I just don't see the point in pushing out the existing API
+> to support that. In reality 2 and 3 are redundant. You probably only
+> need 3. Like I mentioned earlier you can essentially just pass a
 
-Agreed. EVM_NEW_FILE is not going to be set during the open(), only
-before, in evm_post_path_mknod().
+If the caller just expect [page, offset], do you expect the caller also
+type 3 API, which return both [va] and [page, offset]?
 
-Looks good to me.
+I am not sure if I understand why you think 2 and 3 are redundant here?
+If you think 2 and 3 are redundant here, aren't 1 and 3 also redundant
+as the similar agrument?
 
-Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+> page_frag via pointer to the function. With that you could also look
+> at just returning a virtual address as well if you insist on having
+> something that returns all of the above. No point in having 2 and 3 be
+> seperate functions.
 
-Thanks
+Let's be more specific about what are your suggestion here: which way
+is the prefer way to return the virtual address. It seems there are two
+options:
 
-Roberto
+1. Return the virtual address by function returning as below:
+void *page_frag_alloc_bio(struct page_frag_cache *nc, struct bio_vec *bio);
 
-> Not accessing it reduces traffic on the cacheline during parallel open
-> of the same file and drop the evm_file_release routine from second place
-> to bottom of the profile.
->=20
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> ---
->=20
-> The context is that I'm writing a patch which removes one lockref
-> get/put cycle on parallel open. An operational WIP reduces ping-pong in
-> that area and made do_dentry_open skyrocket along with evm_file_release,
-> due to i_writecount access. With the patch they go down again and
-> apparmor takes the rightful first place.
->=20
-> The patch accounts for about 5% speed up at 20 cores running open3 from
-> will-it-scale on top of the above wip. (the apparmor + lockref thing
-> really don't scale, that's next)
->=20
-> I would provide better measurements, but the wip is not ready (as the
-> description suggests) and I need evm out of the way for the actual
-> patch.
->=20
->  security/integrity/evm/evm_main.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/e=
-vm_main.c
-> index 62fe66dd53ce..309630f319e2 100644
-> --- a/security/integrity/evm/evm_main.c
-> +++ b/security/integrity/evm/evm_main.c
-> @@ -1084,7 +1084,8 @@ static void evm_file_release(struct file *file)
->  	if (!S_ISREG(inode->i_mode) || !(mode & FMODE_WRITE))
->  		return;
-> =20
-> -	if (iint && atomic_read(&inode->i_writecount) =3D=3D 1)
-> +	if (iint && iint->flags & EVM_NEW_FILE &&
-> +	    atomic_read(&inode->i_writecount) =3D=3D 1)
->  		iint->flags &=3D ~EVM_NEW_FILE;
->  }
-> =20
+2. Return the virtual address by double pointer as below:
+int page_frag_alloc_bio(struct page_frag_cache *nc, struct bio_vec *bio,
+		        void **va);
 
+If the above options is what you have in mind, please be more specific
+which one is the prefer option, and why it is the prefer option.
+If the above options is not what you have in mind, please list out the
+declaration of API in your mind.
+
+> 
+> I am going to nack this patch set if you insist on this pointless
+> renaming. The fact is it is just adding noise that adds no value.
 
