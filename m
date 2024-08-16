@@ -1,159 +1,184 @@
-Return-Path: <linux-kernel+bounces-289545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5CBE954758
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:01:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC2BA95475D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 13:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDD1E1C247FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:01:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 500AA1F2583C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56AA7198A2F;
-	Fri, 16 Aug 2024 11:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76EED19D089;
+	Fri, 16 Aug 2024 11:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gXIk5zbJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="G1pjVnaO"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5802B139590;
-	Fri, 16 Aug 2024 11:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0881991BB
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 11:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723806066; cv=none; b=Li93NL+NCzdurknMc+QRm5GUPws43bqeMvjhhW349pkbvyveHWo8cuR4dMdR27KLOwnOSYPUXY4u/MT/py7wCnd9RjhciJWrXrjCP25ex9mxw1cw9ZjTwTHuu+E95BOdu5a/tkuylFvMADVvy/1HXhKkOOPXFlM3C77k30OSeMA=
+	t=1723806081; cv=none; b=uguI7vJIsfoyjCfec6CU3ch43ATI43rpaeQbPC3Rr7ZuyKw1kpPoQgi+rjx7Cb3ILlebieuK/XoxHFgaN9gQEnpxmBb6BDW2eeviZnfXLD9BPRwhqFbYc7urq0Sw+Kt0oLDPSluidvRbEqD65fgJtzYDi1Zvnpk7dkI5wJxz9FI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723806066; c=relaxed/simple;
-	bh=c+RQj85F9jpQR1WdA6XgZX+EEDOsLLKjCNtlTw/pA3g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GLlzu1b6r6LZE1QfJticjpOGUriDsZNzjXU2+whtU8jp42QSxyJJcg8wa4S0Vh0RPoDHCy9DD6j3HfLOgpaEUd/QnrQX+qjCCqxK5BjuwkgTAZTCGg2GJicMyDJNpJOhglYag3TnNuvY9I5QZ6J4owCfZXIwdN5Cu8rVToBCILY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gXIk5zbJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65750C32782;
-	Fri, 16 Aug 2024 11:01:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723806065;
-	bh=c+RQj85F9jpQR1WdA6XgZX+EEDOsLLKjCNtlTw/pA3g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gXIk5zbJIXFuEJFocLJAxmPYZqlSb1RK+fR6Yvkb4x6qsU1lzujD9Ao3UAHyUIWoS
-	 gTm0PDi+XNI6pGI141hxgOgiTHzk2DicrGWhWX++NW7/JdWmTaCNRTGDVCWy7M0TOk
-	 4/73pvGwtr8HozWeWvfuou9RWiT9w8YIP5YAMrkw=
-Date: Fri, 16 Aug 2024 13:01:02 +0200
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: =?utf-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>
-Cc: "quic_prashk@quicinc.com" <quic_prashk@quicinc.com>,
-	"quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"opensource.kernel" <opensource.kernel@vivo.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Subject: Re: [PATCH] usb: gadget: u_serial: check Null pointer in EP callback
-Message-ID: <2024081635-slacking-buzz-acce@gregkh>
-References: <TYUPR06MB62172CC6BA9647EF769D4DF2D2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
+	s=arc-20240116; t=1723806081; c=relaxed/simple;
+	bh=jOVkyCZRwxwfPGY4eymxAuwM3qMtwzLVgjzO31sjmjI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ukKhO1k8KoEpaMFikH+y6MT3STPB1ILwgPyA4ITB3XlZ4/U8sSdtgRomRa4wqMG97Qxpn70C3lBIw7GV7bMSr3C4pD9hvy+l5gLpwFAxCropo/koNEYFlGEY9kyZMStArwPg+OpEGnwGmpxffoGU0T/REyY3XMubmN/9wi1OvgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=G1pjVnaO; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so4141912e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 04:01:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1723806078; x=1724410878; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=4qsz+7mQYKMGsKT5Lq9NXZ6sjzsnZVAWwIJdiaA3GZU=;
+        b=G1pjVnaO1TgbyjtkCz9qqyrWZSXyR7ZOm941OMfE7aKU+U28+4pM3i4wi7GoLOoxga
+         MWr9aA4A62yroM1UkSaxnWs6VY8CoVvkTXH+sRtPYcmuRykSwTCf+4l7qJ82DVQIcLzu
+         Jsdy5PurQQtk/R5eTWQKl6Oyj0fCA75pFEQg4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723806078; x=1724410878;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4qsz+7mQYKMGsKT5Lq9NXZ6sjzsnZVAWwIJdiaA3GZU=;
+        b=F/+Ft4tDoak3PvIU3ZqlSyS4vckLdk2YGHZ6d5TSBawKzVSmHF9BBZp1ed+P9I14f4
+         9Z5yIvzHGWQhbvubvj3136H0kPfxgLBk0JnfH3YsM9XJy0KedGhRh2qhT1qwO9Nmr9ET
+         Xc/+zpz3JxuZB54nChKuSDm+W1X8sJBzvXltlxnncPT63Sq9wayRvOrxSe1ACrvF8Lsp
+         QpuVjOf8Le09B9aZfl1PDDmCXMR3Q2oFhrBwAaGsD2cbp6Bbh8AXIogpVO38FANI5MJr
+         kxY82vZm7P3yLMd8EYsAX+0AH9Nn4jUL4mBB9Upe6NIf1uimer7nPso4AvWxNUgLjYMi
+         z/iA==
+X-Forwarded-Encrypted: i=1; AJvYcCUq7mGjWqZb/Cm2OSFMK4+TWzYbc02vxHHTCyHaTBVFTKHFDVvfv01INZdrNfHOAtJ1qVUDmZsfbnVChVyaXQIB2vaOE9oBgI+MXfXI
+X-Gm-Message-State: AOJu0Yy5XErDuNb9h7tdi7Zyhicq4GaJ3zqcXAZrR9/xLqY7tgoVIpuf
+	sCpDLyPIokDk8QU3hScCphdsER+HdiKi79uQ8ofpw/EqtSV32Q69xz+KD6ec6rg=
+X-Google-Smtp-Source: AGHT+IE4AZiVE7kjprocqnllW5JlMr4sYvdQRlM74n9w7KXPCquuL65elKkFvCQuUxcO79Gv2cLBjw==
+X-Received: by 2002:a05:6512:3d28:b0:52c:8342:6699 with SMTP id 2adb3069b0e04-5331c6e4088mr2153159e87.55.1723806077291;
+        Fri, 16 Aug 2024 04:01:17 -0700 (PDT)
+Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c6ae6sm238812066b.35.2024.08.16.04.01.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Aug 2024 04:01:16 -0700 (PDT)
+Message-ID: <550d15cd-5c48-4c20-92c2-f09a7e30adc9@citrix.com>
+Date: Fri, 16 Aug 2024 12:01:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <TYUPR06MB62172CC6BA9647EF769D4DF2D2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
+ early measurements
+To: Thomas Gleixner <tglx@linutronix.de>,
+ "Daniel P. Smith" <dpsmith@apertussolutions.com>,
+ "Eric W. Biederman" <ebiederm@xmission.com>,
+ Eric Biggers <ebiggers@kernel.org>
+Cc: Ross Philipson <ross.philipson@oracle.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org, linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+ linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
+ mingo@redhat.com, bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
+ ardb@kernel.org, mjg59@srcf.ucam.org, James.Bottomley@hansenpartnership.com,
+ peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, luto@amacapital.net,
+ nivedita@alum.mit.edu, herbert@gondor.apana.org.au, davem@davemloft.net,
+ corbet@lwn.net, dwmw2@infradead.org, baolu.lu@linux.intel.com,
+ kanth.ghatraju@oracle.com, trenchboot-devel@googlegroups.com
+References: <20240531010331.134441-1-ross.philipson@oracle.com>
+ <20240531010331.134441-7-ross.philipson@oracle.com>
+ <20240531021656.GA1502@sol.localdomain>
+ <874jaegk8i.fsf@email.froward.int.ebiederm.org>
+ <5b1ce8d3-516d-4dfd-a976-38e5cee1ef4e@apertussolutions.com>
+ <87ttflli09.ffs@tglx>
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ xsFNBFLhNn8BEADVhE+Hb8i0GV6mihnnr/uiQQdPF8kUoFzCOPXkf7jQ5sLYeJa0cQi6Penp
+ VtiFYznTairnVsN5J+ujSTIb+OlMSJUWV4opS7WVNnxHbFTPYZVQ3erv7NKc2iVizCRZ2Kxn
+ srM1oPXWRic8BIAdYOKOloF2300SL/bIpeD+x7h3w9B/qez7nOin5NzkxgFoaUeIal12pXSR
+ Q354FKFoy6Vh96gc4VRqte3jw8mPuJQpfws+Pb+swvSf/i1q1+1I4jsRQQh2m6OTADHIqg2E
+ ofTYAEh7R5HfPx0EXoEDMdRjOeKn8+vvkAwhviWXTHlG3R1QkbE5M/oywnZ83udJmi+lxjJ5
+ YhQ5IzomvJ16H0Bq+TLyVLO/VRksp1VR9HxCzItLNCS8PdpYYz5TC204ViycobYU65WMpzWe
+ LFAGn8jSS25XIpqv0Y9k87dLbctKKA14Ifw2kq5OIVu2FuX+3i446JOa2vpCI9GcjCzi3oHV
+ e00bzYiHMIl0FICrNJU0Kjho8pdo0m2uxkn6SYEpogAy9pnatUlO+erL4LqFUO7GXSdBRbw5
+ gNt25XTLdSFuZtMxkY3tq8MFss5QnjhehCVPEpE6y9ZjI4XB8ad1G4oBHVGK5LMsvg22PfMJ
+ ISWFSHoF/B5+lHkCKWkFxZ0gZn33ju5n6/FOdEx4B8cMJt+cWwARAQABzSlBbmRyZXcgQ29v
+ cGVyIDxhbmRyZXcuY29vcGVyM0BjaXRyaXguY29tPsLBegQTAQgAJAIbAwULCQgHAwUVCgkI
+ CwUWAgMBAAIeAQIXgAUCWKD95wIZAQAKCRBlw/kGpdefoHbdD/9AIoR3k6fKl+RFiFpyAhvO
+ 59ttDFI7nIAnlYngev2XUR3acFElJATHSDO0ju+hqWqAb8kVijXLops0gOfqt3VPZq9cuHlh
+ IMDquatGLzAadfFx2eQYIYT+FYuMoPZy/aTUazmJIDVxP7L383grjIkn+7tAv+qeDfE+txL4
+ SAm1UHNvmdfgL2/lcmL3xRh7sub3nJilM93RWX1Pe5LBSDXO45uzCGEdst6uSlzYR/MEr+5Z
+ JQQ32JV64zwvf/aKaagSQSQMYNX9JFgfZ3TKWC1KJQbX5ssoX/5hNLqxMcZV3TN7kU8I3kjK
+ mPec9+1nECOjjJSO/h4P0sBZyIUGfguwzhEeGf4sMCuSEM4xjCnwiBwftR17sr0spYcOpqET
+ ZGcAmyYcNjy6CYadNCnfR40vhhWuCfNCBzWnUW0lFoo12wb0YnzoOLjvfD6OL3JjIUJNOmJy
+ RCsJ5IA/Iz33RhSVRmROu+TztwuThClw63g7+hoyewv7BemKyuU6FTVhjjW+XUWmS/FzknSi
+ dAG+insr0746cTPpSkGl3KAXeWDGJzve7/SBBfyznWCMGaf8E2P1oOdIZRxHgWj0zNr1+ooF
+ /PzgLPiCI4OMUttTlEKChgbUTQ+5o0P080JojqfXwbPAyumbaYcQNiH1/xYbJdOFSiBv9rpt
+ TQTBLzDKXok86M7BTQRS4TZ/ARAAkgqudHsp+hd82UVkvgnlqZjzz2vyrYfz7bkPtXaGb9H4
+ Rfo7mQsEQavEBdWWjbga6eMnDqtu+FC+qeTGYebToxEyp2lKDSoAsvt8w82tIlP/EbmRbDVn
+ 7bhjBlfRcFjVYw8uVDPptT0TV47vpoCVkTwcyb6OltJrvg/QzV9f07DJswuda1JH3/qvYu0p
+ vjPnYvCq4NsqY2XSdAJ02HrdYPFtNyPEntu1n1KK+gJrstjtw7KsZ4ygXYrsm/oCBiVW/OgU
+ g/XIlGErkrxe4vQvJyVwg6YH653YTX5hLLUEL1NS4TCo47RP+wi6y+TnuAL36UtK/uFyEuPy
+ wwrDVcC4cIFhYSfsO0BumEI65yu7a8aHbGfq2lW251UcoU48Z27ZUUZd2Dr6O/n8poQHbaTd
+ 6bJJSjzGGHZVbRP9UQ3lkmkmc0+XCHmj5WhwNNYjgbbmML7y0fsJT5RgvefAIFfHBg7fTY/i
+ kBEimoUsTEQz+N4hbKwo1hULfVxDJStE4sbPhjbsPCrlXf6W9CxSyQ0qmZ2bXsLQYRj2xqd1
+ bpA+1o1j2N4/au1R/uSiUFjewJdT/LX1EklKDcQwpk06Af/N7VZtSfEJeRV04unbsKVXWZAk
+ uAJyDDKN99ziC0Wz5kcPyVD1HNf8bgaqGDzrv3TfYjwqayRFcMf7xJaL9xXedMcAEQEAAcLB
+ XwQYAQgACQUCUuE2fwIbDAAKCRBlw/kGpdefoG4XEACD1Qf/er8EA7g23HMxYWd3FXHThrVQ
+ HgiGdk5Yh632vjOm9L4sd/GCEACVQKjsu98e8o3ysitFlznEns5EAAXEbITrgKWXDDUWGYxd
+ pnjj2u+GkVdsOAGk0kxczX6s+VRBhpbBI2PWnOsRJgU2n10PZ3mZD4Xu9kU2IXYmuW+e5KCA
+ vTArRUdCrAtIa1k01sPipPPw6dfxx2e5asy21YOytzxuWFfJTGnVxZZSCyLUO83sh6OZhJkk
+ b9rxL9wPmpN/t2IPaEKoAc0FTQZS36wAMOXkBh24PQ9gaLJvfPKpNzGD8XWR5HHF0NLIJhgg
+ 4ZlEXQ2fVp3XrtocHqhu4UZR4koCijgB8sB7Tb0GCpwK+C4UePdFLfhKyRdSXuvY3AHJd4CP
+ 4JzW0Bzq/WXY3XMOzUTYApGQpnUpdOmuQSfpV9MQO+/jo7r6yPbxT7CwRS5dcQPzUiuHLK9i
+ nvjREdh84qycnx0/6dDroYhp0DFv4udxuAvt1h4wGwTPRQZerSm4xaYegEFusyhbZrI0U9tJ
+ B8WrhBLXDiYlyJT6zOV2yZFuW47VrLsjYnHwn27hmxTC/7tvG3euCklmkn9Sl9IAKFu29RSo
+ d5bD8kMSCYsTqtTfT6W4A3qHGvIDta3ptLYpIAOD2sY3GYq2nf3Bbzx81wZK14JdDDHUX2Rs
+ 6+ahAA==
+In-Reply-To: <87ttflli09.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 16, 2024 at 10:49:19AM +0000, 胡连勤 wrote:
-> From: Lianqin Hu <hulianqin@vivo.com>
-> 
-> Added null pointer check to avoid system crash.
-> 
-> Unable to handle kernel NULL pointer dereference at
-> virtual address 00000000000001a8
-> pc : gs_read_complete+0x58/0x240
-> lr : usb_gadget_giveback_request+0x40/0x160
-> sp : ffffffc00f1539c0
-> x29: ffffffc00f1539c0 x28: ffffff8002a30000 x27: 0000000000000000
-> x26: ffffff8002a30000 x25: 0000000000000000 x24: ffffff8002a30000
-> x23: ffffff8002ff9a70 x22: ffffff898e7a7b00 x21: ffffff803c9af9d8
-> x20: ffffff898e7a7b00 x19: 00000000000001a8 x18: ffffffc0099fd098
-> x17: 0000000000001000 x16: 0000000080000000 x15: 0000000ac1200000
-> x14: 0000000000000003 x13: 000000000000d5e8 x12: 0000000355c314ac
-> x11: 0000000000000015 x10: 0000000000000012 x9 : 0000000000000008
-> x8 : 0000000000000000 x7 : 0000000000000000 x6 : ffffff887cd12000
-> x5 : 0000000000000002 x4 : ffffffc00f9b07f0 x3 : ffffffc00f1538d0
-> x2 : 0000000000000001 x1 : 0000000000000000 x0 : 00000000000001a8
-> Call trace:
-> gs_read_complete+0x58/0x240
-> usb_gadget_giveback_request+0x40/0x160
-> dwc3_remove_requests+0x170/0x484
-> dwc3_ep0_out_start+0xb0/0x1d4
-> __dwc3_gadget_start+0x25c/0x720
-> kretprobe_trampoline.cfi_jt+0x0/0x8
-> kretprobe_trampoline.cfi_jt+0x0/0x8
-> udc_bind_to_driver+0x1d8/0x300
-> usb_gadget_probe_driver+0xa8/0x1dc
-> gadget_dev_desc_UDC_store+0x13c/0x188
-> configfs_write_iter+0x160/0x1f4
-> vfs_write+0x2d0/0x40c
-> ksys_write+0x7c/0xf0
-> __arm64_sys_write+0x20/0x30
-> invoke_syscall+0x60/0x150
-> el0_svc_common+0x8c/0xf8
-> do_el0_svc+0x28/0xa0
-> el0_svc+0x24/0x84
-> el0t_64_sync_handler+0x88/0xec
-> el0t_64_sync+0x1b4/0x1b8
-> Code: aa1f03e1 aa1303e0 52800022 2a0103e8 (88e87e62)
-> ---[ end trace 938847327a739172 ]---
-> Kernel panic - not syncing: Oops: Fatal exception
-> 
-> Signed-off-by: Lianqin Hu <hulianqin@vivo.com>
-> ---
->  drivers/usb/gadget/function/u_serial.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/drivers/usb/gadget/function/u_serial.c b/drivers/usb/gadget/function/u_serial.c
-> index b394105e55d6..65637d53bf02
-> --- a/drivers/usb/gadget/function/u_serial.c
-> +++ b/drivers/usb/gadget/function/u_serial.c
-> @@ -454,6 +454,14 @@ static void gs_read_complete(struct usb_ep *ep, struct usb_request *req)
->  {
->  	struct gs_port	*port = ep->driver_data;
->  
-> +	/*
-> +	 * When port is NULL, Return to avoid panic.
-> +	 */
+On 15/08/2024 8:10 pm, Thomas Gleixner wrote:
+> On Thu, Aug 15 2024 at 13:38, Daniel P. Smith wrote:
+>> On 5/31/24 09:54, Eric W. Biederman wrote:
+>>> Eric Biggers <ebiggers@kernel.org> writes:
+>>>> That paragraph is also phrased as a hypothetical, "Even if we'd prefer to use
+>>>> SHA-256-only".  That implies that you do not, in fact, prefer SHA-256 only.  Is
+>>>> that the case?  Sure, maybe there are situations where you *have* to use SHA-1,
+>>>> but why would you not at least *prefer* SHA-256?
+>>> Yes.  Please prefer to use SHA-256.
+>>>
+>>> Have you considered implementing I think it is SHA1-DC (as git has) that
+>>> is compatible with SHA1 but blocks the known class of attacks where
+>>> sha1 is actively broken at this point?
+>> We are using the kernel's implementation, addressing what the kernel 
+>> provides is beyond our efforts. Perhaps someone who is interested in 
+>> improving the kernel's SHA1 could submit a patch implementing/replacing 
+>> it with SHA1-DC, as I am sure the maintainers would welcome the help.
+> Well, someone who is interested to get his "secure" code merged should
+> have a vested interested to have a non-broken SHA1 implementation if
+> there is a sensible requirement to use SHA1 in that new "secure" code,
+> no?
 
-Multiple line comments for something like this really isn't needed.
+No.
 
-> +	if (!port) {
-> +		pr_err("%s, failed to get port\n", __func__);
+The use of SHA-1 is necessary even on modern systems to avoid a
+vulnerability.
 
-No need for this either, right?
+It is the platform, not Linux, which decides which TPM PCR banks are active.
 
-But how can this happen?  What is causing driver_data to be NULL?  And
-what protects it from happening right after you check for it?
+Linux *must* have an algorithm for every active bank (which is the
+platform's choice), even if the single thing it intends to do is cap the
+bank and use better ones.
 
-> +		return;
-> +	}
-> +
->  	/* Queue all received data until the tty layer is ready for it. */
->  	spin_lock(&port->port_lock);
->  	list_add_tail(&req->list, &port->read_queue);
-> @@ -465,6 +473,14 @@ static void gs_write_complete(struct usb_ep *ep, struct usb_request *req)
->  {
->  	struct gs_port	*port = ep->driver_data;
->  
-> +	/*
-> +	 * When port is NULL, Return to avoid panic.
-> +	 */
-> +	if (!port) {
-> +		pr_err("%s, failed to get port\n", __func__);
-> +		return;
-> +	}
+Capping a bank requires updating the TPM Log without corrupting it,
+which requires a hash calculation of the correct type for the bank.
 
-Same question here, what is keeping it from changing right after you
-test?
-
-thanks,
-
-greg k-h
+~Andrew
 
