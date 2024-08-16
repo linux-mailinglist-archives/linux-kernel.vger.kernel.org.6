@@ -1,129 +1,192 @@
-Return-Path: <linux-kernel+bounces-289075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C07E29541E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:36:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 677B09541E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6991A1F2363A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:36:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFFDDB2382C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D3685654;
-	Fri, 16 Aug 2024 06:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2922B83CDA;
+	Fri, 16 Aug 2024 06:35:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ysfnu2hl"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="21FlmIED"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F29085260
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 06:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9CE82866
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 06:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723790052; cv=none; b=mZpEOLjL2wKH0OZX75qI3ccxB+RD/jU6v1CTroWmm8dc2Tf6vZfgjw7Mz16iADF8teKhMEKqW6UCmtOtuMx+dWAqjhKntRRYtMjt6j6TdhV5zdsnpDnI3A3gtvmnZfjT27ZiuilsK3zrBxXnstM5xBD8ke3B+ffXbcKB6b0vpEk=
+	t=1723790135; cv=none; b=Kjh39JXTGOup5XbqZJelLX3zMyiu7SKnAfIi8cNYDGMKfQ+if26P4j+vN0Lu1NbjJgCWldeI8YZchtg8t6uBojjbmKNIsN3jIqMhy1XPRJcN/giCZMcIB/1E+pfmRb/Ztk4pgGdAA8ItbQ58Ewmd0h8IEkZjhh9tT1RY33DPfCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723790052; c=relaxed/simple;
-	bh=4uCrMhQ06N0SQ35tVNzYs2DOgiGlKcWDSHAS0/JjxSQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fXySt7BsAMgwgGDJuLh6NQmuo+4togBYS7GAVRijHZ0N/IGCpCq8hdR6EHNv8sFB8AhGxCkG+8kcUP5Qf7LYwezb/+1sFEbQL+FxmqZf/c9fN4fUjewphHCH4Z6v9Nea4Uyi3AkwuYV7rCD7Q6mHHW+AT62UpZ7Hk4bcBscHnec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ysfnu2hl; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2d3e46ba5bcso371542a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 23:34:10 -0700 (PDT)
+	s=arc-20240116; t=1723790135; c=relaxed/simple;
+	bh=Fyd8Rghju8MutKywJURznuQGDhRTdOs24AGq+FEMZ5E=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=CPGgKrmzXKbgCqBsnVldszagzI6/gNG42ZDNQxs04bxdSRT0aF4Cea/JHBimGzApf04rKC0YrSO9rzrjSHbWpAQFOnWz7TycmlQ8FqdRFQuqrxhoW2RRnm77H+47NLWDk6umlM+uMBCKd33NSzHHTQJ+9t2O6vlyBmgtX/q9A80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=21FlmIED; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so216862166b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 23:35:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723790050; x=1724394850; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=a/uavK0PbYy3J4bVDBO5APBAVCLocLDlmvM+81JXjMc=;
-        b=Ysfnu2hlkUEu8IlxTsboeRoAeaCIkQbrGsaUMJIKNc51johwkvr2GVRzVJ/bOlzWG2
-         +MOSRjvBp/jJQaMkSrH1E783Bb0t0In72EQum3wLyryRsVLZoo7FWFUe5rVeQy+HTSAK
-         ygewqtszz2NK4dEoyKrRNKEU1APcwqNsRbqvY9sdss5dyTo61yYq5SSWptvvBeSVym6C
-         AxZCghq5zTB3trEIDgSVwqec1oFX+lQ9vzbvB9OZQicwRbqLdoCa68vCTiyRdwBfv891
-         35ap9vKFylSHhKadDHGgwA9x0n/BF3S4Y5pfuvGGcLANgHGKPmutNadwDe+j5nAwyiMF
-         013g==
+        d=fairphone.com; s=fair; t=1723790132; x=1724394932; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dlvy/2cOpY4w4qpZGIrneMUP1FhFXubcCbWNdPksnnY=;
+        b=21FlmIEDHKSC+hmkidrhhwE8kt4G0xMdf2U/ZWiAMauSrmESjcKGM8Q7Dwqx7bjkbg
+         Fg974uAibwQv5ikFYWDTNge6Brdsr6AZFjEX7wfnrNn6QMGDNnDyJrCxEU3u6JsKMH0S
+         aFznz1SMdhdJ2Nw2feQVoxBjOh0WFvKIE/F3EpHfpmS6UvcLoZ65GWy6+ah/+oHGnDAs
+         UfNRdv46mANu22sNsR/JW0IPuIRBb+EZYzTxRzywjdk+Ie1BwJEekFUqly0/Ixit6oCR
+         YrDnfcO8O5LTfrjU21coRdXACskOaINA2jAhcG3xBbgyOBWHYGkJy7x4j0rknLPa8Dkj
+         i4gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723790050; x=1724394850;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a/uavK0PbYy3J4bVDBO5APBAVCLocLDlmvM+81JXjMc=;
-        b=iEBh0CminBg3PeloFHp0F+q6fZ8U2pkSw+6dnF9lyAAfqMedoCLPyjnX4B6NAD58DS
-         D5qqsXq0cSpieufmGZynlqzjZivYeyHR8DTBeVCnBr5yX6gvHijHXk4yHaa8YXA6pZJK
-         gLQQ6fh5XInUJZu5FRuBbTUKZctu6opUoABCWS/uHaXKdhz7SO0LiuOUBxQpx/h3ofjP
-         ncU7OWBGiF2oUs1epU4nJbXGj8IFgdwzciGfAf5QXYm1wb0OO2M8LaiM7F3L9VlkhCih
-         VR1WR6YdATZUsViAbqPm6ztDfCwP/XBO15O9kmil4ptkKbunjrD3mYfZjwfrbOz3H4LE
-         a2Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCUFMyNO7Vy9A0dsQ21240MBo/AVUBoRj6GeRqQHH7mk43FUzHlpC/yQ8LPuAD4m0kfZ4U7JJGRn21jvtnkFkZPBmMRgD7j/5Ru36Mo7
-X-Gm-Message-State: AOJu0YzCgSgHJPNtA809fPn3dbmelaEB9sAcT5PZMbqzY1POq0f0V2wT
-	ulEM1FbEj4b6ij3zKDf+4T+PBj+ra1x0i2iaaHxffcTGevE5ok0DEwyb03vOKg==
-X-Google-Smtp-Source: AGHT+IG+rI3TLugumIXccrhydXWKglvJJ/DXhaBKWiPX4142sdMZr6blJoDC4km6y3HgiGXYFRfx/w==
-X-Received: by 2002:a17:90a:ce11:b0:2d3:d09a:630e with SMTP id 98e67ed59e1d1-2d3dfc29dabmr2190989a91.1.1723790049604;
-        Thu, 15 Aug 2024 23:34:09 -0700 (PDT)
-Received: from thinkpad ([36.255.17.34])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3e3ebf665sm970485a91.56.2024.08.15.23.34.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 23:34:09 -0700 (PDT)
-Date: Fri, 16 Aug 2024 12:04:04 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Nitin Rawat <quic_nitirawa@quicinc.com>,
-	Can Guo <quic_cang@quicinc.com>, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] scsi: ufs: ufshcd-pltfrm: Signedness bug in
- ufshcd_parse_clock_info()
-Message-ID: <20240816063404.GH2331@thinkpad>
-References: <404a4727-89c6-410b-9ece-301fa399d4db@stanley.mountain>
- <b613d16f-1167-456d-a5cd-807db875adb9@acm.org>
- <6beba3f4-dfa1-4871-829c-ed1e44b5bd39@stanley.mountain>
+        d=1e100.net; s=20230601; t=1723790132; x=1724394932;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=dlvy/2cOpY4w4qpZGIrneMUP1FhFXubcCbWNdPksnnY=;
+        b=OCVbOHThtJDd+YiDCqAyTNnSlgNnMc6FZBePSk1RCWNOp70wJhC7fphqo2HgAivZro
+         Xp6OqANl3oEnSeHku9xwC2f2aUpieToYKjyO2XsJdoOnBZADi4lqX65epzZ9ZpTbOhYQ
+         j81OvDw7AOrEnuabKT9Rq/64CNrkrtIR/Azx8Xl7YEEkFHGHJH8ewA7tt+UXv6VSECAX
+         hiQy73o8EyMA2ActXm/yzyRuQjfTVtrdKMBwH1wxvXYz/9UqpDNZYMlE3smuhsZamc7S
+         04nlssjf+Xu7MHLbF9X8yIgOz6qiExLTk4GsqKvpkISh0Mlu4cPQvtKzJc92n46a5Zg3
+         98dA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnoMt+CjjZ0XrB7cw7g7qRh0UvT5e8IJb4nVNgcnmJ47ihEZNdRiLZDpRDODN46V3kjX+1BygB77PqbuNzM+ByYMtJMEO6U/wtW4Rb
+X-Gm-Message-State: AOJu0Yxv/FZle/pOZr4agDKoXlqXBzpmGC8fi+uA7S/jK/YZQLGMQ/Gn
+	OONgUaXd//aRZNYNSUiZUL8iLn5r1AVlCytM5aSe78W4A+2+uAfMNMeTuK/B+GU=
+X-Google-Smtp-Source: AGHT+IEjLooN9mJouFfwclDBmTI6IWvI0aT85+PtIm7Jj9agzY0qG27OrjnCsCVb6+1o8gjkiZQ/Qw==
+X-Received: by 2002:a17:907:944a:b0:a77:db36:1ccf with SMTP id a640c23a62f3a-a8392a3bb13mr117533666b.42.1723790131615;
+        Thu, 15 Aug 2024 23:35:31 -0700 (PDT)
+Received: from localhost ([145.15.244.232])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838eeecesm206592166b.95.2024.08.15.23.35.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Aug 2024 23:35:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6beba3f4-dfa1-4871-829c-ed1e44b5bd39@stanley.mountain>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 16 Aug 2024 08:35:28 +0200
+Message-Id: <D3H4LOY4UHKJ.2E21EUSJWXQGJ@fairphone.com>
+Cc: <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/7] arm64: qcom: allow up to 4 lanes for the Type-C
+ DisplayPort Altmode
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Neil Armstrong" <neil.armstrong@linaro.org>, "Vinod Koul"
+ <vkoul@kernel.org>, "Kishon Vijay Abraham I" <kishon@kernel.org>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Bjorn Andersson"
+ <andersson@kernel.org>, "Konrad Dybcio" <konrad.dybcio@linaro.org>,
+ "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20240527-topic-sm8x50-upstream-phy-combo-typec-mux-v2-0-a03e68d7b8fc@linaro.org>
+In-Reply-To: <20240527-topic-sm8x50-upstream-phy-combo-typec-mux-v2-0-a03e68d7b8fc@linaro.org>
 
-On Fri, Aug 16, 2024 at 12:35:22AM +0300, Dan Carpenter wrote:
-> On Thu, Aug 15, 2024 at 10:47:30AM -0700, Bart Van Assche wrote:
-> > On 8/15/24 4:24 AM, Dan Carpenter wrote:
-> > > The "sz" variable needs to be a signed type for the error handling to
-> > > work as intended.
-> > 
-> > What error handling are you referring to? I haven't found any code that
-> > assigns a negative value to 'sz' in ufshcd_parse_clock_info(). Did I
-> > perhaps overlook something?
-> > 
-> 
-> Rob's patch in linux-next.
-> 
+On Mon May 27, 2024 at 10:42 AM CEST, Neil Armstrong wrote:
+> Register a typec mux in order to change the PHY mode on the Type-C
+> mux events depending on the mode and the svid when in Altmode setup.
+>
+> The DisplayPort phy should be left enabled if is still powered on
+> by the DRM DisplayPort controller, so bail out until the DisplayPort
+> PHY is not powered off.
+>
+> The Type-C Mode/SVID only changes on plug/unplug, and USB SAFE states
+> will be set in between of USB-Only, Combo and DisplayPort Only so
+> this will leave enough time to the DRM DisplayPort controller to
+> turn of the DisplayPort PHY.
+>
+> The patchset also includes bindings changes and DT changes.
+>
+> This has been successfully tested on an SM8550 board, but the
+> Thinkpad X13s deserved testing between non-PD USB, non-PD DisplayPort,
+> PD USB Hubs and PD Altmode Dongles to make sure the switch works
+> as expected.
+>
+> The DisplayPort 4 lanes setup can be check with:
+> $ cat /sys/kernel/debug/dri/ae01000.display-controller/DP-1/dp_debug
+> 	name =3D msm_dp
+> 	drm_dp_link
+> 		rate =3D 540000
+> 		num_lanes =3D 4
+> ...
+>
+> This patchset depends on [1] to allow broadcasting the type-c mode
+> to the PHY, otherwise the PHY will keep the combo state while the
+> retimer would setup the 4 lanes in DP mode.
+>
+> [1] https://lore.kernel.org/all/20240527-topic-sm8x50-upstream-retimer-br=
+oadcast-mode-v1-0-79ec91381aba@linaro.org/
 
-It would've been helpful if you added 'next' in the patch subject prefix.
+Hi Neil,
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Is there anything happening on this patchset? From what I can see there
+were a few comments on the patches, would be nice if we could get this
+in at some point.
 
-- Mani
+Regards
+Luca
 
-> -       if (!of_get_property(np, "freq-table-hz", &len)) {
-> +       sz = of_property_count_u32_elems(np, "freq-table-hz");
-> +       if (sz <= 0) {
->                 dev_info(dev, "freq-table-hz property not specified\n");
->                 goto out;
-> 
-> regards,
-> dan carpenter
-> 
+>
+> To: Bjorn Andersson <andersson@kernel.org>
+> To: Konrad Dybcio <konrad.dybcio@linaro.org>
+> To: Vinod Koul <vkoul@kernel.org>
+> To: Kishon Vijay Abraham I <kishon@kernel.org>
+> To: Rob Herring <robh@kernel.org>
+> To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+> To: Conor Dooley <conor+dt@kernel.org>
+> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: linux-phy@lists.infradead.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>
+> Changes in v2:
+> - Reference usb-switch.yaml in bindings patch
+> - Fix switch/case indenting
+> - Check svid for USB_TYPEC_DP_SID
+> - Fix X13s patch subject
+> - Update SM8650 patch to enable 4 lanes on HDK aswell
+> - Link to v1: https://lore.kernel.org/r/20240229-topic-sm8x50-upstream-ph=
+y-combo-typec-mux-v1-0-07e24a231840@linaro.org
+>
+> ---
+> Neil Armstrong (7):
+>       dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp: Reference usb-switch.y=
+aml to allow mode-switch
+>       phy: qcom: qmp-combo: store DP phy power state
+>       phy: qcom: qmp-combo: introduce QPHY_MODE
+>       phy: qcom: qmp-combo: register a typec mux to change the QPHY_MODE
+>       arm64: dts: qcom-sm8550: allow 4 lanes for DisplayPort and enable Q=
+MP PHY mode-switch
+>       arm64: dts: qcom-sm8650: allow 4 lanes for DisplayPort and enable Q=
+MP PHY mode-switch
+>       arm64: dts: qcom: sc8280xp-lenovo-thinkpad-x13: allow 4 lanes for D=
+isplayPort and enable QMP PHY mode-switch
+>
+>  .../phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml         |   7 +-
+>  .../dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts     |   6 +-
+>  arch/arm64/boot/dts/qcom/sm8550-hdk.dts            |   3 +-
+>  arch/arm64/boot/dts/qcom/sm8550-qrd.dts            |   3 +-
+>  arch/arm64/boot/dts/qcom/sm8650-hdk.dts            |   3 +-
+>  arch/arm64/boot/dts/qcom/sm8650-qrd.dts            |   3 +-
+>  drivers/phy/qualcomm/phy-qcom-qmp-combo.c          | 169 +++++++++++++++=
+++++--
+>  7 files changed, 174 insertions(+), 20 deletions(-)
+> ---
+> base-commit: d4eef8b2e18d3e4d2343fb3bb975f8ac4522129a
+> change-id: 20240229-topic-sm8x50-upstream-phy-combo-typec-mux-31b5252513c=
+9
+>
+> Best regards,
 
--- 
-மணிவண்ணன் சதாசிவம்
 
