@@ -1,73 +1,64 @@
-Return-Path: <linux-kernel+bounces-290439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E7C29553DA
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:43:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 005F09553DD
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91F11B2363D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:42:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E7B61F22DD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866CA14830D;
-	Fri, 16 Aug 2024 23:42:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362EB1482FE;
+	Fri, 16 Aug 2024 23:43:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JqgFDO9H"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nb0wQJ4W"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2173E147C96;
-	Fri, 16 Aug 2024 23:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90914145FEE;
+	Fri, 16 Aug 2024 23:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723851768; cv=none; b=A5LZOe0wcNoZUS52JVOkAERx8w9qpkcsf6k3+Qr7ZYFX62vtX5JlTpkCzCqKnWej9zhwaSrRc6wElAY2v9QErhYxCa+MfqOvf6wdtjSjDuRXJ8gHaL8bRpL4lRyNS9eP5JeANCJZSK+wSaXNbDiZEv4rOiZ5wz4Rv/iFJyWlJcw=
+	t=1723851790; cv=none; b=kALuSCQYpY0VkoHubdichpiUdck7f1G1e409/l7BBOQQv9JjQvjjBKjyemp8ISvuLETVyWd5MYhloFiwcJpm6mpDzzvBgJCjVdgaWJW7+dkIFp21/p2he8ac9yTlNRCsWfj3tSXaE+9A3eQwSUX77l6/pWzsatZSa/ueDk9ptZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723851768; c=relaxed/simple;
-	bh=Od8uOqD1E0LkGzBeMxbp6AiUK3x8htxNRrjfVi6rVBA=;
+	s=arc-20240116; t=1723851790; c=relaxed/simple;
+	bh=beYeNlxIPK9w8xuSxdQ/6Grv4kIGkfjA0BnlbGC+1r8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ATvf+R6yjm6KfRF7odSx0zKAY6oR+ljXNXaLMH9Tx95GGTQk8VYfKVkuiuvcn5ZO0m8D1IPBkpqyeV47rvgpArxmkbZrxwF2GJSK5XHDZsoIugfVR3jhkxqP8KSGhzL+Q80QuHUM5aHpiNHZyV3CWhHf0/O361/i38DXi/qKEcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JqgFDO9H; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7aac70e30dso282848066b.1;
-        Fri, 16 Aug 2024 16:42:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723851765; x=1724456565; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RH/rPI35J13TIcTmDXM4xAWE7+R4US73obFliUuHk8g=;
-        b=JqgFDO9HnePD3FSIVqKOCKL4hQ/bDPRXcX21yc5UQDaEoA680zVrew1MUIodnY9DIZ
-         tqrGZcgrPFSUV8D/lLx0hyfiPf9/GFtF0Ij57UkxZ5tBXAhZTrwpBXZwluq8aQR1O1e+
-         NKsssX4xE1+yGBpF1iylYpeXGg9WmDDxr+q350agiRH72thCQIRZDVx27FXw+6xnLveK
-         feUa2QFI1ehVv+oV4PqhwMiXFhM4UuUyVETF3/qJZX6Yq9XopO5oswZMseaTKvG6bVYu
-         dnjEl1BqNaWAQCxLe/ZqPFjW/LolwF2cUH51UmD2q13aUXrqeOSMy7yky2c1liVK0NCw
-         BXMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723851765; x=1724456565;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RH/rPI35J13TIcTmDXM4xAWE7+R4US73obFliUuHk8g=;
-        b=f6LOK0b+vTfspMeumvK0Fc9KGzP83GoTFYk/xoUZ+Su0N8jQS+Ves1gsMbzKExzxrL
-         +KAttAjQ4/6Viz/aoUhVDgcmK6bT1rS73PeUt+bcW0MvqD5kQm0krQ7yCcbPDLWe7dsI
-         5dLq6jVgLhysyHEiDMF+2UCDRwulQeQJIafMdlwFab10d2xAuttP55kBpustNp9lyxN3
-         4mhmTq6w3rzUgJ1Xisl4IvscDpDvT+AY6NNPUW28OUEZxOACKnzoMRJRMWhl+o/64yA5
-         axVCojyre03eoS62+oqNdPpP/ZxvVD6fQK87pg8Js69d57O5VQP2W5UjyP5GghwhZBf5
-         88qg==
-X-Forwarded-Encrypted: i=1; AJvYcCWhQLiJ8hYTV9klv0R/mVjcIoQiSBVrG2Ql5M8CmZyh22kJYtJnX6cye+02DopHyc7A3Xxo4DoenAPxIiXeKagVr8K5e/iQVs0gqXifcho11THW8OIGVS7Mnbs9AnEts/kCdKjKLIck4DORyw==
-X-Gm-Message-State: AOJu0YzlLoibRqxrjVFZ/2fxSrQR+eM9C0Awjd6MIjQbgvnt9pze4Zxd
-	wEiipz2CnnKEv6pWKrwfSapY/412WD4fqvpycJnOiCTvv0zJAiwf
-X-Google-Smtp-Source: AGHT+IFHh3rJK/WkfcHOF52rAbjLG1pNSReXF3Ompen1dC2c00uCWocEwRcDw+ckHU2wnMDrRLmmaA==
-X-Received: by 2002:a17:907:7fa5:b0:a80:aefa:14d3 with SMTP id a640c23a62f3a-a8392a4128amr351909366b.63.1723851764930;
-        Fri, 16 Aug 2024 16:42:44 -0700 (PDT)
-Received: from [192.168.1.13] (host-95-235-164-146.retail.telecomitalia.it. [95.235.164.146])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a838393599asm319803166b.132.2024.08.16.16.42.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Aug 2024 16:42:44 -0700 (PDT)
-Message-ID: <78d36089-5a65-41b3-a9fa-102266736d9b@gmail.com>
-Date: Sat, 17 Aug 2024 01:42:42 +0200
+	 In-Reply-To:Content-Type; b=YqNd2hNJwLtIgDO0TF70LX0HCu0XE+Fm2M91ffCH4KF4xWAQ9JRNR95Awp7z7RDAHcxVzGWtXF39XCJzAT8LYU+2cZ1FwrxthuIcWjTmF0yGKypGBfXXExM9IvpUDzPl7fInSjATtiPKkYg9zNCBfVAV7izDYnICvNWepxu80JY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nb0wQJ4W; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723851789; x=1755387789;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=beYeNlxIPK9w8xuSxdQ/6Grv4kIGkfjA0BnlbGC+1r8=;
+  b=nb0wQJ4W/gQOouvGmRTZxAyUYuRPvxi+dcnpDBM3tFcqfCXm9GzBqVVk
+   bAT28JpJkBTC1S/EkEOEP7NhJpc1QXZ9/QaJX/DP9mh7UjGZ3aWHuutWD
+   FYdb66AkqYIstLDiJ/vmXWAedVvOd7tbZmMlsI5FBnABYGG3M2Rlvac/W
+   jGGOOALuSqfceQlFaAS3yqb2rSKIlQkG2DH3UhGNJSESXw8LcsE4n4TbF
+   VmJqTHFtLmdKB0JbhT8N5nVvWWk+StEOnZDU6Rg3mMfmRaapO86cp29Q0
+   0GD5nPh3GcadlDvTU6vCE8fLGYd03kUXDcFJr868881r9qiQrlLClkKDV
+   w==;
+X-CSE-ConnectionGUID: v1Ms/Qh4SUmX/M8wNlrEUw==
+X-CSE-MsgGUID: x5SqDUECToGK44IWS1MaJQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="13063657"
+X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
+   d="scan'208";a="13063657"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 16:43:08 -0700
+X-CSE-ConnectionGUID: vq/orHWdTz2gVCT3RIU/Tg==
+X-CSE-MsgGUID: TCalvPG1SyOQwnnUMzHcFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
+   d="scan'208";a="59842897"
+Received: from unknown (HELO [10.125.111.71]) ([10.125.111.71])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 16:43:06 -0700
+Message-ID: <fcfbae13-9c6b-460d-ab10-e739caf86a06@intel.com>
+Date: Fri, 16 Aug 2024 16:43:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,94 +66,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7] Preemption support for A7XX
-To: Rob Clark <robdclark@gmail.com>
-Cc: Sean Paul <sean@poorly.run>, Konrad Dybcio <konrad.dybcio@linaro.org>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Sharat Masetty <smasetty@codeaurora.org>
-References: <20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com>
- <CAF6AEGsiu2OBbwQJO5nS55CAQtCvKebc59-mu2h0BDiu4C2gxg@mail.gmail.com>
+Subject: Re: [PATCH v3 12/25] cxl/region: Refactor common create region code
+To: Ira Weiny <ira.weiny@intel.com>, Fan Ni <fan.ni@samsung.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+ Davidlohr Bueso <dave@stgolabs.net>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, linux-btrfs@vger.kernel.org,
+ linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, nvdimm@lists.linux.dev
+References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
+ <20240816-dcd-type2-upstream-v3-12-7c9b96cba6d7@intel.com>
 Content-Language: en-US
-From: Antonino Maniscalco <antomani103@gmail.com>
-In-Reply-To: <CAF6AEGsiu2OBbwQJO5nS55CAQtCvKebc59-mu2h0BDiu4C2gxg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20240816-dcd-type2-upstream-v3-12-7c9b96cba6d7@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 8/16/24 7:47 PM, Rob Clark wrote:
-> On Thu, Aug 15, 2024 at 11:27 AM Antonino Maniscalco
-> <antomani103@gmail.com> wrote:
->>
->> This series implements preemption for A7XX targets, which allows the GPU to
->> switch to an higher priority ring when work is pushed to it, reducing latency
->> for high priority submissions.
->>
->> This series enables L1 preemption with skip_save_restore which requires
->> the following userspace patches to function:
->>
->> https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/30544
->>
->> A flag is added to `msm_gem_submit` to only allow submissions from compatible
->> userspace to be preempted, therefore maintaining compatibility.
+
+
+On 8/16/24 7:44 AM, Ira Weiny wrote:
+> create_pmem_region_store() and create_ram_region_store() are identical
+> with the exception of the region mode.  With the addition of DC region
+> mode this would end up being 3 copies of the same code.
 > 
-> I guess this last para is from an earlier iteration of this series?
-> Looks like instead you are making this a submitqueue flag (which is an
-> approach that I prefer)
+> Refactor create_pmem_region_store() and create_ram_region_store() to use
+> a single common function to be used in subsequent DC code.
 > 
-> BR,
-> -R
+> Suggested-by: Fan Ni <fan.ni@samsung.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+
+> ---
+>  drivers/cxl/core/region.c | 28 +++++++++++-----------------
+>  1 file changed, 11 insertions(+), 17 deletions(-)
 > 
-
-That is correct, I got confused on which one I ended up going with when 
-I wrote that.
-
-Thanks for spotting it!
-
->> Some commits from this series are based on a previous series to enable
->> preemption on A6XX targets:
->>
->> https://lkml.kernel.org/1520489185-21828-1-git-send-email-smasetty@codeaurora.org
->>
->> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
->> ---
->> Antonino Maniscalco (7):
->>        drm/msm: Fix bv_fence being used as bv_rptr
->>        drm/msm: Add submitqueue setup and close
->>        drm/msm: Add a `preempt_record_size` field
->>        drm/msm/A6xx: Implement preemption for A7XX targets
->>        drm/msm/A6xx: Add traces for preemption
->>        drm/msm/A6XX: Add a flag to allow preemption to submitqueue_create
->>        drm/msm/A6xx: Enable preemption for A7xx targets
->>
->>   drivers/gpu/drm/msm/Makefile              |   1 +
->>   drivers/gpu/drm/msm/adreno/a6xx_catalog.c |   3 +
->>   drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 339 ++++++++++++++++++++++-
->>   drivers/gpu/drm/msm/adreno/a6xx_gpu.h     | 168 ++++++++++++
->>   drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 441 ++++++++++++++++++++++++++++++
->>   drivers/gpu/drm/msm/adreno/adreno_gpu.h   |   1 +
->>   drivers/gpu/drm/msm/msm_gpu.h             |   7 +
->>   drivers/gpu/drm/msm/msm_gpu_trace.h       |  28 ++
->>   drivers/gpu/drm/msm/msm_ringbuffer.h      |   8 +
->>   drivers/gpu/drm/msm/msm_submitqueue.c     |  10 +
->>   include/uapi/drm/msm_drm.h                |   5 +-
->>   11 files changed, 995 insertions(+), 16 deletions(-)
->> ---
->> base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
->> change-id: 20240815-preemption-a750-t-fcee9a844b39
->>
->> Best regards,
->> --
->> Antonino Maniscalco <antomani103@gmail.com>
->>
-
-Best regards,
--- 
-Antonino Maniscalco <antomani103@gmail.com>
-
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index 650fe33f2ed4..f85b26b39b2f 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -2553,9 +2553,8 @@ static struct cxl_region *__create_region(struct cxl_root_decoder *cxlrd,
+>  	return devm_cxl_add_region(cxlrd, id, mode, CXL_DECODER_HOSTONLYMEM);
+>  }
+>  
+> -static ssize_t create_pmem_region_store(struct device *dev,
+> -					struct device_attribute *attr,
+> -					const char *buf, size_t len)
+> +static ssize_t create_region_store(struct device *dev, const char *buf,
+> +				   size_t len, enum cxl_region_mode mode)
+>  {
+>  	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(dev);
+>  	struct cxl_region *cxlr;
+> @@ -2565,31 +2564,26 @@ static ssize_t create_pmem_region_store(struct device *dev,
+>  	if (rc != 1)
+>  		return -EINVAL;
+>  
+> -	cxlr = __create_region(cxlrd, CXL_REGION_PMEM, id);
+> +	cxlr = __create_region(cxlrd, mode, id);
+>  	if (IS_ERR(cxlr))
+>  		return PTR_ERR(cxlr);
+>  
+>  	return len;
+>  }
+> +
+> +static ssize_t create_pmem_region_store(struct device *dev,
+> +					struct device_attribute *attr,
+> +					const char *buf, size_t len)
+> +{
+> +	return create_region_store(dev, buf, len, CXL_REGION_PMEM);
+> +}
+>  DEVICE_ATTR_RW(create_pmem_region);
+>  
+>  static ssize_t create_ram_region_store(struct device *dev,
+>  				       struct device_attribute *attr,
+>  				       const char *buf, size_t len)
+>  {
+> -	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(dev);
+> -	struct cxl_region *cxlr;
+> -	int rc, id;
+> -
+> -	rc = sscanf(buf, "region%d\n", &id);
+> -	if (rc != 1)
+> -		return -EINVAL;
+> -
+> -	cxlr = __create_region(cxlrd, CXL_REGION_RAM, id);
+> -	if (IS_ERR(cxlr))
+> -		return PTR_ERR(cxlr);
+> -
+> -	return len;
+> +	return create_region_store(dev, buf, len, CXL_REGION_RAM);
+>  }
+>  DEVICE_ATTR_RW(create_ram_region);
+>  
+> 
 
