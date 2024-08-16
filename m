@@ -1,145 +1,377 @@
-Return-Path: <linux-kernel+bounces-289873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78691954CAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:44:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2840C954CAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D80F1C24AE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:44:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FE7D1F21A40
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE331BDA8B;
-	Fri, 16 Aug 2024 14:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFB01BD51E;
+	Fri, 16 Aug 2024 14:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b="OfGzmRg7"
-Received: from mail-4317.proton.ch (mail-4317.proton.ch [185.70.43.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LZUroW1/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4F51BD027
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 14:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9C61BD013;
+	Fri, 16 Aug 2024 14:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723819464; cv=none; b=eU2fP1fQndvmSCArahfr1rJ3LecqqXfsUpo94L/AwxuyxOf4dVio3je4MDRVoBqD0O1XQn0EMnvzA2A2yPKVamxzy088eLd9oFSNbhImngCSSaV6zkfzEPYPeojgyrSLVIfQHG8YYY9iJOZJndmEeQ5BCWIah/OIsfIl5TYxrkc=
+	t=1723819463; cv=none; b=rfM0aeesPV1kBleaN/NztO3m0Os2h94iEUejQdVa95bG/T7/NL1KwoaYF0+HyFz8C+DOiqG6p7LqSEejhc2DaSdxTtW7SSNY/kqLSJzGScGJ+IseCPhaqtO7jDScMxQpRKE7SZd1WIEqNFJZsPCZVZTS98y+lw8wOUGMPnn2LDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723819464; c=relaxed/simple;
-	bh=L+O4RdAU/s91Wl7LewhGqsQMpDeaYc6Qxwjw4FFL/60=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WndFEuGQe6Cz7nUnpcy99FQA1geeY6O7oOrMuLyI7ei6gPNoUYHARzLsrnRGJ1I4m1QEqDUFKM8tgZan5qVk0qkkkw2gq2M7Nr/ADLA0/qxjcqBMBclEBZi2+RgO9zSsvyzWTJPGdmlxro5zvyxbgkmrthg7+6rkv8TPtnWGyBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com; spf=pass smtp.mailfrom=yhndnzj.com; dkim=pass (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b=OfGzmRg7; arc=none smtp.client-ip=185.70.43.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yhndnzj.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yhndnzj.com;
-	s=protonmail; t=1723819453; x=1724078653;
-	bh=d31/1askkQWIiO9ejP6OOS7hCzAz8Xh2PnZ0tdJxyps=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=OfGzmRg7R/S8KDBfXeTlcbpe4PtSI81sM7m/uKiFEtMVxactPM2OJef+iv67P6lc8
-	 wEniqvP9+c87GFkscBq9ulGOTF6VSWrNsasSSjSMavwtYSL+ZAzSMQg/jq9ffq+uXg
-	 ah+by0+3p4FiJy0DGifvCQvEPl7PiOvJUb5KBs6JKrZCpMt0dB0j8678TZz/2UUEcO
-	 K5bGhm6/Wukq6Yxwdmde8/1xwdIMrNnz/sZgttxFvdsQZGtNdQbkRGI9r6nHUrPwbo
-	 btmllxS1++tGNgFRracVBorrrz+Huk4KM7yr7UAuXMOwR4GaQrbkxCwj4biYsTFzKR
-	 GMNLQVVNo3rqQ==
-Date: Fri, 16 Aug 2024 14:44:07 +0000
-To: linux-kernel@vger.kernel.org
-From: Mike Yuan <me@yhndnzj.com>
-Cc: Mike Yuan <me@yhndnzj.com>, linux-mm@kvack.org, cgroups@vger.kernel.org, Nhat Pham <nphamcs@gmail.com>, Yosry Ahmed <yosryahmed@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Andrew Morton <akpm@linux-foundation.org>, Muchun Song <muchun.song@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, Roman Gushchin <roman.gushchin@linux.dev>, Michal Hocko <mhocko@kernel.org>
-Subject: [PATCH v2 1/2] mm/memcontrol: respect zswap.writeback setting from parent cg too
-Message-ID: <20240816144344.18135-1-me@yhndnzj.com>
-Feedback-ID: 102487535:user:proton
-X-Pm-Message-ID: 9c7b4dfd44ee35e2926420d9f191edee1ce7950e
+	s=arc-20240116; t=1723819463; c=relaxed/simple;
+	bh=o2J30PQ2fdM3vlEAmwLlV0Kv0kgQQ9sfYiVCy4keNOA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NjSYAKWHeyCZMYnQxtm4iQbb6LqBazUhlF4iXBai/dYWrI4hQpCWC5Uy1qhx9RE7zhchAGyeWDxwF3KgqqlgkZSe4bhFR0OVx4n/69kjwexaubZIlXtHXLsMetAjjWfnOpcNYchuC9L30OXlanpYL9fplkGL0x7lbWOC/AGQ3KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LZUroW1/; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723819460; x=1755355460;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=o2J30PQ2fdM3vlEAmwLlV0Kv0kgQQ9sfYiVCy4keNOA=;
+  b=LZUroW1/XQLemYYFyJ+hTyo562RJhkDeWNgAqBGxMveGZxApm58yvZ7a
+   utj/k/eHfoYvJDUm2aesL+dSwW2kwhAZZ206CAy3gVNIv7ibMFyMn2zpZ
+   zznzpL1BwWGGQwK1SzqipFKAwdv2kN7RkNHbr1O33NukqI/kdVyN6nYdO
+   So4hjIwNygR2+a2EBQLH3S68/rn8aEzhZfNGdCJaGbh7NDLsmDE/6hz8s
+   Orry/z8vNej5M3gUOopj635ywXG8Kh6dj1R97+J0+fjIv0RyIALgGkd+I
+   rJalOSZ66Pe5zWomxnx3m1eflceYPCbZ87FDpj0JcPNoZEcrOvayAeBdd
+   w==;
+X-CSE-ConnectionGUID: LYPYGl5SQla1EjC72iFVjw==
+X-CSE-MsgGUID: 2ewEVqXKR+WDajoKev5Dqg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="32752985"
+X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
+   d="scan'208";a="32752985"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 07:44:19 -0700
+X-CSE-ConnectionGUID: HtKVa2gITgGHO0WX3mWU4w==
+X-CSE-MsgGUID: XdN41AsZRQi0Ju9STwR5TQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,152,1719903600"; 
+   d="scan'208";a="59532415"
+Received: from iweiny-mobl.amr.corp.intel.com (HELO localhost) ([10.125.111.52])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 07:44:17 -0700
+From: Ira Weiny <ira.weiny@intel.com>
+Subject: [PATCH v3 00/25] DCD: Add support for Dynamic Capacity Devices
+ (DCD)
+Date: Fri, 16 Aug 2024 09:44:08 -0500
+Message-Id: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALhlv2YC/4WOvQ7CMBCDXwVlJuhySRPBxHsghvxcaSRoq6RUV
+ KjvTtoJBmC05c/2k2VKkTI7bJ4s0Rhz7Noi5HbDfGPbC/EYimYIKEGD4sEHPkw9Ib/3eUhkbxx
+ 8EFWtUeg6sAI6m4m7ZFvfLOhnegn0ier4WFdP56KbmIcuTeuJUSzuz71RcOBGOC2VcJYqdYztQ
+ Ned79b2giqQ+B11xgEEjVJj9YYuT0b8v46lojYKvDJk9kK/V8zz/AIaLtgKUwEAAA==
+To: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>, 
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+ Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Dan Williams <dan.j.williams@intel.com>, 
+ Davidlohr Bueso <dave@stgolabs.net>, 
+ Alison Schofield <alison.schofield@intel.com>, 
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+ linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ nvdimm@lists.linux.dev, Johannes Thumshirn <johannes.thumshirn@wdc.com>, 
+ "Li, Ming" <ming4.li@intel.com>, 
+ Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+X-Mailer: b4 0.15-dev-37811
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723819455; l=12840;
+ i=ira.weiny@intel.com; s=20221211; h=from:subject:message-id;
+ bh=o2J30PQ2fdM3vlEAmwLlV0Kv0kgQQ9sfYiVCy4keNOA=;
+ b=Ia5O4IUDEdBEYfq8wLGcmx7b9sRAQJccNs91gN7p3loedEV4FpfGIIJgMfXluQp7bcKNFMacU
+ 4R9gWQTEM6ODr/gBirclGOExAJIWf3AHLhcuNqYmzWmXy4KCuZQqvdf
+X-Developer-Key: i=ira.weiny@intel.com; a=ed25519;
+ pk=noldbkG+Wp1qXRrrkfY1QJpDf7QsOEthbOT7vm0PqsE=
 
-Currently, the behavior of zswap.writeback wrt.
-the cgroup hierarchy seems a bit odd. Unlike zswap.max,
-it doesn't honor the value from parent cgroups. This
-surfaced when people tried to globally disable zswap writeback,
-i.e. reserve physical swap space only for hibernation [1] -
-disabling zswap.writeback only for the root cgroup results
-in subcgroups with zswap.writeback=3D1 still performing writeback.
+A git tree of this series can be found here:
 
-The inconsistency became more noticeable after I introduced
-the MemoryZSwapWriteback=3D systemd unit setting [2] for
-controlling the knob. The patch assumed that the kernel would
-enforce the value of parent cgroups. It could probably be
-workarounded from systemd's side, by going up the slice unit
-tree and inheriting the value. Yet I think it's more sensible
-to make it behave consistently with zswap.max and friends.
+	https://github.com/weiny2/linux-kernel/tree/dcd-v4-2024-08-16
 
-[1] https://wiki.archlinux.org/title/Power_management/Suspend_and_hibernate=
-#Disable_zswap_writeback_to_use_the_swap_space_only_for_hibernation
-[2] https://github.com/systemd/systemd/pull/31734
+This series requires the CXL memory notifier lock change:
 
-Changes in v2:
-- Actually base on latest tree (is_zswap_enabled() -> zswap_is_enabled())
-- Updated Documentation/admin-guide/cgroup-v2.rst to reflect the change
+	https://lore.kernel.org/all/20240814-fix-notifiers-v2-1-6bab38192c7c@intel.com/
 
-Link to v1: https://lore.kernel.org/linux-kernel/20240814171800.23558-1-me@=
-yhndnzj.com/
+Background
+==========
 
-Cc: Nhat Pham <nphamcs@gmail.com>
-Cc: Yosry Ahmed <yosryahmed@google.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
+A Dynamic Capacity Device (DCD) (CXL 3.1 sec 9.13.3) is a CXL memory
+device that allows memory capacity within a region to change
+dynamically without the need for resetting the device, reconfiguring
+HDM decoders, or reconfiguring software DAX regions.
 
-Signed-off-by: Mike Yuan <me@yhndnzj.com>
-Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+One of the biggest use cases for Dynamic Capacity is to allow hosts to
+share memory dynamically within a data center without increasing the
+per-host attached memory.
+
+The general flow for the addition or removal of memory is to have an
+orchestrator coordinate the use of the memory.  Generally there are 5
+actors in such a system, the Orchestrator, Fabric Manager, the Logical
+device, the Host Kernel, and a Host User.
+
+Typical work flows are shown below.
+
+Orchestrator      FM         Device       Host Kernel    Host User
+
+    |             |           |            |              |
+    |-------------- Create region ----------------------->|
+    |             |           |            |              |
+    |             |           |            |<-- Create ---|
+    |             |           |            |    Region    |
+    |<------------- Signal done --------------------------|
+    |             |           |            |              |
+    |-- Add ----->|-- Add --->|--- Add --->|              |
+    |  Capacity   |  Extent   |   Extent   |              |
+    |             |           |            |              |
+    |             |<- Accept -|<- Accept  -|              |
+    |             |   Extent  |   Extent   |              |
+    |             |           |            |<- Create --->|
+    |             |           |            |   DAX dev    |-- Use memory
+    |             |           |            |              |   |
+    |             |           |            |              |   |
+    |             |           |            |<- Release ---| <-+
+    |             |           |            |   DAX dev    |
+    |             |           |            |              |
+    |<------------- Signal done --------------------------|
+    |             |           |            |              |
+    |-- Remove -->|- Release->|- Release ->|              |
+    |  Capacity   |  Extent   |   Extent   |              |
+    |             |           |            |              |
+    |             |<- Release-|<- Release -|              |
+    |             |   Extent  |   Extent   |              |
+    |             |           |            |              |
+    |-- Add ----->|-- Add --->|--- Add --->|              |
+    |  Capacity   |  Extent   |   Extent   |              |
+    |             |           |            |              |
+    |             |<- Accept -|<- Accept  -|              |
+    |             |   Extent  |   Extent   |              |
+    |             |           |            |<- Create ----|
+    |             |           |            |   DAX dev    |-- Use memory
+    |             |           |            |              |   |
+    |             |           |            |<- Release ---| <-+
+    |             |           |            |   DAX dev    |
+    |<------------- Signal done --------------------------|
+    |             |           |            |              |
+    |-- Remove -->|- Release->|- Release ->|              |
+    |  Capacity   |  Extent   |   Extent   |              |
+    |             |           |            |              |
+    |             |<- Release-|<- Release -|              |
+    |             |   Extent  |   Extent   |              |
+    |             |           |            |              |
+    |-- Add ----->|-- Add --->|--- Add --->|              |
+    |  Capacity   |  Extent   |   Extent   |              |
+    |             |           |            |<- Create ----|
+    |             |           |            |   DAX dev    |-- Use memory
+    |             |           |            |              |   |
+    |-- Remove -->|- Release->|- Release ->|              |   |
+    |  Capacity   |  Extent   |   Extent   |              |   |
+    |             |           |            |              |   |
+    |             |           |     (Release Ignored)     |   |
+    |             |           |            |              |   |
+    |             |           |            |<- Release ---| <-+
+    |             |           |            |   DAX dev    |
+    |<------------- Signal done --------------------------|
+    |             |           |            |              |
+    |             |- Release->|- Release ->|              |
+    |             |  Extent   |   Extent   |              |
+    |             |           |            |              |
+    |             |<- Release-|<- Release -|              |
+    |             |   Extent  |   Extent   |              |
+    |             |           |            |<- Destroy ---|
+    |             |           |            |   Region     |
+    |             |           |            |              |
+
+Previous versions of this series[0] resulted in architectural comments
+as well as confusion on the architecture based on the organization of
+patch series itself.
+
+This version has reordered the patches to clarify the architecture.
+It also streamlines extent handling more.
+
+The series still requires the creation of regions and DAX devices to be
+synchronized with the Orchestrator and Fabric Manager.  The host kernel
+will reject an add extent event if the region is not created yet.  It
+will also ignore a release if the DAX device is created and referencing
+an extent.
+
+These synchronizations are not anticipated to be an issue with real
+applications.
+
+In order to allow for capacity to be added and removed a new concept of
+a sparse DAX region is introduced.  A sparse DAX region may have 0 or
+more bytes of available space.  The total space depends on the number
+and size of the extents which have been added.
+
+Initially it is anticipated that users of the memory will carefully
+coordinate the surfacing of additional capacity with the creation of DAX
+devices which use that capacity.  Therefore, the allocation of the
+memory to DAX devices does not allow for specific associations between
+DAX device and extent.  This keeps allocations very similar to existing
+DAX region behavior.
+
+Great care was taken to keep the extent tracking simple.  Some xarray's
+needed to be added but extra software objects were kept to a minimum.
+
+Region extents continue to be tracked as sub-devices of the DAX region.
+This ensures that region destruction cleans up all extent allocations
+properly.
+
+Due to these major changes all reviews were removed from the larger
+patches.  A few of the straight forward patches have kept the tags.
+
+In summary the major functionality of this series includes:
+
+- Getting the dynamic capacity (DC) configuration information from cxl
+  devices
+
+- Configuring the DC partitions reported by hardware
+
+- Enhancing the CXL and DAX regions for dynamic capacity support
+	a. Maintain a logical separation between hardware extents and
+	   software managed region extents.  This provides an
+	   abstraction between the layers and should allow for
+	   interleaving in the future
+
+- Get hardware extent lists for endpoint decoders upon
+  region creation.
+
+- Adjust extent/region memory available on the following events.
+        a. Add capacity Events
+	b. Release capacity events
+
+- Host response for add capacity
+	a. do not accept the extent if:
+		If the region does not exist
+		or an error occurs realizing the extent
+	b. If the region does exist
+		realize a DAX region extent with 1:1 mapping (no
+		interleave yet)
+	c. Support the more bit by processing a list of extents marked
+	   with the more bit together before setting up a response.
+
+- Host response for remove capacity
+	a. If no DAX device references the extent; release the extent
+	b. If a reference does exist, ignore the request.
+	   (Require FM to issue release again.)
+
+- Modify DAX device creation/resize to account for extents within a
+  sparse DAX region
+
+- Trace Dynamic Capacity events for debugging
+
+- Add cxl-test infrastructure to allow for faster unit testing
+  (See new ndctl branch for cxl-dcd.sh test[1])
+
+Fan Ni's upstream of Qemu DCD was used for testing.
+
+Remaining work:
+
+	1) Integrate the QoS work from Dave Jiang
+	2) Interleave support
+
+Possible additional work depending on requirements:
+
+	1) Allow mapping to specific extents (perhaps based on
+	   label/tag)
+	2) Release extents when DAX devices are released if a release
+	   was previously seen from the device
+	3) Accept a new extent which extends (but overlaps) an existing
+	   extent(s)
+	4) Rework DAX device interfaces, memfd has been explored a bit
+
+[0] v1: https://lore.kernel.org/all/20240324-dcd-type2-upstream-v1-0-b7b00d623625@intel.com/
+[1] https://github.com/weiny2/ndctl/tree/dcd-region2-2024-08-15
+
 ---
- Documentation/admin-guide/cgroup-v2.rst | 5 ++++-
- mm/memcontrol.c                         | 9 ++++++++-
- 2 files changed, 12 insertions(+), 2 deletions(-)
+Major changes:
+- Jonathan: support the more bit
+- djbw: Allow more than 1 region per DC partition
+- All: Address the many comments on the series.
+- iweiny: rebase
+- iweiny: Rework the series to make it easier to review and understand
+          the flow
+- Link to v1: https://lore.kernel.org/r/20240324-dcd-type2-upstream-v1-0-b7b00d623625@intel.com
+- Link to v2: https://lore.kernel.org/all/20240816-dcd-type2-upstream-v2-0-20189a10ad7d@intel.com/
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-=
-guide/cgroup-v2.rst
-index 86311c2907cd..80906cea4264 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1719,7 +1719,10 @@ The following nested keys are defined.
-   memory.zswap.writeback
- =09A read-write single value file. The default value is "1". The
- =09initial value of the root cgroup is 1, and when a new cgroup is
--=09created, it inherits the current value of its parent.
-+=09created, it inherits the current value of its parent. Note that
-+=09this setting is hierarchical, i.e. the writeback would be
-+=09implicitly disabled for child cgroups if the upper hierarchy
-+=09does so.
-=20
- =09When this is set to 0, all swapping attempts to swapping devices
- =09are disabled. This included both zswap writebacks, and swapping due
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index f29157288b7d..327b2b030639 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -5320,7 +5320,14 @@ void obj_cgroup_uncharge_zswap(struct obj_cgroup *ob=
-jcg, size_t size)
- bool mem_cgroup_zswap_writeback_enabled(struct mem_cgroup *memcg)
- {
- =09/* if zswap is disabled, do not block pages going to the swapping devic=
-e */
--=09return !zswap_is_enabled() || !memcg || READ_ONCE(memcg->zswap_writebac=
-k);
-+=09if (!zswap_is_enabled())
-+=09=09return true;
-+
-+=09for (; memcg; memcg =3D parent_mem_cgroup(memcg))
-+=09=09if (!READ_ONCE(memcg->zswap_writeback))
-+=09=09=09return false;
-+
-+=09return true;
- }
-=20
- static u64 zswap_current_read(struct cgroup_subsys_state *css,
+---
+Ira Weiny (11):
+      range: Add range_overlaps()
+      printk: Add print format (%par) for struct range
+      dax: Document dax dev range tuple
+      cxl/pci: Delay event buffer allocation
+      cxl/region: Refactor common create region code
+      cxl/events: Split event msgnum configuration from irq setup
+      cxl/pci: Factor out interrupt policy check
+      cxl/core: Return endpoint decoder information from region search
+      dax/bus: Factor out dev dax resize logic
+      tools/testing/cxl: Make event logs dynamic
+      tools/testing/cxl: Add DC Regions to mock mem data
 
-base-commit: d07b43284ab356daf7ec5ae1858a16c1c7b6adab
---=20
-2.46.0
+Navneet Singh (14):
+      cxl/mbox: Flag support for Dynamic Capacity Devices (DCD)
+      cxl/mem: Read dynamic capacity configuration from the device
+      cxl/core: Separate region mode from decoder mode
+      cxl/region: Add dynamic capacity decoder and region modes
+      cxl/hdm: Add dynamic capacity size support to endpoint decoders
+      cxl/port: Add endpoint decoder DC mode support to sysfs
+      cxl/mem: Expose DCD partition capabilities in sysfs
+      cxl/region: Add sparse DAX region support
+      cxl/mem: Configure dynamic capacity interrupts
+      cxl/extent: Process DCD events and realize region extents
+      cxl/region/extent: Expose region extent information in sysfs
+      dax/region: Create resources on sparse DAX regions
+      cxl/region: Read existing extents on region creation
+      cxl/mem: Trace Dynamic capacity Event Record
 
+ Documentation/ABI/testing/sysfs-bus-cxl   |  68 ++-
+ Documentation/core-api/printk-formats.rst |  14 +
+ drivers/cxl/core/Makefile                 |   2 +-
+ drivers/cxl/core/core.h                   |  33 +-
+ drivers/cxl/core/extent.c                 | 467 ++++++++++++++
+ drivers/cxl/core/hdm.c                    | 206 ++++++-
+ drivers/cxl/core/mbox.c                   | 578 +++++++++++++++++-
+ drivers/cxl/core/memdev.c                 | 101 ++-
+ drivers/cxl/core/port.c                   |  13 +-
+ drivers/cxl/core/region.c                 | 173 ++++--
+ drivers/cxl/core/trace.h                  |  65 ++
+ drivers/cxl/cxl.h                         | 122 +++-
+ drivers/cxl/cxlmem.h                      | 128 +++-
+ drivers/cxl/pci.c                         | 123 +++-
+ drivers/dax/bus.c                         | 352 +++++++++--
+ drivers/dax/bus.h                         |   4 +-
+ drivers/dax/cxl.c                         |  73 ++-
+ drivers/dax/dax-private.h                 |  39 +-
+ drivers/dax/hmem/hmem.c                   |   2 +-
+ drivers/dax/pmem.c                        |   2 +-
+ fs/btrfs/ordered-data.c                   |  10 +-
+ include/linux/cxl-event.h                 |  32 +
+ include/linux/range.h                     |   7 +
+ lib/vsprintf.c                            |  37 ++
+ tools/testing/cxl/Kbuild                  |   3 +-
+ tools/testing/cxl/test/mem.c              | 981 ++++++++++++++++++++++++++----
+ 26 files changed, 3327 insertions(+), 308 deletions(-)
+---
+base-commit: 3cef9316df4cda21b5bf25e4230221b02050dfa1
+change-id: 20230604-dcd-type2-upstream-0cd15f6216fd
+
+Best regards,
+-- 
+Ira Weiny <ira.weiny@intel.com>
 
 
