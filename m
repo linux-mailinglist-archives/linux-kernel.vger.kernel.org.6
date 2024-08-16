@@ -1,175 +1,133 @@
-Return-Path: <linux-kernel+bounces-290062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F26D3954EFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:37:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF586954E69
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C2661F26C71
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:37:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED6A91C224BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F191BE85F;
-	Fri, 16 Aug 2024 16:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A161BE85F;
+	Fri, 16 Aug 2024 16:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ePcj1LDH"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJEtdsG0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB8B1BBBD2
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 16:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FED31BB68D;
+	Fri, 16 Aug 2024 16:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723826225; cv=none; b=D1CUZyn6Au9s2mRY14NUEnnxGJcQIcixbVGQDl+LVSKqKSDXLsyDrNJGKo9qH0aHYdR5kCSdAgfJXmrh+4Ys8DlDPH9I0TvDb08ib8dH9Z9cwvIjpbPthJI3WqP1TNrQin1IpeLxrCJ8GLd3qYmF+GOq2hm9rAcX22vlcP6qPFk=
+	t=1723824279; cv=none; b=D7Z/VyEw8+l2bbfHsCUg6XqGee6GaxU0g9wx0hheQfog96DbVGk4ohYjD3RFY3rA5zeGaGz/FPY9KuyaDx0wart/PrUfZurQuwIBK3DQud3pI6D0Bwn8L15IOyoiQ0ysLi4kfu3qcsDb7talWxlIUTm57kr0fo/D+M7dCrD9Ykg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723826225; c=relaxed/simple;
-	bh=cZSUAWeDd5rCM+qAD/LVzIvs5CQlQpQNp66n+o3c3Q4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=RGHJYhp7SksO+i4TCh53Ngz3cPQUfNaX3h7adbk2lD1D99xEeA+nBYujPpVtgAMRSbKcF9SLw5di3EuWwKbo9RvDs8hZwgjL/pKd4aggYD9wdiLKLTdeDT6r+mH1Axh75oupyKVnqgzC7lVzhxoAHTxMEw5wKz7gEwaFgCsFJJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ePcj1LDH; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240816163700epoutp04c40ca9d134726270649a03babd10b8de~sQtB8nziT1193011930epoutp04Q
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 16:37:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240816163700epoutp04c40ca9d134726270649a03babd10b8de~sQtB8nziT1193011930epoutp04Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1723826220;
-	bh=TqPPlQaKUArbuhJTxVDgQq9zqm+9VIp3Ca3AX7bpk+o=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=ePcj1LDHj7HvJ9EzsJG0px2h/UlkKoI4+wiLRbS/0HdBnjnECj6eDCH4yRNB/+DA3
-	 MPvrsa1CoRn2YgjDu2MEmTiTiizJSmi0deiHW4Rn4NFuZI9XUsq0uMRXMICHWn7/Fi
-	 5o9QJg0bwFBz9/lVp4yrBVgJqgWTW1IBzRx5gQnU=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240816163700epcas5p433ca7d63b0a9f4c98750499f1d36e4e8~sQtBlrTuc2435224352epcas5p4o;
-	Fri, 16 Aug 2024 16:37:00 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4WlnhB45rJz4x9Pp; Fri, 16 Aug
-	2024 16:36:58 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	01.75.09743.A208FB66; Sat, 17 Aug 2024 01:36:58 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240816154312epcas5p3b282d7cba06fe54e1aa9be216452b143~sP_DdiH5h0211602116epcas5p3R;
-	Fri, 16 Aug 2024 15:43:12 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240816154312epsmtrp2c964e674b29bcb79c77d561a0c4c8cf4~sP_Dcsv9x0744807448epsmtrp2E;
-	Fri, 16 Aug 2024 15:43:12 +0000 (GMT)
-X-AuditID: b6c32a4a-14fff7000000260f-12-66bf802ada82
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	A4.04.19367.0937FB66; Sat, 17 Aug 2024 00:43:12 +0900 (KST)
-Received: from [107.122.5.126] (unknown [107.122.5.126]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240816154310epsmtip19c177cdfece7ba449e0946e137a2b101~sP_BeXm3l2660326603epsmtip1P;
-	Fri, 16 Aug 2024 15:43:10 +0000 (GMT)
-Message-ID: <4f286780-89a2-496d-9007-d35559f26a21@samsung.com>
-Date: Fri, 16 Aug 2024 21:13:09 +0530
+	s=arc-20240116; t=1723824279; c=relaxed/simple;
+	bh=EPuQ2Nh1roM0N2s8I0Ls0NSMzC1GbSyB3GEWBTBguSE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NoiibVe4oevHWYnjHJ8jEYVBm9dbdVDuAbBhmSqw7lLM+ZBe3ONew/aavzdolL1qE/TWIqKUHsdXAhfj6Pi/XG6fIDSqlQS7tGTrEDSdVS+dTcGIGmVt7LfK53Vy/SJFdf2g2/A0v5zFz33m244bqIFp7/aJRoVqg1DEgVvU+Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FJEtdsG0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48CFDC32782;
+	Fri, 16 Aug 2024 16:04:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723824278;
+	bh=EPuQ2Nh1roM0N2s8I0Ls0NSMzC1GbSyB3GEWBTBguSE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FJEtdsG0vhlBjP+YaxfIfo6ESwYNVAYYNjiDRgScyXLluWnBOQUJmupTpGka3kTCU
+	 eXFOGR6mBmD3PkZnCUThKrCJh89wknjtz3zGsrcoeUojbjcqrfbgBUTBzH1EbyEokm
+	 3HDqNXRvTFhRMnSUh6Zs4AezX+naz+Bt7jMKFjWi6XCwp9zZB0Pj/igN5Pl5h+g6Tn
+	 bWGnCSMHvLNPR7BKfSkc7TfMYfVtmbb3FzqoVpmq6ukWpzDRS0ofmtsMvr37yb20qR
+	 EbfB1nkh5UQVSsZZ4p5VJPLg3iObPIM3MuhiHiIbxqn4iqDQZyVhts5Pt+2gyCK0B8
+	 hUHapenwRazPQ==
+Date: Fri, 16 Aug 2024 17:04:34 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Stanislav Jakubek <stano.jakubek@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: power: supply: sc27xx-fg: add low voltage
+ alarm IRQ
+Message-ID: <20240816-licorice-dealing-b67197d3f88f@spud>
+References: <Zr3SAHlq5A78QvrW@standask-GA-A55M-S2HP>
+ <20240815-winnings-waving-1ec5561f90e7@spud>
+ <Zr74o7/4uurJeRnF@standask-GA-A55M-S2HP>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] usb: dwc3: core: Prevent USB core invalid event
- buffer address access
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Thinh.Nguyen@synopsys.com, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com,
-	dh10.jung@samsung.com, naushad@samsung.com, akash.m5@samsung.com,
-	rc93.raju@samsung.com, taehyun.cho@samsung.com, hongpooh.kim@samsung.com,
-	eomji.oh@samsung.com, shijie.cai@samsung.com, stable@vger.kernel.org
-Content-Language: en-US
-From: Selvarasu Ganesan <selvarasu.g@samsung.com>
-In-Reply-To: <2024081618-singing-marlin-2b05@gregkh>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOJsWRmVeSWpSXmKPExsWy7bCmlq5Ww/40g7bJshZvrq5itbizYBqT
-	xanlC5ksmhevZ7OYtGcri8Xdhz9YLC7vmsNmsWhZK7PFp6P/WS1Wdc4Bin3fyWyxYOMjRotJ
-	B0UtVi04wO7A57F/7hp2j74tqxg9tuz/zOjxeZNcAEtUtk1GamJKapFCal5yfkpmXrqtkndw
-	vHO8qZmBoa6hpYW5kkJeYm6qrZKLT4CuW2YO0I1KCmWJOaVAoYDE4mIlfTubovzSklSFjPzi
-	Elul1IKUnAKTAr3ixNzi0rx0vbzUEitDAwMjU6DChOyMCWeusxTM4q7Yfn8lWwPjPo4uRk4O
-	CQETic1rtrF1MXJxCAnsZpQ40LmfGcL5xChx9PlHVjhn+45WdpiWj1/aWCASOxklmuc/gqp6
-	yyjx7Pp3FpAqXgE7iad/1gPN4uBgEVCVaNjnDBEWlDg58wlYiaiAvMT9WzPAhgoLxEscub2U
-	FcQWEdCQeHn0FtgCZoGTTBJXly5jAkkwC4hL3HoynwlkJpuAocSzEzYgYU6gg9a032KHKJGX
-	2P52DjPEoWs5JKZszAUplxBwkTh4KxUiLCzx6vgWqF+kJD6/28sGYVdLrL7zERwUEgItjBKH
-	n3yDKrKXeHz0EdgrzAKaEut36UOEZSWmnloHdRmfRO/vJ0wQcV6JHfNgbFWJU42XoeZLS9xb
-	co0VwvaQmPxiC/MERsVZSKEyC8mTs5B8Mwth8wJGllWMkqkFxbnpqcWmBUZ5qeXw+E7Oz93E
-	CE7BWl47GB8++KB3iJGJg/EQowQHs5II79Mve9OEeFMSK6tSi/Lji0pzUosPMZoCY2cis5Ro
-	cj4wC+SVxBuaWBqYmJmZmVgamxkqifO+bp2bIiSQnliSmp2aWpBaBNPHxMEp1cDksDrxnGNZ
-	mw+zwWIP+d9b1SasYuSYfuxXG39Z6NWXgX6fTOcF2YlMscy+ue3WooqY//bskZJ/i56sLLVT
-	sGfm7stqFdWa08v2idPgU8niV3u015ZVTxCN5VghY/x+6UkG5oLf7SEr79+/XN6REu7upnvR
-	LbPRb2mduaq4oKazBePE7dFtf/s4psX0vP3fbncurnRD9KVSZmEZu8/buc/UXRAsnF6tWKW1
-	NSJpRejh2CcMj+UT/M9ven/Z/miEptsFlZrfj/Tzb4kJflDxqeuV2H5CTWPB9JZTuRI3jpTZ
-	n09+UndJZf5Kv+aHny+ZFmzc7/DqlP5qIYuJmUmLXWS0UnMknvxs9z4ZZinEp8RSnJFoqMVc
-	VJwIABHmJ/NKBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAIsWRmVeSWpSXmKPExsWy7bCSnO6E4v1pBpPf8Fq8ubqK1eLOgmlM
-	FqeWL2SyaF68ns1i0p6tLBZ3H/5gsbi8aw6bxaJlrcwWn47+Z7VY1TkHKPZ9J7PFgo2PGC0m
-	HRS1WLXgALsDn8f+uWvYPfq2rGL02LL/M6PH501yASxRXDYpqTmZZalF+nYJXBkTzlxnKZjF
-	XbH9/kq2BsZ9HF2MnBwSAiYSH7+0sXQxcnEICWxnlJj3+SIrREJa4vWsLkYIW1hi5b/n7BBF
-	rxkl9u/sACviFbCTePpnPXMXIwcHi4CqRMM+Z4iwoMTJmU9YQGxRAXmJ+7dmsIPYwgLxEs2T
-	9zOB2CICGhIvj94CW8wscJJJYt+VPmaIBTsZJbof7gHrYBYQl7j1ZD4TyAI2AUOJZydsQMKc
-	QFevab8FVWIm0bUV4lBmoGXb385hnsAoNAvJHbOQTJqFpGUWkpYFjCyrGEVTC4pz03OTCwz1
-	ihNzi0vz0vWS83M3MYIjTStoB+Oy9X/1DjEycTAeYpTgYFYS4X36ZW+aEG9KYmVValF+fFFp
-	TmrxIUZpDhYlcV7lnM4UIYH0xJLU7NTUgtQimCwTB6dUA1NuQyxjo889uexmpZwYD7/pBSK1
-	Nl8VMpYJ2Ldq7LN5Ilict6zW9SfviQtvDTZGGz9h5TxwTD44KoIj/vDirif33bb/kPRIq2L6
-	vkTVyPpF1V4prt1M7SHhFYGnVD03RU82cctZrKnrLBp/XFnqxdzzKz0Of2hcJnlq+rZFGfxO
-	JqwrJiZcnnHzifT16K4jC8+bLDjoLWvHULBQxTgq2P5I5GEtJT3P3XeuHpK9U7Xm4dJVqbcc
-	C2aezOrx/dIbU2Sbo2mvEW68YOc5363feoLLbrWVu0unrq7z7997Tzq3StjtX6qQQF1NkaJ8
-	tMPN033WXQv+nsvO2ajZ9tVO3Kbn6ulb+5Y/+mJy/lSaEktxRqKhFnNRcSIAG2kT3SMDAAA=
-X-CMS-MailID: 20240816154312epcas5p3b282d7cba06fe54e1aa9be216452b143
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240815064918epcas5p1248e4f9084d33fdb11a25fa34e66cdbe
-References: <CGME20240815064918epcas5p1248e4f9084d33fdb11a25fa34e66cdbe@epcas5p1.samsung.com>
-	<20240815064836.1491-1-selvarasu.g@samsung.com>
-	<2024081618-singing-marlin-2b05@gregkh>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="iSN+i34vU373tBO4"
+Content-Disposition: inline
+In-Reply-To: <Zr74o7/4uurJeRnF@standask-GA-A55M-S2HP>
 
 
-On 8/16/2024 3:25 PM, Greg KH wrote:
-> On Thu, Aug 15, 2024 at 12:18:31PM +0530, Selvarasu Ganesan wrote:
->> This commit addresses an issue where the USB core could access an
->> invalid event buffer address during runtime suspend, potentially causing
->> SMMU faults and other memory issues in Exynos platforms. The problem
->> arises from the following sequence.
->>          1. In dwc3_gadget_suspend, there is a chance of a timeout when
->>          moving the USB core to the halt state after clearing the
->>          run/stop bit by software.
->>          2. In dwc3_core_exit, the event buffer is cleared regardless of
->>          the USB core's status, which may lead to an SMMU faults and
->>          other memory issues. if the USB core tries to access the event
->>          buffer address.
->>
->> To prevent this hardware quirk on Exynos platforms, this commit ensures
->> that the event buffer address is not cleared by software  when the USB
->> core is active during runtime suspend by checking its status before
->> clearing the buffer address.
->>
->> Cc: stable@vger.kernel.org # v6.1+
-> Any hint as to what commit id this fixes?
->
-> thanks,
->
-> greg k-h
+--iSN+i34vU373tBO4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Aug 16, 2024 at 08:58:43AM +0200, Stanislav Jakubek wrote:
+> Hi Conor,
+>=20
+> On Thu, Aug 15, 2024 at 03:46:18PM +0100, Conor Dooley wrote:
+> > On Thu, Aug 15, 2024 at 12:01:36PM +0200, Stanislav Jakubek wrote:
+> > > The SC27XX fuel gauge supports a low voltage alarm IRQ, which is used
+> > > for more accurate battery capacity measurements with lower voltages.
+> > >=20
+> > > This was unfortunately never documented in bindings, do so now.
+> > >=20
+> > > Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+> > > ---
+> > > Initial Linux driver submission adding this feature:
+> > > https://lore.kernel.org/lkml/ee1dd39f126bd03fb88381de9663d32df994d341=
+=2E1542185618.git.baolin.wang@linaro.org/
+> > >=20
+> > > The only in-tree user (sc2731.dtsi) has had interrupts specified sinc=
+e its
+> > > initial fuel-gauge submission:
+> > > https://lore.kernel.org/lkml/4f66af3b47ba241380f8092e08879aca6d7c35b3=
+=2E1548052878.git.baolin.wang@linaro.org/
+> >=20
+> > This context could go into the commit message I think, as justification
+> > for making the interrupt required.
+>=20
+> TBH I'm not 100% sure that the interrupt is required, I just looked at
+> the Linux driver, and that it returns from probe if it doesn't get the IR=
+Q.
+>=20
+> >=20
+> > Also, this binding is odd in that it has several compatibles in an enum,
+> > but the driver (added at the same time) only has one compatible in it.
+>=20
+> I think the intent was to document the entire sc27xx series of PMICs, as
+> they're supposedly very similar (this is just my guess), while initially
+> adding support only for sc2731.
+>=20
+> > Are you using the sc2731 in your device?
+>=20
+> No, I do not have any such device.
 
-Hi Greg,
+No worries.
 
-This issue is not related to any particular commit. The given fix is 
-address a hardware quirk on the Exynos platform. And we require it to be 
-backported on stable kernel 6.1 and above all stable kernel.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Thanks,
-Selva
+--iSN+i34vU373tBO4
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
->
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZr94kgAKCRB4tDGHoIJi
+0vpUAP9/LGLlbZaexYAUrcsXDwmy4v19apWfDrSJIyQ5JkbDUwD/dXPvd5xOVdio
+mNhHQWgiVWlpF6IdZk+8Hu8UlcfVBwM=
+=7TZU
+-----END PGP SIGNATURE-----
+
+--iSN+i34vU373tBO4--
 
