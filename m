@@ -1,80 +1,95 @@
-Return-Path: <linux-kernel+bounces-289528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 694A5954735
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:57:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8F02954747
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26881287230
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:57:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BFF6280E9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B131BB6A2;
-	Fri, 16 Aug 2024 10:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48D6817;
+	Fri, 16 Aug 2024 10:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l1n2KYkq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GPYcjOZU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA0B1B9B41;
-	Fri, 16 Aug 2024 10:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87BC198A32;
+	Fri, 16 Aug 2024 10:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723805703; cv=none; b=snTNw/hpENphTMl8D4PfUylQa7Sf1uHzbScssr8OwddtjjDGwdpk4b5h9uK7BNMUMnMbE6kY5NpIX/XJGM8i55Qy5VD3FtnNadHZnRtSC3h4Uqemf13JC0u/S9S3XYjGK40vzxoTEcd3+t1lMgTZULfqzloVuWCoHihXOVjtDTc=
+	t=1723805786; cv=none; b=To3z2jm4wXKUz9ROkSRIJE8e8PX0T7nZjNFXZroqCQso7r3MSqVW/bRo23ILWRzcAJXaDvpa14BLa3d2s9C52g5jBowH5atYDYPapkmzVD7OSj8/vZX/+w6Ofvp8b8GKJSgQUULKKJZoLn4+ACmt+fu6QNAY8LaMtL8cGmbJLPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723805703; c=relaxed/simple;
-	bh=iXwPjY/2OXN3pzBaT6tWz/A/Lrxef/t0PSx5EIp8LAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RkT/fEfsj8haGd0IAGHxQO40ZudQpI8erGYUDwRq1q4bKoXTQnDDSSC+VNjoL+kDSBluWAfkIluMZ1i+dQpLZla48d2actZK38M82zhdtiFggKi2nIVqxuAZbgvZfCSnW19R7ZNtezZslU5QbT66CcV4FApOQsH7MPWxQF6QvdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l1n2KYkq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C99EBC4AF09;
-	Fri, 16 Aug 2024 10:55:00 +0000 (UTC)
+	s=arc-20240116; t=1723805786; c=relaxed/simple;
+	bh=pyTa9dPu9oVB1p3RNRYnO3QSsfYU06JEbFq4M8hqeSg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VaiXtue+NenHMytXdVxtKl/LS+LsvXaEMOfUG/cdCe3Artr/wirKeaZHjzLjoxdyKHBelbE97HQ6HtoYbb+BbkDnf0v5mKPfovHU6EljshkgAXruaCGLXfMafCh9uiS+f0w4D8Z4lbPtxPB50fMRxY8fxNDC6CCxcPum5AFeec0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GPYcjOZU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D66F1C4AF09;
+	Fri, 16 Aug 2024 10:56:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723805703;
-	bh=iXwPjY/2OXN3pzBaT6tWz/A/Lrxef/t0PSx5EIp8LAY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l1n2KYkqz9YvEHrO7EZ5jqvbDonBnyhPgx8LxcsJwWPrbqPkcEkSZfJqOEuJnd2lH
-	 gUOiZXLz/wjQX5c8w/i/4ODxRvE4tm3BID5CCT+wOv5QeqHBuFQnWyH/pWKhXPT/kP
-	 dGvfcVRRQZWs9WYc14w3Z6QAb0tLTnyZCL3WOz/bxflIbdF/FP6W9ljpD6OKRAdYQO
-	 QlxvDyGNeHmCBlDAI2ryMpPc+p0gruG4pkcnnKH0bhY4UZRjhhW6/7R2O7vRahhfdz
-	 s+56FSXXtlPYFyCdqVxwFayvOm1IYui4/2xg3Utgjh0nzostS/U1P3cDFeoKaqhqpW
-	 W23aCts8evpXA==
-Date: Fri, 16 Aug 2024 11:54:57 +0100
-From: Simon Horman <horms@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
-	Andrew Lunn <andrew@lunn.ch>, linux-arm-kernel@lists.infradead.org,
-	Michal Simek <michal.simek@amd.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	linux-kernel@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>
-Subject: Re: [PATCH net-next v2 4/5] net: xilinx: axienet: Don't set
- IFF_PROMISC in ndev->flags
-Message-ID: <20240816105457.GS632411@kernel.org>
-References: <20240815193614.4120810-1-sean.anderson@linux.dev>
- <20240815193614.4120810-5-sean.anderson@linux.dev>
+	s=k20201202; t=1723805786;
+	bh=pyTa9dPu9oVB1p3RNRYnO3QSsfYU06JEbFq4M8hqeSg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=GPYcjOZUmB2gvdr/szNvHsWamcM41r23Bppsd4bOVDn7u6v1fLGyRBsXfeSN2UHVt
+	 iJSFSqml+SgLhpx149krPYfMHltvzkVrmS3g34VVCWIJJq/drgGEYcpxsKahVDVXUC
+	 XclowKSUngpHB3V5U+j+GHj/JYk1sHqnp3x86hEzOcVRw+HwK4FikS8wNouhpBxB3x
+	 TGluFfljV3dZHDHGBf8+DP3j9eov+coAzWuRqtnKjZq+oVGD1VMEob06rrbnqU0Bvj
+	 hvGfJgcm13nHm+FpTPOs11WmqfMv/u2HLLAULawQPpkwi9MuXjWSknXtY7ejsXuneQ
+	 cTkHzIAubtcLw==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: elide smp_mb in iversion handling in the common case
+Date: Fri, 16 Aug 2024 12:56:19 +0200
+Message-ID: <20240816-wertarbeit-steil-90ff676fb2d1@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240815083310.3865-1-mjguzik@gmail.com>
+References: <20240815083310.3865-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240815193614.4120810-5-sean.anderson@linux.dev>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1249; i=brauner@kernel.org; h=from:subject:message-id; bh=pyTa9dPu9oVB1p3RNRYnO3QSsfYU06JEbFq4M8hqeSg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTtNwjmntNp6Nt+6+/npw98fpz/HB4Q9nuxd8jKvysLP A3u6Fzv7ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhIqSMjw2nv84oWz6Il0le8 k2i+JfGph/+J68EnZ5VmS/2vPbrcqpOR4cry7DU8l9TCGL8FWZ37mXjisEiqcKXtWYG+1SIxdde +8gIA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 15, 2024 at 03:36:13PM -0400, Sean Anderson wrote:
-> Contrary to the comment, we don't have to inform the net subsystem.
+On Thu, 15 Aug 2024 10:33:10 +0200, Mateusz Guzik wrote:
+> According to bpftrace on these routines most calls result in cmpxchg,
+> which already provides the same guarantee.
 > 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> ---
+> In inode_maybe_inc_iversion elision is possible because even if the
+> wrong value was read due to now missing smp_mb fence, the issue is going
+> to correct itself after cmpxchg. If it appears cmpxchg wont be issued,
+> the fence + reload are there bringing back previous behavior.
 > 
-> Changes in v2:
-> - Split off from printing changes
+> [...]
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] vfs: elide smp_mb in iversion handling in the common case
+      https://git.kernel.org/vfs/vfs/c/5570f04d0bb1
 
