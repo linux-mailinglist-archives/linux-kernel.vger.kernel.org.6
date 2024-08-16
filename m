@@ -1,134 +1,138 @@
-Return-Path: <linux-kernel+bounces-290261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5316955177
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:28:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACE5A95517E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:30:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 035F01C23A80
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:28:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E06AF1C2309F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423D71C461E;
-	Fri, 16 Aug 2024 19:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YOb03rvt"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE39F1C4600;
+	Fri, 16 Aug 2024 19:30:43 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4561C3F3E;
-	Fri, 16 Aug 2024 19:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423B410E4;
+	Fri, 16 Aug 2024 19:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723836483; cv=none; b=DkghdvMQU4Ox/ZcRXi8+cNqsfnc4sie8ZlnGA4eRpdFrMxSGMl7QB9QfWx6tByf5FIaiBx5zvRVVdkjS60PrAgP9B1SMrsG6Jt3GVEveLagLA82BTKccoF3beBRqKys+V4g3WA6cef9DmsnjSBOodvTGA+hmYcHCzq3RyLo6CaQ=
+	t=1723836643; cv=none; b=qIcDjkblPDA1MtI3rx3t+nH1T2UdeWus7jjv3J46QPLOzvf6GO+SdQcajk3r9CsPwMPZXl5Vjc2pEAbs2vELe4muobNziDhKR9HxQjFXKC7ze7QHy8JMxoYvZCPWGsHE/Pz+FSc3XCHaCLFW6QevGh0Ee2getCSb8HwaTe6P7NU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723836483; c=relaxed/simple;
-	bh=CIw9DPk2JTHUJqxqpuLOS7kldbV+bgDrJlwd4gP3AOs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ft1idvIj8niLnq8f0zyr+eLeH8mlkm0dNA1vcntKwmaVChj588VB81rtPQoegacZwIyq1XyHtfoe2og41tIcAssUBUWPT/5QMF94c+5A7smMZxDbwDzV3KTZF/8edZ1Iyetnq7N9Nfx1iKb59t4ohJ2p+oeDvmjvkMDiiEPr0ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YOb03rvt; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-530d0882370so2409245e87.3;
-        Fri, 16 Aug 2024 12:28:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723836480; x=1724441280; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CE6XtGp7KoeNdDNBrlXqZpr1Iyoicx4DxbmZrRjkjss=;
-        b=YOb03rvt4TUwVdO2gTTsyj6rtiRfLQhiEh1EMlTS7akdB2t0q5xjmnVXQpHtX2HSZh
-         2jJ0gBlRgDZSsbTGjNuGizMmY/CLZhZzDJBJxy8UnXCm84mVE3mB0AT8ENaSM35sohZM
-         iz0NcfMvXfpBh0CNcC2yP/u/NHkjb9NaRg3hPioqkxK51moq6iO5JGS267MaqB9pvI75
-         8wHioyQc0Pd8w3CEA8cs0qfLv4i1wXwzSl1cmLyIOlWVh2ZxJjOxXWmYy/pkx7QpvDhY
-         x7uzV3VkdRgWYx4bVskHTzFh7ihQWgu1WhBVSSoBKKS9oxsym0uN404UCvgSAhsq7VMb
-         lECA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723836480; x=1724441280;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CE6XtGp7KoeNdDNBrlXqZpr1Iyoicx4DxbmZrRjkjss=;
-        b=FVy7EfpV2Ag882ZaG+fI6k03mN+Z3lvBfRMcfzT7ZySuuDqzyZZZghBF9PZXqsdgtc
-         ycSBmWzwGZ+jAnu5FAY0KtVTZvA3ziF4DapwVxxQw92AEcmdGi4wQDvAzYNYfVpAy9WP
-         7Mhm+FZLiHxOJP02ZDZpIQLO84Gh/4NQTTrBPDDGvKu9Lr3BNB8EtON8MzK+bkROHP5o
-         ZuCYLBZZ6JWHWc096mkcTLvEkzdUSmPQmxBnCi8DbLDCqvjY5T39+KoRLh+KTWelnrL0
-         1HYQYueVBxsMnR/05zEs4rBL041NtasGiv2q1aJdjxD5N73+/SYVRmLVjwoGqsdCibvY
-         3l/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWv4GDpJpphM9oTRsH7uHBrrKmgKg7hPGVip/D+BUbfnSeOJ1/9ddKzQy0h5dVuwpSBBa50zcIHh+ddRL/TF/HVidUWZmDWT+rDMjH9MjMVvAXOCYU/UhkUr5juJMKFq2R3+JMKGpLo
-X-Gm-Message-State: AOJu0Yz2XgNv7T4oqpCjxuHRZ4i+dC4whmOHNZ6dUqrAH995adZwfJdi
-	cNymNyVp6HXdH0rTBMoRTt/hCXltXs7ScUks4VHLzhGE+BMlz8Kn6Gfj5Q884BJLVQ==
-X-Google-Smtp-Source: AGHT+IEymvjbBVzQIV0kHSXsyBKvbYFRUuVdZNg1ZdOqlMhK2EiiNqpaLjZQcYNP5PbzUZWCqF1gqw==
-X-Received: by 2002:a05:6512:104a:b0:52e:7f09:aaae with SMTP id 2adb3069b0e04-5331c6b0286mr2768812e87.27.1723836479323;
-        Fri, 16 Aug 2024 12:27:59 -0700 (PDT)
-Received: from localhost.localdomain ([178.69.224.101])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5330d3afb15sm655960e87.21.2024.08.16.12.27.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 12:27:59 -0700 (PDT)
-From: Artem Sadovnikov <ancowi69@gmail.com>
-To: stable@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Artem Sadovnikov <ancowi69@gmail.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH v5 5.10/5.15] ata: libata-scsi: check cdb length for VARIABLE_LENGTH_CMD commands
-Date: Fri, 16 Aug 2024 22:27:52 +0300
-Message-Id: <20240816192752.9488-1-ancowi69@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723836643; c=relaxed/simple;
+	bh=iN7A7inr48pTV1DSy1aigzEmKF2n/mAt4X+XCaxE0Xo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=evgxLnan5CNqEOlEYFCMft0Po8l+ZQ0J50oFt55L1perXEyKJmzTFPO5GO0O72YrhyTTvtR+hRwHFweg3rX0VYTzY8MItvjD+Y4nT9/PfzAlsKbiypUB2hhMhKdKNe6h7I8EOdV8Ga+W/hZ+AJwpkbxrYG1Q0zjH5f1MXLwblo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB1DCC32782;
+	Fri, 16 Aug 2024 19:30:41 +0000 (UTC)
+Date: Fri, 16 Aug 2024 15:30:40 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Juri Lelli
+ <juri.lelli@redhat.com>, bpf <bpf@vger.kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>, Artem Savkov <asavkov@redhat.com>, "Jose E.
+ Marchesi" <jose.marchesi@oracle.com>
+Subject: Re: NULL pointer deref when running BPF monitor program
+ (6.11.0-rc1)
+Message-ID: <20240816153040.14d36c77@rorschach.local.home>
+In-Reply-To: <Zr-ho0ncAk__sZiX@krava>
+References: <ZrCZS6nisraEqehw@jlelli-thinkpadt14gen4.remote.csb>
+	<ZrECsnSJWDS7jFUu@krava>
+	<CAADnVQLMPPavJQR6JFsi3dtaaLHB816JN4HCV_TFWohJ61D+wQ@mail.gmail.com>
+	<ZrIj9jkXqpKXRuS7@krava>
+	<CAADnVQ+NpPtFOrvD0o2F8npCpZwPrLf4dX8h8Rt96uwM+crQcQ@mail.gmail.com>
+	<ZrSh8AuV21AKHfNg@krava>
+	<CAADnVQLYxdKn-J2-2iXKKKTg=o6xkKWzV2WyYrnmQ-j62b9STA@mail.gmail.com>
+	<Zr3q8ihbe8cUdpfp@krava>
+	<CAADnVQL2ChR5hGAXoV11QdMjN2WwHTLizfiAjRQfz3ekoj2iqg@mail.gmail.com>
+	<20240816101031.6dd1361b@rorschach.local.home>
+	<Zr-ho0ncAk__sZiX@krava>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-No upstream commit exists for this commit.
+On Fri, 16 Aug 2024 20:59:47 +0200
+Jiri Olsa <olsajiri@gmail.com> wrote:
 
-Fuzzing of 5.10 stable branch reports a slab-out-of-bounds error in
-ata_scsi_pass_thru.
+> so far the only working solution I have is adding '__nullable' suffix
+> to argument name:
+> 
+> 	diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+> 	index 9ea4c404bd4e..fc46f0b42741 100644
+> 	--- a/include/trace/events/sched.h
+> 	+++ b/include/trace/events/sched.h
+> 	@@ -559,9 +559,9 @@ DEFINE_EVENT(sched_stat_runtime, sched_stat_runtime,
+> 	  */
+> 	 TRACE_EVENT(sched_pi_setprio,
+> 	 
+> 	-	TP_PROTO(struct task_struct *tsk, struct task_struct *pi_task),
+> 	+	TP_PROTO(struct task_struct *tsk, struct task_struct *pi_task__nullable),
+> 	 
+> 	-	TP_ARGS(tsk, pi_task),
+> 	+	TP_ARGS(tsk, pi_task__nullable),
+> 	 
+> 		TP_STRUCT__entry(
+> 			__array( char,	comm,	TASK_COMM_LEN	)
+> 	@@ -574,8 +574,8 @@ TRACE_EVENT(sched_pi_setprio,
+> 			memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
+> 			__entry->pid		= tsk->pid;
+> 			__entry->oldprio	= tsk->prio;
+> 	-		__entry->newprio	= pi_task ?
+> 	-				min(tsk->normal_prio, pi_task->prio) :
+> 	+		__entry->newprio	= pi_task__nullable ?
+> 	+				min(tsk->normal_prio, pi_task__nullable->prio) :
+> 					tsk->normal_prio;
+> 			/* XXX SCHED_DEADLINE bits missing */
+> 		),
+> 
+> 
+> now I'm trying to make work something like:
+> 
+> 	diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+> 	index 9ea4c404bd4e..4e4aae2d5700 100644
+> 	--- a/include/trace/events/sched.h
+> 	+++ b/include/trace/events/sched.h
+> 	@@ -559,9 +559,9 @@ DEFINE_EVENT(sched_stat_runtime, sched_stat_runtime,
+> 	  */
+> 	 TRACE_EVENT(sched_pi_setprio,
+> 	 
+> 	-	TP_PROTO(struct task_struct *tsk, struct task_struct *pi_task),
+> 	+	TP_PROTO(struct task_struct *tsk, struct task_struct *__nullable(pi_task)),
+> 	 
+> 	-	TP_ARGS(tsk, pi_task),
+> 	+	TP_ARGS(tsk, __nullable(pi_task)),
+> 	 
+> 		TP_STRUCT__entry(
+> 			__array( char,	comm,	TASK_COMM_LEN	)
 
-The error is fixed in 5.18 by commit ce70fd9a551a ("scsi: core: Remove the
-cmd field from struct scsi_request") upstream.
-Backporting this commit would require significant changes to the code so
-it is better to use a simple fix for that particular error.
+Hmm, that's really ugly though. Both versions.
 
-The problem is that the length of the received SCSI command is not
-validated if scsi_op == VARIABLE_LENGTH_CMD. It can lead to out-of-bounds
-reading if the user sends a request with SCSI command of length less than
-32.
+Now when Alexei said:
 
-Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+> > > > > We cannot make all tracepoint pointers to be PTR_TRUSTED | PTR_MAYBE_NULL
+> > > > > by default, since it will break a bunch of progs.
+> > > > > Instead we can annotate this tracepoint arg as __nullable and
+> > > > > teach the verifier to recognize such special arguments of tracepoints. 
 
-Acked-by: Damien Le Moal <dlemoal@kernel.org>
-Co-developed-by: Mikhail Ivanov <iwanov-23@bk.ru>
-Signed-off-by: Mikhail Ivanov <iwanov-23@bk.ru>
-Co-developed-by: Mikhail Ukhin <mish.uxin2012@yandex.ru>
-Signed-off-by: Mikhail Ukhin <mish.uxin2012@yandex.ru>
-Signed-off-by: Artem Sadovnikov <ancowi69@gmail.com>
----
-Link: https://lore.kernel.org/lkml/20240711151546.341491-1-ancowi69@gmail.com/T/#u
-unfortunately, stable@vger.kernel.org wasn't initially mentioned.
- drivers/ata/libata-scsi.c | 3 +++
- 1 file changed, 3 insertions(+)
+I'm not familiar with the verifier, so I don't know how the above is
+implemented, and why it would break a bunch of progs.
 
-diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-index 36f32fa052df..4397986db053 100644
---- a/drivers/ata/libata-scsi.c
-+++ b/drivers/ata/libata-scsi.c
-@@ -3949,6 +3949,9 @@ static unsigned int ata_scsi_var_len_cdb_xlat(struct ata_queued_cmd *qc)
- 	const u8 *cdb = scmd->cmnd;
- 	const u16 sa = get_unaligned_be16(&cdb[8]);
- 
-+	if (scmd->cmd_len != 32)
-+		return 1;
-+
- 	/*
- 	 * if service action represents a ata pass-thru(32) command,
- 	 * then pass it to ata_scsi_pass_thru handler.
--- 
-2.34.1
+If you had a macro around the parameter:
 
+		TP_PROTO(struct task_struct *tsk, struct task_struct *__nullable(pi_task)),
+
+Could having that go through another macro pass in trace_events.h work?
+That is, could we associate the trace event with "nullable" parameters
+that could be stored someplace else for you?
+
+-- Steve
 
