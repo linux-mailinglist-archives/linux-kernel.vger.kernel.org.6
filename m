@@ -1,253 +1,417 @@
-Return-Path: <linux-kernel+bounces-290441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 050BD9553E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:46:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B79E9553EF
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86BC81F23654
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:46:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90F4F1F23645
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC4F14601F;
-	Fri, 16 Aug 2024 23:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57BE14830D;
+	Fri, 16 Aug 2024 23:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="qvaoaxNg"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VzjtphJl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F5378C8F;
-	Fri, 16 Aug 2024 23:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B2FB661;
+	Fri, 16 Aug 2024 23:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723851999; cv=none; b=sF9PVsM0fbXMiXoPYe2HhCTl0Rp9Mlg2KrtCwbOPfF33ZcLxfmQzZiu+iskRA8qyJw0I2gtJ5aWgTyjySnaCOskRVlK9gdXcTFc89NV7EJU7ir9yo0CaQ/54BxZShalbAayBmpi69RPrTQDdVorCzruQy8uw6SFl/g7lOTugdYM=
+	t=1723852298; cv=none; b=nbxjrgMi7gYz5IFFwTrZ57IJDnOWkY2aXtKo1O57sefJbvCaNtzA2xxs3vaN4h21C8M69w2HZWgi8ax8o8V4VRfD1VEUuEsIZ3cVeLiqiSjbFGN9WxagGI+ivuNSJQRVTXBdCSSVzxzGrpTzB+ddlIvQsrB8VORrcGZZycx3ybo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723851999; c=relaxed/simple;
-	bh=feUvX9V8w+NhXqTyhRt7l6bICwVKyQyAXpz2P6isYSc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=H1mNH9mdLUeL/A1bL6+bRzttznqp/jL8yM0rljTuGZM7mGvFEPBP2TOa33FObhK7HHn+YafoAgF7DltZGCsFYUFhH1lBDmq6vNQHqOqX2bUhM7gHRCN4Z4BGUQhLOiC32x5fP4G+q0VX2hxFlJxLBpnk++DgRt0fzLVxIck+hHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=qvaoaxNg; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1723851995;
-	bh=ZMZbIojl7FpylGqV64BXYP8kTFTEQ6oAfPllyZLp8pc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=qvaoaxNgnv80fP+qTi+04woa7oNYPquPEU+WRub/c0MGgl9zPp1W+4OFzEggYu46V
-	 ANnVvM8wRX3epbmhWOYHYH8l04YQmQI9HOi/O0oIj9i42OWzizVB1WVR/6PiQNd1wY
-	 p4L0JYcFEhFhUy8DB24+siBSOREdJ9G9wUI6XMPm/K9tRxWTFSU/PTwTqa9lChz6SE
-	 0hUiT+r1J0aSZ6bVsxrSkIOO1nB12ziOq5cN+Ic+SdtCJfrbeFZqQzl2Csrcyi2AK9
-	 SfDx/+GzR04Weu7clsaXqnlzqPEe/WTRqIMwyDCK/qZetxgWBT2ClXjltE9qct0SkP
-	 E30jx5sVURs0A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WlzCq3ZT0z4wbv;
-	Sat, 17 Aug 2024 09:46:31 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: =?utf-8?Q?Kolbj=C3=B8rn?= Barmen <linux-ppc@kolla.no>,
- linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org, =?utf-8?B?Sm9u?=
- =?utf-8?B?w6HFoQ==?= Vidra
- <vidra@ufal.mff.cuni.cz>, Christoph Hellwig <hch@lst.de>,
- linux@roeck-us.net
-Subject: Re: Since 6.10 - kernel oops/panics on G4 macmini due to change in
- drivers/ata/pata_macio.c
-In-Reply-To: <Zry58qB80V80uS38@ryzen.lan>
-References: <62d248bb-e97a-25d2-bcf2-9160c518cae5@kolla.no>
- <3b6441b8-06e6-45da-9e55-f92f2c86933e@ufal.mff.cuni.cz>
- <Zrstcei9WN9sRfdX@x1-carbon.wireless.wdc> <87sev81u3f.fsf@mail.lhotse>
- <Zrt028rSVT5hVPbU@ryzen.lan> <87jzgj1ejc.fsf@mail.lhotse>
- <Zry58qB80V80uS38@ryzen.lan>
-Date: Sat, 17 Aug 2024 09:46:31 +1000
-Message-ID: <87jzgg2fqg.fsf@mail.lhotse>
+	s=arc-20240116; t=1723852298; c=relaxed/simple;
+	bh=Y3R5Xe9PvNt7c9UthSrlFrTLiWzerjmIgm8r/fHprOs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AowU3rh0pdjqP1CVFe50UsMBGoPJu4oBEfQWYAuvs9kHerAw1fYEdvnlNmxAGIh8tQM0q1nN021ujQMaUqNwydyX7qDyXmi8i1iAK22X1/ZG9lnZP1JePVIQjIWm5PXNPMPt+88yk0oF2BZo/h9wBtl2fWvmzxFWNA2LyD3TpTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VzjtphJl; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723852297; x=1755388297;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Y3R5Xe9PvNt7c9UthSrlFrTLiWzerjmIgm8r/fHprOs=;
+  b=VzjtphJln2PfK6wmphasOwX0pvwMKo6B8lhxwtPeQffW8991B9MUEAQV
+   x2v1WbRkQAAqwdXAroL1cn7rQi4EJWq9g/UU/fwA+dO1gH/IrMLYFZUS4
+   N6Cos79TE0Zs6DOyXF7BVQbdsIqXuqS4DoriYY1x/Gjw2dNLZonFJlIl9
+   2L/wLgxnZPQtkH9ZUhYU+rH9ZfoDCtC1kRnSJffUqL9uQWe0gDHNgie0y
+   yxjJp4ReRt1f1LpELYIy7aYHteGS56Fl9wMlsHSd3ACernJBhdiFJWos5
+   e9M3yU0bxwlRyswHMImOaJSEECmMRo47Zntd/7zxwzlvNoUviu4PTpSH4
+   g==;
+X-CSE-ConnectionGUID: Q5lTjgKvTJO6oNijFL5u5A==
+X-CSE-MsgGUID: qeUUdhnfQ5G78vOiHH3spg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="22039852"
+X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
+   d="scan'208";a="22039852"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 16:51:36 -0700
+X-CSE-ConnectionGUID: rP9/veaASJS0L3KH+gZrdw==
+X-CSE-MsgGUID: L1zajP0KRzaC1dfu9MqMrQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
+   d="scan'208";a="60364021"
+Received: from unknown (HELO [10.125.111.71]) ([10.125.111.71])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 16:51:35 -0700
+Message-ID: <b20a64bc-d0c2-4cea-b696-4667cfc9126b@intel.com>
+Date: Fri, 16 Aug 2024 16:51:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 13/25] cxl/region: Add sparse DAX region support
+To: ira.weiny@intel.com, Fan Ni <fan.ni@samsung.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+ Davidlohr Bueso <dave@stgolabs.net>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, linux-btrfs@vger.kernel.org,
+ linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, nvdimm@lists.linux.dev
+References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
+ <20240816-dcd-type2-upstream-v3-13-7c9b96cba6d7@intel.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20240816-dcd-type2-upstream-v3-13-7c9b96cba6d7@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Niklas Cassel <cassel@kernel.org> writes:
-> On Wed, Aug 14, 2024 at 10:20:55PM +1000, Michael Ellerman wrote:
->> Niklas Cassel <cassel@kernel.org> writes:
->> > On Tue, Aug 13, 2024 at 10:32:36PM +1000, Michael Ellerman wrote:
->> >> Niklas Cassel <cassel@kernel.org> writes:
->> >> > On Tue, Aug 13, 2024 at 07:49:34AM +0200, Jon=C3=A1=C5=A1 Vidra wro=
-te:
->> ...
->> >> >> ------------[ cut here ]------------
->> >> >> kernel BUG at drivers/ata/pata_macio.c:544!
->> >> >
->> >> > https://github.com/torvalds/linux/blob/v6.11-rc3/drivers/ata/pata_m=
-acio.c#L544
->> >> >
->> >> > It seems that the
->> >> > while (sg_len) loop does not play nice with the new .max_segment_si=
-ze.
->> >>=20
->> >> Right, but only for 4KB kernels for some reason. Is there some limit
->> >> elsewhere that prevents the bug tripping on 64KB kernels, or is it ju=
-st
->> >> luck that no one has hit it?
->> >
->> > Have your tried running fio (flexible I/O tester), with reads with a v=
-ery
->> > large block sizes?
->> >
->> > I would be surprised if it isn't possible to trigger the same bug with
->> > 64K page size.
->> >
->> > max segment size =3D 64K
->> > MAX_DCMDS =3D 256
->> > 256 * 64K =3D 16 MiB
->> > What happens if you run fio with a 16 MiB blocksize?
->> >
->> > Something like:
->> > $ sudo fio --name=3Dtest --filename=3D/dev/sdX --direct=3D1 --runtime=
-=3D60 --ioengine=3Dio_uring --rw=3Dread --iodepth=3D4 --bs=3D16M
->>=20
->> Nothing interesting happens, fio succeeds.
->>=20
->> The largest request that comes into pata_macio_qc_prep() is 1280KB,
->> which results in 40 DMA list entries.
->>=20
->> I tried with a larger block size but it doesn't change anything. I guess
->> there's some limit somewhere else in the stack?
->>=20
->> That was testing on qemu, but I don't think it should matter?
->>=20
->> I guess there's no way to run the fio test against a file, ie. without a
->> raw partition? My real G5 doesn't have any spare disks/partitions in it.
->
->
-> You can definitely run fio against a file.
->
-> e.g.
-> $ dd if=3D/dev/random of=3D/tmp/my_file bs=3D1M count=3D1024
->
-> $ sudo fio --name=3Dtest --filename=3D/tmp/my_file --direct=3D1 --runtime=
-=3D60 --ioengine=3Dio_uring --rw=3Dread --iodepth=3D4 --bs=3D16M
->
->
-> Perhaps try with 32M block size, so that it is larger than
-> max segment size =3D 64K
-> MAX_DCMDS =3D 256
-> 256 * 64K =3D 16 MiB
->
-> Perhaps also try with and without --direct.
-> It could be interesting to use the page cache if you do --rw=3Dreadwrite
-> that might possibly result in larger bios.
 
-Changing the fio settings didn't help.
 
-I did some tracing and noticed it was always splitting the bio in
-__bio_split_to_limits() based on get_max_io_size().
+On 8/16/24 7:44 AM, ira.weiny@intel.com wrote:
+> From: Navneet Singh <navneet.singh@intel.com>
+> 
+> Dynamic Capacity CXL regions must allow memory to be added or removed
+> dynamically.  In addition to the quantity of memory available the
+> location of the memory within a DC partition is dynamic based on the
+> extents offered by a device.  CXL DAX regions must accommodate the
+> sparseness of this memory in the management of DAX regions and devices.
+> 
+> Introduce the concept of a sparse DAX region.  Add a create_dc_region()
+> sysfs entry to create such regions.  Special case DC capable regions to
+> create a 0 sized seed DAX device to maintain compatibility which
+> requires a default DAX device to hold a region reference.
+> 
+> Indicate 0 byte available capacity until such time that capacity is
+> added.
+> 
+> Sparse regions complicate the range mapping of dax devices.  There is no
+> known use case for range mapping on sparse regions.  Avoid the
+> complication by preventing range mapping of dax devices on sparse
+> regions.
+> 
+> Interleaving is deferred for now.  Add checks.
+> 
+> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
+> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
 
-That eventually lead me to max_sectors_kb in sysfs, which is by default
-(on my system at least) 1280 (KB) - which is exactly the size I see in
-pata-macio.
-
-Increasing max_sectors_kb with:
-
-  # echo 16384 > /sys/devices/pci0000:f0/0000:f0:0c.0/0.80000000:mac-io/0.0=
-0020000:ata-3/ata1/host0/target0:0:0/0:0:0:0/block/sda/queue/max_sectors_kb
-
-Allows me to trip the bug (I turned it into a WARN to keep the system alive=
-):
-
-  [ 1804.988552] ------------[ cut here ]------------
-  [ 1804.988963] DMA table overflow!
-  [ 1804.989781] WARNING: CPU: 0 PID: 299 at drivers/ata/pata_macio.c:546 p=
-ata_macio_qc_prep+0x27c/0x2a4
-  [ 1804.991157] Modules linked in:
-  [ 1804.991945] CPU: 0 PID: 299 Comm: iou-wrk-298 Not tainted 6.10.4-dirty=
- #242
-  [ 1804.992688] Hardware name: PowerMac3,1 PPC970FX 0x3c0301 PowerMac
-  [ 1804.993512] NIP:  c0000000008bcfb4 LR: c0000000008bcfb0 CTR: 000000000=
-0000000
-  [ 1804.994244] REGS: c0000000052d6fb0 TRAP: 0700   Not tainted  (6.10.4-d=
-irty)
-  [ 1804.994998] MSR:  800000000202b032 <SF,VEC,EE,FP,ME,IR,DR,RI>  CR: 444=
-84240  XER: 00000000
-  [ 1804.996178] IRQMASK: 1
-  [ 1804.996178] GPR00: c0000000008bcfb0 c0000000052d7250 c000000000f50b00 =
-0000000000000013
-  [ 1804.996178] GPR04: 0000000100000282 c0000000014806c0 fffffffffffec230 =
-000000003ed10000
-  [ 1804.996178] GPR08: 0000000000000027 c00000003fe02410 0000000000000001 =
-0000000044484240
-  [ 1804.996178] GPR12: c0000000014806a8 c0000000017b0000 c0000000006c9488 =
-c000000005026b40
-  [ 1804.996178] GPR16: 0000000000000000 0000000002000000 c000000000cecaa8 =
-c000000000e44ac8
-  [ 1804.996178] GPR20: 0000000000800000 0000000000000080 000000000000ff00 =
-c000000000d12730
-  [ 1804.996178] GPR24: c000000000e20788 c00000000330eae8 0000000000000000 =
-0000000000000020
-  [ 1804.996178] GPR28: c0000000036c8130 0000000000000100 0000000000000000 =
-c000000003fb1000
-  [ 1805.003085] NIP [c0000000008bcfb4] pata_macio_qc_prep+0x27c/0x2a4
-  [ 1805.003715] LR [c0000000008bcfb0] pata_macio_qc_prep+0x278/0x2a4
-  [ 1805.004564] Call Trace:
-  [ 1805.004963] [c0000000052d7250] [c0000000008bcfb0] pata_macio_qc_prep+0=
-x278/0x2a4 (unreliable)
-  [ 1805.005974] [c0000000052d7310] [c00000000089840c] ata_qc_issue+0x170/0=
-x390
-  [ 1805.006719] [c0000000052d7390] [c0000000008a5160] __ata_scsi_queuecmd+=
-0x220/0x7d4
-  [ 1805.007472] [c0000000052d7410] [c000000000 8a5778] ata_scsi_queuecmd+0=
-x64/0xe8
-  [ 1805.008194] [c0000000052d7450] [c00000000085b450] scsi_queue_rq+0x408/=
-0xd74
-  [ 1805.008904] [c0000000052d7500] [c00000000067bfc8] blk_mq_dispatch_rq_l=
-ist+0x160/0x914
-  [ 1805.009696] [c0000000052d75b0] [c000000000683d50] __blk_mq_sched_dispa=
-tch_requests+0x5fc/0x77c
-  [ 1805.010551] [c0000000052d7680] [c000000000683f68] blk_mq_sched_dispatc=
-h_requests+0x44/0x90
-  [ 1805.011371] [c0000000052d76b0] [c000000000677328] blk_mq_run_hw_queue+=
-0x220/0x240
-  [ 1805.012138] [c0000000052d76f0] [c00000000067b084] blk_mq_flush_plug_li=
-st.part.0+0x214/0x75c
-  [ 1805.012975] [c0000000052d77a0] [c00000000067b664] blk_add_rq_to_plug+0=
-x98/0x1f0
-  [ 1805.013717] [c0000000052d77e0] [c00000000067cd4c] blk_mq_submit_bio+0x=
-5b0/0x888
-  [ 1805.014457] [c0000000052d7890] [c000000000667bf0] __submit_bio+0xa4/0x=
-2e4
-  [ 1805.015149] [c0000000052d7910] [c0000000006680bc] submit_bio_noacct_no=
-check+0x28c/0x404
-  [ 1805.015952] [c0000000052d7980] [c00000000065bf68] blkdev_direct_IO+0x6=
-3c/0x824
-  [ 1805.016688] [c0000000052d7aa0] [c00000000065c614] blkdev_read_iter+0x1=
-0c/0x1c8
-  [ 1805.017423] [c0000000052d7af0] [c0000000006b2cdc] __io_read+0xe0/0x5a0
-  [ 1805.018091] [c0000000052d7b50] [c0000000006b3a70] io_read+0x30/0x74
-  [ 1805.018733] [c0000000052d7b80] [c0000000006a9040] io_issue_sqe+0x8c/0x=
-768
-  [ 1805.019419] [c0000000052d7c00] [c0000000006a9850] io_wq_submit_work+0x=
-118/0x518
-  [ 1805.020153] [c0000000052d7c60] [c0000000006c8ebc] io_worker_handle_wor=
-k+0x23c/0x800
-  [ 1805.020923] [c0000000052d7d00] [c0000000006c95f8] io_wq_worker+0x178/0=
-x51c
-  [ 1805.021621] [c0000000052d7e50] [c00000000000bd94] ret_from_kernel_user=
-_thread+0x14/0x1c
-=20=20
-
-Same behaviour on a kernel with PAGE_SIZE =3D 4KB.
-
-I don't know why max_sectors_kb starts out with a different value on my
-system, but anyway the bug is lurking there, even if it doesn't trip by
-default in some configurations.
-
-I'll clean up and send my patch from earlier in the thread.
-
-cheers
+> 
+> ---
+> Changes:
+> [Fan: use single function for dc region store]
+> [djiang: avoid setting dev_size twice]
+> [djbw: Check DCD support and interleave restriction on region creation]
+> [iweiny: squash patch : dax/region: Prevent range mapping allocation on sparse regions]
+> [iwieny: remove reviews]
+> [iweiny: rebase to master]
+> [iweiny: push sysfs version to 6.12]
+> [iweiny: make cxled_to_mds inline]
+> ---
+>  Documentation/ABI/testing/sysfs-bus-cxl | 22 ++++++++--------
+>  drivers/cxl/core/core.h                 | 12 +++++++++
+>  drivers/cxl/core/port.c                 |  1 +
+>  drivers/cxl/core/region.c               | 46 +++++++++++++++++++++++++++++++--
+>  drivers/dax/bus.c                       | 10 +++++++
+>  drivers/dax/bus.h                       |  1 +
+>  drivers/dax/cxl.c                       | 16 ++++++++++--
+>  7 files changed, 93 insertions(+), 15 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-cxl b/Documentation/ABI/testing/sysfs-bus-cxl
+> index 6227ae0ab3fc..3a5ee88e551b 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-cxl
+> +++ b/Documentation/ABI/testing/sysfs-bus-cxl
+> @@ -406,20 +406,20 @@ Description:
+>  		interleave_granularity).
+>  
+>  
+> -What:		/sys/bus/cxl/devices/decoderX.Y/create_{pmem,ram}_region
+> -Date:		May, 2022, January, 2023
+> -KernelVersion:	v6.0 (pmem), v6.3 (ram)
+> +What:		/sys/bus/cxl/devices/decoderX.Y/create_{pmem,ram,dc}_region
+> +Date:		May, 2022, January, 2023, August 2024
+> +KernelVersion:	v6.0 (pmem), v6.3 (ram), v6.12 (dc)
+>  Contact:	linux-cxl@vger.kernel.org
+>  Description:
+>  		(RW) Write a string in the form 'regionZ' to start the process
+> -		of defining a new persistent, or volatile memory region
+> -		(interleave-set) within the decode range bounded by root decoder
+> -		'decoderX.Y'. The value written must match the current value
+> -		returned from reading this attribute. An atomic compare exchange
+> -		operation is done on write to assign the requested id to a
+> -		region and allocate the region-id for the next creation attempt.
+> -		EBUSY is returned if the region name written does not match the
+> -		current cached value.
+> +		of defining a new persistent, volatile, or Dynamic Capacity
+> +		(DC) memory region (interleave-set) within the decode range
+> +		bounded by root decoder 'decoderX.Y'. The value written must
+> +		match the current value returned from reading this attribute.
+> +		An atomic compare exchange operation is done on write to assign
+> +		the requested id to a region and allocate the region-id for the
+> +		next creation attempt.  EBUSY is returned if the region name
+> +		written does not match the current cached value.
+>  
+>  
+>  What:		/sys/bus/cxl/devices/decoderX.Y/delete_region
+> diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
+> index 72a506c9dbd0..15b6cf1c19ef 100644
+> --- a/drivers/cxl/core/core.h
+> +++ b/drivers/cxl/core/core.h
+> @@ -4,15 +4,27 @@
+>  #ifndef __CXL_CORE_H__
+>  #define __CXL_CORE_H__
+>  
+> +#include <cxlmem.h>
+> +
+>  extern const struct device_type cxl_nvdimm_bridge_type;
+>  extern const struct device_type cxl_nvdimm_type;
+>  extern const struct device_type cxl_pmu_type;
+>  
+>  extern struct attribute_group cxl_base_attribute_group;
+>  
+> +static inline struct cxl_memdev_state *
+> +cxled_to_mds(struct cxl_endpoint_decoder *cxled)
+> +{
+> +	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
+> +	struct cxl_dev_state *cxlds = cxlmd->cxlds;
+> +
+> +	return container_of(cxlds, struct cxl_memdev_state, cxlds);
+> +}
+> +
+>  #ifdef CONFIG_CXL_REGION
+>  extern struct device_attribute dev_attr_create_pmem_region;
+>  extern struct device_attribute dev_attr_create_ram_region;
+> +extern struct device_attribute dev_attr_create_dc_region;
+>  extern struct device_attribute dev_attr_delete_region;
+>  extern struct device_attribute dev_attr_region;
+>  extern const struct device_type cxl_pmem_region_type;
+> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+> index 222aa0aeeef7..44e1e203173d 100644
+> --- a/drivers/cxl/core/port.c
+> +++ b/drivers/cxl/core/port.c
+> @@ -320,6 +320,7 @@ static struct attribute *cxl_decoder_root_attrs[] = {
+>  	&dev_attr_qos_class.attr,
+>  	SET_CXL_REGION_ATTR(create_pmem_region)
+>  	SET_CXL_REGION_ATTR(create_ram_region)
+> +	SET_CXL_REGION_ATTR(create_dc_region)
+>  	SET_CXL_REGION_ATTR(delete_region)
+>  	NULL,
+>  };
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index f85b26b39b2f..35c4a1f4f9bd 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -496,6 +496,11 @@ static ssize_t interleave_ways_store(struct device *dev,
+>  	if (rc)
+>  		return rc;
+>  
+> +	if (cxlr->mode == CXL_REGION_DC && val != 1) {
+> +		dev_err(dev, "Interleaving and DCD not supported\n");
+> +		return -EINVAL;
+> +	}
+> +
+>  	rc = ways_to_eiw(val, &iw);
+>  	if (rc)
+>  		return rc;
+> @@ -2174,6 +2179,7 @@ static size_t store_targetN(struct cxl_region *cxlr, const char *buf, int pos,
+>  	if (sysfs_streq(buf, "\n"))
+>  		rc = detach_target(cxlr, pos);
+>  	else {
+> +		struct cxl_endpoint_decoder *cxled;
+>  		struct device *dev;
+>  
+>  		dev = bus_find_device_by_name(&cxl_bus_type, NULL, buf);
+> @@ -2185,8 +2191,13 @@ static size_t store_targetN(struct cxl_region *cxlr, const char *buf, int pos,
+>  			goto out;
+>  		}
+>  
+> -		rc = attach_target(cxlr, to_cxl_endpoint_decoder(dev), pos,
+> -				   TASK_INTERRUPTIBLE);
+> +		cxled = to_cxl_endpoint_decoder(dev);
+> +		if (cxlr->mode == CXL_REGION_DC &&
+> +		    !cxl_dcd_supported(cxled_to_mds(cxled))) {
+> +			dev_dbg(dev, "DCD unsupported\n");
+> +			return -EINVAL;
+> +		}
+> +		rc = attach_target(cxlr, cxled, pos, TASK_INTERRUPTIBLE);
+>  out:
+>  		put_device(dev);
+>  	}
+> @@ -2534,6 +2545,7 @@ static struct cxl_region *__create_region(struct cxl_root_decoder *cxlrd,
+>  	switch (mode) {
+>  	case CXL_REGION_RAM:
+>  	case CXL_REGION_PMEM:
+> +	case CXL_REGION_DC:
+>  		break;
+>  	default:
+>  		dev_err(&cxlrd->cxlsd.cxld.dev, "unsupported mode %s\n",
+> @@ -2587,6 +2599,20 @@ static ssize_t create_ram_region_store(struct device *dev,
+>  }
+>  DEVICE_ATTR_RW(create_ram_region);
+>  
+> +static ssize_t create_dc_region_show(struct device *dev,
+> +				     struct device_attribute *attr, char *buf)
+> +{
+> +	return __create_region_show(to_cxl_root_decoder(dev), buf);
+> +}
+> +
+> +static ssize_t create_dc_region_store(struct device *dev,
+> +				      struct device_attribute *attr,
+> +				      const char *buf, size_t len)
+> +{
+> +	return create_region_store(dev, buf, len, CXL_REGION_DC);
+> +}
+> +DEVICE_ATTR_RW(create_dc_region);
+> +
+>  static ssize_t region_show(struct device *dev, struct device_attribute *attr,
+>  			   char *buf)
+>  {
+> @@ -3168,6 +3194,11 @@ static int devm_cxl_add_dax_region(struct cxl_region *cxlr)
+>  	struct device *dev;
+>  	int rc;
+>  
+> +	if (cxlr->mode == CXL_REGION_DC && cxlr->params.interleave_ways != 1) {
+> +		dev_err(&cxlr->dev, "Interleaving DC not supported\n");
+> +		return -EINVAL;
+> +	}
+> +
+>  	cxlr_dax = cxl_dax_region_alloc(cxlr);
+>  	if (IS_ERR(cxlr_dax))
+>  		return PTR_ERR(cxlr_dax);
+> @@ -3260,6 +3291,16 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
+>  		return ERR_PTR(-EINVAL);
+>  
+>  	mode = cxl_decoder_to_region_mode(cxled->mode);
+> +	if (mode == CXL_REGION_DC) {
+> +		if (!cxl_dcd_supported(cxled_to_mds(cxled))) {
+> +			dev_err(&cxled->cxld.dev, "DCD unsupported\n");
+> +			return ERR_PTR(-EINVAL);
+> +		}
+> +		if (cxled->cxld.interleave_ways != 1) {
+> +			dev_err(&cxled->cxld.dev, "Interleaving and DCD not supported\n");
+> +			return ERR_PTR(-EINVAL);
+> +		}
+> +	}
+>  	do {
+>  		cxlr = __create_region(cxlrd, mode,
+>  				       atomic_read(&cxlrd->region_id));
+> @@ -3467,6 +3508,7 @@ static int cxl_region_probe(struct device *dev)
+>  	case CXL_REGION_PMEM:
+>  		return devm_cxl_add_pmem_region(cxlr);
+>  	case CXL_REGION_RAM:
+> +	case CXL_REGION_DC:
+>  		/*
+>  		 * The region can not be manged by CXL if any portion of
+>  		 * it is already online as 'System RAM'
+> diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
+> index fde29e0ad68b..d8cb5195a227 100644
+> --- a/drivers/dax/bus.c
+> +++ b/drivers/dax/bus.c
+> @@ -178,6 +178,11 @@ static bool is_static(struct dax_region *dax_region)
+>  	return (dax_region->res.flags & IORESOURCE_DAX_STATIC) != 0;
+>  }
+>  
+> +static bool is_sparse(struct dax_region *dax_region)
+> +{
+> +	return (dax_region->res.flags & IORESOURCE_DAX_SPARSE_CAP) != 0;
+> +}
+> +
+>  bool static_dev_dax(struct dev_dax *dev_dax)
+>  {
+>  	return is_static(dev_dax->region);
+> @@ -301,6 +306,9 @@ static unsigned long long dax_region_avail_size(struct dax_region *dax_region)
+>  
+>  	lockdep_assert_held(&dax_region_rwsem);
+>  
+> +	if (is_sparse(dax_region))
+> +		return 0;
+> +
+>  	for_each_dax_region_resource(dax_region, res)
+>  		size -= resource_size(res);
+>  	return size;
+> @@ -1373,6 +1381,8 @@ static umode_t dev_dax_visible(struct kobject *kobj, struct attribute *a, int n)
+>  		return 0;
+>  	if (a == &dev_attr_mapping.attr && is_static(dax_region))
+>  		return 0;
+> +	if (a == &dev_attr_mapping.attr && is_sparse(dax_region))
+> +		return 0;
+>  	if ((a == &dev_attr_align.attr ||
+>  	     a == &dev_attr_size.attr) && is_static(dax_region))
+>  		return 0444;
+> diff --git a/drivers/dax/bus.h b/drivers/dax/bus.h
+> index cbbf64443098..783bfeef42cc 100644
+> --- a/drivers/dax/bus.h
+> +++ b/drivers/dax/bus.h
+> @@ -13,6 +13,7 @@ struct dax_region;
+>  /* dax bus specific ioresource flags */
+>  #define IORESOURCE_DAX_STATIC BIT(0)
+>  #define IORESOURCE_DAX_KMEM BIT(1)
+> +#define IORESOURCE_DAX_SPARSE_CAP BIT(2)
+>  
+>  struct dax_region *alloc_dax_region(struct device *parent, int region_id,
+>  		struct range *range, int target_node, unsigned int align,
+> diff --git a/drivers/dax/cxl.c b/drivers/dax/cxl.c
+> index 9b29e732b39a..367e86b1c22a 100644
+> --- a/drivers/dax/cxl.c
+> +++ b/drivers/dax/cxl.c
+> @@ -13,19 +13,31 @@ static int cxl_dax_region_probe(struct device *dev)
+>  	struct cxl_region *cxlr = cxlr_dax->cxlr;
+>  	struct dax_region *dax_region;
+>  	struct dev_dax_data data;
+> +	resource_size_t dev_size;
+> +	unsigned long flags;
+>  
+>  	if (nid == NUMA_NO_NODE)
+>  		nid = memory_add_physaddr_to_nid(cxlr_dax->hpa_range.start);
+>  
+> +	flags = IORESOURCE_DAX_KMEM;
+> +	if (cxlr->mode == CXL_REGION_DC)
+> +		flags |= IORESOURCE_DAX_SPARSE_CAP;
+> +
+>  	dax_region = alloc_dax_region(dev, cxlr->id, &cxlr_dax->hpa_range, nid,
+> -				      PMD_SIZE, IORESOURCE_DAX_KMEM);
+> +				      PMD_SIZE, flags);
+>  	if (!dax_region)
+>  		return -ENOMEM;
+>  
+> +	if (cxlr->mode == CXL_REGION_DC)
+> +		/* Add empty seed dax device */
+> +		dev_size = 0;
+> +	else
+> +		dev_size = range_len(&cxlr_dax->hpa_range);
+> +
+>  	data = (struct dev_dax_data) {
+>  		.dax_region = dax_region,
+>  		.id = -1,
+> -		.size = range_len(&cxlr_dax->hpa_range),
+> +		.size = dev_size,
+>  		.memmap_on_memory = true,
+>  	};
+>  
+> 
 
