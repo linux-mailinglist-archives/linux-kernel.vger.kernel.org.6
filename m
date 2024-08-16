@@ -1,333 +1,216 @@
-Return-Path: <linux-kernel+bounces-289226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F58B95435B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:52:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 123A095435D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:52:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B03CD1F25068
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:52:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ECCE285064
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C30514B087;
-	Fri, 16 Aug 2024 07:47:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465F6144D20;
+	Fri, 16 Aug 2024 07:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S0BJthpU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M0oCmpQi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A1014A4FB
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718DC144D10
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723794458; cv=none; b=YregLK7gkv3T0kjFfRj3z8G+KknA9Gr/OiZgMdRuADJkG9L/0duJ07FJzbQ2iohP3rrg9icI9fAdZNJG+mbbJ0dFIpeKK3KQNsbhClGTbuS2IrXReb1jkMU5q+V/23lnyFtwiRCqmy3ZYPBVVqR4iWXrdYm+Bbr5v8bvy9ZOGzQ=
+	t=1723794470; cv=none; b=bdp21Ms2oJc37WVXKb/QnLp3w98Xl6s7min5fwoFtzhamwAx1zq+egLh6yZ/MvBZfomoH4xIjWsiFj2C72xyYbav/Pl5MzfjivvXf1nqP8y1OhsKALvYygqWbDvKeoEHH+81+fwkvKJqr0tboy/1P2HQLGXIIiD+LtY36Vh4lD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723794458; c=relaxed/simple;
-	bh=qD1OFtO/qJnrvrml5wouhVG92sWSwTSTNw43wCV9uTI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=J7TxVYLNYb6iEhE4Fg56AZwcK75QNTVXQylQSogOJ+O/UiYz7Mo2MzqgNRsFsL+IJy24xM5Nfz1Fy1Oerm63pyXT0VfWdsK1lDLZbsuwugVDBUAS2TIFUt4CynftphY5QZWRozVYu37yzaXs7HDWOJ9WO+mX+3uGYsiBMfW78VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S0BJthpU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723794455;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p3+oGBurxqhUAn+LlCI73zSVN83RLmsnyOF7xPiqQ+Q=;
-	b=S0BJthpULQMIN5oV52yutXh6vJd/N/NnH3VdyIlN1b9Yf6HixciZ058peWMaR3xsYhDD1k
-	+fzmwQ+Q1JHCU8eqGR7RAc8ExIOEDwAPoBMrALvAqcp77OuB76LivUDvQD/N6kreNYHiDf
-	4wPplR7ZLupfuXjTVjbxwCmHLmfOUCA=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-451-2TsM3b78P7ig1F3l4Y7KwA-1; Fri, 16 Aug 2024 03:47:33 -0400
-X-MC-Unique: 2TsM3b78P7ig1F3l4Y7KwA-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4267378f538so2897825e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 00:47:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723794452; x=1724399252;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=p3+oGBurxqhUAn+LlCI73zSVN83RLmsnyOF7xPiqQ+Q=;
-        b=sGF/2HR2ztwZrYFVOWQr2nD2O8/l8CBN5Wflo+8eyDPz78uBuvt3OjwDnR6kBhVrK0
-         QabWE9nbKO2NyuV7InS/IgToqjXH96JKPW6UlJS5nR3agXwkdVfggNaWbwyhpdQ6XMd6
-         14zw3PyCDLbu3eEVLCCP5Sz2W3QKzDnBJnL/n3SNQT3t/7xtcpyg6UAS8aU17DNhtiL7
-         e5s1cHaGgU3jfbnFPUuBDKppvD8C/ty0K9SrybgjAsuWJno5JBXH76J2m7Hq9cIRA9Gt
-         ivUG+unvUaLiBffpYWrD+ATRC64HkNr02o8Fmq6kNwB0GsToMffkBl/86WDtuU+2/R1N
-         Mdug==
-X-Forwarded-Encrypted: i=1; AJvYcCV0Q9QQujQdHLT+W3jxB07Aws1RwjdfB3WjlTaKSPVs84Q3IDTa4guuy/JD9Ow4rQbOg+HrAg28A2NZLIxJmWef48b6WHAzJA3kQLOH
-X-Gm-Message-State: AOJu0YwTj6pVC12+W31bmDSW5gyLSo8dybegNEMrXfp53wirEuYA4Qbn
-	JqWQLFVW3H4FN8AoistbJ4exJ7+mO2nnraoNFmCxugw8ZFEFjbWMrARj8EiACYEOTZMp/7ov1KB
-	WuaGs0evLhuKdNWm5ZruLOCOII+/PDj/MG6XI9bSlk+S9c90cBAth6VZdSLzDsg==
-X-Received: by 2002:a5d:5984:0:b0:367:4d9d:56a6 with SMTP id ffacd0b85a97d-3719431dfc0mr769781f8f.1.1723794451954;
-        Fri, 16 Aug 2024 00:47:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEC4ozEjfAOD0QEHHeHPcUnNdfIQxp3r757L0yb57BkQvFFuPL+ahHJVAq23k76NL2WjLdZVw==
-X-Received: by 2002:a5d:5984:0:b0:367:4d9d:56a6 with SMTP id ffacd0b85a97d-3719431dfc0mr769766f8f.1.1723794451492;
-        Fri, 16 Aug 2024 00:47:31 -0700 (PDT)
-Received: from dhcp-64-16.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718985a35fsm3034918f8f.59.2024.08.16.00.47.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 00:47:31 -0700 (PDT)
-Message-ID: <94a378e6c2d442e0e7ae06fbd496d02983f9baaa.camel@redhat.com>
-Subject: Re: [PATCH] ata: Replace deprecated PCI devres functions
-From: Philipp Stanner <pstanner@redhat.com>
-To: Sergey Shtylyov <s.shtylyov@omp.ru>, Damien Le Moal
- <dlemoal@kernel.org>,  Niklas Cassel <cassel@kernel.org>, Mikael Pettersson
- <mikpelinux@gmail.com>
-Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	pstanner@redhat.com
-Date: Fri, 16 Aug 2024 09:47:29 +0200
-In-Reply-To: <c2d21da0-7fe1-f995-5562-7ff04e9f1b8b@omp.ru>
-References: <20240812084839.37580-2-pstanner@redhat.com>
-	 <c2d21da0-7fe1-f995-5562-7ff04e9f1b8b@omp.ru>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1723794470; c=relaxed/simple;
+	bh=JHKKZBy7vNeUhEayQtEzd+i+b2SH1IXhnsnWiZ13YP8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FKiP3/z28Qq0Gkj6NIBIk6O6Pa9PqI8E2DwEgyQ5FGbpLKSXMYbmIR/jC0HayvlzpMv0oZnj6aSha72VPAhTqIfZ0qoVRkWX7cg8qg4V5MvxRzCBkpIoXIhMvTuI9R6WcUbGkQxnWf4zsf9/jj6ScQA12jpmWDfkMoY9Ykk3Lyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M0oCmpQi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F337DC4AF11
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:47:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723794470;
+	bh=JHKKZBy7vNeUhEayQtEzd+i+b2SH1IXhnsnWiZ13YP8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=M0oCmpQiZBsQCNaPOq6HCmRtG7wSHWjpvkl2C4xs1kUoNz4bTFq3HeQ58ER7k8B34
+	 uagvi+jV4d14jhldDndlcsfm4WgEuYprJXeB9/3YMsWT7dCSzTvGc9gXQPaQx2xyGI
+	 478wvTsr8dALrcwE7zLHQ3YHx/il+FQfEIbTm7I0LNa2SnnQfFerEuWLzxZYmCGcKw
+	 3miAuAvztIVYj6rxxruAAnedRIhZ5R8j7RRBHD1MDtxAgFgV0BEmMUkx3yUa0DpRVF
+	 4hwsiXkdEtxKZzNOiX/EjPzG/zW8xJUwDNSrujWdi4mtgi6LFjlwFL0UlSN1QsA4Br
+	 E9Lh0reoZbm6A==
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-69483a97848so17464377b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 00:47:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUVivpNcItqTXZ3P7EmbODeOICXi4ERttPZfphTb5QEJxNp9vNFHkz88HuMHYYfhh+0CGXPHJzgNPW4cMWpiLxMhu+z93wgzehpECZY
+X-Gm-Message-State: AOJu0YxMktzkjIFjXojIbidWtKBHSGsvECktTsG416YSotsiITsOImho
+	7I1kr1U+NWkFtJIZ3WEbJGwCWThZ9Pv7Iu8h8uEwjSz0cf8/VD2+AUnBmBEBgbb/AsUm1tLs5JA
+	TfpL7mWsBS7CP4TWCR4gLpWAdQMfTMAX1umGS+Q==
+X-Google-Smtp-Source: AGHT+IEQd3AlU0NiE+7VfRAc2+iGypr+DriGLoAKlGDaOwMv/aID0+ljHMf+DIaSus8DKYdtbQWQZiZtP6bDRC0dF40=
+X-Received: by 2002:a05:690c:7684:b0:687:e11:8c34 with SMTP id
+ 00721157ae682-6b1bb75e76emr20434097b3.30.1723794469227; Fri, 16 Aug 2024
+ 00:47:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240730-swap-allocator-v5-0-cb9c148b9297@kernel.org>
+ <87h6bw3gxl.fsf@yhuang6-desk2.ccr.corp.intel.com> <CACePvbXH8b9SOePQ-Ld_UBbcAdJ3gdYtEkReMto5Hbq9WAL7JQ@mail.gmail.com>
+ <87sevfza3w.fsf@yhuang6-desk2.ccr.corp.intel.com>
+In-Reply-To: <87sevfza3w.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Fri, 16 Aug 2024 00:47:37 -0700
+X-Gmail-Original-Message-ID: <CACePvbUenbKM+i5x6xR=2A=8tz4Eu2azDFAV_ksvn2TtrFsVOQ@mail.gmail.com>
+Message-ID: <CACePvbUenbKM+i5x6xR=2A=8tz4Eu2azDFAV_ksvn2TtrFsVOQ@mail.gmail.com>
+Subject: Re: [PATCH v5 0/9] mm: swap: mTHP swap allocator base on swap cluster order
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Kairui Song <kasong@tencent.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Barry Song <baohua@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2024-08-14 at 20:32 +0300, Sergey Shtylyov wrote:
-> On 8/12/24 11:48 AM, Philipp Stanner wrote:
->=20
-> > The ata subsystem uses the PCI devres functions pcim_iomap_table()
-> > and
-> > pcim_request_regions(), which have been deprecated in commit
-> > e354bb84a4c1
-> > ("PCI: Deprecate pcim_iomap_table(),
-> > pcim_iomap_regions_request_all()").
-> >=20
-> > These functions internally already use their successors, notably
-> > pcim_request_region(), so they are quite trivial to replace.
-> >=20
-> > However, one thing special about ata is that it stores the iomap
-> > table
-> > provided by pcim_iomap_table() in struct ata_host. This can be
-> > replaced
-> > with a __iomem pointer table, statically allocated with size
-> > PCI_STD_NUM_BARS so it can house the maximum number of PCI BARs.
-> > The
-> > only further modification then necessary is to explicitly fill that
-> > table, whereas before it was filled implicitly by
-> > pcim_request_regions().
-> >=20
-> > Modify the iomap table in struct ata_host.
-> >=20
-> > Replace all calls to pcim_request_region() with ones to
-> > pcim_request_region().
->=20
-> =C2=A0=C2=A0 Huh? :-)
-> =C2=A0=C2=A0 Besides, I'm not seeing pcim_request_region() anywhere in th=
-is
-> patch...
+On Thu, Aug 8, 2024 at 1:38=E2=80=AFAM Huang, Ying <ying.huang@intel.com> w=
+rote:
+>
+> Chris Li <chrisl@kernel.org> writes:
+>
+> > On Wed, Aug 7, 2024 at 12:59=E2=80=AFAM Huang, Ying <ying.huang@intel.c=
+om> wrote:
+> >>
+> >> Hi, Chris,
+> >>
+> >> Chris Li <chrisl@kernel.org> writes:
+> >>
+> >> > This is the short term solutions "swap cluster order" listed
+> >> > in my "Swap Abstraction" discussion slice 8 in the recent
+> >> > LSF/MM conference.
+> >> >
+> >> > When commit 845982eb264bc "mm: swap: allow storage of all mTHP
+> >> > orders" is introduced, it only allocates the mTHP swap entries
+> >> > from the new empty cluster list.  It has a fragmentation issue
+> >> > reported by Barry.
+> >> >
+> >> > https://lore.kernel.org/all/CAGsJ_4zAcJkuW016Cfi6wicRr8N9X+GJJhgMQdS=
+Mp+Ah+NSgNQ@mail.gmail.com/
+> >> >
+> >> > The reason is that all the empty clusters have been exhausted while
+> >> > there are plenty of free swap entries in the cluster that are
+> >> > not 100% free.
+> >> >
+> >> > Remember the swap allocation order in the cluster.
+> >> > Keep track of the per order non full cluster list for later allocati=
+on.
+> >> >
+> >> > This series gives the swap SSD allocation a new separate code path
+> >> > from the HDD allocation. The new allocator use cluster list only
+> >> > and do not global scan swap_map[] without lock any more.
+> >>
+> >> This sounds good.  Can we use SSD allocation method for HDD too?
+> >> We may not need a swap entry allocator optimized for HDD.
+> >
+> > Yes, that is the plan as well. That way we can completely get rid of
+> > the old scan_swap_map_slots() code.
+>
+> Good!
+>
+> > However, considering the size of the series, let's focus on the
+> > cluster allocation path first, get it tested and reviewed.
+>
+> OK.
+>
+> > For HDD optimization, mostly just the new block allocations portion
+> > need some separate code path from the new cluster allocator to not do
+> > the per cpu allocation.  Allocating from the non free list doesn't
+> > need to change too
+>
+> I suggest not consider HDD optimization at all.  Just use SSD algorithm
+> to simplify.
 
-Ah, typo. pcim_iomap_regionS() is being replaced.
+Adding a global next allocating CI rather than the per CPU next CI
+pointer is pretty trivial as well. It is just a different way to fetch
+the next cluster pointer.
 
->=20
-> > Remove all calls to pcim_iomap_table().
-> >=20
-> > Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> [...]
-> > =C2=A0drivers/ata/ata_piix.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 7 ++=
-+---
-> > =C2=A0drivers/ata/libata-sff.c=C2=A0=C2=A0=C2=A0 | 50 +++++++++++++++++=
-+++++++++++++---
-> > ----
-> > =C2=A0drivers/ata/pata_atp867x.c=C2=A0 | 13 ++++++----
-> > =C2=A0drivers/ata/pata_hpt3x3.c=C2=A0=C2=A0 |=C2=A0 8 +++---
-> > =C2=A0drivers/ata/pata_ninja32.c=C2=A0 | 10 ++++----
-> > =C2=A0drivers/ata/pata_pdc2027x.c | 11 ++++----
-> > =C2=A0drivers/ata/pata_sil680.c=C2=A0=C2=A0 | 11 ++++----
-> > =C2=A0drivers/ata/pdc_adma.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 9 ++=
-+----
-> > =C2=A0drivers/ata/sata_inic162x.c | 10 +++-----
-> > =C2=A0drivers/ata/sata_mv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=
- 8 +++---
-> > =C2=A0drivers/ata/sata_nv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=
- 8 +++---
-> > =C2=A0drivers/ata/sata_promise.c=C2=A0 |=C2=A0 7 +++---
-> > =C2=A0drivers/ata/sata_qstor.c=C2=A0=C2=A0=C2=A0 |=C2=A0 7 +++---
-> > =C2=A0drivers/ata/sata_sil.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 7 ++=
-+---
-> > =C2=A0drivers/ata/sata_sil24.c=C2=A0=C2=A0=C2=A0 | 20 ++++++++-------
-> > =C2=A0drivers/ata/sata_sis.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 8 ++=
-+---
-> > =C2=A0drivers/ata/sata_svw.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 9 ++=
-++---
-> > =C2=A0drivers/ata/sata_sx4.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 17 +++++++=
-+++---
-> > =C2=A0drivers/ata/sata_via.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 31 +++++++=
-+++++++---------
-> > =C2=A0drivers/ata/sata_vsc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 7 ++=
-+---
-> > =C2=A0include/linux/libata.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 7 ++=
-+++-
-> > =C2=A021 files changed, 163 insertions(+), 102 deletions(-)
->=20
-> =C2=A0=C2=A0 I did review all the changes, not just PATA drivers.
+>
+> >>
+> >> Hi, Hugh,
+> >>
+> >> What do you think about this?
+> >>
+> >> > This streamline the swap allocation for SSD. The code matches the
+> >> > execution flow much better.
+> >> >
+> >> > User impact: For users that allocate and free mix order mTHP swappin=
+g,
+> >> > It greatly improves the success rate of the mTHP swap allocation aft=
+er the
+> >> > initial phase.
+> >> >
+> >> > It also performs faster when the swapfile is close to full, because =
+the
+> >> > allocator can get the non full cluster from a list rather than scann=
+ing
+> >> > a lot of swap_map entries.
+> >>
+> >> Do you have some test results to prove this?  Or which test below can
+> >> prove this?
+> >
+> > The two zram tests are already proving this. The system time
+> > improvement is about 2% on my low CPU count machine.
+> > Kairui has a higher core count machine and the difference is higher
+> > there. The theory is that higher CPU count has higher contentions.
+>
+> I will interpret this as the performance is better in theory.  But
+> there's almost no measurable results so far.
 
-Thx
+I am trying to understand why don't see the performance improvement in
+the zram setup in my cover letter as a measurable result?
 
->=20
-> [...]
-> > diff --git a/drivers/ata/libata-sff.c b/drivers/ata/libata-sff.c
-> > index 250f7dae05fd..d58db8226436 100644
-> > --- a/drivers/ata/libata-sff.c
-> > +++ b/drivers/ata/libata-sff.c
-> [...]
-> > @@ -2172,8 +2173,41 @@ int ata_pci_sff_init_host(struct ata_host
-> > *host)
-> > =C2=A0			continue;
-> > =C2=A0		}
-> > =C2=A0
-> > -		rc =3D pcim_iomap_regions(pdev, 0x3 << base,
-> > -					dev_driver_string(gdev));
-> > +		/*
-> > +		 * In a first loop run, we want to get BARs 0 and
-> > 1.
-> > +		 * In a second run, we want BARs 2 and 3.
-> > +		 */
-> > +		if (i =3D=3D 0) {
-> > +			io_tmp =3D pcim_iomap_region(pdev, 0,
-> > drv_name);
-> > +			if (IS_ERR(io_tmp)) {
-> > +				rc =3D PTR_ERR(io_tmp);
-> > +				goto err;
-> > +			}
-> > +			host->iomap[0] =3D io_tmp;
-> > +
-> > +			io_tmp =3D pcim_iomap_region(pdev, 1,
-> > drv_name);
-> > +			if (IS_ERR(io_tmp)) {
-> > +				rc =3D PTR_ERR(io_tmp);
-> > +				goto err;
-> > +			}
-> > +			host->iomap[1] =3D io_tmp;
-> > +		} else {
-> > +			io_tmp =3D pcim_iomap_region(pdev, 2,
-> > drv_name);
-> > +			if (IS_ERR(io_tmp)) {
-> > +				rc =3D PTR_ERR(io_tmp);
-> > +				goto err;
-> > +			}
-> > +			host->iomap[2] =3D io_tmp;
-> > +
-> > +			io_tmp =3D pcim_iomap_region(pdev, 3,
-> > drv_name);
-> > +			if (IS_ERR(io_tmp)) {
-> > +				rc =3D PTR_ERR(io_tmp);
-> > +				goto err;
-> > +			}
-> > +			host->iomap[3] =3D io_tmp;
-> > +		}
-> > +
->=20
-> =C2=A0=C2=A0 Ugh... Why you couldn't keep using base (or just i * 2) and =
-avoid
-> such code duplication?
+>
+> > The 2% system time number does not sound like much. But consider this
+> > two factors:
+> > 1) swap allocator only takes a small percentage of the overall workload=
+.
+> > 2) The new allocator does more work.
+> > The old allocator has a time tick budget. It will abort and fail to
+> > find an entry when it runs out of time budget, even though there are
+> > still some free entries on the swapfile.
+>
+> What is the time tick budget you mentioned?
 
-I mean, this would at least make it perfectly readable what's being
-done.
+I was under the impression that the previous swap entry allocation
+code will not scan 100% of the swapfile if there is only one entry
+left.
+Please let me know if my understanding is not correct.
 
-I guess we could do something like this, maybe with a comment explining
-what is going on:
-
-for_each_set_bit(j, 0x3 << base, PCI_STD_NUM_BARS) {
-	host->iomap[j] =3D pcim_iomap_region(pdev, j, drv_name);
-	if (IS_ERR(host->iomap[j])) {
-		rc =3D PTR_ERR(host->iomap[j]);
-		break;
-	}
-}
-
-if (rc) {
-	dev_warn(gdev,
+        /* time to take a break? */
+        if (unlikely(--latency_ration < 0)) {
+                if (n_ret)
+                        goto done;
+                spin_unlock(&si->lock);
+                cond_resched();
+                spin_lock(&si->lock);
+                latency_ration =3D LATENCY_LIMIT;
+        }
 
 
-Unless you've got a better idea?
-
-Tell me which version you'd prefer.
-
->=20
-> [...]
-> > diff --git a/drivers/ata/pata_sil680.c b/drivers/ata/pata_sil680.c
-> > index abe64b5f83cf..8a17df73412e 100644
-> > --- a/drivers/ata/pata_sil680.c
-> > +++ b/drivers/ata/pata_sil680.c
-> > @@ -360,15 +360,16 @@ static int sil680_init_one(struct pci_dev
-> > *pdev, const struct pci_device_id *id)
-> > =C2=A0	/* Try to acquire MMIO resources and fallback to PIO if
-> > =C2=A0	 * that fails
-> > =C2=A0	 */
-> > -	rc =3D pcim_iomap_regions(pdev, 1 << SIL680_MMIO_BAR,
-> > DRV_NAME);
-> > -	if (rc)
-> > +	mmio_base =3D pcim_iomap_region(pdev, SIL680_MMIO_BAR,
-> > DRV_NAME);
-> > +	if (IS_ERR(mmio_base)) {
-> > +		rc =3D PTR_ERR(mmio_base);
-> =C2=A0=C2=A0		goto use_ioports;
->=20
-> =C2=A0=C2=A0 The code under that label ignores rc, no?
->=20
-> [...]
-> > diff --git a/drivers/ata/sata_sx4.c b/drivers/ata/sata_sx4.c
-> > index a482741eb181..d115f6f66974 100644
-> > --- a/drivers/ata/sata_sx4.c
-> > +++ b/drivers/ata/sata_sx4.c
-> > @@ -1390,6 +1390,7 @@ static int pdc_sata_init_one(struct pci_dev
-> > *pdev,
-> > =C2=A0	struct ata_host *host;
-> > =C2=A0	struct pdc_host_priv *hpriv;
-> > =C2=A0	int i, rc;
-> > +	void __iomem *io_tmp;
->=20
-> =C2=A0=C2=A0 I'd suggest to call it base or s/th...
->=20
-> [...]
-> > diff --git a/drivers/ata/sata_via.c b/drivers/ata/sata_via.c
-> > index 57cbf2cef618..73b78834fa3f 100644
-> > --- a/drivers/ata/sata_via.c
-> > +++ b/drivers/ata/sata_via.c
-> > @@ -457,6 +457,7 @@ static int vt6420_prepare_host(struct pci_dev
-> > *pdev, struct ata_host **r_host)
-> > =C2=A0{
-> > =C2=A0	const struct ata_port_info *ppi[] =3D { &vt6420_port_info,
-> > NULL };
-> > =C2=A0	struct ata_host *host;
-> > +	void __iomem *iomem;
->=20
-> =C2=A0=C2=A0 Call it base, maybe?
->=20
-> [...]
-> > @@ -486,6 +488,7 @@ static int vt6421_prepare_host(struct pci_dev
-> > *pdev, struct ata_host **r_host)
-> > =C2=A0	const struct ata_port_info *ppi[] =3D
-> > =C2=A0		{ &vt6421_sport_info, &vt6421_sport_info,
-> > &vt6421_pport_info };
-> > =C2=A0	struct ata_host *host;
-> > +	void __iomem *iomem;
->=20
-> =C2=A0=C2=A0 Here as well...
-
-ACK, will provide better naming in v2.
-
-
-Regards,
-P.
-
-
->=20
-> [...]
->=20
-> MBR, Sergey
->=20
-
+>
+> > The new allocator can get to the last few free swap entries if it is
+> > available. If not then, the new swap allocator will work harder on
+> > swap cache reclaim.
+> >
+> > From the swap cache reclaim aspect, it is very hard to optimize the
+> > swap cache reclaim in the old allocation path because the scan
+> > position is randomized.
+> > The full list and frag list both design to help reduce the repeat
+> > reclaim attempt of the swap cache.
+>
+> [snip]
+>
+> --
+> Best Regards,
+> Huang, Ying
 
