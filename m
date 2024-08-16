@@ -1,252 +1,89 @@
-Return-Path: <linux-kernel+bounces-289928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34EFC954D6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:15:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74B44954D70
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59F611C2188F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:15:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30AF8286AE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98AEF1BDA85;
-	Fri, 16 Aug 2024 15:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E3E1BD4F7;
+	Fri, 16 Aug 2024 15:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K2HtIXfT"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MpKiCjHx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DD71B86C9
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 15:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C605A0F5;
+	Fri, 16 Aug 2024 15:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723821320; cv=none; b=nGMWDnqUd/xcwh/0+QoTTSHe87Hmcz8aip4WazVhJzsSNuwbsSGgVkmlAECdCtaKhL8ptUhOIEYt8C7CFMVJRMwJP633yr/zEwGHdZiZCg2gKRJ/aiOb2qDSYmQqKNP4o3o7hfVFedV5/g0eYEBCGn1JsdfWymRL9Q2f3mnZyRc=
+	t=1723821372; cv=none; b=J8h5f75yaXKobRHrjONtIaMsiTLdVHpwpTH5W8Hc85SZxQ2/9BwfNOHsd1whctgL7YCL0w/g46QeURewbkKupmbiS8gX6nypwQ8fznuSEXm/Rx5G01mjsJ8znf553LuZpJul53eSy9Ux63mNu/wks9gg5dFJuqenIyF2/7sBNM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723821320; c=relaxed/simple;
-	bh=af3Wnlrqj51wLxCll+j/L/Km0zd0Y1WnD5ggVCwcI5g=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=sbEC0RwMrZttt30K5y49s4/liMVf8Qyj3sDzz4YzElbkJQXs8zpFqW6WBkfCf4MaRODxi4IJqdxFQh/6LgB2Ch9pxuXSe7vpzDI8+gI/REaB1spneORYnySMdwdiOlLPczOHK1ga7fiKkHWogkpBGjZ7qz8xgZWf975ep4CEdYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K2HtIXfT; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e0b8fa94718so3715367276.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 08:15:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723821317; x=1724426117; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=audPgIvH9vGhPjDTkEQr2zmmu/dkfSOsV7tEwPaTB5k=;
-        b=K2HtIXfTI8m1akQM5of/uUdvLpNW2K8kPVBREgA2W3NCSCF5D+eD2G+R+lfVVUuM8G
-         FYhx16U78i7uQEjbH9NynuqpEUyrPm2NAv1ysBqVQZFhDqiFBnUjGF7Xoj1IbcpZ3J/i
-         zad+9wFLveze/EBA3EOIWT3hMQRWny6y2sWLxmvv6b2aLeoZhdyjlc6zZ84E8dr7Xq50
-         I49Lwt+t6A3iTb1xLuBhUEK/m9/e+9AUDVoEUGLFpd2emELRd15VpRWRMVLnDJBDO/CX
-         sGdGDRmvZ4dWwoK5coCinS4T2G6P1y/i46P1UdX4Ueiik7SmU/izcmjokYpcBtktOb1I
-         1n5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723821317; x=1724426117;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=audPgIvH9vGhPjDTkEQr2zmmu/dkfSOsV7tEwPaTB5k=;
-        b=V/1tr9ioK3lnivwISUW3LErZ8QiSU9D5eq7v5755OH7qQPRArYsH883JU0FILI32bt
-         6xR5po4ic/WccrOlrw5sl1qZZIpslCNDl4OhizjLJo1zTqyms4MDjojNwNCwH0eBtQf0
-         G7VY1GIfF5NNg5bLJZCpwrxenk2dNZNO80YMzJSy/Yh2ua+5XgcBo2xazREdXsqWm4Rg
-         QBiLFkyItNZICGFSrDRpkoRXNm7+EukHyV2/brsiF0aNkt+p1QYH0HD0K1x6rLdUhear
-         5Qn1j+fzHLuxK0onwn1MDviKSfWytnsCwkEPyOBdlJjPVe+udnZBch9aSZ0wflZSGXWi
-         ECOA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4tqA4E4MRCVx9WvX9wpl1aU2aklTUfrN6a3uAKlIZ1+cVadjNlR3dh4OwkeY1Y6A4AJmNgtwbdBSCqY5314zP7lrD/QYFZcoTkxE6
-X-Gm-Message-State: AOJu0Yy4nOIKI+ZPqZK67/3tBW0l/08kp/hW2k/T4P/Ldb9dntH7B+4F
-	lVrZewTZ/4Z4rx8cmcpDv8wldPilrb3FQ7TnvHvPZ3WwsYtS5rC9j7FOR25TC68cnOWi7LPQ6J1
-	ZDw==
-X-Google-Smtp-Source: AGHT+IFV3YYIqX95vEiDKWYNQFidNCj03voRsbMLSjJM2NsLTxC+YavJPcOkhhWt87y2JW6LNHEg1k7uXPs=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:6987:0:b0:e05:fb86:1909 with SMTP id
- 3f1490d57ef6-e1180e9caa5mr12919276.6.1723821316975; Fri, 16 Aug 2024 08:15:16
- -0700 (PDT)
-Date: Fri, 16 Aug 2024 08:15:15 -0700
-In-Reply-To: <20240106083346.29180-1-dongli.zhang@oracle.com>
+	s=arc-20240116; t=1723821372; c=relaxed/simple;
+	bh=ijY7DtR+EGmbIx+sh77hG4AFDUp2oE9cYY70Ns0KpUA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cN4iRFTWB17OSW4jPZMuPLIlRJmtNRY/C3x0MV23skD6dEYgiGTAJ/ySqlqBIo07iTloEbmHEZ56uPMIONY6+F1RKhxZ0SOnbZB7zOoKBHy1cqrRMPkM0gfdM7gol8oStf8kgHoSrLFe17nH9E9Bf88qFi5nyXfNlF3YSHqqB20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MpKiCjHx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C4B8C32782;
+	Fri, 16 Aug 2024 15:16:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723821371;
+	bh=ijY7DtR+EGmbIx+sh77hG4AFDUp2oE9cYY70Ns0KpUA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=MpKiCjHx/pha+73ceLMNQ3+Ch71kgbyHgcjIBougbEO81H/3AKQROBENqN1vZF8AQ
+	 NeRN13EYGhln+xYsqrRwPhUIfD6VVXizZfDkvBiMtYH4PR97HxY5IMWBhcKDT80IqR
+	 UE4s0zrjAPlCTXbXVzcNM+FsqU7xtDl/Ja2rZCA336/SI6wAIWElRIauW1ra4ZU6In
+	 Ev4+DEruatVAY0uxeI1KnLkeFPTfnUrzyLpFtOPny+tvPirB6yqJZ8SOqsor5LW5Zi
+	 V+DcdPgURDADQZflrEKaEJp7KsY3Mq6KxKF4WT1XlujhsqkM+l49r8fzwHjne4v0m2
+	 pXW0RA4M1QY8A==
+From: Will Deacon <will@kernel.org>
+To: linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>
+Subject: Re: [PATCH v1 1/1] ACPI/IORT: Switch to use kmemdup_array()
+Date: Fri, 16 Aug 2024 16:15:50 +0100
+Message-Id: <172380439581.1161472.5676200182467142150.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20240606165005.3031490-1-andriy.shevchenko@linux.intel.com>
+References: <20240606165005.3031490-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240106083346.29180-1-dongli.zhang@oracle.com>
-Message-ID: <Zr9tA1Zo9QXmCm9V@google.com>
-Subject: Re: [PATCH 1/1] KVM: selftests: add kvmclock drift test
-From: Sean Christopherson <seanjc@google.com>
-To: Dongli Zhang <dongli.zhang@oracle.com>
-Cc: kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, pbonzini@redhat.com, 
-	shuah@kernel.org, linux-kernel@vger.kernel.org, joe.jin@oracle.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jan 06, 2024, Dongli Zhang wrote:
-> diff --git a/tools/testing/selftests/kvm/x86_64/kvm_clock_drift.c b/tools/testing/selftests/kvm/x86_64/kvm_clock_drift.c
-> new file mode 100644
-> index 000000000000..324f0dbc5762
-> --- /dev/null
-> +++ b/tools/testing/selftests/kvm/x86_64/kvm_clock_drift.c
+On Thu, 06 Jun 2024 19:50:05 +0300, Andy Shevchenko wrote:
+> Let the kememdup_array() take care about multiplication and possible
+> overflows.
+> 
+> 
 
-For better or worse, our selftests naming adds a _test at the end.
+Applied to arm64 (for-next/acpi), thanks!
 
-However, should we call this kvm_clock_hotplug_test.c?  That way the file level
-comment isn't necessary (those these always become stale), and David's live update
-suggestion won't conflict.
+[1/1] ACPI/IORT: Switch to use kmemdup_array()
+      https://git.kernel.org/arm64/c/9cd8062b38e6
 
-Or if the live update code fits nicely in this test, then kvm_clock_drift_test.c
-is probably a good name.
+Cheers,
+-- 
+Will
 
-> @@ -0,0 +1,223 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * The kvmclock drift test. Emulate vCPU hotplug and online to verify if
-> + * there is kvmclock drift.
-> + *
-> + * Adapted from steal_time.c
-
-This is really uninteresting.
-
-> + * Copyright (C) 2020, Red Hat, Inc.
-> + * Copyright (C) 2024 Oracle and/or its affiliates.
-> + */
-> +
-> +#include <asm/kvm_para.h>
-> +#include <asm/pvclock.h>
-> +#include <asm/pvclock-abi.h>
-> +#include <sys/stat.h>
-> +
-> +#include "kvm_util.h"
-> +#include "processor.h"
-> +
-> +#define NR_VCPUS		2
-> +#define NR_SLOTS		2
-> +#define KVMCLOCK_SIZE		sizeof(struct pvclock_vcpu_time_info)
-> +/*
-> + * KVMCLOCK_GPA is identity mapped
-> + */
-> +#define KVMCLOCK_GPA		(1 << 30)
-> +
-> +static uint64_t kvmclock_gpa = KVMCLOCK_GPA;
-
-Why hardcode an address?  Can't the test have a global "struct pvclock_vcpu_time_info"
-whose address is then queried by the host by reading the MSR?
-
-Actually, can't the pvclock reads and asserts be done in the guest?  Which is
-arguably better since the guest observing drift (or not) is what we really care
-about.  Then the host side of the test never needs to resolve a host virtual
-address for the pvclock_vcpu_time_info structure.
-
-> +static void guest_code(int cpu)
-> +{
-> +	struct pvclock_vcpu_time_info *kvmclock;
-> +
-> +	/*
-> +	 * vCPU#0 is to detect the change of pvclock_vcpu_time_info
-
-Just vCPU0, which is the usually terminology in KVM land.
-
-> +	 */
-
-	/* Single line comments should look like this. */
-
-> +	if (cpu == 0) {
-
-Rather than switch inside the guest code, just use vcpu_arch_set_entry_point()
-to point vCPU1 at a different function entirely.  Then most of the commetns go
-away, and the code is generally much easier to read.
-
-> +		GUEST_SYNC(0);
-> +
-> +		kvmclock = (struct pvclock_vcpu_time_info *) kvmclock_gpa;
-> +		wrmsr(MSR_KVM_SYSTEM_TIME_NEW, kvmclock_gpa | KVM_MSR_ENABLED);
-> +
-> +		/*
-> +		 * Backup the pvclock_vcpu_time_info before vCPU#1 hotplug
-> +		 */
-> +		kvmclock[1] = kvmclock[0];
-> +
-> +		GUEST_SYNC(2);
-> +		/*
-> +		 * Enter the guest to update pvclock_vcpu_time_info
-> +		 */
-> +		GUEST_SYNC(4);
-> +	}
-> +
-> +	/*
-> +	 * vCPU#1 is to emulate the vCPU hotplug
-> +	 */
-> +	if (cpu == 1) {
-> +		GUEST_SYNC(1);
-> +		/*
-> +		 * This is after the host side MSR_IA32_TSC
-> +		 */
-
-Rather than add comments, use an enum to describe the stages:
-
-	enum {
-		SYNC_VCPU0_???
-		SYNC_VCPU1_???
-		SYNC_VCPU0_???
-		SYNC_VCPU1_???
-	}
-
-That said, why does this test "emulate" hotplug?  Why not literally hotplug a
-vCPU?  It's probably _less_ code, and the annoying NR_VCPUS #define goes away too,
-because you can do:
-
-	vm = vm_create_with_one_vcpu(&vcpu0, vcpu0_code);
-
-	<setup kvmclock>
-
-	vcpu1 = vm_vcpu_add(vm, 1, vcpu1_code);
-
-Then you probably only need one sync, from vCPU to alert the host that kvmclock
-is setup.
-
-> +		GUEST_SYNC(3);
-> +	}
-> +}
-> +#define CLOCKSOURCE_PATH "/sys/devices/system/clocksource/clocksource0/current_clocksource"
-> +
-> +static void check_clocksource(void)
-> +{
-> +	char *clk_name;
-> +	struct stat st;
-> +	FILE *fp;
-> +
-> +	fp = fopen(CLOCKSOURCE_PATH, "r");
-> +	if (!fp) {
-> +		pr_info("failed to open clocksource file: %d; assuming TSC.\n",
-> +			errno);
-> +		return;
-> +	}
-> +
-> +	if (fstat(fileno(fp), &st)) {
-> +		pr_info("failed to stat clocksource file: %d; assuming TSC.\n",
-> +			errno);
-> +		goto out;
-> +	}
-> +
-> +	clk_name = malloc(st.st_size);
-> +	TEST_ASSERT(clk_name, "failed to allocate buffer to read file\n");
-> +
-> +	if (!fgets(clk_name, st.st_size, fp)) {
-> +		pr_info("failed to read clocksource file: %d; assuming TSC.\n",
-> +			ferror(fp));
-> +		goto out;
-> +	}
-> +
-> +	TEST_ASSERT(!strncmp(clk_name, "tsc\n", st.st_size),
-
-TEST_REQUIRE, not TEST_ASSERT, i.e. skip the test if the clocksource isn't
-supported, don't cause a failure.
-
-> +		    "clocksource not supported: %s", clk_name);
-> +out:
-> +	fclose(fp);
-> +}
-
-This can all be replaced with:
-
-	TEST_REQUIRE(sys_clocksource_is_based_on_tsc());
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
 
