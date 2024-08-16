@@ -1,142 +1,142 @@
-Return-Path: <linux-kernel+bounces-290026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00923954E91
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:15:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E292C954E94
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:15:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84292B208DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:15:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4949AB21B8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB951BCA1C;
-	Fri, 16 Aug 2024 16:15:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DAD51BF310;
+	Fri, 16 Aug 2024 16:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yv32sMAq"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MwXY80nN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E076F2F0
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 16:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3117E6F2F0
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 16:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723824916; cv=none; b=gMRnW6cd15c+6hQ67xWzlPrgv3zh9DzIVmXsCcRIhaWSMtzFoKLbpT+7jkP2oUXOQzZTwb0KOoYamOglkVQtWgskv8fAE/qtF/V+yQtqcsnJ3NGr9SrgwmL86Dhi1aTP93KLk7Jo29XzdFu7rz7fNzO4leKta7YafikMu8C07Mk=
+	t=1723824922; cv=none; b=KH0Y1a14DwitFjmt9GJTLllxgxQB4YhCJdzJ/smfLs1tYqoCz68ofmX3wKf9hoOLIYpfi4UCe4ncoQFOBIOkuh7tb4SAtHOIDFS/smMVoe09i0Me7Hbku1eoK0Eooq3rjBzCZkvoYC5Ge5GkRbN54m6ohcYy18Ig6tNeZ0si80A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723824916; c=relaxed/simple;
-	bh=9yAwGCZHdgmyh1W/M4Ieg+n7bg/nBi73jrflY+JfztM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PAB+6ZiRh9f+1kK5SxupVQ3DOpr3YK5+hn61BuBJZNSKU0duDiGrSa0QyVxAf8kpLBN3ZOEnG27cP2viBeT+6IZqUE7qeCByd0GgQbxc9RrKsYoCLjp1/wA1WdEtxDmdbsvQjIgRIA3zr1xtwqp+OgzVD3mO4TwZIjoFwhybXc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yv32sMAq; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-690ad83d4d7so21692947b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:15:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723824914; x=1724429714; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iGB75WNp2k3B7jPw4mKOAIQo0L1IpYb0wqaeqHh4s6w=;
-        b=yv32sMAqJhjfY4d/490XlQxNRr/9zncBJDEV/S9vJkxqjBEu8YJoh6gK5IAaiKtZDw
-         ISPvf8K4v2RQCf3Hl05coFNYkjAARj+VWDtjGrYHBs8e0NVp06SLaicCiWS698ZoK21X
-         RTTKUcbLBltEzCKdQG/RipJ0xIgq3fIf6AYHeNxNT5F5QrjwSrnCxFuhYM4hTLYq8fnm
-         Paw7UUBmKYaXq48mvhYKGgJMmAPZA5tESRpxAe1n7oyOKrcvJiYzwDiOambjO9cK3NFm
-         gn60OU3KFyWcWod0SCv+TO6EHRICiP4EZnLt29lWEOBBNLPAcj1274NbZu7+4QcW3zIk
-         9QiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723824914; x=1724429714;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iGB75WNp2k3B7jPw4mKOAIQo0L1IpYb0wqaeqHh4s6w=;
-        b=fhD9prIQEtnCUC6n0x+9k7AeszCUXEvLDoy2zS35bs1UKd5ZqkOrNpE2CKZphCMckO
-         1EOgORiNRXH3SMouS0bUEXP/CUr2IhhNnPxZ6zeK1aph+PErcl1bO2ZXGNMFnZ30wZRE
-         8AemgWsJDNGJYySUtqzWeXAvPRKxGJSNgtWIglXYT+tkBWlbgdGmGhH06d6y2ot1GxfZ
-         Ig3LPK1f/XT+GGcyKJpQRcZ5J95a/9T/Wkt4WDpvM8OB5CLTKS/V4oNV4QTumVeOGwom
-         Azat3GXEGubGPs00jBuB6XStq1WBastjX0pHdWfGGlXqRK9WU3MU45o/PskCGKSufL5G
-         fWtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWcmgtqTBcIPgaPgFqhAmUKPoxIvUtkGzEZoOFj82EYRjCwFZCdYnskOnPgEfu128qXLz5SiPPaPwPeMEJbp4JVRuT6CyGZs5ldDti8
-X-Gm-Message-State: AOJu0YwT9J2KE0XPW49fNKIcAObXHQcHwECalrkTmzlU8wYFTwqzyaX1
-	Ou3WiHJmWP5CARtZH5RjsRGW5y+VfiUscCHb0GGaFp3xGnZ1m5A6Bm9BLIM6Pt5XYByHyivvUq9
-	bM01LxkpBQqkt8YpN+kjN0PgSlUE+D8SIZG9x
-X-Google-Smtp-Source: AGHT+IGN9bKv/c0GyHlyxEeZPUueQdw36mZHlzwKYbGCbDIVXo6Qmf8fAlROL3QiPP9HsyO4r754ovZtBdYN34UZpiU=
-X-Received: by 2002:a05:690c:c8c:b0:6b0:ea82:9760 with SMTP id
- 00721157ae682-6b1b996ce64mr44413447b3.27.1723824913603; Fri, 16 Aug 2024
- 09:15:13 -0700 (PDT)
+	s=arc-20240116; t=1723824922; c=relaxed/simple;
+	bh=REb0zsBjwB1tdfHOzYnUeubdhTBPYbvNx3oC8RorGcA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YOFs+0ttjvDf6Fhs/uxIp9fIYryLH7nDL121wyXk1lcZJl78Gq7/VWg+YMUj99IFwnbLrZpP4+CbxcAEGc0374HbVYUvK9MnglUtXnuGFBUgMhn0H/FkckA6ALXikxtyY8vO/hUu2jMAWDamj4rv6gNriKVyHVPlFJs27p+genE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MwXY80nN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723824920;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=atbfBzbpVJrrinLTFjpDdZ++CnkCWoD354k0n5MAo1Q=;
+	b=MwXY80nNajHe3ZlkajTS4WfoURPJdnSwykfpZwk2PyMDuR0HUqcQDUHkJ93BGJLHB8g3N8
+	tvsWxITywWkCALHsmATCX+ifO3uOJ6sx2buZb6fDwG1js3wMgN7YnQgDYXg9bIH4BGp3ay
+	bfQkTKwRT9m02DHTo8H78lCoNL+aRtI=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-623-eH51UxaOOpaSwzACwZCeXA-1; Fri,
+ 16 Aug 2024 12:15:15 -0400
+X-MC-Unique: eH51UxaOOpaSwzACwZCeXA-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CD0DA1954227;
+	Fri, 16 Aug 2024 16:15:12 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.51])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 205053001FE5;
+	Fri, 16 Aug 2024 16:15:10 +0000 (UTC)
+Date: Sat, 17 Aug 2024 00:15:05 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: Hailong Liu <hailong.liu@oppo.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@suse.com>, Barry Song <21cnbao@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Tangquan Zheng <zhengtangquan@oppo.com>, stable@vger.kernel.org,
+	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH v1] mm/vmalloc: fix page mapping if
+ vm_area_alloc_pages() with high order fallback to order 0
+Message-ID: <Zr97CW+Y4FiviI35@MiWiFi-R3L-srv>
+References: <20240808122019.3361-1-hailong.liu@oppo.com>
+ <CAGsJ_4z4+CCDoPR7+dPEhemBQN60Cj84rCeqRY7-xvWapY4LGg@mail.gmail.com>
+ <ZrXiUvj_ZPTc0yRk@tiehlicka>
+ <ZrXkVhEg1B0yF5_Q@pc636>
+ <20240815220709.47f66f200fd0a072777cc348@linux-foundation.org>
+ <20240816091232.fsliktqgza5o5x6t@oppo.com>
+ <Zr8mQbc3ETdeOMIK@pc636>
+ <Zr96JyrzXuQXT2BG@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813204716.842811-1-kinseyho@google.com> <20240813204716.842811-3-kinseyho@google.com>
- <qh77aw6nnsytwtux6f2bkzmene3fzrh4skegvqktlw4b47jgea@oxovqnsrulef>
-In-Reply-To: <qh77aw6nnsytwtux6f2bkzmene3fzrh4skegvqktlw4b47jgea@oxovqnsrulef>
-From: Kinsey Ho <kinseyho@google.com>
-Date: Fri, 16 Aug 2024 12:15:01 -0400
-Message-ID: <CAF6N3nV3RPaiS9E4=-ABXQ-F++J=E8goSquN1cq2S_TuftUNxg@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable v2 2/5] mm: don't hold css->refcnt during traversal
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	Yosry Ahmed <yosryahmed@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zr96JyrzXuQXT2BG@MiWiFi-R3L-srv>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi Michal,
+On 08/17/24 at 12:11am, Baoquan He wrote:
+> On 08/16/24 at 12:13pm, Uladzislau Rezki wrote:
+> > On Fri, Aug 16, 2024 at 05:12:32PM +0800, Hailong Liu wrote:
+> > > On Thu, 15. Aug 22:07, Andrew Morton wrote:
+> > > > On Fri, 9 Aug 2024 11:41:42 +0200 Uladzislau Rezki <urezki@gmail.com> wrote:
+> > > >
+> > > > > > > Acked-by: Barry Song <baohua@kernel.org>
+> > > > > > >
+> > > > > > > because we already have a fallback here:
+> > > > > > >
+> > > > > > > void *__vmalloc_node_range_noprof :
+> > > > > > >
+> > > > > > > fail:
+> > > > > > >         if (shift > PAGE_SHIFT) {
+> > > > > > >                 shift = PAGE_SHIFT;
+> > > > > > >                 align = real_align;
+> > > > > > >                 size = real_size;
+> > > > > > >                 goto again;
+> > > > > > >         }
+> > > > > >
+> > > > > > This really deserves a comment because this is not really clear at all.
+> > > > > > The code is also fragile and it would benefit from some re-org.
+> > > > > >
+> > > > > > Thanks for the fix.
+> > > > > >
+> > > > > > Acked-by: Michal Hocko <mhocko@suse.com>
+> > > > > >
+> > > > > I agree. This is only clear for people who know the code. A "fallback"
+> > > > > to order-0 should be commented.
+> > > >
+> > > > It's been a week.  Could someone please propose a fixup patch to add
+> > > > this comment?
+> > > 
+> > > Hi Andrew:
+> > > 
+> > > Do you mean that I need to send a v2 patch with the the comments included?
+> > > 
+> > It is better to post v2.
+> > 
+> > But before, could you please comment on:
+> > 
+> > in case of order-0, bulk path may easily fail and fallback to the single
+> > page allocator. If an request is marked as NO_FAIL, i am talking about
+> > order-0 request, your change breaks GFP_NOFAIL for !order.
+> 
+> In case order-0, bulk_gfp masks off __GFP_NOFAIL, but alloc_gfp doesn't.
+> So alloc_gfp has __GFP_NOFAIL in fallback, it won't be failed by
+> alloc_pages().
 
-Thank you for reviewing this patchset!
+Please ignore this, I didn't update my local mail box, didn't see
+Hailong's reply.
 
-On Wed, Aug 14, 2024 at 5:00=E2=80=AFAM Michal Koutn=C3=BD <mkoutny@suse.co=
-m> wrote:
->
-> On Tue, Aug 13, 2024 at 08:47:12PM GMT, Kinsey Ho <kinseyho@google.com> w=
-rote:
-> > To obtain the pointer to the next memcg position, mem_cgroup_iter()
-> > currently holds css->refcnt during memcg traversal only to put
-> > css->refcnt at the end of the routine. This isn't necessary as an
-> > rcu_read_lock is already held throughout the function. The use of
-> > the RCU read lock with css_next_descendant_pre() guarantees that
-> > sibling linkage is safe without holding a ref on the passed-in @css.
-> >
-> > Remove css->refcnt usage during traversal by leveraging RCU.
-> >
-> > Signed-off-by: Kinsey Ho <kinseyho@google.com>
-> > ---
-> >  include/linux/memcontrol.h |  2 +-
-> >  mm/memcontrol.c            | 18 +-----------------
-> >  2 files changed, 2 insertions(+), 18 deletions(-)
-> >
-> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> > index 90ecd2dbca06..1aaed2f1f6ae 100644
-> > --- a/include/linux/memcontrol.h
-> > +++ b/include/linux/memcontrol.h
-> > @@ -75,7 +75,7 @@ struct lruvec_stats_percpu;
-> >  struct lruvec_stats;
-> >
-> >  struct mem_cgroup_reclaim_iter {
-> > -     struct mem_cgroup *position;
-> > +     struct mem_cgroup __rcu *position;
->
-> I'm not sure about this annotation.
-> This pointer could be modified concurrently with RCU read sections with
-> the cmpxchg which would assume that's equivalent with
-> rcu_assign_pointer(). (Which it might be but it's not idiomatic, so it
-> causes some head wrapping.)
-> Isn't this situation covered with a regular pointer and
-> READ_ONCE()+cmpxchg?
-
-Yes, that's a good point =E2=80=93 this situation is covered with a regular
-pointer and READ_ONCE() + cmpxchg(). I'll make the change to remove
-the __rcu tag and replace rcu_dereference() with READ_ONCE() and send
-it out in v3. (This also rids of the sparse errors seen in v1)
-
-Thanks for pointing this out.
-
-Best,
-Kinsey
 
