@@ -1,150 +1,205 @@
-Return-Path: <linux-kernel+bounces-290172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1230E955042
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:53:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC9495504D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 19:55:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9468287273
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:53:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CA731F27079
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715031C2326;
-	Fri, 16 Aug 2024 17:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="kON99rqd"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96A11AD9F9
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 17:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 785071C3F34;
+	Fri, 16 Aug 2024 17:54:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6556A1C3F2F;
+	Fri, 16 Aug 2024 17:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723830812; cv=none; b=s1880DQCB8Q41YQ861oJ64LLO8qyxACwleZtIp47Wtgv5GqNdJV7Lt0gkjWkapme+gs+G/ECF6Uc6kIPKVO+dw1MBDOxjAnrgidCqxtgB9Asd8bXUQZlpVnAcCQUP1SjLyv+YNXeEYvK2rB15+gpD1fafpNZ/gvqPHKqYKaFnUc=
+	t=1723830862; cv=none; b=EsM3ZBcbiVRQjT1zmaRJD3BiI1dmT9IsYNjr9AdUdzBCO1wKei08Nuh5LNRjiOt1TAcmBzY9bimCnGV9hiYSPqrVeMBX7xedqj7EO7U9gUz4GR/IT00cpZtB9Jnkre1PGDhybfolY2ibOWb/3yq9neNEnBIZFrJrMCWdVrdOtLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723830812; c=relaxed/simple;
-	bh=tvfMhWGq9uBcP9rk50Bzjk37jaXGPNycXM71rxxvwpw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=le1OzkXfjmFYwByo971YAkJGuVVkFTc52fOobbpIzcGzW9DUSDX75QClZDIfsueomnc8DfFK/GQHWE1gOIfgABg8yl5PHoDS5LnPZrJo2ALfO9GpLvEqtmlKe/heYsMudT3tc1VjqMDJgbvfAUwE4djy+YvvFhS/B1zTlFnWRH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=kON99rqd; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 47GHqp3q3197859
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 16 Aug 2024 10:52:52 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 47GHqp3q3197859
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024071601; t=1723830773;
-	bh=JVKMDNcXdz23RlhyDYN2nabLj+dE3eoeUN1rHsNn4rE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kON99rqdXwZP9Bfm9KHYx0NGSdk9JrDHGNCn2HvIEzaLeYfegsI1qyhFZtzSd7t8W
-	 YS+1nWhBGnFlh422RjHRUWUKAEeS4SPC11wEOZ5EF8BE8VCuCmJeraPsGBdt4k4ZmZ
-	 3epY0gv9ETsNd6q9JqUUJBYvovuifJfNgJoAWc3oRButYNXPmJ0L3348LFWySXOoOp
-	 UnISgxsLu1E8As0/Pu7Cu0XEIZNF96vHijyKu/iQUrS+ctb1eA2GViwj1H7G+NTrFh
-	 THukd6UoC4a2G1hqqYy2v3w65CN48/mk18wUJR5g6NRJesCWemGOwkzJBNRlNt4VMd
-	 1IETFliKjxWKw==
-Message-ID: <7c09d124-08f1-40b4-813c-f0f74e19497a@zytor.com>
-Date: Fri, 16 Aug 2024 10:52:51 -0700
+	s=arc-20240116; t=1723830862; c=relaxed/simple;
+	bh=21bmq1wZojonL5BW0KyWR9WylEzTTKYZDupzBC5feD8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ok4rveaZbnY49Rddq++k531qBlpK2JYMCz5glYLDwsa826ptJPDIM5QSdHSvDVkGctjZnu5sdQH44w+HfqYfwpj7PJSju54TkAR/tolTukXhK4CORSCk/sDTICHGMD6DLpRr72Df00ZypYvpZcEVjYXV/GNTz/noT5vIq6WisOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6AC8113D5;
+	Fri, 16 Aug 2024 10:54:44 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AFDC83F6A8;
+	Fri, 16 Aug 2024 10:54:16 -0700 (PDT)
+Date: Fri, 16 Aug 2024 18:54:14 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"open list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE" <arm-scmi@vger.kernel.org>,
+	"moderated list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE" <linux-arm-kernel@lists.infradead.org>,
+	justin.chen@broadcom.com, opendmb@gmail.com,
+	kapil.hali@broadcom.com, bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH v2 2/2] firmware: arm_scmi: Support 'reg-io-width'
+ property for shared memory
+Message-ID: <Zr-SRo10QtSh4G9R@pluto>
+References: <20240813180747.1439034-1-florian.fainelli@broadcom.com>
+ <20240813180747.1439034-3-florian.fainelli@broadcom.com>
+ <Zr-GJts3Gu6GEkhC@pluto>
+ <345aca0f-12f0-4a66-a760-3b8524fda7fe@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] x86/msr: Switch between WRMSRNS and WRMSR with the
- alternatives mechanism
-To: Andrew Cooper <andrew.cooper3@citrix.com>, linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        peterz@infradead.org, seanjc@google.com
-References: <20240807054722.682375-1-xin@zytor.com>
- <20240807054722.682375-3-xin@zytor.com>
- <e18cd005-24ef-497d-b39c-74a54d89a969@citrix.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <e18cd005-24ef-497d-b39c-74a54d89a969@citrix.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <345aca0f-12f0-4a66-a760-3b8524fda7fe@broadcom.com>
 
-On 8/9/2024 4:07 PM, Andrew Cooper wrote:
-> On 07/08/2024 6:47 am, Xin Li (Intel) wrote:
->> From: Andrew Cooper <andrew.cooper3@citrix.com>
->> +/* Instruction opcode for WRMSRNS supported in binutils >= 2.40 */
->> +#define WRMSRNS _ASM_BYTES(0x0f,0x01,0xc6)
->> +
->> +/* Non-serializing WRMSR, when available.  Falls back to a serializing WRMSR. */
->>   static __always_inline void wrmsrns(u32 msr, u64 val)
->>   {
->> -	__wrmsrns(msr, val, val >> 32);
->> +	/*
->> +	 * WRMSR is 2 bytes.  WRMSRNS is 3 bytes.  Pad WRMSR with a redundant
->> +	 * DS prefix to avoid a trailing NOP.
->> +	 */
->> +	asm volatile("1: "
->> +		     ALTERNATIVE("ds wrmsr",
+On Fri, Aug 16, 2024 at 10:39:42AM -0700, Florian Fainelli wrote:
+> On 8/16/24 10:02, Cristian Marussi wrote:
+> > On Tue, Aug 13, 2024 at 11:07:47AM -0700, Florian Fainelli wrote:
+> > > Some shared memory areas might only support a certain access width,
+> > > such as 32-bit, which memcpy_{from,to}_io() does not adhere to at least
+> > > on ARM64 by making both 8-bit and 64-bit accesses to such memory.
+> > > 
+> > > Update the shmem layer to support reading from and writing to such
+> > > shared memory area using the specified I/O width in the Device Tree. The
+> > > various transport layers making use of the shmem.c code are updated
+> > > accordingly to pass the I/O accessors that they store.
+> > > 
+> > 
+> > Hi Florian,
+> > 
+
+Hi,
+
+> > I gave it ago at this on a JUNO regarding the mailbox/shmem transport
+> > without any issue. I'll have a go later on an OPTEE/shmem scenario too.
+> > 
+> > This looks fundamentally good to me, since you moved all ops setup at
+> > setup time and you keep the pointers per-channel instead of global...
 > 
-> This isn't the version I presented, and there's no discussion of the
-> alteration.
+> Thanks!
+>
 
-I'm trying to implement wrmsr() as
-
-static __always_inline void wrmsr(u32 msr, u64 val)
-{
-	asm volatile("1: " ALTERNATIVE_2("wrmsr", WRMSRNS, X86_FEATURE_WRMSRNS,
-					 "call asm_xen_write_msr", X86_FEATURE_XENPV)
-		     "2: " _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_WRMSR)
-		     : : "c" (msr), "a" (val), "d" ((u32)(val >> 32)),
-		     "D" (msr), "S" (val));
-}
-
-
-As the CALL instruction is 5-byte long, and we need to pad nop for both
-WRMSR and WRMSRNS, what about not using segment prefix at all?
-
-
-> The choice of CS over DS was deliberate, and came from Intel:
+[snip]
+ 
+> > > +
+> > 
+> > There are a bunch of warn/errs from checkpatch --strict, beside the volatile
+> > here and on the previous typedefs, also about args reuse and trailing semicolon
+> > in these macros...
 > 
-> https://www.intel.com/content/dam/support/us/en/documents/processors/mitigations-jump-conditional-code-erratum.pdf
-> 
-> So unless Intel want to retract that whitepaper, and all the binutils
-> work with it, I'd suggest keeping it as CS like we use elsewhere, and as
-> explicitly instructed by Intel.
+> I don't think we can silence the volatile ones, checkpatch --strict did not
+> complain about the typedefs in my case, what did it look like in yours?
+
+...I dont get warns on new typedefs..only on volatile and macro args
+reuse
+
+
+---8<---
+
+WARNING: Use of volatile is usually wrong: see Documentation/process/volatile-considered-harmful.rst
+#36: FILE: drivers/firmware/arm_scmi/common.h:322:
++typedef void (*shmem_copy_toio_t)(volatile void __iomem *to, const void *from,
+
+WARNING: Use of volatile is usually wrong: see Documentation/process/volatile-considered-harmful.rst
+#38: FILE: drivers/firmware/arm_scmi/common.h:324:
++typedef void (*shmem_copy_fromio_t)(void *to, const volatile void __iomem *from,
+
+CHECK: Macro argument reuse 'amt' - possible side-effects?
+#94: FILE: drivers/firmware/arm_scmi/shmem.c:37:
++#define SHMEM_IO_OPS(w, s, amt)						\
++static inline void shmem_memcpy_fromio##s(void *to,			\
++					  const volatile void __iomem *from, \
++					  size_t count)			\
++{									\
++	while (count) {							\
++		*(u##s *)to = __raw_read##w(from);			\
++		from += amt;						\
++		to += amt;						\
++		count -= amt;						\
++	}								\
++}									\
++static inline void shmem_memcpy_toio##s(volatile void __iomem *to,	\
++					const void *from,		\
++					size_t count)			\
++{									\
++	while (count) {							\
++		__raw_write##w(*(u##s *)from, to);			\
++		from += amt;						\
++		to += amt;						\
++		count -= amt;						\
++	}								\
++}									\
++static struct scmi_shmem_io_ops shmem_io_ops##s = {			\
++	.fromio	= shmem_memcpy_fromio##s,				\
++	.toio	= shmem_memcpy_toio##s,					\
++};
+
+WARNING: macros should not use a trailing semicolon
+#94: FILE: drivers/firmware/arm_scmi/shmem.c:37:
++#define SHMEM_IO_OPS(w, s, amt)						\
++static inline void shmem_memcpy_fromio##s(void *to,			\
++					  const volatile void __iomem *from, \
++					  size_t count)			\
++{									\
++	while (count) {							\
++		*(u##s *)to = __raw_read##w(from);			\
++		from += amt;						\
++		to += amt;						\
++		count -= amt;						\
++	}								\
++}									\
++static inline void shmem_memcpy_toio##s(volatile void __iomem *to,	\
++					const void *from,		\
++					size_t count)			\
++{									\
++	while (count) {							\
++		__raw_write##w(*(u##s *)from, to);			\
++		from += amt;						\
++		to += amt;						\
++		count -= amt;						\
++	}								\
++}									\
++static struct scmi_shmem_io_ops shmem_io_ops##s = {			\
++	.fromio	= shmem_memcpy_fromio##s,				\
++	.toio	= shmem_memcpy_toio##s,					\
++};
+
+WARNING: Use of volatile is usually wrong: see Documentation/process/volatile-considered-harmful.rst
+#96: FILE: drivers/firmware/arm_scmi/shmem.c:39:
++					  const volatile void __iomem *from, \
+
+WARNING: Use of volatile is usually wrong: see Documentation/process/volatile-considered-harmful.rst
+#106: FILE: drivers/firmware/arm_scmi/shmem.c:49:
++static inline void shmem_memcpy_toio##s(volatile void __iomem *to,	\
+
+WARNING: Use of volatile is usually wrong: see Documentation/process/volatile-considered-harmful.rst
+#128: FILE: drivers/firmware/arm_scmi/shmem.c:71:
++				       const volatile void __iomem *from,
+
+WARNING: Use of volatile is usually wrong: see Documentation/process/volatile-considered-harmful.rst
+#134: FILE: drivers/firmware/arm_scmi/shmem.c:77:
++static inline void shmem_memcpy_toio(volatile void __iomem *to,
+
+total: 0 errors, 7 warnings, 1 checks, 312 lines checked
+
+NOTE: For some of the reported defects, checkpatch may be able to
+      mechanically convert to the typical style using --fix or --fix-inplace.
+
+"[PATCH] firmware: arm_scmi: Support 'reg-io-width' property for" has style problems, please review.
+
+NOTE: If any of the errors are false positives, please report
+      them to the maintainer, see CHECKPATCH in MAINTAINERS.
+
+---8<----
+
 
