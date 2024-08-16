@@ -1,135 +1,93 @@
-Return-Path: <linux-kernel+bounces-289147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 977F6954269
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:12:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BD17954268
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:11:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC6B61C2369F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:12:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 676041C22B41
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF028563E;
-	Fri, 16 Aug 2024 07:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MVsDCrFr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51AA484FA0;
+	Fri, 16 Aug 2024 07:11:42 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D09074076;
-	Fri, 16 Aug 2024 07:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9950274076
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 07:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723792315; cv=none; b=uA7TjIHiw1GcDkagZSgUXugCJh5DesZfsW5CwmmSDvTVhIWVY9bN2zQNd63RDfpcTdzXOj1ek3peYU0kR9WJUnMJ7JvjhMUu75MTo6rw89q6pj1mr99tY/SDMxw+O+TBKJnJ2Cfg43gmckf9BvtRBxhInS8F+rHvCYKSLbvumkA=
+	t=1723792301; cv=none; b=HzNScN9r6y8QNpZYOn6SIUfjYP9YehVzPRNNDDhiq76Bo7lhgD3btHmBoQo1PlKymwnjkRKpU6bizE2diewINEL9gnkSFUEAlhe6bhLMSc85tI4d5qAPFgQ4YskV6ddXEVGoKx5RlOSN68DQuXdASwJDYwwfZlmZSxrZDQa4CxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723792315; c=relaxed/simple;
-	bh=QfEsd8CNM/qDln+by7LXPRLcSy7qOHCULrCU0g6vcGk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BAsmfseIhcMgPX6d4KLSHbneHCoWZT3T7woO3WbsPiHhFjJmhk/uniUpmzSdRu4ZFKH+nj6ton+QDz2kjC26OgzcCV+hPd+Emj4frNJ/qa1dNRWy+rg+EjE0ocHUILKg3y219D6bdkQUf9/3omkFzQkljyFpjFku4J5jZKfK+Ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MVsDCrFr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D87FC32782;
-	Fri, 16 Aug 2024 07:11:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723792315;
-	bh=QfEsd8CNM/qDln+by7LXPRLcSy7qOHCULrCU0g6vcGk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MVsDCrFrkBaiSSyX7fwLmzxPT7DD9oqmoNhHg70N0whKSLHrqsJ4NnCfGdXHGH3WD
-	 ali9g8AKHBc7BB4LosDf26JPn5KVCszDak19XWbHjQZS87B9mZ+uFpNGewiOuCrU09
-	 xySqv9B0RenbvEeq5JDbAJDik85ozKrCFakos9pXEVPtBSAf0bUrHKkyRsyl14ngSs
-	 Pgx+noeU4TGOrSlDixb6zn4MCvtafmRnWCuJTA1dX2WqFTUNevj9YJbmSVZyBsZG66
-	 PEaQ0Pf3/CWE7SQQmDV7kzOcJ7DhPrhJskTQvARAbazmmxUqgCj2WEIrLkTWPLFvSo
-	 oIsCqsXGLekFA==
-From: neeraj.upadhyay@kernel.org
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	paulmck@kernel.org,
-	neeraj.upadhyay@kernel.org,
-	neeraj.upadhyay@amd.com,
-	boqun.feng@gmail.com,
-	joel@joelfernandes.org,
-	urezki@gmail.com,
-	frederic@kernel.org,
-	Waiman Long <longman@redhat.com>,
-	Vratislav Bendel <vbendel@redhat.com>,
-	Breno Leitao <leitao@debian.org>
-Subject: [PATCH rcu] rcu: Use system_unbound_wq to avoid disturbing isolated CPUs
-Date: Fri, 16 Aug 2024 12:41:09 +0530
-Message-Id: <20240816071109.63059-1-neeraj.upadhyay@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240816071026.GA62718@neeraj.linux>
-References: <20240816071026.GA62718@neeraj.linux>
+	s=arc-20240116; t=1723792301; c=relaxed/simple;
+	bh=muBrsezKV8v8bj8HQqTAtEJr/fVMUdL6A0sNbQsvgc0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kxIIQyPwapMPajj1zeoG7ZuNEH4MFUZuI2Tw5Hc/HgGxe2eSY7Lqtal/9R7fXTEti5du20/NVjGeXVK6G/iRbKgJ7P2HPx5LRetpnikKnwzCFud9aFUi0cc9LQghjFu+2mQiHvwDNfdCyGQeVYO1WChLFmTHSQhxWOVhJZBG+F8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id E85B8227A87; Fri, 16 Aug 2024 09:11:34 +0200 (CEST)
+Date: Fri, 16 Aug 2024 09:11:34 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Leon Romanovsky <leon@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Leon Romanovsky <leonro@nvidia.com>,
+	Easwar Hariharan <eahariha@linux.microsoft.com>,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v4 2/2] dma: add IOMMU static calls with clear default
+ ops
+Message-ID: <20240816071134.GA2943@lst.de>
+References: <cover.1721818168.git.leon@kernel.org> <c3179690b16d790d5bfd7d0afabac9b90922ec28.1721818168.git.leon@kernel.org> <20369981-37c8-482a-9ffa-cf54d12dad2d@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20369981-37c8-482a-9ffa-cf54d12dad2d@arm.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-From: Waiman Long <longman@redhat.com>
+On Thu, Aug 15, 2024 at 05:54:49PM +0100, Robin Murphy wrote:
+>>   +#ifdef CONFIG_DMA_OPS_HELPERS
+>> +#include <asm/dma-mapping.h>
+>
+> What needs a definition of get_arch_dma_ops() in this scope?
+>
+>> +struct page *dma_common_alloc_pages(struct device *dev, size_t size,
+>> +		dma_addr_t *dma_handle, enum dma_data_direction dir, gfp_t gfp);
+>> +void dma_common_free_pages(struct device *dev, size_t size, struct page *vaddr,
+>> +		dma_addr_t dma_handle, enum dma_data_direction dir);
+>
+> Why not bring the rest of the dma_common_* declarations in here as well? 
+> (Or more literally, add the #ifdef around where they all are already)
 
-It was discovered that isolated CPUs could sometimes be disturbed by
-kworkers processing kfree_rcu() works causing higher than expected
-latency. It is because the RCU core uses "system_wq" which doesn't have
-the WQ_UNBOUND flag to handle all its work items. Fix this violation of
-latency limits by using "system_unbound_wq" in the RCU core instead.
-This will ensure that those work items will not be run on CPUs marked
-as isolated.
+We actually don't need the ifdef at all, the calls in mapping.c are
+all keyed off compile time constants, so just leaving the stray
+prorotypes for this code that won't ever be called around should be
+just fine.
 
-Beside the WQ_UNBOUND flag, the other major difference between system_wq
-and system_unbound_wq is their max_active count. The system_unbound_wq
-has a max_active of WQ_MAX_ACTIVE (512) while system_wq's max_active
-is WQ_DFL_ACTIVE (256) which is half of WQ_MAX_ACTIVE.
+>>   	depends on !NO_DMA
+>>   	default y
+>>   +# DMA IOMMU uses common ops helpers for certain operations, so let's 
+>> allow to build
+>> +# ops_helpers.c even if DMA_OPS is not enabled
+>
+> Hmm, but actually dma-direct also uses dma_common_contiguous_remap(), so 
+> something seems a little inconsistent here...
 
-Reported-by: Vratislav Bendel <vbendel@redhat.com>
-Closes: https://issues.redhat.com/browse/RHEL-50220
-Signed-off-by: Waiman Long <longman@redhat.com>
-Reviewed-by: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Tested-by: Breno Leitao <leitao@debian.org>
-Signed-off-by: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
----
- kernel/rcu/tree.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Yes, but that's not really new.  I'll look into a patch to select
+the helpers based on the conditions that make dma-direct use it.
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index e641cc681901..494aa9513d0b 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -3539,10 +3539,10 @@ schedule_delayed_monitor_work(struct kfree_rcu_cpu *krcp)
- 	if (delayed_work_pending(&krcp->monitor_work)) {
- 		delay_left = krcp->monitor_work.timer.expires - jiffies;
- 		if (delay < delay_left)
--			mod_delayed_work(system_wq, &krcp->monitor_work, delay);
-+			mod_delayed_work(system_unbound_wq, &krcp->monitor_work, delay);
- 		return;
- 	}
--	queue_delayed_work(system_wq, &krcp->monitor_work, delay);
-+	queue_delayed_work(system_unbound_wq, &krcp->monitor_work, delay);
- }
- 
- static void
-@@ -3634,7 +3634,7 @@ static void kfree_rcu_monitor(struct work_struct *work)
- 			// be that the work is in the pending state when
- 			// channels have been detached following by each
- 			// other.
--			queue_rcu_work(system_wq, &krwp->rcu_work);
-+			queue_rcu_work(system_unbound_wq, &krwp->rcu_work);
- 		}
- 	}
- 
-@@ -3704,7 +3704,7 @@ run_page_cache_worker(struct kfree_rcu_cpu *krcp)
- 	if (rcu_scheduler_active == RCU_SCHEDULER_RUNNING &&
- 			!atomic_xchg(&krcp->work_in_progress, 1)) {
- 		if (atomic_read(&krcp->backoff_page_cache_fill)) {
--			queue_delayed_work(system_wq,
-+			queue_delayed_work(system_unbound_wq,
- 				&krcp->page_cache_work,
- 					msecs_to_jiffies(rcu_delay_page_cache_fill_msec));
- 		} else {
--- 
-2.40.1
+I'll fix up all style issues and will apply the patch with that over
+the weekend so that we can get it into this merge window.
 
 
