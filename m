@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-289524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13A8A954722
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:56:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5620954725
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:56:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C309A283B36
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:55:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C98731C2424D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE141A01DF;
-	Fri, 16 Aug 2024 10:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F3C1B3F05;
+	Fri, 16 Aug 2024 10:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="niBTVg22"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KNASsJvh"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25C11AB53B
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 10:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579021AC427
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 10:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723805696; cv=none; b=bdUYbUoQbuNse6fnMN1EiDt7xLNBAm4c3r8lq0wvXqd+qIN4zY+scSbArKZc1n86GaXGu0SePwCMrY5NAZb+lPIh3Q6+hGTSjD8kzHIKpdeGDb8oAFDjRVpeRM1p7VsuexB0RK4I6SfsiemcvUKPtQEn4LfWhUtFUWGcaCvtToA=
+	t=1723805698; cv=none; b=uaa4oXFAuHuDQ2TIbZJBp7N0f22oMeNr41KpJmgb5nPxFDP/KrPUHZptCh5o3eqbn9vv0EZP+yNIixEHJAcMLsaZtydxt+9d9zqC9cwJJu+47C1zTfKCYqHhQDkWRoOs5/a78SCQ3yuOE901GMt26JGJrqQ6mmNwI4PfOMlGVfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723805696; c=relaxed/simple;
-	bh=G2yPrpxBXb4PKw54ECzRtlVki76Ov9GcRLuKMdvmvH8=;
+	s=arc-20240116; t=1723805698; c=relaxed/simple;
+	bh=wJWap3GNtDgLkBsWgnZ2oGeVybItqtjwJfBbYGyPlo8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uxUX7fRLnlRJfO0TBD7CtpDbebaZJs+1iTlMjUSXNHL6TbMY2a0jNLIDr20YrQEv3zk2Dh7JEq54vvLHudxfxvEoKgxJBkj/p7AcNImiP9ERHS0ACLadZ/SZoxfhh0iNjgadmBdfFOkHOs0l/2ZyQYRyZxWNySy277bWfhdmo30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=niBTVg22; arc=none smtp.client-ip=209.85.221.43
+	 In-Reply-To:To:Cc; b=tbNEPyRzKs9ZL0WpRk5NCL5+goGpDPIYQe1UKa6nQsQG7ZvpJWQcg4UYtymhzINgjj2Sw7oXlD7VZTn1ASDsixlbbQHwGs8jkPkt/80Q2gUK7JyPTresgVL/mJCR+ijGtGpi3JUYYUcHMogRjk4VKApNzIWcbWWpRSBYbQhUTyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KNASsJvh; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3718eaf4046so758335f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 03:54:54 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42812945633so14445185e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 03:54:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723805693; x=1724410493; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723805695; x=1724410495; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7xWelpTr/XRUqKFM91cNQuNNebnp+T2/XDk25EhyUnU=;
-        b=niBTVg22lY9aUZImJgPjv0lk/YKpJ/RapBh9iJBWUSJuPRH7c3nZ47x7DT5wUuEKfj
-         w2VezXX+hT9SPd263L+DOJ8UGRmkVNj8gNpZxDVli4msOgavqZeC1hfSaZAlfWDIH2iC
-         hjl66DusiZAg32ssKROwmmVEvHKPOeBa+gRznn3jmdMn7n6IUW6yl7GyXfg29vFYd8CO
-         50hSbg5vvnN9939P2l7DfIUVA9+iej1uKXSakGaN3Cm97yjTxMn+No843+A79Dvs8w60
-         4LG54cHEFeJHM969yJhJ1LacGZhvfYNJpjYLfUQ32O+Ernj93fKi2kHRmY6hyDSfn7LZ
-         QLVw==
+        bh=n3JBsocw3Kxo+E25kYGT4nJEc4iHDY8+0T+RDH3CrwQ=;
+        b=KNASsJvhvt+HKjtbgO9AuANuHVCDrwSKHxzOYspKY9Szt3xkSbFdS65ri97KYp/hap
+         Uss/s73AojF+iwaSTtFoR5sZtQmAUGtzFKGBXheEyAR/DiWnnfDc8jKAnUBQECZIul4h
+         5Mn/AtxEjZauQDx9Uc6HiDKNTfEqWtcH0yIsKAl3pck9DnszmnAbIjWGorpZPnGwaB9v
+         ZHwIbese/tYVxbNwqI4bcWKs2KG9pHzIrE19DfkRuHMQ4fjB1MaBLcf+3CCPtd8Bco61
+         ZbDdQJ32tMhDPuCWSaopgpfR/aBv2da/hdsRBWE71FD+rVvmycPOgXOCT/xGjAw2T0PU
+         0PXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723805693; x=1724410493;
+        d=1e100.net; s=20230601; t=1723805695; x=1724410495;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7xWelpTr/XRUqKFM91cNQuNNebnp+T2/XDk25EhyUnU=;
-        b=QnphjnmGj/ldbzqYDXad/0XDpDCfJ/VwNvdakOWA8XtskAFjlttPIbGgcBYhGrZQ1M
-         FC4ZG7PYUpk/35jiXLS4l91yPesoOTk7Lif9Du/GMccb5U1Q8L5FGmIwoyHqHW9EJKI2
-         GpQuLUl0xJqirNsHLNRBTc1/Jrkbn7UA3AJ2xyp//2WBcMZuJOIWOPn4z9w3utikN8Xe
-         CNWme2CIrVhXZS9Rm7ALMF4gOZXvOhlgvJux+/z8qOQPM6pbr7B62g5veX54GmWwppW8
-         ctdmz+WC2y4rO6gf48OBIRVL/t4yRslD/5CE0leoRemKbYmrDPDUqV2lHKHeycttXATW
-         +tmw==
-X-Gm-Message-State: AOJu0YzL21GB+jxaD8jbCD317IJhC2GFLUQsEFewJbm3yJB1Nfs3jt3P
-	mos9Yj1KRG0iAM4Pgo7wLby3Hqw86Sl074IHmz2bbJ9KQu9CoUpt7+PmXdFzgpg=
-X-Google-Smtp-Source: AGHT+IHD6wj7Dw8hXlamLzfXLE0YX9yxmT0kZMl6frJAfF1JNE4GaKBDulB0vb8SdWVJZ+hZ4bUsCA==
-X-Received: by 2002:a05:6000:1368:b0:368:6f64:307c with SMTP id ffacd0b85a97d-371943285e6mr2028271f8f.15.1723805693032;
-        Fri, 16 Aug 2024 03:54:53 -0700 (PDT)
+        bh=n3JBsocw3Kxo+E25kYGT4nJEc4iHDY8+0T+RDH3CrwQ=;
+        b=CUfvEpKxXA+i+wVwI6wjYyK59HwgqqSjMNZrvbeEqdEOf+f2pycn7CKb18LTvFlU22
+         K+XT+tXnMldH/lmx7QQiLkI3mfJuKc6rSLgBRmI/EN9q8pzxwWwFJRG2PrgcZSPyx8l/
+         TIA8NK7GIj4pR9iPtQmmubFVpTJIsWl+lxMhfTQZot2PZ/4TcHeLGDisHr90yOusRSJN
+         FzylGnK4qW/c7enYuSSFfGrIyD7NmJOWK9ELF5MtLjbsq/qTNgbWaXwf4idPFrEBt3V0
+         jSvVCJ8aelzoDswpfjhrn4/Ln+K5r5YxU8seO5ojo+N5HoBDMdQcjNp8wXLcZkTqI+kA
+         S6Bw==
+X-Gm-Message-State: AOJu0YzF4Ua7KJfk7n9Ho3c9D8ZSXfhXPgf+sR25qnG7cYXmETYakjHi
+	LfoAg+44d2aNV6bTeF8qglKEDF5qkk89bpzoGDqXguN+2aKDRbqt9Dxo+JX2jLY=
+X-Google-Smtp-Source: AGHT+IGn24wROLCo//DeF9Mt4n5RqsRN4gzOTX6eoavLir3z179fbxoYWt2i3lJKrmfKXQrfoXgzyA==
+X-Received: by 2002:a05:600c:5253:b0:426:5b51:109d with SMTP id 5b1f17b1804b1-429ed7db6cdmr13568165e9.36.1723805694621;
+        Fri, 16 Aug 2024 03:54:54 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed7945cesm19461935e9.40.2024.08.16.03.54.51
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed7945cesm19461935e9.40.2024.08.16.03.54.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 03:54:52 -0700 (PDT)
+        Fri, 16 Aug 2024 03:54:54 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Fri, 16 Aug 2024 12:54:29 +0200
-Subject: [PATCH v2 05/13] memory: stm32-fmc2-ebi: simplify with scoped for
- each OF child loop
+Date: Fri, 16 Aug 2024 12:54:30 +0200
+Subject: [PATCH v2 06/13] memory: stm32-fmc2-ebi: simplify with
+ dev_err_probe()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240816-cleanup-h-of-node-put-memory-v2-5-9eed0ee16b78@linaro.org>
+Message-Id: <20240816-cleanup-h-of-node-put-memory-v2-6-9eed0ee16b78@linaro.org>
 References: <20240816-cleanup-h-of-node-put-memory-v2-0-9eed0ee16b78@linaro.org>
 In-Reply-To: <20240816-cleanup-h-of-node-put-memory-v2-0-9eed0ee16b78@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -96,84 +96,71 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1947;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1560;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=G2yPrpxBXb4PKw54ECzRtlVki76Ov9GcRLuKMdvmvH8=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmvy/rb4znf7Gc13+IjmByAMk6RS/9zPzPfxYqw
- 7Z6nvJ1sLGJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZr8v6wAKCRDBN2bmhouD
- 18MYD/oCLaJmWOWxy5n36CttxJFqbO51zWjtlcst6hRwuUgHToAatzCC4rqdYj6BqW6udSiOq2x
- MaCjbbXPxz3iOpxzfwcKWbg19No+lmlb1qk/33S3x0U9G2QJPvwticKeSkQ8rVKoCQ0axG/Jk64
- d59f87Oj+o4vvSe7bsarfpHSoxwEgjUVHG5/GvzVue/zwwfqsjCGsyd4eXS+7TCNWhyCIn5arMy
- d8Na9fDtC0X96Vjb5Pz/N289yVyYzZMtPrRDhdCQf0mxVKutUKhovg+VIGQwfBYJn8zh/ZGk66X
- DnuFEXvtDvlbr3h9lprlTzxCx/NRlVE/inFAV0lmj0GkErB0jire5a0G8+2/TMBDPuOTQu67sWA
- AZbrnvBUiv4vNpo9dtFviLw8KmYvUiZQ9VJCtwrVDwAYjtaKvWwu5pUiODcp98nbefbrm3pI2Rd
- THvcNlzPdoge696l78CgQUFoI5nxUVT8pPm4jjf82IsTJTWP2SWRg6NIldGL9doI71w+PQe6u+I
- dn4MAXawWNYuqEYgnvKY6sKASV82gYBZRe+W8jWBdobXx46WliBPxQqeY5WU5WaZe8OQpG7haL8
- DtnPg9H5b0Fdv+igpVtGJ1c7G6tDzTSUiatX/wgxRi1EO61LToCYLGG6PmXswqAUADLuNbXmpWd
- 5flfqJkZrR5Iblg==
+ bh=wJWap3GNtDgLkBsWgnZ2oGeVybItqtjwJfBbYGyPlo8=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmvy/sa1xUY2YBbxWKQP1tRrbI7EqugouDoNZVC
+ Bxnkk/Q3qWJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZr8v7AAKCRDBN2bmhouD
+ 14EjD/428b1j5rsiaZx68rdq6FjyH4n1esOcsNDQiNVBlR4beEtg6pbk2K+emMl87pLVexTc2tI
+ Es+y1tj551HtjBN3PqK3+JqBC0trcXcilAiFzYScxywj6dzEmrD1gpMVj95qyaJSZQbemKTA+TY
+ MKvjLPhQtIsoaNEOUWXyVoK4Q88HdIW6ZzKjEwnTi9cHljpxbOjpA6q5q3IT2pyzYTbzVHQzNpZ
+ +3kg/GACYNB44ceLVjoCzujsdHfWY2VeIsO33kZMG3MYwjU7YqnCTUZsFOnSbvON74kB7tBW+i0
+ HEWc9aH75+TQIRz/axO9yk/PymB31x5t/ClfslDUwoGvMui9XnVf4CF8XIk/3xjbykNxLXfrkJb
+ DVpJvmhiHvF4+W1UZy6tEvIqvzJHMCogCGapsN8DsaPdCmDx5ipOy9RnxZ7PRKaU23KHA/9w/3w
+ m5M14ycC5TG0e9cb9VoQaYKRftqHMIDDyUIHXXeC9IZuOCSPY9hyAxKvOLgpXL7itZU902JzVPy
+ ZLT6/DluBzcv2jZTniQ20gHFVZzIvl14HMXmTlgYBJCruFV68W5nndXMCA84RyMLPHbNhTo1S0p
+ YEllo27Ct2QdtJtan8MTc6dSbIgQ5UWchNtS38wgjjg9qRV9k1N3ZPaU+XRyViDL6FnJumJl+yC
+ Xtov6VwsVHfu4Nw==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Use scoped for_each_available_child_of_node_scoped() when iterating over
-device nodes to make code a bit simpler.
+dev_err_probe() combines 'return' and error code printing, thus code is
+a bit simpler, even if it cannot actually defer.
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 ---
- drivers/memory/stm32-fmc2-ebi.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+
+Changes in v2:
+1. New patch
+---
+ drivers/memory/stm32-fmc2-ebi.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/memory/stm32-fmc2-ebi.c b/drivers/memory/stm32-fmc2-ebi.c
-index 1c63eeacd071..7167e1da56d3 100644
+index 7167e1da56d3..566c225f71c0 100644
 --- a/drivers/memory/stm32-fmc2-ebi.c
 +++ b/drivers/memory/stm32-fmc2-ebi.c
-@@ -1573,29 +1573,25 @@ static int stm32_fmc2_ebi_setup_cs(struct stm32_fmc2_ebi *ebi,
- static int stm32_fmc2_ebi_parse_dt(struct stm32_fmc2_ebi *ebi)
- {
- 	struct device *dev = ebi->dev;
--	struct device_node *child;
- 	bool child_found = false;
- 	u32 bank;
- 	int ret;
+@@ -1579,11 +1579,8 @@ static int stm32_fmc2_ebi_parse_dt(struct stm32_fmc2_ebi *ebi)
  
--	for_each_available_child_of_node(dev->of_node, child) {
-+	for_each_available_child_of_node_scoped(dev->of_node, child) {
+ 	for_each_available_child_of_node_scoped(dev->of_node, child) {
  		ret = of_property_read_u32(child, "reg", &bank);
- 		if (ret) {
- 			dev_err(dev, "could not retrieve reg property: %d\n",
- 				ret);
--			of_node_put(child);
- 			return ret;
- 		}
+-		if (ret) {
+-			dev_err(dev, "could not retrieve reg property: %d\n",
+-				ret);
+-			return ret;
+-		}
++		if (ret)
++			return dev_err_probe(dev, ret, "could not retrieve reg property\n");
  
  		if (bank >= FMC2_MAX_BANKS) {
  			dev_err(dev, "invalid reg value: %d\n", bank);
--			of_node_put(child);
- 			return -EINVAL;
+@@ -1605,11 +1602,9 @@ static int stm32_fmc2_ebi_parse_dt(struct stm32_fmc2_ebi *ebi)
+ 
+ 		if (bank < FMC2_MAX_EBI_CE) {
+ 			ret = stm32_fmc2_ebi_setup_cs(ebi, child, bank);
+-			if (ret) {
+-				dev_err(dev, "setup chip select %d failed: %d\n",
+-					bank, ret);
+-				return ret;
+-			}
++			if (ret)
++				return dev_err_probe(dev, ret,
++						     "setup chip select %d failed\n", bank);
  		}
  
- 		if (ebi->bank_assigned & BIT(bank)) {
- 			dev_err(dev, "bank already assigned: %d\n", bank);
--			of_node_put(child);
- 			return -EINVAL;
- 		}
- 
-@@ -1603,7 +1599,6 @@ static int stm32_fmc2_ebi_parse_dt(struct stm32_fmc2_ebi *ebi)
- 			ret = ebi->data->check_rif(ebi, bank + 1);
- 			if (ret) {
- 				dev_err(dev, "bank access failed: %d\n", bank);
--				of_node_put(child);
- 				return ret;
- 			}
- 		}
-@@ -1613,7 +1608,6 @@ static int stm32_fmc2_ebi_parse_dt(struct stm32_fmc2_ebi *ebi)
- 			if (ret) {
- 				dev_err(dev, "setup chip select %d failed: %d\n",
- 					bank, ret);
--				of_node_put(child);
- 				return ret;
- 			}
- 		}
+ 		ebi->bank_assigned |= BIT(bank);
 
 -- 
 2.43.0
