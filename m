@@ -1,87 +1,88 @@
-Return-Path: <linux-kernel+bounces-289494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D635A9546BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:24:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8676B9546BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71BB91F23A73
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:24:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44624284FC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E231922FB;
-	Fri, 16 Aug 2024 10:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE855190040;
+	Fri, 16 Aug 2024 10:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OjvM6LGN"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ouZk3cDO"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617AB190466;
-	Fri, 16 Aug 2024 10:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF94418D644
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 10:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723803840; cv=none; b=IMUpjsY7tnmEMmRHNFfaVNS0ObVRIWX26D+to3CQuU76RwF6aq0nq58OhmR5VpDfthWIUCj7yN9TXuDJRYb16ZiIGfPp9CgDG+OESx9t6GGKVKbL1nN8wyPcrwlTm3j4TkFga5Ht0cpVilsGAIrpHnoMU6S0Y/2wRFrrd2KVQJA=
+	t=1723803837; cv=none; b=JApbGy9pNeYAY0eiB7MOVNf6NwSEOVCbLiff7UUmPdvjD8yTZxCbVgYGOOQa1O7N/YiApwJuOu/ZocitgS1edrcJgA08vVbSIfNeU6XemAVzKzBRofx2UolmzfXVgb5EFPDfaOJJS0zjm6I7Wrvt2NTGxsJewDYRurgm73+aTYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723803840; c=relaxed/simple;
-	bh=eR6g0kICvaWDCim7XMZTYhHqSBbWnikawdT2zlhEDd0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZTj8WPzdXuYjUSStDbo6U4nj5P017/wSdkaKXJiHZynrEX2USTPIcNt+EkwIeSNUv6kmuEGLJGAhDWP/wbbPUD1VX8pJczqAOoQjDI371Wy6t86hDsJxCjt2k68wuiLu+00JjVJfcZsRSGenBZ6/o+esefuFQkC3mstnR27sdZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OjvM6LGN; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso13263805e9.1;
-        Fri, 16 Aug 2024 03:23:58 -0700 (PDT)
+	s=arc-20240116; t=1723803837; c=relaxed/simple;
+	bh=CaJnOyQue3Q9Tu676JMyTm4MNNEAGskyDjAkRRRIYg0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SM4mx8tPV+kF/t0cMOquIz7n53mAny/DcFBzTj629UAgWz842dMoxBGS0pTDwi/9fMWe22GaHZNgkv4FFUzSPDqpJrQPDnHeOVHf7Oe97Sn1Fo8YywU3spRfbO+Pu0TCrOprFHyfS+e85048kZwrZtwHKfjW1dB8FVFjKAB4pc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ouZk3cDO; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42817f1eb1fso13138215e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 03:23:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723803837; x=1724408637; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RpRJjd4BRhvinkPXpnKisaEyE+ndcG8cHLpX7n8m0n4=;
-        b=OjvM6LGNCyL8cyIH6kDZbS7e/K25PMeOImwEhK7dtRA80DxX0YkJJJxPK2HYulfiub
-         RbBPaBU2lOeSKPiLB92n504ZhvmCXIdSk6apTI8ZYvYa0KHVYJFO/NG5Ptyaz+Gb0/Jg
-         9ZD6RyjQGtgPuXElK0DhIsMqLyWVLruWoD2b/P13Odaeqk4qmg46K0asrfhuTU7b75K0
-         VqWqtoVrRoxkQ4HXc8LjcsIlhvMQKfEpBQpHKWN/qSDsH9VCtgwgirlpyw6e5eH14JE7
-         q6k8TjgXLn+/lKFCGU1jh7wZ6QN8Wa0RFjH1JB9BIiHBTi1uH5L5KwUxD0vS8fbT5itg
-         7UUw==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723803833; x=1724408633; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8cRa80QxztxjicJF5rsAT8pzK6md8mByVXGfDIWdXzQ=;
+        b=ouZk3cDOOHNodxIrDRR/R5l3UsfoMdXWIVb/tAzsl02tpWp0tovuZp+z+TxygB7LtU
+         lplfs0UL1w77wS2kPpVEjQMj3aN/8JU00EAcV/p9uSerJyQ/cuF3wrLtvevO7+F4xRkD
+         v61YwkPaHnbl6okCQPpyTObDhKprMmGLwYHdrDDnMfalqjCvDOXynXr8kC2VScaz7SX+
+         qYwIyl+XSIqXFsQEcjfsfWIBGHr+IfZIrNFPXVYtOV1OYtT0IHPKCGyBPbRv778j32C0
+         UQ5pKpXd8tieAYwl1cWc1q8OWbH3d9kSlrjgOjMbZFW3zf6Gu+WmUK6/PZ49oVgyQKCj
+         kCCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723803837; x=1724408637;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RpRJjd4BRhvinkPXpnKisaEyE+ndcG8cHLpX7n8m0n4=;
-        b=KOWAQMfkiSIzFl9jzoiqdxskG6mEun8n2YaG6VAyPCqm5MuJV1WJBxm4TjRkxRbfcq
-         6kiMNd2Xl63KVjkn3mivMzzzqSYbj+Yhe/oiZyI8knyqEp4BCqjD6uepjpszLq80e5cG
-         IXSgJAPR8qSXNBN87q9S2op7b6Gg4Q1v1TtWzcH0mD7AHkkD9pT0hOGH8TEKXyU7JOYs
-         B3HWU7xwWpCGNSHNyVr1MUhF9qNcP4/KPw92oNmC8dtufsAn7FN5J6zrk8/p8PU2aFK4
-         hk2sgaHEe6KiVnVR4gRzGHEPbnzp0O0a1PoHKtR9ir7qvax14uqO1DGe+tZaky9E0w55
-         zSzw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1nQ/glUEJUpVhGCPriw0bRgC+iPo/DHiNx+Zhea+sBRY5j+73Ph0id4EMQTapwiYtceYqKsUgP6Qr1tYPHsyHadsegEE5pAmTJvCrExsOSKlQOPlTCyojtvi8FAACjOBZgSd0/fBe6MT8
-X-Gm-Message-State: AOJu0YwYQUKOUCVELl8zSVRwalms9CYd1AXO1qFudQF0gtIomfgpySon
-	tgZkm8+nvBwIRo2zRcp83FDWpt04kC+atJ8Pn/FYofzm0RuSqRV3
-X-Google-Smtp-Source: AGHT+IGdKD64cR/xI7my6i60xD0kP5WvZgIMfaqvwl/vY+iJ3OTfh37Y0LtkOgldyOgX4BG51sOG3Q==
-X-Received: by 2002:a05:600c:1c24:b0:427:9a8f:9717 with SMTP id 5b1f17b1804b1-429ed620183mr15765455e9.0.1723803836486;
-        Fri, 16 Aug 2024 03:23:56 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:908:e842:bf20::c7d2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37189849831sm3318522f8f.30.2024.08.16.03.23.54
+        d=1e100.net; s=20230601; t=1723803833; x=1724408633;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8cRa80QxztxjicJF5rsAT8pzK6md8mByVXGfDIWdXzQ=;
+        b=Y4WhqMhMbciROpFNwjFqIxqGKvhrDtCqyphCHBFCwyP0WD8YOiidvpbjPcg6UR5pp8
+         1AvQcGaA7fRNF9SHn/CORZUAvzUTJI5J6CeDQDz5AQ6KACSvtegFFGOnV5XCVdRfUDJl
+         Ze1CaCO9yuxUmUDHN8QAdnfYUBWCCnlNyhT+h6xUxZxzSsDOwbnzOvG/aJTsqhjTtkGa
+         HjHZ/Av75x/c2kZoss+qM5uxvzaGMfJiqTidLSXSVbBk99nLhngbKDKrEtz9km0wdU47
+         HvPdXnYe2/gn8AY7dIBstmm7c7iotYxPKAn2JphzTLD/ySHTM43uV0KH8WFzXvq6cxpl
+         RSbA==
+X-Forwarded-Encrypted: i=1; AJvYcCVh1nD7hvi0u8P+mf2iT/mOEgFJcehgOJtZGuzFGBpgaSNDXX7vlK/64bGyq3KbItOFRn85w28IaUDCi3o+uVt4xYYZYbDI5iLr2gGq
+X-Gm-Message-State: AOJu0YyrKg4uv84iez7dsiGRRd30kzByI1uRXHKTaKXsP/O2CUXKyH6l
+	9rjqmaiHX+6hmGEXG2cq3TrK1bEXO+EWW3rmcRMcLUDkqUYR3sZTApRf6RLWqVA=
+X-Google-Smtp-Source: AGHT+IHiMiemHA0HDYK7fUySNf6tNACiyVMdxfcXAwZ7wf3FKOLNNg2TYqApmadNe4V2VEmyNHOi5w==
+X-Received: by 2002:a05:600c:35cd:b0:428:16a0:1c3d with SMTP id 5b1f17b1804b1-429ed7ae16cmr14655845e9.19.1723803832385;
+        Fri, 16 Aug 2024 03:23:52 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:aff3:cc35:cd8f:c520])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded18630sm72650125e9.1.2024.08.16.03.23.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 03:23:56 -0700 (PDT)
-From: Ole Schuerks <ole0811sch@gmail.com>
-To: masahiroy@kernel.org
-Cc: deltaone@debian.org,
-	jan.sollmann@rub.de,
-	jude.gyimah@rub.de,
-	linux-kbuild@vger.kernel.org,
+        Fri, 16 Aug 2024 03:23:52 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Amol Maheshwari <amahesh@qti.qualcomm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Tengfei Fan <quic_tengfan@quicinc.com>,
+	Ling Xu <quic_lxu5@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	mcgrof@kernel.org,
-	ole0811sch@gmail.com,
-	thorsten.berger@rub.de
-Subject: Re: [PATCH v4 07/12] kconfig: Add files for handling expressions
-Date: Fri, 16 Aug 2024 12:23:19 +0200
-Message-Id: <20240816102319.21739-1-ole0811sch@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <CAK7LNARA2W41X2n97O-=TXYPrmTsGqL-aMczPHsB2T_Y3QOGrA@mail.gmail.com>
-References: <CAK7LNARA2W41X2n97O-=TXYPrmTsGqL-aMczPHsB2T_Y3QOGrA@mail.gmail.com>
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH 1/2] dt-bindings: misc: qcom,fastrpc: document new domain ID
+Date: Fri, 16 Aug 2024 12:23:44 +0200
+Message-ID: <20240816102345.16481-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,47 +91,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On 8/12/24 10:46, Masahiro Yamada wrote:
-> On Wed, Jul 10, 2024 at 3:54 PM Ole Schuerks <ole0811sch@gmail.com> wrote:
->>
->> To translate the Kconfig-model into propositional logic and resolve
->> conflicts, we need to handle propostional formulas.
->> These files contain many functions and macros to deal with
->> propositional formulas.
->>
->> Co-developed-by: Patrick Franz <deltaone@debian.org>
->> Signed-off-by: Patrick Franz <deltaone@debian.org>
->> Co-developed-by: Ibrahim Fayaz <phayax@gmail.com>
->> Signed-off-by: Ibrahim Fayaz <phayax@gmail.com>
->> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
->> Tested-by: Evgeny Groshev <eugene.groshev@gmail.com>
->> Suggested-by: Sarah Nadi <nadi@ualberta.ca>
->> Suggested-by: Thorsten Berger <thorsten.berger@rub.de>
->> Signed-off-by: Thorsten Berger <thorsten.berger@rub.de>
->> Signed-off-by: Ole Schuerks <ole0811sch@gmail.com>
->> ---
->>  scripts/kconfig/cf_expr.c | 2594 +++++++++++++++++++++++++++++++++++++
->>  scripts/kconfig/cf_expr.h |  296 +++++
->>  2 files changed, 2890 insertions(+)
->>  create mode 100644 scripts/kconfig/cf_expr.c
->>  create mode 100644 scripts/kconfig/cf_expr.h
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
->> +/*
->> + * convert a fexpr to a pexpr
->> + */
->> +struct pexpr *pexf(struct fexpr *fe)
->
->
->
->
-> Not only this one, but more descriptive function name please.
->
-> "pexf", so what?
-> I do not understand what it is doing from the name.
->
->
+Add "cdsp1" as the new supported label for the CDSP1 fastrpc domain.
 
-Could you give us one or two examples of what other functions have bad 
-names? I didn't find anything as bad as pexf() so I'm not sure what the 
-expectations are. Thank you, that would be helpful.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml b/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
+index c27a8f33d8d7..2a5b18982804 100644
+--- a/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
++++ b/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
+@@ -26,6 +26,7 @@ properties:
+       - mdsp
+       - sdsp
+       - cdsp
++      - cdsp1
+ 
+   memory-region:
+     maxItems: 1
+-- 
+2.43.0
+
 
