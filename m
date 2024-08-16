@@ -1,107 +1,105 @@
-Return-Path: <linux-kernel+bounces-289468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85FBB954688
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:10:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A36EE95468B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C255B214CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:10:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3B0E1C21BEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 10:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3D6172BDC;
-	Fri, 16 Aug 2024 10:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C33172BDE;
+	Fri, 16 Aug 2024 10:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mediatomb.cc header.i=@mediatomb.cc header.b="Kf4Rjgis"
-Received: from xn--80adja5bqm.su (xn--80adja5bqm.su [198.44.140.76])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E658B170A2D;
-	Fri, 16 Aug 2024 10:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.44.140.76
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="HfmrIPJU"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95710170A2D
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 10:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723803039; cv=none; b=SnOV50XXPNlnDccW/IcaP09cv7pL4aD/9YgegsQUg0bNRV5dmMP4zBC0HSoaEiPw6f/voUA4fvMN5JRxlnEg4n4cYUuspSlIoC1Llpk33zFy3u25RpF1t5ZKAKYyxKUU1fwpEGMj7WxvZLjEk1NgEsgv3hgCDiSNgxQAyQZS/3U=
+	t=1723803085; cv=none; b=qIQYzFLZ94AzPgJNAqZlQUZulr+TAYn7vl/6jrZWe+krA9/gaKQxuX05LBKwSvdk7MUnxFCjgkw54q15lo7LEO3GkaCWp4r3V/NsZ0dMdUOhb4NrtafPVDLyYv2jAmPqQxfmWU2oSjwVyGfhJ9wAQvIwm865NN3OtXv2pPlYwSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723803039; c=relaxed/simple;
-	bh=8PnY6ixqsAoTmvoPYVNiLNZjGToDbEwFtSVLO2CL+hg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GgCL5lBsqaVcVEPyTTmNAp6VXaBi6WoIvwQTMye0iN+kBaxB/YzeDkZRF68MS/vIrPMLWZS5WQdQUF+FkcYTQIXBH2J/QXijNwf/a1KVrcCT6GNj1wuWqMhKLsJXWBHlyUfKueGX7V+S9EhgF3XbihGdKy1rXsJryJpZl7MTadU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mediatomb.cc; spf=pass smtp.mailfrom=xn--80adja5bqm.su; dkim=pass (2048-bit key) header.d=mediatomb.cc header.i=@mediatomb.cc header.b=Kf4Rjgis; arc=none smtp.client-ip=198.44.140.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mediatomb.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xn--80adja5bqm.su
-Received: by xn--80adja5bqm.su (Postfix, from userid 1000)
-	id 6418440005C1; Fri, 16 Aug 2024 10:10:18 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 xn--80adja5bqm.su 6418440005C1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mediatomb.cc;
-	s=default; t=1723803018;
-	bh=8PnY6ixqsAoTmvoPYVNiLNZjGToDbEwFtSVLO2CL+hg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Kf4RjgisE1JyRq2z8ZDh/EHzOiRO0w7GKQ92NB7qdEPAarpRZ9hKmjv/12eGkU+fS
-	 OBqKFp2auis09NoRVLoo057/ZNxBgbjDItLeVAIdnrB7HKb1odzRHWFmM+pO3gW7zw
-	 5bbGgunBCKnEZRjIW0Dl/hcPbbjyvSJtI+aZwH1wVbCJlOTtLujFUh/+uLvHobHgx0
-	 V1Tbg6F9+opwRh27EvYWcg7WLU/s9LmhpwVWobZKssWw3mNvlbcG/AV7+FyM/nIL1n
-	 h8WcTGcGMn6KXM/5qITcRVwxMzmoNVmmYb/KLc1mg+aWflxn/ECb1YiUT+SlPWaHRa
-	 lwUGdkP9jqdUQ==
-Date: Fri, 16 Aug 2024 10:10:18 +0000
-From: Sergey 'Jin' Bostandzhyan <jin@mediatomb.cc>
-To: Dragan Simic <dsimic@manjaro.org>, heiko@sntech.de
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] arm64: dts: rockchip: improve eMMC speed on
- NanoPi R2S Plus
-Message-ID: <20240816101017.GB28881@ветеран.su>
-References: <20240814170048.23816-1-jin@mediatomb.cc>
- <20240814170048.23816-4-jin@mediatomb.cc>
- <002107db3dcf3f1d1d1a767f049b5b79@manjaro.org>
+	s=arc-20240116; t=1723803085; c=relaxed/simple;
+	bh=jgW8qR9dd1GpYhXPsruabtVGV0P70quPl95KW8r73/M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KsS9boKd4oLrG1+kUL42ANPO3oyyx6x25WDwtShIRUMqKBEhwleZE80DMnOUCKHzswBTIjhOMgeV8olI/5ibs1HpWZG3xtToSUuhWVYlWPxyRQamWGQMohwWBE3fyXv1Q8ZwxMAMlMHNJEHhy0nH0LCVhjuPYF/Ih8/V7Vp67Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=HfmrIPJU; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-530e2235688so1966403e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 03:11:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723803081; x=1724407881; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jgW8qR9dd1GpYhXPsruabtVGV0P70quPl95KW8r73/M=;
+        b=HfmrIPJUeFGdQACbuIm/vJgTJiMS6/uGIQl6yQY1SXYphCBrI0kg1z8Y4BgK0oRX1E
+         X7qPmwzkEQ+GfZAAbnoJtBBoSap7wmU27zbiCjUtSITmuqypFjoTgnF5caRid8JglvNJ
+         AhqM2wLZFzp1TMk5pTRtyTjIjrlGrSJ55rSkv46zcK///r+3PBSLhH2lal6Cza4D42tB
+         YkJJLAzZCuWTcO7ZFUSonE0koWnF2MzkvnKTftcNVuWSEVwqAbGAXBnCwvexwHKhLDOi
+         kmh7Y5vaZmD8IG3nXMkczFHX466Pag7H+5/xSgZaPUhh4R0YisyE0f3PK1FvyVAZKx3H
+         aaNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723803081; x=1724407881;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jgW8qR9dd1GpYhXPsruabtVGV0P70quPl95KW8r73/M=;
+        b=f6KWt43F8Py0y7AouEaKCnt2eSO8lgSZ9NPGw4zPk2WY9J9xPi1EdX9BLv14uNjYxC
+         TbUhEZsd6cjTTH4m8O4dJ+Rplyk7MAyUQNX7Mm9FD9JQKvbYWAR4piq/A0JRCiBK5MXX
+         j0T9wgFctQ2/BoL7V2mkXMQW55pKrttE/QIT1QjXpFyt9EkJ2hXbbmnO02YgJgCiS32Z
+         FVECVAsoOd0i3DGoHkWlataYcgNl3Hueaa5o2WzsxWa0rB5jOe7hAcwkAmoqQABzjqVa
+         YRDB4vr0xUkAKZOu2BJ6vlRwbVXaLdpPDZiGpU6dJ+3BPXMZTeOMlgeg/qo78fZtmxWq
+         DvYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlbEodha1cklGovLjsI3yTV8qN0gXAjXZVt75RTL+PNfQz3FvagG7a6OCpZYmNa/yqAplCzLtp75gDI/7ZzKUJe4jh2lnY9GKZrrf5
+X-Gm-Message-State: AOJu0Yz/0uGh6nY9OG2y9In8HHCKL4KGMtGIzJyopyyp5jbgqa3XCkwp
+	EM9LFKWGfzhFv04hTaejNeHzw4sEBp2uJaC1UGT6atdxr80uD5SYrBCgLwHjkURV0nAW3cj0Xa2
+	UYF85BOFelwMEDuSQkzevWeOkU/mFdcuqk0DX+w==
+X-Google-Smtp-Source: AGHT+IFcVVXjGoc/qGWPxsaC0pBLaWdPcEgyZ2BKX13uQ6PcUDXE3ldI/yAxzls/u7L0bahDE7nlrnrf5QbmU71tWFQ=
+X-Received: by 2002:a05:6512:2356:b0:52e:767a:ada3 with SMTP id
+ 2adb3069b0e04-5331c6e38afmr1553665e87.47.1723803080819; Fri, 16 Aug 2024
+ 03:11:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <002107db3dcf3f1d1d1a767f049b5b79@manjaro.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20240815071651.3645949-1-ye.zhang@rock-chips.com> <20240815071651.3645949-6-ye.zhang@rock-chips.com>
+In-Reply-To: <20240815071651.3645949-6-ye.zhang@rock-chips.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 16 Aug 2024 12:11:09 +0200
+Message-ID: <CAMRc=Mfok1T4xGvdKa54Hy9BocuFx5g4zrK8eSC3Qivhhmz9xg@mail.gmail.com>
+Subject: Re: [PATCH v1 5/5] rockchip: gpio: fix debounce config error
+To: Ye Zhang <ye.zhang@rock-chips.com>
+Cc: linus.walleij@linaro.org, heiko@sntech.de, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, tao.huang@rock-chips.com, 
+	finley.xiao@rock-chips.com, tim.chen@rock-chips.com, 
+	elaine.zhang@rock-chips.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Thu, Aug 15, 2024 at 9:17=E2=80=AFAM Ye Zhang <ye.zhang@rock-chips.com> =
+wrote:
+>
+> 1. Prevent data from crossing boundaries
 
-On Fri, Aug 16, 2024 at 08:51:40AM +0200, Dragan Simic wrote:
-> On 2024-08-14 19:00, Sergey Bostandzhyan wrote:
-> >This change has been suggested by Daniel Golle during patch review,
-> >adding mmc-hs200-1_8v; makes sure that eMMC gets detected as HS200
-> >which improves it's performance.
-> 
-> Describing who suggested the patch in the patch description looks
-> out of place.  Instead, you should add a Suggested-by tag, whose
-> purpose is exactly to describe who suggested the patch.
+I don't understand.
 
-thank you for the pointer, I guess I missed that, I generally had a hard time to 
-come to grips with the hole process as there are so many details and nuances.
+> 2. Support GPIO_TYPE_V2_2 debounce config
 
-Heiko, I guess it is too late to fix that now, sine you wrote that the
-patch has been applied?
+Should this be a separate patch?
 
-Kind regards,
-Sergey
+> 3. fix rockchip_gpio_set_config
+>
 
+Same? And a fix?
 
-
-> >---
-> > arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts | 1 +
-> > 1 file changed, 1 insertion(+)
-> >
-> >diff --git a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts
-> >b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts
-> >index 12eabdbf8fe8..146b1da198b8 100644
-> >--- a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts
-> >+++ b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts
-> >@@ -23,6 +23,7 @@
-> > 	cap-mmc-highspeed;
-> > 	supports-emmc;
-> > 	disable-wp;
-> >+	mmc-hs200-1_8v;
-> > 	non-removable;
-> > 	num-slots = <1>;
-> > 	pinctrl-names = "default";
+Bart
 
