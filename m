@@ -1,616 +1,140 @@
-Return-Path: <linux-kernel+bounces-290336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF109955266
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:30:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2043955252
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 23:26:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 413C5B21AEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:30:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 695F42834B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 21:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8248E1C461E;
-	Fri, 16 Aug 2024 21:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3EAC1C463F;
+	Fri, 16 Aug 2024 21:26:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="F+bIgTit"
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="UKETg2Fa"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D500B1C3F30
-	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 21:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBCF1C460C
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 21:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723843823; cv=none; b=IHI7+H1WoiwskB4bGIS+Y28jnrpBeZDvT6ul1ZIkrNCRSJh4wF2cst7BUIkFkfFfiOuxPqV41ldSzf5k5NHibbajBkFeT39OzNBU8Kz3ESP8D6D0TPr3p4pzEkpThB7JdF8w1jV9aaLv8L2u5JCCLLrcjCakah/gE0sJCxHUqiU=
+	t=1723843610; cv=none; b=Jhg9Pw9U+UUE9H45R6VBzWcPNDLFTjENm6wtMS/tyECofINbkCYF6OKFWmSCIRmmrcJibqBAZcq5I89d4qYN18qK5nrhsFOdc8eUClZ5gRVc3oFy8/BQxheiJ3X3N2RyoFbZt0Q9y0hhKA+/dQbUA1yokQAqbxu2F7OEJYx71mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723843823; c=relaxed/simple;
-	bh=u7tbWmxbBhSn2A4TT4XaQQXgPkZ9gYgfJHtlVBuNECU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N9Hmjt4QX5kx61YIKzVNYYMaMKlacZS4sq5Jt1Qn2Hfi0/t0JOQjJ5P3wphccUMsRkeEbe51r9HviibqwGeP5mzjvUPnwijy30MJlHqeTa98jyX4rIhzjHd6bE79ztHKfdaP8u49H2gwdSm4BNdMy5zV69H5hkV+Xihku3Eskwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=F+bIgTit; arc=none smtp.client-ip=185.125.25.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Wlw2S6rsJz15bn;
-	Fri, 16 Aug 2024 23:23:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1723843392;
-	bh=tgni7elx79iHFvq26KubsfPoSoiTs22g/KpskKgYY2Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F+bIgTitHRC39yQ1VFFtrO6JOCo8OfFVSVp8h900cj3GJ7PSsY8lXTLKO7fClcTuv
-	 7kK5RwnaRwW4JwXqTq4FdbDszIA9I4XK42fHFT4n7czblsVfvie36MTDi5auTB2jMh
-	 EUpv4VAukUm7k8ldpaMKsJM6zf4rEbQcVEvDoj6U=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Wlw2S1tBpzsY5;
-	Fri, 16 Aug 2024 23:23:12 +0200 (CEST)
-Date: Fri, 16 Aug 2024 23:23:05 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v9 2/5] selftests/Landlock: Abstract unix socket
- restriction tests
-Message-ID: <20240816.His9oihaigei@digikod.net>
-References: <cover.1723615689.git.fahimitahera@gmail.com>
- <2fb401d2ee04b56c693bba3ebac469f2a6785950.1723615689.git.fahimitahera@gmail.com>
+	s=arc-20240116; t=1723843610; c=relaxed/simple;
+	bh=D4cYVKJZMtkqJ9AH3ighYYzvw72p0dCyhKoG69sakaY=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To; b=HdHsrg+W7j9oRwWoWHz/VqlJLBw/ej++wMoV7VwpHUppWLuVN4n0G3K8GBQhW62aVvLFH29rORybo1tHehNiJ2HaH4e6I/d1ySwForLRwUHrDxVANw8WRDxrn/yMQ4SSBy9nfFjrm8PHAFu01/7J+lPpjZc8ombjrKRdGZjNmT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=UKETg2Fa; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2601:646:8002:4641:eb14:ad94:2806:1c1a] ([IPv6:2601:646:8002:4641:eb14:ad94:2806:1c1a])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 47GLQ8Y63454923
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Fri, 16 Aug 2024 14:26:09 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 47GLQ8Y63454923
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024071601; t=1723843572;
+	bh=+7Vt5KAXlnvFFbfmtpWyM730Kav07i6jWX89zUHR6os=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UKETg2FaVwLo3nFcfUKzDI9P/uTelW9SBQzhisfB1Vk7ZLRitd7SZa1+BghB7sfFZ
+	 AbqlWGfAToPmtssu7v5et8t1Xo8MSy3hX8S2WXvEa+IJkMpT+DPa1mu48gaWjhA2xR
+	 gJsdlfv5fmdKkvd3ZMczZS1D7/4mSgfmS22QlcXuWlXHvjZ4Qj599PlupjWV/GdUUG
+	 qbzld+AEsDNlNODTf63ep0b6Apzy9LgD6Eytuzw7T295lLZCiL6bXZn0XYeyr+N0qh
+	 vEsvM5SuLjESA9FxDPaTZjZgXRmgL29r18Gexu6cWFQngYY/6ZFesvNrnlt06lGzsz
+	 C+aZmn0nk9xpQ==
+Content-Type: multipart/mixed; boundary="------------eEzwgDqgLY0cwdRptC9Ae9Ma"
+Message-ID: <4f7566b5-a743-4819-b221-88207c132f63@zytor.com>
+Date: Fri, 16 Aug 2024 14:26:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2fb401d2ee04b56c693bba3ebac469f2a6785950.1723615689.git.fahimitahera@gmail.com>
-X-Infomaniak-Routing: alpha
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/3] x86/msr: Switch between WRMSRNS and WRMSR with the
+ alternatives mechanism
+To: Andrew Cooper <andrew.cooper3@citrix.com>, Xin Li <xin@zytor.com>,
+        linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, peterz@infradead.org,
+        seanjc@google.com
+References: <20240807054722.682375-1-xin@zytor.com>
+ <20240807054722.682375-3-xin@zytor.com>
+ <e18cd005-24ef-497d-b39c-74a54d89a969@citrix.com>
+ <7c09d124-08f1-40b4-813c-f0f74e19497a@zytor.com>
+ <25200a9d-e222-4c40-9c97-b5e5e532db8c@citrix.com>
+Content-Language: en-US
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <25200a9d-e222-4c40-9c97-b5e5e532db8c@citrix.com>
 
-Please make sure all subject's prefixes have "landlock", not "Landlock"
-for consistency with current commits.
+This is a multi-part message in MIME format.
+--------------eEzwgDqgLY0cwdRptC9Ae9Ma
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 14, 2024 at 12:22:20AM -0600, Tahera Fahimi wrote:
-> The patch introduces Landlock ABI version 6 and has three types of tests
-> that examines different scenarios for abstract unix socket connection:
-> 1) unix_socket: base tests of the abstract socket scoping mechanism for a
->    landlocked process, same as the ptrace test.
-> 2) optional_scoping: generates three processes with different domains and
->    tests if a process with a non-scoped domain can connect to other
->    processes.
-> 3) unix_sock_special_cases: since the socket's creator credentials are used
->    for scoping sockets, this test examines the cases where the socket's
->    credentials are different from the process using it.
-> 
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> ---
-> Changes in versions:
-> v9:
-> - Move pathname_address_sockets to a different patch.
-> - Extend optional_scoping test scenarios.
-> - Removing hardcoded numbers and using "backlog" instead.
-
-You may have missed some parts of my previous review (e.g. local
-variables).
-
-> V8:
-> - Move tests to scoped_abstract_unix_test.c file.
-> - To avoid potential conflicts among Unix socket names in different tests,
->   set_unix_address is added to common.h to set different sun_path for Unix sockets.
-> - protocol_variant and service_fixture structures are also moved to common.h
-> - Adding pathname_address_sockets to cover all types of address formats
->   for unix sockets, and moving remove_path() to common.h to reuse in this test.
-> V7:
-> - Introducing landlock ABI version 6.
-> - Adding some edge test cases to optional_scoping test.
-> - Using `enum` for different domains in optional_scoping tests.
-> - Extend unix_sock_special_cases test cases for connected(SOCK_STREAM) sockets.
-> - Modifying inline comments.
-> V6:
-> - Introducing optional_scoping test which ensures a sandboxed process with a
->   non-scoped domain can still connect to another abstract unix socket(either
->   sandboxed or non-sandboxed).
-> - Introducing unix_sock_special_cases test which tests examines scenarios where
->   the connecting sockets have different domain than the process using them.
-> V4:
-> - Introducing unix_socket to evaluate the basic scoping mechanism for abstract
->   unix sockets.
-> ---
->  tools/testing/selftests/landlock/base_test.c  |   2 +-
->  tools/testing/selftests/landlock/common.h     |  38 +
->  tools/testing/selftests/landlock/net_test.c   |  31 +-
->  .../landlock/scoped_abstract_unix_test.c      | 942 ++++++++++++++++++
->  4 files changed, 982 insertions(+), 31 deletions(-)
->  create mode 100644 tools/testing/selftests/landlock/scoped_abstract_unix_test.c
+On 8/16/24 11:40, Andrew Cooper wrote:
+>>
+>> As the CALL instruction is 5-byte long, and we need to pad nop for both
+>> WRMSR and WRMSRNS, what about not using segment prefix at all?
 > 
 
-> +static void create_unix_domain(struct __test_metadata *const _metadata)
-> +{
-> +	int ruleset_fd;
-> +	const struct landlock_ruleset_attr ruleset_attr = {
-> +		.scoped = LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET,
-> +	};
-> +
-> +	ruleset_fd =
-> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-> +	EXPECT_LE(0, ruleset_fd)
-> +	{
-> +		TH_LOG("Failed to create a ruleset: %s", strerror(errno));
-> +	}
-> +	enforce_ruleset(_metadata, ruleset_fd);
-> +	EXPECT_EQ(0, close(ruleset_fd));
-> +}
-> +
-> +/* clang-format off */
+You can use up to 4 prefixes of any kind (which includes opcode prefixes 
+before 0F) before most decoders start hurting, so we can pad it out to 5 
+bytes by doing 3f 3f .. .. ..
 
-It should not be required to add this clang-format comment here nor in
-most places, except variant declarations (that might change if we remove
-variables though).
+> 
+> My suggestion, not that I've had time to experiment, was to change
+> paravirt to use a non-C ABI and have asm_xen_write_msr() recombine
+> edx:eax into rsi.  That way the top level wrmsr() retains sensible
+> codegen for native even when paravirt is active.
+> 
 
-> +FIXTURE(unix_socket)
-> +{
-> +	struct service_fixture stream_address, dgram_address;
-> +	int server, client, dgram_server, dgram_client;
+I have attached what should be an "obvious" example... famous last words.
 
-These variables don't need to be in the fixture but they should be local
-instead (and scoped to the if/else condition where they are used).
+	-hpa
 
-> +};
-> +
-> +/* clang-format on */
-> +FIXTURE_VARIANT(unix_socket)
-> +{
-> +	bool domain_both;
-> +	bool domain_parent;
-> +	bool domain_child;
-> +	bool connect_to_parent;
-> +};
+--------------eEzwgDqgLY0cwdRptC9Ae9Ma
+Content-Type: text/plain; charset=UTF-8; name="xen.S"
+Content-Disposition: attachment; filename="xen.S"
+Content-Transfer-Encoding: base64
 
-> +/* 
-> + * Test UNIX_STREAM_CONNECT and UNIX_MAY_SEND for parent and child,
-> + * when they have scoped domain or no domain.
-> + */
-> +TEST_F(unix_socket, abstract_unix_socket)
-> +{
-> +	int status;
-> +	pid_t child;
-> +	bool can_connect_to_parent, can_connect_to_child;
-> +	int err, err_dgram;
-> +	int pipe_child[2], pipe_parent[2];
-> +	char buf_parent;
-> +
-> +	/*
-> +	 * can_connect_to_child is true if a parent process can connect to its
-> +	 * child process. The parent process is not isolated from the child
-> +	 * with a dedicated Landlock domain.
-> +	 */
-> +	can_connect_to_child = !variant->domain_parent;
-> +	/*
-> +	 * can_connect_to_parent is true if a child process can connect to its
-> +	 * parent process. This depends on the child process is not isolated from
-> +	 * the parent with a dedicated Landlock domain.
-> +	 */
-> +	can_connect_to_parent = !variant->domain_child;
-> +
-> +	ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
-> +	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
-> +	if (variant->domain_both) {
-> +		create_unix_domain(_metadata);
-> +		if (!__test_passed(_metadata))
-> +			return;
-> +	}
-> +
-> +	child = fork();
-> +	ASSERT_LE(0, child);
-> +	if (child == 0) {
-> +		char buf_child;
-> +
-> +		ASSERT_EQ(0, close(pipe_parent[1]));
-> +		ASSERT_EQ(0, close(pipe_child[0]));
-> +		if (variant->domain_child)
-> +			create_unix_domain(_metadata);
-> +
-> +		/* Waits for the parent to be in a domain, if any. */
-> +		ASSERT_EQ(1, read(pipe_parent[0], &buf_child, 1));
-> +
-> +		if (variant->connect_to_parent) {
-> +			self->client = socket(AF_UNIX, SOCK_STREAM, 0);
+LyoKICogSW5wdXQgaW4gJXJheCwgTVNSIG51bWJlciBpbiAlZWN4CiAqICVyZHggaXMgY2xv
+YmJlcmVkLCBhcyB0aGUgbmF0aXZlIHN0dWIgaXMgYXNzdW1lZCB0byBkbwogKgogKiBDaGFu
+Z2UgeGVuX2RvX3dyaXRlX21zciB0byByZXR1cm4gaXRzIGVycm9yIGNvZGUgaW5zdGVhZAog
+KiBvZiBwYXNzaW5nIGEgcG9pbnRlcgktIHRoaXMgZ2l2ZXMgdGhlIGV4dHJhIGJlbmVmaXQg
+dGhhdAogKiB3ZSBjYW4gZ2V0IHRoZSAqYWN0dWFsIGludm9jYXRpb24gYWRkcmVzcyogaW4g
+dGhlIGVycm9yCiAqIG1lc3NhZ2VzLgogKgogKiBleF9oYW5kbGVyX21zcigpIHNob3VsZCBi
+ZSBjaGFuZ2VkIHRvIGdldCB0aGUgTVNSIGRhdGEKICogZnJvbSAlcmF4IHJlZ2FyZGxlc3Mg
+b2YgWGVuIHZzIG5hdGl2ZTsgYWx0ZXJuYXRpdmVseSB0aGUKICogWGVuIGhhbmRsZXIgY2Fu
+IHNldCB1cCAlZWR4IGFzIHdlbGwuCiAqCiAqIExldCB0aGUgbmF0aXZlIHBhdHRlcm4gbG9v
+ayBsaWtlOgogKgogKiA0OCA4OSBjMiAgICAgICAgICAgICAgICBtb3YgICAgJXJheCwlcmR4
+CiAqIDQ4IGMxIGVhIDIwICAgICAgICAgICAgIHNociAgICAkMzIsJXJkeAogKiAzZSAwZiAz
+MCAgICAgICAgICAgICAgICBkcyB3cm1zcgkJPC0tLSB0cmFwIHBvaW50CiAqCiAqIC4uLiB3
+aGljaCBjYW4gYmUgcmVwbGFjZWQgd2l0aCAuLi4KICogNDggODkgYzIgICAgICAgICAgICAg
+ICAgbW92ICAgICVyYXgsJXJkeAogKiA0OCBjMSBlYSAyMCAgICAgICAgICAgICBzaHIgICAg
+JDMyLCVyZHgKICogMGYgMDEgYzYgICAgICAgICAgICAgICAgd3Jtc3JucwkJPC0tLSB0cmFw
+IHBvaW50CiAqCiAqIC4uLiBvciAuLi4KICogZTggeHggeHggeHggeHggICAgICAgICAgY2Fs
+bCBhc21feGVuX3dyaXRlX21zcgogKiA3NCAwMiAgICAgICAgICAgICAgICAgICBqeiAxZgog
+KiAzZSAwZiAwYiAgICAgICAgICAgICAgICBkcyB1ZDIgICAgICAgICAgICAgICAgICA8LS0t
+IHRyYXAgcG9pbnQKICogICAgICAgICAgICAgICAgICAgICAgMToKICogZHMgdWQyIGNhbiBv
+ZiBjb3Vyc2UgYmUgcmVwbGFjZWQgd2l0aCBhbnkgb3RoZXIgMy1ieXRlIHRyYXBwaW5nCiAq
+IGluc3RydWN0aW9uLgogKgogKiBUaGlzIGFsc28gcmVtb3ZlcyB0aGUgbmVlZCBmb3IgWGVu
+IHRvIG1haW50YWluIGRpZmZlcmVudCBzYWZlIGFuZAogKiB1bnNhZmUgTVNSIHJvdXRpbmVz
+LCBhcyB0aGUgZGlmZmVyZW5jZSBpcyBoYW5kbGVkIGJ5IHRoZSBzYW1lCiAqIHRyYXAgaGFu
+ZGxlciBhcyBpcyB1c2VkIG5hdGl2ZWx5LgogKi8KIFNZTV9GVU5DX1NUQVJUKGFzbV94ZW5f
+d3JpdGVfbXNyKQoJRlJBTUVfQkVHSU4KCXB1c2ggJXJheAkJLyogU2F2ZSBpbiBjYXNlIG9m
+IGVycm9yICovCglwdXNoICVyY3gKCXB1c2ggJXJzaQoJcHVzaCAlcmRpCglwdXNoICVyOAoJ
+cHVzaCAlcjkKCXB1c2ggJXIxMAoJcHVzaCAlcjExCgltb3YgJXJheCwlcmRpCgltb3YgJWVj
+eCwlZXNpCgljYWxsIHhlbl9kb193cml0ZV9tc3IKCXRlc3QgJWVheCwlZWF4CQkvKiBaRj0w
+IG9uIGVycm9yICovCglwb3AgJXIxMQoJcG9wICVyMTAKCXBvcCAlcjkKCXBvcCAlcjgKCXBv
+cCAlcmRpCglwb3AgJXJzaQoJcG9wICVyY3gKI2lmZGVmIE9QVElPTkFMCgltb3YgNCglcnNw
+KSwlZWR4CiNlbmRpZgoJcG9wICVyYXgKCUZSQU1FX0VORAoJUkVUClNZTV9GVU5DX0VORChh
+c21feGVuX3dyaXRlX21zcikK
 
-int stream_client;
-
-stream_client = socket(AF_UNIX, SOCK_STREAM, 0);
-
-ditto for dgram_client
-
-> +			self->dgram_client = socket(AF_UNIX, SOCK_DGRAM, 0);
-> +
-> +			ASSERT_NE(-1, self->client);
-> +			ASSERT_NE(-1, self->dgram_client);
-> +			ASSERT_EQ(1, read(pipe_parent[0], &buf_child, 1));
-> +
-> +			err = connect(self->client,
-> +				      &self->stream_address.unix_addr,
-> +				      (self->stream_address).unix_addr_len);
-> +			err_dgram =
-> +				connect(self->dgram_client,
-> +					&self->dgram_address.unix_addr,
-> +					(self->dgram_address).unix_addr_len);
-> +
-> +			if (can_connect_to_parent) {
-> +				EXPECT_EQ(0, err);
-> +				EXPECT_EQ(0, err_dgram);
-> +			} else {
-> +				EXPECT_EQ(-1, err);
-> +				EXPECT_EQ(-1, err_dgram);
-> +				EXPECT_EQ(EPERM, errno);
-> +			}
-
-EXPECT_EQ(0, close(stream_client));
-EXPECT_EQ(0, close(dgram_client));
-
-> +		} else {
-> +			self->server = socket(AF_UNIX, SOCK_STREAM, 0);
-
-int stream_server;
-
-server = socket(AF_UNIX, SOCK_STREAM, 0);
-
-ditto for dgram_server
-
-> +			self->dgram_server = socket(AF_UNIX, SOCK_DGRAM, 0);
-> +			ASSERT_NE(-1, self->server);
-> +			ASSERT_NE(-1, self->dgram_server);
-> +
-> +			ASSERT_EQ(0,
-> +				  bind(self->server,
-> +				       &self->stream_address.unix_addr,
-> +				       (self->stream_address).unix_addr_len));
-> +			ASSERT_EQ(0, bind(self->dgram_server,
-> +					  &self->dgram_address.unix_addr,
-> +					  (self->dgram_address).unix_addr_len));
-> +			ASSERT_EQ(0, listen(self->server, backlog));
-> +
-> +			/* signal to parent that child is listening */
-> +			ASSERT_EQ(1, write(pipe_child[1], ".", 1));
-> +			/* wait to connect */
-> +			ASSERT_EQ(1, read(pipe_parent[0], &buf_child, 1));
-
-ditto
-
-> +		}
-> +		_exit(_metadata->exit_code);
-> +		return;
-> +	}
-> +
-> +	ASSERT_EQ(0, close(pipe_child[1]));
-> +	ASSERT_EQ(0, close(pipe_parent[0]));
-> +
-> +	if (variant->domain_parent)
-> +		create_unix_domain(_metadata);
-> +
-> +	/* Signals that the parent is in a domain, if any. */
-> +	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
-> +
-> +	if (!variant->connect_to_parent) {
-> +		self->client = socket(AF_UNIX, SOCK_STREAM, 0);
-> +		self->dgram_client = socket(AF_UNIX, SOCK_DGRAM, 0);
-
-ditto
-
-> +
-> +		ASSERT_NE(-1, self->client);
-> +		ASSERT_NE(-1, self->dgram_client);
-> +
-> +		/* Waits for the child to listen */
-> +		ASSERT_EQ(1, read(pipe_child[0], &buf_parent, 1));
-> +		err = connect(self->client, &self->stream_address.unix_addr,
-> +			      (self->stream_address).unix_addr_len);
-> +		err_dgram = connect(self->dgram_client,
-> +				    &self->dgram_address.unix_addr,
-> +				    (self->dgram_address).unix_addr_len);
-> +
-> +		if (can_connect_to_child) {
-> +			EXPECT_EQ(0, err);
-> +			EXPECT_EQ(0, err_dgram);
-> +		} else {
-> +			EXPECT_EQ(-1, err);
-> +			EXPECT_EQ(-1, err_dgram);
-> +			EXPECT_EQ(EPERM, errno);
-> +		}
-> +		ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
-
-ditto
-
-> +	} else {
-> +		self->server = socket(AF_UNIX, SOCK_STREAM, 0);
-> +		self->dgram_server = socket(AF_UNIX, SOCK_DGRAM, 0);
-
-ditto
-
-> +		ASSERT_NE(-1, self->server);
-> +		ASSERT_NE(-1, self->dgram_server);
-> +		ASSERT_EQ(0, bind(self->server, &self->stream_address.unix_addr,
-> +				  (self->stream_address).unix_addr_len));
-> +		ASSERT_EQ(0, bind(self->dgram_server,
-> +				  &self->dgram_address.unix_addr,
-> +				  (self->dgram_address).unix_addr_len));
-> +		ASSERT_EQ(0, listen(self->server, backlog));
-> +
-> +		/* signal to child that parent is listening */
-> +		ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
-
-ditto
-
-> +	}
-> +
-> +	ASSERT_EQ(child, waitpid(child, &status, 0));
-> +
-> +	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
-> +	    WEXITSTATUS(status) != EXIT_SUCCESS)
-> +		_metadata->exit_code = KSFT_FAIL;
-> +}
-> +
-
-> +/*
-> + * ###################
-> + * #         ####### #  P3 -> P2 : allow
-> + * #   P1----# P2  # #  P3 -> P1 : deny
-> + * #         #  |  # #
-> + * #         # P3  # #
-> + * #         ####### #
-> + * ###################
-> + */
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(optional_scoping, all_scoped) {
-> +        .domain_all = SCOPE_SANDBOX,
-> +        .domain_parent = NO_SANDBOX,
-> +        .domain_children = SCOPE_SANDBOX,
-> +        .domain_child = NO_SANDBOX,
-> +        .domain_grand_child = NO_SANDBOX,
-> +        .type = SOCK_DGRAM,
-
-There are spaces instead of tabs here.
-
-> +	/* clang-format on */
-> +};
-
-> +/*
-> + *  ######		P3 -> P2 : deny
-> + *  # P1 #----P2	P3 -> P1 : deny
-> + *  ######     |
-> + *	       |
-> + *	     ######
-> + *           # P3 #
-> + *           ######
-> + */
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(optional_scoping, deny_with_self_and_parents_domain) {
-> +        .domain_all = NO_SANDBOX,
-> +        .domain_parent = SCOPE_SANDBOX,
-> +        .domain_children = NO_SANDBOX,
-> +        .domain_child = NO_SANDBOX,
-> +        .domain_grand_child = SCOPE_SANDBOX,
-> +        .type = SOCK_STREAM,
-
-ditto
-
-> +	/* clang-format on */
-> +};
-> +
-> +/* 
-
-Extra space
-
-> + * Test UNIX_STREAM_CONNECT and UNIX_MAY_SEND for parent, child
-> + * and grand child processes when they can have scoped or non-scoped
-> + * domains.
-> + **/
-
-Extra '*'
-
-> +TEST_F(optional_scoping, unix_scoping)
-> +{
-> +	pid_t child;
-> +	int status;
-> +	bool can_connect_to_parent, can_connect_to_child;
-> +	int pipe_parent[2];
-> +
-> +	can_connect_to_child =
-> +		(variant->domain_grand_child == SCOPE_SANDBOX) ? false : true;
-
-No need for `? false : true`, just use comparison result:
-can_connect_to_child = (variant->domain_grand_child != SCOPE_SANDBOX);
-
-
-> +
-> +	can_connect_to_parent = (!can_connect_to_child ||
-> +				 variant->domain_children == SCOPE_SANDBOX) ?
-> +					false :
-> +					true;
-
-ditto
-
-> +
-> +	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
-> +
-> +	if (variant->domain_all == OTHER_SANDBOX)
-> +		create_fs_domain(_metadata);
-> +	else if (variant->domain_all == SCOPE_SANDBOX)
-> +		create_unix_domain(_metadata);
-> +
-> +	child = fork();
-> +	ASSERT_LE(0, child);
-> +	if (child == 0) {
-> +		int pipe_child[2];
-> +
-> +		ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
-> +		pid_t grand_child;
-> +
-> +		if (variant->domain_children == OTHER_SANDBOX)
-> +			create_fs_domain(_metadata);
-> +		else if (variant->domain_children == SCOPE_SANDBOX)
-> +			create_unix_domain(_metadata);
-> +
-> +		grand_child = fork();
-> +		ASSERT_LE(0, grand_child);
-> +		if (grand_child == 0) {
-> +			ASSERT_EQ(0, close(pipe_parent[1]));
-> +			ASSERT_EQ(0, close(pipe_child[1]));
-> +
-> +			char buf1, buf2;
-> +			int err;
-> +
-> +			if (variant->domain_grand_child == OTHER_SANDBOX)
-> +				create_fs_domain(_metadata);
-> +			else if (variant->domain_grand_child == SCOPE_SANDBOX)
-> +				create_unix_domain(_metadata);
-> +
-> +			self->client = socket(AF_UNIX, variant->type, 0);
-
-ditto
-
-> +			ASSERT_NE(-1, self->client);
-> +
-> +			ASSERT_EQ(1, read(pipe_child[0], &buf2, 1));
-> +			err = connect(self->client,
-> +				      &self->child_address.unix_addr,
-> +				      (self->child_address).unix_addr_len);
-> +			if (can_connect_to_child) {
-> +				EXPECT_EQ(0, err);
-> +			} else {
-> +				EXPECT_EQ(-1, err);
-> +				EXPECT_EQ(EPERM, errno);
-> +			}
-> +
-> +			if (variant->type == SOCK_STREAM) {
-> +				EXPECT_EQ(0, close(self->client));
-> +				self->client =
-> +					socket(AF_UNIX, variant->type, 0);
-> +				ASSERT_NE(-1, self->client);
-> +			}
-> +
-> +			ASSERT_EQ(1, read(pipe_parent[0], &buf1, 1));
-> +			err = connect(self->client,
-> +				      &self->parent_address.unix_addr,
-> +				      (self->parent_address).unix_addr_len);
-> +			if (can_connect_to_parent) {
-> +				EXPECT_EQ(0, err);
-> +			} else {
-> +				EXPECT_EQ(-1, err);
-> +				EXPECT_EQ(EPERM, errno);
-> +			}
-> +			EXPECT_EQ(0, close(self->client));
-> +
-> +			_exit(_metadata->exit_code);
-> +			return;
-> +		}
-> +
-> +		ASSERT_EQ(0, close(pipe_child[0]));
-> +		if (variant->domain_child == OTHER_SANDBOX)
-> +			create_fs_domain(_metadata);
-> +		else if (variant->domain_child == SCOPE_SANDBOX)
-> +			create_unix_domain(_metadata);
-> +
-> +		self->child_server = socket(AF_UNIX, variant->type, 0);
-> +		ASSERT_NE(-1, self->child_server);
-> +		ASSERT_EQ(0, bind(self->child_server,
-> +				  &self->child_address.unix_addr,
-> +				  (self->child_address).unix_addr_len));
-> +		if (variant->type == SOCK_STREAM)
-> +			ASSERT_EQ(0, listen(self->child_server, backlog));
-> +
-> +		ASSERT_EQ(1, write(pipe_child[1], ".", 1));
-> +		ASSERT_EQ(grand_child, waitpid(grand_child, &status, 0));
-> +		return;
-> +	}
-> +	ASSERT_EQ(0, close(pipe_parent[0]));
-> +
-> +	if (variant->domain_parent == OTHER_SANDBOX)
-> +		create_fs_domain(_metadata);
-> +	else if (variant->domain_parent == SCOPE_SANDBOX)
-> +		create_unix_domain(_metadata);
-> +
-> +	self->parent_server = socket(AF_UNIX, variant->type, 0);
-> +	ASSERT_NE(-1, self->parent_server);
-> +	ASSERT_EQ(0, bind(self->parent_server, &self->parent_address.unix_addr,
-> +			  (self->parent_address).unix_addr_len));
-> +
-> +	if (variant->type == SOCK_STREAM)
-> +		ASSERT_EQ(0, listen(self->parent_server, backlog));
-> +
-> +	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
-> +	ASSERT_EQ(child, waitpid(child, &status, 0));
-> +	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
-> +	    WEXITSTATUS(status) != EXIT_SUCCESS)
-> +		_metadata->exit_code = KSFT_FAIL;
-> +}
-> +
-> +/*
-> + * Since the special case of scoping only happens when the connecting socket
-> + * is scoped, the client's domain is true for all the following test cases.
-> + */
-> +/* clang-format off */
-> +FIXTURE(unix_sock_special_cases) {
-> +	int server_socket, client;
-> +	int stream_server, stream_client;
-
-Same here, these variables should be local.
-
-> +	struct service_fixture address, transit_address;
-> +};
-> +
-> +/* clang-format on */
-> +FIXTURE_VARIANT(unix_sock_special_cases)
-> +{
-> +	const bool domain_server;
-> +	const bool domain_server_socket;
-> +	const int type;
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(unix_sock_special_cases, allow_dgram_server_sock_domain) {
-> +	/* clang-format on */
-> +	.domain_server = false,
-> +	.domain_server_socket = true,
-> +	.type = SOCK_DGRAM,
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(unix_sock_special_cases, deny_dgram_server_domain) {
-> +	/* clang-format on */
-> +	.domain_server = true,
-> +	.domain_server_socket = false,
-> +	.type = SOCK_DGRAM,
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(unix_sock_special_cases, allow_stream_server_sock_domain) {
-> +	/* clang-format on */
-> +	.domain_server = false,
-> +	.domain_server_socket = true,
-> +	.type = SOCK_STREAM,
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(unix_sock_special_cases, deny_stream_server_domain) {
-> +	/* clang-format on */
-> +	.domain_server = true,
-> +	.domain_server_socket = false,
-> +	.type = SOCK_STREAM,
-> +};
-> +
-> +FIXTURE_SETUP(unix_sock_special_cases)
-> +{
-> +	memset(&self->transit_address, 0, sizeof(self->transit_address));
-> +	memset(&self->address, 0, sizeof(self->address));
-> +	set_unix_address(&self->transit_address, 0);
-> +	set_unix_address(&self->address, 1);
-> +}
-> +
-> +FIXTURE_TEARDOWN(unix_sock_special_cases)
-> +{
-> +	close(self->client);
-> +	close(self->server_socket);
-> +	close(self->stream_server);
-> +	close(self->stream_client);
-
-These EXPECT_EQ(0, close()) calls should be local too.
+--------------eEzwgDqgLY0cwdRptC9Ae9Ma--
 
