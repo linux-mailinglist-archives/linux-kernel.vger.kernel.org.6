@@ -1,178 +1,150 @@
-Return-Path: <linux-kernel+bounces-289035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D01954170
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:55:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0878C954164
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86253284BC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 05:55:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88CF9284A43
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 05:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5EE8139563;
-	Fri, 16 Aug 2024 05:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7498F81AB1;
+	Fri, 16 Aug 2024 05:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eeiMxHtS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RI/onDsd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC11913342F;
-	Fri, 16 Aug 2024 05:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA39D2837B;
+	Fri, 16 Aug 2024 05:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723787641; cv=none; b=ROZd7V6wYXbXAIZqRBcBjS6Zt5XZjs1EPX/kJ/58OHAIw+kQSWFEB8sYAaRg8lmCJsnfnWVCArgQe2+3Q/bGnsaE6lbWB9lN+6PeTiLvu1rs/TxbSSquY7cvD+KvYD58/I1PO8kLUnBZT5tLb1yHnlZss8ekQPxFLYo/8UtQFnA=
+	t=1723787567; cv=none; b=rHfJiDld+mSMgrpEfWjYVN1KXAwDhJNJewcfSuRjq7cc3LUZtlq/iwSjLzDY8EIB6Cy9k09NQgQ3EIAgBVRN54YKM79WnGgq3zYihV9cfwxjdjCp4JHK+OZl3S/So18ZO7Vs5US41WTfiueALO1M4izKDJJypm00f/VZxjGrUj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723787641; c=relaxed/simple;
-	bh=eeppvtbDpSkgUcv30kPmrHzbBpLaPSX80LuOauxDDFU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GTA55OeYL4XVq6RB8c+EBtGce/3ji1CduRGh9uEHlCT7nA4XDpCJ3QSf+LyfmTlgjKVHsMlf0GtnAoJFLEWkhBkOBnwyjSDBFpdnwkkki4Eq7A2EBXQ4JEQKLK8t50dd/KgHUAmP3HY47jvniTZPsrbBIn+wl/IPVvg67C4K2g8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eeiMxHtS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E3CCC4AF0B;
-	Fri, 16 Aug 2024 05:53:52 +0000 (UTC)
+	s=arc-20240116; t=1723787567; c=relaxed/simple;
+	bh=Xcopc7tK8G4+SePbVsdHO/9wA+krKsvwVmsu8ti7V2w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sKmv+TfrH5dbUUQTWVI2gr3L7fYJBBbY3AeGvIBob8QNBSJRhqTSAlNcYI+wfjzcWHEbbeEEnOPOQiQM7AKDW+DoWDhPf9XRj9f9k14A+qhT9rDKYE/U3FVMN0uyI5hslwJefaEqPBIcykLbK5jl8c+J+X9bADpfcbv5zRFu8uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RI/onDsd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0EF5C4AF0B;
+	Fri, 16 Aug 2024 05:52:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723787641;
-	bh=eeppvtbDpSkgUcv30kPmrHzbBpLaPSX80LuOauxDDFU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=eeiMxHtS39MOWPc+4Mylgh6YtVVzlrSYTKn84GAt/OC1j3Zb+XbU8SfxAQMQTtyc+
-	 AfXUy8ASBrx7pmqqGSj4Q4sm3Cn7gypHfus2Lv66VxfUdLUQSJJV2Z0/NLul4eHMSV
-	 CYdTV90sBcnXBT3MeYiVlD9Sgly569kahaNFG9koZmINKFkc/xR3N4NVp9ZgD9Y+Q6
-	 t28BCzHqI+jq02jjmnjYhm+aYyNX1M9jUp/AH7a/Q7NF7qrlwDpAgy5frX8fFS/afZ
-	 p4sDMW7KzqHkL+WF2b0rK7E1AOy+pQi9HtyVsee8KVEo7oMK5IcoUUswLzicVq65pd
-	 6jkUMMJh2PArw==
-From: neeraj.upadhyay@kernel.org
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	paulmck@kernel.org,
-	neeraj.upadhyay@kernel.org,
-	neeraj.upadhyay@amd.com,
-	boqun.feng@gmail.com,
-	joel@joelfernandes.org,
-	urezki@gmail.com,
-	frederic@kernel.org
-Subject: [PATCH rcu 8/8] torture: Add torture.sh --guest-cpu-limit argument for limited hosts
-Date: Fri, 16 Aug 2024 11:22:03 +0530
-Message-Id: <20240816055203.43784-9-neeraj.upadhyay@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240816055203.43784-1-neeraj.upadhyay@kernel.org>
-References: <20240816055203.43784-1-neeraj.upadhyay@kernel.org>
+	s=k20201202; t=1723787567;
+	bh=Xcopc7tK8G4+SePbVsdHO/9wA+krKsvwVmsu8ti7V2w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RI/onDsd/iSxiFKdHRvAw8N0PZMCMiinRnD8etpJp7PziQKnSYK77CDH9hzf8+DZE
+	 WIW2JnZXlmM547u43x9agr7jTN8lBLleVpFwxsLEI1/fqGXBoAsAaDTOpSbgPyDaRx
+	 rHoC86WoMBY3wvxqM6rWgbeEnh2biftW2RoJPvd7EUnLLwF2+gK7EG5oRoQswk8s6n
+	 xRIzgWRuD6uc+BkpybSH3/Gg3GTmjaO14l4Ur+Nfc5E9pq4HX5yNheWziJSldBkVkK
+	 w0hJ1zAkHQXybO1JsY8YQjbv53pQGTQ8WKTCgES1udXn0aOhOB/0N6Zv5tg/aPJhsy
+	 krwPHstbDHkEw==
+Message-ID: <5d26a74d-af5c-490a-8a00-ca0791bb23f6@kernel.org>
+Date: Fri, 16 Aug 2024 07:52:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gpio: add support for FTDI's MPSSE as GPIO
+To: Mary Strodl <mstrodl@csh.rit.edu>, linux-kernel@vger.kernel.org
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, linux-gpio@vger.kernel.org
+References: <20240814191509.1577661-1-mstrodl@csh.rit.edu>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240814191509.1577661-1-mstrodl@csh.rit.edu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: "Paul E. McKenney" <paulmck@kernel.org>
+On 14/08/2024 21:15, Mary Strodl wrote:
+> FTDI FT2232H is a USB to GPIO chip. Sealevel produces some devices
+> with this chip. FT2232H presents itself as a composite device with two
+> interfaces (each is an "MPSSE"). Each MPSSE has two banks (high and low)
+> of 8 GPIO each. I believe some MPSSE's have only one bank, but I don't
+> know how to identify them (I don't have any for testing) and as a result
+> are unsupported for the time being.
+> 
+> Additionally, this driver provides software polling-based interrupts for
+> edge detection. For the Sealevel device I have to test with, this works
+> well because there is hardware debouncing. From talking to Sealevel's
+> people, this is their preferred way to do edge detection.
+> 
+> Signed-off-by: Mary Strodl <mstrodl@csh.rit.edu>
 
-Some servers have limitations on the number of CPUs a given guest OS
-can use.  In my earlier experience, such limitations have been at least
-half of the host's CPUs, but in a recent example, this limit is less
-than 40%.  This commit therefore adds a --guest-cpu-limit argument that
-allows such low limits to be made known to torture.sh.
+Thank you for your patch. There is something to discuss/improve.
 
-Signed-off-by: "Paul E. McKenney" <paulmck@kernel.org>
-Signed-off-by: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
----
- .../selftests/rcutorture/bin/torture.sh       | 38 +++++++++++++------
- 1 file changed, 27 insertions(+), 11 deletions(-)
 
-diff --git a/tools/testing/selftests/rcutorture/bin/torture.sh b/tools/testing/selftests/rcutorture/bin/torture.sh
-index 990d24696fd3..0447c4a00cc4 100755
---- a/tools/testing/selftests/rcutorture/bin/torture.sh
-+++ b/tools/testing/selftests/rcutorture/bin/torture.sh
-@@ -19,10 +19,10 @@ PATH=${RCUTORTURE}/bin:$PATH; export PATH
- 
- TORTURE_ALLOTED_CPUS="`identify_qemu_vcpus`"
- MAKE_ALLOTED_CPUS=$((TORTURE_ALLOTED_CPUS*2))
--HALF_ALLOTED_CPUS=$((TORTURE_ALLOTED_CPUS/2))
--if test "$HALF_ALLOTED_CPUS" -lt 1
-+SCALE_ALLOTED_CPUS=$((TORTURE_ALLOTED_CPUS/2))
-+if test "$SCALE_ALLOTED_CPUS" -lt 1
- then
--	HALF_ALLOTED_CPUS=1
-+	SCALE_ALLOTED_CPUS=1
- fi
- VERBOSE_BATCH_CPUS=$((TORTURE_ALLOTED_CPUS/16))
- if test "$VERBOSE_BATCH_CPUS" -lt 2
-@@ -90,6 +90,7 @@ usage () {
- 	echo "       --do-scftorture / --do-no-scftorture / --no-scftorture"
- 	echo "       --do-srcu-lockdep / --do-no-srcu-lockdep / --no-srcu-lockdep"
- 	echo "       --duration [ <minutes> | <hours>h | <days>d ]"
-+	echo "       --guest-cpu-limit N"
- 	echo "       --kcsan-kmake-arg kernel-make-arguments"
- 	exit 1
- }
-@@ -203,6 +204,21 @@ do
- 		duration_base=$(($ts*mult))
- 		shift
- 		;;
-+	--guest-cpu-limit|--guest-cpu-lim)
-+		checkarg --guest-cpu-limit "(number)" "$#" "$2" '^[0-9]*$' '^--'
-+		if (("$2" <= "$TORTURE_ALLOTED_CPUS" / 2))
-+		then
-+			SCALE_ALLOTED_CPUS="$2"
-+			VERBOSE_BATCH_CPUS="$((SCALE_ALLOTED_CPUS/8))"
-+			if (("$VERBOSE_BATCH_CPUS" < 2))
-+			then
-+				VERBOSE_BATCH_CPUS=0
-+			fi
-+		else
-+			echo "Ignoring value of $2 for --guest-cpu-limit which is greater than (("$TORTURE_ALLOTED_CPUS" / 2))."
-+		fi
-+		shift
-+		;;
- 	--kcsan-kmake-arg|--kcsan-kmake-args)
- 		checkarg --kcsan-kmake-arg "(kernel make arguments)" $# "$2" '.*' '^error$'
- 		kcsan_kmake_args="`echo "$kcsan_kmake_args $2" | sed -e 's/^ *//' -e 's/ *$//'`"
-@@ -425,9 +441,9 @@ fi
- if test "$do_scftorture" = "yes"
- then
- 	# Scale memory based on the number of CPUs.
--	scfmem=$((3+HALF_ALLOTED_CPUS/16))
--	torture_bootargs="scftorture.nthreads=$HALF_ALLOTED_CPUS torture.disable_onoff_at_boot csdlock_debug=1"
--	torture_set "scftorture" tools/testing/selftests/rcutorture/bin/kvm.sh --torture scf --allcpus --duration "$duration_scftorture" --configs "$configs_scftorture" --kconfig "CONFIG_NR_CPUS=$HALF_ALLOTED_CPUS" --memory ${scfmem}G --trust-make
-+	scfmem=$((3+SCALE_ALLOTED_CPUS/16))
-+	torture_bootargs="scftorture.nthreads=$SCALE_ALLOTED_CPUS torture.disable_onoff_at_boot csdlock_debug=1"
-+	torture_set "scftorture" tools/testing/selftests/rcutorture/bin/kvm.sh --torture scf --allcpus --duration "$duration_scftorture" --configs "$configs_scftorture" --kconfig "CONFIG_NR_CPUS=$SCALE_ALLOTED_CPUS" --memory ${scfmem}G --trust-make
- fi
- 
- if test "$do_rt" = "yes"
-@@ -471,8 +487,8 @@ for prim in $primlist
- do
- 	if test -n "$firsttime"
- 	then
--		torture_bootargs="refscale.scale_type="$prim" refscale.nreaders=$HALF_ALLOTED_CPUS refscale.loops=10000 refscale.holdoff=20 torture.disable_onoff_at_boot"
--		torture_set "refscale-$prim" tools/testing/selftests/rcutorture/bin/kvm.sh --torture refscale --allcpus --duration 5 --kconfig "CONFIG_TASKS_TRACE_RCU=y CONFIG_NR_CPUS=$HALF_ALLOTED_CPUS" --bootargs "refscale.verbose_batched=$VERBOSE_BATCH_CPUS torture.verbose_sleep_frequency=8 torture.verbose_sleep_duration=$VERBOSE_BATCH_CPUS" --trust-make
-+		torture_bootargs="refscale.scale_type="$prim" refscale.nreaders=$SCALE_ALLOTED_CPUS refscale.loops=10000 refscale.holdoff=20 torture.disable_onoff_at_boot"
-+		torture_set "refscale-$prim" tools/testing/selftests/rcutorture/bin/kvm.sh --torture refscale --allcpus --duration 5 --kconfig "CONFIG_TASKS_TRACE_RCU=y CONFIG_NR_CPUS=$SCALE_ALLOTED_CPUS" --bootargs "refscale.verbose_batched=$VERBOSE_BATCH_CPUS torture.verbose_sleep_frequency=8 torture.verbose_sleep_duration=$VERBOSE_BATCH_CPUS" --trust-make
- 		mv $T/last-resdir-nodebug $T/first-resdir-nodebug || :
- 		if test -f "$T/last-resdir-kasan"
- 		then
-@@ -520,8 +536,8 @@ for prim in $primlist
- do
- 	if test -n "$firsttime"
- 	then
--		torture_bootargs="rcuscale.scale_type="$prim" rcuscale.nwriters=$HALF_ALLOTED_CPUS rcuscale.holdoff=20 torture.disable_onoff_at_boot"
--		torture_set "rcuscale-$prim" tools/testing/selftests/rcutorture/bin/kvm.sh --torture rcuscale --allcpus --duration 5 --kconfig "CONFIG_TASKS_TRACE_RCU=y CONFIG_NR_CPUS=$HALF_ALLOTED_CPUS" --trust-make
-+		torture_bootargs="rcuscale.scale_type="$prim" rcuscale.nwriters=$SCALE_ALLOTED_CPUS rcuscale.holdoff=20 torture.disable_onoff_at_boot"
-+		torture_set "rcuscale-$prim" tools/testing/selftests/rcutorture/bin/kvm.sh --torture rcuscale --allcpus --duration 5 --kconfig "CONFIG_TASKS_TRACE_RCU=y CONFIG_NR_CPUS=$SCALE_ALLOTED_CPUS" --trust-make
- 		mv $T/last-resdir-nodebug $T/first-resdir-nodebug || :
- 		if test -f "$T/last-resdir-kasan"
- 		then
-@@ -559,7 +575,7 @@ do_kcsan="$do_kcsan_save"
- if test "$do_kvfree" = "yes"
- then
- 	torture_bootargs="rcuscale.kfree_rcu_test=1 rcuscale.kfree_nthreads=16 rcuscale.holdoff=20 rcuscale.kfree_loops=10000 torture.disable_onoff_at_boot"
--	torture_set "rcuscale-kvfree" tools/testing/selftests/rcutorture/bin/kvm.sh --torture rcuscale --allcpus --duration $duration_rcutorture --kconfig "CONFIG_NR_CPUS=$HALF_ALLOTED_CPUS" --memory 2G --trust-make
-+	torture_set "rcuscale-kvfree" tools/testing/selftests/rcutorture/bin/kvm.sh --torture rcuscale --allcpus --duration $duration_rcutorture --kconfig "CONFIG_NR_CPUS=$SCALE_ALLOTED_CPUS" --memory 2G --trust-make
- fi
- 
- if test "$do_clocksourcewd" = "yes"
--- 
-2.40.1
+> +
+> +static struct usb_driver gpio_mpsse_driver = {
+> +	.name           = "gpio-mpsse",
+> +	.probe          = gpio_mpsse_probe,
+> +	.disconnect     = gpio_mpsse_disconnect,
+> +	.id_table       = gpio_mpsse_table,
+> +};
+> +
+> +module_usb_driver(gpio_mpsse_driver);
+> +
+> +MODULE_ALIAS("gpio-mpsse");
+
+You should not need MODULE_ALIAS() in normal cases. If you need it,
+usually it means your device ID table is wrong (e.g. misses either
+entries or MODULE_DEVICE_TABLE()). MODULE_ALIAS() is not a substitute
+for incomplete ID table.
+
+The module with autoload based on USB ids, right?
+
+
+> +MODULE_AUTHOR("Mary Strodl <mstrodl@csh.rit.edu>");
+> +MODULE_DESCRIPTION("MPSSE GPIO driver");
+> +MODULE_LICENSE("GPL");
+
+Best regards,
+Krzysztof
 
 
