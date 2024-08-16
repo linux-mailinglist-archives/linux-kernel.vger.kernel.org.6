@@ -1,105 +1,97 @@
-Return-Path: <linux-kernel+bounces-289867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB51E954C9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:42:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87F0A954C9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78F53288159
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:42:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB39B1C24AE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20931BD01F;
-	Fri, 16 Aug 2024 14:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2251BD03B;
+	Fri, 16 Aug 2024 14:42:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MuUyvOcM"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Ub1ECHTV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28527191473;
-	Fri, 16 Aug 2024 14:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BDC191473;
+	Fri, 16 Aug 2024 14:42:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723819335; cv=none; b=EroWNTwBkKCREE18V1JE83tsNgPu/lYRkRvEWBelcDc5e5CgcnT8HJwW9A3Sw5X4V1Fi2KSybzPHRf0i7woPn2ArQ+lv5+3wDiyrGPuPdFV1T+o7YETyFTMHYEzcPOGcZYx0JQZbSBSaVCSzKVZrnSeVuc0OEPQJtKCsuRV3cbI=
+	t=1723819349; cv=none; b=AAfu1eQVFiUHSdolHQvM3tTwC82I7oOJOHUINHLsd4ajklTMygWUGpYcS4IwnVKIcY1WzzmvKsbFEAEJLNwgWbUvQVXRfOEZ4YJxVwoddzGgnjESJ8xmpboBMNf7vyLqF5obfzmu4kCMtSfHGU8JnG0zriz1M/VrZKCCIaXL7S8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723819335; c=relaxed/simple;
-	bh=7TGuegKZbNzPtsJjymQhdPwGEn/Vab/BwE8qKh95Wgg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=R/jHyKLrlPWjNBJp7P6sfs9EGYSwsgdglWDRQlJSlDhmwf6cEuzavp8Ck0zEfQzGXujetwSSUCuZci4rT8cjufqFd1f+AB/UKQxEM2PwCcLtsChJLrf0+aVjKL8mNlHrnc8mzprnsA/75mANJUboC5UbwGZ0PXz8zNCy6o1xVXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MuUyvOcM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B975EC32782;
-	Fri, 16 Aug 2024 14:42:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723819334;
-	bh=7TGuegKZbNzPtsJjymQhdPwGEn/Vab/BwE8qKh95Wgg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=MuUyvOcMDsHWUrm7QvhhQqvro+LQqyCCLtoq7e/dnIDNs7Ge4iNH4ULEHf0WqL9PP
-	 O934GIwYW9fDE3Sn9MBNTIQLbOpQUcqdIxzUpXoEzgIjp35TyfizY4kWtPCyBr7QxH
-	 C/dHz+7T9ViDG57XAee5lEsvnaY/UG/u7pXQ/L9urDWHfWxPHmdGrdn20JYE97yrmV
-	 1Ry5gDafPO9GPQHEBBz897IPJfKF+3HlD2KGTl91fz/HYpAsdFgMDaea1vJUD4YSOJ
-	 tmAgqtnuDjihRLcPRwGosNM2BMjg1IyRa4k8fKxK5D+oGSXhomvVOqgbzzYg9zr0Cp
-	 vOqm2LAdFNk2g==
-From: Mark Brown <broonie@kernel.org>
-To: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-Cc: alsa-devel@alsa-project.org, pierre-louis.bossart@linux.intel.com, 
- yung-chuan.liao@linux.intel.com, ranjani.sridharan@linux.intel.com, 
- lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com, 
- venkataprasad.potturu@amd.com, cristian.ciocaltea@collabora.com, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240816070328.610360-1-Vijendar.Mukunda@amd.com>
-References: <20240816070328.610360-1-Vijendar.Mukunda@amd.com>
-Subject: Re: [PATCH] ASoC: SOF: amd: Fix for acp init sequence
-Message-Id: <172381933148.65490.13739657424123950336.b4-ty@kernel.org>
-Date: Fri, 16 Aug 2024 15:42:11 +0100
+	s=arc-20240116; t=1723819349; c=relaxed/simple;
+	bh=TUkHIeV/zlALbVKyJ8dfPXvj/ynLTnBJxD/KkydGsiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ky4UDCC0yOhpv6ufh2LqkGP0K6XrV/ymwlQBMKJPXVxXIO/ETu+JEHaE/yzOeoUCllioG1vI/SPIItuuVdWlIOKankFlLUjV467tdhZf16/f+S2rovmnwzGhqIi2hzpl7hMlmpbI0EuRFx97R6HZkgjw2xvBBuKPFQYngR+zkmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Ub1ECHTV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B5EBC32782;
+	Fri, 16 Aug 2024 14:42:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723819348;
+	bh=TUkHIeV/zlALbVKyJ8dfPXvj/ynLTnBJxD/KkydGsiM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ub1ECHTVJPwH5CHDKddEBDLHWge4FSmO+DNDuXu4cDl6phW2UV+w3LLNRBhVuGLSV
+	 NDA9WFJ0/JRyHcZGI/i6pjVexIdIFKWrfusGPVAgdGRrvs1QouYWppZkaH8dyXaAEM
+	 5+3rWKewrTm8hoH6K1juN3Fmz3hH22YpT8noU/jQ=
+Date: Fri, 16 Aug 2024 16:42:25 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: =?utf-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>
+Cc: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+	"quic_prashk@quicinc.com" <quic_prashk@quicinc.com>,
+	"quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"opensource.kernel" <opensource.kernel@vivo.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Subject: Re: =?utf-8?B?562U5aSNOiBbUEFUQw==?= =?utf-8?Q?H?= v1] usb: gadget:
+ u_serial: check Null pointer in EP callback
+Message-ID: <2024081652-unify-unlucky-28d2@gregkh>
+References: <TYUPR06MB62177737F0054278B489962BD2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <2024081608-punch-coherent-d29e@gregkh>
+ <CAOf5uwnsgcJjp1=RLa7qx9ScQY5rZvwX-Zu6BOqxBBhBCz+CFQ@mail.gmail.com>
+ <TYUPR06MB62177BCD4AB43C19E38990D3D2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <CAOf5uwm65Cw-V+td_=6QAGUF+Uisueqcm0z=1zFaNTisAJnSFQ@mail.gmail.com>
+ <TYUPR06MB6217877B31A08356241CAB38D2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <TYUPR06MB6217877B31A08356241CAB38D2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
 
-On Fri, 16 Aug 2024 12:33:28 +0530, Vijendar Mukunda wrote:
-> When ACP is not powered on by default, acp power on sequence explicitly
-> invoked by programming pgfsm control mask. The existing implementation
-> checks the same PGFSM status mask and programs the same PGFSM control mask
-> in all ACP variants which breaks acp power on sequence for ACP6.0 and
-> ACP6.3 variants. So to fix this issue, update ACP pgfsm control mask and
-> status mask based on acp descriptor rev field, which will vary based on
-> acp variant.
+On Fri, Aug 16, 2024 at 02:19:58PM +0000, 胡连勤 wrote:
+> Hello linux community expert:
 > 
-> [...]
+> > > Q: Are you running a mainline kernel?
+> > > A: Yes.
+> >
+> > You should reply without top posting (refer to [1]). I'm trying to be helpful to you but it's not easy. The question was if your on some 6.10.y or older version of the kernel, the step to reproduce it, and if you have any automation to test it
+>   The kernel version that has the problem is 5.15.
 
-Applied to
+Which specific 5.15 kernel?  The latest one or some random
+Android-provided 5.15 kernel?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Does this also show up on 6.11-rc3?
 
-Thanks!
+>   To reproduce, turn on the combination mode of the mobile phone USB, such as adb+diag+serial_tty+rmnet_ipa+serial_cdev when running the monkey test.
 
-[1/1] ASoC: SOF: amd: Fix for acp init sequence
-      commit: a42db293e5983aa1508d12644f23d73f0553b32c
+What is "monkey test"?
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+I think this has been reported previously, and different patches have
+been proposed, have you searched the archives?
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Specifically, take a look at:
+	https://lore.kernel.org/r/20240116141801.396398-1-khtsai@google.com
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+thanks,
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+greg k-h
 
