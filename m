@@ -1,180 +1,150 @@
-Return-Path: <linux-kernel+bounces-289975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45821954DF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:40:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 428D5954DFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 17:40:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0061284120
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:40:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E02551F26D0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 15:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D951BDAAB;
-	Fri, 16 Aug 2024 15:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87EDA1BE221;
+	Fri, 16 Aug 2024 15:40:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A141WcLa"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B3l497tn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BAE1DDF5;
-	Fri, 16 Aug 2024 15:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0671DDF5;
+	Fri, 16 Aug 2024 15:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723822802; cv=none; b=lszQjG+ShfrEFB0Gwb4Yj6YWYdoMGEwiInQkkbnvNF0cI7lowabPqVOhBkoSGLrhj/aOftKPS7C1V1I8sE9Ef6Zl8VUgHtq2ADvsdoc8TmWUXayvYFKX/bjDWiWGgcpZdLaUv3kobEqLiahii+wHOSZ0GQ1AU6X8DyTjbtIHNP8=
+	t=1723822846; cv=none; b=Jg9Axy2jcAgNA+B/ThSenTLK7ipb9WKKyw6hk0SNlxUZhg1DKXeDlCgy7DUcPUO+gz7rJyVQu3oKA8rIphhLd058k1QwEbQKpskntBjFBwl4nFcp4BZjnMCGjXCW26Y1VVGScIB+ziY5/SOkGPzb59xelXaFJweDVgUU5XPQAS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723822802; c=relaxed/simple;
-	bh=SodHBwOnb0Y1f+oSByMA9Ox5MHwmXJ4juOcn37B0Bno=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C3ZOuj7Q0TukRRSx6LYY3pN56C6U+CzRqW9AotkcLhP2l90RuKYLz3sRi45J5UaPNWGbMKszf5p2GF7iZ7Vf7FuY5TqSUhvrJGmghXMpqCwJsD7+c2LXnS1AFhXptenZeJlbgmbmRaEgLSl2+qYDtORuAErb1scvdlK5UnY1hgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A141WcLa; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-429da8b5feaso21544335e9.2;
-        Fri, 16 Aug 2024 08:39:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723822798; x=1724427598; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/6S2acSozC6mYzCkGcCYQNmohIFTorTmXouK8gd9clk=;
-        b=A141WcLa7hBVeECajN5AzYpS3vGfU9rwCDOld3NDiy4VgCSM+tOWjOW3LuguUd5erb
-         +7+y1sF4VDlffPkYcDZTtNrXu8TvuZyia7b2A+0KQnoPaAR5/ANyhiZiqcgTQy+kljWw
-         2VS5TEuxIj/b/AsTzbVbTpCnDFnYIEYb19PXcLJ0OMccO5dhYtni6fYGWtrlFURvTGA5
-         wdlWh9QM1Q4zbS3OgAXdUR8dKD8eNTWBnlwUjrxYp0VX3UgFuzW1O7fTVZjhS1m9oOVq
-         aFZgD90n0HXUMyVgikI23VBP2y1kd5TBkZsgru3uQ8Kfs3hSh+Zmlkkj9zOdk7Ha8+wu
-         fmCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723822798; x=1724427598;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/6S2acSozC6mYzCkGcCYQNmohIFTorTmXouK8gd9clk=;
-        b=aY4gCs4Twmk+7WUCXlIn29dySt+HIhe++mal/pVopv/WRJ7TS8oRN83Ofn7lMG887w
-         bvM9YSrUer2AhmBSPH7TwlZ1Fo75FpFEwB8z+wggQ3Y2eI9qmUcqTRawL7rT7/IA1+lZ
-         rifkJPV+s7vejBEkAqzvEJYeDEmL+O7owSSNUiX1OqWoqW4cuYF5PhDvp6HL7JE489qM
-         WEaXzCXfraoUG8t5duMa7s1IevQW5ofiuz4012Di38APtoEUPPPgk9qaPddM+v3nTg/1
-         TGoquDu91abrpDfnYXfWYai10mWS390Zvr25a4WaYwRCCrDn5LAU+j7n/KgmY9fm/v7k
-         UFaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWomSdinyQBPGcn+Uk6IQk09DWw9pOO7TJ3zfTklJayaiEX5CzOs6eJ93s8LkkesQXxvRUUa/VqMmf462VIZcQ2wo76zhiDyLv34gOuYTUFtM5rPRWi4z4+01F7hZbt7Uee
-X-Gm-Message-State: AOJu0YzlX6GMdOHZm9sGeBVY2JvyAmmYPZiKY4B5x6v/5JzRaT+3Ab/M
-	Ah6vVJ6h9i/xHg6zbdEw6gd0DnEfnOCvo3V3HgECixSR+eDqmtbPb8NY1+p/ZEfbdtYwxpnSj7a
-	oR+JP9N8w0NqIGl3K1GTPaUPeE+lRdEZcIqA=
-X-Google-Smtp-Source: AGHT+IFxgn2tebM4X1AucuO0ZQREUl+nzh/ddBxxqDgJVt6QLUfVKhqOUgFvOomAG6kN1y9vgP2ngOIww01AqumR3Sk=
-X-Received: by 2002:a05:600c:190e:b0:426:5e8e:aa48 with SMTP id
- 5b1f17b1804b1-429ed7b8878mr31018735e9.22.1723822797442; Fri, 16 Aug 2024
- 08:39:57 -0700 (PDT)
+	s=arc-20240116; t=1723822846; c=relaxed/simple;
+	bh=s5xPHWl9Hp3bK8OiyJg3sXrToRCCGMBKSEElvw86CVE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZKtZyMU6a8V5M2aIXP60v7S+AakIzax8POQ2R8PrlmNaHbG4qPIAytY4KH26fzXBiEl4h8cAPyWWLgdBFwPTKg499eJKTe99b2gjupAHJj1KrF+g7t56zE/5IEZZO5wzEmzJcvelb/rcTMKfp1aqFgzRuSEKvn6OQqPNN8s5MtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B3l497tn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2BB8C32782;
+	Fri, 16 Aug 2024 15:40:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723822846;
+	bh=s5xPHWl9Hp3bK8OiyJg3sXrToRCCGMBKSEElvw86CVE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=B3l497tn3B12WsQ5ObXXui8/RU+jgZAr8/RMpUXMd9+geIryseMBncYOO6k5bY+cn
+	 wbobUGvDw70jemzkKx7lxaTwxsCPD7Eo5lbJn44aD7mB+6TKL41ZNgHdqJ7fu7Z1or
+	 gg0VaELZLsulUUorgFnEH4eHMcpOKAKXyt6YoTgYMdI+wlBPaqwtPJ2nIF+1W9rBFg
+	 1UM1f9cRIZvtRrctpT6M20UWSwdcXFeTwhS3aMm2av0CNw3p5EFY+cdhsk69Er7upJ
+	 x2yDad2OOPvcFZGtEEM2MvzAqp0dTZP9Du6KTby9J62D4rsd8rOM7bsTu+rLOU3IZD
+	 HBNNIMBUTTv+g==
+Message-ID: <f91048f3-2a97-493f-a35c-0e8f184d77d6@kernel.org>
+Date: Fri, 16 Aug 2024 17:40:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AM6PR03MB58489794C158C438B04FD0E599802@AM6PR03MB5848.eurprd03.prod.outlook.com>
- <CAEf4Bzb3XbGx+N5yrYELNAkaABP9fyifAQhTP1VHSvVycG36TQ@mail.gmail.com> <AM6PR03MB584807BFB29105F1D7FDC89E99812@AM6PR03MB5848.eurprd03.prod.outlook.com>
-In-Reply-To: <AM6PR03MB584807BFB29105F1D7FDC89E99812@AM6PR03MB5848.eurprd03.prod.outlook.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 16 Aug 2024 17:39:46 +0200
-Message-ID: <CAADnVQKvt2uUsvFbYnEmApj9ZzeL0on1zM4zKBJEFmzuoTtzhg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 1/2] bpf: Make the pointer returned by iter next
- method valid
-To: Juntong Deng <juntong.deng@outlook.com>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 04/10] power: supply: max77693: Set charge current
+ limits during init
+To: Artur Weber <aweber.kernel@gmail.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht, Henrik Grimler <henrik@grimler.se>,
+ Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>,
+ Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
+References: <20240816-max77693-charger-extcon-v4-0-050a0a9bfea0@gmail.com>
+ <20240816-max77693-charger-extcon-v4-4-050a0a9bfea0@gmail.com>
+ <9dbaacdb-5f9c-48d4-a56a-a19ca8809344@kernel.org>
+ <021f5a99-bbee-4d4c-b36e-49339030b869@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <021f5a99-bbee-4d4c-b36e-49339030b869@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 16, 2024 at 3:43=E2=80=AFPM Juntong Deng <juntong.deng@outlook.=
-com> wrote:
->
-> On 8/15/24 18:15, Andrii Nakryiko wrote:
-> > On Thu, Aug 15, 2024 at 9:11=E2=80=AFAM Juntong Deng <juntong.deng@outl=
-ook.com> wrote:
-> >>
-> >> Currently we cannot pass the pointer returned by iter next method as
-> >> argument to KF_TRUSTED_ARGS kfuncs, because the pointer returned by
-> >> iter next method is not "valid".
-> >>
-> >> This patch sets the pointer returned by iter next method to be valid.
-> >>
-> >> This is based on the fact that if the iterator is implemented correctl=
-y,
-> >> then the pointer returned from the iter next method should be valid.
-> >>
-> >> This does not make NULL pointer valid. If the iter next method has
-> >> KF_RET_NULL flag, then the verifier will ask the ebpf program to
-> >> check NULL pointer.
-> >>
-> >> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
-> >> ---
-> >>   kernel/bpf/verifier.c | 4 ++++
-> >>   1 file changed, 4 insertions(+)
-> >>
-> >> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> >> index ebec74c28ae3..35a7b7c6679c 100644
-> >> --- a/kernel/bpf/verifier.c
-> >> +++ b/kernel/bpf/verifier.c
-> >> @@ -12832,6 +12832,10 @@ static int check_kfunc_call(struct bpf_verifi=
-er_env *env, struct bpf_insn *insn,
-> >>                          /* For mark_ptr_or_null_reg, see 93c230e3f5bd=
-6 */
-> >>                          regs[BPF_REG_0].id =3D ++env->id_gen;
-> >>                  }
-> >> +
-> >> +               if (is_iter_next_kfunc(&meta))
-> >> +                       regs[BPF_REG_0].type |=3D PTR_TRUSTED;
-> >> +
-> >
-> > It seems a bit too generic to always assign PTR_TRUSTED to anything
-> > returned from any iterator. Let's maybe add KF_RET_TRUSTED or
-> > KF_ITER_TRUSTED or something along those lines to mark such iter_next
-> > kfuncs explicitly?
-> >
-> > For the numbers iterator, for instance, this PTR_TRUSTED makes no sense=
-.
-> >
->
-> I had the same idea (KF_RET_TRUSTED) before, but Kumar thought it should
-> be avoided and pointers returned by iter next method should be trusted
-> by default [0].
->
-> The following are previous related discussions:
->
->  >> For iter_next(), I currently have an idea to add new flags to allow
->  >> iter_next() to decide whether the return value is trusted or not,
->  >> such as KF_RET_TRUSTED.
->  >>
->  >> What do you think?
->  >
->  > Why shouldn't the return value always be trusted?
->  > We eventually want to switch over to trusted by default everywhere.
->  > It would be nice not to go further in the opposite direction (i.e.
->  > having to manually annotate trusted) if we can avoid it.
->
-> [0]:
-> https://lore.kernel.org/bpf/CAP01T75na=3Dfz7EhrP4Aw0WZ33R7jTbZ4BcmY56S1xT=
-WczxHXWw@mail.gmail.com/
->
-> Maybe we can have more discussion?
->
-> (This email has been CC Kumar)
+On 16/08/2024 16:25, Artur Weber wrote:
+> 
+> 
+> On 16.08.2024 11:54, Krzysztof Kozlowski wrote:
+>> On 16/08/2024 10:19, Artur Weber wrote:
+>>> @@ -732,6 +794,15 @@ static int max77693_charger_probe(struct platform_device *pdev)
+>>>   	chg->dev = &pdev->dev;
+>>>   	chg->max77693 = max77693;
+>>>   
+>>> +	psy_cfg.drv_data = chg;
+>>> +
+>>> +	chg->charger = devm_power_supply_register(&pdev->dev,
+>>> +						  &max77693_charger_desc,
+>>> +						  &psy_cfg);
+>>> +	if (IS_ERR(chg->charger))
+>>> +		return dev_err_probe(&pdev->dev, PTR_ERR(chg->charger),
+>>> +				     "failed: power supply register\n");
+>>
+>> This code move is not explained in the commit msg. At least I could not
+>> find it. Please explain why you need it in the commit msg.
+> 
+> This is done because the call to power_supply_get_battery_info in
+> max77693_dt_init requires chg->charger to be set. (I was considering
+> putting this in the commit message, can't remember why I didn't do it.
+> I'll add it in the next version.)
 
-+1
-pointer from iterator should always be trusted except
-the case of KF_RCU_PROTECTED iterators.
-Those iters clear iter itself outside of RCU CS,
-so a pointer returned from iter_next should probably be
-PTR_TO_BTF_ID | MEM_RCU | PTR_MAYBE_NULL.
+I think that's wrong. Power supply is being available to the system
+before it is being configured.
 
-For all other iters it should be safe to return
-PTR_TO_BTF_ID | PTR_TRUSTED | PTR_MAYBE_NULL
+Best regards,
+Krzysztof
 
-> For the numbers iterator, for instance, this PTR_TRUSTED makes no sense
-
-I see no conflict. It's a trusted pointer to u32.
 
