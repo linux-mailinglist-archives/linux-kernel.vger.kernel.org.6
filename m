@@ -1,141 +1,147 @@
-Return-Path: <linux-kernel+bounces-289684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 530EB954970
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:55:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8DDB9549A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:55:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE2F81F22CD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:55:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 018A11C240DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3351B86C1;
-	Fri, 16 Aug 2024 12:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ccqst9i5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297701B5801;
+	Fri, 16 Aug 2024 12:55:31 +0000 (UTC)
+Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4840D45026;
-	Fri, 16 Aug 2024 12:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46491B3F0B
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 12:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723812899; cv=none; b=eOzbRBVb/JLKgVy7XddMbvslahxh7yMWLBC4aIirGSyeVu+q+yNJPQ0tj5kbtzhPQRhWvNBxrYG42FWu7ZJEZBqeBPtJCkrAIJsvpPls98QxjEFZeMcLxEpKbv1rPgt/vELZ/Erq7PuB+WjMGSrZfzERm4JkAxwKQy7Hp6aJSMo=
+	t=1723812930; cv=none; b=nWYXoYBp9+TwR/I4ZFZg3mizvOSMoCRLBdnT6dxapavttDnngMeKkGzsTU4VgHA2BEO+ykoWfNGt1SRUiKsbeL4XJBARMGttnYGaOWj5woa8JwUiPNvQn+L1LSHy/usYoRARJhXGcUrVRKB0bVlXppyfRV3iqCjWANZi7hKP/cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723812899; c=relaxed/simple;
-	bh=OSCzB+p00nSVW/dHRk7hsNkN+RR7Pek+A4z85VZMYuU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gsxAhs7sszGGxjqfL2982xjotfOpsa2/6hEqV9yOAjaI+O0x8c3kn0NxXmP/ThjilyHrSvCiUVHi75rcz9oW6jrv5BJOzN3MkKBkW24zvCUZxPil+QpqoHiDMsCG4fcHBVwwGldeZtXk8aV3i8ZK0NlnDxRhYyzl7n7sdS/NuMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ccqst9i5; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723812899; x=1755348899;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OSCzB+p00nSVW/dHRk7hsNkN+RR7Pek+A4z85VZMYuU=;
-  b=ccqst9i548UGMuEgqqoGlKB6DJ1xnfGu6cc2xDgTaZ5dFCb73wVoGCJj
-   RbazYnVEZ15B2oCqSDJFMKAYfRVW0AhzvDbSb9bteZtcsmxuGQuVbx/Un
-   tYKEcxyUBdp+yHJFbeVyBKdlcNAptzl1ndKi+3Mgic8uCG9Qpz12BD9LC
-   yhk/L83BXqPbboA3/mRdRlPJKyKo4tr6FLME8scAwWfHbkGq8M0dvWF4x
-   z6ioI3u53ED50KFoYG0Slqk7/MIzh6k5ZptuEXAzx6+BLWDL0vevKXnFz
-   RQcfoDBR61ed2XFzh+V76k+XlYnE1Q/acQsa7pB+8YgzBznc8AdW7bw1s
-   Q==;
-X-CSE-ConnectionGUID: 2tZsFIBJSf+vXEyHD7p+lA==
-X-CSE-MsgGUID: b2/5FrpDRiaHfIVsLAU94A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="33259274"
-X-IronPort-AV: E=Sophos;i="6.10,151,1719903600"; 
-   d="scan'208";a="33259274"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 05:54:58 -0700
-X-CSE-ConnectionGUID: QDVynEIoRQ270siWOnAKdw==
-X-CSE-MsgGUID: m3JGk3tFT6SARvoiCDI1VA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,151,1719903600"; 
-   d="scan'208";a="90440914"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 16 Aug 2024 05:54:54 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sewTk-0006Qs-2B;
-	Fri, 16 Aug 2024 12:54:52 +0000
-Date: Fri, 16 Aug 2024 20:54:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Huan Yang <link@vivo.com>, Gerd Hoffmann <kraxel@redhat.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, opensource.kernel@vivo.com,
-	Huan Yang <link@vivo.com>
-Subject: Re: [PATCH v3 5/5] udmabuf: remove udmabuf_folio
-Message-ID: <202408162012.cL9pnFSm-lkp@intel.com>
-References: <20240813090518.3252469-6-link@vivo.com>
+	s=arc-20240116; t=1723812930; c=relaxed/simple;
+	bh=tLSriVxKBbwfEJhdBUpD/GnpVIoRoWGnwHu4L7xVZs8=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=BG8HyCJcoh5Tgjy7kLPaNOZm54RzXyw2XUStcjCzEQ/+gotLg9irGJ9uWd+p1XrnVqx8ba6pnHsA07UaW4Ye1W1j5RUVjnwJQg2CmDGgfq/7prA7QG/bQuR3VwQis4UYkP9psiDwj1iFwt85XPinQGWF9xEYUNHD0RsBqRf7/LU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in01.mta.xmission.com ([166.70.13.51]:33400)
+	by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1sewUC-008RFg-8Z; Fri, 16 Aug 2024 06:55:20 -0600
+Received: from ip68-227-165-127.om.om.cox.net ([68.227.165.127]:48330 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1sewUA-00EE99-W5; Fri, 16 Aug 2024 06:55:19 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Petr Tesarik <petr.tesarik@suse.com>
+Cc: Sourabh Jain <sourabhjain@linux.ibm.com>,  Hari Bathini
+ <hbathini@linux.ibm.com>,  Baoquan He <bhe@redhat.com>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Eric DeVolder <eric.devolder@oracle.com>,
+  kexec@lists.infradead.org (open list:KEXEC),
+  linux-kernel@vger.kernel.org (open list),  Petr Tesarik
+ <ptesarik@suse.com>,  stable@kernel.org
+References: <20240805150750.170739-1-petr.tesarik@suse.com>
+Date: Fri, 16 Aug 2024 07:54:52 -0500
+In-Reply-To: <20240805150750.170739-1-petr.tesarik@suse.com> (Petr Tesarik's
+	message of "Mon, 5 Aug 2024 17:07:50 +0200")
+Message-ID: <871q2oy6eb.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240813090518.3252469-6-link@vivo.com>
+Content-Type: text/plain
+X-XM-SPF: eid=1sewUA-00EE99-W5;;;mid=<871q2oy6eb.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.165.127;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX18Vf6nPdb92wzdBhT3kwrfv72NqUKEluUY=
+X-SA-Exim-Connect-IP: 68.227.165.127
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Level: **
+X-Spam-Virus: No
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4883]
+	*  1.5 XMNoVowels Alpha-numberic number with no vowels
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
+	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+	*  0.0 T_TooManySym_02 5+ unique symbols in subject
+X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Petr Tesarik <petr.tesarik@suse.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 366 ms - load_scoreonly_sql: 0.03 (0.0%),
+	signal_user_changed: 4.6 (1.2%), b_tie_ro: 3.2 (0.9%), parse: 0.95
+	(0.3%), extract_message_metadata: 11 (3.0%), get_uri_detail_list: 1.60
+	(0.4%), tests_pri_-2000: 10 (2.6%), tests_pri_-1000: 1.98 (0.5%),
+	tests_pri_-950: 0.96 (0.3%), tests_pri_-900: 0.77 (0.2%),
+	tests_pri_-90: 82 (22.3%), check_bayes: 80 (22.0%), b_tokenize: 5
+	(1.4%), b_tok_get_all: 6 (1.7%), b_comp_prob: 1.52 (0.4%),
+	b_tok_touch_all: 65 (17.7%), b_finish: 0.75 (0.2%), tests_pri_0: 241
+	(66.0%), check_dkim_signature: 0.58 (0.2%), check_dkim_adsp: 3.1
+	(0.9%), poll_dns_idle: 0.84 (0.2%), tests_pri_10: 2.4 (0.7%),
+	tests_pri_500: 8 (2.1%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 1/1] kexec_file: fix elfcorehdr digest exclusion when
+ CONFIG_CRASH_HOTPLUG=y
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 
-Hi Huan,
+Petr Tesarik <petr.tesarik@suse.com> writes:
 
-kernel test robot noticed the following build warnings:
+> From: Petr Tesarik <ptesarik@suse.com>
+>
+> Fix the condition to exclude the elfcorehdr segment from the SHA digest
+> calculation.
+>
+> The j iterator is an index into the output sha_regions[] array, not into
+> the input image->segment[] array. Once it reaches image->elfcorehdr_index,
+> all subsequent segments are excluded. Besides, if the purgatory segment
+> precedes the elfcorehdr segment, the elfcorehdr may be wrongly included in
+> the calculation.
 
-[auto build test WARNING on 033a4691702cdca3a613256b0623b8eeacb4985e]
+I would rather make CONFIG_CRASH_HOTPLUG depend on broken.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Huan-Yang/udmabuf-cancel-mmap-page-fault-direct-map-it/20240814-231504
-base:   033a4691702cdca3a613256b0623b8eeacb4985e
-patch link:    https://lore.kernel.org/r/20240813090518.3252469-6-link%40vivo.com
-patch subject: [PATCH v3 5/5] udmabuf: remove udmabuf_folio
-config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20240816/202408162012.cL9pnFSm-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240816/202408162012.cL9pnFSm-lkp@intel.com/reproduce)
+The hash is supposed to include everything we depend upon so when
+a borken machine corrupts something we can detect that corruption
+and not attempt to take a crash dump.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408162012.cL9pnFSm-lkp@intel.com/
+The elfcorehdr is definitely something that needs to be part of the
+hash.
 
-All warnings (new ones prefixed by >>):
-
->> drivers/dma-buf/udmabuf.c:175: warning: Function parameter or struct member 'ubuf' not described in 'unpin_all_folios'
+So please go back to the drawing board and find a way to include the
+program header in the hash even with CONFIG_CRASH_HOTPLUG.
 
 
-vim +175 drivers/dma-buf/udmabuf.c
+Eric
 
-17a7ce20349045 Gurchetan Singh 2019-12-02  165  
-d934739404652b Huan Yang       2024-08-13  166  /**
-d934739404652b Huan Yang       2024-08-13  167   * unpin_all_folios:		unpin each folio we pinned in create
-d934739404652b Huan Yang       2024-08-13  168   * The udmabuf set all folio in folios and pinned it, but for large folio,
-d934739404652b Huan Yang       2024-08-13  169   * We may have only used a small portion of the physical in the folio.
-d934739404652b Huan Yang       2024-08-13  170   * we will repeatedly, sequentially set the folio into the array to ensure
-d934739404652b Huan Yang       2024-08-13  171   * that the offset can index the correct folio at the corresponding index.
-d934739404652b Huan Yang       2024-08-13  172   * Hence, we only need to unpin the first iterred folio.
-d934739404652b Huan Yang       2024-08-13  173   */
-d934739404652b Huan Yang       2024-08-13  174  static void unpin_all_folios(struct udmabuf *ubuf)
-c6a3194c05e7e6 Vivek Kasireddy 2024-06-23 @175  {
-d934739404652b Huan Yang       2024-08-13  176  	pgoff_t pg;
-d934739404652b Huan Yang       2024-08-13  177  	struct folio *last = NULL;
-c6a3194c05e7e6 Vivek Kasireddy 2024-06-23  178  
-d934739404652b Huan Yang       2024-08-13  179  	for (pg = 0; pg < ubuf->pagecount; pg++) {
-d934739404652b Huan Yang       2024-08-13  180  		struct folio *tmp = ubuf->folios[pg];
-c6a3194c05e7e6 Vivek Kasireddy 2024-06-23  181  
-d934739404652b Huan Yang       2024-08-13  182  		if (tmp == last)
-d934739404652b Huan Yang       2024-08-13  183  			continue;
-c6a3194c05e7e6 Vivek Kasireddy 2024-06-23  184  
-d934739404652b Huan Yang       2024-08-13  185  		last = tmp;
-d934739404652b Huan Yang       2024-08-13  186  		unpin_folio(tmp);
-d934739404652b Huan Yang       2024-08-13  187  	}
-c6a3194c05e7e6 Vivek Kasireddy 2024-06-23  188  }
-c6a3194c05e7e6 Vivek Kasireddy 2024-06-23  189  
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> Fixes: f7cc804a9fd4 ("kexec: exclude elfcorehdr from the segment digest")
+> Cc: stable@kernel.org
+> Signed-off-by: Petr Tesarik <ptesarik@suse.com>
+> ---
+>  kernel/kexec_file.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> index 3d64290d24c9..3eedb8c226ad 100644
+> --- a/kernel/kexec_file.c
+> +++ b/kernel/kexec_file.c
+> @@ -752,7 +752,7 @@ static int kexec_calculate_store_digests(struct kimage *image)
+>  
+>  #ifdef CONFIG_CRASH_HOTPLUG
+>  		/* Exclude elfcorehdr segment to allow future changes via hotplug */
+> -		if (j == image->elfcorehdr_index)
+> +		if (i == image->elfcorehdr_index)
+>  			continue;
+>  #endif
 
