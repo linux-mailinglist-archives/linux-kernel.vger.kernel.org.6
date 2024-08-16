@@ -1,124 +1,124 @@
-Return-Path: <linux-kernel+bounces-289176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F559542BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:26:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC8E99542C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B3441F21A91
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:26:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26F1CB22169
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 07:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB2D12C491;
-	Fri, 16 Aug 2024 07:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79ECA12C46F;
+	Fri, 16 Aug 2024 07:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="baInNCP5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dtvn8GAM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8CBC7710E;
-	Fri, 16 Aug 2024 07:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329908563E;
+	Fri, 16 Aug 2024 07:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723793192; cv=none; b=isW9roPtqFOjs5abYqVpV/MCtKp/fKPl32z1wkwkrMEWzHmXtx9H+/zqnjxTMuJuQrxO+928JjNA/ng4d8DdR1xhIL827bcuA6l63QQNG9wcZwjUu5eE+ZMkuJU60MXwi8/xucNIUAPuh3h4qQ/Au1Hm4k3caU6tFYGk2C8af7o=
+	t=1723793284; cv=none; b=KmVuk9yXV7FVg1iBNf0MPkgAHNI7gTWgI1xFAIHWj0Byla3Z0pUmDEF9/yWPbuEBDMruL1Zchym7bAL0SLGJ19sqgnQjnjcdlatOubCjLQAz9tOT+9RBMYQGJZGsjDYLqJx1ElsfIVzvoDWOMqO2IwRaAyxWSuuWgzD+jDGJHbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723793192; c=relaxed/simple;
-	bh=8jdxMs9eYxoxwq9ryBRvyyNMPaHW50XHDWYI4zoeYg4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=NZWm/94GEaoV+TUiROtNf4yb2N5PGwnT1z3tZyCw04D9aaAdBw4/tZ6rIPSxhbN6LIX2PQiCKuoyNTW+/ZyDx3HSGAxY1wbyuUmbQSbDICLiHgwTKf6iOVOcpF64TTK8JGPYvjXhNbsmEpOvFDzdMn8qyF8++69sxObly6Jo5Xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=baInNCP5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D603AC32782;
-	Fri, 16 Aug 2024 07:26:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723793190;
-	bh=8jdxMs9eYxoxwq9ryBRvyyNMPaHW50XHDWYI4zoeYg4=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=baInNCP5y5lLHO00rMk/8eBjbfBFL/H2YH+csuQ8wqd52VNtEgE+xZ0CRbYLrlNTA
-	 FqOdA8upzzrXxyGSLFnHh6tmiRZWANM5t4n+JyqSg+yvpmWm3D3ccpUncMFgRO1P1m
-	 QBJfJ3TyFRy662ns56JqUyvlE1FVidYC4Bf+4+n+3H6zCuQATnc6askYc6s1FT+16q
-	 Zv/6bVfGQdnMFgwpfUd+g6WOnJsxCP5sgpRqR474YSYM6byEJTF+IRa9RzIhjZIs8K
-	 1eFLuv0Pne7TUdSQuIIRiJcQFOefyPkVz8HMzdDZRNfEbnAsc0bsFUmvw6o5qLTBgM
-	 t2CuhO0JUR2wQ==
-Message-ID: <23bce839-d991-4553-929a-9e53b7c2d4e3@kernel.org>
-Date: Fri, 16 Aug 2024 09:26:23 +0200
+	s=arc-20240116; t=1723793284; c=relaxed/simple;
+	bh=Yue6WQ830weCdQe8FWjaTaPLieyUHCZqYinYPsMU+u4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WgM+SjKepuCbMviX83914bWv5p8NK2yrgQ330RXguS4y1yuOIjHX9qO4CZT3b+ltfw1CvNuNF98+f6RP7JG2x3rdcUaSUs9X/8OrV6aZfZePkuvtzK/P9ssWZV+u0oFRZuQOJCxRyEe7tcP/sz+KrobyScj2uFiKL8AkHsvzKkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dtvn8GAM; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723793282; x=1755329282;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Yue6WQ830weCdQe8FWjaTaPLieyUHCZqYinYPsMU+u4=;
+  b=dtvn8GAMWouohtMDFMStTv5fLOtypvImZxmQ6HWtdDw1S2x7ZCFgaEBN
+   al2BdCvKSZ7VdnCD6nrGPazY8h7R3R/i70nb58lWU1IQ25ft8ZhK4vmIG
+   XY6tUnKeER/PRkfS0TeZoEmbTF2kqYuN/R3BoqDPKIjZXD1bZbNc6Xm2T
+   Q8roy1mEE8D/E5/4Ac+zGTUxaMBcT0TtiwOBllEJvskpCfixCLfgnM1qM
+   y17pB0LVElYvpmLFKFiSJUEe77DEMcOuVqw2L2g4dG1wqAXg2Nq/xhv9q
+   P/AtllparcxybI35Hrn4V4HBfZn14V2dN54ypxLMOGD7t6JvCG1fO5nEW
+   A==;
+X-CSE-ConnectionGUID: 7ezN2LDfS16BFMfpXGC5pw==
+X-CSE-MsgGUID: IT5bdfB6TO2VpW6ikWI8fA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11165"; a="22225647"
+X-IronPort-AV: E=Sophos;i="6.10,151,1719903600"; 
+   d="scan'208";a="22225647"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 00:27:52 -0700
+X-CSE-ConnectionGUID: TMSYtdU0ScSPiqwIoebVxg==
+X-CSE-MsgGUID: pBRXIBB+QAa/o7Ioixu3ig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,151,1719903600"; 
+   d="scan'208";a="59433899"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 16 Aug 2024 00:27:49 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1serND-00066w-1a;
+	Fri, 16 Aug 2024 07:27:47 +0000
+Date: Fri, 16 Aug 2024 15:27:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andres Salomon <dilinger@queued.net>, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+	platform-driver-x86@vger.kernel.org,
+	Matthew Garrett <mjg59@srcf.ucam.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-pm@vger.kernel.org, Dell.Client.Kernel@dell.com
+Subject: Re: [PATCH v3 1/2] platform/x86:dell-laptop: Add knobs to change
+  battery charge settings
+Message-ID: <202408161520.j54E147f-lkp@intel.com>
+References: <20240815192848.3489d3e1@5400>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: iio: imu: smi240: devicetree binding
-To: Jianping.Shen@de.bosch.com, jic23@kernel.org, lars@metafoo.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- dima.fedrau@gmail.com, marcelo.schmitt1@gmail.com,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Christian.Lorenz3@de.bosch.com,
- Ulrike.Frauendorf@de.bosch.com, Kai.Dolde@de.bosch.com
-References: <20240815152545.7705-1-Jianping.Shen@de.bosch.com>
- <20240815152545.7705-2-Jianping.Shen@de.bosch.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240815152545.7705-2-Jianping.Shen@de.bosch.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240815192848.3489d3e1@5400>
 
-On 15/08/2024 17:25, Jianping.Shen@de.bosch.com wrote:
-> From: Shen Jianping <Jianping.Shen@de.bosch.com>
-> 
-> dt-bindings: iio: imu: smi240: add sensor dt-binding
+Hi Andres,
 
-Nothing improved. Please write proper commit msgs. See
-submitting-patches document.
+kernel test robot noticed the following build warnings:
 
-> Signed-off-by: Shen Jianping <Jianping.Shen@de.bosch.com>
-> ---
-> 
-Best regards,
-Krzysztof
+[auto build test WARNING on sre-power-supply/for-next]
+[also build test WARNING on linus/master v6.11-rc3 next-20240816]
+[cannot apply to amd-pstate/linux-next amd-pstate/bleeding-edge]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Andres-Salomon/platform-x86-dell-laptop-remove-duplicate-code-w-battery-function/20240816-102156
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git for-next
+patch link:    https://lore.kernel.org/r/20240815192848.3489d3e1%405400
+patch subject: [PATCH v3 1/2] platform/x86:dell-laptop: Add knobs to change  battery charge settings
+reproduce: (https://download.01.org/0day-ci/archive/20240816/202408161520.j54E147f-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408161520.j54E147f-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
+   Warning: Documentation/hwmon/g762.rst references a file that doesn't exist: Documentation/devicetree/bindings/hwmon/g762.txt
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/reserved-memory/qcom
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/display/exynos/
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+>> Warning: /sys/class/power_supply/<supply_name>/charge_type is defined 2 times:  ./Documentation/ABI/testing/sysfs-class-power-dell:0  ./Documentation/ABI/testing/sysfs-class-power:375
+   Using alabaster theme
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
