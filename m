@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-290052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0B88954EDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:31:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83C11954EDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 18:32:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E46761C22F1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:31:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DDB4B21DBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 16:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F161BD51E;
-	Fri, 16 Aug 2024 16:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E2E1BC9EF;
+	Fri, 16 Aug 2024 16:32:19 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD947364A0;
-	Fri, 16 Aug 2024 16:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963D91BE241;
+	Fri, 16 Aug 2024 16:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723825899; cv=none; b=IfP3cIJqT80Ws+c1nrivq1/oG+imwKyy6Y04oyKKWY9W0a84ssYJGlKfgQAUMqJQ2n5rJVA6ex/yuRE0e60bngtl3LFo1bP1mnLWYABaF/6HmR8e2AIQvGYrngPgXFCEEdRbwiM4uLAwfyGYuruE93mwsejSGJ39y9/ehIIX/Lo=
+	t=1723825939; cv=none; b=ARV+j2eR7uoSwvmbJ6bZDNux/AerDye45P+89ESTD5ke/9UdCo3nGi/QE+2DZoZT56aAsxGiplMs3Hsl6GDvOdHPkRswIlrN7EyKTg27yyi7OfSnlNscf08ap7U890MohOTTOsmPEs03ktS8LIlEPTVCqHvcGO0x7k45LhVIZd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723825899; c=relaxed/simple;
-	bh=9PT3gNpyR9fSzfxTZR3Nyw668zUlJjUTQe2irAaX7G0=;
+	s=arc-20240116; t=1723825939; c=relaxed/simple;
+	bh=+0QMLewbM/WTE0dMzqm5v68v1oUXlFZqdkASOILwHkM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pLUG5MMIb8BiJS9+otPuZwhYB2oYHwTmshdUnVi0U61Z2P1uCq/U/Q9oTLu5/LiA6aKFE13YVOcK51vn2oE+CtqO4xzdV1oRHGhitV5+FVCOEfgnaHhKSNPr5jJBz+dMwjDP5o2ZInrHSXKSMpRoS7aqxKiYqv5p8UxYeSlC0KM=
+	 In-Reply-To:Content-Type; b=AUTif7sKZS7uHRpFceGIjf8jS2ybgvWWMVRmUiWsrN5I0kSkL0AsBXVm4Bw/ZpbWaRBwkr3HaGbt9kzoBIVZ0khere24Qxdn9yBbSI4rJI7ONa/w7cnE7ZD8klMxb/49riATrrdtVQFm0cK48hlPPeuo2plywhM+r2LWIxzAMrk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5D4BB152B;
-	Fri, 16 Aug 2024 09:32:03 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E0922153B;
+	Fri, 16 Aug 2024 09:32:42 -0700 (PDT)
 Received: from [10.1.196.28] (eglon.cambridge.arm.com [10.1.196.28])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5A0563F58B;
-	Fri, 16 Aug 2024 09:31:33 -0700 (PDT)
-Message-ID: <983fded5-48f8-439d-8afe-45b60841985a@arm.com>
-Date: Fri, 16 Aug 2024 17:31:33 +0100
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9850B3F58B;
+	Fri, 16 Aug 2024 09:32:11 -0700 (PDT)
+Message-ID: <df0c32ef-a694-4e5a-9d93-54ae2b93e452@arm.com>
+Date: Fri, 16 Aug 2024 17:32:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,8 +41,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 19/22] x86/resctrl: Introduce the interface to switch
- between monitor modes
+Subject: Re: [PATCH v6 20/22] x86/resctrl: Enable AMD ABMC feature by default
+ when supported
 Content-Language: en-GB
 To: Babu Moger <babu.moger@amd.com>
 Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
@@ -55,48 +55,77 @@ Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
  ilpo.jarvinen@linux.intel.com, peternewman@google.com,
  maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
  linux-kernel@vger.kernel.org, eranian@google.com, mingo@redhat.com,
- bp@alien8.de, corbet@lwn.net, dave.hansen@linux.intel.com,
- fenghua.yu@intel.com, reinette.chatre@intel.com, tglx@linutronix.de
+ bp@alien8.de, corbet@lwn.net, fenghua.yu@intel.com,
+ reinette.chatre@intel.com, tglx@linutronix.de, dave.hansen@linux.intel.com
 References: <cover.1722981659.git.babu.moger@amd.com>
- <784eaa900b9e0778ddc534c04c7ded9466bfd19b.1722981659.git.babu.moger@amd.com>
+ <1061a60166f2fdb508aaf2dd9163b2bab3705063.1722981659.git.babu.moger@amd.com>
 From: James Morse <james.morse@arm.com>
-In-Reply-To: <784eaa900b9e0778ddc534c04c7ded9466bfd19b.1722981659.git.babu.moger@amd.com>
+In-Reply-To: <1061a60166f2fdb508aaf2dd9163b2bab3705063.1722981659.git.babu.moger@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Hi Babu,
 
 On 06/08/2024 23:00, Babu Moger wrote:
-> Introduce interface to switch between ABMC and legacy modes.
+> Enable ABMC by default when supported during the boot up.
 > 
-> By default ABMC is enabled on boot if the feature is available.
-> Provide the interface to go back to legacy mode if required.
+> Users will not see any difference in the behavior when resctrl is
+> mounted. With automatic assignment everything will work as running
+> in the legacy monitor mode.
 
-I may have missed it on an earlier version ... why would anyone want the non-ABMC
-behaviour on hardware that requires it: counters randomly reset and randomly return
-'Unavailable'... is that actually useful?
+> diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+> index 6fb0cfdb5529..a7980f84c487 100644
+> --- a/arch/x86/kernel/cpu/resctrl/core.c
+> +++ b/arch/x86/kernel/cpu/resctrl/core.c
+> @@ -599,6 +599,7 @@ static void domain_add_cpu_mon(int cpu, struct rdt_resource *r)
+>  		d = container_of(hdr, struct rdt_mon_domain, hdr);
+>  
+>  		cpumask_set_cpu(cpu, &d->hdr.cpu_mask);
+> +		resctrl_arch_mbm_cntr_assign_configure();
+>  		return;
+>  	}
+>  
+> @@ -620,6 +621,7 @@ static void domain_add_cpu_mon(int cpu, struct rdt_resource *r)
+>  	arch_mon_domain_online(r, d);
+>  
+>  	resctrl_mbm_evt_config_init(hw_dom);
+> +	resctrl_arch_mbm_cntr_assign_configure();
+>  
+>  	if (arch_domain_mbm_alloc(r->mon.num_rmid, hw_dom)) {
+>  		mon_domain_free(hw_dom);
 
-You default this to on, so there isn't a backward compatibility argument here.
+> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> index 66febff2a3d3..d15fd1bde5f4 100644
+> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> @@ -2756,6 +2756,23 @@ void resctrl_arch_mbm_cntr_assign_disable(void)
+>  	}
+>  }
+>  
+> +void resctrl_arch_mbm_cntr_assign_configure(void)
+> +{
+> +	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
+> +	struct rdt_hw_resource *hw_res = resctrl_to_arch_res(r);
+> +	bool enable = true;
+> +
+> +	mutex_lock(&rdtgroup_mutex);
 
-It seems like being able to disable this is a source of complexity - is it needed?
+As before - this lock isn't available to the architecture code after the filesystem code
+moves to /fs/. To prevent concurrent calls to resctrl_abmc_set_one_amd() I think you need
+your own mutex.
 
 
-For MPAM I'm looking at enabling this on any platform that is short of monitors. If
-user-space disables it I don't have a "at random" hardware behaviour to fall back on - its
-extra work to invent a behaviour I'm not sure is useful...
+> +	if (r->mon.mbm_cntr_assignable) {
+> +		if (!hw_res->mbm_cntr_assign_enabled)
+> +			hw_res->mbm_cntr_assign_enabled = true;
+> +		resctrl_abmc_set_one_amd(&enable);
+> +	}
+> +
+> +	mutex_unlock(&rdtgroup_mutex);
+> +}
 
-
-> $ cat /sys/fs/resctrl/info/L3_MON/mbm_mode
-> [mbm_cntr_assign]
-> legacy
-> 
-> To enable the "mbm_cntr_assign" mode:
-> $ echo "mbm_cntr_assign" > /sys/fs/resctrl/info/L3_MON/mbm_mode
-> 
-> To enable the legacy monitoring feature:
-> $ echo "legacy" > /sys/fs/resctrl/info/L3_MON/mbm_mode
-> 
-> MBM event counters will reset when mbm_mode is changed.
+Neither of this functions callers are in filesystem code, could you drop the 'arch' from
+the name - it isn't part of the fs/arch interface.
 
 
 Thanks,
