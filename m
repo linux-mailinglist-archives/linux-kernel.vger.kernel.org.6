@@ -1,204 +1,230 @@
-Return-Path: <linux-kernel+bounces-289643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 981139548B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:24:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B9179548B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 14:26:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46342284E6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:24:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF44D1F24013
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 12:26:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77821B0122;
-	Fri, 16 Aug 2024 12:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0811AE873;
+	Fri, 16 Aug 2024 12:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u4K44YJF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eQhehuzU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E829C1991D2;
-	Fri, 16 Aug 2024 12:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E4212AAC6
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 12:26:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723811079; cv=none; b=Z95qJFx4yBf5hEgGxFyByuTWfvTVsen0x0STNbcwcLRWIOJZQEiip4KZZGP3Wym8FwalP6D10JsKjY69IOXMGaL7+IppneoNoRBCNfUT+Ako9YBRkKdK5ZXeGIp1NANYhCoNZ0OnK1ACP8WdHW6+i6HjKUCa3l8uFDQn7T+AHzQ=
+	t=1723811183; cv=none; b=qycyLa1Q5fiL7W6k/HwBDKAiFk3VPedGxsJBLQX+t5vVl7A5X/nLpma8Qyju9i7e5P1LdQb55xoiT37qTW6yKGqEAKNkwGBNlp5rMnPai4tFsJjC+MgMDGN3mRE9iFdEwTDsiCqt3iWUPnQa5ty6MRaBTdSdhk7saDE6iADKOsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723811079; c=relaxed/simple;
-	bh=BHvv3tQ/qH7itDrWANJ9OnwJU3uS5u76IJ2JNjIhTqM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UGCIqot+ixAgCYiOa7rUpnPqrmEP4O8spyEVCd3n3QXX94diWEHZDb3VzlTEjQ4HFPlJnrcNBgxkcTcU/cpFilv4p0gqOmFG4K2NaOw39eNXKm4+PbG64Vhl/woJcZ5EkG3cCmbIiUydpKet1xBNbZPCw5UrCuWCy4QSFC4behI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u4K44YJF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0982BC32782;
-	Fri, 16 Aug 2024 12:24:31 +0000 (UTC)
+	s=arc-20240116; t=1723811183; c=relaxed/simple;
+	bh=HMNiKhgEMzC8vQswXZUWYIvnLzZglYzYTD0GACczhv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M20H0gvTOPjowyV6NZjpmYsXZuHFt6v28pKFTWlEk/KBnULATzkOUAXcs6DRFSC0YuGq1QGneJQ+KYd5U/hlSCxJRtVWPuoriK2iCz9XAPFmPw91XlvON2lYYFmNECVgtOkEWjw8y44GNtqxKQR5ssJZF4jwMqGqwSk8CWxxSkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eQhehuzU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6216EC32782;
+	Fri, 16 Aug 2024 12:26:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723811078;
-	bh=BHvv3tQ/qH7itDrWANJ9OnwJU3uS5u76IJ2JNjIhTqM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=u4K44YJF2Qc1nQLB8q3V8ADeGVb2TyoGJv2zIL7cfKS3KqZJ0zkIdMFSYyla2KOmL
-	 hzw162U3RzlB5v4XhilnoFD4feol2Vic/anaTfK7+qHF+2iYG1SjPioz87hgHdRgaZ
-	 aBQC1jy693cWkpivc9o0Nwu0+/jJn5LajFiUd8QeqB/HMYOZTDAjyZjle8boa2Ln7w
-	 pzBF9FfH9LdV2giP2tWEPu5EHGM/tVFegQoRTjaBHDjO588tsEQoCwVCKoklWUwUxc
-	 oM2SvxwuU2r6un731UcP3m+vUF3bqpLjoPATnxZHFKIk0uuNbHT4vNlRfc8OurOf6T
-	 o0yapb+Z50NHQ==
-Message-ID: <b247a843-0918-4cd1-b6f8-66caca3ecae3@kernel.org>
-Date: Fri, 16 Aug 2024 14:24:28 +0200
+	s=k20201202; t=1723811182;
+	bh=HMNiKhgEMzC8vQswXZUWYIvnLzZglYzYTD0GACczhv8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eQhehuzU6/dgZBpI3cU2OD2gg5KUQJKn/APjU4UA6DBVnQA5iPM0PXVvaxXjuydUL
+	 WZ+3YH0Fqf121LS2MAu4FIovocWSVQJdLpChf6Z2dpiie5Kc+e87KryM35x8aXPUaw
+	 F1cYlJyWbZ7h8lu4s5hEw0Hn6/FI6bu4rYBluuLe9T7i4a0tLshsNGacPiqsqSqxEJ
+	 0iOTjthxN1E0BVGoNOC8ohC8kDrDTOzOBBaNTNTiHU3ZPc9oV+s+TJFsL4FEhhsn8Y
+	 +eXXOCO8Ihql++Fm/GBv4Tgkb9IIZTOJix69PuSwj48WDqxjS6NuS4rtLYT1cDp706
+	 xChhBZ1gNoFrQ==
+Date: Fri, 16 Aug 2024 13:26:18 +0100
+From: Will Deacon <will@kernel.org>
+To: Gowthami Thiagarajan <gthiagarajan@marvell.com>
+Cc: mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, gcherian@marvell.com,
+	sgoutham@marvell.com, bbhushan2@marvell.com
+Subject: Re: [PATCH v6 2/3] perf/marvell: perf/marvell: Odyssey DDR
+ Performance monitor support
+Message-ID: <20240816122617.GC24137@willie-the-truck>
+References: <20240704092022.1136805-1-gthiagarajan@marvell.com>
+ <20240704092022.1136805-3-gthiagarajan@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 RESEND 2/2] drm/bridge: imx: Add i.MX93 parallel
- display format configuration support
-To: Liu Ying <victor.liu@nxp.com>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, andrzej.hajda@intel.com, neil.armstrong@linaro.org,
- rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
- peng.fan@nxp.com
-References: <20240816080933.440594-1-victor.liu@nxp.com>
- <20240816080933.440594-3-victor.liu@nxp.com>
- <faf56b73-2143-4f5d-8e35-5cfe5f8d72d5@kernel.org>
- <613b4eb4-dbac-48a9-bcdd-79b4e94a7b66@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <613b4eb4-dbac-48a9-bcdd-79b4e94a7b66@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240704092022.1136805-3-gthiagarajan@marvell.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On 16/08/2024 11:44, Liu Ying wrote:
-> On 08/16/2024, Krzysztof Kozlowski wrote:
->> On 16/08/2024 10:09, Liu Ying wrote:
->>> NXP i.MX93 mediamix blk-ctrl contains one DISPLAY_MUX register which
->>> configures parallel display format by using the "PARALLEL_DISP_FORMAT"
->>> field. Add a DRM bridge driver to support the display format configuration.
->>>
->>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
->>> ---
->>
->> ...
->>
->>> +
->>> +static int imx93_pdfc_bridge_probe(struct platform_device *pdev)
->>> +{
->>> +	struct device *dev = &pdev->dev;
->>> +	struct imx93_pdfc *pdfc;
->>> +	int ret;
->>> +
->>> +	pdfc = devm_kzalloc(dev, sizeof(*pdfc), GFP_KERNEL);
->>> +	if (!pdfc)
->>> +		return -ENOMEM;
->>> +
->>> +	pdfc->regmap = syscon_node_to_regmap(dev->of_node->parent);
->>> +	if (IS_ERR(pdfc->regmap)) {
->>> +		ret = PTR_ERR(pdfc->regmap);
->>> +		if (ret != -EPROBE_DEFER)
->>> +			DRM_DEV_ERROR(dev, "failed to get regmap: %d\n", ret);
->>> +		return ret;
->>
->> Nope, you just open-coded dev_err_probe. Syntax is - return
->> dev_err_probe(). if you need wrapper for DRM, add such.
+On Thu, Jul 04, 2024 at 02:50:21PM +0530, Gowthami Thiagarajan wrote:
+> Odyssey DRAM Subsystem supports eight counters for monitoring performance
+> and software can program those counters to monitor any of the defined
+> performance events. Supported performance events include those counted
+> at the interface between the DDR controller and the PHY, interface between
+> the DDR Controller and the CHI interconnect, or within the DDR Controller.
 > 
-> Will use dev_err_probe().
+> Additionally DSS also supports two fixed performance event counters, one
+> for ddr reads and the other for ddr writes.
 > 
->>
->>> +	}
->>> +
->>> +	pdfc->next_bridge = devm_drm_of_get_bridge(dev, dev->of_node, 1, 0);
->>> +	if (IS_ERR(pdfc->next_bridge)) {
->>> +		ret = PTR_ERR(pdfc->next_bridge);
->>> +		if (ret != -EPROBE_DEFER)
->>> +			DRM_DEV_ERROR(dev, "failed to get next bridge: %d\n", ret);
->>> +		return ret;
->>
->> Ditto
-> 
-> Will use dev_err_probe().
-> 
->>
->>
->>> +	}
->>> +
->>
->> ...
->>
->>> +MODULE_DESCRIPTION("NXP i.MX93 parallel display format configuration driver");
->>> +MODULE_AUTHOR("Liu Ying <victor.liu@nxp.com>");
->>> +MODULE_LICENSE("GPL v2");
->>> +MODULE_ALIAS("platform:" DRIVER_NAME);
->>
->> Which other driver needs this platform alias?
-> 
-> Quote include/linux/module.h:
-> 
-> "
-> /* For userspace: you can also call me... */                                     
-> #define MODULE_ALIAS(_alias) MODULE_INFO(alias, _alias)   
-> "
-> 
-> Anything wrong with using MODULE_ALIAS() here?
+> Signed-off-by: Gowthami Thiagarajan <gthiagarajan@marvell.com>
+> ---
+>  drivers/perf/marvell_cn10k_ddr_pmu.c | 248 +++++++++++++++++++++++++++
+>  1 file changed, 248 insertions(+)
 
-Yes, it redundant. Do not answer with question to the question.
+Please can you add some documentation to Documentation/admin-guide/perf?
 
-Are you adding random code that you cannot justify? It looks like this
-if you cannot answer why do you need it.
+> @@ -314,6 +420,14 @@ static int ddr_perf_get_event_bitmap(int eventid, u64 *event_bitmap,
+>  	case EVENT_OP_IS_REFRESH ... EVENT_OP_IS_ZQLATCH:
+>  		*event_bitmap = (1ULL << (eventid - 1));
+>  		break;
+> +	case EVENT_DFI_PARITY_POISON ...EVENT_DFI_CMD_IS_RETRY:
+> +		if (ddr_pmu->version == DDR_PMU_V2) {
+> +			*event_bitmap = (1ULL << (eventid - 1));
+> +		} else {
+> +			pr_err("%s Invalid eventid %d\n", __func__, eventid);
+> +			return -EINVAL;
+> +		}
 
-Form letter:
+This 'else' clause is identical to the default case. Please either add
+a shared error label or have a fallthrough. We shouldn't duplicate the
+print.
 
-You should not need MODULE_ALIAS() in normal cases. If you need it,
-usually it means your device ID table is wrong (e.g. misses either
-entries or MODULE_DEVICE_TABLE()). MODULE_ALIAS() is not a substitute
-for incomplete ID table.
+> +		break;
+>  	case EVENT_OP_IS_ENTER_SELFREF:
+>  	case EVENT_OP_IS_ENTER_POWERDOWN:
+>  	case EVENT_OP_IS_ENTER_MPSM:
+> @@ -439,6 +553,7 @@ static u64 cn10k_ddr_perf_read_counter(struct cn10k_ddr_pmu *pmu, int counter)
+>  
+>  	val = readq_relaxed(pmu->base +
+>  			    DDRC_PERF_REG(p_data->ddrc_perf_cnt_base, counter));
+> +
 
-Best regards,
-Krzysztof
+Random whitespace change.
 
+>  	return val;
+>  }
+>  
+> @@ -459,15 +574,43 @@ static void cn10k_ddr_perf_event_update(struct perf_event *event)
+>  	local64_add((new_count - prev_count) & mask, &event->count);
+>  }
+>  
+> +static void cn10k_ddr_perf_counter_start(struct cn10k_ddr_pmu *ddr_pmu,
+> +					 int counter)
+> +{
+> +	const struct ddr_pmu_platform_data *p_data = ddr_pmu->p_data;
+> +	u64 ctrl_reg = p_data->ddrc_perf_cnt_start_op_ctrl;
+> +
+> +	writeq_relaxed(START_OP_CTRL_VAL_START, ddr_pmu->base +
+> +		       DDRC_PERF_REG(ctrl_reg, counter));
+> +}
+> +
+> +static void cn10k_ddr_perf_counter_stop(struct cn10k_ddr_pmu *ddr_pmu,
+> +					int counter)
+> +{
+> +	const struct ddr_pmu_platform_data *p_data = ddr_pmu->p_data;
+> +	u64 ctrl_reg = p_data->ddrc_perf_cnt_end_op_ctrl;
+> +
+> +	writeq_relaxed(END_OP_CTRL_VAL_END, ddr_pmu->base +
+> +		       DDRC_PERF_REG(ctrl_reg, counter));
+> +}
+> +
+>  static void cn10k_ddr_perf_event_start(struct perf_event *event, int flags)
+>  {
+>  	struct cn10k_ddr_pmu *pmu = to_cn10k_ddr_pmu(event->pmu);
+> +	u64 ctrl_reg = pmu->p_data->ddrc_perf_cnt_op_mode_ctrl;
+>  	struct hw_perf_event *hwc = &event->hw;
+>  	int counter = hwc->idx;
+>  
+>  	local64_set(&hwc->prev_count, 0);
+>  
+>  	cn10k_ddr_perf_counter_enable(pmu, counter, true);
+> +	if (pmu->version == DDR_PMU_V2) {
+> +	/* Setup the PMU counter to work in manual mode */
+> +		writeq_relaxed(OP_MODE_CTRL_VAL_MANUAL, pmu->base +
+> +			       DDRC_PERF_REG(ctrl_reg, counter));
+> +
+> +		cn10k_ddr_perf_counter_start(pmu, counter);
+> +	}
+>  
+>  	hwc->state = 0;
+>  }
+> @@ -526,6 +669,9 @@ static void cn10k_ddr_perf_event_stop(struct perf_event *event, int flags)
+>  
+>  	cn10k_ddr_perf_counter_enable(pmu, counter, false);
+>  
+> +	if (pmu->version == DDR_PMU_V2)
+> +		cn10k_ddr_perf_counter_stop(pmu, counter);
+> +
+>  	if (flags & PERF_EF_UPDATE)
+>  		cn10k_ddr_perf_event_update(event);
+>  
+> @@ -642,6 +788,61 @@ static void ddr_pmu_overflow_hander(struct cn10k_ddr_pmu *pmu, int evt_idx)
+>  	cn10k_ddr_perf_pmu_enable(&pmu->pmu);
+>  }
+>  
+> +static void ddr_pmu_v2_enable_read_freerun(struct cn10k_ddr_pmu *pmu,
+> +					   bool enable)
+> +{
+> +	const struct ddr_pmu_platform_data *p_data = pmu->p_data;
+> +	u64 val;
+> +
+> +	val = readq_relaxed(pmu->base + p_data->ddrc_perf_cnt_freerun_ctrl);
+> +	if (enable)
+> +		val |= DDRC_PERF_FREERUN_READ_EN;
+> +	else
+> +		val &= ~DDRC_PERF_FREERUN_READ_EN;
+> +
+> +	writeq_relaxed(val, pmu->base + p_data->ddrc_perf_cnt_freerun_ctrl);
+> +}
+> +
+> +static void ddr_pmu_v2_enable_write_freerun(struct cn10k_ddr_pmu *pmu,
+> +					    bool enable)
+> +{
+> +	const struct ddr_pmu_platform_data *p_data = pmu->p_data;
+> +	u64 val;
+> +
+> +	val = readq_relaxed(pmu->base + p_data->ddrc_perf_cnt_freerun_ctrl);
+> +	if (enable)
+> +		val |= DDRC_PERF_FREERUN_WRITE_EN;
+> +	else
+> +		val &= ~DDRC_PERF_FREERUN_WRITE_EN;
+> +
+> +	writeq_relaxed(val, pmu->base + p_data->ddrc_perf_cnt_freerun_ctrl);
+> +}
+> +
+> +static void ddr_pmu_v2_read_clear_freerun(struct cn10k_ddr_pmu *pmu)
+> +{
+> +	const struct ddr_pmu_platform_data *p_data = pmu->p_data;
+> +	u64 val;
+> +
+> +	val = DDRC_FREERUN_READ_CNT_CLR;
+> +	writeq_relaxed(val, pmu->base + p_data->ddrc_perf_cnt_freerun_clr);
+> +}
+> +
+> +static void ddr_pmu_v2_write_clear_freerun(struct cn10k_ddr_pmu *pmu)
+> +{
+> +	const struct ddr_pmu_platform_data *p_data = pmu->p_data;
+> +	u64 val;
+> +
+> +	val = DDRC_FREERUN_WRITE_CNT_CLR;
+> +	writeq_relaxed(val, pmu->base + p_data->ddrc_perf_cnt_freerun_clr);
+> +}
+> +
+> +static void ddr_pmu_v2_overflow_hander(struct cn10k_ddr_pmu *pmu, int evt_idx)
+> +{
+> +	cn10k_ddr_perf_event_update(pmu->events[evt_idx]);
+> +	cn10k_ddr_perf_counter_stop(pmu, evt_idx);
+> +	cn10k_ddr_perf_counter_start(pmu, evt_idx);
+
+I don't understand this. Why are you calling _event_update() when
+cn10k_ddr_perf_event_stop() already does that? And why are you calling
+stop/start back-to-back after the update?
+
+Will
 
