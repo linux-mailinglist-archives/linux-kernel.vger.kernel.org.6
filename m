@@ -1,184 +1,280 @@
-Return-Path: <linux-kernel+bounces-290454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E8A1955402
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 02:00:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9115E955407
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 02:02:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0749B23964
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 00:00:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43E7F283B9B
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 00:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC80715624B;
-	Fri, 16 Aug 2024 23:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F59910F7;
+	Sat, 17 Aug 2024 00:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9u7P7pq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QKJhu/O2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190301553A3;
-	Fri, 16 Aug 2024 23:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9662E6FD3;
+	Sat, 17 Aug 2024 00:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723852726; cv=none; b=VGuMztvbD2sAz8LTUJVtnpr7VQ0nt8tp5SfcQNts6uMu3RBGovzyjMIqF4FYnQJLh/RYiWhfkrlalXTrPevbIjVeH8OMZcteCj3fnEXCzOEO76mtL0Qy/U8YXxwtPObNsZ0rFHrJ/uAD3ypuoNHOMhwoeEqeFgTye+bR09OLm40=
+	t=1723852957; cv=none; b=L13QfNGq8JkGuF9Ld6+gOihEJtkKxex3VzU7JSG8S7gSeAHiWszG8iv8CEVIrBPOWBeyTB3osGo5K/istdzW9VP2+kYxsewJxDHhFLHV+SGk+h6uKz78YdpQCQpSjz+ZxVmUQWUZV/JkIDsWVFxuZpZcriCS69MH6a+kbwOUTmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723852726; c=relaxed/simple;
-	bh=bVwU8VTS7qfB6LIa6XnvFuKDHO0RzgTfbyXDJAdcTdY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OdguynwZ4cmAknOVUNVmuT9telYeEipebsHAZHabQJsxvkOFUoQBLNzR2BZppsE6l/wXebZaXg+VVbuYvEbmRHfGI6tBHSHPKqnGJsPpWrTfKJKdngfrvJ8QKImiSB4ZYFp6oD5knu1OyqTe5ogEudG0kKw9tsFOdydE1YET+Mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s9u7P7pq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C51DC4AF09;
-	Fri, 16 Aug 2024 23:58:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723852725;
-	bh=bVwU8VTS7qfB6LIa6XnvFuKDHO0RzgTfbyXDJAdcTdY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=s9u7P7pqv6Q+nJRJlb2bvCokLoc5eoRXOSePx2m9uV1zikirp9yNiSVuWB6H8y5ws
-	 +b3fzRL9wKcCnWU/JvjEDemG0YcSe1jbHdfRmBs2gzBQT2ZhKMl3grd1zzM4IQjELa
-	 3Pos8xjRBWBmnHBsbY8Dh02pos0iF3ch13jWpF8+ImN79vRWUO6kUJpO+mcGG4g2/N
-	 nKQsi43NpYkuMjsfqr/6ICEWclLLnJdJMQmZkd8Kb7tOB5vYZ7OoqHx4+bzyHhbVnJ
-	 b2SZIc2hwdyAQQc8kjMzAa2NWX2gxZ11wrFD9y12fohmwTdJ29HOEqjqW44Z9ubaCw
-	 5obW7SXI52L7Q==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Subject: [PATCH 9/9] perf annotate-data: Update type stat at the end of find_data_type_die()
-Date: Fri, 16 Aug 2024 16:58:39 -0700
-Message-ID: <20240816235840.2754937-10-namhyung@kernel.org>
-X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
-In-Reply-To: <20240816235840.2754937-1-namhyung@kernel.org>
-References: <20240816235840.2754937-1-namhyung@kernel.org>
+	s=arc-20240116; t=1723852957; c=relaxed/simple;
+	bh=NuhIj1J02UysqmDVGSje94SaDZPttynyjirGgg07UtY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KFKYWO2VkUSDrQQV+2b7eQ1MwnmaL2SoqJaR6vb/IGXlfQj1nJqyFXiYlDKUl2Oth9ZolYvSpXNKD+dBgD4ByyMzMb5fALXwx25BZimT5TbeSz6rigILS0tQnhppmG0jCIPP86CFMXGFQQXU6SRqXS0aUnCSC+5A96aW9B9wReE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QKJhu/O2; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723852956; x=1755388956;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=NuhIj1J02UysqmDVGSje94SaDZPttynyjirGgg07UtY=;
+  b=QKJhu/O2OZUMJ/SB5vP+4kc90usaOibDyXA1Og94VK3o0rb7W+yP4Spw
+   N7Kr+qAvDjPFTZbgwLzor90NycdbEJMB/YXOZG6ZZy6ISRTPuxzcWh5Vv
+   rVUjEItFckFsKphOPCZC/aSxscyGDGEsmGI9uoaucJXkWVTJM/WcP5e4E
+   x1kZRIYN2KCjNIYmGPLTukk4WgJWR4On9cOISr8eJHtRVwYF5IMj3mtmz
+   NbM1emJax9L21Ol6yZawx5EM957aVem9ewzl+3ed8X4qc2K4/ZGpaM1zH
+   bN3mtSn9OXIF4ugU+9tHAXEA2msK4qanqceWY/6+9e+1S+Nb0e6rJU7Gk
+   A==;
+X-CSE-ConnectionGUID: ooy0MepvSI2SAF3ssbSwsQ==
+X-CSE-MsgGUID: Ao5+/hxZTmy4Hc/0OLzQMA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="25918809"
+X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
+   d="scan'208";a="25918809"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 17:02:36 -0700
+X-CSE-ConnectionGUID: tlxDfjcySJ2pHE4ox9f2QA==
+X-CSE-MsgGUID: dhFxq7X/RnCY74e033c/8g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
+   d="scan'208";a="59785771"
+Received: from unknown (HELO [10.125.111.71]) ([10.125.111.71])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 17:02:34 -0700
+Message-ID: <974af11f-b515-427b-b679-16cf8cebd739@intel.com>
+Date: Fri, 16 Aug 2024 17:02:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 16/25] cxl/mem: Configure dynamic capacity interrupts
+To: ira.weiny@intel.com, Fan Ni <fan.ni@samsung.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+ Davidlohr Bueso <dave@stgolabs.net>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, linux-btrfs@vger.kernel.org,
+ linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, nvdimm@lists.linux.dev
+References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
+ <20240816-dcd-type2-upstream-v3-16-7c9b96cba6d7@intel.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20240816-dcd-type2-upstream-v3-16-7c9b96cba6d7@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-after trying all possibilities with DWARF and instruction tracking.
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/util/annotate-data.c | 47 +++++++++++++++++++++------------
- 1 file changed, 30 insertions(+), 17 deletions(-)
 
-diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-data.c
-index e86f40fed323..aa330c7d8edd 100644
---- a/tools/perf/util/annotate-data.c
-+++ b/tools/perf/util/annotate-data.c
-@@ -432,10 +432,8 @@ static enum type_match_result check_variable(struct data_loc_info *dloc,
- 		needs_pointer = false;
- 
- 	/* Get the type of the variable */
--	if (__die_get_real_type(var_die, type_die) == NULL) {
--		ann_data_stat.no_typeinfo++;
-+	if (__die_get_real_type(var_die, type_die) == NULL)
- 		return PERF_TMR_NO_TYPE;
--	}
- 
- 	/*
- 	 * Usually it expects a pointer type for a memory access.
-@@ -444,10 +442,8 @@ static enum type_match_result check_variable(struct data_loc_info *dloc,
- 	 */
- 	if (needs_pointer) {
- 		if (!is_pointer_type(type_die) ||
--		    __die_get_real_type(type_die, type_die) == NULL) {
--			ann_data_stat.no_typeinfo++;
-+		    __die_get_real_type(type_die, type_die) == NULL)
- 			return PERF_TMR_NO_POINTER;
--		}
- 	}
- 
- 	if (dwarf_tag(type_die) == DW_TAG_typedef)
-@@ -456,16 +452,12 @@ static enum type_match_result check_variable(struct data_loc_info *dloc,
- 		sized_type = *type_die;
- 
- 	/* Get the size of the actual type */
--	if (dwarf_aggregate_size(&sized_type, &size) < 0) {
--		ann_data_stat.invalid_size++;
-+	if (dwarf_aggregate_size(&sized_type, &size) < 0)
- 		return PERF_TMR_NO_SIZE;
--	}
- 
- 	/* Minimal sanity check */
--	if ((unsigned)offset >= size) {
--		ann_data_stat.bad_offset++;
-+	if ((unsigned)offset >= size)
- 		return PERF_TMR_BAD_OFFSET;
--	}
- 
- 	return PERF_TMR_OK;
- }
-@@ -1275,7 +1267,7 @@ static int find_data_type_die(struct data_loc_info *dloc, Dwarf_Die *type_die)
- 	bool found = false;
- 	u64 pc;
- 	char buf[64];
--	enum type_match_result result;
-+	enum type_match_result result = PERF_TMR_UNKNOWN;
- 
- 	if (dloc->op->multi_regs)
- 		snprintf(buf, sizeof(buf), "reg%d, reg%d", dloc->op->reg1, dloc->op->reg2);
-@@ -1317,7 +1309,7 @@ static int find_data_type_die(struct data_loc_info *dloc, Dwarf_Die *type_die)
- 			pr_debug_dtp("found by addr=%#"PRIx64" type_offset=%#x\n",
- 				     dloc->var_addr, offset);
- 			pr_debug_type_name(type_die, TSR_KIND_TYPE);
--			ret = 0;
-+			found = true;
- 			goto out;
- 		}
- 	}
-@@ -1416,16 +1408,37 @@ static int find_data_type_die(struct data_loc_info *dloc, Dwarf_Die *type_die)
- 		}
- 	}
- 
-+out:
- 	if (found) {
- 		pr_debug_dtp("final type:");
- 		pr_debug_type_name(type_die, TSR_KIND_TYPE);
- 		ret = 0;
- 	} else {
--		pr_debug_dtp("no variable found\n");
--		ann_data_stat.no_var++;
-+		switch (result) {
-+		case PERF_TMR_NO_TYPE:
-+		case PERF_TMR_NO_POINTER:
-+			pr_debug_dtp("%s\n", match_result_str(result));
-+			ann_data_stat.no_typeinfo++;
-+			break;
-+		case PERF_TMR_NO_SIZE:
-+			pr_debug_dtp("%s\n", match_result_str(result));
-+			ann_data_stat.invalid_size++;
-+			break;
-+		case PERF_TMR_BAD_OFFSET:
-+			pr_debug_dtp("%s\n", match_result_str(result));
-+			ann_data_stat.bad_offset++;
-+			break;
-+		case PERF_TMR_UNKNOWN:
-+		case PERF_TMR_BAIL_OUT:
-+		case PERF_TMR_OK:  /* should not reach here */
-+		default:
-+			pr_debug_dtp("no variable found\n");
-+			ann_data_stat.no_var++;
-+			break;
-+		}
-+		ret = -1;
- 	}
- 
--out:
- 	free(scopes);
- 	return ret;
- }
--- 
-2.46.0.184.g6999bdac58-goog
+On 8/16/24 7:44 AM, ira.weiny@intel.com wrote:
+> From: Navneet Singh <navneet.singh@intel.com>
+> 
+> Dynamic Capacity Devices (DCD) support extent change notifications
+> through the event log mechanism.  The interrupt mailbox commands were
+> extended in CXL 3.1 to support these notifications.  Firmware can't
+> configure DCD events to be FW controlled but can retain control of
+> memory events.
+> 
+> Configure DCD event log interrupts on devices supporting dynamic
+> capacity.  Disable DCD if interrupts are not supported.
+> 
+> Care is taken to preserve the interrupt policy set by the FW if FW first
+> has been selected by the BIOS.
+> 
+> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
+> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
 
+> 
+> ---
+> Changes:
+> [iweiny: update commit message]
+> [iweiny: rebase to upstream irq code]
+> [iweiny: disable DCD if irqs not supported]
+> [Jonathan: formatting fix]
+> [Fan: add text to debug print]
+> [djiang: make dcd helpers inline]
+> ---
+>  drivers/cxl/cxlmem.h |  2 ++
+>  drivers/cxl/pci.c    | 72 +++++++++++++++++++++++++++++++++++++++++++---------
+>  2 files changed, 62 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
+> index b4eb8164d05d..d41bec5433db 100644
+> --- a/drivers/cxl/cxlmem.h
+> +++ b/drivers/cxl/cxlmem.h
+> @@ -225,7 +225,9 @@ struct cxl_event_interrupt_policy {
+>  	u8 warn_settings;
+>  	u8 failure_settings;
+>  	u8 fatal_settings;
+> +	u8 dcd_settings;
+>  } __packed;
+> +#define CXL_EVENT_INT_POLICY_BASE_SIZE 4 /* info, warn, failure, fatal */
+>  
+>  /**
+>   * struct cxl_event_state - Event log driver state
+> diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
+> index 370c74eae323..e5430c4e3a3b 100644
+> --- a/drivers/cxl/pci.c
+> +++ b/drivers/cxl/pci.c
+> @@ -669,22 +669,33 @@ static int cxl_event_get_int_policy(struct cxl_memdev_state *mds,
+>  }
+>  
+>  static int cxl_event_config_msgnums(struct cxl_memdev_state *mds,
+> -				    struct cxl_event_interrupt_policy *policy)
+> +				    struct cxl_event_interrupt_policy *policy,
+> +				    bool native_cxl)
+>  {
+> +	size_t size_in = CXL_EVENT_INT_POLICY_BASE_SIZE;
+>  	struct cxl_mbox_cmd mbox_cmd;
+>  	int rc;
+>  
+> -	*policy = (struct cxl_event_interrupt_policy) {
+> -		.info_settings = CXL_INT_MSI_MSIX,
+> -		.warn_settings = CXL_INT_MSI_MSIX,
+> -		.failure_settings = CXL_INT_MSI_MSIX,
+> -		.fatal_settings = CXL_INT_MSI_MSIX,
+> -	};
+> +	/* memory event policy is left if FW has control */
+> +	if (native_cxl) {
+> +		*policy = (struct cxl_event_interrupt_policy) {
+> +			.info_settings = CXL_INT_MSI_MSIX,
+> +			.warn_settings = CXL_INT_MSI_MSIX,
+> +			.failure_settings = CXL_INT_MSI_MSIX,
+> +			.fatal_settings = CXL_INT_MSI_MSIX,
+> +			.dcd_settings = 0,
+> +		};
+> +	}
+> +
+> +	if (cxl_dcd_supported(mds)) {
+> +		policy->dcd_settings = CXL_INT_MSI_MSIX;
+> +		size_in += sizeof(policy->dcd_settings);
+> +	}
+>  
+>  	mbox_cmd = (struct cxl_mbox_cmd) {
+>  		.opcode = CXL_MBOX_OP_SET_EVT_INT_POLICY,
+>  		.payload_in = policy,
+> -		.size_in = sizeof(*policy),
+> +		.size_in = size_in,
+>  	};
+>  
+>  	rc = cxl_internal_send_cmd(mds, &mbox_cmd);
+> @@ -731,6 +742,31 @@ static int cxl_event_irqsetup(struct cxl_memdev_state *mds,
+>  	return 0;
+>  }
+>  
+> +static int cxl_irqsetup(struct cxl_memdev_state *mds,
+> +			struct cxl_event_interrupt_policy *policy,
+> +			bool native_cxl)
+> +{
+> +	struct cxl_dev_state *cxlds = &mds->cxlds;
+> +	int rc;
+> +
+> +	if (native_cxl) {
+> +		rc = cxl_event_irqsetup(mds, policy);
+> +		if (rc)
+> +			return rc;
+> +	}
+> +
+> +	if (cxl_dcd_supported(mds)) {
+> +		rc = cxl_event_req_irq(cxlds, policy->dcd_settings);
+> +		if (rc) {
+> +			dev_err(cxlds->dev, "Failed to get interrupt for DCD event log\n");
+> +			cxl_disable_dcd(mds);
+> +			return rc;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static bool cxl_event_int_is_fw(u8 setting)
+>  {
+>  	u8 mode = FIELD_GET(CXLDEV_EVENT_INT_MODE_MASK, setting);
+> @@ -757,17 +793,25 @@ static int cxl_event_config(struct pci_host_bridge *host_bridge,
+>  			    struct cxl_memdev_state *mds, bool irq_avail)
+>  {
+>  	struct cxl_event_interrupt_policy policy = { 0 };
+> +	bool native_cxl = host_bridge->native_cxl_error;
+>  	int rc;
+>  
+>  	/*
+>  	 * When BIOS maintains CXL error reporting control, it will process
+>  	 * event records.  Only one agent can do so.
+> +	 *
+> +	 * If BIOS has control of events and DCD is not supported skip event
+> +	 * configuration.
+>  	 */
+> -	if (!host_bridge->native_cxl_error)
+> +	if (!native_cxl && !cxl_dcd_supported(mds))
+>  		return 0;
+>  
+>  	if (!irq_avail) {
+>  		dev_info(mds->cxlds.dev, "No interrupt support, disable event processing.\n");
+> +		if (cxl_dcd_supported(mds)) {
+> +			dev_info(mds->cxlds.dev, "DCD requires interrupts, disable DCD\n");
+> +			cxl_disable_dcd(mds);
+> +		}
+>  		return 0;
+>  	}
+>  
+> @@ -775,10 +819,10 @@ static int cxl_event_config(struct pci_host_bridge *host_bridge,
+>  	if (rc)
+>  		return rc;
+>  
+> -	if (!cxl_event_validate_mem_policy(mds, &policy))
+> +	if (native_cxl && !cxl_event_validate_mem_policy(mds, &policy))
+>  		return -EBUSY;
+>  
+> -	rc = cxl_event_config_msgnums(mds, &policy);
+> +	rc = cxl_event_config_msgnums(mds, &policy, native_cxl);
+>  	if (rc)
+>  		return rc;
+>  
+> @@ -786,12 +830,16 @@ static int cxl_event_config(struct pci_host_bridge *host_bridge,
+>  	if (rc)
+>  		return rc;
+>  
+> -	rc = cxl_event_irqsetup(mds, &policy);
+> +	rc = cxl_irqsetup(mds, &policy, native_cxl);
+>  	if (rc)
+>  		return rc;
+>  
+>  	cxl_mem_get_event_records(mds, CXLDEV_EVENT_STATUS_ALL);
+>  
+> +	dev_dbg(mds->cxlds.dev, "Event config : %s DCD %s\n",
+> +		native_cxl ? "OS" : "BIOS",
+> +		cxl_dcd_supported(mds) ? "supported" : "not supported");
+> +
+>  	return 0;
+>  }
+>  
+> 
 
