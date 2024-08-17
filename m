@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-290491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9561495549A
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 03:30:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C74B95549C
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 03:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51736284716
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:29:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 779F91C214F8
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC62BA2D;
-	Sat, 17 Aug 2024 01:29:33 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5994A4A33;
+	Sat, 17 Aug 2024 01:31:06 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807F5AD52;
-	Sat, 17 Aug 2024 01:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD0633E8;
+	Sat, 17 Aug 2024 01:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723858172; cv=none; b=bLlVcPR93IqM4d88EdNAKH6JbrkQiKABGXe+ivNBIsMzWNE6nKVhjIkp5nUml8LhDHoDXnz+J7v6fRLXjtQx/vcC/W+TDGvJ11SyGdbAbkZ9useTHa4mrRzPUnitZEOFTG1Ed02s1xDNfGJyXxwNNEHBhtw1XBhJldgt9QpP1FI=
+	t=1723858265; cv=none; b=WdM7PKeu3k8P5FFGcehrbclmZ/au3ktT3prMmekCYwmaaEvg6UTfZtAJ0yo6Sd/WyxtQA6rlKA5+gEtTTUx6019sK5ILOCyoTUVT9FtymN9jkUSOrUWWcqPuZiwjGWSHyz2/k9udvjzPov1cgbD5bqEZIVt15OqmG5Q82mQOwDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723858172; c=relaxed/simple;
-	bh=B5BkuD8o6Mx3dm4hQm3aSwfgvwqiy1n28NaUq5o/2CU=;
+	s=arc-20240116; t=1723858265; c=relaxed/simple;
+	bh=eCz1qgGD7M3l4pwI5OuTdSjUMQm+4S3nWZ++hnwv5jM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t0eFWci0AexqPnOVWQOA1z36ShPTFFvq3LARmO0wSHJys7GbghHLvCpP3d1psFBgLp0gUiYgaNEeu8jaBd97plKsgy+SLhn01aMo4mG1ujYuNTCAbyB6pO7L3+WrcM9MxFhW2w7PNct95cWVEcPG6O90wtAECoBX9Dsyrv/1W9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 In-Reply-To:Content-Type; b=UwLrJCOGqv9BzOPB+YiViGeaGzUS79SRXHS7mcINwzsi13Gz0bDrpu2rXPuOCyMTI3eidf4+Q3Q7AnqHi11zjamkXJb3PJlmp7SVglwGDrrfO30yfOxjyXvEbME0tv7L+CwRv1z0OLpLARIPLsatl7aeT0XTBIGo6sJvlFdh1y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wm1VH0yHxz4f3l1y;
-	Sat, 17 Aug 2024 09:29:11 +0800 (CST)
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Wm1X56fWlz4f3js9;
+	Sat, 17 Aug 2024 09:30:45 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 002721A058E;
-	Sat, 17 Aug 2024 09:29:25 +0800 (CST)
-Received: from [10.174.177.210] (unknown [10.174.177.210])
-	by APP4 (Coremail) with SMTP id gCh0CgB37ILz_L9mc4edBw--.25760S3;
-	Sat, 17 Aug 2024 09:29:25 +0800 (CST)
-Message-ID: <ee50fce8-d931-eb10-78eb-7157a2c9020b@huaweicloud.com>
-Date: Sat, 17 Aug 2024 09:29:23 +0800
+	by mail.maildlp.com (Postfix) with ESMTP id D064B1A058E;
+	Sat, 17 Aug 2024 09:30:59 +0800 (CST)
+Received: from [10.67.110.112] (unknown [10.67.110.112])
+	by APP4 (Coremail) with SMTP id gCh0CgAnmoBS_b9mcaGdBw--.32124S2;
+	Sat, 17 Aug 2024 09:30:59 +0800 (CST)
+Message-ID: <1ddb539a-79ed-d992-76cf-061acb4df11e@huaweicloud.com>
+Date: Sat, 17 Aug 2024 09:30:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,114 +47,156 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.5.1
-Subject: Re: [PATCH] ext4: disambiguate the return value of
- ext4_dio_write_end_io()
-To: alexjlzheng@gmail.com, yangerkun@huaweicloud.com,
- "Darrick J. Wong" <djwong@kernel.org>
-Cc: adilger.kernel@dilger.ca, alexjlzheng@tencent.com,
- linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu
-References: <9de82d23-902f-cb18-7688-f5e687e86d14@huaweicloud.com>
- <20240816165731.1007238-1-alexjlzheng@tencent.com>
-From: yangerkun <yangerkun@huaweicloud.com>
-In-Reply-To: <20240816165731.1007238-1-alexjlzheng@tencent.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 5/5] slab: Allocate and use per-call-site caches
+To: Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+ Kent Overstreet <kent.overstreet@linux.dev>, Christoph Lameter
+ <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+ David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+ "GONG, Ruiqi" <gongruiqi@huaweicloud.com>, Jann Horn <jannh@google.com>,
+ Matteo Rizzo <matteorizzo@google.com>, jvoisin <julien.voisin@dustri.org>,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20240809072532.work.266-kees@kernel.org>
+ <20240809073309.2134488-5-kees@kernel.org>
+Content-Language: en-US
+From: Xiu Jianfeng <xiujianfeng@huaweicloud.com>
+In-Reply-To: <20240809073309.2134488-5-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB37ILz_L9mc4edBw--.25760S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxZr4DAr1DAw47uw4fZw1rXrb_yoW5WF1kpr
-	s8uF9FkrWqv347Cw4xKFn5Zr10ka1UGrWUXryqgw1xZryqvwn7KF48ta4Y9F18CrZ7Gw4F
-	qF4vqrZxZw18A37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
-	Y487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa
-	73UjIFyTuYvjfUYCJmUUUUU
-X-CM-SenderInfo: 51dqwvhunx0q5kxd4v5lfo033gof0z/
+X-CM-TRANSID:gCh0CgAnmoBS_b9mcaGdBw--.32124S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxGrW5Xw4xZF18KFWrCrW5GFg_yoWrJw4UpF
+	WxWa15GFs5XFy7Ca9xt348WrySqayrGFy5Jayaq3s5ZF1Yqr18WFn7GrWIvrWkAry5CF40
+	gF9YyasI93WUA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
+	IYCTnIWIevJa73UjIFyTuYvjxUIa0PDUUUU
+X-CM-SenderInfo: x0lxyxpdqiv03j6k3tpzhluzxrxghudrp/
 
+Hi Kees,
 
-
-在 2024/8/17 0:57, alexjlzheng@gmail.com 写道:
-> On Fri, 16 Aug 2024 20:21:22 +0800, yangerkun@huaweicloud.com wrote:
->> 在 2024/8/15 19:27, alexjlzheng@gmail.com 写道:
->>> From: Jinliang Zheng <alexjlzheng@tencent.com>
->>>
->>> The commit 91562895f803 ("ext4: properly sync file size update after O_SYNC
->>> direct IO") causes confusion about the meaning of the return value of
->>> ext4_dio_write_end_io().
->>>
->>> Specifically, when the ext4_handle_inode_extension() operation succeeds,
->>> ext4_dio_write_end_io() directly returns count instead of 0.
->>>
->>> This does not cause a bug in the current kernel, but the semantics of the
->>> return value of the ext4_dio_write_end_io() function are wrong, which is
->>> likely to introduce bugs in the future code evolution.
->>>
->>> Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
->>> ---
->>>    fs/ext4/file.c | 5 +++--
->>>    1 file changed, 3 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
->>> index c89e434db6b7..6df5a92cec2b 100644
->>> --- a/fs/ext4/file.c
->>> +++ b/fs/ext4/file.c
->>> @@ -392,8 +392,9 @@ static int ext4_dio_write_end_io(struct kiocb *iocb, ssize_t size,
->>>    	 */
->>>    	if (pos + size <= READ_ONCE(EXT4_I(inode)->i_disksize) &&
->>>    	    pos + size <= i_size_read(inode))
->>> -		return size;
->>> -	return ext4_handle_inode_extension(inode, pos, size);
->>> +		return 0;
->>> +	error = ext4_handle_inode_extension(inode, pos, size);
->>> +	return error < 0 ? error : 0;
->>
->> Why?
+On 2024/8/9 15:33, Kees Cook wrote:
+> Use separate per-call-site kmem_cache or kmem_buckets. These are
+> allocated on demand to avoid wasting memory for unused caches.
 > 
-> Before commit 91562895f803 ("ext4: properly sync file size update after O_SYNC
-> direct IO"), all filesystems' iomap_dio_ops.end_io() return 0 on success and
-> negative value on failure.
+> A few caches need to be allocated very early to support allocating the
+> caches themselves: kstrdup(), kvasprintf(), and pcpu_mem_zalloc(). Any
+> GFP_ATOMIC allocations are currently left to be allocated from
+> KMALLOC_NORMAL.
 > 
-> Moreover, this confusion of return value semantics caused data corruption when
-> this above patch was merged to the stable branch. See
-> https://lwn.net/Articles/954285/ for details.
-
-Yeah, I know this problem, you should backport 936e114a245b("iomap:
-update ki_pos a little later in iomap_dio_complete") too to help update
-iocb->ki_pos since ext4_dio_write_end_io now return > 0.
-
+> With a distro config, /proc/slabinfo grows from ~400 entries to ~2200.
 > 
->>
->> iomap_dio_complete can use the return value directly without any bug.
->> And I think the code now seems more clearly...
->>
+> Since this feature (CONFIG_SLAB_PER_SITE) is redundant to
+> CONFIG_RANDOM_KMALLOC_CACHES, mark it a incompatible. Add Kconfig help
+> text that compares the features.
 > 
-> In my opinion, clean code should be clearly defined code, especially the
-
-Agree.
-
-> interface functions connecting various modules. So, what is the return value
-> definition of iomap_dio_ops.end_io()? What is the return value definition of
-> ext4_dio_write_end_io()?
-
-I have not seen the definition of return value for
-iomap_dio_ops.end_io(), so I think the code is ok now. If we give a
-definition for the return value like Darrick describe, this patch looks
-good to me.
-
+> Improvements needed:
+> - Retain call site gfp flags in alloc_tag meta field to:
+>   - pre-allocate all GFP_ATOMIC caches (since their caches cannot
+>     be allocated on demand unless we want them to be GFP_ATOMIC
+>     themselves...)
+>   - Separate MEMCG allocations as well
+> - Allocate individual caches within kmem_buckets on demand to
+>   further reduce memory usage overhead.
 > 
-> Thanks,
-> Jinliang Zheng
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: Kent Overstreet <kent.overstreet@linux.dev>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Christoph Lameter <cl@linux.com>
+> Cc: Pekka Enberg <penberg@kernel.org>
+> Cc: David Rientjes <rientjes@google.com>
+> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Roman Gushchin <roman.gushchin@linux.dev>
+> Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+> Cc: linux-mm@kvack.org
+> ---
+>  include/linux/alloc_tag.h |   8 +++
+>  lib/alloc_tag.c           | 121 +++++++++++++++++++++++++++++++++++---
+>  mm/Kconfig                |  19 +++++-
+>  mm/slab_common.c          |   1 +
+>  mm/slub.c                 |  31 +++++++++-
+>  5 files changed, 170 insertions(+), 10 deletions(-)
 > 
->>>    }
->>>    
->>>    static const struct iomap_dio_ops ext4_dio_write_ops = {
-> 
+
+[...]
+
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 3520acaf9afa..d14102c4b4d7 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -4135,6 +4135,35 @@ void *__kmalloc_large_node_noprof(size_t size, gfp_t flags, int node)
+>  }
+>  EXPORT_SYMBOL(__kmalloc_large_node_noprof);
+>  
+> +static __always_inline
+> +struct kmem_cache *choose_slab(size_t size, kmem_buckets *b, gfp_t flags,
+> +			       unsigned long caller)
+> +{
+> +#ifdef CONFIG_SLAB_PER_SITE
+> +	struct alloc_tag *tag = current->alloc_tag;
+
+There is a compile error here if CONFIG_MEM_ALLOC_PROFILING is disabled
+when I test this patchset.
+
+mm/slub.c: In function ‘choose_slab’:
+mm/slub.c:4187:40: error: ‘struct task_struct’ has no member named
+‘alloc_tag’
+ 4187 |         struct alloc_tag *tag = current->alloc_tag;
+      |                                        ^~
+  CC      mm/page_reporting.o
+
+maybe CONFIG_SLAB_PER_SITE should depend on CONFIG_MEM_ALLOC_PROFILING
+
+
+> +
+> +	if (!b && tag && tag->meta.sized &&
+> +	    kmalloc_type(flags, caller) == KMALLOC_NORMAL &&
+> +	    (flags & GFP_ATOMIC) != GFP_ATOMIC) {
+> +		void *p = READ_ONCE(tag->meta.cache);
+> +
+> +		if (!p && slab_state >= UP) {
+> +			alloc_tag_site_init(&tag->ct, true);
+> +			p = READ_ONCE(tag->meta.cache);
+> +		}
+> +
+> +		if (tag->meta.sized < SIZE_MAX) {
+> +			if (p)
+> +				return p;
+> +			/* Otherwise continue with default buckets. */
+> +		} else {
+> +			b = p;
+> +		}
+> +	}
+> +#endif
+> +	return kmalloc_slab(size, b, flags, caller);
+> +}
+> +
+>  static __always_inline
+>  void *__do_kmalloc_node(size_t size, kmem_buckets *b, gfp_t flags, int node,
+>  			unsigned long caller)
+> @@ -4152,7 +4181,7 @@ void *__do_kmalloc_node(size_t size, kmem_buckets *b, gfp_t flags, int node,
+>  	if (unlikely(!size))
+>  		return ZERO_SIZE_PTR;
+>  
+> -	s = kmalloc_slab(size, b, flags, caller);
+> +	s = choose_slab(size, b, flags, caller);
+>  
+>  	ret = slab_alloc_node(s, NULL, flags, node, caller, size);
+>  	ret = kasan_kmalloc(s, ret, size, flags);
 
 
