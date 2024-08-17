@@ -1,50 +1,57 @@
-Return-Path: <linux-kernel+bounces-290645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50B319556CF
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 11:36:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 240C69556D7
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 11:41:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E105DB21D7D
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:36:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49A971C21001
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:41:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C4C881E;
-	Sat, 17 Aug 2024 09:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F51149DE4;
+	Sat, 17 Aug 2024 09:41:15 +0000 (UTC)
 Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357CC1494B0;
-	Sat, 17 Aug 2024 09:36:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB6D14600F;
+	Sat, 17 Aug 2024 09:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723887380; cv=none; b=qsBML5oXY+LyTylYagMWxYAbzMu1cCV66BIG3gyethJVt3A99KIfHRYOYuGxF88EjkXmNCLkOitTLoEymQjA1xm+KzWxmZOdoQZ9Fccv9e/Rba2EUCnQ5SGJ5Cbi6UtARY/LcAo2vRjRvHXDI0d3WgjwqtqCAssdWY2sKRyA5wM=
+	t=1723887674; cv=none; b=tkGWm+L1h8thLl5+Y/zks4BCThr2WpQMaDvGjpECn35UIn4r7OJzH2cjsgJ8brqf5oWD9KhLgZb9a/0CA7RWTZZ2FW8hBYi1LuHdJAvPIBHeiVxs4mY5820c1AlkEIrIK2fz77xWTNVMUCebRh3sxDJVpAYpCpgv/njsqlDEz5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723887380; c=relaxed/simple;
-	bh=wzegZNh/JQ/vmkSWDX+aXKIV+AEH9C5s2h3okCrEYBQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lxc5ZFIQIiGqABOcCQBFkY9Smfq6AUFBkhtKwWxeucfRx4hYW1NVGjS9d089HjKmAMP04YWDEyXqy28dk4pNIhdE0q0XgiXuw7baOPAq4KLSdLqA1a4/+VSuV8hqGUIsCDXeq+mhZdYFzZOEdpZfMz3t0m9GRoxd8xevpk46oWU=
+	s=arc-20240116; t=1723887674; c=relaxed/simple;
+	bh=e/6eO58p0hU4BqE/P+CYc0FUTo4UyWBoKSiNKG6ov9k=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OnKlicAsUHYTZ+AoBXFFtieV2iLXHHAO5Kr/1ZFkQKTRH3N6+JABEzN82IfxUqE2LEQYLBr9jwXoH9eYqMfdUz2Rv9wq7Jq2XrpyDFezj/wKn+OFhifbZyeZSNto0yi4D0MJHqU7frW5cLZlzowMK85QTmZpjg97ecpg83Ztbc8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WmDBZ5mfSz2CmPV;
-	Sat, 17 Aug 2024 17:31:18 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 98DDB140154;
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WmDJG34lqz2Cmhg;
 	Sat, 17 Aug 2024 17:36:14 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 17 Aug
- 2024 17:36:14 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <perex@perex.cz>, <tiwai@suse.com>, <yuehaibing@huawei.com>,
-	<arnd@arndb.de>
-CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] ALSA: seq: Remove unused declarations
-Date: Sat, 17 Aug 2024 17:33:34 +0800
-Message-ID: <20240817093334.1120002-1-yuehaibing@huawei.com>
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id 393A81401E9;
+	Sat, 17 Aug 2024 17:41:10 +0800 (CST)
+Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Sat, 17 Aug
+ 2024 17:41:09 +0800
+From: Chen Ridong <chenridong@huawei.com>
+To: <martin.lau@linux.dev>, <ast@kernel.org>, <daniel@iogearbox.net>,
+	<andrii@kernel.org>, <eddyz87@gmail.com>, <song@kernel.org>,
+	<yonghong.song@linux.dev>, <john.fastabend@gmail.com>, <kpsingh@kernel.org>,
+	<sdf@google.com>, <haoluo@google.com>, <jolsa@kernel.org>, <tj@kernel.org>,
+	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>, <roman.gushchin@linux.dev>
+CC: <bpf@vger.kernel.org>, <cgroups@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 1/1] cgroup: fix deadlock caused by cgroup_mutex and cpu_hotplug_lock
+Date: Sat, 17 Aug 2024 09:33:34 +0000
+Message-ID: <20240817093334.6062-2-chenridong@huawei.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240817093334.6062-1-chenridong@huawei.com>
+References: <20240817093334.6062-1-chenridong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,74 +60,151 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-These functions are never implemented and used.
+We found a hung_task problem as shown below:
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+INFO: task kworker/0:0:8 blocked for more than 327 seconds.
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/0:0     state:D stack:13920 pid:8     ppid:2       flags:0x00004000
+Workqueue: events cgroup_bpf_release
+Call Trace:
+ <TASK>
+ __schedule+0x5a2/0x2050
+ ? find_held_lock+0x33/0x100
+ ? wq_worker_sleeping+0x9e/0xe0
+ schedule+0x9f/0x180
+ schedule_preempt_disabled+0x25/0x50
+ __mutex_lock+0x512/0x740
+ ? cgroup_bpf_release+0x1e/0x4d0
+ ? cgroup_bpf_release+0xcf/0x4d0
+ ? process_scheduled_works+0x161/0x8a0
+ ? cgroup_bpf_release+0x1e/0x4d0
+ ? mutex_lock_nested+0x2b/0x40
+ ? __pfx_delay_tsc+0x10/0x10
+ mutex_lock_nested+0x2b/0x40
+ cgroup_bpf_release+0xcf/0x4d0
+ ? process_scheduled_works+0x161/0x8a0
+ ? trace_event_raw_event_workqueue_execute_start+0x64/0xd0
+ ? process_scheduled_works+0x161/0x8a0
+ process_scheduled_works+0x23a/0x8a0
+ worker_thread+0x231/0x5b0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0x14d/0x1c0
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x59/0x70
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1b/0x30
+ </TASK>
+
+This issue can be reproduced by the following pressuse test:
+1. A large number of cpuset cgroups are deleted.
+2. Set cpu on and off repeatly.
+3. Set watchdog_thresh repeatly.
+The scripts can be obtained at LINK mentioned above the signature.
+
+The reason for this issue is cgroup_mutex and cpu_hotplug_lock are
+acquired in different tasks, which may lead to deadlock.
+It can lead to a deadlock through the following steps:
+1. A large number of cpusets are deleted asynchronously, which puts a
+   large number of cgroup_bpf_release works into system_wq. The max_active
+   of system_wq is WQ_DFL_ACTIVE(256). Consequently, all active works are
+   cgroup_bpf_release works, and many cgroup_bpf_release works will be put
+   into inactive queue. As illustrated in the diagram, there are 256 (in
+   the acvtive queue) + n (in the inactive queue) works.
+2. Setting watchdog_thresh will hold cpu_hotplug_lock.read and put
+   smp_call_on_cpu work into system_wq. However step 1 has already filled
+   system_wq, 'sscs.work' is put into inactive queue. 'sscs.work' has
+   to wait until the works that were put into the inacvtive queue earlier
+   have executed (n cgroup_bpf_release), so it will be blocked for a while.
+3. Cpu offline requires cpu_hotplug_lock.write, which is blocked by step 2.
+4. Cpusets that were deleted at step 1 put cgroup_release works into
+   cgroup_destroy_wq. They are competing to get cgroup_mutex all the time.
+   When cgroup_metux is acqured by work at css_killed_work_fn, it will
+   call cpuset_css_offline, which needs to acqure cpu_hotplug_lock.read.
+   However, cpuset_css_offline will be blocked for step 3.
+5. At this moment, there are 256 works in active queue that are
+   cgroup_bpf_release, they are attempting to acquire cgroup_mutex, and as
+   a result, all of them are blocked. Consequently, sscs.work can not be
+   executed. Ultimately, this situation leads to four processes being
+   blocked, forming a deadlock.
+
+system_wq(step1)		WatchDog(step2)			cpu offline(step3)	cgroup_destroy_wq(step4)
+...
+2000+ cgroups deleted asyn
+256 actives + n inactives
+				__lockup_detector_reconfigure
+				P(cpu_hotplug_lock.read)
+				put sscs.work into system_wq
+256 + n + 1(sscs.work)
+sscs.work wait to be executed
+				warting sscs.work finish
+								percpu_down_write
+								P(cpu_hotplug_lock.write)
+								...blocking...
+											css_killed_work_fn
+											P(cgroup_mutex)
+											cpuset_css_offline
+											P(cpu_hotplug_lock.read)
+											...blocking...
+256 cgroup_bpf_release
+mutex_lock(&cgroup_mutex);
+..blocking...
+
+To fix the problem, place cgroup_bpf_release works on cgroup_destroy_wq,
+which can break the loop and solve the problem. System wqs are for misc
+things which shouldn't create a large number of concurrent work items.
+If something is going to generate >WQ_DFL_ACTIVE(256) concurrent work
+items, it should use its own dedicated workqueue.
+
+Fixes: 4bfc0bb2c60e ("bpf: decouple the lifetime of cgroup_bpf from cgroup itself")
+Link: https://lore.kernel.org/cgroups/e90c32d2-2a85-4f28-9154-09c7d320cb60@huawei.com/T/#t
+Signed-off-by: Chen Ridong <chenridong@huawei.com>
 ---
- include/sound/seq_kernel.h          | 4 ----
- sound/core/seq/oss/seq_oss_device.h | 4 ----
- sound/core/seq/seq_queue.h          | 1 -
- sound/core/seq/seq_timer.h          | 2 --
- 4 files changed, 11 deletions(-)
+ kernel/bpf/cgroup.c             | 2 +-
+ kernel/cgroup/cgroup-internal.h | 1 +
+ kernel/cgroup/cgroup.c          | 2 +-
+ 3 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/include/sound/seq_kernel.h b/include/sound/seq_kernel.h
-index c8621671fa70..00c32eed2124 100644
---- a/include/sound/seq_kernel.h
-+++ b/include/sound/seq_kernel.h
-@@ -86,10 +86,6 @@ static inline size_t snd_seq_event_packet_size(struct snd_seq_event *ev)
- /* interface for OSS emulation */
- int snd_seq_set_queue_tempo(int client, struct snd_seq_queue_tempo *tempo);
+diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
+index 8ba73042a239..a611a1274788 100644
+--- a/kernel/bpf/cgroup.c
++++ b/kernel/bpf/cgroup.c
+@@ -334,7 +334,7 @@ static void cgroup_bpf_release_fn(struct percpu_ref *ref)
+ 	struct cgroup *cgrp = container_of(ref, struct cgroup, bpf.refcnt);
  
--/* port callback routines */
--void snd_port_init_callback(struct snd_seq_port_callback *p);
--struct snd_seq_port_callback *snd_port_alloc_callback(void);
--
- /* port attach/detach */
- int snd_seq_event_port_attach(int client, struct snd_seq_port_callback *pcbp,
- 			      int cap, int type, int midi_channels, int midi_voices, char *portname);
-diff --git a/sound/core/seq/oss/seq_oss_device.h b/sound/core/seq/oss/seq_oss_device.h
-index f0e964b19af7..98dd20b42976 100644
---- a/sound/core/seq/oss/seq_oss_device.h
-+++ b/sound/core/seq/oss/seq_oss_device.h
-@@ -116,10 +116,6 @@ __poll_t snd_seq_oss_poll(struct seq_oss_devinfo *dp, struct file *file, poll_ta
+ 	INIT_WORK(&cgrp->bpf.release_work, cgroup_bpf_release);
+-	queue_work(system_wq, &cgrp->bpf.release_work);
++	queue_work(cgroup_destroy_wq, &cgrp->bpf.release_work);
+ }
  
- void snd_seq_oss_reset(struct seq_oss_devinfo *dp);
+ /* Get underlying bpf_prog of bpf_prog_list entry, regardless if it's through
+diff --git a/kernel/cgroup/cgroup-internal.h b/kernel/cgroup/cgroup-internal.h
+index c964dd7ff967..17ac19bc8106 100644
+--- a/kernel/cgroup/cgroup-internal.h
++++ b/kernel/cgroup/cgroup-internal.h
+@@ -13,6 +13,7 @@
+ extern spinlock_t trace_cgroup_path_lock;
+ extern char trace_cgroup_path[TRACE_CGROUP_PATH_LEN];
+ extern void __init enable_debug_cgroup(void);
++extern struct workqueue_struct *cgroup_destroy_wq;
  
--/* */
--void snd_seq_oss_process_queue(struct seq_oss_devinfo *dp, abstime_t time);
--
--
- /* proc interface */
- void snd_seq_oss_system_info_read(struct snd_info_buffer *buf);
- void snd_seq_oss_midi_info_read(struct snd_info_buffer *buf);
-diff --git a/sound/core/seq/seq_queue.h b/sound/core/seq/seq_queue.h
-index c69105dc1a10..74cc31aacdac 100644
---- a/sound/core/seq/seq_queue.h
-+++ b/sound/core/seq/seq_queue.h
-@@ -84,7 +84,6 @@ void snd_seq_check_queue(struct snd_seq_queue *q, int atomic, int hop);
- int snd_seq_queue_check_access(int queueid, int client);
- int snd_seq_queue_timer_set_tempo(int queueid, int client, struct snd_seq_queue_tempo *info);
- int snd_seq_queue_set_owner(int queueid, int client, int locked);
--int snd_seq_queue_set_locked(int queueid, int client, int locked);
- int snd_seq_queue_timer_open(int queueid);
- int snd_seq_queue_timer_close(int queueid);
- int snd_seq_queue_use(int queueid, int client, int use);
-diff --git a/sound/core/seq/seq_timer.h b/sound/core/seq/seq_timer.h
-index 3b906064bde1..c8803216a3a4 100644
---- a/sound/core/seq/seq_timer.h
-+++ b/sound/core/seq/seq_timer.h
-@@ -109,8 +109,6 @@ static inline void snd_seq_inc_time_nsec(snd_seq_real_time_t *tm, unsigned long
- struct snd_seq_queue;
- int snd_seq_timer_open(struct snd_seq_queue *q);
- int snd_seq_timer_close(struct snd_seq_queue *q);
--int snd_seq_timer_midi_open(struct snd_seq_queue *q);
--int snd_seq_timer_midi_close(struct snd_seq_queue *q);
- void snd_seq_timer_defaults(struct snd_seq_timer *tmr);
- void snd_seq_timer_reset(struct snd_seq_timer *tmr);
- int snd_seq_timer_stop(struct snd_seq_timer *tmr);
+ /*
+  * cgroup_path() takes a spin lock. It is good practice not to take
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 75058fbf4450..77fa9ed69c86 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -124,7 +124,7 @@ DEFINE_PERCPU_RWSEM(cgroup_threadgroup_rwsem);
+  * destruction work items don't end up filling up max_active of system_wq
+  * which may lead to deadlock.
+  */
+-static struct workqueue_struct *cgroup_destroy_wq;
++struct workqueue_struct *cgroup_destroy_wq;
+ 
+ /* generate an array of cgroup subsystem pointers */
+ #define SUBSYS(_x) [_x ## _cgrp_id] = &_x ## _cgrp_subsys,
 -- 
 2.34.1
 
