@@ -1,93 +1,78 @@
-Return-Path: <linux-kernel+bounces-290788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFFCA9558B2
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 17:34:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA9FA9558B7
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 17:39:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB61F1C20CB0
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:34:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63B451F21E90
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:39:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA3014EC55;
-	Sat, 17 Aug 2024 15:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C441F14D28A;
+	Sat, 17 Aug 2024 15:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tCOS2MX9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="V7sXCKsr"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86CFD2E5;
-	Sat, 17 Aug 2024 15:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CEC8F40;
+	Sat, 17 Aug 2024 15:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723908845; cv=none; b=i5ytIAJoUJfZsQ0TxKlhzsoJbiehRxenROrDVQHozQaPNe0pEDAyFHETMRtQQg716y5x5m66YuNQJxGAPdHMu49KjdJRcLHkWFoEr3IMwAdE23KYzn/RXOfW9/W6hIdGTw2nhOFBnT0eEu2HG1UAqlpB7I4hrhhxfP3D1wHPapM=
+	t=1723909132; cv=none; b=qWexu8QnUbQYmfT9qBXw8sCM1AH3hIwirpv69WgqWmLTe3MPGky3LHkqsNhI9MtK1xBhRvUd+qTeSYy99MEgxTreB3IyFNKYYUy2U3yacbbHs9JAxaIY7Vqn/ov67XWNPr3Bk8IOqwRyn/YRfuJCLDuo2NlxLqViuF1tPROzIi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723908845; c=relaxed/simple;
-	bh=P61hLlTE3CU9QrFc26cIC8xddi+vWGWzL0f2eUqIgms=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YBy+2WBelzPwyJBpJ3N7P3Ha6z7vKVEngJM1ubEPfRJS71bi7Aikzt82r6TNjqLVljXWVHw8jU+gV4HrpYZA/oqvyRMyNSXltVwBje9sPrOeP8AlyCfYeBQDy7dI945QEJsLL2ybHqUCcF8wRey3nkCyQwoSetnWyMKH05rJsNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tCOS2MX9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FC7CC116B1;
-	Sat, 17 Aug 2024 15:33:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723908845;
-	bh=P61hLlTE3CU9QrFc26cIC8xddi+vWGWzL0f2eUqIgms=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tCOS2MX9aJ/LCnu1OSpSsn0Xba/iCZ44XP992cTW+MQTOBC4PxBvNJ44Wy6JHe+eg
-	 Tgb85tmo+faxLUuD3AFrvqEMayeQvnxwISXxP1Qt6OyPBTTeS2x+6huOpPZYOzIZ/h
-	 eowdbnvUWJbV0txFDVd3Rz8Een0NwVUqbwsYZj4kZDwsZp7VvNiwTCQ+8BQMBMYSLW
-	 1B8zDxLVTr1ebwY73knSM5KL2pyMi2zL4F55/BOXbocXZHEr32MNE9viX1ATN23WP+
-	 t2gIk8Bf7z8Qc9ar7b/C3x1aYIGoIhaZJjoijoH8nI5m/uAEDnhePyofpEVbR7UnXD
-	 ZbdjVeJwV0HCQ==
-Date: Sat, 17 Aug 2024 16:33:54 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Guillaume Stols <gstols@baylibre.com>
-Cc: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Lars-Peter
- Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- aardelean@baylibre.com
-Subject: Re: [PATCH 7/8] iio: adc: ad7606: Switch to
- xxx_get_device_match_data
-Message-ID: <20240817163354.68ec95f4@jic23-huawei>
-In-Reply-To: <20240815-ad7606_add_iio_backend_support-v1-7-cea3e11b1aa4@baylibre.com>
-References: <20240815-ad7606_add_iio_backend_support-v1-0-cea3e11b1aa4@baylibre.com>
-	<20240815-ad7606_add_iio_backend_support-v1-7-cea3e11b1aa4@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1723909132; c=relaxed/simple;
+	bh=5Uj2/LCT4xIeiI7PoyH1kJVm5dMofpNTE/pOQkqqHco=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rX9T8Nc+ga0VdNQhO36VcxvgKqpGz7Fv+UiDBQSd6x+eoVCKJ9Daotr95dIkee05gpQCNy9lZPPDP/6UK+KODpgNf9XvyWnRyL4RJ7lJtdA6ibv6qyTV6+5+0LEpTEH3YRniM53cbV3XalrRc0fm+kv6Ua60pcW0N5DSBcItNTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=V7sXCKsr; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=dddiX3MU+x7AJwuIy7HkslI+ScPQ1EPrha6bb8Jm4L8=; b=V7sXCKsrIDLSnQ9Qo3NOZGY0hX
+	1PMM0g7R7oRe8bPd5kmU0Mn9qInSq+FfbgCFl6nnc3+fE9qfZZDG3C1ZEoKOQBDp03RQ642oiJjpt
+	E/DnIC7TWU5YT0MFx5Dp7Vv4XSjyBigJvawjIbbZ4iMIvSqb7ykrHU5FplJneSgmDI84=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sfLVY-0050Gy-T1; Sat, 17 Aug 2024 17:38:24 +0200
+Date: Sat, 17 Aug 2024 17:38:24 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Frank Sae <Frank.Sae@motor-comm.com>, hkallweit1@gmail.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yuanlai.cui@motor-comm.com,
+	hua.sun@motor-comm.com, xiaoyong.li@motor-comm.com,
+	suting.hu@motor-comm.com, jie.han@motor-comm.com
+Subject: Re: [PATCH net-next v2 2/2] net: phy: Add driver for Motorcomm
+ yt8821 2.5G ethernet phy
+Message-ID: <13950b5b-d596-4205-a808-72219e78b158@lunn.ch>
+References: <20240816060955.47076-1-Frank.Sae@motor-comm.com>
+ <20240816060955.47076-3-Frank.Sae@motor-comm.com>
+ <ZsCLMQWoZcVV+7xR@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZsCLMQWoZcVV+7xR@shell.armlinux.org.uk>
 
-On Thu, 15 Aug 2024 12:12:01 +0000
-Guillaume Stols <gstols@baylibre.com> wrote:
+> Also, it would be nice to have phydev->supported_interfaces populated
+> (which has to be done when the PHY is probed) so that phylink knows
+> before connecting with the PHY which interface modes are supported by
+> the PHY. (Andrew - please can we make this a condition for any new PHYs
+> supported by phylib in the future?)
 
-> On the parallel version, the current implementation is only compatible
-> with id tables and won't work with fx_nodes. So in this commit, the goal
-> is to switch to use get_device_match_data, in order to simplify the
-> logic of retrieving chip data.
-> 
-> Also, chip info is moved in the .h file so to be accessible to all the
-> driver files that can set a pointer to the corresponding chip as the
-> driver data.
+O.K i will add it to my mental checklist.
 
-This means each driver gets their own copy.
-
-Better to use an extern in the header and keep the actual data
-in the core module.
-
-Otherwise LGTM.
-
-
-
+	Andrew
 
