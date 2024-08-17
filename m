@@ -1,363 +1,131 @@
-Return-Path: <linux-kernel+bounces-290726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 058239557DF
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 14:43:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58B549557D7
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 14:42:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A4EBB21A50
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 12:43:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F12BD1F223B5
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 12:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FFDD155306;
-	Sat, 17 Aug 2024 12:42:31 +0000 (UTC)
-Received: from chessie.everett.org (chessie.fmt1.pfcs.com [66.220.13.234])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3CF153838;
-	Sat, 17 Aug 2024 12:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.220.13.234
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723898550; cv=none; b=R/H858IU2y0GGqBWdVbFLSlKXCAiK+IYD1uzuMoiWETADJ2Rxagyjf02SnmlDqvz55UNda8kyFlGRvx9LL2fwOda60yhh3aNHe1JOzj1CkQ6jl/b1oRbnRtcfezqZ1lagjod6efmYsUejsIKfF2bke81v4hlHw1+3brzlp+plSQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723898550; c=relaxed/simple;
-	bh=lKZDEoa4Q2Ld7cHoD2va4rPOokrvbL0/rOLpKlaY3ys=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=I0CqQp14hhcgkcB718aIQWgyyrDMA2GQqlt6OsUFOUW5uaxqLPlLcau4S4FjQeXjzq66yBcGSvbpBq5mlk3zjpK+dKXQB4/1IHNypbey8+DxqrFtZ9FwlqtimTsBx4WCsJOwCKvmgDbi3xH3hxNXWp6+sNTiKeRDuj0PSpuANb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nwtime.org; spf=pass smtp.mailfrom=nwtime.org; arc=none smtp.client-ip=66.220.13.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nwtime.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nwtime.org
-Received: from localhost.localdomain (ip1f10f85d.dynamic.kabel-deutschland.de [31.16.248.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D3314D457;
+	Sat, 17 Aug 2024 12:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PGNnyzzj"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by chessie.everett.org (Postfix) with ESMTPSA id 4WmJR00ybyzMQvj;
-	Sat, 17 Aug 2024 12:42:19 +0000 (UTC)
-From: Erez Geva <erezgeva@nwtime.org>
-To: linux-mtd@lists.infradead.org,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Michael Walle <mwalle@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Erez Geva <ErezGeva2@gmail.com>
-Subject: [PATCH v3 4/4] mtd: spi-nor: macronix: add manufacturer flags
-Date: Sat, 17 Aug 2024 14:41:40 +0200
-Message-Id: <20240817124140.800637-5-erezgeva@nwtime.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240817124140.800637-1-erezgeva@nwtime.org>
-References: <20240817124140.800637-1-erezgeva@nwtime.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14558145B37
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 12:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723898523; cv=none; b=it+wYkUt2m1F6SaETOEWhVGPH39P/hzNIUNJe1WXzHv7t6AeZiQwlByOT4jV2/KyKgPPs35+zG8pUzxS4WSs0qRclt70COgh8PGJIYefu35K1uAKcSV7ktFDC/HxRCRY/uDFsjfoloxr73KWN61sH9r+HFGS02NHkwHW3QS58VE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723898523; c=relaxed/simple;
+	bh=zawVGMi36NR05FYscXVAShSiMsJ6gTMPq8l6RNLvSrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fKR9jJ2miZBgvtVb1xUS1/t7O+YBA6DR0jljOs1Ufsg1NRLB2u2JtF0hc78JQlfKd0YD+ZNfR5+Ei3DDmrn/ichVmsc8TvPONgq6XWSb15SFf3cDdLTbI625KRY9qLgTL+psAxHLbyEGKELCk5SUz+aaav5Ue8UgjKIDq05YX/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PGNnyzzj; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42812945633so23158515e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 05:42:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723898520; x=1724503320; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=28ncRbCpnkLJ5/D26aUzNQlA5NCqwwwLXApZ4Hr03aA=;
+        b=PGNnyzzjMUIV8l/hA0bVULk4QI6blC2ezemfXfKrEraJR0qh/oqaOW9rz58oi0DyCn
+         AaVSi7xyaIFhjJWi12uqdlL14eQA/6uzP4j0V4DdtsSyzBC6vLvPhumySFKZQh6IFlHk
+         aoyD6c/KQy58/58oYNnS1lxrHVttx2oPkrcI3MeRK53HaTEv2aSOqoJiP9ekSzo1fX0g
+         C4YdPHqGTT/eYt7hmzkce2LKic4AyiAmtvH/TmSg7B6t3K5oR0bkEhvh9ctJ3xDRKmgc
+         ZovLhWpSp2BgqmJq/aNSEvY6rdkYxWK7CuFRwdQR9CQJSai34KVqYMQC5Y50p4UB4k1x
+         bsnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723898520; x=1724503320;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=28ncRbCpnkLJ5/D26aUzNQlA5NCqwwwLXApZ4Hr03aA=;
+        b=EWtiw/UlKk3ypLPwDeT7BLr4h4P6g6wloKUZM+gqcRng0so19FL1Vsu0qPy6rLrPes
+         SboXCKn9H0SzH3yml2metQI0i6NmmIRNTWJcKa6b8piDEtpMKIwiKpww/idTGsZ989Vu
+         lkAI6jqv2HqCOjyAa6GfS+e2QF09uZBrhwbWUnidUFEVcpxbd7s+D84+jxqWOgdRMjMc
+         fBcLBnmo6KnxbUi5b3+EfOCkM9XDw+RCpu8cuylMyp/PlTPv0EsbFpvjVGLSNt/SYz33
+         GkYorsssyOJIEL15Fs230kWwYiL1w0ZqzRZYm8v3fr0ePLLsk3mq3mvDi3YxcJLv5VTE
+         2+Yg==
+X-Gm-Message-State: AOJu0YwdMEIwpGJ74Hdd7QhsroSAkH1hBy659aCMTihMk0i9mzVBhr5b
+	xZbER+DKA42GFNZmnuHHDUiQPb5jKFhhefSUeRKS1sZpYIV/nFv9jYv1XQ==
+X-Google-Smtp-Source: AGHT+IF8JcFonXeS5BqsGkaj2afPjHM0G8puSOTREdxaWXTjGQ+eOU2zmGVd5/Y5DyiGsw7uW5UPyQ==
+X-Received: by 2002:a05:600c:3509:b0:426:6b92:387d with SMTP id 5b1f17b1804b1-429ed7b8860mr41405695e9.21.1723898519944;
+        Sat, 17 Aug 2024 05:41:59 -0700 (PDT)
+Received: from f (cst-prg-76-86.cust.vodafone.cz. [46.135.76.86])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429d781047asm117761715e9.0.2024.08.17.05.41.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 17 Aug 2024 05:41:59 -0700 (PDT)
+Date: Sat, 17 Aug 2024 14:41:52 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] ratelimit: convert flags to int to save 8 bytes in size
+Message-ID: <w65wgoyfu65xzeftqcc2xyrikvrq2nfmmqiq3z5jqytt65g3wu@2kykf4kwra3z>
+References: <20240817123754.240924-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240817123754.240924-1-mjguzik@gmail.com>
 
-From: Erez Geva <ErezGeva2@gmail.com>
+On Sat, Aug 17, 2024 at 02:37:54PM +0200, Mateusz Guzik wrote:
+> Only bit 1 is used, making an unsigned long a total overkill.
+> 
+> This brings it from 64 to 32 bytes, which in turn shrinks user_struct
 
-Add flag for always trying reading SFDP:
-All new chips from Macronix support SFDP.
-All old chips in the IDs table were reused by new chips.
+sigh, 40 to 32 bytes of course
 
-Add flag for reading OTP parameters from device tree.
-As Macronix reuse JEDEC IDs, there is no way to determine OTP parameters.
-Allow users to define the OTP parameters in device tree.
+this is embedded into user_struct, avoidably pushing it past 128 bytes
+of size
 
-Signed-off-by: Erez Geva <ErezGeva2@gmail.com>
----
- drivers/mtd/spi-nor/macronix.c | 1 +
- 1 file changed, 1 insertion(+)
-
--- My initial Macronix OTP code was tested with MX25l12833F.
--- As I no longer have that hardware.
-
--- I now testing with MX25L3233F connected to my BeagleBone Black
---  through an 8-PIN SOP (200mil).
--- The BeagleBone Black runs with Debian GNU/Linux 12.
--- And use Kernel 6.6.32-ti-arm32-r5 build with
---  arm-linux-gnueabihf-gcc gcc version 12.2.0 (Debian 12.2.0-14).
-
-$ cat /sys/bus/spi/devices/spi0.0/spi-nor/jedec_id
-c22016
-$ cat /sys/bus/spi/devices/spi0.0/spi-nor/manufacturer
-macronix
-$ cat /sys/bus/spi/devices/spi0.0/spi-nor/partname
-mx25l3205d
-$ xxd -p /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
-53464450000101ff00000109300000ffc2000104600000ffffffffffffff
-ffffffffffffffffffffffffffffffffffffe520f1ffffffff0144eb086b
-083b04bbeeffffffffff00ffffff00ff0c200f5210d800ffffffffffffff
-ffffffffffff003650269ef97764fecfffffffffffff
-$ sha256sum /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
-22d5d34af77c3628300056a0fc4bfbeafa027f544998852cf27f7cebf7881196  /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
-
-$ cat /sys/kernel/debug/spi-nor/spi0.0/capabilities
-Supported read modes by the flash
- 1S-1S-1S
-  opcode        0x03
-  mode cycles   0
-  dummy cycles  0
- 1S-1S-2S
-  opcode        0x3b
-  mode cycles   0
-  dummy cycles  8
- 1S-2S-2S
-  opcode        0xbb
-  mode cycles   0
-  dummy cycles  4
- 1S-1S-4S
-  opcode        0x6b
-  mode cycles   0
-  dummy cycles  8
- 1S-4S-4S
-  opcode        0xeb
-  mode cycles   2
-  dummy cycles  4
-
-Supported page program modes by the flash
- 1S-1S-1S
-  opcode        0x02
-
-$ cat /sys/kernel/debug/spi-nor/spi0.0/params
-name            mx25l3205d
-id              c2 20 16 c2 20 16
-size            4.00 MiB
-write size      1
-page size       256
-address nbytes  3
-flags           HAS_16BIT_SR
-
-opcodes
- read           0x03
-  dummy cycles  0
- erase          0x20
- program        0x02
- 8D extension   none
-
-protocols
- read           1S-1S-1S
- write          1S-1S-1S
- register       1S-1S-1S
-
-erase commands
- 20 (4.00 KiB) [1]
- 52 (32.0 KiB) [2]
- d8 (64.0 KiB) [3]
- c7 (4.00 MiB)
-
-sector map
- region (in hex)   | erase mask | flags
- ------------------+------------+----------
- 00000000-003fffff |     [ 123] |
-
-# mtd_debug info /dev/mtd0
-mtd.type = MTD_NORFLASH
-mtd.flags = MTD_CAP_NORFLASH
-mtd.size = 4194304 (4M)
-mtd.erasesize = 4096 (4K)
-mtd.writesize = 1
-mtd.oobsize = 0
-regions = 0
-
--- The BeagleBone Black SPI is very slow, Tests are slow.
-
-# dd if=/dev/urandom of=./spi_test bs=1M count=2
-2+0 records in
-2+0 records out
-2097152 bytes (2.1 MB, 2.0 MiB) copied, 0.0682607 s, 30.7 MB/s
-
-# time mtd_debug erase /dev/mtd0 0 2097152
-Erased 2097152 bytes from address 0x00000000 in flash
-
-real    0m12.703s
-user    0m0.000s
-sys     0m12.692s
-
-# time mtd_debug read /dev/mtd0 0 2097152 spi_read
-Copied 2097152 bytes from address 0x00000000 in flash to spi_read
-
-real    0m1.942s
-user    0m0.000s
-sys     0m0.053s
-
-# hexdump spi_read
-0000000 ffff ffff ffff ffff ffff ffff ffff ffff
-*
-0200000
-
-# sha256sum spi_read
-4bda3a28f4ffe603c0ec1258c0034d65a1a0d35ab7bd523a834608adabf03cc5  spi_read
-
-# time mtd_debug write /dev/mtd0 0 2097152 spi_test
-Copied 2097152 bytes from spi_test to address 0x00000000 in flash
-
-real    0m5.883s
-user    0m0.006s
-sys     0m3.970s
-
-# time mtd_debug read /dev/mtd0 0 2097152 spi_read
-Copied 2097152 bytes from address 0x00000000 in flash to spi_read
-
-real    0m2.208s
-user    0m0.003s
-sys     0m0.063s
-
-# sha256sum spi*
-f4f5d1d0a4fef487037cdb3f1be0f9aab68ca32f2dbe8782c927f03adf623ec3  spi_read
-f4f5d1d0a4fef487037cdb3f1be0f9aab68ca32f2dbe8782c927f03adf623ec3  spi_test
-
-# time mtd_debug erase /dev/mtd0 0 2097152
-Erased 2097152 bytes from address 0x00000000 in flash
-
-real    0m12.126s
-user    0m0.001s
-sys     0m12.115s
-
-# time mtd_debug read /dev/mtd0 0 2097152 spi_read
-Copied 2097152 bytes from address 0x00000000 in flash to spi_read
-
-real    0m2.611s
-user    0m0.000s
-sys     0m0.064s
-
-# sha256sum spi*
-4bda3a28f4ffe603c0ec1258c0034d65a1a0d35ab7bd523a834608adabf03cc5  spi_read
-f4f5d1d0a4fef487037cdb3f1be0f9aab68ca32f2dbe8782c927f03adf623ec3  spi_test
-
--- MX25L3233F OTP uses 1 region of size of 4096 bits
--- changes in device tree:
-                compatible = "jedec,spi-nor";
-+               otp_len = <512>;
-+               opt_n_regions = <1>;
-
-# flash_otp_info -u /dev/mtd0
-Number of OTP user blocks on /dev/mtd0: 1
-block  0:  offset = 0x0000  size = 512 bytes  [unlocked]
-
-# flash_otp_dump -u /dev/mtd0
-OTP user data for /dev/mtd0
-0x0000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x0010: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x0020: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x0030: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x0040: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x0050: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x0060: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x0070: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x0080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x0090: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x00a0: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x00b0: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x00c0: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x00d0: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x00e0: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x00f0: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x0100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x0110: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x0120: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x0130: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x0140: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x0150: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x0160: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x0170: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x0180: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x0190: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x01a0: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x01b0: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x01c0: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x01d0: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x01e0: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-0x01f0: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-
--- Macronix OTP does not support erase!
--- flash_otp_erase
-
--- TODO: As this testing can be done once per chip, I will do it after review.
-
-# printf '\xde\xad%.0s' {1..256} | flash_otp_write -u /dev/mtd0 0
-# flash_otp_lock -u /dev/mtd0 0 512
-# flash_otp_info -u /dev/mtd0
-
--- Test that mimic old Macronix chip lack SFDP.
--- In order to check how will the driver cope with an old Macronix chip.
--- As we do not posses such an old chip, we will change RDSFDP to an unused opcode.
-
--- changes in include/linux/mtd/spi-nor.h
--#define SPINOR_OP_RDSFDP       0x5a    /* Read SFDP */
-+#define SPINOR_OP_RDSFDP       0x57    /* Read SFDP */
-
-# dmesg | grep spi
-[   42.436974] spi-nor spi0.0: mx25l3205d (4096 Kbytes)
-
--- No error in kernel log!
-
-# ls /sys/bus/spi/devices/spi0.0/spi-nor/
-jedec_id  manufacturer  partname
-
--- No SFDP, as expected!
-
-$ cat /sys/kernel/debug/spi-nor/spi0.0/capabilities
-Supported read modes by the flash
- 1S-1S-1S
-  opcode        0x03
-  mode cycles   0
-  dummy cycles  0
-
-Supported page program modes by the flash
- 1S-1S-1S
-  opcode        0x02
-
-$ cat /sys/kernel/debug/spi-nor/spi0.0/params
-name            mx25l3205d
-id              c2 20 16 c2 20 16
-size            4.00 MiB
-write size      1
-page size       256
-address nbytes  3
-flags           HAS_16BIT_SR
-
-opcodes
- read           0x03
-  dummy cycles  0
- erase          0x20
- program        0x02
- 8D extension   none
-
-protocols
- read           1S-1S-1S
- write          1S-1S-1S
- register       1S-1S-1S
-
-erase commands
- 20 (4.00 KiB) [0]
- d8 (64.0 KiB) [1]
- c7 (4.00 MiB)
-
-sector map
- region (in hex)   | erase mask | flags
- ------------------+------------+----------
- 00000000-003fffff |     [01  ] |
-
-
-
-diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.c
-index 8df87b414e47..0e4dc6127fd1 100644
---- a/drivers/mtd/spi-nor/macronix.c
-+++ b/drivers/mtd/spi-nor/macronix.c
-@@ -393,4 +393,5 @@ const struct spi_nor_manufacturer spi_nor_macronix = {
- 	.parts = macronix_nor_parts,
- 	.nparts = ARRAY_SIZE(macronix_nor_parts),
- 	.fixups = &macronix_nor_fixups,
-+	.flags = SPI_NOR_MANUFACT_TTY_SFDP | SPI_NOR_MANUFACT_DT_OTP,
- };
--- 
-2.39.2
-
+> from 136 to 128 bytes. Since the latter is allocated with hwalign, this
+> means the total usage goes down from 192 to 128 bytes per object.
+> 
+> No functional changes.
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
+> 
+> ./scripts/get_maintainer.pl --git was most unhelpful showing nothing
+> 
+> I have no idea who to prod about it, I think it is pretty trivial not
+> needing any discussion.
+> 
+> Andrew Morton pulled in some of the changes to the file, so that's my
+> primary recipient.
+> 
+>  include/linux/ratelimit_types.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/ratelimit_types.h b/include/linux/ratelimit_types.h
+> index 002266693e50..765232ce0b5e 100644
+> --- a/include/linux/ratelimit_types.h
+> +++ b/include/linux/ratelimit_types.h
+> @@ -19,8 +19,8 @@ struct ratelimit_state {
+>  	int		burst;
+>  	int		printed;
+>  	int		missed;
+> +	unsigned int	flags;
+>  	unsigned long	begin;
+> -	unsigned long	flags;
+>  };
+>  
+>  #define RATELIMIT_STATE_INIT_FLAGS(name, interval_init, burst_init, flags_init) { \
+> -- 
+> 2.43.0
+> 
+> 
 
