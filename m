@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-290861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2CD09559AA
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 22:47:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E12C89559AB
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 22:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEDA42829B0
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 20:47:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A9ED2829E7
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 20:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E7715699E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D33156C49;
 	Sat, 17 Aug 2024 20:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="kyjbiwa1"
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="l+1pcYK2"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7CD15623B
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 20:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4C015624D
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 20:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723927610; cv=none; b=RkNin+PDIerCqVgv0aNKhSUl4oIUxtE/EPEjYdz/wC/34fDN1X13r+ddE3jcKo4BzW6ClGCAkOYSxPFfSK794UvXc5YR8k5dkMaTuMg4r07GFEMdcm0XNqC4XSYRZYOkdQqwvb5u7qQL97OsQZdVQhEa9ZpUrIe/f55Jbi/LeZY=
+	t=1723927610; cv=none; b=ddfAo4C14FaXE4MnwszSgOoZCbMd/ImQqwTMaAVlCIqwZ0RT23aqYb5yhFc1qZDZOiwHjd7I5F1gOMCpfzM0AkeksIZhBippXySCYeMVsUB/7hIfDOGWPML3tomS/lhsxXhvT2fAs2DIXs/vocQ0TMTVMR01BTWxEaQpfiCOWAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723927610; c=relaxed/simple;
-	bh=7Vp7No9whTj/vA4D1O3CqTZTNcenrkvZwi9JHFy5Tm8=;
+	bh=BmTe2CyYLeUX7cn6C5aHi1iNgZg8GBCBNyLdqX9hEhI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lva8ToINsf44yRFb/KUGgSLVH4iK8DTeyyxwbz9mBLkCMtCxSiTq2x31pLGxejSzx+1VPiQFt7Qz9KH+94iR422hA4V+mho3opgB6zRO+hJ5ZDO40MkZ97vNuZErjpDStVFRm5AJswFheaJtHZ1D0derIOoHPmG2phjlGaeBVAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=kyjbiwa1; arc=none smtp.client-ip=209.85.210.42
+	 MIME-Version; b=ZS7M0ObWoNPHYuR+GX3nqcEdYKY6eBLf+zvErrMJkjdNtakqRdO+B8OpFejjlXGkAlRQ51rEZGqPFWKS1TdCrUnR2QCUxJTbZuz5e1bB7j5zOVGhjA7Jq+OtpHFVWQKLRSgeo4WvMi+csLKRIt63b8I634HOVBB4aiphcTm5uJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=l+1pcYK2; arc=none smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-70c7c5cb313so48589a34.1
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 13:46:47 -0700 (PDT)
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2d3ed48c748so353997a91.3
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 13:46:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1723927606; x=1724532406; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1723927608; x=1724532408; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=02y/Wd8d3ZrLXS7qBzEKtx51SdWa+9oNHCqY9s5SPZE=;
-        b=kyjbiwa1Y0r0vy7Jqzp9b3DNujVInGrqgtIPLPYMs0lJSEf1Bum4in7Mwk7xYO4oA7
-         PTX6dOynrg+Nd4c9CvWHzjrxNtH8zU5CFxwVDATRXFC0X22W5xLUAkbAOYEsDeh+Jf8h
-         O+0uFZNXmAc30iqRE31snyCj+Ut07YF0A3KTN5U+cJzELey2WGtmyFw3AfVvBx5a3aGo
-         R6pOtLnML//iji/4p7dLWqdYYEGNbaHK9WCJ1mWyRB8Jh49CVCEfuXTUFZF4fwoMerKM
-         TmIadzgCLvmlHf1uKyURjyiGIdDm99rvDztyNXd76FGfTaXX/dMGrRLDYwAwfNH4hhJe
-         x7HQ==
+        bh=fqE65oF4WU06KhnFO6TGzqMahCVuqHBDZ2qPq59QCiU=;
+        b=l+1pcYK21cr/Ey8IjhY72AqkH5mBgTQimwTXqEBGFQFqGFRgHPv3gNVtFBFjcY5m75
+         1F04tloCpCMrw518ZdB7fLg6dP0Kt2qw+eYNCfX/mc6wf+qJqtG+WtMTPxLeTuL4Spi6
+         l4Xt/TomASWa/BgmC6Mvoxhd4wbLkuJQ/f/GJ/9hU2Dm4ROsBnR9riC8qr8XS9CB5rjP
+         cK6outfpMQmrqlPCLQ0lMfDNCWNeLSeaZskpwnHta9GaOjVD5nD0JW3+wRD0Kkahtco1
+         LhbBZ34nOMEdAAHblH3TtKlx31VVS8ZW4EsLsyfpEl52PjRixPgDY7BgdiWmssvdVkrC
+         I5oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723927606; x=1724532406;
+        d=1e100.net; s=20230601; t=1723927608; x=1724532408;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=02y/Wd8d3ZrLXS7qBzEKtx51SdWa+9oNHCqY9s5SPZE=;
-        b=A5vGeVdhLOY9Yb4aDnsmppiFXtWQ5XKWUBPtrladSo/I1L1aql/cnXM7FXbqCopcGL
-         6iE9M2coSFX0tKtZXnX+8ZmXDIQuOWZBtOD/fn749n/nNDiZVjqMuDG2qNGxx31bLeuB
-         Ve9H+kYolqGc2J4xn3EXikSNLL3Byy0pjKyb5N5v149vFirEbqGzGhnQfEed/ftsXFAZ
-         dqCXNHRkJ3tyauKI7aEv/dyN1SF/aTqbz0JYUp9jYlzf6Z4ucTqg2qNBMEwCKOBnMEb8
-         8ebuCgTbCLNUOZDyTNNxosjPbB2SjaQEKdhX/csTM/LtI9BqG1BszsEcCc148ulVt95j
-         mBIA==
-X-Gm-Message-State: AOJu0YymL8X4x3KHkf88Gtu2+zXElKuR+4uDzbXiVqPwJG8cGbYAfFjA
-	XY9fohYFVMIluTLrJJV1lvFy/3n4vu3xmBfmVgOijOFP7iXF8r+hMbVS2ijwwb/Vhi08PvZlJF6
-	O
-X-Google-Smtp-Source: AGHT+IFqjfiTlMbyBgbOXSrDzwrVTU0Iq7cMM59EJVaPUwdJqLY9FKlS5uF3LRTNIbPXN3Rw+6xIRw==
-X-Received: by 2002:a05:6830:4486:b0:703:78ff:1e1 with SMTP id 46e09a7af769-70cac7d4d86mr3074352a34.0.1723927606580;
-        Sat, 17 Aug 2024 13:46:46 -0700 (PDT)
+        bh=fqE65oF4WU06KhnFO6TGzqMahCVuqHBDZ2qPq59QCiU=;
+        b=pGXdL+vDWuFlCa7Ir5rmYr4eIOv8mytqNOuxCQmANsvyEGNBHwfV5ocdHNGUnWUteC
+         DZyHO3V4IVCDsdor9mzR+ZTxX9TYeCQbTkAcg1gKrV2j/rG5sGJZeoneV4SCXvRru8n/
+         ekXLjhREuxe7Nw2hC5WoMcOWWXp/8GHo4OdalzxyCQmW9U1TNIehRJ8CYMKuF2K9BJfF
+         ySOwByiV0bmdx1BluKLjH6jIGX32CGr0Fl/SMPSRb+sJOUvOUUGU68LZ9AE7brALJvHq
+         Wo04zFbd2jO79+SdZw+1Pn1GzHkRLq3MTc+rAMZlpODU46PXuLWMUotZkhDLwPKtGSUo
+         wuew==
+X-Gm-Message-State: AOJu0Yyb5PH6VL1jK+aiAMsPaksoltuN7e0vWtjVtrTBUZsPY232drXQ
+	5BstPq3h/P0kbSOe5Ij9q3R3dRiiMTFG3tQnB3CDmEwonMUYP0aLdxWOZDdnCkyxmahP7LFt3AK
+	W
+X-Google-Smtp-Source: AGHT+IGjVuqQzi5Vz0aVyh+txyYvwjdEKreZuWKgms7U6azB9teX3pOfS9dgfoxt8zyxLln1F1i1Ag==
+X-Received: by 2002:a05:6a21:6da3:b0:1c4:9567:18fe with SMTP id adf61e73a8af0-1c905052543mr4722461637.6.1723927608077;
+        Sat, 17 Aug 2024 13:46:48 -0700 (PDT)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127ae07e41sm4411039b3a.65.2024.08.17.13.46.45
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127ae07e41sm4411039b3a.65.2024.08.17.13.46.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Aug 2024 13:46:45 -0700 (PDT)
+        Sat, 17 Aug 2024 13:46:47 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: linux-kernel@vger.kernel.org
 Cc: peterz@infradead.org,
 	tglx@linutronix.de,
 	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 2/4] sched/core: change rq->nr_iowait type to atomic_long_t on 64-bit
-Date: Sat, 17 Aug 2024 14:45:11 -0600
-Message-ID: <20240817204639.132794-3-axboe@kernel.dk>
+Subject: [PATCH 3/4] sched/core: have io_schedule_prepare() return a long
+Date: Sat, 17 Aug 2024 14:45:12 -0600
+Message-ID: <20240817204639.132794-4-axboe@kernel.dk>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240817204639.132794-1-axboe@kernel.dk>
 References: <20240817204639.132794-1-axboe@kernel.dk>
@@ -85,78 +85,114 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In preparation for storing two separate iowait states in there, bump the
-size from a 32-bit to a 64-bit size, for 64-bit kernels.
-
-Note that on 32-bit, the number of tasks are limited to 0x8000, which
-fits just fine in even half of the existiing 32-bit atomic_t. For 64-bit,
-no such limit exists, hence play it safe and make it a 64-bit atomic.
+In preparation for needing more state then 32-bit on 64-bit archs,
+switch it to a long instead.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- kernel/sched/core.c  | 14 +++++++++++++-
- kernel/sched/sched.h |  4 ++++
- 2 files changed, 17 insertions(+), 1 deletion(-)
+ block/blk-cgroup.c           | 2 +-
+ include/linux/sched.h        | 4 ++--
+ kernel/locking/mutex.c       | 4 ++--
+ kernel/locking/rtmutex_api.c | 4 ++--
+ kernel/sched/core.c          | 6 +++---
+ 5 files changed, 10 insertions(+), 10 deletions(-)
 
+diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+index 69e70964398c..f8e6220c66a7 100644
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -1884,7 +1884,7 @@ static void blkcg_maybe_throttle_blkg(struct blkcg_gq *blkg, bool use_memdelay)
+ 	u64 now = blk_time_get_ns();
+ 	u64 exp;
+ 	u64 delay_nsec = 0;
+-	int tok;
++	long tok;
+ 
+ 	while (blkg->parent) {
+ 		int use_delay = atomic_read(&blkg->use_delay);
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 2c1b4ee3234f..c1a65e19a3ac 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -319,8 +319,8 @@ asmlinkage void preempt_schedule_irq(void);
+  extern void schedule_rtlock(void);
+ #endif
+ 
+-extern int __must_check io_schedule_prepare(void);
+-extern void io_schedule_finish(int token);
++extern long __must_check io_schedule_prepare(void);
++extern void io_schedule_finish(long token);
+ extern long io_schedule_timeout(long timeout);
+ extern void io_schedule(void);
+ 
+diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
+index cbae8c0b89ab..4a86ea6c7f19 100644
+--- a/kernel/locking/mutex.c
++++ b/kernel/locking/mutex.c
+@@ -830,7 +830,7 @@ EXPORT_SYMBOL_GPL(mutex_lock_interruptible_nested);
+ void __sched
+ mutex_lock_io_nested(struct mutex *lock, unsigned int subclass)
+ {
+-	int token;
++	long token;
+ 
+ 	might_sleep();
+ 
+@@ -1026,7 +1026,7 @@ EXPORT_SYMBOL(mutex_lock_killable);
+  */
+ void __sched mutex_lock_io(struct mutex *lock)
+ {
+-	int token;
++	long token;
+ 
+ 	token = io_schedule_prepare();
+ 	mutex_lock(lock);
+diff --git a/kernel/locking/rtmutex_api.c b/kernel/locking/rtmutex_api.c
+index a6974d044593..ddf7f7f3f0b5 100644
+--- a/kernel/locking/rtmutex_api.c
++++ b/kernel/locking/rtmutex_api.c
+@@ -547,7 +547,7 @@ EXPORT_SYMBOL_GPL(mutex_lock_killable_nested);
+ 
+ void __sched mutex_lock_io_nested(struct mutex *lock, unsigned int subclass)
+ {
+-	int token;
++	long token;
+ 
+ 	might_sleep();
+ 
+@@ -579,7 +579,7 @@ EXPORT_SYMBOL(mutex_lock_killable);
+ 
+ void __sched mutex_lock_io(struct mutex *lock)
+ {
+-	int token = io_schedule_prepare();
++	long token = io_schedule_prepare();
+ 
+ 	__mutex_lock_common(lock, TASK_UNINTERRUPTIBLE, 0, NULL, _RET_IP_);
+ 	io_schedule_finish(token);
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 9bf1b67818d0..ddabf20cd9e0 100644
+index ddabf20cd9e0..7cb7ca38fdfc 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -3543,17 +3543,29 @@ static inline bool rq_has_pinned_tasks(struct rq *rq)
+@@ -7427,16 +7427,16 @@ static inline void preempt_dynamic_init(void) { }
  
- static void task_iowait_inc(struct task_struct *p)
+ #endif /* CONFIG_PREEMPT_DYNAMIC */
+ 
+-int io_schedule_prepare(void)
++long io_schedule_prepare(void)
  {
-+#ifdef CONFIG_64BIT
-+	atomic_long_inc(&task_rq(p)->nr_iowait);
-+#else
- 	atomic_inc(&task_rq(p)->nr_iowait);
-+#endif
+-	int old_iowait = current->in_iowait;
++	long old_iowait = current->in_iowait;
+ 
+ 	current->in_iowait = 1;
+ 	blk_flush_plug(current->plug, true);
+ 	return old_iowait;
  }
  
- static void task_iowait_dec(struct task_struct *p)
+-void io_schedule_finish(int token)
++void io_schedule_finish(long token)
  {
-+#ifdef CONFIG_64BIT
-+	atomic_long_dec(&task_rq(p)->nr_iowait);
-+#else
- 	atomic_dec(&task_rq(p)->nr_iowait);
-+#endif
+ 	current->in_iowait = token;
  }
- 
- int rq_iowait(struct rq *rq)
- {
-+#ifdef CONFIG_64BIT
-+	return atomic_long_read(&rq->nr_iowait);
-+#else
- 	return atomic_read(&rq->nr_iowait);
-+#endif
- }
- 
- static void
-@@ -8372,7 +8384,7 @@ void __init sched_init(void)
- #endif
- #endif /* CONFIG_SMP */
- 		hrtick_rq_init(rq);
--		atomic_set(&rq->nr_iowait, 0);
-+		atomic_long_set(&rq->nr_iowait, 0);
- 		fair_server_init(rq);
- 
- #ifdef CONFIG_SCHED_CORE
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index b6b3b565bcb1..6a90c2da1eb3 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1082,7 +1082,11 @@ struct rq {
- 	u64			clock_idle_copy;
- #endif
- 
-+#ifdef CONFIG_64BIT
-+	atomic_long_t		nr_iowait;
-+#else
- 	atomic_t		nr_iowait;
-+#endif
- 
- #ifdef CONFIG_SCHED_DEBUG
- 	u64 last_seen_need_resched_ns;
 -- 
 2.43.0
 
