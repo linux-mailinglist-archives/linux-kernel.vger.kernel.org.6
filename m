@@ -1,99 +1,113 @@
-Return-Path: <linux-kernel+bounces-290840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB7AF955960
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 21:23:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C49B4955961
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 21:24:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 777892821D8
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 19:23:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69DBE1F21C3E
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 19:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FAB14F115;
-	Sat, 17 Aug 2024 19:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DDBC14F115;
+	Sat, 17 Aug 2024 19:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="A4ascoyP"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=howett.net header.i=@howett.net header.b="Gq0sTClW"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB282B9B0
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 19:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A227F7CA
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 19:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723922604; cv=none; b=ZtPFG4pUKee6ec2ps+KL6wDT9vH0rhITBP3foFFQmzEwnFh7mXhPFE1zpgcZjiZuWxC22vMkUIlKrI6zI6WPSdvPeBfKJj36KMraiAhstjwjc5tbUVvtr/KN5HIFR3Yf1oR/j+MDF2Wjq2D2tS6n9OfUZ3QanPT+0O7i/b+Piuw=
+	t=1723922636; cv=none; b=b1iiy4k2UZtbQZ8W4rAMCNvIfn6rqw+NYa7mCIepulJD/fH0jpCvPWVGkt/PTTKVr7gF7n+qkvLnhTwmf9pbgXv9/H79lnbg41pcHULoNSWa33wp25Dg2AjpiAvzY9uXx67MgCpjqmLFnPgqQ3FKm8Dd6nU7CXixyU0jBSSg7PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723922604; c=relaxed/simple;
-	bh=bJXmI8pebUaDkoU4aMq1GTHJic2gNbeF/2Fyq4fW6Bs=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=luuECYVC0LlG/es5al1zghb8oJtlq3LiFPahiVUSGf9cyGsWGEalNXiiWkeBq0HZU/+SXftMM4zQCgW+AGCZ5bb6LhRaARtaidnBb1WY+7S+7yrWde4T3EGa6Yc4DN63tm5J+sqkmcgM1e+SN70+Ic2SpNPxjcSdsdCtjl2fvYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=A4ascoyP; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 47HJMwTx071220
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Sat, 17 Aug 2024 12:22:58 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 47HJMwTx071220
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024071601; t=1723922579;
-	bh=R+B6hPDx9Wrld+dfV+qVsGadl1I+kv4ReRkR897IY70=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=A4ascoyPye+Ole4Bs8kD1zWazii/OgbZdM7vE2y3yOJyGiqK3hit+pqY1lUX/8DLg
-	 lELv9Mi1w2c+YCrRMjh+T4waVOPsU7Np44Aw2EyloCn/WWrx4Dpxuys2VsNI0MWA9u
-	 AIIVbx+WI1do5TBMwCMzhBAd8AGzxVulFRAMRS+N6EP+xiATCEQVmG/weD47VP18ab
-	 o+amQIJTJ5lMDM/pM/NEjl4rX9StMHlN8a+TVqdiuk6S/xkv/GHaeMcCq65GE3uqx8
-	 dgm5a0/e4h64XvybeIbGqNKPMnlCtBBkJWA+SY1fXwcShEGyr0UUtyHUUnFx4LX2M1
-	 pGBu36n4NMqJg==
-Date: Sat, 17 Aug 2024 12:22:56 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Borislav Petkov <bp@alien8.de>, Xin Li <xin@zytor.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        linux-kernel@vger.kernel.org
-CC: tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-        x86@kernel.org, peterz@infradead.org, seanjc@google.com
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v1_2/3=5D_x86/msr=3A_Switch_between_WRM?=
- =?US-ASCII?Q?SRNS_and_WRMSR_with_the_alternatives_mechanism?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20240817144316.GAZsC3BOm7anUPdJGe@fat_crate.local>
-References: <20240807054722.682375-1-xin@zytor.com> <20240807054722.682375-3-xin@zytor.com> <e18cd005-24ef-497d-b39c-74a54d89a969@citrix.com> <7c09d124-08f1-40b4-813c-f0f74e19497a@zytor.com> <DAC74A8B-DDE4-450E-93A1-EFD7D47B25F7@alien8.de> <20240817144316.GAZsC3BOm7anUPdJGe@fat_crate.local>
-Message-ID: <46CAFA22-2EB9-457B-BD14-864CFD71ADBF@zytor.com>
+	s=arc-20240116; t=1723922636; c=relaxed/simple;
+	bh=kFD57C+My3h1ivHtEWfkdI35wsZUfgnSclHTKh6Ywfg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YLtRIgL4Zk0DNGGpT4zJ7PHqNswOoY3jm/UieK6kRDpbeeCnreMoAQdyfMqcuyFsJbqnRIkW2fXjhGOCt3fHk4NfEnvewkWLRI5y7qshMfOawzcUvYA6LcFqh0kSzIaJn2clvaSWNawNh/clt/R3XjESS6JhgSz7piVDstvX4VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=howett.net; spf=none smtp.mailfrom=howett.net; dkim=pass (2048-bit key) header.d=howett.net header.i=@howett.net header.b=Gq0sTClW; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=howett.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=howett.net
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e0e76380433so3148253276.2
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 12:23:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=howett.net; s=google; t=1723922634; x=1724527434; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4FyQINhQPCirsSYgI/BHpwpUDCbcDb6H8eZzj5rbq+c=;
+        b=Gq0sTClWDDUk2W1mC7BhgPM0HDY6PQhl0ygBYHbczYI5yJ+cCVRC0JkCcn7jnYVZfI
+         My0iikm2LJmjW3qW25u8JOu1NHfeMCtINYIFM59yuCFYAo497rwh1xEg5gOnLhYz1/gi
+         dzaMTi0YxLV213ugNbnKA76l/MtacAzepGvQZJtDweTQfV+kuWvPAK3NrKRS5QuDkcs2
+         8l3mbjmQs4cxHkSAsowdCJp/Lg3Gyl+wBROFCpqm4LuP3JwLUgCxloQoGXkm++aJMAcO
+         aBcsNaxD9g4QIAZkb+s41wxKYFU38KePipgED5tTLo2LsQQCv9/+i8RlMiBfGWGTcIKp
+         nJZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723922634; x=1724527434;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4FyQINhQPCirsSYgI/BHpwpUDCbcDb6H8eZzj5rbq+c=;
+        b=SWpYKrDFyhII0nJjvuFa9GTt+V1OJH6q6/rjvNFVHx7dW5oQDUbuSxWYuQLT6hGVM4
+         RzpFR43/b39nVWUK2GX5ieDot/eUZapJIkYxUUuAXzL18SpBbz+1BK/+mnLTOnVC4iGk
+         2cojpJZaU3qVa7roeHzTXgkZmJ49VI6f+6fkN/vm7Dz+vo1NnJL+7ZFQqlU66rWvyeDz
+         p5rgNiDDVUfeYaXsXd1DTN6/xTcbYj7wGdCDfGXR5OdiO2oKW6Ciuoyh6l5PnMB7gBiO
+         sfmtczeJ1njqITJ9Yi8ch02SvkRTmk+FhFfFGvrmhQGw3nXPEKCq83dOFrMAQNEi26dC
+         oHeA==
+X-Forwarded-Encrypted: i=1; AJvYcCWhc6ajMKd8UehPeGquyM6AYgg7GQ2UkY2QwEsDUFwTbS3YqV3O1iplgSo6GbanrpZOcQnkKu8PMmdHXYyRH+33C2p8VVB/93FvRtOY
+X-Gm-Message-State: AOJu0YzXnKdvclYcuwKUceyz3ba6LEBfyrpleKDnlKHWfs7jDY2UU8Uf
+	72JQbQk2QagA5n4LHsR/bdfgE5ETtSg7So+MYLNd+F3YcHk8Grc3O3Rr397bTvkvlKYyZgN7vKV
+	WyAqN+4SysppAG/LbpL0+A+vcPbYarE9TviI0
+X-Google-Smtp-Source: AGHT+IFxnlIgkFr84OeRJ8oiSVn8hoiYx79ww1a+q4oEMCPZ69AuUTfuG22NDtP+s0OqXkOHpjtpMUfOEzFvswWtKQE=
+X-Received: by 2002:a05:6902:a08:b0:e13:83fd:cf01 with SMTP id
+ 3f1490d57ef6-e1383fdda45mr5567723276.49.1723922633924; Sat, 17 Aug 2024
+ 12:23:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+References: <20240817-drm-add-additional-framework-laptop-displays-to-panel-backlight-quirks-v1-1-cfdd5dbbffc8@howett.net>
+In-Reply-To: <20240817-drm-add-additional-framework-laptop-displays-to-panel-backlight-quirks-v1-1-cfdd5dbbffc8@howett.net>
+From: Dustin Howett <dustin@howett.net>
+Date: Sat, 17 Aug 2024 14:23:42 -0500
+Message-ID: <CA+BfgNK9PEspi8=M2YDC4Kc43+JcEo2iej4Q2K7O2r9X1=X=OA@mail.gmail.com>
+Subject: Re: [PATCH] drm: panel-backlight-quirks: Add Framework 13 glossy and
+ 2.8k panels
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, 
+	Matt Hartley <matt.hartley@gmail.com>, Kieran Levin <ktl@framework.net>, 
+	Hans de Goede <hdegoede@redhat.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Xinhui Pan <Xinhui.Pan@amd.com>, Jonathan Corbet <corbet@lwn.net>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On August 17, 2024 7:43:16 AM PDT, Borislav Petkov <bp@alien8=2Ede> wrote:
->On Sat, Aug 17, 2024 at 05:23:07PM +0300, Borislav Petkov wrote:
->> >static __always_inline void wrmsr(u32 msr, u64 val)
->> >{
->> >	asm volatile("1: " ALTERNATIVE_2("wrmsr", WRMSRNS, X86_FEATURE_WRMSRN=
-S,
->> >					 "call asm_xen_write_msr", X86_FEATURE_XENPV)
->> >		     "2: " _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_WRMSR)
->> >		     : : "c" (msr), "a" (val), "d" ((u32)(val >> 32)),
->> >		     "D" (msr), "S" (val));
->> >}
->> >
->> >
->> >As the CALL instruction is 5-byte long, and we need to pad nop for bot=
-h
->> >WRMSR and WRMSRNS, what about not using segment prefix at all?
->>=20
->> The alternatives macros can handle arbitrary insn sizes - no need for a=
-ny padding=2E
+On Sat, Aug 17, 2024 at 1:59=E2=80=AFPM Dustin L. Howett <dustin@howett.net=
+> wrote:
 >
->What you cannot do is have a CALL insn in only one of the alternative
->insn groups because the compiler is free to clobber callee regs and
->those might be live where you place the alternative and thus will have
->a nice lovely corruption=2E
+> This patch depends on
+> 20240812-amdgpu-min-backlight-quirk-v4-0-56a63ff897b7@weissschuh.net
 >
+> I have tested these panels on the Framework Laptop 13 AMD with firmware
+> revision 3.05 (latest at time of submission).
 
-Only if the call goes to a C function=2E
+I apologize for the noise. I built this against Thomas' earlier patch
+version and obviously did inadequate testing when he submitted v4.
+
+I will follow up with a new revision after a little while.
+
+>
+> +               .quirk.pwm_min_brightness =3D 0,
+                   ^^^^^^
+This is clearly incorrect for the updated quirks infrastructure.
+
+Dustin
 
