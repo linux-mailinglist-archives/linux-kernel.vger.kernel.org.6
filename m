@@ -1,134 +1,190 @@
-Return-Path: <linux-kernel+bounces-290687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0BE1955773
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:32:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40DF4955777
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACB66282302
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 11:32:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2020D1C20FDA
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 11:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F6D14B07E;
-	Sat, 17 Aug 2024 11:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0B514A62A;
+	Sat, 17 Aug 2024 11:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MxOeo0/b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="El0UzOc4"
+Received: from mail-yb1-f194.google.com (mail-yb1-f194.google.com [209.85.219.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7001C32;
-	Sat, 17 Aug 2024 11:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C211F83CDA;
+	Sat, 17 Aug 2024 11:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723894340; cv=none; b=M2B+I+RlVVhXJ2+9oQdKGjYu+LOwehlvncGAMIfgsNp9GlYImmWUtKBn7qBOV5xaZiKC2bVC/u/+altxlQgXrsHtZGJ2RvXWJAs3H7N3dvgu+THLMgeNgWwkixN1GPXJ9z4iuOmSRdjzRNUfY6wU8fmOeajHJ4v63kBZ9vwdXTk=
+	t=1723894404; cv=none; b=VhvVyRB5EzyDAKfAAd++gHcZGe171BtJY2pmv3MqwQn4SBiWWGbEcWt1bY0Rjw+OD4YAAo9uPuE4Kja4AFTqPG5QPIJrtIXf+dTnwAtNedkI8MSkJ4S6k5603Ku3b74JsGn/qcOxDJHFSSkxL1l6pXF5n29l7TxkxgRBe3ufzCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723894340; c=relaxed/simple;
-	bh=WPi/0xKBeUVZfXJccLvpi5U+6P6UdVWcEVoeDHhgO7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dNtLMh7dFN+SnEZgk81yBEqKVHOKrTZ4wf50RmYW9reyLb2zswWCHMXzundPobfkS3X9cqRExfkwqwIpahk41AJpFfym0sMlGqIqAV6ufJ7jx88TlVGuubI+WdqMRQgJSTsbjSC+fI9Nih9lAa0SoWTu0/m4Dp2Pbct5DjAdbSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MxOeo0/b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92E54C116B1;
-	Sat, 17 Aug 2024 11:32:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723894339;
-	bh=WPi/0xKBeUVZfXJccLvpi5U+6P6UdVWcEVoeDHhgO7k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MxOeo0/bxo8xsivJgCM4DVofw/hjy7d079G+29OSWivJctC7s4byJjcskgfcLbAYp
-	 cceorbq6LpNYvaMjriPMbb2/DaMR95twWKDxgS177ka+zIQBOFD9jzHtRNqcuN8hcZ
-	 ndqJ/RtXHs/AQo2NW52Z4tPm5ega4Uenm8AkdQGhVXp1bLigHP+Zh2sSud+z/YKez2
-	 PKrLc8H2otLba8Uqu20Lt/Su9yuiM9CxRuCWXQt9Du0InXSC6MThn+36Bs5qMZueKG
-	 nO3lYmXPYe4nh9gKeufwyHFK9KWocCaIUMEejPQrqhVxVUl+xEanfhxB2v0Nkfrgjm
-	 ce6tIzxp4qZIg==
-Message-ID: <9c731c93-772e-409e-b7e5-ae36af402c76@kernel.org>
-Date: Sat, 17 Aug 2024 13:32:11 +0200
+	s=arc-20240116; t=1723894404; c=relaxed/simple;
+	bh=COftzJgG/EMMoQ2fnKwJOfvLWndf1mS/oh2j7AeVKig=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XMVv4CkroF+majjoO+jUgVrGtiAxxSf2azoxYZATesneaaT/rNIrtL7NgpbGm7+MQ7ICKjV+WrMoWIsDF5ofLYRfx43oxw3rXQqCuTwUBIS10i7NjIa2w8UOYg4/xlAwzraBPEW6R5wSJLLhEDrQZ/dznCvUopDkHvj0u5xBdbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=El0UzOc4; arc=none smtp.client-ip=209.85.219.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f194.google.com with SMTP id 3f1490d57ef6-e115c8aa51fso2762364276.1;
+        Sat, 17 Aug 2024 04:33:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723894402; x=1724499202; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SESKwucFxjDdZ8FkRu+VMQPyl3jzoCLi6zR1M+QPMa0=;
+        b=El0UzOc4Fw9JUF4e10sKIDrMAl64g/zwjVz7Iw6wkYqI2m2g6RHtpWhqs9Fph+F0os
+         SgTiR4wKCzwvxVowcSDcr5bo+OIEdMhL2mn0lnY6aDaZrVz8L/+EtfuSG/jdDx4NRx1p
+         8HsBKdeonh23JYPcfqtwRvIgGx2ZtsaUDElhE6J3zt8YwJQBDOZ10IGRgn16bBT3aoHu
+         aCHK3DwQ4NphzDp32oIaDGV3V3UcQr44jx/UtVqDlHGL9YcN2DX2xKI6AaWjhU4cmpxX
+         uik+J5IxUWXnxZsZ1wq/28gbKKsw3a1EMHpd3MHdDmmnwQItBtDdpXpj0sqjyKUgD4ni
+         ZgjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723894402; x=1724499202;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SESKwucFxjDdZ8FkRu+VMQPyl3jzoCLi6zR1M+QPMa0=;
+        b=wI9kR+o30E+zy2NJXgS3QEE4Sh9Vs8LU/rqHWQsS3aSTT7PL5lIkmjY3Rm+2qEj7J/
+         ISJyyCH0f7tKXGNu9Lr/7UZ2Lqp6WlfdQTOTP/mJeUMkK1D2tW8l0jEDrWZKTGVE3r+L
+         rf4A0DNamlIN3ynSqKw2aiAVhfMHU/tXn9Ipa2H2wBW5mW6Pv5nfrOK0wpe8TFJbq2sI
+         5R4fXlsok65GS+E/0Ko5mmC7Z+r2oMy8WkEg7LFIa9Nk4ktt3FbJrdD+2sCjvAbDspfJ
+         fvfrMq/YDCl7JG2AKoUD1AjpwESOSqYpGnlb9K7VjUi+b0EFztDJKlYkfIo3SWv68FHm
+         G6Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCXd28ELPL1s6wBeE3/rEPY4VDEt6ZcXkzcD7g9M90GYd2nI2auswW/+cdDRZEvfJoI3uXpPGk5WrNUKooXgHdNRqPnxBItZaUv2/b906CPSInGAZXJ1gaXTY/UItCRvgwuOGErt
+X-Gm-Message-State: AOJu0YzCg+VDxQ4v3fVMIYonKj0kNm6z62wSQ3CwpOBO17xxgYUAs+74
+	Qq6sYKi8t8WxQYu5w7cpEtC8RAZ8vksBzhwKUsWUznYffDH/wIfsJsEME3MoF2Bsm8KHfGJS4wD
+	0hoEDtpFOzsuyvtemQEEbva8iB7g=
+X-Google-Smtp-Source: AGHT+IEWZk1oHXltyZ1g79/emSVqRf5qSTKVkqIEaYhWNNk4GjD5HhRUVElse+KO330nH/ASwpW7c49M3bSmPGvsu4M=
+X-Received: by 2002:a05:6902:e12:b0:e13:ddd5:c6d4 with SMTP id
+ 3f1490d57ef6-e13ddd5ea77mr531236276.38.1723894401550; Sat, 17 Aug 2024
+ 04:33:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e80100: Add USB Multiport
- controller
-To: Song Xue <quic_songxue@quicinc.com>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Wesley Cheng <quic_wcheng@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Krishna Kurapati <quic_kriskura@quicinc.com>,
- Konrad Dybcio <quic_kdybcio@quicinc.com>
-References: <20240809-topic-h_mp-v1-0-3c5f468566d8@quicinc.com>
- <20240809-topic-h_mp-v1-2-3c5f468566d8@quicinc.com>
- <21fffb71-d559-4973-8028-d9c9b9f67001@quicinc.com>
- <3077d600-c570-407a-87eb-6926a67636f9@gmail.com>
- <81b60725-f744-4b40-9450-e881397c2ddf@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <81b60725-f744-4b40-9450-e881397c2ddf@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240815124302.982711-1-dongml2@chinatelecom.cn>
+ <20240815124302.982711-7-dongml2@chinatelecom.cn> <20240816192243.050d0b1f@kernel.org>
+In-Reply-To: <20240816192243.050d0b1f@kernel.org>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Sat, 17 Aug 2024 19:33:23 +0800
+Message-ID: <CADxym3ZEvUYwfvh2O5M+aYmLSMe_eZ8n=X_qBj8DiN8hh2OkaQ@mail.gmail.com>
+Subject: Re: [PATCH net-next 06/10] net: vxlan: add skb drop reasons to vxlan_rcv()
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
+	dsahern@kernel.org, dongml2@chinatelecom.cn, idosch@nvidia.com, 
+	amcohen@nvidia.com, gnault@redhat.com, bpoirier@nvidia.com, 
+	b.galvani@gmail.com, razor@blackwall.org, petrm@nvidia.com, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 14.08.2024 1:56 PM, Song Xue wrote:
-> 
-> 
-> On 8/14/2024 6:24 PM, Konrad Dybcio wrote:
->> On 14.08.2024 12:08 PM, Song Xue wrote:
->>>
->>> On 8/9/2024 9:18 PM, Konrad Dybcio wrote:
->>>> X1E80100 has a multiport controller with 2 HS (eUSB) and 2 SS PHYs
->>>> attached to it. It's commonly used for USB-A ports and internally
->>>> routed devices. Configure it to support such functionality.
->>>>
->>>> Signed-off-by: Konrad Dybcio<konrad.dybcio@linaro.org>
->>>> ---
->>
->> [...]
->>
->>>> +
->>>> +                phys = <&usb_mp_hsphy0>, <&usb_mp_qmpphy0>,
->>>> +                       <&usb_mp_hsphy1>, <&usb_mp_qmpphy1>;
->>>> +                phy-names = "usb2-0", "usb3-0",
->>>> +                        "usb2-1", "usb3-1";
->>>> +                dr_mode = "host";
->>>
->>> Why do we add the dr_mode definition in dtsi file rather than in corresponding board dts file?  Could we follow the node "usb_1_ss1_dwc3"  in x1e80100-crd.dtsi?
->>
->> That is because the MP controller is host-only and it doesn't make sense
->> to ensure the OS of that in each board file separately. That's also how
->> it's done on other platforms with a MP controller description.
->>
->>>
->>> BTW, how do we verify the function of  multiport controller？From my test on x1e80100-crd,  the eusb6 which is from usb_mp_hsphy1 attaches the third-party repeater, do we need a new repeater node/driver to verify the function of eusb6?
->>
->> I have a X1E Surface Laptop 7 with a USB-A port with a NXP PTN3222 in
->> front of it. Tested with a smoke test, with both SS and HS USB-A devices.
->>
-> What is detailed information on smoke test.
-> From my end, I also have two questions.
-> 1. I found the usb_mp_hsphy1 is using the driver "phy-qcom-snps-eusb2". However, the driver requires a repeater node from DT. At present, we don't have the node or driver for NXP repeater and it is not working on eusb6 to detect the NXP repeater. So, is it possible for us to have complete function involving with MP DT and repeater node for CRD board, and then we push patches together?
+On Sat, Aug 17, 2024 at 10:22=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> w=
+rote:
+>
+> On Thu, 15 Aug 2024 20:42:58 +0800 Menglong Dong wrote:
+> >  #define VXLAN_DROP_REASONS(R)                        \
+> > +     R(VXLAN_DROP_FLAGS)                     \
+> > +     R(VXLAN_DROP_VNI)                       \
+> > +     R(VXLAN_DROP_MAC)                       \
+>
+> Drop reasons should be documented.
 
-I believe you're a bit confused about the upstreaming process. Describing
-hardware in Device Tree vs doing the same plus enabling it on some upstream
-board are of equal value, and this patch is very much in the spirit of
-"release early, release often".
+Yeah, I wrote the code here just like what we did in
+net/openvswitch/drop.h, which makes the definition of
+enum ovs_drop_reason a call of VXLAN_DROP_REASONS().
 
-There's no need to delay patches that are correct within their own
-confinement (which they should be [1]) just so that the series is bigger.
-That may even be discouraged by some folks..
+I think that we can define the enum ovs_drop_reason just like
+what we do in include/net/dropreason-core.h, which can make
+it easier to document the reasons.
 
-> 2. The usb_mp_dwc3 node has four phys. When enabling the driver for the node, we must need enable all four phys in borad's DT. Howerver, if the board is only using one phy like eusb6, is it suitable to enable other three phys?
+> I don't think name of a header field is a great fit for a reason.
+>
 
-Yes, they will simply be registered, configured and since there won't
-be any interrupts (as the pins are N/C, it will not do much). But
-these PHYs are physically on the SoC regardless of them being
-connected, so I see no issue.
+Enn...Do you mean the "VXLAN_DROP_" prefix?
 
-[1] https://www.kernel.org/doc/html/latest/process/submitting-patches.html#separate-your-changes
+> >       /* deliberate comment for trailing \ */
+> >
+> >  enum vxlan_drop_reason {
+> > diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_c=
+ore.c
+> > index e971c4785962..9a61f04bb95d 100644
+> > --- a/drivers/net/vxlan/vxlan_core.c
+> > +++ b/drivers/net/vxlan/vxlan_core.c
+> > @@ -1668,6 +1668,7 @@ static bool vxlan_ecn_decapsulate(struct vxlan_so=
+ck *vs, void *oiph,
+> >  /* Callback from net/ipv4/udp.c to receive packets */
+> >  static int vxlan_rcv(struct sock *sk, struct sk_buff *skb)
+> >  {
+> > +     enum skb_drop_reason reason =3D pskb_may_pull_reason(skb, VXLAN_H=
+LEN);
+>
+> Do not call complex functions inline as variable init..
 
-Konrad
+Okay!
+
+>
+> >       struct vxlan_vni_node *vninode =3D NULL;
+> >       struct vxlan_dev *vxlan;
+> >       struct vxlan_sock *vs;
+> > @@ -1681,7 +1682,7 @@ static int vxlan_rcv(struct sock *sk, struct sk_b=
+uff *skb)
+> >       int nh;
+> >
+> >       /* Need UDP and VXLAN header to be present */
+> > -     if (!pskb_may_pull(skb, VXLAN_HLEN))
+> > +     if (reason !=3D SKB_NOT_DROPPED_YET)
+>
+> please don't compare against "not dropped yet", just:
+>
+
+Okay!
+
+>         if (reason)
+>
+> > @@ -1815,8 +1831,9 @@ static int vxlan_rcv(struct sock *sk, struct sk_b=
+uff *skb)
+> >       return 0;
+> >
+> >  drop:
+> > +     SKB_DR_RESET(reason);
+>
+> the name of this macro is very confusing, I don't think it should exist
+> in the first place. nothing should goto drop without initialing reason
+>
+
+It's for the case that we call a function which returns drop reasons.
+For example, the reason now is assigned from:
+
+  reason =3D pskb_may_pull_reason(skb, VXLAN_HLEN);
+  if (reason) goto drop;
+
+  xxxxxx
+  if (xx) goto drop;
+
+The reason now is SKB_NOT_DROPPED_YET when we "goto drop",
+as we don't set a drop reason here, which is unnecessary in some cases.
+And, we can't set the drop reason for every "drop" code path, can we?
+So, we need to check if the drop reason is SKB_NOT_DROPPED_YET
+when we call kfree_skb_reason().
+
+We use "SKB_DR_OR(drop_reason, NOT_SPECIFIED);" in tcp_v4_rcv()
+for this purpose. And we can remove SKB_DR_RESET and replace it
+with "SKB_DR_OR(drop_reason, NOT_SPECIFIED);" here if you think
+it's ok.
+
+Thanks!
+Menglong Dong
+> >       /* Consume bad packet */
+> > -     kfree_skb(skb);
+> > +     kfree_skb_reason(skb, reason);
+> >       return 0;
+> >  }
 
