@@ -1,126 +1,144 @@
-Return-Path: <linux-kernel+bounces-290743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A720E95580C
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:19:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FC6695580F
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E0A11F21B1D
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:19:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D35D01F218B5
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC39414F121;
-	Sat, 17 Aug 2024 13:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94A114F117;
+	Sat, 17 Aug 2024 13:20:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mHtBnTLx"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="g2XMO8Kr"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB2083A17;
-	Sat, 17 Aug 2024 13:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DD414C59A
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 13:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723900786; cv=none; b=JsZYHMGVTewbUE4OWg1FnKh19CuiGuk8AR33tL+2C+8PW5mqoultFIhp+u9uhA2orPbOcerzTQi0PqU3cKHbNuwG5c/RVmJIwWtjz+O5jRZIGoUQGb/Zktrmnd/etiNDJSGL13ZazCgNGoMHrsBNy9n8jnn8rGpF2qp1ihrQQWU=
+	t=1723900808; cv=none; b=NHHAdXhl/osu45ZLb7qfeFjEc3Ir/yb0QEFHzOe/3aX/+F45tZP/oaG4fD9lnYPF6zUX6C3D6LsgYnR0SESKIvC9XZmyDQab3MXsRp1hwI+cmc1RugZyHaJBAG1pFTUjze9Ej441yZyCj8FF5MYHUZ9VNyfD2DdrHdZEl6KkkmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723900786; c=relaxed/simple;
-	bh=nJzxrGQzgx8+7tzW6h73YT6rIUTVlyKyjuP8CLvWGaU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ck7FvqOdKbt16A44Gy1VcJYfV4nnIp6pNiwCzjBuqpW50QutbSpXozQy05D7yKrFiYdDur/lyvlh/DecOdbLEhM642QZHIwdnzU8A46TSBewdIoL1jz1paj2maWiZYf4/d/QJnL3ZGI1GGscLl31A+mMN9ieKOdo6v40NKzriWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mHtBnTLx; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723900784; x=1755436784;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nJzxrGQzgx8+7tzW6h73YT6rIUTVlyKyjuP8CLvWGaU=;
-  b=mHtBnTLxVdcle8K92Bi9IQsOanHG4Z91W0iqJ2MDHNlqnQDFLJfO27bN
-   QNbqQ5/XAB9JHu5Sc5W3A9Xi7hiLnSefTFPC3Rial4PoM0vm4dSIiIfBf
-   o5eXw1TENcuF76s9pZBsx/WSBe6xMGZzOp4J7q43yp01mfTT46pCAlJfG
-   +MjJRQjag/jpOaaXMILRxBg4S1ILxuY1A9kFuQDiisWXWGypJYjeHObrV
-   QaJF9eEwILY9B+eewmH5Yu1ivp6M+gSFRrh1C4hC6viHNeeL5bcdOhRTG
-   YqxKgQ4v7F6y6hVmxZl02zcEgW3YA7pDWMe8VejotGkush2VYxCwmIRcI
-   A==;
-X-CSE-ConnectionGUID: n+9wSFljSwqXO9m2U/nt8w==
-X-CSE-MsgGUID: 26vGKjI/TfSP1B+cvo4hfA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11167"; a="39638877"
-X-IronPort-AV: E=Sophos;i="6.10,155,1719903600"; 
-   d="scan'208";a="39638877"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2024 06:19:44 -0700
-X-CSE-ConnectionGUID: CtgaLvO1QjyUO4EkidZGfg==
-X-CSE-MsgGUID: ehiIDzGkR3aKz9upug7Kjw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,155,1719903600"; 
-   d="scan'208";a="64889849"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 17 Aug 2024 06:19:39 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sfJLE-0007UW-2W;
-	Sat, 17 Aug 2024 13:19:36 +0000
-Date: Sat, 17 Aug 2024 21:19:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-arch@vger.kernel.org
-Subject: Re: [PATCH 3/9] vdso: Add __arch_get_k_vdso_rng_data()
-Message-ID: <202408172143.g3Qxmakr-lkp@intel.com>
-References: <a7bdbbb14d8635c1e33ada7982cf2cd1a8321e5c.1723817900.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1723900808; c=relaxed/simple;
+	bh=mPLPgPLHO6Ixud7oOpd/z/JGbxH2aQkAFVO52+GRYik=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fiKMGQbel2ABvyqZqOM0AZlD10TccrfaBz21dwSRYaijpqfGTn98zSeJS9NMIuix/rNQqbjC1xE0kcyRrS/BScfHxqXcytIIUkbeJt+4Q74/ri9Pf2yXp7ZoIHvMxGgwRSyW1ZIW/Ti5+Z5KHNsV43sHUMBm+kNX6FhjmiSAPlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=g2XMO8Kr; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1723900799; x=1724159999;
+	bh=j/PPS3EYuNHFT3+6UMf12p/CM7ltsg2HQQvZIYDDvrY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=g2XMO8KrGCemhep3mXA0XstRJkQG4mViRXVMJOTlbUtQX520QNQqN9r6JMwMna8Xq
+	 XbnVwnVDh6YM0IVFsqguVYgnAKYuEz2GLxRS4xfWNFH4Lv5YCE/HXjWT4OF5cI20Dq
+	 LvnQam9XXddIi7DxFZWLboTBeWE+OGzwzxU6vMgtFD9vRSolPErnt7LksY1hkAKgIy
+	 uLffKcoXtUMQjV8w6YoajX4pQD7IF9pPgW6k/5UMMbGezMywFyOon+GTUHkv8O0ZcG
+	 rSjI8ehM4dAxKOXHvIcBhoqMvIpbb3pSLNPGUe/aJ0TjGH5OGW8+z201JfskKhj8qN
+	 P9qearbDqczDA==
+Date: Sat, 17 Aug 2024 13:19:55 +0000
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sami Tolvanen <samitolvanen@google.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved structure fields
+Message-ID: <ef6f7294-0afe-46af-8714-ed4a4aaee558@proton.me>
+In-Reply-To: <2024081705-overarch-deceptive-6689@gregkh>
+References: <20240815173903.4172139-21-samitolvanen@google.com> <20240815173903.4172139-37-samitolvanen@google.com> <2024081600-grub-deskwork-4bae@gregkh> <CABCJKuedc3aCO2Or+_YBSzK_zp9zB8nFwjr-tK95EBM3La1AmA@mail.gmail.com> <2024081705-overarch-deceptive-6689@gregkh>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 985bccfc1600ca44c1aa5ffd0d6fb059413f58a3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a7bdbbb14d8635c1e33ada7982cf2cd1a8321e5c.1723817900.git.christophe.leroy@csgroup.eu>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Christophe,
+On 17.08.24 09:41, Greg Kroah-Hartman wrote:
+> On Fri, Aug 16, 2024 at 08:50:53AM -0700, Sami Tolvanen wrote:
+>> On Fri, Aug 16, 2024 at 12:20=E2=80=AFAM Greg Kroah-Hartman
+>> <gregkh@linuxfoundation.org> wrote:
+>>> On Thu, Aug 15, 2024 at 05:39:20PM +0000, Sami Tolvanen wrote:
+>>> Especially as I have no idea how you are going to do
+>>> this with the rust side of things, this all will work for any structure=
+s
+>>> defined in .rs code, right?
+>>
+>> Yes, Rust structures can use the same scheme. Accessing union members
+>> might be less convenient than in C, but can presumably be wrapped in
+>> helper macros if needed.
+>=20
+> That feels ripe for problems for any rust code as forcing a helper macro
+> for a "normal" access to a structure field is going to be a lot of churn
+> over time.  Is the need for a macro due to the fact that accessing a
+> union is always considered "unsafe" in rust?  If that's the case, ick,
+> this is going to get even messier even faster as the need for sprinkling
+> unsafe accesses everywhere for what used to be a normal/safe one will
+> cause people to get nervous...
 
-kernel test robot noticed the following build errors:
+The reason for union field access being unsafe in Rust is that you can
+easily shoot yourself in the foot. For example:
 
-[auto build test ERROR on powerpc/next]
-[also build test ERROR on powerpc/fixes crng-random/master shuah-kselftest/next shuah-kselftest/fixes linus/master v6.11-rc3 next-20240816]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+    union Foo {
+        a: bool,
+        b: i32,
+    }
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christophe-Leroy/powerpc-vdso-Don-t-discard-rela-sections/20240816-223917
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git next
-patch link:    https://lore.kernel.org/r/a7bdbbb14d8635c1e33ada7982cf2cd1a8321e5c.1723817900.git.christophe.leroy%40csgroup.eu
-patch subject: [PATCH 3/9] vdso: Add __arch_get_k_vdso_rng_data()
-config: x86_64-buildonly-randconfig-002-20240817 (https://download.01.org/0day-ci/archive/20240817/202408172143.g3Qxmakr-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240817/202408172143.g3Qxmakr-lkp@intel.com/reproduce)
+    let foo =3D Foo { b: 3 };
+    println!("{}", unsafe { foo.a });
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408172143.g3Qxmakr-lkp@intel.com/
+This is UB, since `3` is of course not a valid value for `bool`. With
+unions the compiler doesn't know which variant is active.
 
-All errors (new ones prefixed by >>):
+Since unions are unsafe in Rust, we don't really use them directly (in
+the `kernel` crate, we have 0 union definitions). Instead we use certain
+unions from the stdlib such as `MaybeUninit`. But the fields of that
+union are private and never accessed.
 
->> ld: drivers/char/random.o:(.vvar__vdso_rng_data+0x0): multiple definition of `_vdso_rng_data'; kernel/time/vsyscall.o:(.vvar__vdso_rng_data+0x0): first defined here
->> ld: drivers/char/random.o:(.vvar__vdso_data+0x0): multiple definition of `_vdso_data'; kernel/time/vsyscall.o:(.vvar__vdso_data+0x0): first defined here
+In general, unions in Rust are very important primitive types, but they
+are seldomly used directly. Instead enums are used a lot more, since you
+don't need to roll your own tagged unions.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+For this use-case (the one in the patch), I don't really know if we want
+to copy the approach from C. Do we even support exporting kABI from
+Rust? If yes, then we I would recommend we tag it in the source code
+instead of using a union. Here the example from the patch adapted:
+
+    #[repr(C)] // needed for layout stability
+    pub struct Struct1 {
+        a: u64,
+        #[kabi_reserved(u64)] // this marker is new
+        _reserved: u64,
+    }
+
+And then to use the reserved field, you would do this:
+   =20
+    #[repr(C)]
+    pub struct Struct1 {
+        a: u64,
+        #[kabi_reserved(u64)]
+        b: Struct2,
+    }
+
+    #[repr(C)]
+    pub struct Struct2 {
+        b: i32,
+        v: i32,
+    }
+
+The attribute would check that the size of the two types match and
+gendwarfksyms would use the type given in "()" instead of the actual
+type.
+
+---
+Cheers,
+Benno
+
 
