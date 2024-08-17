@@ -1,168 +1,205 @@
-Return-Path: <linux-kernel+bounces-290638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCCFE9556BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 11:26:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCEAA9556BD
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 11:27:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A43B1F21DC4
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:26:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E68E51C20EAD
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1681487DF;
-	Sat, 17 Aug 2024 09:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1225F1487E3;
+	Sat, 17 Aug 2024 09:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qe4hc70A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z9vfKvEI"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDC618054;
-	Sat, 17 Aug 2024 09:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB81148317;
+	Sat, 17 Aug 2024 09:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723886755; cv=none; b=dqPxMROpRUEzWFSpwzRziuw3AzHFkW0tgTA68G/cHEQgHbzSwAuhS5jeZXp40A4txQ1iblZxUJPcHmjoEwsf8DmlsaUPr0p5bsGq/Qr8Sa3PzvK8OVk2N/hH2sFwFx6KHZoZZ+T75ojfng1f6pQyUQnrhuH0pk7Zy7yVGqVEeT4=
+	t=1723886853; cv=none; b=UdPMgQQ+/OZzo0cx4lp2/AzsLBVrnsgUn3ZzaIHYXt4kVC2J4XaBG+ReltRsJhJ3Lofc3630TaJ1t9JifKzmow3Tvox7Cv25p6BcbXaqMoWY4ZS3WoLxvJIg8jjRYbGsX3q+gCXNTJ34VIG3gXRPK+DbEsGToDRUbsaoXiiIfkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723886755; c=relaxed/simple;
-	bh=GXOxAMSTmZx7OyxjG+de6DaP7ldjZbWKt1lGcUUgB5A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eyv1BXdbk9bJlRK5bAl1uiog6p2q3mT7p4aq+EMDCHVMyiaRGifh3xx5NPMvxUrNbFvJOo6D2YRbG7S7NWt3yb9QYGMQFrGgj1xcEPMcqPiWpLebVvy45HxSAu31UBiP7NxQv/YFdbfntZBbsAbnm43tW/UFUNBcBFtb0+fcSlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qe4hc70A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05073C116B1;
-	Sat, 17 Aug 2024 09:25:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723886755;
-	bh=GXOxAMSTmZx7OyxjG+de6DaP7ldjZbWKt1lGcUUgB5A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qe4hc70A8Ee591OQgVeRzgsPFC+rxlweI9+welTE3dvFUgZXmThVP1UKtpsSMYbxz
-	 QbYbB1ng0ogdg93VkUsKJEZl6nqw1cawi2SX+mwf8EM4YC3u33jPaeIMGWYAMnfFE+
-	 fi7iCvMt0hyYBSgHdhAUNwDtaWE7xvvpC/7NF7vM1jlF0jgAnnTmSGRS9i323BmzXc
-	 A+GqRdxQd86HEQYx4aqYMkostAAIcN4fuFAt1PLq8zJotg313rO3AMM8TaFHpInMxt
-	 W1qThX510KTWNUXPFnhgDCBGLlq1y/0tfwrCfsVrg7NCqlHrP/iVGtJ8e+oQon0DJP
-	 fepLyd6ru/UMA==
-Message-ID: <67819a53-8e99-469b-a458-8c00034fec4a@kernel.org>
-Date: Sat, 17 Aug 2024 11:25:48 +0200
+	s=arc-20240116; t=1723886853; c=relaxed/simple;
+	bh=kGg9VSaWjG1r5mfWepw9eoy+c+ZwvFl5r/ZQEyLibDU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fhAkygMLmbmjqOTHANKwcQQOKcoadzdxsoTAeHP9nmFWUMCHDavD7dAJwkCy70Bt6OfbDEFYVu1xwHf124sIFOQd+BVwd37KewfpKu4mFn/rKMon41gSH8wO9QLMBuv5Ldrx2UClvB1Gg94Qj6OwVP5y+bjeLnrScPvgAEbVkJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z9vfKvEI; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4519383592aso16525061cf.3;
+        Sat, 17 Aug 2024 02:27:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723886850; x=1724491650; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fgRw6teSk0Vsqncxx6wgpyYYiQXJoNo9naphE5dxvn4=;
+        b=Z9vfKvEI1qG9PPjTjvNfxXMlPGV7Zfzidv2/zHjYc+IImzmt64bl8rdr2sjc6XFMv5
+         7+eVr/fQ8Wi5vwGl9G3UVSEVcbKuriHKRjZ8p7Tz+7BUjjqexXwMH/dhw3VRKx75OMZa
+         X8v4n3mMKsJxUccGWHSPD/jzx/WAv0KT/zYy94KRiv5RA/HNTAEQfQ+cWNgCjpoWXAIA
+         2nfLprlvg+wCqiPR5907tGmnb8YvWkLwNj/9XKKpsnxc/OXMkQey0kSJ7oTQcx/JBLpS
+         +CFjZhfL5rGcT/rfq6k7cSUKz9rcohUxxlFWAWWJ0/95XYp4RobWpyPPg/C/SEA3naWK
+         Gcmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723886850; x=1724491650;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fgRw6teSk0Vsqncxx6wgpyYYiQXJoNo9naphE5dxvn4=;
+        b=qtyM1pUEL14LeKVY/CB7Po+v79P/babw/ZscCHyT7C8qdfwUx5wFquXOAl2ZAzFvcT
+         8uBWrOVZZZmW98sl4WShBexD9+j7OJc+G42CJCdVDthhIRLgLdLtSxvknA5RVeJy5Vqs
+         beAooIgu0QUDxmoIi0YQknO9oeQByn+VNwa9Zo7z24wK9luVpZX0Zzmr3FWyN4MlCnsV
+         JqbcreNs+fAdtR8sK33Nzqaoqw5gbOKXHcaILpuLI3VMF3j+u2IpB6mhr3DJASOai3Jk
+         1oUT0GXboDZWzXvExbDZmmEP3F/UO0nI+oI8csGOAQ4bcFvkdqcSQZ2RwL3kMbgbs7LQ
+         BpbA==
+X-Forwarded-Encrypted: i=1; AJvYcCVGh5WmET5rsYdmV0l4rnNalWUuaO36ohoVVA7MYEsGjk8yllDOhUjQh+qLAGqlEq1iB3ecb68OV0V7UtexGBTzJVUu5z4I99MMLU7G
+X-Gm-Message-State: AOJu0Yxeyf4mlFJk6i/Bkou8Hmk3lW5ucvYUtuZyFLfsASLkz4WzHEEh
+	fZGoKjihQ/8Szn0NfukIk137jOFNgQLGQa1rTbwpU8eI4cfHjMMzQxaXfjqCi2htXSHZK7oQO+k
+	aU/8DdgVeIki09KGQG42rMdup1s8=
+X-Google-Smtp-Source: AGHT+IFVo1p+v3CrXFfk3Gw22BDMFxLp7295yMXwWc9k/Zmg+GCLMbW9UUNXC0cNHga0lCO400RQjVCpS/G4+q3VlGU=
+X-Received: by 2002:a05:622a:590c:b0:44f:c9ad:9cc2 with SMTP id
+ d75a77b69052e-453743aa05bmr73314661cf.50.1723886849734; Sat, 17 Aug 2024
+ 02:27:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] clk: qcom: lpassaudiocc-sc7280: Add support for
- LPASS resets for QCM6490
-To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
- <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- quic_imrashai@quicinc.com, quic_jkona@quicinc.com
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240816-qcm6490-lpass-reset-v1-0-a11f33cad3c5@quicinc.com>
- <20240816-qcm6490-lpass-reset-v1-2-a11f33cad3c5@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240816-qcm6490-lpass-reset-v1-2-a11f33cad3c5@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240816015355.688153-1-alex000young@gmail.com>
+ <CAM0EoMmAcgbQWG7kQoe335079Y2UY_BmoYErL=44-itJ=p-B-Q@mail.gmail.com> <CAM0EoM=qvBxXS_1eheyhCKbNMRbK_qTTFMa1fFBFQp_hRbzpQQ@mail.gmail.com>
+In-Reply-To: <CAM0EoM=qvBxXS_1eheyhCKbNMRbK_qTTFMa1fFBFQp_hRbzpQQ@mail.gmail.com>
+From: Alex Young <alex000young@gmail.com>
+Date: Sat, 17 Aug 2024 17:27:17 +0800
+Message-ID: <CAFC++j15p9Ey3qc4ZsY4CXBsL3LHn7TsFTi6=N9=H+_Yx_k=+Q@mail.gmail.com>
+Subject: Re: [PATCH] net: sched: use-after-free in tcf_action_destroy
+To: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	xiyou.wangcong@gmail.com, jiri@resnulli.us, davem@davemloft.net, 
+	security@kernel.org, xkaneiki@gmail.com, hackerzheng666@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 16/08/2024 10:32, Taniya Das wrote:
-> On the QCM6490 boards the LPASS firmware controls the complete clock
-> controller functionalities. But the LPASS resets are required to be
-> controlled from the high level OS. The Audio SW driver should be able to
-> assert/deassert the audio resets as required. Thus in clock driver add
-> support for the resets.
-> 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
->  drivers/clk/qcom/lpassaudiocc-sc7280.c | 23 +++++++++++++++++++----
->  1 file changed, 19 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-> index 45e726477086..b64393089263 100644
-> --- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
-> +++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-> @@ -1,6 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0-only
->  /*
->   * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
->   */
->  
->  #include <linux/clk-provider.h>
-> @@ -713,14 +714,24 @@ static const struct qcom_reset_map lpass_audio_cc_sc7280_resets[] = {
->  	[LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
->  };
->  
-> +static const struct regmap_config lpass_audio_cc_sc7280_reset_regmap_config = {
-> +	.name = "lpassaudio_cc_reset",
-> +	.reg_bits = 32,
-> +	.reg_stride = 4,
-> +	.val_bits = 32,
-> +	.fast_io = true,
-> +	.max_register = 0xc8,
-> +};
-> +
->  static const struct qcom_cc_desc lpass_audio_cc_reset_sc7280_desc = {
-> -	.config = &lpass_audio_cc_sc7280_regmap_config,
-> +	.config = &lpass_audio_cc_sc7280_reset_regmap_config,
->  	.resets = lpass_audio_cc_sc7280_resets,
->  	.num_resets = ARRAY_SIZE(lpass_audio_cc_sc7280_resets),
->  };
->  
->  static const struct of_device_id lpass_audio_cc_sc7280_match_table[] = {
-> -	{ .compatible = "qcom,sc7280-lpassaudiocc" },
-> +	{ .compatible = "qcom,qcm6490-lpassaudiocc", .data = &lpass_audio_cc_reset_sc7280_desc },
+Hi Jamal,
 
-That's odd to see sc7280 reset added for qcm6490, but not used fot
-sc7280 at all. Didn't you mean here lpass_audio_cc_qcm6409_desc?
+Thanks your mention. I have reviewed the latest kernel code.
+I understand why these two tc function threads can enter the kernel at the =
+same
+time. It's because the request_module[2] function in tcf_action_init_1. Whe=
+n the
+tc_action_init_1 function to add a new action, it will load the action
+module. It will
+call rtnl_unlock to let the Thread2 into the kernel space.
 
+Thread1                                                 Thread2
+rtnetlink_rcv_msg                                   rtnetlink_rcv_msg
+ rtnl_lock();
+ tcf_action_init
+  for(i;i<TCA_ACT_MAX_PRIO;i++)
+   act=3Dtcf_action_init_1 //[1]
+        if (rtnl_held)
+           rtnl_unlock(); //[2]
+        request_module("act_%s", act_name);
+
+                                                                tcf_del_wal=
+ker
+
+idr_for_each_entry_ul(idr,p,id)
+
+__tcf_idr_release(p,false,true)
+
+ free_tcf(p) //[3]
+if (rtnl_held)
+rtnl_lock();
+
+   if(IS_ERR(act))
+    goto err
+   actions[i] =3D act
+
+  err:
+   tcf_action_destroy
+    a=3Dactions[i]
+    ops =3D a->ops //[4]
+I know this time window is small, but it can indeed cause the bug. And
+in the latest
+kernel, it have fixed the bug. But version 4.19.x is still a
+maintenance version.
+Is there anyone who can introduce this change into version 4.19.
 
 Best regards,
-Krzysztof
+Alex
 
+Jamal Hadi Salim <jhs@mojatatu.com> =E4=BA=8E2024=E5=B9=B48=E6=9C=8816=E6=
+=97=A5=E5=91=A8=E4=BA=94 23:04=E5=86=99=E9=81=93=EF=BC=9A
+
+>
+> On Fri, Aug 16, 2024 at 12:06=E2=80=AFAM Jamal Hadi Salim <jhs@mojatatu.c=
+om> wrote:
+> >
+> > On Thu, Aug 15, 2024 at 9:54=E2=80=AFPM yangzhuorao <alex000young@gmail=
+.com> wrote:
+> > >
+> > > There is a uaf bug in net/sched/act_api.c.
+> > > When Thread1 call [1] tcf_action_init_1 to alloc act which saves
+> > > in actions array. If allocation failed, it will go to err path.
+> > > Meanwhile thread2 call tcf_del_walker to delete action in idr.
+> > > So thread 1 in err path [3] tcf_action_destroy will cause
+> > > use-after-free read bug.
+> > >
+> > > Thread1                            Thread2
+> > >  tcf_action_init
+> > >   for(i;i<TCA_ACT_MAX_PRIO;i++)
+> > >    act=3Dtcf_action_init_1 //[1]
+> > >    if(IS_ERR(act))
+> > >     goto err
+> > >    actions[i] =3D act
+> > >                                    tcf_del_walker
+> > >                                     idr_for_each_entry_ul(idr,p,id)
+> > >                                      __tcf_idr_release(p,false,true)
+> > >                                       free_tcf(p) //[2]
+> > >   err:
+> > >    tcf_action_destroy
+> > >     a=3Dactions[i]
+> > >     ops =3D a->ops //[3]
+> > >
+> > > We add lock and unlock in tcf_action_init and tcf_del_walker function
+> > > to aviod race condition.
+> > >
+>
+> Hi Alex,
+>
+> Thanks for your valiant effort, unfortunately there's nothing to fix
+> here for the current kernels.
+> For your edification:
+>
+> This may have been an issue on the 4.x kernels you ran but i dont see
+> a valid codepath that would create the kernel parallelism scenario you
+> mentioned above (currently or ever actually). Kernel entry is
+> syncronized from user space via the rtnetlink lock - meaning you cant
+> have two control plane threads (as you show in your nice diagram above
+> in your commit) entering from user space in parallel to trigger the
+> bug.
+>
+> I believe the reason it happens in 4.x is there is likely a bug(hand
+> waving here) where within a short window upon a) creating a batch of
+> actions of the same kind b) followed by partial updates of said action
+> you then c) flush that action kind. Theory is the flush will trigger
+> the bug. IOW, it is not parallel but rather a single entry. I didnt
+> have time to look but whatever this bug is was most certainly fixed at
+> some point - perhaps nobody bothered to backport. If this fix is so
+> important to you please dig into newer kernels and backport.
+>
+> There are other technical issues with your solution but I hope the above =
+helps.
+> The repro doesnt cause any issues in newer kernels - but please verify
+> for yourself as well.
+>
+> So from me, I am afraid, this is a nack
+>
+> cheers,
+> jamal
 
