@@ -1,92 +1,141 @@
-Return-Path: <linux-kernel+bounces-290738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F5F8955800
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:15:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74602955803
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:18:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 878921C20EA4
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:15:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05032B219CB
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:18:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E97514F12F;
-	Sat, 17 Aug 2024 13:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486A714D282;
+	Sat, 17 Aug 2024 13:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="DsBJMzwE"
-Received: from smtpdh17-su.aruba.it (smtpdh17-su.aruba.it [62.149.155.128])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="WoBeRecr"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCB91E531
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 13:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.155.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6991E531;
+	Sat, 17 Aug 2024 13:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723900539; cv=none; b=uIJmXGnwDYRCWfgb77IiAlaib9Z2WaX83mQvi1yhG6YXq+r0nCQ/uEJQ/2tKXjVCi/SrT2B7ehxYbtqxbVywNaP+nR948+4Y4+Fo+h6f04b8GfzUvSLMqf9v4t+i0evVbQtXmFLzOVAid6ioB/MveOFd+BCcKXr7BYDxxOKycPg=
+	t=1723900687; cv=none; b=A/xCvTxPj+tp9AHMgqsNky13W7/YYDhhKqZeviTYXAw9v34WMRGVfUJflxRMpKbQmVT4iGRHdrZi1P7PMbboJeSaGtyFoEJ3i7ApAHUAgBNWxMnlL7+VPpTQW3KSYJqS2LyDhOM0OjEhNGar+e4XglPVO7dfhEZRxJCUB2BaPvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723900539; c=relaxed/simple;
-	bh=2F8nLXpu6utciwf73TEHErlUBn07rnVVcj0FX8O7uko=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=QJ7Z4t5vq27xzJShnWHy7nciIo2jvzSn8JXZ7bva/65irkLkz2UShozWxM6/LtitEJ7YQR4bLjF17FE3dwvcG9EKcG87ht9oY5Kwfp8uSFsVzOgSquV31LGkeOKf0FGPuPlNUF8VMFQi24wSnIYj5BM77K2nvJcQD1R6PDwh5Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xhero.org; spf=pass smtp.mailfrom=xhero.org; dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b=DsBJMzwE; arc=none smtp.client-ip=62.149.155.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xhero.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xhero.org
-Received: from smtpclient.apple ([84.74.245.127])
-	by Aruba Outgoing Smtp  with ESMTPSA
-	id fJHIsuVgIJLbHfJHIsulm7; Sat, 17 Aug 2024 15:15:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-	t=1723900533; bh=2F8nLXpu6utciwf73TEHErlUBn07rnVVcj0FX8O7uko=;
-	h=Content-Type:Mime-Version:Subject:From:Date:To;
-	b=DsBJMzwEhUbJk9XnllJFQKQZh/t3xA3C8KAlVMv0kuRx9K0UQyVvqfm8b1TPP5nGX
-	 lzk1munk+k9e0BOKKyLZNh4CzsUNwZgmDHzqecyPZ324J1a/QpfQ7/Y2g7shHUnC4z
-	 jmItHJfpWbKfxi8Btjf0Hvi4ZShqackrI7A4rnV7cJ4t0AzB9C9XT4LhpLkR0QEQLw
-	 ndinMmOk5mwyt58ZUznt+QBt6FhoML1Jfxi45phanBejoXw57I0n8aFhr6QkzFfIDh
-	 UK6IBdfSP1C5GY03hMSCdCaTJzScJmg7AHGj3BTDjqZYBX+DAeplLeZDwmVOPw/ypI
-	 aY8/Yba/lzZeg==
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1723900687; c=relaxed/simple;
+	bh=HvXmyuHg5GnswCDkAJPVSYjHNNSfv3TKohdSNPIPCZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lFHxGZGVm2PnqaATzuXUZBjGp+r4XLo+J8U8POXEt+afHH4Z58pQ6TzVkKpMCg8U4V/pnqY2hetGzIiRj9AGUcwF3mjt4hxG5iNBPBsoHbxYfQNwqknjkoSJa8Bxf97TE4hn0A+f+lM6ZwpIBmSd5qY0afTDO6RgFbswpTAYABU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=WoBeRecr; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
+	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=SgbIPuQb9jRS6bEK3u2c9dEhiPTushvj+p3+mp9gGzw=; b=WoBeRecrG9h5E3blQfEkLRl/4W
+	0vh6R/aKkW2Rmq8EDRIiUplqhXk7W0N5DKFlhZqRwPiSUZCkPp+7N/9oQ0WQl9z0fDexLlAwPxh3l
+	0GUWnCwsY+sCiqMlQhjY6H+rOPtJRWb4yS3c5XqnzEs4a8bf0Nkt5A2kBTLw54H1pr8eEL0Qh9WT7
+	hQ8PZDkDZXQ6QkQ4itVQs2uocW/vfXg/0OIxGimSYAIb/GwWndLcmWHfXPVdjCfPzZ2+eWhhaYrWH
+	rTAyqrqrnnUXuc4Bsgj4Xw6Yj/iX5Hdg9X9cSX+KuGHgtNJe/m2wUPYp/4W08PwZrKvXtFiWCvh5O
+	G4U83+Zw==;
+Received: from [2001:9e8:9db:8201:3235:adff:fed0:37e6] (port=46100 helo=lindesnes.fjasle.eu)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1sfJJX-00DYyR-GG;
+	Sat, 17 Aug 2024 15:17:51 +0200
+Date: Sat, 17 Aug 2024 15:17:47 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH] modpost: improve the section mismatch warning format
+Message-ID: <20240817-strong-passionate-gecko-dd86ac@lindesnes>
+References: <20240812165455.2156964-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [PATCH net-next 1/2] tty: Add N_TASHTALK line discipline for
- TashTalk Localtalk serial driver
-From: Rodolfo Zitellini <rwz@xhero.org>
-In-Reply-To: <2024081717-mating-uncle-6e4c@gregkh>
-Date: Sat, 17 Aug 2024 15:15:21 +0200
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Jiri Slaby <jirislaby@kernel.org>,
- netdev@vger.kernel.org,
- linux-doc@vger.kernel.org,
- linux-serial@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Arnd Bergmann <arnd@arndb.de>,
- Doug Brown <doug@schmorgal.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <245045A2-2B0A-4232-8B3E-8FB29F0167CA@xhero.org>
-References: <20240817093258.9220-1-rwz@xhero.org>
- <2024081717-mating-uncle-6e4c@gregkh>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-X-Mailer: Apple Mail (2.3774.600.62)
-X-CMAE-Envelope: MS4xfNOvGofd9QYNAgEfrGFmsPeg9WvA4gVEyadhY3I2Nssi18CulYFa+uawW5HRhqrqiqGIXpPoaN8GmFOF6+OqQCQj5fSHjEAj84QWGPXOZk0KxXOqm2zC
- qjgOkjaHAwq35PYVjJkZ+tmKtIVJ98gFes3oxZUlmDwB2uhBNhI2StOJHNrOG1aGcaLKts++026e6/K0k3zI/f46gd2qL2A84hsnUi/ow7NP0haEVIqppQev
- Zz+WJBMDGuJUiZiAWO8vFCt390m0FruvgC+XID0EJsXaQNbIcLb84pRlKMkCwoyrGJosQM/jykIvpeK3xYwUW6XRQ7vYI/LW0DoqNz7wgdeaXGIp+npg+wTd
- xMw47wUWMWhPfTKu5Li34NGJ7UMZY9fqviEno0Ovb3eXGII9ZOJGjMIc3egRTKPWMQ8BIpEgCqDO4U4/dJILntbBJIxyrS0+UaFfNchjaXG5PJo0Xr5IcbBF
- z+iEb48f7MVQB7Hbn38J9xWa61t2X6YVb0DQjeOB2U0YH0DZczGWWu3O7ZsSfg2ecIWo4FJ4R4i/aMz621Tw8JY6flOK3iqcawh0hw==
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812165455.2156964-1-masahiroy@kernel.org>
 
-> Please look at the kernel documentation for best how to write =
-changelog
-> texts.  This needs a bit of work.
+On Tue, Aug 13, 2024 at 01:54:51AM +0900, Masahiro Yamada wrote:
+> This commit improves the section mismatch warning format when there is
+> no suitable symbol name to print.
+> 
+> The section mismatch warning prints the reference source in the form
+> of <symbol_name>+<offset> and the reference destination in the form
+> of <symbol_name>.
+> 
+> However, there are some corner cases where <symbol_name> becomes
+> "(unknown)", as reported in commit 23dfd914d2bf ("modpost: fix null
+> pointer dereference").
+> 
+> In such cases, it is better to print the symbol address.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+> 
+>  scripts/mod/modpost.c | 21 +++++++++++++--------
+>  1 file changed, 13 insertions(+), 8 deletions(-)
+> 
+> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> index d0f138803207..3e474291258c 100644
+> --- a/scripts/mod/modpost.c
+> +++ b/scripts/mod/modpost.c
+> @@ -705,10 +705,7 @@ static char *get_modinfo(struct elf_info *info, const char *tag)
+>  
+>  static const char *sym_name(struct elf_info *elf, Elf_Sym *sym)
+>  {
+> -	if (sym)
+> -		return elf->strtab + sym->st_name;
+> -	else
+> -		return "(unknown)";
+> +	return sym ? elf->strtab + sym->st_name : "";
+>  }
+>  
+>  /*
+> @@ -1021,6 +1018,7 @@ static void default_mismatch_handler(const char *modname, struct elf_info *elf,
+>  	Elf_Sym *from;
+>  	const char *tosym;
+>  	const char *fromsym;
+> +	char taddr_str[16];
+>  
+>  	from = find_fromsym(elf, faddr, fsecndx);
+>  	fromsym = sym_name(elf, from);
+> @@ -1034,10 +1032,17 @@ static void default_mismatch_handler(const char *modname, struct elf_info *elf,
+>  
+>  	sec_mismatch_count++;
+>  
+> -	warn("%s: section mismatch in reference: %s+0x%x (section: %s) -> %s (section: %s)\n",
+> -	     modname, fromsym,
+> -	     (unsigned int)(faddr - (from ? from->st_value : 0)),
+> -	     fromsec, tosym, tosec);
+> +	if (!tosym[0])
+> +		snprintf(taddr_str, sizeof(taddr_str), "0x%x", (unsigned int)taddr);
+> +
+> +	/*
+> +	 * The format for the reference source:      <symbol_name>+<offset> or <address>
+> +	 * The format for the reference destination: <symbol_name>          or <address>
+> +	 */
+> +	warn("%s: section mismatch in reference: %s%s0x%x (section: %s) -> %s (section: %s)\n",
+> +	     modname, fromsym, fromsym[0] ? "+" : "",
+> +	     (unsigned int)(faddr - (fromsym[0] ? from->st_value : 0)),
+> +	     fromsec, tosym[0] ? tosym : taddr_str, tosec);
+>  
+>  	if (mismatch->mismatch == EXTABLE_TO_NON_TEXT) {
+>  		if (match(tosec, mismatch->bad_tosec))
+> -- 
+> 2.43.0
+> 
 
-Hi Greg,
-thanks for your review! I will absolutely improve the commit messages on =
-both patches in the next version of the series.
-
-Kind Regards,
-Rodolfo=
+Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
 
