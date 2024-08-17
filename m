@@ -1,136 +1,106 @@
-Return-Path: <linux-kernel+bounces-290599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C18A3955620
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:18:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38BB2955619
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:16:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D96DA1C21330
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:18:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D565D1F23E73
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F1B13EFEE;
-	Sat, 17 Aug 2024 07:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="QqKLW3YZ"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA80A140369;
+	Sat, 17 Aug 2024 07:16:48 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C385813D886;
-	Sat, 17 Aug 2024 07:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5411213D880;
+	Sat, 17 Aug 2024 07:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723879089; cv=none; b=jmvbqULPwkzFS69ObP7MtMnk7JA00IG+t1F1/lQgYgp5ksui/yiVyQwA9u2+RVcCg6YWH0SeP6Y7pwb2TRoovv5qCdLpLSe+4G4m8kplyeLuIoHBxPbNo/kMUpusohxC18Oy3QOVNch2JShMMNdhVAWVETJtaI+vBYOlcTFzGJo=
+	t=1723879008; cv=none; b=NuKP6NVqTfu8bJeY7WM7gozNQwgyUzWCJjdTaSg7MWPRRsNLb0fXBt+CxswdrKUtsUMpx9+rO3RCY18pVPM5pqMOlB2q/35qVjxIPWH4ZC24BldLiDLNkZoSZDKglLq0fhGOl3ftC7HWiy6MAWRYJmp6MoKi3r0B1EAq/rkK1Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723879089; c=relaxed/simple;
-	bh=iep9HEh6PTtLOtgubvSnPRt/PF3dSSz7gtDA6JdfAb4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lUQR+5zA0/C9T+Y40QVQp6WZLvPQFDG4gU6hRUJY3lrRX842EGTeUGqsIuSBJm+RJwlQY2eYjECRJqwcgzSNXz6UHeyGvlj43fLN09b4w3/T7KmL+DONglRpK0eUjlszmpmvEJRz92uFS2/QNGDgFb+FODknMOLtby/hRddgOA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=QqKLW3YZ; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=N64/orJE2dSRemHF5EZJAKDhD0XlDaCW2eGwq0sHYVM=; t=1723879086; x=1724483886; 
-	b=QqKLW3YZ9VSgQCMBn52c7xRPBR50PoDy3n7pYWEVkrnIg7HYcDMDnf48NmRIGAAB634P71e8jIN
-	pLORzKiQswIkGvPnLUMrLKTC+NxZcroP1Lrr+aGKxKhzf2jYyJCT6On5VkEHazsewDIpqBHaYW/rJ
-	1rlJtHxZtw7s5oPGLo2WZQfRW1J6ntMhoesPKA7onFYm5O1PmalHiYaVmghtrfj2lsNBU6WW/PJ0P
-	Bnv/i+31OPDqPp4emIl7FhyteHGVg22ApuHssyvDk1nA8rPq/3AEONcP5jhpkFInQUkdja4IcIJ6G
-	704BdCOOll+Xm/93tCj5piJRDtY/54XuBDaA==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1sfDe0-00000001iWP-2BX2; Sat, 17 Aug 2024 09:14:36 +0200
-Received: from p5b13a2bf.dip0.t-ipconnect.de ([91.19.162.191] helo=[192.168.178.20])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1sfDe0-000000011MC-1EVE; Sat, 17 Aug 2024 09:14:36 +0200
-Message-ID: <a9c6a1132d8fab355d5d770f08777daacf4c6038.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH v4] sh: Restructure setup code to reserve memory regions
- earlier
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Oreoluwa Babatunde <quic_obabatun@quicinc.com>, 
-	ysato@users.sourceforge.jp, dalias@libc.org
-Cc: linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
- robh+dt@kernel.org,  kernel@quicinc.com, Geert Uytterhoeven
- <geert+renesas@glider.be>, Artur Rojek <contact@artur-rojek.eu>
-Date: Sat, 17 Aug 2024 09:14:35 +0200
-In-Reply-To: <5ea6b07e-7583-45f6-afd1-05f2856bea27@quicinc.com>
-References: <20240711214438.3920702-1-quic_obabatun@quicinc.com>
-	 <a68b7cd0e3b143f023414feca279deb768d43575.camel@physik.fu-berlin.de>
-	 <121b8077-bc6d-42a3-8ec2-c792e84bd947@quicinc.com>
-	 <831887db73d9eafc50940315ed44139107bd5f2a.camel@physik.fu-berlin.de>
-	 <636943c1-6e32-4dd1-abdd-5a110e9aa07c@quicinc.com>
-	 <d12de025cfb71bcf2a86aa54251aac20f16d32b7.camel@physik.fu-berlin.de>
-	 <5ea6b07e-7583-45f6-afd1-05f2856bea27@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 
+	s=arc-20240116; t=1723879008; c=relaxed/simple;
+	bh=H5vRJ7qWKzwCuSYttmlCbpKT8XxX86cdHL5br20y1d0=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Xz6koxbIZcZIVzYLT5aEr2Zj3gtz+ZFHcPgyKjS2qk4A88E2dm/Fn42Lv9E6TuPwKCgzOqtj54rSFuHhkcVoDh2NeIKkjbvSKZf/1mX7ywN0JilqEo5kZ8SOEsRTTWPE1VPxpzAgt0mzWyNXzoitkrWkQN6C7G7BUF3hmcebL5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wm9Bx72Tdz4f3jYx;
+	Sat, 17 Aug 2024 15:16:25 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 725BC1A0568;
+	Sat, 17 Aug 2024 15:16:35 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgAXPoRRTsBm_Bq0Bw--.39554S3;
+	Sat, 17 Aug 2024 15:16:35 +0800 (CST)
+Subject: Re: [PATCH v2 5/6] iomap: don't mark blocks uptodate after partial
+ zeroing
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+ brauner@kernel.org, david@fromorbit.com, jack@suse.cz, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com
+References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
+ <20240812121159.3775074-6-yi.zhang@huaweicloud.com>
+ <ZsArnB9ItrxUmXHW@casper.infradead.org>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <5a3dd916-19a3-7c61-e19d-f257907ae47d@huaweicloud.com>
+Date: Sat, 17 Aug 2024 15:16:33 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+In-Reply-To: <ZsArnB9ItrxUmXHW@casper.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgAXPoRRTsBm_Bq0Bw--.39554S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7GF4kWw13ZryUGw1rZryrZwb_yoWxCFc_uw
+	1kuw1kAFZ8W3Z3Aa45C3W5J3s7KFn5XF47Xr4Fy347Cr9rWF93Ar40krn3GrsavF43GFy5
+	Cwsavr48AFn3XjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUba8YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCYjI0SjxkI62AI
+	1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFV
+	Cjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
+	x4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
+	1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
+	JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
+	sGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hi Oreoluwa,
+On 2024/8/17 12:48, Matthew Wilcox wrote:
+> On Mon, Aug 12, 2024 at 08:11:58PM +0800, Zhang Yi wrote:
+>> +++ b/fs/iomap/buffered-io.c
+>> @@ -744,8 +744,8 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+>>  					poff, plen, srcmap);
+>>  			if (status)
+>>  				return status;
+>> +			iomap_set_range_uptodate(folio, poff, plen);
+>>  		}
+>> -		iomap_set_range_uptodate(folio, poff, plen);
+>>  	} while ((block_start += plen) < block_end);
+> 
+> Um, what I meant was to just delete the iomap_set_range_uptodate()
+> call in __iomap_write_begin() altogether.  We'll call it soon enough in
+> __iomap_write_end().
+> 
 
-On Tue, 2024-07-23 at 09:59 -0700, Oreoluwa Babatunde wrote:
-> On 7/23/2024 12:57 AM, John Paul Adrian Glaubitz wrote:
-> > Hi Oreluwa,
-> >=20
-> > On Wed, 2024-07-17 at 19:22 -0700, Oreoluwa Babatunde wrote:
-> > > Thanks for your feedback and for working with me on this.
-> > > I have uploaded a new version here:
-> > > https://lore.kernel.org/all/20240718021822.1545976-1-quic_obabatun@qu=
-icinc.com/
-> > >=20
-> > > Please let me know if this properly addresses your comments.
-> > Thanks. I'll have another look this week, including testing.
-> >=20
-> > But I have decided to send the pull request to Linus for v6.11 now,
-> > so I don't have to hurry with the review.
-> >=20
-> ack.
->=20
-> Thank you!
+Yeah! Looks reasonable to me.
 
-Sorry for the very late reply. I'm currently having issues booting HEAD on =
-the J2
-Turtleboard, most likely it's an issue with the serial console. We're curre=
-ntly
-trying to figure out what's wrong and bisected the commit that introduced t=
-he
-problem although it seems to be unrelated.
+Thanks,
+Yi.
 
-Both Artur and Geert (CC'ed) are getting their own J2 Turtleboards within t=
-he next
-days, so they will hopefully be able to help me debug the problem and come =
-up with
-a fix.
-
-I previously did test your v3 patch against v6.9 where it did not introduce=
- any
-regressions but I would like to test with HEAD just to be sure which is why=
- we
-need to get the kernel working again first.
-
-Adrian
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
