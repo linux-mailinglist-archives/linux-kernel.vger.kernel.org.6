@@ -1,58 +1,51 @@
-Return-Path: <linux-kernel+bounces-290544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92EC4955584
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:18:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 712B895558D
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCEC21C22962
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 05:18:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3DDC284A38
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 05:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F91B83CDA;
-	Sat, 17 Aug 2024 05:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MqEeOHWr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC5012BEBB;
+	Sat, 17 Aug 2024 05:29:42 +0000 (UTC)
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA0F2F23;
-	Sat, 17 Aug 2024 05:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580C91119A;
+	Sat, 17 Aug 2024 05:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723871877; cv=none; b=FKmIAs+OL2e/LkZG0ERRwc6KmrwB1suT5sVovVJ1VlmT9eR+vyEdtljfZtKZFZCFteFSkSqfRlF8/+ZWfMGuC0RJfOoYbXJBgIF9RmhZ7qU1SccotbIYNzjClNoP/bW+B+UPip6Sv5qrlbQEIYERBRPdIg+UIJRcCIPj0AoNFSs=
+	t=1723872582; cv=none; b=FszkDVMeBmtjE82UjEJ5n76U1oMD62wjRoS6nueWiYbt1wR9y3d3/OlYwbPAEI2fgNv+v5Ar38R6Nlww4aahw8rMshLZk+lz2Yy2gtXovlHdmbokpwLkp7x9UyiCK1f9aZieIZDoWu0Kt6Du8mM7pekeQVqRsZrbItrnRd4iV78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723871877; c=relaxed/simple;
-	bh=kxdohkZzGnZSc92jRJAMD2mosuQ9K9cXUXRgO4U8xbY=;
+	s=arc-20240116; t=1723872582; c=relaxed/simple;
+	bh=uzVpqMmC7E5SKGFzefSKhbIkSobZJj0bkq99bpCXnHk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dAEKDS+olZnreXzs1C74RG9omGBnDMbc/YM8XdPl+qrIbskzJ4Zuhk+yq5snNgNj8aDqkwtus0vgpS/IP6UVrXTAEaIoJgMr0JBcjT45xPPFqf87C/QcEBYGS4ICSh7L/loWWfs4Mkzud2JKA1irh4xRHByPyP2EuQVBHRH2jdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MqEeOHWr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CEBCC116B1;
-	Sat, 17 Aug 2024 05:17:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723871877;
-	bh=kxdohkZzGnZSc92jRJAMD2mosuQ9K9cXUXRgO4U8xbY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MqEeOHWrnCd7ad65ey+pouxpK7yWIcGymQlyzR1JrP0Ln0m13K8M7EiLdWjTMuKrC
-	 ezS/rU/ArZ0NG0RTy75eFrPraGmSWz+USwqkZ3bzmVkSBQ9wVAPuA0vZ1xPoMtKfeh
-	 yB3FyI1MHTL7uoCFWmOmpfE2U9roSPZ/gjmIpPks=
-Date: Sat, 17 Aug 2024 07:17:53 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Selvarasu Ganesan <selvarasu.g@samsung.com>
-Cc: Thinh.Nguyen@synopsys.com, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com,
-	dh10.jung@samsung.com, naushad@samsung.com, akash.m5@samsung.com,
-	rc93.raju@samsung.com, taehyun.cho@samsung.com,
-	hongpooh.kim@samsung.com, eomji.oh@samsung.com,
-	shijie.cai@samsung.com, stable@vger.kernel.org
-Subject: Re: [PATCH v3] usb: dwc3: core: Prevent USB core invalid event
- buffer address access
-Message-ID: <2024081700-skittle-lethargy-9567@gregkh>
-References: <CGME20240815064918epcas5p1248e4f9084d33fdb11a25fa34e66cdbe@epcas5p1.samsung.com>
- <20240815064836.1491-1-selvarasu.g@samsung.com>
- <2024081618-singing-marlin-2b05@gregkh>
- <4f286780-89a2-496d-9007-d35559f26a21@samsung.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cox+mWhjwuN+nxeM0ZvNAGkWjcUXIiytc1uYhnKYzJlDOEIEHk82/me8m5miNzR9GFJvSmp1C4/otjlgyciYrRgCY+g0I54POg+vhxWHtPyOhz9eLwfZ7zWfrT4Ohc/wtG8ZtQrMj079GViMjnD8jQsUO4BjnWHmCQnZ0nuTwA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout2.hostsharing.net (Postfix) with ESMTPS id AC43B2800B3C8;
+	Sat, 17 Aug 2024 07:20:51 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 89E8D2C5689; Sat, 17 Aug 2024 07:20:51 +0200 (CEST)
+Date: Sat, 17 Aug 2024 07:20:51 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+Cc: scott@spiteful.org, bhelgaas@google.com, ilpo.jarvinen@linux.intel.com,
+	wsa+renesas@sang-engineering.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Nam Cao <namcao@linutronix.de>
+Subject: Re: [PATCH] PCI: hotplug: check the return of hotplug bridge
+Message-ID: <ZsAzM8K9PnN5jxR9@wunner.de>
+References: <20240817032228.6844-1-trintaeoitogc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,47 +54,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4f286780-89a2-496d-9007-d35559f26a21@samsung.com>
+In-Reply-To: <20240817032228.6844-1-trintaeoitogc@gmail.com>
 
-On Fri, Aug 16, 2024 at 09:13:09PM +0530, Selvarasu Ganesan wrote:
-> 
-> On 8/16/2024 3:25 PM, Greg KH wrote:
-> > On Thu, Aug 15, 2024 at 12:18:31PM +0530, Selvarasu Ganesan wrote:
-> >> This commit addresses an issue where the USB core could access an
-> >> invalid event buffer address during runtime suspend, potentially causing
-> >> SMMU faults and other memory issues in Exynos platforms. The problem
-> >> arises from the following sequence.
-> >>          1. In dwc3_gadget_suspend, there is a chance of a timeout when
-> >>          moving the USB core to the halt state after clearing the
-> >>          run/stop bit by software.
-> >>          2. In dwc3_core_exit, the event buffer is cleared regardless of
-> >>          the USB core's status, which may lead to an SMMU faults and
-> >>          other memory issues. if the USB core tries to access the event
-> >>          buffer address.
-> >>
-> >> To prevent this hardware quirk on Exynos platforms, this commit ensures
-> >> that the event buffer address is not cleared by software  when the USB
-> >> core is active during runtime suspend by checking its status before
-> >> clearing the buffer address.
-> >>
-> >> Cc: stable@vger.kernel.org # v6.1+
-> > Any hint as to what commit id this fixes?
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> 
-> Hi Greg,
-> 
-> This issue is not related to any particular commit. The given fix is 
-> address a hardware quirk on the Exynos platform. And we require it to be 
-> backported on stable kernel 6.1 and above all stable kernel.
+[shorten subject, cc += Nam Cao, start of thread:
+https://lore.kernel.org/all/20240817032228.6844-1-trintaeoitogc@gmail.com/
+]
 
-If it's a hardware quirk issue, why are you restricting it to a specific
-kernel release and not a specific kernel commit?  Why not 5.15?  5.4?
+On Sat, Aug 17, 2024 at 12:22:27AM -0300, Guilherme Giacomo Simoes wrote:
+> Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
 
-thanks,
+Hm, the body of the commit message ended up in the subject
+and the patch was submitted twice.
 
-greg k-h
+
+> --- a/drivers/pci/hotplug/shpchp_pci.c
+> +++ b/drivers/pci/hotplug/shpchp_pci.c
+> @@ -48,8 +48,11 @@ int shpchp_configure_device(struct slot *p_slot)
+>  	}
+>  
+>  	for_each_pci_bridge(dev, parent) {
+> -		if (PCI_SLOT(dev->devfn) == p_slot->device)
+> -			pci_hp_add_bridge(dev);
+> +		if (PCI_SLOT(dev->devfn) == p_slot->device) {
+> +			ret = pci_hp_add_bridge(dev);
+> +			if (ret)
+> +				goto out;
+> +		}
+>  	}
+>  
+>  	pci_assign_unassigned_bridge_resources(bridge);
+
+Nam Cao worked on this back in May:
+
+v1:
+https://lore.kernel.org/all/cover.1714762038.git.namcao@linutronix.de/
+
+v2:
+https://lore.kernel.org/all/cover.1714838173.git.namcao@linutronix.de/
+
+v3:
+https://lore.kernel.org/all/cover.1715609848.git.namcao@linutronix.de/
+
+Note that there was discussion on v2 after v3 had been submitted,
+i.e. the last messages in the discussion are in the v2 thread.
+
+Nam Cao's patches didn't get applied, I think we hadn't reached
+consensus or were waiting for a v4.
+
+Nam Cao's v2 uses the exact same approach that you're proposing
+and they subsequently found a way to crash the kernel despite the
+newly introduced error handling:
+
+https://lore.kernel.org/all/20240506083701.NZNifFGn@linutronix.de/
+
+So I'm afraid your patch may not work in every scenario.
+
+Thanks,
+
+Lukas
 
