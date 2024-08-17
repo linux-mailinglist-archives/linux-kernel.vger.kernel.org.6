@@ -1,202 +1,114 @@
-Return-Path: <linux-kernel+bounces-290492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C74B95549C
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 03:31:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 092B795549E
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 03:34:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 779F91C214F8
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:31:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB3B1285F56
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5994A4A33;
-	Sat, 17 Aug 2024 01:31:06 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798F153BE;
+	Sat, 17 Aug 2024 01:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="H1THmsOl"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD0633E8;
-	Sat, 17 Aug 2024 01:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522571C27;
+	Sat, 17 Aug 2024 01:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723858265; cv=none; b=WdM7PKeu3k8P5FFGcehrbclmZ/au3ktT3prMmekCYwmaaEvg6UTfZtAJ0yo6Sd/WyxtQA6rlKA5+gEtTTUx6019sK5ILOCyoTUVT9FtymN9jkUSOrUWWcqPuZiwjGWSHyz2/k9udvjzPov1cgbD5bqEZIVt15OqmG5Q82mQOwDk=
+	t=1723858449; cv=none; b=t+ZQQx8gJ2pG4iFKMMWWG0uhAuFiI+4D1jJfR7dcKFDPA0K/AN2SuqGMydu7rHIsGfhkC44wkNedLngdaVrJz2pv+zpR2q7YNweL/alO9luASqgskkHSbGrxHevwQsbMEHQcUtSTW3+fPnNToKQVpLEaVwwzOofATfCO+MJ+h/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723858265; c=relaxed/simple;
-	bh=eCz1qgGD7M3l4pwI5OuTdSjUMQm+4S3nWZ++hnwv5jM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UwLrJCOGqv9BzOPB+YiViGeaGzUS79SRXHS7mcINwzsi13Gz0bDrpu2rXPuOCyMTI3eidf4+Q3Q7AnqHi11zjamkXJb3PJlmp7SVglwGDrrfO30yfOxjyXvEbME0tv7L+CwRv1z0OLpLARIPLsatl7aeT0XTBIGo6sJvlFdh1y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Wm1X56fWlz4f3js9;
-	Sat, 17 Aug 2024 09:30:45 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id D064B1A058E;
-	Sat, 17 Aug 2024 09:30:59 +0800 (CST)
-Received: from [10.67.110.112] (unknown [10.67.110.112])
-	by APP4 (Coremail) with SMTP id gCh0CgAnmoBS_b9mcaGdBw--.32124S2;
-	Sat, 17 Aug 2024 09:30:59 +0800 (CST)
-Message-ID: <1ddb539a-79ed-d992-76cf-061acb4df11e@huaweicloud.com>
-Date: Sat, 17 Aug 2024 09:30:58 +0800
+	s=arc-20240116; t=1723858449; c=relaxed/simple;
+	bh=WYGrtmRDGi5gX7rw4w5gWOMbvpyBuamVjOjeU7/9xqc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o7a3SeWlV0BPkcT0NySs/IfgPyXWIEF1284JO/AtiF2myjJQkISKXjIIUT/8WUZ+LGJGSgJgtr/0LrjmyFo7MmKv/7EjnAWwSam7jymwcisg+xL7HzM5wTncdWyzC+FH/y5IeuIAvk1Tokdu0thse3KuB0rfX48xPihTWXgc42c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=H1THmsOl; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47GLCcKe015131;
+	Sat, 17 Aug 2024 01:34:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:mime-version:content-type:content-transfer-encoding; s=
+	corp-2023-11-20; bh=9XL9MTqU4nwkDPx0AuEJ9ok87Z0m5iSH5jxYU83mEfk=; b=
+	H1THmsOlVSbskSNLEUmVsebMFDKPzeacWmZT4kVIKP9BisrMdEeII6Y2uPhTnhEU
+	PibMqtMSY1KjIiLVwaSZ8/qX4Tt3Rgt5bJRbqFSivJ8f7hJt0aAJ5teUqoqgzzaZ
+	dF3xJQOH6f33lfGnrMVOcTIwKaDUxP5cubPdSUsK4ACqz8vtqrYN6Jeosgn9vP1B
+	X34dA2lugBBOa8zOL8xQk2aRYiR5eC/zYUGmbus35xWkkjnt4aBsS4nmOjjdEksA
+	Y/RbX4rDnGVoVo4dzoHCfkLsm1+WL8Zbnvlt9xmNe4n9CoTgbxXKBhM0jWDSNVnd
+	vsrWR4qymZ5VgX9ucrhKrQ==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40x039dhqu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 17 Aug 2024 01:34:01 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47H1XWKa020951;
+	Sat, 17 Aug 2024 01:33:59 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 412ja6r026-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 17 Aug 2024 01:33:59 +0000
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47H1Xx3x021117;
+	Sat, 17 Aug 2024 01:33:59 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 412ja6r01x-1;
+	Sat, 17 Aug 2024 01:33:59 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: Avri Altman <avri.altman@wdc.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bart Van Assche <bvanassche@acm.org>,
+        Keoseong Park <keosung.park@samsung.com>,
+        Manivannan Sadhasivam <manisadhasivam.linux@gmail.com>
+Subject: Re: [PATCH v4 0/2] scsi: ufs: Add host capabilities sysfs group
+Date: Fri, 16 Aug 2024 21:33:23 -0400
+Message-ID: <172385819636.3430749.12789495756986082340.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240811143757.2538212-1-avri.altman@wdc.com>
+References: <20240811143757.2538212-1-avri.altman@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH 5/5] slab: Allocate and use per-call-site caches
-To: Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>
-Cc: Suren Baghdasaryan <surenb@google.com>,
- Kent Overstreet <kent.overstreet@linux.dev>, Christoph Lameter
- <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
- David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
- "GONG, Ruiqi" <gongruiqi@huaweicloud.com>, Jann Horn <jannh@google.com>,
- Matteo Rizzo <matteorizzo@google.com>, jvoisin <julien.voisin@dustri.org>,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20240809072532.work.266-kees@kernel.org>
- <20240809073309.2134488-5-kees@kernel.org>
-Content-Language: en-US
-From: Xiu Jianfeng <xiujianfeng@huaweicloud.com>
-In-Reply-To: <20240809073309.2134488-5-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAnmoBS_b9mcaGdBw--.32124S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGrW5Xw4xZF18KFWrCrW5GFg_yoWrJw4UpF
-	WxWa15GFs5XFy7Ca9xt348WrySqayrGFy5Jayaq3s5ZF1Yqr18WFn7GrWIvrWkAry5CF40
-	gF9YyasI93WUA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUIa0PDUUUU
-X-CM-SenderInfo: x0lxyxpdqiv03j6k3tpzhluzxrxghudrp/
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-16_18,2024-08-16_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 malwarescore=0
+ mlxlogscore=569 suspectscore=0 bulkscore=0 spamscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2408170009
+X-Proofpoint-ORIG-GUID: eye9iivTrM0PN4xgu62NleqFdtuRob9k
+X-Proofpoint-GUID: eye9iivTrM0PN4xgu62NleqFdtuRob9k
 
-Hi Kees,
+On Sun, 11 Aug 2024 17:37:55 +0300, Avri Altman wrote:
 
-On 2024/8/9 15:33, Kees Cook wrote:
-> Use separate per-call-site kmem_cache or kmem_buckets. These are
-> allocated on demand to avoid wasting memory for unused caches.
+> This patch series add sysfs entries for the host capabilities registers.
+> This platform info is otherwise not available. Please consider this
+> patch series for the next merge window.
 > 
-> A few caches need to be allocated very early to support allocating the
-> caches themselves: kstrdup(), kvasprintf(), and pcpu_mem_zalloc(). Any
-> GFP_ATOMIC allocations are currently left to be allocated from
-> KMALLOC_NORMAL.
+> Thanks,
+> Avri
 > 
-> With a distro config, /proc/slabinfo grows from ~400 entries to ~2200.
-> 
-> Since this feature (CONFIG_SLAB_PER_SITE) is redundant to
-> CONFIG_RANDOM_KMALLOC_CACHES, mark it a incompatible. Add Kconfig help
-> text that compares the features.
-> 
-> Improvements needed:
-> - Retain call site gfp flags in alloc_tag meta field to:
->   - pre-allocate all GFP_ATOMIC caches (since their caches cannot
->     be allocated on demand unless we want them to be GFP_ATOMIC
->     themselves...)
->   - Separate MEMCG allocations as well
-> - Allocate individual caches within kmem_buckets on demand to
->   further reduce memory usage overhead.
-> 
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Suren Baghdasaryan <surenb@google.com>
-> Cc: Kent Overstreet <kent.overstreet@linux.dev>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Christoph Lameter <cl@linux.com>
-> Cc: Pekka Enberg <penberg@kernel.org>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Roman Gushchin <roman.gushchin@linux.dev>
-> Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
-> Cc: linux-mm@kvack.org
-> ---
->  include/linux/alloc_tag.h |   8 +++
->  lib/alloc_tag.c           | 121 +++++++++++++++++++++++++++++++++++---
->  mm/Kconfig                |  19 +++++-
->  mm/slab_common.c          |   1 +
->  mm/slub.c                 |  31 +++++++++-
->  5 files changed, 170 insertions(+), 10 deletions(-)
-> 
+> [...]
 
-[...]
+Applied to 6.12/scsi-queue, thanks!
 
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 3520acaf9afa..d14102c4b4d7 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -4135,6 +4135,35 @@ void *__kmalloc_large_node_noprof(size_t size, gfp_t flags, int node)
->  }
->  EXPORT_SYMBOL(__kmalloc_large_node_noprof);
->  
-> +static __always_inline
-> +struct kmem_cache *choose_slab(size_t size, kmem_buckets *b, gfp_t flags,
-> +			       unsigned long caller)
-> +{
-> +#ifdef CONFIG_SLAB_PER_SITE
-> +	struct alloc_tag *tag = current->alloc_tag;
+[1/2] scsi: ufs: Prepare to add HCI capabilities sysfs
+      https://git.kernel.org/mkp/scsi/c/b9d104465a6c
+[2/2] scsi: ufs: Add HCI capabilities sysfs group
+      https://git.kernel.org/mkp/scsi/c/f51d74819577
 
-There is a compile error here if CONFIG_MEM_ALLOC_PROFILING is disabled
-when I test this patchset.
-
-mm/slub.c: In function ‘choose_slab’:
-mm/slub.c:4187:40: error: ‘struct task_struct’ has no member named
-‘alloc_tag’
- 4187 |         struct alloc_tag *tag = current->alloc_tag;
-      |                                        ^~
-  CC      mm/page_reporting.o
-
-maybe CONFIG_SLAB_PER_SITE should depend on CONFIG_MEM_ALLOC_PROFILING
-
-
-> +
-> +	if (!b && tag && tag->meta.sized &&
-> +	    kmalloc_type(flags, caller) == KMALLOC_NORMAL &&
-> +	    (flags & GFP_ATOMIC) != GFP_ATOMIC) {
-> +		void *p = READ_ONCE(tag->meta.cache);
-> +
-> +		if (!p && slab_state >= UP) {
-> +			alloc_tag_site_init(&tag->ct, true);
-> +			p = READ_ONCE(tag->meta.cache);
-> +		}
-> +
-> +		if (tag->meta.sized < SIZE_MAX) {
-> +			if (p)
-> +				return p;
-> +			/* Otherwise continue with default buckets. */
-> +		} else {
-> +			b = p;
-> +		}
-> +	}
-> +#endif
-> +	return kmalloc_slab(size, b, flags, caller);
-> +}
-> +
->  static __always_inline
->  void *__do_kmalloc_node(size_t size, kmem_buckets *b, gfp_t flags, int node,
->  			unsigned long caller)
-> @@ -4152,7 +4181,7 @@ void *__do_kmalloc_node(size_t size, kmem_buckets *b, gfp_t flags, int node,
->  	if (unlikely(!size))
->  		return ZERO_SIZE_PTR;
->  
-> -	s = kmalloc_slab(size, b, flags, caller);
-> +	s = choose_slab(size, b, flags, caller);
->  
->  	ret = slab_alloc_node(s, NULL, flags, node, caller, size);
->  	ret = kasan_kmalloc(s, ret, size, flags);
-
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
