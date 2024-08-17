@@ -1,197 +1,130 @@
-Return-Path: <linux-kernel+bounces-290781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 043FD95587F
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 17:06:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77C1D955886
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 17:09:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF016282B38
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:06:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1034B217D2
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6BF13E028;
-	Sat, 17 Aug 2024 15:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A4914A617;
+	Sat, 17 Aug 2024 15:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mk5YTgyu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HCEtOVZf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54CDD1E481;
-	Sat, 17 Aug 2024 15:06:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083AF282F4;
+	Sat, 17 Aug 2024 15:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723907185; cv=none; b=bQAcvX8OcMM8FuVBxARBiZNentgxzb8/RB79NOiMgFPNEc/QLXp2Q/0cl6FF+2qKRxp1jnGL+88dxKavU5RJcKtBeAZfnXBd6NNT+R/5KnFiLbIfMwYZ2aA3H69IJoP9MI19mL2SwilKDd9bLlsTRLERUKvGGB3W0IOAM84gxPU=
+	t=1723907361; cv=none; b=eusT2npWqe7Dwra5c+UxVB9nJBFZlYROAndYd4lg94WC9tIaTjJKXPPHIEVrERmnVG91bxqTbPqUyJtyID8OIh9bNB+9TxKMmYLBumGMGhHAfa6UUVA/ksCPuJo8OP8a4w09CxgR6pzQTR6OsVIbVCM9QWojIya4D1eAHWG65XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723907185; c=relaxed/simple;
-	bh=zbn0E1B0YyTqAT0fzHzfqPqipnMKY9cP86kkdSsHEOc=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=p/dwpYr+RYstOk85C79ThLJq0/gqIbxDwu/+ZSLbc8gI9pZGzWCZUwubOSZlCaqorzVfNz5ucTLUvk+6w7TRRZvatAWNiCy3TaKzv8ydHFHa4yUdXn551AWl0KnvkyhdZZGYB5jNYHZHHqjN6ySdS1hzi7B1wCkmLoMdJctixfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mk5YTgyu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A73FDC116B1;
-	Sat, 17 Aug 2024 15:06:22 +0000 (UTC)
+	s=arc-20240116; t=1723907361; c=relaxed/simple;
+	bh=vT90vZx0bkS5VbqUkazyS+8auUsDLMrWvv+LTZ+swMI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tMLXa7qCDxOO0dP66IiVxDKYenlFGQKKeri4RHvRJMgCF7dORT4FYjtt56nbmHL5ZNi0/nW/c09N2rjvVp7hefnJ4QopGIzOLxoYgx/RQaTF1V7WEKhoaVXYyAa+ZVcuVdh3y1AGRNk98d2de28KSkS4dualrkfWUP9LRuTQilw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HCEtOVZf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD543C116B1;
+	Sat, 17 Aug 2024 15:09:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723907184;
-	bh=zbn0E1B0YyTqAT0fzHzfqPqipnMKY9cP86kkdSsHEOc=;
+	s=k20201202; t=1723907360;
+	bh=vT90vZx0bkS5VbqUkazyS+8auUsDLMrWvv+LTZ+swMI=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Mk5YTgyuHWuXeyFhYAJDDz6hmUyxTPU+qYGnNdFM9El07nhxbwkvp8rEPdkYcOh0j
-	 62rzPZmE+uR6hmAvlZNRZz8p/lmsV5z+kYI8zVZE+DgnxpYrknlglnsRETns7pcBNy
-	 x/aQuQptBX8lkf/chxIlRLqcEjOM9oFevTC8Eu6FqB/yPYhYzZMKmQdL5CAEWpKLvo
-	 RUlQXmfzYpxCr8Ap+bgU4sh679WEVqbJluhLuNsxmaY0v4TBBchODkjT2SPtp91dBh
-	 6gvf43PEt2iSqP5r0PhAgOCPuLqW/Ec5MEp1+mliAhou7iLuRHR1xK4bb3HK9+6O/W
-	 ZHK616u8hjg9Q==
-Date: Sun, 18 Aug 2024 00:06:20 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Shuah Khan <shuah@kernel.org>, Tom
- Zanussi <zanussi@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] selftests/tracing: Add hist poll() support test
-Message-Id: <20240818000620.ba9a93ccb82bc48cd3155cc7@kernel.org>
-In-Reply-To: <fdd141e8-337b-4f6c-a721-7d20dc63b50d@linuxfoundation.org>
-References: <172377544331.67914.7474878424159759789.stgit@devnote2>
-	<172377547205.67914.494998437883733530.stgit@devnote2>
-	<fdd141e8-337b-4f6c-a721-7d20dc63b50d@linuxfoundation.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	b=HCEtOVZf2KXGsSlV9M4pTypH+iH6GEjpJYeYRUe8RkXTllV2EYldbabBXg5HyJaSi
+	 ROopU2mRJBPj1UeEV7PRyzucQm8TgHK690r/8pabBaO+5gMi/QS3MhLnDwNXTrIG/N
+	 oIL+s7PWdTMKWd5vD2CBaUU7qZW+QvBlK2KShnHQ3xAhPS9RSr7Jiy3x5BMl+Uir4i
+	 HqayNfGkwVIuZcspDFJQD+JYGxN/+Y1rJgUCO81sVmioYNAk5uzxLUxvw5bc7fmqTA
+	 KguC5pQ8FMQq6MetyLU01zTHyYDHjojyTb2Ytr+HmkYOpC0LpX70M4kob1GsBQMb9p
+	 vC6QZsq9AxqJA==
+Date: Sat, 17 Aug 2024 16:09:10 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Guillaume Stols <gstols@baylibre.com>
+Cc: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Lars-Peter
+ Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ aardelean@baylibre.com
+Subject: Re: [PATCH 2/8] dt-bindings: iio: adc: ad7606: Add iio backend
+ bindings
+Message-ID: <20240817160900.01224c80@jic23-huawei>
+In-Reply-To: <20240815-ad7606_add_iio_backend_support-v1-2-cea3e11b1aa4@baylibre.com>
+References: <20240815-ad7606_add_iio_backend_support-v1-0-cea3e11b1aa4@baylibre.com>
+	<20240815-ad7606_add_iio_backend_support-v1-2-cea3e11b1aa4@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Fri, 16 Aug 2024 08:04:41 -0600
-Shuah Khan <skhan@linuxfoundation.org> wrote:
+On Thu, 15 Aug 2024 12:11:56 +0000
+Guillaume Stols <gstols@baylibre.com> wrote:
 
-> On 8/15/24 20:31, Masami Hiramatsu (Google) wrote:
-> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > 
-> > Add a testcase for poll() on hist file. This introduces a helper binary
-> > to the ftracetest, because there is no good way to reliably execute
-> > poll() on hist file.
-> > 
-> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > ---
-> >   Changes in v4:
-> >    - Use getopt() in poll.c (command options are changed)
-> >    - Update test code according to the new command options.
-> >   Changes in v2:
-> >    - Update poll command to support both of POLLIN and POLLPRI, and timeout.
-> >    - Identify unsupported stable kernel if poll-in returns soon.
-> >    - Test both of POLLIN and POLLPRI.
-> > ---
-> >   tools/testing/selftests/ftrace/Makefile            |    2 +
-> >   tools/testing/selftests/ftrace/poll.c              |   74 ++++++++++++++++++++
-> >   .../ftrace/test.d/trigger/trigger-hist-poll.tc     |   74 ++++++++++++++++++++
-> >   3 files changed, 150 insertions(+)
-> >   create mode 100644 tools/testing/selftests/ftrace/poll.c
-> >   create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc
-> > 
-> > diff --git a/tools/testing/selftests/ftrace/Makefile b/tools/testing/selftests/ftrace/Makefile
-> > index a1e955d2de4c..49d96bb16355 100644
-> > --- a/tools/testing/selftests/ftrace/Makefile
-> > +++ b/tools/testing/selftests/ftrace/Makefile
-> > @@ -6,4 +6,6 @@ TEST_PROGS := ftracetest-ktap
-> >   TEST_FILES := test.d settings
-> >   EXTRA_CLEAN := $(OUTPUT)/logs/*
-> >   
-> > +TEST_GEN_PROGS = poll
-> > +
-> >   include ../lib.mk
-> > diff --git a/tools/testing/selftests/ftrace/poll.c b/tools/testing/selftests/ftrace/poll.c
-> > new file mode 100644
-> > index 000000000000..584f159654b1
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/ftrace/poll.c
-> > @@ -0,0 +1,74 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Simple poll on a file.
-> > + *
-> > + * Copyright (c) 2024 Google LLC.
-> > + */
-> > +
-> > +#include <errno.h>
-> > +#include <fcntl.h>
-> > +#include <poll.h>
-> > +#include <stdio.h>
-> > +#include <stdlib.h>
-> > +#include <string.h>
-> > +#include <unistd.h>
-> > +
-> > +#define BUFSIZE 4096
-> > +
-> > +/*
-> > + * Usage:
-> > + *  poll [-I|-P] [-t timeout] FILE
-> > + */
-> > +int main(int argc, char *argv[])
-> > +{
-> > +	struct pollfd pfd = {.events = POLLIN};
-> > +	char buf[BUFSIZE];
-> > +	int timeout = -1;
-> > +	int ret, opt;
-> > +
-> > +	while ((opt = getopt(argc, argv, "IPt:")) != -1) {
-> > +		switch (opt) {
-> > +		case 'I':
-> > +			pfd.events = POLLIN;
-> > +			break;
-> > +		case 'P':
-> > +			pfd.events = POLLPRI;
-> > +			break;
-> > +		case 't':
-> > +			timeout = atoi(optarg);
-> > +			break;
-> > +		default:
-> > +			fprintf(stderr, "Usage: %s [-I|-P] [-t timeout] FILE\n",
-> > +				argv[0]);
-> > +			return -1;
-> > +		}
-> > +	}
-> > +	if (optind >= argc) {
-> > +		fprintf(stderr, "Error: Polling file is not specified\n");
-> > +		return -1;
-> > +	}
-> > +
-> > +	pfd.fd = open(argv[optind], O_RDONLY);
-> > +	if (pfd.fd < 0) {
-> > +		fprintf(stderr, "failed to open %s", argv[optind]);
-> > +		perror("open");
-> > +		return -1;
-> > +	}
-> > +
-> > +	/* Reset poll by read if POLLIN is specified. */
-> > +	if (pfd.events & POLLIN)
-> > +		do {} while (read(pfd.fd, buf, BUFSIZE) == BUFSIZE);
-> > +
-> > +	ret = poll(&pfd, 1, timeout);
-> > +	if (ret < 0 && errno != EINTR) {
-> > +		perror("poll");
-> > +		return -1;
-> > +	}
-> > +	close(pfd.fd);
-> > +
-> > +	/* If timeout happned, return code is 0 */
+> Add the required properties for iio-backend support, as well as an
+> example and the conditions to mutually exclude interruption and
+> conversion trigger with iio-backend.
+> The iio-backend's function is to controls the communication, and thus the
+> interruption pin won't be available anymore.
+> As a consequence, the conversion pin must be controlled externally since
+> we will miss information about when every single conversion cycle (i.e
+> conversion + data transfert) ends, hence a PWM is introduced to trigger
+
+transfer
+
+> the conversions.
 > 
-> Looks like you missed this one :) Otherwise looks good to me.
+> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+> ---
+>  .../devicetree/bindings/iio/adc/adi,ad7606.yaml    | 75 +++++++++++++++++++++-
+>  1 file changed, 72 insertions(+), 3 deletions(-)
 > 
-Oops, indeed.
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> index c0008d36320f..4b324f7e3207 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> @@ -114,13 +114,28 @@ properties:
+>        assumed that the pins are hardwired to VDD.
+>      type: boolean
+>  
+> +  pwms:
+> +    description:
+> +      In case the conversion is triggered by a PWM instead of a GPIO plugged to
+> +      the CONVST pin, the PWM must be referenced.
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  pwm-names:
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  io-backends:
+> +    description:
+> +      A reference to the iio-backend, which is responsible handling the BUSY
+> +      pin's falling edge and communication.
+> +      An example of backend can be found at
+> +      http://analogdevicesinc.github.io/hdl/library/axi_ad7606x/index.html
+> +
+>  required:
+>    - compatible
+> -  - reg
 
-> With this fixed
-> 
-> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+I think we still want a reg, but only to differentiate multiple instances
+perhaps.
 
-Thanks!
-
-> 
-> thanks,
-> -- Shuah
+>    - avcc-supply
+>    - vdrive-supply
 
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
