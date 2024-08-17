@@ -1,124 +1,154 @@
-Return-Path: <linux-kernel+bounces-290736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBDDA9557F8
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:05:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CFD39557FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36954282B2E
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:05:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75F0F1C211A8
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478FC14D70B;
-	Sat, 17 Aug 2024 13:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E91C14E2CC;
+	Sat, 17 Aug 2024 13:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="o7bH7Vwh"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gtTbljhR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA7511187;
-	Sat, 17 Aug 2024 13:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455C211187;
+	Sat, 17 Aug 2024 13:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723899895; cv=none; b=VIt+zLTCYl/LVLb7hPO6gtsymsQ+YO0/oBiHBCD+QsWD9gMci/pY0MLLLd6HRePLm9H8Vtxk0HrPrzv4Vnw/cNt3LOuOYg34O98d4dj32lkg6syvqLUH37nCyyCnU/Smhr1MnNfZNZuZGQEE8dCOWBU9sglJ+yVhcVh+NYOwEZQ=
+	t=1723899937; cv=none; b=ZMZKRtjnnMafxjfMwZ0qEZb4TnUtYuhfkDSISPM/FUANI0CcmhVGsCVyX7QRip/9GAIJ/8DwBmAcEqGxmUDG3YZVtlAIkaVIp6UdJGm8s7MM7XsC+nkhOBzg/FFabnMoAGYpIK+qEt3rkw3zCSyibFeCq7LitQvxca7Nw3TOyls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723899895; c=relaxed/simple;
-	bh=JZM8n8x+g7qMtmOd0SazR3cDaPmkuaJQzeNaeIE0dq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=twQjXTaSDbsFsuGEjyiw7qSqU+yKJeW4/zK4wQJviO+m/iAclgEksvwu/n7xELw3v1ZzOjOJFu9nq4jHsP+AzAzd0FOkBFUcVLDMAYe6DVK2IlG6t7+r30VEVZ4zo8POmuEfXln0Ad46fdu7m0eT+NRzjtBfNQcRloXOSWYhwXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=o7bH7Vwh; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=/Dt+vJQWOKJTjuhMKbvYgOKGXnEc+DToKh1gi8tXf1U=; b=o7bH7Vwh5q/EcfqpCJwKbpjXIk
-	7fUra0YsHU5cLrF2PCDtdo7rwnboFRQ1PHxUxZ9DxJcR5nFW4K2q8wGyrdDL2K/g1VfYzK7CvUrjz
-	6qGx/aaER4duegBZr9KYzTYam1AS2l5OKzC5vQ4nErpWAV6t3sCMcNzHODyPpS80j6kuheQKJ65em
-	jo6BVpz5+dENNmxBJ8ulptaM+zftmhcSJb73SQeGrbg4iwXeQ4tk+OkUX8KlQPV2xy9As3RlZ9XPk
-	l5LIjgQ/h4uSCX+ahueSXjNsIm+PWoJJeiwU2a2kc/ZQi18fJLgZjN5Rwp405y36Wq76OvGyFRaJz
-	Td3QW+xA==;
-Received: from [2001:9e8:9db:8201:3235:adff:fed0:37e6] (port=53842 helo=lindesnes.fjasle.eu)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1sfJ6p-00DWQe-Oa;
-	Sat, 17 Aug 2024 15:04:43 +0200
-Date: Sat, 17 Aug 2024 15:04:39 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH 4/6] kbuild: rust: rebuild if the version text changes
-Message-ID: <20240817-cute-doberman-from-shambhala-6f42db@lindesnes>
-References: <20240808221138.873750-1-ojeda@kernel.org>
- <20240808221138.873750-5-ojeda@kernel.org>
+	s=arc-20240116; t=1723899937; c=relaxed/simple;
+	bh=ynNt+qJtq1GzV89D76JrRGwxuyN/mwj7wAUxZty0RdI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M0gffVFulls6VRj2omgMyZfiO/BNqABAEzOQ+si6ac4eYt7c1Z2NoVovJM3YgkxAyfhgjRTa+SiJfOYmX8AEBDDS+DOtX696hLdWHKcRudoFjk1VJu2Vc+QN3UKU4fXnEvWyFIhiWKDi0nvqp4q2U8vOdcnwzT2sCzPUATWeDuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gtTbljhR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9825BC116B1;
+	Sat, 17 Aug 2024 13:05:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723899936;
+	bh=ynNt+qJtq1GzV89D76JrRGwxuyN/mwj7wAUxZty0RdI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gtTbljhRNWfbu8mQXFzCcwJGFYssq8HLr5wsVb3erywUw3VacOH5pxZK1JQawlUr6
+	 d5d67vkY2bgPhnNdGL3haWx5pS9xgW4Jbi8U7i7SByzD/Nrp4HUbTC0OqdJcDwH7zs
+	 +8Q41T+TeLUUB87zsXFoZUf5V9sKpQYP2cbV8MlHKvmn3zEMjL1D2Ln9dL2SMgOifS
+	 tHO5A4udD0eANPE+7bBUvLeoF6P9NA/2woXJVDBwmtnVT9cv/fb49F1xat8SZHSRAb
+	 DJ6nqYVhT70Gi1NIslOd1AzSvQbg9QMOpkeAi9Pp91aoBCFpUHulTE5bfu7GgALMST
+	 zCx9tTXAMyrQQ==
+Date: Sat, 17 Aug 2024 14:05:26 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto
+ <inochiama@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, =?UTF-8?B?TWlxdcOobA==?= Raynal
+ <miquel.raynal@bootlin.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v4 2/3] iio: adc: sophgo-saradc: Add driver for Sophgo
+ CV18XX series SARADC
+Message-ID: <20240817140526.579cd9cc@jic23-huawei>
+In-Reply-To: <20240812-sg2002-adc-v4-2-599bdb67592f@bootlin.com>
+References: <20240812-sg2002-adc-v4-0-599bdb67592f@bootlin.com>
+	<20240812-sg2002-adc-v4-2-599bdb67592f@bootlin.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240808221138.873750-5-ojeda@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 09, 2024 at 12:11:36AM +0200, Miguel Ojeda wrote:
-> Now that `RUSTC_VERSION_TEXT` exists, use it to rebuild `core` when the
-> version text changes (which in turn will trigger a rebuild of all the
-> kernel Rust code).
-> 
-> This also applies to proc macros (which only work with the `rustc` that
-> compiled them), via the already existing dependency on `core.o`. That
-> is cleaned up in the next commit.
-> 
-> However, this does not cover host programs written in Rust, which is
-> the same case in the C side.
-> 
-> This is accomplished by referencing directly the generated file, instead
-> of using the `fixdep` header trick, since we cannot change the Rust
-> standard library sources. This is not too much of a burden, since it
-> only needs to be done for `core`.
-> 
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
-> Masahiro: I used `$(objtree)` here since we still use it in the rest of
-> this `Makefile`, but please let me know if you prefer otherwise. Thanks!
-> 
->  rust/Makefile | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/rust/Makefile b/rust/Makefile
-> index 6c0644b6090c..966743a9ee25 100644
-> --- a/rust/Makefile
-> +++ b/rust/Makefile
-> @@ -370,7 +370,8 @@ $(obj)/core.o: private skip_clippy = 1
->  $(obj)/core.o: private skip_flags = -Wunreachable_pub
->  $(obj)/core.o: private rustc_objcopy = $(foreach sym,$(redirect-intrinsics),--redefine-sym $(sym)=__rust$(sym))
->  $(obj)/core.o: private rustc_target_flags = $(core-cfgs)
-> -$(obj)/core.o: $(RUST_LIB_SRC)/core/src/lib.rs FORCE
-> +$(obj)/core.o: $(RUST_LIB_SRC)/core/src/lib.rs \
-> +    $(wildcard $(objtree)/include/config/RUSTC_VERSION_TEXT) FORCE
->  	+$(call if_changed_dep,rustc_library)
->  ifneq ($(or $(CONFIG_X86_64),$(CONFIG_X86_32)),)
->  $(obj)/core.o: scripts/target.json
-> --
-> 2.46.0
+On Mon, 12 Aug 2024 17:00:56 +0200
+Thomas Bonnefille <thomas.bonnefille@bootlin.com> wrote:
 
-Looks good to me, but I'd prefer something like the suggestion from
-Masahiro:
-https://lore.kernel.org/linux-kbuild/CAK7LNAQBG0nDupXSgAAk-6nOqeqGVkr3H1RjYaqRJ1OxmLm6xA@mail.gmail.com/
+> This adds a driver for the common Sophgo SARADC.
+> 
+> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Similar comment on wild cards to the one you resolved in the dt binding
+applies to the driver.
+
+So normally convention is pick a part and name after that for
+all function names, parameters etc.
+
+cv1800b seems appropriate given the binding.
+
+Other than that, just one trivial comment from me.
+
+Jonathan
+
+
+> diff --git a/drivers/iio/adc/sophgo-cv18xx-adc.c b/drivers/iio/adc/sophgo-cv18xx-adc.c
+> new file mode 100644
+> index 000000000000..ab7ee0f482cc
+> --- /dev/null
+> +++ b/drivers/iio/adc/sophgo-cv18xx-adc.c
+> @@ -0,0 +1,208 @@
+
+> +static int cv18xx_adc_probe(struct platform_device *pdev)
+> +{
+> +	struct cv18xx_adc *saradc;
+> +	struct iio_dev *indio_dev;
+> +	struct clk *clk;
+> +	int ret;
+> +
+> +	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*saradc));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	saradc = iio_priv(indio_dev);
+> +	indio_dev->name = "sophgo-cv18xx-adc";
+This definitely doesn't want to be wildcard based
+
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	indio_dev->info = &cv18xx_adc_info;
+> +	indio_dev->num_channels = ARRAY_SIZE(sophgo_channels);
+> +	indio_dev->channels = sophgo_channels;
+> +
+> +	clk = devm_clk_get_enabled(&pdev->dev, NULL);
+> +	if (IS_ERR(clk))
+> +		return PTR_ERR(clk);
+> +
+> +	saradc->regs = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(saradc->regs))
+> +		return PTR_ERR(saradc->regs);
+> +
+> +	saradc->irq = platform_get_irq_optional(pdev, 0);
+> +	if (saradc->irq >= 0) {
+> +		init_completion(&saradc->completion);
+> +		ret = devm_request_irq(&pdev->dev, saradc->irq,
+> +				       cv18xx_adc_interrupt_handler, 0,
+> +				       dev_name(&pdev->dev), saradc);
+> +		if (ret)
+> +			return ret;
+> +
+> +		writel(1, saradc->regs + CV18XX_ADC_INTR_EN_REG);
+> +	}
+> +
+> +	ret = devm_mutex_init(&pdev->dev, &saradc->lock);
+> +	if (ret)
+> +		return ret;
+> +
+> +	platform_set_drvdata(pdev, indio_dev);
+
+Is this used?
+
+> +	writel(FIELD_PREP(CV18XX_ADC_DEF_STARTUP_CYCLE_MASK, 0xF) |
+> +	       FIELD_PREP(CV18XX_ADC_DEF_SAMPLE_WINDOW_MASK, 0xF) |
+> +	       FIELD_PREP(CV18XX_ADC_DEF_CLOCK_DIVIDER_MASK, 0x1) |
+> +	       FIELD_PREP(CV18XX_ADC_DEF_COMPARE_CYCLE_MASK, 0xF),
+> +	       saradc->regs + CV18XX_ADC_CYC_SET_REG);
+> +
+> +	return devm_iio_device_register(&pdev->dev, indio_dev);
+> +}
+
 
