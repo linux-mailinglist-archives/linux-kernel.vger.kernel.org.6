@@ -1,134 +1,109 @@
-Return-Path: <linux-kernel+bounces-290760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D54AA95584F
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 16:21:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC6C955851
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 16:21:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84A691F21E1C
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 14:21:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B5871F222A2
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 14:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4556B153BF7;
-	Sat, 17 Aug 2024 14:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E812815444E;
+	Sat, 17 Aug 2024 14:21:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="kevwTIZs"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U6ve/loF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076D61E481
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 14:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A1F1EEE6
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 14:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723904489; cv=none; b=UGsZuT2mIbW9pkeROmUIlNxcNj/SHW3GTgQPtSZnN/46FWpe5fkwTk6zpF24vWNXwXjcnZEN5GV81upH8sLHf6bWDI5CI0BsX/z16baWid7DVr2c2fE8Suvn7sUIfz1vvja+RGsURZdg1ZXNaSmlCAgX4XO8TLTpQAmXIEAWKrA=
+	t=1723904505; cv=none; b=WkZPVYh9RoIbQMWL3U8dULB4KK201pnHjGK81ZXGRwFh2p9ovOfvE2naSPUIQ4NBso18OfslzEbFwn8prNX+PQImf51EOTcSFB/Z2tisyyu1DGR81o5z5MOZmbGj1VAl93Tu1kQiCOifPUHmTpJCcbVDc6iMn3eBqO9NeHLmUrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723904489; c=relaxed/simple;
-	bh=vjjnpzw4xihlbZ0brAqP1VmfV3dyscnLMEfBKjis4LQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AbFq0M9cLuPiyX3QGnuytlo6cDXJeZclmjbw+3lxd8qAZkwn6Hb3QdMHjDPUyJQc+4lOuYJKIen9njZqwrKybvM55opTQLDw9q28vLNGPCh+AeREUTmedGcLzb4oaTG0IOt4GuhHRQoZnZ6o6crjQrBrCjRVnjQJRYFHPwcE7Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=kevwTIZs; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3718acbc87fso1349593f8f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 07:21:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1723904486; x=1724509286; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+yIPvpn5RiREIdWEvUL9xddN+rBBaKKA9WfA/vQhO7s=;
-        b=kevwTIZsWgb0Qcn2pajoUNJYXd3+lCvWBB/kOAZldjJs+JfystjbSlqbSFjdz4O4MK
-         Y4vWHy5BrpH/8SUyf7TmwjoiiJxkSRdHR0HO3IBEP1ckCddjnLnPuTKmn/V93UwPusY4
-         A47AyBEWe+biq3jAAg4KSzF3z4jMgJs24wTPveuN53SSUrGuv996w5EFo9GAyRE5+N2m
-         cG2v5JvgLVe4R0EodLIhlS19LLQgYHTWZnONHshiaidY8luqkec4rUlWXkxldsZpkHs0
-         LkmxfMmmUwtgwNDt9/9F61Ek2Fsyb9jgtrSp+c2MF4qdpaR6fhkEaJFj18FNJ1sWYwQ1
-         a/Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723904486; x=1724509286;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+yIPvpn5RiREIdWEvUL9xddN+rBBaKKA9WfA/vQhO7s=;
-        b=bgB+miS6/TibyLdww0V2+UKABYNVdtLS+FefgM0Id2n4T/PcaerZRxdvIlJck5r6nf
-         VthLAQgAKCJ2gJRqtuhtduI0bSrlKvNycbjMhs3rN7rzc3t4KVB5KYOeg8t2letuIZHJ
-         8w70ce8Db+ogOmNCv3iSH86nz0lkIzAMRjH9pqNcEYWjhgQAx+N2F5GYWOPO98OCw879
-         o5L8sriB4ImBDnKnf5OU31Yu+G1J52EBLsjDdq2UXgxz53+eum9nYvpmnLfHbCGkTqPG
-         GGidsNLvOKLfre8vchl3mA7bnSwUg5ts2V14Lqe0knbDSKFOyUS3dxEFct4jhLs7v5vF
-         B/Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCWpQncmhYC7tg8/WUOImaFFfVHOS+9kH0l8NEt4Z9K4tqWOT7PL403IgkU1waicR6gs9XIreYcrUu1/B7z+GGiKG8jQYkx4Vk9aTqkd
-X-Gm-Message-State: AOJu0YzWecepKhoBcAPHQtPm0nYghkJ7X10ZHAPEpM6xoeEDcML1XjE9
-	NpeMsNkHsCC8d7ul7ss4RMGn60tSQ1p6b+4UM8tUzDCLprzUNLBOuk3TgjXQzpU=
-X-Google-Smtp-Source: AGHT+IGTnbsZzhgA30HV1nq4jUBYXpBcMACaAMCY4g0TJpzNpkhYWLeLKT8kVFN1sqa4jKwuB/P+pA==
-X-Received: by 2002:adf:a2da:0:b0:371:8e8b:39d4 with SMTP id ffacd0b85a97d-3719464cd9dmr4721751f8f.28.1723904486056;
-        Sat, 17 Aug 2024 07:21:26 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-62-216-208-163.dynamic.mnet-online.de. [62.216.208.163])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718983a397sm6008530f8f.24.2024.08.17.07.21.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Aug 2024 07:21:25 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: anna@kernel.org,
-	jlayton@kernel.org,
-	bcodding@redhat.com,
-	kolga@netapp.com,
-	josef@toxicpanda.com,
-	gustavoars@kernel.org,
-	kees@kernel.org
-Cc: linux-nfs@vger.kernel.org,
+	s=arc-20240116; t=1723904505; c=relaxed/simple;
+	bh=htRSgoh4HeAnINgrPfrRqDXF/tbWN8laKhf4x5ETh14=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=tyLYDPS+BscgpoW2RZj8lZMQPLysjURI/oeqCcr37QS3w/JBIA1JCFGRoXfIRLxpWzkFctOowdFoWmaAL0sHFPZyTBRXUeRk/zT1uZ225MgGL7SEgcOF+ZwRAO8gmAqWMsK1vR9LP5hp58oHXSTGhlVtv+WkfjwdOyfJKqzhgmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U6ve/loF; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723904503; x=1755440503;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=htRSgoh4HeAnINgrPfrRqDXF/tbWN8laKhf4x5ETh14=;
+  b=U6ve/loFALXdUg4VYgZZT6Yo9YkPrMeVj8Eo7c8/NkZljJAX94wvnnKn
+   0ttftRQTiWzp+fYlGMMp+eEt0MqBdN7Swt4PAYvSjhtlECHyw95DI2Sv6
+   YiW93KOvPzugjigEnGQZgchPlMvJPytP3g3Czi+g/GFh8usjdTqWHDSKs
+   ZaleM28HKbJ4P3Ad3OcDooKicYSSQGe1QG9B2iEIA61eRe5vcYPG+G+Z3
+   LA4Y1DR1mxeNL2MkYz+YYgOO2eWXZcHVnyMJEPSR2XUV1jmjx4/VnOQCZ
+   AKN51i0w1QWYvF/iqLMEVWWMJ13m24Fh5nqE8NLzJhh32wS8M97SIMty2
+   g==;
+X-CSE-ConnectionGUID: M3XiBwWtR02/aiijHLLCOg==
+X-CSE-MsgGUID: ED/qUTRfTx6kE0b0j4uYXA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11167"; a="26055017"
+X-IronPort-AV: E=Sophos;i="6.10,155,1719903600"; 
+   d="scan'208";a="26055017"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2024 07:21:43 -0700
+X-CSE-ConnectionGUID: NQDKtBghSU2WdzZWqgGrrA==
+X-CSE-MsgGUID: DP/XN7snQpCAvd3zsZf+wA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,155,1719903600"; 
+   d="scan'208";a="59918083"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 17 Aug 2024 07:21:42 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sfKJG-0007Xk-2O;
+	Sat, 17 Aug 2024 14:21:38 +0000
+Date: Sat, 17 Aug 2024 22:21:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] NFS/flexfiles: Replace one-element array with flexible-array member
-Date: Sat, 17 Aug 2024 16:20:23 +0200
-Message-ID: <20240817142022.68411-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.46.0
+	Alex Deucher <alexander.deucher@amd.com>,
+	Aurabindo Pillai <aurabindo.pillai@amd.com>
+Subject: ld.lld: warning:
+ src/consumer/drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c:6544:0:
+ stack frame size (3416) exceeds limit (3072) in function
+ 'dml_core_mode_support'
+Message-ID: <202408172241.anNeqaHq-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Replace the deprecated one-element array with a modern flexible-array
-member in the struct nfs4_flexfile_layoutreturn_args.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   e5fa841af679cb830da6c609c740a37bdc0b8b35
+commit: aa463cc850c464091cb749317372b70415d3e7d9 drm/amd/display: Fix CFLAGS for dml2_core_dcn4_calcs.o
+date:   4 months ago
+config: x86_64-randconfig-102-20240817 (https://download.01.org/0day-ci/archive/20240817/202408172241.anNeqaHq-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240817/202408172241.anNeqaHq-lkp@intel.com/reproduce)
 
-Adjust the struct size accordingly.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408172241.anNeqaHq-lkp@intel.com/
 
-There are no binary differences after this conversion.
+All warnings (new ones prefixed by >>):
 
-Link: https://github.com/KSPP/linux/issues/79
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- fs/nfs/flexfilelayout/flexfilelayout.c | 2 +-
- fs/nfs/flexfilelayout/flexfilelayout.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+   ld.lld: warning: src/consumer/drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/display_mode_core.c:6711:0: stack frame size (4912) exceeds limit (3072) in function 'dml_core_mode_support'
+>> ld.lld: warning: src/consumer/drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c:6544:0: stack frame size (3416) exceeds limit (3072) in function 'dml_core_mode_support'
+   ld.lld: warning: src/consumer/drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c:755:0: stack frame size (3384) exceeds limit (3072) in function 'dml2_core_shared_mode_support'
+   ld.lld: warning: src/consumer/drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/display_mode_core.c:8280:0: stack frame size (3120) exceeds limit (3072) in function 'dml_core_mode_programming'
+   vmlinux.o: warning: objtool: .text.jffs2_erase_pending_blocks: unexpected end of section
+   vmlinux.o: warning: objtool: bad call to elf_init_reloc_text_sym() for data symbol .rodata
 
-diff --git a/fs/nfs/flexfilelayout/flexfilelayout.c b/fs/nfs/flexfilelayout/flexfilelayout.c
-index 39ba9f4208aa..fc698fa9aaea 100644
---- a/fs/nfs/flexfilelayout/flexfilelayout.c
-+++ b/fs/nfs/flexfilelayout/flexfilelayout.c
-@@ -2224,7 +2224,7 @@ ff_layout_prepare_layoutreturn(struct nfs4_layoutreturn_args *args)
- 	struct nfs4_flexfile_layoutreturn_args *ff_args;
- 	struct nfs4_flexfile_layout *ff_layout = FF_LAYOUT_FROM_HDR(args->layout);
- 
--	ff_args = kmalloc(sizeof(*ff_args), nfs_io_gfp_mask());
-+	ff_args = kmalloc(struct_size(ff_args, pages, 1), nfs_io_gfp_mask());
- 	if (!ff_args)
- 		goto out_nomem;
- 	ff_args->pages[0] = alloc_page(nfs_io_gfp_mask());
-diff --git a/fs/nfs/flexfilelayout/flexfilelayout.h b/fs/nfs/flexfilelayout/flexfilelayout.h
-index f84b3fb0dddd..a269753f9a46 100644
---- a/fs/nfs/flexfilelayout/flexfilelayout.h
-+++ b/fs/nfs/flexfilelayout/flexfilelayout.h
-@@ -115,7 +115,7 @@ struct nfs4_flexfile_layoutreturn_args {
- 	struct nfs42_layoutstat_devinfo devinfo[FF_LAYOUTSTATS_MAXDEV];
- 	unsigned int num_errors;
- 	unsigned int num_dev;
--	struct page *pages[1];
-+	struct page *pages[];
- };
- 
- static inline struct nfs4_flexfile_layout *
 -- 
-2.46.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
