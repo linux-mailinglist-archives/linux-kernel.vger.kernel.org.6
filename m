@@ -1,150 +1,173 @@
-Return-Path: <linux-kernel+bounces-290836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 988E7955956
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 20:59:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0113C955959
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 21:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C57ED1C20CE9
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 18:59:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E730E1C20C9E
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 19:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2E215534D;
-	Sat, 17 Aug 2024 18:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=howett.net header.i=@howett.net header.b="oJtzX1ay"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B278155A57;
+	Sat, 17 Aug 2024 19:01:35 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F7322334
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 18:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727432770E
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 19:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723921173; cv=none; b=YRgm2Hen3NGCuGqrzPb0+G1aK5XzKFFl+amuL1ZB5gcyxwKGucZSizvVyMQCNl8xjUy6jQqqSa5QiqnGaMOzh+QkzAbgG54RyZlolTtQ6ngmpQs8jYZSvedmYcgGF1ZR7QWD5SIMqxzEaQOaTH1hl3GejuuhbS8M/GsPMBB8Grg=
+	t=1723921295; cv=none; b=moBoT8DY0JlxTytoNxsorCaJ7NdLsIqjcWwA8Hm6IwNhv23oBQAo+BsdmFpZq8O00GJtfsYd20gMiPz2FR0/nqf0HSG93fz/Fnq7DD0LJWBjapJdiCHHndG5eqaLe31jSuEu9kJdYKnZZjXSaj64X3C6E6vJj1KELdXlQMSXOeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723921173; c=relaxed/simple;
-	bh=clckoixbjNZipfiFJmBFFo4F0E14Wh2dU+hMp/lw/8o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Bl9qdJdgsso00IEOXTv0QCUvoinC2xc7II4yfn5U+AgqpSicEaJKSul0tE71oZSzazWqWKsKLwnVnRh10cbvV7XgLPlAscGh9r8yfpNPyKu+dsDBxnBEI2b5FRMRVX+gPvEP/t6/GCXZZgpwjvXTBGq4KTePbAtnX8PvWuZrr8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=howett.net; spf=none smtp.mailfrom=howett.net; dkim=pass (2048-bit key) header.d=howett.net header.i=@howett.net header.b=oJtzX1ay; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=howett.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=howett.net
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-69483a97848so29807507b3.2
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 11:59:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=howett.net; s=google; t=1723921170; x=1724525970; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GOEb9DjC8C4gSnq0R9sZfb7HwCNzSDtTyyJEre0G9ys=;
-        b=oJtzX1ay8UXUf9ir9A3h+PWnpwxBoQYw21J3XgHof5wQ3Ikdm65LQcOMCsDaIHCxsx
-         JkYJKuEeVEUEc62Xz6oFBkbeF/NRX9oI9kWDOaSD3BxHWtgNW2KAPbLTt4HlN8JBiteh
-         6TaH3fWAIoJ9XPwU5MgXXaUMRLmshdHpMXXgZ7g7oCS5ysbKbU9IgZhe69tlB6pAttYK
-         qKs9BiA6j38gar3UpgUG2MrDJGfE0mBwXC2O7a+8y1NE2f4IcJ8cudw1wlyigzypsZWv
-         FvzuSgqpfJV7SIEEr/WvRKJ4GE1e/CQJ9gdBwi3zb6Ya+72vmArkfvFRCp8GmX5kcSzS
-         MWag==
+	s=arc-20240116; t=1723921295; c=relaxed/simple;
+	bh=koHbXpWO3CxqZanxtLdTgu/e6n7zMxQM6gr5wya7CaU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LHKeUn1VaL8EcFipXkZVcbCM8ho64Xw0c/LrUQRoM0q2tGY1CsCJD/6hZrNCyWRXcZwvD1oqg7/DneLiVIzbf0HABKWU/3LHUqUipEAQLybxhUW1iH2572SJTXvFXOv1mDUMuC/TSoYr095bD5Bt5syT+shYu5v5o3mKalBSQkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39b3b3c74d9so28950335ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 12:01:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723921170; x=1724525970;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GOEb9DjC8C4gSnq0R9sZfb7HwCNzSDtTyyJEre0G9ys=;
-        b=VD3F/OGFx86PMDSpYErUashnbQ/GMlTKFFCUaSlX7cGqfEkI9RftcLIz74yFDlFU7D
-         s6xVtScl2HtEMN4Guc07cFgQ5IAo39mOVeaI3QzLQKx3LxD3DVngMOK13sSRTuawmJsg
-         rsRvxID5PwTfBppah/jU1j2Ht9CauNMaVfhvKpra98BtniBpOzsa02nkApQxF6llp3XD
-         BwrmmO7Z/wY0gUbIUtdYru0QAg7Q7RMUROGg9vqfE6oU95ymRLT28IHabimUWtRCY0ur
-         eohT4wuGvKh6e7TVtXo5oUvc8v5Pq+pS9lEn8Phbf0e3/qmiAN6wQkJ29z4GOKl3WsC7
-         YY2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVrI344J1GgYoir3DCKTkDjvpPOJ4qadZij1nPcQ2PqJ9ZGQ4BS0Q1QRfj7XfBg+GL8h39tvcTlIiEHm8MZbTm+bVKbxrlAOALQpZsZ
-X-Gm-Message-State: AOJu0YxFHHFZkQkFyTzCpTbNuP0ud6P8arqKx8HSROMn85nLDXIWXgRO
-	qdw0zCuev8zkFqXySlHluxiL4pYvXSBk5LTANqz00yQPmaJHedzUW/4ISZaKEQ==
-X-Google-Smtp-Source: AGHT+IGvCA4SK5nWxPmS0rUPAyrPIHZQr5OiOhI6qqSuz0rFCaAb5EwzTE5YASkeqSTp/+Nz95ZK5w==
-X-Received: by 2002:a05:690c:f09:b0:632:c442:2316 with SMTP id 00721157ae682-6b1b75975f5mr80541077b3.3.1723921169847;
-        Sat, 17 Aug 2024 11:59:29 -0700 (PDT)
-Received: from [127.0.0.1] ([2600:1702:5e30:4f11::6f8])
-        by smtp.googlemail.com with ESMTPSA id 00721157ae682-6af9ce76217sm10699037b3.92.2024.08.17.11.59.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Aug 2024 11:59:29 -0700 (PDT)
-From: "Dustin L. Howett" <dustin@howett.net>
-Date: Sat, 17 Aug 2024 13:59:26 -0500
-Subject: [PATCH] drm: panel-backlight-quirks: Add Framework 13 glossy and
- 2.8k panels
+        d=1e100.net; s=20230601; t=1723921292; x=1724526092;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uowFCIZghpxJvoNZX8bSJ/JFrlmSFboKLdSQpoxsJ6E=;
+        b=oJc0ZNZiAmz7twqvM/4H0WPCouFwji5koFTgOtXJ0didkNYBzzKl43uAZqyGWrGZ/4
+         4Z4u5JZHGgAEXmuFNrOkgLy2aqiQ51gYASEWvrziwTV4X7cDcJBoqmW9m2Ktma06XJr/
+         9eF8jg/3HWoVyR4kzRWNWhW0ef8aqroDEc+jIVdvYm7RGTLUJtzbnEegJrsMj9f6WNIt
+         OSX2/t4zUTmeYCJ05WT/9xZTRwVgG4olYzs9lL3ZCAp+8TA7sdK4HzJeyAr3pR+P1p9j
+         XVQTmHP7up2EB16BdLWWdSoCUy96t9wpaJ8AFw2GvETTbtYtXdoa5LJNTbzeNFHWA3Ih
+         pdJg==
+X-Forwarded-Encrypted: i=1; AJvYcCVdGRq54OP8fDHeGUPRYmqU9waxBEI1d+ZfTUUR2reYwyGLuf/hbu8fP/gzLxguVUqT4cZWQXnr3yLv+F7uG3jZ87xXwt9sYCTdBi+G
+X-Gm-Message-State: AOJu0YyxGiQ5xeHrVVhPUqxnmt7eaxeOhP6VXthDZMeSwQyc8ZanmPMf
+	jGBrPFKtg6/V3xMoMan7f04d2rTTZKwyYCVFiOoFUfBNDK3Co1qdzZBDODoCL8WMqy6iXbMrMM+
+	GKC1ccPIYQa8xMUQ/hhLg2kUDBC8I4r6C1fzK6ID6YIl59TEY2Se1W5k=
+X-Google-Smtp-Source: AGHT+IH0JoGNnWZcJv80CMdQ/6bxGMdJJcB0+IB8mo45ZavZrh09+qpoarVcdMAakw7f6ydctAH/8LZwgNyCbbsuSpevRTpa48O6
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240817-drm-add-additional-framework-laptop-displays-to-panel-backlight-quirks-v1-1-cfdd5dbbffc8@howett.net>
-X-B4-Tracking: v=1; b=H4sIAA3zwGYC/x2OywrCMBBFf6Vk7UBfaPVXxMWYTNohaZNO4ovSf
- ze6OIsDB+7dVCJhSupSbUroyYnDUqQ5VEpPuIwEbIqrtm77emhOYGQGNOYH5xKjBys40yuIA48
- xhwiGU/T4SZADRFzIwx218zxOGdYHi0sw1L1uOnPszmRVGYtClt//I9fbvn8Bu/361pgAAAA=
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Alex Deucher <alexander.deucher@amd.com>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
- Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
- Mario Limonciello <mario.limonciello@amd.com>, 
- Matt Hartley <matt.hartley@gmail.com>, Kieran Levin <ktl@framework.net>, 
- Hans de Goede <hdegoede@redhat.com>, 
- Jani Nikula <jani.nikula@linux.intel.com>, Xinhui Pan <Xinhui.Pan@amd.com>, 
- Jonathan Corbet <corbet@lwn.net>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- "Dustin L. Howett" <dustin@howett.net>
-X-Mailer: b4 0.14.1
+X-Received: by 2002:a05:6e02:b2c:b0:39d:1d50:e6f9 with SMTP id
+ e9e14a558f8ab-39d26d7057cmr4171005ab.4.1723921292599; Sat, 17 Aug 2024
+ 12:01:32 -0700 (PDT)
+Date: Sat, 17 Aug 2024 12:01:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004432b7061fe5b45e@google.com>
+Subject: [syzbot] [net?] [bpf?] WARNING in skb_ensure_writable (2)
+From: syzbot <syzbot+deb196d6d40f19e8551a@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, davem@davemloft.net, eddyz87@gmail.com, 
+	edumazet@google.com, haoluo@google.com, john.fastabend@gmail.com, 
+	jolsa@kernel.org, kpsingh@kernel.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
+	pabeni@redhat.com, sdf@google.com, song@kernel.org, 
+	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-This patch depends on
-20240812-amdgpu-min-backlight-quirk-v4-0-56a63ff897b7@weissschuh.net
+Hello,
 
-I have tested these panels on the Framework Laptop 13 AMD with firmware
-revision 3.05 (latest at time of submission).
+syzbot found the following issue on:
+
+HEAD commit:    8867bbd4a056 mm: arm64: Fix the out-of-bounds issue in con..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=143cc2f5980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1bc88a9f65787e86
+dashboard link: https://syzkaller.appspot.com/bug?extid=deb196d6d40f19e8551a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5ef30d34e749/disk-8867bbd4.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a21c2389ebfb/vmlinux-8867bbd4.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9720b12c3f99/Image-8867bbd4.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+deb196d6d40f19e8551a@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 13062 at include/linux/skbuff.h:2738 pskb_may_pull_reason include/linux/skbuff.h:2738 [inline]
+WARNING: CPU: 0 PID: 13062 at include/linux/skbuff.h:2738 pskb_may_pull include/linux/skbuff.h:2754 [inline]
+WARNING: CPU: 0 PID: 13062 at include/linux/skbuff.h:2738 skb_ensure_writable+0x26c/0x3a8 net/core/skbuff.c:6100
+Modules linked in:
+CPU: 0 PID: 13062 Comm: syz.2.2595 Tainted: G        W          6.10.0-rc2-syzkaller-g8867bbd4a056 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : pskb_may_pull_reason include/linux/skbuff.h:2738 [inline]
+pc : pskb_may_pull include/linux/skbuff.h:2754 [inline]
+pc : skb_ensure_writable+0x26c/0x3a8 net/core/skbuff.c:6100
+lr : pskb_may_pull_reason include/linux/skbuff.h:2738 [inline]
+lr : pskb_may_pull include/linux/skbuff.h:2754 [inline]
+lr : skb_ensure_writable+0x26c/0x3a8 net/core/skbuff.c:6100
+sp : ffff800098f076c0
+x29: ffff800098f076c0 x28: 0000000001000000 x27: ffff800098f07768
+x26: 0000000000000000 x25: ffff800098f07770 x24: 1ffff000136a9e06
+x23: 1ffff000131e0f1c x22: dfff800000000000 x21: dfff800000000000
+x20: 00000000ffffffff x19: ffff0000c61a8280 x18: 0000000000000000
+x17: 0000000000000000 x16: ffff80008055a9d4 x15: 0000000000000003
+x14: ffff80008f3c0558 x13: dfff800000000000 x12: 0000000000000003
+x11: 0000000000040000 x10: 00000000000004d0 x9 : ffff80009f01f000
+x8 : 00000000000004d1 x7 : ffff80008044e140 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : 0000000000000001 x3 : 0000000000000000
+x2 : ffff0000d24fdac0 x1 : 00000000ffffffff x0 : 0000000000000000
+Call trace:
+ pskb_may_pull_reason include/linux/skbuff.h:2738 [inline]
+ pskb_may_pull include/linux/skbuff.h:2754 [inline]
+ skb_ensure_writable+0x26c/0x3a8 net/core/skbuff.c:6100
+ __bpf_try_make_writable net/core/filter.c:1668 [inline]
+ bpf_try_make_writable net/core/filter.c:1674 [inline]
+ ____bpf_skb_pull_data net/core/filter.c:1865 [inline]
+ bpf_skb_pull_data+0x80/0x210 net/core/filter.c:1854
+ bpf_prog_d22c10afa9a4a832+0x50/0xb8
+ bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
+ __bpf_prog_run include/linux/filter.h:691 [inline]
+ bpf_prog_run include/linux/filter.h:698 [inline]
+ bpf_test_run+0x374/0x890 net/bpf/test_run.c:425
+ bpf_prog_test_run_skb+0x8d4/0x1090 net/bpf/test_run.c:1066
+ bpf_prog_test_run+0x2dc/0x364 kernel/bpf/syscall.c:4291
+ __sys_bpf+0x314/0x5f0 kernel/bpf/syscall.c:5705
+ __do_sys_bpf kernel/bpf/syscall.c:5794 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5792 [inline]
+ __arm64_sys_bpf+0x80/0x98 kernel/bpf/syscall.c:5792
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+irq event stamp: 291
+hardirqs last  enabled at (289): [<ffff80008044e060>] seqcount_lockdep_reader_access+0x80/0x104 include/linux/seqlock.h:74
+hardirqs last disabled at (291): [<ffff80008b1fe010>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:470
+softirqs last  enabled at (276): [<ffff800080030830>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
+softirqs last disabled at (290): [<ffff800089727270>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
+---[ end trace 0000000000000000 ]---
+
 
 ---
-Signed-off-by: Dustin L. Howett <dustin@howett.net>
----
- drivers/gpu/drm/drm_panel_backlight_quirks.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/gpu/drm/drm_panel_backlight_quirks.c b/drivers/gpu/drm/drm_panel_backlight_quirks.c
-index c58344cdbb6e..348cf68729f9 100644
---- a/drivers/gpu/drm/drm_panel_backlight_quirks.c
-+++ b/drivers/gpu/drm/drm_panel_backlight_quirks.c
-@@ -24,6 +24,24 @@ static const struct drm_panel_min_backlight_quirk drm_panel_min_backlight_quirks
- 		.ident.name = "NE135FBM-N41",
- 		.min_brightness = 0,
- 	},
-+	/* 13 inch glossy panel */
-+	{
-+		.dmi_match.field = DMI_BOARD_VENDOR,
-+		.dmi_match.value = "Framework",
-+		.ident.panel_id = drm_edid_encode_panel_id('B', 'O', 'E', 0x095f),
-+		.ident.name = "NE135FBM-N41",
-+		.quirk.overrides.pwm_min_brightness = true,
-+		.quirk.pwm_min_brightness = 0,
-+	},
-+	/* 13 inch 2.8k panel */
-+	{
-+		.dmi_match.field = DMI_BOARD_VENDOR,
-+		.dmi_match.value = "Framework",
-+		.ident.panel_id = drm_edid_encode_panel_id('B', 'O', 'E', 0x0cb4),
-+		.ident.name = "NE135A1M-NY1",
-+		.quirk.overrides.pwm_min_brightness = true,
-+		.quirk.pwm_min_brightness = 0,
-+	},
- };
- 
- static bool drm_panel_min_backlight_quirk_matches(const struct drm_panel_min_backlight_quirk *quirk,
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
----
-base-commit: da62c6801838309f5c64cd0520f7bd758edb7d4b
-change-id: 20240817-drm-add-additional-framework-laptop-displays-to-panel-backlight-quirks-804c13d639ef
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Best regards,
--- 
-Dustin L. Howett <dustin@howett.net>
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
