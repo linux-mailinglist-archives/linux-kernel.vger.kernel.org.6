@@ -1,72 +1,69 @@
-Return-Path: <linux-kernel+bounces-290837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0113C955959
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 21:01:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F8C595595C
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 21:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E730E1C20C9E
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 19:01:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFFFF2829B4
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 19:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B278155A57;
-	Sat, 17 Aug 2024 19:01:35 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9EC155C94;
+	Sat, 17 Aug 2024 19:12:22 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727432770E
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 19:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C95155385
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 19:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723921295; cv=none; b=moBoT8DY0JlxTytoNxsorCaJ7NdLsIqjcWwA8Hm6IwNhv23oBQAo+BsdmFpZq8O00GJtfsYd20gMiPz2FR0/nqf0HSG93fz/Fnq7DD0LJWBjapJdiCHHndG5eqaLe31jSuEu9kJdYKnZZjXSaj64X3C6E6vJj1KELdXlQMSXOeI=
+	t=1723921941; cv=none; b=LdpD/ytnI99EEiV5sXIy0/B9bMlpk5A22trlD198OHe1DwH9qU9fgHidP0qB28yU9nSHoBXghLEAHI7EjPkbGbLt80/pHoXCPlqX/TwuBpw9JCYpWUsnEH1+Ce2LLeZsoHaksKy6Ih8gOnQmvDpo6z3hIQ+qJGAh5d2EMwGG3ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723921295; c=relaxed/simple;
-	bh=koHbXpWO3CxqZanxtLdTgu/e6n7zMxQM6gr5wya7CaU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LHKeUn1VaL8EcFipXkZVcbCM8ho64Xw0c/LrUQRoM0q2tGY1CsCJD/6hZrNCyWRXcZwvD1oqg7/DneLiVIzbf0HABKWU/3LHUqUipEAQLybxhUW1iH2572SJTXvFXOv1mDUMuC/TSoYr095bD5Bt5syT+shYu5v5o3mKalBSQkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+	s=arc-20240116; t=1723921941; c=relaxed/simple;
+	bh=2blOF0KfiMK8U6H4ERCzY5ZT5I8lnCEfrvSQMtyIblw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=UgIiCnqEOtEUjFiSVUDQAHcnZE1l4nr/AIw3q+jTb5BMI3at1lCTAdnS2KdRjeHeJ8zKEmrjJJXnsCCVAOP0qJzNaijRgjycEpYDzS+x1R97RhoODIYS6var01EKrTo4DwLc5Gt9vDfjx2v3KEWwSG4J9/FVhfVyNaiaSMGa80Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39b3b3c74d9so28950335ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 12:01:33 -0700 (PDT)
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39b4165a56cso28220545ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 12:12:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723921292; x=1724526092;
+        d=1e100.net; s=20230601; t=1723921939; x=1724526739;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=uowFCIZghpxJvoNZX8bSJ/JFrlmSFboKLdSQpoxsJ6E=;
-        b=oJc0ZNZiAmz7twqvM/4H0WPCouFwji5koFTgOtXJ0didkNYBzzKl43uAZqyGWrGZ/4
-         4Z4u5JZHGgAEXmuFNrOkgLy2aqiQ51gYASEWvrziwTV4X7cDcJBoqmW9m2Ktma06XJr/
-         9eF8jg/3HWoVyR4kzRWNWhW0ef8aqroDEc+jIVdvYm7RGTLUJtzbnEegJrsMj9f6WNIt
-         OSX2/t4zUTmeYCJ05WT/9xZTRwVgG4olYzs9lL3ZCAp+8TA7sdK4HzJeyAr3pR+P1p9j
-         XVQTmHP7up2EB16BdLWWdSoCUy96t9wpaJ8AFw2GvETTbtYtXdoa5LJNTbzeNFHWA3Ih
-         pdJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVdGRq54OP8fDHeGUPRYmqU9waxBEI1d+ZfTUUR2reYwyGLuf/hbu8fP/gzLxguVUqT4cZWQXnr3yLv+F7uG3jZ87xXwt9sYCTdBi+G
-X-Gm-Message-State: AOJu0YyxGiQ5xeHrVVhPUqxnmt7eaxeOhP6VXthDZMeSwQyc8ZanmPMf
-	jGBrPFKtg6/V3xMoMan7f04d2rTTZKwyYCVFiOoFUfBNDK3Co1qdzZBDODoCL8WMqy6iXbMrMM+
-	GKC1ccPIYQa8xMUQ/hhLg2kUDBC8I4r6C1fzK6ID6YIl59TEY2Se1W5k=
-X-Google-Smtp-Source: AGHT+IH0JoGNnWZcJv80CMdQ/6bxGMdJJcB0+IB8mo45ZavZrh09+qpoarVcdMAakw7f6ydctAH/8LZwgNyCbbsuSpevRTpa48O6
+        bh=cFD6qD3rW7rnczddHSWMIFzVoUEuhzzFjSw0LeSwMMw=;
+        b=Rst9kKaVDnbhhtRsf9i1GoYtUSiRKJODUg7N/s3Vc4tXUC1+5aAhXHnDZzLpw/v9Bw
+         RVg3nHF8zx4foaFdTWt3ANrffbcv7fUVqieUP1997PK/NS5NzGtgPNlhMXKYFIlH3ipI
+         VN2zSPr709WYnagPB7H4UFVtGmlXBvhzS3B+BdXzLFfPNuzK314eiFWKLJpm7t6SAopN
+         +U+Mdp6d7JycuOQLwO99vt8eaPe6/+0jFs54vFsB/UB/egfUUT/7ZaW4FnQepzBqDwZO
+         wOUx85KnEkr5RautZfKfwZyVFe/Q3Xm+yzmBP2UbQHWGwNFcFX9TMzrmo7dn6f1NaZs6
+         WlvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIUawGBkgDF1GPpJk0OdMIvYLDcaSD6cxOD4JzcHBf19Wfhozr3kc6TZLEA5G0fptMJxODTU+NFizQs+uY/iuvMJZp5N5K5RCb6ar5
+X-Gm-Message-State: AOJu0YwpI2/V3uNq3YEYJD9q+X2OsCBaGUHQutBW3EQNvHmW5/RsAYyF
+	8l7NyBNFlguTrogfd/5gY9f7A9X4VX+OEbup9IMNvoKfi+WAPh1ALScaxbd0NVqJ8kfSFPlNs8Y
+	mPQ9VrhDCjEobK4paJJlDtFDnZBSvrHLL+jQbxZ8BPZg+QmTVU8NAobs=
+X-Google-Smtp-Source: AGHT+IF0wTvBx1DMrk6Zb/Z59M/+HgGT2o0S3T1WngXZACmjCkagJp73hpLQvL3Bi6CLsFNA74eNSgCwZfZqJFshrZNqrbnkO9S7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b2c:b0:39d:1d50:e6f9 with SMTP id
- e9e14a558f8ab-39d26d7057cmr4171005ab.4.1723921292599; Sat, 17 Aug 2024
- 12:01:32 -0700 (PDT)
-Date: Sat, 17 Aug 2024 12:01:32 -0700
+X-Received: by 2002:a05:6638:2182:b0:4c2:7f96:6f4 with SMTP id
+ 8926c6da1cb9f-4cce16d0113mr300497173.4.1723921939086; Sat, 17 Aug 2024
+ 12:12:19 -0700 (PDT)
+Date: Sat, 17 Aug 2024 12:12:19 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004432b7061fe5b45e@google.com>
-Subject: [syzbot] [net?] [bpf?] WARNING in skb_ensure_writable (2)
-From: syzbot <syzbot+deb196d6d40f19e8551a@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, davem@davemloft.net, eddyz87@gmail.com, 
-	edumazet@google.com, haoluo@google.com, john.fastabend@gmail.com, 
-	jolsa@kernel.org, kpsingh@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
-	pabeni@redhat.com, sdf@google.com, song@kernel.org, 
-	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Message-ID: <000000000000ccd0fc061fe5dab8@google.com>
+Subject: [syzbot] [wireless?] KASAN: slab-out-of-bounds Read in
+ cfg80211_wext_freq (2)
+From: syzbot <syzbot+ad5a1b5c1c112c61fc6f@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, johannes@sipsolutions.net, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
@@ -75,9 +72,9 @@ syzbot found the following issue on:
 
 HEAD commit:    8867bbd4a056 mm: arm64: Fix the out-of-bounds issue in con..
 git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=143cc2f5980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=159bd409980000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=1bc88a9f65787e86
-dashboard link: https://syzkaller.appspot.com/bug?extid=deb196d6d40f19e8551a
+dashboard link: https://syzkaller.appspot.com/bug?extid=ad5a1b5c1c112c61fc6f
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 userspace arch: arm64
 
@@ -89,52 +86,34 @@ vmlinux: https://storage.googleapis.com/syzbot-assets/a21c2389ebfb/vmlinux-8867b
 kernel image: https://storage.googleapis.com/syzbot-assets/9720b12c3f99/Image-8867bbd4.gz.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+deb196d6d40f19e8551a@syzkaller.appspotmail.com
+Reported-by: syzbot+ad5a1b5c1c112c61fc6f@syzkaller.appspotmail.com
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 13062 at include/linux/skbuff.h:2738 pskb_may_pull_reason include/linux/skbuff.h:2738 [inline]
-WARNING: CPU: 0 PID: 13062 at include/linux/skbuff.h:2738 pskb_may_pull include/linux/skbuff.h:2754 [inline]
-WARNING: CPU: 0 PID: 13062 at include/linux/skbuff.h:2738 skb_ensure_writable+0x26c/0x3a8 net/core/skbuff.c:6100
-Modules linked in:
-CPU: 0 PID: 13062 Comm: syz.2.2595 Tainted: G        W          6.10.0-rc2-syzkaller-g8867bbd4a056 #0
+==================================================================
+BUG: KASAN: slab-out-of-bounds in cfg80211_wext_freq+0x170/0x1ac net/wireless/wext-compat.c:238
+Read of size 2 at addr ffff0000cbece140 by task syz.3.369/7789
+
+CPU: 1 PID: 7789 Comm: syz.3.369 Tainted: G        W          6.10.0-rc2-syzkaller-g8867bbd4a056 #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : pskb_may_pull_reason include/linux/skbuff.h:2738 [inline]
-pc : pskb_may_pull include/linux/skbuff.h:2754 [inline]
-pc : skb_ensure_writable+0x26c/0x3a8 net/core/skbuff.c:6100
-lr : pskb_may_pull_reason include/linux/skbuff.h:2738 [inline]
-lr : pskb_may_pull include/linux/skbuff.h:2754 [inline]
-lr : skb_ensure_writable+0x26c/0x3a8 net/core/skbuff.c:6100
-sp : ffff800098f076c0
-x29: ffff800098f076c0 x28: 0000000001000000 x27: ffff800098f07768
-x26: 0000000000000000 x25: ffff800098f07770 x24: 1ffff000136a9e06
-x23: 1ffff000131e0f1c x22: dfff800000000000 x21: dfff800000000000
-x20: 00000000ffffffff x19: ffff0000c61a8280 x18: 0000000000000000
-x17: 0000000000000000 x16: ffff80008055a9d4 x15: 0000000000000003
-x14: ffff80008f3c0558 x13: dfff800000000000 x12: 0000000000000003
-x11: 0000000000040000 x10: 00000000000004d0 x9 : ffff80009f01f000
-x8 : 00000000000004d1 x7 : ffff80008044e140 x6 : 0000000000000000
-x5 : 0000000000000001 x4 : 0000000000000001 x3 : 0000000000000000
-x2 : ffff0000d24fdac0 x1 : 00000000ffffffff x0 : 0000000000000000
 Call trace:
- pskb_may_pull_reason include/linux/skbuff.h:2738 [inline]
- pskb_may_pull include/linux/skbuff.h:2754 [inline]
- skb_ensure_writable+0x26c/0x3a8 net/core/skbuff.c:6100
- __bpf_try_make_writable net/core/filter.c:1668 [inline]
- bpf_try_make_writable net/core/filter.c:1674 [inline]
- ____bpf_skb_pull_data net/core/filter.c:1865 [inline]
- bpf_skb_pull_data+0x80/0x210 net/core/filter.c:1854
- bpf_prog_d22c10afa9a4a832+0x50/0xb8
- bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
- __bpf_prog_run include/linux/filter.h:691 [inline]
- bpf_prog_run include/linux/filter.h:698 [inline]
- bpf_test_run+0x374/0x890 net/bpf/test_run.c:425
- bpf_prog_test_run_skb+0x8d4/0x1090 net/bpf/test_run.c:1066
- bpf_prog_test_run+0x2dc/0x364 kernel/bpf/syscall.c:4291
- __sys_bpf+0x314/0x5f0 kernel/bpf/syscall.c:5705
- __do_sys_bpf kernel/bpf/syscall.c:5794 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5792 [inline]
- __arm64_sys_bpf+0x80/0x98 kernel/bpf/syscall.c:5792
+ dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:114
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x198/0x538 mm/kasan/report.c:488
+ kasan_report+0xd8/0x138 mm/kasan/report.c:601
+ __asan_report_load2_noabort+0x20/0x2c mm/kasan/report_generic.c:379
+ cfg80211_wext_freq+0x170/0x1ac net/wireless/wext-compat.c:238
+ cfg80211_wext_siwscan+0x438/0xef0 net/wireless/scan.c:3447
+ ioctl_standard_iw_point+0x7f0/0xdc4 net/wireless/wext-core.c:867
+ ioctl_standard_call+0xcc/0x264 net/wireless/wext-core.c:1052
+ wext_ioctl_dispatch+0x1b4/0x534 net/wireless/wext-core.c:1016
+ wext_handle_ioctl+0x1f8/0x3f4 net/wireless/wext-core.c:1077
+ sock_ioctl+0x15c/0x838 net/socket.c:1275
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:893
  __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
@@ -142,12 +121,92 @@ Call trace:
  el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-irq event stamp: 291
-hardirqs last  enabled at (289): [<ffff80008044e060>] seqcount_lockdep_reader_access+0x80/0x104 include/linux/seqlock.h:74
-hardirqs last disabled at (291): [<ffff80008b1fe010>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:470
-softirqs last  enabled at (276): [<ffff800080030830>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (290): [<ffff800089727270>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
+
+Allocated by task 7789:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x40/0x78 mm/kasan/common.c:68
+ kasan_save_alloc_info+0x40/0x50 mm/kasan/generic.c:565
+ poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
+ __kasan_kmalloc+0xac/0xc4 mm/kasan/common.c:387
+ kasan_kmalloc include/linux/kasan.h:211 [inline]
+ __do_kmalloc_node mm/slub.c:4121 [inline]
+ __kmalloc_noprof+0x2a0/0x494 mm/slub.c:4134
+ kmalloc_noprof include/linux/slab.h:664 [inline]
+ kzalloc_noprof include/linux/slab.h:778 [inline]
+ ioctl_standard_iw_point+0x3b8/0xdc4 net/wireless/wext-core.c:828
+ ioctl_standard_call+0xcc/0x264 net/wireless/wext-core.c:1052
+ wext_ioctl_dispatch+0x1b4/0x534 net/wireless/wext-core.c:1016
+ wext_handle_ioctl+0x1f8/0x3f4 net/wireless/wext-core.c:1077
+ sock_ioctl+0x15c/0x838 net/socket.c:1275
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:893
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+
+The buggy address belongs to the object at ffff0000cbece000
+ which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 4 bytes to the right of
+ allocated 316-byte region [ffff0000cbece000, ffff0000cbece13c)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x10becc
+head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+anon flags: 0x5ffc00000000040(head|node=0|zone=2|lastcpupid=0x7ff)
+page_type: 0xffffefff(slab)
+raw: 05ffc00000000040 ffff0000c0001c80 0000000000000000 dead000000000001
+raw: 0000000000000000 0000000080100010 00000001ffffefff 0000000000000000
+head: 05ffc00000000040 ffff0000c0001c80 0000000000000000 dead000000000001
+head: 0000000000000000 0000000080100010 00000001ffffefff 0000000000000000
+head: 05ffc00000000002 fffffdffc32fb301 ffffffffffffffff 0000000000000000
+head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff0000cbece000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff0000cbece080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff0000cbece100: 00 00 00 00 00 00 00 04 fc fc fc fc fc fc fc fc
+                                           ^
+ ffff0000cbece180: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff0000cbece200: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+------------[ cut here ]------------
+UBSAN: array-index-out-of-bounds in net/wireless/scan.c:3445:8
+index 33 is out of range for type 'struct iw_freq[32]'
+CPU: 1 PID: 7789 Comm: syz.3.369 Tainted: G    B   W          6.10.0-rc2-syzkaller-g8867bbd4a056 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Call trace:
+ dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:114
+ dump_stack+0x1c/0x28 lib/dump_stack.c:123
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_out_of_bounds+0xf8/0x148 lib/ubsan.c:429
+ cfg80211_wext_siwscan+0x4a8/0xef0 net/wireless/scan.c:3445
+ ioctl_standard_iw_point+0x7f0/0xdc4 net/wireless/wext-core.c:867
+ ioctl_standard_call+0xcc/0x264 net/wireless/wext-core.c:1052
+ wext_ioctl_dispatch+0x1b4/0x534 net/wireless/wext-core.c:1016
+ wext_handle_ioctl+0x1f8/0x3f4 net/wireless/wext-core.c:1077
+ sock_ioctl+0x15c/0x838 net/socket.c:1275
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:893
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+---[ end trace ]---
 
 
 ---
