@@ -1,121 +1,91 @@
-Return-Path: <linux-kernel+bounces-290643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01AC89556CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 11:35:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C57B19556D8
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 11:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 909C9B21CC9
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:35:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 019591C20FD3
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BC71487C3;
-	Sat, 17 Aug 2024 09:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="akEjxC1v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6786A148856;
+	Sat, 17 Aug 2024 09:43:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3743881E;
-	Sat, 17 Aug 2024 09:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA4813BAE3
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 09:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723887333; cv=none; b=MIV82o2AQrtVUxSXFcFDUaGE9GqvayjKgolvf6M9UVMuxuciVevnCkN4WaLolY3eAnNBGhCmaHev/kDh8RpLjleb4ciqtvsf0VBObxS7rAa1SoGSP3ycVZURTuUdALb4DPIKCPk9ocB+H3w03eRDEEgujeMSIbNzmkaPQN6tM9c=
+	t=1723887785; cv=none; b=qT9vIqHaQfGmJC5co8vY7924Nsn8T4Vws9B2wfNzcWtdPBysN9Kbf3J1k5aCgx/5edkV2f1nJbNQQxjyPa3o1WOiCaeKMW9ZdVXrKELZlFxOJ2ZnvwoIQn38jRseqr8DmuglrdpqBR4euRzEsj2x/BXJ3rZLtSK7oEgiZU9BdcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723887333; c=relaxed/simple;
-	bh=Sw1HIvz572t59kMetUvCyMhXO9ZkRGeCQrNyyiWLYtk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uAFyWZk0pCgAPcNW5Y1q2mCOZ3j4OR1RUkFjnaOT7ndyR1y92kKvBctDUB6IBwBjExB8Lg2wiAPjEBjeiAhQ/dygYeUYkWbAePJ4I9LHE77qRBx6OAuajY4OnsbdK4OgU4WYnY+EeOtm8B2WDDEnlxdPeit+CBaJrkByXg7zGK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=akEjxC1v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCDEEC116B1;
-	Sat, 17 Aug 2024 09:35:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723887333;
-	bh=Sw1HIvz572t59kMetUvCyMhXO9ZkRGeCQrNyyiWLYtk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=akEjxC1vFTIUq8RvgEODnkyu4+wgCYGN1jKpTV5gGuIogxCfOl1VW65LHrZDhOW3H
-	 2qTh7gpTPsOs+GxWciwCFMCBg11eayMHbMhd2W7rHygmEZCj3/yxPf+JcQKqXs4f8A
-	 qud6CHl/eMhy1wqlzRnAQ5SwBfMj+fv+F+gDLSLk=
-Date: Sat, 17 Aug 2024 11:35:30 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Alex Young <alex000young@gmail.com>
-Cc: Jamal Hadi Salim <jhs@mojatatu.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, xiyou.wangcong@gmail.com,
-	jiri@resnulli.us, davem@davemloft.net, security@kernel.org,
-	xkaneiki@gmail.com, hackerzheng666@gmail.com
-Subject: Re: [PATCH] net: sched: use-after-free in tcf_action_destroy
-Message-ID: <2024081722-reflex-reverend-4916@gregkh>
-References: <20240816015355.688153-1-alex000young@gmail.com>
- <CAM0EoMmAcgbQWG7kQoe335079Y2UY_BmoYErL=44-itJ=p-B-Q@mail.gmail.com>
- <CAM0EoM=qvBxXS_1eheyhCKbNMRbK_qTTFMa1fFBFQp_hRbzpQQ@mail.gmail.com>
- <CAFC++j15p9Ey3qc4ZsY4CXBsL3LHn7TsFTi6=N9=H+_Yx_k=+Q@mail.gmail.com>
+	s=arc-20240116; t=1723887785; c=relaxed/simple;
+	bh=aw3OrjGPyOiGlZAT3FZ+bO0SCHYvTxv26JvXyJ2LBC8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=izZe/DFaZcdGcg9XIUXZ6u3GO9+2wOcozPJuaCPwgBmomr+5b/C4e2sME128NFSB1S51Ru7ESRg9Up7XtAgmUB6tOy8HpRcAmzXmRJzMq/to+KeuFAZm66BceTypYgBT8fsSVTddSFxkyd2ShaMFoL01JbhU6DZSbdKLDX6SX7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3994393abd5so26887815ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 02:43:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723887783; x=1724492583;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OSD89904qpwLmfrxCcXP28eUr7NSxC1NZ5Fvz+p5mUQ=;
+        b=ZeynTWv6nGQdwrPhOx4CutwgijOcIMQKvhYOYS8UOIvTKbCtD6Ix67452H/NFn274n
+         20XGqr5VIJOSpk2Y1EliIcWypRSwR2BXHTIzkBC3W9mHGM0ChpRR8jSe5v8+PYlb8oqR
+         Xhcvmx+yhulR31NtYnCHXWQkBzWI/ZKoKLplYM/ZXUrtpS+z4cPEnuhrakF2z8RnjrW+
+         3D76YQ6fnhnpBKR70mvpq+zObLtbxzBWzTko5uBU3ahBTGdDhuorNMN+wmMoHZng/xNb
+         NPlJyguLpKv/IdU1atmw0hBLiWuv494Ei2OeHguxb9PSrOJU8OxmK0oxGYzqkoWbas1w
+         UubA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxm3OWCaJCqYlFabN2RnbvtWCWi8HG2ZCqS3Sc4TbAy2BhWeziaHZYq9QZJ7qGhNMFhc6lZtyHNQv2KjtOMN0eCAfKiHA2sYTHtjUE
+X-Gm-Message-State: AOJu0YygxaP3QOAoqRmryTgm/WSvHo9lj1VWSZAvUHG7uSOhKfHf2r5+
+	9AZZFGavsO0OZ5L5tV9fUw8/z3FY/q6j81NKTgLFTcC8JHxP6UmSgXGrh1SPB2qm/5kOLsMJN0f
+	TRmitUca4eN4c+/O+mf+hQIXLpwhqn4IsgrwlIGe3diVxqeegs+uP9/Y=
+X-Google-Smtp-Source: AGHT+IFT5pwTzCVlFpLJPWYMEgMO9md978fZAAaZXpZ4i0Pwzf0awZHU6cX89B6NqA+XmRrh9qSadggyA41R0z6rKF7ETwZpbZsn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFC++j15p9Ey3qc4ZsY4CXBsL3LHn7TsFTi6=N9=H+_Yx_k=+Q@mail.gmail.com>
+X-Received: by 2002:a05:6e02:1c04:b0:396:ec3b:df63 with SMTP id
+ e9e14a558f8ab-39d26d84a29mr5013885ab.4.1723887782588; Sat, 17 Aug 2024
+ 02:43:02 -0700 (PDT)
+Date: Sat, 17 Aug 2024 02:43:02 -0700
+In-Reply-To: <00000000000093ea0d06142c361a@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ea066d061fdde62b@google.com>
+Subject: Re: [syzbot] [fs] INFO: task hung in do_new_mount (2)
+From: syzbot <syzbot+f59c2feaf7cb5988e877@syzkaller.appspotmail.com>
+To: brauner@kernel.org, eadavis@qq.com, linkinjeon@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sandeen@redhat.com, sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Aug 17, 2024 at 05:27:17PM +0800, Alex Young wrote:
-> Hi Jamal,
-> 
-> Thanks your mention. I have reviewed the latest kernel code.
-> I understand why these two tc function threads can enter the kernel at the same
-> time. It's because the request_module[2] function in tcf_action_init_1. When the
-> tc_action_init_1 function to add a new action, it will load the action
-> module. It will
-> call rtnl_unlock to let the Thread2 into the kernel space.
-> 
-> Thread1                                                 Thread2
-> rtnetlink_rcv_msg                                   rtnetlink_rcv_msg
->  rtnl_lock();
->  tcf_action_init
->   for(i;i<TCA_ACT_MAX_PRIO;i++)
->    act=tcf_action_init_1 //[1]
->         if (rtnl_held)
->            rtnl_unlock(); //[2]
->         request_module("act_%s", act_name);
-> 
->                                                                 tcf_del_walker
-> 
-> idr_for_each_entry_ul(idr,p,id)
-> 
-> __tcf_idr_release(p,false,true)
-> 
->  free_tcf(p) //[3]
-> if (rtnl_held)
-> rtnl_lock();
-> 
->    if(IS_ERR(act))
->     goto err
->    actions[i] = act
-> 
->   err:
->    tcf_action_destroy
->     a=actions[i]
->     ops = a->ops //[4]
-> I know this time window is small, but it can indeed cause the bug. And
-> in the latest
-> kernel, it have fixed the bug. But version 4.19.x is still a
-> maintenance version.
+syzbot suspects this issue was fixed by commit:
 
-4.19.y is only going to be alive for 4 more months, and anyone still
-using it now really should have their plans to move off of it finished
-already (or almost finished.)
+commit ffe1b94d7464bef15b6585f9e7f8192cd0668327
+Author: Eric Sandeen <sandeen@redhat.com>
+Date:   Fri Jun 28 00:31:51 2024 +0000
 
-If this is a request_module issue, and you care about 4.19.y kernels,
-just add that module to the modprobe exclude list in userspace which
-will prevent it from being loaded automatically.  Or load it at boot
-time.
+    exfat: Convert to new uid/gid option parsing helpers
 
-And what specific commit resolved this issue in the older kernels?  Have
-you attempted to just backport that change to 4.19.y?
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17cdae05980000
+start commit:   fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4d90a36f0cab495a
+dashboard link: https://syzkaller.appspot.com/bug?extid=f59c2feaf7cb5988e877
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1075d2c9180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=161012a5180000
 
-thanks,
+If the result looks correct, please mark the issue as fixed by replying with:
 
-greg k-h
+#syz fix: exfat: Convert to new uid/gid option parsing helpers
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
