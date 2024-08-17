@@ -1,58 +1,86 @@
-Return-Path: <linux-kernel+bounces-290774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEDAD955869
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 16:43:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B501955863
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 16:37:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 611DF1F22FBD
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 14:43:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B8F728188C
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 14:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFD5C2E3;
-	Sat, 17 Aug 2024 14:42:58 +0000 (UTC)
-Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8B3BA33;
+	Sat, 17 Aug 2024 14:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="bUaz2I/8"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806F7C2F2
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 14:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7955256
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 14:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723905778; cv=none; b=r/BuzpYwV/iqErc6Wj4ljiVKbj/Q0MaMG8ffULc+zYJlc2uGZaOQ2upiRwC+T0/ZgTQ8SBEiHEIdqN4kYi0q461qSXkbZtAN8Vv7+3W9iN+MAYWz3l5V+zcRZofroAz7d9uAY/itEAqVv97T2cAWgZpyRA4sy7F3NjUg9Fan8fQ=
+	t=1723905421; cv=none; b=DAGevupPU5yR1ijcYkX+pVDhZg8qyQyqIARY0ZMC97Wfh6ZU+TcOi56nbNC6tWRqdZ9JT/V0ir+17y5MMUBggUaqwa3+fOMZyJpz+H3mjNY00iUMSNI3WqxQEVgo/uEK6U+QTRzMiABnbG2vQoSWeBfVI7pab94GwYFhr1TNxLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723905778; c=relaxed/simple;
-	bh=HiwXKyFfyxDf8GmeXBBD0uFSc8166dnVc40UtRBxvTs=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EHrNnBdNbq7i1vHjYCWUnagF6QoIuHtcQ8zTNPlK57tnZQuM27vS7fyVivtamTJAAUCw7wigpQjsBJ0p7v2x1j6cnhWCQt07JFVdlSfrRqyrCDNA3VJsz1wTEkafBIZl+5jyoARWO76T7mzJdVqSfnxnMhGbXKdlE50dFmqspII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4WmLy13JwXz4x7Cv
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 16:35:53 +0200 (CEST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:c7a0:cb7:c29:2a18])
-	by baptiste.telenet-ops.be with bizsmtp
-	id 12bm2D00B0HnQKF012bmvF; Sat, 17 Aug 2024 16:35:46 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sfKWw-0005fx-Au
-	for linux-kernel@vger.kernel.org;
-	Sat, 17 Aug 2024 16:35:46 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sfKWw-006Vhf-8H
-	for linux-kernel@vger.kernel.org;
-	Sat, 17 Aug 2024 16:35:46 +0200
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: linux-kernel@vger.kernel.org
-Subject: Build regressions/improvements in v6.11-rc3
-Date: Sat, 17 Aug 2024 16:35:46 +0200
-Message-Id: <20240817143546.1551748-1-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CAHk-=wj7_w1E0kMiUeskhBRrcCz3bejjegteGmM6-TES8bQURg@mail.gmail.com>
-References: <CAHk-=wj7_w1E0kMiUeskhBRrcCz3bejjegteGmM6-TES8bQURg@mail.gmail.com>
+	s=arc-20240116; t=1723905421; c=relaxed/simple;
+	bh=AgZkjTczEFd62yuqkbBbC5Z2vbFEzvDMtqf4z8mAx6M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=he6rYKyJoaQe4XQYoD0Aq7d+OE7zijGTRkDuTqNpoCoiKO+sspIkpuif7OyI5kelJwQgz4SDEwOB0khnIwznDBdsy6+80UVKEmUvZ1FD31XD2IMdtEZlzbgeGtko5pVWvW/m7L9Tegt2uVsaDurcUQQ1RTQrkyS8gvQjeMoNnj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=bUaz2I/8; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5bec4c3ace4so389784a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 07:36:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723905418; x=1724510218; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Al+SmtU+sIIwFr4jQDcTO2Drgn6PFlBI5eq4W/6i2T0=;
+        b=bUaz2I/8xBodmvNFF7Oaq2cJguW9BV1kc9oJYvhEZRXDwct7Xdp1VPXndnOIWoY4lf
+         B7Z3W43nU+ApR31cI3MpgAwOQ2tw6+wJPSbc2Gr8MnJVT6WLpmPWnByaTdyjMsNvRJ6x
+         s6QXz+mBkRW2xhqXoS/3EAYW0VmGQEA5+o9mx6o1JoqmzE0lrjXV6V9CA0PE3oeQkWuB
+         hwN/nA5xh+2AwSsc3g6mLhk/wRYqlayPi8LTZDhlTCfz1wYUn7gdf5hqtmv29JgXG/an
+         vsV5WN5fHWIf4b9ZHA6OHig7IwDjDh8igYzLcR9ETbeLGhUX2/9YZvHJnM00NbJI0oBK
+         JUxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723905418; x=1724510218;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Al+SmtU+sIIwFr4jQDcTO2Drgn6PFlBI5eq4W/6i2T0=;
+        b=AnPnAplknrx6kRv0whw+vA1qyO94wwXqr0SrNbDiQqde+XUiXkLQ5CJ+AadVBZ5cE2
+         geD7F6UBbpkdpMaKWJcVTQ0qBrCm3CQnKjVt7EfmHf2mrWvi4f/+ECeeE1dlmuJoS+WZ
+         850U1hJDdDh36lDN40PeY7aGhO/B9EJSPb2lfj8f006piglt6GoMMP2bnXQyLWb0kqQU
+         Vd2aWZ9QA4ECEUKo3Ub3DmrCNFdqdTK3YSsccprw8HRlKnzIdQMYf/MHFDzudjF49WAC
+         9hoM5n60e1q4ws5LKu5fsiaSDkUhGtHA5RjxAtNiCgN3YJIEc1Gou1ZILKkXAMPqB7SM
+         AmSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqcKSDoYOEXOl4qxHOgrIbw8NgfTF7OSpy2Pn3K2kFuyLZjfOGH14g63qeRrVr/BCANABkfU58/qrUYkyoOP4NMqTvRrG7Mtq7o/o1
+X-Gm-Message-State: AOJu0YyzrVAY6w86HUJ2ks1oCob+2rXpInl8CXu/xnzmexq8nhcaCLdY
+	t37dijRpUVosIXFsS3OcFDUcQp5pCYpk/tbkC733ihsnI7NrY8m+N2xMUiq9srM=
+X-Google-Smtp-Source: AGHT+IGXfJ5EzbcdgJZ4wHtZcC561IG3+5+VwIwevWbFKrMqVIbwwgqjQ8Fig1iwUAxR5oDeuAxQrg==
+X-Received: by 2002:a17:907:9709:b0:a80:ed79:a0d9 with SMTP id a640c23a62f3a-a839254db5fmr211834866b.0.1723905417295;
+        Sat, 17 Aug 2024 07:36:57 -0700 (PDT)
+Received: from localhost.localdomain ([188.27.129.165])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383946898sm410376866b.174.2024.08.17.07.36.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 17 Aug 2024 07:36:56 -0700 (PDT)
+From: Alexandru Ardelean <aardelean@baylibre.com>
+To: linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: jic23@kernel.org,
+	Michael.Hennerich@analog.com,
+	lars@metafoo.de,
+	gstols@baylibre.com,
+	nuno.sa@analog.com,
+	Alexandru Ardelean <aardelean@baylibre.com>
+Subject: [PATCH v2] iio: adc: ad7606: move 'val' pointer to ad7606_scan_direct()
+Date: Sat, 17 Aug 2024 17:36:47 +0300
+Message-ID: <20240817143647.15998-1-aardelean@baylibre.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240817142257.14470-1-aardelean@baylibre.com>
+References: <20240817142257.14470-1-aardelean@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,98 +89,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Below is the list of build error/warning regressions/improvements in
-v6.11-rc3[1] compared to v6.10[2].
+The ad7606_scan_direct() function returns 'int', which is fine for 16-bit
+samples.
+But when going to 18-bit samples, these need to be implemented as 32-bit
+(or int) type.
 
-Summarized:
-  - build errors: +9/-21
-  - build warnings: +2/-19
+In that case when getting samples (which can be negative), we'd get random
+error codes.
+So, the easiest thing is to just move the 'val' pointer to
+'ad7606_scan_direct()'. This doesn't qualify as a fix, it's just a
+preparation for 18-bit ADCs (of the AD7606 family).
 
-JFYI, when comparing v6.11-rc3[1] to v6.11-rc2[3], the summaries are:
-  - build errors: +0/-2
-  - build warnings: +0/-0
+Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
+---
+ drivers/iio/adc/ad7606.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Happy fixing! ;-)
+diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
+index dba1f28782e4..68481e97e50a 100644
+--- a/drivers/iio/adc/ad7606.c
++++ b/drivers/iio/adc/ad7606.c
+@@ -138,7 +138,8 @@ static irqreturn_t ad7606_trigger_handler(int irq, void *p)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static int ad7606_scan_direct(struct iio_dev *indio_dev, unsigned int ch)
++static int ad7606_scan_direct(struct iio_dev *indio_dev, unsigned int ch,
++			      int *val)
+ {
+ 	struct ad7606_state *st = iio_priv(indio_dev);
+ 	int ret;
+@@ -153,7 +154,7 @@ static int ad7606_scan_direct(struct iio_dev *indio_dev, unsigned int ch)
+ 
+ 	ret = ad7606_read_samples(st);
+ 	if (ret == 0)
+-		ret = st->data[ch];
++		*val = (short)st->data[ch];
+ 
+ error_ret:
+ 	gpiod_set_value(st->gpio_convst, 0);
+@@ -173,10 +174,9 @@ static int ad7606_read_raw(struct iio_dev *indio_dev,
+ 	switch (m) {
+ 	case IIO_CHAN_INFO_RAW:
+ 		iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
+-			ret = ad7606_scan_direct(indio_dev, chan->address);
++			ret = ad7606_scan_direct(indio_dev, chan->address, val);
+ 			if (ret < 0)
+ 				return ret;
+-			*val = (short) ret;
+ 			return IIO_VAL_INT;
+ 		}
+ 		unreachable();
+-- 
+2.46.0
 
-Thanks to the linux-next team for providing the build service.
-
-[1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/7c626ce4bae1ac14f60076d00eafe71af30450ba/ (all 132 configs)
-[2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/0c3836482481200ead7b416ca80c68a29cfdaabd/ (all 132 configs)
-[3] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed/ (all 132 configs)
-
-
-*** ERRORS ***
-
-9 error regressions:
-  + /kisskb/src/arch/mips/sgi-ip22/ip22-gio.c: error: initialization of 'int (*)(struct device *, const struct device_driver *)' from incompatible pointer type 'int (*)(struct device *, struct device_driver *)' [-Werror=incompatible-pointer-types]:  => 384:14
-  + /kisskb/src/drivers/md/dm-integrity.c: error: logical not is only applied to the left hand side of comparison [-Werror=logical-not-parentheses]:  => 4718:45
-  + /kisskb/src/fs/bcachefs/data_update.c: error: the frame size of 1032 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]:  => 338:1
-  + /kisskb/src/include/linux/compiler_types.h: error: call to '__compiletime_assert_950' declared with attribute error: FIELD_GET: mask is not constant:  => 510:38
-  + /kisskb/src/include/linux/compiler_types.h: error: call to '__compiletime_assert_951' declared with attribute error: FIELD_GET: mask is not constant:  => 510:38
-  + /kisskb/src/kernel/fork.c: error: #warning clone3() entry point is missing, please fix [-Werror=cpp]:  => 3072:2
-  + {standard input}: Error: displacement to undefined symbol .L142 overflows 8-bit field :  => 1070
-  + {standard input}: Error: displacement to undefined symbol .L161 overflows 8-bit field :  => 1075
-  + {standard input}: Error: unknown pseudo-op: `.l18':  => 1111
-
-21 error improvements:
-  - /kisskb/src/arch/sparc/include/asm/floppy_64.h: error: no previous prototype for 'sparc_floppy_irq' [-Werror=missing-prototypes]: 200:13 => 
-  - /kisskb/src/arch/sparc/include/asm/floppy_64.h: error: no previous prototype for 'sun_pci_fd_dma_callback' [-Werror=missing-prototypes]: 437:6 => 
-  - /kisskb/src/arch/sparc/power/hibernate.c: error: no previous prototype for 'pfn_is_nosave' [-Werror=missing-prototypes]: 22:5 => 
-  - /kisskb/src/arch/sparc/power/hibernate.c: error: no previous prototype for 'restore_processor_state' [-Werror=missing-prototypes]: 35:6 => 
-  - /kisskb/src/arch/sparc/power/hibernate.c: error: no previous prototype for 'save_processor_state' [-Werror=missing-prototypes]: 30:6 => 
-  - /kisskb/src/arch/sparc/prom/misc_64.c: error: no previous prototype for 'prom_get_mmu_ihandle' [-Werror=missing-prototypes]: 165:5 => 
-  - /kisskb/src/arch/sparc/prom/p1275.c: error: no previous prototype for 'prom_cif_init' [-Werror=missing-prototypes]: 52:6 => 
-  - /kisskb/src/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c: error: unknown option after '#pragma GCC diagnostic' kind [-Werror=pragmas]: 16:9 => 
-  - /kisskb/src/drivers/gpu/drm/msm/adreno/adreno_gen7_0_0_snapshot.h: error: 'gen7_0_0_external_core_regs' defined but not used [-Werror=unused-variable]: 924:19 => 
-  - /kisskb/src/drivers/gpu/drm/msm/adreno/adreno_gen7_2_0_snapshot.h: error: 'gen7_2_0_external_core_regs' defined but not used [-Werror=unused-variable]: 748:19 => 
-  - /kisskb/src/drivers/gpu/drm/msm/adreno/adreno_gen7_9_0_snapshot.h: error: 'gen7_9_0_external_core_regs' defined but not used [-Werror=unused-variable]: 1438:19 => 
-  - /kisskb/src/drivers/gpu/drm/msm/adreno/adreno_gen7_9_0_snapshot.h: error: 'gen7_9_0_sptp_clusters' defined but not used [-Werror=unused-variable]: 1188:43 => 
-  - /kisskb/src/fs/bcachefs/data_update.c: error: the frame size of 1028 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]: 338:1 => 
-  - error: arch/sparc/kernel/process_32.o: relocation truncated to fit: R_SPARC_WDISP22 against `.text': (.fixup+0x4), (.fixup+0xc) => 
-  - error: arch/sparc/kernel/signal_32.o: relocation truncated to fit: R_SPARC_WDISP22 against `.text': (.fixup+0x0), (.fixup+0x10), (.fixup+0x18), (.fixup+0x20), (.fixup+0x8) => 
-  - error: relocation truncated to fit: R_SPARC_WDISP22 against `.init.text': (.head.text+0x5040), (.head.text+0x5100) => 
-  - error: relocation truncated to fit: R_SPARC_WDISP22 against symbol `leon_smp_cpu_startup' defined in .text section in arch/sparc/kernel/trampoline_32.o: (.init.text+0xa4) => 
-  - {standard input}: Error: displacement to undefined symbol .L137 overflows 8-bit field : 1105, 1031 => 
-  - {standard input}: Error: displacement to undefined symbol .L158 overflows 8-bit field : 1110 => 
-  - {standard input}: Error: pcrel too far: 1074, 1095, 1126, 1254, 1096, 1255, 1022, 1021, 1020 => 1061, 1060, 1397, 1059
-  - {standard input}: Error: unknown pseudo-op: `.al': 1270 => 
-
-
-*** WARNINGS ***
-
-2 warning regressions:
-  + /kisskb/src/fs/btrfs/fiemap.c: warning: 'last_extent_end' may be used uninitialized in this function [-Wmaybe-uninitialized]:  => 822:19
-  + /kisskb/src/kernel/fork.c: warning: #warning clone3() entry point is missing, please fix [-Wcpp]:  => 3072:2
-
-19 warning improvements:
-  - ./.config.32r1_defconfig: warning: override: CPU_BIG_ENDIAN changes choice state: 93 => 
-  - ./.config.32r2_defconfig: warning: override: CPU_BIG_ENDIAN changes choice state: 93 => 
-  - ./.config.32r6_defconfig: warning: override: CPU_BIG_ENDIAN changes choice state: 95 => 
-  - ./.config.64r1_defconfig: warning: override: CPU_BIG_ENDIAN changes choice state: 96 => 
-  - ./.config.64r2_defconfig: warning: override: CPU_BIG_ENDIAN changes choice state: 96 => 
-  - ./.config.64r6_defconfig: warning: override: CPU_BIG_ENDIAN changes choice state: 98 => 
-  - ./.config.micro32r2_defconfig: warning: override: CPU_BIG_ENDIAN changes choice state: 94 => 
-  - .config: warning: override: ARCH_RV32I changes choice state: 6414 => 
-  - .config: warning: override: CPU_BIG_ENDIAN changes choice state: 93, 95, 97, 94, 92 => 
-  - /kisskb/src/arch/mips/sgi-ip22/ip22-berr.c: warning: no previous prototype for 'ip22_be_init' [-Wmissing-prototypes]: 113:13 => 
-  - /kisskb/src/arch/mips/sgi-ip22/ip22-berr.c: warning: no previous prototype for 'ip22_be_interrupt' [-Wmissing-prototypes]: 89:6 => 
-  - /kisskb/src/arch/mips/sgi-ip22/ip22-gio.c: warning: no previous prototype for 'ip22_gio_init' [-Wmissing-prototypes]: 398:12 => 
-  - /kisskb/src/arch/mips/sgi-ip22/ip22-gio.c: warning: no previous prototype for 'ip22_gio_set_64bit' [-Wmissing-prototypes]: 249:6 => 
-  - /kisskb/src/arch/mips/sgi-ip22/ip22-time.c: warning: no previous prototype for 'indy_8254timer_irq' [-Wmissing-prototypes]: 119:18 => 
-  - /kisskb/src/arch/sparc/prom/misc_64.c: warning: no previous prototype for 'prom_get_mmu_ihandle' [-Wmissing-prototypes]: 165:5 => 
-  - /kisskb/src/arch/sparc/prom/p1275.c: warning: no previous prototype for 'prom_cif_init' [-Wmissing-prototypes]: 52:6 => 
-  - /kisskb/src/drivers/base/regmap/regcache-maple.c: warning: 'lower_index' is used uninitialized [-Wuninitialized]: 113:23 => 
-  - /kisskb/src/drivers/base/regmap/regcache-maple.c: warning: 'lower_last' is used uninitialized [-Wuninitialized]: 113:36 => 
-  - /kisskb/src/fs/btrfs/extent_io.c: warning: 'last_extent_end' may be used uninitialized in this function [-Wmaybe-uninitialized]: 3285:19 => 
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
 
