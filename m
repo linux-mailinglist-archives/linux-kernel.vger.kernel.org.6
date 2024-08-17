@@ -1,117 +1,126 @@
-Return-Path: <linux-kernel+bounces-290692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 814DD95577F
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:37:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC045955780
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:41:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE493B2184E
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 11:37:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82E612825B8
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 11:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC0D15359A;
-	Sat, 17 Aug 2024 11:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595C714AD1A;
+	Sat, 17 Aug 2024 11:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bHzUCme4"
-Received: from mail-yb1-f195.google.com (mail-yb1-f195.google.com [209.85.219.195])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="VjG5ENY6"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964DA14D70B;
-	Sat, 17 Aug 2024 11:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05112256E;
+	Sat, 17 Aug 2024 11:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723894604; cv=none; b=NzZMgt0mQvo8FHm5BXZ2LoaGr+q54Sint9hDsDb/etlAsTirRtiXIm5wBSaw9HCXvBsdi1yqpx7Rxl43iJTdV7uCKh7kgLRmNTyJTZqswBfLo91K5e6uw10ZswhXGAmM5kFWCiMaFYMthTyJc6UUontoDHpkw3NhNECkpKC7LnE=
+	t=1723894864; cv=none; b=RkEWevgVh4Q9O4QaJViHb+FnZXbSRc6BLNjiV1WV157ijVi1EiZWBnX4iK7yGxclCtfotOMa9vF050xXXSPsrY+e/ZJpi62vA3JegEKDzoq20HWxDvtk/5LmTnFciQm+Egj+zUJWF8jleKo7jxE3f+x99csR9D2YFYgYM7EYgBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723894604; c=relaxed/simple;
-	bh=zkZT8VZZft9eg4VK7YiFBpd65xUOib8cc9JrtLJddBg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ce9/XObAHvZ0184/o+n6b5lsHizRjUay7sJMVIkG65PNF7m7Jc6+pFY3gUjOqI1CF7TfDOWil8JpnlxmG6bM+cKsrjmZAnlgWtuWGM/8AJ/KgDOocwJ8UjUacdaC5AC/kM0iqh4kZqkpsq+pTVmNU/CEhS4uPEKVfJYR9pT7Rt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bHzUCme4; arc=none smtp.client-ip=209.85.219.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f195.google.com with SMTP id 3f1490d57ef6-e11693fbebaso3276168276.3;
-        Sat, 17 Aug 2024 04:36:42 -0700 (PDT)
+	s=arc-20240116; t=1723894864; c=relaxed/simple;
+	bh=pHb1cd/bM5HAeb2aNJlmyYZrkZZKm2iDpqq5ciaa690=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GCGpbBJ9JzWCR6TwOQ5epwcg/r3G/wXq73CDRg4cYwQevBnrRRiXZgLvvQVX4DD2sZyu+ijMl8EVcfze5GJacqlay7V8OuMNpECDCJ819cMQNeCtc18ZYB5UkGrGSfRnGkSTrL0e59f5ZtUqDz4iWfUlTwjSPlW+OgAVRtvgqgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=VjG5ENY6; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-530e062217eso3682346e87.1;
+        Sat, 17 Aug 2024 04:41:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723894601; x=1724499401; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zkZT8VZZft9eg4VK7YiFBpd65xUOib8cc9JrtLJddBg=;
-        b=bHzUCme4+N98BKe6+jy+9tdxs3XKs7yFoAp4RLeoH91FdQalcP75DI20Vd6SoyP+kn
-         BWzDALxm2EHyxwKxjic/Kjz6/XonUViewc9VTp4aGwW/L6GurwXJEMRdPdjxv46DPEGN
-         X6HddLVzb1cCe/EFDdzha/RICOhDK9L6MJZWq/ZgVdRdrYE1bZr3jjFkybQaX4Qnr4s5
-         LYTXaEV5Y9ZjtktpZQ4R1D1GXM4RkDFiM+5VmGdAxGHZtLMpdMZp5Fc/+pze0T12k/pw
-         ugdVU1GIwuR4Ioonsm0QNGTJvpu+lbBmAmeSpQrZJCuPtqa3C1Fch7EGye67oeKUIQxk
-         AhSA==
+        d=googlemail.com; s=20230601; t=1723894861; x=1724499661; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vRpUQui6KEL9xqbOs0Ea/v4MaqiDAscFoJmUDj6bZgo=;
+        b=VjG5ENY6zeMmHwYARA8cB50dZ7mfDKkqTdbIZ/Vb8FNvCF7MS1GfhsTv7bt1cqBf/s
+         ipDKghtF2DgAqe1cEsDMIwGcr20rZrMGtM8F9BZM6dPV5UJsv9QKDVXQb5/UxVKrmvaW
+         8w+PQBOOp3ftnCuWuUzqjAyxwnjGKSSi4TPgHpuQoSJm+Fd+hrjlQ/mVnECh1Fi+QFhb
+         lOdJ5SaMd+Qt7so2BUXdyKEUHuy67EEVrJBGIlDiTaVH7OK5n6MXenG1/Bzv6DJRkd7p
+         2qe91DqqyiqRiADezp0wglAjHOZjlr/0VB85kfpb8tWcVzPrOGKlnli+VYaii17EG1mz
+         MYSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723894601; x=1724499401;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zkZT8VZZft9eg4VK7YiFBpd65xUOib8cc9JrtLJddBg=;
-        b=a8+3ISgW5n8A3wcmQym7mBLeetsb6yTfxnIr3X+Thio25g527X3WpwZmx1dAEk+vz7
-         jd1TrxrBkeb9YM+LxytacbOgZ5lRLV1vEy9FV2AaZdtcYipK6mvF95mlL8auCLQIycjs
-         PhPFc2jYAWXqfGDXA5m0L32ay5a7gGcS69rou9TpvyK/l5Dy+F9RxefPHUeSNxZHC1Qy
-         WGeRJF1n4OU1vHRwiFj8TxMRb+whUYRTQ6qYItlroN13DrEmfmh6yfABIoRtPJqR+rSH
-         VEYz6yK06EzocTn7mJxP93ECe+8goaXfWKn97kB7vTMw5jLDK1BeHEw2xQ8FnZ9/hsto
-         xLYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJn9WFRAUhpo0Pum68IJNDWuzpjVVioWENz8UOhsNqFOhEBrDsLv3Et82DcZHqtn+1X9AS4Q/7Z9DDx8Xd0GMrryXYm/cFEZfZUNaNfAOeo99mXwbQMhIiT/HUHyam4MZLFrV0
-X-Gm-Message-State: AOJu0YyMzMRVXfjYfMQfyuMCnjYddSK+T8a9VB20A1CN7bKzdJusWdKF
-	caiEf2okXYmwsh/aud18oPFc9PiTDa1XNkfkAbel0U7+b/kwiwMlMS+H4Y6HuESA1CqJ4whXbNy
-	VNUUglGxJq5nCk2bOPRrV8JQh1Ec=
-X-Google-Smtp-Source: AGHT+IFPd7FvnLAxxdKLMPFiWeMxJJneT4UuXKWccUv0IemSV7CT3I9vIS35azlwWUt6HKej84iSJN8IhoO+OjAiwuY=
-X-Received: by 2002:a25:8389:0:b0:e13:c773:68c2 with SMTP id
- 3f1490d57ef6-e13c77372f1mr4100933276.51.1723894601357; Sat, 17 Aug 2024
- 04:36:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723894861; x=1724499661;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vRpUQui6KEL9xqbOs0Ea/v4MaqiDAscFoJmUDj6bZgo=;
+        b=TOZOtKrOrEcvdpTsVLKkKEcFHyRGtM8oJJ24Hdai/eKIwCsWlVuIA0Yz2/ZB0wgLFe
+         pvQ+HK7vVSryS7726q0a2ubXddqpJg4v8MN1Z33XBHFu1PAkUzQO3gGL8gkurc5Cu//Y
+         60j+aC7BOLmPgJreKJ5ExNEx4bnxx7DP+7Y5URo2vRj6QdtfRZCOGmh06ek/MJPcBuWQ
+         sKP1ZreRd2zvKhqzLZ0uxzKFPP6vPH6tV4S1uujQ6hsklA707pl1NWbQS1xMtIp/iEaA
+         pT1oHKvyG0O+0+PVqECNMsX0eRSy8GjKHrKxzqCv1k/9g023mPy7Oraw9xn8PTQua+MA
+         xNvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVcdjB+bNr2Ea4LXZl4YaTEZPNvGdlKrCno4wOBiZ59qkEN7GMh7boOZ3N7v7ciC0FDF2QaLiJwow20/Z1zwNVO3jGFUFu0OiUeXUJd8PN8h01l38gAfYLBDW31V0iRXDCx+IYb
+X-Gm-Message-State: AOJu0YxWNLnO3fXUlCDQ2nriz5Dirbxeo91S0vd0YFhdnU2xXmNIxnlL
+	3mpv4gQ771kw/LT4/DEhykk0S4mscSwWjxMf04g1MzRK5+C+Yaw=
+X-Google-Smtp-Source: AGHT+IFRrGmUNhCYwUr6r0aNdaQyrpw2Zl2kgseXIhOIL4K1vn+dS++NFAIzpV6T7Gr+tD4HzXyacw==
+X-Received: by 2002:a05:6512:1081:b0:52e:73a2:4415 with SMTP id 2adb3069b0e04-5331c6dc95emr3852777e87.46.1723894860555;
+        Sat, 17 Aug 2024 04:41:00 -0700 (PDT)
+Received: from [192.168.1.3] (p5b05713d.dip0.t-ipconnect.de. [91.5.113.61])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5331c98c77esm622664e87.250.2024.08.17.04.40.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 17 Aug 2024 04:40:59 -0700 (PDT)
+Message-ID: <886e729c-d3fd-432f-8fce-6f6926b1fdbc@googlemail.com>
+Date: Sat, 17 Aug 2024 13:40:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815122245.975440-1-dongml2@chinatelecom.cn> <20240816180104.3b843e93@kernel.org>
-In-Reply-To: <20240816180104.3b843e93@kernel.org>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Sat, 17 Aug 2024 19:36:43 +0800
-Message-ID: <CADxym3b-cNL5KpyKFJeiW1Su7rCok5rXqMY+qg2R6MLW8O4qXg@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: ovs: fix ovs_drop_reasons error
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: pshelar@ovn.org, davem@davemloft.net, edumazet@google.com, 
-	pabeni@redhat.com, amorenoz@redhat.com, netdev@vger.kernel.org, 
-	dev@openvswitch.org, linux-kernel@vger.kernel.org, 
-	Menglong Dong <dongml2@chinatelecom.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.10 00/25] 6.10.6-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240816085226.888902473@linuxfoundation.org>
+Content-Language: de-DE
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20240816085226.888902473@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, Aug 17, 2024 at 9:01=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
->
-> On Thu, 15 Aug 2024 20:22:45 +0800 Menglong Dong wrote:
-> > I'm sure if I understand it correctly, but it seems that there is
-> > something wrong with ovs_drop_reasons.
-> >
-> > ovs_drop_reasons[0] is "OVS_DROP_LAST_ACTION", but
-> > OVS_DROP_LAST_ACTION =3D=3D __OVS_DROP_REASON + 1, which means that
-> > ovs_drop_reasons[1] should be "OVS_DROP_LAST_ACTION".
-> >
-> > Fix this by initializing ovs_drop_reasons with index.
-> >
-> > Fixes: 9d802da40b7c ("net: openvswitch: add last-action drop reason")
-> > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
->
-> Could you include output? Presumably from drop monitor?
-> I think it should go to net rather than net-next.
+Am 16.08.2024 um 11:42 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.10.6 release.
+> There are 25 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-I have not tested it yet. I just copy all the code for drop reason
-subsystem from openvswitch to vxlan, and this happens in
-the vxlan code.
+Now I'm a little bit confused. I saw you announced a new 6.10.6 RC and I wanted to 
+(re-)test it. Your subject says -rc2, but when I git fetch from the kernel.org 
+linux-stable-rc git repo (which I always do) what I get is -rc3 from today, however I have 
+not (yet) seen a mail from you announcing -rc3. Forgot to send that one out? Anyway, -rc3 
+is what I tested, and as I already reported for -rc1, it is fine on my machine, too.
 
-I'm on vacation right now, and I'll test it out next Monday.
+I tested with running 4 QEMU/KVM virtual machines for an hour, and did not find any 
+problems, so:
 
-Thanks!
-Menglong Dong
 
-> --
-> pw-bot: cr
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
+
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+
+Beste Grüße,
+Peter Schneider
+
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
