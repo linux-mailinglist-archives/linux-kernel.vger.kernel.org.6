@@ -1,104 +1,98 @@
-Return-Path: <linux-kernel+bounces-290624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF5E2955671
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 10:43:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F7C9955674
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 10:46:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4AEE1F22120
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 08:43:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94EC7B2160C
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 08:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53075145335;
-	Sat, 17 Aug 2024 08:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C66C1448FA;
+	Sat, 17 Aug 2024 08:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jrf2ipw+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RqKv1fF/"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715AA224D1;
-	Sat, 17 Aug 2024 08:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19A912FB37
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 08:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723884174; cv=none; b=TqmRYJp7JUzg1C+AXhoQnoQ2nqm+Oet1nMWY60OXPe3qK98egLHKfQ+dOTGgxCrR4eal7zmL2qSztdPXN5JhZ6mavGcJQOQaZAIPG9a/ZNN2J2gdMBl7DPqW2TkvgBM58tedp+UOtUnt+oXZv7CYaWgQBYU0o03JdDGdkQvvLgM=
+	t=1723884407; cv=none; b=TOLdJU3M9kgpeXbpC/9T7cCtU4CVH3ibOZlF83V4vTU6uhTj/j17o74b9mn3mBYtB6+iwnXmqhvgdPYAhSxMRdZ8JIwhrSqmQU/ZNL7LyvjtcOJ2MCIrFNdyPIq5Qol9Di0Mej/uCHPSAle0kHNIGV0z/zC3ZBGzhQu4TUTtBRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723884174; c=relaxed/simple;
-	bh=wCPDpgJU3wZjcbdksuUtn6o6BHEmcbYJwksedTAOdnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oqkp+tRfGM4DqjLDNl+DzJ0RAII7TQ+2CCHrndElI+ej0xZdJpiP6vFYstrcgHdMVQZUzf0zmjnA011keeKEoqvvXD4Dr9apczbFrzbpO16mDIt1ezPwi9CiivZFkyJo2/yApVLVvxw/l0pHki4AB7pf4NI9fj0ZJnWxAiLC3Tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jrf2ipw+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 765E7C116B1;
-	Sat, 17 Aug 2024 08:42:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723884173;
-	bh=wCPDpgJU3wZjcbdksuUtn6o6BHEmcbYJwksedTAOdnk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jrf2ipw+XP2hHIoE9izV0sNQF5Nl4z321jHbyn0zWZPoZqPL1LR02dn/0ycdsYPSK
-	 hNCp7UJ6cf+jtTaAIWFzs5JOehixXWZND8OCkVRRgV5H22njOjNNr5IZJwcoZ78M21
-	 fESXQWNCsepCSQQsZRxrfoW/kfbb/ovifwsYjtxo=
-Date: Sat, 17 Aug 2024 10:42:51 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Kevin Holm <kevin@holm.dev>
-Cc: stable@vger.kernel.org, regressions@lists.linux.dev,
-	amd-gfx@lists.freedesktop.org,
-	ML dri-devel <dri-devel@lists.freedesktop.org>,
-	LKML <linux-kernel@vger.kernel.org>, Wayne Lin <wayne.lin@amd.com>,
-	Jerry Zuo <jerry.zuo@amd.com>,
-	Zaeem Mohamed <zaeem.mohamed@amd.com>,
-	Daniel Wheeler <daniel.wheeler@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>
-Subject: Re: [PATCH 6.10] drm/amd/display: Refactor function
- dm_dp_mst_is_port_support_mode()
-Message-ID: <2024081739-suburb-manor-e6c3@gregkh>
-References: <20240730185339.543359-1-kevin@holm.dev>
+	s=arc-20240116; t=1723884407; c=relaxed/simple;
+	bh=HgGLgbu1/qWVx1lyyESDChPt/OUUW1ebFpe2qoF8JxM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sLAh2ufLsSLD7H6L5cHkMllroRCXhacrxVch748x2KVzOIpY9jNNVqiY9N52YtOjkptZ7pj2ODZIy+jqkT1cMT6oEC3VvamyTuQBOhxNP7Ub/o1L93oHZj4lgJV4bpATkJjIT2ZpINkKVqlrAZlvNDN8lwrvbo/ZdZHwWvJtz84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RqKv1fF/; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <5377e3e7-9644-4e71-8d2f-b34b2b5ae676@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723884403;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EGHIyJLxgTPX0taP7YAbOFdfgE44JycCOF1YZWtuhWI=;
+	b=RqKv1fF/88Z+Xul3C305DJxXKKxibkUnzyg61xqo1g6L5Cyra7uxiE8zm755V84DyKBwIa
+	Rc4X9Sh23MUqHGjuaWkcsW234Jm6mVP0YWx+dRwllUK98tY0YEHMp1yxGjukzqiaHVHq20
+	aGApkRYDo5GijH+AdT++w3A/XNxbwMc=
+Date: Sat, 17 Aug 2024 16:46:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730185339.543359-1-kevin@holm.dev>
+Subject: Re: [linus:master] [RDMA/iwcm] aee2424246:
+ WARNING:at_kernel/workqueue.c:#check_flush_dependency
+To: Bart Van Assche <bvanassche@acm.org>,
+ kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+ Leon Romanovsky <leon@kernel.org>,
+ Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+ linux-rdma@vger.kernel.org
+References: <202408151633.fc01893c-oliver.sang@intel.com>
+ <c64a2f6e-ea18-4e8d-b808-0f1732c6d004@linux.dev>
+ <4254277c-2037-44bc-9756-c32b41c01bdf@linux.dev>
+ <717ccc9e-87e0-49da-a26c-d8a0d3c5d8f8@linux.dev>
+ <3411d2cd-1aa5-4648-9c30-3ea5228f111f@acm.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <3411d2cd-1aa5-4648-9c30-3ea5228f111f@acm.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jul 30, 2024 at 08:53:39PM +0200, Kevin Holm wrote:
-> From: Wayne Lin <wayne.lin@amd.com>
-> 
-> [ Upstream commit fa57924c76d995e87ca3533ec60d1d5e55769a27 ]
-> 
-> [Why]
-> dm_dp_mst_is_port_support_mode() is a bit not following the original design rule and cause
-> light up issue with multiple 4k monitors after mst dsc hub.
-> 
-> [How]
-> Refactor function dm_dp_mst_is_port_support_mode() a bit to solve the light up issue.
-> 
-> Reviewed-by: Jerry Zuo <jerry.zuo@amd.com>
-> Acked-by: Zaeem Mohamed <zaeem.mohamed@amd.com>
-> Signed-off-by: Wayne Lin <wayne.lin@amd.com>
-> Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
-> Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-> [kevin@holm.dev: Resolved merge conflict in .../amdgpu_dm_mst_types.c]
-> Fixes: 4df96ba6676034 ("drm/amd/display: Add timing pixel encoding for mst mode validation")
-> Link: https://lore.kernel.org/stable/d74a7768e957e6ce88c27a5bece0c64dff132e24@holm.dev/T/#u
-> Signed-off-by: Kevin Holm <kevin@holm.dev>
-> ---
-> I resolved the merge conflict so that, after this patch is applied to the
-> linux-6.10.y branch of the stable git repository, the resulting function
-> dm_dp_mst_is_port_support_mode (and also the new function 
-> dp_get_link_current_set_bw) is identical to the original commit.
-> 
-> I've confirmed that it fixes the regression I reported for my use case.
 
-And it turns out this change breaks the arm and arm64 builds.  I tried
-to fix it up by applying the fixup afterward for this file, but it's
-just too much of a mess to unwind this, so I'm going to have to revert
-this now, sorry.
+在 2024/8/17 1:10, Bart Van Assche 写道:
+> On 8/16/24 5:49 AM, Zhu Yanjun wrote:
+>> Hi, kernel test robot
+>>
+>> Please help to make tests with the following commits.
+>>
+>> Please let us know the result.
+> I don't think that the kernel test robot understands the above request.
 
-See:
-	https://lore.kernel.org/r/b27c5434-f1b1-4697-985b-91bb3e9a22df@roeck-us.net
-for details.
+Got it. I do not know how to let test robot make tests with this patch.^_^
 
-greg k-h
+Follow your advice, I have sent out a patch to rdma maillist. Please review.
+
+Best Regards,
+
+Zhu Yanjun
+
+>
+> Thanks,
+>
+> Bart.
+
+-- 
+Best Regards,
+Yanjun.Zhu
+
 
