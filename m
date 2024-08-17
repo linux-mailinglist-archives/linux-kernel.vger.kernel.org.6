@@ -1,91 +1,164 @@
-Return-Path: <linux-kernel+bounces-290649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C57B19556D8
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 11:43:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 688739556DD
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 11:46:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 019591C20FD3
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:43:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24B81283096
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6786A148856;
-	Sat, 17 Aug 2024 09:43:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B99148FF9;
+	Sat, 17 Aug 2024 09:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y0QvydZZ"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA4813BAE3
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 09:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC26313A250
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 09:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723887785; cv=none; b=qT9vIqHaQfGmJC5co8vY7924Nsn8T4Vws9B2wfNzcWtdPBysN9Kbf3J1k5aCgx/5edkV2f1nJbNQQxjyPa3o1WOiCaeKMW9ZdVXrKELZlFxOJ2ZnvwoIQn38jRseqr8DmuglrdpqBR4euRzEsj2x/BXJ3rZLtSK7oEgiZU9BdcA=
+	t=1723887972; cv=none; b=blxrfDpF+ZDZvEo0IHYkb79YnRVxta24jmFbLy4kDwhbWaOirZElhAbVpVK9MdoHFflPbbWiVvd3i8xLEpGk6M81ULVnV/Z/Cbjf8FKk5pJvr59sTSELRWfapsWCFE/XO33hgetRaoL4CE9CGPVU85UAwTtkU4rTVVfRuCl0njA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723887785; c=relaxed/simple;
-	bh=aw3OrjGPyOiGlZAT3FZ+bO0SCHYvTxv26JvXyJ2LBC8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=izZe/DFaZcdGcg9XIUXZ6u3GO9+2wOcozPJuaCPwgBmomr+5b/C4e2sME128NFSB1S51Ru7ESRg9Up7XtAgmUB6tOy8HpRcAmzXmRJzMq/to+KeuFAZm66BceTypYgBT8fsSVTddSFxkyd2ShaMFoL01JbhU6DZSbdKLDX6SX7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3994393abd5so26887815ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 02:43:03 -0700 (PDT)
+	s=arc-20240116; t=1723887972; c=relaxed/simple;
+	bh=CWHFcYPRtRY+Qq7QGzuma85hGAjlXR6aFEhWCuiLKXU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ug2TPTBGSuc8U8jhAWChme5Z1wsApGjhz+gdSvlH1DjbgH9vgtAzJdfAyW0Mh94OEhFVmKrAQp+x6O8FdQeLdqgNBNi6CWNq3H0zy24XHJ2MpvgmtIvfZM+YP9VBhcW0FDGZ7qefhJFj+EhQiJcnm7MfyoTfbpObGvs1The3Nko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y0QvydZZ; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52f01b8738dso2507167e87.1
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 02:46:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723887969; x=1724492769; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wog6RxrWQdPYSZMlgcH4rB8QP2t+UaAUqZpSk10hqww=;
+        b=y0QvydZZyYEJmwRen460TbOhaTGX6Ajqn+cRjUu9IcwMNxirts+7W+XKZVjppPYPL/
+         lXQtMtqaGi+FuGZJ0FyM1Y4Q30hMehvxH0Bfi74tOO/Z1Z1RdcGiJDTYb0aPhxuRZfgm
+         dThgnP9f3SVrQZRm95mJKjyPCkNKzcQJ0MiWKvfIdf/xJouluGhwQqiWynqfA3OLtyHk
+         rGUYbHdMwYbbyU66sXU8wWtCha+WAkP/6FcNKaT6JHV6mfniGrjl6ynqMiq2UO+IkK8L
+         EMzPsZ16JGTrNzmtAlCA8tqT68zT9SxkF9iwe0jMIimDycoVRkt6m77WhyJvlS4PYLdk
+         VzYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723887783; x=1724492583;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OSD89904qpwLmfrxCcXP28eUr7NSxC1NZ5Fvz+p5mUQ=;
-        b=ZeynTWv6nGQdwrPhOx4CutwgijOcIMQKvhYOYS8UOIvTKbCtD6Ix67452H/NFn274n
-         20XGqr5VIJOSpk2Y1EliIcWypRSwR2BXHTIzkBC3W9mHGM0ChpRR8jSe5v8+PYlb8oqR
-         Xhcvmx+yhulR31NtYnCHXWQkBzWI/ZKoKLplYM/ZXUrtpS+z4cPEnuhrakF2z8RnjrW+
-         3D76YQ6fnhnpBKR70mvpq+zObLtbxzBWzTko5uBU3ahBTGdDhuorNMN+wmMoHZng/xNb
-         NPlJyguLpKv/IdU1atmw0hBLiWuv494Ei2OeHguxb9PSrOJU8OxmK0oxGYzqkoWbas1w
-         UubA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxm3OWCaJCqYlFabN2RnbvtWCWi8HG2ZCqS3Sc4TbAy2BhWeziaHZYq9QZJ7qGhNMFhc6lZtyHNQv2KjtOMN0eCAfKiHA2sYTHtjUE
-X-Gm-Message-State: AOJu0YygxaP3QOAoqRmryTgm/WSvHo9lj1VWSZAvUHG7uSOhKfHf2r5+
-	9AZZFGavsO0OZ5L5tV9fUw8/z3FY/q6j81NKTgLFTcC8JHxP6UmSgXGrh1SPB2qm/5kOLsMJN0f
-	TRmitUca4eN4c+/O+mf+hQIXLpwhqn4IsgrwlIGe3diVxqeegs+uP9/Y=
-X-Google-Smtp-Source: AGHT+IFT5pwTzCVlFpLJPWYMEgMO9md978fZAAaZXpZ4i0Pwzf0awZHU6cX89B6NqA+XmRrh9qSadggyA41R0z6rKF7ETwZpbZsn
+        d=1e100.net; s=20230601; t=1723887969; x=1724492769;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wog6RxrWQdPYSZMlgcH4rB8QP2t+UaAUqZpSk10hqww=;
+        b=erhvkUBAUSN0VEz1/uUAr/vsNiakrafQ91M4k/3r7HJXF7EH80NcsUmGIEHXJ20UvS
+         kGV2wPsn+aSAITYwHYlcQ9A883AXu3VwAA3EUJLT1mkzdkVu/IEEz9B7CnkvKYCLvWyq
+         cJK34nVYqeoDP+8AVa5ztCAMODZX7UAObdI72798OoK0KG1qMQy4/y685jUfgfNMUAQM
+         L2fC3fjsE/Y5gOfMKW5ZfMJcc0O4UVcTTntj83mfFobjiekaqBHRNZv8n8y8oO/bu6KU
+         9VJLqIgcdGiLTFDJSgRs7eDhMzKRsAPorudf8y6OhyaX84/VP7Nd0fZ40QQ8Pkufu2ui
+         2YGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXCBUGbQ63nJkR8eWB8jQ8n990xjzk6O/V9aWfIbp+DF+Hhu1sTQaaPWq1S6DssXrLmkLE5W5OdMR1bHgdcjMLWzGywQpLzYD5Sc2H/
+X-Gm-Message-State: AOJu0YxwB6/wJNMSjru9Z3PRRkAg9PNOcEOSSz/I8OaW2ofs+w5MzcQo
+	+psbk4MYiSa/FZF+pWP6Dypvxrnp9r3noxQ9/ePMd3CFq9cSaRZgCLFr3Oi92K0=
+X-Google-Smtp-Source: AGHT+IERuJuUpU+XHOnVB6Mjkl8vgEL7ssVayE3dityP1pBDzL5Rj6MmNxvhvWaQNNpOeGGcTqhoWw==
+X-Received: by 2002:a05:6512:3188:b0:52d:259d:bd91 with SMTP id 2adb3069b0e04-5331c6a2764mr3473051e87.18.1723887968567;
+        Sat, 17 Aug 2024 02:46:08 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.215.209])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded2931asm97641815e9.17.2024.08.17.02.46.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 17 Aug 2024 02:46:07 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/2] dt-bindings: clock: qcom,sc7280-lpasscorecc: order properties to match convention
+Date: Sat, 17 Aug 2024 11:46:04 +0200
+Message-ID: <20240817094605.27185-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c04:b0:396:ec3b:df63 with SMTP id
- e9e14a558f8ab-39d26d84a29mr5013885ab.4.1723887782588; Sat, 17 Aug 2024
- 02:43:02 -0700 (PDT)
-Date: Sat, 17 Aug 2024 02:43:02 -0700
-In-Reply-To: <00000000000093ea0d06142c361a@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ea066d061fdde62b@google.com>
-Subject: Re: [syzbot] [fs] INFO: task hung in do_new_mount (2)
-From: syzbot <syzbot+f59c2feaf7cb5988e877@syzkaller.appspotmail.com>
-To: brauner@kernel.org, eadavis@qq.com, linkinjeon@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sandeen@redhat.com, sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot suspects this issue was fixed by commit:
+By convention we expect first "compatible", then "reg" and then rest.
+Order properties to match convention and what is in "required:" block.
 
-commit ffe1b94d7464bef15b6585f9e7f8192cd0668327
-Author: Eric Sandeen <sandeen@redhat.com>
-Date:   Fri Jun 28 00:31:51 2024 +0000
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-    exfat: Convert to new uid/gid option parsing helpers
+---
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17cdae05980000
-start commit:   fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4d90a36f0cab495a
-dashboard link: https://syzkaller.appspot.com/bug?extid=f59c2feaf7cb5988e877
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1075d2c9180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=161012a5180000
+Cc: Taniya Das <quic_tdas@quicinc.com>
+---
+ .../clock/qcom,sc7280-lpasscorecc.yaml        | 21 ++++++++++---------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-If the result looks correct, please mark the issue as fixed by replying with:
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+index deee5423d66e..5e6737c39897 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+@@ -18,12 +18,6 @@ description: |
+     include/dt-bindings/clock/qcom,lpassaudiocc-sc7280.h
+ 
+ properties:
+-  clocks: true
+-
+-  clock-names: true
+-
+-  reg: true
+-
+   compatible:
+     enum:
+       - qcom,sc7280-lpassaoncc
+@@ -31,12 +25,18 @@ properties:
+       - qcom,sc7280-lpasscorecc
+       - qcom,sc7280-lpasshm
+ 
+-  power-domains:
+-    maxItems: 1
++  reg: true
++
++  clocks: true
++
++  clock-names: true
+ 
+   '#clock-cells':
+     const: 1
+ 
++  power-domains:
++    maxItems: 1
++
+   '#power-domain-cells':
+     const: 1
+ 
+@@ -57,8 +57,6 @@ required:
+   - '#clock-cells'
+   - '#power-domain-cells'
+ 
+-additionalProperties: false
+-
+ allOf:
+   - if:
+       properties:
+@@ -125,6 +123,9 @@ allOf:
+ 
+         reg:
+           maxItems: 1
++
++additionalProperties: false
++
+ examples:
+   - |
+     #include <dt-bindings/clock/qcom,rpmh.h>
+-- 
+2.43.0
 
-#syz fix: exfat: Convert to new uid/gid option parsing helpers
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
