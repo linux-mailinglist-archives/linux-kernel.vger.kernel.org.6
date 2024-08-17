@@ -1,121 +1,160 @@
-Return-Path: <linux-kernel+bounces-290674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C132895572E
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 12:25:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37647955731
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 12:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DDCDB2170F
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 10:25:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 740C41C20C21
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 10:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74588149C4D;
-	Sat, 17 Aug 2024 10:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29E014A095;
+	Sat, 17 Aug 2024 10:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X1uZUHiE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aHkreDwD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7217B657;
-	Sat, 17 Aug 2024 10:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9508B657;
+	Sat, 17 Aug 2024 10:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723890345; cv=none; b=eKrG9x+7usGBNxG4NEiKcNcrVk20vu2RWDZVw9pOTQu+QlTcNoigvSSWLg0k6xRjFE/zthPzDOLf/4eQ/KGPJ3mKHsC144Q5j0XM8qtsuTFenTcXwFG9E3b0O3sHfkzYQ+iagUMu9u5GBbFvo8x5YgrOFXXLkJeeltk8oC49VU4=
+	t=1723890391; cv=none; b=sU8Mp8uLMm1/LxWl6SR56uiA4Ct2UliD2PMgF7JH9VCB70kvCio8TlKkmw82WTlSFHCi5HxXdxB1k1kqK0M25i1L/tyXqS4Ctkt9eg2EnWane36P88ynknLRiYeBn0MoJq+QYW7nE0XEfP9FK+RscymzqfaPFaBvejNFAiUvwsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723890345; c=relaxed/simple;
-	bh=DHhe3pmtDxyRax9ygVaZwi+haQX8zawBPIakTdO65OU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kMUGlwNgoT4Fe7euzf129TocG+B3zBd92QC5old6vjDIOgYVj5+f6nuuisExNG/1xPNL7o/UdqkwjI2PLJ5qqFtJW3NrAy+g0AWSPiWpfuR8PiAAezoAfvXXVtCROwj0OZyE5Tg/1nUy2mWMgfn8XJXdMiVJZKUqKhUtjMOIHIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X1uZUHiE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32F01C116B1;
-	Sat, 17 Aug 2024 10:25:45 +0000 (UTC)
+	s=arc-20240116; t=1723890391; c=relaxed/simple;
+	bh=lYozc8NLhmIarc2gIP+HKCa+ZUpVEC20QXMZ0Sil0iI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cs3hZb6rGD3wmigBS6CgRu8f05X1AWP3FvsWoE/OUAz9ye6oWJW68LXaeaoGQAsyqST+EltQAnXmwyz8S/M2+sE2xZY8uAwxPZX2e4mQX93SMmHAUAuZLs26z2qR1jle6AhhyJy+SU6i+5HxkDxpsmS3JvqTLfq/YUikHQ+PiHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aHkreDwD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06AC5C116B1;
+	Sat, 17 Aug 2024 10:26:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723890345;
-	bh=DHhe3pmtDxyRax9ygVaZwi+haQX8zawBPIakTdO65OU=;
+	s=k20201202; t=1723890390;
+	bh=lYozc8NLhmIarc2gIP+HKCa+ZUpVEC20QXMZ0Sil0iI=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=X1uZUHiEhv04V2Z9T7Ey1pL2Ih2gnasu7T5IuEMEwQ8lOHweIsVlQKl17TW68jzIF
-	 0PIBCnwAcmU9GGeM55o0tj+nMe+fwmBWuKc3RETFMPYBWbVY/pQ9bdq/aAFkksYPEa
-	 8+e+8R/xjssLoRXBKPK2WR7E+AeQChlPCU80Ak+Dms9l3aNiBUB9hvqkasOFxxAmLW
-	 Ty+I/pbP2X9aAZg06HXUMOFfgpTqZCCIh9n9BlDsrLkSw668JhTk18SF7WTcjZgBRR
-	 5xmb3RUbqMM23X/YXCo6LdjYC5NNGHWmfZJZFhs4KVCH6jRNcqnilfkp6XyuJYVw1D
-	 z3drnIZYCLuFA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sfGcx-004Vcv-00;
-	Sat, 17 Aug 2024 11:25:43 +0100
-Date: Sat, 17 Aug 2024 11:25:42 +0100
-Message-ID: <86a5hbzbrt.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Zenghui Yu <yuzenghui@huawei.com>
-Cc: <kvmarm@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>,
-	<oliver.upton@linux.dev>,
-	<james.morse@arm.com>,
-	<suzuki.poulose@arm.com>,
-	<wanghaibin.wang@huawei.com>
-Subject: Re: [PATCH] KVM: arm64: vgic-debug: Don't put unmarked LPIs
-In-Reply-To: <20240817101541.1664-1-yuzenghui@huawei.com>
-References: <20240817101541.1664-1-yuzenghui@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	b=aHkreDwDLaPg85rFzSMSqtXaBDxDTp9jtqcVckctr5O2pXHqUgFxNjoE2fdwVjVrj
+	 PEB4eVq/gWZTbGRMTL578+vZhPh7PZR/FmJfNmiPAzUACsS/iVU0wnKXL7+COqcER2
+	 Ld7U6JMUBs67D/gunVpLOG1ZwHoZvNSdz5KlgyrlZ6W/+IvpsxnmlrEfUsqDm7IfkK
+	 O0suIbKzmRRvEq4AOVDbYGx9ckYvsSUcKKziQCyEYE5ukvJqgfEkApGNs2fgpc4mOS
+	 4o2IedALrLl38yexuta6k8dUz/QZ55zwZ039VgskwRaszsQ2xBFkbeWaaZE7AYlesx
+	 Ei4yMxXb/uJiQ==
+Date: Sat, 17 Aug 2024 11:26:20 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: wangshuaijie@awinic.com
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, kees@kernel.org, gustavoars@kernel.org,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+ liweilei@awinic.com, kangjiajun@awinic.com, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH V6 1/2] dt-bindings: iio: aw96103: Add bindings for
+ aw96103/aw96105 sensor
+Message-ID: <20240817112620.4426a10b@jic23-huawei>
+In-Reply-To: <20240808102851.4024025-2-wangshuaijie@awinic.com>
+References: <20240808102851.4024025-1-wangshuaijie@awinic.com>
+	<20240808102851.4024025-2-wangshuaijie@awinic.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: yuzenghui@huawei.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, wanghaibin.wang@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 7bit
 
-On Sat, 17 Aug 2024 11:15:41 +0100,
-Zenghui Yu <yuzenghui@huawei.com> wrote:
+On Thu,  8 Aug 2024 10:28:50 +0000
+wangshuaijie@awinic.com wrote:
+
+> From: shuaijie wang <wangshuaijie@awinic.com>
 > 
-> If there were LPIs being mapped behind our back (i.e., between .start() and
-> .stop()), we would put them at iter_unmark_lpis() without checking if they
-> were actually *marked*, which is obviously not good.
+> Add device tree bindings for aw96103/aw96105 proximity sensor.
 > 
-> Switch to use the xa_for_each_marked() iterator to fix it.
-> 
-> Fixes: 85d3ccc8b75b ("KVM: arm64: vgic-debug: Use an xarray mark for debug iterator")
-> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: shuaijie wang <wangshuaijie@awinic.com>
 > ---
->  arch/arm64/kvm/vgic/vgic-debug.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  .../iio/proximity/awinic,aw96103.yaml         | 63 +++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/proximity/awinic,aw96103.yaml
 > 
-> diff --git a/arch/arm64/kvm/vgic/vgic-debug.c b/arch/arm64/kvm/vgic/vgic-debug.c
-> index bc74d06398ef..e1397ab2072a 100644
-> --- a/arch/arm64/kvm/vgic/vgic-debug.c
-> +++ b/arch/arm64/kvm/vgic/vgic-debug.c
-> @@ -85,7 +85,7 @@ static void iter_unmark_lpis(struct kvm *kvm)
->  	struct vgic_irq *irq;
->  	unsigned long intid;
->  
-> -	xa_for_each(&dist->lpi_xa, intid, irq) {
-> +	xa_for_each_marked(&dist->lpi_xa, intid, irq, LPI_XA_MARK_DEBUG_ITER) {
->  		xa_clear_mark(&dist->lpi_xa, intid, LPI_XA_MARK_DEBUG_ITER);
->  		vgic_put_irq(kvm, irq);
->  	}
+> diff --git a/Documentation/devicetree/bindings/iio/proximity/awinic,aw96103.yaml b/Documentation/devicetree/bindings/iio/proximity/awinic,aw96103.yaml
+> new file mode 100644
+> index 000000000000..54b5bc176d5c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/proximity/awinic,aw96103.yaml
+> @@ -0,0 +1,63 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/proximity/awinic,aw96103.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Awinic's AW96103 capacitive proximity sensor and similar
+> +
+> +maintainers:
+> +  - Wang Shuaijie <wangshuaijie@awinic.com>
+> +
+> +description: |
+> +  Awinic's AW96103/AW96105 proximity sensor.
+> +  The specific absorption rate (SAR) is a metric that measures
+> +  the degree of absorption of electromagnetic radiation emitted by
+> +  wireless devices, such as mobile phones and tablets, by human tissue.
+> +  In mobile phone applications, the proximity sensor is primarily
+> +  used to detect the proximity of the human body to the phone. When the
+> +  phone approaches the human body, it will actively reduce the transmit
+> +  power of the antenna to keep the SAR within a safe range. Therefore,
+> +  we also refer to the proximity sensor as a SAR sensor.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - awinic,aw96103
+> +      - awinic,aw96105
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    description:
+> +      Generated by the device to announce that a close/far
+> +      proximity event has happened.
+> +    maxItems: 1
+> +
+> +  vcc-supply:
+> +    description:
+> +      Optional regulator for chip, 1.7V-3.6V.
 
-Ouch. Nicely caught. I think this deserves a
+Not optional given it's in required (which is correct)
 
-Cc: stable@vger.kernel.org # v6.10
+    vcc-supply: true
 
-With that,
+is enough for this as the voltage is probably only relevant for the person
+designing the board, not the dts author.
 
-Reviewed-by: Marc Zyngier <maz@kernel.org>
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - vcc-supply
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        proximity@12 {
+> +            compatible = "awinic,aw96103";
+> +            reg = <0x12>;
+> +            interrupt-parent = <&gpio>;
+> +            interrupts = <23 IRQ_TYPE_EDGE_FALLING>;
+> +            vcc-supply = <&pp1800_prox>;
+> +        };
+> +    };
 
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
 
