@@ -1,123 +1,80 @@
-Return-Path: <linux-kernel+bounces-290480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 341BD955472
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 03:01:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69880955474
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 03:01:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC6EBB2213D
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:01:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1364E1F22CE9
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AEDE46BA;
-	Sat, 17 Aug 2024 01:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFBE3D66;
+	Sat, 17 Aug 2024 01:01:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V3Dt8QVY"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KISJjOPg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160E31C32
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 01:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA278BE5;
+	Sat, 17 Aug 2024 01:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723856454; cv=none; b=FmrL5Lt9e3ziMRFa9TI0dNDa4WaBSgR+n77ArFBlIb7EjP6HjB+RJI7BiKUW+NfhXZx/5UwdYyjIByAAE2XkoZqI05ZNJRASv7w1jypaOWnKRJlEdd2/Yqg2Jb6obvNvPQK820HLkIvnAoFoxybfxXqNfBvwkkI6ABTof2NCL78=
+	t=1723856466; cv=none; b=pY20svagLKvUoEqbBW976ty3pPn/WoXsof5E0GLrrO1H+Ku96FIU4qmWeGQyjC9K0TWceKE6kpthAJy2EM1H7LxGpP65ActSmFTQyWY1+yWJvrZTifdMKasFHig+QhtLWAMgHmIH+2F4nULlY98Dl/EDxDcbH09MQiCsMnsYHKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723856454; c=relaxed/simple;
-	bh=xME3BnPckt7E13btYdrc63u8unf/OOEIYZuvPJ+UGKE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZSxuT/s7jlM24xXuCrMKNRKsSUIS4gUJEPQhQJ6zK3s6TS5xWnjMv3JdJmI0Ys5xahvDPqCpPzs0+wiI1ubVcZHm74/ZIonacHE+MiLOnri59haUlGcy6bPrQtngEVU0wRYje1NHDgSKqhznlUU4wTlgRWumRmK7YAo3EWI5oZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V3Dt8QVY; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7c3da34af55so1292274a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 18:00:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723856452; x=1724461252; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DHurR+fx7zf8gF+fH8OqsanlwZHSvsgIt3z0suTHGLw=;
-        b=V3Dt8QVYNYP1rGEjPwFGBXgHTd3TBzf1yG7uwWxRMaLtNcOfpHUX+8pLnlz4t9g69q
-         C5cHPe5bWGKDY871aAS9VUIu+MQNcLW1j0+37hwaE2p/Igc++Mc1tLDbDV2lG22UYkI8
-         9X6O1R6sXI4X5Luk5Wd1OUrAompEejk/jV6N7xE/FlBt8KAOBz6ldM6qq7RDYLJSkt4o
-         ajYnb/Ta3Ko79fj1mlL2j4voqN9B33EMv3qlGO5ImSWV64p1P/1IdAHP978MR+/3o1i7
-         /fQ4FaYAqB3xZD2RifaNLqPiMAD2/zBD7RCKJsMypOBbfMD56grNHk/xU7Nkq1mzFn7f
-         1ySA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723856452; x=1724461252;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DHurR+fx7zf8gF+fH8OqsanlwZHSvsgIt3z0suTHGLw=;
-        b=c6S0FqZJ3919RVH4luvsnr9ezlfF3zCAz74wNelWv83k8r8h1RSf4qE7cO/l+IhfnX
-         NmC5X4gGBNOmLEXqE0AwNHr3iuCJNkSyafnoFy+n/cYY1c5uXYdEoyaUtnPXlfgZZjX2
-         iDBEf7gfiHnz0+Va2b+tAz7d5pB38u+Xek9LdTlljBTHeFgW6z4RZPvq+gOuypqWxw3W
-         pyRvwTx7PDZF1oEC+KJNjUydlH7dViV1ehKBCbw3DzaNx/KUqkuD7L250OybeshDX5a2
-         UB7jgL7eGqlL4Sierbu31LbcH11JTmIWUh7CXC1oMOEY8TwZnkHATB4uRACq8VR4Etzy
-         FF/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXGZEZb+K2mb4RsMmHboRmoJuJsekzoCvvrZbU7j1Gu3TKicS9CB0BysvfDCqlSFYJx1mMOAAPRtPB6ZT5nTJgn78qftPqGmS+8s9z4
-X-Gm-Message-State: AOJu0YwiSU0xOtE9Epk9Cv7wniy7eZZYpH9+zgWLeJJTAOlsqW5j+i+G
-	Pbn8v6JWQ9wUgQ15jjoO0o+SWt5IpPM97we4DMolDLvg92KJ7n0dnSTBZpoouCljwVoZSUtZIqc
-	bbQ==
-X-Google-Smtp-Source: AGHT+IGgQ5L96WEtrOF85LpPpxMbEdlboogX890StOgCMUdrhDjVb+vU60wuE1WwXFLKi0Z3aJ4DtITuwPA=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a02:4a3:b0:75f:3d6e:6461 with SMTP id
- 41be03b00d2f7-7c97af56e6bmr10481a12.6.1723856452244; Fri, 16 Aug 2024
- 18:00:52 -0700 (PDT)
-Date: Fri, 16 Aug 2024 18:00:50 -0700
-In-Reply-To: <ZqKWxfqRoJzUWroG@google.com>
+	s=arc-20240116; t=1723856466; c=relaxed/simple;
+	bh=8CTkRrTUj02ZIWcuNru1JzE+ShAl2rkLBUWuz0bcW2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fI5r+nu5xW6gwVY4JjP8wbombaHHj1XTqcVXHnnTZ+r+snpcGQYcRhRAWlx7QRt7r0HcnzcrxlN6McbQPt6RAnyf/v6yisJ01EBVIWwk8rJ/5Wg7IauWwGZLkfUX07Xys8gNCNZ2S30Or2/PwXuvF8pXW3yKONcctQinFRJVwMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KISJjOPg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4792BC32782;
+	Sat, 17 Aug 2024 01:01:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723856465;
+	bh=8CTkRrTUj02ZIWcuNru1JzE+ShAl2rkLBUWuz0bcW2E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KISJjOPgunQj+5Y9SayxAL8YOSJgQmnPEobNZWQLvdowGLrneBOyjbs+3VC0Ntdxt
+	 Ds/P9xVWuXswQgH+VHqW6n8vXvPyl3hrdgZUyQ1SzN0LS4MFfCFQanzAqzdrGT+xva
+	 AFHcqEJsPa71AMpmN8iLT+b/whI90qDLCPgzszcPPH4DXzhM0rALR7AWdCkNitI3QL
+	 tEBON6woIeRze/8JgrEMkOc+g44xvkyPqmyock0LNrLnla14o1e5ZcJqbTffCXkraF
+	 zBnN0FC+flk8ipO1P+XVTce2ks27Nze8vB4vHZgW6kr1t6iZ/0Fkw/7/FQeez4Vrkp
+	 GzJhBHbkadriQ==
+Date: Fri, 16 Aug 2024 18:01:04 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: pshelar@ovn.org, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, amorenoz@redhat.com, netdev@vger.kernel.org,
+ dev@openvswitch.org, linux-kernel@vger.kernel.org, Menglong Dong
+ <dongml2@chinatelecom.cn>
+Subject: Re: [PATCH net-next] net: ovs: fix ovs_drop_reasons error
+Message-ID: <20240816180104.3b843e93@kernel.org>
+In-Reply-To: <20240815122245.975440-1-dongml2@chinatelecom.cn>
+References: <20240815122245.975440-1-dongml2@chinatelecom.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240724011037.3671523-1-jthoughton@google.com>
- <20240724011037.3671523-9-jthoughton@google.com> <ZqKWxfqRoJzUWroG@google.com>
-Message-ID: <Zr_2Qhflx5xBhFCY@google.com>
-Subject: Re: [PATCH v6 08/11] KVM: x86: Optimize kvm_{test_,}age_gfn a little bit
-From: Sean Christopherson <seanjc@google.com>
-To: David Matlack <dmatlack@google.com>
-Cc: James Houghton <jthoughton@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Ankit Agrawal <ankita@nvidia.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	David Rientjes <rientjes@google.com>, James Morse <james.morse@arm.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Raghavendra Rao Ananta <rananta@google.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Shaoqin Huang <shahuang@redhat.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>, 
-	Will Deacon <will@kernel.org>, Yu Zhao <yuzhao@google.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 25, 2024, David Matlack wrote:
-> On 2024-07-24 01:10 AM, James Houghton wrote:
-> > Optimize both kvm_age_gfn and kvm_test_age_gfn's interaction with the
+On Thu, 15 Aug 2024 20:22:45 +0800 Menglong Dong wrote:
+> I'm sure if I understand it correctly, but it seems that there is
+> something wrong with ovs_drop_reasons.
 > 
-> nit: Use () when referring to functions.
+> ovs_drop_reasons[0] is "OVS_DROP_LAST_ACTION", but
+> OVS_DROP_LAST_ACTION == __OVS_DROP_REASON + 1, which means that
+> ovs_drop_reasons[1] should be "OVS_DROP_LAST_ACTION".
 > 
-> > shadow MMU by, rather than checking if our memslot has rmaps, check if
-> > there are any indirect_shadow_pages at all.
+> Fix this by initializing ovs_drop_reasons with index.
 > 
-> What is optimized by checking indirect_shadow_pages instead of
-> have_rmaps and what's the benefit? Smells like a premature optimization.
+> Fixes: 9d802da40b7c ("net: openvswitch: add last-action drop reason")
+> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
 
-Checking indirect_shadow_pages avoids taking mmu_lock for write when KVM doesn't
-currently have shadow MMU pages, but did at some point in the past, whereas
-kvm_memslots_have_rmaps() is sticky and will return true forever.
-
-> > Also, for kvm_test_age_gfn, reorder the TDP MMU check to be first. If we
-> > find that the range is young, we do not need to check the shadow MMU.
-> 
-> This should be a separate commit since it's a logically distinct change
-> and no dependency on the other change in this commit (other than both
-> touch the same function).
-> 
-> Splitting the commits up will also make it easier to write more specific
-> short logs (instead of "optimize a little bit" :)
-
-+1.  Especially code movement and refactoring, e.g. factoring out
-tdp_mmu_clear_spte_bits_atomic() would ideally be in a standalone patch that's
-dead simple to review.
+Could you include output? Presumably from drop monitor?
+I think it should go to net rather than net-next.
+-- 
+pw-bot: cr
 
