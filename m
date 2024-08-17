@@ -1,116 +1,203 @@
-Return-Path: <linux-kernel+bounces-290783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4C83955888
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 17:12:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 248B1955891
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 17:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72EE41F21C88
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:12:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2E8C1F21CA0
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 865341442F2;
-	Sat, 17 Aug 2024 15:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C641442F2;
+	Sat, 17 Aug 2024 15:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dbdaAAy9"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U9+1GQSU"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BC68BF0
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 15:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A56145341
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 15:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723907539; cv=none; b=XMNNlbebG9uH63SsDkuZ258q2sAWIEcmSA7kWQwpu1GRr+kLXn77G0DXPD8ffYEf8karTB68m933IZ9HNKmPWqMSVacteFq+iy/QmM23lbC5XN6J+HBMw9bgjopSRKA5FWLdCqnqLnABn1ekYX9oBGeR5/7bCLXjYATjBsG8jCE=
+	t=1723907632; cv=none; b=htH12gIqbC96Uy6rg2xd5B586cGgY5MQP8J1l+DJnAZosv70584KStIdrab2rk49jNol2cKL3WRszEY7BOdj5MB00HFgWhS7mme2ejnJSpJHXML9iMfj5KtvHXPAxn92Vm8twTSwaWhtVFnQmZrhLb+28W2/Hyzr6mNRnJJcaaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723907539; c=relaxed/simple;
-	bh=DcQqlyPhUX/TtBvD1m7UEOntn+AroF0FB9K5gHY30dA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ElwQ0pdu8OraQfkg9WpIluNRETwxBIE6vVHORg9A00fPlVJt2Wy02myF7mmYuhQrdf3I+d0H92tmv01tvQ0QnRm1ov9A2ozOUEBiSvzcaEOm4mwq7UAzetq+ZObVde/6bfbl8k9cDBC5CHo9II+bioHHS1ad2XgwkNB74+Mbj5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dbdaAAy9; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723907534;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=hsH+p2Rj1XhDMvtdTQeoq5m/sGRAmgGNzXuE7X/vjZE=;
-	b=dbdaAAy9K0jLVMJYHv2EAobza1GeKCtXr9+wz29kmushvOMbraRv7TiB3P6J/ltSddeYXR
-	jhuSW9dPYXPGCtd1T2VuRWTN7LqWshSJi5fEOcD4DwH6hs0LWxAVb2G1xXKfSGhDosDvCb
-	8VJ2rUpySFKPKsJa78ixqOOZCSJ84Gg=
-From: Jose Fernandez <jose.fernandez@linux.dev>
-To: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	Christian Heusel <christian@heusel.eu>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Cc: Jose Fernandez <jose.fernandez@linux.dev>,
-	Peter Jung <ptr1337@cachyos.org>,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] kbuild: add debug package to pacman PKGBUILD
-Date: Sat, 17 Aug 2024 09:11:47 -0600
-Message-ID: <20240817151147.156479-1-jose.fernandez@linux.dev>
+	s=arc-20240116; t=1723907632; c=relaxed/simple;
+	bh=f4FKGxVYQxxLRQXGi6/ad1xe8zUcE9oY9HGYW6YKezU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t+Ozg/5Hh1LHo2t+N+pog+k2tF68lEbSnlKe8Qy6XhIDPcS16LTRZeerce8kyA+BZkEqHjInlNXAwXrCrbbHenZtit4F856g5qfbTwaNeAH6NBoXVFWLCk1J0SWr3UEbnnKsqGHn2A1rdVIDDJs1nJb2pEcuQBHziiGBtDhECp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U9+1GQSU; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6bf9081b650so1711136d6.3
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 08:13:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723907629; x=1724512429; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h8fuP4rXSYs0IsxsahVa0Q55YFfnXxVc+PpufNcWYNA=;
+        b=U9+1GQSUeEWxIibtppep4qqj4OpdA4mm2tCOuBsqsxkbvUJXxxoHvC/1DD8XHYEu8i
+         WjEgJp64Wh0LjJMNctGnsHDdI4LWWS4i1de+9JlsKLbjhuxqNGnqQc6jEWF/WIZdyoE8
+         Ood0I9cMludlmhZXLRIR99I6NTR03YjLyd2UU8aPRBzFY2EVJN3zKFaiACpBDkuLmbAs
+         KhMnNOiWEb+OtTL7MMrHZDKy9Eh+cAn0nWsdeIFVr9qOqYdsd6BN0FHrwHGsI7Ewhy3K
+         sam5K1XJncYJcHKCyUHyfaQ13LVvQhnOQYzacwOTyK4ahx+PK34TLjUH1vu5Rlz3DzPk
+         osJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723907629; x=1724512429;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h8fuP4rXSYs0IsxsahVa0Q55YFfnXxVc+PpufNcWYNA=;
+        b=MKFrFEeskGUTy7va7eIBuGYw1iD0S/hUWHb0L2p/WB7Yc2LDoByY62XRoBQQk8jADj
+         0ZdHUTE4G7fUuvlKRrUoAdPZFWBfu9C1YCzbOxxBTitRhvXq6UUVL3X0qKvowyLjEstB
+         LcmGIhs6egpyXQVJUknQ+tmHUrV8z3KBwj0FQA6GeF6v3Zbbn4fCGCSt6aCB4/JbFd7G
+         +tD9a6etTP1mjqxpNrbMqG+Jd6NBWjjgIt8AlTD3Z0wx/qKmuyvnG5qG6VV7laFXdImH
+         AOxnXQW5dPdLkaxIMyQle2dd5ei6xRcT9GHWdoN89QFK7cDu9EoofAXoGZp52ViA28YS
+         K5tg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4NHWfd5A00lzdo91a6AnssGr5rCnrUll9MJ3pBg05lC2jPDMtHHpDuyn1XRRE8UKBRitXmHY4JcbK4VUxlRx9CTuQXCtTJ/dTr6nP
+X-Gm-Message-State: AOJu0YygL1pwQHGaVXZwP9W5/nbZMhDqeX67iYNrStx8RQzSeDUXiC7w
+	xc4CRXqmBCurNX+rqjPf1MZ/mRoV29sL9Z89YtWZbptnZ5scIOrbdFxyk6HWoKFg+Y1zJdEq8Hl
+	fEy7/3iZx7nIJHHWYPclw+aZNP2/KYtfo1LCN+vqV6jV+F/y2hynC
+X-Google-Smtp-Source: AGHT+IEVoTrHdVFvEzEpKQmmtV0mdfaBBccZW7R2wrmBmSZjuFbL1LJHUNlqx3hUH+/ws9eu5VXMD1mp4i3r/g0VSRU=
+X-Received: by 2002:a0c:f40d:0:b0:6bf:79c1:b9aa with SMTP id
+ 6a1803df08f44-6bf8950a6c2mr26142936d6.33.1723907629272; Sat, 17 Aug 2024
+ 08:13:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20240813211317.3381180-10-almasrymina@google.com> <CAMArcTW=mg2gF_e6spPWOCuQdDAWSuKTCdCNPWGqcU1ciq30EQ@mail.gmail.com>
+In-Reply-To: <CAMArcTW=mg2gF_e6spPWOCuQdDAWSuKTCdCNPWGqcU1ciq30EQ@mail.gmail.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Sat, 17 Aug 2024 11:13:34 -0400
+Message-ID: <CAHS8izOqGMiZNkfQ6G-29UuG64GVo7L+fAzWn5A1713cDAgbgg@mail.gmail.com>
+Subject: Re: [PATCH net-next v19 09/13] tcp: RX path for devmem TCP
+To: Taehee Yoo <ap420073@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
+	Nikolay Aleksandrov <razor@blackwall.org>, Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, 
+	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
+	Praveen Kaligineedi <pkaligineedi@google.com>, Willem de Bruijn <willemb@google.com>, 
+	Kaiyuan Zhang <kaiyuanz@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a new debug package to the PKGBUILD for the pacman-pkg target. The
-debug package includes the non-stripped vmlinux file, providing access
-to debug symbols needed for kernel debugging and profiling. The vmlinux
-file will be installed to /usr/src/debug/${pkgbase}. The debug package
-will be built by default and can be excluded by overriding PACMAN_EXTRAPACKAGES.
+On Sat, Aug 17, 2024 at 9:58=E2=80=AFAM Taehee Yoo <ap420073@gmail.com> wro=
+te:
+>
+> On Wed, Aug 14, 2024 at 6:13=E2=80=AFAM Mina Almasry <almasrymina@google.=
+com> wrote:
+> >
+>
+> Hi Mina,
+>
+> > In tcp_recvmsg_locked(), detect if the skb being received by the user
+> > is a devmem skb. In this case - if the user provided the MSG_SOCK_DEVME=
+M
+> > flag - pass it to tcp_recvmsg_devmem() for custom handling.
+> >
+> > tcp_recvmsg_devmem() copies any data in the skb header to the linear
+> > buffer, and returns a cmsg to the user indicating the number of bytes
+> > returned in the linear buffer.
+> >
+> > tcp_recvmsg_devmem() then loops over the unaccessible devmem skb frags,
+> > and returns to the user a cmsg_devmem indicating the location of the
+> > data in the dmabuf device memory. cmsg_devmem contains this information=
+:
+> >
+> > 1. the offset into the dmabuf where the payload starts. 'frag_offset'.
+>
+> I have been testing this patch and I found a bug.
 
-Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
-Reviewed-by: Peter Jung <ptr1337@cachyos.org>
----
-v1->v2:
-- Use the new PACMAN_EXTRAPACKAGES [1] variable to allow users to disable the
-debug package if desired, instead of always including it.
+Thanks Taehee. It's exciting to see that you have gotten this far in
+your testing!! You seem to have devmem TCP (almost) fully working!!
+May I ask which driver this is? I assume it's bnxt. Do you have the
+driver support somewhere on github or something? I'm curious what your
+driver implementation looks like.
 
-[1] https://lore.kernel.org/lkml/20240813185900.GA140556@thelio-3990X/T/
+> While testing it with the ncdevmem cmd, it fails to validate buffers
+> after some period.
+> This is because tcp_recvmsg_dmabuf() can't handle skb properly when
+> the parameter offset !=3D 0.
 
- scripts/package/PKGBUILD | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+Sadly I'm unable to reproduce this issue, but I think I know where to
+suspect the bug is. Thanks for taking the time to root cause this and
+provide a fix.
 
-diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
-index fbd7eb10a52c..d40d282353de 100644
---- a/scripts/package/PKGBUILD
-+++ b/scripts/package/PKGBUILD
-@@ -5,7 +5,7 @@
- pkgbase=${PACMAN_PKGBASE:-linux-upstream}
- pkgname=("${pkgbase}")
- 
--_extrapackages=${PACMAN_EXTRAPACKAGES-headers api-headers}
-+_extrapackages=${PACMAN_EXTRAPACKAGES-headers api-headers debug}
- for pkg in $_extrapackages; do
- 	pkgname+=("${pkgbase}-${pkg}")
- done
-@@ -106,6 +106,15 @@ _package-api-headers() {
- 	${MAKE} headers_install INSTALL_HDR_PATH="${pkgdir}/usr"
- }
- 
-+_package-debug(){
-+	pkgdesc="Non-stripped vmlinux file for the ${pkgdesc} kernel"
-+	depends=(${pkgbase}-headers)
-+
-+	cd "${objtree}"
-+	mkdir -p "$pkgdir/usr/src/debug/${pkgbase}"
-+	install -Dt "$pkgdir/usr/src/debug/${pkgbase}" -m644 vmlinux
-+}
-+
- for _p in "${pkgname[@]}"; do
- 	eval "package_$_p() {
- 		$(declare -f "_package${_p#$pkgbase}")
+...
 
-base-commit: 869679673d3bbaaf1c2a43dba53930f5241e1d30
--- 
-2.46.0
+> > +               offset =3D 0;
+>
+> If the offset is 5000 and only 4500 bytes are skipped at this point,
+> the offset should be 500, not 0.
+> We need to add a condition to set the offset correctly.
+>
 
+I highly suspect this is a regression that was introduced in v13. In
+v12 Pavel asked if offset can just be set to 0 here, and I didn't see
+any reason why not, so I made the change:
+
+    -+          offset =3D offset - start;
+    ++          offset =3D 0;
+
+It looks like we missed something. I suspect reverting that may
+resolve the issue, because __skb_copy_datagram() in earlier kernels
+modified offset like this and it's well tested. Can you test with this
+change reverted? Diff like so:
+
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index 40e7335dae6e..984e28c5d096 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -2522,7 +2522,7 @@ static int tcp_recvmsg_dmabuf(struct sock *sk,
+const struct sk_buff *skb,
+                 */
+                skb =3D skb_shinfo(skb)->frag_list ?: skb->next;
+
+-               offset =3D 0;
++               offset =3D offset - start;
+        } while (skb);
+
+        if (remaining_len) {
+
+I'm running a long test to try to reproduce this issue, but I have ran
+many long tests before and was not able to. For some reason my setup
+is not able to reproduce this edge case. Are you doing anything
+special with ncdevmem? Or simply running commands like these on the
+server client?
+
+server: ./ncdevmem -s SERVER -c CLIENT -l -p 5224 -v 7
+client: yes $(echo -e \\x01\\x02\\x03\\x04\\x05\\x06) | tr \\n \\0 |
+nc SERVER 5224 -p 5224
+
+
+--=20
+Thanks,
+Mina
 
