@@ -1,195 +1,90 @@
-Return-Path: <linux-kernel+bounces-290825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57F6795592F
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 19:42:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 144CA955934
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 19:46:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFDB41F21BE9
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 17:42:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62820B2161D
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 17:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EA1155731;
-	Sat, 17 Aug 2024 17:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278C5155C96;
+	Sat, 17 Aug 2024 17:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="efjNRCeT";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fyJtI0Ne";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="efjNRCeT";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fyJtI0Ne"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="Pi+1yIQl"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF95440C;
-	Sat, 17 Aug 2024 17:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC27614E2CC;
+	Sat, 17 Aug 2024 17:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723916515; cv=none; b=ZqGmEWFaRHDv50nZHs3E2o1RhIjBVz9zrBZXJvLXOhTrwZQDICnb1p0RdGllErVMPcBpqPv6gOlBjtB67pTWXXoQOoei8glKgJOmt0IZ5wM5xx/QD+wJYuj5i2nwtC/Ddxb8eDGtGwjE1n+LV6I6cKWCSYvEyGyxqrGIZ0MCUNA=
+	t=1723916793; cv=none; b=Kmw1+8jBIo+uPcVlexug2s+Q7E2D5j69HE2IwcjGP9pOepazDK78ZKweaF3t7945FeaxWJGwSiSbdAfF9q1ZXHNHyp+JE7f25Afi376TTYa/iJDT2sHY7+YV8z9D9ruv9hBn06Z/FYxsb+vUtxl69/RdQqkQoIOmAaV2wGzJYwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723916515; c=relaxed/simple;
-	bh=jtqDTtNajvInU5FR+593dp7wIWkfBEwX/qDLvacvdGU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gke0JMDcAC3wHc5jrv44Wi9iqj/TDd1E1GBn2xoy0WIKxJvqVLvKCozmygBQMBcLFWu2cgAXPHpEoEWW0Yx1LZwTyQFcYomckUvia6y1KxsJMdSEyPkv3O9GUwsbVnDu9Bfybq5Mpno8qU/KzpJFECECA/1/fpOBHpFuLcUcxNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=efjNRCeT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fyJtI0Ne; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=efjNRCeT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fyJtI0Ne; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 45F4220233;
-	Sat, 17 Aug 2024 17:41:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723916506; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KVJWcYecUYFD2wvA80Jm7qXMKv1nO73ux4O2gMSc0l8=;
-	b=efjNRCeT06TaE2zT9OdcsxWe+em4oIyhgfp0atysl8mwt9tLlqtJz2CjFYu1nWCbW25eyu
-	eF5ogRAUlKyUxXL6ceoaKEMQB0hBIs/yxfayavEkxE4LhvE5E7FRa8jo1l5uHVYCLSAidf
-	2ulZneqPT/tKQ95GyhRFVapqbmHpYp8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723916506;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KVJWcYecUYFD2wvA80Jm7qXMKv1nO73ux4O2gMSc0l8=;
-	b=fyJtI0NeM10LedJTJL22uWlCRNpI6huGDudR1Ms5Dslf/+wt34IF99AglPFyMvWYJHRmUc
-	MSayPAyjbz8C4bAQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723916506; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KVJWcYecUYFD2wvA80Jm7qXMKv1nO73ux4O2gMSc0l8=;
-	b=efjNRCeT06TaE2zT9OdcsxWe+em4oIyhgfp0atysl8mwt9tLlqtJz2CjFYu1nWCbW25eyu
-	eF5ogRAUlKyUxXL6ceoaKEMQB0hBIs/yxfayavEkxE4LhvE5E7FRa8jo1l5uHVYCLSAidf
-	2ulZneqPT/tKQ95GyhRFVapqbmHpYp8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723916506;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KVJWcYecUYFD2wvA80Jm7qXMKv1nO73ux4O2gMSc0l8=;
-	b=fyJtI0NeM10LedJTJL22uWlCRNpI6huGDudR1Ms5Dslf/+wt34IF99AglPFyMvWYJHRmUc
-	MSayPAyjbz8C4bAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6B90113991;
-	Sat, 17 Aug 2024 17:41:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Dc64F9ngwGZ0BgAAD6G6ig
-	(envelope-from <svarbanov@suse.de>); Sat, 17 Aug 2024 17:41:45 +0000
-Message-ID: <1a6d6972-f2db-4d44-b79c-811ba44368f0@suse.de>
-Date: Sat, 17 Aug 2024 20:41:29 +0300
+	s=arc-20240116; t=1723916793; c=relaxed/simple;
+	bh=dfAIuA49d6maUVQ1eOJXieONkJENQ4XvD+5kCXqjNeU=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=JstV/u2r2nJ0973kBuLMLMjSHQAT0AKS73fYbN+LM/iIGIs48XhKIU4a4RGGd6Jb5t6CoNc6m/0bO67ODMUiVzPL+QSPuitYbaZPgdOr/+d9Ng0Omi9se8b0pvGio9rel+sFalgxxIrU2w8Y4U2vBDhcO9qe1Rs6qWOBsiiEA4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=Pi+1yIQl; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 05/13] PCI: brcmstb: Use bridge reset if available
-To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240815225731.40276-1-james.quinlan@broadcom.com>
- <20240815225731.40276-6-james.quinlan@broadcom.com>
-Content-Language: en-US
-From: Stanimir Varbanov <svarbanov@suse.de>
-In-Reply-To: <20240815225731.40276-6-james.quinlan@broadcom.com>
-Content-Type: text/plain; charset=UTF-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1723916787;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/2fq2cJOoYCZ0qPJRLcrPAQ3+lG+SQLv/Ww2mQw2+t4=;
+	b=Pi+1yIQl4TAVFM8NgdyWXo/AQ0ttpqRDorSM2EgCWDSVVl1zkisbfGa2ucnbVz+8nJCg8s
+	/bVntQfY4i2xd41XSVufrQ1IbWtp0To98lVXkexaDWIqipLOsdCd62wpNNcZMVQ7JsZukP
+	VzoR8cZGtpRlckIaAIniBTYDSZdeHIbNyLEn95tDQOfdpobdZTFqhev5TT3bHEiz7lfIDl
+	F8wWzqbHS4EujjPhrsYs1J4Vhw37cxDQA9fIvc7XBk+3ECdSToH8P0uJjRYIzxzzSEdyrH
+	wd9StlIT0xL76ou7Vnwbw61xlA1ZREekQWpDC2AGS5VjwPZAMyASvAyCWEyzJQ==
+Date: Sat, 17 Aug 2024 19:46:25 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Ivan Orlov <ivan.orlov0322@gmail.com>
+Cc: masahiroy@kernel.org, isak01@gmail.com, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] menuconfig: Allow sorting the entries alphabetically
+In-Reply-To: <20240816141831.104085-1-ivan.orlov0322@gmail.com>
+References: <20240816141831.104085-1-ivan.orlov0322@gmail.com>
+Message-ID: <b7d45269e9d9438d3b1db293dc1482dd@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[broadcom.com,vger.kernel.org,kernel.org,google.com,arm.com,debian.org,suse.de,linaro.org,gmail.com];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid]
-X-Spam-Score: -4.30
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Hi Jim,
+Hello Ivan,
 
-On 8/16/24 01:57, Jim Quinlan wrote:
-> The 7712 SOC has a bridge reset which can be described in the device tree.
-> Use it if present.  Otherwise, continue to use the legacy method to reset
-> the bridge.
+On 2024-08-16 16:18, Ivan Orlov wrote:
+> Implement the functionality which allows to sort the Kconfig entries
+> alphabetically if user decides to. It may help finding the desired 
+> entry
+> faster, so the user will spend less time looking through the list.
+
+Awesome, I love this new feature!  Thank you for the patch.
+
+> The sorting is done on the dialog_list elements in the 'dialog_menu'
+> function, so on the option "representation" layer. The sorting could be
+> enabled/disabled by pressing the '>' key. The labels are sorted in the
+> following way:
 > 
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> ---
->  drivers/pci/controller/pcie-brcmstb.c | 24 +++++++++++++++++++-----
->  1 file changed, 19 insertions(+), 5 deletions(-)
-
-Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
-
-One problem though on RPi5 (bcm2712).
-
-With this series applied + my WIP patches for enablement of PCIe on
-bcm2712 when enable the pcie1 and pcie2 root ports in dts, I see kernel
-boot stuck on pcie2 enumeration and I have to add this [1] to make it
-work again.
-
-Some more info about resets used:
-
-pcie0 @ 100000:
-	resets = <&bcm_reset 5>, <&bcm_reset 42>, <&pcie_rescal>;
-	reset-names = "swinit", "bridge", "rescal";
-
-pcie1 @ 110000:
-	resets = <&bcm_reset 7>, <&bcm_reset 43>, <&pcie_rescal>;
-	reset-names = "swinit", "bridge", "rescal";
-
-pcie2 @ 120000:
-	resets = <&bcm_reset 9>, <&bcm_reset 44>, <&pcie_rescal>;
-	reset-names = "swinit", "bridge", "rescal";
-
-
-I changed "swinit" reset for pcie2 to <&bcm_reset 9> (it is 32 in
-downstream rpi kernel) because otherwise I'm unable to enumerate RP1
-south bridge at all.
-
-Any help will be appreciated.
-
-~Stan
-
-[1]
-https://github.com/raspberrypi/linux/blob/rpi-6.11.y/drivers/pci/controller/pcie-brcmstb.c#L1711
+> 1. Put all entries into the array (from the linked list)
+> 2. Sort them alphabetically using qsort and custom comparator
+> 3. Restore the items linked list structure
+> 
+> I know that this modification includes the ugly heruistics for
+> extracting the actual label text from "    [ ] Some-option"-like
+> expressions (to be able to alphabetically compare the labels), and I
+> would be happy to discuss alternative solutions.
 
