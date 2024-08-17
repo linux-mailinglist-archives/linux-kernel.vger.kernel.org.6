@@ -1,89 +1,140 @@
-Return-Path: <linux-kernel+bounces-290671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 570C3955725
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 12:16:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7DA9955729
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 12:19:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9A8FB214FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 10:16:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BE811F21D35
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 10:19:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB19148826;
-	Sat, 17 Aug 2024 10:16:40 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B793149DE8;
+	Sat, 17 Aug 2024 10:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K6QvYROI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712C958ABC
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 10:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB0913E021;
+	Sat, 17 Aug 2024 10:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723889800; cv=none; b=a3fi/5RMJBhqBoSWRb3/ok+Dwk4zRN7dZ3tuprR48WEMVumzY2GyVmRzKpWX1OgKnFlskRAdQZiAfOAYOsr71LvYmhM49XLTVl/2enmxe74H/wkEZf85tWrENGZJsgO5YjpBsxfNpPLIoSKWuHh0/SfzYhFGD7qK4TxOXxCFg5Y=
+	t=1723889951; cv=none; b=f/PYJn0HOtff3o/SUXuRN8ZfPi/wa3+dt/U86PZK2mIiVNJLkrZEaG64p/hB33AHqALLc8iGLofiDX23jzc9mnOASYNcXAhQyU2U6Zo0srCgzjQswzK5d+r0U/efJH41c1KyG/anSQBTmCT/+Ke5W9mt/iEHhBM15gePsBRBSIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723889800; c=relaxed/simple;
-	bh=iOtg+i5wMlWNqEwP42cHZN7C73ZQKag0NQLv+2KnlR8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=p+208kZtZAth+jU1aykcEG/s607naw+8xMdRgFNUdcwLRL1IJyfpLyzwrlALsuD7ndHcbHKj0cIY5UkOmxtYxMJrDbiGY94wTYpkk4qoptKvFocwWidgPK/EMehi7ri2yRWXAPLFfjb+ulXK4vC++iwxaReYLhzGH+F7Cgz4BH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WmF545yYhz2CmfR;
-	Sat, 17 Aug 2024 18:11:36 +0800 (CST)
-Received: from kwepemm600007.china.huawei.com (unknown [7.193.23.208])
-	by mail.maildlp.com (Postfix) with ESMTPS id A7942180044;
-	Sat, 17 Aug 2024 18:16:32 +0800 (CST)
-Received: from DESKTOP-8RFUVS3.china.huawei.com (10.174.178.219) by
- kwepemm600007.china.huawei.com (7.193.23.208) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sat, 17 Aug 2024 18:16:31 +0800
-From: Zenghui Yu <yuzenghui@huawei.com>
-To: <kvmarm@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <maz@kernel.org>, <oliver.upton@linux.dev>, <james.morse@arm.com>,
-	<suzuki.poulose@arm.com>, <wanghaibin.wang@huawei.com>, Zenghui Yu
-	<yuzenghui@huawei.com>
-Subject: [PATCH] KVM: arm64: vgic-debug: Don't put unmarked LPIs
-Date: Sat, 17 Aug 2024 18:15:41 +0800
-Message-ID: <20240817101541.1664-1-yuzenghui@huawei.com>
-X-Mailer: git-send-email 2.23.0.windows.1
+	s=arc-20240116; t=1723889951; c=relaxed/simple;
+	bh=yq4xPAvlsqC1fAcFJqipBs6Ym77XzFEVD7SQoDh9GjM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J1KgxqxglVUIVqBL3qG5dGTNRPH7OIARFeReWF+f5uSpjj7ytMAt7BaNcsna9xsSnvHp0FqddYwCJfGR1XIDmTC1hqECvzA5UGc5nnzLAf5SF5ATFSlWfXLE2PjfF0vcFJGXHRrRZljEvFD5LLzdMo9Nz+0ZJKXJtZv5PF9S+D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K6QvYROI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DA73C116B1;
+	Sat, 17 Aug 2024 10:19:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723889950;
+	bh=yq4xPAvlsqC1fAcFJqipBs6Ym77XzFEVD7SQoDh9GjM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=K6QvYROIwLjuERVEW8MC+T7pJs3aZkgByN3gVidXBUr2iLLah0tyNmgZy+ktcIiN7
+	 MZR+aEAW8yZjhDbXvZ1WFEgnjmXmovPQqeiSBQ128CzVMEx4RPBJu45mu8a+u7oo7x
+	 evdrrTq6YcGmx+cZPn4H38sNHMXQDmVy7VNJOWG1M3n0Myo1sUHTu6wvtrEnZ2kgEj
+	 nXRhCyBO3CcUqqwn3YnEm1wy/zD+2gXr+hXoufyvtu0Sm7ZsN6XemnGVeTA6apnjdH
+	 N+CWgi1E3qRJD9imnT53A46l9LNExFXayiOtYcPEC3LxMdf/RER4eMMTNqP/R7bkd5
+	 A8z70PSIF2qYQ==
+Date: Sat, 17 Aug 2024 11:19:02 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Dumitru Ceclan via B4 Relay
+ <devnull+dumitru.ceclan.analog.com@kernel.org>
+Cc: dumitru.ceclan@analog.com, Lars-Peter Clausen <lars@metafoo.de>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, mitrutzceclan@gmail.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Conor Dooley
+ <conor.dooley@microchip.com>, Nuno Sa <nuno.sa@analog.com>
+Subject: Re: [PATCH v3 0/3] Add support for AD4113
+Message-ID: <20240817111902.2ed6b98a@jic23-huawei>
+In-Reply-To: <20240812-ad4113-v3-0-046e785dd253@analog.com>
+References: <20240812-ad4113-v3-0-046e785dd253@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm600007.china.huawei.com (7.193.23.208)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-If there were LPIs being mapped behind our back (i.e., between .start() and
-.stop()), we would put them at iter_unmark_lpis() without checking if they
-were actually *marked*, which is obviously not good.
+On Mon, 12 Aug 2024 11:13:13 +0300
+Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org> =
+wrote:
 
-Switch to use the xa_for_each_marked() iterator to fix it.
+> This patch series adds support for the AD4113 ADC within the existing
+> AD7173 driver.
+>=20
+> The AD4113 is a low power, low noise, 16-bit, =CE=A3-=CE=94 analog-to-dig=
+ital
+> converter (ADC) that integrates an analog front end (AFE) for four
+> fully differential or eight single-ended inputs.
+>=20
+> The part is not released yet and the documentation is not public.
+> Register map is identical to AD4114 besides the lower width data
+> register and the GPIO register.
+>=20
+> Particularities of this model:
+> - 16 bit data register
+> - no temperature sensor
+> - no current inputs
+> - input buffers
+> - internal reference
+> - external reference REF-/REF+
+> - no second external reference REF2-/REF2+
+> - no AVDD2 supply
+> - 2 GPIO pins with config bits starting at a higher position in register
+> - 8 VINx inputs with voltage divider
+> - 16 channel registers and 8 setup registers
+>=20
+> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+Hi.
 
-Fixes: 85d3ccc8b75b ("KVM: arm64: vgic-debug: Use an xarray mark for debug iterator")
-Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
----
- arch/arm64/kvm/vgic/vgic-debug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Series is fine, but I don't yet have the fix=20
+[PATCH] iio: adc: ad7173: Fix incorrect compatible string
+in the upstream of my togreg branch.
 
-diff --git a/arch/arm64/kvm/vgic/vgic-debug.c b/arch/arm64/kvm/vgic/vgic-debug.c
-index bc74d06398ef..e1397ab2072a 100644
---- a/arch/arm64/kvm/vgic/vgic-debug.c
-+++ b/arch/arm64/kvm/vgic/vgic-debug.c
-@@ -85,7 +85,7 @@ static void iter_unmark_lpis(struct kvm *kvm)
- 	struct vgic_irq *irq;
- 	unsigned long intid;
- 
--	xa_for_each(&dist->lpi_xa, intid, irq) {
-+	xa_for_each_marked(&dist->lpi_xa, intid, irq, LPI_XA_MARK_DEBUG_ITER) {
- 		xa_clear_mark(&dist->lpi_xa, intid, LPI_XA_MARK_DEBUG_ITER);
- 		vgic_put_irq(kvm, irq);
- 	}
--- 
-2.33.0
+Hence this will have to wait a little while for that to be present.
+Otherwise this will create a fiddly merge for linux-next etc.
+
+Jonathan
+
+> ---
+> Changes in v3:
+> - lowercase chip ID
+> - add patch to correctly order chip IDs defines
+> - picked up RB and ACK tags
+> - Link to v2: https://lore.kernel.org/r/20240809-ad4113-v2-0-2a70c101a1f4=
+@analog.com
+>=20
+> Changes in v2:
+> - correctly set realbits and storagebits to 16 in iio_chan_spec
+> - describe bindings restrictions in commit message due to lack of
+>   sufficient diff context
+> - describe model differences better in cover letter
+> - Link to v1: https://lore.kernel.org/r/20240807-ad4113-v1-0-2d338f702c7b=
+@analog.com
+>=20
+> ---
+> Dumitru Ceclan (3):
+>       dt-bindings: adc: ad7173: add support for ad4113
+>       iio: adc: ad7173: order chipID by value
+>       iio: adc: ad7173: add support for ad4113
+>=20
+>  .../devicetree/bindings/iio/adc/adi,ad7173.yaml    |  3 ++
+>  drivers/iio/adc/ad7173.c                           | 38 ++++++++++++++++=
+++++--
+>  2 files changed, 39 insertions(+), 2 deletions(-)
+> ---
+> base-commit: 1c61e13d7dc9003662bd7fd6064dfea67e64b014
+> change-id: 20240725-ad4113-baa63ff99245
+>=20
+> Best regards,
 
 
