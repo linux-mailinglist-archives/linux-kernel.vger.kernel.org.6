@@ -1,161 +1,149 @@
-Return-Path: <linux-kernel+bounces-290767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F59595585E
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 16:33:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D87C955860
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 16:33:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B482281B8B
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 14:33:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26B9A1C21290
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 14:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE54B9454;
-	Sat, 17 Aug 2024 14:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25B6D528;
+	Sat, 17 Aug 2024 14:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="MWHO1EqS"
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HJ4KGbcm";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="s9nfMM8r";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HJ4KGbcm";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="s9nfMM8r"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16C28F5B
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 14:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54E1D2FB;
+	Sat, 17 Aug 2024 14:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723905186; cv=none; b=M62nPbagEJmPsf2OgpwRgwdi32S+txRgKrY6UaDE9nUPozEFXfUHzRA5hs90GRn6P3VJULg5mV07GmJrJyL1KKVMvUGMnUXJLKzvojFSBnmxBnc0Soa0wLWcZ9mRBnS0++d3qcvlcKLnGVjzS2vafmhnbJru0oMQr08VeKUCSHc=
+	t=1723905191; cv=none; b=Kt2oX0rOHz04zWBlGvHaTrITpQFaCUJWsnO567HMa9jkKqijiLoQ/maAKMQbkHYdYEpfT9unIl4QrrgfkaY7FeW+DtGvpD8kiVRhxSQ1g4qBZNwgickGfBzGLopWvS0YL3Qn6OvPhW0Ro+Jx9vNH1Z+TYL5zjWALUfHRVZW6iNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723905186; c=relaxed/simple;
-	bh=C4poUl2wKeCf51qUHp+pzmr6kSXrA/riU68WL2PCBvs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kb6rEp/CQQ0f7RtddJyTez5ca33QE6KQcUCdgaWvcHTtt34KvVz0vOxRl23BVs1lbSUC3MoyYQNQSkd7YMAanrK/mhaizKy66PZZCrzYvqzU6dky3JnwYEI8CyIaBRtx8iDdEJw7lDJ/530DPv5+IzBflMNGjTGSTf6blOqbM7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=MWHO1EqS; arc=none smtp.client-ip=209.85.222.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-822fdea84c4so59873241.1
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 07:33:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723905182; x=1724509982; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0f8I9WhmapCi6fSJlsgN3NHudz8UCIRAhEFKdwk381g=;
-        b=MWHO1EqSPLMa0gjKRY9spn8g9Bu9eg9vQookM7CcBxltSH2fhzx3gWgW6Y1OnAuK0h
-         PAZkVmmvvFeMKSQksUHAyTAN8zJzl689NmUqT6f0etSMn/MtfuDOmO9BvUfbTfGd9LYW
-         obbWBSv3C3/HeKRy3XvA1AExcU+mKXpd9o8NB1q9v201bfoffcuqdthEmW7f6d8wzm1Q
-         WOC3tigENloe43o4hnlSrSwB10B63/tY/QF0QGZ0oPnsf5MpLCcvtY43vdD+EuQv19Br
-         rH2OKaBorYubncjZOyC7rk41u4mGl6Sbz84zxcdi3qJtwCxTaruHftqMn9pono7fDNzA
-         E0Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723905182; x=1724509982;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0f8I9WhmapCi6fSJlsgN3NHudz8UCIRAhEFKdwk381g=;
-        b=fy4BLTjXBW0u12oZ5JfCR505A6ouprPOKP6V60Ww4tu1K9gq+2GQdwM906cqtXduxq
-         szjjqgdUh/GRREPvdIIFcGPhkptgRtJnOt/saxQQXJEJEsKo5smDfof3Ib9egs8rt8dy
-         jYawUkJFEZhK1rbRhfM5q1OB+uTk8R8wiRpHtoXbxvXkT5WsnljFXE29JKQeF2RHTfLm
-         KJa+vhuHma00Atb+n23Tuk38heLzn8tFCNBGgpnE5hWHHlYHqfFcfxMf0qAuMPo3LaH6
-         N1JTkbj6xGlNEJEXN4QkkvnYbdsHOHWu9jcxvEDb2LwxXZmkF+CvjC6b3TaE+vmM2KyA
-         nUxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUzHr2V4OetWvPUHVfuw3hmI9ko6i9CIDOgXK/R3hZT/IIKBEhDz0YzsRK/pWj0Y1Pr8UTStLM3Bbv8j785OgeFwqupV/5wRkk1xkzj
-X-Gm-Message-State: AOJu0Yy3MTVsLAbr7Ee1+KQXmUzNPA0OKVCHQDmE96ButgQcpgXLl2Am
-	3/VLYyBERq7MxzFIlZkhzoDcGEUIx8BLHYvq3ervymghjR333gZ/PxBY+bRlzs2N1KBm53sqolN
-	XFDujPpjsIv+DVwbJA1PZzF93O4hxH5SLVceLZg==
-X-Google-Smtp-Source: AGHT+IH1CcAu0+oQSLVCvod6ENKuThRGNhzp9I4Ruu7kGYuYhFS9l/UWlmOUACFHt1dEqWcwkjjoiM7kgDFXTRLzerM=
-X-Received: by 2002:a05:6102:f11:b0:491:1e5b:8a0a with SMTP id
- ada2fe7eead31-4977bf58f35mr3179941137.4.1723905182011; Sat, 17 Aug 2024
- 07:33:02 -0700 (PDT)
+	s=arc-20240116; t=1723905191; c=relaxed/simple;
+	bh=P7XAFbV0SN4dW8j8/XnNvX/OfIOzKTU6tgUHMI2Wjbs=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BCUID+2RZ6J+nVJIe+rMwAld64uIj54flJ9le1mWSYT2UQ//DNa8MZs9x2k9aGELNdzhTUAdVrkDUiRt4VkPK+WOPoWBCB2vx/rEGoXpFtvhYkHuv9sO0LjuTUMno/OpisQbprmAxnQvob2saIwhajBM583BxfWIuPxpd5xZ+Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HJ4KGbcm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=s9nfMM8r; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HJ4KGbcm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=s9nfMM8r; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9E2B222525;
+	Sat, 17 Aug 2024 14:33:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723905187; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CCQbpS+QIXCwwA3tC4YutAsPWszxrwZWJszs+8DMaWM=;
+	b=HJ4KGbcm1Iv+epxJSakKG6dnCz74qKS3BYo5/bA6oA4ik0S+FQbfbPP5fszVH2cUeTA9q1
+	JVyEtQRsuOde1D8TaeJfCUhPW9DIRq67ahEMAu+DPPF4yqB4PB74GszKz7lJY22jUYy16T
+	pYfYOpk4LA8Tnk/N8YiSX+dpwGRCqjk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723905187;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CCQbpS+QIXCwwA3tC4YutAsPWszxrwZWJszs+8DMaWM=;
+	b=s9nfMM8rcywurNYVJ+2/hHno2WUra3qR8cxpZhsuQddOeY/z0oxvhPeDRk4d/XrXaU13EV
+	9AUi2DXhD540ebAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=HJ4KGbcm;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=s9nfMM8r
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723905187; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CCQbpS+QIXCwwA3tC4YutAsPWszxrwZWJszs+8DMaWM=;
+	b=HJ4KGbcm1Iv+epxJSakKG6dnCz74qKS3BYo5/bA6oA4ik0S+FQbfbPP5fszVH2cUeTA9q1
+	JVyEtQRsuOde1D8TaeJfCUhPW9DIRq67ahEMAu+DPPF4yqB4PB74GszKz7lJY22jUYy16T
+	pYfYOpk4LA8Tnk/N8YiSX+dpwGRCqjk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723905187;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CCQbpS+QIXCwwA3tC4YutAsPWszxrwZWJszs+8DMaWM=;
+	b=s9nfMM8rcywurNYVJ+2/hHno2WUra3qR8cxpZhsuQddOeY/z0oxvhPeDRk4d/XrXaU13EV
+	9AUi2DXhD540ebAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5DFBD1397F;
+	Sat, 17 Aug 2024 14:33:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id r2jYFKO0wGakWgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Sat, 17 Aug 2024 14:33:07 +0000
+Date: Sat, 17 Aug 2024 16:33:48 +0200
+Message-ID: <87mslb1ann.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: <perex@perex.cz>,
+	<tiwai@suse.com>,
+	<arnd@arndb.de>,
+	<linux-sound@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH -next] ALSA: seq: Remove unused declarations
+In-Reply-To: <20240817093334.1120002-1-yuehaibing@huawei.com>
+References: <20240817093334.1120002-1-yuehaibing@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240817142257.14470-1-aardelean@baylibre.com>
-In-Reply-To: <20240817142257.14470-1-aardelean@baylibre.com>
-From: Alexandru Ardelean <aardelean@baylibre.com>
-Date: Sat, 17 Aug 2024 17:32:51 +0300
-Message-ID: <CA+GgBR-ymOVRbPgKcWDprduUwaBbDD_8aBc9A1qH-bz_FRe6Ew@mail.gmail.com>
-Subject: Re: [PATCH] iio: adc: ad7606: move 'val' pointer to ad7606_scan_direct()
-To: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: jic23@kernel.org, Michael.Hennerich@analog.com, lars@metafoo.de, 
-	gstols@baylibre.com, nuno.sa@analog.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 9E2B222525
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.98%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -3.51
 
-On Sat, Aug 17, 2024 at 5:23=E2=80=AFPM Alexandru Ardelean
-<aardelean@baylibre.com> wrote:
->
-> The ad7606_scan_direct() function returns 'int', which is fine for 16-bit
-> samples.
-> But when going to 18-bit samples, these need to be implemented as 32-bit
-> (or int) type.
->
-> In that case when getting samples (which can be negative), we'd get rando=
-m
-> error codes.
-> So, the easiest thing is to, just move the 'val' pointer to
-> 'ad7606_scan_direct()'. This doesn't qualify as a fix, it's just a
-> preparation for 18-bit ADCs (of the AD7606 family).
->
-> Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
-> ---
+On Sat, 17 Aug 2024 11:33:34 +0200,
+Yue Haibing wrote:
+> 
+> These functions are never implemented and used.
+> 
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 
-Baaah.
-Please disregard this patch.
+Applied, thanks.
 
-It seems I picked it up from an older working branch by mistake.
 
-I still need to learn to use this new b4 tool.
-
-Apologies.
-
->  drivers/iio/adc/ad7606.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
-> index dba1f28782e4..35b2862c3928 100644
-> --- a/drivers/iio/adc/ad7606.c
-> +++ b/drivers/iio/adc/ad7606.c
-> @@ -138,7 +138,8 @@ static irqreturn_t ad7606_trigger_handler(int irq, vo=
-id *p)
->         return IRQ_HANDLED;
->  }
->
-> -static int ad7606_scan_direct(struct iio_dev *indio_dev, unsigned int ch=
-)
-> +static int ad7606_scan_direct(struct iio_dev *indio_dev, unsigned int ch=
-,
-> +                             int *val)
->  {
->         struct ad7606_state *st =3D iio_priv(indio_dev);
->         int ret;
-> @@ -153,7 +154,7 @@ static int ad7606_scan_direct(struct iio_dev *indio_d=
-ev, unsigned int ch)
->
->         ret =3D ad7606_read_samples(st);
->         if (ret =3D=3D 0)
-> -               ret =3D st->data[ch];
-> +               ret =3D (short)st->data[ch];
->
->  error_ret:
->         gpiod_set_value(st->gpio_convst, 0);
-> @@ -173,10 +174,9 @@ static int ad7606_read_raw(struct iio_dev *indio_dev=
-,
->         switch (m) {
->         case IIO_CHAN_INFO_RAW:
->                 iio_device_claim_direct_scoped(return -EBUSY, indio_dev) =
-{
-> -                       ret =3D ad7606_scan_direct(indio_dev, chan->addre=
-ss);
-> +                       ret =3D ad7606_scan_direct(indio_dev, chan->addre=
-ss, val);
->                         if (ret < 0)
->                                 return ret;
-> -                       *val =3D (short) ret;
->                         return IIO_VAL_INT;
->                 }
->                 unreachable();
-> --
-> 2.46.0
->
+Takashi
 
