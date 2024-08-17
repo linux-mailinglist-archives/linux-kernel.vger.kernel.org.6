@@ -1,141 +1,90 @@
-Return-Path: <linux-kernel+bounces-290739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74602955803
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:18:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94A0F955806
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05032B219CB
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:18:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FDDF1F21B2B
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486A714D282;
-	Sat, 17 Aug 2024 13:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46E51527B4;
+	Sat, 17 Aug 2024 13:18:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="WoBeRecr"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b="KbKb6G6x"
+Received: from serv108.segi.ulg.ac.be (serv108.segi.ulg.ac.be [139.165.32.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6991E531;
-	Sat, 17 Aug 2024 13:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878C883A17;
+	Sat, 17 Aug 2024 13:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.165.32.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723900687; cv=none; b=A/xCvTxPj+tp9AHMgqsNky13W7/YYDhhKqZeviTYXAw9v34WMRGVfUJflxRMpKbQmVT4iGRHdrZi1P7PMbboJeSaGtyFoEJ3i7ApAHUAgBNWxMnlL7+VPpTQW3KSYJqS2LyDhOM0OjEhNGar+e4XglPVO7dfhEZRxJCUB2BaPvU=
+	t=1723900711; cv=none; b=WtnFubBcPBYwAWcuar4IF7UrIr/iDyKHBH4/Q56Gg49oyN3+DF5u9IaROXghbtYXwhlDbPcv3Kfxbkec560jpQenbZ3GZAw9Ulyd+BGUcsSUMxftMBdUJ1ljuXg7w33sHldIXk0Ks5ECuKit6bHcmD5OOU/kXPLSXttJ5MrZgb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723900687; c=relaxed/simple;
-	bh=HvXmyuHg5GnswCDkAJPVSYjHNNSfv3TKohdSNPIPCZ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lFHxGZGVm2PnqaATzuXUZBjGp+r4XLo+J8U8POXEt+afHH4Z58pQ6TzVkKpMCg8U4V/pnqY2hetGzIiRj9AGUcwF3mjt4hxG5iNBPBsoHbxYfQNwqknjkoSJa8Bxf97TE4hn0A+f+lM6ZwpIBmSd5qY0afTDO6RgFbswpTAYABU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=WoBeRecr; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=SgbIPuQb9jRS6bEK3u2c9dEhiPTushvj+p3+mp9gGzw=; b=WoBeRecrG9h5E3blQfEkLRl/4W
-	0vh6R/aKkW2Rmq8EDRIiUplqhXk7W0N5DKFlhZqRwPiSUZCkPp+7N/9oQ0WQl9z0fDexLlAwPxh3l
-	0GUWnCwsY+sCiqMlQhjY6H+rOPtJRWb4yS3c5XqnzEs4a8bf0Nkt5A2kBTLw54H1pr8eEL0Qh9WT7
-	hQ8PZDkDZXQ6QkQ4itVQs2uocW/vfXg/0OIxGimSYAIb/GwWndLcmWHfXPVdjCfPzZ2+eWhhaYrWH
-	rTAyqrqrnnUXuc4Bsgj4Xw6Yj/iX5Hdg9X9cSX+KuGHgtNJe/m2wUPYp/4W08PwZrKvXtFiWCvh5O
-	G4U83+Zw==;
-Received: from [2001:9e8:9db:8201:3235:adff:fed0:37e6] (port=46100 helo=lindesnes.fjasle.eu)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1sfJJX-00DYyR-GG;
-	Sat, 17 Aug 2024 15:17:51 +0200
-Date: Sat, 17 Aug 2024 15:17:47 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH] modpost: improve the section mismatch warning format
-Message-ID: <20240817-strong-passionate-gecko-dd86ac@lindesnes>
-References: <20240812165455.2156964-1-masahiroy@kernel.org>
+	s=arc-20240116; t=1723900711; c=relaxed/simple;
+	bh=HrSfnsFtNBSL3Ll3AO1k9QGFMqtExW2Cjt6YKQfpa/I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=h/I0Ke5hT0EmTT0tnvCu5nwXNi1YxTxg6NU9Lc4QZTx6T5XW2Q+oG+MHhKpTIHueQ7MD6EdQ5RZYqv6dHHKxh5kNQOXCtDg0MdzdtnuFqKohmjsfTKPtIUSe2f5a2w3WbZIE++9KbTN0OU4EhQNzi92pfpKa+oKJsr1eJmo591Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be; spf=pass smtp.mailfrom=uliege.be; dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b=KbKb6G6x; arc=none smtp.client-ip=139.165.32.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uliege.be
+Received: from ubuntu.home (220.24-245-81.adsl-dyn.isp.belgacom.be [81.245.24.220])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by serv108.segi.ulg.ac.be (Postfix) with ESMTPSA id 7A04A200BE42;
+	Sat, 17 Aug 2024 15:18:27 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 serv108.segi.ulg.ac.be 7A04A200BE42
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uliege.be;
+	s=ulg20190529; t=1723900707;
+	bh=aSOs550sGKXT38iGfuI5W9QA85cxI3oGMnVNHjYv2lw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KbKb6G6xi+Fg2lshGPww3tjKRaypIIv+LIO9Q9qFey6HJDVRaiaUTuVxHqi/kBUVk
+	 TL9XaGIjZAZOVAu9GyB22FHxACh3sVrXWu2vZUv4Hq4Jhc+bsoxKk09bwVyxiSeqJG
+	 MDWuPKsA69rmjTxS12ctaIKThr7WuwPKGwyDTossotBOmGPdfINm1mviXQVGRMSJhV
+	 bXMS/8w4QTrX/8spBRmxVg42bpVkIfuEebjza0kshQTxlgr3ZpdN35Ws8tCptos/0O
+	 ngqOtCcHThBzpBMi8uG5rgAznPzjP7udIn1FwTti+cWvhE1XRFK6NgiJtsQ+DoLkUO
+	 O00exDhmkqA/A==
+From: Justin Iurman <justin.iurman@uliege.be>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	dsahern@kernel.org,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	justin.iurman@uliege.be
+Subject: [PATCH net-next v3 0/2] net: ipv6: ioam6: introduce tunsrc
+Date: Sat, 17 Aug 2024 15:18:16 +0200
+Message-Id: <20240817131818.11834-1-justin.iurman@uliege.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812165455.2156964-1-masahiroy@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 13, 2024 at 01:54:51AM +0900, Masahiro Yamada wrote:
-> This commit improves the section mismatch warning format when there is
-> no suitable symbol name to print.
-> 
-> The section mismatch warning prints the reference source in the form
-> of <symbol_name>+<offset> and the reference destination in the form
-> of <symbol_name>.
-> 
-> However, there are some corner cases where <symbol_name> becomes
-> "(unknown)", as reported in commit 23dfd914d2bf ("modpost: fix null
-> pointer dereference").
-> 
-> In such cases, it is better to print the symbol address.
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
->  scripts/mod/modpost.c | 21 +++++++++++++--------
->  1 file changed, 13 insertions(+), 8 deletions(-)
-> 
-> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> index d0f138803207..3e474291258c 100644
-> --- a/scripts/mod/modpost.c
-> +++ b/scripts/mod/modpost.c
-> @@ -705,10 +705,7 @@ static char *get_modinfo(struct elf_info *info, const char *tag)
->  
->  static const char *sym_name(struct elf_info *elf, Elf_Sym *sym)
->  {
-> -	if (sym)
-> -		return elf->strtab + sym->st_name;
-> -	else
-> -		return "(unknown)";
-> +	return sym ? elf->strtab + sym->st_name : "";
->  }
->  
->  /*
-> @@ -1021,6 +1018,7 @@ static void default_mismatch_handler(const char *modname, struct elf_info *elf,
->  	Elf_Sym *from;
->  	const char *tosym;
->  	const char *fromsym;
-> +	char taddr_str[16];
->  
->  	from = find_fromsym(elf, faddr, fsecndx);
->  	fromsym = sym_name(elf, from);
-> @@ -1034,10 +1032,17 @@ static void default_mismatch_handler(const char *modname, struct elf_info *elf,
->  
->  	sec_mismatch_count++;
->  
-> -	warn("%s: section mismatch in reference: %s+0x%x (section: %s) -> %s (section: %s)\n",
-> -	     modname, fromsym,
-> -	     (unsigned int)(faddr - (from ? from->st_value : 0)),
-> -	     fromsec, tosym, tosec);
-> +	if (!tosym[0])
-> +		snprintf(taddr_str, sizeof(taddr_str), "0x%x", (unsigned int)taddr);
-> +
-> +	/*
-> +	 * The format for the reference source:      <symbol_name>+<offset> or <address>
-> +	 * The format for the reference destination: <symbol_name>          or <address>
-> +	 */
-> +	warn("%s: section mismatch in reference: %s%s0x%x (section: %s) -> %s (section: %s)\n",
-> +	     modname, fromsym, fromsym[0] ? "+" : "",
-> +	     (unsigned int)(faddr - (fromsym[0] ? from->st_value : 0)),
-> +	     fromsec, tosym[0] ? tosym : taddr_str, tosec);
->  
->  	if (mismatch->mismatch == EXTABLE_TO_NON_TEXT) {
->  		if (match(tosec, mismatch->bad_tosec))
-> -- 
-> 2.43.0
-> 
+This series introduces a new feature called "tunsrc" (just like seg6
+already does).
 
-Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
+v3:
+- address Jakub's comments
+
+v2:
+- add links to performance result figures (see patch#2 description)
+- move the ipv6_addr_any() check out of the datapath
+
+Justin Iurman (2):
+  net: ipv6: ioam6: code alignment
+  net: ipv6: ioam6: new feature tunsrc
+
+ include/uapi/linux/ioam6_iptunnel.h |  6 +++
+ net/ipv6/ioam6_iptunnel.c           | 74 ++++++++++++++++++++++++-----
+ 2 files changed, 68 insertions(+), 12 deletions(-)
+
+-- 
+2.34.1
+
 
