@@ -1,164 +1,113 @@
-Return-Path: <linux-kernel+bounces-290772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0277D955867
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 16:42:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA176955868
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 16:42:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4C2C2820C5
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 14:42:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCBFA1C20F09
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 14:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD5EBE40;
-	Sat, 17 Aug 2024 14:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7557CBA33;
+	Sat, 17 Aug 2024 14:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Vz++LjCI"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="c42NRJ46"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD4F944E
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 14:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9922B944E
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 14:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723905758; cv=none; b=btoWegwfoJFueiwuTx5t5M15gVRocT1LXnCru/0wrIkkrKvWtkhuwMvlLINZoNxgY+cGtIDrm7DTQxJHhwsA8jGu2geuiftW++vS0HKnLD+ynOLJQLoo5ulGllikYPfI7xGclBgQbF93wpFCCHdY45AJw4zFMLje3OO+mDUXkGo=
+	t=1723905766; cv=none; b=s04mVy5PU0+VJjt42YS5yjks7XuNWK6kq82+u8hlM5DCCH5c5gcnBnPLTfq17rEAqhNGz5GWcCZzcrdgxdmOSKsXlby+czFeO7Y52y1iPzVKXHlQaWm0UlQqZllNAAEYKGEV/34Lplku4dSbJBpFBu4c+gRxFWAOpx/k7YF8Xug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723905758; c=relaxed/simple;
-	bh=UBkzE6+oCuIftGfpMq3065zC0QcdCWFK6oX1UTE8cBY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EUo+CztQsouzvtD+m+QV9anW56FiOOy3/limZLQajMCIUk22pRITrXlJERu1aVwP2OOJZWy3BNx2k6L1QjHHiq2wV/IwtAiEKzhJhFL3fDSmg5W3W9/D3qZ/kH1EKI+oOoIbFv5/JrPOjVn4V3wM+o0HHUjA5HrPl/CSn0oTzVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Vz++LjCI; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5bec50de77fso416346a12.2
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 07:42:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723905754; x=1724510554; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HHNgwMtUWTK7B3ia4ikN1/V7/xrza6Azw4TfJ/emNAY=;
-        b=Vz++LjCIuX1S5gqL419Z79V/IOB5jKhdYW/zG7d7pLAZ5dxepFXYzsnHeFcG0zjFxM
-         hPSaLIpdr7s5zdi2elB+moIDxACuYsy3JA8c7SC6NWFK4YbMNdqhEQkOWJvgqgNUaeM3
-         ZbmpU5RXYPBaSWZCK4WIlrmGUzZySyJ1MyUceXkpCHm0F+u/IxJmeq6nq1cTz4DJPdPy
-         wQZEho5kL77OAUxhod19joanWQbiMoHaSSPHH2FdbPtZCcicS2a0L4bARVp7D9JZceFs
-         3ERufM4b95bWOBR9KD+lVrlKBZ3K35ZwtzVOzpHjH5mHvfB5/uN7zBstNyVb2h3AIrFL
-         QHTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723905754; x=1724510554;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HHNgwMtUWTK7B3ia4ikN1/V7/xrza6Azw4TfJ/emNAY=;
-        b=CHGJJHKtJQjzlmju1wcV1lgM3pd6aE740/OwrfE610FRI7UUpY347NOGPsFZRKE/2U
-         tV4866UcO6oI8gW6bxglmqh2M5pLJ+kLMAjZlI9vYhxOiO4JsnP81NNq7MnCLZW3szoQ
-         qI4QbD8q67uXCpLztZ0vFQlUs2XwS/vt+r+Ow31jsMrjZAyqF5fWLHVB2FpvSo5oIDT0
-         pDbtdt3IZ6oT9uNObIloaGt+PpcYD26mrDjosLLiv1VGWVKUQvehZ1sY98ZK2kw9vjbe
-         Yg1o6vQO/a3H0XcaszQ+dtpRUgqTiJLHZtPMdlzO/ZG5gIm2HpHFvodfFHqzRAyETp69
-         lgJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ/sWyAzSr2wHYjcrsKf2GtkG3QPDnC9R2Z2X3lQyPFF/kGZ0NuPV7NWBayiEQ3AUlI0kJv4MJMGDitRHoEKzbG7U/IPQpwHPD2O7l
-X-Gm-Message-State: AOJu0YyihLAmcK6k2uRsUEF60IJMB3OxRA5rUS+xK2EYByXvchczvBdw
-	3nQZ1OrEADkTYBrBB95kmIdwtervOBXTWXBiKZssNH3982C3FTPQI54gtnYRxOI=
-X-Google-Smtp-Source: AGHT+IE9RuYHDHrkqJsko1Tqy4QNxSpJva9+rcXcps9qVQ3GLPfBR9jtX56S0hFYxtbftprk2G/0xg==
-X-Received: by 2002:a17:907:6d1f:b0:a80:b63b:eba0 with SMTP id a640c23a62f3a-a839291c501mr246376766b.4.1723905753890;
-        Sat, 17 Aug 2024 07:42:33 -0700 (PDT)
-Received: from localhost.localdomain ([188.27.129.165])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c6c07sm409840666b.43.2024.08.17.07.42.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Aug 2024 07:42:33 -0700 (PDT)
-From: Alexandru Ardelean <aardelean@baylibre.com>
-To: linux-iio@vger.kernel.org,
+	s=arc-20240116; t=1723905766; c=relaxed/simple;
+	bh=in8M3zm45MU0enM4bTUpLBUEz4fAvhsTjIqhfnbfRp4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FZOi3do1DYcTO7G9hUWQ3THI/ZFvjq9CAQ2SOhKR9DKmTIDNCNmD9YPDffSXPJb2zptrY+jh2LDA99oPdhXSR8GTmibt6sriWyWkDSzuKjuqRrvSuDT51u65Z1m2eWGn/GzoQ7+APM9EWC2v9yFkC+r5iz6AUx+lm7RwY236TGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=c42NRJ46; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2F07440E022F;
+	Sat, 17 Aug 2024 14:42:42 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id hEdUfdCkq0D7; Sat, 17 Aug 2024 14:42:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1723905758; bh=0iUNJgR4SdsRbF8nQcdR6MxyljvHC8WnM+Bg4yk3Xl0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c42NRJ46r7zr7TuxnQ/9AJDwaqFNBNEV69uianMHfiR6pMzxJHwo83QB0f3KDooGm
+	 or4C+jt3l41s8028ALOisE2wYw6qDE/KlWQ2XpnzC4EJ/tOJfuWYaS7O5+fKULVWig
+	 j2ag8gnV7WxZCEwN7JD1JrgRoG399snZDeWr0u9dlRjkkIyeRvsYfmw/qv51EiZ8oO
+	 sJ2dG4tEolkf/Bp0LuoJZpm82DxZjEd3VhSbmv1p1lDLoBSBv+EZmDWazUkTkxgkdx
+	 cS/EPYAjAigXKPztY3m+fg2Cx9AOwDx5lwMBbG662BDG+GklYC78CiS+/MnIpjvI3i
+	 OhoRrO9XYWVDU4I5567QXHGAggQh3/Dt8Bi9hftZ57rgyeqbxrHGayjt2wQ9id35vF
+	 oTXe73ampx4vE57MxPtVsRvDu+pvHemf2yjVabtj/9LX0LvivN7jykDTkD25repAra
+	 OuhVc9GKGEjt1SpJvmElxrazmls+tYcJNuEmLUREjv8PmdPx+oYaULAhrFoDtkG7aQ
+	 jvzL4FruFuO3Zz9K2aNzxlff/xkSmhZnQGfLWU/meMTSNPKWdsfWgThY5B34sPdN7v
+	 KOXVLe0DQVgm1yfCSwWj+oln0R1PdjbIDTvZALEORs6EQ+yw0P9B5SrBF1cRY0kV3L
+	 nKUUi1Id6FR5Kxo53E4SomcA=
+Received: from nazgul.tnic (unknown [87.120.165.225])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C5EDA40E0081;
+	Sat, 17 Aug 2024 14:42:27 +0000 (UTC)
+Date: Sat, 17 Aug 2024 16:43:16 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Xin Li <xin@zytor.com>, Andrew Cooper <andrew.cooper3@citrix.com>,
 	linux-kernel@vger.kernel.org
-Cc: jic23@kernel.org,
-	Michael.Hennerich@analog.com,
-	lars@metafoo.de,
-	gstols@baylibre.com,
-	Alexandru Ardelean <aardelean@baylibre.com>
-Subject: [PATCH] iio: adc: ad7606: split a 'ad7606_sw_mode_setup()' from probe
-Date: Sat, 17 Aug 2024 17:42:15 +0300
-Message-ID: <20240817144216.16569-1-aardelean@baylibre.com>
-X-Mailer: git-send-email 2.46.0
+Cc: tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, peterz@infradead.org,
+	seanjc@google.com
+Subject: Re: [PATCH v1 2/3] x86/msr: Switch between WRMSRNS and WRMSR with
+ the alternatives mechanism
+Message-ID: <20240817144316.GAZsC3BOm7anUPdJGe@fat_crate.local>
+References: <20240807054722.682375-1-xin@zytor.com>
+ <20240807054722.682375-3-xin@zytor.com>
+ <e18cd005-24ef-497d-b39c-74a54d89a969@citrix.com>
+ <7c09d124-08f1-40b4-813c-f0f74e19497a@zytor.com>
+ <DAC74A8B-DDE4-450E-93A1-EFD7D47B25F7@alien8.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <DAC74A8B-DDE4-450E-93A1-EFD7D47B25F7@alien8.de>
 
-This change moves the logic for setting up SW mode (during probe) into it's
-own function.
+On Sat, Aug 17, 2024 at 05:23:07PM +0300, Borislav Petkov wrote:
+> >static __always_inline void wrmsr(u32 msr, u64 val)
+> >{
+> >	asm volatile("1: " ALTERNATIVE_2("wrmsr", WRMSRNS, X86_FEATURE_WRMSRNS,
+> >					 "call asm_xen_write_msr", X86_FEATURE_XENPV)
+> >		     "2: " _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_WRMSR)
+> >		     : : "c" (msr), "a" (val), "d" ((u32)(val >> 32)),
+> >		     "D" (msr), "S" (val));
+> >}
+> >
+> >
+> >As the CALL instruction is 5-byte long, and we need to pad nop for both
+> >WRMSR and WRMSRNS, what about not using segment prefix at all?
+> 
+> The alternatives macros can handle arbitrary insn sizes - no need for any padding.
 
-With the addition of some newer parts, the SW-mode part can get a little
-more complicated.
-So it's a bit better to have a separate function for this.
+What you cannot do is have a CALL insn in only one of the alternative
+insn groups because the compiler is free to clobber callee regs and
+those might be live where you place the alternative and thus will have
+a nice lovely corruption.
 
-Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
----
- drivers/iio/adc/ad7606.c | 43 ++++++++++++++++++++++++----------------
- 1 file changed, 26 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
-index 68481e97e50a..192b9cd56b45 100644
---- a/drivers/iio/adc/ad7606.c
-+++ b/drivers/iio/adc/ad7606.c
-@@ -545,6 +545,29 @@ static const struct iio_trigger_ops ad7606_trigger_ops = {
- 	.validate_device = iio_trigger_validate_own_device,
- };
- 
-+static int ad7606_sw_mode_setup(struct iio_dev *indio_dev)
-+{
-+	struct ad7606_state *st = iio_priv(indio_dev);
-+
-+	if (!st->bops->sw_mode_config)
-+		return 0;
-+
-+	st->sw_mode_en = device_property_present(st->dev, "adi,sw-mode");
-+	if (!st->sw_mode_en)
-+		return 0;
-+
-+	indio_dev->info = &ad7606_info_os_range_and_debug;
-+
-+	/* Scale of 0.076293 is only available in sw mode */
-+	st->scale_avail = ad7616_sw_scale_avail;
-+	st->num_scales = ARRAY_SIZE(ad7616_sw_scale_avail);
-+
-+	/* After reset, in software mode, ±10 V is set by default */
-+	memset32(st->range, 2, ARRAY_SIZE(st->range));
-+
-+	return st->bops->sw_mode_config(indio_dev);
-+}
-+
- int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
- 		 const char *name, unsigned int id,
- 		 const struct ad7606_bus_ops *bops)
-@@ -617,23 +640,9 @@ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
- 	st->write_scale = ad7606_write_scale_hw;
- 	st->write_os = ad7606_write_os_hw;
- 
--	if (st->bops->sw_mode_config)
--		st->sw_mode_en = device_property_present(st->dev,
--							 "adi,sw-mode");
--
--	if (st->sw_mode_en) {
--		/* Scale of 0.076293 is only available in sw mode */
--		st->scale_avail = ad7616_sw_scale_avail;
--		st->num_scales = ARRAY_SIZE(ad7616_sw_scale_avail);
--
--		/* After reset, in software mode, ±10 V is set by default */
--		memset32(st->range, 2, ARRAY_SIZE(st->range));
--		indio_dev->info = &ad7606_info_os_range_and_debug;
--
--		ret = st->bops->sw_mode_config(indio_dev);
--		if (ret < 0)
--			return ret;
--	}
-+	ret = ad7606_sw_mode_setup(indio_dev);
-+	if (ret)
-+		return ret;
- 
- 	st->trig = devm_iio_trigger_alloc(dev, "%s-dev%d",
- 					  indio_dev->name,
 -- 
-2.46.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
