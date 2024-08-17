@@ -1,324 +1,146 @@
-Return-Path: <linux-kernel+bounces-290536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A085955574
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 06:56:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14AF7955576
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84BAB1C22857
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 04:56:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD47F1F23CEF
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 05:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2947F81720;
-	Sat, 17 Aug 2024 04:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B3xwNS+N"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB26101DE
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 04:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956A9811E2;
+	Sat, 17 Aug 2024 05:00:29 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [20.231.56.155])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F77BE5D;
+	Sat, 17 Aug 2024 05:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=20.231.56.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723870567; cv=none; b=AsbZtQgKqCDyYQZ1xHhDGnia+Sbms0oPrx/r7GKyOvrofMlIxLq+rtlCD6J3BtDx3BiM/q4eATXBvh3spwJRGRt1JQJjfkvwdi8H+Uuq04ycsWX/VY+wXxgQOZxueSSP2/AO7fMhtpDGT40NTWs96HWUFIMbiTO5Vl92DyXhOlg=
+	t=1723870829; cv=none; b=YZ7VS6gY6I98SQ4ktaALWWqKCgx5D3aI2DBB5HK129HslEDQoU+yCNIdEE1oaX0HLknyLdugyBYmpsyB/PBbgVs2pC4W4UbCMI3oxbm/Bs5TT/bqYXseDkTXBwSfGx+5YbF79KBhrIQ4QvOysYvyZm9ryZl9Wln1rQAdtQ3c0js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723870567; c=relaxed/simple;
-	bh=hgsOVRrRqAf3YVZwNJg1GTvX+JPAgwuaKzsarkTH5fY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k1jOvfX8XlU77+dSL9zy51dKjxnbS0NdUVHfng/vlvFxJpDwn17dvUFbjVIZ3YjQ3LUEQ0BgZOKaZrj2nkbHc7XRcF0AGMr30w9+MPbQCqlrovgt9TcSLjSvzWto87IRwcKEK87gb3KIeUXyqqEv5Tvifw4zxwv64MouB1akHIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B3xwNS+N; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7126d62667bso1694487b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 21:56:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723870565; x=1724475365; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=90Dn5cjzDzLtyzWrS/a8MBAYblFtGSEi8TOi7CgPMA0=;
-        b=B3xwNS+NEnrzvhCG+PvoWTig/6ekupz3cghpA4DI79A8C8YYI4nGcbnbgBUPHdu1Uc
-         CM0tfuKoLIyz/NcdFez2UZU42ZcwNNpSToCDg6Me02O9EfnwFmBVJqxR82btPjNAvFny
-         w6ABtchH2ZoHHIcUaA+GLfMTIWNa/cWWpVdGF2ZpA640hVbfruLcJDaSoH8PXecL3a8J
-         /ZHGB1r6GDWn95pdUZTdIV+inovxwjn3Eadd3VOwH8NsMWkGPJYZP7VxtguBDIG/A2l8
-         wSaOmYZWFPDFf3OLESGcmlVC+nQxnRmmkIecZWADtLxICr9zMHQMEsRd/dxL4V3+/I8W
-         WlEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723870565; x=1724475365;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=90Dn5cjzDzLtyzWrS/a8MBAYblFtGSEi8TOi7CgPMA0=;
-        b=mPMjedjpIAoSHeMPIpXRzvHlMwjYyr56joRWki9W8i3UrxT2HyAWL5vJKcb1dGMiV3
-         QnwSMEy3kZ8xaxIF5SJUlnNSzI7JfXvS4fNQwr839VMZ0BRqMqPf8tCiVso5MwwQp4Vk
-         GfBCssFj2sLqqz/9x/lHBxyNik9aHgs5Uyvl22VR9wQ1Cj9vqJIRlLF0+zQ/eiaShY1b
-         ZBBwyoiwYxsds8PfEatK+XQ4+GO/nD782Ew+dnrWpFmuey4MpP5AUozhQ3RCyC7oQ25f
-         dBehn7NTbcqq0qMof5K9iiBBjPhEeF9Nttq0C+FdgHEG9UD7a0O6NQkLdwzHPAngxeKQ
-         Wqpg==
-X-Forwarded-Encrypted: i=1; AJvYcCXWqqinZZwBipym57pE2MtGAAxD4fIVlcEpxHnNA6jNLr+xTEM21a6aD9H9A1YRgbDoKfZKGeynQfvTlWfdTxGH9dw3l7ffzyobS0ce
-X-Gm-Message-State: AOJu0YzJT5qA8tN54LWsKSv1SMcbLNPJH5ff0PD/QrhhxSX7WayHWsd6
-	rxS9EovwS5Tx0am78ypfJ10KtdewHCL93eEdrJyzSw2FuDzQxPku
-X-Google-Smtp-Source: AGHT+IHNKqt8weUm9VZF1ryifXfv4BG6d1BYy0/Vgx1L5ZhHaR/NdgwqOBdZQNBPwmxij2Y4NjwLsw==
-X-Received: by 2002:a05:6a00:3d01:b0:70d:2497:383 with SMTP id d2e1a72fcca58-713c4e72710mr6199987b3a.18.1723870564663;
-        Fri, 16 Aug 2024 21:56:04 -0700 (PDT)
-Received: from Barrys-MBP.hub ([2407:7000:8942:5500:fd84:292a:c6d0:8b67])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b61dc763sm3809014a12.39.2024.08.16.21.56.00
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 16 Aug 2024 21:56:04 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: akpm@linux-foundation.org,
-	linux-mm@kvack.org
-Cc: baohua@kernel.org,
-	baolin.wang@linux.alibaba.com,
-	corbet@lwn.net,
-	david@redhat.com,
-	ioworker0@gmail.com,
-	linux-kernel@vger.kernel.org,
-	ryan.roberts@arm.com,
-	v-songbaohua@oppo.com
-Subject: [PATCH v5] mm: override mTHP "enabled" defaults at kernel cmdline
-Date: Sat, 17 Aug 2024 16:55:16 +1200
-Message-Id: <20240817045516.58037-1-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1723870829; c=relaxed/simple;
+	bh=2S+QbEWGme4zIg1L2rhpubtJ7u7R8DG0G9w8lDVn/oA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mB8CaDMG2h0aXho30huSj0pUTSC0Bc1ysCEvRfPz4F3gHGRBgm9/HxenV93mMr8XwCmTO3hBaKL/hcjHPab4aO34MBrMYA6uZn9JGkV55doK+tsg0DOtinbWkPTiWS8Gl3iX0BTcY8biNL3kHMCpQpnn+drSYI7aiqU/E7qVGWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=20.231.56.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.50])
+	by app2 (Coremail) with SMTP id HwEQrABnEBUpLsBm_giDAA--.60679S2;
+	Sat, 17 Aug 2024 12:59:22 +0800 (CST)
+Received: from [172.20.10.4] (unknown [1.48.198.69])
+	by gateway (Coremail) with SMTP id _____wCHlXglLsBmXC9KAQ--.38422S2;
+	Sat, 17 Aug 2024 12:59:21 +0800 (CST)
+Message-ID: <64426130-d59a-47a1-8bf2-3b72fb0cc030@hust.edu.cn>
+Date: Sat, 17 Aug 2024 12:59:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6] docs/zh_CN: Add dev-tools/kcsan Chinese translation
+To: Jonathan Corbet <corbet@lwn.net>, Alex Shi <alexs@kernel.org>,
+ Yanteng Si <siyanteng@loongson.cn>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+References: <20240810082245.5934-1-tttturtleruss@hust.edu.cn>
+ <87ttfkhzl2.fsf@trenco.lwn.net>
+From: Haoyang Liu <tttturtleruss@hust.edu.cn>
+In-Reply-To: <87ttfkhzl2.fsf@trenco.lwn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:HwEQrABnEBUpLsBm_giDAA--.60679S2
+Authentication-Results: app2; spf=neutral smtp.mail=tttturtleruss@hust
+	.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvJXoWxuF1kAF4kKr43Gw4fAw4Dtwb_yoW5Ww4fpF
+	WvgrySka1DZr43Cw4Ig3W8Ar1FkFZ7Gr4UGFWagw1Fqwn8Kr4Syrs0qryjgayxXrWxAan8
+	Xw15KFyDWw4YyaDanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUmYb7Iv0xC_Zr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
+	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
+	v20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
+	6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r
+	126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I8C
+	rVACY4xI64kE6c02F40Ex7xfMcIj64x0Y40En7xvr7AKxVW8Jr0_Cr1UMcIj6x8ErcxFaV
+	Av8VW8uFyUJr1UMcIj6xkF7I0En7xvr7AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbVWUJVW8
+	JwACjcxG0xvEwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCF04k20x
+	vE74AGY7Cv6cx26r4fZr1UJr1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_
+	JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
+	AY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAI
+	cVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42
+	IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIev
+	Ja73UjIFyTuYvjxUVco2UUUUU
+X-CM-SenderInfo: rxsqjiqrssiko6kx23oohg3hdfq/1tbiAQkMAmbAGjQDhAABsI
 
-From: Ryan Roberts <ryan.roberts@arm.com>
 
-Add thp_anon= cmdline parameter to allow specifying the default enablement
-of each supported anon THP size.  The parameter accepts the following
-format and can be provided multiple times to configure each size:
+在 2024/8/17 6:28, Jonathan Corbet 写道:
+> Haoyang Liu <tttturtleruss@hust.edu.cn> writes:
+>
+>> Translate dev-tools/kcsan commit 31f605a308e6
+>> ("kcsan, compiler_types: Introduce __data_racy type qualifier")
+>> into Chinese and add it in dev-tools/zh_CN/index.rst
+>>
+>> Signed-off-by: Haoyang Liu <tttturtleruss@hust.edu.cn>
+>> Reviewed-by: Yanteng Si <siyanteng@loongson.cn>
+>> ---
+>> v5 -> v6: Fix a typo.
+>> v4 -> v5: Translate link into Chinese as well according to reviewer's advice.
+>> v3 -> v4: Added original English text for proper nouns and modified some unclear experessions.
+>> v2 -> v3: Revised some sentences based on reviewer's suggestions and updated the KTSAN url.
+>> v1 -> v2: Added commit tag and fixed style problems according to reviewer's suggestions.
+>>
+>>   .../translations/zh_CN/dev-tools/index.rst    |   2 +-
+>>   .../translations/zh_CN/dev-tools/kcsan.rst    | 321 ++++++++++++++++++
+>>   2 files changed, 322 insertions(+), 1 deletion(-)
+>>   create mode 100644 Documentation/translations/zh_CN/dev-tools/kcsan.rst
+> So I applied this, but ended up unapplying it.  It adds a whole pile of
+> docs build warnings:
+>
+> Documentation/translations/zh_CN/dev-tools/kcsan:223: ./include/linux/kcsan-checks.h:370: WARNING: Duplicate C declaration, also defined at dev-tools/kcsan:370.
+> Declaration is '.. c:macro:: ASSERT_EXCLUSIVE_WRITER'.
+> Documentation/translations/zh_CN/dev-tools/kcsan:223: ./include/linux/kcsan-checks.h:419: WARNING: Duplicate C declaration, also defined at dev-tools/kcsan:419.
+> Declaration is '.. c:macro:: ASSERT_EXCLUSIVE_WRITER_SCOPED'.
+> Documentation/translations/zh_CN/dev-tools/kcsan:223: ./include/linux/kcsan-checks.h:451: WARNING: Duplicate C declaration, also defined at dev-tools/kcsan:451.
+> Declaration is '.. c:macro:: ASSERT_EXCLUSIVE_ACCESS'.
+>
+> [...]
+>
+> You really do need to do a build test before sending changes like this.
+>
+> The problem is the duplicated inclusion caused by the kernel-doc
+> directive:
+>
+>> +.. kernel-doc:: include/linux/kcsan-checks.h
+>> +    :functions: ASSERT_EXCLUSIVE_WRITER ASSERT_EXCLUSIVE_WRITER_SCOPED
+>> +                ASSERT_EXCLUSIVE_ACCESS ASSERT_EXCLUSIVE_ACCESS_SCOPED
+>> +                ASSERT_EXCLUSIVE_BITS
+>>
+> We really just can't do that with the current build system; the best
+> thing is to put in a note saying to see the original document for those
+> declarations.
 
-thp_anon=<size>,<size>[KMG]:<value>;<size>-<size>[KMG]:<value>
+I'm sorry for the warnings my patch introduced. I thought they were 
+harmless so I ignored them. I will replace the duplicated inclusion with 
+a note and a link to the original document.
 
-An example:
+I apologize for my mistake.
 
-thp_anon=16K-64K:always;128K,512K:inherit;256K:madvise;1M-2M:never
 
-See Documentation/admin-guide/mm/transhuge.rst for more details.
+Thanks,
 
-Configuring the defaults at boot time is useful to allow early user
-space to take advantage of mTHP before its been configured through
-sysfs.
+Haoyang
 
-Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-Co-developed-by: Barry Song <v-songbaohua@oppo.com>
-Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-Tested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Lance Yang <ioworker0@gmail.com>
----
- -v5:
- * collect Baolin's reviewed-by and tested-by tags, thanks!
- * use get_order and check size is power 2, David, Baolin;
- * use proper __initdata
-
-.../admin-guide/kernel-parameters.txt         |   9 ++
- Documentation/admin-guide/mm/transhuge.rst    |  38 +++++--
- mm/huge_memory.c                              | 100 +++++++++++++++++-
- 3 files changed, 139 insertions(+), 8 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index f0057bac20fb..d0d141d50638 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6629,6 +6629,15 @@
- 			<deci-seconds>: poll all this frequency
- 			0: no polling (default)
- 
-+	thp_anon=	[KNL]
-+			Format: <size>,<size>[KMG]:<state>;<size>-<size>[KMG]:<state>
-+			state is one of "always", "madvise", "never" or "inherit".
-+			Can be used to control the default behavior of the
-+			system with respect to anonymous transparent hugepages.
-+			Can be used multiple times for multiple anon THP sizes.
-+			See Documentation/admin-guide/mm/transhuge.rst for more
-+			details.
-+
- 	threadirqs	[KNL,EARLY]
- 			Force threading of all interrupt handlers except those
- 			marked explicitly IRQF_NO_THREAD.
-diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-index 60522f49178b..4468851b6ecb 100644
---- a/Documentation/admin-guide/mm/transhuge.rst
-+++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -284,13 +284,37 @@ that THP is shared. Exceeding the number would block the collapse::
- 
- A higher value may increase memory footprint for some workloads.
- 
--Boot parameter
--==============
--
--You can change the sysfs boot time defaults of Transparent Hugepage
--Support by passing the parameter ``transparent_hugepage=always`` or
--``transparent_hugepage=madvise`` or ``transparent_hugepage=never``
--to the kernel command line.
-+Boot parameters
-+===============
-+
-+You can change the sysfs boot time default for the top-level "enabled"
-+control by passing the parameter ``transparent_hugepage=always`` or
-+``transparent_hugepage=madvise`` or ``transparent_hugepage=never`` to the
-+kernel command line.
-+
-+Alternatively, each supported anonymous THP size can be controlled by
-+passing ``thp_anon=<size>,<size>[KMG]:<state>;<size>-<size>[KMG]:<state>``,
-+where ``<size>`` is the THP size (must be a power of 2 of PAGE_SIZE and
-+supported anonymous THP)  and ``<state>`` is one of ``always``, ``madvise``,
-+``never`` or ``inherit``.
-+
-+For example, the following will set 16K, 32K, 64K THP to ``always``,
-+set 128K, 512K to ``inherit``, set 256K to ``madvise`` and 1M, 2M
-+to ``never``::
-+
-+	thp_anon=16K-64K:always;128K,512K:inherit;256K:madvise;1M-2M:never
-+
-+``thp_anon=`` may be specified multiple times to configure all THP sizes as
-+required. If ``thp_anon=`` is specified at least once, any anon THP sizes
-+not explicitly configured on the command line are implicitly set to
-+``never``.
-+
-+``transparent_hugepage`` setting only affects the global toggle. If
-+``thp_anon`` is not specified, PMD_ORDER THP will default to ``inherit``.
-+However, if a valid ``thp_anon`` setting is provided by the user, the
-+PMD_ORDER THP policy will be overridden. If the policy for PMD_ORDER
-+is not defined within a valid ``thp_anon``, its policy will default to
-+``never``.
- 
- Hugepages in tmpfs/shmem
- ========================
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 69cef10ed9aa..c8ca577526cf 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -82,6 +82,7 @@ unsigned long huge_zero_pfn __read_mostly = ~0UL;
- unsigned long huge_anon_orders_always __read_mostly;
- unsigned long huge_anon_orders_madvise __read_mostly;
- unsigned long huge_anon_orders_inherit __read_mostly;
-+static bool anon_orders_configured __initdata;
- 
- unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
- 					 unsigned long vm_flags,
-@@ -756,7 +757,10 @@ static int __init hugepage_init_sysfs(struct kobject **hugepage_kobj)
- 	 * disable all other sizes. powerpc's PMD_ORDER isn't a compile-time
- 	 * constant so we have to do this here.
- 	 */
--	huge_anon_orders_inherit = BIT(PMD_ORDER);
-+	if (!anon_orders_configured) {
-+		huge_anon_orders_inherit = BIT(PMD_ORDER);
-+		anon_orders_configured = true;
-+	}
- 
- 	*hugepage_kobj = kobject_create_and_add("transparent_hugepage", mm_kobj);
- 	if (unlikely(!*hugepage_kobj)) {
-@@ -941,6 +945,100 @@ static int __init setup_transparent_hugepage(char *str)
- }
- __setup("transparent_hugepage=", setup_transparent_hugepage);
- 
-+static inline int get_order_from_str(const char *size_str)
-+{
-+	unsigned long size;
-+	char *endptr;
-+	int order;
-+
-+	size = memparse(size_str, &endptr);
-+
-+	if (!is_power_of_2(size))
-+		goto err;
-+	order = get_order(size);
-+	if ((1 << order) & ~THP_ORDERS_ALL_ANON)
-+		goto err;
-+
-+	return order;
-+err:
-+	pr_err("invalid size %s in thp_anon boot parameter\n", size_str);
-+	return -EINVAL;
-+}
-+
-+static char str_dup[PAGE_SIZE] __initdata;
-+static int __init setup_thp_anon(char *str)
-+{
-+	char *token, *range, *policy, *subtoken;
-+	unsigned long always, inherit, madvise;
-+	char *start_size, *end_size;
-+	int start, end, nr;
-+	char *p;
-+
-+	if (!str || strlen(str) + 1 > PAGE_SIZE)
-+		goto err;
-+	strcpy(str_dup, str);
-+
-+	always = huge_anon_orders_always;
-+	madvise = huge_anon_orders_madvise;
-+	inherit = huge_anon_orders_inherit;
-+	p = str_dup;
-+	while ((token = strsep(&p, ";")) != NULL) {
-+		range = strsep(&token, ":");
-+		policy = token;
-+
-+		if (!policy)
-+			goto err;
-+
-+		while ((subtoken = strsep(&range, ",")) != NULL) {
-+			if (strchr(subtoken, '-')) {
-+				start_size = strsep(&subtoken, "-");
-+				end_size = subtoken;
-+
-+				start = get_order_from_str(start_size);
-+				end = get_order_from_str(end_size);
-+			} else {
-+				start = end = get_order_from_str(subtoken);
-+			}
-+
-+			if (start < 0 || end < 0 || start > end)
-+				goto err;
-+
-+			nr = end - start + 1;
-+			if (!strcmp(policy, "always")) {
-+				bitmap_set(&always, start, nr);
-+				bitmap_clear(&inherit, start, nr);
-+				bitmap_clear(&madvise, start, nr);
-+			} else if (!strcmp(policy, "madvise")) {
-+				bitmap_set(&madvise, start, nr);
-+				bitmap_clear(&inherit, start, nr);
-+				bitmap_clear(&always, start, nr);
-+			} else if (!strcmp(policy, "inherit")) {
-+				bitmap_set(&inherit, start, nr);
-+				bitmap_clear(&madvise, start, nr);
-+				bitmap_clear(&always, start, nr);
-+			} else if (!strcmp(policy, "never")) {
-+				bitmap_clear(&inherit, start, nr);
-+				bitmap_clear(&madvise, start, nr);
-+				bitmap_clear(&always, start, nr);
-+			} else {
-+				pr_err("invalid policy %s in thp_anon boot parameter\n", policy);
-+				goto err;
-+			}
-+		}
-+	}
-+
-+	huge_anon_orders_always = always;
-+	huge_anon_orders_madvise = madvise;
-+	huge_anon_orders_inherit = inherit;
-+	anon_orders_configured = true;
-+	return 1;
-+
-+err:
-+	pr_warn("thp_anon=%s: cannot parse, ignored\n", str);
-+	return 0;
-+}
-+__setup("thp_anon=", setup_thp_anon);
-+
- pmd_t maybe_pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
- {
- 	if (likely(vma->vm_flags & VM_WRITE))
--- 
-2.39.3 (Apple Git-146)
+>
+> This would be good to fix, perhaps with a variant of kernel-doc that
+> doesn't generate the duplicated declarations, but until somebody does
+> that we have to work around it.
+>
+> Thanks,
+>
+> jon
 
 
