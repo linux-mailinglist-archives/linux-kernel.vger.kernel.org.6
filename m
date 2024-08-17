@@ -1,126 +1,236 @@
-Return-Path: <linux-kernel+bounces-290693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC045955780
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:41:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D72C8955784
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82E612825B8
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 11:41:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62E9D1F21AF2
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 11:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595C714AD1A;
-	Sat, 17 Aug 2024 11:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7C914A4E1;
+	Sat, 17 Aug 2024 11:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="VjG5ENY6"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="mpFlwg5V"
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2075.outbound.protection.outlook.com [40.92.103.75])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05112256E;
-	Sat, 17 Aug 2024 11:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723894864; cv=none; b=RkEWevgVh4Q9O4QaJViHb+FnZXbSRc6BLNjiV1WV157ijVi1EiZWBnX4iK7yGxclCtfotOMa9vF050xXXSPsrY+e/ZJpi62vA3JegEKDzoq20HWxDvtk/5LmTnFciQm+Egj+zUJWF8jleKo7jxE3f+x99csR9D2YFYgYM7EYgBA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723894864; c=relaxed/simple;
-	bh=pHb1cd/bM5HAeb2aNJlmyYZrkZZKm2iDpqq5ciaa690=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GCGpbBJ9JzWCR6TwOQ5epwcg/r3G/wXq73CDRg4cYwQevBnrRRiXZgLvvQVX4DD2sZyu+ijMl8EVcfze5GJacqlay7V8OuMNpECDCJ819cMQNeCtc18ZYB5UkGrGSfRnGkSTrL0e59f5ZtUqDz4iWfUlTwjSPlW+OgAVRtvgqgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=VjG5ENY6; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-530e062217eso3682346e87.1;
-        Sat, 17 Aug 2024 04:41:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1723894861; x=1724499661; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vRpUQui6KEL9xqbOs0Ea/v4MaqiDAscFoJmUDj6bZgo=;
-        b=VjG5ENY6zeMmHwYARA8cB50dZ7mfDKkqTdbIZ/Vb8FNvCF7MS1GfhsTv7bt1cqBf/s
-         ipDKghtF2DgAqe1cEsDMIwGcr20rZrMGtM8F9BZM6dPV5UJsv9QKDVXQb5/UxVKrmvaW
-         8w+PQBOOp3ftnCuWuUzqjAyxwnjGKSSi4TPgHpuQoSJm+Fd+hrjlQ/mVnECh1Fi+QFhb
-         lOdJ5SaMd+Qt7so2BUXdyKEUHuy67EEVrJBGIlDiTaVH7OK5n6MXenG1/Bzv6DJRkd7p
-         2qe91DqqyiqRiADezp0wglAjHOZjlr/0VB85kfpb8tWcVzPrOGKlnli+VYaii17EG1mz
-         MYSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723894861; x=1724499661;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vRpUQui6KEL9xqbOs0Ea/v4MaqiDAscFoJmUDj6bZgo=;
-        b=TOZOtKrOrEcvdpTsVLKkKEcFHyRGtM8oJJ24Hdai/eKIwCsWlVuIA0Yz2/ZB0wgLFe
-         pvQ+HK7vVSryS7726q0a2ubXddqpJg4v8MN1Z33XBHFu1PAkUzQO3gGL8gkurc5Cu//Y
-         60j+aC7BOLmPgJreKJ5ExNEx4bnxx7DP+7Y5URo2vRj6QdtfRZCOGmh06ek/MJPcBuWQ
-         sKP1ZreRd2zvKhqzLZ0uxzKFPP6vPH6tV4S1uujQ6hsklA707pl1NWbQS1xMtIp/iEaA
-         pT1oHKvyG0O+0+PVqECNMsX0eRSy8GjKHrKxzqCv1k/9g023mPy7Oraw9xn8PTQua+MA
-         xNvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVcdjB+bNr2Ea4LXZl4YaTEZPNvGdlKrCno4wOBiZ59qkEN7GMh7boOZ3N7v7ciC0FDF2QaLiJwow20/Z1zwNVO3jGFUFu0OiUeXUJd8PN8h01l38gAfYLBDW31V0iRXDCx+IYb
-X-Gm-Message-State: AOJu0YxWNLnO3fXUlCDQ2nriz5Dirbxeo91S0vd0YFhdnU2xXmNIxnlL
-	3mpv4gQ771kw/LT4/DEhykk0S4mscSwWjxMf04g1MzRK5+C+Yaw=
-X-Google-Smtp-Source: AGHT+IFRrGmUNhCYwUr6r0aNdaQyrpw2Zl2kgseXIhOIL4K1vn+dS++NFAIzpV6T7Gr+tD4HzXyacw==
-X-Received: by 2002:a05:6512:1081:b0:52e:73a2:4415 with SMTP id 2adb3069b0e04-5331c6dc95emr3852777e87.46.1723894860555;
-        Sat, 17 Aug 2024 04:41:00 -0700 (PDT)
-Received: from [192.168.1.3] (p5b05713d.dip0.t-ipconnect.de. [91.5.113.61])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5331c98c77esm622664e87.250.2024.08.17.04.40.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 17 Aug 2024 04:40:59 -0700 (PDT)
-Message-ID: <886e729c-d3fd-432f-8fce-6f6926b1fdbc@googlemail.com>
-Date: Sat, 17 Aug 2024 13:40:57 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C60B13BC35;
+	Sat, 17 Aug 2024 11:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723894962; cv=fail; b=crse8Yhy9oyz+0WziAmMa/+N33Y7BJOKBMUWfwwihD+cHBiB9oJHUrOA09x3j8uM5Io5NyKNIz/kwojPUF4/PzdSMOYD9w/d/T6XwbPdrj4jlPZ2FexZPX5ks5RiAdGkZLF8HXOzuWYsQAP+9IF+kovfiC38Anr2Cc6DPliLr0g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723894962; c=relaxed/simple;
+	bh=/J02cFirQfu/9P80QJLSVfhrMXwvO3FytN9OmsIca8Y=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=D4t2Mvr7Tw3QqV0+cewuewnEZddIL+UfeXfhWnrSEVRvsuqMD2dEyvV7hJpuuMPbdLh200c+2tYqBOFbIuKsIbEErBC6OX8WKo+pUUJ0IafF+SYHhKvbhcqvk6DEwjAZX1zLpQD01XIVtThF5J78lqLD36yE6Jlio/45wdCVBmg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=mpFlwg5V; arc=fail smtp.client-ip=40.92.103.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ue3i+cUYgb1Cu/4ZNRQ/Kwqt0YKlR86JFjL2F6YCxMl/WJyO7ds2zKKh0ClIDfQPFvV8CPh0Fmda8M8wgwcDXQHppjyGpcf+jBMr2NeiybgLDavr9O4SjtJDu+O1GwM3eecJIRtvLy9dMbBhMs46uTDRBegcqwaRXyRwptCLvBaj5Xfr/hPLahl1IuK8MyD+v+oH0s6uwfFHeFXH8yS5ZlXXteCldW2KFoouw6NttVONTfj4XRYDz2+twH5bIP7pHf1Nh8pTQDalgQZ8JtEEl3UxWzxRkHV58pmu5eTVDTHHPFXD/IiwJUpZqL1bSN0s0hv0hKwXCqZdmKCYWh9jBw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zZZavzphr3shhraXMTActElLkw7ZbEzpEF4Qxu1ZaD8=;
+ b=O9OQIxKc2vO+fTcrZd6miGMbqze2ORyymjEqpMezrfHGwZGjizwNImyIg1IuFY9d/H9uf+vW7zuqecWqf4CS+zl/nz+MryCWeEQbsNsIt1nG2mEE1QwgYESSxIcTXORNqHRDiYaPA9A5HpI1TM84m5apLCl4kXwe6yRRXOifCjCKNRI7zbOmBeWjnDrf8WJhADNW+RgcBS1KAjKoonGm7vEA1PkDzW0FRwE1q085ECpw2EmNsScIymL28OB1iubTgHOjzFZUfWm/iHjwQjyJKH61pyyyFWPL25qf56aK7PSUObPuyLMpOPWj3Rvz3ktsFbST7mJ/WM0nK2qVHROk4A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zZZavzphr3shhraXMTActElLkw7ZbEzpEF4Qxu1ZaD8=;
+ b=mpFlwg5Vz0PSmTLWrCFn8iXvhGvjsS+m1aZ5nTEIbedY4/cGkuxs8kj3k3KIyfm/fT8ftnd3Y9Rlnna7iBcivvjyCEwbSp2XU18SNiyyI6/niYp1DrGMousJknQwzHj0sRCPtCtb6EcZJq7YvurS1alG1Ed+S8i0CyjLb8rRlhZi331+gezY0DBP9gC204zRuIWDhiaHU7rftPzRQUc2WU3zBQzIQUTk4OqUAD79i76z4WGwh22f4FExHRPy6btq5SaZz2WKRl8zgbnef0/F5sw4Owz1goWV0lu+NS9IeV1o5WGY8hriHEKiFERfiaFiXCQF4tbPr0tFRIYV51uT9A==
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
+ PN2P287MB0673.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:15b::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7875.20; Sat, 17 Aug 2024 11:42:34 +0000
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a%6]) with mapi id 15.20.7875.016; Sat, 17 Aug 2024
+ 11:42:34 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: "tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
+	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina
+	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>,
+	=?iso-8859-1?Q?Thomas_Wei=DFschuh?= <thomas@t-8ch.de>
+CC: Orlando Chamberlain <orlandoch.dev@gmail.com>, Kerem Karabay
+	<kekrby@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Subject: [PATCH v5 0/10] Touch Bar support for T2 Macs
+Thread-Topic: [PATCH v5 0/10] Touch Bar support for T2 Macs
+Thread-Index: AQHa8JqMhaHTVqCfcEyEHqSqQiXxJg==
+Date: Sat, 17 Aug 2024 11:42:34 +0000
+Message-ID: <D84FFA4A-3651-4036-8230-41EECDC8FD31@live.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:
+ [MPxLKLaE3J+hVU9RBjxnc51qrzwSgkHRzWCUvNXzpXZ6ABnKMbmbiJWp1aB5nrK5TKEgiOBbaJ0=]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN2P287MB0673:EE_
+x-ms-office365-filtering-correlation-id: c1c5ccb0-7f79-4ffa-70cf-08dcbeb1af69
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|15080799003|8060799006|19110799003|440099028|3412199025|4302099013|102099032|1602099012;
+x-microsoft-antispam-message-info:
+ 4tPquo5zlsnDpwQx6WO0qeogagxJmF5lRToryHjPr9BiwT86nXrE/DS5jEXtgyyQIYKNSr/23f5KFQlPOpFKf7X5tLISwmfC/HOGsx9o1LBeTePwEATl3aj40u+DxjEDZSsAug4yQ693Lhpw4/B2a5xOY7ewYsWZh37EKurhU+rQtRIPaRBoRA4JNX3Gk9AqLyKBR5cqyt5v4NPwEZVbjF71Kbrx/VMXN/eaNK0lokX9fOhTyevv5LKB5HKrWEa+NcWY7y97l9rHFmvmguwXZSek2+w9F/+LMEGqKbrcXp2IvsuAQgm9wGHIOCTQaDwZtAQks+mnrHHSEOGyVlTyKSpJGsN5SYWv5osPK430LrSf1ZBj/it5PsZty0E/cfKF5zvGR2nEREDje/XAmGxEjbhaIzGp0KKpEKdYakkPF59ynEoy3qjOVAbQ9UC+ReaRhmuvA2+ySsCCFuD4sPW5Ed3oj2FHxEgm9V/HVMtr6CXTBWXXyYAjArvtMctfKKdLN0J03pm41ZzDv004byslVTdV850fWuP+ni76ai18UMMNI/VbXJnuSH92HdO8CkRfwukysoYMzIX+HdYWH4sbFWW5yxV/jVIATXBsvLRppxUHJoqzI6Gc1s/lIzYo1mypVKUryNupZza/UzRktDdXCnFde3baBx02aaGE0WwZ6/c3b1bGpcGNQWYyQKURlmmPsDG8gfztslfHGgYbOJsLypyEpaNR5dg8JQ9Bv4PigXsy5YlIG1Gc6v019XSXf0RB7wEOxhl13EdhvQiMi8psL3CVkq34dTycCqpZ2szPexI=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?LxSjtwyLO8N80rVNCGxBJJ6V5zlre3nGEVCe/knsv4iZnxM+fJqUJOHSqz?=
+ =?iso-8859-1?Q?Rln7iWk3G+k6aF1M78DjDzu+modkaawuRjsSEasncnu7OfjQI+CZpxN/lI?=
+ =?iso-8859-1?Q?yk2dyBcnQxnHiqa047CpybFbhLT9lKJPLUdcu1w0eIz6Y/1fCsIrxyTysq?=
+ =?iso-8859-1?Q?E5iTyxoMiI9YqC+Bj2dHkVGTVdsl2E1xnR4oTpIgWbYIVTAEo8Ti8q4oqG?=
+ =?iso-8859-1?Q?PQTmE3PG11Habvf6UzjB7PQLkozohh2zzT0tIIJDKKb+zxcgm4ja+5ffk5?=
+ =?iso-8859-1?Q?01SawkH+dLBo2Xo5JyMsk7AaYCoeK1m/sOe4m1+SIbokGxkwO/KlbOM4AI?=
+ =?iso-8859-1?Q?P0XZRHF7gfhWNOrWWDzLLit8q5Pw9HQ2+hY1ih4+rLDaY79fNw9Txjy3J2?=
+ =?iso-8859-1?Q?swbexn2y2cqsFtgTBUEKn0/d/ooBDsizQeWtqPFwRUOC4joSUufvUdj4zW?=
+ =?iso-8859-1?Q?ttpoga+JynQlFV3QvmlvjlOpEzbGfNjT5BYLU2Z6rXxjSl5j3H8nldzcbw?=
+ =?iso-8859-1?Q?Y4dIVAiJa16D/MxrJajJ5+xk0t5Mqu9MUYAZEZrqecJe0SThx5fOPJZVFn?=
+ =?iso-8859-1?Q?kgGPur4eYpKdEmpUfzX4jYeigkh85SyFxxkWF53pDr0a5AA69ID2Gc1xqh?=
+ =?iso-8859-1?Q?3AElK9jXw/LmkSyn5brELgGZhfeTkMhNzz9yGiU3fRMVIgXKIy0SEna0FK?=
+ =?iso-8859-1?Q?nWirl+/P6E58/w/IBlS20+UX+YYULm9YgMxPip2emhTKtlEmskScGD7WzM?=
+ =?iso-8859-1?Q?OHCCGl97IV6BzlizB5CRywrHh7nHdGE4OUXObdsh1dFeXNxqiG6yPT9LPw?=
+ =?iso-8859-1?Q?3QdIVgDVS2r7Qt3APEJEpeUVSrCdFk58SvsxCeNKIvaYfw6TUL4EIfFj6o?=
+ =?iso-8859-1?Q?VyrQVpfnDS2kuUBI56WuXDcw1oymqbv7LxMjge15wnmmgTfh+VDu9LgNI6?=
+ =?iso-8859-1?Q?TCq5CRawvJCA6mMIwd0Rno/aNYYCAOtfN/OWA9PX6N4SV3AhqnWIv3garU?=
+ =?iso-8859-1?Q?4kdnJJOMnESFmpyvjfSLFP6CcFj+bCEfOQ1crs0aiXt8OwVpWpjVegcSXV?=
+ =?iso-8859-1?Q?pSyqrREa676eIH6cXw5aGhkf3fRh1m2nyp+8L+V7qjp/iKfo+L+saeQrbk?=
+ =?iso-8859-1?Q?3RbsTUTobwiLdEFmyRixU+8V2F5GpithsZNJQ9Rz9ThnqPX+E7OoVLiAnC?=
+ =?iso-8859-1?Q?Y6oA66QNDr/1aCtXOp5KbqNBA/i92a2FrBATr7qfmZ4SkawyhhiuGQkkjo?=
+ =?iso-8859-1?Q?adKyFaHfrjdhbSvAm8GWyCNRJbWbyc8u0ou3wlLgPSrk0wytNEA8d4cwJ2?=
+ =?iso-8859-1?Q?JTXz4PDMGPWlZzej8t+S4sYKVVgfadrezBtBX9/yQ6Gxl0AdWU/8ysDtTn?=
+ =?iso-8859-1?Q?GSY4j2TMpN?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <17539F3FE808BC418F3FB14817F81A75@INDP287.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.10 00/25] 6.10.6-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240816085226.888902473@linuxfoundation.org>
-Content-Language: de-DE
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20240816085226.888902473@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1c5ccb0-7f79-4ffa-70cf-08dcbeb1af69
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Aug 2024 11:42:34.0720
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB0673
 
-Am 16.08.2024 um 11:42 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.10.6 release.
-> There are 25 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Hi Maintainers
 
-Now I'm a little bit confused. I saw you announced a new 6.10.6 RC and I wanted to 
-(re-)test it. Your subject says -rc2, but when I git fetch from the kernel.org 
-linux-stable-rc git repo (which I always do) what I get is -rc3 from today, however I have 
-not (yet) seen a mail from you announcing -rc3. Forgot to send that one out? Anyway, -rc3 
-is what I tested, and as I already reported for -rc1, it is fine on my machine, too.
+The Touch Bars found on x86 Macs support two USB configurations: one
+where the device presents itself as a HID keyboard and can display
+predefined sets of keys, and one where the operating system has full
+control over what is displayed.
 
-I tested with running 4 QEMU/KVM virtual machines for an hour, and did not find any 
-problems, so:
+This patch series adds support for both the configurations.
 
+The hid-appletb-bl driver adds support for the backlight of the Touch Bar.
+This enables the user to control the brightness of the Touch Bar from
+userspace. The Touch Bar supports 3 modes here: Max brightness, Dim and Off=
+.
+So, daemons, used to manage Touch Bar can easily manage these modes by writ=
+ing
+to /sys/class/backlight/appletb_backlight/brightness. It is needed by both =
+the
+configurations of the Touch Bar.
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+The hid-appletb-kbd adds support for the first (predefined keys) configurat=
+ion.
+There are 4 modes here: Esc key only, Fn mode, Media keys and No keys.
+Mode can be changed by writing to /sys/bus/hid/drivers/hid-appletb-kbd/<dev=
+>/mode
+This configuration is what Windows uses with the official Apple Bootcamp dr=
+ivers.
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+Rest patches support the second configuration, where the OS has full contro=
+l
+on what's displayed on the Touch Bar. It is achieved by the patching the
+hid-multitouch driver to add support for touch feedback from the Touch Bar
+and the appletbdrm driver, that displays what we want to on the Touch Bar.
+This configuration is what macOS uses.
 
-Beste Grüße,
-Peter Schneider
+The appletbdrm driver is based on the similar driver made for Windows by
+imbushuo [1].
 
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+Currently, a daemon named tiny-dfr [2] is being used to display function ke=
+ys
+and media controls using the second configuration for both Apple Silicon an=
+d
+T2 Macs.
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+A daemon for the first configuration is being developed, but that's a users=
+pace
+thing.
+
+[1]: https://github.com/imbushuo/DFRDisplayKm
+[2]: https://github.com/WhatAmISupposedToPutHere/tiny-dfr
+
+v2:
+  1. Cleaned up some code in the hid-appletb-kbd driver.
+  2. Fixed wrong subject in drm/format-helper patch.
+  3. Fixed Co-developed-by wrongly added to hid-multitouch patch.
+
+v3:
+  1. Fixed key mapping for Function keys in hid-appletb-kbd driver.
+
+v4:
+  1. Added support for fn key toggle in the hid-appletb-kbd driver.
+
+v5:
+  1. Do required changes to hid-appletb-bl as requested by upstream.
+
+Aditya Garg (1):
+  HID: hid-appletb-kbd: add support for fn toggle between media and
+    function mode
+
+Kerem Karabay (9):
+  HID: hid-appletb-bl: add driver for the backlight of Apple Touch Bars
+  HID: hid-appletb-kbd: add driver for the keyboard mode of Apple Touch
+    Bars
+  HID: multitouch: support getting the contact ID from
+    HID_DG_TRANSDUCER_INDEX fields
+  HID: multitouch: support getting the tip state from HID_DG_TOUCH
+    fields
+  HID: multitouch: take cls->maxcontacts into account for devices
+    without a HID_DG_CONTACTMAX field too
+  HID: multitouch: allow specifying if a device is direct in a class
+  HID: multitouch: add device ID for Apple Touch Bars
+  drm/format-helper: Add conversion from XRGB8888 to BGR888 conversion
+  drm/tiny: add driver for Apple Touch Bars in x86 Macs
+
+ .../ABI/testing/sysfs-driver-hid-appletb-kbd  |  13 +
+ MAINTAINERS                                   |   6 +
+ drivers/gpu/drm/drm_format_helper.c           |  54 ++
+ .../gpu/drm/tests/drm_format_helper_test.c    |  81 +++
+ drivers/gpu/drm/tiny/Kconfig                  |  12 +
+ drivers/gpu/drm/tiny/Makefile                 |   1 +
+ drivers/gpu/drm/tiny/appletbdrm.c             | 624 ++++++++++++++++++
+ drivers/hid/Kconfig                           |  22 +
+ drivers/hid/Makefile                          |   2 +
+ drivers/hid/hid-appletb-bl.c                  | 207 ++++++
+ drivers/hid/hid-appletb-kbd.c                 | 432 ++++++++++++
+ drivers/hid/hid-multitouch.c                  |  60 +-
+ drivers/hid/hid-quirks.c                      |   8 +-
+ include/drm/drm_format_helper.h               |   3 +
+ 14 files changed, 1509 insertions(+), 16 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-hid-appletb-kbd
+ create mode 100644 drivers/gpu/drm/tiny/appletbdrm.c
+ create mode 100644 drivers/hid/hid-appletb-bl.c
+ create mode 100644 drivers/hid/hid-appletb-kbd.c
+
+--=20
+2.43.0
+
 
