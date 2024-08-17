@@ -1,216 +1,189 @@
-Return-Path: <linux-kernel+bounces-290664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F65955714
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 12:01:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30C17955719
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 12:07:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD3731C20D47
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 10:01:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9AE82821DB
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 10:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235D5149C4D;
-	Sat, 17 Aug 2024 10:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D3F149C4A;
+	Sat, 17 Aug 2024 10:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="lv1S8Zby"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="N8Dvz+IY"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690092F870
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 10:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D348005B
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 10:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723888862; cv=none; b=qNlI/wapPEWd4qixUnBVDOPNofCW9QACwvTMbGKyXOCtdMRIIVVC5vEdVeGfbRnCSn0a2WK5zj8J5NygudQ/0M27JXplwhTiZLlm34kr49FbScREL82J7GWVok1ivzVvFYM9PqMnFp07LT737Ei6MHhBinCl77b8/MVqqge2abE=
+	t=1723889254; cv=none; b=DUuuoTsV17sO7stpe4LDXINUUpX02rPOq2OiWTDlVgMzvzZxuWcekKv2y8L53h166Vr4bZBLFsNv0DDiKYDOwEyRbn6dnqKT9o2bn9ZcrF2b1HWBEt7NLofVQ+hkg9AIi1JHUQ2RgImDBaCozV8Yvu350BmNM+i4GViJ0jNGcME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723888862; c=relaxed/simple;
-	bh=nDX73kmG43zD1h9uI+pb/oshet7B35SLo/HwmSmtjWQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qAC/RVa/oPcGqBj6S2Z23l9RdFzW5FQLZmL2w0yFrx+lVn/0CoI3uZh1TfcW0CVbscL051X89Yz2/N1uATHp+P02xrIOpz/dHi63tayIEpp+TYVzSrrXvnFZUaW87fBPn8O7rnuL+2ZP9k9/I+suw5zkBUEXE0GGUsGmRLgzpZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=lv1S8Zby; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42817f1eb1fso20160515e9.1
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 03:01:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1723888859; x=1724493659; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/wOaVFGUPugW85pZ5rWgM4fAp/o3v69bNqYxxQVcnxU=;
-        b=lv1S8ZbyEjUwKXDdgjupMufQvasQooyDQ4NhmPA7EBF1U6r0DN4f3kqRBmsVS9k/NP
-         0/GsH0qehXsAPvT4LUTO4baNpr56q429aM7MIvzB7G1IIStovFsQUZ/0XQ4OLf2c5L+D
-         C29YQvjWdAv+Win6JgfibyzSMIVk5OZ+jCfO4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723888859; x=1724493659;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/wOaVFGUPugW85pZ5rWgM4fAp/o3v69bNqYxxQVcnxU=;
-        b=ty3i+hJzulcWD19OkEohPkQcvQNSU6Q/ZTvkR03v8/sybKyFCdNUOoMkPDrc42d1X/
-         MPa7u3qHitJ/nxvAtHq1cumLFLKCghuwDrXwuMPa3nb3xZAKW6Cet9f4Pc2pjz9YHszk
-         OuorujFZTh/PHQlapbO5blmNyrgcf+Ws9ERfzREhQQFSLyIOnYnRnxVBhnxY44UV3x0p
-         XltdpUPiH86dHc3weplZ85T/HmiN+PkTs1/bF3vfHdyq3scycqdwfrQqTy510hOPQdS4
-         UO5pnGyPU+UFp30J5aCk5UtRd23ZqBr8etOwKPhMPLgMrC0Uq/XCbVitFIYln/nd/99X
-         YVrw==
-X-Forwarded-Encrypted: i=1; AJvYcCXmqvBAMMbKmOzXa3Bkuw8SRTbZpNJUPT16lEzbJDyElYw7vxq9o/3hVQ2EGAeeJrHLe6aYKwOFUJWM2KfW/b121VwoaThixQTrrrSX
-X-Gm-Message-State: AOJu0YxZFNPFL5v9KClC7vWeINumIDhjL8MuqEIiuGGQKMNCSmbCsA5i
-	AUoTyXklja1UazSSq4vr4XZNNzlZqrqtDi2067sqx1TjyYpLrRppbqDW/tPHnXI=
-X-Google-Smtp-Source: AGHT+IHfQWV98fZLeG84YWRpqKY4ur3K6QpUoQyzhtj2RkcLl3fzp/oRkmKTRxcOvBE8DiQ+VXR6gA==
-X-Received: by 2002:a05:600c:4445:b0:426:60e4:c691 with SMTP id 5b1f17b1804b1-429ed7891demr35901395e9.11.1723888858539;
-        Sat, 17 Aug 2024 03:00:58 -0700 (PDT)
-Received: from LQ3V64L9R2 (default-46-102-197-122.interdsl.co.uk. [46.102.197.122])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898aabf5sm5490505f8f.97.2024.08.17.03.00.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Aug 2024 03:00:58 -0700 (PDT)
-Date: Sat, 17 Aug 2024 11:00:56 +0100
-From: Joe Damato <jdamato@fastly.com>
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: Martin Karsten <mkarsten@uwaterloo.ca>,
-	Samiullah Khawaja <skhawaja@google.com>,
-	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Breno Leitao <leitao@debian.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [RFC net-next 0/5] Suspend IRQs during preferred busy poll
-Message-ID: <ZsB02OnFM1IhLkAt@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Samiullah Khawaja <skhawaja@google.com>,
-	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Breno Leitao <leitao@debian.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-References: <Zrq8zCy1-mfArXka@mini-arch>
- <5e52b556-fe49-4fe0-8bd3-543b3afd89fa@uwaterloo.ca>
- <Zrrb8xkdIbhS7F58@mini-arch>
- <6f40b6df-4452-48f6-b552-0eceaa1f0bbc@uwaterloo.ca>
- <CAAywjhRsRYUHT0wdyPgqH82mmb9zUPspoitU0QPGYJTu+zL03A@mail.gmail.com>
- <d63dd3e8-c9e2-45d6-b240-0b91c827cc2f@uwaterloo.ca>
- <66bf61d4ed578_17ec4b294ba@willemb.c.googlers.com.notmuch>
- <66bf696788234_180e2829481@willemb.c.googlers.com.notmuch>
- <Zr9vavqD-QHD-JcG@LQ3V64L9R2>
- <66bf85f635b2e_184d66294b9@willemb.c.googlers.com.notmuch>
+	s=arc-20240116; t=1723889254; c=relaxed/simple;
+	bh=Jn9wdDW8U7nXahtKgzAhdBLR5Gusg2jiALCcsf0XAtE=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=g/sUu3tLazawI1E9uUXSupsIP05xxb/CFqAmg9mpzp1QO4MGT8msmxWv1ABlGjpQNGe7K4pLrYmj5H3PBAeUFaYvWj1hTfCLdA9vXZfiMXneY3y4t2UfxtpwsLBqNFF3Br3oGpTF+eMno6kc3e39S5uDZX0pbo8/nXFTjmKGNg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=N8Dvz+IY; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1723889250; x=1724148450;
+	bh=TFYv1VRBNCN/E0qo/1YUyImx5ns3Zf75xpcEDQhjdeI=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=N8Dvz+IYkdHplgdoE9mWA/8JPkLRbVLuSG3Ewa4Gh74ESjdFn9Tn4vdJIgOaKnzuG
+	 EDFpWaHtzdq9FlX6qBUWkw5XF1qDS1ch0ABJRB4w2VcxTBoVgBPc6DuZrYWeG4SpPL
+	 DUPgyVSTNfDDNpFjSDj+Q7wmnPWFjw2Zrzj/bjYa13x/w0RrenvGQ8koXplvj9QvNi
+	 JCMPHLvz/tLmltHH2L2xPPdeN/D2tDBpI1/v+cwwmM1Jf02ybc6XcM3i5eRxf32B3F
+	 snQpb1lKgvZb2n0/i8EnrnrRvpKPqkuTEvRKUcZ1f7ayZAjgR5FS+Ay6K9it6mVDIR
+	 /qRzYbIfrePtg==
+Date: Sat, 17 Aug 2024 10:07:26 +0000
+To: gregkh@linuxfoundation.org, philipp.g.hortmann@gmail.com
+From: =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
+Subject: [PATCH] staging: vt6655: Fix alignment to open parentheses
+Message-ID: <20240817100559.33174-1-dominik.karol.piatkowski@protonmail.com>
+Feedback-ID: 117888567:user:proton
+X-Pm-Message-ID: 32076799cf8c93c638f126ab2e80ea0bbe144d1f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66bf85f635b2e_184d66294b9@willemb.c.googlers.com.notmuch>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 16, 2024 at 01:01:42PM -0400, Willem de Bruijn wrote:
-> Joe Damato wrote:
-> > On Fri, Aug 16, 2024 at 10:59:51AM -0400, Willem de Bruijn wrote:
-[...]
-> > > Willem de Bruijn wrote:
-> > > If the only goal is to safely reenable interrupts when the application
-> > > stops calling epoll_wait, does this have to be user tunable?
-> > > 
-> > > Can it be either a single good enough constant, or derived from
-> > > another tunable, like busypoll_read.
-> > 
-> > I believe you meant busy_read here, is that right?
-> > 
-> > At any rate:
-> > 
-> >   - I don't think a single constant is appropriate, just as it
-> >     wasn't appropriate for the existing mechanism
-> >     (napi_defer_hard_irqs/gro_flush_timeout), and
-> > 
-> >   - Deriving the value from a pre-existing parameter to preserve the
-> >     ABI, like busy_read, makes using this more confusing for users
-> >     and complicates the API significantly.
-> > 
-> > I agree we should get the API right from the start; that's why we've
-> > submit this as an RFC ;)
-> > 
-> > We are happy to take suggestions from the community, but, IMHO,
-> > re-using an existing parameter for a different purpose only in
-> > certain circumstances (if I understand your suggestions) is a much
-> > worse choice than adding a new tunable that clearly states its
-> > intended singular purpose.
-> 
-> Ack. I was thinking whether an epoll flag through your new epoll
-> ioctl interface to toggle the IRQ suspension (and timer start)
-> would be preferable. Because more fine grained.
+This patch fixes the "Alignment should match open parenthesis" checks
+detected by checkpatch.pl.
 
-I understand why you are asking about this and I think it would be
-great if this were possible, but unfortunately it isn't.
+Signed-off-by: Dominik Karol Pi=C4=85tkowski <dominik.karol.piatkowski@prot=
+onmail.com>
+---
+ drivers/staging/vt6655/card.h        |  4 ++--
+ drivers/staging/vt6655/device_main.c |  6 +++---
+ drivers/staging/vt6655/rxtx.c        | 14 +++++++-------
+ 3 files changed, 12 insertions(+), 12 deletions(-)
 
-epoll contexts can be associated with any NAPI ID, but the IRQ
-suspension is NAPI specific.
+diff --git a/drivers/staging/vt6655/card.h b/drivers/staging/vt6655/card.h
+index f52e42564e81..f6b462ebca51 100644
+--- a/drivers/staging/vt6655/card.h
++++ b/drivers/staging/vt6655/card.h
+@@ -55,8 +55,8 @@ void CARDvSafeResetRx(struct vnt_private *priv);
+ void card_radio_power_off(struct vnt_private *priv);
+ bool card_set_phy_parameter(struct vnt_private *priv, u8 bb_type);
+ bool card_update_tsf(struct vnt_private *priv, unsigned char rx_rate,
+-=09=09    u64 bss_timestamp);
++=09=09     u64 bss_timestamp);
+ bool card_set_beacon_period(struct vnt_private *priv,
+-=09=09=09  unsigned short beacon_interval);
++=09=09=09    unsigned short beacon_interval);
+=20
+ #endif /* __CARD_H__ */
+diff --git a/drivers/staging/vt6655/device_main.c b/drivers/staging/vt6655/=
+device_main.c
+index 3ff8103366c1..9ea647aefd60 100644
+--- a/drivers/staging/vt6655/device_main.c
++++ b/drivers/staging/vt6655/device_main.c
+@@ -1140,7 +1140,7 @@ static void vnt_interrupt_process(struct vnt_private =
+*priv)
+ =09=09=09=09PSbIsNextTBTTWakeUp((void *)priv);
+=20
+ =09=09=09if ((priv->op_mode =3D=3D NL80211_IFTYPE_AP ||
+-=09=09=09    priv->op_mode =3D=3D NL80211_IFTYPE_ADHOC) &&
++=09=09=09     priv->op_mode =3D=3D NL80211_IFTYPE_ADHOC) &&
+ =09=09=09    priv->vif->bss_conf.enable_beacon)
+ =09=09=09=09MACvOneShotTimer1MicroSec(priv,
+ =09=09=09=09=09=09=09  (priv->vif->bss_conf.beacon_int -
+@@ -1535,7 +1535,7 @@ static void vnt_bss_info_changed(struct ieee80211_hw =
+*hw,
+ =09    priv->op_mode !=3D NL80211_IFTYPE_AP) {
+ =09=09if (vif->cfg.assoc && conf->beacon_rate) {
+ =09=09=09card_update_tsf(priv, conf->beacon_rate->hw_value,
+-=09=09=09=09       conf->sync_tsf);
++=09=09=09=09=09conf->sync_tsf);
+=20
+ =09=09=09card_set_beacon_period(priv, conf->beacon_int);
+=20
+@@ -1763,7 +1763,7 @@ vt6655_probe(struct pci_dev *pcid, const struct pci_d=
+evice_id *ent)
+ =09priv->memaddr =3D pci_resource_start(pcid, 0);
+ =09priv->ioaddr =3D pci_resource_start(pcid, 1);
+ =09priv->port_offset =3D ioremap(priv->memaddr & PCI_BASE_ADDRESS_MEM_MASK=
+,
+-=09=09=09=09   256);
++=09=09=09=09    256);
+ =09if (!priv->port_offset) {
+ =09=09dev_err(&pcid->dev, ": Failed to IO remapping ..\n");
+ =09=09device_free_info(priv);
+diff --git a/drivers/staging/vt6655/rxtx.c b/drivers/staging/vt6655/rxtx.c
+index 5e5ed582c35e..3705cb1e87b6 100644
+--- a/drivers/staging/vt6655/rxtx.c
++++ b/drivers/staging/vt6655/rxtx.c
+@@ -493,9 +493,9 @@ s_uFillDataHead(
+ =09=09buf->duration_a =3D cpu_to_le16((u16)s_uGetDataDuration(pDevice, DAT=
+ADUR_A, cbFrameLength, byPktType,
+ =09=09=09=09=09=09=09=09      wCurrentRate, bNeedAck, uFragIdx, cbLastFrag=
+mentSize, uMACfragNum, byFBOption));
+ =09=09buf->duration_b =3D cpu_to_le16((u16)s_uGetDataDuration(pDevice, DAT=
+ADUR_B, cbFrameLength, PK_TYPE_11B,
+-=09=09=09=09=09=09=09=09       pDevice->byTopCCKBasicRate, bNeedAck, uFrag=
+Idx, cbLastFragmentSize, uMACfragNum, byFBOption));
++=09=09=09=09=09=09=09=09      pDevice->byTopCCKBasicRate, bNeedAck, uFragI=
+dx, cbLastFragmentSize, uMACfragNum, byFBOption));
+ =09=09buf->duration_a_f0 =3D cpu_to_le16((u16)s_uGetDataDuration(pDevice, =
+DATADUR_A_F0, cbFrameLength, byPktType,
+-=09=09=09=09=09=09=09=09=09  wCurrentRate, bNeedAck, uFragIdx, cbLastFragm=
+entSize, uMACfragNum, byFBOption));
++=09=09=09=09=09=09=09=09=09 wCurrentRate, bNeedAck, uFragIdx, cbLastFragme=
+ntSize, uMACfragNum, byFBOption));
+ =09=09buf->duration_a_f1 =3D cpu_to_le16((u16)s_uGetDataDuration(pDevice, =
+DATADUR_A_F1, cbFrameLength, byPktType,
+ =09=09=09=09=09=09=09=09=09 wCurrentRate, bNeedAck, uFragIdx, cbLastFragme=
+ntSize, uMACfragNum, byFBOption));
+=20
+@@ -520,7 +520,7 @@ s_uFillDataHead(
+ =09=09=09buf->duration_f0 =3D cpu_to_le16((u16)s_uGetDataDuration(pDevice,=
+ DATADUR_A_F0, cbFrameLength, byPktType,
+ =09=09=09=09=09=09=09=09=09       wCurrentRate, bNeedAck, uFragIdx, cbLast=
+FragmentSize, uMACfragNum, byFBOption));
+ =09=09=09buf->duration_f1 =3D cpu_to_le16((u16)s_uGetDataDuration(pDevice,=
+ DATADUR_A_F1, cbFrameLength, byPktType,
+-=09=09=09=09=09=09=09=09=09=09wCurrentRate, bNeedAck, uFragIdx, cbLastFrag=
+mentSize, uMACfragNum, byFBOption));
++=09=09=09=09=09=09=09=09=09       wCurrentRate, bNeedAck, uFragIdx, cbLast=
+FragmentSize, uMACfragNum, byFBOption));
+ =09=09=09buf->time_stamp_off =3D vnt_time_stamp_off(pDevice, wCurrentRate)=
+;
+ =09=09=09return buf->duration;
+ =09=09}
+@@ -1375,8 +1375,8 @@ static int vnt_beacon_xmit(struct vnt_private *priv,
+ =09=09/* Get Duration and TimeStampOff */
+ =09=09short_head->duration =3D
+ =09=09=09cpu_to_le16((u16)s_uGetDataDuration(priv, DATADUR_B,
+-=09=09=09=09    frame_size, PK_TYPE_11A, current_rate,
+-=09=09=09=09    false, 0, 0, 1, AUTO_FB_NONE));
++=09=09=09=09=09=09=09    frame_size, PK_TYPE_11A, current_rate,
++=09=09=09=09=09=09=09    false, 0, 0, 1, AUTO_FB_NONE));
+=20
+ =09=09short_head->time_stamp_off =3D
+ =09=09=09=09vnt_time_stamp_off(priv, current_rate);
+@@ -1391,8 +1391,8 @@ static int vnt_beacon_xmit(struct vnt_private *priv,
+ =09=09/* Get Duration and TimeStampOff */
+ =09=09short_head->duration =3D
+ =09=09=09cpu_to_le16((u16)s_uGetDataDuration(priv, DATADUR_B,
+-=09=09=09=09    frame_size, PK_TYPE_11B, current_rate,
+-=09=09=09=09    false, 0, 0, 1, AUTO_FB_NONE));
++=09=09=09=09=09=09=09    frame_size, PK_TYPE_11B, current_rate,
++=09=09=09=09=09=09=09    false, 0, 0, 1, AUTO_FB_NONE));
+=20
+ =09=09short_head->time_stamp_off =3D
+ =09=09=09vnt_time_stamp_off(priv, current_rate);
+--=20
+2.34.1
 
-As an example: imagine a user program creates an epoll context and
-adds fds with NAPI ID 1111 to the context. It then issues the ioctl
-to set the suspend timeout for that context. Then, for whatever
-reason, the user app decides to remove all the fds and add new ones,
-this time from NAPI ID 2222, which happens to be a different
-net_device.
 
-What does that mean for the suspend timeout? It's not clear to me
-what the right behavior would be in this situation (does it persist?
-does it get cleared when a new NAPI ID is added? etc) and it makes
-the user API much more complicated, with many more edge cases and
-possible bugs.
-
-> Also, the value is likely dependent more on the expected duration
-> of userspace processing? If so, it would be the same for all
-> devices, so does a per-netdev value make sense?
-
-There is presently no way to set values like gro_timeout,
-defer_hard_irqs, or this new proposed value on a per-NAPI basis.
-IMHO, that is really where all of these values should live.
-
-I mentioned on the list previously (and also in the cover letter),
-that time permitting, I think the correct evolution of this would be
-to support per-NAPI settings (via netdev-genl, I assume) so that
-user programs can set all 3 values on only the NAPIs they care
-about.
-
-Until that functionality is available, it would seem per-netdev is
-the only way for this feature to be added at the present time. I
-simply haven't had the time to add the above interface. This
-feature we're proposing has demonstrable performance value, but it
-doesn't seem sensible to block it until time permits me to add a
-per-NAPI interface for all of these values given that we already
-globally expose 2 of them.
-
-That said, I appreciate the thoughtfulness of your replies and I am
-open to other suggestions.
-
-- Joe
 
