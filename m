@@ -1,131 +1,107 @@
-Return-Path: <linux-kernel+bounces-290543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF53595557F
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:10:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92EC4955584
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:18:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58BF2B22FA3
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 05:10:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCEC21C22962
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 05:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AEFD770F6;
-	Sat, 17 Aug 2024 05:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F91B83CDA;
+	Sat, 17 Aug 2024 05:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ioVR7Rqr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MqEeOHWr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A69885283
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 05:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA0F2F23;
+	Sat, 17 Aug 2024 05:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723871374; cv=none; b=ZF1Nu21DY6XNLPkIFZutTADH8IELyF2Hl/g5pm/3e3M4PplkMlX9WN8qDP9QXuR2Ulmac+KAj9AwuQDBYY/bmSMniMPK4BATR/SDNjd8j0C7XWzWwyMEzZKQ0jgFS38gh20zHrPhuTS78AbRw2HxINr0XrNHDqrvhqDdfVRipkU=
+	t=1723871877; cv=none; b=FKmIAs+OL2e/LkZG0ERRwc6KmrwB1suT5sVovVJ1VlmT9eR+vyEdtljfZtKZFZCFteFSkSqfRlF8/+ZWfMGuC0RJfOoYbXJBgIF9RmhZ7qU1SccotbIYNzjClNoP/bW+B+UPip6Sv5qrlbQEIYERBRPdIg+UIJRcCIPj0AoNFSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723871374; c=relaxed/simple;
-	bh=pIv8/Aymq35M3mk+Ip2dqi+IlPE8wYobMr4oum9ku1Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YTnpN7TFJIuJS6M5Mg7dtuTpZvfoYzwfTRHZFzSSSrVYODj7o5Bvg4YjqlbGJYEqeZjJlPVnu0VcUuG77k2mr9F/Dy7Ppjw+b+zwMa9TOjm3uOMGdD344U6vAJbkF7X49nDEJxr3am20Vnh3fb7O8YIu5s1zx1x3JRmMKsCF4/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ioVR7Rqr; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723871372; x=1755407372;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=pIv8/Aymq35M3mk+Ip2dqi+IlPE8wYobMr4oum9ku1Y=;
-  b=ioVR7Rqr9ZgapfLWy4X+8U+OtZ98GG8Q+eOWXgGRZqMyk3GtFWPsFrM+
-   s9A2xNsYdDO9d7zHmM/UAY8hFYQ37263kzjgECEHhlkSOxaWuxajv/xQv
-   9UR4dyoVIekgcuXmLMtUf3ldjSH5j8kVemYG0g6+qhNPGsAAkN0AvSxv6
-   yO/YkkxFxLbX83sumQlqQhODtq25V82Zj8RAz+2NN8octvcxdEbb4n6p0
-   bdEhV4ENLzcRewcx+7dVOeEBLuyolN6DQ2o60Zao1vdIbXqtuw6e6oT8Z
-   Se2Ypnh5qfTF4dANEsfk3Dn1tpP8KiHtpT8UF1EK2XqWkE502kZ0sZ4vG
-   w==;
-X-CSE-ConnectionGUID: i683/gphS+S53/42wCH/ag==
-X-CSE-MsgGUID: jchyHopvQAacm/kbxZwHIw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="25929485"
-X-IronPort-AV: E=Sophos;i="6.10,154,1719903600"; 
-   d="scan'208";a="25929485"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 22:09:22 -0700
-X-CSE-ConnectionGUID: G3ES7ewjRXi5YjsXLL3eQQ==
-X-CSE-MsgGUID: fZPmCcW6RFSDaGvIag7BFg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,154,1719903600"; 
-   d="scan'208";a="60141501"
-Received: from jf5300-b11a338t.jf.intel.com ([10.242.51.6])
-  by orviesa006.jf.intel.com with ESMTP; 16 Aug 2024 22:09:22 -0700
-From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	hannes@cmpxchg.org,
-	yosryahmed@google.com,
-	nphamcs@gmail.com,
-	ryan.roberts@arm.com,
-	ying.huang@intel.com,
-	21cnbao@gmail.com,
-	akpm@linux-foundation.org
-Cc: nanhai.zou@intel.com,
-	wajdi.k.feghali@intel.com,
-	vinodh.gopal@intel.com,
-	kanchana.p.sridhar@intel.com
-Subject: [PATCH v3 4/4] mm: swap: Count successful mTHP ZSWAP stores in sysfs mTHP stats.
-Date: Fri, 16 Aug 2024 22:09:21 -0700
-Message-Id: <20240817050921.18462-5-kanchana.p.sridhar@intel.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20240817050921.18462-1-kanchana.p.sridhar@intel.com>
-References: <20240817050921.18462-1-kanchana.p.sridhar@intel.com>
+	s=arc-20240116; t=1723871877; c=relaxed/simple;
+	bh=kxdohkZzGnZSc92jRJAMD2mosuQ9K9cXUXRgO4U8xbY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dAEKDS+olZnreXzs1C74RG9omGBnDMbc/YM8XdPl+qrIbskzJ4Zuhk+yq5snNgNj8aDqkwtus0vgpS/IP6UVrXTAEaIoJgMr0JBcjT45xPPFqf87C/QcEBYGS4ICSh7L/loWWfs4Mkzud2JKA1irh4xRHByPyP2EuQVBHRH2jdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MqEeOHWr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CEBCC116B1;
+	Sat, 17 Aug 2024 05:17:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723871877;
+	bh=kxdohkZzGnZSc92jRJAMD2mosuQ9K9cXUXRgO4U8xbY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MqEeOHWrnCd7ad65ey+pouxpK7yWIcGymQlyzR1JrP0Ln0m13K8M7EiLdWjTMuKrC
+	 ezS/rU/ArZ0NG0RTy75eFrPraGmSWz+USwqkZ3bzmVkSBQ9wVAPuA0vZ1xPoMtKfeh
+	 yB3FyI1MHTL7uoCFWmOmpfE2U9roSPZ/gjmIpPks=
+Date: Sat, 17 Aug 2024 07:17:53 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Selvarasu Ganesan <selvarasu.g@samsung.com>
+Cc: Thinh.Nguyen@synopsys.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com,
+	dh10.jung@samsung.com, naushad@samsung.com, akash.m5@samsung.com,
+	rc93.raju@samsung.com, taehyun.cho@samsung.com,
+	hongpooh.kim@samsung.com, eomji.oh@samsung.com,
+	shijie.cai@samsung.com, stable@vger.kernel.org
+Subject: Re: [PATCH v3] usb: dwc3: core: Prevent USB core invalid event
+ buffer address access
+Message-ID: <2024081700-skittle-lethargy-9567@gregkh>
+References: <CGME20240815064918epcas5p1248e4f9084d33fdb11a25fa34e66cdbe@epcas5p1.samsung.com>
+ <20240815064836.1491-1-selvarasu.g@samsung.com>
+ <2024081618-singing-marlin-2b05@gregkh>
+ <4f286780-89a2-496d-9007-d35559f26a21@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4f286780-89a2-496d-9007-d35559f26a21@samsung.com>
 
-If zswap_store() successfully stores an mTHP, it will be
-counted under the per-order sysfs "zswpout" stats:
+On Fri, Aug 16, 2024 at 09:13:09PM +0530, Selvarasu Ganesan wrote:
+> 
+> On 8/16/2024 3:25 PM, Greg KH wrote:
+> > On Thu, Aug 15, 2024 at 12:18:31PM +0530, Selvarasu Ganesan wrote:
+> >> This commit addresses an issue where the USB core could access an
+> >> invalid event buffer address during runtime suspend, potentially causing
+> >> SMMU faults and other memory issues in Exynos platforms. The problem
+> >> arises from the following sequence.
+> >>          1. In dwc3_gadget_suspend, there is a chance of a timeout when
+> >>          moving the USB core to the halt state after clearing the
+> >>          run/stop bit by software.
+> >>          2. In dwc3_core_exit, the event buffer is cleared regardless of
+> >>          the USB core's status, which may lead to an SMMU faults and
+> >>          other memory issues. if the USB core tries to access the event
+> >>          buffer address.
+> >>
+> >> To prevent this hardware quirk on Exynos platforms, this commit ensures
+> >> that the event buffer address is not cleared by software  when the USB
+> >> core is active during runtime suspend by checking its status before
+> >> clearing the buffer address.
+> >>
+> >> Cc: stable@vger.kernel.org # v6.1+
+> > Any hint as to what commit id this fixes?
+> >
+> > thanks,
+> >
+> > greg k-h
+> 
+> 
+> Hi Greg,
+> 
+> This issue is not related to any particular commit. The given fix is 
+> address a hardware quirk on the Exynos platform. And we require it to be 
+> backported on stable kernel 6.1 and above all stable kernel.
 
-/sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/zswpout
+If it's a hardware quirk issue, why are you restricting it to a specific
+kernel release and not a specific kernel commit?  Why not 5.15?  5.4?
 
-Other block dev/fs mTHP swap-out events will be counted under
-the existing sysfs "swpout" stats:
+thanks,
 
-/sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/swpout
-
-Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
----
- mm/page_io.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/mm/page_io.c b/mm/page_io.c
-index ff8c99ee3af7..debd04fbdfd0 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -172,6 +172,12 @@ int generic_swapfile_activate(struct swap_info_struct *sis,
- 	goto out;
- }
- 
-+static inline void count_mthp_zswpout_vm_event(struct folio *folio)
-+{
-+	if (IS_ENABLED(CONFIG_THP_SWAP))
-+		count_mthp_stat(folio_order(folio), MTHP_STAT_ZSWPOUT);
-+}
-+
- /*
-  * We may have stale swap cache pages in memory: notice
-  * them here and get rid of the unnecessary final write.
-@@ -196,6 +202,7 @@ int swap_writepage(struct page *page, struct writeback_control *wbc)
- 		return ret;
- 	}
- 	if (zswap_store(folio)) {
-+		count_mthp_zswpout_vm_event(folio);
- 		folio_unlock(folio);
- 		return 0;
- 	}
--- 
-2.27.0
-
+greg k-h
 
