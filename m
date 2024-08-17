@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-290568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2189555D4
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 08:46:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E6C39555D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 08:46:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B964B22B9C
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 06:46:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C987D2856F1
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 06:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C27013B780;
-	Sat, 17 Aug 2024 06:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205391465A0;
+	Sat, 17 Aug 2024 06:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o7F4B4a7"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FCi8ExA4"
 Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B33F14533F
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 06:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C85D145FEB
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 06:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723877117; cv=none; b=DiPJsPFtw6VtLzkiwBfYNSAQdQIuxnWt+mw5yZ2dzgyQ5JaEy2TSAVLdEmVvhWzXJkElMWaD/QcPmmVNSmxhk9Y7b97nHm/ByMmY4Ex4b+KmaoGuKksbgwrcyv0C8OPBMHvd9TB8uKG5fdBYYiZDHmTWrIC7ICvvpDVSSgo0J7Q=
+	t=1723877120; cv=none; b=iysl+IYl1U04r3r+ZNa73enbdPuDozd+6s1Ic1JxuW+MYeV5wnnMi999w92XZvygP6F3EI1eYTNibc+V7JijsaPXicLPPBCvlU37kUx9ptETMv1Hsy1c9XYu5cPwB3+v2NJa64H2RvrGKqKOQ9Fg/KBmDK0v1OxMR+PPSsVuiTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723877117; c=relaxed/simple;
-	bh=svsXcTMaRqZcv7GQdX5SDwbX/PNPLJVnzNXlCv1HOwg=;
+	s=arc-20240116; t=1723877120; c=relaxed/simple;
+	bh=pRY5AZfCbwpYgGVAWMLYaicbhD2xuRtNblur1R1C4z8=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=OIaiYAd/D5CquVhnn4IwAQQPuMWkxZSne6S+1ZAg7JCiGjr9a+TFEmVF0tedjrWGsLd9H6vZyBT7KmbBNqX7AJBMK99IuNaxdnLsPP5ZHNozyPj5u6nziKzsqQ0oeevg5sva7988yh8GjO3g280gyWsDCfURY1A5FKscXICZtNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o7F4B4a7; arc=none smtp.client-ip=209.85.128.202
+	 To:Content-Type; b=hJzwuz6CS59TsY+TMnweb1jA9Dbyr9QfqBxcP3lxXPyvfYReB35e5sYVR/eaKH6eJ9uTTVe7dGka1q8H6nDtP9lbdEgObUAIUNZTu0F2m7DOhwL6Bh/0nczTbX8tKd09EzQUdyF0hGgG37lZLfICNkV8c5e9AcgNkms2p2ByKdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FCi8ExA4; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6886cd07673so49592527b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 23:45:16 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6acf8ac7569so52015297b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 23:45:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723877115; x=1724481915; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1723877117; x=1724481917; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=uiIb0LHFpPGuH8DbvZrhFnBLb6AIQ7thHhf5YFck8Ko=;
-        b=o7F4B4a72LTF0ZtAZDSYFB+3PzHhy77VR9b9FUa0cGmPfKIU1iIk0Q6Pjt3IVk0oo+
-         8wVCO6ZtlzbUh7gO93+SA3XsBMTaPBzliuHi6NJJFh0GiUnRfRaXy249BiFYo5Jkw6UO
-         9h/a6/5E3PBS6hqH2f/x93+yoPKqi6FfvgQGVoiVVBEF+oZ4cjygUyMNiHVHwazWWtDZ
-         TO4uzD4Zov4gKgJTYqrBpSf0c0uBgO4zILHyTtbWMOogZ/k9+oj2Wzg9bd/awnTWoYyv
-         baKuHGAjDKyYPlWJEHYWX85UB+BFjkVMpUqN1OX5qNxse89Iihrd+Nr3izoxfdWITSAy
-         hSgw==
+        bh=wAJzyWm13hc0XphEnwse3Fp8/0A+sQVmN1fNLb1gecE=;
+        b=FCi8ExA4ISx306zIPeeadGugF1ffeTgK9NRLZR45pqPkb3ew/4cMCajkVfwlvGtrLi
+         8LAOn+3rMhGElMx5KinBcs/qYIy69XPbLZNnpdjhv//wLxQoa+xuag1xalQby9Y0i2cn
+         5Ws1oHZF/Ip0TV7Zhsk6SR1wrrMl2ZiKLMzBPtigsHI0/KdAQMJfbYmm/pwSoEY4xAh3
+         z2CbckixxoHReN80WBC0oz0+MOiIPmHN9CUsRyMcqkLsGZ1gRuFi7XbATSfGMnPZuEgy
+         Bf8A102E0NpL1Du37P5AkU+aPsI7KvbMgqrewR4gNP5E/gWzHnwgqqas4TPSwfatjkkN
+         i/LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723877115; x=1724481915;
+        d=1e100.net; s=20230601; t=1723877117; x=1724481917;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uiIb0LHFpPGuH8DbvZrhFnBLb6AIQ7thHhf5YFck8Ko=;
-        b=P+VdfCz6pfXv1r15qwj3VjTRJV3u6aHtUl5obHfXkgxrSINDAcjoddYpgklonppn4r
-         tWYWCx2dFwxq568kueiEo4ZM7C2ErJ2dlpUNiN6BMx4FSyHu64gOK79WKBSEolJ2Ty42
-         pHafTqmMUQuK60VStrsI2oAKVc0OOn6fI8Vhb5ZQBs9I9Xf/KaBQyyuahY0x4qRHLopi
-         yPR2suEV+5qc8RG/UwoeFb8Ok0T4BVcG1OuI7ewR6Glh0du6kkG6J1dB+hrXge9E2ks6
-         3toDhxcrJs/ZC0w20/W+UI65ecE13SLUMmQxmTATytJbYYzYhtE+7ljhxvjPPRvpK65P
-         IoKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXsPvN5Ql2dnd96XCsm54c6UOpNWTn74puzx28tnROgjrjYfwuE4BqLB9kscIi5fH7XZ9UJWAki735y3ECt5KtkR0ph/mGBCe/a/ypX
-X-Gm-Message-State: AOJu0Yx13HYhlx1Uw+waiRyliH4Lh8+1pMgKppBYUZ1Vqg8+dH6sZJNU
-	CJ10mcpUQj1Xb2x1/MtYJZwZ1GNYsVOk8WmtjpnK14i5zL1YPdRpgxoOJXvXho9fyv79xKNc6f3
-	jngWisQ==
-X-Google-Smtp-Source: AGHT+IHpIQH3Z4+neJvbwuE+BMqXxfg4n05M1ztGFk7NZrFg4BazntZ8QBZQfcIgDAHYHp5Rx83a8q7z27Ab
+        bh=wAJzyWm13hc0XphEnwse3Fp8/0A+sQVmN1fNLb1gecE=;
+        b=PzSnKtsdhHmH+yhzwPz0UDyhc8/7XAE+okWG/j+ngv91ZBgH4c8U1oQYWf2oMeKgFL
+         jfSZ1T8C1lmAx3lc8yq7AKtBJrwSfHW3pA+YqQXLy+p2Om2NPc1wmkHOpPIxoEQ1Xbsz
+         7Ix7azEZrUVThJW8xh3qf7kCSzaJjekcIVLnCREhCy5XqldvjPjg2k7AUQBh3OpkZS8I
+         q1DhbWm4VkYe7puKR0J2Ty7hxaHX7F2HUrNMMHCbBreFN4v8zQ/PLpTlQ+xnr3kq/Pzi
+         n+HtmGxs08acMMlCxTieSogh6Q6JVbz+HRlYFch5Kx/HTaoA3V5hek2KkRbXUhvFzk8i
+         O5BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXU8O/uzD3r6vRufFDPIadSeBuTr1HbJPWEtfwXVBYx6IQXOpHuoRh+3lKoLSzy8WTtp1XZIM4baB1sGJ80GDBKtJcyBD/4nRLEIahF
+X-Gm-Message-State: AOJu0YyLigwvG5E9mkdVYIkcwFGMUSBWxHtMiI0K8sRVBXSJnE8miv9I
+	JkLeanzwEu9p+90gg9NxGno/tuQtlDRXiGN48D5ZwmXQNyBgZ7Bl512ySdzvAc2LYEwCx6IAvV0
+	ItFhmXA==
+X-Google-Smtp-Source: AGHT+IH7Yu232gNnniV3EHstk3fBHEEIjNkNXlA2pzSz4OdB3zq/IUPHPuAWRECkAxMJmLLflc2sJAA69/1d
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:78c9:5e58:734f:c59f])
- (user=irogers job=sendgmr) by 2002:a05:690c:2f0b:b0:6ad:9825:6a2f with SMTP
- id 00721157ae682-6b1b6cb7a10mr534947b3.1.1723877115221; Fri, 16 Aug 2024
- 23:45:15 -0700 (PDT)
-Date: Fri, 16 Aug 2024 23:44:35 -0700
+ (user=irogers job=sendgmr) by 2002:a05:690c:4606:b0:691:2f66:4b1c with SMTP
+ id 00721157ae682-6b1baeadc0amr594057b3.6.1723877117487; Fri, 16 Aug 2024
+ 23:45:17 -0700 (PDT)
+Date: Fri, 16 Aug 2024 23:44:36 -0700
 In-Reply-To: <20240817064442.2152089-1-irogers@google.com>
-Message-Id: <20240817064442.2152089-7-irogers@google.com>
+Message-Id: <20240817064442.2152089-8-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240817064442.2152089-1-irogers@google.com>
 X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
-Subject: [PATCH v1 06/13] perf test: Expand pipe/inject test
+Subject: [PATCH v1 07/13] perf inject: Combine build_ids and build_id_all into enum
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -93,133 +93,146 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Test recording of call-graphs and injecting --build-all. Add/expand
-trap handler.
+It is clearer to have a single enum that determines how build ids are
+injected, it also allows for future extension.
+
+Set the header build ID feature whether lazy or all are generated,
+previously only the lazy case would set it.
+
+Allow parsing of known build IDs for either the lazy or all cases.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/tests/shell/pipe_test.sh | 101 ++++++++++++++++++++++------
- 1 file changed, 79 insertions(+), 22 deletions(-)
+ tools/perf/builtin-inject.c | 51 ++++++++++++++++++++++---------------
+ 1 file changed, 31 insertions(+), 20 deletions(-)
 
-diff --git a/tools/perf/tests/shell/pipe_test.sh b/tools/perf/tests/shell/pipe_test.sh
-index a78d35d2cff0..ad10012fdc29 100755
---- a/tools/perf/tests/shell/pipe_test.sh
-+++ b/tools/perf/tests/shell/pipe_test.sh
-@@ -1,4 +1,4 @@
--#!/bin/sh
-+#!/bin/bash
- # perf pipe recording and injection test
- # SPDX-License-Identifier: GPL-2.0
+diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
+index 8440ddfbf4fe..865d16ceead2 100644
+--- a/tools/perf/builtin-inject.c
++++ b/tools/perf/builtin-inject.c
+@@ -103,11 +103,16 @@ struct guest_session {
+ 	struct guest_event		ev;
+ };
  
-@@ -12,30 +12,87 @@ skip_test_missing_symbol ${sym}
++enum build_id_rewrite_style {
++	BID_RWS__NONE = 0,
++	BID_RWS__INJECT_HEADER_LAZY,
++	BID_RWS__INJECT_HEADER_ALL,
++};
++
+ struct perf_inject {
+ 	struct perf_tool	tool;
+ 	struct perf_session	*session;
+-	bool			build_ids;
+-	bool			build_id_all;
++	enum build_id_rewrite_style build_id_style;
+ 	bool			sched_stat;
+ 	bool			have_auxtrace;
+ 	bool			strip;
+@@ -2015,8 +2020,8 @@ static int __cmd_inject(struct perf_inject *inject)
  
- data=$(mktemp /tmp/perf.data.XXXXXX)
- prog="perf test -w noploop"
--task="perf"
-+err=0
+ 	signal(SIGINT, sig_handler);
  
--if ! perf record -e task-clock:u -o - ${prog} | perf report -i - --task | grep ${task}; then
--	echo "cannot find the test file in the perf report"
--	exit 1
--fi
-+set -e
+-	if (inject->build_ids || inject->sched_stat ||
+-	    inject->itrace_synth_opts.set || inject->build_id_all) {
++	if (inject->build_id_style != BID_RWS__NONE || inject->sched_stat ||
++	    inject->itrace_synth_opts.set) {
+ 		inject->tool.mmap	  = perf_event__repipe_mmap;
+ 		inject->tool.mmap2	  = perf_event__repipe_mmap2;
+ 		inject->tool.fork	  = perf_event__repipe_fork;
+@@ -2027,10 +2032,10 @@ static int __cmd_inject(struct perf_inject *inject)
  
--if ! perf record -e task-clock:u -o - ${prog} | perf inject -b | perf report -i - | grep ${sym}; then
--	echo "cannot find noploop function in pipe #1"
--	exit 1
--fi
-+cleanup() {
-+  rm -rf "${data}"
-+  rm -rf "${data}".old
+ 	output_data_offset = perf_session__data_offset(session->evlist);
  
--perf record -e task-clock:u -o - ${prog} | perf inject -b -o ${data}
--if ! perf report -i ${data} | grep ${sym}; then
--	echo "cannot find noploop function in pipe #2"
--	exit 1
--fi
-+  trap - EXIT TERM INT
-+}
+-	if (inject->build_id_all) {
++	if (inject->build_id_style == BID_RWS__INJECT_HEADER_ALL) {
+ 		inject->tool.mmap	  = perf_event__repipe_buildid_mmap;
+ 		inject->tool.mmap2	  = perf_event__repipe_buildid_mmap2;
+-	} else if (inject->build_ids) {
++	} else if (inject->build_id_style == BID_RWS__INJECT_HEADER_LAZY) {
+ 		inject->tool.sample = perf_event__inject_buildid;
+ 	} else if (inject->sched_stat) {
+ 		struct evsel *evsel;
+@@ -2148,9 +2153,9 @@ static int __cmd_inject(struct perf_inject *inject)
+ 			.inject = inject,
+ 		};
  
--perf record -e task-clock:u -o ${data} ${prog}
--if ! perf inject -b -i ${data} | perf report -i - | grep ${sym}; then
--	echo "cannot find noploop function in pipe #3"
--	exit 1
--fi
-+trap_cleanup() {
-+  echo "Unexpected signal in ${FUNCNAME[1]}"
-+  cleanup
-+  exit 1
-+}
-+trap trap_cleanup EXIT TERM INT
+-		if (inject->build_ids)
+-			perf_header__set_feat(&session->header,
+-					      HEADER_BUILD_ID);
++		if (inject->build_id_style == BID_RWS__INJECT_HEADER_LAZY ||
++		    inject->build_id_style == BID_RWS__INJECT_HEADER_ALL)
++			perf_header__set_feat(&session->header, HEADER_BUILD_ID);
+ 		/*
+ 		 * Keep all buildids when there is unprocessed AUX data because
+ 		 * it is not known which ones the AUX trace hits.
+@@ -2211,11 +2216,13 @@ int cmd_inject(int argc, const char **argv)
+ 	int ret;
+ 	bool repipe = true;
+ 	const char *known_build_ids = NULL;
++	bool build_ids;
++	bool build_id_all;
  
-+test_record_report() {
-+  echo
-+  echo "Record+report pipe test"
-+
-+  task="perf"
-+  if ! perf record -e task-clock:u -o - ${prog} | perf report -i - --task | grep -q ${task}
-+  then
-+    echo "Record+report pipe test [Failed - cannot find the test file in the perf report #1]"
-+    err=1
-+    return
-+  fi
-+
-+  if ! perf record -g -e task-clock:u -o - ${prog} | perf report -i - --task | grep -q ${task}
-+  then
-+    echo "Record+report pipe test [Failed - cannot find the test file in the perf report #2]"
-+    err=1
-+    return
-+  fi
-+
-+  echo "Record+report pipe test [Success]"
-+}
-+
-+test_inject_bids() {
-+  inject_opt=$1
-+
-+  echo
-+  echo "Inject ${inject_opt} build-ids test"
-+
-+  if ! perf record -e task-clock:u -o - ${prog} | perf inject ${inject_opt}| perf report -i - | grep -q ${sym}
-+  then
-+    echo "Inject build-ids test [Failed - cannot find noploop function in pipe #1]"
-+    err=1
-+    return
-+  fi
-+
-+  if ! perf record -g -e task-clock:u -o - ${prog} | perf inject ${inject_opt} | perf report -i - | grep -q ${sym}
-+  then
-+    echo "Inject ${inject_opt} build-ids test [Failed - cannot find noploop function in pipe #2]"
-+    err=1
-+    return
-+  fi
-+
-+  perf record -e task-clock:u -o - ${prog} | perf inject ${inject_opt} -o ${data}
-+  if ! perf report -i ${data} | grep -q ${sym}; then
-+    echo "Inject ${inject_opt} build-ids test [Failed - cannot find noploop function in pipe #3]"
-+    err=1
-+    return
-+  fi
-+
-+  perf record -e task-clock:u -o ${data} ${prog}
-+  if ! perf inject ${inject_opt} -i ${data} | perf report -i - | grep -q ${sym}; then
-+    echo "Inject ${inject_opt} build-ids test [Failed - cannot find noploop function in pipe #4]"
-+    err=1
-+    return
-+  fi
-+
-+  echo "Inject ${inject_opt} build-ids test [Success]"
-+}
-+
-+test_record_report
-+test_inject_bids -b
-+test_inject_bids --buildid-all
-+
-+cleanup
-+exit $err
+ 	struct option options[] = {
+-		OPT_BOOLEAN('b', "build-ids", &inject.build_ids,
++		OPT_BOOLEAN('b', "build-ids", &build_ids,
+ 			    "Inject build-ids into the output stream"),
+-		OPT_BOOLEAN(0, "buildid-all", &inject.build_id_all,
++		OPT_BOOLEAN(0, "buildid-all", &build_id_all,
+ 			    "Inject build-ids of all DSOs into the output stream"),
+ 		OPT_STRING(0, "known-build-ids", &known_build_ids,
+ 			   "buildid path [,buildid path...]",
+@@ -2313,6 +2320,10 @@ int cmd_inject(int argc, const char **argv)
+ 			return -1;
+ 		}
+ 	}
++	if (build_ids)
++		inject.build_id_style = BID_RWS__INJECT_HEADER_LAZY;
++	if (build_id_all)
++		inject.build_id_style = BID_RWS__INJECT_HEADER_ALL;
  
--rm -f ${data} ${data}.old
--exit 0
+ 	data.path = inject.input_name;
+ 	if (!strcmp(inject.input_name, "-") || inject.output.is_pipe) {
+@@ -2326,7 +2337,7 @@ int cmd_inject(int argc, const char **argv)
+ 			repipe = false;
+ 	}
+ 	ordered_events = inject.jit_mode || inject.sched_stat ||
+-		(inject.build_ids && !inject.build_id_all);
++		(inject.build_id_style == BID_RWS__INJECT_HEADER_LAZY);
+ 	perf_tool__init(&inject.tool, ordered_events);
+ 	inject.tool.sample		= perf_event__repipe_sample;
+ 	inject.tool.read		= perf_event__repipe_sample;
+@@ -2398,7 +2409,7 @@ int cmd_inject(int argc, const char **argv)
+ 			goto out_delete;
+ 	}
+ 
+-	if (inject.build_ids && !inject.build_id_all) {
++	if (inject.build_id_style == BID_RWS__INJECT_HEADER_LAZY) {
+ 		/*
+ 		 * to make sure the mmap records are ordered correctly
+ 		 * and so that the correct especially due to jitted code
+@@ -2406,14 +2417,14 @@ int cmd_inject(int argc, const char **argv)
+ 		 * inject the jit mmaps at the same time for now.
+ 		 */
+ 		inject.tool.ordering_requires_timestamps = true;
+-		if (known_build_ids != NULL) {
+-			inject.known_build_ids =
+-				perf_inject__parse_known_build_ids(known_build_ids);
++	}
++	if (inject.build_id_style != BID_RWS__NONE && known_build_ids != NULL) {
++		inject.known_build_ids =
++			perf_inject__parse_known_build_ids(known_build_ids);
+ 
+-			if (inject.known_build_ids == NULL) {
+-				pr_err("Couldn't parse known build ids.\n");
+-				goto out_delete;
+-			}
++		if (inject.known_build_ids == NULL) {
++			pr_err("Couldn't parse known build ids.\n");
++			goto out_delete;
+ 		}
+ 	}
+ 
 -- 
 2.46.0.184.g6999bdac58-goog
 
