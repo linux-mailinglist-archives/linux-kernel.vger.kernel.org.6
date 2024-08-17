@@ -1,84 +1,209 @@
-Return-Path: <linux-kernel+bounces-290592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3F4095560C
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:11:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9BAF955617
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:15:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7546EB22556
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:11:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96326285C3A
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E4813DBB7;
-	Sat, 17 Aug 2024 07:11:06 +0000 (UTC)
-Received: from gollum.nazgul.ch (gollum.nazgul.ch [81.221.21.253])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70197140363;
+	Sat, 17 Aug 2024 07:15:40 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C4820E6;
-	Sat, 17 Aug 2024 07:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.221.21.253
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA79412CDB0;
+	Sat, 17 Aug 2024 07:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723878666; cv=none; b=dGgGWEF0FCE6gKa3Mv0SBdNyjEL+RWOqFM+iownMDz+hKLQZ6tG3+daxU9J0dH3Z1AG8dSY6h194+4jMkVTB8OM/Tc16tnkbdG9/fPrIH1qwAxxTYEBsejOiwkUDU5ZEM5/04mEGuARKPu33UZPy0io/gPjJRaceV0S80Jmrv04=
+	t=1723878940; cv=none; b=rofx1H4Hwj73QU3PNctJKtc9grK26XWLPNBgyp1Azewb3uuufJBvNAIMbmjuY3/xVOe3aII+kghNK7f8olkx4f9HAgImjsoVQki7Gwb0sC2WxCZoXYebV/ibm6hldw+wI4V8XA8Z/slSBvAzLaYzdNU28nvePJf3NB+yJCHjJNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723878666; c=relaxed/simple;
-	bh=RmPTMHik1Ww+as8nGPYipMDCD9r8HigdtJBXkQE/E1E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BuztWNKuahE6uRUwAt2tjBvT9arlGEW8YFmFzvVjAdDvaXk+dg/qBEpfxtYBVZAZCsvHunWVKGwWB9JrYwis9/ymshyl2CwaIepm9npNLBETWFLtt2eTh8LMK55Mouoxtf+95hFaVj9kmsUeAiBN5PQb4vJGw4SaKL99Z842cVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nazgul.ch; spf=pass smtp.mailfrom=nazgul.ch; arc=none smtp.client-ip=81.221.21.253
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nazgul.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nazgul.ch
-Received: from localhost (gollum.nazgul.ch [local])
-	by gollum.nazgul.ch (OpenSMTPD) with ESMTPA id 6fd25548;
-	Sat, 17 Aug 2024 09:11:01 +0200 (CEST)
-Date: Sat, 17 Aug 2024 09:11:01 +0200
-From: Marcus Glocker <marcus@nazgul.ch>
-To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>
-Subject: [PATCH v4 3/6] dt-bindings: ufs: Add X1E80100 UFS
-Message-ID: <vqdfcwwctbgrlamqecpevy7ycxdyzidy73joj6aqao4fq5235o@eithrqu3elp2>
-References: <3lmcfffifsg6v3ljzxfbk25ydh6446phdff7w75k6gwoyw3jkw@ryc66frtyksk>
+	s=arc-20240116; t=1723878940; c=relaxed/simple;
+	bh=cpQ/dTQaaeMXokaHetPUTehUGKoy4+4Sq9ThDX5zTLI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ef+8sXiEM0gpIp0QSaMc66ZxarWDLwgaZtGCYI4Alj4D9dE3F199DF97EKdJ3euldthQlus4W04CSCadDOEBUY+zvssZGDo8RiUTYcLBe2WvLVBFP2ll/ciM12tT6PbLxdyPAY3qcSjO/RupM7UZG6KqHlbtoFoXDefbFbKjIMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Wm99g3pNJz4f3jHn;
+	Sat, 17 Aug 2024 15:15:19 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 751E51A058E;
+	Sat, 17 Aug 2024 15:15:33 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgCXv4USTsBmTQm0Bw--.39374S4;
+	Sat, 17 Aug 2024 15:15:32 +0800 (CST)
+From: Li Lingfeng <lilingfeng@huaweicloud.com>
+To: tj@kernel.org,
+	josef@toxicpanda.com,
+	hch@lst.de,
+	mkoutny@suse.com,
+	axboe@kernel.dk
+Cc: cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai1@huaweicloud.com,
+	houtao1@huawei.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	yukuai3@huawei.com,
+	lilingfeng@huaweicloud.com,
+	lilingfeng3@huawei.com
+Subject: [PATCH v3] block: flush all throttled bios when deleting the cgroup
+Date: Sat, 17 Aug 2024 15:11:08 +0800
+Message-Id: <20240817071108.1919729-1-lilingfeng@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3lmcfffifsg6v3ljzxfbk25ydh6446phdff7w75k6gwoyw3jkw@ryc66frtyksk>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCXv4USTsBmTQm0Bw--.39374S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxWr4xWF48Gw47WF1kCFWDXFb_yoWrAF1DpF
+	WS9a45Cw1DJr90kr4agr1UJFWSv395XrWag397GayayrWxtw1jqF9YvFy8XFWrJFn3Cr4Y
+	vr45tr1xuF18G37anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUQID7UUUUU=
+X-CM-SenderInfo: polox0xjih0w46kxt4xhlfz01xgou0bp/
 
-Document the ufs host controller compatible for the Qualcomm X1E80100.
+From: Li Lingfeng <lilingfeng3@huawei.com>
 
-Signed-off-by: Marcus Glocker <marcus@nazgul.ch>
+When a process migrates to another cgroup and the original cgroup is deleted,
+the restrictions of throttled bios cannot be removed. If the restrictions
+are set too low, it will take a long time to complete these bios.
+
+Refer to the process of deleting a disk to remove the restrictions and
+issue bios when deleting the cgroup.
+
+This makes difference on the behavior of throttled bios:
+Before: the limit of the throttled bios can't be changed and the bios will
+complete under this limit;
+Now: the limit will be canceled and the throttled bios will be flushed
+immediately.
+
+References:
+[1] https://lore.kernel.org/r/20220318130144.1066064-4-ming.lei@redhat.com
+[2] https://lore.kernel.org/all/da861d63-58c6-3ca0-2535-9089993e9e28@huaweicloud.com/
+
+Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
 ---
- Documentation/devicetree/bindings/ufs/qcom,ufs.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+  v2->v3:
+    Change "tg_cancel_bios" to "tg_flush_bios";
+    Add reference of v2 to describe the background.
+ block/blk-throttle.c | 68 ++++++++++++++++++++++++++++----------------
+ 1 file changed, 44 insertions(+), 24 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
-index 25a5edeea164..4cb3fea53651 100644
---- a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
-+++ b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
-@@ -41,6 +41,7 @@ properties:
-           - qcom,sm8450-ufshc
-           - qcom,sm8550-ufshc
-           - qcom,sm8650-ufshc
-+          - qcom,x1e80100-ufshc
-       - const: qcom,ufshc
-       - const: jedec,ufs-2.0
+diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+index 6943ec720f39..cf7f4912c57a 100644
+--- a/block/blk-throttle.c
++++ b/block/blk-throttle.c
+@@ -1526,6 +1526,42 @@ static void throtl_shutdown_wq(struct request_queue *q)
+ 	cancel_work_sync(&td->dispatch_work);
+ }
  
-@@ -121,6 +122,7 @@ allOf:
-           contains:
-             enum:
-               - qcom,sc7180-ufshc
-+              - qcom,x1e80100-ufshc
-     then:
-       properties:
-         clocks:
++static void tg_flush_bios(struct throtl_grp *tg)
++{
++	struct throtl_service_queue *sq = &tg->service_queue;
++
++	if (tg->flags & THROTL_TG_CANCELING)
++		return;
++	/*
++	 * Set the flag to make sure throtl_pending_timer_fn() won't
++	 * stop until all throttled bios are dispatched.
++	 */
++	tg->flags |= THROTL_TG_CANCELING;
++
++	/*
++	 * Do not dispatch cgroup without THROTL_TG_PENDING or cgroup
++	 * will be inserted to service queue without THROTL_TG_PENDING
++	 * set in tg_update_disptime below. Then IO dispatched from
++	 * child in tg_dispatch_one_bio will trigger double insertion
++	 * and corrupt the tree.
++	 */
++	if (!(tg->flags & THROTL_TG_PENDING))
++		return;
++
++	/*
++	 * Update disptime after setting the above flag to make sure
++	 * throtl_select_dispatch() won't exit without dispatching.
++	 */
++	tg_update_disptime(tg);
++
++	throtl_schedule_pending_timer(sq, jiffies + 1);
++}
++
++static void throtl_pd_offline(struct blkg_policy_data *pd)
++{
++	tg_flush_bios(pd_to_tg(pd));
++}
++
+ struct blkcg_policy blkcg_policy_throtl = {
+ 	.dfl_cftypes		= throtl_files,
+ 	.legacy_cftypes		= throtl_legacy_files,
+@@ -1533,6 +1569,7 @@ struct blkcg_policy blkcg_policy_throtl = {
+ 	.pd_alloc_fn		= throtl_pd_alloc,
+ 	.pd_init_fn		= throtl_pd_init,
+ 	.pd_online_fn		= throtl_pd_online,
++	.pd_offline_fn		= throtl_pd_offline,
+ 	.pd_free_fn		= throtl_pd_free,
+ };
+ 
+@@ -1553,32 +1590,15 @@ void blk_throtl_cancel_bios(struct gendisk *disk)
+ 	 */
+ 	rcu_read_lock();
+ 	blkg_for_each_descendant_post(blkg, pos_css, q->root_blkg) {
+-		struct throtl_grp *tg = blkg_to_tg(blkg);
+-		struct throtl_service_queue *sq = &tg->service_queue;
+-
+-		/*
+-		 * Set the flag to make sure throtl_pending_timer_fn() won't
+-		 * stop until all throttled bios are dispatched.
+-		 */
+-		tg->flags |= THROTL_TG_CANCELING;
+-
+ 		/*
+-		 * Do not dispatch cgroup without THROTL_TG_PENDING or cgroup
+-		 * will be inserted to service queue without THROTL_TG_PENDING
+-		 * set in tg_update_disptime below. Then IO dispatched from
+-		 * child in tg_dispatch_one_bio will trigger double insertion
+-		 * and corrupt the tree.
++		 * disk_release will call pd_offline_fn to cancel bios.
++		 * However, disk_release can't be called if someone get
++		 * the refcount of device and issued bios which are
++		 * inflight after del_gendisk.
++		 * Cancel bios here to ensure no bios are inflight after
++		 * del_gendisk.
+ 		 */
+-		if (!(tg->flags & THROTL_TG_PENDING))
+-			continue;
+-
+-		/*
+-		 * Update disptime after setting the above flag to make sure
+-		 * throtl_select_dispatch() won't exit without dispatching.
+-		 */
+-		tg_update_disptime(tg);
+-
+-		throtl_schedule_pending_timer(sq, jiffies + 1);
++		tg_flush_bios(blkg_to_tg(blkg));
+ 	}
+ 	rcu_read_unlock();
+ 	spin_unlock_irq(&q->queue_lock);
 -- 
 2.39.2
 
