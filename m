@@ -1,47 +1,55 @@
-Return-Path: <linux-kernel+bounces-290593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6AFD95560F
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:12:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7866F955611
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:13:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7A4F1C21409
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:12:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 024BCB22497
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD0613DDAD;
-	Sat, 17 Aug 2024 07:12:13 +0000 (UTC)
-Received: from gollum.nazgul.ch (gollum.nazgul.ch [81.221.21.253])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370CF13DB99;
+	Sat, 17 Aug 2024 07:12:55 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B27820E6;
-	Sat, 17 Aug 2024 07:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.221.21.253
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C614720E6;
+	Sat, 17 Aug 2024 07:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723878733; cv=none; b=oNONpA7RVanqN7TNDguMJbJ2qwcoHtgdRRrd/bFdKrSOkqkpuZnn0w4H9wbI0stKUW9+drKGRT/I98vpqgpnsMO4PSWpLz4VgSYAUASStwLfPGTB6ToLVF1nwRJoBt5o2N9KPvnShrww6cR+UfgkLFttcbS8l7LHBl57eZgv01o=
+	t=1723878774; cv=none; b=tm12H+nZLT8kF8WDibYSvUtMRzOk3/hSV25CR/0wn/E9pAnK86amiAacvug3cA8SVx6+9nwMzNi/KvG8VW+IwRimKWO9MLzRiGjkmpRDbEpAELd3DI51XTyF/C+90iDR6FRuw6dTZvY/Vr3NiFPB5Nkxv9PFItTytcaocsVEaF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723878733; c=relaxed/simple;
-	bh=RUP6Gqoj9OT0gB/mLdkcHmKdOD4LZB/wGNIcRzaeELo=;
+	s=arc-20240116; t=1723878774; c=relaxed/simple;
+	bh=/o4Vnthxc4+P95238wpYEJpmMWZOiInjNs4QutY4M+8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hXDdqPKmEjJioFX9sZPbKOF3r++L3MJsonG6aGSWCbHSa4AEgMNzsSN45VYK2HiR3yekhFSsL1uP584AKSBoX8IoyosHhGU6YxWa0w2G6sLth15CCysy2tQZ3pWUH2+VIcCETKStqHmENj+3+JoWSJJpmzo1YkAXkR3Da2czJvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nazgul.ch; spf=pass smtp.mailfrom=nazgul.ch; arc=none smtp.client-ip=81.221.21.253
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nazgul.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nazgul.ch
-Received: from localhost (gollum.nazgul.ch [local])
-	by gollum.nazgul.ch (OpenSMTPD) with ESMTPA id 45b17932;
-	Sat, 17 Aug 2024 09:12:09 +0200 (CEST)
-Date: Sat, 17 Aug 2024 09:12:09 +0200
-From: Marcus Glocker <marcus@nazgul.ch>
-To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>
-Subject: [PATCH v4 4/6] arm64: dts: qcom: Add UFS node
-Message-ID: <d7syvqsveojqnoriulzf62fqbgnpn7qvj7ifnhhrqjqfa7to7b@wyxov7juxqqw>
-References: <3lmcfffifsg6v3ljzxfbk25ydh6446phdff7w75k6gwoyw3jkw@ryc66frtyksk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uHrq80owYyFqSyVigUQjZamuIlPZ+PNq8DAsaVk4l4qYUyFTxad0M77QHyM6m6hyase/k0AwGMXiSdkcZk8gugzg6F0mdF3YxP+wJdV7oQKEW5cv0DRRtyZQG+mKQFGUD1ej5k2HsdXuIHuLqtmwYjvwnMVqTgvd1jyj/BDAnaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sfDTc-005IQL-1A;
+	Sat, 17 Aug 2024 15:12:38 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 17 Aug 2024 15:12:37 +0800
+Date: Sat, 17 Aug 2024 15:12:37 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Waiman Long <longman@redhat.com>
+Cc: steffen.klassert@secunet.com, daniel.m.jordan@oracle.com,
+	akpm@linux-foundation.org, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] padata: Fix possible divide-by-0 panic in
+ padata_mt_helper()
+Message-ID: <ZsBNZXfVZbtZnb2Y@gondor.apana.org.au>
+References: <Zrbm--AxRXgfHUek@gondor.apana.org.au>
+ <e752f094-adb4-4448-8bc8-e2460330eaec@redhat.com>
+ <ZrgXtLI1R5zJ9GFG@gondor.apana.org.au>
+ <91d29649-ca88-4f6c-bf1d-19e49c9555df@redhat.com>
+ <ZrgsU-1PdxvUVMOW@gondor.apana.org.au>
+ <88c188dc-3664-45db-b54a-11feca59d7d2@redhat.com>
+ <Zrgy1TDikPSkzaYP@gondor.apana.org.au>
+ <c5cc5ea9-1135-4ac6-a38f-652ed07dae17@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,100 +58,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3lmcfffifsg6v3ljzxfbk25ydh6446phdff7w75k6gwoyw3jkw@ryc66frtyksk>
+In-Reply-To: <c5cc5ea9-1135-4ac6-a38f-652ed07dae17@redhat.com>
 
-Add the ufs host controller node for the Qualcomm X1E80100.
-This was copied from arch/arm64/boot/dts/qcom/sc7180.dtsi and
-adapted to our needs.
+On Mon, Aug 12, 2024 at 10:04:07AM -0400, Waiman Long wrote:
+>
+> Anyway, using DIV_ROUND_UP() is a slight change in behavior as chunk_size
+> will be increased by 1 in most cases. I am a bit hesitant to make this
+> change without looking into more detail about the rationale behind the
+> current code.
 
-Signed-off-by: Marcus Glocker <marcus@nazgul.ch>
----
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 71 ++++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
+I don't think it matters much.  Just look at the two lines after
+the division, they're both rounding the value up.  So clearly this
+is expected to handle the case where work gets bunched up into the
+first N CPUs, potentially leaving some CPUs unused.
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index 7bca5fcd7d52..235e20e4b51f 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -2878,6 +2878,77 @@ mmss_noc: interconnect@1780000 {
- 			#interconnect-cells = <2>;
- 		};
- 
-+		ufs_mem_hc: ufs@1d84000 {
-+			compatible = "qcom,x1e80100-ufshc", "qcom,ufshc",
-+				     "jedec,ufs-2.0";
-+			reg = <0 0x01d84000 0 0x3000>;
-+			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
-+			phys = <&ufs_mem_phy>;
-+			phy-names = "ufsphy";
-+			lanes-per-direction = <1>;
-+			#reset-cells = <1>;
-+			resets = <&gcc GCC_UFS_PHY_BCR>;
-+			reset-names = "rst";
-+
-+			power-domains = <&gcc GCC_UFS_PHY_GDSC>;
-+
-+			iommus = <&apps_smmu 0xa0 0x0>;
-+
-+			clock-names = "core_clk",
-+				      "bus_aggr_clk",
-+				      "iface_clk",
-+				      "core_clk_unipro",
-+				      "ref_clk",
-+				      "tx_lane0_sync_clk",
-+				      "rx_lane0_sync_clk";
-+			clocks = <&gcc GCC_UFS_PHY_AXI_CLK>,
-+				 <&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>,
-+				 <&gcc GCC_UFS_PHY_AHB_CLK>,
-+				 <&gcc GCC_UFS_PHY_UNIPRO_CORE_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK>,
-+				 <&gcc GCC_UFS_PHY_TX_SYMBOL_0_CLK>,
-+				 <&gcc GCC_UFS_PHY_RX_SYMBOL_0_CLK>;
-+			freq-table-hz = <50000000 200000000>,
-+					<0 0>,
-+					<0 0>,
-+					<37500000 150000000>,
-+					<0 0>,
-+					<0 0>,
-+					<0 0>;
-+
-+			interconnects = <&aggre1_noc MASTER_UFS_MEM QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-+					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+					 &config_noc SLAVE_UFS_MEM_CFG QCOM_ICC_TAG_ALWAYS>;
-+			interconnect-names = "ufs-ddr", "cpu-ufs";
-+
-+			qcom,ice = <&ice>;
-+
-+			status = "disabled";
-+		};
-+
-+		ufs_mem_phy: phy@1d87000 {
-+			compatible = "qcom,x1e80100-qmp-ufs-phy";
-+			reg = <0 0x01d87000 0 0x1000>;
-+			clocks = <&rpmhcc RPMH_CXO_CLK>,
-+				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>;
-+			clock-names = "ref",
-+				      "ref_aux",
-+				      "qref";
-+			power-domains = <&gcc GCC_UFS_PHY_GDSC>;
-+			resets = <&ufs_mem_hc 0>;
-+			reset-names = "ufsphy";
-+			#phy-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		ice: crypto@1d90000 {
-+			compatible = "qcom,x1e80100-inline-crypto-engine",
-+				     "qcom,inline-crypto-engine";
-+			reg = <0 0x01d90000 0 0x8000>;
-+			clocks = <&gcc GCC_UFS_PHY_ICE_CORE_CLK>;
-+		};
-+
- 		pcie6a: pci@1bf8000 {
- 			device_type = "pci";
- 			compatible = "qcom,pcie-x1e80100";
+But Daniel wrote the code so he can have the last say of whether
+we should round up after the division or after the other two ops.
+
+Daniel?
+
+Cheers,
 -- 
-2.39.2
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
