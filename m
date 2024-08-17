@@ -1,53 +1,87 @@
-Return-Path: <linux-kernel+bounces-290794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2D529558BE
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 17:46:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B47E9558CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 17:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D27BC1C20C8A
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:46:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C92BB20F0C
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5560012C54D;
-	Sat, 17 Aug 2024 15:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0974F15383F;
+	Sat, 17 Aug 2024 15:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="FW3hjrWY"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (3072-bit key) header.d=octiron.net header.i=@octiron.net header.b="Htkkf+Le";
+	dkim=permerror (0-bit key) header.d=octiron.net header.i=@octiron.net header.b="i2PlxWYM";
+	dkim=pass (3072-bit key) header.d=octiron.net header.i=@octiron.net header.b="mZKieQBu";
+	dkim=permerror (0-bit key) header.d=octiron.net header.i=@octiron.net header.b="1KxZoK1m"
+Received: from papylos.uuid.uk (papylos.uuid.uk [209.16.157.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5A52107
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 15:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1136621;
+	Sat, 17 Aug 2024 15:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.16.157.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723909555; cv=none; b=LkxEziQs8hmvJR2f4ttt9b+c3TEyu0ypEji9lKaAtBmtdIoJ367Bh2MVnIRClYu+EBLSan6nHcq5VQxzfVP+fQbDfoD/PHM6DOR08RFX2cte+XayplEqBxEFTY5YoF5/J1Cra8nxAIltvuQ57V9BuC/LSpQKYjdKlOZtSn3MAkg=
+	t=1723910002; cv=none; b=mE7XdnwgPN43muG9fDhZ4hJLapMF+v5GDIn57n1gETuhCIURFJ5o6yzfk4Z+ouOdlnngIqhcTKIxanF7znl/u+A7vJBVU+jOY3Ms5QkfcH7RlShkcvZYiJiV7F3JI+4L6Zl+pWt9jRp69fTZJHdvLmidVzpyRJtwO1HPNQgC+94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723909555; c=relaxed/simple;
-	bh=OGL62sB61emjnqbxIJmLloDZuR4baw1Q9bvuaSpytS4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wbjabm2sBgYHgW9A0sKh8llzkV+6jep625zi0Qg69PVsmr1k4XXuCNRr86e22GDPBNjydTxu2b/idpilkA6a8CH1KunCQK8QpEKkc7/uhEoKpJbAXdOIdQc5B+Qxd/FAP/DjrEiIbB0av+Y29IuH8NQYioKL5SYn0CxHHhX9uCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=FW3hjrWY; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 47HFitWQ4187346
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Sat, 17 Aug 2024 08:44:56 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 47HFitWQ4187346
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024071601; t=1723909497;
-	bh=TmC4Ju3hvlDQzhjXGLimT3wqkboBWiuJZaYmGcB8Xf0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FW3hjrWYa+nmYAPJpAVIlEH9OXwnCzVQzpEAj2jIIW70EXY93zo/YoeDF8HZKL+1l
-	 TEUv+snd/4DoC2xu/Eu56htAA3Ls0efVOHvJkQp2CxBT4Vs3rbMtSPQPwYmhLACopG
-	 i2iDgEEYpTvkp7neu9CBkb/cQf7Xu+OERSiFPn1bDTLBtJdHOpCQLRlSWU2h34znTJ
-	 FLow+lFGdqQd0jp5B/+16NPgeRj4Pl98ww6KNJrynYRIhtVzGsf8H/VT+zHL80E8Az
-	 0a6Z88Ki3egq968sy3BBxusB5MoGAvkHsYDD2jieIRPB4rkjGwYERDBsi46ntngn5Y
-	 AB8AQOfH+ZBsA==
-Message-ID: <451f9224-f0de-43c5-b178-2bb4281e5ad2@zytor.com>
-Date: Sat, 17 Aug 2024 08:44:55 -0700
+	s=arc-20240116; t=1723910002; c=relaxed/simple;
+	bh=44Gcg5gHo0SDzHcx2AbXaJijpGiE6ziXWTF+kBIM6xo=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=jwzz0XL6Oo5RIll1F6eEPs3G0FJMDGUiji9S6uHEMjNjHb91UB7RVdhAUnV9SOujafmRqjPgzhAxT3wF/xv554VGGqfT/aW52KY254hNTPwjPHJwoQNC/SEeN7Ddlr3Bhg63IzhOkYEUxn4rNlrjrOydjwHOwWMX4aHPCeQ1/mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=octiron.net; spf=pass smtp.mailfrom=octiron.net; dkim=pass (3072-bit key) header.d=octiron.net header.i=@octiron.net header.b=Htkkf+Le; dkim=permerror (0-bit key) header.d=octiron.net header.i=@octiron.net header.b=i2PlxWYM; dkim=pass (3072-bit key) header.d=octiron.net header.i=@octiron.net header.b=mZKieQBu; dkim=permerror (0-bit key) header.d=octiron.net header.i=@octiron.net header.b=1KxZoK1m; arc=none smtp.client-ip=209.16.157.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=octiron.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=octiron.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=octiron.net
+	; s=20230424-rsa3072; h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:
+	From:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:
+	Message-ID:To:Cc:Bcc:MIME-Version:Content-Type:Content-Disposition:
+	Content-Transfer-Encoding:In-Reply-To:References:Organization;
+	bh=g7qDpelvAGbFuX1Lj9/Vu9+S47+tSyG/wswyKe8fpSY=; t=1723909998; b=Htkkf+LepvSe
+	BP13KVjDkg9iUcbFYHAfUeESi1vmxGMuLtaSHUJ3Fznda3tqRUMBJYVvrByUnPYkvQAV9hLg5qK3D
+	JDKwYpLFG0Iv7X0TrwsOzaGXEAklDhKNZCxXtuADGmdDABpLdMcYL2QqS/uJDNj6qIfLVMm5i1BSW
+	4altVE9bnNkRiAuPHRu2kFQwpBvmdNAQivphDiwlAvA0MTVhJszaEjggyMgb0n6SVFSbHGDdUiyvC
+	n4oeqxSy1WcWvTYAwZ2QIrk3BrOGznbzX0UfSMXdjxU+KXD38GcDiu57N2zfEI9fjQ9lMRmGEZGp1
+	HFHR9D/hdMjTWyRZ6IneE6a+XsNkougq77aQCyWnPmnhWhdcCcQ4EQutULKAOocWrdIZW1KECKwUk
+	l9FjGxbIJ20W99YVZ3mDM9gjTgzKQw7CihPRwnYEChaP9oSqtOmQMyWLPLvdx1Nfw1GRwX2Wr2RyX
+	hj4UW87WPtLPYjI64bu6sqR6dg/kvl45/gKY7C;
+DKIM-Signature: v=1; a=ed25519-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=octiron.net; s=20230410-ed25519; h=Content-Transfer-Encoding:Content-Type:
+	Cc:To:Subject:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:Bcc:MIME-Version:Content-Type:Content-Disposition:
+	Content-Transfer-Encoding:In-Reply-To:References:Organization;
+	bh=g7qDpelvAGbFuX1Lj9/Vu9+S47+tSyG/wswyKe8fpSY=; t=1723909998; b=i2PlxWYMoAZE
+	BpbaL3WpHPJFyn5BrgoYDAE0Iq+bN4s3kpTOLZEexu+/i9M/EXY1pZTwx/HnLHINuc6aUHehDQ==;
+Received: by papylos.uuid.uk with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	(envelope-from <simon@octiron.net>)
+	id 1sfLcL-0073lS-9K; Sat, 17 Aug 2024 16:45:28 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=octiron.net
+	; s=20230424-rsa3072; h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:
+	From:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:
+	Message-ID:To:Cc:Bcc:MIME-Version:Content-Type:Content-Disposition:
+	Content-Transfer-Encoding:In-Reply-To:References:Organization;
+	bh=g7qDpelvAGbFuX1Lj9/Vu9+S47+tSyG/wswyKe8fpSY=; t=1723909525; b=mZKieQBuQo3y
+	cAaV0Ug7/ip10Dfyd0ERjpfOgCflmzYTPu3c93bnSXocPLA60Zhso91HNWqlhmm2zSgu/sCQMvnYw
+	VlQ3DwPp1+AmO/H8sBOA8JYXMAoxcqc9ysXVKCaAQFish4RSlKYjc59XUvkAxYmzqy+8KXtrxG6TB
+	x7F2/DZuB+9/D2CjRsSjFDEig0wLVA/iAbXq+yaS8MfikokwkZwvmlcfGqi3hBGsOHxLsBjtFINht
+	Ovn0SXg3egd8t9HBOFXiKza+4emoDdfr8UnZVgTVr4Ld/nVxeRYCCOHNuDn6qFSyr1PW6/ZPqWRTl
+	Xgt1z1Lu8YjV3svYslxh0uVoepBv8Xamc6L02QCzFX7pC48pGHQWaW15vR/UL1GZYGE6f3YlCaZje
+	J6M+JWFuM5t7SGK3YIjaJpl6BBr2dFUSYCxoxmqogYPKZzUCOI6hRhRTnA1Ukzx9EmN7W/nHbIinM
+	3rnpLP8dSLTtW7Elcn21C4VjscMeHnW66VwTco;
+DKIM-Signature: v=1; a=ed25519-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=octiron.net; s=20230410-ed25519; h=Content-Transfer-Encoding:Content-Type:
+	Cc:To:Subject:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:Bcc:MIME-Version:Content-Type:Content-Disposition:
+	Content-Transfer-Encoding:In-Reply-To:References:Organization;
+	bh=g7qDpelvAGbFuX1Lj9/Vu9+S47+tSyG/wswyKe8fpSY=; t=1723909525; b=1KxZoK1me+2o
+	b+c+4T43CBM0wUN98Nc7fNH+8lfB7gGT2D7lgsuKGIb2kQJ+Au57q40EmfFQh85O3JsCcKjeDQ==;
+Received: by tsort.uuid.uk with esmtps (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+	(Exim 4.93)
+	(envelope-from <simon@octiron.net>)
+	id 1sfLcH-003504-H1; Sat, 17 Aug 2024 16:45:22 +0100
+Message-ID: <ea44fb76-0a9d-4009-8eba-021f0928cc77@0882a8b5-c6c3-11e9-b005-00805fc181fe.uuid.home.arpa>
+Date: Sat, 17 Aug 2024 16:45:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,88 +89,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] x86/msr: Switch between WRMSRNS and WRMSR with the
- alternatives mechanism
-To: Borislav Petkov <bp@alien8.de>, Andrew Cooper
- <andrew.cooper3@citrix.com>,
-        linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-        x86@kernel.org, hpa@zytor.com, peterz@infradead.org, seanjc@google.com
-References: <20240807054722.682375-1-xin@zytor.com>
- <20240807054722.682375-3-xin@zytor.com>
- <e18cd005-24ef-497d-b39c-74a54d89a969@citrix.com>
- <7c09d124-08f1-40b4-813c-f0f74e19497a@zytor.com>
- <DAC74A8B-DDE4-450E-93A1-EFD7D47B25F7@alien8.de>
- <20240817144316.GAZsC3BOm7anUPdJGe@fat_crate.local>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- xsDNBGUPz1cBDACS/9yOJGojBFPxFt0OfTWuMl0uSgpwk37uRrFPTTLw4BaxhlFL0bjs6q+0
- 2OfG34R+a0ZCuj5c9vggUMoOLdDyA7yPVAJU0OX6lqpg6z/kyQg3t4jvajG6aCgwSDx5Kzg5
- Rj3AXl8k2wb0jdqRB4RvaOPFiHNGgXCs5Pkux/qr0laeFIpzMKMootGa4kfURgPhRzUaM1vy
- bsMsL8vpJtGUmitrSqe5dVNBH00whLtPFM7IbzKURPUOkRRiusFAsw0a1ztCgoFczq6VfAVu
- raTye0L/VXwZd+aGi401V2tLsAHxxckRi9p3mc0jExPc60joK+aZPy6amwSCy5kAJ/AboYtY
- VmKIGKx1yx8POy6m+1lZ8C0q9b8eJ8kWPAR78PgT37FQWKYS1uAroG2wLdK7FiIEpPhCD+zH
- wlslo2ETbdKjrLIPNehQCOWrT32k8vFNEMLP5G/mmjfNj5sEf3IOKgMTMVl9AFjsINLHcxEQ
- 6T8nGbX/n3msP6A36FDfdSEAEQEAAc0WWGluIExpIDx4aW5Aenl0b3IuY29tPsLBDQQTAQgA
- NxYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89XBQkFo5qAAhsDBAsJCAcFFQgJCgsFFgID
- AQAACgkQa70OVx2uN1HUpgv/cM2fsFCQodLArMTX5nt9yqAWgA5t1srri6EgS8W3F+3Kitge
- tYTBKu6j5BXuXaX3vyfCm+zajDJN77JHuYnpcKKr13VcZi1Swv6Jx1u0II8DOmoDYLb1Q2ZW
- v83W55fOWJ2g72x/UjVJBQ0sVjAngazU3ckc0TeNQlkcpSVGa/qBIHLfZraWtdrNAQT4A1fa
- sWGuJrChBFhtKbYXbUCu9AoYmmbQnsx2EWoJy3h7OjtfFapJbPZql+no5AJ3Mk9eE5oWyLH+
- QWqtOeJM7kKvn/dBudokFSNhDUw06e7EoVPSJyUIMbYtUO7g2+Atu44G/EPP0yV0J4lRO6EA
- wYRXff7+I1jIWEHpj5EFVYO6SmBg7zF2illHEW31JAPtdDLDHYcZDfS41caEKOQIPsdzQkaQ
- oW2hchcjcMPAfyhhRzUpVHLPxLCetP8vrVhTvnaZUo0xaVYb3+wjP+D5j/3+hwblu2agPsaE
- vgVbZ8Fx3TUxUPCAdr/p73DGg57oHjgezsDNBGUPz1gBDAD4Mg7hMFRQqlzotcNSxatlAQNL
- MadLfUTFz8wUUa21LPLrHBkUwm8RujehJrzcVbPYwPXIO0uyL/F///CogMNx7Iwo6by43KOy
- g89wVFhyy237EY76j1lVfLzcMYmjBoTH95fJC/lVb5Whxil6KjSN/R/y3jfG1dPXfwAuZ/4N
- cMoOslWkfZKJeEut5aZTRepKKF54T5r49H9F7OFLyxrC/uI9UDttWqMxcWyCkHh0v1Di8176
- jjYRNTrGEfYfGxSp+3jYL3PoNceIMkqM9haXjjGl0W1B4BidK1LVYBNov0rTEzyr0a1riUrp
- Qk+6z/LHxCM9lFFXnqH7KWeToTOPQebD2B/Ah5CZlft41i8L6LOF/LCuDBuYlu/fI2nuCc8d
- m4wwtkou1Y/kIwbEsE/6RQwRXUZhzO6llfoN96Fczr/RwvPIK5SVMixqWq4QGFAyK0m/1ap4
- bhIRrdCLVQcgU4glo17vqfEaRcTW5SgX+pGs4KIPPBE5J/ABD6pBnUUAEQEAAcLA/AQYAQgA
- JhYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89ZBQkFo5qAAhsMAAoJEGu9DlcdrjdR4C0L
- /RcjolEjoZW8VsyxWtXazQPnaRvzZ4vhmGOsCPr2BPtMlSwDzTlri8BBG1/3t/DNK4JLuwEj
- OAIE3fkkm+UG4Kjud6aNeraDI52DRVCSx6xff3bjmJsJJMb12mWglN6LjdF6K+PE+OTJUh2F
- dOhslN5C2kgl0dvUuevwMgQF3IljLmi/6APKYJHjkJpu1E6luZec/lRbetHuNFtbh3xgFIJx
- 2RpgVDP4xB3f8r0I+y6ua+p7fgOjDLyoFjubRGed0Be45JJQEn7A3CSb6Xu7NYobnxfkwAGZ
- Q81a2XtvNS7Aj6NWVoOQB5KbM4yosO5+Me1V1SkX2jlnn26JPEvbV3KRFcwV5RnDxm4OQTSk
- PYbAkjBbm+tuJ/Sm+5Yp5T/BnKz21FoCS8uvTiziHj2H7Cuekn6F8EYhegONm+RVg3vikOpn
- gao85i4HwQTK9/D1wgJIQkdwWXVMZ6q/OALaBp82vQ2U9sjTyFXgDjglgh00VRAHP7u1Rcu4
- l75w1xInsg==
-In-Reply-To: <20240817144316.GAZsC3BOm7anUPdJGe@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Language: en-GB
+From: Simon Arlott <simon@octiron.net>
+Subject: [PATCH] can: mcp251x: fix deadlock if an interrupt occurs during
+ mcp251x_open
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+ Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+X-Face: -|Y&Xues/.'(7\@`_\lFE/)pw"7..-Ur1^@pRL`Nad5a()6r+Y)18-pi'!`GI/zGn>6a6ik
+ mcW-%sg_wM:4PXDw:(;Uu,n&!8=;A<P|QG`;AMu5ypJkN-Sa<eyt,Ap3q`5Z{D0BN3G`OmX^8x^++R
+ Gr9G'%+PNM/w+w1+vB*a($wYgA%*cm3Hds`a7k)CQ7'"[\C|g2k]FQ-f*DDi{pU]v%5JZm
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 8/17/2024 7:43 AM, Borislav Petkov wrote:
-> On Sat, Aug 17, 2024 at 05:23:07PM +0300, Borislav Petkov wrote:
->>> static __always_inline void wrmsr(u32 msr, u64 val)
->>> {
->>> 	asm volatile("1: " ALTERNATIVE_2("wrmsr", WRMSRNS, X86_FEATURE_WRMSRNS,
->>> 					 "call asm_xen_write_msr", X86_FEATURE_XENPV)
->>> 		     "2: " _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_WRMSR)
->>> 		     : : "c" (msr), "a" (val), "d" ((u32)(val >> 32)),
->>> 		     "D" (msr), "S" (val));
->>> }
->>>
->>>
->>> As the CALL instruction is 5-byte long, and we need to pad nop for both
->>> WRMSR and WRMSRNS, what about not using segment prefix at all?
->>
->> The alternatives macros can handle arbitrary insn sizes - no need for any padding.
-> 
-> What you cannot do is have a CALL insn in only one of the alternative
-> insn groups because the compiler is free to clobber callee regs and
-> those might be live where you place the alternative and thus will have
-> a nice lovely corruption.
+The mcp251x_hw_wake() function is called with the mpc_lock mutex held and
+disables the interrupt handler so that no interrupts can be processed while
+waking the device. If an interrupt has already occurred then waiting for
+the interrupt handler to complete will deadlock because it will be trying
+to acquire the same mutex.
 
-Yeah, asm_xen_write_msr() is a wrapper function to xen_write_msr() which
-saves/restores those regs.
+CPU0                           CPU1
+----                           ----
+mcp251x_open()
+ mutex_lock(&priv->mcp_lock)
+  request_threaded_irq()
+                               <interrupt>
+                               mcp251x_can_ist()
+                                mutex_lock(&priv->mcp_lock)
+  mcp251x_hw_wake()
+   disable_irq() <-- deadlock
 
-My first draft patch calls xen_write_msr() directly and works fine.  But
-hpa said the same thing as you said.
+Use disable_irq_nosync() instead because the interrupt handler does
+everything while holding the mutex so it doesn't matter if it's still
+running.
 
-Thanks!
-     Xin
+Signed-off-by: Simon Arlott <simon@octiron.net>
+---
+ drivers/net/can/spi/mcp251x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/can/spi/mcp251x.c b/drivers/net/can/spi/mcp251x.c
+index 3b8736ff0345..ec5c64006a16 100644
+--- a/drivers/net/can/spi/mcp251x.c
++++ b/drivers/net/can/spi/mcp251x.c
+@@ -752,7 +752,7 @@ static int mcp251x_hw_wake(struct spi_device *spi)
+ 	int ret;
+ 
+ 	/* Force wakeup interrupt to wake device, but don't execute IST */
+-	disable_irq(spi->irq);
++	disable_irq_nosync(spi->irq);
+ 	mcp251x_write_2regs(spi, CANINTE, CANINTE_WAKIE, CANINTF_WAKIF);
+ 
+ 	/* Wait for oscillator startup timer after wake up */
+-- 
+2.44.0
+
+-- 
+Simon Arlott
 
