@@ -1,146 +1,494 @@
-Return-Path: <linux-kernel+bounces-290537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14AF7955576
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:00:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88DEE95557A
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:08:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD47F1F23CEF
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 05:00:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C2571C226AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 05:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956A9811E2;
-	Sat, 17 Aug 2024 05:00:29 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [20.231.56.155])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F77BE5D;
-	Sat, 17 Aug 2024 05:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=20.231.56.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15E884047;
+	Sat, 17 Aug 2024 05:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uj1dGwvB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400D7BE5D;
+	Sat, 17 Aug 2024 05:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723870829; cv=none; b=YZ7VS6gY6I98SQ4ktaALWWqKCgx5D3aI2DBB5HK129HslEDQoU+yCNIdEE1oaX0HLknyLdugyBYmpsyB/PBbgVs2pC4W4UbCMI3oxbm/Bs5TT/bqYXseDkTXBwSfGx+5YbF79KBhrIQ4QvOysYvyZm9ryZl9Wln1rQAdtQ3c0js=
+	t=1723871328; cv=none; b=PDpXc79COuSpIuQJKBlUoGmZbQeAgaWuRsSxc5BXWtZdVZzxddsRUee98lAWOaESy8MZI83seIh2MtPCMvyAAWiHrZopQUMECWWvU/WDVERi4OGYvOlZvo4ZROr4a2sfC5tusl2DE1aD33lKJ4ALcAxtReNUMQJMa8rO05ydpAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723870829; c=relaxed/simple;
-	bh=2S+QbEWGme4zIg1L2rhpubtJ7u7R8DG0G9w8lDVn/oA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mB8CaDMG2h0aXho30huSj0pUTSC0Bc1ysCEvRfPz4F3gHGRBgm9/HxenV93mMr8XwCmTO3hBaKL/hcjHPab4aO34MBrMYA6uZn9JGkV55doK+tsg0DOtinbWkPTiWS8Gl3iX0BTcY8biNL3kHMCpQpnn+drSYI7aiqU/E7qVGWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=20.231.56.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.50])
-	by app2 (Coremail) with SMTP id HwEQrABnEBUpLsBm_giDAA--.60679S2;
-	Sat, 17 Aug 2024 12:59:22 +0800 (CST)
-Received: from [172.20.10.4] (unknown [1.48.198.69])
-	by gateway (Coremail) with SMTP id _____wCHlXglLsBmXC9KAQ--.38422S2;
-	Sat, 17 Aug 2024 12:59:21 +0800 (CST)
-Message-ID: <64426130-d59a-47a1-8bf2-3b72fb0cc030@hust.edu.cn>
-Date: Sat, 17 Aug 2024 12:59:16 +0800
+	s=arc-20240116; t=1723871328; c=relaxed/simple;
+	bh=EOtE5nJHOFhA5eR67AzrZLQCP4pgwI1WArYLqYUpulY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a6UZXRd1VAU30Y63q0+G1/wAKdLRuIM0T0Zph4Zwo+erf1pnoP3i+FfdE5Xe7dzUw2TAlgEqan7M0b+mcU7jPwD5nqk+Fq5ww85YsVpRw+BsrMHS0qafKhmhgFAwgm892icWY9pyUlsEpMaos7N3VTvijHQE43nvk0wSnkHCjH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uj1dGwvB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90295C4AF0D;
+	Sat, 17 Aug 2024 05:08:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723871327;
+	bh=EOtE5nJHOFhA5eR67AzrZLQCP4pgwI1WArYLqYUpulY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uj1dGwvBhHpO9G9hUOP+NEw00LnZTkVOzrw3Lgj/I8kl73uLQ45Tj+cBGhZn+rEF0
+	 PFzxiRHDZLougkhHrOdOyLHo3dXLG6DhrximSr+fPMDoz2ydbTGS+Pn0On5ZxG3Bge
+	 HhpxDZdeS+nJ5dTw1UsDW+MCl7Y/zqPouAsU5KeavmaS2oDrybPxudEUK5PwrbX+Lr
+	 VWGKdtPU+iDqJupekrwlXx+Y+uvzrHmpg3VZE1vFhqHzoKFlVb3K8TAe6UF4ojWkOp
+	 /OV2kxfbjy0+Tr9NSAt7iS0RCeyt4o/pqRqsasg0dH21Jr5FPCLdlrLWf43uiRoUPL
+	 MevJMVQ784htw==
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7a843bef98so306571966b.2;
+        Fri, 16 Aug 2024 22:08:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVrrGaeAe2WOzrXuYd7G9mn/nRl1Xz14vlBlaEHA4Z5i3UoeUgED38zYUBMrMTeLNClgNb+22aEgXhVOLnTVzCCO/ukM5vVx3MFlfowf+PadLvluWl/jRx1uV1LSO0NsjPfPrurHGkXTmD+L50YZ1IvtUBCJZz+Ke9ixuwVVi/bPFllHNz7CY3HuMwRjG6w1GuzhCceL0P8iRWTEMU5AIU=
+X-Gm-Message-State: AOJu0YyLOMH4u9owza541l1WPlcblpW14/IH8SKsAX16MQ7MG/JLfH+B
+	P82dSod0x8GaPv0sD7Cb4fLptBq7Vh3P6UmtpAHXacV36Ir54sRo3JHkDYUx+hs7GXXzmlI8Xou
+	5jT8IAGMm5QZ3aY9Z4gSp8LZt9cA=
+X-Google-Smtp-Source: AGHT+IFnpAwTSzWzvMMMBdA3qrPNleW9O87krsDI6GyN92ABevefYDMvUaKEJvLkWkc5NHkMfxw7qq7zfWQtVh1272I=
+X-Received: by 2002:a17:906:6a0c:b0:a80:f6f4:a8d9 with SMTP id
+ a640c23a62f3a-a839256aad2mr343868366b.0.1723871326049; Fri, 16 Aug 2024
+ 22:08:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6] docs/zh_CN: Add dev-tools/kcsan Chinese translation
-To: Jonathan Corbet <corbet@lwn.net>, Alex Shi <alexs@kernel.org>,
- Yanteng Si <siyanteng@loongson.cn>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-References: <20240810082245.5934-1-tttturtleruss@hust.edu.cn>
- <87ttfkhzl2.fsf@trenco.lwn.net>
-From: Haoyang Liu <tttturtleruss@hust.edu.cn>
-In-Reply-To: <87ttfkhzl2.fsf@trenco.lwn.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HwEQrABnEBUpLsBm_giDAA--.60679S2
-Authentication-Results: app2; spf=neutral smtp.mail=tttturtleruss@hust
-	.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvJXoWxuF1kAF4kKr43Gw4fAw4Dtwb_yoW5Ww4fpF
-	WvgrySka1DZr43Cw4Ig3W8Ar1FkFZ7Gr4UGFWagw1Fqwn8Kr4Syrs0qryjgayxXrWxAan8
-	Xw15KFyDWw4YyaDanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmYb7Iv0xC_Zr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-	v20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
-	6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r
-	126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I8C
-	rVACY4xI64kE6c02F40Ex7xfMcIj64x0Y40En7xvr7AKxVW8Jr0_Cr1UMcIj6x8ErcxFaV
-	Av8VW8uFyUJr1UMcIj6xkF7I0En7xvr7AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbVWUJVW8
-	JwACjcxG0xvEwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCF04k20x
-	vE74AGY7Cv6cx26r4fZr1UJr1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_
-	JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-	AY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAI
-	cVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42
-	IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIev
-	Ja73UjIFyTuYvjxUVco2UUUUU
-X-CM-SenderInfo: rxsqjiqrssiko6kx23oohg3hdfq/1tbiAQkMAmbAGjQDhAABsI
+References: <20240731072405.197046-1-alexghiti@rivosinc.com>
+ <20240731072405.197046-14-alexghiti@rivosinc.com> <20240731-ce25dcdc5ce9ccc6c82912c0@orel>
+ <CAHVXubgtD_nDBL2H-MYb9V+3jLBoszz8HAZ2NTTsiS2wR6aPDQ@mail.gmail.com> <6f1bcc9b-1812-4e8c-9050-a750bfadd008@ghiti.fr>
+In-Reply-To: <6f1bcc9b-1812-4e8c-9050-a750bfadd008@ghiti.fr>
+From: Guo Ren <guoren@kernel.org>
+Date: Sat, 17 Aug 2024 13:08:34 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTS4L6=HE_-9rgn3L8+6R7C4Jx=QgCkvOBhQHdHVGzr5MA@mail.gmail.com>
+Message-ID: <CAJF2gTS4L6=HE_-9rgn3L8+6R7C4Jx=QgCkvOBhQHdHVGzr5MA@mail.gmail.com>
+Subject: Re: [PATCH v4 13/13] riscv: Add qspinlock support
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>, Andrew Jones <ajones@ventanamicro.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Andrea Parri <parri.andrea@gmail.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>, linux-doc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-在 2024/8/17 6:28, Jonathan Corbet 写道:
-> Haoyang Liu <tttturtleruss@hust.edu.cn> writes:
+On Thu, Aug 15, 2024 at 9:27=E2=80=AFPM Alexandre Ghiti <alex@ghiti.fr> wro=
+te:
 >
->> Translate dev-tools/kcsan commit 31f605a308e6
->> ("kcsan, compiler_types: Introduce __data_racy type qualifier")
->> into Chinese and add it in dev-tools/zh_CN/index.rst
->>
->> Signed-off-by: Haoyang Liu <tttturtleruss@hust.edu.cn>
->> Reviewed-by: Yanteng Si <siyanteng@loongson.cn>
->> ---
->> v5 -> v6: Fix a typo.
->> v4 -> v5: Translate link into Chinese as well according to reviewer's advice.
->> v3 -> v4: Added original English text for proper nouns and modified some unclear experessions.
->> v2 -> v3: Revised some sentences based on reviewer's suggestions and updated the KTSAN url.
->> v1 -> v2: Added commit tag and fixed style problems according to reviewer's suggestions.
->>
->>   .../translations/zh_CN/dev-tools/index.rst    |   2 +-
->>   .../translations/zh_CN/dev-tools/kcsan.rst    | 321 ++++++++++++++++++
->>   2 files changed, 322 insertions(+), 1 deletion(-)
->>   create mode 100644 Documentation/translations/zh_CN/dev-tools/kcsan.rst
-> So I applied this, but ended up unapplying it.  It adds a whole pile of
-> docs build warnings:
+> Hi Andrew,
 >
-> Documentation/translations/zh_CN/dev-tools/kcsan:223: ./include/linux/kcsan-checks.h:370: WARNING: Duplicate C declaration, also defined at dev-tools/kcsan:370.
-> Declaration is '.. c:macro:: ASSERT_EXCLUSIVE_WRITER'.
-> Documentation/translations/zh_CN/dev-tools/kcsan:223: ./include/linux/kcsan-checks.h:419: WARNING: Duplicate C declaration, also defined at dev-tools/kcsan:419.
-> Declaration is '.. c:macro:: ASSERT_EXCLUSIVE_WRITER_SCOPED'.
-> Documentation/translations/zh_CN/dev-tools/kcsan:223: ./include/linux/kcsan-checks.h:451: WARNING: Duplicate C declaration, also defined at dev-tools/kcsan:451.
-> Declaration is '.. c:macro:: ASSERT_EXCLUSIVE_ACCESS'.
+> On 01/08/2024 08:53, Alexandre Ghiti wrote:
+> > On Wed, Jul 31, 2024 at 5:29=E2=80=AFPM Andrew Jones <ajones@ventanamic=
+ro.com> wrote:
+> >> On Wed, Jul 31, 2024 at 09:24:05AM GMT, Alexandre Ghiti wrote:
+> >>> In order to produce a generic kernel, a user can select
+> >>> CONFIG_COMBO_SPINLOCKS which will fallback at runtime to the ticket
+> >>> spinlock implementation if Zabha or Ziccrse are not present.
+> >>>
+> >>> Note that we can't use alternatives here because the discovery of
+> >>> extensions is done too late and we need to start with the qspinlock
+> >>> implementation because the ticket spinlock implementation would pollu=
+te
+> >>> the spinlock value, so let's use static keys.
+> >>>
+> >>> This is largely based on Guo's work and Leonardo reviews at [1].
+> >>>
+> >>> Link: https://lore.kernel.org/linux-riscv/20231225125847.2778638-1-gu=
+oren@kernel.org/ [1]
+> >>> Signed-off-by: Guo Ren <guoren@kernel.org>
+> >>> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> >>> ---
+> >>>   .../locking/queued-spinlocks/arch-support.txt |  2 +-
+> >>>   arch/riscv/Kconfig                            | 29 +++++++++++++
+> >>>   arch/riscv/include/asm/Kbuild                 |  4 +-
+> >>>   arch/riscv/include/asm/spinlock.h             | 43 ++++++++++++++++=
++++
+> >>>   arch/riscv/kernel/setup.c                     | 38 ++++++++++++++++
+> >>>   include/asm-generic/qspinlock.h               |  2 +
+> >>>   include/asm-generic/ticket_spinlock.h         |  2 +
+> >>>   7 files changed, 118 insertions(+), 2 deletions(-)
+> >>>   create mode 100644 arch/riscv/include/asm/spinlock.h
+> >>>
+> >>> diff --git a/Documentation/features/locking/queued-spinlocks/arch-sup=
+port.txt b/Documentation/features/locking/queued-spinlocks/arch-support.txt
+> >>> index 22f2990392ff..cf26042480e2 100644
+> >>> --- a/Documentation/features/locking/queued-spinlocks/arch-support.tx=
+t
+> >>> +++ b/Documentation/features/locking/queued-spinlocks/arch-support.tx=
+t
+> >>> @@ -20,7 +20,7 @@
+> >>>       |    openrisc: |  ok  |
+> >>>       |      parisc: | TODO |
+> >>>       |     powerpc: |  ok  |
+> >>> -    |       riscv: | TODO |
+> >>> +    |       riscv: |  ok  |
+> >>>       |        s390: | TODO |
+> >>>       |          sh: | TODO |
+> >>>       |       sparc: |  ok  |
+> >>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> >>> index ef55ab94027e..c9ff8081efc1 100644
+> >>> --- a/arch/riscv/Kconfig
+> >>> +++ b/arch/riscv/Kconfig
+> >>> @@ -79,6 +79,7 @@ config RISCV
+> >>>        select ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP
+> >>>        select ARCH_WANTS_NO_INSTR
+> >>>        select ARCH_WANTS_THP_SWAP if HAVE_ARCH_TRANSPARENT_HUGEPAGE
+> >>> +     select ARCH_WEAK_RELEASE_ACQUIRE if ARCH_USE_QUEUED_SPINLOCKS
+> >> Why do we need this? Also, we presumably would prefer not to have it
+> >> when we end up using ticket spinlocks when combo spinlocks is selected=
+.
+> >> Is there no way to avoid it?
+> > I'll let Andrea answer this as he asked for it.
+> >
+> >>>        select BINFMT_FLAT_NO_DATA_START_OFFSET if !MMU
+> >>>        select BUILDTIME_TABLE_SORT if MMU
+> >>>        select CLINT_TIMER if RISCV_M_MODE
+> >>> @@ -488,6 +489,34 @@ config NODES_SHIFT
+> >>>          Specify the maximum number of NUMA Nodes available on the ta=
+rget
+> >>>          system.  Increases memory reserved to accommodate various ta=
+bles.
+> >>>
+> >>> +choice
+> >>> +     prompt "RISC-V spinlock type"
+> >>> +     default RISCV_COMBO_SPINLOCKS
+> >>> +
+> >>> +config RISCV_TICKET_SPINLOCKS
+> >>> +     bool "Using ticket spinlock"
+> >>> +
+> >>> +config RISCV_QUEUED_SPINLOCKS
+> >>> +     bool "Using queued spinlock"
+> >>> +     depends on SMP && MMU && NONPORTABLE
+> >>> +     select ARCH_USE_QUEUED_SPINLOCKS
+> >>> +     help
+> >>> +       The queued spinlock implementation requires the forward progr=
+ess
+> >>> +       guarantee of cmpxchg()/xchg() atomic operations: CAS with Zab=
+ha or
+> >>> +       LR/SC with Ziccrse provide such guarantee.
+> >>> +
+> >>> +       Select this if and only if Zabha or Ziccrse is available on y=
+our
+> >>> +       platform.
+> >> Maybe some text recommending combo spinlocks here? As it stands it sou=
+nds
+> >> like enabling queued spinlocks is a bad idea for anybody that doesn't =
+know
+> >> what platforms will run the kernel they're building, which is all dist=
+ros.
+> > That's NONPORTABLE, so people enabling this config are supposed to
+> > know that right?
+> >
+> >>> +
+> >>> +config RISCV_COMBO_SPINLOCKS
+> >>> +     bool "Using combo spinlock"
+> >>> +     depends on SMP && MMU
+> >>> +     select ARCH_USE_QUEUED_SPINLOCKS
+> >>> +     help
+> >>> +       Embed both queued spinlock and ticket lock so that the spinlo=
+ck
+> >>> +       implementation can be chosen at runtime.
+> >> nit: Add a blank line here
+> > Done
+> >
+> >>> +endchoice
+> >>> +
+> >>>   config RISCV_ALTERNATIVE
+> >>>        bool
+> >>>        depends on !XIP_KERNEL
+> >>> diff --git a/arch/riscv/include/asm/Kbuild b/arch/riscv/include/asm/K=
+build
+> >>> index 5c589770f2a8..1c2618c964f0 100644
+> >>> --- a/arch/riscv/include/asm/Kbuild
+> >>> +++ b/arch/riscv/include/asm/Kbuild
+> >>> @@ -5,10 +5,12 @@ syscall-y +=3D syscall_table_64.h
+> >>>   generic-y +=3D early_ioremap.h
+> >>>   generic-y +=3D flat.h
+> >>>   generic-y +=3D kvm_para.h
+> >>> +generic-y +=3D mcs_spinlock.h
+> >>>   generic-y +=3D parport.h
+> >>> -generic-y +=3D spinlock.h
+> >>>   generic-y +=3D spinlock_types.h
+> >>> +generic-y +=3D ticket_spinlock.h
+> >>>   generic-y +=3D qrwlock.h
+> >>>   generic-y +=3D qrwlock_types.h
+> >>> +generic-y +=3D qspinlock.h
+> >>>   generic-y +=3D user.h
+> >>>   generic-y +=3D vmlinux.lds.h
+> >>> diff --git a/arch/riscv/include/asm/spinlock.h b/arch/riscv/include/a=
+sm/spinlock.h
+> >>> new file mode 100644
+> >>> index 000000000000..503aef31db83
+> >>> --- /dev/null
+> >>> +++ b/arch/riscv/include/asm/spinlock.h
+> >>> @@ -0,0 +1,43 @@
+> >>> +/* SPDX-License-Identifier: GPL-2.0 */
+> >>> +
+> >>> +#ifndef __ASM_RISCV_SPINLOCK_H
+> >>> +#define __ASM_RISCV_SPINLOCK_H
+> >>> +
+> >>> +#ifdef CONFIG_RISCV_COMBO_SPINLOCKS
+> >>> +#define _Q_PENDING_LOOPS     (1 << 9)
+> >>> +
+> >>> +#define __no_arch_spinlock_redefine
+> >>> +#include <asm/ticket_spinlock.h>
+> >>> +#include <asm/qspinlock.h>
+> >>> +#include <asm/alternative.h>
+> >> We need asm/jump_label.h instead of asm/alternative.h, but...
+> >>
+> >>> +
+> >>> +DECLARE_STATIC_KEY_TRUE(qspinlock_key);
+> >>> +
+> >>> +#define SPINLOCK_BASE_DECLARE(op, type, type_lock)                  =
+ \
+> >>> +static __always_inline type arch_spin_##op(type_lock lock)          =
+ \
+> >>> +{                                                                   =
+ \
+> >>> +     if (static_branch_unlikely(&qspinlock_key))                    =
+ \
+> >>> +             return queued_spin_##op(lock);                         =
+ \
+> >>> +     return ticket_spin_##op(lock);                                 =
+ \
+> >>> +}
+> >> ...do you know what impact this inlined static key check has on the
+> >> kernel size?
+> > No, I'll check, thanks.
 >
-> [...]
 >
-> You really do need to do a build test before sending changes like this.
+> So I have just checked the size of the jump table section:
 >
-> The problem is the duplicated inclusion caused by the kernel-doc
-> directive:
+> * defconfig:
 >
->> +.. kernel-doc:: include/linux/kcsan-checks.h
->> +    :functions: ASSERT_EXCLUSIVE_WRITER ASSERT_EXCLUSIVE_WRITER_SCOPED
->> +                ASSERT_EXCLUSIVE_ACCESS ASSERT_EXCLUSIVE_ACCESS_SCOPED
->> +                ASSERT_EXCLUSIVE_BITS
->>
-> We really just can't do that with the current build system; the best
-> thing is to put in a note saying to see the original document for those
-> declarations.
-
-I'm sorry for the warnings my patch introduced. I thought they were 
-harmless so I ignored them. I will replace the duplicated inclusion with 
-a note and a link to the original document.
-
-I apologize for my mistake.
-
-
-Thanks,
-
-Haoyang
+> - ticket: 26928 bytes
+> - combo: 28320 bytes
+>
+> So that's a ~5% increase.
+>
+> * ubuntu config
+>
+> - ticket: 107840 bytes
+> - combo: 174752 bytes
+>
+> And that's a ~62% increase.
+The size of the jump table section has increased from 5% to 62%. I
+think some configuration triggers the jump table's debug code. If it's
+not a debugging configuration, that's a bug of the Ubuntu config.
 
 >
-> This would be good to fix, perhaps with a variant of kernel-doc that
-> doesn't generate the duplicated declarations, but until somebody does
-> that we have to work around it.
+> This is the ELF size difference between ticket and combo spinlocks:
+>
+> * ticket: 776915592 bytes
+> * combo: 786958968 bytes
+>
+> So that's an increase of ~1.3% on the ELF.
+>
+> And the .text section size:
+>
+> * ticket: 12290960 bytes
+> * combo: 12366644 bytes
+>
+> And that's a ~0.6% increase!
+>
+> Finally, I'd say the impact is very limited :)
 >
 > Thanks,
 >
-> jon
+> Alex
+>
+>
+> >
+> >> Actually, why not use ALTERNATIVE with any nonzero cpufeature value.
+> >> Then add code to riscv_cpufeature_patch_check() to return true when
+> >> qspinlocks should be enabled (based on the value of some global set
+> >> during riscv_spinlock_init)?
+> > As discussed with Guo in the previous iteration, the patching of the
+> > alternatives intervenes far after the first use of the spinlocks and
+> > the ticket spinlock implementation pollutes the spinlock value, so
+> > we'd have to unconditionally start with the qspinlock implementation
+> > and after switch to the ticket implementation if not supported by the
+> > platform. It works but it's dirty, I really don't like this hack.
+> >
+> > We could though:
+> > - add an initial value to the alternatives (not sure it's feasible thou=
+gh)
+> > - make the patching of alternatives happen sooner by parsing the isa
+> > string sooner, either in DT or ACPI (I have a working PoC for very
+> > early parsing of ACPI).
+> >
+> > I intend to do the latter as I think we should be aware of the
+> > extensions sooner in the boot process, so I'll change that to the
+> > alternatives when it's done. WDYT, any other idea?
+> >
+> >
+> >>> +
+> >>> +SPINLOCK_BASE_DECLARE(lock, void, arch_spinlock_t *)
+> >>> +SPINLOCK_BASE_DECLARE(unlock, void, arch_spinlock_t *)
+> >>> +SPINLOCK_BASE_DECLARE(is_locked, int, arch_spinlock_t *)
+> >>> +SPINLOCK_BASE_DECLARE(is_contended, int, arch_spinlock_t *)
+> >>> +SPINLOCK_BASE_DECLARE(trylock, bool, arch_spinlock_t *)
+> >>> +SPINLOCK_BASE_DECLARE(value_unlocked, int, arch_spinlock_t)
+> >>> +
+> >>> +#elif defined(CONFIG_RISCV_QUEUED_SPINLOCKS)
+> >>> +
+> >>> +#include <asm/qspinlock.h>
+> >>> +
+> >>> +#else
+> >>> +
+> >>> +#include <asm/ticket_spinlock.h>
+> >>> +
+> >>> +#endif
+> >>> +
+> >>> +#include <asm/qrwlock.h>
+> >>> +
+> >>> +#endif /* __ASM_RISCV_SPINLOCK_H */
+> >>> diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
+> >>> index a2cde65b69e9..b811fa331982 100644
+> >>> --- a/arch/riscv/kernel/setup.c
+> >>> +++ b/arch/riscv/kernel/setup.c
+> >>> @@ -244,6 +244,43 @@ static void __init parse_dtb(void)
+> >>>   #endif
+> >>>   }
+> >>>
+> >>> +#if defined(CONFIG_RISCV_COMBO_SPINLOCKS)
+> >>> +DEFINE_STATIC_KEY_TRUE(qspinlock_key);
+> >>> +EXPORT_SYMBOL(qspinlock_key);
+> >>> +#endif
+> >>> +
+> >>> +static void __init riscv_spinlock_init(void)
+> >>> +{
+> >>> +     char *using_ext =3D NULL;
+> >>> +
+> >>> +     if (IS_ENABLED(CONFIG_RISCV_TICKET_SPINLOCKS)) {
+> >>> +             pr_info("Ticket spinlock: enabled\n");
+> >>> +             return;
+> >>> +     }
+> >>> +
+> >>> +     if (IS_ENABLED(CONFIG_RISCV_ISA_ZABHA) &&
+> >>> +         IS_ENABLED(CONFIG_RISCV_ISA_ZACAS) &&
+> >>> +         riscv_isa_extension_available(NULL, ZABHA) &&
+> >>> +         riscv_isa_extension_available(NULL, ZACAS)) {
+> >>> +             using_ext =3D "using Zabha";
+> >>> +     } else if (riscv_isa_extension_available(NULL, ZICCRSE)) {
+> >>> +             using_ext =3D "using Ziccrse";
+> >>> +     }
+> >>> +#if defined(CONFIG_RISCV_COMBO_SPINLOCKS)
+> >>> +     else {
+> >> else if (IS_ENABLED(CONFIG_RISCV_COMBO_SPINLOCKS))
+> >>
+> >>> +             static_branch_disable(&qspinlock_key);
+> >>> +             pr_info("Ticket spinlock: enabled\n");
+> >>> +
+> >> nit: remove this blank line
+> >>
+> >>> +             return;
+> >>> +     }
+> >>> +#endif
+> >>> +
+> >>> +     if (!using_ext)
+> >>> +             pr_err("Queued spinlock without Zabha or Ziccrse");
+> >>> +     else
+> >>> +             pr_info("Queued spinlock %s: enabled\n", using_ext);
+> >>> +}
+> >>> +
+> >>>   extern void __init init_rt_signal_env(void);
+> >>>
+> >>>   void __init setup_arch(char **cmdline_p)
+> >>> @@ -297,6 +334,7 @@ void __init setup_arch(char **cmdline_p)
+> >>>        riscv_set_dma_cache_alignment();
+> >>>
+> >>>        riscv_user_isa_enable();
+> >>> +     riscv_spinlock_init();
+> >>>   }
+> >>>
+> >>>   bool arch_cpu_is_hotpluggable(int cpu)
+> >>> diff --git a/include/asm-generic/qspinlock.h b/include/asm-generic/qs=
+pinlock.h
+> >>> index 0655aa5b57b2..bf47cca2c375 100644
+> >>> --- a/include/asm-generic/qspinlock.h
+> >>> +++ b/include/asm-generic/qspinlock.h
+> >>> @@ -136,6 +136,7 @@ static __always_inline bool virt_spin_lock(struct=
+ qspinlock *lock)
+> >>>   }
+> >>>   #endif
+> >>>
+> >>> +#ifndef __no_arch_spinlock_redefine
+> >> I'm not sure what's better/worse, but instead of inventing this
+> >> __no_arch_spinlock_redefine thing we could just name all the functions
+> >> something like __arch_spin* and then add defines for both to asm/spinl=
+ock.h,
+> >> i.e.
+> >>
+> >> #define queued_spin_lock(l) __arch_spin_lock(l)
+> >> ...
+> >>
+> >> #define ticket_spin_lock(l) __arch_spin_lock(l)
+> >> ...
+> >>
+> >> Besides not having to touch asm-generic/qspinlock.h and
+> >> asm-generic/ticket_spinlock.h it allows one to find the implementation=
+s
+> >> a bit easier as following a tag to arch_spin_lock() will take them to
+> >> queued_spin_lock() which will then take them to
+> >> arch/riscv/include/asm/spinlock.h and there they'll figure out how
+> >> __arch_spin_lock() was defined.
+> >>
+> >>>   /*
+> >>>    * Remapping spinlock architecture specific functions to the corres=
+ponding
+> >>>    * queued spinlock functions.
+> >>> @@ -146,5 +147,6 @@ static __always_inline bool virt_spin_lock(struct=
+ qspinlock *lock)
+> >>>   #define arch_spin_lock(l)            queued_spin_lock(l)
+> >>>   #define arch_spin_trylock(l)         queued_spin_trylock(l)
+> >>>   #define arch_spin_unlock(l)          queued_spin_unlock(l)
+> >>> +#endif
+> >>>
+> >>>   #endif /* __ASM_GENERIC_QSPINLOCK_H */
+> >>> diff --git a/include/asm-generic/ticket_spinlock.h b/include/asm-gene=
+ric/ticket_spinlock.h
+> >>> index cfcff22b37b3..325779970d8a 100644
+> >>> --- a/include/asm-generic/ticket_spinlock.h
+> >>> +++ b/include/asm-generic/ticket_spinlock.h
+> >>> @@ -89,6 +89,7 @@ static __always_inline int ticket_spin_is_contended=
+(arch_spinlock_t *lock)
+> >>>        return (s16)((val >> 16) - (val & 0xffff)) > 1;
+> >>>   }
+> >>>
+> >>> +#ifndef __no_arch_spinlock_redefine
+> >>>   /*
+> >>>    * Remapping spinlock architecture specific functions to the corres=
+ponding
+> >>>    * ticket spinlock functions.
+> >>> @@ -99,5 +100,6 @@ static __always_inline int ticket_spin_is_contende=
+d(arch_spinlock_t *lock)
+> >>>   #define arch_spin_lock(l)            ticket_spin_lock(l)
+> >>>   #define arch_spin_trylock(l)         ticket_spin_trylock(l)
+> >>>   #define arch_spin_unlock(l)          ticket_spin_unlock(l)
+> >>> +#endif
+> >>>
+> >>>   #endif /* __ASM_GENERIC_TICKET_SPINLOCK_H */
+> >>> --
+> >>> 2.39.2
+> >>>
+> >> Thanks,
+> >> drew
+> > _______________________________________________
+> > linux-riscv mailing list
+> > linux-riscv@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-riscv
 
+
+
+--=20
+Best Regards
+ Guo Ren
 
