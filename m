@@ -1,117 +1,154 @@
-Return-Path: <linux-kernel+bounces-290561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AE0B9555CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 08:43:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF4149555CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 08:45:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 090BC1F225B6
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 06:43:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27678285729
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 06:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2843713BACC;
-	Sat, 17 Aug 2024 06:43:22 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFEB812E1EE;
+	Sat, 17 Aug 2024 06:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="umDg3VAt"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38B5BA2D;
-	Sat, 17 Aug 2024 06:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DFD13A416
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 06:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723877001; cv=none; b=fL8UeP6FZN8wY5MgDHoVDumUH6pc+7WzfjZQCp7mGBhgzk4ozJeqCRjQS1slLCuuV38CAzXDNS7+62W6cUPOLH311GUXhQ09LaqS1XgZ+Sz+NfEb4a8CMOdLvRUmgx5fLjehEC+A9daq2FisEtlnrxwKp8aAYG+6t2imtHgAx6Y=
+	t=1723877104; cv=none; b=ajGWGTxVuhEyVWqvNA5ArHDiMBPp5XqL0uKQc/ftzOOnvZXlYbiEd/WWRPbrj6dNdoT7rcdpla9T9qPVERlx8RsjLAmLewfAM+IEt2YqK76aFbiK5FI1e9YZWPtaNng2DJfzmLYEzWX4cKYBJJUSO4kXUWYT8gor3SPaU5EzHGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723877001; c=relaxed/simple;
-	bh=f1W0HHHrGQ+9M+f+peZJqHg5y6H7TaYQhI0iN8WAeVw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=IiTi4j9RVuXj8eE6N6gNa3zpJCUYZgRLrIwJT8na5PfyJxgiUm3A4SO3n4qVSp73TOltv+qDq59dQUh7Dv7MFWh0NGwmEdDbAzfOwayojGv23U/r8InBs1cICHDmOqYfNN4DNR7yuP6R8mQBRr62zLNrGaNfrPjkE/Ht1GFLBCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Wm8SN1VCcz4f3jdF;
-	Sat, 17 Aug 2024 14:43:00 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 22AE61A0568;
-	Sat, 17 Aug 2024 14:43:14 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgBnj4V+RsBmEPKxBw--.36495S3;
-	Sat, 17 Aug 2024 14:43:11 +0800 (CST)
-Subject: Re: [PATCH v2 4/6] iomap: correct the dirty length in page mkwrite
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
- brauner@kernel.org, david@fromorbit.com, jack@suse.cz, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com
-References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
- <20240812121159.3775074-5-yi.zhang@huaweicloud.com>
- <ZsAq11RKg-dRfPv2@casper.infradead.org>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <53da5ebf-3d91-7c70-1be9-4c8a5485cd17@huaweicloud.com>
-Date: Sat, 17 Aug 2024 14:43:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1723877104; c=relaxed/simple;
+	bh=IXtYMnjmCYqhMrj3iJHdd0cKXN0eMB8Ry1wJ89qWj+s=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=nVHFDidMKbk1TtIkpNAAAHT1lqogFEG0pUBJnGJV5YcCleLeSCZcJ0SHPHJHLfVAd30T6RjUWRVbNxL7zyAJdRwaCF47aTnXv/Kphdmrjx37IQwvSz+pdGE06KU6oCkGyMe+7Aytxh38KAIT7LhxWdmfjDSRAo9Hlr+thXFaz48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=umDg3VAt; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6b3825748c2so16650337b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 23:45:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723877101; x=1724481901; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Zc9lwqz+vCaLRPDoCDBvoTod7icBUTaf+QytbMzdm/8=;
+        b=umDg3VAtkAnCBsobjwTxZWS020fAhCNfCBG9UCwyPAAJxe6CcJNRwLnUZ2U8mIrwud
+         4GeLDIeoB0GnOA5unxmqJC+njw1Jk//8pysRepJQUr/sOPtJI+1UdA4B3hdK1ExD/1Hn
+         W3w52R5JA3plUCqVhLZDI5ayzkJJpzkhWWPNS6mE+mVQFHGsKgS0amJSe66WJXuxtxjP
+         K4ZARkKacUiRlKz3LVkPALCzeUwm7Zq4S6sqMEP8vBiCH8fi54kP6c5Y6il1H9MC15sJ
+         TjdwITHRc4ItrC1taRB0KOay8oyGEE51h5bXNwsaUMwBPg/bo4yFck60zxfuG2ek5MVf
+         V8RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723877101; x=1724481901;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Zc9lwqz+vCaLRPDoCDBvoTod7icBUTaf+QytbMzdm/8=;
+        b=WifD/n2A/UK7+3Ax2Z5WkP0qaWPkER7HNyJN2fkH9C+Y/fXKe4Y1u1kWj9qAmiU0UL
+         1rUh9kwMl/7mNWG81QqryNxij+G8FTC02cC2fInw2bGXJtTKb3KekHaseas8Rqqvp3kk
+         SDmjavkz+/qwMOSxumykV90OhKXzcxwLtXcHtiBtAhnPTBnsyW39Pr9SZFQT9mi7CsY/
+         EVLpLaOVyAmO4UzrMxYq3tOPSF5+0TZehzKXq22lHtedlulcZs6itvTdxUzqBH9C+St/
+         gwSW8DaQg1sqXlhvgvl3E1s0Fn3OHQD10362U3UPm+eJVPdTAIu+CBcxBbw+dT5up5Ys
+         4+7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX8EEfl0JW7Tps3ZY5yDS9CgYr4ZKV36xB+2LO44v8y1TWlso1WE//w/fdB7OYe5oKantXOnM/g7grm7ccg/vdgxy2QX6M0keZILhZ9
+X-Gm-Message-State: AOJu0Ywh4ZPaq4+04qtYHdGtwAWG/pEMzcyId1RnpEwvmD6Y5jVsC7w6
+	MpFpB++5B+jK29mrEiKCWtK8LZz/l1XpSHY73+lMjXbrfBzn8X7kKK3p1ilxVp6eI9hmDvNV0wb
+	VmIK2Nw==
+X-Google-Smtp-Source: AGHT+IF0c1kHTtNmQ8YqUbSlWr/peUPSf0ASeWsg/qwjWVL1kXV/hrLuK2p710o4R6Tgm39wZjOo9zaLtAtS
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:78c9:5e58:734f:c59f])
+ (user=irogers job=sendgmr) by 2002:a05:690c:34c8:b0:6aa:4e26:e600 with SMTP
+ id 00721157ae682-6b1bc20a43bmr1216967b3.6.1723877101409; Fri, 16 Aug 2024
+ 23:45:01 -0700 (PDT)
+Date: Fri, 16 Aug 2024 23:44:29 -0700
+Message-Id: <20240817064442.2152089-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <ZsAq11RKg-dRfPv2@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgBnj4V+RsBmEPKxBw--.36495S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7tFW8JF18Jr4DKrWDXF4fKrg_yoW8Xr13pa
-	yfK3Wqkrn5t3Z7Cwn7uw10qw1Fy3y5KF45ZF1qgr15ArZ8WF1agryxKa1qvay7Kw1ft3WI
-	vFWUZ34xCF15ArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
+Subject: [PATCH v1 00/13] perf inject improvements
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>, 
+	Colin Ian King <colin.i.king@gmail.com>, Casey Chen <cachen@purestorage.com>, 
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Chaitanya S Prakash <chaitanyas.prakash@arm.com>, James Clark <james.clark@linaro.org>, 
+	Ze Gao <zegao2021@gmail.com>, Yang Jihong <yangjihong1@huawei.com>, 
+	Yunseong Kim <yskelg@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
+	Dominique Martinet <asmadeus@codewreck.org>, Anne Macedo <retpolanne@posteo.net>, 
+	Sun Haiyong <sunhaiyong@loongson.cn>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/8/17 12:45, Matthew Wilcox wrote:
-> On Mon, Aug 12, 2024 at 08:11:57PM +0800, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> When doing page mkwrite, iomap_folio_mkwrite_iter() dirty the entire
->> folio by folio_mark_dirty() even the map length is shorter than one
->> folio. However, on the filesystem with more than one blocks per folio,
->> we'd better to only set counterpart block's dirty bit according to
->> iomap_length(), so open code folio_mark_dirty() and pass the correct
->> length.
-> 
-> We shouldn't waste any time trying to optimise writing to files through
-> mmap().  People have written papers about what a terrible programming
-> model this is.  eg https://db.cs.cmu.edu/mmap-cidr2022/
-> 
-> There are some programs that do it, but they are few and far between.
-> 
+Fix the existing build id injection by adding sample IDs on to the
+synthesized events. This correctly orders the events and addresses
+issues such as a profiled executable being replaced during its
+execution.
 
-I don't think it's an optimization, this is a fix, the issue is the same
-to the one that previous 2 patches want to fix: there left a hole with
-ifs dirty bit set but without any valid data and without any block
-allocated/reserved. This mmap() path is just once case that could lead
-to this issue (The case if as I said in my reply to Christoph, suppose
-we have a 3K regular file on a filesystem with 1K block size. If the
-folio size is 4K, In iomap_page_mkwrite(), it will mark all 4 bits of ifs
-dirty, the last one will become redundant if we expand the file to 4K
-later).
+Add a new --mmap2-buildid-all option that rewrites all mmap events as
+mmap2 events containing build IDs. This removes the need for build_id
+events.
 
-Hence in my opinion, we need to fix this, or it's gonna be a potential
-problem one day.
+Add a new -B option that like --mmap2-buildid-all synthesizes mmap2
+with build id events. With -B the behavior is to do it lazily, so only
+when a sample references the particular map. With system wide
+profiling that synthesizes mmap events for all running processes the
+perf.data file savings can be greater than 50%.
 
-Thanks,
-Yi.
+Reduce the memory footprint of perf inject by avoiding creating
+symbols in the callchain, the symbols aren't used during perf inject
+and necessitate the loading of dsos.
+
+Ian Rogers (13):
+  perf synthetic-events: Avoid unnecessary memset
+  perf map: API clean up
+  perf jit: Constify filename argument
+  perf dso: Constify dso_id
+  perf evsel: Constify evsel__id_hdr_size argument
+  perf test: Expand pipe/inject test
+  perf inject: Combine build_ids and build_id_all into enum
+  perf inject: Combine different mmap and mmap2 functions
+  perf inject: Combine mmap and mmap2 handling
+  perf inject: Fix build ID injection
+  perf inject: Add new mmap2-buildid-all option
+  perf inject: Lazy build-id mmap2 event insertion
+  perf callchain: Allow symbols to be optional when resolving a
+    callchain
+
+ tools/perf/builtin-inject.c         | 532 ++++++++++++++++++----------
+ tools/perf/builtin-top.c            |   2 +-
+ tools/perf/tests/shell/pipe_test.sh | 103 ++++--
+ tools/perf/tests/vmlinux-kallsyms.c |   4 +-
+ tools/perf/util/build-id.c          |   6 +-
+ tools/perf/util/callchain.c         |   8 +-
+ tools/perf/util/callchain.h         |   2 +-
+ tools/perf/util/dso.c               |   4 +-
+ tools/perf/util/dso.h               |   4 +-
+ tools/perf/util/dsos.c              |  12 +-
+ tools/perf/util/dsos.h              |   2 +-
+ tools/perf/util/evsel.c             |   2 +-
+ tools/perf/util/evsel.h             |   2 +-
+ tools/perf/util/jit.h               |   3 +-
+ tools/perf/util/jitdump.c           |   6 +-
+ tools/perf/util/machine.c           |  95 ++---
+ tools/perf/util/machine.h           |  36 +-
+ tools/perf/util/map.c               |  25 +-
+ tools/perf/util/map.h               |  22 +-
+ tools/perf/util/synthetic-events.c  | 103 +++++-
+ tools/perf/util/synthetic-events.h  |  21 +-
+ 21 files changed, 682 insertions(+), 312 deletions(-)
+
+-- 
+2.46.0.184.g6999bdac58-goog
 
 
