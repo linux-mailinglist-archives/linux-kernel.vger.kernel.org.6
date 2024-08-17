@@ -1,83 +1,117 @@
-Return-Path: <linux-kernel+bounces-290867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC8B19559DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 23:50:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 825369559DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 23:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63DF0282544
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 21:50:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 477432820D3
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 21:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A871553BB;
-	Sat, 17 Aug 2024 21:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA18155A4F;
+	Sat, 17 Aug 2024 21:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qh2rkMUB"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YIR35SMq"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AFF1AC8BE
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 21:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8E2145B26;
+	Sat, 17 Aug 2024 21:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723931439; cv=none; b=hwv5DUNgyLrFrCw1S0nTI0Yww3mwIkqWedldB7xiDWO4aw+Sy/N7OPytjmKhw5lirHKlRQEOxXPkGM/DLvsjLzx8OheHeTsU6hPSRvBwHw05rYoZgLgQiaIoeO7EAG4ScMM/KJTqyfRzsueeXbw6g5YeJUzmvxcHh+NpsRoSbCs=
+	t=1723931578; cv=none; b=JfvDuzKcq2YyuLoVNJvZ5hMZBNLXYt9nkCBdQPyLNW0LgbJklCuHDPuxP9hY8V6/LnWZkrGdDZrRryU2o3b/oBD0HsFaICAc41C7oUT19R7lBjJlHB8NtExMfH7URvtBhXxDI3qXSyKL9XZm79/Ur+1QTSu4Z9GylPwf91DkyqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723931439; c=relaxed/simple;
-	bh=A0MCABEyH9WwZCS+LXvQM4TUgXYZxhYFGo/mUke9q78=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E8RPhcods8zFydw9YsOcgF9KcZG4fAJyu6dIHRImNlfnSq1UzS448NGz5SUtdpD4zDZMxcUZ9fM3/JhYdIOk8+DlmGPmcMNtJMTO3XZHN7fFIgXIOrnk9esWeUergqTLUI6ie0NxVtBBm74hyZ/Bj0RPrlEZMVwYR87DDflmcIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qh2rkMUB; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723931434;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=m9lw+o1lDJ02mPL9jlFTS3W+wJz8LSPltmhS9IpzRGg=;
-	b=qh2rkMUBrcsBHdQO3N3VlHlxhR8D+f88X+zTNKtiDrGmdnkqRi3a2yHZW6MJydwFBxaOlX
-	gNxNDys78btajqViKvFk89hJf0VhJv5v8ncfaAA9KnuAviIqwh2PPyFEfZOByUN56rsaxT
-	UAYenlWuV6iDp4Wtd9li4fCoVadKC40=
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: linux-kernel@vger.kernel.org
-Cc: cmllamas@google.com,
-	quic_bjorande@quicinc.com,
-	xndchn@gmail.com,
-	quic_eberman@quicinc.com,
-	akpm@linux-foundation.org,
-	Kent Overstreet <kent.overstreet@linux.dev>
-Subject: [PATCH] scripts/decode_stacktrace.sh: nix-ify
-Date: Sat, 17 Aug 2024 17:50:25 -0400
-Message-ID: <20240817215025.161628-1-kent.overstreet@linux.dev>
+	s=arc-20240116; t=1723931578; c=relaxed/simple;
+	bh=ze9ch3YZzCfYoeKWUNaWCiaBI8bFGWp1iPa0i7rZnx8=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=dnfd+ISVJ5N7Yoo33wt2P1GfsINLmhKxf056CakbQD4Xeu9U+lx2Rf2XCZiO2vGlM9BtL78xjd4JQhEovLzQsKsUXllQWGQ58ZWm/gyiSx3NTR4F56dz4JvD/ZPYmvaDK7o+dgcU+ptdnaVL0A88mdk9120J0ym3eQvmNEwpPWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YIR35SMq; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52f0277daa5so4068780e87.0;
+        Sat, 17 Aug 2024 14:52:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723931574; x=1724536374; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=f+fGjjDilP5f8PC3j0wUi71bYLunoVbG2PgMeSDaZTc=;
+        b=YIR35SMqjPVSaTioy2uMeYaXQdWmoa1c8IC0Txwgpcbfike3RrYb6E1GB42/fY51u3
+         CCDVi+gKfqUQYL1sWscY0Q1md1TsQmfDFTT6P1EVrzWiZQiSLu6p45enR64TvOipOFJH
+         eVG6CrAT+ERUVLxWayRyJuequwY9aAN1TNZ2VmNUGIihDFq39dlzQR/HVviY1uaDXsAU
+         G83XXsvXCjTGyDJbwb2BiN45VgAfCJcaOfeu5HXDYxionnIEDFNYqWoh9/x0pkEc4A3H
+         nYnbDlkq4li33xY01KlnZtr6O8mOSiXN2TTe362uTazKco5cpZnU1z2IzvfqexRzqcN6
+         7DgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723931574; x=1724536374;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=f+fGjjDilP5f8PC3j0wUi71bYLunoVbG2PgMeSDaZTc=;
+        b=ZiNd89Q+1wnOCLZMFrcZSY22PVR4zs5NXygXh2WJm/iZIqd2dwU+QRAbe9WIOpZQx0
+         5L1vrQrwNdSlPafmggqUZM0LXZbCSU/4CxXyRkqzioncTcIvM3dAd7wkCnZr8xwSQxmf
+         jmHh31Lvwqlz8lDoz38mzMchS4oWJB2y7PNKuN3JqT7du7DgQiPvHf+eM5DdzFweYEzM
+         1DKnFpZz5s4Q1EdSyjLk2aSUw33gONXjDkAFfyNwpEPfCnC0yQ0T396oEo8zTdQzNr5O
+         NoRztSRYybjC0Q8t4Zrjmfxc87F/oTkJqcxIVwuZucEGVXTzCTSBovHHzRe4A3PTtgho
+         Fe6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVlFVQE4w1qRALXGSQSV4XQj+yqA9x+noOa6HJCNYMvdhvne3cjF8OKwp0aCovFoTEjuxXURXT9ajPoDgVLL8ddPQST8+Pisi/rLg==
+X-Gm-Message-State: AOJu0Yy6JiUh8tijgxipZLCIRLIVDQ9m51A8KH7A0uHlh25zl+caKKs8
+	Pwa0uLG/+PlUMdFRvLs2Wl3z0TlUDLR9I4BN6V1rQhGs+vWU3c8NPzVfIZdWMDWnLlEuM3X0P7r
+	wSCxZsODIqrVfpGZOG4q8Cwkgfs5Z7nW+
+X-Google-Smtp-Source: AGHT+IGWU0Xhmz9pFeGBWh371YNtvP9B8oKAvaOF8np+VIx1fMCQTh/ecvtRtPcUKE9q9QH2eS/Dq92vTVJL7O/Qlz4=
+X-Received: by 2002:a05:6512:2386:b0:533:97b:e272 with SMTP id
+ 2adb3069b0e04-5331c6dc80bmr5070881e87.41.1723931574146; Sat, 17 Aug 2024
+ 14:52:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+From: Steve French <smfrench@gmail.com>
+Date: Sat, 17 Aug 2024 16:52:43 -0500
+Message-ID: <CAH2r5mtMOk4B+Chvd=an04wjx0zG4NA_b0uSmsBV00qC+T52Cw@mail.gmail.com>
+Subject: [GIT PULL] smb3 client fixes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-nix only puts /usr/bin/env at the standard location (as required by
-posix), so shebangs have to be tweaked.
+Please pull the following changes since commit
+7c626ce4bae1ac14f60076d00eafe71af30450ba:
 
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
----
- scripts/decode_stacktrace.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  Linux 6.11-rc3 (2024-08-11 14:27:14 -0700)
 
-diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
-index a0f50a5b4f7c..ed9f914334cc 100755
---- a/scripts/decode_stacktrace.sh
-+++ b/scripts/decode_stacktrace.sh
-@@ -1,4 +1,4 @@
--#!/bin/bash
-+#!/usr/bin/env bash
- # SPDX-License-Identifier: GPL-2.0
- # (c) 2014, Sasha Levin <sasha.levin@oracle.com>
- #set -x
+are available in the Git repository at:
+
+  git://git.samba.org/sfrench/cifs-2.6.git tags/v6.11-rc3-smb3-client-fixes
+
+for you to fetch changes up to 5b4f3af39b6588e8de4444d8e1ccf759b40f9414:
+
+  smb: smb2pdu.h: Use static_assert() to check struct sizes
+(2024-08-15 16:06:55 -0500)
+
+----------------------------------------------------------------
+Three client fixes, including two for stable
+- fix for clang warning - additional null check
+- fix for cached write with posix locks
+- flexible structure fix
+
+----------------------------------------------------------------
+Gustavo A. R. Silva (1):
+      smb: smb2pdu.h: Use static_assert() to check struct sizes
+
+Steve French (1):
+      smb3: fix lock breakage for cached writes
+
+Su Hui (1):
+      smb/client: avoid possible NULL dereference in cifs_free_subrequest()
+
+ fs/smb/client/file.c    | 21 +++++++++++++++------
+ fs/smb/common/smb2pdu.h |  2 ++
+ 2 files changed, 17 insertions(+), 6 deletions(-)
+
+
 -- 
-2.45.2
+Thanks,
 
+Steve
 
