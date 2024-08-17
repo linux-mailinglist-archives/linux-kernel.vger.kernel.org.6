@@ -1,215 +1,251 @@
-Return-Path: <linux-kernel+bounces-290518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 099BC955532
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 05:11:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 101DE955535
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 05:18:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F80FB21E9A
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 03:11:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D4BBB22497
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 03:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C3378276;
-	Sat, 17 Aug 2024 03:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4A362A02;
+	Sat, 17 Aug 2024 03:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="kwQaMqBI"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MBDMNFmA"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF64E6FD3;
-	Sat, 17 Aug 2024 03:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A845210F7;
+	Sat, 17 Aug 2024 03:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723864296; cv=none; b=mqkZqr82oOiU3BTvI4PioJeDPlPD+b9MoQtmaBex4r8NIyQeTqJrWSAYwQppykAu6o76rHE9N4InHVj+ATVoug8p8IAAVhXN32jxnFpPv0OX3tCAkawsc+hrYTSFVRrmtrs46l7SCCSLz9rSkVIrQbT9eDc0WPKVEis2gO3INoo=
+	t=1723864715; cv=none; b=Lsy53EaXvkIMhFkRdzM/qzZMFe7d253USo/ndY8u2K6jnlARX7zoRY9I/HVKW8E0V/XJpZLANfOc5h529o+tljlqOJ+EMS2OAwjZBUAh6owGPRfkyEgu+/Kw6qiK+xWk/lSCv58IfixS88lJ+NC7w2r3WY0k6cjWfVUnceofEhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723864296; c=relaxed/simple;
-	bh=l38IdzJYOwLZtyjjLa9m/LqkWwtiawxtuHaK2D68IlM=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=KbveEyw27+Qi9cSnJg6+s7S0fbyn6IaZ0ntuNmJPF7CXmrWcezJtE3Usz5cB1jpoGcFsw+2Ezw3gLfChJKEBMbATokZ7rROnhu/4yaqw2EgyuQhinWUteaVJWozLfIwahYfY9rFol13MV7kBPhtgQq51fx40wJpomlpQMt2GTWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=kwQaMqBI; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1723864715; c=relaxed/simple;
+	bh=PK1gtm+3JXc0XeI/lpDSKVfzle9AZFrvPpYDWKo8t1Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YH6+jK+NK+tcqL6ZCxtjXkIsiRmFupE4I94+cPpUdT0OGs9zm4wQw5lePjDwYS3g9qdM3ExMItAjN6KLfuvB1tT22LrOKg8A+5uF2UCsucBE5eKg3ZVxCflTZqhfq+q1kYSRGGzZ4012zyAIViYTRIol6ywY8h5JcOytnkvQp/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MBDMNFmA; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20227ba378eso51495ad.0;
+        Fri, 16 Aug 2024 20:18:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723864713; x=1724469513; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vuEKBbm6jzfUML/VgRcrXFhdwGGxYBzUG3C/0kVpiDc=;
+        b=MBDMNFmAqHFsMlbYfG8nTChu6LmRX8CdC2MC09BmVOp1nQnATE1O6Q5Pj86jWawqqE
+         0yMb7w6CmNTNXhk6KmNN6708LDsKrb+gGn3kKYWIGWbDjNVJXFfWQWAl3h2ADRIGkfYE
+         3ICGNRzyNGUAh50I68GJgvxfqtRXNvuaZBkTHHF4kXLw5WITezmv7ov+fxgPWwWwDBBL
+         5GfY4Lg4tJBYt9KWnP7RLGNw5r0gcbIoVxgjIANIPxyvn933nXSxyq47ZPYczlWqcGuO
+         S2DYLOUjhatiTsdiPP4VqPW2Z13qtBpnSnCVAq/NxTUpAeZt+76UwQx6BVim0OjV9tlq
+         RXhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723864713; x=1724469513;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vuEKBbm6jzfUML/VgRcrXFhdwGGxYBzUG3C/0kVpiDc=;
+        b=e+/VVCxawXMozleSzhWPhovVumS/k/hur90TJRxNQm3rviUIaib7xRGBrLu0n5jB3B
+         O9zGy7gQQgeF2JDjf73qaslTiYXbSYvPCTWsUc+aX/z7NLGqD+wwn4nirg6EmwrZij2V
+         sliYw0cPzZiPowBuKDmhEDL3Crai5RXEVWkeiBRRVAaVUOidyUrHaV+8ZJiZc6PvzU+a
+         CQcdYU8BEhprcqyjFWKIzn4oxMygEr7DPtozZFmOQmbfM8iqL4bdirmmH72i1Jzx6X9d
+         mLCDTnDK8U0uyRe7571ZycgJtG58QMDXUEOL4fGFYwHSoHQV/cUeU0usbolNZNccPFAY
+         jXWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNBpx7ZcEWrFg6B8sErPTu6ezqXEjekNTsH4Bx2vUEt98040Bvemj1D8jBqpqziSHHVeuxffTSY5wJ5t3uJo84Nl7tjWriBRbqzA28QWC/tsm5kqd2QqhGlbJiop9E8rcYLpZzQyWd
+X-Gm-Message-State: AOJu0YxrXCkGxae6HtGYseZNQoLTo4SIEog4uAXJfkYsGTawsWB8qxK6
+	BnaPKwTiOyecrchbHNWeqiFuzg1tHRsNTOnJX+moXKIWBwOJVIxF
+X-Google-Smtp-Source: AGHT+IGBdcnWj3Ytjsg9a2o0sYeEDzfMIbjF4qgKVXw7PBKoef1Y7BS9PViToKtj+Ayv6Ll1r+xUNg==
+X-Received: by 2002:a17:902:e752:b0:1fd:684f:ca72 with SMTP id d9443c01a7336-20203ea74a7mr49271445ad.25.1723864712745;
+        Fri, 16 Aug 2024 20:18:32 -0700 (PDT)
+Received: from localhost.localdomain ([187.120.159.46])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2020b9ed5bfsm16509505ad.274.2024.08.16.20.18.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 20:18:32 -0700 (PDT)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: scott@spiteful.org,
+	bhelgaas@google.com,
+	ilpo.jarvinen@linux.intel.com,
+	wsa+renesas@sang-engineering.com,
+	lukas@wunner.de
+Cc: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: hotplug: check the return of hotplug bridge In some pci drivers, when the pci bridge is added if the process return an error, the drivers don't check this and continue your execute normally. Then, this patch change this drivers for check return of pci_hp_add_bridge(), and if has an error, then the drivers call goto lable , free your mutex and return the error for your caller.
+Date: Sat, 17 Aug 2024 00:18:15 -0300
+Message-ID: <20240817031817.6762-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1723864292;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=odkph5w0PVDl1mITUK856/Sf3iEO6l5n47FubRaBVgs=;
-	b=kwQaMqBIuqeUpD8pGTY+4isN7YnsejsZrk80UnjrwBa4yfM0eix0SWYi9q9jZgXWZmY4Zd
-	wWZveORCVtTZekiRupv8yVTqL3d32BHXbsAyI/kMzkgR4JWpE/siLGcT2Mt5yqsN0leVmG
-	w4mYe0H/1XBeYls5sovwqJwxOLtOqU3xSFOPPtN8I7DCyBSXHXvlmACLVimTLvPy7P7yko
-	fwb20S8gKajjtq5/fRdaQA6kUC65LUMdjAGnkQ5/OgtsrgM60u94INCthhybYegg+//ujN
-	BcPscnQadpyHUYJnYlvCA+2vm0ojvV+JK1jltT06cXFKL6ZZkrs3LScAMaxF/g==
-Date: Sat, 17 Aug 2024 05:11:30 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Detlev Casanova <detlev.casanova@collabora.com>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Heiko
- Stuebner <heiko@sntech.de>, Andi Shyti <andi.shyti@kernel.org>, Jonathan
- Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Lee Jones
- <lee@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri
- Slaby <jirislaby@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, Chris Morgan
- <macromorgan@hotmail.com>, Jonas Karlman <jonas@kwiboo.se>, Tim Lunn
- <tim@feathertop.org>, Muhammed Efe Cetin <efectn@protonmail.com>, Andy Yan
- <andyshrk@163.com>, Jagan Teki <jagan@edgeble.ai>, Sebastian Reichel
- <sebastian.reichel@collabora.com>, Shresth Prasad
- <shresthprasad7@gmail.com>, Ondrej Jirman <megi@xff.cz>, Weizhao Ouyang
- <weizhao.ouyang@arm.com>, Alexey Charkov <alchark@gmail.com>, Jimmy Hon
- <honyuenkwun@gmail.com>, Finley Xiao <finley.xiao@rock-chips.com>, Yifeng
- Zhao <yifeng.zhao@rock-chips.com>, Elaine Zhang <zhangqing@rock-chips.com>,
- Liang Chen <cl@rock-chips.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-serial@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH 09/10] arm64: dts: rockchip: Add rk3576 SoC base DT
-In-Reply-To: <20240802214612.434179-10-detlev.casanova@collabora.com>
-References: <20240802214612.434179-1-detlev.casanova@collabora.com>
- <20240802214612.434179-10-detlev.casanova@collabora.com>
-Message-ID: <e794a247b52dd2fc10b470ed7df4d463@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Transfer-Encoding: 8bit
 
-Hello Detlev,
+Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+---
+ drivers/pci/hotplug/cpci_hotplug_pci.c | 7 +++++--
+ drivers/pci/hotplug/cpqphp_pci.c       | 9 ++++++---
+ drivers/pci/hotplug/ibmphp_core.c      | 8 ++++++--
+ drivers/pci/hotplug/pciehp_pci.c       | 7 +++++--
+ drivers/pci/hotplug/shpchp_pci.c       | 7 +++++--
+ drivers/pci/probe.c                    | 9 ++++++---
+ 6 files changed, 33 insertions(+), 14 deletions(-)
 
-Please see a few comments below.
+diff --git a/drivers/pci/hotplug/cpci_hotplug_pci.c b/drivers/pci/hotplug/cpci_hotplug_pci.c
+index 6c48066acb44..2d3256795eab 100644
+--- a/drivers/pci/hotplug/cpci_hotplug_pci.c
++++ b/drivers/pci/hotplug/cpci_hotplug_pci.c
+@@ -269,8 +269,11 @@ int cpci_configure_slot(struct slot *slot)
+ 	parent = slot->dev->bus;
+ 
+ 	for_each_pci_bridge(dev, parent) {
+-		if (PCI_SLOT(dev->devfn) == PCI_SLOT(slot->devfn))
+-			pci_hp_add_bridge(dev);
++		if (PCI_SLOT(dev->devfn) == PCI_SLOT(slot->devfn)) {
++			ret = pci_hp_add_bridge(dev);
++			if (ret)
++				goto out;
++		}
+ 	}
+ 
+ 	pci_assign_unassigned_bridge_resources(parent->self);
+diff --git a/drivers/pci/hotplug/cpqphp_pci.c b/drivers/pci/hotplug/cpqphp_pci.c
+index e9f1fb333a71..5f6ce2c6385a 100644
+--- a/drivers/pci/hotplug/cpqphp_pci.c
++++ b/drivers/pci/hotplug/cpqphp_pci.c
+@@ -70,7 +70,7 @@ static void __iomem *detect_HRT_floating_pointer(void __iomem *begin, void __iom
+ int cpqhp_configure_device(struct controller *ctrl, struct pci_func *func)
+ {
+ 	struct pci_bus *child;
+-	int num;
++	int num, ret = 0;
+ 
+ 	pci_lock_rescan_remove();
+ 
+@@ -97,7 +97,10 @@ int cpqhp_configure_device(struct controller *ctrl, struct pci_func *func)
+ 	}
+ 
+ 	if (func->pci_dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
+-		pci_hp_add_bridge(func->pci_dev);
++		ret = pci_hp_add_bridge(func->pci_dev);
++		if (ret)
++			goto out;
++
+ 		child = func->pci_dev->subordinate;
+ 		if (child)
+ 			pci_bus_add_devices(child);
+@@ -107,7 +110,7 @@ int cpqhp_configure_device(struct controller *ctrl, struct pci_func *func)
+ 
+  out:
+ 	pci_unlock_rescan_remove();
+-	return 0;
++	return ret;
+ }
+ 
+ 
+diff --git a/drivers/pci/hotplug/ibmphp_core.c b/drivers/pci/hotplug/ibmphp_core.c
+index 197997e264a2..73a593c2993b 100644
+--- a/drivers/pci/hotplug/ibmphp_core.c
++++ b/drivers/pci/hotplug/ibmphp_core.c
+@@ -663,6 +663,7 @@ static int ibm_configure_device(struct pci_func *func)
+ 	int num;
+ 	int flag = 0;	/* this is to make sure we don't double scan the bus,
+ 					for bridged devices primarily */
++	int ret = 0;
+ 
+ 	pci_lock_rescan_remove();
+ 
+@@ -690,7 +691,10 @@ static int ibm_configure_device(struct pci_func *func)
+ 		}
+ 	}
+ 	if (!(flag) && (func->dev->hdr_type == PCI_HEADER_TYPE_BRIDGE)) {
+-		pci_hp_add_bridge(func->dev);
++		ret = pci_hp_add_bridge(func->dev);
++		if (ret)
++			goto out;
++
+ 		child = func->dev->subordinate;
+ 		if (child)
+ 			pci_bus_add_devices(child);
+@@ -698,7 +702,7 @@ static int ibm_configure_device(struct pci_func *func)
+ 
+  out:
+ 	pci_unlock_rescan_remove();
+-	return 0;
++	return ret;
+ }
+ 
+ /*******************************************************
+diff --git a/drivers/pci/hotplug/pciehp_pci.c b/drivers/pci/hotplug/pciehp_pci.c
+index 65e50bee1a8c..0c4873c2ef3c 100644
+--- a/drivers/pci/hotplug/pciehp_pci.c
++++ b/drivers/pci/hotplug/pciehp_pci.c
+@@ -58,8 +58,11 @@ int pciehp_configure_device(struct controller *ctrl)
+ 		goto out;
+ 	}
+ 
+-	for_each_pci_bridge(dev, parent)
+-		pci_hp_add_bridge(dev);
++	for_each_pci_bridge(dev, parent) {
++		ret = pci_hp_add_bridge(dev);
++		if (ret)
++			goto out;
++	}
+ 
+ 	pci_assign_unassigned_bridge_resources(bridge);
+ 	pcie_bus_configure_settings(parent);
+diff --git a/drivers/pci/hotplug/shpchp_pci.c b/drivers/pci/hotplug/shpchp_pci.c
+index 36db0c3c4ea6..7db0ce966f1d 100644
+--- a/drivers/pci/hotplug/shpchp_pci.c
++++ b/drivers/pci/hotplug/shpchp_pci.c
+@@ -48,8 +48,11 @@ int shpchp_configure_device(struct slot *p_slot)
+ 	}
+ 
+ 	for_each_pci_bridge(dev, parent) {
+-		if (PCI_SLOT(dev->devfn) == p_slot->device)
+-			pci_hp_add_bridge(dev);
++		if (PCI_SLOT(dev->devfn) == p_slot->device) {
++			ret = pci_hp_add_bridge(dev);
++			if (ret)
++				goto out;
++		}
+ 	}
+ 
+ 	pci_assign_unassigned_bridge_resources(bridge);
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index b14b9876c030..2418998820dc 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -3363,9 +3363,10 @@ int pci_hp_add_bridge(struct pci_dev *dev)
+ 		if (!pci_find_bus(pci_domain_nr(parent), busnr))
+ 			break;
+ 	}
++
+ 	if (busnr-- > end) {
+ 		pci_err(dev, "No bus number available for hot-added bridge\n");
+-		return -1;
++		return -ENODEV;
+ 	}
+ 
+ 	/* Scan bridges that are already configured */
+@@ -3380,8 +3381,10 @@ int pci_hp_add_bridge(struct pci_dev *dev)
+ 	/* Scan bridges that need to be reconfigured */
+ 	pci_scan_bridge_extend(parent, dev, busnr, available_buses, 1);
+ 
+-	if (!dev->subordinate)
+-		return -1;
++	if (!dev->subordinate) {
++		pci_err(dev, "No dev subordinate\n");
++		return -ENODEV;
++	}
+ 
+ 	return 0;
+ }
+-- 
+2.46.0
 
-On 2024-08-02 23:45, Detlev Casanova wrote:
-> This device tree contains all devices necessary for booting from 
-> network
-> or SD Card.
-> 
-> It supports CPU, CRU, PM domains, dma, interrupts, timers, UART and
-> SDHCI (everything necessary to boot Linux on this system on chip) as
-> well as Ethernet, I2C, SPI and OTP.
-> 
-> Also add the necessary DT bindings for the SoC.
-> 
-> Signed-off-by: Liang Chen <cl@rock-chips.com>
-> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-> Signed-off-by: Yifeng Zhao <yifeng.zhao@rock-chips.com>
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> [rebase, squash and reword commit message]
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> ---
-
-[snip]
-
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-> b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-> new file mode 100644
-> index 0000000000000..00c4d2a153ced
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-> @@ -0,0 +1,1635 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2023 Rockchip Electronics Co., Ltd.
-> + */
-> +
-> +#include <dt-bindings/clock/rockchip,rk3576-cru.h>
-> +#include <dt-bindings/reset/rockchip,rk3576-cru.h>
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/phy/phy.h>
-> +#include <dt-bindings/power/rk3576-power.h>
-> +#include <dt-bindings/pinctrl/rockchip.h>
-> +#include <dt-bindings/soc/rockchip,boot-mode.h>
-> +
-> +/ {
-> +	compatible = "rockchip,rk3576";
-> +
-> +	interrupt-parent = <&gic>;
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
-> +
-> +	aliases {
-> +		ethernet0 = &gmac0;
-> +		ethernet1 = &gmac1;
-
-Please remove ethernetX aliases from the SoC dtsi.  The consensus
-is that those aliases need to be defined at the board level instead.
-
-See the commit 5d90cb1edcf7 (arm64: dts: rockchip: Remove ethernet0
-alias from the SoC dtsi for RK3399, 2023-12-12), for example, for
-more details.
-
-> +		gpio0 = &gpio0;
-> +		gpio1 = &gpio1;
-> +		gpio2 = &gpio2;
-> +		gpio3 = &gpio3;
-> +		gpio4 = &gpio4;
-> +		i2c0 = &i2c0;
-> +		i2c1 = &i2c1;
-> +		i2c2 = &i2c2;
-> +		i2c3 = &i2c3;
-> +		i2c4 = &i2c4;
-> +		i2c5 = &i2c5;
-> +		i2c6 = &i2c6;
-> +		i2c7 = &i2c7;
-> +		i2c8 = &i2c8;
-> +		i2c9 = &i2c9;
-> +		serial0 = &uart0;
-> +		serial1 = &uart1;
-> +		serial2 = &uart2;
-> +		serial3 = &uart3;
-> +		serial4 = &uart4;
-> +		serial5 = &uart5;
-> +		serial6 = &uart6;
-> +		serial7 = &uart7;
-> +		serial8 = &uart8;
-> +		serial9 = &uart9;
-> +		serial10 = &uart10;
-> +		serial11 = &uart11;
-> +		spi0 = &spi0;
-> +		spi1 = &spi1;
-> +		spi2 = &spi2;
-> +		spi3 = &spi3;
-> +		spi4 = &spi4;
-> +	};
-> +
-> +	xin32k: clock-32k {
-
-Please use "xin32k: clock-xin32k { ... }" instead, because that follows
-the recently established revised pattern for clock names.  We should 
-have
-come consistency in the new SoC dtsi additions.
-
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <32768>;
-> +		clock-output-names = "xin32k";
-> +	};
-> +
-> +	xin24m: clock-24m {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <24000000>;
-> +		clock-output-names = "xin24m";
-> +	};
-
-Please use "xin24m: clock-xin24m { ... }" instead, for the same reasons
-as already described above.
-
-> +	spll: clock-702m {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <702000000>;
-> +		clock-output-names = "spll";
-> +	};
-
-Perhaps using "spll: clock-spll { ... }" instead would also be a good
-idea, because it would improve the overall consistency.
 
