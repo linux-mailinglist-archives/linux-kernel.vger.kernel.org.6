@@ -1,118 +1,216 @@
-Return-Path: <linux-kernel+bounces-290514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8062B9554EC
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 04:42:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B25CC9554EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 04:42:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D742B20FBF
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 02:42:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D165B22AA4
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 02:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E3C1F5FA;
-	Sat, 17 Aug 2024 02:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF161A291;
+	Sat, 17 Aug 2024 02:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JR7YHaDD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="FJs1vkA1"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DAB0138E;
-	Sat, 17 Aug 2024 02:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3F14653A;
+	Sat, 17 Aug 2024 02:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723862526; cv=none; b=MnFq9gB5/JuOoEzeDd62pBgjGGa011QQli/NTmVAGjypd2XvJoxFVoK/i4DZH9bSbTkp0yw3duCFzxK+BrNYBDr18pYqdGLUsttkQtxgJIIt7RLW5EkD48ucwWJQxyCDr6/iUOqYm7xv73iSukwXPd6M8hQm578YFiU/CPHQBSA=
+	t=1723862539; cv=none; b=jsKh31r3HanbGCfD/om6JZX4DzWS9aO/A+t74cq3nLCJKyX1BJr9HATLA0pupV/gubDQWw6vXwhDruCX262N7WGvb0IoJlnXELlvVMZT/GtmSdrFevGzJGI8iXIB/2WKim14dXDMON+jyACZCJnwElcJ4vE4CaffJs3iU1z3ad4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723862526; c=relaxed/simple;
-	bh=l7c+tqqb/MEMAkjLmzruqEhMtkaDk2Uid0ORzOuA0pQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WIq3J1HSc2uesHmGjsML3y+Ry4cI6FSMezyEcfKeRxNGAYXwDaHnh4wgvjAfQZ37zPQpDcMkoZlxt6br9OOpBiiE6VTaabtmjr7YatWEOj4UcYENJmrJUgzLmDWpVrkXsAqPN227BX9X5390Xmv8Ndp0huAQerG8Gmg99BAMS4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JR7YHaDD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EA13C32782;
-	Sat, 17 Aug 2024 02:42:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723862525;
-	bh=l7c+tqqb/MEMAkjLmzruqEhMtkaDk2Uid0ORzOuA0pQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JR7YHaDDV54RwgDhRgPYtrLdn9l/cl37v5X6Y/SlZK+vFMqYVEAOf54T/p+U36vOh
-	 wYFIrZQ9LuJ76TY1uCOop/pHo1JdqkBGMFWTLhbV1u2s4yZYAZXNBDSAcA2RKU6K3H
-	 86CtTBcDJRVAaAIoFwTn38VZ0CTrB/E+ShlB3abihR3b0th0/R2VKebda/AAUSGgRe
-	 fRMzbVYrQN8+s2NFkuapeRTHw/YjOAyWHTTSWA5FaT3e5lk4CnQhrZeaujqz141wpI
-	 /4T6fjvECkecteMx9VtL5OifkNLvM3i11G7o4E3Y8NUQ7FpLiEPx0sXmcI6VGD6S/j
-	 ujgzu01UjaX7Q==
-Date: Fri, 16 Aug 2024 19:42:03 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Andrew Lunn <andrew@lunn.ch>, Radhey Shyam Pandey
- <radhey.shyam.pandey@amd.com>, netdev@vger.kernel.org, Simon Horman
- <horms@kernel.org>, Michal Simek <michal.simek@amd.com>,
- linux-kernel@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
- Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH net-next v3 2/2] net: xilinx: axienet: Add statistics
- support
-Message-ID: <20240816194203.05753edf@kernel.org>
-In-Reply-To: <20240815144031.4079048-3-sean.anderson@linux.dev>
-References: <20240815144031.4079048-1-sean.anderson@linux.dev>
-	<20240815144031.4079048-3-sean.anderson@linux.dev>
+	s=arc-20240116; t=1723862539; c=relaxed/simple;
+	bh=C286EmAyP/FNAORtOpe5XqhVBh9YZxbtRsVtQFWHtY4=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=CBGfplwC8UTzYsUD54bi8cyA6aONzkNk3KHx9TAAUPhXKWo3HwxFdCvQbXCCD+yUn9rtjLaT/gBXJSU9gK6RN1JuwcTctNK5ncNmitaUR3x0XB5l6AKEL/h9+qoeWUQuofI1WIUwJazmOLgvAPYvAd+JT5Rj6mO6/bJhDkblCDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=FJs1vkA1; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1723862526;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t3PBtFS4FGd7SCAA1CPDEsl/8k7nrplme33HqFORp+I=;
+	b=FJs1vkA1ZlGCNKZAgEddbKLErQb+R2TpueJ69yhDSU/8qvqN6yc+rb9cvSRe+hGqQIogQL
+	C531SWWND+q9RZL08oOSEFLg1y1KDiqUv1XmBJk5tftvbhaq5At+MhZ/pF9+Jykv3EsRKB
+	p/KusXYhHVegnH+HI86MJWEUgi3DVGiI1YuTNgwUqfpOB3z0OuaVi1zj6fGS9VJVbSFM+3
+	RoCW1WPhJLbqPdoivlBRqSWHRjzC3ZiWFuhbo3uvhW0QLE8NOZcE+MEVYClMOK9wlbiPc1
+	NDnCFAukjD7cI8cA+oRLGoNp0pmRfRoeKhwX4lAd/IV4djT90xKhpcfUEDgvzA==
+Date: Sat, 17 Aug 2024 04:42:05 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Amit Kucheria
+ <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Icenowy Zheng
+ <uwu@icenowy.me>, Mark Brown <broonie@kernel.org>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, =?UTF-8?Q?N=C3=ADcolas_F=2E_R=2E_A=2E_Pra?=
+ =?UTF-8?Q?do?= <nfraprado@collabora.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>, linux-mediatek@lists.infradead.org, Hsin-Te Yuan
+ <yuanhsinte@chromium.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2] thermal/of: support thermal zones w/o trips subnode
+In-Reply-To: <CAGXv+5GQixa389nudKk=U3Rh2jN8VuWQGKb9rsixhvj3KGFQDg@mail.gmail.com>
+References: <20240809070822.2835371-1-wenst@chromium.org>
+ <b00273d65dfc4b48cca474784184c62b@manjaro.org>
+ <CAGXv+5ERoH=jQGzo=mo2K-r3Meh2-5Kgvjf9Eh7bfNgcQYfWoA@mail.gmail.com>
+ <CAGXv+5GQixa389nudKk=U3Rh2jN8VuWQGKb9rsixhvj3KGFQDg@mail.gmail.com>
+Message-ID: <35a2ef84aaa9f650bd63bfc25e336ef3@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Thu, 15 Aug 2024 10:40:31 -0400 Sean Anderson wrote:
-> +	u64 hw_stat_base[STAT_COUNT];
-> +	u64 hw_last_counter[STAT_COUNT];
+Hello Chen-Yu,
 
-I think hw_last_counter has to be u32..
+On 2024-08-15 06:45, Chen-Yu Tsai wrote:
+> On Mon, Aug 12, 2024 at 12:46 PM Chen-Yu Tsai <wenst@chromium.org> 
+> wrote:
+>> 
+>> On Mon, Aug 12, 2024 at 9:22 AM Dragan Simic <dsimic@manjaro.org> 
+>> wrote:
+>> >
+>> > Hello Chen-Yu,
+>> >
+>> > Thanks for the patch.  Please see one comment below.
+>> >
+>> > On 2024-08-09 09:08, Chen-Yu Tsai wrote:
+>> > > From: Icenowy Zheng <uwu@icenowy.me>
+>> > >
+>> > > Although the current device tree binding of thermal zones require the
+>> > > trips subnode, the binding in kernel v5.15 does not require it, and
+>> > > many
+>> > > device trees shipped with the kernel, for example,
+>> > > allwinner/sun50i-a64.dtsi and mediatek/mt8183-kukui.dtsi in ARM64,
+>> > > still
+>> > > comply to the old binding and contain no trips subnode.
+>> > >
+>> > > Allow the code to successfully register thermal zones w/o trips subnode
+>> > > for DT binding compatibility now.
+>> > >
+>> > > Furtherly, the inconsistency between DTs and bindings should be
+>> > > resolved
+>> > > by either adding empty trips subnode or dropping the trips subnode
+>> > > requirement.
+>> > >
+>> > > Fixes: d0c75fa2c17f ("thermal/of: Initialize trip points separately")
+>> > > Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+>> > > Reviewed-by: Mark Brown <broonie@kernel.org>
+>> > > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+>> > > ---
+>> > > Resurrecting this patch specifically for MediaTek MT8183 Kukui devices.
+>> > >
+>> > > Changes since v1:
+>> > > - set *ntrips at beginning of thermal_of_trips_init()
+>> > > - Keep goto out_of_node_put in of_get_child_count(trips) == 0 branch
+>> > > - Check return value of thermal_of_trips_init(), if it is -ENXIO, print
+>> > >   warning and clear |trips| pointer
+>> > > - Drop |mask| change, as the variable was removed
+>> > >
+>> > > I kept Mark's reviewed-by since the changes are more stylish than
+>> > > functional.
+>> > > ---
+>> > >  drivers/thermal/thermal_of.c | 19 ++++++++++++-------
+>> > >  1 file changed, 12 insertions(+), 7 deletions(-)
+>> > >
+>> > > diff --git a/drivers/thermal/thermal_of.c
+>> > > b/drivers/thermal/thermal_of.c
+>> > > index aa34b6e82e26..f237e74c92fc 100644
+>> > > --- a/drivers/thermal/thermal_of.c
+>> > > +++ b/drivers/thermal/thermal_of.c
+>> > > @@ -128,16 +128,17 @@ static struct thermal_trip
+>> > > *thermal_of_trips_init(struct device_node *np, int *n
+>> > >       struct device_node *trips, *trip;
+>> > >       int ret, count;
+>> > >
+>> > > +     *ntrips = 0;
+>> > >       trips = of_get_child_by_name(np, "trips");
+>> > >       if (!trips) {
+>> > > -             pr_err("Failed to find 'trips' node\n");
+>> > > -             return ERR_PTR(-EINVAL);
+>> > > +             pr_debug("Failed to find 'trips' node\n");
+>> > > +             return ERR_PTR(-ENXIO);
+>> > >       }
+>> > >
+>> > >       count = of_get_child_count(trips);
+>> > >       if (!count) {
+>> > > -             pr_err("No trip point defined\n");
+>> > > -             ret = -EINVAL;
+>> > > +             pr_debug("No trip point defined\n");
+>> > > +             ret = -ENXIO;
+>> > >               goto out_of_node_put;
+>> > >       }
+>> > >
+>> > > @@ -162,7 +163,6 @@ static struct thermal_trip
+>> > > *thermal_of_trips_init(struct device_node *np, int *n
+>> > >
+>> > >  out_kfree:
+>> > >       kfree(tt);
+>> > > -     *ntrips = 0;
+>> > >  out_of_node_put:
+>> > >       of_node_put(trips);
+>> >
+>> > It might be a bit cleaner to keep the "*ntrips = 0" assignment
+>> > in the error handling path(s) only, with the positions of the goto
+>> > labels adjusted a bit, and then assign -ENXIO to "ret" and jump
+>> > to the right label when of_get_child_by_name(np, "trips") fails,
+>> > instead of returning from there.
+>> >
+>> > If it's unclear what I'm talking about, please let me know and
+>> > I'll send back the proposed hunk.
+>> 
+>> I think I understand: move "*ntrips = 0" to after of_node_put() in the
+>> error path, and have the "!trips" branch jump to "out_of_node_put" as
+>> well. That works since of_node_put() checks the pointer first.
+>> 
+>> I'll wait a bit and see if there are any more comments.
+> 
+> Actually, Krzysztof (+CC) is cleaning up this function using scoped
+> variables. So it might actually make more sense to move "*ntrips = 0"
+> to the top once the error path is completely removed.
 
-> +	seqcount_mutex_t hw_stats_seqcount;
-> +	struct mutex stats_lock;
-> +	struct delayed_work stats_work;
-> +	bool reset_in_progress;
-> +
->  	struct work_struct dma_err_task;
->  
->  	int tx_irq;
-> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> index b2d7c396e2e3..9353a4f0ab1b 100644
-> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> @@ -519,11 +519,55 @@ static void axienet_setoptions(struct net_device *ndev, u32 options)
->  	lp->options |= options;
->  }
->  
-> +static u64 axienet_stat(struct axienet_local *lp, enum temac_stat stat)
-> +{
-> +	u32 counter;
-> +
-> +	if (lp->reset_in_progress)
-> +		return lp->hw_stat_base[stat];
-> +
-> +	counter = axienet_ior(lp, XAE_STATS_OFFSET + stat * 8);
-> +	return lp->hw_stat_base[stat] + (counter - lp->hw_last_counter[stat]);
+I see, it would make sense to move "*ntrips = 0" to the top, but what
+bugs me with that approach a bit is that we's still have another 
+instance
+of "*ntrips = 0" in the error paths.  Thus, it might be cleaner to have
+only one instance of "*ntrips = 0", in the error paths, and use "ret = 
+..."
+plus "goto ..." pairs instead of single "return ..." statements.
 
-.. or you need to cast the (counter - lp->...) result to u32.
-Otherwise counter's type is getting bumped to 64 and you're just doing
-64b math here.
+That way, we'd keep "*ntrips = 0" in the error pathso only, which would
+clearly show that's part of the error handling only.  Though, I'd be 
+also
+fine with moving "*ntrips = 0" to the top, if you find that cleaner.
 
-> +}
-> +
-> +static void axienet_stats_update(struct axienet_local *lp, bool reset)
-> +{
-> +	enum temac_stat stat;
-> +
-> +	write_seqcount_begin(&lp->hw_stats_seqcount);
-> +	lp->reset_in_progress = reset;
-> +	for (stat = 0; stat < STAT_COUNT; stat++) {
-> +		u32 counter = axienet_ior(lp, XAE_STATS_OFFSET + stat * 8);
-> +
-> +		lp->hw_stat_base[stat] += counter - lp->hw_last_counter[stat];
-> +		lp->hw_last_counter[stat] = counter;
-> +	}
-> +	write_seqcount_end(&lp->hw_stats_seqcount);
+>> > > @@ -490,8 +490,13 @@ static struct thermal_zone_device
+>> > > *thermal_of_zone_register(struct device_node *
+>> > >
+>> > >       trips = thermal_of_trips_init(np, &ntrips);
+>> > >       if (IS_ERR(trips)) {
+>> > > -             pr_err("Failed to find trip points for %pOFn id=%d\n", sensor, id);
+>> > > -             return ERR_CAST(trips);
+>> > > +             if (PTR_ERR(trips) != -ENXIO) {
+>> > > +                     pr_err("Failed to find trip points for %pOFn id=%d\n", sensor, id);
+>> > > +                     return ERR_CAST(trips);
+>> > > +             }
+>> > > +
+>> > > +             pr_warn("Failed to find trip points for %pOFn id=%d\n", sensor, id);
+>> > > +             trips = NULL;
+>> > >       }
+>> > >
+>> > >       ret = thermal_of_monitor_init(np, &delay, &pdelay);
 
