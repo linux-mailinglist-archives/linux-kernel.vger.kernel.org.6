@@ -1,55 +1,47 @@
-Return-Path: <linux-kernel+bounces-290594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7866F955611
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:13:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5314C955614
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 024BCB22497
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:13:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 864701C21520
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370CF13DB99;
-	Sat, 17 Aug 2024 07:12:55 +0000 (UTC)
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7091A13E028;
+	Sat, 17 Aug 2024 07:13:19 +0000 (UTC)
+Received: from gollum.nazgul.ch (gollum.nazgul.ch [81.221.21.253])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C614720E6;
-	Sat, 17 Aug 2024 07:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B2913D2A9;
+	Sat, 17 Aug 2024 07:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.221.21.253
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723878774; cv=none; b=tm12H+nZLT8kF8WDibYSvUtMRzOk3/hSV25CR/0wn/E9pAnK86amiAacvug3cA8SVx6+9nwMzNi/KvG8VW+IwRimKWO9MLzRiGjkmpRDbEpAELd3DI51XTyF/C+90iDR6FRuw6dTZvY/Vr3NiFPB5Nkxv9PFItTytcaocsVEaF4=
+	t=1723878799; cv=none; b=cj/GHLT7wEhzeg53dc5rajsSp9+JDSp65lsZ6ksMcEqeBbmvlSwfoG0Q4Ec1QwkymhH4eiC3QNJRRqtqYekXLQpenDF4ZbHmp6JNrwrKiquZIlqfFEnWfrWDtTVPrDgPPFf3oXAn4od//Oe/d0JJslnTZywW9wWzSqEJ7TON8jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723878774; c=relaxed/simple;
-	bh=/o4Vnthxc4+P95238wpYEJpmMWZOiInjNs4QutY4M+8=;
+	s=arc-20240116; t=1723878799; c=relaxed/simple;
+	bh=Q50X+iiAUTtWK/G4L8ENbhYe21kcz7+eUohGKc1ueoU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uHrq80owYyFqSyVigUQjZamuIlPZ+PNq8DAsaVk4l4qYUyFTxad0M77QHyM6m6hyase/k0AwGMXiSdkcZk8gugzg6F0mdF3YxP+wJdV7oQKEW5cv0DRRtyZQG+mKQFGUD1ej5k2HsdXuIHuLqtmwYjvwnMVqTgvd1jyj/BDAnaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sfDTc-005IQL-1A;
-	Sat, 17 Aug 2024 15:12:38 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 17 Aug 2024 15:12:37 +0800
-Date: Sat, 17 Aug 2024 15:12:37 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Waiman Long <longman@redhat.com>
-Cc: steffen.klassert@secunet.com, daniel.m.jordan@oracle.com,
-	akpm@linux-foundation.org, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] padata: Fix possible divide-by-0 panic in
- padata_mt_helper()
-Message-ID: <ZsBNZXfVZbtZnb2Y@gondor.apana.org.au>
-References: <Zrbm--AxRXgfHUek@gondor.apana.org.au>
- <e752f094-adb4-4448-8bc8-e2460330eaec@redhat.com>
- <ZrgXtLI1R5zJ9GFG@gondor.apana.org.au>
- <91d29649-ca88-4f6c-bf1d-19e49c9555df@redhat.com>
- <ZrgsU-1PdxvUVMOW@gondor.apana.org.au>
- <88c188dc-3664-45db-b54a-11feca59d7d2@redhat.com>
- <Zrgy1TDikPSkzaYP@gondor.apana.org.au>
- <c5cc5ea9-1135-4ac6-a38f-652ed07dae17@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=B5AutgqySiv50L8PIdGfO9Vbsmuyj+5lPufrjnYKV9BQhPEY6iYFjd7YlRzR4HiimN4Lm7p2ipuYKvEK1YZeGA9I8Rbxr7kIz5oamGOT3hq9nokxU3aQQLYx/5OT7Ir5gNujMR3l6QTLCyeUnsZt0zyl+/hBmbxCKxZo6WVQ7vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nazgul.ch; spf=pass smtp.mailfrom=nazgul.ch; arc=none smtp.client-ip=81.221.21.253
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nazgul.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nazgul.ch
+Received: from localhost (gollum.nazgul.ch [local])
+	by gollum.nazgul.ch (OpenSMTPD) with ESMTPA id 9ea65a6b;
+	Sat, 17 Aug 2024 09:13:15 +0200 (CEST)
+Date: Sat, 17 Aug 2024 09:13:15 +0200
+From: Marcus Glocker <marcus@nazgul.ch>
+To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>
+Subject: [PATCH v4 5/6] dt-bindings: arm: Add Samsung Galaxy Book4 Edge
+Message-ID: <kzkddvzak5x3batdlmw5wvazwb74vtcqa46cysaphphr5wazjb@qwdybjwhyhme>
+References: <3lmcfffifsg6v3ljzxfbk25ydh6446phdff7w75k6gwoyw3jkw@ryc66frtyksk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,28 +50,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c5cc5ea9-1135-4ac6-a38f-652ed07dae17@redhat.com>
+In-Reply-To: <3lmcfffifsg6v3ljzxfbk25ydh6446phdff7w75k6gwoyw3jkw@ryc66frtyksk>
 
-On Mon, Aug 12, 2024 at 10:04:07AM -0400, Waiman Long wrote:
->
-> Anyway, using DIV_ROUND_UP() is a slight change in behavior as chunk_size
-> will be increased by 1 in most cases. I am a bit hesitant to make this
-> change without looking into more detail about the rationale behind the
-> current code.
+Document the Samsung Galaxy Book4 Edge compatible.
 
-I don't think it matters much.  Just look at the two lines after
-the division, they're both rounding the value up.  So clearly this
-is expected to handle the case where work gets bunched up into the
-first N CPUs, potentially leaving some CPUs unused.
+Signed-off-by: Marcus Glocker <marcus@nazgul.ch>
+---
+ Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-But Daniel wrote the code so he can have the last say of whether
-we should round up after the division or after the other two ops.
-
-Daniel?
-
-Cheers,
+diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+index f08e13b61172..c8a32e5d2c74 100644
+--- a/Documentation/devicetree/bindings/arm/qcom.yaml
++++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+@@ -1044,6 +1044,7 @@ properties:
+               - lenovo,yoga-slim7x
+               - qcom,x1e80100-crd
+               - qcom,x1e80100-qcp
++              - samsung,galaxy-book4-edge
+           - const: qcom,x1e80100
+ 
+   # Board compatibles go above
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.39.2
+
 
