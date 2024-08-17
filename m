@@ -1,170 +1,134 @@
-Return-Path: <linux-kernel+bounces-290688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A121955775
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:32:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0BE1955773
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:32:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D24321F216AF
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 11:32:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACB66282302
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 11:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C5814A61A;
-	Sat, 17 Aug 2024 11:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F6D14B07E;
+	Sat, 17 Aug 2024 11:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pWCeF1sJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MxOeo0/b"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EDD145B1D;
-	Sat, 17 Aug 2024 11:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7001C32;
+	Sat, 17 Aug 2024 11:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723894357; cv=none; b=C46fhf4NA3Hum6ahLoVYhIT6GNZcUlg3L0nPMgvtvp8zUzY3f2mZdJn5TJxfDQ1+QHLlbAvszN5ohaB5BJ8aqXbYjw9X/aNa4ds6KCjhJXtB1SWnl+CO6sB+WXVfbkPI3h7NXmwGmfh9xuMKeoUPy93xx3RlmTEAxgGZqJdj21I=
+	t=1723894340; cv=none; b=M2B+I+RlVVhXJ2+9oQdKGjYu+LOwehlvncGAMIfgsNp9GlYImmWUtKBn7qBOV5xaZiKC2bVC/u/+altxlQgXrsHtZGJ2RvXWJAs3H7N3dvgu+THLMgeNgWwkixN1GPXJ9z4iuOmSRdjzRNUfY6wU8fmOeajHJ4v63kBZ9vwdXTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723894357; c=relaxed/simple;
-	bh=Tl1nqVyNUDE1Xz8spO574JD89qKO1gVZSNkkZ4XCCzU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P70xcKTZ5CEb5HeYPbWCLBx3ONsU+NTDXMPsHuvj1A+LDwxw7EGdfB4BNjqWBYIs9K32l6GLsGSXOWZQhb010UMBrS2HCu0guejaLTCCuzOPX48TbKRA+2FpaUkOhIxjvRE4cIAeKAT3qEuRolzLVoTCfGJIHpcIHlcbfPGSx4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pWCeF1sJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8314DC116B1;
-	Sat, 17 Aug 2024 11:32:22 +0000 (UTC)
+	s=arc-20240116; t=1723894340; c=relaxed/simple;
+	bh=WPi/0xKBeUVZfXJccLvpi5U+6P6UdVWcEVoeDHhgO7k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dNtLMh7dFN+SnEZgk81yBEqKVHOKrTZ4wf50RmYW9reyLb2zswWCHMXzundPobfkS3X9cqRExfkwqwIpahk41AJpFfym0sMlGqIqAV6ufJ7jx88TlVGuubI+WdqMRQgJSTsbjSC+fI9Nih9lAa0SoWTu0/m4Dp2Pbct5DjAdbSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MxOeo0/b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92E54C116B1;
+	Sat, 17 Aug 2024 11:32:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723894356;
-	bh=Tl1nqVyNUDE1Xz8spO574JD89qKO1gVZSNkkZ4XCCzU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pWCeF1sJ9HQzgKW0nFmYA0A4JWSANBWHpVf2XSqW3dX9Cksul+JI3z0FuKvqV8G+u
-	 uOru9NRC4OsUeVuR6kVX2BA8fIH9UQjHFievwecA+DIX8A0kWneg0NaPgpkt3Cxz/n
-	 2L276TzX00RK3n3IKRp6ECK7JC/2FaumsX7LaF/MEi4VkCpGEdjoOOujrjUAHvCmb4
-	 pmEK+Owi+x3SYQLYPLR8ha/2mE/AkAfSehZlR0ZgpJwZdZYF7lURqtnm2JJEe/RZQ7
-	 NAbG9n3haqkSQtrP67SpU2+83RpmNkyeY/5Bb/gPltozjxeID85mFdO3KIDgtR9hCC
-	 Skt98GIOmcmpQ==
-Date: Sat, 17 Aug 2024 12:32:10 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, Bartosz Golaszewski
- <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH] iio: dac: ad5449: drop support for platform data
-Message-ID: <20240817123210.04b3c2f8@jic23-huawei>
-In-Reply-To: <20240814092629.9862-1-brgl@bgdev.pl>
-References: <20240814092629.9862-1-brgl@bgdev.pl>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1723894339;
+	bh=WPi/0xKBeUVZfXJccLvpi5U+6P6UdVWcEVoeDHhgO7k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MxOeo0/bxo8xsivJgCM4DVofw/hjy7d079G+29OSWivJctC7s4byJjcskgfcLbAYp
+	 cceorbq6LpNYvaMjriPMbb2/DaMR95twWKDxgS177ka+zIQBOFD9jzHtRNqcuN8hcZ
+	 ndqJ/RtXHs/AQo2NW52Z4tPm5ega4Uenm8AkdQGhVXp1bLigHP+Zh2sSud+z/YKez2
+	 PKrLc8H2otLba8Uqu20Lt/Su9yuiM9CxRuCWXQt9Du0InXSC6MThn+36Bs5qMZueKG
+	 nO3lYmXPYe4nh9gKeufwyHFK9KWocCaIUMEejPQrqhVxVUl+xEanfhxB2v0Nkfrgjm
+	 ce6tIzxp4qZIg==
+Message-ID: <9c731c93-772e-409e-b7e5-ae36af402c76@kernel.org>
+Date: Sat, 17 Aug 2024 13:32:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e80100: Add USB Multiport
+ controller
+To: Song Xue <quic_songxue@quicinc.com>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Wesley Cheng <quic_wcheng@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Krishna Kurapati <quic_kriskura@quicinc.com>,
+ Konrad Dybcio <quic_kdybcio@quicinc.com>
+References: <20240809-topic-h_mp-v1-0-3c5f468566d8@quicinc.com>
+ <20240809-topic-h_mp-v1-2-3c5f468566d8@quicinc.com>
+ <21fffb71-d559-4973-8028-d9c9b9f67001@quicinc.com>
+ <3077d600-c570-407a-87eb-6926a67636f9@gmail.com>
+ <81b60725-f744-4b40-9450-e881397c2ddf@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <81b60725-f744-4b40-9450-e881397c2ddf@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 14 Aug 2024 11:26:29 +0200
-Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 14.08.2024 1:56 PM, Song Xue wrote:
 > 
-> There are no longer any users of the platform data struct. Remove
-> support for it from the driver.
 > 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> On 8/14/2024 6:24 PM, Konrad Dybcio wrote:
+>> On 14.08.2024 12:08 PM, Song Xue wrote:
+>>>
+>>> On 8/9/2024 9:18 PM, Konrad Dybcio wrote:
+>>>> X1E80100 has a multiport controller with 2 HS (eUSB) and 2 SS PHYs
+>>>> attached to it. It's commonly used for USB-A ports and internally
+>>>> routed devices. Configure it to support such functionality.
+>>>>
+>>>> Signed-off-by: Konrad Dybcio<konrad.dybcio@linaro.org>
+>>>> ---
+>>
+>> [...]
+>>
+>>>> +
+>>>> +                phys = <&usb_mp_hsphy0>, <&usb_mp_qmpphy0>,
+>>>> +                       <&usb_mp_hsphy1>, <&usb_mp_qmpphy1>;
+>>>> +                phy-names = "usb2-0", "usb3-0",
+>>>> +                        "usb2-1", "usb3-1";
+>>>> +                dr_mode = "host";
+>>>
+>>> Why do we add the dr_mode definition in dtsi file rather than in corresponding board dts file?  Could we follow the node "usb_1_ss1_dwc3"  in x1e80100-crd.dtsi?
+>>
+>> That is because the MP controller is host-only and it doesn't make sense
+>> to ensure the OS of that in each board file separately. That's also how
+>> it's done on other platforms with a MP controller description.
+>>
+>>>
+>>> BTW, how do we verify the function of  multiport controller？From my test on x1e80100-crd,  the eusb6 which is from usb_mp_hsphy1 attaches the third-party repeater, do we need a new repeater node/driver to verify the function of eusb6?
+>>
+>> I have a X1E Surface Laptop 7 with a USB-A port with a NXP PTN3222 in
+>> front of it. Tested with a smoke test, with both SS and HS USB-A devices.
+>>
+> What is detailed information on smoke test.
+> From my end, I also have two questions.
+> 1. I found the usb_mp_hsphy1 is using the driver "phy-qcom-snps-eusb2". However, the driver requires a repeater node from DT. At present, we don't have the node or driver for NXP repeater and it is not working on eusb6 to detect the NXP repeater. So, is it possible for us to have complete function involving with MP DT and repeater node for CRD board, and then we push patches together?
 
-I'm fine with this but want an ADI ack.
+I believe you're a bit confused about the upstreaming process. Describing
+hardware in Device Tree vs doing the same plus enabling it on some upstream
+board are of equal value, and this patch is very much in the spirit of
+"release early, release often".
 
-Jonathan
+There's no need to delay patches that are correct within their own
+confinement (which they should be [1]) just so that the series is bigger.
+That may even be discouraged by some folks..
 
-> ---
->  drivers/iio/dac/ad5449.c             | 15 ++---------
->  include/linux/platform_data/ad5449.h | 39 ----------------------------
->  2 files changed, 2 insertions(+), 52 deletions(-)
->  delete mode 100644 include/linux/platform_data/ad5449.h
-> 
-> diff --git a/drivers/iio/dac/ad5449.c b/drivers/iio/dac/ad5449.c
-> index 4572d6f49275..953fcfa2110b 100644
-> --- a/drivers/iio/dac/ad5449.c
-> +++ b/drivers/iio/dac/ad5449.c
-> @@ -20,8 +20,6 @@
->  #include <linux/iio/iio.h>
->  #include <linux/iio/sysfs.h>
->  
-> -#include <linux/platform_data/ad5449.h>
-> -
->  #define AD5449_MAX_CHANNELS		2
->  #define AD5449_MAX_VREFS		2
->  
-> @@ -268,7 +266,6 @@ static const char *ad5449_vref_name(struct ad5449 *st, int n)
->  
->  static int ad5449_spi_probe(struct spi_device *spi)
->  {
-> -	struct ad5449_platform_data *pdata = spi->dev.platform_data;
->  	const struct spi_device_id *id = spi_get_device_id(spi);
->  	struct iio_dev *indio_dev;
->  	struct ad5449 *st;
-> @@ -306,16 +303,8 @@ static int ad5449_spi_probe(struct spi_device *spi)
->  	mutex_init(&st->lock);
->  
->  	if (st->chip_info->has_ctrl) {
-> -		unsigned int ctrl = 0x00;
-> -		if (pdata) {
-> -			if (pdata->hardware_clear_to_midscale)
-> -				ctrl |= AD5449_CTRL_HCLR_TO_MIDSCALE;
-> -			ctrl |= pdata->sdo_mode << AD5449_CTRL_SDO_OFFSET;
-> -			st->has_sdo = pdata->sdo_mode != AD5449_SDO_DISABLED;
-> -		} else {
-> -			st->has_sdo = true;
-> -		}
-> -		ad5449_write(indio_dev, AD5449_CMD_CTRL, ctrl);
-> +		st->has_sdo = true;
-> +		ad5449_write(indio_dev, AD5449_CMD_CTRL, 0x0);
->  	}
->  
->  	ret = iio_device_register(indio_dev);
-> diff --git a/include/linux/platform_data/ad5449.h b/include/linux/platform_data/ad5449.h
-> deleted file mode 100644
-> index d687ef5726c2..000000000000
-> --- a/include/linux/platform_data/ad5449.h
-> +++ /dev/null
-> @@ -1,39 +0,0 @@
-> -/* SPDX-License-Identifier: GPL-2.0-only */
-> -/*
-> - * AD5415, AD5426, AD5429, AD5432, AD5439, AD5443, AD5449 Digital to Analog
-> - * Converter driver.
-> - *
-> - * Copyright 2012 Analog Devices Inc.
-> - *  Author: Lars-Peter Clausen <lars@metafoo.de>
-> - */
-> -
-> -#ifndef __LINUX_PLATFORM_DATA_AD5449_H__
-> -#define __LINUX_PLATFORM_DATA_AD5449_H__
-> -
-> -/**
-> - * enum ad5449_sdo_mode - AD5449 SDO pin configuration
-> - * @AD5449_SDO_DRIVE_FULL: Drive the SDO pin with full strength.
-> - * @AD5449_SDO_DRIVE_WEAK: Drive the SDO pin with not full strength.
-> - * @AD5449_SDO_OPEN_DRAIN: Operate the SDO pin in open-drain mode.
-> - * @AD5449_SDO_DISABLED: Disable the SDO pin, in this mode it is not possible to
-> - *			read back from the device.
-> - */
-> -enum ad5449_sdo_mode {
-> -	AD5449_SDO_DRIVE_FULL = 0x0,
-> -	AD5449_SDO_DRIVE_WEAK = 0x1,
-> -	AD5449_SDO_OPEN_DRAIN = 0x2,
-> -	AD5449_SDO_DISABLED = 0x3,
-> -};
-> -
-> -/**
-> - * struct ad5449_platform_data - Platform data for the ad5449 DAC driver
-> - * @sdo_mode: SDO pin mode
-> - * @hardware_clear_to_midscale: Whether asserting the hardware CLR pin sets the
-> - *			outputs to midscale (true) or to zero scale(false).
-> - */
-> -struct ad5449_platform_data {
-> -	enum ad5449_sdo_mode sdo_mode;
-> -	bool hardware_clear_to_midscale;
-> -};
-> -
-> -#endif
+> 2. The usb_mp_dwc3 node has four phys. When enabling the driver for the node, we must need enable all four phys in borad's DT. Howerver, if the board is only using one phy like eusb6, is it suitable to enable other three phys?
 
+Yes, they will simply be registered, configured and since there won't
+be any interrupts (as the pins are N/C, it will not do much). But
+these PHYs are physically on the SoC regardless of them being
+connected, so I see no issue.
+
+[1] https://www.kernel.org/doc/html/latest/process/submitting-patches.html#separate-your-changes
+
+Konrad
 
