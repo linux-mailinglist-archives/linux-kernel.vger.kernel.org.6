@@ -1,239 +1,203 @@
-Return-Path: <linux-kernel+bounces-290660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E6B7955706
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 11:51:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A019C9556E5
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 11:48:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E2C21F21765
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:51:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4FF91C21028
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5049F14AD1A;
-	Sat, 17 Aug 2024 09:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2856614884D;
+	Sat, 17 Aug 2024 09:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nEqMfpP3";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="m/B9mY3E"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="nu/O0F34"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991C314659D;
-	Sat, 17 Aug 2024 09:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723888243; cv=fail; b=X2MEzHu2CjaN+XL6Ib876WceXPc/JvZ4JxjOPPxpo32Z52QlLTp1ZLMejzNAVilKVEy+s3vDi5fDff6aWrCyKQm3yOxYS/Z6pc4vr+EvGB0MP8A70RRLTlNh2wZ0hdS1JRQd7JJkXtdKx11btXJfuOyEOfE9Eizq8qPNjIZDJik=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723888243; c=relaxed/simple;
-	bh=/PmvLwg2gc5mEPSuPtBUXqggXavSC5VczM11cmaj3ek=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YN3Z/nSJ7Lyu8E4iWlcu+gc4+aNdQOIDqWbXp2q5Pl7ua/TnP4tJMIdjpl9JDzfjmf6jqzBgZt0/p+Ubt1Mmlp8FW9VekMeZtPMxcIhFtuMs2K/8x23SSqaPx02r8hsUI2X/cHQv2VWzYJ3Kj18gHEZTVRgp6+xsDz418VBRcqU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nEqMfpP3; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=m/B9mY3E; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47H8VcB8020383;
-	Sat, 17 Aug 2024 09:48:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:content-transfer-encoding:content-type:mime-version; s=
-	corp-2023-11-20; bh=my3x/GJey/9khfYN7B75qEa1wmhc9epLDfdvaLxnatw=; b=
-	nEqMfpP3foAMwpqu1J2RnMIYA3ueO0zCZLM6uNHc2LIKKTqKs6jDBjbcoe18Cxkf
-	H5OqB9qP+NkX3vy4CK5fRM1hmaA5hQzB9cyFeTwFg052dBYranGsVu6UQPUrAGh6
-	sG+J1UEjUUoFmsuMu2uThWvhudSeyN2BBpgJOnvaTXHf2YmVCqmpEU0dUqZG5P1I
-	07z5wEYGf003wZGd1rOaOYOQpIAGFpnf2trJ19I8t1xRpD66I5IKBtHGsa9g/G+u
-	csWkESOOdxnIQqn1IsqmoXiMGPaZigHNZeXM0ZZ1sfZ69DLuzPZA2fSR59s4Kjz6
-	i3CyALREDf1WsZZOBbs54Q==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 412m3hg7e7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 17 Aug 2024 09:48:29 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47H811UM031437;
-	Sat, 17 Aug 2024 09:48:28 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2175.outbound.protection.outlook.com [104.47.57.175])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 412ja5y121-3
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 17 Aug 2024 09:48:28 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IHtw3BLXImS789MYqzB7OR02DhqljHq5tuU3Vr39h6OKMucgmoL1mMq6+Cqca86hhdxqy+tXE8nm2c4WJkN4XZKJF81AJJQ1NbZxsgNh5JIdWPb2P3bbvDGmcUUmCvOVSOHnhoHBxWwvlOAhaAeIySFoOiFqEb5ny2YJrOsfdhWdA9iwa+7WZJ4672nkg38Tx9g9PwWltDjWSVlz4gVGlGqFWJtKJbAOaLjDCasFRhMroDA9ub36i1vguRu1gxBveaaur/5+fzxoUIpWd/3qN2PDZ1j/HLmaTDciMGOeia2nYyYTVex3kSTUlLredI1SspjruY3cL5hZBZXP999kFg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=my3x/GJey/9khfYN7B75qEa1wmhc9epLDfdvaLxnatw=;
- b=ZnmoYUaWDZnU10GOVsrzo9eoITlTK+Djvl1Kn70DAdnR0G2Axb5JuTfYwtkRuy3fMLJu3xulLnjH/BzkjGETDel19n6DouNS9WlAYNG6Bi2oCt5yV17qMXLs5RgwLhzwuoGo663yMHxkQNpwXNQK3ONbfGBg6Aq5pl0k+UORHvjkkUuEJWCMnAfNShhxBGzUUTEg/nolgvBNyU1zYIlw8bxw3gwkJN11QbKuFq52V/IR9jngUAk4++jqSHwhtktN+bY2wFAp0+vCYX1qSc8z9OeQnsuAqO9CUfMM6yrVhmpEbyMT1oI1EBB2sQJrCjqpFsRwr5cuOyZs6tpTpX7sbg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A138113DB99
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 09:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723888106; cv=none; b=IBFxZLYJdbSBcA9dCMwabXiMS1ScFlzST+FK87+j53vT8ZVe4MT54mmwagSgMTSCQpi6Ddpdiavj1J7Ha7e4sHmBBBEGrHFm5tKTQ6UCL8q/VufNzL0km4n6MW20vXd7McIORPXBVvOU1hETHQUhVruUYjuHCKUfxwIo7q+kTyo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723888106; c=relaxed/simple;
+	bh=AZx2BJBXH8oQq7xdyF9rrqUH+UIpxBGVygKCLrGYUlM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=No4YoF6vM0SpP4nq6vsjprta2tiXLM7pv/H9KQ9N+2lvZzZSXlaLw6RgH76gETJs62xQKM0fBI/aBdSXPa341SEFEgliVKyYXCirge0F4+H7ZPECuNuF4bcvA9REsfZ+K5gtYHVIrQaJETUZ359+7EOi0zmMqGcFC5h34KfmSx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=nu/O0F34; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f0dfdc9e16so32170381fa.2
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 02:48:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=my3x/GJey/9khfYN7B75qEa1wmhc9epLDfdvaLxnatw=;
- b=m/B9mY3Ei7nZj+/zeSyF7JO2tsu9Ou1CHx3q+IHmAmOJxnzUaeee4Ln5sKEK3m92736JWNQH5/tO44rujBysSoVXWyvfcKLvMBd8RMCJmmwMfrv4rNAwLfTj8eNxEePPkwTGzGBGv8SeNywfKbXCCT+C+ubOFRClwYIsaKXjasY=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by PH0PR10MB4758.namprd10.prod.outlook.com (2603:10b6:510:3c::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.11; Sat, 17 Aug
- 2024 09:48:27 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%6]) with mapi id 15.20.7897.009; Sat, 17 Aug 2024
- 09:48:27 +0000
-From: John Garry <john.g.garry@oracle.com>
-To: axboe@kernel.dk, brauner@kernel.org, djwong@kernel.org,
-        viro@zeniv.linux.org.uk, jack@suse.cz, chandan.babu@oracle.com,
-        dchinner@redhat.com, hch@lst.de
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, hare@suse.de,
-        martin.petersen@oracle.com, catherine.hoang@oracle.com,
-        kbusch@kernel.org, John Garry <john.g.garry@oracle.com>
-Subject: [PATCH v5 7/7] xfs: Support setting FMODE_CAN_ATOMIC_WRITE
-Date: Sat, 17 Aug 2024 09:48:00 +0000
-Message-Id: <20240817094800.776408-8-john.g.garry@oracle.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20240817094800.776408-1-john.g.garry@oracle.com>
-References: <20240817094800.776408-1-john.g.garry@oracle.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MN2PR02CA0029.namprd02.prod.outlook.com
- (2603:10b6:208:fc::42) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+        d=fairphone.com; s=fair; t=1723888102; x=1724492902; darn=vger.kernel.org;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=350RyIMKXGOQLd/8HTZr3pRXPYZz9XbRH5Vw+7o+H40=;
+        b=nu/O0F34jB1ZW2kCAdf23PO7x4QFVu9KeHT0q5bfOC1hEkMcu6Gd8bU53YdBcjtarG
+         tqaEYWucfci+eSkxiXvtQs14MTiB8zQMfWi9L7zL4cM4EJFGbWUdbwAHTe2BRbDMERxI
+         BSr3o365xwZFvjO/UEAEci4eQJxr+bIhtVQl4iutRMxQfuw2u3PxDsJnH/M/SUKFQHKG
+         cAqaEk5QP2GKtKp8qbKiTeZaArSvU5ArA3rBWj3k3AUzpowGTJ8viJ+GOHpz9X/pcQeA
+         Xcz08Wcl3+nTMJB6JhziQNf5+gHfh1Kwips7pugKog2E9cgBuyZ7gq0LYaCpBqLRW07O
+         Cdrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723888102; x=1724492902;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=350RyIMKXGOQLd/8HTZr3pRXPYZz9XbRH5Vw+7o+H40=;
+        b=FyKOPRi/9pYVZ9HuSVn4RrrffMRrNBgDFvFq4MzSfTDlzoHhYvB8ml7sb0dBZMGsSX
+         nHjJiqEMc7M0eQskN3Hspud3SA2eZGgiXeeLbFzFgW9+S0n4Jp5Olu30lVngAnhFu5JA
+         YA1gxe1q5jivvxHtpXKLSg3nI8Qg4GyBBuOae+8znBtcAFvrMKGRZiUWG2z7LVMQH09V
+         6RzSlpSzm2DcoCVudPWoNuZc0Zl2QoTEJwp48aY5cShDfWweoSEkE5orrcbE/g8lKtVi
+         GPYS1NQDXZugwg89jjTyIKCcObaTHgOe/oqkdkK/b0Vd6QU7Bv0W/zeuqRi48xl4hq7V
+         teNA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLbHLPh/Ae0fjW2NRaKR9EUfInZGOiTGYNEhLFkcSUVfT9tNiNEJAzYepf0vicSPTBs243P+1fKpQS6FzqKJTfhQ71YVaCq2VA+Sj8
+X-Gm-Message-State: AOJu0YxgosOUt8rdKDZN/n3ytVbW7y55VqD7GAtTdfvs1wrtvUHHZreU
+	HuwT5r+6RCvWHtGUInHDXkhWYeSzQCi3X/pno3RN+V9MKA5xMXRXBNlviGGQi3M=
+X-Google-Smtp-Source: AGHT+IHqnXF5BOfwuJW2UnmBiqatHyT9kJAyaAOLERxfSFlVm4kaSkuz6kKxlR9v7OJqRmYcz5htpg==
+X-Received: by 2002:a2e:a490:0:b0:2f2:b2f7:c8a3 with SMTP id 38308e7fff4ca-2f3c91334ffmr10398731fa.44.1723888101375;
+        Sat, 17 Aug 2024 02:48:21 -0700 (PDT)
+Received: from localhost ([194.95.66.31])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ccd6e96d61sm1829227173.67.2024.08.17.02.48.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 17 Aug 2024 02:48:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|PH0PR10MB4758:EE_
-X-MS-Office365-Filtering-Correlation-Id: b5a46481-f53d-4c08-913d-08dcbea1be1d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?8s/RvbBrNDBlYTx0X+XznPBuaKtRwk+4EneG7rmcgkBbf8XWOg8pIM27/fHj?=
- =?us-ascii?Q?ijLM1AnEmP5NIi8e/1TO97jOZHS+50vsMdA0pbVcxngf/rhzGsLahkJa+Jrg?=
- =?us-ascii?Q?a0RKk8uEpvRrflG2dgAG0hG5QwZdaj05BDu8cZoBW8Cwy/yStFRDKSYrZBF5?=
- =?us-ascii?Q?SmyLb4hh9e2OKj7xB3PJcMpfoBU+kQj/mS7VjJguzeFRO11hfAhITXVpich1?=
- =?us-ascii?Q?7MZRLvByv+w9dOWHg3Two6MEy7fjxfN3rR3s9FQtEVqrkFFlPFexLD6vogjm?=
- =?us-ascii?Q?uHnCq5Amqt9znl5ZnEtyr+9s42flkjq2I9OocgJ3Lcr3D0S8uH+NPPJy2bHt?=
- =?us-ascii?Q?hXnrv3AtR3XKN29Lc4SQAjKaiz8BeZUXP8NQhLH01i18vmqup08ONJyYCmV0?=
- =?us-ascii?Q?9Z4PSZpJ/PQgGATHd7Y/auubQc6ZNybPc1wDppUCzX/uInoQP4H+CqXP5dPB?=
- =?us-ascii?Q?h9p34rSHvEP8GAWNEtB/2kc8pF44LNcQl9hhaYO3BWZ27kSC17sumJOUcvHi?=
- =?us-ascii?Q?iHhuZx+rd6P6pCH0OioPB48fsdXPPdT7gg0TEthsUpXBpNjkyqpN3YQx92N7?=
- =?us-ascii?Q?AohsH0+898SJ7VqROcIb09Xj9R4G1mR1KccYR0/0g/25LJs5ZHxD0CeS+719?=
- =?us-ascii?Q?CvpeaPKtH6iZMrAKGcEeyIotbaRLWphiZJenrev7HbwajOaeU2W4YNZ+j5OY?=
- =?us-ascii?Q?l6FUtqfSXNfySrX01l/9JGL25Cbq2app1OU8TwdRgJMq5GdRGG918x25TZmt?=
- =?us-ascii?Q?KYw99TswMSqLM0bL8vfXfYlwnasfAnW4sR1RKNlrfkLqkWYLOVHnArcdAJq6?=
- =?us-ascii?Q?zE8nxjSZC6NJr9n1Y9wPdS6WiIwf56iqljtQq1Vdkhg2PksTA3puYkgn1hu2?=
- =?us-ascii?Q?twiqzAuYG+e+BKHBHyqOvw7wJqgnsbyjY51HwLAdzb3jwih7pvlAezNqRoqY?=
- =?us-ascii?Q?FEvjUKDzWAHzKMbYwkmgBENcI7bpz4nTN9qvl+K1ZKE4di7QhucTVVWb1dV8?=
- =?us-ascii?Q?tmEi3DKBIwJ3Y0e40R2e6ZIRSnz/s9d6A1bwxtH8B+b8b8vdoBSxNChzsuhP?=
- =?us-ascii?Q?W43qWVS/neQHDGEpmu4iVvTUPREqjIAXUcCGtjYzfK6IoX7hzMQ3/oSeHnXM?=
- =?us-ascii?Q?bNSSO2MkQDzge1o499K7pS8JqrDxfxEdSWjdL6pK4XlslnLtkj7B3kmdcQF1?=
- =?us-ascii?Q?PIRp+4h/ZICHFOdHB+Y7cCxGSPYP3tEyM0kO5PPvm6qeOcMje+Wo4lF/snZG?=
- =?us-ascii?Q?Wd6N4ETy2zKKvI9GloIjiBo8A6A1HG3x+mxHfw7/ea0wsFHPkD5pVGwOLSl7?=
- =?us-ascii?Q?qRy4KGWkN/ZThviTLyGgUM2ZAz4EmlULERZ2o3Y5F1I3Pg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?y4+7kNX0+BH9GwLmjvrOm4FK/b+6vClrS7ViPEpxeUduNbbz+hwAVfi/69wO?=
- =?us-ascii?Q?dCSkToINptZhEZq5ZYhn9LSahkDlp4UD0B9lL8ildG7Tqy32VQL9/PiknXMj?=
- =?us-ascii?Q?h0teaHOOdGleHOIguuvA6/Sq+dPnh6T1W768341CrR4z9xJJ8EkdMVkEa34x?=
- =?us-ascii?Q?SBEQ/UQyfBUDXClvauW689/LmEZxryiFxfZq1YonMUboxaR5oZmSau0TeEFI?=
- =?us-ascii?Q?/znsf8nMe3RhCDkDX0I9cWgWgYnPeVJtitjMR3L2st4TlASCAyT/80TzR8XV?=
- =?us-ascii?Q?alzPUQhyAIn4/OgZrN6twHEXoimkA+oIAIDRV+x1qoDF9VCvKR6SqBxG3rMd?=
- =?us-ascii?Q?gq0auVTFKPe9J5NNPFfn1hW5qYOpDoT8BtqiVWXSh3OI/JRSrU8SKbO7sbBi?=
- =?us-ascii?Q?douhpCf17Vhp64SO9XbL0/YTUa75w2gxfarNexgJsPShjFjNpz1aoYDmrZyP?=
- =?us-ascii?Q?D2diMu1F+fuitc3YbHA6btt2IeyLBMloPVBSfABtGqitIu4BJ1LF/MQ0XahA?=
- =?us-ascii?Q?iAv4siN19ZM63UmCVRJ7yrUD8EMIsWXaLaLR4WRoLipw8+8niz4MrkIAsPVH?=
- =?us-ascii?Q?gZiZ7C0/96Rer5crbjEwp8I5DfTP6Rh+JLrdALVA3uQao1h6EoHbbCQniwlu?=
- =?us-ascii?Q?mQXQc5yABwRSdfGuJCFm3WYIqEpz6bKy/FaRP7wNP9U1jhK0V4JcoSykXaNV?=
- =?us-ascii?Q?V7O8flfkhyRLGA92lUlGWFlexLToVSvrMkSZ/I5Llkwu4FLvE/1FR8OEu+K1?=
- =?us-ascii?Q?PYgOcKmVx9IBjT/Efm5Yl35MfjlBh2mlWgcYBV+p3Lp9rtZ7j8oBCPPR9dj+?=
- =?us-ascii?Q?uSBaGxFl0ozrxQM98AcUwx1X2Xts2WDqQlTID+XJM2Km1gxm9ByjNAB2Wb0V?=
- =?us-ascii?Q?FxGJAL7DNfe0Ft4PQVF5XZXftkLWVfCLTG6PSADrsn5VYGztm0zU2ZVHQS6B?=
- =?us-ascii?Q?J6M9F7yKbQhKO2UiU3nhs1ISJMp2pnLk+eZiWZqCou73YLJvsjQ0eVsO+quZ?=
- =?us-ascii?Q?4jicCLzK9F4XR/0VGBeK7nstjoOZLEcNirenCtl6VUWIi1UpeEmXaXaQ+ba1?=
- =?us-ascii?Q?MxZo7+pGDJYcpgKQwiSOEh0pARIgKKE+QT7D1wALfMzP62mjwFX0Fue22TMS?=
- =?us-ascii?Q?dTzC1zF3Jwm+V/U/99UGaE3S6pw4JvhTTw8ZmOYPczl96RJGEu5SE5Gy2miK?=
- =?us-ascii?Q?4zbT7nApIR+XyyeAsc+OS5fx3vi6Fy34x3AL2pOdsoqbjPvr3zzl7egAHGj6?=
- =?us-ascii?Q?yRc/YLtMhLjR9RbkghAMAPhFrvzBa8VK7emKCeoClZ+UZrZ+3lFkG2JPTqXC?=
- =?us-ascii?Q?yseYkhFina0sKpUviP+IKLezbBXAGasg6XdRNVHFrmbBKdy/WcnMBHNE3Q/F?=
- =?us-ascii?Q?d7WW2sGa8zC7RfNRuOSNb4LVCNPTS+P56xPSmgm39b0x3NHmnotjMrzkhziF?=
- =?us-ascii?Q?OC1jYUyAQgv7hfHnLOl6HPw5Df5h/l320FCzHyffge2NxwG/pTQdbn94AtYR?=
- =?us-ascii?Q?SlHcK2+h5VBE+q15CSDr/jzEWGIl1BhAaX/KM0ZxkhkqVwFqt4g5qI6CJv5I?=
- =?us-ascii?Q?zDCtWv51B4lOE0M5Z1IjiDhVMgoPAKFvE+RRyHR/CPxyzTMTgE8EAYyUkvOX?=
- =?us-ascii?Q?uw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	8fBm9KbERiE9RP+4mR01ff/1zc1cjanTKsstE7I9XZrMFf1Hk4oB61xq5Zq0mdmD/0fuJBwBdhBfbyvg0o2HwPscQcsEur9doFap1i2zUPg118hb58pomUiiYBKfJjhZdYNAJU0t3TCBLTbAyUyIYoSM0Hj2fYaQ+ZLwVgt1RQ8mW/3V7n0z4INgWtCtUm76jCE325NUbRc7zSpQrekE8nHQE3OzQqs7txbEDV0n6y3cPBC4S4B2fNQCxSFx8GUsuKhzoRQ7NP9go+qTkkbMlQXLipM8mw3BLCeDzaJfytiEnu4jrOxDk7qPWMcAPbCJhZNw13c9cbb1FDHqRp9Ro6EjG2DABRqjMAZcYKmDpE5SLx0JzbHOWgpUzWqoXjpqhZ9aBIrhKyzHKK1iyXliGw6PqhA3O6GHOOXZ4aMLj9TIHOTDKazB8GZ9rUc85dSt/YygFB6VHMePtiRVJzzjofRcoh3XOpOFnhKwpVQwm4alYpNDd4H4fFmHb/d7Lc8YQZIUjGRD0u39IR4mvhAWdMR8iuayIvlcnIxIKSYWcWPBCj7677lc67MGA28wPPEu5HT8R9nfQwkSmQ+i9vgLb2ZBwOXAekqH67fJavFLsZ0=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b5a46481-f53d-4c08-913d-08dcbea1be1d
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Aug 2024 09:48:27.0230
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FUVpcjWu0PCnAXKeL/2Qf2qMFA6C7tS0SvqFhR3HHTpr0kbPb0GRjEcJHnRobDghu7bukYyvGXoG71uw1rFk/Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4758
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-17_04,2024-08-16_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0
- suspectscore=0 phishscore=0 mlxlogscore=999 adultscore=0 bulkscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2407110000 definitions=main-2408170068
-X-Proofpoint-ORIG-GUID: E2AKdCACKgMYEiU_nzgf8lqTgA7IpjbG
-X-Proofpoint-GUID: E2AKdCACKgMYEiU_nzgf8lqTgA7IpjbG
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 17 Aug 2024 11:48:14 +0200
+Message-Id: <D3I3BTOHN2RW.2DUYSKP3JRT5Z@fairphone.com>
+To: <max.oss.09@gmail.com>, "Max Krummenacher"
+ <max.krummenacher@toradex.com>
+Cc: <stable@vger.kernel.org>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Jiri Slaby" <jirislaby@kernel.org>,
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>
+Subject: Re: [PATCH] tty: vt: conmakehash: cope with abs_srctree no longer
+ in env
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20240725132056.9151-1-max.oss.09@gmail.com>
+In-Reply-To: <20240725132056.9151-1-max.oss.09@gmail.com>
 
-For when an inode is enabled for atomic writes, set FMODE_CAN_ATOMIC_WRITE
-flag. Only direct IO is currently supported, so check for that also.
+On Thu Jul 25, 2024 at 3:20 PM CEST, max.oss.09 wrote:
+> From: Max Krummenacher <max.krummenacher@toradex.com>
+>
+> conmakehash uses getenv("abs_srctree") from the environment to strip
+> the absolute path from the generated sources.
+> However since commit e2bad142bb3d ("kbuild: unexport abs_srctree and
+> abs_objtree") this environment variable no longer gets set.
+> Instead use basename() to indicate the used file in a comment of the
+> generated source file.
+>
+> Fixes: 3bd85c6c97b2 ("tty: vt: conmakehash: Don't mention the full path o=
+f the input in output")
+> Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
+>
+> ---
+>
+>  drivers/tty/vt/conmakehash.c | 20 +++++++-------------
+>  1 file changed, 7 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/tty/vt/conmakehash.c b/drivers/tty/vt/conmakehash.c
+> index dc2177fec715..82d9db68b2ce 100644
+> --- a/drivers/tty/vt/conmakehash.c
+> +++ b/drivers/tty/vt/conmakehash.c
+> @@ -11,6 +11,8 @@
+>   * Copyright (C) 1995-1997 H. Peter Anvin
+>   */
+> =20
+> +#include <libgen.h>
+> +#include <linux/limits.h>
 
-We rely on the block layer to reject atomic writes which exceed the bdev
-request_queue limits, so don't bother checking any such thing here.
+Hi Max,
 
-Signed-off-by: John Garry <john.g.garry@oracle.com>
----
- fs/xfs/xfs_file.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Not sure this is the best place to ask but this <linux/limits.h> include
+appears to rely on this file already being installed in /usr/include and
+is not taken from the Linux source tree that's being built.
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 9b6530a4eb4a..3489d478809e 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -1149,6 +1149,18 @@ xfs_file_remap_range(
- 	return remapped > 0 ? remapped : ret;
- }
- 
-+static bool xfs_file_open_can_atomicwrite(
-+	struct inode		*inode,
-+	struct file		*file)
-+{
-+	struct xfs_inode	*ip = XFS_I(inode);
-+
-+	if (!(file->f_flags & O_DIRECT))
-+		return false;
-+
-+	return xfs_inode_has_atomicwrites(ip);
-+}
-+
- STATIC int
- xfs_file_open(
- 	struct inode	*inode,
-@@ -1157,6 +1169,8 @@ xfs_file_open(
- 	if (xfs_is_shutdown(XFS_M(inode->i_sb)))
- 		return -EIO;
- 	file->f_mode |= FMODE_NOWAIT | FMODE_CAN_ODIRECT;
-+	if (xfs_file_open_can_atomicwrite(inode, file))
-+		file->f_mode |= FMODE_CAN_ATOMIC_WRITE;
- 	return generic_file_open(inode, file);
- }
- 
--- 
-2.31.1
+This mostly manifests in building Linux kernel e.g. in Alpine Linux
+package build if 'linux-headers' package is not being explicitly
+installed, failing with=20
+
+  drivers/tty/vt/conmakehash.c:15:10: fatal error: linux/limits.h: No such =
+file or directory
+     15 | #include <linux/limits.h>
+        |          ^~~~~~~~~~~~~~~~
+  compilation terminated.
+
+Apparently this is (understandably) also a problem when building on
+macOS:
+https://lore.kernel.org/all/20240807-macos-build-support-v1-11-4cd1ded85694=
+@samsung.com/
+
+I did try that linked patch a bit ago, but unfortunately didn't fix it
+for the Alpine Linux build environment.
+
+Any ideas?
+
+Regards
+Luca
+
+
+>  #include <stdio.h>
+>  #include <stdlib.h>
+>  #include <sysexits.h>
+> @@ -76,8 +78,8 @@ static void addpair(int fp, int un)
+>  int main(int argc, char *argv[])
+>  {
+>    FILE *ctbl;
+> -  const char *tblname, *rel_tblname;
+> -  const char *abs_srctree;
+> +  const char *tblname;
+> +  char base_tblname[PATH_MAX];
+>    char buffer[65536];
+>    int fontlen;
+>    int i, nuni, nent;
+> @@ -102,16 +104,6 @@ int main(int argc, char *argv[])
+>  	}
+>      }
+> =20
+> -  abs_srctree =3D getenv("abs_srctree");
+> -  if (abs_srctree && !strncmp(abs_srctree, tblname, strlen(abs_srctree))=
+)
+> -    {
+> -      rel_tblname =3D tblname + strlen(abs_srctree);
+> -      while (*rel_tblname =3D=3D '/')
+> -	++rel_tblname;
+> -    }
+> -  else
+> -    rel_tblname =3D tblname;
+> -
+>    /* For now we assume the default font is always 256 characters. */
+>    fontlen =3D 256;
+> =20
+> @@ -253,6 +245,8 @@ int main(int argc, char *argv[])
+>    for ( i =3D 0 ; i < fontlen ; i++ )
+>      nuni +=3D unicount[i];
+> =20
+> +  strncpy(base_tblname, tblname, PATH_MAX);
+> +  base_tblname[PATH_MAX - 1] =3D 0;
+>    printf("\
+>  /*\n\
+>   * Do not edit this file; it was automatically generated by\n\
+> @@ -264,7 +258,7 @@ int main(int argc, char *argv[])
+>  #include <linux/types.h>\n\
+>  \n\
+>  u8 dfont_unicount[%d] =3D \n\
+> -{\n\t", rel_tblname, fontlen);
+> +{\n\t", basename(base_tblname), fontlen);
+> =20
+>    for ( i =3D 0 ; i < fontlen ; i++ )
+>      {
 
 
