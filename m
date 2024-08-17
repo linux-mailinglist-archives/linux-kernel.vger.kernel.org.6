@@ -1,130 +1,124 @@
-Return-Path: <linux-kernel+bounces-290810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB2CE9558F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 18:27:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B36B9558FF
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 18:35:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A72D12827B5
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 16:27:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D49D71F219BB
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 16:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97DF915534D;
-	Sat, 17 Aug 2024 16:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11B214E2CC;
+	Sat, 17 Aug 2024 16:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cnbialIX"
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Oab+Z/fo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFDC14F9CF;
-	Sat, 17 Aug 2024 16:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D61145B01
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 16:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723912048; cv=none; b=jm7RPorkoNkoicx7qKnH20MoTvERm4rjkF84dFX0a1prx4jUdtJx13diH8/82sPKvtntjSEOYNkFombW9yXFStMhjc8kicNZXZXLvtCYCZx/PZYTbW4CGQ815O9ANbMypwmJHny0R+k1zjbH60EBN5n5CPx3Pe/kD13S8lDI0v8=
+	t=1723912551; cv=none; b=cdUgEjsm5rf6s2LKgbJdiiZ6iMZD+/LorQSsx4AxZR/4q6okihWHlI5phh1D48soXHxDg+wniRadOLbxdnH4pQHVXgR8O6u52aWQ1BQoy19FMBwa35Na+fgaeLPE2XO7wNt+IJEKEabaXE42vUrZ+v1TNrUrxDc/eF9l1bMc/dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723912048; c=relaxed/simple;
-	bh=M321tqZviLaBwQ05L11bRWv/zf9KkqcTufhMPYAXpIQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YPacRGe6UMcfojizKqcxdcdmUdGk5RBg9/56tdWfcsbGkbZLhrLRWPrJh+LqB2ZazgdQWNPSDr8EQv1zaXGDJmASaKgL+5gkWK5xTlnP79mqn/C9vDDH1V3Oljg5L5q9XP8FEaMlAmZ8+YnQu8sJLJpPcDhkxQ/pGYLE+laCetE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cnbialIX; arc=none smtp.client-ip=209.85.222.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-842fe6f6c04so809950241.2;
-        Sat, 17 Aug 2024 09:27:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723912046; x=1724516846; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=T1A5yMQKgbCZuCbj77O+oxwO97dOiKdh/DiTFn2+/hs=;
-        b=cnbialIXQfnEjTae8JIUu7APD5VVkNohOKP28tRDyMoUULCnwNAXHmgd0vVRimU2Ck
-         oVTThAIJMeyit3k3i1UeNxvL2YeWfN1JugkvpHP4g5HDEejUr/pN38JKD0h0C63/22Ir
-         xRB/o5x2rZIAijmfQfYA17/DO6oNW6Rm7Y7uTZMD2JaOTWVCX6dzmQazU9YVHx3Yw4pv
-         DB8l40hS4ZVvp6xztlnfcGGLws8A88jGDLCpx0+v3FjHLqPY/e0L8rK0DdzHH+Qgujg2
-         T2ri4CfshzlA4dGC0FoyBWBGZD5yVkO6ceuj6hn8RwY74EMBGEvEdglfDRyPcenLEU2l
-         1Uag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723912046; x=1724516846;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=T1A5yMQKgbCZuCbj77O+oxwO97dOiKdh/DiTFn2+/hs=;
-        b=vrd/0JaiWIeIfupeWe9KYtmzkfIxM5jYbp+1Ofp2YaR6u7tppIoxNhcbxIFhZ9XlDV
-         hRigmaO5YvE6bGY+7rlwRWYv6u0FZxsZahAC7vAcLIQUoBLe1rlaxhxvkmoBrARB5OEo
-         TPzehhOAIKXvve3XUxkUSgeMy1yKc2vutZcrXK88fzeuIRVlJxpqlRDFjgpao7MVT5qX
-         t7NU/stquBq5HGc+CoUv9KUhkmgIgj6b5TO4e9YC4Q6UZBlkLsV7Iplagj3U61q+iFYu
-         QhTvqqzUv1Ry4R3uZGccGqBbnAoTUkEbNnmhFLcB//+/oLvaMb7QN065p/bWvkbj2kUk
-         2+eg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNJC3dEIhX6ZPACLO+FrwKxXtet+j5PHFRrsxcIDeenjQ+AH9xRLEBgEduHeSMd+/G7tG+EIUkwm7aB2gB/7EpluUEI8V8N0NdGmu3RzN+yMdlqVQTfjJ6t+3I19+kDlS1qyjrixNgT+uHjMPJb1Utz1EVTEkz2TveOirLXQoYZw==
-X-Gm-Message-State: AOJu0YxLfCqOfz7mFNiETBZGydK+8nnBNL8MhJnCnx23TNnSS3BwH0bH
-	6xEfDZ3DoT+3Cq1ck7WB42Y5F2I07QX4WtUjpkycJHv0Rmvjwv3exB9tNrHKt4TsfxulO7fpODR
-	n6mrHww5PM2rJdcsAXTOdoKfRJTc=
-X-Google-Smtp-Source: AGHT+IFx0j8ezeKwWu+XpqYMf8JHykePkwdV2Y3dtrWi4k5+xq/d3tJKId26C/oubJUmlDbTay38F1tRYOoR1BkUNGw=
-X-Received: by 2002:a05:6102:3749:b0:493:e0cb:7263 with SMTP id
- ada2fe7eead31-497799a66aemr7331522137.29.1723912046305; Sat, 17 Aug 2024
- 09:27:26 -0700 (PDT)
+	s=arc-20240116; t=1723912551; c=relaxed/simple;
+	bh=cIq6tITWCPVOHi1mX6/s16HXzCeadnclsTCFYqbtJEc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b4cqQUeeTcGwf14eKnRiIxyF7yV/VlJnOFmfKombz2dc7yAf34h2oc54T5LMwZPhNwK1vPd0GJj081lmzRbdwMyYiXDnyI2sp2GDy3ve/FPo7psnMfX4zHMuuiwbsA32vMPobrtxCw1h9/7QuyyDiwP+eNvvIyk695k1u0vo+MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Oab+Z/fo; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723912549; x=1755448549;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cIq6tITWCPVOHi1mX6/s16HXzCeadnclsTCFYqbtJEc=;
+  b=Oab+Z/fopfxu/9sUxddJceNzwgI+g4i1tgQ271J4AXDze6gzhp7m1buM
+   PzWYD9ZclYac/n7a+G2h1HEgNEn0DNntKPj75XkAYUfZSWvZzuyFlJpN5
+   maq3TtrpEJr1n1JGnwW3oIL7c+1Qh2vsAWGjQpqsPb2KIjLAlnAdFi+uK
+   yTE4ElbZ4S0WRjiZUZUglDE97kKqxe6oq84FLP7vFKMhJvmsyFPrGEGKM
+   TXK1sgSmF3siNKzq0qE8cjxcjRoXqAowakYoF0upYemb4qF8JruKatTp5
+   Dc19USCvazHbbNrpuQDmYm0PefDJBSveTmcEAW4zh0mLY7/4RKLWPVXJb
+   A==;
+X-CSE-ConnectionGUID: 5JznIdGnRwGsxql+29HkyQ==
+X-CSE-MsgGUID: +xad2sLwTDSJxWQvJSZueA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11167"; a="44714187"
+X-IronPort-AV: E=Sophos;i="6.10,155,1719903600"; 
+   d="scan'208";a="44714187"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2024 09:35:49 -0700
+X-CSE-ConnectionGUID: ivkCYo+uTKmkApLP69OaLQ==
+X-CSE-MsgGUID: iKcGbF2DSc6ONgQ1wSvleQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,155,1719903600"; 
+   d="scan'208";a="64919725"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 17 Aug 2024 09:35:46 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sfMP1-0007e6-14;
+	Sat, 17 Aug 2024 16:35:43 +0000
+Date: Sun, 18 Aug 2024 00:34:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dipendra Khadka <kdipendra88@gmail.com>, harry.wentland@amd.com,
+	sunpeng.li@amd.com, hRodrigo.Siqueira@amd.com,
+	alexander.deucher@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com,
+	daniel@ffwll.ch
+Cc: oe-kbuild-all@lists.linux.dev, Dipendra Khadka <kdipendra88@gmail.com>,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Fix warning: symbol 'dcn3_14_ip' was not declared.
+ Should it be static? in dcn314_fpu.c
+Message-ID: <202408180054.z1Y6Mfuo-lkp@intel.com>
+References: <20240815185629.65725-1-kdipendra88@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730183403.4176544-1-allen.lkml@gmail.com>
- <20240730183403.4176544-6-allen.lkml@gmail.com> <20240731190829.50da925d@kernel.org>
- <CAOMdWS+HJfjDpQX1yE+2O3nb1qAkQJC_GSiCjrrAJVrRB5r_rg@mail.gmail.com>
- <20240801175756.71753263@kernel.org> <CAOMdWSKRFXFdi4SF20LH528KcXtxD+OL=HzSh9Gzqy9HCqkUGw@mail.gmail.com>
- <20240805123946.015b383f@kernel.org> <CAOMdWS+=5OVmtez1NPjHTMbYy9br8ciRy8nmsnaFguTKJQiD9g@mail.gmail.com>
- <20240807073752.01bce1d2@kernel.org> <CAOMdWSJF3L+bj-f5yz5BULTHR1rsCV-rr_MK0bobpKgRwuM9kA@mail.gmail.com>
- <20240809203606.69010c5b@kernel.org> <CAOMdWSLEWzdzSEzZqhZAMqfG7OtpLPeFGMuUVn1eYt1Pc_YhRA@mail.gmail.com>
- <20240815164924.6312eb47@kernel.org>
-In-Reply-To: <20240815164924.6312eb47@kernel.org>
-From: Allen <allen.lkml@gmail.com>
-Date: Sat, 17 Aug 2024 09:27:14 -0700
-Message-ID: <CAOMdWSKzh6gAzcQWNO=PWr1oOqf=9dKnhncSgkY5fYcL4nTMdA@mail.gmail.com>
-Subject: Re: [net-next v3 05/15] net: cavium/liquidio: Convert tasklet API to
- new bottom half workqueue mechanism
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, jes@trained-monkey.org, kda@linux-powerpc.org, 
-	cai.huoqing@linux.dev, dougmill@linux.ibm.com, npiggin@gmail.com, 
-	christophe.leroy@csgroup.eu, aneesh.kumar@kernel.org, 
-	naveen.n.rao@linux.ibm.com, nnac123@linux.ibm.com, tlfalcon@linux.ibm.com, 
-	cooldavid@cooldavid.org, marcin.s.wojtas@gmail.com, mlindner@marvell.com, 
-	stephen@networkplumber.org, nbd@nbd.name, sean.wang@mediatek.com, 
-	Mark-MC.Lee@mediatek.com, lorenzo@kernel.org, matthias.bgg@gmail.com, 
-	angelogioacchino.delregno@collabora.com, borisp@nvidia.com, 
-	bryan.whitehead@microchip.com, UNGLinuxDriver@microchip.com, 
-	louis.peens@corigine.com, richardcochran@gmail.com, 
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-acenic@sunsite.dk, linux-net-drivers@amd.com, netdev@vger.kernel.org, 
-	Sunil Goutham <sgoutham@marvell.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240815185629.65725-1-kdipendra88@gmail.com>
 
-> > > Hm. Let me give you an example of what I was hoping to see for this
-> > > patch (in addition to your explanation of the API difference):
-> > >
-> > >  The conversion for oct_priv->droq_bh_work should be safe. While
-> > >  the work is per adapter, the callback (octeon_droq_bh()) walks all
-> > >  queues, and for each queue checks whether the oct->io_qmask.oq mask
-> > >  has a bit set. In case of spurious scheduling of the work - none of
-> > >  the bits should be set, making the callback a noop.
-> >
-> > Thank you. Really appreciate your patience and help.
-> >
-> > Would you prefer a new series/or update this patch with this
-> > additional info and resend it.
->
-> Just thinking from the perspective of getting the conversions merged,
-> could you send out the drivers/net/ethernet conversions which don't
-> include use of enable_and_queue_work() first? Those should be quick
-> to review and marge. And then separately if you could send the rest
-> with updated commit messages for each case that would be splendid
+Hi Dipendra,
 
- Sure, let me send the series again with this driver dropped. We can
-revisit drivers with enable_and_queue_work() later.
+kernel test robot noticed the following build errors:
 
-Thank you.
+[auto build test ERROR on drm-misc/drm-misc-next]
+[also build test ERROR on drm-tip/drm-tip linus/master v6.11-rc3 next-20240816]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Dipendra-Khadka/Fix-warning-symbol-dcn3_14_ip-was-not-declared-Should-it-be-static-in-dcn314_fpu-c/20240816-025925
+base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+patch link:    https://lore.kernel.org/r/20240815185629.65725-1-kdipendra88%40gmail.com
+patch subject: [PATCH] Fix warning: symbol 'dcn3_14_ip' was not declared. Should it be static? in dcn314_fpu.c
+config: x86_64-randconfig-121-20240816 (https://download.01.org/0day-ci/archive/20240818/202408180054.z1Y6Mfuo-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240818/202408180054.z1Y6Mfuo-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408180054.z1Y6Mfuo-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/usb_debug.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/mxuport.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/navman.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/qcaux.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/symbolserial.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_userspace.o
+>> ERROR: modpost: "dcn3_14_ip" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
 
 -- 
-       - Allen
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
