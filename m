@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-290552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28EBF9555A7
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:56:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31EA89555AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E6771C21547
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 05:56:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCD33283B1D
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 05:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D00012FB0A;
-	Sat, 17 Aug 2024 05:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16A7132121;
+	Sat, 17 Aug 2024 05:57:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mBnMZ+fD"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t4z6jW7M"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E031412CDB6
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 05:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FB612BF25
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 05:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723874156; cv=none; b=hd0bnvFJ2vjdCbt3un5WG3OhLfu+ej7eTPnk2R+NBDUpl3jfYFU78ldiNFEbPFbFVMGvYXQotyWaGGArCqK8YbhDcFqybjLy3jYMyC7rg+C9mg2oN2vjSBPORlja85a3+8rIiRBNc5Cl5fF+OgS9ei0oOUdhr1EQPxqgC53mtEw=
+	t=1723874273; cv=none; b=cbljDgTDrFFQeNypGnwgOlQe/GfXJqOOir9dRjLV66WPNkk8pTOtj8biZjgLZzW5PLlcYcdbISzSeEBwOAByGo4EG4Lre0AKtiZp4GQNYwH3+Q6OEVSfKdNFtsVMn033HRaFHZIQsJCbLkItdfMdFC0k3U4ReRInfZlhRciT7tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723874156; c=relaxed/simple;
-	bh=x0tjE7zHG6lY5cEzWOOeiKPc6Ssm8TTI/c6m7gLX1m0=;
+	s=arc-20240116; t=1723874273; c=relaxed/simple;
+	bh=L6/kkT9rKApXwS91JQDNsORr/X1GI+rDEPlBF/B/ELo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h0BZppYWzWZAfOq2z7TgIMFcYvDIsysFPmk6UTZRM8PUEhr/gyMb6zVB2TRQIOt0LKJLQXowvX9Vqwfl6vPDtHcu3eOGRek+shaOIhL/fWTkNTAzqxaktd/mcG70N8RsYxZBAPud5jKJhiyePiRetuc+cqFKphZDM2Z26fJsLTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mBnMZ+fD; arc=none smtp.client-ip=209.85.219.47
+	 To:Cc:Content-Type; b=MJKRo/dlQxuhB5hjk3DXTBZ7v5b7WgcncctfhuSllg8Q+odQHk+RTWUrH55O5RGF+vTo0pWqNYR8MhbygINO7/3nCNkrtC3Vc2LztjmmGUzan74HmuXD1eAK6y3oEQyu2lnBReTWzYGYMDENNEeBCtGvJG01IHbpPQ2nSFsw9RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t4z6jW7M; arc=none smtp.client-ip=209.85.219.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6bf6e17cc2bso14235456d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 22:55:54 -0700 (PDT)
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6bf7a2035d9so18376396d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 22:57:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723874154; x=1724478954; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723874270; x=1724479070; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zO5DfF0viHSdHtAQMPfC+hUUBY2ki1Sd9boOM/ZvnhY=;
-        b=mBnMZ+fDXvEQbKI9uWvD70HYjaGU7P/qKYovbXXMonRMZ7SKQrL6BMbmRZ2Ec7mWYu
-         kG9qkJtaiF1dCPnWH9fbnN/ZlZuga3KvbTvejthR9phDklMpQgWoKGDCETHm3LERfexM
-         XqCnvQXPh3VYhxOE8SUJtiFYY7i5faazjYO7ND13rC0sk5ndxTshLY9NfnlRzkWLkrXc
-         E2lPpGdq0A4e5Sc8VWtQ+vSQUUjG2ToKQ/i+kSUjWt7JQ1zDJw+9vYM53ECJHGzTbuqO
-         t3gt/cHow3UcLtyoUPfbxeGX4ZnMdeHIG7Y9BM0vrE28/Kjl4g80UnsbYTtjl5WJOl4V
-         4Jeg==
+        bh=Lu4Nl0GB1iED2MWCr04OB+Jfo3hv8Ww3jPrNd67fLNQ=;
+        b=t4z6jW7MH7C28QL1V0WVtNUd8SyMRUyOUX84B9Wdm2fy08D96z0lKIfrRLKHp7ee/e
+         Hb6oq1KFxtBgcsUBW1LDtI4qsHN4oF3NJavL0llYWi4pW3rXVNv8HJae04Vq4Wg7L/Gh
+         90EXMxDlrJuvkbDbw3blGgPbo5HFNNIdgBAL4nzxQwLnv9+x/VZqrh/HNHeoCFUdvjCN
+         W6yPTXsmpJTvFUA2wCx7JC/FOqRncFuc5N94ELsgapv48BPdkK3KceQ/aeXRnCdmFmVf
+         ZUejq9LqpkHc7e7QDjrYwH4CYFyQ/+ejbgxXR/dBqKedTfjXAdQcMiT6CrvrANOS7m9s
+         vvYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723874154; x=1724478954;
+        d=1e100.net; s=20230601; t=1723874270; x=1724479070;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zO5DfF0viHSdHtAQMPfC+hUUBY2ki1Sd9boOM/ZvnhY=;
-        b=WVwJfBkL1Go3Q4/ED4dLv4clvIUcsq1uSY9ofPhQs6175yUFBWzFIz/ExS+mhVdflg
-         nt1dbzD5zoaXLocxOQrCUf+zf3UafVlqmmJGKN5RtFeHyD3LN5OAL6ZPuV24gBcj4SZT
-         E+HNK+gtZhDEMLTv5/QJTwbJWvikjn8CZJJSdC87EYzunieptC1OqFXnlaYIN+CbLnmA
-         HJUOh8Vwwl6ved371UNEWQdHfycyOmXWhrPslCeZJTcl5SZ+ihHXVYNkdmx19uwjPabt
-         7WXYrJFVc3WzmR97pS5Ms67s9xCHU0M1pXf2uH5F2eWt8VxBHQFx6wbyVTmrVfzHxTPM
-         x+lA==
-X-Forwarded-Encrypted: i=1; AJvYcCVc9QWaBR06r7C7ZXmiU+9oDZgeriAwYfP8uHsCBC1lcuPDWdXGbNIHHfNW098oiJ76Rq7i7/ExAHQN7YA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxf9CAqC5bs8LTCm5fFSOgdnnqBPIGZYmb+TThF61tz0laAOs6X
-	SuLEoFFdjZ6Eklb4J8C18bjE1MXVu6mFzujlqheqc3sa9Psi1hHjemD8Yz5hJ82lg1iZT/MTG40
-	+zdcqooPXzrrRCte5I4onWHDp7RW1LMYVaDA2fQ==
-X-Google-Smtp-Source: AGHT+IGxPjrv7dCSE/Do/bjou+Y4IoMXg01+vIkSYQmvAsJPrtNyj03mz3wUw+BiG/VwsTp6/e075xN4f1duRl7HfrE=
-X-Received: by 2002:a05:6214:3f86:b0:6bf:6127:98a7 with SMTP id
- 6a1803df08f44-6bf7cf1c06cmr51142686d6.56.1723874153746; Fri, 16 Aug 2024
- 22:55:53 -0700 (PDT)
+        bh=Lu4Nl0GB1iED2MWCr04OB+Jfo3hv8Ww3jPrNd67fLNQ=;
+        b=Nlj/gCCSoCKGfcwQMkXLmMN91Wl2HP9bXxo5+4zPvnEHNm1Qhs56Vg/BbhdiWuijcI
+         JE+ANe68D1bTWRi1Cy3iZ49JHHsK6DgRxEnwJeWhqATeQE7QlmTfSAvry8BWicjNy7ev
+         Y61wSPCHLqf/9/k1gWWKzqzk7EesA7lBoPE2GMfyu1KPtxOE53nnUH/9XPMhrO6KiVBe
+         xmyrV6WbJOd2SqL1BLDrV3dkMR2kv/B3zUI/LniIaNwe2Cd3jZu5pC46PWNOSYPSISPL
+         wv+v6IUkqexnjEFc5vdtoOsGvWJLO8D3wTfS1VricdHghrxoKSNsJ4PFWOVOn7r/rBft
+         NX3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVffSkYdcskn0qkIkLcMA5ECED9fefHrBOdQcOLDEKb4qFzn3l3CDKS9GV+A/x8x/AcHnAQknK+mXjjZJOPOsjzvydfXEvXLoSQqgIG
+X-Gm-Message-State: AOJu0Yxmjt7LDq2Cb26ZiUAQd5pxLyIQ+/reim6xKXhRVUXOR1neiYFT
+	387q6CnA81WJ5ioyYId8qUAe/8ajc/rb31QZb70dhLwHP3WBf81kbPHVdGAHV4joasVo7pArLx3
+	AVRR2HavDVXySQPdAZEoVcs7CllrcikYBg5M9+Q==
+X-Google-Smtp-Source: AGHT+IE+sUu9pWEuBlQvuPiIymkPTnth27ELlW5XvrnyJPCs70aN5KVC2LtEGJ+bMm2rNvH1MKufn+f3an7JwP3laYM=
+X-Received: by 2002:a05:6214:1c48:b0:6b5:2062:dd5c with SMTP id
+ 6a1803df08f44-6bf6dd61a57mr140443316d6.8.1723874270359; Fri, 16 Aug 2024
+ 22:57:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240816101524.478149768@linuxfoundation.org>
-In-Reply-To: <20240816101524.478149768@linuxfoundation.org>
+References: <20240816101509.001640500@linuxfoundation.org>
+In-Reply-To: <20240816101509.001640500@linuxfoundation.org>
 From: Anders Roxell <anders.roxell@linaro.org>
-Date: Sat, 17 Aug 2024 07:55:42 +0200
-Message-ID: <CADYN=9KMRjaxqtcc-Yo9ZDK3b2HH7gzJiwTrUXz7t0x0TO6=uA@mail.gmail.com>
-Subject: Re: [PATCH 5.15 000/483] 5.15.165-rc2 review
+Date: Sat, 17 Aug 2024 07:57:39 +0200
+Message-ID: <CADYN=9+gT_me8D_+KtWqmS9_vZg7=dTat90dPCNSieSjq9sFXg@mail.gmail.com>
+Subject: Re: [PATCH 5.10 000/350] 5.10.224-rc2 review
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
 	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
@@ -88,25 +88,25 @@ Content-Type: text/plain; charset="UTF-8"
 On Fri, 16 Aug 2024 at 12:22, Greg Kroah-Hartman
 <gregkh@linuxfoundation.org> wrote:
 >
-> This is the start of the stable review cycle for the 5.15.165 release.
-> There are 483 patches in this series, all will be posted as a response
+> This is the start of the stable review cycle for the 5.10.224 release.
+> There are 350 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 >
-> Responses should be made by Sun, 18 Aug 2024 10:14:00 +0000.
+> Responses should be made by Sun, 18 Aug 2024 10:14:04 +0000.
 > Anything received after that time might be too late.
 >
 > The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.165-rc2.gz
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.224-rc2.gz
 > or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
 > and the diffstat can be found below.
 >
 > thanks,
 >
 > greg k-h
 
-The following S390 build failed on stable-rc 5.15.y with gcc-12 and clang due
+The following S390 build failed on stable-rc 5.10.y with gcc-12 and clang due
 to following warnings and errors [1].
 
 s390:
@@ -118,7 +118,7 @@ s390:
 
 Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-The bisect points to 85cf9455e504 ("KVM: s390: pv: avoid stalls when
+The bisect points to 0fbb54ce4bff ("KVM: s390: pv: avoid stalls when
 making pages secure")
 as the problematic commit [ Upstream commit
 f0a1a0615a6ff6d38af2c65a522698fb4bb85df6 ].
@@ -126,50 +126,52 @@ f0a1a0615a6ff6d38af2c65a522698fb4bb85df6 ].
 Build log:
 --------
 /builds/linux/arch/s390/kernel/uv.c: In function 'make_page_secure':
-/builds/linux/arch/s390/kernel/uv.c:219:19: error: 'UVC_CC_OK'
+/builds/linux/arch/s390/kernel/uv.c:240:19: error: 'UVC_CC_OK'
 undeclared (first use in this function)
-  219 |         if (cc == UVC_CC_OK)
+  240 |         if (cc == UVC_CC_OK)
       |                   ^~~~~~~~~
-/builds/linux/arch/s390/kernel/uv.c:219:19: note: each undeclared
+/builds/linux/arch/s390/kernel/uv.c:240:19: note: each undeclared
 identifier is reported only once for each function it appears in
-/builds/linux/arch/s390/kernel/uv.c:221:24: error: 'UVC_CC_BUSY'
+/builds/linux/arch/s390/kernel/uv.c:242:24: error: 'UVC_CC_BUSY'
 undeclared (first use in this function); did you mean 'SIGP_CC_BUSY'?
-  221 |         else if (cc == UVC_CC_BUSY || cc == UVC_CC_PARTIAL)
+  242 |         else if (cc == UVC_CC_BUSY || cc == UVC_CC_PARTIAL)
       |                        ^~~~~~~~~~~
       |                        SIGP_CC_BUSY
-/builds/linux/arch/s390/kernel/uv.c:221:45: error: 'UVC_CC_PARTIAL'
+/builds/linux/arch/s390/kernel/uv.c:242:45: error: 'UVC_CC_PARTIAL'
 undeclared (first use in this function)
-  221 |         else if (cc == UVC_CC_BUSY || cc == UVC_CC_PARTIAL)
+  242 |         else if (cc == UVC_CC_BUSY || cc == UVC_CC_PARTIAL)
       |                                             ^~~~~~~~~~~~~~
 /builds/linux/arch/s390/kernel/uv.c: In function 'should_export_before_import':
-/builds/linux/arch/s390/kernel/uv.c:249:40: error: 'mm_context_t' has
+/builds/linux/arch/s390/kernel/uv.c:270:40: error: 'mm_context_t' has
 no member named 'protected_count'
-  249 |         return atomic_read(&mm->context.protected_count) > 1;
+  270 |         return atomic_read(&mm->context.protected_count) > 1;
       |                                        ^
-/builds/linux/arch/s390/kernel/uv.c:250:1: error: control reaches end
+/builds/linux/arch/s390/kernel/uv.c:271:1: error: control reaches end
 of non-void function [-Werror=return-type]
-  250 | }
+  271 | }
       | ^
 cc1: some warnings being treated as errors
+make[3]: *** [/builds/linux/scripts/Makefile.build:286:
+arch/s390/kernel/uv.o] Error 1
 
 
 Build log link:
 --------
-[1] https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.15.y/build/v5.15.164-484-gaff234a5be72/testrun/24890486/suite/build/test/gcc-12-defconfig/log
+[1] https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10.223-351-g470450f8c61c/testrun/24890569/suite/build/test/gcc-12-defconfig/log
 
 metadata:
 --------
-* kernel: 5.15.165-rc2
+* kernel: 5.10.224-rc2
 * git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-* git commit: aff234a5be72ef6e0a85246b992f6ec19cd59812
-* git describe: v5.15.164-484-gaff234a5be72
+* git commit: 470450f8c61c0d2248174891cb188c5378eb5d22
+* git describe: v5.10.223-351-g470450f8c61c
 * test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.15.y/build/v5.15.164-484-gaff234a5be72
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10.223-351-g470450f8c61c
 * arch: s390
 * toolchain: gcc-12, clang
-* config: https://storage.tuxsuite.com/public/linaro/lkft/builds/2kjlB8pPtrlqwxjAoqVX8sFQDpN/config
+* config: https://storage.tuxsuite.com/public/linaro/lkft/builds/2kjlITR0fntaWX0F0o4bJ62HPb6/config
 * download_url:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2kjlB8pPtrlqwxjAoqVX8sFQDpN/
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2kjlITR0fntaWX0F0o4bJ62HPb6/
 
 --
 Linaro LKFT
