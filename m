@@ -1,257 +1,118 @@
-Return-Path: <linux-kernel+bounces-290748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C2E295581A
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:25:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C341095581D
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:28:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFE81282C5E
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:25:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E2D2282BDB
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0741514C8;
-	Sat, 17 Aug 2024 13:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D8515350B;
+	Sat, 17 Aug 2024 13:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ARmVkq61"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="etEVR7bO"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B6B14AD1A;
-	Sat, 17 Aug 2024 13:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F3314A09F;
+	Sat, 17 Aug 2024 13:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723901108; cv=none; b=tWY3S9uzZwxfoZB+n+42wMgGIZp8NrJQnqOMnli8ttmwMTvZFCIkdBy2MRgVkZMs1HFtdgElwsVc87d+4who838IIrv+cpG05XzBD6XaWE/EPgbDyLNudpxDvkwak/v0gzfou+SOGF7zUmHGQWGExUaxWkKJgwgqL78/f9Br350=
+	t=1723901312; cv=none; b=HBI0o7c8E6yC4eugSledAgxJ5EXbSJa1/bDYKfRa+Fymmgso88DnHDOnrDHGnnu2rh1Pacjn/syXhJN24Q/pGsEt59QxrCZbe8i8H7ZFN5YYFWOgpMfg5UwUZ9Pjm/VKI/JXc46N1CdFqhOzxeK/lPnUvDbVo9TUU2OMCOxJgCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723901108; c=relaxed/simple;
-	bh=kdEhp/Kg27kne0vOQ2RDduD1wKCXvRJ42Jc1+k5J+XI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LFAxmRNgJNd5ZfKj/fuK3y4qSKeZDbw6sd/F5ALZle08UqW5NiTBrJZbFFcVLddazbZMivFNPEEwTkG5+vnvN/+1QeE6kJhTPREklH09NY8sMxa6uaea+cMHl5WRNNs/rJGzK2ObHpLgyz8a2DXSJlbQXyguN90mlu8NK715w1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ARmVkq61; arc=none smtp.client-ip=209.85.215.175
+	s=arc-20240116; t=1723901312; c=relaxed/simple;
+	bh=bG7amRFd1SeXww/sW3fHII8B50Zcx0B+0CeTFObVS5k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mcphrHmaIjEeKwGv19pOxwCbqPMTC77XS8Oq1fNCBpf1L9e1cSlAzPX7ZSXKMekB4cXWadOp8nDPy933JNMvIpHvKFFRoxmFHjoBxLvf7A9+fT4lRYYBWm6c+BXjFzjWZA2O38bc6eqQt3cK7OHlBv462takhDofflX5rSMRy/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=etEVR7bO; arc=none smtp.client-ip=209.85.216.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7c6b4222fe3so1777853a12.3;
-        Sat, 17 Aug 2024 06:25:06 -0700 (PDT)
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2d3e44b4613so1249983a91.3;
+        Sat, 17 Aug 2024 06:28:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723901106; x=1724505906; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lBh1jjPkZpHihQJDhRtC8nDyBpN1Y8R089uuo6Q3AtU=;
-        b=ARmVkq61YpdGz9it2ebGXsxA69GOH58qBhc1mqX+EMgvmREYMKs3ibk/nd8dyqHBE8
-         Kt/jZMfTD1oeJmHZ2KFGxZ3dQyJJuBQGrAVXn10+sV32EiYnoQo+xuDDXTda8vV+Ffbe
-         USrIP9bsCRPbrNU3ed8q+7NuMjOUyjdlNasJM1ALBn0D90ocwINm++0GkL7ZPEjuJNOq
-         9B4ldE1B0+KqwlH91mu+6McMxnJAHMI+SUaLzyc91L8UiZFr0RvlPAiiDGl/5DJUdNVu
-         HH2H0dIAIxl5+HN+VdFf8kljKf46KI3ZMhr1iacespaC9m9GR9t2U/zFV1JAWHFi9+gE
-         4loQ==
+        d=gmail.com; s=20230601; t=1723901309; x=1724506109; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w46CrKlXMkRvz2M8MkwLOk4U12EJHFtMw4PTZouv2zI=;
+        b=etEVR7bOK28sNf0yev91pxbBLy/A/NF9iT4pYxTwDHMkxKFDkDbZ+m0WNvuhJ/p+1Z
+         PAGGiCmt47J6YJBTR5hoTgZwoa42qHwr4qp+YrDb0TvHMRhOTcRGDQZHcSsEqCUUrje5
+         cmzJ8aGo54pNQUHQDtwmIeUOtw5QrUMBMzqNEv+6o9m12fnZQgvMNssZ+Z2YyCDtj5gD
+         mZCKkbCrXfLNL10AjgS7AYzl//UrHCd28YpiT015Mk/VebFTT/j8Hw60xzsB3jjK3+Rd
+         /xZBHaIZcMHauIl6pLJRJE7v4AayKmx0v1kGm6fmcwVpbVFsHy+KBZzyXVOVRaXmRion
+         K8/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723901106; x=1724505906;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lBh1jjPkZpHihQJDhRtC8nDyBpN1Y8R089uuo6Q3AtU=;
-        b=pmCcJwtBz4CaJAUPVe8Kyiliq3lnh7RQ4mrhVXBr9yOwphZZY+ZQ5hLxi8/P06lvIm
-         5mNkBWWFkzKBzd1pGL5lw/l0Az8ZAIzGi05q1g64JUmuDiaBv6R5ud2irQ0tN8ISSVkX
-         WlVisvnHneAKlkTv6O/SFusgq/FyGP8JM4KLeH8LzI7d074nmyMdCcTvpbUO1Lc2FLRQ
-         q4ti5KzKQoz9KwhfGJf3qe2v5UZ0hu7YdX+TtfJvo881mLIbbl5uTJSbD4tQXYIxvGBC
-         XeoFFHmy2jxcmeQOrJd3HwAQCHh8ypZ1lCsFMLdiV8ghIcFL3SQLJ70ouvwhELdd4Vi8
-         vNuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVRja306dx7CrxFvTIVtq8V/6ywJEyFPFZY2N/rSeZSjuYbH+FyymCza1r3nTXohqHL99I45jf9t63YgFXmbNIGYqh1z88sNCL6T8j4/hC13JUTDG07SnA9RVoRi2jmBJMZeiXmRUT+
-X-Gm-Message-State: AOJu0YxEjJnhwY2pEN+20eKLLJlP0XxKh2LJb1Lw03nAVQQpTGCWMdVV
-	RUEhVb9RsibrzCA092uC8PysBKV3wEyY4qmBzIx4X6OCD+Oipt0Y
-X-Google-Smtp-Source: AGHT+IGSpyfCzSgGAl3qtHqgyJI3xqyFgI5keFIbe7gfV8k0xV72gjZIUiodR5TFVZoh6TN+eqQ7/Q==
-X-Received: by 2002:a05:6a21:318b:b0:1c2:8cc4:908f with SMTP id adf61e73a8af0-1c90505277amr6015862637.48.1723901105811;
-        Sat, 17 Aug 2024 06:25:05 -0700 (PDT)
-Received: from localhost.localdomain ([187.120.159.46])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f031c267sm39648455ad.83.2024.08.17.06.25.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Aug 2024 06:25:05 -0700 (PDT)
-From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-To: scott@spiteful.org,
-	bhelgaas@google.com,
-	ilpo.jarvinen@linux.intel.com,
-	wsa+renesas@sang-engineering.com,
-	lukas@wunner.de
-Cc: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] PCI: hotplug: check the return of hotplug bridge
-Date: Sat, 17 Aug 2024 10:24:51 -0300
-Message-ID: <20240817132452.8731-1-trintaeoitogc@gmail.com>
-X-Mailer: git-send-email 2.46.0
+        d=1e100.net; s=20230601; t=1723901309; x=1724506109;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w46CrKlXMkRvz2M8MkwLOk4U12EJHFtMw4PTZouv2zI=;
+        b=enr4pnyO5jAaX5JVp8bP8VnfSlKq6hjJu108YzAkejXTYORnqO+IHlHChljV4/ohpH
+         HeiizJk6Bu1DrMTXr1WPjnQeeWm9ndH0/ZbkorpILfObzCrq5ww02WOgK6scDQY9YvSL
+         /fLhH2N2GBlH6ydSPorOW53/2OOeLR1KNLWusY5fnaSTG0ev8hFE36E7oi/qWLreFspq
+         19YLoW2TXNRmBx8skg7fB9y05CUu1m/TYN2fhe8QAcBnJyh9hAig20Jh3ejCKhQGZCPs
+         ma9bkn9y6ehtZWA2RiGpMLcehy8jFGs23zeKKSJJ6oxXlMqNduGvMSKFthEuFEqsqf7H
+         fCZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVE0ELAlfXStXag3K7EfHYjH1YT3u/fOA3PWgMDcCK8+c1YW0CctZXm5cEVHZzeZxIvkZ0Kn2ilIPZqc6zwJ8Hw85CyO2YUupPE0cOcdr8zBOWieEg29AyLoIuJb4CA8g/OWtkfwQHNUD79Fl2hAH/aAJ6buJb0L829KALCzp7Rp2wZXwdTtObSJi0=
+X-Gm-Message-State: AOJu0Yy2H1ubhTmo+qxbows1kFM21yzT4CIkbHKWa1Imwn0iaEEfAS2G
+	C8qPArPr71e/i3O7ZdS+gc2QYBHV+uOGCKJ885GgHWFa9hHa2rZVF6C6UZf7+1ZKO5NUsdS2RFs
+	c6NYpcVACcsTNa0AZDJt2WOleAUc=
+X-Google-Smtp-Source: AGHT+IGkwUrq5cvtbg90rMni5kEuQpodzfRuOoYIc/r9GruV5MgAJHDJJ62APn+dxgexiydViJ0S2Xi0JWt3Vguy0T0=
+X-Received: by 2002:a17:90a:ad93:b0:2c9:b72:7a1f with SMTP id
+ 98e67ed59e1d1-2d3e00f324cmr5497946a91.28.1723901309226; Sat, 17 Aug 2024
+ 06:28:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240808221138.873750-1-ojeda@kernel.org> <20240808221138.873750-4-ojeda@kernel.org>
+ <20240817-heavy-dancing-whale-6ae13d@lindesnes>
+In-Reply-To: <20240817-heavy-dancing-whale-6ae13d@lindesnes>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 17 Aug 2024 15:28:16 +0200
+Message-ID: <CANiq72n60=dKdsu0X3CWLaCkEhnAHMuwRZZpwhiJMGkt0aGyUw@mail.gmail.com>
+Subject: Re: [PATCH 3/6] kbuild: rust: re-run Kconfig if the version text changes
+To: Nicolas Schier <nicolas@fjasle.eu>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In some pci drivers, when the pci bridge is added if the process return an error,
-the drivers don't check this and continue your execute normally.
-Then, this patch change this drivers for check return of pci_hp_add_bridge(), and
-if has an error, then the drivers call goto lable , free your mutex and return the
-error for your caller.
+On Sat, Aug 17, 2024 at 2:58=E2=80=AFPM Nicolas Schier <nicolas@fjasle.eu> =
+wrote:
+>
+> If you send a v2, mind you consider reformatting so that this comment
+> block stays <=3D 80 chars?
 
-Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
----
- drivers/pci/hotplug/cpci_hotplug_pci.c | 7 +++++--
- drivers/pci/hotplug/cpqphp_pci.c       | 9 ++++++---
- drivers/pci/hotplug/ibmphp_core.c      | 8 ++++++--
- drivers/pci/hotplug/pciehp_pci.c       | 7 +++++--
- drivers/pci/hotplug/shpchp_pci.c       | 7 +++++--
- drivers/pci/probe.c                    | 9 ++++++---
- 6 files changed, 33 insertions(+), 14 deletions(-)
+Sure.
 
-diff --git a/drivers/pci/hotplug/cpci_hotplug_pci.c b/drivers/pci/hotplug/cpci_hotplug_pci.c
-index 6c48066acb44..2d3256795eab 100644
---- a/drivers/pci/hotplug/cpci_hotplug_pci.c
-+++ b/drivers/pci/hotplug/cpci_hotplug_pci.c
-@@ -269,8 +269,11 @@ int cpci_configure_slot(struct slot *slot)
- 	parent = slot->dev->bus;
- 
- 	for_each_pci_bridge(dev, parent) {
--		if (PCI_SLOT(dev->devfn) == PCI_SLOT(slot->devfn))
--			pci_hp_add_bridge(dev);
-+		if (PCI_SLOT(dev->devfn) == PCI_SLOT(slot->devfn)) {
-+			ret = pci_hp_add_bridge(dev);
-+			if (ret)
-+				goto out;
-+		}
- 	}
- 
- 	pci_assign_unassigned_bridge_resources(parent->self);
-diff --git a/drivers/pci/hotplug/cpqphp_pci.c b/drivers/pci/hotplug/cpqphp_pci.c
-index e9f1fb333a71..5f6ce2c6385a 100644
---- a/drivers/pci/hotplug/cpqphp_pci.c
-+++ b/drivers/pci/hotplug/cpqphp_pci.c
-@@ -70,7 +70,7 @@ static void __iomem *detect_HRT_floating_pointer(void __iomem *begin, void __iom
- int cpqhp_configure_device(struct controller *ctrl, struct pci_func *func)
- {
- 	struct pci_bus *child;
--	int num;
-+	int num, ret = 0;
- 
- 	pci_lock_rescan_remove();
- 
-@@ -97,7 +97,10 @@ int cpqhp_configure_device(struct controller *ctrl, struct pci_func *func)
- 	}
- 
- 	if (func->pci_dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
--		pci_hp_add_bridge(func->pci_dev);
-+		ret = pci_hp_add_bridge(func->pci_dev);
-+		if (ret)
-+			goto out;
-+
- 		child = func->pci_dev->subordinate;
- 		if (child)
- 			pci_bus_add_devices(child);
-@@ -107,7 +110,7 @@ int cpqhp_configure_device(struct controller *ctrl, struct pci_func *func)
- 
-  out:
- 	pci_unlock_rescan_remove();
--	return 0;
-+	return ret;
- }
- 
- 
-diff --git a/drivers/pci/hotplug/ibmphp_core.c b/drivers/pci/hotplug/ibmphp_core.c
-index 197997e264a2..73a593c2993b 100644
---- a/drivers/pci/hotplug/ibmphp_core.c
-+++ b/drivers/pci/hotplug/ibmphp_core.c
-@@ -663,6 +663,7 @@ static int ibm_configure_device(struct pci_func *func)
- 	int num;
- 	int flag = 0;	/* this is to make sure we don't double scan the bus,
- 					for bridged devices primarily */
-+	int ret = 0;
- 
- 	pci_lock_rescan_remove();
- 
-@@ -690,7 +691,10 @@ static int ibm_configure_device(struct pci_func *func)
- 		}
- 	}
- 	if (!(flag) && (func->dev->hdr_type == PCI_HEADER_TYPE_BRIDGE)) {
--		pci_hp_add_bridge(func->dev);
-+		ret = pci_hp_add_bridge(func->dev);
-+		if (ret)
-+			goto out;
-+
- 		child = func->dev->subordinate;
- 		if (child)
- 			pci_bus_add_devices(child);
-@@ -698,7 +702,7 @@ static int ibm_configure_device(struct pci_func *func)
- 
-  out:
- 	pci_unlock_rescan_remove();
--	return 0;
-+	return ret;
- }
- 
- /*******************************************************
-diff --git a/drivers/pci/hotplug/pciehp_pci.c b/drivers/pci/hotplug/pciehp_pci.c
-index 65e50bee1a8c..0c4873c2ef3c 100644
---- a/drivers/pci/hotplug/pciehp_pci.c
-+++ b/drivers/pci/hotplug/pciehp_pci.c
-@@ -58,8 +58,11 @@ int pciehp_configure_device(struct controller *ctrl)
- 		goto out;
- 	}
- 
--	for_each_pci_bridge(dev, parent)
--		pci_hp_add_bridge(dev);
-+	for_each_pci_bridge(dev, parent) {
-+		ret = pci_hp_add_bridge(dev);
-+		if (ret)
-+			goto out;
-+	}
- 
- 	pci_assign_unassigned_bridge_resources(bridge);
- 	pcie_bus_configure_settings(parent);
-diff --git a/drivers/pci/hotplug/shpchp_pci.c b/drivers/pci/hotplug/shpchp_pci.c
-index 36db0c3c4ea6..7db0ce966f1d 100644
---- a/drivers/pci/hotplug/shpchp_pci.c
-+++ b/drivers/pci/hotplug/shpchp_pci.c
-@@ -48,8 +48,11 @@ int shpchp_configure_device(struct slot *p_slot)
- 	}
- 
- 	for_each_pci_bridge(dev, parent) {
--		if (PCI_SLOT(dev->devfn) == p_slot->device)
--			pci_hp_add_bridge(dev);
-+		if (PCI_SLOT(dev->devfn) == p_slot->device) {
-+			ret = pci_hp_add_bridge(dev);
-+			if (ret)
-+				goto out;
-+		}
- 	}
- 
- 	pci_assign_unassigned_bridge_resources(bridge);
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index b14b9876c030..2418998820dc 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -3363,9 +3363,10 @@ int pci_hp_add_bridge(struct pci_dev *dev)
- 		if (!pci_find_bus(pci_domain_nr(parent), busnr))
- 			break;
- 	}
-+
- 	if (busnr-- > end) {
- 		pci_err(dev, "No bus number available for hot-added bridge\n");
--		return -1;
-+		return -ENODEV;
- 	}
- 
- 	/* Scan bridges that are already configured */
-@@ -3380,8 +3381,10 @@ int pci_hp_add_bridge(struct pci_dev *dev)
- 	/* Scan bridges that need to be reconfigured */
- 	pci_scan_bridge_extend(parent, dev, busnr, available_buses, 1);
- 
--	if (!dev->subordinate)
--		return -1;
-+	if (!dev->subordinate) {
-+		pci_err(dev, "No dev subordinate\n");
-+		return -ENODEV;
-+	}
- 
- 	return 0;
- }
--- 
-2.46.0
+> Do we already support rust in external kernel modules?  In top-level
 
+If you mean out-of-tree modules, then yeah, they should generally work
+(at least I test the build with a trivial one regularly, but perhaps
+it is missing something), although they are not the highest priority.
+
+> Makefile's oot-kmod 'prepare' target we check that the compiler
+> (version) is the same as when the kernel itself was built.  If rust
+> modules are supported, adding a similar check might be helpful.
+
+That is a good point, I will take a look.
+
+> Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
+
+Thanks!
+
+Cheers,
+Miguel
 
