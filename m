@@ -1,236 +1,166 @@
-Return-Path: <linux-kernel+bounces-290694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D72C8955784
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:42:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 612FE955786
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62E9D1F21AF2
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 11:42:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FDA9B217F6
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 11:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7C914A4E1;
-	Sat, 17 Aug 2024 11:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8C714A4E1;
+	Sat, 17 Aug 2024 11:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="mpFlwg5V"
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2075.outbound.protection.outlook.com [40.92.103.75])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="VyYjgXp8"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C60B13BC35;
-	Sat, 17 Aug 2024 11:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723894962; cv=fail; b=crse8Yhy9oyz+0WziAmMa/+N33Y7BJOKBMUWfwwihD+cHBiB9oJHUrOA09x3j8uM5Io5NyKNIz/kwojPUF4/PzdSMOYD9w/d/T6XwbPdrj4jlPZ2FexZPX5ks5RiAdGkZLF8HXOzuWYsQAP+9IF+kovfiC38Anr2Cc6DPliLr0g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723894962; c=relaxed/simple;
-	bh=/J02cFirQfu/9P80QJLSVfhrMXwvO3FytN9OmsIca8Y=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=D4t2Mvr7Tw3QqV0+cewuewnEZddIL+UfeXfhWnrSEVRvsuqMD2dEyvV7hJpuuMPbdLh200c+2tYqBOFbIuKsIbEErBC6OX8WKo+pUUJ0IafF+SYHhKvbhcqvk6DEwjAZX1zLpQD01XIVtThF5J78lqLD36yE6Jlio/45wdCVBmg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=mpFlwg5V; arc=fail smtp.client-ip=40.92.103.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ue3i+cUYgb1Cu/4ZNRQ/Kwqt0YKlR86JFjL2F6YCxMl/WJyO7ds2zKKh0ClIDfQPFvV8CPh0Fmda8M8wgwcDXQHppjyGpcf+jBMr2NeiybgLDavr9O4SjtJDu+O1GwM3eecJIRtvLy9dMbBhMs46uTDRBegcqwaRXyRwptCLvBaj5Xfr/hPLahl1IuK8MyD+v+oH0s6uwfFHeFXH8yS5ZlXXteCldW2KFoouw6NttVONTfj4XRYDz2+twH5bIP7pHf1Nh8pTQDalgQZ8JtEEl3UxWzxRkHV58pmu5eTVDTHHPFXD/IiwJUpZqL1bSN0s0hv0hKwXCqZdmKCYWh9jBw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zZZavzphr3shhraXMTActElLkw7ZbEzpEF4Qxu1ZaD8=;
- b=O9OQIxKc2vO+fTcrZd6miGMbqze2ORyymjEqpMezrfHGwZGjizwNImyIg1IuFY9d/H9uf+vW7zuqecWqf4CS+zl/nz+MryCWeEQbsNsIt1nG2mEE1QwgYESSxIcTXORNqHRDiYaPA9A5HpI1TM84m5apLCl4kXwe6yRRXOifCjCKNRI7zbOmBeWjnDrf8WJhADNW+RgcBS1KAjKoonGm7vEA1PkDzW0FRwE1q085ECpw2EmNsScIymL28OB1iubTgHOjzFZUfWm/iHjwQjyJKH61pyyyFWPL25qf56aK7PSUObPuyLMpOPWj3Rvz3ktsFbST7mJ/WM0nK2qVHROk4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zZZavzphr3shhraXMTActElLkw7ZbEzpEF4Qxu1ZaD8=;
- b=mpFlwg5Vz0PSmTLWrCFn8iXvhGvjsS+m1aZ5nTEIbedY4/cGkuxs8kj3k3KIyfm/fT8ftnd3Y9Rlnna7iBcivvjyCEwbSp2XU18SNiyyI6/niYp1DrGMousJknQwzHj0sRCPtCtb6EcZJq7YvurS1alG1Ed+S8i0CyjLb8rRlhZi331+gezY0DBP9gC204zRuIWDhiaHU7rftPzRQUc2WU3zBQzIQUTk4OqUAD79i76z4WGwh22f4FExHRPy6btq5SaZz2WKRl8zgbnef0/F5sw4Owz1goWV0lu+NS9IeV1o5WGY8hriHEKiFERfiaFiXCQF4tbPr0tFRIYV51uT9A==
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
- PN2P287MB0673.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:15b::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7875.20; Sat, 17 Aug 2024 11:42:34 +0000
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a%6]) with mapi id 15.20.7875.016; Sat, 17 Aug 2024
- 11:42:34 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: "tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
-	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina
-	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>,
-	=?iso-8859-1?Q?Thomas_Wei=DFschuh?= <thomas@t-8ch.de>
-CC: Orlando Chamberlain <orlandoch.dev@gmail.com>, Kerem Karabay
-	<kekrby@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: [PATCH v5 0/10] Touch Bar support for T2 Macs
-Thread-Topic: [PATCH v5 0/10] Touch Bar support for T2 Macs
-Thread-Index: AQHa8JqMhaHTVqCfcEyEHqSqQiXxJg==
-Date: Sat, 17 Aug 2024 11:42:34 +0000
-Message-ID: <D84FFA4A-3651-4036-8230-41EECDC8FD31@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:
- [MPxLKLaE3J+hVU9RBjxnc51qrzwSgkHRzWCUvNXzpXZ6ABnKMbmbiJWp1aB5nrK5TKEgiOBbaJ0=]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN2P287MB0673:EE_
-x-ms-office365-filtering-correlation-id: c1c5ccb0-7f79-4ffa-70cf-08dcbeb1af69
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|15080799003|8060799006|19110799003|440099028|3412199025|4302099013|102099032|1602099012;
-x-microsoft-antispam-message-info:
- 4tPquo5zlsnDpwQx6WO0qeogagxJmF5lRToryHjPr9BiwT86nXrE/DS5jEXtgyyQIYKNSr/23f5KFQlPOpFKf7X5tLISwmfC/HOGsx9o1LBeTePwEATl3aj40u+DxjEDZSsAug4yQ693Lhpw4/B2a5xOY7ewYsWZh37EKurhU+rQtRIPaRBoRA4JNX3Gk9AqLyKBR5cqyt5v4NPwEZVbjF71Kbrx/VMXN/eaNK0lokX9fOhTyevv5LKB5HKrWEa+NcWY7y97l9rHFmvmguwXZSek2+w9F/+LMEGqKbrcXp2IvsuAQgm9wGHIOCTQaDwZtAQks+mnrHHSEOGyVlTyKSpJGsN5SYWv5osPK430LrSf1ZBj/it5PsZty0E/cfKF5zvGR2nEREDje/XAmGxEjbhaIzGp0KKpEKdYakkPF59ynEoy3qjOVAbQ9UC+ReaRhmuvA2+ySsCCFuD4sPW5Ed3oj2FHxEgm9V/HVMtr6CXTBWXXyYAjArvtMctfKKdLN0J03pm41ZzDv004byslVTdV850fWuP+ni76ai18UMMNI/VbXJnuSH92HdO8CkRfwukysoYMzIX+HdYWH4sbFWW5yxV/jVIATXBsvLRppxUHJoqzI6Gc1s/lIzYo1mypVKUryNupZza/UzRktDdXCnFde3baBx02aaGE0WwZ6/c3b1bGpcGNQWYyQKURlmmPsDG8gfztslfHGgYbOJsLypyEpaNR5dg8JQ9Bv4PigXsy5YlIG1Gc6v019XSXf0RB7wEOxhl13EdhvQiMi8psL3CVkq34dTycCqpZ2szPexI=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?LxSjtwyLO8N80rVNCGxBJJ6V5zlre3nGEVCe/knsv4iZnxM+fJqUJOHSqz?=
- =?iso-8859-1?Q?Rln7iWk3G+k6aF1M78DjDzu+modkaawuRjsSEasncnu7OfjQI+CZpxN/lI?=
- =?iso-8859-1?Q?yk2dyBcnQxnHiqa047CpybFbhLT9lKJPLUdcu1w0eIz6Y/1fCsIrxyTysq?=
- =?iso-8859-1?Q?E5iTyxoMiI9YqC+Bj2dHkVGTVdsl2E1xnR4oTpIgWbYIVTAEo8Ti8q4oqG?=
- =?iso-8859-1?Q?PQTmE3PG11Habvf6UzjB7PQLkozohh2zzT0tIIJDKKb+zxcgm4ja+5ffk5?=
- =?iso-8859-1?Q?01SawkH+dLBo2Xo5JyMsk7AaYCoeK1m/sOe4m1+SIbokGxkwO/KlbOM4AI?=
- =?iso-8859-1?Q?P0XZRHF7gfhWNOrWWDzLLit8q5Pw9HQ2+hY1ih4+rLDaY79fNw9Txjy3J2?=
- =?iso-8859-1?Q?swbexn2y2cqsFtgTBUEKn0/d/ooBDsizQeWtqPFwRUOC4joSUufvUdj4zW?=
- =?iso-8859-1?Q?ttpoga+JynQlFV3QvmlvjlOpEzbGfNjT5BYLU2Z6rXxjSl5j3H8nldzcbw?=
- =?iso-8859-1?Q?Y4dIVAiJa16D/MxrJajJ5+xk0t5Mqu9MUYAZEZrqecJe0SThx5fOPJZVFn?=
- =?iso-8859-1?Q?kgGPur4eYpKdEmpUfzX4jYeigkh85SyFxxkWF53pDr0a5AA69ID2Gc1xqh?=
- =?iso-8859-1?Q?3AElK9jXw/LmkSyn5brELgGZhfeTkMhNzz9yGiU3fRMVIgXKIy0SEna0FK?=
- =?iso-8859-1?Q?nWirl+/P6E58/w/IBlS20+UX+YYULm9YgMxPip2emhTKtlEmskScGD7WzM?=
- =?iso-8859-1?Q?OHCCGl97IV6BzlizB5CRywrHh7nHdGE4OUXObdsh1dFeXNxqiG6yPT9LPw?=
- =?iso-8859-1?Q?3QdIVgDVS2r7Qt3APEJEpeUVSrCdFk58SvsxCeNKIvaYfw6TUL4EIfFj6o?=
- =?iso-8859-1?Q?VyrQVpfnDS2kuUBI56WuXDcw1oymqbv7LxMjge15wnmmgTfh+VDu9LgNI6?=
- =?iso-8859-1?Q?TCq5CRawvJCA6mMIwd0Rno/aNYYCAOtfN/OWA9PX6N4SV3AhqnWIv3garU?=
- =?iso-8859-1?Q?4kdnJJOMnESFmpyvjfSLFP6CcFj+bCEfOQ1crs0aiXt8OwVpWpjVegcSXV?=
- =?iso-8859-1?Q?pSyqrREa676eIH6cXw5aGhkf3fRh1m2nyp+8L+V7qjp/iKfo+L+saeQrbk?=
- =?iso-8859-1?Q?3RbsTUTobwiLdEFmyRixU+8V2F5GpithsZNJQ9Rz9ThnqPX+E7OoVLiAnC?=
- =?iso-8859-1?Q?Y6oA66QNDr/1aCtXOp5KbqNBA/i92a2FrBATr7qfmZ4SkawyhhiuGQkkjo?=
- =?iso-8859-1?Q?adKyFaHfrjdhbSvAm8GWyCNRJbWbyc8u0ou3wlLgPSrk0wytNEA8d4cwJ2?=
- =?iso-8859-1?Q?JTXz4PDMGPWlZzej8t+S4sYKVVgfadrezBtBX9/yQ6Gxl0AdWU/8ysDtTn?=
- =?iso-8859-1?Q?GSY4j2TMpN?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <17539F3FE808BC418F3FB14817F81A75@INDP287.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE0313BC35;
+	Sat, 17 Aug 2024 11:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723894972; cv=none; b=aHmku645xACz7OTjloS4ZvEbNRCkJFYAhfvMab5X9cwbvQ90PZbLN1HHHZ2e+DWj5vwYX9Qas+4AjkrmYu7DAETjAkxHXUjyfj6kvQifaCxp65BhLJLZJop8ToVszi0xjDehdKvHKKWGtD7kRMLJVVlVMyGGoC9plfG720qfEp4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723894972; c=relaxed/simple;
+	bh=rxFQbgsli5u5X3yvibgECN7D5xxmrWak8vejPh2RtWg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=shuDJ/JiLSMh8sQVQHEkQQaxLjZMwDAgjkwWKXsZQa+lKXHa5IkElb4gmAno8OX+5qReDHVZ1FyTHA0mAQ5GavnqYKmbjFwvj8iPLgLxotpVFsHDNzcReLcnB8IXWbEZTdf1PVyAF8lYBSjvgMJUPKNh5tb7F0SluktksTzPJtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=VyYjgXp8; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=odtZsN2r31c6Y4mLYHFwJQ8Ut4xfX0epn4tT7wnEwSo=; b=VyYjgXp82jchU/02GzL5t+NqEy
+	CTQKSDso4x1pmwDO4AsDos+iJrE5U5WK8wAK80b7d/Qyu2/05+V5lGb/Yrh3pbfgO+tRwDVZbPOgB
+	92MIiunCPIu2AyvVmVvP5ps6pBiK1zLRk/ac8L10yi1z6I/Elnu76P1CTjS5/3ZKC449dulFhow3h
+	xWhMqBalZ7ZG+oOp6HWp0qdjOn4mS39WedXUVa1cBkVtQicWVTq/++9KkmkvWJhV3vTkIMHgqp1qj
+	AlQygiJ4MHPnTbAXh+2XeWNIAafdHMYVkebpVNiEIcfV5YwUrRBqYgsHagm7xkJYBIKJAKRHj4Hkx
+	6dQTmXpA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:57076)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sfHpQ-0006pF-13;
+	Sat, 17 Aug 2024 12:42:40 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sfHpU-00056a-SJ; Sat, 17 Aug 2024 12:42:44 +0100
+Date: Sat, 17 Aug 2024 12:42:44 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+Cc: Ronnie.Kunin@microchip.com, netdev@vger.kernel.org, davem@davemloft.net,
+	kuba@kernel.org, andrew@lunn.ch, horms@kernel.org,
+	hkallweit1@gmail.com, richardcochran@gmail.com,
+	rdunlap@infradead.org, Bryan.Whitehead@microchip.com,
+	edumazet@google.com, pabeni@redhat.com,
+	linux-kernel@vger.kernel.org, UNGLinuxDriver@microchip.com
+Subject: Re: [PATCH net-next V3 3/4] net: lan743x: Migrate phylib to phylink
+Message-ID: <ZsCMtARGCOLsbF9h@shell.armlinux.org.uk>
+References: <20240730140619.80650-1-Raju.Lakkaraju@microchip.com>
+ <20240730140619.80650-4-Raju.Lakkaraju@microchip.com>
+ <Zqj/Mdoy5rhD2YXx@shell.armlinux.org.uk>
+ <ZqtrcRfRVBR6H9Ri@HYD-DK-UNGSW21.microchip.com>
+ <Zqu3aHJzAnb3KDvz@shell.armlinux.org.uk>
+ <PH8PR11MB79655D0005E227742CBA1A8A95B22@PH8PR11MB7965.namprd11.prod.outlook.com>
+ <Zqyau+JjwQdzBNaI@shell.armlinux.org.uk>
+ <PH8PR11MB796562D6C8964A6B6A1CC7E595B92@PH8PR11MB7965.namprd11.prod.outlook.com>
+ <ZrUzkF8jj50ZgGhk@shell.armlinux.org.uk>
+ <Zr+OsygS+YRkRnL6@HYD-DK-UNGSW21.microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1c5ccb0-7f79-4ffa-70cf-08dcbeb1af69
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Aug 2024 11:42:34.0720
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB0673
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zr+OsygS+YRkRnL6@HYD-DK-UNGSW21.microchip.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hi Maintainers
+On Fri, Aug 16, 2024 at 11:08:59PM +0530, Raju Lakkaraju wrote:
+> Hi Russell King,
+> 
+> Thank you for quick response.
+> 
+> The 08/08/2024 22:07, Russell King (Oracle) wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> > 
+> > On Thu, Aug 08, 2024 at 08:23:38PM +0000, Ronnie.Kunin@microchip.com wrote:
+> > > We looked into an alternate way to migrate our lan743x driver from phylib to phylink continuing to support our existing hardware out in the field, without using the phylib's fixed-phy approach that you opposed to, but without modifying the phylib framework either.
+> > > While investigating how to implement it we came across this which Raju borrowed ideas from: https://lore.kernel.org/linux-arm-kernel/YtGPO5SkMZfN8b%2Fs@shell.armlinux.org.uk/ . He is in the process of testing/cleaning it up and expects to submit it early next week.
+> > 
+> > That series died a death because it wasn't acceptable to the swnode
+> > folk. In any case, that's clearly an over-complex solution for what is
+> > a simple problem here.
+> > 
+> > The simplest solution would be for phylink to provide a new function,
+> > e.g.
+> > 
+> > int phylink_set_fixed_link(struct phylink *pl,
+> >                            const struct phylink_state *state)
+> > {
+> >         const struct phy_setting *s;
+> >         unsigned long *adv;
+> > 
+> >         if (pl->cfg_link_an_mode != MLO_AN_PHY || !state ||
+> >             !test_bit(PHYLINK_DISABLE_STOPPED, &pl->phylink_disable_state))
+> >                 return -EINVAL;
+> > 
+> >         s = phy_lookup_setting(state->speed, state->duplex,
+> >                                pl->supported, true);
+> >         if (!s)
+> >                 return -EINVAL;
+> > 
+> >         adv = pl->link_config.advertising;
+> >         linkmode_zero(adv);
+> >         linkmode_set_bit(s->bit, adv);
+> >         linkmode_set_bit(ETHTOOL_LINK_MODE_Autoneg_BIT, adv);
+> > 
+> >         pl->link_config.speed = state->speed;
+> >         pl->link_config.duplex = state->duplex;
+> >         pl->link_config.link = 1;
+> >         pl->link_config.an_complete = 1;
+> > 
+> >         pl->cfg_link_an_mode = MLO_AN_FIXED;
+> >         pl->cur_link_an_mode = pl->cfg_link_an_mode;
+> > 
+> >         return 0;
+> > }
+> > 
+> > You can then call this _instead_ of attaching a PHY to switch phylink
+> > into fixed-link mode with the specified speed and duplex (assuming
+> > they are supported by the MAC.)
+> > 
+> > Isn't this going to be simpler than trying to use swnodes that need
+> > to be setup before phylink_create() gets called?
+> > 
+> 
+> Your suggestion seems to be working well for us. I'm currently testing it on
+> different boards and checking for corner cases.
+> I plan to submit it for code review next week.
+> 
+> Quick question: Should I submit your suggested code along with our patches, or
+> will you be submitting it separately?
 
-The Touch Bars found on x86 Macs support two USB configurations: one
-where the device presents itself as a HID keyboard and can display
-predefined sets of keys, and one where the operating system has full
-control over what is displayed.
+Note the point in my signature, which means I won't be doing very much
+likely for through the rest of August and - given the timeline I expect,
+nothing at all through much of September.
 
-This patch series adds support for both the configurations.
+So, please include it as a separate patch with my authorship. You'll
+need to add a prototype to linux/phylink.h for it as well. I'm giving
+you explicit permission to add my sign-off for such a patch. Thanks.
 
-The hid-appletb-bl driver adds support for the backlight of the Touch Bar.
-This enables the user to control the brightness of the Touch Bar from
-userspace. The Touch Bar supports 3 modes here: Max brightness, Dim and Off=
-.
-So, daemons, used to manage Touch Bar can easily manage these modes by writ=
-ing
-to /sys/class/backlight/appletb_backlight/brightness. It is needed by both =
-the
-configurations of the Touch Bar.
+-- 
+*** please note that I probably will only be occasionally responsive
+*** for an unknown period of time due to recent eye surgery making
+*** reading quite difficult.
 
-The hid-appletb-kbd adds support for the first (predefined keys) configurat=
-ion.
-There are 4 modes here: Esc key only, Fn mode, Media keys and No keys.
-Mode can be changed by writing to /sys/bus/hid/drivers/hid-appletb-kbd/<dev=
->/mode
-This configuration is what Windows uses with the official Apple Bootcamp dr=
-ivers.
-
-Rest patches support the second configuration, where the OS has full contro=
-l
-on what's displayed on the Touch Bar. It is achieved by the patching the
-hid-multitouch driver to add support for touch feedback from the Touch Bar
-and the appletbdrm driver, that displays what we want to on the Touch Bar.
-This configuration is what macOS uses.
-
-The appletbdrm driver is based on the similar driver made for Windows by
-imbushuo [1].
-
-Currently, a daemon named tiny-dfr [2] is being used to display function ke=
-ys
-and media controls using the second configuration for both Apple Silicon an=
-d
-T2 Macs.
-
-A daemon for the first configuration is being developed, but that's a users=
-pace
-thing.
-
-[1]: https://github.com/imbushuo/DFRDisplayKm
-[2]: https://github.com/WhatAmISupposedToPutHere/tiny-dfr
-
-v2:
-  1. Cleaned up some code in the hid-appletb-kbd driver.
-  2. Fixed wrong subject in drm/format-helper patch.
-  3. Fixed Co-developed-by wrongly added to hid-multitouch patch.
-
-v3:
-  1. Fixed key mapping for Function keys in hid-appletb-kbd driver.
-
-v4:
-  1. Added support for fn key toggle in the hid-appletb-kbd driver.
-
-v5:
-  1. Do required changes to hid-appletb-bl as requested by upstream.
-
-Aditya Garg (1):
-  HID: hid-appletb-kbd: add support for fn toggle between media and
-    function mode
-
-Kerem Karabay (9):
-  HID: hid-appletb-bl: add driver for the backlight of Apple Touch Bars
-  HID: hid-appletb-kbd: add driver for the keyboard mode of Apple Touch
-    Bars
-  HID: multitouch: support getting the contact ID from
-    HID_DG_TRANSDUCER_INDEX fields
-  HID: multitouch: support getting the tip state from HID_DG_TOUCH
-    fields
-  HID: multitouch: take cls->maxcontacts into account for devices
-    without a HID_DG_CONTACTMAX field too
-  HID: multitouch: allow specifying if a device is direct in a class
-  HID: multitouch: add device ID for Apple Touch Bars
-  drm/format-helper: Add conversion from XRGB8888 to BGR888 conversion
-  drm/tiny: add driver for Apple Touch Bars in x86 Macs
-
- .../ABI/testing/sysfs-driver-hid-appletb-kbd  |  13 +
- MAINTAINERS                                   |   6 +
- drivers/gpu/drm/drm_format_helper.c           |  54 ++
- .../gpu/drm/tests/drm_format_helper_test.c    |  81 +++
- drivers/gpu/drm/tiny/Kconfig                  |  12 +
- drivers/gpu/drm/tiny/Makefile                 |   1 +
- drivers/gpu/drm/tiny/appletbdrm.c             | 624 ++++++++++++++++++
- drivers/hid/Kconfig                           |  22 +
- drivers/hid/Makefile                          |   2 +
- drivers/hid/hid-appletb-bl.c                  | 207 ++++++
- drivers/hid/hid-appletb-kbd.c                 | 432 ++++++++++++
- drivers/hid/hid-multitouch.c                  |  60 +-
- drivers/hid/hid-quirks.c                      |   8 +-
- include/drm/drm_format_helper.h               |   3 +
- 14 files changed, 1509 insertions(+), 16 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-driver-hid-appletb-kbd
- create mode 100644 drivers/gpu/drm/tiny/appletbdrm.c
- create mode 100644 drivers/hid/hid-appletb-bl.c
- create mode 100644 drivers/hid/hid-appletb-kbd.c
-
---=20
-2.43.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
