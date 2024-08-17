@@ -1,46 +1,48 @@
-Return-Path: <linux-kernel+bounces-290583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 968019555F7
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:06:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CABFB9555F9
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5D461C2148E
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:06:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B71FBB21A1B
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F55013C9A2;
-	Sat, 17 Aug 2024 07:06:10 +0000 (UTC)
-Received: from gollum.nazgul.ch (gollum.nazgul.ch [81.221.21.253])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E0113C9A2;
+	Sat, 17 Aug 2024 07:07:48 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AD620E6;
-	Sat, 17 Aug 2024 07:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.221.21.253
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F2A20E6;
+	Sat, 17 Aug 2024 07:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723878370; cv=none; b=HENWGVKQGR+cO2KRX+UXOiaDvLLyiQoEFtM0yhmWE6rH6qv5mCQLwyQhWOUcipl3EeSoW/LJbICv1MNR+hiwD9Yse3u93oCgdz3l2UTTKQkn7vd05W50trLCwbyom9bELm1VMOIGWkUPF2NeXan5DmVk01R3qQuXJiJW/mOnC20=
+	t=1723878468; cv=none; b=qeJObDmZ+y2agOMsD3uNW2qVSdcHPukC3JVlA6UtZROAP9IG1yyRinqBVj6O+fBSckTgZ2wrMuu4sDXJz8sE/9fQScf/SUjylyBEnYs/Bj47HD6761C05880LV5xKZ9uyZ/aoDikCsLjDXc6aO8HcwD/qbNXmgp+ku7dkyZ/40A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723878370; c=relaxed/simple;
-	bh=IY547ZcpWtIPAEJC9DbRMzd7nGkJUZiA8PpUspOKts8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=hcIMi+vawErJG+sD4gPZk+/Om/ytGgPRnNnckhx6Q4IIfsGeYaYzbVs93dItseZ0hFQ/8Mj9LHzTEf6WR/KPHtfwAQomq8dxq1LCGFN62oh25+Ln8dnoonTxXMioGo/bp+rnwe+TVyUcZ94VERLwn/s63SYsPvHVYV7Mh56AbRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nazgul.ch; spf=pass smtp.mailfrom=nazgul.ch; arc=none smtp.client-ip=81.221.21.253
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nazgul.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nazgul.ch
-Received: from localhost (gollum.nazgul.ch [local])
-	by gollum.nazgul.ch (OpenSMTPD) with ESMTPA id 4c0366b7;
-	Sat, 17 Aug 2024 09:05:57 +0200 (CEST)
-Date: Sat, 17 Aug 2024 09:05:57 +0200
-From: Marcus Glocker <marcus@nazgul.ch>
-To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>
-Subject: [PATCH v4 0/6] Add initial DTS for Samsung Galaxy Book4 Edge
-Message-ID: <3lmcfffifsg6v3ljzxfbk25ydh6446phdff7w75k6gwoyw3jkw@ryc66frtyksk>
+	s=arc-20240116; t=1723878468; c=relaxed/simple;
+	bh=e0zG4knXbURuHciSIhE0VY4dQyzqlKSPYHfzg3PFP3g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jCyI28Q3kbjxQ3FdpcNjTABL4sLSXCtZsPf/jIt4kVZF1rNBUt6Eo8WZEV96/yCoeum50dYA80B9tSw0/csIxO/bHYJsItpxTRVvyRo4OEyd+ph7GdwzJ37LB8oc34gwxA9uA2gVAsk+PDQzBpSyslnfPXMBx+h+PXJwLXeduF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sfDOn-005IJl-1x;
+	Sat, 17 Aug 2024 15:07:39 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 17 Aug 2024 15:07:38 +0800
+Date: Sat, 17 Aug 2024 15:07:38 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: davem@davemloft.net, kees@kernel.org, gustavoars@kernel.org,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] crypto: chacha20poly1305 - Annotate struct
+ chachapoly_ctx with __counted_by()
+Message-ID: <ZsBMOjw4LosxwH9y@gondor.apana.org.au>
+References: <20240805221129.2644-2-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,46 +51,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240805221129.2644-2-thorsten.blum@toblux.com>
 
-This DTS adds initial support for the Samsung Galaxy Book4 Edge laptop.
-Keyboard, Touch-pad, and UFS are working.  The Touch-screen needs further
-investigation, and is therefore disabled for now.
+On Tue, Aug 06, 2024 at 12:11:30AM +0200, Thorsten Blum wrote:
+> Add the __counted_by compiler attribute to the flexible array member
+> salt to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+> CONFIG_FORTIFY_SOURCE.
+> 
+> Reviewed-by: Kees Cook <kees@kernel.org>
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> ---
+> Changes in v2:
+> - Drop using struct_size_t() as suggested by Eric Biggers and Kees Cook
+> - Link to v1: https://lore.kernel.org/linux-kernel/20240805175237.63098-2-thorsten.blum@toblux.com/
+> ---
+>  crypto/chacha20poly1305.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changed from v3:
-- Improved commit messages.
-- Added missing clock line for ufs.
-- Removed invalid microamp lines for ufs.
-
-Changed from v2:
-- Squash Makefile patch to new DTS file patch.
-
-Changed from v1:
-- Provide the patch in the expected format.
-- Added missing bindings.
-- Removed sound node.
-- Changed regulator syntax to be consistent.
-- Changed touchscreen node comment, and removed false pin definition.
-- Rename ufshc@ to ufs@.
-
-Marcus Glocker (6):
-  dt-bindings: crypto: Add X1E80100 Crypto Engine
-  dt-bindings: phy: Add X1E80100 UFS
-  dt-bindings: ufs: Add X1E80100 UFS
-  arm64: dts: qcom: Add UFS node
-  dt-bindings: arm: Add Samsung Galaxy Book4 Edge
-  arm64: dts: qcom: Add Samsung Galaxy Book4 Edge DTS
-
- .../devicetree/bindings/arm/qcom.yaml         |   1 +
- .../crypto/qcom,inline-crypto-engine.yaml     |   1 +
- .../phy/qcom,sc8280xp-qmp-ufs-phy.yaml        |   2 +
- .../devicetree/bindings/ufs/qcom,ufs.yaml     |   2 +
- arch/arm64/boot/dts/qcom/Makefile             |   1 +
- .../x1e80100-samsung-galaxy-book4-edge.dts    | 959 ++++++++++++++++++
- arch/arm64/boot/dts/qcom/x1e80100.dtsi        |  71 ++
- 7 files changed, 1037 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/x1e80100-samsung-galaxy-book4-edge.dts
-
+Patch applied.  Thanks.
 -- 
-2.39.2
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
