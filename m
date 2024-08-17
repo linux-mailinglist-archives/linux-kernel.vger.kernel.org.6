@@ -1,114 +1,160 @@
-Return-Path: <linux-kernel+bounces-290715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45E039557C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 14:23:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EC6D9557C9
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 14:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77C761C21294
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 12:23:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D428B21B24
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 12:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17BE914D70B;
-	Sat, 17 Aug 2024 12:23:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBDB14EC4E;
+	Sat, 17 Aug 2024 12:26:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="S9J9SCMu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+eh/8WeN"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GeEYyhjJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EDD7DA97;
-	Sat, 17 Aug 2024 12:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E73145341;
+	Sat, 17 Aug 2024 12:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723897397; cv=none; b=QfpEtVrC/j/EAYrnCn3TAKdV5qsr4W2h1YOq1zgm+falZb/icaFxqP00k2YnlO1hnRuy0LZPh0xsIq6sgvEWk12P6j4l6b1H9tZ7XldMWMK7biMzdjcQp1lIyBASN6sAlCIQha8cZGSqIgxqbN+jc8wZNw9sOgjLK45rNt0FHOU=
+	t=1723897609; cv=none; b=sJA+Npzq6NnE+ZXopkNOz/wCkwdfAgqdDfYkxrif4n7N8A6oBcbQ/QSsV7sWvnw4DoDfJpzdcPlTCar7FEtZn6wrtrMAZ5YbYpUfLkZcrQVd6hLIZy/s4vRO4foHNpWF/rAvEWeM1bBU/Gito7G99kb1Z0VSZ3jsSzXK0hBOTIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723897397; c=relaxed/simple;
-	bh=dHWX1SdrRQ3+NHhcPCDipEoG6DZEdRjwQN6EQqRzqOM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NhDFp96dRtwLDKaDu2SNbKGwtsf8C+gbTfODV6JtOSS7Y6rLQFiacdOvXADJ6cJvL0qXEsHUFAKCh2UMpwT65Q7ae3Sne+7sewbJT0Hd8cS7PjI01B7t0V2lc9XpqPHmkVTS1cKY0nER5XAuj2Fg5Mtn+btMRZ1R5YXFve8VETc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=S9J9SCMu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+eh/8WeN; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723897388;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0pDMQ1csewAZjVObVNdm6EOoseVhQ4C3pzjLXmRpsEs=;
-	b=S9J9SCMuuU/XZZ9Zgq9rXGp0LHLod0TzKdK50rKTFm+70D83Xo70xE6BOliMWf8vUDV+pN
-	2cWedD/+6zJ6JqRjg/O1VQHMtgAf7WlqyMWgZnvJdlsv2uYoO1okMWm+1IDVJZDeNzSL0l
-	gTdYcHShtKMSzFZFS8C6tVUKLbt98id9mKfD59CN57wAjApFPaA0viieR5bxZQaTS5KR9w
-	F2dXH50CTBVStsH+WwZAnUZbjs5F3MJW+0oXtssITTtBgnRJp62GvFkiOQyzFx/IW1IvMD
-	MwQw61chA8n8WrHdc/c05oqdbaomYIhxPpQC6iO5tmKDpZcg3V+SWQ/qdR8Jzw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723897388;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0pDMQ1csewAZjVObVNdm6EOoseVhQ4C3pzjLXmRpsEs=;
-	b=+eh/8WeNOsV8xRg8hx0BakthH9HtsyLtHNbeMQgXSLYD3Nr8xBNf1YFV+5UT6TPkJSZLbX
-	gIbaClIXTPjESCDA==
-To: "Liang, Kan" <kan.liang@linux.intel.com>, Li Huafei
- <lihuafei1@huawei.com>, peterz@infradead.org, mingo@redhat.com
-Cc: acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, bp@alien8.de, dave.hansen@linux.intel.com,
- x86@kernel.org, hpa@zytor.com, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, Vince
- Weaver <vincent.weaver@maine.edu>
-Subject: Re: [PATCH] perf/x86/intel: Restrict period on Haswell
-In-Reply-To: <705dc2fe-7ab3-458a-9b5a-7ea0b30756b8@linux.intel.com>
-References: <87sev7nom4.ffs@tglx>
- <a42a3e35-2166-4539-930b-21ea0921e8d8@linux.intel.com>
- <87frr7nd28.ffs@tglx>
- <70657c5e-f771-456b-a5ac-3df590249288@linux.intel.com>
- <875xs2oh69.ffs@tglx>
- <166fdbdf-b24d-4267-b42d-f11348b87b1b@linux.intel.com>
- <87wmkhlk1l.ffs@tglx>
- <059d6217-10a5-4d2a-b639-90806c04a13b@linux.intel.com>
- <87plq9l5d2.ffs@tglx>
- <705dc2fe-7ab3-458a-9b5a-7ea0b30756b8@linux.intel.com>
-Date: Sat, 17 Aug 2024 14:23:07 +0200
-Message-ID: <87cym7l4no.ffs@tglx>
+	s=arc-20240116; t=1723897609; c=relaxed/simple;
+	bh=kF+/iTDYmVlm6ai7F9rWIiLZy5+GP0XM77EBVLSK+YE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bF/CMkL/rRDtlKi1S4kNY1csTUmyuAcR43+2x3JwdnbBQ+SvKw3M6v1w3Hn+6egjba9OK6UUy13ZzMPsqgBIVeZ0gdpvUvEg8QG1v2TFgkd+k/AhRAb5IubXlQs0n5ICs1yWIle4ZQv+UfvJ5FrnCUxaIzCimH9Rayn3Di2cTJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GeEYyhjJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65FD0C116B1;
+	Sat, 17 Aug 2024 12:26:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723897609;
+	bh=kF+/iTDYmVlm6ai7F9rWIiLZy5+GP0XM77EBVLSK+YE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GeEYyhjJBfjfIRyr0E4xLypY6cJv1IXQI8NZabxzxVEGbN/zSvPkihlKqt6eJO2lW
+	 ukFxDabb2DHehHuZ2ozeCEzJzlawKndvXVZN3tgpdpRyEEnCCwki1dj78ei2Xic4EV
+	 6k++xqXJoUi58+nxpRY5G7glyb2+goOREdahdLD+BzYHPqrXJEoH4b3QwAUaPDm2j9
+	 bss0C9bEK8GePIveFS2sQ9jq+5Ze5mfz7a44bBbrZ17N38jcdeiSWHEMx1dxfZNpE1
+	 0HBvLwVxLmQFGC641sPccTJCQbVzbihsdDshc7i3NWSB+syd3GkusZscMnQP9Dy53W
+	 VoS657/4yBWxw==
+Date: Sat, 17 Aug 2024 13:26:41 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Albrieux <jonathan.albrieux@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux@mainlining.org
+Subject: Re: [PATCH v3 2/4] iio: magnetometer: ak8975: Fix reading for
+ ak099xx sensors
+Message-ID: <20240817132641.2902418e@jic23-huawei>
+In-Reply-To: <20240809-ak09918-v3-2-6b036db4d5ec@mainlining.org>
+References: <20240809-ak09918-v3-0-6b036db4d5ec@mainlining.org>
+	<20240809-ak09918-v3-2-6b036db4d5ec@mainlining.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 16 2024 at 15:27, Kan Liang wrote:
-> On 2024-08-15 7:43 p.m., Thomas Gleixner wrote:
->
-> The HSW11 is also BDM11. It sounds like we need the trick from both bdw
-> and nhm.
->
-> How about this?
->
-> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-> index e8bd45556c30..42f557a128b9 100644
-> --- a/arch/x86/events/intel/core.c
-> +++ b/arch/x86/events/intel/core.c
-> @@ -4664,6 +4664,12 @@ static void nhm_limit_period(struct perf_event
-> *event, s64 *left)
->  	*left = max(*left, 32LL);
+On Fri, 09 Aug 2024 22:25:40 +0200
+Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas.czeman@mainlining.org> wrote:
+
+> Move ST2 reading with overflow handling after measurement data
+> reading.
+> ST2 register read have to be read after read measurment data,
+> because it means end of the reading and realease the lock on the data.
+> Remove ST2 read skip on interrupt based waiting because ST2 required to
+> be read out at and of the axis read.
+>=20
+> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas.czeman@mainlining=
+.org>
+This still needs a fixes tag to tell us when the bug was first
+introduced into the driver so that we know how far to back port it.
+
+One other comment inline.
+
+Thanks,
+
+Jonathan
+
+> ---
+>  drivers/iio/magnetometer/ak8975.c | 33 ++++++++++++++++-----------------
+>  1 file changed, 16 insertions(+), 17 deletions(-)
+>=20
+> diff --git a/drivers/iio/magnetometer/ak8975.c b/drivers/iio/magnetometer=
+/ak8975.c
+> index 6357666edd34..f8355170f529 100644
+> --- a/drivers/iio/magnetometer/ak8975.c
+> +++ b/drivers/iio/magnetometer/ak8975.c
+> @@ -692,22 +692,7 @@ static int ak8975_start_read_axis(struct ak8975_data=
+ *data,
+>  	if (ret < 0)
+>  		return ret;
+> =20
+> -	/* This will be executed only for non-interrupt based waiting case */
+> -	if (ret & data->def->ctrl_masks[ST1_DRDY]) {
+> -		ret =3D i2c_smbus_read_byte_data(client,
+> -					       data->def->ctrl_regs[ST2]);
+> -		if (ret < 0) {
+> -			dev_err(&client->dev, "Error in reading ST2\n");
+> -			return ret;
+> -		}
+> -		if (ret & (data->def->ctrl_masks[ST2_DERR] |
+> -			   data->def->ctrl_masks[ST2_HOFL])) {
+> -			dev_err(&client->dev, "ST2 status error 0x%x\n", ret);
+> -			return -EINVAL;
+> -		}
+> -	}
+> -
+> -	return 0;
+> +	return !data->def->ctrl_regs[ST1_DRDY];
 >  }
->
-> +static void hsw_limit_period(struct perf_event *event, s64 *left)
-> +{
-> +	nhm_limit_period(event, left);
-> +	bdw_limit_period(event, left);
-> +}
->  static void glc_limit_period(struct perf_event *event, s64 *left)
->  {
->  	if (event->attr.precise_ip == 3)
->
-> Do you plan to post the "limit" patch for HSW?
-> Or should I send the patch?
+> =20
+>  /* Retrieve raw flux value for one of the x, y, or z axis.  */
+> @@ -734,6 +719,20 @@ static int ak8975_read_axis(struct iio_dev *indio_de=
+v, int index, int *val)
+>  	if (ret < 0)
+>  		goto exit;
+> =20
+> +	/* Read out ST2 for release lock */
+> +	ret =3D i2c_smbus_read_byte_data(client, data->def->ctrl_regs[ST2]);
+> +	if (ret < 0) {
+> +		dev_err(&client->dev, "Error in reading ST2\n");
+> +		goto exit;
+> +	}
+> +
+> +	if (ret & (data->def->ctrl_masks[ST2_DERR] |
+> +		   data->def->ctrl_masks[ST2_HOFL])) {
+> +		dev_err(&client->dev, "ST2 status error 0x%x\n", ret);
+> +		ret =3D -EINVAL;
+> +		goto exit;
+> +	}
+> +
+>  	mutex_unlock(&data->lock);
+> =20
+>  	pm_runtime_mark_last_busy(&data->client->dev);
+> @@ -746,7 +745,7 @@ static int ak8975_read_axis(struct iio_dev *indio_dev=
+, int index, int *val)
+> =20
+>  exit:
+>  	mutex_unlock(&data->lock);
+> -	dev_err(&client->dev, "Error in reading axis\n");
+> +	dev_err(&client->dev, "Error in reading axis %d\n", ret);
 
-Go wild...
+In most of the paths above there is already a detailed print. I'd not bother
+adding the return value to this one.  It just adds noise to the patch.
+
+>  	return ret;
+>  }
+> =20
+>=20
+
 
