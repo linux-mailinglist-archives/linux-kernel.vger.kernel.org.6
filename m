@@ -1,55 +1,62 @@
-Return-Path: <linux-kernel+bounces-290834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 473E595594E
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 20:39:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8773D955953
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 20:51:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AFF51C20D0A
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 18:39:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EC5DB213C9
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 18:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179D1155393;
-	Sat, 17 Aug 2024 18:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D610015535A;
+	Sat, 17 Aug 2024 18:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="w+wcCaUf"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="Xf2TAjJu"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB485225A2;
-	Sat, 17 Aug 2024 18:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9FB78C92
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 18:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723919953; cv=none; b=HMC2kzQECUcQwIG9ZxBd2m4/jv8PzcpckTn6KcOtJ6dCYnVk1FEqsBaYFDTnmUdbgYvOqsk6pKrxUPP2zqUEtLwAUmY9dDT2DEq88PV7gRCag7hOj2oYDq6se3kZAuNlVXoNqv1sy1a7PBLbjSmiwAt8TqOWXHsgA+U1KL6G2qQ=
+	t=1723920705; cv=none; b=DDevK582laaJn4fpoMc7Z9PLVbTG4cy/TdgSLDhb89HmNBsU8iSHlJYldkmpU7pG91EY95QV96lewKWu6XnDIXya3/wfjUGYOsuD0h7xNlH1hKZFYZ4W1zqYNO2+vHuIjQSKX3Prt9X/wH50CZ1VQhJDYykrmcz01tJnlUxX/Ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723919953; c=relaxed/simple;
-	bh=RBOqHWcpOL200wMzaRpoDYXleqvQIbaH30VxNbJAsxc=;
+	s=arc-20240116; t=1723920705; c=relaxed/simple;
+	bh=MjP2DD6/GFdjWJPfJS4LlxOJ+1kSArHevkSXjV6J+l0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dlfh5KycsVW2i5yong5AQv43iAVgbraXUzLH2dwHow03VbK/F6ASyR4q2GxaFwzhssTOQXgRCRLwwEu/FZhQOAq2yF2Cf4Iky91VT9h4T+QS2W82/kafaOizkA+KG6ux8pk8XyytlMOtmYKtAfAtQ4Cd1AJic/73qQYX9eMdbrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=w+wcCaUf; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Wa5LEgwkZY0FD5bZdQisEp2BTUIPn539FfsMHm+YsHo=; b=w+wcCaUfK7heUmNoKPawgyetpe
-	OuBZE5dp4+sJucaQBuIc2K8EjnQvaUrUmaZ2NGK6+PYkIXsBSXye4mX57p5bgsgtHwV9cavdsQvvr
-	gHTqB0ACKjhvFPpFGYRos/IV8MMGP7+3cHJkpiWFb1Gty7RyD5D34qu9Lv1FyJfHYqbw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sfOKL-0050bg-Dx; Sat, 17 Aug 2024 20:39:01 +0200
-Date: Sat, 17 Aug 2024 20:39:01 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	o.rempel@pengutronix.de, nbd@nbd.name
-Subject: Re: [PATCH RFC net-next] net: ag71xx: disable GRO by default
-Message-ID: <981a8ff4-d4f3-4e1c-8201-d7331ae29f96@lunn.ch>
-References: <20240816224741.596989-1-rosenp@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=slP2/BdHFzsoyNtPOeh43xvQqvBO8uVwp8CV7n+KArJIWRCxbzrua0iwbAjcOdslKdlz1DBrlN+UvRbXab7u4zkCYf7P/LteXvvjIVBm1Q98M3BouhYocFl/8ITIzHwvpKOJ4Lz3uAPF2/Gq0KW2qsxxPUI0USleOx50KUG+riA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=Xf2TAjJu; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
+Date: Sat, 17 Aug 2024 20:51:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+	t=1723920698;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TMvWByJNuw5TyydJGoxlSzz4CSYY6PeFa1vY2R3Mvno=;
+	b=Xf2TAjJui0ncJXwKgSk1YtCoQaB4JJNB2B3jlL3MKWNVjd8s1wI/pxjmEcRBZmjPB7OKCK
+	EcUjSp+koAu0bKCeG1nGbXboGF9ouVwN3nqyphiUbAJIeT59Qpu+ogItx8cbtr318ju9O3
+	jHhLSkydWB00/+RrBjqWgU0223ccKWw=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Henrik Grimler <henrik@grimler.se>
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Sebastian Reichel <sre@kernel.org>,
+	Anton Vorontsov <anton.vorontsov@linaro.org>,
+	Ramakrishna Pallala <ramakrishna.pallala@intel.com>,
+	Dirk Brandewie <dirk.brandewie@gmail.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH] power: supply: max17042_battery: Fix SOC threshold calc
+ w/ no current sense
+Message-ID: <20240817185136.GA102892@l14.localdomain>
+References: <20240817-max17042-soc-threshold-fix-v1-1-72b45899c3cc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,22 +65,86 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240816224741.596989-1-rosenp@gmail.com>
+In-Reply-To: <20240817-max17042-soc-threshold-fix-v1-1-72b45899c3cc@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Aug 16, 2024 at 03:47:33PM -0700, Rosen Penev wrote:
-> ```
-> Currently this is handled in userspace with ethtool. Not sure if this
-> should be done in the kernel or if this is even the proper place for it.
-> ```
+On Sat, Aug 17, 2024 at 12:51:14PM +0200, Artur Weber wrote:
+> Commit 223a3b82834f ("power: supply: max17042_battery: use VFSOC for
+> capacity when no rsns") made it so that capacity on systems without
+> current sensing would be read from VFSOC instead of RepSOC. However,
+> the SOC threshold calculation still read RepSOC to get the SOC
+> regardless of the current sensing option state.
+> 
+> Fix this by applying the same conditional to determine which register
+> should be read.
+> 
+> This also seems to be the intended behavior as per the datasheet - SOC
+> alert config value in MiscCFG on setups without current sensing is set
+> to a value of 0b11, indicating SOC alerts being generated based on
+> VFSOC, instead of 0b00 which indicates SOC alerts being generated based
+> on RepSOC.
+> 
+> This fixes an issue on the Galaxy S3/Midas boards, where the alert
+> interrupt would be constantly retriggered, causing high CPU usage
+> on idle (around ~12%-15%).
+> 
+> Fixes: e5f3872d2044 ("max17042: Add support for signalling change in SOC")
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 
-Comments like this should be placed under the ---. If the patch is
-merged, anything in the commit message under the --- is then
-discarded.
+Reviewed-by: Henrik Grimler <henrik@grimler.se>
 
-> ag71xx is usually paired with qca8k or ar9331, both DSA drivers.
+Can confirm that this fixes high irq CPU usage on exynos4412-i9300 and
+exynos4412-i9305, thanks!
 
-Can it be used without a switch? It looks like this option will
-disable offloads which are useful when there is no switch.
+Best regards
+Henrik Grimler
 
-	Andrew
+> ---
+> Commit 223a3b82834f ("power: supply: max17042_battery: use VFSOC for
+> capacity when no rsns") made it so that capacity on systems without
+> current sensing would be read from VFSOC instead of RepSOC. However,
+> the SOC threshold calculation still read RepSOC to get the SOC
+> regardless of the current sensing option state.
+> 
+> Fix this by applying the same conditional to determine which register
+> should be read.
+> 
+> This also seems to be the intended behavior as per the datasheet - SOC
+> alert config value in MiscCFG on setups without current sensing is set
+> to a value of 0b11, indicating SOC alerts being generated based on
+> VFSOC, instead of 0b00 which indicates SOC alerts being generated based
+> on RepSOC.
+> 
+> This fixes an issue on the Galaxy S3/Midas boards, where the alert
+> interrupt would be constantly retriggered, causing high CPU usage
+> on idle (around ~12%-15%).
+> ---
+>  drivers/power/supply/max17042_battery.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/power/supply/max17042_battery.c b/drivers/power/supply/max17042_battery.c
+> index e7d37e422c3f..496c3e1f2ee6 100644
+> --- a/drivers/power/supply/max17042_battery.c
+> +++ b/drivers/power/supply/max17042_battery.c
+> @@ -853,7 +853,10 @@ static void max17042_set_soc_threshold(struct max17042_chip *chip, u16 off)
+>  	/* program interrupt thresholds such that we should
+>  	 * get interrupt for every 'off' perc change in the soc
+>  	 */
+> -	regmap_read(map, MAX17042_RepSOC, &soc);
+> +	if (chip->pdata->enable_current_sense)
+> +		regmap_read(map, MAX17042_RepSOC, &soc);
+> +	else
+> +		regmap_read(map, MAX17042_VFSOC, &soc);
+>  	soc >>= 8;
+>  	soc_tr = (soc + off) << 8;
+>  	if (off < soc)
+> 
+> ---
+> base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+> change-id: 20240817-max17042-soc-threshold-fix-e96f15a622e5
+> 
+> Best regards,
+> -- 
+> Artur Weber <aweber.kernel@gmail.com>
+> 
 
