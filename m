@@ -1,368 +1,193 @@
-Return-Path: <linux-kernel+bounces-290751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4A9D955823
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:42:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0261595582F
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAEF21C20D02
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:42:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFBD4282C9A
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E841E153828;
-	Sat, 17 Aug 2024 13:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D29115383F;
+	Sat, 17 Aug 2024 13:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHlp26IH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nUOdgm0k"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85312745E;
-	Sat, 17 Aug 2024 13:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B3E433B0
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 13:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723902144; cv=none; b=T4XYClyqqOaAJ8DKmTEn81wpBhFxpypDOrZZFcPUnARRa9euublKUgSvXlyzMVeq3n86b/JMr3eD8eA2GeeaeBKiiGQhp/9B8A5jMa1M/avpG7LlGXKVrQ7Dxoj7wNRbqHKATC5m4c631279/YZn7javRgEvolqq8G2qx/xD334=
+	t=1723902569; cv=none; b=l8LG2KGhfdQrYNtyLTdaFHqgSpYrKnkxs10KuU/a/C3ctA3jxJa6QAzGJKfZWFwX0A9BpYyabKjfOm7ajqslPq8zGyjXjtLbMrWrFLdGiB77dwVY8INh7He+iYt7JZFW1CzrFtSQvomvfaIBNDhg4PZo23ycWc9sbkE+mc0T/mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723902144; c=relaxed/simple;
-	bh=hYXiXv4D4hGebvEHZRWy15ifimGJBekHZxkDSjvrFmo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YtA1KBamM52sCBSfNwTIn6eCEk3D9cL20Ic2WPEygjuqDADVUJOfRcwU+ZhaTytOj9p6usX7Da00SV27eRX/Lu6vLz8jNWrBOc4XxYXPsttywXmZcihSCFf+Hp4OBQH/tPbBVP77VwnzK3kzi40I/Q6wHknX1nvAIGpOStraFcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHlp26IH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F7D8C116B1;
-	Sat, 17 Aug 2024 13:42:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723902143;
-	bh=hYXiXv4D4hGebvEHZRWy15ifimGJBekHZxkDSjvrFmo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fHlp26IH7KPh/yfX2x8Phvo+MFeSJaUNo35q1JJuNfIF3Q1tVAPxPSQHbWPoSP3wh
-	 tATM4C+nxd/MASrwRG/e4BB3tK7/8XMDkCYMNO6wSxozPCwiOd+VLecETXGgzGYd4T
-	 oqMXpVb3iC7CUzJ5udNH1ulOVBeTGhsFSzDV+eqYrIvliWUUKcAJFMw9YIqbwtY3tx
-	 +iLoHYN47WtapOz/tUZ2TgQLzd2OUItkFH2opFbgPpomqmjhXRNOPS4SAw3druS2eE
-	 hfU64xtafODIrrc35MtQ1YzFTUaxvOxmbz5LS7i+Dq7zWBEVNdMihuzeFChybrei1Q
-	 zSuwgXne9CPjQ==
-Date: Sat, 17 Aug 2024 14:42:15 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Li, Hua Qian" <HuaQian.Li@siemens.com>
-Cc: "conor@kernel.org" <conor@kernel.org>, "Kiszka, Jan"
- <jan.kiszka@siemens.com>, "Zeng, Chao" <chao.zeng@siemens.com>,
- "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "Su, Bao Cheng"
- <baocheng.su@siemens.com>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] dt-bindings: iio: Add everlight pm16d17 binding
-Message-ID: <20240817144215.1b2e9db3@jic23-huawei>
-In-Reply-To: <a458a2cbc96a23c0a2ef89327e1f8bcd2e2777e6.camel@siemens.com>
-References: <cover.1723527641.git.jan.kiszka@siemens.com>
-	<f6476e06cd8d1cf3aff6563530612c536cd45716.1723527641.git.jan.kiszka@siemens.com>
-	<20240813-captivity-spellbind-d36ca0f31e22@spud>
-	<a458a2cbc96a23c0a2ef89327e1f8bcd2e2777e6.camel@siemens.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1723902569; c=relaxed/simple;
+	bh=Z37x7P3OUwQ57VOk02zwVc2udz2b1U+xIPjklLd4zCo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=rbu5xFKdmAp7O9/Am0fOqaBs8gIUnfxfEFi8wfHQP02zkrUh+lTsTJCO3BnCr/HWkVp109T3Xkx75YLDi0/RseDZZlcZ9SFwDCoYYKTxESjF0WOhuaRTGzXh1xF1GS8S2o0BfVeuc3yUmhYQiBqMit0Q503vxNXCEtI52xFryEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=nUOdgm0k; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240817134919epoutp03c89a8e269f18a206c067b281bb0021b5~siD56LL8w0468004680epoutp03E
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 13:49:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240817134919epoutp03c89a8e269f18a206c067b281bb0021b5~siD56LL8w0468004680epoutp03E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1723902559;
+	bh=6OdAAhY1jmDD/qNc8iBhpCFMfmOZJ5vdix/d/18DDPQ=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=nUOdgm0ktl34B2s0pKxb3UkUK88B4KLP1hctKHgmNtvkc/V1CHVUJakkdkU+oiNwW
+	 ZhzWrCxOideaD9sI+xT3pO3FN91BhRWUqOLihsW1gznNBKxUxUlg/6/P5DkvFvc0gu
+	 vluUXMvs1QpeIqkl0iFqCCuaXWz/Bs8Ucx5UHySg=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20240817134918epcas5p4b81041e43428e2ab9c9ce40d2c919282~siD5lhkIw0893208932epcas5p4H;
+	Sat, 17 Aug 2024 13:49:18 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.179]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4WmKwF2pmjz4x9Pp; Sat, 17 Aug
+	2024 13:49:17 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	87.D4.09743.D5AA0C66; Sat, 17 Aug 2024 22:49:17 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240817134356epcas5p311b04d9ba86b537c871a55ae7f2e4261~sh-NkFcK82016620166epcas5p3p;
+	Sat, 17 Aug 2024 13:43:56 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240817134356epsmtrp2ad3aba442d71ae211fca8898de870bbd~sh-NjSmU20363203632epsmtrp2C;
+	Sat, 17 Aug 2024 13:43:56 +0000 (GMT)
+X-AuditID: b6c32a4a-14fff7000000260f-b2-66c0aa5d535c
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	56.6A.07567.C19A0C66; Sat, 17 Aug 2024 22:43:56 +0900 (KST)
+Received: from [107.122.5.126] (unknown [107.122.5.126]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240817134354epsmtip130a4c32a2f80ebb9ac325ba1b7b421d5~sh-LnkTaY0574705747epsmtip1P;
+	Sat, 17 Aug 2024 13:43:54 +0000 (GMT)
+Message-ID: <c477fdb2-a92a-4551-b6c8-38ada06914c6@samsung.com>
+Date: Sat, 17 Aug 2024 19:13:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, 16 Aug 2024 01:48:36 +0000
-"Li, Hua Qian" <HuaQian.Li@siemens.com> wrote:
-
-> On Tue, 2024-08-13 at 16:52 +0100, Conor Dooley wrote:
-> > On Tue, Aug 13, 2024 at 07:40:41AM +0200, Jan Kiszka wrote: =20
-> > > From: Chao Zeng <chao.zeng@siemens.com>
-> > >=20
-> > > Add the binding document for the everlight pm16d17 sensor.
-> > >=20
-> > > Signed-off-by: Chao Zeng <chao.zeng@siemens.com>
-> > > Co-developed-by: Baocheng Su <baocheng.su@siemens.com>
-> > > Signed-off-by: Baocheng Su <baocheng.su@siemens.com> =20
-> >=20
-> > Ditto here Jan.
-> >  =20
-> > > ---
-> > > =C2=A0.../iio/proximity/everlight,pm16d17.yaml=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 | 95
-> > > +++++++++++++++++++
-> > > =C2=A01 file changed, 95 insertions(+)
-> > > =C2=A0create mode 100644
-> > > Documentation/devicetree/bindings/iio/proximity/everlight,pm16d17.y
-> > > aml
-> > >=20
-> > > diff --git
-> > > a/Documentation/devicetree/bindings/iio/proximity/everlight,pm16d17
-> > > .yaml
-> > > b/Documentation/devicetree/bindings/iio/proximity/everlight,pm16d17
-> > > .yaml
-> > > new file mode 100644
-> > > index 000000000000..fadc3075181a
-> > > --- /dev/null
-> > > +++
-> > > b/Documentation/devicetree/bindings/iio/proximity/everlight,pm16d17
-> > > .yaml
-> > > @@ -0,0 +1,95 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id:
-> > > http://devicetree.org/schemas/iio/proximity/everlight,pm16d17.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Everlight PM-16D17 Ambient Light & Proximity Sensor
-> > > +
-> > > +maintainers:
-> > > +=C2=A0 - Chao Zeng <chao.zeng@siemens.com>
-> > > +
-> > > +description: |
-> > > +=C2=A0 This sensor uses standard I2C interface. Interrupt function is
-> > > not covered. =20
-> >=20
-> > Bindings should be complete, even if software doesn't use the
-> > interrupts. Can you document them please.
-> >  =20
-> > > +=C2=A0 Datasheet:
-> > > https://en.everlight.com/sensor/category-proximity_sensor/digital_pro=
-ximity_sensor/ =20
-> >=20
-> > Do you have a link to a datasheet? The link to the pm16d17 here 404s
-> > for
-> > me.
-> >  =20
-> > > +
-> > > +properties:
-> > > +=C2=A0 compatible:
-> > > +=C2=A0=C2=A0=C2=A0 enum:
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - everlight,pm16d17
-> > > +
-> > > +=C2=A0 reg:
-> > > +=C2=A0=C2=A0=C2=A0 maxItems: 1
-> > > +
-> > > +=C2=A0 ps-gain:
-> > > +=C2=A0=C2=A0=C2=A0 description: Receiver gain of proximity sensor
-> > > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/uint32
-> > > +=C2=A0=C2=A0=C2=A0 enum: [1, 2, 4, 8]
-> > > +=C2=A0=C2=A0=C2=A0 default: 1
-> > > +
-> > > +=C2=A0 ps-itime: =20
-> >=20
-> > How did you get itime from conversion time? To the layman (like me!)
-> > conversion-time would make more sense...
-> >=20
-> > Also, "ps"? The whole thing is a proxy sensor, so why have that
-> > prefix
-> > on properties. What is missing however is a vendor prefix.
-> >  =20
-> > > +=C2=A0=C2=A0=C2=A0 description: Conversion time for proximity sensor=
- [ms]
-> > > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/string =20
-> >=20
-> > Instead of a string, please use the -us suffix, and put this in
-> > microseconds instead.
-> >=20
-> > In total, that would be s/ps-itime/everlight,conversion-time-us/.
-> >=20
-> > I would, however, like to know why this is a property of the
-> > hardware.
-> > What factors do you have to consider when determining what value to
-> > put
-> > in here?
-> >  =20
-> > > +=C2=A0=C2=A0=C2=A0 enum:
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - "0.4"
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - "0.8"
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - "1.6"
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - "3.2"
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - "6.3"
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - "12.6"
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - "25.2"
-> > > +=C2=A0=C2=A0=C2=A0 default: "0.4"
-> > > +
-> > > +=C2=A0 ps-wtime:
-> > > +=C2=A0=C2=A0=C2=A0 description: Waiting time for proximity sensor [m=
-s]
-> > > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/string =20
-> >=20
-> > All of the same comments apply here. E.g. why "wtime" isntead of
-> > "waiting-time" and so on.
-> > I would really like to know why these things are properties of the
-> > hardware, rather than something that software should control.
-> >  =20
-> > > +=C2=A0=C2=A0=C2=A0 enum:
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - "12.5"
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - "25"
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - "50"
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - "100"
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - "200"
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - "400"
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - "800"
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - "1600"
-> > > +=C2=A0=C2=A0=C2=A0 default: "12.5"
-> > > +
-> > > +=C2=A0 ps-ir-led-pulse-count:
-> > > +=C2=A0=C2=A0=C2=A0 description: IR LED drive pulse count
-> > > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/uint32 =20
-> >=20
-> > All custom properties require a vendor prefix, not "ps". Again, what
-> > makes this a property of the hardware, rather than something that
-> > software should control?
-> >  =20
-> > > +=C2=A0=C2=A0=C2=A0 minimum: 1
-> > > +=C2=A0=C2=A0=C2=A0 maximum: 256
-> > > +=C2=A0=C2=A0=C2=A0 default: 1
-> > > +
-> > > +=C2=A0 ps-offset-cancel:
-> > > +=C2=A0=C2=A0=C2=A0 description: |
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 When PS offset cancel function is ena=
-bled, the result of
-> > > subtracting any
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 value specified by the PS offset canc=
-el register from the
-> > > internal PS
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 output data is written to the PS outp=
-ut data register. =20
-> >=20
-> > Again, what makes this a property of the hardware? What hardware
-> > related
-> > factors determine that value that you put in here?
-> >=20
-> > Thanks,
-> > Conor. =20
->=20
-> Certain parameters such as conversion time, wait time, or sampling rate
-> are directly tied to the physical characteristics and capabilities of
-> the sensor.
-
-Ah. I think I'd missed this uses an external LED (rather than it being
-in package).  In that case, the characteristics that 'work' for
-proximity sensing are somewhat dependent on the system design
-(simplifying heavily, led output for a given current, optical filter
- on that LED etc).
-
-For the sensor specific side, it should be just from the compatible, but
-when another part is involved, DT binding based tuning may make sense
-as long as it is 'per consumer device / board' not per specific instance.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] usb: dwc3: core: Prevent USB core invalid event
+ buffer address access
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Thinh.Nguyen@synopsys.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com,
+	dh10.jung@samsung.com, naushad@samsung.com, akash.m5@samsung.com,
+	rc93.raju@samsung.com, taehyun.cho@samsung.com, hongpooh.kim@samsung.com,
+	eomji.oh@samsung.com, shijie.cai@samsung.com, stable@vger.kernel.org
+Content-Language: en-US
+From: Selvarasu Ganesan <selvarasu.g@samsung.com>
+In-Reply-To: <2024081700-skittle-lethargy-9567@gregkh>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBJsWRmVeSWpSXmKPExsWy7bCmum7sqgNpBs0LhS3eXF3FanFnwTQm
+	i1PLFzJZNC9ez2Yxac9WFou7D3+wWFzeNYfNYtGyVmaLT0f/s1qs6pwDFPu+k9liwcZHjBaT
+	DoparFpwgN2Bz2P/3DXsHn1bVjF6bNn/mdHj8ya5AJaobJuM1MSU1CKF1Lzk/JTMvHRbJe/g
+	eOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoBuVFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnF
+	JbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZa3fZF2wSrHi49DBTA+Nm3i5GTg4J
+	AROJpsUT2LsYuTiEBHYzSpxe8BTK+cQoMen+YSYI5xujxLoFN9hhWqYu384GkdjLKNF+ajUL
+	hPOWUWLu3BusIFW8AnYSf/dOZu5i5OBgEVCVONuRDBEWlDg58wkLiC0qIC9x/9YMsKHCAvES
+	R24vBWsVEdCQeHn0FthMZoGTTBJXly5jAkkwC4hL3HoynwlkJpuAocSzEzYgYU4BM4mptxcx
+	QpTIS2x/O4cZpFdCYA+HxL4TDUwQV7tIdLbfYoawhSVeHd8C9Y2UxOd3e9kg7GqJ1Xc+skE0
+	tzBKHH7yDarIXuLx0UdgzzALaEqs36UPEZaVmHpqHdRtfBK9v59A7eKV2DEPxlaVONV4GWq+
+	tMS9JddYIWwPickvtjBPYFSchRQus5C8OQvJP7MQNi9gZFnFKJlaUJybnlpsWmCUl1oOj/Dk
+	/NxNjOAkrOW1g/Hhgw96hxiZOBgPMUpwMCuJ8D79sjdNiDclsbIqtSg/vqg0J7X4EKMpMH4m
+	MkuJJucD80BeSbyhiaWBiZmZmYmlsZmhkjjv69a5KUIC6YklqdmpqQWpRTB9TBycUg1M3tZX
+	C5Zemrb6QcRaK/f4pXlhFp1L1aQEvRVtTirdWe776MtvJaGO3Y1vxee4Pu2ws5217NCzN3tD
+	kgI9Z895Em0rU6O5XnRiRGLbp6s/JNK1uJ2v3RXeu3n58vU218QCRLeGlbPOy3z3NH0x84Jj
+	9Zqv9abKVzBZ9lovmLenpF1E4tHGOrWFZ0qWf5nEbuL+NeZYe8D7iGjefV2vNae7nBKYt9j0
+	1Uaj+70LRT9PUJVNrGKqnLtvTXMz17Iij63fH6aEmSudeL2gXPXnXN6S1hvdQXveXF0i+2iN
+	sOHmPsXlRkb3TyraCR3NvCDz5oqAY7fUfua+6a2RbCcqk+M0rk9bz6Vy8enOez+LV3x1U2Ip
+	zkg01GIuKk4EAGET9E9LBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsWy7bCSnK7MygNpBt83aFq8ubqK1eLOgmlM
+	FqeWL2SyaF68ns1i0p6tLBZ3H/5gsbi8aw6bxaJlrcwWn47+Z7VY1TkHKPZ9J7PFgo2PGC0m
+	HRS1WLXgALsDn8f+uWvYPfq2rGL02LL/M6PH501yASxRXDYpqTmZZalF+nYJXBlrd9kXbBKs
+	eLj0MFMD42beLkZODgkBE4mpy7ezgdhCArsZJeZMroWIS0u8ntXFCGELS6z895y9i5ELqOY1
+	o8SBYyfYQRK8AnYSf/dOZu5i5OBgEVCVONuRDBEWlDg58wkLiC0qIC9x/9YMsHJhgXiJ5sn7
+	mUBsEQENiZdHb7GAzGQWOMkkse9KHzPEgllMEtcnzGMFqWIWEJe49WQ+E8gCNgFDiWcnbEDC
+	nAJmElNvL2KEKDGT6NraBWXLS2x/O4d5AqPQLCR3zEIyaRaSlllIWhYwsqxilEwtKM5Nz002
+	LDDMSy3XK07MLS7NS9dLzs/dxAiONi2NHYz35v/TO8TIxMF4iFGCg1lJhPfpl71pQrwpiZVV
+	qUX58UWlOanFhxilOViUxHkNZ8xOERJITyxJzU5NLUgtgskycXBKNTDJCB9K+Bt87vlJZu3D
+	0+cq/bTf+YPLasLvU584IvKnL9+69VWw7E/n2/w+5iw1uj8qqrfHf0n/Fid9Ye++GVdklhx1
+	ODi3bTnXCvEHU5kOOShaSVZEXVr8JGe/dl7VTecahd7grzEbY2xNw+Jrt3PkKT4z1Nn0aFth
+	gbqHeOe6aZGMZ0T3lbnon3bmbHRjkvm+7CvD5cPnbBhm79v10MPvilTd8ZPGLEq2C977lTgm
+	yu+Mqrp34OGhzWtTZgf8msNwZteO72t8xF6L7RZqv2kdtStOSoCXU3JKXK1G7cIzyoveva+I
+	qfl+fvlcdtZdEhufsk06f0vGkvfaCg0u2+YPF89b2v+U5Hp6PlRzQn+PEktxRqKhFnNRcSIA
+	OkdZfCUDAAA=
+X-CMS-MailID: 20240817134356epcas5p311b04d9ba86b537c871a55ae7f2e4261
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240815064918epcas5p1248e4f9084d33fdb11a25fa34e66cdbe
+References: <CGME20240815064918epcas5p1248e4f9084d33fdb11a25fa34e66cdbe@epcas5p1.samsung.com>
+	<20240815064836.1491-1-selvarasu.g@samsung.com>
+	<2024081618-singing-marlin-2b05@gregkh>
+	<4f286780-89a2-496d-9007-d35559f26a21@samsung.com>
+	<2024081700-skittle-lethargy-9567@gregkh>
 
 
+On 8/17/2024 10:47 AM, Greg KH wrote:
+> On Fri, Aug 16, 2024 at 09:13:09PM +0530, Selvarasu Ganesan wrote:
+>> On 8/16/2024 3:25 PM, Greg KH wrote:
+>>> On Thu, Aug 15, 2024 at 12:18:31PM +0530, Selvarasu Ganesan wrote:
+>>>> This commit addresses an issue where the USB core could access an
+>>>> invalid event buffer address during runtime suspend, potentially causing
+>>>> SMMU faults and other memory issues in Exynos platforms. The problem
+>>>> arises from the following sequence.
+>>>>           1. In dwc3_gadget_suspend, there is a chance of a timeout when
+>>>>           moving the USB core to the halt state after clearing the
+>>>>           run/stop bit by software.
+>>>>           2. In dwc3_core_exit, the event buffer is cleared regardless of
+>>>>           the USB core's status, which may lead to an SMMU faults and
+>>>>           other memory issues. if the USB core tries to access the event
+>>>>           buffer address.
+>>>>
+>>>> To prevent this hardware quirk on Exynos platforms, this commit ensures
+>>>> that the event buffer address is not cleared by software  when the USB
+>>>> core is active during runtime suspend by checking its status before
+>>>> clearing the buffer address.
+>>>>
+>>>> Cc: stable@vger.kernel.org # v6.1+
+>>> Any hint as to what commit id this fixes?
+>>>
+>>> thanks,
+>>>
+>>> greg k-h
+>>
+>> Hi Greg,
+>>
+>> This issue is not related to any particular commit. The given fix is
+>> address a hardware quirk on the Exynos platform. And we require it to be
+>> backported on stable kernel 6.1 and above all stable kernel.
+> If it's a hardware quirk issue, why are you restricting it to a specific
+> kernel release and not a specific kernel commit?  Why not 5.15?  5.4?
 
+Hi Greg,
 
-> These parameters are typically determined by the sensor
-> specifications, and the datasheet usually provides recommended values
-> for these parameters. Below is an excerpt from the datasheet:
->=20
-> /*
-> +-----------------------+-------+------+------+------+-----+----------+
-> | Parameter             | Symbol| Min  | Typ  | Max  | Unit| Condition|
-> +-----------------------+-------+------+------+------+-----+----------+
-> | PS A/D conversion time| TPS   | 21.4 | 25.2 | 28.9 | ms  | PS
-> A/DC=3D16bit  |
-> | PS wait time setting  | TPSWAIT| 10.6| 12.5 | 14.3 | ms  | 12.5ms
-> setting |
-> +-----------------------+-------+------+------+------+-----+----------+
-> */
+I mentioned a specific kernel because our platform is set to be tested 
+and functioning with kernels 6.1 and above, and the issue was reported 
+with these kernel versions. However, we would be fine if all stable 
+kernels, such as 5.4 and 5.15, were backported. In this case, if you 
+need a new patch version to update the Cc tag for all stable kernels, 
+please suggest the Cc tag to avoid confusion in next version.
 
-Doesn't apply to everything you have here though. wtime / wait time
-is about how often you get a reading not the physical device.  How is
-that affected by the physical device?
-
-I 'think' the table above is giving precision of the value for a particular
-control setting. If you set wtime to 12.5msec (value 0 in register)
-then it will actually be between 10.6 and 14.3 msec, not that you should
-set it to 12.5msec.
-
-There are 3 controls related to gain that you could argue for defaults
-for in DT (maybe) but given proximity sensing is also about the
-target, not just the measurement device, there won't be a right answer
-unless your proximity sensor is being used for a fixed purpose (e.g.
-WIFI signal strength limiting or a button type control).
->=20
->=20
-> However, there are some similar cases in the kernel, as follows:
->=20
-> Documentation/devicetree/bindings/iio/proximity/devantech-srf04.yaml
->     - startup-time-ms
-That's after a resume and I think depends one exactly what the circuitry
-is (in this case the device is more of a reference design than a single
-device).
-
-> Documentation/devicetree/bindings/iio/proximity/semtech,sx9310.yaml
-> Documentation/devicetree/bindings/iio/proximity/semtech,sx9324.yaml
-> Documentation/devicetree/bindings/iio/proximity/semtech,sx9360.yaml
->     - semtech,avg-pos-strength
->     - semtech,ph01-resolution
->     - semtech,input-analog-gain
-These are SAR sensors I think, so the sensor element is external to
-the device.  In theory we could have described the sensing element
-and used that to work out the right values of these, but in practice
-it was easier to just provide the parameters from some 'per design'
-tuning.
-
->     - ...
-> Documentation/devicetree/bindings/iio/proximity/vishay,vcnl3020.yaml
->     - vishay,led-current-microamp
-
-I think this is about whether you can burn the external LED out or not.
-On the datasheet I'm looking at for this device, only value 000 is
-specified in this 3bit field so I guess it's not controllable?
-
-Pulse counts are less likely to be relevant to the LED burning out, but
-maybe(?)
-
-Anyhow, it's not entirely obvious to me that it makes sense to control
-so much in DT for this device.  Better to put it in userspace control
-and rely on udev etc setting things right for a given device + application.
-
-Jonathan
-
-
-
-
->=20
-> This is why we are leveraging the hardware properties.
->=20
-> Thanks,
-> Hua Qian
->=20
-> >  =20
-> > > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/uint32
-> > > +=C2=A0=C2=A0=C2=A0 default: 0
-> > > +=C2=A0=C2=A0=C2=A0 maximum: 65535
-> > > +
-> > > +required:
-> > > +=C2=A0 - compatible
-> > > +=C2=A0 - reg
-> > > +
-> > > +unevaluatedProperties: false
-> > > +
-> > > +examples:
-> > > +=C2=A0 - |
-> > > +=C2=A0=C2=A0=C2=A0 i2c {
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #address-cells =3D <1>;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #size-cells =3D <0>;
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 lightsensor: pm16d17@44 {
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 c=
-ompatible =3D "everlight,pm16d17";
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 r=
-eg =3D <0x44>;
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 p=
-s-gain =3D <1>;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 p=
-s-itime =3D "0.4";
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 p=
-s-wtime =3D "12.5";
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 p=
-s-ir-led-pulse-count =3D <1>;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 p=
-s-offset-cancel =3D <280>;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
-> > > +=C2=A0=C2=A0=C2=A0 };
-> > > --=20
-> > > 2.43.0
-> > >  =20
->=20
-
+Thanks,
+Selva
+>
+> thanks,
+>
+> greg k-h
+>
+>
 
