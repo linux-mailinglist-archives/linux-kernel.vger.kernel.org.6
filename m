@@ -1,139 +1,139 @@
-Return-Path: <linux-kernel+bounces-290607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C927A95563C
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:43:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C46DF95563F
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:43:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 851AC282141
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:43:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9E4B1C216AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:43:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5D314386B;
-	Sat, 17 Aug 2024 07:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68846143759;
+	Sat, 17 Aug 2024 07:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W5os2dVN"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="b+bOyJLw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DBE1422C7;
-	Sat, 17 Aug 2024 07:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E48213DDCD;
+	Sat, 17 Aug 2024 07:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723880577; cv=none; b=QNk3lHjEc2CqM5Jvm4e5dGnhQCUpzYoVCWYkCrnMWO5391580whw5tCneUjyGZecaUQLRZKXloJ/FsvlGTisc37VaGpK5lAoFrcChdvN9SHCPAszogEFe4G5opZKXT2BaobhOl41sABdmoP8X9rWPq+tHdyjp9U8PcVJucoyMPU=
+	t=1723880612; cv=none; b=g13Rh/uWl15wU6VVZYCBzp2oYpT+sn8S+gOFsZghFXnZqdJzMWG/qJezxnFbwCRo1i8T5aZZNdOv/ZO77YE77GGS/fLgS0KvQ0ElTYyd46epVC6RXnEt3KgZXjMktZjt443kmUOF96vJT+9XPxfuc6TrPlt4JvkwU1fyJ443GVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723880577; c=relaxed/simple;
-	bh=L9qmGyz4KafnFl4DVDkUKTwh1bYTjIPVCMGBTJK7I5M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lGxrFlgwHkxs48WAatRUA0j6nOvT7j1C2QEUCZ5nPeaNrH7XhHzzHwDl6ZXT7J/sMJ0JIr/Lylh7IMVwDxkYXqvfGshZIjirtdu3+4hJU1x08uuhLW9d2YjBfCmi5ibXcDAb/n/taF5UnzwJan6geI6Kqw0yCCWfRkIH6Pdl/TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W5os2dVN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72498C116B1;
-	Sat, 17 Aug 2024 07:42:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723880577;
-	bh=L9qmGyz4KafnFl4DVDkUKTwh1bYTjIPVCMGBTJK7I5M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=W5os2dVNsX+1IQ7sWbe483uzAOiOGMC1CJ3ldWyHMyiWaCAaGHTDUepzTixc7sLwH
-	 w/Itb2pn5O+Ul3gdkipa2zZldxa5nUVXP2q7U1fH5QeVz+yqBT8dWJQokaV+XodhdE
-	 6JtKqjOTeOMAyVFZ7Qu3ONRS7x9j29G0TAsdu50XYY3WzfjY4OamX9ovtI6BxCf/cP
-	 NAZ92nadd9QyGmLekYY0xzSfs86qbJ8o/pucwV3qV5cmcIj0HqxcjNPc3hziuMLSR5
-	 HPcxSTYhfJ+DMGmnzVPq7jIf/7l7Uvk5ByBkqaog+QXenBJmk160TMTavK30jKtofB
-	 uHoHRXvN38dPA==
-Message-ID: <094264f7-a0b8-43f7-a405-305afb0d44e9@kernel.org>
-Date: Sat, 17 Aug 2024 09:42:51 +0200
+	s=arc-20240116; t=1723880612; c=relaxed/simple;
+	bh=A+lGQ5o2T8pTh+g0c7rkc60LOwZr5vn2JgeBHKg8cFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qnu9rqJX1oVwVU+lDAgTj4S9VXDLpD/OSHnlPAY4M3BhRFRbg9S0B4P2dabTd8SucdoGDhoxHuoR9FDee9uQtkMWAjqSGpJ3jYbcHrlkdK39cK2ZjCsPHl4MIn3RITWlwukNEKZizigr29aZrCQOZDa9Rxn+uE6GRXdaK3y+ils=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=b+bOyJLw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93D9DC116B1;
+	Sat, 17 Aug 2024 07:43:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723880612;
+	bh=A+lGQ5o2T8pTh+g0c7rkc60LOwZr5vn2JgeBHKg8cFw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b+bOyJLwmiy6YEkoXJgi5GDZAhcU2/ZYt7TdUNHaQNcdkH5tniePs41HNqa+gRM9Y
+	 QqAM1qVgHc0XxSw2EMOQ/GQpwuc8Zwh3+nPdgx915kSm/TfkE2uo1Ao6cHVkZBr9rn
+	 0hAFVN9NfCsNuKHBBk9WEc54gpBSch4nB5SgW6ig=
+Date: Sat, 17 Aug 2024 09:43:28 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: "patches@lists.linux.dev" <patches@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux@roeck-us.net" <linux@roeck-us.net>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"patches@kernelci.org" <patches@kernelci.org>,
+	"lkft-triage@lists.linaro.org" <lkft-triage@lists.linaro.org>,
+	"pavel@denx.de" <pavel@denx.de>,
+	"f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+	"sudipm.mukherjee@gmail.com" <sudipm.mukherjee@gmail.com>,
+	"srw@sladewatkins.net" <srw@sladewatkins.net>,
+	"rwarsow@gmx.de" <rwarsow@gmx.de>,
+	"conor@kernel.org" <conor@kernel.org>,
+	"allen.lkml@gmail.com" <allen.lkml@gmail.com>,
+	"broonie@kernel.org" <broonie@kernel.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.10 000/350] 5.10.224-rc2 review
+Message-ID: <2024081757-single-anime-67a3@gregkh>
+References: <20240816101509.001640500@linuxfoundation.org>
+ <058ae5ab-7040-4bb0-b451-c4fd4e37bb36@drhqmail201.nvidia.com>
+ <DM8PR12MB5447F590697190728874B64FD9812@DM8PR12MB5447.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/6] dt-bindings: phy: Add X1E80100 UFS
-To: Marcus Glocker <marcus@nazgul.ch>, Bjorn Andersson
- <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
- Johan Hovold <johan@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-References: <3lmcfffifsg6v3ljzxfbk25ydh6446phdff7w75k6gwoyw3jkw@ryc66frtyksk>
- <ek4lj2gz4ykry4evfzhfwxgievrgypaqilqhbfs3ascmkb4rdf@u5nfzj733i5o>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ek4lj2gz4ykry4evfzhfwxgievrgypaqilqhbfs3ascmkb4rdf@u5nfzj733i5o>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DM8PR12MB5447F590697190728874B64FD9812@DM8PR12MB5447.namprd12.prod.outlook.com>
 
-On 17/08/2024 09:09, Marcus Glocker wrote:
-> Document the qmp ufs phy compatible for the Qualcomm X1E80100.
+On Fri, Aug 16, 2024 at 08:12:36PM +0000, Jon Hunter wrote:
 > 
-> Signed-off-by: Marcus Glocker <marcus@nazgul.ch>
+> ________________________________
+> From: Jon Hunter <jonathanh@nvidia.com>
+> Sent: Friday, August 16, 2024 2:43 PM
+> To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; patches@lists.linux.dev <patches@lists.linux.dev>; linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>; torvalds@linux-foundation.org <torvalds@linux-foundation.org>; akpm@linux-foundation.org <akpm@linux-foundation.org>; linux@roeck-us.net <linux@roeck-us.net>; shuah@kernel.org <shuah@kernel.org>; patches@kernelci.org <patches@kernelci.org>; lkft-triage@lists.linaro.org <lkft-triage@lists.linaro.org>; pavel@denx.de <pavel@denx.de>; Jon Hunter <jonathanh@nvidia.com>; f.fainelli@gmail.com <f.fainelli@gmail.com>; sudipm.mukherjee@gmail.com <sudipm.mukherjee@gmail.com>; srw@sladewatkins.net <srw@sladewatkins.net>; rwarsow@gmx.de <rwarsow@gmx.de>; conor@kernel.org <conor@kernel.org>; allen.lkml@gmail.com <allen.lkml@gmail.com>; broonie@kernel.org <broonie@kernel.org>; linux-tegra@vger.kernel.org <linux-tegra@vger.kernel.org>; stable@vger.kernel.org <stable@vger.kernel.org>
+> Subject: Re: [PATCH 5.10 000/350] 5.10.224-rc2 review
+> 
+> On Fri, 16 Aug 2024 12:22:05 +0200, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.10.224 release.
+> > There are 350 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Sun, 18 Aug 2024 10:14:04 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >        https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.224-rc2.gz
+> > or in the git tree and branch at:
+> >        git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> 
+> Failures detected for Tegra ...
+> 
+> Test results for stable-v5.10:
+>     10 builds:  10 pass, 0 fail
+>     31 boots:   26 pass, 5 fail
+>     45 tests:   44 pass, 1 fail
+> 
+> Linux version:  5.10.224-rc2-g470450f8c61c
+> Boards tested:  tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+>                 tegra20-ventana, tegra210-p2371-2180,
+>                 tegra210-p3450-0000, tegra30-cardhu-a04
+> 
+> Boot failures:  tegra186-p2771-0000, tegra210-p2371-2180,
+>                 tegra210-p3450-0000
+> 
+> Test failures:  tegra194-p2972-0000: boot.py
+> 
+> ---
+> 
+> Apologies for the mail formatting. I am travelling and only have outlook for mobile :-(
+> 
+> Bisect points to the following commit ...
+> 
+> # first bad commit: [4bade5a6b1cfe81c9777aa3c8823009ff28a6e7f] memory: fsl_ifc: Make FSL_IFC config visible and selectable
+> 
+> Reverting this does fix the issue. Seems odd but this appears to disable CONFIG_MEMORY for v5.10 with ARM64 defconfig. So something we need to fix.
 
-<form letter>
-This is a friendly reminder during the review process.
+Ah, that's a mess.  I'll go drop this one for now, glad it's not showing
+up on 5.15.y where this commit also is.  It's not really important for
+5.10.y so there's no harm in removing it.
 
-It looks like you received a tag and forgot to add it.
+thanks,
 
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions, under or above your Signed-off-by tag. Tag is "received", when
-provided in a message replied to you on the mailing list. Tools like b4
-can help here. However, there's no need to repost patches *only* to add
-the tags. The upstream maintainer will do that for tags received on the
-version they apply.
-
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
-
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
-
-I guess this applies everywhere...
-
-Best regards,
-Krzysztof
-
+greg k-h
 
