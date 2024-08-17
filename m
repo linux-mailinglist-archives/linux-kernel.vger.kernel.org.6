@@ -1,49 +1,47 @@
-Return-Path: <linux-kernel+bounces-290585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 462599555FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:08:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A48069555FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:08:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C20E6283A35
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:08:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D68D21C21D2F
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B6913D62E;
-	Sat, 17 Aug 2024 07:08:07 +0000 (UTC)
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC2513E8B6;
+	Sat, 17 Aug 2024 07:08:18 +0000 (UTC)
+Received: from gollum.nazgul.ch (gollum.nazgul.ch [81.221.21.253])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23AD13213C;
-	Sat, 17 Aug 2024 07:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A4213BACC;
+	Sat, 17 Aug 2024 07:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.221.21.253
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723878486; cv=none; b=rVxsBRXSawVbvQdB3Zr0kj788GENUtrdqIc7oBQP+r5lGkDLhzPb/PdjR49jrkQtvX0e8AXzIqQLF2I+ih7gFrqI2TewbVVE1I+91PbhQcKOupIwua+2W9Z3FqikSR208Dx8WVotodEhdjg/pfASXg8edyTbcOD2Qf396LbmFyQ=
+	t=1723878497; cv=none; b=ABD0SoNbHslAVTPFPYTem1VHV5UWFza4skeifc8ULZIFL0wtN/Wzlx9bL9r/zXEg7sVdhLstPMep2ADuKe/Wg/sOU9P9ZNGQpM3G9F199M6l8wOV2rS9er8V87gzOwxSN0rZlrxCs3iVeZJhtYlcckvsWc2Oa6uuapQGq3yfZvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723878486; c=relaxed/simple;
-	bh=LVNUcBsPkT1ZhS8qRJmIktLxJA4GBi66gn9u9snb8NQ=;
+	s=arc-20240116; t=1723878497; c=relaxed/simple;
+	bh=yzE+jy8b8afb5issZkSmbEdmvFnKwx2rjcFKUOjTdLY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pjHDQ+bPOk0lPr6tMg6ypCDYsR60287HDkzD/ilrqDKJKQNR8bEUvviLVBcVxe5E9vvDInN5KsyUdo/Uw45RMoRFD1b8ARjKNmOGQHyRzzQTwH8Vy3+Qs6vM7Zh+HIRBefP9ctq8v31zwbnV000aWz6f14KO5+y/DUzpHCPFUUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sfDP0-005IJt-0I;
-	Sat, 17 Aug 2024 15:07:52 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 17 Aug 2024 15:07:51 +0800
-Date: Sat, 17 Aug 2024 15:07:51 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Jia He <justin.he@arm.com>
-Cc: Andy Polyakov <appro@cryptogams.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-crypto@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] crypto: arm64/poly1305 - move data to rodata section
-Message-ID: <ZsBMRzbjPvfnhYg3@gondor.apana.org.au>
-References: <20240806055444.528932-1-justin.he@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GOCX5djk/ftFvPOSKTULOvXWhQDNrWRF3jCdklaTnllITwCVToA+5u8bKFUCkMYEx2o7r9w0uxPrEYQtLViKTsgWtjv0eqwYs8uExAarK95OthnA33Ent8z/FTvEHqJf9DLrbTmfq3/j5hlZ+cdTXkIeSmyTCGDi1pawBJfYAnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nazgul.ch; spf=pass smtp.mailfrom=nazgul.ch; arc=none smtp.client-ip=81.221.21.253
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nazgul.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nazgul.ch
+Received: from localhost (gollum.nazgul.ch [local])
+	by gollum.nazgul.ch (OpenSMTPD) with ESMTPA id 4bb5a486;
+	Sat, 17 Aug 2024 09:08:12 +0200 (CEST)
+Date: Sat, 17 Aug 2024 09:08:12 +0200
+From: Marcus Glocker <marcus@nazgul.ch>
+To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>
+Subject: [PATCH v4 1/6] dt-bindings: crypto: Add X1E80100 Crypto Engine
+Message-ID: <6xex326bp6rwybul4tfviiry37oz6qerkzov2czfiig56khnfn@o6nuxcudj3cn>
+References: <3lmcfffifsg6v3ljzxfbk25ydh6446phdff7w75k6gwoyw3jkw@ryc66frtyksk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,34 +50,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240806055444.528932-1-justin.he@arm.com>
+In-Reply-To: <3lmcfffifsg6v3ljzxfbk25ydh6446phdff7w75k6gwoyw3jkw@ryc66frtyksk>
 
-On Tue, Aug 06, 2024 at 05:54:44AM +0000, Jia He wrote:
-> When objtool gains support for ARM in the future, it may encounter issues
-> disassembling the following data in the .text section:
-> > .Lzeros:
-> > .long   0,0,0,0,0,0,0,0
-> > .asciz  "Poly1305 for ARMv8, CRYPTOGAMS by \@dot-asm"
-> > .align  2
-> 
-> Move it to .rodata which is a more appropriate section for read-only data.
-> 
-> There is a limit on how far the label can be from the instruction, hence
-> use "adrp" and low 12bits offset of the label to avoid the compilation
-> error.
-> 
-> Signed-off-by: Jia He <justin.he@arm.com>
-> ---
-> v2:
->   - use adrp+offset to avoid compilation error(kernel test bot and Andy)
-> v1: https://lkml.org/lkml/2024/8/2/616
-> 
->  arch/arm64/crypto/poly1305-armv8.pl | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+Document the inline crypto engine compatible for the Qualcomm X1E80100.
 
-Patch applied.  Thanks.
+Signed-off-by: Marcus Glocker <marcus@nazgul.ch>
+---
+ .../devicetree/bindings/crypto/qcom,inline-crypto-engine.yaml    | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/crypto/qcom,inline-crypto-engine.yaml b/Documentation/devicetree/bindings/crypto/qcom,inline-crypto-engine.yaml
+index 0304f074cf08..915db3d28892 100644
+--- a/Documentation/devicetree/bindings/crypto/qcom,inline-crypto-engine.yaml
++++ b/Documentation/devicetree/bindings/crypto/qcom,inline-crypto-engine.yaml
+@@ -19,6 +19,7 @@ properties:
+           - qcom,sm8450-inline-crypto-engine
+           - qcom,sm8550-inline-crypto-engine
+           - qcom,sm8650-inline-crypto-engine
++          - qcom,x1e80100-inline-crypto-engine
+       - const: qcom,inline-crypto-engine
+ 
+   reg:
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.39.2
+
 
