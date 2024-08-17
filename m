@@ -1,78 +1,128 @@
-Return-Path: <linux-kernel+bounces-290820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37271955922
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 19:12:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC9F6955926
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 19:15:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 736AF1C20E7E
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 17:12:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69AEA28119F
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 17:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150BF155CAD;
-	Sat, 17 Aug 2024 17:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC03715530B;
+	Sat, 17 Aug 2024 17:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZCsOBz3k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="GBi6BlGQ"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54EFC84FAD;
-	Sat, 17 Aug 2024 17:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3B4C121;
+	Sat, 17 Aug 2024 17:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723914746; cv=none; b=Uk+FQBDbXO1bddp+rzbPCWQH6XRv4rRt2HGWv/+qCUlYOLldGozDQKoDqIzKQ8ZkMN4s3B4bOoAZJUYCHrSuZaX7OsP/PjNAuiMzIAwzao+MAoZ251CBm9oJQmfX9OKCmDSsYsgn6MRbLpN58lHvs86akHuEu54sTf+zQjJii1g=
+	t=1723914942; cv=none; b=PfMiShv5KCCjEtiCHcEMaSXRG9EByTSaEkQUr9dlzz+BWLfQAXRI9XV3+x/qbjT7Ccl5AhqGBo/zrEzxtuc8j6SmsNT2p5hljdk/mE9UbA2rStTRhrj5FwnAuQwI4Q8p7vHeTCED3xr5/hgsn92ZJt8Q5eLMJtK1aKB3SgftfjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723914746; c=relaxed/simple;
-	bh=s/nA8DLjFoEtL/5FRIs14j65v36acKpHyXLxZC56a/w=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Avc8TNkR/1jO3AFbI4HQFNwl7I8QXQSn6UnKPUFsTCYGAHpoLdu/Xw7zFbt2SM8iabthZdFAilIGAMkkELaBIwOZU+1x5LocTlZES1aui9H597/dQ4lPZAvj/8WD+y678jiH/1Tr7dOcGQTm4zAOTNmtKUPWoaglHdpxonUhqTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZCsOBz3k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D12A3C116B1;
-	Sat, 17 Aug 2024 17:12:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723914745;
-	bh=s/nA8DLjFoEtL/5FRIs14j65v36acKpHyXLxZC56a/w=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=ZCsOBz3kXliqm+HRazvc8zwcjsT7dDM8bSB3qmXVX8jIv3v1fmuoTAT8SBiHZIBCu
-	 VHOMftShhlXVXqc7erhYiI8zBSP4xiEmR38y7yq9fQwWJ14QVZpnKTB2Klju/pPdUK
-	 B7XyorAyExJJ9WMRS4NYRalANExdQdm02Mm5KO13Rzx1hH8suk74uA8h3Uz5YxSd32
-	 su6iP2sjVppjcRykQTmQ1lRe//7+HLeUaKUHrEdF/hsmHYq6VBUY0GhwGbUowFSMbp
-	 WwTa+Qih2wMUSow1jpL1tsvEm9s7ekLgNZR55JbkLiNbErGpUtA7CRWlhvrPbwA5RV
-	 mpcueReAdVd+A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D9638231F8;
-	Sat, 17 Aug 2024 17:12:26 +0000 (UTC)
-Subject: Re: [GIT PULL] SCSI fixes for 6.11-rc3
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <47228494aa07492b9c00d463789049a0a492d033.camel@HansenPartnership.com>
-References: <47228494aa07492b9c00d463789049a0a492d033.camel@HansenPartnership.com>
-X-PR-Tracked-List-Id: <linux-scsi.vger.kernel.org>
-X-PR-Tracked-Message-Id: <47228494aa07492b9c00d463789049a0a492d033.camel@HansenPartnership.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
-X-PR-Tracked-Commit-Id: 8c6b808c8c2a9de21503944bd6308979410fd812
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: df6cbc62cc9b3bcf593d13400dd58cd339a0f56d
-Message-Id: <172391474509.3799179.10304402945988084680.pr-tracker-bot@kernel.org>
-Date: Sat, 17 Aug 2024 17:12:25 +0000
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+	s=arc-20240116; t=1723914942; c=relaxed/simple;
+	bh=FExCVIou6Bpaxp4k5WRqM9LyIa/mTp2pjEBC0C4AsKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dI19XajxY95WPIY0ijS2FWphfMSE7LZmCrSeZfbyPF/t8tSfMRXQ9271Fzonz0eQrtL739e5qVNHIs3ltByw7Ud6cpHgMDQUiPPb99yuPHwUBgOEJpQfAhWpRFM3pb1s6/uOo+/fN1oeSq8KRwhGK83WA9a4gyMHr3A1HI8wJDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=GBi6BlGQ; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1723914934;
+	bh=FExCVIou6Bpaxp4k5WRqM9LyIa/mTp2pjEBC0C4AsKc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GBi6BlGQIYKgihgfmLbIbLQ4y9E/5qGLwI4QyObhj+5oelIa4xjeMncvKcsK/PMCY
+	 fmKuVCl5HUbnw3NThrD1SRdlLVYk+2iX0TLriBaIGMPun+aWT7kvr8o9WsR190Xqsb
+	 eMvDMXKNp/hojLtbU6nH4s0CYgNsUdPM/l9jdCjo=
+Date: Sat, 17 Aug 2024 19:15:33 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Jose Fernandez <jose.fernandez@linux.dev>
+Cc: Christian Heusel <christian@heusel.eu>, 
+	Nathan Chancellor <nathan@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] kbuild: add debug package to pacman PKGBUILD
+Message-ID: <0dbfa069-a931-416d-ac1f-e9ceaee96b80@t-8ch.de>
+References: <20240817151147.156479-1-jose.fernandez@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240817151147.156479-1-jose.fernandez@linux.dev>
 
-The pull request you sent on Sat, 17 Aug 2024 08:27:39 +0100:
+On 2024-08-17 09:11:47+0000, Jose Fernandez wrote:
+> Add a new debug package to the PKGBUILD for the pacman-pkg target. The
+> debug package includes the non-stripped vmlinux file, providing access
+> to debug symbols needed for kernel debugging and profiling. The vmlinux
+> file will be installed to /usr/src/debug/${pkgbase}. The debug package
+> will be built by default and can be excluded by overriding PACMAN_EXTRAPACKAGES.
+> 
+> Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
+> Reviewed-by: Peter Jung <ptr1337@cachyos.org>
+> ---
+> v1->v2:
+> - Use the new PACMAN_EXTRAPACKAGES [1] variable to allow users to disable the
+> debug package if desired, instead of always including it.
+> 
+> [1] https://lore.kernel.org/lkml/20240813185900.GA140556@thelio-3990X/T/
+> 
+>  scripts/package/PKGBUILD | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> index fbd7eb10a52c..d40d282353de 100644
+> --- a/scripts/package/PKGBUILD
+> +++ b/scripts/package/PKGBUILD
+> @@ -5,7 +5,7 @@
+>  pkgbase=${PACMAN_PKGBASE:-linux-upstream}
+>  pkgname=("${pkgbase}")
+>  
+> -_extrapackages=${PACMAN_EXTRAPACKAGES-headers api-headers}
+> +_extrapackages=${PACMAN_EXTRAPACKAGES-headers api-headers debug}
+>  for pkg in $_extrapackages; do
+>  	pkgname+=("${pkgbase}-${pkg}")
+>  done
+> @@ -106,6 +106,15 @@ _package-api-headers() {
+>  	${MAKE} headers_install INSTALL_HDR_PATH="${pkgdir}/usr"
+>  }
+>  
+> +_package-debug(){
+> +	pkgdesc="Non-stripped vmlinux file for the ${pkgdesc} kernel"
+> +	depends=(${pkgbase}-headers)
+> +
+> +	cd "${objtree}"
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+This should make use of _prologue() from 
+"kbuild: pacman-pkg: move common commands to a separate function"
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/df6cbc62cc9b3bcf593d13400dd58cd339a0f56d
+https://lore.kernel.org/lkml/20240816141844.1217356-1-masahiroy@kernel.org/
 
-Thank you!
+It's not yet part of the kbuild tree, but I guess will be soon.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> +	mkdir -p "$pkgdir/usr/src/debug/${pkgbase}"
+
+The mkdir shouldn't be necessary, as install -D is used.
+
+> +	install -Dt "$pkgdir/usr/src/debug/${pkgbase}" -m644 vmlinux
+
+Can you also add a symlink to /usr/lib/modules/$(uname -r)/build/vmlinux
+for compatibility with the vanilla package?
+
+> +}
+> +
+>  for _p in "${pkgname[@]}"; do
+>  	eval "package_$_p() {
+>  		$(declare -f "_package${_p#$pkgbase}")
+> 
+> base-commit: 869679673d3bbaaf1c2a43dba53930f5241e1d30
+> -- 
+> 2.46.0
+> 
 
