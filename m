@@ -1,48 +1,47 @@
-Return-Path: <linux-kernel+bounces-290589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14F5B955605
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:09:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57C7C955608
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 476CA1C21EEC
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:09:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1453B284796
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F347713D8A2;
-	Sat, 17 Aug 2024 07:09:16 +0000 (UTC)
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2487513DBB7;
+	Sat, 17 Aug 2024 07:09:53 +0000 (UTC)
+Received: from gollum.nazgul.ch (gollum.nazgul.ch [81.221.21.253])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D8713213C;
-	Sat, 17 Aug 2024 07:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9F620E6;
+	Sat, 17 Aug 2024 07:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.221.21.253
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723878556; cv=none; b=ovsGkdnmCa2lQoWT1cYUhSMTtmdX5Rxkj+sisNMx6WOJWe75GXnt9Kvw7X/CziiL9nt/D7tVbdZClXj98YPw59zacBEihdRIGEQgRmD6+muIowexxjVBDCuJh6WpKLyTJq2iu2ijDHC0FwSCDT28rUKEIiJjulqydYggRcoAZGA=
+	t=1723878592; cv=none; b=IhDBd4GOCztvVZMfwakB+GMjsQ1iB3nSkrIylhRJz8wLIUYmrq61F3nmgZmz39K5Ay+qqumFq+ibY8+KBsqjR7+GlVbMTccWHcyd6NfUoDYiS51Yy9guP6Vt383fayGh6oCqyZPjryRiw3gooiRZPdDUTgptZKNJwViYPP9T2SM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723878556; c=relaxed/simple;
-	bh=KiN5at4d3qP18ofT9fzMyx2b3EB1WB3f1W1aAbx/9lQ=;
+	s=arc-20240116; t=1723878592; c=relaxed/simple;
+	bh=JvzCCKC0wSDVJ7SbM4PZ7/+vtSnSPsAjuaz/BWOT4dc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WLNhlELxq1MYwm8Pj2DVlM+iTK79zJIWN6mwQtrf0uFihFxq6di4Sad0bV0TPphKWPEKlMcUnT14sU6OeT9CiPlResEQTULkBg8pv+uMkvJUcCefUI2RrSF/rkIY3xr/KLLESs0xf+cySnJSnl5SU3n6Qs8MAdihtK6DmTgNCjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sfDQA-005ILI-0l;
-	Sat, 17 Aug 2024 15:09:04 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 17 Aug 2024 15:09:03 +0800
-Date: Sat, 17 Aug 2024 15:09:03 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: bbrezillon@kernel.org, arno@natisbad.org, schalla@marvell.com,
-	davem@davemloft.net, jserv@ccns.ncku.edu.tw,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] crypto: marvell - Remove custom swap function in
- favor of built-in sort swap
-Message-ID: <ZsBMj2x25A3e7alC@gondor.apana.org.au>
-References: <20240811062817.210527-1-visitorckw@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HP1aiJcXm9y4p7Oitjq7TwsiFaqw7FbL0u6IUXxBbU1vq39Cc/HVkZC5QeanfMsuyoNv5Wf3kHQMPBCYe5XAYeotou0NWdNh3klYYHrJ1P3gXw2gMbM98FthAXCmqLSTANsRbVizxV9FFSwbGQRd9U/WnezWZmhLvZNTy7xvz8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nazgul.ch; spf=pass smtp.mailfrom=nazgul.ch; arc=none smtp.client-ip=81.221.21.253
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nazgul.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nazgul.ch
+Received: from localhost (gollum.nazgul.ch [local])
+	by gollum.nazgul.ch (OpenSMTPD) with ESMTPA id f5ee78ed;
+	Sat, 17 Aug 2024 09:09:47 +0200 (CEST)
+Date: Sat, 17 Aug 2024 09:09:47 +0200
+From: Marcus Glocker <marcus@nazgul.ch>
+To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>
+Subject: [PATCH v4 2/6] dt-bindings: phy: Add X1E80100 UFS
+Message-ID: <ek4lj2gz4ykry4evfzhfwxgievrgypaqilqhbfs3ascmkb4rdf@u5nfzj733i5o>
+References: <3lmcfffifsg6v3ljzxfbk25ydh6446phdff7w75k6gwoyw3jkw@ryc66frtyksk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,34 +50,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240811062817.210527-1-visitorckw@gmail.com>
+In-Reply-To: <3lmcfffifsg6v3ljzxfbk25ydh6446phdff7w75k6gwoyw3jkw@ryc66frtyksk>
 
-On Sun, Aug 11, 2024 at 02:28:15PM +0800, Kuan-Wei Chiu wrote:
-> The custom swap function used in octeontx/octeontx2 driver do not
-> perform any special operations and can be replaced with the built-in
-> swap function of sort. This change not only reduces code size but also
-> improves efficiency, especially in scenarios where CONFIG_RETPOLINE is
-> enabled, as it makes indirect function calls more expensive.
-> 
-> By using the built-in swap, we avoid these costly indirect function
-> calls, leading to better performance.
-> 
-> Kuan-Wei Chiu (2):
->   crypto: octeontx - Remove custom swap function in favor of built-in
->     sort swap
->   crypto: octeontx2 - Remove custom swap functions in favor of built-in
->     sort swap
-> 
->  drivers/crypto/marvell/octeontx/otx_cptvf_algs.c   | 12 ++----------
->  drivers/crypto/marvell/octeontx2/otx2_cptvf_algs.c | 10 +---------
->  2 files changed, 3 insertions(+), 19 deletions(-)
-> 
-> -- 
-> 2.34.1
+Document the qmp ufs phy compatible for the Qualcomm X1E80100.
 
-All applied.  Thanks.
+Signed-off-by: Marcus Glocker <marcus@nazgul.ch>
+---
+ .../devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml      | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml
+index f9cfbd0b2de6..c8a61cddb311 100644
+--- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-ufs-phy.yaml
+@@ -35,6 +35,7 @@ properties:
+       - qcom,sm8475-qmp-ufs-phy
+       - qcom,sm8550-qmp-ufs-phy
+       - qcom,sm8650-qmp-ufs-phy
++      - qcom,x1e80100-qmp-ufs-phy
+ 
+   reg:
+     maxItems: 1
+@@ -102,6 +103,7 @@ allOf:
+               - qcom,sm8475-qmp-ufs-phy
+               - qcom,sm8550-qmp-ufs-phy
+               - qcom,sm8650-qmp-ufs-phy
++              - qcom,x1e80100-qmp-ufs-phy
+     then:
+       properties:
+         clocks:
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.39.2
+
 
