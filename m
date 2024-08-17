@@ -1,93 +1,121 @@
-Return-Path: <linux-kernel+bounces-290646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D707F9556D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 11:38:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01AC89556CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 11:35:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CA931F22285
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:38:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 909C9B21CC9
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF53C1487DC;
-	Sat, 17 Aug 2024 09:38:18 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BC71487C3;
+	Sat, 17 Aug 2024 09:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="akEjxC1v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5C7881E;
-	Sat, 17 Aug 2024 09:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3743881E;
+	Sat, 17 Aug 2024 09:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723887498; cv=none; b=skJjBAW0dqOpUvnP3MP7wLFevfWFlVUAqV/FSAwG71jPkkSIGNXUqMdiZWfJbM7DjzXIESedbUdkptj1wo1sfvWwE7xF+d9LV8nzoM+Xrv+DS9ocqai2UfW9EbJ/v4Cwlo9gPFWJWT/OjAVbk39MmleOSdXHwlaAo6iyvqrNprg=
+	t=1723887333; cv=none; b=MIV82o2AQrtVUxSXFcFDUaGE9GqvayjKgolvf6M9UVMuxuciVevnCkN4WaLolY3eAnNBGhCmaHev/kDh8RpLjleb4ciqtvsf0VBObxS7rAa1SoGSP3ycVZURTuUdALb4DPIKCPk9ocB+H3w03eRDEEgujeMSIbNzmkaPQN6tM9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723887498; c=relaxed/simple;
-	bh=4LZBxysOt7p5mfbtXH+sIKwMGMV4pKHPmn22fhN6098=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NjZphulRuX5rQWmh9OKyieryhogwTrtGI4jBqLNh5b9DD9/5l6aZEtKn3W8tgIGBUTgRnvgJnWbwtmBt6JSyAOi714utPRwWhv8RA/uscXbXwdyRthq4ecuwpvgJaZWkgxesI44zPXRd6JCvv3gMH8cAjoKkzLv8bXmL8rAejYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WmDF96FtHz20lqF;
-	Sat, 17 Aug 2024 17:33:33 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1B6B3140154;
-	Sat, 17 Aug 2024 17:38:11 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 17 Aug
- 2024 17:38:10 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <perex@perex.cz>, <tiwai@suse.com>, <yuehaibing@huawei.com>
-CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] ALSA: trident: Remove unused declarations
-Date: Sat, 17 Aug 2024 17:35:27 +0800
-Message-ID: <20240817093527.1120240-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723887333; c=relaxed/simple;
+	bh=Sw1HIvz572t59kMetUvCyMhXO9ZkRGeCQrNyyiWLYtk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uAFyWZk0pCgAPcNW5Y1q2mCOZ3j4OR1RUkFjnaOT7ndyR1y92kKvBctDUB6IBwBjExB8Lg2wiAPjEBjeiAhQ/dygYeUYkWbAePJ4I9LHE77qRBx6OAuajY4OnsbdK4OgU4WYnY+EeOtm8B2WDDEnlxdPeit+CBaJrkByXg7zGK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=akEjxC1v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCDEEC116B1;
+	Sat, 17 Aug 2024 09:35:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723887333;
+	bh=Sw1HIvz572t59kMetUvCyMhXO9ZkRGeCQrNyyiWLYtk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=akEjxC1vFTIUq8RvgEODnkyu4+wgCYGN1jKpTV5gGuIogxCfOl1VW65LHrZDhOW3H
+	 2qTh7gpTPsOs+GxWciwCFMCBg11eayMHbMhd2W7rHygmEZCj3/yxPf+JcQKqXs4f8A
+	 qud6CHl/eMhy1wqlzRnAQ5SwBfMj+fv+F+gDLSLk=
+Date: Sat, 17 Aug 2024 11:35:30 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Alex Young <alex000young@gmail.com>
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, xiyou.wangcong@gmail.com,
+	jiri@resnulli.us, davem@davemloft.net, security@kernel.org,
+	xkaneiki@gmail.com, hackerzheng666@gmail.com
+Subject: Re: [PATCH] net: sched: use-after-free in tcf_action_destroy
+Message-ID: <2024081722-reflex-reverend-4916@gregkh>
+References: <20240816015355.688153-1-alex000young@gmail.com>
+ <CAM0EoMmAcgbQWG7kQoe335079Y2UY_BmoYErL=44-itJ=p-B-Q@mail.gmail.com>
+ <CAM0EoM=qvBxXS_1eheyhCKbNMRbK_qTTFMa1fFBFQp_hRbzpQQ@mail.gmail.com>
+ <CAFC++j15p9Ey3qc4ZsY4CXBsL3LHn7TsFTi6=N9=H+_Yx_k=+Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFC++j15p9Ey3qc4ZsY4CXBsL3LHn7TsFTi6=N9=H+_Yx_k=+Q@mail.gmail.com>
 
-Commit 8bb8b453cb45 ("[ALSA] trident - clean up obsolete synth codes")
-remove synth functions but leave declarations.
-And Commit e5723b41abe5 ("[ALSA] Remove sequencer instrument layer")
-left snd_trident_attach_synthesizer().
+On Sat, Aug 17, 2024 at 05:27:17PM +0800, Alex Young wrote:
+> Hi Jamal,
+> 
+> Thanks your mention. I have reviewed the latest kernel code.
+> I understand why these two tc function threads can enter the kernel at the same
+> time. It's because the request_module[2] function in tcf_action_init_1. When the
+> tc_action_init_1 function to add a new action, it will load the action
+> module. It will
+> call rtnl_unlock to let the Thread2 into the kernel space.
+> 
+> Thread1                                                 Thread2
+> rtnetlink_rcv_msg                                   rtnetlink_rcv_msg
+>  rtnl_lock();
+>  tcf_action_init
+>   for(i;i<TCA_ACT_MAX_PRIO;i++)
+>    act=tcf_action_init_1 //[1]
+>         if (rtnl_held)
+>            rtnl_unlock(); //[2]
+>         request_module("act_%s", act_name);
+> 
+>                                                                 tcf_del_walker
+> 
+> idr_for_each_entry_ul(idr,p,id)
+> 
+> __tcf_idr_release(p,false,true)
+> 
+>  free_tcf(p) //[3]
+> if (rtnl_held)
+> rtnl_lock();
+> 
+>    if(IS_ERR(act))
+>     goto err
+>    actions[i] = act
+> 
+>   err:
+>    tcf_action_destroy
+>     a=actions[i]
+>     ops = a->ops //[4]
+> I know this time window is small, but it can indeed cause the bug. And
+> in the latest
+> kernel, it have fixed the bug. But version 4.19.x is still a
+> maintenance version.
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- sound/pci/trident/trident.h | 5 -----
- 1 file changed, 5 deletions(-)
+4.19.y is only going to be alive for 4 more months, and anyone still
+using it now really should have their plans to move off of it finished
+already (or almost finished.)
 
-diff --git a/sound/pci/trident/trident.h b/sound/pci/trident/trident.h
-index 9768a7fc2349..ed2d4eecc704 100644
---- a/sound/pci/trident/trident.h
-+++ b/sound/pci/trident/trident.h
-@@ -406,7 +406,6 @@ int snd_trident_create_gameport(struct snd_trident *trident);
- int snd_trident_pcm(struct snd_trident *trident, int device);
- int snd_trident_foldback_pcm(struct snd_trident *trident, int device);
- int snd_trident_spdif_pcm(struct snd_trident *trident, int device);
--int snd_trident_attach_synthesizer(struct snd_trident * trident);
- struct snd_trident_voice *snd_trident_alloc_voice(struct snd_trident * trident, int type,
- 					     int client, int port);
- void snd_trident_free_voice(struct snd_trident * trident, struct snd_trident_voice *voice);
-@@ -419,9 +418,5 @@ extern const struct dev_pm_ops snd_trident_pm;
- struct snd_util_memblk *snd_trident_alloc_pages(struct snd_trident *trident,
- 						struct snd_pcm_substream *substream);
- int snd_trident_free_pages(struct snd_trident *trident, struct snd_util_memblk *blk);
--struct snd_util_memblk *snd_trident_synth_alloc(struct snd_trident *trident, unsigned int size);
--int snd_trident_synth_free(struct snd_trident *trident, struct snd_util_memblk *blk);
--int snd_trident_synth_copy_from_user(struct snd_trident *trident, struct snd_util_memblk *blk,
--				     int offset, const char __user *data, int size);
- 
- #endif /* __SOUND_TRIDENT_H */
--- 
-2.34.1
+If this is a request_module issue, and you care about 4.19.y kernels,
+just add that module to the modprobe exclude list in userspace which
+will prevent it from being loaded automatically.  Or load it at boot
+time.
 
+And what specific commit resolved this issue in the older kernels?  Have
+you attempted to just backport that change to 4.19.y?
+
+thanks,
+
+greg k-h
 
