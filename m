@@ -1,151 +1,196 @@
-Return-Path: <linux-kernel+bounces-290848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 438B295597A
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 21:58:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D91F955988
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 22:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3EFE282475
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 19:58:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 263CB1F21878
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 20:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA4C1553B7;
-	Sat, 17 Aug 2024 19:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D751E824AF;
+	Sat, 17 Aug 2024 20:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gC/nnu7M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=holm.dev header.i=@holm.dev header.b="xAEGVIcP"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DE7646;
-	Sat, 17 Aug 2024 19:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C5413CFB8
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 20:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723924702; cv=none; b=CUtrPDOm5Q1qsmGb+a3y7Qd9Q6aSWnHH92gk0m/PR7lp9kbNoLfyy3gZZGGysSVtwUegSQs6WvfGllwimwkxrs3XTZyR4QFLILs5Hpf+kdSEE40RadFn+qiUhwXD8P2WBRt9SeqD3U5QdFB2HH3YdRmTaDMUkIRZ/03pAwTp2So=
+	t=1723926650; cv=none; b=GaggGrzk72Ev6/zQTISZiEEfG9JzoG8/SrUP1sHaeyfWxIJujxtzVTkHmAB6KrbrJm7HNFPicN+t+ZD9INgStieMPeR/WaZAze9oICPvRJJc5QN1NDKvz3/nEHoLhVp0blEYf0ovo2Dt9rhgUdArnnqxSRHp/mcLOckoFUFuoLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723924702; c=relaxed/simple;
-	bh=nsBtUaVNqz8BztyQu7LhFBI0CLrd00qX8ELuGWKRIcI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=u9kslH9KgNjGQcZ9l3tSUGquK/oPxWX8ftGrHFLLEKlaQIXN8p2oZl2nDB8IBaPXgI29020eEz05KsOtbn8NvnKnMXMyYgLvJpymbPjGIyCSo3H/QAEeFoJIpuCgYkKUlK8oaDkRWM7Ku3BBTR+xdz4R3BQ/FWIFH8qC+wIRvGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gC/nnu7M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A376AC116B1;
-	Sat, 17 Aug 2024 19:58:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723924702;
-	bh=nsBtUaVNqz8BztyQu7LhFBI0CLrd00qX8ELuGWKRIcI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=gC/nnu7M/xCiluApsQdsGInEx2ZczEfg5MYXu87YC5268oIMrJ53FGcGaCh2Eh6ED
-	 U79auSs2V1rIXI80LOVLNslgOxtOWaGFdanwMsYcZhFSLpvnT4Ug0Kr5/kwHEUJz3L
-	 hroVs/r+IMss6/35vw8KB+d9yqiQhsx0OyU3cYByfXell0VU/x5mNvSnF1/1V0qJoT
-	 mxkAEx9f8IwpydH834QxQ3yo43Kpt5OxRwfKDQ0mNkKN/Ec97uJd950AFm6x/XPMwG
-	 0Cn/z5/mvZx6BDpcJU0hMBnneLyEIIv4ikgz3RMjlLeSDoh3sUuaCgUHpjx4pZ4HvU
-	 tHJgtUMbKehow==
-Date: Sat, 17 Aug 2024 21:58:18 +0200
-From: Wolfram Sang <wsa@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: [PULL REQUEST] i2c-for-6.11-rc4
-Message-ID: <ZsEA2hE5048Dt5Vq@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
+	s=arc-20240116; t=1723926650; c=relaxed/simple;
+	bh=9pVBnF/IoqoTA9giQFUXONfm/EXkOUlqKduLvu0uTR4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S11gk9wzcbcGjJjji5KoeqslgSlIPNwoQ8TZtkX0P8frO7jxeQIp7DNXfwiL6k25b+SCbO5GlP+3rCk6V8TOb9MCxg8xkblmOkygDDgNcrElu6bE1OVKsCVr/5cnKzdFnFDuHt02yjeH9KmxZQNLic/7amAvDihjZh+GEIX7E2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=holm.dev; spf=pass smtp.mailfrom=holm.dev; dkim=pass (2048-bit key) header.d=holm.dev header.i=@holm.dev header.b=xAEGVIcP; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=holm.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=holm.dev
+Message-ID: <e518ef00-4c7a-4719-bc58-90d782e34b30@holm.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=holm.dev; s=key1;
+	t=1723926645;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RiMzr2mOghlf7iiDaqEMg26CjM/eQ8wr+mNOVNBO9T4=;
+	b=xAEGVIcPQJt5llu96Y8JewrBti+W3MjnLAKMZadCVm5MruQjiBAKEN2skzp8aTFjwPjX8u
+	8HPDBLLrEA7tyzsraZrdiWCfBGKVC7AlK0OQ+zpB7UqoMsN/VLkXb1YhdBlvHye/+vxKXk
+	qGi2JTZ1s+lprhbPrkppOY+2AiBxGNaZfQRb94U7Hx918DkNMuh2mNLCiup2x1CpAcw6NY
+	d+fQ1eL2yJKm/IKfaSHooV3SMJHHhxjYwNi9vBM6ZOW+hAWpN9EZRyESmoUtK9wg22Iqr5
+	KPYzKv4eHL5r82wuOVG6+EE74AHBgs0U9ZLWL+DaR6WwAdMtti910CvHdnSdxA==
+Date: Sat, 17 Aug 2024 22:30:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Fqxl5XGXrXGJL2Ev"
-Content-Disposition: inline
+Subject: Re: [PATCH 6.10] drm/amd/display: Refactor function
+ dm_dp_mst_is_port_support_mode()
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, regressions@lists.linux.dev,
+ amd-gfx@lists.freedesktop.org, ML dri-devel
+ <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>,
+ Wayne Lin <wayne.lin@amd.com>, Jerry Zuo <jerry.zuo@amd.com>,
+ Zaeem Mohamed <zaeem.mohamed@amd.com>,
+ Daniel Wheeler <daniel.wheeler@amd.com>,
+ Alex Deucher <alexander.deucher@amd.com>
+References: <20240730185339.543359-1-kevin@holm.dev>
+ <2024081739-suburb-manor-e6c3@gregkh>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kevin Holm <kevin@holm.dev>
+Content-Language: en-US
+In-Reply-To: <2024081739-suburb-manor-e6c3@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
 
---Fqxl5XGXrXGJL2Ev
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-The following changes since commit 7c626ce4bae1ac14f60076d00eafe71af30450ba:
+On 17.08.24 10:42, Greg KH wrote:
+> On Tue, Jul 30, 2024 at 08:53:39PM +0200, Kevin Holm wrote:
+>> From: Wayne Lin <wayne.lin@amd.com>
+>>
+>> [ Upstream commit fa57924c76d995e87ca3533ec60d1d5e55769a27 ]
+>>
+>> [Why]
+>> dm_dp_mst_is_port_support_mode() is a bit not following the original design rule and cause
+>> light up issue with multiple 4k monitors after mst dsc hub.
+>>
+>> [How]
+>> Refactor function dm_dp_mst_is_port_support_mode() a bit to solve the light up issue.
+>>
+>> Reviewed-by: Jerry Zuo <jerry.zuo@amd.com>
+>> Acked-by: Zaeem Mohamed <zaeem.mohamed@amd.com>
+>> Signed-off-by: Wayne Lin <wayne.lin@amd.com>
+>> Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
+>> Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+>> [kevin@holm.dev: Resolved merge conflict in .../amdgpu_dm_mst_types.c]
+>> Fixes: 4df96ba6676034 ("drm/amd/display: Add timing pixel encoding for mst mode validation")
+>> Link: https://lore.kernel.org/stable/d74a7768e957e6ce88c27a5bece0c64dff132e24@holm.dev/T/#u
+>> Signed-off-by: Kevin Holm <kevin@holm.dev>
+>> ---
+>> I resolved the merge conflict so that, after this patch is applied to the
+>> linux-6.10.y branch of the stable git repository, the resulting function
+>> dm_dp_mst_is_port_support_mode (and also the new function
+>> dp_get_link_current_set_bw) is identical to the original commit.
+>>
+>> I've confirmed that it fixes the regression I reported for my use case.
+> 
+> And it turns out this change breaks the arm and arm64 builds.  I tried
+> to fix it up by applying the fixup afterward for this file, but it's
+> just too much of a mess to unwind this, so I'm going to have to revert
+> this now, sorry.
+That sucks, sorry for the problems my patch caused. :(
 
-  Linux 6.11-rc3 (2024-08-11 14:27:14 -0700)
+> See:
+> 	https://lore.kernel.org/r/b27c5434-f1b1-4697-985b-91bb3e9a22df@roeck-us.net
+> for details.
+I unfortunately don't know the amdgpu driver and kernel code in general enough to help fix
+that. The back-ported patch I send was my first patch to the kernel.
 
-are available in the Git repository at:
+In the email thread where I reported the problem I send a patch that reverts
+4df96ba6676034 ("drm/amd/display: Add timing pixel encoding for mst mode validation") to
+fix the problem that way [1]. I've included a copy of that below.
+I've tested that it still applies to 6.10.6-rc3 without conflicts and compiles for me. I
+could not test if the 6.10.6-rc3 with the revert applied fixes the problem as I'm
+traveling and don't have access to my normal setup. I can only say that reverting it on
+v6.10.2 fixed the problem for me.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.11-rc4
+I don't know how to compile for other architectures so I did not test that.
 
-for you to fetch changes up to 87cea484951eba1d0342033241f80e49303d802c:
+Not sure what would be best, reverting the problem commit so the regression is fixed in
+the 6.10 stable kernel (and maybe breaking something else?) or waiting for someone at AMD
+with better knowledge of the amdgpu driver to back-port the fixing commit in a non-broken
+way.
 
-  Merge tag 'i2c-host-fixes-6.11-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current (2024-08-16 16:23:51 +0200)
+~kevin
 
-----------------------------------------------------------------
-i2c-for-6.11-rc4
+[1] https://lore.kernel.org/regressions/7bf26283474fbb6ea915f93f4db0bc614a627617@holm.dev/
+> 
+> greg k-h
+---
+  .../display/amdgpu_dm/amdgpu_dm_mst_types.c   | 33 +++----------------
+  1 file changed, 5 insertions(+), 28 deletions(-)
 
-I2C core needs to fix a fix from rc3 by replacing IS_ENABLED() with
-IS_REACHABLE().
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c 
+b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+index a5e1a93ddaea..5c555a37e367 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+@@ -1599,7 +1599,7 @@ enum dc_status dm_dp_mst_is_port_support_mode(
+         struct amdgpu_dm_connector *aconnector,
+         struct dc_stream_state *stream)
+  {
+-       int pbn, branch_max_throughput_mps = 0;
++       int bpp, pbn, branch_max_throughput_mps = 0;
+         struct dc_link_settings cur_link_settings;
+         unsigned int end_to_end_bw_in_kbps = 0;
+         unsigned int upper_link_bw_in_kbps = 0, down_link_bw_in_kbps = 0;
+@@ -1649,34 +1649,11 @@ enum dc_status dm_dp_mst_is_port_support_mode(
+                         }
+                 }
+         } else {
+-               /* Check if mode could be supported within max slot
+-                * number of current mst link and full_pbn of mst links.
+-                */
+-               int pbn_div, slot_num, max_slot_num;
+-               enum dc_link_encoding_format link_encoding;
+-               uint32_t stream_kbps =
+-                       dc_bandwidth_in_kbps_from_timing(&stream->timing,
+-                               dc_link_get_highest_encoding_format(stream->link));
+-
+-               pbn = kbps_to_peak_pbn(stream_kbps);
+-               pbn_div = dm_mst_get_pbn_divider(stream->link);
+-               slot_num = DIV_ROUND_UP(pbn, pbn_div);
+-
+-               link_encoding = dc_link_get_highest_encoding_format(stream->link);
+-               if (link_encoding == DC_LINK_ENCODING_DP_8b_10b)
+-                       max_slot_num = 63;
+-               else if (link_encoding == DC_LINK_ENCODING_DP_128b_132b)
+-                       max_slot_num = 64;
+-               else {
+-                       DRM_DEBUG_DRIVER("Invalid link encoding format\n");
++               /* check if mode could be supported within full_pbn */
++               bpp = convert_dc_color_depth_into_bpc(stream->timing.display_color_depth) * 3;
++               pbn = drm_dp_calc_pbn_mode(stream->timing.pix_clk_100hz / 10, bpp << 4);
++               if (pbn > aconnector->mst_output_port->full_pbn)
+                         return DC_FAIL_BANDWIDTH_VALIDATE;
+-               }
+-
+-               if (slot_num > max_slot_num ||
+-                       pbn > aconnector->mst_output_port->full_pbn) {
+-                       DRM_DEBUG_DRIVER("Mode can not be supported within mst links!");
+-                       return DC_FAIL_BANDWIDTH_VALIDATE;
+-               }
+         }
 
-For host drivers, there are two fixes in this update:
-
-Tegra I2C Controller: Addresses a potential double-locking issue
-during probe. ACPI devices are not IRQ-safe when invoking runtime
-suspend and resume functions, so the irq_safe flag should not be
-set.
-
-Qualcomm GENI I2C Controller: Fixes an oversight in the exit path
-of the runtime_resume() function, which was missed in the
-previous release.
-
-----------------------------------------------------------------
-Andi Shyti (1):
-      i2c: qcom-geni: Add missing geni_icc_disable in geni_i2c_runtime_resume
-
-Breno Leitao (1):
-      i2c: tegra: Do not mark ACPI devices as irq safe
-
-Richard Fitzgerald (1):
-      i2c: Use IS_REACHABLE() for substituting empty ACPI functions
-
-Wolfram Sang (1):
-      Merge tag 'i2c-host-fixes-6.11-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
-
-
-with much appreciated quality assurance from
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      (Rev.) i2c: tegra: Do not mark ACPI devices as irq safe
-
-Dmitry Osipenko (1):
-      (Rev.) i2c: tegra: Do not mark ACPI devices as irq safe
-
-Takashi Iwai (1):
-      (Rev.) i2c: Use IS_REACHABLE() for substituting empty ACPI functions
-
- drivers/i2c/busses/i2c-qcom-geni.c | 4 +++-
- drivers/i2c/busses/i2c-tegra.c     | 4 ++--
- include/linux/i2c.h                | 2 +-
- 3 files changed, 6 insertions(+), 4 deletions(-)
-
---Fqxl5XGXrXGJL2Ev
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmbBANoACgkQFA3kzBSg
-Kba75xAAsdvJUuhdJC5axRPfKSe32Fekh5m+Psby1Rn6zWEecXDj1jXBv1+AFmhq
-XprjfoURtZd0LuyF5Q9yXxeEYKJl8t6GAvtjbIY8Q89zZki8Z5tkRRqeXOCIV/FL
-5wk9i6LO6kHJ7aFp7zqRYQPWcYS+sC5G53ZCU8p7lVhsZiEEASLJ4Cj26X2nIgMA
-8p+X4T2noUKF0MWW0lCjU0FpxNSdl6F2oesIyezV6FDhzAWy8hKWoubgTSo5Rq0k
-FfWaEpo7zo53tSQA7O5OizKubrj2PihvK9xA38o+hswGz6tjA/qfF5fZERpXrZSJ
-PntFfgO3Xv3mFUqFVnttzpLEK9scd4DdmS19pdS067YLRWEsWHLT/Eh5NyJSrml8
-nNF3Pv1Bc1g/5VLkZ49DfB2b4+mdWYWhuS/1wRzWqpCL1hh/8pwqcKfL34hLCEzh
-PoW5qdrt0O2W1PP/43Qj8GcZ4+YVQkBQhB+y0QZ34ahIkFlMcQciVeEUnTEp7Qhe
-W4jP3MdNdQI+quflcgAPquhuJuRXwEw8boZUPOkTgTfRdUuk6f0VAn0ma8iqkjLO
-4Sq8RVTUHT/ghcKV7V1DW3dXH7PlKEB0uac9gSRxD95l4sqQSk8NIsqVgfuDlr3w
-Ji2M/DTPIzbENlGvpECHWvcZT6qtASAbPe21cTOELjNspYpvF6U=
-=kxDV
------END PGP SIGNATURE-----
-
---Fqxl5XGXrXGJL2Ev--
+         /* check is mst dsc output bandwidth branch_overall_throughput_0_mps */
+-- 
+2.45.2
 
