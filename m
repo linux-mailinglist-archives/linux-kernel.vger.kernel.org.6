@@ -1,126 +1,372 @@
-Return-Path: <linux-kernel+bounces-290730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 598349557E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 14:49:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A64719557EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 14:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16CDD282C64
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 12:49:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA8A61C21372
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 12:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635611E871;
-	Sat, 17 Aug 2024 12:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C97214BFB0;
+	Sat, 17 Aug 2024 12:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A3RTQsh+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOVLdH9S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0E11854;
-	Sat, 17 Aug 2024 12:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC151854;
+	Sat, 17 Aug 2024 12:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723898923; cv=none; b=ILyqCwCdBe4QzVvLoNtZ8Bte59Bpw6APfsAtyUaShdZH5RrpxDkS+/xO2mD+30oAjufTSfNkLarNcLTXTDHSZVNoGZkqbzszUwspf8kdY3LPYX2Ax2aG3z0tnemqdPEEcZX3YRy7gFAO9z+5lL0Y5qD/ereGIeYbIBkbUaNyfY8=
+	t=1723898959; cv=none; b=lynF+tP2Bj8VJfEa4MdJ6NQs3aVBSYr6NjNC8DlVXNlmbmSaXkVMPX98jHqkQgpgnymG0MLqWFtLDFVNOtT224AZ3Qfh0Fe8XD2+CrwPmm4NmsClkvcCM9mNorR1bBc2Xa8HSLFZWfP25NewuUOGGL6YsE3AlNj91ihyDw8iBfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723898923; c=relaxed/simple;
-	bh=3AlbDRi86u9EhNaNflWrcwKVKeWeCwuXaFv/Oj7Z604=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xe4TyaTSZ4ETHasK89u7PphQT0cqKmBCIQF9SIdUHwqQPSCuprf/SbJ08G0IwGNNXlEiaFkuRmYi4LAFw/0qD3Dlz+UWZ1T0vPvGe0iVATmFrJo5HhugRrfMPG3f1zgAHRwPSgMGu2kTldE8QVjm0OwBtwzhjwg59YcKrdBKV4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A3RTQsh+; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723898922; x=1755434922;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3AlbDRi86u9EhNaNflWrcwKVKeWeCwuXaFv/Oj7Z604=;
-  b=A3RTQsh+0WHvwtFA18DoIk3eeeX1/9mkTOFbCqpQO6PwownezlDDIf9E
-   rJpNvKVWa0a1xLk42O1fsVWnLsyrVj3GkN0UaGMuzRGTU64PcrxM+DSrE
-   FAkUaz+PdFMfJU/S/CFe/bu58T+ZNoTFZeGg0lDAcM9HJzrsf6cbYGUOK
-   VxI8PI+sTVd+BWogzDsbduYrQb0WEDyusCC2hJFQorYZm0E+p8LocLgHT
-   +9KO5eq9K8u3n52vlw0KXOtSd1biJh778pd4oPbj8EBM52Hn+RYAL/z2l
-   8W+3UgNBGiPfUBOslj0EKcAfC10H+rn8rK9stEZUaNY+U6CH4b7DAxZOd
-   w==;
-X-CSE-ConnectionGUID: IjYb4DbzQvORi1NsSOrioA==
-X-CSE-MsgGUID: GZ0h+txWTGm2EhRRkxpHpw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11167"; a="33568594"
-X-IronPort-AV: E=Sophos;i="6.10,154,1719903600"; 
-   d="scan'208";a="33568594"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2024 05:48:42 -0700
-X-CSE-ConnectionGUID: M2214yHERHSVfojmdFc6jw==
-X-CSE-MsgGUID: ra6VrFjoQ+6mTaOAaVmbEg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,154,1719903600"; 
-   d="scan'208";a="90672395"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 17 Aug 2024 05:48:37 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sfIrC-0007Sg-1D;
-	Sat, 17 Aug 2024 12:48:34 +0000
-Date: Sat, 17 Aug 2024 20:48:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-arch@vger.kernel.org
-Subject: Re: [PATCH 3/9] vdso: Add __arch_get_k_vdso_rng_data()
-Message-ID: <202408172056.OAokF1z5-lkp@intel.com>
-References: <a7bdbbb14d8635c1e33ada7982cf2cd1a8321e5c.1723817900.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1723898959; c=relaxed/simple;
+	bh=+pE5SKWzlxF3fD73WKhRfKm3B6zo5OA06Nc/dkeL658=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mV659riTiyWJyxFOxmoTmVxMCArok1TXuzIW9UiaNavxmquLnSpWPVAZQh17wDkQdCVKOQPgl8VKu7lRgtmDjrWnVkc51+jqqoCTj8yCmuPi0udLkLjBqSeBCKEJ+dXl+RHqQOZLMZI5DbRUMyxoP0Sb6WO2v3xRbgsSDp3ePxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOVLdH9S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 169B1C116B1;
+	Sat, 17 Aug 2024 12:49:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723898958;
+	bh=+pE5SKWzlxF3fD73WKhRfKm3B6zo5OA06Nc/dkeL658=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JOVLdH9S9heKEEqyUSsvrbQBm/NO/PRD2+n8hARLH2RQf0SkbirvWgRiu8sV5JjVr
+	 AaTK80Hu1VY6iTuDLTT0Lcmd4nJFgNB4zjr/j9VoMIeerMOJe6k6OcCVeNXaWSIhAy
+	 jGWdJo2h/MQryfP3TcSOcCd+Gt9sEeYRDO+XJkLH7uVOTRId+JNXf7hcb6soMl23pc
+	 9XGQ9i7bP3gnMPTVU4DjI3jvRFI2xL0tQlBjdSzw66VIlKDCq0bSwxsvC/E1p12um/
+	 KNNIpUgikqQj7MP5aPodQCMuCONDNv3QOt/5fGZkchEI8h9melw357JFlegS+uH0St
+	 vCBuqwvXXc16A==
+Date: Sat, 17 Aug 2024 13:49:11 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Denis Benato <benato.denis96@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Jagath Jog J
+ <jagathjog1996@gmail.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Luke D . Jones" <luke@ljones.dev>, Jonathan
+ LoBue <jlobue10@gmail.com>
+Subject: Re: [PATCH 1/1] iio: bmi323: peripheral in lowest power state on
+ suspend
+Message-ID: <20240817134911.6043c798@jic23-huawei>
+In-Reply-To: <20240811161202.19818-2-benato.denis96@gmail.com>
+References: <20240811161202.19818-1-benato.denis96@gmail.com>
+	<20240811161202.19818-2-benato.denis96@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a7bdbbb14d8635c1e33ada7982cf2cd1a8321e5c.1723817900.git.christophe.leroy@csgroup.eu>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Christophe,
+On Sun, 11 Aug 2024 18:12:02 +0200
+Denis Benato <benato.denis96@gmail.com> wrote:
 
-kernel test robot noticed the following build errors:
+> The bmi323 is mounted on some devices that are powered
+> by an internal battery: help in reducing system overall power drain
+> while the imu is not in use by resetting it in its lowest power
+> draining state.
+> 
+> Signed-off-by: Denis Benato <benato.denis96@gmail.com>
+Hi Denis.
 
-[auto build test ERROR on powerpc/next]
-[also build test ERROR on powerpc/fixes crng-random/master shuah-kselftest/next shuah-kselftest/fixes linus/master v6.11-rc3 next-20240816]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This is rather an expensive path for runtime PM. 
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christophe-Leroy/powerpc-vdso-Don-t-discard-rela-sections/20240816-223917
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git next
-patch link:    https://lore.kernel.org/r/a7bdbbb14d8635c1e33ada7982cf2cd1a8321e5c.1723817900.git.christophe.leroy%40csgroup.eu
-patch subject: [PATCH 3/9] vdso: Add __arch_get_k_vdso_rng_data()
-config: x86_64-randconfig-003-20240817 (https://download.01.org/0day-ci/archive/20240817/202408172056.OAokF1z5-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240817/202408172056.OAokF1z5-lkp@intel.com/reproduce)
+Maybe mention this still only applies in s2idle.
+The driver doesn't have a more sophisticated runtime pm to
+bring the power down when it's simply not being used:
+autosuspend etc which would need a lot more infrastructure
+as we need to add when the device must be resumed + when we
+are done with talking to it.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408172056.OAokF1z5-lkp@intel.com/
+Jonathan
 
-All errors (new ones prefixed by >>):
 
->> ld: drivers/char/random.o:arch/x86/include/asm/vdso/vsyscall.h:13: multiple definition of `_vdso_rng_data'; kernel/time/vsyscall.o:arch/x86/include/asm/vdso/vsyscall.h:13: first defined here
->> ld: drivers/char/random.o:arch/x86/include/asm/vdso/vsyscall.h:12: multiple definition of `_vdso_data'; kernel/time/vsyscall.o:arch/x86/include/asm/vdso/vsyscall.h:12: first defined here
+> ---
+>  drivers/iio/imu/bmi323/bmi323.h      |   1 +
+>  drivers/iio/imu/bmi323/bmi323_core.c | 183 ++++++++++++++++++++++++++-
+>  drivers/iio/imu/bmi323/bmi323_i2c.c  |   8 ++
+>  drivers/iio/imu/bmi323/bmi323_spi.c  |   8 ++
+>  4 files changed, 194 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/iio/imu/bmi323/bmi323.h b/drivers/iio/imu/bmi323/bmi323.h
+> index 209bccb1f335..9fd3c5db7520 100644
+> --- a/drivers/iio/imu/bmi323/bmi323.h
+> +++ b/drivers/iio/imu/bmi323/bmi323.h
+> @@ -204,6 +204,7 @@
+>  
+>  struct device;
+>  int bmi323_core_probe(struct device *dev);
+> +void bmi323_core_remove(struct device *dev);
+>  extern const struct regmap_config bmi323_regmap_config;
+>  extern const struct dev_pm_ops bmi323_core_pm_ops;
+>  
+> diff --git a/drivers/iio/imu/bmi323/bmi323_core.c b/drivers/iio/imu/bmi323/bmi323_core.c
+> index 4b2b211a3e88..edb9ce4e66a0 100644
+> --- a/drivers/iio/imu/bmi323/bmi323_core.c
+> +++ b/drivers/iio/imu/bmi323/bmi323_core.c
+> @@ -118,6 +118,24 @@ static const struct bmi323_hw bmi323_hw[2] = {
+>  	},
+>  };
+>  
+> +struct bmi323_ext_regs_settings {
+> +	unsigned int reg;
+> +	unsigned int val;
+> +};
+> +
+> +struct bmi323_regs_settings {
+> +	unsigned int reg;
+> +	unsigned int val;
+> +};
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Why are two types useful?
+
+> +
+> +#define EXT_SETTING_REGISTERS 12
+> +#define SETTING_REGISTERS 9
+> +
+> +struct bmi323_regs_runtime_pm {
+> +	struct bmi323_regs_settings reg_settings[SETTING_REGISTERS];
+> +	struct bmi323_ext_regs_settings ext_settings[EXT_SETTING_REGISTERS];
+
+As below. Break these part so that the register addresses are just const data
+and the values are all that is stored in here. 
+
+> +};
+> +
+>  struct bmi323_data {
+>  	struct device *dev;
+>  	struct regmap *regmap;
+> @@ -130,6 +148,7 @@ struct bmi323_data {
+>  	u32 odrns[BMI323_SENSORS_CNT];
+>  	u32 odrhz[BMI323_SENSORS_CNT];
+>  	unsigned int feature_events;
+> +	struct bmi323_regs_runtime_pm runtime_pm_status;
+>  
+>  	/*
+>  	 * Lock to protect the members of device's private data from concurrent
+> @@ -1982,7 +2001,7 @@ static int bmi323_set_bw(struct bmi323_data *data,
+>  				  FIELD_PREP(BMI323_ACC_GYRO_CONF_BW_MSK, bw));
+>  }
+>  
+> -static int bmi323_init(struct bmi323_data *data)
+> +static int bmi323_init(struct bmi323_data *data, bool first_init)
+>  {
+>  	int ret, val;
+>  
+> @@ -2030,6 +2049,9 @@ static int bmi323_init(struct bmi323_data *data)
+>  		return dev_err_probe(data->dev, -EINVAL,
+>  				     "Sensor power error = 0x%x\n", val);
+>  
+
+Maybe better to split the function into two parts and call both in probe() 
+but not in resume()
+
+> +	if (!first_init)
+> +		return 0;
+> +
+>  	/*
+>  	 * Set the Bandwidth coefficient which defines the 3 dB cutoff
+>  	 * frequency in relation to the ODR.
+> @@ -2078,9 +2100,32 @@ int bmi323_core_probe(struct device *dev)
+>  	data = iio_priv(indio_dev);
+>  	data->dev = dev;
+>  	data->regmap = regmap;
+> +	data->irq_pin = BMI323_IRQ_DISABLED;
+> +	data->state = BMI323_IDLE;
+> +	data->runtime_pm_status.reg_settings[0].reg = BMI323_INT_MAP1_REG;
+
+Use a local pointer to reg_settings / ext_settings to shorten all these a lot.
+Or better still separate the register addresses into a const arrays with only
+the values (in a 1 D array) being changed by code.
+
+> +	data->runtime_pm_status.reg_settings[1].reg = BMI323_INT_MAP2_REG;
+> +	data->runtime_pm_status.reg_settings[2].reg = BMI323_IO_INT_CTR_REG;
+> +	data->runtime_pm_status.reg_settings[3].reg = BMI323_IO_INT_CONF_REG;
+> +	data->runtime_pm_status.reg_settings[4].reg = BMI323_ACC_CONF_REG;
+> +	data->runtime_pm_status.reg_settings[5].reg = BMI323_GYRO_CONF_REG;
+> +	data->runtime_pm_status.reg_settings[6].reg = BMI323_FEAT_IO0_REG;
+> +	data->runtime_pm_status.reg_settings[7].reg = BMI323_FIFO_WTRMRK_REG;
+> +	data->runtime_pm_status.reg_settings[8].reg = BMI323_FIFO_CONF_REG;
+> +	data->runtime_pm_status.ext_settings[0].reg = BMI323_GEN_SET1_REG;
+> +	data->runtime_pm_status.ext_settings[1].reg = BMI323_TAP1_REG;
+> +	data->runtime_pm_status.ext_settings[2].reg = BMI323_TAP2_REG;
+> +	data->runtime_pm_status.ext_settings[3].reg = BMI323_TAP3_REG;
+> +	data->runtime_pm_status.ext_settings[4].reg = BMI323_FEAT_IO0_S_TAP_MSK;
+> +	data->runtime_pm_status.ext_settings[5].reg = BMI323_STEP_SC1_REG;
+> +	data->runtime_pm_status.ext_settings[6].reg = BMI323_ANYMO1_REG;
+> +	data->runtime_pm_status.ext_settings[7].reg = BMI323_NOMO1_REG;
+> +	data->runtime_pm_status.ext_settings[8].reg = BMI323_ANYMO1_REG + BMI323_MO2_OFFSET;
+> +	data->runtime_pm_status.ext_settings[9].reg = BMI323_NOMO1_REG + BMI323_MO2_OFFSET;
+> +	data->runtime_pm_status.ext_settings[10].reg = BMI323_ANYMO1_REG + BMI323_MO3_OFFSET;
+> +	data->runtime_pm_status.ext_settings[11].reg = BMI323_NOMO1_REG + BMI323_MO3_OFFSET;
+>  	mutex_init(&data->mutex);
+>  
+> -	ret = bmi323_init(data);
+> +	ret = bmi323_init(data, true);
+>  	if (ret)
+>  		return -EINVAL;
+>  
+> @@ -2117,21 +2162,147 @@ int bmi323_core_probe(struct device *dev)
+>  		return dev_err_probe(data->dev, ret,
+>  				     "Unable to register iio device\n");
+>  
+> -	return 0;
+> +	return bmi323_fifo_disable(data);
+>  }
+>  EXPORT_SYMBOL_NS_GPL(bmi323_core_probe, IIO_BMI323);
+>  
+> +void bmi323_core_remove(struct device *dev)
+> +{
+> +	struct regmap *const regmap = dev_get_regmap(dev, NULL);
+> +
+> +	/*
+> +	 * Place the peripheral in its lowest power consuming state.
+> +	 */
+> +	if (regmap)
+> +		regmap_write(regmap, BMI323_CMD_REG, BMI323_RST_VAL);
+This is happening before the userspace interfaces are removed.
+Unlikely to be a good idea.  Use devm_add_action_or_reset()
+to register this during probe so that it is torn down
+at the correct point.
+
+> +}
+> +EXPORT_SYMBOL_NS_GPL(bmi323_core_remove, IIO_BMI323);
+> +
+>  #if defined(CONFIG_PM)
+>  static int bmi323_core_runtime_suspend(struct device *dev)
+
+
+>  
+>  static int bmi323_core_runtime_resume(struct device *dev)
+>  {
+> -	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> +	struct iio_dev *const indio_dev = dev_get_drvdata(dev);
+
+Whilst true that it's const, do we care? I'd drop this
+modification.
+
+> +	struct bmi323_data *const data = iio_priv(indio_dev);
+Likewise, unlikely the const really helps us.
+
+> +
+> +	int ret = 0;
+
+Always set, so don't initialize here.
+
+> +
+> +	guard(mutex)(&data->mutex);
+> +
+> +	/*
+> +	 * Perform the device power-on and initial setup once again
+> +	 * after being reset in the lower power state by runtime-pm.
+> +	 */
+> +	ret = bmi323_init(data, false);
+> +	if (!ret)
+> +		return ret;
+> +
+> +	/* Register must be cleared before changing an active config */
+> +	ret = regmap_write(data->regmap, BMI323_FEAT_IO0_REG, 0);
+> +	if (ret) {
+> +		dev_err(data->dev, "Error stopping feature engine\n");
+> +		return ret;
+> +	}
+> +
+> +	/*
+> +	 * Restore external registers saved by suspend pm callback.
+> +	 */
+> +	for (unsigned int i = 0; i < EXT_SETTING_REGISTERS; ++i) {
+
+i++ preferred. It's more common and doesn't matter here.
+
+I'd use a local variable for a pointer to data->runtime_pm_status.ext_settings[i]
+to make these more readable. Same for other similar cases.
+
+> +		ret = bmi323_write_ext_reg(data,
+> +			data->runtime_pm_status.ext_settings[i].reg,
+> +			data->runtime_pm_status.ext_settings[i].val);
+> +		if (ret) {
+> +			dev_err(data->dev, "Error writing bmi323 external reg 0x%x: %d\n",
+> +				data->runtime_pm_status.ext_settings[i].reg, ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	/*
+> +	 * Restore registers saved by suspend pm callback.
+> +	 */
+> +	for (unsigned int i = 0; i < SETTING_REGISTERS; ++i) {
+> +		ret = regmap_write(data->regmap,
+> +			data->runtime_pm_status.reg_settings[i].reg,
+> +			data->runtime_pm_status.reg_settings[i].val);
+> +		if (ret) {
+> +			dev_err(data->dev, "Error writing bmi323 reg 0x%x: %d\n",
+> +				data->runtime_pm_status.reg_settings[i].reg, ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	if (data->state == BMI323_BUFFER_FIFO) {
+> +		ret = regmap_write(data->regmap, BMI323_FIFO_CTRL_REG,
+> +			   BMI323_FIFO_FLUSH_MSK);
+> +		if (ret) {
+> +			dev_err(data->dev, "Error flushing FIFO buffer: %d\n", ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	unsigned int val;
+> +
+> +	ret = regmap_read(data->regmap, BMI323_ERR_REG, &val);
+> +	if (ret) {
+> +		dev_err(data->dev, "Error reading bmi323 error register: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	if (val) {
+> +		dev_err(data->dev, "Sensor power error in PM = 0x%x\n", val);
+> +		return -EINVAL;
+> +	}
+>  
+>  	return iio_device_resume_triggering(indio_dev);
+>  }
+
+> diff --git a/drivers/iio/imu/bmi323/bmi323_spi.c b/drivers/iio/imu/bmi323/bmi323_spi.c
+> index 9de3ade78d71..f42c49c471c1 100644
+> --- a/drivers/iio/imu/bmi323/bmi323_spi.c
+> +++ b/drivers/iio/imu/bmi323/bmi323_spi.c
+> @@ -64,6 +64,13 @@ static int bmi323_spi_probe(struct spi_device *spi)
+>  	return bmi323_core_probe(dev);
+>  }
+>  
+> +static void bmi323_spi_remove(struct spi_device *spi)
+> +{
+> +	struct device *const dev = &spi->dev;
+> +
+> +	bmi323_core_remove(dev);
+Register anything that needs doing with devm_add_action_or_reset()
+after whatever is undoing is first done in probe().
+
+There shouldn't be a need for a remove function and it is very
+likely to have ordering issues given driver previously didn't
+have one.
+
+> +}
+> +
+>  static const struct spi_device_id bmi323_spi_ids[] = {
+>  	{ "bmi323" },
+>  	{ }
+> @@ -83,6 +90,7 @@ static struct spi_driver bmi323_spi_driver = {
+>  		.of_match_table = bmi323_of_spi_match,
+>  	},
+>  	.probe = bmi323_spi_probe,
+> +	.remove = bmi323_spi_remove,
+>  	.id_table = bmi323_spi_ids,
+>  };
+>  module_spi_driver(bmi323_spi_driver);
+
 
