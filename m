@@ -1,74 +1,88 @@
-Return-Path: <linux-kernel+bounces-290611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B212E955648
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:50:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEC8D95562F
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67E911F21CF0
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:50:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A33A282EB4
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABC8143726;
-	Sat, 17 Aug 2024 07:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D776140363;
+	Sat, 17 Aug 2024 07:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="PYCTwhFi"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="gDKEVVT3"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C57B657;
-	Sat, 17 Aug 2024 07:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5307413D8A3
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 07:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723881024; cv=none; b=Asl5h0DZp2HAN5Nrms5LgqH28CFsR+H3kHicayEYb103PalLeSdoWZZJdzzHgRlE3fBIUyA9oNyQ8XdY/OGWztecuVR+mJUHPxtTKmNV4/CGG5BRpEGLP44bHAWLs0DWeFpaaSliP/ciUaWXsKI1rNJd+kXGrBqSy8HL66u51X4=
+	t=1723880473; cv=none; b=OH9x1se3GfTAepkrncuzETr4e65j8ltt03LV1ZFCPnHESAVaaTxpcsGl3eEG6wd6cxMGTV8bDS7y7djG67GyBKlcZLsG+BdDjVfcWT79AledfjDe9iUed3EnJLCb9hniPS4Nz/s7xHmiTvLd1Dokpzj4RuCPy8cXweFPdky3fY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723881024; c=relaxed/simple;
-	bh=lJ+bzKxQQ9J1zundLHGX0rmjg4TeBxh9Iu4ubcsLQxc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G5Wzpa/yya/h4/nR4SEUpGiGSt81bilUEym3JJ02eymLKeCvmyijbtdz0+tqFGJFih+RwqOUXOH3VQc07IkjugEeSveyAcZ8tgoGnFaUmNkPZM/V5Z3SgCQrP6ZECMKgDTRJiovkBqDrDiiW5bw5mXbwSzfhFCdb0fM6Ox0s7mM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=PYCTwhFi; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 38175b385c6b11ef8593d301e5c8a9c0-20240817
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=oDxP565M3e/1/ATaMhgsl2oGGX16jXdrhb9ibx6pOK8=;
-	b=PYCTwhFiTcPigEHwtY04nvBNAaq6uTdHIbLvJJExzeXdFr7Xffz8HwGeJVOB7UJir497OeAEtAhs6vbFZPar6MC0yUDQx96YyUoXjpH/DgyG+GSX5Xe7+sqO4K0lHLJtBz8gWonjL3OUNNYta3Pe5RjkqMSCTrB/+rQF1mRCABg=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:e9cc2b30-50e5-4c89-8d19-591f6cb3e96f,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-META: VersionHash:6dc6a47,CLOUDID:f7cfbdce-7921-4900-88a1-3aef019a55ce,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 38175b385c6b11ef8593d301e5c8a9c0-20240817
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
-	(envelope-from <zhi.mao@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1055596188; Sat, 17 Aug 2024 15:35:04 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Sat, 17 Aug 2024 15:35:05 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Sat, 17 Aug 2024 15:35:04 +0800
-From: Zhi Mao <zhi.mao@mediatek.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-CC: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	<linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<shengnan.wang@mediatek.com>, <yaya.chang@mediatek.com>,
-	<teddy.chen@mediatek.com>, <yunkec@chromium.org>, <10572168@qq.com>, Zhi Mao
-	<zhi.mao@mediatek.com>
-Subject: [PATCH] media: i2c: improve suspend/resume switch performance for GT9769 VCM driver
-Date: Sat, 17 Aug 2024 15:34:02 +0800
-Message-ID: <20240817073452.21627-1-zhi.mao@mediatek.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1723880473; c=relaxed/simple;
+	bh=rPfPuGfh1UW1S1e0N3zz+OLUk/Jea98BE7sqKkvRG/0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c+GAixiUzjgpTnR2GB6kxc0mC6bOGXWuJfkVBm4A5IZEqkpmoWrQvoR6R6U01z3pITOSJ6R7wyvQRu+SgsJ0vA4c4kce2zqfGw0MkFfjoAUiyZG6TqvcvjBYinTGsXqbsbx4cUDAetxAiVxb5xsezqfhbgt3rN17GeyNL6Abxuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=gDKEVVT3; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5bed72ff443so1220695a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 00:41:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1723880470; x=1724485270; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hBORzQsZTXM1LbW/643seFKYzIpgNc2kY1JCnCvH3JE=;
+        b=gDKEVVT3O+M8so4/nawWrPmAlj8arktrdoQ98EolSnyfXx/Vn8yYz8n+lW4kAepdej
+         tc8jV3/no1RboqSsJNbhiOdT0OLiajpKM1adzNnLCPLRnW9ovsOCY2jK2+1BBluQ4Vk5
+         44B0ElhSZWTlIT7dMrXvW3kvog4A4mGAdksCcpsn4F1YWubJVn+ZFjswTf1FybaidPag
+         4akBcWBNQqyQ4tGMmMqeMl+DCI+It1KDOPtx9jTx0TsKJHbYItIBJ5EDEMeFiBSUO5XQ
+         7syRoK7eNL+I5T6ZRgm0pkZiyDyYOi0Ldm7LcPygpPpE80SvLOVpEQLs5xD35vAR7nM2
+         oonw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723880470; x=1724485270;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hBORzQsZTXM1LbW/643seFKYzIpgNc2kY1JCnCvH3JE=;
+        b=ZY92+sb5OCL9dK9MJUebevMIq70RKGdmwvhaMjF7J6Io413Turt42MvaIlXTzLMagE
+         /iK0xvtDIv9LuRS2vd8G7pfYbVGaVrBKlg8Zh+R5X75McNYLgBWGBQqQpQLaVKU7WAuY
+         4EHnER1Ffy8IadLnSHcrZsBDPfAtNKrjdX+2V4xBRxTyuMM5Yprkbr0j3O3QJV/ADpBy
+         ABaDO22Mb6zFb9X5oHlQP+CZHuR9kemu8sTEdWm01sVIEFas3rV01DWY1rXH3NkKDR1c
+         IXkmKeOPv24as0pXnI78NUBiKTsXiNZ+10lAGleiHDszlsFGsU0go8TP4QZD2MBs8E55
+         q1gg==
+X-Forwarded-Encrypted: i=1; AJvYcCWR0JPCE+M4V79ZIV2xxdN1aC/pZNXkiaDY0Y1+FJkaMM0Im/okp/BTS/E0oEElzxMvZ/AHkXXawEJeC4W3e2VaDAR7VPHqMmsV2ye4
+X-Gm-Message-State: AOJu0YyW4gVE6CZ8eUZWxCPgnqLkdnoEyQkAWjJBDjvVnUxh/Q+Ipqc0
+	fqyFsrWaof9HdOGWcfSh5A8KxxtGShKk1gErv/sIHFBS2w7G9Ntb7KgGaS20q3o=
+X-Google-Smtp-Source: AGHT+IENhmqi+DxLc2mz1SydD0A7p9AlI66nGERR3UWKR5q1emYV4OIEyUSKUHefLCRrMdx9ictRhg==
+X-Received: by 2002:a17:907:e2ce:b0:a7a:a4be:2f99 with SMTP id a640c23a62f3a-a839292f4d3mr321245066b.22.1723880469146;
+        Sat, 17 Aug 2024 00:41:09 -0700 (PDT)
+Received: from localhost (cst2-173-13.cust.vodafone.cz. [31.30.173.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83aeb6eb4dsm66950666b.35.2024.08.17.00.41.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 17 Aug 2024 00:41:08 -0700 (PDT)
+From: Andrew Jones <ajones@ventanamicro.com>
+To: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org
+Cc: maz@kernel.org,
+	mark.rutland@arm.com,
+	robh@kernel.org,
+	saravanak@google.com,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	Anup Patel <apatel@ventanamicro.com>
+Subject: [PATCH v3] of/irq: Support #msi-cells=<0> in of_msi_get_domain
+Date: Sat, 17 Aug 2024 09:41:08 +0200
+Message-ID: <20240817074107.31153-2-ajones@ventanamicro.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,152 +90,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--5.895800-8.000000
-X-TMASE-MatchedRID: Oc3lNZcRIY7R/1qlpYxoUlVN8laWo90MWjWsWQUWzVpcKZwALwMGs8CS
-	2AMm1nQCXj+G1I2Cld9RCqldf11uXwClEgKLW3itBDoR8w7C9OZWjiXAsVR2K0+OfsT6fdpn+Vi
-	hXqn9xLFMJgsbV0+Bf+pAvk4T8Agrbn83JMqUbr0MH4SsGvRsA7zWODqZvEk5ol3uZzZ1GLfXvK
-	BONfUNb+krhuwxhcex326LyHbpKCPsIv/PxUkglXV7tdtvoibaMVx/3ZYby79fXk0kfCOnbt5NR
-	zJ0gz5HsNV8m2Omj9WAMuqetGVetnyef22ep6XYymsk/wUE4hqfigt155p8oY9tUqB3K1zQw//t
-	taiU0fabfUda0wkrLX3dHoIymspUwL6SxPpr1/I=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--5.895800-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	19799DA5C2E152BDCCA6451577318065D2A4DDD1ED7AB9367165EB13BC04EB7D2000:8
-X-MTK: N
 
-GT9769 VCM power-on default setting is PD=0,
-so it is not necessary to set again in dw9768_init function,
-and it also has no requirement of setting PD=1
-before power-off in dw9768_release function.
-For GT9769 VCM, PD mode control will add extra time
-when switching between suspend and resume.
-e.g. chrome camera AP can switch between video and photo mode,
-the behavior corresponding to VCM is suspend and resume,
-it will cause camera preview is not smooth.
+An 'msi-parent' property with a single entry and no accompanying
+'#msi-cells' property is considered the legacy definition as opposed
+to its definition after being expanded with commit 126b16e2ad98
+("Docs: dt: add generic MSI bindings"). However, the legacy
+definition is completely compatible with the current definition and,
+since of_phandle_iterator_next() tolerates missing and present-but-
+zero *cells properties since commit e42ee61017f5 ("of: Let
+of_for_each_phandle fallback to non-negative cell_count"), there's no
+need anymore to special case the legacy definition in
+of_msi_get_domain().
 
-Signed-off-by: Zhi Mao <zhi.mao@mediatek.com>
+Indeed, special casing has turned out to be harmful, because, as of
+commit 7c025238b47a ("dt-bindings: irqchip: Describe the IMX MU block
+as a MSI controller"), MSI controller DT bindings have started
+specifying '#msi-cells' as a required property (even when the value
+must be zero) as an effort to make the bindings more explicit. But,
+since the special casing of 'msi-parent' only uses the existence of
+'#msi-cells' for its heuristic, and not whether or not it's also
+nonzero, the legacy path is not taken. Furthermore, the path to
+support the new, broader definition isn't taken either since that
+path has been restricted to the platform-msi bus.
+
+But, neither the definition of 'msi-parent' nor the definition of
+'#msi-cells' is platform-msi-specific (the platform-msi bus was just
+the first bus that needed '#msi-cells'), so remove both the special
+casing and the restriction. The code removal also requires changing
+to of_parse_phandle_with_optional_args() in order to ensure the
+legacy (but compatible) use of 'msi-parent' remains supported. This
+not only simplifies the code but also resolves an issue with PCI
+devices finding their MSI controllers on riscv, as the riscv,imsics
+binding requires '#msi-cells=<0>'.
+
+Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
 ---
- drivers/media/i2c/dw9768.c | 65 ++++++++++++++++++++++++--------------
- 1 file changed, 42 insertions(+), 23 deletions(-)
+v3:
+ - switch to of_for_each_phandle() to further cleanup/simplify the
+   code [Rob]
+v2:
+ - switch to of_parse_phandle_with_optional_args() to ensure the
+   absence of #msi-cells means count=0
 
-diff --git a/drivers/media/i2c/dw9768.c b/drivers/media/i2c/dw9768.c
-index 18ef2b35c9aa..88d96165a805 100644
---- a/drivers/media/i2c/dw9768.c
-+++ b/drivers/media/i2c/dw9768.c
-@@ -97,12 +97,17 @@ static const char * const dw9768_supply_names[] = {
- 	"vdd",	/* Digital core power */
- };
+ drivers/of/irq.c | 35 ++++++++---------------------------
+ 1 file changed, 8 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+index c94203ce65bb..b74a3f5fc4e2 100644
+--- a/drivers/of/irq.c
++++ b/drivers/of/irq.c
+@@ -709,8 +709,7 @@ struct irq_domain *of_msi_map_get_device_domain(struct device *dev, u32 id,
+  * @np: device node for @dev
+  * @token: bus type for this domain
+  *
+- * Parse the msi-parent property (both the simple and the complex
+- * versions), and returns the corresponding MSI domain.
++ * Parse the msi-parent property and returns the corresponding MSI domain.
+  *
+  * Returns: the MSI domain for this device (or NULL on failure).
+  */
+@@ -718,33 +717,15 @@ struct irq_domain *of_msi_get_domain(struct device *dev,
+ 				     struct device_node *np,
+ 				     enum irq_domain_bus_token token)
+ {
+-	struct device_node *msi_np;
++	struct of_phandle_iterator it;
+ 	struct irq_domain *d;
++	int err;
  
-+struct dw9768_vcm_data {
-+	bool pd_mode_ctrl;
-+};
-+
- /* dw9768 device structure */
- struct dw9768 {
- 	struct regulator_bulk_data supplies[ARRAY_SIZE(dw9768_supply_names)];
- 	struct v4l2_ctrl_handler ctrls;
- 	struct v4l2_ctrl *focus;
- 	struct v4l2_subdev sd;
-+	const struct dw9768_vcm_data *data;
- 
- 	u32 aac_mode;
- 	u32 aac_timing;
-@@ -221,18 +226,20 @@ static int dw9768_init(struct dw9768 *dw9768)
- 	struct i2c_client *client = v4l2_get_subdevdata(&dw9768->sd);
- 	int ret, val;
- 
--	/* Reset DW9768_RING_PD_CONTROL_REG to default status 0x00 */
--	ret = i2c_smbus_write_byte_data(client, DW9768_RING_PD_CONTROL_REG,
--					DW9768_PD_MODE_OFF);
--	if (ret < 0)
--		return ret;
+-	/* Check for a single msi-parent property */
+-	msi_np = of_parse_phandle(np, "msi-parent", 0);
+-	if (msi_np && !of_property_read_bool(msi_np, "#msi-cells")) {
+-		d = irq_find_matching_host(msi_np, token);
+-		if (!d)
+-			of_node_put(msi_np);
+-		return d;
+-	}
 -
--	/*
--	 * DW9769 requires waiting delay time of t_OPR
--	 * after PD reset takes place.
--	 */
--	usleep_range(DW9768_T_OPR_US, DW9768_T_OPR_US + 100);
-+	if (dw9768->data->pd_mode_ctrl) {
-+		/* Reset DW9768_RING_PD_CONTROL_REG to default status 0x00 */
-+		ret = i2c_smbus_write_byte_data(client,
-+						DW9768_RING_PD_CONTROL_REG,
-+						DW9768_PD_MODE_OFF);
-+		if (ret < 0)
-+			return ret;
- 
-+		/*
-+		 * DW9769 requires waiting delay time of t_OPR
-+		 * after PD reset takes place.
-+		 */
-+		usleep_range(DW9768_T_OPR_US, DW9768_T_OPR_US + 100);
-+	}
- 	/* Set DW9768_RING_PD_CONTROL_REG to DW9768_AAC_MODE_EN(0x01) */
- 	ret = i2c_smbus_write_byte_data(client, DW9768_RING_PD_CONTROL_REG,
- 					DW9768_AAC_MODE_EN);
-@@ -294,17 +301,19 @@ static int dw9768_release(struct dw9768 *dw9768)
- 			     dw9768->move_delay_us + 1000);
+-	if (token == DOMAIN_BUS_PLATFORM_MSI) {
+-		/* Check for the complex msi-parent version */
+-		struct of_phandle_args args;
+-		int index = 0;
+-
+-		while (!of_parse_phandle_with_args(np, "msi-parent",
+-						   "#msi-cells",
+-						   index, &args)) {
+-			d = irq_find_matching_host(args.np, token);
+-			if (d)
+-				return d;
+-
+-			of_node_put(args.np);
+-			index++;
+-		}
++	of_for_each_phandle(&it, err, np, "msi-parent", "#msi-cells", 0) {
++		d = irq_find_matching_host(it.node, token);
++		if (d)
++			return d;
++		of_node_put(it.node);
  	}
  
--	ret = i2c_smbus_write_byte_data(client, DW9768_RING_PD_CONTROL_REG,
--					DW9768_PD_MODE_EN);
--	if (ret < 0)
--		return ret;
--
--	/*
--	 * DW9769 requires waiting delay time of t_OPR
--	 * after PD reset takes place.
--	 */
--	usleep_range(DW9768_T_OPR_US, DW9768_T_OPR_US + 100);
-+	if (dw9768->data->pd_mode_ctrl) {
-+		ret = i2c_smbus_write_byte_data(client,
-+						DW9768_RING_PD_CONTROL_REG,
-+						DW9768_PD_MODE_EN);
-+		if (ret < 0)
-+			return ret;
- 
-+		/*
-+		 * DW9769 requires waiting delay time of t_OPR
-+		 * after PD reset takes place.
-+		 */
-+		usleep_range(DW9768_T_OPR_US, DW9768_T_OPR_US + 100);
-+	}
- 	return 0;
- }
- 
-@@ -440,6 +449,8 @@ static int dw9768_probe(struct i2c_client *client)
- 						      dw9768->clock_presc,
- 						      dw9768->aac_timing);
- 
-+	dw9768->data = device_get_match_data(dev);
-+
- 	for (i = 0; i < ARRAY_SIZE(dw9768_supply_names); i++)
- 		dw9768->supplies[i].supply = dw9768_supply_names[i];
- 
-@@ -525,9 +536,17 @@ static void dw9768_remove(struct i2c_client *client)
- 	pm_runtime_disable(dev);
- }
- 
-+static const struct dw9768_vcm_data dw9768_data = {
-+	.pd_mode_ctrl = true,
-+};
-+
-+static const struct dw9768_vcm_data gt9769_data = {
-+	.pd_mode_ctrl = false,
-+};
-+
- static const struct of_device_id dw9768_of_table[] = {
--	{ .compatible = "dongwoon,dw9768" },
--	{ .compatible = "giantec,gt9769" },
-+	{ .compatible = "dongwoon,dw9768", .data = &dw9768_data },
-+	{ .compatible = "giantec,gt9769", .data = &gt9769_data },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, dw9768_of_table);
+ 	return NULL;
 -- 
-2.46.0
+2.45.2
 
 
