@@ -1,203 +1,248 @@
-Return-Path: <linux-kernel+bounces-290784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 248B1955891
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 17:14:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CADE95589A
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 17:14:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2E8C1F21CA0
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:14:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E512B21976
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C641442F2;
-	Sat, 17 Aug 2024 15:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3E5155306;
+	Sat, 17 Aug 2024 15:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U9+1GQSU"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o6Wa0RzT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A56145341
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 15:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1181494DC;
+	Sat, 17 Aug 2024 15:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723907632; cv=none; b=htH12gIqbC96Uy6rg2xd5B586cGgY5MQP8J1l+DJnAZosv70584KStIdrab2rk49jNol2cKL3WRszEY7BOdj5MB00HFgWhS7mme2ejnJSpJHXML9iMfj5KtvHXPAxn92Vm8twTSwaWhtVFnQmZrhLb+28W2/Hyzr6mNRnJJcaaI=
+	t=1723907641; cv=none; b=FRWRS0uJVE570whBrL26aQejq3BP2HcwaxwcBA21fqqFraoFhjXy6iSh+bMLB57zih6sIWtJpoBfgl48IE0hShjP/x+mj/EaZse0OMcBSs21KQ2Xml3b7FKgUxF8SJS5fbYsaPxQ8w/HdCtk461UKrYZbyk+/QsmfRTWLgjsFuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723907632; c=relaxed/simple;
-	bh=f4FKGxVYQxxLRQXGi6/ad1xe8zUcE9oY9HGYW6YKezU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t+Ozg/5Hh1LHo2t+N+pog+k2tF68lEbSnlKe8Qy6XhIDPcS16LTRZeerce8kyA+BZkEqHjInlNXAwXrCrbbHenZtit4F856g5qfbTwaNeAH6NBoXVFWLCk1J0SWr3UEbnnKsqGHn2A1rdVIDDJs1nJb2pEcuQBHziiGBtDhECp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U9+1GQSU; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6bf9081b650so1711136d6.3
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 08:13:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723907629; x=1724512429; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h8fuP4rXSYs0IsxsahVa0Q55YFfnXxVc+PpufNcWYNA=;
-        b=U9+1GQSUeEWxIibtppep4qqj4OpdA4mm2tCOuBsqsxkbvUJXxxoHvC/1DD8XHYEu8i
-         WjEgJp64Wh0LjJMNctGnsHDdI4LWWS4i1de+9JlsKLbjhuxqNGnqQc6jEWF/WIZdyoE8
-         Ood0I9cMludlmhZXLRIR99I6NTR03YjLyd2UU8aPRBzFY2EVJN3zKFaiACpBDkuLmbAs
-         KhMnNOiWEb+OtTL7MMrHZDKy9Eh+cAn0nWsdeIFVr9qOqYdsd6BN0FHrwHGsI7Ewhy3K
-         sam5K1XJncYJcHKCyUHyfaQ13LVvQhnOQYzacwOTyK4ahx+PK34TLjUH1vu5Rlz3DzPk
-         osJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723907629; x=1724512429;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h8fuP4rXSYs0IsxsahVa0Q55YFfnXxVc+PpufNcWYNA=;
-        b=MKFrFEeskGUTy7va7eIBuGYw1iD0S/hUWHb0L2p/WB7Yc2LDoByY62XRoBQQk8jADj
-         0ZdHUTE4G7fUuvlKRrUoAdPZFWBfu9C1YCzbOxxBTitRhvXq6UUVL3X0qKvowyLjEstB
-         LcmGIhs6egpyXQVJUknQ+tmHUrV8z3KBwj0FQA6GeF6v3Zbbn4fCGCSt6aCB4/JbFd7G
-         +tD9a6etTP1mjqxpNrbMqG+Jd6NBWjjgIt8AlTD3Z0wx/qKmuyvnG5qG6VV7laFXdImH
-         AOxnXQW5dPdLkaxIMyQle2dd5ei6xRcT9GHWdoN89QFK7cDu9EoofAXoGZp52ViA28YS
-         K5tg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4NHWfd5A00lzdo91a6AnssGr5rCnrUll9MJ3pBg05lC2jPDMtHHpDuyn1XRRE8UKBRitXmHY4JcbK4VUxlRx9CTuQXCtTJ/dTr6nP
-X-Gm-Message-State: AOJu0YygL1pwQHGaVXZwP9W5/nbZMhDqeX67iYNrStx8RQzSeDUXiC7w
-	xc4CRXqmBCurNX+rqjPf1MZ/mRoV29sL9Z89YtWZbptnZ5scIOrbdFxyk6HWoKFg+Y1zJdEq8Hl
-	fEy7/3iZx7nIJHHWYPclw+aZNP2/KYtfo1LCN+vqV6jV+F/y2hynC
-X-Google-Smtp-Source: AGHT+IEVoTrHdVFvEzEpKQmmtV0mdfaBBccZW7R2wrmBmSZjuFbL1LJHUNlqx3hUH+/ws9eu5VXMD1mp4i3r/g0VSRU=
-X-Received: by 2002:a0c:f40d:0:b0:6bf:79c1:b9aa with SMTP id
- 6a1803df08f44-6bf8950a6c2mr26142936d6.33.1723907629272; Sat, 17 Aug 2024
- 08:13:49 -0700 (PDT)
+	s=arc-20240116; t=1723907641; c=relaxed/simple;
+	bh=jlh8YQOzcxvQeTjYCF15meBYhlr8C79cP3mOrCILxTU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NdyVjwQz2L3EJMBZSrVnGK5CqmxPxZsgp5WrGIma2O+Z1/imdP7QC98bb4pSQQfuGq4zs8X4z/6Jf9pJfSc2fiEmbDbu3jWudNER1TifSOwWO6UOGYlzi3uVmodG8xH3VQdn2pX/YSimY+H06IkhYkLqfnBpWPJJ9LGWbs0S96M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o6Wa0RzT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47A67C4AF0D;
+	Sat, 17 Aug 2024 15:13:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723907641;
+	bh=jlh8YQOzcxvQeTjYCF15meBYhlr8C79cP3mOrCILxTU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=o6Wa0RzTpG0OPlZryM9o6iYr22P5kQkxjHGSb21jVtkugSC7trOnSi3A0TU85UmNa
+	 FOCK7Gk020NdnNsUNqY7VHC6nNh7hRCDj+5Ohv8YLIVosNhDbCgfJLuDfe7xE99aR2
+	 ruc3H74tigFtomGAUlYbP2uyC429rKgM82EJVHeKSk/3bAdRxTC7gpzQ6j0uGcH0fu
+	 +cu2banvmG4Mdywkb+Ri+S/YcFP3sz2zUOWls75tpQsXasbtVzwUPYVzqskXTsNM4O
+	 KLT6afmm7P3jD9WXV0/fD8i6/LES5Wf4r2vv7l/1TyrHaX1gpADvChwi0n3ltUqefw
+	 7DF9Sy8tKIzcQ==
+Date: Sat, 17 Aug 2024 16:13:52 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Guillaume Stols <gstols@baylibre.com>
+Cc: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Lars-Peter
+ Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ aardelean@baylibre.com
+Subject: Re: [PATCH 3/8] Documentation: iio: Document ad7606 driver
+Message-ID: <20240817161352.61661418@jic23-huawei>
+In-Reply-To: <20240815-ad7606_add_iio_backend_support-v1-3-cea3e11b1aa4@baylibre.com>
+References: <20240815-ad7606_add_iio_backend_support-v1-0-cea3e11b1aa4@baylibre.com>
+	<20240815-ad7606_add_iio_backend_support-v1-3-cea3e11b1aa4@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813211317.3381180-10-almasrymina@google.com> <CAMArcTW=mg2gF_e6spPWOCuQdDAWSuKTCdCNPWGqcU1ciq30EQ@mail.gmail.com>
-In-Reply-To: <CAMArcTW=mg2gF_e6spPWOCuQdDAWSuKTCdCNPWGqcU1ciq30EQ@mail.gmail.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Sat, 17 Aug 2024 11:13:34 -0400
-Message-ID: <CAHS8izOqGMiZNkfQ6G-29UuG64GVo7L+fAzWn5A1713cDAgbgg@mail.gmail.com>
-Subject: Re: [PATCH net-next v19 09/13] tcp: RX path for devmem TCP
-To: Taehee Yoo <ap420073@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
-	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
-	Nikolay Aleksandrov <razor@blackwall.org>, Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, 
-	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
-	Praveen Kaligineedi <pkaligineedi@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Kaiyuan Zhang <kaiyuanz@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Aug 17, 2024 at 9:58=E2=80=AFAM Taehee Yoo <ap420073@gmail.com> wro=
-te:
->
-> On Wed, Aug 14, 2024 at 6:13=E2=80=AFAM Mina Almasry <almasrymina@google.=
-com> wrote:
-> >
->
-> Hi Mina,
->
-> > In tcp_recvmsg_locked(), detect if the skb being received by the user
-> > is a devmem skb. In this case - if the user provided the MSG_SOCK_DEVME=
-M
-> > flag - pass it to tcp_recvmsg_devmem() for custom handling.
-> >
-> > tcp_recvmsg_devmem() copies any data in the skb header to the linear
-> > buffer, and returns a cmsg to the user indicating the number of bytes
-> > returned in the linear buffer.
-> >
-> > tcp_recvmsg_devmem() then loops over the unaccessible devmem skb frags,
-> > and returns to the user a cmsg_devmem indicating the location of the
-> > data in the dmabuf device memory. cmsg_devmem contains this information=
-:
-> >
-> > 1. the offset into the dmabuf where the payload starts. 'frag_offset'.
->
-> I have been testing this patch and I found a bug.
+On Thu, 15 Aug 2024 12:11:57 +0000
+Guillaume Stols <gstols@baylibre.com> wrote:
 
-Thanks Taehee. It's exciting to see that you have gotten this far in
-your testing!! You seem to have devmem TCP (almost) fully working!!
-May I ask which driver this is? I assume it's bnxt. Do you have the
-driver support somewhere on github or something? I'm curious what your
-driver implementation looks like.
+> The Analog Devices Inc. AD7606 (and similar chips) are complex ADCs that
+> will benefit from a detailed driver documentation.
+> 
+> This documents the current features supported by the driver.
+> 
+> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+A few typos that I spotted, but other than that lgtm
+> ---
+>  Documentation/iio/ad7606.rst | 142 +++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 142 insertions(+)
+> 
+> diff --git a/Documentation/iio/ad7606.rst b/Documentation/iio/ad7606.rst
+> new file mode 100644
+> index 000000000000..e9578399e80d
+> --- /dev/null
+> +++ b/Documentation/iio/ad7606.rst
+> @@ -0,0 +1,142 @@
+> +.. SPDX-License-Identifier: GPL-2.0-only
+> +
+> +=============
+> +AD7606 driver
+> +=============
+> +
+> +ADC driver for Analog Devices Inc. AD7606 and similar devices. The module name
+> +is ``ad7606``.
+> +
+> +Supported devices
+> +=================
+> +
+> +The following chips are supported by this driver:
+> +
+> +* `AD7605 <https://www.analog.com/en/products/ad7605.html>`_
+> +* `AD7606 <https://www.analog.com/en/products/ad7606.html>`_
+> +* `AD7606B <https://www.analog.com/en/products/ad7606b.html>`_
+> +* `AD7616 <https://www.analog.com/en/products/ad7616.html>`_
+> +
+> +Supported features
+> +==================
+> +
+> +SPI wiring modes
+> +----------------
+> +
+> +ad7606x ADCs can output data on several SDO lines (1/2/4/8). The driver
+> +currently supports only 1 SDO line.
+> +
+> +Parallel wiring mode
+> +--------------------
+> +
+> +AD7606x ADC have also a parallel interface, with 16 lines (that can be reduced
+> +to 8 in byte mode). The parallel interface is selected by declaring the device
+> +as platform in the device tree (with no io-backends node defined, see below).
+> +
+> +IIO-backend mode
+> +----------------
+> +
+> +This mode allows to reach the best sample rates, but it requires an external
+> +hardware (eg HDL or APU) to handle the low level communication.
+> +The backend mode is enabled when trough the definition of the "io-backends"
 
-> While testing it with the ncdevmem cmd, it fails to validate buffers
-> after some period.
-> This is because tcp_recvmsg_dmabuf() can't handle skb properly when
-> the parameter offset !=3D 0.
+through.  Spell check in general as I'm bad at spotting these.
 
-Sadly I'm unable to reproduce this issue, but I think I know where to
-suspect the bug is. Thanks for taking the time to root cause this and
-provide a fix.
+> +property in the device tree.
+> +The reference configuration for the current implementation of IIO-backend mode
+> +is the HDL reference provided by ADI:
+> +https://wiki.analog.com/resources/eval/user-guides/ad7606x-fmc/hdl
+> +This implementation embeds an IIO-backend compatible IP (adi-axi-adc) and a PWM
+> +connected to the conversion trigger pin.
+> +
+> ++---+                                       +----------------------------
+> +|   |               +-------+               |AD76xx
+> +| A |  controls     |       |               |
+> +| D |-------------->|  PWM  |-------------->| cnvst
+> +| 7 |               |       |               |
+> +| 6 |               +-------+               |
+> +| 0 | controls  +-----------+------------   |
+> +| 6 |---------->|           |           |<--| frstdata
+> +|   |           | Backend   |  Backend  |<--| busy
+> +| D |           | Driver    |           |   |
+> +| R |           |           |           |-->| clk
+> +| I |  requests |+---------+| DMA       |   |
+> +| V |----------->|  Buffer ||<----      |<=>| DATA
+> +| E |           |+---------+|           |   |
+> +| R |           +-----------+-----------+   |
+> +|   |-------------------------------------->| reset/configuration gpios
+> ++---+                                       +-----------------------------
+> +
+> +
+> +Software and hardware modes
+> +---------------------------
+> +
+> +While all the AD7606 series parts can be configured using GPIOs, some of them
+> +can be configured using register.
 
-...
+I'd add blank lines between paragraphs as makes it easier to read as text
 
-> > +               offset =3D 0;
->
-> If the offset is 5000 and only 4500 bytes are skipped at this point,
-> the offset should be 500, not 0.
-> We need to add a condition to set the offset correctly.
->
+> +The chip that support software mode have more values avalaible for configuring
 
-I highly suspect this is a regression that was introduced in v13. In
-v12 Pavel asked if offset can just be set to 0 here, and I didn't see
-any reason why not, so I made the change:
+available
 
-    -+          offset =3D offset - start;
-    ++          offset =3D 0;
+> +the device, as well as more settings, and allow to control the range and
+> +calibration per channel.
+> +The following settings are available per channel in software mode:
+> + - Scale
+> +Also, there is a broader choice of oversampling ratios in software mode.
+> +
+> +Conversion triggering
+> +---------------------
+> +
+> +The conversion can be triggered by two distinct ways:
+> +
+> + - A GPIO is connected to the conversion trigger pin, and this GPIO is controlled
+> +   by the driver directly.  In this configuration, the driver set back the
+the driver sets back
 
-It looks like we missed something. I suspect reverting that may
-resolve the issue, because __skb_copy_datagram() in earlier kernels
-modified offset like this and it's well tested. Can you test with this
-change reverted? Diff like so:
+> +   conversion trigger pin to high as soon as it has read all the conversions.
+> +
+> + - An external source is connected to the conversion trigger pin. In the
+> +   current implementation, it must be a PWM. In this configuration, the driver
+> +   does not control directly the conversion trigger pin. Instead, it can
+> +   control the PWM's frequency. This trigger is enabled only for iio-backend.
+> +
+> +Reference voltage
+> +-----------------
+> +
+> +2 possible reference voltage sources are supported:
+> +
+> + - Internal reference (2.5V)
+> + - External reference (2.5V)
+> +
+> +The source is determined by the device tree. If ``refin-supply`` is present,
+> +then the external reference is used, else the internal reference is used.
+> +
+> +Oversampling
+> +------------
+> +
+> +This family supports oversampling to improve SNR.
+> +In software mode, the following ratios are available:
+> +1 (oversampling disabled)/2/4/8/16/32/64/128/256.
+> +
+> +Unimplemented features
+> +----------------------
+> +
+> +- 2/4/8 SDO lines
+> +- CRC indication
+> +- Calibration
+> +
+> +Device buffers
+> +==============
+> +
+> +IIO triggered buffer
+> +--------------------
+> +
+> +This driver supports IIO triggered buffers, with a "built in" trigger, i.e the
+> +trigger is allocated and linked by the driver, and a new conversion is triggered
+> +as soon as the samples are transferred, and a timestamp channel is added to make
+> +up for the potential jitter induced by the delays in the interrupt handling.
+> +
+> +IIO backend buffer
+> +------------------
+> +
+> +When IIO backend is used, the trigger is not needed, and the sample rate is
+> +considered as stable, hence there is no timestamp channel. The communication is
+> +delegated to an external logic, called a backend, and the backend's driver
+> +handles the buffer. When this mode is enabled, the driver cannot control the
+> +conversion pin, because the busy pin is bound to the backend.
+> +
+> +
+> +
+> +
+> +
+Drop this trailing whitespace.
 
-diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-index 40e7335dae6e..984e28c5d096 100644
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -2522,7 +2522,7 @@ static int tcp_recvmsg_dmabuf(struct sock *sk,
-const struct sk_buff *skb,
-                 */
-                skb =3D skb_shinfo(skb)->frag_list ?: skb->next;
+> 
 
--               offset =3D 0;
-+               offset =3D offset - start;
-        } while (skb);
-
-        if (remaining_len) {
-
-I'm running a long test to try to reproduce this issue, but I have ran
-many long tests before and was not able to. For some reason my setup
-is not able to reproduce this edge case. Are you doing anything
-special with ncdevmem? Or simply running commands like these on the
-server client?
-
-server: ./ncdevmem -s SERVER -c CLIENT -l -p 5224 -v 7
-client: yes $(echo -e \\x01\\x02\\x03\\x04\\x05\\x06) | tr \\n \\0 |
-nc SERVER 5224 -p 5224
-
-
---=20
-Thanks,
-Mina
 
