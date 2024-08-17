@@ -1,63 +1,83 @@
-Return-Path: <linux-kernel+bounces-290604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F80955633
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:41:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDAD4955636
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 09:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70468B21C7F
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:41:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E24E61C215FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15E614431C;
-	Sat, 17 Aug 2024 07:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3F2143726;
+	Sat, 17 Aug 2024 07:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ppWBcpSc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="e3xgFAKF"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA5713D8A3;
-	Sat, 17 Aug 2024 07:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BEA11422BC
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 07:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723880483; cv=none; b=bBoNpIYyXp0Qu+sWEqyZVLfURofXPChG5rCS6icFjLs8dzzuGYpiq34Nd0W/6b9Z7ik8oKvcuFCGoh6Qb5oq0xxMcMI1wPACoefE434XlY5nBPjgm+yJOBveHttSyYSWYXX5q6HWid2sOAxHMtnYicZRluqGKgmW8kcRr1vE/fw=
+	t=1723880527; cv=none; b=Bpzy2HN2Bwf2fFPQLrhBTkcfeA80k9d2TfaGfJx9ij6AG7nnvhkOrfhcqRvrlGQPW4EcpciJtBcVTj3i26h/0s8x8MbQvdOy3HUmNiYgshGEJhshZWxXCTFo18MtgGPmPTRTaTBtNukLZVePR06slCLGOkSnMkx1v+Qmp8DyS3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723880483; c=relaxed/simple;
-	bh=ouOiNakR9AJKElEYsRFF7eC3ZWKxqzpdD71OQFANQC8=;
+	s=arc-20240116; t=1723880527; c=relaxed/simple;
+	bh=o1vH8b9lO6cU5Jga3PyafNVQi/jAQmAcUgSiItYk5P8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iZCKtJ2nLKxDT9exYz9uCFckgCwSmLueCoKwGGx3T5obXyxH0b2CDOXU/8XEzyPHMFFYnhfVNzCRq7XFgDyYQuUY7I9eJNUDwwBzOrzvXUrsToHGgOXa5gzyouzp0XOZKy6mO0L/kyJS961/14m4VkqRMylulKlkhV/r626UtYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ppWBcpSc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8537BC116B1;
-	Sat, 17 Aug 2024 07:41:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723880483;
-	bh=ouOiNakR9AJKElEYsRFF7eC3ZWKxqzpdD71OQFANQC8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ppWBcpSc6rrRBk/5O16TwTf0NlH3xqMdKThzt5+5neFK1l5kW4C21h2A2ekvaAjPJ
-	 j5PIgKE8iLMHUGRwOioEVlY0Ds50UMOHNGOGc6uiqboS6bwSNJTiRGBCf0YfM2inEb
-	 jsNXjODIGAZVEwVLAh0lZiNSoSH/xsVCZSUMvu3I=
-Date: Sat, 17 Aug 2024 09:41:20 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Matthew Maurer <mmaurer@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>,
-	Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>,
-	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved
- structure fields
-Message-ID: <2024081705-overarch-deceptive-6689@gregkh>
-References: <20240815173903.4172139-21-samitolvanen@google.com>
- <20240815173903.4172139-37-samitolvanen@google.com>
- <2024081600-grub-deskwork-4bae@gregkh>
- <CABCJKuedc3aCO2Or+_YBSzK_zp9zB8nFwjr-tK95EBM3La1AmA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=R2qSQ6WJm0aQtZ4o+lev7lnSLTlbp5z8zle9RLzCdX5S3F+It+71qJC5Xh5Ff+gQx+HF38RF8KHhDYdeXjiMXbUASXlrUfNHPs6aln1IGsUsOCr6fjf7t+VASKGu04IkIzfzfNLzE2DPkTgztN1o2zUnHOOfwMVvpat1ALwGewo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=e3xgFAKF; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5bed72ff2f2so1308363a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 00:42:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1723880524; x=1724485324; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Scgmx1Gy14t/+J79KcdymAvZdzIGaTJBly1hyr+iYTA=;
+        b=e3xgFAKF6JI9whX4wq8h3sskurvBAN3e6ihnt6o+ee/dWaKnrSgt8rgcQo5Ud4oTSc
+         GtuawfDfIHKI3czfzNPMz7l2AxWkEZY/YrnNNsJ8vwYHM2saSfMCs8RUqLonkFIa808O
+         4+zTJhCMVaJ5u0YDy3ZTRdxpeYPNqnojWh7AZntORDdJv/gpuBF3PpzfqR5Q3AtIa+Oq
+         tHfuHTPRle0IqLbWzI5d+ws2brhOyW95/Qvzf6i0zqC5FCPLQ3LYrZcndq0Y906fRVhp
+         jJceJIuCEaCsU3CDAuwvoyhtYm3HFePkZ+YABnaoS+/hwcWRYe+1eGDS9fk8Aglc3zve
+         /k4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723880524; x=1724485324;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Scgmx1Gy14t/+J79KcdymAvZdzIGaTJBly1hyr+iYTA=;
+        b=Xz6zlgJfbJy6fwUwgQ9TC1QxgtQxnnvW8ot0GQZ3Gifiilm23+rl0Nr/qGLPYfgHCz
+         AsFKLfvH+QYU6IpQUtBk2+5skkoWvxK22HfelJai03ey3AG4qT+9RXzqZ4Lfn6+YZ17D
+         KQ8R9Ru17Nj9pSmBVK2Vk1u7yMQzcr07UVYVm82nYTpi7e47nwoVCJcBgt5O4IjR04Iq
+         K5fIpIlwGBQbR2yMmZeBsc3mZQUOwXMaOajmZEUBPk6AUFEncV25PLNFP+GNlpJCAxty
+         oV8PEX4QhwcyoyOD+7pufM0gtzJIsJDCc0pMHdOVdpdrPivdh9D8vjHk7tWkLIRsa9k4
+         YV7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVlAH1zGI/pZ5K4tPPXnqzGY/bBZWxqyap4JFFbSoVSUKRw1RAjQdmc2+3PpyF7fMY91dsQBvKt9V15dF6kim1Fae1DRyVYQuIULvCc
+X-Gm-Message-State: AOJu0YzKzK46QNNlo6I2/JeCkPVJNZvcWvlj6ogoJyURGMD2FjPdilu6
+	6aKU6//T5vv51WeUiwkRIbi1/PwF1KAEgDCGWgWIMZPFzjqKS6XtDfNOmKBCeug=
+X-Google-Smtp-Source: AGHT+IEyEY1ACb4tUAripTPSCmB0FUFFTAKoRc5xxNQCmxLh1aHgyMRfh2Kx1r4BMktxuhjgrrRvVw==
+X-Received: by 2002:a05:6402:2710:b0:57c:c166:ba6 with SMTP id 4fb4d7f45d1cf-5beca5c5750mr2878547a12.19.1723880523014;
+        Sat, 17 Aug 2024 00:42:03 -0700 (PDT)
+Received: from localhost (cst2-173-13.cust.vodafone.cz. [31.30.173.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebbde5cbdsm3166518a12.37.2024.08.17.00.42.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 17 Aug 2024 00:42:02 -0700 (PDT)
+Date: Sat, 17 Aug 2024 09:42:01 +0200
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev, 
+	linux-mips@vger.kernel.org, maz@kernel.org, mark.rutland@arm.com, saravanak@google.com, 
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	Anup Patel <apatel@ventanamicro.com>
+Subject: Re: [PATCH v2] of/irq: Support #msi-cells=<0> in of_msi_get_domain
+Message-ID: <20240817-c1d2345fcc50ade60ce09449@orel>
+References: <20240816124957.130017-2-ajones@ventanamicro.com>
+ <CAL_Jsq+0fXJarCjLA1ZYOiHbM_qn3dtG00Xz+Z8qGCg8Wu=dgA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,122 +87,98 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABCJKuedc3aCO2Or+_YBSzK_zp9zB8nFwjr-tK95EBM3La1AmA@mail.gmail.com>
+In-Reply-To: <CAL_Jsq+0fXJarCjLA1ZYOiHbM_qn3dtG00Xz+Z8qGCg8Wu=dgA@mail.gmail.com>
 
-On Fri, Aug 16, 2024 at 08:50:53AM -0700, Sami Tolvanen wrote:
-> Hi Greg,
-> 
-> On Fri, Aug 16, 2024 at 12:20 AM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
+On Fri, Aug 16, 2024 at 02:18:41PM GMT, Rob Herring wrote:
+> On Fri, Aug 16, 2024 at 6:50 AM Andrew Jones <ajones@ventanamicro.com> wrote:
 > >
-> > On Thu, Aug 15, 2024 at 05:39:20PM +0000, Sami Tolvanen wrote:
-> > > Distributions that want to maintain a stable kABI need the ability to
-> > > add reserved fields to kernel data structures that they anticipate
-> > > will be modified during the ABI support timeframe, either by LTS
-> > > updates or backports.
-> > >
-> > > With genksyms, developers would typically hide changes to the reserved
-> > > fields from version calculation with #ifndef __GENKSYMS__, which would
-> > > result in the symbol version not changing even though the actual type
-> > > of the reserved field changes. When we process precompiled object
-> > > files, this is again not an option.
-> > >
-> > > To support stable symbol versions for reserved fields, change the
-> > > union type processing to recognize field name prefixes, and if the
-> > > union contains a field name that starts with __kabi_reserved, only use
-> > > the type of that field for computing symbol versions. In other words,
-> > > let's assume we have a structure where we want to reserve space for
-> > > future changes:
-> > >
-> > >   struct struct1 {
-> > >     long a;
-> > >     long __kabi_reserved_0; /* reserved for future use */
-> > >   };
-> > >   struct struct1 exported;
-> > >
-> > > gendwarfksyms --debug produces the following output:
-> > >
-> > >   variable structure_type struct1 {
-> > >     member base_type long int byte_size(8) encoding(5) data_member_location(0),
-> > >     member base_type long int byte_size(8) encoding(5) data_member_location(8),
-> > >   } byte_size(16);
-> > >   #SYMVER exported 0x67997f89
-> > >
-> > > To take the reserved field into use, a distribution would replace it
-> > > with a union, with one of the fields keeping the __kabi_reserved name
-> > > prefix for the original type:
-> > >
-> > >   struct struct1 {
-> > >     long a;
-> > >     union {
-> > >       long __kabi_reserved_0;
-> > >       struct {
-> > >           int b;
-> > >           int v;
-> > >       };
-> > >     };
-> > >
+> > An 'msi-parent' property with a single entry and no accompanying
+> > '#msi-cells' property is considered the legacy definition as opposed
+> > to its definition after being expanded with commit 126b16e2ad98
+> > ("Docs: dt: add generic MSI bindings"). However, the legacy
+> > definition is completely compatible with the current definition and,
+> > since of_phandle_iterator_next() tolerates missing and present-but-
+> > zero *cells properties since commit e42ee61017f5 ("of: Let
+> > of_for_each_phandle fallback to non-negative cell_count"), there's no
+> > need anymore to special case the legacy definition in
+> > of_msi_get_domain().
 > >
-> > Ah, ignore my previous email, here's the --stable stuff.
+> > Indeed, special casing has turned out to be harmful, because, as of
+> > commit 7c025238b47a ("dt-bindings: irqchip: Describe the IMX MU block
+> > as a MSI controller"), MSI controller DT bindings have started
+> > specifying '#msi-cells' as a required property (even when the value
+> > must be zero) as an effort to make the bindings more explicit. But,
+> > since the special casing of 'msi-parent' only uses the existence of
+> > '#msi-cells' for its heuristic, and not whether or not it's also
+> > nonzero, the legacy path is not taken. Furthermore, the path to
+> > support the new, broader definition isn't taken either since that
+> > path has been restricted to the platform-msi bus.
 > >
-> > But this all needs to go into some documentation somewhere, trying to
-> > dig it out of a changelog is going to be impossible to point people at.
-> 
-> I agree, which is why I included the details in the comments too.
-> There's also an example file if you scroll down a bit further, but I
-> can certainly add some actual documentation too. Since the --stable
-> bits are not really needed in the mainline kernel, do you prefer a
-> file in Documentation/ or is it sufficient to expand the example files
-> to include any missing details?
-
-Ah, I missed the examples, I thought that was a test for the feature :)
-
-Yes, it needs to be documented somewhere, and usually documentation is
-in Documentation/ so that it shows up on the web and everywhere else.
-
-> > > +/* See dwarf.c:process_reserved */
-> > > +#define RESERVED_PREFIX "__kabi_reserved"
+> > But, neither the definition of 'msi-parent' nor the definition of
+> > '#msi-cells' is platform-msi-specific (the platform-msi bus was just
+> > the first bus that needed '#msi-cells'), so remove both the special
+> > casing and the restriction. The code removal also requires changing
+> > to of_parse_phandle_with_optional_args() in order to ensure the
+> > legacy (but compatible) use of 'msi-parent' remains supported. This
+> > not only simplifies the code but also resolves an issue with PCI
+> > devices finding their MSI controllers on riscv, as the riscv,imsics
+> > binding requires '#msi-cells=<0>'.
 > >
-> > Seems semi-sane, I can live with this.
+> > Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
+> > ---
+> > v2:
+> >  - switch to of_parse_phandle_with_optional_args() to ensure the
+> >    absence of #msi-cells means count=0
+> >
+> >  drivers/of/irq.c | 37 +++++++++++--------------------------
+> >  1 file changed, 11 insertions(+), 26 deletions(-)
+> >
+> > diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+> > index c94203ce65bb..690df4b71ab9 100644
+> > --- a/drivers/of/irq.c
+> > +++ b/drivers/of/irq.c
+> > @@ -709,8 +709,7 @@ struct irq_domain *of_msi_map_get_device_domain(struct device *dev, u32 id,
+> >   * @np: device node for @dev
+> >   * @token: bus type for this domain
+> >   *
+> > - * Parse the msi-parent property (both the simple and the complex
+> > - * versions), and returns the corresponding MSI domain.
+> > + * Parse the msi-parent property and returns the corresponding MSI domain.
+> >   *
+> >   * Returns: the MSI domain for this device (or NULL on failure).
+> >   */
+> > @@ -718,33 +717,19 @@ struct irq_domain *of_msi_get_domain(struct device *dev,
+> >                                      struct device_node *np,
+> >                                      enum irq_domain_bus_token token)
+> >  {
+> > -       struct device_node *msi_np;
+> > +       struct of_phandle_args args;
+> >         struct irq_domain *d;
+> > +       int index = 0;
+> >
+> > -       /* Check for a single msi-parent property */
+> > -       msi_np = of_parse_phandle(np, "msi-parent", 0);
+> > -       if (msi_np && !of_property_read_bool(msi_np, "#msi-cells")) {
+> > -               d = irq_find_matching_host(msi_np, token);
+> > -               if (!d)
+> > -                       of_node_put(msi_np);
+> > -               return d;
+> > -       }
+> > -
+> > -       if (token == DOMAIN_BUS_PLATFORM_MSI) {
+> > -               /* Check for the complex msi-parent version */
+> > -               struct of_phandle_args args;
+> > -               int index = 0;
+> > +       while (!of_parse_phandle_with_optional_args(np, "msi-parent",
+> > +                                                   "#msi-cells",
+> > +                                                   index, &args)) {
 > 
-> Is there something you'd change to make this more than semi-sane?
+> I guess you just maintained essentially what was here, but
+> of_for_each_phandle() should work here. It's a bit more efficient too
+> because of_parse_phandle_with_optional_args() is implemented using
+> of_for_each_phandle().
 
-I can't think of it, but perhaps we need a check somewhere to ensure
-that these symbol names do NOT end up in the main kernel tree?
+Thanks, Rob. I just sent v3.
 
-Or just keep this whole patch as an add-on on the end that is only
-applied by the distro kernels and is not merged into mainline at all?
-
-> > I don't know if you want to take the next step and provide examples of
-> > how to use this in "easy to use macros" for it all, but if so, that
-> > might be nice.
-> 
-> This should already work with the macros Android uses, for example,
-> with minor changes. The current example file doesn't include macro
-> wrappers, but I can add them in the next version.
-
-The Android macros are a copy of what SLES and RHEL does so that's good.
-
-And yes, an example macro would be nice so we all don't have to reinvent
-it yet-again like we have done already.  Consolidation is nice.
-
-> > Especially as I have no idea how you are going to do
-> > this with the rust side of things, this all will work for any structures
-> > defined in .rs code, right?
-> 
-> Yes, Rust structures can use the same scheme. Accessing union members
-> might be less convenient than in C, but can presumably be wrapped in
-> helper macros if needed.
-
-That feels ripe for problems for any rust code as forcing a helper macro
-for a "normal" access to a structure field is going to be a lot of churn
-over time.  Is the need for a macro due to the fact that accessing a
-union is always considered "unsafe" in rust?  If that's the case, ick,
-this is going to get even messier even faster as the need for sprinkling
-unsafe accesses everywhere for what used to be a normal/safe one will
-cause people to get nervous...
-
-thanks,
-
-greg k-h
+drew
 
