@@ -1,175 +1,124 @@
-Return-Path: <linux-kernel+bounces-290735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 263999557F4
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 14:59:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBDDA9557F8
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:05:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A1B11C21228
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 12:59:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36954282B2E
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BEE614A09F;
-	Sat, 17 Aug 2024 12:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478FC14D70B;
+	Sat, 17 Aug 2024 13:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="VHRad4Xd"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="o7bH7Vwh"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7AD14F9FF;
-	Sat, 17 Aug 2024 12:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA7511187;
+	Sat, 17 Aug 2024 13:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723899532; cv=none; b=oZMk7H2pDRSH9tUVaEju9OufQvQgQgZ532rS+WQy3ManmmIUowHIa9uAbvPsxwA6keNbDj47TOQmPKsyLyFAnBZH5Sic68xOSAehgLkO0PEqeJpQg0TczuWTpSuhg6cjT5n7U/xgJj0R56CgB8mNa/1spcoyAJDvwmC1tN4N7CM=
+	t=1723899895; cv=none; b=VIt+zLTCYl/LVLb7hPO6gtsymsQ+YO0/oBiHBCD+QsWD9gMci/pY0MLLLd6HRePLm9H8Vtxk0HrPrzv4Vnw/cNt3LOuOYg34O98d4dj32lkg6syvqLUH37nCyyCnU/Smhr1MnNfZNZuZGQEE8dCOWBU9sglJ+yVhcVh+NYOwEZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723899532; c=relaxed/simple;
-	bh=mqTy7GWX7rzXkBMSQRJPizJCFX4QZSZlTrvfnOmKcTU=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=jBQsUmUY8fP3QDlCkUrra1hbb5ekdIzWqGX0MQd3N34b7thFBx3J7bD0IZsOsbKNOqBY5pURfOPU63/J0gppIVE5lnMrau0Yas5w1z5pKxWkiOIvfphhEZaSeoWTawumXsuca3Gq6L60ydM5IfzF6wurucR8seBHdN8TPFjHZxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=VHRad4Xd; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from localhost (docker-mailserver-web-1.docker-mailserver_default [172.22.0.5])
-	by mail.mainlining.org (Postfix) with ESMTPSA id 9DEC5E44F4;
-	Sat, 17 Aug 2024 12:58:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1723899522;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+B5RmOjlkNNPTiGhgAcbMh56LNwdC0DpmSCaHxQDzw8=;
-	b=VHRad4Xdvz+yHFLVcT5FZJ11lwcy0sLHyljr3c0D9P4cXKs+b+jz76P3oqi+NcT1+nyt42
-	fU0lwmJpH2dbN9w3KlZZHn19nBafREAUHyDY+w5Uqd5Cq28nflfSh/DgDpts65h5i6HKaW
-	aWzwn1e+NUoVPKuD4SH6Bv2fz+B/RDVOWWOyZPUmGXJ0X0CMyKcIuvexgcT3FTxwNv+DG1
-	ayPPXLvG8Fn38OtTBK/VwVpTAVb1vUi/NEXgm8RH9eUGvJl6aAedVwNUpiLPVJI3YlFG5l
-	Cy5NVUd3OSvPFj9tChLzc626LNYGQXglDyDGxGUohIEZC6nVDRyJ9LC8ChzAug==
+	s=arc-20240116; t=1723899895; c=relaxed/simple;
+	bh=JZM8n8x+g7qMtmOd0SazR3cDaPmkuaJQzeNaeIE0dq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=twQjXTaSDbsFsuGEjyiw7qSqU+yKJeW4/zK4wQJviO+m/iAclgEksvwu/n7xELw3v1ZzOjOJFu9nq4jHsP+AzAzd0FOkBFUcVLDMAYe6DVK2IlG6t7+r30VEVZ4zo8POmuEfXln0Ad46fdu7m0eT+NRzjtBfNQcRloXOSWYhwXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=o7bH7Vwh; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
+	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=/Dt+vJQWOKJTjuhMKbvYgOKGXnEc+DToKh1gi8tXf1U=; b=o7bH7Vwh5q/EcfqpCJwKbpjXIk
+	7fUra0YsHU5cLrF2PCDtdo7rwnboFRQ1PHxUxZ9DxJcR5nFW4K2q8wGyrdDL2K/g1VfYzK7CvUrjz
+	6qGx/aaER4duegBZr9KYzTYam1AS2l5OKzC5vQ4nErpWAV6t3sCMcNzHODyPpS80j6kuheQKJ65em
+	jo6BVpz5+dENNmxBJ8ulptaM+zftmhcSJb73SQeGrbg4iwXeQ4tk+OkUX8KlQPV2xy9As3RlZ9XPk
+	l5LIjgQ/h4uSCX+ahueSXjNsIm+PWoJJeiwU2a2kc/ZQi18fJLgZjN5Rwp405y36Wq76OvGyFRaJz
+	Td3QW+xA==;
+Received: from [2001:9e8:9db:8201:3235:adff:fed0:37e6] (port=53842 helo=lindesnes.fjasle.eu)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1sfJ6p-00DWQe-Oa;
+	Sat, 17 Aug 2024 15:04:43 +0200
+Date: Sat, 17 Aug 2024 15:04:39 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH 4/6] kbuild: rust: rebuild if the version text changes
+Message-ID: <20240817-cute-doberman-from-shambhala-6f42db@lindesnes>
+References: <20240808221138.873750-1-ojeda@kernel.org>
+ <20240808221138.873750-5-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sat, 17 Aug 2024 14:58:42 +0200
-From: barnabas.czeman@mainlining.org
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Albrieux <jonathan.albrieux@gmail.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux@mainlining.org
-Subject: Re: [PATCH v3 2/4] iio: magnetometer: ak8975: Fix reading for ak099xx
- sensors
-In-Reply-To: <20240817132641.2902418e@jic23-huawei>
-References: <20240809-ak09918-v3-0-6b036db4d5ec@mainlining.org>
- <20240809-ak09918-v3-2-6b036db4d5ec@mainlining.org>
- <20240817132641.2902418e@jic23-huawei>
-Message-ID: <a7da0c7296188542c14a54985995a8fa@mainlining.org>
-X-Sender: barnabas.czeman@mainlining.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808221138.873750-5-ojeda@kernel.org>
 
-On 2024-08-17 14:26, Jonathan Cameron wrote:
-> On Fri, 09 Aug 2024 22:25:40 +0200
-> Barnabás Czémán <barnabas.czeman@mainlining.org> wrote:
+On Fri, Aug 09, 2024 at 12:11:36AM +0200, Miguel Ojeda wrote:
+> Now that `RUSTC_VERSION_TEXT` exists, use it to rebuild `core` when the
+> version text changes (which in turn will trigger a rebuild of all the
+> kernel Rust code).
 > 
->> Move ST2 reading with overflow handling after measurement data
->> reading.
->> ST2 register read have to be read after read measurment data,
->> because it means end of the reading and realease the lock on the data.
->> Remove ST2 read skip on interrupt based waiting because ST2 required 
->> to
->> be read out at and of the axis read.
->> 
->> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-> This still needs a fixes tag to tell us when the bug was first
-> introduced into the driver so that we know how far to back port it.
-I have got some test results from a device with ak09916 and that was 
-working
-without the fix so it seems only ak09918 is strict about ST2.
-In theory all ak099xx should work like this so:
-Fixes: 57e73a423b1e (iio: ak8975: add ak09911 and ak09912 support)
+> This also applies to proc macros (which only work with the `rustc` that
+> compiled them), via the already existing dependency on `core.o`. That
+> is cleaned up in the next commit.
 > 
-> One other comment inline.
+> However, this does not cover host programs written in Rust, which is
+> the same case in the C side.
 > 
-> Thanks,
+> This is accomplished by referencing directly the generated file, instead
+> of using the `fixdep` header trick, since we cannot change the Rust
+> standard library sources. This is not too much of a burden, since it
+> only needs to be done for `core`.
 > 
-> Jonathan
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> ---
+> Masahiro: I used `$(objtree)` here since we still use it in the rest of
+> this `Makefile`, but please let me know if you prefer otherwise. Thanks!
 > 
->> ---
->>  drivers/iio/magnetometer/ak8975.c | 33 
->> ++++++++++++++++-----------------
->>  1 file changed, 16 insertions(+), 17 deletions(-)
->> 
->> diff --git a/drivers/iio/magnetometer/ak8975.c 
->> b/drivers/iio/magnetometer/ak8975.c
->> index 6357666edd34..f8355170f529 100644
->> --- a/drivers/iio/magnetometer/ak8975.c
->> +++ b/drivers/iio/magnetometer/ak8975.c
->> @@ -692,22 +692,7 @@ static int ak8975_start_read_axis(struct 
->> ak8975_data *data,
->>  	if (ret < 0)
->>  		return ret;
->> 
->> -	/* This will be executed only for non-interrupt based waiting case 
->> */
->> -	if (ret & data->def->ctrl_masks[ST1_DRDY]) {
->> -		ret = i2c_smbus_read_byte_data(client,
->> -					       data->def->ctrl_regs[ST2]);
->> -		if (ret < 0) {
->> -			dev_err(&client->dev, "Error in reading ST2\n");
->> -			return ret;
->> -		}
->> -		if (ret & (data->def->ctrl_masks[ST2_DERR] |
->> -			   data->def->ctrl_masks[ST2_HOFL])) {
->> -			dev_err(&client->dev, "ST2 status error 0x%x\n", ret);
->> -			return -EINVAL;
->> -		}
->> -	}
->> -
->> -	return 0;
->> +	return !data->def->ctrl_regs[ST1_DRDY];
->>  }
->> 
->>  /* Retrieve raw flux value for one of the x, y, or z axis.  */
->> @@ -734,6 +719,20 @@ static int ak8975_read_axis(struct iio_dev 
->> *indio_dev, int index, int *val)
->>  	if (ret < 0)
->>  		goto exit;
->> 
->> +	/* Read out ST2 for release lock */
->> +	ret = i2c_smbus_read_byte_data(client, data->def->ctrl_regs[ST2]);
->> +	if (ret < 0) {
->> +		dev_err(&client->dev, "Error in reading ST2\n");
->> +		goto exit;
->> +	}
->> +
->> +	if (ret & (data->def->ctrl_masks[ST2_DERR] |
->> +		   data->def->ctrl_masks[ST2_HOFL])) {
->> +		dev_err(&client->dev, "ST2 status error 0x%x\n", ret);
->> +		ret = -EINVAL;
->> +		goto exit;
->> +	}
->> +
->>  	mutex_unlock(&data->lock);
->> 
->>  	pm_runtime_mark_last_busy(&data->client->dev);
->> @@ -746,7 +745,7 @@ static int ak8975_read_axis(struct iio_dev 
->> *indio_dev, int index, int *val)
->> 
->>  exit:
->>  	mutex_unlock(&data->lock);
->> -	dev_err(&client->dev, "Error in reading axis\n");
->> +	dev_err(&client->dev, "Error in reading axis %d\n", ret);
+>  rust/Makefile | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> In most of the paths above there is already a detailed print. I'd not 
-> bother
-> adding the return value to this one.  It just adds noise to the patch.
-> 
->>  	return ret;
->>  }
->> 
->> 
+> diff --git a/rust/Makefile b/rust/Makefile
+> index 6c0644b6090c..966743a9ee25 100644
+> --- a/rust/Makefile
+> +++ b/rust/Makefile
+> @@ -370,7 +370,8 @@ $(obj)/core.o: private skip_clippy = 1
+>  $(obj)/core.o: private skip_flags = -Wunreachable_pub
+>  $(obj)/core.o: private rustc_objcopy = $(foreach sym,$(redirect-intrinsics),--redefine-sym $(sym)=__rust$(sym))
+>  $(obj)/core.o: private rustc_target_flags = $(core-cfgs)
+> -$(obj)/core.o: $(RUST_LIB_SRC)/core/src/lib.rs FORCE
+> +$(obj)/core.o: $(RUST_LIB_SRC)/core/src/lib.rs \
+> +    $(wildcard $(objtree)/include/config/RUSTC_VERSION_TEXT) FORCE
+>  	+$(call if_changed_dep,rustc_library)
+>  ifneq ($(or $(CONFIG_X86_64),$(CONFIG_X86_32)),)
+>  $(obj)/core.o: scripts/target.json
+> --
+> 2.46.0
+
+Looks good to me, but I'd prefer something like the suggestion from
+Masahiro:
+https://lore.kernel.org/linux-kbuild/CAK7LNAQBG0nDupXSgAAk-6nOqeqGVkr3H1RjYaqRJ1OxmLm6xA@mail.gmail.com/
 
