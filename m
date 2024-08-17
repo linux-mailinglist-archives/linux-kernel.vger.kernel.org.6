@@ -1,93 +1,260 @@
-Return-Path: <linux-kernel+bounces-290457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90E8495540D
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 02:08:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68A7C95540F
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 02:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4875B284020
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 00:08:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E744E1F23739
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 00:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B52C645;
-	Sat, 17 Aug 2024 00:08:08 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076B41373;
+	Sat, 17 Aug 2024 00:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qe8FUw0D"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF2D391
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 00:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E7539B
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 00:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723853287; cv=none; b=dzzvqK3Li7kRCDhGLvIkATVkkAYy1DuyCt7G+uacFT9MrqUDZpLvtqD5Y+wXqB/l1MD49fG1lL2A3v2bUXDHgAouSQ8ywxFVjIJlslcV/7Q8wQpo33eOvSxi+g4AGLAgrJ5ZxRmQuXbBlD2/lUzDqzP0U5MJFF3TozbJYtflcFY=
+	t=1723853608; cv=none; b=KNavj5S9fyUNwHFJTlPPNRbnlrK9745f9iJ/YO4TfshIl+nTf5qpu8fu4llDVdHKerf5vO87JHSoKPTULCCKTrQPO5MMvxCQrKSJP4RuAjCEgcyLRBl3MSpZes7+N4c/w1kH19hbhfoIOWYiQHsJVmyQKiDO5/K2hyoiYTvMGRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723853287; c=relaxed/simple;
-	bh=8cqZKJkH404Adiz24foqLGVKFP5OXxPIMKKRlsAWz/0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Ip3EoaRHCn1w5VXQqkVLEUgXsVQi5B/qFYy+PvZ9ncm865q9dKGv6YQKDjYr4j4WL5r6uJ6QnF00wQ3JbFl8FcEPRhPOo8L9EhW0KasqidhyEjx/TdoZ4M2l/M+R8wlSjFPD21GuXicq80nKoGgKIwJtUN+Gj65lfTQHlKymMGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39d244820edso20568745ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 17:08:05 -0700 (PDT)
+	s=arc-20240116; t=1723853608; c=relaxed/simple;
+	bh=SpIjzJc0NlGGMGuCcq/WnANtKMkY7KDl6JVSdF0bP7s=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=LsIDaGGEjXS+yTiGDEUQ0FlrrLGVY0WnL1MQBQQX3+NElO2nzoLcSMOonROPrarfPdNP/WBtvviBzKteTiRJZNSUoVkwGVvMLlH+nfBISOEAYHDy4JbA3bL3rL4hEm268V8MLDrnGwdX8eoS7T/vL+Gp2hFrDmsA/S0+qjhhaDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qe8FUw0D; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6b44f75f886so8420837b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 17:13:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723853604; x=1724458404; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zG87Hua2vkNi5Jf3T7cPpY7RUfNYDh1NRNWyIu15Z2A=;
+        b=Qe8FUw0DJLydZWyjAnhWj0EgqyknzydvpK3wRzrxxKnHYy5G7W2uUhMYML9i31f1Q8
+         kLRPxhFmK7bObCfKtMKqrQpLt457rOt2SIn8hdAzz2eXfMCqxvuZxI5L2pQd5auPnVEX
+         YOm0hLDzZ4+vWMKna0HP0Kk3sWlCqwE6DGvnbFnsiwdQmkUp0V+8ixS483utwI7Nrtik
+         CklTaWjd6egvtprJP8q8QJRJOa5ECUwQj1+zMCiG7+JaViz84AYvtXAX/o1tFtLGEgUx
+         b//zGizfneKwBtKgRcK77j8E7y6gUx68Apec+DMsSo2JMDVTBywq+ipuCDkAna4KD6N3
+         cXmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723853285; x=1724458085;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q8+h+UYhIgx6SA9dj67GwMpfszzUP7FwDAYj8kWtHvE=;
-        b=Rn542mIysPLJZTjCeMaSZdh/cHF8/wKMbyvg9+MziaDafHe/q1I4Ypiw/janKLGnS4
-         PmN6lRRGg2j43DoeSXrZVMb8ZLTwmPXiFLQpOuntbuAXyYyLvqPHGleVcbs4H8ak3GiH
-         AlxFpAmQ1lUTsmJS/cKVMbF0PZe8p33HKRgphEaelzRB3qxf5e26gGZH0XLUPentXMT7
-         LHqgrCp5YvAvqUpqEJlGOpxVeSBvv4Pqjc3NWm4bsHBkU4WwV2mtTbzFY1wVG+XtrqgT
-         eX5uM7Q8BsdXaObLAk08KDTB8TLKNllwQ/bFzeqY+Px3EfFYo4NvOC6nWW+O0WevcQEL
-         hSnA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0kh9oUdyUTBfJnR12ca6Mh6Qw07kUc28rTashbYhaLCrDhN331KnI2nuqQj43ec5nWbHz8qtYvWxBqCrMPAaDMCjwOHC9Ek17+tfA
-X-Gm-Message-State: AOJu0Yzoxr7IyQVpNVHfb0EhiclkVArGjIpiUmA1KjNU6bp7r2/AeRlI
-	Mk7MrOPq6xduznwUm4hQrj8LX3zZDT5nmwChfz9x0PzptqOTM1B/uk0ajSY8ehFVg01fhTTjeXb
-	enD64VjHmSJvwsyCbmqYpZ976svOsJwck75BK8B4ZCTBJhE8liAu+XIA=
-X-Google-Smtp-Source: AGHT+IE4e/l8ryHrMJHbK42ym5lVt+Ue8iZ5+aOCXbtbdZsNfLBaLvJ+NnXDWMXIWC5jTOID/up/26bmXmsuhbcipqOIFdkBmzIc
+        d=1e100.net; s=20230601; t=1723853604; x=1724458404;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zG87Hua2vkNi5Jf3T7cPpY7RUfNYDh1NRNWyIu15Z2A=;
+        b=be7xnkSkmlowJCSJTD8FCzuOHv+SlGxTg1qAdvG2/xqDIHR8KiIPMq/ccqAZ5Lo1W9
+         byAG5l0l1ztaJKSnDfgQSt2OwomFncRtFFFM7QFdEB/hl/DmolqMCBtTfQtPyk4gehEC
+         Xi0dTNmvW4NOIjLWuS/c2Sim+KrudQfrRfvbJ/BfcztHgV1IbezFaUvANJDPf6mHvX1h
+         S7bkBE0QQW823DDwqfx5iXH2JXQBdfaGOua6y2fDMvWhnwAQqWr1Rai0QWlphvmhYGvD
+         lNRYyiawK9eROe2AjuzjxUGy/FBnUbgzqf5+Z1T/GvzZy7UL2aPI6xief01MuQLcdY0W
+         Ze/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWBpH6NG7gqkysAqRyXjU16H9rDIuZ69zPkr4ML/YxYqZAP8vECyfSVyVClHK1OkzKJuKM65gMSpwA+fL2NtCP8iiGgF8q8i0RxtcKf
+X-Gm-Message-State: AOJu0Yx6qR6fbw+ZVE8d1X3x2bV7NSfhmk9pX6S0E7EiIfTwY9b2x9NI
+	uCfvP1HGF/TV09aPCXXxJu/bWZAFrRUx1+P8YHfXkHi5kFk8X/GO4vLVYNoR4KNl158bsZ5MSmm
+	4rg==
+X-Google-Smtp-Source: AGHT+IH36xJ7IS0L0vENo7BJkYmLiRSWFHCZuvhJ+/03qqbIAu/UTaTGIFyPyYeAe4OqD30nJpnP+Wd1wGk=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:2fc3:b0:6a9:3d52:79e9 with SMTP id
+ 00721157ae682-6b1ba5f69cemr371237b3.4.1723853604464; Fri, 16 Aug 2024
+ 17:13:24 -0700 (PDT)
+Date: Fri, 16 Aug 2024 17:13:22 -0700
+In-Reply-To: <20240808062937.1149-5-ravi.bangoria@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1989:b0:39b:2133:8ee5 with SMTP id
- e9e14a558f8ab-39d26ce2d21mr3786475ab.1.1723853284994; Fri, 16 Aug 2024
- 17:08:04 -0700 (PDT)
-Date: Fri, 16 Aug 2024 17:08:04 -0700
-In-Reply-To: <00000000000012a63d061fccab65@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b28361061fd5de24@google.com>
-Subject: Re: [syzbot] [jfs?] KASAN: slab-use-after-free Read in dbFreeBits
-From: syzbot <syzbot+3c010e21296f33a5dc16@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, axboe@kernel.dk, eadavis@qq.com, 
-	jfs-discussion@lists.sourceforge.net, kristian@klausen.dk, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, shaggy@kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20240808062937.1149-1-ravi.bangoria@amd.com> <20240808062937.1149-5-ravi.bangoria@amd.com>
+Message-ID: <Zr_rIrJpWmuipInQ@google.com>
+Subject: Re: [PATCH v4 4/4] KVM: SVM: Add Bus Lock Detect support
+From: Sean Christopherson <seanjc@google.com>
+To: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, pbonzini@redhat.com, thomas.lendacky@amd.com, 
+	jmattson@google.com, hpa@zytor.com, rmk+kernel@armlinux.org.uk, 
+	peterz@infradead.org, james.morse@arm.com, lukas.bulwahn@gmail.com, 
+	arjan@linux.intel.com, j.granados@samsung.com, sibs@chinatelecom.cn, 
+	nik.borisov@suse.com, michael.roth@amd.com, nikunj.dadhania@amd.com, 
+	babu.moger@amd.com, x86@kernel.org, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, santosh.shukla@amd.com, ananth.narayan@amd.com, 
+	sandipan.das@amd.com, manali.shukla@amd.com
+Content-Type: text/plain; charset="us-ascii"
 
-syzbot has bisected this issue to:
+On Thu, Aug 08, 2024, Ravi Bangoria wrote:
+> Add Bus Lock Detect support in AMD SVM. Bus Lock Detect is enabled through
+> MSR_IA32_DEBUGCTLMSR and MSR_IA32_DEBUGCTLMSR is virtualized only if LBR
+> Virtualization is enabled. Add this dependency in the SVM.
 
-commit 2b9ac22b12a266eb4fec246a07b504dd4983b16b
-Author: Kristian Klausen <kristian@klausen.dk>
-Date:   Fri Jun 18 11:51:57 2021 +0000
+This doesn't depend on the x86 patches that have gone into tip-tree, correct?
 
-    loop: Fix missing discard support when using LOOP_CONFIGURE
+In the future, unless there's an actual depenency in code or functionality,
+please send separate series for patches that obviously need to be routed through
+different trees.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16f44605980000
-start commit:   d7a5aa4b3c00 Merge tag 'perf-tools-fixes-for-v6.11-2024-08..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=15f44605980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=11f44605980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=92c0312151c4e32e
-dashboard link: https://syzkaller.appspot.com/bug?extid=3c010e21296f33a5dc16
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=139469f5980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=100f7713980000
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
+> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+> ---
+>  arch/x86/kvm/svm/nested.c |  3 ++-
+>  arch/x86/kvm/svm/svm.c    | 17 ++++++++++++++---
+>  2 files changed, 16 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
+> index 6f704c1037e5..1df9158c72c1 100644
+> --- a/arch/x86/kvm/svm/nested.c
+> +++ b/arch/x86/kvm/svm/nested.c
+> @@ -586,7 +586,8 @@ static void nested_vmcb02_prepare_save(struct vcpu_svm *svm, struct vmcb *vmcb12
+>  	/* These bits will be set properly on the first execution when new_vmc12 is true */
+>  	if (unlikely(new_vmcb12 || vmcb_is_dirty(vmcb12, VMCB_DR))) {
+>  		vmcb02->save.dr7 = svm->nested.save.dr7 | DR7_FIXED_1;
+> -		svm->vcpu.arch.dr6  = svm->nested.save.dr6 | DR6_ACTIVE_LOW;
+> +		/* DR6_RTM is a reserved bit on AMD and as such must be set to 1 */
+> +		svm->vcpu.arch.dr6  = svm->nested.save.dr6 | DR6_FIXED_1 | DR6_RTM;
+>  		vmcb_mark_dirty(vmcb02, VMCB_DR);
+>  	}
+>  
+> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> index e1b6a16e97c0..9f3d31a5d231 100644
+> --- a/arch/x86/kvm/svm/svm.c
+> +++ b/arch/x86/kvm/svm/svm.c
+> @@ -1047,7 +1047,8 @@ void svm_update_lbrv(struct kvm_vcpu *vcpu)
+>  {
+>  	struct vcpu_svm *svm = to_svm(vcpu);
+>  	bool current_enable_lbrv = svm->vmcb->control.virt_ext & LBR_CTL_ENABLE_MASK;
+> -	bool enable_lbrv = (svm_get_lbr_vmcb(svm)->save.dbgctl & DEBUGCTLMSR_LBR) ||
+> +	u64 dbgctl_buslock_lbr = DEBUGCTLMSR_BUS_LOCK_DETECT | DEBUGCTLMSR_LBR;
+> +	bool enable_lbrv = (svm_get_lbr_vmcb(svm)->save.dbgctl & dbgctl_buslock_lbr) ||
+>  			    (is_guest_mode(vcpu) && guest_can_use(vcpu, X86_FEATURE_LBRV) &&
+>  			    (svm->nested.ctl.virt_ext & LBR_CTL_ENABLE_MASK));
 
-Reported-by: syzbot+3c010e21296f33a5dc16@syzkaller.appspotmail.com
-Fixes: 2b9ac22b12a2 ("loop: Fix missing discard support when using LOOP_CONFIGURE")
+Out of sight, but this leads to calling svm_enable_lbrv() even when the guest
+just wants to enable BUS_LOCK_DETECT.  Ignoring SEV-ES guests, KVM will intercept
+writes to DEBUGCTL, so can't KVM defer mucking with the intercepts and
+svm_copy_lbrs() until the guest actually wants to use LBRs?
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Hmm, and I think the existing code is broken.  If L1 passes DEBUGCTL through to
+L2, then KVM will handles writes to L1's effective value.  And if L1 also passes
+through the LBRs, then KVM will fail to update the MSR bitmaps for vmcb02.
+
+Ah, it's just a performance issue though, because KVM will still emulate RDMSR.
+
+Ugh, this code is silly.  The LBR MSRs are read-only, yet KVM passes them through
+for write.
+
+Anyways, I'm thinking something like this?  Note, using msr_write_intercepted()
+is wrong, because that'll check L2's bitmap if is_guest_mode(), and the idea is
+to use L1's bitmap as the canary.
+
+static void svm_update_passthrough_lbrs(struct kvm_vcpu *vcpu, bool passthrough)
+{
+	struct vcpu_svm *svm = to_svm(vcpu);
+
+	KVM_BUG_ON(!passthrough && sev_es_guest(vcpu->kvm), vcpu->kvm);
+
+	if (!msr_write_intercepted(vcpu, MSR_IA32_LASTBRANCHFROMIP) == passthrough)
+		return;
+
+	set_msr_interception(vcpu, svm->msrpm, MSR_IA32_LASTBRANCHFROMIP, passthrough, 0);
+	set_msr_interception(vcpu, svm->msrpm, MSR_IA32_LASTBRANCHTOIP, passthrough, 0);
+	set_msr_interception(vcpu, svm->msrpm, MSR_IA32_LASTINTFROMIP, passthrough, 0);
+	set_msr_interception(vcpu, svm->msrpm, MSR_IA32_LASTINTTOIP, passthrough, 0);
+
+	/*
+	 * When enabling, move the LBR msrs to vmcb02 so that L2 can see them,
+	 * and then move them back to vmcb01 when disabling to avoid copying
+	 * them on nested guest entries.
+	 */
+	if (is_guest_mode(vcpu)) {
+		if (passthrough)
+			svm_copy_lbrs(svm->vmcb, svm->vmcb01.ptr);
+		else
+			svm_copy_lbrs(svm->vmcb01.ptr, svm->vmcb);
+	}
+}
+
+void svm_enable_lbrv(struct kvm_vcpu *vcpu)
+{
+	struct vcpu_svm *svm = to_svm(vcpu);
+
+	if (WARN_ON_ONCE(!sev_es_guest(vcpu->kvm)))
+		return;
+
+	svm->vmcb->control.virt_ext |= LBR_CTL_ENABLE_MASK;
+	svm_update_passthrough_lbrs(vcpu, true);
+
+	set_msr_interception(vcpu, svm->msrpm, MSR_IA32_DEBUGCTLMSR, 1, 1);
+}
+
+static struct vmcb *svm_get_lbr_vmcb(struct vcpu_svm *svm)
+{
+	/*
+	 * If LBR virtualization is disabled, the LBR MSRs are always kept in
+	 * vmcb01.  If LBR virtualization is enabled and L1 is running VMs of
+	 * its own, the MSRs are moved between vmcb01 and vmcb02 as needed.
+	 */
+	return svm->vmcb->control.virt_ext & LBR_CTL_ENABLE_MASK ? svm->vmcb :
+								   svm->vmcb01.ptr;
+}
+
+void svm_update_lbrv(struct kvm_vcpu *vcpu)
+{
+	struct vcpu_svm *svm = to_svm(vcpu);
+	u64 guest_debugctl = svm_get_lbr_vmcb(svm)->save.dbgctl;
+	bool enable_lbrv = (guest_debugctl & DEBUGCTLMSR_LBR) ||
+			    (is_guest_mode(vcpu) && guest_can_use(vcpu, X86_FEATURE_LBRV) &&
+			    (svm->nested.ctl.virt_ext & LBR_CTL_ENABLE_MASK));
+
+	if (enable_lbrv || (guest_debugctl & DEBUGCTLMSR_BUS_LOCK_DETECT))
+		svm->vmcb->control.virt_ext |= LBR_CTL_ENABLE_MASK;
+	else
+		svm->vmcb->control.virt_ext &= ~LBR_CTL_ENABLE_MASK;
+
+	svm_update_passthrough_lbrs(vcpu, enable_lbrv);
+}
+
+
+> @@ -3158,6 +3159,10 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
+>  		if (data & DEBUGCTL_RESERVED_BITS)
+
+Not your code, but why does DEBUGCTL_RESERVED_BITS = ~0x3f!?!?  That means the
+introduction of the below check, which is architecturally correct, has the
+potential to break guests.  *sigh*
+
+I doubt it will cause a problem, but it's something to look out for.
+
+>  			return 1;
+>  
+> +		if ((data & DEBUGCTLMSR_BUS_LOCK_DETECT) &&
+> +		    !guest_cpuid_has(vcpu, X86_FEATURE_BUS_LOCK_DETECT))
+> +			return 1;
+> +
+>  		svm_get_lbr_vmcb(svm)->save.dbgctl = data;
+>  		svm_update_lbrv(vcpu);
+>  		break;
+> @@ -5225,8 +5230,14 @@ static __init void svm_set_cpu_caps(void)
+>  	/* CPUID 0x8000001F (SME/SEV features) */
+>  	sev_set_cpu_caps();
+>  
+> -	/* Don't advertise Bus Lock Detect to guest if SVM support is absent */
+> -	kvm_cpu_cap_clear(X86_FEATURE_BUS_LOCK_DETECT);
+> +	/*
+> +	 * LBR Virtualization must be enabled to support BusLockTrap inside the
+> +	 * guest, since BusLockTrap is enabled through MSR_IA32_DEBUGCTLMSR and
+> +	 * MSR_IA32_DEBUGCTLMSR is virtualized only if LBR Virtualization is
+> +	 * enabled.
+> +	 */
+> +	if (!lbrv)
+> +		kvm_cpu_cap_clear(X86_FEATURE_BUS_LOCK_DETECT);
+>  }
+>  
+>  static __init int svm_hardware_setup(void)
+> -- 
+> 2.34.1
+> 
 
