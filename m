@@ -1,342 +1,383 @@
-Return-Path: <linux-kernel+bounces-290483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C0D695547C
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 03:05:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C30495547E
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 03:06:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 004B5B22328
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:05:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEA90B22B10
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53DBE4C6C;
-	Sat, 17 Aug 2024 01:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7761E8F7D;
+	Sat, 17 Aug 2024 01:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VNXQRC/f"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TkPBIP2u"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3D34400
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 01:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723856731; cv=none; b=MOLWQ01INDORmTL713n91/v0QrVvqtD6kQA1IpySftbrB6yL9ktRgLMu2wK4ZhH9UCUuG+owGvJC74r0oG1MFYHbII6SObSfzqsk811h8neVQ/PsnrMfpfvSAwon33FcYinQzWCL1+dIBBAval0+aHDidXGok3ui34tVzZdYVsw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723856731; c=relaxed/simple;
-	bh=0dOcXqSyekOwkzzsmrHdpqTdMzvbrJ4ze01HnoKUsJw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=YnIHzHxitUV4JlL5MZa6rjeF85UVvbOskf2MzRVGzh9O6T/NeQ7Z6haTA6Id4KmFjyYvddhPLg1rFeuqPepfihy11JW3YN7qbaHfRu1hqIorA/Sm8muoSv3YH4w6Vrkmwd1dFwH7sh1RYu4IG8kOdH7wtjLbQ2nAanYvyLiw+Qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VNXQRC/f; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2d406dc42f4so332678a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 18:05:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723856728; x=1724461528; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yZ3NIWTD82ZZqG4QrxvtzlxbU1NhadZyZ5e9GyWWoHs=;
-        b=VNXQRC/fA9DTsq2dEP9RJQeGWbxKioigQGwbiwg6lX7f3nFx1NflLBDoEUKCoqt/bG
-         SOJiJbeK2/EjkMVcVut8jPjb4Pj3WBbLH5bezIZcizEn3BB+sPwL8YsDUzam2IyMJtHR
-         KUTc/SXX7fUDd01g/C9Kss2ZPC1O4KUhax2OTNuEJ3fUVX9bLrRAmSZlMAXn9E71GniR
-         rs3gEDrORI4XO4rUW3lcyDDqWj3e2/ZKRqRTctIPm7M/ZgeCdAQtUIdIPSWej3t3e2AL
-         USFi46urtTTNILpd5/TDwwOiXwrN6wLzy3Qyp6vVapfez3ZnBLJt+sSavShNO2xR9FDK
-         RdnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723856728; x=1724461528;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yZ3NIWTD82ZZqG4QrxvtzlxbU1NhadZyZ5e9GyWWoHs=;
-        b=tj15x1+Y+ZR7SHzgh2D+JFf6TZGH+TLxHYcG2PkXhJ5d1sBFULnXDMhbda1kMsiINe
-         FV9iMF+kTVHHoOJdzN3AaxhmN1miwSFIM6zhKMrz2EO4NnCfROhvaj8k34FNVutjBKMt
-         xbR3eZqNcwulf4QWzSzhIs6BCqnTNVEMqypOGFLYVkJfZeqiUBJkdVG5boaWgH0VYzYZ
-         AZSvOJbSje4CkRmosUama4qPixtKE24SOe4ot2a1qDUMPsqaSVS1418j8OF8//s98rwM
-         g4Hmi4sIsAQlq8R1AAjAppQlXhyq8E/NEgajy1tTMsJsRrYaXdmTWfKELnzeLSzaW0EB
-         KDzw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8ELdD3hsqfDuBhlCriSVLxtcY/l/04/lGT9Cghqfxrl676icj9CxHjJ2y0QxLW9fAYTXPrGp9+E7HlUzKommNj/ScvmoZKD/9zWBt
-X-Gm-Message-State: AOJu0YyVwra3hXTBMOvwrhXOR12P2Ho9uFvAgVZx9QuQChm8QZlW6+Fm
-	8yjtty43Baj2XymHR6eczt2x5m9S3lzJDplh+PUOFjT9RvtzAzSviBoSPsr5GtLE/egKaDCD7wu
-	M0g==
-X-Google-Smtp-Source: AGHT+IGV4YzgxmwuCW8TgHBWt0j766Jl0TrT07V8PzpayCNsn2Lgz80apJLxO0myiLlSCmy6amt7b3XqQ7I=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:c292:b0:2c9:a168:9719 with SMTP id
- 98e67ed59e1d1-2d3e00f2177mr20697a91.6.1723856727684; Fri, 16 Aug 2024
- 18:05:27 -0700 (PDT)
-Date: Fri, 16 Aug 2024 18:05:26 -0700
-In-Reply-To: <20240724011037.3671523-3-jthoughton@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C29553BE;
+	Sat, 17 Aug 2024 01:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723856735; cv=fail; b=WSgcx/JPvRVjva98XxGEEafpb3XEAYNP3A291GiCnzqn65rUtJJxiK1p+MLLNfNVboGm4fsHRqHAT6dRnX6desXNXEKzf3wNsjQfB97AJPC6TG7gZXf1rUiNFhmH/myrSk/vo8uZtb4umsAGBiZBYSBXYsAZjtEMDQRXJzbwe/I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723856735; c=relaxed/simple;
+	bh=yv+WmNudnM8988vt+e43w0bN27RCjOwmAkR6WXUuhjA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=bjANznDBT//pR066kmG/jHFiBTmseTk4GFpxSmSW1Y4gAXGh6wpedoRQPtY/uGcSPm+tkwQ3MLl3hsTRbPRIfP3JlAKLxRbDDmlDPSsMw7sr91j6j8lcR3z4AaWQnhAYBsjcCBniCJT68oaBegxPn77/JlEYCQ2MaPYx3Uu2W4s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TkPBIP2u; arc=fail smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723856734; x=1755392734;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=yv+WmNudnM8988vt+e43w0bN27RCjOwmAkR6WXUuhjA=;
+  b=TkPBIP2u3z2egQgDfJqqrbSrIk4JvthbqtvCa7vEYtSZ/AktxXKJgHjl
+   Iwj8x+ToLPqS5+FW31E5E4VogsYaAA1LUmoqHQz1dBTxjuHlJ2TVy7SY4
+   jmmJGWQvOQYvnafgtGuHNH+XEMJq9gWg0wFD7C7zANE8sJMmjXV2uj5Ps
+   qkeAYCST8PtPGURnnP+8qr8QpCbiCu3UAcw2501f/k+Z9SKQt9yCeY+QS
+   Jlx0tlWnsqM/aGKW8lMuGjjypATDip7VsGRV4E5YRjEyLsX0imXtBMnsi
+   tvmCNNqrLtZ2CP3avUriBSGqoydUqgct+czWvAuWRiCiWiwu/yyO5+QYO
+   Q==;
+X-CSE-ConnectionGUID: EhxA87FmQ7WhAC9sZAGR+A==
+X-CSE-MsgGUID: FcPXrX9lQsyNEI5v89+cwA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="22043969"
+X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
+   d="scan'208";a="22043969"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 18:05:33 -0700
+X-CSE-ConnectionGUID: pOgwm2ZARCaY1283hixphw==
+X-CSE-MsgGUID: AuXiRz7bRBiWSsvKIX7SgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
+   d="scan'208";a="60606537"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Aug 2024 18:05:33 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 16 Aug 2024 18:05:32 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 16 Aug 2024 18:05:31 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 16 Aug 2024 18:05:31 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.101)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 16 Aug 2024 18:05:31 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=h+qn4Hq8LyR1fda3f2EMcjN933eQOHkmQIZSjTNwkhxlD+Hve/hoIoFy1BQASXYUjvM9mOsKG9xgAKS9q46oLzKkbNdI2BTbGjwj8SKF+KwMNLGmxApS6z9NZuOFk4D+zhCEM2caG/Ic/xWquTnxQ3lNjyyO9ty8z+tiLzoTc6Cs3a9eMGByuHQcLPMus9sCYN/oCVRiE+ybhAvaTwZFzjNguoeusJXST9AiVMOe6p1XmzoOzPAZ/k2X+1vaIBm6Y4d3BD6Yc/7K0zxwtzd7mZQssL08NHXOgqMIInZaHA7EGn8MCEdpuNdjAw5tsjUIop1wnI5MpsZpFHC8DG5rrQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XHCwqlaV/IKl1svffcLQ4gka1hKB/63O0BEkgAS669Q=;
+ b=gcI4gDDlHyr7D8oSuXLe59oQruH+oQHRSARBkIgGKnh41s8pZhES5sE8Fd1oJTvixSi/E1xzoT8tl9YJU5cYEVG7NGvSAgSiSw9/p7Pxc0SP7xkcu40jSAioZwzP1fypHpaaJiJCrh1YLNHDIrSuecInpFRZCz9K/C66HIyc+jQrqTGDjzzw2w7Lj0tI5sqpUgdPkCTxSIsQLfb/4vx7NVjYvGzl4SRsjIMm2mIaWnZtgTlzB5Dcgp/xooYCDEPuS2BmfoivbdWAhVh484BOXKgwsUS43ss89HlfxaAouJqT8WsVXC9CbKJOj+Ga0hACQ0lOHyIbYeXZ7k8uqO+ebg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from IA0PR11MB7185.namprd11.prod.outlook.com (2603:10b6:208:432::20)
+ by IA0PR11MB7403.namprd11.prod.outlook.com (2603:10b6:208:431::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Sat, 17 Aug
+ 2024 01:05:29 +0000
+Received: from IA0PR11MB7185.namprd11.prod.outlook.com
+ ([fe80::dd3b:ce77:841a:722b]) by IA0PR11MB7185.namprd11.prod.outlook.com
+ ([fe80::dd3b:ce77:841a:722b%4]) with mapi id 15.20.7875.019; Sat, 17 Aug 2024
+ 01:05:29 +0000
+From: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>
+To: Huan Yang <link@vivo.com>, Gerd Hoffmann <kraxel@redhat.com>, Sumit Semwal
+	<sumit.semwal@linaro.org>, =?iso-8859-1?Q?Christian_K=F6nig?=
+	<christian.koenig@amd.com>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>, "linaro-mm-sig@lists.linaro.org"
+	<linaro-mm-sig@lists.linaro.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
+Subject: RE: [PATCH v3 5/5] udmabuf: remove udmabuf_folio
+Thread-Topic: [PATCH v3 5/5] udmabuf: remove udmabuf_folio
+Thread-Index: AQHa7WAVlW5V0jmvPUOO8FKdSnTWCbIotMqg
+Date: Sat, 17 Aug 2024 01:05:29 +0000
+Message-ID: <IA0PR11MB71858D28621C745C1663B593F8822@IA0PR11MB7185.namprd11.prod.outlook.com>
+References: <20240813090518.3252469-1-link@vivo.com>
+ <20240813090518.3252469-6-link@vivo.com>
+In-Reply-To: <20240813090518.3252469-6-link@vivo.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA0PR11MB7185:EE_|IA0PR11MB7403:EE_
+x-ms-office365-filtering-correlation-id: ef379459-dbdb-45ea-dfbf-08dcbe58afd2
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?zaZXb7NnQ+yiXlXAuT+rN5BwoSEmoYN2KlwhMKmx3ANRy8UuSt/J9iPhlh?=
+ =?iso-8859-1?Q?QhM9YVwlujoe3hfwQvtJi6Nfp0XoN2tL0WZkrWClDbe3AaiiDj17yfQsbe?=
+ =?iso-8859-1?Q?EvBM/srp8c8rQySwXPfvW4VpwUY1Yfj9UFlszLdzZnSDh3XHq+YXImvPjX?=
+ =?iso-8859-1?Q?nD5lp0kvirJVEyO8/s3iOsMUrTTSWNqkuuR8oCOoe352LwwGjNLqgxmBXN?=
+ =?iso-8859-1?Q?tOKY2xwsF180PYN+90cFGfqrGPDdh28UblLW2doVk8bgwCF5faGQwHC3Oo?=
+ =?iso-8859-1?Q?wXxHnTaY8hCDkPtHa3dwdNjZlyJ29yCXmOvSHFKwmIQSuqotel7EJDa5/Y?=
+ =?iso-8859-1?Q?Z02Ugzqf2tkUeT74FUe0FhwWa62dMGoygetNTRuXsbn3bPjg99OHoS1ZXf?=
+ =?iso-8859-1?Q?o+GppvE4z5RX9enfLLS1mw/5bqpZ2vtCggJEWuopRiZT+IGx7QalqduYnD?=
+ =?iso-8859-1?Q?vS0j+LWOPtevEmkMPBH/MKqq50FMlUy8c9hV0OgPCJdigfWktfLUuzJpbX?=
+ =?iso-8859-1?Q?n4g5P2AQizR1AVQNtbhpcspgnuVNFNviqG5bte7VF6S5PS3q31CrtiIH7e?=
+ =?iso-8859-1?Q?OjmpGREeZF5Sq6SvYvo0CKVReP2IDwZPz0xxY2DbqjcfEZZXn63m6Yhdgc?=
+ =?iso-8859-1?Q?FOrCxYBJY1MrOOxxSMksnTyuAA7LV9bmMnE0WJ9GLMsNKx37dplEpN2tZJ?=
+ =?iso-8859-1?Q?MKGfhZCZ9hA3WU/bWMP/Y8OCZeD2sV+NDQCsxFKTTetWDxBE+tao/WnYiy?=
+ =?iso-8859-1?Q?GvC+aXPk42iJR6KvRVIGQHsaafmnVYWPFTB2hVwLR2pin9BIgPk4el2YW4?=
+ =?iso-8859-1?Q?/TDtJauqgHW4awYAHgCJu2XFNVEo3U3AYJ6Z6qiOLx8EcajuKMKfKOEFTT?=
+ =?iso-8859-1?Q?tgkslJBmkDtlPvbrkdhDzOabfOD2bJuHRdYxkIIp5xsccHGUkifjDHCozm?=
+ =?iso-8859-1?Q?mxKI30ynMS5zlLgT6U/M7DJY8EMTYGtNw255VdrEEwvsqClNrLnrh3EUgU?=
+ =?iso-8859-1?Q?hm2l+FzD3cBgaVzDzu+6kMleYIYWuBguTMT+i+9uXCvKa4aV/Qo+uDcSqY?=
+ =?iso-8859-1?Q?itX47Bkw6Yj2/3r8kiwdXLrH5+BHSwCwqfKrccKtHPHhYV6ciX3waKzr5B?=
+ =?iso-8859-1?Q?z071BWVt8Qh26SH4O7p30rq7Y3JNrq5ceTfsH+SbvrGbqeVKDbDtkSrjmV?=
+ =?iso-8859-1?Q?SFr4lWobzCPldM/CKYqXLr+AXNKuLaEwb98MDJNei7KcHtxM12o1RKdPU0?=
+ =?iso-8859-1?Q?lcwTfCXOE4xN8Z7V3lr6TcMxFzuasAolGV0tw1c/h19JFc0TnyOlHArD43?=
+ =?iso-8859-1?Q?eb6dDohi7mDywOKhQWzhu6r8gwHGOxJxSbovvD74QGYCj0k5YFjczugabw?=
+ =?iso-8859-1?Q?B3SPvMTMvy8+KiEnyk3EnAUwx6UTRKTTzNTAybCQHP74Dwsqrd3FGSsIj3?=
+ =?iso-8859-1?Q?XjvsquMqUjVqmVg6MFZyxMYDjmohk9Ay+nxZTA=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR11MB7185.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?6XcTbVbgfGrIIJFe2IpG7FCEQUL9ws0QDRYUOlUHHnyd3bCF/haaGfI33f?=
+ =?iso-8859-1?Q?dcHlVt9zO0+7IoUyRdhuU2Ip2/dMm2xpigNNJgWKPeI+XeROqivb7tC5vV?=
+ =?iso-8859-1?Q?99wdsVZrWB4ugHR9ss579GRO29edMBC6fPAu/75wiqDJPy9iAR77PdR01U?=
+ =?iso-8859-1?Q?mWQXLflV+yWycPzka9Vt015GivT+Nb97LYwn+mn2PgQfhC6+1K+NizFosQ?=
+ =?iso-8859-1?Q?yYpqFydalYgE9hkJKvkqmipw2de/nnjnQ0u1Nld8gAZ5C/4cxxpxNEkRYH?=
+ =?iso-8859-1?Q?XMefWRPXKNwHjeQdw15gLvLVYUOdo42ILvFUAPyHwJCAQx3X0rqx1V8ojd?=
+ =?iso-8859-1?Q?YfZLGvaJzCmn1tVtRrjKPvBsvyBYki5/QUqkPAVQ0ltcMQXQUAxJVKcyi1?=
+ =?iso-8859-1?Q?UZvul4XSEy8v/7L6UEZi7J39+ytc1JMb6yg3hxV7x0yExVOtsaF32SahjK?=
+ =?iso-8859-1?Q?IieyEtFrFBGTDLb9Hd7akOg6LEcfc6c3zZLfkEuu7a9QeQbvnPYUvR8dOZ?=
+ =?iso-8859-1?Q?7tiZOvm6s942mvMIl7GPi5GgitlXGJunvkZItDVbv+L8Ch+PZrujV1RxfH?=
+ =?iso-8859-1?Q?0J+LI4FTP99HEhUmhINqpr6IaZryDKXGKd610m1uf0tX+53Qp3VtWAQS/v?=
+ =?iso-8859-1?Q?0lBkSInMOVTMRYsN6l4SRCX1cSHRPC6zDwfltww7c7lFs2lrHJcxnTincF?=
+ =?iso-8859-1?Q?09h2rVtDwbHExMvq6WOgI4zK8nkKCtRORGJMplsoZUKtHwO7QFrnDV9Bu9?=
+ =?iso-8859-1?Q?f9WfM3PS+8MK+gImYlnnv6dfgcDUCGBB15wdt74zyF2gXjhbNIgTM9aygq?=
+ =?iso-8859-1?Q?aUpY8EA9eXofKttnQqT/unfd1JWUOYnDQHZmUEhp9AetcChxYlZ/+SDXct?=
+ =?iso-8859-1?Q?fOpV8SWW2aP1Iqlsb/qcFQcqfHpRqbv6iD6ypv+h8LpeTkGcSQy6pkWmcB?=
+ =?iso-8859-1?Q?fntBUz/RkiaihZTLyJX+Mo6KKXD28ymvNwbGC4Y1zyVNqESqzU1AbYO8H8?=
+ =?iso-8859-1?Q?EQRAKTh4ghPiwNnYAU2zcMuT7Ygd+5isWW8t+a3zoxSyaWt6OAlwZtxdKh?=
+ =?iso-8859-1?Q?ty0mlGfEkfl2IFymn8bWe7AGBdp6lbCi8+uOGNk3WovzewJVO1Y8v6XJir?=
+ =?iso-8859-1?Q?NcQzHK8l2xB/nehHRkXKPIJzDMgI9ns+Vjs66klj9z23KKGZeAq0lG4GIu?=
+ =?iso-8859-1?Q?renyOr7kchzns94460m3EGvfBkC5ihp+IZ5bRgukXAdNtbfhAF5pX4ZTH6?=
+ =?iso-8859-1?Q?KXoLf1R9gnWwenySgBZ1wEZOH0+MjgozlV25Il4cMs4N4RA8WAhgYUACf1?=
+ =?iso-8859-1?Q?ce2ex4drVlh78yD4PzzaxHUF877fQgEutpPFEwcx1SNy1f5NMOQJRw6eHS?=
+ =?iso-8859-1?Q?LYzpKCAdC3i9fVD5J/H56fASJDAGLTWcfYzxbD9ERMpkPx6+k4uXSNXt69?=
+ =?iso-8859-1?Q?t5adkXFNrnWsitMZ5r1eypk/vEVNknUVuIJP++x0OCN9dAzL6Riv2DpmtB?=
+ =?iso-8859-1?Q?75o95uvLlmXMDmrpNl/fUl/KpDlSLBj0GTxCU5+O9gZs1XoZXANBe9Z16a?=
+ =?iso-8859-1?Q?Rw0mJTWhNQUm78OXsjMap6BAARp1/2mijh8LuxXDebk2hRi1thBgyGpZIc?=
+ =?iso-8859-1?Q?GttpNwClKFOsusK1E5wckAsndQLSiOxp00?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240724011037.3671523-1-jthoughton@google.com> <20240724011037.3671523-3-jthoughton@google.com>
-Message-ID: <Zr_3Vohvzt0KmFiN@google.com>
-Subject: Re: [PATCH v6 02/11] KVM: x86: Relax locking for kvm_test_age_gfn and kvm_age_gfn
-From: Sean Christopherson <seanjc@google.com>
-To: James Houghton <jthoughton@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Ankit Agrawal <ankita@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, David Matlack <dmatlack@google.com>, 
-	David Rientjes <rientjes@google.com>, James Morse <james.morse@arm.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Raghavendra Rao Ananta <rananta@google.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Shaoqin Huang <shahuang@redhat.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>, 
-	Will Deacon <will@kernel.org>, Yu Zhao <yuzhao@google.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA0PR11MB7185.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ef379459-dbdb-45ea-dfbf-08dcbe58afd2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Aug 2024 01:05:29.5507
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: T5suLLjkNgCRiOXCgxqTetI7RY4UFvRHdIBXY/0sjJIvu7bewldMWv8jyVeCv3gt4HXQdNzJvSoncnNvGZe8V81241rDtWFNnusnUj1l178=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7403
+X-OriginatorOrg: intel.com
 
-On Wed, Jul 24, 2024, James Houghton wrote:
-> Walk the TDP MMU in an RCU read-side critical section. 
+Hi Huan,
 
-...without holding mmu_lock, while doing xxx.  There are a lot of TDP MMU walks,
-pand they all need RCU protection.
+>=20
+> Currently, udmabuf handles folio by creating an unpin list to record
+> each folio obtained from the list and unpinning them when released. To
+> maintain this approach, many data structures have been established.
+>=20
+> However, maintaining this type of data structure requires a significant
+> amount of memory and traversing the list is a substantial overhead,
+> which is not friendly to the CPU cache.
+>=20
+> Considering that during creation, we arranged the folio array in the
+> order of pin and set the offset according to pgcnt.
+>=20
+> We actually don't need to use unpin_list to unpin during release.
+> Instead, we can iterate through the folios array during release and
+> unpin any folio that is different from the ones previously accessed.
+No, that won't work because iterating the folios array doesn't tell you
+anything about how many times a folio was pinned (via memfd_pin_folios()),
+as a folio could be part of multiple ranges.
 
-> This requires a way to do RCU-safe walking of the tdp_mmu_roots; do this with
-> a new macro. The PTE modifications are now done atomically, and
-> kvm_tdp_mmu_spte_need_atomic_write() has been updated to account for the fact
-> that kvm_age_gfn can now lockless update the accessed bit and the R/X bits).
-> 
-> If the cmpxchg for marking the spte for access tracking fails, we simply
-> retry if the spte is still a leaf PTE. If it isn't, we return false
-> to continue the walk.
+For example, if userspace provides ranges 64..128 and 256..512 (assuming
+these are 4k sized subpage offsets and we have a 2MB hugetlb folio), then
+the same folio would cover both ranges and there would be 2 entries for
+this folio in unpin_list. But, with your logic, we'd be erroneously unpinni=
+ng
+it only once.
 
-Please avoid pronouns.  E.g. s/we/KVM (and adjust grammar as needed), so that
-it's clear what actor in particular is doing the retry.
+Not sure if there are any great solutions available to address this situati=
+on,
+but one option I can think of is to convert unpin_list to unpin array (dyna=
+mically
+resized with krealloc?) and track its length separately. Or, as suggested e=
+arlier,
+another way is to not use unpin_list for memfds backed by shmem, but I susp=
+ect
+this may not work if THP is enabled.
 
-> Harvesting age information from the shadow MMU is still done while
-> holding the MMU write lock.
-> 
-> Suggested-by: Yu Zhao <yuzhao@google.com>
-> Signed-off-by: James Houghton <jthoughton@google.com>
+Thanks,
+Vivek
+
+>=20
+> By this, not only saves the overhead of the udmabuf_folio data structure
+> but also makes array access more cache-friendly.
+>=20
+> Signed-off-by: Huan Yang <link@vivo.com>
 > ---
->  arch/x86/include/asm/kvm_host.h |  1 +
->  arch/x86/kvm/Kconfig            |  1 +
->  arch/x86/kvm/mmu/mmu.c          | 10 ++++-
->  arch/x86/kvm/mmu/tdp_iter.h     | 27 +++++++------
->  arch/x86/kvm/mmu/tdp_mmu.c      | 67 +++++++++++++++++++++++++--------
->  5 files changed, 77 insertions(+), 29 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 950a03e0181e..096988262005 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1456,6 +1456,7 @@ struct kvm_arch {
->  	 * tdp_mmu_page set.
->  	 *
->  	 * For reads, this list is protected by:
-> +	 *	RCU alone or
->  	 *	the MMU lock in read mode + RCU or
->  	 *	the MMU lock in write mode
->  	 *
-> diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-> index 4287a8071a3a..6ac43074c5e9 100644
-> --- a/arch/x86/kvm/Kconfig
-> +++ b/arch/x86/kvm/Kconfig
-> @@ -23,6 +23,7 @@ config KVM
->  	depends on X86_LOCAL_APIC
->  	select KVM_COMMON
->  	select KVM_GENERIC_MMU_NOTIFIER
-> +	select KVM_MMU_NOTIFIER_YOUNG_LOCKLESS
->  	select HAVE_KVM_IRQCHIP
->  	select HAVE_KVM_PFNCACHE
->  	select HAVE_KVM_DIRTY_RING_TSO
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 901be9e420a4..7b93ce8f0680 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -1633,8 +1633,11 @@ bool kvm_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range)
->  {
->  	bool young = false;
->  
-> -	if (kvm_memslots_have_rmaps(kvm))
-> +	if (kvm_memslots_have_rmaps(kvm)) {
-> +		write_lock(&kvm->mmu_lock);
->  		young = kvm_handle_gfn_range(kvm, range, kvm_age_rmap);
-> +		write_unlock(&kvm->mmu_lock);
-> +	}
->  
->  	if (tdp_mmu_enabled)
->  		young |= kvm_tdp_mmu_age_gfn_range(kvm, range);
-> @@ -1646,8 +1649,11 @@ bool kvm_test_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range)
->  {
->  	bool young = false;
->  
-> -	if (kvm_memslots_have_rmaps(kvm))
-> +	if (kvm_memslots_have_rmaps(kvm)) {
-> +		write_lock(&kvm->mmu_lock);
->  		young = kvm_handle_gfn_range(kvm, range, kvm_test_age_rmap);
-> +		write_unlock(&kvm->mmu_lock);
-> +	}
->  
->  	if (tdp_mmu_enabled)
->  		young |= kvm_tdp_mmu_test_age_gfn(kvm, range);
-> diff --git a/arch/x86/kvm/mmu/tdp_iter.h b/arch/x86/kvm/mmu/tdp_iter.h
-> index 2880fd392e0c..510936a8455a 100644
-> --- a/arch/x86/kvm/mmu/tdp_iter.h
-> +++ b/arch/x86/kvm/mmu/tdp_iter.h
-> @@ -25,6 +25,13 @@ static inline u64 kvm_tdp_mmu_write_spte_atomic(tdp_ptep_t sptep, u64 new_spte)
->  	return xchg(rcu_dereference(sptep), new_spte);
->  }
->  
-> +static inline u64 tdp_mmu_clear_spte_bits_atomic(tdp_ptep_t sptep, u64 mask)
-> +{
-> +	atomic64_t *sptep_atomic = (atomic64_t *)rcu_dereference(sptep);
-> +
-> +	return (u64)atomic64_fetch_and(~mask, sptep_atomic);
-> +}
-> +
->  static inline void __kvm_tdp_mmu_write_spte(tdp_ptep_t sptep, u64 new_spte)
->  {
->  	KVM_MMU_WARN_ON(is_ept_ve_possible(new_spte));
-> @@ -32,10 +39,11 @@ static inline void __kvm_tdp_mmu_write_spte(tdp_ptep_t sptep, u64 new_spte)
->  }
->  
->  /*
-> - * SPTEs must be modified atomically if they are shadow-present, leaf
-> - * SPTEs, and have volatile bits, i.e. has bits that can be set outside
-> - * of mmu_lock.  The Writable bit can be set by KVM's fast page fault
-> - * handler, and Accessed and Dirty bits can be set by the CPU.
-> + * SPTEs must be modified atomically if they have bits that can be set outside
-> + * of the mmu_lock. This can happen for any shadow-present leaf SPTEs, as the
-> + * Writable bit can be set by KVM's fast page fault handler, the Accessed and
-> + * Dirty bits can be set by the CPU, and the Accessed and R/X bits can be
-> + * cleared by age_gfn_range.
->   *
->   * Note, non-leaf SPTEs do have Accessed bits and those bits are
->   * technically volatile, but KVM doesn't consume the Accessed bit of
-> @@ -46,8 +54,7 @@ static inline void __kvm_tdp_mmu_write_spte(tdp_ptep_t sptep, u64 new_spte)
->  static inline bool kvm_tdp_mmu_spte_need_atomic_write(u64 old_spte, int level)
->  {
->  	return is_shadow_present_pte(old_spte) &&
-> -	       is_last_spte(old_spte, level) &&
-> -	       spte_has_volatile_bits(old_spte);
-> +	       is_last_spte(old_spte, level);
->  }
->  
->  static inline u64 kvm_tdp_mmu_write_spte(tdp_ptep_t sptep, u64 old_spte,
-> @@ -63,12 +70,8 @@ static inline u64 kvm_tdp_mmu_write_spte(tdp_ptep_t sptep, u64 old_spte,
->  static inline u64 tdp_mmu_clear_spte_bits(tdp_ptep_t sptep, u64 old_spte,
->  					  u64 mask, int level)
->  {
-> -	atomic64_t *sptep_atomic;
+>  drivers/dma-buf/udmabuf.c | 68 +++++++++++++++++----------------------
+>  1 file changed, 30 insertions(+), 38 deletions(-)
+>=20
+> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+> index 8f9cb0e2e71a..1e7f46c33d1a 100644
+> --- a/drivers/dma-buf/udmabuf.c
+> +++ b/drivers/dma-buf/udmabuf.c
+> @@ -26,16 +26,19 @@ MODULE_PARM_DESC(size_limit_mb, "Max size of a
+> dmabuf, in megabytes. Default is
+>=20
+>  struct udmabuf {
+>  	pgoff_t pagecount;
+> -	struct folio **folios;
+>  	struct sg_table *sg;
+>  	struct miscdevice *device;
+> +	struct folio **folios;
+> +	/**
+> +	 * offset in folios array's folio, byte unit.
+> +	 * udmabuf can use either shmem or hugetlb pages, an array based
+> on
+> +	 * pages may not be suitable.
+> +	 * Especially when HVO is enabled, the tail page will be released,
+> +	 * so our reference to the page will no longer be correct.
+> +	 * Hence, it's necessary to record the offset in order to reference
+> +	 * the correct PFN within the folio.
+> +	 */
+>  	pgoff_t *offsets;
+> -	struct list_head unpin_list;
+> -};
 > -
-> -	if (kvm_tdp_mmu_spte_need_atomic_write(old_spte, level)) {
-> -		sptep_atomic = (atomic64_t *)rcu_dereference(sptep);
-> -		return (u64)atomic64_fetch_and(~mask, sptep_atomic);
-> -	}
-> +	if (kvm_tdp_mmu_spte_need_atomic_write(old_spte, level))
-> +		return tdp_mmu_clear_spte_bits_atomic(sptep, mask);
->  
->  	__kvm_tdp_mmu_write_spte(sptep, old_spte & ~mask);
->  	return old_spte;
-> diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-> index c7dc49ee7388..3f13b2db53de 100644
-> --- a/arch/x86/kvm/mmu/tdp_mmu.c
-> +++ b/arch/x86/kvm/mmu/tdp_mmu.c
-> @@ -29,6 +29,11 @@ static __always_inline bool kvm_lockdep_assert_mmu_lock_held(struct kvm *kvm,
->  
->  	return true;
+> -struct udmabuf_folio {
+> -	struct folio *folio;
+> -	struct list_head list;
+>  };
+>=20
+>  static int mmap_udmabuf(struct dma_buf *buf, struct vm_area_struct
+> *vma)
+> @@ -160,32 +163,28 @@ static void unmap_udmabuf(struct
+> dma_buf_attachment *at,
+>  	return put_sg_table(at->dev, sg, direction);
 >  }
-> +static __always_inline bool kvm_lockdep_assert_rcu_read_lock_held(void)
-> +{
-> +	WARN_ON_ONCE(!rcu_read_lock_held());
-> +	return true;
-> +}
-
-I doubt KVM needs a manual WARN, the RCU deference stuff should yell loudly if
-something is missing an rcu_read_lock().
-
->  void kvm_mmu_uninit_tdp_mmu(struct kvm *kvm)
->  {
-> @@ -178,6 +183,15 @@ static struct kvm_mmu_page *tdp_mmu_next_root(struct kvm *kvm,
->  		     ((_only_valid) && (_root)->role.invalid))) {		\
->  		} else
->  
-> +/*
-> + * Iterate over all TDP MMU roots in an RCU read-side critical section.
+>=20
+> -static void unpin_all_folios(struct list_head *unpin_list)
+> +/**
+> + * unpin_all_folios:		unpin each folio we pinned in create
+> + * The udmabuf set all folio in folios and pinned it, but for large foli=
+o,
+> + * We may have only used a small portion of the physical in the folio.
+> + * we will repeatedly, sequentially set the folio into the array to ensu=
+re
+> + * that the offset can index the correct folio at the corresponding inde=
+x.
+> + * Hence, we only need to unpin the first iterred folio.
 > + */
-> +#define for_each_tdp_mmu_root_rcu(_kvm, _root, _as_id)				\
-> +	list_for_each_entry_rcu(_root, &_kvm->arch.tdp_mmu_roots, link)		\
-
-This should just process valid roots:
-
-https://lore.kernel.org/all/20240801183453.57199-7-seanjc@google.com
-
-> +		if (kvm_lockdep_assert_rcu_read_lock_held() &&			\
-> +		    (_as_id >= 0 && kvm_mmu_page_as_id(_root) != _as_id)) {	\
-> +		} else
-> +
->  #define for_each_tdp_mmu_root(_kvm, _root, _as_id)			\
->  	__for_each_tdp_mmu_root(_kvm, _root, _as_id, false)
->  
-> @@ -1224,6 +1238,27 @@ static __always_inline bool kvm_tdp_mmu_handle_gfn(struct kvm *kvm,
->  	return ret;
->  }
->  
-> +static __always_inline bool kvm_tdp_mmu_handle_gfn_lockless(
-> +		struct kvm *kvm,
-> +		struct kvm_gfn_range *range,
-> +		tdp_handler_t handler)
-
-Please burn all the Google3 from your brain, and code ;-)
-
-> +	struct kvm_mmu_page *root;
-> +	struct tdp_iter iter;
-> +	bool ret = false;
-> +
-> +	rcu_read_lock();
-> +
-> +	for_each_tdp_mmu_root_rcu(kvm, root, range->slot->as_id) {
-> +		tdp_root_for_each_leaf_pte(iter, root, range->start, range->end)
-> +			ret |= handler(kvm, &iter, range);
-> +	}
-> +
-> +	rcu_read_unlock();
-> +
-> +	return ret;
-> +}
-> +
->  /*
->   * Mark the SPTEs range of GFNs [start, end) unaccessed and return non-zero
->   * if any of the GFNs in the range have been accessed.
-> @@ -1237,28 +1272,30 @@ static bool age_gfn_range(struct kvm *kvm, struct tdp_iter *iter,
+> +static void unpin_all_folios(struct udmabuf *ubuf)
 >  {
->  	u64 new_spte;
->  
-> +retry:
->  	/* If we have a non-accessed entry we don't need to change the pte. */
->  	if (!is_accessed_spte(iter->old_spte))
->  		return false;
->  
->  	if (spte_ad_enabled(iter->old_spte)) {
-> -		iter->old_spte = tdp_mmu_clear_spte_bits(iter->sptep,
-> -							 iter->old_spte,
-> -							 shadow_accessed_mask,
-> -							 iter->level);
-> +		iter->old_spte = tdp_mmu_clear_spte_bits_atomic(iter->sptep,
-> +						shadow_accessed_mask);
->  		new_spte = iter->old_spte & ~shadow_accessed_mask;
->  	} else {
-> -		/*
-> -		 * Capture the dirty status of the page, so that it doesn't get
-> -		 * lost when the SPTE is marked for access tracking.
-> -		 */
-> +		new_spte = mark_spte_for_access_track(iter->old_spte);
-> +		if (__tdp_mmu_set_spte_atomic(iter, new_spte)) {
-> +			/*
-> +			 * The cmpxchg failed. If the spte is still a
-> +			 * last-level spte, we can safely retry.
-> +			 */
-> +			if (is_shadow_present_pte(iter->old_spte) &&
-> +			    is_last_spte(iter->old_spte, iter->level))
-> +				goto retry;
+> -	struct udmabuf_folio *ubuf_folio;
+> -
+> -	while (!list_empty(unpin_list)) {
+> -		ubuf_folio =3D list_first_entry(unpin_list,
+> -					      struct udmabuf_folio, list);
+> -		unpin_folio(ubuf_folio->folio);
+> -
+> -		list_del(&ubuf_folio->list);
+> -		kfree(ubuf_folio);
+> -	}
+> -}
+> +	pgoff_t pg;
+> +	struct folio *last =3D NULL;
+>=20
+> -static int add_to_unpin_list(struct list_head *unpin_list,
+> -			     struct folio *folio)
+> -{
+> -	struct udmabuf_folio *ubuf_folio;
+> +	for (pg =3D 0; pg < ubuf->pagecount; pg++) {
+> +		struct folio *tmp =3D ubuf->folios[pg];
+>=20
+> -	ubuf_folio =3D kzalloc(sizeof(*ubuf_folio), GFP_KERNEL);
+> -	if (!ubuf_folio)
+> -		return -ENOMEM;
+> +		if (tmp =3D=3D last)
+> +			continue;
+>=20
+> -	ubuf_folio->folio =3D folio;
+> -	list_add_tail(&ubuf_folio->list, unpin_list);
+> -	return 0;
+> +		last =3D tmp;
+> +		unpin_folio(tmp);
+> +	}
+>  }
+>=20
+>  static void release_udmabuf(struct dma_buf *buf)
+> @@ -196,7 +195,7 @@ static void release_udmabuf(struct dma_buf *buf)
+>  	if (ubuf->sg)
+>  		put_sg_table(dev, ubuf->sg, DMA_BIDIRECTIONAL);
+>=20
+> -	unpin_all_folios(&ubuf->unpin_list);
+> +	unpin_all_folios(ubuf);
+>  	kvfree(ubuf->offsets);
+>  	kvfree(ubuf->folios);
+>  	kfree(ubuf);
+> @@ -308,7 +307,6 @@ static long udmabuf_create(struct miscdevice
+> *device,
+>  	if (!ubuf)
+>  		return -ENOMEM;
+>=20
+> -	INIT_LIST_HEAD(&ubuf->unpin_list);
+>  	pglimit =3D (size_limit_mb * 1024 * 1024) >> PAGE_SHIFT;
+>  	for (i =3D 0; i < head->count; i++) {
+>  		if (!IS_ALIGNED(list[i].offset, PAGE_SIZE))
+> @@ -366,12 +364,6 @@ static long udmabuf_create(struct miscdevice
+> *device,
+>  			u32 k;
+>  			long fsize =3D folio_size(folios[j]);
+>=20
+> -			ret =3D add_to_unpin_list(&ubuf->unpin_list, folios[j]);
+> -			if (ret < 0) {
+> -				kfree(folios);
+> -				goto err;
+> -			}
+> -
+>  			for (k =3D pgoff; k < fsize; k +=3D PAGE_SIZE) {
+>  				ubuf->folios[pgbuf] =3D folios[j];
+>  				ubuf->offsets[pgbuf] =3D k;
+> @@ -399,7 +391,7 @@ static long udmabuf_create(struct miscdevice
+> *device,
+>  err:
+>  	if (memfd)
+>  		fput(memfd);
+> -	unpin_all_folios(&ubuf->unpin_list);
+> +	unpin_all_folios(ubuf);
+>  	kvfree(ubuf->offsets);
+>  	kvfree(ubuf->folios);
+>  	kfree(ubuf);
+> --
+> 2.45.2
 
-Do we have a feel for how often conflicts actually happen?  I.e. is it worth
-retrying and having to worry about infinite loops, however improbable they may
-be?
 
