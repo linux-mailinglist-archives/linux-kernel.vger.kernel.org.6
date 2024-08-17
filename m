@@ -1,217 +1,249 @@
-Return-Path: <linux-kernel+bounces-290753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F4E0955832
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:52:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4851B955834
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:57:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01A511F219CB
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:52:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9A6A28249B
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 13:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05BEE153808;
-	Sat, 17 Aug 2024 13:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E5E1514F8;
+	Sat, 17 Aug 2024 13:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V676TsH3"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BDFIRZ2S"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7886FF507;
-	Sat, 17 Aug 2024 13:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD4A1474BC;
+	Sat, 17 Aug 2024 13:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723902748; cv=none; b=g+UXTmiP+GRT7kKZV5znit+EJnVIkb741hUeqF91rwiqo5rGY8Yw+Ie0o3t6mDgoJpsq5cArKU9MeKTngOaymK6OEgFxzOul/lXHPqX0FFuh8MLOWOPILrImaFgUuo+D5NdLygI7JcchAz7YGyMTVtYGBpURbUVDry1gAuHbzOk=
+	t=1723903067; cv=none; b=BPv7Gn4FyBqddHubkL7EaFKrsPOtLCIPcQy+wK04rLfjR6UccEU7u+TPRBSIGUJcasXH1sq6+hhpxqe9xEqtF2EAxPbPeiKn3yOZnsiPC1LA9MeZoZMKGeYraSN7S7B0fxqVkqz7WWlw3ClLsU/b6bvGf/czYgaR143mEZd3e8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723902748; c=relaxed/simple;
-	bh=10ShYPpgkaroFS2ksMKDMWdNDO8MC7xsOob74hArJYY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dCN4i33IF6wfKm5hob6TsCrJ8Q7uV2Jlvblwe5m5WyLRq76uG30Qv8qh+Wl0EFNwCGli0IxApIBbt2J8Bw1lCE9VTdqqkLdqQjyOV3RJcf9RKpvHWKCpd7VP6lBaN+yPUm2Jo8zacLsesaYa8vBsJi9gWrK3vIFhXCQgTQkWwSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V676TsH3; arc=none smtp.client-ip=209.85.128.45
+	s=arc-20240116; t=1723903067; c=relaxed/simple;
+	bh=B+dg8mEku4e9WU1YVPcK6sBwx30Oa/RLX/fhQkJ69Go=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=myhZ8bRyZEOHF6nSB6ajPLdiNlaZiKVquEpDJVFRVkkSkklAalZF2bAVCVXioZHH6x/Nrzfumy3A3KX8Man4JgyRb6nxCUEhjrqbR0IJhQiWdgNnLztandDNqeb8Pa97uFpd7yERrZ9tszdlWJ4oitimgBFNtn25c1Tw+6Lw4MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BDFIRZ2S; arc=none smtp.client-ip=209.85.128.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-429d2d7be1eso14826895e9.1;
-        Sat, 17 Aug 2024 06:52:26 -0700 (PDT)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6b45d23a2daso6949227b3.3;
+        Sat, 17 Aug 2024 06:57:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723902745; x=1724507545; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HhF0RYx6ynDaRd0C4Ob0aLdco1kIfELnk5gy0xZdEL8=;
-        b=V676TsH339LmUaBzvUIwJkj4JKT99d/+zeBszATxihX46mM0P6Qzj0EixqUIwwS8aX
-         z+OblT8QUChUirVpE/vKmrOJPxZlVHDsnWZj7ibOtdoL26rR1FXN8tnRsjIqZuvIsuIj
-         pg69SPCCWjD/vW6UrI1fLltC7CKXXeKFdniiKQFJC6nMGzEwxVLd7IRplui+5CtUbcMi
-         cfHR3CY0QV1eCtpy1FuDGkOUfL3ndvADMrFZDyZtfblHUuZvLOyl4nqcUNuCRZgD7uqm
-         qwb4+NgUuQZf14weFQG0T9hHiYfQiMQ/nWYUKB3Q+ilIeg6fep7LxwKfbPodEsi+n5yY
-         Uutg==
+        d=gmail.com; s=20230601; t=1723903065; x=1724507865; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=9sE7j0E8FwLyVJZ3f0Dy0iecLRuL6/ufNZIU9u0uAW0=;
+        b=BDFIRZ2S1iStwRGFJAuIgthF41QWTB4q5k8wFnoO4tyz4Hvo2KSFJoIUxmKxct6anO
+         CMGym/dYdoU8sygDqkHaa8QIF5Qo36CMIXHs2p5+NbrThwCAJNX4SGWOkM8e9Q4dxlbw
+         o7AH1MSbZlk3bNwrP0XwMN07fTHz1G5CtOF9f9NUkEvGMNIDroyIJlG7UJ6HYJ7qZJe5
+         20PxGxdO5PqeQQm+h0DiPzEaE3nuwsxuX7y9ZPHBgU/bMGKGmzNqJikXZ0ixDZJ2CM1n
+         VjfhdI8Ra7LNat0cQmhSia010w4+fcnt/FFfJctLnc5VbHoqKDCLfDBErlhrIFf51Pte
+         lyZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723902745; x=1724507545;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HhF0RYx6ynDaRd0C4Ob0aLdco1kIfELnk5gy0xZdEL8=;
-        b=eyzrNFeUKmdDVLjl8genJKaSriVzUm/Xy/48jPRzdkSEw2TUeOAW5yyxu3Kwn9wHBU
-         PoN/cBZfYFkceMURM8Ips84xve6UR4ewXSelxIw7Vn2ROYiFYQowXNaPaHbyi+RF7Mga
-         UcKerMVgGnPxRDJ2b0s+QOXMxlLM0C12Us7nE0MZmgnbTjkn3Tfo5wOJUW2tADE4a9yr
-         zEojMiFZiPz4OB42FWL1U83oKkURMmDwNAa8lQQHVeJS2rMPIEWb3mypZMLJdIxBalw1
-         /y9/Jy57K5hbOeMnyXyk7beSiTvZf/dUMiloP8vwUFOU6k+y3w0mGedSnp2PJYhWP2Yy
-         a27w==
-X-Forwarded-Encrypted: i=1; AJvYcCVNE3XFwi2aWJjg0LY0zB8qDZ0c3KVOpFC4GWGvmyn9MLKZKMZrYM4aV47dgVVnanU6pjhhpAGriAqeHEWCrpqC56WsZAGM4pUbKuAQPTpqWYgLGEMZNFlUSbDnadAhgSnkXIA06eDZrVsspRXGzNUc/gg4mFlis9x/gdaZFdek4gNZ
-X-Gm-Message-State: AOJu0YySD+nrkCJ5xTmqmmep2P9M0y2R6h5c4p5REEoE6isLlJRzRt8v
-	n9xcjsRYd2sc6sNWpCItegTGJ/f8mKtgBfb7jVJAvoRoyXy3/ZA9c602zpYnakopYuzAUAnDrnj
-	dee4GWJCxjszb5z0+1AO3TPwnldg=
-X-Google-Smtp-Source: AGHT+IG2Dte1tcw6sJPWDiyzzIAPURygmYu25hnF/KjN1rpvyHQwHIMX/6EjVWe/64zBi5ru4A7hDqqvSh0hlds/kyM=
-X-Received: by 2002:a05:600c:1808:b0:424:71f7:77f2 with SMTP id
- 5b1f17b1804b1-429e6f61d47mr59981775e9.16.1723902744330; Sat, 17 Aug 2024
- 06:52:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723903065; x=1724507865;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9sE7j0E8FwLyVJZ3f0Dy0iecLRuL6/ufNZIU9u0uAW0=;
+        b=HSkbi9S3p15NTaW1nxA4Ty32TlxLWk0ZDDQUzETBsxo/OV9/q+ZzVn+siRaT45y11I
+         VChzlvIlDW3i1J4vUblaCvctCief/owjbEbwOU/rqh8cHCNqcVSzQ41Pgh0SpNjwZ/aE
+         ySgfrkE65kaxAR4p4i/7HNa8LpKmFM9MXiThGQtx0rwp7SMqKDVu6L16oeVHDrEDjDyH
+         swrrwsmAEkm1DgASP+1Dg32HAjp/3DWK300GMMulKQTeLRpAvOJ2GxQ0GwI2AxzAV+gG
+         IZDhmNI+7ghJkU8qqtbZQEypPcrtZDwkGNjHU/MvtcqKsX6p2elXvbm1DljRKzlAJeWS
+         BYyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXjKdhHld2t4Wqkb0l9uKu1k/OlHED4WToLT2x1eTASj0FE3Q1aY71X283p2SpXmPtIuDrPnqZTJx+w2Q2t7wLEMTZ8gcC83QJYAQ==
+X-Gm-Message-State: AOJu0Ywnyhje3eQ6Qt4EBNZlNImJ+fKexqpMyTcoGB+tWnyO7CCtUSRs
+	VE/v+u9qeOoKu69mx1oExqLpSjVQVBS0+mZCI8CDuUbq6GA5rlJ1NEZy/uY0
+X-Google-Smtp-Source: AGHT+IGf/gIor41ZqpJYORdhkNSlK+7hC6xTUzWPBPj5U9BjALQpn9R9onLFc8njqjM7dwr2DTSpRA==
+X-Received: by 2002:a05:690c:c8c:b0:6ad:91df:8fad with SMTP id 00721157ae682-6b1bbe307fbmr72784837b3.26.1723903064615;
+        Sat, 17 Aug 2024 06:57:44 -0700 (PDT)
+Received: from localhost (c-71-203-131-184.hsd1.fl.comcast.net. [71.203.131.184])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6af99506c9fsm9807987b3.29.2024.08.17.06.57.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 17 Aug 2024 06:57:43 -0700 (PDT)
+Date: Sat, 17 Aug 2024 06:57:42 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-kernel@vger.kernel.org, ardb@kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org
+Subject: Re: [PATCH V3 1/2] uapi: Define GENMASK_U128
+Message-ID: <ZsCsVkkK-ElBf_dZ@yury-ThinkPad>
+References: <20240801071646.682731-1-anshuman.khandual@arm.com>
+ <20240801071646.682731-2-anshuman.khandual@arm.com>
+ <090eb237-10f4-4358-be07-1eb8d30c3ec1@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725132056.9151-1-max.oss.09@gmail.com> <D3I3BTOHN2RW.2DUYSKP3JRT5Z@fairphone.com>
-In-Reply-To: <D3I3BTOHN2RW.2DUYSKP3JRT5Z@fairphone.com>
-From: Max Krummenacher <max.oss.09@gmail.com>
-Date: Sat, 17 Aug 2024 15:52:13 +0200
-Message-ID: <CAEHkU3V9L4NKUkwr8Gyo2ZWEVJsjYTqPRduYrHoHyVtdEfFEVQ@mail.gmail.com>
-Subject: Re: [PATCH] tty: vt: conmakehash: cope with abs_srctree no longer in env
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Max Krummenacher <max.krummenacher@toradex.com>, stable@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <090eb237-10f4-4358-be07-1eb8d30c3ec1@arm.com>
 
-Hi Luca
-
-On Sat, Aug 17, 2024 at 11:48=E2=80=AFAM Luca Weiss <luca.weiss@fairphone.c=
-om> wrote:
->
-> On Thu Jul 25, 2024 at 3:20 PM CEST, max.oss.09 wrote:
-> > From: Max Krummenacher <max.krummenacher@toradex.com>
-> >
-> > conmakehash uses getenv("abs_srctree") from the environment to strip
-> > the absolute path from the generated sources.
-> > However since commit e2bad142bb3d ("kbuild: unexport abs_srctree and
-> > abs_objtree") this environment variable no longer gets set.
-> > Instead use basename() to indicate the used file in a comment of the
-> > generated source file.
-> >
-> > Fixes: 3bd85c6c97b2 ("tty: vt: conmakehash: Don't mention the full path=
- of the input in output")
-> > Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
-> >
+On Fri, Aug 16, 2024 at 11:58:04AM +0530, Anshuman Khandual wrote:
+> 
+> 
+> On 8/1/24 12:46, Anshuman Khandual wrote:
+> > This adds GENMASK_U128() and __GENMASK_U128() macros using __BITS_PER_U128
+> > and __int128 data types. These macros will be used in providing support for
+> > generating 128 bit masks.
+> > 
+> > Cc: Yury Norov <yury.norov@gmail.com>
+> > Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> > Cc: Arnd Bergmann <arnd@arndb.de>>
+> > Cc: linux-kernel@vger.kernel.org
+> > Cc: linux-arch@vger.kernel.org
+> > Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> > Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 > > ---
-> >
-> >  drivers/tty/vt/conmakehash.c | 20 +++++++-------------
-> >  1 file changed, 7 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/drivers/tty/vt/conmakehash.c b/drivers/tty/vt/conmakehash.=
-c
-> > index dc2177fec715..82d9db68b2ce 100644
-> > --- a/drivers/tty/vt/conmakehash.c
-> > +++ b/drivers/tty/vt/conmakehash.c
-> > @@ -11,6 +11,8 @@
-> >   * Copyright (C) 1995-1997 H. Peter Anvin
-> >   */
-> >
-> > +#include <libgen.h>
-> > +#include <linux/limits.h>
->
-> Hi Max,
->
-> Not sure this is the best place to ask but this <linux/limits.h> include
-> appears to rely on this file already being installed in /usr/include and
-> is not taken from the Linux source tree that's being built.
->
-> This mostly manifests in building Linux kernel e.g. in Alpine Linux
-> package build if 'linux-headers' package is not being explicitly
-> installed, failing with
->
->   drivers/tty/vt/conmakehash.c:15:10: fatal error: linux/limits.h: No suc=
-h file or directory
->      15 | #include <linux/limits.h>
->         |          ^~~~~~~~~~~~~~~~
->   compilation terminated.
->
-> Apparently this is (understandably) also a problem when building on
-> macOS:
-> https://lore.kernel.org/all/20240807-macos-build-support-v1-11-4cd1ded856=
-94@samsung.com/
->
-> I did try that linked patch a bit ago, but unfortunately didn't fix it
-> for the Alpine Linux build environment.
+> >  include/linux/bits.h       | 13 +++++++++++++
+> >  include/uapi/linux/bits.h  |  3 +++
+> >  include/uapi/linux/const.h | 15 +++++++++++++++
+> >  3 files changed, 31 insertions(+)
+> > 
+> > diff --git a/include/linux/bits.h b/include/linux/bits.h
+> > index 0eb24d21aac2..bf99feb5570e 100644
+> > --- a/include/linux/bits.h
+> > +++ b/include/linux/bits.h
+> > @@ -36,4 +36,17 @@
+> >  #define GENMASK_ULL(h, l) \
+> >  	(GENMASK_INPUT_CHECK(h, l) + __GENMASK_ULL(h, l))
+> >  
+> > +/*
+> > + * Missing asm support
+> > + *
+> > + * __GENMASK_U128() depends on _BIT128() which would not work
+> > + * in the asm code, as it shifts an 'unsigned __init128' data
+> > + * type instead of direct representation of 128 bit constants
+> > + * such as long and unsigned long. The fundamental problem is
+> > + * that a 128 bit constant will get silently truncated by the
+> > + * gcc compiler.
+> > + */
+> > +#define GENMASK_U128(h, l) \
+> > +	(GENMASK_INPUT_CHECK(h, l) + __GENMASK_U128(h, l))
+> > +
+> >  #endif	/* __LINUX_BITS_H */
+> > diff --git a/include/uapi/linux/bits.h b/include/uapi/linux/bits.h
+> > index 3c2a101986a3..4d4b7b08003c 100644
+> > --- a/include/uapi/linux/bits.h
+> > +++ b/include/uapi/linux/bits.h
+> > @@ -12,4 +12,7 @@
+> >          (((~_ULL(0)) - (_ULL(1) << (l)) + 1) & \
+> >           (~_ULL(0) >> (__BITS_PER_LONG_LONG - 1 - (h))))
+> >  
+> > +#define __GENMASK_U128(h, l) \
+> > +	((_BIT128((h) + 1)) - (_BIT128(l)))
+> > +
+> >  #endif /* _UAPI_LINUX_BITS_H */
+> > diff --git a/include/uapi/linux/const.h b/include/uapi/linux/const.h
+> > index a429381e7ca5..5be12e8f8f9c 100644
+> > --- a/include/uapi/linux/const.h
+> > +++ b/include/uapi/linux/const.h
+> > @@ -28,6 +28,21 @@
+> >  #define _BITUL(x)	(_UL(1) << (x))
+> >  #define _BITULL(x)	(_ULL(1) << (x))
+> >  
+> > +/*
+> > + * Missing asm support
+> > + *
+> > + * __BIT128() would not work in the asm code, as it shifts an
+> > + * 'unsigned __init128' data type as direct representation of
+> > + * 128 bit constants is not supported in the gcc compiler, as
+> > + * they get silently truncated.
+> > + *
+> > + * TODO: Please revisit this implementation when gcc compiler
+> > + * starts representing 128 bit constants directly like long
+> > + * and unsigned long etc. Subsequently drop the comment for
+> > + * GENMASK_U128() which would then start supporting asm code.
+> > + */
+> > +#define _BIT128(x)	((unsigned __int128)(1) << (x))
+> > +
+> >  #define __ALIGN_KERNEL(x, a)		__ALIGN_KERNEL_MASK(x, (__typeof__(x))(a) - 1)
+> >  #define __ALIGN_KERNEL_MASK(x, mask)	(((x) + (mask)) & ~(mask))
+> >  
+> 
+> Hello Yuri/Arnd,
+> 
+> This proposed GENMASK_U128(h, l) warns during build when the higher end
+> bit is 127 (which in itself is a valid input).
+> 
+> ./include/uapi/linux/const.h:45:44: warning: left shift count >= width of type [-Wshift-count-overflow]
+>    45 | #define _BIT128(x) ((unsigned __int128)(1) << (x))
+>       |                                            ^~
+> ./include/asm-generic/bug.h:123:25: note: in definition of macro ‘WARN_ON’
+>   123 |  int __ret_warn_on = !!(condition);    \
+>       |                         ^~~~~~~~~
+> ./include/uapi/linux/bits.h:16:4: note: in expansion of macro ‘_BIT128’
+>    16 |  ((_BIT128((h) + 1)) - (_BIT128(l)))
+>       |    ^~~~~~~
+> ./include/linux/bits.h:51:31: note: in expansion of macro ‘__GENMASK_U128’
+>    51 |  (GENMASK_INPUT_CHECK(h, l) + __GENMASK_U128(h, l))
+>       |                               ^~~~~~~~~~~~~~
+> 
+> This is caused by ((unsigned __int128)(1) << (128)) which is generated
+> via (h + 1) element in __GENMASK_U128().
+> 
+> #define _BIT128(x)	((unsigned __int128)(1) << (x))
+> #define __GENMASK_U128(h, l) \
+> 	((_BIT128((h) + 1)) - (_BIT128(l)))
+> 
+> Adding some extra tests in lib/test_bits.c exposes this build problem,
+> although it does not fail these new tests.
+> 
+> [    1.719221]     # Subtest: bits-test
+> [    1.719291]     # module: test_bits
+> [    1.720522]     ok 1 genmask_test
+> [    1.721570]     ok 2 genmask_ull_test
+> [    1.722668]     ok 3 genmask_u128_test
+> [    1.723760]     ok 4 genmask_input_check_test
+> [    1.723909] # bits-test: pass:4 fail:0 skip:0 total:4
+> [    1.724101] ok 1 bits-test
+> 
+> diff --git a/lib/test_bits.c b/lib/test_bits.c
+> index d3d858b24e02..7a972edc7122 100644
+> --- a/lib/test_bits.c
+> +++ b/lib/test_bits.c
+> @@ -49,6 +49,8 @@ static void genmask_u128_test(struct kunit *test)
+>         KUNIT_EXPECT_EQ(test, 0xffffffffffffffffULL, GENMASK_U128(63, 0));
+>         KUNIT_EXPECT_EQ(test, 0xffffffffffffffffULL, GENMASK_U128(64, 0) >> 1);
+>         KUNIT_EXPECT_EQ(test, 0x00000000ffffffffULL, GENMASK_U128(81, 50) >> 50);
+> +       KUNIT_EXPECT_EQ(test, 0x0000000000000003ULL, GENMASK_U128(127, 126) >> 126);
+> +       KUNIT_EXPECT_EQ(test, 0x0000000000000001ULL, GENMASK_U128(127, 127) >> 127);
+> 
+> The most significant bit in the generate mask can be added separately
+> , thus voiding that extra shift. The following patch solves the build
+> problem.
+> 
+> diff --git a/include/uapi/linux/bits.h b/include/uapi/linux/bits.h
+> index 4d4b7b08003c..4e50f635c6d9 100644
+> --- a/include/uapi/linux/bits.h
+> +++ b/include/uapi/linux/bits.h
+> @@ -13,6 +13,6 @@
+>           (~_ULL(0) >> (__BITS_PER_LONG_LONG - 1 - (h))))
+>  
+>  #define __GENMASK_U128(h, l) \
+> -       ((_BIT128((h) + 1)) - (_BIT128(l)))
+> +       (((_BIT128(h)) - (_BIT128(l))) | (_BIT128(h)))
 
-This is a bug I introduced.
+Can you send v3 with the fix? I will drop this series from bitmap-for-next
+meanwhile.
 
-Masahiro Yamada already fixed it with [1].
+Can you also extend the test for more? I'd like to check for example
+the (127, 0) range. Also, can you please check both HI and LO parts 
+the mask?
 
-Sorry about that.
+For the v3, please share the link to the following series that
+actually uses new API.
 
-Regards
-Max
-
-[1] https://lore.kernel.org/all/20240809160853.1269466-1-masahiroy@kernel.o=
-rg/
-
->
-> Any ideas?
->
-> Regards
-> Luca
->
->
-> >  #include <stdio.h>
-> >  #include <stdlib.h>
-> >  #include <sysexits.h>
-> > @@ -76,8 +78,8 @@ static void addpair(int fp, int un)
-> >  int main(int argc, char *argv[])
-> >  {
-> >    FILE *ctbl;
-> > -  const char *tblname, *rel_tblname;
-> > -  const char *abs_srctree;
-> > +  const char *tblname;
-> > +  char base_tblname[PATH_MAX];
-> >    char buffer[65536];
-> >    int fontlen;
-> >    int i, nuni, nent;
-> > @@ -102,16 +104,6 @@ int main(int argc, char *argv[])
-> >       }
-> >      }
-> >
-> > -  abs_srctree =3D getenv("abs_srctree");
-> > -  if (abs_srctree && !strncmp(abs_srctree, tblname, strlen(abs_srctree=
-)))
-> > -    {
-> > -      rel_tblname =3D tblname + strlen(abs_srctree);
-> > -      while (*rel_tblname =3D=3D '/')
-> > -     ++rel_tblname;
-> > -    }
-> > -  else
-> > -    rel_tblname =3D tblname;
-> > -
-> >    /* For now we assume the default font is always 256 characters. */
-> >    fontlen =3D 256;
-> >
-> > @@ -253,6 +245,8 @@ int main(int argc, char *argv[])
-> >    for ( i =3D 0 ; i < fontlen ; i++ )
-> >      nuni +=3D unicount[i];
-> >
-> > +  strncpy(base_tblname, tblname, PATH_MAX);
-> > +  base_tblname[PATH_MAX - 1] =3D 0;
-> >    printf("\
-> >  /*\n\
-> >   * Do not edit this file; it was automatically generated by\n\
-> > @@ -264,7 +258,7 @@ int main(int argc, char *argv[])
-> >  #include <linux/types.h>\n\
-> >  \n\
-> >  u8 dfont_unicount[%d] =3D \n\
-> > -{\n\t", rel_tblname, fontlen);
-> > +{\n\t", basename(base_tblname), fontlen);
-> >
-> >    for ( i =3D 0 ; i < fontlen ; i++ )
-> >      {
->
+Thanks,
+Yury
 
