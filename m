@@ -1,97 +1,195 @@
-Return-Path: <linux-kernel+bounces-290824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A0A295592D
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 19:38:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57F6795592F
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 19:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6860A1C20B7B
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 17:38:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFDB41F21BE9
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 17:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C451553BB;
-	Sat, 17 Aug 2024 17:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EA1155731;
+	Sat, 17 Aug 2024 17:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WfWRMOC4"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="efjNRCeT";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fyJtI0Ne";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="efjNRCeT";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fyJtI0Ne"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2755C2E3;
-	Sat, 17 Aug 2024 17:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF95440C;
+	Sat, 17 Aug 2024 17:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723916273; cv=none; b=itTaTyAaa17WxUttL59TcbsKecvwhbFMzG3MW3IOCQWjDUNoG5GYBowegwmD0pd/tSAsBCmDtQFWCEvrUN5iXbo7YszP7g7NsmOQuKU+v8X8iLdD73pQfoGvMD2WN55Z+JXLsXrXCZp2Hcrjj3n1KHEzPx/8FzbXZgEKzq33tDA=
+	t=1723916515; cv=none; b=ZqGmEWFaRHDv50nZHs3E2o1RhIjBVz9zrBZXJvLXOhTrwZQDICnb1p0RdGllErVMPcBpqPv6gOlBjtB67pTWXXoQOoei8glKgJOmt0IZ5wM5xx/QD+wJYuj5i2nwtC/Ddxb8eDGtGwjE1n+LV6I6cKWCSYvEyGyxqrGIZ0MCUNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723916273; c=relaxed/simple;
-	bh=+cEI/xItrRT5nq6RI5L8xglbEZ+sSMqu2zck20RBW/U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QkZrmRJ4Ywd0oTixwqQ4+6q1ijBMXcLfQzaPSeKafnFthMx+FrPEUckiThZGerAgNBckqv/OhavOZ8zx1Rkf8r63efD2QWggSaE9pMphQ1VQD0m31YVo/k7U6au/P6XuUAKeFbRpaX3Z1ztxvDgZ2JKNNkubohiybu8MNiXw80s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WfWRMOC4; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53310b07267so3998253e87.3;
-        Sat, 17 Aug 2024 10:37:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723916270; x=1724521070; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0SZvSC0Uru0/uzuhZQvmWzgYlBLlTeTbI1JzeU/3YS8=;
-        b=WfWRMOC4REr1xvi6juzqysbrxK/y84VKOOwZlaGzVwlN5s2sqMS8s4f5o3bapxHnu1
-         sLK1HYWRoITiw6xWiQ16K5GAFg/LxI/kxRWIFqoVzOgiZytVx5qenX8PtBvrqeYChNVE
-         qT0EBkDKd7OJv/ceOwGXdKkAHMZ5tnCWOgrXRAXH615UgJXbN2OOtodKsAdJm8Ffy84D
-         HekupvDPL6nebaWp5d90uyuorYsXhQpaDBTbYrsictGjDRCvxoZqmRaMpVfPg9hQNCT/
-         PYlYNVh+YFKt1IN1h5fWOjzgPF7IxykMQ/bNetbM13fGEPcjfhOyjX3NHc7grxU4+Xvl
-         53xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723916270; x=1724521070;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0SZvSC0Uru0/uzuhZQvmWzgYlBLlTeTbI1JzeU/3YS8=;
-        b=do4e9Mo6ba2lFvJCf6d5apKZOZGyp2VIBO5yTkZYe1zyEXRWfIxCaiWGxxR7D8cTHL
-         Vu4VrNzRCZ181DDQYo24eIyMtB32qATzHI4pptqT6fpopo4iQ/2NwA+JIRvp644+e1gW
-         Eh18VQXiNsF5GqA9QukkgkxxO4WcDJZSgtNgF6w6ZlOSFmLQ6LMoBPkkD285pmYP0bKk
-         pTZi5gbGA4Kw5UQWhHLQoMrC3OwI/HXulM++gfJ0ZEOSxrVbx9l9bq3Mk6/JFjdjtfdj
-         YUesFB7lqOjNg12WfugF7qocaptAqGopEg36RXYSv/cDm51rTPnT52AcPPW9E8pBez/W
-         UYjA==
-X-Forwarded-Encrypted: i=1; AJvYcCWoBO40piGuYFrjWzqkQ7PqglGrmhiTMnYKuo/JoQR5w7AgMXJgUK4V/xAc3ya7FpazpiDUKMwyjZV5hGhtPTX6tc28+bmkEnnHu19u
-X-Gm-Message-State: AOJu0YyLZcu5hyOJz+bVgkk/HjJanZGVGhmzyTQ985c1QVFDDHdpnrW7
-	ahIi4AOlprQxloTRRbNTJ6Ig3QgeVQjNJC3RIMahmbyditx1YmXwwp8Bmhpwrna4xhNMgLyeYy8
-	bDigekcntQs1tsCumyAD+tJyBBZw=
-X-Google-Smtp-Source: AGHT+IFk1aynC9pVGiMcTqJmEk0gV5pciM6iNSSDMpa1ydVTYikM65Lzkvw06z/6iX8MFFspmExGzbXANomBqn1ewZI=
-X-Received: by 2002:a05:6512:b01:b0:52e:932d:88ab with SMTP id
- 2adb3069b0e04-5331c6aff01mr5250435e87.23.1723916269384; Sat, 17 Aug 2024
- 10:37:49 -0700 (PDT)
+	s=arc-20240116; t=1723916515; c=relaxed/simple;
+	bh=jtqDTtNajvInU5FR+593dp7wIWkfBEwX/qDLvacvdGU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gke0JMDcAC3wHc5jrv44Wi9iqj/TDd1E1GBn2xoy0WIKxJvqVLvKCozmygBQMBcLFWu2cgAXPHpEoEWW0Yx1LZwTyQFcYomckUvia6y1KxsJMdSEyPkv3O9GUwsbVnDu9Bfybq5Mpno8qU/KzpJFECECA/1/fpOBHpFuLcUcxNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=efjNRCeT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fyJtI0Ne; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=efjNRCeT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fyJtI0Ne; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 45F4220233;
+	Sat, 17 Aug 2024 17:41:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723916506; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KVJWcYecUYFD2wvA80Jm7qXMKv1nO73ux4O2gMSc0l8=;
+	b=efjNRCeT06TaE2zT9OdcsxWe+em4oIyhgfp0atysl8mwt9tLlqtJz2CjFYu1nWCbW25eyu
+	eF5ogRAUlKyUxXL6ceoaKEMQB0hBIs/yxfayavEkxE4LhvE5E7FRa8jo1l5uHVYCLSAidf
+	2ulZneqPT/tKQ95GyhRFVapqbmHpYp8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723916506;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KVJWcYecUYFD2wvA80Jm7qXMKv1nO73ux4O2gMSc0l8=;
+	b=fyJtI0NeM10LedJTJL22uWlCRNpI6huGDudR1Ms5Dslf/+wt34IF99AglPFyMvWYJHRmUc
+	MSayPAyjbz8C4bAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723916506; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KVJWcYecUYFD2wvA80Jm7qXMKv1nO73ux4O2gMSc0l8=;
+	b=efjNRCeT06TaE2zT9OdcsxWe+em4oIyhgfp0atysl8mwt9tLlqtJz2CjFYu1nWCbW25eyu
+	eF5ogRAUlKyUxXL6ceoaKEMQB0hBIs/yxfayavEkxE4LhvE5E7FRa8jo1l5uHVYCLSAidf
+	2ulZneqPT/tKQ95GyhRFVapqbmHpYp8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723916506;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KVJWcYecUYFD2wvA80Jm7qXMKv1nO73ux4O2gMSc0l8=;
+	b=fyJtI0NeM10LedJTJL22uWlCRNpI6huGDudR1Ms5Dslf/+wt34IF99AglPFyMvWYJHRmUc
+	MSayPAyjbz8C4bAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6B90113991;
+	Sat, 17 Aug 2024 17:41:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Dc64F9ngwGZ0BgAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Sat, 17 Aug 2024 17:41:45 +0000
+Message-ID: <1a6d6972-f2db-4d44-b79c-811ba44368f0@suse.de>
+Date: Sat, 17 Aug 2024 20:41:29 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814113135.14575-1-abhashkumarjha123@gmail.com>
- <20240817153953.1743e020@jic23-huawei> <CAG=0RqLaigoVLN2D9LEfC0_1ctJO6OzwEgpeOx8NQavB4mZxoA@mail.gmail.com>
- <20240817174919.5583f28a@jic23-huawei>
-In-Reply-To: <20240817174919.5583f28a@jic23-huawei>
-From: Abhash jha <abhashkumarjha123@gmail.com>
-Date: Sat, 17 Aug 2024 23:07:37 +0530
-Message-ID: <CAG=0RqJN=M5+w4CDXggDnoyOrW5qxTejJy=UkzMQX36emFT5fw@mail.gmail.com>
-Subject: Re: [PATCH v7 0/2] Add light channel for LTR390
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: linux-iio@vger.kernel.org, anshulusr@gmail.com, lars@metafoo.de, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 05/13] PCI: brcmstb: Use bridge reset if available
+To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240815225731.40276-1-james.quinlan@broadcom.com>
+ <20240815225731.40276-6-james.quinlan@broadcom.com>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <20240815225731.40276-6-james.quinlan@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[broadcom.com,vger.kernel.org,kernel.org,google.com,arm.com,debian.org,suse.de,linaro.org,gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid]
+X-Spam-Score: -4.30
 
-> I think I have.  But with two versions of v7 I'm not 100% sure which one got picked
-> up. I've pushed out now as testing, so take a look.
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/log/?h=testing
-> >
-The two versions v7 patches are the same. I had sent the same thing
-again because
-I thought it might have gotten lost in your mail.
-My apologies for getting you confused.
+Hi Jim,
 
-Thanks,
-Abhash
+On 8/16/24 01:57, Jim Quinlan wrote:
+> The 7712 SOC has a bridge reset which can be described in the device tree.
+> Use it if present.  Otherwise, continue to use the legacy method to reset
+> the bridge.
+> 
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> ---
+>  drivers/pci/controller/pcie-brcmstb.c | 24 +++++++++++++++++++-----
+>  1 file changed, 19 insertions(+), 5 deletions(-)
+
+Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
+
+One problem though on RPi5 (bcm2712).
+
+With this series applied + my WIP patches for enablement of PCIe on
+bcm2712 when enable the pcie1 and pcie2 root ports in dts, I see kernel
+boot stuck on pcie2 enumeration and I have to add this [1] to make it
+work again.
+
+Some more info about resets used:
+
+pcie0 @ 100000:
+	resets = <&bcm_reset 5>, <&bcm_reset 42>, <&pcie_rescal>;
+	reset-names = "swinit", "bridge", "rescal";
+
+pcie1 @ 110000:
+	resets = <&bcm_reset 7>, <&bcm_reset 43>, <&pcie_rescal>;
+	reset-names = "swinit", "bridge", "rescal";
+
+pcie2 @ 120000:
+	resets = <&bcm_reset 9>, <&bcm_reset 44>, <&pcie_rescal>;
+	reset-names = "swinit", "bridge", "rescal";
+
+
+I changed "swinit" reset for pcie2 to <&bcm_reset 9> (it is 32 in
+downstream rpi kernel) because otherwise I'm unable to enumerate RP1
+south bridge at all.
+
+Any help will be appreciated.
+
+~Stan
+
+[1]
+https://github.com/raspberrypi/linux/blob/rpi-6.11.y/drivers/pci/controller/pcie-brcmstb.c#L1711
 
