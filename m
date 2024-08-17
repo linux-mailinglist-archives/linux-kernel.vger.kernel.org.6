@@ -1,28 +1,28 @@
-Return-Path: <linux-kernel+bounces-290724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFEDF9557DB
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 14:42:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B20B29557DD
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 14:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 503B328240C
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 12:42:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 357EF1F21B93
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 12:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF781537A8;
-	Sat, 17 Aug 2024 12:42:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF226154444;
+	Sat, 17 Aug 2024 12:42:28 +0000 (UTC)
 Received: from chessie.everett.org (chessie.fmt1.pfcs.com [66.220.13.234])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BFE14D452;
-	Sat, 17 Aug 2024 12:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6580815350B;
+	Sat, 17 Aug 2024 12:42:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.220.13.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723898546; cv=none; b=Ws+6xmT3aKlCX/rsf4gfxrc9+ZjBC0IvCeuWhF7sc2Sgts318cpHxJNpPv80aLZYY+p5LeJjLzc4qQOCB0q2AhQ5O8SFVhF9kI0LfhAsMZc6vjCnHIyukKUNGWm5zXftUBedSQNB+/EedATQg0p0s9WlvUFZiEiAr9fY7pGhcVY=
+	t=1723898548; cv=none; b=EVNbywkzAh9zCYX3bgjEGCOkYj3te39TqNM2ybTBniugS9rQHZ6Nlbh4l+0mbvpFa4XPdoPD23PqiwbgRmyLCmGzVsAarv2r3Saw6GPi2uIL+Uknzs6qg4NTnErSb3Vnh/yKRtdBmvBhNbxdcgrKo91tZNN76T0Sb+BEzbrK0bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723898546; c=relaxed/simple;
-	bh=oIZDCRVTYcyB2VVwR7HqVfKgVfpqLssFDdRiPnfyM3w=;
+	s=arc-20240116; t=1723898548; c=relaxed/simple;
+	bh=8MCq0A44ypknCHYEOPZoHWh8xeuUVB1YzKZnquigXZk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WwhtfVFTOw9Ma4gQKcGd5a0b1aV/MuVU92ej9kX1J6KGDYfVFcqIZbPAmmHaa9n7kTmiLgchu09rBh1lOSGIpL7Lp9qpUyQZmjGKef+rEDON3FNVeTG5zlzDrEI0+dmSqJLqJABDBzyGmJb7cinYtWbsNJUdLjmkqh5LBfJHqlU=
+	 MIME-Version; b=nM36rJZkZJZHdK2SjcXiP0i7rYnx1iHe4KuFaAE1u2MRwadcX3Qo5ZmchNVXo4tqd0/vwZEe2QNWfxjjTfP4yvu3GcyOtZdyNuBnTby0I6tdGRV8RE9/sNpqjxmlKejGSxwySm7noOOAfEm2T5NIwoI35Mk+2QLQz/SVxFax84w=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nwtime.org; spf=pass smtp.mailfrom=nwtime.org; arc=none smtp.client-ip=66.220.13.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nwtime.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nwtime.org
@@ -30,8 +30,8 @@ Received: from localhost.localdomain (ip1f10f85d.dynamic.kabel-deutschland.de [3
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by chessie.everett.org (Postfix) with ESMTPSA id 4WmJQt4GGlzMQvZ;
-	Sat, 17 Aug 2024 12:42:14 +0000 (UTC)
+	by chessie.everett.org (Postfix) with ESMTPSA id 4WmJQx2dGgzMQvc;
+	Sat, 17 Aug 2024 12:42:17 +0000 (UTC)
 From: Erez Geva <erezgeva@nwtime.org>
 To: linux-mtd@lists.infradead.org,
 	Tudor Ambarus <tudor.ambarus@linaro.org>,
@@ -46,9 +46,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Erez Geva <ErezGeva2@gmail.com>
-Subject: [PATCH v3 2/4] mtd: spi-nor: core: add generic functions
-Date: Sat, 17 Aug 2024 14:41:38 +0200
-Message-Id: <20240817124140.800637-3-erezgeva@nwtime.org>
+Subject: [PATCH v3 3/4] mtd: spi-nor: macronix: add support for OTP
+Date: Sat, 17 Aug 2024 14:41:39 +0200
+Message-Id: <20240817124140.800637-4-erezgeva@nwtime.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240817124140.800637-1-erezgeva@nwtime.org>
 References: <20240817124140.800637-1-erezgeva@nwtime.org>
@@ -62,280 +62,244 @@ Content-Transfer-Encoding: 8bit
 
 From: Erez Geva <ErezGeva2@gmail.com>
 
-Create a new internal function, spi_nor_send_cmd_internal()
- to reduce duplicate code.
+Macronix SPI-NOR support OTP.
+Add callbacks to read, write and lock the OTP.
 
-Add generic functions for use by vendor callbacks.
-The functions contain dispatching for using SPIMEM
- or using an SPI controller.
-It is better to leave this kind of dispatcher,
- out side of vendor specific code.
-
-In this patch series we use the new functions in
- Macronix new OTP callbacks.
-
-The new added functions:
-
- - Send an opcode without address or data.
-
- - Read a register value.
-
- - Write a register value.
+Notice Macronix OTP do not support erase.
+Every bit written with '0', can not be changed further.
 
 Signed-off-by: Erez Geva <ErezGeva2@gmail.com>
 ---
- drivers/mtd/spi-nor/core.c | 130 +++++++++++++++++++++++++++----------
- drivers/mtd/spi-nor/core.h |  27 +-------
- 2 files changed, 99 insertions(+), 58 deletions(-)
+ drivers/mtd/spi-nor/macronix.c | 185 +++++++++++++++++++++++++++++++++
+ include/linux/mtd/spi-nor.h    |  10 ++
+ 2 files changed, 195 insertions(+)
 
-diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
-index af522c426ac9..647c843c165d 100644
---- a/drivers/mtd/spi-nor/core.c
-+++ b/drivers/mtd/spi-nor/core.c
-@@ -354,53 +354,134 @@ int spi_nor_write_any_volatile_reg(struct spi_nor *nor, struct spi_mem_op *op,
- }
+diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.c
+index ea6be95e75a5..8df87b414e47 100644
+--- a/drivers/mtd/spi-nor/macronix.c
++++ b/drivers/mtd/spi-nor/macronix.c
+@@ -8,6 +8,180 @@
  
- /**
-- * spi_nor_write_enable() - Set write enable latch with Write Enable command.
-+ * spi_nor_send_cmd_internal() - Send instruction without address or data to the chip.
-  * @nor:	pointer to 'struct spi_nor'.
-+ * @opcode:	Command to send
-  *
-  * Return: 0 on success, -errno otherwise.
-  */
--int spi_nor_write_enable(struct spi_nor *nor)
-+static inline int spi_nor_send_cmd_internal(struct spi_nor *nor, u8 opcode)
- {
- 	int ret;
+ #include "core.h"
  
- 	if (nor->spimem) {
--		struct spi_mem_op op = SPI_NOR_WREN_OP;
-+		struct spi_mem_op op = SPI_MEM_OP(SPI_MEM_OP_CMD(opcode, 0),
-+					   SPI_MEM_OP_NO_ADDR,
-+					   SPI_MEM_OP_NO_DUMMY,
-+					   SPI_MEM_OP_NO_DATA);
- 
- 		spi_nor_spimem_setup_op(nor, &op, nor->reg_proto);
- 
- 		ret = spi_mem_exec_op(nor->spimem, &op);
- 	} else {
--		ret = spi_nor_controller_ops_write_reg(nor, SPINOR_OP_WREN,
--						       NULL, 0);
-+		ret = spi_nor_controller_ops_write_reg(nor, opcode, NULL, 0);
- 	}
- 
--	if (ret)
--		dev_dbg(nor->dev, "error %d on Write Enable\n", ret);
++/**
++ * macronix_nor_otp_enter() - Send Enter Secured OTP instruction to the chip.
++ * @nor:	pointer to 'struct spi_nor'.
++ *
++ * Return: 0 on success, -errno otherwise.
++ */
++static int macronix_nor_otp_enter(struct spi_nor *nor)
++{
++	int error;
++
++	error = spi_nor_send_cmd(nor, SPINOR_OP_ENSO);
++
++	if (error)
++		dev_dbg(nor->dev, "error %d on Macronix Enter Secured OTP\n", error);
++
++	return error;
++}
++
++/**
++ * macronix_nor_otp_exit() - Send Exit Secured OTP instruction to the chip.
++ * @nor:	pointer to 'struct spi_nor'.
++ *
++ * Return: 0 on success, -errno otherwise.
++ */
++static int macronix_nor_otp_exit(struct spi_nor *nor)
++{
++	int error;
++
++	error = spi_nor_send_cmd(nor, SPINOR_OP_EXSO);
++
++	if (error)
++		dev_dbg(nor->dev, "error %d on Macronix Exit Secured OTP\n", error);
++
++	return error;
++}
++
++/**
++ * macronix_nor_otp_read() - read security register
++ * @nor:	pointer to 'struct spi_nor'
++ * @addr:       offset to read from
++ * @len:        number of bytes to read
++ * @buf:        pointer to dst buffer
++ *
++ * Return: number of bytes read successfully, -errno otherwise
++ */
++static int macronix_nor_otp_read(struct spi_nor *nor, loff_t addr, size_t len, u8 *buf)
++{
++	int ret, error;
++
++	error = macronix_nor_otp_enter(nor);
++	if (error)
++		return error;
++
++	ret = spi_nor_read_data(nor, addr, len, buf);
++
++	error = macronix_nor_otp_exit(nor);
++
++	if (ret < 0)
++		dev_dbg(nor->dev, "error %d on Macronix read OTP data\n", ret);
++	else if (error)
++		return error;
++
 +	return ret;
 +}
 +
 +/**
-+ * spi_nor_send_cmd() - Send instruction without address or data to the chip.
-+ * @nor:	pointer to 'struct spi_nor'.
-+ * @opcode:	Command to send
++ * macronix_nor_otp_write() - write security register
++ * @nor:        pointer to 'struct spi_nor'
++ * @addr:       offset to write to
++ * @len:        number of bytes to write
++ * @buf:        pointer to src buffer
 + *
-+ * Return: 0 on success, -errno otherwise.
++ * Return: number of bytes written successfully, -errno otherwise
 + */
-+int spi_nor_send_cmd(struct spi_nor *nor, u8 opcode)
++static int macronix_nor_otp_write(struct spi_nor *nor, loff_t addr, size_t len, const u8 *buf)
 +{
-+	int ret;
++	int error, ret = 0;
 +
-+	ret = spi_nor_send_cmd_internal(nor, opcode);
- 
- 	return ret;
- }
- 
- /**
-- * spi_nor_write_disable() - Send Write Disable instruction to the chip.
-+ * spi_nor_read_reg() - Send instruction without address or data to the chip.
-  * @nor:	pointer to 'struct spi_nor'.
-+ * @opcode:	Command to send
-+ * @len:	register value length
-  *
-  * Return: 0 on success, -errno otherwise.
-  */
--int spi_nor_write_disable(struct spi_nor *nor)
-+int spi_nor_read_reg(struct spi_nor *nor, u8 opcode, size_t len)
- {
- 	int ret;
- 
- 	if (nor->spimem) {
--		struct spi_mem_op op = SPI_NOR_WRDI_OP;
-+		struct spi_mem_op op = SPI_MEM_OP(SPI_MEM_OP_CMD(opcode, 0),
-+					   SPI_MEM_OP_NO_ADDR,
-+					   SPI_MEM_OP_NO_DUMMY,
-+					   SPI_MEM_OP_DATA_IN(len, nor->bouncebuf, 0));
- 
- 		spi_nor_spimem_setup_op(nor, &op, nor->reg_proto);
- 
- 		ret = spi_mem_exec_op(nor->spimem, &op);
- 	} else {
--		ret = spi_nor_controller_ops_write_reg(nor, SPINOR_OP_WRDI,
--						       NULL, 0);
-+		ret = spi_nor_controller_ops_read_reg(nor, opcode, nor->bouncebuf, len);
- 	}
- 
-+	return ret;
-+}
++	error = macronix_nor_otp_enter(nor);
++	if (error)
++		return error;
 +
-+/*
-+ * spi_nor_write_reg() - Send instruction without address or data to the chip.
-+ * @nor:	pointer to 'struct spi_nor'.
-+ * @opcode:	Command to send
-+ * @len:	register value length
-+ *
-+ * Return: 0 on success, -errno otherwise.
-+ */
-+int spi_nor_write_reg(struct spi_nor *nor, u8 opcode, size_t len)
-+{
-+	int ret;
++	error = spi_nor_write_enable(nor);
++	if (error)
++		goto otp_write_err;
 +
-+	if (nor->spimem) {
-+		struct spi_mem_op op = SPI_MEM_OP(SPI_MEM_OP_CMD(opcode, 0),
-+					   SPI_MEM_OP_NO_ADDR,
-+					   SPI_MEM_OP_NO_DUMMY,
-+					   SPI_MEM_OP_DATA_OUT(len, nor->bouncebuf, 0));
-+
-+		spi_nor_spimem_setup_op(nor, &op, nor->reg_proto);
-+
-+		ret = spi_mem_exec_op(nor->spimem, &op);
-+	} else {
-+		ret = spi_nor_controller_ops_write_reg(nor, opcode, nor->bouncebuf, len);
++	ret = spi_nor_write_data(nor, addr, len, buf);
++	if (ret < 0) {
++		dev_dbg(nor->dev, "error %d on Macronix write OTP data\n", ret);
++		goto otp_write_err;
 +	}
 +
-+	return ret;
-+}
++	error = spi_nor_wait_till_ready(nor);
++	if (error)
++		dev_dbg(nor->dev, "error %d on Macronix waiting write OTP finish\n", error);
 +
-+/**
-+ * spi_nor_write_enable() - Set write enable latch with Write Enable command.
-+ * @nor:	pointer to 'struct spi_nor'.
-+ *
-+ * Return: 0 on success, -errno otherwise.
-+ */
-+int spi_nor_write_enable(struct spi_nor *nor)
-+{
-+	int ret;
++otp_write_err:
 +
-+	ret = spi_nor_send_cmd_internal(nor, SPINOR_OP_WREN);
-+
-+	if (ret)
-+		dev_dbg(nor->dev, "error %d on Write Enable\n", ret);
++	error = macronix_nor_otp_exit(nor);
 +
 +	return ret;
 +}
 +
 +/**
-+ * spi_nor_write_disable() - Send Write Disable instruction to the chip.
-+ * @nor:	pointer to 'struct spi_nor'.
++ * macronix_nor_otp_lock() - lock the OTP region
++ * @nor:        pointer to 'struct spi_nor'
++ * @region:     OTP region
 + *
 + * Return: 0 on success, -errno otherwise.
 + */
-+int spi_nor_write_disable(struct spi_nor *nor)
++static int macronix_nor_otp_lock(struct spi_nor *nor, unsigned int region)
++{
++	int error;
++	u8 *rdscur = nor->bouncebuf;
++
++	error = spi_nor_read_reg(nor, SPINOR_OP_RDSCUR, 1);
++	if (error) {
++		dev_dbg(nor->dev, "error %d on read security register\n", error);
++		return error;
++	}
++
++	switch (region) {
++	case 0: /* Lock 1st 4K-bit region */
++		if (rdscur[0] & SEC_REG_LDS1)
++			return 0; /* Already locked */
++		rdscur[0] |= SEC_REG_LDS1;
++		break;
++	case 1: /* Lock 2nd 4K-bit region */
++		if (rdscur[0] & SEC_REG_LDS2)
++			return 0; /* Already locked */
++		rdscur[0] |= SEC_REG_LDS2;
++		break;
++	default:
++		return 0; /* Unknown region */
++	}
++
++	error = spi_nor_write_reg(nor, SPINOR_OP_WRSCUR, 1);
++	if (error)
++		dev_dbg(nor->dev, "error %d on update security register\n", error);
++
++	return error;
++}
++
++/**
++ * macronix_nor_otp_is_locked() - get the OTP region lock status
++ * @nor:        pointer to 'struct spi_nor'
++ * @region:     OTP region
++ *
++ * Return: 0 on success, -errno otherwise.
++ */
++static int macronix_nor_otp_is_locked(struct spi_nor *nor, unsigned int region)
 +{
 +	int ret;
++	u8 *rdscur = nor->bouncebuf;
 +
-+	ret = spi_nor_send_cmd_internal(nor, SPINOR_OP_WRDI);
++	ret = spi_nor_read_reg(nor, SPINOR_OP_RDSCUR, 1);
++	if (ret) {
++		dev_dbg(nor->dev, "error %d on read security register\n", ret);
++		return ret;
++	}
 +
- 	if (ret)
- 		dev_dbg(nor->dev, "error %d on Write Disable\n", ret);
++	switch (region) {
++	case 0: /* 1st 4K-bit region */
++		ret = (rdscur[0] & SEC_REG_LDS1) > 0;
++		break;
++	case 1: /* 2nd 4K-bit region */
++		ret = (rdscur[0] & SEC_REG_LDS2) > 0;
++		break;
++	default: /* Unknown region */
++		break;
++	}
++	return ret;
++}
++
+ static int
+ mx25l25635_post_bfpt_fixups(struct spi_nor *nor,
+ 			    const struct sfdp_parameter_header *bfpt_header,
+@@ -190,8 +364,19 @@ static void macronix_nor_default_init(struct spi_nor *nor)
+ 	nor->params->quad_enable = spi_nor_sr1_bit6_quad_enable;
+ }
  
-@@ -521,18 +602,8 @@ int spi_nor_set_4byte_addr_mode_en4b_ex4b(struct spi_nor *nor, bool enable)
++static const struct spi_nor_otp_ops macronix_nor_otp_ops = {
++	.read = macronix_nor_otp_read,
++	.write = macronix_nor_otp_write,
++	/* .erase = Macronix OTP do not support erase, */
++	.lock = macronix_nor_otp_lock,
++	.is_locked = macronix_nor_otp_is_locked,
++};
++
+ static int macronix_nor_late_init(struct spi_nor *nor)
  {
- 	int ret;
++	if (nor->params->otp.org.n_regions)
++		nor->params->otp.ops = &macronix_nor_otp_ops;
++
+ 	if (!nor->params->set_4byte_addr_mode)
+ 		nor->params->set_4byte_addr_mode = spi_nor_set_4byte_addr_mode_en4b_ex4b;
  
--	if (nor->spimem) {
--		struct spi_mem_op op = SPI_NOR_EN4B_EX4B_OP(enable);
--
--		spi_nor_spimem_setup_op(nor, &op, nor->reg_proto);
--
--		ret = spi_mem_exec_op(nor->spimem, &op);
--	} else {
--		ret = spi_nor_controller_ops_write_reg(nor,
--						       enable ? SPINOR_OP_EN4B :
--								SPINOR_OP_EX4B,
--						       NULL, 0);
--	}
-+	ret = spi_nor_send_cmd_internal(nor, enable ? SPINOR_OP_EN4B :
-+						SPINOR_OP_EX4B);
+diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
+index cdcfe0fd2e7d..86490c291b88 100644
+--- a/include/linux/mtd/spi-nor.h
++++ b/include/linux/mtd/spi-nor.h
+@@ -81,6 +81,16 @@
+ #define SPINOR_OP_BP		0x02	/* Byte program */
+ #define SPINOR_OP_AAI_WP	0xad	/* Auto address increment word program */
  
- 	if (ret)
- 		dev_dbg(nor->dev, "error %d setting 4-byte mode\n", ret);
-@@ -765,16 +836,7 @@ int spi_nor_global_block_unlock(struct spi_nor *nor)
- 	if (ret)
- 		return ret;
- 
--	if (nor->spimem) {
--		struct spi_mem_op op = SPI_NOR_GBULK_OP;
--
--		spi_nor_spimem_setup_op(nor, &op, nor->reg_proto);
--
--		ret = spi_mem_exec_op(nor->spimem, &op);
--	} else {
--		ret = spi_nor_controller_ops_write_reg(nor, SPINOR_OP_GBULK,
--						       NULL, 0);
--	}
-+	ret = spi_nor_send_cmd_internal(nor, SPINOR_OP_GBULK);
- 
- 	if (ret) {
- 		dev_dbg(nor->dev, "error %d on Global Block Unlock\n", ret);
-diff --git a/drivers/mtd/spi-nor/core.h b/drivers/mtd/spi-nor/core.h
-index 237196b908dd..f546bebf6ffc 100644
---- a/drivers/mtd/spi-nor/core.h
-+++ b/drivers/mtd/spi-nor/core.h
-@@ -25,18 +25,6 @@
- 		   SPI_MEM_OP_DUMMY(ndummy, 0),				\
- 		   SPI_MEM_OP_DATA_IN(len, buf, 0))
- 
--#define SPI_NOR_WREN_OP							\
--	SPI_MEM_OP(SPI_MEM_OP_CMD(SPINOR_OP_WREN, 0),			\
--		   SPI_MEM_OP_NO_ADDR,					\
--		   SPI_MEM_OP_NO_DUMMY,					\
--		   SPI_MEM_OP_NO_DATA)
--
--#define SPI_NOR_WRDI_OP							\
--	SPI_MEM_OP(SPI_MEM_OP_CMD(SPINOR_OP_WRDI, 0),			\
--		   SPI_MEM_OP_NO_ADDR,					\
--		   SPI_MEM_OP_NO_DUMMY,					\
--		   SPI_MEM_OP_NO_DATA)
--
- #define SPI_NOR_RDSR_OP(buf)						\
- 	SPI_MEM_OP(SPI_MEM_OP_CMD(SPINOR_OP_RDSR, 0),			\
- 		   SPI_MEM_OP_NO_ADDR,					\
-@@ -67,24 +55,12 @@
- 		   SPI_MEM_OP_NO_DUMMY,					\
- 		   SPI_MEM_OP_DATA_IN(1, buf, 0))
- 
--#define SPI_NOR_EN4B_EX4B_OP(enable)					\
--	SPI_MEM_OP(SPI_MEM_OP_CMD(enable ? SPINOR_OP_EN4B : SPINOR_OP_EX4B, 0),	\
--		   SPI_MEM_OP_NO_ADDR,					\
--		   SPI_MEM_OP_NO_DUMMY,					\
--		   SPI_MEM_OP_NO_DATA)
--
- #define SPI_NOR_BRWR_OP(buf)						\
- 	SPI_MEM_OP(SPI_MEM_OP_CMD(SPINOR_OP_BRWR, 0),			\
- 		   SPI_MEM_OP_NO_ADDR,					\
- 		   SPI_MEM_OP_NO_DUMMY,					\
- 		   SPI_MEM_OP_DATA_OUT(1, buf, 0))
- 
--#define SPI_NOR_GBULK_OP						\
--	SPI_MEM_OP(SPI_MEM_OP_CMD(SPINOR_OP_GBULK, 0),			\
--		   SPI_MEM_OP_NO_ADDR,					\
--		   SPI_MEM_OP_NO_DUMMY,					\
--		   SPI_MEM_OP_NO_DATA)
--
- #define SPI_NOR_DIE_ERASE_OP(opcode, addr_nbytes, addr, dice)		\
- 	SPI_MEM_OP(SPI_MEM_OP_CMD(opcode, 0),				\
- 		   SPI_MEM_OP_ADDR(dice ? addr_nbytes : 0, addr, 0),	\
-@@ -604,6 +580,9 @@ extern const struct attribute_group *spi_nor_sysfs_groups[];
- void spi_nor_spimem_setup_op(const struct spi_nor *nor,
- 			     struct spi_mem_op *op,
- 			     const enum spi_nor_protocol proto);
-+int spi_nor_send_cmd(struct spi_nor *nor, u8 opcode);
-+int spi_nor_read_reg(struct spi_nor *nor, u8 opcode, size_t len);
-+int spi_nor_write_reg(struct spi_nor *nor, u8 opcode, size_t len);
- int spi_nor_write_enable(struct spi_nor *nor);
- int spi_nor_write_disable(struct spi_nor *nor);
- int spi_nor_set_4byte_addr_mode_en4b_ex4b(struct spi_nor *nor, bool enable);
++/* Macronix OTP registers. */
++#define SPINOR_OP_RDSCUR	0x2b	/* read security register */
++#define SPINOR_OP_WRSCUR	0x2f	/* write security register */
++#define SPINOR_OP_ENSO		0xb1	/* enter secured OTP */
++#define SPINOR_OP_EXSO		0xc1	/* exit secured OTP */
++
++/* Macronix security register values */
++#define SEC_REG_LDS1		BIT(1)  /* lock-down bit 1st 4K-bit */
++#define SEC_REG_LDS2		BIT(0)  /* lock-down bit 2nd 4K-bit */
++
+ /* Used for Macronix and Winbond flashes. */
+ #define SPINOR_OP_EN4B		0xb7	/* Enter 4-byte mode */
+ #define SPINOR_OP_EX4B		0xe9	/* Exit 4-byte mode */
 -- 
 2.39.2
 
