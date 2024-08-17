@@ -1,204 +1,130 @@
-Return-Path: <linux-kernel+bounces-290843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD17495596A
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 21:30:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2951195596B
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 21:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B526282D0D
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 19:30:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A24DDB21837
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 19:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A4D15534E;
-	Sat, 17 Aug 2024 19:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D0813DBA2;
+	Sat, 17 Aug 2024 19:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="akigKAij"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Guf/rmLW"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9001D84A51;
-	Sat, 17 Aug 2024 19:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A227F7CA
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 19:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723923049; cv=none; b=kcQ7hGkF2tP5eHqtA7txtzfLzRXtjDYkoGqHcH9irLXg8SoVPrGbopyI496tF5+pYTOX4zUqmqK3EhEE0/1dFopeFi/7SOtmTKsnGS8cWnPTkSTkGx1sclwm86CepQ5VnZNfmFVkWqRw1/Adjxw9PJkWcUoKGiYqE8QYi2iPJmw=
+	t=1723923253; cv=none; b=cjno0vpPG769RtHwXtHGOeHXhEqMdUYUlX0V/BqXoGsjpb5RKpwM0sJk8lhsuaLnP1/gxIyYLv0+rmIL2z2EKHKdbJLM9zr/yZiayNHn32ur8wbPECcbzHbaXjvXqxbld0xNgAYByJXLXZFF/AjHkh8vvtDDOxkIe8bmrFWTjOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723923049; c=relaxed/simple;
-	bh=Pm4Ytukf0XTma7RZxCSO7MjTvY62x2OWfUIv9D282CM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iWeJtyFzBH6gvPi9SwSzE/8+7CNUcqrfczBkKUPe+jf4aYdunf006ssc0a7GHsjcxOgdbdor0jXTE/xutWEwAkjmwih8kDP06CMAK8tBff9i6+dsZPyLsz01EWWbd/nO3MCZV+iwWjQTxSl3iXaBnae90vqgmjw7TidvC46tq3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=akigKAij; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5beb6ea9ed6so2997768a12.1;
-        Sat, 17 Aug 2024 12:30:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723923046; x=1724527846; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZJC795JTs2Ekt9gDVD2gEbeCAt29WPxzke9UPmqpJtU=;
-        b=akigKAijAvyuXVxTubnmeiP3huoHG5WRhZbNkJrvLgIzNXxmBoxA7YXbHG5ZsaRtgi
-         vI3pZ2Ggd4sByMyfotNVDdeCkXVMY1rsbS1OP911rkgdmV85GMeKKSMqzHkfKCmhEO6B
-         fcF5sDYlhYNXDxS9Fos5piMiBdFtsoZnBjLQj9dspl3STy/Eny/Vcv6pPMNcsvLBSLeA
-         hZRLNKloNeSKjwHmzh10aeORyMhnkupf0WX0DwLdOrG1WyTQ2wV3H2PL7Jq8hol09ClY
-         uLcyztmsvVhzG2DAnr2ZQkCEv+3skDvQzDEnNmwpA5qGqfQVN0MsY36TT1ggQLEmxA+3
-         T+og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723923046; x=1724527846;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZJC795JTs2Ekt9gDVD2gEbeCAt29WPxzke9UPmqpJtU=;
-        b=c3Z37XTb5pAwMaJP2Fk+o7fbmIIMKusKWgAT0hEpV6yX5hIRmSdNZqZ8xbTkFhq1jv
-         GYT3Qq4TqYzDHjpaiwhm8zKbSVG2tuJ8MKgF5W8Rrg2+cRVTQMc7a5ftCUkL1MuEUd8x
-         KJC2VeMj7+k7ljjNSR9vcxnpJz7mjCBTlvOoSoiiguaStMXURbA38ZSfFSG3dwj1zIMb
-         z99TmP0x5KS+zvh9JOewXDkuqOd9PJd2IByKzEtVNTdD9xkus/+elt9dsvZieRUpjGRK
-         rSYir6C+WAgswfWJKvR+Q/epTsFyWdUUMgKFoKdLtGOv9t/jnP7gyErNb6CFH3uTGldt
-         nAzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLZ6uIGtHERlUaLw+pIUx52PHdqjL7cfTIFpPXVrQ8JerOAOPESmm1ZALkC5GXvgunWQ1jXqT96ad8a9KC6fhpEqfnDCZTZk8W46DzdunkCFGnQWT4B2oASGkYnsHkAePV48SfFIobjg==
-X-Gm-Message-State: AOJu0YxJEm6D/QIX+NNNESiw9JJ7jsrf/pxCUVayj1FaGY+Aut82iQi/
-	LCT+g505lka8H+k5jDmB9VsSxidNpPtZL81Wgk/z8dVmomaXcvyjqvVHayIFJFyqKwKeygp1XOG
-	bQyuchSQBgaxBIioRqy5cDVJrHg==
-X-Google-Smtp-Source: AGHT+IFbUR16kAsVyKpURPOC69k6sALRGq1kb8PlxvVjzFANtYa6tdmHkwMpCTolk7kRmB7moSOMuF6h0epC6JVlrkY=
-X-Received: by 2002:a17:906:d265:b0:a7d:3a85:7a3e with SMTP id
- a640c23a62f3a-a8392a494a3mr425085466b.59.1723923045436; Sat, 17 Aug 2024
- 12:30:45 -0700 (PDT)
+	s=arc-20240116; t=1723923253; c=relaxed/simple;
+	bh=0JBO1dxyJIDIBSIBLxm28zVxfTS+j4l5X5RngmBL/lU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NE471q5N4UjRfkEYxMOcSbe4yP2VisSDqKggOku7EEWQvOrRh5BXAbslNqhI2ZP1jwsOXCf0FghHMs1TQx25yf8qp6yuTGDrLeYU1UQtNfIuOAgRFQt/cHHCVOlxJA+wHDtB7R+en+LkfbX4ck68IlW0v/ug5HauOOfZxgK+hT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Guf/rmLW; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4C36E250;
+	Sat, 17 Aug 2024 21:33:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1723923189;
+	bh=0JBO1dxyJIDIBSIBLxm28zVxfTS+j4l5X5RngmBL/lU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Guf/rmLWNsyMKypdfC5seu+FLOCxtgbwsKRmsfjwHY9IzD1FcINpbWnXp7wrfn7sH
+	 e0LQL6eJI8SXHbSOSuaTaYxDsv/PwwgDb/v5QqOFp5PZ8GtB2UzvzipxvZtQmK8hmw
+	 5kicXK008aM0heLPyrU2+91p5zt91kInkfqUN68w=
+Date: Sat, 17 Aug 2024 22:33:42 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	=?utf-8?B?w43DsWlnbw==?= Huguet <ihuguet@redhat.com>,
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	Alexey Dobriyan <adobriyan@sw.ru>,
+	=?utf-8?B?Uy7Dh2HEn2xhcg==?= Onur <caglar@pardus.org.tr>
+Subject: Re: [PATCH] Remove *.orig pattern from .gitignore
+Message-ID: <20240817193342.GA12234@pendragon.ideasonboard.com>
+References: <20240729155738.29142-1-laurent.pinchart@ideasonboard.com>
+ <20240801011120.GA1620143@thelio-3990X>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240817124140.800637-1-erezgeva@nwtime.org>
-In-Reply-To: <20240817124140.800637-1-erezgeva@nwtime.org>
-From: Erez <erezgeva2@gmail.com>
-Date: Sat, 17 Aug 2024 21:30:08 +0200
-Message-ID: <CANeKEMO+8=fVx9EXpPoXaLPen79W=7kBTghw3L+9dLwOFOWWoQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] Add support for SPI-NOR Macronix OTP
-To: Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
-	Rob Herring <robh@kernel.org>
-Cc: linux-mtd@lists.infradead.org, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, linux-kernel@vger.kernel.org, 
-	Vignesh Raghavendra <vigneshr@ti.com>, devicetree@vger.kernel.org, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240801011120.GA1620143@thelio-3990X>
 
-Hi,
+On Wed, Jul 31, 2024 at 06:11:20PM -0700, Nathan Chancellor wrote:
+> On Mon, Jul 29, 2024 at 06:57:38PM +0300, Laurent Pinchart wrote:
+> > Commit 3f1b0e1f2875 (".gitignore update") added *.orig and *.rej
+> > patterns to .gitignore in v2.6.23. The commit message didn't give a
+> > rationale. Later on, commit 1f5d3a6b6532 ("Remove *.rej pattern from
+> > .gitignore") removed the *.rej pattern in v2.6.26, on the rationale that
+> > *.rej files indicated something went really wrong and should not be
+> > ignored.
+> > 
+> > The *.rej files are now shown by `git status`, which helps located
+> > conflicts when applying patches and lowers the probability that they
+> > will go unnoticed. It is however still easy to overlook the *.orig files
+> > which slowly polute the source tree. That's not as big of a deal as not
+> > noticing a conflict, but it's still not nice.
+> > 
+> > Drop the *.orig pattern from .gitignore to avoid this and help keep the
+> > source tree clean.
+> > 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > ---
+> > As this has been in the tree for so long and appears not to have botherd
+> > anyone, I have a strong feeling I've overlooked something and this patch
+> > will be rejected. I've actually had that feeling for a few years
+> > already, and today I decided that maybe everybody else used the exact
+> > same reasoning, explaining why the annoying *.orig pattern is still in
+> > .gitignore.
+> 
+> I don't really have a strong opinion myself but it does seem reasonable
+> to be consistent. For what it's worth, Stephen Rothwell checks for
+> accidentally added .orig and .rej files in -next (and catches them
+> occasionally [1]), so I wouldn't expect removing this to matter much.
+> 
+> [1]: https://lore.kernel.org/linux-next/?q=.rej
 
-Looking in Documentation/devicetree/bindings/mtd/mtd.yaml
+I didn't know that, it's useful information, thanks. I wonder if
+checkpatch.pl could also check for that ? Although git-add already
+warns unless you specify -f, so people ignoring that may also ignore
+checkpatch.pl, I'm not sure.
 
-I see you are defining OTP in a different way, as partitions.
-Each partition is an OTP region which can be user or factory mode
-(since many chips do not define or enforce it).
+Who decides on whether this patch should be merged ?
 
-While I try to define the OTP parameters.
+> > ---
+> >  .gitignore | 1 -
+> >  1 file changed, 1 deletion(-)
+> > 
+> > diff --git a/.gitignore b/.gitignore
+> > index 7902adf4f7f1..58fdbb35e2f1 100644
+> > --- a/.gitignore
+> > +++ b/.gitignore
+> > @@ -142,7 +142,6 @@ GTAGS
+> >  # id-utils files
+> >  ID
+> >  
+> > -*.orig
+> >  *~
+> >  \#*#
+> >  
+> > 
+> > base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
 
-I wonder what you think?
-Should the parameter be in the partitions?
-Do we wish to support asymmetric OTP?
-I only found asymmetric OTP (OTP with different region sizes) with old
-chips. But perhaps I missed it.
+-- 
+Regards,
 
-Erez
-
-
-diff --git a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
-b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
-index 6e3afb42926e..5fde51309b93 100644
---- a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
-+++ b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
-@@ -90,6 +90,47 @@ properties:
-       the SRWD bit while writing the status register. WP# signal hard
-strapped to GND
-       can be a valid use case.
-
-+  opt_n_regions:
-+    type: u32
-+    description:
-+      Some flash devices need OTP parameters in the device tree.
-+      As we can not deduce the parameters based on JEDEC ID,
-+       or SFDP.
-+      This parameter indicates the number of OTP regions.
-+      The value must be larger than 1 and mandatory for OTP.
-+
-+  otp_len:
-+    type: u32
-+    description:
-+      Some flash devices need OTP parameters in the device tree.
-+      As we can not deduce the parameters based on JEDEC ID,
-+       or SFDP.
-+      This parameter indicates the size (length) in bytes of an OTP region.
-+      Currently the driver supports symmetric OTP,
-+       which means all regions must use the same size.
-+      The value must be positive and mandatory for OTP.
-+
-+  otp_offset:
-+    type: u32
-+    description:
-+      Some flash devices need OTP parameters in the device tree.
-+      As we can not deduce the parameters based on JEDEC ID,
-+       or SFDP.
-+      This parameter indicates the offset in bytes of
-+       an OTP region relative to its previous.
-+      User can omit it if the offset equals the length.
-+      Or in case we have a single OTP region.
-+
-+  otp_base:
-+    type: u32
-+    description:
-+      Some flash devices need OTP parameters in the device tree.
-+      As we can not deduce the parameters based on JEDEC ID,
-+       or SFDP.
-+      This parameter indicates the base in bytes of the first OTP region.
-+      User can omit it if the base is zero.
-+      I.e. the address of the first OTP region starts from 0.
-+
-   reset-gpios:
-     description:
-       A GPIO line connected to the RESET (active low) signal of the device.
-
-
-
-On Sat, 17 Aug 2024 at 14:42, Erez Geva <erezgeva@nwtime.org> wrote:
->
-> From: Erez Geva <ErezGeva2@gmail.com>
->
-> Add support for SPI-NOR Macronix OTP.
-> And add MX25L12833F with OTP.
->
-> TODO:
-> - Test OTP with 'flash_otp_write' and 'flash_otp_lock'
-> - Question: Do we need documentation on new DT OTP parameters?
->
-> v2:
-> Improve description of mx25l12833f.
-> Add note about mx25l12833f using the same JEDEC ID as mx25l12805d.
->
-> v3:
-> Improve description.
-> Rename _nor_send_cmd() to spi_nor_send_cmd_internal()
-> Remove MX25L12833F specific changes.
-> Add reading SFDP to all Macronix chips.
-> Add support of reading OTP parameters from device tree.
-> Reorgenize patches to 2 SPI-NOR patches and 2 Macronix patches
-> Testing with MX25L3233F using BeagleBone Black.
-> Test results are in "mtd: spi-nor: macronix: add manufacturer flags" patch
->
-> Erez Geva (4):
->   mtd: spi-nor: core: add manufacturer flags
->   mtd: spi-nor: core: add generic functions
->   mtd: spi-nor: macronix: add support for OTP
->   mtd: spi-nor: macronix: add manufacturer flags
->
->  drivers/mtd/spi-nor/core.c     | 166 ++++++++++++++++++++++-------
->  drivers/mtd/spi-nor/core.h     |  34 ++----
->  drivers/mtd/spi-nor/macronix.c | 186 +++++++++++++++++++++++++++++++++
->  drivers/mtd/spi-nor/otp.c      |   6 +-
->  drivers/mtd/spi-nor/winbond.c  |   2 +-
->  include/linux/mtd/spi-nor.h    |  10 ++
->  6 files changed, 336 insertions(+), 68 deletions(-)
->
-> --
-> 2.39.2
->
+Laurent Pinchart
 
