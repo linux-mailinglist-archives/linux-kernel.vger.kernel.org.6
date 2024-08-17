@@ -1,102 +1,234 @@
-Return-Path: <linux-kernel+bounces-290502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AA379554BE
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 03:58:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A35B9554C3
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 04:02:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2A47B21B4F
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:58:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30D8C283267
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 02:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CEB881E;
-	Sat, 17 Aug 2024 01:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52986944D;
+	Sat, 17 Aug 2024 02:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6MS3zhy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IZGB1l0j"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F804C6C;
-	Sat, 17 Aug 2024 01:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9BF18827
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 02:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723859888; cv=none; b=g8RQkH5cY8iGacrry3KXPOW7DtG5/tWFDjaEgYfHgqsjWmPJL7O5dESrbJwHgQX4xDQ1mTKtf1kzI2LfE9ulMm5Z6M/Eglm+MDtD2qelbjwIDen+brIVTQarbvl14N8LJpopo2gQG83ZzcQJxPjC3T+xLuNSAY98bvUfXPWKXxg=
+	t=1723860116; cv=none; b=NSGuAOeOJ4uL22JwjI9rO5UbhtLMQfcuEu+IDH7vwJiePSPHcpOxupHBcct5cDbrilSIndfKQCEriRXtOJUaVDzEaZNO1mvmC22/oiq9IVkSYeYbxDaj6YIpqdHXGkEQ/HwrQYhBdcQKxDIW5IJyEDMwlULpfQ6LV2j+6yCQ0vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723859888; c=relaxed/simple;
-	bh=qeg1lNzgCoGHgx7lqLL7Clol+O0nlePey0hI9eo5tck=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lQPKKWw/UYGVEhS1/OpULnerq38F3cys4vZLqkaY3vrFP4VoHnK97Cyei79bFA5JVsHfCCKXJJuIrRyiydbQzuN1/ll+zGUKhPrHMkYZR+vO/sLa/sZwbgzUQVQMRUXDJyU92g8IRUbzqQfLhUJmMaF+VqRHUP4ko+AlHQKgR8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6MS3zhy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6546BC32782;
-	Sat, 17 Aug 2024 01:58:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723859887;
-	bh=qeg1lNzgCoGHgx7lqLL7Clol+O0nlePey0hI9eo5tck=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=R6MS3zhyw3BOOjdZ2XR01k6LCgAYN3e9FdCum/gCdfAoxbtG3nAQOXV6aIY0iR4wJ
-	 5gXdmxELH+4G2fOrEQVpdguSg6bQvxvIv3bRDwHMUwcBujB1F0t4XNHrNru0yvEJ4L
-	 0AKhJZdegLYZzWhvH588vwLNhdsOnPjhakcEp+rgEkmWEULdutdJ0SvraMhlq80OC7
-	 fjoQMz/VodQTPUxju2wUpoWpaN531ebskyXbZud5WmTg58aEVTMwGXUkkufLxzORvx
-	 XIhxhxf/fOpT5Q+NkwUNE2FWyU50/FAuu3V9hyQfA1f5Glcet6BGTAKXzJu++nmwfe
-	 jzHZYi093XgMw==
-Date: Fri, 16 Aug 2024 18:58:05 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Shradha Gupta <shradhagupta@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, "K. Y.
- Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
- Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Long Li <longli@microsoft.com>, Ajay Sharma
- <sharmaajay@microsoft.com>, Simon Horman <horms@kernel.org>, Konstantin
- Taranov <kotaranov@microsoft.com>, Souradeep Chakrabarti
- <schakrabarti@linux.microsoft.com>, Erick Archer
- <erick.archer@outlook.com>, Pavan Chebbi <pavan.chebbi@broadcom.com>, Ahmed
- Zaki <ahmed.zaki@intel.com>, Colin Ian King <colin.i.king@gmail.com>,
- Shradha Gupta <shradhagupta@microsoft.com>
-Subject: Re: [PATCH net-next v3] net: mana: Implement
- get_ringparam/set_ringparam for mana
-Message-ID: <20240816185805.60e16145@kernel.org>
-In-Reply-To: <1723805303-11432-1-git-send-email-shradhagupta@linux.microsoft.com>
-References: <1723805303-11432-1-git-send-email-shradhagupta@linux.microsoft.com>
+	s=arc-20240116; t=1723860116; c=relaxed/simple;
+	bh=v+Pi/DblEZO86qBIJLP05oOr943epaXJ3fCxDeK2Vxs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hsrc8rKb6G8d2fOtnNN2OqZd03xpIZPvGMYWWAjBj8k8T5AnNbbrjwGOxui8XUD4rpy6utPr+b7qDAsxfvqGMfN7GMZ5SBKmKOXvBUWoJrOcagzl0Vu2dRddwYqDi/++cGLppezxRwUiC1mEDxIqbJs+Or4hQnWVgwCXQ+agmwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IZGB1l0j; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fc611a0f8cso22723355ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 19:01:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723860114; x=1724464914; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XuZHGi+VXRXi9xw2FZMQ0Jmzs5dQDajQPPg4POCnbZc=;
+        b=IZGB1l0j8lC112iWMQVlWXduYrPGdwLrgQRC3C7o+ePwDNzp8eZzNwyT/qIl750DR8
+         lKPhCpa395RNQ1SKHmYyNU0axFfZKHcXxUwM0upVxgA/5UoSomokuxie0SykPDSSEANX
+         dWQDgv3By7qJ1l7DKSLPMbBEk3nqfkfUjFixUpt/wXyAHqT4mFL70N/ElyEzMy2YEPWn
+         2wERF1vY/DDM1jTMaceE7XI1TIG5xArYZJGU4MCyvuFutC/FX6EiwY432gAmrcQIoknk
+         WJaDnZms3gANkHDQkDmodS1/hUfmf2td+DzH/CBvYUcHumsfhAnB4JJ6cgydmuycfAh6
+         jA3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723860114; x=1724464914;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XuZHGi+VXRXi9xw2FZMQ0Jmzs5dQDajQPPg4POCnbZc=;
+        b=c9hwAkVLLOQP4XoWpUcsbJNN48jXOio2wwSV+SA5Zkk3Y2rMAVJAb00hthwnTdZ+dA
+         ZS798KEbzLz5UY7+ci+GGNBDl6vdJ3jNRFWTfX86XA4V5G3QRPbRZKx1+sql+FODuEZx
+         fXReEbU0+UnOYgAHArEG6uhXx8QAZdFkD2MeK5oip/oGRnc/LJUfPki2rtduFp2iDnzE
+         1o6oTwuIoUKQcEi9OFjdgO40SyZfad+/nkBorXg0bIrLV7dwQeCSfR/ROEQ8IBKt4MCo
+         WN72mPc6YTVeURC/4SatYNZN3l/p2gko4aK6UnyjVJrSRUoBwsSvvbLIqlxto6OQwUla
+         Gu9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWlNlqnPGBKKGopEFN9XInG65KL/nl+C/Ih+OKgUuZPWtd/qfi91t7Hp92Kt6hQDrXMYZBR9uBcYLNIfNqS2DRrJ6KWbiLbc4nMm5Id
+X-Gm-Message-State: AOJu0YwqFQGqgdxRaquMKgZoOpKaKkz1Y3D4psnOL05oJFuCS2TcTjfC
+	y+2DDIFEWM/tI4PB0Sq6NxoBEQnXxEPciAge8tkyJhDcu3Xs+GrKcxzPeF/x/Q==
+X-Google-Smtp-Source: AGHT+IFwmOfQtJuDzzmgmOvtl7O/FhQchBC4mBKDDin3MuTQxZ1JMs78w5nvcLwydyOTJkhqaRxPgw==
+X-Received: by 2002:a17:902:e747:b0:1fd:69d6:856d with SMTP id d9443c01a7336-20203e84504mr47263195ad.17.1723860114095;
+        Fri, 16 Aug 2024 19:01:54 -0700 (PDT)
+Received: from thinkpad ([220.158.156.146])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f0320f85sm31116245ad.113.2024.08.16.19.01.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 19:01:53 -0700 (PDT)
+Date: Sat, 17 Aug 2024 07:31:48 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Vidya Sagar <vidyas@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] PCI: qcom-ep: Move controller cleanups to
+ qcom_pcie_perst_deassert()
+Message-ID: <20240817020148.7oyvgc7e452dafg5@thinkpad>
+References: <20240816050029.GA2331@thinkpad>
+ <20240816191222.GA69867@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240816191222.GA69867@bhelgaas>
 
-On Fri, 16 Aug 2024 03:48:23 -0700 Shradha Gupta wrote:
-> +	old_tx = apc->tx_queue_size;
-> +	old_rx = apc->rx_queue_size;
-> +	new_tx = clamp_t(u32, ring->tx_pending, MIN_TX_BUFFERS_PER_QUEUE, MAX_TX_BUFFERS_PER_QUEUE);
-> +	new_rx = clamp_t(u32, ring->rx_pending, MIN_RX_BUFFERS_PER_QUEUE, MAX_RX_BUFFERS_PER_QUEUE);
+On Fri, Aug 16, 2024 at 02:12:22PM -0500, Bjorn Helgaas wrote:
+> On Fri, Aug 16, 2024 at 10:30:29AM +0530, Manivannan Sadhasivam wrote:
+> > On Thu, Aug 15, 2024 at 05:47:17PM -0500, Bjorn Helgaas wrote:
+> > > [+cc Vidya, Jon since tegra194 does similar things]
+> > > 
+> > > On Mon, Jul 29, 2024 at 05:52:45PM +0530, Manivannan Sadhasivam wrote:
+> > > > Currently, the endpoint cleanup function dw_pcie_ep_cleanup() and EPF
+> > > > deinit notify function pci_epc_deinit_notify() are called during the
+> > > > execution of qcom_pcie_perst_assert() i.e., when the host has asserted
+> > > > PERST#. But quickly after this step, refclk will also be disabled by the
+> > > > host.
+> > > > 
+> > > > All of the Qcom endpoint SoCs supported as of now depend on the refclk from
+> > > > the host for keeping the controller operational. Due to this limitation,
+> > > > any access to the hardware registers in the absence of refclk will result
+> > > > in a whole endpoint crash. Unfortunately, most of the controller cleanups
+> > > > require accessing the hardware registers (like eDMA cleanup performed in
+> > > > dw_pcie_ep_cleanup(), powering down MHI EPF etc...). So these cleanup
+> > > > functions are currently causing the crash in the endpoint SoC once host
+> > > > asserts PERST#.
+> > > > 
+> > > > One way to address this issue is by generating the refclk in the endpoint
+> > > > itself and not depending on the host. But that is not always possible as
+> > > > some of the endpoint designs do require the endpoint to consume refclk from
+> > > > the host (as I was told by the Qcom engineers).
+> > > > 
+> > > > So let's fix this crash by moving the controller cleanups to the start of
+> > > > the qcom_pcie_perst_deassert() function. qcom_pcie_perst_deassert() is
+> > > > called whenever the host has deasserted PERST# and it is guaranteed that
+> > > > the refclk would be active at this point. So at the start of this function,
+> > > > the controller cleanup can be performed. Once finished, rest of the code
+> > > > execution for PERST# deassert can continue as usual.
+> > > 
+> > > What makes this v6.11 material?  Does it fix a problem we added in
+> > > v6.11-rc1?
+> > 
+> > No, this is not a 6.11 material, but the rest of the patches I
+> > shared offline.
+> 
+> For reference, the patches you shared offline are:
+> 
+>   PCI: qcom: Use OPP only if the platform supports it
+>   PCI: qcom-ep: Do not enable resources during probe()
+>   PCI: qcom-ep: Disable MHI RAM data parity error interrupt for SA8775P SoC
+>   PCI: qcom-ep: Move controller cleanups to qcom_pcie_perst_deassert()
+> 
 
-You can min(), the max side of clam is unnecessary. Core code won't let
-user requests above max provided by "get" thru.
+And then the note...
 
-> +	if (!is_power_of_2(new_tx)) {
-> +		netdev_err(ndev, "%s:Tx:%d not supported. Needs to be a power of 2\n",
-> +			   __func__, new_tx);
-> +		return -EINVAL;
-> +	}
+"last one is not strictly a 6.11 material, but rest are"
 
-The power of 2 vs clamp is a bit odd.
-On one hand you clamp the values to what's supported automatically.
-On the other you hard reject values which are not power of 2.
-Why not round them up?
+Sorry if that confused you. I shouldn't have mentioned this patch anyway.
 
-IDK whether checking or auto-correction is better, but mixing the two
-is odd.
+> > > Is there a Fixes: commit?
+> > 
+> > Hmm, the controller addition commit could be the valid fixes tag.
+> > 
+> > > This patch essentially does this:
+> > > 
+> > >   qcom_pcie_perst_assert
+> > > -   pci_epc_deinit_notify
+> > > -   dw_pcie_ep_cleanup
+> > >     qcom_pcie_disable_resources
+> > > 
+> > >   qcom_pcie_perst_deassert
+> > > +   if (pcie_ep->cleanup_pending)
+> > > +     pci_epc_deinit_notify(pci->ep.epc);
+> > > +     dw_pcie_ep_cleanup(&pci->ep);
+> > >     dw_pcie_ep_init_registers
+> > >     pci_epc_init_notify
+> > > 
+> > > Maybe it makes sense to call both pci_epc_deinit_notify() and
+> > > pci_epc_init_notify() from the PERST# deassert function, but it makes
+> > > me question whether we really need both.
+> > 
+> > There is really no need to call pci_epc_deinit_notify() during the first
+> > deassert (i.e., during the ep boot) because there are no cleanups to be done.
+> > It is only needed during a successive PERST# assert + deassert.
+> > 
+> > > pcie-tegra194.c has a similar structure:
+> > > 
+> > >   pex_ep_event_pex_rst_assert
+> > >     pci_epc_deinit_notify
+> > >     dw_pcie_ep_cleanup
+> > > 
+> > >   pex_ep_event_pex_rst_deassert
+> > >     dw_pcie_ep_init_registers
+> > >     pci_epc_init_notify
+> > > 
+> > > Is there a reason to make them different, or could/should a similar
+> > > change be made to tegra?
+> > 
+> > Design wise both drivers are similar, so it could apply. I didn't
+> > spin a patch because if testing of tegra driver gets delayed (I've
+> > seen this before), then I do not want to stall merging the whole
+> > series. 
+> 
+> It can and should be separate patches, one per driver.  But I don't
+> want to end up with the drivers being needlessly different.
+> 
 
-> +	if (!is_power_of_2(new_rx)) {
-> +		netdev_err(ndev, "%s:Rx:%d not supported. Needs to be a power of 2\n",
-> +			   __func__, new_rx);
+Ok. Let me spin a patch for that driver also.
 
-Instead of printing please use the extack passed in as an argument.
+> > For Qcom it is important to get this merged asap to avoid
+> > the crash.
+> 
+> If this is not v6.11 material, there's time to work this out.
+> 
+> > > > +	if (pcie_ep->cleanup_pending) {
+> > > 
+> > > Do we really need this flag?  I assume the cleanup functions could
+> > > tell whether any previous setup was done?
+> > 
+> > Not so. Some cleanup functions may trigger a warning if attempted to do it
+> > before 'setup'. I think dw_edma_remove() that is part of dw_pcie_ep_cleanup()
+> > does that IIRC.
+> 
+> It looks safe to me:
+> 
+>   dw_pcie_ep_cleanup
+>     dw_pcie_edma_remove
+>       dw_edma_remove(chip = &pci->edma)       # struct dw_pcie *pci
+>         dev = chip->dev
+>         dw = chip->dw
+>         if (!dw)
+>           return -ENODEV
+> 
+> but if not, it could probably be made safe by adding a NULL pointer
+> check and/or a "chip->dw = NULL" at the right spot.
+> 
+> We hardly have any cleanup functions affected by "cleanup_pending", so
+> I think we can decide that they should be safe before 'setup' and just
+> make it so.
+> 
+
+I just tested by removing the cleanup flag and it doesn't seem to scream. Maybe
+the issue I saw previously was unrelated.
+
+- Mani
+
 -- 
-pw-bot: cr
+மணிவண்ணன் சதாசிவம்
 
