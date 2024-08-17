@@ -1,189 +1,162 @@
-Return-Path: <linux-kernel+bounces-290667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30C17955719
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 12:07:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C11A95571C
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 12:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9AE82821DB
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 10:07:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2FF11F21B10
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 10:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D3F149C4A;
-	Sat, 17 Aug 2024 10:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42954149C53;
+	Sat, 17 Aug 2024 10:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="N8Dvz+IY"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4TdjhBt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D348005B
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 10:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796598005B;
+	Sat, 17 Aug 2024 10:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723889254; cv=none; b=DUuuoTsV17sO7stpe4LDXINUUpX02rPOq2OiWTDlVgMzvzZxuWcekKv2y8L53h166Vr4bZBLFsNv0DDiKYDOwEyRbn6dnqKT9o2bn9ZcrF2b1HWBEt7NLofVQ+hkg9AIi1JHUQ2RgImDBaCozV8Yvu350BmNM+i4GViJ0jNGcME=
+	t=1723889302; cv=none; b=J6BWTBpTIWeb8jEFTJJRIi5mqVu8mNC+nw3PwUzJCjrj1E1HBvyGqZAojQR/vf1rJKq4vNsSEma51zPdtqRe0/+L70mcpYycVwsO8i2b70+uKyX8JjiH0kNAqqzcXFjh5wMqtCjnOjTQLzO5Cr0T6eGwaLgM0YqGW7OmXzCEObs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723889254; c=relaxed/simple;
-	bh=Jn9wdDW8U7nXahtKgzAhdBLR5Gusg2jiALCcsf0XAtE=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=g/sUu3tLazawI1E9uUXSupsIP05xxb/CFqAmg9mpzp1QO4MGT8msmxWv1ABlGjpQNGe7K4pLrYmj5H3PBAeUFaYvWj1hTfCLdA9vXZfiMXneY3y4t2UfxtpwsLBqNFF3Br3oGpTF+eMno6kc3e39S5uDZX0pbo8/nXFTjmKGNg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=N8Dvz+IY; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1723889250; x=1724148450;
-	bh=TFYv1VRBNCN/E0qo/1YUyImx5ns3Zf75xpcEDQhjdeI=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=N8Dvz+IYkdHplgdoE9mWA/8JPkLRbVLuSG3Ewa4Gh74ESjdFn9Tn4vdJIgOaKnzuG
-	 EDFpWaHtzdq9FlX6qBUWkw5XF1qDS1ch0ABJRB4w2VcxTBoVgBPc6DuZrYWeG4SpPL
-	 DUPgyVSTNfDDNpFjSDj+Q7wmnPWFjw2Zrzj/bjYa13x/w0RrenvGQ8koXplvj9QvNi
-	 JCMPHLvz/tLmltHH2L2xPPdeN/D2tDBpI1/v+cwwmM1Jf02ybc6XcM3i5eRxf32B3F
-	 snQpb1lKgvZb2n0/i8EnrnrRvpKPqkuTEvRKUcZ1f7ayZAjgR5FS+Ay6K9it6mVDIR
-	 /qRzYbIfrePtg==
-Date: Sat, 17 Aug 2024 10:07:26 +0000
-To: gregkh@linuxfoundation.org, philipp.g.hortmann@gmail.com
-From: =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
-Subject: [PATCH] staging: vt6655: Fix alignment to open parentheses
-Message-ID: <20240817100559.33174-1-dominik.karol.piatkowski@protonmail.com>
-Feedback-ID: 117888567:user:proton
-X-Pm-Message-ID: 32076799cf8c93c638f126ab2e80ea0bbe144d1f
+	s=arc-20240116; t=1723889302; c=relaxed/simple;
+	bh=eWZbiFSANBiGnMWWREKtc2OD3K+I/5bM/NG5nEmc9zE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B8M+kNx6N+/RIHNIIfiQ37JiGXOpgITljWnKv6ComF9n15zGNXSf+WoflEGyW9BpRDOmZplM/ce6T6cK3fiKqz7yhStpZ6odXwZvuWmNDRpGpTPf/pwsA99drOJyjU0PZj7AP9E8eRdOEqnmkpnqK7zgXYzey/qDynUassNaCgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4TdjhBt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D71C1C4AF0D;
+	Sat, 17 Aug 2024 10:08:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723889302;
+	bh=eWZbiFSANBiGnMWWREKtc2OD3K+I/5bM/NG5nEmc9zE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=h4TdjhBtBDzUZBrpzYdyYNMb25cYKGgtQ7nHKsoXC0k11nML9A/nhB1K0P1UiD4H0
+	 1+t/mh6ORyjL9ri+mAt20LlIGqWp2BucWXnXP3ShPGB6AXPS3k5aaeLRRpv5O3T6Tv
+	 DH0RJltX+GKFlSHntVqMFF+hTpPy9o6+FElI1bZxzb2s72Oup5do4+d7f8AI8irXXC
+	 SxxH6+I2ElTId4CSv7Z/oay7gR96jYL8pJOt8343Io1cMC5ZkHVDbD195pqOXdgIJ9
+	 uKQKk3Vgi+uAE8hXdR2WPM39cIZD//9y8p3R4V9+umnQS3Pf6lCKzB/LUFpZnFeAm1
+	 3KNuDK6ter6Tw==
+Date: Sat, 17 Aug 2024 11:08:13 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] iio: humidity: Add support for ENS210
+Message-ID: <20240817110806.72f6b71a@jic23-huawei>
+In-Reply-To: <20240805-ens21x-v6-2-5bb576ef26a6@thegoodpenguin.co.uk>
+References: <20240805-ens21x-v6-0-5bb576ef26a6@thegoodpenguin.co.uk>
+	<20240805-ens21x-v6-2-5bb576ef26a6@thegoodpenguin.co.uk>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-This patch fixes the "Alignment should match open parenthesis" checks
-detected by checkpatch.pl.
+On Mon, 05 Aug 2024 09:12:53 +0100
+Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk> wrote:
 
-Signed-off-by: Dominik Karol Pi=C4=85tkowski <dominik.karol.piatkowski@prot=
-onmail.com>
----
- drivers/staging/vt6655/card.h        |  4 ++--
- drivers/staging/vt6655/device_main.c |  6 +++---
- drivers/staging/vt6655/rxtx.c        | 14 +++++++-------
- 3 files changed, 12 insertions(+), 12 deletions(-)
+> Add support for ENS210/ENS210A/ENS211/ENS212/ENS213A/ENS215.
+>=20
+> The ENS21x is a family of temperature and relative humidity sensors with
+> accuracies tailored to the needs of specific applications.
+>=20
+> Signed-off-by: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
 
-diff --git a/drivers/staging/vt6655/card.h b/drivers/staging/vt6655/card.h
-index f52e42564e81..f6b462ebca51 100644
---- a/drivers/staging/vt6655/card.h
-+++ b/drivers/staging/vt6655/card.h
-@@ -55,8 +55,8 @@ void CARDvSafeResetRx(struct vnt_private *priv);
- void card_radio_power_off(struct vnt_private *priv);
- bool card_set_phy_parameter(struct vnt_private *priv, u8 bb_type);
- bool card_update_tsf(struct vnt_private *priv, unsigned char rx_rate,
--=09=09    u64 bss_timestamp);
-+=09=09     u64 bss_timestamp);
- bool card_set_beacon_period(struct vnt_private *priv,
--=09=09=09  unsigned short beacon_interval);
-+=09=09=09    unsigned short beacon_interval);
-=20
- #endif /* __CARD_H__ */
-diff --git a/drivers/staging/vt6655/device_main.c b/drivers/staging/vt6655/=
-device_main.c
-index 3ff8103366c1..9ea647aefd60 100644
---- a/drivers/staging/vt6655/device_main.c
-+++ b/drivers/staging/vt6655/device_main.c
-@@ -1140,7 +1140,7 @@ static void vnt_interrupt_process(struct vnt_private =
-*priv)
- =09=09=09=09PSbIsNextTBTTWakeUp((void *)priv);
-=20
- =09=09=09if ((priv->op_mode =3D=3D NL80211_IFTYPE_AP ||
--=09=09=09    priv->op_mode =3D=3D NL80211_IFTYPE_ADHOC) &&
-+=09=09=09     priv->op_mode =3D=3D NL80211_IFTYPE_ADHOC) &&
- =09=09=09    priv->vif->bss_conf.enable_beacon)
- =09=09=09=09MACvOneShotTimer1MicroSec(priv,
- =09=09=09=09=09=09=09  (priv->vif->bss_conf.beacon_int -
-@@ -1535,7 +1535,7 @@ static void vnt_bss_info_changed(struct ieee80211_hw =
-*hw,
- =09    priv->op_mode !=3D NL80211_IFTYPE_AP) {
- =09=09if (vif->cfg.assoc && conf->beacon_rate) {
- =09=09=09card_update_tsf(priv, conf->beacon_rate->hw_value,
--=09=09=09=09       conf->sync_tsf);
-+=09=09=09=09=09conf->sync_tsf);
-=20
- =09=09=09card_set_beacon_period(priv, conf->beacon_int);
-=20
-@@ -1763,7 +1763,7 @@ vt6655_probe(struct pci_dev *pcid, const struct pci_d=
-evice_id *ent)
- =09priv->memaddr =3D pci_resource_start(pcid, 0);
- =09priv->ioaddr =3D pci_resource_start(pcid, 1);
- =09priv->port_offset =3D ioremap(priv->memaddr & PCI_BASE_ADDRESS_MEM_MASK=
-,
--=09=09=09=09   256);
-+=09=09=09=09    256);
- =09if (!priv->port_offset) {
- =09=09dev_err(&pcid->dev, ": Failed to IO remapping ..\n");
- =09=09device_free_info(priv);
-diff --git a/drivers/staging/vt6655/rxtx.c b/drivers/staging/vt6655/rxtx.c
-index 5e5ed582c35e..3705cb1e87b6 100644
---- a/drivers/staging/vt6655/rxtx.c
-+++ b/drivers/staging/vt6655/rxtx.c
-@@ -493,9 +493,9 @@ s_uFillDataHead(
- =09=09buf->duration_a =3D cpu_to_le16((u16)s_uGetDataDuration(pDevice, DAT=
-ADUR_A, cbFrameLength, byPktType,
- =09=09=09=09=09=09=09=09      wCurrentRate, bNeedAck, uFragIdx, cbLastFrag=
-mentSize, uMACfragNum, byFBOption));
- =09=09buf->duration_b =3D cpu_to_le16((u16)s_uGetDataDuration(pDevice, DAT=
-ADUR_B, cbFrameLength, PK_TYPE_11B,
--=09=09=09=09=09=09=09=09       pDevice->byTopCCKBasicRate, bNeedAck, uFrag=
-Idx, cbLastFragmentSize, uMACfragNum, byFBOption));
-+=09=09=09=09=09=09=09=09      pDevice->byTopCCKBasicRate, bNeedAck, uFragI=
-dx, cbLastFragmentSize, uMACfragNum, byFBOption));
- =09=09buf->duration_a_f0 =3D cpu_to_le16((u16)s_uGetDataDuration(pDevice, =
-DATADUR_A_F0, cbFrameLength, byPktType,
--=09=09=09=09=09=09=09=09=09  wCurrentRate, bNeedAck, uFragIdx, cbLastFragm=
-entSize, uMACfragNum, byFBOption));
-+=09=09=09=09=09=09=09=09=09 wCurrentRate, bNeedAck, uFragIdx, cbLastFragme=
-ntSize, uMACfragNum, byFBOption));
- =09=09buf->duration_a_f1 =3D cpu_to_le16((u16)s_uGetDataDuration(pDevice, =
-DATADUR_A_F1, cbFrameLength, byPktType,
- =09=09=09=09=09=09=09=09=09 wCurrentRate, bNeedAck, uFragIdx, cbLastFragme=
-ntSize, uMACfragNum, byFBOption));
-=20
-@@ -520,7 +520,7 @@ s_uFillDataHead(
- =09=09=09buf->duration_f0 =3D cpu_to_le16((u16)s_uGetDataDuration(pDevice,=
- DATADUR_A_F0, cbFrameLength, byPktType,
- =09=09=09=09=09=09=09=09=09       wCurrentRate, bNeedAck, uFragIdx, cbLast=
-FragmentSize, uMACfragNum, byFBOption));
- =09=09=09buf->duration_f1 =3D cpu_to_le16((u16)s_uGetDataDuration(pDevice,=
- DATADUR_A_F1, cbFrameLength, byPktType,
--=09=09=09=09=09=09=09=09=09=09wCurrentRate, bNeedAck, uFragIdx, cbLastFrag=
-mentSize, uMACfragNum, byFBOption));
-+=09=09=09=09=09=09=09=09=09       wCurrentRate, bNeedAck, uFragIdx, cbLast=
-FragmentSize, uMACfragNum, byFBOption));
- =09=09=09buf->time_stamp_off =3D vnt_time_stamp_off(pDevice, wCurrentRate)=
-;
- =09=09=09return buf->duration;
- =09=09}
-@@ -1375,8 +1375,8 @@ static int vnt_beacon_xmit(struct vnt_private *priv,
- =09=09/* Get Duration and TimeStampOff */
- =09=09short_head->duration =3D
- =09=09=09cpu_to_le16((u16)s_uGetDataDuration(priv, DATADUR_B,
--=09=09=09=09    frame_size, PK_TYPE_11A, current_rate,
--=09=09=09=09    false, 0, 0, 1, AUTO_FB_NONE));
-+=09=09=09=09=09=09=09    frame_size, PK_TYPE_11A, current_rate,
-+=09=09=09=09=09=09=09    false, 0, 0, 1, AUTO_FB_NONE));
-=20
- =09=09short_head->time_stamp_off =3D
- =09=09=09=09vnt_time_stamp_off(priv, current_rate);
-@@ -1391,8 +1391,8 @@ static int vnt_beacon_xmit(struct vnt_private *priv,
- =09=09/* Get Duration and TimeStampOff */
- =09=09short_head->duration =3D
- =09=09=09cpu_to_le16((u16)s_uGetDataDuration(priv, DATADUR_B,
--=09=09=09=09    frame_size, PK_TYPE_11B, current_rate,
--=09=09=09=09    false, 0, 0, 1, AUTO_FB_NONE));
-+=09=09=09=09=09=09=09    frame_size, PK_TYPE_11B, current_rate,
-+=09=09=09=09=09=09=09    false, 0, 0, 1, AUTO_FB_NONE));
-=20
- =09=09short_head->time_stamp_off =3D
- =09=09=09vnt_time_stamp_off(priv, current_rate);
---=20
-2.34.1
+Hi Joshua,
 
+Sorry for delay on this one, it was next on the list when I ran
+out of time before going on a short vacation.
+
+Anyhow, just some minor whitespace stuff so I'll tweak that
+whilst applying.
+
+Applied to the togreg branch of iio.git and pushed out as testing
+for 0-day etc to poke at it and see if we missed anything.
+
+Also a minor thing with scoped_guard().
+Compilers can't figure out that there is not path out of that so
+we get an unmarked fallthrough warning.
+
+In file included from ./include/linux/irqflags.h:17,
+                 from ./arch/x86/include/asm/special_insns.h:10,
+                 from ./arch/x86/include/asm/processor.h:25,
+                 from ./include/linux/sched.h:13,
+                 from ./include/linux/delay.h:23,
+                 from drivers/iio/humidity/ens210.c:18:
+drivers/iio/humidity/ens210.c: In function =E2=80=98ens210_read_raw=E2=80=
+=99:
+./include/linux/cleanup.h:172:9: warning: this statement may fall through [=
+-Wimplicit-fallthrough=3D]
+  172 |         for (CLASS(_name, scope)(args),                            =
+     \
+      |         ^~~
+drivers/iio/humidity/ens210.c:153:17: note: in expansion of macro =E2=80=98=
+scoped_guard=E2=80=99
+  153 |                 scoped_guard(mutex, &data->lock) {
+      |                 ^~~~~~~~~~~~
+drivers/iio/humidity/ens210.c:160:9: note: here
+  160 |         case IIO_CHAN_INFO_SCALE:
+      |         ^~~~
+  CHECK   drivers/iio/humidity/ens210.c
+  MODPOST Module.symvers
+
+Annoyingly even an unreachable() doesn't work for this particular situation.
+
+ CC [M]  drivers/iio/humidity/ens210.o
+drivers/iio/humidity/ens210.o: warning: objtool: ens210_read_raw+0x52: can'=
+t find jump dest instruction at .text+0x36c
+
+So for now I've added
+
+diff --git a/drivers/iio/humidity/ens210.c b/drivers/iio/humidity/ens210.c
+index bc5dedb46b83..e9167574203a 100644
+--- a/drivers/iio/humidity/ens210.c
++++ b/drivers/iio/humidity/ens210.c
+@@ -157,6 +157,7 @@ static int ens210_read_raw(struct iio_dev *indio_dev,
+                                return ret;
+                        return IIO_VAL_INT;
+                }
++               return -EINVAL; /* compiler warning workaround */
+        case IIO_CHAN_INFO_SCALE:
+                if (channel->type =3D=3D IIO_TEMP) {
+                        *val =3D 15;
+
+Thanks,
+
+Jonathan
+
+> diff --git a/drivers/iio/humidity/ens210.c b/drivers/iio/humidity/ens210.c
+> new file mode 100644
+> index 000000000000..719fdac817cf
+> --- /dev/null
+> +++ b/drivers/iio/humidity/ens210.c
+
+> +
+> +static int ens210_probe(struct i2c_client *client)
+> +{
+> +	struct ens210_data *data;
+> +	struct iio_dev *indio_dev;
+> +	uint16_t part_id;
+> +	int ret;
+> +
+> +	if (!i2c_check_functionality(client->adapter,
+> +				     I2C_FUNC_SMBUS_WRITE_BYTE_DATA |
+> +					     I2C_FUNC_SMBUS_WRITE_BYTE |
+> +					     I2C_FUNC_SMBUS_READ_I2C_BLOCK)) {
+Non standard alignment. I'll fix up.
+
+> +		return dev_err_probe(&client->dev, -EOPNOTSUPP,
+> +			"adapter does not support some i2c transactions\n");
+> +	}
 
 
