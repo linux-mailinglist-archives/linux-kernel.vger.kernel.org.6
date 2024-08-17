@@ -1,112 +1,121 @@
-Return-Path: <linux-kernel+bounces-290673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5B8E95572B
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 12:20:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C132895572E
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 12:25:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5501F282466
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 10:20:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DDCDB2170F
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 10:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E438149C4D;
-	Sat, 17 Aug 2024 10:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74588149C4D;
+	Sat, 17 Aug 2024 10:25:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qKMEe1NJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X1uZUHiE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DA558ABC;
-	Sat, 17 Aug 2024 10:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7217B657;
+	Sat, 17 Aug 2024 10:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723890044; cv=none; b=TamzvsEZqQyCNE7sB4tbcQooPqthl6pdDTmewc1yvISngnZUpSd43y9cn9C3MVGnehZ7DNuQ8U5Bk+/ofFgVVALqxRsqvA0Qb3+dMwmvjlxLH//LTtLqVl9qKjJm2KfmL8NKw2/3e0+L8gQ229x0dAUM9RjtaAuRXKSEPClgM+A=
+	t=1723890345; cv=none; b=eKrG9x+7usGBNxG4NEiKcNcrVk20vu2RWDZVw9pOTQu+QlTcNoigvSSWLg0k6xRjFE/zthPzDOLf/4eQ/KGPJ3mKHsC144Q5j0XM8qtsuTFenTcXwFG9E3b0O3sHfkzYQ+iagUMu9u5GBbFvo8x5YgrOFXXLkJeeltk8oC49VU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723890044; c=relaxed/simple;
-	bh=gQjONiikFsXYs3z8NWw5w1fNzi3PrS2Oc2oXtECh4tA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gCNxdLfaRPv533q3V5cMQEIh4ARpkM50Z7pCbbw0O2WS6TzhfKfw8g9Lgh/p5g+k8xuFoBaNGGdfSIlh5U9ug2xgVZTRPLheOCA+e0liQczEo7Kn4Lox65h2MNLOWIDvhBmpbRJNdINNZ9S4PhCKxY9VE7dbmV0rovJYjSKaMJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qKMEe1NJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCC3EC116B1;
-	Sat, 17 Aug 2024 10:20:42 +0000 (UTC)
+	s=arc-20240116; t=1723890345; c=relaxed/simple;
+	bh=DHhe3pmtDxyRax9ygVaZwi+haQX8zawBPIakTdO65OU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kMUGlwNgoT4Fe7euzf129TocG+B3zBd92QC5old6vjDIOgYVj5+f6nuuisExNG/1xPNL7o/UdqkwjI2PLJ5qqFtJW3NrAy+g0AWSPiWpfuR8PiAAezoAfvXXVtCROwj0OZyE5Tg/1nUy2mWMgfn8XJXdMiVJZKUqKhUtjMOIHIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X1uZUHiE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32F01C116B1;
+	Sat, 17 Aug 2024 10:25:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723890044;
-	bh=gQjONiikFsXYs3z8NWw5w1fNzi3PrS2Oc2oXtECh4tA=;
+	s=k20201202; t=1723890345;
+	bh=DHhe3pmtDxyRax9ygVaZwi+haQX8zawBPIakTdO65OU=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qKMEe1NJqLoh4VDDbcqtQoVclQPDFq6PlQWhdthBrf9hM05IxaHNcZuhl1r/e0fb7
-	 b5lGupxPy50X2UI8IAc2bT+nmTa0kR+WA8qivrLv4CiTAPX6bdzIMzQrMEO1bW5Q7m
-	 eNn+oWcqKQ4nub+/JYNHUJ/vweK6ACaVy6feiY7XiHZCUIBQH1lfK8qKz8V13Em8zi
-	 mzv0OsMb1Xp/SgxZntLOknrejIVmlW9nvGDeThWpgp3dkiFZ1E8Mx/6Pq+tc0PTjMO
-	 8Xi3tx/sqoQI2qvsaI1pRj8xyqTWWAhagd2tbwAJteWppXiNur6XWfoEDtP8Aya4E/
-	 9NsU3I5Hqtkpg==
-Date: Sat, 17 Aug 2024 11:20:37 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Dumitru Ceclan <mitrutzceclan@gmail.com>
-Cc: dlechner@baylibre.com, dumitru.ceclan@analog.com0,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Dumitru Ceclan
- <dumitru.ceclan@analog.com>
-Subject: Re: [PATCH] iio: adc: ad7173: fix GPIO device info
-Message-ID: <20240817112037.68cb99c2@jic23-huawei>
-In-Reply-To: <20240809134909.26829-1-dumitru.ceclan@analog.com>
-References: <20240809134909.26829-1-dumitru.ceclan@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	b=X1uZUHiEhv04V2Z9T7Ey1pL2Ih2gnasu7T5IuEMEwQ8lOHweIsVlQKl17TW68jzIF
+	 0PIBCnwAcmU9GGeM55o0tj+nMe+fwmBWuKc3RETFMPYBWbVY/pQ9bdq/aAFkksYPEa
+	 8+e+8R/xjssLoRXBKPK2WR7E+AeQChlPCU80Ak+Dms9l3aNiBUB9hvqkasOFxxAmLW
+	 Ty+I/pbP2X9aAZg06HXUMOFfgpTqZCCIh9n9BlDsrLkSw668JhTk18SF7WTcjZgBRR
+	 5xmb3RUbqMM23X/YXCo6LdjYC5NNGHWmfZJZFhs4KVCH6jRNcqnilfkp6XyuJYVw1D
+	 z3drnIZYCLuFA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sfGcx-004Vcv-00;
+	Sat, 17 Aug 2024 11:25:43 +0100
+Date: Sat, 17 Aug 2024 11:25:42 +0100
+Message-ID: <86a5hbzbrt.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Zenghui Yu <yuzenghui@huawei.com>
+Cc: <kvmarm@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>,
+	<oliver.upton@linux.dev>,
+	<james.morse@arm.com>,
+	<suzuki.poulose@arm.com>,
+	<wanghaibin.wang@huawei.com>
+Subject: Re: [PATCH] KVM: arm64: vgic-debug: Don't put unmarked LPIs
+In-Reply-To: <20240817101541.1664-1-yuzenghui@huawei.com>
+References: <20240817101541.1664-1-yuzenghui@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: yuzenghui@huawei.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, wanghaibin.wang@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Fri,  9 Aug 2024 16:49:08 +0300
-Dumitru Ceclan <mitrutzceclan@gmail.com> wrote:
+On Sat, 17 Aug 2024 11:15:41 +0100,
+Zenghui Yu <yuzenghui@huawei.com> wrote:
+> 
+> If there were LPIs being mapped behind our back (i.e., between .start() and
+> .stop()), we would put them at iter_unmark_lpis() without checking if they
+> were actually *marked*, which is obviously not good.
+> 
+> Switch to use the xa_for_each_marked() iterator to fix it.
+> 
+> Fixes: 85d3ccc8b75b ("KVM: arm64: vgic-debug: Use an xarray mark for debug iterator")
+> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+> ---
+>  arch/arm64/kvm/vgic/vgic-debug.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/kvm/vgic/vgic-debug.c b/arch/arm64/kvm/vgic/vgic-debug.c
+> index bc74d06398ef..e1397ab2072a 100644
+> --- a/arch/arm64/kvm/vgic/vgic-debug.c
+> +++ b/arch/arm64/kvm/vgic/vgic-debug.c
+> @@ -85,7 +85,7 @@ static void iter_unmark_lpis(struct kvm *kvm)
+>  	struct vgic_irq *irq;
+>  	unsigned long intid;
+>  
+> -	xa_for_each(&dist->lpi_xa, intid, irq) {
+> +	xa_for_each_marked(&dist->lpi_xa, intid, irq, LPI_XA_MARK_DEBUG_ITER) {
+>  		xa_clear_mark(&dist->lpi_xa, intid, LPI_XA_MARK_DEBUG_ITER);
+>  		vgic_put_irq(kvm, irq);
+>  	}
 
-> Models AD4114/5/6 have .higher_gpio_bits = true. This is not correct as
-> the only models that have the GPIO bits to a higher position are AD4111/2.
-> 
-> Fix by removing the higher_gpio_bits = true from the AD4114/5/6 models.
-> 
-> Fixes: 13d12e3ad12d ("iio: adc: ad7173: Add support for AD411x devices")
-> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
-Applied and marked for stable.
+Ouch. Nicely caught. I think this deserves a
+
+Cc: stable@vger.kernel.org # v6.10
+
+With that,
+
+Reviewed-by: Marc Zyngier <maz@kernel.org>
 
 Thanks,
 
-Jonathan
+	M.
 
-> ---
->  drivers/iio/adc/ad7173.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
-> index 9544bf7142ad..b77e2beb502a 100644
-> --- a/drivers/iio/adc/ad7173.c
-> +++ b/drivers/iio/adc/ad7173.c
-> @@ -302,7 +302,6 @@ static const struct ad7173_device_info ad4114_device_info = {
->  	.num_configs = 8,
->  	.num_voltage_in = 16,
->  	.num_gpios = 4,
-> -	.higher_gpio_bits = true,
->  	.has_vincom_input = true,
->  	.has_temp = true,
->  	.has_input_buf = true,
-> @@ -320,7 +319,6 @@ static const struct ad7173_device_info ad4115_device_info = {
->  	.num_configs = 8,
->  	.num_voltage_in = 16,
->  	.num_gpios = 4,
-> -	.higher_gpio_bits = true,
->  	.has_vincom_input = true,
->  	.has_temp = true,
->  	.has_input_buf = true,
-> @@ -338,7 +336,6 @@ static const struct ad7173_device_info ad4116_device_info = {
->  	.num_configs = 8,
->  	.num_voltage_in = 16,
->  	.num_gpios = 4,
-> -	.higher_gpio_bits = true,
->  	.has_vincom_input = true,
->  	.has_temp = true,
->  	.has_input_buf = true,
-
+-- 
+Without deviation from the norm, progress is not possible.
 
