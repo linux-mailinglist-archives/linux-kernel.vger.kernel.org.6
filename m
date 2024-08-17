@@ -1,92 +1,125 @@
-Return-Path: <linux-kernel+bounces-290799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A4B69558CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 17:50:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C2C89558D1
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 17:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 368D2281A6A
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:50:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F4DB282914
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 15:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7CE153598;
-	Sat, 17 Aug 2024 15:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31FA8154452;
+	Sat, 17 Aug 2024 15:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JEncB7cs"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="mUubDfZ6"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0361B66E;
-	Sat, 17 Aug 2024 15:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3851537D9;
+	Sat, 17 Aug 2024 15:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723909828; cv=none; b=oA1++mbIDvhBAJCm2WynIRH0Ytrblblnrp6lVCMNRr9Xy+ZKUX9Cl3P9WusR8nBW2Z9bYpGvwB98Z3JehnHsDAq+lGXkj56jMDF57RuHP3qpv5fAd85q4g2RGgiRwd0M80Ah9EfYiRrXz4Mfi9jqQYvtEaL62vR/IpOJGljNTwU=
+	t=1723910109; cv=none; b=O0W1ij55G1W79skFY27FSF3VMeHAAItNeC156LApXHddP94G21YtoKYA6ZcUUDmT8U6OUM52MEZc3fFh/r1cz1pxtgcRGxu/WdNoaXoz6nvYPUGRw+u5SOQUnW5kQiEQ/SCGR/DXthCF1GM+hT23k96gSd6RgC6VPdkedUCyJ+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723909828; c=relaxed/simple;
-	bh=fUJCAK8PPToGy0AWsAAjITyCFLBUAd3mJakeS/9+NBQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=agU3DZdhfCohb5eP4MwohLuuTLjgE+zuSdTk8qaERaiOiFvpkAzOVND9eczjhdrIm4UHfpsn/9Ao/FQ0xQzKOUVZGbELVFnayVsPmiDe2KQpD1e0MLilNm86a42CQv7DQoBt5R58yuER879QFS6rsGVB9PvOVgFLqXRyboYnz6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JEncB7cs; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-530e22878cfso2980246e87.2;
-        Sat, 17 Aug 2024 08:50:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723909824; x=1724514624; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=h1GvbgdyiJc4EjKcSTE6L8qq7eWcsQYjW+Rfw/8jZPY=;
-        b=JEncB7csT3PyIZZJzXOqGSWJKYGHi6ftY4hQ88fjzT5COIeHApJpEGEDJdpFsOgV6O
-         ohExV4tz7H5Q/XTSEOt5FaAyBKSorBVIFSFx7F0G69cUCCfdxIUzn2Q6vDY4Y/xjnGkz
-         vW+OLwXnkom5g0DkFUtPpYc/MRRf6s43DwfUDhdjvp45W2Ib194ME3zA43TePvtLWWGT
-         wmzD3k4jHMJ37EPyH9OnGaerX3PdSPDfx06S5T+A85qnpxDigr0gEIuJtexNi8fHxM1q
-         tBiwvdzPf1F3223DeVmakWjp8ZSTTdIB3fAtoLDtoyuWwXqFgS3u59OruNiUPWHWVXyo
-         Tftw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723909824; x=1724514624;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=h1GvbgdyiJc4EjKcSTE6L8qq7eWcsQYjW+Rfw/8jZPY=;
-        b=NbkXh02NZAuPd6XtbDhG9miG5Z2Llm9ZfGri0lObx3agQNGvBySZnu/bl+O2Led1mn
-         WK5J7QiLaICADjPznQQRl6LkY9HhlVBS/LJh/gtCJIjwhGWie4NBjcJcakF15Pi1i6F3
-         VMzfonSbKxfBF+j6gRzRGF7WQ9uPwYFnuAsXQETcOVcsvU/0VMq5oa8GMEHQsgKT7ZLX
-         30kcSjUsxu4ChZcfN/22WVgScVqtlp7KydPW6kAMqv5UAbNrny1UR5ufhCfTa1Z8jTxb
-         qikNqA/S1kgWvEXODdbTPNq4/KBHiFFoXs4SA8TxbnLMKhEmcmU6KAhNljDq0Bn1rEYk
-         yKrw==
-X-Forwarded-Encrypted: i=1; AJvYcCWsgSkjtuukWOmUPp5AzyWlzew1FP2nw1b58w/WEXe1jjXhnBMoeYR0tg8E9SguwAcu02p3tQhAXrUsihwppkMvA/s2m/ybcfoIDPzM
-X-Gm-Message-State: AOJu0Yw4D0NKPGzHH6rabVP2vLyH+WTkWl+4SlG7Fu6OjoDHKJYw4Rul
-	5zoekKG58+nnWqmXypmZSsyvIo08Ehpt2irpmnEbBQ1bDZiKucTUV7DycNsST3cARMnp0w7wGrt
-	DN8g7XmedHl6xXFkoh6PVoXGdrDI=
-X-Google-Smtp-Source: AGHT+IF2zinGhuKR0LifhVhDWm/WIO+nRhia7/dj9Zoi3GL25cuGgmUrcyhsCDWIRjYL6RZ5OS+kHcrVt0TGrzuQJrI=
-X-Received: by 2002:a05:6512:110c:b0:533:e83:c414 with SMTP id
- 2adb3069b0e04-5331c6edea5mr3382241e87.59.1723909823324; Sat, 17 Aug 2024
- 08:50:23 -0700 (PDT)
+	s=arc-20240116; t=1723910109; c=relaxed/simple;
+	bh=Pv2kmBCJrCf1bGsREJrDB6o6cv0JyZD/VQoKxKxLPug=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GR27pxrXp0CTr4rMJ6+zT0Fm+SzTrVy/A3S7rjppX3v1rgfopHlFgddG7LAFfF4dHWsFs1BVA6VVSf5gUg1R6BGeVf4ruq1yFCqTCEiAxCOhdhBxPOt1lvrqv+37VpAA/dWPKSlzVUqipZJpjh1J0S+dtw6lNnGwcKId4FauI4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=mUubDfZ6; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
+	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=iPts1Rj7m/aa9fAx0luy8RGZYF61tp2ZWT085zcOXdU=; b=mUubDfZ6Di8mQoT/gvSeqZOrfh
+	K8Qmz/+a+vbYEZpKsA1KQylfAY4PkGQmd0EgJ8naFGsa6TamCHVYA1CtC+MvmGdIEa6obT1yTJvoW
+	bxcESlb5gYEuHVOXfUCEe4dFWXitQACorlt6+S3XYiUFmvw+36bqHtWBwyhixO6YiQqA0yejxC/yd
+	qh4mOnxT8h81Kb2RI+oddVw2F3wVsLg0uYMWx+FX8AfZex0OubaKSyY2UV2IcGLQKustA3qgoAtEl
+	x8vw+FSXx49HUu+WjK+wgEu4Fn/qk7DH2M0EhaIXbqZpLHetsJ/MdejvzFlHh/aNAtYn97s4T0WVp
+	G73Zy4SA==;
+Received: from [2001:9e8:9db:8201:3235:adff:fed0:37e6] (port=45034 helo=lindesnes.fjasle.eu)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1sfLlY-00E1zW-Pc;
+	Sat, 17 Aug 2024 17:54:56 +0200
+Date: Sat, 17 Aug 2024 17:54:51 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Jose Fernandez <jose.fernandez@linux.dev>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Christian Heusel <christian@heusel.eu>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] kbuild: add debug package to pacman PKGBUILD
+Message-ID: <20240817-brave-labrador-from-eldorado-e929a8@lindesnes>
+References: <20240817151147.156479-1-jose.fernandez@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814113135.14575-1-abhashkumarjha123@gmail.com> <20240817153953.1743e020@jic23-huawei>
-In-Reply-To: <20240817153953.1743e020@jic23-huawei>
-From: Abhash jha <abhashkumarjha123@gmail.com>
-Date: Sat, 17 Aug 2024 21:20:10 +0530
-Message-ID: <CAG=0RqLaigoVLN2D9LEfC0_1ctJO6OzwEgpeOx8NQavB4mZxoA@mail.gmail.com>
-Subject: Re: [PATCH v7 0/2] Add light channel for LTR390
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: linux-iio@vger.kernel.org, anshulusr@gmail.com, lars@metafoo.de, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240817151147.156479-1-jose.fernandez@linux.dev>
 
-> This is v7 mark 2.  I'm confused, but I think I picked up this version
-> (Seems I'd queued an earlier one and not mentioned it on the list though
-> so I've dropped that in favour of this).
->
-Does that mean that you have picked up the patch 1/2 and 2/2 of the v7 series
-as well ?
+On Sat, Aug 17, 2024 at 09:11:47AM -0600, Jose Fernandez wrote:
+> Add a new debug package to the PKGBUILD for the pacman-pkg target. The
+> debug package includes the non-stripped vmlinux file, providing access
+> to debug symbols needed for kernel debugging and profiling. The vmlinux
+> file will be installed to /usr/src/debug/${pkgbase}. The debug package
+> will be built by default and can be excluded by overriding PACMAN_EXTRAPACKAGES.
+> 
+> Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
+> Reviewed-by: Peter Jung <ptr1337@cachyos.org>
+> ---
+> v1->v2:
+> - Use the new PACMAN_EXTRAPACKAGES [1] variable to allow users to disable the
+> debug package if desired, instead of always including it.
+> 
+> [1] https://lore.kernel.org/lkml/20240813185900.GA140556@thelio-3990X/T/
+> 
+>  scripts/package/PKGBUILD | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> index fbd7eb10a52c..d40d282353de 100644
+> --- a/scripts/package/PKGBUILD
+> +++ b/scripts/package/PKGBUILD
+> @@ -5,7 +5,7 @@
+>  pkgbase=${PACMAN_PKGBASE:-linux-upstream}
+>  pkgname=("${pkgbase}")
+>  
+> -_extrapackages=${PACMAN_EXTRAPACKAGES-headers api-headers}
+> +_extrapackages=${PACMAN_EXTRAPACKAGES-headers api-headers debug}
+>  for pkg in $_extrapackages; do
+>  	pkgname+=("${pkgbase}-${pkg}")
+>  done
+> @@ -106,6 +106,15 @@ _package-api-headers() {
+>  	${MAKE} headers_install INSTALL_HDR_PATH="${pkgdir}/usr"
+>  }
+>  
+> +_package-debug(){
+> +	pkgdesc="Non-stripped vmlinux file for the ${pkgdesc} kernel"
+> +	depends=(${pkgbase}-headers)
+> +
+> +	cd "${objtree}"
+> +	mkdir -p "$pkgdir/usr/src/debug/${pkgbase}"
+> +	install -Dt "$pkgdir/usr/src/debug/${pkgbase}" -m644 vmlinux
+> +}
+> +
 
-Thanks,
-Abhash
+If you like to also include debug stuff for kernel modules, you might
+want to have a look at scripts/package/builddeb's install_linux_image_dbg.
+
+Kind regards,
+Nicolas
 
