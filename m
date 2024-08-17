@@ -1,83 +1,137 @@
-Return-Path: <linux-kernel+bounces-290557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA6D89555BC
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 08:15:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09E559555BF
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 08:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71B04285637
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 06:15:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B53E31F2394C
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 06:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA2AE136E01;
-	Sat, 17 Aug 2024 06:15:29 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A5613AD2F;
+	Sat, 17 Aug 2024 06:16:39 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781CB1E52C;
-	Sat, 17 Aug 2024 06:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25283BA2D;
+	Sat, 17 Aug 2024 06:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723875329; cv=none; b=aRaOGrd33jUPK6O3wfywVTuTtuXh0JUHyNg7SVIg4V5YLL7cSevKeo2VbHmhEqMd6fo8bx0R95uBYnAUFodcjxFoAq8RFOSzN9rjXQyZOPWRZYpx6O8D+5LnNm0tScllUqvLfDcDPlosmmt2Q9JP5w9RQbcoxvKV1xsUPL1aplQ=
+	t=1723875399; cv=none; b=ZOrwXBSDX2hra12XNxzXAC8HAmqowaDVqQThw1pfNa/Qo3xIwiS7WTKZmeyaqBZ44eagePFKNkzRUFoHvyfdke9E7QTrtb0ra5zeNVRQ5QGDm+8JEMTAZ9BpGLyZhKLdsZlYACLUi40XbEzKJ5xheeph8seaXVUpHqOKvlHNdhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723875329; c=relaxed/simple;
-	bh=AYQp8r4LWRwy7ODCGzAO9/jcbD6lhUJOm65ht+Gm7/s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YVOeDcUukK9L96LJpnMN1RiUm5q+xfETbEVXOogOAZIUMewJldaHa22qoXW9lukB+UKVU4yDMJlHyH9Ce2p+OcNJW9nk7iOoYG1DG9hZUfzrAt2f0fkt0kjML8un6aGs2w+H6nC6NDX2BCT118uG5BwlrKAem2yS52uowR6Q2TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Wm7pD4YMLz1xv56;
-	Sat, 17 Aug 2024 14:13:24 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4E8DB140138;
-	Sat, 17 Aug 2024 14:15:17 +0800 (CST)
-Received: from [10.174.179.113] (10.174.179.113) by
- dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 17 Aug 2024 14:15:16 +0800
-Message-ID: <adae952a-6a99-ea21-ac98-c304f4afcba0@huawei.com>
-Date: Sat, 17 Aug 2024 14:15:16 +0800
+	s=arc-20240116; t=1723875399; c=relaxed/simple;
+	bh=4IRGa72FdT2uVCvD1C6kgQEUqWo/gKm1kKoke0mBBZ8=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=QUf67vEK8/UjLeb6Cp335kKnCkFHq39yBv/4ow4qjjvRKTf4RjhQwONvF0thtPWRQwZg4UggdmUDHRmZg4nuS8o86hd/L1AIBjjI9dPmfDlqXlppIEmmyUFXvpm1EeBLJQcYwbDvhPYJPGhNgAKxZPdbkUmbj32VyzGv+/NP/cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wm7sg0fgVz4f3jjk;
+	Sat, 17 Aug 2024 14:16:23 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 899701A06D7;
+	Sat, 17 Aug 2024 14:16:32 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgBXzII+QMBmzDWwBw--.2489S3;
+	Sat, 17 Aug 2024 14:16:32 +0800 (CST)
+Subject: Re: [PATCH v2 3/6] iomap: advance the ifs allocation if we have more
+ than one blocks per folio
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ djwong@kernel.org, brauner@kernel.org, david@fromorbit.com, jack@suse.cz,
+ yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
+ <20240812121159.3775074-4-yi.zhang@huaweicloud.com>
+ <ZrxBfKi_DpThYo94@infradead.org>
+ <58d9c752-1b40-0af8-370c-cf03144c54c0@huaweicloud.com>
+ <ZsAqG-Q527PYWYrz@casper.infradead.org>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <73a60117-79c2-fa69-2113-1932a644363f@huaweicloud.com>
+Date: Sat, 17 Aug 2024 14:16:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH net-next] gve: Remove unused declaration
- gve_rx_alloc_rings()
+In-Reply-To: <ZsAqG-Q527PYWYrz@casper.infradead.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-To: Simon Horman <horms@kernel.org>
-CC: <jeroendb@google.com>, <pkaligineedi@google.com>, <shailend@google.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <willemb@google.com>, <hramamurthy@google.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240816101906.882743-1-yuehaibing@huawei.com>
- <20240816164513.GY632411@kernel.org>
-From: Yue Haibing <yuehaibing@huawei.com>
-In-Reply-To: <20240816164513.GY632411@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBXzII+QMBmzDWwBw--.2489S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7CF13tw1UZrWUtr4kWrWUCFg_yoW8KFy3pF
+	9rKFyDGFW8Ga17Cr9293W7Zw1Fq347JFy5XF4aqw1akFn0q3W7K3W2ga4jkay7Gwn7Aw40
+	q3y7XFZrWFy5A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
+	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
+	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
+	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
+	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-
-On 2024/8/17 0:45, Simon Horman wrote:
-> On Fri, Aug 16, 2024 at 06:19:06PM +0800, Yue Haibing wrote:
->> Commit f13697cc7a19 ("gve: Switch to config-aware queue allocation")
->> convert this function to gve_rx_alloc_rings_gqi().
+On 2024/8/17 12:42, Matthew Wilcox wrote:
+> On Sat, Aug 17, 2024 at 12:27:49PM +0800, Zhang Yi wrote:
+>> On 2024/8/14 13:32, Christoph Hellwig wrote:
+>>> On Mon, Aug 12, 2024 at 08:11:56PM +0800, Zhang Yi wrote:
+>>>> From: Zhang Yi <yi.zhang@huawei.com>
+>>>>
+>>>> Now we allocate ifs if i_blocks_per_folio is larger than one when
+>>>> writing back dirty folios in iomap_writepage_map(), so we don't attach
+>>>> an ifs after buffer write to an entire folio until it starts writing
+>>>> back, if we partial truncate that folio, iomap_invalidate_folio() can't
+>>>> clear counterpart block's dirty bit as expected. Fix this by advance the
+>>>> ifs allocation to __iomap_write_begin().
+>>>
+>>> Wouldn't it make more sense to only allocate the ifѕ in
+>>> iomap_invalidate_folio when it actually is needed?
+>>>
 >>
->> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+>> I forget to mention that truncate_inode_partial_folio() call
+>> folio_invalidate()->iomap_invalidate_folio() only when the folio has
+>> private, if the folio doesn't has ifs, the iomap_invalidate_folio()
+>> would nerver be called, hence allocate the ifs in
+>> iomap_invalidate_folio() is useless.
+>>
+>> In my opinion, one solution is change to always call folio_invalidate()
+>> in truncate_inode_partial_folio(), all callbacks should handle the no
+>> private case. Another solution is add a magic (a fake ifs) to
+>> folio->private and then convert it to a real one in
+>> iomap_invalidate_folio(), any thoughts?
 > 
-> Reviewed-by: Simon Horman <horms@kernel.org>
+> Why do we need iomap_invalidate_folio() to be called if there is no ifs?
+> Even today, all it does is call ifs_free() if we're freeing the entire
+> folio (which is done by truncate_cleanup_folio() and not by
+> truncate_inode_partial_folio().
 > 
-> In future, please consider grouping similar changes, say up to 10,
-> in a patchset.
+Please see patch 2, if we truncate a partial folio (through punch hole or
+truncate) on a filesystem with blocksize < folio size, it will left over
+dirty bits of truncated/punched blocks, and this will lead to a hole with
+dirty bit set but without any block allocated/reserved, this is not
+correct.
 
-ok, thanks for your review.
-> .
+Hence we also need to call iomap_invalidate_folio() by
+truncate_inode_partial_folio() and clear partial folio of the counterpart
+dirty bits. But now we don't allocate ifs in __iomap_write_begin() when
+writing an entire folio, so it doesn't has ifs, but we still can
+partial truncate this folio, we should allocate ifs for it and update
+the dirty bits on it.
+
+Thanks,
+Yi.
+
+
 
