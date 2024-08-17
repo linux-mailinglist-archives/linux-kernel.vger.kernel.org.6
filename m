@@ -1,171 +1,627 @@
-Return-Path: <linux-kernel+bounces-290532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8B4D955562
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 06:33:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 314B2955555
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 06:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF00F2855EF
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 04:33:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1674A1C21951
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 04:25:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD6E77113;
-	Sat, 17 Aug 2024 04:33:40 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC4E78C89;
+	Sat, 17 Aug 2024 04:25:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="aVpLglRQ"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45876FBF0;
-	Sat, 17 Aug 2024 04:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC421E52C;
+	Sat, 17 Aug 2024 04:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723869219; cv=none; b=ru3HjXe2g+3DqoUKHg5XPu91ZIX6J3WjSoxtUry9eqZM+NS7bPpk2kPY8HDA3otPUP5AdYn/LefRYZSLQ5pdSrcliBFw5ZBaf9DDMAzPjTxb6tIz74s90MYyxkLxtgQ3sUg3JzgwAHpdboaTqXyhnnunPXS3EtupI8feZnFI35w=
+	t=1723868713; cv=none; b=Rvuf2tSfvqqLLvM+uyGzpxRn0OEGuMwM7DaIWYY522U8uh+2vihJMocp0hjxGTRZSD+iRh6cRqgh1mbqWREgjIiL4AweVZQ3/gPj2Bk3ER51ThFMQc0lwi4+xyGKjDF6PN7jNjjdi1PQuRlA3bndiC94giAyk4A9SRgBhfj76NE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723869219; c=relaxed/simple;
-	bh=eDnp+2gx6QCRwhpBESBXCQMwVIUXqpzIau2n3A/Fvc0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=POc2J02Z85lqzZm89YCuTcJeyFg+U+HZWiCjd1kSW0hqdVtA45VnmsrkMH4fFThIZQ6gUYkSe741hBU8p+T7+wj8rW8hnt780ZEnr2q+UzVXi461huzzEc/tt30XuqTeMt8GSlszmz1357xql2J4KQ+f1wt+MfuiG/OAURAgUy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf19.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id 2234A8044C;
-	Sat, 17 Aug 2024 03:54:52 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf19.hostedemail.com (Postfix) with ESMTPA id ED87820025;
-	Sat, 17 Aug 2024 03:54:49 +0000 (UTC)
-Message-ID: <3c0658cc4a5a174d149175bd9b8f6ce3dfe75574.camel@perches.com>
-Subject: Re: [PATCH 1/2] get_maintainer: add --bug option to print bug
- reporting info
-From: Joe Perches <joe@perches.com>
-To: Jani Nikula <jani.nikula@intel.com>, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Date: Fri, 16 Aug 2024 20:54:48 -0700
-In-Reply-To: <20240815113450.3397499-1-jani.nikula@intel.com>
-References: <20240815113450.3397499-1-jani.nikula@intel.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1723868713; c=relaxed/simple;
+	bh=KL1kBzn2nZ4ll5b/XHMbzItawCd3v4hNh2mBh+McVgs=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=rCKwrgStrWqXLsMPuJwmBFrvLmOiKz+LIbBJyMcQ4BO3NKay7IwfIbzGtjUHa6e8fTBwhmziS8+yUyCMouk3K2mB6XAQmP4hP1NYkJiugk2PeIwdld0pHUnIJyi4F2RqjY8AsDf+5ZD3OwcB1ju0qe+O8UCCpvHj0hrv5bBEzhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=aVpLglRQ; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Rspamd-Queue-Id: ED87820025
-X-Rspamd-Server: rspamout07
-X-Stat-Signature: 4wogohdghyjmk1ozweorx98k615pnzfs
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX18s59Ngl0OfNgXviDlVqMO6fWuIGsClT1A=
-X-HE-Tag: 1723866889-878923
-X-HE-Meta: U2FsdGVkX18uUGTaxNORMUF09RuX0kKw1FbjXkKTsxci0VBtexklqfAC439zULFKzYs7qMxcgL4KHM++3arxkP8OYwFFEpjAb+Lbq6WMLKberIjgGl1WtBBg14FwSMy5zjRo+Sr59hg/ZP2fUKH8FqS7pomceyFWgFCQLgjXRooanTCiz7nUkRbyOBXpdnrnvAVc9fhp8QJQ6e1UHmlXOD5B3SbFZkDN7Ix8oiyPXQ+XPEpo6Mt6NqtAvoOQZ1CNtCc+mrzxmMr/2aK/+HPPljod8LWXzORbxv1XCllUVuuEfrO6YwnhSbuLE4UqNF/i7IwFCgajJjeTkXkf+Wq7jfcBAyQGAKGsfwB376oqhlumStPIutRDrs4G5xvM9QaulAq5CSQPlGdPKB/jtMektj/OtANXxWpqXWoe0TsioZ0c2QeEcf65qLlZoWagSni+asT8PTXE6q2Q2Cq7M9DbRA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1723868707;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nNTR7E+M5F7Y9Kg8Rd3I9IpAaVgSJris2NWPCLVcGZY=;
+	b=aVpLglRQIIEDTZU1Z+U5VNPuPfPz8+XDX9FZipUeB0CRkmKFpLJ4ZB91OH1q1coOm5ay8G
+	qb0rc8mA8HNbsjAYkA1FNFOUXLa6wDER4NhyWPN+p01ISwTpf51UR3rSTihmuhEjfbG2Hp
+	7JcsZvoH3woYvnXDDS11Y3GBxSxMclcPl69DVwoBps0LMElGTMC91+bV3zT9lE8YjEj+Sr
+	uCY3uIbvw56emknDaA4L/VfniLCdfkrntrUOnS83sig9P2OjL9pY1M0dSXzGJxMvGMDWrO
+	bfuUADzlqLUwyF5vgBeRthiL1e7MggTQH6fXDhjSEQB6v4qEPENyaWkW3GNfXw==
+Date: Sat, 17 Aug 2024 06:25:07 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: wens@csie.org, linux-sunxi@lists.linux.dev, jernej.skrabec@gmail.com,
+ samuel@sholland.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: allwinner: a64: Move CPU OPPs to the SoC dtsi
+ file
+In-Reply-To: <20240815181508.6800e205@donnerap.manchester.arm.com>
+References: <92ebc9cba6eb669df73efd478e4f5745056a4ce5.1723614345.git.dsimic@manjaro.org>
+ <CAGb2v678Z8TMKZmBmmd5hW9XBdKw9KD+JgrsMm5e8sSoYOq3wA@mail.gmail.com>
+ <21d6e75bc33ef2b7f27932fee1b8de05@manjaro.org>
+ <20240815181508.6800e205@donnerap.manchester.arm.com>
+Message-ID: <06cec3fc98e930bedc8ea5bfde776b3d@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Thu, 2024-08-15 at 14:34 +0300, Jani Nikula wrote:
-> For example Documentation/adming-guide/bug-hunting.rst suggest using
-> get_maintainer.pl to get a list of maintainers and mailing lists to
-> report bugs to, while a number of subsystems and drivers explicitly use
-> the "B:" MAINTAINERS entry to direct bug reports at issue trackers
-> instead of mailing lists and people.
->=20
-> Add the --bug option to get_maintainer.pl to print the bug reporting
-> URIs, if any.
+Hello Andre,
 
-Seems sensible, thanks.
+On 2024-08-15 19:15, Andre Przywara wrote:
+> On Thu, 15 Aug 2024 18:34:58 +0200
+> Dragan Simic <dsimic@manjaro.org> wrote:
+>> On 2024-08-14 18:11, Chen-Yu Tsai wrote:
+>> > On Wed, Aug 14, 2024 at 1:52 PM Dragan Simic <dsimic@manjaro.org>
+>> > wrote:
+>> >>
+>> >> Move the Allwinner A64 CPU OPPs to the A64 SoC dtsi file and,
+>> >> consequently,
+>> >> adjust the contents of the affected board dts(i) files appropriately,
+>> >> to
+>> >> "encapsulate" the CPU OPPs into the SoC dtsi file.
+>> >>
+>> >> Moving the CPU OPPs to the SoC dtsi file, instead of requiring the
+>> >> board
+>> >> dts(i) files to include both the SoC dtsi file and the CPU OPP dtsi
+>> >> file,
+>> >> reduces the possibility for incomplete SoC data inclusion and improves
+>> >> the
+>> >> overall hierarchical representation of data.  Moreover, the CPU OPPs
+>> >> are
+>> >> not used anywhere but together with the SoC dtsi file, which
+>> >> additionally
+>> >> justifies the folding of the CPU OPPs into the SoC dtsi file.
+>> >>
+>> >> No functional changes are introduced, which was validated by
+>> >> decompiling and
+>> >> comparing all affected board dtb files before and after these changes.
+>> >>  When
+>> >> compared with the decompiled original dtb files, the updated dtb files
+>> >> have
+>> >> some of their blocks shuffled around a bit and some of their phandles
+>> >> have
+>> >> different values, as a result of the changes to the order in which the
+>> >> building blocks from the parent dtsi files are included into them, but
+>> >> they
+>> >> still effectively remain the same as the originals.
+>> >
+>> > IIRC, this was a conscious decision requiring board dts files to set
+>> > their
+>> > CPU supply before OPPs are given. The bootloader does not boot the SoC
+>> > at the highest possible OPP / regulator voltage, so if the OPPs are
+>> > given
+>> > but the supply is not, the kernel will attempt to raise the frequency
+>> > beyond what the current voltage can supply, causing it to hang.
+> 
+> Yes, this is what I remember as well: this forces boards to opt in to
+> DVFS, otherwise they get a fixed 816 MHz. Since there is only one OPP
+> table for all boards with that SoC, I think it's reasonable to ask for
+> this, since the cooling could not be adequate for higher frequencies in
+> the first place, or the power supply is not up to par.
 
-Acked-by: Joe Perches <joe@perches.com>
+If the cooling isn't capable enough to dissipate the additional heat
+generated at higher frequencies, the thermal governor is there to handle
+that by lowering the operating frequency.  If the PSU isn't capable to
+provide an additional watt or two, I think a better PSU is needed. :)
+No reasonably sized PSU should work at ~100% of its power output.
 
->=20
-> Cc: Joe Perches <joe@perches.com>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
-> ---
->  scripts/get_maintainer.pl | 17 +++++++++++++++--
->  1 file changed, 15 insertions(+), 2 deletions(-)
->=20
-> diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
-> index ee1aed7e090c..5ac02e198737 100755
-> --- a/scripts/get_maintainer.pl
-> +++ b/scripts/get_maintainer.pl
-> @@ -54,6 +54,7 @@ my $output_section_maxlen =3D 50;
->  my $scm =3D 0;
->  my $tree =3D 1;
->  my $web =3D 0;
-> +my $bug =3D 0;
->  my $subsystem =3D 0;
->  my $status =3D 0;
->  my $letters =3D "";
-> @@ -271,6 +272,7 @@ if (!GetOptions(
->  		'scm!' =3D> \$scm,
->  		'tree!' =3D> \$tree,
->  		'web!' =3D> \$web,
-> +		'bug!' =3D> \$bug,
->  		'letters=3Ds' =3D> \$letters,
->  		'pattern-depth=3Di' =3D> \$pattern_depth,
->  		'k|keywords!' =3D> \$keywords,
-> @@ -320,13 +322,14 @@ if ($sections || $letters ne "") {
->      $status =3D 0;
->      $subsystem =3D 0;
->      $web =3D 0;
-> +    $bug =3D 0;
->      $keywords =3D 0;
->      $keywords_in_file =3D 0;
->      $interactive =3D 0;
->  } else {
-> -    my $selections =3D $email + $scm + $status + $subsystem + $web;
-> +    my $selections =3D $email + $scm + $status + $subsystem + $web + $bu=
-g;
->      if ($selections =3D=3D 0) {
-> -	die "$P:  Missing required option: email, scm, status, subsystem or web=
-\n";
-> +	die "$P:  Missing required option: email, scm, status, subsystem, web o=
-r bug\n";
->      }
->  }
-> =20
-> @@ -631,6 +634,7 @@ my %hash_list_to;
->  my @list_to =3D ();
->  my @scm =3D ();
->  my @web =3D ();
-> +my @bug =3D ();
->  my @subsystem =3D ();
->  my @status =3D ();
->  my %deduplicate_name_hash =3D ();
-> @@ -662,6 +666,11 @@ if ($web) {
->      output(@web);
->  }
-> =20
-> +if ($bug) {
-> +    @bug =3D uniq(@bug);
-> +    output(@bug);
-> +}
-> +
->  exit($exit);
-> =20
->  sub self_test {
-> @@ -847,6 +856,7 @@ sub get_maintainers {
->      @list_to =3D ();
->      @scm =3D ();
->      @web =3D ();
-> +    @bug =3D ();
->      @subsystem =3D ();
->      @status =3D ();
->      %deduplicate_name_hash =3D ();
-> @@ -1069,6 +1079,7 @@ MAINTAINER field selection options:
->    --status =3D> print status if any
->    --subsystem =3D> print subsystem name if any
->    --web =3D> print website(s) if any
-> +  --bug =3D> print bug reporting info if any
-> =20
->  Output type options:
->    --separator [, ] =3D> separator for multiple entries on 1 line
-> @@ -1382,6 +1393,8 @@ sub add_categories {
->  		push(@scm, $pvalue . $suffix);
->  	    } elsif ($ptype eq "W") {
->  		push(@web, $pvalue . $suffix);
-> +	    } elsif ($ptype eq "B") {
-> +		push(@bug, $pvalue . $suffix);
->  	    } elsif ($ptype eq "S") {
->  		push(@status, $pvalue . $suffix);
->  	    }
+On top of that, all currently supported A64-based boards have the CPU
+OPPs defined and CPU DVFS enabled, so no such issues are possible there.
+Though, there could be some issues with new A64-based boards, which is
+discussed further below.
 
+>> > Now that all existing boards have it properly enabled, there should be
+>> > no
+>> > need for this. However I would appreciate a second opinion.
+> 
+> Well, since there is no way to opt *out* now, I am somewhat reluctant 
+> to
+> just have this. What is the actual problem we are solving here? After 
+> all
+> there is just one OPP table for all A64 boards, so there is less 
+> confusion
+> about what to include in each board file. Which IIUC is a more 
+> complicated
+> situation on the Rockchip side.
+
+Well, this patch doesn't solve some real problem, but it makes the 
+things
+neater and a bit more clean.  The things are more complicated with 
+Rockchip
+SoCs, but following the concept of "encapsulating" the CPU OPPs into the
+A64 SoC dtsi makes things neater.  Moreover, the A64 GPU OPPs are 
+already
+in the A64 SoC dtsi, so we could also say that folding the A64 CPU OPPs
+into the SoC dtsi follows the A64 GPU OPPs.
+
+> I still have to try "operating-points-v2", but at least on the H616 
+> side
+> putting a 'status = "disabled";' into the OPP node didn't prevent it 
+> from
+> probing. Otherwise this would have been a nice compromise, I think.
+> 
+>> Good point, thanks for the clarification.  This is quite similar to 
+>> how
+>> board dts(i) files for Rockchip SoCs need to enable the SoC's built-in
+>> TSADC for temperature sensing, before the CPU thermal throttling can
+>> actually work and prevent the SoC from overheating, etc.
+>> 
+>> The consensus for Rockchip boards is that it's up to the authors and
+>> reviewers of the board dts(i) files to make sure that the built-in 
+>> TSADC
+>> is enabled, etc.  With that approach in mind, and knowing that all
+>> Allwinner
+>> A64 board dts(i) files are in good shape when it comes to the 
+>> associated
+>> voltage regulators, I think it's fine to follow the same approach of
+>> "encapsulating" the CPU OPPs into the A64 SoC dtsi file.
+> 
+> As mentioned above, I am not so sure about this. With this patch here,
+> *every* board gets DVFS. And while this seems to be fine when looking 
+> at
+> the current DTs in the tree (which have it anyway), it creates a
+> potentially dangerous situation for new boards.
+> 
+> So pragmatically speaking, this patch would be fine, but it leaves me a
+> bit uneasy about future or downstream boards.
+
+Frankly, I wouldn't be worried about that.  When a new A64-based board
+is added, it should be verified that CPU DVFS works as expected, etc.,
+before the new board dts file is accepted upstream.
+
+Maybe we could take into account some possible issues when someone 
+starts
+putting together a new A64-based board dts file, but there are already
+many dangerous things that someone can do in the process, such as 
+messing
+up various regulators and voltages unrelated to the CPU DVFS, so 
+everyone
+putting a new board dts file together simply have to know what are they
+doing.  I see no way for escaping from that need.
+
+>> >> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+>> >> ---
+>> >>
+>> >> Notes:
+>> >>     These changes follow the general approach used for the Rockchip
+>> >> RK3588
+>> >>     and RK3399 SoCs, which was introduced and described further in
+>> >> commits
+>> >>     def88eb4d836 ("arm64: dts: rockchip: Prepare RK3588 SoC dtsi files
+>> >> for
+>> >>     per-variant OPPs") [1] and 296602b8e5f7 ("arm64: dts: rockchip:
+>> >> Move
+>> >>     RK3399 OPPs to dtsi files for SoC variants"), [2] respectively.
+>> >> Please
+>> >>     see those commits for a more detailed explanation.
+>> >>
+>> >>     [1]
+>> >> https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git/commit/?h=for-next&id=def88eb4d8365a4aa064d28405d03550a9d0a3be
+>> >>     [2]
+>> >> https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git/commit/?h=for-next&id=296602b8e5f715d6a0ccdcd37d57170c2c81d5e4
+>> >>
+>> >>  .../allwinner/sun50i-a64-amarula-relic.dts    |  2 -
+>> >>  .../dts/allwinner/sun50i-a64-bananapi-m64.dts |  2 -
+>> >>  .../dts/allwinner/sun50i-a64-cpu-opp.dtsi     | 75
+>> >> -------------------
+>> >>  .../dts/allwinner/sun50i-a64-nanopi-a64.dts   |  2 -
+>> >>  .../dts/allwinner/sun50i-a64-olinuxino.dts    |  2 -
+>> >>  .../dts/allwinner/sun50i-a64-orangepi-win.dts |  2 -
+>> >>  .../boot/dts/allwinner/sun50i-a64-pine64.dts  |  2 -
+>> >>  .../dts/allwinner/sun50i-a64-pinebook.dts     |  2 -
+>> >>  .../dts/allwinner/sun50i-a64-pinephone.dtsi   |  2 -
+>> >>  .../boot/dts/allwinner/sun50i-a64-pinetab.dts |  2 -
+>> >>  .../boot/dts/allwinner/sun50i-a64-sopine.dtsi |  2 -
+>> >>  .../boot/dts/allwinner/sun50i-a64-teres-i.dts |  2 -
+>> >>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 66 +++++++++++++++-
+>> >>  .../allwinner/sun50i-h64-remix-mini-pc.dts    |  2 -
+>> >>  14 files changed, 63 insertions(+), 102 deletions(-)
+>> >>  delete mode 100644
+>> >> arch/arm64/boot/dts/allwinner/sun50i-a64-cpu-opp.dtsi
+>> >>
+>> >> diff --git
+>> >> a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+>> >> b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+>> >> index 8233582f6288..1590a455683f 100644
+>> >> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+>> >> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+>> >> @@ -5,8 +5,6 @@
+>> >>  /dts-v1/;
+>> >>
+>> >>  #include "sun50i-a64.dtsi"
+>> >> -#include "sun50i-a64-cpu-opp.dtsi"
+>> >> -
+>> >>  #include <dt-bindings/gpio/gpio.h>
+>> >>
+>> >>  / {
+>> >> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+>> >> b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+>> >> index d1f415acd7b5..869fd4a50582 100644
+>> >> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+>> >> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+>> >> @@ -4,8 +4,6 @@
+>> >>  /dts-v1/;
+>> >>
+>> >>  #include "sun50i-a64.dtsi"
+>> >> -#include "sun50i-a64-cpu-opp.dtsi"
+>> >> -
+>> >>  #include <dt-bindings/gpio/gpio.h>
+>> >>
+>> >>  / {
+>> >> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-cpu-opp.dtsi
+>> >> b/arch/arm64/boot/dts/allwinner/sun50i-a64-cpu-opp.dtsi
+>> >> deleted file mode 100644
+>> >> index e39db51eb448..000000000000
+>> >> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-cpu-opp.dtsi
+>> >> +++ /dev/null
+>> >> @@ -1,75 +0,0 @@
+>> >> -// SPDX-License-Identifier: GPL-2.0
+>> >> -/*
+>> >> - * Copyright (C) 2020 Vasily khoruzhick <anarsoul@gmail.com>
+>> >> - */
+>> >> -
+>> >> -/ {
+>> >> -       cpu0_opp_table: opp-table-cpu {
+>> >> -               compatible = "operating-points-v2";
+>> >> -               opp-shared;
+>> >> -
+>> >> -               opp-648000000 {
+>> >> -                       opp-hz = /bits/ 64 <648000000>;
+>> >> -                       opp-microvolt = <1040000>;
+>> >> -                       clock-latency-ns = <244144>; /* 8 32k periods
+>> >> */
+>> >> -               };
+>> >> -
+>> >> -               opp-816000000 {
+>> >> -                       opp-hz = /bits/ 64 <816000000>;
+>> >> -                       opp-microvolt = <1100000>;
+>> >> -                       clock-latency-ns = <244144>; /* 8 32k periods
+>> >> */
+>> >> -               };
+>> >> -
+>> >> -               opp-912000000 {
+>> >> -                       opp-hz = /bits/ 64 <912000000>;
+>> >> -                       opp-microvolt = <1120000>;
+>> >> -                       clock-latency-ns = <244144>; /* 8 32k periods
+>> >> */
+>> >> -               };
+>> >> -
+>> >> -               opp-960000000 {
+>> >> -                       opp-hz = /bits/ 64 <960000000>;
+>> >> -                       opp-microvolt = <1160000>;
+>> >> -                       clock-latency-ns = <244144>; /* 8 32k periods
+>> >> */
+>> >> -               };
+>> >> -
+>> >> -               opp-1008000000 {
+>> >> -                       opp-hz = /bits/ 64 <1008000000>;
+>> >> -                       opp-microvolt = <1200000>;
+>> >> -                       clock-latency-ns = <244144>; /* 8 32k periods
+>> >> */
+>> >> -               };
+>> >> -
+>> >> -               opp-1056000000 {
+>> >> -                       opp-hz = /bits/ 64 <1056000000>;
+>> >> -                       opp-microvolt = <1240000>;
+>> >> -                       clock-latency-ns = <244144>; /* 8 32k periods
+>> >> */
+>> >> -               };
+>> >> -
+>> >> -               opp-1104000000 {
+>> >> -                       opp-hz = /bits/ 64 <1104000000>;
+>> >> -                       opp-microvolt = <1260000>;
+>> >> -                       clock-latency-ns = <244144>; /* 8 32k periods
+>> >> */
+>> >> -               };
+>> >> -
+>> >> -               opp-1152000000 {
+>> >> -                       opp-hz = /bits/ 64 <1152000000>;
+>> >> -                       opp-microvolt = <1300000>;
+>> >> -                       clock-latency-ns = <244144>; /* 8 32k periods
+>> >> */
+>> >> -               };
+>> >> -       };
+>> >> -};
+>> >> -
+>> >> -&cpu0 {
+>> >> -       operating-points-v2 = <&cpu0_opp_table>;
+>> >> -};
+>> >> -
+>> >> -&cpu1 {
+>> >> -       operating-points-v2 = <&cpu0_opp_table>;
+>> >> -};
+>> >> -
+>> >> -&cpu2 {
+>> >> -       operating-points-v2 = <&cpu0_opp_table>;
+>> >> -};
+>> >> -
+>> >> -&cpu3 {
+>> >> -       operating-points-v2 = <&cpu0_opp_table>;
+>> >> -};
+>> >> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+>> >> b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+>> >> index dec9960a7440..e3b1943f7f63 100644
+>> >> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+>> >> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+>> >> @@ -4,8 +4,6 @@
+>> >>  /dts-v1/;
+>> >>
+>> >>  #include "sun50i-a64.dtsi"
+>> >> -#include "sun50i-a64-cpu-opp.dtsi"
+>> >> -
+>> >>  #include <dt-bindings/gpio/gpio.h>
+>> >>
+>> >>  / {
+>> >> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+>> >> b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+>> >> index fd3794678c33..f1a4a9ab295b 100644
+>> >> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+>> >> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+>> >> @@ -4,8 +4,6 @@
+>> >>  /dts-v1/;
+>> >>
+>> >>  #include "sun50i-a64.dtsi"
+>> >> -#include "sun50i-a64-cpu-opp.dtsi"
+>> >> -
+>> >>  #include <dt-bindings/gpio/gpio.h>
+>> >>
+>> >>  / {
+>> >> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
+>> >> b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
+>> >> index c8303a66438d..f3c9a3534612 100644
+>> >> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
+>> >> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
+>> >> @@ -5,8 +5,6 @@
+>> >>  /dts-v1/;
+>> >>
+>> >>  #include "sun50i-a64.dtsi"
+>> >> -#include "sun50i-a64-cpu-opp.dtsi"
+>> >> -
+>> >>  #include <dt-bindings/gpio/gpio.h>
+>> >>
+>> >>  / {
+>> >> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+>> >> b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+>> >> index 09e71fd60785..4f65eec043d0 100644
+>> >> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+>> >> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+>> >> @@ -4,8 +4,6 @@
+>> >>  /dts-v1/;
+>> >>
+>> >>  #include "sun50i-a64.dtsi"
+>> >> -#include "sun50i-a64-cpu-opp.dtsi"
+>> >> -
+>> >>  #include <dt-bindings/gpio/gpio.h>
+>> >>
+>> >>  / {
+>> >> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
+>> >> b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
+>> >> index 379c2c8466f5..a06a0b34bd3f 100644
+>> >> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
+>> >> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
+>> >> @@ -5,8 +5,6 @@
+>> >>  /dts-v1/;
+>> >>
+>> >>  #include "sun50i-a64.dtsi"
+>> >> -#include "sun50i-a64-cpu-opp.dtsi"
+>> >> -
+>> >>  #include <dt-bindings/gpio/gpio.h>
+>> >>  #include <dt-bindings/input/gpio-keys.h>
+>> >>  #include <dt-bindings/input/input.h>
+>> >> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+>> >> b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+>> >> index 6eab61a12cd8..0e38cd02a90a 100644
+>> >> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+>> >> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+>> >> @@ -4,8 +4,6 @@
+>> >>  // Copyright (C) 2020 Ondrej Jirman <megous@megous.com>
+>> >>
+>> >>  #include "sun50i-a64.dtsi"
+>> >> -#include "sun50i-a64-cpu-opp.dtsi"
+>> >> -
+>> >>  #include <dt-bindings/gpio/gpio.h>
+>> >>  #include <dt-bindings/input/input.h>
+>> >>  #include <dt-bindings/leds/common.h>
+>> >> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinetab.dts
+>> >> b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinetab.dts
+>> >> index f5fb1ee32dad..4a49f137885b 100644
+>> >> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinetab.dts
+>> >> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinetab.dts
+>> >> @@ -7,8 +7,6 @@
+>> >>  /dts-v1/;
+>> >>
+>> >>  #include "sun50i-a64.dtsi"
+>> >> -#include "sun50i-a64-cpu-opp.dtsi"
+>> >> -
+>> >>  #include <dt-bindings/gpio/gpio.h>
+>> >>  #include <dt-bindings/input/input.h>
+>> >>  #include <dt-bindings/pwm/pwm.h>
+>> >> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine.dtsi
+>> >> b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine.dtsi
+>> >> index 6d78a1c98f10..4ba5c11e6870 100644
+>> >> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine.dtsi
+>> >> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine.dtsi
+>> >> @@ -4,8 +4,6 @@
+>> >>  //   Copyright (c) 2016 ARM Ltd.
+>> >>
+>> >>  #include "sun50i-a64.dtsi"
+>> >> -#include "sun50i-a64-cpu-opp.dtsi"
+>> >> -
+>> >>  #include <dt-bindings/gpio/gpio.h>
+>> >>
+>> >>  &codec_analog {
+>> >> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+>> >> b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+>> >> index b407e1dd08a7..61ccd90bae01 100644
+>> >> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+>> >> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+>> >> @@ -5,8 +5,6 @@
+>> >>  /dts-v1/;
+>> >>
+>> >>  #include "sun50i-a64.dtsi"
+>> >> -#include "sun50i-a64-cpu-opp.dtsi"
+>> >> -
+>> >>  #include <dt-bindings/gpio/gpio.h>
+>> >>  #include <dt-bindings/input/input.h>
+>> >>  #include <dt-bindings/pwm/pwm.h>
+>> >> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>> >> b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>> >> index e868ca5ae753..f842e64562b7 100644
+>> >> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>> >> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>> >> @@ -1,7 +1,10 @@
+>> >>  // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> >> -// Copyright (C) 2016 ARM Ltd.
+>> >> -// based on the Allwinner H3 dtsi:
+>> >> -//    Copyright (C) 2015 Jens Kuske <jenskuske@gmail.com>
+>> >> +/*
+>> >> + * Copyright (C) 2016 ARM Ltd.
+>> >> + * based on the Allwinner H3 dtsi:
+>> >> + *    Copyright (C) 2015 Jens Kuske <jenskuske@gmail.com>
+>> >> + * Copyright (C) 2020 Vasily khoruzhick <anarsoul@gmail.com>
+>> >> + */
+>> >>
+>> >>  #include <dt-bindings/clock/sun50i-a64-ccu.h>
+>> >>  #include <dt-bindings/clock/sun6i-rtc.h>
+>> >> @@ -54,6 +57,7 @@ cpu0: cpu@0 {
+>> >>                         clocks = <&ccu CLK_CPUX>;
+>> >>                         clock-names = "cpu";
+>> >>                         #cooling-cells = <2>;
+>> >> +                       operating-points-v2 = <&cpu_opp_table>;
+>> >>                         i-cache-size = <0x8000>;
+>> >>                         i-cache-line-size = <64>;
+>> >>                         i-cache-sets = <256>;
+>> >> @@ -71,6 +75,7 @@ cpu1: cpu@1 {
+>> >>                         clocks = <&ccu CLK_CPUX>;
+>> >>                         clock-names = "cpu";
+>> >>                         #cooling-cells = <2>;
+>> >> +                       operating-points-v2 = <&cpu_opp_table>;
+>> >>                         i-cache-size = <0x8000>;
+>> >>                         i-cache-line-size = <64>;
+>> >>                         i-cache-sets = <256>;
+>> >> @@ -88,6 +93,7 @@ cpu2: cpu@2 {
+>> >>                         clocks = <&ccu CLK_CPUX>;
+>> >>                         clock-names = "cpu";
+>> >>                         #cooling-cells = <2>;
+>> >> +                       operating-points-v2 = <&cpu_opp_table>;
+>> >>                         i-cache-size = <0x8000>;
+>> >>                         i-cache-line-size = <64>;
+>> >>                         i-cache-sets = <256>;
+>> >> @@ -105,6 +111,7 @@ cpu3: cpu@3 {
+>> >>                         clocks = <&ccu CLK_CPUX>;
+>> >>                         clock-names = "cpu";
+>> >>                         #cooling-cells = <2>;
+>> >> +                       operating-points-v2 = <&cpu_opp_table>;
+>> >>                         i-cache-size = <0x8000>;
+>> >>                         i-cache-line-size = <64>;
+>> >>                         i-cache-sets = <256>;
+>> >> @@ -124,6 +131,59 @@ l2_cache: l2-cache {
+>> >>                 };
+>> >>         };
+>> >>
+>> >> +       cpu_opp_table: opp-table-cpu {
+>> >> +               compatible = "operating-points-v2";
+>> >> +               opp-shared;
+>> >> +
+>> >> +               opp-648000000 {
+>> >> +                       opp-hz = /bits/ 64 <648000000>;
+>> >> +                       opp-microvolt = <1040000>;
+>> >> +                       clock-latency-ns = <244144>; /* 8 32k periods
+>> >> */
+>> >> +               };
+>> >> +
+>> >> +               opp-816000000 {
+>> >> +                       opp-hz = /bits/ 64 <816000000>;
+>> >> +                       opp-microvolt = <1100000>;
+>> >> +                       clock-latency-ns = <244144>; /* 8 32k periods
+>> >> */
+>> >> +               };
+>> >> +
+>> >> +               opp-912000000 {
+>> >> +                       opp-hz = /bits/ 64 <912000000>;
+>> >> +                       opp-microvolt = <1120000>;
+>> >> +                       clock-latency-ns = <244144>; /* 8 32k periods
+>> >> */
+>> >> +               };
+>> >> +
+>> >> +               opp-960000000 {
+>> >> +                       opp-hz = /bits/ 64 <960000000>;
+>> >> +                       opp-microvolt = <1160000>;
+>> >> +                       clock-latency-ns = <244144>; /* 8 32k periods
+>> >> */
+>> >> +               };
+>> >> +
+>> >> +               opp-1008000000 {
+>> >> +                       opp-hz = /bits/ 64 <1008000000>;
+>> >> +                       opp-microvolt = <1200000>;
+>> >> +                       clock-latency-ns = <244144>; /* 8 32k periods
+>> >> */
+>> >> +               };
+>> >> +
+>> >> +               opp-1056000000 {
+>> >> +                       opp-hz = /bits/ 64 <1056000000>;
+>> >> +                       opp-microvolt = <1240000>;
+>> >> +                       clock-latency-ns = <244144>; /* 8 32k periods
+>> >> */
+>> >> +               };
+>> >> +
+>> >> +               opp-1104000000 {
+>> >> +                       opp-hz = /bits/ 64 <1104000000>;
+>> >> +                       opp-microvolt = <1260000>;
+>> >> +                       clock-latency-ns = <244144>; /* 8 32k periods
+>> >> */
+>> >> +               };
+>> >> +
+>> >> +               opp-1152000000 {
+>> >> +                       opp-hz = /bits/ 64 <1152000000>;
+>> >> +                       opp-microvolt = <1300000>;
+>> >> +                       clock-latency-ns = <244144>; /* 8 32k periods
+>> >> */
+>> >> +               };
+>> >> +       };
+>> >> +
+>> >>         de: display-engine {
+>> >>                 compatible = "allwinner,sun50i-a64-display-engine";
+>> >>                 allwinner,pipelines = <&mixer0>,
+>> >> diff --git
+>> >> a/arch/arm64/boot/dts/allwinner/sun50i-h64-remix-mini-pc.dts
+>> >> b/arch/arm64/boot/dts/allwinner/sun50i-h64-remix-mini-pc.dts
+>> >> index ce90327e1b2e..19cb74cf1f57 100644
+>> >> --- a/arch/arm64/boot/dts/allwinner/sun50i-h64-remix-mini-pc.dts
+>> >> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h64-remix-mini-pc.dts
+>> >> @@ -4,8 +4,6 @@
+>> >>  /dts-v1/;
+>> >>
+>> >>  #include "sun50i-a64.dtsi"
+>> >> -#include "sun50i-a64-cpu-opp.dtsi"
+>> >> -
+>> >>  #include <dt-bindings/gpio/gpio.h>
+>> >>
+>> >>  / {
+>> 
 
