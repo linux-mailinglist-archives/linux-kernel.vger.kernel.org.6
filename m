@@ -1,114 +1,196 @@
-Return-Path: <linux-kernel+bounces-290500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F3CC9554AF
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 03:50:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B98A9554BA
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 03:56:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2536FB21CA1
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:50:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00C2CB20D96
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268896FB0;
-	Sat, 17 Aug 2024 01:50:27 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63EE3749A;
+	Sat, 17 Aug 2024 01:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h7z2quYw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8CE7464;
-	Sat, 17 Aug 2024 01:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37EC63211;
+	Sat, 17 Aug 2024 01:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723859426; cv=none; b=izOJJqfZWI9wGeRgPNmQre+98+V/7+3s0E/SMg4l+NqqSXu6TMA8J3iiccQA8cn9bGU2ben53ztCep8094YnNF6xs2AjsbvbuWmVSuXSS3affEEw4hbXmIzZ3xr8Hu66hgCMDPR7MhCrfkTxUQV/oXQAaVApL/Vp7e4ZGy94iHA=
+	t=1723859789; cv=none; b=O79lrS3nqz0nFdYQ1phhB2QhEXcqyi1503Ak3olHWaTijZJJk0R3wjbB9uzV2wp9LznoxHD5hI2f+/YvsYRdsEyO2PLR0qdmO8uIk8Pk4mvEb77+R0JmfsYPNoRiXNKBrLIK4SOm9xpmdhuxTFsoyDTHDL8Nirx7TAX1Qh5V3H8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723859426; c=relaxed/simple;
-	bh=4RLfXEz98KK3x0nXEGtYwk91Bn1R7H16pzJ8e42DkfY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SvfjJT2rep2mrSHLLaibLKp9X+oQlt0NL/3BaJOLe+D3cT4b7n+M8v+oE7+sHTu8I32353Ut/boEv7VvSJlEIu7aIoLLk6kOPUPiikqkgofec51/iDloZ3tUwZfD2n0sh2wDaY4SV+g6poOAuNUPGqNqNJMJECXWFyE+fuS1gb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wm1x354SdzpSwX;
-	Sat, 17 Aug 2024 09:48:55 +0800 (CST)
-Received: from dggpemf100013.china.huawei.com (unknown [7.185.36.179])
-	by mail.maildlp.com (Postfix) with ESMTPS id 739351401F2;
-	Sat, 17 Aug 2024 09:50:20 +0800 (CST)
-Received: from localhost.huawei.com (10.50.165.33) by
- dggpemf100013.china.huawei.com (7.185.36.179) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 17 Aug 2024 09:50:20 +0800
-From: Yihang Li <liyihang9@huawei.com>
-To: <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<bvanassche@acm.org>, <liyihang9@huawei.com>, <linuxarm@huawei.com>,
-	<prime.zeng@huawei.com>, <stable@vger.kernel.org>
-Subject: [PATCH v4] scsi: sd: retry command SYNC CACHE if format in progress
-Date: Sat, 17 Aug 2024 09:50:19 +0800
-Message-ID: <20240817015019.3467765-1-liyihang9@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1723859789; c=relaxed/simple;
+	bh=xF4ou8X8ntZ++7VKf4djCVEPiMuqx1unD6WioySVMdc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hoq7Zfkq7iC8B73NGotQemx/cdjckpIgwDMQSCiIf8P5oYaaIYmE6JKfcTSZW8mxhk4nzPmpiGKnMTSiPD2UJm4hkIjap9LjLLmGK+G2DNjafA3gGYcTxvexduBe2ezeav2gndv4rDdY9BkOFoXOguNN4uYlQPZC/5s4AnorzDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h7z2quYw; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723859787; x=1755395787;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xF4ou8X8ntZ++7VKf4djCVEPiMuqx1unD6WioySVMdc=;
+  b=h7z2quYw5LwQecrRa2pYQ4exfJ0P1CEqAGwX5Pr0Uo8gtcRt64ZKBL/f
+   f8dzNlK1tlRWYTPUvUw/zfawv3mbPhJgI7qV0RHaZkU5O/zoJ9k52r6Gk
+   P5behUrTZhEQVat6EAr3pWnTjc8yJlZw7wrqYCAsTcdwtCUbqP4tUZzrj
+   CskBcl313jz/CpsU1BGZU2py5S9gj/f0om6yz1PISYQYLSIlPBaxcnTFm
+   zyYu+PTmSj+3ccZgDP/obPx75LN5dm+MFtT1P8T2yT3HCIg3pKd4MEH5p
+   2/el0fjs5udeUyWj/Edr6mmovqL2/hHTH/c0A0AF2obc7g9WTB602U4Bm
+   w==;
+X-CSE-ConnectionGUID: eopToTX3TJact0vu3TYVZw==
+X-CSE-MsgGUID: m4elG0I0QGWH1psW2XmEOA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="39681435"
+X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
+   d="scan'208";a="39681435"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 18:56:26 -0700
+X-CSE-ConnectionGUID: sElGVJL6R/apUCQ+fDw9Mw==
+X-CSE-MsgGUID: JmNtofhoR/yAIWW2Qdppgw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,153,1719903600"; 
+   d="scan'208";a="59473633"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 16 Aug 2024 18:56:23 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sf8g1-00076c-1C;
+	Sat, 17 Aug 2024 01:56:21 +0000
+Date: Sat, 17 Aug 2024 09:56:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jianping.Shen@de.bosch.com, jic23@kernel.org, lars@metafoo.de,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	dima.fedrau@gmail.com, marcelo.schmitt1@gmail.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Christian.Lorenz3@de.bosch.com,
+	Ulrike.Frauendorf@de.bosch.com, Kai.Dolde@de.bosch.com
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v3 2/2] iio: imu: smi240: imu driver
+Message-ID: <202408170910.aR1gYef3-lkp@intel.com>
+References: <20240815152545.7705-3-Jianping.Shen@de.bosch.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemf100013.china.huawei.com (7.185.36.179)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240815152545.7705-3-Jianping.Shen@de.bosch.com>
 
-If formatting a suspended disk (such as formatting with different DIF
-type), the disk will be resuming first, and then the format command will
-submit to the disk through SG_IO ioctl.
+Hi,
 
-When the disk is processing the format command, the system does not submit
-other commands to the disk. Therefore, the system attempts to suspend the
-disk again and sends the SYNC CACHE command. However, the SYNC CACHE
-command will fail because the disk is in the formatting process, which
-will cause the runtime_status of the disk to error and it is difficult
-for user to recover it. Error info like:
+kernel test robot noticed the following build warnings:
 
-[  669.925325] sd 6:0:6:0: [sdg] Synchronizing SCSI cache
-[  670.202371] sd 6:0:6:0: [sdg] Synchronize Cache(10) failed: Result: hostbyte=0x00 driverbyte=DRIVER_OK
-[  670.216300] sd 6:0:6:0: [sdg] Sense Key : 0x2 [current]
-[  670.221860] sd 6:0:6:0: [sdg] ASC=0x4 ASCQ=0x4
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on linus/master v6.11-rc3 next-20240816]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-To solve the issue, retry the command until format command is finished.
+url:    https://github.com/intel-lab-lkp/linux/commits/Jianping-Shen-de-bosch-com/dt-bindings-iio-imu-smi240-devicetree-binding/20240815-234739
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20240815152545.7705-3-Jianping.Shen%40de.bosch.com
+patch subject: [PATCH v3 2/2] iio: imu: smi240: imu driver
+config: x86_64-randconfig-123-20240817 (https://download.01.org/0day-ci/archive/20240817/202408170910.aR1gYef3-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240817/202408170910.aR1gYef3-lkp@intel.com/reproduce)
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Yihang Li <liyihang9@huawei.com>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
----
-Changes since v3:
-- Add Cc tag for kernel stable.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408170910.aR1gYef3-lkp@intel.com/
 
-Changes since v2:
-- Add Reviewed-by for Bart.
+sparse warnings: (new ones prefixed by >>)
+>> drivers/iio/imu/smi240/smi240_core.c:207:9: sparse: sparse: dereference of noderef expression
+>> drivers/iio/imu/smi240/smi240_core.c:207:9: sparse: sparse: dereference of noderef expression
+>> drivers/iio/imu/smi240/smi240_core.c:207:9: sparse: sparse: dereference of noderef expression
+--
+>> drivers/iio/imu/smi240/smi240_spi.c:69:17: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be32 [usertype] request @@     got int @@
+   drivers/iio/imu/smi240/smi240_spi.c:69:17: sparse:     expected restricted __be32 [usertype] request
+   drivers/iio/imu/smi240/smi240_spi.c:69:17: sparse:     got int
+>> drivers/iio/imu/smi240/smi240_spi.c:70:17: sparse: sparse: invalid assignment: |=
+   drivers/iio/imu/smi240/smi240_spi.c:70:17: sparse:    left side has type restricted __be32
+   drivers/iio/imu/smi240/smi240_spi.c:70:17: sparse:    right side has type int
+   drivers/iio/imu/smi240/smi240_spi.c:71:17: sparse: sparse: invalid assignment: |=
+   drivers/iio/imu/smi240/smi240_spi.c:71:17: sparse:    left side has type restricted __be32
+   drivers/iio/imu/smi240/smi240_spi.c:71:17: sparse:    right side has type unsigned long
+>> drivers/iio/imu/smi240/smi240_spi.c:72:32: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int [usertype] data @@     got restricted __be32 [usertype] request @@
+   drivers/iio/imu/smi240/smi240_spi.c:72:32: sparse:     expected unsigned int [usertype] data
+   drivers/iio/imu/smi240/smi240_spi.c:72:32: sparse:     got restricted __be32 [usertype] request
+   drivers/iio/imu/smi240/smi240_spi.c:72:17: sparse: sparse: invalid assignment: |=
+   drivers/iio/imu/smi240/smi240_spi.c:72:17: sparse:    left side has type restricted __be32
+   drivers/iio/imu/smi240/smi240_spi.c:72:17: sparse:    right side has type unsigned char
+>> drivers/iio/imu/smi240/smi240_spi.c:73:19: sparse: sparse: cast from restricted __be32
+>> drivers/iio/imu/smi240/smi240_spi.c:89:18: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be32 [addressable] [usertype] response @@     got unsigned int [usertype] @@
+   drivers/iio/imu/smi240/smi240_spi.c:89:18: sparse:     expected restricted __be32 [addressable] [usertype] response
+   drivers/iio/imu/smi240/smi240_spi.c:89:18: sparse:     got unsigned int [usertype]
+>> drivers/iio/imu/smi240/smi240_spi.c:91:42: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int [usertype] data @@     got restricted __be32 [addressable] [usertype] response @@
+   drivers/iio/imu/smi240/smi240_spi.c:91:42: sparse:     expected unsigned int [usertype] data
+   drivers/iio/imu/smi240/smi240_spi.c:91:42: sparse:     got restricted __be32 [addressable] [usertype] response
+>> drivers/iio/imu/smi240/smi240_spi.c:94:20: sparse: sparse: cast to restricted __be32
+>> drivers/iio/imu/smi240/smi240_spi.c:94:20: sparse: sparse: restricted __be32 degrades to integer
+>> drivers/iio/imu/smi240/smi240_spi.c:94:20: sparse: sparse: restricted __be32 degrades to integer
+>> drivers/iio/imu/smi240/smi240_spi.c:94:18: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be32 [addressable] [usertype] response @@     got unsigned long @@
+   drivers/iio/imu/smi240/smi240_spi.c:94:18: sparse:     expected restricted __be32 [addressable] [usertype] response
+   drivers/iio/imu/smi240/smi240_spi.c:94:18: sparse:     got unsigned long
+   drivers/iio/imu/smi240/smi240_spi.c:108:17: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be32 [usertype] request @@     got int @@
+   drivers/iio/imu/smi240/smi240_spi.c:108:17: sparse:     expected restricted __be32 [usertype] request
+   drivers/iio/imu/smi240/smi240_spi.c:108:17: sparse:     got int
+   drivers/iio/imu/smi240/smi240_spi.c:109:17: sparse: sparse: invalid assignment: |=
+   drivers/iio/imu/smi240/smi240_spi.c:109:17: sparse:    left side has type restricted __be32
+   drivers/iio/imu/smi240/smi240_spi.c:109:17: sparse:    right side has type int
+   drivers/iio/imu/smi240/smi240_spi.c:110:17: sparse: sparse: invalid assignment: |=
+   drivers/iio/imu/smi240/smi240_spi.c:110:17: sparse:    left side has type restricted __be32
+   drivers/iio/imu/smi240/smi240_spi.c:110:17: sparse:    right side has type unsigned long
+   drivers/iio/imu/smi240/smi240_spi.c:111:17: sparse: sparse: invalid assignment: |=
+   drivers/iio/imu/smi240/smi240_spi.c:111:17: sparse:    left side has type restricted __be32
+   drivers/iio/imu/smi240/smi240_spi.c:111:17: sparse:    right side has type unsigned long
+   drivers/iio/imu/smi240/smi240_spi.c:112:32: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int [usertype] data @@     got restricted __be32 [usertype] request @@
+   drivers/iio/imu/smi240/smi240_spi.c:112:32: sparse:     expected unsigned int [usertype] data
+   drivers/iio/imu/smi240/smi240_spi.c:112:32: sparse:     got restricted __be32 [usertype] request
+   drivers/iio/imu/smi240/smi240_spi.c:112:17: sparse: sparse: invalid assignment: |=
+   drivers/iio/imu/smi240/smi240_spi.c:112:17: sparse:    left side has type restricted __be32
+   drivers/iio/imu/smi240/smi240_spi.c:112:17: sparse:    right side has type unsigned char
+   drivers/iio/imu/smi240/smi240_spi.c:113:19: sparse: sparse: cast from restricted __be32
 
-Changes since v1:
-- Updated and added error information to the patch description.
+vim +207 drivers/iio/imu/smi240/smi240_core.c
 
----
- drivers/scsi/sd.c | 5 +++++
- 1 file changed, 5 insertions(+)
+   197	
+   198	static irqreturn_t smi240_trigger_handler(int irq, void *p)
+   199	{
+   200		struct iio_poll_func *pf = p;
+   201		struct iio_dev *indio_dev = pf->indio_dev;
+   202		struct smi240_data *data = iio_priv(indio_dev);
+   203		int ret, sample, chan, i = 0;
+   204	
+   205		data->capture = SMI240_CAPTURE_ON;
+   206	
+ > 207		for_each_set_bit(chan, indio_dev->active_scan_mask,
+   208				 indio_dev->masklength) {
+   209			ret = regmap_read(data->regmap,
+   210					  SMI240_DATA_CAP_FIRST_REG + chan, &sample);
+   211			data->capture = SMI240_CAPTURE_OFF;
+   212			if (ret)
+   213				break;
+   214			data->buf[i++] = sample;
+   215		}
+   216	
+   217		if (ret == 0)
+   218			iio_push_to_buffers_with_timestamp(indio_dev, data->buf,
+   219							   pf->timestamp);
+   220	
+   221		iio_trigger_notify_done(indio_dev->trig);
+   222		return IRQ_HANDLED;
+   223	}
+   224	
 
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index adeaa8ab9951..5cd88a8eea73 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -1823,6 +1823,11 @@ static int sd_sync_cache(struct scsi_disk *sdkp)
- 			    (sshdr.asc == 0x74 && sshdr.ascq == 0x71))	/* drive is password locked */
- 				/* this is no error here */
- 				return 0;
-+
-+			/* retry if format in progress */
-+			if (sshdr.asc == 0x4 && sshdr.ascq == 0x4)
-+				return -EBUSY;
-+
- 			/*
- 			 * This drive doesn't support sync and there's not much
- 			 * we can do because this is called during shutdown
 -- 
-2.33.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
