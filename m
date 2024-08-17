@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-290542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A06BD95557E
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:10:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF53595557F
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 07:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D63D1F239C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 05:10:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58BF2B22FA3
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 05:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F6013774A;
-	Sat, 17 Aug 2024 05:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AEFD770F6;
+	Sat, 17 Aug 2024 05:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZsNhL8zk"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ioVR7Rqr"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77F684A31
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 05:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A69885283
+	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 05:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723871373; cv=none; b=QWGpua7t8ujSg3LzcMn9n86Ijns1H3ccvAPrAqyMdCPrBsoI+iYHkWlL03Alk6kjwz44mK8LiggFdGHfzghIDMEc3hlqjFHS1txoqVBr4vq0gEW5f2TJF5gmNZaUYDy3W1EXzpzT/LFlI1Vj0MFONm5UbDpxOkDSjr7FqaPjKuM=
+	t=1723871374; cv=none; b=ZF1Nu21DY6XNLPkIFZutTADH8IELyF2Hl/g5pm/3e3M4PplkMlX9WN8qDP9QXuR2Ulmac+KAj9AwuQDBYY/bmSMniMPK4BATR/SDNjd8j0C7XWzWwyMEzZKQ0jgFS38gh20zHrPhuTS78AbRw2HxINr0XrNHDqrvhqDdfVRipkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723871373; c=relaxed/simple;
-	bh=Rhd+o6cIvQZsonqH5BjtpwXRBNEn4sYl6ZxLr6ObqFU=;
+	s=arc-20240116; t=1723871374; c=relaxed/simple;
+	bh=pIv8/Aymq35M3mk+Ip2dqi+IlPE8wYobMr4oum9ku1Y=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BO01vjGjpSgppYlXBoGP46I/I7OXjfS682TP3ESPjwCl2TePak9mikLPc2P9uBUabsMhuP0IitO0dbGkk62B8NjYtH+cHtTvLQfs3eEt/2TmQbRsXZxdMB/15ss7AlPHtpMcfMKqBlwkVfq9onVPBhpI4kwa5mSgTAHSD9v5mr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZsNhL8zk; arc=none smtp.client-ip=198.175.65.15
+	 MIME-Version; b=YTnpN7TFJIuJS6M5Mg7dtuTpZvfoYzwfTRHZFzSSSrVYODj7o5Bvg4YjqlbGJYEqeZjJlPVnu0VcUuG77k2mr9F/Dy7Ppjw+b+zwMa9TOjm3uOMGdD344U6vAJbkF7X49nDEJxr3am20Vnh3fb7O8YIu5s1zx1x3JRmMKsCF4/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ioVR7Rqr; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,28 +35,28 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1723871372; x=1755407372;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Rhd+o6cIvQZsonqH5BjtpwXRBNEn4sYl6ZxLr6ObqFU=;
-  b=ZsNhL8zkBlfN76rfgr0HQUP+SEPtbQ0tx7oIcjxSuKLAS2GPl0zikari
-   o+dLOFYpAEq9uiu4o7A5DA7x7UELr5uSOWNH3rLCDNCGPdAMkYQIuT0nO
-   VnIg3D0/21wrnSSjF+H93pONS61mpRPhDFplCYMRAbCadJzpf8Xw9w85d
-   ftc6+OLehPPqQZdQP/y6i5pDVwn3Z5NorQvGFKlldnfsPzAzq0hLDtpMN
-   q5risecZ0ICw0vxa3LSk8Z7+ee9MKMl4I1wafKqfGCfVKY4qVSV1tfieG
-   mbYfLrdhXo0UFnw2jzCWn6TMYqj7MksDoKlhGe/bFRLHzb0GwpARhfIsX
-   Q==;
-X-CSE-ConnectionGUID: aNx2WiFaSKqnJxuzwFWf4g==
-X-CSE-MsgGUID: U3MjBQ7ZRzid4lMdlDmN1w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="25929478"
+  bh=pIv8/Aymq35M3mk+Ip2dqi+IlPE8wYobMr4oum9ku1Y=;
+  b=ioVR7Rqr9ZgapfLWy4X+8U+OtZ98GG8Q+eOWXgGRZqMyk3GtFWPsFrM+
+   s9A2xNsYdDO9d7zHmM/UAY8hFYQ37263kzjgECEHhlkSOxaWuxajv/xQv
+   9UR4dyoVIekgcuXmLMtUf3ldjSH5j8kVemYG0g6+qhNPGsAAkN0AvSxv6
+   yO/YkkxFxLbX83sumQlqQhODtq25V82Zj8RAz+2NN8octvcxdEbb4n6p0
+   bdEhV4ENLzcRewcx+7dVOeEBLuyolN6DQ2o60Zao1vdIbXqtuw6e6oT8Z
+   Se2Ypnh5qfTF4dANEsfk3Dn1tpP8KiHtpT8UF1EK2XqWkE502kZ0sZ4vG
+   w==;
+X-CSE-ConnectionGUID: i683/gphS+S53/42wCH/ag==
+X-CSE-MsgGUID: jchyHopvQAacm/kbxZwHIw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="25929485"
 X-IronPort-AV: E=Sophos;i="6.10,154,1719903600"; 
-   d="scan'208";a="25929478"
+   d="scan'208";a="25929485"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 22:09:21 -0700
-X-CSE-ConnectionGUID: ZSoOEOTiSpKi7SFuA8U4wg==
-X-CSE-MsgGUID: xlveTXNuQU62fSdNy5hU2w==
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 22:09:22 -0700
+X-CSE-ConnectionGUID: G3ES7ewjRXi5YjsXLL3eQQ==
+X-CSE-MsgGUID: fZPmCcW6RFSDaGvIag7BFg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,154,1719903600"; 
-   d="scan'208";a="60141498"
+   d="scan'208";a="60141501"
 Received: from jf5300-b11a338t.jf.intel.com ([10.242.51.6])
-  by orviesa006.jf.intel.com with ESMTP; 16 Aug 2024 22:09:21 -0700
+  by orviesa006.jf.intel.com with ESMTP; 16 Aug 2024 22:09:22 -0700
 From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
 To: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
@@ -71,9 +71,9 @@ Cc: nanhai.zou@intel.com,
 	wajdi.k.feghali@intel.com,
 	vinodh.gopal@intel.com,
 	kanchana.p.sridhar@intel.com
-Subject: [PATCH v3 3/4] mm: Add MTHP_STAT_ZSWPOUT to sysfs per-order mthp stats.
-Date: Fri, 16 Aug 2024 22:09:20 -0700
-Message-Id: <20240817050921.18462-4-kanchana.p.sridhar@intel.com>
+Subject: [PATCH v3 4/4] mm: swap: Count successful mTHP ZSWAP stores in sysfs mTHP stats.
+Date: Fri, 16 Aug 2024 22:09:21 -0700
+Message-Id: <20240817050921.18462-5-kanchana.p.sridhar@intel.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20240817050921.18462-1-kanchana.p.sridhar@intel.com>
 References: <20240817050921.18462-1-kanchana.p.sridhar@intel.com>
@@ -85,47 +85,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a new MTHP_STAT_ZSWPOUT entry to the sysfs mTHP stats so that
-per-order mTHP folio ZSWAP stores can be accounted.
+If zswap_store() successfully stores an mTHP, it will be
+counted under the per-order sysfs "zswpout" stats:
+
+/sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/zswpout
+
+Other block dev/fs mTHP swap-out events will be counted under
+the existing sysfs "swpout" stats:
+
+/sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/swpout
 
 Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
 ---
- include/linux/huge_mm.h | 1 +
- mm/huge_memory.c        | 2 ++
- 2 files changed, 3 insertions(+)
+ mm/page_io.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index e25d9ebfdf89..44609d84f2dd 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -273,6 +273,7 @@ enum mthp_stat_item {
- 	MTHP_STAT_ANON_FAULT_ALLOC,
- 	MTHP_STAT_ANON_FAULT_FALLBACK,
- 	MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
-+	MTHP_STAT_ZSWPOUT,
- 	MTHP_STAT_SWPOUT,
- 	MTHP_STAT_SWPOUT_FALLBACK,
- 	MTHP_STAT_SHMEM_ALLOC,
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index f4be468e06a4..7e97b6ed6ff1 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -574,6 +574,7 @@ static struct kobj_attribute _name##_attr = __ATTR_RO(_name)
- DEFINE_MTHP_STAT_ATTR(anon_fault_alloc, MTHP_STAT_ANON_FAULT_ALLOC);
- DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
- DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
-+DEFINE_MTHP_STAT_ATTR(zswpout, MTHP_STAT_ZSWPOUT);
- DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
- DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
- DEFINE_MTHP_STAT_ATTR(shmem_alloc, MTHP_STAT_SHMEM_ALLOC);
-@@ -587,6 +588,7 @@ static struct attribute *stats_attrs[] = {
- 	&anon_fault_alloc_attr.attr,
- 	&anon_fault_fallback_attr.attr,
- 	&anon_fault_fallback_charge_attr.attr,
-+	&zswpout_attr.attr,
- 	&swpout_attr.attr,
- 	&swpout_fallback_attr.attr,
- 	&shmem_alloc_attr.attr,
+diff --git a/mm/page_io.c b/mm/page_io.c
+index ff8c99ee3af7..debd04fbdfd0 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -172,6 +172,12 @@ int generic_swapfile_activate(struct swap_info_struct *sis,
+ 	goto out;
+ }
+ 
++static inline void count_mthp_zswpout_vm_event(struct folio *folio)
++{
++	if (IS_ENABLED(CONFIG_THP_SWAP))
++		count_mthp_stat(folio_order(folio), MTHP_STAT_ZSWPOUT);
++}
++
+ /*
+  * We may have stale swap cache pages in memory: notice
+  * them here and get rid of the unnecessary final write.
+@@ -196,6 +202,7 @@ int swap_writepage(struct page *page, struct writeback_control *wbc)
+ 		return ret;
+ 	}
+ 	if (zswap_store(folio)) {
++		count_mthp_zswpout_vm_event(folio);
+ 		folio_unlock(folio);
+ 		return 0;
+ 	}
 -- 
 2.27.0
 
