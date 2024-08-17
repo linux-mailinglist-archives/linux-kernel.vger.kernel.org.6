@@ -1,93 +1,78 @@
-Return-Path: <linux-kernel+bounces-290872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39C63955A29
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 01:07:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13738955A66
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 01:36:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D5271C20B3D
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 23:07:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 475EBB21614
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 23:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8682C155C8F;
-	Sat, 17 Aug 2024 23:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D4D156641;
+	Sat, 17 Aug 2024 23:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eNpYZg2D"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W2HwXVeI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E34149018
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 23:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BACE1C32;
+	Sat, 17 Aug 2024 23:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723936025; cv=none; b=P099i5SV8CqswK6XsNBwmukMyEMWMeTJXTIjh7MhexzspO2sp+XO4GzkRFOWlCEZkQxmelHcYgZdw+4j5c5hQJxadKGbUWQOzQv1+EYhIYUYSjarXe34rRdWeHeHCm1s3QeUwV63qWBeZN+WNVVWqcOLhp71ouaBtkKnD9s5kKA=
+	t=1723937779; cv=none; b=TCW+uGKnew8QuVdv6MBXiHxRuuqyNSTj76up6hfW5nnhVQYe4AwxoU3EtXeacm2E3huZDEhnSd5+cxIYib//1DnojObIh0ZAH83pMYEEa+dkEBZDTGSdiHg1EyTaJfFtG4tvTPxNqoLn0BncRDO/fJE2+Q9epnItAs/+m1Hy+xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723936025; c=relaxed/simple;
-	bh=UuCaKBlTxePsFkys14JaLzrfdXnMXRAS1STarqX/H3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LTCQzBkSQPElPHL5X5AX6HFBOTmZvPZfOrxM0RqaV7YdRYocwMs3lPRk209U/UMH42Vho/jRtO22/j6Rs39J63X3U5aIiNU6/wCvx1CYvWIodunlS+NslGDwpTqvtgcHlB0gBTXK5QulX29fHzOteiEyE675flaRYralGnSehB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eNpYZg2D; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=nXyS2sUo1n0Mw1n5ITMhmlne7GDtRzGJn7gmD/Y/8P0=; b=eNpYZg2Dfk8WK7soZM3/ImEnOl
-	lUHkXGZpJZV/h4A8dHxcxcxd5KnSza9q06TuRSplfLjYhtR8qi2Pj3LSz3L8TDKd2Ae7mnLApoN4b
-	gL/OXJ/egK7je1mbGsMrjwxKatMMTB7gtlye8iPheaZV8h2H/kRhY456Mp9RLpjXWHlLBdJ7tfmlI
-	SngrxIDGZuC3e35EXKpTV5iy+4B6++ATG86YBEApkgd2SBKrx0T42uXb/KRI/nObhsqoA24oZwERE
-	eKcK890leicSiFBO4KR0q8opL5bo/tgRzx6c2MQQ/OMOCGrvPf5hfdOUYxl745YWt8IIVPKW9Erl7
-	zGdzQBFQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sfSVI-00000005AjH-3mnL;
-	Sat, 17 Aug 2024 23:06:36 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8798C300848; Sun, 18 Aug 2024 01:06:36 +0200 (CEST)
-Date: Sun, 18 Aug 2024 01:06:36 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Valentin Schneider <vschneid@redhat.com>, mingo@redhat.com,
-	juri.lelli@redhat.com, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	linux-kernel@vger.kernel.org, kprateek.nayak@amd.com,
-	wuyun.abel@bytedance.com, youssefesmat@chromium.org,
-	tglx@linutronix.de, efault@gmx.de
-Subject: Re: [PATCH 19/24] sched/eevdf: Fixup PELT vs DELAYED_DEQUEUE
-Message-ID: <20240817230636.GB20319@noisy.programming.kicks-ass.net>
-References: <20240727102732.960974693@infradead.org>
- <20240727105030.514088302@infradead.org>
- <xhsmh7ccky4mr.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <20240813221806.GB10328@noisy.programming.kicks-ass.net>
- <CAKfTPtBD3iyR3XSssQDAU=vkPs70tZLukvbwPYpnSv63ra_-Ew@mail.gmail.com>
+	s=arc-20240116; t=1723937779; c=relaxed/simple;
+	bh=WsuVMCw+Rwc95TYFKUtAHB1I+WIdMSG2zxehlWRdDCA=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=FfDIXwuHYNa7QpkpAfAKfl9PLuG2wKc2ZnJN6LYA4Hyp68T/I/Z2qJYhiHkUDNVy27cEw+QU7P+eVPbduH1MhrJgJ0cVntOKJzwYIHCTVm1fsefNEIUiXeisNc20DQqEXvHnp5FUKjQ44fpiRZw4OLhrAxJHjRbYCnynQmB+Qmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W2HwXVeI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0C27C116B1;
+	Sat, 17 Aug 2024 23:36:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723937778;
+	bh=WsuVMCw+Rwc95TYFKUtAHB1I+WIdMSG2zxehlWRdDCA=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=W2HwXVeIqWXe0RGoyw978GmhNs+Uai6q0Ir8yWQ9PcMnxz1kCp1v8/MF/NG1Snfzu
+	 C9cm31iKWjb1PqUjmESgDWGzwH4br2jQjg6wZ06Vw9B36RJV9Bc2/1LMzDlUrP7pZT
+	 m7WVUvcaoXC6zYbAhRAsOg3D6GpLYwXoRuTQs6kV6OIx3VRJfvfwZW/I4QG8CbF70l
+	 ItJTpn698OCIAJyPb47C8sCoiXFtBbU8fTo+E5Rpkrv6a/c5fuzfpY7afCNGLfuAOB
+	 xkx7FWBGGWzpbGQgl+arhJUFOrDQFOjSdoUINQtaV8tvGBxdCcWU5L4DNv9OS+Jta6
+	 waT2YunZN35ig==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DFA38231F8;
+	Sat, 17 Aug 2024 23:36:19 +0000 (UTC)
+Subject: Re: [PULL REQUEST] i2c-for-6.11-rc4
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <ZsEA2hE5048Dt5Vq@shikoro>
+References: <ZsEA2hE5048Dt5Vq@shikoro>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <ZsEA2hE5048Dt5Vq@shikoro>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.11-rc4
+X-PR-Tracked-Commit-Id: 87cea484951eba1d0342033241f80e49303d802c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 98a1b2d71f9fac01c7aba80f30235b1b2e8234da
+Message-Id: <172393777806.3838684.18134398750162632957.pr-tracker-bot@kernel.org>
+Date: Sat, 17 Aug 2024 23:36:18 +0000
+To: Wolfram Sang <wsa@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>, Andi Shyti <andi.shyti@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtBD3iyR3XSssQDAU=vkPs70tZLukvbwPYpnSv63ra_-Ew@mail.gmail.com>
 
-On Wed, Aug 14, 2024 at 02:59:00PM +0200, Vincent Guittot wrote:
+The pull request you sent on Sat, 17 Aug 2024 21:58:18 +0200:
 
-> > So the whole reason to keep then enqueued is so that they can continue
-> > to compete for vruntime, and vruntime is load based. So it would be very
-> > weird to remove them from load.
-> 
-> We only use the weight to update vruntime, not the load. The load is
-> used to balance tasks between cpus and if we keep a "delayed" dequeued
-> task in the load, we will artificially inflate the load_avg on this rq
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.11-rc4
 
-So far load has been a direct sum of all weight. Additionally, we delay
-until a task gets picked again, migrating tasks to other CPUs will
-expedite this condition.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/98a1b2d71f9fac01c7aba80f30235b1b2e8234da
 
-Anyway, at the moment I don't have strong evidence either which way, and
-the above argument seem to suggest not changing things for now.
+Thank you!
 
-We can always re-evaluate.
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
