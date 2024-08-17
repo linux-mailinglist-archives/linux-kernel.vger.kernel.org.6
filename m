@@ -1,155 +1,124 @@
-Return-Path: <linux-kernel+bounces-290486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FCD2955488
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 03:11:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 259F595548A
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 03:11:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92EBAB22392
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:11:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0F88B229D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 01:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51594A28;
-	Sat, 17 Aug 2024 01:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hYv/bv5X"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F1C443D;
+	Sat, 17 Aug 2024 01:11:36 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38251FBA;
-	Sat, 17 Aug 2024 01:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373F879CF;
+	Sat, 17 Aug 2024 01:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723857085; cv=none; b=fdLxDlWUgonciwIk2HBjpVh+NjnxMhjwX51Kc4tMhUH0ziHkx5T365+ZI1NHQA/UooYt8e6XHyZ54HTIi8/mrXL80zHbDRBrFCrNl5isoQrFiqHK4zXbKZTJSPdF3KBm8t9+dQECfoRvdCKEPLQNjG+P0vMbDwhejULdr+kBAjU=
+	t=1723857096; cv=none; b=SKBizIQM1AS/kQBRnoqE3UFb1K11KUZxz8a6wepzmBSA3KvtdSM0Qbpo6bV+35rqfmTRifsKC4znTQj82YdxbRM+9Ko161dOq11swhsJV2nkudFbGJ+/xA5GJ8LLJatiEJ2rjvwp0+BmaH6QEQNXTn6L2wgeBPHi/0arWXNREQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723857085; c=relaxed/simple;
-	bh=g8Geri2XNbL38pyOWzp7d2MgOy9oPpFutYakSLbV27M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RPS2hwXnXpnG0yi4B4aQ8mYcCQpP1xMdURL7UATKekAlHJtWK0Xk1Gbr4E88HwhG+HbsDWGr2DtJ9i0rSBo62FLtsKFFVGk3lB+Jl3fDyBiJvbM+bUQpDtYuJy1GgrNQdBtEYxYPfme+KAXQIE+UhO8dQdvGGxUE2S7UvfSxAY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hYv/bv5X; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e0ec934a1fdso2421481276.0;
-        Fri, 16 Aug 2024 18:11:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723857082; x=1724461882; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ug8rihSZJE889SueAoqTX9ZWSfO/z3Gsu452Tq7F+6A=;
-        b=hYv/bv5Xi2sco/dleOYF1v1u0282L5QSuvtFGPcv6+YQDWSaX32MnURGMD97DP95rH
-         n+zdx68SRMkrny5c8zG9tCQNPdkgPYIe+COD9uN9n/eqhDI2hwjFiOqEqMKd2GDNqZKc
-         tDPGIO2/dkv/PjugX7gwTsEXW8Ehik/LHXDalg0iifwufWIsP40UCjDCoxZoR30p5PxQ
-         k4piSoCF4/WusUh5AFpE/1fXdwXFazg8rirltU2uO7Jg7//7P/s3Lth1ROiemjMq8nM1
-         8uYcibNyYqcbBPE7G+MOOf290YSe6YxovoP5XZMwJfmAOrxTZmMX7Vg0hGVoZrQ8cICc
-         WyxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723857082; x=1724461882;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ug8rihSZJE889SueAoqTX9ZWSfO/z3Gsu452Tq7F+6A=;
-        b=sY2uDDB0UlCZE/6uZwBSoy+jOOGDQo7iWemmqpIyekM68T23wZJrTzbxezDKIi6ox5
-         g60LAy1s8YzReI40lIzu7Ja5f3lIHhg07uQziMht0M99xTqAQbiSubz5kTfUBck1kSWl
-         3eDita1DNaGEIHGXSXZDCHsyE1mH4q0imC1ExD9p7gCm7if73rqyuCSbgPBjYnHhFZc6
-         8LyzEwY4tNsPNiqHNPd1XeXySzL1KLDDMVE6iothBt5UHFni/FyvZwcghUGK2+4Cfj2Z
-         unk6TDnDecG7YdbVn+vV2nqZoNXq52y04LPYBKRafAxi7IgOnuRKhpMKEhlJFgU23hUc
-         K7mA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBpJjqSzLFRoFVd6q6jY/uSkZNNaoREeIU1/5rblFwUdczqaG7LPAf1lkm8oAiIMv4mnjfJdStqyubXXEe/Y2o6PJo1zfUjbWTwi6s5V73SATStLW83DRJFTD+ZeC8l1/XkWDhPgqP7AEkPEvPmsThC0mqPhZ6NhOod0CcVt99Zekw+Q9RqD4XW0MCsTTFyRTQ3Ejlt1wgRiatqNR+fRNFww==
-X-Gm-Message-State: AOJu0YxpvlFpmF/0fpk6449XAW3hZNNhfci7N6d/noWDk8we8YeOCoMI
-	g/dTEECT5p13DG3LTZ+4FvoAUTj1U+KRKjjj/oKkhcuIshSj/jr8MufUG85wCgFpwitYartesNj
-	FRC5RWLVLogTqq0N7ZxLx3oK/wJ8=
-X-Google-Smtp-Source: AGHT+IEM2mdGVjOsGnMz8WXTnI9118qcDH2jUCIIbDZ4rPiQ10iGBBlTUuDxRR73hnxLfbHp9nYn32+CIgpvlrRB+hI=
-X-Received: by 2002:a05:6902:701:b0:e08:5e73:cdf3 with SMTP id
- 3f1490d57ef6-e1180e6c54emr4739180276.9.1723857082428; Fri, 16 Aug 2024
- 18:11:22 -0700 (PDT)
+	s=arc-20240116; t=1723857096; c=relaxed/simple;
+	bh=e6Ih+qDjS8hZTeJnLYRBVww5GDd/zQv2Vr3ZEKTKLX0=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=H1Fx+qzFBRQ7s4w0QyoWbOm5zKDFTciD+BK85b7SVe8Gvmj/pyecfpUeaRA4nyVxFbhNM9rbBz6eXCjV3iRFJqde4Cm3k84B8WubpngLhgMkw+hMVw2TG0U5hjt2w+Rh7dlqCTU49SyhsxhxmEx/D8WtYiwfOjmVykg1+zUZK4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wm13W4F8CzhXrp;
+	Sat, 17 Aug 2024 09:09:27 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0D185180100;
+	Sat, 17 Aug 2024 09:11:26 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Sat, 17 Aug 2024 09:11:25 +0800
+Message-ID: <ef78137e-d977-4da5-acfb-00865e3a9837@huawei.com>
+Date: Sat, 17 Aug 2024 09:11:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
- <CGME20240807110114eucas1p2e1ca4cbd352c6cd9d60688b1570df8d4@eucas1p2.samsung.com>
- <2024080753-debug-roulette-8cb1@gregkh> <3jnp6tnkjpvnisefomxagazu2u3uzzt7rcon3r5jssraxzwegb@gsxc7c5sfh7v>
- <2024080758-dedicator-smoky-44be@gregkh>
-In-Reply-To: <2024080758-dedicator-smoky-44be@gregkh>
-From: Barry Song <21cnbao@gmail.com>
-Date: Sat, 17 Aug 2024 13:11:11 +1200
-Message-ID: <CAGsJ_4zA6=ajoOgAm9kweeiBFKz4TJxxjYFGHHd3HQY8dxHpWA@mail.gmail.com>
-Subject: Re: [PATCH 00/12] Enable build system on macOS hosts
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Daniel Gomez <da.gomez@samsung.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Lucas De Marchi <lucas.demarchi@intel.com>, 
-	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, 
-	Kirk Reiser <kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, 
-	Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Jiri Slaby <jirislaby@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>, 
-	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"speakup@linux-speakup.org" <speakup@linux-speakup.org>, 
-	"selinux@vger.kernel.org" <selinux@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, 
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>, Finn Behrens <me@kloenk.dev>, 
-	"Daniel Gomez (Samsung)" <d+samsung@kruces.com>, "gost.dev@samsung.com" <gost.dev@samsung.com>, 
-	Nick Desaulniers <nick.desaulniers@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, <yisen.zhuang@huawei.com>,
+	<salil.mehta@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
+	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
+	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
+	<jdamato@fastly.com>, <jonathan.cameron@huawei.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH V2 net-next 03/11] net: hibmcge: Add mdio and hardware
+ configuration supported in this module
+To: Andrew Lunn <andrew@lunn.ch>
+References: <20240813135640.1694993-1-shaojijie@huawei.com>
+ <20240813135640.1694993-4-shaojijie@huawei.com>
+ <79122634-093b-44a3-bbcd-479d6692affc@lunn.ch>
+ <1ff7ba7c-3a25-46b5-a9de-a49d96926e64@huawei.com>
+ <7bab865c-b5f6-4319-ba0f-1d0ddc09f9cd@lunn.ch>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <7bab865c-b5f6-4319-ba0f-1d0ddc09f9cd@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
-On Thu, Aug 8, 2024 at 2:20=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Wed, Aug 07, 2024 at 01:56:38PM +0000, Daniel Gomez wrote:
-> > On Wed, Aug 07, 2024 at 01:01:08PM GMT, Greg Kroah-Hartman wrote:
-> > > On Wed, Aug 07, 2024 at 01:09:14AM +0200, Daniel Gomez via B4 Relay w=
-rote:
-> > > > This patch set allows for building the Linux kernel for arm64 in ma=
-cOS with
-> > > > LLVM.
-> > >
-> > > Is this a requirement somewhere that this must work?  It seems like a=
-n
-> > > odd request, what workflows require cross-operating-system builds lik=
-e
-> > > this?
-> >
-> > This isn't a requirement, but it would, for example, support workflows =
-for QEMU
-> > users and developers on macOS. They could build/compile the kernel nati=
-vely and
-> > use it to launch QEMU instances, simplifying their process.
->
-> But that's not a real workload of anyone?  How often does this ever come
-> up?  Who is going to maintain this cross-build functionality over time?
 
-it is a real workload of me,  i was running qemu-system-aarch64 on x86
-and it was
-pretty slow. so got a M3 pro to accelerate my development. frequently chang=
-ing
-kernel's source code, i am using qemu-system-aarch64 to do quick verificati=
-on.
+on 2024/8/17 5:04, Andrew Lunn wrote:
+> On Fri, Aug 16, 2024 at 02:10:36PM +0800, Jijie Shao wrote:
+>> on 2024/8/16 10:25, Andrew Lunn wrote:
+>>>> +struct hbg_mdio_command {
+>>>> +	union {
+>>>> +		struct {
+>>>> +			u32 mdio_devad : 5;
+>>>> +			u32 mdio_prtad :5;
+>>>> +			u32 mdio_op : 2;
+>>>> +			u32 mdio_st : 2;
+>>>> +			u32 mdio_start : 1;
+>>>> +			u32 mdio_clk_sel : 1;
+>>>> +			u32 mdio_auto_scan : 1;
+>>>> +			u32 mdio_clk_sel_exp : 1;
+>>>> +			u32 rev : 14;
+>>>> +		};
+>>>> +		u32 bits;
+>>>> +	};
+>>>> +};
+>>> This is generally not the way to do this. Please look at the macros in
+>>> include/linux/bitfield.h. FIELD_PREP, GENMASK, BIT, FIELD_GET
+>>> etc. These are guaranteed to work for both big and little endian, and
+>>> you avoid issues where the compiler decides to add padding in your
+>>> bitfields.
+>>>
+>>> 	Andrew
+>> Thanks, I already know about macros like FIELD_PREP or FIELD_GET.
+>> and these macros are already used in parts of this patch set.
+>>
+>> But I think this writing style in here very convenient.
+>> Although padding needs to be added during definition,
+>> but you can use command.mdio_start or command->mdio_start
+>> to access specific bitfields.
+>>
+>> Although FIELD_PREP/FIELD_GET is convenient,
+>> But it also needs to define the mask using BIT or GENMASK,
+>> and the mask can only be a static constant,
+>> which makes it difficult to use sometimes.
+> Have a look around. How many drivers use this sort of union? How many
+> use bitfield.h. There is a reason the union is not used. I suspect
+> there is nothing in the C standard which guarantees it works.
+>
+>        Andrew
 
->
-> thanks,
->
-> greg k-h
->
+Ok, thanks for the comment.
+I'll fix it in the next version.
+	
+	Jijie Shao
 
-Thanks
-Barry
+
 
