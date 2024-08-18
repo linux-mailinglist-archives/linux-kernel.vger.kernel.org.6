@@ -1,38 +1,47 @@
-Return-Path: <linux-kernel+bounces-290942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98BA3955B60
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 08:37:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1065955B6B
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 08:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EA3D1F21D8D
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 06:37:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1115A1C21123
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 06:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F2DFC02;
-	Sun, 18 Aug 2024 06:37:31 +0000 (UTC)
-Received: from out28-124.mail.aliyun.com (out28-124.mail.aliyun.com [115.124.28.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F5EFC0B;
+	Sun, 18 Aug 2024 06:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ttsuo6lB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B654EFC0A;
-	Sun, 18 Aug 2024 06:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C214BDDA9;
+	Sun, 18 Aug 2024 06:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723963051; cv=none; b=gsqwhJJ7bQi77Y9Fzb/QZIKtPuHIKOsRL5mLQPC8735gv7ggntgjXQ+/5AgRbCOxLEFx+EPK03/AYKS3Bo1XwT5piUY76tvJWBIrmGXUVxiOTSPRTIDYEczFUR7sLY7mZ1uBO9WrtwgCE6zNHU+RtJOvFoJuOFpKThU5kZT1c/A=
+	t=1723963166; cv=none; b=Q/5oNGa7CLyvgFAI7hVqpHcVdygXYqm7AX4m3+f+iFXHZmKqjiRq2vQVANv4z7B0yDR3eqFHe9sRWjZ2EGFysNa2K+v8hCQ3rwWQd1mIDmCbVclztjYYYUC9BTcYu88OHFtItRCD1UTdsSHY7/vp3t2MKbqQGtcWM70TMIbjMuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723963051; c=relaxed/simple;
-	bh=1FLRfl8oDMdmwSZEuccVBa3OVneT0Ya49b2lwc5PqdE=;
+	s=arc-20240116; t=1723963166; c=relaxed/simple;
+	bh=qRBqd32aKqnqH/KIchSIKqtYai0NWAVhP0OSrm9xxXU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C5pp8E2HmF9SIYqStXCxsjsl1tpuuIYRcBnjUGvj2/rkIOHM43FpMMoW9QS6KD++NmjHdwB9bIMB6VcWZ6UD8OleeA6u7IFfhplt98nqJ96Ei91+2Ec0O2BQfJV9AVt/U//AisuUqXw4MK2uRP7vj32jicXKtjfA6EOX/NP+7lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com; spf=pass smtp.mailfrom=motor-comm.com; arc=none smtp.client-ip=115.124.28.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motor-comm.com
-Received: from 192.168.208.130(mailfrom:Frank.Sae@motor-comm.com fp:SMTPD_---.YvIfKL8_1723962999)
-          by smtp.aliyun-inc.com;
-          Sun, 18 Aug 2024 14:37:13 +0800
-Message-ID: <0d4d3507-f095-47c6-866f-1e850cf7f3d8@motor-comm.com>
-Date: Sat, 17 Aug 2024 23:36:38 -0700
+	 In-Reply-To:Content-Type; b=Q64j5Rex1BrOizJYlfBOM54skOq1iRal2s+E1o2hNVLLYZ/sCTOy/OaYfNrkeifkfB7p+jUnIl5kganFiwSJEItn6LxSmh9ZpLkoFFg5j1cIS0gXx8KpNsXXIBy+RaXVbEX/5juvLIpDBTOKJgua5q2DpAUt1Hu/JEMNJf1KpeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ttsuo6lB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7B64C32786;
+	Sun, 18 Aug 2024 06:39:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723963166;
+	bh=qRBqd32aKqnqH/KIchSIKqtYai0NWAVhP0OSrm9xxXU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ttsuo6lBkH68D7MxntKFDd6GLOCLagyQTC3+RnN1LBqm/gEzEgC4Hac3iqh6zyYTV
+	 oRX7XXsLtSlca13uyN3Ra5OB9ZKgRp6EYx+ipBLCs+2W9UAviYAmHedOwYWJE4kE3w
+	 u66o80DOngxi3I220WTOxy2rUI6ORNwuXqzZ/gRmd3z6En1JolWq5vutrE/npyPfd5
+	 +1Vl2IVfgDdXijnu3RU7Hwjvay/dnDjJV5nZmq5yWdFtI8ege6AH8svk7KYkpd4Fkd
+	 k0kjXiAzZYaqQ/vXMHFyewtu5EYwqDKSsjxaYBtRHk8ZTjnlHw6i+Xk/MseiCfixqE
+	 d3I7XdTZHglNA==
+Message-ID: <4289e248-842a-4883-8c71-bd2fcbeecae1@kernel.org>
+Date: Sun, 18 Aug 2024 08:39:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -40,135 +49,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 2/2] net: phy: Add driver for Motorcomm yt8821
- 2.5G ethernet phy
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- yuanlai.cui@motor-comm.com, hua.sun@motor-comm.com,
- xiaoyong.li@motor-comm.com, suting.hu@motor-comm.com, jie.han@motor-comm.com
-References: <20240816060955.47076-1-Frank.Sae@motor-comm.com>
- <20240816060955.47076-3-Frank.Sae@motor-comm.com>
- <ZsCLMQWoZcVV+7xR@shell.armlinux.org.uk>
+Subject: Re: [PATCH] power: supply: max17042_battery: Fix SOC threshold calc
+ w/ no current sense
+To: Artur Weber <aweber.kernel@gmail.com>, Hans de Goede
+ <hdegoede@redhat.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
+ Purism Kernel Team <kernel@puri.sm>, Sebastian Reichel <sre@kernel.org>,
+ Anton Vorontsov <anton.vorontsov@linaro.org>,
+ Ramakrishna Pallala <ramakrishna.pallala@intel.com>,
+ Dirk Brandewie <dirk.brandewie@gmail.com>
+Cc: Henrik Grimler <henrik@grimler.se>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+References: <20240817-max17042-soc-threshold-fix-v1-1-72b45899c3cc@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: "Frank.Sae" <Frank.Sae@motor-comm.com>
-In-Reply-To: <ZsCLMQWoZcVV+7xR@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240817-max17042-soc-threshold-fix-v1-1-72b45899c3cc@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On 17/08/2024 12:51, Artur Weber wrote:
+> Commit 223a3b82834f ("power: supply: max17042_battery: use VFSOC for
+> capacity when no rsns") made it so that capacity on systems without
+> current sensing would be read from VFSOC instead of RepSOC. However,
+> the SOC threshold calculation still read RepSOC to get the SOC
+> regardless of the current sensing option state.
+> 
+> Fix this by applying the same conditional to determine which register
+> should be read.
+> 
+> This also seems to be the intended behavior as per the datasheet - SOC
+> alert config value in MiscCFG on setups without current sensing is set
+> to a value of 0b11, indicating SOC alerts being generated based on
+> VFSOC, instead of 0b00 which indicates SOC alerts being generated based
+> on RepSOC.
+> 
+> This fixes an issue on the Galaxy S3/Midas boards, where the alert
+> interrupt would be constantly retriggered, causing high CPU usage
+> on idle (around ~12%-15%).
+> 
+> Fixes: e5f3872d2044 ("max17042: Add support for signalling change in SOC")
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 
-On 8/17/24 04:36, Russell King (Oracle) wrote:
-> On Thu, Aug 15, 2024 at 11:09:55PM -0700, Frank Sae wrote:
->> +static int yt8821_get_rate_matching(struct phy_device *phydev,
->> +				    phy_interface_t iface)
->> +{
->> +	int val;
->> +
->> +	val = ytphy_read_ext_with_lock(phydev, YT8521_CHIP_CONFIG_REG);
->> +	if (val < 0)
->> +		return val;
->> +
->> +	if (FIELD_GET(YT8521_CCR_MODE_SEL_MASK, val) ==
->> +	    YT8821_CHIP_MODE_FORCE_BX2500)
->> +		return RATE_MATCH_PAUSE;
-> Does this device do rate matching for _any_ interface mode if it has
-> this bit set - because that's what you're saying here by not testing
-> "iface". From what I understand from your previous posting which
-> included a DT update, this only applies when 2500base-X is being
-> used as the interface mode.
+Cc: <stable@vger.kernel.org>
 
-Here not check parameter iface, it is not to say that iface has no relation
-with rate matching. when interface is configed with phy-mode property in
-DT, modify YT8521_CHIP_CONFIG_REG register bit2:0 dependent on
-phydev->interface in yt8821_config_init(), if phy-mode = "sgmii", bit2:0
-will be set 3'b000, if phy-mode = "2500base-x", bit2:0 will be set 3'b001.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-so that YT8521_CHIP_CONFIG_REG register bit2:0 may decide enable or disable
-rate matching feature in yt8821_get_rate_matching() and do not care input
-parameter iface here.
+Best regards,
+Krzysztof
 
->> +static int yt8821_aneg_done(struct phy_device *phydev)
->> +{
->> +	int link;
->> +
->> +	link = yt8521_aneg_done_paged(phydev, YT8521_RSSR_UTP_SPACE);
->> +
->> +	return link;
->> +}
-> Why not just:
->
-> 	return yt8521_aneg_done_paged(phydev, YT8521_RSSR_UTP_SPACE);
->
-> ?
->
->> +/**
->> + * yt8821_config_init() - phy initializatioin
->> + * @phydev: a pointer to a &struct phy_device
->> + *
->> + * Returns: 0 or negative errno code
->> + */
->> +static int yt8821_config_init(struct phy_device *phydev)
->> +{
->> +	u8 mode = YT8821_CHIP_MODE_AUTO_BX2500_SGMII;
->> +	int ret;
->> +	u16 set;
->> +
->> +	if (phydev->interface == PHY_INTERFACE_MODE_2500BASEX)
->> +		mode = YT8821_CHIP_MODE_FORCE_BX2500;
-> Hmm, I think this is tying us into situations we don't want. What if the
-> host supports 2500base-X and SGMII, but does not support pause (for
-> example, Marvell PP2 based hosts.) In that situation, we don't want to
-> lock-in to using pause based rate adaption, which I fear will become
-> a behaviour that would be risky to change later on.
-
-yt8821 is pin2pin realtek rtl8221.
-
-please refer to description about interface force 2500base-x and auto
-2500base-x_sgmii in datasheet.
-
-In AUTO_BX2500_SGMII mode, The internal flow control buffer is disabled in
-this mode.
-
-In FORCE_BX2500, SerDes always works as 2500BASE-X, internal flow control
-buffer will be activated if UTP doesn't work at 2.5GBASE-T.
-
->> +
->> +	set = FIELD_PREP(YT8521_CCR_MODE_SEL_MASK, mode);
->> +	ret = ytphy_modify_ext_with_lock(phydev,
->> +					 YT8521_CHIP_CONFIG_REG,
->> +					 YT8521_CCR_MODE_SEL_MASK,
->> +					 set);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	if (mode == YT8821_CHIP_MODE_AUTO_BX2500_SGMII) {
->> +		__set_bit(PHY_INTERFACE_MODE_2500BASEX,
->> +			  phydev->possible_interfaces);
->> +		__set_bit(PHY_INTERFACE_MODE_SGMII,
->> +			  phydev->possible_interfaces);
->> +
->> +		phydev->rate_matching = RATE_MATCH_NONE;
->> +	} else if (mode == YT8821_CHIP_MODE_FORCE_BX2500) {
-> 		__set_bit(PHY_INTERFACE_MODE_2500BASEX,
-> 			  phydev->possible_interfaces);
->
-> so that phylink knows you're only going to be using a single interface
-> mode. Even better, since this is always supported, move it out of these
-> if() statements?
-
-it is ok.
-
->
->
-> Also, it would be nice to have phydev->supported_interfaces populated
-> (which has to be done when the PHY is probed) so that phylink knows
-> before connecting with the PHY which interface modes are supported by
-> the PHY. (Andrew - please can we make this a condition for any new PHYs
-> supported by phylib in the future?)
-
-now no supported_interfaces member in struct phy_device.
-
-> Note the point below in my signature.
->
 
