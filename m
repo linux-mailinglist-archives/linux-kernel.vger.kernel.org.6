@@ -1,130 +1,115 @@
-Return-Path: <linux-kernel+bounces-291055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53BEA955CA5
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 15:03:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8FCC955CB3
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 15:13:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10E9C281C83
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 13:03:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 307F0B20EC7
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 13:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1403A1A8;
-	Sun, 18 Aug 2024 13:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16FA34CDE;
+	Sun, 18 Aug 2024 13:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gMqg/9uM"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DWgh4t1z"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820C817C9B;
-	Sun, 18 Aug 2024 13:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD11B666;
+	Sun, 18 Aug 2024 13:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723986222; cv=none; b=J/slJFPez/Ct+7DGxva636cOhi5Al/eBTDJsOw1SnmnYLH3h486VcDsIyRxRHCau9zgUkhKS3d18ASUvYJNRUXPBvFQSOAzcubKk9JjSSZNwRAMkC7MfTs5MkcqmBP7l85pO/AcV8vWhi1NNT7DkPF4TgSaTHMY41vZ240lKzz0=
+	t=1723986793; cv=none; b=gBMZDLqenSkunvOle49YH6MrUL4NdPoOr2I7Vr8q396tos5HNAuHcIFKuR0+chrum/DVrpRmdtj3z9WTo8DwXoWGNYo/MMcAk62VkR9a7aU60zh328+iV51qBtXMTYNYMgF7KCqGw1kcSth5ReJQdXw+BWBhN58BsTEo6M+fFN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723986222; c=relaxed/simple;
-	bh=ZvaCRg39vE4Ee6Mny1uj8pWX2qzsse27jru5bmzX+DA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hvUV01s1SBL99uVFrkLn38cww08F+3simM9Os89TbOYAdWEzxHtqz/m3wJIN3uIJHp1IRDb8LkXhjuVvzF++fD4ZABDuC8iwiqMswuxFGcOtoniolSrFug3iL9TyzSxJqVWrgmtqXy7XA8fkvyhNwHzolm5ZbCF6U0DcQ1FQct8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gMqg/9uM; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-68518bc1407so37280237b3.2;
-        Sun, 18 Aug 2024 06:03:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723986220; x=1724591020; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dKuzpVJiFk4xBooodI4VeM4vceNm39MbpknJ/YPFpFY=;
-        b=gMqg/9uM4K+s1tCdysxeonKsdrPy761KN8pH81GcQm5krE90bjXzposYKE7T6N/9S/
-         4he1W1zVwH+QVky/gY4AtSlKlxQEX4kwo9RP6CoOnvK08xUrFiGSrsRWIqDb+cD4z0cm
-         VYkX1N+sO+CdqozTB9HlYmtfTQEbNrTRymCvzO1iJu2aYrj6ggJ7T2u0Mf/D2hoedUWG
-         DoBO5VX0Aw3Hu69iyP5BaVOwqxenymXnmI/EcKTubqftybPbxEnSiXTJvrG7qf180Wq0
-         4j8DA9T1mhAVW9C0HkESRok2TSVcatmcq3UE5XpI39NYGOdEI71PMfJid/rdo3/Luxc4
-         AGEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723986220; x=1724591020;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dKuzpVJiFk4xBooodI4VeM4vceNm39MbpknJ/YPFpFY=;
-        b=MtcDl5eWPtqFXtEV9T8Cjdy24bjJpLK3716GEXYnPepsReJDQWdwhtjYKkzFtwWXk4
-         7NXWfpqfcga++UFzXbbIu6Q2OfuEweHUjQk0qTyJGyK3V5uLdJ74Rois9bWZaHJx2JWt
-         aZhp82SDVPKRG5yGilu6YLFhYjhLFX/Cfya0Xnn4CwFZGY0PMLRYJHeQ8tOivmjQvJJe
-         NNoFossmH9OW9BVZGc6+zgP/bxAMMKvkoJmqKNqVSVHHZEEKL0D9ImcPoJ27OPO3BTw4
-         WhxYkggn6k21YJHQvIZX7W4YSwCxOwFtJhi8V2QQDHrd/ChovfoTyixeAdJ+7GY74SU9
-         viqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXmyoCy24BCulNFVdHtIrABx9cN6SYv6kYoEjAy86ovl/ptVTthJNndJaYkmzXOkD/rnVEO+9xoSv8tNzfLgue6Y71Fi42eBWdFf02aPMgkkndT7C3ujTlJs2yDOCKvdg0agDWZ
-X-Gm-Message-State: AOJu0YzGw8s7VU+Itj/ziTUTLompM1N1cIIAnx3iLIogCtJH/vmgvdQY
-	fvvYlaBaXe3ml7A7Kr68PkVXp4fvC9cEi8hs7S8BJKDipVbjzrL4pN8LCSPZ6jI44Fm3wlwqYsB
-	P/QuPmIfBxhD5RHEnk7l+ypatHpo=
-X-Google-Smtp-Source: AGHT+IH8ByidZiVyqGayXnG01vIkC8Qa5DOMAddBzWu4pAWk93IAJpzRz6iDuHjToX+hWztAEDdvZT0ZSY3TyVk5BxA=
-X-Received: by 2002:a05:690c:690f:b0:6b1:2825:a3cf with SMTP id
- 00721157ae682-6b1ba5f78dcmr98563177b3.10.1723986220186; Sun, 18 Aug 2024
- 06:03:40 -0700 (PDT)
+	s=arc-20240116; t=1723986793; c=relaxed/simple;
+	bh=wzKRVbF0+iIEwH2adiCkjyvf9KMRxPZMHSR//B5cIzI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=VdhpoGcUdmK8Hq84jyxpCAz2AA4buSgF032c0m3Ydj2cH2uMpQpeKqSAPd3YkOrYYpZPeqg+FAdkfEGkt14pKqhga8a6rHW0XJ/FKUMb1EhlZsZ9eEsK1jU9M1tQ5kl84ezCniqL98Aq2PBXslOiO2glN7Igo9DIpXVrJ49EjV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=DWgh4t1z; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1723986776; x=1724591576; i=markus.elfring@web.de;
+	bh=wzKRVbF0+iIEwH2adiCkjyvf9KMRxPZMHSR//B5cIzI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=DWgh4t1zw7Esbf1tYAgp08w1Jv8h5z/nu4AQfGWwSCJ2soiNOrODLP1rMj+cMza0
+	 yzCs3cLyWzCJ34QV+ZfRWb2sUk0n+xJ/dKlVzsHPCgmmLfUOu0oGMjgjDFiNwH8M1
+	 J3HtsDMnjWTbPhJzWdM7h/LGGBSOMOlh3gn48b0Onxp6XQ9SanoJzkTFD5atv0U61
+	 yJTQuWjNvW9yORQFBAxn018q9swbm/Nlr8DYv/sDCeWmGUm+UnhVJ3xoPTXhWGesl
+	 ZdTsA0EPfP4b4ihloND3e6wiiHiRGRvbbIqaCt0BctrkbzaLj6Z1uhqSiOPbcqqeQ
+	 RlV1cYE1gLxe6Y1Y9A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M3V6E-1sgDgA1epG-000WKu; Sun, 18
+ Aug 2024 15:12:56 +0200
+Message-ID: <aa331200-205e-4b00-ae02-343c96c52ae8@web.de>
+Date: Sun, 18 Aug 2024 15:12:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240818071757.798601-1-make24@iscas.ac.cn>
-In-Reply-To: <20240818071757.798601-1-make24@iscas.ac.cn>
-From: lock hey lee <lee.lockhey@gmail.com>
-Date: Sun, 18 Aug 2024 21:03:27 +0800
-Message-ID: <CAL7siYN5gUgv6kG72paLeoeqh2pic6ZySGf_r90oK_2UyPKjiA@mail.gmail.com>
-Subject: Re: [PATCH v3] dmaengine: moxart: handle irq_of_parse_and_map() errors
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: dmaengine@vger.kernel.org, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>, linux-input@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>, Jiri Kosina <jikos@kernel.org>
+References: <20240813153819.840275-3-stuart.a.hayhurst@gmail.com>
+Subject: Re: [PATCH] HID: corsair-void: Add Corsair Void headset family driver
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240813153819.840275-3-stuart.a.hayhurst@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Bgo8Mjcj/UCW6RoBpCIC+Zuvxemp49W6vDQLsezt+tiSkJAhPN1
+ JDy1nOzqby9HbXjRzKALuFAFQyUezPik60QtsCl2DYZva0MqPdo5Xsh1R/XTDVKEtpCJx+c
+ jQm3Si8a7vid+/N1fUmjPBOrLvNe9z6gyw9YjQKI9ZNL6VB+hLaBQVk1dlcJLWSUu8+2vZh
+ 5nT7WE3FCSw1k6I8Fz+Ng==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:yEqxYLdwEMo=;Ty+Fj4klsSrBwo3/nLBKK5ejFw/
+ nqltL8LOU+jxBFAI9EvoTnV7UwbGtqjyU6e58R9MdpftR4PHQqQhWR0xFVH448EpdJsaqb2Uk
+ TaYHbOc0v8idNBXtW5s90jpacNV3EaQYzPokmg9LPWaZHsKyLJoSWcp6UJyVQEra571GdVJ3P
+ tQLcJGUzqQfDa9CHrEy1LRHcP33qjEo2Wk3wP6OS+PpEvH3exAuvBsLhpC3qTCHJ3l30DPN1H
+ krtg/HUXXzuaO+JD/DmORCzOpi4F9EyiyADH6QITL2JnhKiv+oQ660S/QsGivXlnK3Ru2yy4s
+ If6Nm7xWKOqv9bQHaaLdnFD12eI/qgYXAVGVd8V6cfoFj4Xv1RwkZEpNj1RA/0EnIfQfhPHbY
+ 2A9CXr5/6htdXgIMwEqbjZeFGWoEWhe6NqGRYHQ1GJCEecUOqUms+USaqVEP9gkPOwOZvFrxn
+ z7joKPMFlpVnhbGrXliIqs+mDT02fvtv+SYqaX+yKuk4/ZnUBIZYGm/B0afSiDuz8BpaSpuF/
+ XuPbdtxmyJweo6oOWh/bI57iRy/+0NbNqqXPqlcO1J3AmI1P2K29Jnjbu1aW7/o7doWhhiN8J
+ VwOaMslzpGVTV3qIREGQOokCaJdedg0rLMOb62DqqN18ZPvZ4MronY0/ew/NF7B32XDMSE0pN
+ p9ekjZ9Xdke4AUerFJ+8dWsw5w3gqI1NRzT+jPCr7h9StIpmbaoHuavIc0sGTNwbRrTVZD1aE
+ J+L72ZJ2fev5cqz0k71TJ7Dtl+gcQLFpK4g/C3kg0z5QX/+IPePwmGm253TvqqIhuoOPdbYm6
+ BMV7JNBURo8K+IJREF0koTDg==
 
-Hello Ma Ke,
+How do you think about to distinguish properties any further for available
+device attributes?
+https://elixir.bootlin.com/linux/v6.11-rc3/source/Documentation/driver-api=
+/driver-model/device.rst#L38
 
-On 2024/8/18 15:17:57 +0800, Ma Ke wrote:
->Zero and negative number is not a valid IRQ for in-kernel code and the
->irq_of_parse_and_map() function returns zero on error.  So this check for
->valid IRQs should only accept values > 0.
->
->Cc: stable@vger.kernel.org
->Fixes: 2d9e31b9412c ("dmaengine: moxart: remove NO_IRQ")
->Signed-off-by: Ma Ke <make24@iscas.ac.cn>
->---
->Changes in v3:
->- added missed changelog v2.
->Changes in v2:
->- added Cc stable line;
->- added Fixes line.
->---
->  drivers/dma/moxart-dma.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/drivers/dma/moxart-dma.c b/drivers/dma/moxart-dma.c
->index 66dc6d31b603..16dd3c5aba4d 100644
->--- a/drivers/dma/moxart-dma.c
->+++ b/drivers/dma/moxart-dma.c
->@@ -568,7 +568,7 @@ static int moxart_probe(struct platform_device *pdev)
->               return -ENOMEM;
->
->       irq =3D irq_of_parse_and_map(node, 0);
->-      if (!irq) {
->+      if (irq <=3D 0) {
 
-The =E2=80=99irq=E2=80=98 variable type here is =E2=80=98unsigned int, whic=
-h will never be negative, :-)
+=E2=80=A6
+> +++ b/drivers/hid/hid-corsair-void.c
+> @@ -0,0 +1,851 @@
+=E2=80=A6
+> +static DEVICE_ATTR(fw_version_receiver, 0444, corsair_void_report_firmw=
+are, NULL);
+> +static DEVICE_ATTR(fw_version_headset, 0444, corsair_void_report_firmwa=
+re, NULL);
 
->
->               dev_err(dev, "no IRQ resource\n");
->               return -EINVAL;
->       }
->--
->2.25.1
->
->
+* Are these really changeable?
 
-Thanks,
-Luoxi
+* Can the macro =E2=80=9CDEVICE_ATTR_RO=E2=80=9D be applied?
+
+
+=E2=80=A6
+> +MODULE_AUTHOR("Stuart Hayhurst");
+
+Would you like to add an email address here?
+
+Regards,
+Markus
 
