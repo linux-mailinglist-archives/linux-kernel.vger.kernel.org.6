@@ -1,226 +1,94 @@
-Return-Path: <linux-kernel+bounces-290968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E47A0955BB7
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 09:05:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85F4D955BB9
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 09:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 159D51C210C0
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 07:05:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E8BF1F21D08
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 07:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B199917BA5;
-	Sun, 18 Aug 2024 07:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VLqR5u51"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B582E1805A;
+	Sun, 18 Aug 2024 07:05:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF121758B;
-	Sun, 18 Aug 2024 07:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C1A17C96
+	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 07:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723964700; cv=none; b=sp4ZLh/eCuX39KcNH8jRBVf9PWnTmnea7cW1iIGtg+Qdy+u1VKgpWetQGUaz+Pc48vgHoA17PMJW+Zqi1BaeC4JKDdNiVuhJOFnHZFAbLTnSXpi6o78knQGVAfrX2eHIakhUG26YGrQPxAUpQI7j2cy9WmIGVXOT7EINJJEhkn8=
+	t=1723964705; cv=none; b=fiQus3eOgnO9Sk+kIaTYKvlVZZgmdYpOuTjHmvo6TAh2ec7dqbhI+/xMQfq2Xy6MurQzUiYU5xI/Wv4v/DTohJ+jQ6eY8g2cMv4khKyI/3y1yWWrjRua6PLlOC/Bt34D3zE0G6+EPG0qDAOBTqOhbrMX4fJIRVXq/SIWnvNym58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723964700; c=relaxed/simple;
-	bh=JkCXrBddsAmPsjNruqRw2xUrMRsszkRxypNEw90PA3Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=hR0t8vdO7owqUZHd8Nt8ZvGb5p1RoIaO6Dvj8YxsExPt5lWBExMhfHbk1YP+7P+hev1rNrkrobmyKL0v1Wgi4GDOPVpiA71FwPw8iDj/yFD/QGzz98P1tWCzS/qmMufqc87JmefgAG5OHqn0yUGjlZaKGClanWyyVISwCPg4uiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VLqR5u51; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73809C32786;
-	Sun, 18 Aug 2024 07:04:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723964700;
-	bh=JkCXrBddsAmPsjNruqRw2xUrMRsszkRxypNEw90PA3Q=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=VLqR5u51glNxnE0PkzxGdLmW0M2D6rfBpBQw89l1Oz4bUq4MW6z1VjCr+Zxarmb6m
-	 g5apwXGFI9RSE8h8wqyntoaOi+YD4sD1Bh77mXm02ghk73ud9sjGFg+0/E2vMbNRTx
-	 kOzCIm2vbWHzm3x06oBPUd/pC0bazgwQDM2+Cf62Yva92ED1zQda9sPTmBj1JI6NFK
-	 XgQ1V60BAuThp6W6GRrCLqztbJI47Ds2f3L+4UzcyqyzXN9+T9IMiyOeItqnI/S3+v
-	 o6onDzQitNsX2Zk4kXYX8bxiZc8diLgPhTuN+vzzIKtA5KCzX6AvYI0wAde1J5lnwJ
-	 fuHfpwhR1cwMg==
-Message-ID: <8d24b75a-18dd-4d54-98c3-d899c5502dad@kernel.org>
-Date: Sun, 18 Aug 2024 09:04:52 +0200
+	s=arc-20240116; t=1723964705; c=relaxed/simple;
+	bh=H/XKGPPa4sk1xnoTIs+5dmtF9w8LaBWYETMI5xcE3ug=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=e58UIQTsSi9sFncfRpWJHGzPvOqgeSbLb4U405+EBM+C3ByFlElvnBgyefavxocReeGVmI+/imgq/NtjY85Sz2bmCn/C5aS/M4TJF6UBOboKlcJbn4AdxIl0cv7OadgTjf5wqVyYc750GD4/oPLVIFDiCd1LhoJrJW7MVKthg3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39d2dee9722so20918985ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 00:05:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723964703; x=1724569503;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AAODbr3KNrQLgKG+w/bPHlAPvZQUfwQo38tYsLIe7pI=;
+        b=jQg1FvYgG45vuzzNj+1xVrSuTLQht0QxwjhhZa9HRHT+B6jX17FGMzRh+c4XRo3ENE
+         OVfvTHivtxJygTmb+jJVqYuQvAlV2/oTOCtI+yZKYc11F7DZCOzlGo6wndvxnvWQSmju
+         Ew/+IggAhw5bLDaF4lLQFFtlY9eP1OxUOJZTAYbx6FV70EpbMJuv7DyGvZ6DM9K9OHip
+         HperxZT/EbjHsMg+WougehpuswWCijIYo8VfYBNKVBt5Su1CVTuTPLAbcgSAACUq+rVG
+         AiAVbGcEUHuRnRnWU8/jqSzs7hcHhZSMel+4ksNY7ruarGsAg0B31RpNFEFCGKaECCo2
+         s8mg==
+X-Forwarded-Encrypted: i=1; AJvYcCWV1t8wB0ZCiBh8AeI0J2R2GlgjLULARTU/B+KNH0CvhQwpWx8IVwTcKQceFZ7mYaYL33F6RWdMvXDQb8mf6e1up+mtEus9cHizCCk5
+X-Gm-Message-State: AOJu0YzvghOizBPPny3jwT09mo4Uoqp8knljVjlgM7EzkWGoLctRuld6
+	3LHMQj/yxvujlwEz/Z3w1DdnmUtkV8XKy1NYQ5wRCeB5Zx4G3E4QzQ0AKG2YcQdKv4Q4vPY65nH
+	myCd3BJtqDv7vs+QJbkjx8DJVeTsDiSx/EpQoC2ziMs5syJqfohxe8EE=
+X-Google-Smtp-Source: AGHT+IFIf/XAp6OAbWzSaPzmAnzIo5XNj4ClP9Ag5KxvX+Szm8WWVlR9sdtngHyBnGk1odrfmYyO4dPohFlbWPrGwinei1eqLvGH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: iio: dac: add docs for ad8460
-To: "Tinaco, Mariel" <Mariel.Tinaco@analog.com>,
- "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- "Hennerich, Michael" <Michael.Hennerich@analog.com>,
- Conor Dooley <conor+dt@kernel.org>,
- Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
- Dimitri Fedrau <dima.fedrau@gmail.com>, David Lechner
- <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>
-References: <20240730030509.57834-1-Mariel.Tinaco@analog.com>
- <20240730030509.57834-2-Mariel.Tinaco@analog.com>
- <71cbe674-b232-4327-929b-351630907540@kernel.org>
- <SJ0PR03MB6224EB6BB835741EA94DEB7491822@SJ0PR03MB6224.namprd03.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <SJ0PR03MB6224EB6BB835741EA94DEB7491822@SJ0PR03MB6224.namprd03.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1c23:b0:381:c14:70cf with SMTP id
+ e9e14a558f8ab-39d26cec1bdmr6913475ab.1.1723964702919; Sun, 18 Aug 2024
+ 00:05:02 -0700 (PDT)
+Date: Sun, 18 Aug 2024 00:05:02 -0700
+In-Reply-To: <000000000000e540f3061fc68863@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b91f33061fefcfbb@google.com>
+Subject: Re: [syzbot] [cgroups?] possible deadlock in task_rq_lock
+From: syzbot <syzbot+ca14b36a46a8c541b509@syzkaller.appspotmail.com>
+To: bristot@kernel.org, cgroups@vger.kernel.org, hannes@cmpxchg.org, 
+	hdanton@sina.com, juri.lelli@redhat.com, linux-kernel@vger.kernel.org, 
+	lizefan.x@bytedance.com, mkoutny@suse.com, peterz@infradead.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, tj@kernel.org, 
+	vincent.guittot@linaro.org, vineeth@bitbyteword.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 17/08/2024 13:18, Tinaco, Mariel wrote:
->>> +  clocks:
->>
->> maxItems: 1
->> and drop description (or use items: - description, but then do not
->> repeat redundant parts)
->>
-> 
-> Simplified the description for this item
-> 
->   refio-1p2v-supply:
->     description: Reference voltage to adjust full scale output span
->     maxItems: 1
-> 
-> Should I put, "maxItems: 1" in the other vrefs as well?
+syzbot has bisected this issue to:
 
-No, why do you change supply? My comment was under clocks. Comments are
-always under specific part of code which is being discussed.
+commit 5f6bd380c7bdbe10f7b4e8ddcceed60ce0714c6d
+Author: Peter Zijlstra <peterz@infradead.org>
+Date:   Mon May 27 12:06:55 2024 +0000
 
-> 
->>> +    description: The clock for the DAC. This is the sync clock
->>> +
->>> +  adi,rset-ohms:
->>> +    description: Specify value of external resistor connected to FS_ADJ pin
->>> +      to establish internal HVDAC's reference current I_REF
->>> +    default: 2000
->>> +    minimum: 2000
->>> +    maximum: 20000
->>> +
->>> +  adi,range-microvolt:
->>> +    description: |
->>> +      Voltage output range specified as <minimum, maximum>
->>> +    oneOf:
->>
->> Not an oneOf.
->>
-> 
-> You're right. I should have put all the possible values. I populated it with common
-> Values found in the datasheet
-> 
->   adi,range-microvolt:
->     description: Voltage output range specified as <minimum, maximum>
->     oneOf:
->       - items:
->           - enum: [0, -10000000, -20000000, -30000000, -40000000, -55000000]
->           - enum: [10000000, 20000000, 30000000, 40000000, 55000000]
-> 
->>> +      - items:
->>> +          - const: -40000000
->>> +          - const: 40000000
->>
->> Why do you need this property if this cannot be anything else? Drop.
->>
->>> +
->>> +  adi,range-microamp:
->>> +    description: |
->>
->> Do not need '|' unless you need to preserve formatting.
->>
->>> +      Current output range specified as <minimum, maximum>
->>> +    oneOf:
->>> +      - items:
->>> +          - const: 0
->>> +          - const: 50000
->>> +      - items:
->>> +          - const: -50000
->>> +          - const: 50000
->>> +
->>> +  adi,temp-max-millicelsius:
->>> +    description: Overtemperature threshold
->>> +    default: 50000
->>> +    minimum: 20000
->>> +    maximum: 150000
->>> +
->>> +  sdn-reset-gpios:
->>
->> reset-gpios or shutdown-gpios or anything from gpio-consumer-common
->> which is not deprecated.
->>
-> 
-> Lifted from gpio-consumer-common yaml. Mapped to corresponding pins
-> 
->   wakeup-gpios:
->     description: Corresponds to SDN_RESET pin. To exit shutdown
->       or sleep mode, pulse SDN_RESET HIGH, then leave LOW.
+    sched/rt: Remove default bandwidth control
 
-That's not a wakeup-gpio. I think my comment was imprecise. You have
-something like three reset/shutdown GPIOs, so pick from
-gpio-consumer-common the reset and shutdown. Remaining one could stay as
-in your original code.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11a668dd980000
+start commit:   367b5c3d53e5 Add linux-next specific files for 20240816
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=13a668dd980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15a668dd980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=61ba6f3b22ee5467
+dashboard link: https://syzkaller.appspot.com/bug?extid=ca14b36a46a8c541b509
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13d6dbf3980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=142413c5980000
 
->     maxItems: 1
-> 
->   reset-gpios:
->     description: Manual Power On Reset (POR). Pull this GPIO pin
->       LOW and then HIGH to reset all digital registers to default
->     maxItems: 1
-> 
->   shutdown-gpios:
->     description: Corresponds to SDN_IO pin. Shutdown may be
->       initiated by the user, by pulsing SDN_IO high. To exit shutdown,
->       pulse SDN_IO low, then float.
->     maxItems: 1
-> 
+Reported-by: syzbot+ca14b36a46a8c541b509@syzkaller.appspotmail.com
+Fixes: 5f6bd380c7bd ("sched/rt: Remove default bandwidth control")
 
-
-Best regards,
-Krzysztof
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
