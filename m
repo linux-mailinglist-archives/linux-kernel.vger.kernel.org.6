@@ -1,118 +1,241 @@
-Return-Path: <linux-kernel+bounces-291078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8B9F955D00
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 16:34:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB7F955D01
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 16:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7DC71C212BF
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 14:34:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C27128191D
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 14:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5919129E9C;
-	Sun, 18 Aug 2024 14:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FC7139580;
+	Sun, 18 Aug 2024 14:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=verizon.net header.i=@verizon.net header.b="DyaFshe1"
-Received: from sonic308-1.consmr.mail.bf2.yahoo.com (sonic308-1.consmr.mail.bf2.yahoo.com [74.6.130.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Y9YXuniO"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1DBEEA5
-	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 14:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.130.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E807449652
+	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 14:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723991637; cv=none; b=R2SZEn1R7STVHjuY4L0/e9flRxRD509mEKHQlCaKnSVYIkQsl/UQiFuAqVdsZac+/F6IDm/S0usxl6ZH9+nbTv+2Zuxnr5rqix0bXdcARdY287mgdR/56ZLgOx5FUUNtQvV5PbDIAAjYwG0f4BwV+hDtzzwYv4PRMI6CYjmD6y0=
+	t=1723992105; cv=none; b=tIHiv10uOaE8NEjnxCUBkwLekd7xq6KukU2FVa4h2Je3jW6iKPjWShzoyA8zvEY36/m87KI+9/Kwqh+aviYK5rS2zD8R1gVHlPYk9EciylpJNhHRLaGCZcBp+cFg2JRoKbLqPF7LIaKtCvziVHuTpYC8e1zoq5r92gS0PhcjOXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723991637; c=relaxed/simple;
-	bh=1XKHKIKjGC9XCnNOCvWtJBLm19n+uVOk/QkjeQU8wgE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gM7UqwACvaEvmkTKfuCWrsQWAy3mtGCkTEJe9Xr48tLc/MVwW0RgzijWkU8Cd4xobPE3iqPYzO0a6q2qFV3bI72UF6gGhKDxidqV10iYjguThXWlE5Sr1HGu77U9yuG7xGrvkcYBdUsFFLeNnB/r2SEgxupyuRNR0Pq31EZ6a4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=verizon.net; spf=pass smtp.mailfrom=verizon.net; dkim=pass (2048-bit key) header.d=verizon.net header.i=@verizon.net header.b=DyaFshe1; arc=none smtp.client-ip=74.6.130.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=verizon.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=verizon.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=verizon.net; s=a2048; t=1723991628; bh=+YK/ji/DlkcZ3TzV0aGb39CAz+3zulPxbMu8jUlGTNk=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=DyaFshe1wZhmX5Hh+gN7O0L4Ga4CjhGdw/rXLxKgart7LHd/dM91MF2iop5zCezOZK2P8GOjG4RhrZv+BUwwAJJBz/Vg6qFKM5vtp/t/6OOfSOsUyU2MmN1uJIwF6I1Y/dVqE7IrTEZoVgtOTO06euEtF0l1kXE47wU7zdq7BelT/pQZbTgQ3IIFK1i3uyeGeEx/sIhEM3w9ernIaRlWrNd9YPZ3ZorIDJVBWBoFeUwDinTqht8xkWGq7ZdOAydlvq9COCi8e+Zwc11fEuaFdxNAXH1SaqOFBXd1wrsjUFYmYGWdPl8ausNyFLu3qCpRZPiDvr+XV1TwF49xTEtoAw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1723991628; bh=GQX4w9ZM/zjW7X0lApx8MOg0OT9w8YgSIhxw3Z4+0o1=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=i9rKIiZpwuIkAlQiivN7zrq6zzKaGCTUEn+VL/DjGjRijcssBmRjyv5I/rgBojLA7DAS7YATGfyF1Xez0MrYwAQfk8vFVrJ1F3dwQvtHVS9vpMwdbNAh2O3DibhsktADkkdceAsOb6ox+ba6XADBhSprPztVcWcw8M6f1N29BfD6WraJjx/bWACSOiKUZj7sIk19jG25GnXqxh83lxJ7bjpQmsR5IqAMki+ldAZ6/tYiVH8whpfijtq2WfNahZ42eRZ9LbH4peKnlr1pn4B+RpFXhnmaHK776KwLidrKNiBQtmyyLB/Fo99VV5qIiHHpwFNJxzM3vc4g+PaQHLdEgw==
-X-YMail-OSG: gY8g6e8VM1nV3e6UvECVm9oBGElEb6NwT1fNNpOpsAN8vn9lczRJ1jXIu5saW1J
- ssUQTKBhnSQqsm04gwlP.s.yVAYEdmf9VN8qva3rR9Hm2ctCjP7EWbaMbv7YPXwey2LxBMtBOHnG
- hDr1xu_yBIa6X_JWtovW6h5lduzMfV.MQjRtEIfJG8DL.m3Q.FgrzuEcpfkGfwQ_sXALC6oDCVxW
- TuJJzOQNl5zJNp3XKo2IsyFEawT0qP2CUCmSnS09oHXbEYGqQxx9vjtICvoWoIqcAzVJXvvLNWEA
- 95EKAdEYa99vYCpWRcF0rLEAPdyIw1Ow4CV4jQB4nnKqoawUkOpj5lBZKJFDRiuL3xz9fLRC8qTs
- tKWFueZNbvzzey4nYWnCl.TqDeDINd2kLt2ztKpPSrvNPy7p_40.jV8Cy_zUonN3bxBSkOOaXHCq
- Gg.OUF.KQdJIz6Z4S7jnYMQdZUpmHawiHMDKeOmeyesbBmKIGkw75DBhuSMxxth76yKEQ7RfwJPB
- VXoHjSRlFgvLiQWwCnEiYqJI1GqqNucKETCExnK5Abl5XrwkfZyM3LdxVJTm0msWVKEGwkqB0apF
- x86TcARV5HeaBjZtjshoZZ8rA4CoK9FdatP1MsNLQPt3ERipUOMKZclKA3Hc1uLmMoZOKWVgtqAx
- g76ONC527ySc7SIqAHFty3yx4rS7QUVZskebBsSlo35HnEKZbhszB.PChSf8ZvYlbsLocsfvR_Qq
- bhKemhmPtrLMyLESPygXXFrQw0RD0bNq6ZT3hvUSoufobTiUQkS4VZuQbQcYTUVUCV6S9jpyY.t9
- J9iCXxhNGHGpNqtWf32bm0XM_BR4WSQrGDO5yl6Ao4Mp07T37mlqrIk2JTYDm8Ld4k5z_KYwXCZU
- SGSzaiTbGKRiabMTBC8MpM8WUNCKFSrBMg4KZ1U6msUMAbsvbh6dkZNOB.xy.4s4EjdAMO36zKNb
- BsAgFitDfFJrnQFfurn80uxXwPeVX5zUZBMVeDMUBNJ7DffiXBloRNm.X3b1j4g5A9HjHUJunHds
- 5TTZ2Di0agOzecP3G27nDVKr52dPz.tPGP03T.eVJc_YB_7L63I4GHSJtjyIBSRvnaQJ342.aS.t
- KxZxm_e7h9CjknHa1KvZ_vN3OH5RTHZH_OkAABaFWCyM2dWW0DKJdi4MLWmO6PDsPpccu0mJ6kQt
- Sm0icwDMWVo6J..n2ECiJbLl8iMs.X6fdEdTRDkTJZ1ftLYX4VkC2DRzHItXpL0e19Qx8sIUBaLN
- tUhZZt0NP44gu.pYRJu_2Q63iDWs8nCxF23JjZLmI2flHdJi.BKdhKiwSW7V7G1Uph_OP6r1yBVf
- 7MIysb7BSWAE_ikvXcOBiRuKXvUHqfvNwJU44G3qEb3u3jmUFzEI.JTcdfbD5L8cUuRvRkDsBFEl
- jMVF8kpTWhsyvAI5ydJvTQggXEWzlhY_XdUdIZh9EwlH_9KKgmxpZXl_ZyOapDhYhedDYLQiK1LY
- rW94gwrR69yvlmpOkeAfg9_U9gh4pas8nHw0i4vDkS7.5SFnjxeufYb2h0jpNaorYGhGvFuHnVQ.
- m3X7PqAsRiBfsKPintfSdeIeX8y6I8gQpyzYfTkV6hntaK8eGbBEsYkUd2kMwOjifoNAYlq3Fa9t
- GgHvP9lJNQSKnDVQz7ca5UHLYaUQtEoNxyJl7N8B4oDZvxB8HH5.b4v23OJLYDQnfpcYgxzacQ25
- BCmxsVClzFS91xdTAY_2Xg3do_Yg.Vp7dgtHCYBJMg6Cyn5dSHvtn78kK.bBAm93rQtXrTtCmAb1
- m_WsXJ7vJtp3LgXP2ynsCXapAJm_VWIXRrIiPwrNyfso.cOvleODCMoln2xKvU5NcG.Y6K9HgZdQ
- 2ptWJCdWq_PpBCK0UeeWnn8S0Jog3K6hU6PoAdcoov_c__uCxJZMngpIDUYsYI5VjXcJr.gKeVzs
- Xm6qdLkRTlwqFdPU_mofm5aHB0KcKf1mhLwPk4sPILoYdnjj.ogHMIdhVue7NEcVJhjVUZtbTLqD
- 8MmKDk0F2TaW9uGa.2eSAJPGCckhnp9WNK5syCrB1vUJEmiQTV9w4lDF3m4Kb1hgWrkXV6EYGMx6
- VeglFsq5rFIO8Oa6iakbIpB3IiXUTdYDfgANu0pLzURkiiu.omGdUFT5MQRB6Abanga22HnjJFwN
- rLRdgURia5CpZR.qjMcbZkiUBKsfheZIp_SrGB8zt0Qnqt_LYfA1.um01U0YrEVyf0xfe.tvCpUW
- JbMvwNALczAEU3L.i5PRDVg0XFypZLIrBGnoGzB4SvzATXuXcYlOfGTRN7BrK6_9oI5T.pgROiXL
- AF4A-
-X-Sonic-MF: <bluescreen_avenger@verizon.net>
-X-Sonic-ID: 9e2345e2-b666-4e42-bda9-38c6c8da0730
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.bf2.yahoo.com with HTTP; Sun, 18 Aug 2024 14:33:48 +0000
-Received: by hermes--production-bf1-774ddfff8-jvfvg (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID dc21d25653818b99f5103f4d5b3f3aac;
-          Sun, 18 Aug 2024 14:33:47 +0000 (UTC)
-From: nerdopolis <bluescreen_avenger@verizon.net>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: pmladek@suse.com, rostedt@goodmis.org, john.ogness@linutronix.de,
- senozhatsky@chromium.org, tglx@linutronix.de, tony@atomide.com,
- linux-kernel@vger.kernel.org, Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: Re: VT-less kernels, and /dev/console on x86
-Date: Sun, 18 Aug 2024 10:33:46 -0400
-Message-ID: <6066116.alqRGMn8q6@nerdopolis2>
-In-Reply-To: <2024081821-taps-briskly-c23f@gregkh>
-References: <2669238.7s5MMGUR32.ref@nerdopolis2> <4805768.rnE6jSC6OK@nerdopolis2>
- <2024081821-taps-briskly-c23f@gregkh>
+	s=arc-20240116; t=1723992105; c=relaxed/simple;
+	bh=f/Yyh1SQiz037i+coZ5d5gnMdIEpE5sBF1HqgTYcoPs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rWgxnuvRB3B7Pe8KE3OPluwQbV4DqV73gXTRBdhmm3+Fc/7NFBM8bcoT1SgE1rBMO8sdSwT5biSrSe5cT2wM+qXActo0u8AyXw60vj/nmAG/atVfYHELe7g1U5aaB6EqHcuNNumgJwB8tPLQKCYe/H28bvKwskcpGxI3Tc9VbGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Y9YXuniO; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <4a50889c-aa90-4a99-b3d9-45d5666b3171@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723992100;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oPs/TgqEJtnJfx1BsHQyi/jmTIqnp3sMt5LKa8FQ7vg=;
+	b=Y9YXuniODlvYIxuioQ4x6VUkcnKCIAxWiuv9SoLe13t7cEkLVCIM5YKppOqjZfWZLTlDZR
+	fjFg0EvtmipEogfdvkm02pz15Fsa+BMHObb6RqfYNsrC1W+eo0i/QIx6WDi14oOkng12Mk
+	c0N05ZdRec6wtPrXoKUAwb5MFgt/Wcg=
+Date: Sun, 18 Aug 2024 22:41:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Mailer: WebService/1.1.22544 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
+Subject: Re: [RESEND PATCH v2] eventfd: introduce ratelimited wakeup for
+ non-semaphore eventfd
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
+ Dylan Yudaken <dylany@fb.com>, David Woodhouse <dwmw@amazon.co.uk>,
+ Paolo Bonzini <pbonzini@redhat.com>, Dave Young <dyoung@redhat.com>,
+ kernel test robot <lkp@intel.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240811085954.17162-1-wen.yang@linux.dev>
+ <w7ldxi4jcdizkefv7musjwxblwu66pg3rfteprfymqoxaev6by@ikvzlsncihbr>
+ <f21b635e-3bd7-48c3-b257-dde1b9f49c6c@linux.dev>
+ <CAGudoHFQtxU7r+Y9AV2yPc+JrTdMtzJopsjUinFK8uE5h7cbTQ@mail.gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Wen Yang <wen.yang@linux.dev>
+In-Reply-To: <CAGudoHFQtxU7r+Y9AV2yPc+JrTdMtzJopsjUinFK8uE5h7cbTQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Sunday, August 18, 2024 1:12:58 AM EDT Greg KH wrote:
-> On Sat, Aug 17, 2024 at 10:31:17PM -0400, nerdopolis wrote:
-> > The thought is that when distributions eventually decide to go VT-less they are
-> > not going to want to change the kernel boot options in the bootloader config to
-> > force console=ttynull, and might want this to happen automatically.
+
+
+On 2024/8/15 04:58, Mateusz Guzik wrote:
+> On Wed, Aug 14, 2024 at 6:15 PM Wen Yang <wen.yang@linux.dev> wrote:
+>>
+>>
+>>
+>> On 2024/8/11 18:26, Mateusz Guzik wrote:
+>>> On Sun, Aug 11, 2024 at 04:59:54PM +0800, Wen Yang wrote:
+>>>> For the NON-SEMAPHORE eventfd, a write (2) call adds the 8-byte integer
+>>>> value provided in its buffer to the counter, while a read (2) returns the
+>>>> 8-byte value containing the value and resetting the counter value to 0.
+>>>> Therefore, the accumulated value of multiple writes can be retrieved by a
+>>>> single read.
+>>>>
+>>>> However, the current situation is to immediately wake up the read thread
+>>>> after writing the NON-SEMAPHORE eventfd, which increases unnecessary CPU
+>>>> overhead. By introducing a configurable rate limiting mechanism in
+>>>> eventfd_write, these unnecessary wake-up operations are reduced.
+>>>>
+>>>>
+>>> [snip]
+>>>
+>>>>       # ./a.out  -p 2 -s 3
+>>>>       The original cpu usage is as follows:
+>>>> 09:53:38 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>>>> 09:53:40 PM    2   47.26    0.00   52.74    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>> 09:53:40 PM    3   44.72    0.00   55.28    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>>
+>>>> 09:53:40 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>>>> 09:53:42 PM    2   45.73    0.00   54.27    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>> 09:53:42 PM    3   46.00    0.00   54.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>>
+>>>> 09:53:42 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>>>> 09:53:44 PM    2   48.00    0.00   52.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>> 09:53:44 PM    3   45.50    0.00   54.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>>
+>>>> Then enable the ratelimited wakeup, eg:
+>>>>       # ./a.out  -p 2 -s 3  -r1000 -c2
+>>>>
+>>>> Observing a decrease of over 20% in CPU utilization (CPU # 3, 54% ->30%), as shown below:
+>>>> 10:02:32 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>>>> 10:02:34 PM    2   53.00    0.00   47.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>> 10:02:34 PM    3   30.81    0.00   30.81    0.00    0.00    0.00    0.00    0.00    0.00   38.38
+>>>>
+>>>> 10:02:34 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>>>> 10:02:36 PM    2   48.50    0.00   51.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>> 10:02:36 PM    3   30.20    0.00   30.69    0.00    0.00    0.00    0.00    0.00    0.00   39.11
+>>>>
+>>>> 10:02:36 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>>>> 10:02:38 PM    2   45.00    0.00   55.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>> 10:02:38 PM    3   27.08    0.00   30.21    0.00    0.00    0.00    0.00    0.00    0.00   42.71
+>>>>
+>>>>
+>>>
+>>> Where are these stats from? Is this from your actual program you coded
+>>> the feature for?
+>>>
+>>> The program you inlined here does next to nothing in userspace and
+>>> unsurprisingly the entire thing is dominated by kernel time, regardless
+>>> of what event rate can be achieved.
+>>>
+>>> For example I got: /a.out -p 2 -s 3  5.34s user 60.85s system 99% cpu 66.19s (1:06.19) total
+>>>
+>>> Even so, looking at perf top shows me that a significant chunk is
+>>> contention stemming from calls to poll -- perhaps the overhead will
+>>> sufficiently go down if you epoll instead?
+>>
+>> We have two threads here, one publishing and one subscribing, running on
+>> CPUs 2 and 3 respectively. If we further refine and collect performance
+>> data on CPU 2, we will find that a large amount of CPU is consumed on
+>> the spin lock of the wake-up logic of event write, for example:
+>>
+>>    # perf top  -C 2  -e cycles:k
+>>
+>>       65.80%  [kernel]       [k] do_syscall_64
+>>       14.71%  [kernel]       [k] _raw_spin_unlock_irq
+>>        7.54%  [kernel]       [k] __fget_light
+>>        4.52%  [kernel]       [k] ksys_write
+>>        1.94%  [kernel]       [k] vfs_write
+>>        1.43%  [kernel]       [k] _copy_from_user
+>>        0.87%  [kernel]       [k] common_file_perm
+>>        0.61%  [kernel]       [k] aa_file_perm
+>>        0.46%  [kernel]       [k] eventfd_write
+>>
+>>
+>> One of its call stacks:
+>>
+>> |--6.39%--vfs_write
+>> |           --5.46%--eventfd_write
+>> |                      --4.73%--_raw_spin_unlock_irq
+>>
+>>
+>>>   > I think the idea is pretty dodgey. If the consumer program can tolerate
+>>> some delay in event processing, this probably can be massaged entirely in
+>>> userspace.
+>>>
+>>> If your real program has the wake up rate so high that it constitutes a
+>>> tangible problem I wonder if eventfd is even the right primitive to use
+>>> -- perhaps something built around shared memory and futexes would do the
+>>> trick significantly better?
+>>
+>> Thank you for your feedback.
+>>
+>> This demo comes from the real world: the test vehicle has sensors with
+>> multiple cycles (such as 1ms, 5ms, 10ms, etc.), and due to the large
+>> number of sensors, data is reported at all times. The publisher reported
+>> data through libzmq and went to the write logic of eventfd, frequently
+>> waking up the receiver. We collected flame graph and observed that a
+>> significant amount of CPU was consumed in this path: eventfd_write ->
+>> _raw_spin_unlock_irq.
+>>
+>> We did modify a lot of code in user mode on the test vehicle to avoid
+>> this issue, such as not using wake-up, not using eventfd, the publisher
+>> writing shared memory directly, the receiver periodically extracting the
+>> content of shared memory, and so on.
+>>
 > 
-> If/when they want to do this, odds are a command line will be fine, or
-> they will build in ttynull properly into their kernels.
+> Well I don't have the full picture and whatnot, but given the
+> additional info you posted here I even more strongly suspect eventfd
+> is a bad fit. AFAICS this boils down to batching a number of updates
+> and collecting them at some interval.
 > 
-For new installs, I guess it would be fine, but for existing installs they
-would have to script out the changes to /etc/default/grub, and/or however
-systemd-boot handles default kernel command line arguments during the upgrade
-process.
-
-I couldn't get ttynull to be selected by default without the command line
-without the console=ttynull, even when building it into the kernel (not as a
-module) without the modification to printk.c
-> thanks,
+> With the assumption that updates to the eventfd counter are guaranteed
+> to not overflow within the wakeup delay and that there is constant
+> traffic, I'm suspect you would get the expected speed up by using
+> timerfd to wake the consumer up periodically. Then you would only
+> issue an eventfd read when the timerfd tells you time is up. You would
+> (e)poll only on that as well, never on the eventfd.
 > 
-> greg k-h
+> Even so, as is I think this wants a page shared between producer(s)
+> and the consumer updating everything with atomics and the consumer
+> collecting it periodically (atomic add on one side, atomic swap with 0
+> on the consumer, I don't know the c11 intrinsics). It would be
+> drastically cheaper all around.
 > 
 
+Thank you for your suggestion.
 
+By using these methods above instead of eventfd, CPU consumption can 
+indeed be reduced.
 
+But this requires modifying some user mode programs. Some of the 
+programs on the test vehicle are our own and can be modified; But there 
+is still a portion from various suppliers, and some even only deliver 
+binary, which is difficult to change.
+
+And the kernel is open source, if it can be optimized, all user mode 
+programs can benefit from it.
+
+You also mentioned that "AFAICS this boils down to batching a number of 
+updates and collecting them at some interval."
+Yes, it's also similar to 'TCP's silly windw syndrome':
+Every time the counter is incremented by 1, the read side process needs 
+to be awakened. When such operations are frequently performed, a lot of 
+time is wasted on awakening.
+
+This patch is also inspired by algorithms such as Nagle and Cork. It 
+attempts to delay wake-up, accumulate a larger counter value, and then 
+wake up the reader process to consume the accumulated counter value at once.
+
+Eventfd has already provided the NON-SEMAPHORE attribute, but it has not 
+been used yet. We look forward to your collaboration in using it 
+together to solve such problems.
+
+--
+Best wishes,
+Wen
 
 
