@@ -1,200 +1,227 @@
-Return-Path: <linux-kernel+bounces-291118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB97A955D88
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 18:56:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 944F0955D8F
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 18:59:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD5B41C20AC8
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 16:56:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5036A2814E6
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 16:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703AA1494D8;
-	Sun, 18 Aug 2024 16:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PkHxwJ44"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43115149C7A;
+	Sun, 18 Aug 2024 16:59:47 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B361386C6;
-	Sun, 18 Aug 2024 16:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416B581AD2;
+	Sun, 18 Aug 2024 16:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724000164; cv=none; b=D97Zq4nt5iQYcgTL/VlAM6qsdLVixHUkFcOuZyHpdGp28UDloDZPiwnnbjNXgmX/NNHa+lpI6Ux7mKse/RAJ8f42Aju46T1KVf8asZ31WHIyicnU917b0H/yytrpfnLRTPCyrEKneMY0fR8gJkNAYiQMgtzt/VF9tXhNuNGUaGQ=
+	t=1724000386; cv=none; b=AeCafPTSJvV7klRcOG+pdzfCBsLcu+KSnwJqYwSTRA8A6iYU97E9lOhwfuZQOj0OQAT6/jIPpu/hLTvEesxnsC6pg8MwAacRx1qwm3arvAlLy1iucHVwpHhGonjYu96k1YdGysr8hkMjKqfw23RhdpbDuIuPx8L489fn0KJT5G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724000164; c=relaxed/simple;
-	bh=Qi2VmkOBr/YtTsz+qW/OhZpunw0QduUME+9/qJCGtAY=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=L1radybwBWPzysAKM87OllY9ofhyoGyDdj97gQTMjFzLZ13GUMuu7R02DSMAkhdLhvDlDUsspXiMH+XFzWsmwLKL9BZZ4qGJr7rosP1s5CvDfBo/m1g8NJza7vHobO1KS+X0cKOmCRcMnWCWyfwGiV/etrgdHKh6seLgxD+JFMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=PkHxwJ44; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240818165551euoutp0258140a37ef73bcc4656173befe53d6b1~s4QD8OiMy2193121931euoutp02x;
-	Sun, 18 Aug 2024 16:55:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240818165551euoutp0258140a37ef73bcc4656173befe53d6b1~s4QD8OiMy2193121931euoutp02x
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724000151;
-	bh=pgk63OzM4MV5B1YZ1Q6RhX/k/tQPgbLegYhXhPxJ50g=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=PkHxwJ44aZhmcYMdzJKAGZXelphodr77bbg9/BPcudcGnFtavaJMJ9p2nd51Tj6yl
-	 EaF87ID3nxhu/IEgZzyY2TPZYcEWqlo0jRREP2U3hZ6UDipar0KJoHoGGOhd9+mR8o
-	 njp4oTr7P/w9+o/j0eFte/CLOGU+aG0zzrs/aqcg=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240818165551eucas1p2cfad7c58437449945b2cf154473a035d~s4QDrLzpK2264222642eucas1p2-;
-	Sun, 18 Aug 2024 16:55:51 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id 50.EF.09620.79722C66; Sun, 18
-	Aug 2024 17:55:51 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240818165550eucas1p29e0c2db56a8031d550147a0305929f47~s4QC3qo8m2264222642eucas1p2_;
-	Sun, 18 Aug 2024 16:55:50 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240818165550eusmtrp1f22f7444782d04f43e5ceb6ffa5e8082~s4QC2rdl71394913949eusmtrp1b;
-	Sun, 18 Aug 2024 16:55:50 +0000 (GMT)
-X-AuditID: cbfec7f5-d31ff70000002594-c8-66c227976f5c
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 98.94.09010.69722C66; Sun, 18
-	Aug 2024 17:55:50 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240818165550eusmtip2d54ec6aadacf9035b826ccd01848f656~s4QChYpRJ2514925149eusmtip2C;
-	Sun, 18 Aug 2024 16:55:50 +0000 (GMT)
-Received: from localhost (106.210.248.197) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Sun, 18 Aug 2024 17:55:45 +0100
-Date: Sun, 18 Aug 2024 18:55:45 +0200
-From: Klaus Jensen <k.jensen@samsung.com>
-To: Barry Song <21cnbao@gmail.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Daniel Gomez
-	<da.gomez@samsung.com>, Masahiro Yamada <masahiroy@kernel.org>, "Nathan
- Chancellor" <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, "Lucas
- De Marchi" <lucas.demarchi@intel.com>, Thomas =?utf-8?Q?Hellstr=C3=B6m?=
-	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
-	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, William Hubbs
-	<w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, Kirk Reiser
-	<kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, Paul
-	Moore <paul@paul-moore.com>, Stephen Smalley
-	<stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, James
-	Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>, Jiri Slaby <jirislaby@kernel.org>, Nick
-	Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-kbuild@vger.kernel.org"
-	<linux-kbuild@vger.kernel.org>, "intel-xe@lists.freedesktop.org"
-	<intel-xe@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "speakup@linux-speakup.org"
-	<speakup@linux-speakup.org>, "selinux@vger.kernel.org"
-	<selinux@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>, "linux-serial@vger.kernel.org"
-	<linux-serial@vger.kernel.org>, "llvm@lists.linux.dev"
-	<llvm@lists.linux.dev>, Finn Behrens <me@kloenk.dev>, "Daniel Gomez
- (Samsung)" <d+samsung@kruces.com>, "gost.dev@samsung.com"
-	<gost.dev@samsung.com>, Nick Desaulniers <nick.desaulniers@gmail.com>
-Subject: Re: [PATCH 00/12] Enable build system on macOS hosts
-Message-ID: <ZsInkfDqwzd2ojHz@AALNPWKJENSEN.aal.scsc.local>
+	s=arc-20240116; t=1724000386; c=relaxed/simple;
+	bh=hsTauafTm2FR41Tdc9ImN807VXws3wFETzem63wTHrw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j38h+vNkTK/C5KEULp8pS9HZLwh5gZHy8RiKNLsnouH1bvPis3VPnVhkM+fdbCx83Qxzz59BYn4dE3pUS7QwYw3G2fuT5/XSNTp3pMYrNfG2kuqmG4AGlR/Zj2N5gMnKtgOZHWR5Vst11n6UNdZfGlSZVDyhMLXcsvuTV4Cky4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wn1gQ1BQFz9v7Hm;
+	Mon, 19 Aug 2024 00:40:34 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 578ED1401F1;
+	Mon, 19 Aug 2024 00:59:34 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwAXm4VpKMJm+zZxAQ--.21009S2;
+	Sun, 18 Aug 2024 17:59:33 +0100 (CET)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: dhowells@redhat.com,
+	dwmw2@infradead.org,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net
+Cc: linux-kernel@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	zohar@linux.ibm.com,
+	linux-integrity@vger.kernel.org,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v2 00/14] KEYS: Add support for PGP keys and signatures
+Date: Sun, 18 Aug 2024 18:57:42 +0200
+Message-Id: <20240818165756.629203-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGsJ_4zA6=ajoOgAm9kweeiBFKz4TJxxjYFGHHd3HQY8dxHpWA@mail.gmail.com>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te1BUZRiH5zvn7Dm7y6weFxo+wYlplaE1wryg30gaZOEpGmutqHHGcpXD
-	JW62CyqVI+aKgGIgIcMGC7LTchEC14VwBQnU5bIyGwOzaLiIAYEIKIEERbuxHEz/e+Z7f887
-	7++Pj4+LT1Ee/Ki4BFYRJ4+RkEKi1jRneTXXpzn8NdPgcjRlE6PWnmIMPdKdAchUPoKjqw4b
-	jhy1WTjqfvKIRCe0VSSavTyCoXvXSjA0UbAKnb+oJZGms41Ao4brBNIPWHlo3liHoS5jPolu
-	aTMoNPh9I4mGBnQkujBZQ6D7/bd56Ep+Gw81VHWRSN81xUMpaToeOlU2RKLHmQ4MGRvnCPRH
-	QysP5cyNkWg88yaFes/lEqhRbaVQ6WwuQJYWE4Vq6zoAGrZkA5TX2wvQw7qFzYaxLB4qTtmC
-	VHf90Z0fq6lAX6ZCUwGYelMHyTTMFBGMsfkyyVxR2yimSJ/IqG6M8xht/QOM0ZenkYwmTYMx
-	jox+HnPDUUwxF5JzcEbTJmMaCyoo5t7pFuwDuEf4ehgbE3WIVazbvk8Y+e/JSnDQ5nLEmnwJ
-	TwZ5gnQg4EN6E0y3GnAni+lSAOdngzmeBrC9iU4HwgWeAvB66d/gqZA610hygxIAL2rU2P+p
-	saHCpUkNgFOTasKpELQ3bMtQk04maSn8ed6x+O5GS2B2zgzhFHC6nIYlQzk858CV3gZHSuoX
-	BREdADuGb2Ecr4BteYMLAn9BkMIq4zoOPWGJne9M4LQXPFHzw2IdAS2DOrMe465eDS/1WAiO
-	j8J2w2+LR0P6qgssmzmLOfdA+i3YmhrIZVzhaIuB4ngVNGefIbj8NQCnC3uoJRnAm7/ocC4V
-	AFXdg0tGEBwr1lPc0mXw9vgK7rhl8FxtLs49i2BqijgTrFE/V0z9rJj6WTH1c8WKAFEO3NlE
-	ZWwEq9wYxx72U8pjlYlxEX4H4mP1YOGvmO0tT+pA6eikXzPA+KAZQD4ucROdftAULhaFyZO+
-	YhXxnysSY1hlM/DkExJ3kXeYFyumI+QJbDTLHmQVT6cYX+CRjL0ZYvLj/SW7v1Vmtg2FiAdC
-	g9ZumPDK9JxcLUkCazK0BhdbpVTkio0GhmyulAaogo/oNrxj/FZ4nGzYvtmu2nf07V3xc2mf
-	YJbsTdKv31/5cHdEzP5dd8XS/r1/Tpz9Yrr9fExZeOl8mS099pW6mm1s6GhCL7XTN9Kc5R+d
-	K6yIdmO6h5f3bWQKP6tw73r5pTCw8hgxINjZae/67vcX9xzzlX8c7GFNMh6qjq//8Mt3/wn9
-	SeCdaffx3Jtd9M3ERNMOmV/fbOtxcpkqSGXU+t/pjN0Rr0uv9nkhQ/T4gD0n6o3Ivizb/qBe
-	8+H3in8NsKyPtH4q21qQgBEfddQMSLeczN8dKCGUkfL1a3GFUv4fl9bBPJoEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0xTdxjGdy49bYEuZxXZGZpp6uaFSKHl9pYiYYtLzr64kRlxuoV19ABG
-	oKyXKVvmiFwUHQYGSKil4xKugwDlYulg5eKABpGMCtIgogMEuQwJDiUButZu0W+//N/n+eWf
-	Ny8H4zcQ3pwzSWpGmSRLEBBu+OB2/wPf6wd6Yv0HR71gbZIPA/fKUFip/AmBvtp5DH6zT2Jg
-	b8vF4O4/KwSklTcQ8KJ5HoWp36tQ+Lt4N1z/tZwA/Z8WHBZaenEwTI+xYNNkRMFq0hFwuzyb
-	DTP5ZgJmpysJKF1txeHRw3EWtOssLOhssBJgsK6xIDOrkgWXamYJeJpjR8Fk3sDhcecACwo2
-	lghYzvmDDRM/F+Jg1o6xofpFIQLD/X1saDMOITA3nIdA0cQEAotGh7llKZcFZZkhkH4/CGwV
-	jeyIw3Sdvg6hO/qGCLpzvQSnTT3NBN2unWTTJQYNnX5rmUWXdzxBaUNtFkHrs/Qobc9+yKJv
-	2cvYdGlqAUbrLZG0ubiOTU9d7Uc/pU4Jw5QKjZrZG69QqY8ITotALBRJQCgOlAhFASFfhoqD
-	BH7hYXIm4cy3jNIv/Cth/FZGPZI86X5+LLUJS0WKuFcQLociA6nLG2bCyXyyAqG6GuSu991U
-	07NRlot3UJtjV/7LrCJUmy3Sxa0IVTnKOBkn36cs2dqXGYI8RN3ctONO9iQFVF7BuoPdOBhZ
-	S1JL1VWoc7CDPELNV3W8LPBIKTU0dxt1hvjkJkrNL5eyXIO3KEvRjKPNcbQPUQ0mPxfuoqq2
-	Oc4ERu6h0lpvYE7mkpFU5aABdf15H9V0bxh38Q/U2tZjJAfx1L4m1b6Sal9Jta9JSxC8FvFk
-	NKrEuESVWKiSJao0SXHCGEWiAXFcblvfRosRqVlYFfYgKAfpQSgOJvDkXX3SHcvnyWUp3zFK
-	RbRSk8CoepAgx4ZyMe+dMQrH6Sepo0XB/kGiwGCJf5AkOEDwNu/j5MsyPhknUzNnGSaZUf7f
-	Qzlc71TUQyeJOmk0HfilscueyI8w88TpsdrjvaUlx2Y/y+IWP7rTEf7jex5sbY0043D0CU7E
-	1ORzjy9O8o6GVbhZqq9B2xtevrlHM3W9kgsf+WY8bb8/5R5l0JQGGnVWQq7+hPzeR34tlCsx
-	7bVlfpjXOLsn5lzKxW2fVL5nre3zNOsHophTN985t7gkjyx6tn8t/2DgyGKe7k699EHoN50J
-	zTWCr+sDukXP94csuh8MPd3Ypbq7s+Li9Oq7dZsl56t3hU/TwXkXcuKkM8k+xVLbgu14ing9
-	aqYmaUN69s2Rlb8WV/ZFWW/EbG2ZDc0DhSvj9dsnGK9Ls+P6sO1j+R6t3SMKRcGcAFfFy0Q+
-	mFIl+xfttvvaQgQAAA==
-X-CMS-MailID: 20240818165550eucas1p29e0c2db56a8031d550147a0305929f47
-X-Msg-Generator: CA
-X-RootMTR: 20240807110114eucas1p2e1ca4cbd352c6cd9d60688b1570df8d4
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240807110114eucas1p2e1ca4cbd352c6cd9d60688b1570df8d4
-References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
-	<CGME20240807110114eucas1p2e1ca4cbd352c6cd9d60688b1570df8d4@eucas1p2.samsung.com>
-	<2024080753-debug-roulette-8cb1@gregkh>
-	<3jnp6tnkjpvnisefomxagazu2u3uzzt7rcon3r5jssraxzwegb@gsxc7c5sfh7v>
-	<2024080758-dedicator-smoky-44be@gregkh>
-	<CAGsJ_4zA6=ajoOgAm9kweeiBFKz4TJxxjYFGHHd3HQY8dxHpWA@mail.gmail.com>
+X-CM-TRANSID:LxC2BwAXm4VpKMJm+zZxAQ--.21009S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxKrW7ArW5Zw4fGFW7uFWDtwb_yoWxuF1xpF
+	4Fkr90yFyDJrn2kayfJw17uw4rAFs5Aw43Gwnaqw15A3sIqF10ya92kF13uF9xGr18XrWF
+	qrWYqw1UCw1Yy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
+	w2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	xUF1v3UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgATBGbBWPgB5wABs1
 
-On Aug 17 13:11, Barry Song wrote:
-> On Thu, Aug 8, 2024 at 2:20 AM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Wed, Aug 07, 2024 at 01:56:38PM +0000, Daniel Gomez wrote:
-> > > On Wed, Aug 07, 2024 at 01:01:08PM GMT, Greg Kroah-Hartman wrote:
-> > > > On Wed, Aug 07, 2024 at 01:09:14AM +0200, Daniel Gomez via B4 Relay wrote:
-> > > > > This patch set allows for building the Linux kernel for arm64 in macOS with
-> > > > > LLVM.
-> > > >
-> > > > Is this a requirement somewhere that this must work?  It seems like an
-> > > > odd request, what workflows require cross-operating-system builds like
-> > > > this?
-> > >
-> > > This isn't a requirement, but it would, for example, support workflows for QEMU
-> > > users and developers on macOS. They could build/compile the kernel natively and
-> > > use it to launch QEMU instances, simplifying their process.
-> >
-> > But that's not a real workload of anyone?  How often does this ever come
-> > up?  Who is going to maintain this cross-build functionality over time?
-> 
-> it is a real workload of me,  i was running qemu-system-aarch64 on x86
-> and it was
-> pretty slow. so got a M3 pro to accelerate my development. frequently changing
-> kernel's source code, i am using qemu-system-aarch64 to do quick verification.
-> 
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Allow me to chime in as well. Working with qemu-system-aarch64 on an Mx
-are a daily thing for me as well. Working with custom built kernels have
-been a pain, and this really helps.
+Support for PGP keys and signatures was proposed by David long time ago,
+before the decision of using PKCS#7 for kernel modules signatures
+verification was made. After that, there has been not enough interest to
+support PGP too.
+
+Lately, when discussing a proposal of introducing fsverity signatures in
+Fedora [1], developers expressed their preference on not having a separate
+key for signing, which would complicate the management of the distribution.
+They would be more in favor of using the same PGP key, currently used for
+signing RPM headers, also for file-based signatures (not only fsverity, but
+also IMA ones).
+
+Another envisioned use case would be to add the ability to appraise RPM
+headers with their existing PGP signature, so that they can be used as an
+authenticated source of reference values for appraising remaining
+files [2].
+
+To make these use cases possible, introduce support for PGP keys and
+signatures in the kernel, and load provided PGP keys in the built-in
+keyring, so that PGP signatures of RPM headers, fsverity digests, and IMA
+digests can be verified from this trust anchor.
+
+In addition to the original version of the patch set, also introduce
+support for signature verification of PGP keys, so that those keys can be
+added to keyrings with a signature-based restriction (e.g. .ima). PGP keys
+are searched with partial IDs, provided with signature subtype 16 (Issuer).
+Search with full IDs could be supported with
+draft-ietf-openpgp-rfc4880bis-10, by retrieving the information from
+signature subtype 33 (Issuer Fingerprint). Due to the possibility of ID
+collisions, the key_or_keyring restriction is not supported.
+
+The patch set includes two preliminary patches: patch 1 introduces
+mpi_key_length(), to get the number of bits and bytes of an MPI; patch 2
+introduces rsa_parse_priv_key_raw() and rsa_parse_pub_key_raw(), to parse
+an RSA key in RAW format if the ASN.1 parser returns an error.
+
+Patches 3-5 introduce the library necessary to parse PGP keys and
+signatures, whose support is added with patches 6-10. Patch 11 introduces
+verify_pgp_signature() to be used by kernel subsystems (e.g. fsverity and
+IMA). Patch 12 is for testing of PGP signatures. Finally, patches 13-14
+allow loading a set of PGP keys from a supplied blob at boot time.
+
+Changelog
+
+v1 [4]:
+- Remove quiet_cmd_extract_certs (redundant, likely leftover from
+  conflict resolution)
+- Load PGP keys embedded in the kernel image within load_module_cert()
+  and load_system_certificate_list(), instead of using a separate initcall
+- Style bug fixes found by checkpatch.pl
+- Add <crypto/pgp.h> include in crypto/asymmetric_keys/pgp_preload.c, to
+  remove no previous prototype warning
+- Correctly check returned tfm in pgp_generate_fingerprint()
+- Fix printing message in pgp_generate_fingerprint()
+- Don't create a public key if the key blob does not contain a PGP key
+  packet
+- Remove unused pgp_pubkey_hash array
+- Set KEY_EFLAG_DIGITALSIG key flag if the key has the capability
+- Allow PGP_SIG_GENERAL_CERT_OF_UID_PUBKEY signature type (for key sigs)
+- Add is_key_sig parameter to pgp_sig_get_sig() to ensure the key
+  signature type is PGP_SIG_GENERAL_CERT_OF_UID_PUBKEY or
+  PGP_SIG_POSTITIVE_CERT_OF_UID_PUBKEY
+
+v0 [3]:
+- style fixes
+- move include/linux/pgp.h and pgplib.h to crypto/asymmetric_keys
+- introduce verify_pgp_signature()
+- replace KEY_ALLOC_TRUSTED flag with KEY_ALLOC_BUILT_IN
+- don't fetch PGP subkeys
+- drop support for DSA
+- store number of MPIs in pgp_key_algo_p_num_mpi array
+- replace dynamic memory allocations with static ones in
+  pgp_generate_fingerprint()
+- store only keys with capability of verifying signatures
+- remember selection of PGP signature packet and don't repeat parsing
+- move search of the PGP key to verify the signature from the beginning
+  to the end of the verification process (to be similar with PKCS#7)
+- don't retry key search in the session keyring from the signature
+  verification code, let the caller pass the desired keyring
+- for the PGP signature test key type, retry the key search in the session
+  keyring
+- retry key search in restrict_link_by_signature() with a partial ID
+  (provided in the PGP signature)
+
+[1] https://fedoraproject.org/wiki/Changes/FsVerityRPM
+[2] https://lore.kernel.org/linux-integrity/20240415142436.2545003-1-roberto.sassu@huaweicloud.com/
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-modsign.git/log/?h=pgp-parser
+[4] https://lore.kernel.org/linux-integrity/20220111180318.591029-1-roberto.sassu@huawei.com/
+
+David Howells (8):
+  PGPLIB: PGP definitions (RFC 4880)
+  PGPLIB: Basic packet parser
+  PGPLIB: Signature parser
+  KEYS: PGP data parser
+  KEYS: Provide PGP key description autogeneration
+  KEYS: PGP-based public key signature verification
+  PGP: Provide a key type for testing PGP signatures
+  KEYS: Provide a function to load keys from a PGP keyring blob
+
+Roberto Sassu (6):
+  mpi: Introduce mpi_key_length()
+  rsa: add parser of raw format
+  KEYS: Retry asym key search with partial ID in
+    restrict_link_by_signature()
+  KEYS: Calculate key digest and get signature of the key
+  verification: introduce verify_pgp_signature()
+  KEYS: Introduce load_pgp_public_keyring()
+
+ MAINTAINERS                             |   1 +
+ certs/Kconfig                           |  11 +
+ certs/Makefile                          |   7 +
+ certs/system_certificates.S             |  18 +
+ certs/system_keyring.c                  |  93 ++++
+ crypto/asymmetric_keys/Kconfig          |  38 ++
+ crypto/asymmetric_keys/Makefile         |  13 +
+ crypto/asymmetric_keys/pgp.h            | 206 ++++++++
+ crypto/asymmetric_keys/pgp_library.c    | 620 ++++++++++++++++++++++++
+ crypto/asymmetric_keys/pgp_parser.h     |  18 +
+ crypto/asymmetric_keys/pgp_preload.c    | 111 +++++
+ crypto/asymmetric_keys/pgp_public_key.c | 492 +++++++++++++++++++
+ crypto/asymmetric_keys/pgp_signature.c  | 505 +++++++++++++++++++
+ crypto/asymmetric_keys/pgp_test_key.c   | 129 +++++
+ crypto/asymmetric_keys/pgplib.h         |  74 +++
+ crypto/asymmetric_keys/restrict.c       |  10 +-
+ crypto/rsa.c                            |  14 +-
+ crypto/rsa_helper.c                     |  69 +++
+ include/crypto/internal/rsa.h           |   6 +
+ include/crypto/pgp.h                    |  36 ++
+ include/linux/mpi.h                     |   2 +
+ include/linux/verification.h            |  23 +
+ lib/crypto/mpi/mpicoder.c               |  33 +-
+ 23 files changed, 2516 insertions(+), 13 deletions(-)
+ create mode 100644 crypto/asymmetric_keys/pgp.h
+ create mode 100644 crypto/asymmetric_keys/pgp_library.c
+ create mode 100644 crypto/asymmetric_keys/pgp_parser.h
+ create mode 100644 crypto/asymmetric_keys/pgp_preload.c
+ create mode 100644 crypto/asymmetric_keys/pgp_public_key.c
+ create mode 100644 crypto/asymmetric_keys/pgp_signature.c
+ create mode 100644 crypto/asymmetric_keys/pgp_test_key.c
+ create mode 100644 crypto/asymmetric_keys/pgplib.h
+ create mode 100644 include/crypto/pgp.h
+
+-- 
+2.34.1
+
 
