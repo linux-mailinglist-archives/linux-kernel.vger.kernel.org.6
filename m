@@ -1,143 +1,246 @@
-Return-Path: <linux-kernel+bounces-290945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1065955B6B
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 08:39:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 434B3955B76
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 08:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1115A1C21123
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 06:39:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 689091C21199
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 06:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F5EFC0B;
-	Sun, 18 Aug 2024 06:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBEE711CBD;
+	Sun, 18 Aug 2024 06:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ttsuo6lB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HTRuItXG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C214BDDA9;
-	Sun, 18 Aug 2024 06:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0994A10940;
+	Sun, 18 Aug 2024 06:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723963166; cv=none; b=Q/5oNGa7CLyvgFAI7hVqpHcVdygXYqm7AX4m3+f+iFXHZmKqjiRq2vQVANv4z7B0yDR3eqFHe9sRWjZ2EGFysNa2K+v8hCQ3rwWQd1mIDmCbVclztjYYYUC9BTcYu88OHFtItRCD1UTdsSHY7/vp3t2MKbqQGtcWM70TMIbjMuk=
+	t=1723963275; cv=none; b=o4yWnolIn0SMU40oiEebQMdWR26WBdvoZiHCLuWewFU/msUVb98W/BmzyJ9VS7c7kpy+kD103A8juo4bZh6PLuewNAKWS7CmSaaa1Y4PuQyE7vl/fB6Jv6cXjF4k+2SDhzR41Qwxe3cOkd988Rbh4xdir/XG/ZvO/TvjLAZmj5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723963166; c=relaxed/simple;
-	bh=qRBqd32aKqnqH/KIchSIKqtYai0NWAVhP0OSrm9xxXU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q64j5Rex1BrOizJYlfBOM54skOq1iRal2s+E1o2hNVLLYZ/sCTOy/OaYfNrkeifkfB7p+jUnIl5kganFiwSJEItn6LxSmh9ZpLkoFFg5j1cIS0gXx8KpNsXXIBy+RaXVbEX/5juvLIpDBTOKJgua5q2DpAUt1Hu/JEMNJf1KpeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ttsuo6lB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7B64C32786;
-	Sun, 18 Aug 2024 06:39:22 +0000 (UTC)
+	s=arc-20240116; t=1723963275; c=relaxed/simple;
+	bh=EHkiK0JzhHYSXiqWsANRhL5kO97JQKAqAlYC59Sk2ic=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lWm1vn+SfFxW7zrGyOKvLKCSpFkFM2W/Y4ba13l/8TGPlsR2mec/fzit1Qchlhw0YpIOT3urk0cVNVh371cud6tn8HFhneJ4EQt2ssrT34UnRoxG7X54B8qbDuR8Ra+lzmFo0+pRANPiVAuoENZ2/a/6VlvuLab7onmPY1tID0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HTRuItXG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E449C4AF0C;
+	Sun, 18 Aug 2024 06:41:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723963166;
-	bh=qRBqd32aKqnqH/KIchSIKqtYai0NWAVhP0OSrm9xxXU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ttsuo6lBkH68D7MxntKFDd6GLOCLagyQTC3+RnN1LBqm/gEzEgC4Hac3iqh6zyYTV
-	 oRX7XXsLtSlca13uyN3Ra5OB9ZKgRp6EYx+ipBLCs+2W9UAviYAmHedOwYWJE4kE3w
-	 u66o80DOngxi3I220WTOxy2rUI6ORNwuXqzZ/gRmd3z6En1JolWq5vutrE/npyPfd5
-	 +1Vl2IVfgDdXijnu3RU7Hwjvay/dnDjJV5nZmq5yWdFtI8ege6AH8svk7KYkpd4Fkd
-	 k0kjXiAzZYaqQ/vXMHFyewtu5EYwqDKSsjxaYBtRHk8ZTjnlHw6i+Xk/MseiCfixqE
-	 d3I7XdTZHglNA==
-Message-ID: <4289e248-842a-4883-8c71-bd2fcbeecae1@kernel.org>
-Date: Sun, 18 Aug 2024 08:39:20 +0200
+	s=k20201202; t=1723963274;
+	bh=EHkiK0JzhHYSXiqWsANRhL5kO97JQKAqAlYC59Sk2ic=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=HTRuItXGVfwL9ZoCifYshte73IgJ2k09r+tG1bq6q6dQh8fPxyaq94Eu8dgFJl2ae
+	 04/TC0yAf77EMp0t1pF1ZSdh9G7nK2AR56AO8kR4YsbWr85Usudy/w14nwKi9HTxC9
+	 tTFxE3Mx67NMWtA7sIMQGutm7Og/EpkEhXCrHuSFSXW+C9qitNcjUB2uhx9jfucaTn
+	 a50t8atX9wFsSXZaxIv717ZbXhVDAc3EidKOWdeBJZdnjugtv9jMRBkcIibNNq3G8j
+	 GBdHbr9jLIZ7DGFMDtCcW/wmUjFxTQNKjv5EhvD7Hg1iBky69OS26ying2+I14Eadm
+	 VAg0SjG9ULH2w==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-530d0882370so3420658e87.3;
+        Sat, 17 Aug 2024 23:41:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWo0LEWP8UEgkM/6xMQLjFScQ4FNP/LdtbR64kg34724e4SQpv58933vVqjQSoRoRYyV8PXjIIg53aa/7B3DZlyiB+6h625v2i4V65bcYiM85eP1eVTZXBK39LJyYFpmiPyDs/UiAhPsfCW+g6ASBNd7qH3WLTgPAtLNUGI1vAAntbeqOSao/sKROmL0+E0Yw==
+X-Gm-Message-State: AOJu0Yzm5aRHsL5MJ5u2ZN6ZjakYKALuM2aYaMiEQxnDmBz/5SMK/ywc
+	TbztOphaey/DsVXbnszzwvJPVchEZBpAbBmBuBe5ll/YOPdyVwFGlbS/G9mTcAl9dWshCvn7Ejc
+	qil8JUHmMcOU2kY7GNhq8uiTfecE=
+X-Google-Smtp-Source: AGHT+IHVLeK6t7JmurWjF5DT2h5QaqOSnI/aNxVqi6L9gi1tqE9G6NCTZANMZkto1NcImMHNpe8rQVEIMGaz1HNBn3U=
+X-Received: by 2002:a05:6512:2386:b0:533:97b:e272 with SMTP id
+ 2adb3069b0e04-5331c6dc80bmr5676026e87.41.1723963273195; Sat, 17 Aug 2024
+ 23:41:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] power: supply: max17042_battery: Fix SOC threshold calc
- w/ no current sense
-To: Artur Weber <aweber.kernel@gmail.com>, Hans de Goede
- <hdegoede@redhat.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
- Purism Kernel Team <kernel@puri.sm>, Sebastian Reichel <sre@kernel.org>,
- Anton Vorontsov <anton.vorontsov@linaro.org>,
- Ramakrishna Pallala <ramakrishna.pallala@intel.com>,
- Dirk Brandewie <dirk.brandewie@gmail.com>
-Cc: Henrik Grimler <henrik@grimler.se>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-References: <20240817-max17042-soc-threshold-fix-v1-1-72b45899c3cc@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240817-max17042-soc-threshold-fix-v1-1-72b45899c3cc@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240815150339.1564769-1-kris.van.hees@oracle.com> <20240815150339.1564769-4-kris.van.hees@oracle.com>
+In-Reply-To: <20240815150339.1564769-4-kris.van.hees@oracle.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sun, 18 Aug 2024 15:40:36 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASjR=1S_H+r=QEX5DbkQ4MJ4-MMtB-UQWAvCeSbhbMOqA@mail.gmail.com>
+Message-ID: <CAK7LNASjR=1S_H+r=QEX5DbkQ4MJ4-MMtB-UQWAvCeSbhbMOqA@mail.gmail.com>
+Subject: Re: [PATCH v6 3/4] scripts: add verifier script for builtin module
+ range data
+To: Kris Van Hees <kris.van.hees@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	Nick Alcock <nick.alcock@oracle.com>, Alan Maguire <alan.maguire@oracle.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Jiri Olsa <olsajiri@gmail.com>, Elena Zannoni <elena.zannoni@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 17/08/2024 12:51, Artur Weber wrote:
-> Commit 223a3b82834f ("power: supply: max17042_battery: use VFSOC for
-> capacity when no rsns") made it so that capacity on systems without
-> current sensing would be read from VFSOC instead of RepSOC. However,
-> the SOC threshold calculation still read RepSOC to get the SOC
-> regardless of the current sensing option state.
-> 
-> Fix this by applying the same conditional to determine which register
-> should be read.
-> 
-> This also seems to be the intended behavior as per the datasheet - SOC
-> alert config value in MiscCFG on setups without current sensing is set
-> to a value of 0b11, indicating SOC alerts being generated based on
-> VFSOC, instead of 0b00 which indicates SOC alerts being generated based
-> on RepSOC.
-> 
-> This fixes an issue on the Galaxy S3/Midas boards, where the alert
-> interrupt would be constantly retriggered, causing high CPU usage
-> on idle (around ~12%-15%).
-> 
-> Fixes: e5f3872d2044 ("max17042: Add support for signalling change in SOC")
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+On Fri, Aug 16, 2024 at 12:04=E2=80=AFAM Kris Van Hees <kris.van.hees@oracl=
+e.com> wrote:
+>
+> The modules.builtin.ranges offset range data for builtin modules is
+> generated at compile time based on the list of built-in modules and
+> the vmlinux.map and vmlinux.o.map linker maps.  This data can be used
+> to determine whether a symbol at a particular address belongs to
+> module code that was configured to be compiled into the kernel proper
+> as a built-in module (rather than as a standalone module).
+>
+> This patch adds a script that uses the generated modules.builtin.ranges
+> data to annotate the symbols in the System.map with module names if
+> their address falls within a range that belongs to one or more built-in
+> modules.
+>
+> It then processes the vmlinux.map (and if needed, vmlinux.o.map) to
+> verify the annotation:
+>
+>   - For each top-level section:
+>      - For each object in the section:
+>         - Determine whether the object is part of a built-in module
+>           (using modules.builtin and the .*.cmd file used to compile
+>            the object as suggested in [0])
+>         - For each symbol in that object, verify that the built-in
+>           module association (or lack thereof) matches the annotation
+>           given to the symbol.
+>
+> Signed-off-by: Kris Van Hees <kris.van.hees@oracle.com>
+> Reviewed-by: Nick Alcock <nick.alcock@oracle.com>
+> Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
+> ---
+>     Changes since v5:
+>      - Added optional 6th argument to specify kernel build directory.
+>      - Report error and exit if .*.o.cmd files cannot be read.
+>
+>     Changes since v4:
+>      - New patch in the series
+> ---
+>  scripts/verify_builtin_ranges.awk | 365 ++++++++++++++++++++++++++++++
+>  1 file changed, 365 insertions(+)
+>  create mode 100755 scripts/verify_builtin_ranges.awk
+>
+> diff --git a/scripts/verify_builtin_ranges.awk b/scripts/verify_builtin_r=
+anges.awk
+> new file mode 100755
+> index 000000000000..b82cf0a0fbeb
+> --- /dev/null
+> +++ b/scripts/verify_builtin_ranges.awk
+> @@ -0,0 +1,365 @@
+> +#!/usr/bin/gawk -f
+> +# SPDX-License-Identifier: GPL-2.0
+> +# verify_builtin_ranges.awk: Verify address range data for builtin modul=
+es
+> +# Written by Kris Van Hees <kris.van.hees@oracle.com>
+> +#
+> +# Usage: verify_builtin_ranges.awk modules.builtin.ranges System.map \
+> +#                                 modules.builtin vmlinux.map vmlinux.o.=
+map \
+> +#                                 [ <build-dir> ]
+> +#
+> +
+> +# Return the module name(s) (if any) associated with the given object.
+> +#
+> +# If we have seen this object before, return information from the cache.
+> +# Otherwise, retrieve it from the corresponding .cmd file.
+> +#
+> +function get_module_info(fn, mod, obj, mfn, s) {
+> +       if (fn in omod)
+> +               return omod[fn];
+> +
+> +       if (match(fn, /\/[^/]+$/) =3D=3D 0)
+> +               return "";
+> +
+> +       obj =3D fn;
+> +       mod =3D "";
+> +       mfn =3D "";
+> +       fn =3D kdir "/" substr(fn, 1, RSTART) "." substr(fn, RSTART + 1) =
+".cmd";
+> +       if (getline s <fn =3D=3D 1) {
+> +               if (match(s, /DKBUILD_MODFILE=3D['"]+[^'"]+/) > 0) {
+> +                       mfn =3D substr(s, RSTART + 16, RLENGTH - 16);
+> +                       gsub(/['"]/, "", mfn);
+> +
+> +                       mod =3D mfn;
+> +                       gsub(/([^/ ]*\/)+/, "", mod);
+> +                       gsub(/-/, "_", mod);
+> +               }
+> +       } else {
+> +               print "ERROR: Failed to read: " fn "\n\n" \
+> +                     "  Invalid kernel build directory (" kdir ")\n" \
+> +                     "  or its content does not match " ARGV[1] >"/dev/s=
+tderr";
+> +               close(fn);
+> +               total =3D 0;
+> +               exit(1);
+> +       }
+> +       close(fn);
+> +
+> +       # A single module (common case) also reflects objects that are no=
+t part
+> +       # of a module.  Some of those objects have names that are also a =
+module
+> +       # name (e.g. core).  We check the associated module file name, an=
+d if
+> +       # they do not match, the object is not part of a module.
+> +       if (mod !~ / /) {
+> +               if (!(mod in mods))
+> +                       return "";
+> +               if (mods[mod] !=3D mfn)
+> +                       return "";
+> +       }
+> +
+> +       # At this point, mod is a single (valid) module name, or a list o=
+f
+> +       # module names (that do not need validation).
+> +       omod[obj] =3D mod;
+> +       close(fn);
+> +
+> +       return mod;
+> +}
+>
 
-Cc: <stable@vger.kernel.org>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Best regards,
-Krzysztof
+This code is copy-paste from scripts/generate_builtin_ranges.awk
+So, my comments in 2/4 can apply to this patch, too.
 
+
+Instead of adding a separate script,
+we could add a "verify mode" option.
+
+
+ scripts/generate_builtin_ranges.awk --verify ...
+
+
+But, I do not know how much cleaner it will become.
+
+I am not good at reviewing AWK code, but this
+is how you go.
+
+
+
+
+If this script were written in Python,
+it would be easy and readable to
+split logically-related code chunks into functions,
+as follows:
+
+
+def parse_module_builtin():
+    ...
+
+
+def parse_vmlinux_map_lld():
+    ...
+
+
+def parse_vmlinux_map_bfd():
+    ...
+
+
+def parse_vmlinux_o_map():
+    ...
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
