@@ -1,241 +1,184 @@
-Return-Path: <linux-kernel+bounces-290995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D05BE955C0D
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 11:24:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EEA3955C0E
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 11:27:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8627F281E58
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 09:24:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87EDE1C209E3
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 09:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0723F182A0;
-	Sun, 18 Aug 2024 09:24:31 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BA617C6C;
+	Sun, 18 Aug 2024 09:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EDLgLuHs";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1JNCmfcK";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EDLgLuHs";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1JNCmfcK"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF51017BC9
-	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 09:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971D617BBE
+	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 09:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723973070; cv=none; b=fLhT6qVRO7DbtL2Gibv3aFMD+Wii3nlYAcRiQVMNBgDa5ACuXq52ZawSKDUgTXTFpIydxAZCpxGAV4HGQTAGwAp39F7lMmlAIoe3HH4/hl2KE/D+JJ4KfR5vypg8DKKgZ39wrOalacawBioy2nxSkpfUFWFlnu77VB5rtc/wSz8=
+	t=1723973251; cv=none; b=l59RjFMhzD93ipOYeIQoqKcm8q1iJS8PHMJTcQl+eJrZ6IR+F5HhemsyAhRWMkf+Z+bX92GsAJ5UbleAgA7i0B7f4mbNmQQ3Dcrs0bQOnzYftVo/Epm5xHp3FKMzM2clMvLeNTIsEFD30w68gF5niecVk4pkEXLTxgZMZ52fSxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723973070; c=relaxed/simple;
-	bh=eBb0Jf+qZ1njuXuk4+uWhszzv4Cwh2U0Tj2z87eo69I=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nHRqhIKvDwCpZoYUeLXKvuFPqscQHZinbu62rmMRZprPmD7RYpzggsteDTu77WAjTXfgBvhBsnVxZFAsv56DTf9Bc+MWKNv/UsYDLQRzdyRVHIRnw2SOs1HXZbyf8mE0a4h10t2ehMl8Hq/A/CxEj7kvPLfDmu6zzgBAf44KhC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81f8293cdb1so331320339f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 02:24:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723973068; x=1724577868;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jXn6X6OIlj+84K6mXihqwzjOjoaeDpvmPXJT9VyhkvM=;
-        b=ROr4B+grRQCE2/pH89ylL2zrzWz0NjQt9yjcGFqwVVOfxos05lwNte5C8p96Szs8dA
-         j+TXotltgN+wqr3ttN1gio8Y+GWz9GEj1LxztKUzN1KgfLAoCOKGmvhOoP4ZZC+gptrN
-         RSiR4M0/0zpOEwoZwZPlc4LrpZRp52WdOkJ1TckHgaatWAWiNnyWQDnn21a7XWWwruTc
-         DyxN1562evEGd0jTtZYgRHNEmx03wlNea3ItJU8O/MXc5DBGJCC8Pcc2HhF4+VeAJD1q
-         MbWHLdw/4EdSPuRJ3cLszcZ5W2LddZAaVKzwR5cztmzuvsX1s60GgRTvGQ9Zfamg9sJ/
-         kImA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGudOjdlDQmpHvlA/T+zqDxHhERhfjV1zvdgqWych1gyYElPKuDwG42lLM57dy1F5qMjm1RiEU/qNFU40LTkNWSxrBQkFRdFO3Ve+I
-X-Gm-Message-State: AOJu0YwV3JFhAEJ/008Q+yI6wPoDrtD/uEgnu4HQrukkhTH929dUfqZ9
-	DGoUUFYQ1IX2TCcssXG1wy3g930WQCCPqNMw+qU6F+U8wMK7aiMG6PEeQ6ra2bJLoq2z1Mv0oGP
-	cmfiH+XirIaSjCAYjFBt9oGae/ongG2TKDq8v2sYQfgR6Ki8OVCPDnBg=
-X-Google-Smtp-Source: AGHT+IGn74sJpu8+9FB7W2aSF6T62VVMQai4fvMJqyqw10GrAMogVGkefixaOqreyFqgjvet/xmN1BEzAumwZpPnIOGld4fCyCnl
+	s=arc-20240116; t=1723973251; c=relaxed/simple;
+	bh=C5qjVSFLbHT633IyFecTCMNdeRzuse34+0Gq5GMtLrQ=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=pD1WLrUE10mSZl9GXi6P8sbGocPHncD5FNHs5ktqAFcj662dHc9GbuXlV8+PaDiO56++L/RNa0uG+DGFhIDQfvsYNjRY/wMLGQ3PtNt479vYKbF3JNTerxGJ3iF4Cg6k6ITZCF+pCNw58tBnNo+iJxfRfvF67L25ExqyZ+oEjIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EDLgLuHs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1JNCmfcK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EDLgLuHs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1JNCmfcK; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C50C620307;
+	Sun, 18 Aug 2024 09:27:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723973247; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GZlmuodUzsffUpLSPtOBsk5LrJHVlHkQjDRo5YV6zYo=;
+	b=EDLgLuHsdWLDblYrb0ZTK3vFVjfPgI1UKzOnYg0Mtcg6h7MAMldJDIMH44iYJV5cjjAz0b
+	c3thFWvM6QG1E1OlqEUlBq+OG/OzTrVnu4mmKM9nbS6mHG0v+blD/xXNRRFLZI2keUTD1Y
+	KZb1siTe+wNEFHIYbimPyB7mBWZZUnc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723973247;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GZlmuodUzsffUpLSPtOBsk5LrJHVlHkQjDRo5YV6zYo=;
+	b=1JNCmfcKSHsaXAUochvRqw54C3WljfKFNiYwm5SC54HLl84jLnnrklQyX50VzryO05CF43
+	gktNjQxfYf4XEeCA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723973247; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GZlmuodUzsffUpLSPtOBsk5LrJHVlHkQjDRo5YV6zYo=;
+	b=EDLgLuHsdWLDblYrb0ZTK3vFVjfPgI1UKzOnYg0Mtcg6h7MAMldJDIMH44iYJV5cjjAz0b
+	c3thFWvM6QG1E1OlqEUlBq+OG/OzTrVnu4mmKM9nbS6mHG0v+blD/xXNRRFLZI2keUTD1Y
+	KZb1siTe+wNEFHIYbimPyB7mBWZZUnc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723973247;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GZlmuodUzsffUpLSPtOBsk5LrJHVlHkQjDRo5YV6zYo=;
+	b=1JNCmfcKSHsaXAUochvRqw54C3WljfKFNiYwm5SC54HLl84jLnnrklQyX50VzryO05CF43
+	gktNjQxfYf4XEeCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B9B86136ED;
+	Sun, 18 Aug 2024 09:27:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id WaLXLH++wWZTWQAAD6G6ig
+	(envelope-from <iivanov@suse.de>); Sun, 18 Aug 2024 09:27:27 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1989:b0:39b:2133:8ee5 with SMTP id
- e9e14a558f8ab-39d26ce2d21mr7510835ab.1.1723973067901; Sun, 18 Aug 2024
- 02:24:27 -0700 (PDT)
-Date: Sun, 18 Aug 2024 02:24:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000509ee8061ff1c2cc@google.com>
-Subject: [syzbot] [input?] [usb?] possible deadlock in hid_hw_open
-From: syzbot <syzbot+2313ca2498b9554beeba@syzkaller.appspotmail.com>
-To: bentiss@kernel.org, jikos@kernel.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Date: Sun, 18 Aug 2024 12:27:27 +0300
+From: "Ivan T. Ivanov" <iivanov@suse.de>
+To: corey@minyard.net
+Cc: minyard@acm.org, openipmi-developer@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ipmi:ssif: Exit early when there is a SMBus error
+In-Reply-To: <Zr+Up+94gmPEHwcJ@mail.minyard.net>
+References: <20240816065458.117986-1-iivanov@suse.de>
+ <Zr+Up+94gmPEHwcJ@mail.minyard.net>
+User-Agent: Roundcube Webmail
+Message-ID: <84eb700ee647cc40e9e99b086a8648e3@suse.de>
+X-Sender: iivanov@suse.de
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.29 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_NONE(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-Spam-Level: 
+X-Spam-Score: -4.29
 
-Hello,
+Hi,
 
-syzbot found the following issue on:
+On 2024-08-16 21:04, Corey Minyard wrote:
+> On Fri, Aug 16, 2024 at 09:54:58AM +0300, Ivan T. Ivanov wrote:
+>> It is pointless to continue module probing when communication
+>> with device is failing. This just fill logs with misleading
+>> messages like this:
+> 
+> So the BMC (or whatever is there) responds to a GET_DEVICE_ID command,
 
-HEAD commit:    82313624b2ae usb: gadget: f_uac1: Change volume name and r..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=13983409980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ab70c480460dbde
-dashboard link: https://syzkaller.appspot.com/bug?extid=2313ca2498b9554beeba
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+Well, not really. In cases where ssif_detect() returns -ENODEV, i2c core
+i2c_detect_address() threat it as "We catch it here as this isn't an 
+error”.
+See i2c_detect_address().
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> but then doesn't properly handle any other valid and mandatory 
+> commands?
+> And this device was added via ACPI or SMBIOS or device tree, almost
+> certainly.
+> 
+> My comments are:
+> 
+> 1) This fix is wrong, because it may mask important things that need to
+> be reported.
+> 
+> 2) Fix the source of the problem.  You can't expect software to
+> compensate for all bad hardware and firmware.  I'd guess the firmware
+> tables are pointing to something that's not a BMC.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/cb6687ee6ff4/disk-82313624.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8453a8c86e39/vmlinux-82313624.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e57cfd8ca75c/bzImage-82313624.xz
+I am not saying that hardware or firmware do not have its issues in this
+case. But just as it is written now ssif_probe() is fragile. It continue
+asking device for features ignoring that there is no valid SMBus 
+communication.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2313ca2498b9554beeba@syzkaller.appspotmail.com
+> 
+> 3) It appears the response to the GET_DEVICE_ID command, though a
+> response is returned, is not valid.  The right way to handle this would
+> be to do more validation in the ssif_detect() function.  It doesn't do
+> any validation of the response data, and that's really what needs to be
+> done.
+> 
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-rc3-syzkaller-00046-g82313624b2ae #0 Not tainted
-------------------------------------------------------
-acpid/2530 is trying to acquire lock:
-ffff88811905de20 (&hdev->ll_open_lock){+.+.}-{3:3}, at: hid_hw_open+0x25/0x170 drivers/hid/hid-core.c:2361
+do_cmd() in ssif_detect() already do validation. Perhaps,
+ssif_probe() should just not return ENODEV in case of error.
 
-but task is already holding lock:
-ffff88810bb362c0
- (&dev->mutex#2){+.+.}-{3:3}, at: input_open_device+0x4f/0x320 drivers/input/input.c:597
+Thank you for your comments!
 
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&dev->mutex#2){+.+.}-{3:3}:
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
-       input_disconnect_device drivers/input/input.c:724 [inline]
-       __input_unregister_device+0x24/0x450 drivers/input/input.c:2273
-       input_unregister_device+0xb9/0x100 drivers/input/input.c:2514
-       steam_input_unregister+0x10c/0x2c0 drivers/hid/hid-steam.c:917
-       steam_client_ll_open+0xc9/0x100 drivers/hid/hid-steam.c:1121
-       hid_hw_open+0xe2/0x170 drivers/hid/hid-core.c:2366
-       hidraw_open+0x274/0x7e0 drivers/hid/hidraw.c:296
-       chrdev_open+0x26d/0x6f0 fs/char_dev.c:414
-       do_dentry_open+0x957/0x1490 fs/open.c:959
-       vfs_open+0x82/0x3f0 fs/open.c:1089
-       do_open fs/namei.c:3727 [inline]
-       path_openat+0x2141/0x2d20 fs/namei.c:3886
-       do_filp_open+0x1dc/0x430 fs/namei.c:3913
-       do_sys_openat2+0x17a/0x1e0 fs/open.c:1416
-       do_sys_open fs/open.c:1431 [inline]
-       __do_sys_openat fs/open.c:1447 [inline]
-       __se_sys_openat fs/open.c:1442 [inline]
-       __x64_sys_openat+0x175/0x210 fs/open.c:1442
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&hdev->ll_open_lock){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3133 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
-       validate_chain kernel/locking/lockdep.c:3868 [inline]
-       __lock_acquire+0x24ed/0x3cb0 kernel/locking/lockdep.c:5142
-       lock_acquire kernel/locking/lockdep.c:5759 [inline]
-       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
-       hid_hw_open+0x25/0x170 drivers/hid/hid-core.c:2361
-       input_open_device+0x1c9/0x320 drivers/input/input.c:617
-       evdev_open_device drivers/input/evdev.c:391 [inline]
-       evdev_open+0x533/0x6a0 drivers/input/evdev.c:478
-       chrdev_open+0x26d/0x6f0 fs/char_dev.c:414
-       do_dentry_open+0x957/0x1490 fs/open.c:959
-       vfs_open+0x82/0x3f0 fs/open.c:1089
-       do_open fs/namei.c:3727 [inline]
-       path_openat+0x2141/0x2d20 fs/namei.c:3886
-       do_filp_open+0x1dc/0x430 fs/namei.c:3913
-       do_sys_openat2+0x17a/0x1e0 fs/open.c:1416
-       do_sys_open fs/open.c:1431 [inline]
-       __do_sys_openat fs/open.c:1447 [inline]
-       __se_sys_openat fs/open.c:1442 [inline]
-       __x64_sys_openat+0x175/0x210 fs/open.c:1442
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&dev->mutex#2);
-                               lock(&hdev->ll_open_lock);
-                               lock(&dev->mutex#2);
-  lock(&hdev->ll_open_lock);
-
- *** DEADLOCK ***
-
-2 locks held by acpid/2530:
- #0: ffff88810db56110 (&evdev->mutex){+.+.}-{3:3}, at: evdev_open_device drivers/input/evdev.c:384 [inline]
- #0: ffff88810db56110 (&evdev->mutex){+.+.}-{3:3}, at: evdev_open+0x2ee/0x6a0 drivers/input/evdev.c:478
- #1: ffff88810bb362c0 (&dev->mutex#2){+.+.}-{3:3}, at: input_open_device+0x4f/0x320 drivers/input/input.c:597
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 2530 Comm: acpid Not tainted 6.11.0-rc3-syzkaller-00046-g82313624b2ae #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
- check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2186
- check_prev_add kernel/locking/lockdep.c:3133 [inline]
- check_prevs_add kernel/locking/lockdep.c:3252 [inline]
- validate_chain kernel/locking/lockdep.c:3868 [inline]
- __lock_acquire+0x24ed/0x3cb0 kernel/locking/lockdep.c:5142
- lock_acquire kernel/locking/lockdep.c:5759 [inline]
- lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
- hid_hw_open+0x25/0x170 drivers/hid/hid-core.c:2361
- input_open_device+0x1c9/0x320 drivers/input/input.c:617
- evdev_open_device drivers/input/evdev.c:391 [inline]
- evdev_open+0x533/0x6a0 drivers/input/evdev.c:478
- chrdev_open+0x26d/0x6f0 fs/char_dev.c:414
- do_dentry_open+0x957/0x1490 fs/open.c:959
- vfs_open+0x82/0x3f0 fs/open.c:1089
- do_open fs/namei.c:3727 [inline]
- path_openat+0x2141/0x2d20 fs/namei.c:3886
- do_filp_open+0x1dc/0x430 fs/namei.c:3913
- do_sys_openat2+0x17a/0x1e0 fs/open.c:1416
- do_sys_open fs/open.c:1431 [inline]
- __do_sys_openat fs/open.c:1447 [inline]
- __se_sys_openat fs/open.c:1442 [inline]
- __x64_sys_openat+0x175/0x210 fs/open.c:1442
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2b9d4f09a4
-Code: 24 20 48 8d 44 24 30 48 89 44 24 28 64 8b 04 25 18 00 00 00 85 c0 75 2c 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 76 60 48 8b 15 55 a4 0d 00 f7 d8 64 89 02 48 83
-RSP: 002b:00007ffc30a90ad0 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007ffc30a90db8 RCX: 00007f2b9d4f09a4
-RDX: 0000000000080800 RSI: 00007ffc30a90cb8 RDI: 00000000ffffff9c
-RBP: 00007ffc30a90cb8 R08: 00000000000000f4 R09: 00007ffc30a90cb8
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000080800
-R13: 0000000000000020 R14: 00007ffc30a90db8 R15: 00007ffc30a90cb8
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Regards,
+Ivan
 
