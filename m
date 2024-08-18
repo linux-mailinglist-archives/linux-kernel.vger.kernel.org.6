@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-291019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54FD9955C40
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 12:45:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3579955C3B
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 12:45:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10C5B281ED2
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 10:45:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68B2A1F2148E
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 10:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F8B146A63;
-	Sun, 18 Aug 2024 10:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551C013E028;
+	Sun, 18 Aug 2024 10:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="CUloWEMS"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="fUOT8yLp"
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A0F4DA04
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C6A49649
 	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 10:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723977830; cv=none; b=Cl6evhQX+YEYs9ID/oF5GwmZFOekHDFiwmumrvPAXZcCQ8/KP5liR98t9rkNAht1Mts5ukj5t3qxhl04kF3qFhK6sS5GOshQpOn/75EwPvQEdMmX/xqJIe9+BRhb55zs+2QlnOXUUQsDDdoUcvuR2JD5BCLkxERKHp4nU4ZTxUg=
+	t=1723977829; cv=none; b=fpFnYdSePw7uuATTEOgSZqlLv3Di/OdtZ35BE3KWUiz1onHqM20k74JGEdmbw1Od+S/iqz9EVeSH0/BaUuiG/gYV+TQrJVHQRFwNCRlChngup+cFjiczKcCmHa2agKMZRefwlgIQMeb/xB5+JqguAkuVmjTxkHvM4infmzJGtUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723977830; c=relaxed/simple;
-	bh=egW2yxJoVHO8L9Qj2nOkUgi3LPFo8IuMg/0XCAJcySs=;
+	s=arc-20240116; t=1723977829; c=relaxed/simple;
+	bh=+g9tdiVlfWP8HZuj22GaUD3ReR3pbnKtUcNnPSBesLo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ExTWcd7SN7EmQNt+xsYnmGaPTA8ka9NpG80Pa4PICR+q8w+eN0kwhBF5dpbLE7mWU/iFX15BtZYuy6zyC9nisuRSpWCQmatRvgbIAZpzTXjpl8nT639nxzjfrrYwBbaauQODPmYnjnhCdgI2bkCGAowezNtruKgujURZ6EjiVVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=CUloWEMS; arc=none smtp.client-ip=159.69.126.157
+	 In-Reply-To:To:Cc; b=EIruDLdr5ywvG4cqkmjXnws46hc74u+PU6bxvk+aJPb7jiDcSeYkh/T5JUIDB62ayMm681PlIa8KyadbU1ZhBupdCbh8Dm+vChmb9guzoP9fgGQ7Gx8E4oJE7lTgi9hmEOYnGRxuJlVy+v0NaGI+p+nf3A3pbsV6Rm3Asfbc6js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=fUOT8yLp; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1723977821;
-	bh=egW2yxJoVHO8L9Qj2nOkUgi3LPFo8IuMg/0XCAJcySs=;
+	bh=+g9tdiVlfWP8HZuj22GaUD3ReR3pbnKtUcNnPSBesLo=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=CUloWEMSusPCYujVRg7X4GHX3L6Mhmj079byOzFcuXodqvWZKzAx+YN6znvXy/ExG
-	 R4BJJs6PN4jDwxPeVddoShZvwhjMgCY/daRXJRG6+c9uQb3SKxKi7rKdqXst1ibg0R
-	 Qb6CfLE7UndSOqpGnngeB+YijvYPzfsG3pFwnj3E=
+	b=fUOT8yLpqufsCiExNm+0QfGrpjBvp/z18Qcg68bBU6sto3RGWBXeQueKap3ZOykey
+	 d9sD4Wwic0Bp8qD8WZl/koQ6gu+L07fmTQZEQTy3mgi9/S+ttiCUzhsDLDQGPjBT2L
+	 UHL2hOps5p06Sq3QSk/H3jofx6Xj2kRu7NCEpYEM=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sun, 18 Aug 2024 12:43:29 +0200
-Subject: [PATCH 05/12] drm/amd/display: Constify raw_edid handling in
- dm_helpers_parse_edid_caps()
+Date: Sun, 18 Aug 2024 12:43:30 +0200
+Subject: [PATCH 06/12] drm/amd/display: Constify 'struct edid' in parsing
+ functions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240818-amdgpu-drm_edid-v1-5-aea66c1f7cf4@weissschuh.net>
+Message-Id: <20240818-amdgpu-drm_edid-v1-6-aea66c1f7cf4@weissschuh.net>
 References: <20240818-amdgpu-drm_edid-v1-0-aea66c1f7cf4@weissschuh.net>
 In-Reply-To: <20240818-amdgpu-drm_edid-v1-0-aea66c1f7cf4@weissschuh.net>
 To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
@@ -67,62 +67,84 @@ Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
  linux-kernel@vger.kernel.org, Harry Wentland <Harry.Wentland@amd.com>, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723977820; l=1803;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723977820; l=2869;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=egW2yxJoVHO8L9Qj2nOkUgi3LPFo8IuMg/0XCAJcySs=;
- b=KCJ5usCuvuNccDdqHeBOG4t930/Xd/jo/7BqqPm3k/nOSL83ZqBtJnbURJIG6Dt4l63PTB9Nz
- x+pjRj/R2w3C8ZE/Ki2FYJUEzb6eIl0dMEGLfq2E9cjC7XvsLrvZzUa
+ bh=+g9tdiVlfWP8HZuj22GaUD3ReR3pbnKtUcNnPSBesLo=;
+ b=WVMzyhAnRYEnW/0NlScNahsAycBKkMDyvQ/ts3npHme/RJLOKcvCJ8Q1ee7DYBhK193QHS/e4
+ q6iULo4Aa8VDu4BHdeRoDip5Z7pdE3NNk/LiUs+Rd67YA9dDi4aosCU
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-The argument edid is passed in as const.
-Preserve this constness through the edid_buf variable and the used
-helper functions.
+The parsing functions do not modify their edid argument.
+Mark the const to reflect this to the caller.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 14 +++++++-------
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h |  2 +-
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-index 3cc0808f391a..98d1d5abafa7 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-@@ -45,14 +45,14 @@
- #include "dm_helpers.h"
- #include "ddc_service_types.h"
- 
--static u32 edid_extract_panel_id(struct edid *edid)
-+static u32 edid_extract_panel_id(const struct edid *edid)
- {
- 	return (u32)edid->mfg_id[0] << 24   |
- 	       (u32)edid->mfg_id[1] << 16   |
- 	       (u32)EDID_PRODUCT_ID(edid);
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 7d999e352df3..4e7f40481379 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -11834,7 +11834,7 @@ static bool parse_edid_cea(struct amdgpu_dm_connector *aconnector,
  }
  
--static void apply_edid_quirks(struct edid *edid, struct dc_edid_caps *edid_caps)
-+static void apply_edid_quirks(const struct edid *edid, struct dc_edid_caps *edid_caps)
+ static void parse_edid_displayid_vrr(struct drm_connector *connector,
+-		struct edid *edid)
++		const struct edid *edid)
  {
- 	uint32_t panel_id = edid_extract_panel_id(edid);
+ 	u8 *edid_ext = NULL;
+ 	int i;
+@@ -11877,7 +11877,7 @@ static void parse_edid_displayid_vrr(struct drm_connector *connector,
+ }
  
-@@ -94,7 +94,7 @@ enum dc_edid_status dm_helpers_parse_edid_caps(
+ static int parse_amd_vsdb(struct amdgpu_dm_connector *aconnector,
+-			  struct edid *edid, struct amdgpu_hdmi_vsdb_info *vsdb_info)
++			  const struct edid *edid, struct amdgpu_hdmi_vsdb_info *vsdb_info)
  {
- 	struct amdgpu_dm_connector *aconnector = link->priv;
- 	struct drm_connector *connector = &aconnector->base;
--	struct edid *edid_buf;
-+	const struct edid *edid_buf;
- 	struct cea_sad *sads;
- 	int sad_count = -1;
- 	int sadb_count = -1;
-@@ -106,7 +106,7 @@ enum dc_edid_status dm_helpers_parse_edid_caps(
- 	if (!edid_caps || !edid)
- 		return EDID_BAD_INPUT;
+ 	u8 *edid_ext = NULL;
+ 	int i;
+@@ -11912,7 +11912,7 @@ static int parse_amd_vsdb(struct amdgpu_dm_connector *aconnector,
+ }
  
--	edid_buf = (struct edid *)edid->raw_edid;
-+	edid_buf = (const struct edid *)edid->raw_edid;
+ static int parse_hdmi_amd_vsdb(struct amdgpu_dm_connector *aconnector,
+-		struct edid *edid, struct amdgpu_hdmi_vsdb_info *vsdb_info)
++		const struct edid *edid, struct amdgpu_hdmi_vsdb_info *vsdb_info)
+ {
+ 	u8 *edid_ext = NULL;
+ 	int i;
+@@ -11954,12 +11954,12 @@ static int parse_hdmi_amd_vsdb(struct amdgpu_dm_connector *aconnector,
+  * FreeSync parameters.
+  */
+ void amdgpu_dm_update_freesync_caps(struct drm_connector *connector,
+-				    struct edid *edid)
++				    const struct edid *edid)
+ {
+ 	int i = 0;
+-	struct detailed_timing *timing;
+-	struct detailed_non_pixel *data;
+-	struct detailed_data_monitor_range *range;
++	const struct detailed_timing *timing;
++	const struct detailed_non_pixel *data;
++	const struct detailed_data_monitor_range *range;
+ 	struct amdgpu_dm_connector *amdgpu_dm_connector =
+ 			to_amdgpu_dm_connector(connector);
+ 	struct dm_connector_state *dm_con_state = NULL;
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+index 2d7755e2b6c3..27c0017707dd 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+@@ -951,7 +951,7 @@ void dm_restore_drm_connector_state(struct drm_device *dev,
+ 				    struct drm_connector *connector);
  
- 	if (!drm_edid_is_valid(edid_buf))
- 		result = EDID_BAD_CHECKSUM;
+ void amdgpu_dm_update_freesync_caps(struct drm_connector *connector,
+-					struct edid *edid);
++					const struct edid *edid);
+ 
+ void amdgpu_dm_trigger_timing_sync(struct drm_device *dev);
+ 
 
 -- 
 2.46.0
