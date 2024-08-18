@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-290911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CDDF955B19
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 08:08:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C2BF955B1A
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 08:08:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22813282561
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 06:08:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D634E282532
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 06:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592EB125D6;
-	Sun, 18 Aug 2024 06:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84B5D53F;
+	Sun, 18 Aug 2024 06:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bCYwOgtu"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jg3lDvAv"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230B5101DE
-	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 06:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE3D15E96
+	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 06:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723961313; cv=none; b=LUUrJ6gZtHQTdfEcXeaVNI1HN+gOmTZxdC4mpBksoEiuRnnuBYTOrnqfeP3bEKtju3+LZahPOCoaPGwFvKPMEVjo8OE/o9Kk1cb/tUyqZ/5fqPUW2g6U+Q2cPUnhONTatxx0HiAdrkXC8xvq4lX5bzO1/0HXkIf4Ci0hY2e/+CQ=
+	t=1723961317; cv=none; b=REkX/biNE1ybQoywDsVfzzSalraB4Jf5NiA417WRZE5OwuxfHszmrgTFdd3jIu8qDiXli6l9v/QJdZJoOGHSW565aq5IKML++y2yLoYiXCCXtfGfAgnBA4OhaWn4m5w22KSJD0EfxNJHEJ+pYcB6BqlLZABTFqmwOi9eIoblS7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723961313; c=relaxed/simple;
-	bh=O+dFhSSwMviCycogW/WqcduEniOW27fwihvWs/emkLM=;
+	s=arc-20240116; t=1723961317; c=relaxed/simple;
+	bh=lyWdoxJIYg+uZPBV2sDX1oYxJugNPki6UChH6tky+g0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uLF2aCje1wqXH0wqqCVnIRMWSVk70xbqneaawbQMPaiPgM/lHQ/Asp13XBfmSVhgP8HUXeb4G3epqoznIDhhfEUPTY3tTWu3r+SOxjR5gWnUKQITf2yQT9g9/4v+/x36ctQx/FsdKXERDNW2CEBeLO/URraYK59OeRfFM1PHHdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bCYwOgtu; arc=none smtp.client-ip=209.85.215.174
+	 MIME-Version; b=d0FmnI2yP7r7/LAWmkXmiJGWoHt8WnMRtc3I1NR2+3a7Y2ll9PMlY9h5OvOp692azucA1nIXLNPFRMjGICKDVfJX11uAua0l5X4x+Yg2mnudVgX2z1I8Q7mk5slwHzp/HuXB24wKIiuXVzTYbIB99nMZ/OzyX2KsfblQ5wWL/to=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jg3lDvAv; arc=none smtp.client-ip=209.85.216.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-6c5bcb8e8edso2562026a12.2
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 23:08:31 -0700 (PDT)
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2d439572aeaso40568a91.1
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 23:08:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723961311; x=1724566111; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723961315; x=1724566115; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UnhRO8oIbYzeyc2+UcIe5cCUCjnBIooF0x4NCKcs5c0=;
-        b=bCYwOgtuC86xn5SKZnfbLjEjeeW3uuw0bWd2KT6lq2dvHusijYaZvGDd6DedPw5+ST
-         Xx8z08qMRRXBBR2/qC1IGgwxoOcn2sjcyV6sR9nlJ9kttyitxDIZ4Fl9vsc0z+3YZOc4
-         GN8OJiJrnfY03kmM6pp4lJjd3DE5QLP8gDv91AmP4JA6sGBd+X4Oj0NQRsTv+6o8S7FG
-         z+rbkxwYmF6SCLFGY6nDpEPaIxbffBSYrUoqVAlqLkGRGG2bxa1YWiSvN777N5beLCjh
-         TLiJ+30QBu0LFwZQKvs4o72u5zm8Wd1uY+IlaadejR37S0mZGlNUtJUdf3ZYeeC9XXOn
-         uENg==
+        bh=q7ad08V9dWOOHyWHL258V3QEERYZAETpc4J3fM7chOc=;
+        b=Jg3lDvAv5YigxVbMGlzyinR6Z6oMinu5SkwienK1MeYkyVL5hyHvqbTf4tatO9og9P
+         /Z6Z4kKIGjxh2UTzxjbpHyaQSi3O0p9Dq7+Ak3mQ5BruOzDM2euW0u5NiA21yYeGFZa6
+         3MUBmwPWTzmsMK053wPCTVHDMTfSu9WsqjdUufIH0v90Yit2dgI6Q7Il2Si7dcZYF/GO
+         DDDGdvzno3cHacLC48ap+2yt/kOA9wIvKriB80R+uGcBLRalfG8tFm/x25F8+8ZeEUMb
+         YmgvQfYVruxNnFVOnG5qi/2Y/OAlVXgFE3wr3WQA83Q0hWvqbK9vmAucZs5B75orQZeN
+         BJ5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723961311; x=1724566111;
+        d=1e100.net; s=20230601; t=1723961315; x=1724566115;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UnhRO8oIbYzeyc2+UcIe5cCUCjnBIooF0x4NCKcs5c0=;
-        b=YM7d9En7IdLXit6I2nCSRz0IxrGLj4EaDwYHbwYld4T6ekDAUKRElI/sAZ/jldZxMf
-         KrCAzjXd8njwE3KionwwSMbEwE1vQBVrSa7PboY5PyzzArQEf9CbtFOP44Y1pn5pv3C9
-         WfeSM/oK7UNikAOaKSqvZ/DnIH9grnTK8KtEjVMWwDdvSGUVwnJDkPo3DeD21Z9w9JGE
-         Jp3+mJo6Ip8a5VQChibCIFZyM0j37tvVZdxGYAXWe+bOiBHstpVbivQ8gQfAl15YVS4s
-         U0XVZc1cTP/SeDKJT8B5WOoLmX18GNYgAk/QxNknVQ2sU9+dkhrTyAda3xsC2IKm795E
-         OODw==
-X-Forwarded-Encrypted: i=1; AJvYcCWzixAVhYaj6aqtmXKdp1mq1pXzNNUnWjAucKn8H//Hxb+zBKvq8XRdt1sTZBCOrPQiUMzPrq6Wmlr/BIecqvLyXG4FIPK6eSt2YIi5
-X-Gm-Message-State: AOJu0YzbWUsl/C3KHc3XSbaUoGd9hVa6dnEVCEuUBNvINgL8t9aaIS0u
-	7I7vmNj2Wq7dsj15lv+M9CBV7nwpRk1VIj04dIC9MspyEQ/oSa5/
-X-Google-Smtp-Source: AGHT+IFKX+dkBN6/eSiq0VUEAhavDIJd0EypI+SXpKA6+P2rIe7RILckQEXPojZOkD0j1gGj5WjfXA==
-X-Received: by 2002:a17:90a:a787:b0:2cb:3306:b2cc with SMTP id 98e67ed59e1d1-2d3dfc2aa4amr8742078a91.1.1723961311044;
-        Sat, 17 Aug 2024 23:08:31 -0700 (PDT)
+        bh=q7ad08V9dWOOHyWHL258V3QEERYZAETpc4J3fM7chOc=;
+        b=IJSrkKlYQCG+v+Qea3l6G2jivu6ZZueQMWjWLyZ1GX33KTHtRbZhL0YgmFTEVc7bTt
+         Pqz6ASzXFarFcu0U6g+7966SRgLRDJ0lCWI6SYQuoD8CsSZQXliQYCTKKFb3fOUPGWkU
+         prdwd+9nQ4guCtjks87dx8YTsipp8N+NF/iYGf5SiDLiigqaRUPk7Xn0lDhQZpJpo+y1
+         3qcHZ0grmjUvRe4jUl1ANUzzau6zVOHei5MtxALoD7MGH68ni0hmA0TAimBAsbyqErS8
+         TPRGYEcHrkhuQrk3pmx4NOZq9oUh6v+fhJUTGm7n9nXkc1ooGSRKLJ0HO68TuuyMIj/D
+         qWMg==
+X-Forwarded-Encrypted: i=1; AJvYcCX6WZpSQ4DYu3mA465l+2UNhxHfgQIVkRduM1lk4DDfyrCvIqoQ1B0vUk4EusC3ETUCBfT8OJ9XZ9mFtJmhq8Ltsh3VaXZeQl3dcA0z
+X-Gm-Message-State: AOJu0YzBACl93YTv7O8w+HigdgISV6CVktOmnhJ9BCuKe7Fg2vru1BwM
+	BugV9SPSRM1FAS5K858ucaj2BpSFqAif2TuY18jKNKcg/Epvkexy
+X-Google-Smtp-Source: AGHT+IFRtCSERfuy675a0jOJLl4KWwWGVGXXS4VlR/U2FYPHZXXE4rpb1RZGXKMSWZ1kKar/w+HVqA==
+X-Received: by 2002:a17:90b:124b:b0:2d3:ad05:7240 with SMTP id 98e67ed59e1d1-2d3c3aa98bbmr16548494a91.22.1723961315162;
+        Sat, 17 Aug 2024 23:08:35 -0700 (PDT)
 Received: from distilledx.srmu.edu.in ([2401:4900:6322:f541:ea23:e535:a48c:3c88])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d4394e01b4sm236228a91.46.2024.08.17.23.08.27
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d4394e01b4sm236228a91.46.2024.08.17.23.08.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Aug 2024 23:08:30 -0700 (PDT)
+        Sat, 17 Aug 2024 23:08:34 -0700 (PDT)
 From: Tejas Vipin <tejasvipin76@gmail.com>
 To: maarten.lankhorst@linux.intel.com,
 	mripard@kernel.org,
@@ -78,9 +78,9 @@ Cc: dianders@chromium.org,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	Tejas Vipin <tejasvipin76@gmail.com>
-Subject: [PATCH v3 1/2] drm/mipi-dsi: Add mipi_dsi_dcs_set_tear_scanline_multi
-Date: Sun, 18 Aug 2024 11:38:15 +0530
-Message-ID: <20240818060816.848784-2-tejasvipin76@gmail.com>
+Subject: [PATCH v3 2/2] drm/panel: jdi-fhd-r63452: transition to mipi_dsi wrapped functions
+Date: Sun, 18 Aug 2024 11:38:16 +0530
+Message-ID: <20240818060816.848784-3-tejasvipin76@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240818060816.848784-1-tejasvipin76@gmail.com>
 References: <20240818060816.848784-1-tejasvipin76@gmail.com>
@@ -92,79 +92,210 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-mipi_dsi_dcs_set_tear_scanline_multi can heavily benefit from being
-converted to a multi style function as it is often called in the context of
-similar functions.
+Changes the jdi-fhd-r63452 panel to use multi style functions for
+improved error handling.
 
 Reviewed-by: Douglas Anderson <dianders@chromium.org>
 Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
 ---
- drivers/gpu/drm/drm_mipi_dsi.c | 31 +++++++++++++++++++++++++++++++
- include/drm/drm_mipi_dsi.h     |  2 ++
- 2 files changed, 33 insertions(+)
+ drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c | 149 ++++++-------------
+ 1 file changed, 48 insertions(+), 101 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
-index 8d0a866cf1e0..b7ad18c148c2 100644
---- a/drivers/gpu/drm/drm_mipi_dsi.c
-+++ b/drivers/gpu/drm/drm_mipi_dsi.c
-@@ -1339,6 +1339,9 @@ EXPORT_SYMBOL(mipi_dsi_dcs_set_pixel_format);
-  * @dsi: DSI peripheral device
-  * @scanline: scanline to use as trigger
-  *
-+ * This function is deprecated. Use mipi_dsi_dcs_set_tear_scanline_multi()
-+ * instead.
-+ *
-  * Return: 0 on success or a negative error code on failure
-  */
- int mipi_dsi_dcs_set_tear_scanline(struct mipi_dsi_device *dsi, u16 scanline)
-@@ -1833,6 +1836,34 @@ void mipi_dsi_dcs_set_page_address_multi(struct mipi_dsi_multi_context *ctx,
- }
- EXPORT_SYMBOL(mipi_dsi_dcs_set_page_address_multi);
- 
-+/**
-+ * mipi_dsi_dcs_set_tear_scanline_multi() - set the scanline to use as trigger for
-+ *    the Tearing Effect output signal of the display module
-+ * @ctx: Context for multiple DSI transactions
-+ * @scanline: scanline to use as trigger
-+ *
-+ * Like mipi_dsi_dcs_set_tear_scanline() but deals with errors in a way that
-+ * makes it convenient to make several calls in a row.
-+ */
-+void mipi_dsi_dcs_set_tear_scanline_multi(struct mipi_dsi_multi_context *ctx,
-+					  u16 scanline)
-+{
-+	struct mipi_dsi_device *dsi = ctx->dsi;
-+	struct device *dev = &dsi->dev;
-+	int ret;
-+
-+	if (ctx->accum_err)
-+		return;
-+
-+	ret = mipi_dsi_dcs_set_tear_scanline(dsi, scanline);
-+	if (ret < 0) {
-+		ctx->accum_err = ret;
-+		dev_err(dev, "Failed to set tear scanline: %d\n",
-+			ctx->accum_err);
-+	}
-+}
-+EXPORT_SYMBOL(mipi_dsi_dcs_set_tear_scanline_multi);
-+
- static int mipi_dsi_drv_probe(struct device *dev)
+diff --git a/drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c b/drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c
+index 483dc88d16d8..4eb71e85e9e9 100644
+--- a/drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c
++++ b/drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c
+@@ -41,142 +41,89 @@ static void jdi_fhd_r63452_reset(struct jdi_fhd_r63452 *ctx)
+ static int jdi_fhd_r63452_on(struct jdi_fhd_r63452 *ctx)
  {
- 	struct mipi_dsi_driver *drv = to_mipi_dsi_driver(dev->driver);
-diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
-index 602be6ce081a..c823cc13ad1f 100644
---- a/include/drm/drm_mipi_dsi.h
-+++ b/include/drm/drm_mipi_dsi.h
-@@ -375,6 +375,8 @@ void mipi_dsi_dcs_set_column_address_multi(struct mipi_dsi_multi_context *ctx,
- 					   u16 start, u16 end);
- void mipi_dsi_dcs_set_page_address_multi(struct mipi_dsi_multi_context *ctx,
- 					   u16 start, u16 end);
-+void mipi_dsi_dcs_set_tear_scanline_multi(struct mipi_dsi_multi_context *ctx,
-+					u16 scanline);
+ 	struct mipi_dsi_device *dsi = ctx->dsi;
+-	struct device *dev = &dsi->dev;
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
  
- /**
-  * mipi_dsi_generic_write_seq - transmit data using a generic write packet
+ 	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
+ 
+-	mipi_dsi_generic_write_seq(dsi, 0xb0, 0x00);
+-	mipi_dsi_generic_write_seq(dsi, 0xd6, 0x01);
+-	mipi_dsi_generic_write_seq(dsi, 0xec,
+-				   0x64, 0xdc, 0xec, 0x3b, 0x52, 0x00, 0x0b, 0x0b,
+-				   0x13, 0x15, 0x68, 0x0b, 0xb5);
+-	mipi_dsi_generic_write_seq(dsi, 0xb0, 0x03);
+-
+-	ret = mipi_dsi_dcs_set_tear_on(dsi, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to set tear on: %d\n", ret);
+-		return ret;
+-	}
+-
+-	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_SET_ADDRESS_MODE, 0x00);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xb0, 0x00);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xd6, 0x01);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xec,
++					 0x64, 0xdc, 0xec, 0x3b, 0x52, 0x00, 0x0b, 0x0b,
++					 0x13, 0x15, 0x68, 0x0b, 0xb5);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xb0, 0x03);
+ 
+-	ret = mipi_dsi_dcs_set_pixel_format(dsi, 0x77);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to set pixel format: %d\n", ret);
+-		return ret;
+-	}
+-
+-	ret = mipi_dsi_dcs_set_column_address(dsi, 0x0000, 0x0437);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to set column address: %d\n", ret);
+-		return ret;
+-	}
++	mipi_dsi_dcs_set_tear_on_multi(&dsi_ctx, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
+ 
+-	ret = mipi_dsi_dcs_set_page_address(dsi, 0x0000, 0x077f);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to set page address: %d\n", ret);
+-		return ret;
+-	}
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_SET_ADDRESS_MODE, 0x00);
+ 
+-	ret = mipi_dsi_dcs_set_tear_scanline(dsi, 0x0000);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to set tear scanline: %d\n", ret);
+-		return ret;
+-	}
++	mipi_dsi_dcs_set_pixel_format_multi(&dsi_ctx, 0x77);
++	mipi_dsi_dcs_set_column_address_multi(&dsi_ctx, 0x0000, 0x0437);
++	mipi_dsi_dcs_set_page_address_multi(&dsi_ctx, 0x0000, 0x077f);
++	mipi_dsi_dcs_set_tear_scanline_multi(&dsi_ctx, 0x0000);
++	mipi_dsi_dcs_set_display_brightness_multi(&dsi_ctx, 0x00ff);
+ 
+-	ret = mipi_dsi_dcs_set_display_brightness(dsi, 0x00ff);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to set display brightness: %d\n", ret);
+-		return ret;
+-	}
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_WRITE_CONTROL_DISPLAY, 0x24);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_WRITE_POWER_SAVE, 0x00);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_SET_CABC_MIN_BRIGHTNESS, 0x00);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x84, 0x00);
+ 
+-	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_WRITE_CONTROL_DISPLAY, 0x24);
+-	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_WRITE_POWER_SAVE, 0x00);
+-	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_SET_CABC_MIN_BRIGHTNESS, 0x00);
+-	mipi_dsi_dcs_write_seq(dsi, 0x84, 0x00);
++	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
++	mipi_dsi_msleep(&dsi_ctx, 20);
++	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
++	mipi_dsi_msleep(&dsi_ctx, 80);
+ 
+-	ret = mipi_dsi_dcs_set_display_on(dsi);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to set display on: %d\n", ret);
+-		return ret;
+-	}
+-	msleep(20);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xb0, 0x04);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x84, 0x00);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xc8, 0x11);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xb0, 0x03);
+ 
+-	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to exit sleep mode: %d\n", ret);
+-		return ret;
+-	}
+-	msleep(80);
+-
+-	mipi_dsi_generic_write_seq(dsi, 0xb0, 0x04);
+-	mipi_dsi_dcs_write_seq(dsi, 0x84, 0x00);
+-	mipi_dsi_generic_write_seq(dsi, 0xc8, 0x11);
+-	mipi_dsi_generic_write_seq(dsi, 0xb0, 0x03);
+-
+-	return 0;
++	return dsi_ctx.accum_err;
+ }
+ 
+-static int jdi_fhd_r63452_off(struct jdi_fhd_r63452 *ctx)
++static void jdi_fhd_r63452_off(struct jdi_fhd_r63452 *ctx)
+ {
+ 	struct mipi_dsi_device *dsi = ctx->dsi;
+-	struct device *dev = &dsi->dev;
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
+ 
+ 	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
+ 
+-	mipi_dsi_generic_write_seq(dsi, 0xb0, 0x00);
+-	mipi_dsi_generic_write_seq(dsi, 0xd6, 0x01);
+-	mipi_dsi_generic_write_seq(dsi, 0xec,
+-				   0x64, 0xdc, 0xec, 0x3b, 0x52, 0x00, 0x0b, 0x0b,
+-				   0x13, 0x15, 0x68, 0x0b, 0x95);
+-	mipi_dsi_generic_write_seq(dsi, 0xb0, 0x03);
+-
+-	ret = mipi_dsi_dcs_set_display_off(dsi);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to set display off: %d\n", ret);
+-		return ret;
+-	}
+-	usleep_range(2000, 3000);
+-
+-	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to enter sleep mode: %d\n", ret);
+-		return ret;
+-	}
+-	msleep(120);
+-
+-	return 0;
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xb0, 0x00);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xd6, 0x01);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xec,
++					 0x64, 0xdc, 0xec, 0x3b, 0x52, 0x00, 0x0b, 0x0b,
++					 0x13, 0x15, 0x68, 0x0b, 0x95);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xb0, 0x03);
++
++	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
++	mipi_dsi_usleep_range(&dsi_ctx, 2000, 3000);
++	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
++	mipi_dsi_msleep(&dsi_ctx, 120);
+ }
+ 
+ static int jdi_fhd_r63452_prepare(struct drm_panel *panel)
+ {
+ 	struct jdi_fhd_r63452 *ctx = to_jdi_fhd_r63452(panel);
+-	struct device *dev = &ctx->dsi->dev;
+ 	int ret;
+ 
+ 	jdi_fhd_r63452_reset(ctx);
+ 
+ 	ret = jdi_fhd_r63452_on(ctx);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to initialize panel: %d\n", ret);
++	if (ret < 0)
+ 		gpiod_set_value_cansleep(ctx->reset_gpio, 1);
+-		return ret;
+-	}
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int jdi_fhd_r63452_unprepare(struct drm_panel *panel)
+ {
+ 	struct jdi_fhd_r63452 *ctx = to_jdi_fhd_r63452(panel);
+-	struct device *dev = &ctx->dsi->dev;
+-	int ret;
+ 
+-	ret = jdi_fhd_r63452_off(ctx);
+-	if (ret < 0)
+-		dev_err(dev, "Failed to un-initialize panel: %d\n", ret);
++	/*
++	 * NOTE: We don't return an error here as while the panel won't have
++	 * been cleanly turned off at least we've asserted the reset signal
++	 * so it should be safe to power it back on again later
++	 */
++	jdi_fhd_r63452_off(ctx);
+ 
+ 	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
+ 
 -- 
 2.46.0
 
