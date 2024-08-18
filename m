@@ -1,120 +1,119 @@
-Return-Path: <linux-kernel+bounces-290962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30FD5955BAB
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 08:58:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49633955BB3
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 09:05:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CED311F21D38
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 06:58:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D62581F21D24
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 07:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39E915E86;
-	Sun, 18 Aug 2024 06:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="NS9c4Pls"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFEE416419;
+	Sun, 18 Aug 2024 07:04:59 +0000 (UTC)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E034112B63;
-	Sun, 18 Aug 2024 06:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E7D13FEE;
+	Sun, 18 Aug 2024 07:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723964288; cv=none; b=ZlxJXTN8lwBwRjsASRODBorS0Kd74Hb1cqvGGAjhet21jeYQjBTOWMlpjdq9ItA3YG4AwQj8xCelxYOA9XsoIJV2vQlQKbus81N6z2VhSUxYTEhAB3qoJ7HsT5RenE6sPTQtjdfiAqRA7BO2Rdb4Gig70demhmWPRJHzp8VOU/0=
+	t=1723964699; cv=none; b=I3rxfBG4g1rLfZBCvTn4/6Sxd+uAsnj8D2h9fWWwe/scDWhuUWzwzasc9jrMgPRtPfu27KvyfgvAlvDzp7QjcYQDMM/DYywHBTy/r4TG8Pc0IJe//3h5H0IryQgxEi6skGm2/vXopzwiYjLnUFG2SElx1Lyv4APOJECkEoaLHvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723964288; c=relaxed/simple;
-	bh=Q+CWVM1eWnfL/atd6pTcZYYzfcoTGsOu2mcBkfKzYg0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OV7YUdw3F7a2adqp7h6aqR1GZxq+XxcPTSkxyJdLhsX8QbvFCa4WhMGLlfEYG+1l1PvauUwr+6aEndvr+y4HHzK80/6KfHYcBMYaQAWbz5ZGFmNTEk4gjEGzey1M8P3SVl3UHaYXUQu72KmxxipLrHMzHKA/k27iUFrTNbyKzMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=NS9c4Pls; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1723964282;
-	bh=Q+CWVM1eWnfL/atd6pTcZYYzfcoTGsOu2mcBkfKzYg0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=NS9c4Plso9foostRPNCT7hRHGrLsb19jl9Jo5XxvGopgy5utCTH59Tioo8Js4D/pz
-	 oK8DFBhRPSHCjwmAisYaunM5uP930ZhUVFJPF5mh9U+JIBluFUxO71QI0+mfGQxNoK
-	 lkSF8XPmoPYXyLjIbZXvhoZs9MUtLOPK8vY97gbU=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sun, 18 Aug 2024 08:56:40 +0200
-Subject: [PATCH v5 4/4] drm: panel-backlight-quirks: Add Framework 13
- glossy and 2.8k panels
+	s=arc-20240116; t=1723964699; c=relaxed/simple;
+	bh=mIrm6vVicupTZRlXUxSQzer2XzkiPaTTLGb8owVkW2w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NH28ziGcV1tQXY3+NCDeyJDV0ZR8dnf5osUcpnUb6iXNDw8wNcZw6hMojsAdkiTs054sx9A3yZgPNih/vbeVny86Zvp2XakhJwC5CvBp27t+K2cWCbUfacB7pOsLbVAiDgeKJlkj6XoISciMaf9CqIsaYBVbNhYIxOqDzIrWKBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7d89bb07e7so359834366b.3;
+        Sun, 18 Aug 2024 00:04:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723964695; x=1724569495;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r6OkscswnHSoLQc+dDQz+vP2n9xYpi6RMiXpbL1v/jE=;
+        b=bpPIBThuhrxMAIH2S62JJehP0fKIex43RB6/OtaCjJp0Xmp1310Xxz/wnUI5RAYZ7E
+         rH/x7yT52cCMa53OvKfBC6ZQ5eeuu7qnqcEuDv2Jf8tfPuHtB+QMF7fWRjDkntZ7kQPA
+         KeACY4oIUVMMpmbmvnV51UkQWlBK+4DkQeVeuhsGNUVCoANlmgokd465czbj8VL0SJnP
+         MpJC6p8iaILMQ0IRDrjjE5Eic3HSnyAElcPnku4siQ7aBg2VyKrMW3otn7kW3Nl1Pxxk
+         SIIOi634JAnY02SYayf7trEQPIWSqa/sp75UoKA9jWC47tmvKDIiq2QhO48cxglzlomn
+         6xpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWl8/EO9M8iJDaK3REQGj/3rcUjyQNtTNCT2WA+2oDBdW6MyDVrKJ9gmkuDPvdm4mr30tsJ0of9Ra+k/B8CIom0NHieQfLYIOG8nmSo
+X-Gm-Message-State: AOJu0Yzmpl61aZloCT0o9IpqA89o1fa8nyGsr6UgloLnM7Vu0VKwfCxs
+	ptRbT1yoEETxgsE4P+evKY1hRi2HgC2vu088+D/kq1eG2QS1hSCcTzDEMEME
+X-Google-Smtp-Source: AGHT+IGOKmK8UpZ4hQS37OiAfSiZ72uYIU8SKLb7umOUDMA3+S1GQVzMNQTr4I4Pj6OhFuaji/LRNA==
+X-Received: by 2002:a17:907:7e90:b0:a77:b4e3:4fca with SMTP id a640c23a62f3a-a83928a661emr426392766b.9.1723964695129;
+        Sun, 18 Aug 2024 00:04:55 -0700 (PDT)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383934116sm488426566b.109.2024.08.18.00.04.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 18 Aug 2024 00:04:55 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7aa4ca9d72so442256966b.0;
+        Sun, 18 Aug 2024 00:04:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXZ+NZEE9ai64YLh1iwjdkNngnxYYR+8KD4IoeMMIz36WD6lrKAzNF/nOSYJxa7ayn9YIIyTxMH+Wvt3+hVxQgbxeM6APM/8hZSkmj2
+X-Received: by 2002:a17:907:7286:b0:a7a:8da1:eb00 with SMTP id
+ a640c23a62f3a-a83928a993bmr482431466b.7.1723964694394; Sun, 18 Aug 2024
+ 00:04:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240818-amdgpu-min-backlight-quirk-v5-4-b6c0ead0c73d@weissschuh.net>
-References: <20240818-amdgpu-min-backlight-quirk-v5-0-b6c0ead0c73d@weissschuh.net>
-In-Reply-To: <20240818-amdgpu-min-backlight-quirk-v5-0-b6c0ead0c73d@weissschuh.net>
-To: Alex Deucher <alexander.deucher@amd.com>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
- Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
- Mario Limonciello <mario.limonciello@amd.com>, 
- Matt Hartley <matt.hartley@gmail.com>, Kieran Levin <ktl@framework.net>, 
- Hans de Goede <hdegoede@redhat.com>, 
- Jani Nikula <jani.nikula@linux.intel.com>, Xinhui Pan <Xinhui.Pan@amd.com>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>, 
- linux-doc@vger.kernel.org
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723964281; l=1323;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=JArR9JICCmn0YbpAXfNY1dO1o7oSdk/p0an/HUTd+vk=;
- b=Rrxx/lWLRCElyhM3NLXM7Y1RbYccBezq6Ebt7sXZz5G+WufPs5/MF7dgAWgsUguCrcZKjBFVz
- V3iYs09bJepALcAYk6jzF35zPK77j8qthmKA39/9UhPZJsS8zlFgbn+
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+References: <20240731125615.3368813-1-neal@gompa.dev>
+In-Reply-To: <20240731125615.3368813-1-neal@gompa.dev>
+From: Neal Gompa <neal@gompa.dev>
+Date: Sun, 18 Aug 2024 03:04:17 -0400
+X-Gmail-Original-Message-ID: <CAEg-Je9qtud+9uJdratbLmD9EOWPrFh8xn5==-ip_AMZF82Vsw@mail.gmail.com>
+Message-ID: <CAEg-Je9qtud+9uJdratbLmD9EOWPrFh8xn5==-ip_AMZF82Vsw@mail.gmail.com>
+Subject: Re: [PATCH v2] init/Kconfig: Only block on RANDSTRUCT for RUST
+To: rust-for-linux@vger.kernel.org
+Cc: asahi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Miguel Ojeda <ojeda@kernel.org>, Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, 
+	Asahi Lina <lina@asahilina.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: "Dustin L. Howett" <dustin@howett.net>
+On Wed, Jul 31, 2024 at 8:57=E2=80=AFAM Neal Gompa <neal@gompa.dev> wrote:
+>
+> When enabling Rust in the kernel, we only need to block on the
+> RANDSTRUCT feature and GCC plugin. The rest of the GCC plugins
+> are reasonably safe to enable.
+>
+> Signed-off-by: Neal Gompa <neal@gompa.dev>
+> ---
+> Changes in v2
+> - Drop changing !RANDSTRUCT to RANDSTRUCT_NONE
+>   (they're equivalent anyway)
+> ---
+>  init/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/init/Kconfig b/init/Kconfig
+> index a465ea9525bd..0939486938cc 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -1900,7 +1900,7 @@ config RUST
+>         depends on RUST_IS_AVAILABLE
+>         depends on !CFI_CLANG
+>         depends on !MODVERSIONS
+> -       depends on !GCC_PLUGINS
+> +       depends on !GCC_PLUGIN_RANDSTRUCT
+>         depends on !RANDSTRUCT
+>         depends on !DEBUG_INFO_BTF || PAHOLE_HAS_LANG_EXCLUDE
+>         help
+> --
+> 2.45.2
+>
 
-I have tested these panels on the Framework Laptop 13 AMD with firmware
-revision 3.05 (latest at time of submission).
+Bump for notice... Can we get this looked at to incorporate for 6.11?
 
-Signed-off-by: Dustin L. Howett <dustin@howett.net>
----
- drivers/gpu/drm/drm_panel_backlight_quirks.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/gpu/drm/drm_panel_backlight_quirks.c b/drivers/gpu/drm/drm_panel_backlight_quirks.c
-index f2aefff618dd..c477d98ade2b 100644
---- a/drivers/gpu/drm/drm_panel_backlight_quirks.c
-+++ b/drivers/gpu/drm/drm_panel_backlight_quirks.c
-@@ -25,6 +25,22 @@ static const struct drm_panel_min_backlight_quirk drm_panel_min_backlight_quirks
- 		.ident.name = "NE135FBM-N41",
- 		.min_brightness = 0,
- 	},
-+	/* 13 inch glossy panel */
-+	{
-+		.dmi_match.field = DMI_BOARD_VENDOR,
-+		.dmi_match.value = "Framework",
-+		.ident.panel_id = drm_edid_encode_panel_id('B', 'O', 'E', 0x095f),
-+		.ident.name = "NE135FBM-N41",
-+		.min_brightness = 0,
-+	},
-+	/* 13 inch 2.8k panel */
-+	{
-+		.dmi_match.field = DMI_BOARD_VENDOR,
-+		.dmi_match.value = "Framework",
-+		.ident.panel_id = drm_edid_encode_panel_id('B', 'O', 'E', 0x0cb4),
-+		.ident.name = "NE135A1M-NY1",
-+		.min_brightness = 0,
-+	},
- };
- 
- static bool drm_panel_min_backlight_quirk_matches(const struct drm_panel_min_backlight_quirk *quirk,
-
--- 
-2.46.0
-
+--=20
+=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
+=BC=81/ Always, there's only one truth!
 
