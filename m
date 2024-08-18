@@ -1,59 +1,52 @@
-Return-Path: <linux-kernel+bounces-290899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33072955AFA
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 07:08:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F8E955AFC
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 07:12:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6647B1C20AF2
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 05:08:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 622CB1F216C8
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 05:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E7BB66E;
-	Sun, 18 Aug 2024 05:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4C0B66E;
+	Sun, 18 Aug 2024 05:12:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bedKcfx0"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="I7vpTf1D"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26062946F;
-	Sun, 18 Aug 2024 05:08:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51A2944F
+	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 05:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723957723; cv=none; b=r4S5+axTQ8lgtL/JB3iteSYz2CLw2urvjvKAluFEPMYTknE0rQjY0UE0mUYk5EQYV0itwXHBp5wT8RG8HtwF+s6JZyVGijxyO8OYtbeZ2cAOymZkJaOfvnYjEjcTbdf7U0kqEfUxwxQG3/mx0c5s9flnhB0lYAbcM4r/W4qx4n8=
+	t=1723957938; cv=none; b=ODcjxIwjsa27bHCuMCxBX7K4koAYL0hLiKP4MlTXneNjkZhJxJE7mKskJJ3zvOL5Rj0HfAg7sJVX1iaUaY23zJ/OlUCZYCpXzeyFmYJPsDWlGx0QuQgvKJKIVwgfjed7mWcQQHzAiBFkyTu6w+Jr2/8cfCaW1l6ZfhX+FgL2vz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723957723; c=relaxed/simple;
-	bh=tLHjBLhxmFXEWqxbLa7VP5D2HxF8A4lSY0hSwJ/qc5M=;
+	s=arc-20240116; t=1723957938; c=relaxed/simple;
+	bh=5NsqGhMym8MZCzt7IdXN1LK/T8cJ9rfKvQRSDyqEEcE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VWui8rE/2NIuT2w0hWHEorZ3PBPkaUG+ZstsEi//yRnNB8IFPBcfYxI3/63VhkemNk3TcWCe4MY/0a2M2UzNe9MT0RGFs5t6SVXMhiZJK5qSnMUAy41nau1L1EFKkCHy+3N1w0/cyhoH1ntYys351L+NbLRQ3PWMn4dU8aXID3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bedKcfx0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22EA0C32786;
-	Sun, 18 Aug 2024 05:08:41 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gwJcH7UtmGRVzVZqHDJexp87pnFW78D3UQi0Xt9d0X2h6Eg39wH4DDffKNCUyfgsxczUE2KoeQLZGKKPUCkZYiEphAJgY8FnitXrl9kbZrKKDtkyZNQOEhTLFEmfNZGHerTz5aZSak+Du0KZFLF9qu+Cqc9EnTaWMFEQtlOPxUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=I7vpTf1D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97939C32786;
+	Sun, 18 Aug 2024 05:12:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723957722;
-	bh=tLHjBLhxmFXEWqxbLa7VP5D2HxF8A4lSY0hSwJ/qc5M=;
+	s=korg; t=1723957938;
+	bh=5NsqGhMym8MZCzt7IdXN1LK/T8cJ9rfKvQRSDyqEEcE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bedKcfx0w9jhWw8P66djV4eyhZMxnyqdcrZTdTwp3los+uxy9iS2wKbIhVgZSnxN2
-	 wYz7S4xWZIeBNhgqOpd1+omEFR6NEHTj81kA4Rd8JnFKWXNkwXbmeEjpNxCTSFGYSh
-	 5M3yKvWHyUHVgBH+Ityom1j1WcaYJYdM+lVZrDlE=
-Date: Sun, 18 Aug 2024 07:08:39 +0200
+	b=I7vpTf1DA039rlnpbtw3wV73wu8m5lPOMCxu55E/v+SWWyJo53IRD/jKgsLMbUWfy
+	 e8b5X3RuaDE58qF2/Rajl1H3jKALlDuVkZF9FR5jQ9Ssr75w3LHs1jdic/TwwwxJR6
+	 wYVd3QNPsBE5/fjUAwelwDLv33M3aDbQLJl+kAJQ=
+Date: Sun, 18 Aug 2024 07:12:14 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
-To: Kevin Holm <kevin@holm.dev>
-Cc: stable@vger.kernel.org, regressions@lists.linux.dev,
-	amd-gfx@lists.freedesktop.org,
-	ML dri-devel <dri-devel@lists.freedesktop.org>,
-	LKML <linux-kernel@vger.kernel.org>, Wayne Lin <wayne.lin@amd.com>,
-	Jerry Zuo <jerry.zuo@amd.com>,
-	Zaeem Mohamed <zaeem.mohamed@amd.com>,
-	Daniel Wheeler <daniel.wheeler@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>
-Subject: Re: [PATCH 6.10] drm/amd/display: Refactor function
- dm_dp_mst_is_port_support_mode()
-Message-ID: <2024081800-owl-girdle-fd89@gregkh>
-References: <20240730185339.543359-1-kevin@holm.dev>
- <2024081739-suburb-manor-e6c3@gregkh>
- <e518ef00-4c7a-4719-bc58-90d782e34b30@holm.dev>
+To: nerdopolis <bluescreen_avenger@verizon.net>
+Cc: pmladek@suse.com, rostedt@goodmis.org, john.ogness@linutronix.de,
+	senozhatsky@chromium.org, tglx@linutronix.de, tony@atomide.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: VT-less kernels, and /dev/console on x86
+Message-ID: <2024081824-leggings-omission-562a@gregkh>
+References: <2669238.7s5MMGUR32.ref@nerdopolis2>
+ <2669238.7s5MMGUR32@nerdopolis2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,72 +55,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e518ef00-4c7a-4719-bc58-90d782e34b30@holm.dev>
+In-Reply-To: <2669238.7s5MMGUR32@nerdopolis2>
 
-On Sat, Aug 17, 2024 at 10:30:41PM +0200, Kevin Holm wrote:
+On Sat, Aug 17, 2024 at 08:09:20PM -0400, nerdopolis wrote:
+> Hi
+> 
+> I originally brought this up on linux-serial, but I think it makes more sense
+> that it's part of how printk console device selection works. Without VTs, while
+> most software is able to handle the situation, some userspace programs expect
+> /dev/console to still be responsive. Namely systemd. It calls isatty() against
+> /dev/console, and since /dev/console on VT-less systems currently defaults to
+> /dev/ttyS0, and when /dev/ttyS0 is disconnected, the ioctl's fail, and it
+> refuses to write log messages to it.
+> 
+> There doesn't seem to be a mailing list for printk, so I had to use
+> get_maintainer.pl. Hopefully this is correct
 > 
 > 
-> On 17.08.24 10:42, Greg KH wrote:
-> > On Tue, Jul 30, 2024 at 08:53:39PM +0200, Kevin Holm wrote:
-> > > From: Wayne Lin <wayne.lin@amd.com>
-> > > 
-> > > [ Upstream commit fa57924c76d995e87ca3533ec60d1d5e55769a27 ]
-> > > 
-> > > [Why]
-> > > dm_dp_mst_is_port_support_mode() is a bit not following the original design rule and cause
-> > > light up issue with multiple 4k monitors after mst dsc hub.
-> > > 
-> > > [How]
-> > > Refactor function dm_dp_mst_is_port_support_mode() a bit to solve the light up issue.
-> > > 
-> > > Reviewed-by: Jerry Zuo <jerry.zuo@amd.com>
-> > > Acked-by: Zaeem Mohamed <zaeem.mohamed@amd.com>
-> > > Signed-off-by: Wayne Lin <wayne.lin@amd.com>
-> > > Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
-> > > Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-> > > [kevin@holm.dev: Resolved merge conflict in .../amdgpu_dm_mst_types.c]
-> > > Fixes: 4df96ba6676034 ("drm/amd/display: Add timing pixel encoding for mst mode validation")
-> > > Link: https://lore.kernel.org/stable/d74a7768e957e6ce88c27a5bece0c64dff132e24@holm.dev/T/#u
-> > > Signed-off-by: Kevin Holm <kevin@holm.dev>
-> > > ---
-> > > I resolved the merge conflict so that, after this patch is applied to the
-> > > linux-6.10.y branch of the stable git repository, the resulting function
-> > > dm_dp_mst_is_port_support_mode (and also the new function
-> > > dp_get_link_current_set_bw) is identical to the original commit.
-> > > 
-> > > I've confirmed that it fixes the regression I reported for my use case.
-> > 
-> > And it turns out this change breaks the arm and arm64 builds.  I tried
-> > to fix it up by applying the fixup afterward for this file, but it's
-> > just too much of a mess to unwind this, so I'm going to have to revert
-> > this now, sorry.
-> That sucks, sorry for the problems my patch caused. :(
+> After some grepping and guessing and testing, and playing around Something like
+> diff --git a/drivers/tty/Kconfig b/drivers/tty/Kconfig
+> index a45d423ad10f..f94a4632aab0 100644
+> --- a/drivers/tty/Kconfig
+> +++ b/drivers/tty/Kconfig
+> @@ -384,9 +384,12 @@ config NULL_TTY
+>  
+>           In order to use this driver, you should redirect the console to this
+>           TTY, or boot the kernel with console=ttynull.
+> -
+>           If unsure, say N.
+>  
+> +config NULL_TTY_CONSOLE
+> +        bool "Supports /dev/ttynull as a console automatically"
+> +        depends on NULL_TTY && !VT_CONSOLE
+> +
+>  config VCC
+>         tristate "Sun Virtual Console Concentrator"
+>         depends on SUN_LDOMS
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index dddb15f48d59..c1554a789de8 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -3712,6 +3712,11 @@ void __init console_init(void)
+>         initcall_t call;
+>         initcall_entry_t *ce;
+>  
+> +#ifdef CONFIG_NULL_TTY_CONSOLE
+> +       if (!strstr(boot_command_line, "console="))
+> +               add_preferred_console("ttynull", 0, NULL);
+> +#endif
+> +
+>         /* Setup the default TTY line discipline. */
+>         n_tty_init();
+>  
 > 
-> > See:
-> > 	https://lore.kernel.org/r/b27c5434-f1b1-4697-985b-91bb3e9a22df@roeck-us.net
-> > for details.
-> I unfortunately don't know the amdgpu driver and kernel code in general enough to help fix
-> that. The back-ported patch I send was my first patch to the kernel.
 > 
-> In the email thread where I reported the problem I send a patch that reverts
-> 4df96ba6676034 ("drm/amd/display: Add timing pixel encoding for mst mode validation") to
-> fix the problem that way [1]. I've included a copy of that below.
-> I've tested that it still applies to 6.10.6-rc3 without conflicts and compiles for me. I
-> could not test if the 6.10.6-rc3 with the revert applied fixes the problem as I'm
-> traveling and don't have access to my normal setup. I can only say that reverting it on
-> v6.10.2 fixed the problem for me.
 > 
-> I don't know how to compile for other architectures so I did not test that.
-> 
-> Not sure what would be best, reverting the problem commit so the regression is fixed in
-> the 6.10 stable kernel (and maybe breaking something else?) or waiting for someone at AMD
-> with better knowledge of the amdgpu driver to back-port the fixing commit in a non-broken
-> way.
+> seems to work, it conflicts with CONFIG_VT_CONSOLE since it is effectively
+> redundant, it is optional, so that it doesn't cause any changes to
+> configurations, that historically had CONFIG_VT_CONSOLE turned off in the past,
+> and for bootloader configs, it won't change any behavior if the kernel command
+> line has a console device specified
 
-Yes, this is up to the amd developers now, I suggest you work with them
-to get this resolved please.
-
-Or just use 6.11-rc3 and newer :)
+What is wrong with just setting the kernel command line for this
+instead?
 
 thanks,
 
