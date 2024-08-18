@@ -1,98 +1,87 @@
-Return-Path: <linux-kernel+bounces-291260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B75B6955FFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 00:36:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 835DE956000
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 00:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35208B21006
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 22:35:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7F041C20E05
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 22:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BDC156653;
-	Sun, 18 Aug 2024 22:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xyf+f6CJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716A915534D;
+	Sun, 18 Aug 2024 22:39:06 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB869610D;
-	Sun, 18 Aug 2024 22:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9370E610D
+	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 22:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724020548; cv=none; b=QWe5eDQ32tdlp7roE8p3OSK40YZZRuwK10GrUUFntkjBk0g+q049EXUyrfhW5q2g9x8Fm1RibL5zN2RMFnBe4K7/b3+dFk/oJMchS8WmF44N7/kFwHP28EnYBxUiq+fXAvB+zpvouVvh+AhbXfoKjIUcTp/VKX36DzxLBufGPs8=
+	t=1724020746; cv=none; b=GQvQgz+ipQlM1M7a6PNj+3Y/mmD1iSgF0qdpLGy9q7dy/qUQzoaMs76epKH4tMSDbzz6waAkaXsxcY6wtGkM8GMMxCBuKrdeTilk3S9U/wpBxXvEvU0RdxotiF+CFl1QBmNbsH6fdVyOu0Ken5zzaida8ep5GpUKfpKEnn1XvPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724020548; c=relaxed/simple;
-	bh=P3zyhjnGHxYGLn6uj4wiSZbI1XcBPqGdvNYCAJ+SEAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gr7e2h4XEevNLNd/IrA/BVik9g/eVm/zAn7+9UWjOcnSXFSXWdEULrrnBZCRCHM0nlj2z8qWv4gj1+zvCFa2dQgGNE3bN5S95BLWQpGd7SYNFovhKz1mDHh6zEwSns2mr3PqyzyMtFWmXC6RhYD4CwOvFMsM73dmgSGowgSy4ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xyf+f6CJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 939B7C32786;
-	Sun, 18 Aug 2024 22:35:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724020548;
-	bh=P3zyhjnGHxYGLn6uj4wiSZbI1XcBPqGdvNYCAJ+SEAo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xyf+f6CJrnnv5sz+cDNM71HRtRfZHnFZ5CEMPP5fSV3n30NKcmg70pIIEipUXCKEx
-	 sf9XX18Ectn+VcA/eQeYtmJJorsYblE7o8mn0zNLIw+HdCbg7uv7tLtXXWsdZM008v
-	 BUGfNfJWra1Lrybc6ayJJmqIiSWacVy+n+8JxlvYXXPTiAxvCjetqDp4ui8J7AdsJ6
-	 8ELiSTtbXwG4NP2jnXkaITUvGAehP8Ehw2QzICAjJw028nNUWg20ufvG/GugjMl0d8
-	 Rr4HS/hr73XYEZsA1DLCIZZOd8oUBvOg81PMXad9orQEb+SxACwXJOMmdOqGoYJ3H6
-	 ukVBZkgYpWIjw==
-Date: Sun, 18 Aug 2024 23:35:43 +0100
-From: Conor Dooley <conor@kernel.org>
-To: =?iso-8859-1?B?QmFybmFi4XMgQ3rpbeFu?= <barnabas.czeman@mainlining.org>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Albrieux <jonathan.albrieux@gmail.com>,
-	Gwendal Grignou <gwendal@chromium.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux@mainlining.org, Danila Tikhonov <danila@jiaxyga.com>
-Subject: Re: [PATCH v4 3/4] dt-bindings: iio: magnetometer: Add ak09118
-Message-ID: <20240818-audience-surviving-1a7af0441aab@spud>
-References: <20240819-ak09918-v4-0-f0734d14cfb9@mainlining.org>
- <20240819-ak09918-v4-3-f0734d14cfb9@mainlining.org>
+	s=arc-20240116; t=1724020746; c=relaxed/simple;
+	bh=uLb7DE5+sb5ojuZ2PVgJ3Q3aZCMr6SWcfdBLYaDKqGY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=nSKC6q1ITrOyJJ7iwtcLRaXO/5AQRmZKhWeQKJHpf87ixrWRZvdiF/QKv5yebgneHd6B510Zk1tWuBkkw0TioznyFX1lb1an0k9D/fJ4a7nQPpPvbW3YP0b95LTn2bdA53eA37wboiLvD//T6WDN+JA5RnUHK5puB8hPX7LpCwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d2c44422eso21122425ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 15:39:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724020744; x=1724625544;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v3BTXGhifwOMjDbCZo0d2Ej089WynqAydAc6O/8cTpM=;
+        b=iPLEX/Jx2fmwVhWXozJI6Z4Kb5vVZHTJ7MyZzMfFWG8E8EZAZXI8TvGhs1GODW6pFh
+         rlCQXBqGC4b9zQllJPI283/7lrB8U9BTLc4RNeh7gPK/HT/3hUodyjUYEPbvCrEV3no0
+         XQo19prM10EXsRmp16f1CvTeAS1m2R+GsP9WJ6/+qECfupnf9bG+p38cqYw68XySVeQT
+         lFO8nHpPJT1grF//mEfMwY77JMClFC6LfqUjLVPldGWTeObH04Ee6PFwJOz4FezGvfHr
+         FG839ayFyqNyunySzXAcoN/vORRYcTR178MO87IShYy6Kbz3hdhn5nOjnG9CN9kPNpDW
+         6d0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUblJ/8VK6SN/SGyUvnNtrUg0ky5pmyluyuVKIw8oCkn11v8Zd+q1KW5Kb7EgDSTjlsr9x8QhgSM5RpUM6ogeSJgey7edQ4I90BYDtx
+X-Gm-Message-State: AOJu0Yx06H6WroDR3kmxqNHXhYnRqsCg0DjIeCkfc0V7TfyTR1An/5mm
+	knvfV2rX3mC+vDjubE6d6vSN+Nh0ZaQ0KQ5bnOuHGUYLpQuHbTKQVMqiv+H0mQJ9BTWg7RJRDLn
+	0ixfHlZqXzItPz3jeDTLECK9B6Ru7aS/tSt8ilo9CCVsomtbCu01DrF0=
+X-Google-Smtp-Source: AGHT+IEUH9iw47JklcMyfGPT+cYEsOHrLiWsHdC2DH7l27e6NGU+vPe/ZB5gj9tT+WjGfQEnrLCCu88B9AcB3sbvZ+ZyJ+vFqmEZ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="1HdgyuG3gzWeJEz3"
-Content-Disposition: inline
-In-Reply-To: <20240819-ak09918-v4-3-f0734d14cfb9@mainlining.org>
+X-Received: by 2002:a05:6638:9807:b0:4c0:a90d:4a78 with SMTP id
+ 8926c6da1cb9f-4cce173107cmr629135173.6.1724020743715; Sun, 18 Aug 2024
+ 15:39:03 -0700 (PDT)
+Date: Sun, 18 Aug 2024 15:39:03 -0700
+In-Reply-To: <20240818221048.813-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000003cef3061ffcdca7@google.com>
+Subject: Re: [syzbot] [btrfs?] general protection fault in __alloc_workqueue
+From: syzbot <syzbot+9fd43bb1ae7b5d9240c3@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
---1HdgyuG3gzWeJEz3
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On Mon, Aug 19, 2024 at 12:29:41AM +0200, Barnab=E1s Cz=E9m=E1n wrote:
-> From: Danila Tikhonov <danila@jiaxyga.com>
->=20
-> Document asahi-kasei,ak09918 compatible as a fallback compatible,
-> ak09918 is register compatible with ak09912.
->=20
-> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-> Signed-off-by: Barnab=E1s Cz=E9m=E1n <barnabas.czeman@mainlining.org>
+Reported-by: syzbot+9fd43bb1ae7b5d9240c3@syzkaller.appspotmail.com
+Tested-by: syzbot+9fd43bb1ae7b5d9240c3@syzkaller.appspotmail.com
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Tested on:
 
---1HdgyuG3gzWeJEz3
-Content-Type: application/pgp-signature; name="signature.asc"
+commit:         367b5c3d Add linux-next specific files for 20240816
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=1008f7c9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=61ba6f3b22ee5467
+dashboard link: https://syzkaller.appspot.com/bug?extid=9fd43bb1ae7b5d9240c3
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15ccd8dd980000
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsJ3PwAKCRB4tDGHoIJi
-0lHlAQDE9dsASR3TqPScIngmx4qCcOJFTEXU8uQ4nOIxIwna3AD/WxXsIPFD8DVP
-ls9dgc2TDq2c+k95OfxktpOmrHzDlg0=
-=bNkD
------END PGP SIGNATURE-----
-
---1HdgyuG3gzWeJEz3--
+Note: testing is done by a robot and is best-effort only.
 
