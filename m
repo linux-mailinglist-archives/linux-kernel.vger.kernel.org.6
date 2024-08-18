@@ -1,121 +1,143 @@
-Return-Path: <linux-kernel+bounces-290961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F2E4955BA2
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 08:50:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79341955BB0
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 08:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37A48281E38
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 06:50:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF065B2160A
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 06:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885F71CF83;
-	Sun, 18 Aug 2024 06:49:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94F21804E;
+	Sun, 18 Aug 2024 06:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NcgZmvjq"
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="erBoN4tt"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BAF81BC3C;
-	Sun, 18 Aug 2024 06:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE72211CAF;
+	Sun, 18 Aug 2024 06:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723963756; cv=none; b=tMv5FabzOZqzHQpnXXWEeLfbysvtCgQkPqA4UK6eI0ovp4qmuuTf+EfaZevPQWxkScjkvBHt19KJuNmyl9sqwbMFgySQTH0G8UO3UPiiZdyC0mVCCtK+iEPlazDbeKSMLisiSdQN4MTP502WJOgzAlRcx/KtBI3/uEtvE0faTgw=
+	t=1723964290; cv=none; b=p7xeZi8fj5AeFGjUZ3zcueVTcCI3ld1Td5lcqyMSkWWg/3EBQM1OasvdLSCQPM5g393WuzFhaBBUVZdkYqDqJuAIr6UzS5LHFZMDd1KbRUIweVPKvaT9l7tYxzTYhAh7zd/eJ+aeIGuqebBtXsQuYXIBN1xH5c8gN+4yCUWUsok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723963756; c=relaxed/simple;
-	bh=uFKjpSKWuJr4EH1NYhsVClFE8GCC/v5Fjf55YsSRT2A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DPEjOqTV8FTeyii8yWxl6/e/SWc5270MRy9UJhlejJKVJOdpquZI8ATPngdYc4R4S8WWQLcyN5UMVWhuoCsfmowuN/Z/QpSSjw6VNHe3Gj/rm+2IgD0Vf/6KcFhuP8KulsZWt94wiqkzbL1fBI61M7Ki0Ff1Hy7sk9U8WNY9kuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NcgZmvjq; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-4f6b7250d6dso1310934e0c.0;
-        Sat, 17 Aug 2024 23:49:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723963754; x=1724568554; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+qcuV1/bhqx2+PhvCkmyGByyF97mh0J56XinoCbmJVs=;
-        b=NcgZmvjqWBHNaUgFKUrAgBKJoAfzkqEJSyuwwQDQUNSR/IIWA57G2gCHRVTx/Wd1gE
-         fpSz20BKufYEJjxgjNwjJccPnXAyA3C/PvFAiqSBnI6SSSOrs7erfwPWkoD0BqEl/9RI
-         JZ0ae+DyRzLcjnG7HbKuM1QT7L3vgro9T5hOh3A88y8XMVLJXKIMsCjZ0eVOUXhkyS3F
-         5dvnvsU1o3RaaHkn/uhFIOjShIjqroBJRoPRN2XYyjQQDdjyeeTKotHNmy1IvR9GOL6e
-         WS5WJ19NPrTW6m1YyoLpEDaJ1/FEbD+zmyrccZ3bwJ6bVbjUjPk8sVsfNVpfSuORdAI4
-         WWmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723963754; x=1724568554;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+qcuV1/bhqx2+PhvCkmyGByyF97mh0J56XinoCbmJVs=;
-        b=csqkpPWqeqMt9rKscE5EI2aVw+mnUAWAqFsLqu5liXpLZ3VACGd/ZqlzWlbJkktOQt
-         DmGmmwBXM2b7lFRtq5k5ro70ZM8B4fasb4jTIxwEvYBDtCcc3oPMwEVyI2D95KgrBkTf
-         B445qRbQ9lvTtlfwzTTvLi5MzxjbmP9WWZV43BHPKdK0zrSLHcbEJtJ24c3LpwPu6BHs
-         khV5TUdV/IINcb4mM1TlwHLeIqXswj1k2iwxQmi+UjRFNJO2wgbEZ95/kx8GRKn17j+m
-         nSWRwCrPufto2LAfjpfpoL3Hn6o7KSdVpo9MNvv+qnlPBkBlT864yzcAJz44Z/mJTdtu
-         n4OQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUr7kOf4P6wSOXPINyl+tNn+oN1NfB9HO3foXxhqWh+HagPI6f8Gfr5m08c4I3XFN0DReSy95yLkD0kmC+T5/fmqz/A0Snhd1O66Wfd
-X-Gm-Message-State: AOJu0YwTBizuKy9QxM8Lh/NHck6PB08/9lgU7cY/5OLhqMHftPyEdKde
-	XuJ7Ege7ODUaCgwRxDeWJtYbHkwT8Mqj92Qwwza94LjlOfP/LwHQRffyr33D
-X-Google-Smtp-Source: AGHT+IGebxRjer9JYBhkjcmiTwzNK6AFkhGDZxwz4GvdkZmQGwNDgqxX9tX+wSRcxQy7IHZQ6/B8ZQ==
-X-Received: by 2002:a05:6122:a21:b0:4f6:b094:80aa with SMTP id 71dfb90a1353d-4fc6c9e0725mr9474060e0c.9.1723963754276;
-        Sat, 17 Aug 2024 23:49:14 -0700 (PDT)
-Received: from fedora.. ([2800:e6:4001:fca7:b7e8:4418:a953:72f2])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-4fc5b8e30cfsm811032e0c.18.2024.08.17.23.49.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Aug 2024 23:49:13 -0700 (PDT)
-From: =?UTF-8?q?Juan=20Jos=C3=A9=20Arboleda?= <soyjuanarbol@gmail.com>
-To: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: miriam.rachel.korenblit@intel.com,
-	kvalo@kernel.org,
-	=?UTF-8?q?Juan=20Jos=C3=A9=20Arboleda?= <soyjuanarbol@gmail.com>
-Subject: [PATCH 3/3] iwlwifi: mvm: Replace spaces for tabs in iwl_mvm_vendor_events_idx
-Date: Sun, 18 Aug 2024 01:48:59 -0500
-Message-ID: <a0014cb240df075eddba6a81dc59fac69469acaa.1723963126.git.soyjuanarbol@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <cover.1723963126.git.soyjuanarbol@gmail.com>
-References: <cover.1723963126.git.soyjuanarbol@gmail.com>
+	s=arc-20240116; t=1723964290; c=relaxed/simple;
+	bh=kNCKiT1FN6YahGLa2oSLHTz2Alz/wRPZwTWTFClaIjg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AEC1YhBzhUMDs4Smw616Z6/lnfQbfn2GXLFAieK6IUhFSb+aApS0ou1u3Xa0NCJG0k0xizI81/JhSWOqvLoIve9shiBvyx0NeAvTYkxbswp8a4CVU0bRfAJllgZi/TQsDN44g1nHPpPi2Nvsi2l9X3ym2IpgpE0VEVwzo/ek1Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=erBoN4tt; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1723964282;
+	bh=kNCKiT1FN6YahGLa2oSLHTz2Alz/wRPZwTWTFClaIjg=;
+	h=From:Subject:Date:To:Cc:From;
+	b=erBoN4tte68H/WaTM29ouoFi4ZXbyhZy7DBczgz69veu7xLn86PfuNWYd6o4o6fLT
+	 QfI3dTyUN8vQneXBazl73Dkyd1/DsyCQwooVNHP4yyj6atLrpxz2Q/V+F1PxnecHqm
+	 j/8xWVYdfuTTv0lbAsKxu9omL/rk9MAC85RdoSGI=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH v5 0/4] drm: Minimum backlight overrides and implementation
+ for amdgpu
+Date: Sun, 18 Aug 2024 08:56:36 +0200
+Message-Id: <20240818-amdgpu-min-backlight-quirk-v5-0-b6c0ead0c73d@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIACSbwWYC/43NS07DMBSF4a1UHmNkX787Yh+IgZ+xVZoWOwmgK
+ nvH7aRIVBHD/wy+c0Et1hIb2u8uqMaltHIae4inHfLZjkPEJfRGQIATSQm2xzCcZ3wsI3bWH97
+ LkCf8MZd6wJoTSEFHxaRFHTjXmMrXDX99651Lm071+/a10Ov6L3ahmHZbGG2EFQ7sy2csrTWf5
+ /w8xgld7QV+ecA2PcAE++iTStwEa9xDj909xeimx7rHZeDEOaBWwkOP3z1NYdPj3RPSSpaSNsq
+ pP966rj82dFsSuQEAAA==
+To: Alex Deucher <alexander.deucher@amd.com>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+ Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
+ Mario Limonciello <mario.limonciello@amd.com>, 
+ Matt Hartley <matt.hartley@gmail.com>, Kieran Levin <ktl@framework.net>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ Jani Nikula <jani.nikula@linux.intel.com>, Xinhui Pan <Xinhui.Pan@amd.com>, 
+ Jonathan Corbet <corbet@lwn.net>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>, 
+ linux-doc@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723964281; l=2448;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=kNCKiT1FN6YahGLa2oSLHTz2Alz/wRPZwTWTFClaIjg=;
+ b=7h3BBPZuOZAF4p/CtlZ3V4u4Xa1fmy2PSEC1mrAH6U6xvkgEpJ6UXtejd5lgu/N1MNmYHeGKw
+ lStgNTZuvpbB4NpvCMvpv1JFeR6JPVL3gADixG75tjuLlEjvd7Lpld6
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-This patch replaces spaces with tabs in the affected source files to
-adhere to the Linux kernel coding style guidelines.
+The value of "min_input_signal" returned from ATIF on a Framework AMD 13
+is "12". This leads to a fairly bright minimum display backlight.
 
-This change is purely stylistic and do not affect the functionality
-of the code.
+Introduce a quirk to override "min_input_signal" to "0" which leads to a
+much lower minimum brightness, which is still readable even in daylight.
 
-Signed-off-by: Juan José Arboleda <soyjuanarbol@gmail.com>
+Tested on a Framework AMD 13 BIOS 3.05 and Framework AMD 16.
+
+One solution would be a fixed firmware version, which was announced but
+has no timeline.
+
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/vendor-cmd.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Changes in v5:
+- Forward-declare struct drm_edid
+- Reorder patches, quirk entries are last
+- Add patch from Dustin for additional quirk entries
+- Link to v4: https://lore.kernel.org/r/20240812-amdgpu-min-backlight-quirk-v4-0-56a63ff897b7@weissschuh.net
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/vendor-cmd.c b/drivers/net/wireless/intel/iwlwifi/mvm/vendor-cmd.c
-index 080a1587caa5..0f7fa6032c66 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/vendor-cmd.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/vendor-cmd.c
-@@ -104,9 +104,9 @@ static const struct wiphy_vendor_command iwl_mvm_vendor_commands[] = {
- };
- 
- enum iwl_mvm_vendor_events_idx {
--        /* 0x0 - 0x3 are deprecated */
--        IWL_MVM_VENDOR_EVENT_IDX_ROAMING_FORBIDDEN = 4,
--        NUM_IWL_MVM_VENDOR_EVENT_IDX
-+	/* 0x0 - 0x3 are deprecated */
-+	IWL_MVM_VENDOR_EVENT_IDX_ROAMING_FORBIDDEN = 4,
-+	NUM_IWL_MVM_VENDOR_EVENT_IDX
- };
- 
- static const struct nl80211_vendor_cmd_info
+Changes in v4:
+- Switch back to v2 implementation
+- Add MODULE_DESCRIPTION()
+- Simplify quirk infrastructure to only handle min backlight quirks.
+  It can be extended if necessary.
+- Expand documentation.
+- Link to v3: https://lore.kernel.org/r/20240731-amdgpu-min-backlight-quirk-v3-0-46d40bb21a62@weissschuh.net
+
+Changes in v3:
+- Switch to cmdline override parameter
+- Link to v2: https://lore.kernel.org/r/20240623-amdgpu-min-backlight-quirk-v2-0-cecf7f49da9b@weissschuh.net
+
+Changes in v2:
+- Introduce proper drm backlight quirk infrastructure
+- Quirk by EDID and DMI instead of only DMI
+- Limit quirk to only single Framework 13 matte panel
+- Link to v1: https://lore.kernel.org/r/20240610-amdgpu-min-backlight-quirk-v1-1-8459895a5b2a@weissschuh.net
+
+---
+Dustin L. Howett (1):
+      drm: panel-backlight-quirks: Add Framework 13 glossy and 2.8k panels
+
+Thomas Weißschuh (3):
+      drm: Add panel backlight quirks
+      drm/amd/display: Add support for minimum backlight quirk
+      drm: panel-backlight-quirks: Add Framework 13 matte panel
+
+ Documentation/gpu/drm-kms-helpers.rst             |  3 +
+ drivers/gpu/drm/Kconfig                           |  4 +
+ drivers/gpu/drm/Makefile                          |  1 +
+ drivers/gpu/drm/amd/amdgpu/Kconfig                |  1 +
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 10 +++
+ drivers/gpu/drm/drm_panel_backlight_quirks.c      | 94 +++++++++++++++++++++++
+ include/drm/drm_utils.h                           |  4 +
+ 7 files changed, 117 insertions(+)
+---
+base-commit: c3f2d783a459980eafd24c5af94ccd56a615961f
+change-id: 20240610-amdgpu-min-backlight-quirk-8402fd8e736a
+
+Best regards,
 -- 
-2.46.0
+Thomas Weißschuh <linux@weissschuh.net>
 
 
