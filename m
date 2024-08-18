@@ -1,92 +1,100 @@
-Return-Path: <linux-kernel+bounces-291105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF186955D59
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 18:05:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1DC3955D61
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 18:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 586FD1F21395
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 16:05:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FB062819CC
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 16:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91AA8145335;
-	Sun, 18 Aug 2024 16:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A580D14831D;
+	Sun, 18 Aug 2024 16:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F0MzJRyF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pSV+rd4m"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D1B145B0C;
-	Sun, 18 Aug 2024 16:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DD38F6E;
+	Sun, 18 Aug 2024 16:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723997143; cv=none; b=LYz0JSpbtvIuczzpo+58HQyhk/Hjw6hvaizbqg/Y8g2EOV+0EiTVY9sXfyF72g5CXaPU0b39eqRS33IgCjvFaszBjlKp4Lxs5ivjEfX6IUu0cgiHbPgQn+AEkTfZxAgTwxq3uJ67iUz9IH+dqIWCr38RS4C2uXJ5dzYz0/yBmOI=
+	t=1723997271; cv=none; b=dJ0YNkNIPsJ+kCyUHnHQYdZdk+m9cKLEraSFSgctg8whKJ2aEsOTZz6R1cuX533Kj1eq4XBStEP+lfT256QaQYCdVxxePIL7CnjM01pbw1suHUjGElOl97rglQ2gMJ5TONwQpBoCcafA9I25d5QJsBj4Z/Q1qLJ3U4SJEg+dhzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723997143; c=relaxed/simple;
-	bh=4RpES87diZd5X42Za+Zib9TolNlTl0ajnivXRuYSUcw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Vd1SieYcZtdPnAiM4rmscgviPSKqipDYS1fNB6wdF3sFNnz+8VPJSL6wSliIsqqANc6nn94qk9FbwadNAh0PyPSj1Vd636kOJtWg3Gfj+PqJSUwr5QE4IGcAhYom77eJGKJ1leSwZ4/za6DEr4Eappe7LYFLzj9MuufmAVxVghs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F0MzJRyF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13FE7C32786;
-	Sun, 18 Aug 2024 16:05:40 +0000 (UTC)
+	s=arc-20240116; t=1723997271; c=relaxed/simple;
+	bh=mcs4PVQSjRuRWq45Plieqdxgjn6imGdr088Dfey7QR8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OUxPX6KDShSS1j0oBqUVrUKMyPRRBBi8YmY5ZkytfK0i95VMj9Fa0NJhQdlE3j0RTCUIlMM7d5/9UIXbpuYRteKZgVdOAICWG2jUvD7mwch7XVFZ8A4IocnG+53hTy9r97otrNwpKSKnasfVk9J70KVxzoTcuIk6OQlsBvnwUGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pSV+rd4m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9A1DC32786;
+	Sun, 18 Aug 2024 16:07:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723997143;
-	bh=4RpES87diZd5X42Za+Zib9TolNlTl0ajnivXRuYSUcw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=F0MzJRyFy3SCLO2Y5DZv6AKKc5wLiCP7mCc4XwjkVN7zWJ8Ud4hjtbazeJO+WHm5y
-	 s+dH4+kncEJYqqglDPKZKCZsChLaE2FR/UgHMQeSSt99U5gSUei85/FDBta/9NxvIy
-	 wM4vMm0pahoCEMnMmIoMqY4G6zGo+ryEUNH7XQPmSI5movTZ4GYc2M8/Xxalt/ON0u
-	 OuKesCOhKpoEOgGUz+Lp7DXeSUhuUSoNq8/Uv/XQ9tn4bj3dMvsrAssM4CrLX+T89Y
-	 d0gqmm+Gc7X1zTyEMv+3uGOUiTdXcFGraSLRZlRSEFVOrjui3sZlQagfNlJdfQlNRe
-	 OpDVr0MCynK7w==
-Date: Sun, 18 Aug 2024 17:05:35 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Abhash jha <abhashkumarjha123@gmail.com>
-Cc: linux-iio@vger.kernel.org, anshulusr@gmail.com, lars@metafoo.de,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 0/2] Add light channel for LTR390
-Message-ID: <20240818170535.7a1aa6b5@jic23-huawei>
-In-Reply-To: <CAG=0RqJN=M5+w4CDXggDnoyOrW5qxTejJy=UkzMQX36emFT5fw@mail.gmail.com>
-References: <20240814113135.14575-1-abhashkumarjha123@gmail.com>
-	<20240817153953.1743e020@jic23-huawei>
-	<CAG=0RqLaigoVLN2D9LEfC0_1ctJO6OzwEgpeOx8NQavB4mZxoA@mail.gmail.com>
-	<20240817174919.5583f28a@jic23-huawei>
-	<CAG=0RqJN=M5+w4CDXggDnoyOrW5qxTejJy=UkzMQX36emFT5fw@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1723997270;
+	bh=mcs4PVQSjRuRWq45Plieqdxgjn6imGdr088Dfey7QR8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pSV+rd4mhhLch4Hb2wQ/JD7sosK/sfdaeXSa0O7La/4tfRgdqYyY+XSSEg4O+vKY0
+	 GtGq3vXiQu61TkU+4hT+vclqgy48LdRM4U9YKuVrryfZAtczV/S4W5h6U9Nbm17u6V
+	 B3JKz+domndIxoO571OL+TUKLSap1B50WTenCj9sjudZsbcpeBUGoF956ZfTXZlADG
+	 zW5zjnF1rFRcdRfQWSl5khQInDDmPMlbqaR8TVI9pGoHIcorjsDBXGhfZcj799laPB
+	 07r/F+fyPfDjiMxXNnmS5dbOSPxW3q8x/8M+tmRUKvK+cWCrGwjlG1MfuKEJxg1ghh
+	 FhOgTPiJA63cA==
+Date: Sun, 18 Aug 2024 10:07:48 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Conor Dooley <conor+dt@kernel.org>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Brian Norris <briannorris@chromium.org>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	imx@lists.linux.dev, Kalle Valo <kvalo@kernel.org>
+Subject: Re: [PATCH v2 1/1] dt-bindings: net: wireless: convert
+ marvel-8xxx.txt to yaml format
+Message-ID: <172399726749.169283.2858503269781464007.robh@kernel.org>
+References: <20240816171203.143486-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240816171203.143486-1-Frank.Li@nxp.com>
 
-On Sat, 17 Aug 2024 23:07:37 +0530
-Abhash jha <abhashkumarjha123@gmail.com> wrote:
 
-> > I think I have.  But with two versions of v7 I'm not 100% sure which one got picked
-> > up. I've pushed out now as testing, so take a look.
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/log/?h=testing  
-> > >  
-> The two versions v7 patches are the same. I had sent the same thing
-> again because
-> I thought it might have gotten lost in your mail.
-> My apologies for getting you confused.
-Ah. Never bother doing that.  Just send a 'ping' to the original
-thread.  
-
-Most maintainers now use a lot of automation so tend not to drop messages
-any more (it used to happen occasionally). 
-
-Also convention is to wait at least 2 weeks before pinging.
-
-Jonathan
-
+On Fri, 16 Aug 2024 13:12:01 -0400, Frank Li wrote:
+> Convert binding doc marvel-8xxx.txt to yaml format.
+> Additional change:
+> - Remove marvell,caldata_00_txpwrlimit_2g_cfg_set in example.
+> - Remove mmc related property in example.
+> - Add wakeup-source property.
+> - Remove vmmc-supply and mmc-pwrseq.
 > 
-> Thanks,
-> Abhash
+> Fix below warning:
+> arch/arm64/boot/dts/freescale/imx8mp-beacon-kit.dtb: /soc@0/bus@30800000/mmc@30b40000/wifi@1:
+> failed to match any schema with compatible: ['marvell,sd8997']
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Change from v1 to v2
+> - Add Brian Norris <briannorris@chromium.org as maintainer
+> - Remove vmmc-supply and mmc-pwrseq
+> - Add wakeup-source
+> - rename to marvell,sd8787.yaml by using one compatible string, suggestted
+> by conor dooley at other binding doc convert review
+> ---
+>  .../bindings/net/wireless/marvell,sd8787.yaml | 93 +++++++++++++++++++
+>  .../bindings/net/wireless/marvell-8xxx.txt    | 70 --------------
+>  2 files changed, 93 insertions(+), 70 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/net/wireless/marvell,sd8787.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/net/wireless/marvell-8xxx.txt
+> 
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
