@@ -1,143 +1,125 @@
-Return-Path: <linux-kernel+bounces-291199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6ABB955ECF
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 22:10:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97A6A955ED7
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 22:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46B972814DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 20:10:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 561C62814F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 20:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A418114EC5B;
-	Sun, 18 Aug 2024 20:10:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5C51537A8;
+	Sun, 18 Aug 2024 20:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V8eHaiei"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QTncAxnV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1D215E96;
-	Sun, 18 Aug 2024 20:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25A61442F2
+	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 20:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724011817; cv=none; b=gjOH5hlrZo/juRUqDKBMDEV17i8ldKOGs/Faq4ov/C5PTYv4gFbpFAS/0gtYFuQ0VxYGdmcknw7vCFs2t0FF8EjkHDUGG3MgmFZGlK0mfWe1hnr7EL661bZ0IB0fxO9PF1IBrITC210cakKgr4Of+J3V5qeOhC5x9BWD5X4FIwg=
+	t=1724012194; cv=none; b=aH19j+fYl2tDrdLWhdykIUcxqJJ57C9pLAnbEQK0edOIYV6b304Exotc3dIwCJjlHcsQtbZ1YYWiVCKJcvZQuxqdRt1hzKKstVbHcvip+Y1gRCzvBSAVvYGViP5NT80WuD5VeGBWOjsKz7agcfNCN2N0aSQx/GLWkDSxpvU/8LU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724011817; c=relaxed/simple;
-	bh=uJGDB56sVeipkrQtaQqsgJwyDlIKrHdunQ5iELVKJy0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KeMrJ9mfd9ExPP11EQ762inCzIPhy5XgPuhZUUK0GYYz9KpcYmmURBlj96NbCAkB/embL9HR1k84RnDeCbqQYbjdOX3ABYZ1MIvRXUO/ELrf1XFv2an4FYIJmVHLop71as7kV57Qd4/533O6gzgyRrpmDsAeyQs4OEcLb7QQb0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V8eHaiei; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3db1657c0fdso2324616b6e.1;
-        Sun, 18 Aug 2024 13:10:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724011815; x=1724616615; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qy/+jzT/NOiYw3uhsQ90salDPTFe4qnoDBEo8k9h6Rg=;
-        b=V8eHaieiVDLz5m3usH1RccfBAEimd0v8WRGF9Jsfq9sG4bkor1k+3ecRBX68H7KeG3
-         VSwHoy9W+p+Zxrnr4Y1Y5R741EWzQLUpIPqAwVkX8DcCbzREcJH8DbiCvjr9eIRxGPO2
-         yHDkmBjUqPU6tfTvcoZhWdcGYy5ckP20pyROOy0g+kzPoQOMnUJXIqUp26lq3/Q2bJmT
-         cQwbHujwOEHUNpnOW9AyzyGnvbRgow3ataq2wvTwGwc8LZfVZhgll39zfPg0jfwAzVNi
-         tYcKqwN5oVkCyKWDpooxn1U/pIC7Zofq9EGDRmfftlQYBCsT8LY1OQgWriz0XtZTY4mR
-         zRew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724011815; x=1724616615;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qy/+jzT/NOiYw3uhsQ90salDPTFe4qnoDBEo8k9h6Rg=;
-        b=qeVg9IGtWWzCW+kPCSLzI7ysGkx+MLYljkSNtzVZpiXF9v1r4DOcu59jnDJDqlPzq7
-         kJmuRN1s2nT3alkfMHCERzESkq3/6kuiCexsB2R6U7XSRukMuqFcOg9NpK2Wv4n3h3SJ
-         k402OVPxZd8Upa3xSwQNZre/JyqRcN9qPzDELx4r0f51T/JO8B+YVwCaTclGUEpw9hzi
-         ojmtgV79Nhcr8OpAlVZUDFkYN7Gz++fbqB4saKH792gk0Kza+h/shIxWjMsO155JtRTG
-         8r+YXgUjExbC7H4qTbvS9I8drlBMKzQXIC4gAxMkrOHuWC75457lG6ByonfCGE2aYD/w
-         0NsA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnu6MEHlKOft0IGJbdMybXaLnE/b+s8JSL4/tPdGTEI0+DWYQrHTXG9x4OVjvI89//eBbFxisq7CBchTzD2v5esHT1N1PZn8az5143MSKNKygetnkfg1cYpAxdUVVF+pSLo5wDUfod
-X-Gm-Message-State: AOJu0Yxf/J1AgqwgBloDjZDxMhfIzz+UJeZg2zdab4ouLmeVyLklYUYU
-	dMQSgBJSbdFSm6fQQ3Njim0hoo4B9PrQpIkinc5eQe3PdQk9m3A1m+kMfcdHIiA/Y1gEUAKrbV0
-	7h3UR76kgxPYlgCBg+4mE6oU9LcM=
-X-Google-Smtp-Source: AGHT+IHJoFs9kq0DonN2CXQEo5pYPafXJaMBOnGljUPRyg7t7x+vEVzjt5+Y7d1CumebXA2fN+0KbrIMpMBtlZEUGPo=
-X-Received: by 2002:a05:6808:e87:b0:3da:bc80:b233 with SMTP id
- 5614622812f47-3dd3ad546bdmr9654294b6e.17.1724011815630; Sun, 18 Aug 2024
- 13:10:15 -0700 (PDT)
+	s=arc-20240116; t=1724012194; c=relaxed/simple;
+	bh=TGUbjXVA9aSl50o7GSmUfIw+O8tTGf4xBLnLzbfqck8=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=ZEE2yn/jhZSVLFVa9vx1NtQbhAfV65CiLAQkgJsmZJz22o8upO+Gcxyfr0OlVbxCatSZHpeV5rHJbBAZFyL719lQ98/dnAhqq379SciaeHaHbMiJnf73B5NE8ZkGrOewsyWRbGpTDUMvtUzzuQ49xwctJoOsNj76DVjuEfnWLQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QTncAxnV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724012191;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9pnN2touy3okUISVQBvLtGnxKUZwMFoasBZg0jnjJZE=;
+	b=QTncAxnVRRox3MqV6VIVp4/awusIvyE44u3Ec2Bxope0IyiPePIA2l9nIfqxcjKiZ/4sh7
+	ylu2BoMnd+qNpNkShfmYxGwwF6M1I8a5KQI1iC5s05U0Kh6GLxZm7Qmcuo6kC7biivZqBo
+	7Oi+zyZ5TgP6AhWJyhsKA8QT9WsZI6Y=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-398-9tKNDKzHPnWMT12Xkczofg-1; Sun,
+ 18 Aug 2024 16:16:28 -0400
+X-MC-Unique: 9tKNDKzHPnWMT12Xkczofg-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4036219560B4;
+	Sun, 18 Aug 2024 20:16:24 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 00B8C30001A4;
+	Sun, 18 Aug 2024 20:16:17 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240818165124.7jrop5sgtv5pjd3g@quentin>
+References: <20240818165124.7jrop5sgtv5pjd3g@quentin> <20240815090849.972355-1-kernel@pankajraghav.com> <2924797.1723836663@warthog.procyon.org.uk>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: dhowells@redhat.com, brauner@kernel.org, akpm@linux-foundation.org,
+    chandan.babu@oracle.com, linux-fsdevel@vger.kernel.org,
+    djwong@kernel.org, hare@suse.de, gost.dev@samsung.com,
+    linux-xfs@vger.kernel.org, hch@lst.de, david@fromorbit.com,
+    Zi Yan <ziy@nvidia.com>, yang@os.amperecomputing.com,
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+    willy@infradead.org, john.g.garry@oracle.com,
+    cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
+    ryan.roberts@arm.com
+Subject: Re: [PATCH v12 00/10] enable bs > ps in XFS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAAMcf8Dts3=6CxNCLZBvXsdFHpaOs9mL2NJ8TMPU5+duray6-g@mail.gmail.com>
- <d35a5c5216ee3d0321c725aea61e0326@manjaro.org> <CAAMcf8CFED71FKUBpRy+FZNf8XKim1fuxW1C+ErZQqLsaWm1yQ@mail.gmail.com>
- <4455b5175d3c372c15d9732f03b9eb20@manjaro.org>
-In-Reply-To: <4455b5175d3c372c15d9732f03b9eb20@manjaro.org>
-From: Vicente Bergas <vicencb@gmail.com>
-Date: Sun, 18 Aug 2024 22:10:04 +0200
-Message-ID: <CAAMcf8CpkZHY6Awyo3LWZXfkqbZ1z3YcvF5W_08uv-XNov2j-A@mail.gmail.com>
-Subject: Re: [BUG] Rockchip SPI: Runtime PM usage count underflow!
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-spi@vger.kernel.org, 
-	Mark Brown <broonie@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3141776.1724012176.1@warthog.procyon.org.uk>
+Date: Sun, 18 Aug 2024 21:16:16 +0100
+Message-ID: <3141777.1724012176@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Sun, Aug 18, 2024 at 9:20=E2=80=AFPM Dragan Simic <dsimic@manjaro.org> w=
-rote:
->
-> On 2024-08-18 20:55, Vicente Bergas wrote:
-> > On Sun, Aug 18, 2024 at 8:26=E2=80=AFPM Dragan Simic <dsimic@manjaro.or=
-g>
-> > wrote:
-> >> On 2024-08-18 20:13, Vicente Bergas wrote:
-> >> > i am a user of the CONFIG_SPI_SPIDEV device.
-> >> > It stopped working between 6.8 and 6.10.5.
-> >> > The SPI bus itself reports no errors to userspace, but no devices
-> >> > appear connected to the bus.
-> >> > The platform used is RK3328.
-> >> > The only spi-related message in dmesg is:
-> >> > rockchip-spi ff190000.spi: Runtime PM usage count underflow!
-> >>
-> >> I'm working on a related patch.  Could you, please, describe your
-> >> use case for the spidev driver, i.e. what board are you using it on,
-> >> and for what purpose?
-> >
-> > The board is ROCK64 and the purpose is to update all the software that
-> > board runs, which is stored on the SPI NOR flash onboard.
->
-> So, if I got it right, you boot your Rock64 from the SPI chip that
-> contains all the software it runs, but you also boot Linux on it from
+Pankaj Raghav (Samsung) <kernel@pankajraghav.com> wrote:
 
-correct
+> I am no expert in network filesystems but are you sure there are no
+> PAGE_SIZE assumption when manipulating folios from the page cache in
+> AFS?
 
-> a microSD card, to update the contents of the SPI chip?  I'm guessing
-> it that way, because the size of an SPI chip is hardly large enough
-> for storing even an extremely size-optimized Linux system.
+Note that I've removed the knowledge of the pagecache from 9p, afs and cifs to
+netfslib and intend to do the same to ceph.  The client filesystems just
+provide read and write ops to netfslib and netfslib uses those to do ordinary
+buffered I/O, unbuffered I/O (selectable by mount option on some filesystems)
+and DIO.
 
-No, everything is in the SPI NOR flash, which is 16MB in size and it
-is enough for my application.
+That said, I'm not sure that I haven't made some PAGE_SIZE assumptions.  I
+don't *think* I have since netfslib is fully multipage folio capable, but I
+can't guarantee it.
 
-> Anyway, I wonder why do you have to use the spidev driver for that
-> purpose?  Why can't you use 'compatible =3D "jedec,spi-nor";' to access
-> the SPI chip through /dev/mtd0 under Linux?
+Mostly this was just a note to you that there might be an issue with your code
+- but I haven't investigated it yet and it could well be in my code.
 
-The bug report is about the SPI bus, MTD is a service provided on top
-of the SPI bus.
-If the bus fails, then there is no MTD.
-That said, i don't use MTD. The bootloader reads the kernel, dtb and
-initramfs from the SPI flash into RAM and boots linux entirely on RAM.
-There is no persistent filesystem on top of MTD.
+Apparently, I also need to update xfstests, so it could be that too.
 
-> > I have not tested this kernel version on RK3399, but it may also
-> > affect that other use case:
-> > https://gitlab.com/vicencb/kevinboot
-> >
-> > N.B.: My name is Vicente.
->
-> Oh, I'm sorry for mistyping your first name.  Should've copy & pasted
-> it instead, to prevent such typing mistakes.
+> > 	ls /afs/openafs.org/www/docs.openafs.org/
+> > 
+> > and browse the publicly accessible files under there.
+> 
+> Great. But is this enough to run FStests? I assume I also need some afs
+> server to run the fstests?
+
+Sadly not, but if you turn on some tracepoints, you can see netfslib operating
+under the bonnet.
+
+> Are the tests just failing or are you getting some kernel panic?
+
+Just failing.
+
+Thanks,
+David
+
 
