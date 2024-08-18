@@ -1,130 +1,137 @@
-Return-Path: <linux-kernel+bounces-291201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22548955EE2
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 22:21:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 290F6955EE7
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 22:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 591561C20AA6
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 20:21:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2BF22814F0
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 20:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2080115383A;
-	Sun, 18 Aug 2024 20:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044B51537DE;
+	Sun, 18 Aug 2024 20:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="upWdjS4g"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="V6jLkkeQ"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931B81F5FD
-	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 20:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9D2BE65;
+	Sun, 18 Aug 2024 20:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724012502; cv=none; b=Bbkd4KR9f1IFxKVe151MgrsuP/nfrge0l5lkTlxtHVD2Y196tq4EWrInavB4oq6oZoX2eVbw0X0R0DegMcHXt0yWA61qf/eaKtWj/HTtqNTXZHr89CyZ1KFaI6lbLY3zX4qjTcBvxq1iDaMw6F3tnoG5GXt+gmi0gX0QIg6ScSI=
+	t=1724012769; cv=none; b=SHbzrkScS9gxvGpPSKOtj2wektbBqfCP1PduxMgGlmRa2qbWufmsbPiwhBDCcKNk/D7paaGbbpEdaQ+aNz5qb6GhhE1FjfPjtW2QpXBh/UiuttsiHbjOJRkwH5GOb8rlENTGRl4XbSFtYk8ETG3TLgMnqrpKJmFuSv9ZAKdmQEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724012502; c=relaxed/simple;
-	bh=70Z4hvDcxJ0JQ1h2UgF/clGEXvnPtqwlNLdYJo/LkOQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=s16PqIFFOT8uHonYrUAHiSotp3a/4CvxhDqM/aPimUibXL2/AmCPghari2eHLOnnojjmfL8AfpUXZFNCs4d3fv59rhbzQAYPiNIIPinUHM5GhoFO69QJPbQf83CUtaR+dEb4AuT7Lka3l7Uv/7g+XNN69dcFtyzq2kSDCr2rWJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=upWdjS4g; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4280b3a7efaso28114645e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 13:21:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1724012499; x=1724617299; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YP6/tJr0AaQIXolLt7n3xjX+yRAvdjUkQdCsfI84uZ4=;
-        b=upWdjS4gqjW0G8OLeXw7JRBfVMFnPdzPLGCzb6JJAyxSu68srOvLqFHjGL5igHZkzh
-         F94dwWFsc40XmY0MdhX/MIRbzYE2Fi3F0iF4OQn06W8LaUtKNae3VKOx5+Vj9ysh1p9j
-         1/3NebsVkfogFyRCci1qwiQr7g+4KrSwT4FMvQ+H54//TnMyDUUKuM4MTXwV0Cw0caFC
-         9XS3SK7wR0IRAeAUI1aqn2EjJMdmgU6G9GIhmeydSxWH3ojLW0tHzYSVIV5ZJJlKQ0fx
-         vbWzIkiBVtCsUHajMzzKGJiOYwSFWmy2ZVsC28Gw1rXomA/XYJQbiGnXE0mijFTco7DW
-         7xYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724012499; x=1724617299;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YP6/tJr0AaQIXolLt7n3xjX+yRAvdjUkQdCsfI84uZ4=;
-        b=al6PvXv0S7kcnlS0jsAKfLNIdtNNjfNa8qXNL8/C40Y5SdZIr9TpFdZHGvtKRx6A/V
-         Jg8wOG99aV07DXXk1EZbB7x2VYlYgO5ETKqGym4w+qxa9+6qxzwrI3yGfzVOv5pVma7D
-         qKYSL77x43oHzXp9nUlGgs9thidCLhJoEn996EChJ589gBuGFXofuRXQsohg9S2IXmA5
-         vh9NGH12kYNNYsEPwmQeWa5Edw+YA5NEEn5bpF2N8/QZ7pYiJaEut6pEApYDQXr93ei4
-         y0OXq592flDoLNKZwht93l24i2cbG4GyUOuoxqEHaBqXiItNomn4KrsbIOxhJz39YRS1
-         c9Cw==
-X-Forwarded-Encrypted: i=1; AJvYcCVrN9U5LBg5wP2EZWYzitRi2yjE0uT5Pe1CSPv3+W7i/JZXT6pXuoqPBhMWwyp4XWgYj/dRWwQZ9EnRDXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7MWc18448s2TeUM6ropJVBxck1+Gt1hUnPJt4VtKSVem/Hxdu
-	bFtu2YpudHXKMhq1IToQf2mDBOy0VVLb+Y5UjzXEw9SMB3datplne7hnHL1lupM=
-X-Google-Smtp-Source: AGHT+IEzeMiU4Y8sfoqhoetfoMozEKIafj6FwkmAOx4atTNxTwtNuJAsjc81DT9gdhnWnvwnbKMMlw==
-X-Received: by 2002:adf:fad1:0:b0:36b:a3f1:eb with SMTP id ffacd0b85a97d-371946bfa9amr4842568f8f.53.1724012498679;
-        Sun, 18 Aug 2024 13:21:38 -0700 (PDT)
-Received: from [100.64.0.4] (ip-185-104-138-79.ptr.icomera.net. [185.104.138.79])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37189849a05sm8716179f8f.26.2024.08.18.13.21.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2024 13:21:38 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Sun, 18 Aug 2024 22:21:01 +0200
-Subject: [PATCH] usb: typec: fsa4480: Relax CHIP_ID check
+	s=arc-20240116; t=1724012769; c=relaxed/simple;
+	bh=Nl30EEkHa8Nm1Yw2QyG6scgBsHgaSd+oX8FXE9X8iV0=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=nA9OIrkhgEET+RJ9Lflj/jMMGFysMxP85PuOcjAmji5I2yphuqgotYfHRKQRgN6hZWZMirTW2Eo4RKJk29q8LdlaKerrLKxDWeDfA66iXqGBSIS9bJmIsWXLNH65cehxzVnkp7j+dVdQWkH5kIe8ebuxwyjiRCg/gBkwp1Zh+7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=V6jLkkeQ; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240818-fsa4480-chipid-fix-v1-1-17c239435cf7@fairphone.com>
-X-B4-Tracking: v=1; b=H4sIAKxXwmYC/x2MQQqAIBAAvyJ7bkFNSfpKdBBdcy8lChFIf086z
- sBMh0aVqcEqOlS6ufF1DlCTgJD9eRByHAxaaiOdcpiaN8ZJDJkLR0z8oA5LSNYpqWYLIyyVhv6
- n2/6+H/xHf5xkAAAA
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Caleb Connolly <caleb.connolly@linaro.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, stable@vger.kernel.org, 
- Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1724012764;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LoF+vbchm17LMfasv0YbGns6ehOlp2E0hnsjTQ7EaHg=;
+	b=V6jLkkeQuGWSmeFNRiuW2DjUeJl1EXtcalhwzICuy4nk9Y/aE5uajMMzQpvlDDAarDSxWv
+	PgqOnIGlIt3lh26j7ENfczvzcsWXwPjAdIbxj4on+sna1MZIaxFfDm+1IvPgSKmmlvieGm
+	7hXMpRjQGEfK8XpWARWTAAr2YU7EMcnlFGiPv4UNAto0PcG1QWb66K1uWRfRPnu5cUoyaG
+	m79uLxHPdFMpNbWfiAqsI06droltmBei5iJYtpgrWLsQGwY8NVkxOyDhkieKSnrxRR6Yfw
+	sdSP+vdEnpUXVfH7X3LBwt8W+gL/gVROptGdNdRlIYhjGdozTwuAn2WgKF1Z3A==
+Date: Sun, 18 Aug 2024 22:26:03 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Vicente Bergas <vicencb@gmail.com>
+Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+ linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [BUG] Rockchip SPI: Runtime PM usage count underflow!
+In-Reply-To: <CAAMcf8CpkZHY6Awyo3LWZXfkqbZ1z3YcvF5W_08uv-XNov2j-A@mail.gmail.com>
+References: <CAAMcf8Dts3=6CxNCLZBvXsdFHpaOs9mL2NJ8TMPU5+duray6-g@mail.gmail.com>
+ <d35a5c5216ee3d0321c725aea61e0326@manjaro.org>
+ <CAAMcf8CFED71FKUBpRy+FZNf8XKim1fuxW1C+ErZQqLsaWm1yQ@mail.gmail.com>
+ <4455b5175d3c372c15d9732f03b9eb20@manjaro.org>
+ <CAAMcf8CpkZHY6Awyo3LWZXfkqbZ1z3YcvF5W_08uv-XNov2j-A@mail.gmail.com>
+Message-ID: <58bcd9fad47377e4ccf203b3f11caf21@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Some FSA4480-compatible chips like the OCP96011 used on Fairphone 5
-return 0x00 from the CHIP_ID register. Handle that gracefully and only
-fail probe when the I2C read has failed.
+On 2024-08-18 22:10, Vicente Bergas wrote:
+> On Sun, Aug 18, 2024 at 9:20 PM Dragan Simic <dsimic@manjaro.org> 
+> wrote:
+>> On 2024-08-18 20:55, Vicente Bergas wrote:
+>> > On Sun, Aug 18, 2024 at 8:26 PM Dragan Simic <dsimic@manjaro.org>
+>> > wrote:
+>> >> On 2024-08-18 20:13, Vicente Bergas wrote:
+>> >> > i am a user of the CONFIG_SPI_SPIDEV device.
+>> >> > It stopped working between 6.8 and 6.10.5.
+>> >> > The SPI bus itself reports no errors to userspace, but no devices
+>> >> > appear connected to the bus.
+>> >> > The platform used is RK3328.
+>> >> > The only spi-related message in dmesg is:
+>> >> > rockchip-spi ff190000.spi: Runtime PM usage count underflow!
+>> >>
+>> >> I'm working on a related patch.  Could you, please, describe your
+>> >> use case for the spidev driver, i.e. what board are you using it on,
+>> >> and for what purpose?
+>> >
+>> > The board is ROCK64 and the purpose is to update all the software that
+>> > board runs, which is stored on the SPI NOR flash onboard.
+>> 
+>> So, if I got it right, you boot your Rock64 from the SPI chip that
+>> contains all the software it runs, but you also boot Linux on it from
+> 
+> correct
+> 
+>> a microSD card, to update the contents of the SPI chip?  I'm guessing
+>> it that way, because the size of an SPI chip is hardly large enough
+>> for storing even an extremely size-optimized Linux system.
+> 
+> No, everything is in the SPI NOR flash, which is 16MB in size and it
+> is enough for my application.
 
-With this the dev_dbg will print 0 but otherwise continue working.
+Thanks for the clarification.
 
-  [    0.251581] fsa4480 1-0042: Found FSA4480 v0.0 (Vendor ID = 0)
+>> Anyway, I wonder why do you have to use the spidev driver for that
+>> purpose?  Why can't you use 'compatible = "jedec,spi-nor";' to access
+>> the SPI chip through /dev/mtd0 under Linux?
+> 
+> The bug report is about the SPI bus, MTD is a service provided on top
+> of the SPI bus.
+> If the bus fails, then there is no MTD.
+> That said, i don't use MTD. The bootloader reads the kernel, dtb and
+> initramfs from the SPI flash into RAM and boots linux entirely on RAM.
+> There is no persistent filesystem on top of MTD.
 
-Cc: stable@vger.kernel.org
-Fixes: e885f5f1f2b4 ("usb: typec: fsa4480: Check if the chip is really there")
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- drivers/usb/typec/mux/fsa4480.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Alright, but you wrote initially that you use CONFIG_SPI_SPIDEV,
+which means that use the spidev driver, and you also wrote that it
+has stopped working.  All that meant to me that the spidev driver
+no longer works for you, which is somewhat known issue.
 
-diff --git a/drivers/usb/typec/mux/fsa4480.c b/drivers/usb/typec/mux/fsa4480.c
-index cd235339834b..f71dba8bf07c 100644
---- a/drivers/usb/typec/mux/fsa4480.c
-+++ b/drivers/usb/typec/mux/fsa4480.c
-@@ -274,7 +274,7 @@ static int fsa4480_probe(struct i2c_client *client)
- 		return dev_err_probe(dev, PTR_ERR(fsa->regmap), "failed to initialize regmap\n");
- 
- 	ret = regmap_read(fsa->regmap, FSA4480_DEVICE_ID, &val);
--	if (ret || !val)
-+	if (ret)
- 		return dev_err_probe(dev, -ENODEV, "FSA4480 not found\n");
- 
- 	dev_dbg(dev, "Found FSA4480 v%lu.%lu (Vendor ID = %lu)\n",
+Anyway, please let me know are the following directories present
+on your Rock64 running the troublesome version of Linux kernel,
+presumably 6.10.5, and if they are, please send over the listings
+of their contents:
 
----
-base-commit: ccdbf91fdf5a71881ef32b41797382c4edd6f670
-change-id: 20240818-fsa4480-chipid-fix-2c7cf5810135
+   - /sys/bus/spi
+   - /sys/bus/spi/devices
+   - /sys/bus/spi/drivers
 
-Best regards,
--- 
-Luca Weiss <luca.weiss@fairphone.com>
-
+>> > I have not tested this kernel version on RK3399, but it may also
+>> > affect that other use case:
+>> > https://gitlab.com/vicencb/kevinboot
 
