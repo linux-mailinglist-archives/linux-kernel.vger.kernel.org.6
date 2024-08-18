@@ -1,223 +1,104 @@
-Return-Path: <linux-kernel+bounces-290895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66440955AB2
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 05:50:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7BB4955AB5
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 05:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D75D61F21788
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 03:50:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85AD328209E
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 03:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3918F40;
-	Sun, 18 Aug 2024 03:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E1C9460;
+	Sun, 18 Aug 2024 03:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jl2HIvNi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pFOwn/7c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5A21AC8BB
-	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 03:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723953035; cv=fail; b=ZJCbX46GEwyFDW5l9u5JPU6LyhCxPP7ldyVJtwldhS5+FG50v5Z1jVj1nRr+KkO5obNbQjY0N7TYlMD0mEqHOQTc7fXuJMyT/60It3+zbRLUZ1n+ZPVA8kM4hvlXyDGPxHTNCj3KrBcx+wEPVXEqYB7DuEtnhXvl5adu3TF6KuI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723953035; c=relaxed/simple;
-	bh=55/k1eSGhDICyztU2b+YpsbGVGcHaS995ptxzYWHLRI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=GZiztvPwWrs9J7Nln/Fomv4sT7Iko386juk33d3wtPhJY3Ynw0NfI/lT8O71ObxTNaf8nQsO7jISakjrYzEsg1/Yz/z0gL+Td4zOagF38HWt0KyY3lKR8XmTaE8hrJeo3FMicMSZ7IATVj4IxpRFR1JMO9bppOPgN+zIGscblNI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jl2HIvNi; arc=fail smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723953033; x=1755489033;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=55/k1eSGhDICyztU2b+YpsbGVGcHaS995ptxzYWHLRI=;
-  b=Jl2HIvNiHfcayQUpkkbCCV+VS085H+dqVNI95g2G9NqXPQwNPTBWnb4k
-   IZWV/hpEvWtSceefkdwE4dlOi+E5UjZKPg+dambKWXdpzlGo8qRY8qkwq
-   18I7LWMJgeRFdG0/jqz5Y3Vie3HEIji3sBKe6SenSSnujlyRKVwhJ71dx
-   QP/zAQLsCVFYuCXicIiXsIVj36hm9I+BXrn4JKqcHqL5mFc+HgRqDJtkq
-   0gLM0/lPIPfhJv3/9JUBHy4c+ucEWApG3Fo1MEOkPou5IQAJf3IcUAjQs
-   9+1JsxOvVlJyrFuk1x0adHmN2/yzkKJvwLBse6lA2eGoqUhKv4mrpYjIP
-   w==;
-X-CSE-ConnectionGUID: OSpClYNXQtyAYifYe9hG/w==
-X-CSE-MsgGUID: 8W6Zvz7fRVCubqDK0kCWgw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11167"; a="22360980"
-X-IronPort-AV: E=Sophos;i="6.10,156,1719903600"; 
-   d="scan'208";a="22360980"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2024 20:50:33 -0700
-X-CSE-ConnectionGUID: xQvKijblTauC7z8/GHKVbA==
-X-CSE-MsgGUID: FWxjKIwsR7mRPaoFVIr6+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,156,1719903600"; 
-   d="scan'208";a="64434889"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 17 Aug 2024 20:50:33 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sat, 17 Aug 2024 20:50:32 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Sat, 17 Aug 2024 20:50:32 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.175)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sat, 17 Aug 2024 20:50:31 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NGv0ufl8LTCUhZ3F+DXwH6oLNVVRaCqGGEt2NDDJeKnhyRLT+WPeCw9iFFBmelN5D9FxgcEbVmeM+9uklD1j+GbNLb4ZyTrUoecPM270ZhxaGvAYaJDARTussndKszqwyWH6khaBtJGfsQW6zyH4ndNG65i3D9TZkJ7XTHtdlXj7PqjX7MyS3+kXLWKhBQjFqzHPo+1KiMqcqkLRogPU0rfOnVErcuVq+BfeapWNMO2m4CsYCVMPcvehs9aqVF+Mmk53TcEcwB4cU0qlR1ax451hy0VzvuNf2Q5czZHb2LNffjnC9CHlnUbp/W2AVs3mTshKKM/Mj6Wai2CVHHkGcA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MIzIaq4uy9EX0+pFCo1k5jjPsng24+PJovC7NCW/VLE=;
- b=x+qP1bQ0pgFE2SVeQ+ce3UzkbsqlLiBWa1fSqPYiZkCd0GiWD6UeMIQ931TTmegp8vz0+ea3y5Xp34V0ZDF6Fns2dhga+1rXua4vKn4TKHjsvAPigxMiGQ2wihNLPE8YTSc4IFS01we9i2VipPtmWTTLomJHKj3VZqSIkIDtyVCxIRalLMkpGAk2NpKUEctn93Lx+/yQMs1wrwaUi5srPDRbPw5kAj0RsShJUGoE2uwgpZeTJIIw7bNbmeyIVLM4UezmBQL8YmSbv5PnCDEf5jpsSyHh1psfbKGQbHL9+HM8KjDv204qTwnBsLovC/9MmUy0dYQIvUd+xDvv2ff0UQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
- by MW4PR11MB7103.namprd11.prod.outlook.com (2603:10b6:303:225::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Sun, 18 Aug
- 2024 03:50:29 +0000
-Received: from PH7PR11MB6522.namprd11.prod.outlook.com
- ([fe80::9e94:e21f:e11a:332]) by PH7PR11MB6522.namprd11.prod.outlook.com
- ([fe80::9e94:e21f:e11a:332%6]) with mapi id 15.20.7875.018; Sun, 18 Aug 2024
- 03:50:29 +0000
-Date: Sun, 18 Aug 2024 03:49:20 +0000
-From: Matthew Brost <matthew.brost@intel.com>
-To: Dipendra Khadka <kdipendra88@gmail.com>
-CC: <ltuikov89@gmail.com>, <maarten.lankhorst@linux.intel.com>,
-	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
-	<daniel@ffwll.ch>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Initialize symbol 'entity' in sched_main.c
-Message-ID: <ZsFvQFnG/LEkzT0V@DUT025-TGLU.fm.intel.com>
-References: <20240817162026.84761-1-kdipendra88@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240817162026.84761-1-kdipendra88@gmail.com>
-X-ClientProxiedBy: SJ2PR07CA0003.namprd07.prod.outlook.com
- (2603:10b6:a03:505::26) To PH7PR11MB6522.namprd11.prod.outlook.com
- (2603:10b6:510:212::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7AC748D;
+	Sun, 18 Aug 2024 03:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723953501; cv=none; b=s74+3dm0308wQHhaBRL92O/QxBFEBcMPzIELEmM063QBaES+TdGzZoOEi+Ei7tcfn46VGTqeP5qQTLc7Jvyte5gXJCYGbC/sDwhtbHXVhHf17J97fOT2HElA/NWicdGebcRWffcEZGa5EQMxu3nWdnTpPp8qN3dQn2nvNXwC+Dg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723953501; c=relaxed/simple;
+	bh=L9oJBUC516q+ejSs4MQDSm90WpWXosKx1wQ5yOBnEq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fj/TTaK6olpE0p9RY3SpvVVu5eqe6j0BozpnQv4YQRVn6hVBfLxBHtif9xo9YQyivec3UEB03PMBXgioE2w7RmoHQOcIh6HFp5WAaugUXEXdyTJWDgLRvke2Neie2zu/5r0BiBOSGM2LZTV8nOihkG34OVQ3O0UkuesI7t0of8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pFOwn/7c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 356DBC32786;
+	Sun, 18 Aug 2024 03:58:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723953500;
+	bh=L9oJBUC516q+ejSs4MQDSm90WpWXosKx1wQ5yOBnEq8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pFOwn/7c2x2YWhkYlDvtta1Rcl8axckpl3SGPQQ9X4KZzjL5hdaEr3T2j7OJP1Rc7
+	 Ubcq8Vz/6dXUGmeHw8e6DDcU1S+XXVdpV4+TF8xEnhxBSX+kWobJs71VwYG7z3kNwc
+	 egQaStHzciEZY+g0Rv03F8HHpLOy1VRJ3bYi1HBCphKNaiRKwHlNxu4ADg6yP01wWh
+	 qbqfTu3p/YDqzmD0IrkDfjm/3fwGzOikPY/djYZbN8wINfE4SZA80sq9dek92sbtcY
+	 fzRnaNuSVpoc3eixOVSWJc9IM+E2ts8thyKDNs8JEBzeCKwq+2+eh1VgF6K3V+aV6s
+	 ZbKFm7jXUfzVQ==
+Date: Sat, 17 Aug 2024 20:58:18 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <cyphar@cyphar.com>,
+	Tycho Andersen <tandersen@netflix.com>,
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Tejun Heo <tj@kernel.org>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] pidfd: prevent creation of pidfds for kthreads
+Message-ID: <20240818035818.GA1929@sol.localdomain>
+References: <20240731-gleis-mehreinnahmen-6bbadd128383@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|MW4PR11MB7103:EE_
-X-MS-Office365-Filtering-Correlation-Id: e207ffb5-2e1b-4441-c3aa-08dcbf38e6d4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?rQTg7jaW8DrRq/91Re/zEutZBMH76ZVvHAOaxDU3/WrWiGKjPXPhrkIiPlAw?=
- =?us-ascii?Q?epRCoisijpixfXU7hU01wB/+mKoaMk5QbHEr0hEIB6SWV2HEueFoMgjkCQd4?=
- =?us-ascii?Q?L4LwNU3pK476XuG8KGCK9XrJK9il5WsM/N0L9JNVKqGMoOdMYLZ7GQZEkgEt?=
- =?us-ascii?Q?OuMkgKYnAmG6PgBwmPRA+gKuSACKT5ZWCw2kI6e/U6X4FWd1FY5Bq6RNHzGc?=
- =?us-ascii?Q?bB8uS/NVHacZ11HmCiS0TooMZ1GWg841rJJoJKxMNt/ig78DstVjnuTFJMLn?=
- =?us-ascii?Q?po1eRYBQKiXFSRCPBziemGynu5dmJEUfSFVAWdjeVpOfqOqHUNHWw9f15J09?=
- =?us-ascii?Q?+HpMQB2C2kiGp/boBWHsHfqrD4EXA3za5Mmxmkh6saZ+PU9y7MNYp5krLGr3?=
- =?us-ascii?Q?CC9H0xnfATtoSFBJ5+is4G1hp/6jtgpDYMF5wcD3HNnN4VD9efaSpGMCeeKL?=
- =?us-ascii?Q?bTyMXo/XPrg7DaAU5LqnXAFyhboKIubL6CVprI04OmZhEkCjXOqAFI+/Eefz?=
- =?us-ascii?Q?J+TGD5oCyWqF0cmmUKUDnUNdBX7rzpFh0p8JvgA5D+KjeAhjZFTKG7yPL6Ze?=
- =?us-ascii?Q?1qpnGD0pdoG8YIROhfMGZCloBP5RDIAkbI/OxDm9aYqvTGegJ3kDWLMKS4/L?=
- =?us-ascii?Q?MW49gMGYITwcGF0oJ1bz3x08MpHZOax0bFU20cV2i8Pa416ooEZvXcJKZp2L?=
- =?us-ascii?Q?RSPvo4ag4F3ilodXHMuF0pWcFIqz8Y4raMJNCCEgLSZEfylflTEf3r9HyP90?=
- =?us-ascii?Q?UNyrncTUlkdSh27AWdQ6SbYViM1NfaDaCvEsCodPyabwBBzVua4UEcJKHQcO?=
- =?us-ascii?Q?F35i5S7Aei3Rc+FWpy8GeJGP/pstglXXvWXakMpWK+ZgSBxDMudvbGqWZLOM?=
- =?us-ascii?Q?OW7Wg6hvec30K7Om5hGp/hHJxF5t6OsxS2pHHF8JJiXty534RHlAVbEFuyYG?=
- =?us-ascii?Q?ldcKPrp84Swwm6uxJyEwxWPUQpQluLKkBvuGiRMGLavMyGcC2ET/3xoWMKk6?=
- =?us-ascii?Q?AfvO7kz2RGnoKFKkLFQX3QXfcoW3PMzxo+YCEjCDmiSuET5pJ0InJ7Ks60HU?=
- =?us-ascii?Q?6wEf6haPdDmBj5c6alYpkUJHPbOlc825TUhfNWdOT/yyo4wATRExx/f0ltgf?=
- =?us-ascii?Q?to9RFz9k9e4zatkyuWpQWfdfLBGGjKxXDDTC1DS5ptZl6hMcEQXJcT6TN4Xu?=
- =?us-ascii?Q?PPE4dX88DKu6sFbSF0XvMhf4WC3HYOl/pziSiU3pZWn1YRFVXyNT5Vs4+gg0?=
- =?us-ascii?Q?BzUP79GI9aWpkw7Wp1JDoxiFvaPOg70WjCkZcFvUJwmPEnQy0mWsp52/LKoI?=
- =?us-ascii?Q?NV8BZMcZS9qZ+z/oMkawEyxQfHMEY5OFzi9MSWeopDCZwg=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?2I38MXMMMjOmzbGbAgIrWztEi7FQCvwMw/8Q0M7FfXAnLMD+UDoTRMUYg9Fm?=
- =?us-ascii?Q?uufEOcUzG9dfMzIeQkzE8Pr0JShiq4cbwZV2FVdL6cRwx3oepwyHL7SsMUku?=
- =?us-ascii?Q?7D69v8P1db/PNETDko36eHPrspfMUD/dmebh+mlb+mM6b9wNwUuBaOJXPjjM?=
- =?us-ascii?Q?ZIB2r6kGvWHwkOrzBoz7nfIim9lz47URUmP8Ju6ePXr5kLAjsyk/va3lOvYw?=
- =?us-ascii?Q?qASKHFFfU42M4xVSODtMk2e/DJRs02B0gxoslcOigQVcGZzgBCB2fp5k2KNH?=
- =?us-ascii?Q?LchyGui+U7FSNOpOmTwYfyGwReimYga35uwvxDsVJ9jUEC/KSc3Xy0tQu8gz?=
- =?us-ascii?Q?yw/HsuaOiyJWq3volv1dFk9S3RCqoOJ3tzIRUfHU7gDuBm9Yx719hrp2NbJQ?=
- =?us-ascii?Q?ip9NgJFWFvhypzK+wU5XiwnjeRWLrSxshzNl4n95XVQ0twE1H0LnDI6TUK7i?=
- =?us-ascii?Q?K0RdhbPVo62EPWGQd4dvA7xqGwE8/thuddpcTGyRc24R1fJMwOTxLhYTFnxG?=
- =?us-ascii?Q?0xG53I1uW+p0bAW2gW7iQcbZSZUooydgylVwUqO/s5SnRa4XOirvcVLhlOKy?=
- =?us-ascii?Q?lGiuODVeJsGrebL8uyPe+nRzlyYey3ivIVDbnzY3UpDhWd4swM/YtGEXFMZ4?=
- =?us-ascii?Q?/5+1PsDb/R9BkSPn7PkrdntIVcrkYxvTQU9uKCoO3be+/L4IItIIrWkkRXah?=
- =?us-ascii?Q?KBinOECVj7aQsQ1j255RPVNROPLmjMtX4PBBk5U3CbJaav149fmTyaWlIUen?=
- =?us-ascii?Q?AFaMyvYMJ5y16MapRhPc+DT9bnAzgrdx0zNKqxh0dyxQ1Wcm3ulVmGulOX1M?=
- =?us-ascii?Q?ROYvKtTLSDNpfAwtMEzTTTMuQ0Ag3zCWZ1WXMMiiEBRFte0ZuYSOfm5GMotq?=
- =?us-ascii?Q?B8b64thQK9rvxLDP25ncfZAoaeKUsnp09EAUubeqJ00y/OUK2gQ0d3w0d4Id?=
- =?us-ascii?Q?TgYWuAoNYlxoHFhArHaAzuZ9xjW69RNcw4rXTSTa3ntahEVoWrCC/gok+oms?=
- =?us-ascii?Q?AvHbnKG5SuyH7D7G7sGQLE4S0DknlE/JVGNtdi9XbGbYZvcd0f5iW9f2CULz?=
- =?us-ascii?Q?9XMAsQ0kO2Oo0mScLktxAaWWe/A+e16wZ2C77nm2xZc3BwFt8eN8gZkJObsw?=
- =?us-ascii?Q?8rbs7D1hotzd2wrmCF+K7cVik0DNIaYNQGJCdtrIqs7GJaGTsRijTP95U6RO?=
- =?us-ascii?Q?xIXEl2D2nd31gVZS/+9n+1835mfwHcOjeGreVTC4HvDkShLSJKQbecT1nw3o?=
- =?us-ascii?Q?ZK3Mu5QNXtclsLf7V3F7T+RwYx0Bf2Em5EhdKqKZe3crJPgLQaV7bulNmbuu?=
- =?us-ascii?Q?BRRgVIHloh9ehyK29YQMfjOHK8Vsf0Nqrais2PENYVoRekyP10hzekHcU11h?=
- =?us-ascii?Q?kG9ebPqEi52xyWsm4bp4jzHgRDxSk//sC6jLQSoLkc7USufMNv2NVIKWXjHU?=
- =?us-ascii?Q?OVcqpuM43Ziz84UNsbMwPTCIq++Zt66kPZKjjWRjrEX3zFinemD6wmfCLZon?=
- =?us-ascii?Q?AHfdq2qsLcHIgIWUpMog9NZZduZk9UQqAAexKLQU5op/2ziSAdvtaW71VMO4?=
- =?us-ascii?Q?zYiIjHamvRBJPRKqXbgygNWxZcv1AA9lNNu6Bm4Atw24uoLWnZ6OZ7bDgqDy?=
- =?us-ascii?Q?Lw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: e207ffb5-2e1b-4441-c3aa-08dcbf38e6d4
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2024 03:50:29.2848
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OveP6ZagAYabjcEs2/mEikmFmXM7TfePcsDlpDRxqR2+91k3gnZ1ELGkIZuSR5M39jrbgBVr/uX8RzDXLlHbLw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB7103
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731-gleis-mehreinnahmen-6bbadd128383@brauner>
 
-On Sat, Aug 17, 2024 at 04:20:24PM +0000, Dipendra Khadka wrote:
-> smatch reported following error:
+Hi Christian,
+
+On Wed, Jul 31, 2024 at 12:01:12PM +0200, Christian Brauner wrote:
+> It's currently possible to create pidfds for kthreads but it is unclear
+> what that is supposed to mean. Until we have use-cases for it and we
+> figured out what behavior we want block the creation of pidfds for
+> kthreads.
 > 
-> '''
-> staging/drivers/gpu/drm/scheduler/sched_main.c:1063 drm_sched_select_entity() error: uninitialized symbol 'entity'.
-> '''
-> 
-> The symbol entity is initialized.
-> 
-
-Looks like false postive, no opposed merging it but since
-'sched->num_rqs' must be greater than zero it entity should always be
-set unless I'm missing something.
-
-Matt
-
-> Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
+> Fixes: 32fcb426ec00 ("pid: add pidfd_open()")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 > ---
->  drivers/gpu/drm/scheduler/sched_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> index 7e90c9f95611..dcfd4d0f7c6e 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -1047,7 +1047,7 @@ void drm_sched_wakeup(struct drm_gpu_scheduler *sched,
->  static struct drm_sched_entity *
->  drm_sched_select_entity(struct drm_gpu_scheduler *sched)
->  {
-> -	struct drm_sched_entity *entity;
-> +	struct drm_sched_entity *entity = NULL;
->  	int i;
->  
->  	/* Start with the highest priority.
-> -- 
-> 2.43.0
-> 
+>  kernel/fork.c | 25 ++++++++++++++++++++++---
+>  1 file changed, 22 insertions(+), 3 deletions(-)
+
+Unfortunately this commit broke systemd-shutdown's ability to kill processes,
+which makes some filesystems no longer get unmounted at shutdown.
+
+It looks like systemd-shutdown relies on being able to create a pidfd for any
+process listed in /proc (even a kthread), and if it gets EINVAL it treats it a
+fatal error and stops looking for more processes...
+
+This is what shows up in the system log:
+
+    systemd[1]: Shutting down.
+    systemd-shutdown[1]: Syncing filesystems and block devices.
+    systemd-shutdown[1]: Sending SIGTERM to remaining processes...
+    systemd-shutdown[1]: Failed to enumerate /proc/: Invalid argument
+    systemd-shutdown[1]: Sending SIGKILL to remaining processes...
+    systemd-shutdown[1]: Failed to enumerate /proc/: Invalid argument
+    systemd-shutdown[1]: Unmounting file systems.
+    (sd-umount)[17359]: Unmounting '/run/credentials/systemd-vconsole-setup.service'.
+    (sd-umount)[17360]: Unmounting '/run/credentials/systemd-journald.service'.
+    (sd-remount)[17361]: Remounting '/' read-only with options ''.
+    (sd-remount)[17361]: Failed to remount '/' read-only: Device or resource busy
+    (sd-remount)[17362]: Remounting '/' read-only with options ''.
+    (sd-remount)[17362]: Failed to remount '/' read-only: Device or resource busy
+    systemd-shutdown[1]: Not all file systems unmounted, 1 left.
+
+- Eric
 
