@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-290924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86AD8955B39
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 08:24:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F4173955B3E
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 08:24:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA2CC1C21169
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 06:24:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB68F2825D2
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 06:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4565EDDBE;
-	Sun, 18 Aug 2024 06:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F62945028;
+	Sun, 18 Aug 2024 06:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="s3PQbwSd";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LWdc1Xex"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Xu7ZpBgJ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n9EGqr8S"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5305E17555;
-	Sun, 18 Aug 2024 06:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DE116426;
+	Sun, 18 Aug 2024 06:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723962194; cv=none; b=S3zExK4B7I/M65zsHB8c7KWwmMAR3Y51yin9gLqoGNtHwW/CDfetxhGae6pdZbnEzy1m+2GaknHggK+XG583dEEUffaFcViA9VWoG4m2r7ug7pqzvXp3P4jeipY3qo+9sVUKXnjEeMsO6shzIrUcfuqqzqQK0nv9fT8h0fhvsMs=
+	t=1723962195; cv=none; b=MC+DNi0fXuezw2ZKAlbvUTWm5iebN4rNX8OIMKeg8d7rrGNbjgG5QvUm+nRUbJ2MiLtqPufy2b1vrqShSBoEsQDeEF+WLfjTZzfKgUeTTq1qydwEdPDPO6otlQv/VUUQ/68oqJBS4HOZjHHFY1ctF6A45DL1PrV+0JDKI5ZZ77M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723962194; c=relaxed/simple;
-	bh=T/yXCF6NcStf7ED8yX4IfQACN1VKffEBfhEEVsPkZLM=;
+	s=arc-20240116; t=1723962195; c=relaxed/simple;
+	bh=GqoQ8HfJa3o5E9VB00tGAdfSqdThxXcMXTOKGp/UCeQ=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=o6c8m2MvjSBGJCvM4hZNmI50I5U4J6uDmjKaoTy+YOZxnNtZYRDLd/v95fyTExF8oLhMyK13sW7VsdtURAw+6zkZux9klTMowXpbsXDWHwgCWJhRgRcU0i589eIFf25aCZmK7Rr+eGIKENs9lxdpAJEUkEyAms7vyf8Oc86SDo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=s3PQbwSd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LWdc1Xex; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=UGFl45FYL+PfOUisylqZ24muYhCc2Q7lysvn1lV/00H/7hokPD1BlR9MdiMqXyoGrlil5to4M/riFl2/+yYgsZNDCsBW7UeHXbI9Zm7342peB+fWp/tTjeebVOufkkFq3iNb4UC/P7LsPU5nuCn2YsVB7T1+LXI8Cehx24TAsnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Xu7ZpBgJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n9EGqr8S; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Sun, 18 Aug 2024 06:23:08 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723962189;
+	s=2020; t=1723962188;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Yu6+5+thBKkGtf+1gINvvUjwEwS5X2SVXb4oxBXKSFs=;
-	b=s3PQbwSdak2M4B0Vuou3AAxLjsrgQVzu1AYCO0qRhX9XquVVNXgPx/LXe3GVkz5deyhcJm
-	/lzptcMEbguCkti8dzgCRjITBLVpZM2ULqz2xDfuJgvFiCVsXDyeiWO+rl8rUJfqh6StX2
-	Ze/2zQ0H5QQXIPeGHiMUbdhb4PocVEoj0TkjmgyUcQAACAZvxkod4FyH4Au76YPhCIlqUk
-	90wrT5SjMWwlJ1f5cNAIuqibnWk3Ldv6SBTA+nsjfDddZESVkMeAkuVxrmfFgI1Z7nEVI2
-	a2N7dGvvS1h5JMrGOza0PXautbPk8eGqzLYMqT7Jl6esvXjvM2nBluuhv2azSA==
+	bh=l+iS60uE5F1Q60LKlAAEKJ3IHAfbYPD0ZAd1tJHH28U=;
+	b=Xu7ZpBgJ8++yqBQYGlIiida5a7EruRMlg0fkzFUD0gspKRQdzFeK2KHJljcqucFVQr5dCS
+	j39z460w6zFhnxQRCXV/2i6kEPZ6LCa4pNvlUpW1wlFPTYjoTx6ZvZ+89zcIYXJekePyUd
+	x79PuIbDp3Hdlo0qiCd2L3hl+s2u6l8SF6m+XwtzrXH+GktUF1ItfP85B4Xi6vsoAA7Ool
+	O4BnyQ6s7WBNbkZnI2xDJqv+lVx6eeykZ9xSx6WTWajZdHk0HDXo6MY+QhOYT9ud3GCQBZ
+	RVLEJh2T6HvmZPzLSOWvtI1FksUUZyU+/Rgxqkm79Ted+n44EWlDxIS/0W7sEQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1723962189;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,27 +52,26 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Yu6+5+thBKkGtf+1gINvvUjwEwS5X2SVXb4oxBXKSFs=;
-	b=LWdc1XexSm0TXtZ71dKCbLonJRI1f5JjvfA/3V1C6KMLGTAcUtjT5VREC3mLH+S+bnIIlX
-	SjAN08oxG4hCqRCg==
+	bh=l+iS60uE5F1Q60LKlAAEKJ3IHAfbYPD0ZAd1tJHH28U=;
+	b=n9EGqr8SNGKDMWxwtZoNVQsBc4sbksYiIJRmLNTpk/Sv69MujONyA7brBxLg6nv3rFgTAn
+	Vy8yvdUqaTcQV0CQ==
 From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: sched/core] sched/fair: Prepare pick_next_task() for delayed dequeue
+Subject: [tip: sched/core] sched/fair: Implement ENQUEUE_DELAYED
 Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
  Valentin Schneider <vschneid@redhat.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20240727105029.747330118@infradead.org>
-References: <20240727105029.747330118@infradead.org>
+In-Reply-To: <20240727105029.888107381@infradead.org>
+References: <20240727105029.888107381@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172396218883.2215.6061200164052431314.tip-bot2@tip-bot2>
+Message-ID: <172396218856.2215.6446008555962763303.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,83 +81,99 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     f12e148892ede8d9ee82bcd3e469e6d01fc077ac
-Gitweb:        https://git.kernel.org/tip/f12e148892ede8d9ee82bcd3e469e6d01fc077ac
+Commit-ID:     781773e3b68031bd001c0c18aa72e8470c225ebd
+Gitweb:        https://git.kernel.org/tip/781773e3b68031bd001c0c18aa72e8470c225ebd
 Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Thu, 23 May 2024 11:26:25 +02:00
+AuthorDate:    Thu, 23 May 2024 11:57:43 +02:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Sat, 17 Aug 2024 11:06:43 +02:00
 
-sched/fair: Prepare pick_next_task() for delayed dequeue
+sched/fair: Implement ENQUEUE_DELAYED
 
-Delayed dequeue's natural end is when it gets picked again. Ensure
-pick_next_task() knows what to do with delayed tasks.
-
-Note, this relies on the earlier patch that made pick_next_task()
-state invariant -- it will restart the pick on dequeue, because
-obviously the just dequeued task is no longer eligible.
+Doing a wakeup on a delayed dequeue task is about as simple as it
+sounds -- remove the delayed mark and enjoy the fact it was actually
+still on the runqueue.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Reviewed-by: Valentin Schneider <vschneid@redhat.com>
 Tested-by: Valentin Schneider <vschneid@redhat.com>
-Link: https://lkml.kernel.org/r/20240727105029.747330118@infradead.org
+Link: https://lkml.kernel.org/r/20240727105029.888107381@infradead.org
 ---
- kernel/sched/fair.c | 23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
+ kernel/sched/fair.c | 33 +++++++++++++++++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 9a84903..a4f1f79 100644
+index a4f1f79..25b14df 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -5473,6 +5473,8 @@ set_next_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
- 	se->prev_sum_exec_runtime = se->sum_exec_runtime;
- }
+@@ -5290,6 +5290,9 @@ static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq);
+ static inline bool cfs_bandwidth_used(void);
  
-+static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags);
+ static void
++requeue_delayed_entity(struct sched_entity *se);
++
++static void
+ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ {
+ 	bool curr = cfs_rq->curr == se;
+@@ -5922,8 +5925,10 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+ 	for_each_sched_entity(se) {
+ 		struct cfs_rq *qcfs_rq = cfs_rq_of(se);
+ 
+-		if (se->on_rq)
++		if (se->on_rq) {
++			SCHED_WARN_ON(se->sched_delayed);
+ 			break;
++		}
+ 		enqueue_entity(qcfs_rq, se, ENQUEUE_WAKEUP);
+ 
+ 		if (cfs_rq_is_idle(group_cfs_rq(se)))
+@@ -6773,6 +6778,22 @@ static int sched_idle_cpu(int cpu)
+ }
+ #endif
+ 
++static void
++requeue_delayed_entity(struct sched_entity *se)
++{
++	struct cfs_rq *cfs_rq = cfs_rq_of(se);
++
++	/*
++	 * se->sched_delayed should imply: se->on_rq == 1.
++	 * Because a delayed entity is one that is still on
++	 * the runqueue competing until elegibility.
++	 */
++	SCHED_WARN_ON(!se->sched_delayed);
++	SCHED_WARN_ON(!se->on_rq);
++
++	se->sched_delayed = 0;
++}
 +
  /*
-  * Pick the next process, keeping these things in mind, in this order:
-  * 1) keep things fair between processes/task groups
-@@ -5481,16 +5483,27 @@ set_next_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
-  * 4) do not run the "skip" process, if something else is available
-  */
- static struct sched_entity *
--pick_next_entity(struct cfs_rq *cfs_rq)
-+pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
- {
- 	/*
- 	 * Enabling NEXT_BUDDY will affect latency but not fairness.
- 	 */
- 	if (sched_feat(NEXT_BUDDY) &&
--	    cfs_rq->next && entity_eligible(cfs_rq, cfs_rq->next))
-+	    cfs_rq->next && entity_eligible(cfs_rq, cfs_rq->next)) {
-+		/* ->next will never be delayed */
-+		SCHED_WARN_ON(cfs_rq->next->sched_delayed);
- 		return cfs_rq->next;
+  * The enqueue_task method is called before nr_running is
+  * increased. Here we update the fair scheduling stats and
+@@ -6787,6 +6808,11 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 	int task_new = !(flags & ENQUEUE_WAKEUP);
+ 	int rq_h_nr_running = rq->cfs.h_nr_running;
+ 
++	if (flags & ENQUEUE_DELAYED) {
++		requeue_delayed_entity(se);
++		return;
 +	}
 +
-+	struct sched_entity *se = pick_eevdf(cfs_rq);
-+	if (se->sched_delayed) {
-+		dequeue_entities(rq, se, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
-+		SCHED_WARN_ON(se->sched_delayed);
-+		SCHED_WARN_ON(se->on_rq);
+ 	/*
+ 	 * The code below (indirectly) updates schedutil which looks at
+ 	 * the cfs_rq utilization to select a frequency.
+@@ -6804,8 +6830,11 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 		cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT);
  
--	return pick_eevdf(cfs_rq);
-+		return NULL;
-+	}
-+	return se;
- }
- 
- static bool check_cfs_rq_runtime(struct cfs_rq *cfs_rq);
-@@ -8507,7 +8520,9 @@ again:
- 		if (unlikely(check_cfs_rq_runtime(cfs_rq)))
- 			goto again;
- 
--		se = pick_next_entity(cfs_rq);
-+		se = pick_next_entity(rq, cfs_rq);
-+		if (!se)
-+			goto again;
- 		cfs_rq = group_cfs_rq(se);
- 	} while (cfs_rq);
+ 	for_each_sched_entity(se) {
+-		if (se->on_rq)
++		if (se->on_rq) {
++			if (se->sched_delayed)
++				requeue_delayed_entity(se);
+ 			break;
++		}
+ 		cfs_rq = cfs_rq_of(se);
+ 		enqueue_entity(cfs_rq, se, flags);
  
 
