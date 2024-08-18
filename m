@@ -1,116 +1,135 @@
-Return-Path: <linux-kernel+bounces-291091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39AD6955D27
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 17:25:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A211955D28
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 17:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D2341C20ABD
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 15:25:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 498B51C20A7B
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 15:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F441422D2;
-	Sun, 18 Aug 2024 15:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2350713BAE3;
+	Sun, 18 Aug 2024 15:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T307s+5Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aKVfYHDd"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B6012B8B;
-	Sun, 18 Aug 2024 15:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3FF7D405
+	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 15:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723994719; cv=none; b=mrKjf0k7NXFtPRj3M+T/+bvd+bO3eNGoQ1lsGVEqizA/xziDVsQzY2WFy/9xqgb8LCcfyIG/Eg6dg9jJK1WjzCOUVy794CnGinq/achDg7YLh0e3o/TyQIVJVH4ddTH8jbLE+7/K2Ii3G5XCqRLe6mogprrweUhZa5dsYX7JU1E=
+	t=1723994822; cv=none; b=UK8XxZXUzHcwYVpcgAgbNM5yLgDoOvYP4ACjidBq8BRU8vG/izKZiTBRHY3tj4cqzhLL8FgdCAI0oXZsI/0aGTuLsivY9/kJpNVTNg1kwyycGp037wN1WcW1sfa0Z6PMNSXgw/woOpXjRclyymff1d2PO53TzozgzAyyV5shGQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723994719; c=relaxed/simple;
-	bh=orlwBxElkQ3sTiSKxjEs+BXm+WDBKsem+aACCut7YCI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j8ZJmaujvcke0DLVSaekueXrLhqaDEfVGL/3U8sg21r0KodFPkt30vFPh1lEn2RD8GQCrfj0aumba3tkzFKLx2LXYHIrRFBgNyD0qaIbGTEa5NggoWfZEww1Vy79r3/nre7Zzi8uCpQe3lZEoJY5+QoBabJAUtppAW1pVIcYIAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T307s+5Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CBD3C32786;
-	Sun, 18 Aug 2024 15:25:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723994718;
-	bh=orlwBxElkQ3sTiSKxjEs+BXm+WDBKsem+aACCut7YCI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T307s+5QzegpKA6WEsGFxE9SZ5+1vewr+i/3cGEDZi3D+w4sWsAsL49HvorQ+rnvM
-	 41znro7LVlHAIn7qjTfjpDPqZ3JRoq6C9EA4yPDLTSuwn9/LRCaOJi7thfDlOlzOS0
-	 dUB2BjaFy+N0E5ONRMQei879QazTgcvhWquBLnRawfSkT51OglcP17Y+TqBUeVVhvI
-	 U5gFAFNBNFm9cD03FOywFulirEyM0oLZ5ze4ukGFrKAc/0MRjbp7joo/aP0+ZJDXCV
-	 5hrfTXl176Fb14T/lMIV2THKMrhTERHutUsziZ0DKfjXxPTPzV7efqH21Go4FuKAnl
-	 0jY5Z4XCrVfJg==
-Date: Sun, 18 Aug 2024 09:25:15 -0600
-From: Rob Herring <robh@kernel.org>
-To: Marc Gonzalez <mgonzalez@freebox.fr>
-Cc: Rob Clark <robdclark@gmail.com>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, iommu@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Arnaud Vrac <avrac@freebox.fr>,
-	Pierre-Hugues Husson <phhusson@freebox.fr>,
-	Marijn Suijten <marijn.suijten@somainline.org>
-Subject: Re: [PATCH 1/2] dt-bindings: arm-smmu: Add
- qcom,last-ctx-bank-reserved
-Message-ID: <20240818152515.GA104481-robh@kernel.org>
-References: <20240814-smmu-v1-0-3d6c27027d5b@freebox.fr>
- <20240814-smmu-v1-1-3d6c27027d5b@freebox.fr>
+	s=arc-20240116; t=1723994822; c=relaxed/simple;
+	bh=LS8eF8OweOQBSggprqaSIy6dvHsmBgDQg5tvoyMHgPU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gMyx71PxdPh9PTd16So2u+oN/OMNTQxlZ78Kn2svvw7UkuRa9FoG0FfeZ3eRCYaGtE3Gyi3aB9Tgu1W6CQBirgC98MYUplYRSM5ji+4DUTyoDHihC7ClKp3eFK/z+fwIcA3Q2N8KbT9g9hmSxuXh9FlMWeB3TvNPSJsK3lzXP2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aKVfYHDd; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f149845d81so36642451fa.0
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 08:27:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723994819; x=1724599619; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RHx6D1zKrkAV68zeEgpHIyICDAfmO0Yll8Q2BD72P7o=;
+        b=aKVfYHDdXepSas/zUOuxfbhI7auWTP4IErgRg7Brme6wxnPDIhNSDBcBshTrYaqTqL
+         UAm2vH0OqBJV80hf5ASVE/xP2IgwmJNdNLUuVZXAXWih9EuGIp56hnQDNoCa5ttnranq
+         XrifzNK8ZDHK2ar10I2sNRiMCKy5YD4iYEOLJJ2s6056FWqg3UXItUTxT5jGfFJyg1KX
+         IdnUbKH+A2AYYartmLKsz7Y1VMcAIClk03Tg2bGEzWMFRpKOcicx8h+NTxsdmJjg7Lws
+         pWGEVEhBEcMS99+R2sY639esaLOsyDho0iehkPRjkilkd1YRvJw7TkOndP6119QbWTJP
+         kfzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723994819; x=1724599619;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RHx6D1zKrkAV68zeEgpHIyICDAfmO0Yll8Q2BD72P7o=;
+        b=AzPJOHj2zPLwcg2zVCCSpeyCPWnBtsAtN0ZvKAHzlzDTNRkQCsKQW8seuaG5YKaFsJ
+         zqXTJMr/2LOQo9wUZDtoUfYE4uSB/1d+pORpRidYo5V6Mria/E93aQ15il5uro0KA9Y5
+         L2C/+Jm70rpyEMOhi+oV0E87FieMl8/FTpDcOVT8lHiv7PllysE02PFbejM68L3BxC0Z
+         onfMnkoTzKRimoXznRs6w9Au/JuRo+AeUZ4kFsdBZqhEOp9xN0wfEmetOSHqkGQ93PaP
+         PHpptDJ6GOTtVqQfde5QiliP5uIWReIl3fc3qxOaNd2ZnvZDc3eDDPf/xGvidwmt6tuk
+         kPpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXxo1NkYNT/6ih5Zz/zo1tEogby7dOubPlBCDypZQgBctWXW+dbzrEVQbEVELnXSrTP65O0Q68FiiO0SLTwcbQOnNP0uhIoQou8/6Gx
+X-Gm-Message-State: AOJu0YxSz28m42zjdFR3kfNeAxju1ycYSZqGNlivwCjHIy9Xul+Ivkgo
+	3JqwhkATqAHQ6IXKT7vU96Bj0Wi9K0XwoRVm9TgEu5iQCym50u3qb3l2/w==
+X-Google-Smtp-Source: AGHT+IEkeS6ykZk1MjvKLwnRlKxacIaVt3qa2Z7l0SNRPjt79dqhcsjQGzRgvxSG+RaYtiqcOXbOcA==
+X-Received: by 2002:a05:6512:3b21:b0:52c:df8c:72cc with SMTP id 2adb3069b0e04-5331c6d98d3mr5226359e87.43.1723994818326;
+        Sun, 18 Aug 2024 08:26:58 -0700 (PDT)
+Received: from localhost.localdomain ([46.248.82.114])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a838396d0cdsm528574766b.219.2024.08.18.08.26.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Aug 2024 08:26:57 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH v2] mm/kmemleak: Use explicit cast to cast pointer from percpu to generic AS
+Date: Sun, 18 Aug 2024 17:26:11 +0200
+Message-ID: <20240818152634.17443-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240814-smmu-v1-1-3d6c27027d5b@freebox.fr>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 14, 2024 at 03:59:55PM +0200, Marc Gonzalez wrote:
-> On qcom msm8998, writing to the last context bank of lpass_q6_smmu
-> (base address 0x05100000) produces a system freeze & reboot.
-> 
-> Specifically, here:
-> 
-> 	qsmmu->bypass_cbndx = smmu->num_context_banks - 1;
-> 	arm_smmu_cb_write(smmu, qsmmu->bypass_cbndx, ARM_SMMU_CB_SCTLR, 0);
-> 
-> and here:
-> 
-> 	arm_smmu_write_context_bank(smmu, i);
-> 	arm_smmu_cb_write(smmu, i, ARM_SMMU_CB_FSR, ARM_SMMU_CB_FSR_FAULT);
-> 
-> It is likely that FW reserves the last context bank for its own use,
-> thus a simple work-around would be: DON'T USE IT in Linux.
-> 
-> Signed-off-by: Marc Gonzalez <mgonzalez@freebox.fr>
-> ---
->  Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> index 280b4e49f2191..f9b23aef351b0 100644
-> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-> @@ -204,6 +204,12 @@ properties:
->        access to SMMU configuration registers. In this case non-secure aliases of
->        secure registers have to be used during SMMU configuration.
->  
-> +  qcom,last-ctx-bank-reserved:
-> +    type: boolean
-> +    description:
-> +      FW reserves the last context bank of this SMMU for its own use.
-> +      If Linux tries to use it, Linux gets nuked.
+Use explicit cast to cast pointer from percpu to generic address space.
 
-How is this Qualcomm specific? Presumably any implementation could do 
-this if there's no way to properly partition things. Robin?
+The patch will avoid future build errors due to pointer address
+space mismatch with enabled strict percpu address space checks.
 
-Also, this property isn't very flexible. What happens when it is not the 
-last bank or more than 1 bank reserved? This should probably be a mask 
-instead.
+The patch also fixes following sparse warnings:
 
-Rob
+kmemleak.c:1063:39: warning: cast removes address space '__percpu' of expression
+kmemleak.c:1138:37: warning: cast removes address space '__percpu' of expression
+
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+---
+v2: Use explicit casts instead of IS_ERR_PCPU().
+---
+ mm/kmemleak.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index 764b08100570..fc2e09ec48f8 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -1059,8 +1059,9 @@ void __ref kmemleak_alloc_percpu(const void __percpu *ptr, size_t size,
+ 	 * Percpu allocations are only scanned and not reported as leaks
+ 	 * (min_count is set to 0).
+ 	 */
+-	if (kmemleak_enabled && ptr && !IS_ERR(ptr))
+-		create_object_percpu((unsigned long)ptr, size, 0, gfp);
++	if (kmemleak_enabled && ptr &&
++	    !IS_ERR((const void *)(__force const unsigned long)ptr))
++		create_object_percpu((__force unsigned long)ptr, size, 0, gfp);
+ }
+ EXPORT_SYMBOL_GPL(kmemleak_alloc_percpu);
+ 
+@@ -1134,8 +1135,9 @@ void __ref kmemleak_free_percpu(const void __percpu *ptr)
+ {
+ 	pr_debug("%s(0x%px)\n", __func__, ptr);
+ 
+-	if (kmemleak_free_enabled && ptr && !IS_ERR(ptr))
+-		delete_object_full((unsigned long)ptr, OBJECT_PERCPU);
++	if (kmemleak_free_enabled && ptr &&
++	    !IS_ERR((const void *)(__force const unsigned long)ptr))
++		delete_object_full((__force unsigned long)ptr, OBJECT_PERCPU);
+ }
+ EXPORT_SYMBOL_GPL(kmemleak_free_percpu);
+ 
+-- 
+2.42.0
+
 
