@@ -1,143 +1,200 @@
-Return-Path: <linux-kernel+bounces-291117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89AF7955D84
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 18:51:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB97A955D88
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 18:56:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACEEE1C209D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 16:51:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD5B41C20AC8
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 16:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78BE1494B0;
-	Sun, 18 Aug 2024 16:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703AA1494D8;
+	Sun, 18 Aug 2024 16:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="Ud62Q1Hf"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PkHxwJ44"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CD033C0;
-	Sun, 18 Aug 2024 16:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B361386C6;
+	Sun, 18 Aug 2024 16:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723999903; cv=none; b=SwCXf71QDvw3BL+wzi55qbkWI1UQm8D7shDEtZ5MNaMuKx951P5YwoQw9+20Xe/2602/dnU61arHzW8Han/wDvCf3JSTwV+G5P2PxhUxNW0gL1rak8sJFffq7XIprHOZxkgyphab7o46Pa5CNqHfS8ycylCwzTQ4kgdMW0c+I7A=
+	t=1724000164; cv=none; b=D97Zq4nt5iQYcgTL/VlAM6qsdLVixHUkFcOuZyHpdGp28UDloDZPiwnnbjNXgmX/NNHa+lpI6Ux7mKse/RAJ8f42Aju46T1KVf8asZ31WHIyicnU917b0H/yytrpfnLRTPCyrEKneMY0fR8gJkNAYiQMgtzt/VF9tXhNuNGUaGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723999903; c=relaxed/simple;
-	bh=7Bl4BOOfFoy8ViYYyTwQiPRdGuQa4IPF5ww1bxZG9Wg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ck3Gwj5SwpwXCMAENECuH0vxPwshCH1Ypbj5hfBnx9WfhNF9dMVcA+8M4US/zKUkKr2CvC2odkU/wl/2U39Nw6n3Wm3sthMsiJa43AwSmjs5kHGdQ3fNCdkTEY9JsjE2O5E2SIeSKPV9zUwL6PnAS4RaWH3cXtUN5UNYMPXlvkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=Ud62Q1Hf; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Wn1w34sYfz9t0Z;
-	Sun, 18 Aug 2024 18:51:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1723999891;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iJtQXoqkg1Ql6i6lKlrT5656z34Z7stPQ3wfnhFxFrY=;
-	b=Ud62Q1Hfxg0cQlxfaNFcOxaYdhJdHuFYjTbZThaJO7BH6N34wLvYzV1t2F9cgp7qTGc5b9
-	1tYxvKOWEUfVZhi0sEt0KhPoLlHNEKCDzrbi9Lh5Wu6oNjjFkZgxL+I+OnqGs3Z8TUtG/4
-	9CLOKRqENEqOk0JHVgt3fHU0MKmIzHBBznCYQanLnJYHdsY/rvlJPK7zGwFHmTYaQXuFma
-	JoH3+6+mjRnaWR8Wqxvle1g4Zk1CMc63QtHctV/ZT9UMkfTmzAZshJxpYSV+Ue94TglLNH
-	MqDVU0fVn3ILLYw2LrnWJi2i08G+AxL+/BnZfGz7jud1NlY/VKvBdYWhctTsWg==
-Date: Sun, 18 Aug 2024 16:51:24 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: David Howells <dhowells@redhat.com>
-Cc: brauner@kernel.org, akpm@linux-foundation.org, chandan.babu@oracle.com,
-	linux-fsdevel@vger.kernel.org, djwong@kernel.org, hare@suse.de,
-	gost.dev@samsung.com, linux-xfs@vger.kernel.org, hch@lst.de,
-	david@fromorbit.com, Zi Yan <ziy@nvidia.com>,
-	yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, willy@infradead.org, john.g.garry@oracle.com,
-	cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
-	ryan.roberts@arm.com
-Subject: Re: [PATCH v12 00/10] enable bs > ps in XFS
-Message-ID: <20240818165124.7jrop5sgtv5pjd3g@quentin>
-References: <20240815090849.972355-1-kernel@pankajraghav.com>
- <2924797.1723836663@warthog.procyon.org.uk>
+	s=arc-20240116; t=1724000164; c=relaxed/simple;
+	bh=Qi2VmkOBr/YtTsz+qW/OhZpunw0QduUME+9/qJCGtAY=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=L1radybwBWPzysAKM87OllY9ofhyoGyDdj97gQTMjFzLZ13GUMuu7R02DSMAkhdLhvDlDUsspXiMH+XFzWsmwLKL9BZZ4qGJr7rosP1s5CvDfBo/m1g8NJza7vHobO1KS+X0cKOmCRcMnWCWyfwGiV/etrgdHKh6seLgxD+JFMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=PkHxwJ44; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240818165551euoutp0258140a37ef73bcc4656173befe53d6b1~s4QD8OiMy2193121931euoutp02x;
+	Sun, 18 Aug 2024 16:55:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240818165551euoutp0258140a37ef73bcc4656173befe53d6b1~s4QD8OiMy2193121931euoutp02x
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724000151;
+	bh=pgk63OzM4MV5B1YZ1Q6RhX/k/tQPgbLegYhXhPxJ50g=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=PkHxwJ44aZhmcYMdzJKAGZXelphodr77bbg9/BPcudcGnFtavaJMJ9p2nd51Tj6yl
+	 EaF87ID3nxhu/IEgZzyY2TPZYcEWqlo0jRREP2U3hZ6UDipar0KJoHoGGOhd9+mR8o
+	 njp4oTr7P/w9+o/j0eFte/CLOGU+aG0zzrs/aqcg=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240818165551eucas1p2cfad7c58437449945b2cf154473a035d~s4QDrLzpK2264222642eucas1p2-;
+	Sun, 18 Aug 2024 16:55:51 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 50.EF.09620.79722C66; Sun, 18
+	Aug 2024 17:55:51 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240818165550eucas1p29e0c2db56a8031d550147a0305929f47~s4QC3qo8m2264222642eucas1p2_;
+	Sun, 18 Aug 2024 16:55:50 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240818165550eusmtrp1f22f7444782d04f43e5ceb6ffa5e8082~s4QC2rdl71394913949eusmtrp1b;
+	Sun, 18 Aug 2024 16:55:50 +0000 (GMT)
+X-AuditID: cbfec7f5-d31ff70000002594-c8-66c227976f5c
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 98.94.09010.69722C66; Sun, 18
+	Aug 2024 17:55:50 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240818165550eusmtip2d54ec6aadacf9035b826ccd01848f656~s4QChYpRJ2514925149eusmtip2C;
+	Sun, 18 Aug 2024 16:55:50 +0000 (GMT)
+Received: from localhost (106.210.248.197) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Sun, 18 Aug 2024 17:55:45 +0100
+Date: Sun, 18 Aug 2024 18:55:45 +0200
+From: Klaus Jensen <k.jensen@samsung.com>
+To: Barry Song <21cnbao@gmail.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Daniel Gomez
+	<da.gomez@samsung.com>, Masahiro Yamada <masahiroy@kernel.org>, "Nathan
+ Chancellor" <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, "Lucas
+ De Marchi" <lucas.demarchi@intel.com>, Thomas =?utf-8?Q?Hellstr=C3=B6m?=
+	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, William Hubbs
+	<w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, Kirk Reiser
+	<kirk@reisers.ca>, Samuel Thibault <samuel.thibault@ens-lyon.org>, Paul
+	Moore <paul@paul-moore.com>, Stephen Smalley
+	<stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, James
+	Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>, Jiri Slaby <jirislaby@kernel.org>, Nick
+	Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-kbuild@vger.kernel.org"
+	<linux-kbuild@vger.kernel.org>, "intel-xe@lists.freedesktop.org"
+	<intel-xe@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "speakup@linux-speakup.org"
+	<speakup@linux-speakup.org>, "selinux@vger.kernel.org"
+	<selinux@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
+	<kvmarm@lists.linux.dev>, "linux-serial@vger.kernel.org"
+	<linux-serial@vger.kernel.org>, "llvm@lists.linux.dev"
+	<llvm@lists.linux.dev>, Finn Behrens <me@kloenk.dev>, "Daniel Gomez
+ (Samsung)" <d+samsung@kruces.com>, "gost.dev@samsung.com"
+	<gost.dev@samsung.com>, Nick Desaulniers <nick.desaulniers@gmail.com>
+Subject: Re: [PATCH 00/12] Enable build system on macOS hosts
+Message-ID: <ZsInkfDqwzd2ojHz@AALNPWKJENSEN.aal.scsc.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <2924797.1723836663@warthog.procyon.org.uk>
-X-Rspamd-Queue-Id: 4Wn1w34sYfz9t0Z
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGsJ_4zA6=ajoOgAm9kweeiBFKz4TJxxjYFGHHd3HQY8dxHpWA@mail.gmail.com>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te1BUZRiH5zvn7Dm7y6weFxo+wYlplaE1wryg30gaZOEpGmutqHHGcpXD
+	JW62CyqVI+aKgGIgIcMGC7LTchEC14VwBQnU5bIyGwOzaLiIAYEIKIEERbuxHEz/e+Z7f887
+	7++Pj4+LT1Ee/Ki4BFYRJ4+RkEKi1jRneTXXpzn8NdPgcjRlE6PWnmIMPdKdAchUPoKjqw4b
+	jhy1WTjqfvKIRCe0VSSavTyCoXvXSjA0UbAKnb+oJZGms41Ao4brBNIPWHlo3liHoS5jPolu
+	aTMoNPh9I4mGBnQkujBZQ6D7/bd56Ep+Gw81VHWRSN81xUMpaToeOlU2RKLHmQ4MGRvnCPRH
+	QysP5cyNkWg88yaFes/lEqhRbaVQ6WwuQJYWE4Vq6zoAGrZkA5TX2wvQw7qFzYaxLB4qTtmC
+	VHf90Z0fq6lAX6ZCUwGYelMHyTTMFBGMsfkyyVxR2yimSJ/IqG6M8xht/QOM0ZenkYwmTYMx
+	jox+HnPDUUwxF5JzcEbTJmMaCyoo5t7pFuwDuEf4ehgbE3WIVazbvk8Y+e/JSnDQ5nLEmnwJ
+	TwZ5gnQg4EN6E0y3GnAni+lSAOdngzmeBrC9iU4HwgWeAvB66d/gqZA610hygxIAL2rU2P+p
+	saHCpUkNgFOTasKpELQ3bMtQk04maSn8ed6x+O5GS2B2zgzhFHC6nIYlQzk858CV3gZHSuoX
+	BREdADuGb2Ecr4BteYMLAn9BkMIq4zoOPWGJne9M4LQXPFHzw2IdAS2DOrMe465eDS/1WAiO
+	j8J2w2+LR0P6qgssmzmLOfdA+i3YmhrIZVzhaIuB4ngVNGefIbj8NQCnC3uoJRnAm7/ocC4V
+	AFXdg0tGEBwr1lPc0mXw9vgK7rhl8FxtLs49i2BqijgTrFE/V0z9rJj6WTH1c8WKAFEO3NlE
+	ZWwEq9wYxx72U8pjlYlxEX4H4mP1YOGvmO0tT+pA6eikXzPA+KAZQD4ucROdftAULhaFyZO+
+	YhXxnysSY1hlM/DkExJ3kXeYFyumI+QJbDTLHmQVT6cYX+CRjL0ZYvLj/SW7v1Vmtg2FiAdC
+	g9ZumPDK9JxcLUkCazK0BhdbpVTkio0GhmyulAaogo/oNrxj/FZ4nGzYvtmu2nf07V3xc2mf
+	YJbsTdKv31/5cHdEzP5dd8XS/r1/Tpz9Yrr9fExZeOl8mS099pW6mm1s6GhCL7XTN9Kc5R+d
+	K6yIdmO6h5f3bWQKP6tw73r5pTCw8hgxINjZae/67vcX9xzzlX8c7GFNMh6qjq//8Mt3/wn9
+	SeCdaffx3Jtd9M3ERNMOmV/fbOtxcpkqSGXU+t/pjN0Rr0uv9nkhQ/T4gD0n6o3Ivizb/qBe
+	8+H3in8NsKyPtH4q21qQgBEfddQMSLeczN8dKCGUkfL1a3GFUv4fl9bBPJoEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0xTdxjGdy49bYEuZxXZGZpp6uaFSKHl9pYiYYtLzr64kRlxuoV19ABG
+	oKyXKVvmiFwUHQYGSKil4xKugwDlYulg5eKABpGMCtIgogMEuQwJDiUButZu0W+//N/n+eWf
+	Ny8H4zcQ3pwzSWpGmSRLEBBu+OB2/wPf6wd6Yv0HR71gbZIPA/fKUFip/AmBvtp5DH6zT2Jg
+	b8vF4O4/KwSklTcQ8KJ5HoWp36tQ+Lt4N1z/tZwA/Z8WHBZaenEwTI+xYNNkRMFq0hFwuzyb
+	DTP5ZgJmpysJKF1txeHRw3EWtOssLOhssBJgsK6xIDOrkgWXamYJeJpjR8Fk3sDhcecACwo2
+	lghYzvmDDRM/F+Jg1o6xofpFIQLD/X1saDMOITA3nIdA0cQEAotGh7llKZcFZZkhkH4/CGwV
+	jeyIw3Sdvg6hO/qGCLpzvQSnTT3NBN2unWTTJQYNnX5rmUWXdzxBaUNtFkHrs/Qobc9+yKJv
+	2cvYdGlqAUbrLZG0ubiOTU9d7Uc/pU4Jw5QKjZrZG69QqY8ITotALBRJQCgOlAhFASFfhoqD
+	BH7hYXIm4cy3jNIv/Cth/FZGPZI86X5+LLUJS0WKuFcQLociA6nLG2bCyXyyAqG6GuSu991U
+	07NRlot3UJtjV/7LrCJUmy3Sxa0IVTnKOBkn36cs2dqXGYI8RN3ctONO9iQFVF7BuoPdOBhZ
+	S1JL1VWoc7CDPELNV3W8LPBIKTU0dxt1hvjkJkrNL5eyXIO3KEvRjKPNcbQPUQ0mPxfuoqq2
+	Oc4ERu6h0lpvYE7mkpFU5aABdf15H9V0bxh38Q/U2tZjJAfx1L4m1b6Sal9Jta9JSxC8FvFk
+	NKrEuESVWKiSJao0SXHCGEWiAXFcblvfRosRqVlYFfYgKAfpQSgOJvDkXX3SHcvnyWUp3zFK
+	RbRSk8CoepAgx4ZyMe+dMQrH6Sepo0XB/kGiwGCJf5AkOEDwNu/j5MsyPhknUzNnGSaZUf7f
+	Qzlc71TUQyeJOmk0HfilscueyI8w88TpsdrjvaUlx2Y/y+IWP7rTEf7jex5sbY0043D0CU7E
+	1ORzjy9O8o6GVbhZqq9B2xtevrlHM3W9kgsf+WY8bb8/5R5l0JQGGnVWQq7+hPzeR34tlCsx
+	7bVlfpjXOLsn5lzKxW2fVL5nre3zNOsHophTN985t7gkjyx6tn8t/2DgyGKe7k699EHoN50J
+	zTWCr+sDukXP94csuh8MPd3Ypbq7s+Li9Oq7dZsl56t3hU/TwXkXcuKkM8k+xVLbgu14ing9
+	aqYmaUN69s2Rlb8WV/ZFWW/EbG2ZDc0DhSvj9dsnGK9Ls+P6sO1j+R6t3SMKRcGcAFfFy0Q+
+	mFIl+xfttvvaQgQAAA==
+X-CMS-MailID: 20240818165550eucas1p29e0c2db56a8031d550147a0305929f47
+X-Msg-Generator: CA
+X-RootMTR: 20240807110114eucas1p2e1ca4cbd352c6cd9d60688b1570df8d4
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240807110114eucas1p2e1ca4cbd352c6cd9d60688b1570df8d4
+References: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
+	<CGME20240807110114eucas1p2e1ca4cbd352c6cd9d60688b1570df8d4@eucas1p2.samsung.com>
+	<2024080753-debug-roulette-8cb1@gregkh>
+	<3jnp6tnkjpvnisefomxagazu2u3uzzt7rcon3r5jssraxzwegb@gsxc7c5sfh7v>
+	<2024080758-dedicator-smoky-44be@gregkh>
+	<CAGsJ_4zA6=ajoOgAm9kweeiBFKz4TJxxjYFGHHd3HQY8dxHpWA@mail.gmail.com>
 
-Hi David,
+On Aug 17 13:11, Barry Song wrote:
+> On Thu, Aug 8, 2024 at 2:20 AM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Wed, Aug 07, 2024 at 01:56:38PM +0000, Daniel Gomez wrote:
+> > > On Wed, Aug 07, 2024 at 01:01:08PM GMT, Greg Kroah-Hartman wrote:
+> > > > On Wed, Aug 07, 2024 at 01:09:14AM +0200, Daniel Gomez via B4 Relay wrote:
+> > > > > This patch set allows for building the Linux kernel for arm64 in macOS with
+> > > > > LLVM.
+> > > >
+> > > > Is this a requirement somewhere that this must work?  It seems like an
+> > > > odd request, what workflows require cross-operating-system builds like
+> > > > this?
+> > >
+> > > This isn't a requirement, but it would, for example, support workflows for QEMU
+> > > users and developers on macOS. They could build/compile the kernel natively and
+> > > use it to launch QEMU instances, simplifying their process.
+> >
+> > But that's not a real workload of anyone?  How often does this ever come
+> > up?  Who is going to maintain this cross-build functionality over time?
+> 
+> it is a real workload of me,  i was running qemu-system-aarch64 on x86
+> and it was
+> pretty slow. so got a M3 pro to accelerate my development. frequently changing
+> kernel's source code, i am using qemu-system-aarch64 to do quick verification.
+> 
 
-On Fri, Aug 16, 2024 at 08:31:03PM +0100, David Howells wrote:
-> Hi Pankaj,
-> 
-> I applied the first five patches and set minimum folio size for afs files to
-> 8K (see attached patch) and ran some tests.
-> 
-> With simple tests, I can see in the trace log that it is definitely creating
-> 8K folios where it would previously create 4K folios.
-> 
-> However, with 'xfstests -g quick', generic/075 generic/112 generic/393 fail
-> where they didn't previously.  I won't be able to look into this more till
-> Monday.
-
-Thanks for trying it out!
-
-As you might have seen the whole patchset, typically filesystems will
-require some changes to support min order correctly. That is why 
-this patchset only enables XFS to use min order to support bs > ps.
-
-In the case of XFS (block-based FS), we set the min order to the FS
-block size as that is the smallest unit of operation in the data path,
-and we know for sure there are no implicit PAGE_SIZE assumption.
-
-I am no expert in network filesystems but are you sure there are no
-PAGE_SIZE assumption when manipulating folios from the page cache in
-AFS?
-
-Similar to AFS, XFS also supported large_folios but we found some bugs
-when we set min order to be the block size of the FS.
-> 
-> If you want to try using afs for yourself, install the kafs-client package
-> (available on Fedora and Debian), do 'systemctl start afs.mount' and then you
-> can, say, do:
-> 
-> 	ls /afs/openafs.org/www/docs.openafs.org/
-> 
-> and browse the publicly accessible files under there.
-
-Great. But is this enough to run FStests? I assume I also need some afs
-server to run the fstests?
-
-Are the tests just failing or are you getting some kernel panic?
-
-> 
-> David
-> ---
-> commit d676df787baee3b710b9f0d284b21518473feb3c
-> Author: David Howells <dhowells@redhat.com>
-> Date:   Fri Aug 16 19:54:25 2024 +0100
-> 
->     afs: [DEBUGGING] Set min folio order
-> 
-> diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-> index 3acf5e050072..c3842cba92e7 100644
-> --- a/fs/afs/inode.c
-> +++ b/fs/afs/inode.c
-> @@ -104,6 +104,7 @@ static int afs_inode_init_from_status(struct afs_operation *op,
->  		inode->i_fop	= &afs_file_operations;
->  		inode->i_mapping->a_ops	= &afs_file_aops;
->  		mapping_set_large_folios(inode->i_mapping);
-> +		mapping_set_folio_min_order(inode->i_mapping, 1);
->  		break;
->  	case AFS_FTYPE_DIR:
->  		inode->i_mode	= S_IFDIR |  (status->mode & S_IALLUGO);
-> 
+Allow me to chime in as well. Working with qemu-system-aarch64 on an Mx
+are a daily thing for me as well. Working with custom built kernels have
+been a pain, and this really helps.
 
