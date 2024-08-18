@@ -1,116 +1,174 @@
-Return-Path: <linux-kernel+bounces-290940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 476FF955B5A
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 08:36:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98BA3955B60
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 08:37:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB8461F21C6E
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 06:36:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EA3D1F21D8D
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 06:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B42DDA9;
-	Sun, 18 Aug 2024 06:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ehz4zDEC"
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F2DFC02;
+	Sun, 18 Aug 2024 06:37:31 +0000 (UTC)
+Received: from out28-124.mail.aliyun.com (out28-124.mail.aliyun.com [115.124.28.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF50D515;
-	Sun, 18 Aug 2024 06:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B654EFC0A;
+	Sun, 18 Aug 2024 06:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723963000; cv=none; b=ZGkv5h+Pmd22FBvqVj9ftEj/5jVw/O/qvAkKfzcpjQuzr2YYGEvTf+1L/T6/6NFRPufw7FsUeUl1Wcv7M8XD6Or65g5x4VZO4iRkITr20BM3Gy1DgEaJ287sVbmzhppSD5wCe+8weEvGevQeNVTzQwUdUhUA8SzvSToeZtdc2Q0=
+	t=1723963051; cv=none; b=gsqwhJJ7bQi77Y9Fzb/QZIKtPuHIKOsRL5mLQPC8735gv7ggntgjXQ+/5AgRbCOxLEFx+EPK03/AYKS3Bo1XwT5piUY76tvJWBIrmGXUVxiOTSPRTIDYEczFUR7sLY7mZ1uBO9WrtwgCE6zNHU+RtJOvFoJuOFpKThU5kZT1c/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723963000; c=relaxed/simple;
-	bh=cmwJOfGRINdC9eNirCR0v368/sKckH2gDfeG1BPkfhs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mraIiGi7qt3eYle4diHud2feprSdHGhTtQ5Jg5yLuT/b/AqEtgAmFpfhyKf5nQQJoudGHyAN4nnJUr9MOSMfZKWhygi0FOydti5zjlorugmSN4QgmqK16aOoK2V2BPia47xJdhBBkJaOcLWMj/amkp+8NlS5//skzJ6rZiLkgtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ehz4zDEC; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-4f51981b1beso1083505e0c.2;
-        Sat, 17 Aug 2024 23:36:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723962998; x=1724567798; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZhhLeU16UIaSURwOIjTFGnW/8lJXcoPE5+u9c33DNJE=;
-        b=ehz4zDECJuninCaT2cKJfQuYiaJ9j++2KqtqUhDvqSQvbgMSqSNVdZ83QyW8xq0Dmx
-         pzA3ARPJgh9cL1x8/dwCPYhhL0pCqrRvlmz1F4ivjfz4g04ZNPh4FOEa7LoUiTaBSSwp
-         206er3IIwoNP9nyvatnbteA/b35Trk6aQuqlTemhEClbRptmTASzMxrHE/WsrT+n+ZUI
-         F56hrHoEQBGvwUj0o8HxEFHyVz4RKAnVpbeZWmBg1fq3c+PakYUIRWEo5X/lEMc56Q6C
-         Uk97kJ1h4I7T2XBSZpL704LlonzsDqfUzGlm7mvk97HxzXk/xfD+TiESdjUTlP3VGIqi
-         uWUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723962998; x=1724567798;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZhhLeU16UIaSURwOIjTFGnW/8lJXcoPE5+u9c33DNJE=;
-        b=JAOqBD9sKBa9NFWfC897yaX1MmMrhu6ZbuNEaCW/5AjZ+2s1lg7qScNXqvZ6tXVzDi
-         HWf3bR8TK3DgUUTRfx1dPkqYkI7Zzaf6xTMgS9hdz23dvsX7298D6sFdv1mN4WCkkA7J
-         D9T/rG7eaPwXH482ED7Nu7zIOTVOjuNCFBree1JnvwYXoj0XF3kWR/QTBdH3JTPvZC7g
-         ZquKLEx6aBkpbRWZ+w/xGZdQ4f8jEB5C7PFADvCXhEIsnIkXXus2pstlvgruVxz4yTR2
-         6ULgNa8eRav93F3/qdgCQUO84e8uZ+NBfr6eChamQwO+Kw7iOloou45UM67gTbPBZZUP
-         wtvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWLAAwOyR+TBjO3pW38eorj7/U1LahsZLeSLEx2SixssczbTH2gR42AbKf7xbSnriOGi3tf5i+RdjT5AO+ZoPasuE1xFxjCmOoKAwyVOzD4mOKDCBQjIHS28AGBBSw5W3AtMAZf4UkU6vI26KJW
-X-Gm-Message-State: AOJu0Yx7t2Shos3shq7rlwFJ6uV7A2bQAaJHkYuZGyHVveztGjNtEwdv
-	2fN9h5RNxJG1HOqDaffY/YXhXhS6o7IdLBPgGx4vn/cep0fleS1Su2zQZoN1S8EhpQ0JUsxdKv1
-	ih28r2+HyacjJIDQeTPxaJ3DPAAQ=
-X-Google-Smtp-Source: AGHT+IEko2GfN0dNu+2mfgzBxN5cTLajQWzx4nzczvmU1AenlierGwmKiBWginPTJ0iSjxOhz48+A0QcGpjG2DH037U=
-X-Received: by 2002:a05:6122:2092:b0:4f6:ad39:dab1 with SMTP id
- 71dfb90a1353d-4fc6c5f094fmr9153942e0c.5.1723962998054; Sat, 17 Aug 2024
- 23:36:38 -0700 (PDT)
+	s=arc-20240116; t=1723963051; c=relaxed/simple;
+	bh=1FLRfl8oDMdmwSZEuccVBa3OVneT0Ya49b2lwc5PqdE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C5pp8E2HmF9SIYqStXCxsjsl1tpuuIYRcBnjUGvj2/rkIOHM43FpMMoW9QS6KD++NmjHdwB9bIMB6VcWZ6UD8OleeA6u7IFfhplt98nqJ96Ei91+2Ec0O2BQfJV9AVt/U//AisuUqXw4MK2uRP7vj32jicXKtjfA6EOX/NP+7lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com; spf=pass smtp.mailfrom=motor-comm.com; arc=none smtp.client-ip=115.124.28.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motor-comm.com
+Received: from 192.168.208.130(mailfrom:Frank.Sae@motor-comm.com fp:SMTPD_---.YvIfKL8_1723962999)
+          by smtp.aliyun-inc.com;
+          Sun, 18 Aug 2024 14:37:13 +0800
+Message-ID: <0d4d3507-f095-47c6-866f-1e850cf7f3d8@motor-comm.com>
+Date: Sat, 17 Aug 2024 23:36:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240817-mseal-depessimize-v3-0-d8d2e037df30@gmail.com> <20240817-mseal-depessimize-v3-7-d8d2e037df30@gmail.com>
-In-Reply-To: <20240817-mseal-depessimize-v3-7-d8d2e037df30@gmail.com>
-From: Pedro Falcato <pedro.falcato@gmail.com>
-Date: Sun, 18 Aug 2024 07:36:26 +0100
-Message-ID: <CAKbZUD1dA2q9Yv_Z0S4SgvddHxnR9KZddYHAbMLsV+dt+bf8dg@mail.gmail.com>
-Subject: Re: [PATCH v3 7/7] selftests/mm: add more mseal traversal tests
-To: Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Shuah Khan <shuah@kernel.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, jeffxu@chromium.org, oliver.sang@intel.com, 
-	torvalds@linux-foundation.org, Michael Ellerman <mpe@ellerman.id.au>, 
-	Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 2/2] net: phy: Add driver for Motorcomm yt8821
+ 2.5G ethernet phy
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yuanlai.cui@motor-comm.com, hua.sun@motor-comm.com,
+ xiaoyong.li@motor-comm.com, suting.hu@motor-comm.com, jie.han@motor-comm.com
+References: <20240816060955.47076-1-Frank.Sae@motor-comm.com>
+ <20240816060955.47076-3-Frank.Sae@motor-comm.com>
+ <ZsCLMQWoZcVV+7xR@shell.armlinux.org.uk>
+Content-Language: en-US
+From: "Frank.Sae" <Frank.Sae@motor-comm.com>
+In-Reply-To: <ZsCLMQWoZcVV+7xR@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Aug 17, 2024 at 1:18=E2=80=AFAM Pedro Falcato <pedro.falcato@gmail.=
-com> wrote:
-> @@ -983,6 +1019,41 @@ static void test_seal_munmap_vma_with_gap(bool seal=
-)
->         REPORT_TEST_PASS();
->  }
+
+On 8/17/24 04:36, Russell King (Oracle) wrote:
+> On Thu, Aug 15, 2024 at 11:09:55PM -0700, Frank Sae wrote:
+>> +static int yt8821_get_rate_matching(struct phy_device *phydev,
+>> +				    phy_interface_t iface)
+>> +{
+>> +	int val;
+>> +
+>> +	val = ytphy_read_ext_with_lock(phydev, YT8521_CHIP_CONFIG_REG);
+>> +	if (val < 0)
+>> +		return val;
+>> +
+>> +	if (FIELD_GET(YT8521_CCR_MODE_SEL_MASK, val) ==
+>> +	    YT8821_CHIP_MODE_FORCE_BX2500)
+>> +		return RATE_MATCH_PAUSE;
+> Does this device do rate matching for _any_ interface mode if it has
+> this bit set - because that's what you're saying here by not testing
+> "iface". From what I understand from your previous posting which
+> included a DT update, this only applies when 2500base-X is being
+> used as the interface mode.
+
+Here not check parameter iface, it is not to say that iface has no relation
+with rate matching. when interface is configed with phy-mode property in
+DT, modify YT8521_CHIP_CONFIG_REG register bit2:0 dependent on
+phydev->interface in yt8821_config_init(), if phy-mode = "sgmii", bit2:0
+will be set 3'b000, if phy-mode = "2500base-x", bit2:0 will be set 3'b001.
+
+so that YT8521_CHIP_CONFIG_REG register bit2:0 may decide enable or disable
+rate matching feature in yt8821_get_rate_matching() and do not care input
+parameter iface here.
+
+>> +static int yt8821_aneg_done(struct phy_device *phydev)
+>> +{
+>> +	int link;
+>> +
+>> +	link = yt8521_aneg_done_paged(phydev, YT8521_RSSR_UTP_SPACE);
+>> +
+>> +	return link;
+>> +}
+> Why not just:
 >
-> +static void test_seal_munmap_partial_across_vmas(bool seal)
-> +{
-> +       void *ptr;
-> +       unsigned long page_size =3D getpagesize();
-> +       unsigned long size =3D 2 * page_size;
-> +       int ret;
-> +       int prot;
-> +
-> +       /*
-> +        * Check if a partial mseal (that results in two vmas) works corr=
-ectly.
-> +        * It might unmap the first, but it'll never unmap the second (ms=
-ealed) vma.
-> +        */
+> 	return yt8521_aneg_done_paged(phydev, YT8521_RSSR_UTP_SPACE);
+>
+> ?
+>
+>> +/**
+>> + * yt8821_config_init() - phy initializatioin
+>> + * @phydev: a pointer to a &struct phy_device
+>> + *
+>> + * Returns: 0 or negative errno code
+>> + */
+>> +static int yt8821_config_init(struct phy_device *phydev)
+>> +{
+>> +	u8 mode = YT8821_CHIP_MODE_AUTO_BX2500_SGMII;
+>> +	int ret;
+>> +	u16 set;
+>> +
+>> +	if (phydev->interface == PHY_INTERFACE_MODE_2500BASEX)
+>> +		mode = YT8821_CHIP_MODE_FORCE_BX2500;
+> Hmm, I think this is tying us into situations we don't want. What if the
+> host supports 2500base-X and SGMII, but does not support pause (for
+> example, Marvell PP2 based hosts.) In that situation, we don't want to
+> lock-in to using pause based rate adaption, which I fear will become
+> a behaviour that would be risky to change later on.
 
-Bah, obviously this comment isn't true, munmap is never partial.
-I'll change this locally for v4 if there ends up being one.
+yt8821 is pin2pin realtek rtl8221.
 
---=20
-Pedro
+please refer to description about interface force 2500base-x and auto
+2500base-x_sgmii in datasheet.
+
+In AUTO_BX2500_SGMII mode, The internal flow control buffer is disabled in
+this mode.
+
+In FORCE_BX2500, SerDes always works as 2500BASE-X, internal flow control
+buffer will be activated if UTP doesn't work at 2.5GBASE-T.
+
+>> +
+>> +	set = FIELD_PREP(YT8521_CCR_MODE_SEL_MASK, mode);
+>> +	ret = ytphy_modify_ext_with_lock(phydev,
+>> +					 YT8521_CHIP_CONFIG_REG,
+>> +					 YT8521_CCR_MODE_SEL_MASK,
+>> +					 set);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	if (mode == YT8821_CHIP_MODE_AUTO_BX2500_SGMII) {
+>> +		__set_bit(PHY_INTERFACE_MODE_2500BASEX,
+>> +			  phydev->possible_interfaces);
+>> +		__set_bit(PHY_INTERFACE_MODE_SGMII,
+>> +			  phydev->possible_interfaces);
+>> +
+>> +		phydev->rate_matching = RATE_MATCH_NONE;
+>> +	} else if (mode == YT8821_CHIP_MODE_FORCE_BX2500) {
+> 		__set_bit(PHY_INTERFACE_MODE_2500BASEX,
+> 			  phydev->possible_interfaces);
+>
+> so that phylink knows you're only going to be using a single interface
+> mode. Even better, since this is always supported, move it out of these
+> if() statements?
+
+it is ok.
+
+>
+>
+> Also, it would be nice to have phydev->supported_interfaces populated
+> (which has to be done when the PHY is probed) so that phylink knows
+> before connecting with the PHY which interface modes are supported by
+> the PHY. (Andrew - please can we make this a condition for any new PHYs
+> supported by phylib in the future?)
+
+now no supported_interfaces member in struct phy_device.
+
+> Note the point below in my signature.
+>
 
