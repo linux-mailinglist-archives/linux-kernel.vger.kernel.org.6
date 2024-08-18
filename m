@@ -1,74 +1,54 @@
-Return-Path: <linux-kernel+bounces-291022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7304D955C4A
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 13:36:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A08AD955C5A
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 13:45:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1E451F213EA
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 11:36:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D36C61C20401
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 11:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7478C13;
-	Sun, 18 Aug 2024 11:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD9F2110E;
+	Sun, 18 Aug 2024 11:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YsZx4gtS"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="i0DvSryU"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8F317BA9
-	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 11:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA031803D;
+	Sun, 18 Aug 2024 11:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723980996; cv=none; b=FtXAOZ/vNgMn0HZxT5KHCEVPUpGTIZPAtHlbedyYmJoYWjn38aijydy6B6bjAYYGl2OnbknEVL98ca2rgdDVhYf42/Z0Qb73PEkbV00T1Qisrrdf782fV5Ffpe2Ng2ORrTy+CJh+TSWnV75KX3BKydNUCZXT1gnvKrL3W9CL0AU=
+	t=1723981544; cv=none; b=FLyLxScpNYVXkBLyVBOKC/iPp298TW4ajxFUgVVFpKW/jQtHmFSYvMhnGE/AVd6emiT1f3tGFUmcYlbSCpvXgdKxj4EgB1lOKKG3/vHkGjbBaJftkKxFl2X9cf+eeSs/vhJmRnzfa3tFrjU9ITujWekc7M4QRpm0JjeWLlxdK0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723980996; c=relaxed/simple;
-	bh=emaXNsgdl5NHORKtBOppdVEU2slprfD8AHSZqpBCNw8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OosfigmRhRcPOB4kBQpbaDIneK8N33nJlWwdbbsIQdqTQ+PUdGRjYcc/7BT6gWtDKwJKKKg/vmsi3ry1EFBjdorevXHZKinPOUz7/W2V/heiF4NYKzviTZa6x/U8Zqstrxmjnr1GSm96Doi2SIe6J2vVtBdDZdiDTpCoVlNPouw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YsZx4gtS; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37189d8e637so2000771f8f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 04:36:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1723980993; x=1724585793; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PAJdMQKZiX+9jCnggas981zW+KUWWZZDTKHFUqV7VHM=;
-        b=YsZx4gtSCY2OQjSo43TS2TS5kOZHpi/kblxQk9hJ0lWoMfmOKo8MUHDi2PZ8n7OBCQ
-         ExEQpKnljWUHNWjBciILZnQ4Vqi1cvYRB7FB1gtJ93vUo/YVJ7G5Q48izvOWvRK2Zq/Q
-         1WTTvXjtWtipl2DoN2y2JDFIiU0pfaDQT/T8k7tUmQ9shV9fWgSk601sPLQgxbTfkkgt
-         JjYY+S9mNUG5+c5hBkO8nN81fO2Uy2Ese/NqVrX0SBPh3XGuxbOIKJ6MxKSByhH2WDIs
-         QG29C3oWGkCDBR00Qpvk8ifcpKHx4+ep4/JJOJzsiCMTAQQzX2R80sGWZI+HMBBDTytk
-         Cb6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723980993; x=1724585793;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PAJdMQKZiX+9jCnggas981zW+KUWWZZDTKHFUqV7VHM=;
-        b=kpdY8lpPkmhs9AO/CrQklfVQaOH97cPD4PMIvH94NLQN9bcBcOc3stjMv5608wQKUu
-         KC10fCq73GoHv++2CxfFuQK6ooNtBIK9h0u58xZIJl3xG6G2Tu4g87MDFucMsBSFis+5
-         Rffl7z7LFbMpWYRpR+Q/7oMZTpVwnU1+X3tyaf43eZ1Ohpda7tDHAHg+IsouG/VzsnaA
-         jk46CTrAujNfdBO/cvkHxSJM4YLfsnppZWI4EB6Fp1yGnyyWiDNRIvJAeHAEbYGu2QyJ
-         TWgbnLJcFGb1AqJApr0o17tho8HyRX8lQ7QBjU+0ufq6gXmYqjpkEM2iON39CHUNZvmD
-         aa7g==
-X-Forwarded-Encrypted: i=1; AJvYcCX5lFJaRvqSy73uXr8j+djfxuaJGWj+dXfbjdmG6d/WuPUaK4FbVB9itCe2gYg/RnLzvexdLARNJEJ7df+ijTpJ4bvW2bU1XULH2Z2i
-X-Gm-Message-State: AOJu0Yw2C0mCYIIvpGDFQnNP0VeH5AzaHJ9hDQIAwwhGuQljcImmWq0n
-	LE6p/kAzdg/dWetDg0YqexOk9axJGQZ3CHfK7x1l1EWhWvnhFqa8CNP1z8IEmG1ZEnZ8u+j3CZS
-	g
-X-Google-Smtp-Source: AGHT+IFzBHXv9/w0iRDS4AcSUkJDBHxQa194bTyJD7dRAKg6cwL4kmUfwhABd6WEcQOinr9c2dZgRw==
-X-Received: by 2002:a5d:6908:0:b0:371:83ac:fec1 with SMTP id ffacd0b85a97d-37194314afemr4592193f8f.1.1723980992674;
-        Sun, 18 Aug 2024 04:36:32 -0700 (PDT)
-Received: from [127.0.0.1] ([192.177.92.77])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f039e258sm49307155ad.245.2024.08.18.04.36.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 18 Aug 2024 04:36:32 -0700 (PDT)
-Message-ID: <a4b3ab50-02af-42f2-b937-dcbb92b4f0d2@suse.com>
-Date: Sun, 18 Aug 2024 19:36:18 +0800
+	s=arc-20240116; t=1723981544; c=relaxed/simple;
+	bh=Ee0NJhwA1mFRhyXTh1ahgd08EBzvfs/+Rge0vDVW5Eo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=lmJ9znYbRPOzW3AZlnBTi/DXkwN5CKFV58xrW5UsGyfyZtFgVbfoIAQt+X18G+Mxi3jK1hXYti7tyGHy1jD87lE47nybVigS3UXnjaPCzEvkodFyUEW+bhtigGyyIa584vDygBw1NmnkhIID6ZTyuzRzQzp+/rO3tRHat8VwcmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=i0DvSryU; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1723981533; x=1724586333; i=markus.elfring@web.de;
+	bh=i2wEq5t2ni+TcH94U0okDlCDrekF0+WUCWcIYa0wtzo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=i0DvSryUtVwFGTCcIU+HgRC3ND3GrwLXQZXC8bjCwJ8J+Ux4xyCmEaoMy7KMFh98
+	 Y00fY3kthfnO8yyDjs9nygGEHBtAHmm9tDAiD1Q7obtGq1PrH1Tu97jy5epX9u4zp
+	 x/e544jmbhEbJqewLcbOPG3Y/BG4IevCDeO5IsQRCdHjnjtbX2DUAIRo2EzBYk/pe
+	 ZXVdRA3bN2GOo8mtAh4/ZV/G3f+bPoSt89ub+5W14UA+6A9m33p/DGbHv+X4GOQpC
+	 YF4DHkUgyzw7YOex0kut8tnOX7fsLR7GrvxvP36paAbrxgYvNpFDwoDZTQxGZk0XN
+	 x3JY/DkcOMOaGSPHzw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MyO0u-1rwJbQ2Zky-00zNsj; Sun, 18
+ Aug 2024 13:39:12 +0200
+Message-ID: <6e9dc4ce-fd4c-42a7-9839-6bcdfe5d0cbd@web.de>
+Date: Sun, 18 Aug 2024 13:38:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,159 +56,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ocfs2: Remove custom swap functions in favor of built-in
- sort swap
-Content-Language: en-US
-To: Kuan-Wei Chiu <visitorckw@gmail.com>, mark@fasheh.com,
- jlbec@evilplan.org, joseph.qi@linux.alibaba.com
-Cc: jserv@ccns.ncku.edu.tw, ocfs2-devel@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20240810195316.186504-1-visitorckw@gmail.com>
-From: Heming Zhao <heming.zhao@suse.com>
-In-Reply-To: <20240810195316.186504-1-visitorckw@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: Ira Weiny <ira.weiny@intel.com>, Navneet Singh <navneet.singh@intel.com>,
+ linux-cxl@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ nvdimm@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Chris Mason
+ <clm@fb.com>, Dave Jiang <dave.jiang@intel.com>,
+ David Sterba <dsterba@suse.com>, Fan Ni <fan.ni@samsung.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Jonathan Corbet <corbet@lwn.net>, Josef Bacik <josef@toxicpanda.com>,
+ Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky
+ <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, Davidlohr Bueso
+ <dave@stgolabs.net>, Vishal Verma <vishal.l.verma@intel.com>
+References: <20240816-dcd-type2-upstream-v3-21-7c9b96cba6d7@intel.com>
+Subject: Re: [PATCH v3 21/25] dax/region: Create resources on sparse DAX
+ regions
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240816-dcd-type2-upstream-v3-21-7c9b96cba6d7@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:SDZ0mAvNdLKow+wykbK1KiOyQmXyTPlV1uC1C+eCaomkPY5xVF2
+ iMLv8p4ZioEUFddT9msWDOy29paAp5SqQJw5+cQg83gm8AaFg5A2ZuGdMWZzh/wqHa776u6
+ w0rS47wRs/rUhw9FGiT5WqiEg8JqTyszPl/bfsw8AYnTxlhH33+ddmoKTx1/u/qeZjyYl6k
+ sU/i0aJ6l2PAogEC09NUg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ZcGeyuGiXPE=;u8RUXU03d6tpqvo7a2y83Lp/vB5
+ 4CMNtKFulyvvi69D2gS8xxY/sqZqmd50D7+9goxbAonCZHsIhan69YK5H4kV+vU5jNzn+3jxB
+ GnljVFqfylwL0PffO1d86TOjtg4Ekdigo7sCmAeOT1h9GQzuM4eYuJk7hrR3C1t0OBOLDVza6
+ V3TCwfLoD7vBi8ZqcKtZtJY/VWa3q2YnqBGpXqA5tjPLOOp5ABCLbnaXHcm+teAHjzSAhYRxr
+ dOkLCfoD9kej45UQJHdbYlnjhTjq/MD0EpshG4PsnA0N8qeGtZf81KxNZ2CT5ELF7AW7/Q6WN
+ FtAEm9Z9vdox5M0j2mVPvXPmcG6kh78PZk0iWX7pAqfMdQgfnN21peafg1k+sMiLUIog5MuKe
+ sPJQbaPEp42iYbtOX6zsRCCGusXaHjAMtWBXDBVrxTdbqDKmZrJArM4nfQDcVR65b7CI7Gg1Z
+ XhffZAQb/t/n9rf5JYA6OTup4Ks3FcCwTJcZ0bkUpLNQcJW5SsPBOLTNYrMDp6WoMr8hiNX2f
+ PCSiz3Ph9R8iN3ezyHZ2i3ELinvAQbCC7C7Em+mneTk0WWUC9/DTtVGwTvHXxI3YCJDrqmGRf
+ Hu7838t6IQ8ZXLE9OfTzimAgj1do8IIoSMgtdpAnO49azkKleR1mnuy5wOsCQ5M9NYUyV+cpP
+ 8HnzZT8eXtp07OHpT/b/umw5X4WPXZdqKmSELyqyrKW3BFylfId107KQzJLv8DIAspDueSKB2
+ zOLz/iYk6EKcmBVb3jcL9guSy1ysLtP2NsIi3eCkUHqqKy+dhWA1BC/48RSaOGEyCEPYYArDy
+ pLZ+dJERm06WFwZR44ZvU4cA==
 
-On 8/11/24 03:53, Kuan-Wei Chiu wrote:
-> The custom swap functions used in ocfs2 do not perform any special
-> operations and can be replaced with the built-in swap function of sort.
-> This change not only reduces code size but also improves efficiency,
-> especially in scenarios where CONFIG_RETPOLINE is enabled, as it makes
-> indirect function calls more expensive.
-> 
-> By using the built-in swap, we avoid these costly indirect function
-> calls, leading to better performance.
-> 
-> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+=E2=80=A6
+> +++ b/drivers/cxl/core/extent.c
+> @@ -271,20 +271,67 @@ static void calc_hpa_range(struct cxl_endpoint_dec=
+oder *cxled,
+>  	hpa_range->end =3D hpa_range->start + range_len(dpa_range) - 1;
+>  }
+>
+> +static int cxlr_notify_extent(struct cxl_region *cxlr, enum dc_event ev=
+ent,
+> +			      struct region_extent *region_extent)
+> +{
+=E2=80=A6
+> +	device_lock(dev);
+> +	if (dev->driver) {
+=E2=80=A6
+> +	}
+> +	device_unlock(dev);
+> +	return rc;
+> +}
+=E2=80=A6
 
-Looks good to me
-Signed-off-by: Heming Zhao <heming.zhao@suse.com>
+Under which circumstances would you become interested to apply a statement
+like =E2=80=9Cguard(device)(dev);=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.11-rc3/source/include/linux/device.h#L=
+1027
 
-> ---
-> Note: Build test only.
-> 
->   fs/ocfs2/dir.c          | 12 +-----------
->   fs/ocfs2/refcounttree.c | 13 +++----------
->   fs/ocfs2/xattr.c        | 15 +++------------
->   3 files changed, 7 insertions(+), 33 deletions(-)
-> 
-> diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
-> index f0beb173dbba..fa5d0819a997 100644
-> --- a/fs/ocfs2/dir.c
-> +++ b/fs/ocfs2/dir.c
-> @@ -3511,16 +3511,6 @@ static int dx_leaf_sort_cmp(const void *a, const void *b)
->   	return 0;
->   }
->   
-> -static void dx_leaf_sort_swap(void *a, void *b, int size)
-> -{
-> -	struct ocfs2_dx_entry *entry1 = a;
-> -	struct ocfs2_dx_entry *entry2 = b;
-> -
-> -	BUG_ON(size != sizeof(*entry1));
-> -
-> -	swap(*entry1, *entry2);
-> -}
-> -
->   static int ocfs2_dx_leaf_same_major(struct ocfs2_dx_leaf *dx_leaf)
->   {
->   	struct ocfs2_dx_entry_list *dl_list = &dx_leaf->dl_list;
-> @@ -3781,7 +3771,7 @@ static int ocfs2_dx_dir_rebalance(struct ocfs2_super *osb, struct inode *dir,
->   	 */
->   	sort(dx_leaf->dl_list.de_entries, num_used,
->   	     sizeof(struct ocfs2_dx_entry), dx_leaf_sort_cmp,
-> -	     dx_leaf_sort_swap);
-> +	     NULL);
->   
->   	ocfs2_journal_dirty(handle, dx_leaf_bh);
->   
-> diff --git a/fs/ocfs2/refcounttree.c b/fs/ocfs2/refcounttree.c
-> index 1f303b1adf1a..4f85508538fc 100644
-> --- a/fs/ocfs2/refcounttree.c
-> +++ b/fs/ocfs2/refcounttree.c
-> @@ -1392,13 +1392,6 @@ static int cmp_refcount_rec_by_cpos(const void *a, const void *b)
->   	return 0;
->   }
->   
-> -static void swap_refcount_rec(void *a, void *b, int size)
-> -{
-> -	struct ocfs2_refcount_rec *l = a, *r = b;
-> -
-> -	swap(*l, *r);
-> -}
-> -
->   /*
->    * The refcount cpos are ordered by their 64bit cpos,
->    * But we will use the low 32 bit to be the e_cpos in the b-tree.
-> @@ -1474,7 +1467,7 @@ static int ocfs2_divide_leaf_refcount_block(struct buffer_head *ref_leaf_bh,
->   	 */
->   	sort(&rl->rl_recs, le16_to_cpu(rl->rl_used),
->   	     sizeof(struct ocfs2_refcount_rec),
-> -	     cmp_refcount_rec_by_low_cpos, swap_refcount_rec);
-> +	     cmp_refcount_rec_by_low_cpos, NULL);
->   
->   	ret = ocfs2_find_refcount_split_pos(rl, &cpos, &split_index);
->   	if (ret) {
-> @@ -1499,11 +1492,11 @@ static int ocfs2_divide_leaf_refcount_block(struct buffer_head *ref_leaf_bh,
->   
->   	sort(&rl->rl_recs, le16_to_cpu(rl->rl_used),
->   	     sizeof(struct ocfs2_refcount_rec),
-> -	     cmp_refcount_rec_by_cpos, swap_refcount_rec);
-> +	     cmp_refcount_rec_by_cpos, NULL);
->   
->   	sort(&new_rl->rl_recs, le16_to_cpu(new_rl->rl_used),
->   	     sizeof(struct ocfs2_refcount_rec),
-> -	     cmp_refcount_rec_by_cpos, swap_refcount_rec);
-> +	     cmp_refcount_rec_by_cpos, NULL);
->   
->   	*split_cpos = cpos;
->   	return 0;
-> diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
-> index 35c0cc2a51af..0e58a5ce539e 100644
-> --- a/fs/ocfs2/xattr.c
-> +++ b/fs/ocfs2/xattr.c
-> @@ -4167,15 +4167,6 @@ static int cmp_xe(const void *a, const void *b)
->   	return 0;
->   }
->   
-> -static void swap_xe(void *a, void *b, int size)
-> -{
-> -	struct ocfs2_xattr_entry *l = a, *r = b, tmp;
-> -
-> -	tmp = *l;
-> -	memcpy(l, r, sizeof(struct ocfs2_xattr_entry));
-> -	memcpy(r, &tmp, sizeof(struct ocfs2_xattr_entry));
-> -}
-> -
->   /*
->    * When the ocfs2_xattr_block is filled up, new bucket will be created
->    * and all the xattr entries will be moved to the new bucket.
-> @@ -4241,7 +4232,7 @@ static void ocfs2_cp_xattr_block_to_bucket(struct inode *inode,
->   	trace_ocfs2_cp_xattr_block_to_bucket_end(offset, size, off_change);
->   
->   	sort(target + offset, count, sizeof(struct ocfs2_xattr_entry),
-> -	     cmp_xe, swap_xe);
-> +	     cmp_xe, NULL);
->   }
->   
->   /*
-> @@ -4436,7 +4427,7 @@ static int ocfs2_defrag_xattr_bucket(struct inode *inode,
->   	 */
->   	sort(entries, le16_to_cpu(xh->xh_count),
->   	     sizeof(struct ocfs2_xattr_entry),
-> -	     cmp_xe_offset, swap_xe);
-> +	     cmp_xe_offset, NULL);
->   
->   	/* Move all name/values to the end of the bucket. */
->   	xe = xh->xh_entries;
-> @@ -4478,7 +4469,7 @@ static int ocfs2_defrag_xattr_bucket(struct inode *inode,
->   	/* sort the entries by their name_hash. */
->   	sort(entries, le16_to_cpu(xh->xh_count),
->   	     sizeof(struct ocfs2_xattr_entry),
-> -	     cmp_xe, swap_xe);
-> +	     cmp_xe, NULL);
->   
->   	buf = bucket_buf;
->   	for (i = 0; i < bucket->bu_blocks; i++, buf += blocksize)
-
+Regards,
+Markus
 
