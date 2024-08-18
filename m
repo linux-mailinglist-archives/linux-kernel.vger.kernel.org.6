@@ -1,49 +1,50 @@
-Return-Path: <linux-kernel+bounces-291097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DAE3955D37
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 17:38:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9791F955D39
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 17:39:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95529B20EDA
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 15:38:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C3AE1F212BC
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 15:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C4614375A;
-	Sun, 18 Aug 2024 15:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC07A143C72;
+	Sun, 18 Aug 2024 15:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YNPjGdUA"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="N8hxFEjj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E226E23AD;
-	Sun, 18 Aug 2024 15:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257B433CFC;
+	Sun, 18 Aug 2024 15:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723995515; cv=none; b=HmumZZEgqyW5vo6prhHbQrUofpDAni94GgB7Jhp6g/7rdcqPV3zdL3zLYXBAsQIMOH8qF/dOlnICrsbVP2QiHD3h7cUeAZe8WIefBYg2+ZAHOahG/QvjFvjn1F6XaPw74m1MPxIwguWRkDuCv+KoG360XMDAG8+bWQfAsGAtF28=
+	t=1723995544; cv=none; b=u6LYfbdUTqixrtLvw0mFNteTinXmgLWnPcAFV6MtWhoqfEZacxqA7IIzDPmuJcsAl4xHuj4TdCCHQa8pXKSwFYTgx4sA1q+bNNK5VBGviYfD2poV2JDaJbJA1Kub1gvum11WyDBcyKg7B960aPPK0/G9O0rsBk9T1Wq6sZyOXF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723995515; c=relaxed/simple;
-	bh=ikNGWPWpIGBhSNPr3Cal2HGGnnrBGMuA6NvSuDnS8CU=;
+	s=arc-20240116; t=1723995544; c=relaxed/simple;
+	bh=B0LVImnxgSRlqYvil3XLccM+KZP17A6/A4dNNrbsXLA=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gJnRfFEHCwdV3beOtm4Ku/DrFv1IPAA6q+4XYFATAQ4qAw69ZBHdns8lb5iIz3kg54pDR3DUBUQaTtubnntFkWi693Z6A39fWxkHmOTHIrc3pHTtNsSHPGiOWfdOAcnigamKG9JG4bCH01zJVcg7oyFw8PGqhu6Acz+onm4I+js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YNPjGdUA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DAF6C32786;
-	Sun, 18 Aug 2024 15:38:33 +0000 (UTC)
+	 Content-Disposition; b=Gtfy49EeRVNf3dKT/m+uzTk8IQZd5OmJAiVmZkhNYQCd1GqXYxix1RjjfVQBAfc8+AZu/HyNHFPF1jnYypNjd5ZCev2ucOPExwBNt152CpP5OWIeZEiUqSoKpOFMZCwZOFifdBmeiYY0PU1uBgBIZM1zEebvy2hxJO/qvgI5A/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=N8hxFEjj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92E18C32786;
+	Sun, 18 Aug 2024 15:39:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723995514;
-	bh=ikNGWPWpIGBhSNPr3Cal2HGGnnrBGMuA6NvSuDnS8CU=;
+	s=korg; t=1723995544;
+	bh=B0LVImnxgSRlqYvil3XLccM+KZP17A6/A4dNNrbsXLA=;
 	h=Date:From:To:Cc:Subject:From;
-	b=YNPjGdUASF0K46DBefCXEZTfYXxeIFr6McHjspuBkJzQ20y/+erjKnepVUi+H7SFl
-	 ynv7k+WgWQwQ3NJV2dlM7T2P52kWzHahwOOHlrBdrSAytQJu0NoYDKpnngpQBi9eP0
-	 r/Nc9SUkHlj598mGjL+V1iZgtCNBgJgvlzGPBHPE=
-Date: Sun, 18 Aug 2024 17:38:31 +0200
+	b=N8hxFEjjyLYRqcIFfFWr/66c/jke8+tp1qhOmAGbrJWOPW+QPXD/aGekT8bLR9+QD
+	 OTwUApu9vgQIdcrLLo9HMYZamM7/2hHj8MCTz+lZx0W9liHCupIMAOHhFHEu0gGQ4N
+	 9n2+FlFbpiNmvea4rVTfRrCcRzPPXyv4Gv/dVetY=
+Date: Sun, 18 Aug 2024 17:39:01 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [GIT PULL] USB / Thunderbolt driver fixes for 6.11-rc4
-Message-ID: <ZsIVd2smm0EX27rL@kroah.com>
+Cc: Jiri Slaby <jslaby@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [GIT PULL] TTY / Serial driver fixes for 6.11-rc4
+Message-ID: <ZsIVlRGstB9mxtQU@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,61 +60,42 @@ The following changes since commit 7c626ce4bae1ac14f60076d00eafe71af30450ba:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.11-rc4
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-6.11-rc4
 
-for you to fetch changes up to af8e119f52e9c13e556be9e03f27957554a84656:
+for you to fetch changes up to 0863bffda1131fd2fa9c05b653ad9ee3d8db127e:
 
-  xhci: Fix Panther point NULL pointer deref at full-speed re-enumeration (2024-08-15 16:29:46 +0200)
+  Revert "serial: 8250_omap: Set the console genpd always on if no console suspend" (2024-08-15 07:22:10 +0200)
 
 ----------------------------------------------------------------
-USB / Thunderbolt driver fixes for 6.11-rc4
+TTY/Serial fixes for 6.11-rc4
 
-Here are some small USB and Thunderbolt driver fixes for 6.11-rc4 to
-resolve some reported issues.  Included in here are:
-  - thunderbolt driver fixes for reported problems
-  - typec driver fixes
-  - xhci fixes
-  - new device id for ljca usb driver
+Here are some small tty and serial driver fixes for 6.11-rc4 to resolve
+some reported problems.  Included in here are:
+  - conmakehash.c userspace build issues
+  - fsl_lpuart driver fix
+  - 8250_omap revert for reported regression
+  - atmel_serial rts flag fix
 
 All of these have been in linux-next this week with no reported issues.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Aapo Vienamo (1):
-      thunderbolt: Fix memory leaks in {port|retimer}_sb_regs_write()
+Griffin Kroah-Hartman (1):
+      Revert "serial: 8250_omap: Set the console genpd always on if no console suspend"
 
-Greg Kroah-Hartman (1):
-      Merge tag 'thunderbolt-for-v6.11-rc3' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/westeri/thunderbolt into usb-linus
+Masahiro Yamada (1):
+      tty: vt: conmakehash: remove non-portable code printing comment header
 
-Hans de Goede (1):
-      usb: misc: ljca: Add Lunar Lake ljca GPIO HID to ljca_gpio_hids[]
+Mathieu Othacehe (1):
+      tty: atmel_serial: use the correct RTS flag.
 
-Heikki Krogerus (1):
-      usb: typec: ucsi: Fix the return value of ucsi_run_command()
+Peng Fan (1):
+      tty: serial: fsl_lpuart: mark last busy before uart_add_one_port
 
-Marc Zyngier (1):
-      usb: xhci: Check for xhci->interrupters being allocated in xhci_mem_clearup()
-
-Mathias Nyman (1):
-      xhci: Fix Panther point NULL pointer deref at full-speed re-enumeration
-
-Mika Westerberg (1):
-      thunderbolt: Mark XDomain as unplugged when router is removed
-
-Niklas Neronin (1):
-      usb: xhci: fix duplicate stall handling in handle_tx_event()
-
-Xu Yang (1):
-      Revert "usb: typec: tcpm: clear pd_event queue in PORT_RESET"
-
- drivers/thunderbolt/debugfs.c | 10 ++++++----
- drivers/thunderbolt/switch.c  |  1 +
- drivers/usb/host/xhci-mem.c   |  2 +-
- drivers/usb/host/xhci-ring.c  |  1 +
- drivers/usb/host/xhci.c       |  8 +++++---
- drivers/usb/misc/usb-ljca.c   |  1 +
- drivers/usb/typec/tcpm/tcpm.c |  1 -
- drivers/usb/typec/ucsi/ucsi.c |  2 +-
- 8 files changed, 16 insertions(+), 10 deletions(-)
+ drivers/tty/serial/8250/8250_omap.c | 33 +++++----------------------------
+ drivers/tty/serial/atmel_serial.c   |  2 +-
+ drivers/tty/serial/fsl_lpuart.c     |  1 +
+ drivers/tty/vt/conmakehash.c        | 12 ++----------
+ 4 files changed, 9 insertions(+), 39 deletions(-)
 
