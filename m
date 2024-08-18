@@ -1,66 +1,71 @@
-Return-Path: <linux-kernel+bounces-291176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AED1D955E69
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 19:51:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47ACA955E6E
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 20:00:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6649A281AAF
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 17:51:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3FD5B20EE5
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 18:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B3F14C59A;
-	Sun, 18 Aug 2024 17:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="XJPEn9w3"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B412260C;
+	Sun, 18 Aug 2024 18:00:09 +0000 (UTC)
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D3747F69;
-	Sun, 18 Aug 2024 17:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5153C33999;
+	Sun, 18 Aug 2024 18:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724003509; cv=none; b=BGLApy0bec9UyLmnQPOHLbbi5/9L8+cQy2vVQ1/r9Z2GHR2jAozrPKPtCNhLkNo3qUjWqV5GIHaolG5ZoOq4q3ME0+2pYoS68aRJohWVJkl6Tq+M2C1aqIA3uQUq/jhqfxXD2ElQ2yQmYbPhVQFnaahVp8rYXnGRvtogPz+dFSo=
+	t=1724004008; cv=none; b=KebSWWvzNwN6ec75s76Kuf1IWrb0vJT4edjBXvKkxdZ13kjHea5S0+zo1j5KCVA0BfNsCZxVzXaem78lhSAMAWEZ1ahiOhpTFVqP6+6EpU4BVpU12v95mlXN+3cjHFeA89gNltmcRTEBmmN2It4cofgH93BkwIiL+kq01PApRdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724003509; c=relaxed/simple;
-	bh=tidVSY8rGlKZOZ/mG0BgYK99Ekuv0IZphfvjl/fYTac=;
+	s=arc-20240116; t=1724004008; c=relaxed/simple;
+	bh=kfqsfv57DVDS/vp7L8IMA2Y5h1vow7qmksD9p/I1Yqw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nB0D5htnO2xWZofMRGbxW0uehRbNxbnHtMMvIeRjKtxxqNWk3CJNg1zakH1LzZLVgOaya/ZPULmmp2C990qOzoLwDJVSpDtmlENP3RtkrYiaG2We/vqdfce+Uoald65jljW150Oc3H5AlCyG7Sj+0Th6a7zM936flBxcnfp1Hnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=XJPEn9w3; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2AC57541;
-	Sun, 18 Aug 2024 19:50:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1724003445;
-	bh=tidVSY8rGlKZOZ/mG0BgYK99Ekuv0IZphfvjl/fYTac=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XJPEn9w358MvTwtX9mZJn4kwOCClwMA9nTvzWfvCUsCSXYW0tXEIm9nUbkT/Zcm51
-	 U575WtWwgZVHkV808z4eMjUADz8zbVaPfaz4bBCMcL/w9FnPjN6HCTpaicl52ru8zC
-	 bCqtaoRLB5jovSx5CXxohuVgF3CluwiVfdlAT1Wo=
-Date: Sun, 18 Aug 2024 20:51:18 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: display: renesas,du: narrow interrupts
- and resets per variants
-Message-ID: <20240818175118.GF29465@pendragon.ideasonboard.com>
-References: <20240818173003.122025-1-krzysztof.kozlowski@linaro.org>
- <20240818174137.GC29465@pendragon.ideasonboard.com>
- <4615f52b-4e4c-4fe4-bfef-a66e196410d7@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sRhT+DNjmISyLAwHsRml0vmvmh139KUbTunMOISYZesF+tCu1G/kVFAj/C34FnbCNMuCEIyTWAqOxXkkMrZNKGWXPUfEr+uS19mqb4sFs75Q2BAmY31+cGt0Z3+y9xNYpVzEFG23jArF/rgK5JVj/S30dihddDF8+4yXxq2XzsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37182eee02dso1787991f8f.1;
+        Sun, 18 Aug 2024 11:00:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724004005; x=1724608805;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xv5kxdMF0HY3Xx0ovqxUG45Dd/e2FxVGmprSK3V/Bf8=;
+        b=K30U6dweiYgICO9DBU2P8y5gB0UwBc5w6vWc32jriYT1UZ6HK8qiF434K0gbkJ+neN
+         456yExwcz4BjXvZz+x6v3C5/I2Eyz/BYHFNXvM57of6Xzq0yngOfQsodNExHNOhNlytp
+         W3l1cNu+OIrTn0vjeFOnP6qRxnJe6fXHPotC6Fimo51U/eMLWa7/InjatsXIoiqz2oFf
+         Dp///zDQaImri4k7IMv3wqAjrEgiKopgullJd/hsjU/xuXl3sWmsblGtf+EStx6W+ZGW
+         ycrWepn/vVQs0bhQifnEfmWdLDDEGmlM/nauoRrUZICG60yjdIAwkHUGTIQ2iW0bhBts
+         Fe6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVToPInktZZtu7EVR6eUkMNeuoW0OZwsx3Uwz9wcT75ZzUrnsYZ1dbR3z589QBEf0yPK2J5pxkXGzK7IgPJ/hBnmOUH0MXNswQLzkXoKf7P776nhi+ad1mWvieXibr1rJylQmCRXc2koMT3kiQPrcu3fwerHkspobDiP+KOZf6WlWnt9RyLJxV82h8aWLKZ/2lCsihU6aZjpOERxKD/Z6KO0/M=
+X-Gm-Message-State: AOJu0Yw7Xr0cs6bRzACvbnLif1xzUE8a72VFqebM+12fG6E1fXx9j8c1
+	URHpq+YXv8/aw/SD/XDajgxTd630VL62bTNCXH0z33J62F0aLtRQ
+X-Google-Smtp-Source: AGHT+IHrZK8SSJS6CpKt4gJPEW/knW5lt1z9dWz2r7y2szQ+DSZmly7nlgZblFExw4OUKKjiHYLeqg==
+X-Received: by 2002:a5d:46cb:0:b0:367:9049:da2e with SMTP id ffacd0b85a97d-37194badde1mr5540882f8f.8.1724004005098;
+        Sun, 18 Aug 2024 11:00:05 -0700 (PDT)
+Received: from krzk-bin ([178.197.215.209])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3718983a13esm8562980f8f.22.2024.08.18.11.00.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Aug 2024 11:00:04 -0700 (PDT)
+Date: Sun, 18 Aug 2024 20:00:01 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	quic_imrashai@quicinc.com, quic_jkona@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/8] dt-bindings: clock: qcom: Add SA8775P video clock
+ controller
+Message-ID: <wjiosbt2ysmped3iwbxfwg74snqipfve2hzsysbjbxbwgfjw35@7zjf2qghb62m>
+References: <20240816-sa8775p-mm-v3-v1-0-77d53c3c0cef@quicinc.com>
+ <20240816-sa8775p-mm-v3-v1-1-77d53c3c0cef@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,43 +74,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4615f52b-4e4c-4fe4-bfef-a66e196410d7@linaro.org>
+In-Reply-To: <20240816-sa8775p-mm-v3-v1-1-77d53c3c0cef@quicinc.com>
 
-On Sun, Aug 18, 2024 at 07:44:22PM +0200, Krzysztof Kozlowski wrote:
-> On 18/08/2024 19:41, Laurent Pinchart wrote:
-> > Hi Krzysztof,
-> > 
-> > Thank you for the patch.
-> > 
-> > On Sun, Aug 18, 2024 at 07:30:02PM +0200, Krzysztof Kozlowski wrote:
-> >> Each variable-length property like interrupts or resets must have fixed
-> >> constraints on number of items for given variant in binding.  The
-> >> clauses in "if:then:" block should define both limits: upper and lower.
-> > 
-> > I thought that, when only one of minItems or maxItems was specified, the
-> > other automatically defaulted to the same value. I'm pretty sure I
-> > recall Rob asking me to drop one of the two in some bindings. Has the
-> > rule changes ? Is it documented somewhere ?
+On Fri, Aug 16, 2024 at 12:01:43PM +0530, Taniya Das wrote:
+> Add device tree bindings for the video clock controller on Qualcomm
+> SA8775P platform.
 > 
-> New dtschema changed it and, even if previous behavior is restored, the
-> size in if:then: always had to be constrained. You could have skipped
-> one side of limit if it was equal to outer/top-level limit, e.g:
-> 
-> properties:
->   clocks:
->     minItems: 1
->     maxItems: 2
-> 
-> 
-> if:then:properties:
->   clocks:
->     minItems: 2
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
 
-Where can I find a description of the behaviour of the new dtschema
-(hopefully with some documentation) ?
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
--- 
-Regards,
-
-Laurent Pinchart
+Best regards,
+Krzysztof
 
