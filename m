@@ -1,221 +1,133 @@
-Return-Path: <linux-kernel+bounces-290989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A48B955BE5
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 10:02:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4476E955BF6
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 10:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDDF91F216E1
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 08:02:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2850F1C20FF4
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 08:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385CE179AA;
-	Sun, 18 Aug 2024 08:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A4D17BA5;
+	Sun, 18 Aug 2024 08:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="E3Uevejq";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ltivvQaN";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="E3Uevejq";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ltivvQaN"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ft3ik8jk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7611417993;
-	Sun, 18 Aug 2024 08:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B155217BA0
+	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 08:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723968135; cv=none; b=sy3cFdiajtXWn7lYSD2IemdDPLVIIq31uZATeygWujRjmqqx7mbj7pOsxosqgrXwwgEVLdkg6FsFF9j/CDcTtrBGr5uSIaTouGutTY3WY/bkyPet7Nu+nuP+29o0dNC7448lM5m0Yzq0kun9NO3BDxWtG42hGkpBB2e2uTSU1Iw=
+	t=1723970049; cv=none; b=lzt46K8GQGFjWd5R609P85kO3nAsEPpfZEOiiiCpHSbFRaZHnEOm1ph3ZXYAbh91fj74XpMTRn3BN6o4DQB4KIe3AZuBwBkmPw8fgvx3cHeJZcHmO++Q18Z+91rLo4lR4bKaAszIVhVTc3+rsOf8UbXCKalh3UFmVdONgCvbQlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723968135; c=relaxed/simple;
-	bh=d5ke7UFVpyIUJSVCgMZIUzaxhV+6Je8WoGvdRhjeKQ8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=otyiiCGGOFfvuuR4FxWoPpB+r98tOxc5iUdE60qU88mFIUn/Q8pfW8gwxKaurmlNAOPASM0anCH5QZDSjM+zJW/W5FwpVaONd7IvDEgdMu72frJHdiyGaOSFZ3VJ5TuVHmARvg8TL8b55zu+2b79l9lUdMOF0Jm1JPUG+fD/nFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=E3Uevejq; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ltivvQaN; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=E3Uevejq; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ltivvQaN; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 54489226AE;
-	Sun, 18 Aug 2024 08:02:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723968131; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=03RAG1GbRJWY/6jNzq3WTvIQdSfxH6+QOJGFqzQaIPU=;
-	b=E3UevejqXaoY0+FmPeRJIPj85Ek09tOEjGHJTsPeLVJrHSf30cT4YGMsUaGVg6Mez8wEd+
-	cek6Cnpd8e/jTgrlp1JzRyJKwKPINBDCRZghQLDiPhVktM2xBqZH+8owdjwhagZtNb24T0
-	QYtTbnNEfyZyCJrDcZs6Ak4nALT9qYQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723968131;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=03RAG1GbRJWY/6jNzq3WTvIQdSfxH6+QOJGFqzQaIPU=;
-	b=ltivvQaNfsfLsH+kf31mN92C4XCWSSCntAmHOCWli5xQWGpJC72pUcBVfGdBbYq7h9Kqhy
-	HhovlmdUTxwlrLDw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=E3Uevejq;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ltivvQaN
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723968131; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=03RAG1GbRJWY/6jNzq3WTvIQdSfxH6+QOJGFqzQaIPU=;
-	b=E3UevejqXaoY0+FmPeRJIPj85Ek09tOEjGHJTsPeLVJrHSf30cT4YGMsUaGVg6Mez8wEd+
-	cek6Cnpd8e/jTgrlp1JzRyJKwKPINBDCRZghQLDiPhVktM2xBqZH+8owdjwhagZtNb24T0
-	QYtTbnNEfyZyCJrDcZs6Ak4nALT9qYQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723968131;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=03RAG1GbRJWY/6jNzq3WTvIQdSfxH6+QOJGFqzQaIPU=;
-	b=ltivvQaNfsfLsH+kf31mN92C4XCWSSCntAmHOCWli5xQWGpJC72pUcBVfGdBbYq7h9Kqhy
-	HhovlmdUTxwlrLDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 01FAC136ED;
-	Sun, 18 Aug 2024 08:02:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 95odOoKqwWYnRgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Sun, 18 Aug 2024 08:02:10 +0000
-Date: Sun, 18 Aug 2024 10:02:52 +0200
-Message-ID: <87a5ha1cnn.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Ivan Orlov <ivan.orlov0322@gmail.com>
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	corbet@lwn.net,
-	broonie@kernel.org,
-	shuah@kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	christophe.jaillet@wanadoo.fr,
-	aholzinger@gmx.de
-Subject: Re: [PATCH v5 0/4] Introduce userspace-driven ALSA timers
-In-Reply-To: <20240813120701.171743-1-ivan.orlov0322@gmail.com>
-References: <20240813120701.171743-1-ivan.orlov0322@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1723970049; c=relaxed/simple;
+	bh=25yu9p37vsAbdqZRphRP+Y2t3rTyzWYj9NBH5ai5GQU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BvMAgWEurzj+uEsLttfzAxZ5AHmuW2X/Wdkr5XUAyfLxmkaiTRR1OU3pDTFCdxdGLAK+ci3KcLyflfl68kCnzXokIFPQkallmU51ha6gWPDs9yrTG9B2ShJ9sj0M4Htl+zFBUnbg6RDHajY+toOLP/Ds8+oEs5ooFhInUb2Ppcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ft3ik8jk; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723970047; x=1755506047;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=25yu9p37vsAbdqZRphRP+Y2t3rTyzWYj9NBH5ai5GQU=;
+  b=ft3ik8jkvIN0aUAxMrEW6DNQQokWlEDN5cELgp+fJjt+A3NgIbLMB0nS
+   D0vf3OJztUj4UYzk6E68vHzRIkSLOtU8fWWxS7ZDEoy76Byvw+niiGQS1
+   vBRQ7DkLSD7VA/zSyA7eHsDJipeStlx3gtM0NNiywQDYXiVaZF3WC6Cxk
+   TGIPJLG2wbtulWUjg4rt6W4a144LBwefWb8T/Qef8fxxT6PQLipA5uyHB
+   xAO8eWOoQZDzvW8Bz9J8/cJHhdtDRhgASjkbOAe/fJBoDmmmYMJ+R1j38
+   SZsGpmbyylWB29KflKOe2v3VywymkGnJYcri2ExuHqWNa3Em+oIPOVmZn
+   A==;
+X-CSE-ConnectionGUID: GJdFd3HHTQWYThJXnO7AeQ==
+X-CSE-MsgGUID: s9O0yjkMQNy3bF3y+DNOEg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11167"; a="22038450"
+X-IronPort-AV: E=Sophos;i="6.10,156,1719903600"; 
+   d="scan'208";a="22038450"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2024 01:34:07 -0700
+X-CSE-ConnectionGUID: iJOolUfjRQ+dRXYPgLXGiw==
+X-CSE-MsgGUID: R4V0vhG9TGWmbRjYobBZjw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,156,1719903600"; 
+   d="scan'208";a="59790703"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 18 Aug 2024 01:34:04 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sfbMQ-00087u-0V;
+	Sun, 18 Aug 2024 08:34:02 +0000
+Date: Sun, 18 Aug 2024 16:33:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jocelyn Falempe <jfalempe@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	John Ogness <john.ogness@linutronix.de>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	"Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+	bluescreen_avenger@verizon.net, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Jocelyn Falempe <jfalempe@redhat.com>
+Subject: Re: [PATCH v2 3/5] drm/log: Introduce a new boot logger to draw the
+ kmsg on the screen
+Message-ID: <202408181614.AAr0qM24-lkp@intel.com>
+References: <20240816125612.1003295-4-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 54489226AE
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de,wanadoo.fr];
-	FREEMAIL_CC(0.00)[perex.cz,suse.com,lwn.net,kernel.org,vger.kernel.org,wanadoo.fr,gmx.de];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:mid,suse.de:dkim]
-X-Spam-Score: -4.01
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240816125612.1003295-4-jfalempe@redhat.com>
 
-On Tue, 13 Aug 2024 14:06:57 +0200,
-Ivan Orlov wrote:
-> 
-> There are multiple possible timer sources which could be useful for
-> the sound stream synchronization: hrtimers, hardware clocks (e.g. PTP),
-> timer wheels (jiffies). Currently, using one of them to synchronize
-> the audio stream of snd-aloop module would require writing a
-> kernel-space driver which exports an ALSA timer through the
-> snd_timer interface.
-> 
-> However, it is not really convenient for application developers, who may
-> want to define their custom timer sources for audio synchronization.
-> 
-> For instance, we could have a network application which receives frames
-> and sends them to snd-aloop pcm device, and another application
-> listening on the other end of snd-aloop. It makes sense to transfer a
-> new period of data only when certain amount of frames is received
-> through the network, but definitely not when a certain amount of jiffies
-> on a local system elapses. Since all of the devices are purely virtual
-> it won't introduce any glitches and will help the application developers
-> to avoid using sample-rate conversion.
-> 
-> This patch series introduces userspace-driven ALSA timers: virtual
-> timers which are created and controlled from userspace. The timer can
-> be created from the userspace using the new ioctl SNDRV_TIMER_IOCTL_CREATE.
-> After creating a timer, it becomes available for use system-wide, so it
-> can be passed to snd-aloop as a timer source (timer_source parameter
-> would be "-1.SNDRV_TIMER_GLOBAL_UDRIVEN.{timer_id}"). When the userspace
-> app decides to trigger a timer, it calls another ioctl
-> SNDRV_TIMER_IOCTL_TRIGGER on the file descriptor of a timer. It
-> initiates a transfer of a new period of data.
-> 
-> Userspace-driven timers are associated with file descriptors. If the
-> application wishes to destroy the timer, it can simply release the file
-> descriptor of a virtual timer.
-> 
-> I believe introducing new ioctl calls is quite inconvenient (as we have
-> a limited amount of them), but other possible ways of app <-> kernel
-> communication (like virtual FS) seem completely inappropriate for this
-> task (but I'd love to discuss alternative solutions).
-> 
-> This patch series also updates the snd-aloop module so the global timers
-> can be used as a timer_source for it (it allows using userspace-driven
-> timers as timer source).
-> 
-> V1 -> V2:
-> - Fix some problems found by Christophe Jaillet
-> <christophe.jaillet@wanadoo.fr>
-> V2 -> V3:
-> - Add improvements suggested by Takashi Iwai <tiwai@suse.de>
-> V3 -> V4:
-> - Address comments from Jaroslav Kysela <perex@perex.cz> and Mark Brown
-> <broonie@kernel.org>
-> V4 -> V5:
-> - Add missing error processing noticed by Takashi Iwai <tiwai@suse.de>
-> - Return timer file descriptor as part of the snd_timer_uinfo structure.
-> This is a more standard way of using ioctl interface, where the return
-> value of the ioctl is either 0 or an error code.
-> 
-> Please, find the patch-specific changelog in the following patches.
-> 
-> Ivan Orlov (4):
->   ALSA: aloop: Allow using global timers
->   Docs/sound: Add documentation for userspace-driven ALSA timers
->   ALSA: timer: Introduce virtual userspace-driven timers
->   selftests: ALSA: Cover userspace-driven timers with test
+Hi Jocelyn,
 
-Now applied to for-next branch.
+kernel test robot noticed the following build warnings:
 
+[auto build test WARNING on 8befe8fa5a4e4b30787b17e078d9d7b5cb92ea19]
 
-thanks,
+url:    https://github.com/intel-lab-lkp/linux/commits/Jocelyn-Falempe/drm-panic-Squash-of-pending-series/20240816-205859
+base:   8befe8fa5a4e4b30787b17e078d9d7b5cb92ea19
+patch link:    https://lore.kernel.org/r/20240816125612.1003295-4-jfalempe%40redhat.com
+patch subject: [PATCH v2 3/5] drm/log: Introduce a new boot logger to draw the kmsg on the screen
+config: arm-randconfig-r121-20240818 (https://download.01.org/0day-ci/archive/20240818/202408181614.AAr0qM24-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
+reproduce: (https://download.01.org/0day-ci/archive/20240818/202408181614.AAr0qM24-lkp@intel.com/reproduce)
 
-Takashi
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408181614.AAr0qM24-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/gpu/drm/drm_log.c:66:17: sparse: sparse: symbol 'drm_log_buf' was not declared. Should it be static?
+>> drivers/gpu/drm/drm_log.c:384:1: sparse: sparse: symbol 'drm_log_work' was not declared. Should it be static?
+   drivers/gpu/drm/drm_log.c: note: in included file (through include/linux/rculist.h, include/linux/console.h):
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+
+vim +/drm_log_buf +66 drivers/gpu/drm/drm_log.c
+
+    59	
+    60	/*
+    61	 * A circular buffer, with the last kmsg logs to print.
+    62	 * 8K is more than what can be drawn on most monitors.
+    63	 */
+    64	#define CIRC_BUF_SIZE	(1 << 13)
+    65	#define CIRC_BUF_MASK	(CIRC_BUF_SIZE - 1)
+  > 66	struct circ_buf drm_log_buf;
+    67	static DEFINE_SPINLOCK(drm_log_writer_lock);
+    68	static DEFINE_SPINLOCK(drm_log_reader_lock);
+    69	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
