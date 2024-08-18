@@ -1,45 +1,59 @@
-Return-Path: <linux-kernel+bounces-291016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AC67955C3D
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 12:45:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DCA5955C34
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 12:44:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FAB01F214FA
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 10:45:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5D521F21196
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 10:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93E0144D01;
-	Sun, 18 Aug 2024 10:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89A761BC3C;
+	Sun, 18 Aug 2024 10:43:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="gjSqJwH1"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rB8D/Rah"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6AE75809
-	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 10:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB29238384;
+	Sun, 18 Aug 2024 10:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723977830; cv=none; b=n3Lc2opUUfSHLagKYYpPJU3eVPSGGN2OwhSwq6aPCEQWBZFCm5OirToRNAL69FamW/it5HyOxwvyxJUMWuHy3IqaykgQsGDjuqPVzxoJscDKZC+fBGnhQXpa43uvKqXBJE+Z58dgT9uLkZIh/8Y3XUK6yIlix4yG21D8oWA6oS0=
+	t=1723977818; cv=none; b=jwp6ZY6A7Kj6DUYI7DuKAfot1aSLmY25ymaUaI31vcZ0XxZjC6uXUD3uxOPd+xAvfkA0eUayMateD2eUDP87CMWh94vAE8AixlHpdE8lhaSvto8wL0fyE2B61wws+7RIETvtKbjzapi/j+Z9TEp/Q8kfQiD+bNMaEsgVWSC2IQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723977830; c=relaxed/simple;
-	bh=zNpawsVFRDk6vrSECsGfQPnlXBxT3clIu57tYxQtJTA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=vFLWYSq538k32P3IRqO0xNx9SFxbeMz7fgecpk4EHcJS+9cdKGPmq2ZzGzqdD5UnWAHp8zJ3oeLZttqqhtOYSoWjgX1rkaMJuOfqDKMFS6L6zYPMNIYGBtEab31Wjue/WcN1AvOqoEW1AkTF36VdT2lp6zMZxU8632xbovES9xI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=gjSqJwH1; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1723977821;
-	bh=zNpawsVFRDk6vrSECsGfQPnlXBxT3clIu57tYxQtJTA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=gjSqJwH1l3YisR4wu4uoMTnT4VyqZ32lmXhUjRNH/HAKopGorWiO3lKf6+CBFj2Md
-	 kiclCPNQShJaichlb3I5dsxf86EqTtfX8xKquCumfJU8CwDaCiWnMzlulCJ2VXq3xN
-	 m+iVpg+Z8gVFPs8cXdfCyDfgadk65qI7XgPGBVp4=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sun, 18 Aug 2024 12:43:34 +0200
-Subject: [PATCH 10/12] drm/edid: add a helper to compare two EDIDs
+	s=arc-20240116; t=1723977818; c=relaxed/simple;
+	bh=rCdP5URlZYm+NPBg5WLaSak0xP7BHvZX5yXjGEZvYzE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CH2a/eiu6c2BlmAxLTZiYxlwCSQFY036aaPXA8khCjWnunf6j67w3A4f8h6muohKdn2qlJWpusgrY2gjTOW3IL7NkdKNI5vA+soLOmxfPE3Bbj6/+oQCPjFaf3Uj0ulcd1jx43O9jEq3Ev1fFNEnucu7q30jhG+CXSMu9UC1Qhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rB8D/Rah; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 121BAC32786;
+	Sun, 18 Aug 2024 10:43:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723977818;
+	bh=rCdP5URlZYm+NPBg5WLaSak0xP7BHvZX5yXjGEZvYzE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=rB8D/RahpCQQCg6W6bLp6TlMu846obvdQ29lzrB45XX3KQZM2815ExD0G6EK5sHsD
+	 aJIBwjYCcnk9TNtKGM0nIho4gUxX4FczOMVt7DvPxq0YyKat4U6ntIsgSb5usWKc39
+	 xvSYLWaesVl6a+w/Ecxj3ZvUsV2TN4ZNiM6Rx8WoxBbYbMYGX6fNPl6mZb4P1QTY7l
+	 EqncrjPsY1yNk1dotjSd4wc66EPgftsZ75QEV4W30L7Zin+wVr8QjvW8v12V4Sz/gf
+	 Tq/8FaJsuRyMio7gGxbpTTPe45MwdPDWdmMZ4tMqgEcR6+IFLA06kazM85gBZ6Nkg0
+	 rX1mxoPj3xbaw==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	don <zds100@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	mhiramat@kernel.org
+Subject: [PATCH v3 5/5] sefltests/tracing: Add a test for tracepoint events on modules
+Date: Sun, 18 Aug 2024 19:43:35 +0900
+Message-Id: <172397781494.286558.7581515061075998225.stgit@devnote2>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <172397776900.286558.8986646398199362026.stgit@devnote2>
+References: <172397776900.286558.8986646398199362026.stgit@devnote2>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,84 +62,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240818-amdgpu-drm_edid-v1-10-aea66c1f7cf4@weissschuh.net>
-References: <20240818-amdgpu-drm_edid-v1-0-aea66c1f7cf4@weissschuh.net>
-In-Reply-To: <20240818-amdgpu-drm_edid-v1-0-aea66c1f7cf4@weissschuh.net>
-To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
- Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
- Alex Deucher <alexander.deucher@amd.com>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, 
- Daniel Vetter <daniel@ffwll.ch>, jinzh <jinzh@github.amd.com>, 
- Aric Cyr <Aric.Cyr@amd.com>, Alan Liu <HaoPing.Liu@amd.com>, 
- Tony Cheng <Tony.Cheng@amd.com>, 
- Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, Harry Wentland <Harry.Wentland@amd.com>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723977820; l=1920;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=zNpawsVFRDk6vrSECsGfQPnlXBxT3clIu57tYxQtJTA=;
- b=LhDAhouDFnqt2Qjronm11swSH/altKLu1DfmQcdZo7y7dhXuRu1xxeREPmyIR1vaiy9f7GKjP
- 7YJxlXRJaQNDRkpUIhH7V5gANCsX9m1W8wm6itHksC6oDy9ILKRD3Ff
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-As struct drm_edid is opaque, drivers can't directly memcmp() the
-contained data. Add a helper to provide this functionality.
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+Add a test case for tracepoint events on modules. This checks if it can add
+and remove the events correctly.
+
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 ---
- drivers/gpu/drm/drm_edid.c | 18 ++++++++++++++++++
- include/drm/drm_edid.h     |  1 +
- 2 files changed, 19 insertions(+)
+ Changes in v3:
+  - Add not-loaded module test.
+---
+ tools/testing/selftests/ftrace/config              |    1 
+ .../test.d/dynevent/add_remove_tprobe_module.tc    |   61 ++++++++++++++++++++
+ 2 files changed, 62 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/add_remove_tprobe_module.tc
 
-diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-index 69fb11741abd..c2493c983a64 100644
---- a/drivers/gpu/drm/drm_edid.c
-+++ b/drivers/gpu/drm/drm_edid.c
-@@ -1840,6 +1840,24 @@ static bool drm_edid_eq(const struct drm_edid *drm_edid,
- 	return true;
- }
- 
-+/**
-+ * drm_edid_equal - compare two EDID
-+ * @drm_edid_a: First EDID data
-+ * @drm_edid_b: Second EDID data
-+ *
-+ * Compare two EDIDs for equality (including extensions)
-+ *
-+ * Return: True if the EDIDs are equal, false otherwise.
-+ */
-+bool drm_edid_equal(const struct drm_edid *drm_edid_a, const struct drm_edid *drm_edid_b)
-+{
-+	if (!drm_edid_b)
-+		return !drm_edid_a;
+diff --git a/tools/testing/selftests/ftrace/config b/tools/testing/selftests/ftrace/config
+index 048a312abf40..544de0db5f58 100644
+--- a/tools/testing/selftests/ftrace/config
++++ b/tools/testing/selftests/ftrace/config
+@@ -20,6 +20,7 @@ CONFIG_PREEMPT_TRACER=y
+ CONFIG_PROBE_EVENTS_BTF_ARGS=y
+ CONFIG_SAMPLES=y
+ CONFIG_SAMPLE_FTRACE_DIRECT=m
++CONFIG_SAMPLE_TRACE_EVENTS=m
+ CONFIG_SAMPLE_TRACE_PRINTK=m
+ CONFIG_SCHED_TRACER=y
+ CONFIG_STACK_TRACER=y
+diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_tprobe_module.tc b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_tprobe_module.tc
+new file mode 100644
+index 000000000000..d319d5ed4226
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/dynevent/add_remove_tprobe_module.tc
+@@ -0,0 +1,61 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: Generic dynamic event - add/remove tracepoint probe events on module
++# requires: dynamic_events "t[:[<group>/][<event>]] <tracepoint> [<args>]":README
 +
-+	return drm_edid_eq(drm_edid_a, drm_edid_b->edid, drm_edid_b->size);
-+}
-+EXPORT_SYMBOL(drm_edid_equal);
++rmmod trace-events-sample ||:
++if ! modprobe trace-events-sample ; then
++  echo "No trace-events sample module - please make CONFIG_SAMPLE_TRACE_EVENTS=m"
++  exit_unresolved;
++fi
++trap "rmmod trace-events-sample" EXIT
 +
- enum edid_block_status {
- 	EDID_BLOCK_OK = 0,
- 	EDID_BLOCK_READ_FAIL,
-diff --git a/include/drm/drm_edid.h b/include/drm/drm_edid.h
-index a5b377c4a342..35b40a9d3350 100644
---- a/include/drm/drm_edid.h
-+++ b/include/drm/drm_edid.h
-@@ -456,6 +456,7 @@ drm_display_mode_from_cea_vic(struct drm_device *dev,
- const struct drm_edid *drm_edid_alloc(const void *edid, size_t size);
- const struct drm_edid *drm_edid_dup(const struct drm_edid *drm_edid);
- void drm_edid_free(const struct drm_edid *drm_edid);
-+bool drm_edid_equal(const struct drm_edid *drm_edid_a, const struct drm_edid *drm_edid_b);
- bool drm_edid_valid(const struct drm_edid *drm_edid);
- const struct edid *drm_edid_raw(const struct drm_edid *drm_edid);
- const struct drm_edid *drm_edid_read(struct drm_connector *connector);
-
--- 
-2.46.0
++echo 0 > events/enable
++echo > dynamic_events
++
++TRACEPOINT1=foo_bar
++TRACEPOINT2=foo_bar_with_cond
++
++echo "t:myevent1 $TRACEPOINT1" >> dynamic_events
++echo "t:myevent2 $TRACEPOINT2" >> dynamic_events
++
++grep -q myevent1 dynamic_events
++grep -q myevent2 dynamic_events
++test -d events/tracepoints/myevent1
++test -d events/tracepoints/myevent2
++
++echo "-:myevent2" >> dynamic_events
++
++grep -q myevent1 dynamic_events
++! grep -q myevent2 dynamic_events
++
++echo > dynamic_events
++
++clear_trace
++
++:;: "Try to put a probe on a tracepoint in non-loaded module" ;:
++rmmod trace-events-sample
++
++echo "t:myevent1 $TRACEPOINT1" >> dynamic_events
++echo "t:myevent2 $TRACEPOINT2" >> dynamic_events
++
++grep -q myevent1 dynamic_events
++grep -q myevent2 dynamic_events
++test -d events/tracepoints/myevent1
++test -d events/tracepoints/myevent2
++
++echo 1 > events/tracepoints/enable
++
++modprobe trace-events-sample
++
++sleep 2
++
++grep -q "myevent1" trace
++grep -q "myevent2" trace
++
++rmmod trace-events-sample
++trap "" EXIT
++
++echo 0 > events/tracepoints/enable
++echo > dynamic_events
++clear_trace
 
 
