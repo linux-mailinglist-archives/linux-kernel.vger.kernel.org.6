@@ -1,114 +1,226 @@
-Return-Path: <linux-kernel+bounces-290975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4223E955BC8
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 09:23:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38363955BCA
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 09:24:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D272F1F2111B
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 07:23:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BB481F213C7
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 07:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3657415E96;
-	Sun, 18 Aug 2024 07:23:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE1414A90;
+	Sun, 18 Aug 2024 07:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XLp8SjfF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sr7RDOpR"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F4A12B8B;
-	Sun, 18 Aug 2024 07:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F2911CAF
+	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 07:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723965817; cv=none; b=bnuOHBMKfNcSiwRdRQK+l+T/2fvYzlE0xjrnchutcd8/eNjUSelPyxKmxuht5urK/b0LkkvL2zvQsFSWQQ4aj5qVai2MQgs7UGSli4+SggTT9t9OCPIN0o+pd2ed4q5fFvmgRezSNUw7QoRoxdht1bXHySyujwI8j2psAPK1RE4=
+	t=1723965866; cv=none; b=Bg03kZZfj5vRBfx+87QFq3UkYoDlBiIj2JTamd+CR0CzJ/ePTnO/qiZf+RuIf9oCCb5yspVd0CInh2O5sbA0wKtsqHWNJXgel5RybTckLbEECWVCbf2Se5HHQwy5EYMduWZaauae5Y4uch3wPO5qTp/Q37LnKCWJTuInmpqPYJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723965817; c=relaxed/simple;
-	bh=DHAmu4fXPz6F0RDPNtgs02ef096s4MjYv2NyO32nzLc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AD+9du2HX24g/SjwbhsccTDNch0T+mnipnmwDjq7RPLsxVumOFLD2xjTIv+R3nTPYMJ3I31HYqJiyiG2Q7fBEdEXIyULnj2ma95gbYhT6f0V/EtCFgxMa2YFmRRAaHkd/yYdrw9aic3mQNT2iCmCdrxBG+Bznt3NUCC7EvWgn3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XLp8SjfF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51386C32786;
-	Sun, 18 Aug 2024 07:23:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723965816;
-	bh=DHAmu4fXPz6F0RDPNtgs02ef096s4MjYv2NyO32nzLc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XLp8SjfFEK+0/h7cnJLggkev7mXCNK5czCM7bE9auhDeA6FMhRcAXC4yQG3bW24Kk
-	 yeDdcfVmrO+iYVxEQvfJ10/trRvZD1X+M7Int33iXzjyhAGamlmYBNeVoEQIAFfgKZ
-	 xHCBFRP57e0DHUleVGivgTCf2vX0l753iijsUrjmAOgdK3CmHUF6i8Fyl7t0vjBdeW
-	 XHy9t/GxEmExCa8Dv/f3Gsyz5hKb9CRMK+Ov/rXljV44UlD8DKW1jYDyxdPPmjxZ7j
-	 gh2HwxCk3ndOV819Q74sMzUIwWwj313xfubv61YsDHCefoG1i+yiPnUdFboiqc190k
-	 q84tGhGT4Tfww==
-Date: Sun, 18 Aug 2024 12:53:32 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Bard Liao <yung-chuan.liao@linux.intel.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pierre-louis.bossart@linux.intel.com, bard.liao@intel.com
-Subject: Re: [PATCH] soundwire: intel_auxdevice: add kernel parameter for
- mclk divider
-Message-ID: <ZsGhdFm8nYkm5Y5w@vaman>
-References: <20240806083840.24094-1-yung-chuan.liao@linux.intel.com>
+	s=arc-20240116; t=1723965866; c=relaxed/simple;
+	bh=rTHrz1sVOulNiYayGf/NWFUCDle4p+WyNoxxJo9sHug=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vdg219KmaxJ3Z4o2NgNO/Bt7Uks1nDy/4M8Gt7tRauCj2Wkw0OTTF2dzfXka34XgVvFeJ7G8QRolcf4C8jLI8Z9nEYLOGS3Pd/WKEjOIes5SAeo9t5pquLdwedTOKr5nTctPmRMs4EDBhDw0aJV9SzhaBwzfAYqKmECtszMXiXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sr7RDOpR; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3db1e21b0e4so2196503b6e.2
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 00:24:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723965863; x=1724570663; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W/4wel2er+Y+8qgdhA7QELr/jTAEL57Ae/A8Ya8smkc=;
+        b=Sr7RDOpR/WFk5y3crsQUzlPkQsJQxR/KvRAxm+dlW4wYXh792yWrk7ig/isTPp24NO
+         m7tKdfcy3mDLQ8+rhcs5PwFCuG8/FDaEeU8nPkX62G7lU8EJeVupTxPCDz6M2HAK/A8X
+         z5jikRlbjsQ6LyDP8wLJYhOT/LL9Zw9XL/NHLx6dp5WUFGMaqxxCeHC4YSNYTGMRErH7
+         T3lt9evMR6QBUJ7bBPinFBXRnYoLMEr5EXfgHWICehE1r9r+HXBFx1Jit90n+7j80tge
+         lL4su1APjCocQGVLKY6v7cEHnPRuSk6nicMn3QtnBVIIzk2QCfGTTZH+mYlCaTTwS8rI
+         fEBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723965863; x=1724570663;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W/4wel2er+Y+8qgdhA7QELr/jTAEL57Ae/A8Ya8smkc=;
+        b=FQwB87oD2YAGfdCBKAPQWRT81Oq9X/l/jhDZz1Z0SQMkdHg0vRP4P83W5NW41uugjX
+         lf80oI7rYaTWJE2gFXPd7zQSq5Vziu+pZ73mswpj9KuEz2oNuH95IA4RpP+Hjblf9HJl
+         MEC5mYfKSOrLhnmLBoSY7znRUogpax+w0Idj3W8HbhaIOpmIwyGLz0Ti//tMV7kPXZxt
+         T0o31aJZmeioLtxFg2A3UqyZKQf+KjR5UzicoFC8w5gVFmK6Oap7xoqMK5ZDJyDLJGKX
+         C8vobTnFE/Pi1QfPTlvY+zWMudjqwDBnxv9tp+ro8a7zQRxphi4OXtn6Lx9JugDQ79Uv
+         5PNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWgewSZ/G38KgmlDSMDmifQd+gOV5ZC1OLkV2wiAuvoGATY9UCtoR+6/7GK69XJffGSawGMIhq5HLN+oPCyxMA/drPdSinXAhHD0Zd0
+X-Gm-Message-State: AOJu0Yxca3DirNNDtE47aiSi/rOHmZaAdrKocWcWyfwkY+bFjgs6lT0q
+	QUn0riYGep+eqTCYhRHM2e0lQBlKZv/6OreDiH0RIIInfTUfqGUw
+X-Google-Smtp-Source: AGHT+IGsv4PuPwr9QsF658mBwaaoRWK38GUFATboGtPG6yrFi3MrCZRRZy/VfscnEYXs5akOAzXnQQ==
+X-Received: by 2002:a05:6808:1693:b0:3dc:39e9:df6 with SMTP id 5614622812f47-3dd3ade0dfcmr9031124b6e.23.1723965863488;
+        Sun, 18 Aug 2024 00:24:23 -0700 (PDT)
+Received: from distilledx.srmu.edu.in ([103.4.221.252])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b6356929sm5704860a12.73.2024.08.18.00.24.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Aug 2024 00:24:23 -0700 (PDT)
+From: Tejas Vipin <tejasvipin76@gmail.com>
+To: agx@sigxcpu.org,
+	kernel@puri.sm,
+	neil.armstrong@linaro.org
+Cc: dianders@chromium.org,
+	quic_jesszhan@quicinc.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Tejas Vipin <tejasvipin76@gmail.com>
+Subject: [PATCH] drm/panel: mantix-mlaf057we51: transition to mipi_dsi wrapped functions
+Date: Sun, 18 Aug 2024 12:53:56 +0530
+Message-ID: <20240818072356.870465-1-tejasvipin76@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806083840.24094-1-yung-chuan.liao@linux.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On 06-08-24, 16:38, Bard Liao wrote:
-> From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> 
-> Add a kernel parameter to work-around discrepancies between hardware
-> and platform firmware, it's not unusual to see e.g. 38.4MHz listed in
-> _DSD properties as the SoundWire clock source, but the hardware may be
-> based on a 19.2 MHz mclk source.
+Changes the mantix-mlaf057we51 panel to use multi style functions for
+improved error handling.
 
-I think this should be documented in kernel-parameters.txt?
+Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+---
+ .../gpu/drm/panel/panel-mantix-mlaf057we51.c  | 79 +++++++------------
+ 1 file changed, 27 insertions(+), 52 deletions(-)
 
-> 
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
-> ---
->  drivers/soundwire/intel_auxdevice.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/soundwire/intel_auxdevice.c b/drivers/soundwire/intel_auxdevice.c
-> index dff49c5ce5b3..e372195b07b3 100644
-> --- a/drivers/soundwire/intel_auxdevice.c
-> +++ b/drivers/soundwire/intel_auxdevice.c
-> @@ -41,6 +41,10 @@ static int md_flags;
->  module_param_named(sdw_md_flags, md_flags, int, 0444);
->  MODULE_PARM_DESC(sdw_md_flags, "SoundWire Intel Master device flags (0x0 all off)");
->  
-> +static int mclk_divider;
-> +module_param_named(sdw_mclk_divider, mclk_divider, int, 0444);
-> +MODULE_PARM_DESC(sdw_mclk_divider, "SoundWire Intel mclk divider");
-> +
->  struct wake_capable_part {
->  	const u16 mfg_id;
->  	const u16 part_id;
-> @@ -142,8 +146,12 @@ static int sdw_master_read_intel_prop(struct sdw_bus *bus)
->  				 "intel-sdw-ip-clock",
->  				 &prop->mclk_freq);
->  
-> -	/* the values reported by BIOS are the 2x clock, not the bus clock */
-> -	prop->mclk_freq /= 2;
-> +	if (mclk_divider)
-> +		/* use kernel parameter for BIOS or board work-arounds */
-> +		prop->mclk_freq /= mclk_divider;
-> +	else
-> +		/* the values reported by BIOS are the 2x clock, not the bus clock */
-> +		prop->mclk_freq /= 2;
->  
->  	fwnode_property_read_u32(link,
->  				 "intel-quirk-mask",
-> -- 
-> 2.43.0
-
+diff --git a/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c b/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c
+index ea4a6bf6d35b..4db852ffb0f6 100644
+--- a/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c
++++ b/drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c
+@@ -23,7 +23,7 @@
+ 
+ /* Manufacturer specific Commands send via DSI */
+ #define MANTIX_CMD_OTP_STOP_RELOAD_MIPI 0x41
+-#define MANTIX_CMD_INT_CANCEL           0x4C
++#define MANTIX_CMD_INT_CANCEL           0x4c
+ #define MANTIX_CMD_SPI_FINISH           0x90
+ 
+ struct mantix {
+@@ -45,82 +45,57 @@ static inline struct mantix *panel_to_mantix(struct drm_panel *panel)
+ 	return container_of(panel, struct mantix, panel);
+ }
+ 
+-static int mantix_init_sequence(struct mantix *ctx)
++static void mantix_init_sequence(struct mipi_dsi_multi_context *dsi_ctx)
+ {
+-	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+-	struct device *dev = ctx->dev;
+-
+ 	/*
+ 	 * Init sequence was supplied by the panel vendor.
+ 	 */
+-	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A);
+-
+-	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_INT_CANCEL, 0x03);
+-	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A, 0x03);
+-	mipi_dsi_generic_write_seq(dsi, 0x80, 0xA9, 0x00);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5a);
+ 
+-	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5A, 0x09);
+-	mipi_dsi_generic_write_seq(dsi, 0x80, 0x64, 0x00, 0x64, 0x00, 0x00);
+-	msleep(20);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, MANTIX_CMD_INT_CANCEL, 0x03);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5a, 0x03);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x80, 0xa9, 0x00);
+ 
+-	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_SPI_FINISH, 0xA5);
+-	mipi_dsi_generic_write_seq(dsi, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x00, 0x2F);
+-	msleep(20);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x5a, 0x09);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x80, 0x64, 0x00, 0x64, 0x00, 0x00);
++	mipi_dsi_msleep(dsi_ctx, 20);
+ 
+-	dev_dbg(dev, "Panel init sequence done\n");
+-	return 0;
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, MANTIX_CMD_SPI_FINISH, 0xa5);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, MANTIX_CMD_OTP_STOP_RELOAD_MIPI, 0x00, 0x2f);
++	mipi_dsi_msleep(dsi_ctx, 20);
+ }
+ 
+ static int mantix_enable(struct drm_panel *panel)
+ {
+ 	struct mantix *ctx = panel_to_mantix(panel);
+-	struct device *dev = ctx->dev;
+-	struct mipi_dsi_device *dsi = to_mipi_dsi_device(dev);
+-	int ret;
++	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
++	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
+ 
+-	ret = mantix_init_sequence(ctx);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "Panel init sequence failed: %d\n", ret);
+-		return ret;
+-	}
++	mantix_init_sequence(&dsi_ctx);
++	if (!dsi_ctx.accum_err)
++		dev_dbg(ctx->dev, "Panel init sequence done\n");
+ 
+-	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to exit sleep mode\n");
+-		return ret;
+-	}
+-	msleep(20);
++	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
++	mipi_dsi_msleep(&dsi_ctx, 20);
+ 
+-	ret = mipi_dsi_dcs_set_display_on(dsi);
+-	if (ret)
+-		return ret;
+-	usleep_range(10000, 12000);
++	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
++	mipi_dsi_usleep_range(&dsi_ctx, 10000, 12000);
+ 
+-	ret = mipi_dsi_turn_on_peripheral(dsi);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to turn on peripheral\n");
+-		return ret;
+-	}
++	mipi_dsi_turn_on_peripheral_multi(&dsi_ctx);
+ 
+-	return 0;
++	return dsi_ctx.accum_err;
+ }
+ 
+ static int mantix_disable(struct drm_panel *panel)
+ {
+ 	struct mantix *ctx = panel_to_mantix(panel);
+ 	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+-	int ret;
+-
+-	ret = mipi_dsi_dcs_set_display_off(dsi);
+-	if (ret < 0)
+-		dev_err(ctx->dev, "Failed to turn off the display: %d\n", ret);
++	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
+ 
+-	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
+-	if (ret < 0)
+-		dev_err(ctx->dev, "Failed to enter sleep mode: %d\n", ret);
++	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
++	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
+ 
+-
+-	return 0;
++	return dsi_ctx.accum_err;
+ }
+ 
+ static int mantix_unprepare(struct drm_panel *panel)
 -- 
-~Vinod
+2.46.0
+
 
