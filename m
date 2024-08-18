@@ -1,145 +1,156 @@
-Return-Path: <linux-kernel+bounces-291029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8919955C6D
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 14:36:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C07EF955C70
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 14:44:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1FC91C20B09
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 12:36:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E480B210D6
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 12:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6459E1F943;
-	Sun, 18 Aug 2024 12:36:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB272E62C;
+	Sun, 18 Aug 2024 12:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C8Ehl/1c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Q74hn8t0";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Q74hn8t0"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8691FDA;
-	Sun, 18 Aug 2024 12:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C623A17580;
+	Sun, 18 Aug 2024 12:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723984585; cv=none; b=FA6x/qnZmrEPArFHP/QQ9mzkAfqFpTXyzakv8aOYEzdFoQAEtvNvhgiafb1AVoR+Pz8pfABWCSURfoV98vjHg52Wivj8mlbbtvA/bN8dRHYxu663sp9gAyc4bACBOVJuJ/oCdmld0pvG6zQEKMKvin7vBgk/V1ApHXmsmRAR02M=
+	t=1723985042; cv=none; b=cltI5xMluxCzh8+LXgRkV7kuVSp/8kBJkMiN9jc+xbunfMcaTKSeb/gEY42oTs2++Pufs+3RYqZ03dcIoTt7Y55ykjyREFOSaMfRjZZk8m5JGEjD5MP9Aeub8eErJ0v1sCBsrvda0x9KFCkLRT72YQaPv0lTU8HgWuT6vaL3V8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723984585; c=relaxed/simple;
-	bh=z5VreKbZVFWDY1lWwUvhKJuhphwh2NNqI33HgO8xtTw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hXGtMlmrd6Ah7g4yTLtPGM1Ef1VjkMp8X9ykzEuaArYMHXH/KKf1KXQiKqVf3UdAcW+yGAq48houepdQqVV1LRj0LnAaSHVb1rUqcr1MhrjD6T4l/2dguxELhp0MZxDaIZ0Ix8aHR8pO8toUOJc0oT3dnE4p8rMuVA+j/srPpV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C8Ehl/1c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A76E5C4AF0F;
-	Sun, 18 Aug 2024 12:36:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723984584;
-	bh=z5VreKbZVFWDY1lWwUvhKJuhphwh2NNqI33HgO8xtTw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=C8Ehl/1cua8AG6gPVL5bbtiXM6gRTV0GDHTUlZOzLeTQuWM6n6LhyUY7BfbVOJ9PY
-	 gulhZJg5aamMRtBKBXx6Mo1yREXGoa/c1MUxzc+1ix4WKlULf2Ev1Ywj59ZpuyBYzh
-	 1PqNpHbn9sHLYz6ULN89HOW3aznk6D/e38jbsIUdO8x+04YmRgYEd9M13VYRqncL2B
-	 kK3C5HeXofbtYgMXzvDdTTV7oLpKcAV4PXgOKYUvCHjtDBzDs5q2LM/A4NF2vcdHT3
-	 yFJgNv1O+WS5w9XWacVPjsC56Bb7f9FHKpesSzccgDfjriUDGWkBeAJQN+0W0a9O+c
-	 tv4K14B0+gIcg==
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ef2cce8be8so37933981fa.1;
-        Sun, 18 Aug 2024 05:36:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXqMtRAQc1IYKS2UK4RBZbdnjouCksjK/JRVeU//Pm6qtWfiuzsJ1S6WHhw3H8u8nP/yM6pEcw2SNNw9nwjXvja+6gb9MTjZ29j675v50OJYAbCqihucAScdlMI/fa7MRJeaffMMj5JeNgK
-X-Gm-Message-State: AOJu0Yyr0kzBTkFRwk93DsbR1N1AOsLM2topxecxYyzjKaSyHfu53Nvp
-	o/sMjy3Flkb1BMJ4Zyj1jIiF6E03xQSHLeMYU1v7jWGsECQYgP0X1TbgO5zs8lHfKwjz8tBPoQK
-	lALhgGLLLshZN1QQqObTKbOBK/pQ=
-X-Google-Smtp-Source: AGHT+IGExuwdoLG2rFjDOYTJEkMwJ4nx7vH5mGIfSqP2PgDJzu9gmetlp9q4heDfwE1dVWWyDrk0qskevmPKBcJZsrY=
-X-Received: by 2002:a05:6512:3ca0:b0:52e:9481:eaa1 with SMTP id
- 2adb3069b0e04-5331c6b0156mr5518221e87.23.1723984583333; Sun, 18 Aug 2024
- 05:36:23 -0700 (PDT)
+	s=arc-20240116; t=1723985042; c=relaxed/simple;
+	bh=xAPasBmwSql69I8v15tLGNQAjYHZoxbkah538T24wJw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M6l6j07a45JICloOVxBcBzg0dnHLMQMGV5wJPA7SXtLKuPX5hkbXIMq7bfWnpewJZsflF7Rg7puFZU9+voNiur8fjNvf6a3XARfXpiHf5KZ/L08hvQ5V0Ys1oU2C1XpMBsesfo/+jhz7J3NlGPvI5O+uWlx0EzwJGgJHarVPMH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Q74hn8t0; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Q74hn8t0; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E341022668;
+	Sun, 18 Aug 2024 12:43:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1723985038; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=hNdsCgDwfxx9qOwvJpBNpv6a1Q/E/N9dUawDuhnVU74=;
+	b=Q74hn8t0F2JlsFCjXjJO5twmnZrb78JdqP7tkqUWycouaGu5LAfIR4OiixhPFwEa1ih/ke
+	xC0IsbzJHpWAnDVjAbKXgu3suSNIj/cHgkb08KfBU+J3ou+44D98h0ZDrozj+OgOBvr/q7
+	LUL/9lCfBLcgoXQCbG0xMoND1856esg=
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1723985038; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=hNdsCgDwfxx9qOwvJpBNpv6a1Q/E/N9dUawDuhnVU74=;
+	b=Q74hn8t0F2JlsFCjXjJO5twmnZrb78JdqP7tkqUWycouaGu5LAfIR4OiixhPFwEa1ih/ke
+	xC0IsbzJHpWAnDVjAbKXgu3suSNIj/cHgkb08KfBU+J3ou+44D98h0ZDrozj+OgOBvr/q7
+	LUL/9lCfBLcgoXQCbG0xMoND1856esg=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D86BD1397F;
+	Sun, 18 Aug 2024 12:43:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id CBCONI7swWZuBgAAD6G6ig
+	(envelope-from <dsterba@suse.com>); Sun, 18 Aug 2024 12:43:58 +0000
+From: David Sterba <dsterba@suse.com>
+To: torvalds@linux-foundation.org
+Cc: David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Btrfs fixes for 6.11-rc4, part 2
+Date: Sun, 18 Aug 2024 14:43:54 +0200
+Message-ID: <cover.1723984416.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240817151147.156479-1-jose.fernandez@linux.dev>
-In-Reply-To: <20240817151147.156479-1-jose.fernandez@linux.dev>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sun, 18 Aug 2024 21:35:47 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQMMTRX94dJVWiaB5iVFQcVwCUXGQFEHQN_S0ZWjQTZKw@mail.gmail.com>
-Message-ID: <CAK7LNAQMMTRX94dJVWiaB5iVFQcVwCUXGQFEHQN_S0ZWjQTZKw@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: add debug package to pacman PKGBUILD
-To: Jose Fernandez <jose.fernandez@linux.dev>
-Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Christian Heusel <christian@heusel.eu>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-2.78 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.18)[-0.878];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: -2.78
 
-On Sun, Aug 18, 2024 at 12:12=E2=80=AFAM Jose Fernandez
-<jose.fernandez@linux.dev> wrote:
->
-> Add a new debug package to the PKGBUILD for the pacman-pkg target. The
-> debug package includes the non-stripped vmlinux file, providing access
-> to debug symbols needed for kernel debugging and profiling. The vmlinux
-> file will be installed to /usr/src/debug/${pkgbase}. The debug package
-> will be built by default and can be excluded by overriding PACMAN_EXTRAPA=
-CKAGES.
->
-> Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
-> Reviewed-by: Peter Jung <ptr1337@cachyos.org>
-> ---
-> v1->v2:
-> - Use the new PACMAN_EXTRAPACKAGES [1] variable to allow users to disable=
- the
-> debug package if desired, instead of always including it.
->
-> [1] https://lore.kernel.org/lkml/20240813185900.GA140556@thelio-3990X/T/
->
->  scripts/package/PKGBUILD | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
->
-> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
-> index fbd7eb10a52c..d40d282353de 100644
-> --- a/scripts/package/PKGBUILD
-> +++ b/scripts/package/PKGBUILD
-> @@ -5,7 +5,7 @@
->  pkgbase=3D${PACMAN_PKGBASE:-linux-upstream}
->  pkgname=3D("${pkgbase}")
->
-> -_extrapackages=3D${PACMAN_EXTRAPACKAGES-headers api-headers}
-> +_extrapackages=3D${PACMAN_EXTRAPACKAGES-headers api-headers debug}
->  for pkg in $_extrapackages; do
->         pkgname+=3D("${pkgbase}-${pkg}")
->  done
-> @@ -106,6 +106,15 @@ _package-api-headers() {
->         ${MAKE} headers_install INSTALL_HDR_PATH=3D"${pkgdir}/usr"
->  }
->
-> +_package-debug(){
-> +       pkgdesc=3D"Non-stripped vmlinux file for the ${pkgdesc} kernel"
-> +       depends=3D(${pkgbase}-headers)
+Hi,
 
+a few more fixes. We got reports that shrinker added in 6.10 still
+causes latency spikes and the fixes don't handle all corner cases. Due
+to summer holidays we're taking a shortcut to disable it for release
+builds and will fix it in the near future.
 
-Why is this dependency necessary?
+Please pull, thanks.
 
+- only enable extent map shrinker for DEBUG builds, temporary quick fix
+  to avoid latency spikes for regular builds
 
+- update target inode's ctime on unlink, mandated by POSIX
 
+- properly take lock to read/update block group's zoned variables
 
+- add counted_by() annotations
 
-> +
-> +       cd "${objtree}"
-> +       mkdir -p "$pkgdir/usr/src/debug/${pkgbase}"
-> +       install -Dt "$pkgdir/usr/src/debug/${pkgbase}" -m644 vmlinux
-> +}
-> +
->  for _p in "${pkgname[@]}"; do
->         eval "package_$_p() {
->                 $(declare -f "_package${_p#$pkgbase}")
->
-> base-commit: 869679673d3bbaaf1c2a43dba53930f5241e1d30
-> --
-> 2.46.0
->
->
+----------------------------------------------------------------
+The following changes since commit 6252690f7e1b173b86a4c27dfc046b351ab423e7:
 
+  btrfs: fix invalid mapping of extent xarray state (2024-08-13 15:36:57 +0200)
 
---=20
-Best Regards
-Masahiro Yamada
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.11-rc3-tag
+
+for you to fetch changes up to 534f7eff9239c1b0af852fc33f5af2b62c00eddf:
+
+  btrfs: only enable extent map shrinker for DEBUG builds (2024-08-16 21:22:39 +0200)
+
+----------------------------------------------------------------
+Jeff Layton (1):
+      btrfs: update target inode's ctime on unlink
+
+Naohiro Aota (1):
+      btrfs: zoned: properly take lock to read/update block group's zoned variables
+
+Qu Wenruo (2):
+      btrfs: tree-checker: add dev extent item checks
+      btrfs: only enable extent map shrinker for DEBUG builds
+
+Thorsten Blum (1):
+      btrfs: send: annotate struct name_cache_entry with __counted_by()
+
+ fs/btrfs/free-space-cache.c | 14 +++++----
+ fs/btrfs/inode.c            |  1 +
+ fs/btrfs/send.c             |  2 +-
+ fs/btrfs/super.c            |  8 +++++-
+ fs/btrfs/tree-checker.c     | 69 +++++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 86 insertions(+), 8 deletions(-)
 
