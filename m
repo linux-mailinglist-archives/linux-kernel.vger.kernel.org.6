@@ -1,58 +1,49 @@
-Return-Path: <linux-kernel+bounces-291099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA6B7955D3B
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 17:39:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73E68955D3C
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 17:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EEB2B20E47
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 15:39:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31036281881
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 15:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95BEC143C7E;
-	Sun, 18 Aug 2024 15:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46AC5143C7E;
+	Sun, 18 Aug 2024 15:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJx/Mv7C"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xhhEabs7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D0333CFC;
-	Sun, 18 Aug 2024 15:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A97A13B783
+	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 15:39:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723995556; cv=none; b=tyS6QU6L4Hj/rudW87fjmq6O9b40mLcvLWaVFD8DQeDDBOakJ/zdc/p2JKrtY1v4JKForKlftx2/iaZT1TGzML4FFBFxs33pVwha58b6ZT1hBSJj4ji95TiPN0kfgqg/iwMGhRKATO4YmR65cyPEj9ZFxArJ+2VIp4ydrFL+53Q=
+	t=1723995565; cv=none; b=AeTBsH+DaWLNNBCav8Rbl5z2uUMCxb4TJQ5RYhcLb00z2wV+LZmNIaqYBEbjePJObHOJdwa0xslE+SEx2w2dxC79aCqzsfppmr5BSocpCDAZ8itNB26YsTTHEMoFhXJy0y/UFPAI33mP4b3LmZpa0S9nycTa18Um3bdR3ITc0S0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723995556; c=relaxed/simple;
-	bh=puy82X73of98/57pg6dp3PYkdE1fTuT9RzejeNrtwA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GHgd9SM4nz3Pjg8yq5+tLjSvDPna1EAaFHLWCVD3Ki4NLHT0bzMyIPI5tyRKhWx4TGl35pYwj/l8Lx5GUyrMLb2d7HcCH+f+3kWjTalEpWa24VlFZkuR5cLdtDtYfU+T+AbxAuY2PzSSPUfLTobsZzkThzMGJ/+3C2xHHrrTcdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJx/Mv7C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE4CFC32786;
-	Sun, 18 Aug 2024 15:39:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723995556;
-	bh=puy82X73of98/57pg6dp3PYkdE1fTuT9RzejeNrtwA4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EJx/Mv7Ce1BwZMOEm9xojqqHPEHjjJtpUgPClvMzjKxINTr2vuqPbZvH7GZc06tGK
-	 ed2rvS4F/cw5H4qwHdAn9Um8OZBYmtlRKimU/4g/v0ntT+NLbo4wQ6VOfFOL/suvo2
-	 qvdleHU0q7BSO6Ga5wgnY4qdxyhE9HDylG26tuvEvTogfwBTZPN2or9vXvBjYDho9n
-	 o2sLO5tD6JhJ9NOAGBVrTKZbuovm0Q8PYa3hZG4pZAuRkbdkKF3+KiwHhzAhpJ2PjP
-	 T4Mpk07+H1MevV6zLvrmv0y8T3XpzA3hhJZ6xhenDFzlToUkAGKYsTczrJI5Tw2A87
-	 8+/0b4cchvD6w==
-Date: Sun, 18 Aug 2024 09:39:14 -0600
-From: Rob Herring <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Walle <mwalle@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	"open list:MEMORY CONTROLLER DRIVERS" <linux-kernel@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v2 1/1] dt-binding: memory-controllers: fsl,ifc: add
- compatible string fsl,ifc-nand
-Message-ID: <20240818153914.GA120816-robh@kernel.org>
-References: <20240814212958.4047882-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1723995565; c=relaxed/simple;
+	bh=QFApO25i66ywj3/6hpIpsCgGoisigMbbwPCOCvWS6LY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Xch0avuU/yfetVX6bkT8Hf98Y1O6HwO9zpMb9otw/KyPqdBuDskR9sfuP9rHmo1ctaUhTlRzBwTirxoIwy6MBNU0i75ZS5O/CSnFeRU1MxFUVpI439eoR08ABGZ/lUdgrrK5e5H9LtcwHkuYWpP57k+48duh4a3tC4OR4ToI95k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xhhEabs7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7036C32786;
+	Sun, 18 Aug 2024 15:39:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723995565;
+	bh=QFApO25i66ywj3/6hpIpsCgGoisigMbbwPCOCvWS6LY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=xhhEabs7l7bRnwEmCo7gZ47q4OWyb0I3XaRPOJGo19NvItfkekCvMDLp8xFohWglm
+	 yh+Znab+tzUKQOooHZEFMdX4VEibMWW+dkedVjDL3F0Pkx1WbnzQL0xQZ+T1FwYurU
+	 4ptmbt4STMCsH1lVzk/i8aRzgGlv9IdqeZ0Hf+XY=
+Date: Sun, 18 Aug 2024 17:39:22 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Char/Misc driver fixes for 6.11-rc4
+Message-ID: <ZsIVqh8N4QstYXVh@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,66 +52,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240814212958.4047882-1-Frank.Li@nxp.com>
 
-On Wed, Aug 14, 2024 at 05:29:57PM -0400, Frank Li wrote:
-> ifc can connect nor, nand and fpag. Add child node "nand@" under fsl,ifc
-> and compatible string "fsl,ifc-nand" when ifc connect to nand flash.
-> 
-> Fix below warning:
-> arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dtb: /soc/memory-controller@1530000/nand@1,0:
-> 	failed to match any schema with compatible: ['fsl,ifc-nand']
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Change from v1 to v2
-> - add address-cells and size-cells
-> ---
->  .../memory-controllers/fsl/fsl,ifc.yaml       | 21 +++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/fsl/fsl,ifc.yaml b/Documentation/devicetree/bindings/memory-controllers/fsl/fsl,ifc.yaml
-> index d1c3421bee107..c12bb7f51db62 100644
-> --- a/Documentation/devicetree/bindings/memory-controllers/fsl/fsl,ifc.yaml
-> +++ b/Documentation/devicetree/bindings/memory-controllers/fsl/fsl,ifc.yaml
-> @@ -58,6 +58,27 @@ properties:
->        access window as configured.
->  
->  patternProperties:
-> +  "^nand@[a-f0-9]+(,[a-f0-9]+)+$":
-> +    type: object
-> +    properties:
-> +      compatible:
-> +        const: fsl,ifc-nand
-> +
-> +      reg:
-> +        maxItems: 1
-> +
-> +      "#address-cells":
-> +        const: 1
-> +
-> +      "#size-cells":
-> +        const: 1
+The following changes since commit 7c626ce4bae1ac14f60076d00eafe71af30450ba:
 
-These only apply to child nodes, but you've disabled any child nodes.
+  Linux 6.11-rc3 (2024-08-11 14:27:14 -0700)
 
-> +
-> +    required:
-> +      - compatible
-> +      - reg
-> +
-> +    additionalProperties: false
+are available in the Git repository at:
 
-You could minimally make this 'type: object' instead of false.
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-6.11-rc4
 
-Or does this follow the nand controller and chip bindings? May not being 
-older binding.
+for you to fetch changes up to 2374bf7558de915edc6ec8cb10ec3291dfab9594:
 
-> +
->    "^.*@[a-f0-9]+(,[a-f0-9]+)+$":
->      type: object
->      description: |
-> -- 
-> 2.34.1
-> 
+  char: xillybus: Check USB endpoints when probing device (2024-08-16 09:57:56 +0200)
+
+----------------------------------------------------------------
+Char/Misc fixes for 6.11-rc4
+
+Here are some small char/misc fixes for 6.11-rc4 to resolve reported
+problems.  Included in here are:
+  - fastrpc revert of a change that broke userspace
+  - xillybus fixes for reported issues
+
+Half of these have been in linux-next this week with no reported
+problems, I don't know if the last bit of xillybus driver changes made
+it in, but they are "obviously correct" so will be safe :)
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+----------------------------------------------------------------
+Eli Billauer (3):
+      char: xillybus: Don't destroy workqueue from work item running on it
+      char: xillybus: Refine workqueue handling
+      char: xillybus: Check USB endpoints when probing device
+
+Griffin Kroah-Hartman (1):
+      Revert "misc: fastrpc: Restrict untrusted app to attach to privileged PD"
+
+ drivers/char/xillybus/xillyusb.c | 42 ++++++++++++++++++++++++++++++++--------
+ drivers/misc/fastrpc.c           | 22 +++------------------
+ include/uapi/misc/fastrpc.h      |  3 ---
+ 3 files changed, 37 insertions(+), 30 deletions(-)
 
