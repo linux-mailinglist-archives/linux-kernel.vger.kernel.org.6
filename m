@@ -1,101 +1,226 @@
-Return-Path: <linux-kernel+bounces-290908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5993955B0F
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 07:58:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05402955B14
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 08:06:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55D1A1F218CD
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 05:58:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86883282572
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 06:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD656C2ED;
-	Sun, 18 Aug 2024 05:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Rlo9R4+r"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C9F1078F;
+	Sun, 18 Aug 2024 06:06:26 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01C223AD
-	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 05:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14EFC2ED
+	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 06:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723960702; cv=none; b=USytZSKqmwaIfRiDWRxLQJfAod4f9/JLvIunazr37D4wMgm/xak0H259y/SW/I6+BemO4xjhRFE8A4VlOvawdeoJUWjkTFMbcEUMeCQgOhcEv0ImVA/uYe2WYaJH0KJV5hl85/H/liMCy54TW6BuoI8rNGEF01xz0JM6E5HwGGY=
+	t=1723961186; cv=none; b=kEdcdqfFUSz637zP0ysmR7frOpCcCApU/3TKiyPAQ9Joy83Mfg3vrSvU/1VxqqZj5jhM+ENDkDvalhDnSQ1zMTfai4qkzig8wcddsAJOJxnt1Y7UMyyJ1A1+Q+b/CwpuiCucNn95gt1nQK8CD3OTtu4dGFEyhGkijYIjjzO/Vcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723960702; c=relaxed/simple;
-	bh=Pd5zVRa2BxL9VRvKqJTk9LALSmuk610bG30lN1d93uI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YTpRThz+qc52UuAjv+yVAjrvptsLzT+0IjGKBzBU4zAolPhH2rWUrqXeIuIzI0Vbhoz60iFjEnbkHKoAEy/rcR0svd9ws7cwFIiWqSvYiHveCYEWG5Hs0uOBAwFXeV2dnD/YyLxxNa4RbmW3xjIpngjTsT0LoyFHdoWkwPSGMDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Rlo9R4+r; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id ADDE140E023A;
-	Sun, 18 Aug 2024 05:58:17 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 8pWNL87LZZqS; Sun, 18 Aug 2024 05:58:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1723960693; bh=lU15jTPoX4edFZPDxB5jGPp0bDvR7Y5rlAKU0cGjiJI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Rlo9R4+r7A1OLKzwbaJmYWwQTXk0U4nAlXCdq/nq8N8ag85/kyoIFWrxvJhsbdIMW
-	 GG2NCD/qsbKv1QELjZlO+aaBnCGotSH8VL3hV+D2Ud1BhbxEi74A7D/PtlfMz/1wyl
-	 4pPvfvBpNLraFml/6JdSZ75fgZSc7wYQULxcFN3cAbFnfxClnMIc9//WQ2edyt0NuZ
-	 ZeyVXiX3hAeaPQ28NjJ2P3vZ8vL3s6V5mZyYDyKh8zY5zw6wY/WE2xjMaA1olsOwXO
-	 sJsvsT2ITPGYGxt2O1iGjYTW5nT3XM4HhPTypepSunVoT6VSPrIUVNvgFtQOqNvKHy
-	 m7BGP4U0fBPmh/wS2QO0bnAxXr2alBeJsumDCAXwsTyzJicEHZKO9BrHwE1vgE7VrU
-	 b4WucHIpeh8K7+hBPXp1k2E/13msiHhm0bKTIW23ewqnI9EZlnPP4POuMueCehP4nY
-	 F/M5xEqDp/J6jT6G4Dgse0ln94NhZi9scftuE5eDka8EtW/Ag0fDwHGcmvz2F+J1eK
-	 x/eTKX+IV/ndaJplG5/vskHcL3lMnbnqgyiSmbOboxBr+fAVr9DWrAdd7OZQcSm/gg
-	 RUuzDpWZ7NoWCbNuYs9vCb02CrjoBJTb05e+kRqr8bbtnBKwzP3kV0l6IXbSG04o7A
-	 bso9+OmzV9UkbmLLkgVysud0=
-Received: from nazgul.tnic (unknown [87.120.165.225])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 31F7840E0185;
-	Sun, 18 Aug 2024 05:58:03 +0000 (UTC)
-Date: Sun, 18 Aug 2024 07:59:04 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Xin Li <xin@zytor.com>, Andrew Cooper <andrew.cooper3@citrix.com>,
-	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, x86@kernel.org, peterz@infradead.org,
-	seanjc@google.com
-Subject: Re: [PATCH v1 2/3] x86/msr: Switch between WRMSRNS and WRMSR with
- the alternatives mechanism
-Message-ID: <20240818055904.GBZsGNqJA2Cdl2P0mt@fat_crate.local>
-References: <20240807054722.682375-1-xin@zytor.com>
- <20240807054722.682375-3-xin@zytor.com>
- <e18cd005-24ef-497d-b39c-74a54d89a969@citrix.com>
- <7c09d124-08f1-40b4-813c-f0f74e19497a@zytor.com>
- <DAC74A8B-DDE4-450E-93A1-EFD7D47B25F7@alien8.de>
- <20240817144316.GAZsC3BOm7anUPdJGe@fat_crate.local>
- <46CAFA22-2EB9-457B-BD14-864CFD71ADBF@zytor.com>
+	s=arc-20240116; t=1723961186; c=relaxed/simple;
+	bh=jz7twpM+7+6ff0ALSulET3mW0nfeOe/+biy+TCNXhCE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=b1ECFp5IIQJpvHJJpTFRLYfby+b34bK0Sk7eyQG37MKhqYGtsukNZw3NS5aGYACu9mUskRd11/NZGD+cAEMe533zLsK2M3rS2mjX3GEi/MWyqn2wGv3iK2/ZS15fJzau9xDM7ulOCeC7t3T5xCWg3UTlQ7xMxNzTjENX1ZPo2w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-822372161efso232194639f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 23:06:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723961184; x=1724565984;
+        h=content-transfer-encoding:to:from:subject:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zLeaX4ZYCJfD/qs4gb+GcXtjCSYeyQ791Oq5hIK8L+0=;
+        b=NSviKflGWOR7LGvStgjO1RKb6WQGqkN8RkXq4rL3bMpZFG4ktB+zUSaKsOXrdYce5X
+         TraL5jLqnGjTaEHUDnJPV6pOLYtikrV6izHbDppNLmbp7Y1iNZfcbxc/jFLIZSKnW/O1
+         np9kEaZNq6l+d22XBatBWRzVDQysUlDc+bH9ty2jph4daTfKBbEyPLubMATBLeksadjx
+         9E0+Wb4UuNYnDt1u3DZ06NVi1IK10bzSxBPKoJBrNJlYSPbj6j+T47W2XfP+8fZ0J/5R
+         v59Nr0X8f56Pnn83xMeIUjUgP8jG1ELx051+xKAQz5Yy1crVjih2IBHkQVx4PUnbY+Bt
+         oSIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVP4dPxwb7OHyHC+Oo03eu6mBYTCdZWGopDEeYVTcH3xLbt5pt08HN1nAMN+Zx3Ra/pLc5hD4yZDowG8hk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQmqpRTOhb1yPK9spUHAxI+BgkjHuFuao6I1/lzlrit2e+4Qu4
+	QnxCUv4pakWbcROaS4JDhsg2MULlXrB3ipnlIndZ55KRNw/Fn8kRaRtKme7ijEQQOGYANMoCeqY
+	L25tt+nlpjT+nv4D9Upe7iLHDa5oy580Md1FfqRYmU1TiC1sxfYuM4r0=
+X-Google-Smtp-Source: AGHT+IEJCxuzGlogMXXEg0BKd1mVFe9tR628QCFxjm2ZeAqwHWmde9T2H0ftSQH48Qf95vFDQzngikaGTvkQFhSvC0+uiv2WRMGG
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <46CAFA22-2EB9-457B-BD14-864CFD71ADBF@zytor.com>
+X-Received: by 2002:a05:6638:9807:b0:4c0:a90d:4a78 with SMTP id
+ 8926c6da1cb9f-4cce173107cmr474656173.6.1723961183755; Sat, 17 Aug 2024
+ 23:06:23 -0700 (PDT)
+Date: Sat, 17 Aug 2024 23:06:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f6f09e061feefd16@google.com>
+Subject: [syzbot] [btrfs?] general protection fault in __alloc_workqueue
+From: syzbot <syzbot+9fd43bb1ae7b5d9240c3@syzkaller.appspotmail.com>
+To: Jason@zx2c4.com, clm@fb.com, davem@davemloft.net, dsterba@suse.com, 
+	edumazet@google.com, josef@toxicpanda.com, kuba@kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
+	wireguard@lists.zx2c4.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 17, 2024 at 12:22:56PM -0700, H. Peter Anvin wrote:
-> Only if the call goes to a C function.
+Hello,
 
-Aha, you have a patch in the thread which calls a by-hand asm thing.
+syzbot found the following issue on:
 
-I haven't looked in detail but we have a THUNK macro for such stuff.
+HEAD commit:    367b5c3d53e5 Add linux-next specific files for 20240816
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=3D12aa95f5980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D61ba6f3b22ee546=
+7
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D9fd43bb1ae7b5d924=
+0c3
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
+n) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D15b868dd98000=
+0
 
--- 
-Regards/Gruss,
-    Boris.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/0b1b4e3cad3c/disk-=
+367b5c3d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5bb090f7813c/vmlinux-=
+367b5c3d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6674cb0709b1/bzI=
+mage-367b5c3d.xz
 
-https://people.kernel.org/tglx/notes-about-netiquette
+IMPORTANT: if you fix the issue, please add the following tag to the commit=
+:
+Reported-by: syzbot+9fd43bb1ae7b5d9240c3@syzkaller.appspotmail.com
+
+workqueue: Failed to create a rescuer kthread for wq "wg-crypt-=18": -EINTR
+Oops: general protection fault, probably for non-canonical address 0xdffffc=
+0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 0 UID: 0 PID: 5585 Comm: syz-executor Not tainted 6.11.0-rc3-next-2024=
+0816-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Goo=
+gle 08/06/2024
+RIP: 0010:__lock_acquire+0x69/0x2040 kernel/locking/lockdep.c:5010
+Code: b6 04 30 84 c0 0f 85 87 16 00 00 45 31 f6 83 3d b8 08 a9 0e 00 0f 84 =
+ac 13 00 00 89 54 24 54 89 5c 24 68 4c 89 f8 48 c1 e8 03 <80> 3c 30 00 74 1=
+2 4c 89 ff e8 49 5c 8c 00 48 be 00 00 00 00 00 fc
+RSP: 0018:ffffc9000306ec30 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: dffffc0000000000 R11: fffffbfff20318b6 R12: ffff88802c88bc00
+R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000000
+FS:  0000555563814500(0000) GS:ffff8880b9000000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f6ead045000 CR3: 0000000061be2000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5762
+ touch_wq_lockdep_map kernel/workqueue.c:3876 [inline]
+ __flush_workqueue+0x1e3/0x1770 kernel/workqueue.c:3918
+ drain_workqueue+0xc9/0x3a0 kernel/workqueue.c:4082
+ destroy_workqueue+0xba/0xc40 kernel/workqueue.c:5830
+ __alloc_workqueue+0x1c30/0x1fb0 kernel/workqueue.c:5745
+ alloc_workqueue+0xd6/0x210 kernel/workqueue.c:5758
+ wg_newlink+0x260/0x640 drivers/net/wireguard/device.c:343
+ rtnl_newlink_create net/core/rtnetlink.c:3510 [inline]
+ __rtnl_newlink net/core/rtnetlink.c:3730 [inline]
+ rtnl_newlink+0x1591/0x20a0 net/core/rtnetlink.c:3743
+ rtnetlink_rcv_msg+0x73f/0xcf0 net/core/rtnetlink.c:6647
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ __sys_sendto+0x3a8/0x500 net/socket.c:2204
+ __do_sys_sendto net/socket.c:2216 [inline]
+ __se_sys_sendto net/socket.c:2212 [inline]
+ __x64_sys_sendto+0xde/0x100 net/socket.c:2212
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f943557bd0c
+Code: 2a 5a 02 00 44 8b 4c 24 2c 4c 8b 44 24 20 89 c5 44 8b 54 24 28 48 8b =
+54 24 18 b8 2c 00 00 00 48 8b 74 24 10 8b 7c 24 08 0f 05 <48> 3d 00 f0 ff f=
+f 77 34 89 ef 48 89 44 24 08 e8 70 5a 02 00 48 8b
+RSP: 002b:00007ffd6d464f30 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 00007f9436244620 RCX: 00007f943557bd0c
+RDX: 000000000000003c RSI: 00007f9436244670 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 00007ffd6d464f84 R09: 000000000000000c
+R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
+R13: 0000000000000000 R14: 00007f9436244670 R15: 0000000000000000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__lock_acquire+0x69/0x2040 kernel/locking/lockdep.c:5010
+Code: b6 04 30 84 c0 0f 85 87 16 00 00 45 31 f6 83 3d b8 08 a9 0e 00 0f 84 =
+ac 13 00 00 89 54 24 54 89 5c 24 68 4c 89 f8 48 c1 e8 03 <80> 3c 30 00 74 1=
+2 4c 89 ff e8 49 5c 8c 00 48 be 00 00 00 00 00 fc
+RSP: 0018:ffffc9000306ec30 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: dffffc0000000000 R11: fffffbfff20318b6 R12: ffff88802c88bc00
+R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000000
+FS:  0000555563814500(0000) GS:ffff8880b9000000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f6ead045000 CR3: 0000000061be2000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	b6 04                	mov    $0x4,%dh
+   2:	30 84 c0 0f 85 87 16 	xor    %al,0x1687850f(%rax,%rax,8)
+   9:	00 00                	add    %al,(%rax)
+   b:	45 31 f6             	xor    %r14d,%r14d
+   e:	83 3d b8 08 a9 0e 00 	cmpl   $0x0,0xea908b8(%rip)        # 0xea908cd
+  15:	0f 84 ac 13 00 00    	je     0x13c7
+  1b:	89 54 24 54          	mov    %edx,0x54(%rsp)
+  1f:	89 5c 24 68          	mov    %ebx,0x68(%rsp)
+  23:	4c 89 f8             	mov    %r15,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	80 3c 30 00          	cmpb   $0x0,(%rax,%rsi,1) <-- trapping instruct=
+ion
+  2e:	74 12                	je     0x42
+  30:	4c 89 ff             	mov    %r15,%rdi
+  33:	e8 49 5c 8c 00       	call   0x8c5c81
+  38:	48                   	rex.W
+  39:	be 00 00 00 00       	mov    $0x0,%esi
+  3e:	00 fc                	add    %bh,%ah
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
