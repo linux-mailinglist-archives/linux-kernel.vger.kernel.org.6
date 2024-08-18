@@ -1,122 +1,111 @@
-Return-Path: <linux-kernel+bounces-290949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01337955B79
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 08:42:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03FBD955B98
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 08:49:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FE511F21D5E
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 06:42:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94C4DB20B49
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 06:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF7B125D6;
-	Sun, 18 Aug 2024 06:41:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CF3134B2;
+	Sun, 18 Aug 2024 06:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bKfqwKVg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LWIkVKkf"
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B6712B82;
-	Sun, 18 Aug 2024 06:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85A211CAF;
+	Sun, 18 Aug 2024 06:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723963310; cv=none; b=HrVkc2yI48OItLFlvcYIlwrh1Bpij8cbtbcIgJP7CzimGslV0TnF8WbY/GGoJgl3FQS4uxH1bb0RcXIPMyDRm3XbhDXu6hY/w/KdxueQngPniTlIVXHwRdIlP1Hl1jepVMtRW3pnjGE9DlxAclvtULIrlU02SkcZbG4jnr1ozTA=
+	t=1723963740; cv=none; b=N1TX9sa2qVQeJlEM8ygUjukzJzz+r38VJUITTnz9exbykgPU6/PdM0cpK///AKVAv72wsC4mDu+wnyBuvoVKtG8UYeiYTr7yV2pbMLawp24EHx2R87sYzeOo09qT0ipotC+U+ii2NmAoTBjUEVScqBQdWtrOZnocLqqVLogKUyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723963310; c=relaxed/simple;
-	bh=tU2Lnb2q5NkNM8obzwInrLakeb6U739NsJh/oLx9y6Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o613Ut4pYriPjNmIHQuLodWfBUNI5bSqOjy+O7y+dlto3iffPvhjeQcRgjIrXtzdlhwLMyXByAhclJBSQTGWM1zoLuErff4VWNZehQrVDI9Jp7fBTaR6gPmSoyeosp6BdYrN+bk5V0NWzeFMRpOH1Herw8dr6vc7gom9IbG4GH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bKfqwKVg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFDBDC32786;
-	Sun, 18 Aug 2024 06:41:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723963310;
-	bh=tU2Lnb2q5NkNM8obzwInrLakeb6U739NsJh/oLx9y6Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bKfqwKVgDkIEQaC0yV2bs46JNk1FO4xQvaJC4pV/CTFaeEyfOx8u2ACOQrUUBiPEV
-	 /lddMRAbe9z3HggzmTpCj/1yuYsUv4LzWlZXnBJQNKSWE9ROyJWQSlGm6hG8XvrDy0
-	 CXkluf+0p5EiiBNm/xZIvSVaJH0S06ZtEFO3n2F7EXllfZwmrRaqVS5gyUrgt0aj0O
-	 ZxNdWTAXUgy7VMB9+lL7L3Ryy8HqpFQKY6O9oHrF1nHbtnjoWUjfgKgWhVr/9Q3UKI
-	 mbceoI0+MghHRv+LhW8TXjMxzklvhX4VrgwbXGX++YUYO46h8tPANces4x5SFQSI0G
-	 +N+RhPZfYaURQ==
-Message-ID: <97fc6579-a935-4e50-9739-51647ff17b63@kernel.org>
-Date: Sun, 18 Aug 2024 08:41:43 +0200
+	s=arc-20240116; t=1723963740; c=relaxed/simple;
+	bh=TpetKscK5cqGDSQEITixAF99ndmI0U0grrVZBslHV/g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X7uSYyzPeTgWP1AceP+UmRZLU1XiECQwFcnVm7QTVoOxLwdmwaIpNY2WkabkBbCojw11TYnmeBZSNvYMGrbQ1FPspReZQuCKj5DcMnFaBGo58JAlr58d3fhLBh5kOdVTKi1yCUOGez2F2Xf9eaU//riYP5jcezBhOV9y/Wbc/RY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LWIkVKkf; arc=none smtp.client-ip=209.85.221.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-4f6d01961a7so1092739e0c.2;
+        Sat, 17 Aug 2024 23:48:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723963737; x=1724568537; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sydfE0Orj3x7Bv6zu0yP70uPC0xmzYws8gdLFa2riUY=;
+        b=LWIkVKkfJB3ToDwwXAA1jF0PT7FtUfB2xPCEKRc0PbSHGHQByMkYBUJyRjrzpNIdMw
+         XXIN+tOVRy7ZoNWMGhAUMB7dlTd/vaybaW3Z1YkPfTaBh8FmcCVuLHyY60PSEAXoQ119
+         hTQwn9357TPt8++cGprajNVyM8Yum8hk0w4NZZJ+llqng8fP7DonSQbxu7pMQnfX1FJq
+         NBtZ6AnG2KhNfZzUZ+rg4bcPDklzlQiE81IIVdpA66tlVrPuqYgUdBqyva3MUuCR92Fj
+         UWM0GABt2dlYbgQ7zbSr8hJsmRcN6dX73Fdo025DqQS3iv9mT+QPAemZR5AeeGUf6xvP
+         YmBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723963737; x=1724568537;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sydfE0Orj3x7Bv6zu0yP70uPC0xmzYws8gdLFa2riUY=;
+        b=AYHLUH6X0OKKotRTEP7lyDuIsl6GnOACkSYHlxqbOmXXDPsjYw6Nw5W/10ECwBy94n
+         3mBw2ZRPWvFqFWkEarCABKuvuQ7mHX/4K5/bZyWW9fB142zMXFjAAKSp+eXGf/jkmiwG
+         JemvcOhANbsoMXbievgWDfThHS+iBpSs5+CFC9z0yvLYeCTDS9H/jJ3HGn8u3Y7vw9GA
+         qZHRkaAKe51RgVkTRaeqNjo0yxcgdj2PPCYqfpoeprcHCh1eMv5a7D8iAnf/yPcnOLU1
+         X3GZjrXRHNqGVG0VBnvJqbj7mkt0USZwU8caZZ8cxQEtfS8CflK164iC0WvDm8ERH/ef
+         CHmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPbbipwg7YCZ5VrdJvo9igrk5EtEaURwlk5R+093/TVrvpUkKrlOcNaLKUiAm3+y4RJBorXZ3IHqizZd23mLsmkLWoOataJNYtMtDG
+X-Gm-Message-State: AOJu0Yz488dncMjeC8+y4h7smQil3xsJs2kmtfelFfVBuppfB75k1R0L
+	J/TW6MwayGjrfi0RXsN/+5yvV/0jYA7+bjllAQDJv8ByC3xtfmFNpM0CoSQg
+X-Google-Smtp-Source: AGHT+IGBK/coMUhfoc0faG/kBm6UFWHI1I8RjmndG9JKV38W+cjJkvOwpU6s4FpgTBy6YJ8QJhU9Og==
+X-Received: by 2002:a05:6122:3d0d:b0:4f2:ea44:fd36 with SMTP id 71dfb90a1353d-4fc848c20efmr5448700e0c.0.1723963737520;
+        Sat, 17 Aug 2024 23:48:57 -0700 (PDT)
+Received: from fedora.. ([2800:e6:4001:fca7:b7e8:4418:a953:72f2])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-4fc5b8e30cfsm811032e0c.18.2024.08.17.23.48.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 17 Aug 2024 23:48:57 -0700 (PDT)
+From: =?UTF-8?q?Juan=20Jos=C3=A9=20Arboleda?= <soyjuanarbol@gmail.com>
+To: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: miriam.rachel.korenblit@intel.com,
+	kvalo@kernel.org,
+	=?UTF-8?q?Juan=20Jos=C3=A9=20Arboleda?= <soyjuanarbol@gmail.com>
+Subject: [PATCH 0/3] Cleanup: Formatting iwlwifi driver
+Date: Sun, 18 Aug 2024 01:48:56 -0500
+Message-ID: <cover.1723963126.git.soyjuanarbol@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/6] dt-bindings: ufs: Add X1E80100 UFS
-To: Marcus Glocker <marcus@nazgul.ch>, Bjorn Andersson
- <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
- Johan Hovold <johan@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-References: <p3mhtj2rp6y2ezuwpd2gu7dwx5cbckfu4s4pazcudi4j2wogtr@4yecb2bkeyms>
- <zr3bk5yek44mpx4wcriw56uzzi6cnjvvtmt2mu42jyla2hnlgu@sbnulfjo2gks>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <zr3bk5yek44mpx4wcriw56uzzi6cnjvvtmt2mu42jyla2hnlgu@sbnulfjo2gks>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 17/08/2024 22:36, Marcus Glocker wrote:
-> Document the ufs host controller compatible for the Qualcomm X1E80100.
-> 
-> Signed-off-by: Marcus Glocker <marcus@nazgul.ch>
-> ---
+Code Style Enhancements:
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+* Pointer Declarations: Improved spacing consistency.
 
-Best regards,
-Krzysztof
+Macro Improvements:
+
+* Enclosed multi-statement macro in a do-while loop.
+
+Formatting Standardization:
+
+* Replaced spaces with tabs in iwl_mvm_vendor_events_idx.
+
+Juan José Arboleda (3):
+  iwlwifi: mvm: Improve code style in pointer declarations
+  iwlwifi: mvm: Enclose multi-statement macro in a do while
+  iwlwifi: mvm: Replace spaces for tabs in iwl_mvm_vendor_events_idx
+
+ drivers/net/wireless/intel/iwlwifi/mvm/power.c      |  4 ++--
+ drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c       | 11 +++++++----
+ drivers/net/wireless/intel/iwlwifi/mvm/vendor-cmd.c |  6 +++---
+ 3 files changed, 12 insertions(+), 9 deletions(-)
+
+-- 
+2.46.0
 
 
