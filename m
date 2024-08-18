@@ -1,128 +1,195 @@
-Return-Path: <linux-kernel+bounces-290905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8895955B08
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 07:29:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C84D955B0C
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 07:47:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FBE628202E
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 05:29:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42A3C281FFF
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 05:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE828BA49;
-	Sun, 18 Aug 2024 05:29:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5785C2ED;
+	Sun, 18 Aug 2024 05:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=NETORG5796793.onmicrosoft.com header.i=@NETORG5796793.onmicrosoft.com header.b="dVwuw0Fz"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2100.outbound.protection.outlook.com [40.107.96.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E644C83
-	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 05:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723958945; cv=none; b=uNNRKVyWzKecEixxBXIkt9HMIder/T0KGPj3P5kM45yBckM+/417YHSjkfsUKP8W9lI8nbsaVCDp8VTv3QZV5Ip6aLapsuPvQas9ppS3dWihyJmREND1hk2XH4Cmr2ECJ6IHMHl7A2zA79gfnJz4vsGkyeaM5191us5dGeoR+jU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723958945; c=relaxed/simple;
-	bh=Xn+QCP6GRJB0uA+FhsYK+xp0OsbY9qgQje+eaGmWKCI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=AS91mDNBoVJHjR4ZdpnRnXtj5uVrIZQFQ+QQIktKoaWZmuNmEg40f2eKKSk+ewW9MvIguokXOwqz5ai9RvA5NkBnjiiGhnESHruVbLO1QHRoGtLbDED6oMyWHLrCIO2eC7ayjPKUR6g8F+FjaangB2iBu5BlRgP6azmlaQWO+v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d293e492aso21901295ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 22:29:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723958943; x=1724563743;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HPmmVhOflEafKaoaafEaXM8mX95uI2BsS6TfveoW3rk=;
-        b=N5kqyRqXVDdXoDR+IBxGUxcg8o3Yf8+fGtpkJyiFrWBRrZfzwZwPs4K0xIj2jl7uhl
-         saOJEwOkYOqgzRC1CPfHeLxTqA/jS+7tUgiIhONURzlA3kps09sO3ZPXrTiZDXvzAkRT
-         seUTXWaIzl8ybL+EPb+ukgG32VcSfJB9w+75NLwBjamA3QRMgjWb6aiB0uvxWH7FGzSj
-         tSTV/PyoLYMCblkNXon3uWBvPXJ28TwA87FRu8flbff9ejv1LaXew5gbEqXp0FIV8b20
-         ZbJjggdGjWd5rwgMQtbqOq8x0gq9M9YZCd31e5cCH90d+r79ViSuFu6DkDLoo5wyCKGn
-         kDTw==
-X-Forwarded-Encrypted: i=1; AJvYcCWdJ4X+7GDcgIYUd7tMe8nVblXBXvev1XR7Nl1VrSWU4wIpfV1eR9FIpkD1RagEx3T1JuRvt4rMlNgRCmsHchOdaEe6mbX9j69rZPB3
-X-Gm-Message-State: AOJu0YwNPOZKORfs54lkaSdaOa6OO4aOS1wTDrqCzOq5AiI5l4T2i9n+
-	NQn+A3CA46PMuoR7BvMhbOleoi42U1CcF1oP8CoPUWAvkE9ZNWF7VlMUiL7TcQ6AwjvIVk5tRCp
-	oXMihrEVCx8PJZhQgK0y/acnLei4CeulslQtbIDowWub6kwi2GTrKiXU=
-X-Google-Smtp-Source: AGHT+IGKIuerhN3QU/BsfOmnHaUCQWYUCCPIqTjv2eDYNntQVwUq44SLBvUMT1uMndh+D2ULyT6lVJDuXLjA54frOJBltjts09X5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45494B66E;
+	Sun, 18 Aug 2024 05:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.100
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723960054; cv=fail; b=ledFu5HlZWjB3os/qSzOuFvedzeMtb4+pRidN/z1iFDAhUNibbjFEZ0iWMlSU61SU0Q5akCjrDNwDhbC7KdDttvghfhUTKChEho1wT9nqnmw6v5zvHDb8dCzHA3ion38dX4lrBf2MPL1neZVXftteuymU56VMxANr4TYiwSvdwM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723960054; c=relaxed/simple;
+	bh=Yf0dW6KKGdzNbFP2yvW64wlbSO3MPy9kXfB7p3ExFFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=BnLKVjZPdtffcMJ3wAOCUdwMYSyPHP5VQ7XCf8+qr42CBJpnLI3X0A3fZ01PyJ88G1UsG635GInwYYWWw/ceYwoZ9IwuQjdkIf4jDK+OUggiOgtDbNdyTpTRodjbiLz2CmZjU5f4DHZ+rPSoahkrg57k2Pfmh9iuav3REkDvgwI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=labundy.com; spf=pass smtp.mailfrom=labundy.com; dkim=pass (1024-bit key) header.d=NETORG5796793.onmicrosoft.com header.i=@NETORG5796793.onmicrosoft.com header.b=dVwuw0Fz; arc=fail smtp.client-ip=40.107.96.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=labundy.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=labundy.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JVoSwAfL1MHHYcLvoQvQ2ePB+xygW4dX4UkqLLKSMHlvqOQ7Zn3ajA6Qn3c6o4og4+/7DZq1FJFlXQR5UCjEEVYcQ6YFtlG+gFRKWDM+xCZA7+w7MbKI2CAYMDPIRufGW3tFIn9OrLOFmqOKs8YSduHNvDsfERMBVTBkfc263klBXdcSCCNb3ScBrANQ9J7IDDLjgStgDr7foWwU2wjsnv+QiYvZMxH7IYklC2LHwKlm22wAw8eaDhlysu/yMzR/lWVOdawa//Wp6jU4xWAi1MWWAk117YWoGVAMFnRZN/yOh/CmUNCb4b3d5IMqmGAyMzMUd/5iDfb7eKZDffeOBw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bvf1zynoDvD/ICh29T3e58pSe3KRfSXNFEagk24VSN8=;
+ b=BzsbF4qySdUfMIcmYJbC3FE6SzHejlu5cnunX8iwKfFWSoiu5CTyzF33jF9mCjA5YHJK90sJSTEuPP8y1dHFFQDqJ00RBQ4ZDRGj9NkiTxzvrOkdjmJXeXc4T1K/BzB4a/Wy6r5NXy4QrU1Fjeyr/4JxxOTfsi9LvBmw6isR3kFhcMdTublIKnSjx5KiFA4QNtlocObv7oFXILJx+CgIp8eZr5NlaOnzk3PiD7Tng8lgmJKfSiKbZ5HVO3wxhViOluZiFW4HCKc+/Sk/lLkqWqQswkxfO3bZuuCjR8OClAVd12BvwPuiIZxtfDeh2PDAU/Zy54TBW27iXIrI7EMx8A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=labundy.com; dmarc=pass action=none header.from=labundy.com;
+ dkim=pass header.d=labundy.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=NETORG5796793.onmicrosoft.com; s=selector1-NETORG5796793-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bvf1zynoDvD/ICh29T3e58pSe3KRfSXNFEagk24VSN8=;
+ b=dVwuw0FzLlzu0kVt28mpjCG4w5T+xpFPrLjHMdWt8tR+jm+1hMgD1n38wXNhjqEpyYPC1FIUeKA6jjLPRL+urHJPRHuGWiZpShczHZPy4h/uZpYOSrn/Uc/Z85tYSGTRwHfljEmSiQccbXQGti1ktwUbeGYiXCGF80m24SvM1Fw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=labundy.com;
+Received: from BN7PR08MB3937.namprd08.prod.outlook.com (2603:10b6:406:8f::25)
+ by PH0PR08MB7164.namprd08.prod.outlook.com (2603:10b6:510:75::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Sun, 18 Aug
+ 2024 05:47:27 +0000
+Received: from BN7PR08MB3937.namprd08.prod.outlook.com
+ ([fe80::b729:b21d:93b4:504d]) by BN7PR08MB3937.namprd08.prod.outlook.com
+ ([fe80::b729:b21d:93b4:504d%5]) with mapi id 15.20.7875.019; Sun, 18 Aug 2024
+ 05:47:27 +0000
+Date: Sun, 18 Aug 2024 00:47:20 -0500
+From: Jeff LaBundy <jeff@labundy.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>,
+	linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+	Peter Hutterer <peter.hutterer@who-t.net>
+Subject: Re: [PATCH] Input: evdev - limit amount of data for writes
+Message-ID: <ZsGK6MGtuPggHfuG@nixie71>
+References: <Zr5L8TUzkJcB9HcF@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zr5L8TUzkJcB9HcF@google.com>
+X-ClientProxiedBy: SA0PR12CA0011.namprd12.prod.outlook.com
+ (2603:10b6:806:6f::16) To BN7PR08MB3937.namprd08.prod.outlook.com
+ (2603:10b6:406:8f::25)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a6e:b0:380:f12f:30de with SMTP id
- e9e14a558f8ab-39d26ce5d57mr6189185ab.2.1723958942936; Sat, 17 Aug 2024
- 22:29:02 -0700 (PDT)
-Date: Sat, 17 Aug 2024 22:29:02 -0700
-In-Reply-To: <tencent_B1542E456CC49638E98AEF12CDEC79866F0A@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000066c8f8061fee7814@google.com>
-Subject: Re: [syzbot] [net?] kernel BUG in __sock_sendmsg
-From: syzbot <syzbot+58c03971700330ce14d8@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN7PR08MB3937:EE_|PH0PR08MB7164:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9a0cb9c8-72d2-4718-04b3-08dcbf493beb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?UpSLZPRB8Ul7lfS1jByiQaVNEKvf74v2unu7snFG7WPOGkuv5F/rI96FDNKY?=
+ =?us-ascii?Q?MUBb+Fe5F6QrmRB5JP5wb6Ki8Gy7qjum+UYeaKW1iEHszbdOGKHzsbZYe3BB?=
+ =?us-ascii?Q?zBSWn7qDeE0ODl0ZJgVt92+X7LRwbWfi7azcWYX9v97flEGuD15y1jxfv98q?=
+ =?us-ascii?Q?rA5QnWgKkEaD4zO5uC532b4McWAXNUxM3+jfm/rlS4+o7z6eVnYn8GX5WmSg?=
+ =?us-ascii?Q?I2y0gkYomheIbh2VxM4Zu+AwxlRsjF1pg+3SkvNhk7GEEDOfo9itSP6IAuSR?=
+ =?us-ascii?Q?qyhn0N50dTILcuI7rYqcLtg6UdOLHWucdcc7XtuCDb+4x2CEL9JZOuJmIE+B?=
+ =?us-ascii?Q?YQdUW/X21AsKQ4jxZeTieaHgBQqb/57Bu8r/Zi0C/lPDBd+ID5425hALU0pN?=
+ =?us-ascii?Q?ISwcd0+S/XFqnNq+WU/3IwFtGMPg/GIA02zRPKlLBV1wbx7cw82GUcffUF2D?=
+ =?us-ascii?Q?1c3IcRcAZ4NIG/Iee2jx0TW8LT1wYxI2hqMz2YktHYsgVkR8MJFekeg448oA?=
+ =?us-ascii?Q?dPqUS7wEXp57OQh1knImLvdyuNE+sJXDsCNEyS0SXeCGbTqYcsPlvSqxsVZp?=
+ =?us-ascii?Q?STzdWWSwXYH/GOiOYrG0akEq/6MjvD5eRJGNNHsfvSg1LlMLqXS452ykNsKT?=
+ =?us-ascii?Q?ClP3YKqMFgOyq3Lrv2vLNZrHyldZzRxHXkHLS/0T9piC/EiPWjhvKTtP9pNJ?=
+ =?us-ascii?Q?uS+TZppDfQD3xDXIV9X1U54B/vFHOs98MFH1J/KZgp4e3EKS95ahtKeq0GJT?=
+ =?us-ascii?Q?5sniHRsw5/P0dSJEZaJ+u10UwwFekhXbrZSmv/UhkdchhVyb3odoW1JIwg4y?=
+ =?us-ascii?Q?n+boKcKfKbPOsC7+lgBN7hN1ulqSM42hekgRYzbil3jGPiuALzCJNwa6ZsSa?=
+ =?us-ascii?Q?vE+irs7n7xYMnFmSZ0x7sNqK7T3ZAiQrLGbUILNe/4uN6k417X7MC9xfYxrx?=
+ =?us-ascii?Q?rWZ0u/Ji7K3zX7snv42FoivrF9TfQUirbsuhSSKFi7wSLgPdgN2PC3fGqKN7?=
+ =?us-ascii?Q?Kqac7QRZ9FZZG81rytpfft28spguHDndLzlvdqnJCb/OK6bb+JyrOk3OQKx7?=
+ =?us-ascii?Q?SCzGIeG3pL7I0GK46cV81pqBHSddknSGBuX7nr/b0W7+ZGbWeA4MpnvubNaA?=
+ =?us-ascii?Q?5I2OsD8636ltKVFiMCYBXI2ktiZgfaLIXCJ033z6eKcxCFsTGYEwTGxxa4PC?=
+ =?us-ascii?Q?8952kPuiow4jA4lAL8Gj8COpB/Lo9Hxo/GMCmj8DLcHtply8/8juUmw4ALvw?=
+ =?us-ascii?Q?sxKPIwja6tCQqbk3NcK0uwQOooWL7ToEOf+AvsSE0DxXom7iGNzTPSIHvLiO?=
+ =?us-ascii?Q?HzlGsc0mw/cheXMBbPouj0T0/H2Yld2Xac0jFMFSyhSXFg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN7PR08MB3937.namprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?6mBb4/iuC0fdFhL9tw09XYFkyqp3sb1uhjQN2YXG8WoKsmsbtSEfqVy8JeSy?=
+ =?us-ascii?Q?abDUpJvjCpyQ2cMDllU1eUPWIAi0uo+kybH7EaNTni0K4UARFAcqrQ6mjMRP?=
+ =?us-ascii?Q?K0NZJuYy3bC2QnxD0zpqyPRuKftM35jz2rSRxDOArHx58H+Nju1YMWieO9JP?=
+ =?us-ascii?Q?Ie3kwVg3470VHS7ChJYxNVnbB2tknFRJlOJXw1L1hV17GuDcjubrS/lsSZxB?=
+ =?us-ascii?Q?9IWtf8Pw8lQqVGYU8o/xTliQ4FQcKTfZ5khTQYeQEGw2KJaCLOhjyuzbf536?=
+ =?us-ascii?Q?YfrqXcehZLZ4wdGMIFW6uYH2vxgbRn+Y9VFCuNDluvPK9qrRPPWo5/hwxWrJ?=
+ =?us-ascii?Q?ALBcjkyjzK8LSSh4qbsW5L/LkJOC/rxaYo0YxW9sLFNJCHcU7csdE//Tia7O?=
+ =?us-ascii?Q?w8PUrAQ5wOAouQFZ0z1XMMSYP/TEyRRvOD4to79ye+n60OcmSc01dxOjqUU9?=
+ =?us-ascii?Q?rhD9R4Xt0ZrNw4BO5Qt/9GivyHHnUX2X5y4F7zoJ3qbZE2yMMaoq5txZJkBh?=
+ =?us-ascii?Q?8wwyokRt8I+ZHSN2joPEKF1FjyLw+S5sBzLxixT8QUL7A4U3BYznZcKcQlcb?=
+ =?us-ascii?Q?zBxA/lu+ml46tH0jMeo1o+dR3yQacLREsWUcS3tSNMU83DKJimcCzMkjEbzt?=
+ =?us-ascii?Q?xCrjK85xAH7JT4a5CGtW7yHEM73Zp48pfiKRKFS6yIohacDdwlyf++xn7I4z?=
+ =?us-ascii?Q?PknQAicFyB4ITBYrmbSoFjz0cmNydStAOl3GaZuG1Ut8XJYFTpVrZ8XvSFQs?=
+ =?us-ascii?Q?bzCCTjhYlOe+pfpYv/I3QUvfYg2wKSIR4jbGixJ6ITb2whpsUz58StCxQud2?=
+ =?us-ascii?Q?l/ybdbfscgC2nb7r7OGk/umf0TjejsDIutgH58iwadXLyPyaroYdF3QJs+o0?=
+ =?us-ascii?Q?jiWjc5NpkkFFdPZRYfGx349I/mNqV+Z1n/9O6p2Z2tfBIhvYlktFgGrE+qNx?=
+ =?us-ascii?Q?VI6fMPDUXUQxb+HlvD/PrafFBGRW9TzH/sf19MMFVH6dd8C6O9C7uzg3Tr8b?=
+ =?us-ascii?Q?JswglgaKnFI6e5fyl+NHsxrbndO7QfWe2jWTcCm4ZYoqSsACTG9bGADj4+dH?=
+ =?us-ascii?Q?rZaPTexfHwybfs/i/YkMDxf1/lhgR7bRB8lzB9F0mjZhk6ZhtlUmJC+jQL3e?=
+ =?us-ascii?Q?uS2+iC8xflAQfY3MYOlK3w4Ty7GoOSO/ex2o7R+EwR9yeMjfN/Bpl7uJ5uRL?=
+ =?us-ascii?Q?ZDIu+yLRL++mee0/0tMtVDD6SKK1xyGlJmdowWdCpWch8p1A0iwVyCeKGQTu?=
+ =?us-ascii?Q?hQfLIVRS37FnOpQDtZV2MqVe1n6TEK9tBAxCz4RKV7Tr9IzmgklzlC3koy4r?=
+ =?us-ascii?Q?OxnSInB24WCBnJbynXaeUqYOqvJDFCoA2fjbRoBdkPch1sBS3aYrQRpnxjmd?=
+ =?us-ascii?Q?efNNpkz0W0r7aXef1HoT+0Pu9dHDQbX4WPLyKoo5F63Jslhzr82lXZD86D85?=
+ =?us-ascii?Q?Vfrneavdfd3m8/ys4uXXn6PjwPKYGXXurkIMxxm5JMJEMJLwkA1IbBoaCn6l?=
+ =?us-ascii?Q?NsTMcRGoumifqdM3DnoT/5m0v82IJ+FYtmDnyu0CZLYmuetiQGjGGQEUKwRr?=
+ =?us-ascii?Q?uu4l2xDMR0hqn61XT3ElBNfQ7gzRNGiI6djjNyCp?=
+X-OriginatorOrg: labundy.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a0cb9c8-72d2-4718-04b3-08dcbf493beb
+X-MS-Exchange-CrossTenant-AuthSource: BN7PR08MB3937.namprd08.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2024 05:47:27.2349
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 00b69d09-acab-4585-aca7-8fb7c6323e6f
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GqR5t7oUSbFY1tQc14a0soUj4RlPWeulYWpPp8ufD1AslQE8D6GO7a10Om5QPYkcocAnYbVPL23chTbNmMlltw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR08MB7164
 
-Hello,
+Hi Dmitry,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-kernel BUG in __sock_sendmsg
+On Thu, Aug 15, 2024 at 11:41:53AM -0700, Dmitry Torokhov wrote:
+> Limit amount of data that can be written into an evdev instance at
+> a given time to 4096 bytes (170 input events) to avoid holding
+> evdev->mutex for too long and starving other users.
+> 
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-------------[ cut here ]------------
-kernel BUG at net/socket.c:733!
-Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 UID: 0 PID: 3938 Comm: syz.0.15 Not tainted 6.11.0-rc3-syzkaller-gc3f2d783a459 #0
-Hardware name: linux,dummy-virt (DT)
-pstate: 61400009 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-pc : sock_sendmsg_nosec net/socket.c:733 [inline]
-pc : sock_sendmsg_nosec net/socket.c:728 [inline]
-pc : __sock_sendmsg+0x5c/0x60 net/socket.c:745
-lr : sock_sendmsg_nosec net/socket.c:730 [inline]
-lr : __sock_sendmsg+0x54/0x60 net/socket.c:745
-sp : ffff80008960bb30
-x29: ffff80008960bb30 x28: f8f00000054a4900 x27: 0000000000000000
-x26: ffff80008960bbc0 x25: ffff80008960bbc0 x24: 0000000000000000
-x23: fbf0000005f33740 x22: 0000000000000000 x21: ffff80008960bd90
-x20: fbf0000005f33740 x19: ffff80008960bd90 x18: 0000000000000001
-x17: 0000000000000000 x16: 0000000000000000 x15: 000000002002ffaf
-x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
-x11: 0000000000000000 x10: ffff800081585b20 x9 : ffff8000815b4b18
-x8 : 0000000000000000 x7 : 000000000000003f x6 : 0000000000000000
-x5 : 00000000000007e0 x4 : fff07ffffd239000 x3 : f8f00000054a4900
-x2 : 0000000000000000 x1 : 0000000000000000 x0 : 00000000fffffdef
-Call trace:
- sock_sendmsg_nosec net/socket.c:733 [inline]
- __sock_sendmsg+0x5c/0x60 net/socket.c:745
- ____sys_sendmsg+0x274/0x2ac net/socket.c:2597
- ___sys_sendmsg+0xac/0x100 net/socket.c:2651
- __sys_sendmsg+0x84/0xe0 net/socket.c:2680
- __do_sys_sendmsg net/socket.c:2689 [inline]
- __se_sys_sendmsg net/socket.c:2687 [inline]
- __arm64_sys_sendmsg+0x24/0x30 net/socket.c:2687
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x48/0x110 arch/arm64/kernel/syscall.c:49
- el0_svc_common.constprop.0+0x40/0xe0 arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x1c/0x28 arch/arm64/kernel/syscall.c:151
- el0_svc+0x34/0xec arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x100/0x12c arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x19c/0x1a0 arch/arm64/kernel/entry.S:598
-Code: f9404463 d63f0060 3108441f 54fffe81 (d4210000) 
----[ end trace 0000000000000000 ]---
+Reviewed-by: Jeff LaBundy <jeff@labundy.com>
 
+> ---
+>  drivers/input/evdev.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
+> index a8ce3d140722..eb4906552ac8 100644
+> --- a/drivers/input/evdev.c
+> +++ b/drivers/input/evdev.c
+> @@ -498,6 +498,13 @@ static ssize_t evdev_write(struct file *file, const char __user *buffer,
+>  	struct input_event event;
+>  	int retval = 0;
+>  
+> +	/*
+> +	 * Limit amount of data we inject into the input subsystem so that
+> +	 * we do not hold evdev->mutex for too long. 4096 bytes corresponds
+> +	 * to 170 input events.
+> +	 */
+> +	count = min(count, 4096);
+> +
+>  	if (count != 0 && count < input_event_size())
+>  		return -EINVAL;
+>  
+> -- 
+> 2.46.0.184.g6999bdac58-goog
+> 
+> 
+> -- 
+> Dmitry
 
-Tested on:
-
-commit:         c3f2d783 Merge tag 'mm-hotfixes-stable-2024-08-17-19-3..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14d277c5980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9f3e2eb337834cdf
-dashboard link: https://syzkaller.appspot.com/bug?extid=58c03971700330ce14d8
-compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-
-Note: no patches were applied.
+Kind regards,
+Jeff LaBundy
 
