@@ -1,85 +1,94 @@
-Return-Path: <linux-kernel+bounces-291148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EDAE955DED
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 19:29:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B132955DF4
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 19:29:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E32A1C20356
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 17:29:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D2FC1C208A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 17:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6024614A61A;
-	Sun, 18 Aug 2024 17:28:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547C1154439;
+	Sun, 18 Aug 2024 17:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TErJa4RF"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pKk1X/sw"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C5A1EB36
-	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 17:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55454149C7A
+	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 17:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724002122; cv=none; b=G6opcPgSGebFilOu6UpCDN1GX3mZ1YzPRiVMyI2SSwQm9VlN6EB0dNMlaoLPTUQRoeE4fvr99dvlp/yGULT81LHiAImbuj9KMKTBzJ2nGKyaYi0SY6sTbwyaoUnKhLbtmPEvpcMqT0He4QHSgfj6486sdbJM30QvoCPgWGdWrZ4=
+	t=1724002133; cv=none; b=BejrVaPZpBjmnN5V3NgR79NCcdFrr1tDu7R1Mzhyqil8XSPFhSOLI203DybUs6qEmVFy7GzNuWjOo73SfwZj8sb2opNZznwzKZlgYMJN7UXb1TYw34ZtBUJKzUflTZVZTy125mQZ8dEVGUELYAdGF27XqOxDOPtxqvz1mKKzyG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724002122; c=relaxed/simple;
-	bh=AbFEOueyTkApHOCZ2VmW6GfqYLBCyUHUN/YS6oy+fCY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IndAh3B+UPyYgaZ2rBFK8P9SOgQ9W1x0aY9wwWJyo7wfdxR0qxb0teKqCHBWGFelvJMSbwoiGnkYDjPGtJfy9oY01qUVzsmPQu6NTIrZc2qu6h60arpWvvc/MZ7vjopAcsB7K2r/CcfZU/TDhUK1gw5vKMtgnIeTllY7bHPdVZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TErJa4RF; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1724002133; c=relaxed/simple;
+	bh=EcLybmfw+0g9pG7qN2rZISIWYbjARPz79yYF0pURgRg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UcFPxZVL3UjDQP8XWWzl6nJODMVcIql8Rleou3ejAuVzfPdj/EWkTtTmddrkmEmTiCJ+GYdy/1+vuti7fRFawtJ/Mo8mYQbojy8mErcoA9FUTk1VctBrcQRgfRiUWtNZJBHCiuT06vB9Fqn6ahXKAZ337gJicgvF3ULjj7+ZtyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pKk1X/sw; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-429ec9f2155so21918515e9.2
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 10:28:40 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-371a9bea8d4so646346f8f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 10:28:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724002119; x=1724606919; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1724002129; x=1724606929; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PMnjAah/UWroMhE148PgxhjcZt84A7eF0pUsqexp/xQ=;
-        b=TErJa4RFXpz8hZ6AySjZ6CD05IoJYIKFwn3YMVSscnsy90+DTS5HtzZT77ZjxQcQLa
-         QD0Lgq6Kx+u5c8z/sX2PO7WLisafhKxhXHI3e0BlwETyCy6ar1e64GjsyDQq9JzVGI3J
-         uUoFh5G9yfXf2blnZqxth6UEUPxWiqba3EqKuh94AC/SHhl5Ok4pL4e8AbpVm9D9pnBL
-         vziNOp+8/h6fF+yI/mThOn1YYq4/Tic42Hwc5DeIlSFBpMvWyKs/g9WsQiH79mYM9My5
-         ezklLBKuSOiCUp1wJONp1Y/soNOB+uoc5qhjup/BqCTXGgLBD8iqbUrpOmE9x1oYieVE
-         jMiQ==
+        bh=GNx0581gmw5KmVnKNMArHkHEaJIxEm4/jRsnasy6Iao=;
+        b=pKk1X/swdl2oN+2bNpUL5GH7qs4Ir4Cgl7LUFUkNE/562P1P/ui1Jib+Q88VxAIgb9
+         /jSdiQSVxOeddjSASj4ktt1tDxLEzXdVzHhCGLdLO5I6vCXF+HtYyuzBJFabrWfpHaaK
+         6P+eSRT5tdh3Ly4sBzReo0jdKyhaEGmkZ4jekegK0KF+5UT6fWW2yQeVaITVAuww6pl3
+         Z65Ywt3UbN98sQ9CFk6tXyg01er/bw5utj0jY0/7GiMTo+tKbN5XCMLxfkHhFrdl6xni
+         tl99lm2DNlB3uzROAwPOZJMyFDLrhbL0xX11zd2ASHCsCqVLUFPXRBOaSdCqVvhd/OJx
+         1ZWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724002119; x=1724606919;
+        d=1e100.net; s=20230601; t=1724002129; x=1724606929;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PMnjAah/UWroMhE148PgxhjcZt84A7eF0pUsqexp/xQ=;
-        b=duDBA0+Ba7Q0GZxrt+EROfbw68jgQYLQ5jBsqdYho2IkupEcfPfA+kGQh5Ncz1S8gy
-         irLBTJ1F6Fv6ipbDVJJWgoYOAI/uo1OJJ9IcaZw1+LjjLdlUwxhACXj1a7ozQ/zixoaJ
-         qEwS+iIiKdgxclFppBXjHcd9JMtR2ghBAGZiopDeCFQP7MjbFIGxfc6cSGas+XzOLa5M
-         WtluQTDf97TluyCBQHbE47zJJ+LRhhHPlstAL5fBJ7jwkt80Q/4H9VtOqOm85hyYw30I
-         fb7TIFO+ZPs6qGESMTFZV0864Q8icbkGEH7AUraHPcHlKbwrWaqpvfcYbOU70//EsfI8
-         wH2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWvge0RC/IUkyd7DFkyS+TgxJtXk1j5mXpXs5cqlJcKJ4Cw8u0sRToARA0duJouyaLFhMg04/u+EHgDCRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdS+KlnX2q9f8udMQaWyglAA313A5D3FhcUy0IxrW2s4b9z8fm
-	6NrZ064nLdDV1UZV/cXkP7PvTEpn24o637OPbnCecOiBs1MVmXkmjUNrWFf1zXA=
-X-Google-Smtp-Source: AGHT+IHKIKkAiJcdyepoCL+1/HhHa4+A1IIkB0xWHjT0oRr8pb2bKGRlOXa3/rVSag8EpoJHu5jWLw==
-X-Received: by 2002:adf:b347:0:b0:368:3b21:6643 with SMTP id ffacd0b85a97d-371946a1372mr5523675f8f.48.1724002119278;
-        Sun, 18 Aug 2024 10:28:39 -0700 (PDT)
+        bh=GNx0581gmw5KmVnKNMArHkHEaJIxEm4/jRsnasy6Iao=;
+        b=T/mERbQZUUPXmhEjAgtXVZqdNPqzYnPhI5YZbUK3dRQvwPtwxpmg/Hs5J62kRIgZGN
+         sy3M13ClvawNRS4GaxdEUuJ83XYQDjmIG6oGBj0lmQpP9h36Ajl44fRhGp6PfShcVY60
+         NzoVKjt0OzGJNEoLVd0adM6VVvZ7tjTdxbB0ztlYwzGVOyV4DGs8R2qh4HmWAza8sk9t
+         BGWZ5jk+GG540tcQpYJj6LCMbDMgcCOHC/a1kblYAsRRgaUhlQqT+0aeokuiwBGZ+uJj
+         bA4fxdnVj6nhmODJqYziq/UFd0sfWUQSCoN0FfmlCtB2Q/oODGEmaTtTYu5501+9L9Ea
+         pphw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+Nohs/h+Oa2E7998PhEdxg64FanIzNfq6dbvY6TLU+oAkq1FvORm8jBf1GE8HRyiCbkbtpQ+h5yez9FmB9toCDjBoXMAHy9l2Mue+
+X-Gm-Message-State: AOJu0Yxx6ATenaCvZV7f7utXKlmZTNuuh524/oYDcIAHMLO2Z+tSz+SB
+	hz/ImlIQxOYC6pZCRqPEPvq9BZCMaYEpwWJNmfdvjr6Ipj5dUiPdCMDA0CGbOrs=
+X-Google-Smtp-Source: AGHT+IHhIVY0bWR2O7mz+r0RXXbWCwIx/u27MbcgBTwXx1CRg5LFhEFV+GL/Fw9bSLQnd+XYkgRWkw==
+X-Received: by 2002:adf:f285:0:b0:371:888d:7aaa with SMTP id ffacd0b85a97d-371946b1ae9mr5217302f8f.49.1724002128655;
+        Sun, 18 Aug 2024 10:28:48 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898498casm8461112f8f.42.2024.08.18.10.28.37
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718983a31csm8518541f8f.17.2024.08.18.10.28.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2024 10:28:38 -0700 (PDT)
+        Sun, 18 Aug 2024 10:28:48 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
+To: Xiaowei Song <songxiaowei@hisilicon.com>,
+	Binghui Wang <wangbinghui@hisilicon.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
 	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
 	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-phy@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-pci@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: phy: socionext,uniphier: add top-level constraints
-Date: Sun, 18 Aug 2024 19:28:35 +0200
-Message-ID: <20240818172835.121757-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/3] dt-bindings: PCI: hisilicon,kirin-pcie: add top-level constraints
+Date: Sun, 18 Aug 2024 19:28:41 +0200
+Message-ID: <20240818172843.121787-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -96,104 +105,23 @@ for clock-names and reset-names.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../bindings/phy/socionext,uniphier-ahci-phy.yaml         | 8 ++++++--
- .../bindings/phy/socionext,uniphier-pcie-phy.yaml         | 8 ++++++--
- .../bindings/phy/socionext,uniphier-usb3hs-phy.yaml       | 7 +++++--
- .../bindings/phy/socionext,uniphier-usb3ss-phy.yaml       | 7 +++++--
- 4 files changed, 22 insertions(+), 8 deletions(-)
+ .../devicetree/bindings/pci/hisilicon,kirin-pcie.yaml          | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/phy/socionext,uniphier-ahci-phy.yaml b/Documentation/devicetree/bindings/phy/socionext,uniphier-ahci-phy.yaml
-index de3cffc850bc..e34b875a1bb8 100644
---- a/Documentation/devicetree/bindings/phy/socionext,uniphier-ahci-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/socionext,uniphier-ahci-phy.yaml
-@@ -30,13 +30,17 @@ properties:
-     minItems: 1
-     maxItems: 2
+diff --git a/Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.yaml b/Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.yaml
+index c9f04999c9cf..e863519f3161 100644
+--- a/Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.yaml
++++ b/Documentation/devicetree/bindings/pci/hisilicon,kirin-pcie.yaml
+@@ -37,7 +37,8 @@ properties:
+     minItems: 3
+     maxItems: 4
  
--  clock-names: true
-+  clock-names:
-+    minItems: 1
-+    maxItems: 6
+-  clocks: true
++  clocks:
++    maxItems: 5
  
-   resets:
-     minItems: 2
-     maxItems: 6
- 
--  reset-names: true
-+  reset-names:
-+    minItems: 2
-+    maxItems: 6
- 
- allOf:
-   - if:
-diff --git a/Documentation/devicetree/bindings/phy/socionext,uniphier-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/socionext,uniphier-pcie-phy.yaml
-index b3ed2f74a414..9fc0e87c508e 100644
---- a/Documentation/devicetree/bindings/phy/socionext,uniphier-pcie-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/socionext,uniphier-pcie-phy.yaml
-@@ -31,13 +31,17 @@ properties:
-     minItems: 1
-     maxItems: 2
- 
--  clock-names: true
-+  clock-names:
-+    minItems: 1
-+    maxItems: 2
- 
-   resets:
-     minItems: 1
-     maxItems: 2
- 
--  reset-names: true
-+  reset-names:
-+    minItems: 1
-+    maxItems: 2
- 
-   socionext,syscon:
-     $ref: /schemas/types.yaml#/definitions/phandle
-diff --git a/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3hs-phy.yaml b/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3hs-phy.yaml
-index 2107d98ace15..25c4159f86e4 100644
---- a/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3hs-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3hs-phy.yaml
-@@ -34,12 +34,15 @@ properties:
-     minItems: 2
-     maxItems: 3
- 
--  clock-names: true
-+  clock-names:
-+    minItems: 2
-+    maxItems: 3
- 
-   resets:
-     maxItems: 2
- 
--  reset-names: true
-+  reset-names:
-+    maxItems: 2
- 
-   vbus-supply:
-     description: A phandle to the regulator for USB VBUS
-diff --git a/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3ss-phy.yaml b/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3ss-phy.yaml
-index 8f5aa6238bf3..1f663e9901da 100644
---- a/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3ss-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/socionext,uniphier-usb3ss-phy.yaml
-@@ -35,12 +35,15 @@ properties:
-     minItems: 2
-     maxItems: 3
- 
--  clock-names: true
-+  clock-names:
-+    minItems: 2
-+    maxItems: 3
- 
-   resets:
-     maxItems: 2
- 
--  reset-names: true
-+  reset-names:
-+    maxItems: 2
- 
-   vbus-supply:
-     description: A phandle to the regulator for USB VBUS, only for USB host
+   clock-names:
+     items:
 -- 
 2.43.0
 
