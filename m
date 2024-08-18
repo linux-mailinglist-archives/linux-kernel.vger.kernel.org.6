@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-290980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C68D955BD3
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 09:29:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D5D955BD4
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 09:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED7B7282275
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 07:29:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CE5C1F21D9F
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 07:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3364B1642B;
-	Sun, 18 Aug 2024 07:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E55D17C7C;
+	Sun, 18 Aug 2024 07:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldZ0fAMu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G8BUWnIo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74006BA41;
-	Sun, 18 Aug 2024 07:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3C317BBE;
+	Sun, 18 Aug 2024 07:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723966137; cv=none; b=ci7rhZ+tGbBaLsfROKzCcgHS6T8smy1KArIALhUX7U9DkdPIZfxokCclftzeFLtAx+nqyPDC7jsCl4lDd3RqGKk0sryEmkY3GvrPeu5HbUgKJx/NpalypVmWhVOKmAn3WbqOKrJI8ZZxxjpf0YHN1ga1iya7PS48Ih84F/K8m6c=
+	t=1723966140; cv=none; b=plb9g4Zb5yrhGNTdhthZ5RLLs/xgFoV20WsphW9VRgdnwesF8mElR+l7Wdx/c2zqy8ZC2CfOv2kj+dQIrEJr8D3lkurRc2JsE+u2FuZIC7MJitnUyH/LCYpe581K2Hj6oMRB1+1DdHMXDpJeqIPsZwGQjjlkVrm1wta99gs++qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723966137; c=relaxed/simple;
-	bh=7kqkLWEy+OLt/Z/7mO7cI3tSA8L9d/Dhl/E63oaEcyk=;
+	s=arc-20240116; t=1723966140; c=relaxed/simple;
+	bh=fdiA/nubjDzgaO8d4ynk/avtPhGWva8ZWhFS6UXqLdQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=swK8IBhMnttlSKPhPJpZA2fPdy4w4UlOIEB/YOluDdnuZCXlsIiw+W1uXUPC1CW1tSYe2O24VG3uPu/7IShBs5y6JPQy/8qgr7jaXErSPo8wx9pnFwzs8u+CGDZnJsSWCR0VgTmPGptI8UYmyd8xlTuPdoRESHr04ncDaZoOmZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ldZ0fAMu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58514C32786;
-	Sun, 18 Aug 2024 07:28:55 +0000 (UTC)
+	 MIME-Version:Content-Type; b=UjKTlqSHZ9R9u6vXafQZRh4x8pU4b64v9scldjCediD1+IJ8X7aDckTqmAmdq6gIVZ+aBgrvhtjSLPFAgq4KGbZlBA4agXQYIBG5U2XQ9ZN3Tnx4hrtqJUPnXGk7NikOWGE0xGl7GFH5hSHIzKhn+quS4lABDk0jBmzDFVfQGbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G8BUWnIo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B227C32786;
+	Sun, 18 Aug 2024 07:28:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723966137;
-	bh=7kqkLWEy+OLt/Z/7mO7cI3tSA8L9d/Dhl/E63oaEcyk=;
+	s=k20201202; t=1723966139;
+	bh=fdiA/nubjDzgaO8d4ynk/avtPhGWva8ZWhFS6UXqLdQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ldZ0fAMu89bRiKaMv3hGEAXpg/IFsqaIikDLJl9j8ENMbtBgjLRCTGUdOgnbgQBWQ
-	 3KVggvb03CpBfIrPuNp5A/xWt/xdh9WLVo8OBp5kNp3Ph8qcswOiaEGPX1hgFAsGVo
-	 JAqljn42uWkxdWO/oLgJtg/YzE+FkbMLGErKpVRKjQk4OgHpyOZNPTC4ndxRyW9u5x
-	 2QNC2fWSp6ckNppe5PRiMljsgXGeg0uCQIn8JYQUOW4n1NC/diAo/8aofAOOyABtnj
-	 RWeKsX44g8nDlsJm9Cugumf6dl+F36iXbdV/gjXeU7CfXz6Oydw6lQjbB+/1n1wxt4
-	 48P2qnfIvqATQ==
+	b=G8BUWnIo7osb38b0wOzaDc7R5KIJtnRzZNtcZWxBoIYh3VYbgW0NwEttVwDqFx0ed
+	 u3ZeFy3ojVrAWqRcfvYN+NoGkINyeIbnOi5iwHS9Bw49KwfdpO0nBNzYuEfLL0Ls/8
+	 fB05WmGXRq3h9jZwi0diVI05T6hc//bXlkJw4ZXwAu7NouczXrSs1iBe0lE/5+lFio
+	 2AeSM2ItPMoYeY1Vd8/VDDyR0JAfodmdEwVcZigEtlkUGgK6aWw0ZBLbEDiYVO8uJb
+	 N4QYjM7m57mZdnYqAOK1JjdfW+SZAXHeDcNlCLGgIxQbYQbD09QBjztlDk7n30dx68
+	 q/OqsRfU4pYPA==
 From: Vinod Koul <vkoul@kernel.org>
 To: linux-sound@vger.kernel.org, 
  Bard Liao <yung-chuan.liao@linux.intel.com>
 Cc: vinod.koul@linaro.org, linux-kernel@vger.kernel.org, 
  pierre-louis.bossart@linux.intel.com, bard.liao@intel.com
-In-Reply-To: <20240805114921.88007-1-yung-chuan.liao@linux.intel.com>
-References: <20240805114921.88007-1-yung-chuan.liao@linux.intel.com>
-Subject: Re: [PATCH] soundwire: cadence: re-check Peripheral status with
- delayed_work
-Message-Id: <172396613500.999616.5825027141981948673.b4-ty@kernel.org>
-Date: Sun, 18 Aug 2024 12:58:55 +0530
+In-Reply-To: <20240805115003.88035-1-yung-chuan.liao@linux.intel.com>
+References: <20240805115003.88035-1-yung-chuan.liao@linux.intel.com>
+Subject: Re: [PATCH] soundwire: intel_bus_common: enable interrupts before
+ exiting reset
+Message-Id: <172396613728.999616.2602960995757572106.b4-ty@kernel.org>
+Date: Sun, 18 Aug 2024 12:58:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,21 +62,20 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Mon, 05 Aug 2024 19:49:21 +0800, Bard Liao wrote:
-> The SoundWire peripheral enumeration is entirely based on interrupts,
-> more specifically sticky bits tracking state changes.
-> 
-> This patch adds a defensive programming check on the actual status
-> reported in PING frames. If for some reason an interrupt was lost or
-> delayed, the delayed work would detect a peripheral change of status
-> after the bus starts.
+On Mon, 05 Aug 2024 19:50:03 +0800, Bard Liao wrote:
+> The existing code enables the Cadence IP interrupts after the bus
+> reset sequence. The problem with this sequence is that it might be
+> pre-empted, giving SoundWire devices time to sync and report as
+> ATTACHED before the interrupts are enabled. In that case, the Cadence
+> IP will not detect a state change and will not throw an interrupt to
+> proceed with the enumeration of a Device0.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] soundwire: cadence: re-check Peripheral status with delayed_work
-      commit: f8c35d61ba01afa76846905c67862cdace7f66b0
+[1/1] soundwire: intel_bus_common: enable interrupts before exiting reset
+      commit: 5aedb8d8336b0a0421b58ca27d1b572aa6695b5b
 
 Best regards,
 -- 
