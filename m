@@ -1,145 +1,133 @@
-Return-Path: <linux-kernel+bounces-290878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAA4B955A6C
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 01:56:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F5E955A71
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 02:03:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EC541F21916
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2024 23:56:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDEA81C20B83
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 00:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31A7155C9A;
-	Sat, 17 Aug 2024 23:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE7917D2;
+	Sun, 18 Aug 2024 00:03:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZctFRYC9"
-Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="n14UcT6m"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A829460
-	for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2024 23:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6FED366
+	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 00:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723938999; cv=none; b=p872SxjcM1+3TUfOZNwKBn851CCrXaosfVEVx1c7fE7UmHLJrppa0CgHGTXebTXC6mpfRt66VD/8q+rx1se16Gmx4WrOUl/7Pk69qKZSQ2003gUB7DduQR1K8KV1Dclr6AksrvcxVjK/YulvxJHTZ2dFadPpxclnVAFOBP9RKsY=
+	t=1723939401; cv=none; b=GaCIDoqRICrfcwGYSdxfkf5QoPkHTjYzuqBr7sBsp/yA3GEwn7X3NfGJn3z5ABmGqEJXvu7zfMXP9NH4JiKio2+F4hzPRICWKPnVGanHsYX2y3kvVq+Vh5MZ3jU8Gcxt0Ii7kCLFxGC/ktzLUh+amQys3Py0t02EfX2UBSAM4j4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723938999; c=relaxed/simple;
-	bh=HPeYGQj8KBfSSGdgx1xSLRs6X3tjsozpGe+pyT6X05w=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Hh023hvXZuS94w35Mej80VwexXdM1RK5dJE4a48KyT1hT1U2yYMsc4FsK7Fl/VPoH82+tleXH9Eur+HrFfIEfXXfN0oOjttKwHkHy7z0c3Stk8AGfzEeWPpU7BPI9uNUqmHXrtXC04X0Bt95ra4UTIZhyWTxhOJkSXIFAvgcgyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZctFRYC9; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-02.internal (phl-compute-02.nyi.internal [10.202.2.42])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 2588F114BBAB;
-	Sat, 17 Aug 2024 19:56:35 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Sat, 17 Aug 2024 19:56:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1723938995; x=1724025395; bh=6a9TGoLD+oTDFnVv1MDv/D2dHc/B
-	JH70iFj/8O7Fpy0=; b=ZctFRYC9RY1n6KoRyCwMYofxVl1Ye0qHGDd1MJicAPuA
-	LaRVAnfo2UvRW9YjC9Xh5VKYWhOVA4sbKeq5D30UZuKCi0aWhonxYdIVuhy+Z/MQ
-	DCNgVItf99RBICVeHV7mDoUQBKRugyNVgaTvqMTle7yLj/qG7PMse6TracTegRVu
-	yvqthzGmThAq9lY1exLkTXLFbIeL9cCccveR40wgtP9cA95L6GL6be2/lR/G1alJ
-	56NBah3T2IzSRHvpOf2wfjorhWWWOa9WQQyaxA1+dULRDRe4GgDtRDvlnRlKtHHZ
-	if5Lx1/iQOMHxLJmffHCyaR+J4iqTXWZAKBcLCThlw==
-X-ME-Sender: <xms:sjjBZkgqpyUx4t8wEyVb5zCUdRXL5DOEY8mRKvBx9i-h4wleloEaeQ>
-    <xme:sjjBZtDMf-rML_MYnvXDMuz5P3eu2fSN3QdjtEa1gnS141_sPnyOg9Dq8GpRR-7Yo
-    zsnF-xiEW6ru9_7MAs>
-X-ME-Received: <xmr:sjjBZsFsjdFslxMJimuWpnDDEXpHRY8w1JjQzh70kS0JCnD3w-M2qE17D6HusXoMLayr7_P2aG8w2P1Q-Un30CCPxF1RcMfipig>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudduuddgvdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevufgjkfhfgggtsehmtderredttdejnecu
-    hfhrohhmpefhihhnnhcuvfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrd
-    horhhgqeenucggtffrrghtthgvrhhnpeffvdegjefgvedvfefghfffvdegfefhgeeliefg
-    hfevkeekveeitedtfeduteefieenucffohhmrghinhepuggvsghirghnrdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepfhhthhgrihhn
-    sehlihhnuhigqdhmieekkhdrohhrghdpnhgspghrtghpthhtohepiedpmhhouggvpehsmh
-    htphhouhhtpdhrtghpthhtohepghgvvghrtheslhhinhhugidqmheikehkrdhorhhgpdhr
-    tghpthhtohepfhhunhgrhhhosehjuhhrrghirdhorhhgpdhrtghpthhtohepuhhsvghrmh
-    ehjeeshigrhhhoohdrtghomhdprhgtphhtthhopehstghhmhhithiimhhitgesghhmrghi
-    lhdrtghomhdprhgtphhtthhopehlihhnuhigqdhmieekkheslhhishhtshdrlhhinhhugi
-    dqmheikehkrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
-    khgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:sjjBZlQgvC0UAL1WpT_hjK98vQZ1PS8BZpJNTvT5zVQnvjD2KigTfw>
-    <xmx:sjjBZhwA2V-8-W9SNFEE8qgxfWFj8bhya21E8GPbziPwj0HucUBJnw>
-    <xmx:sjjBZj7QNKh43mtmMU0zmyg1O6z5MUJPotgy-h9GUBwWFpjt5oQO_w>
-    <xmx:sjjBZuzvWUHy1SL0i8IQMR9_8RQ8YAjl7Bd0ieCiz9izdCk_y1odTg>
-    <xmx:szjBZkrhPQdBSSrVJErZS9o9M1uTC2OYhUh-HEAuYXi-xWWTFpmvek8I>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 17 Aug 2024 19:56:32 -0400 (EDT)
-Date: Sun, 18 Aug 2024 09:56:50 +1000 (AEST)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-cc: Joshua Thompson <funaho@jurai.org>, Stan Johnson <userm57@yahoo.com>, 
-    Michael Schmitz <schmitzmic@gmail.com>, linux-m68k@lists.linux-m68k.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] m68k/mac: Revise PowerBook 500 series model name
-In-Reply-To: <CAMuHMdVx8XL5qPE0fWM3p6hWyUUH5FxSp-wCF5Q1ekXCSemmXA@mail.gmail.com>
-Message-ID: <9da54e36-682f-aba1-a5fb-4e41665b9873@linux-m68k.org>
-References: <3633d85c51d2133622708e5b0e07cfea96fc295b.1723445731.git.fthain@linux-m68k.org> <CAMuHMdVx8XL5qPE0fWM3p6hWyUUH5FxSp-wCF5Q1ekXCSemmXA@mail.gmail.com>
+	s=arc-20240116; t=1723939401; c=relaxed/simple;
+	bh=43PNXDjta+N+EXhuUTIcjpCi7FZQMT1ibYrtMuZct2k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oc4BXT0g3CZTLfqOQ5bdB+3XSOYs6BEPEeJ/T7qU4AwsLxJDYjCBs8jXZeeHBeIK2WROGHKQa77ofHjQhKa9UsXzObm1LQ/Ews97phAsRRQ7HPubpt+sh8+rm6zoQ4Tw6j3C/Fms36Nnjyqmbg2xSvGJ2WqVniXH8RQyEWFI38g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=n14UcT6m; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1723939395;
+	bh=2UFLq6dlA8/JQmL3/dwSoFNJuKq4nWc6UNq2PkM3vB4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=n14UcT6mT+io6/zpYQyiWlLaaijLJ43pu8MK9NkZ4m8euQtcr18HdyZPtWFrcwFa9
+	 AwMpQl7gF46Zwq1LImMJPHBtnJk/xg3lWFgcyVfBdC4+uDrkB5g2shdLmrceKM133v
+	 G6uw6qXfluoKbFUGFvQ+StxmxztLprbvO1fXLhM0jWGNcEBuDC6Osr25xhKE1rbe4W
+	 Q12r764uAvX4ifGAqrV6rvJBpPy1ID8NJ2RSZ+o6h7dKdLdO1QdcJ1he9C3GfrRWzS
+	 F8LVnBmgdnkVyMJ6kP3cvwCwKDTQQBHFHNaZJA3TOmm8cS20R3RxP/o8IpqggcygIe
+	 z7ioXmP/hLkxQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WmbXd3cFgz4w2F;
+	Sun, 18 Aug 2024 10:03:13 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org,
+ linux@treblig.org, linuxppc-dev@lists.ozlabs.org, nysal@linux.ibm.com,
+ Thomas Gleixner <tglx@linutronix.de>
+Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-6.11-2 tag
+Date: Sun, 18 Aug 2024 10:03:11 +1000
+Message-ID: <87r0ampuio.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-1463811774-536073561-1723939010=:25075"
+Content-Type: text/plain
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
 
----1463811774-536073561-1723939010=:25075
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Hi Linus,
+
+Please pull some powerpc fixes for 6.11:
+
+The following changes since commit de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed:
+
+  Linux 6.11-rc2 (2024-08-04 13:50:53 -0700)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.11-2
+
+for you to fetch changes up to 227bbaabe64b6f9cd98aa051454c1d4a194a8c6a:
+
+  powerpc/topology: Check if a core is online (2024-08-13 10:32:17 +1000)
+
+- ------------------------------------------------------------------
+powerpc fixes for 6.11 #2
+
+ - Fix crashes on 85xx with some configs since the recent hugepd rework.
+
+ - Fix boot warning with hugepages and CONFIG_DEBUG_VIRTUAL on some platforms.
+
+ - Don't enable offline cores when changing SMT modes, to match existing
+   userspace behaviour.
+
+Thanks to: Christophe Leroy, Dr. David Alan Gilbert, Guenter Roeck, Nysal Jan
+K.A, Shrikanth Hegde, Thomas Gleixner, Tyrel Datwyler.
+
+- ------------------------------------------------------------------
+Christophe Leroy (2):
+      powerpc/mm: Fix size of allocated PGDIR
+      powerpc/mm: Fix boot warning with hugepages and CONFIG_DEBUG_VIRTUAL
+
+Dr. David Alan Gilbert (1):
+      soc: fsl: qbman: remove unused struct 'cgr_comp'
+
+Nysal Jan K.A (2):
+      cpu/SMT: Enable SMT only if a core is online
+      powerpc/topology: Check if a core is online
 
 
-On Sat, 17 Aug 2024, Geert Uytterhoeven wrote:
+ Documentation/ABI/testing/sysfs-devices-system-cpu |  3 ++-
+ arch/powerpc/include/asm/topology.h                | 13 +++++++++++++
+ arch/powerpc/kernel/setup-common.c                 |  1 +
+ arch/powerpc/mm/init-common.c                      |  4 ++--
+ arch/powerpc/mm/mem.c                              |  2 --
+ drivers/soc/fsl/qbman/qman.c                       |  5 -----
+ kernel/cpu.c                                       | 12 +++++++++++-
+ 7 files changed, 29 insertions(+), 11 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-> On Mon, Aug 12, 2024 at 8:56=E2=80=AFAM Finn Thain <fthain@linux-m68k.org=
-> wrote:
-> > The PowerBook 520, 540 and 550 all have macintosh_config->ident =3D=3D =
-72
-> > because that's their gestalt ID in MacOS. Hence, Linux describes them a=
-ll
-> > as "Powerbook 520". Change that to "Powerbook 500 series", which is mor=
-e
-> > accurate.
-> >
-> > Cc: Joshua Thompson <funaho@jurai.org>
-> > Cc: Stan Johnson <userm57@yahoo.com>
-> > Reported-by: Stan Johnson <userm57@yahoo.com>
-> > Signed-off-by: Finn Thain <fthain@linux-m68k.org>
->=20
-> Thanks for your patch!
->=20
-> > --- a/arch/m68k/mac/config.c
-> > +++ b/arch/m68k/mac/config.c
-> > @@ -677,7 +677,7 @@ static struct mac_model mac_data_table[] =3D {
-> >                 .floppy_type    =3D MAC_FLOPPY_OLD, /* SWIM 2 */
-> >         }, {
-> >                 .ident          =3D MAC_MODEL_PB520,
-> > -               .name           =3D "PowerBook 520",
-> > +               .name           =3D "PowerBook 500 series",
-> >                 .adb_type       =3D MAC_ADB_PB2,
-> >                 .via_type       =3D MAC_VIA_QUADRA,
-> >                 .scsi_type      =3D MAC_SCSI_OLD,
->=20
-> This is a user-visible change, through /proc/hardware.
-> Do you know if any userspace relies on the old string value?
->=20
-
-I did a search on sources.debian.org and didn't find anything. OTOH, a=20
-search for "powerbook" doesn't actually return Michael's packages that=20
-used to be available for powerbooks...
-
-Anyway, I agree that /proc/hardware should remain stable, so please=20
-disregard this patch.
----1463811774-536073561-1723939010=:25075--
+iQIzBAEBCAAdFiEEJFGtCPCthwEv2Y/bUevqPMjhpYAFAmbBOPQACgkQUevqPMjh
+pYBHbRAAiC+nw/uRkmegLC601p+iVz80/GpzE3MwapPEZG1y38fTbFZBllRl9qsF
+aZBsM6h8prUbMli00DjZo30nqxQQ0aHQo9Vl5Oo4MAu5Bhk4VwbwA6GkyVtrAjXF
+aYeTrMsCAKngoHevyFn/7SLSfx8G+y3MK8VOtF3jA0KgW5JDNscBU3tDvt/A4iop
+b5OUOv04C0CgZ1Hv90VxC2NOtMScqRn9PE9frSTGIO5nI5ZV7ufpjwrYWUBZVuPV
+LWsR7AmK4hIqrd5wOxhVXyOqsf0swKZtF4/eQ5jA32Yh77cGi7tTuJjqS8vduhNx
+9zaODA+EzjpnO/2Vgjf6FyOZeyh5x/DRXsBHzzCpCFdiCI4oYMVfutaCDKCAb1I4
+9CRhQ+TXXFAziBkHiFZ+GcQyFxdjtNsnlf0dzm3fhVMYbz1apeLBVOYtuY6npLA0
+l9udAlsdaxLrJs5VVT8ot85XKl8Hq2XTfBbtcqAO3TAz0JZJzLjK1V7+x3t5xOck
+dYLDAl88Y7aOwfK7+eGTbJ9nEKS7jkln5YF6mLfy1tEJaa3j8fNXpiKm0e6s8qAl
+1hsQH7FRQYqZ6vxfDuSqC6OTw1yY6UrJGrrEQY9W3d09agcAMMJwOSGvYQ4K32ja
+uC1k3UgNq5L1HwbfD/I2iN4/9eGbGaTMYAvu8UkRaMnSek7pO60=
+=2P31
+-----END PGP SIGNATURE-----
 
