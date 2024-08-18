@@ -1,266 +1,141 @@
-Return-Path: <linux-kernel+bounces-291061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD3EC955CBF
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 15:19:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABCBE955CC1
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 15:22:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 379661F213D3
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 13:19:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 600BE281CAF
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 13:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672B67D3F1;
-	Sun, 18 Aug 2024 13:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD637344C;
+	Sun, 18 Aug 2024 13:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZSc6UKja"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QHHoulU1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2BA1B978;
-	Sun, 18 Aug 2024 13:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E192642A8F;
+	Sun, 18 Aug 2024 13:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723987138; cv=none; b=Oj54fgFXY27eS+nTyhVdbYokoYu+THfFeW0/FzzHTiZXMT2yD+Ipa+LKDtSczGDlBOJPKSKh934Uk/0DMwgiKpCNoAEKcaqZD2EoXiIXyQ1N2SWjAIxRlmJJ+CZqRSF3f7ZepaqY7V1swLe6N64yI/88qXdJO+X6buFZmd/BXqk=
+	t=1723987347; cv=none; b=G5ji3V4qRqJQ40RLseSPImzS1LhzSEmLbdKk0PtHPp6knlio/x9OsPV5L6yiG9kKoe0dv+C8sAVMPP9vC96/13jJaHuNYhpMzvux7nIfqb0j7aut6qVjkquMt4e6uf73lo9vO4NAnmwLG0l479fRQ9q4d168XoC1ooafrjjSM9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723987138; c=relaxed/simple;
-	bh=fH0kpLtUOttFyGNx+llSY9Yf0sAa021adABVn3AZlG0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eOtNRvB089PAvDZ7iKIBwK49VrDDl5D6EsndZ7J4TcLnLDEmVWTtUOgxOBTgV8W6ykKIOZBlVKcJFw0ohMbvbCvocNz/uFVW4FdqzPbxTCF/Y1ChjD0MFzNkYxLIF9nisLExzgqSQi5pYN7EwidG5xbnoOU7cRkTmTB6J+UqEeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZSc6UKja; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FD3CC32786;
-	Sun, 18 Aug 2024 13:18:55 +0000 (UTC)
+	s=arc-20240116; t=1723987347; c=relaxed/simple;
+	bh=q78J9YzO+9yDepnK+ZG7ivsszkYxSRLqe2yKgSFxcQA=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=jaPJBfne55I2QcGhaC9BwmTfx5lVHmkBSeyjvs0tQD0b3I/VszYNbJMthoqn57QFbbJkHgZnUH80Tciyw3uFIigGpg7Zhg3xLNsFiMfqCdEQ0WH6CR07axvAHixZGN2RyyfgQVKebFBdBoITGT3liZDppxxHENqVJZ5zqfzTuxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QHHoulU1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04842C32786;
+	Sun, 18 Aug 2024 13:22:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723987137;
-	bh=fH0kpLtUOttFyGNx+llSY9Yf0sAa021adABVn3AZlG0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZSc6UKjawLkikgx1pojN6BDqvAGZ+dgxo1Dy/E0dtGT/7AN7/nwRHKkx4ak43X9J7
-	 40FBhv6ldE0tcqX0j6m744goDIuuJj+VhZe40sWRct/7J7Qa5FsVxm/tkzwRKgeyNl
-	 ciAaUxJH9xcyBX0HhCTkFYKeZ4evAjP7NN8uKZmUctrrD9IOqyKVrEwjsdw8hIv/Uc
-	 9K4sfrERyIfw7MvL1n0sv1F7SiWjviTyxTk6upzaqvzYJR643bafyWm+FiOftTpT/O
-	 Dw4GQn6iE/IBn7PkTiGAGMW4b9CePh5htBpmAy7eNirjjpMCSFzcfH/G19uQvqd5b6
-	 En+gDMDqV2Mww==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Shuah Khan <shuah@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Tom Zanussi <zanussi@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH v5 3/3] selftests/tracing: Add hist poll() support test
-Date: Sun, 18 Aug 2024 22:18:53 +0900
-Message-Id: <172398713342.295714.14169750905476040792.stgit@devnote2>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <172398710447.295714.4489282566285719918.stgit@devnote2>
-References: <172398710447.295714.4489282566285719918.stgit@devnote2>
-User-Agent: StGit/0.19
+	s=k20201202; t=1723987345;
+	bh=q78J9YzO+9yDepnK+ZG7ivsszkYxSRLqe2yKgSFxcQA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QHHoulU173Lrn4F8Nxagl2JkbaTRdP7sXDTaDG5VIGirgVGND2HAjnGaveaYnZr5B
+	 iBktPMqRtUfW1XwXKMM3pcxg4Hf6/Nb+zsFIgZzzy70EREyyOTjFV/vgaOgYkqmx0P
+	 Ni02vhR3Z50GoL9zq0415Q9IKHswRwFipISH9dk5kpgz6jJlokL/drfyUkYzgu5weO
+	 I0EZTbIzldqX6bV9JazRGbK4IVPzpBUkizluyVRK5XPXmHAZthuiksd6XM/VltPbCv
+	 LACTtPEBgKiXZ8BeQsRwUSnCb71f1IfMjukAjsdAfcOiV49dPNYnQF6H4uu8dsi6ys
+	 7xXqBngGcXXbA==
+Date: Sun, 18 Aug 2024 22:22:21 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers
+ <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa
+ <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, Athira
+ Rajeev <atrajeev@linux.vnet.ibm.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>
+Subject: Re: [PATCH 2/9] perf annotate-data: Fix off-by-one in location
+ range check
+Message-Id: <20240818222221.fd9ced7456084b490c52b2da@kernel.org>
+In-Reply-To: <20240816235840.2754937-3-namhyung@kernel.org>
+References: <20240816235840.2754937-1-namhyung@kernel.org>
+	<20240816235840.2754937-3-namhyung@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Fri, 16 Aug 2024 16:58:32 -0700
+Namhyung Kim <namhyung@kernel.org> wrote:
 
-Add a testcase for poll() on hist file. This introduces a helper binary
-to the ftracetest, because there is no good way to reliably execute
-poll() on hist file.
+> The location list will have entries with half-open addressing like
+> [start, end) which means it doesn't include the end address.  So it
+> should skip entries at the end address and match to the next entry.
+> 
+> An example location list looks like this:
+> 
+>     00237876 ffffffff8110d32b (base address)
+>     0023787f v000000000000000 v000000000000002 views at 00237868 for:
+>              ffffffff8110d32b ffffffff8110d4eb (DW_OP_reg3 (rbx))     <<<--- 1
+>     00237885 v000000000000002 v000000000000000 views at 0023786a for:
+>              ffffffff8110d4eb ffffffff8110d50b (DW_OP_reg14 (r14))    <<<--- 2
+>     0023788c v000000000000000 v000000000000001 views at 0023786c for:
+>              ffffffff8110d50b ffffffff8110d7c4 (DW_OP_reg3 (rbx))
+>     00237893 v000000000000000 v000000000000000 views at 0023786e for:
+>              ffffffff8110d806 ffffffff8110d854 (DW_OP_reg3 (rbx))
+>     0023789a v000000000000000 v000000000000000 views at 00237870 for:
+>              ffffffff8110d876 ffffffff8110d88e (DW_OP_reg3 (rbx))
+> 
+> The first entry at 0023787f has [8110d32b, 8110d4eb) (omitting the
+> ffffffff at the beginning), and the second one has [8110d4eb, 8110d50b).
+> 
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
----
- Changes in v5:
-  - Update comment about timeout.
- Changes in v4:
-  - Use getopt() in poll.c (command options are changed)
-  - Update test code according to the new command options.
- Changes in v2:
-  - Update poll command to support both of POLLIN and POLLPRI, and timeout.
-  - Identify unsupported stable kernel if poll-in returns soon.
-  - Test both of POLLIN and POLLPRI.
----
- tools/testing/selftests/ftrace/Makefile            |    2 +
- tools/testing/selftests/ftrace/poll.c              |   74 ++++++++++++++++++++
- .../ftrace/test.d/trigger/trigger-hist-poll.tc     |   74 ++++++++++++++++++++
- 3 files changed, 150 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/poll.c
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc
+Looks good to me.
 
-diff --git a/tools/testing/selftests/ftrace/Makefile b/tools/testing/selftests/ftrace/Makefile
-index a1e955d2de4c..49d96bb16355 100644
---- a/tools/testing/selftests/ftrace/Makefile
-+++ b/tools/testing/selftests/ftrace/Makefile
-@@ -6,4 +6,6 @@ TEST_PROGS := ftracetest-ktap
- TEST_FILES := test.d settings
- EXTRA_CLEAN := $(OUTPUT)/logs/*
- 
-+TEST_GEN_PROGS = poll
-+
- include ../lib.mk
-diff --git a/tools/testing/selftests/ftrace/poll.c b/tools/testing/selftests/ftrace/poll.c
-new file mode 100644
-index 000000000000..53258f7515e7
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/poll.c
-@@ -0,0 +1,74 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Simple poll on a file.
-+ *
-+ * Copyright (c) 2024 Google LLC.
-+ */
-+
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <poll.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+
-+#define BUFSIZE 4096
-+
-+/*
-+ * Usage:
-+ *  poll [-I|-P] [-t timeout] FILE
-+ */
-+int main(int argc, char *argv[])
-+{
-+	struct pollfd pfd = {.events = POLLIN};
-+	char buf[BUFSIZE];
-+	int timeout = -1;
-+	int ret, opt;
-+
-+	while ((opt = getopt(argc, argv, "IPt:")) != -1) {
-+		switch (opt) {
-+		case 'I':
-+			pfd.events = POLLIN;
-+			break;
-+		case 'P':
-+			pfd.events = POLLPRI;
-+			break;
-+		case 't':
-+			timeout = atoi(optarg);
-+			break;
-+		default:
-+			fprintf(stderr, "Usage: %s [-I|-P] [-t timeout] FILE\n",
-+				argv[0]);
-+			return -1;
-+		}
-+	}
-+	if (optind >= argc) {
-+		fprintf(stderr, "Error: Polling file is not specified\n");
-+		return -1;
-+	}
-+
-+	pfd.fd = open(argv[optind], O_RDONLY);
-+	if (pfd.fd < 0) {
-+		fprintf(stderr, "failed to open %s", argv[optind]);
-+		perror("open");
-+		return -1;
-+	}
-+
-+	/* Reset poll by read if POLLIN is specified. */
-+	if (pfd.events & POLLIN)
-+		do {} while (read(pfd.fd, buf, BUFSIZE) == BUFSIZE);
-+
-+	ret = poll(&pfd, 1, timeout);
-+	if (ret < 0 && errno != EINTR) {
-+		perror("poll");
-+		return -1;
-+	}
-+	close(pfd.fd);
-+
-+	/* If timeout happned (ret == 0), exit code is 1 */
-+	if (ret == 0)
-+		return 1;
-+
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc
-new file mode 100644
-index 000000000000..cbd01a71ecad
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc
-@@ -0,0 +1,74 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: event trigger - test poll wait on histogram
-+# requires: set_event events/sched/sched_process_free/trigger events/sched/sched_process_free/hist
-+# flags: instance
-+
-+POLL=${FTRACETEST_ROOT}/poll
-+
-+if [ ! -x ${POLL} ]; then
-+  echo "poll program is not compiled!"
-+  exit_unresolved
-+fi
-+
-+EVENT=events/sched/sched_process_free/
-+
-+# Check poll ops is supported. Before implementing poll on hist file, it
-+# returns soon with POLLIN | POLLOUT, but not POLLPRI.
-+
-+# This must wait >1 sec and return 1 (timeout).
-+set +e
-+${POLL} -I -t 1000 ${EVENT}/hist
-+ret=$?
-+set -e
-+if [ ${ret} != 1 ]; then
-+  echo "poll on hist file is not supported"
-+  exit_unsupported
-+fi
-+
-+# Test POLLIN
-+echo > trace
-+echo "hist:key=comm" > ${EVENT}/trigger
-+echo 1 > ${EVENT}/enable
-+
-+# This sleep command will exit after 2 seconds.
-+sleep 2 &
-+BGPID=$!
-+# if timeout happens, poll returns 1.
-+${POLL} -I -t 4000 ${EVENT}/hist
-+echo 0 > tracing_on
-+
-+if [ -d /proc/${BGPID} ]; then
-+  echo "poll exits too soon"
-+  kill -KILL ${BGPID} ||:
-+  exit_fail
-+fi
-+
-+if ! grep -qw "sleep" trace; then
-+  echo "poll exits before event happens"
-+  exit_fail
-+fi
-+
-+# Test POLLPRI
-+echo > trace
-+echo 1 > tracing_on
-+
-+# This sleep command will exit after 2 seconds.
-+sleep 2 &
-+BGPID=$!
-+# if timeout happens, poll returns 1.
-+${POLL} -P -t 4000 ${EVENT}/hist
-+echo 0 > tracing_on
-+
-+if [ -d /proc/${BGPID} ]; then
-+  echo "poll exits too soon"
-+  kill -KILL ${BGPID} ||:
-+  exit_fail
-+fi
-+
-+if ! grep -qw "sleep" trace; then
-+  echo "poll exits before event happens"
-+  exit_fail
-+fi
-+
-+exit_pass
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
+Thanks!
+
+> Fixes: 2bc3cf575a16 ("perf annotate-data: Improve debug message with location info")
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/util/annotate-data.c | 2 +-
+>  tools/perf/util/dwarf-aux.c     | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-data.c
+> index ff85d190e3ac..fd8d3cdead5a 100644
+> --- a/tools/perf/util/annotate-data.c
+> +++ b/tools/perf/util/annotate-data.c
+> @@ -95,7 +95,7 @@ static void pr_debug_location(Dwarf_Die *die, u64 pc, int reg)
+>  		return;
+>  
+>  	while ((off = dwarf_getlocations(&attr, off, &base, &start, &end, &ops, &nops)) > 0) {
+> -		if (reg != DWARF_REG_PC && end < pc)
+> +		if (reg != DWARF_REG_PC && end <= pc)
+>  			continue;
+>  		if (reg != DWARF_REG_PC && start > pc)
+>  			break;
+> diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
+> index beb632153a74..0151a8d14350 100644
+> --- a/tools/perf/util/dwarf-aux.c
+> +++ b/tools/perf/util/dwarf-aux.c
+> @@ -1444,7 +1444,7 @@ static int __die_find_var_reg_cb(Dwarf_Die *die_mem, void *arg)
+>  
+>  	while ((off = dwarf_getlocations(&attr, off, &base, &start, &end, &ops, &nops)) > 0) {
+>  		/* Assuming the location list is sorted by address */
+> -		if (end < data->pc)
+> +		if (end <= data->pc)
+>  			continue;
+>  		if (start > data->pc)
+>  			break;
+> -- 
+> 2.46.0.184.g6999bdac58-goog
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
