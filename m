@@ -1,141 +1,114 @@
-Return-Path: <linux-kernel+bounces-291223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B8B9955F53
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 23:30:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7340C955F54
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 23:31:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C35428160D
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 21:30:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 293C01F213A9
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 21:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5143155732;
-	Sun, 18 Aug 2024 21:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8805315530B;
+	Sun, 18 Aug 2024 21:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GiMij6Xq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="axtImM1V"
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1A415530C;
-	Sun, 18 Aug 2024 21:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5253DB67A;
+	Sun, 18 Aug 2024 21:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724016591; cv=none; b=T/R5GPEc9wLo23gxXWVmV7rEizN/cnwVhtibWtQ9KPG57DWkN+V/yXcLsqjC4rwRwTsYsn2F6rWI0Iu8qzVggaBnBYQSGjikvuWeeccqzDMVS/BITjTmb574WWZhPjqO8Y2jB5fl7qbyXsphTU/SPUnGWuvjUy3h+4u/p77vlPs=
+	t=1724016711; cv=none; b=jvXdZF9SUbEzXNrc0n6Ksh3LR8a2tAEgO7pB2JiCGNowKvIl1WGjqDJhNHpsSqmZ3OjsqyHDZzZsDjWqxFfWiKjIvYM4IkzIGS7BxfCYHLig/A7lzxN5eY4HES2zn9osoqFcLJ7IwXrs77VR0YJa2jLk0N4paWLGHVnmEmxkPto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724016591; c=relaxed/simple;
-	bh=27mLaOsU4Neh+Lwony+6s7NMH1kp+GzumhgqSNic1ys=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c4nvZnSHamlzP/QQztcHHVkBh8ZMt1owN7kay9HXGwzMj5ENX7Pt24gWnxNcDRfT3yw6wow48Bu87W0TuOFkSARgLKW5BFegNwqxpezuF8RDRh7sHzNpvjpWFQSlsa2+TYh0CViXCiuz1GuzOOvdOdfOmobr0v9FyBvl4aSFjHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GiMij6Xq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A9AEC4AF09;
-	Sun, 18 Aug 2024 21:29:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724016590;
-	bh=27mLaOsU4Neh+Lwony+6s7NMH1kp+GzumhgqSNic1ys=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GiMij6XqJvcLR2pyB66rGpPJEcFEUUQZ9zBgNZ2x9swXZ8IbD/gMNef3gYtWTXihd
-	 4AJYPDt0G2chGwEPVakkJROnOvEIDC1SSYEMJtU5RkEyEPMLMSdfXAzjkiA3IK9J/Q
-	 uMWJWwonyFIulZ8u//NPM1f38UC30uqpRVia0M1Q66ZgJgKCEp0BMRXumSYAjkAy15
-	 ZstVWMPCc/qMJEg93Kc600StSh2/+bOrQ+ve2d4oJH9nVhYfFYc3TJmXG7dLjATZwR
-	 L0jjOUYaZEszW7zFjaYCm25l+9cXQvdB57fZn0YNrwTViPU8W4W6v8Shxhr9PRLUZY
-	 mkxy/RsGFY4ZA==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH 2/2] perf test: Add cgroup sampling test
-Date: Sun, 18 Aug 2024 14:29:48 -0700
-Message-ID: <20240818212948.2873156-2-namhyung@kernel.org>
-X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
-In-Reply-To: <20240818212948.2873156-1-namhyung@kernel.org>
-References: <20240818212948.2873156-1-namhyung@kernel.org>
+	s=arc-20240116; t=1724016711; c=relaxed/simple;
+	bh=XN5T61RDMAPTW3qjddxq7B0BsRlqJCkorxMKqXS/D6c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TU02Hq65hzOcsIM4+AF6gDQbhk7OT2QW1D7BSi370njxjwA12AZvm94vkaYIvIWSPW3ebCx4u+dp3snyobPYn+ZebKfTcGnaIqC642TQQdn8P0UDYdRwEa1yMHXlfNO/LApdwZuscKRztJ48zSgtwDJ4V8ZQS+aku/Yd1xR2Iao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=axtImM1V; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-70942ebcc29so2702529a34.0;
+        Sun, 18 Aug 2024 14:31:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724016709; x=1724621509; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j3BVurL5/9PMXBlfEpBi+zKwV8az7i/+Wh4iZua+GhE=;
+        b=axtImM1VYZ/XzbSnwSUjX+wHB8Ml0nrZnkfOTI6dqhg3b0CG6Dm4XrEMUwOR4UH0cy
+         p3QUmeSANPxZqXia1WTM1BD1h+/2XUDwyrpRxUvHHfigz9akCmdh1HhKWlNw+bRP+Juu
+         3jTX6+bhGqXPKk/kDYFUtMFpWoZoGLuPnrM6y9dxL64QHgmf/KTlt4wOErBEdK2iWCOF
+         RnknYjQSZ9YUPr09GowjNbk/tStxorTTimzxYi00B+OhDTTub+53BfAqV1uYFE2vPaxg
+         1X7pgAIOfkIAFll8PeUtdrTprcQjhQWXnHMdjDT5v2BnxkDN53OJbzTpSttP9bTHEIO+
+         VAeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724016709; x=1724621509;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j3BVurL5/9PMXBlfEpBi+zKwV8az7i/+Wh4iZua+GhE=;
+        b=M4hqYea6fADvZrZoZkPEb2SDVy44JIeo/QSO0usb8ktqMMar/xJjiqSF38iZI1CWIg
+         FmBAJUh7HkGJtEJgKGqCAcCgnGSHrqcQoNYPG+CrTvRIXAjqlTuVjoN1qpaLXxaIGCp3
+         OVzJLBZbNVL9CPEwrVnwJJxiKWRd7x5xEgep/KXEigCJD/GapWxq6EAxtf7FRo56Tnpy
+         nYPVfkipGpuqtXF31ZP8p7b0HkAeo35V5ZtGG8u6qaylkAXyUMPlXvZ4StyQo+xUvKT6
+         Kleh10R9uPz+OxRYXOS1aye8+zNnI925KyEnZVipiCosjidjyHYM7AqeRbETz4tD1Krf
+         PhBw==
+X-Forwarded-Encrypted: i=1; AJvYcCVausYLTKPc3KPBcaTFh+VBo6nwtDYE68wVFhb+Feh6k7gJN6SGt/CI9i5YncyBBMBhEH9u4LL2x7XqILZ6UPVe12NUJBhvrwaUE0BZk3/Me8BMdvzVUTEtvYAtduJVMYeOIRNB9AkuT3bfGtU=
+X-Gm-Message-State: AOJu0YwLQXIhH2dksdBevwB0F6aQtlIxh3N0GpRWxhszfnVt3U++FF44
+	MGQMldy9tq3UfG+o9knsWitgN8fwsJzl6pQITp51FS/GWF404x6l5yX1P+lLKS6c7pCS+z9xN3o
+	rFY2Nf38rrvOCN95s6V3iF1n+7Co=
+X-Google-Smtp-Source: AGHT+IGYrImHtnMwwV8Zonww8P4XquS+0+b8hDSN8+MuYU0EVUkRULDO9az9c6DigMZ+PTh6q5c1oS9nKtojFhgQqes=
+X-Received: by 2002:a05:6830:6189:b0:708:8c07:c646 with SMTP id
+ 46e09a7af769-70cac8ddf50mr11616606a34.33.1724016709374; Sun, 18 Aug 2024
+ 14:31:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240727042442.682109-1-alexmantel93@mailbox.org>
+In-Reply-To: <20240727042442.682109-1-alexmantel93@mailbox.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 18 Aug 2024 23:31:37 +0200
+Message-ID: <CANiq72k=kh-waAy2q3JU9Uoi7j5YZFoEWoXnS_gPAsZn1=Fm7w@mail.gmail.com>
+Subject: Re: [PATCH v3] rust: Implement the smart pointer `InPlaceInit` for `Arc`
+To: Alex Mantel <alexmantel93@mailbox.org>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add it to the record.sh shell test to verify if it tracks cgroup
-information correctly.  It records with --all-cgroups option can check
-if it has PERF_RECORD_CGROUP and the names are not "unknown".
+On Sat, Jul 27, 2024 at 6:25=E2=80=AFAM Alex Mantel <alexmantel93@mailbox.o=
+rg> wrote:
+>
+> For pinned and unpinned initialization of structs, a trait named
+> `InPlaceInit` exists for uniform access. `Arc` did not implement
+> `InPlaceInit` yet, although the functions already existed. The main
+> reason for that, was that the trait itself returned a `Pin<Self>`. The
+> `Arc` implementation of the kernel is already implicitly pinned.
+>
+> To enable `Arc` to implement `InPlaceInit` and to have uniform access,
+> for in-place and pinned in-place initialization, an associated type is
+> introduced for `InPlaceInit`. The new implementation of `InPlaceInit`
+> for `Arc` sets `Arc` as the associated type. Older implementations use
+> an explicit `Pin<T>` as the associated type. The implemented methods for
+> `Arc` are mostly moved from a direct implementation on `Arc`. There
+> should be no user impact. The implementation for `ListArc` is omitted,
+> because it is not merged yet.
+>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1079
+> Signed-off-by: Alex Mantel <alexmantel93@mailbox.org>
 
-  $ sudo ./perf test -vv 95
-   95: perf record tests:
-  --- start ---
-  test child forked, pid 2871922
-   169c90-169cd0 g test_loop
-  perf does have symbol 'test_loop'
-  Basic --per-thread mode test
-  Basic --per-thread mode test [Success]
-  Register capture test
-  Register capture test [Success]
-  Basic --system-wide mode test
-  Basic --system-wide mode test [Success]
-  Basic target workload test
-  Basic target workload test [Success]
-  Branch counter test
-  branch counter feature not supported on all core PMUs (/sys/bus/event_source/devices/cpu) [Skipped]
-  Cgroup sampling test
-  Cgroup sampling test [Success]
-  ---- end(0) ----
-   95: perf record tests                                               : Ok
+Applied to `rust-next` -- thanks everyone!
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/tests/shell/record.sh | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+    [ Removed "Rusts" (Benno). - Miguel ]
 
-diff --git a/tools/perf/tests/shell/record.sh b/tools/perf/tests/shell/record.sh
-index 36883b03169f..048078ee2eca 100755
---- a/tools/perf/tests/shell/record.sh
-+++ b/tools/perf/tests/shell/record.sh
-@@ -206,6 +206,28 @@ test_branch_counter() {
-   echo "Branch counter test [Success]"
- }
- 
-+test_cgroup() {
-+  echo "Cgroup sampling test"
-+  if ! perf record -aB --synth=cgroup --all-cgroups -o "${perfdata}" ${testprog} 2> /dev/null
-+  then
-+    echo "Cgroup sampling [Skipped not supported]"
-+    return
-+  fi
-+  if ! perf report -i "${perfdata}" -D | grep -q "CGROUP"
-+  then
-+    echo "Cgroup sampling [Failed missing output]"
-+    err=1
-+    return
-+  fi
-+  if ! perf script -i "${perfdata}" -F cgroup | grep -q -v "unknown"
-+  then
-+    echo "Cgroup sampling [Failed cannot resolve cgroup names]"
-+    err=1
-+    return
-+  fi
-+  echo "Cgroup sampling test [Success]"
-+}
-+
- # raise the limit of file descriptors to minimum
- if [[ $default_fd_limit -lt $min_fd_limit ]]; then
-        ulimit -Sn $min_fd_limit
-@@ -216,6 +238,7 @@ test_register_capture
- test_system_wide
- test_workload
- test_branch_counter
-+test_cgroup
- 
- # restore the default value
- ulimit -Sn $default_fd_limit
--- 
-2.46.0.184.g6999bdac58-goog
-
+Cheers,
+Miguel
 
