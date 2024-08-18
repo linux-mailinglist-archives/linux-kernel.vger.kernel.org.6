@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-290931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B8F1955B4B
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 08:26:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE5FB955B4F
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 08:26:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8650D1C2125C
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 06:26:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A03A1C20E90
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 06:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211FE15380A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1D41547E6;
 	Sun, 18 Aug 2024 06:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vbLzurhf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lrBxl4ck"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Kl1h7Sw0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sK49/bOG"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A9FD515;
-	Sun, 18 Aug 2024 06:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D422210E9;
+	Sun, 18 Aug 2024 06:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723962197; cv=none; b=Czzh7oSYJC5qoeFbCTw4Qnl9J7mMB6yhftNBHePR8UVDrMhFwNZM5ISwnHBAvo1fbiJV/cffX+5T6XzRHCQiHRvT+uXstbagdMHEshJSDgWpDnuWV4+j5o0pFIsGr0Aumf8SAXxe1Plu4b7sRg6gHwVS0vhbyEuzgdaTkucNj5k=
+	t=1723962197; cv=none; b=DuvDpH15OuVQ7MeyBZM7c+UdnQ2nJZ9cQn+0gJSaZZYB1WRJnLXlvb5Fwp7vPKG6hNRdm0b/lnmJ/xwR+juiNlwiP+PyD74M0j4u0kc3vlox+yML6wWc/43XUtvMjFw9xd9wB2HkAVYogleorkYVSaCVTv8dJpJ/mJ2hhKPxMV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723962197; c=relaxed/simple;
-	bh=X8CY9J27VU8jyCPOJz2P49GeywH6QfeqjQkktptaqaQ=;
+	bh=YxzQv9365LnAFQta1DyoS37F1SN6VBN5OWZDI3dQy/c=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=W2WzNrzIHR0k0HkmcFU2SaHtmPolzzNGxukpEk4C/qRNOjzT3NfvQmx+0N2BuCjwmXRlIYXwvT3YLQ9N2qNYHuvcau3kQuf44HreBzmwenA++FdQEKhq5veYsykGyfrcPiD0Amd8ZsnKrAUvPpEcVEzKUHsynu2FJRovUU6l76E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vbLzurhf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lrBxl4ck; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=nPPP5lGmvx4CwbDW0Dq8QUuxgdw0frCiaXWJrVoAEN5QXPs7uQfIziGNy9xMPmsXMId9f74VTQEohDE6Jkl4duYpCxnKgwapmXLx0dYsh5l27de6kBhMVxSE4wfbhcB/FaEAz26WQBatSDx8sSnm4BEF0x7ZWhPBqqlCX6IDv7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Kl1h7Sw0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sK49/bOG; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sun, 18 Aug 2024 06:23:10 -0000
+Date: Sun, 18 Aug 2024 06:23:11 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723962190;
+	s=2020; t=1723962191;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=btsDmRhV9p4TtztzcGS8KU/hzvDIlCUcdKoqZVj2tPk=;
-	b=vbLzurhfyqSd7jF0F/VUc1ITF7kDt1O5VJLeyfv2jaAITkJTXNvJQmOVWIxHAV+rkczHpX
-	anRfxsyUXICG+Hkuhxg3q66SxEF46pT91f2STAYR+rRfQ5Hd/XrJ8Ug8zdW4s8/PvbEOkC
-	CGC1ZUe5fRW/DNl4nSA2zIgiqBljaxzv2maQnWoTs9BU74FXw9OMZCq7myY3xhrA3q3Cuv
-	MYtVdQzfBhkZeFt8A8lBcUZXImcSo0gSu0vPPXDZWjadRhC9p4kzwiH+wDskOYC7MItP2z
-	i1O/MPbt6afS/DO7ulHo/RWpI9fkAq3/NcMjyi3Bu7Jw0XTO4Py6AAeArvBj1Q==
+	bh=ZLmVnhkKvLZsf12glmULHgXX/TqfYx0IE9/M9ckZv9o=;
+	b=Kl1h7Sw0e+bJStDYLry+jHbvrnPyfAUpPuQuzywft270VG2kRMlwsw+dsxHZYgcJFR4oqs
+	cGRpgyZqAkie1rQtNNy/bn9z+45gnEdn5b7bDd3dfna6BhlpYeE8WyCCqI4GNRvL6HdwKD
+	vgY5LSHobOPb+mfxnClzqnZb1krMAk3JrSRxZMClFG8ZweN4WLn7w2AdUsTuOnZGYEvapF
+	TM8ImGx+tWUolnmCE4ZnVZA9emucL9eWKYK3y/mpwshvAnelt5AHN9WhOvlKxLzKrxWmge
+	gRWAq1QP8UPExgU0sBtxP1n2QcX3O+rOZks8RikG6mBi86iZmGtUga2DOgyWrw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723962190;
+	s=2020e; t=1723962191;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=btsDmRhV9p4TtztzcGS8KU/hzvDIlCUcdKoqZVj2tPk=;
-	b=lrBxl4ckVvYNVVMgaNfMvGVTke6SLEjMfFHbxNzJUF5QvzvBAHGweEz2borolAB//1dbcl
-	HcxKZM18LTK/TCBg==
+	bh=ZLmVnhkKvLZsf12glmULHgXX/TqfYx0IE9/M9ckZv9o=;
+	b=sK49/bOGuxb/oOv5Hext+xD9U+hhOFlHKbFJPgj69CkQ21mQG+DVbmjQbAlPO8LWk0/Cby
+	J3nsw2uTC10eBtAQ==
 From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched: Split DEQUEUE_SLEEP from deactivate_task()
+Subject: [tip: sched/core] sched/fair: Unify pick_{,next_}_task_fair()
 Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
  Valentin Schneider <vschneid@redhat.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20240727105029.086192709@infradead.org>
-References: <20240727105029.086192709@infradead.org>
+In-Reply-To: <20240727105028.725062368@infradead.org>
+References: <20240727105028.725062368@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172396219044.2215.7184290613591661064.tip-bot2@tip-bot2>
+Message-ID: <172396219137.2215.16097733440119925350.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,115 +81,143 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     e8901061ca0cd9acbd3d29d41d16c69c2bfff9f0
-Gitweb:        https://git.kernel.org/tip/e8901061ca0cd9acbd3d29d41d16c69c2bfff9f0
+Commit-ID:     3b3dd89b8bb0f03657859c22c86c19224f778638
+Gitweb:        https://git.kernel.org/tip/3b3dd89b8bb0f03657859c22c86c19224f778638
 Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Thu, 23 May 2024 10:48:09 +02:00
+AuthorDate:    Wed, 03 Apr 2024 09:50:16 +02:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Sat, 17 Aug 2024 11:06:42 +02:00
+CommitterDate: Sat, 17 Aug 2024 11:06:41 +02:00
 
-sched: Split DEQUEUE_SLEEP from deactivate_task()
+sched/fair: Unify pick_{,next_}_task_fair()
 
-As a preparation for dequeue_task() failing, and a second code-path
-needing to take care of the 'success' path, split out the DEQEUE_SLEEP
-path from deactivate_task().
+Implement pick_next_task_fair() in terms of pick_task_fair() to
+de-duplicate the pick loop.
 
-Much thanks to Libo for spotting and fixing a TASK_ON_RQ_MIGRATING
-ordering fail.
+More importantly, this makes all the pick loops use the
+state-invariant form, which is useful to introduce further re-try
+conditions in later patches.
 
-Fixed-by: Libo Chen <libo.chen@oracle.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Reviewed-by: Valentin Schneider <vschneid@redhat.com>
 Tested-by: Valentin Schneider <vschneid@redhat.com>
-Link: https://lkml.kernel.org/r/20240727105029.086192709@infradead.org
+Link: https://lkml.kernel.org/r/20240727105028.725062368@infradead.org
 ---
- kernel/sched/core.c  | 23 +++++++++++++----------
- kernel/sched/sched.h | 14 ++++++++++++++
- 2 files changed, 27 insertions(+), 10 deletions(-)
+ kernel/sched/fair.c | 60 +++++---------------------------------------
+ 1 file changed, 8 insertions(+), 52 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 4f7a4e9..6c59548 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2036,12 +2036,23 @@ void activate_task(struct rq *rq, struct task_struct *p, int flags)
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 175ccec..1452c53 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -8451,7 +8451,6 @@ preempt:
+ 	resched_curr(rq);
+ }
  
- void deactivate_task(struct rq *rq, struct task_struct *p, int flags)
+-#ifdef CONFIG_SMP
+ static struct task_struct *pick_task_fair(struct rq *rq)
  {
--	WRITE_ONCE(p->on_rq, (flags & DEQUEUE_SLEEP) ? 0 : TASK_ON_RQ_MIGRATING);
-+	WRITE_ONCE(p->on_rq, TASK_ON_RQ_MIGRATING);
- 	ASSERT_EXCLUSIVE_WRITER(p->on_rq);
+ 	struct sched_entity *se;
+@@ -8463,7 +8462,7 @@ again:
+ 		return NULL;
  
-+	/*
-+	 * Code explicitly relies on TASK_ON_RQ_MIGRATING begin set *before*
-+	 * dequeue_task() and cleared *after* enqueue_task().
-+	 */
-+
- 	dequeue_task(rq, p, flags);
+ 	do {
+-		/* When we pick for a remote RQ, we'll not have done put_prev_entity() */
++		/* Might not have done put_prev_entity() */
+ 		if (cfs_rq->curr && cfs_rq->curr->on_rq)
+ 			update_curr(cfs_rq);
+ 
+@@ -8484,19 +8483,19 @@ again:
+ 
+ 	return task_of(se);
  }
+-#endif
  
-+static void block_task(struct rq *rq, struct task_struct *p, int flags)
-+{
-+	if (dequeue_task(rq, p, DEQUEUE_SLEEP | flags))
-+		__block_task(rq, p);
-+}
-+
- /**
-  * task_curr - is this task currently executing on a CPU?
-  * @p: the task in question.
-@@ -6498,9 +6509,6 @@ static void __sched notrace __schedule(unsigned int sched_mode)
- 				!(prev_state & TASK_NOLOAD) &&
- 				!(prev_state & TASK_FROZEN);
+ struct task_struct *
+ pick_next_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ {
+-	struct cfs_rq *cfs_rq = &rq->cfs;
+ 	struct sched_entity *se;
+ 	struct task_struct *p;
+ 	int new_tasks;
  
--			if (prev->sched_contributes_to_load)
--				rq->nr_uninterruptible++;
+ again:
+-	if (!sched_fair_runnable(rq))
++	p = pick_task_fair(rq);
++	if (!p)
+ 		goto idle;
++	se = &p->se;
+ 
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ 	if (!prev || prev->sched_class != &fair_sched_class)
+@@ -8508,52 +8507,14 @@ again:
+ 	 *
+ 	 * Therefore attempt to avoid putting and setting the entire cgroup
+ 	 * hierarchy, only change the part that actually changes.
+-	 */
 -
- 			/*
- 			 * __schedule()			ttwu()
- 			 *   prev_state = prev->state;    if (p->on_rq && ...)
-@@ -6512,12 +6520,7 @@ static void __sched notrace __schedule(unsigned int sched_mode)
- 			 *
- 			 * After this, schedule() must not care about p->state any more.
- 			 */
--			deactivate_task(rq, prev, DEQUEUE_SLEEP | DEQUEUE_NOCLOCK);
+-	do {
+-		struct sched_entity *curr = cfs_rq->curr;
 -
--			if (prev->in_iowait) {
--				atomic_inc(&rq->nr_iowait);
--				delayacct_blkio_start();
+-		/*
+-		 * Since we got here without doing put_prev_entity() we also
+-		 * have to consider cfs_rq->curr. If it is still a runnable
+-		 * entity, update_curr() will update its vruntime, otherwise
+-		 * forget we've ever seen it.
+-		 */
+-		if (curr) {
+-			if (curr->on_rq)
+-				update_curr(cfs_rq);
+-			else
+-				curr = NULL;
+-
+-			/*
+-			 * This call to check_cfs_rq_runtime() will do the
+-			 * throttle and dequeue its entity in the parent(s).
+-			 * Therefore the nr_running test will indeed
+-			 * be correct.
+-			 */
+-			if (unlikely(check_cfs_rq_runtime(cfs_rq))) {
+-				cfs_rq = &rq->cfs;
+-
+-				if (!cfs_rq->nr_running)
+-					goto idle;
+-
+-				goto simple;
 -			}
-+			block_task(rq, prev, DEQUEUE_NOCLOCK);
- 		}
- 		switch_count = &prev->nvcsw;
- 	}
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 6196f90..69ab3b0 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -68,6 +68,7 @@
- #include <linux/wait_api.h>
- #include <linux/wait_bit.h>
- #include <linux/workqueue_api.h>
-+#include <linux/delayacct.h>
+-		}
+-
+-		se = pick_next_entity(cfs_rq);
+-		cfs_rq = group_cfs_rq(se);
+-	} while (cfs_rq);
+-
+-	p = task_of(se);
+-
+-	/*
++	 *
+ 	 * Since we haven't yet done put_prev_entity and if the selected task
+ 	 * is a different task than we started out with, try and touch the
+ 	 * least amount of cfs_rqs.
+ 	 */
+ 	if (prev != p) {
+ 		struct sched_entity *pse = &prev->se;
++		struct cfs_rq *cfs_rq;
  
- #include <trace/events/power.h>
- #include <trace/events/sched.h>
-@@ -2585,6 +2586,19 @@ static inline void sub_nr_running(struct rq *rq, unsigned count)
- 	sched_update_tick_dependency(rq);
- }
+ 		while (!(cfs_rq = is_same_group(se, pse))) {
+ 			int se_depth = se->depth;
+@@ -8579,13 +8540,8 @@ simple:
+ 	if (prev)
+ 		put_prev_task(rq, prev);
  
-+static inline void __block_task(struct rq *rq, struct task_struct *p)
-+{
-+	WRITE_ONCE(p->on_rq, 0);
-+	ASSERT_EXCLUSIVE_WRITER(p->on_rq);
-+	if (p->sched_contributes_to_load)
-+		rq->nr_uninterruptible++;
-+
-+	if (p->in_iowait) {
-+		atomic_inc(&rq->nr_iowait);
-+		delayacct_blkio_start();
-+	}
-+}
-+
- extern void activate_task(struct rq *rq, struct task_struct *p, int flags);
- extern void deactivate_task(struct rq *rq, struct task_struct *p, int flags);
+-	do {
+-		se = pick_next_entity(cfs_rq);
+-		set_next_entity(cfs_rq, se);
+-		cfs_rq = group_cfs_rq(se);
+-	} while (cfs_rq);
+-
+-	p = task_of(se);
++	for_each_sched_entity(se)
++		set_next_entity(cfs_rq_of(se), se);
  
+ done: __maybe_unused;
+ #ifdef CONFIG_SMP
 
