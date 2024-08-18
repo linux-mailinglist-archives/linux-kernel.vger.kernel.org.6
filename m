@@ -1,144 +1,166 @@
-Return-Path: <linux-kernel+bounces-291024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D1C955C50
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 13:44:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D7F7955C65
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 14:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 928A51F214F2
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 11:44:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85B571F2154E
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 12:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25B71B964;
-	Sun, 18 Aug 2024 11:44:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA6C1C6A5;
+	Sun, 18 Aug 2024 12:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RQ7ytieg"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uv7sb+HB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E5617557
-	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 11:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0510BB666
+	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 12:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723981441; cv=none; b=deAf7zz/P8JBnTaxc1QdDAHGqFQgsNt6t4kKdlODc9c49XbrkW4nvX5u6ekh3+aJOTU9ZvB/XBaV+hhX8urSpEFuT7QVUyM3gY+WS3KNUtNnrn4ZGOrlHPu+X11AK7mbrfE0bnNo6SBZRETYxAimvXKo+JtDWXvBPac/zdXSYwU=
+	t=1723983672; cv=none; b=cWCiTxys6WT2wHeSg/fGj+1W3x1hIPWcoINXwJBuyk1LjxDONJP0vwpop77uQpX3E3cg2KtTQyr8+cUZO3pRF0+IPFznRBmEBAMD4eyBx4je/8L5GrpTZ3bjpowVY+rJo4Asj2G6jY1IgknWh5bVG3ZwxsSHTgNfl1D3LSyLpNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723981441; c=relaxed/simple;
-	bh=dLCARgwVurr1QJuhRCu+K/rPZakl9JnQqKm0TnTm45k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pmk31rN0QKCs3Sm5Wlc1/Yk9MXBxF9M1pmq+W9xASs/l0/3BfgTdqIunwa1JdzWrhpyUvNuZ6HCcTUvHXlZl5iJPgqbfghlgzaZbjSvFwO/CDf5w1wjz2ZwWitqbeT5qtxFW7NriTdHdWeE+HJYEGrlTllriAuA/GWmORG/qOSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RQ7ytieg; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ef32fea28dso39785961fa.2
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 04:43:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1723981436; x=1724586236; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1CsHkOt9vf+tSdFHHxlwcTsV2VHa5VrYFOWKNehVdrc=;
-        b=RQ7ytiegfTixBYsLlWFkoZsodBOSun7YmC9Ex47EFhTNbCWYMQ4h01rig9uHdYLTMf
-         yNgqLXJkVGX7aRS5O5NgyAhMsKVAplNHGMbaDKskdKNm9v/hBTXYDrzj9RFGTaQ7TNaA
-         jkPKX6ciNGZn6/9Ph+vs9+vhqiTSzXxlQIQBuPVXF57D2Acw1Hc5+CtjJpBwnZurWzxR
-         DWgR/e+CwtlXzPgsxcGzSD17IQEZfB4ULrJcfFtCExEqpacsIGS6U7McgmK9vCwAST7j
-         wzouCWkcgJL1rXI9S4A8F0Y47burH+LiHoi/5zrqQUNtv1in180AvK+u/E00FHwd5HGe
-         1W/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723981436; x=1724586236;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1CsHkOt9vf+tSdFHHxlwcTsV2VHa5VrYFOWKNehVdrc=;
-        b=YzPcj1sZS7vYU2VIRtdXqtSHPx3OZ9j4cD375iwchFrzcmJx/wV9FWClWun/UTiZNn
-         0V5OrRx1VEOnvjGP9vkDFpUNFQDCmPr5fh+0YX2Uv/KfI37vHc7ru0enaB9tb4azOb4N
-         n68Fm2FCuVBykwmcvOxLzFLLgA38P9tD6vI1FP+yLMdcv77OQlGcdVsd/M1GPf/D0p71
-         lEAQnnsaFGYM8UD7oTlPbNUBj2oaeof85aTTrDNLYG36h/7U0QyERSof0NEIH1vMAPDW
-         L9yS7g4QrgylLhSnxKp+qR0WcBwg86bUCPm60zgQ3ELMTpyZMO9nzx9fMHK1oW2+JclR
-         hOSg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6qfv4kOBtUixSJyLGLcVt8s9nFi3G7di7VMYabVxBMHyl+ACTepzZ+6W4GJscagRVSkO2PvDAUcoa4yTEcxI2J55xy7Zgq1PDvbXN
-X-Gm-Message-State: AOJu0Yyt1hpJfsJBxPJqktrY5bh/1f4u3j21niNovXAqx8aPve5lAn3r
-	cbl5ohW32WsECT8UDoJZD/+oCm1BPQajdIhQrvxwr6a+ZgkBg4eOH4DSFXt4bIH7bykkkFa+nJz
-	K
-X-Google-Smtp-Source: AGHT+IG7ta2jjuQc9D2y9DJGRgumHBihHGMFlS1nTYgEhcwU/OJqsrPk3SpooMiDTvMemesb1pkCvQ==
-X-Received: by 2002:a2e:e11:0:b0:2f3:cd4e:b929 with SMTP id 38308e7fff4ca-2f3cd4ec008mr18879461fa.34.1723981435563;
-        Sun, 18 Aug 2024 04:43:55 -0700 (PDT)
-Received: from [127.0.0.1] ([192.177.92.77])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3e3d94fa2sm5264560a91.47.2024.08.18.04.43.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 18 Aug 2024 04:43:55 -0700 (PDT)
-Message-ID: <cbd30b80-d213-4997-b447-10e455f20196@suse.com>
-Date: Sun, 18 Aug 2024 19:43:45 +0800
+	s=arc-20240116; t=1723983672; c=relaxed/simple;
+	bh=mCnl2sjWqxQLaHQgCuE74JIcs23mOo2LREXAbCdHSK0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MJvYkM+f8D3AnS76A9zFJ9pguobYlj+cbSO+oiMKr6tL2PBfSa3Tg+W05z9+ibBUZuME3TyDzXe8Qel/a1DMQ0+LhaZCBclE78CVsmsx6q2XsKGKK02kQOtTwB6z+pEwO/OqfAOnIU736zVcdsPY6yHbvvnYPYri/jIgkugvLn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uv7sb+HB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7388DC4AF13
+	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 12:21:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723983671;
+	bh=mCnl2sjWqxQLaHQgCuE74JIcs23mOo2LREXAbCdHSK0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uv7sb+HB/Yiifmhg0iyZH61Bpn1T9/PJPicvTY5LMHjt4ZoHQXVpu3bwewG9CFQCB
+	 M4Gg9RDr4NtfQWZ6h7Fk5USUJmsvclE7dOltIwZGU2jGfbqrIRVlAO+t+fck2qWIU/
+	 26qZVbd4g3qSKS0uYaKnXnknOOx1jHABAfq66S68f2vKi5O2AoOcf6n3mQnAFVdNQ0
+	 u1gi9/iBbF2ahlv2iKsgeNlswVTj9s5dVztCS/LjSfCSmnQCK5aen9p9+89i841fL6
+	 t5xFbFPYP7dffkqUZJKZ5SsKD5gTvbvuLf5gixzkffqdcUEK9pObAC17YxGLkV9PVF
+	 l+bPN8APlfsdQ==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5314c6dbaa5so4629096e87.2
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 05:21:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXr3OfBnN5Y38qUCzycKVn1qkYnVIoIK0Gsz6mquQ+Q9W/MO3xeUZJQX8+fF9VHm8sdv2C1ez32Y/HKbqtnVMRNchLIZwPLmh+0+bS9
+X-Gm-Message-State: AOJu0YwTdEzVzjxCV4nIypP1FgY/TG56fCGOl4tIYEyXZbujMfFN3vxp
+	hSBia57yyO48QToRK3f9tuO1Ss+RoxvJD5pG1fyr44d28DB1Cw3IV/4g/9TzWYnNIlLVv1gD7tC
+	REVxZqUdUiTOBbjVFtz5vGEUNyh8=
+X-Google-Smtp-Source: AGHT+IHManvMHZN6ER/GkDjqvh9nMEi5IZA41voVWxUL/OYfzoWmeuA2KR1e+na4JEzSCo3ZoKclEUNNlgVe0T3Y53g=
+X-Received: by 2002:a05:6512:1110:b0:52c:d819:517e with SMTP id
+ 2adb3069b0e04-5331c6b050cmr6006961e87.30.1723983669994; Sun, 18 Aug 2024
+ 05:21:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ocfs2: Fix shift-out-of-bounds UBSAN bug in
- ocfs2_verify_volume()
-Content-Language: en-US
-To: qasdev <qasdev00@gmail.com>, mark@fasheh.com, jlbec@evilplan.org,
- joseph.qi@linux.alibaba.com
-Cc: ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <Zr9XJJlZ+RzkLK/M@hostname>
-From: Heming Zhao <heming.zhao@suse.com>
-In-Reply-To: <Zr9XJJlZ+RzkLK/M@hostname>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240729155738.29142-1-laurent.pinchart@ideasonboard.com>
+ <20240801011120.GA1620143@thelio-3990X> <20240817193342.GA12234@pendragon.ideasonboard.com>
+In-Reply-To: <20240817193342.GA12234@pendragon.ideasonboard.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sun, 18 Aug 2024 21:20:33 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQDmPeJHRWsDsv=S=NTBfpCNALEmv1CRCMsypxhOYo+Nw@mail.gmail.com>
+Message-ID: <CAK7LNAQDmPeJHRWsDsv=S=NTBfpCNALEmv1CRCMsypxhOYo+Nw@mail.gmail.com>
+Subject: Re: [PATCH] Remove *.orig pattern from .gitignore
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?B?w43DsWlnbyBIdWd1ZXQ=?= <ihuguet@redhat.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Alexey Dobriyan <adobriyan@sw.ru>, =?UTF-8?B?Uy7Dh2HEn2xhciBPbnVy?= <caglar@pardus.org.tr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/16/24 21:41, qasdev wrote:
->  From ad1ca2fd2ecf4eb7ec2c76fcbbf34639f0ad87ca Mon Sep 17 00:00:00 2001
-> From: Qasim Ijaz <qasdev00@gmail.com>
-> Date: Fri, 16 Aug 2024 02:30:25 +0100
-> Subject: [PATCH] ocfs2: Fix shift-out-of-bounds UBSAN bug in
->   ocfs2_verify_volume()
-> 
-> This patch addresses a shift-out-of-bounds error in the
-> ocfs2_verify_volume() function, identified by UBSAN. The bug was triggered
-> by an invalid s_clustersize_bits value (e.g., 1548), which caused the
-> expression "1 << le32_to_cpu(di->id2.i_super.s_clustersize_bits)"
-> to exceed the limits of a 32-bit integer,
-> leading to an out-of-bounds shift.
-> 
-> Reported-by: syzbot <syzbot+f3fff775402751ebb471@syzkaller.appspotmail.com>
-> Closes: https://syzkaller.appspot.com/bug?extid=f3fff775402751ebb471
-> Tested-by: syzbot <syzbot+f3fff775402751ebb471@syzkaller.appspotmail.com>
-> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
-> ---
->   fs/ocfs2/super.c | 8 ++++++--
->   1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
-> index afee70125ae3..1e43cdca7f40 100644
-> --- a/fs/ocfs2/super.c
-> +++ b/fs/ocfs2/super.c
-> @@ -2357,8 +2357,12 @@ static int ocfs2_verify_volume(struct ocfs2_dinode *di,
->   			     (unsigned long long)bh->b_blocknr);
->   		} else if (le32_to_cpu(di->id2.i_super.s_clustersize_bits) < 12 ||
->   			    le32_to_cpu(di->id2.i_super.s_clustersize_bits) > 20) {
-> -			mlog(ML_ERROR, "bad cluster size found: %u\n",
-> -			     1 << le32_to_cpu(di->id2.i_super.s_clustersize_bits));
-> +			if (le32_to_cpu(di->id2.i_super.s_clustersize_bits) < 32)
-> +				mlog(ML_ERROR, "bad cluster size found: %u\n",
-> +				     1 << le32_to_cpu(di->id2.i_super.s_clustersize_bits));
-> +			else
-> +				mlog(ML_ERROR, "invalid cluster size bit value: %u\n",
-> +				     le32_to_cpu(di->id2.i_super.s_clustersize_bits));
+On Sun, Aug 18, 2024 at 4:34=E2=80=AFAM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> On Wed, Jul 31, 2024 at 06:11:20PM -0700, Nathan Chancellor wrote:
+> > On Mon, Jul 29, 2024 at 06:57:38PM +0300, Laurent Pinchart wrote:
+> > > Commit 3f1b0e1f2875 (".gitignore update") added *.orig and *.rej
+> > > patterns to .gitignore in v2.6.23. The commit message didn't give a
+> > > rationale. Later on, commit 1f5d3a6b6532 ("Remove *.rej pattern from
+> > > .gitignore") removed the *.rej pattern in v2.6.26, on the rationale t=
+hat
+> > > *.rej files indicated something went really wrong and should not be
+> > > ignored.
+> > >
+> > > The *.rej files are now shown by `git status`, which helps located
+> > > conflicts when applying patches and lowers the probability that they
+> > > will go unnoticed. It is however still easy to overlook the *.orig fi=
+les
+> > > which slowly polute the source tree. That's not as big of a deal as n=
+ot
+> > > noticing a conflict, but it's still not nice.
+> > >
+> > > Drop the *.orig pattern from .gitignore to avoid this and help keep t=
+he
+> > > source tree clean.
+> > >
+> > > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > ---
+> > > As this has been in the tree for so long and appears not to have both=
+erd
+> > > anyone, I have a strong feeling I've overlooked something and this pa=
+tch
+> > > will be rejected. I've actually had that feeling for a few years
+> > > already, and today I decided that maybe everybody else used the exact
+> > > same reasoning, explaining why the annoying *.orig pattern is still i=
+n
+> > > .gitignore.
+> >
+> > I don't really have a strong opinion myself but it does seem reasonable
+> > to be consistent. For what it's worth, Stephen Rothwell checks for
+> > accidentally added .orig and .rej files in -next (and catches them
+> > occasionally [1]), so I wouldn't expect removing this to matter much.
+> >
+> > [1]: https://lore.kernel.org/linux-next/?q=3D.rej
+>
+> I didn't know that, it's useful information, thanks. I wonder if
+> checkpatch.pl could also check for that ? Although git-add already
+> warns unless you specify -f, so people ignoring that may also ignore
+> checkpatch.pl, I'm not sure.
+>
+> Who decides on whether this patch should be merged ?
 
-I prefer to use concise code to fix the error.
-Do you like below code?
--		mlog(ML_ERROR, "bad cluster size found: %u\n",
--			     1 << le32_to_cpu(di->id2.i_super.s_clustersize_bits));
-+		mlog(ML_ERROR, "bad cluster size bit found: %u\n",
-+			     le32_to_cpu(di->id2.i_super.s_clustersize_bits));
 
-Thanks,
-Heming
+This is kind of subjective, but so far, nobody has expressed
+a strong opposition.
 
->   		} else if (!le64_to_cpu(di->id2.i_super.s_root_blkno)) {
->   			mlog(ML_ERROR, "bad root_blkno: 0\n");
->   		} else if (!le64_to_cpu(di->id2.i_super.s_system_dir_blkno)) {
+I do not have a strong opinion, because I can ignore
+*.orig from my ~/.config/git/ignore anyway.
 
+I tend to want to ignore '*.orig', so I already have
+*.orig in my ~/.config/git/ignore.
+
+
+I will pick up this with a little further rationale from me:
+
+
+
+
+[masahiroy@kernel.org:
+I do not have a strong opinion about this. Perhaps some people may have
+a different opinion.
+
+If you are someone who wants to ignore *.orig, it is likely you would
+want to do so across all projects. Then, $XDG_CONFIG_HOME/git/ignore
+would be more suitable for your needs. gitignore(5) suggests, "Patterns
+which a user wants Git to ignore in all situations generally go into a
+file specified by core.excludesFile in the user's ~/.gitconfig".
+
+Please note that you cannot do the opposite; if *.orig is ignored by
+the project's .gitignore, you cannot override the decision because
+$XDG_CONFIG_HOME/git/ignore has a lower priority.
+
+If *.orig is sitting on the fence, I'd leave it to the users. ]
+
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
