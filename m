@@ -1,131 +1,244 @@
-Return-Path: <linux-kernel+bounces-291080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37ABF955D03
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 16:47:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A853955D05
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 16:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FDD1B212C6
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 14:47:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 419DBB20FDF
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 14:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C817E76D;
-	Sun, 18 Aug 2024 14:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40ED513210D;
+	Sun, 18 Aug 2024 14:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="2vakvEdL"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="g9htMhSq"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535832F4A
-	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 14:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070302F4A
+	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 14:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723992434; cv=none; b=EQIvd9TYFTHMSVVxceCvti7oX5aQqIUpeF1BKnhLQlqpPDAqAc7z4d4Mn2JxxvDCIvpOqC8udxXMTy5F1Q+BMgxlv17KQmC6VRkDRGowQQFJ4M8k5CSMTIMWVIHQra2SGx5eZ4KWLAaHUj1FxEP2aOF/5tT9HVH/vJtsMZdis9w=
+	t=1723992543; cv=none; b=ul9ven/Ecv0Wm7zQtZjcN/wL9i3O3vkfsFW9xTmUbC+5fdXSqXYPgC7/fi0RXl60wszshb6rKpg+riMTqWw8rzVsWbxFnP0z1wYd0ZxddKgLTAp4XjRD3kEJ1uQ1Yo1kiIq4If0pFLjVd8SOnjONK1rbHnyoVgs3lCn3/ceKn5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723992434; c=relaxed/simple;
-	bh=YxbSvn5cUDl78h8CIcje/7YQx17KEfYP8gRIXN7rHr8=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=KxS23ddJsyNyb7q5dsFoLg0GjHuBPo1vkldWQgUVhkaHTVspsOUsJqBErVHqLc8XnZrbyyVWdOYDthgBPmzyKl0Lwr51CnuXlM1S4zTOm58eXHBskLkenlu4apVKkBmEA7dYAlPGwK4GYL2hZ4TT4dE1zbCINsKjsGR++9Y5LPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=2vakvEdL; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2d3c098792bso2781363a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 07:47:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1723992431; x=1724597231; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b0Go8AiJdek7lWgXbzWIQti4cldN0KMyV85X7iQ7LZM=;
-        b=2vakvEdLvubvG86B+vRMbqfjnMSDPbgzyUiCOi2+Fvwml9U3mrHRL7Slbls1EDMMXc
-         mBnqu91KvQUUFP+urox8YoiHOnuorR4se19bvVA6zCcaO/e0rr+vIRHAU3hXjFr78fiT
-         20EXAXnkGPZqmavQFhivLphkiaGyV2pklFCuqZVLnjPoesN18MmV3T0pb/WFfyz1+Cvq
-         in9XRw+VnJgEoqy5NZMEp444giG6sY/pNBy2qD/+fTQpb+iHrUfXvcxQIL2lGLYo9cFD
-         fu+k5uUk7BIhvyiL88lxMPTmkMr1W97hxrnSfRg0tbLn+3+UDt51l1EPaJBSiNTf7iQj
-         JsTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723992431; x=1724597231;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b0Go8AiJdek7lWgXbzWIQti4cldN0KMyV85X7iQ7LZM=;
-        b=brZ1mao3kdH+fvahSaKF4FAcN2BGwoyxjk876UTPxv4IhbFMA209/8ZzxV10bI4k3/
-         0lY65gFjLhGCrgUK11um0g6d0Jhl8U1Z5K8dIIqhx40yPMJQg9XT3Jm7kPrln/ysJ8/0
-         3q69kTCZlVoKKFq45NZBwtETtyO75ll/OWYwQhgjTnQ89JiK4L2NqPDs6GNGw+JynYry
-         GDrJruXWkBVgHMNCxr26NzTqVmTKngqpYxM6GH9x6Dp7ZYR84PBeZGO4mZGtfw6U9rc0
-         tBl2qRKTkG3CjSPf58TvHFwGywE7OehHAG2kLYgdtMoPcjNGrOryXrANqDnXJ5Pg0/63
-         fpFg==
-X-Gm-Message-State: AOJu0YzW70bV0yKyjuqrGo0cdn+SpRniVqHhqfa4QDMuISXUTl5XuqU9
-	XpS91fJO5+NpiEG9w2pHikW6EX8XPaUeaLWXITPK/NejsXuAvm/azDWRp4/Ow/i3OTOJ5Ve6OpC
-	2
-X-Google-Smtp-Source: AGHT+IFPsZCr0YUiUpr/DaFMboUHyjc9cdjktUKCX4FN+D2Lradt6LfpdkLAoK6RZRWM1coGNNq1GA==
-X-Received: by 2002:a17:90a:fe93:b0:2cf:fe5d:ea12 with SMTP id 98e67ed59e1d1-2d3dfc7b35bmr10124972a91.24.1723992431051;
-        Sun, 18 Aug 2024 07:47:11 -0700 (PDT)
-Received: from localhost ([192.184.165.199])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3e83ebaa1sm5346974a91.17.2024.08.18.07.47.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2024 07:47:10 -0700 (PDT)
-Date: Sun, 18 Aug 2024 07:47:10 -0700 (PDT)
-X-Google-Original-Date: Sun, 18 Aug 2024 07:47:04 PDT (-0700)
-Subject:     Re: [PATCH v1 0/9] Fix Allwinner D1 boot regression
-In-Reply-To: <20240814145642.344485-1-emil.renner.berthing@canonical.com>
-CC: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-  apatel@ventanamicro.com, tglx@linutronix.de, Paul Walmsley <paul.walmsley@sifive.com>,
-  samuel.holland@sifive.com, aou@eecs.berkeley.edu
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: Renner Berthing <emil.renner.berthing@canonical.com>
-Message-ID: <mhng-e2f36a06-7e9e-47bb-8120-126f1a4441f5@palmer-ri-x1c9>
+	s=arc-20240116; t=1723992543; c=relaxed/simple;
+	bh=4FXY7KCGViYQageFCrEku4bznRLF5CklrCoH/VMP5Go=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rGnSXWkVwkGKnmAQRqIVzn6nYRqCxBPIeeXS9BvbGH0+WgwkLWGgOa9NEOv2rTi1A2NJfGb4D30AIpZHz7cZquTgk/TCPG9GyEkZ+fKFxIHgd6BHic75VxZZjCUnrrYj34mpPYdbB+sftc521wqBMyrfEZgviQT34V9LFg+hD2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=g9htMhSq; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <311ac3f4-5fa2-4bff-8fe9-6db355ad3673@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723992538;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=40ma2DFTtgvhta8iN3PF21Sc1IhOndM8X//XyFcAIew=;
+	b=g9htMhSqEL0EAcOwLp/3dllVOyGRZn61y+DTGQodJOzz+86NC1UjL2q5M6JxncwGGHHBHj
+	B61q28XKwHdZ7rMKHVP9IjbUed8gGSdt5PhBrK+1bXrG4TPLtomCa3s9q5Rnynpn5RtBfM
+	yF5MqNc8O6/rjbYJ/OoWmKScFgUikww=
+Date: Sun, 18 Aug 2024 22:48:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
+MIME-Version: 1.0
+Subject: Re: [RESEND PATCH v2] eventfd: introduce ratelimited wakeup for
+ non-semaphore eventfd
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
+ Dylan Yudaken <dylany@fb.com>, David Woodhouse <dwmw@amazon.co.uk>,
+ Paolo Bonzini <pbonzini@redhat.com>, Dave Young <dyoung@redhat.com>,
+ kernel test robot <lkp@intel.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240811085954.17162-1-wen.yang@linux.dev>
+ <w7ldxi4jcdizkefv7musjwxblwu66pg3rfteprfymqoxaev6by@ikvzlsncihbr>
+ <f21b635e-3bd7-48c3-b257-dde1b9f49c6c@linux.dev>
+ <CAGudoHFQtxU7r+Y9AV2yPc+JrTdMtzJopsjUinFK8uE5h7cbTQ@mail.gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Wen Yang <wen.yang@linux.dev>
+In-Reply-To: <CAGudoHFQtxU7r+Y9AV2yPc+JrTdMtzJopsjUinFK8uE5h7cbTQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 14 Aug 2024 07:56:32 PDT (-0700), Renner Berthing wrote:
-> Hi Anup,
->
-> As described in the thread below[1] I haven't been able to boot my
-> boards based on the Allwinner D1 SoC since 6.9 where you converted the
-> SiFive PLIC driver to a platform driver.
->
-> This is clearly a regression and there haven't really been much progress
-> on fixing the issue since then, so here is the revert that fixes it.
->
-> If no other fix is found before 6.11 I suggest we apply this.
->
-> [1]: https://lore.kernel.org/linux-riscv/CAJM55Z9hGKo4784N3s3DhWw=nMRKZKcmvZ58x7uVBghExhoc9A@mail.gmail.com/
->
-> /Emil
->
-> Emil Renner Berthing (9):
->   Revert "irqchip/sifive-plic: Chain to parent IRQ after handlers are
->     ready"
->   Revert "irqchip/sifive-plic: Avoid explicit cpumask allocation on
->     stack"
->   Revert "irqchip/sifive-plic: Improve locking safety by using
->     irqsave/irqrestore"
->   Revert "irqchip/sifive-plic: Parse number of interrupts and contexts
->     early in plic_probe()"
->   Revert "irqchip/sifive-plic: Cleanup PLIC contexts upon irqdomain
->     creation failure"
->   Revert "irqchip/sifive-plic: Use riscv_get_intc_hwnode() to get parent
->     fwnode"
->   Revert "irqchip/sifive-plic: Use devm_xyz() for managed allocation"
->   Revert "irqchip/sifive-plic: Use dev_xyz() in-place of pr_xyz()"
->   Revert "irqchip/sifive-plic: Convert PLIC driver into a platform
->     driver"
->
->  drivers/irqchip/irq-sifive-plic.c | 296 ++++++++++++------------------
->  1 file changed, 117 insertions(+), 179 deletions(-)
 
-I'm still only testing on the QEMU-emulated platforms, but this isn't 
-regressing over there so
 
-Tested-by: Palmer Dabbelt <palmer@rivosinc.com> # QEMU
+On 2024/8/15 04:58, Mateusz Guzik wrote:
+> On Wed, Aug 14, 2024 at 6:15 PM Wen Yang <wen.yang@linux.dev> wrote:
+>>
+>>
+>>
+>> On 2024/8/11 18:26, Mateusz Guzik wrote:
+>>> On Sun, Aug 11, 2024 at 04:59:54PM +0800, Wen Yang wrote:
+>>>> For the NON-SEMAPHORE eventfd, a write (2) call adds the 8-byte integer
+>>>> value provided in its buffer to the counter, while a read (2) returns the
+>>>> 8-byte value containing the value and resetting the counter value to 0.
+>>>> Therefore, the accumulated value of multiple writes can be retrieved by a
+>>>> single read.
+>>>>
+>>>> However, the current situation is to immediately wake up the read thread
+>>>> after writing the NON-SEMAPHORE eventfd, which increases unnecessary CPU
+>>>> overhead. By introducing a configurable rate limiting mechanism in
+>>>> eventfd_write, these unnecessary wake-up operations are reduced.
+>>>>
+>>>>
+>>> [snip]
+>>>
+>>>>       # ./a.out  -p 2 -s 3
+>>>>       The original cpu usage is as follows:
+>>>> 09:53:38 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>>>> 09:53:40 PM    2   47.26    0.00   52.74    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>> 09:53:40 PM    3   44.72    0.00   55.28    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>>
+>>>> 09:53:40 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>>>> 09:53:42 PM    2   45.73    0.00   54.27    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>> 09:53:42 PM    3   46.00    0.00   54.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>>
+>>>> 09:53:42 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>>>> 09:53:44 PM    2   48.00    0.00   52.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>> 09:53:44 PM    3   45.50    0.00   54.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>>
+>>>> Then enable the ratelimited wakeup, eg:
+>>>>       # ./a.out  -p 2 -s 3  -r1000 -c2
+>>>>
+>>>> Observing a decrease of over 20% in CPU utilization (CPU # 3, 54% ->30%), as shown below:
+>>>> 10:02:32 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>>>> 10:02:34 PM    2   53.00    0.00   47.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>> 10:02:34 PM    3   30.81    0.00   30.81    0.00    0.00    0.00    0.00    0.00    0.00   38.38
+>>>>
+>>>> 10:02:34 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>>>> 10:02:36 PM    2   48.50    0.00   51.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>> 10:02:36 PM    3   30.20    0.00   30.69    0.00    0.00    0.00    0.00    0.00    0.00   39.11
+>>>>
+>>>> 10:02:36 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>>>> 10:02:38 PM    2   45.00    0.00   55.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>> 10:02:38 PM    3   27.08    0.00   30.21    0.00    0.00    0.00    0.00    0.00    0.00   42.71
+>>>>
+>>>>
+>>>
+>>> Where are these stats from? Is this from your actual program you coded
+>>> the feature for?
+>>>
+>>> The program you inlined here does next to nothing in userspace and
+>>> unsurprisingly the entire thing is dominated by kernel time, regardless
+>>> of what event rate can be achieved.
+>>>
+>>> For example I got: /a.out -p 2 -s 3  5.34s user 60.85s system 99% cpu 66.19s (1:06.19) total
+>>>
+>>> Even so, looking at perf top shows me that a significant chunk is
+>>> contention stemming from calls to poll -- perhaps the overhead will
+>>> sufficiently go down if you epoll instead?
+>>
+>> We have two threads here, one publishing and one subscribing, running on
+>> CPUs 2 and 3 respectively. If we further refine and collect performance
+>> data on CPU 2, we will find that a large amount of CPU is consumed on
+>> the spin lock of the wake-up logic of event write, for example:
+>>
+>>    # perf top  -C 2  -e cycles:k
+>>
+>>       65.80%  [kernel]       [k] do_syscall_64
+>>       14.71%  [kernel]       [k] _raw_spin_unlock_irq
+>>        7.54%  [kernel]       [k] __fget_light
+>>        4.52%  [kernel]       [k] ksys_write
+>>        1.94%  [kernel]       [k] vfs_write
+>>        1.43%  [kernel]       [k] _copy_from_user
+>>        0.87%  [kernel]       [k] common_file_perm
+>>        0.61%  [kernel]       [k] aa_file_perm
+>>        0.46%  [kernel]       [k] eventfd_write
+>>
+>>
+>> One of its call stacks:
+>>
+>> |--6.39%--vfs_write
+>> |           --5.46%--eventfd_write
+>> |                      --4.73%--_raw_spin_unlock_irq
+>>
+>>
+>>>   > I think the idea is pretty dodgey. If the consumer program can tolerate
+>>> some delay in event processing, this probably can be massaged entirely in
+>>> userspace.
+>>>
+>>> If your real program has the wake up rate so high that it constitutes a
+>>> tangible problem I wonder if eventfd is even the right primitive to use
+>>> -- perhaps something built around shared memory and futexes would do the
+>>> trick significantly better?
+>>
+>> Thank you for your feedback.
+>>
+>> This demo comes from the real world: the test vehicle has sensors with
+>> multiple cycles (such as 1ms, 5ms, 10ms, etc.), and due to the large
+>> number of sensors, data is reported at all times. The publisher reported
+>> data through libzmq and went to the write logic of eventfd, frequently
+>> waking up the receiver. We collected flame graph and observed that a
+>> significant amount of CPU was consumed in this path: eventfd_write ->
+>> _raw_spin_unlock_irq.
+>>
+>> We did modify a lot of code in user mode on the test vehicle to avoid
+>> this issue, such as not using wake-up, not using eventfd, the publisher
+>> writing shared memory directly, the receiver periodically extracting the
+>> content of shared memory, and so on.
+>>
+> 
+> Well I don't have the full picture and whatnot, but given the
+> additional info you posted here I even more strongly suspect eventfd
+> is a bad fit. AFAICS this boils down to batching a number of updates
+> and collecting them at some interval.
+> 
+> With the assumption that updates to the eventfd counter are guaranteed
+> to not overflow within the wakeup delay and that there is constant
+> traffic, I'm suspect you would get the expected speed up by using
+> timerfd to wake the consumer up periodically. Then you would only
+> issue an eventfd read when the timerfd tells you time is up. You would
+> (e)poll only on that as well, never on the eventfd.
+> 
+> Even so, as is I think this wants a page shared between producer(s)
+> and the consumer updating everything with atomics and the consumer
+> collecting it periodically (atomic add on one side, atomic swap with 0
+> on the consumer, I don't know the c11 intrinsics). It would be
+> drastically cheaper all around.
 
-Thanks!
+Thank you for your suggestion.
+
+By using these methods above instead of eventfd, CPU consumption can 
+indeed be reduced.
+
+But this requires modifying some user mode programs. Some of the 
+programs on the test vehicle are our own and can be modified; But there 
+is still a portion from various suppliers, and some even only deliver 
+binary, which is difficult to change.
+
+And the kernel is open source, if it can be optimized, all user mode 
+programs can benefit from it.
+
+You also mentioned that "AFAICS this boils down to batching a number of 
+updates and collecting them at some interval."
+Yes, it's also similar to 'TCP's silly windw syndrome':
+
+eventfd_write has two stages: adding one to the counter and waking up 
+the reader process. The former has low overhead, while the latter has 
+very high overhead. And the current situation is:
+Every time the counter is incremented by 1, the read side process needs 
+to be awakened. When such operations are frequently performed, a lot of 
+time is wasted on awakening.
+
+This patch is also inspired by algorithms such as Nagle and Cork. It 
+attempts to delay wake-up, accumulate a larger counter value, and then 
+wake up the reader process to consume the accumulated counter value at once.
+
+Eventfd has already provided the NON-SEMAPHORE attribute, but it has not 
+been used yet. We look forward to your collaboration in using it 
+together to solve such problems.
+
+-- 
+Best wishes,
+Wen
+
 
