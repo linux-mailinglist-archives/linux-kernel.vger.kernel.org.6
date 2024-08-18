@@ -1,133 +1,133 @@
-Return-Path: <linux-kernel+bounces-290879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3F5E955A71
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 02:03:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F072F955A73
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 02:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDEA81C20B83
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 00:03:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F1E11C20E29
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 00:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE7917D2;
-	Sun, 18 Aug 2024 00:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBF617D2;
+	Sun, 18 Aug 2024 00:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="n14UcT6m"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GkiPKCnI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6FED366
-	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 00:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3AE2F56
+	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 00:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723939401; cv=none; b=GaCIDoqRICrfcwGYSdxfkf5QoPkHTjYzuqBr7sBsp/yA3GEwn7X3NfGJn3z5ABmGqEJXvu7zfMXP9NH4JiKio2+F4hzPRICWKPnVGanHsYX2y3kvVq+Vh5MZ3jU8Gcxt0Ii7kCLFxGC/ktzLUh+amQys3Py0t02EfX2UBSAM4j4=
+	t=1723939442; cv=none; b=urOi+weeF6DAUOWAfo8QWDaVRz3stMlHuYz5UKo7v16LnvSeWjoLBpbBjKxHb0X6nOVU5nz0ooAI6eqP4Hk0IYwqQjleOTaq+jzhZ3XbwhZBUvF7l1GCzZlWsNcth0f2qbXw8nKg0WkCp6vLJ9/CFH6HgsREU6QeYNO9/xnH5TU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723939401; c=relaxed/simple;
-	bh=43PNXDjta+N+EXhuUTIcjpCi7FZQMT1ibYrtMuZct2k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oc4BXT0g3CZTLfqOQ5bdB+3XSOYs6BEPEeJ/T7qU4AwsLxJDYjCBs8jXZeeHBeIK2WROGHKQa77ofHjQhKa9UsXzObm1LQ/Ews97phAsRRQ7HPubpt+sh8+rm6zoQ4Tw6j3C/Fms36Nnjyqmbg2xSvGJ2WqVniXH8RQyEWFI38g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=n14UcT6m; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1723939395;
-	bh=2UFLq6dlA8/JQmL3/dwSoFNJuKq4nWc6UNq2PkM3vB4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=n14UcT6mT+io6/zpYQyiWlLaaijLJ43pu8MK9NkZ4m8euQtcr18HdyZPtWFrcwFa9
-	 AwMpQl7gF46Zwq1LImMJPHBtnJk/xg3lWFgcyVfBdC4+uDrkB5g2shdLmrceKM133v
-	 G6uw6qXfluoKbFUGFvQ+StxmxztLprbvO1fXLhM0jWGNcEBuDC6Osr25xhKE1rbe4W
-	 Q12r764uAvX4ifGAqrV6rvJBpPy1ID8NJ2RSZ+o6h7dKdLdO1QdcJ1he9C3GfrRWzS
-	 F8LVnBmgdnkVyMJ6kP3cvwCwKDTQQBHFHNaZJA3TOmm8cS20R3RxP/o8IpqggcygIe
-	 z7ioXmP/hLkxQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WmbXd3cFgz4w2F;
-	Sun, 18 Aug 2024 10:03:13 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org,
- linux@treblig.org, linuxppc-dev@lists.ozlabs.org, nysal@linux.ibm.com,
- Thomas Gleixner <tglx@linutronix.de>
-Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-6.11-2 tag
-Date: Sun, 18 Aug 2024 10:03:11 +1000
-Message-ID: <87r0ampuio.fsf@mail.lhotse>
+	s=arc-20240116; t=1723939442; c=relaxed/simple;
+	bh=dIBabbHnvUrU2LDn0J+PSLmzE5bL2UFcy1hlsHznb3A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j37Unci/y+hhGOnMufk2cpxpWZlvjItMsuMFQ4PJXf5o84TnCdlwE/TD0v3cM2ykQdZtO5ErXxLSiUMkba+pdlOFivzcd4nXpcdN+s3PNxIB2QVLvcBStJZWyLZ+FijoRDG0t8wv+aiDoXBc+OieNks/N+FsQmZKFQojmAYdI1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GkiPKCnI; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723939439; x=1755475439;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dIBabbHnvUrU2LDn0J+PSLmzE5bL2UFcy1hlsHznb3A=;
+  b=GkiPKCnID1Uq0LliGxh2GV3vAmTWb6wTZQ0ul3lfozHZ4xkgJRiEPV57
+   9etKtXsp+hIcvz8COwGan4kqzqRc1dd4MBAOvBCqdSy1NsQ5mZU+C3Dmw
+   +El9JvvEy/MMLbIO7OreVoQqefCEFgqJ7ZzQI2ZHYOamhCDDExE8i3Xsz
+   vuGyvAmK8LmitmVgiPOV/L0WtRACCzroLVEK50uJjGP/fsLyj3+Pyvlbh
+   9lRIHUjPfZzetU+naSnBEsHFC/1mjuw0FVe1h1TlLu6SZBkirLlCFLmGd
+   R6KS9nr7KHQew2uWPw2ZrTwJ1w4nWPyRbWzLxn1fI7XOW5YfNgXxfj6Uv
+   w==;
+X-CSE-ConnectionGUID: ghN4JiEVT0aMupR/pQ6qRw==
+X-CSE-MsgGUID: 3sd/lFD0RdWX7pvA/WMc4g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11167"; a="39661496"
+X-IronPort-AV: E=Sophos;i="6.10,156,1719903600"; 
+   d="scan'208";a="39661496"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2024 17:03:59 -0700
+X-CSE-ConnectionGUID: xEOYpzM8T+a6vAV7gO/U3A==
+X-CSE-MsgGUID: HB2/fAYRTTuLgoqcBpvJNA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,156,1719903600"; 
+   d="scan'208";a="59856746"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 17 Aug 2024 17:03:56 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sfTOj-0007tH-1U;
+	Sun, 18 Aug 2024 00:03:53 +0000
+Date: Sun, 18 Aug 2024 08:03:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	hannes@cmpxchg.org, yosryahmed@google.com, nphamcs@gmail.com,
+	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com,
+	akpm@linux-foundation.org
+Cc: oe-kbuild-all@lists.linux.dev, nanhai.zou@intel.com,
+	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com,
+	kanchana.p.sridhar@intel.com
+Subject: Re: [PATCH v3 4/4] mm: swap: Count successful mTHP ZSWAP stores in
+ sysfs mTHP stats.
+Message-ID: <202408180729.M6uZh634-lkp@intel.com>
+References: <20240817050921.18462-5-kanchana.p.sridhar@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240817050921.18462-5-kanchana.p.sridhar@intel.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
+Hi Kanchana,
 
-Hi Linus,
+kernel test robot noticed the following build errors:
 
-Please pull some powerpc fixes for 6.11:
+[auto build test ERROR on 7c626ce4bae1ac14f60076d00eafe71af30450ba]
 
-The following changes since commit de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed:
+url:    https://github.com/intel-lab-lkp/linux/commits/Kanchana-P-Sridhar/mm-zswap-zswap_is_folio_same_filled-takes-an-index-in-the-folio/20240817-131053
+base:   7c626ce4bae1ac14f60076d00eafe71af30450ba
+patch link:    https://lore.kernel.org/r/20240817050921.18462-5-kanchana.p.sridhar%40intel.com
+patch subject: [PATCH v3 4/4] mm: swap: Count successful mTHP ZSWAP stores in sysfs mTHP stats.
+config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20240818/202408180729.M6uZh634-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240818/202408180729.M6uZh634-lkp@intel.com/reproduce)
 
-  Linux 6.11-rc2 (2024-08-04 13:50:53 -0700)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408180729.M6uZh634-lkp@intel.com/
 
-are available in the git repository at:
+All errors (new ones prefixed by >>):
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.11-2
-
-for you to fetch changes up to 227bbaabe64b6f9cd98aa051454c1d4a194a8c6a:
-
-  powerpc/topology: Check if a core is online (2024-08-13 10:32:17 +1000)
-
-- ------------------------------------------------------------------
-powerpc fixes for 6.11 #2
-
- - Fix crashes on 85xx with some configs since the recent hugepd rework.
-
- - Fix boot warning with hugepages and CONFIG_DEBUG_VIRTUAL on some platforms.
-
- - Don't enable offline cores when changing SMT modes, to match existing
-   userspace behaviour.
-
-Thanks to: Christophe Leroy, Dr. David Alan Gilbert, Guenter Roeck, Nysal Jan
-K.A, Shrikanth Hegde, Thomas Gleixner, Tyrel Datwyler.
-
-- ------------------------------------------------------------------
-Christophe Leroy (2):
-      powerpc/mm: Fix size of allocated PGDIR
-      powerpc/mm: Fix boot warning with hugepages and CONFIG_DEBUG_VIRTUAL
-
-Dr. David Alan Gilbert (1):
-      soc: fsl: qbman: remove unused struct 'cgr_comp'
-
-Nysal Jan K.A (2):
-      cpu/SMT: Enable SMT only if a core is online
-      powerpc/topology: Check if a core is online
+   mm/page_io.c: In function 'count_mthp_zswpout_vm_event':
+>> mm/page_io.c:178:17: error: implicit declaration of function 'count_mthp_stat' [-Werror=implicit-function-declaration]
+     178 |                 count_mthp_stat(folio_order(folio), MTHP_STAT_ZSWPOUT);
+         |                 ^~~~~~~~~~~~~~~
+>> mm/page_io.c:178:53: error: 'MTHP_STAT_ZSWPOUT' undeclared (first use in this function)
+     178 |                 count_mthp_stat(folio_order(folio), MTHP_STAT_ZSWPOUT);
+         |                                                     ^~~~~~~~~~~~~~~~~
+   mm/page_io.c:178:53: note: each undeclared identifier is reported only once for each function it appears in
+   cc1: some warnings being treated as errors
 
 
- Documentation/ABI/testing/sysfs-devices-system-cpu |  3 ++-
- arch/powerpc/include/asm/topology.h                | 13 +++++++++++++
- arch/powerpc/kernel/setup-common.c                 |  1 +
- arch/powerpc/mm/init-common.c                      |  4 ++--
- arch/powerpc/mm/mem.c                              |  2 --
- drivers/soc/fsl/qbman/qman.c                       |  5 -----
- kernel/cpu.c                                       | 12 +++++++++++-
- 7 files changed, 29 insertions(+), 11 deletions(-)
------BEGIN PGP SIGNATURE-----
+vim +/count_mthp_stat +178 mm/page_io.c
 
-iQIzBAEBCAAdFiEEJFGtCPCthwEv2Y/bUevqPMjhpYAFAmbBOPQACgkQUevqPMjh
-pYBHbRAAiC+nw/uRkmegLC601p+iVz80/GpzE3MwapPEZG1y38fTbFZBllRl9qsF
-aZBsM6h8prUbMli00DjZo30nqxQQ0aHQo9Vl5Oo4MAu5Bhk4VwbwA6GkyVtrAjXF
-aYeTrMsCAKngoHevyFn/7SLSfx8G+y3MK8VOtF3jA0KgW5JDNscBU3tDvt/A4iop
-b5OUOv04C0CgZ1Hv90VxC2NOtMScqRn9PE9frSTGIO5nI5ZV7ufpjwrYWUBZVuPV
-LWsR7AmK4hIqrd5wOxhVXyOqsf0swKZtF4/eQ5jA32Yh77cGi7tTuJjqS8vduhNx
-9zaODA+EzjpnO/2Vgjf6FyOZeyh5x/DRXsBHzzCpCFdiCI4oYMVfutaCDKCAb1I4
-9CRhQ+TXXFAziBkHiFZ+GcQyFxdjtNsnlf0dzm3fhVMYbz1apeLBVOYtuY6npLA0
-l9udAlsdaxLrJs5VVT8ot85XKl8Hq2XTfBbtcqAO3TAz0JZJzLjK1V7+x3t5xOck
-dYLDAl88Y7aOwfK7+eGTbJ9nEKS7jkln5YF6mLfy1tEJaa3j8fNXpiKm0e6s8qAl
-1hsQH7FRQYqZ6vxfDuSqC6OTw1yY6UrJGrrEQY9W3d09agcAMMJwOSGvYQ4K32ja
-uC1k3UgNq5L1HwbfD/I2iN4/9eGbGaTMYAvu8UkRaMnSek7pO60=
-=2P31
------END PGP SIGNATURE-----
+   174	
+   175	static inline void count_mthp_zswpout_vm_event(struct folio *folio)
+   176	{
+   177		if (IS_ENABLED(CONFIG_THP_SWAP))
+ > 178			count_mthp_stat(folio_order(folio), MTHP_STAT_ZSWPOUT);
+   179	}
+   180	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
