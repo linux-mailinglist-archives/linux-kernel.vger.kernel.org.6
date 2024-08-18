@@ -1,102 +1,148 @@
-Return-Path: <linux-kernel+bounces-291241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 823D9955F8D
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 23:58:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E283955FA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 00:02:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1F261F2226C
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 21:58:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAF071F21280
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 22:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 315B2155C98;
-	Sun, 18 Aug 2024 21:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75001553A7;
+	Sun, 18 Aug 2024 22:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qhghUGBB"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VejeZThR"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED54149E0E;
-	Sun, 18 Aug 2024 21:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E5B8BFC;
+	Sun, 18 Aug 2024 22:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724018313; cv=none; b=HmoszYvQnipwlWC3qF+ZUf5xcMhNebclXA8q5t3fEIDpqVQjHQ6uLnyOewGbvaHCDpAMxjbSiluCLwFwK9ic0gviis7T8Nxn5QBQPp5ZO4GmQd36NPKHi8xVUsH24vSWixsJ/Koa1zcWGPJI7Cq0ZuEFKyVTBMr5kAWv725GrTw=
+	t=1724018564; cv=none; b=rm+pnKhHTecxfXbNEIMcljrNSVPAKPQ9Uco9wgmShhkeiUw5vcNtXT/khEzDAhUfRXQdKcRHku5PDa3Zmqs+cpR4joRNS38Sb6/xc7moC8Bm+snLw9LqlX7DrWyHP8CZi+zU5l6z1B9Y/jG+KZ86K//eM2Rrzkz1drakncvhWmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724018313; c=relaxed/simple;
-	bh=yIrv1ugWY+jdtTaVjLFOD86FgzqIE7oR7TLV0Wm+jAc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=k60yt9HF/1RyH2p9dCNQHrAqfBg+01fZ+TmTv3uDEcv3ibNzGXfw8yRnQ4bDK2LAENddEkSVbrFsVZ+9rD82vHYeht4YlVlPz+lIgXP/mWP4ARLA/Mc+1vhx8NKB3+PKZTIKGvnJ6B9US8TPhooCBrYQEH38pS5Z5UR0hJg0aj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=qhghUGBB; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1724018309;
-	bh=kkN/4IQEkyeHg8FMN5nMbrrsT6mgC47VL3EiB+T3XfA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=qhghUGBBtMDAM8ylmJzJF4SI5iRUtdBY+4sDh0bXYguM1BuevV0nsNQnFPwmcs5pR
-	 GuCeLHSamfNoJOjS1P+V317L7oMiOqDxExxFATrD7XabOkKWrgoMOjlgD6pGRAhSAL
-	 Zhx/R6ugdP/xK4s9+v5k4Cj/vgyVv21B8Az/1uvfdkGWjTKfiMrEBhyIhK3HmS34Ui
-	 KHArfahaBfNllYS3qfra4hCqKXA/EwNqTee1BXjHtaEOJCl/xfQp+kjf7p+XGIiUXI
-	 ikkZOvhwelCULsGqXtRPeRv14TWnAp6DGRtZ6L9ie9G1qMXozGxPRDiPvtvk2LsNJP
-	 Kh4lA1aJl6PCQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wn8kF4WTqz4wbp;
-	Mon, 19 Aug 2024 07:58:29 +1000 (AEST)
-Date: Mon, 19 Aug 2024 07:58:28 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the mm-hotfixes tree
-Message-ID: <20240819075828.1d82c0a3@canb.auug.org.au>
+	s=arc-20240116; t=1724018564; c=relaxed/simple;
+	bh=4OY+OfsgBEGBbUrCMGs5ii6nHp9EOSwlPSMYS9b5f3M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ljtvxz8aNkn1cachRtNWhZCLEE3oLWTk67zK02ggAsJim72TH5MD2MG5DkA4HEtmkDPDzaFL9P2yQuvTAgBBC1k6Y+EyGQ7OiMlJwYHq4LZz2Igi67wSbZy74otM7hItx7x19Uu1zCnpt4rnWF33tMI30TZZYcwKQXu13FtkxMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VejeZThR; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-685cc5415e8so36632447b3.3;
+        Sun, 18 Aug 2024 15:02:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724018561; x=1724623361; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ETxuffj1hjBq3fNSlGndae1t4Uh+6W5yBNTfchSYFjI=;
+        b=VejeZThRJJ8ZR+hcxLIt+vkKiA0DINWRe8l8gvDGji/yIJd5ztHKD12Hj5mxcoLTeU
+         Mx0BsIBcJX3ZaE380lF1w/OntM0SPfz/krfsW9BH4kRDO3ntKGs+VT5Og3qaaME8A1TZ
+         sOfpYI+8ehE2K69/puRLjC4vpOGY+Oob9UerbP6ctg7Cqri7WkLgQqrD3QVBoklopxqS
+         g485IKoPbH25/dqkJ0XvnydklA0d0b1fOsFU8bDfgkHftqb3PQey0/DW8zCktpTfxFwQ
+         URshBiIsL90jAga4djP9669ZoocZKPhp/IWbRELxRln9Y8A5q8wAwaruvPbSgzs98le2
+         WK/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724018561; x=1724623361;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ETxuffj1hjBq3fNSlGndae1t4Uh+6W5yBNTfchSYFjI=;
+        b=hwjqW9uKy14Kh0DGDBXjX3nl66rc/tCnQ9BmzlX8lvZ0lTYOKVbfO4tkmNx3r/6ubR
+         wPV2hefeD6NGrOQN2KdcjrR2PzbD0ip4W2V5C5mG9cH4GojIhM0ALLq3NZIOIEaCKKMk
+         zeBhzn0G25EVBt3XyHWMD1pFnXVm64F75n1w65eYpVDnz+zyzrr8QTGuKg7/saKRMhlt
+         EhvpU1knSqlYwR8Vb4oXvbivIVrXCJU/Wp1g5VbxU1bf2nCgYo6kwvOUju5+bv7x0wf7
+         BcgjQPEsPH/qH0PequYAAbHIzpJI87/yxQVI13b6+PBfFqvhsIcfI4T9InQ+SJfcBlrR
+         kAJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWNweO30XpbuadEsNWTMh2e8aA0qjnmGEyykfy2eSMmDjnxFRzwOYFBz4TOzRK+1BN3eDXA6FM5yrG6OdSMVYnIzHNLxWgBl1vSHuPiiGpSZTQgkltkeJFaxHalNLbF8vRbY6X4RmJ0
+X-Gm-Message-State: AOJu0YwKG0jX3xdeAoJhyoAJLRCP/lj4kcG0enj5BkksImYXuXhTz3uP
+	kLFZyIfCFvG1jPqi+nS0ZVZ8uckaBDtURTbzCtF9Ifzj5uOH37xt2Z251uWf2KoCUnR5MKPu+Ax
+	AlI8w+esW1HWSa2P3ROyskHNbNPU=
+X-Google-Smtp-Source: AGHT+IFu5Ai0L4rYHzMaFuY8IIAP2nxViIakFziB7jS8dmaSv0NgxBIP+I4NjIKlU7CX/R4mBtSn1LXnxBkjiQQyxm0=
+X-Received: by 2002:a05:690c:4183:b0:6af:125a:1c5d with SMTP id
+ 00721157ae682-6b1bc3f6774mr80202527b3.38.1724018560935; Sun, 18 Aug 2024
+ 15:02:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/RHihe2zdPGb=4/AxHw8MgBM";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20240722141822.1052370-1-make24@iscas.ac.cn> <172372877149.37632.11411791571570145777.b4-ty@kernel.org>
+In-Reply-To: <172372877149.37632.11411791571570145777.b4-ty@kernel.org>
+From: "lee.lockhey" <lee.lockhey@gmail.com>
+Date: Mon, 19 Aug 2024 06:02:31 +0800
+Message-ID: <CAL7siYP5OO1hKiTw4nKSKhLjRA82uFn7ijz3NxYz8uk_7fRthQ@mail.gmail.com>
+Subject: Re: [PATCH v3] spi: ppc4xx: handle irq_of_parse_and_map() errors
+To: Mark Brown <broonie@kernel.org>
+Cc: jwboyer@linux.vnet.ibm.com, dbrownell@users.sourceforge.net, 
+	sfalco@harris.com, akpm@linux-foundation.org, sr@denx.de, 
+	Ma Ke <make24@iscas.ac.cn>, linux-spi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/RHihe2zdPGb=4/AxHw8MgBM
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello, Mark
 
-Hi all,
+On Mon, 22 Jul 2024 at 22:19, Ma Ke <make24@iscas.ac.cn> wrote:
+>
+> Zero and negative number is not a valid IRQ for in-kernel code and the
+> irq_of_parse_and_map() function returns zero on error.  So this check for
+> valid IRQs should only accept values > 0.
+>
+> Fixes: 44dab88e7cc9 ("spi: add spi_ppc4xx driver")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+> Changes in v3:
+> - removed Cc stable line as suggestions.
+> Changes in v2:
+> - added Cc stable line;
+> - added Fixes line.
+> ---
+>  drivers/spi/spi-ppc4xx.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/spi/spi-ppc4xx.c b/drivers/spi/spi-ppc4xx.c
+> index 01fdecbf132d..599c29a31269 100644
+> --- a/drivers/spi/spi-ppc4xx.c
+> +++ b/drivers/spi/spi-ppc4xx.c
+> @@ -416,6 +416,9 @@ static int spi_ppc4xx_of_probe(struct platform_device *op)
+>         if (hw->irqnum <= 0)
+>                 goto free_host;
+>
 
-The following commit is also in Linus Torvalds' tree as a different commit
-(but the same patch):
+The repeated addition of code here is indeed confusing. :-)
 
-  8e1aa267f430 ("kunit/overflow: fix UB in overflow_allocation_test")
+> +       if (hw->irqnum <= 0)
+> +               goto free_host;
+> +
 
-This is commit
+I noticed that this patch has been merged into the spi repository for-next tree:
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git/commit/?id=f1011ba20b83da3ee70dcb4a6d9d282a718916fa
+and there is also a related patch:
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git/commit/?id=7781f1d120fec8624fc654eda900fc8748262082
 
-  92e9bac18124 ("kunit/overflow: Fix UB in overflow_allocation_test")
+The return type of the 'irq_of_parse_and_map' function is 'unsigned
+int', here we use an 'int' type variable 'irq' to receive the interrupt number,
+this might not be very accurate.
 
-in Linus' tree.
+Would it be better to change the type of the 'irqnum' variable? and do
+not need to check if 'irqnum' is negative, like this:
 
---=20
-Cheers,
-Stephen Rothwell
+           if (!hw->irqnum) {
+                    dev_err(dev, "no IRQ resource\n");
+                    ret = -EINVAL;
+                    goto free_host;
+           }
 
---Sig_/RHihe2zdPGb=4/AxHw8MgBM
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+>         ret = request_irq(hw->irqnum, spi_ppc4xx_int,
+>                           0, "spi_ppc4xx_of", (void *)hw);
+>         if (ret) {
+> --
+> 2.25.1
+>
+>
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbCboQACgkQAVBC80lX
-0GzZAQf7Bjo20Mvji3rKPYzJgOnBAQpf2a3c+cT0yjNiK0rVhejraJMC8GqmGgDv
-9/VjiYVjf/ps8vkLOVCl758s8f9nM8TH2JB2zuqcpuNvGo5vVTL18EDXM+un5k+O
-bDjo8TorXjkVvGHBUB5+d+2y06P2lyxwdZJxJwQKIXhVMy+PAOnqXjyktiYp+fVS
-k5csmDaQDoL6HGjIXO4GD5P0a39N/xSUu3rWTS9/n2mUBMO2tV4pC7Y/2U764uDp
-YfJzkWgPUAFFADrhgye8ydYjeW+CBkuJQr6QPPfGGBGM5d4+qUqbhysSBPE3lxnj
-XqX1EuQGultrkW8MBgGXVZt9I6jARw==
-=piVy
------END PGP SIGNATURE-----
-
---Sig_/RHihe2zdPGb=4/AxHw8MgBM--
+Regards,
+Luoxi
 
