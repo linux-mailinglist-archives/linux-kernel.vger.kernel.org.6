@@ -1,121 +1,131 @@
-Return-Path: <linux-kernel+bounces-291168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3CE0955E45
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 19:34:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF358955E4B
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 19:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DE1F1F212CD
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 17:34:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BFAA1C20C5D
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 17:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED0B156968;
-	Sun, 18 Aug 2024 17:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7ABE14831F;
+	Sun, 18 Aug 2024 17:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eazQ+PWI"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GQcNgKER"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A5113DB99
-	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 17:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CA8748F;
+	Sun, 18 Aug 2024 17:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724002243; cv=none; b=MR6iNoTOfoDmknQy/y58FkmYfcBdrkBh4I5fEwuvIZRzhPRBoQRXMM0ooDvC7Mbuj/rNGEFdW5GeemMOJb9w0/pp9qcDGugPsBctbJIlEqdHY9M+uD0R/BpjTXe/LiEtlgsrmj1bpnpabYvNnOvRbvmJngQ+WF08buKa/yjj5ks=
+	t=1724002709; cv=none; b=sakdkXdcsC0PsaN/DJAJBfSUTiAojeUkev10ccZuI1Murf4zgPQEOUF+SVvj2L/GslWhlMai4MaIFrVMFQ/mpHESAI0JIMaATNXlMN17dD01M41/ETsb1o8KpwP2aJFGBdO9I11f47mGS6RmdE/KFU6eM2pDAA0Bk2rT3iUvB1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724002243; c=relaxed/simple;
-	bh=eZxyfFWiOMWgxzgfMrHHDe1GsJVaWTRUphozkk0Nczs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mHn0dIc31vP7rjehIay2YvVJaGx/5IxIuFmTYFW4M9doD3DPqzgh/TLxX24FryJeCuLtyT1JxD1XLps2rBuuupRj7uR6GKNDYMrFDI57QEPQ9jgtFDLFpfiYviaEBoBPFJ5ory8n6KgCxIhLuqDj1n/rSE1pqwqkxIxoQjDbuF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eazQ+PWI; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-428ec6c190eso29576635e9.1
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 10:30:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724002240; x=1724607040; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hze/nH6p6tvHNE8D/sjNOf2elLJDjNOnQCuybaofysA=;
-        b=eazQ+PWIYMnmwBlJrfEcOpfLDe5cNo+ULi8K5PlMLs6dh8bU/XEgSatDeCsih1oExg
-         fdD9ThiPlr+Y/x2Z61dAyRAz/pR6UxOv6DC0oygW1Tcunp/F28YH/bqOBCFICde0Cla+
-         N5dE1u/L3CeKQv73AaahpNueMcpJ+YQKoySIxOrgvFDXaFkPoYrVLR8zaRYUKE6iMOrG
-         IdqAO7tfdE3RQA3W/CFwBCR/poE9jeJeUlT0wCNAeR/bLv0O6bcnmHIBm3h6iGH+l/wm
-         t8rfUhE/2sqXxDfLMFVmjfoBMu0MFwuG7X4LdI59oBxXcqfbln/z99Tojf7C3lPwiAWy
-         lAcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724002240; x=1724607040;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hze/nH6p6tvHNE8D/sjNOf2elLJDjNOnQCuybaofysA=;
-        b=psGevktIgiBmmWBJztLTq45viYAYEf8D+nQT79e9WF3fE2dk6PnQeL1cm2wxI3YCjB
-         tl/zeuyadIFPRZbSrEEn9Dux6fElvZu80fMcT3cuyA824bxo8RAvXQZmq6jbvc37g2pi
-         AWCGYcv3oJoNrb/3bv9sQwLwFh1R1xfR+PfPqpLQ1o2SDvWPJ71H2BKkIgzHL9Hn8yOh
-         nwkEF8BEJHOXHmb8+W9MIr52Tyk1YuFEFUiBx/1ry3LKEgN9GYCZzubd+Nhv2bhInfWM
-         wUAOjm4ynxqhZgQdZa4/Sr6DWfzxJrcNn1PDPHFaXbRzvgd2jHcoYBLaBOif/0oxJLXX
-         ARfw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2I4mLGOGBrgaftF2SA0jshCN3TuALKlL5/Hz8gzk0Fdt1uhHLIpQQ1U1eGosl3iaIAu4j/ss8b23yRWzR3+QS3FM84K2/pjsMsTZO
-X-Gm-Message-State: AOJu0YyvRlk+OXfaX/PuM7o4Bg576r2wQK27qwRYYz4ga01OvtOUJ6bz
-	SszTEhIV/elARioF0tsDeWOunpWil+bQyXSsAZTrGQlpqRmYgohE3ZG4MNv79Hw=
-X-Google-Smtp-Source: AGHT+IEHHk1AWmAyr7jcxzOjPyrSWQ9wN+5ntefeNwrp3Cysr3LtJPZ7XWcf0YS+yO+S+WhnHLleiA==
-X-Received: by 2002:a05:600c:4683:b0:428:1694:bd8c with SMTP id 5b1f17b1804b1-42aa8276727mr29780845e9.37.1724002240500;
-        Sun, 18 Aug 2024 10:30:40 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded1813dsm139020545e9.7.2024.08.18.10.30.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2024 10:30:40 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
+	s=arc-20240116; t=1724002709; c=relaxed/simple;
+	bh=qNREcpYc/mFMfPprRyDGsRNPXLVRDx6VSzdJK7ojpz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ikz3t3yISzqyzV6n3/AJeiyDIyWjikYdcFTpqHTMUxePcjWo10N1QHoCLXi2iT2m5McdkypEzpDB5vChSmiJPvDL+Tjl9GtI6vTv9o5RB8LaoBe1+O2hOxaYtfjlCrA5UVPzkg8hL1UxD8ux7sh70eo+fPIU19dm41T8M0vClBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=GQcNgKER; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 85070541;
+	Sun, 18 Aug 2024 19:37:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1724002644;
+	bh=qNREcpYc/mFMfPprRyDGsRNPXLVRDx6VSzdJK7ojpz0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GQcNgKERv5IRSYCKIA+BUlMEoJ1TV1dapnrvpF6vrDMJEoClFlJsKxSFg8U2M8zj+
+	 cuExb8zovEBMtC98uHTObux4XeJ0xFDyZip9LD4u2vs8ElxyhBENgxs1EHqhkEDbDA
+	 BeJm+75nr9k2mNUDdO8EOoMJKB6BTkyL+Yx0uWtc=
+Date: Sun, 18 Aug 2024 20:37:58 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] ASoC: dt-bindings: samsung,odroid: drop stale clocks
-Date: Sun, 18 Aug 2024 19:30:37 +0200
-Message-ID: <20240818173037.122152-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+Subject: Re: [PATCH 1/2] media: dt-bindings: renesas,fcp: add top-level
+ constraints
+Message-ID: <20240818173758.GA29465@pendragon.ideasonboard.com>
+References: <20240818172937.121928-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240818172937.121928-1-krzysztof.kozlowski@linaro.org>
 
-Clocks property was present only to allow usage of assigned-clocks in
-the sound card node, however in upstream DTS the assigned-clocks were
-moved in commit 4afb06afd768 ("ARM: dts: exynos: move assigned-clock*
-properties to i2s0 node in Odroid XU4") to respective I2S nodes.  Linux
-drivers never parsed "clocks" so it can be safely dropped.
+Hi Krzysztof,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- Documentation/devicetree/bindings/sound/samsung,odroid.yaml | 5 -----
- 1 file changed, 5 deletions(-)
+Thank you for the patch.
 
-diff --git a/Documentation/devicetree/bindings/sound/samsung,odroid.yaml b/Documentation/devicetree/bindings/sound/samsung,odroid.yaml
-index b77284e3e26a..c3dea852cc8d 100644
---- a/Documentation/devicetree/bindings/sound/samsung,odroid.yaml
-+++ b/Documentation/devicetree/bindings/sound/samsung,odroid.yaml
-@@ -27,11 +27,6 @@ properties:
-       - const: samsung,odroid-xu4-audio
-         deprecated: true
- 
--  assigned-clock-parents: true
--  assigned-clock-rates: true
--  assigned-clocks: true
--  clocks: true
--
-   cpu:
-     type: object
-     additionalProperties: false
+On Sun, Aug 18, 2024 at 07:29:36PM +0200, Krzysztof Kozlowski wrote:
+> Properties with variable number of items per each device are expected to
+> have widest constraints in top-level "properties:" block and further
+> customized (narrowed) in "if:then:".  Add missing top-level constraints
+> for clocks and clock-names.
+
+In this specific case I think it's fine, but generally speaking, how do
+you handle that rule when different variants have completely different
+clocks, not just lack some of the clocks ?
+
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../devicetree/bindings/media/renesas,fcp.yaml    | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.yaml b/Documentation/devicetree/bindings/media/renesas,fcp.yaml
+> index c6abe719881b..68c088821b22 100644
+> --- a/Documentation/devicetree/bindings/media/renesas,fcp.yaml
+> +++ b/Documentation/devicetree/bindings/media/renesas,fcp.yaml
+> @@ -34,9 +34,15 @@ properties:
+>    reg:
+>      maxItems: 1
+>  
+> -  clocks: true
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 3
+>  
+> -  clock-names: true
+> +  clock-names:
+> +    items:
+> +      - const: aclk
+> +      - const: pclk
+> +      - const: vclk
+>  
+>    iommus:
+>      maxItems: 1
+> @@ -71,11 +77,6 @@ allOf:
+>              - description: Main clock
+>              - description: Register access clock
+>              - description: Video clock
+> -        clock-names:
+> -          items:
+> -            - const: aclk
+> -            - const: pclk
+> -            - const: vclk
+
+Any specific reason to move the clock names but not the descriptions ?
+The assymetry bothers me.
+
+>        required:
+>          - clock-names
+>      else:
+
 -- 
-2.43.0
+Regards,
 
+Laurent Pinchart
 
