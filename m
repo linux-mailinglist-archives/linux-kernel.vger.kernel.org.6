@@ -1,166 +1,138 @@
-Return-Path: <linux-kernel+bounces-291026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D7F7955C65
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 14:21:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2785955C69
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 14:28:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85B571F2154E
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 12:21:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A995C1C20B64
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 12:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA6C1C6A5;
-	Sun, 18 Aug 2024 12:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2811222087;
+	Sun, 18 Aug 2024 12:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uv7sb+HB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="l5Pdqc4d";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FeMQmBP4"
+Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0510BB666
-	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 12:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C96A8F66;
+	Sun, 18 Aug 2024 12:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723983672; cv=none; b=cWCiTxys6WT2wHeSg/fGj+1W3x1hIPWcoINXwJBuyk1LjxDONJP0vwpop77uQpX3E3cg2KtTQyr8+cUZO3pRF0+IPFznRBmEBAMD4eyBx4je/8L5GrpTZ3bjpowVY+rJo4Asj2G6jY1IgknWh5bVG3ZwxsSHTgNfl1D3LSyLpNA=
+	t=1723984101; cv=none; b=rgFmeQTIL5bw04I16hO432/2oDK4BYfurxmy6GIuXUP7r3hbkjgoO2C930XLU+Up+iYE+F5XDW+xliF9SaFAioPFhbBGuDSrBGKGLumHuP6iYGqh6mgKzhSMhgZ4ZiTzqqaH3HuvXlXPfCtekJXW0zk+MBMVPBsn6m92JdlNJF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723983672; c=relaxed/simple;
-	bh=mCnl2sjWqxQLaHQgCuE74JIcs23mOo2LREXAbCdHSK0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MJvYkM+f8D3AnS76A9zFJ9pguobYlj+cbSO+oiMKr6tL2PBfSa3Tg+W05z9+ibBUZuME3TyDzXe8Qel/a1DMQ0+LhaZCBclE78CVsmsx6q2XsKGKK02kQOtTwB6z+pEwO/OqfAOnIU736zVcdsPY6yHbvvnYPYri/jIgkugvLn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uv7sb+HB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7388DC4AF13
-	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 12:21:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723983671;
-	bh=mCnl2sjWqxQLaHQgCuE74JIcs23mOo2LREXAbCdHSK0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=uv7sb+HB/Yiifmhg0iyZH61Bpn1T9/PJPicvTY5LMHjt4ZoHQXVpu3bwewG9CFQCB
-	 M4Gg9RDr4NtfQWZ6h7Fk5USUJmsvclE7dOltIwZGU2jGfbqrIRVlAO+t+fck2qWIU/
-	 26qZVbd4g3qSKS0uYaKnXnknOOx1jHABAfq66S68f2vKi5O2AoOcf6n3mQnAFVdNQ0
-	 u1gi9/iBbF2ahlv2iKsgeNlswVTj9s5dVztCS/LjSfCSmnQCK5aen9p9+89i841fL6
-	 t5xFbFPYP7dffkqUZJKZ5SsKD5gTvbvuLf5gixzkffqdcUEK9pObAC17YxGLkV9PVF
-	 l+bPN8APlfsdQ==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5314c6dbaa5so4629096e87.2
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 05:21:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXr3OfBnN5Y38qUCzycKVn1qkYnVIoIK0Gsz6mquQ+Q9W/MO3xeUZJQX8+fF9VHm8sdv2C1ez32Y/HKbqtnVMRNchLIZwPLmh+0+bS9
-X-Gm-Message-State: AOJu0YwTdEzVzjxCV4nIypP1FgY/TG56fCGOl4tIYEyXZbujMfFN3vxp
-	hSBia57yyO48QToRK3f9tuO1Ss+RoxvJD5pG1fyr44d28DB1Cw3IV/4g/9TzWYnNIlLVv1gD7tC
-	REVxZqUdUiTOBbjVFtz5vGEUNyh8=
-X-Google-Smtp-Source: AGHT+IHManvMHZN6ER/GkDjqvh9nMEi5IZA41voVWxUL/OYfzoWmeuA2KR1e+na4JEzSCo3ZoKclEUNNlgVe0T3Y53g=
-X-Received: by 2002:a05:6512:1110:b0:52c:d819:517e with SMTP id
- 2adb3069b0e04-5331c6b050cmr6006961e87.30.1723983669994; Sun, 18 Aug 2024
- 05:21:09 -0700 (PDT)
+	s=arc-20240116; t=1723984101; c=relaxed/simple;
+	bh=QGZSgaDwjkzBfnoDRA6+KuuqDqZikjRQ6sBf6Ujr0d4=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=gc6Ass31ZVps2gfQv44orj/QPwb6uWEBYwBWItykDYpQW0i4RgYyV9zO+d9JFen2P32zuhwsFmJIaIs9EHWHDXzigQoj/XJy/fDsyR/6npMEedOaY5PUPHuoFBJeHaym8YsxBHPldHrZlZ/CtoDDKkBjncOvSOseIWlzeVmpZHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=l5Pdqc4d; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FeMQmBP4; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 9059A1151B61;
+	Sun, 18 Aug 2024 08:28:17 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-04.internal (MEProxy); Sun, 18 Aug 2024 08:28:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1723984097;
+	 x=1724070497; bh=DRpDj2if4gk6AAWUrO6EDxIFDLegIjhrreMFy1AqthQ=; b=
+	l5Pdqc4dnK65nM1uaF6yLTV2hFu+IyDTanJMSqyq3aXX4Qv/CDdovxO2hJ6Xnuet
+	fdwJyzl7z7VGXIcc7Cc/yhATrB4OBaLTF16FBlLd+iBg/aGEdlCZdQBCXCK2o4/O
+	O7GbY9TkA1wiaT/+gwTusn3A+KaaLZ9rmq2wCeUHFcUuCZb28OaSJAncrpzyB80d
+	BRYStQRBzvVmWz67yQBGFV1X12yuqv0rwpyQKZGbwE4cw46lKNT4WJCIstvqkSxj
+	HITkd+xg33dnnbRa1tBmK6ovhrLFQI4N5xivXm63f00edQU5SBJu1PlII4W2xaGg
+	Gry9vt1cx6FqQLAdfW+zEQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723984097; x=
+	1724070497; bh=DRpDj2if4gk6AAWUrO6EDxIFDLegIjhrreMFy1AqthQ=; b=F
+	eMQmBP4rC8xHAiJGQZh9F40ZSgYgtwP+C1zdx2Jrz18tJ0nV+0JKeZeyc0iKe1Lx
+	ixfIQoJupI31wBMV5RqMdSDmwcJamFvlvGRt+Hpofm/Ft8WuvEuU0LTtZY4IZzTE
+	PKXGq01szZVR3I5WTXtTwFOntHyY3NCWxJfwq9CsM+/NGxFk6nLKb8Dz9z+F1GKO
+	V+vw0+Q3fyycTqqUbZV48aoey5qAmh1BU8132NuulOcwB8NOeLmw+vwdT1VxyEpu
+	WprbwTnMzz6AKYvLHnRTc+6nC8a/faqo9eo876ugbNpljhR2bgy1uBVvK44JWR/z
+	itPDAbqUbCuSmpo/oJvBw==
+X-ME-Sender: <xms:4OjBZsOU3EN2qawhBpwSUIaTMFtdmE78ULT6N9fXI-3NgSOex4kugA>
+    <xme:4OjBZi-lTJj4wMlCqlXASbTZcAe_0HlX6aZ9UJbnV1Tc7eA5Vb38K6DAdEJFeeLgn
+    1EfsK3jLs10APN-S20>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudduvddgheefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepiedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgrkhgvvdegsehishgtrghsrdgrtg
+    drtghnpdhrtghpthhtohepvhhkohhulheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    rghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopegumh
+    grvghnghhinhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhu
+    gidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtrg
+    gslhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:4OjBZjTnvrU0NCwBe3Y88TYgtWycaQvN7eRtu9wX1lApoAHFquOG9A>
+    <xmx:4OjBZkuV1GYcWyJwTsr5YVjuJj8r2SKR_1lSM6bRwrFfAyeUnKfMhw>
+    <xmx:4OjBZke3DK4PelYEF4eVQBcvXzT5gz09Mn51Qkpb_dV6hSZJjw2Zuw>
+    <xmx:4OjBZo1vbpD8PDdXimKFpqaNs8dxD43UXTJijjJVzHfG-wiwXXdrDQ>
+    <xmx:4ejBZpH0_HFlfQm6b9HG-iOGxzoq-wc6hUyTKbKZyB3nup0caigtxdIg>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id C9BAB16005E; Sun, 18 Aug 2024 08:28:16 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729155738.29142-1-laurent.pinchart@ideasonboard.com>
- <20240801011120.GA1620143@thelio-3990X> <20240817193342.GA12234@pendragon.ideasonboard.com>
-In-Reply-To: <20240817193342.GA12234@pendragon.ideasonboard.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sun, 18 Aug 2024 21:20:33 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQDmPeJHRWsDsv=S=NTBfpCNALEmv1CRCMsypxhOYo+Nw@mail.gmail.com>
-Message-ID: <CAK7LNAQDmPeJHRWsDsv=S=NTBfpCNALEmv1CRCMsypxhOYo+Nw@mail.gmail.com>
-Subject: Re: [PATCH] Remove *.orig pattern from .gitignore
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?B?w43DsWlnbyBIdWd1ZXQ=?= <ihuguet@redhat.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Alexey Dobriyan <adobriyan@sw.ru>, =?UTF-8?B?Uy7Dh2HEn2xhciBPbnVy?= <caglar@pardus.org.tr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Date: Sun, 18 Aug 2024 14:27:56 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Ma Ke" <make24@iscas.ac.cn>, "Vinod Koul" <vkoul@kernel.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Message-Id: <68f613a0-64c8-4c3c-915c-ce6e76eee317@app.fastmail.com>
+In-Reply-To: <20240818071757.798601-1-make24@iscas.ac.cn>
+References: <20240818071757.798601-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH v3] dmaengine: moxart: handle irq_of_parse_and_map() errors
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Sun, Aug 18, 2024 at 4:34=E2=80=AFAM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
+On Sun, Aug 18, 2024, at 09:17, Ma Ke wrote:
+> Zero and negative number is not a valid IRQ for in-kernel code and the
+> irq_of_parse_and_map() function returns zero on error.  So this check for
+> valid IRQs should only accept values > 0.
 >
-> On Wed, Jul 31, 2024 at 06:11:20PM -0700, Nathan Chancellor wrote:
-> > On Mon, Jul 29, 2024 at 06:57:38PM +0300, Laurent Pinchart wrote:
-> > > Commit 3f1b0e1f2875 (".gitignore update") added *.orig and *.rej
-> > > patterns to .gitignore in v2.6.23. The commit message didn't give a
-> > > rationale. Later on, commit 1f5d3a6b6532 ("Remove *.rej pattern from
-> > > .gitignore") removed the *.rej pattern in v2.6.26, on the rationale t=
-hat
-> > > *.rej files indicated something went really wrong and should not be
-> > > ignored.
-> > >
-> > > The *.rej files are now shown by `git status`, which helps located
-> > > conflicts when applying patches and lowers the probability that they
-> > > will go unnoticed. It is however still easy to overlook the *.orig fi=
-les
-> > > which slowly polute the source tree. That's not as big of a deal as n=
-ot
-> > > noticing a conflict, but it's still not nice.
-> > >
-> > > Drop the *.orig pattern from .gitignore to avoid this and help keep t=
-he
-> > > source tree clean.
-> > >
-> > > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > ---
-> > > As this has been in the tree for so long and appears not to have both=
-erd
-> > > anyone, I have a strong feeling I've overlooked something and this pa=
-tch
-> > > will be rejected. I've actually had that feeling for a few years
-> > > already, and today I decided that maybe everybody else used the exact
-> > > same reasoning, explaining why the annoying *.orig pattern is still i=
-n
-> > > .gitignore.
-> >
-> > I don't really have a strong opinion myself but it does seem reasonable
-> > to be consistent. For what it's worth, Stephen Rothwell checks for
-> > accidentally added .orig and .rej files in -next (and catches them
-> > occasionally [1]), so I wouldn't expect removing this to matter much.
-> >
-> > [1]: https://lore.kernel.org/linux-next/?q=3D.rej
->
-> I didn't know that, it's useful information, thanks. I wonder if
-> checkpatch.pl could also check for that ? Although git-add already
-> warns unless you specify -f, so people ignoring that may also ignore
-> checkpatch.pl, I'm not sure.
->
-> Who decides on whether this patch should be merged ?
+> Cc: stable@vger.kernel.org
+> Fixes: 2d9e31b9412c ("dmaengine: moxart: remove NO_IRQ")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
 
+This makes no sense to me, you explain why the current code is
+correct and then change it to something wrong?
 
-This is kind of subjective, but so far, nobody has expressed
-a strong opposition.
+> diff --git a/drivers/dma/moxart-dma.c b/drivers/dma/moxart-dma.c
+> index 66dc6d31b603..16dd3c5aba4d 100644
+> --- a/drivers/dma/moxart-dma.c
+> +++ b/drivers/dma/moxart-dma.c
+> @@ -568,7 +568,7 @@ static int moxart_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+> 
+>  	irq = irq_of_parse_and_map(node, 0);
+> -	if (!irq) {
+> +	if (irq <= 0) {
+>  		dev_err(dev, "no IRQ resource\n");
+>  		return -EINVAL;
 
-I do not have a strong opinion, because I can ignore
-*.orig from my ~/.config/git/ignore anyway.
+The "if (!irq)" is clearly the intended check, as you explain
+irq_of_parse_and_map() returns 0 on error.
 
-I tend to want to ignore '*.orig', so I already have
-*.orig in my ~/.config/git/ignore.
-
-
-I will pick up this with a little further rationale from me:
-
-
-
-
-[masahiroy@kernel.org:
-I do not have a strong opinion about this. Perhaps some people may have
-a different opinion.
-
-If you are someone who wants to ignore *.orig, it is likely you would
-want to do so across all projects. Then, $XDG_CONFIG_HOME/git/ignore
-would be more suitable for your needs. gitignore(5) suggests, "Patterns
-which a user wants Git to ignore in all situations generally go into a
-file specified by core.excludesFile in the user's ~/.gitconfig".
-
-Please note that you cannot do the opposite; if *.orig is ignored by
-the project's .gitignore, you cannot override the decision because
-$XDG_CONFIG_HOME/git/ignore has a lower priority.
-
-If *.orig is sitting on the fence, I'd leave it to the users. ]
-
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+      Arnd
 
