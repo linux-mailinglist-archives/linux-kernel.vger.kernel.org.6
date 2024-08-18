@@ -1,181 +1,143 @@
-Return-Path: <linux-kernel+bounces-291198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60B04955EC8
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 21:52:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6ABB955ECF
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 22:10:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5B101F2121E
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 19:52:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46B972814DE
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 20:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F4914F115;
-	Sun, 18 Aug 2024 19:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A418114EC5B;
+	Sun, 18 Aug 2024 20:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CYQi/dvb"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V8eHaiei"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0761304BF
-	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 19:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1D215E96;
+	Sun, 18 Aug 2024 20:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724010719; cv=none; b=oFhS099wQY5+p1uznLjUqLH4s2J4DNZCxh0bc+BQTT59928nZmGswAy1RCwraaPDx7rZl+XaUJF17Zih/1/3reeGuukAE7FhgpPp8MmHBa2rZTed5/WzgJXp3F0ZxxjQkLDH9Bm3fsfM31Q0upSNE6ch2Q/buq9uXZl2p6SNN/k=
+	t=1724011817; cv=none; b=gjOH5hlrZo/juRUqDKBMDEV17i8ldKOGs/Faq4ov/C5PTYv4gFbpFAS/0gtYFuQ0VxYGdmcknw7vCFs2t0FF8EjkHDUGG3MgmFZGlK0mfWe1hnr7EL661bZ0IB0fxO9PF1IBrITC210cakKgr4Of+J3V5qeOhC5x9BWD5X4FIwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724010719; c=relaxed/simple;
-	bh=TZsbwwNkEWH1tZ3HT7gmTDUuL1/JZAkZO8Jh34cMkwk=;
+	s=arc-20240116; t=1724011817; c=relaxed/simple;
+	bh=uJGDB56sVeipkrQtaQqsgJwyDlIKrHdunQ5iELVKJy0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OHhnQ0aKJWdxlMKPvrzPE83VGZvVz9fMBpcPJCm6wLKIkywyQEDbs38wAnxw8txLe7ZPoSo0Ac1VDMl9Iu09RR+wYYtdv/LM5nqzu9anlTLbk6OzcmZ6v5sLVS4c5BZyUvg35xaXrfKylkAl5UdcBxXBIHXfUz9TNPM5hTm7+5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CYQi/dvb; arc=none smtp.client-ip=209.85.208.182
+	 To:Cc:Content-Type; b=KeMrJ9mfd9ExPP11EQ762inCzIPhy5XgPuhZUUK0GYYz9KpcYmmURBlj96NbCAkB/embL9HR1k84RnDeCbqQYbjdOX3ABYZ1MIvRXUO/ELrf1XFv2an4FYIJmVHLop71as7kV57Qd4/533O6gzgyRrpmDsAeyQs4OEcLb7QQb0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V8eHaiei; arc=none smtp.client-ip=209.85.167.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f1a7faa4d4so35451151fa.0
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 12:51:57 -0700 (PDT)
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3db1657c0fdso2324616b6e.1;
+        Sun, 18 Aug 2024 13:10:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724010716; x=1724615516; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HygLz4lr7P8WKYrQBOAfXSnwsJqt7olzVpK96u5Fr80=;
-        b=CYQi/dvbgyzFvMTq79PR3ImduiEIvFwhhTl5XwfdR2I3rkm9iVGhP9KyBRnSsczBd4
-         VptRjjWOBodjYsX+fcydNjLa0SyErzM2kW+ckZoDe+/mpfEQ8tVm95GSuQIBpRp4HwKc
-         HOftaqCFNDEt9D+uO6w1/baIqXjtYn+HCMZs/LFe+d2KRp9/VPgE6CGmd5AwOxisfiz9
-         avww2IJCH8pf34SDFMSJmNRFmzchVyn9S/ZIVBS3VpEXUhlSl+HV0CG35ULYWWl+in5T
-         /N/Da0uyL+Pk5rD6puIaxrqWnQCT8iOMfdsBMIv5Ey7FnO/szXfG3xXmdxjoVlsusBpS
-         5LKQ==
+        d=gmail.com; s=20230601; t=1724011815; x=1724616615; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qy/+jzT/NOiYw3uhsQ90salDPTFe4qnoDBEo8k9h6Rg=;
+        b=V8eHaieiVDLz5m3usH1RccfBAEimd0v8WRGF9Jsfq9sG4bkor1k+3ecRBX68H7KeG3
+         VSwHoy9W+p+Zxrnr4Y1Y5R741EWzQLUpIPqAwVkX8DcCbzREcJH8DbiCvjr9eIRxGPO2
+         yHDkmBjUqPU6tfTvcoZhWdcGYy5ckP20pyROOy0g+kzPoQOMnUJXIqUp26lq3/Q2bJmT
+         cQwbHujwOEHUNpnOW9AyzyGnvbRgow3ataq2wvTwGwc8LZfVZhgll39zfPg0jfwAzVNi
+         tYcKqwN5oVkCyKWDpooxn1U/pIC7Zofq9EGDRmfftlQYBCsT8LY1OQgWriz0XtZTY4mR
+         zRew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724010716; x=1724615516;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HygLz4lr7P8WKYrQBOAfXSnwsJqt7olzVpK96u5Fr80=;
-        b=coFMI33gAeqHJ82BxxL3C/Kmb/IJ+Lyp3pCOzaHDg0RePiETHU0xIi4KhwT2dDiCfn
-         KCcYkqw1Rn7DRFuamIuY/9chqHF9HWh6XgMYMzfx5Ij+Tj9FeKsbikZuNdDCDsMthOVs
-         TXmI8moYo7vgjcR/qU+aMpHE83qbtFHIDeYoVX6BH9W7e1dkLN1tMx+qjHlNtKDfShQZ
-         5agfsshnDvyds+fyXyBrbb9fkKDOduLklTLxTHfPTa/cL4PTb9eJfXFOeeKjEEwcRhR8
-         q3i9NLgLtKCa/2oIZJXLZfItf6eRQSfaidZt9dCcRZf6gZAusFsLWoJcl6uH67VwFFQ4
-         gZgA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtyq0EcikiIhiIle+MV5cYdSzXYa818n6M4uztFkyV4+tUUcL1gPpFogiyfBIsJeNCvh5vFF8LjOx+4UxqwA6OLY55w+dW25huo03P
-X-Gm-Message-State: AOJu0YwgCz+yzoeRF0i/+Rt7C6HRzmcCNG20bDZ6VesLLS0+ilPixrFe
-	uFLDDtjk+GU7/UQf+S6hvVef+0hJcv2ks32Is+IesN3Nl8UmS+LXoDVPdqDUKRu9IQFDSxUBmPR
-	1oby7ElvYQnV0squObeiAzVs7rWT2yw==
-X-Google-Smtp-Source: AGHT+IG4/azy1BipsGz50yyFODjemRjPoWuBkdlTqirLQtcIcQY4fvCrRextMlthXhPmXdEQ3lc7awcA/sg05JsOKxY=
-X-Received: by 2002:a05:651c:19a5:b0:2f3:ac23:b1db with SMTP id
- 38308e7fff4ca-2f3b3b84d7fmr37554001fa.4.1724010715234; Sun, 18 Aug 2024
- 12:51:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724011815; x=1724616615;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qy/+jzT/NOiYw3uhsQ90salDPTFe4qnoDBEo8k9h6Rg=;
+        b=qeVg9IGtWWzCW+kPCSLzI7ysGkx+MLYljkSNtzVZpiXF9v1r4DOcu59jnDJDqlPzq7
+         kJmuRN1s2nT3alkfMHCERzESkq3/6kuiCexsB2R6U7XSRukMuqFcOg9NpK2Wv4n3h3SJ
+         k402OVPxZd8Upa3xSwQNZre/JyqRcN9qPzDELx4r0f51T/JO8B+YVwCaTclGUEpw9hzi
+         ojmtgV79Nhcr8OpAlVZUDFkYN7Gz++fbqB4saKH792gk0Kza+h/shIxWjMsO155JtRTG
+         8r+YXgUjExbC7H4qTbvS9I8drlBMKzQXIC4gAxMkrOHuWC75457lG6ByonfCGE2aYD/w
+         0NsA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnu6MEHlKOft0IGJbdMybXaLnE/b+s8JSL4/tPdGTEI0+DWYQrHTXG9x4OVjvI89//eBbFxisq7CBchTzD2v5esHT1N1PZn8az5143MSKNKygetnkfg1cYpAxdUVVF+pSLo5wDUfod
+X-Gm-Message-State: AOJu0Yxf/J1AgqwgBloDjZDxMhfIzz+UJeZg2zdab4ouLmeVyLklYUYU
+	dMQSgBJSbdFSm6fQQ3Njim0hoo4B9PrQpIkinc5eQe3PdQk9m3A1m+kMfcdHIiA/Y1gEUAKrbV0
+	7h3UR76kgxPYlgCBg+4mE6oU9LcM=
+X-Google-Smtp-Source: AGHT+IHJoFs9kq0DonN2CXQEo5pYPafXJaMBOnGljUPRyg7t7x+vEVzjt5+Y7d1CumebXA2fN+0KbrIMpMBtlZEUGPo=
+X-Received: by 2002:a05:6808:e87:b0:3da:bc80:b233 with SMTP id
+ 5614622812f47-3dd3ad546bdmr9654294b6e.17.1724011815630; Sun, 18 Aug 2024
+ 13:10:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240818152634.17443-1-ubizjak@gmail.com>
-In-Reply-To: <20240818152634.17443-1-ubizjak@gmail.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Sun, 18 Aug 2024 21:51:43 +0200
-Message-ID: <CAFULd4aFsoLxs57W6EfddcvZiy=oQ7SMVhSCkvNcPXDvXy6h+Q@mail.gmail.com>
-Subject: Re: [PATCH v2] mm/kmemleak: Use explicit cast to cast pointer from
- percpu to generic AS
-To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Andrew Morton <akpm@linux-foundation.org>
-Content-Type: multipart/mixed; boundary="000000000000455c0f061ffa8622"
-
---000000000000455c0f061ffa8622
+References: <CAAMcf8Dts3=6CxNCLZBvXsdFHpaOs9mL2NJ8TMPU5+duray6-g@mail.gmail.com>
+ <d35a5c5216ee3d0321c725aea61e0326@manjaro.org> <CAAMcf8CFED71FKUBpRy+FZNf8XKim1fuxW1C+ErZQqLsaWm1yQ@mail.gmail.com>
+ <4455b5175d3c372c15d9732f03b9eb20@manjaro.org>
+In-Reply-To: <4455b5175d3c372c15d9732f03b9eb20@manjaro.org>
+From: Vicente Bergas <vicencb@gmail.com>
+Date: Sun, 18 Aug 2024 22:10:04 +0200
+Message-ID: <CAAMcf8CpkZHY6Awyo3LWZXfkqbZ1z3YcvF5W_08uv-XNov2j-A@mail.gmail.com>
+Subject: Re: [BUG] Rockchip SPI: Runtime PM usage count underflow!
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-spi@vger.kernel.org, 
+	Mark Brown <broonie@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 18, 2024 at 5:26=E2=80=AFPM Uros Bizjak <ubizjak@gmail.com> wro=
-te:
+On Sun, Aug 18, 2024 at 9:20=E2=80=AFPM Dragan Simic <dsimic@manjaro.org> w=
+rote:
 >
-> Use explicit cast to cast pointer from percpu to generic address space.
+> On 2024-08-18 20:55, Vicente Bergas wrote:
+> > On Sun, Aug 18, 2024 at 8:26=E2=80=AFPM Dragan Simic <dsimic@manjaro.or=
+g>
+> > wrote:
+> >> On 2024-08-18 20:13, Vicente Bergas wrote:
+> >> > i am a user of the CONFIG_SPI_SPIDEV device.
+> >> > It stopped working between 6.8 and 6.10.5.
+> >> > The SPI bus itself reports no errors to userspace, but no devices
+> >> > appear connected to the bus.
+> >> > The platform used is RK3328.
+> >> > The only spi-related message in dmesg is:
+> >> > rockchip-spi ff190000.spi: Runtime PM usage count underflow!
+> >>
+> >> I'm working on a related patch.  Could you, please, describe your
+> >> use case for the spidev driver, i.e. what board are you using it on,
+> >> and for what purpose?
+> >
+> > The board is ROCK64 and the purpose is to update all the software that
+> > board runs, which is stored on the SPI NOR flash onboard.
 >
-> The patch will avoid future build errors due to pointer address
-> space mismatch with enabled strict percpu address space checks.
->
-> The patch also fixes following sparse warnings:
->
-> kmemleak.c:1063:39: warning: cast removes address space '__percpu' of exp=
-ression
-> kmemleak.c:1138:37: warning: cast removes address space '__percpu' of exp=
-ression
->
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
+> So, if I got it right, you boot your Rock64 from the SPI chip that
+> contains all the software it runs, but you also boot Linux on it from
 
-Actually, we can do something around the lines of the attached patch
-and still keep the __must_check directive active.
+correct
 
-Please disregard this patch, a new (better) approach is in the works.
+> a microSD card, to update the contents of the SPI chip?  I'm guessing
+> it that way, because the size of an SPI chip is hardly large enough
+> for storing even an extremely size-optimized Linux system.
 
-Uros.
+No, everything is in the SPI NOR flash, which is 16MB in size and it
+is enough for my application.
 
-> ---
-> v2: Use explicit casts instead of IS_ERR_PCPU().
-> ---
->  mm/kmemleak.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-> index 764b08100570..fc2e09ec48f8 100644
-> --- a/mm/kmemleak.c
-> +++ b/mm/kmemleak.c
-> @@ -1059,8 +1059,9 @@ void __ref kmemleak_alloc_percpu(const void __percp=
-u *ptr, size_t size,
->          * Percpu allocations are only scanned and not reported as leaks
->          * (min_count is set to 0).
->          */
-> -       if (kmemleak_enabled && ptr && !IS_ERR(ptr))
-> -               create_object_percpu((unsigned long)ptr, size, 0, gfp);
-> +       if (kmemleak_enabled && ptr &&
-> +           !IS_ERR((const void *)(__force const unsigned long)ptr))
-> +               create_object_percpu((__force unsigned long)ptr, size, 0,=
- gfp);
->  }
->  EXPORT_SYMBOL_GPL(kmemleak_alloc_percpu);
->
-> @@ -1134,8 +1135,9 @@ void __ref kmemleak_free_percpu(const void __percpu=
- *ptr)
->  {
->         pr_debug("%s(0x%px)\n", __func__, ptr);
->
-> -       if (kmemleak_free_enabled && ptr && !IS_ERR(ptr))
-> -               delete_object_full((unsigned long)ptr, OBJECT_PERCPU);
-> +       if (kmemleak_free_enabled && ptr &&
-> +           !IS_ERR((const void *)(__force const unsigned long)ptr))
-> +               delete_object_full((__force unsigned long)ptr, OBJECT_PER=
-CPU);
->  }
->  EXPORT_SYMBOL_GPL(kmemleak_free_percpu);
->
-> --
-> 2.42.0
->
+> Anyway, I wonder why do you have to use the spidev driver for that
+> purpose?  Why can't you use 'compatible =3D "jedec,spi-nor";' to access
+> the SPI chip through /dev/mtd0 under Linux?
 
---000000000000455c0f061ffa8622
-Content-Type: text/plain; charset="US-ASCII"; name="p.diff.txt"
-Content-Disposition: attachment; filename="p.diff.txt"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lzzzgih60>
-X-Attachment-Id: f_lzzzgih60
+The bug report is about the SPI bus, MTD is a service provided on top
+of the SPI bus.
+If the bus fails, then there is no MTD.
+That said, i don't use MTD. The bootloader reads the kernel, dtb and
+initramfs from the SPI flash into RAM and boots linux entirely on RAM.
+There is no persistent filesystem on top of MTD.
 
-ZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvZXJyLmggYi9pbmNsdWRlL2xpbnV4L2Vyci5oCmlu
-ZGV4IGI1ZDliYjJhMjM0OS4uNmRkN2YwMGQ0MjJkIDEwMDY0NAotLS0gYS9pbmNsdWRlL2xpbnV4
-L2Vyci5oCisrKyBiL2luY2x1ZGUvbGludXgvZXJyLmgKQEAgLTQxLDYgKzQxLDggQEAgc3RhdGlj
-IGlubGluZSB2b2lkICogX19tdXN0X2NoZWNrIEVSUl9QVFIobG9uZyBlcnJvcikKIAlyZXR1cm4g
-KHZvaWQgKikgZXJyb3I7CiB9CiAKKyNkZWZpbmUgRVJSX1BUUl9QQ1BVKHB0cikgKHsgKHZvaWQg
-X19wZXJjcHUgKikodW5zaWduZWQgbG9uZylFUlJfUFRSKHB0cik7IH0pCisKIC8qKgogICogUFRS
-X0VSUiAtIEV4dHJhY3QgdGhlIGVycm9yIGNvZGUgZnJvbSBhbiBlcnJvciBwb2ludGVyLgogICog
-QHB0cjogQW4gZXJyb3IgcG9pbnRlci4KQEAgLTUxLDYgKzUzLDggQEAgc3RhdGljIGlubGluZSBs
-b25nIF9fbXVzdF9jaGVjayBQVFJfRVJSKF9fZm9yY2UgY29uc3Qgdm9pZCAqcHRyKQogCXJldHVy
-biAobG9uZykgcHRyOwogfQogCisjZGVmaW5lIFBUUl9FUlJfUENQVShwdHIpICh7IFBUUl9FUlIo
-KHZvaWQgKikoX19mb3JjZSB1bnNpZ25lZCBsb25nKXB0cik7IH0pCisKIC8qKgogICogSVNfRVJS
-IC0gRGV0ZWN0IGFuIGVycm9yIHBvaW50ZXIuCiAgKiBAcHRyOiBUaGUgcG9pbnRlciB0byBjaGVj
-ay4KQEAgLTYxLDYgKzY1LDggQEAgc3RhdGljIGlubGluZSBib29sIF9fbXVzdF9jaGVjayBJU19F
-UlIoX19mb3JjZSBjb25zdCB2b2lkICpwdHIpCiAJcmV0dXJuIElTX0VSUl9WQUxVRSgodW5zaWdu
-ZWQgbG9uZylwdHIpOwogfQogCisjZGVmaW5lIElTX0VSUl9QQ1BVKHB0cikgKHsgSVNfRVJSKCh2
-b2lkICopKF9fZm9yY2UgdW5zaWduZWQgbG9uZylwdHIpOyB9KQorCiAvKioKICAqIElTX0VSUl9P
-Ul9OVUxMIC0gRGV0ZWN0IGFuIGVycm9yIHBvaW50ZXIgb3IgYSBudWxsIHBvaW50ZXIuCiAgKiBA
-cHRyOiBUaGUgcG9pbnRlciB0byBjaGVjay4K
---000000000000455c0f061ffa8622--
+> > I have not tested this kernel version on RK3399, but it may also
+> > affect that other use case:
+> > https://gitlab.com/vicencb/kevinboot
+> >
+> > N.B.: My name is Vicente.
+>
+> Oh, I'm sorry for mistyping your first name.  Should've copy & pasted
+> it instead, to prevent such typing mistakes.
 
