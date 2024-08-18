@@ -1,54 +1,74 @@
-Return-Path: <linux-kernel+bounces-291025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A08AD955C5A
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 13:45:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D1C955C50
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 13:44:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D36C61C20401
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 11:45:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 928A51F214F2
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 11:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD9F2110E;
-	Sun, 18 Aug 2024 11:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25B71B964;
+	Sun, 18 Aug 2024 11:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="i0DvSryU"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RQ7ytieg"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA031803D;
-	Sun, 18 Aug 2024 11:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E5617557
+	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 11:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723981544; cv=none; b=FLyLxScpNYVXkBLyVBOKC/iPp298TW4ajxFUgVVFpKW/jQtHmFSYvMhnGE/AVd6emiT1f3tGFUmcYlbSCpvXgdKxj4EgB1lOKKG3/vHkGjbBaJftkKxFl2X9cf+eeSs/vhJmRnzfa3tFrjU9ITujWekc7M4QRpm0JjeWLlxdK0E=
+	t=1723981441; cv=none; b=deAf7zz/P8JBnTaxc1QdDAHGqFQgsNt6t4kKdlODc9c49XbrkW4nvX5u6ekh3+aJOTU9ZvB/XBaV+hhX8urSpEFuT7QVUyM3gY+WS3KNUtNnrn4ZGOrlHPu+X11AK7mbrfE0bnNo6SBZRETYxAimvXKo+JtDWXvBPac/zdXSYwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723981544; c=relaxed/simple;
-	bh=Ee0NJhwA1mFRhyXTh1ahgd08EBzvfs/+Rge0vDVW5Eo=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=lmJ9znYbRPOzW3AZlnBTi/DXkwN5CKFV58xrW5UsGyfyZtFgVbfoIAQt+X18G+Mxi3jK1hXYti7tyGHy1jD87lE47nybVigS3UXnjaPCzEvkodFyUEW+bhtigGyyIa584vDygBw1NmnkhIID6ZTyuzRzQzp+/rO3tRHat8VwcmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=i0DvSryU; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1723981533; x=1724586333; i=markus.elfring@web.de;
-	bh=i2wEq5t2ni+TcH94U0okDlCDrekF0+WUCWcIYa0wtzo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=i0DvSryUtVwFGTCcIU+HgRC3ND3GrwLXQZXC8bjCwJ8J+Ux4xyCmEaoMy7KMFh98
-	 Y00fY3kthfnO8yyDjs9nygGEHBtAHmm9tDAiD1Q7obtGq1PrH1Tu97jy5epX9u4zp
-	 x/e544jmbhEbJqewLcbOPG3Y/BG4IevCDeO5IsQRCdHjnjtbX2DUAIRo2EzBYk/pe
-	 ZXVdRA3bN2GOo8mtAh4/ZV/G3f+bPoSt89ub+5W14UA+6A9m33p/DGbHv+X4GOQpC
-	 YF4DHkUgyzw7YOex0kut8tnOX7fsLR7GrvxvP36paAbrxgYvNpFDwoDZTQxGZk0XN
-	 x3JY/DkcOMOaGSPHzw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MyO0u-1rwJbQ2Zky-00zNsj; Sun, 18
- Aug 2024 13:39:12 +0200
-Message-ID: <6e9dc4ce-fd4c-42a7-9839-6bcdfe5d0cbd@web.de>
-Date: Sun, 18 Aug 2024 13:38:29 +0200
+	s=arc-20240116; t=1723981441; c=relaxed/simple;
+	bh=dLCARgwVurr1QJuhRCu+K/rPZakl9JnQqKm0TnTm45k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pmk31rN0QKCs3Sm5Wlc1/Yk9MXBxF9M1pmq+W9xASs/l0/3BfgTdqIunwa1JdzWrhpyUvNuZ6HCcTUvHXlZl5iJPgqbfghlgzaZbjSvFwO/CDf5w1wjz2ZwWitqbeT5qtxFW7NriTdHdWeE+HJYEGrlTllriAuA/GWmORG/qOSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RQ7ytieg; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ef32fea28dso39785961fa.2
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 04:43:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1723981436; x=1724586236; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1CsHkOt9vf+tSdFHHxlwcTsV2VHa5VrYFOWKNehVdrc=;
+        b=RQ7ytiegfTixBYsLlWFkoZsodBOSun7YmC9Ex47EFhTNbCWYMQ4h01rig9uHdYLTMf
+         yNgqLXJkVGX7aRS5O5NgyAhMsKVAplNHGMbaDKskdKNm9v/hBTXYDrzj9RFGTaQ7TNaA
+         jkPKX6ciNGZn6/9Ph+vs9+vhqiTSzXxlQIQBuPVXF57D2Acw1Hc5+CtjJpBwnZurWzxR
+         DWgR/e+CwtlXzPgsxcGzSD17IQEZfB4ULrJcfFtCExEqpacsIGS6U7McgmK9vCwAST7j
+         wzouCWkcgJL1rXI9S4A8F0Y47burH+LiHoi/5zrqQUNtv1in180AvK+u/E00FHwd5HGe
+         1W/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723981436; x=1724586236;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1CsHkOt9vf+tSdFHHxlwcTsV2VHa5VrYFOWKNehVdrc=;
+        b=YzPcj1sZS7vYU2VIRtdXqtSHPx3OZ9j4cD375iwchFrzcmJx/wV9FWClWun/UTiZNn
+         0V5OrRx1VEOnvjGP9vkDFpUNFQDCmPr5fh+0YX2Uv/KfI37vHc7ru0enaB9tb4azOb4N
+         n68Fm2FCuVBykwmcvOxLzFLLgA38P9tD6vI1FP+yLMdcv77OQlGcdVsd/M1GPf/D0p71
+         lEAQnnsaFGYM8UD7oTlPbNUBj2oaeof85aTTrDNLYG36h/7U0QyERSof0NEIH1vMAPDW
+         L9yS7g4QrgylLhSnxKp+qR0WcBwg86bUCPm60zgQ3ELMTpyZMO9nzx9fMHK1oW2+JclR
+         hOSg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6qfv4kOBtUixSJyLGLcVt8s9nFi3G7di7VMYabVxBMHyl+ACTepzZ+6W4GJscagRVSkO2PvDAUcoa4yTEcxI2J55xy7Zgq1PDvbXN
+X-Gm-Message-State: AOJu0Yyt1hpJfsJBxPJqktrY5bh/1f4u3j21niNovXAqx8aPve5lAn3r
+	cbl5ohW32WsECT8UDoJZD/+oCm1BPQajdIhQrvxwr6a+ZgkBg4eOH4DSFXt4bIH7bykkkFa+nJz
+	K
+X-Google-Smtp-Source: AGHT+IG7ta2jjuQc9D2y9DJGRgumHBihHGMFlS1nTYgEhcwU/OJqsrPk3SpooMiDTvMemesb1pkCvQ==
+X-Received: by 2002:a2e:e11:0:b0:2f3:cd4e:b929 with SMTP id 38308e7fff4ca-2f3cd4ec008mr18879461fa.34.1723981435563;
+        Sun, 18 Aug 2024 04:43:55 -0700 (PDT)
+Received: from [127.0.0.1] ([192.177.92.77])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3e3d94fa2sm5264560a91.47.2024.08.18.04.43.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 18 Aug 2024 04:43:55 -0700 (PDT)
+Message-ID: <cbd30b80-d213-4997-b447-10e455f20196@suse.com>
+Date: Sun, 18 Aug 2024 19:43:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,74 +76,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Ira Weiny <ira.weiny@intel.com>, Navneet Singh <navneet.singh@intel.com>,
- linux-cxl@vger.kernel.org, linux-btrfs@vger.kernel.org,
- nvdimm@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Chris Mason
- <clm@fb.com>, Dave Jiang <dave.jiang@intel.com>,
- David Sterba <dsterba@suse.com>, Fan Ni <fan.ni@samsung.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Jonathan Corbet <corbet@lwn.net>, Josef Bacik <josef@toxicpanda.com>,
- Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky
- <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Alison Schofield <alison.schofield@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, Davidlohr Bueso
- <dave@stgolabs.net>, Vishal Verma <vishal.l.verma@intel.com>
-References: <20240816-dcd-type2-upstream-v3-21-7c9b96cba6d7@intel.com>
-Subject: Re: [PATCH v3 21/25] dax/region: Create resources on sparse DAX
- regions
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240816-dcd-type2-upstream-v3-21-7c9b96cba6d7@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:SDZ0mAvNdLKow+wykbK1KiOyQmXyTPlV1uC1C+eCaomkPY5xVF2
- iMLv8p4ZioEUFddT9msWDOy29paAp5SqQJw5+cQg83gm8AaFg5A2ZuGdMWZzh/wqHa776u6
- w0rS47wRs/rUhw9FGiT5WqiEg8JqTyszPl/bfsw8AYnTxlhH33+ddmoKTx1/u/qeZjyYl6k
- sU/i0aJ6l2PAogEC09NUg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ZcGeyuGiXPE=;u8RUXU03d6tpqvo7a2y83Lp/vB5
- 4CMNtKFulyvvi69D2gS8xxY/sqZqmd50D7+9goxbAonCZHsIhan69YK5H4kV+vU5jNzn+3jxB
- GnljVFqfylwL0PffO1d86TOjtg4Ekdigo7sCmAeOT1h9GQzuM4eYuJk7hrR3C1t0OBOLDVza6
- V3TCwfLoD7vBi8ZqcKtZtJY/VWa3q2YnqBGpXqA5tjPLOOp5ABCLbnaXHcm+teAHjzSAhYRxr
- dOkLCfoD9kej45UQJHdbYlnjhTjq/MD0EpshG4PsnA0N8qeGtZf81KxNZ2CT5ELF7AW7/Q6WN
- FtAEm9Z9vdox5M0j2mVPvXPmcG6kh78PZk0iWX7pAqfMdQgfnN21peafg1k+sMiLUIog5MuKe
- sPJQbaPEp42iYbtOX6zsRCCGusXaHjAMtWBXDBVrxTdbqDKmZrJArM4nfQDcVR65b7CI7Gg1Z
- XhffZAQb/t/n9rf5JYA6OTup4Ks3FcCwTJcZ0bkUpLNQcJW5SsPBOLTNYrMDp6WoMr8hiNX2f
- PCSiz3Ph9R8iN3ezyHZ2i3ELinvAQbCC7C7Em+mneTk0WWUC9/DTtVGwTvHXxI3YCJDrqmGRf
- Hu7838t6IQ8ZXLE9OfTzimAgj1do8IIoSMgtdpAnO49azkKleR1mnuy5wOsCQ5M9NYUyV+cpP
- 8HnzZT8eXtp07OHpT/b/umw5X4WPXZdqKmSELyqyrKW3BFylfId107KQzJLv8DIAspDueSKB2
- zOLz/iYk6EKcmBVb3jcL9guSy1ysLtP2NsIi3eCkUHqqKy+dhWA1BC/48RSaOGEyCEPYYArDy
- pLZ+dJERm06WFwZR44ZvU4cA==
+Subject: Re: [PATCH] ocfs2: Fix shift-out-of-bounds UBSAN bug in
+ ocfs2_verify_volume()
+Content-Language: en-US
+To: qasdev <qasdev00@gmail.com>, mark@fasheh.com, jlbec@evilplan.org,
+ joseph.qi@linux.alibaba.com
+Cc: ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <Zr9XJJlZ+RzkLK/M@hostname>
+From: Heming Zhao <heming.zhao@suse.com>
+In-Reply-To: <Zr9XJJlZ+RzkLK/M@hostname>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-=E2=80=A6
-> +++ b/drivers/cxl/core/extent.c
-> @@ -271,20 +271,67 @@ static void calc_hpa_range(struct cxl_endpoint_dec=
-oder *cxled,
->  	hpa_range->end =3D hpa_range->start + range_len(dpa_range) - 1;
->  }
->
-> +static int cxlr_notify_extent(struct cxl_region *cxlr, enum dc_event ev=
-ent,
-> +			      struct region_extent *region_extent)
-> +{
-=E2=80=A6
-> +	device_lock(dev);
-> +	if (dev->driver) {
-=E2=80=A6
-> +	}
-> +	device_unlock(dev);
-> +	return rc;
-> +}
-=E2=80=A6
+On 8/16/24 21:41, qasdev wrote:
+>  From ad1ca2fd2ecf4eb7ec2c76fcbbf34639f0ad87ca Mon Sep 17 00:00:00 2001
+> From: Qasim Ijaz <qasdev00@gmail.com>
+> Date: Fri, 16 Aug 2024 02:30:25 +0100
+> Subject: [PATCH] ocfs2: Fix shift-out-of-bounds UBSAN bug in
+>   ocfs2_verify_volume()
+> 
+> This patch addresses a shift-out-of-bounds error in the
+> ocfs2_verify_volume() function, identified by UBSAN. The bug was triggered
+> by an invalid s_clustersize_bits value (e.g., 1548), which caused the
+> expression "1 << le32_to_cpu(di->id2.i_super.s_clustersize_bits)"
+> to exceed the limits of a 32-bit integer,
+> leading to an out-of-bounds shift.
+> 
+> Reported-by: syzbot <syzbot+f3fff775402751ebb471@syzkaller.appspotmail.com>
+> Closes: https://syzkaller.appspot.com/bug?extid=f3fff775402751ebb471
+> Tested-by: syzbot <syzbot+f3fff775402751ebb471@syzkaller.appspotmail.com>
+> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+> ---
+>   fs/ocfs2/super.c | 8 ++++++--
+>   1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
+> index afee70125ae3..1e43cdca7f40 100644
+> --- a/fs/ocfs2/super.c
+> +++ b/fs/ocfs2/super.c
+> @@ -2357,8 +2357,12 @@ static int ocfs2_verify_volume(struct ocfs2_dinode *di,
+>   			     (unsigned long long)bh->b_blocknr);
+>   		} else if (le32_to_cpu(di->id2.i_super.s_clustersize_bits) < 12 ||
+>   			    le32_to_cpu(di->id2.i_super.s_clustersize_bits) > 20) {
+> -			mlog(ML_ERROR, "bad cluster size found: %u\n",
+> -			     1 << le32_to_cpu(di->id2.i_super.s_clustersize_bits));
+> +			if (le32_to_cpu(di->id2.i_super.s_clustersize_bits) < 32)
+> +				mlog(ML_ERROR, "bad cluster size found: %u\n",
+> +				     1 << le32_to_cpu(di->id2.i_super.s_clustersize_bits));
+> +			else
+> +				mlog(ML_ERROR, "invalid cluster size bit value: %u\n",
+> +				     le32_to_cpu(di->id2.i_super.s_clustersize_bits));
 
-Under which circumstances would you become interested to apply a statement
-like =E2=80=9Cguard(device)(dev);=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.11-rc3/source/include/linux/device.h#L=
-1027
+I prefer to use concise code to fix the error.
+Do you like below code?
+-		mlog(ML_ERROR, "bad cluster size found: %u\n",
+-			     1 << le32_to_cpu(di->id2.i_super.s_clustersize_bits));
++		mlog(ML_ERROR, "bad cluster size bit found: %u\n",
++			     le32_to_cpu(di->id2.i_super.s_clustersize_bits));
 
-Regards,
-Markus
+Thanks,
+Heming
+
+>   		} else if (!le64_to_cpu(di->id2.i_super.s_root_blkno)) {
+>   			mlog(ML_ERROR, "bad root_blkno: 0\n");
+>   		} else if (!le64_to_cpu(di->id2.i_super.s_system_dir_blkno)) {
+
 
