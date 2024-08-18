@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-291002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 984EF955C23
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 12:42:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7328955C24
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 12:43:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55375281121
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 10:42:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 834F8280FA6
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 10:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFF3182B2;
-	Sun, 18 Aug 2024 10:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB4D18E1F;
+	Sun, 18 Aug 2024 10:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sp4OvVYl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NQdxoY6/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C6017C77;
-	Sun, 18 Aug 2024 10:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BDB817BBF;
+	Sun, 18 Aug 2024 10:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723977773; cv=none; b=GinbA0rtj3elXI6pBwPp9u+xjYunsYVsizhg3P1HfrF/p5nco6zwZcGcDQF88j1zpG/X5za8zama8iDemAadshxNIX4NzKxp1Dm/Gap+VfB4L2jluBEcvH+ruA5jwrAw/Rm2zNYZ7ICJLrzpWCqhMR2yjBi08Cfc0/vZaJWVgzo=
+	t=1723977782; cv=none; b=MUTTGvV/lNfImkHvYoZKv6drS/HIMCiTgW+ug9avUy2DDPlAvQ0ZnvfK+dnU1PvjfCyxTx2IggK02ZiJ7Iy65NnuQxoEI2UEradDXZeHp/7hNsOZkVbwuMh8qBAk4L9oG/DwCHeobd3CxnI6Epgwyn/bMynOSEsCwktUPdKlHpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723977773; c=relaxed/simple;
-	bh=5BY+uWUvCswrTMuiuhTAsi+IsiFot1bz1CtixOYXbyo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=pEefRORdqvQA4ulvWhBagnyhEBjyWmEXU3OUZcX/ev1H/cmG0JSjAlAj3aKMXiX5tG2/XyRYiGGYzez7qtgJUuKODmS6s/MZk6bID+I/1QZoM9I18hbj2FpmgeLFM2QD+0OcurKx+mrk8ik/uodvfZxwv/pEDrWxBfKCafoLhiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sp4OvVYl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EE75C32786;
-	Sun, 18 Aug 2024 10:42:51 +0000 (UTC)
+	s=arc-20240116; t=1723977782; c=relaxed/simple;
+	bh=K+YhhYrm6wZmaypIZoaE8lkjUEUnYcCHGJ03mCynMzU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ei8Cx31us0hc2fULWFzHsmHNN3HRY/8fpit6b+b3drfGB2nx47yOqS5AuRwdmZooj9XB3+d1Ao9gcjmHxgI4K1jI1SkfrpProwQ45veEuar8+pxjG9OtNcMhNs5q/ptdoIAxvylYcgNXNFow/tI23EeZjp5AG+LPvRJe/se4/w8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NQdxoY6/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8906EC32786;
+	Sun, 18 Aug 2024 10:43:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723977772;
-	bh=5BY+uWUvCswrTMuiuhTAsi+IsiFot1bz1CtixOYXbyo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=sp4OvVYly11FS73BdzCneRtOlk9RQvOfAdDvDMqOtUQFUHtYpt8kxNoEtwz5kKh55
-	 QQn5u+Qlr+pk59GeCJm7WcODh9wuE7scJq3CWEszYdnBSmrrBcQzNddWz5zZjMlQe6
-	 KGlZ/C+jtmec6j2wmmv5gBeF4t8L81eYMIZkf9z/tQpA/hPcSgr4dbYRmeYCqWd1fI
-	 wVXzhLpmxxOJAFTc4kwSOCmBF9w2RPmFNVz9ugkAgCRbl+viDIH3OXX/N0ksDVTSov
-	 YfJq2AXJaA1GaczkWBsLlWK82BAsOZpDv+YT7wB7lt0USRJHnKl5UDMjY7rhphyM+K
-	 Gmzgff+A9ST0A==
+	s=k20201202; t=1723977782;
+	bh=K+YhhYrm6wZmaypIZoaE8lkjUEUnYcCHGJ03mCynMzU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=NQdxoY6/5vQZDSFrmpKhLxatsRhhfz7n+9brTbyy4ipMUWGqmZ1IYaVHrSiHRfsKQ
+	 czzCv0PAZR9IvqrpUj1YrhNQIaoz3rq9V+MbwS7O2aS8luovAgH/yZGKO7pOLan8cw
+	 n1u26jXmO2ZKkA3hdC7L92msz02JUBPWVc0/1fPtY4nIBD3ksXSJAsETYERzZgSS49
+	 8tSGZBXYf6b06iZxQ7nfAidbNCuVHJRf69xCHlD4rjIO5v2+uT428mX3EKgiI1S8JX
+	 2ZJkQbenCNyLyENhvlrwyCBb4f2egxNw41s6YVUezHIWennlsJC13DpSIaQCCO8t3y
+	 WjzLBtkogTd4A==
 From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
 To: Steven Rostedt <rostedt@goodmis.org>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
@@ -46,10 +47,12 @@ Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
 	linux-kernel@vger.kernel.org,
 	linux-trace-kernel@vger.kernel.org,
 	mhiramat@kernel.org
-Subject: [PATCH v3 0/5] tracing/probes: Support tracepoint events on modules
-Date: Sun, 18 Aug 2024 19:42:49 +0900
-Message-Id: <172397776900.286558.8986646398199362026.stgit@devnote2>
+Subject: [PATCH v3 1/5] tracepoint: Support iterating over tracepoints on modules
+Date: Sun, 18 Aug 2024 19:42:58 +0900
+Message-Id: <172397777800.286558.14554748203446214056.stgit@devnote2>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <172397776900.286558.8986646398199362026.stgit@devnote2>
+References: <172397776900.286558.8986646398199362026.stgit@devnote2>
 User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -60,48 +63,78 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-This is the 3rd version of the raw tracepoint events on modules.
-The previous version is here;
+Add for_each_module_tracepoint() for iterating over tracepoints
+on modules. This is similar to the for_each_kernel_tracepoint()
+but only for the tracepoints on modules (not including kernel
+built-in tracepoints).
 
-https://lore.kernel.org/all/fbfec8d9-d0ed-4384-bbd2-dd5c1e568ed1@efficios.com/
-
-This version supports tracepoint event on unloaded modules according
-to Mathies' suggestion ([2/5],[4/5] and part of [5/5]) .
-The concern about blocking module unload by instrumentation is TBD.
-
-Note, to support tracepoints in the unloaded modules, tracepoint event
-can not check the given tracepoint is really defined or not. So unless
-CONFIG_MODULES=n, it does not check the tracepoint existence. IOW,
-user can specify any tracepoint name for tracepoint events. It will be
-just ignored.
-
-You can download this series from;
-
-https://git.kernel.org/pub/scm/linux/kernel/git/mhiramat/linux.git topic/tprobe-on-module
-
-Thank you,
-
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 ---
+ Changes in v3:
+  - Add kerneldoc for for_each_module_tracepoint.
+---
+ include/linux/tracepoint.h |    7 +++++++
+ kernel/tracepoint.c        |   21 +++++++++++++++++++++
+ 2 files changed, 28 insertions(+)
 
-Masami Hiramatsu (Google) (5):
-      tracepoint: Support iterating over tracepoints on modules
-      tracepoint: Support tterating tracepoints in a loading module
-      tracing/fprobe: Support raw tracepoint events on modules
-      tracing/fprobe: Support raw tracepoints on future loaded modules
-      sefltests/tracing: Add a test for tracepoint events on modules
+diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+index 6be396bb4297..837fcf8ec0d5 100644
+--- a/include/linux/tracepoint.h
++++ b/include/linux/tracepoint.h
+@@ -64,6 +64,8 @@ struct tp_module {
+ bool trace_module_has_bad_taint(struct module *mod);
+ extern int register_tracepoint_module_notifier(struct notifier_block *nb);
+ extern int unregister_tracepoint_module_notifier(struct notifier_block *nb);
++void for_each_module_tracepoint(void (*fct)(struct tracepoint *, void *),
++				void *priv);
+ #else
+ static inline bool trace_module_has_bad_taint(struct module *mod)
+ {
+@@ -79,6 +81,11 @@ int unregister_tracepoint_module_notifier(struct notifier_block *nb)
+ {
+ 	return 0;
+ }
++static inline
++void for_each_module_tracepoint(void (*fct)(struct tracepoint *, void *),
++				void *priv)
++{
++}
+ #endif /* CONFIG_MODULES */
+ 
+ /*
+diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+index 8d1507dd0724..bed4aad36d92 100644
+--- a/kernel/tracepoint.c
++++ b/kernel/tracepoint.c
+@@ -735,6 +735,27 @@ static __init int init_tracepoints(void)
+ 	return ret;
+ }
+ __initcall(init_tracepoints);
++
++/**
++ * for_each_module_tracepoint - iteration on all tracepoints in all modules
++ * @fct: callback
++ * @priv: private data
++ */
++void for_each_module_tracepoint(void (*fct)(struct tracepoint *tp, void *priv),
++				void *priv)
++{
++	struct tp_module *tp_mod;
++	struct module *mod;
++
++	mutex_lock(&tracepoint_module_list_mutex);
++	list_for_each_entry(tp_mod, &tracepoint_module_list, list) {
++		mod = tp_mod->mod;
++		for_each_tracepoint_range(mod->tracepoints_ptrs,
++			mod->tracepoints_ptrs + mod->num_tracepoints,
++			fct, priv);
++	}
++	mutex_unlock(&tracepoint_module_list_mutex);
++}
+ #endif /* CONFIG_MODULES */
+ 
+ /**
 
-
- include/linux/tracepoint.h                         |   20 ++
- kernel/trace/trace_fprobe.c                        |  179 +++++++++++++++-----
- kernel/tracepoint.c                                |   42 +++++
- tools/testing/selftests/ftrace/config              |    1 
- .../test.d/dynevent/add_remove_tprobe_module.tc    |   61 +++++++
- .../ftrace/test.d/dynevent/tprobe_syntax_errors.tc |    1 
- 6 files changed, 254 insertions(+), 50 deletions(-)
- create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/add_remove_tprobe_module.tc
-
---
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
