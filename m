@@ -1,168 +1,140 @@
-Return-Path: <linux-kernel+bounces-290985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-290986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53BFA955BDB
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 09:50:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BEA3955BDF
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 09:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 066312824C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 07:50:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C901BB21629
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 07:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6B71758B;
-	Sun, 18 Aug 2024 07:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD3C179AA;
+	Sun, 18 Aug 2024 07:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="arEHSKbF";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AOMtHxkG";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lWCZDQE0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9x8iQL9l"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CLSJmjFa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E760D517;
-	Sun, 18 Aug 2024 07:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8C01754B;
+	Sun, 18 Aug 2024 07:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723967417; cv=none; b=Cxd3Q80FP6j5U2chzOGNm2/ItUzSFV7VhjTLTJzefsh9H/cdC6gdaMts/L2B3TuFsSzcNTaExU4/a0m4jMYAqMoiETnOJFjblJ8N+qXjXAdUSwRhGXCB81Xa4EG5qbrisI+gg+yze1pgsEjmvH18l0wqRqCDukBMPomv9MFgxlY=
+	t=1723967593; cv=none; b=SNr29rBo4CsMCtqJ/I8XjPE6nlDlqQKwXGdDr6rX56v2XU9G4ym+vEl/CvS7R/LTyECDxXMQPfJJ5FrrqttoJ9G7plY5I5gQoDwcfXPPh5wd9QJERsgTbShYYWIIXRUXVszhzx+95Iy9wko9E8dSTvrMjwr9A8WpGvdOmtUxytc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723967417; c=relaxed/simple;
-	bh=WNmBES2YN6RkzmcMnUQq0Azqd/2ZCKbj7rc7inbDf+Q=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TsHmXXRDPngZm+hSfTKTWcrUPLwwf6jlCVHbaBn8+iTUo1O73TxzuxEGJltknhvi6SoQTn4gNhwenmD1/T/W2SZWfYesaYsszkM0d9zvWk3gHcrUNRxQG6BKdqHD2s3Zq6o+6z1RqtQs9RhnHYawU0ipTkz78kJ3rZT/P+U1DNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=arEHSKbF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AOMtHxkG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lWCZDQE0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9x8iQL9l; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 731D11FBAE;
-	Sun, 18 Aug 2024 07:50:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723967413; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hVqXz7vVv+Rwpy7vb7f2UqOUpshcZsveNtQNNp1IgSo=;
-	b=arEHSKbFvBCqhUG5Kftx6iXArDh5RH4KoPAQ0jiAmQ8cHpisrMtZ7D+rd4sjd0yVioYXhm
-	dG4HIvCV1mNiL0zxFsn7hCNBUx0F6xxcBsaPli4wGEfNYP0t+xQBoXPpEiOnk/dJJlPDWr
-	t3Vu9M4owbGRKY/gYZ4+W+vJ4DncMjU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723967413;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hVqXz7vVv+Rwpy7vb7f2UqOUpshcZsveNtQNNp1IgSo=;
-	b=AOMtHxkG8I65niixDljGLcfHOFOp1iQ+1bgePnL0xOuRp5ixtC0vDpYRp6kUzh3ngieM5h
-	kh8pRNrZuvSQPzCQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=lWCZDQE0;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=9x8iQL9l
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723967412; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hVqXz7vVv+Rwpy7vb7f2UqOUpshcZsveNtQNNp1IgSo=;
-	b=lWCZDQE0wZFj2539peTCaKSvJsrbUzEpWg0yOKM62pp4o8s4xHxxclvBiWftddPo5g7wDl
-	L4ap8HM2rB9rVCb159zEAaJg3UHtfv9GYP/118nARDzRTLTwunqXZaxIX80W7R8YtedUy4
-	VGYgrnCK2osKRlDQHvqb71N5ASa4cR4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723967412;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hVqXz7vVv+Rwpy7vb7f2UqOUpshcZsveNtQNNp1IgSo=;
-	b=9x8iQL9lTD8Jpb4AbTInxgO1dlG/zf82AcN/08lnE1V0Hu1jDD4X/kWJSCQa9xFiAPp5+1
-	RrQTeGQPl3YVdICQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 27C2D136ED;
-	Sun, 18 Aug 2024 07:50:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qy7dB7SnwWY6QwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Sun, 18 Aug 2024 07:50:12 +0000
-Date: Sun, 18 Aug 2024 09:50:53 +0200
-Message-ID: <87cym61d7m.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Mark Brown <broonie@kernel.org>
-Cc: Bard Liao <yung-chuan.liao@linux.intel.com>,
-	linux-sound@vger.kernel.org,
-	vkoul@kernel.org,
-	vinod.koul@linaro.org,
-	linux-kernel@vger.kernel.org,
-	tiwai@suse.de,
-	pierre-louis.bossart@linux.intel.com,
-	bard.liao@intel.com
-Subject: Re: [PATCH 1/3] ALSA/ASoC/SoundWire: Intel: use single definition for SDW_INTEL_MAX_LINKS
-In-Reply-To: <19ab3bfb-cc7c-4f3d-84bb-ef35d8849064@sirena.org.uk>
-References: <20240816023331.6565-1-yung-chuan.liao@linux.intel.com>
-	<20240816023331.6565-2-yung-chuan.liao@linux.intel.com>
-	<19ab3bfb-cc7c-4f3d-84bb-ef35d8849064@sirena.org.uk>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1723967593; c=relaxed/simple;
+	bh=JYl0nnbGctAnVjtJkBWj5fgYH+THsGUlIZRbI9paeoc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kWZr+jzpO2N4L8+IRU+9f86WV6WYxvZsVGvUMWIghgnVHAfK3he7b3f6YVFcwZbImsOU179jKkU9pXDxa6PIIgWB+TvmycrKHgj692DdeWj1cADUTHf8gsDSBLDuMCCMozf6yqwELXILktrI2tu3p6C7XpL6z8n4Ai3qssXfSbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CLSJmjFa; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723967591; x=1755503591;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JYl0nnbGctAnVjtJkBWj5fgYH+THsGUlIZRbI9paeoc=;
+  b=CLSJmjFaQ4c/hlQEiy6DPsAkHVNDTOV+DpNe0LfS/ZcOg+CLFELs5VEz
+   zc4apphVoKO7NLYsQolDcec6Pcx/+tlr6pDmm4fdSQ9wKkVmE/TQlHKmz
+   VzwbOAHT4MvfXfhanHl2tZZcQFMSERSJH5sRqlcsa/ZCJHjtYJxfkgfRd
+   WwRnMTMyj81scXAEbEg6leh1rXE3gk0l3ZbDed45NygBYThMzRWYzYOWF
+   7B6j8HsId5hwL1im8aaatUMwl9gL3M70lW6TNIRZK2JhDf4wEhs0zM7Ci
+   O7xmyLyNnNAFzBakjVTaKffXd3lH/emMuvKYUi0rbIrHcziTciAkDJzT4
+   A==;
+X-CSE-ConnectionGUID: dXYw4JgRQkG54hGWrsUplw==
+X-CSE-MsgGUID: TmCHg9WzSD2sO8P7IX+zFw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11167"; a="22366269"
+X-IronPort-AV: E=Sophos;i="6.10,156,1719903600"; 
+   d="scan'208";a="22366269"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2024 00:53:10 -0700
+X-CSE-ConnectionGUID: KkicVjpFRPeRloMYCal/mA==
+X-CSE-MsgGUID: aZr/EikoTjyPjZYU2cGo3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,156,1719903600"; 
+   d="scan'208";a="60070010"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 18 Aug 2024 00:53:03 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sfaij-00086W-1K;
+	Sun, 18 Aug 2024 07:53:01 +0000
+Date: Sun, 18 Aug 2024 15:52:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: shiju.jose@huawei.com, linux-edac@vger.kernel.org,
+	linux-cxl@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, bp@alien8.de, tony.luck@intel.com,
+	rafael@kernel.org, lenb@kernel.org, mchehab@kernel.org,
+	dan.j.williams@intel.com, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	ira.weiny@intel.com, david@redhat.com, Vilas.Sridharan@amd.com,
+	leo.duran@amd.com, Yazen.Ghannam@amd.com, rientjes@google.com,
+	jiaqiyan@google.com, Jon.Grimm@amd.com, dave.hansen@linux.intel.com,
+	naoya.horiguchi@nec.com, james.morse@arm.com, jthoughton@google.com,
+	somasundaram.a@hpe.com, erdemaktas@google.com
+Subject: Re: [PATCH v11 14/14] cxl/memfeature: Add CXL memory device PPR
+ control feature
+Message-ID: <202408181550.8ttlDbQA-lkp@intel.com>
+References: <20240816164238.1902-15-shiju.jose@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Flag: NO
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 731D11FBAE
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-5.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,intel.com:email];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -5.51
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240816164238.1902-15-shiju.jose@huawei.com>
 
-On Fri, 16 Aug 2024 13:25:45 +0200,
-Mark Brown wrote:
-> 
-> On Fri, Aug 16, 2024 at 10:33:29AM +0800, Bard Liao wrote:
-> > From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> > 
-> > The definitions are currently duplicated in intel-sdw-acpi.c and
-> > sof_sdw.c.  Move the definition to the sdw_intel.h header, and change
-> > the prefix to make it Intel-specific.
-> > 
-> > No functionality change in this patch.
-> 
-> Acked-by: Mark Brown <broonie@kernel.org>
+Hi,
 
-As Bard requested, the series can go via ASoC tree.
+kernel test robot noticed the following build warnings:
 
-Feel free to take my ack for HDA part.
+[auto build test WARNING on ras/edac-for-next]
+[also build test WARNING on rafael-pm/linux-next rafael-pm/bleeding-edge cxl/next linus/master v6.11-rc3 next-20240816]
+[cannot apply to cxl/pending]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Reviewed-by: Takashi Iwai <tiwai@suse.de>
+url:    https://github.com/intel-lab-lkp/linux/commits/shiju-jose-huawei-com/EDAC-Add-support-for-EDAC-device-feature-s-control/20240817-004442
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git edac-for-next
+patch link:    https://lore.kernel.org/r/20240816164238.1902-15-shiju.jose%40huawei.com
+patch subject: [PATCH v11 14/14] cxl/memfeature: Add CXL memory device PPR control feature
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20240818/202408181550.8ttlDbQA-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240818/202408181550.8ttlDbQA-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408181550.8ttlDbQA-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/cxl/core/memfeature.c:717:21: warning: 'cxl_hppr_uuid' defined but not used [-Wunused-const-variable=]
+     717 | static const uuid_t cxl_hppr_uuid =
+         |                     ^~~~~~~~~~~~~
 
 
-Takashi
+vim +/cxl_hppr_uuid +717 drivers/cxl/core/memfeature.c
 
+   711	
+   712	/* CXL memory soft PPR & hard PPR control definitions */
+   713	static const uuid_t cxl_sppr_uuid =
+   714		UUID_INIT(0x892ba475, 0xfad8, 0x474e, 0x9d, 0x3e, 0x69, 0x2c, 0x91,     \
+   715			  0x75, 0x68, 0xbb);
+   716	
+ > 717	static const uuid_t cxl_hppr_uuid =
+   718		UUID_INIT(0x80ea4521, 0x786f, 0x4127, 0xaf, 0xb1, 0xec, 0x74, 0x59,     \
+   719			  0xfb, 0x0e, 0x24);
+   720	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
