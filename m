@@ -1,145 +1,157 @@
-Return-Path: <linux-kernel+bounces-291265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0A0395600D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 01:17:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BACA495601A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 01:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 106B2B21891
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 23:17:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDFF41C20F68
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 23:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380DD155335;
-	Sun, 18 Aug 2024 23:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489B915853E;
+	Sun, 18 Aug 2024 23:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N/NLNcE4"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D1kRhZhW"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D778443AA9;
-	Sun, 18 Aug 2024 23:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF3114F12F;
+	Sun, 18 Aug 2024 23:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724023041; cv=none; b=DLBbgU4mEexxkPvofZl/I9bna4qYeEN4dsZAUETLnYIE6rZ6oWRp8BeoMlZugP3YrbQVQtnug+CmUMdINGzqU0QcYEjxXkXSwDNaEI5D3vAjA70sXKcDPfnFyfBAB+NdCcBEJbStgwkjXgTNIAzvR3i3OdbHBUYq7TGv9/kfgVc=
+	t=1724023079; cv=none; b=nfP/z0nLnBYb+HD67QCfwBC7vev/7FhjTprNF8OzB3m1PKUZPI5b9dFY8G40L08QGrtfMQwrZ0qW04HhJLLI7oaVVZGhEG1LYHBF32v0rVECGfNKb/rOmtrIcsW+QxUZ/Lqdjgvo+F+axI9mdCDUvJgGPot4cUG8Z0vbRmWm8oQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724023041; c=relaxed/simple;
-	bh=mjzCCkkb4ZbTcGqwXgP3YjGJHkuaJAiVlLqdbaVyKDc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lyT8mkHYBdWqtUEveLZtt1mkazz9l2SRjnmf8jrBX5oNZCC4sTOoCbCDMFSUQ/5mrKDBzMcAd71LoJNN86ZOJUCv/r7ufk9xPCNxIlLoemTWc5/aMQeCsXLRUnqFj7SmY2mOvqxwW2WzCfTalylyoB9s1ZM9eLGHWcsylj0DKP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N/NLNcE4; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-428141be2ddso28519895e9.2;
-        Sun, 18 Aug 2024 16:17:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724023038; x=1724627838; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mjzCCkkb4ZbTcGqwXgP3YjGJHkuaJAiVlLqdbaVyKDc=;
-        b=N/NLNcE4L99kRpQFIgZU04oPx7036Nlmll/jVdRQYVIELhYVu/h+kct+MoZ5KfJcJK
-         hadgn1YUKiP7Wl/V9mufy6v1pyRU44bsh6rwACoVY3KABEttrHK942/QNwihe+3L/fIg
-         fTkHg/TecrqSfHqN37b4hEZ/Wbt/AQDnVRgJe92Jbdoh1szleMSVo3HYfPBZnJa+yusW
-         upXueAipMdoweMPmtpGx8Rx4fqCQGLAyQ1u2c40kv/2YvyaEzzzaN3dv7zToQ870y+ic
-         08im5RTaMZn/kOsyZiOG9K02yr43ln3dne5uZZKsCAzTSLtCMWeOVDmt6COeOgxCeXwF
-         bxIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724023038; x=1724627838;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mjzCCkkb4ZbTcGqwXgP3YjGJHkuaJAiVlLqdbaVyKDc=;
-        b=IAR8Dgz8JSbmweMoHHZk+U1102ECc8reY8qEKNit12nMS565PINeyxxKUZpGXnRRj6
-         8o9xQuR+HLtAbFA183Qr6fbqrhqQ4mNKljm1o20O1C+NGVySc2cMG7cinbDIlzQPgcNa
-         trOEwdKXZMk9WBKuAOvi2SLId3S84vBNEM0CNmw7AFDeIaaTG4MAbolLSLnJLLGe19Xm
-         3wBaoh7EuZjb6VhJi7HbUwqQKfiCa6T/jUY83FQeJWV2AdsfUiOGSGgX2cFl7IMUD+Az
-         a0ENCyViRfb+cBgdZUrM6ghymhWKNL22O0DE/GfpTIcZXHBrKAliBprC99BCqQR/t0Ew
-         NDUg==
-X-Forwarded-Encrypted: i=1; AJvYcCUy6Dkk5WFH3qaYffvbn4wlGUSfi1yN55tWPghiupXCr3tBaTZjqziOAI9fyvKG4a2x1qlA8K9eudLlw+w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUMU+e06Vqae+6DgyIcyMlP9caLUiSokZ2MitJ7/eRSIn/YYdP
-	iUAGlY26yv5x+BQOsVNUBA/VIgdVQLwH3lWycyylD+CXyjsWnTrmbnF5M8X0Lorh8q0Wioi6fZc
-	F0sQX2Ucnpa1Q/26eRuNnWpNK1eY=
-X-Google-Smtp-Source: AGHT+IHxy2T6UXAIaEhVrq0qGQdA+4TZ7OKvTtoKVdPKod9Ha1x5vNYL7if0QlAQp7T8bwTr+/wSdP7Gcge59JT5ckA=
-X-Received: by 2002:a5d:58fa:0:b0:368:3717:10c7 with SMTP id
- ffacd0b85a97d-3719431e872mr5310398f8f.4.1724023037477; Sun, 18 Aug 2024
- 16:17:17 -0700 (PDT)
+	s=arc-20240116; t=1724023079; c=relaxed/simple;
+	bh=2/uDyHgeJRduSHXpQqcHNYnor9Qt4dV86uSyEebFDXo=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=LwDl1JeDhr8rJMrGQWd5cyfhKUDU3kd+f30dQato8GFYdGQ7Or2Qgh9+f5MyU1+YvExxdATkF9GtMf7mKIgyBSHu6a19FZ9GjiDOWlrOEhIwpXfrC4lVenVocBfA18p9Ev+xRrU/C63lCgbI/KTkLcwozHw9vne59KdHbzSFPac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D1kRhZhW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47IN9HKk007309;
+	Sun, 18 Aug 2024 23:17:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=urBpBTGMS3ylyUFZaMqc3f
+	PHtW/pdqcYyWo6uyf86Eo=; b=D1kRhZhWfLLi82Lj89BHL8m9a9uU6Kz0KhQh7l
+	DgmOzgFu/NCfcMS+ZwC7GAuxRw7Sq9EsmM8ozE3HmSLU0Xk0oI5GCLC/VRnKrE9Z
+	HobQppP82HZ979z374pSOM+YkIHhwkgCn2TaNVNLBn58CBpsHMOrdxtyVjIy3bfc
+	DY7pGXh82xgA4nmj1ANxDxLmTtJkuETmhw35wXHxbSQgG+S0FfzdGR0CI66zNTee
+	OymNAdW2c25WoS8Fh+bHBo23t8zui5VfQkG/PMsguPZWr+6o9ol/gcREKpOZYglz
+	JUj0jW6h2zvwXxznOo8YDYQEpBO5PuvCe3d5Cd0qbxY5YZNQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412kxujg1u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 18 Aug 2024 23:17:39 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47INHcAJ029843
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 18 Aug 2024 23:17:38 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 18 Aug 2024 16:17:37 -0700
+From: Bjorn Andersson <quic_bjorande@quicinc.com>
+Subject: [PATCH 0/3] soc: qcom: pmic_glink: v6.11-rc bug fixes
+Date: Sun, 18 Aug 2024 16:17:36 -0700
+Message-ID: <20240818-pmic-glink-v6-11-races-v1-0-f87c577e0bc9@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813153819.840275-3-stuart.a.hayhurst@gmail.com> <aa331200-205e-4b00-ae02-343c96c52ae8@web.de>
-In-Reply-To: <aa331200-205e-4b00-ae02-343c96c52ae8@web.de>
-From: Stuart <stuart.a.hayhurst@gmail.com>
-Date: Mon, 19 Aug 2024 00:17:06 +0100
-Message-ID: <CALTg27kAMd-0tQdJ+k4Ur9i=kZ0qY_vffhm3ZT+_CX6tD_874Q@mail.gmail.com>
-Subject: Re: [PATCH] HID: corsair-void: Add Corsair Void headset family driver
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-input@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-	Benjamin Tissoires <bentiss@kernel.org>, Jiri Kosina <jikos@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABCBwmYC/x3MQQqAIBBA0avIrBvILNGuEi3CphoqCwUJwrsnL
+ d/i/xciBaYIvXghUOLIly+QlQC3TX4l5LkYmrppayMN3ic7XA/2OyaNUmKYHEVUWi2d1a1TykK
+ J70ALP/94GHP+ALqRDc5oAAAA
+To: Sebastian Reichel <sre@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "Heikki
+ Krogerus" <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>
+CC: Johan Hovold <johan+linaro@kernel.org>, Chris Lew <quic_clew@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Stephen Boyd
+	<swboyd@chromium.org>,
+        Amit Pundir <amit.pundir@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>,
+        Bjorn Andersson
+	<quic_bjorande@quicinc.com>,
+        Johan Hovold <johan@kernel.org>, <stable@vger.kernel.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724023057; l=1879;
+ i=quic_bjorande@quicinc.com; s=20230915; h=from:subject:message-id;
+ bh=2/uDyHgeJRduSHXpQqcHNYnor9Qt4dV86uSyEebFDXo=;
+ b=SEhwtzoFctybJMOdjcRaQJP976EW+1jQ6vnlcIg3PESLwrMV5m+AJCncCb3Grm6p6h91vLURp
+ KUY1pEvXHYAASSjNRv/GHdg48vG4+k6MUbTzCaMJgFWbw3B5KDjB2rm
+X-Developer-Key: i=quic_bjorande@quicinc.com; a=ed25519;
+ pk=VkhObtljigy9k0ZUIE1Mvr0Y+E1dgBEH9WoLQnUtbIM=
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: kh4JqDPPVJD3PVApuWstXkFUSd0KPsMg
+X-Proofpoint-ORIG-GUID: kh4JqDPPVJD3PVApuWstXkFUSd0KPsMg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-18_22,2024-08-16_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=848 spamscore=0
+ priorityscore=1501 phishscore=0 adultscore=0 mlxscore=0 bulkscore=0
+ lowpriorityscore=0 suspectscore=0 malwarescore=0 impostorscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408180174
 
-> How do you think about to distinguish properties any further for availabl=
-e
-> device attributes?
-> https://elixir.bootlin.com/linux/v6.11-rc3/source/Documentation/driver-ap=
-i/driver-model/device.rst#L38
+Amit and Johan both reported a NULL pointer dereference in the
+pmic_glink client code during initialization, and Stephen Boyd pointed
+out the problem (race condition).
 
-Sorry I'm not sure I follow you're saying
+While investigating, and writing the fix, I noticed that
+ucsi_unregister() is called in atomic context but tries to sleep, and I
+also noticed that the condition for when to inform the pmic_glink client
+drivers when the remote has gone down is just wrong.
 
-> * Are these really changeable?
+So, let's fix all three.
 
-The receiver firmware version wouldn't change during the device's
-lifetime unless someone wrote a firmware updater for Linux, even then
-it would probably reconnect
-The headset firmware version could theoretically change if you changed
-which headset is paired, but I don't have 2 headsets of the same model
-to test this
+As mentioned in the commit message for the UCSI fix, I have a series in
+the works that makes the GLINK callback happen in a sleepable context,
+which would remove the need for the clients list to be protected by a
+spinlock, and removing the work scheduling. This is however not -rc
+material...
 
-> * Can the macro =E2=80=9CDEVICE_ATTR_RO=E2=80=9D be applied?
+In addition to the NULL pointer dereference, there is the -ECANCELED
+issue reported here:
+https://lore.kernel.org/all/Zqet8iInnDhnxkT9@hovoldconsulting.com/
+I have not yet been able to either reproduce this or convince myself
+that this is the same issue.
 
-Done, also applied DEVICE_ATTR_WO
+Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+---
+Bjorn Andersson (3):
+      soc: qcom: pmic_glink: Fix race during initialization
+      usb: typec: ucsi: Move unregister out of atomic section
+      soc: qcom: pmic_glink: Actually communicate with remote goes down
 
-> > +MODULE_AUTHOR("Stuart Hayhurst");
-> Would you like to add an email address here?
+ drivers/power/supply/qcom_battmgr.c   | 16 ++++++++-----
+ drivers/soc/qcom/pmic_glink.c         | 40 +++++++++++++++++++++----------
+ drivers/soc/qcom/pmic_glink_altmode.c | 17 +++++++++-----
+ drivers/usb/typec/ucsi/ucsi_glink.c   | 44 ++++++++++++++++++++++++++---------
+ include/linux/soc/qcom/pmic_glink.h   | 11 +++++----
+ 5 files changed, 88 insertions(+), 40 deletions(-)
+---
+base-commit: 296c871d2904cff2b4742702ef94512ab467a8e3
+change-id: 20240818-pmic-glink-v6-11-races-363f5964c339
 
-Done. Thanks again for the review, I'll submit a v2 with the changes so far=
-.
+Best regards,
+-- 
+Bjorn Andersson <quic_bjorande@quicinc.com>
 
-Stuart
-
-On Sun, Aug 18, 2024 at 2:12=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
-de> wrote:
->
-> How do you think about to distinguish properties any further for availabl=
-e
-> device attributes?
-> https://elixir.bootlin.com/linux/v6.11-rc3/source/Documentation/driver-ap=
-i/driver-model/device.rst#L38
->
->
-> =E2=80=A6
-> > +++ b/drivers/hid/hid-corsair-void.c
-> > @@ -0,0 +1,851 @@
-> =E2=80=A6
-> > +static DEVICE_ATTR(fw_version_receiver, 0444, corsair_void_report_firm=
-ware, NULL);
-> > +static DEVICE_ATTR(fw_version_headset, 0444, corsair_void_report_firmw=
-are, NULL);
->
-> * Are these really changeable?
->
-> * Can the macro =E2=80=9CDEVICE_ATTR_RO=E2=80=9D be applied?
->
->
-> =E2=80=A6
-> > +MODULE_AUTHOR("Stuart Hayhurst");
->
-> Would you like to add an email address here?
->
-> Regards,
-> Markus
 
