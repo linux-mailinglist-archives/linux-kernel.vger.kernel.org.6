@@ -1,214 +1,146 @@
-Return-Path: <linux-kernel+bounces-291021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C549B955C44
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 13:08:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 700D3955C4D
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 13:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 233F2281CCB
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 11:08:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CEF1281B21
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2024 11:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6012618B09;
-	Sun, 18 Aug 2024 11:08:35 +0000 (UTC)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449C11BF54;
+	Sun, 18 Aug 2024 11:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NSxTkthg"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC411CA8D
-	for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 11:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EED317BA9;
+	Sun, 18 Aug 2024 11:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723979314; cv=none; b=mZ8DtwI4/HPhF0Q+Z+yadp563+zlENlkG3dbDsBZcju5jOKGvfBd3fF/4yon3VVswSV077Tq1UtEWjq6cn+bGg9AyGm9HOeHSDrjoJpa7RUjIlQAQHOSNM5OaEk7HFUufM/drDsq6NYYWJ7neuZ3dNwwv1SKbtRYNUU3nXKGv7Y=
+	t=1723981245; cv=none; b=ug2QuywxVcSZ/Zi1CTaYWxvII0HZXeoeMG2C4ihJaL77AXDmPkaUWVkDLelRYpyxkrF80lz4SlnCcZs3nYDcMRURPm65Ncp3kDpOlzKmnFsedwI0J8r/zefP2qbk0l18M1OCLlq96BPtrXCgewcpDeSM8VVpct+QVuy2OLh9dJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723979314; c=relaxed/simple;
-	bh=Vk7FsvELc0bmhWbFnVgZpeh0BC2wwY6ZVQbR0gwu45g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ESOOsIvhWz6r6McS7q704y11tg4B9wdNbhn5+amRmuRhYvG0u0IvSmYc666pcnzO0RsZw7jxHgRo/rvz2d70XOROoGEkz03lFa2mgiydrDkb5JGfF1EbVJNc+3t6Eapq0yBwUeVvO9gnZrq4jE0BEQYslnk16/dXHb+Cc++2tGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1723981245; c=relaxed/simple;
+	bh=eBYqKGhWmGDwRXKx7wPCMGC9Z3DbPhTQ/VBYxOAysuw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TqGQ9K1Ov3bR46RCVS5dFMODQF8BEY0eMKo6J+Ku7fKQ7Jr7/GH6aHz+lzkR2iHaxSRTzPSKC5SMVKzeO7K9Iq+KT5jJC3yN7ySZ6dgDW6VY+PTN2elSQR7jbiKKZnoezwl777PRI9SgQwvY+DyhTcwiXOcowOXmEb9e35ohOuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NSxTkthg; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6b47ff8a59aso10638927b3.2
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 04:08:32 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-202089e57d8so12361135ad.0;
+        Sun, 18 Aug 2024 04:40:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723981243; x=1724586043; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iPOAyXslVQztvmKtJNEbQBOKGd86i/cZ1d616kyhVrA=;
+        b=NSxTkthg1AboN0MNA0ByKvRi2zu6s5QOaqwunlVmd6C4anwVGo3u/6uFNOoEbh1pPq
+         vMJ1TrNVIq4ITh1dzVyrfbowV2PGaDtbnPv+7I5PgPCTnPmtMwCqPy0EvkUK/nTgS9Ae
+         QF0VdA78BS05ZZcMG8UhgDpL+86rH5wTcRTjs80Lbd8lJyeQ51gCbaYMSJt33mGrZz2v
+         5KyFFa4x2mMQ28rrpp61krN3zYFcydQrUHze/c9hDID4gwiSHVE+SGOM6cE5D8efDiwA
+         Vxi44SIWVyMwYniuiAGRrJzbmSr+KUvwmLKYE+CC/bZ6WB65pcMZVg3B8mr0LsSDpwMG
+         jTYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723979310; x=1724584110;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7LMS5uQbz0tMfNGBhJ57pvNdfv3GrBQOuF18D6qiaXE=;
-        b=mhWFMFJXelw92HeWM1ZGnLqHZ7OesOoc3FBNRjdfnfyzxFBiBq7+dkJt5xmHt4rlVc
-         V7JVDtpmcLTFCnJWTiqng+BCZCdjWNW7MdG2LjsOIZ5x416eF1+q7kxHAHikxruOhfVF
-         2bB1WYFtCBx/HNl2tSrt0R0zVL4t5I07856VUcUCOogviM09Sk24CoyZq84OYbhxjN5v
-         wo4KiNzO5T1nMRgy0feAwy1YyMJZUhfJ+i7rTCUd4JjjH6YtjKJA7pzoy5GHq4IqXkpq
-         KUIZXx+vo2KeL11apC79pyOyPJFSVZtr6HMrcmHYXD6OahQYECRe7Pmru4JyXHhfyfbl
-         Ouug==
-X-Forwarded-Encrypted: i=1; AJvYcCXCgRlMBNULcBoSVeLLDkzQL/wJPpTAbDms7nNs4YQ3i83b79M1YYY1VnVEPkwsKoCRoG0gvwiwcPAEGACFMlR4A58oW0Q5Epr2v0z3
-X-Gm-Message-State: AOJu0Yz3+DHPEE08k96JEXz/ntxLkl1qKmSoAE7vWMIy9dFl67cg9z+6
-	hLJhvBQHb4o3HspwGqH1I6BeKKTor7ZB5RNbceHyOKUfHPTlxXbji1DqbLsZ
-X-Google-Smtp-Source: AGHT+IG3F57GJZTpQpOHNLgJ4Exu9HMoL1TMPKqHUw+UQRdGZ+pbV69PrOViqzw8EdDM3SHZnqI+uA==
-X-Received: by 2002:a05:690c:ec5:b0:6b0:52a6:6515 with SMTP id 00721157ae682-6b1b9b5abbemr99465757b3.6.1723979310522;
-        Sun, 18 Aug 2024 04:08:30 -0700 (PDT)
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6af9da111f6sm12792987b3.105.2024.08.18.04.08.29
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 18 Aug 2024 04:08:29 -0700 (PDT)
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e026a2238d8so3445206276.0
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 04:08:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVum92gGWK5XqJkXNwLzdAN2scQKuuhvLRpNfNmmw8aKkAHkIqwBb7NwyXYrB8MuYMsKEvgOgOu+Wuj8UwfLMUtyGPTB/lHrvLVWw8B
-X-Received: by 2002:a05:690c:288c:b0:665:b351:25e7 with SMTP id
- 00721157ae682-6b1ba7e6036mr70081327b3.14.1723979308616; Sun, 18 Aug 2024
- 04:08:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723981243; x=1724586043;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iPOAyXslVQztvmKtJNEbQBOKGd86i/cZ1d616kyhVrA=;
+        b=mHWkPiq4TrlMWzO7+1WXM7frCHwuvOwVQ9ojtARMcUyOHWZGWf4T7u5X4xhaLYjzxJ
+         BQyGBnWfHrP7zhgNOkzwKJYqjZ5zdKH/uAcGGD38KLVA/go+zFbTn7PgzzZMp5AcFXtu
+         gr3gtHS7ODr4M0dL3D5zagNF5tUiGjb4WK2IM7wa6YEj2R2VAai02eoJ1An1DEISflD4
+         TguHtILfZFTT+r5IfIXI3uVsSZKmFeM4jlojM/LNACldX8vzvoeY9BwQPxOhgVMfd6iD
+         tcqmqb/IOmgcexnmtakzdZAmqFl8wSUFD0JhGWroxQ/rVI+ZOAVXIDA76Z7Vy2tZWLwo
+         pI2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVl6XkKzUm2CuVQdJnA1TbbFOKqlGRdwmqsjPnYAF3jWyNySf8iHWP4b1HG9g+58KgaMH2wnhLS1p+JpzTj5OHEzpcrszAtJipoOOJXGbtiefepdD5cH4Ge2SlrEPEs0J7EgYHEsF5fXA==
+X-Gm-Message-State: AOJu0YwXwQYDgrc/1UK5XV1PRMcTgbU0nw4aUH0zjZ5G3YNKq13sJJJv
+	ltn2N2PsXtMYEcXOAyOvYxGjIElhEG51QyD7AJLg2kxlzYCdnzA1
+X-Google-Smtp-Source: AGHT+IGXpW4bTySqg25zXNJ2YjKACfoms2OkyOgFUzjpB9MApiGppPNXEosmS30t53Hr7ahx57tBsw==
+X-Received: by 2002:a17:902:e80b:b0:1fc:4acb:3670 with SMTP id d9443c01a7336-202061d3af7mr112886555ad.12.1723981243166;
+        Sun, 18 Aug 2024 04:40:43 -0700 (PDT)
+Received: from localhost.localdomain ([103.57.174.219])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f038d2aasm49085825ad.223.2024.08.18.04.40.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Aug 2024 04:40:42 -0700 (PDT)
+From: abid-sayyad <sayyad.abid16@gmail.com>
+To: airlied@gmail.com
+Cc: daniel@ffwll.ch,
+	dmitry.baryshkov@linaro.org,
+	mripard@kernel.org,
+	ankit.k.nautiyal@intel.com,
+	jani.nikula@intel.com,
+	imre.deak@intel.com,
+	mitulkumar.ajitkumar.golani@intel.com,
+	quic_abhinavk@quicinc.com,
+	dianders@chromium.org,
+	marilene.agarcia@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	jack@suse.com,
+	linux-ext4@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	abid-sayyad <sayyad.abid16@gmail.com>
+Subject: [PATCH] fix member variable description warnings while building docs
+Date: Sun, 18 Aug 2024 16:55:44 +0530
+Message-Id: <20240818112543.1089986-1-sayyad.abid16@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240803140115.3305547-1-arnd@kernel.org>
-In-Reply-To: <20240803140115.3305547-1-arnd@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sun, 18 Aug 2024 13:08:16 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVC-FUSA5C9aNrvP3=RaRWrchhUEC5UYcSGMz_ep1PEhg@mail.gmail.com>
-Message-ID: <CAMuHMdVC-FUSA5C9aNrvP3=RaRWrchhUEC5UYcSGMz_ep1PEhg@mail.gmail.com>
-Subject: Re: [PATCH] m68k: move sun3 into a top-level platform option
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, kernel test robot <lkp@intel.com>, Greg Ungerer <gerg@linux-m68k.org>, 
-	linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Arnd,
+Fix the following warnings while building the docs :-
 
-On Sat, Aug 3, 2024 at 4:01=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wrot=
-e:
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> It is possible to select an m68k MMU build but not actually
-> enable any of the three MMU options, which then results in a
-> build failure:
->
->  arch/m68k/include/asm/page.h:10:25: error: 'CONFIG_PAGE_SHIFT' undeclare=
-d here (not in a function); did you mean 'CONFIG_LOG_BUF_SHIFT'?
->
-> Change the Kconfig selection to ensure that exactly one of the
-> three options is always enabled whenever an MMU-enabled kernel
-> is built, but moving CONFIG_SUN3 into a top-level option next
-> to M68KCLASSIC and COLDFIRE.
->
-> All defconfig files should keep working without changes,
-> but alldefconfig now builds support for the classic MMU.
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202408032138.P7sBvIns-lkp@i=
-ntel.com/
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> I saw another copy of the bug report today.
->
-> Geert, any opinions on this approach? I posted this before but
-> it looks like you missed it.
+./include/linux/jbd2.h:1303: warning: Function parameter or struct member
+		'j_transaction_overhead_buffers' not described in 'journal_s'
+./include/linux/jbd2.h:1303: warning: Excess struct member
+		'j_transaction_overhead' description in 'journal_s'
 
-I was still thinking about it, and then holidays kicked in...
+Fix spelling error for j_transaction_overhead to j_transaction_overhead_buffers.
 
-> --- a/arch/m68k/Kconfig.cpu
-> +++ b/arch/m68k/Kconfig.cpu
-> @@ -32,13 +32,23 @@ config COLDFIRE
->         select HAVE_LEGACY_CLK
->         select HAVE_PAGE_SIZE_8KB if !MMU
->
-> -endchoice
-> +config SUN3
-> +       bool "Sun3 support"
-> +       depends on MMU
-> +       select HAVE_ARCH_PFN_VALID
-> +       select LEGACY_TIMER_TICK
-> +       select NO_DMA
-> +       select M68020
-> +       help
-> +         This option enables support for the Sun 3 series of workstation=
-s
-> +         (3/50, 3/60, 3/1xx, 3/2xx systems). These use a classic 68020 C=
-PU
-> +         but the custom memory management unit makes them incompatible w=
-ith
-> +         all other classic m68k machines, including Sun 3x.
+./include/drm/display/drm_dp_helper.h:127: warning: Function parameter or struct
+		member 'target_rr_divider' not described in 'drm_dp_as_sdp'
 
-Yes, it's a good idea to factor out at the top level machines that
-need special handling.
+Add description for the 'target_rr_divider' member.
 
-However, the name of the choice now sounds a bit odd. Perhaps it should
-be changed to "CPU/machine family support"?
-Likewise for M68KCLASSIC.
+Signed-off-by: abid-sayyad <sayyad.abid16@gmail.com>
+---
+ include/drm/display/drm_dp_helper.h | 1 +
+ include/linux/jbd2.h                | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
->
-> -if M68KCLASSIC
-> +endchoice
->
->  config M68000
-> -       def_bool y
-> -       depends on !MMU
-> +       def_bool M68KCLASSIC && !MMU
+diff --git a/include/drm/display/drm_dp_helper.h b/include/drm/display/drm_dp_helper.h
+index ea03e1dd26ba..7f2567fa230d 100644
+--- a/include/drm/display/drm_dp_helper.h
++++ b/include/drm/display/drm_dp_helper.h
+@@ -112,6 +112,7 @@ struct drm_dp_vsc_sdp {
+  * @target_rr: Target Refresh
+  * @duration_incr_ms: Successive frame duration increase
+  * @duration_decr_ms: Successive frame duration decrease
++ * @target_rr_divider: Target refresh rate divider
+  * @mode: Adaptive Sync Operation Mode
+  */
+ struct drm_dp_as_sdp {
+diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
+index 5157d92b6f23..17662eae408f 100644
+--- a/include/linux/jbd2.h
++++ b/include/linux/jbd2.h
+@@ -1086,7 +1086,7 @@ struct journal_s
+ 	int			j_revoke_records_per_block;
 
-I think this is unrelated, and should be spun-off into a separate patch
-to fix the "no CPU type selected" issue?
-
->         select CPU_HAS_NO_BITFIELDS
->         select CPU_HAS_NO_CAS
->         select CPU_HAS_NO_MULDIV64
-> @@ -56,7 +66,8 @@ config M68000
->           a paging MMU.
->
->  config M68020
-> -       bool "68020 support"
-> +       bool "68020 support" if M68KCLASSIC
-> +       default !(M68030 || M68040 || M68060)
-
-Part of the "no CPU type selected" fix?
-
->         depends on MMU
->         select FPU
->         select CPU_HAS_ADDRESS_SPACES
-
-You also need:
-
-    config M68KFPU_EMU
-            bool "Math emulation support"
-   -        depends on M68KCLASSIC && FPU
-   +        depends on (M68KCLASSIC || SUN3) && FPU
-
-> --- a/arch/m68k/kernel/Makefile
-> +++ b/arch/m68k/kernel/Makefile
-> @@ -5,16 +5,8 @@
->
->  extra-y                        +=3D vmlinux.lds
->
-> -obj-$(CONFIG_AMIGA)    :=3D head.o
-> -obj-$(CONFIG_ATARI)    :=3D head.o
-> -obj-$(CONFIG_MAC)      :=3D head.o
-> -obj-$(CONFIG_APOLLO)   :=3D head.o
-> -obj-$(CONFIG_VME)      :=3D head.o
-> -obj-$(CONFIG_HP300)    :=3D head.o
-> -obj-$(CONFIG_Q40)      :=3D head.o
-> -obj-$(CONFIG_SUN3X)    :=3D head.o
-> -obj-$(CONFIG_VIRT)     :=3D head.o
-> -obj-$(CONFIG_SUN3)     :=3D sun3-head.o
-> +obj-$(CONFIG_M68KCLASSIC)      :=3D head.o
-> +obj-$(CONFIG_SUN3)             :=3D sun3-head.o
-
-Nice cleanup ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+ 	/**
+-	 * @j_transaction_overhead:
++	 * @j_transaction_overhead_buffers:
+ 	 *
+ 	 * Number of blocks each transaction needs for its own bookkeeping
+ 	 */
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+2.39.2
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
