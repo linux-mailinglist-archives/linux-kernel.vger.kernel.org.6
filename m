@@ -1,135 +1,109 @@
-Return-Path: <linux-kernel+bounces-292201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9A64956C5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:42:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F24BF956C53
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66AF7281803
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:42:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE88B285383
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D5216C6BF;
-	Mon, 19 Aug 2024 13:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB0F16C6A9;
+	Mon, 19 Aug 2024 13:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="2LEim/Y0"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HAc3yVcD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09CF16C438;
-	Mon, 19 Aug 2024 13:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FB116B74D;
+	Mon, 19 Aug 2024 13:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724074950; cv=none; b=PxkMeM1KuILHSJ+k1QBv5DMhJF/RXXgXMIOFHYHMd60qjMAnH7ligbcXrrjsHRgmvqL7V3sExPFqKIVSoY1YB/IOZuReXnaHNaeg4nIEYQFxy0Bai4QzBneg+YCJcn6HTme8SHMtu+FzeOlfTVlzSiQXQthYytx2x+QHu/1AiJE=
+	t=1724074844; cv=none; b=dJlDDVc6MVg1YEfkto2VxQ/flNtKjqNm8xmDlfvCDFr7ClrWVtYOGBRJkT7xXCPpCjEx2aFWj7vkJ5Zp1VDdVmziONAciQyvy7Zv6SfSzS2Tdv4rCvt+ELyev/FNr2aRD5Lnx81WYHICt0amyayV91po9ZPITVw/73IlcRLL2A4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724074950; c=relaxed/simple;
-	bh=xdq0mAE8Ba0fmk6rNvkOjgWo+w0dnu+VNJwVS6SS2l8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=LiXwHx1UUoe1C2ehh+hhK/YnKqiZK114YyiaAL4Co/WIaVy+9gMFfNPNaKob3Jy1IRezGOUNzwd4vO14kSohOoFmVjzELJxq7rnG4EMG04sZqEoQwsiEaiQq4SuHZiWTcUyF7QweceVs+fj7Hvh64aUX5KYQJERDvI4FO5Azcmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=2LEim/Y0; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47J8N2dQ014235;
-	Mon, 19 Aug 2024 15:41:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	bQulpxG1VnLqgrCD3WCcMJwDbL8UJbzPwnhyTZrwwt8=; b=2LEim/Y0kyl6Pi9c
-	IqYr2SLsPKLLWnPxWH6m6RvE+DrYzvl+EjT3Pnlwg8/3zpMmSb0k3lmAKyHx49N2
-	KlWr3TofL5NDt+lm1d72dyIgoh1DGpPcltVRFstrPmX/hCDsh9eXTQhH8pyzLa2Q
-	qePnzdn74bWMpB1aUZpPRkP8DY88ExqINm+rXJYDitlto03z/fIojx/mydKysonQ
-	Ug37CYDrDYALBP4gvRch4PCI97Q8Izd0cRx15XPKFxN9a1lsCV6lB/hNUY+b1tJ2
-	ix2nWTTLCGgeyLpybXwrojMhV8J1fL65DlYQ7qT9tLyIryw5TPG1Een9ll6539WH
-	JXtf5w==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 412h9fppv2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 15:41:45 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 3C9D94002D;
-	Mon, 19 Aug 2024 15:41:40 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6B1ED26FD11;
-	Mon, 19 Aug 2024 15:40:50 +0200 (CEST)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
- (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 19 Aug
- 2024 15:40:50 +0200
-Received: from [10.48.86.222] (10.48.86.222) by SAFDAG1NODE1.st.com
- (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 19 Aug
- 2024 15:40:49 +0200
-Message-ID: <9dc935e0-a980-41a0-b4bb-ae54453bd3a3@foss.st.com>
-Date: Mon, 19 Aug 2024 15:40:08 +0200
+	s=arc-20240116; t=1724074844; c=relaxed/simple;
+	bh=ohHtJCd1LMmlZaLfG1cTYsvsMdY41RcEOhH2pBVdJNM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lmg1Nv4t3pjWxOAsCTohAAh2iiTvz1YThKfq1n2T6fOX0htpeJL3ifDsHYyZq9/kfOnXGc8mGTv6E+v5Nn06MHvYUEuzy4LOo8WEQjRF55ojHY3BGOACbCKYEPNctFxgIW2gdG1n2/JVpmSy8ay+mVPks44q7EVSUFfEfdhNBsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HAc3yVcD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5719EC4AF0E;
+	Mon, 19 Aug 2024 13:40:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724074844;
+	bh=ohHtJCd1LMmlZaLfG1cTYsvsMdY41RcEOhH2pBVdJNM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=HAc3yVcDkqMvizgNK/14Kf5xD16MbEM9vKsmtQNOD2Vj5aDhuAyQTSn0vpQVeJro4
+	 C3TR9mMWjaudjKA7F8tXShVAB8nCiLSd6bncPw/jBs6anvdSR9OxXqdyreH9BeQbPD
+	 xpqvgL70awCQuZx6xnmHXPqpTik6oaLD3xh3WmvIkkKqVlha8zK2L5s9t5KGOsG47n
+	 d7Y3u707LJix1WrItDwnrDV8rlzOQUHU2EqK0G1oMt/w5yK9u2YQlwAGfbaT06Nlff
+	 BwBx4K2wP8Oaq2mG7SwJm3mLjz496alljyczemdr/jH+wDqvuPj10DVY+2YBRQLFrB
+	 FPCtNvHy/kE7Q==
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2610c095ea1so600069fac.3;
+        Mon, 19 Aug 2024 06:40:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWay5emyFagDtCf07kuQGe90k3kcNwV+zfLG5dpajp0L2zyne4yiTk2032iNtSWwoT91FvwxWiiCiU=@vger.kernel.org, AJvYcCWfVrsbSALKDSb/yPpPN1pzvvczkk871mvngRdeJ11WTlvdCn4XxAsQvfAhjn1jdjmjyzwXHJVHcSiSH0w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC4gLQ8ToigsRg7WE+Xd+pwrqBtYwpFap6mfLkHsFNyeo372Ep
+	6HzTFL4a6j5xSU3VkR4JnfxRlobLO75XJjBsHF85wt+gzyffUM+dhHL5KLJ84smy4aP96ywtk8z
+	16VUfyPDeGGnS3XXIL9Jh7PuOYcE=
+X-Google-Smtp-Source: AGHT+IGcVhVh+V4mQt5hXDRNbLTiyYms/xw2yVM0mDtZbGAqm3MqkS+kWaSNUzHeYQtV1Y7e/bNOufQMyMOKpbEvDLc=
+X-Received: by 2002:a05:6871:918b:b0:26f:de62:7d8a with SMTP id
+ 586e51a60fabf-2701c5ec1a2mr5376234fac.10.1724074843580; Mon, 19 Aug 2024
+ 06:40:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: iio: st,stm32-adc: add top-level constraints
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Jonathan Cameron
-	<jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "Alexandre Torgue" <alexandre.torgue@foss.st.com>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240818172951.121983-1-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-In-Reply-To: <20240818172951.121983-1-krzysztof.kozlowski@linaro.org>
+References: <20240802184839.1909091-1-srinivas.pandruvada@linux.intel.com>
+In-Reply-To: <20240802184839.1909091-1-srinivas.pandruvada@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 19 Aug 2024 15:40:29 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gkJdSdM+282AWTDKPdRsvJLiXi5p1bq+L+=_weCqOdzg@mail.gmail.com>
+Message-ID: <CAJZ5v0gkJdSdM+282AWTDKPdRsvJLiXi5p1bq+L+=_weCqOdzg@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: intel_pstate: Support Granite Rapids and Sierra
+ Forest OOB mode
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: viresh.kumar@linaro.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-19_12,2024-08-19_01,2024-05-17_01
+Content-Transfer-Encoding: quoted-printable
 
-
-On 8/18/24 19:29, Krzysztof Kozlowski wrote:
-> Properties with variable number of items per each device are expected to
-> have widest constraints in top-level "properties:" block and further
-> customized (narrowed) in "if:then:".  Add missing top-level constraints
-> for clock-names.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Fri, Aug 2, 2024 at 8:49=E2=80=AFPM Srinivas Pandruvada
+<srinivas.pandruvada@linux.intel.com> wrote:
+>
+> Prevent intel_pstate from loading when OOB (Out Of Band) P-states mode is
+> enabled.
+>
+> The OOB identifying bits are same as for the prior generation CPUs like
+> Emerald Rapids servers. Add Granite Rapids and Sierra Forest CPU models t=
+o
+> intel_pstate_cpu_oob_ids[].
+>
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 > ---
->  Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml b/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml
-> index ec34c48d4878..ef9dcc365eab 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml
-> @@ -54,7 +54,9 @@ properties:
->            It's not present on stm32f4.
->            It's required on stm32h7 and stm32mp1.
->  
-> -  clock-names: true
-> +  clock-names:
-> +    minItems: 1
-> +    maxItems: 2
->  
->    st,max-clk-rate-hz:
->      description:
+>  drivers/cpufreq/intel_pstate.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstat=
+e.c
+> index 392a8000b238..79b9c3c27dff 100644
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -2425,6 +2425,10 @@ static const struct x86_cpu_id intel_pstate_cpu_oo=
+b_ids[] __initconst =3D {
+>         X86_MATCH(INTEL_ICELAKE_X,              core_funcs),
+>         X86_MATCH(INTEL_SAPPHIRERAPIDS_X,       core_funcs),
+>         X86_MATCH(INTEL_EMERALDRAPIDS_X,        core_funcs),
+> +       X86_MATCH(INTEL_GRANITERAPIDS_D,        core_funcs),
+> +       X86_MATCH(INTEL_GRANITERAPIDS_X,        core_funcs),
+> +       X86_MATCH(INTEL_ATOM_CRESTMONT,         core_funcs),
+> +       X86_MATCH(INTEL_ATOM_CRESTMONT_X,       core_funcs),
+>         {}
+>  };
+>  #endif
+> --
 
-Hi Krzysztof,
-
-You can add my:
-Reviewed-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-
-Best Regards,
-Thanks,
-Fabrice
+Applied as 6.12 material, thanks!
 
