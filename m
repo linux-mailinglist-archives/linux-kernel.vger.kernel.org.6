@@ -1,182 +1,185 @@
-Return-Path: <linux-kernel+bounces-292631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E0B9957215
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:24:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD5B3957234
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:32:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 534DF1C225E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:24:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87EC2B24094
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5A9184535;
-	Mon, 19 Aug 2024 17:24:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6EB5184535;
+	Mon, 19 Aug 2024 17:25:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="joDu3RFP"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lLQ+zNlP"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08D216A934;
-	Mon, 19 Aug 2024 17:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C6617BB13;
+	Mon, 19 Aug 2024 17:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724088250; cv=none; b=IcB964+wUIro1mX1wkEn+H4Koa4jcGmh/JRMqFqGls6jCmMymWi7DwzeT5T0zH/kkPKe+fR+4A3L631sBDubWGyKhnso3q+PC5MpKpamUbnSU3aDudmgcQKq5BiCRszPg76lRir4KPZeNagYYFeD0WlUsWOWMnvk/GzDNKmMGrE=
+	t=1724088314; cv=none; b=FmoWavYpON+6JgJiKOtZUqU7oAIOvXxZbIPfbaTU+fvxGaIdF14TU1LYS70Y943s1wsVaIp7dv69ubd0MHjGq+cyY3C6wuLwV2QdskRS4oWYz+rDQaxOu2ZucpLrb7MKkHoSOtnwHO4HFbcDf5KVyvxl9v88ZWq8y4r8mDYY8ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724088250; c=relaxed/simple;
-	bh=h5Ik+4GPsKEsUFyv/+ngVFo1vuM4D3ux3Z41/ZHTSlI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rlvISNw1CUIgRkLCxjOS9jk91OC6faeZJO7Hq1hhW+vuTuGe+pmeLh4zs0tEx1WHOKpMrJUPe7RzaL1xqYtTLCrOq03SoxiUPB/mquIxonLnVWMiw+f7KTxIT88A3TsLOpIL2DJurVGY3GK3NCm7tqGIW2FJjTmedl2VBiHAKxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=joDu3RFP; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f381da27bcso3469191fa.3;
-        Mon, 19 Aug 2024 10:24:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724088247; x=1724693047; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tA3DbE0eIgB/krXWiVQLA/SM1DVu9kNL0tSxYAoSxNc=;
-        b=joDu3RFPWGHZa8fnVoj6znCP+Xx/zN2XTizprG6ugz7cqry/CrJ661VXNcNqpXxJIK
-         9wK3vCcJHA+rGqz3EW8sRmp1XtbvgFxE1MY0EZyh1HrtYJvkNomBNd9I2JSwOYR077Ed
-         h0cvaARGKNf3WMukoaU/a7B5jdfX+l7shYlwdpDLztKUPMHQikRmdC823gz1fSSp5RLz
-         6/v7Abt5TvK2mOjWcP21UXDtf4xuu7w8b1cq+H7h9ZQXBbWrxWP1CMKdtAQNuY5u3cb4
-         tjJzWAG7tSee0XM6iBA51hRBatE3P4r56ZQpSeRvzArgniAOeOrWIi+E9LfKO1FYjf6A
-         iuNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724088247; x=1724693047;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tA3DbE0eIgB/krXWiVQLA/SM1DVu9kNL0tSxYAoSxNc=;
-        b=ZvI2APf9MhoJyJtHcugWnYZWZUgfxlT6m1/nPRIDBjISfUjKWn3yYzrmAqA71UhLUu
-         a3gU/qBJnvdJAeQ4As0g2PiQ/NWOaXORqAu3YUJLOafzAN1b9TUXaxD3zKz5Yd+JbBxp
-         i/MM/+vBVZkrjovIxw1TL/rdEoabqfzGQpDyTe8ZTc5qVQS/48KNN12hVd7n5xbT7EdI
-         SthW09mLP/dkR8X17CL88TvQh/lA1jWUILGKegRS+6SLVdUqLBZ20yPtF9RoMRMyAJhm
-         gWd0vZ32rQHfrC3L5YZJmfD7DSFRBuH4Jt/Be08gd9NHiE4WOYYYGe/2cJFdcN310tHT
-         eb0g==
-X-Forwarded-Encrypted: i=1; AJvYcCXXY2e/900hIJcY+TTdm7ngjyuPsv4HuTe5RZoHQaTirqAj4QR1waqFZ0YpXZ1ht/ahoaBddl0x/vfKR1Klm8Z5sS9V7ktHXGG+WuiVHBKUwLhLAgDp2ECsI4iPGFU/tT9LyXYom7PvMA==
-X-Gm-Message-State: AOJu0YwxXe0s9TvgifYgidTqBodCUJ8NiEuQgr+RNzeccBH7nPRwErVA
-	4q7GrGLZxhz7pnQWGA+7pwXQrHNNzu39fItjbWXHh40BZtXeVjbDeBBf+IT/mMsE3UCVXSwxNp+
-	tuY5Qh4hke/gy2lRXkLoyBmzOr8M=
-X-Google-Smtp-Source: AGHT+IGr/XQMgMzcp6jgW0glG/inQWx5ioDh8iHJ7/a0zz1Ff0cyAn5p6R1jdxyTyikNRSSeG19EhIpsXqgXc0tDdN8=
-X-Received: by 2002:a05:651c:198e:b0:2ef:17df:62f9 with SMTP id
- 38308e7fff4ca-2f3be608217mr49111421fa.7.1724088246308; Mon, 19 Aug 2024
- 10:24:06 -0700 (PDT)
+	s=arc-20240116; t=1724088314; c=relaxed/simple;
+	bh=YR3vah68BeAj6BLnmibK2XWflbsD1C4aZdVa8NQqVbg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C9kgsvvEWHDZ5fFGmPpbzjJ9BBMMFb6174OEGxSwbBDSp6VTr56DIcnuhXCGskOOIZ7qI/EuSIqVKY5YIhsxeykDI0Qv5BRR4FHDop3o6eTdv2MH4m0MHl+dnNnQ2BWQ68Kse/rQSwOCZ6cdZ/8Ol+52FgrIotZQp1ELvg3MWtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lLQ+zNlP; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JApCwJ018823;
+	Mon, 19 Aug 2024 17:24:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=VVYxIrjngEk4ZgfsSbP7xpbroYZ
+	QHiKTEwN3JYMXipk=; b=lLQ+zNlPI9CLehHDMWX+ExJJvrpHsV9v1fvDELj9ezW
+	mRKpENp+/EBhJXFyeLZ4ZzWvDcBNMB679nwlDxzs6FmLlzfZ2Xobus8lWFyP9W0+
+	m/o6SB+DMFlbf0Y9Zc80a5alK2cvG0dn2pmTplHNjhPMyaK57njF1xMqw2mYQQ9E
+	J/ir7Yv8njNNOCXwCwwkDdmRYLx9889d3/PftCiO21HqJ8dMrbMG8PWlsDUGqSYY
+	h8HO8tLcXCF3Y9bI6wKQ41gx6eOUOUo9RJ7AGmAVnLBQb/yUmf5F2wxDydCUvN10
+	WtyxQBasiwUkPEyOt3R1itMw0T4RJ5ip3HCE+sZqgSw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mbfsf7v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 17:24:51 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47JHOofD025562;
+	Mon, 19 Aug 2024 17:24:50 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mbfsf7q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 17:24:50 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47JGQmh0002244;
+	Mon, 19 Aug 2024 17:24:50 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4136k0f99n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 17:24:49 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47JHOkN550594144
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 19 Aug 2024 17:24:48 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EE94920073;
+	Mon, 19 Aug 2024 17:24:45 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3B8DD2006C;
+	Mon, 19 Aug 2024 17:24:43 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.43.106.215])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 19 Aug 2024 17:24:42 +0000 (GMT)
+Date: Mon, 19 Aug 2024 22:54:40 +0530
+From: Saket Kumar Bhaskar <skb99@linux.ibm.com>
+To: Chen Ridong <chenridong@huawei.com>
+Cc: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org,
+        longman@redhat.com, adityakali@google.com, sergeh@kernel.org,
+        mkoutny@suse.com, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next 2/3] cgroup/cpuset: remove fetch_xcpus
+Message-ID: <ZsN/2DBi3CyW9gis@linux.ibm.com>
+References: <20240816082727.2779-1-chenridong@huawei.com>
+ <20240816082727.2779-3-chenridong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819-imx_warning-v2-0-4c428bd11160@nxp.com> <20240819-imx_warning-v2-12-4c428bd11160@nxp.com>
-In-Reply-To: <20240819-imx_warning-v2-12-4c428bd11160@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Mon, 19 Aug 2024 14:23:55 -0300
-Message-ID: <CAOMZO5C_uvmuf-+QGH4E2X=Jei81a--N5wC83V-URPkXj-q7hw@mail.gmail.com>
-Subject: Re: [PATCH v2 12/12] arm64: dts: imx8mm-beacon-kit: add DVDD-supply
- and DOVDD-supply
-To: Frank Li <Frank.Li@nxp.com>, Adam Ford <aford173@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Gregor Herburger <gregor.herburger@ew.tq-group.com>, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>, devicetree@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux@ew.tq-group.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240816082727.2779-3-chenridong@huawei.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: yD98jA_hyBiZua8Y8nC7KXZDuZ47mvl_
+X-Proofpoint-ORIG-GUID: 0H6KXeBmubME5fDLzj2W09bLM4ipCMk5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 bulkscore=0 mlxlogscore=632 adultscore=0 malwarescore=0
+ phishscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0 impostorscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408190114
 
-Adding Adam.
-
-On Mon, Aug 19, 2024 at 2:03=E2=80=AFPM Frank Li <Frank.Li@nxp.com> wrote:
->
-> According to binding doc, DVDD-supply and DOVDD-supply is required
-> properties. Add these to fix below warning:
-> arch/arm64/boot/dts/freescale/imx8mm-beacon-kit.dtb: camera@10: 'DVDD-sup=
-ply' is a required proper
->
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+On Fri, Aug 16, 2024 at 08:27:26AM +0000, Chen Ridong wrote:
+> Both fetch_xcpus and user_xcpus functions are used to retrieve the value
+> of exclusive_cpus. If exclusive_cpus is not set, cpus_allowed is the
+> implicit value used as exclusive in a local partition. I can not imagine
+> a scenario where effective_xcpus is not empty when exclusive_cpus is
+> empty. Therefore, I suggest removing the fetch_xcpus function.
+> 
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
 > ---
->  .../boot/dts/freescale/imx8mm-beacon-baseboard.dtsi      | 16 ++++++++++=
-++++++
->  .../boot/dts/freescale/imx8mn-beacon-baseboard.dtsi      | 16 ++++++++++=
-++++++
->  2 files changed, 32 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-beacon-baseboard.dtsi b=
-/arch/arm64/boot/dts/freescale/imx8mm-beacon-baseboard.dtsi
-> index 6086dae2e5fbe..ea1d5b9c6bae0 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mm-beacon-baseboard.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8mm-beacon-baseboard.dtsi
-> @@ -56,6 +56,20 @@ pcie0_refclk_gated:  pcie0-refclk-gated {
->                 enable-gpios =3D <&pca6416_1 2 GPIO_ACTIVE_LOW>;
->         };
->
-> +       reg_1v5: regulator-1v5 {
-> +               compatible =3D "regulator-fixed";
-> +               regulator-name =3D "1V5";
-> +               regulator-min-microvolt =3D <1500000>;
-> +               regulator-max-microvolt =3D <1500000>;
-> +       };
-> +
-> +       reg_1v8: regulator-1v8 {
-> +               compatible =3D "regulator-fixed";
-> +               regulator-name =3D "1V8";
-> +               regulator-min-microvolt =3D <1800000>;
-> +               regulator-max-microvolt =3D <1800000>;
-> +       };
-> +
->         reg_audio: regulator-audio {
->                 compatible =3D "regulator-fixed";
->                 regulator-name =3D "3v3_aud";
-> @@ -187,6 +201,8 @@ camera@10 {
->                 assigned-clock-parents =3D <&clk IMX8MM_CLK_24M>;
->                 assigned-clock-rates =3D <24000000>;
->                 AVDD-supply =3D <&reg_camera>;  /* 2.8v */
-> +               DVDD-supply =3D <&reg_1v5>;
-> +               DOVDD-supply =3D <&reg_1v8>;
->                 powerdown-gpios =3D <&gpio1 7 GPIO_ACTIVE_HIGH>;
->                 reset-gpios =3D <&gpio1 6 GPIO_ACTIVE_LOW>;
->
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mn-beacon-baseboard.dtsi b=
-/arch/arm64/boot/dts/freescale/imx8mn-beacon-baseboard.dtsi
-> index 20018ee2c803e..77d14ea459e57 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mn-beacon-baseboard.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8mn-beacon-baseboard.dtsi
-> @@ -40,6 +40,20 @@ led-3 {
->                 };
->         };
->
-> +       reg_1v5: regulator-1v5 {
-> +               compatible =3D "regulator-fixed";
-> +               regulator-name =3D "1V5";
-> +               regulator-min-microvolt =3D <1500000>;
-> +               regulator-max-microvolt =3D <1500000>;
-> +       };
-> +
-> +       reg_1v8: regulator-1v8 {
-> +               compatible =3D "regulator-fixed";
-> +               regulator-name =3D "1V8";
-> +               regulator-min-microvolt =3D <1800000>;
-> +               regulator-max-microvolt =3D <1800000>;
-> +       };
-> +
->         reg_audio: regulator-audio {
->                 compatible =3D "regulator-fixed";
->                 regulator-name =3D "3v3_aud";
-> @@ -158,6 +172,8 @@ camera@10 {
->                 assigned-clock-parents =3D <&clk IMX8MN_CLK_24M>;
->                 assigned-clock-rates =3D <24000000>;
->                 AVDD-supply =3D <&reg_camera>;  /* 2.8v */
-> +               DVDD-supply =3D <&reg_1v5>;
-> +               DOVDD-supply =3D <&reg_1v8>;
->                 powerdown-gpios =3D <&gpio1 7 GPIO_ACTIVE_HIGH>;
->                 reset-gpios =3D <&gpio1 6 GPIO_ACTIVE_LOW>;
->
->
-> --
+>  kernel/cgroup/cpuset.c | 13 +++----------
+>  1 file changed, 3 insertions(+), 10 deletions(-)
+> 
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index fdd5346616d3..8be0259065f5 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -771,13 +771,6 @@ static inline bool xcpus_empty(struct cpuset *cs)
+>  	       cpumask_empty(cs->exclusive_cpus);
+>  }
+>  
+> -static inline struct cpumask *fetch_xcpus(struct cpuset *cs)
+> -{
+> -	return !cpumask_empty(cs->exclusive_cpus) ? cs->exclusive_cpus :
+> -	       cpumask_empty(cs->effective_xcpus) ? cs->cpus_allowed
+> -						  : cs->effective_xcpus;
+> -}
+> -
+>  /*
+>   * cpusets_are_exclusive() - check if two cpusets are exclusive
+>   *
+> @@ -785,8 +778,8 @@ static inline struct cpumask *fetch_xcpus(struct cpuset *cs)
+>   */
+>  static inline bool cpusets_are_exclusive(struct cpuset *cs1, struct cpuset *cs2)
+>  {
+> -	struct cpumask *xcpus1 = fetch_xcpus(cs1);
+> -	struct cpumask *xcpus2 = fetch_xcpus(cs2);
+> +	struct cpumask *xcpus1 = user_xcpus(cs1);
+> +	struct cpumask *xcpus2 = user_xcpus(cs2);
+>  
+>  	if (cpumask_intersects(xcpus1, xcpus2))
+>  		return false;
+> @@ -2585,7 +2578,7 @@ static int update_cpumask(struct cpuset *cs, struct cpuset *trialcs,
+>  		invalidate = true;
+>  		rcu_read_lock();
+>  		cpuset_for_each_child(cp, css, parent) {
+> -			struct cpumask *xcpus = fetch_xcpus(trialcs);
+> +			struct cpumask *xcpus = user_xcpus(trialcs);
+>  
+>  			if (is_partition_valid(cp) &&
+>  			    cpumask_intersects(xcpus, cp->effective_xcpus)) {
+> -- 
 > 2.34.1
->
+> 
+
+Hi,
+
+In update_cpumask too fetch_xcpus is used. You may want to remove it from there too.
+
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 40ec4abaf440..1b4ee6403de6 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -2587,7 +2587,7 @@ static int update_cpumask(struct cpuset *cs, struct cpuset *trialcs,
+                invalidate = true;
+                rcu_read_lock();
+                cpuset_for_each_child(cp, css, parent) {
+-                       struct cpumask *xcpus = fetch_xcpus(trialcs);
++                       struct cpumask *xcpus = user_xcpus(trialcs);
+
+                        if (is_partition_valid(cp) &&
+                            cpumask_intersects(xcpus, cp->effective_xcpus)) {
+
+
+Reviewed-by: Saket Kumar Bhaskar <skb99@linux.ibm.com> 
+
+Thanks,
+Saket
 
