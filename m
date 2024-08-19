@@ -1,117 +1,73 @@
-Return-Path: <linux-kernel+bounces-292736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA9A69573B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:43:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEC4C9573BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A048E1F23478
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:43:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76D521F243E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9A318A6C6;
-	Mon, 19 Aug 2024 18:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0E118A6AB;
+	Mon, 19 Aug 2024 18:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="SCtttJRn"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jnLOlXXQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E7A18A6A1
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 18:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C10A189F5C;
+	Mon, 19 Aug 2024 18:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724092757; cv=none; b=J6Y2jGZ+Ws88rQnLMv/3Ihd60MJ5ylj7mU7Xw0YjeaSIw/bdRTNSsuK3UOJD3Y4Dnj8/HSQZkES2OKsuJzDN42CXkJs4ymGk7MGzNb3SsSKwiRTOaPRTGHH2u4AKHUk07qfGn81tOYeEAVwBrDdt59aGE9iKGfEZSkKiCIMLvSc=
+	t=1724092773; cv=none; b=slmOMJz9dOasRAC6EVOjRxk442KX1eL84XyJxT4zroGTkqDzgIe+VP2FB5ikucoMqMh3QBpIIBLNUATrKK3EhcpVQ2PDaTQkqW647pIX5uo0YbQ42fillhj7li3oCNHpc6l69MptR/ENmWaGMzPTs4tdqR6JnJSlv/V8JY8KV2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724092757; c=relaxed/simple;
-	bh=SWpGCGgfSTInA73Lkq9d3XSm6SVeqmrSlW6/NUDvBMM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a2LptPXik2s/a3djMc+zKfZ64rjT5B9tTCrgGahKLfBJNZNl+bsQ7RFnaJUFECOd/AOM+Vo1WfTg0t8cutI7RN/cjNYNGaut+jE86UvtUjJKS3w/dVVPFdGNe4bR9Z6TuopSBPZba9JcDqD5ExDjuFJMtxK9Dk1+2OrctjOvQTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=SCtttJRn; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53310adb4c3so4973496e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:39:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1724092753; x=1724697553; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SWpGCGgfSTInA73Lkq9d3XSm6SVeqmrSlW6/NUDvBMM=;
-        b=SCtttJRnlJKd16RTxmcFD1U1owjkDsprv8a39TbNtF0p7lRdNaz4bt2Y/UuGzNTQSk
-         8U9A9sMQ9KpCMdmc/+PSBvJczvHgSLsMVStporF4BgdFU+eYloTd8SzMF+uHJUsQ/EMF
-         Lghuw209b+k1qh/6WaQYAjAF5v/kLHXAmxC8nKOfk/yZRnHUrIiwgkxq/MLHOFEp1nN6
-         Rp0sPapA5U5xZEq528Ye1J7ZNQaOOi5Oj4FVDWB4wR/lz7hN0lTvoisqq0ggAplAyGx5
-         jiV6MVc7z9A5vP6t/JjxeulgAQOb4wyCZWceNYHvNBgDE04PPpKhruYD9pZgNN38AMi4
-         d1UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724092753; x=1724697553;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SWpGCGgfSTInA73Lkq9d3XSm6SVeqmrSlW6/NUDvBMM=;
-        b=wAMtRVNKsiE+oRGsfn2eUPD7ekQa8nC9Z5/t/NfKz9m543pfaJPrvW2P9uZwMgaoA8
-         ICq5NBHJABFiqGkg5sjSZItYMxwTlzetAuUCnaAJb6gHkzTiqN2m/yUmDZkwR7+XCdkX
-         ujjucgcXrrY8FvQpPEecV8CPBncCAVTfV9JAzbGH/5UIafgWWi+6gK30b/z6vg/8IoOc
-         3FJP7ctK+uUHahq78mHM96MSQIWa7RVdfTv0POVxMdfYZck9AhnTq1fDcbvOhMrOpXiX
-         VzBPyUU7e9HhV5cpAj3qTnsQP43Fyjk4X5kw7ssp5XEmzIr3oMpae5BQmnm/jikn7YN0
-         a54A==
-X-Forwarded-Encrypted: i=1; AJvYcCVDQaCHC0rGadpnMP22dnhGUD+PveRdNU4IhcYfg4CAXLYOnUoKcIWMXek6wmBEbSHdaTT1w5KFPPD79iSLZ5+hQNAJq8YltQyoiw3G
-X-Gm-Message-State: AOJu0Yy40qLBqHZJhOB+F57GstKXNou6kci5927MC/6j0CODxlet6sSP
-	h1f6bbFirUjeIoYkvBPDfcOEJggQcZUdYCMYcPA5HGHRNFtniuWAnZva1FMm7OM5w23sw/UV3Bd
-	SBTA3wXE3JkhgOyYXXMzNf4wgtD+Z1e/7XljfXA==
-X-Google-Smtp-Source: AGHT+IHelUVu+3Ik9JdWKk+zeumpW2YAF7qu0Ohxq5buMaU2cv0DmlPnfzkmnuU6AUlGRzMu60+m9UNlwGENsdtWTIk=
-X-Received: by 2002:a05:6512:3e22:b0:533:d3e:16e6 with SMTP id
- 2adb3069b0e04-5331c6af14dmr8387737e87.25.1724092752397; Mon, 19 Aug 2024
- 11:39:12 -0700 (PDT)
+	s=arc-20240116; t=1724092773; c=relaxed/simple;
+	bh=k86tyyWPNxb3mEa0tZJ3W2yt7c06vg3dCTcq4c4U4Iw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J9ru+qTJ00j5udC2QjsQH359evLhqBs310WkRYHSXnUACKe56USzH9TWODKeoMOIZyLQ3ohyOZ4Thwq1D7i0UjBs4mMnN0DNeOV2JUKLXN5V9xJiZSQtfWnEoJ0zCkyYUYa01lgzuGQfBHvvgcRLHyZ+yo0PkVuApW0qSXXXbPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jnLOlXXQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECE3BC32782;
+	Mon, 19 Aug 2024 18:39:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724092770;
+	bh=k86tyyWPNxb3mEa0tZJ3W2yt7c06vg3dCTcq4c4U4Iw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jnLOlXXQpgxGLtbXzxnoFFia7QabXbpNQPox/0Lui0O5jlxIfbcmBmc9hacCt2+J9
+	 e3MDwSqUJKMIhtCPSq9gf242GlOxSSDkXBL7AlRI56nzp4rRZiIRqoSWNeQkuJT/Z5
+	 CKBIJArLxWXMBtIL70BbkTln14F/y4YVmS3DypE1Ex6mF1ZppofU5oUMbfanBlh+MD
+	 9+twmBiXeNfwAYvbxL8I6/9TH2vW9vzRV9f53VOGDeE9//wVwZruSitqytb9Cnwb16
+	 d6OFh7FND0olRE2UGVwnMDrI7kA89pvCoQfawmwaKuOA09qCqtYlSmSSclb2e3Sd2Z
+	 LCTvrOwrfhyNA==
+Date: Mon, 19 Aug 2024 20:39:26 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: broonie@kernel.org, krzk@kernel.org, alim.akhtar@samsung.com, 
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] spi: s3c64xx: Fix module autoloading
+Message-ID: <27tqmeu4mdxcp2ochrjkdxv3zu3fuxdjysxzql3xtrh27zgsok@t5i5zrnb7j72>
+References: <20240819040523.2801461-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819165148.58201-2-pstanner@redhat.com> <20240819165148.58201-7-pstanner@redhat.com>
-In-Reply-To: <20240819165148.58201-7-pstanner@redhat.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 19 Aug 2024 20:39:01 +0200
-Message-ID: <CAMRc=MdLsLeXqm+40wb4O2PmNX9C-g0is13berDF6yDQ1EBh+w@mail.gmail.com>
-Subject: Re: [PATCH 5/9] gpio: Replace deprecated PCI functions
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: onathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>, Wu Hao <hao.wu@intel.com>, 
-	Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>, 
-	Andy Shevchenko <andy@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Alvaro Karsz <alvaro.karsz@solid-run.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Richard Cochran <richardcochran@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Hannes Reinecke <hare@suse.de>, 
-	Damien Le Moal <dlemoal@kernel.org>, Chaitanya Kulkarni <kch@nvidia.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-fpga@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
-	virtualization@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819040523.2801461-1-ruanjinjie@huawei.com>
 
-On Mon, Aug 19, 2024 at 6:53=E2=80=AFPM Philipp Stanner <pstanner@redhat.co=
-m> wrote:
->
-> pcim_iomap_regions() and pcim_iomap_table() have been deprecated by the
-> PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
-> pcim_iomap_table(), pcim_iomap_regions_request_all()").
->
-> Replace those functions with calls to pcim_iomap_region().
->
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> ---
+Hi Jinjie,
 
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Mon, Aug 19, 2024 at 12:05:23PM GMT, Jinjie Ruan wrote:
+> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
+> based on the alias from of_device_id table.
+> 
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+
+Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+
+Thanks,
+Andi
 
