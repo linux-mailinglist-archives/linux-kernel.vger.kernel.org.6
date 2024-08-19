@@ -1,101 +1,96 @@
-Return-Path: <linux-kernel+bounces-291442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A60769562A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:32:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C1B19562AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:40:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FEF31F222AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:32:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4C332823B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35B313D251;
-	Mon, 19 Aug 2024 04:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IoUl13lC"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A287A14883B;
+	Mon, 19 Aug 2024 04:40:04 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1BE2BD19;
-	Mon, 19 Aug 2024 04:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C664228373
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 04:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724041918; cv=none; b=Mx2whuOHw+2dfXEYACnnY5iRYHHrSAKiDNwK8vN7Yxv5JyKHfgq9N2EmmVLkSIzQtvHgsw+5tk0Z7AzeW75szYLHlISfPqVWZLj6BFceexmnPv4f7v86cRwGDCF9xPBsp+1cJnn5dyqaX5ZaMJ+7iR9cF6hKmiD4T3jLmqb2LbY=
+	t=1724042404; cv=none; b=aVHY6H0/cLp1bGB/ksoCyuI4Eo+zSpJpqIqM6bWfD1DwZPZQs0GzB0GuM66G1dK5NzlLwgntGOm/uo5BtEOHvYRAaXGVuKy+t4x7gFfiH9Q1CKCXHvrV08LC9g2ZcR4vOEiYcWCmuxS0cnqD8I3aS3GWu364ihWfqlgq2l5p/QI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724041918; c=relaxed/simple;
-	bh=U+EGGC9xM1D1d10amOKd5j6vNWdUdynEEyMYIdLcd88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UKjml+bZMjE2A/+28mnsIlbAjGqMBfkIuZVdq7Vn1qcwQuNSUR54EcgT4P6ZE5/Sm7T9KMAL8plC7aeqC2MnaSAgM6tQ0KiT4UHks+/e35lA9oAGzwEnZjw42tcOxzl/EB47aML67DgaoNeW/bV1e5/ctMUQmCW1Unm/qUKtzjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IoUl13lC; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7a18ba4143bso2374410a12.2;
-        Sun, 18 Aug 2024 21:31:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724041916; x=1724646716; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pjEw3wQOMf1AKn43BEx21ZcKh5pn+wfGqK3TxJhADLk=;
-        b=IoUl13lCvQ1RprjUx3//Q0ItYKmAZxG8omkb3wK4Rz4upr9IAjB689szQvoOwtsNHi
-         vekhsuLdcjwAdx63tLYc0PgerAkw39tYPJdCCpf6NlzsIKq5HFiucMAgR0r9Z4BsOpNB
-         8Gt5tmzYaays76ACw9mrCEjzgq3kCV9qk+WpfXKZLHf+MSvd7vKqWLy41uVdJyR05m5/
-         tLXCjp8t4i7+g9QoBNh9ScxIr5xRNioQ3dDobNuLF2u1oJD+smlieblkZkgYqqASIjyW
-         Ag6bPDD9JkY+kJGRCQCY9R7hdT7juaTnin37JOl7LN+ErMOw3B8HcTcrcveGesDGEGhV
-         y5TQ==
+	s=arc-20240116; t=1724042404; c=relaxed/simple;
+	bh=ndPGcz+uTi/bIYAnyjXxTlLhFjz2KeP5UQ4eUxYbKxE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=MKZJQqiaibs/ASYH7Gufnb+yxftNzgeIJ0dpqDY7kdJiVHX72cyDqOtTnLY9QhflaHZuRb84cEiPwQIncQoKUcGCfBEretIr4NjFURjPqjTWglT3U1ut159oPJi7O3sAZ+UAvo4Vid0P31yn3MfTPah7fHa8lBauyI+rh+rYlLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81fa44764bbso427889939f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 21:40:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724041916; x=1724646716;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pjEw3wQOMf1AKn43BEx21ZcKh5pn+wfGqK3TxJhADLk=;
-        b=U0AOvQ7JCCVidOhPybk1Mw0aJY35EHJjdAoDMN0n0iXy+V44xnJ+95g8Ygl9MP0sQv
-         1pWPwI4bLFTrm+qann3Mz8nuytFDWwVlnN/xKfcJ78rU3C7aGF9wyOQrIPkdFeKhfcY0
-         YLCvuhfn9nJsrNe3SmUgVvWIhtVtxA39jNzTwxzUSdEtksS3tdvyUDGQI2fz3iDWLHM1
-         VYI/AXdagdc86S6v67cL7/ZRDtYIWLkPvfSkuD4BP/LidQSKJZ4QWazTFkUuaoVPja82
-         NqJ7h9P6tT6NQr13f8kWzBUX+cy9mqlb/NPNVas68yDNMDKYY1dTYaIDiGy3uDbyV0Tc
-         hfAg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1qgJ0XcMDoY6tNEWQDjOva3c8pEHnbvat7ce0ZD/UN3Gx3ZesbEHchYlHjL+UP9G9soEl1fiU1zLpAnHRo3sOyfKfUAe0evyb5FclwprL40DBVhs/1pLBnoxfXrE6+wzG4kzL52qxqHs=
-X-Gm-Message-State: AOJu0Yziy3pJntjCTGH92zDs9wtC79OdY/PUBGZVHyFCVLHFbGZ52otl
-	69tgBh0kWbePDl3iRAFnveHvGaGA99iW+/GgdfvyfARAKoJUj/Qg
-X-Google-Smtp-Source: AGHT+IF4MZ7GWBIIa+SeQgRUZIEcXrAn1USWIEwcTi8KCIlmk9Rq26wkTu9Kh7gV3HogBI221/DBQQ==
-X-Received: by 2002:a17:90b:19c9:b0:2d3:c0b9:7c2a with SMTP id 98e67ed59e1d1-2d3dfd8bef4mr8247906a91.20.1724041915591;
-        Sun, 18 Aug 2024 21:31:55 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:4eb5:4500:6efc:6c24])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3bc1b86casm8823439a91.1.2024.08.18.21.31.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2024 21:31:55 -0700 (PDT)
-Date: Sun, 18 Aug 2024 21:31:52 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Werner Sembach <wse@tuxedocomputers.com>
-Cc: hdegoede@redhat.com, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] i8042: Use new forcenorestore quirk to replace
- old buggy quirk combination
-Message-ID: <ZsLKuKpBzh9fg5qM@google.com>
-References: <20240104183118.779778-1-wse@tuxedocomputers.com>
- <20240104183118.779778-3-wse@tuxedocomputers.com>
+        d=1e100.net; s=20230601; t=1724042402; x=1724647202;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4QxjT7FBtIf+YOOl5Ydo57Y1HRHDgzWdhn/AVlpRKbU=;
+        b=s++uxt6qmSz/2AdU+k3gFD54R0WbDNg8Ptp5azcWB5GDxnQI5yWG/ZRXLodnChfAX5
+         MiCZh6MLqKrYZJte4DWCHqsprdBEnDqQJ2q2FPGblNQbAQ7fBVUOrozFVUUBvXHcWptB
+         sld0n1vTvUSVydDtLM1qvvCpTrc/IIGDFkRV3eNzv4UK1Vv3H1p3ZrAOoJd4j7zoYi+r
+         cZaU6Kj5DvtyZ7iT3oOSqy568Jc8k6xSdbwsr/coYOSJr6a274FawAcVnTP2JvPKX7um
+         DkTMlfPn3IX528FRm2OgJc430Tw+G+LSX8Ff0YBtRnUJ2xvgh/s3i34sWJ+NypxYkcSn
+         gXSw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5ROg6djcfAkpNQxyr8XoGYFBbCkfNHnk0Fe4QX9Dq4nsqB4yoEJ4NoD2A1s6I+PIME/ySE/Ql+LjYIx1IYBI+wqnwFiYHG5wTqFnJ
+X-Gm-Message-State: AOJu0Yzz9tlSJt5BP8dUA9Kmx1ZFGtwe+xl6pzQeYxnjFhrQceGiGMer
+	ydcp+fdDeYLseeHh93ERAbhEEF0Ue8QXOrz3/5Ixo4Hhh/eFM1wBwXVF7r9yAzMlA/l83Irfl+c
+	LWrm9nTjhC8VkLa6e5D5hAEcdTRxBPnGzabFlML+4tzOVFbLFbIY0mf4=
+X-Google-Smtp-Source: AGHT+IH316qYQj7K/SEBVPvVeG35zflMK2F/Sc4nwXd5p9/IyQ5MeXxoQPgP4Q0j6l2BAJ0YCA/7X4FcoFqLlYh6md2L53cvBiuo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240104183118.779778-3-wse@tuxedocomputers.com>
+X-Received: by 2002:a05:6638:370f:b0:4b9:e5b4:67fd with SMTP id
+ 8926c6da1cb9f-4cce15cdbd5mr504210173.1.1724042401927; Sun, 18 Aug 2024
+ 21:40:01 -0700 (PDT)
+Date: Sun, 18 Aug 2024 21:40:01 -0700
+In-Reply-To: <0000000000002be09b061c483ea1@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f1e97e062001e6b2@google.com>
+Subject: Re: [syzbot] [mm?] possible deadlock in __mmap_lock_do_trace_released
+From: syzbot <syzbot+16b6ab88e66b34d09014@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, axelrasmussen@google.com, bpf@vger.kernel.org, 
+	cgroups@vger.kernel.org, hannes@cmpxchg.org, hawk@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-trace-kernel@vger.kernel.org, lizefan.x@bytedance.com, 
+	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, netdev@vger.kernel.org, 
+	nsaenz@amazon.com, nsaenzju@redhat.com, penguin-kernel@I-love.SAKURA.ne.jp, 
+	penguin-kernel@i-love.sakura.ne.jp, rostedt@goodmis.org, 
+	syzkaller-bugs@googlegroups.com, tj@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jan 04, 2024 at 07:31:18PM +0100, Werner Sembach wrote:
-> The old quirk combination sometimes cause a laggy keyboard after boot. With
-> the new quirk the initial issue of an unresponsive keyboard after s3 resume
-> is also fixed, but it doesn't have the negative side effect of the
-> sometimes laggy keyboard.
-> 
-> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
-> Cc: stable@vger.kernel.org
+syzbot suspects this issue was fixed by commit:
 
-Applied, thank you.
+commit 7d6be67cfdd4a53cea7147313ca13c531e3a470f
+Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date:   Fri Jun 21 01:08:41 2024 +0000
 
--- 
-Dmitry
+    mm: mmap_lock: replace get_memcg_path_buf() with on-stack buffer
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12d48893980000
+start commit:   a12978712d90 selftests/bpf: Move ARRAY_SIZE to bpf_misc.h
+git tree:       bpf-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=736daf12bd72e034
+dashboard link: https://syzkaller.appspot.com/bug?extid=16b6ab88e66b34d09014
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=125718be980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14528876980000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: mm: mmap_lock: replace get_memcg_path_buf() with on-stack buffer
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
