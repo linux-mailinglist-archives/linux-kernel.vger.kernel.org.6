@@ -1,73 +1,86 @@
-Return-Path: <linux-kernel+bounces-291511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F4D995637E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:13:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A88095637F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:14:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EBD4B21A57
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:13:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25DCE1F21A55
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21ECD14C58C;
-	Mon, 19 Aug 2024 06:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA4515278E;
+	Mon, 19 Aug 2024 06:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="uD7w1lyd"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="p3Z7lZRD"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2064.outbound.protection.outlook.com [40.107.92.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8882511CA0
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 06:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724048025; cv=none; b=b4g6A+kOgZYTKaJW5HAYE4X3e5RrCXfaX2AnUcVs45wpGc4g2b8IUs5wcDVAnJOoiRIynloTK5B2Vz9VB4YTAacwS27qJYjKLKIuJlQ81iZiEylzSd3hAp4WOW4xTseat9m5AYAtH1ly6yz+dBLkVurg2iIqiR3dfaBfH36VnVQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724048025; c=relaxed/simple;
-	bh=X0+s0FHNCJ6IN3aBODkDM2oCKV3UBN5ESvfdU8fvCbA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iljANzdKTc89Cgw1C85Bk+vca1ISDegKy7P0pSQKyPRtygnV2mHVGbn+Ca2nrtPepsBeyC/GpDv3TqlYDjhQ8Ptag/xUC/6Im/I16Mmv329O1iVZKj7UMnXj+Vm2bIGimyU8iZ0pvrC/eSG5RpJwOu7a4o6JWxpI4v0WhiVUFx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=uD7w1lyd; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 2b1514d85df211ef8b96093e013ec31c-20240819
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=QE567wxaZYFj8kwiVIzL4/viZ/NIGTuq9+uq6fgydvM=;
-	b=uD7w1lydlSP/2HaaHdgw5Rl/slz44EK04KenunCh3Km88rbcdGskt9hh2mKcHbTtaUPF/lVNcyTWWYMTMU6prjB4Z994snwtJ8vcyFeydw1HkfXT/7mHgcQ4b6/VmXj09EQNgZQ+V8DYS4hA9xjE2+tt88sY3iJflwu7x6IIimc=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:ddacd687-d0e5-4fc7-ab3c-6071fa2256b3,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:e578a95b-248b-45cb-bde8-d789f49f4e1e,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 2b1514d85df211ef8b96093e013ec31c-20240819
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
-	(envelope-from <shuijing.li@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1393039332; Mon, 19 Aug 2024 14:13:35 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS09N1.mediatek.inc (172.21.101.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Mon, 19 Aug 2024 14:13:35 +0800
-Received: from mszsdhlt06.gcn.mediatek.inc (10.16.6.206) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Mon, 19 Aug 2024 14:13:35 +0800
-From: Shuijing Li <shuijing.li@mediatek.com>
-To: <chunkuang.hu@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
-	<daniel@ffwll.ch>, <matthias.bgg@gmail.com>,
-	<angelogioacchino.delregno@collabora.com>, <jitao.shi@mediatek.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Shuijing Li
-	<shuijing.li@mediatek.com>
-Subject: [PATCH v7] drm/mediatek: dsi: Add dsi per-frame lp code for mt8188
-Date: Mon, 19 Aug 2024 14:12:51 +0800
-Message-ID: <20240819061333.26069-1-shuijing.li@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0972811CA0;
+	Mon, 19 Aug 2024 06:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724048034; cv=fail; b=PhDMzO1f67e/NNqaYCW355ZDLiz/uj6d6NHzV4wDS6G29HQQkfeTISSBFFl711igN7o5LmQk+1WtbGwhs04+4UGY6X4K6cfOVjhTRtvgFQcM0qlqnkroxGg9dEV9jcuNuGsv4TqwM5m6iNeRJ0MffU60XM03smBXJaWl1+ZXiSk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724048034; c=relaxed/simple;
+	bh=T4ECzQLjoNm/Ww6/vGdZQyd6zCYy9Z2BVlVE0QhVi8E=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nE+SL81d5mHLUV7wFeEANH8fwfSZiqCSKSJmFWOYvcvNQDweEvYrlfj4qzTOX2wbEc3bKQoxasfJdTMeiRK+PxNs1mmvrMjW3EpiUWuAeLQIspzupFg+S1msTlFUSC/qjl6bBZLQzFBZmr3pu3SjIrA5J7rWjgrtWtlWFk/8ACM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=p3Z7lZRD; arc=fail smtp.client-ip=40.107.92.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pP9MsYdfbJ3emNv8oB3X5Z3SLpSM65xzwpWfQOBOjmoG6SeagcrFg0f69Nh9CemoGYfheipmgTNVx4e6dcit0ZTwlYUEp+FdVsNCzRZlY2XGBLARtIlfZbGCOLzDL4rPXVYgQEYvSsonVb2J2k4S5pmMMAJKioqMWHUZ850295uGVAHK116F9KrcHaGJsWJcNoEHmh3C1YZ2CsrUqvTGz+iavUiLheeyAw4NpmDx1Aah6Knsb3CyUc59MkfBVm/YP15xRo7PtAsK7hiplFc2MHSGj9n80NFQ5e/BEE6X3sUJDFzAGUSejIGmr2d3CIMKauIQ1wVSe0Wlmj9hjTZXSw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7chqinX2UUHex5v9pq4eYenkRZTwtCWHR4zd4VbToJA=;
+ b=Nu9LOrBFYlcyJNfSnNtgH27A+FmESkEtL9HXKKAuD47Hrq7qpwmkTq8o3brnxKvRW4rYwG3ujAZwYZwoxm9X/zyXIo2qxwgQkYEliHwHJ8Zdh+fDKA5MJmybLycCKCSGUO9v4kLCgYGHPwFVCr01Xeh3CR+qIEubDH3JjcCdNRtPMlqiqKGfLYf1PFdrt8sdIYR+ZG1N9umy8blRlsMdK6deQudGyb+fubgAhHptphAaLvjfj8GzH97H2s3WylL1s2j5EfPR1qaeg4ilpe2Yt0jE6nsXPHmfpZ19HcICvol0NBcf7cDiUNox/zQBb9PwpfvsZ4qCLR2xpPx+PjyZrA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7chqinX2UUHex5v9pq4eYenkRZTwtCWHR4zd4VbToJA=;
+ b=p3Z7lZRDiJ/sOSZY4HHmIeW5rRWh2sHXRHHAEMKo+3nU+vrTvwgalF88nkHA+RoaujBp+U7zje9hnngliEHIe7g3EXBRuYuFxR8f0B9oaILp3thKXPY7K1Jc3G7xZszcAqYhgjmnlC8rCuQYYa6mUWx851c4CVtFRkgFVz39q8E=
+Received: from MW4PR04CA0131.namprd04.prod.outlook.com (2603:10b6:303:84::16)
+ by CY8PR12MB7684.namprd12.prod.outlook.com (2603:10b6:930:87::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
+ 2024 06:13:48 +0000
+Received: from CO1PEPF000044F8.namprd21.prod.outlook.com
+ (2603:10b6:303:84:cafe::b0) by MW4PR04CA0131.outlook.office365.com
+ (2603:10b6:303:84::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21 via Frontend
+ Transport; Mon, 19 Aug 2024 06:13:48 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000044F8.mail.protection.outlook.com (10.167.241.198) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7897.4 via Frontend Transport; Mon, 19 Aug 2024 06:13:47 +0000
+Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 19 Aug 2024 01:13:42 -0500
+From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+To: <broonie@kernel.org>
+CC: <alsa-devel@alsa-project.org>, <pierre-louis.bossart@linux.intel.com>,
+	<yung-chuan.liao@linux.intel.com>, <ranjani.sridharan@linux.intel.com>,
+	<lgirdwood@gmail.com>, <perex@perex.cz>, <tiwai@suse.com>,
+	<Basavaraj.Hiregoudar@amd.com>, <Sunil-kumar.Dommati@amd.com>,
+	<venkataprasad.potturu@amd.com>, <cristian.ciocaltea@collabora.com>,
+	<linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Vijendar
+ Mukunda" <Vijendar.Mukunda@amd.com>
+Subject: [PATCH] ASoC: amd: acp: replace desc->rev check with acp pci revision id
+Date: Mon, 19 Aug 2024 11:43:29 +0530
+Message-ID: <20240819061329.1025189-1-Vijendar.Mukunda@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,217 +89,136 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-MTK: N
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F8:EE_|CY8PR12MB7684:EE_
+X-MS-Office365-Filtering-Correlation-Id: 28fb3737-263f-480e-52f2-08dcc0161691
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?G417QAG8+X0ozyJjuquHve1HFzhtroWcD1f4Bk9xfkAbdLiyxlsz29641HPw?=
+ =?us-ascii?Q?g8CffcPmH2GmVSBpTq/A9uqAUUebDHXe8H45WzGAAyk0snTEzXNW13leoHhu?=
+ =?us-ascii?Q?1nhbSYhfNrFsLPWf/S1+K/ms3XAl2KIf026V99R54AQIuZSeWwgAsFKm1zhq?=
+ =?us-ascii?Q?HMjTaclX/nIacyCRfuaqoZtKp9fxPB+s/mMgm/g60258tRhhX23aTqtsTGCo?=
+ =?us-ascii?Q?PLImaDX02gof6hTZ+2U7q64plxIJWfe4sMcoUQcuWIs9D8D8x3d9EOLgkJ7Q?=
+ =?us-ascii?Q?IVMj6I0yX4EUh+4659gMv88zQRiSdnb81L5ar+M+dNY9tN1wD3edUcl3XqGM?=
+ =?us-ascii?Q?Wo+ZtTK3FCiUdRciHB3/VZyu9Hxh6b+YWIK8Vjf5kmia/L9r952S0R6ExMV/?=
+ =?us-ascii?Q?70pwDWtaYWuQMn8ss19qfOD5GCyqsea3v1qmLmn6u5UfdOplGX2BjVR25Ksa?=
+ =?us-ascii?Q?ta8EAW5uOPPc0Ney875T8RX4iikZX7yY5pd4OCIY+mow50t4f3pMueags7Fv?=
+ =?us-ascii?Q?BNVPFAaEmEvySzJwUzTOb6p7KfEqy9MJ2P6PKEQMNlkiKesgcXGb02RegcFD?=
+ =?us-ascii?Q?5gdvMFdIxoB9rITKoGIBmwuKkSIAIyon30KkDDRrIhmu1jrZvFolPooI4fu1?=
+ =?us-ascii?Q?D6+TH9YdFjNYyPypEBBhGFDUjUJqfkz0UEHysvFoeEtXc8UgNWMLKZifBcmE?=
+ =?us-ascii?Q?g/OEU03It+CQKuhcFl3QbgIdZDqirU0YdmybKjsaaBwmSM8u8YXCmHHXMS+v?=
+ =?us-ascii?Q?R/v+OdVHs29rYIN7fzBsZieFI/vJMIzl9l038U/Ycpqt4CMRmPXr4pdcZ1G+?=
+ =?us-ascii?Q?cMF/BLYKEk4Tk9k8cgjx7liL5VZSMA1M454DQ7YjTV4pAfrGR1jn6FQfuI1b?=
+ =?us-ascii?Q?szjUaaLihpkN75XH0hJEImHx0zZo52kQUY2y9qqUPTb54TgeuvkDHP6SR8aD?=
+ =?us-ascii?Q?4pmiEWJODvWb6EZeaXSVWlo4H0UdNdEXxPGsWKr5JRpCS1JCJW6NfYJmzW4S?=
+ =?us-ascii?Q?Ib0kycXQx/b2wtaLospDSBbCHHU52OYmztWRrzgsNgMX24Pq148LWhthRtBS?=
+ =?us-ascii?Q?SUKmVxAelSwXLD8Ev81KxmIJm5djIHCcxkROTVtZIMNFtlgVXorqmokDuRVu?=
+ =?us-ascii?Q?f3j2wTxexPYWUKPFV5hkrogcq3P02zMatTmBo2KTeGDCu1h02avx5MBlfSpg?=
+ =?us-ascii?Q?iExrEOVcta467qJ2vj3EX3OTAOd4yXrexaPrguYenP0m4QUCYR61BiVwSdR6?=
+ =?us-ascii?Q?Nr8sMtmOG0bC5QxSkqTVIG36DMsXRatFztaftChGhYvzpggxeJpZ2Qz8zC2I?=
+ =?us-ascii?Q?5VnqD/JY6OvxTb/Baa/hhwgVBziYffT2G1OFFyD1Xmg/Dk7fJMC5lft032ht?=
+ =?us-ascii?Q?Xef5LI3vUboKuIjKjByTP5dkpOwNlDkyg5mDjN+jpw463ZaXmevuxu+AEbOt?=
+ =?us-ascii?Q?CHz57Eb6rkP6y1naaIeqCX2n8NfkoWgd?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 06:13:47.8641
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28fb3737-263f-480e-52f2-08dcc0161691
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044F8.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7684
 
-Adding the per-frame lp function of mt8188, which can keep HFP in HS and
-reduce the time required for each line to enter and exit low power.
-Per Frame LP:
-  |<----------One Active Frame-------->|
---______________________________________----___________________
-  ^HSA+HBP^^RGB^^HFP^^HSA+HBP^^RGB^^HFP^    ^HSA+HBP^^RGB^^HFP^
+Replace acp descriptor structure member 'rev' check with acp pci revision
+id.
 
-Per Line LP:
-  |<---------------One Active Frame----------->|
---______________--______________--______________----______________
-  ^HSA+HBP^^RGB^  ^HSA+HBP^^RGB^  ^HSA+HBP^^RGB^    ^HSA+HBP^^RGB^
-
-Signed-off-by: Shuijing Li <shuijing.li@mediatek.com>
+Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
 ---
-Changes in v7:
-Fix code style and simplify the code per suggestion from previous thread:
-https://patchwork.kernel.org/project/linux-mediatek/patch/20240813022315.18502-1-shuijing.li@mediatek.com/
-Changes in v6:
-Simplify the code per suggestion from previous thread:
-https://patchwork.kernel.org/project/linux-mediatek/patch/20240812070341.26053-1-shuijing.li@mediatek.com/
-Changes in v5:
-Fix code style issue and add per-line-lp function to be symmetrical with per-frame-lp.
-per suggestion from previous thread:
-https://patchwork.kernel.org/project/linux-mediatek/patch/20240801081144.22372-1-shuijing.li@mediatek.com/
-Changes in v4:
-Drop the code related to bllp_en and bllp_wc, adjust ps_wc to dsi->vm.hactive *
-dsi_buf_bpp.
-Changes in v3:
-Use function in bitfield.h and get value from phy timing, per suggestion
-from previous thread:
-https://patchwork.kernel.org/project/linux-mediatek/patch/20240424091639.22759-1-shuijing.li@mediatek.com/
-Changes in v2:
-Use bitfield macros and add new function for per prame lp and improve
-the format, per suggestion from previous thread:
-https://patchwork.kernel.org/project/linux-mediatek/patch/20240314094238.3315-1-shuijing.li@mediatek.com/
----
- drivers/gpu/drm/mediatek/mtk_dsi.c | 110 +++++++++++++++++++++++++----
- 1 file changed, 98 insertions(+), 12 deletions(-)
+ sound/soc/sof/amd/acp.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-index b6e3c011a12d..58518f3257a8 100644
---- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-@@ -88,12 +88,15 @@
- #define DSI_HSA_WC		0x50
- #define DSI_HBP_WC		0x54
- #define DSI_HFP_WC		0x58
-+#define HFP_HS_VB_PS_WC		GENMASK(30, 16)
-+#define HFP_HS_EN			BIT(31)
- 
- #define DSI_CMDQ_SIZE		0x60
- #define CMDQ_SIZE			0x3f
- #define CMDQ_SIZE_SEL		BIT(15)
- 
- #define DSI_HSTX_CKL_WC		0x64
-+#define HSTX_CKL_WC			GENMASK(15, 2)
- 
- #define DSI_RX_DATA0		0x74
- #define DSI_RX_DATA1		0x78
-@@ -187,6 +190,7 @@ struct mtk_dsi_driver_data {
- 	bool has_shadow_ctl;
- 	bool has_size_ctl;
- 	bool cmdq_long_packet_ctl;
-+	bool support_per_frame_lp;
- };
- 
- struct mtk_dsi {
-@@ -426,7 +430,79 @@ static void mtk_dsi_ps_control(struct mtk_dsi *dsi, bool config_vact)
- 	writel(ps_val, dsi->regs + DSI_PSCTRL);
- }
- 
--static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
-+static void mtk_dsi_config_vdo_timing_per_frame_lp(struct mtk_dsi *dsi)
-+{
-+	u32 horizontal_sync_active_byte;
-+	u32 horizontal_backporch_byte;
-+	u32 horizontal_frontporch_byte;
-+	u32 hfp_byte_adjust, v_active_adjust;
-+	u32 cklp_wc_min_adjust, cklp_wc_max_adjust;
-+	u32 dsi_tmp_buf_bpp;
-+	unsigned int da_hs_trail;
-+	unsigned int ps_wc, hs_vb_ps_wc;
-+	u32 v_active_roundup, hstx_cklp_wc;
-+	u32 hstx_cklp_wc_max, hstx_cklp_wc_min;
-+	struct videomode *vm = &dsi->vm;
-+
-+	if (dsi->format == MIPI_DSI_FMT_RGB565)
-+		dsi_tmp_buf_bpp = 2;
-+	else
-+		dsi_tmp_buf_bpp = 3;
-+
-+	da_hs_trail = dsi->phy_timing.da_hs_trail;
-+	ps_wc = vm->hactive * dsi_tmp_buf_bpp;
-+
-+	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE) {
-+		horizontal_sync_active_byte =
-+			vm->hsync_len * dsi_tmp_buf_bpp - 10;
-+		horizontal_backporch_byte =
-+			vm->hback_porch * dsi_tmp_buf_bpp - 10;
-+		hfp_byte_adjust = 12;
-+		v_active_adjust = 32 + horizontal_sync_active_byte;
-+		cklp_wc_min_adjust = 12 + 2 + 4 + horizontal_sync_active_byte;
-+		cklp_wc_max_adjust = 20 + 6 + 4 + horizontal_sync_active_byte;
-+	} else {
-+		horizontal_sync_active_byte = vm->hsync_len * dsi_tmp_buf_bpp - 4;
-+		horizontal_backporch_byte = (vm->hback_porch + vm->hsync_len) *
-+			dsi_tmp_buf_bpp - 10;
-+		cklp_wc_min_adjust = 4;
-+		cklp_wc_max_adjust = 12 + 4 + 4;
-+		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_BURST) {
-+			hfp_byte_adjust = 18;
-+			v_active_adjust = 28;
-+		} else {
-+			hfp_byte_adjust = 12;
-+			v_active_adjust = 22;
-+		}
-+	}
-+	horizontal_frontporch_byte = vm->hfront_porch * dsi_tmp_buf_bpp - hfp_byte_adjust;
-+	v_active_roundup = (v_active_adjust + horizontal_backporch_byte + ps_wc +
-+			   horizontal_frontporch_byte) % dsi->lanes;
-+	if (v_active_roundup)
-+		horizontal_backporch_byte += dsi->lanes - v_active_roundup;
-+	hstx_cklp_wc_min = (DIV_ROUND_UP(cklp_wc_min_adjust, dsi->lanes) + da_hs_trail + 1)
-+			   * dsi->lanes / 6 - 1;
-+	hstx_cklp_wc_max = (DIV_ROUND_UP((cklp_wc_max_adjust + horizontal_backporch_byte +
-+			   ps_wc), dsi->lanes) + da_hs_trail + 1) * dsi->lanes / 6 - 1;
-+
-+	hstx_cklp_wc = FIELD_GET(HSTX_CKL_WC, readl(dsi->regs + DSI_HSTX_CKL_WC));
-+
-+	if (hstx_cklp_wc <= hstx_cklp_wc_min || hstx_cklp_wc >= hstx_cklp_wc_max) {
-+		hstx_cklp_wc = FIELD_PREP(HSTX_CKL_WC, (hstx_cklp_wc_min + hstx_cklp_wc_max) / 2);
-+		writel(hstx_cklp_wc, dsi->regs + DSI_HSTX_CKL_WC);
-+	}
-+
-+	hs_vb_ps_wc = ps_wc - (dsi->phy_timing.lpx + dsi->phy_timing.da_hs_exit +
-+		      dsi->phy_timing.da_hs_prepare + dsi->phy_timing.da_hs_zero + 2) * dsi->lanes;
-+	horizontal_frontporch_byte |= FIELD_PREP(HFP_HS_EN, 1) |
-+				      FIELD_PREP(HFP_HS_VB_PS_WC, hs_vb_ps_wc);
-+
-+	writel(horizontal_sync_active_byte, dsi->regs + DSI_HSA_WC);
-+	writel(horizontal_backporch_byte, dsi->regs + DSI_HBP_WC);
-+	writel(horizontal_frontporch_byte, dsi->regs + DSI_HFP_WC);
-+}
-+
-+static void mtk_dsi_config_vdo_timing_per_line_lp(struct mtk_dsi *dsi)
+diff --git a/sound/soc/sof/amd/acp.c b/sound/soc/sof/amd/acp.c
+index 0f6115c8b005..e4d46fdda88b 100644
+--- a/sound/soc/sof/amd/acp.c
++++ b/sound/soc/sof/amd/acp.c
+@@ -236,7 +236,6 @@ int configure_and_run_sha_dma(struct acp_dev_data *adata, void *image_addr,
+ 			      unsigned int image_length)
  {
- 	u32 horizontal_sync_active_byte;
- 	u32 horizontal_backporch_byte;
-@@ -436,7 +512,6 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
- 	u32 dsi_tmp_buf_bpp, data_phy_cycles;
- 	u32 delta;
- 	struct mtk_phy_timing *timing = &dsi->phy_timing;
--
- 	struct videomode *vm = &dsi->vm;
+ 	struct snd_sof_dev *sdev = adata->dev;
+-	const struct sof_amd_acp_desc *desc = get_chip_info(sdev->pdata);
+ 	unsigned int tx_count, fw_qualifier, val;
+ 	int ret;
  
- 	if (dsi->format == MIPI_DSI_FMT_RGB565)
-@@ -444,16 +519,6 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
- 	else
- 		dsi_tmp_buf_bpp = 3;
+@@ -265,8 +264,9 @@ int configure_and_run_sha_dma(struct acp_dev_data *adata, void *image_addr,
+ 	snd_sof_dsp_write(sdev, ACP_DSP_BAR, ACP_SHA_DMA_DESTINATION_ADDR, dest_addr);
+ 	snd_sof_dsp_write(sdev, ACP_DSP_BAR, ACP_SHA_MSG_LENGTH, image_length);
  
--	writel(vm->vsync_len, dsi->regs + DSI_VSA_NL);
--	writel(vm->vback_porch, dsi->regs + DSI_VBP_NL);
--	writel(vm->vfront_porch, dsi->regs + DSI_VFP_NL);
--	writel(vm->vactive, dsi->regs + DSI_VACT_NL);
--
--	if (dsi->driver_data->has_size_ctl)
--		writel(FIELD_PREP(DSI_HEIGHT, vm->vactive) |
--		       FIELD_PREP(DSI_WIDTH, vm->hactive),
--		       dsi->regs + DSI_SIZE_CON);
--
- 	horizontal_sync_active_byte = (vm->hsync_len * dsi_tmp_buf_bpp - 10);
+-	/* psp_send_cmd only required for vangogh platform (rev - 5) */
+-	if (desc->rev == 5 && !(adata->quirks && adata->quirks->skip_iram_dram_size_mod)) {
++	/* psp_send_cmd only required for vangogh platform */
++	if (adata->pci_rev == ACP_VANGOGH_PCI_ID &&
++	    !(adata->quirks && adata->quirks->skip_iram_dram_size_mod)) {
+ 		/* Modify IRAM and DRAM size */
+ 		ret = psp_send_cmd(adata, MBOX_ACP_IRAM_DRAM_FENCE_COMMAND | IRAM_DRAM_FENCE_2);
+ 		if (ret)
+@@ -285,8 +285,8 @@ int configure_and_run_sha_dma(struct acp_dev_data *adata, void *image_addr,
+ 		return ret;
+ 	}
  
- 	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
-@@ -499,6 +564,26 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
- 	writel(horizontal_sync_active_byte, dsi->regs + DSI_HSA_WC);
- 	writel(horizontal_backporch_byte, dsi->regs + DSI_HBP_WC);
- 	writel(horizontal_frontporch_byte, dsi->regs + DSI_HFP_WC);
-+}
-+
-+static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
-+{
-+	struct videomode *vm = &dsi->vm;
-+
-+	writel(vm->vsync_len, dsi->regs + DSI_VSA_NL);
-+	writel(vm->vback_porch, dsi->regs + DSI_VBP_NL);
-+	writel(vm->vfront_porch, dsi->regs + DSI_VFP_NL);
-+	writel(vm->vactive, dsi->regs + DSI_VACT_NL);
-+
-+	if (dsi->driver_data->has_size_ctl)
-+		writel(FIELD_PREP(DSI_HEIGHT, vm->vactive) |
-+			FIELD_PREP(DSI_WIDTH, vm->hactive),
-+			dsi->regs + DSI_SIZE_CON);
-+
-+	if (dsi->driver_data->support_per_frame_lp)
-+		mtk_dsi_config_vdo_timing_per_frame_lp(dsi);
-+	else
-+		mtk_dsi_config_vdo_timing_per_line_lp(dsi);
+-	/* psp_send_cmd only required for renoir platform (rev - 3) */
+-	if (desc->rev == 3) {
++	/* psp_send_cmd only required for renoir platform*/
++	if (adata->pci_rev == ACP_RN_PCI_ID) {
+ 		ret = psp_send_cmd(adata, MBOX_ACP_SHA_DMA_COMMAND);
+ 		if (ret)
+ 			return ret;
+@@ -405,7 +405,7 @@ static irqreturn_t acp_irq_handler(int irq, void *dev_id)
+ 		snd_sof_dsp_write(sdev, ACP_DSP_BAR, desc->ext_intr_stat, ACP_ERROR_IRQ_MASK);
+ 		snd_sof_dsp_write(sdev, ACP_DSP_BAR, desc->acp_sw0_i2s_err_reason, 0);
+ 		/* ACP_SW1_I2S_ERROR_REASON is newly added register from rmb platform onwards */
+-		if (desc->rev >= 6)
++		if (adata->pci_rev >= ACP_RMB_PCI_ID)
+ 			snd_sof_dsp_write(sdev, ACP_DSP_BAR, ACP_SW1_I2S_ERROR_REASON, 0);
+ 		snd_sof_dsp_write(sdev, ACP_DSP_BAR, desc->acp_error_stat, 0);
+ 		irq_flag = 1;
+@@ -431,6 +431,7 @@ static irqreturn_t acp_irq_handler(int irq, void *dev_id)
+ static int acp_power_on(struct snd_sof_dev *sdev)
+ {
+ 	const struct sof_amd_acp_desc *desc = get_chip_info(sdev->pdata);
++	struct acp_dev_data *adata = sdev->pdata->hw_pdata;
+ 	unsigned int base = desc->pgfsm_base;
+ 	unsigned int val;
+ 	unsigned int acp_pgfsm_status_mask, acp_pgfsm_cntl_mask;
+@@ -441,13 +442,14 @@ static int acp_power_on(struct snd_sof_dev *sdev)
+ 	if (val == ACP_POWERED_ON)
+ 		return 0;
  
- 	mtk_dsi_ps_control(dsi, false);
- }
-@@ -1197,6 +1282,7 @@ static const struct mtk_dsi_driver_data mt8188_dsi_driver_data = {
- 	.has_shadow_ctl = true,
- 	.has_size_ctl = true,
- 	.cmdq_long_packet_ctl = true,
-+	.support_per_frame_lp = true,
- };
- 
- static const struct of_device_id mtk_dsi_of_match[] = {
+-	switch (desc->rev) {
+-	case 3:
+-	case 5:
++	switch (adata->pci_rev) {
++	case ACP_RN_PCI_ID:
++	case ACP_VANGOGH_PCI_ID:
+ 		acp_pgfsm_status_mask = ACP3X_PGFSM_STATUS_MASK;
+ 		acp_pgfsm_cntl_mask = ACP3X_PGFSM_CNTL_POWER_ON_MASK;
+ 		break;
+-	case 6:
++	case ACP_RMB_PCI_ID:
++	case ACP63_PCI_ID:
+ 		acp_pgfsm_status_mask = ACP6X_PGFSM_STATUS_MASK;
+ 		acp_pgfsm_cntl_mask = ACP6X_PGFSM_CNTL_POWER_ON_MASK;
+ 		break;
 -- 
-2.45.2
+2.34.1
 
 
