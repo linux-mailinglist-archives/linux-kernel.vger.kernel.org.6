@@ -1,140 +1,118 @@
-Return-Path: <linux-kernel+bounces-292299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 844B0956DB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:43:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD919956DB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34E401F23B72
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:43:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57831B2336A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA35172BCE;
-	Mon, 19 Aug 2024 14:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4FC172BCC;
+	Mon, 19 Aug 2024 14:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S8CKPWmL"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BqbdimS7"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B7A16B399;
-	Mon, 19 Aug 2024 14:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9FB171E55;
+	Mon, 19 Aug 2024 14:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724078628; cv=none; b=WBFN84+szF7LaDmZiK9f/1Reh8KTxHFDmiMaX+GhuWT+YyexNdHFXUPqWR9nHI8E5UNYYEFmuFr0ulO474RkWd8jIEEgPK7E+KRfgpEylB9qJGGXjJRkQq9VvvLmJjcdo9DhhBIZefQiBa3CTaDm0O24lCo7dJHPQN5w1Aumgoc=
+	t=1724078669; cv=none; b=BnUTgbpq3Me3XFYchK5uSCi/Q5K5oiRvccaNuLFj2NNF+pssNn2n7GUVHQmDXcKj1sfK2gW2J1oKnwccz32iCDL2/Souo70L+kNwOfRe6HtIIICdp4s+1MxicbVJCLFunSdFXNWObqN1wh6V0Ms2vZcIyF+gy87f2x/lF3fT2l4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724078628; c=relaxed/simple;
-	bh=/VrtbbhB5xuTgjJzRXsBZ2qu6eNnfqcRtLePfkE5eJE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=doh6igiFJgxrS7NSxKUnhCsfh+SJqBxSHh8r3W4wc17aJB05tiIharHTM5Fam3Ma01l3G3zvSxpNUeoRr187/QuPqRZqJ3thC8JuZ0qGx3Zpxco4g0UWyJ5bUdOz5+e/uYluYtEM/VV8q/PEQk4PZvXK4di5N0D+Vni2t4Ba1Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S8CKPWmL; arc=none smtp.client-ip=209.85.208.52
+	s=arc-20240116; t=1724078669; c=relaxed/simple;
+	bh=3p9lZltV8E80RCbmETRjYh5iBlWki/oaEyxIniifm2s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KeekqU25pkIZcJLl638WN2Mw5t8MARqahgg8QzRr9WrkIIQ9DfdOb+B2rCkuMjbXyYddFZLD4gErAxG4rVvZNTjTI1Y77xwfOzQHMJQUxZ2tmTEWFReWKMkhBPq4EsvdJz+s/5UPfLDERXiqVpCrduNZRDFyIdW4TeOflB9scbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BqbdimS7; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5bef295a2b4so386977a12.0;
-        Mon, 19 Aug 2024 07:43:46 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5bef4d9e7f8so1688718a12.2;
+        Mon, 19 Aug 2024 07:44:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724078625; x=1724683425; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JuND7K0ekUC0YS6IT+t8ylUpD84fd3Qi1ukfVX2K7jA=;
-        b=S8CKPWmLAOzVxhd0991bvlfHHOyayyE5T1GQXmooahd1WECVYZyHNRp3neBSr6gUNE
-         6cSEb0TtBx4+QjqfRcw2dHd1BWQEAYg5pmxPG603rKJd+8j9CmIC1I6c5BRye8JIdx5f
-         9MYIFg0SVun3tipjOVsT0+vXvhAYKa1X98zdYLOrG/CLbtaaXdlEuWbDsY2AAfsgUiI9
-         ZH/O6IFksyThFV+Qk+ti9McIQYaUY2O6Dommzm8xll+/wA9RPyb1B+KBHGS4iw/XH/XE
-         gZjNcHlVhPQDpF4ePUS9FbP4poEFgUBVCIbV/38oIABCny1635GlHdgoSxSTpxdZtNeT
-         U23A==
+        d=gmail.com; s=20230601; t=1724078666; x=1724683466; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zb6F0HNbTZX23uf0i9iclKqAAe/JFVipCwV1qTRY4HE=;
+        b=BqbdimS7tFL7mtgmLtndewD0xs+nHEjKyC2NHOMrK3X7VKO6VHFu0UpJtpKMD+8mlz
+         i1JU89y1JDaR+uD8pow5UVlWDJ3BjX6xbpUe2K+pg742bncqnObgI2sS5v9mqw6cQOkw
+         NAf0Rr4JOuHghBduyXrL7gYSk+2g9b/I+c4ek3y61MKV9ZyHan0BdBoVkbv44rqhX+zZ
+         0ATEuNj4N5D/sFlQ54VJen10Hdqrcy4hEqwOLXbMzwbkisBfyr0S0D74WkwCNZWKHog0
+         /SZwvydCwonvEl7xhaV9ls5wzO/8+7mGbzgQD3eCJlTOgRxdmHuWTf3AcJ5cTTbVDwd8
+         s/Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724078625; x=1724683425;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JuND7K0ekUC0YS6IT+t8ylUpD84fd3Qi1ukfVX2K7jA=;
-        b=iGuKI2lXtPyp6qyxOyyAfa+IAzKkXxlyxmNJrIJMS5UckV/snud6mJiriaXefdl47l
-         28lUwz+SNXVbMBEgarP+5/jsGTigYOUfQ6tRBvedGZUpXqKoLyEt/MqIBolY7GcCHzXq
-         GrnZPj18oTwZmcUql/IWCH0J0s1wyLneWZtbbYyx7fZ76pTjR10oxKnBhP4MlIpTu+l4
-         HXxM5tJBqajVjRNLZZUPluL/lsA4HaM9/Otl4px9I7wIKbvzURUTIz1wMceYpP7ESM1F
-         XfAKwuqDafxnTn9F0GBXes9XzjyYYjuVgjp/Lq5+HgVSWaleyv2jMK2v/Yy+uRD0LLpT
-         qF9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVMFeUkFatD0StVGr7AcPWUIdt+A32T2aNZTqSBlRaElTBSbQEGRCZiAfwTKXx+IjaSeGMRUrPYvb6Ym2Md+nvQdKckD/a8Au9v/oFPg7bAP8Tjestfiw/rz+SA4NZrjAZ4Umk/wtB0Mg==
-X-Gm-Message-State: AOJu0Yzp+8I+WSMy1gFbbrCzqbAdpNvhTpzCKRmORcODNyRCBoPItCbY
-	9PqSOXHGLDKZxMWnSUpSK3PMresta+LHw9gnbiC96r0SenLxU8I2Nl40A43ZT3vO9dQKPBLL2CS
-	ucQxu/7VASkMZcRmXSq4P69gYF3U=
-X-Google-Smtp-Source: AGHT+IE73IQ5JAxt0eECgIIPdmod+EHyCAWPj8hpNshRr2NIZmu68lEsn9ZJxxBY4mjZB1wHnf/RVXTezw/2zogm5Ew=
-X-Received: by 2002:a05:6402:40c5:b0:5be:fa53:f74 with SMTP id
- 4fb4d7f45d1cf-5befa531123mr4271487a12.0.1724078624824; Mon, 19 Aug 2024
- 07:43:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724078666; x=1724683466;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zb6F0HNbTZX23uf0i9iclKqAAe/JFVipCwV1qTRY4HE=;
+        b=kTKWULe9Ahny3IK12Ze0pPpUbHZ+mNEyrHPv5VpsWGhoJKJP+ZpZCjC/alOfTBUOoV
+         LlWpoY9Hz6RX+68b5995Xl6UQLZWoINsUcy6ZHPwBDZdkvrgygalYH9JhQoQWiynLEUw
+         eO4cuy0XW1NFl+5wtMexxPfs+7nMiUP9ExYej15N10RiTSq6ol3I/DEM+2aAmc3TKKFN
+         zuv8bXFq1tPHCt/kkjdh0ciSxuyGmSYE+LNKk47OpIapY+KQL5pJak/7a1a7TW3YvP5b
+         kaeND4kjk/Ix4CScqZTCkqzGkV3dofMklqg7NwrxyewovrPC/HZa444WBLetOiaOd0J5
+         yQ2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVmrrNjdYJYSJI+4PrhnV+1eMEUDkvEywKKq5wm6Vi03v5Y0lIeuOZRMmamK3bfgRxf0XsW24cFCWuZrh+263rVmJycMbu61YZQ97eMTMluGbRbucYbXMm/7Y+cTgVD0v5kaL66
+X-Gm-Message-State: AOJu0Yy0SukQaOFgBhJjWQq0iut5HjFkfeRoj5nlSHFfIVbdydLcgysq
+	4xKTzIK/5ZgNFO/XztTMj4j/dLLhHxouNPQP3YgiRyLndesShUxA
+X-Google-Smtp-Source: AGHT+IHov3eos8LRePbZ0LJRgiJq+qG+pDNhA/L7pQm6KabReb1rCRtTCC8EcKnbLVQqHpztFqwGAg==
+X-Received: by 2002:a05:6402:1913:b0:5be:d7d8:49ad with SMTP id 4fb4d7f45d1cf-5bed7d84a88mr6401079a12.22.1724078665096;
+        Mon, 19 Aug 2024 07:44:25 -0700 (PDT)
+Received: from skbuf ([188.25.134.29])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebbe7f92dsm5625433a12.60.2024.08.19.07.44.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 07:44:24 -0700 (PDT)
+Date: Mon, 19 Aug 2024 17:44:22 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Pieter <vtpieter@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Woojung Huh <woojung.huh@microchip.com>,
+	UNGLinuxDriver@microchip.com,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Pieter Van Trappen <pieter.van.trappen@cern.ch>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/2] net: dsa: microchip: add KSZ8
+ change_tag_protocol support
+Message-ID: <20240819144422.fxop5fkg4ruoqh43@skbuf>
+References: <20240819104112.gi2egnjbf3b67scu@skbuf>
+ <CAHvy4ApydUb273oJRLLyfBKTNU1YHMBp261uRXJnLO05Hd0XKQ@mail.gmail.com>
+ <90009327-df9d-4ed7-ac6c-be87065421ba@lunn.ch>
+ <CAHvy4Aq0-9+Z9oCSSb=18GHduAfciAzritGb6yhNy1xvO8gNkg@mail.gmail.com>
+ <9e5cc632-3058-46b2-8920-30c521eb1bbd@lunn.ch>
+ <CAHvy4Aq=as=K48NZHt3Ek8Yg_AzyFdsmTe92b8SFobzUBM9JNA@mail.gmail.com>
+ <20240819140536.f33prrex2n3ifi7i@skbuf>
+ <CAHvy4AqRbsjvU4mtRXHuu6dvPCgGfvZUUiDc3OPbk_PtdNBpPg@mail.gmail.com>
+ <a45ef0cf-068e-4535-8857-fbea25603f32@lunn.ch>
+ <CAHvy4ArnEy+28xO3_m6EPFQxOKR1cJNkWLEVbx6JFBzLj6VMUg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <000000000000742b9d062005fc1c@google.com> <tencent_879750E9E2EF32CD287A2E6C9C2C856F1C0A@qq.com>
-In-Reply-To: <tencent_879750E9E2EF32CD287A2E6C9C2C856F1C0A@qq.com>
-From: Julian Sun <sunjunchao2870@gmail.com>
-Date: Mon, 19 Aug 2024 22:43:32 +0800
-Message-ID: <CAHB1NajJsvZgF5AdpaaZbnbBYt4L=Atcymag3aqTknLL0PeGTQ@mail.gmail.com>
-Subject: Re: [PATCH] ocfs2: Fix null-ptr-deref in jbd2_journal_update_sb_log_tail
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+05b9b39d8bdfe1a0861f@syzkaller.appspotmail.com, jack@suse.com, 
-	jlbec@evilplan.org, joseph.qi@linux.alibaba.com, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHvy4ArnEy+28xO3_m6EPFQxOKR1cJNkWLEVbx6JFBzLj6VMUg@mail.gmail.com>
 
-Well,In my modest opinion, j_sb_buffer is an internal variable of
-jbd2. Directly accessing internal variables from other modules can
-degrade the maintainability of the code (for instance, this variable
-might be removed at some point in the future). I have just sent
-another patch to address this issue [1].
+On Mon, Aug 19, 2024 at 04:41:29PM +0200, Pieter wrote:
+> Hi Andrew, Vladimir,
+> thanks for your explanation and patience!
+> 
+> It works as you said, I will have to do some changes to userspace to
+> ensure the DHCP client uses br0 instead of eth0 but that's it.
+> I just tried and br0 obtains the IP address and all is good, with
+> DSA tagging enabled.
+> 
+> This patch can be dropped, sorry for the hassle.
 
-[1]: https://lore.kernel.org/ocfs2-devel/20240819131120.746077-1-sunjunchao=
-2870@gmail.com/
-
-Edward Adam Davis <eadavis@qq.com> =E4=BA=8E2024=E5=B9=B48=E6=9C=8819=E6=97=
-=A5=E5=91=A8=E4=B8=80 21:41=E5=86=99=E9=81=93=EF=BC=9A
->
-> Journal too short will cause ocfs2_check_volume failed, and will set
-> journal->j_sb_buffer to NULL in journal_fail_superblock before running
-> journal shutdown.
->
-> Reported-and-tested-by: syzbot+05b9b39d8bdfe1a0861f@syzkaller.appspotmail=
-.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3D05b9b39d8bdfe1a0861f
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> ---
->  fs/ocfs2/journal.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
-> index 530fba34f6d3..25821077b855 100644
-> --- a/fs/ocfs2/journal.c
-> +++ b/fs/ocfs2/journal.c
-> @@ -1077,9 +1077,11 @@ void ocfs2_journal_shutdown(struct ocfs2_super *os=
-b)
->         BUG_ON(atomic_read(&(osb->journal->j_num_trans)) !=3D 0);
->
->         if (ocfs2_mount_local(osb)) {
-> -               jbd2_journal_lock_updates(journal->j_journal);
-> -               status =3D jbd2_journal_flush(journal->j_journal, 0);
-> -               jbd2_journal_unlock_updates(journal->j_journal);
-> +               if (journal->j_journal->j_sb_buffer) {
-> +                       jbd2_journal_lock_updates(journal->j_journal);
-> +                       status =3D jbd2_journal_flush(journal->j_journal,=
- 0);
-> +                       jbd2_journal_unlock_updates(journal->j_journal);
-> +               }
->                 if (status < 0)
->                         mlog_errno(status);
->         }
-> --
-> 2.43.0
->
->
-
-Thanks,
---=20
-Julian Sun <sunjunchao2870@gmail.com>
+I'm pretty baffled. Was this unclear from the user documentation at:
+https://www.kernel.org/doc/html/next/networking/dsa/configuration.html
+? Maybe we should change something to make it more clear that this is
+what is expected.
 
