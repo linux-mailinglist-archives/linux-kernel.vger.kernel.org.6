@@ -1,145 +1,136 @@
-Return-Path: <linux-kernel+bounces-291696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9F759565A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:33:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 680C09565A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:34:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58E12B21BF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:33:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7476B20CDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD1715821D;
-	Mon, 19 Aug 2024 08:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C23114EC47;
+	Mon, 19 Aug 2024 08:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Qheoh0jr"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WtBnHmgl"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADF4C125;
-	Mon, 19 Aug 2024 08:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B45C125
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724056371; cv=none; b=ctR6ADsq7PRn7v6QmceGQzY33LiTAoBDW9tiUQkUNsnJlW5DlQotHIk83/eczGRnWb3YYsbfSgYuWsdmFkYpAPqN32Ox1pbGbra59kQiZPgnqj5xkMkrxzEtlQew3MO7xp7oDIFXrHulbLYJfKN6iKztURHbxUyTkp/MLYsKyPA=
+	t=1724056430; cv=none; b=AHZ7g+iUkXKyCfql4qR9qOiLcvR9f2FTdmI8UydxVCh0PuKh/v645bTvkd/FU6mj3EMXVxANTgP4wo7OUU/EFTtTO6KdP5y9GzdIm8GzSHa7izY25F5k7VchjcXvKwe0HdNwP0Eq6xB35LrofchOQnK8lzINrtlLzhHva25aw0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724056371; c=relaxed/simple;
-	bh=ZIYg7RLH1+uZnk0IZRJZ10c2hHQsYwb+IZKGRmNbBi4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oBzCaWGaT7i1D27pmLN2uT2KuiXAdjgyboP24Lm5uwB73lCc4jDx8FcAbVI6q+AiejY/g3efacs1EvEvP9FtOpSMvS+nl/jefSytI0rBXxP15ucTLk6HgUlB3ks9EppRHyU3+nF87FEN2M4OukF+ew1gei0uZfWoD6+64oLmBks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Qheoh0jr; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47J8WbTS085474;
-	Mon, 19 Aug 2024 03:32:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724056357;
-	bh=7iEMJxVgqEWFaX/As9NKzd3hIp1ICaM4bk9aNoBrD80=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Qheoh0jrH1RmQ5TvN9yRyarDXGOlMZrkvrDZyA09M/Pf9X1MbiIKWrSIwioRbHNfb
-	 gFT/rr5WPiLwiBtvsWiNjd1QagmjtQ8I0e8HHmns1L/ofKTgtRZnBI3I7Gu+BeVQCg
-	 KSW0Go6u3MjfAHK7yl10XpdJpGivPIVTja/d7qGs=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47J8WbVa039098
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 19 Aug 2024 03:32:37 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 19
- Aug 2024 03:32:36 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 19 Aug 2024 03:32:36 -0500
-Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47J8WWjI119145;
-	Mon, 19 Aug 2024 03:32:32 -0500
-Message-ID: <e5140426-7e69-41b0-858f-16f83eed871a@ti.com>
-Date: Mon, 19 Aug 2024 14:02:31 +0530
+	s=arc-20240116; t=1724056430; c=relaxed/simple;
+	bh=r/2mE26LhYOUrCN214dZpQf1JZLHP0/lng5fopOYvzU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fNwAMxvuXFJ+aJHCMReHsL+vKGShV7tc0Wzqw3BUWb+FA2IsTxsneqb5m2e68pwlfs2IRmLItgY35SYXzseMhB9RJ868rzf617Jf1jJ9K+HotfMivvsKN+cTeH4mb328NzOlBR6BeUSw3GHKAOgZmBa2zUywDxqHJMxprKAdQYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WtBnHmgl; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a8384008482so414249066b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:33:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724056427; x=1724661227; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=P3b7+fBvPEBrGNKQcOtXVzvIBh569+UuVGvzSAzppHM=;
+        b=WtBnHmglFcQZ4rIPlX6ZdMIfHptteDWGd+SAmZfLWqVQKZ4tDnN7nC3jGChq4qqnlu
+         cA7ETzNDuaf8675iD85SVNVy7lRG59bj48lpvkWdCcou08AIS8IovyNQAKN+19ZqmgUg
+         6chrk2vqNc5OopqbS+j2MfYKQw9hAdEHLk8CZ7/bBjn8Z5Phs7ccMwnBoqbbDzQsS8Mw
+         3SAUZflQAd3h496bpRRexj+pJ2XWfWDfbFhkQgJO/0xqeQiGgIltnslP5+RL7IuCLz9/
+         6yDVZGPRUVuN6L7wEu3hj1DYUxjwaYKxKXx9+j+a2rTdaKWCDx3JK1DMSZ+grA9U1gBv
+         YJwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724056427; x=1724661227;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P3b7+fBvPEBrGNKQcOtXVzvIBh569+UuVGvzSAzppHM=;
+        b=raTGrgxg0Bte90QCrNSvwoxLyL5IwU3Uq29/Mv+hYbkDlrFiUk+r7IyB1BR5N89Elt
+         xxUu3B/wAnDXRe6zMfyxXh6gQ+tDDfbUjsOawSNCQBPvnlpQ4rTk3xhKAn9TBIv7JF8y
+         j+IDxoHEkmTPqKsaSm4ZJy8sX3P3JqsKClhu+T2qtzmbQOY9q6hoHHk/KKSVr1G8pwxO
+         AuO3tom423LYCFqU7v9JSGmAZxUGqqkoRlmqmAcsUU2HCCXGh+FYhe6UB8wA/ewXnT9N
+         deppKxntzu9osROtTE681/YaJtaB94lRVIDXbRhFRa8HfZecUEjndkpBY2CSz1jWX+gT
+         8Hqg==
+X-Forwarded-Encrypted: i=1; AJvYcCXRfP9Q+i7Ay9ave1Nb2rdFEUoiizS6kuuuwXUa1kBXL2baf2ENJYVzWshemt5q1hM8FToRBZr96/61B/gagYT0Z3ZU50N/81GgPuYt
+X-Gm-Message-State: AOJu0Yx1Sfjfgm3+DdEJ7GOV2e4/AXtlWbI1VJvywaS4yBL1rPv79Pf5
+	5kv4inWlbveQfqGudYH9LwqH7AUiEo4urtQ7NMPHEdHJxDOOEhuV
+X-Google-Smtp-Source: AGHT+IHOYfgi2IoBawBKKtV6RazPErmEGbc9wdhSXGegBYXfWADFYW/keo/GyPEHvhyPEnC5ocegjA==
+X-Received: by 2002:a17:907:9407:b0:a7a:8cb9:7491 with SMTP id a640c23a62f3a-a83aa09fe65mr454713066b.54.1724056427023;
+        Mon, 19 Aug 2024 01:33:47 -0700 (PDT)
+Received: from fedora.iskraemeco.si ([193.77.86.250])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383934564sm602592666b.126.2024.08.19.01.33.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 01:33:46 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH -tip] x86/boot/64: Strip percpu address space from gdt kernel load
+Date: Mon, 19 Aug 2024 10:33:13 +0200
+Message-ID: <20240819083334.148536-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 3/9] remoteproc: k3-m4: Add a remoteproc driver for
- M4F subsystem
-To: Mathieu Poirier <mathieu.poirier@linaro.org>, Andrew Davis <afd@ti.com>
-CC: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>,
-        Hari Nagalla <hnagalla@ti.com>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240802152109.137243-1-afd@ti.com>
- <20240802152109.137243-4-afd@ti.com> <Zr4w8Vj0mVo5sBsJ@p14s>
- <Zr9j5HBjRqqRIoaD@p14s>
-Content-Language: en-US
-From: Vignesh Raghavendra <vigneshr@ti.com>
-In-Reply-To: <Zr9j5HBjRqqRIoaD@p14s>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-[...]
+init_per_cpu_var() returns pointer in the percpu address space while
+rip_rel_ptr() expects pointer in the generic address space, resulting
+in:
 
-Hi Mathieu
+asm.h:124:63: error: passing argument 1 of ‘rip_rel_ptr’ from pointer to non-enclosed address space
 
-On 16/08/24 20:06, Mathieu Poirier wrote:
->>> +/*
->>> + * Attach to a running M4 remote processor (IPC-only mode)
->>> + *
->>> + * The remote processor is already booted, so there is no need to issue any
->>> + * TI-SCI commands to boot the M4 core. This callback is used only in IPC-only
->>> + * mode.
->>> + */
->>> +static int k3_m4_rproc_attach(struct rproc *rproc)
->>> +{
->>> +	struct k3_m4_rproc *kproc = rproc->priv;
->>> +	int ret;
->>> +
->>> +	ret = k3_m4_rproc_ping_mbox(kproc);
->>> +	if (ret)
->>> +		return ret;
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +/*
->>> + * Detach from a running M4 remote processor (IPC-only mode)
->>> + *
->>> + * This rproc detach callback performs the opposite operation to attach
->>> + * callback, the M4 core is not stopped and will be left to continue to
->>> + * run its booted firmware. This callback is invoked only in IPC-only mode.
->>> + */
->>> +static int k3_m4_rproc_detach(struct rproc *rproc)
->>> +{
->>> +	return 0;
->>> +}
->> Please remove.
-> Forget this comment since it would cause an error in __rproc_detach().  
-> 
->> Other than the above I'm good with this driver.  That said I can't move forward
->> without a nod from the DT crew.  I also noticed a fair amount of code
->> duplication with the k3_r5 and k3_dsp drivers.  Dealing with that should not be
->> part of the current work but will need to be done before another k3 driver can
->> be merged.
->>
+when strict address space checks are enabled.
 
-> The above still apply though.
+Add explicit casts to remove address space of the returned pointer.
 
-Me or Nishanth will pick up the SoC DT patches via TI SoC tree, once the
-driver patches are merged. Feel free to ignore those but queue
-dt-bindings (already has DT maintainers ack) and driver patches via
-rproc tree.
+Found by GCC's named address space checks.
 
+There were no changes in the resulting object file.
 
+Fixes: 11e36b0f7c21 ("x86/boot/64: Load the final kernel GDT during early boot directly, remove startup_gdt[]")
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+---
+ arch/x86/kernel/head64.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index a817ed0724d1..2b7a4e28e72f 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -560,9 +560,11 @@ void early_setup_idt(void)
+ void __head startup_64_setup_gdt_idt(void)
+ {
+ 	void *handler = NULL;
++	struct desc_struct *gdt =
++		(void *)(__force unsigned long)init_per_cpu_var(gdt_page.gdt);
+ 
+ 	struct desc_ptr startup_gdt_descr = {
+-		.address = (unsigned long)&RIP_REL_REF(init_per_cpu_var(gdt_page.gdt)),
++		.address = (unsigned long)&RIP_REL_REF(*gdt),
+ 		.size    = GDT_SIZE - 1,
+ 	};
+ 
 -- 
-Regards
-Vignesh
+2.46.0
+
 
