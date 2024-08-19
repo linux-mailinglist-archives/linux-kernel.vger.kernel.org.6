@@ -1,186 +1,149 @@
-Return-Path: <linux-kernel+bounces-292217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFD28956C98
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:02:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 317BA956C7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DA691F233C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:02:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D803628374B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294D616F0C3;
-	Mon, 19 Aug 2024 14:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E6A16B753;
+	Mon, 19 Aug 2024 13:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ruW8GVhG"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gjiJ/zR3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3227516E890;
-	Mon, 19 Aug 2024 14:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15FD71BDCF
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 13:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724076067; cv=none; b=QQY9RbvqHm1HoVPlt4BLhde9qqzATmJ8fVLX/hl4NwAMbQfa20aAbldooDZu3GQ9+OWkY/kT/pWmx6Lwcu3vRHp0B4JTAY40CBpcBvFrIGXnuyqhYvekdLztGXlWjqJlosJacs7WWq/qd0y0MSXxGyMHThPqKEiJ0uyxW86djiE=
+	t=1724075748; cv=none; b=D8As1IKAV+gmDyPHzHZTtm7cns9RWTaFpFoIWVcTQGvyhV+xjjw4E77EEW9N0YXFIIrdhtZlHHYGLF6KhC++2JLjuE7ESkLYUPNrLHD04jDyFmB9L2dQns3lQgDD0199whzGZrauTS+25l8wBROMPUXchBcBc+VVlp6VWkNIM7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724076067; c=relaxed/simple;
-	bh=s1iE6xPMzKFRmhLcLWROW0r/llJKq3e5Izp2wphWybI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hEVdHMCsC1NLO1o+nFEKjs40vgaJwcsFe21T4HCf+Zi5GnqN6C256HuaDzILcB6eFx2h5SX7t4hmzG6r7QGxbEG1bq8VFYiZ0Z/35bC0JyJ2msxNqP1VUq8/htxJJnbqxkJYd7X3HQkpQ1e8vYk/GagfXYBa/JMBVWgw78iXMa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ruW8GVhG; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JE0ThH006794;
-	Mon, 19 Aug 2024 14:01:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=Q7mFDQQWHBgea
-	oXEshsA3gFOlZBODJhgzOd/TyK16qM=; b=ruW8GVhGejiYVXw1SasWZeSkonl9a
-	GFyVJp8NPYlOkO2MGLhqaHCeNa4rlv6T/F/m7ytvyoVd0tHGtg30jcUyiuPTeQJz
-	CfBhBF4k1ZPmB3e/JkpUk5Co/+ybCTzLQVEXqQgtW9lkxbmf7URi0f2eaeBzmcxz
-	D1v9hMBs9B9Vv2lEvUbg/AYMHkUEep9NI8n2+eiTAXZeF/xdJAKe5tYKCIOUsrmr
-	MN8t+FcwFscUK3tpfF2TTmkZtumlDeBHeSAXTZzwYRVOjTFE1YydCcYcVSQ0FIEG
-	CyuOmy5F4yEoQ/vsdfM0hAaZ0aBFPCxq7nLax4pcqoF5Y/x9LKHtv5Gsg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mcy8n7q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 14:01:01 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47JE11j8031036;
-	Mon, 19 Aug 2024 14:01:01 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mcy8n7g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 14:01:01 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47JCrLjC019105;
-	Mon, 19 Aug 2024 14:01:00 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41376ppcsn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 14:01:00 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47JE0s5147579454
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 19 Aug 2024 14:00:56 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 522A62004B;
-	Mon, 19 Aug 2024 14:00:54 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2ED4620043;
-	Mon, 19 Aug 2024 14:00:54 +0000 (GMT)
-Received: from a46lp38.lnxne.boe (unknown [9.152.108.100])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 19 Aug 2024 14:00:54 +0000 (GMT)
-From: Hariharan Mari <hari55@linux.ibm.com>
-To: linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, shuah@kernel.org,
-        frankja@linux.ibm.com, borntraeger@linux.ibm.com,
-        imbrenda@linux.ibm.com, david@redhat.com, pbonzini@redhat.com
-Subject: [PATCH v1 5/5] KVM: s390: selftests: Add regression tests for PLO subfunctions
-Date: Mon, 19 Aug 2024 15:54:26 +0200
-Message-ID: <20240819140040.1087552-6-hari55@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240819140040.1087552-1-hari55@linux.ibm.com>
-References: <20240819140040.1087552-1-hari55@linux.ibm.com>
+	s=arc-20240116; t=1724075748; c=relaxed/simple;
+	bh=WUNrRHqmSsLxXpn67ARAQf22SPte6CU0HDAC1zhNoSs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=G9U1VbpxYgYn8RXrUcDG/mZeGThZ5VIuyXEMHeDGELptexsn94hcURpDlWaJj/YZy/ENZrjifPfpOL1sZOlS63Jqtu6lFrBbD2npdgHtnA54b54TryT2ciiP2bNFpzsDyuz/0OW3P03Px2ftNfGf9lag0KnhbnSZb4UC1Mke9EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gjiJ/zR3; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724075747; x=1755611747;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=WUNrRHqmSsLxXpn67ARAQf22SPte6CU0HDAC1zhNoSs=;
+  b=gjiJ/zR33zg3h0dgakrmW7zgGGsVHM7UV4f34BiBDZX8iLrdx8d+e58e
+   FswBG/JW7uwWqgfGzQGGlfNVTN51JOxzvOzoIBlVs1es2A/s0A4UTsWwH
+   MaP6zZ/x7k+AKgvSh3vLSAMIdZ0ycJojip+kA/rzfzKe4wW5z/Idq8d8G
+   CTTqQSi5wDEVRQah5ucb1COk2qd8XWLGjbasxM91ZFfjn21O1FFBDeCvo
+   WHnS6R+q4uKxmZqay3/zOMJohRKvwIL97aJKcucqvV0vEqWvfG1ma+VBo
+   GqcclmOSKfQe8DObZ3ndGM1c5toR5YN9F8csWRjCa6tQQjSAZx3EbBxti
+   g==;
+X-CSE-ConnectionGUID: i003BdyGRXC/9Rw94oGFzg==
+X-CSE-MsgGUID: yTs7T+ePRjKA5G4drcbq4A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="32895342"
+X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
+   d="scan'208";a="32895342"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 06:55:46 -0700
+X-CSE-ConnectionGUID: A/XrSvN7TfuVcQd3TKuGww==
+X-CSE-MsgGUID: l+kl596LRmylYDbG1a9r6A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
+   d="scan'208";a="64773287"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 19 Aug 2024 06:55:44 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sg2rG-00091y-0H;
+	Mon, 19 Aug 2024 13:55:42 +0000
+Date: Mon, 19 Aug 2024 21:55:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chris Lu <chris.lu@mediatek.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Subject: ld.lld: error: relocation R_RISCV_HI20 cannot be used against symbol
+ 'errata_list'; recompile with -fPIC
+Message-ID: <202408192115.CLzfNikL-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: znkhn4mQ0BmSZgUWvl1xAvKRl3kLRiMq
-X-Proofpoint-GUID: 3CFScvYy-Bwq1ZUNjm71HJlDcAb8LVep
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-19_11,2024-08-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 phishscore=0 mlxscore=0 bulkscore=0 malwarescore=0
- mlxlogscore=999 spamscore=0 lowpriorityscore=0 clxscore=1015
- suspectscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408190090
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Extend the existing regression test framework for s390x CPU subfunctions
-to include tests for the Perform Locked Operation (PLO) subfunction
-functions.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   47ac09b91befbb6a235ab620c32af719f8208399
+commit: f0c83a23fcbb424fdff5b38fbcdda3c04003a210 Bluetooth: btmtk: Fix btmtk.c undefined reference build error
+date:   3 weeks ago
+config: riscv-randconfig-001-20240819 (https://download.01.org/0day-ci/archive/20240819/202408192115.CLzfNikL-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 26670e7fa4f032a019d23d56c6a02926e854e8af)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240819/202408192115.CLzfNikL-lkp@intel.com/reproduce)
 
-PLO was introduced in the very first 64-bit machine generation.
-Hence it is assumed PLO is always installed in the Z Arch.
-The test procedure follows the established pattern.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408192115.CLzfNikL-lkp@intel.com/
 
-Suggested-by: Janosch Frank <frankja@linux.ibm.com>
-Signed-off-by: Hariharan Mari <hari55@linux.ibm.com>
-Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
----
- .../kvm/s390x/cpumodel_subfuncs_test.c        | 36 ++++++++++++++++++-
- 1 file changed, 35 insertions(+), 1 deletion(-)
+All errors (new ones prefixed by >>):
 
-diff --git a/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c b/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
-index 901c99fe79d9..255984a52365 100644
---- a/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
-+++ b/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
-@@ -20,6 +20,8 @@
- 
- #include "kvm_util.h"
- 
-+#define U8_MAX  ((u8)~0U)
-+
- /**
-  * Query available CPU subfunctions
-  */
-@@ -37,6 +39,33 @@ static void get_cpu_machine_subfuntions(struct kvm_vm *vm,
- 	TEST_ASSERT(!r, "Get cpu subfunctions failed r=%d errno=%d", r, errno);
- }
- 
-+static inline int plo_test_bit(unsigned char nr)
-+{
-+	unsigned long function = (unsigned long)nr | 0x100;
-+	int cc;
-+
-+	asm volatile("	lgr	0,%[function]\n"
-+			/* Parameter registers are ignored for "test bit" */
-+			"	plo	0,0,0,0(0)\n"
-+			"	ipm	%0\n"
-+			"	srl	%0,28\n"
-+			: "=d" (cc)
-+			: [function] "d" (function)
-+			: "cc", "0");
-+	return cc == 0;
-+}
-+
-+/*
-+ * Testing Perform Locked Operation (PLO) CPU subfunction's ASM block
-+ */
-+static void test_plo_asm_block(u8 (*query)[32])
-+{
-+	for (int i = 0; i <= U8_MAX; ++i) {
-+		if (plo_test_bit(i))
-+			(*query)[i >> 3] |= 0x80 >> (i & 7);
-+	}
-+}
-+
- /*
-  * Testing Crypto Compute Message Authentication Code (KMAC) CPU subfunction's
-  * ASM block
-@@ -235,8 +264,13 @@ struct testdef {
- 	u8 *subfunc_array;
- 	size_t array_size;
- 	testfunc_t test;
--	bool facility_bit;
-+	int facility_bit;
- } testlist[] = {
-+	/*  PLO was introduced in the very first 64-bit machine generation.
-+	 *  Hence it is assumed PLO is always installed in Z Arch .
-+	 */
-+	{ "PLO", cpu_subfunc.plo, sizeof(cpu_subfunc.plo),
-+		test_plo_asm_block, 1 },
- 	/* MSA - Facility bit 17 */
- 	{ "KMAC", cpu_subfunc.kmac, sizeof(cpu_subfunc.kmac),
- 		test_kmac_asm_block, 17 },
+>> ld.lld: error: relocation R_RISCV_HI20 cannot be used against symbol 'errata_list'; recompile with -fPIC
+   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
+   >>> referenced by errata.c:0 (arch/riscv/errata/sifive/errata.c:0)
+   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_RISCV_LO12_I cannot be used against symbol 'errata_list'; recompile with -fPIC
+   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
+   >>> referenced by errata.c:0 (arch/riscv/errata/sifive/errata.c:0)
+   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_RISCV_HI20 cannot be used against symbol '.L.str.4'; recompile with -fPIC
+   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
+   >>> referenced by errata.c:71 (arch/riscv/errata/sifive/errata.c:71)
+   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_RISCV_LO12_I cannot be used against symbol '.L.str.4'; recompile with -fPIC
+   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
+   >>> referenced by errata.c:71 (arch/riscv/errata/sifive/errata.c:71)
+   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_RISCV_HI20 cannot be used against symbol 'riscv_cbom_block_size'; recompile with -fPIC
+   >>> defined in vmlinux.a(arch/riscv/mm/cacheflush.o)
+   >>> referenced by errata.c:113 (arch/riscv/errata/thead/errata.c:113)
+   >>>               arch/riscv/errata/thead/errata.o:(thead_errata_patch_func) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_RISCV_LO12_S cannot be used against symbol 'riscv_cbom_block_size'; recompile with -fPIC
+   >>> defined in vmlinux.a(arch/riscv/mm/cacheflush.o)
+   >>> referenced by errata.c:120 (arch/riscv/errata/thead/errata.c:120)
+   >>>               arch/riscv/errata/thead/errata.o:(thead_errata_patch_func) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_RISCV_HI20 cannot be used against symbol 'text_mutex'; recompile with -fPIC
+   >>> defined in vmlinux.a(kernel/extable.o)
+   >>> referenced by errata.c:71 (arch/riscv/errata/sifive/errata.c:71)
+   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_RISCV_LO12_I cannot be used against symbol 'text_mutex'; recompile with -fPIC
+   >>> defined in vmlinux.a(kernel/extable.o)
+   >>> referenced by errata.c:71 (arch/riscv/errata/sifive/errata.c:71)
+   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_RISCV_HI20 cannot be used against symbol '.L.str'; recompile with -fPIC
+   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
+   >>> referenced by errata.c:71 (arch/riscv/errata/sifive/errata.c:71)
+   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_RISCV_LO12_I cannot be used against symbol '.L.str'; recompile with -fPIC
+   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
+   >>> referenced by errata.c:71 (arch/riscv/errata/sifive/errata.c:71)
+   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
+
 -- 
-2.45.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
