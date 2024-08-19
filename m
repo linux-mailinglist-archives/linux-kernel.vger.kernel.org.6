@@ -1,198 +1,115 @@
-Return-Path: <linux-kernel+bounces-292475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 055ED956FEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:13:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 437DA956FB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:05:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 796AF1F26037
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:13:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBEA21F22D5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22AFF1741D1;
-	Mon, 19 Aug 2024 16:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8538B175D4C;
+	Mon, 19 Aug 2024 16:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="hxLRArNu"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yfXRVL15"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2CA13B5AF;
-	Mon, 19 Aug 2024 16:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B51D17556C
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724083980; cv=none; b=sm1cknB20NY3SShsTfmlAuF2ZwtLhzKRk+F2BZNodv3nNMklzwbzlhVZWB79jX60NsY0j6JTs17bA6WqO+TCslQn9byTTS40pgBanwVFCOuzqUJSBwI+qj65nBjQBpOAlCZPElWQpvrNNYOn1Kuwvl8Qcy7xXoW9JrfsOIoWTzw=
+	t=1724083382; cv=none; b=NimZ0uWUG2qAVVrGZfg2zxJLiUIqVWj7EwZbM8aRkqeNMZYMh7m+itAXv4R3VHc9gwPNIDSNHalHSVPBPl5ICdqhti27XmkR231qSEI7CNMHhLCQ/0vqt/QJ4HaYVCWlYrb32wzwgq4RsKTqu3teboaCwpcQE+SzSfFrkur3ZkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724083980; c=relaxed/simple;
-	bh=Zb6109j0Bj3H4tOwPJxMq23sSAYxZGF9FEvKaHyjcAg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oo9dcX405wEMNWOOxFe+XW1fj+wxQbXDrmkPTrtHjOWK1b7BPxaaliu4skwgLqLXzMs2gbVRjxozUsgxWwlO6ectIpja67PFA4lthUxigG0ONtOKPg/Nay+4IZ0ZPNrlQmm+wj9A63NGQ+5CYvZYKo4hgNv/g7tfmNE+VdFBWJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=hxLRArNu reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 506cac52ca7c0934; Mon, 19 Aug 2024 18:12:50 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id B153773B5D4;
-	Mon, 19 Aug 2024 18:12:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1724083970;
-	bh=Zb6109j0Bj3H4tOwPJxMq23sSAYxZGF9FEvKaHyjcAg=;
-	h=From:Subject:Date;
-	b=hxLRArNugnPTs0sA2YHnYp722sz0QoJEgNh/TQU3zVwobZlMTygmRRwxnENqhMRyC
-	 uKSE7rAY5y4KbFoqwnPL8tJwx2zwTZtjJ0XJ5uWSRTvX1fLK0kn4ErOQfelsDWa0Zh
-	 bNCxTHg2/iB0M85nQGD4NqYlS88oCIFo65l4UgTzLTV6GgVWJZNyeDbcGgP6yr36bH
-	 sZXO8vdCP6OPMPRfDTH61ncNieaVTZm1oXQ7Xj8+Ik+jlGzcEt+Lz5wy+3HtqMheDD
-	 JpV/RkeP9gDusQgic3izBRyrFGMhNOlFDajSInoFWS9C3eRiZOOapjaCRIzQM6uR/1
-	 wdmKCCGdM14KA==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
-Subject:
- [PATCH v3 07/14] thermal: ACPI: Use the .should_bind() thermal zone callback
-Date: Mon, 19 Aug 2024 18:02:44 +0200
-Message-ID: <1812827.VLH7GnMWUR@rjwysocki.net>
-In-Reply-To: <2205737.irdbgypaU6@rjwysocki.net>
-References: <2205737.irdbgypaU6@rjwysocki.net>
+	s=arc-20240116; t=1724083382; c=relaxed/simple;
+	bh=bnUBnCqQvrA1i85oD3U8cnHaXF3BzBM72oTbr8bFPPk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=VhwUVAcF8YwfRaF+4VJJySKyUjsu0cF1iJhqeybLCewmKf4aovPht1ad2VEb/WNGCjFlRczoygI/IeE2Zd/O5o5hAnJ70XA+OqkbsKdbqxI8BYW8Ba8rKzjkGrVhNFZr2DVv+vAC3WWcIkEHMBuOuMuEgLvD+5hUGfgiH6MAjFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yfXRVL15; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3718e416297so1993043f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:03:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724083379; x=1724688179; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hPkKW2LvTdv3KmUUw5RUkwnuj7RdV8+FsUA2SiVs/RU=;
+        b=yfXRVL15nReb9AM6JrGthW6Qb06WiZHNILwogs4vpEtf6TL0JwGoWiZZAnEJrpR+Oj
+         JnXt9Y6x6V8msxroqDYWvQun4h1PZUUv6pNvv2UG3ciilQ0uCu2yBaLDxFuXIBEhr8On
+         H9yFTjHpo9x2bfJXT6J7uJI4xoTU871DxZNzptRCYFhJNtxnVuEKx1PHIjjJS3hWGECJ
+         6evMRT36hAYwXNEzk6nt4vTpWrpeRAhm3HF6NNzTxm/2NTi5mD9RIwK3788a2j7JrMEw
+         v0kDYWEluGLijNDQfEsH8AMrv+2YHoA2pMSDLII/XJ0i2S/iVPwsxSe72MF4u6ZugSaQ
+         XpJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724083379; x=1724688179;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hPkKW2LvTdv3KmUUw5RUkwnuj7RdV8+FsUA2SiVs/RU=;
+        b=HQpbAgMEdmB6MzZcAGi30WTgUCqfVPdWGYSWIVasaZ9taBrOb6+htDD+j30p5UgqLA
+         FV5P6n6bdYJ9n2w//bC3oWPiL3/LtgmKbNUF34MDTvIvC7pZBmNTObmiYhnAJOWoBaJ/
+         9Td7z6o4+rsQp1yx8yqY+cMemfrpysxorCWE0q0XUquoBvljC03KpHRl1QiR7hVOlb4r
+         2QkMh75cqVBLzkP+8iwzglyLK/ZrHa2NOc26V1mFYlmhV/qBTb8qoepkvtLSFdXPIm19
+         yIcWlTC2i9zPSUkyZqqjYKPSC/u4LjmUhCmHgOvD/yJOu/Mw2sqLFeebOQdY/6mWdgF9
+         Sw+A==
+X-Forwarded-Encrypted: i=1; AJvYcCX4bRoE6pgNQnXIWt/b4r++rSPVEJDYeEK0kaBXPVlQRFbG9heY/0tYJpq0fMztdlDcPS5uPKvGhqPVk/OMt2/6vPPe+pNH447Vteec
+X-Gm-Message-State: AOJu0YwdMNhWBZBZan9omHAiC6jjnKT7dH+Z+wBpRJCxqSVFgD6DD4k+
+	772OROhlR84BVWGq7JhMrbJmA+HzeB74EQY0O7qgbKDFSS/3v/zdee9imy5czIk=
+X-Google-Smtp-Source: AGHT+IGw6LCgPmvL6ZKIYTJsbQpctLJYo/wa4DHZVvu+Ak/SM6l58kPGLiM8dwDXzvtVr10V3LCUMA==
+X-Received: by 2002:adf:cc8c:0:b0:368:3f60:8725 with SMTP id ffacd0b85a97d-3719468fac0mr5564106f8f.39.1724083378853;
+        Mon, 19 Aug 2024 09:02:58 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898aabe9sm10907638f8f.92.2024.08.19.09.02.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 09:02:58 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Sam Ravnborg <sam@ravnborg.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel@pengutronix.de, 
+ Conor Dooley <conor.dooley@microchip.com>
+In-Reply-To: <20240729-b4-v6-10-topic-innolux-v2-0-27d32c766ce5@pengutronix.de>
+References: <20240729-b4-v6-10-topic-innolux-v2-0-27d32c766ce5@pengutronix.de>
+Subject: Re: [PATCH v2 0/2] drm/panel: simple: add Innolux G070ACE-LH3
+Message-Id: <172408337763.1748689.2942378302112499804.b4-ty@linaro.org>
+Date: Mon, 19 Aug 2024 18:02:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddugedgleekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohephedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhr
- tghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hi,
 
-Make the ACPI thermal zone driver use the .should_bind() thermal zone
-callback to provide the thermal core with the information on whether or
-not to bind the given cooling device to the given trip point in the
-given thermal zone.  If it returns 'true', the thermal core will bind
-the cooling device to the trip and the corresponding unbinding will be
-taken care of automatically by the core on the removal of the involved
-thermal zone or cooling device.
+On Mon, 29 Jul 2024 09:02:37 +0200, Steffen Trumtrar wrote:
+> This series adds support for the Innolux G070ACE-LH3 to the panel-simple
+> driver and adds the according compatible to the devicetree bindings.
+> 
+> 
 
-This replaces the .bind() and .unbind() thermal zone callbacks which
-allows the code to be simplified quite significantly while providing
-the same functionality.
+Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+[1/2] dt-bindings: display: simple: Document support for Innolux G070ACE-LH3
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/99d79eacd1286bafbf5878a510b3ceb49360872c
+[2/2] drm/panel: simple: add Innolux G070ACE-LH3 LVDS display support
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/b9d228a5b2ebcb1f1f63170f5b20bc2f9d276168
 
-v1 -> v3: No changes (previously [09/17])
-
-This patch only depends on the previous one introducing the .should_bind()
-thermal zone callback.
-
----
- drivers/acpi/thermal.c |   64 ++++++-------------------------------------------
- 1 file changed, 9 insertions(+), 55 deletions(-)
-
-Index: linux-pm/drivers/acpi/thermal.c
-===================================================================
---- linux-pm.orig/drivers/acpi/thermal.c
-+++ linux-pm/drivers/acpi/thermal.c
-@@ -558,77 +558,31 @@ static void acpi_thermal_zone_device_cri
- 	thermal_zone_device_critical(thermal);
- }
- 
--struct acpi_thermal_bind_data {
--	struct thermal_zone_device *thermal;
--	struct thermal_cooling_device *cdev;
--	bool bind;
--};
--
--static int bind_unbind_cdev_cb(struct thermal_trip *trip, void *arg)
-+static bool acpi_thermal_should_bind_cdev(struct thermal_zone_device *thermal,
-+					  const struct thermal_trip *trip,
-+					  struct thermal_cooling_device *cdev,
-+					  struct cooling_spec *c)
- {
- 	struct acpi_thermal_trip *acpi_trip = trip->priv;
--	struct acpi_thermal_bind_data *bd = arg;
--	struct thermal_zone_device *thermal = bd->thermal;
--	struct thermal_cooling_device *cdev = bd->cdev;
- 	struct acpi_device *cdev_adev = cdev->devdata;
- 	int i;
- 
- 	/* Skip critical and hot trips. */
- 	if (!acpi_trip)
--		return 0;
-+		return false;
- 
- 	for (i = 0; i < acpi_trip->devices.count; i++) {
- 		acpi_handle handle = acpi_trip->devices.handles[i];
--		struct acpi_device *adev = acpi_fetch_acpi_dev(handle);
--
--		if (adev != cdev_adev)
--			continue;
- 
--		if (bd->bind) {
--			int ret;
--
--			ret = thermal_bind_cdev_to_trip(thermal, trip, cdev,
--							THERMAL_NO_LIMIT,
--							THERMAL_NO_LIMIT,
--							THERMAL_WEIGHT_DEFAULT);
--			if (ret)
--				return ret;
--		} else {
--			thermal_unbind_cdev_from_trip(thermal, trip, cdev);
--		}
-+		if (acpi_fetch_acpi_dev(handle) == cdev_adev)
-+			return true;
- 	}
- 
--	return 0;
--}
--
--static int acpi_thermal_bind_unbind_cdev(struct thermal_zone_device *thermal,
--					 struct thermal_cooling_device *cdev,
--					 bool bind)
--{
--	struct acpi_thermal_bind_data bd = {
--		.thermal = thermal, .cdev = cdev, .bind = bind
--	};
--
--	return thermal_zone_for_each_trip(thermal, bind_unbind_cdev_cb, &bd);
--}
--
--static int
--acpi_thermal_bind_cooling_device(struct thermal_zone_device *thermal,
--				 struct thermal_cooling_device *cdev)
--{
--	return acpi_thermal_bind_unbind_cdev(thermal, cdev, true);
--}
--
--static int
--acpi_thermal_unbind_cooling_device(struct thermal_zone_device *thermal,
--				   struct thermal_cooling_device *cdev)
--{
--	return acpi_thermal_bind_unbind_cdev(thermal, cdev, false);
-+	return false;
- }
- 
- static const struct thermal_zone_device_ops acpi_thermal_zone_ops = {
--	.bind = acpi_thermal_bind_cooling_device,
--	.unbind	= acpi_thermal_unbind_cooling_device,
-+	.should_bind = acpi_thermal_should_bind_cdev,
- 	.get_temp = thermal_get_temp,
- 	.get_trend = thermal_get_trend,
- 	.hot = acpi_thermal_zone_device_hot,
-
-
+-- 
+Neil
 
 
