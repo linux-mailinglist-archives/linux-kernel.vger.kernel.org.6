@@ -1,229 +1,152 @@
-Return-Path: <linux-kernel+bounces-291314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDF449560CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 03:16:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DF0A9560CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 03:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8599D2817F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 01:16:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C19A1F222B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 01:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C21224D1;
-	Mon, 19 Aug 2024 01:16:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B241D554;
+	Mon, 19 Aug 2024 01:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GjVk7vVO"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MPNp7855"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006021BC59
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4EA91B7E4
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724030194; cv=none; b=XYjANz6XwJ/VLh7ccR6h2gO714mAXbsnF8XG7ajzzFGK8D5IFNnAiWeGAsM9yVJcKL4W5wGG1OEXKUNycjiMA1LRReu62mbPOLReGDPSKqLAk+bNsiZj3epD1lXD+vGBOiE5vyDP8wMM4noorO4vCFkXC9oSCsfEhLmqXBBX0S0=
+	t=1724030223; cv=none; b=bOsCHlYaLxWU+G80DwLjF7gcGxGZ7xsUMHl2bg/RlXzlkMKxW/cCh4Q/w++Ofifun+l+7RLqn7g8SU2RzpV3Ejy91xUo002ydOpwHRSqwdjFYIhRQQebYzsGMR7HcEzrpY91w0TS+2gYsfUKpNXJr62OKujwd+b5AYFlLpcswnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724030194; c=relaxed/simple;
-	bh=xhcng5MzljL+XELseiKtxkLrtjUCIkGMzpR+W/AjuHo=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=VI52FQHADkgf6nTvVx1W8pol1CgsASYYreosOWMiF3UDp2+MwZ2qmCJwiwbo7/3nFDTWVIZmo8JmueOn4ubtjlM0RQO0b5lPtbNGdwT7ItgTBKRsBlh7lrtSMVluzeGZz9whpjLvQ+rd4FEjuXhyxSCi2IaaUF8mGJFsG+RBgHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GjVk7vVO; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7a264a24ea7so2892236a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 18:16:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724030192; x=1724634992; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=96bRgenJ1LT1YAwkODeJ5weecL8b0jZhBJFXT0lV/4U=;
-        b=GjVk7vVORz8CBYSt0i3/qVJby3TOFlQcxpjYMhcsPfrtkdbYvB4bEGpYpMLnLziqZ3
-         9QQz0Ft7NMvFSeyQszO6szE3Quo0Y7eTpS3rtCr9/L00r6oZpkLijXKTzQTMse373R6j
-         YWqFkCA/2wQJMaXMjGR09yYSq2sgUSwVAxHBKOQZnAHHvqjF//YQjyVm6FrmHzRNgurb
-         KCf9iycEOEmUmhQYcOSEhdjuxqEPBieK8vJ3F4y+4f8ljrWSU0F+wEefj08ZIJWPdXFY
-         J9TIN5kWeDi6Eyk0n6fXave0h/rqSAWMXOpAFsikYIBGcdT+Or5VpY8sFsdhkLnQkMZY
-         FyjA==
+	s=arc-20240116; t=1724030223; c=relaxed/simple;
+	bh=tp/Xpdn1oemCOIemM7zlCWHNVyPm8ld8A4jJVsyxICU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jiVsnSMpJZkvZv5y8z+SsgsTjgmMXuU6TjN87kBWNjJCWhTJLpVhFDcE07R9HdBFNYZid3nUSvHgi8LqW4w4hRiYb+JMFMHDLoUgaUok2wuxtaCyPRJAlpgtuFq8S6VYtfnR272kthTMGWP7BI69IH4jBKk4EJHNtpWJ64sWxl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MPNp7855; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724030219;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=n6JHQznnoP2B1M81XzspAZrHfEQzedoU2DAU6mxzvA0=;
+	b=MPNp7855NgBnYJdmMjTLdO/g8JZ+oGXAbfmt0D5lbYPxacK+20M2DWoWb6MmdC3CpGAIxs
+	sjZD44Gfij134qXVd4qx3Dh4PvdlRSL8G0OtIP/enj4O3BmZikGz0Rgvdb2HJtwqQd97VE
+	ugLGkAfvF4w7RWsIwbwpbpJu1E5yx2U=
+Received: from mail-oa1-f71.google.com (mail-oa1-f71.google.com
+ [209.85.160.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-612-_bqZdxPuNU6MCcCuZ8cFBw-1; Sun, 18 Aug 2024 21:16:58 -0400
+X-MC-Unique: _bqZdxPuNU6MCcCuZ8cFBw-1
+Received: by mail-oa1-f71.google.com with SMTP id 586e51a60fabf-2701a253946so3987298fac.3
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 18:16:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724030192; x=1724634992;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=96bRgenJ1LT1YAwkODeJ5weecL8b0jZhBJFXT0lV/4U=;
-        b=nq/vAfujVgsQVFyawdN9HuuoTL5lbG+8NzwVNLyFIWbqWVBoNKyt016WX94sYnd7d1
-         d4yj68/wFkV3W2lWDtXc0t364CUBgpIj867g6O4V6cw4fV0g7GBlStDu7+eGTks5HffN
-         KwzJLgckF39P7GuPcSzdhgLb5wmNylZIRREVdVUNSvpYIQhMJtIH+8PEk8MAmLPXKR2Q
-         xA5bPeFYFVzjKrHysUBkS9jeEiM974OfBtpPBx+t+d4iql6NHkyqtcKiuPHmtkGXHkai
-         vxkB8YeAXbGGfKHDCMNgpVc10EFYwqEk5hwBgH/7magHGNuut1hBh7l6YMU2kzl8H4Iu
-         GQiw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbffE1/9yK/pKAcsf+WWKEKVIu/N7FA/4xwYiRZHd5dYgxYoqdCATnYLsAsZj4uVyi6lqN30MWHMvLdQmH3rB4u0K1zV6wcfeb3LC2
-X-Gm-Message-State: AOJu0Ywpdu36Ob13xu+yg41T3PUkNRwtjZha7IqLA85mWOGnHYszF4rG
-	gyEMDJsn+AYOfvuWP7taJRfr9d3nHBLU/m6DQwawINWY1O9+2IdYl+xqspYdvTk=
-X-Google-Smtp-Source: AGHT+IHcVgjWV8mpMJHnmx32G8QnRgUQIlumrcs85ZM34xvrN4Jh1Evor+hnrJi84mm9FQwpiFjahQ==
-X-Received: by 2002:a05:6a20:6f96:b0:1c4:2573:d197 with SMTP id adf61e73a8af0-1c9050477afmr12993409637.35.1724030192131;
-        Sun, 18 Aug 2024 18:16:32 -0700 (PDT)
-Received: from [127.0.0.1] (node-bmc.pool-118-172.dynamic.totinternet.net. [118.172.58.212])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127add68b9sm5920152b3a.19.2024.08.18.18.16.30
+        d=1e100.net; s=20230601; t=1724030217; x=1724635017;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n6JHQznnoP2B1M81XzspAZrHfEQzedoU2DAU6mxzvA0=;
+        b=L/sAUHTctGdI6edGh5k8FcElC9+dN1dQHgQ6b/Qsxpe9mdX0Tzkr/7K/h/9pCUOtdR
+         TjOt9k+59bumaSQOW4r45M7vo2XOBJbkRsKqF+2eeK8vZ+KTIJsaCM+zCEvRIsqel/jI
+         9xxcEsYEtpaT98EvwTSicVqv6wtfxt3Dw721OsBqrS2C2gy5RPHm6QKlaYYPYXtGR6tu
+         3fndz+IrmC2/BVBw/OWyJL0ogFQnOJ7wAAijyOrGZz7bE9TBQ6lAfcn4QRoL9qUchI5c
+         biV+LLOUlgyJedlbUTiodHLlig4iaj1hDFaQXkxn/BTC3DqV7bWBzpsgPg1r1rwBzfx7
+         U1LA==
+X-Forwarded-Encrypted: i=1; AJvYcCWch22Yvm/EP0YtWXpkY6EfO/HaNAwMUcA4es33sLd2sSUJn2ZwTtbXUsJ54qlauzw3Gkr96ML+uqUvlUZJCTTQ/cUdmIq9G9k/CFP0
+X-Gm-Message-State: AOJu0YysEvDeNRwKCrrENESTRZpWBC5JRiKSdpUQcVat9c0bH4syHcfT
+	YZBlZXy0CvbsgqBTyzm2A9jtdZUDSHkzyuskCucA4FlyUdQbi5ZmicwdyQ32DFpobcw+Ekk86Pj
+	1pLhYWdz6AmVs8SEPtAyQpDcl8EcWSd00IJOGyTlm98X/LRIEAmqmV8cFmjiMDg==
+X-Received: by 2002:a05:6870:d287:b0:267:e2b2:ec52 with SMTP id 586e51a60fabf-2701c575da2mr11080119fac.49.1724030217406;
+        Sun, 18 Aug 2024 18:16:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFNijeH38JzYRoylQE2EDaHQsya4pFknB7VNjzjMz3uv9RcA0uMNAhd+JhGjC4VTEGgrfD3sw==
+X-Received: by 2002:a05:6870:d287:b0:267:e2b2:ec52 with SMTP id 586e51a60fabf-2701c575da2mr11080105fac.49.1724030216967;
+        Sun, 18 Aug 2024 18:16:56 -0700 (PDT)
+Received: from [10.72.116.30] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127add6de9sm5930734b3a.12.2024.08.18.18.16.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 18 Aug 2024 18:16:31 -0700 (PDT)
-Date: Mon, 19 Aug 2024 08:16:25 +0700
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Bjorn Andersson <quic_bjorande@quicinc.com>,
- Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Neil Armstrong <neil.armstrong@linaro.org>
-CC: Johan Hovold <johan+linaro@kernel.org>, Chris Lew <quic_clew@quicinc.com>,
- Stephen Boyd <swboyd@chromium.org>, Amit Pundir <amit.pundir@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- stable@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_2/3=5D_usb=3A_typec=3A_ucsi=3A_M?=
- =?US-ASCII?Q?ove_unregister_out_of_atomic_section?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20240818-pmic-glink-v6-11-races-v1-2-f87c577e0bc9@quicinc.com>
-References: <20240818-pmic-glink-v6-11-races-v1-0-f87c577e0bc9@quicinc.com> <20240818-pmic-glink-v6-11-races-v1-2-f87c577e0bc9@quicinc.com>
-Message-ID: <4F313FA4-C2C7-4BD8-8E42-64F98EACCBA2@linaro.org>
+        Sun, 18 Aug 2024 18:16:56 -0700 (PDT)
+Message-ID: <74549d76-1187-4ed6-9589-e5978ba513d0@redhat.com>
+Date: Mon, 19 Aug 2024 09:16:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-On 19 August 2024 06:17:38 GMT+07:00, Bjorn Andersson <quic_bjorande@quicin=
-c=2Ecom> wrote:
->Commit 'caa855189104 ("soc: qcom: pmic_glink: Fix race during
->initialization")' moved the pmic_glink client list under a spinlock, as
->it is accessed by the rpmsg/glink callback, which in turn is invoked
->from IRQ context=2E
->
->This means that ucsi_unregister() is now called from IRQ context, which
->isn't feasible as it's expecting a sleepable context=2E An effort is unde=
-r
->way to get GLINK to invoke its callbacks in a sleepable context, but
->until then lets schedule the unregistration=2E
->
->A side effect of this is that ucsi_unregister() can now happen
->after the remote processor, and thereby the communication link with it, i=
-s
->gone=2E pmic_glink_send() is amended with a check to avoid the resulting
->NULL pointer dereference, but it becomes expecting to see a failing send
->upon shutting down the remote processor (e=2Eg=2E during a restart follow=
-ing
->a firmware crash):
->
->  ucsi_glink=2Epmic_glink_ucsi pmic_glink=2Eucsi=2E0: failed to send UCSI=
- write request: -5
->
->Fixes: caa855189104 ("soc: qcom: pmic_glink: Fix race during initializati=
-on")
->Cc: stable@vger=2Ekernel=2Eorg
->Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc=2Ecom>
->---
-> drivers/soc/qcom/pmic_glink=2Ec       | 10 +++++++++-
-> drivers/usb/typec/ucsi/ucsi_glink=2Ec | 28 +++++++++++++++++++++++-----
-> 2 files changed, 32 insertions(+), 6 deletions(-)
->
->diff --git a/drivers/soc/qcom/pmic_glink=2Ec b/drivers/soc/qcom/pmic_glin=
-k=2Ec
->index 58ec91767d79=2E=2Ee4747f1d3da5 100644
->--- a/drivers/soc/qcom/pmic_glink=2Ec
->+++ b/drivers/soc/qcom/pmic_glink=2Ec
->@@ -112,8 +112,16 @@ EXPORT_SYMBOL_GPL(pmic_glink_register_client);
-> int pmic_glink_send(struct pmic_glink_client *client, void *data, size_t=
- len)
-> {
-> 	struct pmic_glink *pg =3D client->pg;
->+	int ret;
->=20
->-	return rpmsg_send(pg->ept, data, len);
->+	mutex_lock(&pg->state_lock);
->+	if (!pg->ept)
->+		ret =3D -ECONNRESET;
->+	else
->+		ret =3D rpmsg_send(pg->ept, data, len);
->+	mutex_unlock(&pg->state_lock);
->+
->+	return ret;
-> }
-> EXPORT_SYMBOL_GPL(pmic_glink_send);
->=20
->diff --git a/drivers/usb/typec/ucsi/ucsi_glink=2Ec b/drivers/usb/typec/uc=
-si/ucsi_glink=2Ec
->index ac53a81c2a81=2E=2Ea33056eec83d 100644
->--- a/drivers/usb/typec/ucsi/ucsi_glink=2Ec
->+++ b/drivers/usb/typec/ucsi/ucsi_glink=2Ec
->@@ -68,6 +68,9 @@ struct pmic_glink_ucsi {
->=20
-> 	struct work_struct notify_work;
-> 	struct work_struct register_work;
->+	spinlock_t state_lock;
->+	unsigned int pdr_state;
->+	unsigned int new_pdr_state;
->=20
-> 	u8 read_buf[UCSI_BUF_SIZE];
-> };
->@@ -244,8 +247,22 @@ static void pmic_glink_ucsi_notify(struct work_struc=
-t *work)
-> static void pmic_glink_ucsi_register(struct work_struct *work)
-> {
-> 	struct pmic_glink_ucsi *ucsi =3D container_of(work, struct pmic_glink_u=
-csi, register_work);
->+	unsigned long flags;
->+	unsigned int new_state;
->+
->+	spin_lock_irqsave(&ucsi->state_lock, flags);
->+	new_state =3D ucsi->new_pdr_state;
->+	spin_unlock_irqrestore(&ucsi->state_lock, flags);
->+
->+	if (ucsi->pdr_state !=3D SERVREG_SERVICE_STATE_UP) {
->+		if (new_state =3D=3D SERVREG_SERVICE_STATE_UP)
->+			ucsi_register(ucsi->ucsi);
->+	} else {
->+		if (new_state =3D=3D SERVREG_SERVICE_STATE_DOWN)
->+			ucsi_unregister(ucsi->ucsi);
->+	}
->=20
->-	ucsi_register(ucsi->ucsi);
->+	ucsi->pdr_state =3D new_state;
-> }
-
-Is there a chance if a race condition if the firmware is restarted quickly=
-, but the system is under heavy mist:=20
-- the driver gets DOWN event, updates the state and schedules the work,
-- the work starts to execute, reads the state,
-- the driver gets UP event, updates the state, but the work is not resched=
-uled as it is still executing=20
-- the worker finishes unregistering the UCSI=2E
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] ceph: Remove unused declarations
+To: Yue Haibing <yuehaibing@huawei.com>, idryomov@gmail.com,
+ mchangir@redhat.com, jlayton@kernel.org
+Cc: ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240814033415.3800889-1-yuehaibing@huawei.com>
+Content-Language: en-US
+From: Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <20240814033415.3800889-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-
->=20
-> static void pmic_glink_ucsi_callback(const void *data, size_t len, void =
-*priv)
->@@ -269,11 +286,12 @@ static void pmic_glink_ucsi_callback(const void *da=
-ta, size_t len, void *priv)
-> static void pmic_glink_ucsi_pdr_notify(void *priv, int state)
-> {
-> 	struct pmic_glink_ucsi *ucsi =3D priv;
->+	unsigned long flags;
->=20
->-	if (state =3D=3D SERVREG_SERVICE_STATE_UP)
->-		schedule_work(&ucsi->register_work);
->-	else if (state =3D=3D SERVREG_SERVICE_STATE_DOWN)
->-		ucsi_unregister(ucsi->ucsi);
->+	spin_lock_irqsave(&ucsi->state_lock, flags);
->+	ucsi->new_pdr_state =3D state;
->+	spin_unlock_irqrestore(&ucsi->state_lock, flags);
->+	schedule_work(&ucsi->register_work);
-> }
->=20
-> static void pmic_glink_ucsi_destroy(void *data)
+On 8/14/24 11:34, Yue Haibing wrote:
+> These functions is never implemented and used.
 >
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+> ---
+>   fs/ceph/mds_client.h            | 3 ---
+>   fs/ceph/super.h                 | 2 --
+>   include/linux/ceph/osd_client.h | 2 --
+>   3 files changed, 7 deletions(-)
+>
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index 9bcc7f181bfe..585ab5a6d87d 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -559,9 +559,6 @@ extern struct ceph_mds_session *
+>   ceph_get_mds_session(struct ceph_mds_session *s);
+>   extern void ceph_put_mds_session(struct ceph_mds_session *s);
+>   
+> -extern int ceph_send_msg_mds(struct ceph_mds_client *mdsc,
+> -			     struct ceph_msg *msg, int mds);
+> -
+>   extern int ceph_mdsc_init(struct ceph_fs_client *fsc);
+>   extern void ceph_mdsc_close_sessions(struct ceph_mds_client *mdsc);
+>   extern void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc);
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 6e817bf1337c..c88bf53f68e9 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -1056,8 +1056,6 @@ extern int ceph_fill_trace(struct super_block *sb,
+>   extern int ceph_readdir_prepopulate(struct ceph_mds_request *req,
+>   				    struct ceph_mds_session *session);
+>   
+> -extern int ceph_inode_holds_cap(struct inode *inode, int mask);
+> -
+>   extern bool ceph_inode_set_size(struct inode *inode, loff_t size);
+>   extern void __ceph_do_pending_vmtruncate(struct inode *inode);
+>   
+> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+> index f66f6aac74f6..d7941478158c 100644
+> --- a/include/linux/ceph/osd_client.h
+> +++ b/include/linux/ceph/osd_client.h
+> @@ -449,8 +449,6 @@ extern int ceph_osdc_init(struct ceph_osd_client *osdc,
+>   extern void ceph_osdc_stop(struct ceph_osd_client *osdc);
+>   extern void ceph_osdc_reopen_osds(struct ceph_osd_client *osdc);
+>   
+> -extern void ceph_osdc_handle_reply(struct ceph_osd_client *osdc,
+> -				   struct ceph_msg *msg);
+>   extern void ceph_osdc_handle_map(struct ceph_osd_client *osdc,
+>   				 struct ceph_msg *msg);
+>   void ceph_osdc_update_epoch_barrier(struct ceph_osd_client *osdc, u32 eb);
+
+Reviewed-by: Xiubo Li <xiubli@redhat.com>
+
+Thanks!
+
 
 
