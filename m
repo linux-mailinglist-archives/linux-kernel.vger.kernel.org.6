@@ -1,290 +1,280 @@
-Return-Path: <linux-kernel+bounces-291739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 189FB95662E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:59:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37DED95662F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CF5E1C218BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:59:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5CA81F25852
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11CCA15B964;
-	Mon, 19 Aug 2024 08:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9722015B555;
+	Mon, 19 Aug 2024 09:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="Z2U0Ww6t";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WvT87wpI"
-Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gjjm3BGI"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2055.outbound.protection.outlook.com [40.107.100.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 508FF15B11D;
-	Mon, 19 Aug 2024 08:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724057938; cv=none; b=chzYglj4HE9NSs2zIEy83JYI12OjT4m10XQsx27eCghacQmfFHTmie43lXQUPUiTYFo3o7N4TYgsERXyOFjg6LsQcJWRkgESow3dcUCGR+LFam8JfKVGVjzdVg0C8wHJKnRN6ymXsOnygh4IRIv595qUW4tCnpjviLnqwAnfTbE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724057938; c=relaxed/simple;
-	bh=zU2J2dqhsvH8PWWZN4z3ts2gJVdnAVQhuxN+wIZczEI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=CvsC3U3TiE675PpzsCxTFl+542JI7UWdr/E1hCZaJvOfGsti+9cH3LBOIbY75fJFBl6x9krZUz9I7+vFPQlFQiZQ/4zTSrMdzUnmufkqvSWdhbDAvookwq3ImqRlCpq1Pq0IczlQt29FOR4jM5w5Loo8EQi+AGua5cnMpf8+40k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=Z2U0Ww6t; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WvT87wpI; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-05.internal (phl-compute-05.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 62D22138FF81;
-	Mon, 19 Aug 2024 04:58:55 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Mon, 19 Aug 2024 04:58:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm1; t=1724057935; x=1724144335; bh=3S
-	fA1zlL4vLdzjjWrDWy1o8HPyKxln0uS41Tw0AZeCk=; b=Z2U0Ww6tp+TQ5Yl1+8
-	IbJsmHRvIu6PB+dgoQBp0nArvMEFF8iJ2wTN7a1iqqkqH+oRFKfvnERFFJwlme8k
-	g8/ILAbv+ryr51sj97fZkhymCo2sp67Ick0SjoUuUFUW9T0bibaKeXeY5D9d+kOm
-	W3PBn+/w2SypRiTH3LZp6sbCOltcftsO70LsIUgtkyVgd2yl9YAhW9ZOdbkIlLdB
-	74eItPXzaaGdMYUlJVrwQmLhgL1eEMr0iZoNT/4skzj0UXSLdbLUcGT7E6mQqlUe
-	aV7RXmVT84axLvKQikeYO1AEUjfUyeoqjCcxZN3e2kgNWR/ItAVEwmmK/ZIYjZNQ
-	82YA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:reply-to:subject:subject:to:to
-	:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1724057935; x=1724144335; bh=3SfA1zlL4vLdzjjWrDWy1o8HPyKx
-	ln0uS41Tw0AZeCk=; b=WvT87wpIS251yaWoRlhu7NOZy2Q0oaoS0mn8A2Y4GEMe
-	wyfUfDItzMTQdtnGvjcJdPzvenGx9H93TBmEVa626q1bvhT3/sKEyPXbEHA7EBcI
-	UGkXgVTMECtDsYaGDNP5Fs6uj0RJCB8olBNQKWUkxb6BNBGGfxGAyZyvDvDR7v4y
-	ojFxQjAU4CLJCww9HgIFpKN8CS5fJV4F2EFAh/jrsNQ0CicKYRH0MBEXaKIAOVS5
-	VwYLPHdynbdUEkNjchE2shN8dGYtgDjkl8G6zTMgN6FYqI/jBXXylhq3RrBugCtc
-	1ToHPZBJ5c6r/aMFoURVQJs4pKiBooNBylMeeu7DQQ==
-X-ME-Sender: <xms:TgnDZtwysB5Y8xGGcTlZ7AJ3fASKpHn7vwLO51cyWT2JR3T3Nb4GwA>
-    <xme:TgnDZtRrfVETGkUk0wT_0vjhWPWPSzDm1P25aUggNt-45X9UMBG7ovBeJ8tgPlxBK
-    npANy-JO0JglOn4C20>
-X-ME-Received: <xmr:TgnDZnW5F5iOCaoHOLJqJ8aq5PJ27FbC4p84mEyF70Q27ykYySOCthpJhMEcYxnVuv4elAfxukHaVPSSuSEskCaACf77v3CGXAo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddugedgudduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkgggtuggjsehttdertddttddvnecu
-    hfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghshhhisehsrg
-    hkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeeuieffveeggfefjeeufeet
-    veejuddtkedtgedtjeekgedufffhhfegkeekteetgeenucffohhmrghinhepkhgvrhhnvg
-    hlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhho
-    mhepohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhirdhjphdpnhgspghrtghpthhtoh
-    epvddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeiiihhjuhhnpghhuhesihgt
-    lhhouhgurdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrth
-    hiohhnrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopegurghvvgesshhtghholhgrsghsrdhnvghtpdhrtghpthhtohepjhhonhgrth
-    hhrghnrdgtrghmvghrohhnsehhuhgrfigvihdrtghomhdprhgtphhtthhopegurghvvgdr
-    jhhirghnghesihhnthgvlhdrtghomhdprhgtphhtthhopegrlhhishhonhdrshgthhhofh
-    hivghlugesihhnthgvlhdrtghomhdprhgtphhtthhopehvihhshhgrlhdrlhdrvhgvrhhm
-    rgesihhnthgvlhdrtghomhdprhgtphhtthhopehirhgrrdifvghinhihsehinhhtvghlrd
-    gtohhm
-X-ME-Proxy: <xmx:TgnDZviAeMXf575MHbI8MNpYsKoRDZQd2weYdVQ6IEB8k5gjqo5eBw>
-    <xmx:TgnDZvB9EYl8c3P9goXP5Xpvi60iTp6j3NeJ7zlFlWLOUmzKUvT52A>
-    <xmx:TgnDZoLbvs1AG_j7ACAPuyAm-LRGZuYSJgxaoP6TWCwirVpRMpSwjQ>
-    <xmx:TgnDZuDT752UmhaOsOWtgjFxDM9eN8Pqz5hKUoOHNi8gf1hIZoRUTg>
-    <xmx:TwnDZuAoExcbOBgQtrMWLkJhY9btYizEiKWgpMU256ING_8efvIAxPdb>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 19 Aug 2024 04:58:50 -0400 (EDT)
-Date: Mon, 19 Aug 2024 17:58:47 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Timur Tabi <timur@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux1394-devel@lists.sourceforge.net, netdev@vger.kernel.org,
-	Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH v2 3/4] firewire: core: Prevent device_find_child() from
- modifying caller's match data
-Message-ID: <20240819085847.GA252819@workstation.local>
-Mail-Followup-To: Zijun Hu <zijun_hu@icloud.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Timur Tabi <timur@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux1394-devel@lists.sourceforge.net, netdev@vger.kernel.org,
-	Zijun Hu <quic_zijuhu@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFECF11CBD
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724058016; cv=fail; b=Y8lana7/L9+/UnN5o+t7HHy52fb13PVRKLh1KgsnSkt1uCttYuqUBP352UDSQFX9OG4hU1jhbDTWuwr731ich7pgI+pNfEtm1O56Y4ZIq6j0VAfT4vXunhMGFJpwMSVtPZm+gq7RG5bCzXx6Fzrej1gpTTq0ru+ytPG/6eub85s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724058016; c=relaxed/simple;
+	bh=k2VtjlT9v8A3ydnBHlrXXRLJT6OZo3Yl2c7rrqyY4Bs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=H4pr0z1E8QTn8CXnGDOb42imtGPgX1rlxGZtQAVAbhwQfXcQSgo0rlQb0nhzJo6KWKkCMf21jOaGHFuk+L5Cx0+ADNaReBdlg8rRYrE5H1b315orVzZGinserL4CaX1Cej85O0QzPPMwAML9bVpJRzmOYkZwQLOthbLuJnGkpY0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gjjm3BGI; arc=fail smtp.client-ip=40.107.100.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Y/oUg2xiEXWuDUYBleicPl/sV6VN6iYLjeklRn1CRQatdCRlXr8h6//MuI0dFGirqYinQj6TZpQyDDhGNppB30FaPV6g/dV3KUUJqld5soqNQd3zsL4MCyZKKDWroWU7CSJdaceW0KH8V8AisKkIJmtYpHtQfzhad+4+hEcqppsrmiMMf6Kv439EBlzYyobOuSHJ1ZgWAOuMbzKzkDVKDlvhZyQ47oNL/wTYDCRy4bIEs5BUwsuM/YiwPNeGvjKEOIfCw/o4eBAR3QtF38fV3Y7lVWEwT/nCdt2b4QwOyDkgARNZik/ogVEIWq26/RnMM7ModKEs2RaquHg9gDtHVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=evCvIRhIcKt3wUnAykrlT09jRp6yS6j+Dy6RB79mNDE=;
+ b=Bm3wmHLFpC9eyS91ehKkXn8X8dFX6DrTPLSCTEXZKclpkcfRVy862zT0MyEvcH7mHNX3Z4mrMv7j8X6bTnc9vzFTfVFQVR1fRniZhaJ3WsAh+H4ruzjFOAHVUDy5tpu9bDAtt6D/Qb4trxalm/VIKdYp6M6/gcI2ARTK5kuwCkltwfzBLU0qGhpBV20jFVbkngfQebaIv1xd6t1D0bmskxnaed6zkn9A6fVi/GxkJYdL3i8usL8wSNgb5xmMJyOTP5pmrYhwGkoXpsGWDWNW3uW9K8k3FUD2SPy7BEH+JYnp4kWKSBvcW5zq6vH/LAXquZ1nEDsm4mM1iUS7idS8Zw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=evCvIRhIcKt3wUnAykrlT09jRp6yS6j+Dy6RB79mNDE=;
+ b=gjjm3BGIEL7Ng1HQLSiRIFku3GVr9MqLoOLaybuWilmMrhiJPISQktrN1yO2dBd14dkvOhHJ39yjWFT9ua4TymIokshzi4A+zxEl3C9nWFingaSL9bjxza7Li7dRmNXOq9sJfjD0v/4zKQcb5g8tKx3bNeAEKlDrmtew+N2R9hw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
+ DS7PR12MB8082.namprd12.prod.outlook.com (2603:10b6:8:e6::16) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7875.21; Mon, 19 Aug 2024 09:00:11 +0000
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5%5]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
+ 09:00:11 +0000
+Message-ID: <d2bdff89-d9c3-487d-9f05-a1104ba176c7@amd.com>
+Date: Mon, 19 Aug 2024 14:30:05 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2] iommu/amd: Update PASID, GATS, GLX, SNPAVICSUP feature
+ related macros
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+Cc: joro@8bytes.org, robin.murphy@arm.com, jon.grimm@amd.com,
+ santosh.shukla@amd.com, Jason Gunthorpe <jgg@nvidia.com>
+References: <20240816221650.62295-1-suravee.suthikulpanit@amd.com>
+Content-Language: en-US
+From: Vasant Hegde <vasant.hegde@amd.com>
+In-Reply-To: <20240816221650.62295-1-suravee.suthikulpanit@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0092.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:27::7) To DS7PR12MB6048.namprd12.prod.outlook.com
+ (2603:10b6:8:9f::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <11efcbb2-f69a-49b4-a593-34fce42d49ea@icloud.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|DS7PR12MB8082:EE_
+X-MS-Office365-Filtering-Correlation-Id: 77f0b8bb-e128-42a4-3f6f-08dcc02d5527
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TVdNOFJ1NEhZb1o4RjlidEQxa2VWTUp6eEZFdmhicTVGV0RQbXVDM0xLMlN0?=
+ =?utf-8?B?Y2FBVXBsZlM2NGRmeDBzYUlLNEF2dC9FUFA1WW9NekVlRnFuYWVza2Y5U2c1?=
+ =?utf-8?B?T0ttcyswVTQvQ25hRFJubXJrUkJkVHE3eThUSU5FUmVzTTlnVGtEekp1NUhC?=
+ =?utf-8?B?ZHBRN3ZDdTd5RytpU1BBcWFuWk1maDFEYm53bFl3bkZUN1A5TUxIdmRpbTFp?=
+ =?utf-8?B?N0x4NlhGODQ0ZllCSlRjc2Jvb2NDclpkdXI3d1Z3N1lCY0k4RTRjNWVwekhs?=
+ =?utf-8?B?cFhPb3pJa01OZU43UGpKZmpuSFJkUVVjdkh2dnR3YmNTZHpjUVljaEdDYm9n?=
+ =?utf-8?B?VWt1aTVXbVh4VTljSXJLY0dsRlgrRElSdVpyY2tFZnlKWkpSamZNT0d6b2Qv?=
+ =?utf-8?B?MEhXcDlMSnJpWEF5S1ltRktCdy9PNFlOK2lmazlWZGlOd0w0SFUvZ3BsajAz?=
+ =?utf-8?B?NE5sK2VkVFZuR2RiZVp3dTBsK09TU0w0dTMxRHNsOGJqb09MNXZhZnJRMERl?=
+ =?utf-8?B?MHhYWEFXcjh6eUdiMlZFM2VVaTFkRjE5Wml3TEFvTHFFU3pwL0RxVTdrUjkr?=
+ =?utf-8?B?T1FKYzVZVzZPV2hrTFliKzMrNXl6N1NIWFpTRk1LaDRyaHByU281V0dVQnFa?=
+ =?utf-8?B?WHZlTDVEWEE2bHZhcUppSVE5NDg0SzAxTDUwVzdMeDd5MHBxZlA1SU1DMkxG?=
+ =?utf-8?B?d0E3djZKZ01HM0ZaQnI3Y2VoTVFYZkgzM1BYOFpHNmpDcjJENjBQN2h1cGhK?=
+ =?utf-8?B?TFY2ZWgxOThaVlJYMnJDM21UelpQR2VWRkFSakpFUUExMHFwNllFR0hwNXp1?=
+ =?utf-8?B?SERaN3R2WXYyZnl3YlpyNDNjNkZ5eFJUQythSmQvSmMwVGVwRVcyYjVWRlMv?=
+ =?utf-8?B?NDFON2RtMm4vYTVCSTV5b1d3aHIwZjFCR1RpeWJIVjkxTzIrTmdpVFh4ZE55?=
+ =?utf-8?B?MDk1aFJkZnc0UUdrRnlnVWcxWUlvU0tyTktQMGNxUzBSaTF1TXhlZVpsWndv?=
+ =?utf-8?B?RUY2SWhkaUNqbXBySVkzcFpZb2FvUHBTNVdkNExkdVJxVU1xbVBzTUtESFox?=
+ =?utf-8?B?akgwRGlZM2t5Z3dTeTAyZU40STU5M1h5TWpFdnp1aXhwdHRDZzA1eUxFMzVR?=
+ =?utf-8?B?Uk5DOVE4L2g2dzl1K29ORGlTcW5SZmd0djFSS2FEVkczekw2a0RHYWJPRWRy?=
+ =?utf-8?B?c3hjNWVPT1VWbGMraXA3aC9EWWp3MFZIdkg0b3pWV085UHNoWW00VURGVzgw?=
+ =?utf-8?B?cnh3VnJjVUJmQ1I4YWFsNU1jOXM4UFJQL0dkWjFNYmNxRG0xS05wSmc4U3p3?=
+ =?utf-8?B?R3owYUhXWm53Tk1GVnNDbUw4bmpsY0t2OFlnUFAyNXlvQ0hKOWVvVkdJblkx?=
+ =?utf-8?B?UUxmWTJIVEFVZzh3aVpsNG5VbEp5T2VxWVdmUFRGZlA3b3Q3dk5nU3Z3ak82?=
+ =?utf-8?B?NnR0TG42N2xxeFRwYzEzcEtVN1J1QzdiejBYaU1MN2Vucnh5WlhaWXJHNmE4?=
+ =?utf-8?B?MnY4NHlVYmpSZklvQ0hHUUVXZWVNU2Vrb3NwblpMMXBvcVpyV2dmTTJQUlBa?=
+ =?utf-8?B?UkNsZ2FFUFhxMnR4TFRjTkl1bUE3SytsdkNxdnZGc0JpNU4ram9yYnZyWXJl?=
+ =?utf-8?B?eFJ1T215dllMOGZ0Z1hEQUoyYlVscW9aamdqU3B5UFIvWkZGaHRvOXFGT1Jo?=
+ =?utf-8?B?ajZmaXdUbEI2NmxYYTBsWWRqSllBRE1NNk44NFV5T0JXZ2NiQVlLWTFic1p1?=
+ =?utf-8?B?RUluRWd5U3ZrNUtVYnN4bm05RHV5RGY1TE51eFBDYzJKMTR6VlVYN05sbGc4?=
+ =?utf-8?B?U1V3dElxRjdVV1lIU1EyQT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?LzFCL1JrYU1CS2hhWWNqdTNmODNmOTVPTmNZUnBmU0t2a05uRjM3VTh3cE1X?=
+ =?utf-8?B?dHpGL25EY2I3OGZQdWk0WnFHK2swY0VOZnRMUDJPUGFpc3hKNzI2cjFIZ1J4?=
+ =?utf-8?B?blNiVXNwU09MVFpVWWE2aWJEbFJwZ2VtZFIrMVY5MlMyV3pzNHlPaStNQUdI?=
+ =?utf-8?B?SUlaaCtqcmJ6SUllcVl5OWVzY2M2VlA3azBuNGduWjBYaUE1dmh4RkJ5Qjhx?=
+ =?utf-8?B?dzhqT2t6ZmY5TGFDTVNwalVnZHg2bThSUmNUUTVCUE9KdDVIVWh5cGFySWMz?=
+ =?utf-8?B?RWJDVDdUd0IvSWora1p5ek1vcHlHeUZLMDRZczNsYm5YQWdKTjdDY3lBMDlh?=
+ =?utf-8?B?Ylp4b2hvVGp5MnY5VHVqN1NHQUZlaXVqV1NjeUIraEs3WEx0MTdSa2ZxYUh1?=
+ =?utf-8?B?emVlWG9SRlQwWjlUeUFFK0huNndtYUZjMG1rOWdKOXlVSlRwWE1SQk1qSUFF?=
+ =?utf-8?B?VVFxOUd2RUR3RGtIM3VQdDd1QXRmWVNkYmVyTDQxVEM2KzZDZmV0SEdvUDE4?=
+ =?utf-8?B?K2x3K1hVcmRtUkxuSnd4ZU1uVTFMTFdQaVpxTGVUZU5ydVozdGNmR0wyaEg1?=
+ =?utf-8?B?N1l6RWUybWRYVTUyamc0cG5oT3hPZGhuRlUxNXhUMkt6bHhvVERKSk45UDFP?=
+ =?utf-8?B?NHBvdFhCcEJuT0d3UU9tdTBzZDNVdmY4Z3pHb0YwNlBJaCtSb0U5Sms3Z3Rj?=
+ =?utf-8?B?Wmp1MU1sc21SNlpaWk5FN0NwRS9IOE9QY0J5ZmFWMHI0WTRMUjd0K3NlY2xq?=
+ =?utf-8?B?bE5EQW1HOW5obEJkNGVXTEtSekRHWUxmUXdKdS94R1kwWllzVHJHYnh1Q2hE?=
+ =?utf-8?B?aEVMdTVlVmlJSTlwdTQxWStJVkZLZm5qRmVHQTVLNzRYTzdGSFc2L2YyZTAx?=
+ =?utf-8?B?bUdTM0ZEQ1dacXFkZCtMRmp2WmR3dkRDcEdhcGRYc0dsSmI5a0pRY2h4enli?=
+ =?utf-8?B?VW8yOEVWblo4YUlJaGRoSnJCM2pwOW9NTHZHRTE5TkZyNGxNUXorc3VOYUYv?=
+ =?utf-8?B?OWd3UE56TmhBUG1rbUNjME92OG5lTmV0YmhJbzBiOHczamc1cHRnbHUzTjJO?=
+ =?utf-8?B?WGVvbXhMWDMwKzdCL2JMb045MGtQVmFuUjZ2YWV2RmJmRjNlMUdSQmZYVmFt?=
+ =?utf-8?B?MWVQOFE0eVJ4U3ozTTMwUEd0bzZDVEozQ3l2VGdMNlM3aHRhVDBPaGFMT1lZ?=
+ =?utf-8?B?M05vOStkQ3JqNWVIb0ljK2NaMWd3RUhYSDNUb0ovNVNhMWE5THVSQzc1WVZO?=
+ =?utf-8?B?Q2dDTDd1S04yenkvaDdRdm95VmVYWWd0dU92WGc4ZlhwUVRPbTd4aTNRRW53?=
+ =?utf-8?B?T3NiN01YSE9KV2tsVWViWTVjd2FaR203MDR4RzliR1VhQy9VMDRwczRkVDFq?=
+ =?utf-8?B?K3FlVUFkY21aZXAvNWNjR20wUGw3em05dVBnKzNjS1lLVWdJcDNTa2pPcnNp?=
+ =?utf-8?B?L0NuN21RbFNZYnRqa2JGZzZrSENtQVFOSFJsREkrSVNqTmdvZUI0K2lXaWVL?=
+ =?utf-8?B?K09NaDU3NlFHS2NGaG5kZU5KZG5nQjVlSE1lc1dkN2YwbjMxTXlpT1BkOVMv?=
+ =?utf-8?B?RTE4R1NwZTdsYU1QMVJLQXo4SG52QVJweWFYM2FvSGlyV0JFVkxyTEpxQWls?=
+ =?utf-8?B?RXFoYTMrWG9vbFRYUURQTkJCK25YSUVLekFMYXQ1VWEwMDhKOUhCRW9CSnBz?=
+ =?utf-8?B?TTZaZmZpblZHa3JKU3Btdi9oLzN6SHpqODJzUVpnclkrZmhxNUJPSlhFTzNy?=
+ =?utf-8?B?Snlrb3pxZUhvRHlaNWM0SE5Ya0hTb2I4dkhyTGlJSndDNDVqSStycno1OUx6?=
+ =?utf-8?B?T0lYT0NkMnZoVlVlVSt4WDgwTXlvb3p4K3VQbEY1TWdzZkpZbDJCNDR6Ni9u?=
+ =?utf-8?B?c3AvOTJ4TlREZUNGWFZlRzRwa3B0aFpqTnRVcnNQN0xkVExwOHdwUXNKZWhu?=
+ =?utf-8?B?TWd3VmRkaXVwQVVKaWppU0U3SVVmVUMrcmxkd0Q2TUwxM1ZHYlF2UHNaWitK?=
+ =?utf-8?B?K24yUzNBWjVnb0VWcUtzaHR6RllpYzlzQWlPVHFBSkRJVSt4TmVkOVhZVnd0?=
+ =?utf-8?B?dzJvRlltWU8wSld1bmJ0TDF0YVVwNDNLREFITVF5WG5hc1I5dndhT1ZBZDY0?=
+ =?utf-8?Q?3pN9OnaQm6K2J+ctGdqMge5To?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 77f0b8bb-e128-42a4-3f6f-08dcc02d5527
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 09:00:11.7696
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PPPUFSNV4SSXcNwK+FYzqpHGjlsJUTsgmbvgrB93Gg6753YZ+2OB1VNPV4tPAllEYFylPs7idStTpGBX8mvsPw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8082
 
 
-Hi,
 
-On 2024/8/18 22:34, Zijun Hu wrote:
->On 2024/8/17 17:57, Takashi Sakamoto wrote:
->> ======== 8< --------
->> 
->> From ceaa8a986ae07865eb3fec810de330e96b6d56e2 Mon Sep 17 00:00:00 2001
->> From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
->> Date: Sat, 17 Aug 2024 17:52:53 +0900
->> Subject: [PATCH] firewire: core: update fw_device outside of
->>  device_find_child()
->> 
->> When detecting updates of bus topology, the data of fw_device is newly
->> allocated and caches the content of configuration ROM from the
->> corresponding node. Then, the tree of device is sought to find the
->> previous data of fw_device corresponding to the node, since in IEEE 1394
->> specification numeric node identifier could be changed dynamically every
->> generation of bus topology. If it is found, the previous data is updated
->> and reused, then the newly allocated data is going to be released.
->> 
->> The above procedure is done in the call of device_find_child(), however it
->> is a bit abusing against the intention of the helper function, since the
->> call would not only find but also update.
->> 
->> This commit splits the update outside of the call.
->> ---
->>  drivers/firewire/core-device.c | 109 ++++++++++++++++-----------------
->>  1 file changed, 54 insertions(+), 55 deletions(-)
->> 
->> diff --git a/drivers/firewire/core-device.c b/drivers/firewire/core-device.c
->> index bc4c9e5a..62e8d839 100644
->> --- a/drivers/firewire/core-device.c
->> +++ b/drivers/firewire/core-device.c
->> ...
->> @@ -1038,6 +988,17 @@ int fw_device_set_broadcast_channel(struct device *dev, void *gen)
->>  	return 0;
->>  }
->>  
->> +static int compare_configuration_rom(struct device *dev, void *data)
->> +{
->> +	const struct fw_device *old = fw_device(dev);
->> +	const u32 *config_rom = data;
->> +
->> +	if (!is_fw_device(dev))
->> +		return 0;
->> +
->> +	return !!memcmp(old->config_rom, config_rom, 6 * 4);
->
->!memcmp(old->config_rom, config_rom, 6 * 4) ?
+On 8/17/2024 3:46 AM, Suravee Suthikulpanit wrote:
+> Clean up and reorder them according to the bit index. There is no
+> functional change.
+> 
+> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
 
-Indeed.
+Reviewed-by: Vasant Hegde <vasant.hegde@amd.com>
 
->is this extra condition old->state == FW_DEVICE_GONE required ?
->
->namely, is it okay for  below return ?
->return  !memcmp(old->config_rom, config_rom, 6 * 4) && old->state ==
->FW_DEVICE_GONE
+-Vasant
 
-If so, atomic_read() should be used, however I avoid it since the access
-to state member happens twice in in the path to reuse the instance.
-
->> +}
->> +
->>  static void fw_device_init(struct work_struct *work)
->>  {
->>  	struct fw_device *device =
->> @@ -1071,13 +1032,51 @@ static void fw_device_init(struct work_struct *work)
->>  		return;
->>  	}
->>  
->> -	revived_dev = device_find_child(card->device,
->> -					device, lookup_existing_device);
->> +	// If a device was pending for deletion because its node went away but its bus info block
->> +	// and root directory header matches that of a newly discovered device, revive the
->> +	// existing fw_device. The newly allocated fw_device becomes obsolete instead.
->> +	//
->> +	// serialize config_rom access.
->> +	scoped_guard(rwsem_read, &fw_device_rwsem) {
->> +		// TODO: The cast to 'void *' could be removed if Zijun Hu's work goes well.
->
->may remove this TODO line since i will simply remove the cast with the
->other patch series as shown below:
->https://lore.kernel.org/all/20240811-const_dfc_done-v1-0-9d85e3f943cb@quicinc.com/
-
-Of course, I won't apply this patch as is. It is just a mark to hold
-your attention.
-
->> +		revived_dev = device_find_child(card->device, (void *)device->config_rom,
->> +						compare_configuration_rom);
->> +	}
->>  	if (revived_dev) {
->> -		put_device(revived_dev);
->> -		fw_device_release(&device->device);
->> +		struct fw_device *found = fw_device(revived_dev);
->>  
->> -		return;
->> +		// serialize node access
->> +		guard(spinlock_irq)(&card->lock);
->> +
->> +		if (atomic_cmpxchg(&found->state,
->> +				   FW_DEVICE_GONE,
->> +				   FW_DEVICE_RUNNING) == FW_DEVICE_GONE) {
->> +			struct fw_node *current_node = device->node;
->> +			struct fw_node *obsolete_node = found->node;
->> +
->> +			device->node = obsolete_node;
->> +			device->node->data = device;
->> +			found->node = current_node;
->> +			found->node->data = found;
->> +
->> +			found->max_speed = device->max_speed;
->> +			found->node_id = current_node->node_id;
->> +			smp_wmb();  /* update node_id before generation */
->> +			found->generation = card->generation;
->> +			found->config_rom_retries = 0;
->> +			fw_notice(card, "rediscovered device %s\n", dev_name(revived_dev));
->> +
->> +			found->workfn = fw_device_update;
->> +			fw_schedule_device_work(found, 0);
->> +
->> +			if (current_node == card->root_node)
->> +				fw_schedule_bm_work(card, 0);
->> +
->> +			put_device(revived_dev);
->> +			fw_device_release(&device->device);
->> +
->> +			return;
->> +		}
->
->is it okay to put_device() here as well ?
->put_device(revived_dev);
-
-Exactly. The call of put_device() should be done when the call of
-device_find_child() returns non-NULL value.
-
-Additionally, I realize that the call of fw_device_release() under
-acquiring card->lock causes dead lock.
-
->>  	}
->>  
->>  	device_initialize(&device->device);
-
-Anyway, I'll post take 2 and work for its evaluation.
-
-
-Thanks
-
-Takashi Sakamoto
+> ---
+>  drivers/iommu/amd/amd_iommu.h       |  5 -----
+>  drivers/iommu/amd/amd_iommu_types.h | 16 ++++++----------
+>  drivers/iommu/amd/init.c            |  8 +++-----
+>  3 files changed, 9 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/iommu/amd/amd_iommu.h b/drivers/iommu/amd/amd_iommu.h
+> index 2d5945c982bd..52e18b5f99fd 100644
+> --- a/drivers/iommu/amd/amd_iommu.h
+> +++ b/drivers/iommu/amd/amd_iommu.h
+> @@ -121,11 +121,6 @@ static inline bool check_feature2(u64 mask)
+>  	return (amd_iommu_efr2 & mask);
+>  }
+>  
+> -static inline int check_feature_gpt_level(void)
+> -{
+> -	return ((amd_iommu_efr >> FEATURE_GATS_SHIFT) & FEATURE_GATS_MASK);
+> -}
+> -
+>  static inline bool amd_iommu_gt_ppr_supported(void)
+>  {
+>  	return (check_feature(FEATURE_GT) &&
+> diff --git a/drivers/iommu/amd/amd_iommu_types.h b/drivers/iommu/amd/amd_iommu_types.h
+> index 2b76b5dedc1d..c9f9a598eb82 100644
+> --- a/drivers/iommu/amd/amd_iommu_types.h
+> +++ b/drivers/iommu/amd/amd_iommu_types.h
+> @@ -8,6 +8,7 @@
+>  #ifndef _ASM_X86_AMD_IOMMU_TYPES_H
+>  #define _ASM_X86_AMD_IOMMU_TYPES_H
+>  
+> +#include <linux/bitfield.h>
+>  #include <linux/iommu.h>
+>  #include <linux/types.h>
+>  #include <linux/mmu_notifier.h>
+> @@ -95,26 +96,21 @@
+>  #define FEATURE_GA		BIT_ULL(7)
+>  #define FEATURE_HE		BIT_ULL(8)
+>  #define FEATURE_PC		BIT_ULL(9)
+> -#define FEATURE_GATS_SHIFT	(12)
+> -#define FEATURE_GATS_MASK	(3ULL)
+> +#define FEATURE_GATS		GENMASK_ULL(13, 12)
+> +#define FEATURE_GLX		GENMASK_ULL(15, 14)
+>  #define FEATURE_GAM_VAPIC	BIT_ULL(21)
+> +#define FEATURE_PASMAX		GENMASK_ULL(36, 32)
+>  #define FEATURE_GIOSUP		BIT_ULL(48)
+>  #define FEATURE_HASUP		BIT_ULL(49)
+>  #define FEATURE_EPHSUP		BIT_ULL(50)
+>  #define FEATURE_HDSUP		BIT_ULL(52)
+>  #define FEATURE_SNP		BIT_ULL(63)
+>  
+> -#define FEATURE_PASID_SHIFT	32
+> -#define FEATURE_PASID_MASK	(0x1fULL << FEATURE_PASID_SHIFT)
+> -
+> -#define FEATURE_GLXVAL_SHIFT	14
+> -#define FEATURE_GLXVAL_MASK	(0x03ULL << FEATURE_GLXVAL_SHIFT)
+>  
+>  /* Extended Feature 2 Bits */
+> -#define FEATURE_SNPAVICSUP_SHIFT	5
+> -#define FEATURE_SNPAVICSUP_MASK		(0x07ULL << FEATURE_SNPAVICSUP_SHIFT)
+> +#define FEATURE_SNPAVICSUP	GENMASK_ULL(7, 5)
+>  #define FEATURE_SNPAVICSUP_GAM(x) \
+> -	((x & FEATURE_SNPAVICSUP_MASK) >> FEATURE_SNPAVICSUP_SHIFT == 0x1)
+> +	(FIELD_GET(FEATURE_SNPAVICSUP, x) == 0x1)
+>  
+>  /* Note:
+>   * The current driver only support 16-bit PASID.
+> diff --git a/drivers/iommu/amd/init.c b/drivers/iommu/amd/init.c
+> index c89d85b54a1a..6b15ce09e78d 100644
+> --- a/drivers/iommu/amd/init.c
+> +++ b/drivers/iommu/amd/init.c
+> @@ -2042,14 +2042,12 @@ static int __init iommu_init_pci(struct amd_iommu *iommu)
+>  		int glxval;
+>  		u64 pasmax;
+>  
+> -		pasmax = amd_iommu_efr & FEATURE_PASID_MASK;
+> -		pasmax >>= FEATURE_PASID_SHIFT;
+> +		pasmax = FIELD_GET(FEATURE_PASMAX, amd_iommu_efr);
+>  		iommu->iommu.max_pasids = (1 << (pasmax + 1)) - 1;
+>  
+>  		BUG_ON(iommu->iommu.max_pasids & ~PASID_MASK);
+>  
+> -		glxval   = amd_iommu_efr & FEATURE_GLXVAL_MASK;
+> -		glxval >>= FEATURE_GLXVAL_SHIFT;
+> +		glxval = FIELD_GET(FEATURE_GLX, amd_iommu_efr);
+>  
+>  		if (amd_iommu_max_glx_val == -1)
+>  			amd_iommu_max_glx_val = glxval;
+> @@ -3088,7 +3086,7 @@ static int __init early_amd_iommu_init(void)
+>  
+>  	/* 5 level guest page table */
+>  	if (cpu_feature_enabled(X86_FEATURE_LA57) &&
+> -	    check_feature_gpt_level() == GUEST_PGTABLE_5_LEVEL)
+> +	    FIELD_GET(FEATURE_GATS, amd_iommu_efr) == GUEST_PGTABLE_5_LEVEL)
+>  		amd_iommu_gpt_level = PAGE_MODE_5_LEVEL;
+>  
+>  	/* Disable any previously enabled IOMMUs */
 
