@@ -1,126 +1,93 @@
-Return-Path: <linux-kernel+bounces-291610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C669564B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:30:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A0E59564B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:31:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 817CD1F231A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:30:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08A6BB22F85
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88F0157A43;
-	Mon, 19 Aug 2024 07:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IqKnuC+q"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881A9158A09;
+	Mon, 19 Aug 2024 07:30:50 +0000 (UTC)
+Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BE3B657;
-	Mon, 19 Aug 2024 07:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7C3158214
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724052647; cv=none; b=cKJDzfH7T+WaM2U8eNgwa7rY2lWCMgyQIWAqDV4dSvWfJkBBhq3GB0t5VHi1RywkqY0lMjdubfroqR26X15YUHs+DvYXXOdW0qK2t4rsbF0pSKx23HSLuUoAmn+VA59U9MGlHJ0APB96YSJWjz8yPEu6n/hQ+sqKdt9I/rs8EOg=
+	t=1724052650; cv=none; b=WxLhn4eHO44Mt5hOlJwU08eehjTnP0LJ4r/+P1A1cSLeVJs/FJVjnO8JYmSvq0tqhbe8/dgi5qysB4CCzvYKWbVyTKgAjON0QO+NcHjlGkPcnRA7CbJY1F8xmMs/cmKvlEWrJUmEYivTKFMnC2eoXG45r3uAvk1Htu/BMbCrOlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724052647; c=relaxed/simple;
-	bh=7BXnxBZrxRc+q2NleTxrIOuh30+vm8zYfzVHMGFAiXo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SiHWdkooufVVvVHX08LiKM9yhY/rIASPUAnHCVWKIF350t5XMwW+FloKrb7kg+b8KxEHMKz3SDMwbQHkedVHniiDW1M4I2m1bxehSk4uIOpGa5TOYwEUh7/FPASbBWrc4ep27wBfN/kDDK8OfaBF7BagIdc/5L4EnSa5KcE4qZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IqKnuC+q; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47ILKEpk025131;
-	Mon, 19 Aug 2024 07:30:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=8jHwVVsoU2f5bCMX9HB7cN
-	HpdTVQyglT0UfzYVXkZ+M=; b=IqKnuC+q+fE6irEsWmBpMB/glsqXwVDd8acUAi
-	6zXf9R4/7wP7MPXht8LZWdndHorJdZEnsFhF2do4d3YTJ++CAOQOTswczZDN9SEu
-	RMjzhqqPV8BQqjn5BbhvYfM6pf6Kdqalt5SAWMvq/GJ/P4QGBLb4fTRRDm84vaBl
-	oD4sQd5+ndyvOrcw3KRuNIOFeNeiiIyyabY20uo90aEcwXoJU3qaZY8oVO5hg+/o
-	ImFVOQEFpuKYyQDi5xqqWjdnnVosi2REO0MUmSB+qhNd7g6TZ0V3796bhCjQ/dt3
-	MGVOMxAggQ0mXQTcg17lPotmT7cmd8KyRQwogJMJ+2bVCr2A==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412jtrube5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 07:30:40 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47J7UdS4020370
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 07:30:39 GMT
-Received: from hu-sibis-blr.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 19 Aug 2024 00:30:37 -0700
-From: Sibi Sankar <quic_sibis@quicinc.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
-        <dianders@chromium.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>
-Subject: [PATCH] remoteproc: qcom_q6v5_mss: Re-order writes to the IMEM region
-Date: Mon, 19 Aug 2024 13:00:20 +0530
-Message-ID: <20240819073020.3291287-1-quic_sibis@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724052650; c=relaxed/simple;
+	bh=/l9Fe0LFSP8Uuq7JyblD2xXOoporNaiQ/sYhswItljc=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=pAoMcocIxVDasrU9HKjjU1e4O4YFdDLUFIxYLK+OocCz2Ag96s2FjigY/YAkzNIOSxcXGazGEkHT1d2MqvaGinFpiou9FyHX+VgnTQG+nOgpzaasx23dixEgCRaxRBtDAHweTuswPVeAXWwPTQLTD5j2JRumYuxuVIGobG+4bBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4WnPQR4sKFz4xGSY
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:30:39 +0200 (CEST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:7674:86dc:e300:ce10])
+	by laurent.telenet-ops.be with bizsmtp
+	id 1jWY2D0052ltMuT01jWYrk; Mon, 19 Aug 2024 09:30:32 +0200
+Received: from geert (helo=localhost)
+	by ramsan.of.borg with local-esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sfwqW-000Hig-1Z;
+	Mon, 19 Aug 2024 09:30:32 +0200
+Date: Mon, 19 Aug 2024 09:30:32 +0200 (CEST)
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: linux-kernel@vger.kernel.org
+cc: sparclinux@vger.kernel.org, intel-xe@lists.freedesktop.org, 
+    dri-devel@lists.freedesktop.org
+Subject: Re: Build regressions/improvements in v6.11-rc4
+In-Reply-To: <20240819070639.2558629-1-geert@linux-m68k.org>
+Message-ID: <e43d6c-90df-32d2-c7ac-2991e8c5672f@linux-m68k.org>
+References: <CAHk-=wgP=qzODR60Xxzem5LQi6sH+6EFCDMOApAgBy37SQ59hA@mail.gmail.com> <20240819070639.2558629-1-geert@linux-m68k.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: HmVX_4V33t35iAdF8v37AAVewKjjjRpV
-X-Proofpoint-GUID: HmVX_4V33t35iAdF8v37AAVewKjjjRpV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-19_05,2024-08-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
- suspectscore=0 bulkscore=0 mlxlogscore=929 mlxscore=0 impostorscore=0
- malwarescore=0 lowpriorityscore=0 adultscore=0 priorityscore=1501
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408190054
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-Any write access to the IMEM region when the Q6 is setting up XPU
-protection on it will result in a XPU violation. Fix this by ensuring
-IMEM writes related to the MBA post-mortem logs happen before the Q6
-is brought out of reset.
+On Mon, 19 Aug 2024, Geert Uytterhoeven wrote:
+> JFYI, when comparing v6.11-rc4[1] to v6.11-rc3[3], the summaries are:
+>  - build errors: +6/-4
 
-Fixes: 318130cc9362 ("remoteproc: qcom_q6v5_mss: Add MBA log extraction support")
-Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
----
- drivers/remoteproc/qcom_q6v5_mss.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+   + /kisskb/src/arch/sparc/vdso/vdso32/../vclock_gettime.c: error: no previous prototype for '__vdso_clock_gettime' [-Werror=missing-prototypes]:  => 254:1
+   + /kisskb/src/arch/sparc/vdso/vdso32/../vclock_gettime.c: error: no previous prototype for '__vdso_clock_gettime_stick' [-Werror=missing-prototypes]:  => 282:1
+   + /kisskb/src/arch/sparc/vdso/vdso32/../vclock_gettime.c: error: no previous prototype for '__vdso_gettimeofday' [-Werror=missing-prototypes]:  => 307:1
+   + /kisskb/src/arch/sparc/vdso/vdso32/../vclock_gettime.c: error: no previous prototype for '__vdso_gettimeofday_stick' [-Werror=missing-prototypes]:  => 343:1
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 2a42215ce8e0..32c3531b20c7 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -1162,6 +1162,9 @@ static int q6v5_mba_load(struct q6v5 *qproc)
- 		goto disable_active_clks;
- 	}
- 
-+	if (qproc->has_mba_logs)
-+		qcom_pil_info_store("mba", qproc->mba_phys, MBA_LOG_SIZE);
-+
- 	writel(qproc->mba_phys, qproc->rmb_base + RMB_MBA_IMAGE_REG);
- 	if (qproc->dp_size) {
- 		writel(qproc->mba_phys + SZ_1M, qproc->rmb_base + RMB_PMI_CODE_START_REG);
-@@ -1172,9 +1175,6 @@ static int q6v5_mba_load(struct q6v5 *qproc)
- 	if (ret)
- 		goto reclaim_mba;
- 
--	if (qproc->has_mba_logs)
--		qcom_pil_info_store("mba", qproc->mba_phys, MBA_LOG_SIZE);
--
- 	ret = q6v5_rmb_mba_wait(qproc, 0, 5000);
- 	if (ret == -ETIMEDOUT) {
- 		dev_err(qproc->dev, "MBA boot timed out\n");
--- 
-2.34.1
+sparc64-gcc13/sparc64-allmodconfig
+(pre-existing, but now emitted twice in this config only?)
 
+   + /kisskb/src/include/linux/compiler_types.h: error: call to '__compiletime_assert_952' declared with attribute error: FIELD_GET: mask is not constant:  => 510:38
+   + /kisskb/src/include/linux/compiler_types.h: error: call to '__compiletime_assert_953' declared with attribute error: FIELD_GET: mask is not constant:  => 510:38
+
+powerpc-gcc5/powerpc-all{mod,yes}config
+
+In function 'decode_oa_format.isra.26',
+     inlined from 'xe_oa_set_prop_oa_format' at drivers/gpu/drm/xe/xe_oa.c:1664:6:
+drivers/gpu/drm/xe/xe_oa.c:1573:18: note: in expansion of macro 'FIELD_GET'
+   u32 bc_report = FIELD_GET(DRM_XE_OA_FORMAT_MASK_BC_REPORT, fmt);
+                   ^
+Seen before, patch available.
+
+Gr{oetje,eeting}s,
+
+ 						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+ 							    - Linus Torvalds
 
