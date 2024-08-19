@@ -1,45 +1,58 @@
-Return-Path: <linux-kernel+bounces-291835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1970C9567C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:05:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B1B9567CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AE2AB21E8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:05:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAF2128357F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1737115B147;
-	Mon, 19 Aug 2024 10:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E52615E5C1;
+	Mon, 19 Aug 2024 10:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="iWu3Lnso"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="QFQNtX6z"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D05C33C0
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724061908; cv=none; b=GTFLRi8VRAHDjkF5B+OItV0XigClW7Haqd9I8Za2CjmmYYz5i/Ax1qqyeP5ei1ovu3C0fHR4K+m/tV4X3+vBMvhE2E3Mi/WzPn2ZdD6SmaAQh2LMKps9iLE/95jZ5U/QnsEdCQGumqRTDzIA+9T9twxhb9E7KkUzV2XBvuSKeZM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724061908; c=relaxed/simple;
-	bh=liHq5bpT95/0+z2SFRHqocFxeOo1NvcbshDwkxiN62s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hT35AbpVXLRCdPzIAIEW4SVgJYqv8eR3CKVSwa8b+oGVo3jP4DzeHx/Rqy5QmM8mwa27dVLw5sw6GX2LYpWbxck1zLlWYayfNhnZJJoqXRdnW6EhQ6zMr7lALO4jVouU+1kor9G2inkNMyk8zvy1bBmJ5vGvsIDvTI0D4G8apgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=iWu3Lnso; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1724061903; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=MCjqsG6JtfvWAirwZ/LCpeLTqCVtGz+HtJHJeKy+33A=;
-	b=iWu3LnsoqLTo0fiTnZZsJkpAJvqLNyfMgpi0fzappdoKR/F+aGiC4XI18Pk0Ht02gI8oObhgT+sxrmN9UxNMd+H7OpMyjlhD41n342cyDqQupUkIIvs9ZsuMWluG4G6nYJZ9cgRkrEBYzsnIuN+vZtG5N7KO3EiAHXNXuWMagTk=
-Received: from 30.97.56.67(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WDA.YfX_1724061901)
-          by smtp.aliyun-inc.com;
-          Mon, 19 Aug 2024 18:05:02 +0800
-Message-ID: <3802c50b-325e-491f-9f8d-8ab309121935@linux.alibaba.com>
-Date: Mon, 19 Aug 2024 18:05:01 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFCC7148FE0;
+	Mon, 19 Aug 2024 10:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724061937; cv=pass; b=sORd3vXR1cAmt4S7MiowD6cIKtOSAE7NzrXwyX334WTgNcZvkpMQwopSwnVasyX5zCDTjNbJWl56rxmvG6JHHRoKampnACY6U/z2AV9kK0MJsyUVvW5WanV+TDHUVbQOkasCx7+2KWhC6F8HsJL01ykb8bAsPVOLXupBikbLbkc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724061937; c=relaxed/simple;
+	bh=Hh8QfZgSepyCVNdlw8p6+aGPEFGsy6XYRFHLeqgAijE=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=JEVE1Qh32Jt6bvOLcRYE2wd9h7sM/k8EU+iWwLyn+QIoP5yhmrjSymRJ95cgm2SkUJXjXv07SFGVYMcxBMM8Imxe84fZBq12o9pi70x/X2Fn2fp8kdVWGnt+hQHCu6z/JTz0M/U+Z1RGx/7nuSaBjkLhUk4dh97k6T9HBVBj38Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=QFQNtX6z; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: Usama.Anjum@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1724061921; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=MXOhc7NLEDPDr/iPpz6LDk+OKmaWGNi608mPfY3+G8aMooSY4q1YtJlBkTErvALqkiJB36Evfe3+xm5KMlBjUUTuMEaHw+dfpepIghc9za9DvnI0Bz/4DR0dTATzX5UTsxCgz2VFiQLOJnehAK/RryheLGuF5psEDjud0LbaY3Y=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724061921; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=clWg1cFDvmBXHk5ECX33rfzkJ2REgKM2jV0tZFYmIeQ=; 
+	b=PUlR2JI/qzO2k81FjM2m5k5QxwrKZ9omUh/3J+0lC+Mwx+1OiPktwnoi1g3JtYdyFWX9oOnQD8nsBzUJAbXP1ISIWPuDsikRTqIadvYWwWh6t5DXjEmxY7eZsymgSCKZh3NSJWTK5fBD3zLLV0hqpKLAguhZThbpmBtLJjRu0Dk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724061921;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=clWg1cFDvmBXHk5ECX33rfzkJ2REgKM2jV0tZFYmIeQ=;
+	b=QFQNtX6zd8MeGg+ZTXgH2wzzY9xNeJKd5YubWcapTV7m5lk9rX13WKKixaCfjLPY
+	xVrvQjc0GOdi0gTl0msRIJwR5ePxQKYjV/6x1rlG+eya7C4oUl3s2ItFgMYLiZXHrkI
+	eLBRGE4NmrGShGj6+dhZv88676r6cOD0rW38Oasw=
+Received: by mx.zohomail.com with SMTPS id 1724061920204590.2573152825611;
+	Mon, 19 Aug 2024 03:05:20 -0700 (PDT)
+Message-ID: <1b36ba43-60a4-441c-981f-9b62f366aa95@collabora.com>
+Date: Mon, 19 Aug 2024 15:05:07 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,73 +60,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] mm: khugepaged: use the number of pages in the folio
- to check the reference count
-To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org
-Cc: hughd@google.com, willy@infradead.org, 21cnbao@gmail.com,
- ryan.roberts@arm.com, shy828301@gmail.com, ziy@nvidia.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1724054125.git.baolin.wang@linux.alibaba.com>
- <c6038c7e823d4162f745147628616f7876585a97.1724054125.git.baolin.wang@linux.alibaba.com>
- <966bfe10-6123-48db-95b7-ade2f794700d@redhat.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <966bfe10-6123-48db-95b7-ade2f794700d@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Cc: Usama.Anjum@collabora.com, Andrew Morton <akpm@linux-foundation.org>,
+ Shuah Khan <shuah@kernel.org>, Kees Cook <kees@kernel.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, kernel@collabora.com,
+ stable@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests: mm: Fix build errors on armhf
+To: Jeff Xu <jeffxu@chromium.org>
+References: <20240809082511.497266-1-usama.anjum@collabora.com>
+ <CABi2SkWgPoWJY_CMxDru7FPjtQBgv61PA2VoCumd3T8Xq3fjbg@mail.gmail.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+In-Reply-To: <CABi2SkWgPoWJY_CMxDru7FPjtQBgv61PA2VoCumd3T8Xq3fjbg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-
-
-On 2024/8/19 17:40, David Hildenbrand wrote:
-> On 19.08.24 10:14, Baolin Wang wrote:
->> Use the number of pages in the folio to check the reference count as
->> preparation for supporting shmem mTHP collapse.
+On 8/14/24 3:29 AM, Jeff Xu wrote:
+> Hi Muhammad
+> 
+> On Fri, Aug 9, 2024 at 1:25 AM Muhammad Usama Anjum
+> <usama.anjum@collabora.com> wrote:
 >>
->> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->> ---
->>   mm/khugepaged.c | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
+>> The __NR_mmap isn't found on armhf. The mmap() is commonly available
+>> system call and its wrapper is presnet on all architectures. So it
+>> should be used directly. It solves problem for armhf and doesn't create
+>> problem for architectures as well. Remove sys_mmap() functions as they
+>> aren't doing anything else other than calling mmap(). There is no need
+>> to set errno = 0 manually as glibc always resets it.
 >>
->> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->> index f11b4f172e61..60d95f08610c 100644
->> --- a/mm/khugepaged.c
->> +++ b/mm/khugepaged.c
->> @@ -1994,7 +1994,7 @@ static int collapse_file(struct mm_struct *mm, 
->> unsigned long addr,
->>           /*
->>            * We control three references to the folio:
+> The mseal_test should't have dependency on libc, and mmap() is
+> implemented by glibc, right ?
 > 
-> ^ "three" is wrong now.
-
-Ah, good catch. Will change to '2 + nr_pages'.
-
+> I just fixed a bug to switch mremap() to sys_mremap to address an
+> issue that different glibc version's behavior is slightly different
+> for mremap().
 > 
->>            *  - we hold a pin on it;
->> -         *  - one reference from page cache;
->> +         *  - nr_pages reference from page cache;
->>            *  - one from lru_isolate_folio;
->>            * If those are the only references, then any new usage
->>            * of the folio will have to fetch it from the page
->> @@ -2002,7 +2002,7 @@ static int collapse_file(struct mm_struct *mm, 
->> unsigned long addr,
->>            * truncate, so any new usage will be blocked until we
->>            * unlock folio after collapse/during rollback.
->>            */
->> -        if (folio_ref_count(folio) != 3) {
->> +        if (folio_ref_count(folio) != 2 + folio_nr_pages(folio)) {
->>               result = SCAN_PAGE_COUNT;
->>               xas_unlock_irq(&xas);
->>               folio_putback_lru(folio);
->> @@ -2185,7 +2185,7 @@ static int collapse_file(struct mm_struct *mm, 
->> unsigned long addr,
->>           folio_clear_active(folio);
->>           folio_clear_unevictable(folio);
->>           folio_unlock(folio);
->> -        folio_put_refs(folio, 3);
->> +        folio_put_refs(folio, 2 + folio_nr_pages(folio));
->>       }
->>       goto out;
-> 
-> Acked-by: David Hildenbrand <david@redhat.com>
+> What is the reason that __NR_mmap not available in armhf ? (maybe it
+> is another name ?)  there must be a way to call syscall directly on
+> armhf, can we use that instead ?
 
-Thanks for reviewing.
+It seems __NR_mmap syscall is deprecated for arm. Found this comment in
+arch/arm/include/asm/unistd.h:
+/*
+ * The following syscalls are obsolete and no longer available for EABI:
+ *  __NR_time
+ *  __NR_umount
+ *  __NR_stime
+ *  __NR_alarm
+ *  __NR_utime
+ *  __NR_getrlimit
+ *  __NR_select
+ *  __NR_readdir
+ *  __NR_mmap
+ *  __NR_socketcall
+ *  __NR_syscall
+ *  __NR_ipc
+ */
+
+The glibc mmap() calls mmap2() these days by adjusting the parameters
+internally. From man mmap:
+C library/kernel differences:
+This  page  describes the interface provided by the glibc mmap() wrapper
+function.  Originally, this function invoked a system call of the same
+name.  Since Linux 2.4, that system call has been superseded  by
+mmap2(2), and nowadays the glibc mmap() wrapper function invokes
+mmap2(2) with a suitably adjusted value for offset.
+
+I'm not sure if behaviour of glibc mmap() and syscall mmap2() would be
+same, but we should use glibc at most places which accounts for
+different architectures correctly. Maybe the differences were only
+present in case of mremap().
+
+-- 
+BR,
+Muhammad Usama Anjum
+
 
