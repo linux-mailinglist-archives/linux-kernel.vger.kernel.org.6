@@ -1,53 +1,70 @@
-Return-Path: <linux-kernel+bounces-292078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FD47956AD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:27:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73B67956B17
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D981AB257EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:26:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A617B226D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E43016C438;
-	Mon, 19 Aug 2024 12:24:55 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946B316B74B;
+	Mon, 19 Aug 2024 12:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="LnP5EklL"
+Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBE216C42C;
-	Mon, 19 Aug 2024 12:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D50F16B732
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 12:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724070294; cv=none; b=HGUdn6oUH7gRU+3oKA2jpk84HaVeDPgaTReyXIv4Is5cfA78xk5NIrQyjp9p5H2dREkZanQjinTUlKjmFYW1VlJDv22X1OtidTB+VBQeouxhegdy3VIwMqs0kehFn0KuVw/u2dOk7+mXjSLSwsAg3K1cY/hnxm6/yj73UDCubrw=
+	t=1724071403; cv=none; b=mBXJcxHSC8sX2ZwJE0yao5PUp3402w+rqsLp1Mus18RQEfFfkqt/WGStb0qBRNaupeLU7PIAJQE5MESSkLPXzj0tCG6bDnnLA5cF0zfzNLmy29A6i5JhMWMe8OyLHQkt89eGnCI9YsNuse0hhtrXkb786TepgkMwn37P7NOyI+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724070294; c=relaxed/simple;
-	bh=aK8DHVfkVZISmQEbSj/+H3OwAxquMaD5EXh1ACr8Pe4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g/QmxTFuWLg32Moj9kaQ+HnIiNX/6MwP9tv54I4VmNwG4aDwzc9wA27i99ah3eboARuPrAytNA+CX8yf6YEGr452iGy3qYnmt+hRQr+LyQFPZTPFzjr7U1tvm+uvQCA0pD+cKU1F0/TXKuFDeVcO8PQGrs0y2UTO6gx4ATKbw8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WnWrP0TsjzQq7L;
-	Mon, 19 Aug 2024 20:20:05 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0811B1800A5;
-	Mon, 19 Aug 2024 20:24:45 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 19 Aug
- 2024 20:24:44 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <jonas.gorski@gmail.com>, <broonie@kernel.org>,
-	<linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next 2/2] spi: bcm63xx: Fix missing pm_runtime_disable()
-Date: Mon, 19 Aug 2024 20:31:56 +0800
-Message-ID: <20240819123156.4020377-3-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240819123156.4020377-1-ruanjinjie@huawei.com>
-References: <20240819123156.4020377-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1724071403; c=relaxed/simple;
+	bh=Gai2/m6Pd77eSX2qtKKlVbhFDtZu7kZrTdVCazkTGDI=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=FP6S/K7NwXqLAKskDGVdfunvSzQQwPkq8ncy0FqHVIT4x1IM4E8K4jh9gIRpHkUGX6IXdLKJLe0Ajd5z3mzqAbksaRMgScG+oHc9tcnOGuTeL1uhGZILrAGGw/DhL8Jwm4pKzmXBp5jr4Kd2VWTlijCWDQYA6F7aigBCsTlzk/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=LnP5EklL; arc=none smtp.client-ip=162.62.57.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1724071091; bh=H4KEWwHR4c/iOa1WzDtme2MK/SG+05h3GqQxJ8BrG6s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=LnP5EklLP76dHvWozWmNpPjru3hiLZ2JdtMSUlCqVSyz/xbTDNpd/6z0vhJR8tfec
+	 d4UyRLSOfGXKbruicpnHSPOEMwrXFZ8IKPM48XtiyRPSr+4dH/Nfoau5NWDiy5kcrK
+	 71eDsWAHgtKLJmOodMoJ21hB1zIcJH521EwJdl3U=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
+	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
+	id 7FB3ACD1; Mon, 19 Aug 2024 20:31:59 +0800
+X-QQ-mid: xmsmtpt1724070719txavzdeku
+Message-ID: <tencent_E16C702F5D6FE89404EB76ED62CECC783A0A@qq.com>
+X-QQ-XMAILINFO: MncAM2hB0zyG+ZMfnOOHhFZkUrQpgkKB9RarSm9o2uygkn7k/IQq3JMMQwICCY
+	 00SCk2lWJEz2Owi81N7whfhNZV71a7Zn2j9THojnMmOf2YwYULv1AyYwhQoblccIerbOYkR0eQp+
+	 r2yYiy6xCrU5DEbi3jp+dQVqyU3zS05+BmBp2h9lku8iybowwL8v7OnRjMN8jD07vcNVKYKk5eKM
+	 COHCEy3sawps7ispIuHxtXJxmbIHo3ROpzI3bpFJMKrNv7QuanwO8UqSGeRVkanFteaTDY28ZBYc
+	 FyVmSzj4cnlWBX/BQTXgmPRCas4WP5Ey8bbekQvKsiUDqZkEGdMbatAt6G93oI+0ysydnygb+U9f
+	 9LNcm/GR0/vVudLEgKnMCv4BDTgbmv0tMNDJJWe4C4er/sVc8sHpjeiNNo6nHULL6kjXAnRImGt5
+	 CyVYdGbH8HRok/IL2Sxux6FrtqQP+LusY6WwKmmFiWQ6LLvtVm7dbZv+Eig2EV3f1qlI3kJXyCqX
+	 DlEiM8/JeLaB5rnW4EPiOeJ/9iM+Fj995LGFUllVxDQ2UvJ9NQTbvPWUv+A7396g40wI484lKwin
+	 9fiNCwGjPAa2umKg9SWG9In78VuKCcDfXhHEpgeRstTTU5oT59RQyGUljLLlBLcXsS8pAXW91xvD
+	 8Ne1VWd3oIL2pUiSJTjS91A0V3j3MBAUnQt9gmF2zsY6AyPetp5hPJZnem43RVokNDRMyh5fCbCn
+	 lWAlKvASrJXaAhe676cDdEtQMXOllRT0JTcVU2iBb8ebd2r0KS63MAyqTUHFYpGxI06mxP4y3EAZ
+	 ulnGYbWXLQqLRkTjQrBvAjWiqHscnuv9mFHYlZSDaAXKaoCM3tK928XFDvVAIX8qOacvdvrxWbFe
+	 1GtaagTIOo7gNMvowwsiJRfkvgODuBObUAAPxIcvpeflDl7jPN2myAjLWGLlm6WwZFUSGLiHN9
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+05b9b39d8bdfe1a0861f@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [syzbot] [ext4?] [ocfs2?] KASAN: null-ptr-deref Write in jbd2_journal_update_sb_log_tail
+Date: Mon, 19 Aug 2024 20:31:59 +0800
+X-OQ-MSGID: <20240819123158.3198404-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <000000000000742b9d062005fc1c@google.com>
+References: <000000000000742b9d062005fc1c@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,59 +72,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemh500013.china.huawei.com (7.202.181.146)
 
-The pm_runtime_disable() is missing in the remove function, fix it
-by using devm_pm_runtime_enable(), so the pm_runtime_disable() in
-the probe error path can also be removed.
+Journal too short will cause ocfs2_check_volume failed, and will set journal->j_sb_buffer to NULL
 
-Fixes: 2d13f2ff6073 ("spi: bcm63xx-spi: fix pm_runtime")
-Cc: <stable@vger.kernel.org> # v5.13+
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-Suggested-by: Jonas Gorski <jonas.gorski@gmail.com>
----
-v2:
-- Change the fix way.
-- Update the commit message.
-- Add Suggested-by and Cc stable.
----
- drivers/spi/spi-bcm63xx.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+#syz test: upstream c3f2d783a459
 
-diff --git a/drivers/spi/spi-bcm63xx.c b/drivers/spi/spi-bcm63xx.c
-index 289f8a94980b..2fb79701a525 100644
---- a/drivers/spi/spi-bcm63xx.c
-+++ b/drivers/spi/spi-bcm63xx.c
-@@ -583,13 +583,15 @@ static int bcm63xx_spi_probe(struct platform_device *pdev)
+diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
+index 530fba34f6d3..25821077b855 100644
+--- a/fs/ocfs2/journal.c
++++ b/fs/ocfs2/journal.c
+@@ -1077,9 +1077,11 @@ void ocfs2_journal_shutdown(struct ocfs2_super *osb)
+ 	BUG_ON(atomic_read(&(osb->journal->j_num_trans)) != 0);
  
- 	bcm_spi_writeb(bs, SPI_INTR_CLEAR_ALL, SPI_INT_STATUS);
- 
--	pm_runtime_enable(&pdev->dev);
-+	ret = devm_pm_runtime_enable(&pdev->dev);
-+	if (ret)
-+		goto out_clk_disable;
- 
- 	/* register and we are done */
- 	ret = devm_spi_register_controller(dev, host);
- 	if (ret) {
- 		dev_err(dev, "spi register failed\n");
--		goto out_pm_disable;
-+		goto out_clk_disable;
+ 	if (ocfs2_mount_local(osb)) {
+-		jbd2_journal_lock_updates(journal->j_journal);
+-		status = jbd2_journal_flush(journal->j_journal, 0);
+-		jbd2_journal_unlock_updates(journal->j_journal);
++		if (journal->j_journal->j_sb_buffer) {
++			jbd2_journal_lock_updates(journal->j_journal);
++			status = jbd2_journal_flush(journal->j_journal, 0);
++			jbd2_journal_unlock_updates(journal->j_journal);
++		}
+ 		if (status < 0)
+ 			mlog_errno(status);
  	}
- 
- 	dev_info(dev, "at %pr (irq %d, FIFOs size %d)\n",
-@@ -597,8 +599,6 @@ static int bcm63xx_spi_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
--out_pm_disable:
--	pm_runtime_disable(&pdev->dev);
- out_clk_disable:
- 	clk_disable_unprepare(clk);
- out_err:
--- 
-2.34.1
 
 
