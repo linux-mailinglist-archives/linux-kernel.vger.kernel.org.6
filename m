@@ -1,143 +1,173 @@
-Return-Path: <linux-kernel+bounces-292803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B84957495
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:39:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDF99957497
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C6821F21B88
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:39:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABCA7281CAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357321DC481;
-	Mon, 19 Aug 2024 19:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jqy44aHK"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2801DC47E;
+	Mon, 19 Aug 2024 19:39:23 +0000 (UTC)
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271AE1D54E0
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 19:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029D81D54E0;
+	Mon, 19 Aug 2024 19:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724096337; cv=none; b=bM7LzPEQp+w+yBep8I38Bdl1x1B2qFAYIVasKTquQxWnjbYVxMxT5ibSh0sl4XTG4n+qqv68q2BLxUewgD1oCOjSnOyQky/EC+N3SQ2aHrPZAhGzwrtrx+c1uEhWDlbzhb2y8+tdtSIroePOZEHkcP8Atuf0DTLIb9RLNWOjcHw=
+	t=1724096362; cv=none; b=FyrSbrYRbWrM4ZVzV1FFjQlLAcWjA41/T0sn6wUt+2ayyNKnoTv7I113idyzaSNb0K5VMJfKlzCYLFTenhHmTCMj/vW2bDeZ+pwY+15zip8dVVyEGOrfCtCIXMmrI/gu3Z7hER7Vt/MA5g6MU8chmqR0cEMWe8/hdwu1puINCi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724096337; c=relaxed/simple;
-	bh=F7wkcHJPXIPuDfH/klr4thKavbEnJmwxdbEiZYRhu1E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cKJqq1MmwYfwIn7L9Q7w28yXKfEtpjxWE3CLNCeEA8wRYJGZ+iDBYSpiWHwJpqIOy/n4LNv+LhztCh9wY6meyON3doZj+iLxNJEQy9s6XSms5ZDdqz3Q2mlwZFpZ/h7lfO0DoqUJzA9P12sb8BZvZoRcQNKTUUpB6IR2nE30Heo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jqy44aHK; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-201fba05363so29186955ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 12:38:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724096335; x=1724701135; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YeS++fCKemkXhDJMjat3ElWefP5AW5Wy1oKzA28CFNw=;
-        b=Jqy44aHKfCucjW6dSdgDbzaqx2bnXrzPEbfetshLmrEaw/8xyi0TxC5h7b8LHg8N/t
-         kouRMUJCIINWGrPLvd4Sca5u2B86Qpu1OApbkfFi9jPE4QPO7YgUqf48/pp/avbE7M1F
-         lXJKrVlyu8na4SVtkpsonw//DihGztrsDcWO8orF6NQltKwhUgETN4S6mzahBatvl4yK
-         UMKc7DJodi8BjCyDHN1sSBeQM4hD1rgsoVbAMCZPZst7QDHwCBS9MNExih6UbG4Uzp3E
-         K7W7VpffRMkE0tER85oamhTkLH2AFLpW0FSWfqnMxWZ7uyCW3dVhQkwozOJ+vYV/wb0k
-         fn4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724096335; x=1724701135;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YeS++fCKemkXhDJMjat3ElWefP5AW5Wy1oKzA28CFNw=;
-        b=u9FL8nDMbLgMcN0AVlvfaa9S54Gv1j2si14fXOIWNiAiKtV56o+/t2Y5FHnjzgEjY6
-         AqDugGyU22xfsmkOtEp4l1ZBKUEbxSDrGldIdqcx1ukwGB2W11f28OFGJOIUdyEEcrdB
-         S0cC8BcGmRWAkFpPFYY/Gf79kOglfFi8GqDkFoLXrsZfSTHAaMUBgTqTTE6VMjqIv+aY
-         Zj3MCNpO3V5+cjpN0U0oRrh7/hOIewlxo4dFy79zZrMeMigT4cXrHYJHUka3Xh74pFg7
-         rjSmEdgNoVs35rOf6VgnGVQ7NvT686Z5wypjf+MHOPLuuld9J2KnCw8jHtzaCw0dCCGV
-         keAg==
-X-Forwarded-Encrypted: i=1; AJvYcCWzXb9zKMX60sKJ9Uf/r5rWGK7B7PV/ie7I4Ya5kQ5Zo1zjHu7LvNGJpo1T0qhe3k2fpa8X8p75XOJLAjg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/K824o5ZVe/8RTsNQGvYuHF6td3TN3DobSrErUn3MtnMk/454
-	6pGnoS3oe5ea9TGXHcdDmG7KVAzny66ZHVePBML18wFC/NOlCul0q0x5bVYa8A==
-X-Google-Smtp-Source: AGHT+IG8oRBHqBpvRvU+j9ijDv76wPfUzxrx1g+I09GD1WWcWllKaTLicpQtA41S0/MWaq3kkTtGZA==
-X-Received: by 2002:a17:903:188:b0:202:4d05:a24a with SMTP id d9443c01a7336-2024d05a587mr34136775ad.16.1724096334977;
-        Mon, 19 Aug 2024 12:38:54 -0700 (PDT)
-Received: from google.com (226.75.127.34.bc.googleusercontent.com. [34.127.75.226])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f03197b6sm65427305ad.69.2024.08.19.12.38.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 12:38:54 -0700 (PDT)
-Date: Mon, 19 Aug 2024 19:38:51 +0000
-From: Sami Tolvanen <samitolvanen@google.com>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Matthew Maurer <mmaurer@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>,
-	Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>,
-	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved
- structure fields
-Message-ID: <20240819193851.GA4809@google.com>
-References: <20240815173903.4172139-21-samitolvanen@google.com>
- <20240815173903.4172139-37-samitolvanen@google.com>
- <2024081600-grub-deskwork-4bae@gregkh>
- <CABCJKuedc3aCO2Or+_YBSzK_zp9zB8nFwjr-tK95EBM3La1AmA@mail.gmail.com>
- <2024081705-overarch-deceptive-6689@gregkh>
- <ef6f7294-0afe-46af-8714-ed4a4aaee558@proton.me>
+	s=arc-20240116; t=1724096362; c=relaxed/simple;
+	bh=BomMNfY2iAiew9cnUbgviJ5TZayWl5/YovaQf6MYUls=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kfBJiGBTg00Pv0m0pc65dFXnON4GiWC66sBjnfn9Tyi4J8BDNMiHxCQkvfv5yajMDUeEMy9/CnJAuLLlOb06MKGrNOX3Hx3IhKcAreLiTg6YRllYbPma/4ANGwjTPNdzWlgbr6STJ0n3sp4iyfInqdYl/5vrsardMe1cMeegIS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 233392276E;
+	Mon, 19 Aug 2024 19:39:19 +0000 (UTC)
+Authentication-Results: smtp-out1.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3BAE3137C3;
+	Mon, 19 Aug 2024 19:39:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id RXvTC2afw2bPYAAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Mon, 19 Aug 2024 19:39:18 +0000
+Message-ID: <76b528f8-88e2-4954-94cf-7e0933b4ad03@suse.de>
+Date: Mon, 19 Aug 2024 22:39:13 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ef6f7294-0afe-46af-8714-ed4a4aaee558@proton.me>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 05/13] PCI: brcmstb: Use bridge reset if available
+To: Jim Quinlan <james.quinlan@broadcom.com>,
+ Stanimir Varbanov <svarbanov@suse.de>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240815225731.40276-1-james.quinlan@broadcom.com>
+ <20240815225731.40276-6-james.quinlan@broadcom.com>
+ <1a6d6972-f2db-4d44-b79c-811ba44368f0@suse.de>
+ <CA+-6iNxFotwXW4Cc31daT+KwE_LEdAR=pcpsg_3Ng0ep1vYLBA@mail.gmail.com>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <CA+-6iNxFotwXW4Cc31daT+KwE_LEdAR=pcpsg_3Ng0ep1vYLBA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Rspamd-Queue-Id: 233392276E
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Level: 
 
-Hi Benno,
+Hi Jim,
 
-On Sat, Aug 17, 2024 at 01:19:55PM +0000, Benno Lossin wrote:
+On 8/19/24 21:09, Jim Quinlan wrote:
+> On Sat, Aug 17, 2024 at 1:41 PM Stanimir Varbanov <svarbanov@suse.de> wrote:
+>>
+>> Hi Jim,
+>>
+>> On 8/16/24 01:57, Jim Quinlan wrote:
+>>> The 7712 SOC has a bridge reset which can be described in the device tree.
+>>> Use it if present.  Otherwise, continue to use the legacy method to reset
+>>> the bridge.
+>>>
+>>> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+>>> ---
+>>>  drivers/pci/controller/pcie-brcmstb.c | 24 +++++++++++++++++++-----
+>>>  1 file changed, 19 insertions(+), 5 deletions(-)
+>>
+>> Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
+>>
+>> One problem though on RPi5 (bcm2712).
+>>
+>> With this series applied + my WIP patches for enablement of PCIe on
+>> bcm2712 when enable the pcie1 and pcie2 root ports in dts, I see kernel
+>> boot stuck on pcie2 enumeration and I have to add this [1] to make it
+>> work again.
+>>
+>> Some more info about resets used:
+>>
+>> pcie0 @ 100000:
+>>         resets = <&bcm_reset 5>, <&bcm_reset 42>, <&pcie_rescal>;
+>>         reset-names = "swinit", "bridge", "rescal";
+>>
+>> pcie1 @ 110000:
+>>         resets = <&bcm_reset 7>, <&bcm_reset 43>, <&pcie_rescal>;
+>>         reset-names = "swinit", "bridge", "rescal";
+>>
+>> pcie2 @ 120000:
+>>         resets = <&bcm_reset 9>, <&bcm_reset 44>, <&pcie_rescal>;
+>>         reset-names = "swinit", "bridge", "rescal";
+>>
+>>
+>> I changed "swinit" reset for pcie2 to <&bcm_reset 9> (it is 32 in
+>> downstream rpi kernel) because otherwise I'm unable to enumerate RP1
+>> south bridge at all.
+>>
+>> Any help will be appreciated.
 > 
-> For this use-case (the one in the patch), I don't really know if we want
-> to copy the approach from C. Do we even support exporting kABI from
-> Rust? If yes, then we I would recommend we tag it in the source code
-> instead of using a union. Here the example from the patch adapted:
-> 
->     #[repr(C)] // needed for layout stability
->     pub struct Struct1 {
->         a: u64,
->         #[kabi_reserved(u64)] // this marker is new
->         _reserved: u64,
->     }
-> 
-> And then to use the reserved field, you would do this:
->     
->     #[repr(C)]
->     pub struct Struct1 {
->         a: u64,
->         #[kabi_reserved(u64)]
->         b: Struct2,
->     }
-> 
->     #[repr(C)]
->     pub struct Struct2 {
->         b: i32,
->         v: i32,
->     }
-> 
-> The attribute would check that the size of the two types match and
-> gendwarfksyms would use the type given in "()" instead of the actual
-> type.
+> Hi Stan,
+> Let me look into this.  Why is one of the controllers turning off --
+> is it not populated with a device?
 
-This definitely looks cleaner than unions in Rust, but how would this
-scheme be visible in DWARF? You might also need to expand the annotation
-to allow replacing one reserved field with multiple smaller ones without
-using structs.
+Yes, I enabled pcie1 but no PCI endpoint devices attached on the
+expansion connector.
 
-Sami
+> 
+> As you probably know the 7712 only has access to PCIe1.  But we do
+> have another chip with two controllers and I will try to reproduce
+> your failure and get to the bottom of it.
+
+Thank you for the help.
+
+~Stan
+
+> 
+> Regards,
+> Jim Quinlan
+> Broadcom STB/CM
+>>
+>> ~Stan
+>>
+>> [1]
+>> https://github.com/raspberrypi/linux/blob/rpi-6.11.y/drivers/pci/controller/pcie-brcmstb.c#L1711
 
