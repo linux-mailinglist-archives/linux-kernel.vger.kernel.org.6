@@ -1,136 +1,101 @@
-Return-Path: <linux-kernel+bounces-292047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C1DE956A7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:10:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7865956A7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:10:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F8821C21F87
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:10:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D6D91F216A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7FF16A930;
-	Mon, 19 Aug 2024 12:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E32E16B39D;
+	Mon, 19 Aug 2024 12:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XySd1RRj"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PFIlOFoc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A0815666B;
-	Mon, 19 Aug 2024 12:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE38166312;
+	Mon, 19 Aug 2024 12:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724069342; cv=none; b=E7Xqr1vsyOHCbet20QhgJQEkXVp1iJzoXfBYx0S2TM/ecHvVIypcxtsJwci3Ehh4qoaGG7OPTLWKrDu31331drW+bifXro3OGN0/o1W3wf2zXW5tPZ7ei87mPS5xWzqinNcrzihI70bel0Y90VAMNel6OxRjfKBBCoS1UvqbMXw=
+	t=1724069392; cv=none; b=LAac5eAT42YqJ03Lz+RSDQgmoc2jAqQncXW0c9Ot+xw/7iFeGsNojzCPod3TyvSSBjoe9RkmRsSlpq0Ty8MO3VNWup1bW7bT9k4ubOqShFcDBIaD9HssDDGHniQBhehuJwz+OgbYjyNJnCwGUB8oCdm9Guh3pOM2bHcDKRfJa4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724069342; c=relaxed/simple;
-	bh=PKUgctShUuF5smxVxpXr/elfbiHpvj5MZhJ0BzZoYNA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GNHw8muKYLlix3NKWOtPPb4s8JNYztSRcFrOgwQIQAHowI1VIdJf05YOifHayCBdsawscaAZam9w+i0Y4HcYGTf+wB8yIBnQo3ju8OSFfEjMkPZFdj7U5MdaeXLXbNAwLiOPVyDzvHM5y/mdXqHlW4ycGIsck9NFkmcxboy8uF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XySd1RRj; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-710bdddb95cso2374273b3a.3;
-        Mon, 19 Aug 2024 05:09:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724069340; x=1724674140; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Pt6QHwBAmFKSEnRFwX3SHcnEffqlGCVeUH83wmSq7vw=;
-        b=XySd1RRjD+v01Etd9TasJ9tt4zcYVjRPpV91UN04wZjNgJY9bFIGdd+Lwl4kR+9x92
-         EPW4h+cQj3zTD0dCpzt/jVc/ApxnMXXIoCMAPz4VnDpRicPxyu0vuroMgZCnzr3QwznS
-         FmB6Z2MeckwAxntqVeOwPd04J2dsHC8L9vhdrojY1JF8OZHSvkXxdy2CpB7W9I9satSM
-         C+nueb3XNbvnWyL02QNFSkZAtk/7wOvwzyZFjvI7Svv2T/UZ4HgW5rnXZdHjAP3T8klq
-         3Ox8nH0vj2WeRxO945YrcDcPMAzel0WZ9wX8ArU6DUNN1vxk0VWPnvkNNZCfanVi+fjV
-         MQ9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724069340; x=1724674140;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pt6QHwBAmFKSEnRFwX3SHcnEffqlGCVeUH83wmSq7vw=;
-        b=ZFUQT0dGkRcAETgvcpSzIf7vJtEz8nmgc5MqMFbQ4gz48DVDEtnL6+Gz5i4kAZEWkR
-         xW6flU6WowRoXI3PyaIHsfB7M8RIXejxvPAIMzUWUFxV05X4WJGjs1A+w1WozCq62LgS
-         B+xOcgU4OCaFYB61Um0RLyVlwtRPLLQqBdMPe3s7gqpu+stGkFqm2TMThoc/EF/L+ISi
-         TC9ZFSO1PP0CJrc9X9MOi/EfrK8eECkulTc8iTn9309/ECjAoeoZNxgl3UjsmQDzUHG7
-         PcpD3/bv08K9cUdFlROcWFvg4Pc+camMzaV8x4C5SN47YC6qgyGr07SpSfrM7vuN0Kfv
-         DKmw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkzDyRkAX/VIWWE9h6HvbeuAjN1YWrCyXTI02d+QydYdo5aNDaj869WF8t2kybfE86mLny8kM0LVbHfCd2LK+LDreC+MH5vuYahA==
-X-Gm-Message-State: AOJu0YynWF7wbQVftfLP77il4yS9I089dOi/+08bBkJZUWYpPwbvw6BR
-	yeF9+mZGiLEWr4RX9zPdy8F6uSVSN1vdVBUtKVZhXqpmBjzay0Tp
-X-Google-Smtp-Source: AGHT+IGuUzJlxNFYojz7oNc/kOovo0osmwFt37B0ghd4icWTleq7T+Rpk4VrXL/Ocep2C2cxCK5CfQ==
-X-Received: by 2002:a05:6a20:9c99:b0:1c2:8949:5ba1 with SMTP id adf61e73a8af0-1c905059d72mr10180241637.53.1724069339770;
-        Mon, 19 Aug 2024 05:08:59 -0700 (PDT)
-Received: from thinkpad ([120.60.128.138])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127add43dcsm6490526b3a.28.2024.08.19.05.08.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 05:08:59 -0700 (PDT)
-Date: Mon, 19 Aug 2024 17:38:52 +0530
-From: Manivannan Sadhasivam <manisadhasivam.linux@gmail.com>
-To: Mary Guillemard <mary@mary.zone>
-Cc: linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-	Peter Wang <peter.wang@mediatek.com>,
-	Stanley Jhu <chu.stanley@gmail.com>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH 1/1] scsi: ufs-mediatek: Add UFSHCD_QUIRK_BROKEN_LSDBS_CAP
-Message-ID: <20240819120852.tdxlebj7pjcxjbou@thinkpad>
-References: <20240818222442.44990-2-mary@mary.zone>
- <20240818222442.44990-3-mary@mary.zone>
+	s=arc-20240116; t=1724069392; c=relaxed/simple;
+	bh=Ko7YrTMFgeEYgz10mfeYHJXmCLi1qQpsE4JsU2y7FTg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O1WNcn9Iess4FikIa4BhPQ6XRQpEBbrk6BsZKXEvbuMtiHcfIo9HydcAQJtTb4gCWv8e7MCZE0wwNeJ3muFY3tGkQuNKNrf+A/Rv0B0+hibltsiLcKHQH0z2UfFEF7I1QqF4siXsVcP5oxmVDXlMqsM/CxBRAFnAQN5hmXVRN7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PFIlOFoc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B6DAC32782;
+	Mon, 19 Aug 2024 12:09:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724069391;
+	bh=Ko7YrTMFgeEYgz10mfeYHJXmCLi1qQpsE4JsU2y7FTg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=PFIlOFocyb8U5EG+OiDTL9h4psZTVfNqbW5ZuCyJZk6y5NwbSnM4EQAngrzBUcmKH
+	 w9JTIo47Qqk5t6H/iD6Yzqtgq/ALqU7rTfPLO8MBA0CJkKgnCWO8iPCVNOCFVlYm1e
+	 ttBzvFsuucpRbmj4mm38F5wTBlLCWgWsfigBsbUEnZMHgpIO49DxueqAkfmNCzvkeA
+	 cfNvcICoR61uLMs0LrxzS6X6YD+QFPFhfZ9HE1kO3P7SN/9MW7kuT87W5vF9CVC0LU
+	 I4Ks33B5OdMPZOr429DKwevEnpfbuD6kAuYun948OaIXBo9H0A4Q1VzHD6hlSk11m7
+	 d6G1em9iZhg5w==
+From: Christian Brauner <brauner@kernel.org>
+To: Phillip Lougher <phillip@squashfs.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>,
+	willy@infradead.org,
+	lizetao1@huawei.com,
+	akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/4] Squashfs: Update code to not use page->index
+Date: Mon, 19 Aug 2024 14:09:35 +0200
+Message-ID: <20240819-serpentinen-thema-e13d7625bbfa@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240818235847.170468-1-phillip@squashfs.org.uk>
+References: <20240818235847.170468-1-phillip@squashfs.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1517; i=brauner@kernel.org; h=from:subject:message-id; bh=Ko7YrTMFgeEYgz10mfeYHJXmCLi1qQpsE4JsU2y7FTg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQdNuOSv5/Yer3xA8+Rrd0mRqZzDxxafl/px4mGXsvOh OnqE5zudZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzEdh0jQ/+jpaw1n88xr7Da GT/dYKFBxb67bs7lLzY938T0189iTSgjw8v3hi4Txf/wrv/CGHBln+9l85TJ08ovChzcwzijfsv NSRwA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240818222442.44990-3-mary@mary.zone>
 
-On Mon, Aug 19, 2024 at 12:24:42AM +0200, Mary Guillemard wrote:
-> MT8183 supports UFSHCI 2.1 spec, but report a bogus value of 1 in the
-> reserved part for the Legacy Single Doorbell Support (LSDBS) capability.
+On Mon, 19 Aug 2024 00:58:43 +0100, Phillip Lougher wrote:
+> In the near future page->index will be removed [1].  Any code which
+> still uses page->index needs to be updated.
 > 
-
-Wow... I never thought that this quirk will be used outside of Qcom SoCs...
-
-> This set UFSHCD_QUIRK_BROKEN_LSDBS_CAP when MCQ support is explicitly
-> disabled, allowing the device to be properly registered.
+> This patch-set contains 4 patches which updates most of the code in
+> Squashfs.  The exceptions are functions which have been fixed in
+> recent patches [2] & [3].
 > 
-> Signed-off-by: Mary Guillemard <mary@mary.zone>
-> ---
->  drivers/ufs/host/ufs-mediatek.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/ufs/host/ufs-mediatek.c b/drivers/ufs/host/ufs-mediatek.c
-> index 02c9064284e1..9a5919434c4e 100644
-> --- a/drivers/ufs/host/ufs-mediatek.c
-> +++ b/drivers/ufs/host/ufs-mediatek.c
-> @@ -1026,6 +1026,9 @@ static int ufs_mtk_init(struct ufs_hba *hba)
->  	if (host->caps & UFS_MTK_CAP_DISABLE_AH8)
->  		hba->caps |= UFSHCD_CAP_HIBERN8_WITH_CLK_GATING;
->  
-> +	if (host->caps & UFS_MTK_CAP_DISABLE_MCQ)
+> [...]
 
-How can this be the deciding factor? You said above that the issue is with
-MT8183 SoC. So why not just use the quirk only for that platform?
+Applied to the vfs.folio branch of the vfs/vfs.git tree.
+Patches in the vfs.folio branch should appear in linux-next soon.
 
-- Mani
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-> +		hba->quirks |= UFSHCD_QUIRK_BROKEN_LSDBS_CAP;
-> +
->  	ufs_mtk_init_clocks(hba);
->  
->  	/*
-> -- 
-> 2.46.0
-> 
-> 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
--- 
-மணிவண்ணன் சதாசிவம்
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.folio
+
+[1/4] Squashfs: Update page_actor to not use page->index
+      https://git.kernel.org/vfs/vfs/c/2258e22f05af
+[2/4] Squashfs: Update squashfs_readahead() to not use page->index
+      https://git.kernel.org/vfs/vfs/c/6f09ffb1f4fa
+[3/4] Squashfs: Update squashfs_readpage_block() to not use page->index
+      https://git.kernel.org/vfs/vfs/c/7f73fcde4d93
+[4/4] Squashfs: Rewrite and update squashfs_readahead_fragment() to not use page->index
+      https://git.kernel.org/vfs/vfs/c/fd54fa6efe0d
 
