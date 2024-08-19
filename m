@@ -1,289 +1,193 @@
-Return-Path: <linux-kernel+bounces-292794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3897957475
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:28:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F757957477
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E85691C23AFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:28:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0AF81F237D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D7A1D6191;
-	Mon, 19 Aug 2024 19:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9BC1DC462;
+	Mon, 19 Aug 2024 19:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nfQZ5VZM"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2053.outbound.protection.outlook.com [40.107.243.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EBcgKPMa"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711A41DB45F;
-	Mon, 19 Aug 2024 19:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724095686; cv=fail; b=UBm0KCqck3kXjFYs393ZUFXy7M10OIlHbnbY7aIz7gP5vhGr7qJnFFTOKnnOfQVZYTcFUhBVIRTNNgjJ+VF1Nr6jpLRqU72NJfe3eaeLEE/zYdar/u+wsOa2ikd90HlhFKrIPcIMWxkywsJvWrTSShx1jEFbxBNCJmcHu7e2rj8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724095686; c=relaxed/simple;
-	bh=RmmsRQVYRMkbONRCEUEYFFyeMy33hGZ21Bg0gr3fQS4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Vlp+VfHGcgXQtIRxgytCaEsfymtgxd2eR6IVzAlzRY35cJsqW8+jvAwAaak+uUFk2YOybyENP2LtldZNPAMFQsXrV2lVeQISPYJuJMJQAz8mKlZo4dU8Jl850bw4rj5uCeqM2cVrzWq2ps6EIikWJtFgF9/VNdljCaLap8ID3SE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nfQZ5VZM; arc=fail smtp.client-ip=40.107.243.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hsFnCMpguuJoiYTnBDgAdnxnCGiZaoIlUwi4xukQxD9wJF1+QWWgn+QRHeZdMHtmu2ADVz3TJj1RCEW6q6dpSWfjNSTtUgcoekIhlMVH3kyneCj6nSOOJ58NrvWwlo6UnjhusN30EVMr8kVNAOXaFe7wQ3IcTLF0tpm//3tYW2YAeCqDcLMwLxf3R3xmZj+cHw6Ls1BtxsE8TUaEyJtWP5MJcJersQslBLIpDRLTgB9qg+bIRLQcWCzDcGZoKRiVArHXxOt4skrmhCp3POOXGLb4JF2tDyKYdFrSKgJxDZQSfIDICqn7trhl5QODAzL9Lt9uvo9hyram90cEuz04HQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9pQUj5wNeIBvVcX39ys2JjHUSArpycPaK1q33590Who=;
- b=vWMSHpQGaozReyGQhX5TqsNYiE8K5Hpk1OtjZf5KMuFOUtF0RVr61Ai5M0Lx7vXKdSuGn8GCtkEIIl7iWHbQSk9loGQFMHV57Nl62sUUZlbuUsZRzDqdPl1H0iswEyXipBJG4aIy2CyirRL5tG1C7C9Bydz+feWpY011mgPI9z3VSsEJnHOop1dlnj2JeBUtceUyt7F+8ZGq/qm+drG3abk7jkaJB1rm9Nyp63G4AkSG7Vwuq9dZovGSFsXYzNS1vNobx/3yQ0TQosmUtSCqJ/qIgBgHjsjzKnrIEVx1oZHAoxfOsUljmcPYCmDiNYALU99niC+i6oSBxJdyolegvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9pQUj5wNeIBvVcX39ys2JjHUSArpycPaK1q33590Who=;
- b=nfQZ5VZMdqUEMsHETkSFMqa5FvWz4wK9L0oeybkUpHB+XooeWYsP6lEANXvx/zIbUizbcs75Gmh1iEKR0B/kLgv0Ojp59r5HA8MUM/TW23Za1Z2Nclq5GcyaORM1LJtjn1Eza0pJYNw0hxDSmeBT/gxuh9uV+Qr0GPfPjj1viSY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
- by MW4PR12MB6756.namprd12.prod.outlook.com (2603:10b6:303:1e9::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
- 2024 19:28:01 +0000
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87%6]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
- 19:28:01 +0000
-Message-ID: <c82e67e6-b2ff-40a8-9992-f3f68c397f53@amd.com>
-Date: Mon, 19 Aug 2024 14:27:57 -0500
-User-Agent: Mozilla Thunderbird
-Reply-To: babu.moger@amd.com
-Subject: Re: [PATCH v6 07/22] x86/resctrl: Introduce the interface to display
- monitor mode
-To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
- fenghua.yu@intel.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com
-Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
- tj@kernel.org, peterz@infradead.org, yanjiewtw@gmail.com,
- kim.phillips@amd.com, lukas.bulwahn@gmail.com, seanjc@google.com,
- jmattson@google.com, leitao@debian.org, jpoimboe@kernel.org,
- rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
- jithu.joseph@intel.com, kai.huang@intel.com, kan.liang@linux.intel.com,
- daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
- ilpo.jarvinen@linux.intel.com, peternewman@google.com,
- maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
-References: <cover.1722981659.git.babu.moger@amd.com>
- <c8503402c5dcb17012b2010f6accf00db245dec4.1722981659.git.babu.moger@amd.com>
- <5e2fb414-3593-4d1d-b47c-a7dafb454e0c@intel.com>
-Content-Language: en-US
-From: "Moger, Babu" <babu.moger@amd.com>
-In-Reply-To: <5e2fb414-3593-4d1d-b47c-a7dafb454e0c@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SN6PR04CA0104.namprd04.prod.outlook.com
- (2603:10b6:805:f2::45) To MW3PR12MB4553.namprd12.prod.outlook.com
- (2603:10b6:303:2c::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1EF132124
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 19:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724095796; cv=none; b=KsQauwigCrf9SIp046/8jRJjpjcExXgD8dZWNA4WkkRi0YT6UuCRT6iQB+okixNmw44lh6AAJVWuGz6T36ENZpkF/Wslf5yRj1r86Wxp46bECvwGM9juK0Y3TCkBmNgh1uuWRHudveJYHC29/RA/8V0tk77uV0Ar4Ka2RRuDWuY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724095796; c=relaxed/simple;
+	bh=Js6mVgpyfgoOTRUVZV+KA5wfQ+Tt9HYAUFyYGWmPTQg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MIVh7Srg6sb30l+30HnPAUM+U2BKZgRgpDvcRc1WJ1RGnwY5ya9h8dqZq+GJbQEUZzV5/JCDIOidxJXxADhfviz36duF3o1WUL8fxf9vQNe7ksbyYylqT56QNpveNa1k7Dl+6bINGDXfoDHtmxmbwA1TY5dDPt0GCe8BUGz3pVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EBcgKPMa; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a864574429aso16100366b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 12:29:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1724095792; x=1724700592; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3ie0bvC9ROJLnfutVE8C94bre2OY3y4q//fAPg+wLI0=;
+        b=EBcgKPMaKNQE23yEDaxSeZWTJg8iQRt0fqOB6kevi4rJJrgIWIA76UTf8jYYecFHZA
+         Q80FKuJzyt05Izh7BA+itfDAcPyJRa5odq91SVCPw5Zkl4ZS11HuZNXO+gkSmrw4tO2A
+         aOYFjgWbAKdLB2VfbqMWMEDIMSMsIb0e+um5g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724095792; x=1724700592;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3ie0bvC9ROJLnfutVE8C94bre2OY3y4q//fAPg+wLI0=;
+        b=ka86zdiBgn517NyVyxfexLm0+zTOq+xCoCRwmcMNIedJEGiFsZvMa9PGb9To/fPXcv
+         180yKSoWBsRjAi+7Wtgaet+DM+3s1FUrDya5wIwRZPqlhNEPIGhin3gl/GHAeN4W1KkP
+         222BKlihkXoyfH7mDBxMxnRft6l19JkoXo41pGW9MF0LX/QyMkgOKdhfyMD/LL0p3+TO
+         tHbYwqj21JomIwzThdnuo3XTpIkjCoiHiQSquJD0bEEsum65tVx1ChC5EihRzc0xj7Fa
+         qsO4EAvEXwaVFz0cbEfeHIgnBjCx6s42v78BAmQfBPqVgbNcVswJEz6zod09QzbSRD3Q
+         eZZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWhzR3zQNZ7REOBc/9VFtqqVQ4iRePIiqXu6zrqaBfickhfqAVxGl19fXYPergtQwPAx/yv+I8mCEYFb0M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKkvR5h/+JmfHltF+KNxBDf6WsBXUhc3hLCMkGWJRm8auwWIaP
+	8dZHrxlFx4dnS4bJABUqt6S5sL/AKkhSLKhuNABAOXPyo7luKCZ+OlzzzDt6tCfV+DeD3thC28R
+	WvbQVRw==
+X-Google-Smtp-Source: AGHT+IHuwA8WzbfusunGHvre1AIPpNOP3UtkGgsUDWRz6fPCNiugQjFjbBPE2aETbfpx7qW3K5BPcg==
+X-Received: by 2002:a17:907:2d0f:b0:a7d:23e8:94e9 with SMTP id a640c23a62f3a-a839293ef04mr878145766b.34.1724095792025;
+        Mon, 19 Aug 2024 12:29:52 -0700 (PDT)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c70afsm673130166b.15.2024.08.19.12.29.51
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 12:29:51 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5bf01bdaff0so1221349a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 12:29:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVJ/ysFEvrSCZzlQ30uSZlXcWnQ3sz/PzyGZSwCnj91Tx00dfAlbDjcASdLd7hNUO7JaGc5zugbDI28Xjw=@vger.kernel.org
+X-Received: by 2002:a05:6402:42d5:b0:5a2:68a2:ae52 with SMTP id
+ 4fb4d7f45d1cf-5beca26d2f5mr9265659a12.0.1724095790870; Mon, 19 Aug 2024
+ 12:29:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|MW4PR12MB6756:EE_
-X-MS-Office365-Filtering-Correlation-Id: 970774e9-a3cb-46ef-4889-08dcc08509ff
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RVphZ09WSmJwc1crOS96akNOd0FFS1ZlRnpHNDBoeUJSQVBya1lubm81OStS?=
- =?utf-8?B?U2N5WDVGWFlEaG9XU3MvMFludjdmbE9jY2hWOEMwUkZHS1ZNcC96bDdUaW1i?=
- =?utf-8?B?NiszdEFEdjBiWHJmc2FvYzVYUlBQQ0lERndhTnhwR05PN3FtRUtRODg1NVVt?=
- =?utf-8?B?WWhxVG4vOUkzMXZtWm9jUnlFc0VnSllzQThMWTYzSlBCZEdiMmRUODVoRk5u?=
- =?utf-8?B?eVROWEVQZ0pwYVRmcWNiY09Bamw1b3RSZzVmVWNJa0pWdXdNNDc2SDFYemZP?=
- =?utf-8?B?TU5ic0ZNYnJmenc3YXN4R2hybEgxQXF2d3daZFVJclQwMmViUjVRZWpLVm0z?=
- =?utf-8?B?K3RCdVQ2QmdEK2cxRzJhMGNHSEFDR3pjeExnVnNnQnh1OFNodTdYOXF4UjQx?=
- =?utf-8?B?aFR2WGwvMUlSQ3ZwSFlEVFNxMDVuOUtCSlhFZzg4elJYSmZxZUJIVncrblhM?=
- =?utf-8?B?UllnSHl6akdLVFNiUjJqVXRLZlJET05uaG52VDFrc0pKTFRpUHN4OHl0MWNY?=
- =?utf-8?B?Mk1YU0xZTGRNc3BhSnl6MTRMeUROazI3bDl0enJWUTd0NHJxQk1HNTAvdW1K?=
- =?utf-8?B?a2FkdlVmMGZHU2wzam1uU2FpUkJqVmV1Zm5KVm9QRzBzK2R2eWYrM2JBc2Z4?=
- =?utf-8?B?YjY5bEViSWNsVkdnQlVCMHJ6eXpzREJGMmh5TG9oRHRSWEcwaHVSUjVjS2xk?=
- =?utf-8?B?blllbEcxMzk2M0gvNDI4c0dkWE9QRnpZVG5DaHpMQ0xteVV3My8rV3VQTWtQ?=
- =?utf-8?B?TTluek5IbS9zN2JrNU4zRWRqQlpmdHorNktNNHY4YjVOVDA0d1ZLQkR2ODBY?=
- =?utf-8?B?K25JRHg2S1VCVVJ6UlY4RkQ2UGhBR3ZqUjM4WkhUOWdFL3p3MXdROFNDMUsr?=
- =?utf-8?B?Mmh6UWZyYytYMitlMDFoZzR6Z3RPS2hNK2NNQXJTeEFPRVU5b0NwQVJiaFpV?=
- =?utf-8?B?YnFGQWRrNUtLRWdiOVoxSEJ3aFRPajhVMnJ6NEtpa0N2a2g1MlJkc2xWbzRm?=
- =?utf-8?B?YjB0NTZhc1pXVlhueVBYcHlTTjNJOHl3NllCUCsxRjVkTjVaYXl4ZGNMeWdL?=
- =?utf-8?B?RzNmRWZwU2tRMHBKNWJhZnlBN3U5UE5oTDk4Rk9PUldzRmVVYkVmemNNZ1VB?=
- =?utf-8?B?WGtGb0dEOXNwR3FHMUd3RnpxeTRkcTB3VVB2aEthL1VwTUFiREs3MHlwVGpE?=
- =?utf-8?B?Q2phbnd1eDYzak5ZRDBXSDB0V3VTcGtLVHZNclJEcXNlOWRtTXk3YjBNaDZj?=
- =?utf-8?B?eE5mMTkrNVZQWFgvazgvMktXL0g2RFBEa3FsQlcwVlluR2lzbzJjMmc3OXZa?=
- =?utf-8?B?c21icm5KdkdwUkVSbTdON3RtWU10SzNiamhBVW5FRGJ5UlQvU21iTDRENlNB?=
- =?utf-8?B?OW8xYk01WnFFbEtsd01MNklROFcvZGJSeHNsTjlmVFNmdldjdGV4M3Awa0Vv?=
- =?utf-8?B?NFFsL1NCRW52MVNMYWQxcDFHTXJ1UlVUYkQ1K0M5MENUS21USjNiRlUzTFJG?=
- =?utf-8?B?eU81RVFZOWNWR1dKdGFNdnkwbUFRUThZa1MweUt2K2NHdjhMNDhONk1Vb21n?=
- =?utf-8?B?NGttd0ViSlVPdk5qM0k4Q05kNmZlSkdtVDdYQzYxTGsvcEpCU1I3RkRyK3FN?=
- =?utf-8?B?TFRvVURieWgvQnpod1JDVDErWkY1ay85NXZQS1VCSDkxL3E0SWQ4eStMSHFV?=
- =?utf-8?B?SE85MEVCNmgxNDB0di90eFZxTTFoT3VNM0FtdkxkYWMwNGc1Szl0WEV1MFNP?=
- =?utf-8?B?M21vdE5BQmF1V1YxRU9aTlE3QUZqMDFmOWVjSDM3RXhEZU1BV1pobnNTN0Jn?=
- =?utf-8?B?VW5xK0UwemthOGs3QjFaUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?M2hMenVaVGEvVDZ3K2RySEhyVVZ6UFVIcitqUHdWbEpzejFDZ0VFdFBuTHdp?=
- =?utf-8?B?K2FBVS9PbkhLKzNlRUdTL09VblU1MFVYY1BlY0tSdzRNR3V0QU0ybFlqU1VK?=
- =?utf-8?B?YXY0VkgxMXduNEEzdUtBd1NDdjMxRkppU255cFMzb0JBanBrQWJ3b0x2MytI?=
- =?utf-8?B?MzZkb0JqTDRGQ0pSZ0o5K3JwbXJxVlZFZHBqQUE0MjVZMUQzVlI1Z1ZTc2Vv?=
- =?utf-8?B?NGM2cjdyQTl6WmFkbStTU2JsMTF0MENFZnh4eVNzZnlVc1hDT2pGUm82WHpN?=
- =?utf-8?B?WGFKKzFIdXV4bm1ZeitqbHVja3BDSXc5Z3ZlVFA4RFJHR0tHRGJma3BTSFRZ?=
- =?utf-8?B?aVlYS2F6NE5tMVhJTy9xVUtxb3k4QlhhaUZLSDBHaFd2ZmRQcy9GNndiSFlM?=
- =?utf-8?B?b0ZXQjNaSHVmYUFDTGMwclc0bEErZHZRbEk2U1grYXp4QjhLaTFXd0Z0dkt1?=
- =?utf-8?B?dG5GaFFuL1VLdTNTbytvbTNHZE9OTXUrYVNkL0Rwci9WdUlBdVNtcnJMOVRJ?=
- =?utf-8?B?c1lYR3ZPZmg3QzFvcDFRYnl1Y1NaWHhRMkhyU3Y5UVVnRGN5aW80bmh2bGZs?=
- =?utf-8?B?bXY4dXoySlk1bCtOTlp0S2tFQlBFem5Nc0lCbkRnQU5WK08yZXRxZ1Y3Q2pF?=
- =?utf-8?B?OWQwaGJXeTdoaTFWUFhwZytsZHcvSXl6cFBwcHloNnRrOEo0c1p0S3FHeVVT?=
- =?utf-8?B?SVdIL2t0ZkZ0Mlh2bW5rVGFOcmJVRHdRVkd0UWtqTWZLZU9TcVB4a0o4Y1ZY?=
- =?utf-8?B?MTJMTkkzVHhScTB1R1E3Lzc5TEx1c0xWR2RBckxkeXhnWmhOMmJMUU5YNVNI?=
- =?utf-8?B?d1JxMVB3VG1BRUp4VnZPZ3o3MWVDTC9scWNJQ2prYy9ZR2pLQXdSajN3NUM2?=
- =?utf-8?B?b3hMUjgrcFhjK0JaZ2dXQVVTdm9nd3Y0dFFIM1FRazRQTXJmTGE3Q1cyTnV5?=
- =?utf-8?B?ejNoNHJ5blBxYVl0ODFhVXVrZDhzNDJqY3FONE42clRHRFhTd0hGdDM0L25n?=
- =?utf-8?B?M1hOTVhoQnRIQm9RaTFadXMvS0cvTURSclB1VUo3RVZUcUw0cUdOU0xyeldo?=
- =?utf-8?B?dFphUHZoTEU0YjIrUUVtb3M0UFdTZlQrWUZaZXNid0tXR01FSXA5cm1CU1c2?=
- =?utf-8?B?cWhwNE5ZR0Mrc1RBcHRyZWMwVWtmeEJPOWZOSnd0UkNSMHJ1enltbjkvVHNT?=
- =?utf-8?B?QUU1YXF5bEJNSllEZTNKajczLytFaENQdzU2WmFBZVVFcGxhTENGbjhIbFpX?=
- =?utf-8?B?aHR5SVVWV3lIdi9ZSkVQSXFtQ09KOWRJampsZ1AwY21JN2p1Mkx3WGRLY0Y0?=
- =?utf-8?B?VEhSSUQzNG40SUJ4S0FBR1FPOTR1aHhkRnE0U3BHMlpDR0w2RzhHaWdRb2Jz?=
- =?utf-8?B?TUFNVjlMY0Z2OEtPOWJKbzVWc2FVSzJaZ0k1MEpzQzd6SjZIM1B5TG0xaUx3?=
- =?utf-8?B?dUtBaDB0eTlUbWNUZndhTE5OanF1akFlNTVPeGoxN0VhcmdSbnBEMzdHei9U?=
- =?utf-8?B?bno0TGtncXlRNk02MnFNVGxuN2JrUXZYdFZOQVVTdHpqc083VUxvdGlOa2JS?=
- =?utf-8?B?MjJmWUFzY1ZIb1RPc1E5ZEdBN01neGJLRTMxODJKY2hTcmNGRXZkREFqS2VO?=
- =?utf-8?B?dDB1di93ekZJdlFBV1EzdnFQMnNoM2wxUlRkQU5iZkc0QXQ5aGhxSVJ1amJr?=
- =?utf-8?B?Nkh6dG4zV3BTYmhNQ0pTSE1CNGtLZUorNmdNeVl5cmZqNzJuVllUZWZCaHVR?=
- =?utf-8?B?YktUbDRidWtXc2FkWVM1RmJOK3haQWtmRnlZWVJmWnZXekF4YzJZdkphN3hh?=
- =?utf-8?B?bTJyVksrLzBONXN3M2R3L3R1L1JPN2JoclA3YTlCb1YvZ0FXUG9zSG1ZU25z?=
- =?utf-8?B?Uy81S0haU21ONVZHNTc3dzkrWnZGVmdxV1Uvd0hZVE1Uemt0c0dBaWF6bldB?=
- =?utf-8?B?d2tiQWlTZDY0U3BvVXh0WElCSmZ5bmVCZFB0Z3kvN054dDN5WkFxYlRta2Jr?=
- =?utf-8?B?M1NRQXZTSlZ4NzZXY2E1N2tITi90eXk5VmpmRDVjd0tyVzV3QlZyeVhuWUJX?=
- =?utf-8?B?Q0pIUE5OVGl0R2hWNDRtUUZtYkxoNVduSGpHc0V6R1FKSS9mVWYzcXZyTTRp?=
- =?utf-8?Q?oxZQ=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 970774e9-a3cb-46ef-4889-08dcc08509ff
-X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 19:28:01.2816
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zesjtt4O9LRmuya2J3RQwnWQdLFOeSetsaQRMfBEayJHpHxdrh5MgCItTT7J+t03
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6756
+References: <20240812082605.743814-1-mpe@ellerman.id.au> <20240819185253.GA2333884@thelio-3990X>
+In-Reply-To: <20240819185253.GA2333884@thelio-3990X>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 19 Aug 2024 12:29:34 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj9QPhG4CjiX8YLRC1wHj_Qs-T8wJi0WEhkfp0cszvB9w@mail.gmail.com>
+Message-ID: <CAHk-=wj9QPhG4CjiX8YLRC1wHj_Qs-T8wJi0WEhkfp0cszvB9w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] mm: Add optional close() to struct vm_special_mapping
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org, 
+	akpm@linux-foundation.org, christophe.leroy@csgroup.eu, jeffxu@google.com, 
+	Liam.Howlett@oracle.com, linux-kernel@vger.kernel.org, npiggin@gmail.com, 
+	oliver.sang@intel.com, pedro.falcato@gmail.com, linux-um@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Reinette,
+On Mon, 19 Aug 2024 at 11:53, Nathan Chancellor <nathan@kernel.org> wrote:
+>
+>
+> Modules linked in:
+> Pid: 24, comm: mount Not tainted 6.11.0-rc4-next-20240819
+> RIP: 0033:0x68006f6c
+> RSP: 000000006c8bfc68  EFLAGS: 00010206
+> RAX: 0000000068006f6c RBX: 0000000068a0aa18 RCX: 00000000600d8b09
+> RDX: 0000000000000000 RSI: 0000000068a0aa18 RDI: 0000000068805120
+> RBP: 000000006c8bfc70 R08: 0000000000000001 R09: 0000000068ae0308
+> R10: 000000000000000e R11: ffffffffffffffff R12: 0000000000000001
+> R13: 0000000068a0aa18 R14: 0000000000000015 R15: 0000000068944a88
+> Kernel panic - not syncing: Segfault with no mm
+> CPU: 0 UID: 0 PID: 24 Comm: mount Not tainted 6.11.0-rc4-next-20240819 #1
+> Stack:
+>  600caeff 6c8bfc90 600d8b2a 68944a80
+>  00000047 6c8bfda0 600cbfd9 6c8bfd50
+>  68944ad0 68944a88 7f7ffff000 7f7fffffff
+> Call Trace:
+>  [<600caeff>] ? special_mapping_close+0x16/0x19
 
-On 8/16/24 16:32, Reinette Chatre wrote:
-> Hi Babu,
-> 
-> (expanding on what James said)
-> 
-> On 8/6/24 3:00 PM, Babu Moger wrote:
->> The mbm_mode displays list of monitor modes supported.
->>
->> The mbm_cntr_assign is one of the currently supported modes. It is also
->> called ABMC (Assignable Bandwidth Monitoring Counters) feature. ABMC
->> feature provides option to assign a hardware counter to an RMID and
->> monitor the bandwidth as long as it is assigned. ABMC mode is enabled
->> by default when supported.
->>
->> Legacy mode works without the assignment option.
->>
->> Provide an interface to display the monitor mode on the system.
->> $cat /sys/fs/resctrl/info/L3_MON/mbm_mode
->> [mbm_cntr_assign]
->> legacy
->>
->> Switching the mbm_mode will reset all the mbm counters of all resctrl
->> groups.
-> 
-> The changelog also needs to be clear to distinguish the resctrl fs
-> "mbm_cntr_assign" mode from how it is backed by ABMC on AMD hardware.
-> 
-> for example (please improve):
-> 
->     Introduce "mbm_cntr_assign" mode that provides the option to assign a
->     hardware counter to an RMID and monitor the bandwidth as long as it is
->     assigned. On AMD systems "mbm_cntr_assign" is backed by the ABMC
-> (Assignable
->     Bandwidth Monitoring Counters) hardware feature. "mbm_cntr_assign" mode
->     is enabled by default when supported.
-> 
->     "default" mode is the existing monitoring mode that works without the
->     explicit counter assignment, instead relying on dynamic counter
-> assignment
->     by hardware that may result in hardware not dedicating a counter
-> resulting in
->     monitoring data reads returning "Unavailable".
-> 
->     Provide an interface to display the monitor mode on the system.
->     $cat /sys/fs/resctrl/info/L3_MON/mbm_assign_mode
->     [mbm_cntr_assign]
->     default
-> 
->     Switching the mbm_assign_mode will reset all the MBM counters of all
-> resctrl
->     groups.
+Hmm. No "Code:" line? Did you just edit that out, or maybe UML doesn't
+print one out?
 
-Looks good thanks
+Anyway, for me that special_mapping_close() disassembles to
 
-> 
-> 
-> ....
-> 
->> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->> b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->> index 6075b1e5bb77..d8f85b20ab8f 100644
->> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->> @@ -845,6 +845,26 @@ static int rdtgroup_rmid_show(struct
->> kernfs_open_file *of,
->>       return ret;
->>   }
->>   +static int rdtgroup_mbm_mode_show(struct kernfs_open_file *of,
->> +                  struct seq_file *s, void *v)
->> +{
->> +    struct rdt_resource *r = of->kn->parent->priv;
->> +
->> +    if (r->mon.mbm_cntr_assignable) {
->> +        if (resctrl_arch_get_abmc_enabled()) {
-> 
-> Since this state can change during runtime this access needs to be protected.
 
-Sure. Will do.
+ <+0>:  mov    %rdi,%rsi
+ <+3>:  mov    0x78(%rdi),%rdi
+ <+7>:  mov    0x20(%rdi),%rax
+ <+11>: test   %rax,%rax
+ <+14>: je     0x600caa11 <special_mapping_close+24>
+ <+16>: push   %rbp
+ <+17>: mov    %rsp,%rbp
+ <+20>: call   *%rax
+ <+22>: pop    %rbp
+ <+23>: ret
+ <+24>: ret
 
-> 
->> +            seq_puts(s, "[mbm_cntr_assign]\n");
->> +            seq_puts(s, "legacy\n");
->> +        } else {
->> +            seq_puts(s, "mbm_cntr_assign\n");
->> +            seq_puts(s, "[legacy]\n");
->> +        }
->> +    } else {
->> +        seq_puts(s, "[legacy]\n");
->> +    }
->> +
->> +    return 0;
->> +}
->> +
->>   #ifdef CONFIG_PROC_CPU_RESCTRL
->>     /*
-> 
-> Reinette
-> 
-> 
+which may just match yours, because special_mapping_close+0x16 is
+obviously that +22, and it's the return point for that call.
 
--- 
-Thanks
-Babu Moger
+And your %rax value does match that invalid %rip value of 0x68006f6c.
+
+So it does look like it's jumping off to la-la-land, and the problem is the code
+
+        const struct vm_special_mapping *sm = vma->vm_private_data;
+
+        if (sm->close)
+                sm->close(sm, vma);
+
+where presumably 'vm_private_data' isn't a "struct vm_special_mapping *" at all.
+
+And I think I see the problem.
+
+When we have that 'legacy_special_mapping_vmops', then the
+vm_private_data field actually points to 'pages'.
+
+So the 'legacy_special_mapping_vmops' can *only* contain the '.fault'
+handler, not the other handlers.
+
+IOW, does something like this fix it?
+
+  --- a/mm/mmap.c
+  +++ b/mm/mmap.c
+  @@ -2095,7 +2095,6 @@ static const struct vm_operations_struct
+special_mapping_vmops = {
+   };
+
+   static const struct vm_operations_struct legacy_special_mapping_vmops = {
+  -       .close = special_mapping_close,
+          .fault = special_mapping_fault,
+   };
+
+and honestly, we should have different 'fault' functions instead of
+having the same fault function and then making the function
+dynamically see which vm_operations_struct it was. But that's a
+separate issue.
+
+And oh Christ, the difference between "_install_special_mapping()"
+(which installs the modern style special mapping) and
+"install_special_mapping()" (which installs the legacy special
+mapping) is truly horrendously disgusting.
+
+And yes, UML uses that legacy crap, which explains why it happens on
+UML but not on sane architectures.
+
+As does csky, hexagon, and nios2.
+
+We should get rid of the legacy case entirely, and remove that insane
+difference between _install_special_mapping() and
+install_special_mapping().
+
+But in the meantime, the one-liner fix *should* fix it. The four
+architectures that uses the legacy crud don't care about the close
+function anyway.
+
+What a horrid thing.
+
+                Linus
 
