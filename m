@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-291955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5596A956952
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:31:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E42D956956
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A6A81C215E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:31:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1D6A1F225D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B7C166F18;
-	Mon, 19 Aug 2024 11:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B24F166F07;
+	Mon, 19 Aug 2024 11:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jE44LQ6g"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H9BPeXIb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784CE13DBA0
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3F0165EFB
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724067101; cv=none; b=sVxBnb8fIq/++w/zMPkJEvDosCeAI3Ws/o0YJVpIut37KuB7W4a9Mq908QaPUye3IZ+MagKXXaT/u/NjtbGL+ujL3ly7CndhZstiFnQx+HbskddtVNwXyx7GQb52CFcpRmas/fGFG8gWUSf8hT35JwaZx48b03ZOMyCYBk9PWvg=
+	t=1724067123; cv=none; b=kJYPRvhEsriVWZSFgAn6vpH3GygRb/Fh/agD045mF4H22mdoj3W7n0In+pAoNxLPDR+4zRyE9c+HLZZNNLIILu7074T/Joj3RyXq25w1iMAP4zFiCP1FEFsZLIICDRVSFnluebZ+YYtqqQk+kCDlDDsphuIZ7XpuCHQmTxfFN14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724067101; c=relaxed/simple;
-	bh=Ky/B3NXca3X7lFkRgPJNmQFGjEKyiSbafchOr6X2S7E=;
+	s=arc-20240116; t=1724067123; c=relaxed/simple;
+	bh=6rgcGwUUybJKRz3xVJeRQHraSlHZg2qQMu+RKpLbfLI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ogvtxSOQgwxuFIXIDeNXYIZTJnGSj72wt9TKjwKgsgUqNV3yoxXXS9r1GVyLDOKrCIZl5poN6Vat+v2J9Le4eaD91HjOQMsKEQky7QWToINGPz6xT65edkjHBecy6GsVkJBCuETEH7mHiwtAd8fNWwtxNxmc/A8FpLeVEkJvxXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jE44LQ6g; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=nbbbDvA7Iy719QpfYvXiNNULO3f0WvIho7KSM9CX3x8zWDPJN8BjfPN9opo/ownHM4v4b5fCw249ls2pJTzulevA1gn89ccFKGwC8hXv6Smo33q3JeVpEc7rvE4X7FgQH0aaTreiRBWkKHhBkeosk7IKIkkQo+ltEJtUNP9/WAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H9BPeXIb; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724067098;
+	s=mimecast20190719; t=1724067120;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hPrDOhvYjrt1xlh8GqTfb3Bq+qp7wGx4/YKlG6mzg6U=;
-	b=jE44LQ6gkHVtiLFkxwOl/sAu8pa1/0Fv0R6NcBM2fUv325AQUtv+Q9KZLI82c5rqm8VJkP
-	YtyxvU36U9E+KNfzYfu5MFxCfr/Fe4MNrdUzc+iJRLWczeglew+MlXIFBUzWDFq+9Skf5I
-	5a7o6LC5Ww2O9lOZcJi/qD1Wae8ccfc=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=2OpoZ2uaAP/x527SFfgPTaAj7fQVOIjN/iyYAAwIX5A=;
+	b=H9BPeXIbonyoentjDe04HcaRppuR/ANiHp3Zk9bYh/wY8mjaSRq8pPnPdPAQf8zIemHFqY
+	KokZCjGJ4h3q6URZpulNVbyO553JlAxuIRK1unO3i8EzM2s65upVT3ewplcesfXBoEBqGJ
+	a7f/5w2dCWwFdzyyRkXztp+FuPmqjzU=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-623-pNlkl_fXM_qbu-63YGs0mw-1; Mon, 19 Aug 2024 07:31:37 -0400
-X-MC-Unique: pNlkl_fXM_qbu-63YGs0mw-1
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5becb612a13so2041514a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 04:31:36 -0700 (PDT)
+ us-mta-680-h5lygEULO9S7ZcDp5RPzHw-1; Mon, 19 Aug 2024 07:31:58 -0400
+X-MC-Unique: h5lygEULO9S7ZcDp5RPzHw-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a7d6a72ad99so293438766b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 04:31:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724067096; x=1724671896;
+        d=1e100.net; s=20230601; t=1724067117; x=1724671917;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hPrDOhvYjrt1xlh8GqTfb3Bq+qp7wGx4/YKlG6mzg6U=;
-        b=iS+Kj8hwkMxmfeTV3FDu2bXNp5BLsal7blKZp/vDj8M2GX42tAMDoYJGyHb5IOMl/1
-         ZPuw7YWoM2WTfWG2D0oZouh4MX2OEWOvfvB+CUoZZ7HxO+l5KhVbiLUl8IPbnN/1ptuo
-         rQfCPXTpMmo4seY0Php5YmM14VKx5o+8qRHfgUI1A1FW0PVVeGsuFDA9HYv4l3vV16ln
-         w7iKVVZ9qYM9TX1ygCx21GuQwIUnAJY+hw5txUcnYRXFnM/fBDrSt7rBoJOSkErhqFzs
-         ss+tvZW1TspDIxKL/rKE+jg2Uk2p6THN5MA52N7TdCU7A7NY790ev82Yx/ayHBUmXkwh
-         yVnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXeWBEND9CxsFfCpflxCxGtTPrTkMPTdjYAwkmLnyusd4VnGuAdkDs2dzmx0MIW6WHAMJz2ZJQXID4Brv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIveXWqJRVEWvLgbq9pNp2gMxfPtYcNGZm4SIlx9i/6MAiR+Ex
-	Ps/NegaEe3Uh+JHllPpMhORLgaCVF+g8nlBwTRKFBruyOE+5Bc9HphPVReP8nFn3gsSX6glp9mK
-	W3Yd+p/fSnYDK99MAomK1aih1HvLbkQuO776BbdtrYT2WlV49SO6kmjYFh3iPXQ==
-X-Received: by 2002:a05:6402:540d:b0:5be:f348:314e with SMTP id 4fb4d7f45d1cf-5bef34834d5mr2510361a12.36.1724067095989;
-        Mon, 19 Aug 2024 04:31:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHdL6ead+DHbFwkhYgQIEnqJvT9c+TaKaavUabxtrQK/ZUjhzqan4aYpkDtTYbYTspGUnk5pw==
-X-Received: by 2002:a05:6402:540d:b0:5be:f348:314e with SMTP id 4fb4d7f45d1cf-5bef34834d5mr2510339a12.36.1724067095302;
-        Mon, 19 Aug 2024 04:31:35 -0700 (PDT)
+        bh=2OpoZ2uaAP/x527SFfgPTaAj7fQVOIjN/iyYAAwIX5A=;
+        b=O9n2seSH5bbHFnSgR0Gy7RxbEOuo/v+v26YucBuMVuekE9WAHVH/kTcYIgwQFkQeXx
+         dRFejeiNwrKuxxULGmcPP8buSDTHNFydmGhe6mvaWDWRG9f69L0VsWMqbhUgdwUMJsci
+         49lPI10r3gJF1KWgdrsDPt1C7s0pBinAYzG3jogAe9PWaJtJcauQTvrWss7cm0wRv6nH
+         v/5E4nD5qS2AV83sTgQy6D8XQoeO9x4xLyBi0OrZsiMSzjsbcaMLvadFoZ/Tf2MQd65C
+         9Ws+CddE0QfE9RzS5KyeK2+RhU5TcdK1UbPYP/0P5/E/wFwYGD54m9G5sjXWFU02o62u
+         b/fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXu03tI+pvJdJWgG+s8FPkFHgXsAwRSqPfMW9wglLDKlUXFVj43HnY4TH15BlaBQohZwBFh+O+1ierlXTKRzYb5dnMSqg8iCAfJN2w7
+X-Gm-Message-State: AOJu0YyXAdnkF2/6V0aJb325wOBG+SY0hzPiP30LAU+NclK18bK211SG
+	Qj9cbnaSY8s1kT33/WEIc136p/jEKjI5b9l+fjsJUq8B5UcUNLfN9U8fIVL4BQYEsQVgQIgGoFR
+	6NlDq4N9YxTwyI13pGZYjOZ2sns0PtEq6/caBEhTUMa2lOTG2VRJtZGf86J6fQw==
+X-Received: by 2002:a17:907:7f12:b0:a7a:b9dd:7757 with SMTP id a640c23a62f3a-a83928a1c6amr782037366b.12.1724067117555;
+        Mon, 19 Aug 2024 04:31:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFJ1VfXiB8AMT0+Cz1fYd9GS+ES9g1eIucB4FUz49wdbR8STGlLz4HdH80GjjSPvJW6koISJQ==
+X-Received: by 2002:a17:907:7f12:b0:a7a:b9dd:7757 with SMTP id a640c23a62f3a-a83928a1c6amr782034866b.12.1724067117062;
+        Mon, 19 Aug 2024 04:31:57 -0700 (PDT)
 Received: from [10.40.98.157] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebbe12eccsm5719952a12.58.2024.08.19.04.31.34
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c6be6sm624737266b.34.2024.08.19.04.31.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 04:31:34 -0700 (PDT)
-Message-ID: <318e1059-1c92-4cc5-a7ef-9284f7c5aa37@redhat.com>
-Date: Mon, 19 Aug 2024 13:31:33 +0200
+        Mon, 19 Aug 2024 04:31:56 -0700 (PDT)
+Message-ID: <9ca10fff-b0a5-4d86-94e8-06ddfa4df980@redhat.com>
+Date: Mon, 19 Aug 2024 13:31:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,8 +81,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/2] clocksource: acpi_pm: Add external callback for
- suspend/resume
+Subject: Re: [PATCH v6 2/2] platform/x86:intel/pmc: Enable the ACPI PM Timer
+ to be turned off when suspended
 To: Marek Maslanka <mmaslanka@google.com>, LKML <linux-kernel@vger.kernel.org>
 Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
  Thomas Gleixner <tglx@linutronix.de>,
@@ -90,19 +90,25 @@ Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
  David E Box <david.e.box@intel.com>,
  =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
  platform-driver-x86@vger.kernel.org
-References: <935e8c82-3c91-4c9a-8e43-e6045b28279d@redhat.com>
- <20240812184150.1079924-1-mmaslanka@google.com>
+References: <f5f758f9-bf6f-57dd-179e-475a6b65e903@linux.intel.com>
+ <20240812184208.1080710-1-mmaslanka@google.com>
 Content-Language: en-US
 From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240812184150.1079924-1-mmaslanka@google.com>
+In-Reply-To: <20240812184208.1080710-1-mmaslanka@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Hi,
 
-On 8/12/24 8:41 PM, Marek Maslanka wrote:
-> Provides the capability to register an external callback for the ACPI PM
-> timer, which is called during the suspend and resume processes.
+On 8/12/24 8:42 PM, Marek Maslanka wrote:
+> Allow to disable ACPI PM Timer on suspend and enable on resume. A
+> disabled timer helps optimise power consumption when the system is
+> suspended. On resume the timer is only reactivated if it was activated
+> prior to suspend, so unless the ACPI PM timer is enabled in the BIOS,
+> this won't change anything.
+> 
+> The ACPI PM timer is used by Intel's iTCO/wdat_wdt watchdog to drive the
+> watchdog, so it doesn't need to run during suspend.
 > 
 > Signed-off-by: Marek Maslanka <mmaslanka@google.com>
 
@@ -115,99 +121,225 @@ Regards,
 Hans
 
 
-
 > 
 > ---
 > Changes in v6:
-> - Add the acpi_pmtmr_unregister_suspend_resume_callback function to remove callback
-> - Add EXPORT_SYMBOL_GPL to the added functions
-> - Link to v5: https://lore.kernel.org/lkml/20240812043741.3434744-1-mmaslanka@google.com/
+> - Use guard() to manage the mutex instead of mutex_lock/mutex_unlock
+> - Use newly added acpi_pmtmr_unregister_suspend_resume_callback to remove callback
+> - Link to v5: https://lore.kernel.org/lkml/20240812044028.3439329-1-mmaslanka@google.com/
 > ---
 > ---
->  drivers/clocksource/acpi_pm.c | 32 ++++++++++++++++++++++++++++++++
->  include/linux/acpi_pmtmr.h    | 13 +++++++++++++
->  2 files changed, 45 insertions(+)
+>  drivers/platform/x86/intel/pmc/adl.c  |  2 ++
+>  drivers/platform/x86/intel/pmc/cnp.c  |  2 ++
+>  drivers/platform/x86/intel/pmc/core.c | 45 +++++++++++++++++++++++++++
+>  drivers/platform/x86/intel/pmc/core.h |  8 +++++
+>  drivers/platform/x86/intel/pmc/icl.c  |  2 ++
+>  drivers/platform/x86/intel/pmc/mtl.c  |  2 ++
+>  drivers/platform/x86/intel/pmc/spt.c  |  2 ++
+>  drivers/platform/x86/intel/pmc/tgl.c  |  2 ++
+>  8 files changed, 65 insertions(+)
 > 
-> diff --git a/drivers/clocksource/acpi_pm.c b/drivers/clocksource/acpi_pm.c
-> index 82338773602ca..b4330a01a566b 100644
-> --- a/drivers/clocksource/acpi_pm.c
-> +++ b/drivers/clocksource/acpi_pm.c
-> @@ -25,6 +25,10 @@
->  #include <asm/io.h>
->  #include <asm/time.h>
+> diff --git a/drivers/platform/x86/intel/pmc/adl.c b/drivers/platform/x86/intel/pmc/adl.c
+> index e7878558fd909..9d9c07f44ff61 100644
+> --- a/drivers/platform/x86/intel/pmc/adl.c
+> +++ b/drivers/platform/x86/intel/pmc/adl.c
+> @@ -295,6 +295,8 @@ const struct pmc_reg_map adl_reg_map = {
+>  	.ppfear_buckets = CNP_PPFEAR_NUM_ENTRIES,
+>  	.pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
+>  	.pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
+> +	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
+> +	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
+>  	.ltr_ignore_max = ADL_NUM_IP_IGN_ALLOWED,
+>  	.lpm_num_modes = ADL_LPM_NUM_MODES,
+>  	.lpm_num_maps = ADL_LPM_NUM_MAPS,
+> diff --git a/drivers/platform/x86/intel/pmc/cnp.c b/drivers/platform/x86/intel/pmc/cnp.c
+> index dd72974bf71e2..513c02670c5aa 100644
+> --- a/drivers/platform/x86/intel/pmc/cnp.c
+> +++ b/drivers/platform/x86/intel/pmc/cnp.c
+> @@ -200,6 +200,8 @@ const struct pmc_reg_map cnp_reg_map = {
+>  	.ppfear_buckets = CNP_PPFEAR_NUM_ENTRIES,
+>  	.pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
+>  	.pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
+> +	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
+> +	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
+>  	.ltr_ignore_max = CNP_NUM_IP_IGN_ALLOWED,
+>  	.etr3_offset = ETR3_OFFSET,
+>  };
+> diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
+> index 10c96c1a850af..d8fa9bed4cd3c 100644
+> --- a/drivers/platform/x86/intel/pmc/core.c
+> +++ b/drivers/platform/x86/intel/pmc/core.c
+> @@ -11,6 +11,7 @@
 >  
-> +static void *suspend_resume_cb_data;
-> +
-> +static void (*suspend_resume_callback)(void *data, bool suspend);
-> +
->  /*
->   * The I/O port the PMTMR resides at.
->   * The location is detected during setup_arch(),
-> @@ -58,6 +62,32 @@ u32 acpi_pm_read_verified(void)
->  	return v2;
+>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+>  
+> +#include <linux/acpi_pmtmr.h>
+>  #include <linux/bitfield.h>
+>  #include <linux/debugfs.h>
+>  #include <linux/delay.h>
+> @@ -1171,6 +1172,38 @@ static bool pmc_core_is_pson_residency_enabled(struct pmc_dev *pmcdev)
+>  	return val == 1;
 >  }
 >  
-> +void acpi_pmtmr_register_suspend_resume_callback(void (*cb)(void *data, bool suspend), void *data)
+> +/**
+> + * Enable or disable ACPI PM Timer
+> + *
+> + * This function is intended to be a callback for ACPI PM suspend/resume event.
+> + * The ACPI PM Timer is enabled on resume only if it was enabled during suspend.
+> + */
+> +static void pmc_core_acpi_pm_timer_suspend_resume(void *data, bool suspend)
 > +{
-> +	suspend_resume_callback = cb;
-> +	suspend_resume_cb_data = data;
-> +}
-> +EXPORT_SYMBOL_GPL(acpi_pmtmr_register_suspend_resume_callback);
+> +	struct pmc_dev *pmcdev = data;
+> +	struct pmc *pmc = pmcdev->pmcs[PMC_IDX_MAIN];
+> +	const struct pmc_reg_map *map = pmc->map;
+> +	bool enabled;
+> +	u32 reg;
 > +
-> +void acpi_pmtmr_unregister_suspend_resume_callback(void)
-> +{
-> +	suspend_resume_callback = NULL;
-> +	suspend_resume_cb_data = NULL;
-> +}
-> +EXPORT_SYMBOL_GPL(acpi_pmtmr_unregister_suspend_resume_callback);
+> +	if (!map->acpi_pm_tmr_ctl_offset)
+> +		return;
 > +
-> +static void acpi_pm_suspend(struct clocksource *cs)
-> +{
-> +	if (suspend_resume_callback)
-> +		suspend_resume_callback(suspend_resume_cb_data, true);
-> +}
+> +	guard(mutex)(&pmcdev->lock);
 > +
-> +static void acpi_pm_resume(struct clocksource *cs)
-> +{
-> +	if (suspend_resume_callback)
-> +		suspend_resume_callback(suspend_resume_cb_data, false);
-> +}
+> +	if (!suspend && !pmcdev->enable_acpi_pm_timer_on_resume)
+> +		return;
 > +
->  static u64 acpi_pm_read(struct clocksource *cs)
+> +	reg = pmc_core_reg_read(pmc, map->acpi_pm_tmr_ctl_offset);
+> +	enabled = !(reg & map->acpi_pm_tmr_disable_bit);
+> +	if (suspend)
+> +		reg |= map->acpi_pm_tmr_disable_bit;
+> +	else
+> +		reg &= ~map->acpi_pm_tmr_disable_bit;
+> +	pmc_core_reg_write(pmc, map->acpi_pm_tmr_ctl_offset, reg);
+> +
+> +	pmcdev->enable_acpi_pm_timer_on_resume = suspend && enabled;
+> +}
+>  
+>  static void pmc_core_dbgfs_unregister(struct pmc_dev *pmcdev)
 >  {
->  	return (u64)read_pmtmr();
-> @@ -69,6 +99,8 @@ static struct clocksource clocksource_acpi_pm = {
->  	.read		= acpi_pm_read,
->  	.mask		= (u64)ACPI_PM_MASK,
->  	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
-> +	.suspend	= acpi_pm_suspend,
-> +	.resume		= acpi_pm_resume,
+> @@ -1362,6 +1395,7 @@ static int pmc_core_probe(struct platform_device *pdev)
+>  	struct pmc_dev *pmcdev;
+>  	const struct x86_cpu_id *cpu_id;
+>  	int (*core_init)(struct pmc_dev *pmcdev);
+> +	const struct pmc_reg_map *map;
+>  	struct pmc *primary_pmc;
+>  	int ret;
+>  
+> @@ -1420,6 +1454,11 @@ static int pmc_core_probe(struct platform_device *pdev)
+>  	pm_report_max_hw_sleep(FIELD_MAX(SLP_S0_RES_COUNTER_MASK) *
+>  			       pmc_core_adjust_slp_s0_step(primary_pmc, 1));
+>  
+> +	map = primary_pmc->map;
+> +	if (map->acpi_pm_tmr_ctl_offset)
+> +		acpi_pmtmr_register_suspend_resume_callback(pmc_core_acpi_pm_timer_suspend_resume,
+> +							 pmcdev);
+> +
+>  	device_initialized = true;
+>  	dev_info(&pdev->dev, " initialized\n");
+>  
+> @@ -1429,6 +1468,12 @@ static int pmc_core_probe(struct platform_device *pdev)
+>  static void pmc_core_remove(struct platform_device *pdev)
+>  {
+>  	struct pmc_dev *pmcdev = platform_get_drvdata(pdev);
+> +	const struct pmc *pmc = pmcdev->pmcs[PMC_IDX_MAIN];
+> +	const struct pmc_reg_map *map = pmc->map;
+> +
+> +	if (map->acpi_pm_tmr_ctl_offset)
+> +		acpi_pmtmr_unregister_suspend_resume_callback();
+> +
+>  	pmc_core_dbgfs_unregister(pmcdev);
+>  	pmc_core_clean_structure(pdev);
+>  }
+> diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86/intel/pmc/core.h
+> index 83504c49a0e31..fe1a94f693b63 100644
+> --- a/drivers/platform/x86/intel/pmc/core.h
+> +++ b/drivers/platform/x86/intel/pmc/core.h
+> @@ -67,6 +67,8 @@ struct telem_endpoint;
+>  #define SPT_PMC_LTR_SCC				0x3A0
+>  #define SPT_PMC_LTR_ISH				0x3A4
+>  
+> +#define SPT_PMC_ACPI_PM_TMR_CTL_OFFSET		0x18FC
+> +
+>  /* Sunrise Point: PGD PFET Enable Ack Status Registers */
+>  enum ppfear_regs {
+>  	SPT_PMC_XRAM_PPFEAR0A = 0x590,
+> @@ -147,6 +149,8 @@ enum ppfear_regs {
+>  #define SPT_PMC_VRIC1_SLPS0LVEN			BIT(13)
+>  #define SPT_PMC_VRIC1_XTALSDQDIS		BIT(22)
+>  
+> +#define SPT_PMC_BIT_ACPI_PM_TMR_DISABLE		BIT(1)
+> +
+>  /* Cannonlake Power Management Controller register offsets */
+>  #define CNP_PMC_SLPS0_DBG_OFFSET		0x10B4
+>  #define CNP_PMC_PM_CFG_OFFSET			0x1818
+> @@ -344,6 +348,8 @@ struct pmc_reg_map {
+>  	const u8  *lpm_reg_index;
+>  	const u32 pson_residency_offset;
+>  	const u32 pson_residency_counter_step;
+> +	const u32 acpi_pm_tmr_ctl_offset;
+> +	const u32 acpi_pm_tmr_disable_bit;
 >  };
 >  
->  
-> diff --git a/include/linux/acpi_pmtmr.h b/include/linux/acpi_pmtmr.h
-> index 50d88bf1498d7..0ded9220d379c 100644
-> --- a/include/linux/acpi_pmtmr.h
-> +++ b/include/linux/acpi_pmtmr.h
-> @@ -26,6 +26,19 @@ static inline u32 acpi_pm_read_early(void)
->  	return acpi_pm_read_verified() & ACPI_PM_MASK;
->  }
->  
-> +/**
-> + * Register callback for suspend and resume event
-> + *
-> + * @cb Callback triggered on suspend and resume
-> + * @data Data passed with the callback
-> + */
-> +void acpi_pmtmr_register_suspend_resume_callback(void (*cb)(void *data, bool suspend), void *data);
+>  /**
+> @@ -417,6 +423,8 @@ struct pmc_dev {
+>  	u32 die_c6_offset;
+>  	struct telem_endpoint *punit_ep;
+>  	struct pmc_info *regmap_list;
 > +
-> +/**
-> + * Remove registered callback for suspend and resume event
-> + */
-> +void acpi_pmtmr_unregister_suspend_resume_callback(void);
-> +
->  #else
+> +	bool enable_acpi_pm_timer_on_resume;
+>  };
 >  
->  static inline u32 acpi_pm_read_early(void)
+>  enum pmc_index {
+> diff --git a/drivers/platform/x86/intel/pmc/icl.c b/drivers/platform/x86/intel/pmc/icl.c
+> index 71b0fd6cb7d84..cbbd440544688 100644
+> --- a/drivers/platform/x86/intel/pmc/icl.c
+> +++ b/drivers/platform/x86/intel/pmc/icl.c
+> @@ -46,6 +46,8 @@ const struct pmc_reg_map icl_reg_map = {
+>  	.ppfear_buckets = ICL_PPFEAR_NUM_ENTRIES,
+>  	.pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
+>  	.pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
+> +	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
+> +	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
+>  	.ltr_ignore_max = ICL_NUM_IP_IGN_ALLOWED,
+>  	.etr3_offset = ETR3_OFFSET,
+>  };
+> diff --git a/drivers/platform/x86/intel/pmc/mtl.c b/drivers/platform/x86/intel/pmc/mtl.c
+> index c7d15d864039d..91f2fa728f5c8 100644
+> --- a/drivers/platform/x86/intel/pmc/mtl.c
+> +++ b/drivers/platform/x86/intel/pmc/mtl.c
+> @@ -462,6 +462,8 @@ const struct pmc_reg_map mtl_socm_reg_map = {
+>  	.ppfear_buckets = MTL_SOCM_PPFEAR_NUM_ENTRIES,
+>  	.pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
+>  	.pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
+> +	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
+> +	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
+>  	.lpm_num_maps = ADL_LPM_NUM_MAPS,
+>  	.ltr_ignore_max = MTL_SOCM_NUM_IP_IGN_ALLOWED,
+>  	.lpm_res_counter_step_x2 = TGL_PMC_LPM_RES_COUNTER_STEP_X2,
+> diff --git a/drivers/platform/x86/intel/pmc/spt.c b/drivers/platform/x86/intel/pmc/spt.c
+> index ab993a69e33ee..2cd2b3c68e468 100644
+> --- a/drivers/platform/x86/intel/pmc/spt.c
+> +++ b/drivers/platform/x86/intel/pmc/spt.c
+> @@ -130,6 +130,8 @@ const struct pmc_reg_map spt_reg_map = {
+>  	.ppfear_buckets = SPT_PPFEAR_NUM_ENTRIES,
+>  	.pm_cfg_offset = SPT_PMC_PM_CFG_OFFSET,
+>  	.pm_read_disable_bit = SPT_PMC_READ_DISABLE_BIT,
+> +	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
+> +	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
+>  	.ltr_ignore_max = SPT_NUM_IP_IGN_ALLOWED,
+>  	.pm_vric1_offset = SPT_PMC_VRIC1_OFFSET,
+>  };
+> diff --git a/drivers/platform/x86/intel/pmc/tgl.c b/drivers/platform/x86/intel/pmc/tgl.c
+> index e0580de180773..371b4e30f1426 100644
+> --- a/drivers/platform/x86/intel/pmc/tgl.c
+> +++ b/drivers/platform/x86/intel/pmc/tgl.c
+> @@ -197,6 +197,8 @@ const struct pmc_reg_map tgl_reg_map = {
+>  	.ppfear_buckets = ICL_PPFEAR_NUM_ENTRIES,
+>  	.pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
+>  	.pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
+> +	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
+> +	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
+>  	.ltr_ignore_max = TGL_NUM_IP_IGN_ALLOWED,
+>  	.lpm_num_maps = TGL_LPM_NUM_MAPS,
+>  	.lpm_res_counter_step_x2 = TGL_PMC_LPM_RES_COUNTER_STEP_X2,
 
 
