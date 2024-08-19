@@ -1,85 +1,67 @@
-Return-Path: <linux-kernel+bounces-292452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39DE5956FA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:03:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 153CC956F9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:02:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADC43B276FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:03:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96CA5B26BEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B761850A4;
-	Mon, 19 Aug 2024 16:02:27 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F950176226;
+	Mon, 19 Aug 2024 16:02:21 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D85F17BB28;
-	Mon, 19 Aug 2024 16:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFA917557E;
+	Mon, 19 Aug 2024 16:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724083347; cv=none; b=Z+fQvSsBKK/sUoNj+2KG8C+AcuKEN5uzjqCHeA2/xIIdzGfnIKb0/PaALV/+LdprmJwUfexiX9Cx1mfD5yykgJ/ZcIG6oSbT7dEKecZgKiwvYt+KaMWQk8We7NZSAxRLHRISo6hzJMenAjA95bGNg90mL4psbIe9o5vaFHiT02U=
+	t=1724083340; cv=none; b=HRWhtv/iBBKcq6sNn54QnY0u4FmssoVZphOeaZVZcMY3ZU/EcXT7GXbBWF5zwlDl5Hl1H1WYWfZ/nQJ634JUVw1KwWxAVKES23cs1fWYKC1K0pk5y2nB3A6oyUI98wQYtKMEFOX4LkpG9P0+Nm9U8fJ2zt67nh9ukC1xckQbN+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724083347; c=relaxed/simple;
-	bh=ddWC9mKzp2YiVucUrnXKI0CCSWBopEDMWS4/H1h5CVM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GQ6hRLUVSsLdF+4/Zv1FuUTn7I/vfNG5jmfts7F3ytRmX7wCfI6bNfgKAU1Xc9nbjPonN7Jar5dtgaGPON6EgAqn6lRdqcGREoRxFNzwiCcO1AZx7hr3eFjHHEtf2OFD3iLew5m1ZD+y8XMl5lt9qBzjUZ/m2eXA2Pm5goItqfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WncjN0N3fz67HSr;
-	Mon, 19 Aug 2024 23:59:20 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 38E47140594;
-	Tue, 20 Aug 2024 00:02:23 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 19 Aug
- 2024 17:02:22 +0100
-Date: Mon, 19 Aug 2024 17:02:21 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC: Krzysztof Kozlowski <krzk@kernel.org>, Nicolas Ferre
-	<nicolas.ferre@microchip.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
-	<alexandre.torgue@foss.st.com>, Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, Santosh Shilimkar
-	<ssantosh@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 06/13] memory: stm32-fmc2-ebi: simplify with
- dev_err_probe()
-Message-ID: <20240819170221.00002f91@Huawei.com>
-In-Reply-To: <20240816-cleanup-h-of-node-put-memory-v2-6-9eed0ee16b78@linaro.org>
-References: <20240816-cleanup-h-of-node-put-memory-v2-0-9eed0ee16b78@linaro.org>
-	<20240816-cleanup-h-of-node-put-memory-v2-6-9eed0ee16b78@linaro.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1724083340; c=relaxed/simple;
+	bh=3R1EprVZAZi+ilfqaR9P5vzc2DX83xvyT0LOUkr+4qI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ANXaskz8f8SJGgbI86xKabtw58GP5AbEIUFtQH4v5grfZsXcC4GzPuFG4VbeEGuYbqz3Yjn2QHGykvXKM7xqSfkHoGIZvKgGkX3nYaUrFNbuEBBspHt98OlAy00i3pdcsaBtpIHm2QifjrOKYJlwDvHTTwGhOoEf/TyL7tBrBiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2DE3C4AF12;
+	Mon, 19 Aug 2024 16:02:19 +0000 (UTC)
+Date: Mon, 19 Aug 2024 12:02:44 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [BUG] tracing: dynamic ftrace selftest detected failures
+Message-ID: <20240819120244.5657eb2f@gandalf.local.home>
+In-Reply-To: <20240820005649.dd019cfa70a8955d91cf85a0@kernel.org>
+References: <20240819171152.12f05e0ae5c9472004d1b00a@kernel.org>
+	<20240819112902.11451fe8@gandalf.local.home>
+	<20240820005649.dd019cfa70a8955d91cf85a0@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Fri, 16 Aug 2024 12:54:30 +0200
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
-
-> dev_err_probe() combines 'return' and error code printing, thus code is
-> a bit simpler, even if it cannot actually defer.
+On Tue, 20 Aug 2024 00:56:49 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 > 
-> Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-LGTM
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > 
+> > We may need to add "noinline" or something to make sure those functions
+> > don't get inlined for LTO.  
+> 
+> Yeah, we need such option at least for function call test.
+
+Could you add the noinline, and if it fixes the issue send a patch?
+
+Thanks,
+
+-- Steve
 
 
