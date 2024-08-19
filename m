@@ -1,101 +1,203 @@
-Return-Path: <linux-kernel+bounces-292234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A633956CDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:13:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3736D956CC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99839B25B06
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:13:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4021281566
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5DAD16D30B;
-	Mon, 19 Aug 2024 14:12:15 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C3D16C69A
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 14:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C35216CD1A;
+	Mon, 19 Aug 2024 14:10:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573AE16B399;
+	Mon, 19 Aug 2024 14:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724076735; cv=none; b=jkuIt8LTaavpBsSnluydJFgovMBOXe/vdSZDNteSMCJ+aZRB7E9olS/o8Dp5gSpuXWT7QGSaRAKFenIeDO3PBf4kWgU9Fn4/kFGPvOAoDcQta06GZ7QXwVul+kYemOPQV6ZtCVyuZ4DaVyZ+VeRdfFRLp5QUKSRRWNAj6KnQ6Rc=
+	t=1724076623; cv=none; b=GF4kwj/49EvC6wGtBFJA4Z036u4WzC+iybBkALBHsqysle1g1SLE3E0JaOTNyP64/64QZB6TfeYgc0NzOxgnId+Sm3kiiVlKfoFC7J+YZvqaUpWQNBeFYdiW0hgCLGQaOEITxs7TQzMzrvLR/J0/t+uGD9OKuszkhRIzIQu4ABk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724076735; c=relaxed/simple;
-	bh=ikNtBVm4suV+DfgBlZNcZWbXHwtst49HFL/I4U2o3tc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GgQzsfYf9ywtdnq2b6AUhz+kb9AQeqhT/+EYE/Vm627uCMlZcUB654mnh9xgTs6niRSghX4frhehAFwOQeogfrAC/Jk3VeH+USAQgZaK8+zBy+fp6VPI8KKeqHuq9inIBRPP06r1Atwzizk7wpuFD0MT9Web46GCL/g7RhhlK5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WnZJ16VkwzpSw2;
-	Mon, 19 Aug 2024 22:10:41 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7825D140159;
-	Mon, 19 Aug 2024 22:12:10 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 19 Aug
- 2024 22:12:09 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <lingshan.zhu@kernel.org>, <mst@redhat.com>, <jasowang@redhat.com>,
-	<xuanzhuo@linux.alibaba.com>, <eperezma@redhat.com>,
-	<shannon.nelson@amd.com>, <yuehaibing@huawei.com>
-CC: <virtualization@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] vdpa: Remove unused declarations
-Date: Mon, 19 Aug 2024 22:09:30 +0800
-Message-ID: <20240819140930.122019-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724076623; c=relaxed/simple;
+	bh=Jgcmn7cNSHC9O5Fypdkuo7mZ5zRoudMi01BnYlAJV1c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WbEnn4G0kv6UxeRg7f3RuY+zxjl5kvC0Uvw/fWvK75wfm9S7tYcgYRSkXCp0m+Y7RQEO55Dn1c95DV692w+uCZmpTF6SA1gyGS0gj9tCtCGTnFzYJExf92bkKWc1TeLFH1alunnsc4p0VeSVz710sssGs3tipjzlltCgasemUsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 956AD339;
+	Mon, 19 Aug 2024 07:10:46 -0700 (PDT)
+Received: from [10.57.85.21] (unknown [10.57.85.21])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E8A073F73B;
+	Mon, 19 Aug 2024 07:10:16 -0700 (PDT)
+Message-ID: <d55a24d2-bad9-40c7-8a2e-4a7bebe9c682@arm.com>
+Date: Mon, 19 Aug 2024 15:10:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 05/19] arm64: Detect if in a realm and set RIPAS RAM
+To: Suzuki K Poulose <suzuki.poulose@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ Alper Gun <alpergun@google.com>
+References: <20240819131924.372366-1-steven.price@arm.com>
+ <20240819131924.372366-6-steven.price@arm.com>
+ <ff5a11d6-8208-4987-af03-f67b10cc5904@arm.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <ff5a11d6-8208-4987-af03-f67b10cc5904@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf500002.china.huawei.com (7.185.36.57)
 
-There is no caller and implementation in tree.
+On 19/08/2024 15:04, Suzuki K Poulose wrote:
+> Hi Steven
+> 
+> On 19/08/2024 14:19, Steven Price wrote:
+>> From: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>
+>> Detect that the VM is a realm guest by the presence of the RSI
+>> interface.
+>>
+>> If in a realm then all memory needs to be marked as RIPAS RAM initially,
+>> the loader may or may not have done this for us. To be sure iterate over
+>> all RAM and mark it as such. Any failure is fatal as that implies the
+>> RAM regions passed to Linux are incorrect - which would mean failing
+>> later when attempting to access non-existent RAM.
+>>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> Co-developed-by: Steven Price <steven.price@arm.com>
+>> Signed-off-by: Steven Price <steven.price@arm.com>
+>> ---
+>> Changes since v4:
+>>   * Minor tidy ups.
+>> Changes since v3:
+>>   * Provide safe/unsafe versions for converting memory to protected,
+>>     using the safer version only for the early boot.
+>>   * Use the new psci_early_test_conduit() function to avoid calling an
+>>     SMC if EL3 is not present (or not configured to handle an SMC).
+>> Changes since v2:
+>>   * Use DECLARE_STATIC_KEY_FALSE rather than "extern struct
+>>     static_key_false".
+>>   * Rename set_memory_range() to rsi_set_memory_range().
+>>   * Downgrade some BUG()s to WARN()s and handle the condition by
+>>     propagating up the stack. Comment the remaining case that ends in a
+>>     BUG() to explain why.
+>>   * Rely on the return from rsi_request_version() rather than checking
+>>     the version the RMM claims to support.
+>>   * Rename the generic sounding arm64_setup_memory() to
+>>     arm64_rsi_setup_memory() and move the call site to setup_arch().
+>> ---
+>>   arch/arm64/include/asm/rsi.h | 65 ++++++++++++++++++++++++++++++
+>>   arch/arm64/kernel/Makefile   |  3 +-
+>>   arch/arm64/kernel/rsi.c      | 78 ++++++++++++++++++++++++++++++++++++
+>>   arch/arm64/kernel/setup.c    |  8 ++++
+>>   4 files changed, 153 insertions(+), 1 deletion(-)
+>>   create mode 100644 arch/arm64/include/asm/rsi.h
+>>   create mode 100644 arch/arm64/kernel/rsi.c
+>>
+>> diff --git a/arch/arm64/include/asm/rsi.h b/arch/arm64/include/asm/rsi.h
+>> new file mode 100644
+>> index 000000000000..2bc013badbc3
+>> --- /dev/null
+>> +++ b/arch/arm64/include/asm/rsi.h
+>> @@ -0,0 +1,65 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * Copyright (C) 2024 ARM Ltd.
+>> + */
+>> +
+>> +#ifndef __ASM_RSI_H_
+>> +#define __ASM_RSI_H_
+>> +
+>> +#include <linux/jump_label.h>
+>> +#include <asm/rsi_cmds.h>
+>> +
+>> +DECLARE_STATIC_KEY_FALSE(rsi_present);
+>> +
+>> +void __init arm64_rsi_init(void);
+>> +void __init arm64_rsi_setup_memory(void);
+>> +static inline bool is_realm_world(void)
+>> +{
+>> +    return static_branch_unlikely(&rsi_present);
+>> +}
+>> +
+>> +static inline int rsi_set_memory_range(phys_addr_t start, phys_addr_t
+>> end,
+>> +                       enum ripas state, unsigned long flags)
+>> +{
+>> +    unsigned long ret;
+>> +    phys_addr_t top;
+>> +
+>> +    while (start != end) {
+>> +        ret = rsi_set_addr_range_state(start, end, state, flags, &top);
+>> +        if (WARN_ON(ret || top < start || top > end))
+>> +            return -EINVAL;
+>> +        start = top;
+>> +    }
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +/*
+>> + * Convert the specified range to RAM. Do not use this if you rely on
+>> the
+>> + * contents of a page that may already be in RAM state.
+>> + */
+>> +static inline int rsi_set_memory_range_protected(phys_addr_t start,
+>> +                         phys_addr_t end)
+>> +{
+>> +    return rsi_set_memory_range(start, end, RSI_RIPAS_RAM,
+>> +                    RSI_CHANGE_DESTROYED);
+>> +}
+>> +
+>> +/*
+>> + * Convert the specified range to RAM. Do not convert any pages that
+>> may have
+>> + * been DESTROYED, without our permission.
+>> + */
+>> +static inline int rsi_set_memory_range_protected_safe(phys_addr_t start,
+>> +                              phys_addr_t end)
+>> +{
+>> +    return rsi_set_memory_range(start, end, RSI_RIPAS_RAM,
+>> +                    RSI_NO_CHANGE_DESTROYED);
+>> +}
+>> +
+>> +static inline int rsi_set_memory_range_shared(phys_addr_t start,
+>> +                          phys_addr_t end)
+>> +{
+>> +    return rsi_set_memory_range(start, end, RSI_RIPAS_EMPTY,
+>> +                    RSI_NO_CHANGE_DESTROYED);
+> 
+> I think this should be RSI_CHANGE_DESTROYED, as we are transitioning a
+> page to "shared" (i.e, IPA state to EMPTY) and we do not expect the data
+> to be retained over the transition. Thus we do not care if the IPA was
+> in RIPAS_DESTROYED.
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- drivers/vdpa/ifcvf/ifcvf_base.h | 3 ---
- drivers/vdpa/pds/cmds.h         | 1 -
- 2 files changed, 4 deletions(-)
+Fair point - although something has gone wrong if the VMM has destroyed
+the memory we're calling this on. But it's not going to cause problems
+using RSI_CHANGE_DESTROYED and might be (slightly) more efficient.
 
-diff --git a/drivers/vdpa/ifcvf/ifcvf_base.h b/drivers/vdpa/ifcvf/ifcvf_base.h
-index 0f347717021a..aa36de361c10 100644
---- a/drivers/vdpa/ifcvf/ifcvf_base.h
-+++ b/drivers/vdpa/ifcvf/ifcvf_base.h
-@@ -112,15 +112,12 @@ void ifcvf_write_dev_config(struct ifcvf_hw *hw, u64 offset,
- 			    const void *src, int length);
- u8 ifcvf_get_status(struct ifcvf_hw *hw);
- void ifcvf_set_status(struct ifcvf_hw *hw, u8 status);
--void io_write64_twopart(u64 val, u32 *lo, u32 *hi);
- void ifcvf_reset(struct ifcvf_hw *hw);
- u64 ifcvf_get_dev_features(struct ifcvf_hw *hw);
- u64 ifcvf_get_hw_features(struct ifcvf_hw *hw);
- int ifcvf_verify_min_features(struct ifcvf_hw *hw, u64 features);
- u16 ifcvf_get_vq_state(struct ifcvf_hw *hw, u16 qid);
- int ifcvf_set_vq_state(struct ifcvf_hw *hw, u16 qid, u16 num);
--struct ifcvf_adapter *vf_to_adapter(struct ifcvf_hw *hw);
--int ifcvf_probed_virtio_net(struct ifcvf_hw *hw);
- u32 ifcvf_get_config_size(struct ifcvf_hw *hw);
- u16 ifcvf_set_vq_vector(struct ifcvf_hw *hw, u16 qid, int vector);
- u16 ifcvf_set_config_vector(struct ifcvf_hw *hw, int vector);
-diff --git a/drivers/vdpa/pds/cmds.h b/drivers/vdpa/pds/cmds.h
-index e24d85cb8f1c..6b1bc33356b0 100644
---- a/drivers/vdpa/pds/cmds.h
-+++ b/drivers/vdpa/pds/cmds.h
-@@ -14,5 +14,4 @@ int pds_vdpa_cmd_init_vq(struct pds_vdpa_device *pdsv, u16 qid, u16 invert_idx,
- 			 struct pds_vdpa_vq_info *vq_info);
- int pds_vdpa_cmd_reset_vq(struct pds_vdpa_device *pdsv, u16 qid, u16 invert_idx,
- 			  struct pds_vdpa_vq_info *vq_info);
--int pds_vdpa_cmd_set_features(struct pds_vdpa_device *pdsv, u64 features);
- #endif /* _VDPA_CMDS_H_ */
--- 
-2.34.1
+Thanks,
+
+Steve
+
+> Rest looks good to me.
+> 
+> 
+> Suzuki
 
 
