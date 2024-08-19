@@ -1,58 +1,53 @@
-Return-Path: <linux-kernel+bounces-291365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20A9995613B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:51:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5286295613F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:52:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 532691C210A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:51:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 850111C20AD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017F329D0C;
-	Mon, 19 Aug 2024 02:51:40 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCEB45957;
+	Mon, 19 Aug 2024 02:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="TKndoGdk"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33271BDC8
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 02:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B20838DE4
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 02:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724035899; cv=none; b=IbCzSI4GFdwmtxaXzWefHFCDQfhPK5g39OwH0ndwztG4WRbtKNugAV/xtG/4/BiPe0a6mvHxGta4u7gjYf5KjAzCWXNTpnkGtUXGPnJilyV8vAcddJT6ldzK4q+ftzgVcp72W4RXx0tFs/QcbSp6zmZDG9IBD8uEman8rSaA4mo=
+	t=1724035954; cv=none; b=NYGtOr1Jcr1JfbdkUUkQ8LczX9bpE+nBd3KV+D4VZAmmcirXeZx4h9XlJbA8GXvxFb34R+44EnG2gZ/wTMl11Wf5tAfMjxEPmgOlLXH8LiabSgSSt5PTKfxMiFwpD0LGqfh3uKyNFHYa8jlpwC/Vl3hnio3/R2Hoo/1Vu0WRCWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724035899; c=relaxed/simple;
-	bh=MphJWY7xAAzYAOlHBN+3IDylWkzUrc1HBNy+kvyO6Gg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZnpENpkPvM8GorCQ/sk+gzJrCkaeZJ3PGw18zxVBc+opqrFEbsYvrwYNBPdFwUHSqot8RKjXFOKMOHj+cJdrad6+XKooke2q63LI8qQzxHLFofN7bmu0oQGIEQu06XeByJZ4Mg10tEcIMeOiExc1CIWaHNk596KTv23ZvbzRZ3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47J2oG11005096;
-	Sun, 18 Aug 2024 19:51:16 -0700
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 412q5415vc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Sun, 18 Aug 2024 19:51:15 -0700 (PDT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 18 Aug 2024 19:51:15 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Sun, 18 Aug 2024 19:51:13 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <syzbot+ab134185af9ef88dfed5@syzkaller.appspotmail.com>
-CC: <jlbec@evilplan.org>, <joseph.qi@linux.alibaba.com>,
-        <linux-kernel@vger.kernel.org>, <mark@fasheh.com>,
-        <ocfs2-devel@lists.linux.dev>, <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH] ocfs2: remove unreasonable unlock
-Date: Mon, 19 Aug 2024 10:51:12 +0800
-Message-ID: <20240819025112.2505463-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <0000000000007541d9061ff83615@google.com>
-References: <0000000000007541d9061ff83615@google.com>
+	s=arc-20240116; t=1724035954; c=relaxed/simple;
+	bh=gOH4e2hXdlhmKGaEzeYdnS/IZ4cAjijxp5N4id7IZYI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=unKqzdt03nj+Pbb+o1NFdd/srJ0qe1aVYv8KCsCFrvMmgTUGolXN61iRISWnuraYjcU9SOuWiYXV8q6N6ndqOEAuVXaEpLeVGtv2hWbaDYLaV+g7ZCxICDxWqnQk2KwQxo+WjRU8EqzQ/AY7fWpojld6rf6dVDYyhpGNfAERdiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=TKndoGdk; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1724035942; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=fSBui4eXgKDMvdVfyLpBwQeHWqC9sk1dCBk95MEHyoA=;
+	b=TKndoGdksy2KZuxwpW8sGNPsRVmC1kcyADVvoOKLPvK7kiPvXcBIC3Zno4eZQQaNPwl2JSvv5aghRL+jfIb5ZL2cGVffPOYJ5lHop3X1RMhNBQLNgfcr1iLntmFO1sb8kXcGQw0Jhe3+M5CGfIBDODhp93daT9w1W18SXjIiEFY=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WD4y1IG_1724035928)
+          by smtp.aliyun-inc.com;
+          Mon, 19 Aug 2024 10:52:22 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-erofs@lists.ozlabs.org,
+	Chao Yu <chao@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Barry Song <21cnbao@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH] erofs: allow large folios for compressed files
+Date: Mon, 19 Aug 2024 10:52:07 +0800
+Message-ID: <20240819025207.3808649-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,42 +55,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: jzCXM0XNVvJZ3nJtd9lJGbqoee7L3OYB
-X-Proofpoint-ORIG-GUID: jzCXM0XNVvJZ3nJtd9lJGbqoee7L3OYB
-X-Authority-Analysis: v=2.4 cv=b+3g4cGx c=1 sm=1 tr=0 ts=66c2b323 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=yoJbH4e0A30A:10 a=hSkVLCK3AAAA:8 a=edf1wS77AAAA:8 a=t7CeM3EgAAAA:8 a=HuAlKsfkTx2sNoB5ci0A:9 a=cQPPKAXgyycSBL8etih5:22
- a=DcSpbTIhAlouE1Uv7lRv:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-18_24,2024-08-16_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- adultscore=0 suspectscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
- phishscore=0 mlxlogscore=933 lowpriorityscore=0 malwarescore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2407110000 definitions=main-2408190019
 
-There was a lock release before exiting, so remove the unreasonable unlock.
+As commit 2e6506e1c4ee ("mm/migrate: fix deadlock in
+migrate_pages_batch() on large folios") already landed upstream,
+large folios can be safely enabled for compressed inodes since all
+prerequisites already landed in 6.11-rc1.
 
-Reported-and-tested-by: syzbot+ab134185af9ef88dfed5@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=ab134185af9ef88dfed5
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+Stress tests has been working on my fleet for > 20 days without any
+regression.  Besides, users [1] has requested it for months.  Let's
+allow large folios for EROFS full cases upstream now for wider testing.
+
+[1] https://lore.kernel.org/r/CAGsJ_4wtE8OcpinuqVwG4jtdx6Qh5f+TON6wz+4HMCq=A2qFcA@mail.gmail.com
+Cc: Barry Song <21cnbao@gmail.com>
+Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 ---
- fs/ocfs2/buffer_head_io.c | 1 -
- 1 file changed, 1 deletion(-)
+ Documentation/filesystems/erofs.rst |  2 +-
+ fs/erofs/inode.c                    | 18 ++++++++----------
+ 2 files changed, 9 insertions(+), 11 deletions(-)
 
-diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
-index cdb9b9bdea1f..e62c7e1de4eb 100644
---- a/fs/ocfs2/buffer_head_io.c
-+++ b/fs/ocfs2/buffer_head_io.c
-@@ -235,7 +235,6 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
- 		if (bhs[i] == NULL) {
- 			bhs[i] = sb_getblk(sb, block++);
- 			if (bhs[i] == NULL) {
--				ocfs2_metadata_cache_io_unlock(ci);
- 				status = -ENOMEM;
- 				mlog_errno(status);
- 				/* Don't forget to put previous bh! */
+diff --git a/Documentation/filesystems/erofs.rst b/Documentation/filesystems/erofs.rst
+index cc4626d6ee4f..c293f8e37468 100644
+--- a/Documentation/filesystems/erofs.rst
++++ b/Documentation/filesystems/erofs.rst
+@@ -75,7 +75,7 @@ Here are the main features of EROFS:
+ 
+  - Support merging tail-end data into a special inode as fragments.
+ 
+- - Support large folios for uncompressed files.
++ - Support large folios to make use of THPs (Transparent Hugepages);
+ 
+  - Support direct I/O on uncompressed files to avoid double caching for loop
+    devices;
+diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
+index 43c09aae2afc..419432be3223 100644
+--- a/fs/erofs/inode.c
++++ b/fs/erofs/inode.c
+@@ -257,25 +257,23 @@ static int erofs_fill_inode(struct inode *inode)
+ 		goto out_unlock;
+ 	}
+ 
++	mapping_set_large_folios(inode->i_mapping);
+ 	if (erofs_inode_is_data_compressed(vi->datalayout)) {
+ #ifdef CONFIG_EROFS_FS_ZIP
+ 		DO_ONCE_LITE_IF(inode->i_blkbits != PAGE_SHIFT,
+ 			  erofs_info, inode->i_sb,
+ 			  "EXPERIMENTAL EROFS subpage compressed block support in use. Use at your own risk!");
+ 		inode->i_mapping->a_ops = &z_erofs_aops;
+-		err = 0;
+-		goto out_unlock;
+-#endif
++#else
+ 		err = -EOPNOTSUPP;
+-		goto out_unlock;
+-	}
+-	inode->i_mapping->a_ops = &erofs_raw_access_aops;
+-	mapping_set_large_folios(inode->i_mapping);
++#endif
++	} else {
++		inode->i_mapping->a_ops = &erofs_raw_access_aops;
+ #ifdef CONFIG_EROFS_FS_ONDEMAND
+-	if (erofs_is_fscache_mode(inode->i_sb))
+-		inode->i_mapping->a_ops = &erofs_fscache_access_aops;
++		if (erofs_is_fscache_mode(inode->i_sb))
++			inode->i_mapping->a_ops = &erofs_fscache_access_aops;
+ #endif
+-
++	}
+ out_unlock:
+ 	erofs_put_metabuf(&buf);
+ 	return err;
 -- 
-2.43.0
+2.43.5
 
 
