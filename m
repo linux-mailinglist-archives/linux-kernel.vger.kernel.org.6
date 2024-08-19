@@ -1,68 +1,72 @@
-Return-Path: <linux-kernel+bounces-291676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1627B95656B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:20:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA4C6956569
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:20:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F57F28316C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:20:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A4E21C21799
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6599915B104;
-	Mon, 19 Aug 2024 08:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="M94vokth"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE4A15B0F0;
+	Mon, 19 Aug 2024 08:20:01 +0000 (UTC)
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52A515AADA;
-	Mon, 19 Aug 2024 08:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9197F208A4;
+	Mon, 19 Aug 2024 08:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724055625; cv=none; b=AKIjZ86qmgyqH79LFK/gUUGOfy3G8mc6KZI1A9ShB5CS3gFlQnphHKCXoBA8PHNncwIAtA7OQ2EKGYkgSzBnUH0PXslAvwosc2m+oY+Mzyqv4hzrLT8k3/w2l7ksnwUfCSQF1YpVthF+OT9x3sAHOQJ3gd0PtQDl4iSi6/xB7X0=
+	t=1724055601; cv=none; b=I59bJD4atz0Y+Q10b1McYoNGRL4IdPiLPaPho60/MRcqQEaFZg8Mvywky8YHdDMXL1pLFZYrWQbyGFERPAdfvR4rgXTYo8192c75BkETRcgoQJ1DSMSgnFuuJuR9jiXbY7Cb593tjRprFexKnjIqHtW3cuMGddLpXH86KSOaS/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724055625; c=relaxed/simple;
-	bh=V2B98PLomG8SbWfeta+9PGl9TIi6URtm95xm7RDo6co=;
+	s=arc-20240116; t=1724055601; c=relaxed/simple;
+	bh=Nouv1Dmsj8RfgcNwsiQ+zvpCbcVDYDMltRGUv/xjAqU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hAOechuaijz66vOGiPNGGynTtG3ROSFzf96XtI/YaaVLFSAK/BDGAwPL3rvWDyRjIX/GdxV4ng+exq4gAI5REXX1Z/9M+prRgx0dBso8wIRP09jQZBifC2hkrBF8ILGgBTG4nRt450/GvnUfQozto2thnvBEQdOGquxvuBwlE0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=M94vokth; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B3C3C5A5;
-	Mon, 19 Aug 2024 10:19:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1724055559;
-	bh=V2B98PLomG8SbWfeta+9PGl9TIi6URtm95xm7RDo6co=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M94vokthESzz+5KUapmekTJ66zK+DMMhzCSK1WvUOkZh2pBUNQ48iEH1yUbGdtGf/
-	 o3meiyz8637XjnHFlRF2smxUxWa1O72jONS/4y8Q/i5fj2fAcxkquwB3fcCs6DPvjv
-	 xfMhNN3Mh2YLPmRIEA/ugnXocKNlkkbHXSIH5Cn8=
-Date: Mon, 19 Aug 2024 11:19:53 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Jack Zhu <jack.zhu@starfivetech.com>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>
-Subject: Re: =?utf-8?B?5Zue5aSNOiDlm57lpI06IOWbng==?=
- =?utf-8?B?5aSNOiDlm57lpI06IFtQQVRDSA==?= =?utf-8?Q?=5D?= staging: media:
- starfive: Add multiple resolution support
-Message-ID: <20240819081953.GM29465@pendragon.ideasonboard.com>
-References: <20240419081955.5140-1-changhuang.liang@starfivetech.com>
- <20240809095738.GG5833@pendragon.ideasonboard.com>
- <ZQ0PR01MB1302CAAE59FA0358E7FE6BD0F2BA2@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
- <20240809132624.GB1435@pendragon.ideasonboard.com>
- <ZQ0PR01MB13029DA731711FAA57BD13A4F2852@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
- <20240812103357.GB18729@pendragon.ideasonboard.com>
- <ZQ0PR01MB130236FA891A04350CBC4245F2852@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
- <20240819001327.GK29465@pendragon.ideasonboard.com>
- <ZQ0PR01MB1302CE9D6EC726D3FBE8D6EDF28C2@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VUkJ4qK76Gunnt0MHDdwxdmDfClbOr4ehPp3nzwREC++UXrjOwSe6QKUh2ATS9mL9dLuMxYo3d0qGLmeVf8sXsKS+WrxhWA48gz1y8euD26UwGijHMx+b0XA1je5RXEq4m0mI3uLhUUpPD0rTTBP5Yruw+liXnqC3yBxvmej6v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-428ec6c190eso33654935e9.1;
+        Mon, 19 Aug 2024 01:19:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724055598; x=1724660398;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AUYUJLRw3TtbPkMZU63P542FQWJqsbgCa/2jFZaO0fE=;
+        b=YtnZRyVCZvwwdOTS6UMacdnJRZdcS1VM3iKYJ3TPJ9ed9WFWoMoe/t4E+689NBxAci
+         rsEpcvV0yTH/1X9nVujGKsZVa9sYfj6EfLkMP48sw1wxPQzpJdAuxgOUwkGMy8z6/VMl
+         ucH0JnlP6hbe6MumnftEg4K+MRSGpUsCELucBsvxjQ4crOVxfKJzQ4d11AWsLMceGnk3
+         fKeXDVYJA0aiigl+xPIwW/ThZM9bsuEYYhGGtEly+CDtJthLxz9BOomgTHNtGR6NKulg
+         KnTn0YzVh5Sn/gLjE1dv1vuaHSMXuudFysK12pCUqkaU0CFMKv94PgFGt0iQMHgVtf8G
+         kk2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUWjafHrBIzTKsI7AuuvswNUC3js6nNOx8csE+jydL7YEPKKBSm/RVxP4ymT7hOqVSqbkvYN8XPP3JRY11tmsCkFbZkNLBs3sl4wzfpr++T+ZTyCxtT3CBvbCpnxB5AckZfPNn+iAPSLnavRB86ZiiD7drfEsyPaytJQBQDyvw6Z7ev/gtQXYRj182QmL7TwtCNrhem1pWH+l3AXOVGOIq9PIgBTdRL
+X-Gm-Message-State: AOJu0Yw/MAR3CoKut9uSYaoD/n47dIsplNC1M3t/6hrmQqG5CFklAZ5I
+	/hXfojKrTMpT3+ueCKwkYfmcxnnL3fXNoX05GvjLP4kPaUE03wb6
+X-Google-Smtp-Source: AGHT+IHFbZ0xIu4V8B12eur1z2oMlUHsadyUlMiAVvi2bhhhOQxH8YyisZyXZiXRYgozYAZBhPnxYA==
+X-Received: by 2002:a05:600c:3c99:b0:426:6220:cb57 with SMTP id 5b1f17b1804b1-42aa82651fcmr38918415e9.25.1724055597563;
+        Mon, 19 Aug 2024 01:19:57 -0700 (PDT)
+Received: from krzk-bin ([178.197.215.209])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-429ded29fcfsm155437865e9.20.2024.08.19.01.19.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 01:19:56 -0700 (PDT)
+Date: Mon, 19 Aug 2024 10:19:53 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sunyeal Hong <sunyeal.hong@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/4] dt-bindings: clock: add ExynosAuto v920 SoC CMU
+ bindings
+Message-ID: <nqokjhodd4g3l7s5ukvhirytv4poiusgd5hgv2ntn3ekyolzyd@zmxxtwjgkqmp>
+References: <20240819052416.2258976-1-sunyeal.hong@samsung.com>
+ <CGME20240819052422epcas2p4db394defd5f298658f7841af3649ac6f@epcas2p4.samsung.com>
+ <20240819052416.2258976-2-sunyeal.hong@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,98 +75,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZQ0PR01MB1302CE9D6EC726D3FBE8D6EDF28C2@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+In-Reply-To: <20240819052416.2258976-2-sunyeal.hong@samsung.com>
 
-On Mon, Aug 19, 2024 at 01:37:30AM +0000, Changhuang Liang wrote:
-> > On Mon, Aug 12, 2024 at 12:13:03PM +0000, Changhuang Liang wrote:
-> > > > On Mon, Aug 12, 2024 at 09:43:47AM +0000, Changhuang Liang wrote:
-> > > > > > On Fri, Aug 09, 2024 at 12:12:01PM +0000, Changhuang Liang wrote:
-> > > > > > > > On Fri, Apr 19, 2024 at 01:19:55AM -0700, Changhuang Liang wrote:
-> > > > > > > > > Add multiple resolution support for video "capture_raw" device.
-> > > > > > > > > Otherwise it will capture the wrong image data if the width is not 1920.
-> > > > > > > > >
-> > > > > > > > > Fixes: e080f339c80a ("media: staging: media: starfive: camss: Add capture driver")
-> > > > > > > > >
-> > > > > > > > > Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
-> > > > > > > > > ---
-> > > > > > > > >  drivers/staging/media/starfive/camss/stf-capture.c | 5 ++++-
-> > > > > > > > >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > > > > > > > >
-> > > > > > > > > diff --git
-> > > > > > > > > a/drivers/staging/media/starfive/camss/stf-capture.c
-> > > > > > > > > b/drivers/staging/media/starfive/camss/stf-capture.c
-> > > > > > > > > index ec5169e7b391..9e853ff2596a 100644
-> > > > > > > > > --- a/drivers/staging/media/starfive/camss/stf-capture.c
-> > > > > > > > > +++ b/drivers/staging/media/starfive/camss/stf-capture.c
-> > > > > > > > > @@ -177,9 +177,12 @@ static void stf_channel_set(struct stfcamss_video *video)  {
-> > > > > > > > >  	struct stf_capture *cap = to_stf_capture(video);
-> > > > > > > > >  	struct stfcamss *stfcamss = cap->video.stfcamss;
-> > > > > > > > > +	struct v4l2_pix_format *pix;
-> > > > > > > >
-> > > > > > > > This variable can be const as you don't modify the format.
-> > > > > > > >
-> > > > > > > > >  	u32 val;
-> > > > > > > > >
-> > > > > > > > >  	if (cap->type == STF_CAPTURE_RAW) {
-> > > > > > > > > +		pix = &video->active_fmt.fmt.pix;
-> > > > > > > >
-> > > > > > > > And it can be declared and initialized here:
-> > > > > > > >
-> > > > > > > > 		const struct v4l2_pix_format *pix = &video->active_fmt.fmt.pix;
-> > > > > > > >
-> > > > > > > > > +
-> > > > > > > > >  		val = stf_syscon_reg_read(stfcamss, VIN_CHANNEL_SEL_EN);
-> > > > > > > > >  		val &= ~U0_VIN_CHANNEL_SEL_MASK;
-> > > > > > > > >  		val |= CHANNEL(0);
-> > > > > > > > > @@ -193,7 +196,7 @@ static void stf_channel_set(struct stfcamss_video *video)
-> > > > > > > > >  		val |= PIXEL_HEIGH_BIT_SEL(0);
-> > > > > > > > >
-> > > > > > > > >  		val &= ~U0_VIN_PIX_CNT_END_MASK;
-> > > > > > > > > -		val |= PIX_CNT_END(IMAGE_MAX_WIDTH / 4 - 1);
-> > > > > > > > > +		val |= PIX_CNT_END(pix->width / 4 - 1);
-> > > > > > > >
-> > > > > > > > Is there no need to consider the image height as well ? How
-> > > > > > > > does the driver prevent buffer overflows if the sensor
-> > > > > > > > sends more data than expected ?
-> > > > > > >
-> > > > > > > Our hardware will confirm a frame of data through vblank
-> > > > > > > signal, so there is no image height configuration.
-> > > > > >
-> > > > > > What happens if the system expects, for instance, a 1920x1080
-> > > > > > RAW8 image, and allocates a buffer of of 1920x1080 bytes, but
-> > > > > > the sensor outputs more lines ? Does the camera hardware in the
-> > > > > > SoC offer an option to prevent buffer overruns ?
-> > > > >
-> > > > > The hardware can confirm the image height by using the VSYNC signal.
-> > > > >
-> > > > > Image will transfer when VSYNC is high.
-> > > > >
-> > > > > VSYNC time = (width + h_blank) * height;
-> > > >
-> > > > What I'm trying to understand is what happens if the ISP is configured for
-> > > > 1080 lines, but the camera sensor sends more than 1080 lines (the
-> > > > VSYNC signal is active for more than 1080 lines). Where in the
-> > > > driver is the hardware configure with the 1080 lines limit to avoid buffer overflows ?
-> > >
-> > > If is "capture_raw" video device, no image height can be configured.
-> > 
-> > In that case what happens if the camera sensor sends more lines than
-> > expected ? Will the raw video device write past the end of the buffer ?
+On Mon, Aug 19, 2024 at 02:24:12PM +0900, Sunyeal Hong wrote:
+> Add dt-schema for ExynosAuto v920 SoC clock controller.
+> Add device tree clock binding definitions for below CMU blocks.
 > 
-> Yes, the buffer will overflows, so we will use the software restrictions.
-> Implement .link_validate hooks for the CSI2RX subdev and "capture_raw" video device.
+> - CMU_TOP
+> - CMU_PERIC0
+> 
+> Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
+ +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (38.4 MHz)
+> +            - description: CMU_PERIC0 NOC clock (from CMU_TOP)
+> +            - description: CMU_PERIC0 IP clock (from CMU_TOP)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +            - const: noc
+> +            - const: ip
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynosautov920-cmu-peric1
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (38.4 MHz)
+> +            - description: CMU_PERIC1 NOC clock (from CMU_TOP)
+> +            - description: CMU_PERIC1 IP clock (from CMU_TOP)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +            - const: noc
+> +            - const: ip
 
-Is there an IOMMU in the system that could help preventing buffer
-overflows to reach system memory ?
+This is the same peric0, so combine them and clocks could be just:
 
-> > If so, is there a way to guard against that ?
-> > 
-> > > If is "capture_yuv" video device, it will be set by stf_isp_config_crop.
-> > 
-> > Thank you, that's the information I was looking for.
+items:
+  - description: External reference clock (38.4 MHz)
+  - description: CMU_PERICn NOC clock (from CMU_TOP)
+  - description: CMU_PERICn IP clock (from CMU_TOP)
 
--- 
-Regards,
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynosautov920-cmu-misc
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (38.4 MHz)
+> +            - description: CMU_MISC NOC clock (from CMU_MISC)
 
-Laurent Pinchart
+Similarly:
+
+- description: CMU_MISC/CMU_HSI0 NOC clock (from CMU_MISC)
 
