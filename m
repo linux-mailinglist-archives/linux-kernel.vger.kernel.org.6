@@ -1,82 +1,70 @@
-Return-Path: <linux-kernel+bounces-292324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31EF9956DFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:57:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6566A956DF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD39C1F23D32
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:57:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21E65286E95
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A176176AB9;
-	Mon, 19 Aug 2024 14:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4512178377;
+	Mon, 19 Aug 2024 14:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D8UW8Flb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="BlRc8/Qi"
+Received: from out203-205-221-205.mail.qq.com (out203-205-221-205.mail.qq.com [203.205.221.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B90176251
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 14:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5989178383
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 14:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724079385; cv=none; b=neskfH9dPx5X0EfhqYWf7MIYmhGwA579JDcWYGddnQ1I0w7FYHyx21g7z00NuzNmdGQKrGLfLjG6f2pJEJl/kw9SjtFuyvaJRXXinC/9mNe/BBixvIu8md2PpsAQFcJE6cAcJKhOw8WbA+hDO4s1p1F6+zrFklcZ9oyNv0fVccg=
+	t=1724079375; cv=none; b=JIusz6Ew9X7ql+a0zPr/r1E1JjGvJbUzxMlXzLqmRuoIdOIsMoq8xQ32UK3wNDUjaHOeK2cuVK/55pfcbaPcWamx1C7rA2NhJ0LgF0tRWCYU3zMhNcf+8q7aSR/bdTHmUILtb0cH/V8YDUuW2OYr1GiRucbgLOpsCHYHgdpWTN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724079385; c=relaxed/simple;
-	bh=bexWma/7ne+ZIXrU6dDSPnHuDTwc7JRVTEsbOGaQTlo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gqNPU0D1N7c4K35RlZ4Emvbl5RPUcfPzglNeSp5C/DaALogGgSsdX5lzEuOEokfa2LPUIu7enCm7G/c7voGtskNt646evR/I3rQYJaSB2FKn9/Ha463LJQ07DlcvH5HWb7qk2D45E5ZuEA5N6Qpfz3KLnL6vxHIMrdWlF8Wd4ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D8UW8Flb; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724079383;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tuBomQYrL4neI9/UIiUoEKpHGEUfWQV2ECUiNi8myCc=;
-	b=D8UW8FlbKYEPDCaUMpQuUohZiu7TVBsrGzxIYoiVY2gfg9/vFdoNJ4Tku3ePWFSBolOTdy
-	cCIGZ0/WrqVWTXoPonKCu7kTmuVyoIAjCVSFBeS5+bE3sN+UBh9/1PzZxErOeWT3O++UHm
-	/f+M9GqDOZf6px9aFJJwOvyvWcN58r0=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-193-CWQEnUUsNYCtspDcNI2Rqg-1; Mon,
- 19 Aug 2024 10:56:20 -0400
-X-MC-Unique: CWQEnUUsNYCtspDcNI2Rqg-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4DEEC1955D57;
-	Mon, 19 Aug 2024 14:56:18 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.72.116.15])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9A8CE1955F45;
-	Mon, 19 Aug 2024 14:56:09 +0000 (UTC)
-From: Pingfan Liu <piliu@redhat.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Pingfan Liu <piliu@redhat.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Jan Hendrik Farr <kernel@jfarr.cc>,
-	Philipp Rudo <prudo@redhat.com>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Baoquan He <bhe@redhat.com>,
-	Dave Young <dyoung@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	kexec@lists.infradead.org,
-	linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFCv2 9/9] arm64: kexec: Enable kexec_pe_image
-Date: Mon, 19 Aug 2024 22:53:42 +0800
-Message-ID: <20240819145417.23367-10-piliu@redhat.com>
-In-Reply-To: <20240819145417.23367-1-piliu@redhat.com>
-References: <20240819145417.23367-1-piliu@redhat.com>
+	s=arc-20240116; t=1724079375; c=relaxed/simple;
+	bh=GWPj417j8zzHeYmnsGaTHikctCfMEndcS+75h8wmqXc=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=TWMHL4GoYbNvWGWWnE+Wd4TghxTluzeKNjXXnb/3Rf0OvxCtF4i+ntrn4qduQcAJuxT2CAQmbrvs1U7cPv2gh+T9EtW634wkxBUkr3Lhv5/3g7wBnu55P4xxxpvZJrY0+Y/9zVdtJ9IFTSvv+G1gdwr9OCo5XPCss+uqkBdp5o4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=BlRc8/Qi; arc=none smtp.client-ip=203.205.221.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1724079364; bh=oOn6+C2hQUQF0uGoVQm56ZSL+X2MtgUp158lV4Y0SgA=;
+	h=From:To:Cc:Subject:Date;
+	b=BlRc8/Qil9stAK3JclXZ4RSE0V0I/PBzbfODqTZ6u6CxtfuBpQ6M9CLt1kBVvQ6Gn
+	 fWUsKUG7RM+FirU9BfeEKrybUqMH+O7JJzX/oIr/epFK0yoH5Mgo8aMbMBxXXHT4fL
+	 zzvmpRdT3z4XxGghPx0MfCWvtfGzQ5nyToYE7COk=
+Received: from localhost.localdomain ([112.64.14.141])
+	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
+	id D9334C54; Mon, 19 Aug 2024 22:54:19 +0800
+X-QQ-mid: xmsmtpt1724079259tzjn25qdr
+Message-ID: <tencent_65B128564B40DAFEBCBF06F8E2011BC32407@qq.com>
+X-QQ-XMAILINFO: M1rD3f8svNznFa8nw2ZJtee8WuQcQdZ1eDyoJ+1xBxhPLUG+CglSkUgcCxQ5s6
+	 dTP/z/8UUee9oVpNiDrVYug9WO4H4X7/NGD+7ZI0RpMXyr87/zIcjJuzZb4Mg3PFWt2SDzGzhWe0
+	 tfhC6S4+QGyWV03ecWmHecQsu9IQImfPSnjO8Jad5CLDXicTL8pcfp6zVYQVXdj+43UgcPESEvRH
+	 X2Tftx+h6GA/usF7sOKz5XzLTzNHrjzA3BqkNN2nkQC5nJNb3TFtm+XjY8qzBWzXYI8DU/HFw920
+	 jupo7xycNIPbQHMEmetkm7YBe/JhYOrJnfYOAdZ2e//XQqtxUfA9jmKdh7XhlPjdVZ1R9sfLEM7r
+	 9Qw1cCM67FGQ+xRC1kzTc7A0h+ldvo+0hn79QT39I7dK67NeiUgiTKOVdZax3zrWLwETTn0+urP6
+	 gCQdbbdwx/SAHbatHAeFXkiN3+uYLKEWQZqmej84tQxsrD6DMomiSl9JyiGDneT50AELWxASm5TX
+	 JFKIVVDcrcbBVXasigIg2rsdVjmLOIwTRLb4mA7a8yhx2VPlwJ8d7TvuqEYT/BEvKCPWHaijggoa
+	 kHPA/tgM+r3vq97mhjH14MMhnGmwKCVFBTt5waBvigaS7e/lTiU1M8D7GiPo/Qm38XoZXmNWdg3P
+	 tfowO/phKsNEov2hzfaomR79YEvXTxLwq0sa1iZYn6K377QkRImOwUr5tn+i3hMs9BB1Wun2sUNv
+	 DrAp0Mdk+fhJQkbmP20Mz6n+srLNDQDL0vXRe+EMrS7FED7Q/IcoPAbfMyk6eVEJA3NH4lju+uBO
+	 51z2x8iTPh7yPQXC7tAxjtUVd3HDtyRjcB2qN4EPHmtKbK3pUFwad1zgyZU9wFdQ242DScQmpt31
+	 ktY0OfXxNIo0jl5zTN5RdXczd5oRxiVGeik4ueqWnKMmo/BK8hvlggzUy1iJikaP1u7ZV0RF2URL
+	 jqso4GFuiKJH9zea7MrGAClyzQXCrN1qB2SH5mWqPy5VWREGbr628YIo8hLiKYwk39NUVjETocPE
+	 +1fyIDaRJN0JGLC/gh
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: jiping huang <huangjiping95@qq.com>
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	jiping huang <huangjiping95@qq.com>
+Subject: [PATCH] mm: Avoid a risk of null pointer.
+Date: Mon, 19 Aug 2024 22:54:16 +0800
+X-OQ-MSGID: <20240819145416.1504-1-huangjiping95@qq.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,51 +72,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Now, anything is ready, enable PE image loading on arm64
+There is a probability that we will get a null pointer when we use
+find_vm() interface.
 
-Signed-off-by: Pingfan Liu <piliu@redhat.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-To: linux-arm-kernel@lists.infradead.org
----
- arch/arm64/Kconfig                     | 4 ++++
- arch/arm64/kernel/machine_kexec_file.c | 3 +++
- 2 files changed, 7 insertions(+)
+Signed-off-by: jiping huang <huangjiping95@qq.com>
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 5d91259ee7b53..fb6de7b4cd008 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1550,6 +1550,10 @@ config ARCH_SELECTS_KEXEC_FILE
- 	depends on KEXEC_FILE
- 	select HAVE_IMA_KEXEC if IMA
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index aec756ae5637..a0bcc1865c62 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -1079,6 +1079,11 @@ static long migrate_to_node(struct mm_struct *mm, int source, int dest,
+ 	mmap_read_lock(mm);
+ 	vma = find_vma(mm, 0);
  
-+config ARCH_SELECTS_KEXEC_PEIMAGE
-+	def_bool y
-+	depends on KEXEC_FILE
++	if (!vma) {
++		mmap_read_unlock(mm);
++		return -EFAULT;
++	}
 +
- config ARCH_SUPPORTS_KEXEC_SIG
- 	def_bool y
- 
-diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-index 9fca3a35f04d5..c259d871b8e33 100644
---- a/arch/arm64/kernel/machine_kexec_file.c
-+++ b/arch/arm64/kernel/machine_kexec_file.c
-@@ -24,6 +24,9 @@
- 
- const struct kexec_file_ops * const kexec_file_loaders[] = {
- 	&kexec_image_ops,
-+#ifdef CONFIG_ARCH_SELECTS_KEXEC_PEIMAGE
-+	&pe_image_ops,
-+#endif
- 	NULL
- };
- 
+ 	/*
+ 	 * This does not migrate the range, but isolates all pages that
+ 	 * need migration.  Between passing in the full user address
 -- 
-2.41.0
+2.34.1
 
 
