@@ -1,321 +1,88 @@
-Return-Path: <linux-kernel+bounces-292559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13A25957147
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:58:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 290AC95714B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37B7B1C22D28
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:58:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6F261F23944
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706D3188009;
-	Mon, 19 Aug 2024 16:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF74188CCB;
+	Mon, 19 Aug 2024 16:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="effaAejZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="dFw4dKyT"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E425145341;
-	Mon, 19 Aug 2024 16:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC6517BEAB;
+	Mon, 19 Aug 2024 16:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724086431; cv=none; b=Ja3Hj+ZablERRPObA+8fHP44L2LRRlP72StZq1Ao4gWLv1P4aNYr4+xjL3KLysi5i4UhNMX2uDtXG3G89q2k1nmSp+ub4Z3imRWSihGihgJEGZNvdAKrS4lhnttzHc4lNpRHK8p0bykjBEADE6+irsyNWG2NZ4ml5ENS5LnGhIY=
+	t=1724086461; cv=none; b=saC9B6MGzr5+ZLpUQR7ZVWDFCGb32xs6ISaiovUNliXFMiJ4p1+eWE2uitzQWj7MhQPVIwouWW871yO/ZDC9kdEO/2tPp7m+IBqgt2NUTBzmwdBdaLgm9iG6PK5QSbHRGQxWuyZ7eyOq7twXMVzWaRZVGpVER1gKU6kMZixDLN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724086431; c=relaxed/simple;
-	bh=Lgc91tGqxh8A/yeZwkCHnvZJKzQLNAzEfNfTq/lcPoE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QorfM6ldCOYoCmDi227kHqkMiACllCM+hC8jSn/zsXl2ZNlctwX9gZailufhOkUxwXhPp5jfIV8VsCoTXPwvk9yLIPcG4OJCLw6xtcvmxK+PJvVOjKRrYZ7nW7qvx/Bck7xs5sqGHzRPsq7SZRGj1LTgv+YeThIn2hOwta2ZmE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=effaAejZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4887C32782;
-	Mon, 19 Aug 2024 16:53:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724086431;
-	bh=Lgc91tGqxh8A/yeZwkCHnvZJKzQLNAzEfNfTq/lcPoE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=effaAejZKiMmF/iYn8xf9VirwWcY6KUWYl29sRt9c0A0Bbu1xe9L1oJTpoNHx1YR+
-	 WhpV3wYaIHzbBYOMH4qD7N45c2WlF8Sucdm7nEi7DWWyk9FV4CxX0NvcSw9Q4XfCxk
-	 0JNqJz6rgfMUIAHX7DT+yAwpMLwGTx31/5Htss7C/jy1yFluVJw4MEzfLMhM76Kyet
-	 2fCoIFwsect8/yC6TWtraAw+B/wHakkWNs4xQ6VGeFdK0Ym8+718gyj4BLoKzA+ELW
-	 ejrlEop0ep5mKa6ek2qgG1sbZwEGU0IXpluyLtncAjUcVvWXheALOzrsCw4OjjFtzV
-	 X+TnuipJq41Iw==
-Date: Mon, 19 Aug 2024 17:53:43 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Sandy Huang <hjc@rock-chips.com>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mark Yao <markyao0591@gmail.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-	kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>,
-	Luis de Arquer <ldearquer@gmail.com>
-Subject: Re: [PATCH v4 3/4] dt-bindings: display: rockchip: Add schema for
- RK3588 HDMI TX Controller
-Message-ID: <20240819-bobbing-purplish-99e48baa2304@spud>
-References: <20240819-b4-rk3588-bridge-upstream-v4-0-6417c72a2749@collabora.com>
- <20240819-b4-rk3588-bridge-upstream-v4-3-6417c72a2749@collabora.com>
+	s=arc-20240116; t=1724086461; c=relaxed/simple;
+	bh=/fSVMu+aj3+s0ExFhJfpl2RJAv7DxAo7zEmOtyTG6Ik=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=squDzQ4Kz7FFsaYhOBrO9E6IUXBS5mczsBJNG0FJqGlx9Epg1z66I3nw4DaBFc9xXv8wF4dIyOGWFu6KG9zS9dHuer7E02a0wsBQL6ItzdwV5MmcDHeguceuNcc2g76wUW1L5PxoTB6wvkktVtf/b93dbykBA0byeq0HdXH/x+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=dFw4dKyT; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Wndwj5QXTzlgVnN;
+	Mon, 19 Aug 2024 16:54:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1724086451; x=1726678452; bh=/fSVMu+aj3+s0ExFhJfpl2RJ
+	Av7DxAo7zEmOtyTG6Ik=; b=dFw4dKyTQqKhJuB/lWOJ/HeQNX7FIPYOxm/A0I3U
+	MlXrDdCb1nNPPgCxs6Fbldi6nhjbTrlcdNKfhe3OuLuZhD7cRLVErsuJ5ayAF/r8
+	Kb6abm32rPpdzugmXVuqOy09LC1UCiTnHTQuyOeSaVIzF8d6yTNZNvBt7tsuonXg
+	yZ4xpx8tFrK3If8HSIY4yfM8kuS6d130CtQDtvuRRn+LTjAcpDiS7niEpXhsWdNs
+	+FmZLXad+dSdfVfZuOX7f9Gxn1cfKPQpJQ1meDOKDYyy8oNjikbkOpu4Km2NFMUQ
+	4s2/k8gKQX4Dcg8uf6vw4pm6xPfftmDq+2I1R7vefmbbQg==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id Byc-qIFUWr-p; Mon, 19 Aug 2024 16:54:11 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Wndwd2lL2zlgVnK;
+	Mon, 19 Aug 2024 16:54:09 +0000 (UTC)
+Message-ID: <099752c2-9cc2-43ef-8b97-56d26c148c88@acm.org>
+Date: Mon, 19 Aug 2024 09:54:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="BqjkFo/XhTGy7ekD"
-Content-Disposition: inline
-In-Reply-To: <20240819-b4-rk3588-bridge-upstream-v4-3-6417c72a2749@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] scsi: sd: Ignore command SYNC CACHE error if format in
+ progress
+To: Damien Le Moal <dlemoal@kernel.org>, Yihang Li <liyihang9@huawei.com>,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxarm@huawei.com, prime.zeng@huawei.com, stable@vger.kernel.org
+References: <20240819090934.2130592-1-liyihang9@huawei.com>
+ <c1552d1f-e147-44d9-8cc6-5ab2110b4703@kernel.org>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <c1552d1f-e147-44d9-8cc6-5ab2110b4703@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 8/19/24 3:57 AM, Damien Le Moal wrote:
+> The patch changed significantly, so I do not think you can retain Bart's review
+> tag...
 
---BqjkFo/XhTGy7ekD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Agreed, my Reviewed-by definitely should have been removed.
 
-On Mon, Aug 19, 2024 at 01:29:30AM +0300, Cristian Ciocaltea wrote:
-> Rockchip RK3588 SoC integrates the Synopsys DesignWare HDMI 2.1
-> Quad-Pixel (QP) TX controller IP.
->=20
-> Since this is a new IP block, quite different from those used in the
-> previous generations of Rockchip SoCs, add a dedicated binding file.
->=20
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
->  .../display/rockchip/rockchip,dw-hdmi-qp.yaml      | 170 +++++++++++++++=
-++++++
->  1 file changed, 170 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip,=
-dw-hdmi-qp.yaml b/Documentation/devicetree/bindings/display/rockchip/rockch=
-ip,dw-hdmi-qp.yaml
-> new file mode 100644
-> index 000000000000..de470923d823
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-hdmi=
--qp.yaml
-
-Filename matching the compatible please.
-
-> @@ -0,0 +1,170 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/rockchip/rockchip,dw-hdmi-qp.=
-yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Rockchip DW HDMI QP TX Encoder
-> +
-> +maintainers:
-> +  - Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> +
-> +description:
-> +  Rockchip RK3588 SoC integrates the Synopsys DesignWare HDMI QP TX cont=
-roller
-> +  IP and a HDMI/eDP TX Combo PHY based on a Samsung IP block.
-> +
-> +allOf:
-> +  - $ref: /schemas/display/bridge/synopsys,dw-hdmi-qp.yaml#
-> +  - $ref: /schemas/sound/dai-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - rockchip,rk3588-dw-hdmi-qp
-> +
-> +  clocks:
-> +    minItems: 4
-> +    items:
-> +      - {}
-> +      - {}
-> +      - {}
-> +      - {}
-
-Why have you chosen to do things like this?  I find it makes things less
-clear than reiterating the names of the required clocks.
-
-> +      # The next clocks are optional, but shall be specified in this
-> +      # order when present.
-> +      - description: TMDS/FRL link clock
-> +      - description: Video datapath clock
-
-I don't get what you mean by optional. You have one SoC, either they are
-or are not connected, unless there's multiple instances of this IP block
-on the SoC and some do and some do not have these clocks?
-Ditto for the interrupts.
-
-> +
-> +  clock-names:
-> +    minItems: 4
-> +    items:
-> +      - {}
-> +      - {}
-> +      - {}
-> +      - {}
-> +      - enum: [hdp, hclk_vo1]
-> +      - const: hclk_vo1
-> +
-> +  interrupts:
-> +    items:
-> +      - {}
-> +      - {}
-> +      - {}
-> +      - {}
-> +      - description: HPD interrupt
-> +
-> +  interrupt-names:
-> +    items:
-> +      - {}
-> +      - {}
-> +      - {}
-> +      - {}
-> +      - const: hpd
-> +
-> +  phys:
-> +    maxItems: 1
-> +    description: The HDMI/eDP PHY.
-> +
-> +  phy-names:
-> +    const: hdmi
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    minItems: 2
-> +    maxItems: 2
-> +
-> +  reset-names:
-> +    items:
-> +      - const: ref
-> +      - const: hdp
-> +
-> +  "#sound-dai-cells":
-> +    const: 0
-> +
-> +  rockchip,grf:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      Most HDMI QP related data is accessed through SYS GRF regs.
-> +
-> +  rockchip,vo1-grf:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      Additional HDMI QP related data is accessed through VO1 GRF regs.
-
-Why are these required? What prevents you looking up the syscons by
-compatible?
-
-Cheers,
-Conor.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - interrupts
-> +  - interrupt-names
-> +  - phys
-> +  - phy-names
-> +  - ports
-> +  - resets
-> +  - reset-names
-> +  - rockchip,grf
-> +  - rockchip,vo1-grf
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/rockchip,rk3588-cru.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/power/rk3588-power.h>
-> +    #include <dt-bindings/reset/rockchip,rk3588-cru.h>
-> +
-> +    soc {
-> +      #address-cells =3D <2>;
-> +      #size-cells =3D <2>;
-> +
-> +      hdmi@fde80000 {
-> +        compatible =3D "rockchip,rk3588-dw-hdmi-qp";
-> +        reg =3D <0x0 0xfde80000 0x0 0x20000>;
-> +        clocks =3D <&cru PCLK_HDMITX0>,
-> +                 <&cru CLK_HDMITX0_EARC>,
-> +                 <&cru CLK_HDMITX0_REF>,
-> +                 <&cru MCLK_I2S5_8CH_TX>,
-> +                 <&cru CLK_HDMIHDP0>,
-> +                 <&cru HCLK_VO1>;
-> +        clock-names =3D "pclk", "earc", "ref", "aud", "hdp", "hclk_vo1";
-> +        interrupts =3D <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                     <GIC_SPI 171 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                     <GIC_SPI 172 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                     <GIC_SPI 360 IRQ_TYPE_LEVEL_HIGH 0>;
-> +        interrupt-names =3D "avp", "cec", "earc", "main", "hpd";
-> +        phys =3D <&hdptxphy_hdmi0>;
-> +        phy-names =3D "hdmi";
-> +        power-domains =3D <&power RK3588_PD_VO1>;
-> +        resets =3D <&cru SRST_HDMITX0_REF>, <&cru SRST_HDMIHDP0>;
-> +        reset-names =3D "ref", "hdp";
-> +        rockchip,grf =3D <&sys_grf>;
-> +        rockchip,vo1-grf =3D <&vo1_grf>;
-> +        #sound-dai-cells =3D <0>;
-> +
-> +        ports {
-> +          #address-cells =3D <1>;
-> +          #size-cells =3D <0>;
-> +
-> +          port@0 {
-> +            reg =3D <0>;
-> +
-> +            hdmi0_in_vp0: endpoint {
-> +                remote-endpoint =3D <&vp0_out_hdmi0>;
-> +            };
-> +          };
-> +
-> +          port@1 {
-> +            reg =3D <1>;
-> +
-> +            hdmi0_out_con0: endpoint {
-> +                remote-endpoint =3D <&hdmi_con0_in>;
-> +            };
-> +          };
-> +        };
-> +      };
-> +    };
->=20
-> --=20
-> 2.46.0
->=20
-
---BqjkFo/XhTGy7ekD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsN4lwAKCRB4tDGHoIJi
-0uMlAQCeNiyUGCxDpjROAQ54l9m7hMljsdP2KRn6KVEBgpgwhAD/S9KJnlaANagj
-HTaIDomg1UIgte88LE7zDjLZYOJmWgo=
-=uaDs
------END PGP SIGNATURE-----
-
---BqjkFo/XhTGy7ekD--
+Bart.
 
