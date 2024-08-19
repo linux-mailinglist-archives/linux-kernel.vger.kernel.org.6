@@ -1,277 +1,167 @@
-Return-Path: <linux-kernel+bounces-291821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C98956768
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:46:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D3295676D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:47:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECBF81C21ABB
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:46:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D183528312F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED48115B97A;
-	Mon, 19 Aug 2024 09:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E7415DBA5;
+	Mon, 19 Aug 2024 09:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h0bYYQJZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c4b5/GFh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F0213C81B
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C137113C81B;
+	Mon, 19 Aug 2024 09:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724060791; cv=none; b=K5e28RBkXKqKlPCQIyH43AKymNc1NKc3EuZvyhUpbcavXDUKTXmqo80+KAMOchXUn2/0Re9H9dWsaUCOk7MpdvAs2qdK8a1XcFAOOU9pBjFq5IYFZDvEEn7W0XRGkxgabAODVR1E8GGNljjBwLJZKQ74rO5VVrMKPg2Yq4luRM8=
+	t=1724060834; cv=none; b=VpQcpPlFINofapcxOemiaYdq2MBeJMROyMzxhNTD0bAZ8jYjO4uKLZsWjvLYccpylhm1wPCgpg2qRFsnVqLZhHS0Y/VGvHQqJ8fVcC1p6KmHTZfw81FtNWuNPASX7f4M+ItOt1GM3G1e3k5mDd27tFdfazUAjVTPWQeQR7rVxCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724060791; c=relaxed/simple;
-	bh=7kq4bLV7tAak3fBqNl9JDyXQRKEGfZsGufzo7fyiFUI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lDanpA86dtjz09saytOPWff5SVEjYJ3SGq6MvAhTekPKmPXF+JuCGFqCgS7GtWBvkwse1bwwUl5naVfcqEC7NCjM6UvwZIU56agvBJAeaUs0J79hiY8iSTbSfUN9KJBEaj92aiNaEU7QZDTj7V7oMuAD009LlueXtw1b6afCSXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h0bYYQJZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724060787;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3yJlfW+826MEVX+XTsSkJ6Zur1F9YvRJB4i/zBOkwSY=;
-	b=h0bYYQJZNXJNi2MowMpEutiKy7WVvhehBZ5rcJ/Z/w2nB/sJtgqTDVDKx4aKRVTx5VveOC
-	E0/o+1H+rKu0p/voiZz4YUrIMyPLUVb6+3v/ijGvGOL4Oq5SeWId35sD5f/s6VsVW31Dqs
-	4q9qnLwyniANd/o6Dzvg9gr4IgQArjs=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-578-J-XQ0cdFPhagJ6uU_yO-1A-1; Mon, 19 Aug 2024 05:46:24 -0400
-X-MC-Unique: J-XQ0cdFPhagJ6uU_yO-1A-1
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2d3efe18d05so2484899a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 02:46:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724060783; x=1724665583;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3yJlfW+826MEVX+XTsSkJ6Zur1F9YvRJB4i/zBOkwSY=;
-        b=iVn1XbHjd+867Je09R1NGIG3RslcW6soMlhP75x9PgHpRpjw6NWCHmQdT1trTatvIE
-         63jvpG6odycU6GBSI+2Yio5kaKQ3IGbGNSUBWq7iRm13MYKgvdRj/OYm8bLv0fGYRy0a
-         J2dukGjfSyKyskAEOyHrpMiTx15m043fWjJoZoI4A6fEhKAiwuPzW7Hp0wiOGlIt9Jmq
-         eel+Q6+vjsEdQn88SCa0L2pG3n2eWvp2HcD28RvioJeuE0pYn5AwO7EuWaAN5iglVjDd
-         +ovkawSTb71TWty54QhtbUUn13xcAf+JTb8FvuJTLX1I8IURiYJiE3BVi9YQ9eG58crR
-         dqQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZqzOqYTNz+tmazdPTgwR/XQvVipTtfyXlA1FZxqR5XXD18k4ne3G+UZQhjHFw3JJ7YWK942TS/YzcSf0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVfoUlQeHGmoBVMOfRzM0gmQjSBpQTX0A/A6B1viSixjlloIOQ
-	gZK82l3kS45mDQ1HIdHCyzNFbb/Kpoh0T8MxUT+OR4s7AvXfxpjq4lSO2mKbMlAg830SctZP/PK
-	EEGo5Rgy7RQ03IflE0sJdak0uAJOI0n48Io/sc2tqsOu/2xBaWhAt2tAjSw9HPLScGd/BrKm0FA
-	7SvgPfYq6IOF37f0FOk7YkAqJf0FZvUudym6ml
-X-Received: by 2002:a17:90b:4d8f:b0:2c9:a3d4:f044 with SMTP id 98e67ed59e1d1-2d3dffc0f59mr8409786a91.11.1724060783411;
-        Mon, 19 Aug 2024 02:46:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGdsonGjoEw88ntGBhKWheJOEzKZg+GmVxxiP7CXrtAjUC7woF725y+VXQ7JON4uIe9wxWrA/vqIwfmq/mM9Ow=
-X-Received: by 2002:a17:90b:4d8f:b0:2c9:a3d4:f044 with SMTP id
- 98e67ed59e1d1-2d3dffc0f59mr8409767a91.11.1724060782998; Mon, 19 Aug 2024
- 02:46:22 -0700 (PDT)
+	s=arc-20240116; t=1724060834; c=relaxed/simple;
+	bh=ZzcK0fCwbDX+LhNHK79l7SJCmLFi7ccNT7raE4MJ7E0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hTGSkNsr5NG4ccAWvMaiW8hkaY63zDvJrLDsggZkng5EeYjRnlfzPUybGXjLS72qvotTe01uDAqnSTcH4UwAjh9KjFOQ0woDfaxdgOOqqCZTNLIigkVlzAVWSus5eFt7o5HI8SLUFMi6+fQBDU1W7XZptfBpPt4xjAh1mmDbj/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c4b5/GFh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FB0AC32782;
+	Mon, 19 Aug 2024 09:47:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724060834;
+	bh=ZzcK0fCwbDX+LhNHK79l7SJCmLFi7ccNT7raE4MJ7E0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c4b5/GFhNrbzrhaNFb2ByhWoIpUIOf7Omkkds7mUOkMbsZv1x7eQKSbZvfennVJXU
+	 I40tUb9C2++g6uMtJtXqty9oB2aZm5DaW+Z3WasOwlipZBLIQu6/2G+2y1ilj09hP+
+	 8HqXNOUaHgz4T4+BDHXsStNALX0U/enpeWzu+DqzoCiG09NuQn1HAFLx68KyCIhicp
+	 8WwQZtCeJQCBVvYP1/keK7hR+/A4dTDARwP8LIV2OPu+SP2pH+FN6y2yBPAm8o3WQi
+	 ytdWArNjtEE+8axkP9PtP8HQnQ0DKg5+m1JuNNpSrwMGQKlp5Mtj2hL/pc0E4E9DjK
+	 rwHx98brpp6IQ==
+Date: Mon, 19 Aug 2024 10:47:09 +0100
+From: Simon Horman <horms@kernel.org>
+To: Rodolfo Zitellini <rwz@xhero.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Doug Brown <doug@schmorgal.com>
+Subject: Re: [PATCH net-next 2/2] appletalk: tashtalk: Add LocalTalk line
+ discipline driver for AppleTalk using a TashTalk adapter
+Message-ID: <20240819094709.GD11472@kernel.org>
+References: <20240817093316.9239-1-rwz@xhero.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815083229.42778-1-aha310510@gmail.com>
-In-Reply-To: <20240815083229.42778-1-aha310510@gmail.com>
-From: Ondrej Mosnacek <omosnace@redhat.com>
-Date: Mon, 19 Aug 2024 11:46:11 +0200
-Message-ID: <CAFqZXNvXJY4Bh5k6DZ3yoLFuHo2bQRk3Q5Lv25ms6oOGyN5ZAA@mail.gmail.com>
-Subject: Re: selinux: support IPPROTO_SMC in socket_type_to_security_class()
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: paul@paul-moore.com, stephen.smalley.work@gmail.com, 
-	selinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: multipart/mixed; boundary="0000000000008aec5c0620062eb0"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240817093316.9239-1-rwz@xhero.org>
 
---0000000000008aec5c0620062eb0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Sat, Aug 17, 2024 at 11:33:16AM +0200, Rodolfo Zitellini wrote:
+> This is the TashTalk driver, it perits for a modern machine to
+> participate in a Apple LocalTalk network and is compatibile with
 
-On Thu, Aug 15, 2024 at 10:32=E2=80=AFAM Jeongjun Park <aha310510@gmail.com=
-> wrote:
->
-> IPPROTO_SMC feature has been added to net/smc. It is now possible to
-> create smc sockets in the following way:
->
->   /* create v4 smc sock */
->   v4 =3D socket(AF_INET, SOCK_STREAM, IPPROTO_SMC);
->
->   /* create v6 smc sock */
->   v6 =3D socket(AF_INET6, SOCK_STREAM, IPPROTO_SMC);
->
-> Therefore, we need to add code to support IPPROTO_SMC in
-> socket_type_to_security_class().
->
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> ---
->  security/selinux/hooks.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index bfa61e005aac..36f951f0c574 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -1176,6 +1176,8 @@ static inline u16 socket_type_to_security_class(int=
- family, int type, int protoc
->                                 return SECCLASS_TCP_SOCKET;
->                         else if (extsockclass && protocol =3D=3D IPPROTO_=
-SCTP)
->                                 return SECCLASS_SCTP_SOCKET;
-> +                       else if (extsockclass && protocol =3D=3D IPPROTO_=
-SMC)
-> +                               return SECCLASS_SMC_SOCKET;
->                         else
->                                 return SECCLASS_RAWIP_SOCKET;
->                 case SOCK_DGRAM:
-> --
->
+nit: compatible
 
-I'm not sure if this is the solution we want to go with... Consider
-the following from af_smc(7):
+     Flagged by checkpatch.pl --codespell
 
->   Usage modes
->      Two usage modes are possible:
->
->      AF_SMC native usage
->             uses the socket domain AF_SMC instead of AF_INET and AF_INET6=
-.  Specify SMCPROTO_SMC for AF_INET compatible socket semantics, and SMC_PR=
-OTO_SMC6 for AF_INET6 respectively.
->
->      Usage of AF_INET socket applications with SMC preload library
->             converts AF_INET and AF_INET6 sockets to AF_SMC sockets.  The=
- SMC preload library is part of the SMC tools package.
->
->      SMC socket capabilities are negotiated at connection setup. If one p=
-eer is not SMC capable, further socket processing falls back to TCP usage a=
-utomatically.
+> Netatalk.
+> 
+> Please see the included documentation for details:
+> Documentation/networking/device_drivers/appletalk/index.rst
+> 
+> Signed-off-by: Rodolfo Zitellini <rwz@xhero.org>
 
-This means that the SMC sockets are intended to be used (also) as a
-drop-in compatible replacement for normal TCP sockets in applications
-and they even fall back to TCP when the endpoints fail to negotiate
-communication via SMC. That's a situation similar to MPTCP, where we
-just mapped MPTCP sockets to the tcp_socket SELinux class, so that
-MPTCP can be swapped in place of TCP transparently without having to
-do extensive policy changes. We may want to consider the same/similar
-approach here.
+...
 
-I briefly played with this idea a couple of months ago, when I was
-asked by someone at Red Hat about SMC sockets and their integration
-with SELinux. IIRC, when I tried to implement the MPTCP approach and
-adjusted the selinux-testsuite to test SMC similarly as TCP and MPTCP,
-I saw that the netlabel-related tests (may have been more, I don't
-remember) weren't passing out of the box like with MPTCP. However, the
-person then didn't follow up on my questions, so I didn't look into it
-further...
+> diff --git a/drivers/net/appletalk/tashtalk.c b/drivers/net/appletalk/tashtalk.c
 
-I'm attaching the WIP patches I worked with, in case someone would
-like to continue the experiments.
+...
 
---
-Ondrej Mosnacek
-Senior Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
+> +/* Called by the driver when there's room for more data.
+> + * Schedule the transmit.
+> + */
+> +static void tashtalk_write_wakeup(struct tty_struct *tty)
+> +{
+> +	struct tashtalk *tt;
 
---0000000000008aec5c0620062eb0
-Content-Type: text/x-patch; charset="US-ASCII"; name="kernel-smc-as-tcp.patch"
-Content-Disposition: attachment; filename="kernel-smc-as-tcp.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m00sselb0>
-X-Attachment-Id: f_m00sselb0
+I think that tt needs an __rcu annotation. Sparse says:
 
-Y29tbWl0IGU2ZGNhMWZkM2M3MTNlYWY2OWZmMTZmYjIzYzZkYzY4MzA4MmEyZjgKQXV0aG9yOiBP
-bmRyZWogTW9zbmFjZWsgPG9tb3NuYWNlQHJlZGhhdC5jb20+CkRhdGU6ICAgVHVlIEZlYiA2IDE1
-OjM5OjIxIDIwMjQgKzAxMDAKCiAgICBURVNUCgpkaWZmIC0tZ2l0IGEvc2VjdXJpdHkvc2VsaW51
-eC9ob29rcy5jIGIvc2VjdXJpdHkvc2VsaW51eC9ob29rcy5jCmluZGV4IDU1Yzc4YzMxOGNjZC4u
-YTVkYjYyMTMwZDQxIDEwMDY0NAotLS0gYS9zZWN1cml0eS9zZWxpbnV4L2hvb2tzLmMKKysrIGIv
-c2VjdXJpdHkvc2VsaW51eC9ob29rcy5jCkBAIC0xMjkyLDcgKzEyOTIsNyBAQCBzdGF0aWMgaW5s
-aW5lIHUxNiBzb2NrZXRfdHlwZV90b19zZWN1cml0eV9jbGFzcyhpbnQgZmFtaWx5LCBpbnQgdHlw
-ZSwgaW50IHByb3RvYwogCQljYXNlIFBGX1FJUENSVFI6CiAJCQlyZXR1cm4gU0VDQ0xBU1NfUUlQ
-Q1JUUl9TT0NLRVQ7CiAJCWNhc2UgUEZfU01DOgotCQkJcmV0dXJuIFNFQ0NMQVNTX1NNQ19TT0NL
-RVQ7CisJCQlyZXR1cm4gU0VDQ0xBU1NfVENQX1NPQ0tFVDsKIAkJY2FzZSBQRl9YRFA6CiAJCQly
-ZXR1cm4gU0VDQ0xBU1NfWERQX1NPQ0tFVDsKIAkJY2FzZSBQRl9NQ1RQOgpAQCAtNDc3Miw2ICs0
-NzcyLDcgQEAgc3RhdGljIGludCBzZWxpbnV4X3NvY2tldF9iaW5kKHN0cnVjdCBzb2NrZXQgKnNv
-Y2ssIHN0cnVjdCBzb2NrYWRkciAqYWRkcmVzcywgaW4KIAkJCX0KIAkJfQogCisJCS8vIEZJWE1F
-OiBkbyB0aGUgc2FtZSBoZXJlCiAJCXN3aXRjaCAoc2tzZWMtPnNjbGFzcykgewogCQljYXNlIFNF
-Q0NMQVNTX1RDUF9TT0NLRVQ6CiAJCQlub2RlX3Blcm0gPSBUQ1BfU09DS0VUX19OT0RFX0JJTkQ7
-CkBAIC00ODUyLDYgKzQ4NTMsNyBAQCBzdGF0aWMgaW50IHNlbGludXhfc29ja2V0X2Nvbm5lY3Rf
-aGVscGVyKHN0cnVjdCBzb2NrZXQgKnNvY2ssCiAJCXN0cnVjdCBzb2NrYWRkcl9pbjYgKmFkZHI2
-ID0gTlVMTDsKIAkJdW5zaWduZWQgc2hvcnQgc251bTsKIAkJdTMyIHNpZCwgcGVybTsKKwkJdTgg
-cHJvdG9jb2w7CiAKIAkJLyogc2N0cF9jb25uZWN0eCgzKSBjYWxscyB2aWEgc2VsaW51eF9zY3Rw
-X2JpbmRfY29ubmVjdCgpCiAJCSAqIHRoYXQgdmFsaWRhdGVzIG11bHRpcGxlIGNvbm5lY3QgYWRk
-cmVzc2VzLiBCZWNhdXNlIG9mIHRoaXMKQEAgLTQ4ODEsMjIgKzQ4ODMsMjUgQEAgc3RhdGljIGlu
-dCBzZWxpbnV4X3NvY2tldF9jb25uZWN0X2hlbHBlcihzdHJ1Y3Qgc29ja2V0ICpzb2NrLAogCQkJ
-CXJldHVybiAtRUFGTk9TVVBQT1JUOwogCQl9CiAKLQkJZXJyID0gc2VsX25ldHBvcnRfc2lkKHNr
-LT5za19wcm90b2NvbCwgc251bSwgJnNpZCk7Ci0JCWlmIChlcnIpCi0JCQlyZXR1cm4gZXJyOwot
-CiAJCXN3aXRjaCAoc2tzZWMtPnNjbGFzcykgewogCQljYXNlIFNFQ0NMQVNTX1RDUF9TT0NLRVQ6
-CisJCQlwcm90b2NvbCA9IElQUFJPVE9fVENQOwogCQkJcGVybSA9IFRDUF9TT0NLRVRfX05BTUVf
-Q09OTkVDVDsKIAkJCWJyZWFrOwogCQljYXNlIFNFQ0NMQVNTX0RDQ1BfU09DS0VUOgorCQkJcHJv
-dG9jb2wgPSBJUFBST1RPX0RDQ1A7CiAJCQlwZXJtID0gRENDUF9TT0NLRVRfX05BTUVfQ09OTkVD
-VDsKIAkJCWJyZWFrOwogCQljYXNlIFNFQ0NMQVNTX1NDVFBfU09DS0VUOgorCQkJcHJvdG9jb2wg
-PSBJUFBST1RPX1NDVFA7CiAJCQlwZXJtID0gU0NUUF9TT0NLRVRfX05BTUVfQ09OTkVDVDsKIAkJ
-CWJyZWFrOwogCQl9CiAKKwkJZXJyID0gc2VsX25ldHBvcnRfc2lkKHByb3RvY29sLCBzbnVtLCAm
-c2lkKTsKKwkJaWYgKGVycikKKwkJCXJldHVybiBlcnI7CisKIAkJYWQudHlwZSA9IExTTV9BVURJ
-VF9EQVRBX05FVDsKIAkJYWQudS5uZXQgPSAmbmV0OwogCQlhZC51Lm5ldC0+ZHBvcnQgPSBodG9u
-cyhzbnVtKTsK
---0000000000008aec5c0620062eb0
-Content-Type: text/x-patch; charset="US-ASCII"; name="testsuite-smc-as-tcp.patch"
-Content-Disposition: attachment; filename="testsuite-smc-as-tcp.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m00sskwd1>
-X-Attachment-Id: f_m00sskwd1
+.../tashtalk.c:290:14: error: incompatible types in comparison expression (different address spaces):
+.../tashtalk.c:290:14:    void [noderef] __rcu *
+.../tashtalk.c:290:14:    void *
 
-Y29tbWl0IDIzZmQ5MWZmZjZiNDAwNGEzZTBlNWU3YTBiNmNhNWE5N2JlM2QyMGIKQXV0aG9yOiBP
-bmRyZWogTW9zbmFjZWsgPG9tb3NuYWNlQHJlZGhhdC5jb20+CkRhdGU6ICAgVHVlIEZlYiA2IDE1
-OjEyOjM5IDIwMjQgKzAxMDAKCiAgICBXSVAKCmRpZmYgLS1naXQgYS90ZXN0cy9pbmV0X3NvY2tl
-dC9jbGllbnQuYyBiL3Rlc3RzL2luZXRfc29ja2V0L2NsaWVudC5jCmluZGV4IGQzZmVkZjQuLjE4
-OGQ4Y2UgMTAwNjQ0Ci0tLSBhL3Rlc3RzL2luZXRfc29ja2V0L2NsaWVudC5jCisrKyBiL3Rlc3Rz
-L2luZXRfc29ja2V0L2NsaWVudC5jCkBAIC02NCw2ICs2NCw5IEBAIGludCBtYWluKGludCBhcmdj
-LCBjaGFyICoqYXJndikKIAkJaGludHMuYWlfc29ja3R5cGUgPSBTT0NLX1NUUkVBTTsKIAkJaGlu
-dHMuYWlfcHJvdG9jb2wgPSBJUFBST1RPX1RDUDsKIAkJc29ja3Byb3RvY29sICAgICAgPSBJUFBS
-T1RPX01QVENQOworCX0gZWxzZSBpZiAoIXN0cmNtcChhcmd2W29wdGluZF0sICJzbWMiKSkgewor
-CQloaW50cy5haV9zb2NrdHlwZSA9IFNPQ0tfU1RSRUFNOworCQloaW50cy5haV9wcm90b2NvbCA9
-IElQUFJPVE9fVENQOwogCX0gZWxzZSBpZiAoIXN0cmNtcChhcmd2W29wdGluZF0sICJ1ZHAiKSkg
-ewogCQloaW50cy5haV9zb2NrdHlwZSA9IFNPQ0tfREdSQU07CiAJCWhpbnRzLmFpX3Byb3RvY29s
-ID0gSVBQUk9UT19VRFA7CkBAIC03OSw2ICs4MiwyMCBAQCBpbnQgbWFpbihpbnQgYXJnYywgY2hh
-ciAqKmFyZ3YpCiAJCWV4aXQoMik7CiAJfQogCisJaWYgKCFzdHJjbXAoYXJndltvcHRpbmRdLCAi
-c21jIikpIHsKKwkJc3dpdGNoIChzZXJ2ZXJpbmZvLT5haV9mYW1pbHkpIHsKKwkJY2FzZSBBRl9J
-TkVUOgorCQkJc29ja3Byb3RvY29sID0gMDsgLyogU01DX1BST1RPX1NNQyAqLworCQkJYnJlYWs7
-CisJCWNhc2UgQUZfSU5FVDY6CisJCQlzb2NrcHJvdG9jb2wgPSAxOyAvKiBTTUNfUFJPVE9fU01D
-NiAqLworCQkJYnJlYWs7CisJCWRlZmF1bHQ6CisJCQl1c2FnZShhcmd2WzBdKTsKKwkJfQorCQlz
-ZXJ2ZXJpbmZvLT5haV9mYW1pbHkgPSBBRl9TTUM7CisJfQorCiAJc29jayA9IHNvY2tldChzZXJ2
-ZXJpbmZvLT5haV9mYW1pbHksIHNlcnZlcmluZm8tPmFpX3NvY2t0eXBlLAogCQkgICAgICBzb2Nr
-cHJvdG9jb2wpOwogCWlmIChzb2NrIDwgMCkgewpkaWZmIC0tZ2l0IGEvdGVzdHMvaW5ldF9zb2Nr
-ZXQvc2VydmVyLmMgYi90ZXN0cy9pbmV0X3NvY2tldC9zZXJ2ZXIuYwppbmRleCA2M2I2ODQ5Li5i
-YWEzYzkzIDEwMDY0NAotLS0gYS90ZXN0cy9pbmV0X3NvY2tldC9zZXJ2ZXIuYworKysgYi90ZXN0
-cy9pbmV0X3NvY2tldC9zZXJ2ZXIuYwpAQCAtNzQsNiArNzQsMTAgQEAgaW50IG1haW4oaW50IGFy
-Z2MsIGNoYXIgKiphcmd2KQogCQloaW50cy5haV9zb2NrdHlwZSA9IFNPQ0tfU1RSRUFNOwogCQlo
-aW50cy5haV9wcm90b2NvbCA9IElQUFJPVE9fVENQOwogCQlzb2NrcHJvdG9jb2wgICAgICA9IElQ
-UFJPVE9fTVBUQ1A7CisJfSBlbHNlIGlmICghc3RyY21wKGFyZ3Zbb3B0aW5kXSwgInNtYyIpKSB7
-CisJCWhpbnRzLmFpX3NvY2t0eXBlID0gU09DS19TVFJFQU07CisJCWhpbnRzLmFpX3Byb3RvY29s
-ID0gSVBQUk9UT19UQ1A7CisJCXNvY2twcm90b2NvbCAgICAgID0gMTsgLyogU01DX1BST1RPX1NN
-QzYgKi8KIAl9IGVsc2UgaWYgKCFzdHJjbXAoYXJndltvcHRpbmRdLCAidWRwIikpIHsKIAkJaGlu
-dHMuYWlfc29ja3R5cGUgPSBTT0NLX0RHUkFNOwogCQloaW50cy5haV9wcm90b2NvbCA9IElQUFJP
-VE9fVURQOwpAQCAtODgsNiArOTIsOSBAQCBpbnQgbWFpbihpbnQgYXJnYywgY2hhciAqKmFyZ3Yp
-CiAJCWV4aXQoMSk7CiAJfQogCisJaWYgKCFzdHJjbXAoYXJndltvcHRpbmRdLCAic21jIikpCisJ
-CXJlcy0+YWlfZmFtaWx5ID0gQUZfU01DOworCiAJc29jayA9IHNvY2tldChyZXMtPmFpX2ZhbWls
-eSwgcmVzLT5haV9zb2NrdHlwZSwgc29ja3Byb3RvY29sKTsKIAlpZiAoc29jayA8IDApIHsKIAkJ
-cGVycm9yKCJzb2NrZXQiKTsKZGlmZiAtLWdpdCBhL3Rlc3RzL2luZXRfc29ja2V0L3NtYyBiL3Rl
-c3RzL2luZXRfc29ja2V0L3NtYwpuZXcgZmlsZSBtb2RlIDEyMDAwMAppbmRleCAwMDAwMDAwLi45
-NDVjOWI0Ci0tLSAvZGV2L251bGwKKysrIGIvdGVzdHMvaW5ldF9zb2NrZXQvc21jCkBAIC0wLDAg
-KzEgQEAKKy4KXCBObyBuZXdsaW5lIGF0IGVuZCBvZiBmaWxlCmRpZmYgLS1naXQgYS90ZXN0cy9p
-bmV0X3NvY2tldC90ZXN0IGIvdGVzdHMvaW5ldF9zb2NrZXQvdGVzdAppbmRleCAwOGM3YjFkLi41
-NDU5ODhhIDEwMDc1NQotLS0gYS90ZXN0cy9pbmV0X3NvY2tldC90ZXN0CisrKyBiL3Rlc3RzL2lu
-ZXRfc29ja2V0L3Rlc3QKQEAgLTgsNyArOCwxMiBAQCBCRUdJTiB7CiAgICAgY2hvbXAoJGJhc2Vk
-aXIpOwogICAgICRwcm90byA9IGJhc2VuYW1lKCRiYXNlZGlyKTsKIAotICAgIGlmICggJHByb3Rv
-IGVxICJ0Y3AiIG9yICRwcm90byBlcSAibXB0Y3AiICkgeworICAgICMgY2hlY2sgaWYgU01DIGlz
-IGVuYWJsZWQKKyAgICBpZiAoICRwcm90byBlcSAic21jIiBhbmQgc3lzdGVtKCJtb2Rwcm9iZSBz
-bWMgMj4vZGV2L251bGwiKSAhPSAwICkgeworICAgICAgICBwbGFuIHNraXBfYWxsID0+ICJTTUMg
-cHJvdG9jb2wgbm90IHN1cHBvcnRlZCI7CisgICAgfQorCisgICAgaWYgKCAkcHJvdG8gZXEgInRj
-cCIgb3IgJHByb3RvIGVxICJtcHRjcCIgb3IgJHByb3RvIGVxICJzbWMiICkgewogICAgICAgICAk
-aXNfc3RyZWFtICAgPSAxOwogICAgICAgICAkZmFpbF92YWx1ZTEgPSA1OwogICAgICAgICAkZmFp
-bF92YWx1ZTIgPSA1Owo=
---0000000000008aec5c0620062eb0--
+> +
+> +	rcu_read_lock();
+> +	tt = rcu_dereference(tty->disc_data);
+> +	if (tt)
+> +		schedule_work(&tt->tx_work);
+> +	rcu_read_unlock();
+> +}
 
+...
+
+> +static void tashtalk_send_ctrl_packet(struct tashtalk *tt, unsigned char dst,
+> +				      unsigned char src, unsigned char type)
+> +{
+> +	unsigned char cmd = TT_CMD_TX;
+> +	unsigned char buf[5];
+> +	int actual;
+> +	u16 crc;
+> +
+> +	buf[LLAP_DST_POS] = dst;
+> +	buf[LLAP_SRC_POS] = src;
+> +	buf[LLAP_TYP_POS] = type;
+> +
+> +	crc = tash_crc(buf, 3);
+> +	buf[3] = ~(crc & 0xFF);
+> +	buf[4] = ~(crc >> 8);
+> +
+> +	actual = tt->tty->ops->write(tt->tty, &cmd, 1);
+> +	actual += tt->tty->ops->write(tt->tty, buf, sizeof(buf));
+> +}
+
+actual is set but otherwise unused in this function.
+Should it be used as part of checking, with an error code returned on error?
+If not, it should probably be removed.
+
+Flagged by W=1 builds.
+
+...
+
+> +static void tashtalk_close(struct tty_struct *tty)
+> +{
+> +	struct tashtalk *tt = tty->disc_data;
+> +
+> +	/* First make sure we're connected. */
+> +	if (!tt || tt->magic != TASH_MAGIC || tt->tty != tty)
+> +		return;
+> +
+> +	spin_lock_bh(&tt->lock);
+> +	rcu_assign_pointer(tty->disc_data, NULL);
+
+I think tty->disc_data also needs an __rcu annotation, which will
+likely highlight the need for annotations elsewhere. Flagged by Sparse.
+
+> +	tt->tty = NULL;
+> +	spin_unlock_bh(&tt->lock);
+> +
+> +	synchronize_rcu();
+> +	flush_work(&tt->tx_work);
+> +
+> +	/* Flush network side */
+> +	unregister_netdev(tt->dev);
+> +	/* This will complete via tt_free_netdev */
+> +}
+
+...
 
