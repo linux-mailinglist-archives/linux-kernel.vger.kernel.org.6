@@ -1,92 +1,114 @@
-Return-Path: <linux-kernel+bounces-293024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8B6B95784D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:00:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E87BA957851
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:03:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 636791F21ADF
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:00:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E10F1C22EDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992D01E2117;
-	Mon, 19 Aug 2024 22:59:51 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5542B1DF66B;
+	Mon, 19 Aug 2024 23:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZvnifwNk"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A293C482;
-	Mon, 19 Aug 2024 22:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B3314D43D;
+	Mon, 19 Aug 2024 23:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724108391; cv=none; b=h370V11pymE6S1w+t55Gmnbq2uyp21yR4jmtjHL7+9zlismpkVKqvWIm/zhsl3bhS9chWkOcIcrO6N9EbFbAbCKQpZne8i1VEzq2ydt1CBm3b0JLilDYcgfkZBF1pAug/3NCzwQ/XwMZEGZM4Lv7Q0CPI6RKrsyw/LcF0Vxvl74=
+	t=1724108586; cv=none; b=RbvCJe824xTK7lAHeVz+2XhDetRwPLsT1ksGHlqnphmKOOIDNqdj1Ul+dCT/n+hM/bD6P/kbl/KQCRF88EZSkWAZdTLgUPTIa+eLcd/+M8bAkmA1Li/sH4Wwb/bqsWEKAgONKRb79w3EMxsWhvQ16D1YpR8vTKj8Y9/1MJYc/1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724108391; c=relaxed/simple;
-	bh=goE9FASlTR08YPoTrpnjiOKgWeMuOdfR18sy63+kd4k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QQmdJ2LQJnZ1qI+E5Xrjr7aylD7337NgU7amXWBVRi1b+in6GkIA6E7QuR+2nHA962GQmnxZBIo4X8s51PAI/3+BheQqaMUWBZizbTEIBCD38WYAfbP4DRJQNZONu0wCXKA3ebSwXFKZZZDnbdU37lo35x2ZhSuVNzHoo5+V4mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4C68C4AF12;
-	Mon, 19 Aug 2024 22:59:48 +0000 (UTC)
-Date: Mon, 19 Aug 2024 19:00:14 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, Peter
- Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
- Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>, Ingo
- Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark
- Rutland <mark.rutland@arm.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
- Namhyung Kim <namhyung@kernel.org>, bpf@vger.kernel.org, Joel Fernandes
- <joel@joelfernandes.org>, Ingo Molnar <mingo@kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, Kees Cook <keescook@chromium.org>, Greg KH
- <gregkh@linuxfoundation.org>, Sean Christopherson <seanjc@google.com>
-Subject: Re: [PATCH v5 3/8] cleanup.h: Introduce DEFINE_INACTIVE_GUARD and
- activate_guard
-Message-ID: <20240819190014.31ab74d8@gandalf.local.home>
-In-Reply-To: <20240627152340.82413-4-mathieu.desnoyers@efficios.com>
-References: <20240627152340.82413-1-mathieu.desnoyers@efficios.com>
-	<20240627152340.82413-4-mathieu.desnoyers@efficios.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724108586; c=relaxed/simple;
+	bh=IBxRX3FxX61SdpyV9Dny06ARjAIqWCAWUGzBRw7wFVc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=IN/cyqKmfH3v5iVPs5S5Tc3SWVVBG2aqA/lwm4dD4sb0gnICp8ie89puXugGUgq1gMlJljr/kI/3gKzu/YhyL/mVwSmHyVKmvFB/eoeOO13AbiaGFm5uZA+vc/8joG52q7ducPmvXPIih0KzL/OMXthTTjutv7XUmIHKenGHpK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ZvnifwNk; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1724108581;
+	bh=UqTEZ6PhnHjdy/8LL1nNNbcf5sqyvEDtm+dAnqXjdIc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ZvnifwNkX04zSxMedeEWq38BWyZ6FCTUmCVOKyX9tncFRcoFMsgFVMJp55/SKQMrx
+	 wWjKmvW/oYC6GDKU+zLmVf7Xmsb6oqKv+53ymO2u0VwNVd/DeiIanBiBEAcGSt3J0x
+	 PxHz3OB5jOijbYyScTmd7z8+V4zyor7kJ/LZzIgShcLOVhMV/0kpyqEWWyjdwT0og1
+	 a53bXQBvUMjya7uD51Fb1dOwHj2GUKSKMU8cX2ZvOUqePCRUcoVLQhCJBJ9jbxluWd
+	 sU5l/oqR6c2WbPwusTG224ODt2XMsT2KP/uIqL7Zxt5YAIxrYzREeheKtTH7S2nSCp
+	 B5ucDKWVo2cOQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wnp6F20dpz4w2L;
+	Tue, 20 Aug 2024 09:03:01 +1000 (AEST)
+Date: Tue, 20 Aug 2024 09:03:00 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the vfs-brauner tree
+Message-ID: <20240820090300.166d3383@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/EzaF0X+ACdEBiOdFUqJ7njc";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/EzaF0X+ACdEBiOdFUqJ7njc
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 27 Jun 2024 11:23:35 -0400
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+Hi all,
 
-> To cover scenarios where the scope of the guard differs from the scope
-> of its activation, introduce DEFINE_INACTIVE_GUARD() and activate_guard().
-> 
-> Here is an example use for a conditionally activated guard variable:
-> 
-> void func(bool a)
-> {
-> 	DEFINE_INACTIVE_GUARD(preempt_notrace, myguard);
-> 
-> 	[...]
-> 	if (a) {
-> 		might_sleep();
-> 		activate_guard(preempt_notrace, myguard)();
-> 	}
-> 	[ protected code ]
-> }
-> 
+After merging the vfs-brauner tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Hi Mathieu,
+In file included from include/linux/fs.h:6,
+                 from fs/inode.c:7:
+fs/inode.c: In function 'inode_dio_wait':
+fs/inode.c:2650:45: error: the address of 'inode_dio_finished' will always =
+evaluate as 'true' [-Werror=3Daddress]
+ 2650 |         wait_var_event(&inode->i_dio_count, inode_dio_finished);
+      |                                             ^~~~~~~~~~~~~~~~~~
+include/linux/wait_bit.h:276:13: note: in definition of macro 'wait_var_eve=
+nt'
+  276 |         if (condition)                                             =
+     \
+      |             ^~~~~~~~~
+cc1: all warnings being treated as errors
 
-The three cleanup patches fail to apply (I believe one has already been
-fixed by Ingo too). Could you have the clean up patches be a separate
-series that is likely to get in, especially since it's more of a moving
-target.
+Caused by commit
 
-Thanks,
+  6f87283ed286 ("inode: remove __I_DIO_WAKEUP")
 
--- Steve
+I have used the vfs-brauner tree from next-20240819 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/EzaF0X+ACdEBiOdFUqJ7njc
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbDzyQACgkQAVBC80lX
+0Gz1aAf/TUHyK6XqiFt6YqkKtOgTorGVbPc7WgMV2dnhJ2X3e/Vp0CppPhD8EO9R
+pJndY3a4I8blZxVwE68g6bl4Xuw2AuNJ0u8iTrNd0OypPghP4Jv8MmSPjnQnvome
+yLNGKdA8G5naG8r1CK5spOt+zLNm4shnZlfgtqcgSSuF8fD7fDTLGvWtuidhYf2i
+SBsCzhxFxG244dRKAn+gaIad++Mg9aAvHagZi4ZSqKEEV1KHpYCJqrYxTcoS5CF1
+RVVslSV/NFSdi3Aq5Q0WaggmMechNlIZrjXKgMgwaHny2hxvsAE0vl4J45I5wpdr
+xH8d9j09F66j6a713/8QRnXQ0MztfQ==
+=Svet
+-----END PGP SIGNATURE-----
+
+--Sig_/EzaF0X+ACdEBiOdFUqJ7njc--
 
