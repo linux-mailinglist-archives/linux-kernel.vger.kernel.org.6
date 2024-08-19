@@ -1,78 +1,62 @@
-Return-Path: <linux-kernel+bounces-291963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AB8F956968
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:36:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5500595696F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:36:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E8841C2191A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:36:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D97D28311C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9D2166F07;
-	Mon, 19 Aug 2024 11:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ia3lvB6G"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD6C166F39;
+	Mon, 19 Aug 2024 11:36:44 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76EC115DBB2
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43AFB167DB8
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724067390; cv=none; b=Cv5qDtlktIs3mJpdx59eb2kYJkBgd388Zw1mr2hYySwDBuQ8L/435uKX2glDOb+6FbFw4AqXd/AKpm4IFZ1yLt2CK9hSRTuvOsseztBwJDgQIum8a8JkBL0fMeHDZNdV6fwLT/5cPqv0U8DAWUMQ8Tw4L/Vyl4wK8FkBPE+PFFc=
+	t=1724067403; cv=none; b=fvaWpeRj12LwIR2Pp4OZ+ujd8i9mIymF41uUASpQnRnF4wD2MyYnGgB730fpOL9FGAkcUE0PJu6uAls0xEh4LZd/fQgMcm7ZO6B/Vk4RKIPGmHPB8IDUO2xgnIGqSDGoU/Sp8YPaXeBsdGLUjYJ/ffUZdnc4leOjzd2tJw79n7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724067390; c=relaxed/simple;
-	bh=NRN89sayifMoy1kilIGDYtPCK1wF4xGXEZA5elSPLlc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Nn28VlJ8XqZ0juYdse840fgR1n/93XnoTJ3k7ywUjOjq86Q3tCQrAEDcl0JZiJG7oaGsZn72aAnzpvy07WK7Kgo6+3Xhkopi7LQahw/hMbqYdTtp4whAPy3zSOCI+CZYFUELur/xDsi0AuLuQ9FPyQYEcrk6TYFN1Bxa6cfHxmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ia3lvB6G; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2021c03c13aso11387125ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 04:36:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724067389; x=1724672189; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+WiREMffi25nyyIzqdE8W4yA++e1IQrLgdZzBEOgG4c=;
-        b=Ia3lvB6GUA/jNoqumGqQamG+JSAgGrpmyKvyBPecYa34u7gKi0+Yg1MDmFXxJzZKqQ
-         /pOQhY2S40pP2WpcRCMmpYOw6Tk3sttyI6OjhGD/P+RAE6KcNFPN4coVDA0GcgzWGiUd
-         IVpp08w1FKEogmXrhFjb8A6h0ACLy+pLBO8EpjmO2kB4VEh6NAT6rshJm+t+HuTiiWnd
-         nB3KaGkoUtu3zbzyFHwNS3E8ITmfKZ6L8RojBd9ZQHHbiYeWezkiN+g8/5V4eKymrPxH
-         5QJWKl2+5ZMOibhL7lFGmKBj+4XsoHxikSV9kMWfso4WH8Gpa7Q6WOv6cOkVD2iWMY83
-         dqMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724067389; x=1724672189;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+WiREMffi25nyyIzqdE8W4yA++e1IQrLgdZzBEOgG4c=;
-        b=gBn3RTF6YlzNQjvnd9a0MOHwe0ltqmshE2YgnQs+qUNqp3m7vu0XQEJ6IMxju043V/
-         O1KTCmX5sqJ4NwGMX44GLalw+lhNetDdtcF1Bz7jb6S3I/EbJvAS4vqI0RSGNJOdFijM
-         MhbDQBdOpJArrlz5znxR0Se9f1IDqRSoOxY5bRI2BjMRd+nuLQQ/XQ71lCmdikEDcN2/
-         W4oN+B2gU3e0QkCykIEVXW+CoG0oYvk226GfmDratfXx1cKdkXKYb8p8SGbhoOZhBbNv
-         Jy3xkxfeoUAChu3c8E6vrFoyWxlP6866xcPLqyz7KIE8Qeq2ouozPw3KM24oVAgJRncx
-         R5nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWAEpjXPwKylyElUmDnJo9R7/V+RA9fZny/ZdT+fCeyYAuWMGCq+2u0CiV2YJcuyhjsZhUFGYEREOXjr2Vj7AJmRX9pNrIDRotNC0I2
-X-Gm-Message-State: AOJu0Ywq3QTMTGIGf3kXTewPjIATby3qMn5zh0I/FZBQ+9Mz2xxoYP2+
-	/QxJFeG3A0o9lGh3ZwQBHbrqEQzitSIu6WxrMaslrvTxUSiyga29uWqJshUF/Ds=
-X-Google-Smtp-Source: AGHT+IHGh02cvfBz2W5qfnXKONV2HpC6aEUYbSAynA7KDT1UIEitJ0Iyq8mXZoWh7adSZXcMLQbKYg==
-X-Received: by 2002:a17:903:35c4:b0:201:eb46:1be5 with SMTP id d9443c01a7336-20206162588mr139288285ad.3.1724067388543;
-        Mon, 19 Aug 2024 04:36:28 -0700 (PDT)
-Received: from vernon-pc.. ([121.232.96.69])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f0319683sm61362135ad.67.2024.08.19.04.36.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 04:36:27 -0700 (PDT)
-From: Vernon Yang <vernon2gm@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
+	s=arc-20240116; t=1724067403; c=relaxed/simple;
+	bh=mEOw45v1O8r9fl4DsfGxbNzIFV7bNDGCO5k3DMm3+0M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DhtRCqfjYjAGaje/12Z19daUK53MV8ppE0YHNc51JNPD6iX+6FILxftRpyb21gC2i8jM8kcvlN3nQlPsB82YPQbjESVeh3KtBGKeeFHQ6Dc7oE/ZQOPPKEKVvt5k5FeWs/MbuhNiV3tjbRB8VWpmeqcRz4MzS6BgAw+I8FmVAJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sg0gW-0001lO-4n; Mon, 19 Aug 2024 13:36:28 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sg0gU-001WSM-GB; Mon, 19 Aug 2024 13:36:26 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sg0gU-008h6E-1M;
+	Mon, 19 Aug 2024 13:36:26 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
 	linux-kernel@vger.kernel.org,
-	Vernon Yang <vernon2gm@gmail.com>
-Subject: [PATCH] mm/util: Fix meminfo CommitLimit
-Date: Mon, 19 Aug 2024 19:36:19 +0800
-Message-Id: <20240819113619.1267937-1-vernon2gm@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	netdev@vger.kernel.org
+Subject: [PATCH net-next v1 1/1] phy: dp83tg720: Add statistics support
+Date: Mon, 19 Aug 2024 13:36:25 +0200
+Message-Id: <20240819113625.2072283-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,55 +64,411 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On a machine with 8GB memory, no any swap device, the /proc/meminfo
-CommitLimit shows 4070944KB regardless of overcommit_memory being set to
-0/1/2. This patch fixes this bug, and the final effect is as follows:
+Introduce statistics support for the DP83TG720 PHY driver, enabling
+detailed monitoring and reporting of link quality and packet-related
+metrics.
 
-- when overcommit_memory being set to 0  ## OVERCOMMIT_GUESS
-CommitLimit:     8141884 kB
-- when overcommit_memory being set to 1  ## OVERCOMMIT_ALWAYS
-CommitLimit:           0 kB
-- when overcommit_memory being set to 2  ## OVERCOMMIT_NEVER
-  and overcommit_ratio 50
-CommitLimit:     4070940 kB
+To avoid double reading of certain registers, the implementation caches
+all relevant register values in a single operation. This approach
+ensures accurate and consistent data retrieval, particularly for
+registers that clear upon reading or require special handling.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Vernon Yang <vernon2gm@gmail.com>
+Some of the statistics, such as link training times, do not increment
+and therefore require special handling during the extraction process.
+
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- mm/util.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/net/phy/dp83tg720.c | 330 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 330 insertions(+)
 
-diff --git a/mm/util.c b/mm/util.c
-index bd283e2132e0..4ee93c11dd62 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -932,12 +932,21 @@ int overcommit_kbytes_handler(const struct ctl_table *table, int write, void *bu
+diff --git a/drivers/net/phy/dp83tg720.c b/drivers/net/phy/dp83tg720.c
+index 0ef4d7dba0656..80e72301c56c3 100644
+--- a/drivers/net/phy/dp83tg720.c
++++ b/drivers/net/phy/dp83tg720.c
+@@ -51,6 +51,20 @@
+ /* Register 0x0405: Unknown Register */
+ #define DP83TG720S_UNKNOWN_0405			0x405
+ 
++#define DP83TG720S_A2D_REG_66			0x442
++#define DP83TG720S_ESD_EVENT_COUNT_MASK		GENMASK(14, 9)
++
++#define DP83TG720S_LINK_QUAL_1			0x543
++#define DP83TG720S_LINK_TRAINING_TIME_MASK	GENMASK(7, 0)
++
++#define DP83TG720S_LINK_QUAL_2			0x544
++#define DP83TG720S_REMOTE_RECEIVER_TIME_MASK	GENMASK(15, 8)
++#define DP83TG720S_LOCAL_RECEIVER_TIME_MASK	GENMASK(7, 0)
++
++#define DP83TG720S_LINK_QUAL_3			0x547
++#define DP83TG720S_LINK_LOSS_CNT_MASK		GENMASK(15, 10)
++#define DP83TG720S_LINK_FAIL_CNT_MASK		GENMASK(9, 0)
++
+ /* Register 0x0576: TDR Master Link Down Control */
+ #define DP83TG720S_TDR_MASTER_LINK_DOWN		0x576
+ 
+@@ -60,6 +74,24 @@
+ /* In RGMII mode, Enable or disable the internal delay for TXD */
+ #define DP83TG720S_RGMII_TX_CLK_SEL		BIT(0)
+ 
++#define DP83TG720S_PKT_STAT_1			0x639
++#define DP83TG720S_TX_PKT_CNT_15_0_MASK		GENMASK(15, 0)
++
++#define DP83TG720S_PKT_STAT_2			0x63A
++#define DP83TG720S_TX_PKT_CNT_31_16_MASK	GENMASK(15, 0)
++
++#define DP83TG720S_PKT_STAT_3			0x63B
++#define DP83TG720S_TX_ERR_PKT_CNT_MASK		GENMASK(15, 0)
++
++#define DP83TG720S_PKT_STAT_4			0x63C
++#define DP83TG720S_RX_PKT_CNT_15_0_MASK		GENMASK(15, 0)
++
++#define DP83TG720S_PKT_STAT_5			0x63D
++#define DP83TG720S_RX_PKT_CNT_31_16_MASK	GENMASK(15, 0)
++
++#define DP83TG720S_PKT_STAT_6			0x63E
++#define DP83TG720S_RX_ERR_PKT_CNT_MASK		GENMASK(15, 0)
++
+ /* Register 0x083F: Unknown Register */
+ #define DP83TG720S_UNKNOWN_083F			0x83f
+ 
+@@ -69,6 +101,286 @@
+ 
+ #define DP83TG720_SQI_MAX			7
+ 
++struct dp83tg720_cache_reg {
++	u16 mmd;
++	u16 reg;
++};
++
++#define DP83TG720_FLAG_COUNTER BIT(0)
++
++struct dp83tg720_hw_stat {
++	const char *string;
++	u8 cache_index1;
++	u8 cache_index2;  /* If a statistic spans multiple registers */
++	u32 mask1;
++	u32 mask2;        /* Mask for the second register */
++	u8 shift1;
++	u8 shift2;        /* Shift for the second register */
++	u8 flags;
++};
++
++enum dp83tg720_cache_reg_idx {
++	DP83TG720_CACHE_A2D_REG_66 = 0,
++	DP83TG720_CACHE_LINK_QUAL_1,
++	DP83TG720_CACHE_LINK_QUAL_2,
++	DP83TG720_CACHE_LINK_QUAL_3,
++	DP83TG720_CACHE_PKT_STAT_1,
++	DP83TG720_CACHE_PKT_STAT_2,
++	DP83TG720_CACHE_PKT_STAT_3,
++	DP83TG720_CACHE_PKT_STAT_4,
++	DP83TG720_CACHE_PKT_STAT_5,
++	DP83TG720_CACHE_PKT_STAT_6,
++
++	DP83TG720_CACHE_EMPTY,
++};
++
++static const struct dp83tg720_cache_reg dp83tg720_cache_regs[] = {
++	[DP83TG720_CACHE_A2D_REG_66] = {
++		.mmd = MDIO_MMD_VEND2,
++		.reg = DP83TG720S_A2D_REG_66,
++	},
++	[DP83TG720_CACHE_LINK_QUAL_1] = {
++		.mmd = MDIO_MMD_VEND2,
++		.reg = DP83TG720S_LINK_QUAL_1,
++	},
++	[DP83TG720_CACHE_LINK_QUAL_2] = {
++		.mmd = MDIO_MMD_VEND2,
++		.reg = DP83TG720S_LINK_QUAL_2,
++	},
++	[DP83TG720_CACHE_LINK_QUAL_3] = {
++		.mmd = MDIO_MMD_VEND2,
++		.reg = DP83TG720S_LINK_QUAL_3,
++	},
++	[DP83TG720_CACHE_PKT_STAT_1] = {
++		.mmd = MDIO_MMD_VEND2,
++		.reg = DP83TG720S_PKT_STAT_1,
++	},
++	[DP83TG720_CACHE_PKT_STAT_2] = {
++		.mmd = MDIO_MMD_VEND2,
++		.reg = DP83TG720S_PKT_STAT_2,
++	},
++	[DP83TG720_CACHE_PKT_STAT_3] = {
++		.mmd = MDIO_MMD_VEND2,
++		.reg = DP83TG720S_PKT_STAT_3,
++	},
++	[DP83TG720_CACHE_PKT_STAT_4] = {
++		.mmd = MDIO_MMD_VEND2,
++		.reg = DP83TG720S_PKT_STAT_4,
++	},
++	[DP83TG720_CACHE_PKT_STAT_5] = {
++		.mmd = MDIO_MMD_VEND2,
++		.reg = DP83TG720S_PKT_STAT_5,
++	},
++	[DP83TG720_CACHE_PKT_STAT_6] = {
++		.mmd = MDIO_MMD_VEND2,
++		.reg = DP83TG720S_PKT_STAT_6,
++	},
++};
++
++static const struct dp83tg720_hw_stat dp83tg720_hw_stats[] = {
++	{
++		.string = "esd_event_count",
++		.cache_index1 = DP83TG720_CACHE_A2D_REG_66,
++		.cache_index2 = DP83TG720_CACHE_EMPTY,
++		.mask1 = DP83TG720S_ESD_EVENT_COUNT_MASK,
++		.shift1 = 9,
++		.flags = DP83TG720_FLAG_COUNTER,
++	},
++	{
++		.string = "link_training_time",
++		.cache_index1 = DP83TG720_CACHE_LINK_QUAL_1,
++		.cache_index2 = DP83TG720_CACHE_EMPTY,
++		.mask1 = DP83TG720S_LINK_TRAINING_TIME_MASK,
++	},
++	{
++		.string = "remote_receiver_time",
++		.cache_index1 = DP83TG720_CACHE_LINK_QUAL_2,
++		.cache_index2 = DP83TG720_CACHE_EMPTY,
++		.mask1 = DP83TG720S_REMOTE_RECEIVER_TIME_MASK,
++		.shift1 = 8,
++	},
++	{
++		.string = "local_receiver_time",
++		.cache_index1 = DP83TG720_CACHE_LINK_QUAL_2,
++		.cache_index2 = DP83TG720_CACHE_EMPTY,
++		.mask1 = DP83TG720S_LOCAL_RECEIVER_TIME_MASK,
++	},
++	{
++		.string = "link_loss_cnt",
++		.cache_index1 = DP83TG720_CACHE_LINK_QUAL_3,
++		.cache_index2 = DP83TG720_CACHE_EMPTY,
++		.mask1 = DP83TG720S_LINK_LOSS_CNT_MASK,
++		.shift1 = 10,
++		.flags = DP83TG720_FLAG_COUNTER,
++	},
++	{
++		.string = "link_fail_cnt",
++		.cache_index1 = DP83TG720_CACHE_LINK_QUAL_3,
++		.cache_index2 = DP83TG720_CACHE_EMPTY,
++		.mask1 = DP83TG720S_LINK_FAIL_CNT_MASK,
++		.flags = DP83TG720_FLAG_COUNTER,
++	},
++	{
++		.string = "tx_pkt_cnt",
++		.cache_index1 = DP83TG720_CACHE_PKT_STAT_1,
++		.cache_index2 = DP83TG720_CACHE_PKT_STAT_2,
++		.mask1 = DP83TG720S_TX_PKT_CNT_15_0_MASK,
++		.mask2 = DP83TG720S_TX_PKT_CNT_31_16_MASK,
++		.flags = DP83TG720_FLAG_COUNTER,
++	},
++	{
++		.string = "tx_err_pkt_cnt",
++		.cache_index1 = DP83TG720_CACHE_PKT_STAT_3,
++		.cache_index2 = DP83TG720_CACHE_EMPTY,
++		.mask1 = DP83TG720S_TX_ERR_PKT_CNT_MASK,
++		.flags = DP83TG720_FLAG_COUNTER,
++	},
++	{
++		.string = "rx_pkt_cnt",
++		.cache_index1 = DP83TG720_CACHE_PKT_STAT_4,
++		.cache_index2 = DP83TG720_CACHE_PKT_STAT_5,
++		.mask1 = DP83TG720S_RX_PKT_CNT_15_0_MASK,
++		.mask2 = DP83TG720S_RX_PKT_CNT_31_16_MASK,
++		.flags = DP83TG720_FLAG_COUNTER,
++	},
++	{
++		.string = "rx_err_pkt_cnt",
++		.cache_index1 = DP83TG720_CACHE_PKT_STAT_6,
++		.cache_index2 = DP83TG720_CACHE_EMPTY,
++		.mask1 = DP83TG720S_RX_ERR_PKT_CNT_MASK,
++		.flags = DP83TG720_FLAG_COUNTER,
++	},
++};
++
++struct dp83tg720_priv {
++	u64 stats[ARRAY_SIZE(dp83tg720_hw_stats)];
++	u16 reg_cache[ARRAY_SIZE(dp83tg720_cache_regs)];
++};
++
++/**
++ * dp83tg720_cache_reg_values - Cache register values to avoid clearing counters.
++ * @phydev: Pointer to the phy_device structure.
++ *
++ * Reads and caches the values of all relevant registers.
++ *
++ * Returns: 0 on success, a negative error code on failure.
++ */
++static int dp83tg720_cache_reg_values(struct phy_device *phydev)
++{
++	struct dp83tg720_priv *priv = phydev->priv;
++	int i, ret;
++
++	for (i = 0; i < ARRAY_SIZE(dp83tg720_cache_regs); i++) {
++		const struct dp83tg720_cache_reg *cache_reg =
++			&dp83tg720_cache_regs[i];
++
++		ret = phy_read_mmd(phydev, cache_reg->mmd, cache_reg->reg);
++		if (ret < 0)
++			return ret;
++
++		priv->reg_cache[i] = (u16)ret;
++	}
++
++	return 0;
++}
++
++/**
++ * dp83tg720_extract_stat_value - Extract specific statistic value from cache.
++ * @phydev: Pointer to the phy_device structure.
++ * @i: Index of the statistic in the dp83tg720_hw_stats array.
++ *
++ * Extracts the specific statistic value from the cached register values.
++ *
++ * Returns: The extracted statistic value.
++ */
++static u64 dp83tg720_extract_stat_value(struct phy_device *phydev, int i)
++{
++	const struct dp83tg720_hw_stat *stat = &dp83tg720_hw_stats[i];
++	struct dp83tg720_priv *priv = phydev->priv;
++	u32 val1, val2 = 0;
++
++	val1 = (priv->reg_cache[stat->cache_index1] & stat->mask1);
++	val1 >>= stat->shift1;
++	if (stat->cache_index2 != DP83TG720_CACHE_EMPTY) {
++		val2 = (priv->reg_cache[stat->cache_index2] & stat->mask2);
++		val2 >>= stat->shift2;
++	}
++
++	if (stat->flags & DP83TG720_FLAG_COUNTER)
++		priv->stats[i] += val1 | (val2 << 16);
++	else
++		priv->stats[i] = val1 | (val2 << 16);
++
++	return priv->stats[i];
++}
++
++/**
++ * dp83tg720_get_sset_count - Get the number of statistics sets.
++ * @phydev: Pointer to the phy_device structure.
++ *
++ * Returns: The number of statistics sets.
++ */
++static int dp83tg720_get_sset_count(struct phy_device *phydev)
++{
++	return ARRAY_SIZE(dp83tg720_hw_stats);
++}
++
++/**
++ * dp83tg720_get_strings - Get the strings for the statistics.
++ * @phydev: Pointer to the phy_device structure.
++ * @data: Pointer to the buffer where the strings will be stored.
++ *
++ * Fills the buffer with the strings for the statistics
++ */
++static void dp83tg720_get_strings(struct phy_device *phydev, u8 *data)
++{
++	int i, j = 0;
++
++	for (i = 0; i < ARRAY_SIZE(dp83tg720_hw_stats); i++) {
++		strscpy(&data[j * ETH_GSTRING_LEN],
++			dp83tg720_hw_stats[i].string, ETH_GSTRING_LEN);
++		j++;
++	}
++}
++
++/**
++ * dp83tg720_get_stats - Get the statistics values.
++ * @phydev: Pointer to the phy_device structure.
++ * @stats: Pointer to the ethtool_stats structure.
++ * @data: Pointer to the buffer where the statistics values will be stored.
++ *
++ * Fills the buffer with the statistics values, filtering out those that are
++ * not applicable based on the PHY's operating mode (e.g., RGMII).
++ */
++static void dp83tg720_get_stats(struct phy_device *phydev,
++				struct ethtool_stats *stats, u64 *data)
++{
++	int i, j = 0;
++
++	dp83tg720_cache_reg_values(phydev);
++
++	for (i = 0; i < ARRAY_SIZE(dp83tg720_hw_stats); i++) {
++		data[j] = dp83tg720_extract_stat_value(phydev, i);
++		j++;
++	}
++}
++
++/**
++ * dp83tg720_update_stats - Update the statistics values.
++ * @phydev: Pointer to the phy_device structure.
++ *
++ * Updates the statistics values.
++ */
++static void dp83tg720_update_stats(struct phy_device *phydev)
++{
++	int i;
++
++	dp83tg720_cache_reg_values(phydev);
++
++	for (i = 0; i < ARRAY_SIZE(dp83tg720_hw_stats); i++)
++		dp83tg720_extract_stat_value(phydev, i);
++}
++
+ /**
+  * dp83tg720_cable_test_start - Start the cable test for the DP83TG720 PHY.
+  * @phydev: Pointer to the phy_device structure.
+@@ -208,6 +520,7 @@ static int dp83tg720_read_status(struct phy_device *phydev)
+ 	u16 phy_sts;
+ 	int ret;
+ 
++	dp83tg720_update_stats(phydev);
+ 	phydev->pause = 0;
+ 	phydev->asym_pause = 0;
+ 
+@@ -341,12 +654,26 @@ static int dp83tg720_config_init(struct phy_device *phydev)
+ 	return genphy_c45_pma_baset1_read_master_slave(phydev);
  }
  
- /*
-- * Committed memory limit enforced when OVERCOMMIT_NEVER policy is used
-+ * Committed virtual memory limit
-+ *
-+ * return 0 if OVERCOMMIT_ALWAYS policy is used, otherwise return committed
-+ * memory limit enforced if OVERCOMMIT_GUESS or OVERCOMMIT_NEVER policy is used.
-  */
- unsigned long vm_commit_limit(void)
++static int dp83tg720_probe(struct phy_device *phydev)
++{
++	struct dp83tg720_priv *priv;
++
++	priv = devm_kzalloc(&phydev->mdio.dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	phydev->priv = priv;
++
++	return 0;
++}
++
+ static struct phy_driver dp83tg720_driver[] = {
  {
- 	unsigned long allowed;
+ 	PHY_ID_MATCH_MODEL(DP83TG720S_PHY_ID),
+ 	.name		= "TI DP83TG720S",
  
-+	if (sysctl_overcommit_memory == OVERCOMMIT_ALWAYS)
-+		return 0;
-+
-+	if (sysctl_overcommit_memory == OVERCOMMIT_GUESS)
-+		return totalram_pages() + total_swap_pages;
-+
- 	if (sysctl_overcommit_kbytes)
- 		allowed = sysctl_overcommit_kbytes >> (PAGE_SHIFT - 10);
- 	else
-
-base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
+ 	.flags          = PHY_POLL_CABLE_TEST,
++	.probe		= dp83tg720_probe,
+ 	.config_aneg	= dp83tg720_config_aneg,
+ 	.read_status	= dp83tg720_read_status,
+ 	.get_features	= genphy_c45_pma_read_ext_abilities,
+@@ -355,6 +682,9 @@ static struct phy_driver dp83tg720_driver[] = {
+ 	.get_sqi_max	= dp83tg720_get_sqi_max,
+ 	.cable_test_start = dp83tg720_cable_test_start,
+ 	.cable_test_get_status = dp83tg720_cable_test_get_status,
++	.get_sset_count = dp83tg720_get_sset_count,
++	.get_strings	= dp83tg720_get_strings,
++	.get_stats	= dp83tg720_get_stats,
+ 
+ 	.suspend	= genphy_suspend,
+ 	.resume		= genphy_resume,
 -- 
-2.34.1
+2.39.2
 
 
