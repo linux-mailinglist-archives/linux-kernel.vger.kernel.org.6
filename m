@@ -1,104 +1,174 @@
-Return-Path: <linux-kernel+bounces-292695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9958957321
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:24:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6B0C957324
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 673312827F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:24:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BBDA282B6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BD718951E;
-	Mon, 19 Aug 2024 18:24:34 +0000 (UTC)
-Received: from cavan.codon.org.uk (cavan.codon.org.uk [176.126.240.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E51F189527;
+	Mon, 19 Aug 2024 18:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="khTGhjIE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A6516A934;
-	Mon, 19 Aug 2024 18:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.126.240.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A00184535;
+	Mon, 19 Aug 2024 18:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724091874; cv=none; b=on3hHwl56sRTjSy81xgszfaw3gv3fpj9F1cz7BwvxPa+vXkMNdQND+q+vGK7pBi6a9A9Xu5UigUGN+k6LlsnqJIKluO7ICaTOAEbfGhuQ71CpIlJORmVZjixvucGJ4YyH6qYgo243WTTWaMLOpV09YHNECr4UAKKpQIAFkneAmk=
+	t=1724091927; cv=none; b=K6tG/+3rBJzbL86Lhjuj18tXJZJWBGdK49NkbiSAWbBHfdEBp5eqrcHFbaE1sv1OANdbDWoyQ7h+HuZvLNGMmQbmQBns48SYSfPT4BgA4G4jaY+JX32NFfULmcKTaI5ngPjqoeqkONWVGbbyJGklkUiey+eS61MfqtUWQyIaraw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724091874; c=relaxed/simple;
-	bh=HHitbLQcODdjPuCSoJaZiVGwSe7pT6N18nHKmwnz0TQ=;
+	s=arc-20240116; t=1724091927; c=relaxed/simple;
+	bh=yALXwTSmv4+UWSMtBlDSLjJMgKa3P7yXVK4NJJPbVuk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SwLpxV0LMlwt1fd3DqH14qPuf3m3AgCqKVETARIlpZGGZlvE7Kggs0ojX5xdSy2ifsn9bQgco6g1F+8/Dw/d6r/uIqNfVMev2qeRgNXwvMxlrRQZPHTNyqmfvkb5jnoPZMLOd5jUg1XMtxFTuxZL+7KKTK5VppY9oJjCyibI1Rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=srcf.ucam.org; spf=pass smtp.mailfrom=codon.org.uk; arc=none smtp.client-ip=176.126.240.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=srcf.ucam.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codon.org.uk
-Received: by cavan.codon.org.uk (Postfix, from userid 1000)
-	id 2F2FF409FF; Mon, 19 Aug 2024 19:24:02 +0100 (BST)
-Date: Mon, 19 Aug 2024 19:24:02 +0100
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Daniel P. Smith" <dpsmith@apertussolutions.com>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Ross Philipson <ross.philipson@oracle.com>,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
-	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
-	mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-	dave.hansen@linux.intel.com, ardb@kernel.org,
-	James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
-	jgg@ziepe.ca, luto@amacapital.net, nivedita@alum.mit.edu,
-	herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net,
-	dwmw2@infradead.org, baolu.lu@linux.intel.com,
-	kanth.ghatraju@oracle.com, trenchboot-devel@googlegroups.com
-Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
- early measurements
-Message-ID: <ZsONwsWs3zCln70O@srcf.ucam.org>
-References: <20240531010331.134441-1-ross.philipson@oracle.com>
- <20240531010331.134441-7-ross.philipson@oracle.com>
- <20240531021656.GA1502@sol.localdomain>
- <874jaegk8i.fsf@email.froward.int.ebiederm.org>
- <5b1ce8d3-516d-4dfd-a976-38e5cee1ef4e@apertussolutions.com>
- <87ttflli09.ffs@tglx>
- <550d15cd-5c48-4c20-92c2-f09a7e30adc9@citrix.com>
- <D3HAP4O4OVS3.2LOSH5HMQ34OZ@kernel.org>
- <Zr+dTMYZNY1b9cRV@srcf.ucam.org>
- <D3K35VBCWZSW.2WCXJMW1HGGD5@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=n+RG4JGpoHLp50FiGqtSsfRecRAoVcNsr2M5p0aM/Xamp4O/n88YnMY0VQdsqUmgXQlX7VxI6SZIa0kqaa3iGCAkbQXQM+EiTk7MzaqC+FgfkAavZVesjUOH7utPtD56tq3fs0WKxti1ogUWGaCS50g7ppqL+XCDgu1PtymxHRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=khTGhjIE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F1ADC32782;
+	Mon, 19 Aug 2024 18:25:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724091926;
+	bh=yALXwTSmv4+UWSMtBlDSLjJMgKa3P7yXVK4NJJPbVuk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=khTGhjIEDs49GsU7Lni6hfu2hOgb9DN8IIC1iHGCgjowaDD/BBgdZqJLfwKDBcf4X
+	 3+JGjsjbI8oChg72BHP6NxsvypU8TEGyxYKSAN/6WxncMvIj5hiYcANg6AXqGHX3Kn
+	 mTbXr6frDV162Gs5cp4VUw7+XzQZUxmkZqkTRXtA=
+Date: Mon, 19 Aug 2024 20:25:23 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Sami Tolvanen <samitolvanen@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Matthew Maurer <mmaurer@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>,
+	Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>,
+	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved
+ structure fields
+Message-ID: <2024081938-lyricist-estimator-c4eb@gregkh>
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-37-samitolvanen@google.com>
+ <2024081600-grub-deskwork-4bae@gregkh>
+ <CABCJKuedc3aCO2Or+_YBSzK_zp9zB8nFwjr-tK95EBM3La1AmA@mail.gmail.com>
+ <2024081705-overarch-deceptive-6689@gregkh>
+ <ef6f7294-0afe-46af-8714-ed4a4aaee558@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <D3K35VBCWZSW.2WCXJMW1HGGD5@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ef6f7294-0afe-46af-8714-ed4a4aaee558@proton.me>
 
-On Mon, Aug 19, 2024 at 09:05:47PM +0300, Jarkko Sakkinen wrote:
-> On Fri Aug 16, 2024 at 9:41 PM EEST, Matthew Garrett wrote:
-> > On Fri, Aug 16, 2024 at 02:22:04PM +0300, Jarkko Sakkinen wrote:
-> >
-> > > For (any) non-legacy features we can choose, which choices we choose to
-> > > support, and which we do not. This is not an oppositive view just saying
-> > > how it is, and platforms set of choices is not a selling argument.
-> >
-> > NIST still permits the use of SHA-1 until 2030, and the most significant 
-> > demonstrated weaknesses in it don't seem applicable to the use case 
-> > here. We certainly shouldn't encourage any new uses of it, and anyone 
-> > who's able to use SHA-2 should be doing that instead, but it feels like 
-> > people are arguing about not supporting hardware that exists in the real 
-> > world for vibes reasons rather than it being a realistically attackable 
-> > weakness (and if we really *are* that concerned about SHA-1, why are we 
-> > still supporting TPM 1.2 at all?)
+On Sat, Aug 17, 2024 at 01:19:55PM +0000, Benno Lossin wrote:
+> On 17.08.24 09:41, Greg Kroah-Hartman wrote:
+> > On Fri, Aug 16, 2024 at 08:50:53AM -0700, Sami Tolvanen wrote:
+> >> On Fri, Aug 16, 2024 at 12:20 AM Greg Kroah-Hartman
+> >> <gregkh@linuxfoundation.org> wrote:
+> >>> On Thu, Aug 15, 2024 at 05:39:20PM +0000, Sami Tolvanen wrote:
+> >>> Especially as I have no idea how you are going to do
+> >>> this with the rust side of things, this all will work for any structures
+> >>> defined in .rs code, right?
+> >>
+> >> Yes, Rust structures can use the same scheme. Accessing union members
+> >> might be less convenient than in C, but can presumably be wrapped in
+> >> helper macros if needed.
+> > 
+> > That feels ripe for problems for any rust code as forcing a helper macro
+> > for a "normal" access to a structure field is going to be a lot of churn
+> > over time.  Is the need for a macro due to the fact that accessing a
+> > union is always considered "unsafe" in rust?  If that's the case, ick,
+> > this is going to get even messier even faster as the need for sprinkling
+> > unsafe accesses everywhere for what used to be a normal/safe one will
+> > cause people to get nervous...
 > 
-> We are life-supporting TPM 1.2 as long as necessary but neither the
-> support is extended nor new features will gain TPM 1.2 support. So
-> that is at least my policy for that feature.
+> The reason for union field access being unsafe in Rust is that you can
+> easily shoot yourself in the foot. For example:
+> 
+>     union Foo {
+>         a: bool,
+>         b: i32,
+>     }
+> 
+>     let foo = Foo { b: 3 };
+>     println!("{}", unsafe { foo.a });
+> 
+> This is UB, since `3` is of course not a valid value for `bool`. With
+> unions the compiler doesn't know which variant is active.
 
-But the fact that we support it and provide no warning labels is a 
-pretty clear indication that we're not actively trying to prevent people 
-from using SHA-1 in the general case. Why is this a different case? 
-Failing to support it actually opens an entire separate set of footgun 
-opportunities in terms of the SHA-1 banks now being out of sync with the 
-SHA-2 ones, so either way we're leaving people open to making poor 
-choices.
+Understood, then why attempt to use a union for this type of "abi safe
+padding"?
+
+> Since unions are unsafe in Rust, we don't really use them directly (in
+> the `kernel` crate, we have 0 union definitions). Instead we use certain
+> unions from the stdlib such as `MaybeUninit`. But the fields of that
+> union are private and never accessed.
+> 
+> In general, unions in Rust are very important primitive types, but they
+> are seldomly used directly. Instead enums are used a lot more, since you
+> don't need to roll your own tagged unions.
+> 
+> For this use-case (the one in the patch), I don't really know if we want
+> to copy the approach from C. Do we even support exporting kABI from
+> Rust?
+
+That's the goal here, you want to create an abi that can change over
+time without "breaking" the abi.  Usually this is just adding additional
+padding in structures to have room for new additions.
+
+> If yes, then we I would recommend we tag it in the source code
+> instead of using a union. Here the example from the patch adapted:
+> 
+>     #[repr(C)] // needed for layout stability
+>     pub struct Struct1 {
+>         a: u64,
+>         #[kabi_reserved(u64)] // this marker is new
+>         _reserved: u64,
+>     }
+> 
+> And then to use the reserved field, you would do this:
+>     
+>     #[repr(C)]
+>     pub struct Struct1 {
+>         a: u64,
+>         #[kabi_reserved(u64)]
+>         b: Struct2,
+>     }
+> 
+>     #[repr(C)]
+>     pub struct Struct2 {
+>         b: i32,
+>         v: i32,
+>     }
+> 
+> The attribute would check that the size of the two types match and
+> gendwarfksyms would use the type given in "()" instead of the actual
+> type.
+
+Remember the "goal" here is to NOT have to modify the places in the
+kernel that use the new field in the structure, but for that to "just
+work".  Your change here wouldn't allow that as any use of the new "b"
+field would have to be through something in "Struct2", not directly in
+Struct1, right?
+
+We can mess with the structure definitions but we should not have to
+touch the places where the structure fields are used at all.  If that's
+going to be a requirement (as it sounds like it would with the use of
+unsafe in the union), then this is not going to be a solution at all.
+
+thanks,
+
+greg k-h
 
