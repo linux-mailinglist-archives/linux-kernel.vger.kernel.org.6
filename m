@@ -1,106 +1,177 @@
-Return-Path: <linux-kernel+bounces-291326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F9809560E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 03:31:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 387789560E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 03:31:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D53E72820FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 01:30:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3A1AB21814
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 01:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727171B7E4;
-	Mon, 19 Aug 2024 01:30:53 +0000 (UTC)
-Received: from omta002.cacentral1.a.cloudfilter.net (omta002.cacentral1.a.cloudfilter.net [3.97.99.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235541BC2F;
+	Mon, 19 Aug 2024 01:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dckD/Va9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB6C9460
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.97.99.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB171B7E4
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724031053; cv=none; b=HwL1k5reG+NILRZ6BoxVjtv1Top7I7sEvIu46AckxiHQUai5AAyHD1tY+JocxFa9WcmoF3M9+P+mItYa0akiu8F4zNcDhc83FzII4jKn0Y4LN4WFTRrqyT896kl+T0NlHmLoFkzGjOmx8hynJYB0jLtrfEGWTecUqrONd+CgOGY=
+	t=1724031106; cv=none; b=XkDgdqlZKenGtOpV51UJrh2Dg0z0CVyGFkWUyepCAfEBVQ0bb8kGWL/aOh3a2UVw7QLZDkTINILKppPk+H/iqesyNpdciYkvZjbog/M3VXSkX9DIk9DC/j66pL8TSLniJ0CqoEcxCYkrvAw2Lh+PfPdRSJPeOid6fBJegpnmbQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724031053; c=relaxed/simple;
-	bh=Az1ikj8FMke32Q2EjygpX1gks2KxTTiz3ypYudTXThQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=MjJLqJC8cOiyLH8ejllrIoBrToE1XfLJfD9vg9Bfe89twwbgMU9pGJF1xeq/oEwKXcxDG3EqxJoUqOWxd0HvhouUSe6umwoh8DMdYViZ5APT3QaDIiOXEMin1Go3qiRW+Oni/AoqSboVE9pbgy3LR2IcXmzAhVi0LKOrdTMy1go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuyoix.net; spf=pass smtp.mailfrom=tuyoix.net; arc=none smtp.client-ip=3.97.99.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuyoix.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuyoix.net
-Received: from shw-obgw-4004a.ext.cloudfilter.net ([10.228.9.227])
-	by cmsmtp with ESMTPS
-	id fqblsLwC4MArNfrCrsUbff; Mon, 19 Aug 2024 01:29:13 +0000
-Received: from fanir.tuyoix.net ([68.150.218.192])
-	by cmsmtp with ESMTP
-	id frCqsRhtqKHV8frCqsKkHn; Mon, 19 Aug 2024 01:29:13 +0000
-X-Authority-Analysis: v=2.4 cv=XeEqz555 c=1 sm=1 tr=0 ts=66c29fe9
- a=LfNn7serMq+1bQZBlMsSfQ==:117 a=LfNn7serMq+1bQZBlMsSfQ==:17
- a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=M51BFTxLslgA:10 a=3I1X_3ewAAAA:8
- a=VwQbUJbxAAAA:8 a=CjRulRUbs8e48-67pewA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=VG9N9RgkD3hcbI6YpJ1l:22 a=AjGcO6oz07-iQ99wixmX:22
-Received: from CLUIJ (cluij.tuyoix.net [192.168.144.15])
-	(authenticated bits=0)
-	by fanir.tuyoix.net (8.18.1/8.18.1) with ESMTPSA id 47J1TAWF003546
-	(version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NO);
-	Sun, 18 Aug 2024 19:29:11 -0600
-Date: Sun, 18 Aug 2024 19:29:00 -0600 (Mountain Daylight Time)
-From: =?UTF-8?Q?Marc_Aur=C3=A8le_La_France?= <tsi@tuyoix.net>
-To: Eric Sandeen <sandeen@redhat.com>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] debugfs show actual source in /proc/mounts
-In-Reply-To: <0798a2cf-b43b-4c17-94a0-142314d80f5b@redhat.com>
-Message-ID: <alpine.WNT.2.20.2408181925400.3116@CLUIJ>
-References: <e439fae2-01da-234b-75b9-2a7951671e27@tuyoix.net> <2024081303-bakery-rewash-4c1a@gregkh> <0798a2cf-b43b-4c17-94a0-142314d80f5b@redhat.com>
-User-Agent: Alpine 2.20 (WNT 67 2015-01-07)
+	s=arc-20240116; t=1724031106; c=relaxed/simple;
+	bh=HQ5/dI0Bdm9EgRmrjx9EPAhLLGK7WM59NQ2TNadHhEY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oFSiUowe64KUVWDhyi6zGFMc+bfOOxlIibMVMN5MkwkwQDIkrJh1uKhUk5SkRyVv/vYOUo5WxXThMZDVVFPgIwptc11TK7MwaIovCBfZtedOJBec9AcfyN+BVvb6jQN32w30u6li2mKuCmtILbMbWQvlIyz7xNrK1YSphifdFRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dckD/Va9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724031103;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+CCs3r6hJH4DMfIS+VQJMNGzaRyfgBQFWrMHED7vXl8=;
+	b=dckD/Va9vV6fg1h/SXbPOI9PcwJpa9hSdAjHeECxtN/y5Ln9oZ6JuzyKDpAn8VniQ2xe7Q
+	TDiWkiRyj+JajNPQj06iAzFlzaVpXOhDIukC7k6hyvhIqmleCI+p3xMbthn7SkGNgNQ/qn
+	iavUW78rGh7FxWen7yFTy6chZHah/J0=
+Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
+ [209.85.210.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-76-okQt7iHBNZG95QxtQFbzSQ-1; Sun, 18 Aug 2024 21:31:42 -0400
+X-MC-Unique: okQt7iHBNZG95QxtQFbzSQ-1
+Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-70cb2cd0cf4so2021079a34.3
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 18:31:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724031101; x=1724635901;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+CCs3r6hJH4DMfIS+VQJMNGzaRyfgBQFWrMHED7vXl8=;
+        b=BFXYogmolg/AVP9R4ae3oCPjgLfSkvhgZusGGE7k7Ry7ZdV7szC6Z6zjUboDz2GQfe
+         8/3q5AThUmSZ59bffK5JFZHzNxs5eL+mlI+HEKSX1Ce7Uro1MaRBFYPtXmuAMzCrVDdd
+         iUmObqmAy7gf7LqNWDadsjgN0/R0oQeoyPcTUHkkl7gXoUsjiHV8lJyerp8XhhlJT8/t
+         8z6kphoD/2Diw2IjMELPfn8JL+Mhv8ewP72TJArgoslmgkDss88Fye+xxlpsEBjUCEhe
+         s4mRryIGVQzofe3WDN8VYoe9Kld5boUY9I6aU7g78vHN27Nq1l8xYLQKYwDSBH2PppQm
+         l9MA==
+X-Forwarded-Encrypted: i=1; AJvYcCXCgox2hHpoPGpqAAt9kEdYLuJGmLBUa7FczXemf6OumPpxllhu8Om6PRjOlz5OQE7qz3O6ZYLWEuk8YM4OnHkwOEWtmO4fRx3/iRQZ
+X-Gm-Message-State: AOJu0Yx57rOQj/CEVA6WRcQEDbwLEj2gCFiS1PEw8WpvSpi6rTl11UVh
+	DsE+nbOM48uZEwW7WtsDTIP8T+e1iUHXp3EVKkq8zpDzfYgXKzd6toQkJWT5n8vehjlTNH9AMCG
+	8hEdZuQmsrvdy/uKcmFzyv3r2R43Tf03MNpOnGGuQRnXWi9TQ8CmbId70HoJXWg==
+X-Received: by 2002:a05:6830:919:b0:709:47a6:627c with SMTP id 46e09a7af769-70cac84915emr9933893a34.4.1724031101678;
+        Sun, 18 Aug 2024 18:31:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG6X1a7pPkn+SUa6v7Wbgpm6Nj8OlxFtxYJDnVVkia7xEYC08b4X5v9+urMoiKWMtuL+brG/w==
+X-Received: by 2002:a05:6830:919:b0:709:47a6:627c with SMTP id 46e09a7af769-70cac84915emr9933887a34.4.1724031101377;
+        Sun, 18 Aug 2024 18:31:41 -0700 (PDT)
+Received: from [10.72.116.30] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b61dd9c9sm6712306a12.41.2024.08.18.18.31.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 18 Aug 2024 18:31:40 -0700 (PDT)
+Message-ID: <de34373f-7e53-406f-9ac3-cd9d7dc1c889@redhat.com>
+Date: Mon, 19 Aug 2024 09:31:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] netfs, ceph: Partially revert "netfs: Replace PG_fscache
+ by setting folio->private and marking dirty"
+To: David Howells <dhowells@redhat.com>,
+ Christian Brauner <brauner@kernel.org>
+Cc: Max Kellermann <max.kellermann@ionos.com>,
+ Ilya Dryomov <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>, ceph-devel@vger.kernel.org,
+ netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <2181767.1723665003@warthog.procyon.org.uk>
+Content-Language: en-US
+From: Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <2181767.1723665003@warthog.procyon.org.uk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-X-CMAE-Envelope: MS4xfMUhD4DzdNiqozECGVAsybWYZCNyISs5E3e07nZQfalyGDS91IfD9uyr3X9ck6TXyAD958vpjeGjpJrmngTcE161ik+x3eAsjfj3s6+1mfvjQpaBXsTW
- axxsCAH8uIxFHDxo2EfxdAu+qTxQftBkeVheL756OSlLA5JeWX7zV3zCbGWnNJ0Y+Bm12HcGQiUl+bvbuvtv+l2lUjV2YI6gtU9dAl3wRZihFhDY02sX4V08
- jBvAI5YNrc4814x8io5F0pXcdmT51M17zobaJzHGvJBZ2TcgmgXOPVUeF/YYpBeoTaD7DCj78TzKkV4fJ9zDPBV9e6VPYCim00bBsQ7bKrmg9kQ/iQQNrMhd
- KqtafFBk
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2024-Aug-13, Eric Sandeen wrote:
-> On 8/13/24 4:54 AM, Greg Kroah-Hartman wrote:
->> On Sat, Aug 10, 2024 at 01:25:27PM -0600, Marc Aurèle La France wrote:
->>> After its conversion to the new mount API, debugfs displays "none" in
->>> /proc/mounts instead of the actual source.  Fix this by recognising its
->>> "source" mount option.
 
->>> Signed-off-by: Marc Aurèle La France <tsi@tuyoix.net>
->>> Fixes: a20971c18752 ("vfs: Convert debugfs to use the new mount API")
->>> Cc: stable@vger.kernel.org # 6.10.x: 9f111059e725: fs_parse: add uid & gid option option parsing helpers
->>> Cc: stable@vger.kernel.org # 6.10.x: 49abee5991e1: debugfs: Convert to new uid/gid option parsing helpers
+On 8/15/24 03:50, David Howells wrote:
+>      
+> This partially reverts commit 2ff1e97587f4d398686f52c07afde3faf3da4e5c.
+>
+> In addition to reverting the removal of PG_private_2 wrangling from the
+> buffered read code[1][2], the removal of the waits for PG_private_2 from
+> netfs_release_folio() and netfs_invalidate_folio() need reverting too.
+>
+> It also adds a wait into ceph_evict_inode() to wait for netfs read and
+> copy-to-cache ops to complete.
+>
+> Fixes: 2ff1e97587f4 ("netfs: Replace PG_fscache by setting folio->private and marking dirty")
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Max Kellermann <max.kellermann@ionos.com>
+> cc: Ilya Dryomov <idryomov@gmail.com>
+> cc: Xiubo Li <xiubli@redhat.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: Matthew Wilcox <willy@infradead.org>
+> cc: ceph-devel@vger.kernel.org
+> cc: netfs@lists.linux.dev
+> cc: linux-fsdevel@vger.kernel.org
+> cc: linux-mm@kvack.org
+> Link: https://lore.kernel.org/r/3575457.1722355300@warthog.procyon.org.uk [1]
+> Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8e5ced7804cb9184c4a23f8054551240562a8eda [2]
+> ---
+>   fs/ceph/inode.c |    1 +
+>   fs/netfs/misc.c |    7 +++++++
+>   2 files changed, 8 insertions(+)
+>
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index 71cd70514efa..4a8eec46254b 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -695,6 +695,7 @@ void ceph_evict_inode(struct inode *inode)
+>   
+>   	percpu_counter_dec(&mdsc->metric.total_inodes);
+>   
+> +	netfs_wait_for_outstanding_io(inode);
+>   	truncate_inode_pages_final(&inode->i_data);
+>   	if (inode->i_state & I_PINNING_NETFS_WB)
+>   		ceph_fscache_unuse_cookie(inode, true);
+> diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
+> index 83e644bd518f..554a1a4615ad 100644
+> --- a/fs/netfs/misc.c
+> +++ b/fs/netfs/misc.c
+> @@ -101,6 +101,8 @@ void netfs_invalidate_folio(struct folio *folio, size_t offset, size_t length)
+>   
+>   	_enter("{%lx},%zx,%zx", folio->index, offset, length);
+>   
+> +	folio_wait_private_2(folio); /* [DEPRECATED] */
+> +
+>   	if (!folio_test_private(folio))
+>   		return;
+>   
+> @@ -165,6 +167,11 @@ bool netfs_release_folio(struct folio *folio, gfp_t gfp)
+>   
+>   	if (folio_test_private(folio))
+>   		return false;
+> +	if (unlikely(folio_test_private_2(folio))) { /* [DEPRECATED] */
+> +		if (current_is_kswapd() || !(gfp & __GFP_FS))
+> +			return false;
+> +		folio_wait_private_2(folio);
+> +	}
+>   	fscache_note_page_release(netfs_i_cookie(ctx));
+>   	return true;
+>   }
 
->> As this came from a fs tree, I'll let the vfs maintainer take it if they
->> think it is ok as I know nothing about the fs_parse stuff at the moment,
->> sorry.
+Just back from PTOs.
 
-> Hm, I guess this is OK, though it seems a little unexpected for debugfs
-> to have to parse the trivial internal "source" option.
+This LGTM and I will run the test today locally.
 
-> This actually worked OK until
+Thanks David.
 
-> 0c07c273a5fe debugfs: continue to ignore unknown mount options
+- Xiubo
 
-> but after that commit, debugfs claims to parse "source" successfully even
-> though it has not. So really, it Fixes: that commit, not the original
-> conversion.
 
-> I'm not sure of a better approach offhand, but maybe a comment about why
-> Opt_source exists in debugfs would help future readers?
-
-Meaning what?  I'd say you're in a better position to explain why debugfs
-shouldn't follow other fs's in this regard.
-
-Marc.
 
