@@ -1,68 +1,83 @@
-Return-Path: <linux-kernel+bounces-292419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FAD8956F33
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:48:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B2CA956F39
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFECB283A0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:48:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9B79B22789
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9764113698E;
-	Mon, 19 Aug 2024 15:48:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A780213210D;
+	Mon, 19 Aug 2024 15:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p7p+PPYI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eqG64uGi"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53D141C79;
-	Mon, 19 Aug 2024 15:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AA63BBF2;
+	Mon, 19 Aug 2024 15:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724082508; cv=none; b=WY3TfsJQK0ljDAM8Ns8hi4TTAqkbC0d0r0+GX47YEFYvOHNdO/HXEyL+gFfsM0GFo/fRfxwTfSfyqLQznoZ//BL08RjtSNIeIY73Qg0pUI47+89aE/FNjcm9zL83dq4UUBX7j2e/6yYyulbf6Oj16kCeCL2k8usQWa+1dAtpZqM=
+	t=1724082555; cv=none; b=oAJB37RqevmAqLfXqoQNIWDE/qnTpQECjYOSNs6vh+VOm5MUseYUYwLgazlFMAFDdQlLVtisccOsgh3XgHxjh6dUEieXtPsm7xx8bav6CPNHDp7nGDJXeahhmG5v8MWmiZQeBiODsyptQvgHw7YuJT1AIzpbko91ORsRsfUuyk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724082508; c=relaxed/simple;
-	bh=ZexBRrXYqdegzaKuGie16KhsYastSeM2wRx5qQFg7Tg=;
+	s=arc-20240116; t=1724082555; c=relaxed/simple;
+	bh=fyyjBZF2oTWVnLLBDD6Q09Azx4KL9wSZUi8MT6p9g/Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kwRAuDVWUcVskkygGKs5lNgeUqXor3pjw4UZEn+7BO18NAwW+6AjCwklYpb44Qqua/7OwI3xQ+8TjwOwmytRo2UWFNVVdeuVvjffI+NGkXeC7HOOM5imIvma8zQIw7xbaplmqT4dvcDz4jeI9Gne9tEkp/etsCLCGFxpN1psCxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p7p+PPYI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CC5CC32782;
-	Mon, 19 Aug 2024 15:48:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724082508;
-	bh=ZexBRrXYqdegzaKuGie16KhsYastSeM2wRx5qQFg7Tg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p7p+PPYIU4/DIvdgqUXVipPPf77axfmTOC9kOf5Pwr5go7aZQFacmlfQVYmNNSC09
-	 J8GPvf7vGz7E47Xsu/u1U8R7pIAvyfo7/H1xQD8DfKiZ2hHPLMmT/SxGPuZim4W39l
-	 REkfs3sdS6D/Hc3hYi/YI0C3LfBJmblF5WW2BBNG6q2NkbfUl9qfcRwoLYYzzK9pte
-	 7sauKAUMVHy1KmCtk202UaCXVCUHO9tsDpn5VstafvPJ4sVRPfmUyDHYXlh+c3URLW
-	 w5Boqw0N6p0m0Y6Wm/fBCDxwKW1A5v3pn1VSFsKjlrz1b9xjNoXlbZ3531r/QG3JO+
-	 zI6HieVuIeXqQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sg4cM-000000001X3-0sb8;
-	Mon, 19 Aug 2024 17:48:26 +0200
-Date: Mon, 19 Aug 2024 17:48:26 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-Cc: Sebastian Reichel <sre@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Chris Lew <quic_clew@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Amit Pundir <amit.pundir@linaro.org>, linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 0/3] soc: qcom: pmic_glink: v6.11-rc bug fixes
-Message-ID: <ZsNpSt3BtdFIT6ml@hovoldconsulting.com>
-References: <20240818-pmic-glink-v6-11-races-v1-0-f87c577e0bc9@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sNiCZ4HzgdIdLSzXN2Vku/W494gXFM1b8OnLk/wqM4qwqHESIrzBphr8w0qMCyHOayvvEYxzXFDLV4EeCDCbUwVDPPcnzMY1MFU8A7nGGGvBPWIbJXxQZcTRSCqFJARgRe4jA0tkGAp28iAKCJ+NJjl/ztq9JxXPN3lD4HwnMjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eqG64uGi; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-201cd78c6a3so34406635ad.1;
+        Mon, 19 Aug 2024 08:49:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724082554; x=1724687354; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CSLcyqFQ3EMWy37KrwIoFJyqnZnAuoV7z3EUYygVqD8=;
+        b=eqG64uGi+Syv1Qv2ylK0M4z+MpoVlQxkCnApP4Vo7wyTPphFweZW2P5NLiK3W5VFbF
+         0qsBmVzlxqwmYpq3SHi4L1sUQ3ZjDhlB2cH9aJ+v8FBqReK+NUCPrlsc6Fzu0aU9zFln
+         u0H23YQuFo4Immxpu6NqKNVffq2b19A4ar/JG6n0s1w43+Ig7tt3I+AXZk+IIz7t8Zvj
+         6g22moYnk/CiM+O00oLVXsJ3WlnHj58SN94LJ+aepaUTbkMt3DuJZ10rbKkFYJuaJNah
+         zsoz6FO99FAxRkL0zgvrFR03gwjWywe8WQtrdg8HX1gl+aNDhxbnDnscMr/YS7/8qbid
+         3rNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724082554; x=1724687354;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CSLcyqFQ3EMWy37KrwIoFJyqnZnAuoV7z3EUYygVqD8=;
+        b=rE/u16rwBYYBkBOaKMI8DR3M73ey8J4TazULCm39+0zhjvk0GPxuAA5IhITZatROmA
+         VlGuPXzp/lDOHO6t+K6fbRXjNuR000n6M+KCYk7RXANDvsN2+B8SH7hGBO4ntZrEoFCK
+         YXwGN9BoPmXls3sTkXbLGiNPE/hlwVEBPW/kl+MTiAXJhv8p7oi2+XAX05QFUBtmU0NV
+         8wyjE9kiRN145IZ/WITYvDpqUng3S+HgxcjJUHQ9SOPboqihlNAzELtCLP+oYLapAsoz
+         /iopQY/RhbyynjKbndy1Eh48cSwJQDZhv8NxtRDA9bVyORncZq2OX+mHxDgRSu2vDXY4
+         YMDA==
+X-Forwarded-Encrypted: i=1; AJvYcCVoquPA/aaKiGobzWt6zZowy23S7cEm7rawvuuHf6hsPoJ/NgpcG94inrsCyNLw4bx8K0CGOqoPBqWPoPTAI8Gr2eeAyvTaWFs1iicZSEzk2juQ0mr0gMKmuKL0LvKFSZSvNELz24lgNh+GJH4VI4/EuNlI3pyE48QjffFyARVQGlbJTWdmKmmT/kLry2wnveywPLEDPW+XtQ3hwTehus3FgpCrZvizRsk=
+X-Gm-Message-State: AOJu0YzrBKURwMWqzH5Y1tXKlw72gM8ubSuRTLNgR3KZC5FlclueWMgQ
+	TxMOnY1HjIq07dyQxnq1m5Pd6XDqavh1gs+MtLuafIy59eLqswpSNBv7Lg==
+X-Google-Smtp-Source: AGHT+IEU9Es4Ml341v7O0mbmgFiXC/PhOCgXS75ZkA/SB7UZuypVK5RcoYwAPwcMAnMi1qk6M4kD+w==
+X-Received: by 2002:a17:903:228a:b0:1fd:a942:1558 with SMTP id d9443c01a7336-20203f329a2mr180311055ad.40.1724082553437;
+        Mon, 19 Aug 2024 08:49:13 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:f80c:1483:bced:7f88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f038b401sm63783585ad.213.2024.08.19.08.49.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 08:49:13 -0700 (PDT)
+Date: Mon, 19 Aug 2024 08:49:10 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
+Subject: Re: [PATCH 09/14] dt-bindings: input: samsung,s3c6410-keypad:
+ introduce compact binding
+Message-ID: <ZsNpdhKlLYegkosN@google.com>
+References: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
+ <20240819045813.2154642-10-dmitry.torokhov@gmail.com>
+ <dbs44pwxfhsnmdzsd32mp7rlhq6w5fanu5bakuisxmyz2ehbtd@cdfr26oicjll>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,24 +86,106 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240818-pmic-glink-v6-11-races-v1-0-f87c577e0bc9@quicinc.com>
+In-Reply-To: <dbs44pwxfhsnmdzsd32mp7rlhq6w5fanu5bakuisxmyz2ehbtd@cdfr26oicjll>
 
-On Sun, Aug 18, 2024 at 04:17:36PM -0700, Bjorn Andersson wrote:
-> Amit and Johan both reported a NULL pointer dereference in the
-> pmic_glink client code during initialization, and Stephen Boyd pointed
-> out the problem (race condition).
+On Mon, Aug 19, 2024 at 03:02:07PM +0200, Krzysztof Kozlowski wrote:
+> On Sun, Aug 18, 2024 at 09:58:06PM -0700, Dmitry Torokhov wrote:
+> > The binding with a sub-node per each key is very verbose and is hard to
+> > use with static device properties. Allow standard matrix keymap binding
+> > in addition to the verbose one.
+> > 
+> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > ---
+> >  .../input/samsung,s3c6410-keypad.yaml         | 57 ++++++++++++++++++-
+> >  1 file changed, 54 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/input/samsung,s3c6410-keypad.yaml b/Documentation/devicetree/bindings/input/samsung,s3c6410-keypad.yaml
+> > index a53569aa0ee7..28a318a0ff7e 100644
+> > --- a/Documentation/devicetree/bindings/input/samsung,s3c6410-keypad.yaml
+> > +++ b/Documentation/devicetree/bindings/input/samsung,s3c6410-keypad.yaml
+> > @@ -16,6 +16,10 @@ description:
+> >  maintainers:
+> >    - Krzysztof Kozlowski <krzk@kernel.org>
+> >  
+> > +allOf:
+> > +  - $ref: input.yaml#
+> > +  - $ref: matrix-keymap.yaml#
+> > +
+> >  properties:
+> >    compatible:
+> >      enum:
+> > @@ -37,6 +41,10 @@ properties:
+> >  
+> >    wakeup-source: true
+> >  
+> > +  keypad,num-columns: true
+> > +  keypad,num-rows: true
+> > +  linux,keymap: true
+> > +
+> >    linux,input-no-autorepeat:
+> >      type: boolean
+> >      description:
+> > @@ -81,12 +89,33 @@ patternProperties:
+> >        - keypad,row
+> >        - linux,code
+> >  
+> > +dependencies:
+> > +  linux,keymap:
+> > +    required:
+> 
+> Why "required" keyword? The dependencies should have just list of
+> properties. See example-schema.
 
-> In addition to the NULL pointer dereference, there is the -ECANCELED
-> issue reported here:
-> https://lore.kernel.org/all/Zqet8iInnDhnxkT9@hovoldconsulting.com/
-> I have not yet been able to either reproduce this or convince myself
-> that this is the same issue.
+OK, changed this to
 
-I can confirm that I still see the -ECANCELED issue with this series
-applied:
+dependencies:
+  linux,keymap: [ "keypad,num-columns", "keypad,num-rows" ]
+  
+> 
+> > +      - keypad,num-columns
+> > +      - keypad,num-rows
+> > +
+> >  required:
+> >    - compatible
+> >    - reg
+> >    - interrupts
+> > -  - samsung,keypad-num-columns
+> > -  - samsung,keypad-num-rows
+> > +
+> > +if:
+> 
+> put allOf: here and this within allOf, so you the "if" could grow in the
+> future.
 
-[    8.979329] pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to send altmode request: 0x10 (-125)
-[    9.004735] pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to request altmode notifications: -125
+Hmm, there is already "allOf" at the beginning of the file, so adding
+another one results in complaints about duplicate "allOf". I can move it
+all to the top, like this:
 
-Johan
+allOf:
+  - $ref: input.yaml#
+  - $ref: matrix-keymap.yaml#
+  - if:
+      required:
+        - linux,keymap
+    then:
+      properties:
+        samsung,keypad-num-columns: false
+        samsung,keypad-num-rows: false
+      patternProperties:
+        '^key-[0-9a-z]+$': false
+    else:
+      properties:
+        keypad,num-columns: false
+        keypad,num-rows: false
+      required:
+        - samsung,keypad-num-columns
+        - samsung,keypad-num-rows
+
+Is this OK? I don't quite like that "tweaks" are listed before main
+body of properties.
+
+Thanks.
+
+-- 
+Dmitry
 
