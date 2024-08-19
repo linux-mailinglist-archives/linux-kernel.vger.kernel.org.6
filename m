@@ -1,279 +1,287 @@
-Return-Path: <linux-kernel+bounces-292871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D0CE957581
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:16:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51829957586
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83316B22659
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:16:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08478283D1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D61415A84E;
-	Mon, 19 Aug 2024 20:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09468158D91;
+	Mon, 19 Aug 2024 20:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YXBiyMye"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="M2k6tgCX"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A463158DCD;
-	Mon, 19 Aug 2024 20:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32FB158559
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 20:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724098572; cv=none; b=ADyRXNqL36gXg3UPwvYuPuQ5jEbjrN3Sc3Vfx9eymP2/9vGbHAEPMRQ0miD9XXMC8o0ajbyUFJz3Bcj1K0JlheGGe5wK7oP6sHxCrhVA3UOIv6MBCYk80VTQ8LORuq5EwoflQgpbJ/qdi4/6LY9nEmZxfoF/t/shmpNlmmoop3g=
+	t=1724098615; cv=none; b=Nswiq3ZH+0QWiZH+Lnzg+rfDqjvqCG7MNk4rkkp2m0iMy4hJZG8rJSwuiEOfVFHuBJ3FpVDEF9dePj19CPPoE0PGkUZORWDo8j8kaFMYTX04dLzUSK1LM7tp0SQsWvipbWIucQljPUUIAoDIkP+xKw5TJIDb/NGi3dkGUeZvOkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724098572; c=relaxed/simple;
-	bh=SWVRgeZ7CTQQ7yYl/MchnPLiTqf6i43UKxuy79sGAz8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JQ/IEHSMh2LzP0YnzGcNmOxW6L4v4BGtAtyFtRuWD9LouLtmJBDsuqrVtmMdHXcwsNHZjg8q9ki0uKSGrFuECQ4BqZ8rz8mltYuVT2w6TF6DxgpQ3MkwLvHduY+OFPgffbcMSa6tMAz7Pf6THft3DRc485Mk2WvZsB6TRAcZbco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YXBiyMye; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6bf89e59ff8so14132896d6.0;
-        Mon, 19 Aug 2024 13:16:10 -0700 (PDT)
+	s=arc-20240116; t=1724098615; c=relaxed/simple;
+	bh=4oG8+dW0a03QSNDxifWp5UiSH+A9Gx09nMcLe7DbmWg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FBTS9Yb/4b0zFiOsb5/Mxr6XfbKyzh10csayoZh4SDI3JSuMFD/ntcv2z1pHf9YF3w3Hcmwq84P9cImcHj+V7nQeYuawLeVNe7Qe4ecJHxT4tiOw73TzilhQ/dwDDzrd07Uq7BvDoHE3Pvtay3axeQjMI37oJtRa1HqO6knE9qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=M2k6tgCX; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5bed83488b6so3624672a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 13:16:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724098569; x=1724703369; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2bDcAPyWn/B3dB8WEY9pSZO0HQv1mT5yruHlrosIXss=;
-        b=YXBiyMye/F2ViPy1tzw8jZZfPzT6fet1wxRkZLA39+9c/ynQOEBTz8gslXybjNZCZV
-         0cK//7e7iI8cX4e0dHZygeqkVW0uXApYtPAfaZNOulZ4gf3nwnEti02j+z4l+HXRBEz+
-         n7ZxpIGVVOp5d5aa/gC2W73Ii7c3xQbCxzHuIg1R0cnynSkXHTP054feCNZqkdKer00w
-         tOipEyonW9QIlUsMctczITiTYyvBnmAZUh5vinMtTSeBWo66dRghiyg9aTPUhvFtItCi
-         BOZh41gXJ469aRRmIKt9LOGQIAsfk3V7mevjbHN2dJqbtwfVR9oWBDWIbScoiVNGZnMg
-         Ad+w==
+        d=linux-foundation.org; s=google; t=1724098612; x=1724703412; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WqBiMt0Hhc3DTo9ZmzRdl/dmh1UETN3JdoZoNAHbQcc=;
+        b=M2k6tgCX6Mq3BUAaI3PexlmA8tnrwi3soMYLdnKbuW/96dsmUVtc+5QPKSzct2Glxe
+         tpb7lqfDWCJFiIS1gR6ADZCKukfJxfIQ6wQ+q+yCORjPphpvsmNsxi2NJfpeJy+a7fbc
+         HcQAkgjgPrQPs2BXkxq2wPQFyUWCH8azLMb9M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724098569; x=1724703369;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2bDcAPyWn/B3dB8WEY9pSZO0HQv1mT5yruHlrosIXss=;
-        b=v/lf9ihQK9xqhmrFPzFwnoSmChnruZJta8BxVDqAwuxSabrSLhYdPOQg1xf9PoFXf5
-         sqrsA7gSBDrijaAunH4qrdt7AW6mA3zFkII5PqYIZ8t5CE5ddap2hqvL/uWFiEsM4Wof
-         it/Glq6LdjSllVeOPXO9KnlmfA9t/ICh1eERkGQnpczSj4vGdzreoLp5XVctjUU4Y80F
-         QH7dhBkzS40TUFXfKlE2iSIMLkSgBr5Vq4FbGTUgQUZBELs4McVfW0qXkgMEoQELUNzF
-         s0VsWj/C4HYv+1uQCcjUjZkbbEHkaitx0GUORj2Wq8Cay2nY2JF3XTzj7rBRydpdBVLC
-         vStA==
-X-Forwarded-Encrypted: i=1; AJvYcCUF70MT8OYQNPzgf2XGLZen39DnMRy8mxrWECTYMxZxC0MqYU3ovKzajpeZ9flOPFgwsirmrusEI1YSkwjzEKtma+QZtm5GneIPdQ/iYqPjyH1mPAjD0NIHuCrUoj+X1Z7hytIqxgD3
-X-Gm-Message-State: AOJu0YxIZG08gkNNr2ifE5lWn6I9hs1iccYVBmh/V2I9F4Ny7k4g/iam
-	Q8CuQJHBk3lFbam0QCogIs7HKYKJMzFh2qyNV5tR4zMzn99Vv615
-X-Google-Smtp-Source: AGHT+IH5rVdrhtASVA0IbpdMpTAjIzrHEi8lN53IGRcdkXNk+ka7mf3rD/j3HaEFfUtc07VqzgCwoA==
-X-Received: by 2002:a05:6214:3204:b0:6bf:8ae8:fc0c with SMTP id 6a1803df08f44-6bf8ae92718mr130582366d6.35.1724098569193;
-        Mon, 19 Aug 2024 13:16:09 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1145:4:1409:786c:cb1d:c3fb? ([2620:10d:c091:500::7:e1ca])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fec5e9csm45817476d6.80.2024.08.19.13.16.08
+        d=1e100.net; s=20230601; t=1724098612; x=1724703412;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WqBiMt0Hhc3DTo9ZmzRdl/dmh1UETN3JdoZoNAHbQcc=;
+        b=EbnhpKrjqQDKuElwjS4+vnKGauiC/XCPMWanDOg7g5TUI/7yySECeWVzIW7Idamu2E
+         kbNh67ob+trEdlQ+8+fBoRY8Q9SMlE7Pv+cCtN8D9B09VBPyrYwVzRlxeqELjUrXuCP2
+         13qDA7RXCWnqD3wB19MlCpto04EV39P+wVpHZEUVxyYXmIWjBQlHcPMvNyAFREowLLWV
+         NMNxlzBNZ/8x0ZkgKw22cBDJivHSTG0pQk30vajqVtd7Ii6YeXV+vvGGupOBR+gKfZ4K
+         dzpfo1CLb+JRwlKHMvm0eIe3wyUr7h1VSAe1XNM9AwBZpa9iEjJo3LN5eUxes8Gx9P06
+         nLUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ9M3TZzC9fS22ggsx1AJMeA4UKlWZei3dTtFgtMQ4sYsez3BhqECELeOiRS+GM2ANN6FwW/hRhe7q+5+fT/z1urObiwAGgWJozIO1
+X-Gm-Message-State: AOJu0YxLGxn0RV9td7j8MCGqlH1m8IkhZ60AR5VkCEv5XdZLStecqxyB
+	KOzLZZ1wPk8qGR6F6BKRfphWV+3QJ5OmB/AicxSAlwyycpLhbgybdJlDcGZ7Vk+0Rau2AR8euiL
+	322hpgw==
+X-Google-Smtp-Source: AGHT+IG8ZFlPpAz0U+fdRs9vB+y6nMT+CVgKOtFyOt8rDqEYcdvA3DIFm1Wg7own2d/PmozwkxYL0w==
+X-Received: by 2002:a17:907:f704:b0:a7a:8378:625c with SMTP id a640c23a62f3a-a8392940e43mr836881866b.36.1724098611741;
+        Mon, 19 Aug 2024 13:16:51 -0700 (PDT)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com. [209.85.128.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c67d3sm671229766b.1.2024.08.19.13.16.49
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 13:16:08 -0700 (PDT)
-Message-ID: <9a58e794-2156-4a9f-a383-1cdfc07eee5e@gmail.com>
-Date: Mon, 19 Aug 2024 16:16:07 -0400
+        Mon, 19 Aug 2024 13:16:49 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-428141be2ddso36791645e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 13:16:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUJqbD0z49nfYeWU5E2Jzf+Q4xJrhyUHU5G60gERbWv6qdTWN7qyijD8kkFpt0XF12R/nkbpEli0an9dEHX1Z7fIB3XLQQ4NEnZ+1wq
+X-Received: by 2002:adf:b307:0:b0:368:77f9:fb34 with SMTP id
+ ffacd0b85a97d-3719434475amr8638464f8f.15.1724098609196; Mon, 19 Aug 2024
+ 13:16:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/6] mm: Introduce a pageflag for partially mapped
- folios
-To: Barry Song <baohua@kernel.org>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org,
- riel@surriel.com, shakeel.butt@linux.dev, roman.gushchin@linux.dev,
- yuzhao@google.com, david@redhat.com, ryan.roberts@arm.com, rppt@kernel.org,
- willy@infradead.org, cerasuolodomenico@gmail.com, ryncsn@gmail.com,
- corbet@lwn.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- kernel-team@meta.com
-References: <20240819023145.2415299-1-usamaarif642@gmail.com>
- <20240819023145.2415299-5-usamaarif642@gmail.com>
- <CAGsJ_4yKuvMSazWABXqaeRr84hLEubET0nCUhPFYHQnfR4Tm8w@mail.gmail.com>
- <a09b6af0-4fdb-4ac1-9cbe-9b422ebc3308@gmail.com>
- <CAGsJ_4xeWt9n3zX3-DknE=NftkWS0fe2vKTJT9tLuJPM4EaEwg@mail.gmail.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <CAGsJ_4xeWt9n3zX3-DknE=NftkWS0fe2vKTJT9tLuJPM4EaEwg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240812082605.743814-1-mpe@ellerman.id.au> <20240819185253.GA2333884@thelio-3990X>
+ <CAHk-=wj9QPhG4CjiX8YLRC1wHj_Qs-T8wJi0WEhkfp0cszvB9w@mail.gmail.com>
+ <20240819195120.GA1113263@thelio-3990X> <CAHk-=wgsDJ+sA1T01YT-z5TXs3zxJ54f0VDApkZ1pgcr8T=myQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wgsDJ+sA1T01YT-z5TXs3zxJ54f0VDApkZ1pgcr8T=myQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 19 Aug 2024 13:16:32 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjzYKrwSDK3PFMC1C2x37aKzEuC7dVxg0kGt8h+vjZfjQ@mail.gmail.com>
+Message-ID: <CAHk-=wjzYKrwSDK3PFMC1C2x37aKzEuC7dVxg0kGt8h+vjZfjQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] mm: Add optional close() to struct vm_special_mapping
+To: Nathan Chancellor <nathan@kernel.org>, Guo Ren <guoren@kernel.org>, Brian Cain <bcain@quicinc.com>, 
+	Dinh Nguyen <dinguyen@kernel.org>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
+	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+	Johannes Berg <johannes@sipsolutions.net>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org, 
+	akpm@linux-foundation.org, christophe.leroy@csgroup.eu, jeffxu@google.com, 
+	Liam.Howlett@oracle.com, linux-kernel@vger.kernel.org, npiggin@gmail.com, 
+	oliver.sang@intel.com, pedro.falcato@gmail.com, linux-um@lists.infradead.org, 
+	linux-csky@vger.kernel.org, linux-hexagon <linux-hexagon@vger.kernel.org>, 
+	Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="00000000000029337b06200efd03"
 
+--00000000000029337b06200efd03
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, 19 Aug 2024 at 13:15, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Ok, I did a quick hack-job to remove that disgusting
+> install_special_mapping() legacy case.
+>
+> With this [..]
 
-On 19/08/2024 20:00, Barry Song wrote:
-> On Tue, Aug 20, 2024 at 2:17 AM Usama Arif <usamaarif642@gmail.com> wrote:
->>
->>
->>
->> On 19/08/2024 09:29, Barry Song wrote:
->>> Hi Usama,
->>>
->>> I feel it is much better now! thanks!
->>>
->>> On Mon, Aug 19, 2024 at 2:31 PM Usama Arif <usamaarif642@gmail.com> wrote:
->>>>
->>>> Currently folio->_deferred_list is used to keep track of
->>>> partially_mapped folios that are going to be split under memory
->>>> pressure. In the next patch, all THPs that are faulted in and collapsed
->>>> by khugepaged are also going to be tracked using _deferred_list.
->>>>
->>>> This patch introduces a pageflag to be able to distinguish between
->>>> partially mapped folios and others in the deferred_list at split time in
->>>> deferred_split_scan. Its needed as __folio_remove_rmap decrements
->>>> _mapcount, _large_mapcount and _entire_mapcount, hence it won't be
->>>> possible to distinguish between partially mapped folios and others in
->>>> deferred_split_scan.
->>>>
->>>> Eventhough it introduces an extra flag to track if the folio is
->>>> partially mapped, there is no functional change intended with this
->>>> patch and the flag is not useful in this patch itself, it will
->>>> become useful in the next patch when _deferred_list has non partially
->>>> mapped folios.
->>>>
->>>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
->>>> ---
->>>>  include/linux/huge_mm.h    |  4 ++--
->>>>  include/linux/page-flags.h | 11 +++++++++++
->>>>  mm/huge_memory.c           | 23 ++++++++++++++++-------
->>>>  mm/internal.h              |  4 +++-
->>>>  mm/memcontrol.c            |  3 ++-
->>>>  mm/migrate.c               |  3 ++-
->>>>  mm/page_alloc.c            |  5 +++--
->>>>  mm/rmap.c                  |  5 +++--
->>>>  mm/vmscan.c                |  3 ++-
->>>>  9 files changed, 44 insertions(+), 17 deletions(-)
->>>>
->>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->>>> index 4c32058cacfe..969f11f360d2 100644
->>>> --- a/include/linux/huge_mm.h
->>>> +++ b/include/linux/huge_mm.h
->>>> @@ -321,7 +321,7 @@ static inline int split_huge_page(struct page *page)
->>>>  {
->>>>         return split_huge_page_to_list_to_order(page, NULL, 0);
->>>>  }
->>>> -void deferred_split_folio(struct folio *folio);
->>>> +void deferred_split_folio(struct folio *folio, bool partially_mapped);
->>>>
->>>>  void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
->>>>                 unsigned long address, bool freeze, struct folio *folio);
->>>> @@ -495,7 +495,7 @@ static inline int split_huge_page(struct page *page)
->>>>  {
->>>>         return 0;
->>>>  }
->>>> -static inline void deferred_split_folio(struct folio *folio) {}
->>>> +static inline void deferred_split_folio(struct folio *folio, bool partially_mapped) {}
->>>>  #define split_huge_pmd(__vma, __pmd, __address)        \
->>>>         do { } while (0)
->>>>
->>>> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
->>>> index a0a29bd092f8..c3bb0e0da581 100644
->>>> --- a/include/linux/page-flags.h
->>>> +++ b/include/linux/page-flags.h
->>>> @@ -182,6 +182,7 @@ enum pageflags {
->>>>         /* At least one page in this folio has the hwpoison flag set */
->>>>         PG_has_hwpoisoned = PG_active,
->>>>         PG_large_rmappable = PG_workingset, /* anon or file-backed */
->>>> +       PG_partially_mapped = PG_reclaim, /* was identified to be partially mapped */
->>>>  };
->>>>
->>>>  #define PAGEFLAGS_MASK         ((1UL << NR_PAGEFLAGS) - 1)
->>>> @@ -861,8 +862,18 @@ static inline void ClearPageCompound(struct page *page)
->>>>         ClearPageHead(page);
->>>>  }
->>>>  FOLIO_FLAG(large_rmappable, FOLIO_SECOND_PAGE)
->>>> +FOLIO_TEST_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
->>>> +/*
->>>> + * PG_partially_mapped is protected by deferred_split split_queue_lock,
->>>> + * so its safe to use non-atomic set/clear.
->>>> + */
->>>> +__FOLIO_SET_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
->>>> +__FOLIO_CLEAR_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
->>>>  #else
->>>>  FOLIO_FLAG_FALSE(large_rmappable)
->>>> +FOLIO_TEST_FLAG_FALSE(partially_mapped)
->>>> +__FOLIO_SET_FLAG_NOOP(partially_mapped)
->>>> +__FOLIO_CLEAR_FLAG_NOOP(partially_mapped)
->>>>  #endif
->>>>
->>>>  #define PG_head_mask ((1UL << PG_head))
->>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>>> index 2d77b5d2291e..70ee49dfeaad 100644
->>>> --- a/mm/huge_memory.c
->>>> +++ b/mm/huge_memory.c
->>>> @@ -3398,6 +3398,7 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
->>>>                          * page_deferred_list.
->>>>                          */
->>>>                         list_del_init(&folio->_deferred_list);
->>>> +                       __folio_clear_partially_mapped(folio);
->>>>                 }
->>>>                 spin_unlock(&ds_queue->split_queue_lock);
->>>>                 if (mapping) {
->>>> @@ -3454,11 +3455,13 @@ void __folio_undo_large_rmappable(struct folio *folio)
->>>>         if (!list_empty(&folio->_deferred_list)) {
->>>>                 ds_queue->split_queue_len--;
->>>>                 list_del_init(&folio->_deferred_list);
->>>> +               __folio_clear_partially_mapped(folio);
->>>
->>> is it possible to make things clearer by
->>>
->>>  if (folio_clear_partially_mapped)
->>>     __folio_clear_partially_mapped(folio);
->>>
->>> While writing without conditions isn't necessarily wrong, adding a condition
->>> will improve the readability of the code and enhance the clarity of my mTHP
->>> counters series. also help decrease smp cache sync if we can avoid
->>> unnecessary writing?
->>>
->>
->> Do you mean if(folio_test_partially_mapped(folio))?
->>
->> I don't like this idea. I think it makes the readability worse? If I was looking at if (test) -> clear for the first time, I would become confused why its being tested if its going to be clear at the end anyways?
-> 
-> In the pmd-order case, the majority of folios are not partially mapped.
-> Unconditional writes will trigger cache synchronization across all
-> CPUs (related to the MESI protocol), making them more costly. By
-> using conditional writes, such as "if(test) write," we can avoid
-> most unnecessary writes, which is much more efficient. Additionally,
-> we only need to manage nr_split_deferred when the condition
-> is met. We are carefully evaluating all scenarios to determine
-> if modifications to the partially_mapped flag are necessary.
-> 
+I forgot to actually attach that "this". Here it is. For real, this time.
 
+                   Linus
 
-Hmm okay, as you said its needed for nr_split_deferred anyways. Something like below is ok to fold in?
+--00000000000029337b06200efd03
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m01fsax10>
+X-Attachment-Id: f_m01fsax10
 
-commit 4ae9e2067346effd902b342296987b97dee29018 (HEAD)
-Author: Usama Arif <usamaarif642@gmail.com>
-Date:   Mon Aug 19 21:07:16 2024 +0100
-
-    mm: Introduce a pageflag for partially mapped folios fix
-    
-    Test partially_mapped flag before clearing it. This should
-    avoid unnecessary writes and will be needed in the nr_split_deferred
-    series.
-    
-    Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 5d67d3b3c1b2..ccde60aaaa0f 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -3479,7 +3479,8 @@ void __folio_undo_large_rmappable(struct folio *folio)
-        if (!list_empty(&folio->_deferred_list)) {
-                ds_queue->split_queue_len--;
-                list_del_init(&folio->_deferred_list);
--               __folio_clear_partially_mapped(folio);
-+               if (folio_test_partially_mapped(folio))
-+                       __folio_clear_partially_mapped(folio);
-        }
-        spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
- }
-@@ -3610,7 +3611,8 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
-                } else {
-                        /* We lost race with folio_put() */
-                        list_del_init(&folio->_deferred_list);
--                       __folio_clear_partially_mapped(folio);
-+                       if (folio_test_partially_mapped(folio))
-+                               __folio_clear_partially_mapped(folio);
-                        ds_queue->split_queue_len--;
-                }
-                if (!--sc->nr_to_scan)
-
+IGFyY2gvY3NreS9rZXJuZWwvdmRzby5jICAgICAgICAgICAgfCAyOCArKysrKysrKysrKysrKysr
+KysrKystLS0tLS0tCiBhcmNoL2hleGFnb24va2VybmVsL3Zkc28uYyAgICAgICAgIHwgMTQgKysr
+KysrKysrKy0tLS0KIGFyY2gvbmlvczIvbW0vaW5pdC5jICAgICAgICAgICAgICAgfCAxMiArKysr
+KysrKy0tLS0KIGFyY2gvc2gva2VybmVsL3ZzeXNjYWxsL3ZzeXNjYWxsLmMgfCAxNCArKysrKysr
+KysrKy0tLQogYXJjaC94ODYvdW0vdmRzby92bWEuYyAgICAgICAgICAgICB8IDEyICsrKysrKysr
+LS0tLQogaW5jbHVkZS9saW51eC9tbS5oICAgICAgICAgICAgICAgICB8ICA0IC0tLS0KIG1tL21t
+YXAuYyAgICAgICAgICAgICAgICAgICAgICAgICAgfCAzMiArKysrKy0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLQogNyBmaWxlcyBjaGFuZ2VkLCA2MyBpbnNlcnRpb25zKCspLCA1MyBkZWxldGlv
+bnMoLSkKCmRpZmYgLS1naXQgYS9hcmNoL2Nza3kva2VybmVsL3Zkc28uYyBiL2FyY2gvY3NreS9r
+ZXJuZWwvdmRzby5jCmluZGV4IDJjYTg4NmU0YTQ1OC4uMWNkMTNhMmIzNGViIDEwMDY0NAotLS0g
+YS9hcmNoL2Nza3kva2VybmVsL3Zkc28uYworKysgYi9hcmNoL2Nza3kva2VybmVsL3Zkc28uYwpA
+QCAtNDUsOSArNDUsMTYgQEAgYXJjaF9pbml0Y2FsbCh2ZHNvX2luaXQpOwogaW50IGFyY2hfc2V0
+dXBfYWRkaXRpb25hbF9wYWdlcyhzdHJ1Y3QgbGludXhfYmlucHJtICpicHJtLAogCWludCB1c2Vz
+X2ludGVycCkKIHsKKwlzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYTsKIAlzdHJ1Y3QgbW1fc3Ry
+dWN0ICptbSA9IGN1cnJlbnQtPm1tOwogCXVuc2lnbmVkIGxvbmcgdmRzb19iYXNlLCB2ZHNvX2xl
+bjsKIAlpbnQgcmV0OworCXN0YXRpYyBzdHJ1Y3Qgdm1fc3BlY2lhbF9tYXBwaW5nIHZkc29fbWFw
+cGluZyA9IHsKKwkJLm5hbWUgPSAiW3Zkc29dIiwKKwl9OworCXN0YXRpYyBzdHJ1Y3Qgdm1fc3Bl
+Y2lhbF9tYXBwaW5nIHZ2YXJfbWFwcGluZyA9IHsKKwkJLm5hbWUgPSAiW3Z2YXJdIiwKKwl9Owog
+CiAJdmRzb19sZW4gPSAodmRzb19wYWdlcyArIDEpIDw8IFBBR0VfU0hJRlQ7CiAKQEAgLTY1LDIy
+ICs3MiwyOSBAQCBpbnQgYXJjaF9zZXR1cF9hZGRpdGlvbmFsX3BhZ2VzKHN0cnVjdCBsaW51eF9i
+aW5wcm0gKmJwcm0sCiAJICovCiAJbW0tPmNvbnRleHQudmRzbyA9ICh2b2lkICopdmRzb19iYXNl
+OwogCi0JcmV0ID0KLQkgICBpbnN0YWxsX3NwZWNpYWxfbWFwcGluZyhtbSwgdmRzb19iYXNlLCB2
+ZHNvX3BhZ2VzIDw8IFBBR0VfU0hJRlQsCisJdmRzb19tYXBwaW5nLnBhZ2VzID0gdmRzb19wYWdl
+bGlzdDsKKwl2bWEgPQorCSAgIF9pbnN0YWxsX3NwZWNpYWxfbWFwcGluZyhtbSwgdmRzb19iYXNl
+LCB2ZHNvX3BhZ2VzIDw8IFBBR0VfU0hJRlQsCiAJCShWTV9SRUFEIHwgVk1fRVhFQyB8IFZNX01B
+WVJFQUQgfCBWTV9NQVlXUklURSB8IFZNX01BWUVYRUMpLAotCQl2ZHNvX3BhZ2VsaXN0KTsKKwkJ
+JnZkc29fbWFwcGluZyk7CiAKLQlpZiAodW5saWtlbHkocmV0KSkgeworCWlmICh1bmxpa2VseShJ
+U19FUlIodm1hKSkpIHsKKwkJcmV0ID0gUFRSX0VSUih2bWEpOwogCQltbS0+Y29udGV4dC52ZHNv
+ID0gTlVMTDsKIAkJZ290byBlbmQ7CiAJfQogCiAJdmRzb19iYXNlICs9ICh2ZHNvX3BhZ2VzIDw8
+IFBBR0VfU0hJRlQpOwotCXJldCA9IGluc3RhbGxfc3BlY2lhbF9tYXBwaW5nKG1tLCB2ZHNvX2Jh
+c2UsIFBBR0VfU0laRSwKLQkJKFZNX1JFQUQgfCBWTV9NQVlSRUFEKSwgJnZkc29fcGFnZWxpc3Rb
+dmRzb19wYWdlc10pOworCXZ2YXJfbWFwcGluZy5wYWdlcyA9ICZ2ZHNvX3BhZ2VsaXN0W3Zkc29f
+cGFnZXNdOworCXZtYSA9IF9pbnN0YWxsX3NwZWNpYWxfbWFwcGluZyhtbSwgdmRzb19iYXNlLCBQ
+QUdFX1NJWkUsCisJCShWTV9SRUFEIHwgVk1fTUFZUkVBRCksICZ2dmFyX21hcHBpbmcpOwogCi0J
+aWYgKHVubGlrZWx5KHJldCkpCisJaWYgKHVubGlrZWx5KElTX0VSUih2bWEpKSkgeworCQlyZXQg
+PSBQVFJfRVJSKHZtYSk7CiAJCW1tLT5jb250ZXh0LnZkc28gPSBOVUxMOworCQlnb3RvIGVuZDsK
+Kwl9CisJcmV0ID0gMDsKIGVuZDoKIAltbWFwX3dyaXRlX3VubG9jayhtbSk7CiAJcmV0dXJuIHJl
+dDsKZGlmZiAtLWdpdCBhL2FyY2gvaGV4YWdvbi9rZXJuZWwvdmRzby5jIGIvYXJjaC9oZXhhZ29u
+L2tlcm5lbC92ZHNvLmMKaW5kZXggMmU0ODcyZDYyMTI0Li5mMWViMmNkMmZkMjkgMTAwNjQ0Ci0t
+LSBhL2FyY2gvaGV4YWdvbi9rZXJuZWwvdmRzby5jCisrKyBiL2FyY2gvaGV4YWdvbi9rZXJuZWwv
+dmRzby5jCkBAIC01MSw3ICs1MSwxMSBAQCBpbnQgYXJjaF9zZXR1cF9hZGRpdGlvbmFsX3BhZ2Vz
+KHN0cnVjdCBsaW51eF9iaW5wcm0gKmJwcm0sIGludCB1c2VzX2ludGVycCkKIHsKIAlpbnQgcmV0
+OwogCXVuc2lnbmVkIGxvbmcgdmRzb19iYXNlOworCXN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1h
+OwogCXN0cnVjdCBtbV9zdHJ1Y3QgKm1tID0gY3VycmVudC0+bW07CisJc3RhdGljIHN0cnVjdCB2
+bV9zcGVjaWFsX21hcHBpbmcgdmRzb19tYXBwaW5nID0geworCQluYW1lID0gIlt2ZHNvXSIsCisJ
+fTsKIAogCWlmIChtbWFwX3dyaXRlX2xvY2tfa2lsbGFibGUobW0pKQogCQlyZXR1cm4gLUVJTlRS
+OwpAQCAtNjYsMTYgKzcwLDE4IEBAIGludCBhcmNoX3NldHVwX2FkZGl0aW9uYWxfcGFnZXMoc3Ry
+dWN0IGxpbnV4X2JpbnBybSAqYnBybSwgaW50IHVzZXNfaW50ZXJwKQogCX0KIAogCS8qIE1BWVdS
+SVRFIHRvIGFsbG93IGdkYiB0byBDT1cgYW5kIHNldCBicmVha3BvaW50cy4gKi8KLQlyZXQgPSBp
+bnN0YWxsX3NwZWNpYWxfbWFwcGluZyhtbSwgdmRzb19iYXNlLCBQQUdFX1NJWkUsCisJdmRzb19t
+YXBwaW5nLnBhZ2VzID0gJiZ2ZHNvX3BhZ2U7CisJdm1hID0gX2luc3RhbGxfc3BlY2lhbF9tYXBw
+aW5nKG1tLCB2ZHNvX2Jhc2UsIFBBR0VfU0laRSwKIAkJCQkgICAgICBWTV9SRUFEfFZNX0VYRUN8
+CiAJCQkJICAgICAgVk1fTUFZUkVBRHxWTV9NQVlXUklURXxWTV9NQVlFWEVDLAotCQkJCSAgICAg
+ICZ2ZHNvX3BhZ2UpOworCQkJCSAgICAgICZ2ZHNvX21hcHBpbmcpOwogCi0JaWYgKHJldCkKKwly
+ZXQgPSBQVFJfRVJSKHZtYSk7CisJaWYgKElTX0VSUih2bWEpKQogCQlnb3RvIHVwX2ZhaWw7CiAK
+IAltbS0+Y29udGV4dC52ZHNvID0gKHZvaWQgKil2ZHNvX2Jhc2U7Ci0KKwlyZXQgPSAwOwogdXBf
+ZmFpbDoKIAltbWFwX3dyaXRlX3VubG9jayhtbSk7CiAJcmV0dXJuIHJldDsKZGlmZiAtLWdpdCBh
+L2FyY2gvbmlvczIvbW0vaW5pdC5jIGIvYXJjaC9uaW9zMi9tbS9pbml0LmMKaW5kZXggMzQ1OWRm
+MjhhZmVlLi5hMjI3ODQ4NWRlMTkgMTAwNjQ0Ci0tLSBhL2FyY2gvbmlvczIvbW0vaW5pdC5jCisr
+KyBiL2FyY2gvbmlvczIvbW0vaW5pdC5jCkBAIC04Miw2ICs4MiwxMCBAQCB2b2lkIF9faW5pdCBt
+bXVfaW5pdCh2b2lkKQogcGdkX3Qgc3dhcHBlcl9wZ19kaXJbUFRSU19QRVJfUEdEXSBfX2FsaWdu
+ZWQoUEFHRV9TSVpFKTsKIHB0ZV90IGludmFsaWRfcHRlX3RhYmxlW1BUUlNfUEVSX1BURV0gX19h
+bGlnbmVkKFBBR0VfU0laRSk7CiBzdGF0aWMgc3RydWN0IHBhZ2UgKmt1c2VyX3BhZ2VbMV07Citz
+dGF0aWMgc3RydWN0IHZtX3NwZWNpYWxfbWFwcGluZyB2ZHNvX21hcHBpbmcgPSB7CisJLm5hbWUg
+PSAiW3Zkc29dIiwKKwkucGFnZXMgPSBrdXNlcl9wYWdlLAorfTsKIAogc3RhdGljIGludCBhbGxv
+Y19rdXNlcl9wYWdlKHZvaWQpCiB7CkBAIC0xMDYsMTggKzExMCwxOCBAQCBhcmNoX2luaXRjYWxs
+KGFsbG9jX2t1c2VyX3BhZ2UpOwogaW50IGFyY2hfc2V0dXBfYWRkaXRpb25hbF9wYWdlcyhzdHJ1
+Y3QgbGludXhfYmlucHJtICpicHJtLCBpbnQgdXNlc19pbnRlcnApCiB7CiAJc3RydWN0IG1tX3N0
+cnVjdCAqbW0gPSBjdXJyZW50LT5tbTsKLQlpbnQgcmV0OworCXN0cnVjdCB2bV9hcmVhX3N0cnVj
+dCAqdm1hOwogCiAJbW1hcF93cml0ZV9sb2NrKG1tKTsKIAogCS8qIE1hcCBrdXNlciBoZWxwZXJz
+IHRvIHVzZXIgc3BhY2UgYWRkcmVzcyAqLwotCXJldCA9IGluc3RhbGxfc3BlY2lhbF9tYXBwaW5n
+KG1tLCBLVVNFUl9CQVNFLCBLVVNFUl9TSVpFLAorCXZtYSA9IF9pbnN0YWxsX3NwZWNpYWxfbWFw
+cGluZyhtbSwgS1VTRVJfQkFTRSwgS1VTRVJfU0laRSwKIAkJCQkgICAgICBWTV9SRUFEIHwgVk1f
+RVhFQyB8IFZNX01BWVJFQUQgfAotCQkJCSAgICAgIFZNX01BWUVYRUMsIGt1c2VyX3BhZ2UpOwor
+CQkJCSAgICAgIFZNX01BWUVYRUMsICZ2ZHNvX21hcHBpbmcpOwogCiAJbW1hcF93cml0ZV91bmxv
+Y2sobW0pOwogCi0JcmV0dXJuIHJldDsKKwlyZXR1cm4gSVNfRVJSKHZtYSkgPyBQVFJfRVJSKHZt
+YSkgOiAwOwogfQogCiBjb25zdCBjaGFyICphcmNoX3ZtYV9uYW1lKHN0cnVjdCB2bV9hcmVhX3N0
+cnVjdCAqdm1hKQpkaWZmIC0tZ2l0IGEvYXJjaC9zaC9rZXJuZWwvdnN5c2NhbGwvdnN5c2NhbGwu
+YyBiL2FyY2gvc2gva2VybmVsL3ZzeXNjYWxsL3ZzeXNjYWxsLmMKaW5kZXggMWJkODVhNjk0OWM0
+Li41ZTY4YWI3YTg4OTggMTAwNjQ0Ci0tLSBhL2FyY2gvc2gva2VybmVsL3ZzeXNjYWxsL3ZzeXNj
+YWxsLmMKKysrIGIvYXJjaC9zaC9rZXJuZWwvdnN5c2NhbGwvdnN5c2NhbGwuYwpAQCAtMzYsNiAr
+MzYsMTAgQEAgX19zZXR1cCgidmRzbz0iLCB2ZHNvX3NldHVwKTsKICAqLwogZXh0ZXJuIGNvbnN0
+IGNoYXIgdnN5c2NhbGxfdHJhcGFfc3RhcnQsIHZzeXNjYWxsX3RyYXBhX2VuZDsKIHN0YXRpYyBz
+dHJ1Y3QgcGFnZSAqc3lzY2FsbF9wYWdlc1sxXTsKK3N0YXRpYyBzdHJ1Y3Qgdm1fc3BlY2lhbF9t
+YXBwaW5nIHZkc29fbWFwcGluZyA9IHsKKwkubmFtZSA9ICJbdmRzb10iLAorCS5wYWdlcyA9IHN5
+c2NhbGxfcGFnZXM7Cit9OwogCiBpbnQgX19pbml0IHZzeXNjYWxsX2luaXQodm9pZCkKIHsKQEAg
+LTU4LDYgKzYyLDcgQEAgaW50IF9faW5pdCB2c3lzY2FsbF9pbml0KHZvaWQpCiBpbnQgYXJjaF9z
+ZXR1cF9hZGRpdGlvbmFsX3BhZ2VzKHN0cnVjdCBsaW51eF9iaW5wcm0gKmJwcm0sIGludCB1c2Vz
+X2ludGVycCkKIHsKIAlzdHJ1Y3QgbW1fc3RydWN0ICptbSA9IGN1cnJlbnQtPm1tOworCXN0cnVj
+dCB2bV9hcmVhX3N0cnVjdCAqdm1hOwogCXVuc2lnbmVkIGxvbmcgYWRkcjsKIAlpbnQgcmV0Owog
+CkBAIC03MCwxNCArNzUsMTcgQEAgaW50IGFyY2hfc2V0dXBfYWRkaXRpb25hbF9wYWdlcyhzdHJ1
+Y3QgbGludXhfYmlucHJtICpicHJtLCBpbnQgdXNlc19pbnRlcnApCiAJCWdvdG8gdXBfZmFpbDsK
+IAl9CiAKLQlyZXQgPSBpbnN0YWxsX3NwZWNpYWxfbWFwcGluZyhtbSwgYWRkciwgUEFHRV9TSVpF
+LAorCXZkc29fbWFwcGluZy5wYWdlcyA9IHN5c2NhbGxfcGFnZXM7CisJdm1hID0gX2luc3RhbGxf
+c3BlY2lhbF9tYXBwaW5nKG1tLCBhZGRyLCBQQUdFX1NJWkUsCiAJCQkJICAgICAgVk1fUkVBRCB8
+IFZNX0VYRUMgfAogCQkJCSAgICAgIFZNX01BWVJFQUQgfCBWTV9NQVlXUklURSB8IFZNX01BWUVY
+RUMsCi0JCQkJICAgICAgc3lzY2FsbF9wYWdlcyk7Ci0JaWYgKHVubGlrZWx5KHJldCkpCisJCQkJ
+ICAgICAgJnZkc29fbWFwcGluZyk7CisJcmV0ID0gUFRSX0VSUih2bWEpOworCWlmICh1bmxpa2Vs
+eShJU19FUlIodm1hKSkpCiAJCWdvdG8gdXBfZmFpbDsKIAogCWN1cnJlbnQtPm1tLT5jb250ZXh0
+LnZkc28gPSAodm9pZCAqKWFkZHI7CisJcmV0ID0gMDsKIAogdXBfZmFpbDoKIAltbWFwX3dyaXRl
+X3VubG9jayhtbSk7CmRpZmYgLS1naXQgYS9hcmNoL3g4Ni91bS92ZHNvL3ZtYS5jIGIvYXJjaC94
+ODYvdW0vdmRzby92bWEuYwppbmRleCA3NmQ5ZjZjZTdhM2QuLmYyMzhmN2IzM2NkZCAxMDA2NDQK
+LS0tIGEvYXJjaC94ODYvdW0vdmRzby92bWEuYworKysgYi9hcmNoL3g4Ni91bS92ZHNvL3ZtYS5j
+CkBAIC01Miw4ICs1MiwxMSBAQCBzdWJzeXNfaW5pdGNhbGwoaW5pdF92ZHNvKTsKIAogaW50IGFy
+Y2hfc2V0dXBfYWRkaXRpb25hbF9wYWdlcyhzdHJ1Y3QgbGludXhfYmlucHJtICpicHJtLCBpbnQg
+dXNlc19pbnRlcnApCiB7Ci0JaW50IGVycjsKKwlzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYTsK
+IAlzdHJ1Y3QgbW1fc3RydWN0ICptbSA9IGN1cnJlbnQtPm1tOworCXN0YXRpYyBzdHJ1Y3Qgdm1f
+c3BlY2lhbF9tYXBwaW5nIHZkc29fbWFwcGluZyA9IHsKKwkJLm5hbWUgPSAiW3Zkc29dIiwKKwl9
+OwogCiAJaWYgKCF2ZHNvX2VuYWJsZWQpCiAJCXJldHVybiAwOwpAQCAtNjEsMTIgKzY0LDEzIEBA
+IGludCBhcmNoX3NldHVwX2FkZGl0aW9uYWxfcGFnZXMoc3RydWN0IGxpbnV4X2JpbnBybSAqYnBy
+bSwgaW50IHVzZXNfaW50ZXJwKQogCWlmIChtbWFwX3dyaXRlX2xvY2tfa2lsbGFibGUobW0pKQog
+CQlyZXR1cm4gLUVJTlRSOwogCi0JZXJyID0gaW5zdGFsbF9zcGVjaWFsX21hcHBpbmcobW0sIHVt
+X3Zkc29fYWRkciwgUEFHRV9TSVpFLAorCXZkc29fbWFwcGluZy5wYWdlcyA9IHZkc29wOworCXZt
+YSA9IF9pbnN0YWxsX3NwZWNpYWxfbWFwcGluZyhtbSwgdW1fdmRzb19hZGRyLCBQQUdFX1NJWkUs
+CiAJCVZNX1JFQUR8Vk1fRVhFQ3wKIAkJVk1fTUFZUkVBRHxWTV9NQVlXUklURXxWTV9NQVlFWEVD
+LAotCQl2ZHNvcCk7CisJCSZ2ZHNvX21hcHBpbmcpOwogCiAJbW1hcF93cml0ZV91bmxvY2sobW0p
+OwogCi0JcmV0dXJuIGVycjsKKwlyZXR1cm4gSVNfRVJSKHZtYSkgPyBQVFJfRVJSKHZtYSkgOiAw
+OwogfQpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9tbS5oIGIvaW5jbHVkZS9saW51eC9tbS5o
+CmluZGV4IDY1NDlkMDk3OWIyOC4uN2I3ZTQ3OTdjMGZkIDEwMDY0NAotLS0gYS9pbmNsdWRlL2xp
+bnV4L21tLmgKKysrIGIvaW5jbHVkZS9saW51eC9tbS5oCkBAIC0zMzgxLDEwICszMzgxLDYgQEAg
+ZXh0ZXJuIHN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqX2luc3RhbGxfc3BlY2lhbF9tYXBwaW5nKHN0
+cnVjdCBtbV9zdHJ1Y3QgKm1tLAogCQkJCSAgIHVuc2lnbmVkIGxvbmcgYWRkciwgdW5zaWduZWQg
+bG9uZyBsZW4sCiAJCQkJICAgdW5zaWduZWQgbG9uZyBmbGFncywKIAkJCQkgICBjb25zdCBzdHJ1
+Y3Qgdm1fc3BlY2lhbF9tYXBwaW5nICpzcGVjKTsKLS8qIFRoaXMgaXMgYW4gb2Jzb2xldGUgYWx0
+ZXJuYXRpdmUgdG8gX2luc3RhbGxfc3BlY2lhbF9tYXBwaW5nLiAqLwotZXh0ZXJuIGludCBpbnN0
+YWxsX3NwZWNpYWxfbWFwcGluZyhzdHJ1Y3QgbW1fc3RydWN0ICptbSwKLQkJCQkgICB1bnNpZ25l
+ZCBsb25nIGFkZHIsIHVuc2lnbmVkIGxvbmcgbGVuLAotCQkJCSAgIHVuc2lnbmVkIGxvbmcgZmxh
+Z3MsIHN0cnVjdCBwYWdlICoqcGFnZXMpOwogCiB1bnNpZ25lZCBsb25nIHJhbmRvbWl6ZV9zdGFj
+a190b3AodW5zaWduZWQgbG9uZyBzdGFja190b3ApOwogdW5zaWduZWQgbG9uZyByYW5kb21pemVf
+cGFnZSh1bnNpZ25lZCBsb25nIHN0YXJ0LCB1bnNpZ25lZCBsb25nIHJhbmdlKTsKZGlmZiAtLWdp
+dCBhL21tL21tYXAuYyBiL21tL21tYXAuYwppbmRleCBkMGRmYzg1YjIwOWIuLmVjZTkyZTZjM2Vh
+ZCAxMDA2NDQKLS0tIGEvbW0vbW1hcC5jCisrKyBiL21tL21tYXAuYwpAQCAtMzY2NSwyNyArMzY2
+NSwxNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IHZtX29wZXJhdGlvbnNfc3RydWN0IHNwZWNpYWxf
+bWFwcGluZ192bW9wcyA9IHsKIAkubWF5X3NwbGl0ID0gc3BlY2lhbF9tYXBwaW5nX3NwbGl0LAog
+fTsKIAotc3RhdGljIGNvbnN0IHN0cnVjdCB2bV9vcGVyYXRpb25zX3N0cnVjdCBsZWdhY3lfc3Bl
+Y2lhbF9tYXBwaW5nX3Ztb3BzID0gewotCS5jbG9zZSA9IHNwZWNpYWxfbWFwcGluZ19jbG9zZSwK
+LQkuZmF1bHQgPSBzcGVjaWFsX21hcHBpbmdfZmF1bHQsCi19OwotCiBzdGF0aWMgdm1fZmF1bHRf
+dCBzcGVjaWFsX21hcHBpbmdfZmF1bHQoc3RydWN0IHZtX2ZhdWx0ICp2bWYpCiB7CiAJc3RydWN0
+IHZtX2FyZWFfc3RydWN0ICp2bWEgPSB2bWYtPnZtYTsKIAlwZ29mZl90IHBnb2ZmOwogCXN0cnVj
+dCBwYWdlICoqcGFnZXM7CisJc3RydWN0IHZtX3NwZWNpYWxfbWFwcGluZyAqc20gPSB2bWEtPnZt
+X3ByaXZhdGVfZGF0YTsKIAotCWlmICh2bWEtPnZtX29wcyA9PSAmbGVnYWN5X3NwZWNpYWxfbWFw
+cGluZ192bW9wcykgewotCQlwYWdlcyA9IHZtYS0+dm1fcHJpdmF0ZV9kYXRhOwotCX0gZWxzZSB7
+Ci0JCXN0cnVjdCB2bV9zcGVjaWFsX21hcHBpbmcgKnNtID0gdm1hLT52bV9wcml2YXRlX2RhdGE7
+CisJaWYgKHNtLT5mYXVsdCkKKwkJcmV0dXJuIHNtLT5mYXVsdChzbSwgdm1mLT52bWEsIHZtZik7
+CiAKLQkJaWYgKHNtLT5mYXVsdCkKLQkJCXJldHVybiBzbS0+ZmF1bHQoc20sIHZtZi0+dm1hLCB2
+bWYpOwotCi0JCXBhZ2VzID0gc20tPnBhZ2VzOwotCX0KKwlwYWdlcyA9IHNtLT5wYWdlczsKIAog
+CWZvciAocGdvZmYgPSB2bWYtPnBnb2ZmOyBwZ29mZiAmJiAqcGFnZXM7ICsrcGFnZXMpCiAJCXBn
+b2ZmLS07CkBAIC0zNzQwLDggKzM3MzAsNyBAQCBib29sIHZtYV9pc19zcGVjaWFsX21hcHBpbmco
+Y29uc3Qgc3RydWN0IHZtX2FyZWFfc3RydWN0ICp2bWEsCiAJY29uc3Qgc3RydWN0IHZtX3NwZWNp
+YWxfbWFwcGluZyAqc20pCiB7CiAJcmV0dXJuIHZtYS0+dm1fcHJpdmF0ZV9kYXRhID09IHNtICYm
+Ci0JCSh2bWEtPnZtX29wcyA9PSAmc3BlY2lhbF9tYXBwaW5nX3Ztb3BzIHx8Ci0JCSB2bWEtPnZt
+X29wcyA9PSAmbGVnYWN5X3NwZWNpYWxfbWFwcGluZ192bW9wcyk7CisJCXZtYS0+dm1fb3BzID09
+ICZzcGVjaWFsX21hcHBpbmdfdm1vcHM7CiB9CiAKIC8qCkBAIC0zNzYyLDE3ICszNzUxLDYgQEAg
+c3RydWN0IHZtX2FyZWFfc3RydWN0ICpfaW5zdGFsbF9zcGVjaWFsX21hcHBpbmcoCiAJCQkJCSZz
+cGVjaWFsX21hcHBpbmdfdm1vcHMpOwogfQogCi1pbnQgaW5zdGFsbF9zcGVjaWFsX21hcHBpbmco
+c3RydWN0IG1tX3N0cnVjdCAqbW0sCi0JCQkgICAgdW5zaWduZWQgbG9uZyBhZGRyLCB1bnNpZ25l
+ZCBsb25nIGxlbiwKLQkJCSAgICB1bnNpZ25lZCBsb25nIHZtX2ZsYWdzLCBzdHJ1Y3QgcGFnZSAq
+KnBhZ2VzKQotewotCXN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hID0gX19pbnN0YWxsX3NwZWNp
+YWxfbWFwcGluZygKLQkJbW0sIGFkZHIsIGxlbiwgdm1fZmxhZ3MsICh2b2lkICopcGFnZXMsCi0J
+CSZsZWdhY3lfc3BlY2lhbF9tYXBwaW5nX3Ztb3BzKTsKLQotCXJldHVybiBQVFJfRVJSX09SX1pF
+Uk8odm1hKTsKLX0KLQogc3RhdGljIERFRklORV9NVVRFWChtbV9hbGxfbG9ja3NfbXV0ZXgpOwog
+CiBzdGF0aWMgdm9pZCB2bV9sb2NrX2Fub25fdm1hKHN0cnVjdCBtbV9zdHJ1Y3QgKm1tLCBzdHJ1
+Y3QgYW5vbl92bWEgKmFub25fdm1hKQo=
+--00000000000029337b06200efd03--
 
