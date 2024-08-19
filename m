@@ -1,133 +1,211 @@
-Return-Path: <linux-kernel+bounces-291621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778769564D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:41:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 967159564DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA70F1C21508
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:41:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CF1E28179C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF7E157E82;
-	Mon, 19 Aug 2024 07:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TsQLf6Dj"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F47158556;
+	Mon, 19 Aug 2024 07:42:31 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C678D14AD3D
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F057E1581E0
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724053304; cv=none; b=WzZhXTalxYJPDZQFbxiozob2z0ZudKcfXwBdCtcGjvwBSDabn8xor5z8VQLN6y86e2W2JJpQIcWNAoSiNuJP40DjsU9faytBUhMXa+fg7GRL4zn56CZQNkQeaM5j6TXG2JJhNE9haBp4e1xJSvDNfkN30y3VYdfrsPUfIpCWjLs=
+	t=1724053350; cv=none; b=VDIe/7uijzp3l8fXoNZ0IEBfw+eCSG76+Rhp/4Wx/TK9EbuNi5BRQhuaa1TTqYwujv6P+H4ut2f2sx9PCqZIApZJDep5PRKpkPNMp1kYVPn/f33p0rD+wb6hAWhRCgHjvyz2mp/KYXQrRZOF/8IV/mMZrVQeIOKOOp7oqNxqyPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724053304; c=relaxed/simple;
-	bh=pMOKM3RBsC847tUB099K/Qd4wLcn3O1RCtfoiU2rU1s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=msRxvsM4d+YUS+ZcELfqs4lK1jZpqz7+sG+6X85VqwuWBK5YJFCfdQTpExlmSOcZueLL337wTo9KcYWSrNiaqzIZPyg+hhFZaQU2NHkEJcb+7S38XoRIG5Ay7sqyn/A3s+g6Bl/EUsI8RC9aPihtmemGFuxLxYvPhzZxh6LB3qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TsQLf6Dj; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7a94aa5080so454093566b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 00:41:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724053301; x=1724658101; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=u4BNLaKPQ8H2b7/0myD7ZpvHq9yb9ugQtH6z/mwVSiE=;
-        b=TsQLf6DjFzkN7im95bHmPvsZdOmT3fik4tLHhsU9DaMdalOYRjXcorRaReFCTZv1xs
-         muCWfYivOjQJo4ok/HsvHbbAuj/J1meeA+0wor8F5Z4xYLgM9o3EOIRH9RWRHni4bwOw
-         sd0taHhb+Lo32+GS8yBhselKH1y5G51GisVrcpqL/8+OAg+KPtOkchrfRawsRrk9+JqV
-         C+FKogV43Fb/5/aoQtPIzdDAZQqFU5at4uq6srlpRpWm8oIqIWfl3Q5nGbGsUw3dN0bU
-         iepQ82OEOBVIiN5O/T4DheqkG2r/Bv8yo2WE2FDHgwdgnL1TkwoF5saT2BZ+7I0qAdZ1
-         M17A==
+	s=arc-20240116; t=1724053350; c=relaxed/simple;
+	bh=+JDLI63S1ln8et2UVMGrEsItpYkbK0XsXQggLMv1DI4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bvqLBlQMVbzA6xo74sglCxiyeDynLBbl5lScirXRbsF1MT2Gtr40soXDCVI1ZoERlyuYvDOnqBgJgqnwo0SeUtQBn6apjPg3CM+PgyymBx2qa3CFbd6XjBLdo2w99AxpOLCBrTI/+QMr1XW/vkfQlxmCuoW2hQc4Hn4mxKIqTqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81f99a9111fso414778639f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 00:42:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724053301; x=1724658101;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u4BNLaKPQ8H2b7/0myD7ZpvHq9yb9ugQtH6z/mwVSiE=;
-        b=qG07tcsD0gJNYFj5OColfYu1To+ZtcFnY7k0VHQXwD18bu2o8/HHjFS98OihYC7+cI
-         DSCTSnc7jY76wgy0w6N6PTVX0DoFN0Ug9Kh8bmrDy0aCq2DJN442lK7ZQcixwZ6iFMFh
-         lt3Y4Qb1Y+bef5YooTWluoV9dpZBhKdX6ZJQcO+zX8aXZ8N8adw66wKjLpaE6P0qd88h
-         FQEPhk42zZ4SWZjmJ8HHMFCn3xQOi66Ywsfbe3LN5n9GxZebhR+DqHbpNF9GhBxgnHsJ
-         ipVRxEFoMJ0VgVwDYCVQnTPvMsvaekoOa2NNVnJKnho/EOAXEOp593oWfOe0+/jo4VBl
-         9eqQ==
-X-Gm-Message-State: AOJu0YwnBh+uAdKB7hNTWIS+hCt0Mz4mawHuXXCNuxQkKSV2309VvSfy
-	Ld3Ja0Fy7pDgKHrn8zGPKMV+KumM3w5/mSLk43yCRDjcTCVgqGxyZjO5ts5v
-X-Google-Smtp-Source: AGHT+IGPw7qhaBFVt9/ceZnnt1oC2wT45i5hNIpKz9Kf1rRA8pXiDQxeXeHb/+jbWpbKyU8tTSJgKw==
-X-Received: by 2002:a17:907:3fa9:b0:a6f:4804:d41a with SMTP id a640c23a62f3a-a8392a03a86mr724050166b.55.1724053300332;
-        Mon, 19 Aug 2024 00:41:40 -0700 (PDT)
-Received: from fedora.iskraemeco.si ([193.77.86.250])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383948d19sm600006866b.186.2024.08.19.00.41.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 00:41:39 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH -tip] cleanup: Remove address space of returned pointer
-Date: Mon, 19 Aug 2024 09:41:15 +0200
-Message-ID: <20240819074124.143565-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.46.0
+        d=1e100.net; s=20230601; t=1724053348; x=1724658148;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Pw0Pj8KvLQLM9Mw/vG95gIC/N37eafE73fcwI3LDHFg=;
+        b=Cpyzd4edZ+mD5opqJiSczY50IESsyzvhGx87IAuIEl3jouxa5N4gVd1mle5LupCmKk
+         GXgZK5l2ns2/7BXBrah8uXwRpC9GkU6RyC4CQqHnIo0edXTwL6XFKIM8JSibyM+jmRq+
+         k3SrAP8wDY8WbnbYSv40UJGCqyJNt3pBEUjjB2mv8fCTWuPSC3Of2AdoaLgcMjAWNTTt
+         6WNZ0EHerjq0/QD0xy210rl+IowrSacZPrf3rfpBwLFLvm+DjrRAxbfBnftxHdnNa87s
+         oXf06XjVH0/ziH2rBMNlSium9WVS9h1rw/UQoXj43dZGW84oFzBn6IIK3BcOB3V/TC+Q
+         SMkA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjv9R/OErtHuICTl0JLjNVwu1ATW9ViY9ZU3tjL4SG4yicwJEliqVU+8qsx1vfRWIjxF+Fe7t4vaQrFMSumZdHKwO44cOo/dqqCvxF
+X-Gm-Message-State: AOJu0Yz+os4QT+LWBRkSnPNxPM7wEY8zfjwAlYeZdlOfw9ULLuKIpdU8
+	Fed+Zj04PwYtlXHT7n1REEtdmZbzkqlr7g21ekSfZ9NmDUy7zdrQeV63zK9yMYDvqsONdN4mR4D
+	NR0h7YXIythSIJyDpVjfQL7KoWccbeMtKaSO3/slO82H8vJpqfA2VcgE=
+X-Google-Smtp-Source: AGHT+IH6T/IC2jUcSg/RgvP695bUb09z977MQDV3/XgELvG3iPoIyfaXC7QIOxbiH5AZ1l4+bBshweC3eNR1INU7atoV71WH2+kz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:8327:b0:4c0:9a3e:c264 with SMTP id
+ 8926c6da1cb9f-4cce15dbcf6mr571306173.2.1724053348051; Mon, 19 Aug 2024
+ 00:42:28 -0700 (PDT)
+Date: Mon, 19 Aug 2024 00:42:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000062812a062004738b@google.com>
+Subject: [syzbot] [ext4?] KASAN: use-after-free Read in ext4_search_dir (2)
+From: syzbot <syzbot+0c2508114d912a54ee79@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-Guard functions in local_lock.h are defined using DEFINE_GUARD() and
-DEFINE_LOCK_GUARD_1() macros having lock type defined as pointer in
-the percpu address space. The functions, defined by these macros
-return value in generic address space, causing:
+Hello,
 
-cleanup.h:157:18: error: return from pointer to non-enclosed address space
+syzbot found the following issue on:
 
-and
+HEAD commit:    47ac09b91bef Linux 6.11-rc4
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=153eeafd980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=df2f0ed7e30a639d
+dashboard link: https://syzkaller.appspot.com/bug?extid=0c2508114d912a54ee79
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1335fe05980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=156ba6fd980000
 
-cleanup.h:214:18: error: return from pointer to non-enclosed address space
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-47ac09b9.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6db2a1c6b666/vmlinux-47ac09b9.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b1c782255526/bzImage-47ac09b9.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/83fcfca5f30f/mount_0.gz
 
-when strict percpu checks are enabled.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0c2508114d912a54ee79@syzkaller.appspotmail.com
 
-Add explicit casts to remove address space of the returned pointer.
+EXT4-fs (loop0): mounted filesystem 00000000-0000-0000-0000-000000000000 r/w without journal. Quota mode: none.
+loop0: detected capacity change from 2048 to 2047
+==================================================================
+BUG: KASAN: use-after-free in ext4_search_dir+0xf2/0x1c0 fs/ext4/namei.c:1500
+Read of size 1 at addr ffff88803e91130f by task syz-executor269/5103
 
-Found by GCC's named address space checks.
+CPU: 0 UID: 0 PID: 5103 Comm: syz-executor269 Not tainted 6.11.0-rc4-syzkaller #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ ext4_search_dir+0xf2/0x1c0 fs/ext4/namei.c:1500
+ ext4_find_inline_entry+0x4be/0x5e0 fs/ext4/inline.c:1697
+ __ext4_find_entry+0x2b4/0x1b30 fs/ext4/namei.c:1573
+ ext4_lookup_entry fs/ext4/namei.c:1727 [inline]
+ ext4_lookup+0x15f/0x750 fs/ext4/namei.c:1795
+ lookup_one_qstr_excl+0x11f/0x260 fs/namei.c:1633
+ filename_create+0x297/0x540 fs/namei.c:3980
+ do_symlinkat+0xf9/0x3a0 fs/namei.c:4587
+ __do_sys_symlinkat fs/namei.c:4610 [inline]
+ __se_sys_symlinkat fs/namei.c:4607 [inline]
+ __x64_sys_symlinkat+0x95/0xb0 fs/namei.c:4607
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3e73ced469
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 21 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff4d40c258 EFLAGS: 00000246 ORIG_RAX: 000000000000010a
+RAX: ffffffffffffffda RBX: 0032656c69662f2e RCX: 00007f3e73ced469
+RDX: 0000000020000200 RSI: 00000000ffffff9c RDI: 00000000200001c0
+RBP: 0000000000000000 R08: 00007fff4d40c290 R09: 00007fff4d40c290
+R10: 0023706f6f6c2f76 R11: 0000000000000246 R12: 00007fff4d40c27c
+R13: 0000000000000003 R14: 431bde82d7b634db R15: 00007fff4d40c2b0
+ </TASK>
 
-Fixes: e4ab322fbaaa ("cleanup: Add conditional guard support")
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x7fb7091d9 pfn:0x3e911
+flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
+raw: 04fff00000000000 dead000000000100 dead000000000122 0000000000000000
+raw: 00000007fb7091d9 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as freed
+page last allocated via order 0, migratetype Movable, gfp_mask 0x140dca(GFP_HIGHUSER_MOVABLE|__GFP_COMP|__GFP_ZERO), pid 5083, tgid 5083 (sshd), ts 84338308196, free_ts 84419190442
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1493
+ prep_new_page mm/page_alloc.c:1501 [inline]
+ get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3439
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4695
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2263
+ folio_alloc_mpol_noprof mm/mempolicy.c:2281 [inline]
+ vma_alloc_folio_noprof+0x12e/0x230 mm/mempolicy.c:2312
+ folio_prealloc+0x31/0x170
+ alloc_anon_folio mm/memory.c:4498 [inline]
+ do_anonymous_page mm/memory.c:4555 [inline]
+ do_pte_missing mm/memory.c:3945 [inline]
+ handle_pte_fault+0x255e/0x6fc0 mm/memory.c:5521
+ __handle_mm_fault mm/memory.c:5664 [inline]
+ handle_mm_fault+0x1029/0x1980 mm/memory.c:5832
+ do_user_addr_fault arch/x86/mm/fault.c:1338 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+ exc_page_fault+0x459/0x8c0 arch/x86/mm/fault.c:1539
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+page last free pid 5083 tgid 5083 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1094 [inline]
+ free_unref_folios+0x103a/0x1b00 mm/page_alloc.c:2660
+ folios_put_refs+0x76e/0x860 mm/swap.c:1039
+ free_pages_and_swap_cache+0x2ea/0x690 mm/swap_state.c:332
+ __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
+ tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
+ tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
+ tlb_flush_mmu+0x3a3/0x680 mm/mmu_gather.c:373
+ tlb_finish_mmu+0xd4/0x200 mm/mmu_gather.c:465
+ unmap_region+0x2df/0x350 mm/mmap.c:2441
+ do_vmi_align_munmap+0x1122/0x18c0 mm/mmap.c:2754
+ do_vmi_munmap+0x261/0x2f0 mm/mmap.c:2830
+ __vm_munmap+0x1fc/0x400 mm/mmap.c:3109
+ __do_sys_munmap mm/mmap.c:3126 [inline]
+ __se_sys_munmap mm/mmap.c:3123 [inline]
+ __x64_sys_munmap+0x68/0x80 mm/mmap.c:3123
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff88803e911200: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff88803e911280: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+>ffff88803e911300: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                      ^
+ ffff88803e911380: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff88803e911400: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+==================================================================
+
+
 ---
- include/linux/cleanup.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
-index 9c6b4f2c0176..48da01c1c082 100644
---- a/include/linux/cleanup.h
-+++ b/include/linux/cleanup.h
-@@ -290,7 +290,7 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
- #define DEFINE_GUARD(_name, _type, _lock, _unlock) \
- 	DEFINE_CLASS(_name, _type, if (_T) { _unlock; }, ({ _lock; _T; }), _type _T); \
- 	static inline void * class_##_name##_lock_ptr(class_##_name##_t *_T) \
--	{ return *_T; }
-+	{ return (void *)(__force unsigned long)*_T; }
- 
- #define DEFINE_GUARD_COND(_name, _ext, _condlock) \
- 	EXTEND_CLASS(_name, _ext, \
-@@ -347,7 +347,7 @@ static inline void class_##_name##_destructor(class_##_name##_t *_T)	\
- 									\
- static inline void *class_##_name##_lock_ptr(class_##_name##_t *_T)	\
- {									\
--	return _T->lock;						\
-+	return (void *)(__force unsigned long)_T->lock;			\
- }
- 
- 
--- 
-2.46.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
