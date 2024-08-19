@@ -1,215 +1,167 @@
-Return-Path: <linux-kernel+bounces-291282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF2AB956046
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:01:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08FE995604C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37E3D281AB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 00:01:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D4381C20BD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 00:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6971F26AD3;
-	Mon, 19 Aug 2024 00:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2980EBE46;
+	Mon, 19 Aug 2024 00:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xQa+KlO1"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="n3GZf9+4";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eh7ett96";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="n3GZf9+4";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eh7ett96"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B444C10E0
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 00:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C242F32;
+	Mon, 19 Aug 2024 00:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724025674; cv=none; b=iJNQU+4Cag2OrBtKzglh6nhFRov3Ij0U/QLC5TEbmU+PC0OIwUWfgtf9UZDGGF/HTJtApl/0+B2CzyjRkqCPBRN9Ty9JUlH8MITVTO4ceyMRsBTX9v2NuQKdvLS74s+8DTLcdnH3sTtLNgFhUQW9d1lGMJyRrCvoaagmgnnsTNM=
+	t=1724025871; cv=none; b=DlGK1vZWEyFuCMSr2X+5Y7qFqanwljHe83/mejhoXaoIvvQwp7uUbog9/MtsjrwJR1ydd21w/qhovGvzfNigo3PnvHxDPKAR/4FwX3yimo3zM1io5ybnTRMpt+B2maOCk2Kh0jAA4HQIcZNG1aCXQdYuWOCQvR44TTgKHXuLBEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724025674; c=relaxed/simple;
-	bh=6hYpg0m5Rt67g7Mxzu2ElLnjjv6XNz+ikayF+thPaug=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LsFgh9B6VpV5XJANCORjIDUo+FA/fsLcHRcwXvehzrEBZOvTUDEiNfnv01Qx/dpDFSeQWb27uX+8WZcnNABdSQwOngUSIo34vGKT0h0hmZ7mQ0yBqgVpKHJ1n7i6BUvU8FSD+IFL5116Ny7a59R3LmigrqXcnh4bu8SXJ4rcW/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xQa+KlO1; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52efd2221efso201606e87.1
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 17:01:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724025671; x=1724630471; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BYOLFiuwIeABlNgpCgPMEdlJrY/ffM3olbhyHsVZ574=;
-        b=xQa+KlO1JetyXBB2uHz+pGrTwu6y07n3Ix+kUKNV9FG8gayQzC7Fk8CDC4M87imz+B
-         amkij1vOuTgmQlPEJeGHtGETavOXtH71qh363OmVr7ykfYFsFfggFqZsWhpJCOtOQtlo
-         gXP3u59enZppPNF62UBoob2CFm6+SdcxiD8X3Hvdldl1kA0+JFXeAbXDXM2Zf2mZjSR5
-         JjoBcTOt2VxpOjuCv96PVrXyC9fBksg1OS/K/ObwyY2PSsckl2hgae02MRgDro5dDy7S
-         XvF6qTT9KWeFZXdTiLsxHLRlydPdyN1JMY5I0JQLhNpXQaU1GEMnBt5tR2o4ETQ9Wj41
-         pWgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724025671; x=1724630471;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BYOLFiuwIeABlNgpCgPMEdlJrY/ffM3olbhyHsVZ574=;
-        b=XvJZIC9upFNdc6yskB6mo34eAkflwpHjSCC1O/nwvy/UOo/Z2RPh+AZ6JMbgpN4GT4
-         16i8izsSpDPxxt8/grDe3elb1lGM3zjxp0+l4pdZOtdzRMsqDZ16oU+0Avhg1G34hdL4
-         wWs9vqPXyoOwaFDq0/jtMJlzLcnIZwW4SnVHQsrfL0o1Vawx4adRzsC+ICU+yo/tEJHA
-         HDARZgs2uriP6Yjw1rtN3HSp8WFQVHk85sfr+y+WcL9BGyxpevTIFlfh6D4/0v9BY1py
-         ++gy8SE5yTjKSp/ggai4bSc+2vPHI08whIQ5a+jqH3Pw2J2y2cHhdwUAMZ0FWr9VVPcF
-         1M4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWqnvwqvuryzX2FjvNMh2ERn4skx1Ogp6/y5oHQkNfCk+Z7/P8LpDMHQMoIVAzEtQnUfNBJhse+uHFGNsY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyggEbuf3kaBs0RGmofiHhic3zNtTOvI4uBUggQFJBL/zP/Ex3N
-	ubOMvf5bCHfnjqKG+SHkbMC+XiW5cKq6yRSMvThc97EKaIgqG0GyRxH6DT6nqns=
-X-Google-Smtp-Source: AGHT+IFhCmHG6qv7yNoduE8Vmk9V9zmO0z2IBMuw/McbuDAD0EmCQtvNUBmXvNzXpFO744+oecAeYQ==
-X-Received: by 2002:a05:6512:1081:b0:530:e0fd:4a92 with SMTP id 2adb3069b0e04-5331c618ffemr3586968e87.0.1724025670471;
-        Sun, 18 Aug 2024 17:01:10 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5330d424c63sm1318158e87.259.2024.08.18.17.01.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 18 Aug 2024 17:01:09 -0700 (PDT)
-Message-ID: <cc1484d4-7a61-4f5c-b617-a6ad99985bda@linaro.org>
-Date: Mon, 19 Aug 2024 03:01:08 +0300
+	s=arc-20240116; t=1724025871; c=relaxed/simple;
+	bh=9dIz3PEXhxqykFdhXh3S8uAB/PSD7Khb4HXhPZOh0vw=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=IaBhpeQb1w+o+9b3fWBTuA8vzpRrYiJ9YOTLF1068xMoPLIV1LCk8aKANIrV2FSTfZGp5S/mzfczXZu/zz8O3TgXTNb2ZnzZW+V1/Cv2uLZ9BkDiCLT+QNu9JlclbbuguvQ9cZmqCx59C+SMrvTruZXIV60e4UqPI+aszM2bPDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=n3GZf9+4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eh7ett96; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=n3GZf9+4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eh7ett96; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4224C21FBD;
+	Mon, 19 Aug 2024 00:04:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724025862; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f/zSJxp2oq5IQB53rRJrkxa4bNDT6Gvj6hdUfVbYtss=;
+	b=n3GZf9+4PJuyPNoesjoc13H2M2tVGUs94gt05nQCDSDCyVfy9prlY/ifoOCs2dHa2vRvmy
+	HqMxQg481i736ByGdj2gMjKbf27d/zwzgnC5uAasxZs4oTPEjshIMODVWeIA6rshdkR08B
+	Gz1Dzh3pAVI0ONIhqS5fB1hoX/1RH+Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724025862;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f/zSJxp2oq5IQB53rRJrkxa4bNDT6Gvj6hdUfVbYtss=;
+	b=eh7ett96/mJjeF7ALmbbcmJyMhSC3rgoOYUlMoAsdjncxhAhdVvcwgEcFSdnRVJRsCBPTr
+	0SgKBiGPCV1QwkDA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=n3GZf9+4;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=eh7ett96
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724025862; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f/zSJxp2oq5IQB53rRJrkxa4bNDT6Gvj6hdUfVbYtss=;
+	b=n3GZf9+4PJuyPNoesjoc13H2M2tVGUs94gt05nQCDSDCyVfy9prlY/ifoOCs2dHa2vRvmy
+	HqMxQg481i736ByGdj2gMjKbf27d/zwzgnC5uAasxZs4oTPEjshIMODVWeIA6rshdkR08B
+	Gz1Dzh3pAVI0ONIhqS5fB1hoX/1RH+Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724025862;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f/zSJxp2oq5IQB53rRJrkxa4bNDT6Gvj6hdUfVbYtss=;
+	b=eh7ett96/mJjeF7ALmbbcmJyMhSC3rgoOYUlMoAsdjncxhAhdVvcwgEcFSdnRVJRsCBPTr
+	0SgKBiGPCV1QwkDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EE21C139DE;
+	Mon, 19 Aug 2024 00:04:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nAorKAKMwmaoGQAAD6G6ig
+	(envelope-from <neilb@suse.de>); Mon, 19 Aug 2024 00:04:18 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/13] media: qcom: camss: csiphy-3ph: Move CSIPHY
- variables to data field inside csiphy struct
-Content-Language: en-US
-To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-6-quic_depengs@quicinc.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20240812144131.369378-6-quic_depengs@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "NeilBrown" <neilb@suse.de>
+To: "Jeff Layton" <jlayton@kernel.org>
+Cc: "Chuck Lever" <chuck.lever@oracle.com>,
+ "Olga Kornievskaia" <kolga@netapp.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
+ "Tom Talpey" <tom@talpey.com>, "Trond Myklebust" <trondmy@kernel.org>,
+ "Anna Schumaker" <anna@kernel.org>, "Tom Haynes" <loghyr@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+ "Jeff Layton" <jlayton@kernel.org>
+Subject: Re: [PATCH 1/3] nfsd: bring in support for delstid draft XDR encoding
+In-reply-to: <20240816-delstid-v1-1-c221c3dc14cd@kernel.org>
+References: <20240816-delstid-v1-0-c221c3dc14cd@kernel.org>,
+ <20240816-delstid-v1-1-c221c3dc14cd@kernel.org>
+Date: Mon, 19 Aug 2024 10:04:00 +1000
+Message-id: <172402584064.6062.2891331764461009092@noble.neil.brown.name>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 4224C21FBD
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[oracle.com,netapp.com,talpey.com,kernel.org,gmail.com,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -4.51
 
-On 8/12/24 17:41, Depeng Shao wrote:
-> From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> 
-> A .data field in the csiphy device structure allows us to extend out the
-> register layout of the three phase capable CSIPHY layer.
-> 
-> Move the existing lane configuration structure to an encapsulating
-> structure -> struct csiphy_device_regs which is derived from the .data
-> field populated at PHY init time, as opposed to calculated at lane
-> configuration.
-> 
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
-> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-> ---
->   .../qcom/camss/camss-csiphy-3ph-1-0.c         | 55 ++++++++++++-------
->   .../media/platform/qcom/camss/camss-csiphy.h  |  1 +
->   2 files changed, 36 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-> index b60c32a195df..93782ebfe0ea 100644
-> --- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-> +++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-> @@ -63,6 +63,11 @@ struct csiphy_lane_regs {
->   	u32 csiphy_param_type;
->   };
->   
-> +struct csiphy_device_regs {
-> +	const struct csiphy_lane_regs *lane_regs;
-> +	int lane_array_size;
-> +};
-> +
->   /* GEN2 1.0 2PH */
->   static const struct
->   csiphy_lane_regs lane_regs_sdm845[] = {
-> @@ -470,28 +475,11 @@ static void csiphy_gen1_config_lanes(struct csiphy_device *csiphy,
->   static void csiphy_gen2_config_lanes(struct csiphy_device *csiphy,
->   				     u8 settle_cnt)
->   {
-> -	const struct csiphy_lane_regs *r;
-> -	int i, array_size;
-> +	struct csiphy_device_regs *csiphy_regs = csiphy->data;
-> +	const struct csiphy_lane_regs *r = csiphy_regs->lane_regs;
-> +	int i, array_size = csiphy_regs->lane_array_size;
->   	u32 val;
->   
-> -	switch (csiphy->camss->res->version) {
-> -	case CAMSS_845:
-> -		r = &lane_regs_sdm845[0];
-> -		array_size = ARRAY_SIZE(lane_regs_sdm845);
-> -		break;
-> -	case CAMSS_8250:
-> -		r = &lane_regs_sm8250[0];
-> -		array_size = ARRAY_SIZE(lane_regs_sm8250);
-> -		break;
-> -	case CAMSS_8280XP:
-> -		r = &lane_regs_sc8280xp[0];
-> -		array_size = ARRAY_SIZE(lane_regs_sc8280xp);
-> -		break;
-> -	default:
-> -		WARN(1, "unknown cspi version\n");
-> -		return;
-> -	}
-> -
->   	for (i = 0; i < array_size; i++, r++) {
->   		switch (r->csiphy_param_type) {
->   		case CSIPHY_SETTLE_CNT_LOWER_BYTE:
-> @@ -583,6 +571,33 @@ static void csiphy_lanes_disable(struct csiphy_device *csiphy,
->   
->   static int csiphy_init(struct csiphy_device *csiphy)
->   {
-> +	struct device *dev = csiphy->camss->dev;
-> +	struct csiphy_device_regs *regs;
-> +
-> +	regs = devm_kmalloc(dev, sizeof(*regs), GFP_KERNEL);
-> +	if (!regs)
-> +		return -ENOMEM;
-> +
-> +	csiphy->data = regs;
-> +
-> +	switch (csiphy->camss->res->version) {
-> +	case CAMSS_845:
-> +		regs->lane_regs = &lane_regs_sdm845[0];
-> +		regs->lane_array_size = ARRAY_SIZE(lane_regs_sdm845);
-> +		break;
-> +	case CAMSS_8250:
-> +		regs->lane_regs = &lane_regs_sm8250[0];
-> +		regs->lane_array_size = ARRAY_SIZE(lane_regs_sm8250);
-> +		break;
-> +	case CAMSS_8280XP:
-> +		regs->lane_regs = &lane_regs_sc8280xp[0];
-> +		regs->lane_array_size = ARRAY_SIZE(lane_regs_sc8280xp);
-> +		break;
-> +	default:
-> +		WARN(1, "unknown csiphy version\n");
-> +		return -ENODEV;
-> +	}
-> +
->   	return 0;
->   }
->   
-> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.h b/drivers/media/platform/qcom/camss/camss-csiphy.h
-> index bdf9a9c8bacc..cac1f800b7d8 100644
-> --- a/drivers/media/platform/qcom/camss/camss-csiphy.h
-> +++ b/drivers/media/platform/qcom/camss/camss-csiphy.h
-> @@ -95,6 +95,7 @@ struct csiphy_device {
->   	struct csiphy_config cfg;
->   	struct v4l2_mbus_framefmt fmt[MSM_CSIPHY_PADS_NUM];
->   	const struct csiphy_subdev_resources *res;
-> +	void *data;
+On Fri, 16 Aug 2024, Jeff Layton wrote:
 
-I would suggest to make the type/name above explicit:
+> +// Generated by lkxdrgen, with hand-edits.
 
-struct csiphy_device_regs *regs;
+I *really* don't like having code in the kernel that is partly
+tool-generated and partly human-generated, and where the boundary isn't
+obvious (like separate files).
 
->   };
->   
->   struct camss_subdev_resources;
+If we cannot use tool-generated code as-is, then let's fix the tool.
+If we cannot fix the tool, then include the raw output and a
+human-generated patch which the makefile combines.
 
---
-Best wishes,
-Vladimir
+Ideally the tool should be in tools/, the .x file should be in fs/nfsd/
+and the makefile should apply the one to the other.  We are going to
+want to do that eventually and I think it should be priority.  The tool
+doesn't have to be bug-free before it lands (nothing is).
+
+A particular reason for this is that I cannot review tool-generated
+hand-editted code.  It is too noisy and I don't know which parts are
+worth closer inspection etc.
+
+Thanks,
+NeilBrown
 
