@@ -1,200 +1,151 @@
-Return-Path: <linux-kernel+bounces-291764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05F0395668A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:14:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E54A95668C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:14:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 872B41F232D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:14:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50E301C219D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CEA615C15A;
-	Mon, 19 Aug 2024 09:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zjzPWMPs"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0202148FE0
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF3E15B99D;
+	Mon, 19 Aug 2024 09:14:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF2F148FE0;
+	Mon, 19 Aug 2024 09:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724058828; cv=none; b=DqbT85Fj8XkyDZFqwjHORt//C2e4mKRmJQykmT+DF2ME+mOjet6bBXtufWDuiCcsKHsQpmUA5FyaWRoAO7mALW/T3/KasyqNMo7uyuzAM9DoFROQ2C1YjyGHs/bSDTLIyMYNTZkpJzgbVI6Wdp3Zr3jEWNYRokC71vCQZoi8ooU=
+	t=1724058884; cv=none; b=qKCEHITrUI8/cJ5W9ri4DRaFvWL/au7gJnhzRlth6DBlxczBaArv3c26p9EnpBNkj4y61pQ+HGZ1Ui9db4aVXQP11weqCElC+Pd7yM4HXO+sFKpH4ycCcCwHsBMQKSCyXTJYT0XK14V3wT2e6eTqKEwWdx2ujKUozoIBhmG+mtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724058828; c=relaxed/simple;
-	bh=TtnJmSlrXyV6J/ni8WdY53wD6/CYK1VXWag9BG9YZ40=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CNYl/2JYeKuvAhxunOAFWq0ZPyD44ncK/OKi6WZeC3/cXHRVtpT9qkFd4uttGxWmv7iIH9cy4QJ+5fthPsgDQxHYI75rQ6f3xy/7UpYoB2mi8ss3JMlrD2yZn1eB8ozBeOOYRumPV/MT4Qc9E1MHOFgRZUE5YGwhjYn+BDqw4pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zjzPWMPs; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f029e9c9cfso10074601fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 02:13:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724058825; x=1724663625; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XIMsl1ookSA1DyUgN8UuW8SMlUC0glIxT4g4JKXaVdU=;
-        b=zjzPWMPsgTS5MAFE0rszbPO1O0PtIfXTff074GqJTRV9ANpBBLV1L8NxYo9LtdFK46
-         VVK57WOWfH/6EW3ve6UyzOlxWs9rZODMrfKIbEliv04kA3oRtqBRgcJHefIyfiO/JsnJ
-         fO4bGcqr78BVLwy3ZnZLZhwbQERfHeB1LDNnZzovK7J71vOTwS0FZjteOSaKT7hyxUDh
-         57QtAnYjkCCyEj0/nAb59jZ5G1tyjfOD1N5taOKA0haVsivwsAfIdjPU2UbyLTdydtS4
-         dOkIfQvwv95tpXxmLSQ/IArCdE/P74qgl8S73zskKfuVR1YZj07DS+UEFM4Z+1MPbSca
-         INDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724058825; x=1724663625;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XIMsl1ookSA1DyUgN8UuW8SMlUC0glIxT4g4JKXaVdU=;
-        b=HPh2wNTQ3MYIGf13a7atk8+c9wSX3PZxKjdmNDDVPvRsCZ8MX9o0fVHry2cbfGLVFP
-         JFXp8EjLd0h90Dl9U0Us7yX9fJW2p/whSbKPC4L3Ov/gMUqlzilYCTA+qUZHfo94qNjr
-         InvoFPNlvNgSv7laitVHTq8388UL+H3e1TW66HxvR9/Z0pGsxjlx1cvr4AvySn8AGm3l
-         0Qv9UOlkJfQAW2vQ+2xeqc+QcxKJZKKV0hk9WWRmqbjsL/NyXJV6p24okIo09BnJTGJZ
-         gqbGvsNNpqAW049fX07gOfG6zop7XeehO/04u0tIe7z1cw3Ow8rKjOepROcEm61+/DLy
-         hVvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVf1t9etO9YjpAUb5UO3AI5vMm9QywgXNF0QrcKCsC+E7ufEspUWqqaNPFKif1EvCNVbQ6gXG5TSgEwzM/DZ0iHxec/qJno0O+Ethch
-X-Gm-Message-State: AOJu0YzZZ4htdHBwbv+9VpNozfM6we7WWpogimp6cKBzxJ6VEa4M9g9m
-	FyxN2JZqpa49CS6h/sWb3TeK3Mjqz4TgWkq2o/pqDAkPWk3WcO9fO5fWE5mQExTGbNyirt0q911
-	idS7o05ja5RXBgRv3gGKOYZV/OVb5loZrPjz5
-X-Google-Smtp-Source: AGHT+IFOZG4WMA3ByLVTlGA87b7bgPZg8l2Jlfvs7m1bi8xHPKgfIE9xY9QB2B3aIl9fWxotTq3p7F1FeB2f8sINkIQ=
-X-Received: by 2002:a2e:742:0:b0:2ef:2677:7b74 with SMTP id
- 38308e7fff4ca-2f3be5f02eemr74527771fa.41.1724058824221; Mon, 19 Aug 2024
- 02:13:44 -0700 (PDT)
+	s=arc-20240116; t=1724058884; c=relaxed/simple;
+	bh=G+wsMecrDCT8FTyXe8LseW45irGqIFo3jAoyDBcJ47w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fx+TO5FzAxDCVaQRvqomutHWyKdDEjkvymjkbVTsA1RlhwtfaguveoOlUiL2tc89b2t3IeAWe0NEarUhXex4qOat/Rvlcsvnlc9mzyvfWs9FZDuShN6eoqKHD+PhgqikcshqARquPrvl/14WuQAYyI2FgJ/x2qKsaomzRaxD1Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2EF491063;
+	Mon, 19 Aug 2024 02:15:07 -0700 (PDT)
+Received: from [10.57.49.21] (unknown [10.57.49.21])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 268883F73B;
+	Mon, 19 Aug 2024 02:14:40 -0700 (PDT)
+Message-ID: <d52d617f-d5c7-45c8-a543-d3ecade2adf8@arm.com>
+Date: Mon, 19 Aug 2024 10:14:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819082513.27176-1-Tze-nan.Wu@mediatek.com>
-In-Reply-To: <20240819082513.27176-1-Tze-nan.Wu@mediatek.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 19 Aug 2024 11:13:33 +0200
-Message-ID: <CANn89iJ04bbS4iaB8dpgbtZTWF_JVt1JawwxFah16zN1aj3HWw@mail.gmail.com>
-Subject: Re: [PATCH] net/socket: Acquire cgroup_lock in do_sock_getsockopt
-To: Tze-nan Wu <Tze-nan.Wu@mediatek.com>, Stanislav Fomichev <sdf@fomichev.me>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, bobule.chang@mediatek.com, 
-	wsd_upstream@mediatek.com, Yanghui Li <yanghui.li@mediatek.com>, 
-	Cheng-Jui Wang <cheng-jui.wang@mediatek.com>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [tip: sched/core] sched/uclamg: Handle delayed dequeue
+To: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org
+Cc: Luis Machado <luis.machado@arm.com>, Hongyan Xia <hongyan.xia2@arm.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Valentin Schneider <vschneid@redhat.com>, x86@kernel.org
+References: <20240727105029.315205425@infradead.org>
+ <172396218984.2215.18280492377096522742.tip-bot2@tip-bot2>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <172396218984.2215.18280492377096522742.tip-bot2@tip-bot2>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 19, 2024 at 10:27=E2=80=AFAM Tze-nan Wu <Tze-nan.Wu@mediatek.co=
-m> wrote:
->
-> The return value from `cgroup_bpf_enabled(CGROUP_GETSOCKOPT)` can change
-> between the invocations of `BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN` and
-> `BPF_CGROUP_RUN_PROG_GETSOCKOPT`.
->
-> If `cgroup_bpf_enabled(CGROUP_GETSOCKOPT)` changes from "false" to
-> "true"
-> between the invocations of `BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN` and
-> `BPF_CGROUP_RUN_PROG_GETSOCKOPT`,
-> `BPF_CGROUP_RUN_PROG_GETSOCKOPT` will receive an -EFAULT from
-> `__cgroup_bpf_run_filter_getsockopt(max_optlen=3D0)` due to `get_user()`
-> had not reached in `BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN`.
->
-> Scenario shown as below:
->
->            `process A`                      `process B`
->            -----------                      ------------
->   BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN
->                                             enable CGROUP_GETSOCKOPT
->   BPF_CGROUP_RUN_PROG_GETSOCKOPT (-EFAULT)
->
-> Prevent `cgroup_bpf_enabled(CGROUP_GETSOCKOPT)` change between
-> `BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN` and `BPF_CGROUP_RUN_PROG_GETSOCKOPT`
-> by acquiring cgroup_lock.
->
-> Co-developed-by: Yanghui Li <yanghui.li@mediatek.com>
-> Signed-off-by: Yanghui Li <yanghui.li@mediatek.com>
-> Co-developed-by: Cheng-Jui Wang <cheng-jui.wang@mediatek.com>
-> Signed-off-by: Cheng-Jui Wang <cheng-jui.wang@mediatek.com>
-> Signed-off-by: Tze-nan Wu <Tze-nan.Wu@mediatek.com>
->
+On 8/18/24 07:23, tip-bot2 for Peter Zijlstra wrote:
+> The following commit has been merged into the sched/core branch of tip:
+> 
+> Commit-ID:     dfa0a574cbc47bfd5f8985f74c8ea003a37fa078
+> Gitweb:        https://git.kernel.org/tip/dfa0a574cbc47bfd5f8985f74c8ea003a37fa078
+> Author:        Peter Zijlstra <peterz@infradead.org>
+> AuthorDate:    Wed, 05 Jun 2024 12:09:11 +02:00
+> Committer:     Peter Zijlstra <peterz@infradead.org>
+> CommitterDate: Sat, 17 Aug 2024 11:06:42 +02:00
+> 
+> sched/uclamg: Handle delayed dequeue
+
+Nit, but I haven't seen the typo until now.
+
+> 
+> Delayed dequeue has tasks sit around on the runqueue that are not
+> actually runnable -- specifically, they will be dequeued the moment
+> they get picked.
+> 
+> One side-effect is that such a task can get migrated, which leads to a
+> 'nested' dequeue_task() scenario that messes up uclamp if we don't
+> take care.
+> 
+> Notably, dequeue_task(DEQUEUE_SLEEP) can 'fail' and keep the task on
+> the runqueue. This however will have removed the task from uclamp --
+> per uclamp_rq_dec() in dequeue_task(). So far so good.
+> 
+> However, if at that point the task gets migrated -- or nice adjusted
+> or any of a myriad of operations that does a dequeue-enqueue cycle --
+> we'll pass through dequeue_task()/enqueue_task() again. Without
+> modification this will lead to a double decrement for uclamp, which is
+> wrong.
+> 
+> Reported-by: Luis Machado <luis.machado@arm.com>
+> Reported-by: Hongyan Xia <hongyan.xia2@arm.com>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Reviewed-by: Valentin Schneider <vschneid@redhat.com>
+> Tested-by: Valentin Schneider <vschneid@redhat.com>
+> Link: https://lkml.kernel.org/r/20240727105029.315205425@infradead.org
 > ---
->
-> We have encountered this issue by observing that process A could sometime=
-s
-> get an -EFAULT from getsockopt() during our device boot-up, while another
-> process B triggers the race condition by enabling CGROUP_GETSOCKOPT
-> through bpf syscall at the same time.
->
-> The race condition is shown below:
->
->            `process A`                        `process B`
->            -----------                        ------------
->   BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN
->
->                                               bpf syscall
->                                         (CGROUP_GETSOCKOPT enabled)
->
->   BPF_CGROUP_RUN_PROG_GETSOCKOPT
->   -> __cgroup_bpf_run_filter_getsockopt
->     (-EFAULT)
->
-> __cgroup_bpf_run_filter_getsockopt return -EFAULT at the line shown below=
-:
->         if (optval && (ctx.optlen > max_optlen || ctx.optlen < 0)) {
->                 if (orig_optlen > PAGE_SIZE && ctx.optlen >=3D 0) {
->                         pr_info_once("bpf getsockopt: ignoring program bu=
-ffer with optlen=3D%d (max_optlen=3D%d)\n",
->                                      ctx.optlen, max_optlen);
->                         ret =3D retval;
->                         goto out;
->                 }
->                 ret =3D -EFAULT; <=3D=3D return EFAULT here
->                 goto out;
->         }
->
-> This patch should fix the race but not sure if it introduces any potentia=
-l
-> side effects or regression.
->
-> And we wondering if this is a real issue in do_sock_getsockopt or if
-> getsockopt() is designed to expect such race conditions.
-> Should the userspace caller always anticipate an -EFAULT from getsockopt(=
-)
-> if another process enables CGROUP_GETSOCKOPT at the same time?
->
-> Any comment will be appreciated!
->
-> BTW, I added Chengjui and Yanghui to Co-developed due to we have several
-> discussions on this issue. And we both spend some time on this issue.
->
-> ---
->  net/socket.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/net/socket.c b/net/socket.c
-> index fcbdd5bc47ac..e0b2b16fd238 100644
-> --- a/net/socket.c
-> +++ b/net/socket.c
-> @@ -2370,8 +2370,10 @@ int do_sock_getsockopt(struct socket *sock, bool c=
-ompat, int level,
->         if (err)
->                 return err;
->
-> -       if (!compat)
-> +       if (!compat) {
-> +               cgroup_lock();
->                 max_optlen =3D BPF_CGROUP_GETSOCKOPT_MAX_OPTLEN(optlen);
-> +       }
->
+>  kernel/sched/core.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 7356464..80e639e 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -1691,6 +1691,9 @@ static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
+>  	if (unlikely(!p->sched_class->uclamp_enabled))
+>  		return;
+>  
+> +	if (p->se.sched_delayed)
+> +		return;
+> +
+>  	for_each_clamp_id(clamp_id)
+>  		uclamp_rq_inc_id(rq, p, clamp_id);
+>  
+> @@ -1715,6 +1718,9 @@ static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
+>  	if (unlikely(!p->sched_class->uclamp_enabled))
+>  		return;
+>  
+> +	if (p->se.sched_delayed)
+> +		return;
+> +
+>  	for_each_clamp_id(clamp_id)
+>  		uclamp_rq_dec_id(rq, p, clamp_id);
+>  }
+> @@ -1994,8 +2000,12 @@ void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
+>  		psi_enqueue(p, (flags & ENQUEUE_WAKEUP) && !(flags & ENQUEUE_MIGRATED));
+>  	}
+>  
+> -	uclamp_rq_inc(rq, p);
+>  	p->sched_class->enqueue_task(rq, p, flags);
+> +	/*
+> +	 * Must be after ->enqueue_task() because ENQUEUE_DELAYED can clear
+> +	 * ->sched_delayed.
+> +	 */
+> +	uclamp_rq_inc(rq, p);
+>  
+>  	if (sched_core_enabled(rq))
+>  		sched_core_enqueue(rq, p);
+> @@ -2017,6 +2027,10 @@ inline bool dequeue_task(struct rq *rq, struct task_struct *p, int flags)
+>  		psi_dequeue(p, flags & DEQUEUE_SLEEP);
+>  	}
+>  
+> +	/*
+> +	 * Must be before ->dequeue_task() because ->dequeue_task() can 'fail'
+> +	 * and mark the task ->sched_delayed.
+> +	 */
+>  	uclamp_rq_dec(rq, p);
+>  	return p->sched_class->dequeue_task(rq, p, flags);
+>  }
+> 
 
-Acquiring cgroup_lock mutex in socket getsockopt() fast path ?
-
-There is no way we can accept such a patch, please come up with a
-reasonable patch.
-
-cgroup_bpf_enabled() should probably be used once.
 
