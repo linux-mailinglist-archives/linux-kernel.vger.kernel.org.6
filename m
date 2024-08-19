@@ -1,191 +1,1206 @@
-Return-Path: <linux-kernel+bounces-292758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B0A29573F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:49:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42AE59573FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3072E1C23D3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:49:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 980861F21017
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D03189BA7;
-	Mon, 19 Aug 2024 18:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE941898F5;
+	Mon, 19 Aug 2024 18:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mQpkvCzH"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2061.outbound.protection.outlook.com [40.107.96.61])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SQlg9kPc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7F2189907;
-	Mon, 19 Aug 2024 18:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724093241; cv=fail; b=YPUIrwgKnbuzSmUsdJbCnr+Zc5NpJG9udi9IzCEQHcPoVIqqg9aWa79XMdlGvZrT3xhWxtIl59YE9Igov12tp7i393Aqydh+knGY30kuLVwXV6uvY2XNkyCmcaQVCS3XGXn8lz23t7ETP+VUSXJKa3uXGPyG/IyAAbf4chmBs+4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724093241; c=relaxed/simple;
-	bh=1D3hxbuLjlscoeBGAhgM6goyMPW31/obAp7TBtI5Occ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=tB1FcbX2XpmaPhbGIjaSuhC5pSB7Nt6wR/1ZiwrLdOJFYoiUV4dA3s4SIuFJ3ndGF2UsltEzX34MdlJ+afFLQZzFknJQAf79vYC8MUidXHw3trqfG1shx1xc7efbDf7wx2o2nUYf0Xe97xQjQRiM6sD2BJ+f1gacsNHS27Eb+Lg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mQpkvCzH; arc=fail smtp.client-ip=40.107.96.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rFt5KXlNEudfuOsToNzA5gRVZ1H5zKjFr2uJdaouQIU6tc6nsDejWcXiEGJj/LcdNojIHnGCaer9wlNrN/xZhZJV4J/R7Imb/SUHSX6gpJ/mRyLenwO//zGT8SzyiGrWllo0eJUwEd/hvXtSQwpA85zBXGFfwli63htPuoCcwiS5cDjxjDHmvbV1g4/k0O2CxapoqH6s8JmvsBQp5ZAYwBoa8/yZ3ZRz4I3nCvnJApca0upgMdjEjUi+v2H5dSkRj42Susu1B20KshJotc0XyvhEemV/1vOzb2krhvBJO/He3elJtUHtaLUH/H1TLErt9JidHxY75xKunzQvFAAkkQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qzdL0ENq7+/+L8CFU4NWHEjD5iuK+rJUwCXSLAuk9Yc=;
- b=GRUDffcxoPrhMlQ4us/+6LL5/Mz8yyZKLmZ6v5zJMqXtG3/mXDQ12sF1ssjOvvctz3BKMLQip01b6QXSnqFR1SjlxZWcz/4ah7BgVVH1NSCmE4J5zAX9TEOwAuUdmnmdI8fj7XpnT1NhwAX9f2veCcnnllQfn7BsaMSB6Ik3afG3NZqI6mBqGsGP78Nmc8YJnbh56MAxwA4OXsfr2IaTprZ0l59kvhmTYAnxX3oFj4ZMn04j8FZgpGcbasrpxFKu6aaiodVxVj7L8x5Vg0Smdh+7scxiQ7NvWsJCIGhby8ol99XeURnXkhgVKxX9VxDY6xvHu8V/o4SDCT3M7D2bsQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qzdL0ENq7+/+L8CFU4NWHEjD5iuK+rJUwCXSLAuk9Yc=;
- b=mQpkvCzHNVd7Mp7ngIh1F6J8WdoWboiNCiFC2CfrXltpYVMkxVCupreBbTduieabGyaA1J6i0lrmo7jHRulkwL2gZukEQdR55nkYB5ETAT6aFdHeU31B2tRIMNL1Z1TpdM8ZDJX/FRvSwL2TCZ3eArKOUD+v0Nz7Hs9vTOFCY3HRPv81I5hzxMVcyr4QF6bupgvbUzMxlX+Hjp7mKC+NQRD2BwTkYGHjpDXjbilWqB75Xsqc6wH1gsAdyHrvJqSdE2MDx9tKovR8piZRZkoLwwP3Up0o+xVlXDkZJEHeWRk9kJV41h74bdKO+gjRbGcWR/TTd6PQcspDzdf9LhNWEw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB7763.namprd12.prod.outlook.com (2603:10b6:610:145::10)
- by SN7PR12MB8130.namprd12.prod.outlook.com (2603:10b6:806:32e::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
- 2024 18:47:17 +0000
-Received: from CH3PR12MB7763.namprd12.prod.outlook.com
- ([fe80::8b63:dd80:c182:4ce8]) by CH3PR12MB7763.namprd12.prod.outlook.com
- ([fe80::8b63:dd80:c182:4ce8%3]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
- 18:47:17 +0000
-Date: Mon, 19 Aug 2024 15:47:16 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: kevin.tian@intel.com, will@kernel.org, joro@8bytes.org,
-	suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
-	dwmw2@infradead.org, baolu.lu@linux.intel.com, shuah@kernel.org,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v1 15/16] iommu/arm-smmu-v3: Add viommu cache
- invalidation support
-Message-ID: <20240819184716.GT2032816@nvidia.com>
-References: <cover.1723061377.git.nicolinc@nvidia.com>
- <729dfd0808f85d88fd3ef8bcea0168cc1d2c0d59.1723061378.git.nicolinc@nvidia.com>
- <20240815233635.GV2032816@nvidia.com>
- <Zr6iPtiZ/afonJ5k@Asurada-Nvidia>
- <20240819173615.GN2032816@nvidia.com>
- <ZsOMu3OnMn49cDXf@Asurada-Nvidia>
- <20240819182811.GR2032816@nvidia.com>
- <ZsORHnIKJsJaTkiF@Asurada-Nvidia>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZsORHnIKJsJaTkiF@Asurada-Nvidia>
-X-ClientProxiedBy: BN8PR07CA0028.namprd07.prod.outlook.com
- (2603:10b6:408:ac::41) To CH3PR12MB7763.namprd12.prod.outlook.com
- (2603:10b6:610:145::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E511EB3D;
+	Mon, 19 Aug 2024 18:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724093506; cv=none; b=f48gWK5PZmweCmXBUu2+ruu59gJk+spQHEwslApgdan29bSe9iGxnu3dRc5a0SG8MbxNmzx3iUDMU3yBe3Z5/+aiCMupF9PY59UhK6MKD1X6EL9xr++2W/y9ZTtoBQ6j/VnAIQGbLhrvNzBPvOnJR8X2kQ/vrXLyPIQ0+fEB/UQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724093506; c=relaxed/simple;
+	bh=/uTAaSL7jhz3l9rqlHa4jawU25TXkM3ZUk4k12G+0Vo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oMCWxSDPNDrdHaKpZk/NW5PW25P9z/m5yT6+VszkTTKFH6lW0tm1LNEsxADheF5ceSp/shjB1Ed+GciDrypgxpIb/trkHeY1pvncHdg95FnokldNue7cHA88p2XcYIx7UvPzLhRvfMKCeTwI6ynYgBIJ59svCQ/9nCrQ3zhjDSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SQlg9kPc; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724093504; x=1755629504;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/uTAaSL7jhz3l9rqlHa4jawU25TXkM3ZUk4k12G+0Vo=;
+  b=SQlg9kPcnEv+iP+n8FJLBzky2IReX6cPUZ4mcO2c1o5e+gUoWgOgfrzs
+   pPBw4wYV74LwRLi7apjtmys9VF5IQHS6REnGX3O3r9mPzraJpd7ufNVyJ
+   toJvIlp5fcMmWldGmMSiV8rh+7SkB0R/OeUkQBIGDGSruMVd04c64eBu6
+   lpGXDU3khOj/ZIJ4OmLb7SBGbqvf7Ngr7Lbt0DmCsbINOKC48IYPi2PTk
+   1cZjzwqmrBYO5edhWLPVRZVU7oTcj/bBbel+5V5XXh/ac3V3fr04jgOYT
+   nClyMpiTXFvDy7xLsSivACrHTg1Jk9zenqN3NiRqE/WILT+pj75L+2jbs
+   Q==;
+X-CSE-ConnectionGUID: H4LsVaPwT/Ct6tcBO6vvpA==
+X-CSE-MsgGUID: D2v9whX/Qr2lBuIjUrzeug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="47755647"
+X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
+   d="scan'208";a="47755647"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 11:51:42 -0700
+X-CSE-ConnectionGUID: lSrsoZVjR7uMWYVn9qVXhg==
+X-CSE-MsgGUID: tY7nNkDbQwquKfntwN6kfQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
+   d="scan'208";a="64647009"
+Received: from mgoodin-mobl2.amr.corp.intel.com (HELO [10.125.111.235]) ([10.125.111.235])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 11:51:40 -0700
+Message-ID: <2d56b34e-64d0-4470-9e00-b14cd7b3af9e@intel.com>
+Date: Mon, 19 Aug 2024 11:51:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB7763:EE_|SN7PR12MB8130:EE_
-X-MS-Office365-Filtering-Correlation-Id: cb18e866-193d-4017-ff49-08dcc07f5943
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Cajj/Um+Vm8E7+HubY0mFCrJ3+iLiWM+dUCJ+vkNYcC774GPwnFD1naHBAVI?=
- =?us-ascii?Q?Wi/FhIB9OzBpxRImt2+Wn9zbKZJ26NlYD7bLGg1lsK+15pQtskm+DPj7kIIM?=
- =?us-ascii?Q?ntLtr/zNGmLZ4cgztgFKchw3u9etofwg5GMuohqxtvviiHrwqG054WoySWfT?=
- =?us-ascii?Q?2Qa1btyyUvjQAVb/9/eIMjOkcqNCxGG9Z93S5WLZykw8eIuqRhEyIfoM0NzV?=
- =?us-ascii?Q?KDyMD9I0PsmFWfqvy51ixUGmPWldOaholAmGOY45buQOv01smHN6NT0bFWXj?=
- =?us-ascii?Q?44hzYnlgzlCTkzTtMoUcYNrhlL3z7CDtWirjA/0BOJ57g1SzCzlTitZKLP4X?=
- =?us-ascii?Q?vmwIuagtXsn8XvrHiVULnvBjH61cZjcnrwUEmrIfFMaUOwjMErN+p2V9m6kF?=
- =?us-ascii?Q?wzs/Zd9HcYinF9Ga5pI3+ybBdXQdFyppUiujI+JEPtMQjULVj4ptBVaViAik?=
- =?us-ascii?Q?ReNuruJHfIcFXEfaWznTEODPj4nCozAx8LQe5Xg3sCTrrDKwyeQ38DH3dACP?=
- =?us-ascii?Q?SjMU6RnVHPOFoZHlt2W3YAVedC7mMHUR38Yst7MMxsqXR3bqapbT9bdnEzAJ?=
- =?us-ascii?Q?dYek04RrhWGFP5eT3fmLt1J9x0e9vERDDYIp4jmgMxRE5rXqpXxbTjRQrafw?=
- =?us-ascii?Q?pdR7tv8gMy9hNT210JsQsNkdoOVYIENlqZCexnHTKgl5rD6lQOYb5THL6Zid?=
- =?us-ascii?Q?QiRG0qmYxcu3F+Ium17ZWcRpZ0P6Ho2de3HKNGlkHjPBezZMyKW7gngXrCNF?=
- =?us-ascii?Q?S1xYKr5VKu5nCzgbyt+1IY6DupSAhKNvWNpypOpyA9OihwH8bj79Wdh+XnKQ?=
- =?us-ascii?Q?TMZjFg7/tmPZfhqGXSYeXYwkd4fM9MDgAEH/DO/OKQ3cQihF4qHXwJZjY1MG?=
- =?us-ascii?Q?cgtpHn9nMGpyezR+fNxM9lKSxgMgvdXsS7661eycOxw/tveZ3yImWIqwOQbx?=
- =?us-ascii?Q?ZlCo86fldzSNnkr7J63tZlS7Ex2dwnvLrEuWHWjQ3LUvZNbhbVzqFkmSehsd?=
- =?us-ascii?Q?AHxufUMZN6OHX74rzblUKy57cJ9PFfKpCLCUrzDjB1plXJSvxnYI7ku498iM?=
- =?us-ascii?Q?qBOG5wZqs7Wb27FJRlmcHnqujW+AZSm8zihoV90rCt1kJ8pZsRmEdfXNqph3?=
- =?us-ascii?Q?qmGpOBxtOhHFDu9dvayhKb6X6W+poHJjZlQQj6wHIT+4pFZMY9dPTftvjo/X?=
- =?us-ascii?Q?IuyKH62AtvsFbptHokNAu+8x1vZqfCV4Q0Vt0tXM36gml03jAqZ+7zR3NOgR?=
- =?us-ascii?Q?RQIgJPyWOhKFGSCxFOxvuhLAqldZFvdhCm8cJXLVTrg483New+GFV7o4epjH?=
- =?us-ascii?Q?NR0pvwHqo4L3rgCVFcRlv5Opm+pMndCB8xPb+ubUVAIzOQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB7763.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?183KYQrfB09EfNVojDcAMlZdKEKwrkbQbVTtYkTFC8Si/xOFTFl1oNaGL9dq?=
- =?us-ascii?Q?8vllX593WbZNKueU8yQyoZSGzIuVzdJq9vq76RIytAq8PZsgGEMhlUXK5zpB?=
- =?us-ascii?Q?Kl0bIoQTtfiXyGujHJ4DHPGs4srpaSXhZNeoeOPScW4p9HgfWg/n0PqiW1pt?=
- =?us-ascii?Q?T1UxQd5rzjtHPxqroTXfNmXGs+qgReI2QgFf39zcBfsMJ7Qu5M9WxKcbnPFg?=
- =?us-ascii?Q?BuecTnS3cyqZpyMlN9+Px1lBCmtS93Je005i8dM2A6Os9EtciagBzm4+o/AP?=
- =?us-ascii?Q?J4DjUn/YG0ftu0QNgbQxSG0TM7mGyvRRBTh3RVjA5QQSNcsyzTQCs3WA40sC?=
- =?us-ascii?Q?khnDQFlublXLcN0SJMZxVR+abrdjjk1FwkdZZVHaxik9LSvud0ypqmj0S1iU?=
- =?us-ascii?Q?BBatlwdaOU51nDTuXnSyyauqEwKPa6MIIua/AkcLL7xqxcccwiMivw+NBceB?=
- =?us-ascii?Q?04yV0BYdO92iIKiq3xq/7Sdf1ZbQ7qq5HMpHroYTy7Cr1NXTWc/QZz3FnJBN?=
- =?us-ascii?Q?z/WG52vIQ35pHILpPo/vEMwpn86qMFpBB9YhxsiinWaKLQiv/rrYMncdcDTG?=
- =?us-ascii?Q?BtWDpMpKcJLRnY0LlbjqsTo0oO6jTqd6simAzdj8sx9JBLu1Ugdj+n7i9Fst?=
- =?us-ascii?Q?fQd95ikI/uR8zZ8NCPxh8qrUqdfjiPFr8B9EkUV+W/cQGoLvyrg+in68xSIn?=
- =?us-ascii?Q?yr/kIjshZmn7ktUdv979RP+xU9o3J0W1vuwVX1Cou6H08T7frIiHGQ66qli1?=
- =?us-ascii?Q?R7Yq1pw4MNlrwQPTquAsgj+ybkLp1hx2vluHuM64/dHReBuT1iXuOX6oGScg?=
- =?us-ascii?Q?/LLA5niMfVmvSAf95Cckexo3kW2iKPdmTSRD5eIgipxBtJ7sqG96ybd4hIr4?=
- =?us-ascii?Q?4VCHWCfwVRAhR2tRiTAUBiLkxEtpt6Q4nue+bPsJQ4no0X9VIQfIouvs8IEV?=
- =?us-ascii?Q?0uSopgrqfSylAFxQgZTKQzuWMbpWxQqr6BkTgARGiNpzEvUnzOXq+PKGRvD/?=
- =?us-ascii?Q?tXtaWsTZtyeTn0iNqxItZSK2z3/kCH6f92J720Pop5LUtoeEtmpU0V3dSfeE?=
- =?us-ascii?Q?oviYMD950ndHu53lMUdAfMgCWBQiZlQYTmQRQ/GW6/4IM7oEvgGrwR0+wBfO?=
- =?us-ascii?Q?WnXHVdc/s5nYUULZnpgQb903AymetAO98+8B0y2mYZEE0u04p/a1nr+vX8Tm?=
- =?us-ascii?Q?F6YtbDEzXrj4zI5WSkC4LV/NiZFRvf9M1qNS84gXYBBDVmXGtfCzHx7NjxXK?=
- =?us-ascii?Q?gU4dIqjrGI/dndqht8/m+3+eyzYbQnC392guTsw+qSZ+inujSERnJP5zhdvO?=
- =?us-ascii?Q?OcLruoILfTMbai4IseXKrpoqxC0k0opY3ZiXUK9Vj15/D1NyRmWtSDBZl8lN?=
- =?us-ascii?Q?XOKzFConscJG5QpXAlsMktIuwnRBzH9jWKw3VEd23GcXDvKWcvHNZqevuFkH?=
- =?us-ascii?Q?BWIGb66iJUeHD7R/6aH8N8I5tBuV7ZWrjLbe5CpJTTboCLqT9Xp6kA+vb1UP?=
- =?us-ascii?Q?az2NlMz5FMBzc4U4P3p9ZeGWanEvgemLgNgiarYVhn8qYteR3Vp3AmCdVi4X?=
- =?us-ascii?Q?PvLFbRyY12te2nkVw/UK2xC6p55ArnsQjnIoW4/r?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb18e866-193d-4017-ff49-08dcc07f5943
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB7763.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 18:47:17.1990
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Y1qZTHRFSM47CrAA/a2vYoNdch8onLN2K0elCtWgglmlJMtpncNJU+dNJ9MMGKrH
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8130
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 18/25] cxl/extent: Process DCD events and realize
+ region extents
+To: ira.weiny@intel.com, Fan Ni <fan.ni@samsung.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Navneet Singh <navneet.singh@intel.com>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+ Davidlohr Bueso <dave@stgolabs.net>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, linux-btrfs@vger.kernel.org,
+ linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, nvdimm@lists.linux.dev
+References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
+ <20240816-dcd-type2-upstream-v3-18-7c9b96cba6d7@intel.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20240816-dcd-type2-upstream-v3-18-7c9b96cba6d7@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 19, 2024 at 11:38:22AM -0700, Nicolin Chen wrote:
-> On Mon, Aug 19, 2024 at 03:28:11PM -0300, Jason Gunthorpe wrote:
-> > On Mon, Aug 19, 2024 at 11:19:39AM -0700, Nicolin Chen wrote:
-> > 
-> > > > But nesting enablment with out viommu is alot less useful than I had
-> > > > thought :(
-> > > 
-> > > Actually, without viommu, the hwpt cache invalidate alone could
-> > > still support non-SVA case?
-> > 
-> > That is what I thought, but doesn't the guest still have to invalidate
-> > the CD table entry # 0?
+
+
+On 8/16/24 7:44 AM, ira.weiny@intel.com wrote:
+> From: Navneet Singh <navneet.singh@intel.com>
 > 
-> I recall it doesn't. The CD cache invalidation is required in the
-> viommu invalidation for an SVA case where we need a PASID number
-> to specify CD to the substream. But the CD to the default stream
-> is only changed during a vSTE setup, and the host knows the PASID
-> number (=0)?
+> A dynamic capacity device (DCD) sends events to signal the host for
+> changes in the availability of Dynamic Capacity (DC) memory.  These
+> events contain extents describing a DPA range and meta data for memory
+> to be added or removed.  Events may be sent from the device at any time.
+> 
+> Three types of events can be signaled, Add, Release, and Force Release.
+> 
+> On add, the host may accept or reject the memory being offered.  If no
+> region exists, or the extent is invalid, the extent should be rejected.
+> Add extent events may be grouped by a 'more' bit which indicates those
+> extents should be processed as a group.
+> 
+> On remove, the host can delay the response until the host is safely not
+> using the memory.  If no region exists the release can be sent
+> immediately.  The host may also release extents (or partial extents) at
+> any time.  Thus the 'more' bit grouping of release events is of less
+> value and can be ignored in favor of sending multiple release capacity
+> responses for groups of release events.
+> 
+> Force removal is intended as a mechanism between the FM and the device
+> and intended only when the host is unresponsive, out of sync, or
+> otherwise broken.  Purposely ignore force removal events.
+> 
+> Regions are made up of one or more devices which may be surfacing memory
+> to the host.  Once all devices in a region have surfaced an extent the
+> region can expose a corresponding extent for the user to consume.
+> Without interleaving a device extent forms a 1:1 relationship with the
+> region extent.  Immediately surface a region extent upon getting a
+> device extent.
+> 
+> Per the specification the device is allowed to offer or remove extents
+> at any time.  However, anticipated use cases can expect extents to be
+> offered, accepted, and removed in well defined chunks.
+> 
+> Simplify extent tracking with the following restrictions.
+> 
+> 	1) Flag for removal any extent which overlaps a requested
+> 	   release range.
+> 	2) Refuse the offer of extents which overlap already accepted
+> 	   memory ranges.
+> 	3) Accept again a range which has already been accepted by the
+> 	   host.  (It is likely the device has an error because it
+> 	   should already know that this range was accepted.  But from
+> 	   the host point of view it is safe to acknowledge that
+> 	   acceptance again.)
+> 
+> Management of the region extent devices must be synchronized with
+> potential uses of the memory within the DAX layer.  Create region extent
+> devices as children of the cxl_dax_region device such that the DAX
+> region driver can co-drive them and synchronize with the DAX layer.
+> Synchronization and management is handled in a subsequent patch.
+> 
+> Process DCD events and create region devices.
+> 
+> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
+> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
-I think that would subtly assume certain things about how the driver
-does ordering, ie the that CD table entry 0 is setup with the S1
-before we load it into the STE.
+A few nits below, but in general
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
 
-Yes, the Linux driver does that now, but I don't think anyone should
-rely on that..
+> 
+> ---
+> Changes:
+> [iweiny: combine this with the extent surface patches to better show the
+>          lifetime extent objects in review]
+> [iweiny: clean up commit message.]
+> [iweiny: move extent verification of the 'read extents on region
+>          creation' to this patch]
+> [iweiny: Provide for a common path for extent realization between an add
+> 	 event and adding existing extents.]
+> [iweiny: Persist a check that an extent is within an endpoint decoder]
+> [iweiny: reduce exported and non-static calls]
+> [iweiny: use %par]
+> 
+> 	<Combined comments from the old patches which were addressed>
+> 
+> [Jonathan: implement the more bit with a simple algorithm which accepts
+> 	   all extents it can.
+> 	   Also include the response more bit to prevent payload
+> 	   overflow]
+> [Fan: Do not error if a contained extent is added.]
+> [Jonathan: allocate ida after kzalloc]
+> [iweiny: fix ida resource leak]
+> [fan/djiang: remove unneeded memset]
+> [djiang: fix indentation]
+> [Jonathan: Fix indentation]
+> [Jonathan/djbw: make tag a uuid]
+> [djbw: create helper calc_hpa_range() straight away]
+> [djbw: Allow for multiple cxled_extents per region_extent]
+> [djbw: s/cxl_ed/cxled]
+> [djbw: s/cxl_release_ed_extent/cxled_release_extent/]
+> [djbw: s/reg_ext/region_extent/]
+> [djbw: s/dc_extent/extent/]
+> [Gregory/djbw: reject shared extents]
+> [iweiny: predicate extent.c compile on CONFIG_CXL_REGION]
+> ---
+>  drivers/cxl/core/Makefile |   2 +-
+>  drivers/cxl/core/core.h   |  13 ++
+>  drivers/cxl/core/extent.c | 345 ++++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/cxl/core/mbox.c   | 268 ++++++++++++++++++++++++++++++++++-
+>  drivers/cxl/core/region.c |   6 +
+>  drivers/cxl/cxl.h         |  52 ++++++-
+>  drivers/cxl/cxlmem.h      |  26 ++++
+>  include/linux/cxl-event.h |  32 +++++
+>  tools/testing/cxl/Kbuild  |   3 +-
+>  9 files changed, 743 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/Makefile b/drivers/cxl/core/Makefile
+> index 9259bcc6773c..3b812515e725 100644
+> --- a/drivers/cxl/core/Makefile
+> +++ b/drivers/cxl/core/Makefile
+> @@ -15,4 +15,4 @@ cxl_core-y += hdm.o
+>  cxl_core-y += pmu.o
+>  cxl_core-y += cdat.o
+>  cxl_core-$(CONFIG_TRACING) += trace.o
+> -cxl_core-$(CONFIG_CXL_REGION) += region.o
+> +cxl_core-$(CONFIG_CXL_REGION) += region.o extent.o
+> diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
+> index 76c4153a9b2c..8dfc97b2e0a4 100644
+> --- a/drivers/cxl/core/core.h
+> +++ b/drivers/cxl/core/core.h
+> @@ -44,12 +44,24 @@ struct cxl_region *cxl_dpa_to_region(const struct cxl_memdev *cxlmd, u64 dpa,
+>  u64 cxl_dpa_to_hpa(struct cxl_region *cxlr, const struct cxl_memdev *cxlmd,
+>  		   u64 dpa);
+>  
+> +int cxl_add_extent(struct cxl_memdev_state *mds, struct cxl_extent *extent);
+> +int cxl_rm_extent(struct cxl_memdev_state *mds, struct cxl_extent *extent);
+>  #else
+>  static inline u64 cxl_dpa_to_hpa(struct cxl_region *cxlr,
+>  				 const struct cxl_memdev *cxlmd, u64 dpa)
+>  {
+>  	return ULLONG_MAX;
+>  }
+> +static inline int cxl_add_extent(struct cxl_memdev_state *mds,
+> +				   struct cxl_extent *extent)
+> +{
+> +	return 0;
+> +}
+> +static inline int cxl_rm_extent(struct cxl_memdev_state *mds,
+> +				struct cxl_extent *extent)
+> +{
+> +	return 0;
+> +}
+>  static inline
+>  struct cxl_region *cxl_dpa_to_region(const struct cxl_memdev *cxlmd, u64 dpa,
+>  				     struct cxl_endpoint_decoder **cxled)
+> @@ -121,5 +133,6 @@ long cxl_pci_get_latency(struct pci_dev *pdev);
+>  int cxl_update_hmat_access_coordinates(int nid, struct cxl_region *cxlr,
+>  				       enum access_coordinate_class access);
+>  bool cxl_need_node_perf_attrs_update(int nid);
+> +void memdev_release_extent(struct cxl_memdev_state *mds, struct range *range);
+>  
+>  #endif /* __CXL_CORE_H__ */
+> diff --git a/drivers/cxl/core/extent.c b/drivers/cxl/core/extent.c
+> new file mode 100644
+> index 000000000000..34456594cdc3
+> --- /dev/null
+> +++ b/drivers/cxl/core/extent.c
+> @@ -0,0 +1,345 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*  Copyright(c) 2024 Intel Corporation. All rights reserved. */
+> +
+> +#include <linux/device.h>
+> +#include <cxl.h>
+> +
+> +#include "core.h"
+> +
+> +static void cxled_release_extent(struct cxl_endpoint_decoder *cxled,
+> +				 struct cxled_extent *ed_extent)
+> +{
+> +	struct cxl_memdev_state *mds = cxled_to_mds(cxled);
+> +	struct device *dev = &cxled->cxld.dev;
+> +
+> +	dev_dbg(dev, "Remove extent %par (%*phC)\n", &ed_extent->dpa_range,
+> +		CXL_EXTENT_TAG_LEN, ed_extent->tag);
+> +	memdev_release_extent(mds, &ed_extent->dpa_range);
+> +	kfree(ed_extent);
+> +}
+> +
+> +static void free_region_extent(struct region_extent *region_extent)
+> +{
+> +	struct cxled_extent *ed_extent;
+> +	unsigned long index;
+> +
+> +	/*
+> +	 * Remove from each endpoint decoder the extent which backs this region
+> +	 * extent
+> +	 */
+> +	xa_for_each(&region_extent->decoder_extents, index, ed_extent)
+> +		cxled_release_extent(ed_extent->cxled, ed_extent);
+> +	xa_destroy(&region_extent->decoder_extents);
+> +	ida_free(&region_extent->cxlr_dax->extent_ida, region_extent->dev.id);
+> +	kfree(region_extent);
+> +}
+> +
+> +static void region_extent_release(struct device *dev)
+> +{
+> +	struct region_extent *region_extent = to_region_extent(dev);
+> +
+> +	free_region_extent(region_extent);
+> +}
+> +
+> +static const struct device_type region_extent_type = {
+> +	.name = "extent",
+> +	.release = region_extent_release,
+> +};
+> +
+> +bool is_region_extent(struct device *dev)
+> +{
+> +	return dev->type == &region_extent_type;
+> +}
+> +EXPORT_SYMBOL_NS_GPL(is_region_extent, CXL);
+> +
+> +static void region_extent_unregister(void *ext)
+> +{
+> +	struct region_extent *region_extent = ext;
+> +
+> +	dev_dbg(&region_extent->dev, "DAX region rm extent HPA %par\n",
+> +		&region_extent->hpa_range);
+> +	device_unregister(&region_extent->dev);
+> +}
+> +
+> +static void region_rm_extent(struct region_extent *region_extent)
+> +{
+> +	struct device *region_dev = region_extent->dev.parent;
+> +
+> +	devm_release_action(region_dev, region_extent_unregister, region_extent);
+> +}
+> +
+> +static struct region_extent *
+> +alloc_region_extent(struct cxl_dax_region *cxlr_dax, struct range *hpa_range, u8 *tag)
+> +{
+> +	int id;
+> +
+> +	struct region_extent *region_extent __free(kfree) =
+> +				kzalloc(sizeof(*region_extent), GFP_KERNEL);
+> +	if (!region_extent)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	id = ida_alloc(&cxlr_dax->extent_ida, GFP_KERNEL);
+> +	if (id < 0)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	region_extent->hpa_range = *hpa_range;
+> +	region_extent->cxlr_dax = cxlr_dax;
+> +	import_uuid(&region_extent->tag, tag);
+> +	region_extent->dev.id = id;
+> +	xa_init(&region_extent->decoder_extents);
+> +	return no_free_ptr(region_extent);
+> +}
+> +
+> +static int online_region_extent(struct region_extent *region_extent)
+> +{
+> +	struct cxl_dax_region *cxlr_dax = region_extent->cxlr_dax;
+> +	struct device *dev;
+> +	int rc;
+> +
+> +	dev = &region_extent->dev;
 
-Jason
+Nit. You can move this up to when you declare 'dev'.
+
+> +	device_initialize(dev);
+> +	device_set_pm_not_required(dev);
+> +	dev->parent = &cxlr_dax->dev;
+> +	dev->type = &region_extent_type;
+> +	rc = dev_set_name(dev, "extent%d.%d", cxlr_dax->cxlr->id, dev->id);
+> +	if (rc)
+> +		goto err;
+> +
+> +	rc = device_add(dev);
+> +	if (rc)
+> +		goto err;
+> +
+> +	dev_dbg(dev, "region extent HPA %par\n", &region_extent->hpa_range);
+> +	return devm_add_action_or_reset(&cxlr_dax->dev, region_extent_unregister,
+> +					region_extent);
+> +
+> +err:
+> +	dev_err(&cxlr_dax->dev, "Failed to initialize region extent HPA %par\n",
+> +		&region_extent->hpa_range);
+> +
+> +	put_device(dev);
+> +	return rc;
+> +}
+> +
+> +struct match_data {
+> +	struct cxl_endpoint_decoder *cxled;
+> +	struct range *new_range;
+> +};
+> +
+> +static int match_contains(struct device *dev, void *data)
+> +{
+> +	struct region_extent *region_extent = to_region_extent(dev);
+> +	struct match_data *md = data;
+> +	struct cxled_extent *entry;
+> +	unsigned long index;
+> +
+> +	if (!region_extent)
+> +		return 0;
+> +
+> +	xa_for_each(&region_extent->decoder_extents, index, entry) {
+> +		if (md->cxled == entry->cxled &&
+> +		    range_contains(&entry->dpa_range, md->new_range))
+> +			return true;
+> +	}
+> +	return false;
+> +}
+> +
+> +static bool extents_contain(struct cxl_dax_region *cxlr_dax,
+> +			    struct cxl_endpoint_decoder *cxled,
+> +			    struct range *new_range)
+> +{
+> +	struct device *extent_device;
+> +	struct match_data md = {
+> +		.cxled = cxled,
+> +		.new_range = new_range,
+> +	};
+> +
+> +	extent_device = device_find_child(&cxlr_dax->dev, &md, match_contains);
+> +	if (!extent_device)
+> +		return false;
+> +
+> +	put_device(extent_device);
+> +	return true;
+> +}
+> +
+> +static int match_overlaps(struct device *dev, void *data)
+> +{
+> +	struct region_extent *region_extent = to_region_extent(dev);
+> +	struct match_data *md = data;
+> +	struct cxled_extent *entry;
+> +	unsigned long index;
+> +
+> +	if (!region_extent)
+> +		return 0;
+> +
+> +	xa_for_each(&region_extent->decoder_extents, index, entry) {
+> +		if (md->cxled == entry->cxled &&
+> +		    range_overlaps(&entry->dpa_range, md->new_range))
+> +			return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +static bool extents_overlap(struct cxl_dax_region *cxlr_dax,
+> +			    struct cxl_endpoint_decoder *cxled,
+> +			    struct range *new_range)
+> +{
+> +	struct device *extent_device;
+> +	struct match_data md = {
+> +		.cxled = cxled,
+> +		.new_range = new_range,
+> +	};
+> +
+> +	extent_device = device_find_child(&cxlr_dax->dev, &md, match_overlaps);
+> +	if (!extent_device)
+> +		return false;
+> +
+> +	put_device(extent_device);
+> +	return true;
+> +}
+> +
+> +static void calc_hpa_range(struct cxl_endpoint_decoder *cxled,
+> +			   struct cxl_dax_region *cxlr_dax,
+> +			   struct range *dpa_range,
+> +			   struct range *hpa_range)
+> +{
+> +	resource_size_t dpa_offset, hpa;
+> +
+> +	dpa_offset = dpa_range->start - cxled->dpa_res->start;
+> +	hpa = cxled->cxld.hpa_range.start + dpa_offset;
+> +
+> +	hpa_range->start = hpa - cxlr_dax->hpa_range.start;
+> +	hpa_range->end = hpa_range->start + range_len(dpa_range) - 1;
+> +}
+> +
+> +static int cxlr_rm_extent(struct device *dev, void *data)
+> +{
+> +	struct region_extent *region_extent = to_region_extent(dev);
+> +	struct range *region_hpa_range = data;
+> +
+> +	if (!region_extent)
+> +		return 0;
+> +
+> +	/*
+> +	 * Any extent which 'touches' the released range is removed.
+> +	 */
+> +	if (range_overlaps(region_hpa_range, &region_extent->hpa_range)) {
+> +		dev_dbg(dev, "Remove region extent HPA %par\n",
+> +			&region_extent->hpa_range);
+> +		region_rm_extent(region_extent);
+> +	}
+> +	return 0;
+> +}
+> +
+> +int cxl_rm_extent(struct cxl_memdev_state *mds, struct cxl_extent *extent)
+> +{
+> +	u64 start_dpa = le64_to_cpu(extent->start_dpa);
+> +	struct cxl_memdev *cxlmd = mds->cxlds.cxlmd;
+> +	struct cxl_endpoint_decoder *cxled;
+> +	struct range hpa_range, dpa_range;
+> +	struct cxl_region *cxlr;
+> +
+> +	dpa_range = (struct range) {
+> +		.start = start_dpa,
+> +		.end = start_dpa + le64_to_cpu(extent->length) - 1,
+> +	};
+> +
+> +	guard(rwsem_read)(&cxl_region_rwsem);
+> +	cxlr = cxl_dpa_to_region(cxlmd, start_dpa, &cxled);
+> +	if (!cxlr) {
+> +		memdev_release_extent(mds, &dpa_range);
+> +		return -ENXIO;
+> +	}
+> +
+> +	calc_hpa_range(cxled, cxlr->cxlr_dax, &dpa_range, &hpa_range);
+> +
+> +	/* Remove region extents which overlap */
+> +	return device_for_each_child(&cxlr->cxlr_dax->dev, &hpa_range,
+> +				     cxlr_rm_extent);
+> +}
+> +
+> +static int cxlr_add_extent(struct cxl_dax_region *cxlr_dax,
+> +			   struct cxl_endpoint_decoder *cxled,
+> +			   struct cxled_extent *ed_extent)
+> +{
+> +	struct region_extent *region_extent;
+> +	struct range hpa_range;
+> +	int rc;
+> +
+> +	calc_hpa_range(cxled, cxlr_dax, &ed_extent->dpa_range, &hpa_range);
+> +
+> +	region_extent = alloc_region_extent(cxlr_dax, &hpa_range, ed_extent->tag);
+> +	if (IS_ERR(region_extent))
+> +		return PTR_ERR(region_extent);
+> +
+> +	rc = xa_insert(&region_extent->decoder_extents, (unsigned long)ed_extent, ed_extent,
+> +		       GFP_KERNEL);
+> +	if (rc) {
+> +		free_region_extent(region_extent);
+> +		return rc;
+> +	}
+> +
+> +	/* device model handles freeing region_extent */
+> +	return online_region_extent(region_extent);
+> +}
+> +
+> +/* Callers are expected to ensure cxled has been attached to a region */
+> +int cxl_add_extent(struct cxl_memdev_state *mds, struct cxl_extent *extent)
+> +{
+> +	u64 start_dpa = le64_to_cpu(extent->start_dpa);
+> +	struct cxl_memdev *cxlmd = mds->cxlds.cxlmd;
+> +	struct cxl_endpoint_decoder *cxled;
+> +	struct range ed_range, ext_range;
+> +	struct cxl_dax_region *cxlr_dax;
+> +	struct cxled_extent *ed_extent;
+> +	struct cxl_region *cxlr;
+> +	struct device *dev;
+> +
+> +	ext_range = (struct range) {
+> +		.start = start_dpa,
+> +		.end = start_dpa + le64_to_cpu(extent->length) - 1,
+> +	};
+> +
+> +	guard(rwsem_read)(&cxl_region_rwsem);
+> +	cxlr = cxl_dpa_to_region(cxlmd, start_dpa, &cxled);
+> +	if (!cxlr)
+> +		return -ENXIO;
+> +
+> +	cxlr_dax = cxled->cxld.region->cxlr_dax;
+> +	dev = &cxled->cxld.dev;
+> +	ed_range = (struct range) {
+> +		.start = cxled->dpa_res->start,
+> +		.end = cxled->dpa_res->end,
+> +	};
+> +
+> +	dev_dbg(&cxled->cxld.dev, "Checking ED (%pr) for extent %par\n",
+> +		cxled->dpa_res, &ext_range);
+> +
+> +	if (!range_contains(&ed_range, &ext_range)) {
+> +		dev_err_ratelimited(dev,
+> +				    "DC extent DPA %par (%*phC) is not fully in ED %par\n",
+> +				    &ext_range.start, CXL_EXTENT_TAG_LEN,
+> +				    extent->tag, &ed_range);
+> +		return -ENXIO;
+> +	}
+> +
+> +	if (extents_contain(cxlr_dax, cxled, &ext_range))
+> +		return 0;
+> +
+> +	if (extents_overlap(cxlr_dax, cxled, &ext_range))
+> +		return -ENXIO;
+> +
+> +	ed_extent = kzalloc(sizeof(*ed_extent), GFP_KERNEL);
+> +	if (!ed_extent)
+> +		return -ENOMEM;
+> +
+> +	ed_extent->cxled = cxled;
+> +	ed_extent->dpa_range = ext_range;
+> +	memcpy(ed_extent->tag, extent->tag, CXL_EXTENT_TAG_LEN);
+> +
+> +	dev_dbg(dev, "Add extent %par (%*phC)\n", &ed_extent->dpa_range,
+> +		CXL_EXTENT_TAG_LEN, ed_extent->tag);
+> +
+> +	return cxlr_add_extent(cxlr_dax, cxled, ed_extent);
+> +}
+> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
+> index 01a447aaa1b1..f629ad7488ac 100644
+> --- a/drivers/cxl/core/mbox.c
+> +++ b/drivers/cxl/core/mbox.c
+> @@ -882,6 +882,48 @@ int cxl_enumerate_cmds(struct cxl_memdev_state *mds)
+>  }
+>  EXPORT_SYMBOL_NS_GPL(cxl_enumerate_cmds, CXL);
+>  
+> +static int cxl_validate_extent(struct cxl_memdev_state *mds,
+> +			       struct cxl_extent *extent)
+> +{
+> +	u64 start = le64_to_cpu(extent->start_dpa);
+> +	u64 length = le64_to_cpu(extent->length);
+> +	struct device *dev = mds->cxlds.dev;
+> +
+> +	struct range ext_range = (struct range){
+> +		.start = start,
+> +		.end = start + length - 1,
+> +	};
+> +
+> +	if (le16_to_cpu(extent->shared_extn_seq) != 0) {
+> +		dev_err_ratelimited(dev,
+> +				    "DC extent DPA %par (%*phC) can not be shared\n",
+> +				    &ext_range.start, CXL_EXTENT_TAG_LEN,
+> +				    extent->tag);
+> +		return -ENXIO;
+> +	}
+> +
+> +	/* Extents must not cross DC region boundary's */
+> +	for (int i = 0; i < mds->nr_dc_region; i++) {
+> +		struct cxl_dc_region_info *dcr = &mds->dc_region[i];
+> +		struct range region_range = (struct range) {
+> +			.start = dcr->base,
+> +			.end = dcr->base + dcr->decode_len - 1,
+> +		};
+> +
+> +		if (range_contains(&region_range, &ext_range)) {
+> +			dev_dbg(dev, "DC extent DPA %par (DCR:%d:%#llx)(%*phC)\n",
+> +				&ext_range, i, start - dcr->base,
+> +				CXL_EXTENT_TAG_LEN, extent->tag);
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	dev_err_ratelimited(dev,
+> +			    "DC extent DPA %par (%*phC) is not in any DC region\n",
+> +			    &ext_range, CXL_EXTENT_TAG_LEN, extent->tag);
+> +	return -ENXIO;
+> +}
+> +
+>  void cxl_event_trace_record(const struct cxl_memdev *cxlmd,
+>  			    enum cxl_event_log_type type,
+>  			    enum cxl_event_type event_type,
+> @@ -1009,6 +1051,207 @@ static int cxl_clear_event_record(struct cxl_memdev_state *mds,
+>  	return rc;
+>  }
+>  
+> +static int cxl_send_dc_response(struct cxl_memdev_state *mds, int opcode,
+> +				struct xarray *extent_array, int cnt)
+> +{
+> +	struct cxl_mbox_dc_response *p;
+> +	struct cxl_mbox_cmd mbox_cmd;
+> +	struct cxl_extent *extent;
+> +	unsigned long index;
+> +	u32 pl_index;
+> +	int rc = 0;
+> +
+> +	size_t pl_size = struct_size(p, extent_list, cnt);
+> +	u32 max_extents = cnt;
+> +
+> +	/* May have to use more bit on response. */
+> +	if (pl_size > mds->payload_size) {
+> +		max_extents = (mds->payload_size - sizeof(*p)) /
+> +			      sizeof(struct updated_extent_list);
+> +		pl_size = struct_size(p, extent_list, max_extents);
+> +	}
+> +
+> +	struct cxl_mbox_dc_response *response __free(kfree) =
+> +						kzalloc(pl_size, GFP_KERNEL);
+> +	if (!response)
+> +		return -ENOMEM;
+> +
+> +	pl_index = 0;
+> +	xa_for_each(extent_array, index, extent) {
+> +
+> +		response->extent_list[pl_index].dpa_start = extent->start_dpa;
+> +		response->extent_list[pl_index].length = extent->length;
+> +		pl_index++;
+> +		response->extent_list_size = cpu_to_le32(pl_index);
+> +
+> +		if (pl_index == max_extents) {
+> +			mbox_cmd = (struct cxl_mbox_cmd) {
+> +				.opcode = opcode,
+> +				.size_in = struct_size(response, extent_list,
+> +						       pl_index),
+> +				.payload_in = response,
+> +			};
+> +
+> +			response->flags = 0;
+> +			if (pl_index < cnt)
+> +				response->flags &= CXL_DCD_EVENT_MORE;
+> +
+> +			rc = cxl_internal_send_cmd(mds, &mbox_cmd);
+> +			if (rc)
+> +				return rc;
+> +			pl_index = 0;
+> +		}
+> +	}
+> +
+> +	if (pl_index) {
+> +		mbox_cmd = (struct cxl_mbox_cmd) {
+> +			.opcode = opcode,
+> +			.size_in = struct_size(response, extent_list,
+> +					       pl_index),
+> +			.payload_in = response,
+> +		};
+> +
+> +		response->flags = 0;
+> +		rc = cxl_internal_send_cmd(mds, &mbox_cmd);
+> +	}
+> +
+> +	return rc;
+> +}
+> +
+> +void memdev_release_extent(struct cxl_memdev_state *mds, struct range *range)
+> +{
+> +	struct device *dev = mds->cxlds.dev;
+> +	struct xarray extent_list;
+> +
+> +	struct cxl_extent extent = {
+> +		.start_dpa = cpu_to_le64(range->start),
+> +		.length = cpu_to_le64(range_len(range)),
+> +	};
+> +
+> +	dev_dbg(dev, "Release response dpa %par\n", range);
+> +
+> +	xa_init(&extent_list);
+> +	if (xa_insert(&extent_list, 0, &extent, GFP_KERNEL)) {
+> +		dev_dbg(dev, "Failed to release %par\n", range);
+> +		goto destroy;
+> +	}
+> +
+> +	if (cxl_send_dc_response(mds, CXL_MBOX_OP_RELEASE_DC, &extent_list, 1))
+> +		dev_dbg(dev, "Failed to release %par\n", range);
+> +
+> +destroy:
+> +	xa_destroy(&extent_list);
+> +}
+> +
+> +static int validate_add_extent(struct cxl_memdev_state *mds,
+> +			       struct cxl_extent *extent)
+> +{
+> +	int rc;
+> +
+> +	rc = cxl_validate_extent(mds, extent);
+> +	if (rc)
+> +		return rc;
+> +
+> +	return cxl_add_extent(mds, extent);
+> +}
+> +
+> +static int cxl_add_pending(struct cxl_memdev_state *mds)
+> +{
+> +	struct device *dev = mds->cxlds.dev;
+> +	struct cxl_extent *extent;
+> +	unsigned long index;
+> +	unsigned long cnt = 0;
+reverse xmas tree
+
+> +	int rc;
+> +
+> +	xa_for_each(&mds->pending_extents, index, extent) {
+> +		if (validate_add_extent(mds, extent)) {
+> +			dev_dbg(dev, "unconsumed DC extent DPA:%#llx LEN:%#llx\n",
+> +				le64_to_cpu(extent->start_dpa),
+> +				le64_to_cpu(extent->length));
+> +			xa_erase(&mds->pending_extents, index);
+> +			kfree(extent);
+> +			continue;
+> +		}
+> +		cnt++;
+> +	}
+> +	rc = cxl_send_dc_response(mds, CXL_MBOX_OP_ADD_DC_RESPONSE,
+> +				  &mds->pending_extents, cnt);
+> +	xa_for_each(&mds->pending_extents, index, extent) {
+> +		xa_erase(&mds->pending_extents, index);
+> +		kfree(extent);
+> +	}
+> +	return rc;
+> +}
+> +
+> +static int handle_add_event(struct cxl_memdev_state *mds,
+> +			    struct cxl_event_dcd *event)
+> +{
+> +	struct cxl_extent *tmp = kzalloc(sizeof(*tmp), GFP_KERNEL);
+for readability I would use *extent instead of *tmp
+
+> +	struct device *dev = mds->cxlds.dev;
+> +
+> +	if (!tmp)
+> +		return -ENOMEM;
+> +
+> +	memcpy(tmp, &event->extent, sizeof(*tmp));
+> +	if (xa_insert(&mds->pending_extents, (unsigned long)tmp, tmp,
+> +		      GFP_KERNEL)) {
+> +		kfree(tmp);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	if (event->flags & CXL_DCD_EVENT_MORE) {
+> +		dev_dbg(dev, "more bit set; delay the surfacing of extent\n");
+> +		return 0;
+> +	}
+> +
+> +	/* extents are removed and free'ed in cxl_add_pending() */
+> +	return cxl_add_pending(mds);
+> +}
+> +
+> +static char *cxl_dcd_evt_type_str(u8 type)
+> +{
+> +	switch (type) {
+> +	case DCD_ADD_CAPACITY:
+> +		return "add";
+> +	case DCD_RELEASE_CAPACITY:
+> +		return "release";
+> +	case DCD_FORCED_CAPACITY_RELEASE:
+> +		return "force release";
+> +	default:
+> +		break;
+> +	}
+> +
+> +	return "<unknown>";
+> +}
+> +
+> +static int cxl_handle_dcd_event_records(struct cxl_memdev_state *mds,
+> +					struct cxl_event_record_raw *raw_rec)
+> +{
+> +	struct cxl_event_dcd *event = &raw_rec->event.dcd;
+> +	struct cxl_extent *extent = &event->extent;
+> +	struct device *dev = mds->cxlds.dev;
+> +	uuid_t *id = &raw_rec->id;
+> +
+> +	if (!uuid_equal(id, &CXL_EVENT_DC_EVENT_UUID))
+> +		return -EINVAL;
+> +
+> +	dev_dbg(dev, "DCD event %s : DPA:%#llx LEN:%#llx\n",
+> +		cxl_dcd_evt_type_str(event->event_type),
+> +		le64_to_cpu(extent->start_dpa), le64_to_cpu(extent->length));
+> +
+> +	switch (event->event_type) {
+> +	case DCD_ADD_CAPACITY:
+> +		return handle_add_event(mds, event);
+> +	case DCD_RELEASE_CAPACITY:
+> +		return cxl_rm_extent(mds, &event->extent);
+> +	case DCD_FORCED_CAPACITY_RELEASE:
+> +		dev_err_ratelimited(dev, "Forced release event ignored.\n");
+> +		return 0;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+>  static void cxl_mem_get_records_log(struct cxl_memdev_state *mds,
+>  				    enum cxl_event_log_type type)
+>  {
+> @@ -1044,9 +1287,17 @@ static void cxl_mem_get_records_log(struct cxl_memdev_state *mds,
+>  		if (!nr_rec)
+>  			break;
+>  
+> -		for (i = 0; i < nr_rec; i++)
+> +		for (i = 0; i < nr_rec; i++) {
+>  			__cxl_event_trace_record(cxlmd, type,
+>  						 &payload->records[i]);
+> +			if (type == CXL_EVENT_TYPE_DCD) {
+> +				rc = cxl_handle_dcd_event_records(mds,
+> +								  &payload->records[i]);
+> +				if (rc)
+> +					dev_err_ratelimited(dev, "dcd event failed: %d\n",
+> +							    rc);
+> +			}
+> +		}
+>  
+>  		if (payload->flags & CXL_GET_EVENT_FLAG_OVERFLOW)
+>  			trace_cxl_overflow(cxlmd, type, payload);
+> @@ -1078,6 +1329,8 @@ void cxl_mem_get_event_records(struct cxl_memdev_state *mds, u32 status)
+>  {
+>  	dev_dbg(mds->cxlds.dev, "Reading event logs: %x\n", status);
+>  
+> +	if (cxl_dcd_supported(mds) && (status & CXLDEV_EVENT_STATUS_DCD))
+> +		cxl_mem_get_records_log(mds, CXL_EVENT_TYPE_DCD);
+>  	if (status & CXLDEV_EVENT_STATUS_FATAL)
+>  		cxl_mem_get_records_log(mds, CXL_EVENT_TYPE_FATAL);
+>  	if (status & CXLDEV_EVENT_STATUS_FAIL)
+> @@ -1610,6 +1863,17 @@ int cxl_poison_state_init(struct cxl_memdev_state *mds)
+>  }
+>  EXPORT_SYMBOL_NS_GPL(cxl_poison_state_init, CXL);
+>  
+> +static void clear_pending_extents(void *_mds)
+> +{
+> +	struct cxl_memdev_state *mds = _mds;
+> +	struct cxl_extent *extent;
+> +	unsigned long index;
+> +
+> +	xa_for_each(&mds->pending_extents, index, extent)
+> +		kfree(extent);
+> +	xa_destroy(&mds->pending_extents);
+> +}
+> +
+>  struct cxl_memdev_state *cxl_memdev_state_create(struct device *dev)
+>  {
+>  	struct cxl_memdev_state *mds;
+> @@ -1628,6 +1892,8 @@ struct cxl_memdev_state *cxl_memdev_state_create(struct device *dev)
+>  	mds->cxlds.type = CXL_DEVTYPE_CLASSMEM;
+>  	mds->ram_perf.qos_class = CXL_QOS_CLASS_INVALID;
+>  	mds->pmem_perf.qos_class = CXL_QOS_CLASS_INVALID;
+> +	xa_init(&mds->pending_extents);
+> +	devm_add_action_or_reset(dev, clear_pending_extents, mds);
+>  
+>  	return mds;
+>  }
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index 8e0884b52f84..8c9171f914fb 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -3037,6 +3037,7 @@ static void cxl_dax_region_release(struct device *dev)
+>  {
+>  	struct cxl_dax_region *cxlr_dax = to_cxl_dax_region(dev);
+>  
+> +	ida_destroy(&cxlr_dax->extent_ida);
+>  	kfree(cxlr_dax);
+>  }
+>  
+> @@ -3090,6 +3091,8 @@ static struct cxl_dax_region *cxl_dax_region_alloc(struct cxl_region *cxlr)
+>  
+>  	dev = &cxlr_dax->dev;
+>  	cxlr_dax->cxlr = cxlr;
+> +	cxlr->cxlr_dax = cxlr_dax;
+> +	ida_init(&cxlr_dax->extent_ida);
+>  	device_initialize(dev);
+>  	lockdep_set_class(&dev->mutex, &cxl_dax_region_key);
+>  	device_set_pm_not_required(dev);
+> @@ -3190,7 +3193,10 @@ static int devm_cxl_add_pmem_region(struct cxl_region *cxlr)
+>  static void cxlr_dax_unregister(void *_cxlr_dax)
+>  {
+>  	struct cxl_dax_region *cxlr_dax = _cxlr_dax;
+> +	struct cxl_region *cxlr = cxlr_dax->cxlr;
+>  
+> +	cxlr->cxlr_dax = NULL;
+> +	cxlr_dax->cxlr = NULL;
+>  	device_unregister(&cxlr_dax->dev);
+>  }
+>  
+> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+> index 16861c867537..c858e3957fd5 100644
+> --- a/drivers/cxl/cxl.h
+> +++ b/drivers/cxl/cxl.h
+> @@ -11,6 +11,7 @@
+>  #include <linux/log2.h>
+>  #include <linux/node.h>
+>  #include <linux/io.h>
+> +#include <linux/cxl-event.h>
+>  
+>  extern const struct nvdimm_security_ops *cxl_security_ops;
+>  
+> @@ -169,11 +170,13 @@ static inline int ways_to_eiw(unsigned int ways, u8 *eiw)
+>  #define CXLDEV_EVENT_STATUS_WARN		BIT(1)
+>  #define CXLDEV_EVENT_STATUS_FAIL		BIT(2)
+>  #define CXLDEV_EVENT_STATUS_FATAL		BIT(3)
+> +#define CXLDEV_EVENT_STATUS_DCD			BIT(4)
+>  
+>  #define CXLDEV_EVENT_STATUS_ALL (CXLDEV_EVENT_STATUS_INFO |	\
+>  				 CXLDEV_EVENT_STATUS_WARN |	\
+>  				 CXLDEV_EVENT_STATUS_FAIL |	\
+> -				 CXLDEV_EVENT_STATUS_FATAL)
+> +				 CXLDEV_EVENT_STATUS_FATAL |	\
+> +				 CXLDEV_EVENT_STATUS_DCD)
+>  
+>  /* CXL rev 3.0 section 8.2.9.2.4; Table 8-52 */
+>  #define CXLDEV_EVENT_INT_MODE_MASK	GENMASK(1, 0)
+> @@ -444,6 +447,18 @@ enum cxl_decoder_state {
+>  	CXL_DECODER_STATE_AUTO,
+>  };
+>  
+> +/**
+> + * struct cxled_extent - Extent within an endpoint decoder
+> + * @cxled: Reference to the endpoint decoder
+> + * @dpa_range: DPA range this extent covers within the decoder
+> + * @tag: Tag from device for this extent
+> + */
+> +struct cxled_extent {
+> +	struct cxl_endpoint_decoder *cxled;
+> +	struct range dpa_range;
+> +	u8 tag[CXL_EXTENT_TAG_LEN];
+> +};
+> +
+>  /**
+>   * struct cxl_endpoint_decoder - Endpoint  / SPA to DPA decoder
+>   * @cxld: base cxl_decoder_object
+> @@ -569,6 +584,7 @@ struct cxl_region_params {
+>   * @type: Endpoint decoder target type
+>   * @cxl_nvb: nvdimm bridge for coordinating @cxlr_pmem setup / shutdown
+>   * @cxlr_pmem: (for pmem regions) cached copy of the nvdimm bridge
+> + * @cxlr_dax: (for DC regions) cached copy of CXL DAX bridge
+>   * @flags: Region state flags
+>   * @params: active + config params for the region
+>   * @coord: QoS access coordinates for the region
+> @@ -582,6 +598,7 @@ struct cxl_region {
+>  	enum cxl_decoder_type type;
+>  	struct cxl_nvdimm_bridge *cxl_nvb;
+>  	struct cxl_pmem_region *cxlr_pmem;
+> +	struct cxl_dax_region *cxlr_dax;
+>  	unsigned long flags;
+>  	struct cxl_region_params params;
+>  	struct access_coordinate coord[ACCESS_COORDINATE_MAX];
+> @@ -622,12 +639,45 @@ struct cxl_pmem_region {
+>  	struct cxl_pmem_region_mapping mapping[];
+>  };
+>  
+> +/* See CXL 3.0 8.2.9.2.1.5 */
+> +enum dc_event {
+> +	DCD_ADD_CAPACITY,
+> +	DCD_RELEASE_CAPACITY,
+> +	DCD_FORCED_CAPACITY_RELEASE,
+> +	DCD_REGION_CONFIGURATION_UPDATED,
+> +};
+> +
+>  struct cxl_dax_region {
+>  	struct device dev;
+>  	struct cxl_region *cxlr;
+>  	struct range hpa_range;
+> +	struct ida extent_ida;
+>  };
+>  
+> +/**
+> + * struct region_extent - CXL DAX region extent
+> + * @dev: device representing this extent
+> + * @cxlr_dax: back reference to parent region device
+> + * @hpa_range: HPA range of this extent
+> + * @tag: tag of the extent
+> + * @decoder_extents: Endpoint decoder extents which make up this region extent
+> + */
+> +struct region_extent {
+> +	struct device dev;
+> +	struct cxl_dax_region *cxlr_dax;
+> +	struct range hpa_range;
+> +	uuid_t tag;
+> +	struct xarray decoder_extents;
+> +};
+> +
+> +bool is_region_extent(struct device *dev);
+> +static inline struct region_extent *to_region_extent(struct device *dev)
+> +{
+> +	if (!is_region_extent(dev))
+> +		return NULL;
+> +	return container_of(dev, struct region_extent, dev);
+> +}
+> +
+>  /**
+>   * struct cxl_port - logical collection of upstream port devices and
+>   *		     downstream port devices to construct a CXL memory
+> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
+> index d41bec5433db..3a40fe1f0be7 100644
+> --- a/drivers/cxl/cxlmem.h
+> +++ b/drivers/cxl/cxlmem.h
+> @@ -497,6 +497,7 @@ struct cxl_dc_region_info {
+>   * @pmem_perf: performance data entry matched to PMEM partition
+>   * @nr_dc_region: number of DC regions implemented in the memory device
+>   * @dc_region: array containing info about the DC regions
+> + * @pending_extents: array of extents pending during more bit processing
+>   * @event: event log driver state
+>   * @poison: poison driver state info
+>   * @security: security driver state info
+> @@ -532,6 +533,7 @@ struct cxl_memdev_state {
+>  
+>  	u8 nr_dc_region;
+>  	struct cxl_dc_region_info dc_region[CXL_MAX_DC_REGION];
+> +	struct xarray pending_extents;
+>  
+>  	struct cxl_event_state event;
+>  	struct cxl_poison_state poison;
+> @@ -607,6 +609,21 @@ enum cxl_opcode {
+>  	UUID_INIT(0x5e1819d9, 0x11a9, 0x400c, 0x81, 0x1f, 0xd6, 0x07, 0x19,     \
+>  		  0x40, 0x3d, 0x86)
+>  
+> +/*
+> + * Add Dynamic Capacity Response
+> + * CXL rev 3.1 section 8.2.9.9.9.3; Table 8-168 & Table 8-169
+> + */
+> +struct cxl_mbox_dc_response {
+> +	__le32 extent_list_size;
+> +	u8 flags;
+> +	u8 reserved[3];
+> +	struct updated_extent_list {
+> +		__le64 dpa_start;
+> +		__le64 length;
+> +		u8 reserved[8];
+> +	} __packed extent_list[];
+> +} __packed;
+> +
+>  struct cxl_mbox_get_supported_logs {
+>  	__le16 entries;
+>  	u8 rsvd[6];
+> @@ -669,6 +686,14 @@ struct cxl_mbox_identify {
+>  	UUID_INIT(0xfe927475, 0xdd59, 0x4339, 0xa5, 0x86, 0x79, 0xba, 0xb1, \
+>  		  0x13, 0xb7, 0x74)
+>  
+> +/*
+> + * Dynamic Capacity Event Record
+> + * CXL rev 3.1 section 8.2.9.2.1; Table 8-43
+> + */
+> +#define CXL_EVENT_DC_EVENT_UUID                                             \
+> +	UUID_INIT(0xca95afa7, 0xf183, 0x4018, 0x8c, 0x2f, 0x95, 0x26, 0x8e, \
+> +		  0x10, 0x1a, 0x2a)
+> +
+>  /*
+>   * Get Event Records output payload
+>   * CXL rev 3.0 section 8.2.9.2.2; Table 8-50
+> @@ -694,6 +719,7 @@ enum cxl_event_log_type {
+>  	CXL_EVENT_TYPE_WARN,
+>  	CXL_EVENT_TYPE_FAIL,
+>  	CXL_EVENT_TYPE_FATAL,
+> +	CXL_EVENT_TYPE_DCD,
+>  	CXL_EVENT_TYPE_MAX
+>  };
+>  
+> diff --git a/include/linux/cxl-event.h b/include/linux/cxl-event.h
+> index 0bea1afbd747..eeda8059d81a 100644
+> --- a/include/linux/cxl-event.h
+> +++ b/include/linux/cxl-event.h
+> @@ -96,11 +96,43 @@ struct cxl_event_mem_module {
+>  	u8 reserved[0x3d];
+Previous code, but 61 would be better than 0x3d to be consistent with rest of cxl code
+
+>  } __packed;
+>  
+> +/*
+> + * CXL rev 3.1 section 8.2.9.2.1.6; Table 8-51
+> + */
+> +#define CXL_EXTENT_TAG_LEN 0x10
+> +struct cxl_extent {
+> +	__le64 start_dpa;
+> +	__le64 length;
+> +	u8 tag[CXL_EXTENT_TAG_LEN];
+> +	__le16 shared_extn_seq;
+> +	u8 reserved[0x6];
+
+Why not just 6? In general I find it odd that this header uses hex for array indexing when the rest of the cxl code uses decimal. 
+
+> +} __packed;
+> +
+> +/*
+> + * Dynamic Capacity Event Record
+> + * CXL rev 3.1 section 8.2.9.2.1.6; Table 8-50
+> + */
+> +#define CXL_DCD_EVENT_MORE			BIT(0)
+> +struct cxl_event_dcd {
+> +	struct cxl_event_record_hdr hdr;
+> +	u8 event_type;
+> +	u8 validity_flags;
+> +	__le16 host_id;
+> +	u8 region_index;
+> +	u8 flags;
+> +	u8 reserved1[0x2];
+
+also here, 2?
+
+> +	struct cxl_extent extent;
+> +	u8 reserved2[0x18];
+
+24?
+
+> +	__le32 num_avail_extents;
+> +	__le32 num_avail_tags;
+> +} __packed;
+> +
+>  union cxl_event {
+>  	struct cxl_event_generic generic;
+>  	struct cxl_event_gen_media gen_media;
+>  	struct cxl_event_dram dram;
+>  	struct cxl_event_mem_module mem_module;
+> +	struct cxl_event_dcd dcd;
+>  	/* dram & gen_media event header */
+>  	struct cxl_event_media_hdr media_hdr;
+>  } __packed;
+> diff --git a/tools/testing/cxl/Kbuild b/tools/testing/cxl/Kbuild
+> index 030b388800f0..8238588fffdf 100644
+> --- a/tools/testing/cxl/Kbuild
+> +++ b/tools/testing/cxl/Kbuild
+> @@ -61,7 +61,8 @@ cxl_core-y += $(CXL_CORE_SRC)/hdm.o
+>  cxl_core-y += $(CXL_CORE_SRC)/pmu.o
+>  cxl_core-y += $(CXL_CORE_SRC)/cdat.o
+>  cxl_core-$(CONFIG_TRACING) += $(CXL_CORE_SRC)/trace.o
+> -cxl_core-$(CONFIG_CXL_REGION) += $(CXL_CORE_SRC)/region.o
+> +cxl_core-$(CONFIG_CXL_REGION) += $(CXL_CORE_SRC)/region.o \
+> +				 $(CXL_CORE_SRC)/extent.o
+>  cxl_core-y += config_check.o
+>  cxl_core-y += cxl_core_test.o
+>  cxl_core-y += cxl_core_exports.o
+> 
 
