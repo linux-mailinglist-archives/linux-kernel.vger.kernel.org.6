@@ -1,154 +1,102 @@
-Return-Path: <linux-kernel+bounces-293034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B44F795787E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:10:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A92B6957880
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:12:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 714B2282D44
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:10:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A595B20AC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FA01E2107;
-	Mon, 19 Aug 2024 23:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5412D1DF697;
+	Mon, 19 Aug 2024 23:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rMuokTCE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h2kVampv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166EF1DD384;
-	Mon, 19 Aug 2024 23:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9227A15AAB8;
+	Mon, 19 Aug 2024 23:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724109039; cv=none; b=LrobnK404y6mOTzgsr11uq5jARE3kOLRwWMPgyHGgSgiOtVhzWKFGi/8QxTYqj5g2k3oB2zMig6pHe810/eAlfdfxWkaqH4UKON/VAqk7GLZ6kbW5Dq0u/wGUpUO7Fl/KXFp6jcEwTNogptHICGbOXkSNb4qYLv2IZd3UlkeCro=
+	t=1724109137; cv=none; b=cLU+nPt7D+++WcohxS2Q5IYW58zbiXaziT78EmbIKRyKSY98Zd52zWCNErepN0xbqgxJrZuU+CH/S/jUFWfyf+gOBXNgskdgbXdzgPF4y67EE4BJiGQwpPuqaoRE+MBONH1nHz77QzarRrnQX+C7to4OTjY35NIKONyMgbmjbRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724109039; c=relaxed/simple;
-	bh=6oJxrdVVgTEZcqfhiejtI1ZL4nu4xacBGunuojfaR3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I0+O4o/U/i8rNQJYkeb0Ux59rOBgeBsNh7DNibE3idS1jArVOamqD5BZd455QkJSE8M/GyKPyRvC03wu/528zWRMUreLmnD6XkRg+Fd+QisezaI7qZgqFY2ucgkTz+UoR/zGBjY8yoN5KGJ2JRRcXmkmSVobC/BhtIPXmiPSqxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rMuokTCE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16E32C32782;
-	Mon, 19 Aug 2024 23:10:36 +0000 (UTC)
+	s=arc-20240116; t=1724109137; c=relaxed/simple;
+	bh=VHEkD+dkDRyfNtL8bwaNRMNAG8RJ9dSBV/nM2A5T72M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U/1MFFG8nNwJqTfY5qDtsmXU1XJCeZk2E0Zqg0lZtaq7MqtXY4G2ZK6w8GbnLTedajatOFyMfKuUAAGqjqGvRQkx4wfEDGtWv23cslH4mdGzZsKgWIBHKGYTJUlXpfBPAUBvxDpa7aNMgaVysH6WaFm8HKlR0mgkq5cTYxclC6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h2kVampv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F21FC32782;
+	Mon, 19 Aug 2024 23:12:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724109038;
-	bh=6oJxrdVVgTEZcqfhiejtI1ZL4nu4xacBGunuojfaR3E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rMuokTCE8YcKUlgNqRGo6fz2ZA3peNsJBUb+BshfkUx1YkkVlTH63UGmEzEzaCThb
-	 vcTs95ajyNxGyHm/ti6fIvshdxRv//Vt/40yePV1ncVulZRP7yh2Lx3zu0FLpRmD5A
-	 lOcSwQ/gKIs1IrQYlTeylyPfJMqBxcM5kE/gve4g8gurIiVcLf9QWXOzIPhweKQugt
-	 zT4hkEHZVGf8rDOqk4UC0fZPhshEc9QV2dWWv+26QdWNaUxv9zJrwcgNFQi/7jbhw1
-	 bi/sdsq+/cjlX8CChAP/pY03berBy4Xr4+7JcBfbLBYQEsknH0lgMUa5WXLOsriyyh
-	 Cyqd/1dfXAzhw==
-Date: Tue, 20 Aug 2024 01:10:33 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, syzbot
- <syzbot+85e3ddbf0ddbfbc85f1e@syzkaller.appspotmail.com>,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] media/usb/siano: Fix endpoint type checking in smsusb
-Message-ID: <20240820011033.79312cb5@foz.lan>
-In-Reply-To: <044260d2-4aa3-4937-9f5b-91e039a1df41@rowland.harvard.edu>
-References: <4442a354-87f1-4f7c-a2b0-96fbb29191d1@rowland.harvard.edu>
-	<0000000000009f6f85061e684e92@google.com>
-	<51b854da-f031-4a25-a19f-dac442d7bee2@rowland.harvard.edu>
-	<1959a4fb-8bf2-456b-83b8-ea28d517debf@rowland.harvard.edu>
-	<2024081909-afar-trolling-2a67@gregkh>
-	<20240819101358.77aea582@foz.lan>
-	<54c7e42c-465b-42fc-9707-d848ae53a00c@rowland.harvard.edu>
-	<20240819182456.5e13315a@foz.lan>
-	<044260d2-4aa3-4937-9f5b-91e039a1df41@rowland.harvard.edu>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=k20201202; t=1724109137;
+	bh=VHEkD+dkDRyfNtL8bwaNRMNAG8RJ9dSBV/nM2A5T72M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=h2kVampvs0KyS47DVGtX4fkbEwUP6xyBzbsqkexpNBRiHgJ5dEkuMu8pXU4MOC+VR
+	 KecfCY8sdwrjRLIr972pzt1DNMVjZ/WnNquHnWZ4AJbFJg3NuwpqP2fOQ45rx0pAM+
+	 melWnggsX39WpqNYxwsmdR/Hid0np1uuv2JhI1tNU9j54Qsz1YzniTHBZ1RIv4PKbr
+	 DPDu2y4VoiFOLF+0ucSAab14QQBwOoWvkTP+PSl+ngcFmwPvmCDKvYzwztp+qZJlTL
+	 XA7W+f9COBcDJzRTVO/GPKoBa1nX1qBIGNi7M3UaA9ub5vh6wclKwXb60KYnV/0Y33
+	 mS8pV5+9/56VA==
+Message-ID: <e1f9013d-f520-44de-b961-bf60bdee8181@kernel.org>
+Date: Tue, 20 Aug 2024 08:12:14 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] PCI: endpoint: pci-epf-test: Move DMA check into
+ read/write/copy functions
+To: Rick Wertenbroek <rick.wertenbroek@gmail.com>, rick.wertenbroek@heig-vd.ch
+Cc: alberto.dassatti@heig-vd.ch,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Niklas Cassel <cassel@kernel.org>,
+ Frank Li <Frank.Li@nxp.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240819120112.23563-1-rick.wertenbroek@gmail.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20240819120112.23563-1-rick.wertenbroek@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Em Mon, 19 Aug 2024 13:14:19 -0400
-Alan Stern <stern@rowland.harvard.edu> escreveu:
-
-> On Mon, Aug 19, 2024 at 06:24:56PM +0200, Mauro Carvalho Chehab wrote:
-> > Basically, the actual SMS device type is given by this enum:
-> > 
-> > 	enum sms_device_type_st {
-> > 		SMS_UNKNOWN_TYPE = -1,
-> > 
-> > 		SMS_STELLAR = 0,
-> > 		SMS_NOVA_A0,
-> > 		SMS_NOVA_B0,
-> > 		SMS_VEGA,
-> > 		SMS_VENICE,
-> > 		SMS_MING,
-> > 		SMS_PELE,
-> > 		SMS_RIO,
-> > 		SMS_DENVER_1530,
-> > 		SMS_DENVER_2160,
-> > 
-> > 		SMS_NUM_OF_DEVICE_TYPES	/* This is just a count */
-> > 	};
-> > 
-> > But I dunno if there are a 1:1 mapping between type and chipset 
-> > number. The above type names probably match some vendor internal 
-> > names, but we never had any tables associating them to a device number,
-> > as the vendor never provided us such information.
-> > 
-> > Btw I vaguely remember I heard about a newer Siano chipsets (sm3xxx), 
-> > but never saw such devices.
-> > 
-> > -
-> > 
-> > Now, I'm not sure about what endpoints this specific driver exports, as
-> > I'm lacking vendor's documentation. What I said is that almost all DVB 
-> > devices have isoc endpoints, but I dunno if this is the case of Siano.  
+On 8/19/24 21:01, Rick Wertenbroek wrote:
+> The pci-epf-test PCI endpoint function /drivers/pci/endpoint/function/pci-epf_test.c
+> is meant to be used in a PCI endpoint device inside a host computer with
+> the host side driver: /drivers/misc/pci_endpoint_test.c.
 > 
-> Currently the driver exports only bulk endpoints, even though it doesn't 
-> check the endpoint type.  You can tell because the only routine in it 
-> that calls usb_submit_urb() is smsusb_submit_urb(), and that routine 
-> calls usb_fill_bulk_urb() before doing the submission.
+> The host side driver can request read/write/copy transactions from the
+> endpoint function and expects an IRQ from the endpoint function once
+> the read/write/copy transaction is finished. These can be issued with or
+> without DMA enabled. If the host side driver requests a read/write/copy
+> transaction with DMA enabled and the endpoint function does not support
+> DMA, the endpoint would only print an error message and wait for further
+> commands without sending an IRQ because pci_epf_test_raise_irq() is
+> skipped in pci_epf_test_cmd_handler(). This results in the host side
+> driver hanging indefinitely waiting for the IRQ.
 > 
-> Given this, I suggest merging the earlier patch submission from Nikita 
-> Zhandarovich as-is.  If the driver ever evolves to include support for 
-> isochronous endpoints, the probe function can be modified then.
+> Move the DMA check into the pci_epf_test_read()/write()/copy() functions
+> so that they report a transfer (IO) error and that pci_epf_test_raise_irq()
+> is called when a transfer with DMA is requested, even if unsupported.
+> 
+> The host side driver will no longer hang but report an error on transfer
+> (printing "NOT OKAY") thanks to the checksum because no data was moved.
+> 
+> Signed-off-by: Rick Wertenbroek <rick.wertenbroek@gmail.com>
 
-I'll see if I can try his patch and see if device keeps working. The
-logic indeed use endpoints in bulk mode, but I'm not sure if, for all the
-BIOS files at drivers/media/common/siano/smscoreapi.[ch], the endpoints
-are properly reported as bulk.
+Looks good.
 
-What happens if an endpoint is reported as ISOC, but the URB submit
-is called without URB_ISO_ASAP? On a quick check, the code at usb_submit_urb()
-seems to not complain about that.
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 
-I would be a lot more comfortable if the patch were using just
+-- 
+Damien Le Moal
+Western Digital Research
 
-	if (usb_endpoint_dir_in(desc))
-	...
-	if (usb_endpoint_dir_out(desc))
-	...
-
-or something like this (to accept both isoc and bulk):
-
-	if (!usb_endpoint_xfer_int(epd)) {
-		if (usb_endpoint_dir_in(desc))
-		...
-		if (usb_endpoint_dir_out(desc))
-		...
-	}
-
-
-instead of calling usb_endpoint_xfer_bulk(desc) to check if type
-is bulk.
-
-I'll try to do some tests, but not sure when, as I'm traveling abroad
-this week.
-
-
-Thanks,
-Mauro
 
