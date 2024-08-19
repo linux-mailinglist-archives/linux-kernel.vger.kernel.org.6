@@ -1,176 +1,167 @@
-Return-Path: <linux-kernel+bounces-291857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27511956817
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:18:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B5FF95682D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C627B1F22B63
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:18:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07D6FB21A80
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F0115FD15;
-	Mon, 19 Aug 2024 10:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76EA11607BD;
+	Mon, 19 Aug 2024 10:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="C0GX8mMM"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECCC2900;
-	Mon, 19 Aug 2024 10:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="Qxdj1AuE"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56D42900
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724062699; cv=none; b=JDz1xPTS2fBxg4Q2xl1ZoJIWsfZG+/awhg7zLkByrxcH0PfgkHRMJrygLArF0+6O+8t6Qdor62tw4bl5H4ZGmUi+4jem0XYl38axTGo6DieQPt9nSeQj9z2dZ9tB4HFrz8TWH1k+GLDUGVuOEQP6AA3u+Tf7IfDZj0WCUVBx1Wo=
+	t=1724062840; cv=none; b=PUweX9jSPBehyII8V1T4zKuwwi9B8eGKiRIVfzYdsXYQ21gUwATWboH6skEQm9/vL+CJkn2kW1EvAAoTZKnCc6GUP6YHXX+PX+LBx/+BI6WFvyPn4fm6X2ewr3Z362bMwMCs1qBUA4PFu75n/atzKMAWsI+hS+g5/85/9pMKCbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724062699; c=relaxed/simple;
-	bh=4/iJmbpXu4ug9b+VJ7mrmeUQj5bgy/Syl41CJVA/kvA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H5Ntk/eSTK4rP7RS4yy89Bbn9cTOcUg6qKwkBZ9SaMXbAU/JUvbP6mX9Taxtun+8RrWq/R4yBrxZxHsu3/18JqZwPK4APLkgNyC0w0JC4Xy1dIzuOlwdLh7vS5tHtk8OuA/spb3MrKldhsdb8hAm+KaXwAsv4MCZCYc5TXbHhjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=C0GX8mMM; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1724062687;
-	bh=mpZOcZghaATkINZgHYKogiq38L86o5NZCksImbrz8Mc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=C0GX8mMMe7U3Hx+eHAeBMkFVaqmFh2RslDNgnpfJx3boSvq6JOnVCx8ncT2pw6Xgq
-	 UK38zNQnoVooly7zBveuj+K0B00AduiS5/fr08+oRVirT3KSU5uJ+RTgZ99aoO1M1M
-	 Nz8GPJAasKV9r+AeaUUlkJKiCQKUtFjlG+MhVZ4GpszCGaxmicOi1JyAnBUHAvddzD
-	 LNIqmu8OJY92D2Td+HO1j4A0ms/k7w4yPOuh9DCdLCKtKZIMmtFVspGR9hVPO462Af
-	 xADSlLDr/z2ST3HT6kIHRyttCwCgPNXBx6hh+edTI8d8pASoRNRKWeRq95webWdPz+
-	 NzmyEGy5NNazg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WnT7c1J6qz4w2N;
-	Mon, 19 Aug 2024 20:18:04 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: cassel@kernel.org
-Cc: dlemoal@kernel.org,
-	linux-ide@vger.kernel.org,
-	<linux-kernel@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>,
-	<hch@lst.de>,
-	linux-ppc@kolla.no,
-	vidra@ufal.mff.cuni.cz
-Subject: [PATCH] ata: pata_macio: Fix DMA table overflow
-Date: Mon, 19 Aug 2024 20:17:55 +1000
-Message-ID: <20240819101755.489078-1-mpe@ellerman.id.au>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1724062840; c=relaxed/simple;
+	bh=ztpPThBqI25hpCM8Fy2B7Usl9GXrbcZuidyUsZJDDOk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=N7FQjLAw7NfQ4wmTRTXDKpVnoPLZ8cMFttj/1ubx4SOXZ6mGbzuEJovLuJ+oroEUjj8A6V9FoC6jaGELkvgzzLg5nRo4Zw/gdVTW3eHpye7CvQx+ZhPwabG66v6jckSKO0gMtmlK8WN3QbyPj168sA2fHYT01jmh7I+H7JZwRwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=Qxdj1AuE reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=FePNpNZSUjwB86yqIKHz48sZY4QwNhrQEbdTf2nbMqA=; b=Q
+	xdj1AuE0XcoJwFpKUzPyugSPm2lSyUINDQWz8OHNEsGRNYr7O2e+ctmY0bR1wYVa
+	Oij8sh6L/amomiGh/dyhRVBjU3ECL0sRbJQfqWGIEUQuFAnqprmVze8XyZDxQ2u1
+	Tt14LCl/SyobPRpmQyq+3Vw/BdlnXQtBbdaG98eLiQ=
+Received: from andyshrk$163.com ( [58.22.7.114] ) by
+ ajax-webmail-wmsvr-40-120 (Coremail) ; Mon, 19 Aug 2024 18:18:47 +0800
+ (CST)
+Date: Mon, 19 Aug 2024 18:18:47 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: "Cristian Ciocaltea" <cristian.ciocaltea@collabora.com>
+Cc: "Mark Brown" <broonie@kernel.org>, 
+	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, 
+	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+	"Andy Yan" <andy.yan@rock-chips.com>, kernel@collabora.com, 
+	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re:Re: [PATCH RFC] regmap: maple: Switch to use irq-safe locking
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <9cb322ba-4c08-474b-bdc2-d21cc1904ecf@collabora.com>
+References: <20240814-regcache-maple-irq-safe-v1-1-1b454c5767de@collabora.com>
+ <4a8c9f85-3785-4cbd-be9b-dc6da9bd7324@sirena.org.uk>
+ <9cb322ba-4c08-474b-bdc2-d21cc1904ecf@collabora.com>
+X-NTES-SC: AL_Qu2ZBvydvU8p4SecbOlS8TNX/JloGbfT35Vwr9Mgf8U7tS3t0S0cfl5FNEX57/uGkvEUVJ42NaqVEFp5B/HJ
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-ID: <6be28a20.9cf4.1916a257e4a.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD3XzEHHMNmhZ0JAA--.55767W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqRxAXmVOCS0coQABsY
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Kolbjørn and Jonáš reported that their 32-bit PowerMacs were crashing
-in pata-macio since commit 09fe2bfa6b83 ("ata: pata_macio: Fix
-max_segment_size with PAGE_SIZE == 64K").
-
-For example:
-
-  kernel BUG at drivers/ata/pata_macio.c:544!
-  Oops: Exception in kernel mode, sig: 5 [#1]
-  BE PAGE_SIZE=4K MMU=Hash SMP NR_CPUS=2 DEBUG_PAGEALLOC PowerMac
-  ...
-  NIP pata_macio_qc_prep+0xf4/0x190
-  LR  pata_macio_qc_prep+0xfc/0x190
-  Call Trace:
-    0xc1421660 (unreliable)
-    ata_qc_issue+0x14c/0x2d4
-    __ata_scsi_queuecmd+0x200/0x53c
-    ata_scsi_queuecmd+0x50/0xe0
-    scsi_queue_rq+0x788/0xb1c
-    __blk_mq_issue_directly+0x58/0xf4
-    blk_mq_plug_issue_direct+0x8c/0x1b4
-    blk_mq_flush_plug_list.part.0+0x584/0x5e0
-    __blk_flush_plug+0xf8/0x194
-    __submit_bio+0x1b8/0x2e0
-    submit_bio_noacct_nocheck+0x230/0x304
-    btrfs_work_helper+0x200/0x338
-    process_one_work+0x1a8/0x338
-    worker_thread+0x364/0x4c0
-    kthread+0x100/0x104
-    start_kernel_thread+0x10/0x14
-
-That commit increased max_segment_size to 64KB, with the justification
-that the SCSI core was already using that size when PAGE_SIZE == 64KB,
-and that there was existing logic to split over-sized requests.
-
-However with a sufficiently large request, the splitting logic causes
-each sg to be split into two commands in the DMA table, leading to
-overflow of the DMA table, triggering the BUG_ON().
-
-With default settings the bug doesn't trigger, because the request size
-is limited by max_sectors_kb == 1280, however max_sectors_kb can be
-increased, and apparently some distros do that by default using udev
-rules.
-
-Fix the bug for 4KB kernels by reverting to the old max_segment_size.
-
-For 64KB kernels the sg_tablesize needs to be halved, to allow for the
-possibility that each sg will be split into two.
-
-Fixes: 09fe2bfa6b83 ("ata: pata_macio: Fix max_segment_size with PAGE_SIZE == 64K")
-Cc: stable@vger.kernel.org # v6.10+
-Reported-by: Kolbjørn Barmen <linux-ppc@kolla.no>
-Closes: https://lore.kernel.org/all/62d248bb-e97a-25d2-bcf2-9160c518cae5@kolla.no/
-Reported-by: Jonáš Vidra <vidra@ufal.mff.cuni.cz>
-Closes: https://lore.kernel.org/all/3b6441b8-06e6-45da-9e55-f92f2c86933e@ufal.mff.cuni.cz/
-Tested-by: Kolbjørn Barmen <linux-ppc@kolla.no>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
----
- drivers/ata/pata_macio.c | 23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/ata/pata_macio.c b/drivers/ata/pata_macio.c
-index 1b85e8bf4ef9..eaffa510de49 100644
---- a/drivers/ata/pata_macio.c
-+++ b/drivers/ata/pata_macio.c
-@@ -208,6 +208,19 @@ static const char* macio_ata_names[] = {
- /* Don't let a DMA segment go all the way to 64K */
- #define MAX_DBDMA_SEG		0xff00
- 
-+#ifdef CONFIG_PAGE_SIZE_64KB
-+/*
-+ * The SCSI core requires the segment size to cover at least a page, so
-+ * for 64K page size kernels it must be at least 64K. However the
-+ * hardware can't handle 64K, so pata_macio_qc_prep() will split large
-+ * requests. To handle the split requests the tablesize must be halved.
-+ */
-+#define MAX_SEGMENT_SIZE SZ_64K
-+#define SG_TABLESIZE (MAX_DCMDS / 2)
-+#else
-+#define MAX_SEGMENT_SIZE MAX_DBDMA_SEG
-+#define SG_TABLESIZE MAX_DCMDS
-+#endif
- 
- /*
-  * Wait 1s for disk to answer on IDE bus after a hard reset
-@@ -912,16 +925,10 @@ static int pata_macio_do_resume(struct pata_macio_priv *priv)
- 
- static const struct scsi_host_template pata_macio_sht = {
- 	__ATA_BASE_SHT(DRV_NAME),
--	.sg_tablesize		= MAX_DCMDS,
-+	.sg_tablesize		= SG_TABLESIZE,
- 	/* We may not need that strict one */
- 	.dma_boundary		= ATA_DMA_BOUNDARY,
--	/*
--	 * The SCSI core requires the segment size to cover at least a page, so
--	 * for 64K page size kernels this must be at least 64K. However the
--	 * hardware can't handle 64K, so pata_macio_qc_prep() will split large
--	 * requests.
--	 */
--	.max_segment_size	= SZ_64K,
-+	.max_segment_size	= MAX_SEGMENT_SIZE,
- 	.device_configure	= pata_macio_device_configure,
- 	.sdev_groups		= ata_common_sdev_groups,
- 	.can_queue		= ATA_DEF_QUEUE,
--- 
-2.46.0
-
+CkhpIENyaXN0aWFu77yMCgpBdCAyMDI0LTA4LTE3IDA0OjExOjI3LCAiQ3Jpc3RpYW4gQ2lvY2Fs
+dGVhIiA8Y3Jpc3RpYW4uY2lvY2FsdGVhQGNvbGxhYm9yYS5jb20+IHdyb3RlOgo+T24gOC8xNC8y
+NCAxMDowNCBQTSwgTWFyayBCcm93biB3cm90ZToKPj4gT24gV2VkLCBBdWcgMTQsIDIwMjQgYXQg
+MDE6MjA6MjFBTSArMDMwMCwgQ3Jpc3RpYW4gQ2lvY2FsdGVhIHdyb3RlOgo+Cj5bLi4uXQo+Cj4+
+IEknZCBoYXZlIGEgYmlnZ2VyIHF1ZXN0aW9uIGhlcmUgd2hpY2ggaXMgd2h5IHRoZSBkcml2ZXIg
+aXMgdXNpbmcgYQo+PiBkeW5hbWljYWxseSBhbGxvY2F0ZWQgcmVnaXN0ZXIgY2FjaGUgaW4gYSBo
+YXJkaXJxIGNvbnRleHQsIGVzcGVjaWFsbHkKPj4gd2l0aCBubyBkZWZhdWx0cyBwcm92aWRlZD8g
+IEFueXRoaW5nIGV4Y2VwdCB0aGUgZmxhdCBjYWNoZSBtaWdodCBkbwo+PiBhbGxvY2F0aW9ucyBh
+dCBydW50aW1lIHdoaWNoIG1pZ2h0IGluY2x1ZGUgaW4gaW50ZXJydXB0IGNvbnRleHQgdW5sZXNz
+Cj4+IHRoZSBjYWxsZXIgaXMgdmVyeSBjYXJlZnVsIGFuZCBzaW5jZSB0aGUgbG9ja2RlcCB3YXJu
+aW5nIHRyaWdnZXJlZCBpdCdzCj4+IGNsZWFyIHRoYXQgdGhpcyBkcml2ZXIgaXNuJ3QuICBUaGUg
+Y29yZSB3aWxsIGJlIGRvaW5nIGF0b21pYyBhbGxvY2F0aW9ucwo+PiBmb3IgTU1JTyBidXQgdGhh
+dCdzIG5vdCBzb21ldGhpbmcgd2Ugd2FudCB0byBiZSBkb2luZyBhcyBhIG1hdHRlciBvZgo+PiBj
+b3Vyc2UuLi4gIEkgd291bGQgZ2VuZXJhbGx5IGV4cGVjdCBkcml2ZXJzIHRvIHRyeSB0byBlbnN1
+cmUgdGhhdCBhbnkKPj4gcmVnaXN0ZXJzIGFyZSBjYWNoZWQgb3V0c2lkZSBvZiB0aGUgaW50ZXJy
+dXB0IGhhbmRsZXIsIHVzdWFsbHkgYnkKPj4gc3BlY2lmeWluZyBkZWZhdWx0cyBvciB0b3VjaGlu
+ZyBhbGwgcmVnaXN0ZXJzIGR1cmluZyBzZXR1cC4KPj4gCj4+IFdpdGhvdXQgaGF2aW5nIGRvbmUg
+YSBmdWxsIGFuYWx5c2lzIGl0IGFsc28gbG9va3MgbGlrZSB0aGUgbWFya2luZyBvZgo+PiB2b2xh
+dGlsZSByZWdpc3RlcnMgaXNuJ3QgcmlnaHQsIGl0J3Mgbm90IGltbWVkaWF0ZWx5IGNsZWFyIHRo
+YXQgdGhlCj4+IGludGVycnVwdCBzdGF0dXMgYW5kIGNsZWFyIHJlZ2lzdGVycyBhcmUgdm9sYXRp
+bGUgYW5kIHRoZXkgb3VnaHQgdG8gYmUuCj4+IE5vbmUgb2YgdGhlIHJlZ2lzdGVycyBhY2Nlc3Nl
+ZCBpbiBpbnRlcnJ1cHQgY29udGV4dCBsb29rIGxpa2UgdGhleQo+PiBzaG91bGQgYmUgY2FjaGVk
+IGF0IGFsbCB1bmxlc3MgdGhlcmUncyBzb21ldGhpbmcgdHJpZ2dlcmVkIHZpYSB0aGUgRFJNCj4+
+IHZibGFuayBjYWxscy4KPgo+QUZBSUtULCBhbGwgcmVnaXN0ZXJzIGFjY2Vzc2VkIGluIElSUSBj
+b250ZXh0IGFyZSB2b2xhdGlsZSwgaGVuY2UgdGhlCj5yZWdpc3RlciBjYWNoZSBzaG91bGQgbm90
+IGJlIGludm9sdmVkIGF0IHRoYXQgcG9pbnQuCj4KPlRoZSBkZWFkbG9jayBzY2VuYXJpbyBpbmRp
+Y2F0ZWQgYnkgbG9ja2RlcCBhY3R1YWxseSBwb2ludHMgdG8gdGhlIGxvY2sKPmFjcXVpcmVkIGJ5
+IHJlZ2NhY2hlX21hcGxlX2V4aXQoKSwgd2hpY2ggaGFzIGJlZW4gdHJpZ2dlcmVkIGR1cmluZyBt
+b2R1bGUKPnVubG9hZCBvcGVyYXRpb24sIGFuZCB0aGUgbG9jayBhY3F1aXJlZCBieSByZWdjYWNo
+ZV9tYXBsZV93cml0ZSgpLCBpbiB0aGUKPmNvbnRleHQgb2Ygdm9wMl9wbGFuZV9hdG9taWNfdXBk
+YXRlKCkgY2FsbGVkIHdpdGhpbiB0aGUgRFJNIHN0YWNrLgo+Cj5bICAgNDguNDY2NjY2XSAtPiAo
+Jm10LT5tYV9sb2NrKXsrLi4ufS17MjoyfSB7Cj5bICAgNDguNDY3MDY2XSAgICBIQVJESVJRLU9O
+LVcgYXQ6Cj5bICAgNDguNDY3MzYwXSAgICAgICAgICAgICAgICAgICAgIGxvY2tfYWNxdWlyZSsw
+eDFkNC8weDMyMAo+WyAgIDQ4LjQ2Nzg0OV0gICAgICAgICAgICAgICAgICAgICBfcmF3X3NwaW5f
+bG9jaysweDUwLzB4NzAKPlsgICA0OC40NjgzMzddICAgICAgICAgICAgICAgICAgICAgcmVnY2Fj
+aGVfbWFwbGVfZXhpdCsweDZjLzB4ZTAKPlsgICA0OC40Njg4NjRdICAgICAgICAgICAgICAgICAg
+ICAgcmVnY2FjaGVfZXhpdCsweDhjLzB4YTgKPlsgICA0OC40NjkzNDRdICAgICAgICAgICAgICAg
+ICAgICAgcmVnbWFwX2V4aXQrMHgyNC8weDE2MAo+WyAgIDQ4LjQ2OTgxNV0gICAgICAgICAgICAg
+ICAgICAgICBkZXZtX3JlZ21hcF9yZWxlYXNlKzB4MWMvMHgyOAo+WyAgIDQ4LjQ3MDMzOV0gICAg
+ICAgICAgICAgICAgICAgICByZWxlYXNlX25vZGVzKzB4NjgvMHhhOAo+WyAgIDQ4LjQ3MDgxOF0g
+ICAgICAgICAgICAgICAgICAgICBkZXZyZXNfcmVsZWFzZV9ncm91cCsweDEyMC8weDE4MAo+WyAg
+IDQ4LjQ3MTM2NF0gICAgICAgICAgICAgICAgICAgICBjb21wb25lbnRfdW5iaW5kKzB4NTQvMHg3
+MAo+WyAgIDQ4LjQ3MTg2N10gICAgICAgICAgICAgICAgICAgICBjb21wb25lbnRfdW5iaW5kX2Fs
+bCsweGIwLzB4ZTgKPlsgICA0OC40NzI0MDBdICAgICAgICAgICAgICAgICAgICAgcm9ja2NoaXBf
+ZHJtX3VuYmluZCsweDQ0LzB4ODAgW3JvY2tjaGlwZHJtXQo+WyAgIDQ4LjQ3MzA1OV0gICAgICAg
+ICAgICAgICAgICAgICBjb21wb25lbnRfZGVsKzB4YzgvMHgxNTgKPlsgICA0OC40NzM1NDVdICAg
+ICAgICAgICAgICAgICAgICAgZHdfaGRtaV9yb2NrY2hpcF9yZW1vdmUrMHgyOC8weDQwIFtyb2Nr
+Y2hpcGRybV0KPgo+Wy4uLl0KPgo+WyAgIDQ4LjQ4MjA1OF0gICAgSU5JVElBTCBVU0UgYXQ6Cj5b
+ICAgNDguNDgyMzQ0XSAgICAgICAgICAgICAgICAgICAgbG9ja19hY3F1aXJlKzB4MWQ0LzB4MzIw
+Cj5bICAgNDguNDgyODI0XSAgICAgICAgICAgICAgICAgICAgX3Jhd19zcGluX2xvY2srMHg1MC8w
+eDcwCj5bICAgNDguNDgzMzA0XSAgICAgICAgICAgICAgICAgICAgcmVnY2FjaGVfbWFwbGVfd3Jp
+dGUrMHgyN2MvMHgzMzAKPlsgICA0OC40ODM4NDRdICAgICAgICAgICAgICAgICAgICByZWdjYWNo
+ZV93cml0ZSsweDZjLzB4ODgKPlsgICA0OC40ODQzMjNdICAgICAgICAgICAgICAgICAgICBfcmVn
+bWFwX3JlYWQrMHgxOTgvMHgxYzgKPlsgICA0OC40ODQ4MDFdICAgICAgICAgICAgICAgICAgICBf
+cmVnbWFwX3VwZGF0ZV9iaXRzKzB4YzAvMHgxNDgKPlsgICA0OC40ODUzMjddICAgICAgICAgICAg
+ICAgICAgICByZWdtYXBfZmllbGRfdXBkYXRlX2JpdHNfYmFzZSsweDc0LzB4YjAKPlsgICA0OC40
+ODU5MTldICAgICAgICAgICAgICAgICAgICB2b3AyX3BsYW5lX2F0b21pY191cGRhdGUrMHg5ZTgv
+MHgxNDkwIFtyb2NrY2hpcGRybV0KPlsgICA0OC40ODY2MzFdICAgICAgICAgICAgICAgICAgICBk
+cm1fYXRvbWljX2hlbHBlcl9jb21taXRfcGxhbmVzKzB4MTkwLzB4MmY4IFtkcm1fa21zX2hlbHBl
+cl0KPgo+SSBleHBlcmltZW50ZWQgd2l0aCBhIHJlZHVjZWQgc2NvcGUgb2YgdGhpcyBwYXRjaCBi
+eSBsaW1pdGluZyB0aGUgdXNlIG9mCj50aGUgaXJxLXNhZmUgbG9jayB0byByZWdjYWNoZV9tYXBs
+ZV9leGl0KCkgb25seSwgYW5kIEkgY2FuIGNvbmZpcm0gdGhpcyAKPndhcyBlbm91Z2ggdG8gbWFr
+ZSBsb2NrZGVwIGhhcHB5Lgo+Cj4+IEl0IG1pZ2h0IGJlIHNhZmVyIHRvIGZhbGwgYmFjayB0byB0
+aGUgcmJ0cmVlIGNhY2hlIGZvciB0aGlzIGRldmljZSBzaW5jZQo+PiByYnRyZWUgZG9lc24ndCBm
+b3JjZSBhbiBleHRyYSBsZXZlbCBvZiBsb2NraW5nIG9uIHVzLCB0aG91Z2ggbGlrZSBJIHNheQo+
+PiBJJ20gbm90IGNvbnZpbmNlZCB0aGF0IHdoYXQgdGhlIGRyaXZlciBpcyBkb2luZyB3aXRoIGNh
+Y2hpbmcgaXMgYSBzdXBlcgo+PiBnb29kIGlkZWEuICBUaG91Z2ggcHJvYmFibHkgd2hhdCB0aGUg
+ZHJpdmVyIGlzIGRvaW5nIHNob3VsZCB3b3JrLgo+Cj5JIGFjdHVhbGx5IGdhdmUgdGhlIGZsYXQg
+Y2FjaGUgYSB0cnkgb24gYSBSb2NrIDNBIGJvYXJkIGFuZCBkaWRuJ3QKPmVuY291bnRlciBhbnkg
+KG9idmlvdXMpIGlzc3VlcywgYnV0IG15IHRlc3RpbmcgY2FwYWJpbGl0aWVzIGFyZSByYXRoZXIK
+PmxpbWl0ZWQgYXQgdGhlIG1vbWVudC4KPgo+QEFuZHk6IENvdWxkIHlvdSwgcGxlYXNlLCBzaGVk
+IHNvbWUgbGlnaHQgb24gdGhlIHRvcGljPyBpLmUuIHRoZSByYXRpb25hbAo+YmVoaW5kIGdvaW5n
+IGZvciBhbiByYnRyZWUgY2FjaGUgb3ZlciBhIGZsYXQgb25lLCBzaW5jZSB0aGUgbGF0dGVyIHdv
+dWxkIGJlCj5iZXR0ZXIgc3VpdGVkIGZvciBNTUlPIGRldmljZXMuCgpJIGhhdmUgZW5jb3VudGVy
+ZWQgYSBzaW1pbGFyIGlzc3VlIHdoZW4gSSBhZGQgc3VwcG9ydCBmb3IgcmszNTg4WzBdCgpOb3cg
+aSBjYW4gc2VlIHRoaXMgaXNzdWUgd2hlbiByb2NrY2hpcGRybSBsb2FkIHdpdGg6CkNPTkZJR19Q
+Uk9WRV9MT0NLSU5HPXkKQ09ORklHX0RFQlVHX0xPQ0tERVA9eQoKQnV0IEkgY2FuJ3QgcmVwcm9k
+dWNlIHRoaXMgaXNzdWUgIGF0IHVubG9hZCDvvIh3aXRoIGNtZO+8miBybW1vZCByb2NrY2hpcGRy
+be+8ieOAggpJIG5lZWQgdG8gdGFrZSBhIGRlZXBlciBsb29rIHRvIHVuZGVyc3RhbmRpbmcgdGhl
+IGRldGFpbOOAggoKClswXWh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcHJvamVjdC9saW51
+eC1yb2NrY2hpcC9wYXRjaC8yMDIzMTIxNzA4NDQxNS4yMzczMDQzLTEtYW5keXNocmtAMTYzLmNv
+bS8KCgoKPiAKPj4gTXkgZmlyc3QgdGhvdWdodCBoZXJlIGlzIHRoYXQgaWYgd2UndmUgZ290IGEg
+cmVnbWFwIHVzaW5nIHNwaW5sb2NrcyBmb3IKPj4gdGhlIHJlZ21hcCBsb2NrIGFuZCBhIG1hcGxl
+IHRyZWUgY2FjaGUgd2Ugc2hvdWxkIGFycmFuZ2UgdGhpbmdzIHNvIHRoYXQKPj4gdGhlIG1hcGxl
+IHRyZWUgbG9jayBpcyB1c2VkIGZvciB0aGUgcmVnbWFwJ3MgbG9jay4gIFRoYXQgd291bGQgaG93
+ZXZlcgo+PiBpbnZvbHZlIHNvbWUgdW5wbGVhc2FudCBhYnN0cmFjdGlvbiB2aW9sYXRpb24sIGFu
+ZCBwb3NzaWJseSBzb21lIG1hY3JvCj4+IGZ1biBzaW5jZSB3ZSdkIG5lZWQgdG8gZWxpZGUgdGhl
+IGxvY2tpbmcgZnJvbSB0aGUgY2FjaGUgaXRzZWxmIHdoZW4KPj4gdXNpbmcgdGhlIHNhbWUgbG9j
+ayBhdCB0aGUgcmVnbWFwIGxldmVsLiAgSSB0aGluayB0aGF0J3MgZ29pbmcgdG8gYmUgYQo+PiBj
+YXNlIG9mIGNob29zaW5nIHRoZSBsZWFzdCB1bnBsZWFzYW50IG9wdGlvbi4KPgo+VGhhbmtzLCBN
+YXJrLCBmb3IgdGhlIGRldGFpbGVkIGZlZWRiYWNrIG9uIHRoaXMhCj4KPlJlZ2FyZHMsCj5Dcmlz
+dGlhbgo+Cj5fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+
+TGludXgtcm9ja2NoaXAgbWFpbGluZyBsaXN0Cj5MaW51eC1yb2NrY2hpcEBsaXN0cy5pbmZyYWRl
+YWQub3JnCj5odHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4
+LXJvY2tjaGlwCg==
 
