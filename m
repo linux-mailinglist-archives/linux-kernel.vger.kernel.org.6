@@ -1,161 +1,98 @@
-Return-Path: <linux-kernel+bounces-292388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 754E0956ED6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:34:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC85956EDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:34:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A1831C22AF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:34:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A19271F2241C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9331F54FB5;
-	Mon, 19 Aug 2024 15:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194DF7FBD1;
+	Mon, 19 Aug 2024 15:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t3Cl6uxt"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PM5kY8Ah"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE5D5339E
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DB1335BA;
+	Mon, 19 Aug 2024 15:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724081654; cv=none; b=sh30iOazarjWmgl9K5iLtLncIczh8qr7QHb8Exbk91RxmkLSMiKTjtPx3YdUUqKwruhreOrvNxewQEHrdZc4qhajYpPnxhkHCLqDbGIAMSamKhy8roLTnf3eqFujZe4GyiDTAPEPptAtXqvanF8V4FWMngQi9uIaptTYOE8CTBQ=
+	t=1724081668; cv=none; b=hdG0rIMsYKVx/w+Nu42CUzU3IoYMaEjs+DWD1abkfY5+V3NSymemfdAx4CCcbvvrc3ZOvfDFVbfnne1dPq9Xx96TE+nLoleSUi/q10YjT/WuPteOgLTBLwHCrhh6/oEhyUF4nRS4S8mOkv0WTfZmKiiycWf5LLEN23yb2ff5TQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724081654; c=relaxed/simple;
-	bh=gerX1e1SAyEGGpWbACuDeKTJftuR915APXEAPgfRDW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tIAGiCWx8EGxR7iUdI1Wqji3yHjBww4SWvtfduvquky1TlhseyT+/FdTvTSjhhBKPTOg0ih7wOjJOyAFYppF/sRhUaZbaG+9rpcLLYcOMDInyl+yufmGMH0ifCiWI2792XO6XIY4MjBC2g1JyC1e9nPJkfvXbc5gp3pTcaTtkjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t3Cl6uxt; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-201f2b7fe0dso28476465ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:34:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724081653; x=1724686453; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fWHd8Dubab2kk28unZJz+ySGMDUvatysZhSqj4nkW08=;
-        b=t3Cl6uxtfv7HC/ie0dbfni1fL+5rQOEFfX4wEpGVEcUFh63lbT6ZVrIhzmeLhlzhnr
-         IR5U5Gr+B3sQuW6it/rgu/ZOKVRBDcBkQXVuE/ouHCgXspgkfuRnQKkrUeua4xV/Wh+U
-         heMTMOFmuE4Ry/TS6RniDK52QLZcyGedcZQ81FPmG+DL2r2T5nK9rIckX20e9k6lxeVC
-         1ece6FfUPdbAlaiJ46bPzX8+MDfOIJRPjHQohvkiyZ8ngt/ew4rEyJbslZHeslWHrTxo
-         yyn/4mwtSELn2K18YiRJCihLHDGdGfO4tqO0fQrAxVhK+7y0vGZpQzT97jxtkENgkBft
-         Huvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724081653; x=1724686453;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fWHd8Dubab2kk28unZJz+ySGMDUvatysZhSqj4nkW08=;
-        b=vFo2KfQznMlHZ1/eWeyzV10ebS3Pu4zRa14qHMMICtU8Xrb2K58XxhRDa3TUoIOMHB
-         B1xCfoQOXht7xWV8d7Mi0S2UPmSOznJFW3DPk0P6jtFm3XeUkwecDwTkjWrrx1EHv/mX
-         t9644XoSSOJSrl/udrGQSyKiX/GvRQpoyvmERk7nu4ZBHvfc+F0Jl5rLGPYopKJaqh6y
-         erbbc7XWNsAowoBsyQBJyUwIf9cLvdZn22N82tCaFE8cujTCZzGLwYH0kJmJfTSmX7/1
-         WW1eesnuUDGQPQ/yPI/a5JAPNjO2fKDl38Uc8yelhpbUZpEmoI1Iq0SDUXysy11jmYTt
-         SdHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXPSzkpcKKHvuT353/GF1ZwO1XLQODsv+QHME8cHHxedHVcKc194w2mR+qIEGI8usUnPjYg2IWVGMCyn+IjrLgA9Xm+XzaOn93C7Y+R
-X-Gm-Message-State: AOJu0Yz1Y6O2DHAooJuEo0v6ifD+TaOYWDTs4egon6DjPacQN008qMZ9
-	n87rZiJHI6z32VUyO3CDW3vUGlYoih1HqsWP6CcmDwzpK3d9gKHL2/wmuRiiyw==
-X-Google-Smtp-Source: AGHT+IFkgzCoKEl2Yj644WJFA2at4eKalzRkVxpP0Hu+EOkVJUnnpmXN5q12HO6kOgQzGQcui6MKdg==
-X-Received: by 2002:a17:903:1210:b0:201:fe7d:babe with SMTP id d9443c01a7336-20203ed44b5mr130244915ad.35.1724081652535;
-        Mon, 19 Aug 2024 08:34:12 -0700 (PDT)
-Received: from thinkpad ([120.60.128.138])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f02fa51bsm63669295ad.53.2024.08.19.08.34.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 08:34:11 -0700 (PDT)
-Date: Mon, 19 Aug 2024 21:04:02 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	mika.westerberg@linux.intel.com, Hsin-Yi Wang <hsinyi@chromium.org>
-Subject: Re: [PATCH v5 4/4] PCI: Allow PCI bridges to go to D3Hot on all
- Devicetree based platforms
-Message-ID: <20240819153402.pgykwcmtwgg257m7@thinkpad>
-References: <20240802-pci-bridge-d3-v5-0-2426dd9e8e27@linaro.org>
- <20240802-pci-bridge-d3-v5-4-2426dd9e8e27@linaro.org>
- <ZqyxS8spZ-ohsP3R@wunner.de>
- <20240805133555.GC7274@thinkpad>
- <ZrHITXLkKrDbQKQp@wunner.de>
- <20240806124107.GB2968@thinkpad>
- <ZrIe70Z7uFven8HH@wunner.de>
- <20240806143918.GC2968@thinkpad>
- <ZrKFl-dvNSNCWd8e@wunner.de>
+	s=arc-20240116; t=1724081668; c=relaxed/simple;
+	bh=4VrjSRXNUm0qxK9qDXOgGH/nx+QchNmk1s/6OZfvNV4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=buMjUp4eMJfQGA0M7vQD9YW/OfVkNVE91wi4wy6W0nJ+631ZWCVyRJK7N/DO889yJr/+bVoTmnUSEWgrkH9DU4r3TQniX4VlxTM5uVOB6wRqI5P1zcXMQwbaKXbWj6V3OJiLMubKcU6wJ5B3o0mnJtZzVITZYozNDorhJJv7e8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PM5kY8Ah; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64669C32782;
+	Mon, 19 Aug 2024 15:34:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724081667;
+	bh=4VrjSRXNUm0qxK9qDXOgGH/nx+QchNmk1s/6OZfvNV4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PM5kY8Ahw+OIrEDWQ8tMat2J6tItd92GDnACtD3sm/S7CHbknbbM16IuAWOn9YBLX
+	 vcreb29/dauJM4d922rdfNCAXKhkzm1bXiLNyVoG6rPLpEaGZnyDxUWfOOd3ZXUeP+
+	 RbmIf1/jLqEiqHHzc2npfp22lzpQ1mdjNKOXrbhluzrzMvk18i9wn/qlNjUFrt7nnI
+	 etXB8AFg4FHrFTDY+BPzBWXG78/384cTQE0UPXdcYQ6bn5r0j4Lb1fYewHFA1MN4Zn
+	 17cQGl7VkNPnu4mIAIp/dgYfOVSDXxS7SpQ5EhN+TJHobxJ2EKNxgh6K5AOyDEf8Os
+	 fT11CnZM3JlmQ==
+Date: Mon, 19 Aug 2024 08:34:26 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Erwan Velu <erwanaliasr1@gmail.com>
+Cc: Yury Norov <yury.norov@gmail.com>, Tariq Toukan
+ <ttoukan.linux@gmail.com>, Erwan Velu <e.velu@criteo.com>, Saeed Mahameed
+ <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Tariq Toukan
+ <tariqt@nvidia.com>, Yury Norov <ynorov@nvidia.com>, Rahul Anand
+ <raanand@nvidia.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net/mlx5: Use cpumask_local_spread() instead of custom
+ code
+Message-ID: <20240819083426.1aebc18f@kernel.org>
+In-Reply-To: <CAL2JzuzEBAdkQfRPLXQHry2a2M7_EsScOV_kheo+oXUuKM9rWA@mail.gmail.com>
+References: <20240812082244.22810-1-e.velu@criteo.com>
+	<3dcbfb0d-6e54-4450-a266-bf4701e77e08@gmail.com>
+	<ZrzDAlMiEK4fnLmn@yury-ThinkPad>
+	<CAL2JzuzEBAdkQfRPLXQHry2a2M7_EsScOV_kheo+oXUuKM9rWA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZrKFl-dvNSNCWd8e@wunner.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 06, 2024 at 10:20:39PM +0200, Lukas Wunner wrote:
-> On Tue, Aug 06, 2024 at 08:09:18PM +0530, Manivannan Sadhasivam wrote:
-> > Regarding your comment on patch 3/4, we already have the sysfs attribute
-> > to control whether the device can be put into D3Cold or not and that is
-> > directly coming from userspace. So there is no guarantee to assume that
-> > D3Hot support is considered.
-> 
-> If a device is not allowed to be suspended to D3cold, it will only be
-> suspended to D3hot.
-> 
-> If a port is put into anything deeper than D0, its secondary bus is
-> no longer in B0 (PCI-PM r1.2 table 6-1) and children are inaccessible,
-> so they're "effectively" in D3cold.  Hence if a device cannot be
-> suspended to D3cold, it will block all parent bridges from being
-> suspended.  That's what the logic in pci_bridge_d3_update() and
-> pci_dev_check_d3cold() is doing.
-> 
+On Mon, 19 Aug 2024 12:15:10 +0200 Erwan Velu wrote:
+> 2/ I was also wondering if we shouldn't have a kernel module option to
+> choose the allocation algorithm (I have a POC in that direction).
+> The benefit could be allowing the platform owner to select the
+> allocation algorithm that sys-admin needs.
+> On single-package AMD EPYC servers, the numa topology is pretty handy
+> for mapping the L3 affinity but it doesn't provide any particular hint
+> about the actual "distance" to the network device.
+> You can have up to 12 NUMA nodes on a single package but the actual
+> distance to the nic is almost identical as each core needs to use the
+> IOdie to reach the PCI devices.
+> We can see in the NUMA allocation logic assumptions like "1 NUMA per
+> package" logic that the actual distance between nodes should be
+> considered in the allocation logic.
 
-Agree.
+I think user space has more information on what the appropriate
+placement is than the kernel. We can have a reasonable default,
+and maybe try not to stupidly reset the settings when config
+changes (I don't think mlx5 does that but other drivers do);
+but having a way to select algorithm would only work if there
+was a well understood and finite set of algorithms.
 
-But patch 3/4 is mostly based on the suggestion from Bjorn [1] for earlier
-revision. He specifically mentioned that the platform_pci_bridge_d3() function
-doesn't differentiate between D3Hot and D3Cold and that's why I splitted them:
-
-"These are two vastly different scenarios, and I would really like to
-untangle them so they aren't conflated.  I see that you're extending
-platform_pci_bridge_d3(), which apparently has that conflation baked
-into it already, but my personal experience is that this is really
-hard to maintain."
-
-I agree with your point that if D3Hot is not possible, then D3Cold is also not
-possible as per the PCI PM reference you quoted. But here, D3Hot is possible,
-but D3Cold is not. And platform_pci_power_manageable(),
-platform_pci_choose_state() are already returning false for DT platforms.
-
-So if 'true' is returned from platform_pci_bridge_d3(), then it implies that
-D3Cold is also supported, but it doesn't on DT platforms. So a split seems to be
-necessary IMO.
-
-- Mani
-
-[1] https://lore.kernel.org/linux-pci/20240221182000.GA1533634@bhelgaas/
-
-> The d3cold_allowed attribute in sysfs is just one of several reasons
-> why a device may not go to D3cold (see pci_dev_check_d3cold() for
-> details).
-> 
-> The d3cold_allowed attribute was originally intended to disable D3cold
-> on devices where it was known to not work.  Nowadays this should all
-> be handled automatically, which is why we've discussed moving the
-> attribute to debugfs:
-> 
-> https://lore.kernel.org/all/20230918132424.GA11357@wunner.de/
-> https://lore.kernel.org/all/20231002181025.82746-1-mario.limonciello@amd.com/
-> 
-> Thanks,
-> 
-> Lukas
-
--- 
-மணிவண்ணன் சதாசிவம்
+IMHO we should try to sell this task to systemd-networkd or some other 
+user space daemon. We now have netlink access to NAPI information,
+including IRQ<>NAPI<>queue mapping. It's possible to implement a
+completely driver-agnostic IRQ mapping support from user space
+(without the need to grep irq names like we used to)
 
