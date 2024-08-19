@@ -1,373 +1,140 @@
-Return-Path: <linux-kernel+bounces-292355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C32F8956E4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:10:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A05AF956E4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0773B23900
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 207DAB25991
 	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B6D17921D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4644D175D46;
 	Mon, 19 Aug 2024 15:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QoLpuYSu"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF89815853A
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE59F178395
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724080152; cv=none; b=QrRbMjHO7wIhtUgQdLgB9qNi6LIwoTW+KXDN7onPdmsFP0lLyb6qcHinF5/FX3bgVmEMkgFEiqUKgDsxPPjU9wYUBjmucdqM1Ia0d8zMA0K0H3x+rBmhpinmmgtyoUnas/8JBhF2BAKQECQwvsZBqCuxzs7UwizNp8VTyqB5rl8=
+	t=1724080152; cv=none; b=oTC2XXiDgttEacJHLrGTqr/CgKCAnxk8B4jjYTEUAgvVUVTgIXQPOm0GPZnkp/7B0FacNqkebsUGIsyZeArpu7ZeIBZkBiK8yvP4IRpqujtR+Mbf3F1iFw0VWI+GCVz1zarp1bOpkd2ZwJYoC3Mu1dAHhDBaW0d4eBtO2OQUjyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724080152; c=relaxed/simple;
-	bh=y0XSF0NisbbkaFQeED4S8cRsocv1dZdob/BaUW1EJF4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aBApJkZsa/3DSv175uMwiYCJ1GZJD7bt+rVjZWuCBO3GXtfPvyoEEEx4DPj4BSBNVGhKFCo0kTbr7BpcxY931BA5lNb9dEHUeaQ2Z4dWO3n09WFtSfgvENTjIQKybcTCi7PAhKBW6EKkVR+6+wiv3wPAJ8nfJvE+dBIW0TiCm5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QoLpuYSu; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8385f38fcdso417063866b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:09:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724080148; x=1724684948; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rCuddyNf+0ZBHgPNUo3DWqvGchoe0lCOn0I22CKBsbE=;
-        b=QoLpuYSuX42+nbHD8vS17Qk05O7r7zGSfrB6xWcq4AZzaMGTcfix3h3vyXfLoCNXdn
-         Fn/XCa430WewZLrfJKyU60UHBN3JIPOGAkc6MPMfE/WCfrjWxjK5u6ccqG6Kl/T3obGC
-         rmo88CESff3B+XyDzEbID/cPNeXWcXLMwKtxJ47mK607tTQrASQn/FCtV2BN72yTlbt1
-         Udqr1n+GKBMYtKfkIJdCnBD3OyiHIOrByhfAI1OmaJ5idnaIYlIsVPISXJkWaHh3psDf
-         H8qaApxJ31pWy0p7+VngAGffcEFpvW7h+eb92ExD8N7nXJOPtp3nDD7H2OLyuxS+FY0o
-         4M1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724080148; x=1724684948;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rCuddyNf+0ZBHgPNUo3DWqvGchoe0lCOn0I22CKBsbE=;
-        b=Am8jwsT2XE5OjGFvPtYtjW7SpKkanJAp1I/qYZK2Sc0izsCNt8XebuFGzRFm9Cfw+m
-         w+cOx3h7VsGRuCVoWgNlmMWMIX0jJONTEJ89qGG3oA1BjtCX657kiwJuR3bBE3PHCQr/
-         XUSyWK4xkvxxdBwNfWkAqffcQFTYYiqOz97aKFA9DSdaOrYIMvJHeFh+LYY77RDpzFod
-         6RPCG9V2ZGiUz2yCQaTF0bcVZzIqMvZigFV1FXXyFH+gXJkdy+UwGVdPpHYahx9ZL6H+
-         OyfjSeQsP7GD+CYH8WzcXPuQmnMKWt1QabVpLIEbGA7ICBCRq4cC/cwcz8CiDyunuubA
-         yB7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVXNDTx72VDhf0I0yUE3njlrAkeJ7Qtq4Q3SOeqXEDNwS5fajtmgbRfKcGlZNOak9rY8S4jO43hQfxhAKxplLqa/EZ/nRFNXFyHv1hl
-X-Gm-Message-State: AOJu0YzCXWrqZe8GU3l6v6tSxwX5QF0z+SUYMtRuaxa7cOBic9k0s/Bj
-	6yY/MCvKgtHXjpZmrO/rAeGOY2P1ka2JBJnavCZUPHE6pYSGVvFcbVc/wq2DBIw=
-X-Google-Smtp-Source: AGHT+IGDU5mZ5AzwP0fXDOYNPfdvWhEp0ajZn5PNntcXvLi6kCPsCwyGkuVzzxEvykY8Qqa+GSXArQ==
-X-Received: by 2002:a17:907:2d0f:b0:a7d:23e8:94e9 with SMTP id a640c23a62f3a-a839293ef04mr821074766b.34.1724080147872;
-        Mon, 19 Aug 2024 08:09:07 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:7717:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:7717:7285:c2ff:fedd:7e3a])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383946a7dsm647544266b.181.2024.08.19.08.09.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 08:09:07 -0700 (PDT)
-Message-ID: <e7c16241-100a-4830-9628-65edb44ca78d@suse.com>
-Date: Mon, 19 Aug 2024 18:09:06 +0300
+	bh=XFOujQKSzwVfFtiiwajNzvexEYb/1eeuV57KWoFZE3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=P2DBOwVuT10KvG+A7hssgTMwCTjAkCFw9HgkNDf80jumsVFq7Lo21Q58LMY77CwnMyZlX6bu6ksBDuoETVhCnSrDSK3cj87IaJhvGr6ZAd80Anvlbtux/wUwnqVGHZY7dareWWPAsmr/7hCCOaYPl0BGlkbcHHaJIOKNFKdrp1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3406EC32782;
+	Mon, 19 Aug 2024 15:09:11 +0000 (UTC)
+Date: Mon, 19 Aug 2024 11:09:35 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: nerdopolis <bluescreen_avenger@verizon.net>
+Cc: Greg KH <gregkh@linuxfoundation.org>, pmladek@suse.com,
+ john.ogness@linutronix.de, senozhatsky@chromium.org, tglx@linutronix.de,
+ tony@atomide.com, linux-kernel@vger.kernel.org
+Subject: Re: VT-less kernels, and /dev/console on x86
+Message-ID: <20240819110935.2a7c6241@gandalf.local.home>
+In-Reply-To: <1947584.IobQ9Gjlxr@nerdopolis2>
+References: <2669238.7s5MMGUR32.ref@nerdopolis2>
+	<2024081824-leggings-omission-562a@gregkh>
+	<3669532.hdfAi7Kttb@nerdopolis2>
+	<1947584.IobQ9Gjlxr@nerdopolis2>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/25] KVM: TDX: create/destroy VM structure
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
- pbonzini@redhat.com, kvm@vger.kernel.org
-Cc: kai.huang@intel.com, isaku.yamahata@gmail.com,
- tony.lindgren@linux.intel.com, xiaoyao.li@intel.com,
- linux-kernel@vger.kernel.org, Isaku Yamahata <isaku.yamahata@intel.com>,
- Sean Christopherson <sean.j.christopherson@intel.com>,
- Yan Zhao <yan.y.zhao@intel.com>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-14-rick.p.edgecombe@intel.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-In-Reply-To: <20240812224820.34826-14-rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Sun, 18 Aug 2024 10:30:22 -0400
+nerdopolis <bluescreen_avenger@verizon.net> wrote:
 
+> On Sunday, August 18, 2024 8:33:25 AM EDT nerdopolis wrote:
+> > On Sunday, August 18, 2024 1:12:14 AM EDT Greg KH wrote:  
+> > > On Sat, Aug 17, 2024 at 08:09:20PM -0400, nerdopolis wrote:  
+> > > > Hi
+> > > > 
+> > > > I originally brought this up on linux-serial, but I think it makes more sense
+> > > > that it's part of how printk console device selection works. Without VTs, while
+> > > > most software is able to handle the situation, some userspace programs expect
+> > > > /dev/console to still be responsive. Namely systemd. It calls isatty() against
+> > > > /dev/console, and since /dev/console on VT-less systems currently defaults to
+> > > > /dev/ttyS0, and when /dev/ttyS0 is disconnected, the ioctl's fail, and it
+> > > > refuses to write log messages to it.
+> > > > 
+> > > > There doesn't seem to be a mailing list for printk, so I had to use
+> > > > get_maintainer.pl. Hopefully this is correct
+> > > > 
+> > > > 
+> > > > After some grepping and guessing and testing, and playing around Something like
+> > > > diff --git a/drivers/tty/Kconfig b/drivers/tty/Kconfig
+> > > > index a45d423ad10f..f94a4632aab0 100644
+> > > > --- a/drivers/tty/Kconfig
+> > > > +++ b/drivers/tty/Kconfig
+> > > > @@ -384,9 +384,12 @@ config NULL_TTY
+> > > >  
+> > > >           In order to use this driver, you should redirect the console to this
+> > > >           TTY, or boot the kernel with console=ttynull.
+> > > > -
+> > > >           If unsure, say N.
+> > > >  
+> > > > +config NULL_TTY_CONSOLE
+> > > > +        bool "Supports /dev/ttynull as a console automatically"
+> > > > +        depends on NULL_TTY && !VT_CONSOLE
+> > > > +
+> > > >  config VCC
+> > > >         tristate "Sun Virtual Console Concentrator"
+> > > >         depends on SUN_LDOMS
+> > > > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> > > > index dddb15f48d59..c1554a789de8 100644
+> > > > --- a/kernel/printk/printk.c
+> > > > +++ b/kernel/printk/printk.c
+> > > > @@ -3712,6 +3712,11 @@ void __init console_init(void)
+> > > >         initcall_t call;
+> > > >         initcall_entry_t *ce;
+> > > >  
+> > > > +#ifdef CONFIG_NULL_TTY_CONSOLE
+> > > > +       if (!strstr(boot_command_line, "console="))
+> > > > +               add_preferred_console("ttynull", 0, NULL);
+> > > > +#endif
+> > > > +
+> > > >         /* Setup the default TTY line discipline. */
+> > > >         n_tty_init();
+> > > >  
+> > > > 
+> > > > 
+> > > > 
+> > > > seems to work, it conflicts with CONFIG_VT_CONSOLE since it is effectively
+> > > > redundant, it is optional, so that it doesn't cause any changes to
+> > > > configurations, that historically had CONFIG_VT_CONSOLE turned off in the past,
+> > > > and for bootloader configs, it won't change any behavior if the kernel command
+> > > > line has a console device specified  
+> > > 
+> > > What is wrong with just setting the kernel command line for this
+> > > instead?
+> > >   
+> > When they eventually start shipping kernels without VTs, they will then have to
+> > include a script in their upgrade process that runs
+> > 
+> > sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"/GRUB_CMDLINE_LINUX_DEFAULT=\"nomodeset /g" /etc/default/grub  
+> Ugh, I meant
+> sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"/GRUB_CMDLINE_LINUX_DEFAULT=\"console=ttynull /g" /etc/default/grub
+> sorry
 
-On 13.08.24 г. 1:48 ч., Rick Edgecombe wrote:
-> From: Isaku Yamahata <isaku.yamahata@intel.com>
-> 
-> Implement managing the TDX private KeyID to implement, create, destroy
-> and free for a TDX guest.
-> 
-> When creating at TDX guest, assign a TDX private KeyID for the TDX guest
-> for memory encryption, and allocate pages for the guest. These are used
-> for the Trust Domain Root (TDR) and Trust Domain Control Structure (TDCS).
-> 
-> On destruction, free the allocated pages, and the KeyID.
-> 
-> Before tearing down the private page tables, TDX requires the guest TD to
-> be destroyed by reclaiming the KeyID. Do it at vm_destroy() kvm_x86_ops
-> hook.
-> 
-> Add a call for vm_free() at the end of kvm_arch_destroy_vm() because the
-> per-VM TDR needs to be freed after the KeyID.
-> 
-> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Co-developed-by: Kai Huang <kai.huang@intel.com>
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
-> Co-developed-by: Yan Zhao <yan.y.zhao@intel.com>
-> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-> Co-developed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> ---
+If you can modify the kernel .config for this, can you just update:
 
-<snip>
+  CONFIG_CMDLINE_BOOL=y
+  CONFIG_CMDLINE="console=ttynull"
 
+?
 
-> @@ -19,14 +20,14 @@ static const struct tdx_sysinfo *tdx_sysinfo;
->   /* TDX KeyID pool */
->   static DEFINE_IDA(tdx_guest_keyid_pool);
->   
-> -static int __used tdx_guest_keyid_alloc(void)
-> +static int tdx_guest_keyid_alloc(void)
->   {
->   	return ida_alloc_range(&tdx_guest_keyid_pool, tdx_guest_keyid_start,
->   			       tdx_guest_keyid_start + tdx_nr_guest_keyids - 1,
->   			       GFP_KERNEL);
->   }
->   
-> -static void __used tdx_guest_keyid_free(int keyid)
-> +static void tdx_guest_keyid_free(int keyid)
->   {
->   	ida_free(&tdx_guest_keyid_pool, keyid);
->   }
-> @@ -73,6 +74,305 @@ int tdx_vm_enable_cap(struct kvm *kvm, struct kvm_enable_cap *cap)
->   	return r;
->   }
->   
-> +/*
-> + * Some SEAMCALLs acquire the TDX module globally, and can fail with
-> + * TDX_OPERAND_BUSY.  Use a global mutex to serialize these SEAMCALLs.
-> + */
-> +static DEFINE_MUTEX(tdx_lock);
+There's also bootconfig, that allows you to append command lines to the
+kernel image. See CONFIG_BOOT_CONFIG and Documentation/admin-guide/bootconfig.rst
 
-The way this lock is used is very ugly. So it essentially mimics a lock 
-which already lives in the tdx module. So why not simply gracefully 
-handle the TDX_OPERAND_BUSY return value or change the interface of the 
-module (yeah, it's probably late for this now) so expose the lock. This 
-lock breaks one of the main rules of locking - "Lock data and not code"
-
-> +
-> +/* Maximum number of retries to attempt for SEAMCALLs. */
-> +#define TDX_SEAMCALL_RETRIES	10000
-> +
-> +static __always_inline hpa_t set_hkid_to_hpa(hpa_t pa, u16 hkid)
-> +{
-> +	return pa | ((hpa_t)hkid << boot_cpu_data.x86_phys_bits);
-> +}
-> +
-> +static inline bool is_td_created(struct kvm_tdx *kvm_tdx)
-> +{
-> +	return kvm_tdx->tdr_pa;
-> +}
-> +
-> +static inline void tdx_hkid_free(struct kvm_tdx *kvm_tdx)
-> +{
-> +	tdx_guest_keyid_free(kvm_tdx->hkid);
-> +	kvm_tdx->hkid = -1;
-> +}
-> +
-> +static inline bool is_hkid_assigned(struct kvm_tdx *kvm_tdx)
-> +{
-> +	return kvm_tdx->hkid > 0;
-> +}
-> +
-> +static void tdx_clear_page(unsigned long page_pa)
-> +{
-> +	const void *zero_page = (const void *) __va(page_to_phys(ZERO_PAGE(0)));
-> +	void *page = __va(page_pa);
-> +	unsigned long i;
-> +
-> +	/*
-> +	 * The page could have been poisoned.  MOVDIR64B also clears
-> +	 * the poison bit so the kernel can safely use the page again.
-> +	 */
-> +	for (i = 0; i < PAGE_SIZE; i += 64)
-> +		movdir64b(page + i, zero_page);
-> +	/*
-> +	 * MOVDIR64B store uses WC buffer.  Prevent following memory reads
-> +	 * from seeing potentially poisoned cache.
-> +	 */
-> +	__mb();
-> +}
-> +
-> +static u64 ____tdx_reclaim_page(hpa_t pa, u64 *rcx, u64 *rdx, u64 *r8)
-
-Just inline this into its sole caller. Yes each specific function is 
-rather small but if you have to go through several levels of indirection 
-then there's no point in splitting it...
-
-
-> +{
-> +	u64 err;
-> +	int i;
-> +
-> +	for (i = TDX_SEAMCALL_RETRIES; i > 0; i--) {
-> +		err = tdh_phymem_page_reclaim(pa, rcx, rdx, r8);
-> +		switch (err) {
-> +		case TDX_OPERAND_BUSY | TDX_OPERAND_ID_RCX:
-> +		case TDX_OPERAND_BUSY | TDX_OPERAND_ID_TDR:
-> +			cond_resched();
-> +			continue;
-> +		default:
-> +			goto out;
-> +		}
-> +	}
-> +
-> +out:
-> +	return err;
-> +}
-> +
-
-<snip>
-
-> +
-> +void tdx_mmu_release_hkid(struct kvm *kvm)
-> +{
-> +	bool packages_allocated, targets_allocated;
-> +	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
-> +	cpumask_var_t packages, targets;
-> +	u64 err;
-> +	int i;
-> +
-> +	if (!is_hkid_assigned(kvm_tdx))
-> +		return;
-> +
-> +	/* KeyID has been allocated but guest is not yet configured */
-> +	if (!is_td_created(kvm_tdx)) {
-> +		tdx_hkid_free(kvm_tdx);
-> +		return;
-> +	}
-> +
-> +	packages_allocated = zalloc_cpumask_var(&packages, GFP_KERNEL);
-> +	targets_allocated = zalloc_cpumask_var(&targets, GFP_KERNEL);
-> +	cpus_read_lock();
-> +
-> +	/*
-> +	 * TDH.PHYMEM.CACHE.WB tries to acquire the TDX module global lock
-> +	 * and can fail with TDX_OPERAND_BUSY when it fails to get the lock.
-> +	 * Multiple TDX guests can be destroyed simultaneously. Take the
-> +	 * mutex to prevent it from getting error.
-> +	 */
-> +	mutex_lock(&tdx_lock);
-> +
-> +	/*
-> +	 * We need three SEAMCALLs, TDH.MNG.VPFLUSHDONE(), TDH.PHYMEM.CACHE.WB(),
-> +	 * and TDH.MNG.KEY.FREEID() to free the HKID. When the HKID is assigned,
-> +	 * we need to use TDH.MEM.SEPT.REMOVE() or TDH.MEM.PAGE.REMOVE(). When
-> +	 * the HKID is free, we need to use TDH.PHYMEM.PAGE.RECLAIM().  Get lock
-> +	 * to not present transient state of HKID.
-> +	 */
-> +	write_lock(&kvm->mmu_lock);
-> +
-> +	for_each_online_cpu(i) {
-> +		if (packages_allocated &&
-> +		    cpumask_test_and_set_cpu(topology_physical_package_id(i),
-> +					     packages))
-> +			continue;
-> +		if (targets_allocated)
-> +			cpumask_set_cpu(i, targets);
-> +	}
-> +	if (targets_allocated)
-> +		on_each_cpu_mask(targets, smp_func_do_phymem_cache_wb, NULL, true);
-> +	else
-> +		on_each_cpu(smp_func_do_phymem_cache_wb, NULL, true);
-> +	/*
-> +	 * In the case of error in smp_func_do_phymem_cache_wb(), the following
-> +	 * tdh_mng_key_freeid() will fail.
-> +	 */
-> +	err = tdh_mng_key_freeid(kvm_tdx);
-> +	if (KVM_BUG_ON(err, kvm)) {
-> +		pr_tdx_error(TDH_MNG_KEY_FREEID, err);
-> +		pr_err("tdh_mng_key_freeid() failed. HKID %d is leaked.\n",
-> +		       kvm_tdx->hkid);
-> +	} else {
-> +		tdx_hkid_free(kvm_tdx);
-> +	}
-> +
-> +	write_unlock(&kvm->mmu_lock);
-> +	mutex_unlock(&tdx_lock);
-> +	cpus_read_unlock();
-> +	free_cpumask_var(targets);
-> +	free_cpumask_var(packages);
-> +}
-> +
-> +static inline u8 tdx_sysinfo_nr_tdcs_pages(void)
-> +{
-> +	return tdx_sysinfo->td_ctrl.tdcs_base_size / PAGE_SIZE;
-> +}
-
-Just add a nr_tdcs_pages to struct tdx_sysinfo_td_ctrl and claculate 
-this value in get_tdx_td_ctrl() rather than having this long-named 
-non-sense. This value can't be calculated at compiletime anyway.
-
-> +
-> +void tdx_vm_free(struct kvm *kvm)
-> +{
-> +	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
-> +	u64 err;
-> +	int i;
-> +
-> +	/*
-> +	 * tdx_mmu_release_hkid() failed to reclaim HKID.  Something went wrong
-> +	 * heavily with TDX module.  Give up freeing TD pages.  As the function
-> +	 * already warned, don't warn it again.
-> +	 */
-> +	if (is_hkid_assigned(kvm_tdx))
-> +		return;
-> +
-> +	if (kvm_tdx->tdcs_pa) {
-> +		for (i = 0; i < tdx_sysinfo_nr_tdcs_pages(); i++) {
-> +			if (!kvm_tdx->tdcs_pa[i])
-> +				continue;
-> +
-> +			tdx_reclaim_control_page(kvm_tdx->tdcs_pa[i]);
-> +		}
-> +		kfree(kvm_tdx->tdcs_pa);
-> +		kvm_tdx->tdcs_pa = NULL;
-> +	}
-> +
-> +	if (!kvm_tdx->tdr_pa)
-> +		return;
-
-Use is_td_created() helper. Also isn't this check redundant since you've 
-already executed is_hkid_assigned() and if the VM is not properly 
-created i.e __tdx_td_init() has failed for whatever reason then the 
-is_hkid_assigned check will also fail?
-
-> +
-> +	if (__tdx_reclaim_page(kvm_tdx->tdr_pa))
-> +		return;
-> +
-> +	/*
-> +	 * Use a SEAMCALL to ask the TDX module to flush the cache based on the
-> +	 * KeyID. TDX module may access TDR while operating on TD (Especially
-> +	 * when it is reclaiming TDCS).
-> +	 */
-> +	err = tdh_phymem_page_wbinvd(set_hkid_to_hpa(kvm_tdx->tdr_pa,
-> +						     tdx_global_keyid));
-> +	if (KVM_BUG_ON(err, kvm)) {
-> +		pr_tdx_error(TDH_PHYMEM_PAGE_WBINVD, err);
-> +		return;
-> +	}
-> +	tdx_clear_page(kvm_tdx->tdr_pa);
-> +
-> +	free_page((unsigned long)__va(kvm_tdx->tdr_pa));
-> +	kvm_tdx->tdr_pa = 0;
-> +}
-> +
-
-<snip>
+-- Steve
 
