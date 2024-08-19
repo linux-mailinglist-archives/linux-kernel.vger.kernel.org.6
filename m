@@ -1,224 +1,144 @@
-Return-Path: <linux-kernel+bounces-291627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 243289564E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:47:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAB4A9564E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:44:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 456AE1C208EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:47:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68A7A1F24B05
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C0315853C;
-	Mon, 19 Aug 2024 07:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54CCA158532;
+	Mon, 19 Aug 2024 07:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Se4ieLxq"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b="q/QX5wAe"
+Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197E812C52E
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5057947A;
+	Mon, 19 Aug 2024 07:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724053620; cv=none; b=uqwIbtTu9nebafjPIOPHPQfv0f3pbfEdx5E/ahG4vNP9VGQCoDhj94cSoB3Bi1cVawBXWqDh2wqFowi9mZagHSs8yio62eXTW9DzqYjLhqsQqUEql3w6R2uyyinnKqbkI52h1TslZ2wH+AUCLHWc5QKdUuhIPAzvyeUoHxi6B28=
+	t=1724053435; cv=none; b=uiHaSAP76sJIG52SQ+ptgjQscJcXQWcpeAYYaSxP3Km7vUcboH1e8QH9dGBCbJV+rCadjvmjkrv56sQ+pGVqpTiHaRj6851jOkqXFmyxqcc3zpqZboL9YcB6UUrUKuupFNspwrbK/kdbufCl1JakshX1gur4w32XhAjOGCn7CsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724053620; c=relaxed/simple;
-	bh=wK47MsqCFa27d2aERFh0btpxSPjkr3QYv7hBIOB5qpQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=SwijXnTiUX/FeUQTwIY2VdYalk+eybL9WqSAakS1MZavKCaF52PqUgdHex3/LZCFzKbUn1RUI2GnhTEHF1OjIIMAdD8L9siotIItJi5CrgX1vx8U2qaXAhxGquI3X7kiazFT+4VwNnxVW4Z8zhZrHmm3snJePpgSnxOptIyepqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Se4ieLxq; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240819074654epoutp02348d07a55bedcefb5456e33f5bf2856c~tEaDa35wk2080720807epoutp02F
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:46:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240819074654epoutp02348d07a55bedcefb5456e33f5bf2856c~tEaDa35wk2080720807epoutp02F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724053614;
-	bh=OUaNSPHd4+xzf8o8jo3lM+JfDC4FvaxHFWNa6XiSao8=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=Se4ieLxq4vsaQWNmAW3eNkWB8yhrBQ0h0udJ3a/T6hfqFzI7ZaduFVMET/Qm13mkc
-	 qotFxIQv76t5STjklNVC2sXzUlg2qHj6caamvRSbwV7M6pVIwjpHOWDV/9mdjCKj0z
-	 MuUTVoyxBWkr62M7JiqrPgJWfZwwggh6B47GXSUg=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20240819074654epcas5p10cc4ae7618c3918dd324ea03b8428b9f~tEaDDr7PK3243832438epcas5p1D;
-	Mon, 19 Aug 2024 07:46:54 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.178]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4WnPn82ZqCz4x9Q2; Mon, 19 Aug
-	2024 07:46:52 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	12.F8.19863.C68F2C66; Mon, 19 Aug 2024 16:46:52 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240819074356epcas5p10e5ac15305513608c788d22fe994167a~tEXdSBXIM2487824878epcas5p1F;
-	Mon, 19 Aug 2024 07:43:56 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240819074356epsmtrp236c48e4c78ab4098b1702f5c1f4628ea~tEXdROEpc3005930059epsmtrp2W;
-	Mon, 19 Aug 2024 07:43:56 +0000 (GMT)
-X-AuditID: b6c32a50-ef5fe70000004d97-4f-66c2f86c39fe
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	81.23.07567.CB7F2C66; Mon, 19 Aug 2024 16:43:56 +0900 (KST)
-Received: from dev.. (unknown [109.105.118.18]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240819074354epsmtip2c06a0b1c7b11f1313026963e4ceafbe5~tEXbU6nCL2089420894epsmtip25;
-	Mon, 19 Aug 2024 07:43:54 +0000 (GMT)
-From: Ruyi Zhang <ruyi.zhang@samsung.com>
-To: axboe@kernel.dk, asml.silence@gmail.com
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-	peiwei.li@samsung.com, Ruyi Zhang <ruyi.zhang@samsung.com>
-Subject: [PATCH v2] io_uring/fdinfo: add timeout_list to fdinfo
-Date: Mon, 19 Aug 2024 07:43:23 +0000
-Message-ID: <20240819074323.644650-1-ruyi.zhang@samsung.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1724053435; c=relaxed/simple;
+	bh=ZOpBNrOI92TQ4ZWPkl1Is98B6yTzoIz6bUl81y4zhEA=;
+	h=Content-Type:Date:Message-Id:From:To:Subject:Cc:References:
+	 In-Reply-To; b=WZyJw8HCbvCvFTXIbI+vWvb4rSKA6u6pyVES5awwKVuJAIxxMzZFJdfsss3EImq5/huu3xCgjIS32Icl5nNQT2bIji0Jhhu0PRzB70QsP1ZQpMmo5tsQdRtxkjCFuUAbvqwQ77Ri0ANGFbAYU1sNLRdOJ+FjvcjDD4aS7MYr4Ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc; spf=pass smtp.mailfrom=walle.cc; dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b=q/QX5wAe; arc=none smtp.client-ip=159.69.201.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
+Received: from localhost (unknown [213.135.10.150])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3ffe.de (Postfix) with ESMTPSA id 47F465E;
+	Mon, 19 Aug 2024 09:43:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
+	t=1724053422;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:content-type:content-type:in-reply-to:in-reply-to:
+	 references:references; bh=ZOpBNrOI92TQ4ZWPkl1Is98B6yTzoIz6bUl81y4zhEA=;
+	b=q/QX5wAeJOuGxW1q3+OqRP/H2LXUNKUUsK5i99wGbcsHcWd2b+91UQQU7YKylBjWf3OG0P
+	cDe/Jp+dxaDN8XYh6B9f069LqIWZh5em36kmqSb/QeSEW8eOx9/dASIjV8xXIby/nClq9k
+	5WWF6LLibrcoztsUVig7CJzeXVJgqXnD3o7i+iZjitlkn0nxl64QMdmbnRKxa/Gdkz9GSc
+	v+ZvCWzIuRdaw4L1nL5v+qBVCaZoyevct5dp8a/WVpOrWERc67LNDbBVNZ/FFDrtJaNAaf
+	gz7TVZwQNApVIXn/7Z9DwgTXZ6VB7XQYvUtd9NjMfDHEN2MVDq6SqCVXhOEUUg==
+Content-Type: multipart/signed;
+ boundary=324b8864c0f2f3444bbff5e9243c444c17712f463423f9f78bbd8be049ba;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Mon, 19 Aug 2024 09:43:40 +0200
+Message-Id: <D3JPXJBLA5IH.2FIM5TL0SQ6QB@walle.cc>
+From: "Michael Walle" <michael@walle.cc>
+To: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ <chunkuang.hu@kernel.org>, <ck.hu@mediatek.com>
+Subject: Re: [PATCH v8 0/3] drm/mediatek: Add support for OF graphs
+Cc: <robh@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+ <conor+dt@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+ <daniel@ffwll.ch>, <maarten.lankhorst@linux.intel.com>,
+ <mripard@kernel.org>, <tzimmermann@suse.de>, <matthias.bgg@gmail.com>,
+ <shawn.sung@mediatek.com>, <yu-chang.lee@mediatek.com>,
+ <jitao.shi@mediatek.com>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+ <linux-mediatek@lists.infradead.org>,
+ <linux-arm-kernel@lists.infradead.org>, <wenst@chromium.org>,
+ <kernel@collabora.com>, <sui.jingfeng@linux.dev>
+X-Mailer: aerc 0.16.0
+References: <20240618101726.110416-1-angelogioacchino.delregno@collabora.com> <d84f1469-e82a-42de-94a0-8ee0da0cba02@collabora.com> <eef10e9f-dac5-4a05-a79c-f8026f27f051@collabora.com>
+In-Reply-To: <eef10e9f-dac5-4a05-a79c-f8026f27f051@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPKsWRmVeSWpSXmKPExsWy7bCmlm7Oj0NpBkfn8ljMWbWN0WL13X42
-	i3et51gsfnXfZbS4vGsOm8WzvZwWXw5/Z7c4O+EDqwOHx85Zd9k9Lp8t9ejbsorR4/MmuQCW
-	qGybjNTElNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFslF58AXbfMHKAjlBTK
-	EnNKgUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkFJgV6xYm5xaV56Xp5qSVWhgYGRqZAhQnZ
-	GTcuHWMqeCtW8erPPrYGxhNCXYycHBICJhJ7V+1k7mLk4hAS2MMo0fXzDAuE84lR4uaMOWwQ
-	zjdGiSs7tzLBtKyY3QnVspdRYsOe94wQzhNGiTvNO1lBqtgENCUuz2xgBLFFBLQlXj+eygJi
-	MwtUSKy7/RRoEgeHsIC9xO7zdiAmi4CqxJ2HVSAmr4CNRP9kXohV8hKLdyxnBrF5BQQlTs58
-	AjVEXqJ562ywEyQETrFLNKx/xQbR4CJxZ98KRghbWOLV8S3sELaUxOd3e9lA5ksIFEs87MuH
-	CDcwSmz7XQdhW0v8u7KHBaSEGej49bv0IcKyElNPrWOCWMsn0fv7CTQUeCV2zIOxVSTer3jH
-	BLNpfetuKNtDoudXO9j5QgKxEo+WnmKdwCg/C8k3s5B8Mwth8wJG5lWMUqkFxbnpqcmmBYa6
-	eanl8GhNzs/dxAhOiVoBOxhXb/ird4iRiYPxEKMEB7OSCG/3y4NpQrwpiZVVqUX58UWlOanF
-	hxhNgSE8kVlKNDkfmJTzSuINTSwNTMzMzEwsjc0MlcR5X7fOTRESSE8sSc1OTS1ILYLpY+Lg
-	lGpgSt3+jV1R49a5Z5qfb/w7dqX1vnqmooK4UI/LxHe6p2T6P2VGaSZsvx/YJuiTEBf9bucF
-	zkc3euNqdhtIf5q8vtc2Xcq6hXEql8zzqKVH0o78LZZl93q6Y2rQTIP5hinX+VXsTh0Nni3w
-	RpdZ/2r6t8UP7suk1s9/+y7tr2KMSuHq7KnyVc1BG/Tt9F7tTmLany3o2VCgo6MUmPj+22b9
-	1LMsn4VNbu9btVIyaNmlE9vXdW1qXrJP73Vh1yRNych/M7a71D+5verHKZen+pXM5zeW7Vh9
-	Ta59YqrPp+Ozj83jP7px0y2uuknmN9mu829u+hCdxOX2t8e/e8pfQf+8e//eNHeKrn22p31t
-	836hN0osxRmJhlrMRcWJAAo2flMSBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBLMWRmVeSWpSXmKPExsWy7bCSvO6e74fSDBovilrMWbWN0WL13X42
-	i3et51gsfnXfZbS4vGsOm8WzvZwWXw5/Z7c4O+EDqwOHx85Zd9k9Lp8t9ejbsorR4/MmuQCW
-	KC6blNSczLLUIn27BK6MG5eOMRW8Fat49WcfWwPjCaEuRk4OCQETiRWzO5m7GLk4hAR2M0rs
-	etvACJGQkrjZdIwJwhaWWPnvOTuILSTwiFFiUkMYiM0moClxeSZIPQeHiICuRONdBZAws0CN
-	RNfVCUwgYWEBe4nd5+1ATBYBVYk7D6tATF4BG4n+ybwQs+UlFu9Yzgxi8woISpyc+YQFYoi8
-	RPPW2cwTGPlmIUnNQpJawMi0ilEytaA4Nz032bDAMC+1XK84Mbe4NC9dLzk/dxMjODC1NHYw
-	3pv/T+8QIxMH4yFGCQ5mJRHe7pcH04R4UxIrq1KL8uOLSnNSiw8xSnOwKInzGs6YnSIkkJ5Y
-	kpqdmlqQWgSTZeLglGpg0ujXPHnUZ9n11OXVl/t38zmYrNOamdleYMpRrrf8u5XdbpMVVzzP
-	1E6Sl+iWFAiWXlryYA6Xr5a5yNyyWTqK/45P3uAfYap4ZlnmW3Zm9l3GU//WR091M9jkO8no
-	g6SNHuPnb8f+zqpwzteKs10ste/bS4c1PSadfp/59tmkeDusn9tQeNYw7VSUyNTLqw/6CXHG
-	yKvpfPktL1GXNcG25e9f6ePTX035bv5qqTOr5y/nXxc5n/CElltUsYnvMuzm3PVnxfMLk/7f
-	L435HGVbOXGnoUX6zm4t64a557mNkovFHMOC34X+vCMtsivqa5jMCenUnpncd0OPKqlz1GmW
-	u35e6jibzf/EdZ5LkfuVWIozEg21mIuKEwEyT5iRuwIAAA==
-X-CMS-MailID: 20240819074356epcas5p10e5ac15305513608c788d22fe994167a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240819074356epcas5p10e5ac15305513608c788d22fe994167a
-References: <CGME20240819074356epcas5p10e5ac15305513608c788d22fe994167a@epcas5p1.samsung.com>
 
-io_uring fdinfo contains most of the runtime information,which is
-helpful for debugging io_uring applications; However, there is
-currently a lack of timeout-related information, and this patch adds
-timeout_list information.
+--324b8864c0f2f3444bbff5e9243c444c17712f463423f9f78bbd8be049ba
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Signed-off-by: Ruyi Zhang <ruyi.zhang@samsung.com>
----
- io_uring/fdinfo.c  | 14 ++++++++++++++
- io_uring/timeout.c | 12 ------------
- io_uring/timeout.h | 12 ++++++++++++
- 3 files changed, 26 insertions(+), 12 deletions(-)
+Hi,
 
-diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
-index d43e1b5fcb36..f524c3cd6f57 100644
---- a/io_uring/fdinfo.c
-+++ b/io_uring/fdinfo.c
-@@ -14,6 +14,7 @@
- #include "fdinfo.h"
- #include "cancel.h"
- #include "rsrc.h"
-+#include "timeout.h"
- 
- #ifdef CONFIG_PROC_FS
- static __cold int io_uring_show_cred(struct seq_file *m, unsigned int id,
-@@ -55,6 +56,7 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
- 	struct io_ring_ctx *ctx = file->private_data;
- 	struct io_overflow_cqe *ocqe;
- 	struct io_rings *r = ctx->rings;
-+	struct io_timeout *timeout;
- 	struct rusage sq_usage;
- 	unsigned int sq_mask = ctx->sq_entries - 1, cq_mask = ctx->cq_entries - 1;
- 	unsigned int sq_head = READ_ONCE(r->sq.head);
-@@ -235,5 +237,17 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
- 		seq_puts(m, "NAPI:\tdisabled\n");
- 	}
- #endif
-+
-+	seq_puts(m, "TimeoutList:\n");
-+	spin_lock_irq(&ctx->timeout_lock);
-+	list_for_each_entry(timeout, &ctx->timeout_list, list) {
-+		struct io_timeout_data *data;
-+
-+		data = cmd_to_io_kiocb(timeout)->async_data;
-+		seq_printf(m, "  off=%u, repeats=%u, sec=%lld, nsec=%ld\n",
-+			   timeout->off, timeout->repeats, data->ts.tv_sec,
-+			   data->ts.tv_nsec);
-+	}
-+	spin_unlock_irq(&ctx->timeout_lock);
- }
- #endif
-diff --git a/io_uring/timeout.c b/io_uring/timeout.c
-index 9973876d91b0..4449e139e371 100644
---- a/io_uring/timeout.c
-+++ b/io_uring/timeout.c
-@@ -13,18 +13,6 @@
- #include "cancel.h"
- #include "timeout.h"
- 
--struct io_timeout {
--	struct file			*file;
--	u32				off;
--	u32				target_seq;
--	u32				repeats;
--	struct list_head		list;
--	/* head of the link, used by linked timeouts only */
--	struct io_kiocb			*head;
--	/* for linked completions */
--	struct io_kiocb			*prev;
--};
--
- struct io_timeout_rem {
- 	struct file			*file;
- 	u64				addr;
-diff --git a/io_uring/timeout.h b/io_uring/timeout.h
-index a6939f18313e..befd489a6286 100644
---- a/io_uring/timeout.h
-+++ b/io_uring/timeout.h
-@@ -1,5 +1,17 @@
- // SPDX-License-Identifier: GPL-2.0
- 
-+struct io_timeout {
-+	struct file			*file;
-+	u32				off;
-+	u32				target_seq;
-+	u32				repeats;
-+	struct list_head		list;
-+	/* head of the link, used by linked timeouts only */
-+	struct io_kiocb			*head;
-+	/* for linked completions */
-+	struct io_kiocb			*prev;
-+};
-+
- struct io_timeout_data {
- 	struct io_kiocb			*req;
- 	struct hrtimer			timer;
--- 
-2.43.0
+On Thu Jul 4, 2024 at 10:29 AM CEST, AngeloGioacchino Del Regno wrote:
+> Il 19/06/24 12:56, AngeloGioacchino Del Regno ha scritto:
+> > Il 18/06/24 12:17, AngeloGioacchino Del Regno ha scritto:
+> >> Changes in v8:
+> >> =C2=A0 - Rebased on next-20240617
+> >> =C2=A0 - Changed to allow probing a VDO with no available display outp=
+uts
+> >>
+> >=20
+> > Hello CK,
+> >=20
+> > At the time of writing, this series was well reviewed and tested by mul=
+tiple people
+> > on multiple SoCs and boards.
+> >=20
+> > We've got a bunch of series that are waiting for this to get upstreamed=
+, including
+> > the addition of support for MT8365-EVK (already on mailing lists), MT83=
+95 Radxa
+> > NIO 12L, MT8395 Kontron SBC i1200 (not on mailing lists yet, waiting fo=
+r this to
+> > get merged), other than some other conversion commits for other MediaTe=
+k DTs from
+> > myself.
+> >=20
+> > As for the MT8195/NIO12L commits, I'm planning to send them on the list=
+s tomorrow,
+> > along with some code to properly support devicetree overlays (DTBO) gen=
+eration for
+> > MediaTek boards.
+> >=20
+> > Alexandre tested it on MT8365-EVK;
+> > Michael tested on Kontron SBC-i1200;
+> > I tested on Radxa NIO-12L, Cherry Tomato Chromebook, MT6795 Sony Xperia
+> > M5 (dsi video panel) smartphone and MT8192 Asurada Chromebook.
+> >=20
+> > So, is there anything else to address on this, or can we proceed?
+> >=20
+>
+> Gentle ping
 
+Any news here? Angelo, maybe you can just resend the patches?
+Because there is already a new kernel release, I'm not sure how this
+is handled.
+
+-michael
+
+--324b8864c0f2f3444bbff5e9243c444c17712f463423f9f78bbd8be049ba
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKcEABMJAC8WIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZsL3rBEcbWljaGFlbEB3
+YWxsZS5jYwAKCRASJzzuPgIf+FUbAYDwODh5ZmA5CgDyBJFBWhdWhPocmMAeADIf
+YIj7wM7SyDI0yrNuwDwDHkWqsgqP6zUBf3DRKglqYDugQsOqPOiPOacc7FY1jJNE
+JTe4vU6fiHuUR6s+hkfsCPvpec2A98PhmA==
+=v4Vj
+-----END PGP SIGNATURE-----
+
+--324b8864c0f2f3444bbff5e9243c444c17712f463423f9f78bbd8be049ba--
 
