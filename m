@@ -1,138 +1,151 @@
-Return-Path: <linux-kernel+bounces-292359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7BEB956E65
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:15:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8679A956E79
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:16:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22D501C203B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:15:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D88DB2346F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FFD178364;
-	Mon, 19 Aug 2024 15:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lCYk6sau"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6314D59F;
+	Mon, 19 Aug 2024 15:15:24 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226022AD2C;
-	Mon, 19 Aug 2024 15:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9820A3A8F0;
+	Mon, 19 Aug 2024 15:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724080491; cv=none; b=XSJYua2hnxAhmf0d7klJ9mHbGkiw/z7g+/XO5nNVnRaHNq+FxDReAlBbU8GpKIQYZiilLR3A0zMg25/M4eU85Zdi34R7Wg3FhQHhnkiwvtGDw1MnRdsiBqi3Ib7f0+jB1ZIXSE6a6BIe/SjqM1pEMc+oIwZ6HiXSIaDpHSbGfOo=
+	t=1724080523; cv=none; b=aihjZ33uuS4+kF6tNpvWKaQCROtprHvgGIluneGqyPwPYBpMBCbqzIzNFAnZPdAVtWRqr7hsxqvGDKveue4O4CK305AL0Botk9r5iGwuOA9P4TpmR2SRo1CNuPk1GJZSOMzmIAkRSD1EonnAc39HzSnyaLkLrx72eOizwoyANFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724080491; c=relaxed/simple;
-	bh=S8xLhlX6RpZyNHWb7anPniOddgqkLHLd/F+Q/aXteFs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hKHTWfhqPuW3e9FJLuiFsjLXeVfq7k0k5vPZZZd9Lpzzj3w/VOD76l2FzB636Ye4mxIOC+4hBDWA29Mmu9feTeXF3qu00Y3Impg9VsU2WnGlygzJaNHp/q1v3a8utfo+b/lKRXA1cWp4xBfJpNBrF2DcW9IOnokOORNpqq54/VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lCYk6sau; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33AF7C32782;
-	Mon, 19 Aug 2024 15:14:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724080490;
-	bh=S8xLhlX6RpZyNHWb7anPniOddgqkLHLd/F+Q/aXteFs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lCYk6sauuzGZXdmOUXd2qTfJWvnED9bat34saswazgl+M63wcMrmkDGih3C8kQurA
-	 Y2P6GJV0apLQodqEjQKA4tdHpmZayAUehizPYmJryKzc9k2pe7FjLLsB+nMt+yQu9h
-	 6haqcAo1ROW4FSaTAo1ixtaogoPe/ZoVBT9tJrC3lFtzrBO+EUNak/Eatw3H2Lcpe/
-	 c/nYpouIZebXmyZmxMOP8ewWLGfSRVwk2VIvLTWpC+zyPpx85rnhXiCbZ9E8XxLZ9C
-	 WuivjB335AbSXgBL+2B1hZIrxM8FYBoq6IoTjhDAc4WPE3BbvP3auleWIgXw19OJYa
-	 wCRcfVWJ45ZMA==
-Date: Mon, 19 Aug 2024 16:14:41 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 18/40] arm64/mm: Handle GCS data aborts
-Message-ID: <24d33455-d958-4f27-8a2c-4f237fc2bd29@sirena.org.uk>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-18-699e2bd2190b@kernel.org>
- <ZsMNwAsAWr2IxFns@arm.com>
+	s=arc-20240116; t=1724080523; c=relaxed/simple;
+	bh=eBgQOaG5792MypyuAUQklFLUNmtxOLNrLOLKzEly7xo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TO5LtSG7dXwL2wQMpzJq+/j0qHfrdpN4xVkFKhfxcpc8EIepsoitJF4XcLpxQEakJfrnF1/GQqCykvsTvJkhS0EAonxvUN1SbfwW/FnL6eZnIVhKCmPaO1ng2xGwonxPZ96BDDZYv56ZEcTPt6lF+SXjJUX8Cke5mPraBojhFWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4WnbJf1VL5z9v7Hj;
+	Mon, 19 Aug 2024 22:56:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 9050814101D;
+	Mon, 19 Aug 2024 23:15:12 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwAHi4V4YcNm5o6AAQ--.28507S2;
+	Mon, 19 Aug 2024 16:15:12 +0100 (CET)
+Message-ID: <f142b1c4e662d4701a2ab67fa5fc839ab7109e5e.camel@huaweicloud.com>
+Subject: Re: [PATCH v2 00/14] KEYS: Add support for PGP keys and signatures
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Jonathan McDowell <noodles@earth.li>
+Cc: dhowells@redhat.com, dwmw2@infradead.org, herbert@gondor.apana.org.au, 
+ davem@davemloft.net, linux-kernel@vger.kernel.org,
+ keyrings@vger.kernel.org,  linux-crypto@vger.kernel.org,
+ zohar@linux.ibm.com,  linux-integrity@vger.kernel.org, Roberto Sassu
+ <roberto.sassu@huawei.com>
+Date: Mon, 19 Aug 2024 17:15:02 +0200
+In-Reply-To: <ZsNf1VdfkHqD8R4Q@earth.li>
+References: <20240818165756.629203-1-roberto.sassu@huaweicloud.com>
+	 <ZsNf1VdfkHqD8R4Q@earth.li>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4ClE/UJ5laHl8PFo"
-Content-Disposition: inline
-In-Reply-To: <ZsMNwAsAWr2IxFns@arm.com>
-X-Cookie: Interchangeable parts won't.
+X-CM-TRANSID:LxC2BwAHi4V4YcNm5o6AAQ--.28507S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxArWrXFy3WrWxKw1DZryUtrb_yoW5GF48pa
+	yFkFn8Jr98JFnxCanxZw4UZrWYyrZ3J3W5Grnxt34Fyr1YqFnIvF18KF4ru39xWr4fAw4v
+	qrW5tw13u398AaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUOB
+	MKDUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAABGbCqfEHWgAAsk
 
+On Mon, 2024-08-19 at 16:08 +0100, Jonathan McDowell wrote:
+> On Sun, Aug 18, 2024 at 06:57:42PM +0200, Roberto Sassu wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> >=20
+> > Support for PGP keys and signatures was proposed by David long time ago=
+,
+> > before the decision of using PKCS#7 for kernel modules signatures
+> > verification was made. After that, there has been not enough interest t=
+o
+> > support PGP too.
+>=20
+> You might want to update the RFC/bis references to RFC9580, which was
+> published last month and updates things.
 
---4ClE/UJ5laHl8PFo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yes, makes sense (but probably isn't too much hassle to support more
+things for our purposes?)
 
-On Mon, Aug 19, 2024 at 10:17:52AM +0100, Catalin Marinas wrote:
-> On Thu, Aug 01, 2024 at 01:06:45PM +0100, Mark Brown wrote:
+> Also, I see support for v2 + v3 keys, and this doesn't seem like a good
+> idea. There are cryptographic issues with fingerprints etc there and I
+> can't think of a good reason you'd want the kernel to support them. The
+> same could probably be said of DSA key support too.
 
-> > +static bool is_invalid_gcs_access(struct vm_area_struct *vma, u64 esr)
-> > +{
+Uhm, if I remember correctly I encountered some old PGP keys used to
+verify RPM packages (need to check). DSA keys are not supported, since
+the algorithm is not in the kernel.
 
-> > +	if (unlikely(is_gcs_fault(esr))) {
-> > +		/* GCS accesses must be performed on a GCS page */
-> > +		if (!(vma->vm_flags & VM_SHADOW_STACK))
-> > +			return true;
-> > +		if (!(vma->vm_flags & VM_WRITE))
-> > +			return true;
+Thanks
 
-> Do we need the VM_WRITE check here? Further down in do_page_fault(), we
-> already do the check as we set vm_flags = VM_WRITE.
+Roberto
 
-> >       if (!(vma->vm_flags & vm_flags)) {
-> >               vma_end_read(vma);
-> >               fault = 0;
+> > Lately, when discussing a proposal of introducing fsverity signatures i=
+n
+> > Fedora [1], developers expressed their preference on not having a separ=
+ate
+> > key for signing, which would complicate the management of the distribut=
+ion.
+> > They would be more in favor of using the same PGP key, currently used f=
+or
+> > signing RPM headers, also for file-based signatures (not only fsverity,=
+ but
+> > also IMA ones).
+> >=20
+> > Another envisioned use case would be to add the ability to appraise RPM
+> > headers with their existing PGP signature, so that they can be used as =
+an
+> > authenticated source of reference values for appraising remaining
+> > files [2].
+> >=20
+> > To make these use cases possible, introduce support for PGP keys and
+> > signatures in the kernel, and load provided PGP keys in the built-in
+> > keyring, so that PGP signatures of RPM headers, fsverity digests, and I=
+MA
+> > digests can be verified from this trust anchor.
+> >=20
+> > In addition to the original version of the patch set, also introduce
+> > support for signature verification of PGP keys, so that those keys can =
+be
+> > added to keyrings with a signature-based restriction (e.g. .ima). PGP k=
+eys
+> > are searched with partial IDs, provided with signature subtype 16 (Issu=
+er).
+> > Search with full IDs could be supported with
+> > draft-ietf-openpgp-rfc4880bis-10, by retrieving the information from
+> > signature subtype 33 (Issuer Fingerprint). Due to the possibility of ID
+> > collisions, the key_or_keyring restriction is not supported.
+>=20
+>=20
+> J.
+>=20
 
-It looks bitrotted, yes.
-
-> I was wondering whether we should prevent mprotect(PROT_READ) on the GCS
-> page. But I guess that's fine, we'll SIGSEGV later if we get an invalid
-> GCS access.
-
-Yeah, that doesn't seem like a particular problem - the concern is
-adding rather than removing GCS.
-
---4ClE/UJ5laHl8PFo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbDYWAACgkQJNaLcl1U
-h9CIagf8CVGRJRPIYEL8OXtLlRDHe/BAx31NyJ8PnnV2H/LyZ/HkpxFqkEdopZ2W
-SnomGLDZ/Sbry7VZUUVbO9QNmD/7UinwFR26WOigUY8aHtv/SDsMpx68OMvMPGtp
-aOgTkLDZdZiL3OZbxsdYj24aQ2gywicEb/JxgcqYwclQvQn3geXt9wvBJIZvUqOI
-f9ioaV7/pP5zWb35Kra+jjC2CUxouQ1ozkrxlJhyTT9VM3I4iefpf6eaGmgah7G9
-n5vrIJWkdxaC4B8K/p+Uk/2LJYWdvOho+S1PnJPJloXX/3+dCvveT+3yVcEzT1z0
-73smiFLb21oBkc5wjzRqiGDdQA7z3Q==
-=d5gu
------END PGP SIGNATURE-----
-
---4ClE/UJ5laHl8PFo--
 
