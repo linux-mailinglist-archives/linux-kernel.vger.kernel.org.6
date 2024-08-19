@@ -1,190 +1,122 @@
-Return-Path: <linux-kernel+bounces-292709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B72E957348
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:31:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32D2195734C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3298B23014
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:31:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D00981F22A0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD431891D4;
-	Mon, 19 Aug 2024 18:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BE3189512;
+	Mon, 19 Aug 2024 18:31:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GVlnf8jq"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f4tPbha5"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108DD135A53
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 18:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B834F172BD3
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 18:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724092286; cv=none; b=c5ePpVwwM0FTgcyjoTC6NKa4X59c6O73+HwxnhQnf5/8lsF1nyoh9kUgCGyDNX4EfQcdCIWsJaIA2q9K1SpUdw+I0lFMFD4+olrrsL51hkYOhFgBgtOAv8O2Suoligj2RkBwpKH6Zd2C7PfUe53R2304x6PUk+DmdzoMriCHWro=
+	t=1724092311; cv=none; b=VeNvrWRJFlEfrJ/TpJnAO9rTE77ROTmP5AKevc1JMubyxfcQLK+7IBriVBRWieBNHEdhsxu/hG0pdLTXjMngaCmsqFZloftjLjES4bs8R/BZjS0KTUB3yawoTnooHE/kRwmFYarKbVH8TbGfZI6ldYeMroi5qOw68kVG60zr4/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724092286; c=relaxed/simple;
-	bh=ZrWC8ayVISMEQlXc1POjz6UYuqoV+ZvS6YR7eJJYJC0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=L0C11wKv6Nc9grlXenrY6cgqXVyBDlbZ8tG01grLAARX9vMulmR/X/Ek9oh4MAuNwC3wFAmTie9LnsRP/UNuRbt7aPVHbSZTwh1gKmpCmPuCA6KpzWisatgQJN/G8UQVLmYeKEu4ZspzWoHWmSdxLUx3cSly0UT7Cjkcn5TxnjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GVlnf8jq; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7125fb17a83so2690872b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:31:24 -0700 (PDT)
+	s=arc-20240116; t=1724092311; c=relaxed/simple;
+	bh=jz/ZjxWSKaV9E21NAp8gn+3Khw5Z8VpNkDbDc9dwc2U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i4o0OsBt1QLVVDSvYL6uQqFkWvG7axmlcHGpQotd7MO3Ou2rrCYfPyL88oJ6Y5uJ/Tb7rkUvqBZ+qIQtLX80qLqJRW4M2eLhC+Xzx9cOT+tgPY9akK0uDy5vnWvlwd1jr0YUa7PgdZpjbfwMsjPgKwTsTOBTVQktH8xoUCvjXGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f4tPbha5; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so35195905e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:31:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724092284; x=1724697084; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sZh6vj+JVTE3khn4nIDCIHCY6ZVRQDK1Dqe9+u7egds=;
-        b=GVlnf8jq0VrrH0+8J7j+bLiEkyzgaLRE6UwGa3mfSTZhZ78oFwB0uSk2qfLEmEkDwD
-         HbwXyY9BRjCE4M15se7FCG0mCQA2GgUfE8AGoCsVfbchaNWHSf4fbPoolmgJ9awSTLHO
-         2DFE2nmNHm5jzsVEi+ubf33I9hsI8wl6TfwjI87MmYHMGXYqEfQo16Iv2Tb/eWdISQ2l
-         G2qk1D0MPeWeoj85V8o1Qd6lgZUF33TflHahBCUXWe0JHukfcR6c9zV/jUFRHi5Tulo1
-         c6Ycc12Fa6hbCwvej2wSZEFM40WfogKNW9br/v5rYCRYvCGzmS/00A2dgMXMb8RExWcB
-         /hOg==
+        d=linaro.org; s=google; t=1724092307; x=1724697107; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nxaAE4cpI7LMjHmJRrNjbSHDwPUlpGudLSFm8GQhDF8=;
+        b=f4tPbha5pK8VtHWpwMeJFtkj45/3cXr50Yh+mo8gKprpHBrzBGpRg+n+oDL1rat7ju
+         yKEpkAS1qJfZSAapFcnwqo01CeF4GpxcksfNMMXmaXnOmPKQxI6Ckl+9XG09oXx58OY7
+         4MZUTKf8rNZDjEJvPv+vFlvNr/IuY1CTxtpuqE1k1gtwj98+gObqSubEwAih7Z1R0+Qv
+         wKrun248c+IsZ1ShDzMLMoyvj4YHPVsqZHJt8olADLo5sBoJx4ON5OmRarehlyyICFme
+         Octbr5HVF5zxQmBBRkT58+GYbMYmWyPKa1zXxamPSonNz23c87TVfZqARH9qKZFBdZsd
+         /8nQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724092284; x=1724697084;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=sZh6vj+JVTE3khn4nIDCIHCY6ZVRQDK1Dqe9+u7egds=;
-        b=gtlymCe38Vbp6AwpkW929Efk6H9Knlj46aUJ+JI8KlTIEbhc2UdfnxH83/Cz/1S8Iz
-         RIna2wAaLEeDHJUaUkiFXyIHbAJdO0oqBsEYeiZbNdZid6KqBKf9M6i98UWPX1yPo9n2
-         G8RWTg8uNUaKjQzzWRm26WDzaroHEDbBcdjBD+hGb6c5iurYDwSY4SwmdaxV+VDo5RJY
-         pCNh7Vt9r+4j3ScET3PmWvY0RbmyBhTzAhxLcAaYHkWEeP3k+62LUc5FZGIzfZcfoTdq
-         oEasMpcYkC2sPgQG65WbGCpjVZYTRSQMQoCIFDQJ+Ubj9SwQTxKO4YVPdcrHOoH8LTqb
-         5Z1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXUOK0tS9QLnQTAZmUHYvHMD5hrxEFdb+wYTwWWisHj9EjNIjsT34CuycuNQ9Ez2B+FUJpET1GmrBR/67c4NJroZLM14FC+AkvDiaer
-X-Gm-Message-State: AOJu0Yx2avCiqz2NwkvJ/ziSPcnfvzqCqI+kX38kxNE+0C7ZqvZP5K9U
-	eA2fFdizqK9sg3EG7VbWgdWhXLZ+aQ6U6dTiquu57Kg+CJxY3y0979ieR90yI/lxUpvE42AvWjD
-	+qA==
-X-Google-Smtp-Source: AGHT+IGh8K54hv69rMrUmGxS9qgHX1Rbw16YYeuCjshOKbnSVF1r4Y1OnJ+4xCX8qHN+pt3Ztbq09K0kinA=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:aa7:8145:0:b0:710:4d4d:5ef1 with SMTP id
- d2e1a72fcca58-713c525b48bmr45627b3a.4.1724092284136; Mon, 19 Aug 2024
- 11:31:24 -0700 (PDT)
-Date: Mon, 19 Aug 2024 11:31:22 -0700
-In-Reply-To: <CALzav=cFPduBR4pmgnVrgY6q+wufTn_nS-4QDF4yw8uGQkV41Q@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1724092307; x=1724697107;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nxaAE4cpI7LMjHmJRrNjbSHDwPUlpGudLSFm8GQhDF8=;
+        b=k+NZpgxaGWlYj1E9HJ39HtsVUSSXwjoDnyu/eAjyU8UmKVshSSpIpPI8pGuIp8T9qO
+         +ki3JNT2Ts6KIiAKMdK3bWuPz4D2x9p5B2r4P3vHHDBB46dmdZmTIrK745cCxEforpd/
+         4NeQ3K41hHsBitHQydmUcc5scw+/RSok0Jn7FslA3bx0u9qnQz9PcA+pzQWEWlqFS2iK
+         cU7v42uY2Nx5HyyEHJpUA0i56v+iEBSIM8lpBXD9+5PMxEWp3u+1xMv5Wxbe21w1Pti4
+         OH0yHvLJNt0zQO9HOXCBc6jo0rQdO2Aqdr0WseYrUhG+rCCwIxjXTo1MdGiXKKhEEPfl
+         z1tg==
+X-Forwarded-Encrypted: i=1; AJvYcCViIMYfO6G7u0A3WwL+FqrwjT3CZjUaNZ5qJHwHJYXlWvtff+YfISANuzxfA7rxR3hQcFL9FIivC6ZUU21YUCdLoErVcuG3Z/7MPDx6
+X-Gm-Message-State: AOJu0Yy11X/0NR4vr3mP9KJGcjCwLbHPEF+O3UOe2Vw1/MWdykzSUJx2
+	ff5t+jOQQ79Tky5vw9ZwcYUuapsC7ddEAoUDMerx6YHtyQrXcwxBD7H/duSCH8L9kg6qPDprW1i
+	C
+X-Google-Smtp-Source: AGHT+IGPqrsA51V094dT1HNJcTdp79GxbmHxHjfGNtOcSLpkTDIiIZ0jqfcoK2vPtTRfbGZLpcLtmQ==
+X-Received: by 2002:a05:600c:1c24:b0:426:654e:16da with SMTP id 5b1f17b1804b1-429ed61fe76mr91314875e9.0.1724092306583;
+        Mon, 19 Aug 2024 11:31:46 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-429ed7847d7sm117705455e9.31.2024.08.19.11.31.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 11:31:46 -0700 (PDT)
+Message-ID: <e438d8c4-3c10-4674-916b-dd645d19f210@linaro.org>
+Date: Mon, 19 Aug 2024 20:31:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240812171341.1763297-1-vipinsh@google.com> <20240812171341.1763297-2-vipinsh@google.com>
- <Zr_gx1Xi1TAyYkqb@google.com> <20240819172023.GA2210585.vipinsh@google.com> <CALzav=cFPduBR4pmgnVrgY6q+wufTn_nS-4QDF4yw8uGQkV41Q@mail.gmail.com>
-Message-ID: <ZsOPepvYXoWVv-_D@google.com>
-Subject: Re: [PATCH 1/2] KVM: x86/mmu: Split NX hugepage recovery flow into
- TDP and non-TDP flow
-From: Sean Christopherson <seanjc@google.com>
-To: David Matlack <dmatlack@google.com>
-Cc: Vipin Sharma <vipinsh@google.com>, pbonzini@redhat.com, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/2] clocksource: acpi_pm: Add external callback for
+ suspend/resume
+To: Hans de Goede <hdegoede@redhat.com>, Marek Maslanka
+ <mmaslanka@google.com>, LKML <linux-kernel@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>,
+ David E Box <david.e.box@intel.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ platform-driver-x86@vger.kernel.org
+References: <935e8c82-3c91-4c9a-8e43-e6045b28279d@redhat.com>
+ <20240812184150.1079924-1-mmaslanka@google.com>
+ <e0068ba6-c211-4878-8f16-fe97746c2a56@redhat.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <e0068ba6-c211-4878-8f16-fe97746c2a56@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 19, 2024, David Matlack wrote:
-> On Mon, Aug 19, 2024 at 10:20=E2=80=AFAM Vipin Sharma <vipinsh@google.com=
-> wrote:
-> >
-> > On 2024-08-16 16:29:11, Sean Christopherson wrote:
-> > > On Mon, Aug 12, 2024, Vipin Sharma wrote:
-> > > > +   list_for_each_entry(sp, &kvm->arch.possible_nx_huge_pages, poss=
-ible_nx_huge_page_link) {
-> > > > +           if (i++ >=3D max)
-> > > > +                   break;
-> > > > +           if (is_tdp_mmu_page(sp) =3D=3D tdp_mmu)
-> > > > +                   return sp;
-> > > > +   }
-> > >
-> > > This is silly and wasteful.  E.g. in the (unlikely) case there's one =
-TDP MMU
-> > > page amongst hundreds/thousands of shadow MMU pages, this will walk t=
-he list
-> > > until @max, and then move on to the shadow MMU.
-> > >
-> > > Why not just use separate lists?
-> >
-> > Before this patch, NX huge page recovery calculates "to_zap" and then i=
-t
-> > zaps first "to_zap" pages from the common list. This series is trying t=
-o
-> > maintain that invarient.
+On 19/08/2024 13:35, Hans de Goede wrote:
+> Hi,
+> 
+> On 8/12/24 8:41 PM, Marek Maslanka wrote:
+>> Provides the capability to register an external callback for the ACPI PM
+>> timer, which is called during the suspend and resume processes.
+>>
+>> Signed-off-by: Marek Maslanka <mmaslanka@google.com>
+> 
+> Daniel / Thomas I believe this series is ready for merging now,
+> do you want to merge this through the tree for drivers/clocksource ?
+> 
+> Or shall I merge this through the platform-drivers-x86 tree ?
+> 
+> In case of the latter may I please have your Acked-by for patch 1/2 for ths ?
 
-I wouldn't try to maintain any specific behavior in the existing code, AFAI=
-K it's
-100% arbitrary and wasn't written with any meaningful sophistication.  E.g.=
- FIFO
-is little more than blindly zapping pages and hoping for the best.
 
-> > If we use two separate lists then we have to decide how many pages
-> > should be zapped from TDP MMU and shadow MMU list. Few options I can
-> > think of:
-> >
-> > 1. Zap "to_zap" pages from both TDP MMU and shadow MMU list separately.
-> >    Effectively, this might double the work for recovery thread.
-> > 2. Try zapping "to_zap" page from one list and if there are not enough
-> >    pages to zap then zap from the other list. This can cause starvation=
-.
-> > 3. Do half of "to_zap" from one list and another half from the other
-> >    list. This can lead to situations where only half work is being done
-> >    by the recovery worker thread.
-> >
-> > Option (1) above seems more reasonable to me.
->=20
-> I vote each should zap 1/nx_huge_pages_recovery_ratio of their
-> respective list. i.e. Calculate to_zap separately for each list.
+I'll pick them, thanks
 
-Yeah, I don't have a better idea since this is effectively a quick and dirt=
-y
-solution to reduce guest jitter.  We can at least add a counter so that the=
- zap
-is proportional to the number of pages on each list, e.g. this, and then do=
- the
-necessary math in the recovery paths.
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_hos=
-t.h
-index 94e7b5a4fafe..3ff17ff4f78b 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1484,6 +1484,8 @@ struct kvm_arch {
-         * the code to do so.
-         */
-        spinlock_t tdp_mmu_pages_lock;
-+
-+       u64 tdp_mmu_nx_page_splits;
- #endif /* CONFIG_X86_64 */
-=20
-        /*
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 928cf84778b0..b80fe5d4e741 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -870,6 +870,11 @@ void track_possible_nx_huge_page(struct kvm *kvm, stru=
-ct kvm_mmu_page *sp)
-        if (!list_empty(&sp->possible_nx_huge_page_link))
-                return;
-=20
-+#ifdef CONFIG_X86_64
-+       if (is_tdp_mmu_page(sp))
-+               ++kvm->arch.tdp_mmu_nx_page_splits;
-+#endif
-+
-        ++kvm->stat.nx_lpage_splits;
-        list_add_tail(&sp->possible_nx_huge_page_link,
-                      &kvm->arch.possible_nx_huge_pages);
-@@ -905,6 +910,10 @@ void untrack_possible_nx_huge_page(struct kvm *kvm, st=
-ruct kvm_mmu_page *sp)
-        if (list_empty(&sp->possible_nx_huge_page_link))
-                return;
-=20
-+#ifdef CONFIG_X86_64
-+       if (is_tdp_mmu_page(sp))
-+               --kvm->arch.tdp_mmu_nx_page_splits;
-+#endif
-        --kvm->stat.nx_lpage_splits;
-        list_del_init(&sp->possible_nx_huge_page_link);
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
