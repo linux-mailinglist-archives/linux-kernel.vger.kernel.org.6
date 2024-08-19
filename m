@@ -1,196 +1,279 @@
-Return-Path: <linux-kernel+bounces-292869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6978295757D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:16:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D0CE957581
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:16:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA7AA1F227CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:16:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83316B22659
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB38158D94;
-	Mon, 19 Aug 2024 20:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D61415A84E;
+	Mon, 19 Aug 2024 20:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BGZEe2eU"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YXBiyMye"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3C17FBC2;
-	Mon, 19 Aug 2024 20:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A463158DCD;
+	Mon, 19 Aug 2024 20:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724098568; cv=none; b=t5nwUx7yENhf+qH5f7nWxiNX0//PUz4cMCLaq4tPFstK4ozy4FIKdhff+Yks+KUy+F+28JEUwXvt5slIfYWl2cLTmYQ3m6+E0Os/+mwNJwl7rmVKRBAqfKrI/DMQ5B5TEohJnAVkkIuc2zcHBbBnw0MINV8OngeZOiitdZomQBw=
+	t=1724098572; cv=none; b=ADyRXNqL36gXg3UPwvYuPuQ5jEbjrN3Sc3Vfx9eymP2/9vGbHAEPMRQ0miD9XXMC8o0ajbyUFJz3Bcj1K0JlheGGe5wK7oP6sHxCrhVA3UOIv6MBCYk80VTQ8LORuq5EwoflQgpbJ/qdi4/6LY9nEmZxfoF/t/shmpNlmmoop3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724098568; c=relaxed/simple;
-	bh=tKSoRUQpXePqqNTuO8rItPgcLe8nqBrJWVuADpXoCjA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jbxOGApVhngVmtnGZnMljgS8pTUw4lwLhyXMfwX1Vyy8CXqOitviVt56B7x6HIUloqFnPbJ75T2jaXv5VQ4tGgRlrhyOKTbuN8X+ZM8Y9IfKR8k9sRVIE5I8xW81+vaNPbalcgF0UKnzTV1wj61XOf9fpW3EcWKpWRN5aaDI4z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BGZEe2eU; arc=none smtp.client-ip=209.85.210.175
+	s=arc-20240116; t=1724098572; c=relaxed/simple;
+	bh=SWVRgeZ7CTQQ7yYl/MchnPLiTqf6i43UKxuy79sGAz8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JQ/IEHSMh2LzP0YnzGcNmOxW6L4v4BGtAtyFtRuWD9LouLtmJBDsuqrVtmMdHXcwsNHZjg8q9ki0uKSGrFuECQ4BqZ8rz8mltYuVT2w6TF6DxgpQ3MkwLvHduY+OFPgffbcMSa6tMAz7Pf6THft3DRc485Mk2WvZsB6TRAcZbco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YXBiyMye; arc=none smtp.client-ip=209.85.219.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7126d62667bso2746461b3a.3;
-        Mon, 19 Aug 2024 13:16:07 -0700 (PDT)
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6bf89e59ff8so14132896d6.0;
+        Mon, 19 Aug 2024 13:16:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724098566; x=1724703366; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=FrgAIDdpTJtQEBQLOPROESfX8lbaYtW70SZKJ96zmp0=;
-        b=BGZEe2eUViAtDk5fK3O5GqyuIrkDtbjjz1UJ408lEOnwMFrmimNtPxRLdf08T5POqW
-         qMayShKaLiqn49CH/sKnXyHWMjcN2eUJmRt1bruo6Ktl3LVf6qw8DxZTpwzevwnA0dwO
-         kn8HEOvvIEqIVrbZyoNLPz5esIT3M2RBP41kuCXAuLuhbJBPcIhNLfrvG8d8WQVwQh7z
-         NbM+nN/ain33GBomm3giWA5aqL+dPM43sHzMPgbw3eyATQTwJDPCQHni68gCm1JRZO0M
-         roXR/CcLarOfFmnEw78wfyQG21i5pIUQ73K2q8HULQx1Zr5nWqfVXrFwkySRUBqjiM7m
-         FTtw==
+        d=gmail.com; s=20230601; t=1724098569; x=1724703369; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2bDcAPyWn/B3dB8WEY9pSZO0HQv1mT5yruHlrosIXss=;
+        b=YXBiyMye/F2ViPy1tzw8jZZfPzT6fet1wxRkZLA39+9c/ynQOEBTz8gslXybjNZCZV
+         0cK//7e7iI8cX4e0dHZygeqkVW0uXApYtPAfaZNOulZ4gf3nwnEti02j+z4l+HXRBEz+
+         n7ZxpIGVVOp5d5aa/gC2W73Ii7c3xQbCxzHuIg1R0cnynSkXHTP054feCNZqkdKer00w
+         tOipEyonW9QIlUsMctczITiTYyvBnmAZUh5vinMtTSeBWo66dRghiyg9aTPUhvFtItCi
+         BOZh41gXJ469aRRmIKt9LOGQIAsfk3V7mevjbHN2dJqbtwfVR9oWBDWIbScoiVNGZnMg
+         Ad+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724098566; x=1724703366;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1724098569; x=1724703369;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FrgAIDdpTJtQEBQLOPROESfX8lbaYtW70SZKJ96zmp0=;
-        b=sRhro2CZ5SOMh5XXd2zK64iEHptLmAcwHPjXu4z0HuwiUzCYRGcm4LyNJbhU3lOigD
-         s7wNaMjrV4zo7repr1RjDVdfduFvcbWNAdoLwLG//H3DlYLfm0FTQtxPNiOFyQ5m2SsV
-         Orf9BvnHfIgxq5B5PYetIGnJvEdryPVOZr6Mj9R2l0w5Bm1qdAYksd/SnjfRsY9pLXeU
-         c9G45ghjrPaHB0BY6CL3WE9iorsIQFY12MnGPZKFUeTS5DuPxhYBxbcqg7XkA1MlSoTo
-         M4z+QZ1bkR0R6QoYdbKqhX/5XmsfQvRAG+Qj2iPnUG8VnTNkR4TtALo1tX1jlcRNk6aU
-         Ts5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUPAzbZ4VmJWQcT82sscz6UyUfaAylmdkbCmpvu94j+CLnpMo1/IscBoSnKlqyeoZ0pz08IsDLYc3dGBB3cnlUuzE41zdlDm+jWFw0cAMG8SHt5BEZSYbKsSDDPr0+6lHU7sQbXyNjfQveX6Y0MZ8JF35NgxgcWDzsg1xmXDsW9l7d8zf9OCFyY2xRT
-X-Gm-Message-State: AOJu0Yx4l8wqUhj3I0jSXmtBwMNLfC4F+TuJlk5Kaql+cT+w7Qlqu2IZ
-	z+UV+ByT+eeBhM8igivsV6RKD0gH11u2RvGxvMzwp6+Govh2SDtl
-X-Google-Smtp-Source: AGHT+IE0lM+jGCdajVXpacBz0vUoVs56Q6/TR5ea1dfxBHh0n6IZGwrc2PgaGKjQ0BSjJfw4NK2NwA==
-X-Received: by 2002:a05:6a00:174c:b0:713:f127:ad5c with SMTP id d2e1a72fcca58-713f127b28amr3702328b3a.28.1724098566420;
-        Mon, 19 Aug 2024 13:16:06 -0700 (PDT)
-Received: from tahera-OptiPlex-5000 ([136.159.49.123])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127af3f690sm6888850b3a.211.2024.08.19.13.16.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 13:16:06 -0700 (PDT)
-Date: Mon, 19 Aug 2024 14:16:04 -0600
-From: Tahera Fahimi <fahimitahera@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com,
-	jmorris@namei.org, serge@hallyn.com,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bjorn3_gh@protonmail.com, jannh@google.com, netdev@vger.kernel.org
-Subject: Re: [PATCH v9 0/5] Landlock: Add abstract unix socket connect
- restriction
-Message-ID: <ZsOoBPpNZ+8KXKus@tahera-OptiPlex-5000>
-References: <cover.1723615689.git.fahimitahera@gmail.com>
- <20240819.Gie1thiegeek@digikod.net>
+        bh=2bDcAPyWn/B3dB8WEY9pSZO0HQv1mT5yruHlrosIXss=;
+        b=v/lf9ihQK9xqhmrFPzFwnoSmChnruZJta8BxVDqAwuxSabrSLhYdPOQg1xf9PoFXf5
+         sqrsA7gSBDrijaAunH4qrdt7AW6mA3zFkII5PqYIZ8t5CE5ddap2hqvL/uWFiEsM4Wof
+         it/Glq6LdjSllVeOPXO9KnlmfA9t/ICh1eERkGQnpczSj4vGdzreoLp5XVctjUU4Y80F
+         QH7dhBkzS40TUFXfKlE2iSIMLkSgBr5Vq4FbGTUgQUZBELs4McVfW0qXkgMEoQELUNzF
+         s0VsWj/C4HYv+1uQCcjUjZkbbEHkaitx0GUORj2Wq8Cay2nY2JF3XTzj7rBRydpdBVLC
+         vStA==
+X-Forwarded-Encrypted: i=1; AJvYcCUF70MT8OYQNPzgf2XGLZen39DnMRy8mxrWECTYMxZxC0MqYU3ovKzajpeZ9flOPFgwsirmrusEI1YSkwjzEKtma+QZtm5GneIPdQ/iYqPjyH1mPAjD0NIHuCrUoj+X1Z7hytIqxgD3
+X-Gm-Message-State: AOJu0YxIZG08gkNNr2ifE5lWn6I9hs1iccYVBmh/V2I9F4Ny7k4g/iam
+	Q8CuQJHBk3lFbam0QCogIs7HKYKJMzFh2qyNV5tR4zMzn99Vv615
+X-Google-Smtp-Source: AGHT+IH5rVdrhtASVA0IbpdMpTAjIzrHEi8lN53IGRcdkXNk+ka7mf3rD/j3HaEFfUtc07VqzgCwoA==
+X-Received: by 2002:a05:6214:3204:b0:6bf:8ae8:fc0c with SMTP id 6a1803df08f44-6bf8ae92718mr130582366d6.35.1724098569193;
+        Mon, 19 Aug 2024 13:16:09 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1145:4:1409:786c:cb1d:c3fb? ([2620:10d:c091:500::7:e1ca])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fec5e9csm45817476d6.80.2024.08.19.13.16.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 13:16:08 -0700 (PDT)
+Message-ID: <9a58e794-2156-4a9f-a383-1cdfc07eee5e@gmail.com>
+Date: Mon, 19 Aug 2024 16:16:07 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/6] mm: Introduce a pageflag for partially mapped
+ folios
+To: Barry Song <baohua@kernel.org>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org,
+ riel@surriel.com, shakeel.butt@linux.dev, roman.gushchin@linux.dev,
+ yuzhao@google.com, david@redhat.com, ryan.roberts@arm.com, rppt@kernel.org,
+ willy@infradead.org, cerasuolodomenico@gmail.com, ryncsn@gmail.com,
+ corbet@lwn.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ kernel-team@meta.com
+References: <20240819023145.2415299-1-usamaarif642@gmail.com>
+ <20240819023145.2415299-5-usamaarif642@gmail.com>
+ <CAGsJ_4yKuvMSazWABXqaeRr84hLEubET0nCUhPFYHQnfR4Tm8w@mail.gmail.com>
+ <a09b6af0-4fdb-4ac1-9cbe-9b422ebc3308@gmail.com>
+ <CAGsJ_4xeWt9n3zX3-DknE=NftkWS0fe2vKTJT9tLuJPM4EaEwg@mail.gmail.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <CAGsJ_4xeWt9n3zX3-DknE=NftkWS0fe2vKTJT9tLuJPM4EaEwg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240819.Gie1thiegeek@digikod.net>
 
-On Mon, Aug 19, 2024 at 09:58:27PM +0200, Mickaël Salaün wrote:
-> There are still some issues (mainly with tests) but overall the kernel
-> part looks good!  I pushed this patch series to the -next branch.  I'll
-> update with the next versions of this series.
-Thank you :) 
-> I'll do the same with the next signal scoping patch series once the
-> lifetime issue that Jann reported is fixed.
-I have already applied those changes, but still need to add a test case
-for file_send_sigiotask()
-> On Wed, Aug 14, 2024 at 12:22:18AM -0600, Tahera Fahimi wrote:
-> > This patch series adds scoping mechanism for abstract unix sockets.
-> > Closes: https://github.com/landlock-lsm/linux/issues/7
-> > 
-> > Problem
-> > =======
-> > 
-> > Abstract unix sockets are used for local inter-process communications
-> > independent of the filesystem. Currently, a sandboxed process can
-> > connect to a socket outside of the sandboxed environment, since Landlock
-> > has no restriction for connecting to an abstract socket address(see more
-> > details in [1,2]). Access to such sockets for a sandboxed process should
-> > be scoped the same way ptrace is limited.
-> > 
-> > [1] https://lore.kernel.org/all/20231023.ahphah4Wii4v@digikod.net/
-> > [2] https://lore.kernel.org/all/20231102.MaeWaepav8nu@digikod.net/
-> > 
-> > Solution
-> > ========
-> > 
-> > To solve this issue, we extend the user space interface by adding a new
-> > "scoped" field to Landlock ruleset attribute structure. This field can
-> > contains different rights to restrict different functionalities. For
-> > abstract unix sockets, we introduce
-> > "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" field to specify that a ruleset
-> > will deny any connection from within the sandbox domain to its parent
-> > (i.e. any parent sandbox or non-sandbox processes).
-> > 
-> > Example
-> > =======
-> > 
-> > Starting a listening socket with socat(1):
-> > 	socat abstract-listen:mysocket -
-> > 
-> > Starting a sandboxed shell from $HOME with samples/landlock/sandboxer:
-> > 	LL_FS_RO=/ LL_FS_RW=. LL_SCOPED="a" ./sandboxer /bin/bash
-> > 
-> > If we try to connect to the listening socket, the connection would be
-> > refused.
-> > 	socat - abstract-connect:mysocket --> fails
-> > 
-> > 
-> > Notes of Implementation
-> > =======================
-> > 
-> > * Using the "scoped" field provides enough compatibility and flexibility
-> >   to extend the scoping mechanism for other IPCs(e.g. signals).
-> > 
-> > * To access the domain of a socket, we use its credentials of the file's FD
-> >   which point to the credentials of the process that created the socket.
-> >   (see more details in [3]). Cases where the process using the socket has
-> >   a different domain than the process created it are covered in the 
-> >   unix_sock_special_cases test.
-> > 
-> > [3]https://lore.kernel.org/all/20240611.Pi8Iph7ootae@digikod.net/
-> > 
-> > Previous Versions
-> > =================
-> > v8: https://lore.kernel.org/all/cover.1722570749.git.fahimitahera@gmail.com/
-> > v7: https://lore.kernel.org/all/cover.1721269836.git.fahimitahera@gmail.com/
-> > v6: https://lore.kernel.org/all/Zn32CYZiu7pY+rdI@tahera-OptiPlex-5000/
-> > and https://lore.kernel.org/all/Zn32KKIJrY7Zi51K@tahera-OptiPlex-5000/
-> > v5: https://lore.kernel.org/all/ZnSZnhGBiprI6FRk@tahera-OptiPlex-5000/
-> > v4: https://lore.kernel.org/all/ZnNcE3ph2SWi1qmd@tahera-OptiPlex-5000/
-> > v3: https://lore.kernel.org/all/ZmJJ7lZdQuQop7e5@tahera-OptiPlex-5000/
-> > v2: https://lore.kernel.org/all/ZgX5TRTrSDPrJFfF@tahera-OptiPlex-5000/
-> > v1: https://lore.kernel.org/all/ZgXN5fi6A1YQKiAQ@tahera-OptiPlex-5000/
-> > 
-> > Tahera Fahimi (5):
-> >   Landlock: Add abstract unix socket connect restriction
-> >   selftests/Landlock: Abstract unix socket restriction tests
-> >   selftests/Landlock: Adding pathname Unix socket tests
-> >   sample/Landlock: Support abstract unix socket restriction
-> >   Landlock: Document LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET and ABI
-> >     versioning
-> > 
-> >  Documentation/userspace-api/landlock.rst      |   33 +-
-> >  include/uapi/linux/landlock.h                 |   27 +
-> >  samples/landlock/sandboxer.c                  |   58 +-
-> >  security/landlock/limits.h                    |    3 +
-> >  security/landlock/ruleset.c                   |    7 +-
-> >  security/landlock/ruleset.h                   |   23 +-
-> >  security/landlock/syscalls.c                  |   17 +-
-> >  security/landlock/task.c                      |  129 ++
-> >  tools/testing/selftests/landlock/base_test.c  |    2 +-
-> >  tools/testing/selftests/landlock/common.h     |   38 +
-> >  tools/testing/selftests/landlock/net_test.c   |   31 +-
-> >  .../landlock/scoped_abstract_unix_test.c      | 1146 +++++++++++++++++
-> >  12 files changed, 1469 insertions(+), 45 deletions(-)
-> >  create mode 100644 tools/testing/selftests/landlock/scoped_abstract_unix_test.c
-> > 
-> > -- 
-> > 2.34.1
-> > 
-> > 
+
+
+On 19/08/2024 20:00, Barry Song wrote:
+> On Tue, Aug 20, 2024 at 2:17â€¯AM Usama Arif <usamaarif642@gmail.com> wrote:
+>>
+>>
+>>
+>> On 19/08/2024 09:29, Barry Song wrote:
+>>> Hi Usama,
+>>>
+>>> I feel it is much better now! thanks!
+>>>
+>>> On Mon, Aug 19, 2024 at 2:31â€¯PM Usama Arif <usamaarif642@gmail.com> wrote:
+>>>>
+>>>> Currently folio->_deferred_list is used to keep track of
+>>>> partially_mapped folios that are going to be split under memory
+>>>> pressure. In the next patch, all THPs that are faulted in and collapsed
+>>>> by khugepaged are also going to be tracked using _deferred_list.
+>>>>
+>>>> This patch introduces a pageflag to be able to distinguish between
+>>>> partially mapped folios and others in the deferred_list at split time in
+>>>> deferred_split_scan. Its needed as __folio_remove_rmap decrements
+>>>> _mapcount, _large_mapcount and _entire_mapcount, hence it won't be
+>>>> possible to distinguish between partially mapped folios and others in
+>>>> deferred_split_scan.
+>>>>
+>>>> Eventhough it introduces an extra flag to track if the folio is
+>>>> partially mapped, there is no functional change intended with this
+>>>> patch and the flag is not useful in this patch itself, it will
+>>>> become useful in the next patch when _deferred_list has non partially
+>>>> mapped folios.
+>>>>
+>>>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+>>>> ---
+>>>>  include/linux/huge_mm.h    |  4 ++--
+>>>>  include/linux/page-flags.h | 11 +++++++++++
+>>>>  mm/huge_memory.c           | 23 ++++++++++++++++-------
+>>>>  mm/internal.h              |  4 +++-
+>>>>  mm/memcontrol.c            |  3 ++-
+>>>>  mm/migrate.c               |  3 ++-
+>>>>  mm/page_alloc.c            |  5 +++--
+>>>>  mm/rmap.c                  |  5 +++--
+>>>>  mm/vmscan.c                |  3 ++-
+>>>>  9 files changed, 44 insertions(+), 17 deletions(-)
+>>>>
+>>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>>>> index 4c32058cacfe..969f11f360d2 100644
+>>>> --- a/include/linux/huge_mm.h
+>>>> +++ b/include/linux/huge_mm.h
+>>>> @@ -321,7 +321,7 @@ static inline int split_huge_page(struct page *page)
+>>>>  {
+>>>>         return split_huge_page_to_list_to_order(page, NULL, 0);
+>>>>  }
+>>>> -void deferred_split_folio(struct folio *folio);
+>>>> +void deferred_split_folio(struct folio *folio, bool partially_mapped);
+>>>>
+>>>>  void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+>>>>                 unsigned long address, bool freeze, struct folio *folio);
+>>>> @@ -495,7 +495,7 @@ static inline int split_huge_page(struct page *page)
+>>>>  {
+>>>>         return 0;
+>>>>  }
+>>>> -static inline void deferred_split_folio(struct folio *folio) {}
+>>>> +static inline void deferred_split_folio(struct folio *folio, bool partially_mapped) {}
+>>>>  #define split_huge_pmd(__vma, __pmd, __address)        \
+>>>>         do { } while (0)
+>>>>
+>>>> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+>>>> index a0a29bd092f8..c3bb0e0da581 100644
+>>>> --- a/include/linux/page-flags.h
+>>>> +++ b/include/linux/page-flags.h
+>>>> @@ -182,6 +182,7 @@ enum pageflags {
+>>>>         /* At least one page in this folio has the hwpoison flag set */
+>>>>         PG_has_hwpoisoned = PG_active,
+>>>>         PG_large_rmappable = PG_workingset, /* anon or file-backed */
+>>>> +       PG_partially_mapped = PG_reclaim, /* was identified to be partially mapped */
+>>>>  };
+>>>>
+>>>>  #define PAGEFLAGS_MASK         ((1UL << NR_PAGEFLAGS) - 1)
+>>>> @@ -861,8 +862,18 @@ static inline void ClearPageCompound(struct page *page)
+>>>>         ClearPageHead(page);
+>>>>  }
+>>>>  FOLIO_FLAG(large_rmappable, FOLIO_SECOND_PAGE)
+>>>> +FOLIO_TEST_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
+>>>> +/*
+>>>> + * PG_partially_mapped is protected by deferred_split split_queue_lock,
+>>>> + * so its safe to use non-atomic set/clear.
+>>>> + */
+>>>> +__FOLIO_SET_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
+>>>> +__FOLIO_CLEAR_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
+>>>>  #else
+>>>>  FOLIO_FLAG_FALSE(large_rmappable)
+>>>> +FOLIO_TEST_FLAG_FALSE(partially_mapped)
+>>>> +__FOLIO_SET_FLAG_NOOP(partially_mapped)
+>>>> +__FOLIO_CLEAR_FLAG_NOOP(partially_mapped)
+>>>>  #endif
+>>>>
+>>>>  #define PG_head_mask ((1UL << PG_head))
+>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>>> index 2d77b5d2291e..70ee49dfeaad 100644
+>>>> --- a/mm/huge_memory.c
+>>>> +++ b/mm/huge_memory.c
+>>>> @@ -3398,6 +3398,7 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+>>>>                          * page_deferred_list.
+>>>>                          */
+>>>>                         list_del_init(&folio->_deferred_list);
+>>>> +                       __folio_clear_partially_mapped(folio);
+>>>>                 }
+>>>>                 spin_unlock(&ds_queue->split_queue_lock);
+>>>>                 if (mapping) {
+>>>> @@ -3454,11 +3455,13 @@ void __folio_undo_large_rmappable(struct folio *folio)
+>>>>         if (!list_empty(&folio->_deferred_list)) {
+>>>>                 ds_queue->split_queue_len--;
+>>>>                 list_del_init(&folio->_deferred_list);
+>>>> +               __folio_clear_partially_mapped(folio);
+>>>
+>>> is it possible to make things clearer by
+>>>
+>>>  if (folio_clear_partially_mapped)
+>>>     __folio_clear_partially_mapped(folio);
+>>>
+>>> While writing without conditions isn't necessarily wrong, adding a condition
+>>> will improve the readability of the code and enhance the clarity of my mTHP
+>>> counters series. also help decrease smp cache sync if we can avoid
+>>> unnecessary writing?
+>>>
+>>
+>> Do you mean if(folio_test_partially_mapped(folio))?
+>>
+>> I don't like this idea. I think it makes the readability worse? If I was looking at if (test) -> clear for the first time, I would become confused why its being tested if its going to be clear at the end anyways?
+> 
+> In the pmd-order case, the majority of folios are not partially mapped.
+> Unconditional writes will trigger cache synchronization across all
+> CPUs (related to the MESI protocol), making them more costly. By
+> using conditional writes, such as "if(test) write," we can avoid
+> most unnecessary writes, which is much more efficient. Additionally,
+> we only need to manage nr_split_deferred when the condition
+> is met. We are carefully evaluating all scenarios to determine
+> if modifications to the partially_mapped flag are necessary.
+> 
+
+
+Hmm okay, as you said its needed for nr_split_deferred anyways. Something like below is ok to fold in?
+
+commit 4ae9e2067346effd902b342296987b97dee29018 (HEAD)
+Author: Usama Arif <usamaarif642@gmail.com>
+Date:   Mon Aug 19 21:07:16 2024 +0100
+
+    mm: Introduce a pageflag for partially mapped folios fix
+    
+    Test partially_mapped flag before clearing it. This should
+    avoid unnecessary writes and will be needed in the nr_split_deferred
+    series.
+    
+    Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 5d67d3b3c1b2..ccde60aaaa0f 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -3479,7 +3479,8 @@ void __folio_undo_large_rmappable(struct folio *folio)
+        if (!list_empty(&folio->_deferred_list)) {
+                ds_queue->split_queue_len--;
+                list_del_init(&folio->_deferred_list);
+-               __folio_clear_partially_mapped(folio);
++               if (folio_test_partially_mapped(folio))
++                       __folio_clear_partially_mapped(folio);
+        }
+        spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
+ }
+@@ -3610,7 +3611,8 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+                } else {
+                        /* We lost race with folio_put() */
+                        list_del_init(&folio->_deferred_list);
+-                       __folio_clear_partially_mapped(folio);
++                       if (folio_test_partially_mapped(folio))
++                               __folio_clear_partially_mapped(folio);
+                        ds_queue->split_queue_len--;
+                }
+                if (!--sc->nr_to_scan)
+
 
