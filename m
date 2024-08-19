@@ -1,104 +1,136 @@
-Return-Path: <linux-kernel+bounces-291495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DE1295634C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:39:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E34BA956353
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:40:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEEBC280D77
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:39:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FD81280DCA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F351154C14;
-	Mon, 19 Aug 2024 05:37:45 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07F9158546;
+	Mon, 19 Aug 2024 05:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FjYa4vYT"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B907814BF92
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 05:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B638B156C65;
+	Mon, 19 Aug 2024 05:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724045865; cv=none; b=Zix2RZA7cU+p3gGobsUa1RCp7PQZ8CUwZtcyI+NOmSnzMR+NVfULjZh839oELIiOKVG/OPCouMZ2LaBnZdd5m1JgEiytGR62ONJCTCck+pdnwt1q3CAd7ADhToTQZgn8ABuHV1IOou5glqOEfr6dUeKO1UFSJrcsxYD1aYWdPI0=
+	t=1724045890; cv=none; b=jFfEXpLqFYwCbUaA1mxlBFaJaw3ggzGkhM4UitXMaT+a7usCDqYoo+r6Aq2IJNUhm52avkxEOw/OEsxoqM9RgZOc3iyRLk/kWnijKDvw0kzZIlvUDkop+4Jqbu9cG7qpZahq0Kd4u6Fca/yd4rIqNELcyMxFGuUUJqkxI1GZXmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724045865; c=relaxed/simple;
-	bh=e+nPnS4XyxuzpYoHA/PrKm6uWs9jfGZZHcWs0Nd5WSM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MzQ/T56iZ1kPvCR+anEV7STIDiCSQdii2jvWFiw0TxfTH0X/mfzeS5/2al42h++UcprWiPK9xIjQfic/+Pf8zdvbNY1YOetLSJyt13JQg2TPt1AP4JbosjyQGaGKffl0D/QeAwj/4Dxkz+X8SekEwpQBXCEU9mORR19fO6EeUPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81f901cd3b5so414837039f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 22:37:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724045863; x=1724650663;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bZXQ/nH9wJXxO6Ctvm33UDJfvbLkfNyruTtFa/XEzPM=;
-        b=H4prvQQhKEtjR1wOP+j2K90yUI+P0G/AvJGfAqsVRKglNcXcY9hRWuOely+kBUh1BT
-         1gZQuP7+ztAqFXc2G4g6hnr8VvRwIHoky5TgLlHzwj1eounq5xSqmh2PXBH6verppfFc
-         JSF+dyuAg4sl1fn8n0bWoz5Ya+l2JRagxLGKIOimexhy4a1f691DpSGCOfJ9CehWTqUT
-         JN1tqHmpH3mM7PRinmp7xJ6nb+qfLRaZj1mXzoF9lTQ+E0g2LZZurq4PytgJkpeU9o3I
-         YJZrvam5o9Ik49cfsQ81uJmLEpLDxf5SY0gwsr5vjB8lAILlI6IOvqPyZ5J+MPn1g1og
-         fpzw==
-X-Gm-Message-State: AOJu0YznFaca4BTW5+xIRK10fIGiJV5Ss1sVrZz//vQDcRwnzv7Kwewv
-	9pd1TsF8D8n26HIytcJZJR6pvxo/7lm+7PaI/RwHbstNrH9JtjInibuAiwHeUysuQ5bAPBaifdG
-	wDVV0eHXlQDiIxwdvRwc/8Weeff2EFbIF2xN0+iC2+5WOYxpVZfq+xik=
-X-Google-Smtp-Source: AGHT+IE+3P694oZIrubRwT7V/eGaHTwR3QOie+JN/yIPocr+fp7vV4UykqR+eo3h0j0AJahxIMYVhduuoudgxOA5d+fIfdME3F96
+	s=arc-20240116; t=1724045890; c=relaxed/simple;
+	bh=ndVlNUFibYvE+W+MCflv+7hF3XBaaCGrOjNwNocdg6I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=A08mfugN8W1mBZA6XRQvuCod/9xGn8kYT8LhmQE7HSxQa1Wbje/dmxxPSGEldQnDy9vEU/7KMEAzBpsiyAqUQ93LxAlQstEguQroAiSMDjBljX1HGYy0mV7cjb4KYgv/JF19gb2FHhpUJMIC58bvGJfzQT3mr2kQVIcZvU4JDmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FjYa4vYT; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47IMoNe0014094;
+	Mon, 19 Aug 2024 05:38:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	e/Dw1ICLUJJQZkBDhaiKiDg+TY8zAl1ju75hw75bZic=; b=FjYa4vYTIU0wD2SE
+	OmxWo9VsJ8KwaaEmwQbmXoPogaqWCo5vwFUXCNQXqNe3GZGXpbkUWiaesAE4h6+u
+	wF2RshMj1JgjQMBdjwIt8qjjKBOPd628hhck5x7i+DXloCMPvuuFrtbtGEqgoSdV
+	w4pDE74fvd6gezKQ6u5WKNBym8JAeYlwIKCm2yKYSdELF7opoZqgLQyoyCzduWdx
+	ntZnKtIY0EW+u7h4Bl7TdK1Elg4d2G3PSw6xK4sKIQ99C9DGH176R5wXJJfdiNl4
+	4HER3I0qhGlxNu/ndf9KdMV2yGQZ0X9XLJcCnmU7R6vse8z2A0hMstn8DTWJ1pVK
+	Bnd7DQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412n1jtyg1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 05:38:04 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47J5c3qg026279
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 05:38:03 GMT
+Received: from [10.218.35.239] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 18 Aug
+ 2024 22:38:01 -0700
+Message-ID: <e222bd06-fd9f-32a3-02ca-66a01cf4ab5e@quicinc.com>
+Date: Mon, 19 Aug 2024 11:07:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8301:b0:4c2:8a0c:380d with SMTP id
- 8926c6da1cb9f-4cce1695f7amr629476173.3.1724045862843; Sun, 18 Aug 2024
- 22:37:42 -0700 (PDT)
-Date: Sun, 18 Aug 2024 22:37:42 -0700
-In-Reply-To: <00000000000071b7c5061ff83639@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003b49e0062002b5d3@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [bcachefs?] KASAN: slab-out-of-bounds Write
- in bch2_dev_journal_init
-From: syzbot <syzbot+47ecc948aadfb2ab3efc@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [v2] usb: dwc3: Avoid waking up gadget during startxfer
+Content-Language: en-US
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <20240816062017.970364-1-quic_prashk@quicinc.com>
+ <20240816214941.l3el46ittrugxqp5@synopsys.com>
+From: Prashanth K <quic_prashk@quicinc.com>
+In-Reply-To: <20240816214941.l3el46ittrugxqp5@synopsys.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: GjUqhaIkt5YN1OPXoRcc9jjQvzU55aCi
+X-Proofpoint-GUID: GjUqhaIkt5YN1OPXoRcc9jjQvzU55aCi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_02,2024-08-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ clxscore=1015 mlxlogscore=599 bulkscore=0 adultscore=0 spamscore=0
+ priorityscore=1501 phishscore=0 suspectscore=0 impostorscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408190040
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
 
-***
 
-Subject: Re: [syzbot] [bcachefs?] KASAN: slab-out-of-bounds Write in bch2_dev_journal_init
-Author: lizhi.xu@windriver.com
+On 17-08-24 03:19 am, Thinh Nguyen wrote:
+> On Fri, Aug 16, 2024, Prashanth K wrote:
+>> When operating in High-Speed, it is observed that DSTS[USBLNKST] doesn't
+>> update link state immediately after receiving the wakeup interrupt. Since
+>> wakeup event handler calls the resume callbacks, there is a chance that
+>> function drivers can perform an ep queue, which in turn tries to perform
+>> remote wakeup from send_gadget_ep_cmd(STARTXFER). This happens because
+>> DSTS[[21:18] wasn't updated to U0 yet, it's observed that the latency of
+>> DSTS can be in order of milli-seconds. Hence avoid calling gadget_wakeup
+>> during startxfer to prevent unnecessarily issuing remote wakeup to host.
+>>
+>> Fixes: c36d8e947a56 ("usb: dwc3: gadget: put link to U0 before Start Transfer")
+>> Cc: <stable@vger.kernel.org>
+>> Suggested-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+>> Signed-off-by: Prashanth K <quic_prashk@quicinc.com>
+>> ---
+>> v2:  Refactored the patch as suggested in v1 discussion.
+>>
+>>  drivers/usb/dwc3/gadget.c | 24 ------------------------
+>>  1 file changed, 24 deletions(-)
+>>
+>> diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+>> index 89fc690fdf34..3f634209c5b8 100644
+>> --- a/drivers/usb/dwc3/gadget.c
+>> +++ b/drivers/usb/dwc3/gadget.c
+>> @@ -327,30 +327,6 @@ int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned int cmd,
+>>  			dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(0), reg);
+> 
+> Can you capture the notes I provided explaining why we can issue Start
+> Transfer without checking for L1/L2/U3 states on top of this function?
+> 
+I also thought the same initially, but didnt add since Greg usually adds
+the patch link to commit, so that the discussion would be captured in
+git log. I will add it on top of dwc3_send_gadget_ep_cmd and send V3,
+let me know if there's any other suggestion.
 
-two obj are null ?
-
-#syz test: upstream c3f2d783a459
-
-diff --git a/fs/bcachefs/journal.c b/fs/bcachefs/journal.c
-index 13669dd0e375..d6970d834991 100644
---- a/fs/bcachefs/journal.c
-+++ b/fs/bcachefs/journal.c
-@@ -1307,8 +1307,18 @@ int bch2_dev_journal_init(struct bch_dev *ca, struct bch_sb *sb)
- 	if (journal_buckets_v2) {
- 		unsigned nr = bch2_sb_field_journal_v2_nr_entries(journal_buckets_v2);
- 
--		for (unsigned i = 0; i < nr; i++)
-+		for (unsigned i = 0; i < nr; i++) {
- 			ja->nr += le64_to_cpu(journal_buckets_v2->d[i].nr);
-+			if (le64_to_cpu(journal_buckets_v2->d[i].nr) > UINT_MAX) {
-+				struct bch_fs *c = ca->fs;
-+				struct printbuf buf = PRINTBUF;
-+				prt_printf(&buf, "v2d[%u]: %lu overflow!\n", i,
-+					le64_to_cpu(journal_buckets_v2->d[i].nr));
-+				bch_info(c, "%s", buf.buf);
-+				printbuf_exit(&buf);
-+				return -BCH_ERR_ENOMEM_dev_journal_init;
-+			}
-+		}
- 	} else if (journal_buckets) {
- 		ja->nr = bch2_nr_journal_buckets(journal_buckets);
- 	}
+Thanks,
+Prashanth K
 
