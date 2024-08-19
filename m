@@ -1,124 +1,92 @@
-Return-Path: <linux-kernel+bounces-293023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E48CD95784B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:59:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8B6B95784D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:00:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B4BD1F20CDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:59:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 636791F21ADF
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA361DF66B;
-	Mon, 19 Aug 2024 22:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LubDwco5"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992D01E2117;
+	Mon, 19 Aug 2024 22:59:51 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2E73C482;
-	Mon, 19 Aug 2024 22:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A293C482;
+	Mon, 19 Aug 2024 22:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724108387; cv=none; b=hCOK0XwPr88Wd4tcj6NU2me3Or+Jkwjl4MCrUP1zbzlRyI6ziSysJ8DiFjLYyNPagfWtzHGeHWhwo4k8S4wCOzJDTrbm5R1DY7y5vJ2ev+JMAUyLpv1Ra+k8UwHWEd1WA8ut4ex6wDIztiLO9bKlN/290L3LyRXfUmdYaLyGTuE=
+	t=1724108391; cv=none; b=h370V11pymE6S1w+t55Gmnbq2uyp21yR4jmtjHL7+9zlismpkVKqvWIm/zhsl3bhS9chWkOcIcrO6N9EbFbAbCKQpZne8i1VEzq2ydt1CBm3b0JLilDYcgfkZBF1pAug/3NCzwQ/XwMZEGZM4Lv7Q0CPI6RKrsyw/LcF0Vxvl74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724108387; c=relaxed/simple;
-	bh=eWWL8a5aUhphKSl55AdJyMlyCybyuLzO4j2y4lBBjd8=;
+	s=arc-20240116; t=1724108391; c=relaxed/simple;
+	bh=goE9FASlTR08YPoTrpnjiOKgWeMuOdfR18sy63+kd4k=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X7Cp/0wDtAXGsaQ0jxXRgFZ/XNLJrLvFZ65yCRfkMdG4vbsJDtMRhHHTIqA6Fr9XyzlCw5tGuEim9NMK6RhLQNgo26pbN6a1pXsXXv7vNdY0lFl8rcCdGWz3q6Z52cdFYihpqL+gKxZ76y46IsNNlkKczQa6C/2jwSyVnJMYf/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LubDwco5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12440C32782;
-	Mon, 19 Aug 2024 22:59:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724108386;
-	bh=eWWL8a5aUhphKSl55AdJyMlyCybyuLzO4j2y4lBBjd8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LubDwco5Ktq/x+WKdAVqvd5sV1DNHVrKUx2zrUPmwLa7pM8mKCvJIfM/03BxXWvk/
-	 uTZodsd5nxwSe+xcgloDaZ5YU+8CN5EhKYcY/8flUZz/AJ3YZw+z0DntgkKwsbQVmU
-	 JYfn56XeEWabxcWow6EblYsqWmHFs0v7yvEScB6x1s7VpknlDU2pxVs3vFxxhuxqGT
-	 Lez3qkjppeuzAUezEysaQ8kizxju2D3hNVr8n78qZFY+rm+dAANoBvTtbQwF9nj9r+
-	 laNjrwFQPZ+r3c6hMGqghcVL1lIOUfe43zoqLQu3VPi2WmUJ8ok8SykF1AFEHWx1ep
-	 +s/bIaeGp6UWg==
-Date: Mon, 19 Aug 2024 15:59:45 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- dsahern@kernel.org, dongml2@chinatelecom.cn, idosch@nvidia.com,
- amcohen@nvidia.com, gnault@redhat.com, bpoirier@nvidia.com,
- b.galvani@gmail.com, razor@blackwall.org, petrm@nvidia.com,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next 06/10] net: vxlan: add skb drop reasons to
- vxlan_rcv()
-Message-ID: <20240819155945.19871372@kernel.org>
-In-Reply-To: <CADxym3ZEvUYwfvh2O5M+aYmLSMe_eZ8n=X_qBj8DiN8hh2OkaQ@mail.gmail.com>
-References: <20240815124302.982711-1-dongml2@chinatelecom.cn>
-	<20240815124302.982711-7-dongml2@chinatelecom.cn>
-	<20240816192243.050d0b1f@kernel.org>
-	<CADxym3ZEvUYwfvh2O5M+aYmLSMe_eZ8n=X_qBj8DiN8hh2OkaQ@mail.gmail.com>
+	 MIME-Version:Content-Type; b=QQmdJ2LQJnZ1qI+E5Xrjr7aylD7337NgU7amXWBVRi1b+in6GkIA6E7QuR+2nHA962GQmnxZBIo4X8s51PAI/3+BheQqaMUWBZizbTEIBCD38WYAfbP4DRJQNZONu0wCXKA3ebSwXFKZZZDnbdU37lo35x2ZhSuVNzHoo5+V4mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4C68C4AF12;
+	Mon, 19 Aug 2024 22:59:48 +0000 (UTC)
+Date: Mon, 19 Aug 2024 19:00:14 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, Peter
+ Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
+ Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>, Ingo
+ Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark
+ Rutland <mark.rutland@arm.com>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+ Namhyung Kim <namhyung@kernel.org>, bpf@vger.kernel.org, Joel Fernandes
+ <joel@joelfernandes.org>, Ingo Molnar <mingo@kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Kees Cook <keescook@chromium.org>, Greg KH
+ <gregkh@linuxfoundation.org>, Sean Christopherson <seanjc@google.com>
+Subject: Re: [PATCH v5 3/8] cleanup.h: Introduce DEFINE_INACTIVE_GUARD and
+ activate_guard
+Message-ID: <20240819190014.31ab74d8@gandalf.local.home>
+In-Reply-To: <20240627152340.82413-4-mathieu.desnoyers@efficios.com>
+References: <20240627152340.82413-1-mathieu.desnoyers@efficios.com>
+	<20240627152340.82413-4-mathieu.desnoyers@efficios.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, 17 Aug 2024 19:33:23 +0800 Menglong Dong wrote:
-> On Sat, Aug 17, 2024 at 10:22=E2=80=AFAM Jakub Kicinski <kuba@kernel.org>=
- wrote:
-> >
-> > On Thu, 15 Aug 2024 20:42:58 +0800 Menglong Dong wrote: =20
-> > >  #define VXLAN_DROP_REASONS(R)                        \
-> > > +     R(VXLAN_DROP_FLAGS)                     \
-> > > +     R(VXLAN_DROP_VNI)                       \
-> > > +     R(VXLAN_DROP_MAC)                       \ =20
-> >
-> > Drop reasons should be documented. =20
->=20
-> Yeah, I wrote the code here just like what we did in
-> net/openvswitch/drop.h, which makes the definition of
-> enum ovs_drop_reason a call of VXLAN_DROP_REASONS().
->=20
-> I think that we can define the enum ovs_drop_reason just like
-> what we do in include/net/dropreason-core.h, which can make
-> it easier to document the reasons.
->=20
-> > I don't think name of a header field is a great fit for a reason.
-> > =20
->=20
-> Enn...Do you mean the "VXLAN_DROP_" prefix?
+On Thu, 27 Jun 2024 11:23:35 -0400
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 
-No, I mean the thing after VXLAN_DROP_, it's FLAGS, VNI, MAC,
-those are names of header fields.
+> To cover scenarios where the scope of the guard differs from the scope
+> of its activation, introduce DEFINE_INACTIVE_GUARD() and activate_guard().
+> 
+> Here is an example use for a conditionally activated guard variable:
+> 
+> void func(bool a)
+> {
+> 	DEFINE_INACTIVE_GUARD(preempt_notrace, myguard);
+> 
+> 	[...]
+> 	if (a) {
+> 		might_sleep();
+> 		activate_guard(preempt_notrace, myguard)();
+> 	}
+> 	[ protected code ]
+> }
+> 
 
-> > > @@ -1815,8 +1831,9 @@ static int vxlan_rcv(struct sock *sk, struct sk=
-_buff *skb)
-> > >       return 0;
-> > >
-> > >  drop:
-> > > +     SKB_DR_RESET(reason); =20
-> >
-> > the name of this macro is very confusing, I don't think it should exist
-> > in the first place. nothing should goto drop without initialing reason
-> > =20
->=20
-> It's for the case that we call a function which returns drop reasons.
-> For example, the reason now is assigned from:
->=20
->   reason =3D pskb_may_pull_reason(skb, VXLAN_HLEN);
->   if (reason) goto drop;
->=20
->   xxxxxx
->   if (xx) goto drop;
->=20
-> The reason now is SKB_NOT_DROPPED_YET when we "goto drop",
-> as we don't set a drop reason here, which is unnecessary in some cases.
-> And, we can't set the drop reason for every "drop" code path, can we?
+Hi Mathieu,
 
-Why? It's like saying "we can't set return code before jumping to
-an error label". In my mind drop reasons and function return codes
-are very similar. So IDK why we need all the SK_DR_ macros when
-we are just fine without them for function return codes.
+The three cleanup patches fail to apply (I believe one has already been
+fixed by Ingo too). Could you have the clean up patches be a separate
+series that is likely to get in, especially since it's more of a moving
+target.
+
+Thanks,
+
+-- Steve
 
