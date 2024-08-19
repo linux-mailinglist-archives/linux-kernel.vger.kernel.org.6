@@ -1,562 +1,1067 @@
-Return-Path: <linux-kernel+bounces-292190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79F58956C37
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:35:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C8D7956C3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A00811C22BC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:35:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC3671F22242
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0687716C866;
-	Mon, 19 Aug 2024 13:34:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A6A16D33C;
+	Mon, 19 Aug 2024 13:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8XArx5R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=metaspace.dk header.i=@metaspace.dk header.b="HbiwAnbq"
+Received: from mail-4022.proton.ch (mail-4022.proton.ch [185.70.40.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5A01DFE1;
-	Mon, 19 Aug 2024 13:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECB916D322
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 13:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724074455; cv=none; b=svrzXbZ+hiS0YFh1dqoxlZiGq6GXamoQZRUvZP8xDxK+sc5WREl5ab+FCv4xVLgrQwkvP+ibJQJs4YJTHIFhWrOkdNcWGs1bhc2fiRd7iQ5J5AVqAFxuUYZqZEgb9jGCL/GIQxD5RSyaSUu+dVK25DZw+5viyED7fNqQrV07oM8=
+	t=1724074471; cv=none; b=WYnMuutqNuT0/B12r1JVhrrA2W20YniqySzV6yR/EWpu3ufwx/yL9GRgadMq7O54RaBVXyWqMR7nv3i++9QcNUugDPE6IhpqgTqtzv0+zckkaHqNB7BbLX+HKZfJDBULNmcq1UXtIDi90qxB4FXj2bZpcoHqv67fgWjUABffBM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724074455; c=relaxed/simple;
-	bh=PP8JSQ7AdLSLB8K/tbJoNx75U6KmfVwkvobUFPdglvI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DP8vEOQaJKcY6am4DtxQAIQG6nDnygQyrgYjRUbU0VH4r1YV2Jh029Y/2iRufn1lUa6gi0ufuOfT5Hixc+oQ6LV9QGl22Ax3hckcHy21K2FAG4nWFGRowf0DvSClM7VTfiNA+8Px89jJhduAryUrQi/dJOsSR/1XzgHJ3Kresy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X8XArx5R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4395EC4AF12;
-	Mon, 19 Aug 2024 13:34:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724074455;
-	bh=PP8JSQ7AdLSLB8K/tbJoNx75U6KmfVwkvobUFPdglvI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=X8XArx5RIhMFBeRGDWSGcBgGGnCjcdxFzCCmX2LOiwbAHhzecgmMPO1O1AqaV3ekR
-	 8yOf3DBEaiqUDY8SpobkMno6cB0uVid5zBARlsE5ORIni+4oeSIdJmjn9YDcGL/KBS
-	 eG8ArP07B9s35PaEJXk30HRvKp6jQ8IhcMO03n0jkc9mDSN1Evi5KaK9D7LJwuZcIx
-	 5oJFpgnrDytrJEZ2ka/M4k43EXjv9x6da4IIxrZVmmwEriwkikt93U4TeeVYD1jMBs
-	 cCVZA8UQp4sAJsHCaA7/b2I6gnDnF4FNG4+6VSQ8e+tod8pBuzqoLbUhlEy2f08aZE
-	 0j8tFTrxuqhAg==
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5beb6ea9ed6so4202481a12.1;
-        Mon, 19 Aug 2024 06:34:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU+/ztCjce1NRSlxRfOT0km3gu02L53/2eGY/T91tOYyPy4uqschC3rr5/AXqXSj0xDf8ohuPVuNgT78CtWDXG2lX/PIHNUz+GtGaX7sQ9uBC356r/XGCJ87tNt3d9YUMR3
-X-Gm-Message-State: AOJu0Yy1qGmzNjpnwQi2Xg0a1N/ugudnk1GzEfnuFrh6jSDudng0cdZy
-	noVy4catqVVthxyt/zPPluWwVQCioC4xNMMSbKPqLQNb2qdtkh8f9CJ8Mg5T4XgWaPWeY3idQrk
-	aupz7097P6pkkG2J6p1OERHyoQXE=
-X-Google-Smtp-Source: AGHT+IHsAfw01qb8feFNlq0C6FmFghaAsk6AXhN/B3NvYRjw2BrK/evtfJ/RaKMp+t7Kw6vm1hkbCMdsBHTnEoOS33s=
-X-Received: by 2002:a05:6402:34cb:b0:5be:fadc:e13c with SMTP id
- 4fb4d7f45d1cf-5befadce247mr2556543a12.4.1724074453673; Mon, 19 Aug 2024
- 06:34:13 -0700 (PDT)
+	s=arc-20240116; t=1724074471; c=relaxed/simple;
+	bh=9js+/ypq5ZKtYan1n6jFgYw5G1XGYN2iOC7HSou4EPY=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=mQZVt7THLOEfphas92tjOhjXuJt+WF73Bw/ZAwSvErp5keZK5fMLHKxdI5wLgHfJm+eh/ksvjNNoN1fzQeYfSc68CYadlPrdkBHpp7BjzETDn/JsSb7AGzjpaNhsn+G1+P8cFwBKsbgkeIS+vuEhiBFi6TUvBeg9XMsuYN8pJBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=metaspace.dk; spf=pass smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace.dk header.i=@metaspace.dk header.b=HbiwAnbq; arc=none smtp.client-ip=185.70.40.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=metaspace.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=metaspace.dk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=metaspace.dk;
+	s=protonmail; t=1724074458; x=1724333658;
+	bh=f5/YaG8ZkdvzUQ+iyW5AmjSuwGTKcptVabHcRzljnqc=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=HbiwAnbq4US5q79wHOkrRR6DKp9CsArJQ/b5tWugEQjWOx7Wtm7dcNTWconelvWAS
+	 Bvph81PySyAoIjGp96FSg8YWf01m+0uTtEdyd2Dhk1VPCcKfuU8iv4rmFXzPCVRilE
+	 EtDXzzpVfaqTPhta8090tchEAne/37z2g/Ve8tEZ2D7gaLEa+ANlwDdg7fujvaCqde
+	 zwU2BxGvwb0LNMW0yC1WryZv2PGg9WKBdnkfvdJLvrPoqFp6ZeKWVe2W12TjE7IiY3
+	 xADmhKChUQr1h2rZS5vygWfD2loLOkZsyIXwFGRBAf4vKQju6uUzFuAmCqVYdUM0KO
+	 qDA5jqiXX3bjQ==
+Date: Mon, 19 Aug 2024 13:34:13 +0000
+To: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>
+From: Andreas Hindborg <nmi@metaspace.dk>
+Cc: Andreas Hindborg <a.hindborg@samsung.com>, Adam Bratschi-Kaye <ark.email@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, Daniel Gomez <da.gomez@samsung.com>, rust-for-linux@vger.kernel.org, linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] rust: add `module_params` macro
+Message-ID: <20240819133345.3438739-1-nmi@metaspace.dk>
+Feedback-ID: 113830118:user:proton
+X-Pm-Message-ID: 3ea7ca1f46076a003f55a9bacd272fb2e39fb147
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812030210.500240-1-maobibo@loongson.cn> <20240812030210.500240-4-maobibo@loongson.cn>
-In-Reply-To: <20240812030210.500240-4-maobibo@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 19 Aug 2024 21:34:11 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6DFNY=JnkAGj7vAR1UoXUtJZkbb-pwVSFodCwbyOmpGA@mail.gmail.com>
-Message-ID: <CAAhV-H6DFNY=JnkAGj7vAR1UoXUtJZkbb-pwVSFodCwbyOmpGA@mail.gmail.com>
-Subject: Re: [PATCH v6 3/3] irqchip/loongson-eiointc: Add extioi virt
- extension support
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Thomas Gleixner <tglx@linutronix.de>, 
-	WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, x86@kernel.org, 
-	Song Gao <gaosong@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi, Bibo,
+From: Andreas Hindborg <a.hindborg@samsung.com>
 
-On Mon, Aug 12, 2024 at 11:02=E2=80=AFAM Bibo Mao <maobibo@loongson.cn> wro=
-te:
->
-> Interrupts can be routed to maximal four virtual CPUs with one HW
-> EIOINTC interrupt controller model, since interrupt routing is encoded wi=
-th
-> CPU bitmap and EIOINTC node combined method. Here add the EIOINTC virt
-> extension support so that interrupts can be routed to 256 vCPUs on
-> hypervisor mode. CPU bitmap is replaced with normal encoding and EIOINTC
-> node type is removed, so there are 8 bits for cpu selection, at most 256
-> vCPUs are supported for interrupt routing.
->
-> Co-developed-by: Song Gao <gaosong@loongson.cn>
-> Signed-off-by: Song Gao <gaosong@loongson.cn>
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> ---
->  .../arch/loongarch/irq-chip-model.rst         |  64 ++++++++++
->  .../zh_CN/arch/loongarch/irq-chip-model.rst   |  55 +++++++++
->  arch/loongarch/include/asm/irq.h              |   1 +
->  drivers/irqchip/irq-loongson-eiointc.c        | 109 ++++++++++++++----
->  4 files changed, 209 insertions(+), 20 deletions(-)
->
-> diff --git a/Documentation/arch/loongarch/irq-chip-model.rst b/Documentat=
-ion/arch/loongarch/irq-chip-model.rst
-> index 7988f4192363..d2350780ad1d 100644
-> --- a/Documentation/arch/loongarch/irq-chip-model.rst
-> +++ b/Documentation/arch/loongarch/irq-chip-model.rst
-> @@ -85,6 +85,70 @@ to CPUINTC directly::
->      | Devices |
->      +---------+
->
-> +Virtual extended IRQ model
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-> +
-> +In this model, IPI (Inter-Processor Interrupt) and CPU Local Timer inter=
-rupt
-> +go to CPUINTC directly, CPU UARTS interrupts go to PCH-PIC, while all ot=
-her
-> +devices interrupts go to PCH-PIC/PCH-MSI and gathered by V-EIOINTC (Virt=
-ual
-> +Extended I/O Interrupt Controller), and then go to CPUINTC directly::
-> +
-> +       +-----+    +-------------------+     +-------+
-> +       | IPI |--> | CPUINTC(0-255vcpu)| <-- | Timer |
-> +       +-----+    +-------------------+     +-------+
-> +                            ^
-> +                            |
-> +                      +-----------+
-> +                      | V-EIOINTC |
-> +                      +-----------+
-> +                       ^         ^
-> +                       |         |
-> +                +---------+ +---------+
-> +                | PCH-PIC | | PCH-MSI |
-> +                +---------+ +---------+
-> +                  ^      ^          ^
-> +                  |      |          |
-> +           +--------+ +---------+ +---------+
-> +           | UARTs  | | Devices | | Devices |
-> +           +--------+ +---------+ +---------+
-> +
-> +
-> +Description
-> +-----------
-> +V-EIOINTC (Virtual Extended I/O Interrupt Controller) is an extension of
-> +EIOINTC, it only works in VM mode which runs in KVM hypervisor. Interrup=
-ts can
-> +be routed to up to four vCPUs via standard EIOINTC, however with V-EIOIN=
-TC
-> +interrupts can be routed to up to 256 virtual cpus.
-> +
-> +With standard EIOINTC, interrupt routing setting includes two parts: eig=
-ht
-> +bits for CPU selection and four bits for CPU IP (Interrupt Pin) selectio=
-n.
-> +For CPU selection there is four bits for EIOINTC node selection, four bi=
-ts
-> +for EIOINTC CPU selection. Bitmap method is used for CPU selection and
-> +CPU IP selection, so interrupt can only route to CPU0 - CPU3 and IP0-IP3=
+This patch includes changes required for Rust kernel modules to utilize
+module parameters. This code implements read only support for integer
+types without `sysfs` support.
+
+This code is a reduced and updated version of code by Adam available in the
+original `rust` branch [1].
+
+Link: https://github.com/Rust-for-Linux/linux/tree/bc22545f38d74473cfef3e9f=
+d65432733435b79f [1]
+Cc: Adam Bratschi-Kaye <ark.email@gmail.com>
+Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
+
+---
+
+Changes since v1 [2]:
+- Remove support for params without values (`NOARG_ALLOWED`).
+- Improve documentation for `try_from_param_arg`.
+- Use prelude import.
+- Refactor `try_from_param_arg` to return `Result`.
+- Refactor `ParseInt::from_str` to return `Result`.
+- Move C callable functions out of `ModuleParam` trait.
+- Rename literal string field parser to `expect_string_field`.
+- Move parameter parsing from generation to parsing stage.
+- Use absolute type paths in macro code.
+- Inline `kparam`and `read_func` values.
+- Resolve TODO regarding alignment attributes.
+- Remove unnecessary unsafe blocks in macro code.
+- Improve error message for unrecognized parameter types.
+- Do not use `self` receiver when reading parameter value.
+- Add parameter documentation to `module!` macro.
+- Use empty `enum` for parameter type.
+- Use `addr_of_mut` to get address of parameter value variable.
+- Enabled building of docs for for `module_param` module.
+
+Link: https://lore.kernel.org/rust-for-linux/20240705111455.142790-1-nmi@me=
+taspace.dk/ [2]
+---
+ rust/kernel/error.rs         |   2 -
+ rust/kernel/lib.rs           |   1 +
+ rust/kernel/module_param.rs  | 339 +++++++++++++++++++++++++++++++++++
+ rust/macros/helpers.rs       |   8 +
+ rust/macros/lib.rs           |  40 ++++-
+ rust/macros/module.rs        | 229 ++++++++++++++++++++---
+ samples/rust/rust_minimal.rs |  10 ++
+ scripts/Makefile.build       |   2 +-
+ 8 files changed, 593 insertions(+), 38 deletions(-)
+ create mode 100644 rust/kernel/module_param.rs
+
+diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
+index 145f5c397009..8532a09947d4 100644
+--- a/rust/kernel/error.rs
++++ b/rust/kernel/error.rs
+@@ -312,8 +312,6 @@ pub(crate) fn from_err_ptr<T>(ptr: *mut T) -> Result<*m=
+ut T> {
+ ///     })
+ /// }
+ /// ```
+-// TODO: Remove `dead_code` marker once an in-kernel client is available.
+-#[allow(dead_code)]
+ pub(crate) fn from_result<T, F>(f: F) -> T
+ where
+     T: From<i16>,
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index 274bdc1b0a82..2840237eb73b 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -38,6 +38,7 @@
+ pub mod ioctl;
+ #[cfg(CONFIG_KUNIT)]
+ pub mod kunit;
++pub mod module_param;
+ #[cfg(CONFIG_NET)]
+ pub mod net;
+ pub mod page;
+diff --git a/rust/kernel/module_param.rs b/rust/kernel/module_param.rs
+new file mode 100644
+index 000000000000..9dfee0311d65
+--- /dev/null
++++ b/rust/kernel/module_param.rs
+@@ -0,0 +1,339 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Types for module parameters.
++//!
++//! C header: [`include/linux/moduleparam.h`](../../../include/linux/modul=
+eparam.h)
++
++use crate::prelude::*;
++
++/// Types that can be used for module parameters.
++///
++/// Note that displaying the type in `sysfs` will fail if
++/// [`core::str::from_utf8`] (as implemented through the [`core::fmt::Disp=
+lay`]
++/// trait) writes more than [`PAGE_SIZE`] bytes (including an additional n=
+ull
++/// terminator).
++///
++/// [`PAGE_SIZE`]: `bindings::PAGE_SIZE`
++pub trait ModuleParam: core::fmt::Display + core::marker::Sized {
++    /// The `ModuleParam` will be used by the kernel module through this t=
+ype.
++    ///
++    /// This may differ from `Self` if, for example, `Self` needs to track
++    /// ownership without exposing it or allocate extra space for other po=
+ssible
++    /// parameter values. This is required to support string parameters in=
+ the
++    /// future.
++    type Value: ?Sized;
++
++    /// Parse a parameter argument into the parameter value.
++    ///
++    /// `Err(_)` should be returned when parsing of the argument fails.
++    ///
++    /// Parameters passed at boot time will be set before [`kmalloc`] is
++    /// available (even if the module is loaded at a later time). However,=
  in
-> +one EIOINTC node.
-> +
-> +With V-EIOINTC it supports to route more CPUs and CPU IP (Interrupt Pin)=
-,
-> +there are two newly added registers with V-EIOINTC.
-> +
-> +EXTIOI_VIRT_FEATURES
-> +--------------------
-> +This register is read-only register, which indicates supported features =
-with
-> +V-EIOINTC. Feature EXTIOI_HAS_INT_ENCODE and EXTIOI_HAS_CPU_ENCODE is ad=
++    /// this case, the argument buffer will be valid for the entire lifeti=
+me of
++    /// the kernel. So implementations of this method which need to alloca=
+te
++    /// should first check that the allocator is available (with
++    /// [`crate::bindings::slab_is_available`]) and when it is not availab=
+le
++    /// provide an alternative implementation which doesn't allocate. In c=
+ases
++    /// where the allocator is not available it is safe to save references=
+ to
++    /// `arg` in `Self`, but in other cases a copy should be made.
++    ///
++    /// [`kmalloc`]: ../../../include/linux/slab.h
++    fn try_from_param_arg(arg: &'static [u8]) -> Result<Self>;
++
++    /// Get the current value of the parameter for use in the kernel modul=
+e.
++    ///
++    /// This function should not be used directly. Instead use the wrapper
++    /// `read` which will be generated by [`macros::module`].
++    fn value(&self) -> &Self::Value;
++}
++
++/// Set the module parameter from a string.
++///
++/// Used to set the parameter value at kernel initialization, when loading
++/// the module or when set through `sysfs`.
++///
++/// `param.arg` is a pointer to `*mut T` as set up by the [`module!`]
++/// macro.
++///
++/// See `struct kernel_param_ops.set`.
++///
++/// # Safety
++///
++/// If `val` is non-null then it must point to a valid null-terminated
++/// string. The `arg` field of `param` must be an instance of `T`.
++///
++/// # Invariants
++///
++/// Currently, we only support read-only parameters that are not readable
++/// from `sysfs`. Thus, this function is only called at kernel
++/// initialization time, or at module load time, and we have exclusive
++/// access to the parameter for the duration of the function.
++///
++/// [`module!`]: macros::module
++unsafe extern "C" fn set_param<T>(
++    val: *const core::ffi::c_char,
++    param: *const crate::bindings::kernel_param,
++) -> core::ffi::c_int
++where
++    T: ModuleParam,
++{
++    // NOTE: If we start supporting arguments without values, val _is_ all=
+owed
++    // to be null here.
++    assert!(!val.is_null());
++
++    // SAFETY: By function safety requirement, val is non-null and
++    // null-terminated. By C API contract, `val` is live and valid for rea=
+ds
++    // for the duration of this function.
++    let arg =3D unsafe { CStr::from_char_ptr(val).as_bytes() };
++
++    crate::error::from_result(|| {
++        let new_value =3D T::try_from_param_arg(arg)?;
++
++        // SAFETY: `param` is guaranteed to be valid by C API contract
++        // and `arg` is guaranteed to point to an instance of `T`.
++        let old_value =3D unsafe { (*param).__bindgen_anon_1.arg as *mut T=
+ };
++
++        // SAFETY: `old_value` is valid for writes, as we have exclusive
++        // access. `old_value` is pointing to an initialized static, an
++        // so it is properly initialized.
++        unsafe { core::ptr::replace(old_value, new_value) };
++        Ok(0)
++    })
++}
++
++/// Write a string representation of the current parameter value to `buf`.
++///
++/// # Safety
++///
++/// Must not be called.
++///
++/// # Note
++///
++/// This should not be called as we declare all parameters as read only.
++#[allow(clippy::extra_unused_type_parameters)]
++unsafe extern "C" fn get_param<T>(
++    _buf: *mut core::ffi::c_char,
++    _param: *const crate::bindings::kernel_param,
++) -> core::ffi::c_int
++where
++    T: ModuleParam,
++{
++    unreachable!("Parameters are not readable");
++}
++
++/// Drop the parameter.
++///
++/// Called when unloading a module.
++///
++/// # Safety
++///
++/// The `arg` field of `param` must be an initialized instance of `Self`.
++unsafe extern "C" fn free<T>(arg: *mut core::ffi::c_void)
++where
++    T: ModuleParam,
++{
++    // SAFETY: By function safety requirement, `arg` is an initialized
++    // instance of `T`. By C API contract, `arg` will not be used after
++    // this function returns.
++    unsafe { core::ptr::drop_in_place(arg as *mut T) };
++}
++
++/// Trait for parsing integers.
++///
++/// Strings beginning with `0x`, `0o`, or `0b` are parsed as hex, octal, o=
+r
++/// binary respectively. Strings beginning with `0` otherwise are parsed a=
+s
++/// octal. Anything else is parsed as decimal. A leading `+` or `-` is als=
+o
++/// permitted. Any string parsed by [`kstrtol()`] or [`kstrtoul()`] will b=
+e
++/// successfully parsed.
++///
++/// [`kstrtol()`]: https://www.kernel.org/doc/html/latest/core-api/kernel-=
+api.html#c.kstrtol
++/// [`kstrtoul()`]: https://www.kernel.org/doc/html/latest/core-api/kernel=
+-api.html#c.kstrtoul
++trait ParseInt: Sized {
++    fn from_str_radix(src: &str, radix: u32) -> Result<Self, core::num::Pa=
+rseIntError>;
++
++    // NOTE: Required because `checked_neg` is not provided by any trait.
++    fn checked_neg(self) -> Option<Self>;
++
++    fn from_str_unsigned(src: &str) -> Result<Self, core::num::ParseIntErr=
+or> {
++        let (radix, digits) =3D if let Some(n) =3D src.strip_prefix("0x") =
+{
++            (16, n)
++        } else if let Some(n) =3D src.strip_prefix("0X") {
++            (16, n)
++        } else if let Some(n) =3D src.strip_prefix("0o") {
++            (8, n)
++        } else if let Some(n) =3D src.strip_prefix("0O") {
++            (8, n)
++        } else if let Some(n) =3D src.strip_prefix("0b") {
++            (2, n)
++        } else if let Some(n) =3D src.strip_prefix("0B") {
++            (2, n)
++        } else if src.starts_with('0') {
++            (8, src)
++        } else {
++            (10, src)
++        };
++        Self::from_str_radix(digits, radix)
++    }
++
++    fn from_str(src: &str) -> Result<Self> {
++        match src.bytes().next() {
++            None =3D> Err(EINVAL),
++            Some(b'-') =3D> Self::from_str_unsigned(&src[1..])
++                .map_err(|_| EINVAL)?
++                .checked_neg()
++                .ok_or(EINVAL),
++            Some(b'+') =3D> Self::from_str_unsigned(&src[1..]).map_err(|_|=
+ EINVAL),
++            Some(_) =3D> Self::from_str_unsigned(src).map_err(|_| EINVAL),
++        }
++    }
++}
++
++macro_rules! impl_parse_int {
++    ($ty:ident) =3D> {
++        impl ParseInt for $ty {
++            fn from_str_radix(src: &str, radix: u32) -> Result<Self, core:=
+:num::ParseIntError> {
++                $ty::from_str_radix(src, radix)
++            }
++
++            fn checked_neg(self) -> Option<Self> {
++                self.checked_neg()
++            }
++        }
++    };
++}
++
++impl_parse_int!(i8);
++impl_parse_int!(u8);
++impl_parse_int!(i16);
++impl_parse_int!(u16);
++impl_parse_int!(i32);
++impl_parse_int!(u32);
++impl_parse_int!(i64);
++impl_parse_int!(u64);
++impl_parse_int!(isize);
++impl_parse_int!(usize);
++
++macro_rules! impl_module_param {
++    ($ty:ident) =3D> {
++        impl ModuleParam for $ty {
++            type Value =3D $ty;
++
++            fn try_from_param_arg(arg: &'static [u8]) -> Result<Self> {
++                let utf8 =3D core::str::from_utf8(arg)?;
++                <$ty as crate::module_param::ParseInt>::from_str(utf8)
++            }
++
++            #[inline(always)]
++            fn value(&self) -> &Self::Value {
++                self
++            }
++        }
++    };
++}
++
++#[doc(hidden)]
++#[macro_export]
++/// Generate a static [`kernel_param_ops`](../../../include/linux/modulepa=
+ram.h) struct.
++///
++/// # Examples
++///
++/// ```ignore
++/// make_param_ops!(
++///     /// Documentation for new param ops.
++///     PARAM_OPS_MYTYPE, // Name for the static.
++///     MyType // A type which implements [`ModuleParam`].
++/// );
++/// ```
++macro_rules! make_param_ops {
++    ($ops:ident, $ty:ty) =3D> {
++        $crate::make_param_ops!(
++            #[doc=3D""]
++            $ops,
++            $ty
++        );
++    };
++    ($(#[$meta:meta])* $ops:ident, $ty:ty) =3D> {
++        $(#[$meta])*
++        ///
++        /// Static [`kernel_param_ops`](../../../include/linux/moduleparam=
+.h)
++        /// struct generated by [`make_param_ops`].
++        pub static $ops: $crate::bindings::kernel_param_ops =3D $crate::bi=
+ndings::kernel_param_ops {
++            flags: 0,
++            set: Some(set_param::<$ty>),
++            get: Some(get_param::<$ty>),
++            free: Some(free::<$ty>),
++        };
++    };
++}
++
++impl_module_param!(i8);
++impl_module_param!(u8);
++impl_module_param!(i16);
++impl_module_param!(u16);
++impl_module_param!(i32);
++impl_module_param!(u32);
++impl_module_param!(i64);
++impl_module_param!(u64);
++impl_module_param!(isize);
++impl_module_param!(usize);
++
++make_param_ops!(
++    /// Rust implementation of [`kernel_param_ops`](../../../include/linux=
+/moduleparam.h)
++    /// for [`i8`].
++    PARAM_OPS_I8,
++    i8
++);
++make_param_ops!(
++    /// Rust implementation of [`kernel_param_ops`](../../../include/linux=
+/moduleparam.h)
++    /// for [`u8`].
++    PARAM_OPS_U8,
++    u8
++);
++make_param_ops!(
++    /// Rust implementation of [`kernel_param_ops`](../../../include/linux=
+/moduleparam.h)
++    /// for [`i16`].
++    PARAM_OPS_I16,
++    i16
++);
++make_param_ops!(
++    /// Rust implementation of [`kernel_param_ops`](../../../include/linux=
+/moduleparam.h)
++    /// for [`u16`].
++    PARAM_OPS_U16,
++    u16
++);
++make_param_ops!(
++    /// Rust implementation of [`kernel_param_ops`](../../../include/linux=
+/moduleparam.h)
++    /// for [`i32`].
++    PARAM_OPS_I32,
++    i32
++);
++make_param_ops!(
++    /// Rust implementation of [`kernel_param_ops`](../../../include/linux=
+/moduleparam.h)
++    /// for [`u32`].
++    PARAM_OPS_U32,
++    u32
++);
++make_param_ops!(
++    /// Rust implementation of [`kernel_param_ops`](../../../include/linux=
+/moduleparam.h)
++    /// for [`i64`].
++    PARAM_OPS_I64,
++    i64
++);
++make_param_ops!(
++    /// Rust implementation of [`kernel_param_ops`](../../../include/linux=
+/moduleparam.h)
++    /// for [`u64`].
++    PARAM_OPS_U64,
++    u64
++);
++make_param_ops!(
++    /// Rust implementation of [`kernel_param_ops`](../../../include/linux=
+/moduleparam.h)
++    /// for [`isize`].
++    PARAM_OPS_ISIZE,
++    isize
++);
++make_param_ops!(
++    /// Rust implementation of [`kernel_param_ops`](../../../include/linux=
+/moduleparam.h)
++    /// for [`usize`].
++    PARAM_OPS_USIZE,
++    usize
++);
+diff --git a/rust/macros/helpers.rs b/rust/macros/helpers.rs
+index 563dcd2b7ace..49388907370d 100644
+--- a/rust/macros/helpers.rs
++++ b/rust/macros/helpers.rs
+@@ -107,6 +107,14 @@ pub(crate) struct Generics {
+     pub(crate) ty_generics: Vec<TokenTree>,
+ }
+=20
++pub(crate) fn expect_string_field(it: &mut token_stream::IntoIter, expecte=
+d_name: &str) -> String {
++    assert_eq!(expect_ident(it), expected_name);
++    assert_eq!(expect_punct(it), ':');
++    let string =3D expect_string(it);
++    assert_eq!(expect_punct(it), ',');
++    string
++}
++
+ /// Parses the given `TokenStream` into `Generics` and the rest.
+ ///
+ /// The generics are not present in the rest, but a where clause might rem=
+ain.
+diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
+index 159e75292970..1d7bc99ec5e0 100644
+--- a/rust/macros/lib.rs
++++ b/rust/macros/lib.rs
+@@ -20,6 +20,30 @@
+ /// The `type` argument should be a type which implements the [`Module`]
+ /// trait. Also accepts various forms of kernel metadata.
+ ///
++/// The `params` field describe module parameters. Each entry has the form
++///
++/// ```ignore
++/// parameter_name: type {
++///     default: default_value,
++///     description: "Description",
++/// }
++/// ```
++///
++/// `type` may be one of
++///
++/// - `i8`
++/// - `u8`
++/// - `i8`
++/// - `u8`
++/// - `i16`
++/// - `u16`
++/// - `i32`
++/// - `u32`
++/// - `i64`
++/// - `u64`
++/// - `isize`
++/// - `usize`
++///
+ /// C header: [`include/linux/moduleparam.h`](srctree/include/linux/module=
+param.h)
+ ///
+ /// [`Module`]: ../kernel/trait.Module.html
+@@ -36,21 +60,19 @@
+ ///     description: "My very own kernel module!",
+ ///     license: "GPL",
+ ///     alias: ["alternate_module_name"],
++///     params: {
++///         my_parameter: i64 {
++///             default: 1,
++///             description: "This parameter has a default of 1",
++///         },
++///     },
+ /// }
+ ///
+ /// struct MyModule;
+ ///
+ /// impl kernel::Module for MyModule {
+ ///     fn init() -> Result<Self> {
+-///         // If the parameter is writeable, then the kparam lock must be
+-///         // taken to read the parameter:
+-///         {
+-///             let lock =3D THIS_MODULE.kernel_param_lock();
+-///             pr_info!("i32 param is:  {}\n", writeable_i32.read(&lock))=
+;
+-///         }
+-///         // If the parameter is read only, it can be read without locki=
+ng
+-///         // the kernel parameters:
+-///         pr_info!("i32 param is:  {}\n", my_i32.read());
++///         pr_info!("i32 param is:  {}\n", module_parameters::my_paramete=
+r::read());
+ ///         Ok(Self)
+ ///     }
+ /// }
+diff --git a/rust/macros/module.rs b/rust/macros/module.rs
+index 411dc103d82e..2fa9ed8e78ff 100644
+--- a/rust/macros/module.rs
++++ b/rust/macros/module.rs
+@@ -26,6 +26,7 @@ struct ModInfoBuilder<'a> {
+     module: &'a str,
+     counter: usize,
+     buffer: String,
++    param_buffer: String,
+ }
+=20
+ impl<'a> ModInfoBuilder<'a> {
+@@ -34,10 +35,11 @@ fn new(module: &'a str) -> Self {
+             module,
+             counter: 0,
+             buffer: String::new(),
++            param_buffer: String::new(),
+         }
+     }
+=20
+-    fn emit_base(&mut self, field: &str, content: &str, builtin: bool) {
++    fn emit_base(&mut self, field: &str, content: &str, builtin: bool, par=
+am: bool) {
+         let string =3D if builtin {
+             // Built-in modules prefix their modinfo strings by `module.`.
+             format!(
+@@ -51,8 +53,14 @@ fn emit_base(&mut self, field: &str, content: &str, buil=
+tin: bool) {
+             format!("{field}=3D{content}\0", field =3D field, content =3D =
+content)
+         };
+=20
++        let buffer =3D if param {
++            &mut self.param_buffer
++        } else {
++            &mut self.buffer
++        };
++
+         write!(
+-            &mut self.buffer,
++            buffer,
+             "
+                 {cfg}
+                 #[doc(hidden)]
+@@ -75,20 +83,135 @@ fn emit_base(&mut self, field: &str, content: &str, bu=
+iltin: bool) {
+         self.counter +=3D 1;
+     }
+=20
+-    fn emit_only_builtin(&mut self, field: &str, content: &str) {
+-        self.emit_base(field, content, true)
++    fn emit_only_builtin(&mut self, field: &str, content: &str, param: boo=
+l) {
++        self.emit_base(field, content, true, param)
+     }
+=20
+-    fn emit_only_loadable(&mut self, field: &str, content: &str) {
+-        self.emit_base(field, content, false)
++    fn emit_only_loadable(&mut self, field: &str, content: &str, param: bo=
+ol) {
++        self.emit_base(field, content, false, param)
+     }
+=20
+     fn emit(&mut self, field: &str, content: &str) {
+-        self.emit_only_builtin(field, content);
+-        self.emit_only_loadable(field, content);
++        self.emit_internal(field, content, false);
++    }
++
++    fn emit_internal(&mut self, field: &str, content: &str, param: bool) {
++        self.emit_only_builtin(field, content, param);
++        self.emit_only_loadable(field, content, param);
++    }
++
++    fn emit_param(&mut self, field: &str, param: &str, content: &str) {
++        let content =3D format!("{param}:{content}", param =3D param, cont=
+ent =3D content);
++        self.emit_internal(field, &content, true);
++    }
++
++    fn emit_params(&mut self, info: &ModuleInfo) {
++        if let Some(params) =3D &info.params {
++            for param in params {
++                let ops =3D param_ops_path(&param.ptype);
++
++                self.emit_param("parmtype", &param.name, &param.ptype);
++                self.emit_param("parm", &param.name, &param.description);
++
++                write!(
++                    self.param_buffer,
++                    "
++                static mut __{name}_{param_name}_value: {param_type} =3D {=
+param_default};
++
++                pub(crate) enum {param_name} {{}}
++
++                impl {param_name} {{
++                    pub(crate) fn read<'a>()
++                        -> &'a <{param_type} as ::kernel::module_param::Mo=
+duleParam>::Value {{
++                        // Note: when we enable r/w parameters, we need to=
+ lock here.
++
++                        // SAFETY: Parameters do not need to be locked bec=
+ause they are
++                        // read only or sysfs is not enabled.
++                        unsafe {{
++                            <{param_type} as ::kernel::module_param::Modul=
+eParam>::value(
++                                &__{name}_{param_name}_value
++                            )
++                        }}
++                    }}
++                }}
++
++                /// Newtype to make `bindings::kernel_param` `Sync`.
++                #[repr(transparent)]
++                struct __{name}_{param_name}_RacyKernelParam(::kernel::bin=
+dings::kernel_param);
++
++                // SAFETY: C kernel handles serializing access to this typ=
+e. We
++                // never access from Rust module.
++                unsafe impl Sync for __{name}_{param_name}_RacyKernelParam=
+ {{ }}
++
++                #[cfg(not(MODULE))]
++                const __{name}_{param_name}_name: *const ::core::ffi::c_ch=
+ar =3D
++                    b\"{name}.{param_name}\\0\" as *const _ as *const ::co=
+re::ffi::c_char;
++
++                #[cfg(MODULE)]
++                const __{name}_{param_name}_name: *const ::core::ffi::c_ch=
+ar =3D
++                    b\"{param_name}\\0\" as *const _ as *const ::core::ffi=
+::c_char;
++
++                #[link_section =3D \"__param\"]
++                #[used]
++                static __{name}_{param_name}_struct: __{name}_{param_name}=
+_RacyKernelParam =3D
++                    __{name}_{param_name}_RacyKernelParam(::kernel::bindin=
+gs::kernel_param {{
++                        name: __{name}_{param_name}_name,
++                        // SAFETY: `__this_module` is constructed by the k=
+ernel at load time
++                        // and will not be freed until the module is unloa=
 ded.
-> +
-> +Feature EXTIOI_HAS_INT_ENCODE is part of standard EIOINTC. If it is 1, i=
-t
-> +indicates that CPU Interrupt Pin selection can be normal method rather t=
-han
-> +bitmap method, so interrupt can be routed to IP0 - IP15.
-> +
-> +Feature EXTIOI_HAS_CPU_ENCODE is entension of V-EIOINTC. If it is 1, it
-> +indicates that CPU selection can be normal method rather than bitmap met=
-hod,
-> +so interrupt can be routed to CPU0 - CPU255.
-> +
-> +EXTIOI_VIRT_CONFIG
-> +------------------
-> +This register is read-write register, for compatibility intterupt routed=
- uses
-> +the default method which is the same with standard EIOINTC. If the bit i=
-s set
-> +with 1, it indicated HW to use normal method rather than bitmap method.
-> +
->  ACPI-related definitions
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> diff --git a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-mod=
-el.rst b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-> index f1e9ab18206c..d696bd394c02 100644
-> --- a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-> +++ b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-> @@ -87,6 +87,61 @@ PCH-LPC/PCH-MSI=EF=BC=8C=E7=84=B6=E5=90=8E=E8=A2=ABEIO=
-INTC=E7=BB=9F=E4=B8=80=E6=94=B6=E9=9B=86=EF=BC=8C=E5=86=8D=E7=9B=B4=E6=8E=
-=A5=E5=88=B0=E8=BE=BECPUINTC::
->      | Devices |
->      +---------+
->
-> +=E8=99=9A=E6=8B=9F=E6=89=A9=E5=B1=95IRQ=E6=A8=A1=E5=9E=8B
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +=E5=9C=A8=E8=BF=99=E7=A7=8D=E6=A8=A1=E5=9E=8B=E9=87=8C=E9=9D=A2, IPI(Int=
-er-Processor Interrupt) =E5=92=8CCPU=E6=9C=AC=E5=9C=B0=E6=97=B6=E9=92=9F=E4=
-=B8=AD=E6=96=AD=E7=9B=B4=E6=8E=A5=E5=8F=91=E9=80=81=E5=88=B0CPUINTC,
-> +CPU=E4=B8=B2=E5=8F=A3 (UARTs) =E4=B8=AD=E6=96=AD=E5=8F=91=E9=80=81=E5=88=
-=B0PCH-PIC, =E8=80=8C=E5=85=B6=E4=BB=96=E6=89=80=E6=9C=89=E8=AE=BE=E5=A4=87=
-=E7=9A=84=E4=B8=AD=E6=96=AD=E5=88=99=E5=88=86=E5=88=AB=E5=8F=91=E9=80=81=E5=
-=88=B0=E6=89=80=E8=BF=9E=E6=8E=A5=E7=9A=84PCH_PIC/
-> +PCH-MSI, =E7=84=B6=E5=90=8EV-EIOINTC=E7=BB=9F=E4=B8=80=E6=94=B6=E9=9B=86=
-=EF=BC=8C=E5=86=8D=E7=9B=B4=E6=8E=A5=E5=88=B0=E8=BE=BECPUINTC::
-> +
-> +        +-----+    +-------------------+     +-------+
-> +        | IPI |--> | CPUINTC(0-255vcpu)| <-- | Timer |
-> +        +-----+    +-------------------+     +-------+
-> +                             ^
-> +                             |
-> +                       +-----------+
-> +                       | V-EIOINTC |
-> +                       +-----------+
-> +                        ^         ^
-> +                        |         |
-> +                 +---------+ +---------+
-> +                 | PCH-PIC | | PCH-MSI |
-> +                 +---------+ +---------+
-> +                   ^      ^          ^
-> +                   |      |          |
-> +            +--------+ +---------+ +---------+
-> +            | UARTs  | | Devices | | Devices |
-> +            +--------+ +---------+ +---------+
-> +
-> +V-EIOINTC =E6=98=AFEIOINTC=E7=9A=84=E6=89=A9=E5=B1=95, =E4=BB=85=E5=B7=
-=A5=E4=BD=9C=E5=9C=A8hyperisor=E6=A8=A1=E5=BC=8F=E4=B8=8B, =E4=B8=AD=E6=96=
-=AD=E7=BB=8FEIOINTC=E6=9C=80=E5=A4=9A=E5=8F=AF=E4=B8=AA=E8=B7=AF=E7=94=B1=
-=E5=88=B0=EF=BC=94=E4=B8=AA
-> +=E8=99=9A=E6=8B=9Fcpu. =E4=BD=86=E4=B8=AD=E6=96=AD=E7=BB=8FV-EIOINTC=E6=
-=9C=80=E5=A4=9A=E5=8F=AF=E4=B8=AA=E8=B7=AF=E7=94=B1=E5=88=B0256=E4=B8=AA=E8=
-=99=9A=E6=8B=9Fcpu.
-> +
-> +=E4=BC=A0=E7=BB=9F=E7=9A=84EIOINTC=E4=B8=AD=E6=96=AD=E6=8E=A7=E5=88=B6=
-=E5=99=A8=EF=BC=8C=E4=B8=AD=E6=96=AD=E8=B7=AF=E7=94=B1=E5=88=86=E4=B8=BA=E4=
-=B8=A4=E4=B8=AA=E9=83=A8=E5=88=86=EF=BC=9A8=E6=AF=94=E7=89=B9=E7=94=A8=E4=
-=BA=8E=E6=8E=A7=E5=88=B6=E8=B7=AF=E7=94=B1=E5=88=B0=E5=93=AA=E4=B8=AACPU=EF=
-=BC=8C
-> +4=E6=AF=94=E7=89=B9=E7=94=A8=E4=BA=8E=E6=8E=A7=E5=88=B6=E8=B7=AF=E7=94=
-=B1=E5=88=B0=E7=89=B9=E5=AE=9ACPU=E7=9A=84=E5=93=AA=E4=B8=AA=E4=B8=AD=E6=96=
-=AD=E7=AE=A1=E8=84=9A.=E6=8E=A7=E5=88=B6CPU=E8=B7=AF=E7=94=B1=E7=9A=848=E6=
-=AF=94=E7=89=B9=E5=89=8D4=E6=AF=94=E7=89=B9=E7=94=A8=E4=BA=8E=E6=8E=A7=E5=
-=88=B6
-> +=E8=B7=AF=E7=94=B1=E5=88=B0=E5=93=AA=E4=B8=AAEIOINTC=E8=8A=82=E7=82=B9=
-=EF=BC=8C=E5=90=8E4=E6=AF=94=E7=89=B9=E7=94=A8=E4=BA=8E=E6=8E=A7=E5=88=B6=
-=E6=AD=A4=E8=8A=82=E7=82=B9=E5=93=AA=E4=B8=AACPU=E3=80=82=E4=B8=AD=E6=96=AD=
-=E8=B7=AF=E7=94=B1=E5=9C=A8=E9=80=89=E6=8B=A9CPU=E8=B7=AF=E7=94=B1
-> +=E5=92=8CCPU=E4=B8=AD=E6=96=AD=E7=AE=A1=E8=84=9A=E8=B7=AF=E7=94=B1=E6=97=
-=B6=EF=BC=8C=E4=BD=BF=E7=94=A8bitmap=E7=BC=96=E7=A0=81=E6=96=B9=E5=BC=8F=E8=
-=80=8C=E4=B8=8D=E6=98=AF=E6=AD=A3=E5=B8=B8=E7=BC=96=E7=A0=81=E6=96=B9=E5=BC=
-=8F=EF=BC=8C=E6=89=80=E4=BB=A5=E5=AF=B9=E4=BA=8E=E4=B8=80=E4=B8=AA
-> +EIOINTC=E4=B8=AD=E6=96=AD=E6=8E=A7=E5=88=B6=E5=99=A8=E8=8A=82=E7=82=B9=
-=EF=BC=8C=E4=B8=AD=E6=96=AD=E5=8F=AA=E8=83=BD=E8=B7=AF=E7=94=B1=E5=88=B0CPU=
-0 - CPU3=EF=BC=8C=E4=B8=AD=E6=96=AD=E7=AE=A1=E6=95=99IP0-IP3=E3=80=82
-> +
-> +V-EIOINTC=E6=96=B0=E5=A2=9E=E4=BA=86=E4=B8=A4=E4=B8=AA=E5=AF=84=E5=AD=98=
-=E5=99=A8=EF=BC=8C=E6=94=AF=E6=8C=81=E4=B8=AD=E6=96=AD=E8=B7=AF=E7=94=B1=E5=
-=88=B0=E6=9B=B4=E5=A4=9ACPU=E4=B8=AA=E5=92=8C=E4=B8=AD=E6=96=AD=E7=AE=A1=E8=
-=84=9A=E3=80=82
-> +
-> +V-EIOINTC=E5=8A=9F=E8=83=BD=E5=AF=84=E5=AD=98=E5=99=A8
-> +-------------------
-> +=E5=8A=9F=E8=83=BD=E5=AF=84=E5=AD=98=E5=99=A8=E6=98=AF=E5=8F=AA=E8=AF=BB=
-=E5=AF=84=E5=AD=98=E5=99=A8=EF=BC=8C=E7=94=A8=E4=BA=8E=E6=98=BE=E7=A4=BAV-E=
-IOINTC=E6=94=AF=E6=8C=81=E7=9A=84=E7=89=B9=E6=80=A7=EF=BC=8C=E7=9B=AE=E5=89=
-=8D=E4=B8=A4=E4=B8=AA=E6=94=AF=E6=8C=81=E4=B8=A4=E4=B8=AA=E7=89=B9=E6=80=A7
-> +EXTIOI_HAS_INT_ENCODE =E5=92=8C EXTIOI_HAS_CPU_ENCODE=E3=80=82
-> +
-> +=E7=89=B9=E6=80=A7EXTIOI_HAS_INT_ENCODE=E6=98=AF=E4=BC=A0=E7=BB=9FEIOINT=
-C=E4=B8=AD=E6=96=AD=E6=8E=A7=E5=88=B6=E5=99=A8=E7=9A=84=E4=B8=80=E4=B8=AA=
-=E7=89=B9=E6=80=A7=EF=BC=8C=E5=A6=82=E6=9E=9C=E6=AD=A4=E6=AF=94=E7=89=B9=E4=
-=B8=BA1=EF=BC=8C
-> +=E6=98=BE=E7=A4=BACPU=E4=B8=AD=E6=96=AD=E7=AE=A1=E8=84=9A=E8=B7=AF=E7=94=
-=B1=E6=96=B9=E5=BC=8F=E6=94=AF=E6=8C=81=E6=AD=A3=E5=B8=B8=E7=BC=96=E7=A0=81=
-=EF=BC=8C=E8=80=8C=E4=B8=8D=E6=98=AFbitmap=E7=BC=96=E7=A0=81=EF=BC=8C=E6=89=
-=80=E4=BB=A5=E4=B8=AD=E6=96=AD=E5=8F=AF=E4=BB=A5=E8=B7=AF=E7=94=B1=E5=88=B0
-> +=E7=AE=A1=E8=84=9AIP0 - IP15=E3=80=82
-> +
-> +=E7=89=B9=E6=80=A7EXTIOI_HAS_CPU_ENCODE=E6=98=AFV-EIOINTC=E6=96=B0=E5=A2=
-=9E=E7=89=B9=E6=80=A7=EF=BC=8C=E5=A6=82=E6=9E=9C=E6=AD=A4=E6=AF=94=E7=89=B9=
-=E4=B8=BA1=EF=BC=8C=E8=A1=A8=E7=A4=BACPU=E8=B7=AF=E7=94=B1
-> +=E6=96=B9=E5=BC=8F=E6=94=AF=E6=8C=81=E6=AD=A3=E5=B8=B8=E7=BC=96=E7=A0=81=
-=EF=BC=8C=E8=80=8C=E4=B8=8D=E6=98=AFbitmap=E7=BC=96=E7=A0=81=EF=BC=8C=E6=89=
-=80=E4=BB=A5=E4=B8=AD=E6=96=AD=E5=8F=AF=E4=BB=A5=E8=B7=AF=E7=94=B1=E5=88=B0=
-CPU0 - CPU255=E3=80=82
-> +
-> +V-EIOINTC=E9=85=8D=E7=BD=AE=E5=AF=84=E5=AD=98=E5=99=A8
-> +-------------------
-> +=E9=85=8D=E7=BD=AE=E5=AF=84=E5=AD=98=E5=99=A8=E6=98=AF=E5=8F=AF=E8=AF=BB=
-=E5=86=99=E5=AF=84=E5=AD=98=E5=99=A8=EF=BC=8C=E4=B8=BA=E4=BA=86=E5=85=BC=E5=
-=AE=B9=E6=80=A7=E8=80=83=E8=99=91=EF=BC=8C=E5=A6=82=E6=9E=9C=E4=B8=8D=E5=86=
-=99=E6=AD=A4=E5=AF=84=E5=AD=98=E5=99=A8=EF=BC=8C=E4=B8=AD=E6=96=AD=E8=B7=AF=
-=E7=94=B1=E9=87=87=E7=94=A8
-> +=E5=92=8C=E4=BC=A0=E7=BB=9FEIOINTC=E7=9B=B8=E5=90=8C=E7=9A=84=E8=B7=AF=
-=E7=94=B1=E8=AE=BE=E7=BD=AE=E3=80=82=E5=A6=82=E6=9E=9C=E5=AF=B9=E5=BA=94=E6=
-=AF=94=E7=89=B9=E8=AE=BE=E7=BD=AE=E4=B8=BA1=EF=BC=8C=E8=A1=A8=E7=A4=BA=E9=
-=87=87=E7=94=A8=E6=AD=A3=E5=B8=B8=E8=B7=AF=E7=94=B1=E6=96=B9=E5=BC=8F=E8=80=
-=8C
-> +=E4=B8=8D=E6=98=AFbitmap=E7=BC=96=E7=A0=81=E7=9A=84=E8=B7=AF=E7=94=B1=E6=
-=96=B9=E5=BC=8F=E3=80=82
-> +
->  ACPI=E7=9B=B8=E5=85=B3=E7=9A=84=E5=AE=9A=E4=B9=89
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> diff --git a/arch/loongarch/include/asm/irq.h b/arch/loongarch/include/as=
-m/irq.h
-> index 480418bc5071..ce85d4c7d225 100644
-> --- a/arch/loongarch/include/asm/irq.h
-> +++ b/arch/loongarch/include/asm/irq.h
-> @@ -54,6 +54,7 @@ extern struct acpi_vector_group pch_group[MAX_IO_PICS];
->  extern struct acpi_vector_group msi_group[MAX_IO_PICS];
->
->  #define CORES_PER_EIO_NODE     4
-> +#define CORES_PER_VEIO_NODE    256
->
->  #define LOONGSON_CPU_UART0_VEC         10 /* CPU UART0 */
->  #define LOONGSON_CPU_THSENS_VEC                14 /* CPU Thsens */
-> diff --git a/drivers/irqchip/irq-loongson-eiointc.c b/drivers/irqchip/irq=
--loongson-eiointc.c
-> index b1f2080be2be..cc5b1ec13531 100644
-> --- a/drivers/irqchip/irq-loongson-eiointc.c
-> +++ b/drivers/irqchip/irq-loongson-eiointc.c
-> @@ -14,6 +14,7 @@
->  #include <linux/irqdomain.h>
->  #include <linux/irqchip/chained_irq.h>
->  #include <linux/kernel.h>
-> +#include <linux/kvm_para.h>
->  #include <linux/syscore_ops.h>
->  #include <asm/numa.h>
->
-> @@ -24,15 +25,36 @@
->  #define EIOINTC_REG_ISR                0x1800
->  #define EIOINTC_REG_ROUTE      0x1c00
->
-> +#define EXTIOI_VIRT_FEATURES           0x40000000
-> +#define  EXTIOI_HAS_VIRT_EXTENSION     BIT(0)
-> +#define  EXTIOI_HAS_ENABLE_OPTION      BIT(1)
-> +#define  EXTIOI_HAS_INT_ENCODE         BIT(2)
-> +#define  EXTIOI_HAS_CPU_ENCODE         BIT(3)
-> +#define EXTIOI_VIRT_CONFIG             0x40000004
-> +#define  EXTIOI_ENABLE                 BIT(1)
-> +#define  EXTIOI_ENABLE_INT_ENCODE      BIT(2)
-> +#define  EXTIOI_ENABLE_CPU_ENCODE      BIT(3)
-After careful reading, I found the only used bits are
-EXTIOI_HAS_CPU_ENCODE/EXTIOI_ENABLE_CPU_ENCODE. So to minimize the
-complexity, I suggest to define virtual register as below:
-#define EXTIOI_VIRT_FEATURES           0x40000000
-#define  EXTIOI_HAS_VIRT_EXTENSION                   BIT(0)
-#define  EXTIOI_ENABLE_CPU_ENCODE                 BIT(15)
-Then only one register, the low 16 bits are indicators while the high
-16 bits are enable controls. Even if we will extend more (hardly
-happen, I think), there is enough spaces.
++                        #[cfg(MODULE)]
++                        mod_: unsafe {{ &::kernel::bindings::__this_module=
+ as *const _ as *mut _ }},
++                        #[cfg(not(MODULE))]
++                        mod_: ::core::ptr::null_mut(),
++                        ops: &{ops} as *const ::kernel::bindings::kernel_p=
+aram_ops,
++                        perm: 0, // Will not appear in sysfs
++                        level: -1,
++                        flags: 0,
++                        __bindgen_anon_1:
++                            ::kernel::bindings::kernel_param__bindgen_ty_1=
+ {{
++                                // SAFETY: As this is evaluated in const c=
+ontext, it is
++                                // safe to take a reference to a mut stati=
+c.
++                                arg: unsafe {{
++                                    ::core::ptr::addr_of_mut!(__{name}_{pa=
+ram_name}_value)
++                                 }}.cast::<::core::ffi::c_void>(),
++                            }},
++                    }});
++                ",
++                    name =3D info.name,
++                    param_type =3D param.ptype,
++                    param_default =3D param.default,
++                    param_name =3D param.name,
++                    ops =3D ops,
++                )
++                .unwrap();
++            }
++        }
++    }
++}
++
++fn param_ops_path(param_type: &str) -> &'static str {
++    match param_type {
++        "i8" =3D> "::kernel::module_param::PARAM_OPS_I8",
++        "u8" =3D> "::kernel::module_param::PARAM_OPS_U8",
++        "i16" =3D> "::kernel::module_param::PARAM_OPS_I16",
++        "u16" =3D> "::kernel::module_param::PARAM_OPS_U16",
++        "i32" =3D> "::kernel::module_param::PARAM_OPS_I32",
++        "u32" =3D> "::kernel::module_param::PARAM_OPS_U32",
++        "i64" =3D> "::kernel::module_param::PARAM_OPS_I64",
++        "u64" =3D> "::kernel::module_param::PARAM_OPS_U64",
++        "isize" =3D> "::kernel::module_param::PARAM_OPS_ISIZE",
++        "usize" =3D> "::kernel::module_param::PARAM_OPS_USIZE",
++        t =3D> panic!("Unsupported parameter type {}", t),
+     }
+ }
+=20
++fn expect_param_default(param_it: &mut token_stream::IntoIter) -> String {
++    assert_eq!(expect_ident(param_it), "default");
++    assert_eq!(expect_punct(param_it), ':');
++    let default =3D try_literal(param_it).expect("Expected default param v=
+alue");
++    assert_eq!(expect_punct(param_it), ',');
++    default
++}
++
+ #[derive(Debug, Default)]
+ struct ModuleInfo {
+     type_: String,
+@@ -98,6 +221,50 @@ struct ModuleInfo {
+     description: Option<String>,
+     alias: Option<Vec<String>>,
+     firmware: Option<Vec<String>>,
++    params: Option<Vec<Parameter>>,
++}
++
++#[derive(Debug)]
++struct Parameter {
++    name: String,
++    ptype: String,
++    default: String,
++    description: String,
++}
++
++fn expect_params(it: &mut token_stream::IntoIter) -> Vec<Parameter> {
++    let params =3D expect_group(it);
++    assert_eq!(params.delimiter(), Delimiter::Brace);
++    let mut it =3D params.stream().into_iter();
++    let mut parsed =3D Vec::new();
++
++    loop {
++        let param_name =3D match it.next() {
++            Some(TokenTree::Ident(ident)) =3D> ident.to_string(),
++            Some(_) =3D> panic!("Expected Ident or end"),
++            None =3D> break,
++        };
++
++        assert_eq!(expect_punct(&mut it), ':');
++        let param_type =3D expect_ident(&mut it);
++        let group =3D expect_group(&mut it);
++        assert_eq!(group.delimiter(), Delimiter::Brace);
++        assert_eq!(expect_punct(&mut it), ',');
++
++        let mut param_it =3D group.stream().into_iter();
++        let param_default =3D expect_param_default(&mut param_it);
++        let param_description =3D expect_string_field(&mut param_it, "desc=
+ription");
++        expect_end(&mut param_it);
++
++        parsed.push(Parameter {
++            name: param_name,
++            ptype: param_type,
++            default: param_default,
++            description: param_description,
++        })
++    }
++
++    parsed
+ }
+=20
+ impl ModuleInfo {
+@@ -112,6 +279,7 @@ fn parse(it: &mut token_stream::IntoIter) -> Self {
+             "license",
+             "alias",
+             "firmware",
++            "params",
+         ];
+         const REQUIRED_KEYS: &[&str] =3D &["type", "name", "license"];
+         let mut seen_keys =3D Vec::new();
+@@ -140,6 +308,7 @@ fn parse(it: &mut token_stream::IntoIter) -> Self {
+                 "license" =3D> info.license =3D expect_string_ascii(it),
+                 "alias" =3D> info.alias =3D Some(expect_string_array(it)),
+                 "firmware" =3D> info.firmware =3D Some(expect_string_array=
+(it)),
++                "params" =3D> info.params =3D Some(expect_params(it)),
+                 _ =3D> panic!(
+                     "Unknown key \"{}\". Valid keys are: {:?}.",
+                     key, EXPECTED_KEYS
+@@ -183,28 +352,30 @@ pub(crate) fn module(ts: TokenStream) -> TokenStream =
+{
+     let info =3D ModuleInfo::parse(&mut it);
+=20
+     let mut modinfo =3D ModInfoBuilder::new(info.name.as_ref());
+-    if let Some(author) =3D info.author {
+-        modinfo.emit("author", &author);
++    if let Some(author) =3D &info.author {
++        modinfo.emit("author", author);
+     }
+-    if let Some(description) =3D info.description {
+-        modinfo.emit("description", &description);
++    if let Some(description) =3D &info.description {
++        modinfo.emit("description", description);
+     }
+     modinfo.emit("license", &info.license);
+-    if let Some(aliases) =3D info.alias {
++    if let Some(aliases) =3D &info.alias {
+         for alias in aliases {
+-            modinfo.emit("alias", &alias);
++            modinfo.emit("alias", alias);
+         }
+     }
+-    if let Some(firmware) =3D info.firmware {
++    if let Some(firmware) =3D &info.firmware {
+         for fw in firmware {
+-            modinfo.emit("firmware", &fw);
++            modinfo.emit("firmware", fw);
+         }
+     }
+=20
+     // Built-in modules also export the `file` modinfo string.
+     let file =3D
+         std::env::var("RUST_MODFILE").expect("Unable to fetch RUST_MODFILE=
+ environmental variable");
+-    modinfo.emit_only_builtin("file", &file);
++    modinfo.emit_only_builtin("file", &file, false);
++
++    modinfo.emit_params(&info);
+=20
+     format!(
+         "
+@@ -216,12 +387,14 @@ pub(crate) fn module(ts: TokenStream) -> TokenStream =
+{
+             // SAFETY: `__this_module` is constructed by the kernel at loa=
+d time and will not be
+             // freed until the module is unloaded.
+             #[cfg(MODULE)]
+-            static THIS_MODULE: kernel::ThisModule =3D unsafe {{
+-                kernel::ThisModule::from_ptr(&kernel::bindings::__this_mod=
+ule as *const _ as *mut _)
++            static THIS_MODULE: ::kernel::ThisModule =3D unsafe {{
++                ::kernel::ThisModule::from_ptr(
++                    &::kernel::bindings::__this_module as *const _ as *mut=
+ _
++                )
+             }};
+             #[cfg(not(MODULE))]
+-            static THIS_MODULE: kernel::ThisModule =3D unsafe {{
+-                kernel::ThisModule::from_ptr(core::ptr::null_mut())
++            static THIS_MODULE: ::kernel::ThisModule =3D unsafe {{
++                ::kernel::ThisModule::from_ptr(::core::ptr::null_mut())
+             }};
+=20
+             // Double nested modules, since then nobody can access the pub=
+lic items inside.
+@@ -276,7 +449,8 @@ mod __module_init {{
+                     #[doc(hidden)]
+                     #[link_section =3D \"{initcall_section}\"]
+                     #[used]
+-                    pub static __{name}_initcall: extern \"C\" fn() -> cor=
+e::ffi::c_int =3D __{name}_init;
++                    pub static __{name}_initcall: extern \"C\" fn()
++                        -> ::core::ffi::c_int =3D __{name}_init;
+=20
+                     #[cfg(not(MODULE))]
+                     #[cfg(CONFIG_HAVE_ARCH_PREL32_RELOCATIONS)]
+@@ -291,7 +465,7 @@ mod __module_init {{
+                     #[cfg(not(MODULE))]
+                     #[doc(hidden)]
+                     #[no_mangle]
+-                    pub extern \"C\" fn __{name}_init() -> core::ffi::c_in=
+t {{
++                    pub extern \"C\" fn __{name}_init() -> ::core::ffi::c_=
+int {{
+                         // SAFETY: This function is inaccessible to the ou=
+tside due to the double
+                         // module wrapping it. It is called exactly once b=
+y the C side via its
+                         // placement above in the initcall section.
+@@ -314,8 +488,8 @@ mod __module_init {{
+                     /// # Safety
+                     ///
+                     /// This function must only be called once.
+-                    unsafe fn __init() -> core::ffi::c_int {{
+-                        match <{type_} as kernel::Module>::init(&super::su=
+per::THIS_MODULE) {{
++                    unsafe fn __init() -> ::core::ffi::c_int {{
++                        match <{type_} as ::kernel::Module>::init(&super::=
+super::THIS_MODULE) {{
+                             Ok(m) =3D> {{
+                                 // SAFETY: No data race, since `__MOD` can=
+ only be accessed by this
+                                 // module and there only `__init` and `__e=
+xit` access it. These
+@@ -346,14 +520,17 @@ unsafe fn __exit() {{
+                             __MOD =3D None;
+                         }}
+                     }}
+-
+                     {modinfo}
+                 }}
+             }}
++            mod module_parameters {{
++                {params}
++            }}
+         ",
+         type_ =3D info.type_,
+         name =3D info.name,
+         modinfo =3D modinfo.buffer,
++        params =3D modinfo.param_buffer,
+         initcall_section =3D ".initcall6.init"
+     )
+     .parse()
+diff --git a/samples/rust/rust_minimal.rs b/samples/rust/rust_minimal.rs
+index 2a9eaab62d1c..d9bc2218d504 100644
+--- a/samples/rust/rust_minimal.rs
++++ b/samples/rust/rust_minimal.rs
+@@ -10,6 +10,12 @@
+     author: "Rust for Linux Contributors",
+     description: "Rust minimal sample",
+     license: "GPL",
++    params: {
++        test_parameter: i64 {
++            default: 1,
++            description: "This parameter has a default of 1",
++        },
++    },
+ }
+=20
+ struct RustMinimal {
+@@ -20,6 +26,10 @@ impl kernel::Module for RustMinimal {
+     fn init(_module: &'static ThisModule) -> Result<Self> {
+         pr_info!("Rust minimal sample (init)\n");
+         pr_info!("Am I built-in? {}\n", !cfg!(MODULE));
++        pr_info!(
++            "My parameter: {}\n",
++            *module_parameters::test_parameter::read()
++        );
+=20
+         let mut numbers =3D Vec::new();
+         numbers.push(72, GFP_KERNEL)?;
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index efacca63c897..a65bd0233843 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -263,7 +263,7 @@ $(obj)/%.lst: $(obj)/%.c FORCE
+ # Compile Rust sources (.rs)
+ # ------------------------------------------------------------------------=
+---
+=20
+-rust_allowed_features :=3D new_uninit
++rust_allowed_features :=3D new_uninit,const_mut_refs
+=20
+ # `--out-dir` is required to avoid temporaries being created by `rustc` in=
+ the
+ # current working directory, which may be not accessible in the out-of-tre=
+e
 
-> +
->  #define VEC_REG_COUNT          4
->  #define VEC_COUNT_PER_REG      64
->  #define VEC_COUNT              (VEC_REG_COUNT * VEC_COUNT_PER_REG)
->  #define VEC_REG_IDX(irq_id)    ((irq_id) / VEC_COUNT_PER_REG)
->  #define VEC_REG_BIT(irq_id)     ((irq_id) % VEC_COUNT_PER_REG)
->  #define EIOINTC_ALL_ENABLE     0xffffffff
-> +#define EIOINTC_ALL_ENABLE_VEC_MASK(vector)    (EIOINTC_ALL_ENABLE & ~BI=
-T(vector & 0x1F))
-> +#define EIOINTC_REG_ENABLE_VEC(vector)         (EIOINTC_REG_ENABLE + ((v=
-ector >> 5) << 2))
->
->  #define MAX_EIO_NODES          (NR_CPUS / CORES_PER_EIO_NODE)
->
-> +/*
-> + * Routing registers are 32bit, and there is 8-bit route setting for eve=
-ry
-> + * interrupt vector. So one Route register contains four vectors routing
-> + * information.
-> + */
-> +#define EIOINTC_REG_ROUTE_VEC(vector)          (EIOINTC_REG_ROUTE + (vec=
-tor & ~0x03))
-> +#define EIOINTC_REG_ROUTE_VEC_SHIFT(vector)    ((vector & 0x03) << 3)
-> +#define EIOINTC_REG_ROUTE_VEC_MASK(vector)     (0xff << EIOINTC_REG_ROUT=
-E_VEC_SHIFT(vector))
-> +
->  static int nr_pics;
->
->  struct eiointc_priv {
-> @@ -42,6 +64,7 @@ struct eiointc_priv {
->         cpumask_t               cpuspan_map;
->         struct fwnode_handle    *domain_handle;
->         struct irq_domain       *eiointc_domain;
-> +       bool                    cpu_encoded;
->  };
->
->  static struct eiointc_priv *eiointc_priv[MAX_IO_PICS];
-> @@ -57,7 +80,13 @@ static void eiointc_enable(void)
->
->  static int cpu_to_eio_node(int cpu)
->  {
-> -       return cpu_logical_map(cpu) / CORES_PER_EIO_NODE;
-> +       int cores;
-> +
-> +       if (kvm_para_has_feature(KVM_FEATURE_VIRT_EXTIOI))
-> +               cores =3D CORES_PER_VEIO_NODE;
-> +       else
-> +               cores =3D CORES_PER_EIO_NODE;
-> +       return cpu_logical_map(cpu) / cores;
->  }
->
->  #ifdef CONFIG_SMP
-> @@ -89,6 +118,16 @@ static void eiointc_set_irq_route(int pos, unsigned i=
-nt cpu, unsigned int mnode,
->
->  static DEFINE_RAW_SPINLOCK(affinity_lock);
->
-> +static void virt_extioi_set_irq_route(unsigned int vector, unsigned int =
-cpu)
-> +{
-> +       unsigned long reg =3D EIOINTC_REG_ROUTE_VEC(vector);
-> +       u32 data =3D iocsr_read32(reg);
-> +
-> +       data &=3D ~EIOINTC_REG_ROUTE_VEC_MASK(vector);
-> +       data |=3D cpu_logical_map(cpu) << EIOINTC_REG_ROUTE_VEC_SHIFT(vec=
-tor);
-> +       iocsr_write32(data, reg);
-> +}
-This function can be embedded into eiointc_set_irq_affinity().
+base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+--=20
+2.46.0
 
-> +
->  static int eiointc_set_irq_affinity(struct irq_data *d, const struct cpu=
-mask *affinity, bool force)
->  {
->         unsigned int cpu;
-> @@ -105,18 +144,24 @@ static int eiointc_set_irq_affinity(struct irq_data=
- *d, const struct cpumask *af
->         }
->
->         vector =3D d->hwirq;
-> -       regaddr =3D EIOINTC_REG_ENABLE + ((vector >> 5) << 2);
-> -
-> -       /* Mask target vector */
-> -       csr_any_send(regaddr, EIOINTC_ALL_ENABLE & (~BIT(vector & 0x1F)),
-> -                       0x0, priv->node * CORES_PER_EIO_NODE);
-> -
-> -       /* Set route for target vector */
-> -       eiointc_set_irq_route(vector, cpu, priv->node, &priv->node_map);
-> -
-> -       /* Unmask target vector */
-> -       csr_any_send(regaddr, EIOINTC_ALL_ENABLE,
-> -                       0x0, priv->node * CORES_PER_EIO_NODE);
-> +       regaddr =3D EIOINTC_REG_ENABLE_VEC(vector);
-> +
-> +       if (priv->cpu_encoded) {
-> +               iocsr_write32(EIOINTC_ALL_ENABLE_VEC_MASK(vector), regadd=
-r);
-> +               virt_extioi_set_irq_route(vector, cpu);
-> +               iocsr_write32(EIOINTC_ALL_ENABLE, regaddr);
-> +       } else {
-> +               /* Mask target vector */
-> +               csr_any_send(regaddr, EIOINTC_ALL_ENABLE_VEC_MASK(vector)=
-,
-> +                            0x0, priv->node * CORES_PER_EIO_NODE);
-> +
-> +               /* Set route for target vector */
-> +               eiointc_set_irq_route(vector, cpu, priv->node, &priv->nod=
-e_map);
-> +
-> +               /* Unmask target vector */
-> +               csr_any_send(regaddr, EIOINTC_ALL_ENABLE,
-> +                            0x0, priv->node * CORES_PER_EIO_NODE);
-> +       }
->
->         irq_data_update_effective_affinity(d, cpumask_of(cpu));
->
-> @@ -140,17 +185,23 @@ static int eiointc_index(int node)
->
->  static int eiointc_router_init(unsigned int cpu)
->  {
-> -       int i, bit;
-> -       uint32_t data;
-> -       uint32_t node =3D cpu_to_eio_node(cpu);
-> -       int index =3D eiointc_index(node);
-> +       int i, bit, cores, index, node;
-> +       unsigned int data;
-> +
-> +       node =3D cpu_to_eio_node(cpu);
-> +       index =3D eiointc_index(node);
->
->         if (index < 0) {
->                 pr_err("Error: invalid nodemap!\n");
-> -               return -1;
-> +               return -EINVAL;
->         }
->
-> -       if ((cpu_logical_map(cpu) % CORES_PER_EIO_NODE) =3D=3D 0) {
-> +       if (eiointc_priv[index]->cpu_encoded)
-> +               cores =3D CORES_PER_VEIO_NODE;
-> +       else
-> +               cores =3D CORES_PER_EIO_NODE;
-> +
-> +       if ((cpu_logical_map(cpu) % cores) =3D=3D 0) {
->                 eiointc_enable();
->
->                 for (i =3D 0; i < eiointc_priv[0]->vec_count / 32; i++) {
-> @@ -166,7 +217,9 @@ static int eiointc_router_init(unsigned int cpu)
->
->                 for (i =3D 0; i < eiointc_priv[0]->vec_count / 4; i++) {
->                         /* Route to Node-0 Core-0 */
-> -                       if (index =3D=3D 0)
-> +                       if (eiointc_priv[index]->cpu_encoded)
-> +                               bit =3D cpu_logical_map(0);
-> +                       else if (index =3D=3D 0)
->                                 bit =3D BIT(cpu_logical_map(0));
->                         else
->                                 bit =3D (eiointc_priv[index]->node << 4) =
-| 1;
-> @@ -367,6 +420,19 @@ static int __init acpi_cascade_irqdomain_init(void)
->         return 0;
->  }
->
-> +static void __init kvm_eiointc_init(struct eiointc_priv *priv)
-> +{
-> +       int val;
-> +
-> +       val =3D iocsr_read32(EXTIOI_VIRT_FEATURES);
-> +       if (val & EXTIOI_HAS_CPU_ENCODE) {
-> +               val =3D iocsr_read32(EXTIOI_VIRT_CONFIG);
-> +               val |=3D EXTIOI_ENABLE_CPU_ENCODE;
-> +               iocsr_write32(val, EXTIOI_VIRT_CONFIG);
-> +               priv->cpu_encoded =3D true;
-> +       }
-> +}
-This function can be embedded into eiointc_init().
 
-Huacai
 
-> +
->  static int __init eiointc_init(struct eiointc_priv *priv, int parent_irq=
-,
->                                u64 node_map)
->  {
-> @@ -390,6 +456,9 @@ static int __init eiointc_init(struct eiointc_priv *p=
-riv, int parent_irq,
->                 return -ENOMEM;
->         }
->
-> +       if (kvm_para_has_feature(KVM_FEATURE_VIRT_EXTIOI))
-> +               kvm_eiointc_init(priv);
-> +
->         eiointc_priv[nr_pics++] =3D priv;
->         eiointc_router_init(0);
->         irq_set_chained_handler_and_data(parent_irq, eiointc_irq_dispatch=
-, priv);
-> --
-> 2.39.3
->
 
