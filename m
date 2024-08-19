@@ -1,155 +1,173 @@
-Return-Path: <linux-kernel+bounces-291770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C86AD9566A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:17:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C86F9566A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:18:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECE491C219B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:17:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0F831C21887
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A159B15D5B3;
-	Mon, 19 Aug 2024 09:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62B915B96E;
+	Mon, 19 Aug 2024 09:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="ktJHHSpV"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Ud6JcAod";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dpx3IjKI"
+Received: from fhigh6-smtp.messagingengine.com (fhigh6-smtp.messagingengine.com [103.168.172.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423B615CD75
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689A615B992;
+	Mon, 19 Aug 2024 09:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724059041; cv=none; b=dBoIpjrfTzVIqWwMKOqhQ5WFwFO//deaJT3w78cS9xCMPtXTQNeiv+uT+Xe5xkHDNpRiSCAEeB779adr7a7lsZQISGEc8P1o2Pi6kxB2+1mcKLby5D05LHFDarb8p6qCzi69P7uACQNyBDo7m6fOoiq2IXXmjp4g3X6rDxK1CkI=
+	t=1724059054; cv=none; b=dBt+2bnTLdHntmiYsUPCS7tuEUbcqIM2MplOVzETnlElXAjYRz/4Fp2u7Pt9drL+kNX0kSA+cbWTZ04W9An7RMlalHdcdxmLpvmkvpGJLGczUzt5YHUhI9KKNqHqDRdS3CrAI3cAYFiKr/fwm8urG7tBBANCmGPZOLfM0etM8X0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724059041; c=relaxed/simple;
-	bh=2WOXquNPI9lTCv0oFnVGz9A1cxRJez8OulMExUZpWVU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ols6sDNfrJog+Midcu7w9PIOWts2eWw9wq20TpnceR9YDDEQ8mg9GU33fDr96wrCYCMubPoab5SYcks+nJk11kUhlp5x+OY9PU1ISyFJ+kUhmzyaQgIIEAwX4D6yKeIJlMURwFQVU8OEwySUEshSYQWTePxIdVK2n5NsTUUifEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=ktJHHSpV; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7aa086b077so412317066b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 02:17:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1724059038; x=1724663838; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ALicRhMbFic729p1B+Q3KjvAzvfvgE5+pIP6YQqtG8M=;
-        b=ktJHHSpVoLsxwTvKY0ZoxguVXAsJLZbyOMFiOex6kPdPhjTqzOiYgnd0GQn/wg1Vns
-         W7CEwU13OtWqD2qxWqPhAb5dzcflez1m24m/DIEQFe+h7baU7TN1Md9hwpHoT4EJQbDm
-         kt+0qPIVB6qqbxcf3Xdk0dtHPKu/FzHQpT268=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724059038; x=1724663838;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ALicRhMbFic729p1B+Q3KjvAzvfvgE5+pIP6YQqtG8M=;
-        b=h+YcGZUnLal+UtvzCUAo3PxEzkqMgIacuFT3Jyum3QE08OtPRuDlE+4xvqzA+pW9gv
-         JT6xYa0W1xUD+9EPaDS2woww6eg9zsKg79dPbS3cJFiYb6aBa3ThV6wEY8W2KI3pyDPb
-         2SNj81UqUjgp7raBxv9s9MB+EE2cfgG0TLU7UKacVfmx1FiwIfXSBdzudPH0VtXWthTu
-         dpv+bN+pcK/eD9CoD1O1liSU7iTShlwnKvEkqYQFyWPNtHh+CzjO0TCiWkOQ/x3peHR+
-         Mnu541/7BIdY/5b+kuWNp8dcj7PLirQBsKz/OI9idk/eipfKQe3gtQKPcKdHXj+/xyae
-         /duA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4gzkVRxL4Fib8+xTeTUV9aqS1xCZQvBnUYkUl67vQQOXQc3V39JNqAdAaVywHJEcGvMb7cuxJPTbWn0/lBDtoLHFSFVn3AK3XHuaH
-X-Gm-Message-State: AOJu0YyWXOYJHO07Sy7tPD50rPkVw8k271N0Yq3ja9qn/RXmq1AP/hCl
-	JobBnubHqNTCxCizwcdsvD+z8Xbc7gEZogFG+bPhLBXu9v5TD8sQJ+OO3z6aX0k2vkPstO+oWHP
-	i21M5lCRTxJN1GVshbOKEVWT4ql4lOXgBj3yaii7iLVgfYGVgZ2c=
-X-Google-Smtp-Source: AGHT+IHkFS7t0pMEcZTmWcFNiXZnTxP50r3dEYP+Lc+1dDkfS72kHuuFmzUBowJ9bJ1uLg6pEGqMrVdzqxN+rT+EITY=
-X-Received: by 2002:a17:907:9408:b0:a7a:a892:8e07 with SMTP id
- a640c23a62f3a-a83aa01c90amr369946366b.31.1724059038094; Mon, 19 Aug 2024
- 02:17:18 -0700 (PDT)
+	s=arc-20240116; t=1724059054; c=relaxed/simple;
+	bh=IqniPhbCmZxI9RtQPRoTeIcqNs7wU34N4HJzmRdKoLc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=XnSs4y+OLx6Lh9x4VytrK8HLsM/YUMBDtuSLMAxeerfzc2oQGBsWXykUKNnQoZfytqopgNZ7vbNE8qTQv/mjM1gySGe2k+gJrmqOzR03xq/jf6oSqKC12kMMiQ13xvcywhskrapWNn2JXCM4tBhtcFXVPjMzvX4hZQRwDTFcnBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Ud6JcAod; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dpx3IjKI; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 7209B1150836;
+	Mon, 19 Aug 2024 05:17:31 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-04.internal (MEProxy); Mon, 19 Aug 2024 05:17:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1724059051;
+	 x=1724145451; bh=oVEsI+flW84gQwRAmwbOjMNDy4XUMPgz5I0zP431mCw=; b=
+	Ud6JcAodEHQ43uv1js/tvbMDGmKlleBjvQ6u3go/ut4c3Lye59mh73AB9ZURu+QP
+	nX4ddZM8RS0/XZPugidUx/gmJ50LF8P1aTv8l8yhMBW1VYazgP7/W5KQdakOoY32
+	YgC/1e8V81u8v2n/oC9CfsYGLotiHSQf8rHrYrvKHi0Pov+ZHBhhhVdQx5WibfmF
+	xLY54sj+u6RXlfPNhrLF7tgtqVC2PjqFio2TKqlCCJEOIGGiDHVhlVTFvUMkvKpr
+	PwC8ZDADO1x8AZyLLjOCRp0cHwoWpDrYghFRLOwSNHCB80MIR0uumX59MuRj+hDO
+	lQr4UN9klr8j1zgvNgpqLw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724059051; x=
+	1724145451; bh=oVEsI+flW84gQwRAmwbOjMNDy4XUMPgz5I0zP431mCw=; b=d
+	px3IjKIcF4HxkvSSk5sCZglQnDctnDggwja+d6Kh4CHa00U07cyAijWSfsVxfH4r
+	S4JJ19trSBargI08bB3TqB9sOwpSfdssjIfjO7x9Gxa+F+NF4NvGSDEAtuzwexT+
+	LXdQ9XhzCR4cXg+rc19x1QImDCk+xSf2GPGUdqybPhvVi07bGX6GbpBKHUhbou1/
+	nFmP/GQQPDJHHujeVieUKOAHD8l0cdGkxc3UeT2zkyr8yHTT7aYi3WEWrnQoO9Zi
+	kKJwU+8s5gEAVyyLWOiLW9rUdXDjMKeFvns/yzV631d8mVhk4tVvLZ1OcvARvtt2
+	F43Lem5NomunH/xhHFLSg==
+X-ME-Sender: <xms:qg3DZqJ_-mqNyRF3xoP8OYz9XE-yiNJ6gfN5K7kI4WT0UxpAcbcMUQ>
+    <xme:qg3DZiIAogjVOCE-Y3pdBEksPOxiGKEwrOqxlVZ6LS4lA8veYrrAU-8s-IVpihotw
+    VgX9ENxCYv-YZtrBAo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddugedgudegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvdeh
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehrihgthhgrrhgurdgvrghrnhhshh
+    grfiesrghrmhdrtghomhdprhgtphhtthhopehrihgthhgrrhgurdhsrghnughifhhorhgu
+    segrrhhmrdgtohhmpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrd
+    hukhdprhgtphhtthhopehtohhnhiesrghtohhmihguvgdrtghomhdprhgtphhtthhopehg
+    rhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepnh
+    hitghosehflhhugihnihgtrdhnvghtpdhrtghpthhtoheprghlvgigrghnughrvgdrthho
+    rhhguhgvsehfohhsshdrshhtrdgtohhmpdhrtghpthhtoheprhhosggvrhhtrdhjrghrii
+    hmihhksehfrhgvvgdrfhhrpdhrtghpthhtohepughmihhtrhihrdhtohhrohhkhhhovhes
+    ghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:qg3DZqvy0Ms2WN7rlf3dz4MxENrFR6kIkTgACjD-LxGv2-K2cXEOhg>
+    <xmx:qg3DZvZghMZgwu5eS-WPU40pW-W7a00Uxahb0RKVH2NXaPEdmSetTA>
+    <xmx:qg3DZhYRhmgPElU9UfovaioVay8uZpslc0qtf-aCpofExIB2V2qx6w>
+    <xmx:qg3DZrCmnUkR7NK99ddqCqeg4JqU15x0_EhEwfAPXeLya6Gxh1uLgA>
+    <xmx:qw3DZlKGdeVByaaXHPLKuFZ-JosMCVLnz0C0L16UR87QpTmN63jer7r1>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 54ECE16005F; Mon, 19 Aug 2024 05:17:30 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <TYUPR06MB62177737F0054278B489962BD2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <2024081608-punch-coherent-d29e@gregkh> <CAOf5uwnsgcJjp1=RLa7qx9ScQY5rZvwX-Zu6BOqxBBhBCz+CFQ@mail.gmail.com>
- <TYUPR06MB62177BCD4AB43C19E38990D3D2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <CAOf5uwm65Cw-V+td_=6QAGUF+Uisueqcm0z=1zFaNTisAJnSFQ@mail.gmail.com>
- <TYUPR06MB6217877B31A08356241CAB38D2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <2024081652-unify-unlucky-28d2@gregkh> <TYUPR06MB6217D1798DBC41C7DB2A1DEDD2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <TYUPR06MB6217AEF9DD73C9424C7C1D07D28C2@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <CAOf5uwmdf+Vxes6+BQyghbiKByVC_i1RhmTE81_iix99U7HMmA@mail.gmail.com>
- <TYUPR06MB62171FA07658FE6500DB855FD28C2@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <CAOf5uwk-De+dCaL-xZMByFoMoxD7X1_KnOriq1MKAz5s+mOFiw@mail.gmail.com> <TYUPR06MB62175889B121F542869856E4D28C2@TYUPR06MB6217.apcprd06.prod.outlook.com>
-In-Reply-To: <TYUPR06MB62175889B121F542869856E4D28C2@TYUPR06MB6217.apcprd06.prod.outlook.com>
-From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Date: Mon, 19 Aug 2024 11:17:07 +0200
-Message-ID: <CAOf5uw=Cuubyh1m_biK=A43ZhdP5696s9kebXw4i9pdj-9g4dw@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=E7=AD=94=E5=A4=8D=3A_=5BPATCH_v1=5D_usb=3A_gadget=3A_u=5Fserial=3A_check_?=
-	=?UTF-8?Q?Null_pointer_in_EP_callback?=
-To: =?UTF-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
-	"quic_prashk@quicinc.com" <quic_prashk@quicinc.com>, 
-	"quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>, 
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"opensource.kernel" <opensource.kernel@vivo.com>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Date: Mon, 19 Aug 2024 11:17:08 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jeremy J. Peper" <jeremy@jeremypeper.com>,
+ linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, "Russell King" <linux@armlinux.org.uk>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Richard Earnshaw" <richard.earnshaw@arm.com>,
+ "Richard Sandiford" <richard.sandiford@arm.com>,
+ "Ramana Radhakrishnan" <ramanara@nvidia.com>,
+ "Nicolas Pitre" <nico@fluxnic.net>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Mark Brown" <broonie@kernel.org>,
+ "Kristoffer Ericson" <kristoffer.ericson@gmail.com>,
+ "Robert Jarzmik" <robert.jarzmik@free.fr>,
+ "Aaro Koskinen" <aaro.koskinen@iki.fi>,
+ "Janusz Krzysztofik" <jmkrzyszt@gmail.com>,
+ "Tony Lindgren" <tony@atomide.com>,
+ Linux-OMAP <linux-omap@vger.kernel.org>,
+ "Nikita Shubin" <nikita.shubin@maquefel.me>,
+ linux-samsung-soc@vger.kernel.org, "Andrew Lunn" <andrew@lunn.ch>,
+ "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
+ "Gregory Clement" <gregory.clement@bootlin.com>,
+ debian-arm@lists.debian.org,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ "Alexandre Torgue" <alexandre.torgue@foss.st.com>
+Message-Id: <790bf2c4-2ecf-429c-8e28-ad5807ffed7a@app.fastmail.com>
+In-Reply-To: <3413899.e9J7NaK4W3@earth>
+References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
+ <3413899.e9J7NaK4W3@earth>
+Subject: Re: [RFC} arm architecture board/feature deprecation timeline
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-HI
-
-On Mon, Aug 19, 2024 at 11:00=E2=80=AFAM =E8=83=A1=E8=BF=9E=E5=8B=A4 <hulia=
-nqin@vivo.com> wrote:
+On Thu, Aug 15, 2024, at 21:53, jeremy@jeremypeper.com wrote:
+> For the Buffalo devices we still have a lot of folks using Marvell Kirkwood, 
+> Orion5x and MV78100 NAS devices. In a world where SATA provides the cheapest $ 
+> per TB storage and Gigabit Ethernet is still standard they end up being 
+> surprisingly relevant for hobbyists.  
 >
-> Hello linux community expert:
+> The two pre-DTB device files that we're still using are:
+> mach-mv78xx0/buffalo-wxl-setup.c
+> mach-orion5x/terastation_pro2-setup.c
 >
-> >> >> >>I think this has been reported previously, and different patches =
-have been proposed, have you searched the archives?
-> >> >> > I haven't seen the patch given below before, I will read it caref=
-ully.
-> >> >> > I searched for Linux mainline commits before submitting, but I on=
-ly compared them according to the crash stack information and did not notic=
-e the following commit.
-> >> >>  I checked the stack trace again. The problem we encountered seems =
-different from the problem reported in the link below, and they are not cau=
-sed by the same reason.
-> >> >>
-> >>
-> >> >Did you apply the patch? as suggested, is the test moving from one ga=
-dget to the other?
-> >>  We apply the patch into kernel 5.15 and ran a stress test, and the pr=
-oblem did not recur.
->
-> >It means that does not happen again?
->  Yes.
->
-> >>  Connect the phone to the PC via a USB cable and run the monkey test (=
-run an apk and click on it at will on the phone interface).
->
-> >Yes I know but this monkey test is running a stress test moving from usb=
- storage, to other configfs right?
->  From the crash information, it can be seen that the switch is from mtp m=
-ode to vivo industrial mode port (adb+diag+cser_tty+gser_tty+rmnet)
->
-If the patch applied fix your problem, I think you are ok. I suggest
-even you have an android
-kernel to try to be more close to lts version of your kernel in Android
+> If those can stick around for the next LTS kernel that should give me 
+> sufficient 
+> time to try converting them to DTS like the other Orion5x/Kirkwood 
+> devices.
 
-Michael
+Right, the plan was always to keep them for this year's LTS kernel,
+which is almost certainly going to be 6.12. This should be enough
+for Debian Trixie.
 
+I expect that the terastation pro2 is going to be fairly easy to
+convert to DT as there is already support for similar Orion5x
+machines. In this case I would just remove all the Orion5x board
+files and you can add a dts file later on. The bit I'm unsure
+about here is legacy PCI support. I see that the board file enables
+both PCI and PCIe, but I don't know if both are actually used,
+or if everything is on PCIe.
 
-> Thanks
+I have some old patches for separating orion legacy PCI from
+PCIe support, as only the latter has a modern driver (shared
+with kirkwood and armadaxp). If you can confirm that the machine
+actually uses PCI, I can dig those out from my backups.
 
+The WXL machine is going to be more work since there is currently
+no DT support for mv78xx0, but everything except the pin controller
+should at least have a driver since this SoC is somewhere between
+Kirkwood and Dove. Having a hack for the pin controller similar
+to what orion5x has is probably fine, especially if you only
+need to support one machine.
 
+Let me know if you need any help during the conversion.
 
---=20
-Michael Nazzareno Trimarchi
-Co-Founder & Chief Executive Officer
-M. +39 347 913 2170
-michael@amarulasolutions.com
-__________________________________
-
-Amarula Solutions BV
-Joop Geesinkweg 125, 1114 AB, Amsterdam, NL
-T. +31 (0)85 111 9172
-info@amarulasolutions.com
-www.amarulasolutions.com
+    Arnd
 
