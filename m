@@ -1,109 +1,145 @@
-Return-Path: <linux-kernel+bounces-292829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BF549574F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:51:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8C6B9574F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:51:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2ED71F22043
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:51:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FA92284815
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E345D1DD3BD;
-	Mon, 19 Aug 2024 19:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9D31E2103;
+	Mon, 19 Aug 2024 19:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iHs3wOji"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="E18kVlsu"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1C11DD38D;
-	Mon, 19 Aug 2024 19:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B11B1DD3B2
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 19:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724097040; cv=none; b=EJPcq0IdBNgzWgKAd1boyO2X7lD8CrlkkF97JFkCKc9VrxxoXkR1t9j31wr6cgvuJFW3LpTZYi750pQLxRJShrLwdbsb+3SVk4V7BOL1dXu7K1ulRDXFdt9fYhIkQRHEg6Ero+mlAjj13FK2n3MRQza6o2OpJwu3mNXN1h1lkqM=
+	t=1724097047; cv=none; b=epNdnrx928hgRqF4yQIAiXAyJO+swhV0rurZhVmWTGbFtolbTdc5q+4lJrFnsmL3MfY55vX+jYOQayx2McGaJAE5B94Uy3ktrG6PDv0Ei1rshX/KqSrf6KTOWwrNLgJ0l4X7J1TcThW99gxw20dtUo0Uetj0RTm92hB9O4sakco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724097040; c=relaxed/simple;
-	bh=zNWlPg/XHG5JWYhe5V1kit6lAimfd3NUN45yFbpmsic=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T/Q/HYyU6yp1rZv+Cd/xUn6Bg9LNqaMYTe75wQiyJ4OBByax+t01p4NSHKAUXzJDzc8IdYr1Nhhf17CALPWfzj2AkvLeMgP0FZjPh2jS6GrStKv7B4T/Sn3u3Lf7CZAWm/n5TGVJm+cgze3b7dpTuJ7cZa3upvtxIwHtViWKfdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iHs3wOji; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724097038; x=1755633038;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=zNWlPg/XHG5JWYhe5V1kit6lAimfd3NUN45yFbpmsic=;
-  b=iHs3wOji7GxosCOIGbW/mH6okku3yHNzI7CCpxYPphjv8sbg0VJ8V8ia
-   DNDCIChJmj4cijGRDMALAXsHWN+VUgftAYlR69LbND9GhMaBC/6UT5JNO
-   fA/mVsPaXKRd39QfMT4fgqmErvT/Lb+izeXqis2qss548LXufPFDu+z8M
-   xuUZIzer0N8vLKNYzBNCXHOvxLMHRrB50qj6pOyNan6xHar2/cgMqqn41
-   3VH1olvmUs6s39Ssy2TS0lIPfsA/Kntlkc4H2W+qAmEvmC3h3vLpNieBE
-   kGFo/k008z9LGXqhOfQDfnnWyjkeMg1Paz5NNU3ocwkBNHGN927wHSuxO
-   A==;
-X-CSE-ConnectionGUID: sM/NX568Qyen/1zRmfikgw==
-X-CSE-MsgGUID: xrS1dxDZQkCOoSRts6nvRQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="33749348"
-X-IronPort-AV: E=Sophos;i="6.10,160,1719903600"; 
-   d="scan'208";a="33749348"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 12:50:35 -0700
-X-CSE-ConnectionGUID: CZXDIhLvTo6ZxdyfevMK1Q==
-X-CSE-MsgGUID: oozUtGoHTdyslmO18BNXUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,160,1719903600"; 
-   d="scan'208";a="60460687"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa008.fm.intel.com with ESMTP; 19 Aug 2024 12:50:34 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id DACCC2D8; Mon, 19 Aug 2024 22:50:32 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>,
-	linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] Revert "spi: ppc4xx: handle irq_of_parse_and_map() errors"
-Date: Mon, 19 Aug 2024 22:50:29 +0300
-Message-ID: <20240819195029.2388397-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1724097047; c=relaxed/simple;
+	bh=jO29POK3z1BLcm8HkuO4Cegavmvack2+hlF/5WU8GyA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p8pypG/65eGv5u1w/C8zv+IQqMCGeTMkoocy6FZxRkFwzQDRMwUBpoYNhKdFJ/XAIWjHJOhF5hfdYQOWQ07muf4Nf0XdyhU4ihzTH4DKGkynakKKRge4awbZJEXa6SnDzJ3CHkjd4rgxpSzpPA53InXxYbV3hN6qaO+skuB0jCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=E18kVlsu; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-26fda13f898so3197110fac.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 12:50:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1724097043; x=1724701843; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CqNKkZ9AVI01Zp+n7dR1XvaLaD7tPIHVV7B+MTLeBAk=;
+        b=E18kVlsu68n83V4oKQO8Bnzmr3KPy/JftPTi0ffB1y9kSsPVVGuZxBRAk6pn76ksfl
+         D7cll/PwJYj+IU+mZJWk66N5yZzJUTM35nF1UjPXzD93KykJjcImAcLUc0IvELiGiDpZ
+         6L0JhdPc0MdBeOUR3i2Pk5dH/wz2zUigJtJVmGn2TigOweSx3771bbd6Eji5GFwF+lPC
+         WcFYbnpDn9IpFHh3S9Yl7C5EwmOczSnLiDkF88ntQylH7t+PllLRTL4t/Q+PG0MLjx8f
+         K7Pl+c60afKryQy8Pr2mP6cYElhqYcimrHUraVTyCtpRxKGuIx2zdyvyzI+W+TgIaVy6
+         8AMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724097043; x=1724701843;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CqNKkZ9AVI01Zp+n7dR1XvaLaD7tPIHVV7B+MTLeBAk=;
+        b=XcSK8dyiR1/I9uACJDI2/hQoVzu1BACUqGvtWT0ElsTxf1i+RNsTth8tKzYZulxMFI
+         CbRaYKk7YERbz5qNfDC1X1Kzn+dAJNciHjbU2b10eJHN1b+1p3LK3nn/YaUjqFZTLMvS
+         t/2trBoEaDCShNJA/9jCB1+Vfbh2/0AwqK+Ic11VkT10RTsnwshdJ/50XPqAl0WJenDR
+         kp+nB2FJvs7UQSnRzSQi2xH0dHqWH3GaICQM5EmS2taK6Eb4eSZdQipRt8hgsyUIbFLq
+         lw9XTRaFc05JnW5NypO66tlaSZ7H7mYbTp8vFsNulQM2bBvhbrXcQ+Qx+MOplvM4PWPi
+         tDQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXjFGmCJMpFJDlM5u6Czu+MzysrDZ2e4H0Ryb6lha573UUVsKbX6PS6EPVxM5rrlZwLu6SXeNMz3fBteO0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyNsMhHm7Q4FehcHij4Pq0gImAEIfwrz3p4+OtdxIHSYYvpnfD
+	TFZqRcOOLoQL2tpVdKTJ74yZcb7cRNcdPsbk2pKueyozUQYbgKBapLrsTt1iqMUWO9ohel9c7cj
+	b
+X-Google-Smtp-Source: AGHT+IH3NZLD6naQAd620byBrGpPpV42gGrLR816WbcxoFuLqgsRjryfMf5ic8YQKRyhO2VYJrpXow==
+X-Received: by 2002:a05:6870:7f0c:b0:269:2708:aff6 with SMTP id 586e51a60fabf-2701c37eb7emr14217799fac.16.1724097043320;
+        Mon, 19 Aug 2024 12:50:43 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2702589f29bsm2487392fac.19.2024.08.19.12.50.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 12:50:42 -0700 (PDT)
+Message-ID: <386eec54-025a-460e-8ad0-d1ae87ab7c85@baylibre.com>
+Date: Mon, 19 Aug 2024 14:50:42 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] iio: ABI: audit calibscal and calibbias attributes
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+References: <20240815-iio-abi-calib-audit-v1-0-536b2fea8620@baylibre.com>
+ <20240817155203.4525f9f3@jic23-huawei>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20240817155203.4525f9f3@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This reverts commit f1011ba20b83da3ee70dcb4a6d9d282a718916fa.
+On 8/17/24 9:52 AM, Jonathan Cameron wrote:
+> On Thu, 15 Aug 2024 12:22:09 -0500
+> David Lechner <dlechner@baylibre.com> wrote:
+> 
+>> While preparing to add some new variants of the calib{scale,bias} and
+>> calib{scale,bias}_available attributes, we noticed that quite a few
+>> of the existing attributes were not documented.
+> Thanks for tidying these up.
+> 
+> There are some scripts about (I think Mauro Carvalho Chehab wrote them) that
+> scan sysfs on a particular machine and report missing docs, but we've
+> never put in place anything that looks at the code to figure them out.
 
-The commit had been applied twice as
-  0f245463b01e ("spi: ppc4xx: handle irq_of_parse_and_map() errors")
-and
-  f1011ba20b83 ("spi: ppc4xx: handle irq_of_parse_and_map() errors")
+Thanks for the tip. Currently, 
 
-Revert the latter one.
+	./scripts/get_abi.pl undefined --search-string=iio
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/spi/spi-ppc4xx.c | 3 ---
- 1 file changed, 3 deletions(-)
+doesn't catch anything because we have documented the directory
 
-diff --git a/drivers/spi/spi-ppc4xx.c b/drivers/spi/spi-ppc4xx.c
-index 6071f83dd9c8..8f6309f32de0 100644
---- a/drivers/spi/spi-ppc4xx.c
-+++ b/drivers/spi/spi-ppc4xx.c
-@@ -416,9 +416,6 @@ static int spi_ppc4xx_of_probe(struct platform_device *op)
- 		goto free_host;
- 	hw->irqnum = ret;
- 
--	if (hw->irqnum <= 0)
--		goto free_host;
--
- 	ret = request_irq(hw->irqnum, spi_ppc4xx_int,
- 			  0, "spi_ppc4xx_of", (void *)hw);
- 	if (ret) {
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+	What: /sys/bus/iio/devices/iio:deviceX
+
+which gets translated to the regex
+
+	/sys/.*/iio\:device.*
+
+which matches everything under the iio:device directory.
+
+Maybe `[XYZ]` should get converted to `[^/]*` instead of `.*`?
+
+> 
+> Gut feeling, too fiddly to maintain such a script for constructed attributes
+> my maybe could be done for const ones with the standard macros
+> (so pretty much nothing in IIO :)
+> 
+> Applied,
+> 
+> Jonathan
+> 
+> 
+>>
+>> ---
+>> David Lechner (4):
+>>       iio: ABI: document calibscale_available attributes
+>>       iio: ABI: sort calibscale attributes
+>>       iio: ABI: add missing calibscale attributes
+>>       iio: ABI: add missing calibbias attributes
+>>
+>>  Documentation/ABI/testing/sysfs-bus-iio | 64 ++++++++++++++++++++++++++-------
+>>  1 file changed, 51 insertions(+), 13 deletions(-)
+>> ---
+>> base-commit: d505a9dc8de83df2a8ce8c9e780f7b29887f34af
+>> change-id: 20240815-iio-abi-calib-audit-fcc21b1c6892
+> 
 
 
