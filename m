@@ -1,255 +1,180 @@
-Return-Path: <linux-kernel+bounces-291913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 541949568D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:59:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2F229568D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3AFA1F2250C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:59:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04A2F1C219CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4793D165EFB;
-	Mon, 19 Aug 2024 10:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D4915DBC6;
+	Mon, 19 Aug 2024 10:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=boris.brezillon@collabora.com header.b="LX6kkCxs"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tZzSqXxF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A264615DBC6
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724065148; cv=pass; b=L7lrjNoA5mZ8JrAjfOWidpNkUkPE7Cd2hYOZFPxZfEiP0Nf6slFpOaO/B8ygMcrGAttiq+nTtpip5/ysWw7JRRqIGlYTPVcyS+82mR1hiK7WWsJwTEFW84wSEfoXp3ipFHK1dUfw0l4iK35MgyjX2523wFYStdjwcHmQLC/SPvM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724065148; c=relaxed/simple;
-	bh=vw/hQEHth7dvVCweiuVWAgRIsZxJd2GlCWZtzzlDNc8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mmxlQ1JUpfT9oZ4mYezWoNqlU8TVtQ1fbij/yi4YO21EFZCguH8b940zCwjOjLLurvhMkIsJzKX3IPBbNElRZu1OMCdCps6PXPHldptSmh4OVUtBixn8GMcPQjQwVRajh0iV6mbD0EdY2hLI/Ynp8VtS1dDHDrv6sawmeM3NlfE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=boris.brezillon@collabora.com header.b=LX6kkCxs; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: adrian.larumbe@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724065131; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=WI35hWJN7ea1TgHHFgN3+owWfNPPj8RP9vBPNk7IjtfV2iHnVQFI0X8IpnUHFtWi19HkklpprLudUAOIQa4WPRpyJ2wZur8+iXfNorPVQpcewrQfjrvc/ZVdiOBIwgbu9ErHtW1jRtn7/jHP/ClN+S+gt9Na2p9tgiw03JrwR1E=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724065131; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=X5oEhSX/ia+/y1kOOQLj3+PUnB27N+3uDrL/N0XUB9A=; 
-	b=H62tKotfRt+6lFs2SK2jBs3KIw/ty8v8PuiyP2pqkWrPbh8tu9dROn20ULjRvLvliEKUOJiLgW/gXBuoW5O1PScvLxIOnKe3YZ4mQjm4sQh1PCjimZdqHhurC5sk+utjY7m+MAFgQllL5oj4zN4JcXPBmWITaILcmdK2yEF5QGs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=boris.brezillon@collabora.com;
-	dmarc=pass header.from=<boris.brezillon@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724065131;
-	s=zohomail; d=collabora.com; i=boris.brezillon@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=X5oEhSX/ia+/y1kOOQLj3+PUnB27N+3uDrL/N0XUB9A=;
-	b=LX6kkCxssVrLDzHfztj3lv1KUP+EduChHA8ze2wgNkTSWrHh7fIE7uAal1zdWkg1
-	wVitPzFMWsEOJlAY+GxNThnSclR/VtwNFPhVjt1lR66/7WFd1B9QM/b5IrwuUbrJLDq
-	K+aO8iD8Y9QF2i2Awfkkj+DckxiK4CLeBuqHcGY0=
-Received: by mx.zohomail.com with SMTPS id 1724065129715306.47262661351465;
-	Mon, 19 Aug 2024 03:58:49 -0700 (PDT)
-Date: Mon, 19 Aug 2024 12:58:40 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Steven Price <steven.price@arm.com>
-Cc: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>, Liviu
- Dudau <liviu.dudau@arm.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] drm/panthor: introduce job cycle and timestamp
- accounting
-Message-ID: <20240819125840.64b26200@collabora.com>
-In-Reply-To: <0f089616-2d63-4ac7-a3ba-b6909f9d9ade@arm.com>
-References: <20240716201302.2939894-1-adrian.larumbe@collabora.com>
-	<20240716201302.2939894-2-adrian.larumbe@collabora.com>
-	<e46310c7-27b8-4548-93db-56b780873c12@arm.com>
-	<5u7pv27ifao57iagnasycxg4oe5hqq42kajbf4xnllxefg7oet@c362omtcizaj>
-	<0f089616-2d63-4ac7-a3ba-b6909f9d9ade@arm.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17893165EF8;
+	Mon, 19 Aug 2024 10:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724065167; cv=none; b=uT/hfTYRCrWRzcVUJQU9ueyPbX6X1tHw01HBKsRR0hEuCcqzg23gwiAOXlnABRLUgLxV/L3LUANLPFT+0YKiAhoj92Z9jWUs5jBLNcf38kFt2wbifvDZsRRTYR8+H/UQZaMMiPShxeEpSYrxqRlQTumJiJyWIh31qsSJJ7LmHTY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724065167; c=relaxed/simple;
+	bh=hlQRKMvIVi+Q0mKMmyy/v+wsbia93WzDYzawIplhG+o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nvTsMxIz9WeLR67CG+zx35kDA5SgDinuYSlzV+E+15WhxkidiDLVCHXvvV3sRe52LROFr5DvZmYE/2kZt+GLp472OT9mp6Euk3JI58XgB9Tig8ToR9ePwyhKerS7imebmDuInlHgMMuG3Ipfzfh8zPZFrDD9ZUG3mFi8FOBNbTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tZzSqXxF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92020C4AF09;
+	Mon, 19 Aug 2024 10:59:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724065166;
+	bh=hlQRKMvIVi+Q0mKMmyy/v+wsbia93WzDYzawIplhG+o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tZzSqXxF0hus3h2zJnJK0IiIhWFhqIE2EL5Z/ifJIoArC01d1+PP/DndklflaoHnG
+	 rismGNWnrVRiG5aGvm6wTBqXlDlkhliJT/5MpUrA4YIvcZYR6lzFS4Df11qcA73tlJ
+	 H/296WhgVF+z+pV3aT47M27w4GRpSeTcN50ZX2CytG5QC+uwFFHQJ75dYRcgUq6G8e
+	 k5Fe3NflxLFRbkajXkcFsaQac4kNmLUKUKPx8bKt/bEpjpz7OMWaQgzJxGw5txJ+yh
+	 YHfMNX6aLhjma81x7Hk46aaeGrCScK74HOM2sPFhSFFxR6X9VyG9EnAVbY6dqXVJft
+	 hh6kLIhSU5YGA==
+Message-ID: <b651ae17-0d60-46b5-9571-cf82769ab07c@kernel.org>
+Date: Mon, 19 Aug 2024 19:59:24 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ata: pata_macio: Fix DMA table overflow
+To: Michael Ellerman <mpe@ellerman.id.au>, cassel@kernel.org
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, hch@lst.de, linux-ppc@kolla.no,
+ vidra@ufal.mff.cuni.cz
+References: <20240819101755.489078-1-mpe@ellerman.id.au>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20240819101755.489078-1-mpe@ellerman.id.au>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On 8/19/24 19:17, Michael Ellerman wrote:
+> Kolbjørn and Jonáš reported that their 32-bit PowerMacs were crashing
+> in pata-macio since commit 09fe2bfa6b83 ("ata: pata_macio: Fix
+> max_segment_size with PAGE_SIZE == 64K").
+> 
+> For example:
+> 
+>   kernel BUG at drivers/ata/pata_macio.c:544!
+>   Oops: Exception in kernel mode, sig: 5 [#1]
+>   BE PAGE_SIZE=4K MMU=Hash SMP NR_CPUS=2 DEBUG_PAGEALLOC PowerMac
+>   ...
+>   NIP pata_macio_qc_prep+0xf4/0x190
+>   LR  pata_macio_qc_prep+0xfc/0x190
+>   Call Trace:
+>     0xc1421660 (unreliable)
+>     ata_qc_issue+0x14c/0x2d4
+>     __ata_scsi_queuecmd+0x200/0x53c
+>     ata_scsi_queuecmd+0x50/0xe0
+>     scsi_queue_rq+0x788/0xb1c
+>     __blk_mq_issue_directly+0x58/0xf4
+>     blk_mq_plug_issue_direct+0x8c/0x1b4
+>     blk_mq_flush_plug_list.part.0+0x584/0x5e0
+>     __blk_flush_plug+0xf8/0x194
+>     __submit_bio+0x1b8/0x2e0
+>     submit_bio_noacct_nocheck+0x230/0x304
+>     btrfs_work_helper+0x200/0x338
+>     process_one_work+0x1a8/0x338
+>     worker_thread+0x364/0x4c0
+>     kthread+0x100/0x104
+>     start_kernel_thread+0x10/0x14
+> 
+> That commit increased max_segment_size to 64KB, with the justification
+> that the SCSI core was already using that size when PAGE_SIZE == 64KB,
+> and that there was existing logic to split over-sized requests.
+> 
+> However with a sufficiently large request, the splitting logic causes
+> each sg to be split into two commands in the DMA table, leading to
+> overflow of the DMA table, triggering the BUG_ON().
+> 
+> With default settings the bug doesn't trigger, because the request size
+> is limited by max_sectors_kb == 1280, however max_sectors_kb can be
+> increased, and apparently some distros do that by default using udev
+> rules.
+> 
+> Fix the bug for 4KB kernels by reverting to the old max_segment_size.
+> 
+> For 64KB kernels the sg_tablesize needs to be halved, to allow for the
+> possibility that each sg will be split into two.
+> 
+> Fixes: 09fe2bfa6b83 ("ata: pata_macio: Fix max_segment_size with PAGE_SIZE == 64K")
+> Cc: stable@vger.kernel.org # v6.10+
+> Reported-by: Kolbjørn Barmen <linux-ppc@kolla.no>
+> Closes: https://lore.kernel.org/all/62d248bb-e97a-25d2-bcf2-9160c518cae5@kolla.no/
+> Reported-by: Jonáš Vidra <vidra@ufal.mff.cuni.cz>
+> Closes: https://lore.kernel.org/all/3b6441b8-06e6-45da-9e55-f92f2c86933e@ufal.mff.cuni.cz/
+> Tested-by: Kolbjørn Barmen <linux-ppc@kolla.no>
+> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+> ---
+>  drivers/ata/pata_macio.c | 23 +++++++++++++++--------
+>  1 file changed, 15 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/ata/pata_macio.c b/drivers/ata/pata_macio.c
+> index 1b85e8bf4ef9..eaffa510de49 100644
+> --- a/drivers/ata/pata_macio.c
+> +++ b/drivers/ata/pata_macio.c
+> @@ -208,6 +208,19 @@ static const char* macio_ata_names[] = {
+>  /* Don't let a DMA segment go all the way to 64K */
+>  #define MAX_DBDMA_SEG		0xff00
+>  
+> +#ifdef CONFIG_PAGE_SIZE_64KB
+> +/*
+> + * The SCSI core requires the segment size to cover at least a page, so
+> + * for 64K page size kernels it must be at least 64K. However the
+> + * hardware can't handle 64K, so pata_macio_qc_prep() will split large
+> + * requests. To handle the split requests the tablesize must be halved.
+> + */
+> +#define MAX_SEGMENT_SIZE SZ_64K
+> +#define SG_TABLESIZE (MAX_DCMDS / 2)
+> +#else
+> +#define MAX_SEGMENT_SIZE MAX_DBDMA_SEG
+> +#define SG_TABLESIZE MAX_DCMDS
+> +#endif
 
-On Mon, 19 Aug 2024 08:48:24 +0100
-Steven Price <steven.price@arm.com> wrote:
+These names are rather generic and could clash with some core layer ditions. So
+maybe prefix the macro names with PATA_MACIO_ ?
+Also please tab-align the values to make this a little easier to read.
+Other than this, looks good to me.
 
-> Hi Adri=C3=A1n,
->=20
-> On 31/07/2024 13:41, Adri=C3=A1n Larumbe wrote:
-> > Hi Steven, thanks for the remarks.
-> >=20
-> > On 19.07.2024 15:14, Steven Price wrote: =20
-> >> On 16/07/2024 21:11, Adri=C3=A1n Larumbe wrote: =20
-> >>> Enable calculations of job submission times in clock cycles and wall
-> >>> time. This is done by expanding the boilerplate command stream when r=
-unning
-> >>> a job to include instructions that compute said times right before an=
- after
-> >>> a user CS.
-> >>>
-> >>> Those numbers are stored in the queue's group's sync objects BO, right
-> >>> after them. Because the queues in a group might have a different numb=
-er of
-> >>> slots, one must keep track of the overall slot tally when reckoning t=
-he
-> >>> offset of a queue's time sample structs, one for each slot.
-> >>>
-> >>> This commit is done in preparation for enabling DRM fdinfo support in=
- the
-> >>> Panthor driver, which depends on the numbers calculated herein.
-> >>>
-> >>> A profile mode device flag has been added that will in a future commit
-> >>> allow UM to toggle time sampling behaviour, which is disabled by defa=
-ult to
-> >>> save power. It also enables marking jobs as being profiled and picks =
-one of
-> >>> two call instruction arrays to insert into the ring buffer. One of th=
-em
-> >>> includes FW logic to sample the timestamp and cycle counter registers=
- and
-> >>> write them into the job's syncobj, and the other does not.
-> >>>
-> >>> A profiled job's call sequence takes up two ring buffer slots, and th=
-is is
-> >>> reflected when initialising the DRM scheduler for each queue, with a
-> >>> profiled job contributing twice as many credits.
-> >>>
-> >>> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> =20
-> >>
-> >> Thanks for the updates, this looks better. A few minor comments below.
-> >> =20
-> >>> ---
-> >>>  drivers/gpu/drm/panthor/panthor_device.h |   2 +
-> >>>  drivers/gpu/drm/panthor/panthor_sched.c  | 244 ++++++++++++++++++++-=
---
-> >>>  2 files changed, 216 insertions(+), 30 deletions(-)
-> >>>
-> >>> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/d=
-rm/panthor/panthor_device.h
-> >>> index e388c0472ba7..3ede2f80df73 100644
-> >>> --- a/drivers/gpu/drm/panthor/panthor_device.h
-> >>> +++ b/drivers/gpu/drm/panthor/panthor_device.h
-> >>> @@ -162,6 +162,8 @@ struct panthor_device {
-> >>>  		 */
-> >>>  		struct page *dummy_latest_flush;
-> >>>  	} pm;
-> >>> +
-> >>> +	bool profile_mode;
-> >>>  };
-> >>> =20
-> >>>  /**
-> >>> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/dr=
-m/panthor/panthor_sched.c
-> >>> index 79ffcbc41d78..6438e5ea1f2b 100644
-> >>> --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> >>> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> >>> @@ -93,6 +93,9 @@
-> >>>  #define MIN_CSGS				3
-> >>>  #define MAX_CSG_PRIO				0xf
-> >>> =20
-> >>> +#define NUM_INSTRS_PER_SLOT			16
-> >>> +#define SLOTSIZE				(NUM_INSTRS_PER_SLOT * sizeof(u64))
-> >>> +
-> >>>  struct panthor_group;
-> >>> =20
-> >>>  /**
-> >>> @@ -466,6 +469,9 @@ struct panthor_queue {
-> >>>  		 */
-> >>>  		struct list_head in_flight_jobs;
-> >>>  	} fence_ctx;
-> >>> +
-> >>> +	/** @time_offset: Offset of panthor_job_times structs in group's sy=
-ncobj bo. */
-> >>> +	unsigned long time_offset; =20
-> >>
-> >> AFAICT this doesn't need to be stored. We could just pass this value
-> >> into group_create_queue() as an extra parameter where it's used. =20
-> >=20
-> > I think we need to keep this offset value around, because queues within=
- the same group
-> > could have a variable number of slots, so when fetching the sampled val=
-ues from the
-> > syncobjs BO in update_fdinfo_stats, it would have to traverse the entir=
-e array of
-> > preceding queues and figure out their size in slots so as to jump over =
-as many
-> > struct panthor_job_times after the preceding syncobj array. =20
->=20
-> Yes I think I was getting myself confused - for some reason I'd thought
-> the ring buffers in each queue were the same size. It makes sense to
-> keep this.
+>  
+>  /*
+>   * Wait 1s for disk to answer on IDE bus after a hard reset
+> @@ -912,16 +925,10 @@ static int pata_macio_do_resume(struct pata_macio_priv *priv)
+>  
+>  static const struct scsi_host_template pata_macio_sht = {
+>  	__ATA_BASE_SHT(DRV_NAME),
+> -	.sg_tablesize		= MAX_DCMDS,
+> +	.sg_tablesize		= SG_TABLESIZE,
+>  	/* We may not need that strict one */
+>  	.dma_boundary		= ATA_DMA_BOUNDARY,
+> -	/*
+> -	 * The SCSI core requires the segment size to cover at least a page, so
+> -	 * for 64K page size kernels this must be at least 64K. However the
+> -	 * hardware can't handle 64K, so pata_macio_qc_prep() will split large
+> -	 * requests.
+> -	 */
+> -	.max_segment_size	= SZ_64K,
+> +	.max_segment_size	= MAX_SEGMENT_SIZE,
+>  	.device_configure	= pata_macio_device_configure,
+>  	.sdev_groups		= ata_common_sdev_groups,
+>  	.can_queue		= ATA_DEF_QUEUE,
 
-IIRC, I was the one suggesting to put all metadata in a single BO to
-avoid losing too much space when ring buffers are small (because of the
-4k granularity of BOs). But given the size of panthor_job_times (32
-bytes per slot), a 4k chunk only covers 128 job slots, which is not
-that big to be honest. So I'm no longer sure this optimization makes
-sense. If we still want to allocate one big BO containing syncobjs
-and timestamp slots for all queues, say, to optimize the GEM metadata vs
-actual BO data overhead, I'd recommend having a CPU/GPU pointer
-relative to the queue in panthor_queue which we can easily dereference
-with time_slots[job_slot_id].
+-- 
+Damien Le Moal
+Western Digital Research
 
->=20
-> <snip>
->=20
-> >>> @@ -3384,9 +3565,12 @@ panthor_job_create(struct panthor_file *pfile,
-> >>>  		goto err_put_job;
-> >>>  	}
-> >>> =20
-> >>> +	job->is_profiled =3D pfile->ptdev->profile_mode;
-> >>> +
-> >>>  	ret =3D drm_sched_job_init(&job->base,
-> >>>  				 &job->group->queues[job->queue_idx]->entity,
-> >>> -				 1, job->group);
-> >>> +				 job->is_profiled ? NUM_INSTRS_PER_SLOT * 2 :
-> >>> +				 NUM_INSTRS_PER_SLOT, job->group); =20
-> >>
-> >> Is there a good reason to make the credits the number of instructions,
-> >> rather than the number of slots? If we were going to count the actual
-> >> number of non-NOP instructions then there would be some logic (although
-> >> I'm not convinced that makes much sense), but considering we only allow
-> >> submission in "slot granules" we might as well use that as the unit of
-> >> "credit". =20
-> >=20
-> > In my initial pre-ML version of the patch series I was passing the numb=
-er of
-> > queue slots as the total credit count, but Boris was keener on setting =
-it to
-> > the total number of instructions instead.
-> >=20
-> > I agree with you that both are equivalent, one just being an integer mu=
-ltiple
-> > of the other, so I'm fine with either choice. Maybe Boris can pitch in,=
- in
-> > case he has a strong opinion about this. =20
->=20
-> I wouldn't say I have a strong opinion, it just seems a little odd to be
-> multiplying the value by a constant everywhere. If you'd got some
-> changes planned where the instructions could vary more dynamically that
-> would be good to know about.
-
-Yeah, the long term plan is to make the number of instructions variable
-based on the profiling parameters, such that we don't lose ringbuf
-slots when profiling is completely disabled. Of course we always want to
-keep it a multiple of a cache-line (AKA 8 instructions), but I find it
-easier to reason in number of instructions rather than block of
-instructions.
-
-Regards,
-
-Boris
 
