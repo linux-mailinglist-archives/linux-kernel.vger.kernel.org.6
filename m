@@ -1,192 +1,172 @@
-Return-Path: <linux-kernel+bounces-292775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72E9195742F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:09:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2928B95742C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:09:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B6CD28572F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:09:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A67D1C22A95
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE3D1D6DC7;
-	Mon, 19 Aug 2024 19:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE67F1D54F5;
+	Mon, 19 Aug 2024 19:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IoGnGo5D"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K23Tcdhw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF381D6DA6
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 19:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E372F26AD3;
+	Mon, 19 Aug 2024 19:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724094589; cv=none; b=oT1U8d6tiPU3p+Z2N1pp27LbAKemRNwLlSxJ2PPqkhxPV1G5uVndNHLtGv+hkc8/R6jTYPC3GSIQEn34WoiK03fWmdh93ggoUoSyfRGjFnSiNQfy8jWGPwpFo1uR+HlVgHTRhCncU9b/LTICF9lYvi35WWxEvvJDZJCCqh47YIU=
+	t=1724094572; cv=none; b=EjVJs8S6g3rnAkS9OmGqEpo9G4UgwjVhipqPP0thyHyOnv+PNYmEfFIZDq5TLuopCBgGP/BdpTml5Sh+qa5AS1A5a+5VXo4mLOUm8mVkGVLr5EAIMirRfgFPLqoGX2/rEZY9U5aAQKOnfZOf4Z/Td/eFsIfvFGQrpY/CmWua8ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724094589; c=relaxed/simple;
-	bh=38M6B6nAfyLtnpECmOFdqw/6sYPFm0aJQrtir4RF/q8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J1aNAfJxvQtGyvUqLP4mzQbNqzDr5c00VrLJwVcGSKmQj9/woP9E5TMbsSh40SkZOKd2mNaAEYn7WoXOZtvQ8mZ/biS4zaMOBV5n4F5mMDwgz5XiBmh8505dMJ2Xt0XubR6BCSFkPw2hs29DLU6JVHH5bKXMUhIeNKsZWQocXuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IoGnGo5D; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a7d26c2297eso544400766b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 12:09:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724094586; x=1724699386; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B8keNgyq5Y1CiFPJpkWT/ZTIazYWWYL5qY5ay8DSsuU=;
-        b=IoGnGo5DtHiBfKYXvXJUZsIOt9sFyvikUdF4s98FcWwCPbO2A21mv3mTcS96YDdH26
-         +jKnwNrp7ss+nQ7dbtxce/2R19Zw5qU94JJy2FfGLbWYtGu6pE/SBww8y3534hJOuGb3
-         wkEDyWUoOV6xyjWrGnrX9/3SBwj1QXFCUJ4ry8ae/fIYgTwFN3R4lU36cM5ga/PAxQkO
-         J3EaPMTqZvQXqNyEbA+vA8oQOV4JI0i0qL2navbLtEv1cYAk4E9YDe4CXxCIs5izqi2t
-         fPKyY/UtHkpLvejnrYLyR2sRRtZzyt3x45nckQfomUI5ngK1j/f6Sp0UAYt3n9PNpct4
-         0hrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724094586; x=1724699386;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B8keNgyq5Y1CiFPJpkWT/ZTIazYWWYL5qY5ay8DSsuU=;
-        b=tg6NJseBcJnlJOvZDmcCh+fFzSdXiAdb/tIaCiJJieGfYn0uuzJ65lwzm14j2w+ngw
-         NzntumqKc4ENAGykCvxPOXKBk1wB0ZYhG07FJexTMqV6dsDNUIgL7CIzq2ZS3eyW1p6D
-         Hdw2Jw5MDIs5LggTNeTi2ksTemgRumWIRRHYJrJV3SUyAmjRt2bFAaFP94TK4rmpEBmZ
-         Y03sw0GISypdWZUKCISi4To1DcnHULMfzYBJ3JOTE9+AD8R1VYBo6JNOZ0wfoRBaA+Lj
-         /iR/Eoz9/F7FEXb+mfP2isoM56BZJstLxLcB17ujoN8swSHT6C6A1ZIA2/HX7Nqhq1Ag
-         YH+w==
-X-Gm-Message-State: AOJu0YwyrZ8GHq+DyfzHMlew9qh2+m9+Mx7OoDnj5SuUOid/DqWOGZTU
-	CBW9073AmJUtoWmpmuCjixlzCV990aUBfmhhNUtr0JQOeep/F9l/oNJC05t4JFbUZzp3/o6C9K3
-	l2K08SYchWKiXhyjEQ06Nz2rLGf9hg2noFppB
-X-Google-Smtp-Source: AGHT+IGuKI69R41BZuJTwuz2InUwf8+whd8Hm0hr6/vouCAUsHezmuQBN4on3koeWHj1yT93eqQMGmKyg9R2P+SWPgw=
-X-Received: by 2002:a17:907:97c3:b0:a7a:bae8:f2a1 with SMTP id
- a640c23a62f3a-a8392a03c21mr988519966b.42.1724094585132; Mon, 19 Aug 2024
- 12:09:45 -0700 (PDT)
+	s=arc-20240116; t=1724094572; c=relaxed/simple;
+	bh=l1fQ+yTpICnSE9dSKG3BDMX4w4n0NCxmJvBhJmEGqB4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YfmKR2vLYolwXbpssIP3hMZZMPEeluOd9BbKrl035u+OkzhFo6MH/X9ts4aXofWzqL9FYe06vrDqP87jrvFJ02sZUP1N656SOlDGnAFyhUv2e2zlTQEDqpURSLsgwrvK5LJ+w/2iG2EYcn2Dd1yrP6pXLnN9TaIl2E01l/ZRQlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K23Tcdhw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA725C32782;
+	Mon, 19 Aug 2024 19:09:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724094570;
+	bh=l1fQ+yTpICnSE9dSKG3BDMX4w4n0NCxmJvBhJmEGqB4=;
+	h=From:Date:Subject:To:Cc:From;
+	b=K23Tcdhww1EkxB49+rm3W650EQEZDN1DZ4pOCr70a90bg1W+mWxNTIBGEWrzOsxdQ
+	 /EMvooiFf+IIqBl8ZSoQCK8gk7stYV/9fyjK02RANiVANd/6bgf7+Q5IrHJjrna605
+	 3sfHSfexgVMRk/2N4SkoZbxhj8+tC6DqFIWHxeBXqQycXeOOgo/FgAXugNSB5QqnQd
+	 BGm7TQf7Psk8yCRfi2AJ47B1ggcOG9vOBhF0CqU7QPKErO3V2LFOMe5HDklGyEDSNZ
+	 eDL8qvPfw/Z5Alg22hFsgjYJiusCxk9w5Ue/Q5gJ7AZag2sYHD3Sl9TdjiH5tIFs9a
+	 1v5qjV10mlL+A==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Mon, 19 Aug 2024 12:09:22 -0700
+Subject: [PATCH] ACPI: platform-profile: Fix CFI violation when accessing
+ sysfs files
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240816144344.18135-1-me@yhndnzj.com>
-In-Reply-To: <20240816144344.18135-1-me@yhndnzj.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 19 Aug 2024 12:09:09 -0700
-Message-ID: <CAJD7tkajuiBDV9Hk8Z+f_-f4ZZf81o4CP3LFLVbfZbrvn4RrUA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] mm/memcontrol: respect zswap.writeback setting
- from parent cg too
-To: Nhat Pham <nphamcs@gmail.com>, Mike Yuan <me@yhndnzj.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
-	Johannes Weiner <hannes@cmpxchg.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Muchun Song <muchun.song@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Michal Hocko <mhocko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240819-acpi-platform_profile-fix-cfi-violation-v1-1-479365d848f6@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAGGYw2YC/x2N0QqDMAxFf0XyvIB2E52/Msbo2sQF1JZ0iCD+u
+ 8HHw7mcu0MhFSowVDsorVIkLQbNrYLw88tIKNEYXO0edd880YcsmCf/56TzJ2timQhZNgwsuEo
+ yZQ2M5Lq+a+/f2DJYLSvZ6Hp6vY/jBPDv3sd5AAAA
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, 
+ Mark Pearson <markpearson@lenovo.com>, Kees Cook <kees@kernel.org>, 
+ Sami Tolvanen <samitolvanen@google.com>, linux-acpi@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev, patches@lists.linux.dev, 
+ stable@vger.kernel.org, John Rowley <lkml@johnrowley.me>, 
+ Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3849; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=l1fQ+yTpICnSE9dSKG3BDMX4w4n0NCxmJvBhJmEGqB4=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDGmHZ2T2TtC8LPzCnU3tVVZbYM1K5QeVO3XXH7z8tl5qm
+ ZXRmVnrO0pZGMS4GGTFFFmqH6seNzScc5bxxqlJMHNYmUCGMHBxCsBEToQzMlzhUrrvE5x5tJHp
+ V6pu56JiJXVdg/zMql8a0md81XYt+M/IsLj3AuOdt5MmRYmFBQg+OKRncsTvgeXsCesluSUjrvv
+ P4AQA
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-On Fri, Aug 16, 2024 at 7:44=E2=80=AFAM Mike Yuan <me@yhndnzj.com> wrote:
->
-> Currently, the behavior of zswap.writeback wrt.
-> the cgroup hierarchy seems a bit odd. Unlike zswap.max,
-> it doesn't honor the value from parent cgroups. This
-> surfaced when people tried to globally disable zswap writeback,
-> i.e. reserve physical swap space only for hibernation [1] -
-> disabling zswap.writeback only for the root cgroup results
-> in subcgroups with zswap.writeback=3D1 still performing writeback.
->
-> The inconsistency became more noticeable after I introduced
-> the MemoryZSwapWriteback=3D systemd unit setting [2] for
-> controlling the knob. The patch assumed that the kernel would
-> enforce the value of parent cgroups. It could probably be
-> workarounded from systemd's side, by going up the slice unit
-> tree and inheriting the value. Yet I think it's more sensible
-> to make it behave consistently with zswap.max and friends.
->
-> [1] https://wiki.archlinux.org/title/Power_management/Suspend_and_hiberna=
-te#Disable_zswap_writeback_to_use_the_swap_space_only_for_hibernation
-> [2] https://github.com/systemd/systemd/pull/31734
->
-> Changes in v2:
-> - Actually base on latest tree (is_zswap_enabled() -> zswap_is_enabled())
-> - Updated Documentation/admin-guide/cgroup-v2.rst to reflect the change
->
-> Link to v1: https://lore.kernel.org/linux-kernel/20240814171800.23558-1-m=
-e@yhndnzj.com/
->
-> Cc: Nhat Pham <nphamcs@gmail.com>
-> Cc: Yosry Ahmed <yosryahmed@google.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
->
-> Signed-off-by: Mike Yuan <me@yhndnzj.com>
-> Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+When an attribute group is created with sysfs_create_group(), the
+->sysfs_ops() callback is set to kobj_sysfs_ops, which sets the ->show()
+and ->store() callbacks to kobj_attr_show() and kobj_attr_store()
+respectively. These functions use container_of() to get the respective
+callback from the passed attribute, meaning that these callbacks need to
+be the same type as the callbacks in 'struct kobj_attribute'.
 
-LGTM,
-Acked-by: Yosry Ahmed <yosryahmed@google.com>
+However, the platform_profile sysfs functions have the type of the
+->show() and ->store() callbacks in 'struct device_attribute', which
+results a CFI violation when accessing platform_profile or
+platform_profile_choices under /sys/firmware/acpi because the types do
+not match:
 
-> ---
->  Documentation/admin-guide/cgroup-v2.rst | 5 ++++-
->  mm/memcontrol.c                         | 9 ++++++++-
->  2 files changed, 12 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admi=
-n-guide/cgroup-v2.rst
-> index 86311c2907cd..80906cea4264 100644
-> --- a/Documentation/admin-guide/cgroup-v2.rst
-> +++ b/Documentation/admin-guide/cgroup-v2.rst
-> @@ -1719,7 +1719,10 @@ The following nested keys are defined.
->    memory.zswap.writeback
->         A read-write single value file. The default value is "1". The
->         initial value of the root cgroup is 1, and when a new cgroup is
-> -       created, it inherits the current value of its parent.
-> +       created, it inherits the current value of its parent. Note that
-> +       this setting is hierarchical, i.e. the writeback would be
-> +       implicitly disabled for child cgroups if the upper hierarchy
-> +       does so.
->
->         When this is set to 0, all swapping attempts to swapping devices
->         are disabled. This included both zswap writebacks, and swapping d=
-ue
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index f29157288b7d..327b2b030639 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -5320,7 +5320,14 @@ void obj_cgroup_uncharge_zswap(struct obj_cgroup *=
-objcg, size_t size)
->  bool mem_cgroup_zswap_writeback_enabled(struct mem_cgroup *memcg)
->  {
->         /* if zswap is disabled, do not block pages going to the swapping=
- device */
-> -       return !zswap_is_enabled() || !memcg || READ_ONCE(memcg->zswap_wr=
-iteback);
-> +       if (!zswap_is_enabled())
-> +               return true;
+  CFI failure at kobj_attr_show+0x19/0x30 (target: platform_profile_choices_show+0x0/0x140; expected type: 0x7a69590c)
 
-This is orthogonal to this patch, but I just realized that we
-completely ignore memory.zswap_writeback if zswap is disabled. This
-means that if a cgroup has disabled writeback, then zswap is globally
-disabled for some reason, we stop respecting the cgroup knob. I guess
-the rationale could be that we want to help get pages out of zswap as
-much as possible to honor zswap's disablement? Nhat, did I get that
-right?
+This happens to work because the layout of 'struct kobj_attribute' and
+'struct device_attribute' are the same, so the container_of() cast
+happens to allow the callbacks to still work.
 
-I feel like it's a little bit odd to be honest, but I don't have a
-strong opinion on it. Maybe we should document this behavior better.
+Change the type of platform_profile_choices_show() and
+platform_profile_{show,store}() to match the callbacks in
+'struct kobj_attribute' and update the attribute variables to match,
+which resolves the CFI violation.
 
+Cc: stable@vger.kernel.org
+Fixes: a2ff95e018f1 ("ACPI: platform: Add platform profile support")
+Reported-by: John Rowley <lkml@johnrowley.me>
+Closes: https://github.com/ClangBuiltLinux/linux/issues/2047
+Tested-by: John Rowley <lkml@johnrowley.me>
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+ drivers/acpi/platform_profile.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-> +
-> +       for (; memcg; memcg =3D parent_mem_cgroup(memcg))
-> +               if (!READ_ONCE(memcg->zswap_writeback))
-> +                       return false;
-> +
-> +       return true;
->  }
->
->  static u64 zswap_current_read(struct cgroup_subsys_state *css,
->
-> base-commit: d07b43284ab356daf7ec5ae1858a16c1c7b6adab
-> --
-> 2.46.0
->
->
+diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
+index d2f7fd7743a1..11278f785526 100644
+--- a/drivers/acpi/platform_profile.c
++++ b/drivers/acpi/platform_profile.c
+@@ -22,8 +22,8 @@ static const char * const profile_names[] = {
+ };
+ static_assert(ARRAY_SIZE(profile_names) == PLATFORM_PROFILE_LAST);
+ 
+-static ssize_t platform_profile_choices_show(struct device *dev,
+-					struct device_attribute *attr,
++static ssize_t platform_profile_choices_show(struct kobject *kobj,
++					struct kobj_attribute *attr,
+ 					char *buf)
+ {
+ 	int len = 0;
+@@ -49,8 +49,8 @@ static ssize_t platform_profile_choices_show(struct device *dev,
+ 	return len;
+ }
+ 
+-static ssize_t platform_profile_show(struct device *dev,
+-					struct device_attribute *attr,
++static ssize_t platform_profile_show(struct kobject *kobj,
++					struct kobj_attribute *attr,
+ 					char *buf)
+ {
+ 	enum platform_profile_option profile = PLATFORM_PROFILE_BALANCED;
+@@ -77,8 +77,8 @@ static ssize_t platform_profile_show(struct device *dev,
+ 	return sysfs_emit(buf, "%s\n", profile_names[profile]);
+ }
+ 
+-static ssize_t platform_profile_store(struct device *dev,
+-			    struct device_attribute *attr,
++static ssize_t platform_profile_store(struct kobject *kobj,
++			    struct kobj_attribute *attr,
+ 			    const char *buf, size_t count)
+ {
+ 	int err, i;
+@@ -115,12 +115,12 @@ static ssize_t platform_profile_store(struct device *dev,
+ 	return count;
+ }
+ 
+-static DEVICE_ATTR_RO(platform_profile_choices);
+-static DEVICE_ATTR_RW(platform_profile);
++static struct kobj_attribute attr_platform_profile_choices = __ATTR_RO(platform_profile_choices);
++static struct kobj_attribute attr_platform_profile = __ATTR_RW(platform_profile);
+ 
+ static struct attribute *platform_profile_attrs[] = {
+-	&dev_attr_platform_profile_choices.attr,
+-	&dev_attr_platform_profile.attr,
++	&attr_platform_profile_choices.attr,
++	&attr_platform_profile.attr,
+ 	NULL
+ };
+ 
+
+---
+base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
+change-id: 20240819-acpi-platform_profile-fix-cfi-violation-de278753bd5f
+
+Best regards,
+-- 
+Nathan Chancellor <nathan@kernel.org>
+
 
