@@ -1,127 +1,111 @@
-Return-Path: <linux-kernel+bounces-292097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EEF1956B08
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:39:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 884F5956B16
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BA3B28274E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:39:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22D0BB21E3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C0B16BE22;
-	Mon, 19 Aug 2024 12:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2935F16BE05;
+	Mon, 19 Aug 2024 12:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tf5vBtaV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="nJW55vb7"
+Received: from smtpdh19-su.aruba.it (smtpdh19-su.aruba.it [62.149.155.160])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C7C16B397;
-	Mon, 19 Aug 2024 12:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76391D696
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 12:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.155.160
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724071181; cv=none; b=TvY4wJ14FzO+VA2GVLQH/KKDy6plqeW9U2KRSAsqVNSRYtqJurVoDvrMVUAdKZDGxOzh8UsUY88K3a8e/s/X1xOKIlu4aOTUec7kJOWlIOdOMqRzqkeMP0m6EA96qZYpq55oncGdhLd2W4QcdDBf+LgCRMdpkx5LJeBD+5nDlmY=
+	t=1724071393; cv=none; b=pa+60DWETX4xtWTIeLhPRWaP1SDkT8fHJuaF4lQpuRG3byIwN+psGL79Br0TUc1g5Hj3wDQkTyCFo0W3TsSiH4RDrVbpNAq1vR2yrH2IZpBzWtqbALLGZnZ4jdCFRP9HVXFTkSIfxphLjbZJ+zlUOLzP5PdtW5Regfy5cVsExAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724071181; c=relaxed/simple;
-	bh=HrTwzLj7XSeTw8tryKWAcTYmPm+9tklQ6X4mSbHuZms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TWK9zUTwb5iw8qjZ5fOWMSqRO0dDgZ+3UxVlL2ZWJd99za+Lqot68ykZlGoeyv6/twLvaymPqFF0vN3xEQa9pLqevPYFz8A7xevFd45PFdhHhHMAAAj4FYZhZmXEL5H52p+pUWsPy7fhagyjs10MECDmJE4LoKNRkdcH3G+9ZeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tf5vBtaV; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724071179; x=1755607179;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HrTwzLj7XSeTw8tryKWAcTYmPm+9tklQ6X4mSbHuZms=;
-  b=Tf5vBtaV1ZZgixYqHt7pp3U5F8hN+jWO9p4zrsGpA31jT84848/jPbOB
-   qbB91Un2Tw33edFfBIsEuVN2wc6RA0mnNBDeDJOVE6DnAnNOKsBQ7zRVQ
-   A60Z0a0xBUuV0I+4TN5+ixDsEfnBoz9tmokwJJXMFSR7ASVtIzljJi3lt
-   ETkyh4TvRqWPm6SsgE1cC+F0qyoN/3vC20VGuumgMWkAWpppV/6OaGm0d
-   m0/QZE9YS2/O4jEtd8h01Q82jAHfIgS0NQYFoYLKN4RIzpvBL3zoe6N8E
-   YgQoLg0WQSsgBKEr2MV+qrOm3ONzU4RzI3/q8KRK3bYgRrs2Kjw0DpOQl
-   w==;
-X-CSE-ConnectionGUID: XMNdGA50RUqP5mpP6tCpxQ==
-X-CSE-MsgGUID: fSYg2WLkQVG5iSC40gvYPg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="22473825"
-X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="22473825"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 05:39:38 -0700
-X-CSE-ConnectionGUID: HEKcbfg2SjuEnCUqRPyVFw==
-X-CSE-MsgGUID: gbH/QOgkRCevGz8xw6aE/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
-   d="scan'208";a="60340619"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by fmviesa008.fm.intel.com with SMTP; 19 Aug 2024 05:39:35 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 19 Aug 2024 15:39:34 +0300
-Date: Mon, 19 Aug 2024 15:39:34 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Caleb Connolly <caleb.connolly@linaro.org>,
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: fsa4480: Relax CHIP_ID check
-Message-ID: <ZsM9BkcaxV3qdWNs@kuha.fi.intel.com>
-References: <20240818-fsa4480-chipid-fix-v1-1-17c239435cf7@fairphone.com>
+	s=arc-20240116; t=1724071393; c=relaxed/simple;
+	bh=fCwrGowti2Y9FbC/WSwpnvpRmMD7BY8uWq1ug4s5oc8=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=k8u9vGgJbiJk+mULH5pWur6Djk5G6VOqymnGMK/s4/wQYETzIFXrvejg3TEqyXvc3a1ETRvup7mle+8rzEZUm+bjtp0LeMCbJKK1/7XyxBgzi40NTwCIcX/J0kWlsXnEuX0z+NiXE4P9+RE41Q1cBUWt3R0OYH6pVgO3S0Ds3UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xhero.org; spf=pass smtp.mailfrom=xhero.org; dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b=nJW55vb7; arc=none smtp.client-ip=62.149.155.160
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xhero.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xhero.org
+Received: from smtpclient.apple ([84.74.245.127])
+	by Aruba Outgoing Smtp  with ESMTPSA
+	id g1g0s7h89GPpWg1g0sdU1V; Mon, 19 Aug 2024 14:40:02 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
+	t=1724071202; bh=fCwrGowti2Y9FbC/WSwpnvpRmMD7BY8uWq1ug4s5oc8=;
+	h=Content-Type:Mime-Version:Subject:From:Date:To;
+	b=nJW55vb7YjZ9SvT5UohbI0ldLpGL7iTCUUl2BFPCDHyHdhx67JckO7U+YIjO9qiqi
+	 1/n4hQ2Io27dp5IktOT6100XMkmiMUSaIpupCH8GgLv5qwu62UNZLJjsmuINMdElg9
+	 QlyRxP02OelucC1HgynnPQPKdym6EQyFQyGcLF8jNueoJsGoKiv8DtsEKI/GFr2sYT
+	 t/QB9CO2RYTQPdABXVPSccdmcKt3GBbHfXbgMrzchnV5vPzlUQr+3KXyjvU2es7l9n
+	 /Vf+HuZPPocMqxz5i8HkkkmT4E6uqJ7SJSgUU7Pza4JxF0WT4TGPZqKdva5Um7EFVi
+	 G8sXyQ/2AWYww==
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240818-fsa4480-chipid-fix-v1-1-17c239435cf7@fairphone.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH net-next 2/2] appletalk: tashtalk: Add LocalTalk line
+ discipline driver for AppleTalk using a TashTalk adapter
+From: Rodolfo Zitellini <rwz@xhero.org>
+In-Reply-To: <f1c86ed3-9306-459d-acb5-97730bfeb265@app.fastmail.com>
+Date: Mon, 19 Aug 2024 14:39:49 +0200
+Cc: "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>,
+ Netdev <netdev@vger.kernel.org>,
+ linux-doc@vger.kernel.org,
+ linux-serial@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Doug Brown <doug@schmorgal.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <66CC3DF2-3877-4E59-924A-FA0B14AD4F46@xhero.org>
+References: <20240817093316.9239-1-rwz@xhero.org>
+ <f1c86ed3-9306-459d-acb5-97730bfeb265@app.fastmail.com>
+To: Arnd Bergmann <arnd@arndb.de>
+X-Mailer: Apple Mail (2.3774.600.62)
+X-CMAE-Envelope: MS4xfH4AXYnKIh2BVBscPttom5cXyZiRAjSs4ymV0/+jjynM3I2IRE/1MGshpfSSdbFowrwVfeP4DN6YlOMhpxI+Qi0PL2nobjWLqbHD+k5XaEaUJIN5Hkv/
+ r+wriLFaK+M+lRHfpnFyvnmbJwYBKhq+tJ2ZisE16PCdtNdQIBKiE4ACgeUglF1xWI+KABKWZ5EtKnL3Sp/gPyhhu3q1nurJGLf5kyfIm2pCHsOYzWXwJvgI
+ mxPfBcCbVQ3ognRSsA/+dIY+PG/+lhqKbdk7wDpDkBNg4cwo+/H9/Bl2mj2d1Hz3gplnytcLLw7VuUn7QeMUmi0TSQvC8pGNs2bCTWBiZdyjMvXTXRscTKBn
+ HnncabPcsQHXoxw1a9rEr1YZ0nNDhO8fPU6i+WQd1YNS2PbK3N4t2TR4r3YeB9WLDN+FNquZugPlhCHpr05JPysJOFZb7ZCXRD9BbwyIKIADYJBdz9qOy6BT
+ ryPhz6s76O7rUGfiB2DwVZstHElf/BxjxDhdt85QoNMkVV8HquANl9PBL3Rfkv5VOn0+4fNluLdTdgbUPGglUaOOvBDKIlAL6x96GA==
 
-On Sun, Aug 18, 2024 at 10:21:01PM +0200, Luca Weiss wrote:
-> Some FSA4480-compatible chips like the OCP96011 used on Fairphone 5
-> return 0x00 from the CHIP_ID register. Handle that gracefully and only
-> fail probe when the I2C read has failed.
-> 
-> With this the dev_dbg will print 0 but otherwise continue working.
-> 
->   [    0.251581] fsa4480 1-0042: Found FSA4480 v0.0 (Vendor ID = 0)
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: e885f5f1f2b4 ("usb: typec: fsa4480: Check if the chip is really there")
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> On August 19, 2024, at 11:44 AM, Arnd Bergmann <arnd@arndb.de =
+<mailto:arnd@arndb.de>> wrote:
+> Nice to see you got this into a working state! I vaguely
+> remember discussing this in the past, and suggesting you
+> try a user space solution,
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Hi Arnd, Simon and Jiri,
+First and foremost, thank you so much for taking the time to review my =
+code
+and for providing your comments.
+I will do my best to address the issues and improve the code for the
+next submission.
 
-> ---
->  drivers/usb/typec/mux/fsa4480.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/typec/mux/fsa4480.c b/drivers/usb/typec/mux/fsa4480.c
-> index cd235339834b..f71dba8bf07c 100644
-> --- a/drivers/usb/typec/mux/fsa4480.c
-> +++ b/drivers/usb/typec/mux/fsa4480.c
-> @@ -274,7 +274,7 @@ static int fsa4480_probe(struct i2c_client *client)
->  		return dev_err_probe(dev, PTR_ERR(fsa->regmap), "failed to initialize regmap\n");
->  
->  	ret = regmap_read(fsa->regmap, FSA4480_DEVICE_ID, &val);
-> -	if (ret || !val)
-> +	if (ret)
->  		return dev_err_probe(dev, -ENODEV, "FSA4480 not found\n");
->  
->  	dev_dbg(dev, "Found FSA4480 v%lu.%lu (Vendor ID = %lu)\n",
-> 
-> ---
-> base-commit: ccdbf91fdf5a71881ef32b41797382c4edd6f670
-> change-id: 20240818-fsa4480-chipid-fix-2c7cf5810135
-> 
-> Best regards,
-> -- 
-> Luca Weiss <luca.weiss@fairphone.com>
+I will also add a longer description on why I went this route, it is =
+mostly
+due to compatibility with existing distributions of netatalk 2, which =
+can
+work without modification.
 
--- 
-heikki
+> As we discussed in the past, I think this really should
+> not use ndo_do_ioctl(), which instead should just disappear.
+
+I will fix this in the next revision, I was not sure if I should touch =
+the
+appletalk code for my first submission, but I can add a third patch that
+takes care of this.
+
+Kind Regards,
+Rodolfo=
 
