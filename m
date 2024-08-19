@@ -1,152 +1,168 @@
-Return-Path: <linux-kernel+bounces-291674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC108956565
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:18:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1627B95656B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:20:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3389BB21A25
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:18:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F57F28316C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7473E15AADA;
-	Mon, 19 Aug 2024 08:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6599915B104;
+	Mon, 19 Aug 2024 08:20:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o0aUTpV0"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="M94vokth"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10EC154C0C
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52A515AADA;
+	Mon, 19 Aug 2024 08:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724055524; cv=none; b=mQoGOWg2UMSxU22IRaMYwx5EQmAf6Gpr4KaAK9T53miGHizhYPuxdwD3pwCSc6oQ52tVSPPDAYfPvK1w5XitnS93VOucIxY+/RclMdPxw9c8plBW2RUwN0vKeOb+1xmVqkMoPgy1hUUgFMhluCs1JjZ6KJytlfS7sit+L/zjkdg=
+	t=1724055625; cv=none; b=AKIjZ86qmgyqH79LFK/gUUGOfy3G8mc6KZI1A9ShB5CS3gFlQnphHKCXoBA8PHNncwIAtA7OQ2EKGYkgSzBnUH0PXslAvwosc2m+oY+Mzyqv4hzrLT8k3/w2l7ksnwUfCSQF1YpVthF+OT9x3sAHOQJ3gd0PtQDl4iSi6/xB7X0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724055524; c=relaxed/simple;
-	bh=6KThASgOPSP5/5shA5NtMrTyfMzOw5FtxoFrLmznwMs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QeEgP8cH301TiHQ2IH+rsj5lQZUKf5xXxLk8unmmNSn/8mbSVwNfeVwEuNzrbEwYE9QN9FYQbQl4CvU6dKlLPdrGLmsS7njkPQ031skMI9fF0A4/v0G3cbBvJ8qUMah30a7ROhLg2v502jKDUvArLimBbks/1HNkCOEKWGpyH30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o0aUTpV0; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-428085a3ad1so35311305e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:18:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724055521; x=1724660321; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5vefPSrP1zHUD7xG6qFqJR+hO86OiYjqBlL9pRZIjik=;
-        b=o0aUTpV0zzUuRaleCnzmKzygo1npEcilHNguzIyPh/1zlRd8j4N2OGwvw6VsOjPzmW
-         z8ChNdv9CdlpIaTVVXyCh/X+zkFrRYVaXgk+5zkYkyotWTnToksQcdnWjoiykddP7iqO
-         z1YngLF2xEWEz+2UnX55hBUjKxbNkIxG88EuHl/TPgs7/4opGbukpIpGpIuM+rl9FAwx
-         ljiwEEisDlEMuZttq7pJEsQgXvZxAD+C9CwmQyEglcQaQd1QZTYudNsUmrt3OlEghinB
-         734qTFWiMJIdQjZwairpWlF97qPKyUY3g9yKA/y3t3ygB+pxn1tqwSqJNUN3a7VriYKN
-         EA1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724055521; x=1724660321;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5vefPSrP1zHUD7xG6qFqJR+hO86OiYjqBlL9pRZIjik=;
-        b=mxUnqRaiIQX48Vh2737ou58etWihsKn8ZUQAeGAGQpjTlmySciRBIQxOwLMLkkiGC+
-         OITsIjGehqmDUYGQWgJUX5kCYZnAKFk+hp/zmOkXoBEF18AdNycTQwdBASmj6xKxe2BO
-         jV87ERRIDq5qlmIuAn0L2jdd2BcX4B1W12UYXrbqr7x+0hPUq3te2nJvsA10AYBTwQfu
-         x4UVUTWKS0x4Rtcs2HUH859FEc7rkliQSbwkcm1YLq88YOw5ZioBUB8ojZ5FQA9SOzQE
-         rdoLIt7QJGprA89XkRdkS42zrgr2vXx5Tb6AyvmV60hFcLPAsnCUfI73Rbx8PqaItX/o
-         zMAw==
-X-Forwarded-Encrypted: i=1; AJvYcCV96Mv47Sy1qylOKglN4FuhbMPHwE1E0qX5VpOSDG9pxMeF7Xmc/yEap61x1FizeYLZTJS11cqNZVwJH3t9tlfWq67q3d5daxYlDVxf
-X-Gm-Message-State: AOJu0YzgRfWKiybA1Ygj3zg/xTfxL/YlryQW29FUlWJd/0fDmo174U5T
-	8IeINIK4I0i4aI5FRzTqNHB5B7ehpPxp5N90A5YC2r3Gg8pFsT0vhYcmNg4UsHJ7VB99vk8MSZs
-	f
-X-Google-Smtp-Source: AGHT+IFEji2/+WW2anEgUuhK6Qr8mREdKovvPpo1aJZD2a3UhGCVqnhB5E0FpTt50eT46g5kGnggtQ==
-X-Received: by 2002:a05:6000:1b01:b0:371:8f19:bff0 with SMTP id ffacd0b85a97d-3719445235amr5260377f8f.20.1724055520608;
-        Mon, 19 Aug 2024 01:18:40 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3718983a311sm9838156f8f.23.2024.08.19.01.18.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 01:18:40 -0700 (PDT)
-Message-ID: <51e3c38c-42a3-49b6-ab19-50f4f37336aa@linaro.org>
-Date: Mon, 19 Aug 2024 10:18:39 +0200
+	s=arc-20240116; t=1724055625; c=relaxed/simple;
+	bh=V2B98PLomG8SbWfeta+9PGl9TIi6URtm95xm7RDo6co=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hAOechuaijz66vOGiPNGGynTtG3ROSFzf96XtI/YaaVLFSAK/BDGAwPL3rvWDyRjIX/GdxV4ng+exq4gAI5REXX1Z/9M+prRgx0dBso8wIRP09jQZBifC2hkrBF8ILGgBTG4nRt450/GvnUfQozto2thnvBEQdOGquxvuBwlE0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=M94vokth; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B3C3C5A5;
+	Mon, 19 Aug 2024 10:19:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1724055559;
+	bh=V2B98PLomG8SbWfeta+9PGl9TIi6URtm95xm7RDo6co=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M94vokthESzz+5KUapmekTJ66zK+DMMhzCSK1WvUOkZh2pBUNQ48iEH1yUbGdtGf/
+	 o3meiyz8637XjnHFlRF2smxUxWa1O72jONS/4y8Q/i5fj2fAcxkquwB3fcCs6DPvjv
+	 xfMhNN3Mh2YLPmRIEA/ugnXocKNlkkbHXSIH5Cn8=
+Date: Mon, 19 Aug 2024 11:19:53 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Jack Zhu <jack.zhu@starfivetech.com>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>
+Subject: Re: =?utf-8?B?5Zue5aSNOiDlm57lpI06IOWbng==?=
+ =?utf-8?B?5aSNOiDlm57lpI06IFtQQVRDSA==?= =?utf-8?Q?=5D?= staging: media:
+ starfive: Add multiple resolution support
+Message-ID: <20240819081953.GM29465@pendragon.ideasonboard.com>
+References: <20240419081955.5140-1-changhuang.liang@starfivetech.com>
+ <20240809095738.GG5833@pendragon.ideasonboard.com>
+ <ZQ0PR01MB1302CAAE59FA0358E7FE6BD0F2BA2@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+ <20240809132624.GB1435@pendragon.ideasonboard.com>
+ <ZQ0PR01MB13029DA731711FAA57BD13A4F2852@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+ <20240812103357.GB18729@pendragon.ideasonboard.com>
+ <ZQ0PR01MB130236FA891A04350CBC4245F2852@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+ <20240819001327.GK29465@pendragon.ideasonboard.com>
+ <ZQ0PR01MB1302CE9D6EC726D3FBE8D6EDF28C2@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clocksource/timer-of: Add missing casts to percpu address
- space
-To: Uros Bizjak <ubizjak@gmail.com>, linux-kernel@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>
-References: <20240819061351.14782-1-ubizjak@gmail.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20240819061351.14782-1-ubizjak@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZQ0PR01MB1302CE9D6EC726D3FBE8D6EDF28C2@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
 
-On 19/08/2024 08:13, Uros Bizjak wrote:
-> Add missing casts to percpu address space to fix
+On Mon, Aug 19, 2024 at 01:37:30AM +0000, Changhuang Liang wrote:
+> > On Mon, Aug 12, 2024 at 12:13:03PM +0000, Changhuang Liang wrote:
+> > > > On Mon, Aug 12, 2024 at 09:43:47AM +0000, Changhuang Liang wrote:
+> > > > > > On Fri, Aug 09, 2024 at 12:12:01PM +0000, Changhuang Liang wrote:
+> > > > > > > > On Fri, Apr 19, 2024 at 01:19:55AM -0700, Changhuang Liang wrote:
+> > > > > > > > > Add multiple resolution support for video "capture_raw" device.
+> > > > > > > > > Otherwise it will capture the wrong image data if the width is not 1920.
+> > > > > > > > >
+> > > > > > > > > Fixes: e080f339c80a ("media: staging: media: starfive: camss: Add capture driver")
+> > > > > > > > >
+> > > > > > > > > Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+> > > > > > > > > ---
+> > > > > > > > >  drivers/staging/media/starfive/camss/stf-capture.c | 5 ++++-
+> > > > > > > > >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > > > > > > > >
+> > > > > > > > > diff --git
+> > > > > > > > > a/drivers/staging/media/starfive/camss/stf-capture.c
+> > > > > > > > > b/drivers/staging/media/starfive/camss/stf-capture.c
+> > > > > > > > > index ec5169e7b391..9e853ff2596a 100644
+> > > > > > > > > --- a/drivers/staging/media/starfive/camss/stf-capture.c
+> > > > > > > > > +++ b/drivers/staging/media/starfive/camss/stf-capture.c
+> > > > > > > > > @@ -177,9 +177,12 @@ static void stf_channel_set(struct stfcamss_video *video)  {
+> > > > > > > > >  	struct stf_capture *cap = to_stf_capture(video);
+> > > > > > > > >  	struct stfcamss *stfcamss = cap->video.stfcamss;
+> > > > > > > > > +	struct v4l2_pix_format *pix;
+> > > > > > > >
+> > > > > > > > This variable can be const as you don't modify the format.
+> > > > > > > >
+> > > > > > > > >  	u32 val;
+> > > > > > > > >
+> > > > > > > > >  	if (cap->type == STF_CAPTURE_RAW) {
+> > > > > > > > > +		pix = &video->active_fmt.fmt.pix;
+> > > > > > > >
+> > > > > > > > And it can be declared and initialized here:
+> > > > > > > >
+> > > > > > > > 		const struct v4l2_pix_format *pix = &video->active_fmt.fmt.pix;
+> > > > > > > >
+> > > > > > > > > +
+> > > > > > > > >  		val = stf_syscon_reg_read(stfcamss, VIN_CHANNEL_SEL_EN);
+> > > > > > > > >  		val &= ~U0_VIN_CHANNEL_SEL_MASK;
+> > > > > > > > >  		val |= CHANNEL(0);
+> > > > > > > > > @@ -193,7 +196,7 @@ static void stf_channel_set(struct stfcamss_video *video)
+> > > > > > > > >  		val |= PIXEL_HEIGH_BIT_SEL(0);
+> > > > > > > > >
+> > > > > > > > >  		val &= ~U0_VIN_PIX_CNT_END_MASK;
+> > > > > > > > > -		val |= PIX_CNT_END(IMAGE_MAX_WIDTH / 4 - 1);
+> > > > > > > > > +		val |= PIX_CNT_END(pix->width / 4 - 1);
+> > > > > > > >
+> > > > > > > > Is there no need to consider the image height as well ? How
+> > > > > > > > does the driver prevent buffer overflows if the sensor
+> > > > > > > > sends more data than expected ?
+> > > > > > >
+> > > > > > > Our hardware will confirm a frame of data through vblank
+> > > > > > > signal, so there is no image height configuration.
+> > > > > >
+> > > > > > What happens if the system expects, for instance, a 1920x1080
+> > > > > > RAW8 image, and allocates a buffer of of 1920x1080 bytes, but
+> > > > > > the sensor outputs more lines ? Does the camera hardware in the
+> > > > > > SoC offer an option to prevent buffer overruns ?
+> > > > >
+> > > > > The hardware can confirm the image height by using the VSYNC signal.
+> > > > >
+> > > > > Image will transfer when VSYNC is high.
+> > > > >
+> > > > > VSYNC time = (width + h_blank) * height;
+> > > >
+> > > > What I'm trying to understand is what happens if the ISP is configured for
+> > > > 1080 lines, but the camera sensor sends more than 1080 lines (the
+> > > > VSYNC signal is active for more than 1080 lines). Where in the
+> > > > driver is the hardware configure with the 1080 lines limit to avoid buffer overflows ?
+> > >
+> > > If is "capture_raw" video device, no image height can be configured.
+> > 
+> > In that case what happens if the camera sensor sends more lines than
+> > expected ? Will the raw video device write past the end of the buffer ?
 > 
-> timer-of.c:29:46: warning: incorrect type in argument 2 (different address spaces)
-> timer-of.c:29:46:    expected void [noderef] __percpu *
-> timer-of.c:29:46:    got struct clock_event_device *clkevt
-> timer-of.c:74:51: warning: incorrect type in argument 4 (different address spaces)
-> timer-of.c:74:51:    expected void [noderef] __percpu *percpu_dev_id
-> timer-of.c:74:51:    got struct clock_event_device *clkevt
-> 
-> sparse warnings.
-> 
-> Found by GCC's named address space checks.
-> 
-> There were no changes in the resulting object file.
+> Yes, the buffer will overflows, so we will use the software restrictions.
+> Implement .link_validate hooks for the CSI2RX subdev and "capture_raw" video device.
 
-The warning may go away but the problem sparse is spotting is still there.
+Is there an IOMMU in the system that could help preventing buffer
+overflows to reach system memory ?
 
-IMO sparse is totally right and the code related to the percpu is 
-broken. It seems the .percpu flag is never used in the drivers and we 
-should be able to just remove the percpu related code in timer-of.c
-
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> ---
->   drivers/clocksource/timer-of.c | 7 ++++---
->   1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clocksource/timer-of.c b/drivers/clocksource/timer-of.c
-> index c3f54d9912be..7e0375a804ff 100644
-> --- a/drivers/clocksource/timer-of.c
-> +++ b/drivers/clocksource/timer-of.c
-> @@ -26,7 +26,8 @@ static __init void timer_of_irq_exit(struct of_timer_irq *of_irq)
->   	struct clock_event_device *clkevt = &to->clkevt;
->   
->   	if (of_irq->percpu)
-> -		free_percpu_irq(of_irq->irq, clkevt);
-> +		free_percpu_irq(of_irq->irq,
-> +				(void __percpu *)(unsigned long)clkevt);
->   	else
->   		free_irq(of_irq->irq, clkevt);
->   }
-> @@ -70,8 +71,8 @@ static __init int timer_of_irq_init(struct device_node *np,
->   	}
->   
->   	ret = of_irq->percpu ?
-> -		request_percpu_irq(of_irq->irq, of_irq->handler,
-> -				   np->full_name, clkevt) :
-> +		request_percpu_irq(of_irq->irq, of_irq->handler, np->full_name,
-> +				   (void __percpu *)(unsigned long)clkevt) :
->   		request_irq(of_irq->irq, of_irq->handler,
->   			    of_irq->flags ? of_irq->flags : IRQF_TIMER,
->   			    np->full_name, clkevt);
-
+> > If so, is there a way to guard against that ?
+> > 
+> > > If is "capture_yuv" video device, it will be set by stf_isp_config_crop.
+> > 
+> > Thank you, that's the information I was looking for.
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Regards,
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Laurent Pinchart
 
