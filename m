@@ -1,113 +1,247 @@
-Return-Path: <linux-kernel+bounces-292853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B1AB957546
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:07:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82499957542
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2EA91F22955
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:07:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFC36B2469E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BFC018E0E;
-	Mon, 19 Aug 2024 20:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83301DD39C;
+	Mon, 19 Aug 2024 20:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P0e1jQRX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="a0e9wlXC"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE3D17837E
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 20:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724098025; cv=none; b=fxu+KD6xfz95KJVbRI8nT1I6dlLzFFQnZKN06NUx7b7thV0QXyFMSG9QV0K/9+INuwEnj/0SIP8YBDQSZ4XwpuyS3OqF0qJUzTto3XU8Z4SCXwYVOPbbHXS+nPYi5rZeb6DjLQp2S+UXm7yocSdrzgDMP04dg15Nvyj4Q3lotl4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724098025; c=relaxed/simple;
-	bh=0ev9mPI2krLYItOT7qf8DVewhtCJwdLKCP8duyfGv1s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZHQUiadEjHyJvo5UZ0rKX20Ib3Z6R/1AQ2DFUlXexypuicP4I6z1d8T7HYhz+H5CnY1BrJtHt489k0nNCrD0RpnO3ADdgsrerSeILWp5loRS72B8Fn9dDCpg4aEpioOQg5O+dMQLFg7VIgT/Mv+BqnxhmzimI4JqAHgB4RIH9m4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P0e1jQRX; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724098023; x=1755634023;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=0ev9mPI2krLYItOT7qf8DVewhtCJwdLKCP8duyfGv1s=;
-  b=P0e1jQRXYs7jLi/w9AHGPxtsln6GHM6Zj2ZoIhKw5m09ApOMiRwx0Wsr
-   QZlFEFDSY5CuJOlJ55NheM8pf2qijcVbhpEIiibtvpMs7tfTOwRZcFOTt
-   6Rhx3HnwCkcv+BN+BWYkxycf6U7NkLC1WEfzWNH+Uow7EBYoW+QEuW43d
-   R9HfP1d55W3JVhn5BvImH8IvILwYQSP++ryQ7aELMIQbwj9SBOWRDI0eD
-   Khq+YdvdT727UiU01w+IUzA/UT8nUWmdgB0HMN4VAdS53iL7iMLjw8R9j
-   lFFs861eeJ+COVmJV4t3QHVOqCEE6TjxdHDmIk7eE2T1gBVVDnfTRhDat
-   Q==;
-X-CSE-ConnectionGUID: 8JSZ6KDiQsiYA9Q6cYG9WA==
-X-CSE-MsgGUID: +1zDyaSeRCysfkgUrplH/g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="32990208"
-X-IronPort-AV: E=Sophos;i="6.10,160,1719903600"; 
-   d="scan'208";a="32990208"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 13:07:03 -0700
-X-CSE-ConnectionGUID: sUX7hVRnS56HqsVc7SIpNg==
-X-CSE-MsgGUID: /8pBWARzSm6a/jMfHBFoIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,160,1719903600"; 
-   d="scan'208";a="91254200"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 19 Aug 2024 13:07:01 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sg8eZ-0009OQ-0w;
-	Mon, 19 Aug 2024 20:06:59 +0000
-Date: Tue, 20 Aug 2024 04:06:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Felix Kaechele <felix@kaechele.ca>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: drivers/input/touchscreen/himax_hx83112b.c:125:42-48: ERROR:
- application of sizeof to pointer
-Message-ID: <202408200301.Ujpj7Vov-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CFF18E0E;
+	Mon, 19 Aug 2024 20:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724097954; cv=pass; b=dxI+/YmzoZ/JEqmCqHZAyxKZq/O51H5e733OB6wBFDklXw+wUza6AXQdl7Ib7iYVeyZerxhPFvlUVnjuWb9D1A779JeYUDzKQ/9NRS/ijrwliSQvf1v8JfBXXhUgbnn7zuAUniGc/tDe3NzVlDZeOJJQnXXT2aV4eTMCv1S6D8Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724097954; c=relaxed/simple;
+	bh=MOMyK03eJyKQOGb8+b6fAg9EwcsINxYUyot/w6sRaY0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DvaryNk+7Mu9Z1Mk6fiuVZuC0og0OcdbLUhbr4wzRgUawfcl5hg7UkCyXcoVt52vnm2gDr6PVS2ZDBDmQYLgzJCkq4LxgDJYPDQ1+hblSSZ7EKwRc+K4QJqua0nPlTKKF6to+PML8++EutVQSDrShm1ch3jrpWuBeH3Z1vt8GgA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=a0e9wlXC; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: sebastian.reichel@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1724097881; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=mbUnXMxQcnVKk11zc5ntwAcnrBBrfHYc79EHMLCWKn5hDAToFvfc1vAp5I5LFLVjWZs2zmZPiSirc7dLrhBI4q5l3AtUKYh7X+HG6aExvhm7g9A9hvCGVaF7El7Jz3FsX13HGkUqFZtihZdJcmQkOAGMks1+LHxIihLvEp6swpw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724097881; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=iAA8ouM6M/6kyeb+SrOHPtwZsGUYRPGPpNqj8UiAUpY=; 
+	b=hjLtvJj3FSGEcuvYGirBRak9OxSZhSZlPIHBMWr0SkonXTpJDgubKmg8jrLlvb8JRD8nrfa8DHQJI0Np3p9H7NeF0KEzPhrteVhuBBt08xFIMqqXukhBw91DCXeE0ZPfvIyZO8xMcaAbHjjubPtUCwpCpwNLmUeakzt8B2B1nRc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724097881;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=iAA8ouM6M/6kyeb+SrOHPtwZsGUYRPGPpNqj8UiAUpY=;
+	b=a0e9wlXCB7HKm0DAbBwhKl41bOz9h4d/rV3kzgUZKYrlZ8h7gQImGySlTwv571zT
+	8iNGG6SiTKkMvinFqdhrbHNxMVjc8OVup8C2rybL+BooMVy1wPV6zvLLl2H7GIzOoFA
+	oWALsvdVit+8vfOcXWLluYpzi0Pk50AFsez/ojE0=
+Received: by mx.zohomail.com with SMTPS id 1724097879493204.13829241998803;
+	Mon, 19 Aug 2024 13:04:39 -0700 (PDT)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org, Johan Jonker <jbx6244@yandex.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Andi Shyti <andi.shyti@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Chris Morgan <macromorgan@hotmail.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
+ Muhammed Efe Cetin <efectn@protonmail.com>, Andy Yan <andyshrk@163.com>,
+ Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Shresth Prasad <shresthprasad7@gmail.com>, Ondrej Jirman <megi@xff.cz>,
+ Weizhao Ouyang <weizhao.ouyang@arm.com>, Alexey Charkov <alchark@gmail.com>,
+ Jimmy Hon <honyuenkwun@gmail.com>, Finley Xiao <finley.xiao@rock-chips.com>,
+ Yifeng Zhao <yifeng.zhao@rock-chips.com>,
+ Elaine Zhang <zhangqing@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-i2c@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-serial@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCH 09/10] arm64: dts: rockchip: Add rk3576 SoC base DT
+Date: Mon, 19 Aug 2024 16:06:12 -0400
+Message-ID: <1944590.atdPhlSkOF@trenzalore>
+In-Reply-To: <c5014fe3-130b-4ace-a66e-8773a9a4f1dc@yandex.com>
+References:
+ <20240802214612.434179-1-detlev.casanova@collabora.com>
+ <20240802214612.434179-10-detlev.casanova@collabora.com>
+ <c5014fe3-130b-4ace-a66e-8773a9a4f1dc@yandex.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+X-ZohoMailClient: External
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   6e4436539ae182dc86d57d13849862bcafaa4709
-commit: 0944829d491e0f342924154d2e58c6b2e61e3595 Input: himax_hx83112b - implement MCU register reading
-date:   6 weeks ago
-config: sparc64-randconfig-r051-20240819 (https://download.01.org/0day-ci/archive/20240820/202408200301.Ujpj7Vov-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 14.1.0
+Hi Johan,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408200301.Ujpj7Vov-lkp@intel.com/
+On Thursday, 15 August 2024 05:30:25 EDT Johan Jonker wrote:
+> Some comments below. Whenever useful.
+> 
+> On 8/2/24 23:45, Detlev Casanova wrote:
+> > This device tree contains all devices necessary for booting from network
+> > or SD Card.
+> > 
+> > It supports CPU, CRU, PM domains, dma, interrupts, timers, UART and
+> > SDHCI (everything necessary to boot Linux on this system on chip) as
+> > well as Ethernet, I2C, SPI and OTP.
+> > 
+> > Also add the necessary DT bindings for the SoC.
+> > 
+> > Signed-off-by: Liang Chen <cl@rock-chips.com>
+> > Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+> > Signed-off-by: Yifeng Zhao <yifeng.zhao@rock-chips.com>
+> > Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> > [rebase, squash and reword commit message]
+> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> > ---
+> 
+> [..]
+> 
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
+> > b/arch/arm64/boot/dts/rockchip/rk3576.dtsi new file mode 100644
+> > index 0000000000000..00c4d2a153ced
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
+> [..]
+> 
+> For uart0..uart11:
+> > +
+> > +	uart1: serial@27310000 {
+> > +		compatible = "rockchip,rk3576-uart", "snps,dw-apb-
+uart";
+> > +		reg = <0x0 0x27310000 0x0 0x100>;
+> > 
+> > +		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
+> 
+> "interrupts" are sort just like other properties. A mix of sort styles
+> exists, so check all nodes.
 
-cocci warnings: (new ones prefixed by >>)
->> drivers/input/touchscreen/himax_hx83112b.c:125:42-48: ERROR: application of sizeof to pointer
+Ok, so it should be sorted alphabetically with the following exceptions:
+- 'compatible' and 'reg.*' on top
+- "#.*" at the end, sorted
+- "status" last.
 
-vim +125 drivers/input/touchscreen/himax_hx83112b.c
+Is that right ?
 
-   120	
-   121	static int himax_read_mcu(struct himax_ts_data *ts, u32 address, u32 *dst)
-   122	{
-   123		int error;
-   124	
- > 125		error = himax_bus_read(ts, address, dst, sizeof(dst));
-   126		if (error)
-   127			return error;
-   128	
-   129		return 0;
-   130	}
-   131	
+> > +		clocks = <&cru SCLK_UART1>, <&cru PCLK_UART1>;
+> > +		clock-names = "baudclk", "apb_pclk";
+> > 
+> > +		reg-shift = <2>;
+> > +		reg-io-width = <4>;
+> 
+> Move below "reg".
+> 
+> > +		dmas = <&dmac0 8>, <&dmac0 9>;
+> > +		pinctrl-names = "default";
+> > +		pinctrl-0 = <&uart1m0_xfer>;
+> > +		status = "disabled";
+> > +	};
+> > +
+> > +	pmu: power-management@27380000 {
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+[...]
+
+> > +				#address-cells = <1>;
+> > +				#size-cells = <0>;
+> > +				clocks = <&cru ACLK_VOP>,
+> > +					 <&cru HCLK_VOP>,
+> > +					 <&cru HCLK_VOP_ROOT>;
+> > +				pm_qos = <&qos_vop_m0>,
+> > +					 <&qos_vop_m1ro>;
+> > +
+> > +				power-domain@RK3576_PD_USB {
+> 
+> Since when is USB part of VOP?
+> Recheck?
+
+The TRM doesn't tell me anything, but If I don't put it as a child of VOP, it 
+just hangs when the kernel tries to shut it down.
+
+[...]
+
+> > +
+> > +	pinctrl: pinctrl {
+> > +		compatible = "rockchip,rk3576-pinctrl";
+> > +		rockchip,grf = <&ioc_grf>;
+> > +		rockchip,sys-grf = <&sys_grf>;
+> > +		#address-cells = <2>;
+> > +		#size-cells = <2>;
+> > +		ranges;
+> > +
+> > 
+> > +		gpio0: gpio@27320000 {
+> 
+> The use of gpio nodes as subnode of pinctrl is deprecated.
+> 
+> patternProperties:
+>   "gpio@[0-9a-f]+$":
+>     type: object
+> 
+>     $ref: /schemas/gpio/rockchip,gpio-bank.yaml#
+>     deprecated: true
+> 
+>     unevaluatedProperties: false
+
+I tried putting the gpio nodes out of the pinctrl node, they should work 
+because they already have a gpio-ranges field.
+But unfortunately, that seem to break the pinctrl driver which hangs at some 
+point. Maybe some adaptations are needed to support this, or am I missing 
+something ?
+
+> > +			compatible = "rockchip,gpio-bank";
+> 
+> When in use as separate node the compatible must be SoC related.
+> 
+> Question for the maintainers: Extra entry to rockchip,gpio-bank.yaml ??
+> 
+> > +			reg = <0x0 0x27320000 0x0 0x200>;
+> > +			interrupts = <GIC_SPI 153 
+IRQ_TYPE_LEVEL_HIGH>;
+> > +			clocks = <&cru PCLK_GPIO0>, <&cru 
+DBCLK_GPIO0>;
+> > +
+> > +			gpio-controller;
+> > +			#gpio-cells = <2>;
+> > +			gpio-ranges = <&pinctrl 0 0 32>;
+> > +			interrupt-controller;
+> > +			#interrupt-cells = <2>;
+> > +		};
+> > +
+> > +		gpio1: gpio@2ae10000 {
+> > +
+> > +		gpio2: gpio@2ae20000 {
+> > +
+> > +		gpio3: gpio@2ae30000 {
+> > +
+> > +		gpio4: gpio@2ae40000 {
+> > +	};
+> > +};
+> > +
+> > +#include "rk3576-pinctrl.dtsi"
+
+Regards,
+
+Detlev
+
+
+
 
