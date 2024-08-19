@@ -1,231 +1,192 @@
-Return-Path: <linux-kernel+bounces-292517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7361B957065
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:34:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69B4A95705D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:33:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9EBB1F22830
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:34:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EADF1C2166C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4BB176230;
-	Mon, 19 Aug 2024 16:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284F317622D;
+	Mon, 19 Aug 2024 16:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="mttiSLoa"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mQ+tIkjT"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3F6175D5D;
-	Mon, 19 Aug 2024 16:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE44345C1C
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724085223; cv=none; b=L/I4/SdjnMRh63Th7jLNkvhvoTStmLhz+L7w3gYL/UEAiOUS/jMMiwYGkBDY1o3QJUhG4fUJqvXTdXP+OikpGYjAE+vbWY27H0KVmnRydK+xQo4PPlFCiorik29leogVw4YHiraF2TLaEeavXAhGwljsM01LPUubXx1NoF+2dnQ=
+	t=1724085201; cv=none; b=lyF13sEyZRyiWRa+yx9JdCply7CHASN+i0JgyU8Ky3xb03jCplyloa3snaJukENIkjs5OyJpmAXtqi0nI+5cbweKGn+CySknuC7UismUAQqnSnPJdUg6IFF8JfxqxZDm1Scx5pqY3mx2FomXOp61K8NgEjHtHTcf9bV2NFJY4aE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724085223; c=relaxed/simple;
-	bh=5VFCrHPQhdvu70cp9nbqtAPwZQZMYLt8PYeKbw+mtag=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kL7DRPgRfT9QmI7yGXjCk/JMyFWO+Nc8hDnsKwCd3D/s3Oktcr3BBPE7FW8UD874aRjQ49M29nv8L1OXxkTIzk1FOFN/9OyhIctFbS9IZ/aC6rcabWCN1ygbXwpMNmzM+jRDE6BEcwKwLmqM1nybauLgKH7CpwxaD0WQ8+nYirc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=mttiSLoa; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 1c01ccf5d5ceffdb; Mon, 19 Aug 2024 18:33:39 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 1FD8D73B5D4;
-	Mon, 19 Aug 2024 18:33:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1724085219;
-	bh=5VFCrHPQhdvu70cp9nbqtAPwZQZMYLt8PYeKbw+mtag=;
-	h=From:Subject:Date;
-	b=mttiSLoa5mLQG89zv+NSsCvmxn5NXcPjQLQEGMqinX0345x9Tld04YdHj8szsaNEz
-	 sbORo2mp1SpGNgKGYGX8HDQFcq83HcV6c/rLxe9NyC9/DvxqfxSBGtoyEIvAdr9uLM
-	 jvbIF9uPA1dAuaAtFjGjMb+0JC8Ui9uxGiqK0/hlJab+/IYgyh+GuzH3OY51Z8aE9v
-	 gaR2rAAcmnXSegbvcRs7kUPfv1jky0Sb9cw2NS3Kpv8qIPxQi94t/XSn4w0giZbHRS
-	 b9N91HVnpW1z634/wiilCyOOaJVdsoMh6/Rzqhb8DIsy+YMgEJbAlgw4cDG5xA3L0y
-	 OptJbyWz4Mukw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
-Subject: [PATCH v3 14/14] thermal: core: Clean up trip bind/unbind functions
-Date: Mon, 19 Aug 2024 18:33:11 +0200
-Message-ID: <1831773.TLkxdtWsSY@rjwysocki.net>
-In-Reply-To: <2205737.irdbgypaU6@rjwysocki.net>
-References: <2205737.irdbgypaU6@rjwysocki.net>
+	s=arc-20240116; t=1724085201; c=relaxed/simple;
+	bh=5w/ixzaqd2fEJi7mnvChP6vlKzaed3No1gqLFeWVQUw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=HGQreHv3s56gx3I+/Enwn3qdjZCVK7hrXs5ZfNMSYIq6XuAABRqIqRxcarL2V4ZKNQnEK+a4nDwXJGel8QVs/2qZEECwgEN4xdnuI3SYd19ifiQLpjVUpl1+ytbwlEt90Vug/DdWkM4GULUmL50wLdvAJyAPWr4YkJ+ZmoZM3YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mQ+tIkjT; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2d3e42ef85eso3831963a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:33:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724085199; x=1724689999; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4p2SIjYuIlCaoRIolQv5TgyKbOPsqVSXeOcL6uydFc0=;
+        b=mQ+tIkjTtwGGfbr0G9zsuHBk1n3lByfH+WIZ05TG4Vqtrq4B/Hn2lUxlEnwG09+Qct
+         7wkR0K8C/AOotu4EIM3uABjHk/i7HqC3KoU/FuvxYX17hEGhZT/OS1VrlcsRgrDv+Vo0
+         DyNDthl2QDRlIHu0LLk/IswUGecYnZAF4FXXYjhkslEiWqe5/vwBPNOoA3AKkMDbAvPo
+         YixS2nsiShfC/FveD436Q0ua39C2oOOEnhJckCc3kCgOAQeD16z5rclscyWfvifJo/bR
+         hiKEyVKXPYAKsGCJfP6xD70Phnr2QKAFq+O5FJGVhvMD5SU5YAZmyedV2uF8xvp7cMow
+         hLeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724085199; x=1724689999;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4p2SIjYuIlCaoRIolQv5TgyKbOPsqVSXeOcL6uydFc0=;
+        b=clUc2Tm1+RSRKxK0BLMT6FhSFDgZEH2rqBeVXB1EnEjDfx3SVnaxgLtzAFkxLPTwWy
+         PQsqTIgPTtjVIA8e5luv4qYOjt4ln+QsPxaqX1CjaOCWI0dQJ1vBgJFjN1ZhI7nU5Vw8
+         HUN0AXKOf6iWcgx6X7e9YR3Pf2lPgnSXF3MmHRKN4K6oGbNvla+VOE+Z5jFqV82N4Ebj
+         SXZNL1hc60q9k3K11oukoQoi3B4eTVf5UDgEY8EL06ItDfMX++VSxW+Ha1w08vNVz5XF
+         snKx6kLCStxYnr2XM3ZoPsvJ0I+Jkx4dYKNStwfNCsIQpnJozijSCfou2a80PQFmFdT3
+         k00g==
+X-Forwarded-Encrypted: i=1; AJvYcCVBuYyHJFUy8Gtstci8CqjhAIR2PXLSwtD+USYf6BouoL9se+H0BROSK6RnloMVPt/fAagpXxH8h0gl2236OI6YfhE/rtk5smqPUGaU
+X-Gm-Message-State: AOJu0YwAnCPuptY4R2Qy6ERuzMWLy4AGK00Ha4y+4jQCXqwMfw+IE+5A
+	V4tCBJEeIqV2fzXE6ekWMQ6zZw2lZDF8gWgqzc8BVYpRkUbnQDMjK5psoslTtj4y7Bc0hd60KZv
+	QVg==
+X-Google-Smtp-Source: AGHT+IHXXUvDjnIGWgNHi6tPM6TODiIIkBZkAGdWWZ2nPO179CxiELhSLItCjUB3DxMPDqXY1QGYzaRxHYg=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90b:1043:b0:2cd:1e0d:a4c7 with SMTP id
+ 98e67ed59e1d1-2d3dfc1e9b8mr52362a91.1.1724085199152; Mon, 19 Aug 2024
+ 09:33:19 -0700 (PDT)
+Date: Mon, 19 Aug 2024 09:33:17 -0700
+In-Reply-To: <20240819093030.2864163-1-usama.anjum@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddugedguddtvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegoufhprghmkfhpucdlfedttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucfuphgrmhfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeehpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdp
- rhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtoheprhhuihdriihhrghnghesihhnthgvlhdrtghomh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
+Mime-Version: 1.0
+References: <20240819093030.2864163-1-usama.anjum@collabora.com>
+Message-ID: <ZsNzzajqBkmuu5Xm@google.com>
+Subject: Re: [PATCH v2] selftests: kvm: fix mkdir error when building for
+ unsupported arch
+From: Sean Christopherson <seanjc@google.com>
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, kernel@collabora.com, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
+	Anup Patel <anup@brainfault.org>
+Content-Type: text/plain; charset="us-ascii"
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
++KVM arch maintainers
 
-Make thermal_bind_cdev_to_trip() take a struct cooling_spec pointer
-to reduce the number of its arguments, change the return type of
-thermal_unbind_cdev_from_trip() to void and rearrange the code in
-thermal_zone_cdev_binding() to reduce the indentation level.
+On Mon, Aug 19, 2024, Muhammad Usama Anjum wrote:
+> The tests are built on per architecture basis. When unsupported
+> architecture is specified, it has no tests and TEST_GEN_PROGS is empty.
+> The lib.mk has support for not building anything for such case. But KVM
+> makefile doesn't handle such case correctly. It doesn't check if
+> TEST_GEN_PROGS is empty or not and try to create directory by mkdir.
+> Hence mkdir generates the error.
+> 
+> mkdir: missing operand
+> Try 'mkdir --help' for more information.
+> 
+> This can be easily fixed by checking if TEST_GEN_PROGS isn't empty
+> before calling mkdir.
+> 
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+> Changes since v1:
+> - Instead of ignoring error, check TEST_GEN_PROGS's validity first
+> ---
+>  tools/testing/selftests/kvm/Makefile | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+> index 48d32c5aa3eb7..9f8ed82ff1d65 100644
+> --- a/tools/testing/selftests/kvm/Makefile
+> +++ b/tools/testing/selftests/kvm/Makefile
+> @@ -317,7 +317,9 @@ $(LIBKVM_S_OBJ): $(OUTPUT)/%.o: %.S $(GEN_HDRS)
+>  $(LIBKVM_STRING_OBJ): $(OUTPUT)/%.o: %.c
+>  	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c -ffreestanding $< -o $@
+>  
+> +ifneq ($(strip $(TEST_GEN_PROGS)),)
+>  $(shell mkdir -p $(sort $(dir $(TEST_GEN_PROGS))))
+> +endif
 
-No intentional functional impact.
+This just suppresses an error, it doesn't fix the underlying problem.  E.g. there
+are other weird side effects, such as an above mkdir creating the $(ARCH) directory
+even though it shouldn't exist in the end.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+It's also very opaque, e.g. without a comment or the context of the changelog,
+I'd have no idea what purpose the above serves.
+
+Rather than bury the effective "is this arch supported" check in the middle of
+the Makefile, what if we wrap the "real" makefile and include it only for
+supported architectures, and provide dummy targets for everything else?
+
+E.g.
+
+---
+# SPDX-License-Identifier: GPL-2.0-only
+top_srcdir = ../../../..
+include $(top_srcdir)/scripts/subarch.include
+ARCH            ?= $(SUBARCH)
+
+ifeq ($(ARCH),$(filter $(ARCH),arm64 s390 riscv x86 x86_64))
+ifeq ($(ARCH),x86)
+        ARCH_DIR := x86_64
+else ifeq ($(ARCH),arm64)
+        ARCH_DIR := aarch64
+else ifeq ($(ARCH),s390)
+        ARCH_DIR := s390x
+else
+        ARCH_DIR := $(ARCH)
+endif
+
+include Makefile.kvm
+else
+all:
+clean:
+endif
 ---
 
-v2 -> v3: Subject fix
+And other KVM maintainers, the big question is: if we do the above, would now be
+a decent time to bite the bullet and switch to the kernel's canonical arch paths,
+i.e. arm64, s390, and x86?  I feel like if we're ever going to get away from
+using aarch64, x86_64, and s390x, this is as about a good of an opportunity as
+we're going to get.
 
-v1-> v2: No changes
+The annoying x86_64=>x86 alias still needs to be handled to avoid breaking explicit
+ARCH=x86_64 builds (which apparently are allowed, *sigh*), but we can ditch ARCH_DIR
+and the KVM selftests dirs match tools' include paths.
 
 ---
- drivers/thermal/thermal_core.c |   54 +++++++++++++++--------------------------
- 1 file changed, 21 insertions(+), 33 deletions(-)
+# SPDX-License-Identifier: GPL-2.0-only
+top_srcdir = ../../../..
+include $(top_srcdir)/scripts/subarch.include
+ARCH            ?= $(SUBARCH)
 
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -757,15 +757,7 @@ struct thermal_zone_device *thermal_zone
-  * @tz:		pointer to struct thermal_zone_device
-  * @trip:	trip point the cooling devices is associated with in this zone.
-  * @cdev:	pointer to struct thermal_cooling_device
-- * @upper:	the Maximum cooling state for this trip point.
-- *		THERMAL_NO_LIMIT means no upper limit,
-- *		and the cooling device can be in max_state.
-- * @lower:	the Minimum cooling state can be used for this trip point.
-- *		THERMAL_NO_LIMIT means no lower limit,
-- *		and the cooling device can be in cooling state 0.
-- * @weight:	The weight of the cooling device to be bound to the
-- *		thermal zone. Use THERMAL_WEIGHT_DEFAULT for the
-- *		default value
-+ * @c:		cooling specification for @trip and @cdev
-  *
-  * This interface function bind a thermal cooling device to the certain trip
-  * point of a thermal zone device.
-@@ -776,8 +768,7 @@ struct thermal_zone_device *thermal_zone
- static int thermal_bind_cdev_to_trip(struct thermal_zone_device *tz,
- 				     const struct thermal_trip *trip,
- 				     struct thermal_cooling_device *cdev,
--				     unsigned long upper, unsigned long lower,
--				     unsigned int weight)
-+				     struct cooling_spec *c)
- {
- 	struct thermal_instance *dev;
- 	struct thermal_instance *pos;
-@@ -791,17 +782,17 @@ static int thermal_bind_cdev_to_trip(str
- 		return -EINVAL;
- 
- 	/* lower default 0, upper default max_state */
--	if (lower == THERMAL_NO_LIMIT)
--		lower = 0;
-+	if (c->lower == THERMAL_NO_LIMIT)
-+		c->lower = 0;
- 
--	if (upper == THERMAL_NO_LIMIT) {
--		upper = cdev->max_state;
-+	if (c->upper == THERMAL_NO_LIMIT) {
-+		c->upper = cdev->max_state;
- 		upper_no_limit = true;
- 	} else {
- 		upper_no_limit = false;
- 	}
- 
--	if (lower > upper || upper > cdev->max_state)
-+	if (c->lower > c->upper || c->upper > cdev->max_state)
- 		return -EINVAL;
- 
- 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-@@ -810,11 +801,11 @@ static int thermal_bind_cdev_to_trip(str
- 	dev->tz = tz;
- 	dev->cdev = cdev;
- 	dev->trip = trip;
--	dev->upper = upper;
-+	dev->upper = c->upper;
- 	dev->upper_no_limit = upper_no_limit;
--	dev->lower = lower;
-+	dev->lower = c->lower;
- 	dev->target = THERMAL_NO_TARGET;
--	dev->weight = weight;
-+	dev->weight = c->weight;
- 
- 	result = ida_alloc(&tz->ida, GFP_KERNEL);
- 	if (result < 0)
-@@ -887,12 +878,10 @@ free_mem:
-  * This interface function unbind a thermal cooling device from the certain
-  * trip point of a thermal zone device.
-  * This function is usually called in the thermal zone device .unbind callback.
-- *
-- * Return: 0 on success, the proper error value otherwise.
-  */
--static int thermal_unbind_cdev_from_trip(struct thermal_zone_device *tz,
--					 const struct thermal_trip *trip,
--					 struct thermal_cooling_device *cdev)
-+static void thermal_unbind_cdev_from_trip(struct thermal_zone_device *tz,
-+					  const struct thermal_trip *trip,
-+					  struct thermal_cooling_device *cdev)
- {
- 	struct thermal_instance *pos, *next;
- 
-@@ -912,7 +901,7 @@ static int thermal_unbind_cdev_from_trip
- 	}
- 	mutex_unlock(&cdev->lock);
- 
--	return -ENODEV;
-+	return;
- 
- unbind:
- 	device_remove_file(&tz->device, &pos->weight_attr);
-@@ -920,7 +909,6 @@ unbind:
- 	sysfs_remove_link(&tz->device.kobj, pos->name);
- 	ida_free(&tz->ida, pos->id);
- 	kfree(pos);
--	return 0;
- }
- 
- static void thermal_release(struct device *dev)
-@@ -959,7 +947,6 @@ static void thermal_zone_cdev_binding(st
- 				      struct thermal_cooling_device *cdev)
- {
- 	struct thermal_trip_desc *td;
--	int ret;
- 
- 	if (!tz->ops.should_bind)
- 		return;
-@@ -973,13 +960,14 @@ static void thermal_zone_cdev_binding(st
- 			.lower = THERMAL_NO_LIMIT,
- 			.weight = THERMAL_WEIGHT_DEFAULT
- 		};
-+		int ret;
- 
--		if (tz->ops.should_bind(tz, trip, cdev, &c)) {
--			ret = thermal_bind_cdev_to_trip(tz, trip, cdev, c.upper,
--							c.lower, c.weight);
--			if (ret)
--				print_bind_err_msg(tz, trip, cdev, ret);
--		}
-+		if (!tz->ops.should_bind(tz, trip, cdev, &c))
-+			continue;
-+
-+		ret = thermal_bind_cdev_to_trip(tz, trip, cdev, &c);
-+		if (ret)
-+			print_bind_err_msg(tz, trip, cdev, ret);
- 	}
- 
- 	mutex_unlock(&tz->lock);
+ifeq ($(ARCH),$(filter $(ARCH),arm64 s390 riscv x86 x86_64))
+# Top-level selftests allows ARCH=x86_64 :-(
+ifeq ($(ARCH),x86_64)
+	ARCH := x86
+endif
+include Makefile.kvm
+else
+all:
+clean:
+endif
+---
 
-
-
+If no one objects or has a better idea, I'll post a series to do the above.
 
