@@ -1,83 +1,86 @@
-Return-Path: <linux-kernel+bounces-292420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B2CA956F39
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:49:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70F0C956F3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9B79B22789
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:49:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 956801C22034
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A780213210D;
-	Mon, 19 Aug 2024 15:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E4FE12EBD6;
+	Mon, 19 Aug 2024 15:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eqG64uGi"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EuFiZOcx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AA63BBF2;
-	Mon, 19 Aug 2024 15:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDFB3BBF2
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724082555; cv=none; b=oAJB37RqevmAqLfXqoQNIWDE/qnTpQECjYOSNs6vh+VOm5MUseYUYwLgazlFMAFDdQlLVtisccOsgh3XgHxjh6dUEieXtPsm7xx8bav6CPNHDp7nGDJXeahhmG5v8MWmiZQeBiODsyptQvgHw7YuJT1AIzpbko91ORsRsfUuyk8=
+	t=1724082566; cv=none; b=lkqYQfzeUUp3i7bVZlCbAlKFTJxiVxuTbAEtA+yA7o0Shf0OI1eWV7RE+WqmBMv3PyAKBpleRiBiPbpKJe3S6XKlAX0Gyp6vmJh2uG8IZVE/xv84Wl0/EvSjrH+oUXt13N7MWKjfncsTN1F+jnKSLPutyiqGh7PltC2846Smpuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724082555; c=relaxed/simple;
-	bh=fyyjBZF2oTWVnLLBDD6Q09Azx4KL9wSZUi8MT6p9g/Y=;
+	s=arc-20240116; t=1724082566; c=relaxed/simple;
+	bh=mpgtfZwkltRJnDE0vHDGt4EakdGQxqTVlLn+LHT0GCY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sNiCZ4HzgdIdLSzXN2Vku/W494gXFM1b8OnLk/wqM4qwqHESIrzBphr8w0qMCyHOayvvEYxzXFDLV4EeCDCbUwVDPPcnzMY1MFU8A7nGGGvBPWIbJXxQZcTRSCqFJARgRe4jA0tkGAp28iAKCJ+NJjl/ztq9JxXPN3lD4HwnMjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eqG64uGi; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-201cd78c6a3so34406635ad.1;
-        Mon, 19 Aug 2024 08:49:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724082554; x=1724687354; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CSLcyqFQ3EMWy37KrwIoFJyqnZnAuoV7z3EUYygVqD8=;
-        b=eqG64uGi+Syv1Qv2ylK0M4z+MpoVlQxkCnApP4Vo7wyTPphFweZW2P5NLiK3W5VFbF
-         0qsBmVzlxqwmYpq3SHi4L1sUQ3ZjDhlB2cH9aJ+v8FBqReK+NUCPrlsc6Fzu0aU9zFln
-         u0H23YQuFo4Immxpu6NqKNVffq2b19A4ar/JG6n0s1w43+Ig7tt3I+AXZk+IIz7t8Zvj
-         6g22moYnk/CiM+O00oLVXsJ3WlnHj58SN94LJ+aepaUTbkMt3DuJZ10rbKkFYJuaJNah
-         zsoz6FO99FAxRkL0zgvrFR03gwjWywe8WQtrdg8HX1gl+aNDhxbnDnscMr/YS7/8qbid
-         3rNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724082554; x=1724687354;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CSLcyqFQ3EMWy37KrwIoFJyqnZnAuoV7z3EUYygVqD8=;
-        b=rE/u16rwBYYBkBOaKMI8DR3M73ey8J4TazULCm39+0zhjvk0GPxuAA5IhITZatROmA
-         VlGuPXzp/lDOHO6t+K6fbRXjNuR000n6M+KCYk7RXANDvsN2+B8SH7hGBO4ntZrEoFCK
-         YXwGN9BoPmXls3sTkXbLGiNPE/hlwVEBPW/kl+MTiAXJhv8p7oi2+XAX05QFUBtmU0NV
-         8wyjE9kiRN145IZ/WITYvDpqUng3S+HgxcjJUHQ9SOPboqihlNAzELtCLP+oYLapAsoz
-         /iopQY/RhbyynjKbndy1Eh48cSwJQDZhv8NxtRDA9bVyORncZq2OX+mHxDgRSu2vDXY4
-         YMDA==
-X-Forwarded-Encrypted: i=1; AJvYcCVoquPA/aaKiGobzWt6zZowy23S7cEm7rawvuuHf6hsPoJ/NgpcG94inrsCyNLw4bx8K0CGOqoPBqWPoPTAI8Gr2eeAyvTaWFs1iicZSEzk2juQ0mr0gMKmuKL0LvKFSZSvNELz24lgNh+GJH4VI4/EuNlI3pyE48QjffFyARVQGlbJTWdmKmmT/kLry2wnveywPLEDPW+XtQ3hwTehus3FgpCrZvizRsk=
-X-Gm-Message-State: AOJu0YzrBKURwMWqzH5Y1tXKlw72gM8ubSuRTLNgR3KZC5FlclueWMgQ
-	TxMOnY1HjIq07dyQxnq1m5Pd6XDqavh1gs+MtLuafIy59eLqswpSNBv7Lg==
-X-Google-Smtp-Source: AGHT+IEU9Es4Ml341v7O0mbmgFiXC/PhOCgXS75ZkA/SB7UZuypVK5RcoYwAPwcMAnMi1qk6M4kD+w==
-X-Received: by 2002:a17:903:228a:b0:1fd:a942:1558 with SMTP id d9443c01a7336-20203f329a2mr180311055ad.40.1724082553437;
-        Mon, 19 Aug 2024 08:49:13 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:f80c:1483:bced:7f88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f038b401sm63783585ad.213.2024.08.19.08.49.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 08:49:13 -0700 (PDT)
-Date: Mon, 19 Aug 2024 08:49:10 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH 09/14] dt-bindings: input: samsung,s3c6410-keypad:
- introduce compact binding
-Message-ID: <ZsNpdhKlLYegkosN@google.com>
-References: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
- <20240819045813.2154642-10-dmitry.torokhov@gmail.com>
- <dbs44pwxfhsnmdzsd32mp7rlhq6w5fanu5bakuisxmyz2ehbtd@cdfr26oicjll>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JYZQ3gov/2TTZvWaxJ+GifeqYv48VKUcrLeL/1wnC+FybV7EHDfuElbDVwJNMlr7iiTxcFzFgucOl4ojA8rbLD36LzDUHI9xAjv1HY6WeSHqYZs1+OzPha+qCtHW5OCbuIbgpBvybVmWHlGsV2Tp3n82BbO9LVjlrGX5KZRCG2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EuFiZOcx; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724082565; x=1755618565;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mpgtfZwkltRJnDE0vHDGt4EakdGQxqTVlLn+LHT0GCY=;
+  b=EuFiZOcx1r7BKlVccoAA53EyQbebWfzSALNKqfQ0Ysd0DzoZ8V4Nhs9j
+   ZDO2iAMXXbzLBFzLLFSCa6XATeiiWqqAnMwSaA4FwnpmeY7d9beL7eY6t
+   aQA3Ukvq2mtM5uVBHWIVGGkRtUvzZiTdzDzpdHDcI6vyOmgjqjI4YRtDG
+   g5MvMdzr9C/NwtHQqjlEVOQFzeku93GkO+rST+Lp4G1E5OhzGrA4CxCw/
+   2aQnd9EvY6RBCM62+KV6nZ+TjcxLjkK8eOBVJ/9U0Tk6C3r+qm6Dd8vEl
+   muIYbv4G44Z+3ju5x1FueXNHQD757wwX54Ik9TW3v5s+4BKM+vZ17rhJp
+   g==;
+X-CSE-ConnectionGUID: XAHB+qnjQy2EcObuo9eyiA==
+X-CSE-MsgGUID: mYSqk2ISRCiraOC4k5Jlsw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="26204474"
+X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
+   d="scan'208";a="26204474"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 08:49:24 -0700
+X-CSE-ConnectionGUID: xuc9agqnRzCKBBjaKhL80Q==
+X-CSE-MsgGUID: 7X0Zf9fzSNOtrzWwOZM+7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
+   d="scan'208";a="61192834"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO intel.com) ([10.245.246.73])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 08:49:18 -0700
+Date: Mon, 19 Aug 2024 17:49:13 +0200
+From: Andi Shyti <andi.shyti@linux.intel.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Andi Shyti <andi.shyti@linux.intel.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/bridge: ti-sn65dsi83: use dev_err_probe when failing
+ to get panel bridge
+Message-ID: <ZsNpefhKhj4nXh0_@ashyti-mobl2.lan>
+References: <20240808-ti-sn65dsi83-dev_err_probe-v1-1-72417aa275ab@bootlin.com>
+ <ZrSfayN4U6Lk3UCj@ashyti-mobl2.lan>
+ <20240813101643.5bf8d245@booty>
+ <ZrtuksiarZNS8L79@ashyti-mobl2.lan>
+ <20240819133840.26045152@booty>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,106 +89,107 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dbs44pwxfhsnmdzsd32mp7rlhq6w5fanu5bakuisxmyz2ehbtd@cdfr26oicjll>
+In-Reply-To: <20240819133840.26045152@booty>
 
-On Mon, Aug 19, 2024 at 03:02:07PM +0200, Krzysztof Kozlowski wrote:
-> On Sun, Aug 18, 2024 at 09:58:06PM -0700, Dmitry Torokhov wrote:
-> > The binding with a sub-node per each key is very verbose and is hard to
-> > use with static device properties. Allow standard matrix keymap binding
-> > in addition to the verbose one.
+Hi Luca,
+
+On Mon, Aug 19, 2024 at 01:38:40PM +0200, Luca Ceresoli wrote:
+> On Tue, 13 Aug 2024 16:32:50 +0200
+> > On Tue, Aug 13, 2024 at 10:16:43AM +0200, Luca Ceresoli wrote:
+> > > On Thu, 8 Aug 2024 11:35:23 +0100
+> > > Andi Shyti <andi.shyti@linux.intel.com> wrote:  
+> > > > On Thu, Aug 08, 2024 at 12:26:14PM +0200, Luca Ceresoli wrote:  
+> > > > > When devm_drm_of_get_bridge() fails, the probe fails silently. Use
+> > > > > dev_err_probe() instead to log an error or report the deferral reason,
+> > > > > whichever is applicable.
+> > > > > 
+> > > > > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> > > > > ---
+> > > > >  drivers/gpu/drm/bridge/ti-sn65dsi83.c | 2 +-
+> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> > > > > index 57a7ed13f996..60b9f14d769a 100644
+> > > > > --- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> > > > > +++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> > > > > @@ -606,7 +606,7 @@ static int sn65dsi83_parse_dt(struct sn65dsi83 *ctx, enum sn65dsi83_model model)
+> > > > >  
+> > > > >  	panel_bridge = devm_drm_of_get_bridge(dev, dev->of_node, 2, 0);
+> > > > >  	if (IS_ERR(panel_bridge))
+> > > > > -		return PTR_ERR(panel_bridge);
+> > > > > +		return dev_err_probe(dev, PTR_ERR(panel_bridge), "Failed to get panel bridge\n");    
+> > > > 
+> > > > patch looks good, but the message is a bit misleading. You are
+> > > > not failing to get the panel bridge, but you are failing to find
+> > > > a panel bridge in a DT node. Right?  
+> > > 
+> > > As I can see from both the documentation and the code,
+> > > devm_drm_of_get_bridge() is really returning a pointer to a panel
+> > > bridge, potentially allocating and adding it in case it was not present
+> > > before. Navigating the device tree is only a part of what it does.
+> > > 
+> > > Do you think I am missing something?  
 > > 
-> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > ---
-> >  .../input/samsung,s3c6410-keypad.yaml         | 57 ++++++++++++++++++-
-> >  1 file changed, 54 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/input/samsung,s3c6410-keypad.yaml b/Documentation/devicetree/bindings/input/samsung,s3c6410-keypad.yaml
-> > index a53569aa0ee7..28a318a0ff7e 100644
-> > --- a/Documentation/devicetree/bindings/input/samsung,s3c6410-keypad.yaml
-> > +++ b/Documentation/devicetree/bindings/input/samsung,s3c6410-keypad.yaml
-> > @@ -16,6 +16,10 @@ description:
-> >  maintainers:
-> >    - Krzysztof Kozlowski <krzk@kernel.org>
-> >  
-> > +allOf:
-> > +  - $ref: input.yaml#
-> > +  - $ref: matrix-keymap.yaml#
-> > +
-> >  properties:
-> >    compatible:
-> >      enum:
-> > @@ -37,6 +41,10 @@ properties:
-> >  
-> >    wakeup-source: true
-> >  
-> > +  keypad,num-columns: true
-> > +  keypad,num-rows: true
-> > +  linux,keymap: true
-> > +
-> >    linux,input-no-autorepeat:
-> >      type: boolean
-> >      description:
-> > @@ -81,12 +89,33 @@ patternProperties:
-> >        - keypad,row
-> >        - linux,code
-> >  
-> > +dependencies:
-> > +  linux,keymap:
-> > +    required:
+> > No, maybe it's me being a bit pedantic. In the sense that we are
+> > not really failing to get the panel, but most probably the panel
+> > is not installed.
 > 
-> Why "required" keyword? The dependencies should have just list of
-> properties. See example-schema.
-
-OK, changed this to
-
-dependencies:
-  linux,keymap: [ "keypad,num-columns", "keypad,num-rows" ]
-  
+> The panels I'm used to, which I believe to be the most common in
+> embedded systems just have no way of being detected, so the operating
+> system cannot detect a "panel not installed" condition.
 > 
-> > +      - keypad,num-columns
-> > +      - keypad,num-rows
-> > +
-> >  required:
-> >    - compatible
-> >    - reg
-> >    - interrupts
-> > -  - samsung,keypad-num-columns
-> > -  - samsung,keypad-num-rows
-> > +
-> > +if:
+> However I went back to the code and realized your initial remark ("you
+> are failing to find a panel bridge in a DT node") is more correct than
+> I initially thought. Indeed there are two failure reasons for
+> devm_drm_of_get_bridge() to fail: DT lookup and panel bridge creation
+> failures. The latter however can be due to -ENOMEM (unlikely) or
+> (panel->connector_type == DRM_MODE_CONNECTOR_Unknown), which in turn
+> can be due to either a panel driver error or again a DT error in case
+> the driver gets the panel type from DT, as panel-simple.c does.
 > 
-> put allOf: here and this within allOf, so you the "if" could grow in the
-> future.
+> That said, the role of devm_drm_of_get_bridge() is to provide a panel
+> bridge object. If it fails, that means it is unable to provide such an
+> object for whatever reason. Reasons currently include DT issues (the
+> most likely), driver bug and -ENOMEM. There could be more reasons in
+> future versions of the implementation.
+> 
+> I'm afraid I'm unable to express all the above logic in a single commit
+> title line. However, should you have a better commit title or message
+> to suggest, I'm still open to improvements. I value good commit
+> messages.
 
-Hmm, there is already "allOf" at the beginning of the file, so adding
-another one results in complaints about duplicate "allOf". I can move it
-all to the top, like this:
+yes, that's all correct... I'm just assuming that we don't fail
+for enomem's or similar. But if you want to include them, then a
+generic "get" might work.
 
-allOf:
-  - $ref: input.yaml#
-  - $ref: matrix-keymap.yaml#
-  - if:
-      required:
-        - linux,keymap
-    then:
-      properties:
-        samsung,keypad-num-columns: false
-        samsung,keypad-num-rows: false
-      patternProperties:
-        '^key-[0-9a-z]+$': false
-    else:
-      properties:
-        keypad,num-columns: false
-        keypad,num-rows: false
-      required:
-        - samsung,keypad-num-columns
-        - samsung,keypad-num-rows
+To be honest, I wouldn't know how to write it better :-D
+Writing error messages is skill per se.
 
-Is this OK? I don't quite like that "tweaks" are listed before main
-body of properties.
+Maybe something like
 
-Thanks.
+  ... "Failed to get panel bridge from DT (%pe)", panel_bridge);
 
--- 
-Dmitry
+Fact is that an error message should immidiately tell you what is
+failing and you understand without browsing the code. A generic
+"Failed to get..." says very little.
+
+A use case can be if you receive a bug report. If someone tells
+you "Failed to get..." you will need to start diggin on the
+report. While if someone tells you "Failed to get panel bridge
+from DT (-ENODEV)" you would immediately tell him to add the
+panel in the configuration.
+
+But... as I said...
+
+> > I'm not strong on this comment, though, so that
+> > feel free to add:
+
+... this is a nitpick, feel free to ignore it.
+
+> > Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
+> 
+> Otherwise, I'm sending v2 with your review tag by the end of the week.
+
+Thanks,
+Andi
 
