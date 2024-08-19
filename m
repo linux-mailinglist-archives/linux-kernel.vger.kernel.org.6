@@ -1,144 +1,279 @@
-Return-Path: <linux-kernel+bounces-292778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1894D957446
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:19:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E775095744C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 21:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B50E1C2350D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:19:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A758C2844F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4974E1DC463;
-	Mon, 19 Aug 2024 19:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999121DC479;
+	Mon, 19 Aug 2024 19:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iTYSRtwj"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XDvgHIN1"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEFD4438B;
-	Mon, 19 Aug 2024 19:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B221DC46D
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 19:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724095162; cv=none; b=MeG5ZcT/f7HO7+dQBzQFB+NfwYHtuchGpzzhke105gH/79iGQunmnaVGLSY10BcEDu+oIVMv0yRJPn0uS0nkuYu7d95Ipf4CEA/lCUpHD9o6ZjgKbxAFebGGQ0/hQrfPKEEIQfahdrUstqWEsq7DUl1gPJ4CyroUCBd48RfCAvQ=
+	t=1724095188; cv=none; b=klqwHmc8wGzyTEBUew+Wjnu9znD8E8XicwTZbBmMs6Q75YqB//7+F5czdXrO/pYVC+rnxf7STC7L6maXpb5xOONJSaOwN8XsLcsHs8kPZjbH6TPID39ggj36qJ1lP44EcLvuEoEKgq+C8P5dhIcVE6My2k9Cb2BHqBK3ftO9++U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724095162; c=relaxed/simple;
-	bh=/gEJd6NW+LSDAYBoOI1U7WFiokyKchCo8Jpm5wb3nOQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=anKABYE5cw/Fx5OFW9DSkqHwdJg/JtyE3eX/bJEapc4LauxrzGB68up4k9QEbDailIP7Onb+fL/p+M+3fu3vHaPp1VJDtwUjuCFVbDPH2LX3ibN3WgWRVF678vlWAp0gYBgrUEnH7+o0tStnkIF8SiJCdtAVB35bfCzGwrGuW6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iTYSRtwj; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2d3c098792bso3663324a91.1;
-        Mon, 19 Aug 2024 12:19:21 -0700 (PDT)
+	s=arc-20240116; t=1724095188; c=relaxed/simple;
+	bh=8vjIWzmx4KTL7ajgUxXEjxrazirQfyoLTM19Fh0tBnc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m667CrVZysxRGvWIuBazdWMLWcVKKA4vJsdPiZuH/g6zuKmdTBfSrOBc8wBc0wShHMI+5Pj25VylYrwprfpbbrh1DmlkVFWPr99uDgPMZhHuooWkyWmeT4zyCrkXp3udtIByhIUQz3YDTveiX585k5MpDTma+clLewMZrn+XiKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XDvgHIN1; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5bed05c0a2fso3807067a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 12:19:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724095160; x=1724699960; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/gEJd6NW+LSDAYBoOI1U7WFiokyKchCo8Jpm5wb3nOQ=;
-        b=iTYSRtwjNUSu/jPzCevRjWBOE179xnk+etMpv5+ULrmOkaC0teHJ54P86yi4+8738M
-         JLErcshX+zl2IE/KJo0xQJhm78X1TfQRYxiLqZcGNG3hOcWU95Pahzz/XQmgfEbmBZV5
-         gIqXwaymYvdLr0eVttRGgAAnB0qiZVMdN4EbaF7fuZQdHoRxemt53P+wOenXj2TyDyGg
-         KX3EX/QTpX0SzifUC4o+XTxCVr/w5BArYSiXlz93i1+YgheolMrRYptBSScAiQXZucbI
-         YN5rk7JQR9rOlGEb1HBdGwIgee+G6OcICvIxXLqJJyvE2mVun6WHnic3NMH7E6i2xgnE
-         76zw==
+        d=google.com; s=20230601; t=1724095185; x=1724699985; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YZM5zMJ0sB4lMiTqOGEZX6UeVloMpJCvx8UgNki8n98=;
+        b=XDvgHIN1+tfhrjAP7kEWe5ivV4XmNfY0Wtv7BwFt378EdLa1WezBbkbbqZ21Zwnb+I
+         041CT77HW0gL5X6k5NR3xmWbbtAbCagCe7gBkyokbUrJHi9x0ls7y5b+dHZ1kuaI9+2F
+         ooo6WGU/bc6Ogge0ipfC2Khgmj6knJqQxHRhIb+OUK8grDk0Hefrp9K1SqqhCItzPavQ
+         x58nhpjnaa+2KfEvhycql3UtWZGgKYgxg+KaOMRoWMML+aRzrfRh0HsMLmmrib++J/0F
+         TcMMEdRFg6/GGxEjMk8l38r4QbTVONz2bMAbFBilcO5MXXbXqk06jSYt218ShcY9Oa5U
+         RVUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724095160; x=1724699960;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/gEJd6NW+LSDAYBoOI1U7WFiokyKchCo8Jpm5wb3nOQ=;
-        b=I9AATGprPOnG1/aioE4gpbb3l6KJ1OJdF4f4UiLk+Vs8cvhIWuu0bnnTyq16Dantaa
-         f9e/Fx8e5nE1Gj58BJ408SrRA8BZkgjeu+GgimAEOKQwJlIFITLDGNIBXO0ZTIJejZuK
-         5kyEBs3MbhMIY3NkcW+cE3kcDtScx37GO2a8ctlh9XzsueV8LPfEau0XAdIAyoi09d8l
-         DkYs1MtHOVGS6GlrJtnln0YRUaVuL0cQ6sU3X2VXZhAiLLi0WzfMYy8XhbLkz9RP61sN
-         LNqR7h9vREjUPlJwGlgSJ2yRbCB+ilZD+0pHjyHEphS+ivbZYt7FkvSly1WQcxvlo5Bb
-         Nziw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdKTBQpnRVFqSUKGsUWtc+qDt7v8p559l1kUqH2mnT5sWmlu8d4bnaOg3wyZkQZIfeZECTAqqozhfndeuKC+k=@vger.kernel.org, AJvYcCVF4w2pblSEXUDGhUqrp/5OExsrWQVmHJnbBF5jyne7qG/8hM0aBxMEAE99KKP/ADH9xdnTtxoZ73qHGNk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0Hvjlf/e7Vnlo9ztwHdA0a78wudP+VG+nUp3FxPILWILLhiqg
-	CUzKQ1IJVwT/r0YEmIZxK5zefdK+nkcsQ57QysTHDbzoMfoEgy3ou61XnXtOOGmbwyF+tVD7GiJ
-	7p89QdheTdPEMJi/1/gaMNsLAq3IdNd5mu+JzGT4T
-X-Google-Smtp-Source: AGHT+IEP1iDwqNwYD9UxTJoeWVIFCGa+Q0ol+t9ArKqsxN8dBdhyHAZbZdV7+V6AMwJbTVvvXZZkXFz9VNuDAHEGqXg=
-X-Received: by 2002:a17:90a:c28b:b0:2c9:96fc:ac52 with SMTP id
- 98e67ed59e1d1-2d3dffddd10mr13653919a91.26.1724095159998; Mon, 19 Aug 2024
- 12:19:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724095185; x=1724699985;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YZM5zMJ0sB4lMiTqOGEZX6UeVloMpJCvx8UgNki8n98=;
+        b=RFVDJGC3UgO4ARz5ZqcMEvUMX2CKPR+we6Wcyl+g9PdUBwatTB5KDZdE0OLTmWOHIb
+         MH1C0xmYtUPDLZ3GtrBEmLHxkspWZCot2ZJ73CxP5fBZYvnkPWYHl+fZnNb56hLG3pm6
+         WQZIlXgEluodfeHw2gAg9mi4DL780BEKi9BiXZOvh76ZbacgiPwKTq22tkersKThPmEZ
+         kpkoHyHY6H0uVXQuyz/kQg3Mg9QdpjpaoCFr+oJRXbSqT+UI+2ua/fUY0LYxTukQrsfX
+         DYOqvCcC1Iurlf9xLMKx8twmnMmDOraljaBo+LVYq4M4Ggqx67K30BcUR5uOXF2nMAad
+         dWjQ==
+X-Gm-Message-State: AOJu0Yzbk2xXJCp3Rc87AAz4BFmIm/PfI+H6rOFB/UzJJuOm3hDJ3uJe
+	ax8B8e1dL6sH0PIh2P0Fmcd5WuDXvYZnpwtXJ7/bsAcMW4ZGoZYUsS7Asl/0XpsrN8eE/n7m87K
+	Yl8zWkh5WkVOiNq8IYl2LAAdgHfevMcovg3O/
+X-Google-Smtp-Source: AGHT+IHMItryRi8P70QAVbdIuSGoqw5A/WfIe0nTbfG9cMvEsczl2pfv6OH6aJAnOsvEnmXPd7UYyKKeG2aHjAG0ZG4=
+X-Received: by 2002:a17:906:d7c4:b0:a79:7f94:8a73 with SMTP id
+ a640c23a62f3a-a839292df2emr843653666b.20.1724095184459; Mon, 19 Aug 2024
+ 12:19:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Haoyu Li <lihaoyu499@gmail.com>
-Date: Mon, 19 Aug 2024 12:19:07 -0700
-Message-ID: <CAPbMC760=5UeaU2wwNZkBMi2ZMVhr2GQgG+VkM8Z7zNbt-FtTA@mail.gmail.com>
-Subject: [net/wireless] Question about `cfg80211_conn_scan` func: misuse of __counted_by
-To: Johannes Berg <johannes@sipsolutions.net>, linux-wireless@vger.kernel.org, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240816144344.18135-1-me@yhndnzj.com> <20240816144344.18135-2-me@yhndnzj.com>
+In-Reply-To: <20240816144344.18135-2-me@yhndnzj.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Mon, 19 Aug 2024 12:19:08 -0700
+Message-ID: <CAJD7tkYRiA7113ehpXoiafJtk8Z+j6nV_bQWK0xoX3KaK6=wcQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] selftests: test_zswap: add test for hierarchical zswap.writeback
+To: Mike Yuan <me@yhndnzj.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Muchun Song <muchun.song@linux.dev>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Michal Hocko <mhocko@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dear Linux Developers for NETWORKING and CFG80211/NL80211,
+On Fri, Aug 16, 2024 at 7:44=E2=80=AFAM Mike Yuan <me@yhndnzj.com> wrote:
+>
+> Ensure that zswap.writeback check goes up the cgroup tree.
 
-We are curious about the use of `struct cfg80211_scan_request *request`
-in function `cfg80211_conn_scan`.
-The definition of `struct cfg80211_scan_request` is at
-https://elixir.bootlin.com/linux/v6.10.6/source/include/net/cfg80211.h#L2675.
-```
-struct cfg80211_scan_request {
-struct cfg80211_ssid *ssids;
-int n_ssids;
-u32 n_channels;
-const u8 *ie;
-size_t ie_len;
-u16 duration;
-bool duration_mandatory;
-u32 flags;
+Too concise :) Perhaps a little bit of description of what you are
+doing would be helpful.
 
-u32 rates[NUM_NL80211_BANDS];
+>
+> Signed-off-by: Mike Yuan <me@yhndnzj.com>
+> ---
+>  tools/testing/selftests/cgroup/test_zswap.c | 69 ++++++++++++++-------
+>  1 file changed, 48 insertions(+), 21 deletions(-)
+>
+> diff --git a/tools/testing/selftests/cgroup/test_zswap.c b/tools/testing/=
+selftests/cgroup/test_zswap.c
+> index 190096017f80..7da6f9dc1066 100644
+> --- a/tools/testing/selftests/cgroup/test_zswap.c
+> +++ b/tools/testing/selftests/cgroup/test_zswap.c
+> @@ -263,15 +263,13 @@ static int test_zswapin(const char *root)
+>  static int attempt_writeback(const char *cgroup, void *arg)
+>  {
+>         long pagesize =3D sysconf(_SC_PAGESIZE);
+> -       char *test_group =3D arg;
+>         size_t memsize =3D MB(4);
+>         char buf[pagesize];
+>         long zswap_usage;
+> -       bool wb_enabled;
+> +       bool wb_enabled =3D *(bool *) arg;
+>         int ret =3D -1;
+>         char *mem;
+>
+> -       wb_enabled =3D cg_read_long(test_group, "memory.zswap.writeback")=
+;
+>         mem =3D (char *)malloc(memsize);
+>         if (!mem)
+>                 return ret;
+> @@ -288,12 +286,12 @@ static int attempt_writeback(const char *cgroup, vo=
+id *arg)
+>                 memcpy(&mem[i], buf, pagesize);
+>
+>         /* Try and reclaim allocated memory */
+> -       if (cg_write_numeric(test_group, "memory.reclaim", memsize)) {
+> +       if (cg_write_numeric(cgroup, "memory.reclaim", memsize)) {
+>                 ksft_print_msg("Failed to reclaim all of the requested me=
+mory\n");
+>                 goto out;
+>         }
+>
+> -       zswap_usage =3D cg_read_long(test_group, "memory.zswap.current");
+> +       zswap_usage =3D cg_read_long(cgroup, "memory.zswap.current");
+>
+>         /* zswpin */
+>         for (int i =3D 0; i < memsize; i +=3D pagesize) {
+> @@ -303,7 +301,7 @@ static int attempt_writeback(const char *cgroup, void=
+ *arg)
+>                 }
+>         }
+>
+> -       if (cg_write_numeric(test_group, "memory.zswap.max", zswap_usage/=
+2))
+> +       if (cg_write_numeric(cgroup, "memory.zswap.max", zswap_usage/2))
+>                 goto out;
+>
+>         /*
+> @@ -312,7 +310,7 @@ static int attempt_writeback(const char *cgroup, void=
+ *arg)
+>          * If writeback is disabled, memory reclaim will fail as zswap is=
+ limited and
+>          * it can't writeback to swap.
+>          */
+> -       ret =3D cg_write_numeric(test_group, "memory.reclaim", memsize);
+> +       ret =3D cg_write_numeric(cgroup, "memory.reclaim", memsize);
+>         if (!wb_enabled)
+>                 ret =3D (ret =3D=3D -EAGAIN) ? 0 : -1;
+>
+> @@ -321,12 +319,38 @@ static int attempt_writeback(const char *cgroup, vo=
+id *arg)
+>         return ret;
+>  }
+>
+> +static int test_zswap_writeback_one(const char *cgroup, bool wb)
+> +{
+> +       long zswpwb_before, zswpwb_after;
+> +
+> +       zswpwb_before =3D get_cg_wb_count(cgroup);
+> +       if (zswpwb_before !=3D 0) {
+> +               ksft_print_msg("zswpwb_before =3D %ld instead of 0\n", zs=
+wpwb_before);
+> +               return -1;
+> +       }
+> +
+> +       if (cg_run(cgroup, attempt_writeback, (void *) &wb))
+> +               return -1;
+> +
+> +       /* Verify that zswap writeback occurred only if writeback was ena=
+bled */
+> +       zswpwb_after =3D get_cg_wb_count(cgroup);
+> +       if (zswpwb_after < 0)
+> +               return -1;
+> +
+> +       if (wb !=3D !!zswpwb_after) {
+> +               ksft_print_msg("zswpwb_after is %ld while wb is %s",
+> +                               zswpwb_after, wb ? "enabled" : "disabled"=
+);
+> +               return -1;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+>  /* Test to verify the zswap writeback path */
+>  static int test_zswap_writeback(const char *root, bool wb)
+>  {
+> -       long zswpwb_before, zswpwb_after;
+>         int ret =3D KSFT_FAIL;
+> -       char *test_group;
+> +       char *test_group, *test_group_child =3D NULL;
+>
+>         test_group =3D cg_name(root, "zswap_writeback_test");
+>         if (!test_group)
+> @@ -336,29 +360,32 @@ static int test_zswap_writeback(const char *root, b=
+ool wb)
+>         if (cg_write(test_group, "memory.zswap.writeback", wb ? "1" : "0"=
+))
+>                 goto out;
+>
+> -       zswpwb_before =3D get_cg_wb_count(test_group);
+> -       if (zswpwb_before !=3D 0) {
+> -               ksft_print_msg("zswpwb_before =3D %ld instead of 0\n", zs=
+wpwb_before);
+> +       if (test_zswap_writeback_one(test_group, wb))
+>                 goto out;
+> -       }
+>
+> -       if (cg_run(test_group, attempt_writeback, (void *) test_group))
+> +       if (cg_write(test_group, "memory.zswap.max", "max"))
+> +               goto out;
 
-struct wireless_dev *wdev;
+Why is this needed? Isn't this the default value?
 
-u8 mac_addr[ETH_ALEN] __aligned(2);
-u8 mac_addr_mask[ETH_ALEN] __aligned(2);
-u8 bssid[ETH_ALEN] __aligned(2);
+> +       if (cg_write(test_group, "cgroup.subtree_control", "+memory"))
+>                 goto out;
+>
+> -       /* Verify that zswap writeback occurred only if writeback was ena=
+bled */
+> -       zswpwb_after =3D get_cg_wb_count(test_group);
+> -       if (zswpwb_after < 0)
+> +       test_group_child =3D cg_name(test_group, "zswap_writeback_test_ch=
+ild");
+> +       if (!test_group_child)
+> +               goto out;
+> +       if (cg_create(test_group_child))
+> +               goto out;
 
-/* internal */
-struct wiphy *wiphy;
-unsigned long scan_start;
-struct cfg80211_scan_info info;
-bool notified;
-bool no_cck;
-bool scan_6ghz;
-u32 n_6ghz_params;
-struct cfg80211_scan_6ghz_params *scan_6ghz_params;
-s8 tsf_report_link_id;
+I'd rather have all the hierarchy setup at the beginning of the test,
+before the actual test logic. I don't feel strongly about it though.
 
-/* keep last */
-struct ieee80211_channel *channels[] __counted_by(n_channels);
-};
-```
+> +       if (cg_write(test_group_child, "memory.zswap.writeback", "1"))
+>                 goto out;
 
-Our question is: The `channels` member of `struct
-cfg80211_scan_request` is annotated
-with "__counted_by", which means the array size is indicated by
-`n_channels`. Only if we set `n_channels` before accessing
-`channels[i]`, the flexible
-member `hws` can be properly bounds-checked at run-time when enabling
-CONFIG_UBSAN_BOUNDS and CONFIG_FORTIFY_SOURCE. Or there will be a
-warning from each array access that is prior to the initialization
-because the number of elements is zero.
+Is the idea here that we always hardcode the child's zswap.writeback
+to 1, and the parent's zswap.writeback changes from 0 to 1, and we
+check that the parent's value is what matters?
+I think we need a comment here.
 
-In function `cfg80211_conn_scan` at
-https://elixir.bootlin.com/linux/v6.10.6/source/net/wireless/sme.c#L117,
-we think it's needed to relocate `request->n_channels = n_channels` before
-accessing `request->channels[...]`.
+TBH, I expected a separate test that checks different combinations of
+parent and child values (e.g. also verifies that if the parent is
+enabled but child is disabled, writeback is disabled).
 
-Here is a fix example of a similar situation :
-https://lore.kernel.org/stable/20240613113225.898955993@linuxfoundation.org/.
-
-Please kindly correct us if we missed any key information. Looking
-forward to your response!
-
-Best,
-Haoyu Li
+>
+> -       if (wb !=3D !!zswpwb_after) {
+> -               ksft_print_msg("zswpwb_after is %ld while wb is %s",
+> -                               zswpwb_after, wb ? "enabled" : "disabled"=
+);
+> +       if (test_zswap_writeback_one(test_group_child, wb))
+>                 goto out;
+> -       }
+>
+>         ret =3D KSFT_PASS;
+>
+>  out:
+> +       if (test_group_child) {
+> +               cg_destroy(test_group_child);
+> +               free(test_group_child);
+> +       }
+>         cg_destroy(test_group);
+>         free(test_group);
+>         return ret;
+> --
+> 2.46.0
+>
+>
 
