@@ -1,124 +1,218 @@
-Return-Path: <linux-kernel+bounces-293040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-293041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86392957896
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:23:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84F6A957898
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 01:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30A5F1F22613
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:23:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EB181F23432
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 23:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF511DF68F;
-	Mon, 19 Aug 2024 23:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B82E1DF697;
+	Mon, 19 Aug 2024 23:24:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PUld07nM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="mhX38QHG"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2086.outbound.protection.outlook.com [40.107.236.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A6B3C6BA
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 23:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724109786; cv=none; b=btTiv+u4kxDn/16TGLgEM+bdX5TQTbITv/yUZpDdVmvZOZxrR+IVu+9wr71GGRUzuSqUfp45ruLPaasC3Z5hqy+KqFNG84seDfupMsNOhVW3ZpTY8cvNDTYetv/EsREQky+bgzsFMuYvYjciYaJT83SsW3R5sZbDLISn0YBJNok=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724109786; c=relaxed/simple;
-	bh=i2DLyl8buGbPkl6JZw7wHlrUnacC63KEMxQxiL8QmEQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eI4Uicm9AVVOXaxUYprjCl5uvF1pwM5VpsmDOsDhBYjY/KYZYbecVvW5tLTWT1hcoqFSD5FLwNtT2ny3El53hi0Q7uRwbo1+m/LJr7pkxYHNRZujA0k9yb8IqVrze4bZloFWrBK2bgN2kAgTy2Lk8RaKq04cyvU6leppDAjS7CI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PUld07nM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B497FC32782;
-	Mon, 19 Aug 2024 23:23:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724109785;
-	bh=i2DLyl8buGbPkl6JZw7wHlrUnacC63KEMxQxiL8QmEQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PUld07nM5iA3DTKK77flqWCxrG3bAA+w+xZiRSqpHw4J8I9hiO2XZPlT9Xu6MBXhV
-	 iDc8xKJnuWcOCvMJEPZaYAOkpbq2gCclZ+9DCeXXyLZIbidVgaJsRGhXgI+hIFbny+
-	 0AvhIe+YJdVop/Gbi7VtCQ8JLC09fswU2iYENNWiWwWLd7Fz9bgRUtip7cpzO1Qhze
-	 s9EdeMIOwDdQr38z1wBT9lPfF1bGaIR/OZyhkpuTcQM8yeMrn8dStZK8uXZDcSbhNX
-	 5itq+8Z23pOOpPWy5hsIuCX5k1nRI9l8t0EIZ6s4qJXkpQKZrpwDmteipdIof0/na7
-	 srugzdVCqUsDA==
-Message-ID: <65fd31b2-51c1-458c-a3fa-fadbde5039fb@kernel.org>
-Date: Tue, 20 Aug 2024 01:23:00 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677503C6BA
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 23:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724109868; cv=fail; b=vCvMNzHdk1CoZTkK87gNh+G1bwJaJcGwvxtJSi5oRAyVCk9XQH406sH7cgPFg/9nGY2WKqRkZqyF85ePysONMrsR4FwnZb3n7NMg13jbZQBxQPSSzvKLL7D9V5udty/8+Cq2BInQMBhizDhGkjEOr2QWhAX8kTC8Mutjfp7OdoA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724109868; c=relaxed/simple;
+	bh=xy4gESU/hvZxuEdvsDPUU0N6gaXTwJQV0Ik52b5H5Vo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=RTqC/WyC32PGYX7RWHdNDhSIevqIm+LiawaAGAug4Xgqbw8ysHVpc5SLXHfCPU/FtVcawTbrf9NDhVTBVHSs92Nhx40JmpVhIXXDYdzKQJwXOwCfeZ7R86Bzuv+RJclcbRkDjjV1SlLfYqr7UYWn5vlysM+n+h8abB57dwaQyaE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=mhX38QHG; arc=fail smtp.client-ip=40.107.236.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JhVIC1/rFB0GqjwP6CHb1mOSbTFxwGYwzj+5AqmfltwJTI4UNr6yYAFW41f424O7gLTE8pDdX2a01uZCQopLsxTahR6rpIOzsbUrFDOuBq+ntJoBVYK3wlVWcpp6HZeaq1HguNHhd24pw1lKRwLNOD/dPrWZf1nvB2eqdv734k+znvAc4ILF0nkK5+/WJUbA6LcKP0cPvXtnuta5ukf4HnmfHpctFrBT7eYkzlE1JJijCiikC68GiPHbwRpPNe6S9OrWo0k3Qwe61VP32bL58bLAmEjZjK3RgIInhMZpjHfIugfTRmCDAIfUCgJnQ4mtiCpjl1+ylp+5OSTyj9OPIw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=c5E8hczwkJKphysY+ijzc8W24tjpY7MXzbW//Y40uqw=;
+ b=LIGKytKJPMtve4sbD2RE9qbBrbgrfaYgCK6YTiQozx+Yxe3PIoBPCA7QGVLt3Tr4RB3CEh7PEC0r1AYBvL9an/R6BCnmCceo19SYaJIAgX/L5xQc4qfCBNYpoZvYMWEGJyw3ZxDrzJFpXGZbf26qyEZaLSakkyJInvBzlg9lEO1x4Fo0eShIPWvD7/FqQS+mO4dS/QDGOm5EFQVo2mqZIAV5+vdJShbLEMjkQQtrALHiM6Px2K4vrSB/tmO6U9EUjFNqO6zEjnMXnDhu8poVayuZikzegQYc/zIeynAswWar9tC2mQjHFeDU2r5hRgphhUPPQ1YrQiPajuFn3M7wyQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c5E8hczwkJKphysY+ijzc8W24tjpY7MXzbW//Y40uqw=;
+ b=mhX38QHGR0PcY/a/9454p+coadYIjUrhoHWEqvXx+6uP7e2/FO5JjAS+Vnj7J10iRLTcdzHf1wNxJwnOY/0lUXHWWwqiIiOnO4UGbVBrsbUZvLJ6QuZHCuVAVj2+E1yOpRadx4yjRskxbe17OvNCJRiJrYwc2BEoJJs98nDsYJY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB6583.namprd12.prod.outlook.com (2603:10b6:8:d1::12) by
+ DS0PR12MB8199.namprd12.prod.outlook.com (2603:10b6:8:de::20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7875.21; Mon, 19 Aug 2024 23:24:23 +0000
+Received: from DS0PR12MB6583.namprd12.prod.outlook.com
+ ([fe80::c8a9:4b0d:e1c7:aecb]) by DS0PR12MB6583.namprd12.prod.outlook.com
+ ([fe80::c8a9:4b0d:e1c7:aecb%3]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
+ 23:24:23 +0000
+Message-ID: <f9fd8da2-b429-41a7-aabf-2eec3b3b9d42@amd.com>
+Date: Mon, 19 Aug 2024 16:24:27 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] vdpa: Remove unused declarations
+To: Yue Haibing <yuehaibing@huawei.com>, lingshan.zhu@kernel.org,
+ mst@redhat.com, jasowang@redhat.com, xuanzhuo@linux.alibaba.com,
+ eperezma@redhat.com
+Cc: virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240819140930.122019-1-yuehaibing@huawei.com>
+Content-Language: en-US
+From: "Nelson, Shannon" <shannon.nelson@amd.com>
+In-Reply-To: <20240819140930.122019-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0P220CA0028.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:a03:41b::11) To DS0PR12MB6583.namprd12.prod.outlook.com
+ (2603:10b6:8:d1::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] mm: krealloc: consider spare memory for __GFP_ZERO
-To: akpm@linux-foundation.org
-Cc: cl@linux.com, penberg@kernel.org, rientjes@google.com,
- iamjoonsoo.kim@lge.com, vbabka@suse.cz, roman.gushchin@linux.dev,
- 42.hyeyoo@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240812223707.32049-1-dakr@kernel.org>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20240812223707.32049-1-dakr@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6583:EE_|DS0PR12MB8199:EE_
+X-MS-Office365-Filtering-Correlation-Id: 161e1284-a922-461e-e6d5-08dcc0a60f1f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?a3VhNGU5Y3Fjcm9CaUxPbHc5K2RxOE0wa3ZRc3dMZ3dTbEVBcnVQMHlkeDV3?=
+ =?utf-8?B?bFA2K2xiUXRjYU1nMmZqZDJlY1k0MTBCcXZPa2hvTEFsMUVBUmU5cVBMWHdu?=
+ =?utf-8?B?cE9GVVlLV29TYzR5Z055NDJKdWRoVW5OQTJpdXlRN1Zmd1JVZXJpMHRZMnJJ?=
+ =?utf-8?B?d2ZGU0lpQUtkdDVmZ0kzMmd3VVFXS1FQUUl5T01WNXE3R0RqenFxMTU4aVJG?=
+ =?utf-8?B?TXpwZ3VCTjFncEVkcUN3SWE5a0pNaWV0bmVJa2x1UXNzclh2azJUczVkRXBt?=
+ =?utf-8?B?Vm10S0ljRTlaRDdKNThMc2dkQmFLR0p4aFlOa1JKNWZienJoMnNTa1pzODYv?=
+ =?utf-8?B?ek5XbTkyQVcybmhucHp4biswWmhac0Y0RHNadnJxaGlkS3FVNzYvVG9NazZq?=
+ =?utf-8?B?eWMxMXFBcFJ6VGc4MjYxUXlqMUw1bnlDWXNOMktGaVhNM3RZQ0t4L0JnSkpL?=
+ =?utf-8?B?Sjc1UnpIUStIaDhvY1IrRzZ6azJGWElScTcwQ2dkOTVxZ0lobWk3b05uNXZ5?=
+ =?utf-8?B?L2NTbUQ2ejZPb2xBVHRtSHdPdXdGU3IzUlRRelVEdE9ZNDB4QmdNU24vbk1Q?=
+ =?utf-8?B?NXVqTjUxVEJEaytsNVd5eC9sTFh0cVpPMmdXckdXTTFJVW5rSjREeFRmUW9v?=
+ =?utf-8?B?NWo4eVQ5TnZjYkZLazdDbE5YY0MzQ2NzMW5KNjBhZVE2WTdNYjlVZDlIZVZp?=
+ =?utf-8?B?aDhIa3o4YVJiNjYyVnRCUzZJYkZEaTdpNVVUcmpJeXhKV1lNWWtzbEk5dm02?=
+ =?utf-8?B?L3Q2Qy9ud2ZpRlNPcytuK1FZdy84bW1HTDV4QWNoekJta2JYZnkxK2xSVkRM?=
+ =?utf-8?B?dG14VlNoREVGYS9oR0ZGRmpFZDhsN2V5YmtLNXlyeFI1eTdPNmY0MlBLdjVT?=
+ =?utf-8?B?cDRwZElqdENOTnVjZjdYNkZ4QVNHMDNIcDBPWDU0TFJKYzZiYUlXd3d2S3BO?=
+ =?utf-8?B?TDkvMmI0bFNBN0VEQmpGWWR1M3pTMUNybGJvT2dmN3JtcXY3dUxYMVJwYUZN?=
+ =?utf-8?B?SGtkbzROem9idmhITVk2c0N2SVJlcjlVY3hTaG1BK0pUTjd1NDVNZWFGMVVD?=
+ =?utf-8?B?NEo0QmVYamNrTDRIQS81MnZubmduV3locmp0c25kR2NSdUFjVWM3WUxHdFBz?=
+ =?utf-8?B?dHBwZ0twYWZHQ2Jpd3VUYSt4YmJPc1QyVmdKU0QyS1MyQUFQS3R0dTZBMlVq?=
+ =?utf-8?B?dnhpMXA0SlFRaFBHdktjUDMzazBjdFlEeGFYb1ViSEttVkI5R3BueDV6Y1Fs?=
+ =?utf-8?B?NFNoRXZZK2FyczVveVB0V1h6VXNsVFZ6alBKcmtmaXNTUHVZSVNGVjBFVm5o?=
+ =?utf-8?B?dWxuRXFwMXcvayt5QUE3aG15RnBiZDkvb2oyelRrRmZGLzQ2RHpnRUNudUxI?=
+ =?utf-8?B?c0V1aXZZRjNNeU9KK21id1JaQmhFMzVTR3VVOFN6L2hZM1oyVUhpcW9NSVdM?=
+ =?utf-8?B?YXNsQ29PcHQ2TEZWd011Y21BS3dNNWt5a3RaNDJvUkFRZFdWdml4ZnF0TzZh?=
+ =?utf-8?B?bld6Wi8zdG5jWFNDUzl4OEtqOGNKSjRGQnZmWllrVUNtS2hXOGdLa1ZWM1pw?=
+ =?utf-8?B?cSs1SHNSRklJVURWa3VzTVpEVVhmdWw1VVpub1NxZFdOVGNxck1yRTJkdFpv?=
+ =?utf-8?B?QkZEZTY5b2MwOXpBYkNMbXhWbkptNmduWWo2N1BLM0c4cnkvak1YWDVlOE9j?=
+ =?utf-8?B?TlIxSEp5Y0d2c0s0UEJoOFFSZXVCUjZHQ29RcnVpNmRTeC9ERGltNTVXODFt?=
+ =?utf-8?B?NDRNT2RlNjVickdTeHRwbzJrL1R5eHhrUzNaNGkxTzcrVHZmcVcvWGowTGJS?=
+ =?utf-8?B?VEZYOHlqWkNQUmp3SkVuQT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6583.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ckQzU21PSFFYdlpnalJYMzBZWjYxVUVFTmNLN095eHdyVEVTYkVPZ2I2b2ZF?=
+ =?utf-8?B?U0o1YzhPWVZ0cnB4MlpiaHdYV3owSmlGUnZyME5YWExmRm1MTmJpdjV2NXFr?=
+ =?utf-8?B?OU44bm1YL2hxRmFHVGNoVjFTYnBEQjdDTzdxZVlka3YxeXVFVFpwZ2dTNkhh?=
+ =?utf-8?B?RlZ3NlJGTllIQTVsTGxPL3JtS2hzVWtUTXRhOU03SzBuRnBWV08yUGlSMWdP?=
+ =?utf-8?B?YU5aT0h3RGc0NmZTYXR6cXphaHJ6WUpFUHdIZHFFZWV2cnlQendDNTlNMU84?=
+ =?utf-8?B?bjlGc3lWem9SWHlmK3dmK3RWNlNmbDFKSlFwTlVKaE1pMEc2c2dSODZCeU55?=
+ =?utf-8?B?VVg0aitmQzZLaFloUEgyL2ZwS204Sk84T1pxLzBDdnIrMGVFV05FR2szT2g4?=
+ =?utf-8?B?aTYwRjg0aC9aaERNaURVWllGSzlqSjNkN1hxQWxVSFdyTCtUN3YwaitvWXY2?=
+ =?utf-8?B?RGYwQTJNWnlOYXJBZElwc0lGeGlnN1FmMFdHcDVINHdleVlJOFp4a0RlNXp5?=
+ =?utf-8?B?bmowbjNCbjh1S0cwaHRaQUdLczNKdXZpSzE4ZHdJaVZzbEsxTlduTUFqZVFO?=
+ =?utf-8?B?eXZVSWFGMkVYak5jWjZ5RHIyOG9MNWNSNnh3ZG04cjBuL29vc1NuM1VuRDlq?=
+ =?utf-8?B?N0RmN1dBcU5WMElqalhNSFdIbk0yRXNHTm9zWFlUZ3pCbSszV3A5WG1hZVAw?=
+ =?utf-8?B?UUpMTGlFR3cxU2ZXOTIzSDRXUzc4Ky9ORnZpZGp0bG9mL25hN2ZjOGlTa1Bn?=
+ =?utf-8?B?ckoxT3c0Sm5aMk1raHdCZWdtcmVWQzlJNlZsdGxRMnN4WURyTS93amhQNzVV?=
+ =?utf-8?B?a0phOG4xTCtXSlVwZ3RZdWFPdmF5bzdpTGVMVWlqN014dVRzMVJDMmMwUnVX?=
+ =?utf-8?B?MFF1S0YvdTZ1TEpKNHJVWVJJNVZXZ0NXY292RmxSR3ZNUTR6aUhYcnJSWitK?=
+ =?utf-8?B?NERiOGszUm9jWDZhTDVFNzcrWHExdjFtYklrOU4rdFUxSzUvR2QxRyt6QThE?=
+ =?utf-8?B?eGFFV0hJYnVzcXVKcFgvMVcwdVRiVEVtWGlicVg5QkVyV3JJUW13N0I4MDNO?=
+ =?utf-8?B?Y3pzOWE3NjRhYzZTM3ZWa0p1anI1b1JRa0ZuRHpaeG9BR2FpUm5wSk1xYTk3?=
+ =?utf-8?B?YnBQNjVBWW1nenhpK3VIRTVKYVgzSkN6K2pZdjFoK1c5bndFdjMvb3FiUTIx?=
+ =?utf-8?B?YjdTcE1uejFYdFJVT2hSZjQvM241eDkvZHJvUkFacEoyazJMNDBXck5wTzF2?=
+ =?utf-8?B?QkRpSGkrMXVCRytBR3p6ZTRhWUllNDZVcHZyYm5jZGxUYzk0cGxiSDJIczM5?=
+ =?utf-8?B?WjY5OW41RUZmSjBEMnkzdW9IWFFsTjZmZVlFc2h5RlVuT1o4M2toakZPRklV?=
+ =?utf-8?B?aDl3bVJFNzZnVmd0MjNIbEZvZzBHTGxMbitpUXZyUG9IK2Z1WWFyRDFCL1FR?=
+ =?utf-8?B?QW0xNTB3OWpTd2E4dC9rN01TRUNSYmI0MkNzTzdlMW5Lak9OQ0kvZXRTWnlD?=
+ =?utf-8?B?WjRRUjU0ZVFvalZUYkFub1VYS3N0ckJleU40ZVpWcHRwV1hyWVRMM215REta?=
+ =?utf-8?B?dytjT2hyL09uWjRYU29jcG9RVXNGbC9OdmJnbTZKN3lFeU1BdVQxN0NRMWxv?=
+ =?utf-8?B?Tnc5MzV2R3plTmNLeFhadHEycm9NQ0doSVJUOXdpRk5jSzZXNWY1WHg4Zmtn?=
+ =?utf-8?B?eTBuc0pDRHJlMzJzYmtkZWM4Y3d4V200V29scWpsSHlyOVhUY01yYUwvaWlB?=
+ =?utf-8?B?N1ZZYTFkTmZSMmRQVHdPbzV5RVlxaVdlNzFPNEZlUnBib2x4c0h3a3VVSHlL?=
+ =?utf-8?B?bXVEOER3NkFCQ1V1V1NxSDQ1UE5RM2pIZW9jVDBXYnphblQzMlNuRnFVYlMx?=
+ =?utf-8?B?YmtjTUkzcXVhMG8vUytWL1BJU2g2SjRZWHp3ZDVDeHJkTU93OTE3N2xqZDYx?=
+ =?utf-8?B?SFZpNWNLQmZ5eW13Um94dkVHSHNJbFVHSGNhSFRSSGt6VFFycFlLUlNpY3Jh?=
+ =?utf-8?B?MFFWVEtGc1E2eDhEUHNOUDJaR0RvREdVN2p0eHptaVE1YzNKZHdDei9YcGhn?=
+ =?utf-8?B?UTFqaCtDVzhEMFk2TXN2RXRTaXRWMHVjeXhqZitqK1FvRVRkNWl0TkdXR1kv?=
+ =?utf-8?Q?VJyi9gP6d99M2g98rthbVTr1q?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 161e1284-a922-461e-e6d5-08dcc0a60f1f
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6583.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 23:24:23.2767
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ou9TAvucZRsxp5D3m97PD1WQ/ZiuHrqEI4MgZVE3rSI/D/EaUJEwsXfq3XOCdvyq3klvCkiWFPjGQrc2Pu6jag==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8199
 
-On 8/13/24 12:34 AM, Danilo Krummrich wrote:
-
-Gentle reminder on this one.
-
-> As long as krealloc() is called with __GFP_ZERO consistently, starting
-> with the initial memory allocation, __GFP_ZERO should be fully honored.
+On 8/19/2024 7:09 AM, Yue Haibing wrote:
 > 
-> However, if for an existing allocation krealloc() is called with a
-> decreased size, it is not ensured that the spare portion the allocation
-> is zeroed. Thus, if krealloc() is subsequently called with a larger size
-> again, __GFP_ZERO can't be fully honored, since we don't know the
-> previous size, but only the bucket size.
+> There is no caller and implementation in tree.
 > 
-> Example:
-> 
-> 	buf = kzalloc(64, GFP_KERNEL);
-> 	memset(buf, 0xff, 64);
-> 
-> 	buf = krealloc(buf, 48, GFP_KERNEL | __GFP_ZERO);
-> 
-> 	/* After this call the last 16 bytes are still 0xff. */
-> 	buf = krealloc(buf, 64, GFP_KERNEL | __GFP_ZERO);
-> 
-> Fix this, by explicitly setting spare memory to zero, when shrinking an
-> allocation with __GFP_ZERO flag set or init_on_alloc enabled.
-> 
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-
-I think I forgot to add:
-
-Cc: stable@vger.kernel.org
-
-Not sure if there is a useful commit for "Fixes" though. AFAICT, this has been 
-broken since forever.
-
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 > ---
->   mm/slab_common.c | 7 +++++++
->   1 file changed, 7 insertions(+)
+>   drivers/vdpa/ifcvf/ifcvf_base.h | 3 ---
+>   drivers/vdpa/pds/cmds.h         | 1 -
+>   2 files changed, 4 deletions(-)
 > 
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 40b582a014b8..cff602cedf8e 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -1273,6 +1273,13 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
->   
->   	/* If the object still fits, repoison it precisely. */
->   	if (ks >= new_size) {
-> +		/* Zero out spare memory. */
-> +		if (want_init_on_alloc(flags)) {
-> +			kasan_disable_current();
-> +			memset((void *)p + new_size, 0, ks - new_size);
-> +			kasan_enable_current();
-> +		}
-> +
->   		p = kasan_krealloc((void *)p, new_size, flags);
->   		return (void *)p;
->   	}
+> diff --git a/drivers/vdpa/ifcvf/ifcvf_base.h b/drivers/vdpa/ifcvf/ifcvf_base.h
+> index 0f347717021a..aa36de361c10 100644
+> --- a/drivers/vdpa/ifcvf/ifcvf_base.h
+> +++ b/drivers/vdpa/ifcvf/ifcvf_base.h
+> @@ -112,15 +112,12 @@ void ifcvf_write_dev_config(struct ifcvf_hw *hw, u64 offset,
+>                              const void *src, int length);
+>   u8 ifcvf_get_status(struct ifcvf_hw *hw);
+>   void ifcvf_set_status(struct ifcvf_hw *hw, u8 status);
+> -void io_write64_twopart(u64 val, u32 *lo, u32 *hi);
+>   void ifcvf_reset(struct ifcvf_hw *hw);
+>   u64 ifcvf_get_dev_features(struct ifcvf_hw *hw);
+>   u64 ifcvf_get_hw_features(struct ifcvf_hw *hw);
+>   int ifcvf_verify_min_features(struct ifcvf_hw *hw, u64 features);
+>   u16 ifcvf_get_vq_state(struct ifcvf_hw *hw, u16 qid);
+>   int ifcvf_set_vq_state(struct ifcvf_hw *hw, u16 qid, u16 num);
+> -struct ifcvf_adapter *vf_to_adapter(struct ifcvf_hw *hw);
+> -int ifcvf_probed_virtio_net(struct ifcvf_hw *hw);
+>   u32 ifcvf_get_config_size(struct ifcvf_hw *hw);
+>   u16 ifcvf_set_vq_vector(struct ifcvf_hw *hw, u16 qid, int vector);
+>   u16 ifcvf_set_config_vector(struct ifcvf_hw *hw, int vector);
+> diff --git a/drivers/vdpa/pds/cmds.h b/drivers/vdpa/pds/cmds.h
+> index e24d85cb8f1c..6b1bc33356b0 100644
+> --- a/drivers/vdpa/pds/cmds.h
+> +++ b/drivers/vdpa/pds/cmds.h
+> @@ -14,5 +14,4 @@ int pds_vdpa_cmd_init_vq(struct pds_vdpa_device *pdsv, u16 qid, u16 invert_idx,
+>                           struct pds_vdpa_vq_info *vq_info);
+>   int pds_vdpa_cmd_reset_vq(struct pds_vdpa_device *pdsv, u16 qid, u16 invert_idx,
+>                            struct pds_vdpa_vq_info *vq_info);
+> -int pds_vdpa_cmd_set_features(struct pds_vdpa_device *pdsv, u64 features);
+>   #endif /* _VDPA_CMDS_H_ */
+> --
+> 2.34.1
 > 
-> base-commit: b8dbbb7fe1db26c450a9d2c3302013154b3431df
+
+Thanks!
+
+Reviewed-by: Shannon Nelson <shannon.nelson@amd.com>
+
 
