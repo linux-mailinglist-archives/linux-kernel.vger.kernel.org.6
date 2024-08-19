@@ -1,145 +1,195 @@
-Return-Path: <linux-kernel+bounces-291316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD2299560D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 03:17:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D50DE9560D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 03:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 582E01F22391
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 01:17:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87135281847
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 01:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859071BC20;
-	Mon, 19 Aug 2024 01:17:35 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0EA1BC20;
+	Mon, 19 Aug 2024 01:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iGll7YjG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2579F288B5;
-	Mon, 19 Aug 2024 01:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085F018E0E
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724030255; cv=none; b=TgoYred5dagNOvp2ltlCP+5Xosf8HHqQqSiyRS8ELapP20qdqqz6kC8tBYaQvjTwsYIzuqQJXBSmnl9J/FUEIPlZrva9DxYxw41ltiDfM90MPkUIaH+Y0SbeDwU47IYrLe62xFAQoB5ofcValnTdSgjmlMaobqHKcAlBTTzK6sU=
+	t=1724030439; cv=none; b=oa5j7D4YqS+MptSoI1/25Lt9sTPu/vG59u0kwinNJoKkDPJo0ennP6A1Ol2ZMFy1+vj9QE3SuscyiN1Pk65rErSDoYRQ/66KgUgigr8nwpt4S7bP4E6qspHuXLWbUyqIR+R+Q1jdxmxAgLdUk3x0gxIrqaF2djzQLThrIqfOogY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724030255; c=relaxed/simple;
-	bh=Kraybv2bM05Jkd47FisOuLQyJOdH9jsHsaPE0M0zjsU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=uRPzv8ARObqoQ3PwE8BTo6mp6vrXv8UMZTgVAtUDXXPamlujX3JkrMg2Am2jDnXcH4+LkBhvAaNPzfhEGAtFN6NWyPv3eLWBXi5efVhfIAcDinuZnsfFmyyfKY2LWQJ042+HUONT6qUSdttBX1oDpYF+9InEP2XblXdvg/JGRTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WnF7Y18Jcz4f3jQv;
-	Mon, 19 Aug 2024 09:17:13 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 308591A018D;
-	Mon, 19 Aug 2024 09:17:27 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgBnj4UlncJmGj5YCA--.46393S3;
-	Mon, 19 Aug 2024 09:17:27 +0800 (CST)
-Subject: Re: [PATCH -next] ata: libata: Fix memory leak for error path in
- ata_host_alloc()
-To: Damien Le Moal <dlemoal@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>,
- Zheng Qixing <zhengqixing@huawei.com>, cassel@kernel.org
-Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20240816035820.2055747-1-zhengqixing@huawei.com>
- <3dfa5352-01d3-dc16-5a75-0b38e5893246@huaweicloud.com>
- <5949965e-0155-4ad1-a019-df220140b085@kernel.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <ad59e599-9d6e-211a-957b-410a43eccbdb@huaweicloud.com>
-Date: Mon, 19 Aug 2024 09:17:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1724030439; c=relaxed/simple;
+	bh=P+be2YV0Pz1Bes9YK9GlYeb7ROGI28QQhwWOLpl4U4s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ijmMuxGyXm7XSTMttZdOCqKRq/TyFIEYJ3T4RT03eF8swLqP1OIZPXzzkFoLoAR6Ro9xHr2htgQO5oHTZ48cGdNSoWcZyqSm8NptE0t2ee5MWg4Fcvy+ynpqN5X77KGrNQboxqZR/FiIOG1Rp3DhzzkO8GvHTyayvf7rvX40luM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iGll7YjG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BA2BC32786;
+	Mon, 19 Aug 2024 01:20:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724030438;
+	bh=P+be2YV0Pz1Bes9YK9GlYeb7ROGI28QQhwWOLpl4U4s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iGll7YjGKwvT2n7x8QWoZH6Tkz7pGp/r5UjuJu4lxu9alE90MNOKYf0Wktak0NiyG
+	 8VudkfP2PZ00Adphq+CEPTw0tpWqeEeOT7gIARHofBgHVI2rfbcW+Sr9uZ6DBsJrP/
+	 haVG8SPMHsc4bKDszYMzNbq5GiSQPna/kNvZWWUyO1FtHxqFN4FNwqGNYVr20xBXr7
+	 Re4bGJDxR69MKhtQmoLFUjxD8CEfyGRENq8eD0at1UEVVXPKeCushTkNgc2O9QCpuq
+	 YZVV3kOwDRLrrO3HM1wy3mVivDgk9BGYSqXmqfSjA2fx2hnDhHzAN8B1w2wy/8V66f
+	 RvnH2DzXdteAA==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH 1/8] f2fs: convert f2fs_write_begin() to use folio
+Date: Mon, 19 Aug 2024 09:20:16 +0800
+Message-Id: <20240819012023.3871272-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <5949965e-0155-4ad1-a019-df220140b085@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBnj4UlncJmGj5YCA--.46393S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7trW5ZF4kCF15Ar43Ary5Arb_yoW8Cry5pF
-	srWa1UCFWDGrn7uwnFg3W8ZF1rKa18Kr15ury8t34fZrnxtrn5GrZxCas8uFn0kr1kWF1j
-	qFW8KryfCFyDZa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi,
+Convert to use folio, so that we can get rid of 'page->index' to
+prepare for removal of 'index' field in structure page [1].
 
-在 2024/08/16 18:32, Damien Le Moal 写道:
-> On 8/16/24 15:42, Yu Kuai wrote:
->> 在 2024/08/16 11:58, Zheng Qixing 写道:
->>> In ata_host_alloc(), if ata_port_alloc(host) fails to allocate memory
->>> for a port, the allocated 'host' structure is not freed before returning
->>> from the function. This results in a potential memory leak.
->>>
->>> This patch adds a kfree(host) before the error handling code is executed
->>> to ensure that the 'host' structure is properly freed in case of an
->>> allocation failure.
->>>
->>> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
-> 
-> I did not receive this patch and I do not see it on the list either. Something
-> went wrong...
-> Can you resend please ? Thanks.
-> 
->>> ---
->>>    drivers/ata/libata-core.c | 4 +++-
->>>    1 file changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
->>> index e4023fc288ac..f27a18990c38 100644
->>> --- a/drivers/ata/libata-core.c
->>> +++ b/drivers/ata/libata-core.c
->>> @@ -5663,8 +5663,10 @@ struct ata_host *ata_host_alloc(struct device *dev, int n_ports)
->>>    	}
->>>    
->>>    	dr = devres_alloc(ata_devres_release, 0, GFP_KERNEL);
->>> -	if (!dr)
->>> +	if (!dr) {
->>> +		kfree(host);
->>>    		goto err_out;
->>> +	}
->>
->> Looks correct, dev_set_drvdata(dev, host) is not called yet.
->> ata_devres_release won't free host in this case.
->>
->> I'll suggest to return NULL directly here, and then the 'err_out'
->> tag can be removed as well.
-> 
-> I do not think so. Since devres_open_group() was called, need to call either
-> devres_remove_group() or devres_release_group().
+[1] https://lore.kernel.org/all/Zp8fgUSIBGQ1TN0D@casper.infradead.org/
 
-Yes, you're right.
+Cc: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/data.c | 40 +++++++++++++++++++++-------------------
+ 1 file changed, 21 insertions(+), 19 deletions(-)
 
-Thanks,
-Kuai
-
-> 
->>
->> Anyway, with or without the cleanup:
->> Reviewed-by: Yu Kuai <yukuai3@huawei.com>>
->> Thanks!
->>>    
->>>    	devres_add(dev, dr);
->>>    	dev_set_drvdata(dev, host);
->>>
->>
-> 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 0655fddfc4ba..9e1ade13060c 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3381,8 +3381,8 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
+ 			struct page *page, loff_t pos, unsigned len,
+ 			block_t *blk_addr, bool *node_changed)
+ {
+-	struct inode *inode = page->mapping->host;
+-	pgoff_t index = page->index;
++	struct inode *inode = folio->mapping->host;
++	pgoff_t index = folio->index;
+ 	struct dnode_of_data dn;
+ 	struct page *ipage;
+ 	bool locked = false;
+@@ -3419,7 +3419,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
+ 
+ 	if (f2fs_has_inline_data(inode)) {
+ 		if (pos + len <= MAX_INLINE_DATA(inode)) {
+-			f2fs_do_read_inline_data(page_folio(page), ipage);
++			f2fs_do_read_inline_data(folio, ipage);
+ 			set_inode_flag(inode, FI_DATA_EXIST);
+ 			if (inode->i_nlink)
+ 				set_page_private_inline(ipage);
+@@ -3518,12 +3518,12 @@ static int __reserve_data_block(struct inode *inode, pgoff_t index,
+ }
+ 
+ static int prepare_atomic_write_begin(struct f2fs_sb_info *sbi,
+-			struct page *page, loff_t pos, unsigned int len,
++			struct folio *folio, loff_t pos, unsigned int len,
+ 			block_t *blk_addr, bool *node_changed, bool *use_cow)
+ {
+-	struct inode *inode = page->mapping->host;
++	struct inode *inode = folio->mapping->host;
+ 	struct inode *cow_inode = F2FS_I(inode)->cow_inode;
+-	pgoff_t index = page->index;
++	pgoff_t index = folio->index;
+ 	int err = 0;
+ 	block_t ori_blk_addr = NULL_ADDR;
+ 
+@@ -3566,6 +3566,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+ 	struct inode *inode = mapping->host;
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct page *page = NULL;
++	struct folio *folio;
+ 	pgoff_t index = ((unsigned long long) pos) >> PAGE_SHIFT;
+ 	bool need_balance = false;
+ 	bool use_cow = false;
+@@ -3625,22 +3626,23 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+ 	/* TODO: cluster can be compressed due to race with .writepage */
+ 
+ 	*pagep = page;
++	folio = page_folio(page);
+ 
+ 	if (f2fs_is_atomic_file(inode))
+-		err = prepare_atomic_write_begin(sbi, page, pos, len,
++		err = prepare_atomic_write_begin(sbi, folio, pos, len
+ 					&blkaddr, &need_balance, &use_cow);
+ 	else
+-		err = prepare_write_begin(sbi, page, pos, len,
++		err = prepare_write_begin(sbi, folio, pos, len,
+ 					&blkaddr, &need_balance);
+ 	if (err)
+ 		goto fail;
+ 
+ 	if (need_balance && !IS_NOQUOTA(inode) &&
+ 			has_not_enough_free_secs(sbi, 0, 0)) {
+-		unlock_page(page);
++		folio_unlock(folio);
+ 		f2fs_balance_fs(sbi, true);
+-		lock_page(page);
+-		if (page->mapping != mapping) {
++		folio_lock(folio);
++		if (folio->mapping != mapping) {
+ 			/* The page got truncated from under us */
+ 			f2fs_put_page(page, 1);
+ 			goto repeat;
+@@ -3649,18 +3651,18 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+ 
+ 	f2fs_wait_on_page_writeback(page, DATA, false, true);
+ 
+-	if (len == PAGE_SIZE || PageUptodate(page))
++	if (len == PAGE_SIZE || folio_test_uptodate(folio))
+ 		return 0;
+ 
+ 	if (!(pos & (PAGE_SIZE - 1)) && (pos + len) >= i_size_read(inode) &&
+ 	    !f2fs_verity_in_progress(inode)) {
+-		zero_user_segment(page, len, PAGE_SIZE);
++		folio_zero_segment(folio, len, folio_size(folio));
+ 		return 0;
+ 	}
+ 
+ 	if (blkaddr == NEW_ADDR) {
+-		zero_user_segment(page, 0, PAGE_SIZE);
+-		SetPageUptodate(page);
++		folio_zero_segment(folio, 0, folio_size(folio));
++		folio_mark_uptodate(folio);
+ 	} else {
+ 		if (!f2fs_is_valid_blkaddr(sbi, blkaddr,
+ 				DATA_GENERIC_ENHANCE_READ)) {
+@@ -3669,16 +3671,16 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+ 		}
+ 		err = f2fs_submit_page_read(use_cow ?
+ 				F2FS_I(inode)->cow_inode : inode,
+-				page_folio(page), blkaddr, 0, true);
++				folio, blkaddr, 0, true);
+ 		if (err)
+ 			goto fail;
+ 
+-		lock_page(page);
+-		if (unlikely(page->mapping != mapping)) {
++		folio_lock(folio);
++		if (unlikely(folio->mapping != mapping)) {
+ 			f2fs_put_page(page, 1);
+ 			goto repeat;
+ 		}
+-		if (unlikely(!PageUptodate(page))) {
++		if (unlikely(!folio_test_uptodate(folio))) {
+ 			err = -EIO;
+ 			goto fail;
+ 		}
+-- 
+2.40.1
 
 
