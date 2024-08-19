@@ -1,73 +1,157 @@
-Return-Path: <linux-kernel+bounces-292737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEC4C9573BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:44:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C19809573BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:44:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76D521F243E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:44:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A9CF1F24470
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0E118A6AB;
-	Mon, 19 Aug 2024 18:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4F718A933;
+	Mon, 19 Aug 2024 18:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jnLOlXXQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="CbM97Au7"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C10A189F5C;
-	Mon, 19 Aug 2024 18:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0686189F5C
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 18:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724092773; cv=none; b=slmOMJz9dOasRAC6EVOjRxk442KX1eL84XyJxT4zroGTkqDzgIe+VP2FB5ikucoMqMh3QBpIIBLNUATrKK3EhcpVQ2PDaTQkqW647pIX5uo0YbQ42fillhj7li3oCNHpc6l69MptR/ENmWaGMzPTs4tdqR6JnJSlv/V8JY8KV2o=
+	t=1724092780; cv=none; b=XO3QFQz189xe1egHyh9wXWzqp9vKtWGOCPrvV4iQIAutcnByEiacfBRV74SaaXMovneRd2G4P6yEgcYLTj5br1FA0AYR7NwWUzj132xuwj8oJh6oAPB1QiggkK++YrmZm+i2EEHB/qJamN7DacisKN3hvOSjvSyHjRdtQXymPnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724092773; c=relaxed/simple;
-	bh=k86tyyWPNxb3mEa0tZJ3W2yt7c06vg3dCTcq4c4U4Iw=;
+	s=arc-20240116; t=1724092780; c=relaxed/simple;
+	bh=Ltk+QjD6TRFkUieOvzjHHGmhAHcUXUyF1zlxMr4s/ak=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J9ru+qTJ00j5udC2QjsQH359evLhqBs310WkRYHSXnUACKe56USzH9TWODKeoMOIZyLQ3ohyOZ4Thwq1D7i0UjBs4mMnN0DNeOV2JUKLXN5V9xJiZSQtfWnEoJ0zCkyYUYa01lgzuGQfBHvvgcRLHyZ+yo0PkVuApW0qSXXXbPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jnLOlXXQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECE3BC32782;
-	Mon, 19 Aug 2024 18:39:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724092770;
-	bh=k86tyyWPNxb3mEa0tZJ3W2yt7c06vg3dCTcq4c4U4Iw=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=s7KNjqgTBweztkp/jCcAsvOYjfd1tYBr0ceVJqwSCVCDIyrHKPgL/A9zr35hsZr6wMXnSUvwZTqWO7mDNWhHug6DCub7q1ze51pxRjylwCk4EXpl1lm2zFZUVM++qQgst33MgHmTDILhR4qepjVN8vN/1SPAARmOpiCFY0XnaTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=CbM97Au7; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1724092775;
+	bh=Ltk+QjD6TRFkUieOvzjHHGmhAHcUXUyF1zlxMr4s/ak=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jnLOlXXQpgxGLtbXzxnoFFia7QabXbpNQPox/0Lui0O5jlxIfbcmBmc9hacCt2+J9
-	 e3MDwSqUJKMIhtCPSq9gf242GlOxSSDkXBL7AlRI56nzp4rRZiIRqoSWNeQkuJT/Z5
-	 CKBIJArLxWXMBtIL70BbkTln14F/y4YVmS3DypE1Ex6mF1ZppofU5oUMbfanBlh+MD
-	 9+twmBiXeNfwAYvbxL8I6/9TH2vW9vzRV9f53VOGDeE9//wVwZruSitqytb9Cnwb16
-	 d6OFh7FND0olRE2UGVwnMDrI7kA89pvCoQfawmwaKuOA09qCqtYlSmSSclb2e3Sd2Z
-	 LCTvrOwrfhyNA==
-Date: Mon, 19 Aug 2024 20:39:26 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: broonie@kernel.org, krzk@kernel.org, alim.akhtar@samsung.com, 
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] spi: s3c64xx: Fix module autoloading
-Message-ID: <27tqmeu4mdxcp2ochrjkdxv3zu3fuxdjysxzql3xtrh27zgsok@t5i5zrnb7j72>
-References: <20240819040523.2801461-1-ruanjinjie@huawei.com>
+	b=CbM97Au747P0rOaRji839hbO98/BxUXvWF9WV/wWVTPme6eer9Z0LvQ/K2qStjoKj
+	 1O5DMBb+SZmGnY8bjAGoR/FZbrS2Y+kY5L9lcgkeD5sqL5rt4zC/4AGNaKsQHitgvq
+	 h2G/EJ6INozifm97jdsmsp3RZDgphxUT9t/sF8+A=
+Date: Mon, 19 Aug 2024 20:39:34 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Melissa Wen <mwen@igalia.com>
+Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, jinzh <jinzh@github.amd.com>, 
+	Aric Cyr <Aric.Cyr@amd.com>, Alan Liu <HaoPing.Liu@amd.com>, Tony Cheng <Tony.Cheng@amd.com>, 
+	Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/12] drm/amd: Switch over to struct drm_edid
+Message-ID: <f2664caa-8bf5-4f6d-903c-3de01977e89e@t-8ch.de>
+References: <20240818-amdgpu-drm_edid-v1-0-aea66c1f7cf4@weissschuh.net>
+ <3v3yvr6adlnqgbwbnvhfwj3ylpptunqyvosazyebvov3osdprb@znkx32uxku5q>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240819040523.2801461-1-ruanjinjie@huawei.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3v3yvr6adlnqgbwbnvhfwj3ylpptunqyvosazyebvov3osdprb@znkx32uxku5q>
 
-Hi Jinjie,
+Hi Melissa,
 
-On Mon, Aug 19, 2024 at 12:05:23PM GMT, Jinjie Ruan wrote:
-> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
-> based on the alias from of_device_id table.
+On 2024-08-19 11:31:44+0000, Melissa Wen wrote:
+> On 08/18, Thomas Weißschuh wrote:
+> > The AMD DRM drivers use 'struct edid', raw pointers and even custom
+> > structs to represent EDID data.
+> > Uniformly switch to the safe and recommended "struct drm_edid".
+> > 
+> > Some uses of "struct edid" are left because some ad-hoc parsing is still
+> > being done inside the drivers.
 > 
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> Hi Thomas,
+> 
+> It's great to see more people working on removing raw edid from amd
+> display driver in favor of drm_edid.
+> 
+> I glanced over your series and I found it similar to my recent proposal
+> to migrate amdgpu_dm_connector from edid to drm_edid. You can find the
+> v5 of this work here:
+> https://lore.kernel.org/amd-gfx/20240807203207.2830-1-mwen@igalia.com/
 
-Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+thanks for the pointer.
 
-Thanks,
-Andi
+> I believe it's more productive if we can join efforts and improve that
+> proposal instead of duplicating work. I'll look at your patches more
+> carefully this week. If you can review my work, I'd be happy to hear
+> your feedback too.
+
+Indeed. I'll take a look at your patches.
+Let's see how they can be combined.
+
+> Thanks,
+> 
+> Melissa
+> 
+> > 
+> > The patch "drm/amd/display: Switch amdgpu_dm_connector to struct drm_edid"
+> > will conflict with my backlight quirk series [0].
+> > The conflict will result in an obvious and easy to fix build failure.
+> > 
+> > Patches 1 and 2 delete some dead code.
+> > Patches 3 to 6 constify some arguments and shuffle around some code.
+> > The remaining patches perform the actual conversion in steps.
+> > 
+> > [0] https://lore.kernel.org/lkml/20240818-amdgpu-min-backlight-quirk-v5-0-b6c0ead0c73d@weissschuh.net/
+> > 
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > ---
+> > Thomas Weißschuh (12):
+> >       drm/amd/display: remove spurious definition for dm_helpers_get_sbios_edid()
+> >       drm/amd/display: Remove EDID members of ddc_service
+> >       drm/edid: constify argument of drm_edid_is_valid()
+> >       drm/amd/display: Simplify raw_edid handling in dm_helpers_parse_edid_caps()
+> >       drm/amd/display: Constify raw_edid handling in dm_helpers_parse_edid_caps()
+> >       drm/amd/display: Constify 'struct edid' in parsing functions
+> >       drm/amd/display: Use struct edid in dc_link_add_remote_sink()
+> >       drm/amdgpu: Switch amdgpu_connector to struct drm_edid
+> >       drm/amd/display: Switch amdgpu_dm_connector to struct drm_edid
+> >       drm/edid: add a helper to compare two EDIDs
+> >       drm/amd/display: Switch dc_sink to struct drm_edid
+> >       drm/amd/display: Switch dc_link_add_remote_sink() to struct drm_edid
+> > 
+> >  drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c     | 56 ++++++++-------
+> >  drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h           |  3 +-
+> >  drivers/gpu/drm/amd/amdgpu/dce_v10_0.c             |  4 +-
+> >  drivers/gpu/drm/amd/amdgpu/dce_v11_0.c             |  4 +-
+> >  drivers/gpu/drm/amd/amdgpu/dce_v6_0.c              |  4 +-
+> >  drivers/gpu/drm/amd/amdgpu/dce_v8_0.c              |  4 +-
+> >  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  | 84 +++++++++++-----------
+> >  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h  |  5 +-
+> >  .../drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c  | 34 +++++----
+> >  .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    | 28 ++++----
+> >  .../gpu/drm/amd/display/dc/core/dc_link_exports.c  |  5 +-
+> >  drivers/gpu/drm/amd/display/dc/dc.h                |  8 +--
+> >  drivers/gpu/drm/amd/display/dc/dc_ddc_types.h      |  7 --
+> >  drivers/gpu/drm/amd/display/dc/dc_types.h          |  5 --
+> >  drivers/gpu/drm/amd/display/dc/dm_helpers.h        |  4 +-
+> >  drivers/gpu/drm/amd/display/dc/inc/link.h          |  3 +-
+> >  .../gpu/drm/amd/display/dc/link/link_detection.c   | 42 ++++-------
+> >  .../gpu/drm/amd/display/dc/link/link_detection.h   |  3 +-
+> >  drivers/gpu/drm/drm_edid.c                         | 20 +++++-
+> >  include/drm/drm_edid.h                             |  3 +-
+> >  20 files changed, 155 insertions(+), 171 deletions(-)
+> > ---
+> > base-commit: 207565ee2594ac47261cdfc8a5048f4dc322c878
+> > change-id: 20240615-amdgpu-drm_edid-32d969dfb899
+> > 
+> > Best regards,
+> > -- 
+> > Thomas Weißschuh <linux@weissschuh.net>
+> > 
 
