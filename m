@@ -1,418 +1,157 @@
-Return-Path: <linux-kernel+bounces-292546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 518C79570E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:49:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA329570EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9C92B24726
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:49:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF403280EE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908171779B1;
-	Mon, 19 Aug 2024 16:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C62617ADEE;
+	Mon, 19 Aug 2024 16:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="XcYdq1ys"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d2/fVfeA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11B017837D
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECE7EEA5
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724086163; cv=none; b=ZcTVJqktE/NLktmpqAobIHxiC2SPWlIvUQp+Bg9U9An2uDrxaLqGTNoP8uil0DOAA5d7hxB7KeXzeW8LA2nAJcJGqCOZxd1rAqxz4tqzWK0xJVS6cNYxcJII5E16sI18n/aqLQO5Kg7E0ATGyyRYSOZ1pmDOPjRKIaoA9zgo29w=
+	t=1724086286; cv=none; b=YTMMxvgKWB6181Pl8lIbsGF1pjNvhl9Ia8/qgwjr2jkOV6yeKVLZqnPkaCINOQ6dz78bi+CEYqizeiMz5pLgB9CQ+c4FduqkJJ+KfHWSjfugy86FG9CtlIhohRtV9fITZNSH4mv+OIXzhCicPkbUhzd2wqe/S5UUYsrBX52ACgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724086163; c=relaxed/simple;
-	bh=n0tibAdi3rRW2l9oArRrL5e7od0H83vW3GZq20Mfkss=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=a7qptjvNWShdJ2C7R5MBUotlb6KGLbPcz+EeCcv7QPAOoCO9xElBfLc4yFY4Y4Vuvz7wDrN7zpu8uoDIPLVlaARV9KmCwQ5n3X4k0m/YJuz5DeQ+n6tnz1Va44aKAMD5lT++OUkJta6fgqFnDJkbWGLw82ya7xXdhNFdTQ0P+uM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=XcYdq1ys; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-371b015572cso1726202f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:49:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1724086159; x=1724690959; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sio7EcZBvhMrVmurBCEshWjdi1VcJUT2ygK9dXaZ6/0=;
-        b=XcYdq1ys3xgm0Y0wEFiJAeceZAFMQsTsW3m5B/AUF5/vCS3fMQFGOIRYndFZbnQuVE
-         B2v3BIhvL/ewr/HRYvBuKOT5Oz8GZuryyprFjSY26T+A2qB5U6bnmhKGNCZzPm0h91aZ
-         f0zH5i/NH8Uh3B02e5HPZnHHPLGnK+5zDyJ9njLpPE0lkZjjAS5MuLVz2mmwsgdLKupr
-         BMdIee2/L9YcTbJ6SYWlzQKX0FfAUeZfWxUFjiNg4Jbd6sdvjX0BJ1gsmzYjST4zcPNk
-         SnoN5hbNRxvaIdN7kQLgsQ2zyhFMTjxJtQi81dgZbbmbCRL+vaRryZL7shKcrDkhnB1/
-         TvpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724086159; x=1724690959;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sio7EcZBvhMrVmurBCEshWjdi1VcJUT2ygK9dXaZ6/0=;
-        b=KTbHL1eC/kRGBGmbm3xdHLeXG7FPmdtEmr0a3yI/kBGzVxMOC3VzkR9M269d7/eNq5
-         /QhbVHlTGRvIik0bKjINocBkgPh2JIS6N2J+BC30KcMPb1KGUgZZST3h9ihkINmlAroQ
-         wr73Ar96x75ohTj3VutDz/6fDIkPkSjA0KUzBTwQuKXW9wh72VsPDy59bRvBMPfnPZMo
-         3ouElMHb4jd2fgeboAPH68AJkHp5Whxf8cWosCGyHC6/Scip/ZxTRMrRZjCFDXcwY7bE
-         a3xz2vwmcrYdTJkY0ysT2suvwBqlTzdS6RtCEPQ7PrBm6uD+LOt6+R9NH6fU6Lxy2PAw
-         FVWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXkWr/n4XmBNnWtcSC7vEPyXmpo9+kiFuh7+IAru8f5DRZhTymMhAm4RUQbEBjnEeE08fzjI1K1Hv0lX1OMMoBQJ23o9OzqCJH154D/
-X-Gm-Message-State: AOJu0YytIq7+VSC7SQ6qwC4j+bvRkgY37culGfQaccNxmx4c9kIkXpsj
-	xnM1TOTZFgShC0wVfegPLsYni+jALrDTTD4Xk/At7Alz2H7xpnNbx5Ep50x6p9Y=
-X-Google-Smtp-Source: AGHT+IG9SCmqztz/GPkBbt+X9itkCSqB56ynsjcfSAB2JT0ZUQq+946cPo0gChjft5vwSw7Zfk9k5A==
-X-Received: by 2002:a5d:4532:0:b0:36b:c305:5902 with SMTP id ffacd0b85a97d-3719432b55dmr9795462f8f.17.1724086158655;
-        Mon, 19 Aug 2024 09:49:18 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:db8f:43f4:9b2e:fb1d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37195650163sm8911596f8f.98.2024.08.19.09.49.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 09:49:18 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,  Stephen Boyd
- <sboyd@kernel.org>,  linux-kernel@vger.kernel.org,
-  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 8/9] reset: amlogic: split the device core and
- platform probe
-In-Reply-To: <812c6ddc-1929-46c4-bac7-4bd0f5ccc213@linaro.org> (Neil
-	Armstrong's message of "Mon, 19 Aug 2024 18:33:58 +0200")
-References: <20240808102742.4095904-1-jbrunet@baylibre.com>
-	<20240808102742.4095904-9-jbrunet@baylibre.com>
-	<812c6ddc-1929-46c4-bac7-4bd0f5ccc213@linaro.org>
-Date: Mon, 19 Aug 2024 18:49:17 +0200
-Message-ID: <1jsev0wj8y.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1724086286; c=relaxed/simple;
+	bh=ogNa5gtDMg5QGxyuwqQRDNXrNTIdHkuIUDmVxfecU2U=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=iH7jr5sGCngDrYwchPwG6X31+d23g0C/XmPhQmC+XO38Z3C8AOMExKyn8A86QAZdQGhnC68PRfhsppsWQmhnCd7POvyeYV92k413rbOC2I8EVhXRInTRkQj73E0fwQ2iuX9dB4gJ+rE5e+GMZSPHgX04TbDEqorVCJoMST8WM7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d2/fVfeA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724086283;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=baSDQDw5G5UUnctFQXilEPZrnly/docCCU+r/lFMOuI=;
+	b=d2/fVfeARc2lhw6+UVMbBIsz6s6Edp9SZONxv/nwh7qhPRtaGf4E88U6zidRmyTyK1QmkL
+	JWroUS0ox0DIaEWYm1+NqPTK5yRX5PdidMxwoTmL4a8vkYI2DdNdt2vnCMPFtDUdJefYE3
+	OFnqA4NCiQV3pUTIXDy/yGiq+mnCnKk=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-425-rWSG64mtNlKc-GWHIcJm3Q-1; Mon,
+ 19 Aug 2024 12:51:17 -0400
+X-MC-Unique: rWSG64mtNlKc-GWHIcJm3Q-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BB3B21954B19;
+	Mon, 19 Aug 2024 16:51:13 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E19E01955BF8;
+	Mon, 19 Aug 2024 16:51:07 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <2924797.1723836663@warthog.procyon.org.uk>
+References: <2924797.1723836663@warthog.procyon.org.uk> <20240815090849.972355-1-kernel@pankajraghav.com>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: dhowells@redhat.com, brauner@kernel.org, akpm@linux-foundation.org,
+    chandan.babu@oracle.com, linux-fsdevel@vger.kernel.org,
+    djwong@kernel.org, hare@suse.de, gost.dev@samsung.com,
+    linux-xfs@vger.kernel.org, hch@lst.de, david@fromorbit.com,
+    Zi Yan <ziy@nvidia.com>, yang@os.amperecomputing.com,
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+    willy@infradead.org, john.g.garry@oracle.com,
+    cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
+    ryan.roberts@arm.com
+Subject: Re: [PATCH v12 00/10] enable bs > ps in XFS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3455346.1724086266.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 19 Aug 2024 17:51:06 +0100
+Message-ID: <3455347.1724086266@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Mon 19 Aug 2024 at 18:33, Neil Armstrong <neil.armstrong@linaro.org> wrote:
+Okay, I think there is a bug in your patches also.  If I do:
 
-> On 08/08/2024 12:27, Jerome Brunet wrote:
->> To prepare the addition of the auxiliary device support, split
->> out the device core function from the probe of the platform device.
->> The device core function will be common to both the platform and
->> auxiliary
->> driver.
->> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->> ---
->>   drivers/reset/amlogic/Kconfig                 |  10 +-
->>   drivers/reset/amlogic/Makefile                |   3 +-
->>   .../{reset-meson.c => reset-meson-core.c}     | 101 +++---------------
->>   drivers/reset/amlogic/reset-meson-pltf.c      |  92 ++++++++++++++++
->
-> Are we still in 1983 ?
+	xfs_io -t -f -c "pwrite -S 0x58 0 40" -c "fsync" \
+		-c "truncate 4" -c "truncate 4096" \
+		/xfstest.test/wubble; od /xfstest.test/wubble
 
-I don't quite get that remark or how it is helping the review.
+I see:
 
-> please use reset-meson-platform and drop pltf completely
+  xfs_io-6059: netfs_truncate: ni=3D9e isz=3D1000 rsz=3D1000 zp=3D0 to=3D0
+  xfs_io-6059: netfs_set_size: ni=3D9e resize-file isz=3D0 rsz=3D0 zp=3D0
+  xfs_io-6059: netfs_write_iter: WRITE-ITER i=3D9e s=3D0 l=3D28 f=3D0
+  xfs_io-6059: netfs_folio: pfn=3D10d996 i=3D0009e ix=3D00000-00001 mod-n-=
+clear d=3D5858585858585858
+  xfs_io-6059: netfs_write: R=3D0000000c WRITEBACK c=3D00000002 i=3D9e by=3D=
+0-ffffffffffffffff
+  xfs_io-6059: netfs_folio: pfn=3D10d996 i=3D0009e ix=3D00000-00001 store =
+d=3D5858585858585858
+  xfs_io-6059: netfs_sreq: R=3D0000000c[1] UPLD PREP  f=3D00 s=3D0 0/0 e=3D=
+0
+  xfs_io-6059: netfs_sreq: R=3D0000000c[1] UPLD SUBMT f=3D100 s=3D0 0/28 e=
+=3D0
+ kworker-5948: netfs_sreq: R=3D0000000c[1] UPLD TERM  f=3D100 s=3D0 28/28 =
+e=3D0
+ kworker-5948: netfs_rreq: R=3D0000000c WB COLLECT f=3D2120
+ kworker-5948: netfs_sreq: R=3D0000000c[1] UPLD FREE  f=3D00 s=3D0 28/28 e=
+=3D0
+ kworker-5948: netfs_folio: pfn=3D10d996 i=3D0009e ix=3D00000-00001 clear =
+d=3D5858585858585858
+ kworker-5948: netfs_rreq: R=3D0000000c WB WR-DONE f=3D2120
+ kworker-5948: netfs_rreq: R=3D0000000c WB WAKE-IP f=3D2120
+ kworker-5948: netfs_rreq: R=3D0000000c WB FREE    f=3D2100
+  xfs_io-6059: netfs_truncate: ni=3D9e isz=3D28 rsz=3D28 zp=3D0 to=3D4
+  xfs_io-6059: netfs_set_size: ni=3D9e resize-file isz=3D4 rsz=3D4 zp=3D0
 
-You are requesting auxiliary -> aux on the patch.
-So which one will it be ?
+But ->release_folio() should have been called here because netfs_inode_ini=
+t()
+would have called mapping_set_release_always() for ordinary afs files.
 
->
->>   drivers/reset/amlogic/reset-meson.h           |  24 +++++
->>   5 files changed, 143 insertions(+), 87 deletions(-)
->>   rename drivers/reset/amlogic/{reset-meson.c => reset-meson-core.c} (51%)
->>   create mode 100644 drivers/reset/amlogic/reset-meson-pltf.c
->>   create mode 100644 drivers/reset/amlogic/reset-meson.h
->> diff --git a/drivers/reset/amlogic/Kconfig
->> b/drivers/reset/amlogic/Kconfig
->> index 7ed9cf50f038..04c7be0f3165 100644
->> --- a/drivers/reset/amlogic/Kconfig
->> +++ b/drivers/reset/amlogic/Kconfig
->> @@ -1,9 +1,15 @@
->> +config RESET_MESON_CORE
->> +	tristate
->> +	select REGMAP
->> +
->>   config RESET_MESON
->> -	tristate "Meson Reset Driver"
->> +	tristate "Meson Reset Platform Driver"
->>   	depends on ARCH_MESON || COMPILE_TEST
->>   	default ARCH_MESON
->> +	select REGMAP_MMIO
->> +	select RESET_MESON_CORE
->>   	help
->> -	  This enables the reset driver for Amlogic Meson SoCs.
->> +	  This enables the reset platform driver for Amlogic SoCs.
->>     config RESET_MESON_AUDIO_ARB
->>   	tristate "Meson Audio Memory Arbiter Reset Driver"
->> diff --git a/drivers/reset/amlogic/Makefile b/drivers/reset/amlogic/Makefile
->> index 55509fc78513..0f8f9121b566 100644
->> --- a/drivers/reset/amlogic/Makefile
->> +++ b/drivers/reset/amlogic/Makefile
->> @@ -1,2 +1,3 @@
->> -obj-$(CONFIG_RESET_MESON) += reset-meson.o
->> +obj-$(CONFIG_RESET_MESON) += reset-meson-pltf.o
->> +obj-$(CONFIG_RESET_MESON_CORE) += reset-meson-core.o
->>   obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
->> diff --git a/drivers/reset/amlogic/reset-meson.c b/drivers/reset/amlogic/reset-meson-core.c
->> similarity index 51%
->> rename from drivers/reset/amlogic/reset-meson.c
->> rename to drivers/reset/amlogic/reset-meson-core.c
->> index b16d9c32adb1..ea4fc562f7e6 100644
->> --- a/drivers/reset/amlogic/reset-meson.c
->> +++ b/drivers/reset/amlogic/reset-meson-core.c
->> @@ -1,27 +1,17 @@
->>   // SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
->>   /*
->> - * Amlogic Meson Reset Controller driver
->> + * Amlogic Meson Reset core functions
->>    *
->> - * Copyright (c) 2016 BayLibre, SAS.
->> - * Author: Neil Armstrong <narmstrong@baylibre.com>
->
-> Hmmm no, I'm still an author
->
->> + * Copyright (c) 2024 BayLibre, SAS.
->
-> And Baylibre's Copyright is still from 2016, so use 2016-2024 in this case
->
->> + * Author: Jerome Brunet <jbrunet@baylibre.com>
->>    */
->> -#include <linux/err.h>
->> -#include <linux/init.h>
->> -#include <linux/io.h>
->> -#include <linux/of.h>
->> +
->> +#include <linux/device.h>
->>   #include <linux/module.h>
->> -#include <linux/platform_device.h>
->>   #include <linux/regmap.h>
->>   #include <linux/reset-controller.h>
->> -#include <linux/slab.h>
->> -#include <linux/types.h>
->> -
->> -struct meson_reset_param {
->> -	unsigned int reset_num;
->> -	unsigned int reset_offset;
->> -	unsigned int level_offset;
->> -	bool level_low_reset;
->> -};
->> +
->> +#include "reset-meson.h"
->>     struct meson_reset {
->>   	const struct meson_reset_param *param;
->> @@ -102,84 +92,27 @@ static const struct reset_control_ops meson_reset_ops = {
->>   	.status		= meson_reset_status,
->>   };
->>   -static const struct meson_reset_param meson8b_param = {
->> -	.reset_num	= 256,
->> -	.reset_offset	= 0x0,
->> -	.level_offset	= 0x7c,
->> -	.level_low_reset = true,
->> -};
->> -
->> -static const struct meson_reset_param meson_a1_param = {
->> -	.reset_num	= 96,
->> -	.reset_offset	= 0x0,
->> -	.level_offset	= 0x40,
->> -	.level_low_reset = true,
->> -};
->> -
->> -static const struct meson_reset_param meson_s4_param = {
->> -	.reset_num	= 192,
->> -	.reset_offset	= 0x0,
->> -	.level_offset	= 0x40,
->> -	.level_low_reset = true,
->> -};
->> -
->> -static const struct of_device_id meson_reset_dt_ids[] = {
->> -	 { .compatible = "amlogic,meson8b-reset",    .data = &meson8b_param},
->> -	 { .compatible = "amlogic,meson-gxbb-reset", .data = &meson8b_param},
->> -	 { .compatible = "amlogic,meson-axg-reset",  .data = &meson8b_param},
->> -	 { .compatible = "amlogic,meson-a1-reset",   .data = &meson_a1_param},
->> -	 { .compatible = "amlogic,meson-s4-reset",   .data = &meson_s4_param},
->> -	 { .compatible = "amlogic,c3-reset",   .data = &meson_s4_param},
->> -	 { /* sentinel */ },
->> -};
->> -MODULE_DEVICE_TABLE(of, meson_reset_dt_ids);
->> -
->> -static const struct regmap_config regmap_config = {
->> -	.reg_bits   = 32,
->> -	.val_bits   = 32,
->> -	.reg_stride = 4,
->> -};
->> -
->> -static int meson_reset_probe(struct platform_device *pdev)
->> +int meson_reset_probe(struct device *dev, struct regmap *map,
->> +		      const struct meson_reset_param *param)
->>   {
->> -	struct device *dev = &pdev->dev;
->>   	struct meson_reset *data;
->> -	void __iomem *base;
->>     	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
->>   	if (!data)
->>   		return -ENOMEM;
->>   -	base = devm_platform_ioremap_resource(pdev, 0);
->> -	if (IS_ERR(base))
->> -		return PTR_ERR(base);
->> -
->> -	data->param = device_get_match_data(dev);
->> -	if (!data->param)
->> -		return -ENODEV;
->> -
->> -	data->map = devm_regmap_init_mmio(dev, base, &regmap_config);
->> -	if (IS_ERR(data->map))
->> -		return dev_err_probe(dev, PTR_ERR(data->map),
->> -				     "can't init regmap mmio region\n");
->> -
->> -	data->rcdev.owner = THIS_MODULE;
->> -	data->rcdev.nr_resets = data->param->reset_num;
->> +	data->param = param;
->> +	data->map = map;
->> +	data->rcdev.owner = dev->driver->owner;
->> +	data->rcdev.nr_resets = param->reset_num;
->>   	data->rcdev.ops = &meson_reset_ops;
->>   	data->rcdev.of_node = dev->of_node;
->>     	return devm_reset_controller_register(dev, &data->rcdev);
->>   }
->> +EXPORT_SYMBOL_NS_GPL(meson_reset_probe, MESON_RESET);
->>   -static struct platform_driver meson_reset_driver = {
->> -	.probe	= meson_reset_probe,
->> -	.driver = {
->> -		.name		= "meson_reset",
->> -		.of_match_table	= meson_reset_dt_ids,
->> -	},
->> -};
->> -module_platform_driver(meson_reset_driver);
->> -
->> -MODULE_DESCRIPTION("Amlogic Meson Reset Controller driver");
->> +MODULE_DESCRIPTION("Amlogic Meson Reset Core function");
->>   MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
->> -MODULE_LICENSE("Dual BSD/GPL");
->> +MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
->> +MODULE_IMPORT_NS(MESON_RESET);
->> diff --git a/drivers/reset/amlogic/reset-meson-pltf.c b/drivers/reset/amlogic/reset-meson-pltf.c
->> new file mode 100644
->> index 000000000000..97e933b4aa34
->> --- /dev/null
->> +++ b/drivers/reset/amlogic/reset-meson-pltf.c
->> @@ -0,0 +1,92 @@
->> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
->> +/*
->> + * Amlogic Meson Reset platform driver
->> + *
->> + * Copyright (c) 2016 BayLibre, SAS.
->> + * Author: Neil Armstrong <narmstrong@baylibre.com>
->> + */
->> +#include <linux/err.h>
->> +#include <linux/io.h>
->> +#include <linux/of.h>
->> +#include <linux/module.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/regmap.h>
->> +#include <linux/reset-controller.h>
->> +
->> +#include "reset-meson.h"
->> +
->> +static const struct meson_reset_param meson8b_param = {
->> +	.reset_num	= 256,
->> +	.reset_offset	= 0x0,
->> +	.level_offset	= 0x7c,
->> +	.level_low_reset = true,
->> +};
->> +
->> +static const struct meson_reset_param meson_a1_param = {
->> +	.reset_num	= 96,
->> +	.reset_offset	= 0x0,
->> +	.level_offset	= 0x40,
->> +	.level_low_reset = true,
->> +};
->> +
->> +static const struct meson_reset_param meson_s4_param = {
->> +	.reset_num	= 192,
->> +	.reset_offset	= 0x0,
->> +	.level_offset	= 0x40,
->> +	.level_low_reset = true,
->> +};
->> +
->> +static const struct of_device_id meson_reset_dt_ids[] = {
->> +	 { .compatible = "amlogic,meson8b-reset",    .data = &meson8b_param},
->> +	 { .compatible = "amlogic,meson-gxbb-reset", .data = &meson8b_param},
->> +	 { .compatible = "amlogic,meson-axg-reset",  .data = &meson8b_param},
->> +	 { .compatible = "amlogic,meson-a1-reset",   .data = &meson_a1_param},
->> +	 { .compatible = "amlogic,meson-s4-reset",   .data = &meson_s4_param},
->> +	 { .compatible = "amlogic,c3-reset",   .data = &meson_s4_param},
->> +	 { /* sentinel */ },
->> +};
->> +MODULE_DEVICE_TABLE(of, meson_reset_dt_ids);
->> +
->> +static const struct regmap_config regmap_config = {
->> +	.reg_bits   = 32,
->> +	.val_bits   = 32,
->> +	.reg_stride = 4,
->> +};
->> +
->> +static int meson_reset_pltf_probe(struct platform_device *pdev)
->> +{
->> +	const struct meson_reset_param *param;
->> +	struct device *dev = &pdev->dev;
->> +	struct regmap *map;
->> +	void __iomem *base;
->> +
->> +	base = devm_platform_ioremap_resource(pdev, 0);
->> +	if (IS_ERR(base))
->> +		return PTR_ERR(base);
->> +
->> +	param = device_get_match_data(dev);
->> +	if (!param)
->> +		return -ENODEV;
->> +
->> +	map = devm_regmap_init_mmio(dev, base, &regmap_config);
->> +	if (IS_ERR(map))
->> +		return dev_err_probe(dev, PTR_ERR(map),
->> +				     "can't init regmap mmio region\n");
->> +
->> +	return meson_reset_probe(dev, map, param);
->> +}
->> +
->> +static struct platform_driver meson_reset_pltf_driver = {
->> +	.probe	= meson_reset_pltf_probe,
->> +	.driver = {
->> +		.name		= "meson_reset",
->> +		.of_match_table	= meson_reset_dt_ids,
->> +	},
->> +};
->> +module_platform_driver(meson_reset_pltf_driver);
->> +
->> +MODULE_DESCRIPTION("Amlogic Meson Reset Platform Controller driver");
->> +MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
->> +MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
->> +MODULE_LICENSE("Dual BSD/GPL");
->> +MODULE_IMPORT_NS(MESON_RESET);
->> diff --git a/drivers/reset/amlogic/reset-meson.h b/drivers/reset/amlogic/reset-meson.h
->> new file mode 100644
->> index 000000000000..c2e8a5cf2e46
->> --- /dev/null
->> +++ b/drivers/reset/amlogic/reset-meson.h
->> @@ -0,0 +1,24 @@
->> +/* SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause */
->> +/*
->> + * Copyright (c) 2024 BayLibre, SAS.
->> + * Author: Jerome Brunet <jbrunet@baylibre.com>
->> + */
->> +
->> +#ifndef __MESON_RESET_CORE_H
->> +#define __MESON_RESET_CORE_H
->> +
->> +#include <linux/module.h>
->> +#include <linux/regmap.h>
->> +#include <linux/reset-controller.h>
->> +
->> +struct meson_reset_param {
->> +	unsigned int reset_num;
->> +	unsigned int reset_offset;
->> +	unsigned int level_offset;
->> +	bool level_low_reset;
->> +};
->> +
->> +int meson_reset_probe(struct device *dev, struct regmap *map,
->> +		      const struct meson_reset_param *param);
->> +
->> +#endif /* __MESON_RESET_CORE_H */
+  xfs_io-6059: netfs_truncate: ni=3D9e isz=3D4 rsz=3D4 zp=3D0 to=3D1000
+  xfs_io-6059: netfs_set_size: ni=3D9e resize-file isz=3D1000 rsz=3D1000 z=
+p=3D0
+      od-6060: netfs_read: R=3D0000000d READAHEAD c=3D00000002 ni=3D9e s=3D=
+0 l=3D2000 sz=3D1000
+      od-6060: netfs_folio: pfn=3D10d996 i=3D0009e ix=3D00000-00001 read d=
+=3D58585858
+      od-6060: netfs_sreq: R=3D0000000d[1] ---- ADD   f=3D00 s=3D0 0/2000 =
+e=3D0
+      od-6060: netfs_sreq: R=3D0000000d[1] ZERO SUBMT f=3D00 s=3D0 0/2000 =
+e=3D0
+      od-6060: netfs_sreq: R=3D0000000d[1] ZERO CLEAR f=3D02 s=3D0 2000/20=
+00 e=3D0
+      od-6060: netfs_folio: pfn=3D10d996 i=3D0009e ix=3D00000-00001 read-d=
+one d=3D0
+      od-6060: netfs_folio: pfn=3D10d996 i=3D0009e ix=3D00000-00001 read-u=
+nlock d=3D0
+      od-6060: netfs_sreq: R=3D0000000d[1] ZERO TERM  f=3D02 s=3D0 2000/20=
+00 e=3D0
+      od-6060: netfs_sreq: R=3D0000000d[1] ZERO FREE  f=3D02 s=3D0 2000/20=
+00 e=3D0
+      od-6060: netfs_rreq: R=3D0000000d RA ASSESS  f=3D20
+      od-6060: netfs_rreq: R=3D0000000d RA WAKE-IP f=3D20
+      od-6060: netfs_rreq: R=3D0000000d RA DONE    f=3D00
+      od-6060: netfs_folio: pfn=3D10d996 i=3D0009e ix=3D00000-00001 read-p=
+ut d=3D0
+ kworker-5948: netfs_rreq: R=3D0000000d RA FREE    f=3D00
 
--- 
-Jerome
+David
+
 
