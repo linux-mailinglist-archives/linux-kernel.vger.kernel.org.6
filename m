@@ -1,181 +1,138 @@
-Return-Path: <linux-kernel+bounces-292982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03DC6957763
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:23:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE74957764
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2024 00:23:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5503BB21F85
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:23:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97CA91F22736
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460E91DD3A6;
-	Mon, 19 Aug 2024 22:23:17 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B9A1DD396;
+	Mon, 19 Aug 2024 22:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fzy06zf9"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6D915A843;
-	Mon, 19 Aug 2024 22:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32FB1D6DC6
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 22:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724106196; cv=none; b=f1HRgkfZB2QYftrk/rkWmWMa6QXLfgh+8J5tRfNCwzxY7QONc7luHC9vPhDlzq3ZrwTYizbi7yz5aCXEY4FFx1MzCC3LvoP7nIthCGvR5mKHGfGGAOajwoYNIXcA1HFsUkXcJctaixxtwxIxsVHi6eEqyRRZRRjRPCO9hDznUU8=
+	t=1724106224; cv=none; b=ougmyjWZ6tHu62nUoZO6UkbD/kY/Zsr+gEr3UP0lijTbjShGJp3O2Twfyz4irhSLgWQMAxAnIKU+knN6Vou/p0lwn5eSTsfojvKYrAQuWBbKOxN86MbwwM/pu3sJEcAEcoSSY0gJPSINZT0y3dNla8hVKiC4KtUwbh+1VfnyVaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724106196; c=relaxed/simple;
-	bh=tz4yofYq+XhKDOjLrjsV/Hw50t1cBVsD7gcCCQwHLdI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nCD/nfHd7oaW1Rs4uAXQmro3Kmd44Xgi6cpOQlVHbrhqA5JVELggYZWdATqMtM0ppZqv0j3NIsi8ZxWics0hFxj6cudKHwqs9qUuXqt6WXdUFouitbvdq+f4HMwpfa6r0dDrqDKmlOb79KXFp4WS8xpFONBIzRzW5X9W5XlPxx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F6A8C32782;
-	Mon, 19 Aug 2024 22:23:15 +0000 (UTC)
-Date: Mon, 19 Aug 2024 18:23:40 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-wireless@vger.kernel.org
-Subject: Re: [PATCH v5 0/4] tracing: improve symbolic printing
-Message-ID: <20240819182340.3bd23d67@gandalf.local.home>
-In-Reply-To: <20240614081956.19832-6-johannes@sipsolutions.net>
-References: <20240614081956.19832-6-johannes@sipsolutions.net>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1724106224; c=relaxed/simple;
+	bh=/dWuuqJx6//alwTKkRAoRjouRCsQ6n8uwYXDiZcr204=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=DuKTdm0udOnPfJtv+YGquIfNrqc54X29iTKJyib8kxBUh7F/TLJHrjYvxd4a9v6bbtAnbeuVzmdx93W4gZhZQIEEO8dLJiqsA7yW3q26WY0P776E7TktGnFNRPv70SSUUkXoL9IhIIQIP1NOaLRpGFz4G1liDGk78Mwqqz4aCbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fzy06zf9; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7bc8bb2f6f5so4254389a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:23:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724106222; x=1724711022; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QraVn1YFVIm9p1pLoG75UmtSb9Y9IZMVlgQbMonr5gA=;
+        b=fzy06zf9cYR8tcH4kf9W0+Vfyo3xas3O6/fw/S60MDN7QrhZpQevdPxOsXtR1gnPdf
+         QNa4QovaLsz7xZbyjj/KuLjNAqU00jTWCZGZXMIYKHrJO3l56Dk4yQqqO5X1IJIDSjyu
+         frYs45ObiG0yLvZooLQx6Z6bZClsSLTK7P8XX8prsWZ0wurSUWh1INhJfNWmCkZ+8YZU
+         hhhg2AjmOL89WRGZhxjljvvHUT1XO7FuZS2khXi2sa3qHpIjf3lB9mbbz38nsR7Zh3f7
+         dGBfEwY+cxFy6MjS02eCEZ+gqPkHncxvT6BRfs7CQnhURgPtnr0qI0zw5ROkd5nKBKpW
+         qppQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724106222; x=1724711022;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QraVn1YFVIm9p1pLoG75UmtSb9Y9IZMVlgQbMonr5gA=;
+        b=GtFQLlBRmcPMCRJj+3UzqXtYxAVrPXLkHogGbFuViMULn/EuZ5rspiomZYDUUUSef1
+         RHiMcJ94K6IuEfUYcFsXD7TTVpKVL2A/fJhPs9xAYyL30V5GCc2hLoN7BMsGAkwlAr+a
+         TIKhinPNg36qu29yfIU97G3/3QZbIOGcEoBVvQSd5XJ4ayn7ni5WwUnRVkwQv+q24w3b
+         m/jlQ5CFbLqHEdoJyUutgiKdL4VpFNAkeiA8Wgw1WMW2SToMUEh2qRyUF/UMPz6you4K
+         Xc2Xyh9DvkF97sHpaI7pHhEsUbYH0QP10/s4hXdyaepega5vulNzF/70BkymK7QQi0+9
+         WIPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWE3CqwcE9AciRZpBVoEplr5ZKxtqejhLuq53GYJF2Us7HaY4FtD0bxy97tXKZWBTYUQijE4pLeH0nq7uxviFKivcKM2uQNQxjLblWE
+X-Gm-Message-State: AOJu0YyyUx4ClkFXUmhX1pYgJJNTBfteUP9ydVj7bNEBYTCrqPwc/fqa
+	CjUMJGFFY5jLW6lhnGU04EBXrO+o/epQGniLEjp5tkeksuR8mntdKVB5seFeZ5HxqadRb8X/fYW
+	BwA==
+X-Google-Smtp-Source: AGHT+IEfTz4hLw2X3jgxGkXc0FGTTTxdn8/F6SltD4DQ4SjqMZIhumVipiAYqbvYgJdjDnEqJaAA6kOzbm8=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a63:5ec5:0:b0:760:76b9:ade9 with SMTP id
+ 41be03b00d2f7-7c9791e4e77mr24563a12.1.1724106221794; Mon, 19 Aug 2024
+ 15:23:41 -0700 (PDT)
+Date: Mon, 19 Aug 2024 15:23:40 -0700
+In-Reply-To: <7208a5ac-282c-4ff5-9df2-87af6bcbcc8a@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20240802015732.3192877-1-kim.phillips@amd.com>
+ <20240802015732.3192877-3-kim.phillips@amd.com> <Zr_ZwLsqqOTlxGl2@google.com> <7208a5ac-282c-4ff5-9df2-87af6bcbcc8a@amd.com>
+Message-ID: <ZsPF7FYl3xYwpJiZ@google.com>
+Subject: Re: [PATCH 2/2] KVM: SEV: Configure "ALLOWED_SEV_FEATURES" VMCB Field
+From: Sean Christopherson <seanjc@google.com>
+To: Kim Phillips <kim.phillips@amd.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Michael Roth <michael.roth@amd.com>, 
+	Ashish Kalra <ashish.kalra@amd.com>, Nikunj A Dadhania <nikunj@amd.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Kishon Vijay Abraham I <kvijayab@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
+On Mon, Aug 19, 2024, Kim Phillips wrote:
+> On 8/16/24 5:59 PM, Sean Christopherson wrote:
+> > On Thu, Aug 01, 2024, Kim Phillips wrote:
+> > > From: Kishon Vijay Abraham I <kvijayab@amd.com>
+> > > 
+> > > AMD EPYC 5th generation processors have introduced a feature that allows
+> > > the hypervisor to control the SEV_FEATURES that are set for or by a
+> > > guest [1]. The ALLOWED_SEV_FEATURES feature can be used by the hypervisor
+> > > to enforce that SEV-ES and SEV-SNP guests cannot enable features that the
+> > > hypervisor does not want to be enabled.
+> > 
+> > How does the host communicate to the guest which features are allowed?
+> 
+> I'm not familiar with any future plans to negotiate with the guest directly,
 
-Hi Johannes,
+I feel like I'm missing something.  What happens if the guest wants to enable
+PmcVirtualization and it's unexpectedly disallowed?  Does the guest simply panic?
 
-I finally got around to testing your patches.
+> but since commit ac5c48027bac ("KVM: SEV: publish supported VMSA features"),
+> userspace can retrieve sev_supported_vmsa_features via an ioctl.
+> 
+> > And based on this blurb:
+> > 
+> >    Some SEV features can only be used if the Allowed SEV Features Mask is enabled,
+> >    and the mask is configured to permit the corresponding feature. If the Allowed
+> >    SEV Features Mask is not enabled, these features are not available (see SEV_FEATURES
+> >    in Appendix B, Table B-4).
+> > 
+> > and the appendix, this only applies to PmcVirtualization and SecureAvic.  Adding
+> > that info in the changelog would be *very* helpful.
+> 
+> Ok, how about adding:
+> 
+> "The PmcVirtualization and SecureAvic features explicitly require
+> ALLOWED_SEV_FEATURES to enable them before they can be used."
+> 
+> > And I see that SVM_SEV_FEAT_DEBUG_SWAP, a.k.a. DebugVirtualization, is a guest
+> > controlled feature and doesn't honor ALLOWED_SEV_FEATURES.  Doesn't that mean
+> > sev_vcpu_has_debug_swap() is broken, i.e. that KVM must assume the guest can
+> > DebugVirtualization on and off at will?  Or am I missing something?
+> 
+> My understanding is that users control KVM's DEBUG_SWAP setting
+> with a module parameter since commit 4dd5ecacb9a4 ("KVM: SEV: allow
+> SEV-ES DebugSwap again").  If the module parameter is not set, with
+> this patch, VMRUN will fail since the host doesn't allow DEBUG_SWAP.
 
-I did the following:
-
- # cat /sys/kernel/tracing/events/*/*/format
-
-and hit this:
-
-BUG: unable to handle page fault for address: ffffffff8e6333d0
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 183c40067 P4D 183c40067 PUD 183c41063 PMD 1003ef063 PTE 800ffffe7b9cc062
-Oops: Oops: 0000 [#1] PREEMPT SMP PTI
-CPU: 7 UID: 0 PID: 893 Comm: cat Not tainted 6.11.0-rc4-test-00004-g4ce2836f008b #56 68afcee1248519f8b3b088836c40746e4a6b69d3
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-RIP: 0010:f_show (kernel/trace/trace_events.c:1601 kernel/trace/trace_events.c:1651 kernel/trace/trace_events.c:1689)
-Code: 33 63 8e 48 2d d0 33 63 8e 48 c1 f8 03 85 c0 74 67 89 c0 4c 89 c3 49 8d 04 c0 48 89 04 24 eb 0a 48 83 c3 08 48 39 1c 24 74 4e <4c> 8b 3b 4d 85 ff 74 ee 49 8b 45 10 48 8b 00 49 39 07 75 e2 49 8b
-All code
-========
-   0:   33 63 8e                xor    -0x72(%rbx),%esp
-   3:   48 2d d0 33 63 8e       sub    $0xffffffff8e6333d0,%rax
-   9:   48 c1 f8 03             sar    $0x3,%rax
-   d:   85 c0                   test   %eax,%eax
-   f:   74 67                   je     0x78
-  11:   89 c0                   mov    %eax,%eax
-  13:   4c 89 c3                mov    %r8,%rbx
-  16:   49 8d 04 c0             lea    (%r8,%rax,8),%rax
-  1a:   48 89 04 24             mov    %rax,(%rsp)
-  1e:   eb 0a                   jmp    0x2a
-  20:   48 83 c3 08             add    $0x8,%rbx
-  24:   48 39 1c 24             cmp    %rbx,(%rsp)
-  28:   74 4e                   je     0x78
-  2a:*  4c 8b 3b                mov    (%rbx),%r15              <-- trapping instruction
-  2d:   4d 85 ff                test   %r15,%r15
-  30:   74 ee                   je     0x20
-  32:   49 8b 45 10             mov    0x10(%r13),%rax
-  36:   48 8b 00                mov    (%rax),%rax
-  39:   49 39 07                cmp    %rax,(%r15)
-  3c:   75 e2                   jne    0x20
-  3e:   49                      rex.WB
-  3f:   8b                      .byte 0x8b
-
-Code starting with the faulting instruction
-===========================================
-   0:   4c 8b 3b                mov    (%rbx),%r15
-   3:   4d 85 ff                test   %r15,%r15
-   6:   74 ee                   je     0xfffffffffffffff6
-   8:   49 8b 45 10             mov    0x10(%r13),%rax
-   c:   48 8b 00                mov    (%rax),%rax
-   f:   49 39 07                cmp    %rax,(%r15)
-  12:   75 e2                   jne    0xfffffffffffffff6
-  14:   49                      rex.WB
-  15:   8b                      .byte 0x8b
-RSP: 0018:ffffb43981457ca8 EFLAGS: 00010202
-RAX: ffffffff8e6333e0 RBX: ffffffff8e6333d0 RCX: 00000000000002cd
-RDX: ffff942b4b0bd000 RSI: 000000000000006e RDI: ffff942b42f9cc30
-RBP: ffff942b42f9cc30 R08: ffffffff8e6333d0 R09: 63696c6f626d7973
-R10: 735f746e6972705f R11: 2863696c6f626d79 R12: 0000000000000000
-R13: ffffffff8de44880 R14: ffffffff8de44516 R15: ffffffff8de44515
-FS:  00007f556c562740(0000) GS:ffff942cbdfc0000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffff8e6333d0 CR3: 000000010a1d0006 CR4: 0000000000170ef0
-Call Trace:
-<TASK>
-? __die (arch/x86/kernel/dumpstack.c:421 arch/x86/kernel/dumpstack.c:434)
-? page_fault_oops (arch/x86/mm/fault.c:715)
-? search_module_extables (kernel/module/main.c:3280)
-? search_bpf_extables (kernel/bpf/core.c:799)
-? exc_page_fault (arch/x86/mm/fault.c:1198 arch/x86/mm/fault.c:1479 arch/x86/mm/fault.c:1539)
-? asm_exc_page_fault (arch/x86/include/asm/idtentry.h:623)
-? f_show (kernel/trace/trace_events.c:1601 kernel/trace/trace_events.c:1651 kernel/trace/trace_events.c:1689)
-? f_show (kernel/trace/trace_events.c:1623 kernel/trace/trace_events.c:1689)
-seq_read_iter (fs/seq_file.c:273)
-seq_read (fs/seq_file.c:163)
-vfs_read (fs/read_write.c:474)
-? __handle_mm_fault (mm/memory.c:3945 mm/memory.c:5521 mm/memory.c:5664)
-ksys_read (fs/read_write.c:619)
-do_syscall_64 (arch/x86/entry/common.c:52 (discriminator 1) arch/x86/entry/common.c:83 (discriminator 1))
-? handle_mm_fault (mm/memory.c:5744 (discriminator 1) mm/memory.c:5840 (discriminator 1))
-? exc_page_fault (arch/x86/mm/fault.c:1342 arch/x86/mm/fault.c:1481 arch/x86/mm/fault.c:1539)
-? irqentry_exit_to_user_mode (arch/x86/include/asm/entry-common.h:57 (discriminator 1) include/linux/entry-common.h:330 (discriminator 1) kernel/entry/common.c:231 (discriminator 1))
-entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
-RIP: 0033:0x7f556c65ca5d
-Code: 31 c0 e9 c6 fe ff ff 50 48 8d 3d a6 60 0a 00 e8 a9 08 02 00 66 0f 1f 84 00 00 00 00 00 80 3d 81 3b 0e 00 00 74 17 31 c0 0f 05 <48> 3d 00 f0 ff ff 77 5b c3 66 2e 0f 1f 84 00 00 00 00 00 48 83 ec
-All code
-========
-   0:   31 c0                   xor    %eax,%eax
-   2:   e9 c6 fe ff ff          jmp    0xfffffffffffffecd
-   7:   50                      push   %rax
-   8:   48 8d 3d a6 60 0a 00    lea    0xa60a6(%rip),%rdi        # 0xa60b5
-   f:   e8 a9 08 02 00          call   0x208bd
-  14:   66 0f 1f 84 00 00 00    nopw   0x0(%rax,%rax,1)
-  1b:   00 00
-  1d:   80 3d 81 3b 0e 00 00    cmpb   $0x0,0xe3b81(%rip)        # 0xe3ba5
-  24:   74 17                   je     0x3d
-  26:   31 c0                   xor    %eax,%eax
-  28:   0f 05                   syscall
-  2a:*  48 3d 00 f0 ff ff       cmp    $0xfffffffffffff000,%rax         <-- trapping instruction
-  30:   77 5b                   ja     0x8d
-  32:   c3                      ret
-  33:   66 2e 0f 1f 84 00 00    cs nopw 0x0(%rax,%rax,1)
-  3a:   00 00 00
-  3d:   48                      rex.W
-  3e:   83                      .byte 0x83 
-  3f:   ec                      in     (%dx),%al
-
-Code starting with the faulting instruction
-===========================================
-   0:   48 3d 00 f0 ff ff       cmp    $0xfffffffffffff000,%rax
-   6:   77 5b                   ja     0x63
-   8:   c3                      ret
-   9:   66 2e 0f 1f 84 00 00    cs nopw 0x0(%rax,%rax,1)
-  10:   00 00 00
-  13:   48                      rex.W
-  14:   83                      .byte 0x83 
-  15:   ec                      in     (%dx),%al
-RSP: 002b:00007ffc88ecb878 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 0000000000020000 RCX: 00007f556c65ca5d
-RDX: 0000000000020000 RSI: 00007f556c541000 RDI: 0000000000000003
-RBP: 0000000000020000 R08: 00000000ffffffff R09: 0000000000000000
-R10: 0000000000000022 R11: 0000000000000246 R12: 00007f556c541000
-R13: 0000000000000003 R14: 0000000000020000 R15: 0000000000000000
-</TASK>
-Modules linked in: snd_hda_intel snd_intel_dspcfg snd_intel_sdw_acpi snd_hda_codec snd_hwdep snd_hda_core
-CR2: ffffffff8e6333d0
----[ end trace 0000000000000000 ]---
-
--- Steve
+But that's just KVM's view of vmsa_features.  With SNP's wonderful
+SVM_VMGEXIT_AP_CREATE, can't the guest create a VMSA with whatever sev_features
+it wants, so long as they aren't host-controllable, i.e. aren't PmcVirtualization
+or SecureAvic?
 
