@@ -1,226 +1,198 @@
-Return-Path: <linux-kernel+bounces-291640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C9DD956511
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:55:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4377A956515
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B24541C217ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:55:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7EBE1F22C43
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DF314A62E;
-	Mon, 19 Aug 2024 07:55:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CE715AD86;
+	Mon, 19 Aug 2024 07:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UY7gATLq"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ljwon32A"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6239B15AADA
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DB315AADE
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724054125; cv=none; b=ZLddrs47rXldTUEHFZR81IReJc6YULoKC8VJ9FP5zZUG8EHjMJNiUJ+jhKxZxVNaTLNMbOrsNJngwyL+p7X9ViQAPhSMmqABvCyu0doSgE3MyIf4kWzGVtdKWy0w+e+/55Pm8MRFmZ7o1tp4jVEBOQdudBLI/WmEabvZhzByYns=
+	t=1724054153; cv=none; b=sUNUjUrAgCmeBZBx8C7duWGKUzmCDF8r3NdjwAqSkUElTOGmzTXGILWAq/Snkgb3oMQWHqTSU70Hp/2/YHcB0+N2YIIgwI2CcSF0KZrY/eKcXW43YILNOulBv9ULSptRk8YbwFrrl72zYTZEsGYpTq6rQChrMvvujHs7Dbs0/Ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724054125; c=relaxed/simple;
-	bh=Bzj0OBsOyjOq5i/otbgGherJGLxV0e7eeDR5mlqDSWg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Dn+1fRhkccumWL7Pm0y78ufNcjnwHOn4kBCIq2PVEev3JY9CMWyweYi0iDBf2emvpUUrhMKfjAo05nsSETElgQe663jZdYgaOOdrxQLcxPcyjyfkyy2P9Qa78+b7/evY9dx98xyObwMzkICjte9Xk4GyGbViBZkD6qfhLlgyG7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UY7gATLq; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e1166ecfacdso7649526276.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 00:55:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724054123; x=1724658923; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=c7ZCawhzLiT2hbSx/SLoMERFd6MH+WHf7PVQaHlSMho=;
-        b=UY7gATLqkPtQIBIRNDpd887DBdtZSXSAJ87JCPEyhlzAbatlXth1VN7qtd9W6KYWc1
-         wArVwgCoLeSif+FGY4EYNrlqQRw22j3FfaM8B+PMXFAU7075X0dJQxC4L+zMZqnanyUp
-         66gR2KFFn8RaXLSUlCv0XE2b/8r+tg1avDM0+NDIHpkpzy48mpog6ZGCzsBVAL3B/uiQ
-         M4dpiBpWiWjoihNShL7X4TCvnoF5E2wNeofeX22SQvYXEIKXDZ0W9ujCfke7PDTlCZcz
-         F6gvrr6Z9qruBFyPlQa8RzVKS1q1VfTvkOYxw4Gc0LnM/8pJ3ABucdGR/deGttDqGway
-         lMTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724054123; x=1724658923;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c7ZCawhzLiT2hbSx/SLoMERFd6MH+WHf7PVQaHlSMho=;
-        b=ADT2uQYJiktumhwqQKtU8Lsc0mq3M+Q2DrYno89t0drF7y24KtmP3H2ib5IfT9twws
-         i8/aG4j+7Anc4LSOfNqrrfmZwtxXi2MeXnyHyADDpxNyCIt3pxtPbDOJe7507tb5JM9/
-         fVLUFIev5uL0Jo68MZMTqszxoWi3b+jr0TVNgQwwr46wKkY/aCrM6RMYpVo7Msi2DlHT
-         z9eV6ELApQiuiuVetxc0JICuwN6u+iVmgOQNHd9/3LjAv2OxAxFG2HwgaenilH4dPs8e
-         XjNM9zPDIT8KIyURls66H7yqWOvxaoT2I0yx77cjFR3WMXp0jse6gQLq4kAREqIwGdLi
-         lrWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVueC24VEmhYJSUpQcFPe99xZxBnPFiWLyKwCwgm9sccN1g+uT64jQw7KE7bzztvma9SFeMfK6PZIqr7B1GiQ9xr/QzmIgoFmT83cFQ
-X-Gm-Message-State: AOJu0YyKF68GZy9gL3Ho3COUm1guzh784sSCuZW5hNLr4eG7+UXnd/2t
-	2w57kOlSMWcGkq6nVNIdD72BzJhVbiGckaqJADXPDCCQvwRyHJvuwwek4TaWX3xzyqQxVa1fg23
-	BawZb6JHgVDduLw==
-X-Google-Smtp-Source: AGHT+IGrZOKUNkZwEXux57+oz5w6kAirAdl/7hs0EIWBRRT6GxickSOwEbLbevHrku7qKv9XvqgvOq4/QBtrGSY=
-X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
- (user=aliceryhl job=sendgmr) by 2002:a05:6902:1821:b0:e11:57b5:733f with SMTP
- id 3f1490d57ef6-e1180ba5576mr24276276.0.1724054123247; Mon, 19 Aug 2024
- 00:55:23 -0700 (PDT)
-Date: Mon, 19 Aug 2024 07:55:18 +0000
-In-Reply-To: <20240801-kcfi-v2-2-c93caed3d121@google.com>
+	s=arc-20240116; t=1724054153; c=relaxed/simple;
+	bh=kyEbx6ibDZGx/X2pRkFBT+/a03Am0KiBDmf3wAm174U=;
+	h=From:Date:Subject:MIME-Version:Message-Id:To:Cc:Content-Type:
+	 References; b=DAADfasgK8JqD3HG5516zlMw1vrZM0blNyvs6vbwqB3Ps43j7Y3rScvggYYGWrvtqsVFnDYpjv8xSoNZA9Dy9uWA4B2P9KnYrr/PYfH4hrvCPT9XkzRU9lijtu1mmsIQbnsEN5zMbaPUzX7O/UN/9bMcSYpZvkU4AFliwYixELc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Ljwon32A; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240819075548epoutp035b6e7087d9501dbbfa38163917383d92~tEh0SXIwf1000610006epoutp03l
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:55:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240819075548epoutp035b6e7087d9501dbbfa38163917383d92~tEh0SXIwf1000610006epoutp03l
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724054148;
+	bh=Hjrkn7sNLsF4gXJ9ZddxaEKR99G9ymy3PSHCuYlbsQM=;
+	h=From:Date:Subject:To:Cc:References:From;
+	b=Ljwon32AqACzx/Dw9PTC0n2fULiRDA9Fyrl1e42jtIwvYfxT8fGxhH/3FLC0yd+Xv
+	 krXOxXD+fDdKnbdq8IrZgx6rPl5DtHWMvr2q9zqqTUcVGbri38vDC44yOK80MIFRY/
+	 +jqZqKCFqaGJCer3stKWJ2EEwykXzotEh3A+Jk9I=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+	20240819075547epcas1p332bd669f297c04a6f6aa3ae76c97058c~tEhzzL15o0478604786epcas1p3u;
+	Mon, 19 Aug 2024 07:55:47 +0000 (GMT)
+Received: from epsmgec1p1.samsung.com (unknown [182.195.38.231]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4WnPzQ4tgyz4x9Q3; Mon, 19 Aug
+	2024 07:55:46 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	34.A0.08992.28AF2C66; Mon, 19 Aug 2024 16:55:46 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240819075546epcas1p355a3c85ffcea2c43e8f1b2c69a0f3b4e~tEhySLDy-1899818998epcas1p3c;
+	Mon, 19 Aug 2024 07:55:46 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240819075546epsmtrp183c4ee2adb89210c9ef1fda81d97c672~tEhyRXFQA0521805218epsmtrp1j;
+	Mon, 19 Aug 2024 07:55:46 +0000 (GMT)
+X-AuditID: b6c32a33-96dfa70000002320-20-66c2fa82e119
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	35.21.08964.28AF2C66; Mon, 19 Aug 2024 16:55:46 +0900 (KST)
+Received: from [127.0.1.1] (unknown [10.113.111.204]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240819075546epsmtip25b31c4fc2d63e23398132ff3af59e6ce~tEhyE9Pmc2794427944epsmtip2X;
+	Mon, 19 Aug 2024 07:55:46 +0000 (GMT)
+From: Kwanghoon Son <k.son@samsung.com>
+Date: Mon, 19 Aug 2024 16:55:45 +0900
+Subject: [PATCH] arm64: dts: exynosautov9: Add dpum SysMMU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240801-kcfi-v2-2-c93caed3d121@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5110; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=pk+3xxI+4/FRGOxNmAbyfBM/kYOJSbuUCOFff3jL+zg=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmwvoUCyD1jzfv8yeFzpQGCfoS/Xt2RoHkjsMk+
- wTLhk2xixyJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZsL6FAAKCRAEWL7uWMY5
- Rp8AD/9r70rHdpDFllqwkTcYqCbGI0NWBMbdytm9LSl5ERftI/jDs5GfFxUzypPyz6/cjMYNlGi
- WEG4n+yX23q/vqYIScj+3Xba+YySXAZTp4ZX9ajL9rQuqutHqcoBdpaXxoS/ntmqlyM1aP1SccM
- MguvNLRg1QwGyb0Ph7AOm9y4iwL1PmPDiMlXnsQ/VkTkGxeU1imRiCD8IBt4AnlxjgIFF/hxdjH
- dHQkWD/9Zaibooo29tzjO99fBkoCREx3EcFjAWVuHDJMf3yi8KXRbBrWIcolMplu3OuVXVRGfru
- uAWQnOO2Ht51oxf+Ze2zbq8cT1MJjYcs+IiffPRS/DpXejQE9p2+y1LKYd7r6ipe6KBKf5NaDQ3
- 265v5ALE10me0yy+YzrPMtKmDiHmvb4cHL6r4YMXcK3ycvi6tkwSIRWHebC1go+LSkXX6nz6NfQ
- 3DPCl1yAW9vmbCSGoI4fw6IVW+nJBfRM9QTgP0TzK74zphQfEiq1cCSrmA5BqqZ3uhJ0UVQtVkS
- X40vNLrfxxJb4xvijbWnYQ+zFSWsuAjATVgHkU+Ycce/xwBGCqUbDiLqoycQ0faFNBU2/7JPB9F
- ZWsUvDccFRFH3O2aMJuT7zSKmUPZ4RBZrPCHq/Dem1bX5WB5urINn5ZCApdcUqreIpTsTI/Wt81 h+wURc5aV7wbfLA==
-X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
-Message-ID: <20240801-kcfi-v2b-2-c93caed3d121@google.com>
-Subject: [PATCH v2b] rust: cfi: add support for CFI_CLANG with Rust
-From: Alice Ryhl <aliceryhl@google.com>
-To: aliceryhl@google.com
-Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, benno.lossin@proton.me, 
-	bjorn3_gh@protonmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	kees@kernel.org, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	masahiroy@kernel.org, mmaurer@google.com, nathan@kernel.org, 
-	nicolas@fjasle.eu, ojeda@kernel.org, peterz@infradead.org, 
-	rust-for-linux@vger.kernel.org, samitolvanen@google.com, wedsonaf@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240819-add_sysmmu-v1-1-799c0f3f607f@samsung.com>
+X-B4-Tracking: v=1; b=H4sIAID6wmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+	vPSU3UzU4B8JSMDIxMDC0NL3cSUlPjiyuLc3FJdw0QLSzNDw5SU1FQTJaCGgqLUtMwKsGHRsbW
+	1AEUgyg9cAAAA
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,  Kwanghoon
+	Son <k.son@samsung.com>
+X-Mailer: b4 0.14.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmk+LIzCtJLcpLzFFi42LZdlhTT7fp16E0gym75C0ezNvGZrFm7zkm
+	i/lHzrFa9K65ymTxctY9NotNj6+xWlzeNYfNYsb5fUwW//fsYHfg9Ni0qpPNY/OSeo++LasY
+	PT5vkgtgicq2yUhNTEktUkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXL
+	zAE6RUmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYFqgV5yYW1yal66Xl1piZWhg
+	YGQKVJiQnbHvX03BH4GKC+u2sTUw/uHtYuTgkBAwkWjZbdnFyMUhJLCDUeLy9WOMEM4nRonj
+	bx6xQTjfGCWmtl1h6WLkBOtov/WZHSKxl1Gi9cMlJgjnFaPE1409zCBVbALqEkva1rKD7GAR
+	UJV4N6MGJCwsYCVxtuckO4jNKyAocXLmE7ChzALyEtvfzmGGiNtL/Hi0CGyBhMAKRon/r8+B
+	LRARmMEocXPXNLAMs8BaRolvMy5A3SQs8Xn3GjaIlr/sEtfvL2KDSLhIbGpfzQxT9Or4FnYI
+	W0riZX8blJ0tcfTjXqj6EonrsxaxQtjGEvuXTmYCeYFZQFNi/S59iFP5JN597WGFhB6vREeb
+	EIQpL3GrsxyiUVTizNOPUAM9JC4t2ssIYgsJxEpsuP2aaQKj/Cwk/89C8v8shF0LGJlXMYql
+	FhTnpqcmGxYYwiM1OT93EyM4NWoZ72C8PP+f3iFGJg7GQ4wSHMxKIrzdLw+mCfGmJFZWpRbl
+	xxeV5qQWH2I0BUbCRGYp0eR8YHLOK4k3NLE0MDEzMjaxMDQzVBLnPXOlLFVIID2xJDU7NbUg
+	tQimj4mDU6qBacrKx692tv5MXHD/U43j0m2z3lk/1fvgP7slWKn3B1PJ8okmRhmNKfdu/pBO
+	6u9+xhjwmP/roTi5hO8Vcv5S/cu1/9sE1m3zadpn0ZwnI88iPNOP9eyuCib2I9fUuz/Kp9//
+	ca1HyMJMX+jtEs3cTx3tmWl155frfri5ewVTjOGkW5+ytzz/UbDnToLV/BR5R06BKRZZj1at
+	jdBc/pfTLO3O22VXZ7/KmFB0QO/tkjcHdjHnCycYF575+rfkzXW+mKkrLjtMMSpsX7b8Ctf8
+	J7PqdyjXGJ32b2U4YLBTZa/9i682J8Q/P73JYf/oe4rUmcebr37qc8mcvtN2ToXow7Oxm75Z
+	cdYIN95wrLwbUabEUpyRaKjFXFScCAAFBiLRFgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCLMWRmVeSWpSXmKPExsWy7bCSvG7Tr0NpBt82c1k8mLeNzWLN3nNM
+	FvOPnGO16F1zlcni5ax7bBabHl9jtbi8aw6bxYzz+5gs/u/Zwe7A6bFpVSebx+Yl9R59W1Yx
+	enzeJBfAEsVlk5Kak1mWWqRvl8CVse9fTcEfgYoL67axNTD+4e1i5OSQEDCRaL/1mR3EFhLY
+	zShx6X4WRFxUouNyI2MXIweQLSxx+HBxFyMXUMkLRon7hx+D1bMJqEssaVvLDlLDIqAq8W5G
+	DUhYWMBK4mzPSbASXgFBiZMzn7CAlDALaEqs36UPEmYWkJfY/nYOM0SJvcSPR4vYQcZLCKxg
+	lNh2u50FxBERmMkoMWdDExuIwyywjlHi/a+brBDHCUt83r2GbQKjwCwkS2YhLJmFZMkCRuZV
+	jJKpBcW56bnFhgWGeanlesWJucWleel6yfm5mxjBAa+luYNx+6oPeocYmTgYDzFKcDArifB2
+	vzyYJsSbklhZlVqUH19UmpNafIhRmoNFSZxX/EVvipBAemJJanZqakFqEUyWiYNTqoFpppJb
+	24rqOd8T9MOerFgmOFt9eY3J5kvmiboFlzi9Ta85TGKW8Pjhx/hjr5n9Pm3W1t8WH1afXWtV
+	+Fi0O2cF3//rbrHxkdPK9hxTF3g8Nc2vTMZcK/XZ8/M/F/5hOpjEoGkX8+w/W/Be3dJTHTFW
+	z85Eu7PtqRRRnNd6w758bWD1lZz//D1mL452zpTOPujn2rpqUduW5dIbbY9rz8/T3sytcOjS
+	J8HCGfND8jJVpue9kGz+1rFj6vNFwXVZV7VD1K9Me7Tj9F+ZzQtWHM582TrBQ3nRXuYVwV0K
+	Zgvvlk1bJfWm71lfTZWlueyH+EU5D31lr71Zt/6ngIH/CT92lvz6zRlzbK8v+KWpvstTiaU4
+	I9FQi7moOBEA1ghNhOcCAAA=
+X-CMS-MailID: 20240819075546epcas1p355a3c85ffcea2c43e8f1b2c69a0f3b4e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240819075546epcas1p355a3c85ffcea2c43e8f1b2c69a0f3b4e
+References: <CGME20240819075546epcas1p355a3c85ffcea2c43e8f1b2c69a0f3b4e@epcas1p3.samsung.com>
 
-From: Matthew Maurer <mmaurer@google.com>
+Add System Memory Management Unit(SysMMU) for dpum also called iommu.
 
-Make it possible to use the Control Flow Integrity (CFI) sanitizer when
-Rust is enabled. Enabling CFI with Rust requires that CFI is configured
-to normalize integer types so that all integer types of the same size
-and signedness are compatible under CFI.
+This sysmmu is version 7.4, which has same functionality as exynos850.
 
-Rust and C use the same LLVM backend for code generation, so Rust KCFI
-is compatible with the KCFI used in the kernel for C. In the case of
-FineIBT, CFI also depends on -Zpatchable-function-entry for rewriting
-the function prolouge, so we set that flag for Rust as well. The flag
-for FineIBT requires rustc 1.80.0 or later, so include a Kconfig
-requirement for that.
+DPUM has 4 dma channel, each channel is mapped to one iommu.
 
-Enabling Rust will select CFI_ICALL_NORMALIZE_INTEGERS because the flag
-is required to use Rust with CFI. Using select rather than `depends on`
-avoids the case where Rust is not visible in menuconfig due to
-CFI_ICALL_NORMALIZE_INTEGERS not being enabled. One disadvantage of
-select is that RUST must `depends on` all of the things that
-CFI_ICALL_NORMALIZE_INTEGERS depends on to avoid invalid configurations.
-
-Alice has been using KCFI on her phone for several months, so it is
-reasonably well tested on arm64.
-
-Signed-off-by: Matthew Maurer <mmaurer@google.com>
-Co-developed-by: Alice Ryhl <aliceryhl@google.com>
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+Signed-off-by: Kwanghoon Son <k.son@samsung.com>
 ---
-This is an alternate version that shows how to resolve the conflict with
-the "rust: fix export of bss symbols" patch [1].
+ arch/arm64/boot/dts/exynos/exynosautov9.dtsi | 36 ++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-As for the conflict with the KASAN patchset [2], it should be resolved
-by adding both strings to the supported-sanitizers list in sorted order.
-
-[1]: https://lore.kernel.org/r/20240815074519.2684107-2-nmi@metaspace.dk
-[2]: https://lore.kernel.org/r/20240812232910.2026387-1-mmaurer@google.com
-
- Makefile                        | 7 +++++++
- arch/x86/Makefile               | 4 ++++
- init/Kconfig                    | 4 +++-
- rust/Makefile                   | 2 +-
- scripts/generate_rust_target.rs | 1 +
- 5 files changed, 16 insertions(+), 2 deletions(-)
-
-diff --git a/Makefile b/Makefile
-index 484c6900337e..2dc39a23005d 100644
---- a/Makefile
-+++ b/Makefile
-@@ -955,6 +955,13 @@ CC_FLAGS_CFI	:= -fsanitize=kcfi
- ifdef CONFIG_CFI_ICALL_NORMALIZE_INTEGERS
- 	CC_FLAGS_CFI	+= -fsanitize-cfi-icall-experimental-normalize-integers
- endif
-+ifdef CONFIG_RUST
-+	# Always pass -Zsanitizer-cfi-normalize-integers as CONFIG_RUST selects
-+	# CONFIG_CFI_ICALL_NORMALIZE_INTEGERS.
-+	RUSTC_FLAGS_CFI   := -Zsanitizer=kcfi -Zsanitizer-cfi-normalize-integers
-+	KBUILD_RUSTFLAGS += $(RUSTC_FLAGS_CFI)
-+	export RUSTC_FLAGS_CFI
-+endif
- KBUILD_CFLAGS	+= $(CC_FLAGS_CFI)
- export CC_FLAGS_CFI
- endif
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index 801fd85c3ef6..e9b2ee3c8a71 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -237,6 +237,10 @@ ifdef CONFIG_CALL_PADDING
- PADDING_CFLAGS := -fpatchable-function-entry=$(CONFIG_FUNCTION_PADDING_BYTES),$(CONFIG_FUNCTION_PADDING_BYTES)
- KBUILD_CFLAGS += $(PADDING_CFLAGS)
- export PADDING_CFLAGS
+diff --git a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+index 599e72824875..b36292a7db64 100644
+--- a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+@@ -261,6 +261,42 @@ cmu_dpum: clock-controller@18c00000 {
+ 			clock-names = "oscclk", "bus";
+ 		};
+ 
++		sysmmu_dpum_0: sysmmu@18c80000 {
++			compatible = "samsung,exynos-sysmmu";
++			reg = <0x18c80000 0x10000>;
++			interrupts = <GIC_SPI 459 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu_dpum CLK_GOUT_DPUM_SYSMMU_D0_CLK>;
++			clock-names = "sysmmu";
++			#iommu-cells = <0>;
++		};
 +
-+PADDING_RUSTFLAGS := -Zpatchable-function-entry=$(CONFIG_FUNCTION_PADDING_BYTES),$(CONFIG_FUNCTION_PADDING_BYTES)
-+KBUILD_RUSTFLAGS += $(PADDING_RUSTFLAGS)
-+export PADDING_RUSTFLAGS
- endif
- 
- KBUILD_LDFLAGS += -m elf_$(UTS_MACHINE)
-diff --git a/init/Kconfig b/init/Kconfig
-index b0238c4b6e79..306af56a22df 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1905,11 +1905,13 @@ config RUST
- 	bool "Rust support"
- 	depends on HAVE_RUST
- 	depends on RUST_IS_AVAILABLE
--	depends on !CFI_CLANG
- 	depends on !MODVERSIONS
- 	depends on !GCC_PLUGINS
- 	depends on !RANDSTRUCT
- 	depends on !DEBUG_INFO_BTF || PAHOLE_HAS_LANG_EXCLUDE
-+	depends on !CFI_CLANG || RUSTC_VERSION >= 107900 && $(cc-option,-fsanitize=kcfi -fsanitize-cfi-icall-experimental-normalize-integers)
-+	select CFI_ICALL_NORMALIZE_INTEGERS if CFI_CLANG
-+	depends on !FINEIBT || RUSTC_VERSION >= 108000
- 	help
- 	  Enables Rust support in the kernel.
- 
-diff --git a/rust/Makefile b/rust/Makefile
-index 26b16c036fe3..53a17d22f5cd 100644
---- a/rust/Makefile
-+++ b/rust/Makefile
-@@ -305,7 +305,7 @@ $(obj)/bindings/bindings_helpers_generated.rs: $(src)/helpers.c FORCE
- quiet_cmd_exports = EXPORTS $@
-       cmd_exports = \
- 	$(NM) -p --defined-only $< \
--		| awk '/ (T|R|D|B) / {printf "EXPORT_SYMBOL_RUST_GPL(%s);\n",$$3}' > $@
-+		| awk '$$2~/(T|R|D|B)/ && $$3!~/__cfi/ {printf "EXPORT_SYMBOL_RUST_GPL(%s);\n",$$3}' > $@
- 
- $(obj)/exports_core_generated.h: $(obj)/core.o FORCE
- 	$(call if_changed,exports)
-diff --git a/scripts/generate_rust_target.rs b/scripts/generate_rust_target.rs
-index c31657380bf9..9b184099278a 100644
---- a/scripts/generate_rust_target.rs
-+++ b/scripts/generate_rust_target.rs
-@@ -192,6 +192,7 @@ fn main() {
-         }
-         ts.push("features", features);
-         ts.push("llvm-target", "x86_64-linux-gnu");
-+        ts.push("supported-sanitizers", ["kcfi"]);
-         ts.push("target-pointer-width", "64");
-     } else if cfg.has("X86_32") {
-         // This only works on UML, as i386 otherwise needs regparm support in rustc
++		sysmmu_dpum_1: sysmmu@18c90000 {
++			compatible = "samsung,exynos-sysmmu";
++			reg = <0x18c90000 0x10000>;
++			interrupts = <GIC_SPI 459 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu_dpum CLK_GOUT_DPUM_SYSMMU_D1_CLK>;
++			clock-names = "sysmmu";
++			#iommu-cells = <0>;
++		};
++
++		sysmmu_dpum_2: sysmmu@18ca0000 {
++			compatible = "samsung,exynos-sysmmu";
++			reg = <0x18ca0000 0x10000>;
++			interrupts = <GIC_SPI 459 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu_dpum CLK_GOUT_DPUM_SYSMMU_D2_CLK>;
++			clock-names = "sysmmu";
++			#iommu-cells = <0>;
++		};
++
++		sysmmu_dpum_3: sysmmu@18cb0000 {
++			compatible = "samsung,exynos-sysmmu";
++			reg = <0x18cb0000 0x10000>;
++			interrupts = <GIC_SPI 459 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu_dpum CLK_GOUT_DPUM_SYSMMU_D3_CLK>;
++			clock-names = "sysmmu";
++			#iommu-cells = <0>;
++		};
++
+ 		cmu_core: clock-controller@1b030000 {
+ 			compatible = "samsung,exynosautov9-cmu-core";
+ 			reg = <0x1b030000 0x8000>;
+
+---
+base-commit: 367b5c3d53e57d51a5878816804652963da90950
+change-id: 20240819-add_sysmmu-1a89611ddee4
+
+Best regards,
 -- 
-2.46.0.184.g6999bdac58-goog
+Kwanghoon Son <k.son@samsung.com>
 
 
