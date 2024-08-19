@@ -1,82 +1,128 @@
-Return-Path: <linux-kernel+bounces-291751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3380495665B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:08:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4B6F956660
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4C41282905
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:08:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E79531C217DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABD215C15A;
-	Mon, 19 Aug 2024 09:08:05 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D601E15C12A;
+	Mon, 19 Aug 2024 09:09:43 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210C115B98D;
-	Mon, 19 Aug 2024 09:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4605E148FE0;
+	Mon, 19 Aug 2024 09:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724058485; cv=none; b=Y9cXo7p9V6GNnF0smrf9q4rGjnPEFqUn6COXdZMKCXuIR4ZuiDHs26GHeIOc41AtKjdOJy2Pi0MfAOL9Liav+z52Xfx1ADJKgZGAlUASuRXBSVrFrWx8SL/dwtExSwT/ZWZ8hmoo7QDpdSPQCp0Smx+qnNtq5g0m7ZErAhXNzRw=
+	t=1724058583; cv=none; b=h8HAMLSfTt+2vkBIL8o13Yn4az4ANYzbskd1vQ3W+heO77GmhSlQftqgYVQN/avhX5Ly6RxVfSscBqmZx7ecmRMIV8oxnwDQr+FXsNztC2u+zuxiNqRdpY3yMyD5JJ1oMF5GHnbFqNLlmHWCOPI45y3YZhgvGQhOybUwAisxCaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724058485; c=relaxed/simple;
-	bh=kASuMZUvOB+aHiw8pMzY3HyNDO455tB7yfVmRf+gqx0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hcF8nWFI4/12jqEDTa7DNYA9opqp3OAn1aJeKm8OxzyjMXaQXDYrdOE/7ZIO3Zhn0HS829bdUw2RcIhyNeLOHyAbDgQImsSq7BT15xLjdDQOnqPsvV7T2rEka0eVwOos3wMkltYZRJDKcDaW8RYEtkjamS+phQ1CerTI/ZGBhgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AAD7C32782;
-	Mon, 19 Aug 2024 09:07:59 +0000 (UTC)
-Date: Mon, 19 Aug 2024 10:07:56 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 12/40] mm: Define VM_SHADOW_STACK for arm64 when we
- support GCS
-Message-ID: <ZsMLbEN398N4PbTg@arm.com>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-12-699e2bd2190b@kernel.org>
+	s=arc-20240116; t=1724058583; c=relaxed/simple;
+	bh=LtEilVAKm3QCrkGSgVEhT2aH+SwOWcf5TsJ6Mx1E2Ak=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KibKGR/oKeiHfk0TLsNz/LkC1x7L0Let137NLCkCpYptFaNdPEBdvGG8smCAnLyKcn8XF1mQDRUGvzpWVgxS5tHYwT2rhujPC+mOFQJaAoXumzqqkCn56uCQ5fkN0X1rmLtEAU2j7L+3UsVZcm4Mtkvuva0nZQGjrqkyh8lNUfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WnRVt0FH4z1j6ff;
+	Mon, 19 Aug 2024 17:04:38 +0800 (CST)
+Received: from dggpemf100013.china.huawei.com (unknown [7.185.36.179])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3458B1A016C;
+	Mon, 19 Aug 2024 17:09:36 +0800 (CST)
+Received: from localhost.huawei.com (10.50.165.33) by
+ dggpemf100013.china.huawei.com (7.185.36.179) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 19 Aug 2024 17:09:35 +0800
+From: Yihang Li <liyihang9@huawei.com>
+To: <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bvanassche@acm.org>, <dlemoal@kernel.org>, <liyihang9@huawei.com>,
+	<linuxarm@huawei.com>, <prime.zeng@huawei.com>, <stable@vger.kernel.org>
+Subject: [PATCH v5] scsi: sd: Ignore command SYNC CACHE error if format in progress
+Date: Mon, 19 Aug 2024 17:09:34 +0800
+Message-ID: <20240819090934.2130592-1-liyihang9@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801-arm64-gcs-v10-12-699e2bd2190b@kernel.org>
-X-TUID: +ACxJr4BwsiD
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemf100013.china.huawei.com (7.185.36.179)
 
-On Thu, Aug 01, 2024 at 01:06:39PM +0100, Mark Brown wrote:
-> Use VM_HIGH_ARCH_5 for guarded control stack pages.
-> 
-> Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+If formatting a suspended disk (such as formatting with different DIF
+type), the disk will be resuming first, and then the format command will
+submit to the disk through SG_IO ioctl.
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+When the disk is processing the format command, the system does not submit
+other commands to the disk. Therefore, the system attempts to suspend the
+disk again and sends the SYNC CACHE command. However, the SYNC CACHE
+command will fail because the disk is in the formatting process, which
+will cause the runtime_status of the disk to error and it is difficult
+for user to recover it. Error info like:
+
+[  669.925325] sd 6:0:6:0: [sdg] Synchronizing SCSI cache
+[  670.202371] sd 6:0:6:0: [sdg] Synchronize Cache(10) failed: Result: hostbyte=0x00 driverbyte=DRIVER_OK
+[  670.216300] sd 6:0:6:0: [sdg] Sense Key : 0x2 [current]
+[  670.221860] sd 6:0:6:0: [sdg] ASC=0x4 ASCQ=0x4
+
+To solve the issue, ignore the error and return success/0 when formatting
+in progress.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Yihang Li <liyihang9@huawei.com>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+---
+Changes since v4:
+- Rename the commit title.
+- Ignore the SYNC command error during formatting as suggested by Damien.
+
+Changes since v3:
+- Add Cc tag for kernel stable.
+
+Changes since v2:
+- Add Reviewed-by for Bart.
+
+Changes since v1:
+- Updated and added error information to the patch description.
+
+---
+ drivers/scsi/sd.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index adeaa8ab9951..2d7240a24b52 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -1823,13 +1823,15 @@ static int sd_sync_cache(struct scsi_disk *sdkp)
+ 			    (sshdr.asc == 0x74 && sshdr.ascq == 0x71))	/* drive is password locked */
+ 				/* this is no error here */
+ 				return 0;
++
+ 			/*
+-			 * This drive doesn't support sync and there's not much
+-			 * we can do because this is called during shutdown
+-			 * or suspend so just return success so those operations
+-			 * can proceed.
++			 * If a format is in progress or if the drive does not
++			 * support sync, there is not much we can do because
++			 * this is called during shutdown or suspend so just
++			 * return success so those operations can proceed.
+ 			 */
+-			if (sshdr.sense_key == ILLEGAL_REQUEST)
++			if ((sshdr.asc == 0x04 && sshdr.ascq == 0x04) ||
++			    sshdr.sense_key == ILLEGAL_REQUEST)
+ 				return 0;
+ 		}
+ 
+-- 
+2.33.0
+
 
