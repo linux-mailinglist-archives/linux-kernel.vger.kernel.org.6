@@ -1,132 +1,103 @@
-Return-Path: <linux-kernel+bounces-292881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FA469575A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:30:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BDFE9575AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 22:31:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 528781F23436
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:30:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42C8B1F23630
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EFDA15921D;
-	Mon, 19 Aug 2024 20:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56621158DC4;
+	Mon, 19 Aug 2024 20:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jITrtUxe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sx7OahjE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D21158520
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 20:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC0C158216;
+	Mon, 19 Aug 2024 20:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724099413; cv=none; b=YeodedH3lG/T08NqZFS39Pf6yLNCVR5ol5neiPifvl2PbrhnrGrAOIKQIxU9rsynPzAj2HWVZHHywUMV8FcVEgyqxutQ4KS1/pmw1SgXAAuaGKDSgk/HzR3HJccFey7CHUYnlAbvFHoqcDOmiacfql/NLdi6tgijjUYZ9fOA6Dk=
+	t=1724099479; cv=none; b=s3ZWv6DiYaU/mO1fyeuyt8CVj0pZyVLtQsHZzGpNSwz0JIsBDhs1CZA51xr+jzCTgsrnmhNwypziuI2Us2elZrj6M2vsyCqRnNidwsa1Y3DXMphXDNWp810fR9oClEs/uDDbpP7Xk+NBzK6JdWM2KXx9IVDa+pgXfi7mxk7FHrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724099413; c=relaxed/simple;
-	bh=dxZzgN8fHT7/E9MQmkwqnJhujKe+x7LyCDMQUazEia0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=INi8XLZ0WZOTtiwNzo2KikLNMBqcZ5dOt/SSTZQnQ8Ut1rPim7AYU62Wf7sDZUQopBX09zruhRJTcqQzg00FTc/HM7jUar7CqI470n4+N4SjBLlUzves6NgoaAVUlC1cOyK7vHdT8COUUyAH8uWNGfV0aeHO7hbE/jZ8qP6hDe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jITrtUxe; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724099410;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hn+U0KRxu/hCj/TyTc49LIfB/amh5yN9k/2aiCsM7B4=;
-	b=jITrtUxeYEvhBeO5lTPJBJtsJTQzGfI1S2/PMlVHUsqaH+FqB/SpsblIvNqsISxoYj8nyw
-	I1SPn/6y6Y5rhG7xrAdHBGjwco3Wn9f2uoVWExJ1d5imEtiNsOHLDKgzM6rgj/3eRdKC7U
-	ON6kNkp9m3/YH7lhEVuUmg42hiLozEc=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-440-z3TYU149PZ-d5vkRbPCspg-1; Mon,
- 19 Aug 2024 16:30:07 -0400
-X-MC-Unique: z3TYU149PZ-d5vkRbPCspg-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 05EC419560B4;
-	Mon, 19 Aug 2024 20:30:06 +0000 (UTC)
-Received: from [10.45.224.222] (unknown [10.45.224.222])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 431871956053;
-	Mon, 19 Aug 2024 20:30:03 +0000 (UTC)
-Date: Mon, 19 Aug 2024 22:29:58 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Piotr Zalewski <pZ010001011111@proton.me>
-cc: agk@redhat.com, snitzer@kernel.org, corbet@lwn.net, 
-    dm-devel@lists.linux.dev, linux-doc@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [PATCH] Documentation: admin-guide/dm: Fix indentation bug
-In-Reply-To: <20240819172401.77928-3-pZ010001011111@proton.me>
-Message-ID: <ced0f91b-6db7-df23-3988-b687b8beefcc@redhat.com>
-References: <20240819172401.77928-3-pZ010001011111@proton.me>
+	s=arc-20240116; t=1724099479; c=relaxed/simple;
+	bh=oCmoOhqRG/UpSE5QjX5/1IwargPDbVoT9EUID1D0lWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YvsN3zhrwKBBG2trWW6FcOKF4g0NOG8rU/6AaBkkzp+bCQDgw6jJ0aG5xtBHRhoHlDmNHabLZ55YMH9HokpcgWhtQ5Cdjj33TFNCjFcrF3fFdOVVlOVLFHwLFo3bGfMS+7H4AhNMbjXcfUoJbHvp4V1V8CrSQQiH5kAjpvujgWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sx7OahjE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75DBDC32782;
+	Mon, 19 Aug 2024 20:31:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724099479;
+	bh=oCmoOhqRG/UpSE5QjX5/1IwargPDbVoT9EUID1D0lWY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Sx7OahjEZRYeFtscL5dOL0uE3/HonQZNwiM44+7j+7dggpd33gkgF79JiOxExWJ16
+	 GBxYjjTJ4rPajfaFaWLqmYqVXOnnphLqtVAHChdlOYQWS8o2UxpToOOqHi+Dmtqtn/
+	 IFVABjfXFyjHC8WQHBIBENXJAn7n7mDH196o3hLxmbVMsF7L9m3ikTk7laEZNFmZB7
+	 DRSv8ZRIukDKzGCGUrHwwWIU64K5Hxp8xFr6UvhD48ua8/wcejln/hKX64pmaOWgUC
+	 /FYSduFUy38kgzaPLuzyxikBBGtdMTfiNe4Bivh1Hpan3zUc25tr2Dqd6CQHfU5Qdd
+	 77s8xMLxE3j3g==
+Date: Mon, 19 Aug 2024 22:31:13 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Yuntao Liu <liuyuntao12@huawei.com>, linux-kernel@vger.kernel.org, 
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH -next 0/9] drivers: fix some module autoloading
+Message-ID: <cqvebznbtkryilyd3z6m3lgppwrollf2klyi67mrf4y3mzdq4l@cz2v6efhq2bd>
+References: <20240819113855.787149-1-liuyuntao12@huawei.com>
+ <dabde7bf-dcff-47c6-a68d-f5018ab00282@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dabde7bf-dcff-47c6-a68d-f5018ab00282@app.fastmail.com>
 
+Hi,
 
-
-On Mon, 19 Aug 2024, Piotr Zalewski wrote:
-
-> The following bug was found at `admin-guide/device-mapper/dm-crypt.rst`:
-> ```
-> admin-guide/device-mapper/dm-crypt.rst:167: ERROR: Unexpected indentation.
-> ```
-> Fix the indentation error.
-
-Hi
-
-This should be already fixed in v6.11-rc4.
-
-Mikulas
-
-> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
-> Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
-> ---
->  .../admin-guide/device-mapper/dm-crypt.rst     | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
+On Mon, Aug 19, 2024 at 02:09:49PM GMT, Arnd Bergmann wrote:
+> On Mon, Aug 19, 2024, at 13:38, Yuntao Liu wrote:
+> > Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
+> > based on the alias from platform_device_id table.
+> >
+> > Yuntao Liu (9):
+> >   usb: ehci-mv: fix module autoloading
+> >   soc: pxa: ssp: fix module autoloading
+> >   misc: atmel-ssc: fix module autoloading
+> >   i2c: at91: fix module autoloading
+> >   mpc85xx_edac: fix module autoloading
+> >   dmaengine: pxa: fix module autoloading
+> >   dmaengine: mmp_pdma: fix module autoloading
+> >   dmaengine: at_hdmac: fix module autoloading
+> >   ipmi: ipmi_ssif: fix module autoloading
 > 
-> diff --git a/Documentation/admin-guide/device-mapper/dm-crypt.rst b/Documentation/admin-guide/device-mapper/dm-crypt.rst
-> index e625830d335e..450c211534a9 100644
-> --- a/Documentation/admin-guide/device-mapper/dm-crypt.rst
-> +++ b/Documentation/admin-guide/device-mapper/dm-crypt.rst
-> @@ -160,15 +160,15 @@ iv_large_sectors
->     The <iv_offset> must be multiple of <sector_size> (in 512 bytes units)
->     if this flag is specified.
->  
-> -
-> -Module parameters::
-> -max_read_size
-> -max_write_size
-> -   Maximum size of read or write requests. When a request larger than this size
-> -   is received, dm-crypt will split the request. The splitting improves
-> -   concurrency (the split requests could be encrypted in parallel by multiple
-> -   cores), but it also causes overhead. The user should tune these parameters to
-> -   fit the actual workload. 
-> +    Module parameters::
-> +
-> +        max_read_size
-> +        max_write_size
-> +           Maximum size of read or write requests. When a request larger than this size
-> +           is received, dm-crypt will split the request. The splitting improves
-> +           concurrency (the split requests could be encrypted in parallel by multiple
-> +           cores), but it also causes overhead. The user should tune these parameters to
-> +           fit the actual workload.
->  
->  
->  Example scripts
-> -- 
-> 2.46.0
+> I looked at all the patches and found that most of them do not
+> use the table any more, or will stop using it in the near future.
 > 
+> I think your work to validate the correctness of the entries
+> is useful, but it may be more helpful to focus on removing
+> all the unused tables, including those that have a
+> MODULE_DEVICE_TABLE() tag.
 > 
+> If you are planning to do more such cleanups, maybe you can
+> go through them one subsystem at a time and look for drivers
+> that have both of_device_id and i2c_device_id/platform_device_id/
+> spi_device_id tables. If nothing in the kernel creates a device
+> with the legacy string, you can then send a patch that removes
+> the old device ID list and at the same time makes the DT support
+> unconditional in case there is an #ifdef CONFIG_OF check.
+> 
+> If the probe() function accesses platform_data, this would also
+> be unused, allowing an even nicer cleanup of removing the
+> platofrm_data path in favor of OF properties.
 
+Thanks for looking into these patches, Arnd!
+
+Andi
 
