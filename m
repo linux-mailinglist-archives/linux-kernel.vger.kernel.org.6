@@ -1,494 +1,211 @@
-Return-Path: <linux-kernel+bounces-291686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF720956592
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:26:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36052956594
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:27:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96F982839C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:26:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1285283A1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3D915B10A;
-	Mon, 19 Aug 2024 08:26:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABF415B551;
+	Mon, 19 Aug 2024 08:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W98k5AYJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="LITRnRnk"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2058.outbound.protection.outlook.com [40.107.255.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8661547E6
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724056000; cv=none; b=VpKcSAi4Y+uYBa44zHJFXSNr4OhCzB8g2xFoOIoJZ+oLFFkiHXfeml8z5t5eAWDkHH/C1+iqLmJB51odvAJQtWg3OcEo/rreLixsZXj8XRl6FsHxKS2Tcu4Wme2SI1JJLrXYkGr3NQKDFLl8CZX+w8wFL602DFcmK2IfxUjLpuw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724056000; c=relaxed/simple;
-	bh=RIRM+xjz5yzyB4NfxyuogaqXsk6cGmXaZHC+BFkxCxw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Xeu7rhwHGa7szKgoNGVv0T0h3WDygjayWuIl70PqF9YI8Ty+HxARkwrCkYvN+H5E5aRy91q/se8IUqZElqMl/7OGSCF6onhTUI7OoebrxpfL22AmlJHtUllk0VyEgNKecO/nga+Fh+7UXLGkOXbT3e2bebnm9RxAxROlcDcTyJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W98k5AYJ; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724055999; x=1755591999;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=RIRM+xjz5yzyB4NfxyuogaqXsk6cGmXaZHC+BFkxCxw=;
-  b=W98k5AYJ/5jhg8L0CYY2bZn+ic/iuWDcqjl4zuJvntfveDFMzf3n8c5Y
-   dRhB1DuNSGQ215vKYNdupaiOWpwSzTLPkRuLJDlQSwou91PSgb9JYr5ty
-   OR0Jr0mTWWJqZztVcDeWB+8RbVHhFLjYLvwWX9CmXFBjcWTXpjIv2zgjK
-   35b5Q72P0KizwZ5H3sbuWFKpYAKMj/06sA2LM5lQW9LPcgQSwMeajQ5i2
-   t78j/VOZwOXV6GMJ26nHryMC0d7cCq76/pp03VNrFoOKJRTEcui5gRFAw
-   xmvkOI2ng+MBMR0G9QvNiXhbrlclvytnURKGq6fyG4tO82PXXxsRFFDip
-   A==;
-X-CSE-ConnectionGUID: IbvCPaqeQbuuga9KDBl2Lw==
-X-CSE-MsgGUID: 7ufxuTZ3RoGkSn4/JU2gJg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="22449114"
-X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="22449114"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 01:26:38 -0700
-X-CSE-ConnectionGUID: JjXHIvhoQ1WQXMub3g77RA==
-X-CSE-MsgGUID: +R7EZ4MkS9KsVgiX3cbwvQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="60870332"
-Received: from mwiniars-desk2.ger.corp.intel.com (HELO localhost) ([10.245.246.70])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 01:26:30 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Harry Wentland
- <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira
- <Rodrigo.Siqueira@amd.com>, Alex Deucher <alexander.deucher@amd.com>,
- Christian =?utf-8?Q?K=C3=B6nig?= <christian.koenig@amd.com>, Xinhui Pan
- <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter
- <daniel@ffwll.ch>, jinzh <jinzh@github.amd.com>, Aric Cyr
- <Aric.Cyr@amd.com>, Alan Liu <HaoPing.Liu@amd.com>, Tony Cheng
- <Tony.Cheng@amd.com>, Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Harry Wentland <Harry.Wentland@amd.com>,
- Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Subject: Re: [PATCH 09/12] drm/amd/display: Switch amdgpu_dm_connector to
- struct drm_edid
-In-Reply-To: <20240818-amdgpu-drm_edid-v1-9-aea66c1f7cf4@weissschuh.net>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240818-amdgpu-drm_edid-v1-0-aea66c1f7cf4@weissschuh.net>
- <20240818-amdgpu-drm_edid-v1-9-aea66c1f7cf4@weissschuh.net>
-Date: Mon, 19 Aug 2024 11:26:27 +0300
-Message-ID: <874j7g7wb0.fsf@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEED15B12C;
+	Mon, 19 Aug 2024 08:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724056006; cv=fail; b=Z+MtpejXOdpFFjouwKlOLUk3hUgFNzE3b5t0z3/A8bWawrfBy/uDSAJT2ptiOpuinMmrqJKULerlohMePItjoKs5/evO6wsevM06dQ+YeImtKOmAcd5Wm1G3ZEzr881QW0IEFjTsR5Hb9FzlZ8Wxq3G0m3XsjUOoXTbBwyIpDIo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724056006; c=relaxed/simple;
+	bh=iXFtl5LDbl0Xevx+4yn/bYA53aMeLXEdQ0nHy5ci8J0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=IgqieJhVtaNG634dcoD3CVPwLZtj8BT8mjeloanBP/8tCsLt/9Ld8bmjNZG4ERvyO+upaMOnIiIdPECCVzhgtZqib461psU1qcVm6Y0B0S53LaTxOwgmrmvRHVDd+zaJENf45wm/xiVjC25Zj+UJ3w3EAaDCqI8/LQ4T9aAN6Og=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=LITRnRnk; arc=fail smtp.client-ip=40.107.255.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fabPGP+wKOE1YXKhhP61gf8iQIMLC9fDbkZpc2s3hKiYSkV56KGWwOiqmq7Y4RL4je3iAVRXfujNj42L2NyhTGQH2SvaPXvKPRheCvxxRKG7TIslGMXBuLrmQINTpoPq4qRYyQenq1kBhWSdQzXeEJnKXkaxegON8/CHmmkS5q9kqHiec5m1RN9CG1Yc4+ufAkbajOuLOgX7/zBvFer7Y3hbyWtw/bvNgfqWHLdW4G7csYxZpiO0UVujun2DP7LYC0O3skSWuCzHYfR2guLfvdFSKzq8G4m7PUE3zljrExNgxYEwaIptW5cbcxHQYTQkR6otUAhn1cQuDFdlg7Ynuw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iXFtl5LDbl0Xevx+4yn/bYA53aMeLXEdQ0nHy5ci8J0=;
+ b=ra202HvPYrYvQe2uCFEWddW4RgmrjpPjlp2P10yD/p7yz/6ZChwEj0M7ssC3/TAMpDQxav+8c++iRYMbLHz2zY4b+JbX8b1ZtQ4H9+5KPzDAf5PCBVbXWmvq66Qsqas/RKPpfjyXqDQuebsV1XFvMxqtR0xMCmJ3bkVqYaLc1aDI0U6a1FOooGDO+63EsJ/enPECqEYVphLrV84YftAFHetyCZxEDTRp0qiulrx9xF08NR/KuIiP7xqvfjHNdurqfCpF438HGMiFG3FaQCADY1xpX351sSsQHgs7AL/CEgP0l+A6Io54EvoG3JWC5EQViBMFZK+2YxvKHKU3j+eAcg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iXFtl5LDbl0Xevx+4yn/bYA53aMeLXEdQ0nHy5ci8J0=;
+ b=LITRnRnkV8wIDNKgtImp6VU9Iyxl3xfQzIAZhacFR33gezzz0VcYQjbBk/uoXJwGujWC4gx6C/jDycmbh16iXRh3vQtGPDKU2FcK7tS6XGKKm16HOpMTurW+D+mK1iOyNtwKjQGgDVoeJooKf7kqsKQq7MNKbnYvL9h6/gM5mzVEfiFaPKvIFPfREUls8mzhzqHKRJPNtglPHuj12a8XJj/12GnZub/4IqyIeL4RhvdoDwxcG5sBwOfMeDz/XKImB0r634Qz7K7KrgdRSy/fPWyr89zjRExgDePvcFeEGsvCAHCkNbP6v00+VR43A+jBT2ANRS0xH9ArV0A2rCweyg==
+Received: from TYUPR06MB6217.apcprd06.prod.outlook.com (2603:1096:400:358::7)
+ by TYZPR06MB6954.apcprd06.prod.outlook.com (2603:1096:405:43::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
+ 2024 08:26:41 +0000
+Received: from TYUPR06MB6217.apcprd06.prod.outlook.com
+ ([fe80::c18d:f7c6:7590:64fe]) by TYUPR06MB6217.apcprd06.prod.outlook.com
+ ([fe80::c18d:f7c6:7590:64fe%4]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
+ 08:26:41 +0000
+From: =?gb2312?B?uvrBrMfa?= <hulianqin@vivo.com>
+To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+	"quic_prashk@quicinc.com" <quic_prashk@quicinc.com>,
+	"quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	opensource.kernel <opensource.kernel@vivo.com>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>
+Subject:
+ =?gb2312?B?tPC4tDogtPC4tDogW1BBVENIIHYxXSB1c2I6IGdhZGdldDogdV9zZXJpYWw6?=
+ =?gb2312?Q?_check_Null_pointer_in_EP_callback?=
+Thread-Topic:
+ =?gb2312?B?tPC4tDogW1BBVENIIHYxXSB1c2I6IGdhZGdldDogdV9zZXJpYWw6IGNoZWNr?=
+ =?gb2312?Q?_Null_pointer_in_EP_callback?=
+Thread-Index:
+ AdrvzihtFNSOcxRwTAOIHI6tveAOMAABV00AAACqLAAAAoTOwAAAUcYAAAD4WnAAAUYXgAAAwgzwAIjopbA=
+Date: Mon, 19 Aug 2024 08:26:41 +0000
+Message-ID:
+ <TYUPR06MB6217AEF9DD73C9424C7C1D07D28C2@TYUPR06MB6217.apcprd06.prod.outlook.com>
+References:
+ <TYUPR06MB62177737F0054278B489962BD2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <2024081608-punch-coherent-d29e@gregkh>
+ <CAOf5uwnsgcJjp1=RLa7qx9ScQY5rZvwX-Zu6BOqxBBhBCz+CFQ@mail.gmail.com>
+ <TYUPR06MB62177BCD4AB43C19E38990D3D2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <CAOf5uwm65Cw-V+td_=6QAGUF+Uisueqcm0z=1zFaNTisAJnSFQ@mail.gmail.com>
+ <TYUPR06MB6217877B31A08356241CAB38D2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <2024081652-unify-unlucky-28d2@gregkh>
+ <TYUPR06MB6217D1798DBC41C7DB2A1DEDD2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
+In-Reply-To:
+ <TYUPR06MB6217D1798DBC41C7DB2A1DEDD2812@TYUPR06MB6217.apcprd06.prod.outlook.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYUPR06MB6217:EE_|TYZPR06MB6954:EE_
+x-ms-office365-filtering-correlation-id: 50ebf4d9-0252-4e7e-808a-08dcc028a6fb
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?gb2312?B?ZWhhWnFXU2wxYkdYTFhxdHJMdjNlVzJ5ekY5ZFJkL1NSbmNTc1hSUyt1a055?=
+ =?gb2312?B?NkNzenZOUlo2UHQ5WmhhZkhQNVVseGJWMnJzT2lqUXIrY050bGt3VWF1cm9r?=
+ =?gb2312?B?T0pRd0tXVWFKY2lJQzlydVNwU3IrbE5BNUxCalpQV2p1NGw4RDhIWnBpUWlX?=
+ =?gb2312?B?cUtKSGp0ZndUUVBNR2hFcVlpcGVqb3JsVW5vZ2JyMjVTVUU1TE9NSTZmaXBH?=
+ =?gb2312?B?R1lmbkd4L01aeFl4TG1oWnV5TGMxRGxBV3pUakZVVUdpZE9HeXBtc1Q4dTRh?=
+ =?gb2312?B?OXFXQW1Zbi9rZlR6dENGOE5yd0lidWlabHd6clprTzJ4TDZNcTVHNkw2alVx?=
+ =?gb2312?B?TjR2RStzTWptTDN5cHFxYk9vSXkvMFBHTU9HUWt3S2FCK3kvaUZ2c0tlNWVx?=
+ =?gb2312?B?ZkNoZ3dXUGxxbDY5UndmcXlxOHkxc0I0TkNQa0JwR1VHdEhTSFQ5WlZTaERi?=
+ =?gb2312?B?S0ZqWjYwUDFnQUlhdkdXZE9YaUVxVi9zK0hqOVRhaG9UaWZHdGwrUkxpZEhm?=
+ =?gb2312?B?NzRFRG8vUEo2aCtDNnhtZXdDTUdINXNaUGROSTNpZHFZSXpqT3FMNnk0cFNH?=
+ =?gb2312?B?YU95UE40LzF3ZTJhMnlhQmpOa0pkaFRMcCtlcndscjZLK1NmaGtMMURXRUxk?=
+ =?gb2312?B?ekV3RXA1TkFJV0tnV2NydEQvak8yTlcwRWZBMmwvejdKK0xrRlgrb21wVnd0?=
+ =?gb2312?B?Rk9GRlhxZ05ZK1lLbTBiYjRSUFNZUmxKb0VtQ01TWlhoL3N2dE9VcFNQbk1T?=
+ =?gb2312?B?eHExOVdyeUlLUUpxbFBuVmZBNDFwMHZZT1k0cGZnbXJQd3hFeUE0RFFmZkVG?=
+ =?gb2312?B?VG5leHFBdG5DODcxRStiS1E0VmVnbTNTZWx2TmdESGNhUEwzY3hXYUtoSEh2?=
+ =?gb2312?B?VUdZb1o5VHFxU0c4TmlObTFZRlBrSFVvTDJUM2YyVEZtU3lVMnQyaGxGZWpz?=
+ =?gb2312?B?bDR3azBVNWhrb3dsM2tnSVQvNmxoTSs3dmtQcE01VFBibmhCYlRoVjh2VENS?=
+ =?gb2312?B?SFBwQzBkMGNNQjJVZTRYZEFmYVRmWm9GRmRnNUhpMGFFRjFzK2l0ZmVCL1hO?=
+ =?gb2312?B?VGZlQlhJNzNKcHcxbmo5VTVueUlJOFBVWEdHWmJkLzNod1lCLzBMNklQSDU2?=
+ =?gb2312?B?Y0txR1dwT0VpSXJ4NHpXZ2pPNEVnQW9XQittejJ3R3hXcGI4NmxTdWdDNUxZ?=
+ =?gb2312?B?TFNLVVBQdzZGaWNDcExGbjVpQkRxeHE1ZTQva0xCTGJHWkxYcHcwV200SlhJ?=
+ =?gb2312?B?d1YySFNxNDgxalhCL3E0UCtTa0Y4VlR2Um9PNVRMeUpiQlJaWXJQZFRZdkpI?=
+ =?gb2312?B?UU9qdUk1Qkh5aCtiK0RlYXlheFhvOUdpbGFEOWxSaktXUXBPY1ZmMkw2d3F1?=
+ =?gb2312?B?bFpUKyt2RzhqOW11WDRMdFp4UDJRUWR6enFKZE1naWptcDlnRVFLVENFQ0RP?=
+ =?gb2312?B?SFNsTU9DY3I5UnRra0RsZm5EVUZ6cVJ1QitNM3ZtcWtOb1BVTVRsWnZ4WXJQ?=
+ =?gb2312?B?SENuaFpYOHZJekV6cTNHdGd6Wno1emNGNDZ2bThlOWVhakJGRGtUUkJaOTda?=
+ =?gb2312?B?MGxPMllRY1BZREF2THZYaW9nckk1KzNsUjJuTmRHQWhGazNkU1JvVmZqUmFt?=
+ =?gb2312?B?NXFMVkFFcnlPcFYvaHBRSVpLVzdzdytmUjF2L2xBTFJDeUN0SFQzZmRrdXd5?=
+ =?gb2312?B?bVdabHJPdnZBWUpCMmZNb0JQeHpBb2l5QXFUdzJsVkRUR2JSOWhLSWs1NE5H?=
+ =?gb2312?B?UjJUaXRNQmZpWHlSQnNCVGJsalZ0N0F5K2xadll5NTQ3NjI1bVVrYk5lZWI2?=
+ =?gb2312?B?cnZKbmN4TEl2ellUZHp1Ull0NlJxK3ZVZkpFV1J2VjdBWVZ2Ymk1UWd0TEdB?=
+ =?gb2312?B?NGVkVnE5YXlDcm1ITDdkeldiY25POVdnWnlaL3hZd1VGZlE9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYUPR06MB6217.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?gb2312?B?VDRLY0MvWHlhcllQT2hsUnNQc0FxRkxQbU1ZWVZITEp2b2VISlF4eXFtMUh2?=
+ =?gb2312?B?WFJJZnoyYkp6Rmo1ZEoycHlPc2EyUEpOeFN6bHZEdVBzNS8vcDJHZDFudjI4?=
+ =?gb2312?B?NWRYMmFjRkx6R01kSTdxRjZYNmxROExra3lvUlBjbFhURnpDbGVuTDd1Njky?=
+ =?gb2312?B?MGJCVlp3ZnZWdUZNa0djUWxSdmlBTTJOSGNXZitXM2xyQkdhcWoxVUpNWDA0?=
+ =?gb2312?B?STBEcWRSdnI5QWNIa09pck1raW95dkVKVEF0bXZFeHllQkhDL1ZnMXVKdlJG?=
+ =?gb2312?B?Y2p0TUFqOENwMmJKL3VFMHhlWERXQm1Qa2dRU1pOZDN4YTZEVWRwT0FkZFpQ?=
+ =?gb2312?B?cUZuUGNoSGwxbmErd3h4aFJMdFNKWVBYQ1RiZmVQZjg1R2YrY1lhbWRxNTRy?=
+ =?gb2312?B?bVVuZzRGY2pURnFHYkY4eDNZWDVSKzlwb1JqUkVHMTFnd0F5SGJFWU1nUkJN?=
+ =?gb2312?B?M0JJVjlRTng3d1FQVTc2eGJReUVNOG80NnMvVGs0allOUUlyekxjTExXbXpz?=
+ =?gb2312?B?dTZNbGFDWEt0STBkQ1JnVDJoSmozSG4wL1JqbkdLT0NNTitmdnpWbXRSVVYr?=
+ =?gb2312?B?SHlUcEFYN2NkZUV3SVRSMWxMRFdKQkREOU1CSkRMRnRwRndiN3lLMVFaamNX?=
+ =?gb2312?B?UkQ0KzRFQ0liZ1FtU0R0SGJNd2NUQ1RXVWRDS3FCS2RmVDJxVUErZEZ3NENB?=
+ =?gb2312?B?ZzhuemlsYTR0WmR0VzM1S1VYeXV2ME1UKzh5c0VxWFJJQjhTODgzalRaYm85?=
+ =?gb2312?B?Zkl5cExRNXBsNDJsamx6YlpLaVhVeXNUTzc5c2tZSkNrc09yMUlmcFdEWisx?=
+ =?gb2312?B?OE1Ud0c4c2dkaHI0M04rTmVBWmlJdzl0aU1kV29PNDZLcVlUNFh6ZjBXYmVX?=
+ =?gb2312?B?MURtMlZzajdEUG5DazgxRjByNFU0QVA5RkxJbHA3ZlRiNjV1ZWVSVmZ2aVZU?=
+ =?gb2312?B?V3g4QnB0OXRGdGhLZEJuZFFCTnkwUVh4TWduWXRWQ2UxNXZtK0J1YjJYc0VI?=
+ =?gb2312?B?emUwV0JOYlVuSStRc084TVRETVE0QTV2YThoREh1MFFMNDQ5cUh4Nm5abTVx?=
+ =?gb2312?B?T2hOb2NSbHRGbGl1ZGJ5Tm1TVERsUnRlWVRWT0ZBRjA3L0Z4Qi9aYXZrRVdw?=
+ =?gb2312?B?Q3JsZEZPNmljZjV2K3hJa2V0dE1ocE1WbEZtc3N2Yk5tVHBkY3hDU3VUazdv?=
+ =?gb2312?B?aWt2S1ZsRTZvYTFrbjRtOHk2bDhpWWJXM1N3NVB3TEdjTkRidWx4c2gyZHdI?=
+ =?gb2312?B?OU8rc2NVdy9ScWZ2MkZJc3JzRTRhWC9ySXdmZ2NTV1VlS1NhZFB2bEQ0UE1W?=
+ =?gb2312?B?Z3VZUytmbityMUNENGdSbUUwRDd5SFJmMVJaRFk4S00yc2RGQ1R0OTdXZlow?=
+ =?gb2312?B?M2kxWXZ6NXdRcVBGL1p6c1lHTENtMDBhV0IyWkZwU0Uya3ZUajBZTEJQanZo?=
+ =?gb2312?B?WFVGbVdKZEFjbE9STVBPTThWV0E1Y21abFZQRzc0bzkyL0Y5STNlYTRFOHVJ?=
+ =?gb2312?B?UzJSSCtPWnhYbGN1ZkREdWZKUTdLdXhxVW1iRUxIaWluLzlTN1V6MWVscXFR?=
+ =?gb2312?B?OE5TdnZucGZYTXcwNE50UWF1c3lTL2Jmc0d0TjNTMWg1TmpVTjhPYVJoajYx?=
+ =?gb2312?B?VnUvODlodUR0WjdaVkd1emFJWDl5NHZHMmR2ZjY1STVTQlg4VEwwZlBxUGVP?=
+ =?gb2312?B?SDA4TldzaTNOWHpLcXlwMDZxeitSTzdCWGw3bjIvWWY3NzVKTEpxK095R3dw?=
+ =?gb2312?B?Ri9LRXhNSnFLWGNsV2FzNHd4anAxOHlnbDhKVG56WUNHTG1wejhXbXlwTkNL?=
+ =?gb2312?B?U1F2SkJWSlpnV2dZVWQ1RklWMWFyWHYzS05SL1F3NmlxekVPOHZ6T2dhbDFq?=
+ =?gb2312?B?Z1FPU3ZnZFlBSzVpTVNyTkpXN085VEpUSDN1RnFWTXkvbklQMnFIN0orc3hi?=
+ =?gb2312?B?QUdrdlNHVjZLOG03WTNKZXd0ZW9YcWZyUUxtdlNnV2wralVVbGJnb29TVUJQ?=
+ =?gb2312?B?UWRjK0prS0dMNVM5S0xVZDdXWHRPb3pwYk9JamxMeTNDV3NmUEhOcFdiWmgx?=
+ =?gb2312?B?T2lWMTFzTWV0a3BNUklyblM0K1dvdUNRbFBxL2FoTlNadnFKZEFkOEVIaDlp?=
+ =?gb2312?Q?l5lo=3D?=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYUPR06MB6217.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 50ebf4d9-0252-4e7e-808a-08dcc028a6fb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Aug 2024 08:26:41.2187
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ERJT3IuTaa6gz+e8hPWYX4lfYSM+qzjzUPkvq8ElwuQvpgD4cYiUmRf31MsmKpMag+dylPVh7oBFg8isXRP05w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6954
 
-On Sun, 18 Aug 2024, Thomas Wei=C3=9Fschuh <linux@weissschuh.net> wrote:
-> "struct drm_edid" is the safe and recommended alternative to "struct edid=
-".
->
-> Rename the member to make sure that no usage sites are missed,
-> as "struct drm_edid" has some restrictions, for example it can not be
-> used with kfree().
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> ---
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  | 70 ++++++++++++----=
-------
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h  |  5 +-
->  .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    | 26 ++++----
->  3 files changed, 53 insertions(+), 48 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/=
-gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> index bd9a1a21720e..961f4f308dc7 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> @@ -3426,7 +3426,7 @@ void amdgpu_dm_update_connector_after_detect(
->  			aconnector->dc_sink =3D sink;
->  			dc_sink_retain(aconnector->dc_sink);
->  			amdgpu_dm_update_freesync_caps(connector,
-> -					aconnector->edid);
-> +					aconnector->drm_edid);
->  		} else {
->  			amdgpu_dm_update_freesync_caps(connector, NULL);
->  			if (!aconnector->dc_sink) {
-> @@ -3485,18 +3485,18 @@ void amdgpu_dm_update_connector_after_detect(
->  		aconnector->dc_sink =3D sink;
->  		dc_sink_retain(aconnector->dc_sink);
->  		if (sink->dc_edid.length =3D=3D 0) {
-> -			aconnector->edid =3D NULL;
-> +			aconnector->drm_edid =3D NULL;
->  			if (aconnector->dc_link->aux_mode) {
->  				drm_dp_cec_unset_edid(
->  					&aconnector->dm_dp_aux.aux);
->  			}
->  		} else {
-> -			aconnector->edid =3D
-> -				(struct edid *)sink->dc_edid.raw_edid;
-> +			aconnector->drm_edid =3D drm_edid_alloc(sink->dc_edid.raw_edid,
-> +							      sink->dc_edid.length);
->=20=20
->  			if (aconnector->dc_link->aux_mode)
->  				drm_dp_cec_set_edid(&aconnector->dm_dp_aux.aux,
-> -						    aconnector->edid);
-> +						    drm_edid_raw(aconnector->drm_edid));
->  		}
->=20=20
->  		if (!aconnector->timing_requested) {
-> @@ -3507,8 +3507,8 @@ void amdgpu_dm_update_connector_after_detect(
->  					"failed to create aconnector->requested_timing\n");
->  		}
->=20=20
-> -		drm_connector_update_edid_property(connector, aconnector->edid);
-> -		amdgpu_dm_update_freesync_caps(connector, aconnector->edid);
-> +		drm_edid_connector_update(connector, aconnector->drm_edid);
-> +		amdgpu_dm_update_freesync_caps(connector, aconnector->drm_edid);
->  		update_connector_ext_caps(aconnector);
->  	} else {
->  		drm_dp_cec_unset_edid(&aconnector->dm_dp_aux.aux);
-> @@ -3517,7 +3517,7 @@ void amdgpu_dm_update_connector_after_detect(
->  		aconnector->num_modes =3D 0;
->  		dc_sink_release(aconnector->dc_sink);
->  		aconnector->dc_sink =3D NULL;
-> -		aconnector->edid =3D NULL;
-> +		aconnector->drm_edid =3D NULL;
->  		kfree(aconnector->timing_requested);
->  		aconnector->timing_requested =3D NULL;
->  		/* Set CP to DESIRED if it was ENABLED, so we can re-enable it again o=
-n hotplug */
-> @@ -7016,7 +7016,7 @@ static void amdgpu_dm_connector_funcs_force(struct =
-drm_connector *connector)
->  	struct amdgpu_dm_connector *aconnector =3D to_amdgpu_dm_connector(conne=
-ctor);
->  	struct dc_link *dc_link =3D aconnector->dc_link;
->  	struct dc_sink *dc_em_sink =3D aconnector->dc_em_sink;
-> -	struct edid *edid;
-> +	const struct drm_edid *drm_edid;
->  	struct i2c_adapter *ddc;
->=20=20
->  	if (dc_link && dc_link->aux_mode)
-> @@ -7025,23 +7025,25 @@ static void amdgpu_dm_connector_funcs_force(struc=
-t drm_connector *connector)
->  		ddc =3D &aconnector->i2c->base;
->=20=20
->  	/*
-> -	 * Note: drm_get_edid gets edid in the following order:
-> +	 * Note: drm_edid_read_ddc gets edid in the following order:
->  	 * 1) override EDID if set via edid_override debugfs,
->  	 * 2) firmware EDID if set via edid_firmware module parameter
->  	 * 3) regular DDC read.
->  	 */
-> -	edid =3D drm_get_edid(connector, ddc);
-> -	if (!edid) {
-> +	drm_edid =3D drm_edid_read_ddc(connector, ddc);
-> +	if (!drm_edid) {
->  		DRM_ERROR("No EDID found on connector: %s.\n", connector->name);
->  		return;
->  	}
->=20=20
-> -	aconnector->edid =3D edid;
-> +	aconnector->drm_edid =3D drm_edid;
->=20=20
->  	/* Update emulated (virtual) sink's EDID */
->  	if (dc_em_sink && dc_link) {
->  		memset(&dc_em_sink->edid_caps, 0, sizeof(struct dc_edid_caps));
-> -		memmove(dc_em_sink->dc_edid.raw_edid, edid, (edid->extensions + 1) * E=
-DID_LENGTH);
-> +		memmove(dc_em_sink->dc_edid.raw_edid,
-> +			drm_edid_raw(drm_edid),
-> +			(drm_edid_raw(drm_edid)->extensions + 1) * EDID_LENGTH);
->  		dm_helpers_parse_edid_caps(
->  			dc_link,
->  			&dc_em_sink->dc_edid,
-> @@ -7076,7 +7078,7 @@ static void create_eml_sink(struct amdgpu_dm_connec=
-tor *aconnector)
->  			.link =3D aconnector->dc_link,
->  			.sink_signal =3D SIGNAL_TYPE_VIRTUAL
->  	};
-> -	struct edid *edid;
-> +	const struct drm_edid *drm_edid;
->  	struct i2c_adapter *ddc;
->=20=20
->  	if (dc_link->aux_mode)
-> @@ -7085,25 +7087,25 @@ static void create_eml_sink(struct amdgpu_dm_conn=
-ector *aconnector)
->  		ddc =3D &aconnector->i2c->base;
->=20=20
->  	/*
-> -	 * Note: drm_get_edid gets edid in the following order:
-> +	 * Note: drm_edid_read_ddc gets edid in the following order:
->  	 * 1) override EDID if set via edid_override debugfs,
->  	 * 2) firmware EDID if set via edid_firmware module parameter
->  	 * 3) regular DDC read.
->  	 */
-> -	edid =3D drm_get_edid(connector, ddc);
-> -	if (!edid) {
-> +	drm_edid =3D drm_edid_read_ddc(connector, ddc);
-> +	if (!drm_edid) {
->  		DRM_ERROR("No EDID found on connector: %s.\n", connector->name);
->  		return;
->  	}
->=20=20
-> -	if (drm_detect_hdmi_monitor(edid))
-> +	if (connector->display_info.is_hdmi)
->  		init_params.sink_signal =3D SIGNAL_TYPE_HDMI_TYPE_A;
-
-You need to drm_edid_connector_update() to update
-connector->display_info with the EDID info.
-
-BR,
-Jani.
-
->=20=20
-> -	aconnector->edid =3D edid;
-> +	aconnector->drm_edid =3D drm_edid;
->=20=20
->  	aconnector->dc_em_sink =3D dc_link_add_remote_sink(
->  		aconnector->dc_link,
-> -		edid,
-> +		drm_edid_raw(drm_edid),
->  		&init_params);
->=20=20
->  	if (aconnector->base.force =3D=3D DRM_FORCE_ON) {
-> @@ -7786,16 +7788,17 @@ static void amdgpu_set_panel_orientation(struct d=
-rm_connector *connector)
->  }
->=20=20
->  static void amdgpu_dm_connector_ddc_get_modes(struct drm_connector *conn=
-ector,
-> -					      struct edid *edid)
-> +					      const struct drm_edid *drm_edid)
->  {
->  	struct amdgpu_dm_connector *amdgpu_dm_connector =3D
->  			to_amdgpu_dm_connector(connector);
->=20=20
-> -	if (edid) {
-> +	if (drm_edid) {
->  		/* empty probed_modes */
->  		INIT_LIST_HEAD(&connector->probed_modes);
-> +		drm_edid_connector_update(connector, drm_edid);
->  		amdgpu_dm_connector->num_modes =3D
-> -				drm_add_edid_modes(connector, edid);
-> +				drm_edid_connector_add_modes(connector);
->=20=20
->  		/* sorting the probed modes before calling function
->  		 * amdgpu_dm_get_native_mode() since EDID can have
-> @@ -7809,10 +7812,10 @@ static void amdgpu_dm_connector_ddc_get_modes(str=
-uct drm_connector *connector,
->  		amdgpu_dm_get_native_mode(connector);
->=20=20
->  		/* Freesync capabilities are reset by calling
-> -		 * drm_add_edid_modes() and need to be
-> +		 * drm_connector_edid_add_modes() and need to be
->  		 * restored here.
->  		 */
-> -		amdgpu_dm_update_freesync_caps(connector, edid);
-> +		amdgpu_dm_update_freesync_caps(connector, drm_edid);
->  	} else {
->  		amdgpu_dm_connector->num_modes =3D 0;
->  	}
-> @@ -7908,12 +7911,12 @@ static uint add_fs_modes(struct amdgpu_dm_connect=
-or *aconnector)
->  }
->=20=20
->  static void amdgpu_dm_connector_add_freesync_modes(struct drm_connector =
-*connector,
-> -						   struct edid *edid)
-> +						   const struct drm_edid *drm_edid)
->  {
->  	struct amdgpu_dm_connector *amdgpu_dm_connector =3D
->  		to_amdgpu_dm_connector(connector);
->=20=20
-> -	if (!(amdgpu_freesync_vid_mode && edid))
-> +	if (!(amdgpu_freesync_vid_mode && drm_edid))
->  		return;
->=20=20
->  	if (amdgpu_dm_connector->max_vfreq - amdgpu_dm_connector->min_vfreq > 1=
-0)
-> @@ -7926,24 +7929,24 @@ static int amdgpu_dm_connector_get_modes(struct d=
-rm_connector *connector)
->  	struct amdgpu_dm_connector *amdgpu_dm_connector =3D
->  			to_amdgpu_dm_connector(connector);
->  	struct drm_encoder *encoder;
-> -	struct edid *edid =3D amdgpu_dm_connector->edid;
-> +	const struct drm_edid *drm_edid =3D amdgpu_dm_connector->drm_edid;
->  	struct dc_link_settings *verified_link_cap =3D
->  			&amdgpu_dm_connector->dc_link->verified_link_cap;
->  	const struct dc *dc =3D amdgpu_dm_connector->dc_link->dc;
->=20=20
->  	encoder =3D amdgpu_dm_connector_to_encoder(connector);
->=20=20
-> -	if (!drm_edid_is_valid(edid)) {
-> +	if (!drm_edid_valid(drm_edid)) {
->  		amdgpu_dm_connector->num_modes =3D
->  				drm_add_modes_noedid(connector, 640, 480);
->  		if (dc->link_srv->dp_get_encoding_format(verified_link_cap) =3D=3D DP_=
-128b_132b_ENCODING)
->  			amdgpu_dm_connector->num_modes +=3D
->  				drm_add_modes_noedid(connector, 1920, 1080);
->  	} else {
-> -		amdgpu_dm_connector_ddc_get_modes(connector, edid);
-> +		amdgpu_dm_connector_ddc_get_modes(connector, drm_edid);
->  		if (encoder)
->  			amdgpu_dm_connector_add_common_modes(encoder, connector);
-> -		amdgpu_dm_connector_add_freesync_modes(connector, edid);
-> +		amdgpu_dm_connector_add_freesync_modes(connector, drm_edid);
->  	}
->  	amdgpu_dm_fbc_init(connector);
->=20=20
-> @@ -11953,12 +11956,13 @@ static int parse_hdmi_amd_vsdb(struct amdgpu_dm=
-_connector *aconnector,
->   * FreeSync parameters.
->   */
->  void amdgpu_dm_update_freesync_caps(struct drm_connector *connector,
-> -				    const struct edid *edid)
-> +				    const struct drm_edid *drm_edid)
->  {
->  	int i =3D 0;
->  	const struct detailed_timing *timing;
->  	const struct detailed_non_pixel *data;
->  	const struct detailed_data_monitor_range *range;
-> +	const struct edid *edid =3D drm_edid_raw(drm_edid);
->  	struct amdgpu_dm_connector *amdgpu_dm_connector =3D
->  			to_amdgpu_dm_connector(connector);
->  	struct dm_connector_state *dm_con_state =3D NULL;
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h b/drivers/=
-gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-> index 27c0017707dd..c49cc0170fc5 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-> @@ -81,6 +81,7 @@ struct amdgpu_bo;
->  struct dmub_srv;
->  struct dc_plane_state;
->  struct dmub_notification;
-> +struct drm_edid;
->=20=20
->  struct amd_vsdb_block {
->  	unsigned char ieee_id[3];
-> @@ -673,7 +674,7 @@ struct amdgpu_dm_connector {
->=20=20
->  	/* we need to mind the EDID between detect
->  	   and get modes due to analog/digital/tvencoder */
-> -	struct edid *edid;
-> +	const struct drm_edid *drm_edid;
->=20=20
->  	/* shared with amdgpu */
->  	struct amdgpu_hpd hpd;
-> @@ -951,7 +952,7 @@ void dm_restore_drm_connector_state(struct drm_device=
- *dev,
->  				    struct drm_connector *connector);
->=20=20
->  void amdgpu_dm_update_freesync_caps(struct drm_connector *connector,
-> -					const struct edid *edid);
-> +				    const struct drm_edid *drm_edid);
->=20=20
->  void amdgpu_dm_trigger_timing_sync(struct drm_device *dev);
->=20=20
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c =
-b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-> index 25e98d248c21..cd03108db28b 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-> @@ -129,7 +129,7 @@ dm_dp_mst_connector_destroy(struct drm_connector *con=
-nector)
->  		dc_sink_release(aconnector->dc_sink);
->  	}
->=20=20
-> -	kfree(aconnector->edid);
-> +	kfree(aconnector->drm_edid);
->=20=20
->  	drm_connector_cleanup(connector);
->  	drm_dp_mst_put_port_malloc(aconnector->mst_output_port);
-> @@ -182,7 +182,7 @@ amdgpu_dm_mst_connector_early_unregister(struct drm_c=
-onnector *connector)
->=20=20
->  		dc_sink_release(dc_sink);
->  		aconnector->dc_sink =3D NULL;
-> -		aconnector->edid =3D NULL;
-> +		aconnector->drm_edid =3D NULL;
->  		aconnector->dsc_aux =3D NULL;
->  		port->passthrough_aux =3D NULL;
->  	}
-> @@ -302,12 +302,13 @@ static int dm_dp_mst_get_modes(struct drm_connector=
- *connector)
->  	if (!aconnector)
->  		return drm_add_edid_modes(connector, NULL);
->=20=20
-> -	if (!aconnector->edid) {
-> -		struct edid *edid;
-> +	if (!aconnector->drm_edid) {
-> +		const struct drm_edid *drm_edid;
->=20=20
-> -		edid =3D drm_dp_mst_get_edid(connector, &aconnector->mst_root->mst_mgr=
-, aconnector->mst_output_port);
-> +		drm_edid =3D drm_dp_mst_edid_read(connector, &aconnector->mst_root->ms=
-t_mgr,
-> +						aconnector->mst_output_port);
->=20=20
-> -		if (!edid) {
-> +		if (!drm_edid) {
->  			amdgpu_dm_set_mst_status(&aconnector->mst_status,
->  			MST_REMOTE_EDID, false);
->=20=20
-> @@ -344,7 +345,7 @@ static int dm_dp_mst_get_modes(struct drm_connector *=
-connector)
->  			return ret;
->  		}
->=20=20
-> -		aconnector->edid =3D edid;
-> +		aconnector->drm_edid =3D drm_edid;
->  		amdgpu_dm_set_mst_status(&aconnector->mst_status,
->  			MST_REMOTE_EDID, true);
->  	}
-> @@ -361,7 +362,7 @@ static int dm_dp_mst_get_modes(struct drm_connector *=
-connector)
->  				.sink_signal =3D SIGNAL_TYPE_DISPLAY_PORT_MST };
->  		dc_sink =3D dc_link_add_remote_sink(
->  			aconnector->dc_link,
-> -			aconnector->edid,
-> +			drm_edid_raw(aconnector->drm_edid),
->  			&init_params);
->=20=20
->  		if (!dc_sink) {
-> @@ -403,7 +404,7 @@ static int dm_dp_mst_get_modes(struct drm_connector *=
-connector)
->=20=20
->  		if (aconnector->dc_sink) {
->  			amdgpu_dm_update_freesync_caps(
-> -					connector, aconnector->edid);
-> +					connector, aconnector->drm_edid);
->=20=20
->  #if defined(CONFIG_DRM_AMD_DC_FP)
->  			if (!validate_dsc_caps_on_connector(aconnector))
-> @@ -417,10 +418,9 @@ static int dm_dp_mst_get_modes(struct drm_connector =
-*connector)
->  		}
->  	}
->=20=20
-> -	drm_connector_update_edid_property(
-> -					&aconnector->base, aconnector->edid);
-> +	drm_edid_connector_update(&aconnector->base, aconnector->drm_edid);
->=20=20
-> -	ret =3D drm_add_edid_modes(connector, aconnector->edid);
-> +	ret =3D drm_edid_connector_add_modes(connector);
->=20=20
->  	return ret;
->  }
-> @@ -498,7 +498,7 @@ dm_dp_mst_detect(struct drm_connector *connector,
->=20=20
->  		dc_sink_release(aconnector->dc_sink);
->  		aconnector->dc_sink =3D NULL;
-> -		aconnector->edid =3D NULL;
-> +		aconnector->drm_edid =3D NULL;
->  		aconnector->dsc_aux =3D NULL;
->  		port->passthrough_aux =3D NULL;
-
---=20
-Jani Nikula, Intel
+SGVsbG8gbGludXggY29tbXVuaXR5IGV4cGVydDoNCg0KPj5JIHRoaW5rIHRoaXMgaGFzIGJlZW4g
+cmVwb3J0ZWQgcHJldmlvdXNseSwgYW5kIGRpZmZlcmVudCBwYXRjaGVzIGhhdmUgYmVlbiBwcm9w
+b3NlZCwgaGF2ZSB5b3Ugc2VhcmNoZWQgdGhlIGFyY2hpdmVzPw0KPiBJIGhhdmVuJ3Qgc2VlbiB0
+aGUgcGF0Y2ggZ2l2ZW4gYmVsb3cgYmVmb3JlLCBJIHdpbGwgcmVhZCBpdCBjYXJlZnVsbHkuDQo+
+IEkgc2VhcmNoZWQgZm9yIExpbnV4IG1haW5saW5lIGNvbW1pdHMgYmVmb3JlIHN1Ym1pdHRpbmcs
+IGJ1dCBJIG9ubHkgY29tcGFyZWQgdGhlbSBhY2NvcmRpbmcgdG8gdGhlIGNyYXNoIHN0YWNrIGlu
+Zm9ybWF0aW9uIGFuZCBkaWQgbm90IG5vdGljZSB0aGUgZm9sbG93aW5nIGNvbW1pdC4NCiBJIGNo
+ZWNrZWQgdGhlIHN0YWNrIHRyYWNlIGFnYWluLiBUaGUgcHJvYmxlbSB3ZSBlbmNvdW50ZXJlZCBz
+ZWVtcyBkaWZmZXJlbnQgZnJvbSB0aGUgcHJvYmxlbSByZXBvcnRlZCBpbiB0aGUgbGluayBiZWxv
+dywgYW5kIHRoZXkgYXJlIG5vdCBjYXVzZWQgYnkgdGhlIHNhbWUgcmVhc29uLg0KDQo+PlNwZWNp
+ZmljYWxseSwgdGFrZSBhIGxvb2sgYXQ6DQo+Pmh0dHBzOi8vYXBjMDEuc2FmZWxpbmtzLnByb3Rl
+Y3Rpb24ub3V0bG9vay5jb20vP3VybD1odHRwcyUzQSUyRiUyRmxvcmUuDQo+Pmtlcm5lbC5vcmcl
+MkZyJTJGMjAyNDAxMTYxNDE4MDEuMzk2Mzk4LTEta2h0c2FpJTQwZ29vZ2xlLmNvbSZkYXRhPTA1
+JTdDDQo+PjAyJTdDaHVsaWFucWluJTQwdml2by5jb20lN0NhNGIwNmU5ZGI3YmI0M2FiMWJmYzA4
+ZGNiZTAxYTgzNiU3QzkyM2U0MmRjDQo+PjQ4ZDU0Y2JlYjU4MjFhNzk3YTY0MTJlZCU3QzAlN0Mw
+JTdDNjM4NTk0MTYxNTY2NDc1MDMyJTdDVW5rbm93biU3Q1RXRnBiDQo+Pkdac2IzZDhleUpXSWpv
+aU1DNHdMakF3TURBaUxDSlFJam9pVjJsdU16SWlMQ0pCVGlJNklrMWhhV3dpTENKWFZDSTZNbjAl
+DQo+PjNEJTdDMCU3QyU3QyU3QyZzZGF0YT1wZGIlMkIxYjFxQjFxMiUyQlpOMDk2RDlqeE55dGZO
+NyUyRm81MERQdDZwcTVtMVJVDQo+PiUzRCZyZXNlcnZlZD0wDQoNClRoYW5rcw0K
 
