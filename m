@@ -1,157 +1,257 @@
-Return-Path: <linux-kernel+bounces-291805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA9E195672C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:34:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E433956734
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ACB01C215EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:34:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5619B20AE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFE415E5CB;
-	Mon, 19 Aug 2024 09:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D197A15C14F;
+	Mon, 19 Aug 2024 09:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eqrUq6v9"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JFOIDz7Y"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E6C15C14A
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179022BB10
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724060049; cv=none; b=uLaRBdOzPSoZhjIoBMXL1MNA+A4R8sjaC3djzJZh10RJyhU5fNRoQCtgPjYess9OcuggdZ/urNdrSgj7nLSuzNsRzZFDca67budzZz8a9sATeZd6pGneN0CRmwZhHybnpWyp1dtUDNd5Vzcyy4JRqYCpUg3Vgp8GWNP9yYHEEEc=
+	t=1724060227; cv=none; b=oLCjdM1E0CBAeaTJG3ZA+aDz1+K0FBVk8M8dvHUsSGIAqD70+3Kt74qHrl3JnUEBgHqEMuqr64U+9PWTjrz9WpZT/6r27pC+FVquoHoU5L8be9PiIzLdteuzi0XHW1z4y9n8KFALbY9xxAyV95dcwwt4oB3Jk+sfsTHL1kszuWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724060049; c=relaxed/simple;
-	bh=SpUtl05BeCGOM/1Lkbq/9mp5CcEOrFAlx+xbPz3AkRQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HBlJOi0XpdGwYWiq2BR6JZ1bio6hLpVuFxg50bNUxTe/rlFISxs3fXvN52VvMCmllrLKg4nosAD3uAKz1wHznisgzSmLneDYv+MKVQnD2ZRpU2cWJ3zgQWz9VmhfMlotVHGrchQRyrxFNez16c3k64k/TzzvNcS6WnDCPuOTsZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eqrUq6v9; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7c2595f5c35so421700a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 02:34:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1724060047; x=1724664847; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lL9HyxhiOHw1ksx03a4JZenwbuQJWQ+/lpC+EZL1Mdo=;
-        b=eqrUq6v9yImy+6bOdnGikaEulfNDYq6iwh+p3MEZKEMvGDdTwsK/2NNOoHbhtOq8mG
-         0xBAi9KwMUxaFfohkqg+u2JOC/jOi7+5G0YoL4pUENiCWH66shgAQdFvO1pcRbGCT0Ok
-         +fjDYdUu6GD39byrD/gu4dJgDq+d4lVhxsnnA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724060047; x=1724664847;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lL9HyxhiOHw1ksx03a4JZenwbuQJWQ+/lpC+EZL1Mdo=;
-        b=JJnPelsyGVpH6yW8G/og0/dgCOgr60vwW3TQESdm6Aik2wb0iURuZEjqwjHs7w2pWS
-         cCDh4pFUkdYkWi4UQ5p6Gu8XxmvP0OYPXkxqG0UozzpimqXo0GDTq25MEZYZCgtMZ1a/
-         ODoaO3G3N5L0yHJBJWJrLAnKxiPzI2KlhXIlzqh8UC13uB0tBglRJ0dHnb4DjUVvKAId
-         uCSOZfbi/TS7IFrxUR7aw2v5eqRewVdSOp/Yw/A+fT8Kkt4pfPLTWA/TPFYvx8sr3YkQ
-         hTgW1bGvlXdY0d+Sv3iuneD6H6kZDRU6pI9gSPM4uw7J5nE7p4N8/EkHf/oId1p5oXzU
-         ozuw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8vYAbxILog5facrWBupW8mjvPQiZwKKvf1IUTInpBVQFNZ+bdGp32EipWo0nTAisLHUacoANagSjp8BE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWRh3qZdmqFhd/nGkTquUIL6uBs/HX9nEkeQYlKRs6e73rcEOM
-	jb7l195QO2kOEXafsy18y3XJnK67+c/wLtinbXWoOKWgQMHscA1+zp5duYubfJc=
-X-Google-Smtp-Source: AGHT+IEUw2ClrCHZwzq1ZRV562eGADDxdcjSOnOQEZkmnCKWFyddq0xvCP5HqungbQ1iEQ/0y/yZeQ==
-X-Received: by 2002:a05:6a21:6d90:b0:1c4:f30e:97ff with SMTP id adf61e73a8af0-1c90509322amr8886710637.9.1724060046565;
-        Mon, 19 Aug 2024 02:34:06 -0700 (PDT)
-Received: from [192.168.104.75] ([223.118.50.121])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f0303285sm59630475ad.26.2024.08.19.02.33.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 02:34:06 -0700 (PDT)
-Message-ID: <84629569-c5e3-4900-aa54-82be24369f74@linuxfoundation.org>
-Date: Mon, 19 Aug 2024 03:33:56 -0600
+	s=arc-20240116; t=1724060227; c=relaxed/simple;
+	bh=F+UKEmcvDsJmxXdH+lUd+EzZWpI446bz+xi6gVWh+cM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lG7ZKbPU5jgQOioYe73VQ914nT2cE02kK4fTKyMu0a3vazUCuJqOC7Sffvu3BuZSoBD+hoYS9HjStMJ+21W9zKS7qtEkQoLMQ02PA5nBVThOPGHMPcdaic6YVlrsoSo3NQ0y1YuvZJRpNNszSUt6ShQJx5AI7mxcVc0unmPD7kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JFOIDz7Y; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724060225;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gyhLuQueNQMuCrXYvkTRAcV5urEhM9QfwcqzGwlpWMQ=;
+	b=JFOIDz7YqaYVaOhxGGZ+LdDSlloJr1pYgtyRQs3cIcIE+MXoSPiEHCB31uCMXyLLzYvldK
+	M1DJB0nAVyhWvi0qhYXAN2EXgLXtuymHup9FhcrY50gVY4ryPUX3rGI8tD9TjkcbZ3pvt4
+	UPSIPGsl1bDIdbb31FkdEkV3c7foGUA=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-170-La9A1Bm1MZWN8njVw2B94Q-1; Mon,
+ 19 Aug 2024 05:37:01 -0400
+X-MC-Unique: La9A1Bm1MZWN8njVw2B94Q-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 949E4195608A;
+	Mon, 19 Aug 2024 09:36:58 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.51])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DE2301956054;
+	Mon, 19 Aug 2024 09:36:55 +0000 (UTC)
+Date: Mon, 19 Aug 2024 17:36:51 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Sourabh Jain <sourabhjain@linux.ibm.com>, corbet@lwn.net,
+	akpm@linux-foundation.org
+Cc: Petr Tesarik <petr@tesarici.cz>, Hari Bathini <hbathini@linux.ibm.com>,
+	kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2] Document/kexec: Generalize crash hotplug description
+Message-ID: <ZsMSM4Hgfm7yxFdj@MiWiFi-R3L-srv>
+References: <20240812041651.703156-1-sourabhjain@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests: fix relative rpath usage
-To: Eugene Syromiatnikov <esyr@redhat.com>
-Cc: linux-kselftest@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
- Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
- <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, Artem Savkov <asavkov@redhat.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240812165650.GA5102@asgard.redhat.com>
- <3667e585-ecaa-4664-9e6e-75dc9de928e8@linuxfoundation.org>
- <20240813163348.GA30739@asgard.redhat.com>
- <c946c5c4-366a-4772-81d9-dc5984777cfd@linuxfoundation.org>
- <20240814122513.GA18728@asgard.redhat.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240814122513.GA18728@asgard.redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812041651.703156-1-sourabhjain@linux.ibm.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On 8/14/24 06:25, Eugene Syromiatnikov wrote:
-> On Wed, Aug 14, 2024 at 05:14:08AM -0600, Shuah Khan wrote:
->> On 8/13/24 10:33, Eugene Syromiatnikov wrote:
->>> On Mon, Aug 12, 2024 at 05:03:45PM -0600, Shuah Khan wrote:
->>>> On 8/12/24 10:56, Eugene Syromiatnikov wrote:
->>>>> The relative RPATH ("./") supplied to linker options in CFLAGS is resolved
->>>>> relative to current working directory and not the executable directory,
->>>>> which will lead in incorrect resolution when the test executables are run
->>>> >from elsewhere.  Changing it to $ORIGIN makes it resolve relative
->>>>> to the directory in which the executables reside, which is supposedly
->>>>> the desired behaviour.  This patch also moves these CFLAGS to lib.mk,
->>>>> so the RPATH is provided for all selftest binaries, which is arguably
->>>>> a useful default.
->>>>
->>>> Can you elaborate on the erros you would see if this isn't fixed? I understand
->>>> that check-rpaths tool - howebver I would like to know how it manifests and
->>>
->>> One would be unable to execute the test binaries that require additional
->>> locally built dynamic libraries outside the directories in which they reside:
->>>
->>>      [build@builder selftests]$ alsa/mixer-test
->>>      alsa/mixer-test: error while loading shared libraries: libatest.so: cannot open shared object file: No such file or directory
->>>
->>>> how would you reproduce this problem while running selftests?
->>>
->>> This usually doesn't come up in a regular selftests usage so far, as they
->>> are usually run via make, and make descends into specific test directories
->>> to execute make the respective make targets there, triggering the execution
->>> of the specific test bineries.
->>>
->>
->> Right. selftests are run usually via make and when they are installed run through
->> a script which descends into specific test directories where the tests are installed.
->>
->> Unless we see the problem using kselftest use-case, there is no reason the make changes.
-> 
-> The reason has been outlined in the commit message: relative paths in
-> RPATH/RUNPATH are incorrect and ought to be fixed.
-> 
->> Sorry I am not going be taking these patches.
-> 
-> I see, by the same token, kernel maintainers reject any patches that fix
-> compilation/build warnings, I guess.
-> 
+Add Jonathan and Andew.
 
-No - compilation and build warnings are accepted. This doesn't fall into that
-case. As you mentioned you can't reproduce this using the kselftest use-cases.
+On 08/12/24 at 09:46am, Sourabh Jain wrote:
+> Commit 79365026f869 ("crash: add a new kexec flag for hotplug support")
+> generalizes the crash hotplug support to allow architectures to update
+> multiple kexec segments on CPU/Memory hotplug and not just elfcorehdr.
+> Therefore, update the relevant kernel documentation to reflect the same.
 
-Hence the reason to reject.
+Hi Jonathan and Andew,
 
-thanks,
--- Shuah
+Could any of you pick this into your tree?
+
+Thanks
+Baoquan
+
+> 
+> Cc: Petr Tesarik <petr@tesarici.cz>
+> Cc: Hari Bathini <hbathini@linux.ibm.com>
+> Cc: kexec@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: x86@kernel.org
+> Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
+> ---
+> 
+> Changelog:
+> 
+> Since v1: https://lore.kernel.org/all/20240805050829.297171-1-sourabhjain@linux.ibm.com/
+>   - Update crash_hotplug sysfs document as suggested by Petr T
+>   - Update an error message in crash_handle_hotplug_event and
+>     crash_check_hotplug_support function.
+> 
+> ---
+>  .../ABI/testing/sysfs-devices-memory          |  6 ++--
+>  .../ABI/testing/sysfs-devices-system-cpu      |  6 ++--
+>  .../admin-guide/mm/memory-hotplug.rst         |  5 +--
+>  Documentation/core-api/cpu_hotplug.rst        | 10 +++---
+>  kernel/crash_core.c                           | 33 +++++++++++--------
+>  5 files changed, 35 insertions(+), 25 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-devices-memory b/Documentation/ABI/testing/sysfs-devices-memory
+> index a95e0f17c35a..cec65827e602 100644
+> --- a/Documentation/ABI/testing/sysfs-devices-memory
+> +++ b/Documentation/ABI/testing/sysfs-devices-memory
+> @@ -115,6 +115,6 @@ What:		/sys/devices/system/memory/crash_hotplug
+>  Date:		Aug 2023
+>  Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
+>  Description:
+> -		(RO) indicates whether or not the kernel directly supports
+> -		modifying the crash elfcorehdr for memory hot un/plug and/or
+> -		on/offline changes.
+> +		(RO) indicates whether or not the kernel updates relevant kexec
+> +		segments on memory hot un/plug and/or on/offline events, avoiding the
+> +		need to reload kdump kernel.
+> diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
+> index 325873385b71..1a31b7c71676 100644
+> --- a/Documentation/ABI/testing/sysfs-devices-system-cpu
+> +++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
+> @@ -703,9 +703,9 @@ What:		/sys/devices/system/cpu/crash_hotplug
+>  Date:		Aug 2023
+>  Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
+>  Description:
+> -		(RO) indicates whether or not the kernel directly supports
+> -		modifying the crash elfcorehdr for CPU hot un/plug and/or
+> -		on/offline changes.
+> +		(RO) indicates whether or not the kernel updates relevant kexec
+> +		segments on memory hot un/plug and/or on/offline events, avoiding the
+> +		need to reload kdump kernel.
+>  
+>  What:		/sys/devices/system/cpu/enabled
+>  Date:		Nov 2022
+> diff --git a/Documentation/admin-guide/mm/memory-hotplug.rst b/Documentation/admin-guide/mm/memory-hotplug.rst
+> index 098f14d83e99..cb2c080f400c 100644
+> --- a/Documentation/admin-guide/mm/memory-hotplug.rst
+> +++ b/Documentation/admin-guide/mm/memory-hotplug.rst
+> @@ -294,8 +294,9 @@ The following files are currently defined:
+>  ``crash_hotplug``      read-only: when changes to the system memory map
+>  		       occur due to hot un/plug of memory, this file contains
+>  		       '1' if the kernel updates the kdump capture kernel memory
+> -		       map itself (via elfcorehdr), or '0' if userspace must update
+> -		       the kdump capture kernel memory map.
+> +		       map itself (via elfcorehdr and other relevant kexec
+> +		       segments), or '0' if userspace must update the kdump
+> +		       capture kernel memory map.
+>  
+>  		       Availability depends on the CONFIG_MEMORY_HOTPLUG kernel
+>  		       configuration option.
+> diff --git a/Documentation/core-api/cpu_hotplug.rst b/Documentation/core-api/cpu_hotplug.rst
+> index dcb0e379e5e8..a21dbf261be7 100644
+> --- a/Documentation/core-api/cpu_hotplug.rst
+> +++ b/Documentation/core-api/cpu_hotplug.rst
+> @@ -737,8 +737,9 @@ can process the event further.
+>  
+>  When changes to the CPUs in the system occur, the sysfs file
+>  /sys/devices/system/cpu/crash_hotplug contains '1' if the kernel
+> -updates the kdump capture kernel list of CPUs itself (via elfcorehdr),
+> -or '0' if userspace must update the kdump capture kernel list of CPUs.
+> +updates the kdump capture kernel list of CPUs itself (via elfcorehdr and
+> +other relevant kexec segment), or '0' if userspace must update the kdump
+> +capture kernel list of CPUs.
+>  
+>  The availability depends on the CONFIG_HOTPLUG_CPU kernel configuration
+>  option.
+> @@ -750,8 +751,9 @@ file can be used in a udev rule as follows:
+>   SUBSYSTEM=="cpu", ATTRS{crash_hotplug}=="1", GOTO="kdump_reload_end"
+>  
+>  For a CPU hot un/plug event, if the architecture supports kernel updates
+> -of the elfcorehdr (which contains the list of CPUs), then the rule skips
+> -the unload-then-reload of the kdump capture kernel.
+> +of the elfcorehdr (which contains the list of CPUs) and other relevant
+> +kexec segments, then the rule skips the unload-then-reload of the kdump
+> +capture kernel.
+>  
+>  Kernel Inline Documentations Reference
+>  ======================================
+> diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+> index 63cf89393c6e..c1048893f4b6 100644
+> --- a/kernel/crash_core.c
+> +++ b/kernel/crash_core.c
+> @@ -505,7 +505,7 @@ int crash_check_hotplug_support(void)
+>  	crash_hotplug_lock();
+>  	/* Obtain lock while reading crash information */
+>  	if (!kexec_trylock()) {
+> -		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
+> +		pr_info("kexec_trylock() failed, kdump image may be inaccurate\n");
+>  		crash_hotplug_unlock();
+>  		return 0;
+>  	}
+> @@ -520,18 +520,25 @@ int crash_check_hotplug_support(void)
+>  }
+>  
+>  /*
+> - * To accurately reflect hot un/plug changes of cpu and memory resources
+> - * (including onling and offlining of those resources), the elfcorehdr
+> - * (which is passed to the crash kernel via the elfcorehdr= parameter)
+> - * must be updated with the new list of CPUs and memories.
+> + * To accurately reflect hot un/plug changes of CPU and Memory resources
+> + * (including onling and offlining of those resources), the relevant
+> + * kexec segments must be updated with latest CPU and Memory resources.
+>   *
+> - * In order to make changes to elfcorehdr, two conditions are needed:
+> - * First, the segment containing the elfcorehdr must be large enough
+> - * to permit a growing number of resources; the elfcorehdr memory size
+> - * is based on NR_CPUS_DEFAULT and CRASH_MAX_MEMORY_RANGES.
+> - * Second, purgatory must explicitly exclude the elfcorehdr from the
+> - * list of segments it checks (since the elfcorehdr changes and thus
+> - * would require an update to purgatory itself to update the digest).
+> + * Architectures must ensure two things for all segments that need
+> + * updating during hotplug events:
+> + *
+> + * 1. Segments must be large enough to accommodate a growing number of
+> + *    resources.
+> + * 2. Exclude the segments from SHA verification.
+> + *
+> + * For example, on most architectures, the elfcorehdr (which is passed
+> + * to the crash kernel via the elfcorehdr= parameter) must include the
+> + * new list of CPUs and memory. To make changes to the elfcorehdr, it
+> + * should be large enough to permit a growing number of CPU and Memory
+> + * resources. One can estimate the elfcorehdr memory size based on
+> + * NR_CPUS_DEFAULT and CRASH_MAX_MEMORY_RANGES. The elfcorehdr is
+> + * excluded from SHA verification by default if the architecture
+> + * supports crash hotplug.
+>   */
+>  static void crash_handle_hotplug_event(unsigned int hp_action, unsigned int cpu, void *arg)
+>  {
+> @@ -540,7 +547,7 @@ static void crash_handle_hotplug_event(unsigned int hp_action, unsigned int cpu,
+>  	crash_hotplug_lock();
+>  	/* Obtain lock while changing crash information */
+>  	if (!kexec_trylock()) {
+> -		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
+> +		pr_info("kexec_trylock() failed, kdump image may be inaccurate\n");
+>  		crash_hotplug_unlock();
+>  		return;
+>  	}
+> -- 
+> 2.45.2
+> 
 
 
