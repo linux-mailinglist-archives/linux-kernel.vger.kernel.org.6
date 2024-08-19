@@ -1,224 +1,127 @@
-Return-Path: <linux-kernel+bounces-291959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A729A956961
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:34:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7534795695C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB75A1C21780
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:34:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AABF1C215CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B467D1667C7;
-	Mon, 19 Aug 2024 11:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF20D166F16;
+	Mon, 19 Aug 2024 11:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HL2ztUyN"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="knU8H7w5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F84167D83;
-	Mon, 19 Aug 2024 11:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8B614A4C1;
+	Mon, 19 Aug 2024 11:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724067272; cv=none; b=U2nq8t4eqCcSYw5ys9eGoimg7voJkY2UdOzh1isaOiNbxfPB9ArNJE8Z/V0f3LLbepW0c95SioeEf5141z2/PW7Ckd++14Z/HwVcKjE1pVYwTimi8oMqRxYZd3770hs3xI6bzoouKjAkTw8mfXUzcgNf3kE5B336hTGrOVJltXk=
+	t=1724067254; cv=none; b=sFEr0XdgAJD2qeSaHD0StRghgt9LGbZuMewlj2PTk902Auuwn5pW7Flney7B5msKfeYu815zovTIKzhWpXbsEiO4s9W7Mw0XLV4hJ+l7Rr4xJaTnj6JT+6ZEEH4jbnwxEMUcFYLDVz5kobpRXRW9axtGnSAxVtKz8XgfwI2NHvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724067272; c=relaxed/simple;
-	bh=malUEUP13/IZNGpr+qi6kyLlVM4LzUUH3UWhcU+50PQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HJXMRb0ftQiNx6Z1wMgOwjHwlKn5GJRx7PlfArgpM/IyuO7xAdtHWio6+cmmTj3Curws8IRmNWl778bBPr4ga3cwhwHdU1KXc8lMtmwADgAEM/4sPX/CISm2huuPgACMpri3C8hNYhDVje0SUeIW9QIl8NO+Ta1N4Cu1pl0G/Ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HL2ztUyN; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JA19qd027356;
-	Mon, 19 Aug 2024 11:34:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=UsqDIMpxDyemRi4fPPsg3jRzMi1
-	OTL9ET/Uu1vaJCGc=; b=HL2ztUyNsMroxcQqGesnYXyjwOaobOAHrRdJdhWS0Vc
-	cIDdfOs7afU1fMD292vRj4tee3vSeer/2UbUegXnDwWZnl0ghVcQ5D1Yc0cpwc3t
-	MzmjstUQm/v734SWkhsyvAr0P8XVnkBoRvLLnYTXhIoytzDxfI55ssT0M0PBuYJK
-	tLwcQzTAj05qrgFR9utA6QP9jJ85US6zRcgvR63aTfJt8RCToDljYTXSJjkdW6BN
-	QGx/m7mEE1gok/j2OWbECQ/Lzoax1ejPZr9dxF4T0TgWG5tMIgWHloiNFvRf1PfR
-	n2mMXqJZNOVa5RSge2hua7auyjBaYBEw8Tf76Qe4Kkw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mc4g26v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 11:34:00 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47JBXxq2006657;
-	Mon, 19 Aug 2024 11:33:59 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 412mc4g26p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 11:33:59 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47JA0j1g030060;
-	Mon, 19 Aug 2024 11:33:58 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4138dm5n4y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 Aug 2024 11:33:58 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47JBXr8a43647404
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 19 Aug 2024 11:33:55 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3B8CF20040;
-	Mon, 19 Aug 2024 11:33:53 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CA5F320049;
-	Mon, 19 Aug 2024 11:33:47 +0000 (GMT)
-Received: from li-e7e2bd4c-2dae-11b2-a85c-bfd29497117c.ibm.com (unknown [9.195.39.27])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 19 Aug 2024 11:33:47 +0000 (GMT)
-Date: Mon, 19 Aug 2024 17:03:42 +0530
-From: Amit Machhiwal <amachhiw@linux.ibm.com>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Rob Herring <robh@kernel.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-ppc@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        Lizhi Hou <lizhi.hou@amd.com>, Saravana Kannan <saravanak@google.com>,
-        Vaibhav Jain <vaibhav@linux.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Vaidyanathan Srinivasan <svaidy@linux.ibm.com>,
-        Kowshik Jois B S <kowsjois@linux.ibm.com>,
-        Lukas Wunner <lukas@wunner.de>, kernel-team@lists.ubuntu.com,
-        Stefan Bader <stefan.bader@canonical.com>
-Subject: Re: [PATCH v3] PCI: Fix crash during pci_dev hot-unplug on pseries
- KVM guest
-Message-ID: <20240819165310.cab26333-b8-amachhiw@linux.ibm.com>
-Mail-Followup-To: Michael Ellerman <mpe@ellerman.id.au>, 
-	Bjorn Helgaas <helgaas@kernel.org>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	kvm-ppc@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
-	Lizhi Hou <lizhi.hou@amd.com>, Saravana Kannan <saravanak@google.com>, 
-	Vaibhav Jain <vaibhav@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>, 
-	Vaidyanathan Srinivasan <svaidy@linux.ibm.com>, Kowshik Jois B S <kowsjois@linux.ibm.com>, 
-	Lukas Wunner <lukas@wunner.de>, kernel-team@lists.ubuntu.com, 
-	Stefan Bader <stefan.bader@canonical.com>
-References: <20240806200059.GA74866@bhelgaas>
- <87h6bm1ngo.fsf@mail.lhotse>
- <20240816180441.81f4d694-3b-amachhiw@linux.ibm.com>
- <87o75s2hxa.fsf@mail.lhotse>
+	s=arc-20240116; t=1724067254; c=relaxed/simple;
+	bh=YXi9NAgWSVmNDA5StGAeBv7D+2Dt2es1sfEne8hWFvk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ak4FQo4+Vs+mgEUYLtqCF+KI4QN7BjDIMygXseoiGg0CVnxnMHF6SvuXOSr/9P4EFi9nKnkoMAeX+HUBMiaJlev2m85Ljfc4xTff1ibuueiA1i/1GcCD0joqVWifFng+HqiFJbrDbal6GX/BmGqrbc5OEkZtWM/taJ6egEMAnRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=knU8H7w5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE644C32782;
+	Mon, 19 Aug 2024 11:34:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724067253;
+	bh=YXi9NAgWSVmNDA5StGAeBv7D+2Dt2es1sfEne8hWFvk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=knU8H7w5bmbmD1FsfCzRaumh8OZuzBjcpDBNLJCWz1h1B6WSP+06lhbUxhHeHVHBu
+	 gimGxKj5JeTaB885YKG5tFW6loFtqThmUXnMPhpNr4k0vsgfxYq9I1ubnbJ3gliQqD
+	 sIFnTzd33k869VbBP3wNuIG5T+uBaDJngYZ2IZ0vrncwH8EAZa0E20Xnx1X+aA5V9u
+	 iZtk6E7092tNe/YcZ3auoI5iUlghftju5191o32oUxEntdP1OOAVGzc3EbUi5RgZw7
+	 IW+ieq1A4MCt9AqUcGr1U4hYnX2XrbpYIWTCTkWISMyJ/MHCC2QbOKdt66zF9PNlaw
+	 QgfUJqoitpBgw==
+From: Christian Brauner <brauner@kernel.org>
+To: Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	stgraber@stgraber.org,
+	linux-fsdevel@vger.kernel.org,
+	Seth Forshee <sforshee@kernel.org>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Vivek Goyal <vgoyal@redhat.com>,
+	German Maglione <gmaglione@redhat.com>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Bernd Schubert <bschubert@ddn.com>,
+	linux-kernel@vger.kernel.org,
+	mszeredi@redhat.com
+Subject: Re: [PATCH v3 00/11] fuse: basic support for idmapped mounts
+Date: Mon, 19 Aug 2024 13:34:04 +0200
+Message-ID: <20240819-rockermilieu-baumhaus-02b54f20d530@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240815092429.103356-1-aleksandr.mikhalitsyn@canonical.com>
+References: <20240815092429.103356-1-aleksandr.mikhalitsyn@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87o75s2hxa.fsf@mail.lhotse>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: R8VUjQv28xiQn-SzJOjpJVh2xfSErgDy
-X-Proofpoint-GUID: Fexqrs0yQr5cj37s8xkX5FhhOebrt9J9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-19_10,2024-08-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_spam_definite policy=outbound score=100 bulkscore=0
- mlxscore=100 clxscore=1015 priorityscore=1501 mlxlogscore=-999
- adultscore=0 phishscore=0 impostorscore=0 suspectscore=0 spamscore=100
- lowpriorityscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408190077
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2469; i=brauner@kernel.org; h=from:subject:message-id; bh=YXi9NAgWSVmNDA5StGAeBv7D+2Dt2es1sfEne8hWFvk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQd1l3bHey39knblth5X7t5E+fW9iRP873q8mTKqY0M+ xl3sMjP6yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjI9DiG/5WCq/5ydLgv6VlQ knRI+Nn5E96V5sl/+pnC5u668E3041ZGhlVzJqUczdkVo/M7Jvrnr91SJfnV/7adXK3Alq95dv6 eC/wA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Hi Michael,
-
-On 2024/08/17 08:59 AM, Michael Ellerman wrote:
-> Amit Machhiwal <amachhiw@linux.ibm.com> writes:
-> > On 2024/08/15 01:20 PM, Michael Ellerman wrote:
-> >> Bjorn Helgaas <helgaas@kernel.org> writes:
-> >> > On Sat, Aug 03, 2024 at 12:03:25AM +0530, Amit Machhiwal wrote:
-> >> >> With CONFIG_PCI_DYNAMIC_OF_NODES [1], a hot-plug and hot-unplug sequence
-> >> >> of a PCI device attached to a PCI-bridge causes following kernel Oops on
-> >> >> a pseries KVM guest:
-> >> >
-> >> > What is unique about pseries here?  There's nothing specific to
-> >> > pseries in the patch, so I would expect this to be a generic problem
-> >> > on any arch.
-> >> >
-> >> >>  RTAS: event: 2, Type: Hotplug Event (229), Severity: 1
-> >> >>  Kernel attempted to read user page (10ec00000048) - exploit attempt? (uid: 0)
-> >> >>  BUG: Unable to handle kernel data access on read at 0x10ec00000048
-> >> >
-> >> > Weird address.  I would expect NULL or something.  Where did this
-> >> > non-NULL pointer come from?
-> >> 
-> >> It originally comes from np->data, which is supposed to be an
-> >> of_changeset.
-> >> 
-> >> The powerpc code also uses np->data for the struct pci_dn pointer, see
-> >> pci_add_device_node_info().
-> >> 
-> >> I wonder if that's why it's non-NULL?
-> >
-> > I'm also looking into the code to figure out where's that value coming from. I
-> > will update as soon as I get there.
+On Thu, 15 Aug 2024 11:24:17 +0200, Alexander Mikhalitsyn wrote:
+> This patch series aimed to provide support for idmapped mounts
+> for fuse & virtiofs. We already have idmapped mounts support for almost all
+> widely-used filesystems:
+> * local (ext4, btrfs, xfs, fat, vfat, ntfs3, squashfs, f2fs, erofs, ZFS (out-of-tree))
+> * network (ceph)
 > 
-> Thanks.
->  
-> >> Amit, do we have exact steps to reproduce this? I poked around a bit but
-> >> couldn't get it to trigger.
-> >
-> > Sure, below are the steps:
-> >
-> > 1. Set CONFIG_PCI_DYNAMIC_OF_NODES=y in the kernel config and compile (Fedora
-> >    has it disabled in it's distro config, Ubuntu has it enabled but will have it
-> >    disabled in the next update)
-> >
-> > 2. If you are using Fedora cloud images, make sure you've these packages
-> >    installed:
-> >     $ rpm -qa | grep -e 'ppc64-diag\|powerpc-utils'
-> >     powerpc-utils-core-1.3.11-6.fc40.ppc64le
-> >     powerpc-utils-1.3.11-6.fc40.ppc64le
-> >     ppc64-diag-rtas-2.7.9-6.fc40.ppc64le
-> >     ppc64-diag-2.7.9-6.fc40.ppc64le
-> >
-> > 3. Hotplug a pci device as follows:
-> >     virsh attach-interface <domain_name> bridge --source virbr0
+> Git tree (based on torvalds/master):
+> v3: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts.v3
+> current: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts
 > 
-> I don't use virsh :)
+> [...]
 
-No worries. Fortunately, we do have a way to do it with qemu monitor.
+I've taken this but can drop should it need to end up in a fuse tree.
 
-> 
-> Any idea how to do it with just qemu monitor commands?
-> 
+---
 
-1. Boot the guest with the below included in the qemu cmdline:
+Applied to the vfs.idmap branch of the vfs/vfs.git tree.
+Patches in the vfs.idmap branch should appear in linux-next soon.
 
-    -netdev bridge,id=<net_name>,br=virbr0,helper=/usr/libexec/qemu-bridge-helper
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-2. Once the guest boots, run the below command on qemu monitor to hot-plug a pci
-   device:
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-    device_add rtl8139,netdev=<net_name>,mac=52:54:00:88:31:28,id=<net_id>
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-    dmesg
-    =====
-    [  116.968210] pci 0000:00:01.0: [10ec:8139] type 00 class 0x020000 conventional PCI endpoint
-    [  116.969260] pci 0000:00:01.0: BAR 0 [io  0x10000-0x100ff]
-    [  116.969904] pci 0000:00:01.0: BAR 1 [mem 0x00000000-0x000000ff]
-    [  116.970745] pci 0000:00:01.0: ROM [mem 0x00000000-0x0003ffff pref]
-    [  116.971456] pci 0000:00:01.0: No hypervisor support for SR-IOV on this device, IOV BARs disabled.
-    [  116.972583] pci 0000:00:01.0: Adding to iommu group 0
-    [  116.978466] pci 0000:00:01.0: ROM [mem 0x200080080000-0x2000800bffff pref]: assigned
-    [  116.979347] pci 0000:00:01.0: BAR 0 [io  0x10400-0x104ff]: assigned
-    [  116.980063] pci 0000:00:01.0: BAR 1 [mem 0x200080001000-0x2000800010ff]: assigned
-    [  117.017187] 8139cp: 8139cp: 10/100 PCI Ethernet driver v1.3 (Mar 22, 2004)
-    [  117.018577] 8139cp 0000:00:01.0: enabling device (0000 -> 0003)
-    [  117.025414] 8139cp 0000:00:01.0 eth1: RTL-8139C+ at 0x00000000fbf09e59, 52:54:00:88:31:28, IRQ 26
-    [  117.051028] 8139too: 8139too Fast Ethernet driver 0.9.28
-    [  117.076577] 8139cp 0000:00:01.0 eth1: link up, 100Mbps, full-duplex, lpa 0x05E1
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.idmap
 
-3. Try hot-unplug of the device to recreate the kernel Oops.
-
-    device_del <net_id>
-
-Thanks,
-Amit
-
-> cheers
+[01/11] fs/namespace: introduce SB_I_NOIDMAP flag
+        https://git.kernel.org/vfs/vfs/c/cc3e8969ffb2
+[02/11] fs/fuse: add FUSE_OWNER_UID_GID_EXT extension
+        https://git.kernel.org/vfs/vfs/c/d2c5937035e5
+[03/11] fs/fuse: support idmap for mkdir/mknod/symlink/create
+        https://git.kernel.org/vfs/vfs/c/9961d396252b
+[04/11] fs/fuse: support idmapped getattr inode op
+        https://git.kernel.org/vfs/vfs/c/52dfd148ff75
+[05/11] fs/fuse: support idmapped ->permission inode op
+        https://git.kernel.org/vfs/vfs/c/34ddf0de71be
+[06/11] fs/fuse: support idmapped ->setattr op
+        https://git.kernel.org/vfs/vfs/c/27b622529cdc
+[07/11] fs/fuse: drop idmap argument from __fuse_get_acl
+        https://git.kernel.org/vfs/vfs/c/6d8f2f4fde13
+[08/11] fs/fuse: support idmapped ->set_acl
+        https://git.kernel.org/vfs/vfs/c/ab7c30987cbb
+[09/11] fs/fuse: properly handle idmapped ->rename op
+        https://git.kernel.org/vfs/vfs/c/76c0baad3782
+[10/11] fs/fuse: allow idmapped mounts
+        https://git.kernel.org/vfs/vfs/c/9aace2eda1bd
+[11/11] fs/fuse/virtio_fs: allow idmapped mounts
+        https://git.kernel.org/vfs/vfs/c/020a698f136c
 
