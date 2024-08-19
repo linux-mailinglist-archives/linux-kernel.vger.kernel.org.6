@@ -1,198 +1,152 @@
-Return-Path: <linux-kernel+bounces-292655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA183957263
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:49:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64B2E957267
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 19:50:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F4401F23DAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:49:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5948B2444B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE47188CBD;
-	Mon, 19 Aug 2024 17:49:18 +0000 (UTC)
-Received: from PAUP264CU001.outbound.protection.outlook.com (mail-francecentralazon11021114.outbound.protection.outlook.com [40.107.160.114])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E7E18800B;
+	Mon, 19 Aug 2024 17:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UCQATrkW"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5BB188CB1
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 17:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.160.114
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724089757; cv=fail; b=Ffe/flSlxy2h0viAE3lXi36RrO2yn2quSZgHMJGQb2ha8T+rz15SCkf+qBde5V9tr6IZj9XTVYeWV00rHAb/zBK7hlem7e9BNoe/U+fmxPAF21Oa9Wz2VH74lee9qFeAaTNrOjIwZBx69/wsSTXbSUUVSyn7wwhHZ/pHFYQOgtg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724089757; c=relaxed/simple;
-	bh=AuAKuipX2Pv5VI25Nr/AWES1c7/0LGjdEF1atWqXJ00=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bKDhqTHpUYKWU9qEoJgqZK1q09SbN8q+EnzTBgNACK12E8JUJedGQmUTpgJMMo/hby2w1BBCBFFiOrnE6jUkia4QGhDwvM2MHAqjRd55xyOK3w8C0LVfKF44fDTtXhCPCoHqSkOO/vsVifJZ5g85fgNw/zhbQ6dafd4RY+WlXws=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=witbe.net; spf=pass smtp.mailfrom=witbe.net; arc=fail smtp.client-ip=40.107.160.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=witbe.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=witbe.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tTzL+F3PgOr9JAZhp5puMrKzJfc/S6yfRJzVPf8/nFQHelT5w96ajm/LcwJsy2XSi7Vd8MIdi+TieTOsoBX2OuqawKo96njpKqc+SeenQOprSwGUwPUGIQZ/ZveG76Cf0imsE+FIVcI0JaEGK2Ei06hfT19RGjCyBENSCPnObD+s7kA/bWSzb3lDL0lXqb2mxxMqPVTe6BAk3wOXig+YdHpOAAJGjae7eEKAQGIqcAlVE8+EqCRwkA+dFrcejWElSrdE+dvmRJO0HuYZOzMjjrW7oYhFfdDJEI+xKtF5+FZM2aWma+83RfB0wevZAcaXjCZAIYSE/50ESpxStF5OJw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AuAKuipX2Pv5VI25Nr/AWES1c7/0LGjdEF1atWqXJ00=;
- b=CcekLrEdahUZpSZk6UmCE0nUbEgp+6znfAFipZToPFun9AMywVpRTB4hMvGDfAyh9TPXmCjwqFsF2rp/FejVjCojOG0TEoFQDiKbkd3xqCYdipALImEcrb3YOW0PK3IDxzS25VGo4iq5Z4QKA8gz3lHb2Lk9s6TNN9Qjx74UC/UdlbZ5Y6bxZq8RbNH94h+oCwTqXJ7h68n8oSoB+ohQaIIbRA3BQ/g+h14Gc7WXo/oD8jcQc/29RFUStiS+18p1fSCk/x/srrAts8bq7rN95FqWZcmeS28oYDjcxZvlvSoJ3LNMUavU7C/uF5rz7H9f4asYTatn42D9rqnJjE8q7A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=witbe.net; dmarc=pass action=none header.from=witbe.net;
- dkim=pass header.d=witbe.net; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=witbe.net;
-Received: from MRZP264MB1704.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:17::5) by
- MR0P264MB4923.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:4b::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7875.21; Mon, 19 Aug 2024 17:49:12 +0000
-Received: from MRZP264MB1704.FRAP264.PROD.OUTLOOK.COM
- ([fe80::4a3d:42ec:6933:fa65]) by MRZP264MB1704.FRAP264.PROD.OUTLOOK.COM
- ([fe80::4a3d:42ec:6933:fa65%4]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
- 17:49:12 +0000
-Date: Mon, 19 Aug 2024 19:49:11 +0200
-From: Paul Rolland <rol@witbe.net>
-To: Christian Heusel <christian@heusel.eu>
-Cc: Zack Rusin <zack.rusin@broadcom.com>, Broadcom internal kernel review
- list <bcm-kernel-feedback-list@broadcom.com>, Martin Krastev
- <martin.krastev@broadcom.com>, Maaz Mombasawala
- <maaz.mombasawala@broadcom.com>, dri-devel@lists.freedesktop.org, Brad
- Spengler <spender@grsecurity.net>, rdkehn@gmail.com,
- linux-kernel@vger.kernel.org, regressions@lists.linux.dev, rol@witbe.net
-Subject: Re: [REGRESSION][BISECTED] vmwgfx crashes with command buffer error
- after update
-Message-ID: <20240819194911.7999bec1@riri>
-In-Reply-To: <0d0330f3-2ac0-4cd5-8075-7f1cbaf72a8e@heusel.eu>
-References: <0d0330f3-2ac0-4cd5-8075-7f1cbaf72a8e@heusel.eu>
-Organization: Witbe
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
-X-Ncc-RegId: fr.witbe
-x-ms-reactions: disallow
-Content-Type: multipart/signed; boundary="Sig_/kfW3cN.5WtImt5YMA+9A4dO";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-X-ClientProxiedBy: PAZP264CA0022.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:122::9) To MRZP264MB1704.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:501:17::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0602B14F12F
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 17:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724089838; cv=none; b=fGcC/OVtt3Ip8ZBRKCv3J7vfOE72Bks7uvRO2ggmkOhs+3peuv1/9MmUDM38/HxdeVlbdZfHswbHYeSnFUMDUBRj+dARqDPFRN5KD9khHcAW8AopzfXESn0b643G0j1PZPLYMBDjLJFkdZ+PXUSnBmxE+Zc6ZefRMVs+t+Qtj7A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724089838; c=relaxed/simple;
+	bh=w/Fwcmt6wzBhQKj8NSEi6L2yI3ryj/IbNsRhMAgKF98=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GEaVM0kuLsXHOJZ0sONNIEw/+ksRYOSWS1ZRK7hUjcrpZk7ZAldVulXwUV+kRgEhpqzjjEMRDrbAXQVnZlxGtWYit3zb8cI+zisGQ2S+AIO0GebZoaUhf1nu/X560yASrMzfu7+fA8Dbg+tw1e/0yygWinryOIaaZ8jkRjzfER0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UCQATrkW; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2021537a8e6so25243295ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:50:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724089836; x=1724694636; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mOf43rLdvXlX2YVrcERQm/M+ITZnbYWg68aFZLl8QSU=;
+        b=UCQATrkWYmkIoWmiQYHPtRba/mOgsdDk+HB2z4SJREhNUgPv7KvxJkvKUvDEsST13G
+         vf0gLhbVsDDwGfVXUNqIROBjCGxbKE6v09ygEso2Y5Vr8OLFexLmmHeGJyJce4WSOxVv
+         GkGqdBfEODgwfkXpgwAW3NfOy581ZlcnORs7IKwQAB6+DISaWcGQOPuybbXd684qtWUI
+         wSe+HddLjmeG8t9PIdxRC0eLEqMMaWapdMw2rfc7kgRUHzJKAN1MUYTLQ+2USamP9OAP
+         W6wQZGPyfbcb++sV2tn1qgE3mneK9EQLyyuvT3EwVNHjeMogBZif2zXHIhpNxKX5CRCQ
+         aRbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724089836; x=1724694636;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mOf43rLdvXlX2YVrcERQm/M+ITZnbYWg68aFZLl8QSU=;
+        b=cnb5L2Kz8lb8CnlJKuQ2NE3i1BWawVaYpUsUUDG8sYsoxDtXrC9dfXgm9f4o6b5xPr
+         YzKmeluxR83ISBkCd21kRx28dULMYcnXx7VPNsDcWNTyPaLawcAnXUOqA5kw9eUPwNnS
+         MbVKg9G4zjWq8vFaW+WSXOhN1SlDhfZS1C05Lz962b/ACROPeGP3ln3e4/mD80DaQjR4
+         V+KxfQxB7cH+VQF6cP9/4VC7J/8DT0xeJv2ggv+B7lcI54j8pWhOj3IH8KGEea/c7pwS
+         P3CtrGIhGPhHR+fJNjr1gi2Hv2StNgNnLep6EDj9eV4FU9iPYc8HQhnbs/B/8KPKjZii
+         Kf7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVAtRkZWi22aNJB4D8OyaRfxe4kWF+MMAjcO2p1ChR3NXJrzeIT3aLOhhF8jFrTD0DH3OOFVGREvxjGF6kvjSZSrfxtzGYXjlZ7DOn/
+X-Gm-Message-State: AOJu0Yx8iBiuiLfZ78Gzr3tBpjBOwcO7lx52wxgMOAs7iOk/Q9S3m15i
+	GBlwmdQcpqEBqS2hOLSxPAEH/+0WJ/MwXBCw91gCRoJIA3WjB8JT
+X-Google-Smtp-Source: AGHT+IHthh45koxlcqVb51AsdJSIiP+ADIZPw47JXoa3D6QFq1yXv+bLoH3499/vUQxg94w0/AWJPw==
+X-Received: by 2002:a17:902:d2c2:b0:202:5ac:fa49 with SMTP id d9443c01a7336-20205acfb5fmr141255095ad.51.1724089836004;
+        Mon, 19 Aug 2024 10:50:36 -0700 (PDT)
+Received: from embed-PC.myguest.virtualbox.org ([106.222.231.54])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f02fa4e0sm65064025ad.7.2024.08.19.10.50.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 10:50:34 -0700 (PDT)
+Date: Mon, 19 Aug 2024 23:19:20 +0530
+From: Abhishek Tamboli <abhishektamboli9@gmail.com>
+To: neil.armstrong@linaro.org
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+	quic_jesszhan@quicinc.com, dri-devel@lists.freedesktop.org,
+	skhan@linuxfoundation.org, rbmarliere@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/panel: ili9341: Add comments for ILI9341 register
+Message-ID: <ZsOFoP+NR/pGNC5M@embed-PC.myguest.virtualbox.org>
+References: <20240812171019.561321-1-abhishektamboli9@gmail.com>
+ <b783f932-851f-4ea5-a2cc-d39061c60652@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MRZP264MB1704:EE_|MR0P264MB4923:EE_
-X-MS-Office365-Filtering-Correlation-Id: b8708154-a17c-4ca4-1e40-08dcc0773c1d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?sugCAx7NYZwSqUgmzkF9/eFmePNMvQi87TaDA61uUmjt4W5GYeUAVi4B+JYW?=
- =?us-ascii?Q?PtJIxYprKLVHX02MRLJ8u0zFNXAjb9suKxfYPCkIKLkOF/CQAvqNEhVOnsRN?=
- =?us-ascii?Q?lL7FW2Bia6mGN4sLEdCCDlOh+bqxztsEjhGU4fNYjyeT+FZgI7EgloKgvQDG?=
- =?us-ascii?Q?Iqz5KsIVF6XiuEdjoa/00hKBd3N4T/IzuTKqy3+LYb+zIS+aiJMy2PzxtuzM?=
- =?us-ascii?Q?c4sJTMV5sgVjw/pqwR2PwZsiedtuwUrORLolLbtSg2WhOuN/oKKVGDPFD74+?=
- =?us-ascii?Q?DEmxSUpUjrsC8oONKY4qmZAU7lNog1QYQSE6TUJLyWadCy64jUmlxvKpIfJP?=
- =?us-ascii?Q?rosDlAe0r6Shxv0RnlqLgmqqzhR/tWWRreuQztHPAKgVZ4+e0zRCYI9cdPZ5?=
- =?us-ascii?Q?LzqAD7T8YaReyksiqBlElJXhTzrzuWJr8CrQLvS7X5ayVqs1LSKC4/LtCoiB?=
- =?us-ascii?Q?0TB2yctaqaxyyI2nF23DhZWiR3rLhAhlXhH7oQ+W/XBFkY+w//NjiUcRhKsi?=
- =?us-ascii?Q?dTnOb5AVB4HXSeL1ptcnutLR+qCS5WP1jeg2ffEku9pTnqoIuN1aQQ+nyee1?=
- =?us-ascii?Q?6rFpalNiMGoq23qvA/RMnsQDQiSz6WMDHCronhCs4qxGmn9boff+7WTzUBzT?=
- =?us-ascii?Q?3vBUxUmZSt2UIAnMUp5vBxkK8j2X3uvDSRXQTUUJYnC6AnS3MVZlAxltAVkS?=
- =?us-ascii?Q?T/hEsmQs28v3+lrBawLP22hQ22SZanKLEWnLZUOvbHSBaPy8crV0SeIr2eYL?=
- =?us-ascii?Q?lSrvbFV+AT5h2UNmuUB2PPLE9pea3e9cc627UP2xbw6xcXFDk6pKZA8Execo?=
- =?us-ascii?Q?ZkzZnk70K2EeZkDQikC3e3zENJXNpnQqztlW9nqFT/zIdFjCnoUUZgo+/dqQ?=
- =?us-ascii?Q?SGaiX9CyPDtroTFT+BRJh+51+ojyY2u2G+PlAzSck0h+S9ZLZvXd+DFYgi3c?=
- =?us-ascii?Q?bwvKCVzv495QNzTBAbgCjhwf1kpTnrq/2k42q2ohfEZXoGLSX+pQDBKhxRnW?=
- =?us-ascii?Q?5I3nBo73oozlUCL/o9CFau3dZAGXOQBxPPOVttT2maoUeDMT0Rl7oD0bBgiX?=
- =?us-ascii?Q?AS2b/PjiSVIj/FgcXRgHy4Ub5uNF5gKg/81xsmCDTSm4Fg9mKBMrIG29g6jq?=
- =?us-ascii?Q?ZbhtBylaxpqxFC/WpTCJllH1mE3n4nHeM3AUw87SpSvlyk7KUzON+4mbndFX?=
- =?us-ascii?Q?Gg4RdO3VIyWBVTXOCK5KvSAWFN1Jsbn2fzKNgthMH5UOXcTHY/mO8sPGuSlA?=
- =?us-ascii?Q?Z4OAAhzaQJLsxi+kp2BgEmAHqXFEHsg8peKZTlg5SLWKfF5rVllQD/YxxVdU?=
- =?us-ascii?Q?l1ne7nlg/MWgpY53ckAYHl+U4vSKb5vh8HJRmc/3ZfBTRw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MRZP264MB1704.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?cEArghQzsXVeCoc5iEA45V6GPV36jlzYlfuidOGnWOw/7m+jp4vCw+ITd1q8?=
- =?us-ascii?Q?79FjQb9h54OpvFkekFeZ/Do+UtDiGcenR7bQzISJznmTV3eZx520whJ33n5x?=
- =?us-ascii?Q?i+CzbPV6obLircfpLfW4qOz1cq/djbHqmWB2iouZ+oAzU8hCIRCZhikODZbh?=
- =?us-ascii?Q?32Gen550hN6NoXbHiyuT4VfS18427DnCrwumTTZm6RdMj1ZKmIVQ68FDlj0j?=
- =?us-ascii?Q?w0Fpj5qSI2ixcs3MDtANjgUSyKxLEsq7IUP3fAId5nZoDoz0U5DCjBzegJtH?=
- =?us-ascii?Q?VkdOM5xMzEcaOg6DqMa48EvhB3RhwjCS7oJE3lYagmGDA+Rdo7vhqpGj3F0X?=
- =?us-ascii?Q?Se7SFrF6QwOjlQFFVX4SS5yz070hehbZZ5roT+HWzWeiiDzp9XqzXh01ETzu?=
- =?us-ascii?Q?QvWoLf5L6g2Sit2QefeypmxJxvyKDeKNfnyn1wOkr1bBTJnOSMPd5RDaFW+V?=
- =?us-ascii?Q?w2T6qKYPoab3wfSMtuf49ouC2zu9LQxVwY5X6Juf5RXDoeSj5Rsu91owz0Iw?=
- =?us-ascii?Q?dLKhz0vmU8FOgEdj4wmkw62AhkTar1RB0JqdxoR46YdoMQLbSZQ2sCO4ZOQA?=
- =?us-ascii?Q?T6S/iCc8wKZlP3FbEjkc1DI8ATMdF/7UdsECoYBkWDMVwGg95ZqdUXR10uvv?=
- =?us-ascii?Q?uJoQE0RhCTUVrfSB+aQ2AHA2ldk5WW7qnG8sembkyEV1eHAhDlGxw/neZ9tP?=
- =?us-ascii?Q?XkVdXCPIGA2LzIFAcSq0wKVNJwELYn7NZdzGLRMoFAsr38BGCVzPVxexj6mH?=
- =?us-ascii?Q?jhEwcbu61GCxQbuIiAgAsxx5VDVDc3QnR/aSI4jXGj/0zIb4SB6ocalTM1h8?=
- =?us-ascii?Q?4bOvb/paQFfHh+QTwJSC4BAl0JY1l/YrJSALWkHvVS2hAYtE4/OFoAIS53iB?=
- =?us-ascii?Q?jgRsJVNdEA0dFwZL9phKuEEEPJAWpKKw0LmJ6Djb/CFurmIuBXSlZ3R05J8X?=
- =?us-ascii?Q?a4RRQR4DnITzqeibHlopULTpxnZjcPnxr27T3LKQeR5aV7hn8fDY1tBiuF7j?=
- =?us-ascii?Q?rEw/XsQs1lSWALH01f6MavoeL8Zd09TQvKM5XwtQTzjVsVJIoSY0v5KBhwV8?=
- =?us-ascii?Q?3zq+TqcVWrAiZSiM4fGzqdH6IMqbIrUgIPnlm2CKTNBnyJhHm7fEe77zVsJF?=
- =?us-ascii?Q?3AIaZO9Jm98f8FnEcM7tguZ3PP/7m9lkxSkQv18LgvR4IKcPQ8M4ojc9Y/Pt?=
- =?us-ascii?Q?SGoKrOJ1f/gj9sf/v7Cc3MizDa9xkmAMOir1Z5ez6GlqLARrvLyLjHsJx7yM?=
- =?us-ascii?Q?KUMyvtZAd8W/pdGlQnst88JHX4psqNt9gNk/TYbXSuu12Ibo1gVnBR75OYG9?=
- =?us-ascii?Q?NSeavHmwmAArlnHBQA+imO98mG4+A43V1MNRQT8MjujJou3tjLzRZ7NtDEaI?=
- =?us-ascii?Q?v/9IIbkWKAY8CjheKi3VbleYkxF2t168hZPBfVMQGEVb3xrtQMrBOTCphMKo?=
- =?us-ascii?Q?InL7rE6Z+W44M6urQaw8oXNK2e3TybOg0SMUQPw3neqjQVukfxdq0YDJVyhj?=
- =?us-ascii?Q?NzFHs6S3b5wF/4WOaEd98s3rhVG5PFv4XoeBC+HcNgc3KAb3Ls4R9zlnlX4C?=
- =?us-ascii?Q?UfZbkwd4Bsw3dT9W0biGbnuuVZBrhlDXB8+XCpXh?=
-X-OriginatorOrg: witbe.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8708154-a17c-4ca4-1e40-08dcc0773c1d
-X-MS-Exchange-CrossTenant-AuthSource: MRZP264MB1704.FRAP264.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 17:49:12.3481
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3f8d401f-95c5-4cdd-94d3-64af2479cf89
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: C26mrQdNUq0BXnpCfTbCUQomKGLUOz+cYTAR2IdSS/Y4M37b1K/xiVTz+ITGIqaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MR0P264MB4923
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b783f932-851f-4ea5-a2cc-d39061c60652@linaro.org>
 
---Sig_/kfW3cN.5WtImt5YMA+9A4dO
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi, Neil
+Thanks for the feedback.
 
-Hello,
-
-On Thu, 15 Aug 2024 19:48:47 +0200
-Christian Heusel <christian@heusel.eu> wrote:
-
-> While we were still debugging the issue Brad (also CC'ed) messaged me
-> that they were seeing similar failures in their ESXi based test
-> pipelines except for one box that was running on legacy BIOS (so maybe
-> that is relevant). They noticed this because they had set panic_on_warn.
-
-I have the same problem at home using ESXi and UEFI Bios with my VMs:
-kernel 6.10.4 and 6.10.5 are showing an error with vmwgfx while booting and
-there is no console available, though it's still possible to remotely
-access the VMs using SSH.
-
-Reverting to 6.10.3 solves the problem.
-
+On Mon, Aug 19, 2024 at 05:41:07PM +0200, neil.armstrong@linaro.org wrote:
+> On 12/08/2024 19:10, Abhishek Tamboli wrote:
+> > TODO : Add missing comments for ILI9341 register definition.
+> 
+> Please rephrase the commit message, and explain why in a proper english sentence.
+Sure
+> Neil
+> 
+> > 
+> > Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
+> > ---
+> >   drivers/gpu/drm/panel/panel-ilitek-ili9341.c | 14 +++++++-------
+> >   1 file changed, 7 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/panel/panel-ilitek-ili9341.c b/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
+> > index 775d5d5e828c..cba6a6952568 100644
+> > --- a/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
+> > +++ b/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
+> > @@ -121,19 +121,19 @@ struct ili9341_config {
+> >   	const struct drm_display_mode mode;
+> >   	/* ca: TODO: need comments for this register */
+> >   	u8 ca[ILI9341_CA_LEN];
+> > -	/* power_b: TODO: need comments for this register */
+> > +	/* power_b: Power control B (CFh) */
+> >   	u8 power_b[ILI9341_POWER_B_LEN];
+> > -	/* power_seq: TODO: need comments for this register */
+> > +	/* pdtcaower_seq: Power on sequence control (EDh) */
+> >   	u8 power_seq[ILI9341_POWER_SEQ_LEN];
+> > -	/* dtca: TODO: need comments for this register */
+> > +	/* dtca: Driver timing control A (E8h) */
+> >   	u8 dtca[ILI9341_DTCA_LEN];
+> > -	/* dtcb: TODO: need comments for this register */
+> > +	/* dtcb: Driver timing control B (EAh) */
+> >   	u8 dtcb[ILI9341_DTCB_LEN];
+> > -	/* power_a: TODO: need comments for this register */
+> > +	/* power_a: Power control A (CBh) */
+> >   	u8 power_a[ILI9341_POWER_A_LEN];
+> >   	/* frc: Frame Rate Control (In Normal Mode/Full Colors) (B1h) */
+> >   	u8 frc[ILI9341_FRC_LEN];
+> > -	/* prc: TODO: need comments for this register */
+> > +	/* prc: Pump ratio control (F7h) */
+> >   	u8 prc;
+> >   	/* dfc_1: B6h DISCTRL (Display Function Control) */
+> >   	u8 dfc_1[ILI9341_DFC_1_LEN];
+> > @@ -147,7 +147,7 @@ struct ili9341_config {
+> >   	u8 vcom_2;
+> >   	/* address_mode: Memory Access Control (36h) */
+> >   	u8 address_mode;
+> > -	/* g3amma_en: TODO: need comments for this register */
+> > +	/* g3amma_en: Enable 3G (F2h) */
+> >   	u8 g3amma_en;
+> >   	/* rgb_interface: RGB Interface Signal Control (B0h) */
+> >   	u8 rgb_interface;
+> > --
+> > 2.34.1
+> > 
 Regards,
-Paul
-
-
---Sig_/kfW3cN.5WtImt5YMA+9A4dO
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAEBCAAdFiEEfJBudf4KU8bw8ox368Rc5Xmx8y0FAmbDhZcACgkQ68Rc5Xmx
-8y2b+wv/auNGhWsEJVA1iJZktKXzRWjI6sW8sslf2tHbtlzStRbJw4oE/TKzL/xQ
-3+pGW4k08zxmF2n5HotKCguk2iIo+GKsLc93d2bdtC6NJDKPcIzoaA/ePhiQDRqA
-TMRXS1i4MWGXIdZCjjdrDouze7o/uO4PYPewFjB8FY7Oj3t301JkDh6xfHyUP56m
-pUbndRFj7mowuTsGeSE0HlQTKIOE2HX3NUny2Q/+cDCHqajm1zZu7Jhy/1Fx4BJf
-N6u65gmkEyTFO15qqFDSv2DBiAdyc3JaJ5NZ/i03mETsnh92DVnLsk9p4iI5RVTc
-2NzqA49u7v7whkvtWeIy6ymJhzgkX49cPPj0GUBkdvIg1ZvO8hWZNT4G+ezaXaFX
-yZQ43sxPQMTsJ2SRS+jCemjwzlFS34nHv5DQiiNiuQKWJMw6MqwtiuQFmcLKrGDT
-/nzFK3MkV2ievZasO3mSdAoYMozhKD2c8bkuxqsBZ5yDUlK3XlogzSzeED2z/573
-JURSwI5z
-=9ID1
------END PGP SIGNATURE-----
-
---Sig_/kfW3cN.5WtImt5YMA+9A4dO--
+Abhishek
 
