@@ -1,152 +1,259 @@
-Return-Path: <linux-kernel+bounces-291518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B346C956391
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:21:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5332195638D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E598E1C21397
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:21:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B42831F219EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C7E155A59;
-	Mon, 19 Aug 2024 06:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5C1152517;
+	Mon, 19 Aug 2024 06:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="lev4hKzR"
-Received: from esa11.hc1455-7.c3s2.iphmx.com (esa11.hc1455-7.c3s2.iphmx.com [207.54.90.137])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X6rUFYVm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BFB14E2C2
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 06:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.54.90.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4C83EA69;
+	Mon, 19 Aug 2024 06:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724048488; cv=none; b=LymYByx4NatqayEWU0hoyRFbDlQ5VSeQ342xsQq35AzI6rwuAySgJGNY77T2q6K4qOWGn+qu+qSMZNHxyvYiZK8EIlEnBAOt+GIKZ/rKFRM+kFSUI+A0mBMyd/UwyGwPlVDb0dBIlp+4F01D2Qan9O/8dx2Kim+I7PxWEZBZlYk=
+	t=1724048475; cv=none; b=UpmFply90pN4de6Nx+TIfZCMFJkhfK0trPVJSBnyx//4v21Sfzk4edFg1ZWTW74yFOClR7JidqkZoF+sRutZXb/gCM5gRS/7YLk6MkFeQOUM7wa7U9j+Ylt9W58Pt1+gnP++YcdpUlUBSh2HR7wxIEIco1AaYkW971yYgSOZInM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724048488; c=relaxed/simple;
-	bh=a+0n0CXtNrarF+xG7qvVujI92Un+hGrjPuUZFryzKII=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cn7Xr+rkfmAFLQnanATtP+ZDlS3tJ/lcI2xtdw590xhtWfdOJdhFcyIkDfzdlwMldl77lnwthV/BocThGkGzFsx8cHVLF1q2VxT2JBmmGZjKpLmzJFkHMe7SoZubsFrErfPrXeyyawo0E7gjRjgEFlK1j+t0h2fTbHeSsKWyiJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=lev4hKzR; arc=none smtp.client-ip=207.54.90.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1724048487; x=1755584487;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=a+0n0CXtNrarF+xG7qvVujI92Un+hGrjPuUZFryzKII=;
-  b=lev4hKzRM5eAV7aXAo6bxRG51nRT3t89jsrpEfrFYMWfBpChWNqriB3/
-   WFZHLnflHVimyd2aZMJhjXjODDXKm0bW7HmlQ2iJjZNsiXSBhlDbqO2KB
-   hkTUPvjDZ8N7Ne6w1fhtrfssYa8OPHnwacmSdtZfL6Oxm4vnZKJEGxbyz
-   MClRss1GSBH9AW/9o9JPaGbCI12LTdi1DY9/b/JUDFRMFSfZKhXqiivqb
-   5Zejz2ccIm1SdQrabC00C4JZS+BTSdmv1cPODUvaBSAD+pcNKspVUVKVU
-   QQOdK5I4UMyfIlIPbjPFOdo1ST8xVEU7yA4+Ha3nJBHZE7HM8fqaf9JUf
-   A==;
-X-CSE-ConnectionGUID: 4kiEbSy0QBSZ+NSiOwj5bg==
-X-CSE-MsgGUID: Mw6JcNrRTCewYnUhbytw7A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="150382306"
-X-IronPort-AV: E=Sophos;i="6.10,158,1719846000"; 
-   d="scan'208";a="150382306"
-Received: from unknown (HELO oym-r4.gw.nic.fujitsu.com) ([210.162.30.92])
-  by esa11.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 15:21:14 +0900
-Received: from oym-m1.gw.nic.fujitsu.com (oym-nat-oym-m1.gw.nic.fujitsu.com [192.168.87.58])
-	by oym-r4.gw.nic.fujitsu.com (Postfix) with ESMTP id 17BB3D8011
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:21:12 +0900 (JST)
-Received: from kws-ab4.gw.nic.fujitsu.com (kws-ab4.gw.nic.fujitsu.com [192.51.206.22])
-	by oym-m1.gw.nic.fujitsu.com (Postfix) with ESMTP id 5786DD88A1
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:21:11 +0900 (JST)
-Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
-	by kws-ab4.gw.nic.fujitsu.com (Postfix) with ESMTP id E5355E4750
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:21:10 +0900 (JST)
-Received: from localhost.localdomain (unknown [10.167.226.45])
-	by edo.cn.fujitsu.com (Postfix) with ESMTP id 5D8191A000C;
-	Mon, 19 Aug 2024 14:21:10 +0800 (CST)
-From: Li Zhijian <lizhijian@fujitsu.com>
-To: nvdimm@lists.linux.dev
-Cc: dan.j.williams@intel.com,
-	vishal.l.verma@intel.com,
-	dave.jiang@intel.com,
-	ira.weiny@intel.com,
-	linux-kernel@vger.kernel.org,
-	Li Zhijian <lizhijian@fujitsu.com>
-Subject: [PATCH v3 2/2] nvdimm: Remove dead code for ENODEV checking in scan_labels()
-Date: Mon, 19 Aug 2024 14:20:45 +0800
-Message-Id: <20240819062045.1481298-2-lizhijian@fujitsu.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20240819062045.1481298-1-lizhijian@fujitsu.com>
-References: <20240819062045.1481298-1-lizhijian@fujitsu.com>
+	s=arc-20240116; t=1724048475; c=relaxed/simple;
+	bh=JqIMZ0DbqksFrQUeGUYa/0oLg+02rBT4QhPT6cpTFn4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p2e0npXiD2RkLE9IaMpOMvTDEbzt4Q2XzW14uEiGG6T+7RHK6XOc/tTXoKAdfVxutsDvp0/dfZSXxWHNNP1zEg0SgNr87YtVL/MwoNzZ05KRgbSLLB55ukJkz9iAIdv1zDDUABmOWMZXtX+Eq96pKSzJrz3DdGIIRpS7g2TNPUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X6rUFYVm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16EEDC32782;
+	Mon, 19 Aug 2024 06:21:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724048474;
+	bh=JqIMZ0DbqksFrQUeGUYa/0oLg+02rBT4QhPT6cpTFn4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=X6rUFYVmwEOXOpSPoLjB6r0tYGrfNUQ7CA1F/9XF1GjXFN6BZVFT1w09Myq7DpMgC
+	 j8zJWpVTLHPHU79RJC5H0qfchVPrAZubsCwpNAkBzQ6Z0Mo67YX41O5h3LVlF0bBvB
+	 WH6p+HzXIMXxj3TiC9q9L28TlU7iUM5wqTn4akCP7p3WcR3aOQ/CVkc1ZCw8auBEE1
+	 fYgPlvn2umk98Bhyu/ulK02aT8GvI2KM6pykAnaUqaX8r6gIOr2lbnI7Sji6Pi3pTs
+	 41iTIeLZ4ihy5oRYo6l5SQPwYt2E4SPhzaj2kq+aNzw3CwU8dRIZiN/aodupN3J5WI
+	 6YEkNY5egs8SA==
+Message-ID: <7bbd48c8-7fa6-4d41-9560-3de0a2394c55@kernel.org>
+Date: Mon, 19 Aug 2024 08:21:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-28604.005
-X-TM-AS-User-Approved-Sender: Yes
-X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-28604.005
-X-TMASE-Result: 10--6.042500-10.000000
-X-TMASE-MatchedRID: wJuAbHRzrYfH3ZCJRIiNpAXGi/7cli9jG3SoAWcU42VD0XHWdCmZPCXj
-	tnu2lwmLkPI1/ZdqoS0pVSN22QMNpsyvuTCA7wzlolVO7uyOCDXBOVz0Jwcxl6vCrG0TnfVUIb5
-	NpqK++5qbpZ8QUEHE+lcnoO4Nx+lojejKCMx4rt64u3nS+3EEDpki3iIBA3o/vy9ABIQaa1mjxY
-	yRBa/qJcFwgTvxipFa9xS3mVzWUuA4wHSyGpeEeqvNPRcWGGWSbTId9Q2wfGKa7xgiZswm8wNo2
-	tfYpsrJuhQI4KJ0drQ=
-X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/7] dt-bindings: net: Add DT bindings for DWMAC on NXP
+ S32G/R SoCs
+To: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, Vinod Koul <vkoul@kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-stm32@st-md-mailman.stormreply.com"
+ <linux-stm32@st-md-mailman.stormreply.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+ dl-S32 <S32@nxp.com>
+References: <AM9PR04MB8506A1FAC2DA26F27771D039E2832@AM9PR04MB8506.eurprd04.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <AM9PR04MB8506A1FAC2DA26F27771D039E2832@AM9PR04MB8506.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The only way create_namespace_pmem() returns an ENODEV code is if
-select_pmem_id(nd_region, &uuid) returns ENODEV when its 2nd parameter
-is a null pointer. However, this is impossible because &uuid is always
-valid.
+On 18/08/2024 23:50, Jan Petrous (OSS) wrote:
+> Add basic description for DWMAC ethernet IP on NXP S32G2xx, S32G3xx
+> and S32R45 automotive series SoCs.
 
-Furthermore, create_namespace_pmem() is the only user of
-select_pmem_id(), it's safe to remove the 'return -ENODEV' branch.
+Fix your email threading. b4 handle everything correctly, so start using it.
 
-Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
----
-V2:
-  new patch.
-  It's found when I'm Reviewing/tracing the return values of create_namespace_pmem()
----
- drivers/nvdimm/namespace_devs.c | 9 ---------
- 1 file changed, 9 deletions(-)
+> 
+> Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+> ---
+>  .../bindings/net/nxp,s32cc-dwmac.yaml         | 127 ++++++++++++++++++
+>  .../devicetree/bindings/net/snps,dwmac.yaml   |   1 +
+>  2 files changed, 128 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/nxp,s32cc-dwmac.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/net/nxp,s32cc-dwmac.yaml b/Documentation/devicetree/bindings/net/nxp,s32cc-dwmac.yaml
+> new file mode 100644
+> index 000000000000..443ad918a9a5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/nxp,s32cc-dwmac.yaml
 
-diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
-index 35d9f3cc2efa..55cfbf1e0a95 100644
---- a/drivers/nvdimm/namespace_devs.c
-+++ b/drivers/nvdimm/namespace_devs.c
-@@ -1612,9 +1612,6 @@ static int select_pmem_id(struct nd_region *nd_region, const uuid_t *pmem_id)
- {
- 	int i;
- 
--	if (!pmem_id)
--		return -ENODEV;
--
- 	for (i = 0; i < nd_region->ndr_mappings; i++) {
- 		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
- 		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
-@@ -1790,9 +1787,6 @@ static struct device *create_namespace_pmem(struct nd_region *nd_region,
- 	case -EINVAL:
- 		dev_dbg(&nd_region->dev, "invalid label(s)\n");
- 		break;
--	case -ENODEV:
--		dev_dbg(&nd_region->dev, "label not found\n");
--		break;
- 	default:
- 		dev_dbg(&nd_region->dev, "unexpected err: %d\n", rc);
- 		break;
-@@ -1980,9 +1974,6 @@ static struct device **scan_labels(struct nd_region *nd_region)
- 			case -EAGAIN:
- 				/* skip invalid labels */
- 				continue;
--			case -ENODEV:
--				/* fallthrough to seed creation */
--				break;
- 			default:
- 				goto err;
- 			}
--- 
-2.29.2
+Filename based on compatible, so what does "cc" stand for?
+
+> @@ -0,0 +1,127 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright 2021-2024 NXP
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/nxp,s32cc-dwmac.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP S32G2xx/S32G3xx/S32R45 GMAC ethernet controller
+> +
+> +maintainers:
+> +  - Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+> +
+> +description: |
+
+Do not need '|' unless you need to preserve formatting.
+
+> +  This device is a platform glue layer for stmmac.
+
+Drop description of driver and instead describe the hardware.
+
+> +  Please see snps,dwmac.yaml for the other unchanged properties.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nxp,s32g2-dwmac
+> +      - nxp,s32g3-dwmac
+> +      - nxp,s32r45-dwmac
+> +
+> +  reg:
+> +    items:
+> +      - description: Main GMAC registers
+> +      - description: GMAC PHY mode control register
+> +
+> +  interrupts:
+> +    description: Common GMAC interrupt
+
+No, instead maxItems: 1
+
+> +
+> +  interrupt-names:
+> +    const: macirq
+> +
+> +  clocks:
+> +    items:
+> +      - description: Main GMAC clock
+> +      - description: Transmit clock
+> +      - description: Receive clock
+> +      - description: PTP reference clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: stmmaceth
+> +      - const: tx
+> +      - const: rx
+> +      - const: ptp_ref
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - interrupt-names
+> +  - clocks
+> +  - clock-names
+> +  - phy-mode
+
+Drop, snps,dwmac requires this.
+
+> +
+> +allOf:
+> +  - $ref: snps,dwmac.yaml#
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/phy/phy.h>
+> +    bus {
+> +      #address-cells = <2>;
+> +      #size-cells = <2>;
+> +
+> +      ethernet@4033c000 {
+> +        compatible = "nxp,s32cc-dwmac";
+> +        reg = <0x0 0x4033c000 0x0 0x2000>, /* gmac IP */
+> +              <0x0 0x4007c004 0x0 0x4>;    /* GMAC_0_CTRL_STS */
+> +        interrupt-parent = <&gic>;
+> +        interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
+> +        interrupt-names = "macirq";
+> +        snps,mtl-rx-config = <&mtl_rx_setup>;
+> +        snps,mtl-tx-config = <&mtl_tx_setup>;
+> +        clocks = <&clks 24>, <&clks 17>, <&clks 16>, <&clks 15>;
+> +        clock-names = "stmmaceth", "tx", "rx", "ptp_ref";
+> +        phy-mode = "rgmii-id";
+> +        phy-handle = <&phy0>;
+> +
+> +        mtl_rx_setup: rx-queues-config {
+> +          snps,rx-queues-to-use = <5>;
+> +
+> +          queue0 {
+> +          };
+> +          queue1 {
+> +          };
+
+
+Why listing empty nodes?
+
+Best regards,
+Krzysztof
 
 
