@@ -1,124 +1,201 @@
-Return-Path: <linux-kernel+bounces-291720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E05629565DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:44:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6D909565E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D6BB2853B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:44:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66CFC1F24A0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE8015B963;
-	Mon, 19 Aug 2024 08:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36D415B55D;
+	Mon, 19 Aug 2024 08:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="sTU4HU5o"
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YoIFJLoW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21EAD15B542
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECEBC14BF8A;
+	Mon, 19 Aug 2024 08:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724057013; cv=none; b=lPOKQBqgm02a4xtIGEZ0FTvPhdk+e4iTtsV2poxdttGBPNr6BXnbf+jyhm65N8xoKh7qAy0+a9oG+AAsXyKHbArjlXw2wfCuD2hJe+FNKIaoxN0TyTSONTnNHExPtVUn9aY9UqubFvVAW3ra4FoLlCBOetfE057pVfwl5RAxyH4=
+	t=1724057123; cv=none; b=goglK1NXnfhNVVmIBqwvE4DSNwoSNG69PhdO6Yo654sVNI6yFhyNDqsfg+4dL1SY2NdZbeUHjq7vJ0Ia2C5ef0iWvnsrAO04jA+cXKdfPsQ5Nbk9FshaDaJNkZ7GDCrlaWS0hkuu7ZNnogutPnMVPg6a5y3W7RCW3uVNDzRIXE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724057013; c=relaxed/simple;
-	bh=K3LOxVsi2JTaVAbOF1S0jfFxhM0eM9gdbjcCnbEgaTw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=YImHDN9S6/wMdNNOkn82avY2482lt4KnQeWlmJDTCm/EuzY6+ntGBHA54W1lbI4Sk1tkydXFbpIcSn/VXHoXgXhg0MAMVRRj85BHzF00O1vHjzxi8lXRsewqoPobw51+DgXiVJnu8khuKWgA6+8hxH1JXVc2qtXQmdtkCqkfVb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=sTU4HU5o; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1724057010; x=1726649010;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=K3LOxVsi2JTaVAbOF1S0jfFxhM0eM9gdbjcCnbEgaTw=;
-	b=sTU4HU5oAatwAyRIztmNUz1ikjw2SmScuHIzrk2Xujn97YzDlRn9HmPUgAesZKic
-	YMOO8CBXa4oXJvadTRWyyeGdor3nzNGM3oy6VXbkrrIzr2cGEHUk02G2FJ6hIpmD
-	Jc+1nBKE5sWtyiX3U58w8cqgpe69QkBVafCg+iT73b0=;
-X-AuditID: ac14000a-03251700000021bc-b3-66c305b27500
-Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 8F.37.08636.2B503C66; Mon, 19 Aug 2024 10:43:30 +0200 (CEST)
-Received: from Berlix.phytec.de (172.25.0.12) by Berlix.phytec.de
- (172.25.0.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Mon, 19 Aug
- 2024 10:43:30 +0200
-Received: from Berlix.phytec.de ([fe80::197e:d26b:2ca:c7b4]) by
- berlix.phytec.de ([fe80::197e:d26b:2ca:c7b4%4]) with mapi id 15.01.2507.006;
- Mon, 19 Aug 2024 10:43:30 +0200
-From: Yannic Moog <Y.Moog@phytec.de>
-To: "kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com"
-	<festevam@gmail.com>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"robh@kernel.org" <robh@kernel.org>, "shawnguo@kernel.org"
-	<shawnguo@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, Teresa Remmet
-	<T.Remmet@phytec.de>
-CC: "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, Benjamin Hahn <B.Hahn@phytec.de>, "Yashwanth
- Varakala" <Y.Varakala@phytec.de>, PHYTEC Upstream <upstream@lists.phytec.de>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 6/6] arm64: dts: imx8mp-phyboard-pollux: Add usb3_phy1
- regulator reference
-Thread-Topic: [PATCH 6/6] arm64: dts: imx8mp-phyboard-pollux: Add usb3_phy1
- regulator reference
-Thread-Index: AQHa7iwRevnQ+H5vB0ynpV1fiXCTz7IuKduA
-Date: Mon, 19 Aug 2024 08:43:30 +0000
-Message-ID: <06fc6f28714b08319226178152e1c900b170d3d2.camel@phytec.de>
-References: <20240814-b4-wip-t-remmet-phytec-de-bspimx8m-3392_upstream-v1-0-e2500950c632@phytec.de>
-	 <20240814-b4-wip-t-remmet-phytec-de-bspimx8m-3392_upstream-v1-6-e2500950c632@phytec.de>
-In-Reply-To: <20240814-b4-wip-t-remmet-phytec-de-bspimx8m-3392_upstream-v1-6-e2500950c632@phytec.de>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F7CF9AF4A265D047A18DF27D3C5881BB@phytec.de>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1724057123; c=relaxed/simple;
+	bh=GjUorvjmTU5WRG5EMQuDoN+1MA/+xhI5cJsn+Juh4BU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=cMrkwwjARrv9ALEDpz7i5TGTSfPK10EJReVhymKXlNb7ZBgUyENfWssMeKXSQjJs2Hsqpx86Mtr9Q71iSAEgFwfpGWoPckahDp/xvhPuXzb2SBDXyog8tueNip+FR/BSVwNfCuVKF/Tok0zxDjFIzENbf5jKwhUz3NQYjHEKVJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YoIFJLoW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A200C32782;
+	Mon, 19 Aug 2024 08:45:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724057122;
+	bh=GjUorvjmTU5WRG5EMQuDoN+1MA/+xhI5cJsn+Juh4BU=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=YoIFJLoWMkULYjYzbILG84V+k9yIe+gLlzbc9AYTl8/K6D2vHtyGxfWUOoyL6XGtP
+	 Ft9ZxlruyALRH6yeT7KJX0vmm4kOETsc4R4HDid7b03HnYTm3vNCcatSr0PLivK/aJ
+	 5BkKag/qlMlAIqlcUxabBGiA2GLWbdp0aLhE4GwMK6k8SoZpDElYgpOAn5o8R9ZPf/
+	 MakZ0cWCzqQjLwtgkgoSbgsAM+/e2kGfcA5zxaXONpZOuJx5MhPTlNp3RYZUc6eRd/
+	 POSyXJZXr7veYc9/rcVYMRtJncKhEwc399K3t2Vd99BO9QQQfxxyeXkc0GeCIsWnF4
+	 8FJnQS4t/Nuxg==
+Message-ID: <a0398ebc-c85c-44b4-afda-5e99a4299b34@kernel.org>
+Date: Mon, 19 Aug 2024 10:45:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKIsWRmVeSWpSXmKPExsWyRpKBR3cT6+E0g5unxCzW7D3HZDH/yDlW
-	i4dX/S1m3mtls1g1dSeLxctZ99gsNj2+xmpxedccNov/e3awW/zdvonF4sUWcYvud+oOPB47
-	Z91l99i0qpPNY/OSeo8Xm2cyevR3t7B69P818Pi8SS6APYrLJiU1J7MstUjfLoEro3fiJaaC
-	SdwVF39/ZW5gfMPVxcjBISFgItHz07iLkYtDSGAJk8S8ydNZuxg5gZz7jBI/TrlCJDYwSpz8
-	toARJMEmoCJxcsYlRpCEiMBLJonFU7+DOcwCf5kknv76DlYlLJAgsfb+WjYQW0QgUWLC8ofM
-	ELaRRNOTbrAaFgFViXkrN7CD2LwCbhLzdn5jh1i3j1Hib+sLJpAEp0CKROvNo2A3MQrISmzY
-	cB5sELOAuMSmZ9/B4hICAhJL9kDEJQREJV4+/gcVl5c4cWsaE8ifzAKaEut36UO0Wkj8fzGL
-	HcJWlJjS/RDqBkGJkzOfsExgFJ+FZMMshO5ZSLpnIemehaR7ASPrKkah3Mzk7NSizGy9gozK
-	ktRkvZTUTYygqBdh4NrB2DfH4xAjEwfjIUYJDmYlEd7ulwfThHhTEiurUovy44tKc1KLDzFK
-	c7AoifOu7ghOFRJITyxJzU5NLUgtgskycXBKNTAKOSUVC7B/1Yy9wn3r7lzh7Y+2VHOsS1jV
-	wC5rtv39pRRmtbc664T8/v241+nuJPoqQHbN8wkKrm939m//n5p6zv7UmfOZ0dKTZeZPPG7C
-	5nXpe7a9/9Ivuy78veQykY+BJSH2w9vbU1L0OKdauP5XWycZ9zYvl+HvJbllFtn7O256Wm3g
-	EK9TYinOSDTUYi4qTgQAQQyrpOgCAAA=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] dt-bindings: clock: Add AST2700 clock bindings
+To: Ryan Chen <ryan_chen@aspeedtech.com>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
+ <OS8PR06MB7541CA018C86E262F826B9E5F2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <OS8PR06MB7541B0D9A43B989DC1738F68F2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <5081c41b-dfbd-49ad-a993-b983d4c339f0@kernel.org>
+ <OS8PR06MB7541196D3058904998820CFFF2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <9465f8c0-5270-46df-af4b-e9ee78db63d1@kernel.org>
+ <OS8PR06MB7541CC40B6B8877B2656182CF2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <OS8PR06MB75415EC7A912DBD4D21A0035F2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <e3733148-142c-40a1-b250-4502e8726f0c@kernel.org>
+ <OS8PR06MB7541D5AB85D8E44E89389BC3F2862@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <26988bcd-4d58-4100-b89c-00e8ef879329@kernel.org>
+ <OS8PR06MB7541A7E690A2D72BA671622EF28C2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <929c322e-7385-48da-b925-7f363cf5b6f7@kernel.org>
+ <OS8PR06MB7541672B4F9BCAA37E0D4005F28C2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <OS8PR06MB7541672B4F9BCAA37E0D4005F28C2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-T24gV2VkLCAyMDI0LTA4LTE0IGF0IDExOjI2ICswMjAwLCBUZXJlc2EgUmVtbWV0IHdyb3RlOg0K
-PiBGcm9tOiBZYXNod2FudGggVmFyYWthbGEgPHkudmFyYWthbGFAcGh5dGVjLmRlPg0KPiANCj4g
-QWRkIFZDQ181Vl9TVyByZWd1bGF0b3IgcmVmZXJlbmNlIHRvIHRoZSB1c2IxIHBoeSBub2RlIHRv
-IHJlZmxlY3QgdGhlDQo+IHNjaGVtYXRpYy4gVGhpcyBhbHNvIHNpbGVuY2VzIHRoZSBmYWxsYmFj
-ayBkdW1teSByZWd1bGF0b3Igd2FybmluZy4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFlhc2h3YW50
-aCBWYXJha2FsYSA8eS52YXJha2FsYUBwaHl0ZWMuZGU+DQo+IFNpZ25lZC1vZmYtYnk6IFRlcmVz
-YSBSZW1tZXQgPHQucmVtbWV0QHBoeXRlYy5kZT4NClJldmlld2VkLWJ5OiBZYW5uaWMgTW9vZyA8
-eS5tb29nQHBoeXRlYy5kZT4NCg0KPiAtLS0NCj4gwqBhcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVz
-Y2FsZS9pbXg4bXAtcGh5Ym9hcmQtcG9sbHV4LXJkay5kdHMgfCAxICsNCj4gwqAxIGZpbGUgY2hh
-bmdlZCwgMSBpbnNlcnRpb24oKykNCj4gDQo+IGRpZmYgLS1naXQgYS9hcmNoL2FybTY0L2Jvb3Qv
-ZHRzL2ZyZWVzY2FsZS9pbXg4bXAtcGh5Ym9hcmQtcG9sbHV4LXJkay5kdHMNCj4gYi9hcmNoL2Fy
-bTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9pbXg4bXAtcGh5Ym9hcmQtcG9sbHV4LXJkay5kdHMNCj4g
-aW5kZXggNjJmMTgxOWJjMWE0Li42ZTgxODcwZTE3N2MgMTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJt
-NjQvYm9vdC9kdHMvZnJlZXNjYWxlL2lteDhtcC1waHlib2FyZC1wb2xsdXgtcmRrLmR0cw0KPiAr
-KysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9pbXg4bXAtcGh5Ym9hcmQtcG9sbHV4
-LXJkay5kdHMNCj4gQEAgLTI2MCw2ICsyNjAsNyBAQCAmdXNiX2R3YzNfMCB7DQo+IMKgDQo+IMKg
-LyogVVNCMiA0LXBvcnQgVVNCMy4wIEhVQiAqLw0KPiDCoCZ1c2IzX3BoeTEgew0KPiArCXZidXMt
-c3VwcGx5ID0gPCZyZWdfdmNjXzV2X3N3PjsNCj4gwqAJc3RhdHVzID0gIm9rYXkiOw0KPiDCoH07
-DQo+IMKgDQo+IA0KDQo=
+On 19/08/2024 08:42, Ryan Chen wrote:
+>> Subject: Re: [PATCH 3/4] dt-bindings: clock: Add AST2700 clock bindings
+>>
+>> On 19/08/2024 07:55, Ryan Chen wrote:
+>>>> Subject: Re: [PATCH 3/4] dt-bindings: clock: Add AST2700 clock
+>>>> bindings
+>>>>
+>>>> On 13/08/2024 03:53, Ryan Chen wrote:
+>>>>>> Drop the define for number of clocks from the header, because it is
+>>>>>> not a
+>>>>
+>>>> *NUMBER OF CLOCKS*
+>>>>
+>>>>>> binding. You can put it in the driver or not, I don't care and do
+>>>>>> not provide guidance on this because I don't know if it makes sense at all.
+>>>>>> What I know is that number of clocks is not related to binding. It
+>>>>>> is not needed
+>>>>
+>>>> *NUMBER OF CLOCKS*
+>>>>
+>>>>>> in the binding, either.
+>>>>>
+>>>>> Sorry, I am confused.
+>>>>> if you think that number of clocks is not related to binding.
+>>>>
+>>>> *NUMBER OF CLOCKS*
+>>>>
+>>>>> How dtsi claim for clk?
+>>>>> For example in dtsi.
+>>>>> include <dt-bindings/clock/aspeed,ast2700-clk.h>
+>>>>> usb3bhp: usb3bhp {
+>>>>> ....
+>>>>> clocks = <&syscon0 SCU0_CLK_GATE_PORTAUSB>;
+>>>>
+>>>> And where is *NUMBER OF CLOCKS* here? I don't see any problem. No
+>>>> useless SCU0_CLK_GATE_NUM define here.
+>>>>
+>>> Understood now, I will remove those *NUMBER OF CLOCKS*.
+>>> And will replace to
+>>> #define SCU0_CLK_END  34
+>>
+>> NAK, it's like you keep ignoring my comments entirely. Even if you call it
+>> "SCU0_CLK_NOT_END" it does not change. Do you understand that it is not
+>> about name? Read my first comment.
+>>
+>>>
+>>> Refer:
+>>> https://github.com/torvalds/linux/blob/master/include/dt-bindings/cloc
+>>> k/imx8-clock.h#L87
+>>
+>> So you found a bug and this allows you to create the same bug?
+>>
+> Sorry, I don't see this is a bug.
+
+No, it's not a bug, but I do not agree for using arguments like "someone
+did it, so I can do the same". Why did you pick up exactly this example
+instead of others who removed the clock number?
+
+> But I try to understand your point, you prefer following for clock nums, am I correct?
+> https://github.com/torvalds/linux/blob/master/drivers/clk/meson/g12a.c#L5558-L5559
+
+I said that this is not a binding. Don't add to the binding things which
+are not a binding.
+
+I don't care how do you implement in drivers - there are several ways
+how to achieve it.
+
+
+Best regards,
+Krzysztof
+
 
