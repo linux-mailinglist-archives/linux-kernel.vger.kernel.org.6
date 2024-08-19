@@ -1,94 +1,53 @@
-Return-Path: <linux-kernel+bounces-291871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A1195685A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:25:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01622956847
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:23:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8002E28309D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:25:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2D04283482
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16A6161916;
-	Mon, 19 Aug 2024 10:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F77160884;
+	Mon, 19 Aug 2024 10:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="bj46Ioii"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ndktHXVp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BFE16630A
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 10:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A976A1607BA;
+	Mon, 19 Aug 2024 10:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724063053; cv=none; b=XoojXJ1iE7p5LI2kNsH88N3mn9m/0oF6tDXO5Z67qFdTpnX8GU09UDtHJdLS7Q9Cy65t/p55sEUpZGu7/PPcOAFEXZt44zZBCWMT9CKrig8OjMhRQouj2z9Thlk8crR9em1H1YPgRTv8bebBieyEBaEPmxAezO85ZYLb+FcKxMo=
+	t=1724063028; cv=none; b=cXrWUCs29OyemgMmrdzzEnunhoNiw5mESCnGuXEU/Ly9Djgmua/v1wmclPgZqZhPJm8d2979GAZuDunnEjnuCgP+9I8OyqPPwW8KKmeF9hha0WiWB8yhtvT4DIm5gXRRxe5CXYDgb+5YDB12lJVAmb61MxMlAnhZSgPTzJrXFbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724063053; c=relaxed/simple;
-	bh=iuui/HPIsvJlBttBbi1K8qw454aF9AjMuFqri9PZOtM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eW3mSwLaI8ECxWK4rbn8V0jDU+pa/ozWEigJOe+n5yPGaBcVAvw3mEAv3bTzI0kfSDL0hROUzJ3ceurmf/EDmCRwVCoZN20kZwledXkJ5v+Jh6+q9KOTza5RxvVmkKC5cE5k/a9qJw12Nn6tCw6bDJKvwLzfLsIWuv3+6Sv19N8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=bj46Ioii; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-530c2e5f4feso4309865e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 03:24:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1724063049; x=1724667849; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cJAAHX/Rm3TAMRb2o60KMuYQ9YFxv++1+My4+7vhVCo=;
-        b=bj46IoiiWam0g3KwRLvZIFAcp4Z+ZRxIFrwKpj4Bhk9ep7bH3PvUivnfDSMDcCVjB5
-         /69ONMH1DKo5Dy0k7yWQWsmSbCYrXT7G7rsOSv7OpTisaqF/aTEf8OUnT+aSvBPERFbh
-         uVMFdCD5+Aw5kN005WQsUZ0HYpUnzVIpVXadGDvHjF4NE0O2bJqkHYyj8UFEa84BPBUO
-         +oqSOpZdpMB3OXwN3XXJIUTHkeqC+ElDWh1CkPKXCVssUur3M/941deV6O1vNatEt4YB
-         de5mN0pH4m21ajZwdXNp1dC5qvgfvqM52l505z8fR/M6KGPVyLrn+ptAx+M5ANkBXKPg
-         zGug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724063049; x=1724667849;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cJAAHX/Rm3TAMRb2o60KMuYQ9YFxv++1+My4+7vhVCo=;
-        b=Hmx9M1ojtdZOV5hz75HPeBlm617JEAqeTvNEqeXANosb18Cf6iz4ARNlaY2nR/zwYd
-         RAlpmkEmwB7Ppcict9RxVZ9JRMpxyWPA5nquSBIHRilbh8rYUkKzeLYEkS4Iw5m/skAX
-         rU+TR6MavZIbT1nM+x7tfCVveMNryCtXdRQNGaYH6up8uVO262IJemjSf1KBvbCpnWvd
-         bphLJBIaj++XMQBsfLJMCoM9cWaYyals87xWorZhVHYqZTOXlHCOoG+qzsWo2CIW+C++
-         icurr16LtUx/MGNi539hg32vIl3CsriPK7MPR9GdKYdfLb0snS3YxczQlCUSYbMNYc9S
-         QpLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVoxklKI0LYM2deySyysR0nYxFiBFq/dR58m1ek4tQc7Gg1/z/lUkZWmGXhdZ6Tws1JIlFfTZ3CRs1FwkGz5fFQRSME69f5QhpHveXT
-X-Gm-Message-State: AOJu0YxPQMPtfa9AILa2B+3dO+bmkHf6NdKertOo69MfZ9xXR0mY53uO
-	2OfajAY8Ska42JVFUdCSLPB4zX216Ehj8j3zWnqdcArMs6KDfEabw2doNvDdmtw=
-X-Google-Smtp-Source: AGHT+IF6YLoU4+bdX/oi9H4050Ee34mAfR7HKwspOjdSdAdR1SgAGVkn5mx2EKeRNfJfEy9Yw0Tn7Q==
-X-Received: by 2002:a05:6512:128b:b0:52e:9ecd:3465 with SMTP id 2adb3069b0e04-5331c6e4635mr6348525e87.57.1724063049174;
-        Mon, 19 Aug 2024 03:24:09 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed650402sm106690275e9.11.2024.08.19.03.24.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 03:24:08 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: chris.brandt@renesas.com,
-	andi.shyti@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	p.zabel@pengutronix.de,
-	wsa+renesas@sang-engineering.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	claudiu.beznea@tuxon.dev,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v4 04/11] i2c: riic: Enable runtime PM autosuspend support
-Date: Mon, 19 Aug 2024 13:23:41 +0300
-Message-Id: <20240819102348.1592171-5-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240819102348.1592171-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20240819102348.1592171-1-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1724063028; c=relaxed/simple;
+	bh=FZHQ9VvduvDn1bnce/kD7k3NQT3iI7OL+dLY5pkUEQU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qhchSGbjhf5/EIv+M71IHA7E98w0jwgUstTPbCT86PKjxxBXk6/Ljk9vJeTtgx8Nppm81q4e13/FGNZgkNi5vlePFrS4kt/1BP/qcKwcafAuYNb3eP3p4KK7IVxlKrRus0hD0inG/cykHtKuradZwMbCWZTW9/eSP/26ET0H+aM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ndktHXVp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96C1EC32782;
+	Mon, 19 Aug 2024 10:23:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724063028;
+	bh=FZHQ9VvduvDn1bnce/kD7k3NQT3iI7OL+dLY5pkUEQU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ndktHXVpfiz+5hCu9g+Fp6L5b4WL078TvHZccuZ4aCXlRXVmP+JXIOXHWLRmOyUIp
+	 gYB3MLQxHQ3PV+HqI5vDPLvjGjEx/VSEsngxm/Kga0WR1ZcNM4VmB3/x3Hrhp+FQVZ
+	 2QDXdVEM3X4Yx2amEMzJlW9xItEg11weDbBVJojbGE2THAx8pHIDcpjKgkexbmbcbe
+	 w6WcmLKYasl9lZPHmbF0qLw5NMfe0Y2oKp4vUjsKg8Y4BpWhlX1FG7AzsGuIeWqM5/
+	 lat8ZVGhuS+Xw0p/jHt3rpwignBjY7IRGo7pKckeEDqXNbTb52aSyNsE/bJracsHz9
+	 rNyxPct6PZdPw==
+From: tzungbi@kernel.org
+To: lee@kernel.org
+Cc: tzungbi@kernel.org,
+	chrome-platform@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mfd: cros_ec: update module description
+Date: Mon, 19 Aug 2024 18:23:42 +0800
+Message-ID: <20240819102342.5265-1-tzungbi@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,84 +56,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Tzung-Bi Shih <tzungbi@kernel.org>
 
-Enable runtime PM autosuspend support for the RIIC driver. With this, in
-case there are consecutive xfer requests the device wouldn't be runtime
-enabled/disabled after each consecutive xfer but after the
-the delay configured by user. With this, we can avoid touching hardware
-registers involved in runtime PM suspend/resume saving in this way some
-cycles. The default chosen autosuspend delay is zero to keep the
-previous driver behavior.
+The module description can be backtracked to commit e7c256fbfb15
+("platform/chrome: Add Chrome OS EC userspace device interface").
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+The description became out-of-date after a bunch of changes.  E.g.:
+- 5668bfdd90cd ("platform/chrome: cros_ec_dev - Register cros-ec sensors").
+- ea01a31b9058 ("cros_ec: Split cros_ec_devs module").
+- 5e0115581bbc ("cros_ec: Move cros_ec_dev module to drivers/mfd").
+
+Update the description.
+
+Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
 ---
+ drivers/mfd/cros_ec_dev.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Changes in v4:
-- collected tags
-- added a comment on top of pm_runtime_set_autosuspend_delay()
-
-Changes in v3:
-- none
-
-Changes in v2:
-- none
-
- drivers/i2c/busses/i2c-riic.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
-index 6fc41bde2ec2..ec854a525a0b 100644
---- a/drivers/i2c/busses/i2c-riic.c
-+++ b/drivers/i2c/busses/i2c-riic.c
-@@ -171,7 +171,8 @@ static int riic_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
- 	}
+diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+index 55b30076763b..8a22bd31a707 100644
+--- a/drivers/mfd/cros_ec_dev.c
++++ b/drivers/mfd/cros_ec_dev.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+- * cros_ec_dev - expose the Chrome OS Embedded Controller to user-space
++ * ChromeOS Embedded Controller MFD
+  *
+  * Copyright (C) 2014 Google, Inc.
+  */
+@@ -377,6 +377,6 @@ module_init(cros_ec_dev_init);
+ module_exit(cros_ec_dev_exit);
  
-  out:
--	pm_runtime_put(dev);
-+	pm_runtime_mark_last_busy(dev);
-+	pm_runtime_put_autosuspend(dev);
- 
- 	return riic->err ?: num;
- }
-@@ -399,7 +400,8 @@ static int riic_init_hw(struct riic_dev *riic, struct i2c_timings *t)
- 
- 	riic_clear_set_bit(riic, ICCR1_IICRST, 0, RIIC_ICCR1);
- 
--	pm_runtime_put(dev);
-+	pm_runtime_mark_last_busy(dev);
-+	pm_runtime_put_autosuspend(dev);
- 	return 0;
- }
- 
-@@ -479,6 +481,9 @@ static int riic_i2c_probe(struct platform_device *pdev)
- 
- 	i2c_parse_fw_timings(dev, &i2c_t, true);
- 
-+	/* Default 0 to save power. Can be overridden via sysfs for lower latency. */
-+	pm_runtime_set_autosuspend_delay(dev, 0);
-+	pm_runtime_use_autosuspend(dev);
- 	pm_runtime_enable(dev);
- 
- 	ret = riic_init_hw(riic, &i2c_t);
-@@ -496,6 +501,7 @@ static int riic_i2c_probe(struct platform_device *pdev)
- 
- out:
- 	pm_runtime_disable(dev);
-+	pm_runtime_dont_use_autosuspend(dev);
- 	return ret;
- }
- 
-@@ -512,6 +518,7 @@ static void riic_i2c_remove(struct platform_device *pdev)
- 	}
- 	i2c_del_adapter(&riic->adapter);
- 	pm_runtime_disable(dev);
-+	pm_runtime_dont_use_autosuspend(dev);
- }
- 
- static const struct riic_of_data riic_rz_a_info = {
+ MODULE_AUTHOR("Bill Richardson <wfrichar@chromium.org>");
+-MODULE_DESCRIPTION("Userspace interface to the Chrome OS Embedded Controller");
++MODULE_DESCRIPTION("ChromeOS Embedded Controller MFD");
+ MODULE_VERSION("1.0");
+ MODULE_LICENSE("GPL");
 -- 
-2.39.2
+2.43.0
 
 
