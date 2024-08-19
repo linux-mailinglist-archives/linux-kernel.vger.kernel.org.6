@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-291760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 210BD956678
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:12:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BCAC95667A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8AC8B21DDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:12:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9C781F227BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01A015DBA5;
-	Mon, 19 Aug 2024 09:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC7415E5BD;
+	Mon, 19 Aug 2024 09:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eqV4Y8KP"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NFMTQKZd"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63B515D5CA
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78DF15E5B5
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724058725; cv=none; b=bk1QZ2u+NBX1nJKOT9LL+GSFSVqt39ueGlmSRQPmr3TccpOncADH8peDHNaG72lFSPz1pEnXz8QSXyQq9gT5GrJfycgnvsw/7+p/ZfJ4KSP/iK03QgNI5uKESJr15eXZKfl2HZIldjUhoRL9BH/SjQQozekh+9q6i7Bsg53orEE=
+	t=1724058729; cv=none; b=FBjncXTcsGPm3tRaNCkEvECLVwVto0RDS/KLDO1YQs16MVUz/7eKnexOeNvTCdLjZ1TWp3r8rJg9vAGGv3+pcyYf5uRE3+tuhBBc3baX7+Uxx+XbVLb8m3GWjVaLGnmu22YTYhwIBmP8kFTr4fd2pHXVHYXEnsOWCd2s6qzz+uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724058725; c=relaxed/simple;
-	bh=csvCzZvBVUWF14qlTRdmEc3PVkBgBqKSchd8doa8UpI=;
+	s=arc-20240116; t=1724058729; c=relaxed/simple;
+	bh=D1bSyYfHNPk7edhBSRp+tNk9imiD3d76nZBkbDrWfOY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FZ182MIIaVRcvVOhJLAlCXCnz+D9l5uFv8+CpSwdMYZk2h2Gm6i2HRnJdLlAOCM1kNDBsDdXtdRjFPAzmELQZp3cVbt6feWXc7E343sUpGntwKt9ANSwX/MNLNcju+O48cbpB31D0dnLsQhwWHNzRx/sa/K8Y83KOnx6DAUcQW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eqV4Y8KP; arc=none smtp.client-ip=198.175.65.13
+	 MIME-Version; b=TvR+ihQFv1mT4YAvV5ECD0TV37UAWxfZbgIH0/QuVF5APvwMIy8ONRGwZuUfZ3/LOshQ28XDybQ1ajVECji45oBLK7FRA/QX1VQuRu5Q3WIZpcocPWIZ30PmztYVPftZgWgbM7NBSYFNvQ5F+yEswgosuF5Mwq0yqYpDyESBsBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NFMTQKZd; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724058723; x=1755594723;
+  t=1724058728; x=1755594728;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=csvCzZvBVUWF14qlTRdmEc3PVkBgBqKSchd8doa8UpI=;
-  b=eqV4Y8KPfklNijpWs3FWVhJ9qnCNHuP6whnhNnj/ZVIMwBb0eB7aJg9N
-   eiRT14K84N/qQPcI4ZPWwkbA7iXwCnzIUXEpT58yjFVh0VbWbhbz0232c
-   jlgaTgHXEseB9wfLveJP4DBgJ3p9twHPoVhWZTkLKKlzbo5ioHZ5VZUbU
-   Vsp1bCcnDPxPUzJtx0esmqf2hHUyrOsePELT2FI5lD1xVSb3vD7XHhzxM
-   QcNunwL9u65Csl55Rls167FT5ykv+YBBUf4jv7cWRQkkMcXebwnLjrTpB
-   C/ZqcXWGaXmjhNfhdSQT8DSBlY1+kPhgFdaQ6i3Jz2ol/AOyeW8FVnQvf
+  bh=D1bSyYfHNPk7edhBSRp+tNk9imiD3d76nZBkbDrWfOY=;
+  b=NFMTQKZd5KpA8aU9w8aOy6A5TX5gjWt+Sq7/HxWoxrkUBbWxjSiInMQV
+   3OPdTByPtwuGGbq4UuVTus5eX2NXs7mtMVjqcOWfDQ+7yXmUB/YC95gUQ
+   mQxo3femQ3lwzSQhH4ZULX0pOubVI7rvRQYHRbXFITzYAu+oN6rK/dEuu
+   +N28JB/GPz+Zby7s2x9IqrCnFNdam4Eh19iclpo/4MzWBveBHfcaeM/mk
+   JjUe+EYyy6/8hA8jIpr6XqSoxIRSUQP/rPObMUqLF/CSQUb3u4V51MS+s
+   VyBYytaMA6F7e0mJ4dtVUFQgy/qUXERxOKHVj6IiD4TfYp651gu9LV3hu
    w==;
-X-CSE-ConnectionGUID: Qh4/+5cDQFGH9Wl8HBXihQ==
-X-CSE-MsgGUID: U4YU7CjMQxaEoJ9D+Rb3BQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="33446105"
+X-CSE-ConnectionGUID: 12aNCb99RgSi7ETNFlDMvw==
+X-CSE-MsgGUID: uTJrsEkKTLCbMvqn94Z27A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="33446111"
 X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="33446105"
+   d="scan'208";a="33446111"
 Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 02:12:03 -0700
-X-CSE-ConnectionGUID: CU5GPrQWQzmc2g3i7w0Y5A==
-X-CSE-MsgGUID: tGVUPxZoTGy78TZdej10ZQ==
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 02:12:07 -0700
+X-CSE-ConnectionGUID: oZF2dkRsSYKRrhhflQPBMQ==
+X-CSE-MsgGUID: ZqrrxDkPRwuiKvPh04Ce8w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="61086725"
+   d="scan'208";a="61086730"
 Received: from emr.sh.intel.com ([10.112.229.56])
-  by orviesa008.jf.intel.com with ESMTP; 19 Aug 2024 02:12:01 -0700
+  by orviesa008.jf.intel.com with ESMTP; 19 Aug 2024 02:12:04 -0700
 From: Dapeng Mi <dapeng1.mi@linux.intel.com>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@redhat.com>,
@@ -72,9 +72,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
 	Dapeng Mi <dapeng1.mi@intel.com>,
 	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: [Patch v2 3/4] perf/x86/intel: Support hybrid PMU with multiple atom uarchs
-Date: Mon, 19 Aug 2024 14:55:42 +0000
-Message-Id: <20240819145543.1833126-4-dapeng1.mi@linux.intel.com>
+Subject: [Patch v2 4/4] perf/x86/intel: Add PMU support for ArrowLake-H
+Date: Mon, 19 Aug 2024 14:55:43 +0000
+Message-Id: <20240819145543.1833126-5-dapeng1.mi@linux.intel.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240819145543.1833126-1-dapeng1.mi@linux.intel.com>
 References: <20240819145543.1833126-1-dapeng1.mi@linux.intel.com>
@@ -86,121 +86,239 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The upcoming ARL-H hybrid processor contains 2 different atom uarchs
-which have different PMU capabilities. To distinguish these atom uarchs,
-CPUID.1AH.EAX[23:0] defines a native model ID which can be used to
-uniquely identify the uarch of the core by combining with core type.
+ArrowLake-H contains 3 different uarchs, LionCove, Skymont and Crestmont.
+It is different with previous hybrid processors which only contains two
+kinds of uarchs.
 
-Thus a 3rd hybrid pmu type "hybrid_tiny" is defined to mark the 2nd
-atom uarch. The helper find_hybrid_pmu_for_cpu() would compare the
-hybrid pmu type and dynamically read core native id from cpu to identify
-the corresponding hybrid pmu structure.
+This patch adds PMU support for ArrowLake-H processor, adds ARL-H
+specific events which supports the 3 kinds of uarchs, such as
+td_retiring_arl_h, and extends some existed format attributes like
+offcore_rsp to make them be available to support ARL-H as well. Althrough
+these format attributes like offcore_rsp have been extended to support
+ARL-H, they can still support the regular hybrid platforms with 2 kinds
+of uarchs since the helper hybrid_format_is_visible() would filter PMU
+types and only show the format attribute for available PMUs.
 
 Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 Tested-by: Yongwei Ma <yongwei.ma@intel.com>
 ---
- arch/x86/events/intel/core.c | 24 +++++++++++++++++-------
- arch/x86/events/perf_event.h | 22 +++++++++++++++++++---
- 2 files changed, 36 insertions(+), 10 deletions(-)
+ arch/x86/events/intel/core.c | 105 ++++++++++++++++++++++++++++++++++-
+ arch/x86/events/intel/ds.c   |  21 +++++++
+ arch/x86/events/perf_event.h |   4 ++
+ 3 files changed, 127 insertions(+), 3 deletions(-)
 
 diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 0c9c2706d4ec..62ef039f461f 100644
+index 62ef039f461f..894cf911719b 100644
 --- a/arch/x86/events/intel/core.c
 +++ b/arch/x86/events/intel/core.c
-@@ -4902,17 +4902,26 @@ static struct x86_hybrid_pmu *find_hybrid_pmu_for_cpu(void)
+@@ -4589,6 +4589,28 @@ static enum hybrid_cpu_type adl_get_hybrid_cpu_type(void)
+ 	return HYBRID_INTEL_CORE;
+ }
  
- 	/*
- 	 * This essentially just maps between the 'hybrid_cpu_type'
--	 * and 'hybrid_pmu_type' enums:
-+	 * and 'hybrid_pmu_type' enums except for ARL-H processor
-+	 * which needs to compare atom uarch native id since ARL-H
-+	 * contains two different atom uarchs.
- 	 */
- 	for (i = 0; i < x86_pmu.num_hybrid_pmus; i++) {
- 		enum hybrid_pmu_type pmu_type = x86_pmu.hybrid_pmu[i].pmu_type;
-+		u32 native_id;
- 
--		if (cpu_type == HYBRID_INTEL_CORE &&
--		    pmu_type == hybrid_big)
--			return &x86_pmu.hybrid_pmu[i];
--		if (cpu_type == HYBRID_INTEL_ATOM &&
--		    pmu_type == hybrid_small)
-+		if (cpu_type == HYBRID_INTEL_CORE && pmu_type == hybrid_big)
- 			return &x86_pmu.hybrid_pmu[i];
-+		if (cpu_type == HYBRID_INTEL_ATOM) {
-+			if (x86_pmu.num_hybrid_pmus == 2 && pmu_type == hybrid_small)
-+				return &x86_pmu.hybrid_pmu[i];
++static struct event_constraint *
++arl_h_get_event_constraints(struct cpu_hw_events *cpuc, int idx,
++			  struct perf_event *event)
++{
++	struct x86_hybrid_pmu *pmu = hybrid_pmu(event->pmu);
 +
-+			native_id = get_this_hybrid_cpu_native_id();
-+			if (native_id == skt_native_id && pmu_type == hybrid_small)
-+				return &x86_pmu.hybrid_pmu[i];
-+			if (native_id == cmt_native_id && pmu_type == hybrid_tiny)
-+				return &x86_pmu.hybrid_pmu[i];
-+		}
- 	}
- 
- 	return NULL;
-@@ -6218,6 +6227,7 @@ static inline int intel_pmu_v6_addr_offset(int index, bool eventsel)
- static const struct { enum hybrid_pmu_type id; char *name; } intel_hybrid_pmu_type_map[] __initconst = {
- 	{ hybrid_small, "cpu_atom" },
- 	{ hybrid_big, "cpu_core" },
-+	{ hybrid_tiny, "cpu_lowpower" },
++	if (pmu->pmu_type == hybrid_tiny)
++		return cmt_get_event_constraints(cpuc, idx, event);
++
++	return mtl_get_event_constraints(cpuc, idx, event);
++}
++
++static int arl_h_hw_config(struct perf_event *event)
++{
++	struct x86_hybrid_pmu *pmu = hybrid_pmu(event->pmu);
++
++	if (pmu->pmu_type == hybrid_tiny)
++		return intel_pmu_hw_config(event);
++
++	return adl_hw_config(event);
++}
++
+ /*
+  * Broadwell:
+  *
+@@ -5952,6 +5974,37 @@ static struct attribute *lnl_hybrid_events_attrs[] = {
+ 	NULL
  };
  
- static __always_inline int intel_pmu_init_hybrid(enum hybrid_pmu_type pmus)
-@@ -6250,7 +6260,7 @@ static __always_inline int intel_pmu_init_hybrid(enum hybrid_pmu_type pmus)
- 							0, x86_pmu_num_counters(&pmu->pmu), 0, 0);
++/* The event string must be in PMU IDX order. */
++EVENT_ATTR_STR_HYBRID(topdown-retiring,
++		      td_retiring_arl_h,
++		      "event=0xc2,umask=0x02;event=0x00,umask=0x80;event=0xc2,umask=0x0",
++		      hybrid_big_small_tiny);
++EVENT_ATTR_STR_HYBRID(topdown-bad-spec,
++		      td_bad_spec_arl_h,
++		      "event=0x73,umask=0x0;event=0x00,umask=0x81;event=0x73,umask=0x0",
++		      hybrid_big_small_tiny);
++EVENT_ATTR_STR_HYBRID(topdown-fe-bound,
++		      td_fe_bound_arl_h,
++		      "event=0x9c,umask=0x01;event=0x00,umask=0x82;event=0x71,umask=0x0",
++		      hybrid_big_small_tiny);
++EVENT_ATTR_STR_HYBRID(topdown-be-bound,
++		      td_be_bound_arl_h,
++		      "event=0xa4,umask=0x02;event=0x00,umask=0x83;event=0x74,umask=0x0",
++		      hybrid_big_small_tiny);
++
++static struct attribute *arl_h_hybrid_events_attrs[] = {
++	EVENT_PTR(slots_adl),
++	EVENT_PTR(td_retiring_arl_h),
++	EVENT_PTR(td_bad_spec_arl_h),
++	EVENT_PTR(td_fe_bound_arl_h),
++	EVENT_PTR(td_be_bound_arl_h),
++	EVENT_PTR(td_heavy_ops_adl),
++	EVENT_PTR(td_br_mis_adl),
++	EVENT_PTR(td_fetch_lat_adl),
++	EVENT_PTR(td_mem_bound_adl),
++	NULL,
++};
++
+ /* Must be in IDX order */
+ EVENT_ATTR_STR_HYBRID(mem-loads,     mem_ld_adl,     "event=0xd0,umask=0x5,ldlat=3;event=0xcd,umask=0x1,ldlat=3", hybrid_big_small);
+ EVENT_ATTR_STR_HYBRID(mem-stores,    mem_st_adl,     "event=0xd0,umask=0x6;event=0xcd,umask=0x2",                 hybrid_big_small);
+@@ -5970,6 +6023,21 @@ static struct attribute *mtl_hybrid_mem_attrs[] = {
+ 	NULL
+ };
  
- 		pmu->intel_cap.capabilities = x86_pmu.intel_cap.capabilities;
--		if (pmu->pmu_type & hybrid_small) {
-+		if (pmu->pmu_type & hybrid_small_tiny) {
- 			pmu->intel_cap.perf_metrics = 0;
- 			pmu->intel_cap.pebs_output_pt_available = 1;
- 			pmu->mid_ack = true;
++EVENT_ATTR_STR_HYBRID(mem-loads,
++		      mem_ld_arl_h,
++		      "event=0xd0,umask=0x5,ldlat=3;event=0xcd,umask=0x1,ldlat=3;event=0xd0,umask=0x5,ldlat=3",
++		      hybrid_big_small_tiny);
++EVENT_ATTR_STR_HYBRID(mem-stores,
++		      mem_st_arl_h,
++		      "event=0xd0,umask=0x6;event=0xcd,umask=0x2;event=0xd0,umask=0x6",
++		      hybrid_big_small_tiny);
++
++static struct attribute *arl_h_hybrid_mem_attrs[] = {
++	EVENT_PTR(mem_ld_arl_h),
++	EVENT_PTR(mem_st_arl_h),
++	NULL,
++};
++
+ EVENT_ATTR_STR_HYBRID(tx-start,          tx_start_adl,          "event=0xc9,umask=0x1",          hybrid_big);
+ EVENT_ATTR_STR_HYBRID(tx-commit,         tx_commit_adl,         "event=0xc9,umask=0x2",          hybrid_big);
+ EVENT_ATTR_STR_HYBRID(tx-abort,          tx_abort_adl,          "event=0xc9,umask=0x4",          hybrid_big);
+@@ -5993,8 +6061,8 @@ static struct attribute *adl_hybrid_tsx_attrs[] = {
+ 
+ FORMAT_ATTR_HYBRID(in_tx,       hybrid_big);
+ FORMAT_ATTR_HYBRID(in_tx_cp,    hybrid_big);
+-FORMAT_ATTR_HYBRID(offcore_rsp, hybrid_big_small);
+-FORMAT_ATTR_HYBRID(ldlat,       hybrid_big_small);
++FORMAT_ATTR_HYBRID(offcore_rsp, hybrid_big_small_tiny);
++FORMAT_ATTR_HYBRID(ldlat,       hybrid_big_small_tiny);
+ FORMAT_ATTR_HYBRID(frontend,    hybrid_big);
+ 
+ #define ADL_HYBRID_RTM_FORMAT_ATTR	\
+@@ -6017,7 +6085,7 @@ static struct attribute *adl_hybrid_extra_attr[] = {
+ 	NULL
+ };
+ 
+-FORMAT_ATTR_HYBRID(snoop_rsp,	hybrid_small);
++FORMAT_ATTR_HYBRID(snoop_rsp,	hybrid_small_tiny);
+ 
+ static struct attribute *mtl_hybrid_extra_attr_rtm[] = {
+ 	ADL_HYBRID_RTM_FORMAT_ATTR,
+@@ -7098,6 +7166,37 @@ __init int intel_pmu_init(void)
+ 		name = "lunarlake_hybrid";
+ 		break;
+ 
++	case INTEL_ARROWLAKE_H:
++		intel_pmu_init_hybrid(hybrid_big_small_tiny);
++
++		x86_pmu.pebs_latency_data = arl_h_latency_data;
++		x86_pmu.get_event_constraints = arl_h_get_event_constraints;
++		x86_pmu.hw_config = arl_h_hw_config;
++
++		td_attr = arl_h_hybrid_events_attrs;
++		mem_attr = arl_h_hybrid_mem_attrs;
++		tsx_attr = adl_hybrid_tsx_attrs;
++		extra_attr = boot_cpu_has(X86_FEATURE_RTM) ?
++			mtl_hybrid_extra_attr_rtm : mtl_hybrid_extra_attr;
++
++		/* Initialize big core specific PerfMon capabilities.*/
++		pmu = &x86_pmu.hybrid_pmu[X86_HYBRID_PMU_CORE_IDX];
++		intel_pmu_init_lnc(&pmu->pmu);
++
++		/* Initialize Atom core specific PerfMon capabilities.*/
++		pmu = &x86_pmu.hybrid_pmu[X86_HYBRID_PMU_ATOM_IDX];
++		intel_pmu_init_skt(&pmu->pmu);
++
++		/* Initialize Atom2 core specific PerfMon capabilities.*/
++		pmu = &x86_pmu.hybrid_pmu[X86_HYBRID_PMU_TINY_IDX];
++		intel_pmu_init_grt(&pmu->pmu);
++		pmu->extra_regs = intel_cmt_extra_regs;
++
++		intel_pmu_pebs_data_source_arl_h();
++		pr_cont("ArrowLake-H Hybrid events, ");
++		name = "arrowlake_h_hybrid";
++		break;
++
+ 	default:
+ 		switch (x86_pmu.version) {
+ 		case 1:
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index fa5ea65de0d0..8afc4ad3cd16 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -177,6 +177,17 @@ void __init intel_pmu_pebs_data_source_mtl(void)
+ 	__intel_pmu_pebs_data_source_cmt(data_source);
+ }
+ 
++void __init intel_pmu_pebs_data_source_arl_h(void)
++{
++	u64 *data_source;
++
++	intel_pmu_pebs_data_source_lnl();
++
++	data_source = x86_pmu.hybrid_pmu[X86_HYBRID_PMU_TINY_IDX].pebs_data_source;
++	memcpy(data_source, pebs_data_source, sizeof(pebs_data_source));
++	__intel_pmu_pebs_data_source_cmt(data_source);
++}
++
+ void __init intel_pmu_pebs_data_source_cmt(void)
+ {
+ 	__intel_pmu_pebs_data_source_cmt(pebs_data_source);
+@@ -388,6 +399,16 @@ u64 lnl_latency_data(struct perf_event *event, u64 status)
+ 	return lnc_latency_data(event, status);
+ }
+ 
++u64 arl_h_latency_data(struct perf_event *event, u64 status)
++{
++	struct x86_hybrid_pmu *pmu = hybrid_pmu(event->pmu);
++
++	if (pmu->pmu_type == hybrid_tiny)
++		return cmt_latency_data(event, status);
++
++	return lnl_latency_data(event, status);
++}
++
+ static u64 load_latency_data(struct perf_event *event, u64 status)
+ {
+ 	union intel_x86_pebs_dse dse;
 diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index fdd7d0369d42..6b8e098daf2f 100644
+index 6b8e098daf2f..4ca91830697b 100644
 --- a/arch/x86/events/perf_event.h
 +++ b/arch/x86/events/perf_event.h
-@@ -668,6 +668,13 @@ enum {
- #define PERF_PEBS_DATA_SOURCE_GRT_MAX	0x10
- #define PERF_PEBS_DATA_SOURCE_GRT_MASK	(PERF_PEBS_DATA_SOURCE_GRT_MAX - 1)
+@@ -1592,6 +1592,8 @@ u64 cmt_latency_data(struct perf_event *event, u64 status);
  
+ u64 lnl_latency_data(struct perf_event *event, u64 status);
+ 
++u64 arl_h_latency_data(struct perf_event *event, u64 status);
 +
-+/*
-+ * CPUID.1AH.EAX[31:0] uniquely identifies the microarchitecture
-+ * of the core. Bits 31-24 indicates its core type (Core or Atom)
-+ * and Bits [23:0] indicates the native model ID of the core.
-+ * Core type and native model ID are defined in below enumerations.
-+ */
- enum hybrid_cpu_type {
- 	HYBRID_INTEL_NONE,
- 	HYBRID_INTEL_ATOM	= 0x20,
-@@ -676,13 +683,22 @@ enum hybrid_cpu_type {
+ extern struct event_constraint intel_core2_pebs_event_constraints[];
  
- #define X86_HYBRID_PMU_ATOM_IDX		0
- #define X86_HYBRID_PMU_CORE_IDX		1
-+#define X86_HYBRID_PMU_TINY_IDX		2
+ extern struct event_constraint intel_atom_pebs_event_constraints[];
+@@ -1711,6 +1713,8 @@ void intel_pmu_pebs_data_source_grt(void);
  
- enum hybrid_pmu_type {
- 	not_hybrid,
--	hybrid_small		= BIT(X86_HYBRID_PMU_ATOM_IDX),
--	hybrid_big		= BIT(X86_HYBRID_PMU_CORE_IDX),
-+	hybrid_small = BIT(X86_HYBRID_PMU_ATOM_IDX),
-+	hybrid_big = BIT(X86_HYBRID_PMU_CORE_IDX),
-+	hybrid_tiny = BIT(X86_HYBRID_PMU_TINY_IDX),
-+	/* The belows are only used for matching */
-+	hybrid_big_small = hybrid_big | hybrid_small,
-+	hybrid_small_tiny = hybrid_small | hybrid_tiny,
-+	hybrid_big_small_tiny = hybrid_big | hybrid_small_tiny,
-+};
+ void intel_pmu_pebs_data_source_mtl(void);
  
--	hybrid_big_small	= hybrid_big | hybrid_small, /* only used for matching */
-+enum atom_native_id {
-+	cmt_native_id           = 0x2,  /* Crestmont */
-+	skt_native_id           = 0x3,  /* Skymont */
- };
++void intel_pmu_pebs_data_source_arl_h(void);
++
+ void intel_pmu_pebs_data_source_cmt(void);
  
- struct x86_hybrid_pmu {
+ void intel_pmu_pebs_data_source_lnl(void);
 -- 
 2.40.1
 
