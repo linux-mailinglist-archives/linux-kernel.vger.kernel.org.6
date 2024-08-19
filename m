@@ -1,92 +1,66 @@
-Return-Path: <linux-kernel+bounces-291989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DDA79569D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:50:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF2159569D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:50:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 830641C22508
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:50:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8074B2842F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780C016D9A3;
-	Mon, 19 Aug 2024 11:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA5216B3AB;
+	Mon, 19 Aug 2024 11:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dx+KIxy8"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dIanD26u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6B3169AE6;
-	Mon, 19 Aug 2024 11:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7812C15DBAB;
+	Mon, 19 Aug 2024 11:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724068046; cv=none; b=XQ3n2cqOVRWKsNCElv1x+y+E9+Eopyc1XFtBehog//6UF51kkTdelv9KRAXcQICkMX7SBv9Y4hQSYsj1wP6ABz68TMEDC/ZGpwx/zGvFVJjtOv/Gr8UbXyqlD0O+jWe5jeFHmAcCnCm+aJnFzkAGkY2Q7Q9X20wuns5yUWhZsdI=
+	t=1724068103; cv=none; b=YdeTPef1FHAnotHKiC66E0fcwzBnkNLiZ9nfObc3U1tph555yM3PtR4ok1RLKdItenBaDWl82jGVWcD7ZgGoQDwvrzadUk6e66YyFj85DK6nXHM9s/0M5dRSMoWsnN96EKBcJkh4ZToPZMk0kGC/MMRkf9a+dJRqriK/Qn0M4Zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724068046; c=relaxed/simple;
-	bh=HEuqXXg8KOM1BSeu3oajipebGyT8C3Sey0AM2P+i730=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jq1OqRl6lzdQ+4KOCdT8K+xiX3jSf2ZAUD0I0/cRXdLdn6FPorwKkqF8/s7V3Bz7pMev7lJoV/jMmPrBWfQIGtFZIGw2Rqe36+wLffGU2faZXn7YEtYW/DoI79Nh47k1vqJNinSEFkiiNLK2hY+dMUUu6/XM3rh4y/sbeKDACXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dx+KIxy8; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5bf01bdaff0so539166a12.3;
-        Mon, 19 Aug 2024 04:47:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724068043; x=1724672843; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C+7EmK/x9yGMggIGd6nPIlocVDx2WyNh0YQGki2bgCU=;
-        b=Dx+KIxy85H3kHi+0uovl6YHDaH1yhB73NRGOiB0EbbT811bW/m2LomWEqUKlxp1w66
-         /mikMWscoP7NSEw7AABRyJipDP3c95/3FX8Grbj5I928LW6V6kxy2vJcl1JTqnSa3VGI
-         JiY96lfsPvx7R1peobJO1Uu/awkuICJYGgQ5JdZtDSqzznSAgnqgiOomDlXR7xBBlwBI
-         ffqNCi0KkplpkAKIOix2ZCRl98uN2V/Vd5ThCztvOApZ/Q7lS4FKd4nYq2iQbWOFc9z1
-         CeH7XvbCpIUbXr0IXNdSRRq7f1l//r+OYpKAzbTzHNrkabO3/S0c+P3m+IPr20Ez2ojU
-         2NEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724068043; x=1724672843;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C+7EmK/x9yGMggIGd6nPIlocVDx2WyNh0YQGki2bgCU=;
-        b=lDCm5ImoyxN3DhAH3Tk79LzWlXtswrm4jR9rz6xa7wnj0uXTCQ3qiKWr+UpaO7Hh2C
-         D5o8Nfh/N7p2XBd2ghMmqhaLOlwfaNvLSkd0kCLXX2B7kM0U8sgF5ujm2m1zKWZgwK5i
-         jOG9VFPhBgU67hfXhwXbWa1fiE92cMb2PXS3EW9nxqwJ6cv8AR9z3qGQoAZsdUNg1s1m
-         QbNxzfhQYB57UC14TPZO7JQnoVa7MBWj7DxKn2UOaiSWcv8I3PArmH3oFkYDym210eEQ
-         eDndKx2rWZ3ypSgyPjFnkua7SSHitxCE8uHEHu9BZ42aEk0SWUaeyFkgyHoxXzJTih93
-         DuDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXsdrRsO/pD8gkKz0mtm9TZFwjr3+Um1hthRz9tAubVJNxVgyVJ60kQb67styROAR68FuAC0biwVnU8oT1fMpgd8ELdpkbY1ydVgU7xxlJUIwCZP1zIF255L8JArRqRH2H7
-X-Gm-Message-State: AOJu0YyMODh0CSsdHZwB/kp8GfmoIZib8bv6t0hga2m9tyUlAo6/qMZi
-	LAcXe/KunnIOF+jFA+GBrR6+5LahHbzF3e0ZZjzoMWnlz5P0hDDhiHuyhw==
-X-Google-Smtp-Source: AGHT+IH45mqlxcKm5QQEQ28ZPtqnfTtU8a5TtZIVrd9A3wueqbUcunKHj3cDhW3wunRXDzy6dZLVQQ==
-X-Received: by 2002:a17:907:e291:b0:a75:1069:5b94 with SMTP id a640c23a62f3a-a83928d7cadmr726072366b.21.1724068042810;
-        Mon, 19 Aug 2024 04:47:22 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839344fdsm624106966b.100.2024.08.19.04.47.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 04:47:22 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Mon, 19 Aug 2024 13:47:20 +0200
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Jiri Olsa <olsajiri@gmail.com>,
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Juri Lelli <juri.lelli@redhat.com>, bpf <bpf@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Artem Savkov <asavkov@redhat.com>,
-	"Jose E. Marchesi" <jose.marchesi@oracle.com>
-Subject: Re: NULL pointer deref when running BPF monitor program (6.11.0-rc1)
-Message-ID: <ZsMwyO1Tv6BsOyc-@krava>
-References: <CAADnVQLMPPavJQR6JFsi3dtaaLHB816JN4HCV_TFWohJ61D+wQ@mail.gmail.com>
- <ZrIj9jkXqpKXRuS7@krava>
- <CAADnVQ+NpPtFOrvD0o2F8npCpZwPrLf4dX8h8Rt96uwM+crQcQ@mail.gmail.com>
- <ZrSh8AuV21AKHfNg@krava>
- <CAADnVQLYxdKn-J2-2iXKKKTg=o6xkKWzV2WyYrnmQ-j62b9STA@mail.gmail.com>
- <Zr3q8ihbe8cUdpfp@krava>
- <CAADnVQL2ChR5hGAXoV11QdMjN2WwHTLizfiAjRQfz3ekoj2iqg@mail.gmail.com>
- <20240816101031.6dd1361b@rorschach.local.home>
- <Zr-ho0ncAk__sZiX@krava>
- <20240816153040.14d36c77@rorschach.local.home>
+	s=arc-20240116; t=1724068103; c=relaxed/simple;
+	bh=di0tU9+wqu58rGgOr+Omj7d9W7rETeWgf/iaOGUVmHY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EKSiEH7GW5e498jZiq2MX/VJRO/aM1tTTe7jAj7v10mdguw7cUoF9vj2dNptwKv3mTGkLDOVczaOae+KgZbTohIsHDVAq/ItMfRARMw4A2nFdhHdDrB3bH9AxTVsN9wyKApmwwtuI7YvIlIE7qhk2yYXNYLN10r/QqzjWErFP8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dIanD26u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5C25C32782;
+	Mon, 19 Aug 2024 11:48:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724068103;
+	bh=di0tU9+wqu58rGgOr+Omj7d9W7rETeWgf/iaOGUVmHY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dIanD26u3zjalXAgyNxoh8mvcoQlNL+1sjaVUgNGRdO2jrdhee39iF/NKlWVeMV1m
+	 DT1LGcPYM5KMiMXe2nnbjnqahgKJ89nOMlyfEm7/0nZJC429bKmM+tG0OaLFNR1Jbx
+	 SKu1FlMO7fQIAWeeVwZx9KD62rBo1aqlzdvFv5umXw5+danOLLNFnd5MvNW/eTJGa9
+	 t7tQqS+zO1pcM+DPgZtAIMSPMImg2lkMded86vpeUvxuUGVtAvxGEh/c8EKqPN5Bds
+	 e6KsMM6WJ1gQAWW0EnF5HE680luBKBj66bkmSQZ+3WL2FGKOwlnTQoFFZKTHuALpWV
+	 H/8MalhbbJJOA==
+Date: Mon, 19 Aug 2024 13:48:16 +0200
+From: Alexey Gladkov <legion@kernel.org>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Yuan Yao <yuan.yao@intel.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Yuntao Wang <ytcoode@gmail.com>, Kai Huang <kai.huang@intel.com>,
+	Baoquan He <bhe@redhat.com>, Oleg Nesterov <oleg@redhat.com>,
+	cho@microsoft.com, decui@microsoft.com, John.Starks@microsoft.com
+Subject: Re: [PATCH v3 02/10] x86/tdx: Add validation of userspace MMIO
+ instructions
+Message-ID: <ZsMxAGsYskX0o51m@example.org>
+References: <cover.1722862355.git.legion@kernel.org>
+ <cover.1723807851.git.legion@kernel.org>
+ <f34a16af07be2bf33730ffa9da0c4eaa777087a1.1723807851.git.legion@kernel.org>
+ <3jhsxclq2keesprq43jd7arhiteluppvscutzfdvkwcz3nr5pv@tix36bqw3b5j>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,103 +69,290 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240816153040.14d36c77@rorschach.local.home>
+In-Reply-To: <3jhsxclq2keesprq43jd7arhiteluppvscutzfdvkwcz3nr5pv@tix36bqw3b5j>
 
-On Fri, Aug 16, 2024 at 03:30:40PM -0400, Steven Rostedt wrote:
-> On Fri, 16 Aug 2024 20:59:47 +0200
-> Jiri Olsa <olsajiri@gmail.com> wrote:
-> 
-> > so far the only working solution I have is adding '__nullable' suffix
-> > to argument name:
+On Mon, Aug 19, 2024 at 01:39:17PM +0300, Kirill A. Shutemov wrote:
+> On Fri, Aug 16, 2024 at 03:43:52PM +0200, Alexey Gladkov wrote:
+> > From: "Alexey Gladkov (Intel)" <legion@kernel.org>
 > > 
-> > 	diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-> > 	index 9ea4c404bd4e..fc46f0b42741 100644
-> > 	--- a/include/trace/events/sched.h
-> > 	+++ b/include/trace/events/sched.h
-> > 	@@ -559,9 +559,9 @@ DEFINE_EVENT(sched_stat_runtime, sched_stat_runtime,
-> > 	  */
-> > 	 TRACE_EVENT(sched_pi_setprio,
-> > 	 
-> > 	-	TP_PROTO(struct task_struct *tsk, struct task_struct *pi_task),
-> > 	+	TP_PROTO(struct task_struct *tsk, struct task_struct *pi_task__nullable),
-> > 	 
-> > 	-	TP_ARGS(tsk, pi_task),
-> > 	+	TP_ARGS(tsk, pi_task__nullable),
-> > 	 
-> > 		TP_STRUCT__entry(
-> > 			__array( char,	comm,	TASK_COMM_LEN	)
-> > 	@@ -574,8 +574,8 @@ TRACE_EVENT(sched_pi_setprio,
-> > 			memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
-> > 			__entry->pid		= tsk->pid;
-> > 			__entry->oldprio	= tsk->prio;
-> > 	-		__entry->newprio	= pi_task ?
-> > 	-				min(tsk->normal_prio, pi_task->prio) :
-> > 	+		__entry->newprio	= pi_task__nullable ?
-> > 	+				min(tsk->normal_prio, pi_task__nullable->prio) :
-> > 					tsk->normal_prio;
-> > 			/* XXX SCHED_DEADLINE bits missing */
-> > 		),
+> > Instructions from kernel space are considered trusted. If the MMIO
+> > instruction is from userspace it must be checked.
 > > 
+> > For userspace instructions, it is need to check that the INSN has not
+> > changed at the time of #VE and before the execution of the instruction.
+> 
+> Well, we cannot really check if the instruction changed under us. We can
+> only check if the parsed instruction does an MMIO operation that is
+> allowed for the process.
+
+We also check that the memory access (read/write) type matches. Yes, we
+can't check the instruction itself, but we check the arguments.
+
 > > 
-> > now I'm trying to make work something like:
+> > Once the userspace instruction parsed is enforced that the address
+> > points to mapped memory of current process and that address does not
+> > point to private memory.
 > > 
-> > 	diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-> > 	index 9ea4c404bd4e..4e4aae2d5700 100644
-> > 	--- a/include/trace/events/sched.h
-> > 	+++ b/include/trace/events/sched.h
-> > 	@@ -559,9 +559,9 @@ DEFINE_EVENT(sched_stat_runtime, sched_stat_runtime,
-> > 	  */
-> > 	 TRACE_EVENT(sched_pi_setprio,
-> > 	 
-> > 	-	TP_PROTO(struct task_struct *tsk, struct task_struct *pi_task),
-> > 	+	TP_PROTO(struct task_struct *tsk, struct task_struct *__nullable(pi_task)),
-> > 	 
-> > 	-	TP_ARGS(tsk, pi_task),
-> > 	+	TP_ARGS(tsk, __nullable(pi_task)),
-> > 	 
-> > 		TP_STRUCT__entry(
-> > 			__array( char,	comm,	TASK_COMM_LEN	)
+> > After parsing the userspace instruction, it is necessary to ensure that:
+> > 
+> > 1. the operation direction (read/write) corresponds to #VE info;
+> > 2. the address still points to mapped memory of current process;
+> > 3. the address does not point to private memory.
 > 
-> Hmm, that's really ugly though. Both versions.
+> I don't see where you check 3.
 > 
-> Now when Alexei said:
+> I guess you can add pte_decrypted(pte) check to get_phys_addr().
 > 
-> > > > > > We cannot make all tracepoint pointers to be PTR_TRUSTED | PTR_MAYBE_NULL
-> > > > > > by default, since it will break a bunch of progs.
-> > > > > > Instead we can annotate this tracepoint arg as __nullable and
-> > > > > > teach the verifier to recognize such special arguments of tracepoints. 
-> 
-> I'm not familiar with the verifier, so I don't know how the above is
-> implemented, and why it would break a bunch of progs.
+> But I'm not sure it is strictly needed.
 
-verifier assumes that programs attached to the tracepoint can access
-pointer arguments without checking them for null and some of those
-programs most likely access such arguments directly
+(ve->gpa != cc_mkdec(phys_addr)
 
-changing that globally and require bpf program to do null check for all
-pointer arguments will make verifier fail to load existing programs
+The ve->gpa was checked in the virt_exception_user/kernel().
 
 > 
-> If you had a macro around the parameter:
+> > Signed-off-by: Alexey Gladkov (Intel) <legion@kernel.org>
+> > ---
+> >  arch/x86/coco/tdx/tdx.c | 128 ++++++++++++++++++++++++++++++++++++----
+> >  1 file changed, 115 insertions(+), 13 deletions(-)
+> > 
+> > diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
+> > index af0b6c1cacf7..86c22fec97fb 100644
+> > --- a/arch/x86/coco/tdx/tdx.c
+> > +++ b/arch/x86/coco/tdx/tdx.c
+> > @@ -8,6 +8,7 @@
+> >  #include <linux/export.h>
+> >  #include <linux/io.h>
+> >  #include <linux/kexec.h>
+> > +#include <linux/mm.h>
+> >  #include <asm/coco.h>
+> >  #include <asm/tdx.h>
+> >  #include <asm/vmx.h>
+> > @@ -405,6 +406,84 @@ static bool mmio_write(int size, unsigned long addr, unsigned long val)
+> >  			       EPT_WRITE, addr, val);
+> >  }
+> >  
+> > +static inline bool is_private_gpa(u64 gpa)
+> > +{
+> > +	return gpa == cc_mkenc(gpa);
+> > +}
+> > +
+> > +static int get_phys_addr(unsigned long addr, phys_addr_t *phys_addr, bool *writable)
+> > +{
+> > +	unsigned int level;
+> > +	pgd_t *pgdp;
+> > +	pte_t *ptep;
+> > +
+> > +	/*
+> > +	 * Address validation only makes sense for a user process. The lock must
+> > +	 * be obtained before validation can begin.
+> > +	 */
+> > +	mmap_assert_locked(current->mm);
+> > +
+> > +	pgdp = pgd_offset(current->mm, addr);
+> > +
+> > +	if (!pgd_none(*pgdp)) {
+> > +		ptep = lookup_address_in_pgd(pgdp, addr, &level);
+> > +		if (ptep) {
+> > +			unsigned long offset;
+> > +
+> > +			offset = addr & ~page_level_mask(level);
+> > +			*phys_addr = PFN_PHYS(pte_pfn(*ptep));
+> > +			*phys_addr |= offset;
+> > +
+> > +			*writable = pte_write(*ptep);
+> > +
+> > +			return 0;
+> > +		}
+> > +	}
+> > +
+> > +	return -EFAULT;
+> > +}
+> > +
+> > +static int valid_vaddr(struct ve_info *ve, enum insn_mmio_type mmio, int size,
+> > +		       unsigned long vaddr)
+> > +{
+> > +	phys_addr_t phys_addr;
+> > +	bool writable = false;
+> > +
+> > +	/* It's not fatal. This can happen due to swap out or page migration. */
+> > +	if (get_phys_addr(vaddr, &phys_addr, &writable) || (ve->gpa != cc_mkdec(phys_addr)))
 > 
-> 		TP_PROTO(struct task_struct *tsk, struct task_struct *__nullable(pi_task)),
+> Too long line?
+
+All patches pass checkpatch without warnings.
+
 > 
-> Could having that go through another macro pass in trace_events.h work?
-> That is, could we associate the trace event with "nullable" parameters
-> that could be stored someplace else for you?
+> > +		return -EAGAIN;
+> > +
+> > +	/*
+> > +	 * Re-check whether #VE info matches the instruction that was decoded.
+> > +	 *
+> > +	 * The ve->gpa was valid at the time ve_info was received. But this code
+> > +	 * executed with interrupts enabled, allowing tlb shootdown and therefore
+> > +	 * munmap() to be executed in the parallel thread.
+> > +	 *
+> > +	 * By the time MMIO emulation is performed, ve->gpa may be already
+> > +	 * unmapped from the process, the device it belongs to removed from
+> > +	 * system and something else could be plugged in its place.
+> > +	 */
+> > +	switch (mmio) {
+> > +	case INSN_MMIO_WRITE:
+> > +	case INSN_MMIO_WRITE_IMM:
+> > +		if (!writable || !(ve->exit_qual & EPT_VIOLATION_ACC_WRITE))
+> > +			return -EFAULT;
+> > +		break;
+> > +	case INSN_MMIO_READ:
+> > +	case INSN_MMIO_READ_ZERO_EXTEND:
+> > +	case INSN_MMIO_READ_SIGN_EXTEND:
+> > +		if (!(ve->exit_qual & EPT_VIOLATION_ACC_READ))
+> > +			return -EFAULT;
+> > +		break;
+> > +	default:
+> > +		WARN_ONCE(1, "Unsupported mmio instruction: %d", mmio);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static int handle_mmio_write(struct insn *insn, enum insn_mmio_type mmio, int size,
+> >  			     struct pt_regs *regs, struct ve_info *ve)
+> >  {
+> > @@ -489,7 +568,7 @@ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
+> >  	enum insn_mmio_type mmio;
+> >  	struct insn insn = {};
+> >  	unsigned long vaddr;
+> > -	int size;
+> > +	int size, ret;
+> >  
+> >  	/* Only in-kernel MMIO is supported */
+> >  	if (WARN_ON_ONCE(user_mode(regs)))
+> > @@ -505,6 +584,17 @@ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
+> >  	if (WARN_ON_ONCE(mmio == INSN_MMIO_DECODE_FAILED))
+> >  		return -EINVAL;
+> >  
+> > +	vaddr = (unsigned long)insn_get_addr_ref(&insn, regs);
+> > +
+> > +	if (current->mm) {
+> 
+> Hm. This path will be taken for any MMIO if it is done in context of a
+> process, even in-kernel only. I don't think we want it. It is useless
+> overhead.
 
-IIUC you mean to store extra data for each tracepoint that would
-annotate the argument? as Alexei pointed out earlier it might be
-too much, because we'd be fine with just adding suffix to annotated
-arguments in __bpf_trace_##call:
+The kthread do not have a current->mm. As an example:
 
-	__bpf_trace_##call(void *__data, proto)                                 \
-	{                                                                       \
-		CONCATENATE(bpf_trace_run, COUNT_ARGS(args))(__data, CAST_TO_U64(args));        \
-	}
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/vfio/vfio_iommu_type1.c#n3053
 
-with that verifier could easily get suffix information from BTF and
-once gcc implements btf_type_tag we can easily switch to that
+Also documentation mention this as the way to check a user context:
 
-jirka
+  (which makes more sense anyway - the test is basically one of "do
+  we have a user context", and is generally done by the page fault
+  handler and things like that).
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/mm/active_mm.rst#n80
+
+> Use user_mode(regs) instead.
+
+I can't use this. When nested exception happens in the handle_mmio_movs()
+the regs will be not in the user mode.
+
+I can make a flag that will be set either for user_mode or if we have a
+nested exception.
+
+> > +		if (mmap_read_lock_killable(current->mm))
+> > +			return -EINTR;
+> > +
+> > +		ret = valid_vaddr(ve, mmio, size, vaddr);
+> > +		if (ret)
+> > +			goto unlock;
+> > +	}
+> > +
+> >  	/*
+> >  	 * Reject EPT violation #VEs that split pages.
+> >  	 *
+> > @@ -514,30 +604,39 @@ static int handle_mmio(struct pt_regs *regs, struct ve_info *ve)
+> >  	 *
+> >  	 * load_unaligned_zeropad() will recover using exception fixups.
+> >  	 */
+> > -	vaddr = (unsigned long)insn_get_addr_ref(&insn, regs);
+> > -	if (vaddr / PAGE_SIZE != (vaddr + size - 1) / PAGE_SIZE)
+> > -		return -EFAULT;
+> > +	if (vaddr / PAGE_SIZE != (vaddr + size - 1) / PAGE_SIZE) {
+> > +		ret = -EFAULT;
+> > +		goto unlock;
+> > +	}
+> >  
+> >  	switch (mmio) {
+> >  	case INSN_MMIO_WRITE:
+> >  	case INSN_MMIO_WRITE_IMM:
+> >  	case INSN_MMIO_MOVS:
+> > -		return handle_mmio_write(&insn, mmio, size, regs, ve);
+> > +		ret = handle_mmio_write(&insn, mmio, size, regs, ve);
+> > +		break;
+> >  	case INSN_MMIO_READ:
+> >  	case INSN_MMIO_READ_ZERO_EXTEND:
+> >  	case INSN_MMIO_READ_SIGN_EXTEND:
+> > -		return handle_mmio_read(&insn, mmio, size, regs, ve);
+> > +		ret = handle_mmio_read(&insn, mmio, size, regs, ve);
+> > +		break;
+> >  	case INSN_MMIO_DECODE_FAILED:
+> >  		/*
+> >  		 * MMIO was accessed with an instruction that could not be
+> >  		 * decoded or handled properly. It was likely not using io.h
+> >  		 * helpers or accessed MMIO accidentally.
+> >  		 */
+> > -		return -EINVAL;
+> > +		ret = -EINVAL;
+> > +		break;
+> >  	default:
+> >  		WARN_ONCE(1, "Unknown insn_decode_mmio() decode value?");
+> > -		return -EINVAL;
+> > +		ret = -EINVAL;
+> >  	}
+> > +unlock:
+> > +	if (current->mm)
+> > +		mmap_read_unlock(current->mm);
+> > +
+> > +	return ret;
+> >  }
+> >  
+> >  static bool handle_in(struct pt_regs *regs, int size, int port)
+> > @@ -681,11 +780,6 @@ static int virt_exception_user(struct pt_regs *regs, struct ve_info *ve)
+> >  	}
+> >  }
+> >  
+> > -static inline bool is_private_gpa(u64 gpa)
+> > -{
+> > -	return gpa == cc_mkenc(gpa);
+> > -}
+> > -
+> >  /*
+> >   * Handle the kernel #VE.
+> >   *
+> > @@ -723,6 +817,14 @@ bool tdx_handle_virt_exception(struct pt_regs *regs, struct ve_info *ve)
+> >  		insn_len = virt_exception_user(regs, ve);
+> >  	else
+> >  		insn_len = virt_exception_kernel(regs, ve);
+> > +
+> > +	/*
+> > +	 * A special case to return to userspace without increasing regs->ip
+> > +	 * to repeat the instruction once again.
+> > +	 */
+> > +	if (insn_len == -EAGAIN)
+> > +		return true;
+> > +
+> >  	if (insn_len < 0)
+> >  		return false;
+> >  
+> > -- 
+> > 2.45.2
+> > 
+> 
+> -- 
+>   Kiryl Shutsemau / Kirill A. Shutemov
+> 
+
+-- 
+Rgrds, legion
+
 
