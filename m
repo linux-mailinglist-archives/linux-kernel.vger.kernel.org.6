@@ -1,312 +1,500 @@
-Return-Path: <linux-kernel+bounces-292259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 272F3956D2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:25:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09ACB956D2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DD681F24651
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:25:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3D3B2816D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 14:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E18E171079;
-	Mon, 19 Aug 2024 14:24:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6BA16EB63;
+	Mon, 19 Aug 2024 14:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="dz06x33Q"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010067.outbound.protection.outlook.com [52.101.69.67])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="KoxoQrPZ";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="KoxoQrPZ"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2084.outbound.protection.outlook.com [40.107.21.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96823170A21;
-	Mon, 19 Aug 2024 14:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724077494; cv=fail; b=dXPo2KUArxTkMeQRRkvZBrX5Adk3aDP5v43aUn6Qxl2NYQjdehQ8EKGEwPYehUymJWgOW6H4502q8rYvwmIMT4j6p7xPLZ/vZib247CUMe0MdaOHdoVTuetzvEdGttaoIoer5SQIZ21ZOB/BoTIsuoSosyhWQKeYR6GD7lJ96pw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724077494; c=relaxed/simple;
-	bh=aQUVD5VY2Kx30GU7AsfE+d/lw6fuSTFDKEoAFyfW5P0=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Zakd1lfGvYL0WLKgRRdgZXBX9j7CwYGlK2uratAEkYc2oDCb39r24BhAb7ogvgAvlcDsKU/zVUW3ZeFftm3aOLkIOXgWPj2H//4zqHiNW7QAP2rM8qraEnBi/FZc2PhdyLhR9ZCQ1NnpRz6MfFA53QbpfDX8m6ZSo4yUsyoJvKc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=dz06x33Q; arc=fail smtp.client-ip=52.101.69.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB69E16EB47
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 14:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.84
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724077572; cv=fail; b=VB2WaDgdImoz8qRoADk2dtmfY9v1/cNMCsqPaD3AIu5AptFx8RUymyAh54x58yZVHsC4gJEEG1OFsJWg9qcVyj2ZeFAa3bJsobomrdNYv0YKnlvYJeCxIXx4kW7nCu7a8PlAlfihyMf8gcqiaXPdzr0qERScGPjlZGbC1p2KoJw=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724077572; c=relaxed/simple;
+	bh=KBspK1huolMzM2iGLwftNFD4UyF0lhAZs7sABPBCMBc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=umKjln53FWyIy0F9rwaeeajExGuQKQpKmlJgHDHr/wqBfb+UoeQ1Ht3jxN7aZzfWq9hkHTFAbxz2cosRWcmthG6BmKgJEJBoxP+q/89uJJj/XO2pRk8yTKoYcbAAF3FFzKxTKdPopS+fS4UyLcLtJDd0xTk0Ns7PWI30Zdpl0AA=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=KoxoQrPZ; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=KoxoQrPZ; arc=fail smtp.client-ip=40.107.21.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=c32GoNXf0DkiD6WaMq1puXAOrds63+jq1h/5lObsKlP8rb8ReFJtDe7ZIehFSTgUV3BMHDXIxWwmB9QZzlC80NzHEH8rO/rJSsiTVzj0MMGORDL33b2utBuMHBwkI9l043vHDemOozL6pz+CbwxUZuz85YfLYEvSRzMiW355w5BNzI48GgdE468AK0SxUAyXEfe2/LaNm1/+EmXb7t1e8UyGol/YA9+NmhRhr3NdomX0pBq5v/Qo42eubvf9ShcDhzNW0AzMJ9UKmnUuzvWP8IjjJuaflS6kT+ioJzs+xZigFAmJ3E8Ks6a520V6JcCN+kfTO3XXenstjiV88DCojg==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rVUlTBd+wk/VOfDGr3XflHiWY0YW89MDvJj0GTXJW4c=;
+ b=ikcUmepx0X0ImrqJQKw1eBdCoORVbrqiu5F6ksCUhogfs2pbu8fECBxcpKq+RmYzd30/g2rI4VodWrAheZxdvhKQOBCyoFwVyduw8AhVmtj0771XCsgMymh+QMHGEcxReP/UVd8zKqwo4TpkotE8KuHoH3CZbDdW6nuOkeM+VOxCrOqnxUu3if7ezFXB9CGTHEjdyk+Y5U2qTHBO+tjkYHtyPfr8o7TU6Bbt5ua6DlAaocQgdiSkzwwcm6alAugGKpxeCEMC4ggG4KnBkadaW2PmGxYTS1WDcXyO+X1+l7lFnyxnWNtbNjwPE9OoX8RdylNsvIH3745XiUhrwsooGA==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
+ dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rVUlTBd+wk/VOfDGr3XflHiWY0YW89MDvJj0GTXJW4c=;
+ b=KoxoQrPZhzS/sEts6L67Fg+cQUZesKxvGmAhJHpxpuXuMnKv5rrEF5ei7IivwKcyYjuhHcMZAI47SaTYgy+7tsWHGBDPjV6TyYWRP7Xqa6BnQELlZ9GSL+TPdtaV4ckhxjvOLEQ5FNnAQ4iLCFpHg/iQ18S0H9eOfxOdMHO+uBo=
+Received: from AS8PR04CA0133.eurprd04.prod.outlook.com (2603:10a6:20b:127::18)
+ by GV1PR08MB7753.eurprd08.prod.outlook.com (2603:10a6:150:54::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.13; Mon, 19 Aug
+ 2024 14:26:00 +0000
+Received: from AM4PEPF00025F95.EURPRD83.prod.outlook.com
+ (2603:10a6:20b:127:cafe::35) by AS8PR04CA0133.outlook.office365.com
+ (2603:10a6:20b:127::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21 via Frontend
+ Transport; Mon, 19 Aug 2024 14:26:00 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
+ client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
+ pr=C
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ AM4PEPF00025F95.mail.protection.outlook.com (10.167.16.4) with Microsoft SMTP
+ Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.7918.0 via
+ Frontend Transport; Mon, 19 Aug 2024 14:26:00 +0000
+Received: ("Tessian outbound 49bfb235ebbe:v403"); Mon, 19 Aug 2024 14:25:59 +0000
+X-CheckRecipientChecked: true
+X-CR-MTA-CID: ac9670085f575ea2
+X-CR-MTA-TID: 64aa7808
+Received: from Ldcb6ff5ad7b7.1
+	by 64aa7808-outbound-1.mta.getcheckrecipient.com id F176D039-6FF2-4E64-8545-B27A985D1B88.1;
+	Mon, 19 Aug 2024 14:25:53 +0000
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id Ldcb6ff5ad7b7.1
+    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
+    Mon, 19 Aug 2024 14:25:52 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=M5Dl679Bg74et/KAmcGJh/WkPYhmxn8CL9llxuJv7P+x0OaKg3F1uuahE4DyqQ91T+pskCeE4VDVawHVMn8WqBXiEtk5fXRQ5D585j/jFBukINOuJXYWfPM/harEs9jGpXjWlE+lpJloDsdzp2zSPX5klOUBtH3gNzuIm2JfQiRFFWHGN3TIYtAFwOv7+UylUy0gWU1FVyBBtPbTGaxKEv6zGreTRSL0PTTYO/SluLG8DzjncbrHEhMgrPYHwDzGJvRBS14QIHTSScu+wBsCILeI16PWpjjX5GzavXFcGS5TOVawUsGzIdNLORr6gMcnWLsKjBJyspXEp9fz5focDA==
+ b=VjWwzSN7Zb/wR2mkmCKAXZqGYpUoZW5bjYdCCn4Uytn5CKYUgEj1TsLO5O3NV4q3ufRqK2STsDxHEJSEVa0JJflPsnRR+2RUJk+y701ah2FKgeFxknTh/rHYEVDt+Vmyp0qmOi7q0yd6Ul9nBFUBuiyfH4PhYLjZq63AK6EmZajjMA3gRHAMiyCMeZN+/xZHMf5EhgIAEGXW/obZBfhkzHTDm360YjG6TeEMOYiI+HLnYorYPZha1y/KRO7H1lm94fMUx2wBe28zWiy60PWpZFLuNydjRmP1lTQjqrkvFsAU2l+ZxAWJs/07orSLqrznNAv8USJuOJ5sbKFFBELCEg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=K2qk3K7JgJZK3up6FfTCrOlaaKv0kyX9yh2M1ulwlKA=;
- b=f0bDOx2hIjDSumZh38jzhEc7jbUzRS5RXAAGSXJqCIWSv7dmnxxLU0Vh4uhTDlUXKdTPamplNlclq1zkDF7SZ5JYtTV4UL4gJk/fOrhimQfHpLt6i6utHwk2p8RiL1/9qdsSnLBIZJaYGxA2NlahpKZWEgDMkjuEraK8mzm6MmhJ8FjJDCsO53FlVo9ZDR4B4gWJDDUU+RpEGyXsmLk0lAYRcV4fyBCkwUjibBxsbtUTDfAL7UztAsFKhXGnykMcT3bj9q0aVa2xHp+o+t0G1qQRGS02aFNMsLvVfgn3n+WppktSXxs9/nCUu8w6t+aqKs8j+DzYwx8KhLBrI3VZzg==
+ bh=rVUlTBd+wk/VOfDGr3XflHiWY0YW89MDvJj0GTXJW4c=;
+ b=x8UemSgsIhDCkUHI04sz//uIFPFlsLHCVFsLEBcWLArDPx58lueOAxxE5P/tGUtIzkKvlMnK68Qn4jxIauX9yercYSYfIa0FWFSxsJody7WVBWaVwm2bryGO7iQYxC0b3IEO3GC0JVxWIBgP/xSowdn/HaOq5gPYEQz+0lEzdXMkSLId8EhDn3nk7XKYx0VmL333Qes7/STa8zY+z5vFgapgoFjEPW0eLt3XaaD8IpEW213N8kuKQhe/RabsTrQ6dGX6myGlYXZrYVs+k+AlHkNE/mCqgKViS1ppioeENpWBxuH1XQqTJ373P0N1PsW3DYdMdJ1CfBpk6wBFTevg6A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=K2qk3K7JgJZK3up6FfTCrOlaaKv0kyX9yh2M1ulwlKA=;
- b=dz06x33Qr/Ch91jaTpIUgPf0exaP1KW0i40PMsDZHO/bQEtDBwJ0BZMhieV+/WbdBSFc28z442DIjfEhLgCfWmaFDj8XK2iJ8JkK0vF2OCQoS2Oe3mvUqMlthbxdJKY+ymTEMQzBSpmkx587elQlftZ7W4e2g3tOiaBop0NvVnClQGU+zMcM4dEkrGIrVaXlFNWw16+3AnaDshv0sxzHTrdwXo8eSH+DAdFQf561TXpCcFiwdpVco74tIlVqMMtMg6pZRgxXNtpCSERvqDI8LvciyRzxRXvbzNkhuGQXjZYKIsX1v1rpyfEXoLMnmlO4wlJi/+3qeyW3JzWtj0AVuQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by VE1PR04MB7408.eurprd04.prod.outlook.com (2603:10a6:800:1b3::21) with
+ bh=rVUlTBd+wk/VOfDGr3XflHiWY0YW89MDvJj0GTXJW4c=;
+ b=KoxoQrPZhzS/sEts6L67Fg+cQUZesKxvGmAhJHpxpuXuMnKv5rrEF5ei7IivwKcyYjuhHcMZAI47SaTYgy+7tsWHGBDPjV6TyYWRP7Xqa6BnQELlZ9GSL+TPdtaV4ckhxjvOLEQ5FNnAQ4iLCFpHg/iQ18S0H9eOfxOdMHO+uBo=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from AS8PR08MB6263.eurprd08.prod.outlook.com (2603:10a6:20b:290::9)
+ by PAVPR08MB9699.eurprd08.prod.outlook.com (2603:10a6:102:31e::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.20; Mon, 19 Aug
- 2024 14:24:49 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
- 14:24:49 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sanchayan Maity <maitysanchayan@gmail.com>,
-	linux-input@vger.kernel.org (open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)...),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH v3 1/1] dt-bindings: input: touchscreen: convert colibri-vf50-ts.txt to yaml
-Date: Mon, 19 Aug 2024 10:24:29 -0400
-Message-Id: <20240819142434.311760-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SA0PR11CA0069.namprd11.prod.outlook.com
- (2603:10b6:806:d2::14) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.13; Mon, 19 Aug
+ 2024 14:25:49 +0000
+Received: from AS8PR08MB6263.eurprd08.prod.outlook.com
+ ([fe80::12b5:3f0a:2090:fa7c]) by AS8PR08MB6263.eurprd08.prod.outlook.com
+ ([fe80::12b5:3f0a:2090:fa7c%7]) with mapi id 15.20.7897.010; Mon, 19 Aug 2024
+ 14:25:49 +0000
+Message-ID: <4538ba23-ee8b-4e15-8857-d653d581bc18@arm.com>
+Date: Mon, 19 Aug 2024 15:25:48 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] drm/panthor: Add DEV_QUERY_TIMESTAMP_INFO dev query
+To: Mary Guillemard <mary.guillemard@collabora.com>,
+ linux-kernel@vger.kernel.org
+Cc: kernel@collabora.com, Christopher Healy <healych@amazon.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, nd@arm.com
+References: <20240819112508.67988-2-mary.guillemard@collabora.com>
+Content-Language: en-US
+From: Mihail Atanassov <mihail.atanassov@arm.com>
+In-Reply-To: <20240819112508.67988-2-mary.guillemard@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO6P123CA0036.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:2fe::10) To AS8PR08MB6263.eurprd08.prod.outlook.com
+ (2603:10a6:20b:290::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VE1PR04MB7408:EE_
-X-MS-Office365-Filtering-Correlation-Id: 905dcfc5-4e9c-4619-6d41-08dcc05aaee4
+X-MS-TrafficTypeDiagnostic:
+	AS8PR08MB6263:EE_|PAVPR08MB9699:EE_|AM4PEPF00025F95:EE_|GV1PR08MB7753:EE_
+X-MS-Office365-Filtering-Correlation-Id: a142612d-99f8-474b-bfb0-08dcc05ad91b
+X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr
+x-checkrecipientrouted: true
+NoDisclaimer: true
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?MU5HTStveHJGU0hBdnFIbTFlOHVRL1I2VGxhVFNOZU1XTVo4aFFydVRZSjJu?=
+ =?utf-8?B?bE1jOVhmRWF6MmNVMzhGRUs0OXYxRE5IblNUR1hCKzdpRmFGeXBXMS9DaWdQ?=
+ =?utf-8?B?K2JWMzlKTVAvVTlVYXZvWk03UHhHNVgwb1ZTbk5MT2hRcGVjem54bTlBYmp5?=
+ =?utf-8?B?NVRoMFRYSDREUjErQnd0cnIrWThIVllaUlhLUlBhUTl1VzdxK2xQS291UFlG?=
+ =?utf-8?B?VHdlY09GOFlhaDl5UjNrK1dxTFlRNmdVUVBnaXN3K2ZTNHdZWVVjRGJaaWNB?=
+ =?utf-8?B?VldwbXRsUSs2ZlNIeVVidkpBYzhaZnRPb2N5dy9sWUlMa1V5YlpzVGtRcGtM?=
+ =?utf-8?B?aUw0dmdtNU5uYmFRRHg3QklZK1V3dkVWelNhTmUwWGZtRkVnZlVEa3YyODdG?=
+ =?utf-8?B?d3VrOGJDUDVzSXBnZ01ldXI0ZURDZGE2bndZTzlYbDdKampad0xNV2xrc2U4?=
+ =?utf-8?B?NTV0ZzJxNkhkeEV3S0c2Sk16TE53ZzlJNG1TQVpXL0syUEgwRm5jSTRPeHRT?=
+ =?utf-8?B?dmo3MEYrQ2xrU3RtdDZkZEpVandNZ2h5cXJGY0lMcFVNL0sxL3VnWG83U3RR?=
+ =?utf-8?B?cStvWjU0blBqNENEZUxQbXRDU3l5UWUvbllCUVNiT05jM3BaL2ZrZ1lFNnpZ?=
+ =?utf-8?B?ME1WbGhPbmdqczNyVjNCS205NWp4MmZUd1lrTUROYTFRdDd3VEI3ek5wYjFa?=
+ =?utf-8?B?eDVpUEU1K0RZODJ2MFVHRW11N1ZDRWlzYVJQOGxIZXhJSFU1RS83UVFNcitt?=
+ =?utf-8?B?NGI3VzFPdlNxcWxnd1JzcGE4M3hzaERjbVA1L2ZLaWFSa2Y1SWxlWk1ZbXFW?=
+ =?utf-8?B?UzhWNEVBNEdaeDcxU3pnQUQxZkxTeDFSa3doem0wQU5TNU9QSDZUTW94cXJ6?=
+ =?utf-8?B?bkV5aXZQclMzcVF2UGR4UVFnY08waWxGMDE4S1N0aU5lSkV1NGdsbENWOTd1?=
+ =?utf-8?B?eUhNU3NYQkZXeEtzcUxIUXJxaEtVelRDb2tMdlVkQXlvMnkxTFRRV2duckhI?=
+ =?utf-8?B?WXZDc2s3REJGcXJFWXh6V3JkZm0ydUh1dnl2eVdWdjhyK25vUDB0L3IyZUpQ?=
+ =?utf-8?B?UEMyTHorYmxNL0QyVFN0dUJhN085b3UycVFlbU9TdWRiODNRcTVZNHVWM2pk?=
+ =?utf-8?B?N2V3c1JrZHNYTnBKWXNIOEhTcTBsUktQY1JGb0NxeEZmT2xXSTZPdFJRUm5o?=
+ =?utf-8?B?aTVBNUh5TFdjVUZmZGRnNDl1VzBiYTFFYlFjbUxvL1NacjRLUnk3aWJqZi9h?=
+ =?utf-8?B?R3pjZXJIUHVPTlZQdEZJcTNMVEhRNnFOZTd6M1YwNm1xbkUrdkJkaWc2THVp?=
+ =?utf-8?B?NXVWM0U4UFR3eHQvMmcvdWF2WW85dDRvNy9raGNLR01GZ0UyZ3ZkUlVpQ00w?=
+ =?utf-8?B?WTNxQmJaZm1FMzM2SGd3ald2ekVpdFgvWmpZUERXZzVWbU0xVGxqY1BYc2pO?=
+ =?utf-8?B?TkdjaVJCTkdJRS9mbUtQc2NCb29HVEUxTS81RWk3Z0dLdjB4VzB3WGpndlBa?=
+ =?utf-8?B?c2kwT25qR3lNdXJuL2FHdXpnem8rS2dadmdYTzhSY3E4VXRXZDR0MkdOb0VS?=
+ =?utf-8?B?T2ZrL1JBc3U3TXdDeWx1SUJ1NFo2WmRoRGNicFdtanZqUFFhUlB1RjlRTTBk?=
+ =?utf-8?B?MWtZS2lyeDliZHA3NjVkdjE4WW5iTHl3U2ZkNWVGR0swZk5icTZ1R1pmcTBK?=
+ =?utf-8?B?eGJzV0NQeEQ3S2lva29wWEhCYXpkS0F2MGdBZFI1TnFNQ3NWSEo0S1dyNkxR?=
+ =?utf-8?B?MHRoQS9uNk9NektpQzZ2MStmWnJ3OE9DQXNnVHU3SzRobXlvRHBROVdZOFY3?=
+ =?utf-8?B?L3V3MlMxb2xQWmV0VS9DZz09?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR08MB6263.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAVPR08MB9699
+Original-Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+X-EOPAttributedMessage: 0
+X-MS-Exchange-SkipListedInternetSender:
+ ip=[2603:10a6:20b:290::9];domain=AS8PR08MB6263.eurprd08.prod.outlook.com
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AM4PEPF00025F95.EURPRD83.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	92b618ba-8c8f-4d66-abb4-08dcc05ad297
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|921020|38350700014;
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|35042699022|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hUPXOtRtKblZC0ovDYYzwMIUQfgbJXo0PdVIOIsIPXur39zZ5RA4/XzsE+1q?=
- =?us-ascii?Q?nIFPVuRHesJAYtx/+B6Sc8AoyY1gX/k0/9VJFDq36ZGm0xp5daLcfT0RbNYR?=
- =?us-ascii?Q?j/m1OJ1zAd/sjQoXVuwRZsqeOXE7GNdFTOAiTN0XVJhOx822vmirWZaoMGRz?=
- =?us-ascii?Q?2Ci7e/zGSWD2521web/2MPlQpvYxcvvdBV9qPPgTZAPSPNHrkeEAYRMhtMdh?=
- =?us-ascii?Q?Qd3x3pXDOBondHyMdYjP53UKrq2KArBSW3wSUk4oDv6p88mfvaldj2GwhSYy?=
- =?us-ascii?Q?mDsFduB3ADhq5nPqF4cvMjjUxFN4bVF8Q3ePqxsd1yIqqUUMf60zRO762Hlr?=
- =?us-ascii?Q?E2wbY0OHRJ5Te2X1BsBs9rlr+vkref15fAaf9vz74iVtIu/LsayE/GzyHu+K?=
- =?us-ascii?Q?Altu2jPnoDcbd1vCbIF5tzYKBAl+MXiml0kTTAYRMK2OAQ9JOE10JzGQdNDv?=
- =?us-ascii?Q?LwVq98k0AwrDl6cdsS+qudH8lvBrgwKdgmX0v4uF9GXRj84y61Tuk6NkvgQO?=
- =?us-ascii?Q?+PtV/8T5vQVLkgH7WYUGnK0a3cRMsIvEPcJMBtm/IQLMaX9xgjMNRIg8XwRL?=
- =?us-ascii?Q?prHvnn5g+QJTLOdkTtLGZRrBBrB1tBrCRYi9FmoSalSUIH+AORcnnr4qlDx5?=
- =?us-ascii?Q?TBO/Av9pywX6+OAwXF5DeFXNYkgewa1oMpzMW+nhMMejs7MAPoyM181vBSZl?=
- =?us-ascii?Q?4+p7LNwcIDSJgLSH+UOyMUyZ2+091Wv8WSDyKI7CIYT9r0ngncOm8GFtFngv?=
- =?us-ascii?Q?tnVcEHpw5+GJOYfyKf4elWLlxgERKx+Gutk50omjIwmGOm33Sgd7cS7dZnA8?=
- =?us-ascii?Q?x+TAtPfV3cUBgSmDh0F5MHt0UwpFRkBc1Nt8i6RyZHj3e9GnsDkyFNx96/dM?=
- =?us-ascii?Q?rML61vnvs8wl+R0/Z1MyAFJK1knTywJbPcFJeUE5/clUBBNwH8xzOJd119Da?=
- =?us-ascii?Q?ICo1MzpI5ZUcA5N7aoMSgaejYt3B6dyVqWuSEwdGjaq1+w1NS/NXD/aHz0Jn?=
- =?us-ascii?Q?vkutUdkiDX5p/8rASfda1Tn5Q/q3wb+1NolRBNA1+tJRnvullUh+jVZiU7kf?=
- =?us-ascii?Q?N51tksXmbGEAWdhsMs9etf907hV+sVERnlOhPHni6pmSikFLeQI/Xz3UuPgk?=
- =?us-ascii?Q?UE+0dPS2EimHns+QNAGz9966ZeHMp5NdY0k0QBNpE2dZJ/Z68cDHHvy8nzjZ?=
- =?us-ascii?Q?awGNnbcNE4wWKoEca3AcVcQXTjjK5ckYTUd95VL1CaaThgS6EQInhOtMtRYk?=
- =?us-ascii?Q?z1TIfU/psBP+jpqahmux5It4sER+GTJgwdC5obaIciIIktRDQM38f9EXlHDe?=
- =?us-ascii?Q?LQjMPvOiSAKFLkV3M5Wy2a7cFB8FynhemEuHgeLspxCOz+Dl3k8Dd3rivEOH?=
- =?us-ascii?Q?cktZhp4=3D?=
+	=?utf-8?B?NStkcHIxNVFKNHZYUzlsTkVwUUJYYzlVbmR1SklicUNVNVdBZWhHWnloam9l?=
+ =?utf-8?B?WHhJSFJwN0NPb1dDZnlQcWNkaHc4ck1OaHdhUzAzOHRIbGxnVmI4R2JhTXdq?=
+ =?utf-8?B?eW8yRnNoaGk5UEk5RDgwYjBjTE80VlB1akp6V0h6N0p0WU1lYjdLdEtYZk5u?=
+ =?utf-8?B?OGJMQzExb0ZBc0tlazFpcGdzeFVmdUJSL0RzeU1ZL1JSaW51Y0dWRWcrTFEz?=
+ =?utf-8?B?MjhqaUNSdlJ4N0FRZ09XcVpBSUx3d2FkaDFZaHU3THcwVEt1U1lQcVpMcVVv?=
+ =?utf-8?B?U2pmVGRPVG9DcldFMExSVEdlRlRHQlkrL0JXaU5HbkptczZFTWIrVDZpai8v?=
+ =?utf-8?B?eERrWkZKZEZNLysrTmd5dmxWd0ZHNUdhYm1ZOURUUGNiWExvY3lUZkh1VG5O?=
+ =?utf-8?B?R2wydzExdWFWSGRPbnlKSzVXUkp3RDF5MGQ0aStEbmJBRWY1a1ZhWU1kZWRy?=
+ =?utf-8?B?RDk4VEpYYmpodERZbWV4V0VpWjNKZkU2QmFTOGdpcThxaWVOR2RQSHI1RUg1?=
+ =?utf-8?B?ZzNSbnZQaGszKzBhRWo3MkpUWTE5ZlREVW9PMFpQWUY0cEFvWXhKZHhvUU0r?=
+ =?utf-8?B?TzY0dHhQQ3ZIZDJTNzB0a2pNV05sY0QyY1ZlYUxMQ3RDSU5JckllMmx1b1BS?=
+ =?utf-8?B?WEZ5QUJYbVByc2JYdWVQL1o3aDNjbHBhdERmNmQ3dEJSVHFOdnA5RXRNbmx0?=
+ =?utf-8?B?aXpNNngyeXlWSlV5My9LNTBPK1NQSjRGMTloR2hxQTI4TmlESDNaN285NWxo?=
+ =?utf-8?B?Um1UNHU5dUpnVFRGZEQxYmtxYk8rdkxOcWxCbkVjRmdpVTRKTEF1SWVqNGRI?=
+ =?utf-8?B?NXlHSll0U3Y1dWZ6U3RZWEdPT0FnelByZHVZYmp1czVwMzJ6cTgyQUZBTVNv?=
+ =?utf-8?B?aEtwR0dvVndscDI0WVptU3RCNEFiNjBmN0JTUUxvVzAyaFNZVDZtTFo4MFBU?=
+ =?utf-8?B?T0ZsVzRGYm1ZN2d5ZUtuTkdGS29IYlRhbk9CTEdMcHEvQlpxSGJVdDVpdDgy?=
+ =?utf-8?B?Y2NDWnZaQXZPTlJ1aGhiMnB2Rzd3KzZOL28rN0VjYm53Sm9uaVZBYmpJY0J5?=
+ =?utf-8?B?TTFHeE96Y3F6U2lKT2h2dzhYRUMyV1JoOWV5ODhSM3MwYlZHcDdCcE8waWln?=
+ =?utf-8?B?MVFiQUJzMExqRENKYSt2aDZUYXg0dVMyUG1KK01qSXViRHBqODVGTFhpUHo5?=
+ =?utf-8?B?RC9GQkNxTnpyTjlCcExuMWxJYWRaS3FCLzNmL2h5aHBPb1J4SUg2Q0VpZ3RS?=
+ =?utf-8?B?cnpvcXZENTNBNlB3Vms1dlgySi9BZFdQT0dtTFJBR2w5Z281dHdvOHZQaVdC?=
+ =?utf-8?B?SEFUUmZRcHNCazJwNndXelFSaHZqWVpab213NWZZbHlaYis1VnJkWmVCWEc4?=
+ =?utf-8?B?SmFCQi96VE5ybDBDNkE3VnhMc0JOM01aNTl5dXhzdUFrSFl2MTRtMnN4QjF4?=
+ =?utf-8?B?NUJDRUZRc0Y3NmNxKy9pWXN4aXgxTFRFZUQyTkkzQld0VnY5ZWJsTlVkTERn?=
+ =?utf-8?B?U1FNeVJWeGFvL3pkYjNjODFwRmJhN3l1WEV0ckxJMHUxODg3bkRJZ2JFZzJm?=
+ =?utf-8?B?Vld5WG5oMTM4TFhpcXRYUWVsbnQwMUlrUFVRM2hxaTQwa29LY3AxMnBmMnFP?=
+ =?utf-8?B?MW4xazE4V0JtSjQrL0Fjc1hRVmEvWDVpa0RsTlVCeDJUL1p3MS9aV0RGMWo3?=
+ =?utf-8?B?QWNCdjdndGIrTDczb2RZOWxLYzh5ZE1MUlBuMENHZ3dKTC9GOU9nWlpSdkFI?=
+ =?utf-8?B?c3lDQng3RGhDbnZLWjlhakk2bS9wL1REN0xtbXFkdXpuOEJCV1Fkak0wYmlJ?=
+ =?utf-8?B?UmxHT1ZjczRIUml5R3pSREMyWlpPMTE2eTJNemdwRFY4UG1KemRJU0VWS3FD?=
+ =?utf-8?B?QW9OeDBaNXRsaHpweUlOV3M0WmRyZWt3T29OYU9YWXh5MTJiM2hoS2RnRnVN?=
+ =?utf-8?Q?Hj1fdOPZ5AHXnMXe9NtotOtywN8XtzSB?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?7E/OfZyY12IkJwFOjafe0m8SzvoK5BMhrDzM15S+ffBc0v4il8oebJ3ro7qp?=
- =?us-ascii?Q?SEt/enL2hxPRYJDITNpOCVQXFltiVB9YO9ECc2hOyehL9LX16EuZ8nX2WXa7?=
- =?us-ascii?Q?bdq6ZK+XsiZdqrQrN/3FxGTe9q9q/O4j5Lm8UnQY46s8jYiIJ0AAOO08WcPS?=
- =?us-ascii?Q?Xcf+VSXHTE3mmo9r5gmd4bXfKm2NfWiGPrLMb8+GiQG+uqyPCRj15/fE9e5x?=
- =?us-ascii?Q?s6Qp5PRWivFc7md6cyRhBzbr9O4nODWb3LjUje69swNmkqTBGW/zoaSGfcWb?=
- =?us-ascii?Q?UrUXqfqKJ1Bo8n04tsd83frtCA5p/rv36OfZSGk2Vno2vdsWMduqZgT2RD4q?=
- =?us-ascii?Q?cmWutf8ZodxrduY6uCV3NQh29dNS9KbD2n813jRJQadWSI+OqKwtXjXf1MRX?=
- =?us-ascii?Q?5YtMjUqs5ouQFIdxHNf9dkdFinVNIeHewHRsIP77kfQ06Y04N731LXLsh6Km?=
- =?us-ascii?Q?th81jXDEwCNUuZ82XEiZl7U+h1ngydBTTqiKxI2Lm4h1DN+07KfbnyyOfa+/?=
- =?us-ascii?Q?kIW+EpqvPWUUfjhH2aFw3GzG4Q3vyZ5aIyADPqvyL+9vQbNYa9Q5qeeNCS+P?=
- =?us-ascii?Q?be5Y+D7Ujh32U6Ej5YekQf9JDooSvrpuuUKrQCo+XJqH6gtzxOvbZ5Ju4Nkz?=
- =?us-ascii?Q?gDwUEIVr5SPp/QIvnljXGEzesm8k3CNU/R3M3CJ/qQMXJ9aA2I9SrXi66U2r?=
- =?us-ascii?Q?V2HiZ0ZaG11JaeaRi1MHJcZ0wlpNoBA48/pBZi5LJyG6x9n9RNp1vd1NtLnD?=
- =?us-ascii?Q?ojkHN605ku08SZZ+qvBNX8jntSoFq2O4FUEmlITD36BcLAZqAx04qwd/Z64B?=
- =?us-ascii?Q?yfeX5aSpkwC9+073qlxcjm6GwaElHOr/Ivl5dWJMrLkDOQxlTfSTRgvzG40W?=
- =?us-ascii?Q?r4COSJtx0CgAscOYL5b6eGUyW5tOLTPe7hMXILQ0UEkCyr7iiyBZMKsx3Qzc?=
- =?us-ascii?Q?B9RvzX30G84HYnMB49F5TTqUft8EatlG7EAe8P6fcW2/KUTjuiNEaGtnzmrE?=
- =?us-ascii?Q?olz9VimqaW51TwP2xdb6OLL0cSNjIouXOs49UDCbgCmGCph8CvT6+GI5GDnW?=
- =?us-ascii?Q?NIzoO8MM1qClm0zYjsLh1+8jQP6L6KsJ0EIkWh93JqoeKh3WkKkAV8xjganL?=
- =?us-ascii?Q?5ZfR+CJlOB4iWBDteyO61443oJwmnufQ089L4f8oSFxs10krZ+zXmBrDrdgu?=
- =?us-ascii?Q?3K0ebvR+UgI9p+zJx/iHDXfAlhGo/wckMNMeFIfSsI4AMsZenamQK0b2feJ4?=
- =?us-ascii?Q?es0r52MnB9tB2VM6iaLtZJYt20gQdxQIAkxU8m/9KknxiAqRSpogP4zgSIeg?=
- =?us-ascii?Q?csqibMYRKaOD9GPj6uwnFKymEzY5gj3xbZjgcy2HMH8WXwRTPVEvXwvQpuav?=
- =?us-ascii?Q?jX8i39SAPMXRBn8xyEon3rkkIaqb8PwlW/YFhGsj9BCSiodYAS6Y+MAAQP3n?=
- =?us-ascii?Q?xgOcdHzTVH0rJYBk/5k+I+EhCGrGz5G0GS6hmEkcTnuo+7hqSDWCqBu/hkmE?=
- =?us-ascii?Q?NGDnWwXzAxkxlfNjQhR/LBByAflJ4NutF+p+6pt1lIyAo1QPFUKDhOpRpwlI?=
- =?us-ascii?Q?2vH1+nDRRgN5OmzzJj8hrYr1qgfhRJUXGnbZa8zX?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 905dcfc5-4e9c-4619-6d41-08dcc05aaee4
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 14:24:49.5410
+	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(35042699022)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2024 14:26:00.1206
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wwnjiy/hB9KOCs/GWe1KGTfRbCTjRRFqBtSpSpx79J8xrWRGNBccwGfT2kA4DSgzl1K9Ltl3vd/5UzVC+6Swyg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7408
+X-MS-Exchange-CrossTenant-Network-Message-Id: a142612d-99f8-474b-bfb0-08dcc05ad91b
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM4PEPF00025F95.EURPRD83.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR08MB7753
 
-Convert binding doc colibri-vf50-ts.txt to yaml.
-Additional change:
-- add ref touchscreen.yaml.
-- remove standard pinctrl properties.
+Hi Mary,
 
-Fix below warning:
-arch/arm64/boot/dts/freescale/imx8qm-apalis-eval.dtb: /touchscreen:
-  failed to match any schema with compatible: ['toradex,vf50-touchscreen']
+On 19/08/2024 12:25, Mary Guillemard wrote:
+> Expose timestamp information supported by the GPU with a new device
+> query.
+> 
+> Mali uses an external timer as GPU system time. On ARM, this is wired to
+> the generic arch timer so we wire cntfrq_el0 as device frequency.
+> 
+> This new uAPI will be used in Mesa to implement timestamp queries and
+> VK_KHR_calibrated_timestamps.
+> 
+> Since this extends the uAPI and because userland needs a way to advertise
+> those features conditionally, this also bumps the driver minor version.
+> 
+> v2:
+> - Rewrote to use GPU timestamp register
+> - Added timestamp_offset to drm_panthor_timestamp_info
+> - Add missing include for arch_timer_get_cntfrq
+> - Rework commit message
+> 
+> v3:
+> - Add panthor_gpu_read_64bit_counter
+> - Change panthor_gpu_read_timestamp to use
+>    panthor_gpu_read_64bit_counter
+> 
+> Signed-off-by: Mary Guillemard <mary.guillemard@collabora.com>
+> ---
+>   drivers/gpu/drm/panthor/panthor_drv.c | 43 +++++++++++++++++++++++-
+>   drivers/gpu/drm/panthor/panthor_gpu.c | 47 +++++++++++++++++++++++++++
+>   drivers/gpu/drm/panthor/panthor_gpu.h |  2 ++
+>   include/uapi/drm/panthor_drm.h        | 19 +++++++++++
+>   4 files changed, 110 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+> index b5e7b919f241..444e3bb1cfb5 100644
+> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+> @@ -3,6 +3,10 @@
+>   /* Copyright 2019 Linaro, Ltd., Rob Herring <robh@kernel.org> */
+>   /* Copyright 2019 Collabora ltd. */
+>   
+> +#ifdef CONFIG_ARM_ARCH_TIMER
+> +#include <asm/arch_timer.h>
+> +#endif
+> +
+>   #include <linux/list.h>
+>   #include <linux/module.h>
+>   #include <linux/of_platform.h>
+> @@ -164,6 +168,7 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
+>   	_Generic(_obj_name, \
+>   		 PANTHOR_UOBJ_DECL(struct drm_panthor_gpu_info, tiler_present), \
+>   		 PANTHOR_UOBJ_DECL(struct drm_panthor_csif_info, pad), \
+> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_timestamp_info, current_timestamp), \
+>   		 PANTHOR_UOBJ_DECL(struct drm_panthor_sync_op, timeline_value), \
+>   		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_submit, syncs), \
+>   		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_create, ringbuf_size), \
+> @@ -750,10 +755,33 @@ static void panthor_submit_ctx_cleanup(struct panthor_submit_ctx *ctx,
+>   	kvfree(ctx->jobs);
+>   }
+>   
+> +static int panthor_query_timestamp_info(struct panthor_device *ptdev,
+> +					struct drm_panthor_timestamp_info *arg)
+> +{
+> +	int ret;
+> +
+> +	ret = pm_runtime_resume_and_get(ptdev->base.dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +#ifdef CONFIG_ARM_ARCH_TIMER
+> +	arg->timestamp_frequency = arch_timer_get_cntfrq();
+> +#else
+> +	arg->timestamp_frequency = 0;
+> +#endif
+> +	arg->current_timestamp = panthor_gpu_read_timestamp(ptdev);
+> +	arg->timestamp_offset = panthor_gpu_read_timestamp_offset(ptdev);
+> +
+> +	pm_runtime_put(ptdev->base.dev);
+> +	return 0;
+> +}
+> +
+>   static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct drm_file *file)
+>   {
+>   	struct panthor_device *ptdev = container_of(ddev, struct panthor_device, base);
+>   	struct drm_panthor_dev_query *args = data;
+> +	struct drm_panthor_timestamp_info timestamp_info;
+> +	int ret;
+>   
+>   	if (!args->pointer) {
+>   		switch (args->type) {
+> @@ -765,6 +793,10 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
+>   			args->size = sizeof(ptdev->csif_info);
+>   			return 0;
+>   
+> +		case DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO:
+> +			args->size = sizeof(timestamp_info);
+> +			return 0;
+> +
+>   		default:
+>   			return -EINVAL;
+>   		}
+> @@ -777,6 +809,14 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
+>   	case DRM_PANTHOR_DEV_QUERY_CSIF_INFO:
+>   		return PANTHOR_UOBJ_SET(args->pointer, args->size, ptdev->csif_info);
+>   
+> +	case DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO:
+> +		ret = panthor_query_timestamp_info(ptdev, &timestamp_info);
+> +
+> +		if (ret)
+> +			return ret;
+> +
+> +		return PANTHOR_UOBJ_SET(args->pointer, args->size, timestamp_info);
+> +
+>   	default:
+>   		return -EINVAL;
+>   	}
+> @@ -1372,6 +1412,7 @@ static void panthor_debugfs_init(struct drm_minor *minor)
+>   /*
+>    * PanCSF driver version:
+>    * - 1.0 - initial interface
+> + * - 1.1 - adds DEV_QUERY_TIMESTAMP_INFO query
+>    */
+>   static const struct drm_driver panthor_drm_driver = {
+>   	.driver_features = DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ |
+> @@ -1385,7 +1426,7 @@ static const struct drm_driver panthor_drm_driver = {
+>   	.desc = "Panthor DRM driver",
+>   	.date = "20230801",
+>   	.major = 1,
+> -	.minor = 0,
+> +	.minor = 1,
+>   
+>   	.gem_create_object = panthor_gem_create_object,
+>   	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table,
+> diff --git a/drivers/gpu/drm/panthor/panthor_gpu.c b/drivers/gpu/drm/panthor/panthor_gpu.c
+> index 5251d8764e7d..ef66cfea6f1f 100644
+> --- a/drivers/gpu/drm/panthor/panthor_gpu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_gpu.c
+> @@ -480,3 +480,50 @@ void panthor_gpu_resume(struct panthor_device *ptdev)
+>   	panthor_gpu_irq_resume(&ptdev->gpu->irq, GPU_INTERRUPTS_MASK);
+>   	panthor_gpu_l2_power_on(ptdev);
+>   }
+> +
+> +/**
+> + * panthor_gpu_read_64bit_counter() - Read a 64-bit counter at a given offset.
+> + * @ptdev: Device.
+> + * @reg: The offset of the register to read.
+> + *
+> + * Return: The counter value.
+> + */
+> +static unsigned long long
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-Change from v2 to v3
-- raname to toradex,vf50-touchscreen.yaml
-- Add Rob's review tag
-Change from v1 to v2
-- fix missed required properties
-- use original submitter and input maintainer
-- add value limitted vf50-ts-min-pressure, just provide rough range, which
-not mention in original doc
-- fix style problem in example
----
- .../input/touchscreen/colibri-vf50-ts.txt     | 34 --------
- .../touchscreen/toradex,vf50-touchscreen.yaml | 78 +++++++++++++++++++
- 2 files changed, 78 insertions(+), 34 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/colibri-vf50-ts.txt
- create mode 100644 Documentation/devicetree/bindings/input/touchscreen/toradex,vf50-touchscreen.yaml
+[nit] s/unsigned long long/u64/ ?
 
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/colibri-vf50-ts.txt b/Documentation/devicetree/bindings/input/touchscreen/colibri-vf50-ts.txt
-deleted file mode 100644
-index ca304357c374a..0000000000000
---- a/Documentation/devicetree/bindings/input/touchscreen/colibri-vf50-ts.txt
-+++ /dev/null
-@@ -1,34 +0,0 @@
--* Toradex Colibri VF50 Touchscreen driver
--
--Required Properties:
--- compatible must be toradex,vf50-touchscreen
--- io-channels: adc channels being used by the Colibri VF50 module
--    IIO ADC for Y-, X-, Y+, X+ connections
--- xp-gpios: FET gate driver for input of X+
--- xm-gpios: FET gate driver for input of X-
--- yp-gpios: FET gate driver for input of Y+
--- ym-gpios: FET gate driver for input of Y-
--- interrupts: pen irq interrupt for touch detection, signal from X plate
--- pinctrl-names: "idle", "default"
--- pinctrl-0: pinctrl node for pen/touch detection, pinctrl must provide
--    pull-up resistor on X+, X-.
--- pinctrl-1: pinctrl node for X/Y and pressure measurement (ADC) state pinmux
--- vf50-ts-min-pressure: pressure level at which to stop measuring X/Y values
--
--Example:
--
--	touchctrl: vf50_touchctrl {
--		compatible = "toradex,vf50-touchscreen";
--		io-channels = <&adc1 0>,<&adc0 0>,
--				<&adc0 1>,<&adc1 2>;
--		xp-gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
--		xm-gpios = <&gpio2 29 GPIO_ACTIVE_HIGH>;
--		yp-gpios = <&gpio0 12 GPIO_ACTIVE_LOW>;
--		ym-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
--		interrupt-parent = <&gpio0>;
--		interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
--		pinctrl-names = "idle","default";
--		pinctrl-0 = <&pinctrl_touchctrl_idle>, <&pinctrl_touchctrl_gpios>;
--		pinctrl-1 = <&pinctrl_touchctrl_default>, <&pinctrl_touchctrl_gpios>;
--		vf50-ts-min-pressure = <200>;
--	};
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/toradex,vf50-touchscreen.yaml b/Documentation/devicetree/bindings/input/touchscreen/toradex,vf50-touchscreen.yaml
-new file mode 100644
-index 0000000000000..69da21d40e729
---- /dev/null
-+++ b/Documentation/devicetree/bindings/input/touchscreen/toradex,vf50-touchscreen.yaml
-@@ -0,0 +1,78 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/input/touchscreen/toradex,vf50-touchscreen.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Toradex Colibri VF50 Touchscreen
-+
-+maintainers:
-+  - Dmitry Torokhov <dmitry.torokhov@gmail.com>
-+  - Sanchayan Maity <maitysanchayan@gmail.com>
-+
-+properties:
-+  compatible:
-+    const: toradex,vf50-touchscreen
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  io-channels:
-+    maxItems: 4
-+    description:
-+      adc channels being used by the Colibri VF50 module
-+      IIO ADC for Y-, X-, Y+, X+ connections
-+
-+  xp-gpios:
-+    description: FET gate driver for input of X+
-+
-+  xm-gpios:
-+    description: FET gate driver for input of X-
-+
-+  yp-gpios:
-+    description: FET gate driver for input of Y+
-+
-+  ym-gpios:
-+    description: FET gate driver for input of Y-
-+
-+  vf50-ts-min-pressure:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    minimum: 50
-+    maximum: 2000
-+    description: pressure level at which to stop measuring X/Y values
-+
-+required:
-+  - compatible
-+  - io-channels
-+  - xp-gpios
-+  - xm-gpios
-+  - yp-gpios
-+  - ym-gpios
-+  - interrupts
-+  - vf50-ts-min-pressure
-+
-+allOf:
-+  - $ref: touchscreen.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/gpio/gpio.h>
-+
-+    touchscreen {
-+        compatible = "toradex,vf50-touchscreen";
-+        interrupt-parent = <&gpio0>;
-+        interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
-+        io-channels = <&adc1 0>, <&adc0 0>, <&adc0 1>, <&adc1 2>;
-+        xp-gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
-+        xm-gpios = <&gpio2 29 GPIO_ACTIVE_HIGH>;
-+        yp-gpios = <&gpio0 12 GPIO_ACTIVE_LOW>;
-+        ym-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
-+        pinctrl-names = "idle", "default";
-+        pinctrl-0 = <&pinctrl_touchctrl_idle>, <&pinctrl_touchctrl_gpios>;
-+        pinctrl-1 = <&pinctrl_touchctrl_default>, <&pinctrl_touchctrl_gpios>;
-+        vf50-ts-min-pressure = <200>;
-+    };
-+
+> +panthor_gpu_read_64bit_counter(struct panthor_device *ptdev, u32 reg)
+> +{
+> +	u32 hi, lo;
+> +
+> +	do {
+> +		hi = gpu_read(ptdev, reg + 0x4);
+> +		lo = gpu_read(ptdev, reg);
+> +	} while (hi != gpu_read(ptdev, reg + 0x4));
+> +
+> +	return ((u64)hi << 32) | lo;
+> +}
+> +
+> +/**
+> + * panthor_gpu_read_timestamp() - Read the timstamp register.
+
+[nit] Spelling, `s/timstamp/timestamp/`. Ditto below.
+
+> + * @ptdev: Device.
+> + *
+> + * Return: The GPU timestamp value.
+> + */
+> +unsigned long long panthor_gpu_read_timestamp(struct panthor_device *ptdev)
+> +{
+> +	return panthor_gpu_read_64bit_counter(ptdev, GPU_TIMESTAMP_LO);
+> +}
+> +
+> +/**
+> + * panthor_gpu_read_timestamp_offset() - Read the timstamp offset register.
+> + * @ptdev: Device.
+> + *
+> + * Return: The GPU timestamp offset value.
+> + */
+> +unsigned long long panthor_gpu_read_timestamp_offset(struct panthor_device *ptdev)
+> +{
+> +	u32 hi, lo;
+> +
+> +	hi = gpu_read(ptdev, GPU_TIMESTAMP_OFFSET_HI);
+> +	lo = gpu_read(ptdev, GPU_TIMESTAMP_OFFSET_LO);
+> +
+> +	return ((u64)hi << 32) | lo;
+> +}
+> diff --git a/drivers/gpu/drm/panthor/panthor_gpu.h b/drivers/gpu/drm/panthor/panthor_gpu.h
+> index bba7555dd3c6..73d335859db8 100644
+> --- a/drivers/gpu/drm/panthor/panthor_gpu.h
+> +++ b/drivers/gpu/drm/panthor/panthor_gpu.h
+> @@ -48,5 +48,7 @@ int panthor_gpu_l2_power_on(struct panthor_device *ptdev);
+>   int panthor_gpu_flush_caches(struct panthor_device *ptdev,
+>   			     u32 l2, u32 lsc, u32 other);
+>   int panthor_gpu_soft_reset(struct panthor_device *ptdev);
+> +unsigned long long panthor_gpu_read_timestamp(struct panthor_device *ptdev);
+> +unsigned long long panthor_gpu_read_timestamp_offset(struct panthor_device *ptdev);
+>   
+>   #endif
+> diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
+> index 926b1deb1116..944f5618aa05 100644
+> --- a/include/uapi/drm/panthor_drm.h
+> +++ b/include/uapi/drm/panthor_drm.h
+> @@ -260,6 +260,9 @@ enum drm_panthor_dev_query_type {
+>   
+>   	/** @DRM_PANTHOR_DEV_QUERY_CSIF_INFO: Query command-stream interface information. */
+>   	DRM_PANTHOR_DEV_QUERY_CSIF_INFO,
+> +
+> +	/** @DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO: Query timestamp information. */
+> +	DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO,
+>   };
+>   
+>   /**
+> @@ -377,6 +380,22 @@ struct drm_panthor_csif_info {
+>   	__u32 pad;
+>   };
+>   
+> +/**
+> + * struct drm_panthor_timestamp_info - Timestamp information
+> + *
+> + * Structure grouping all queryable information relating to the GPU timestamp.
+> + */
+> +struct drm_panthor_timestamp_info {
+> +	/** @timestamp_frequency: The frequency of the timestamp timer. */
+> +	__u64 timestamp_frequency;
+> +
+> +	/** @current_timestamp: The current timestamp. */
+> +	__u64 current_timestamp;
+> +
+> +	/** @timestamp_offset: The offset of the timestamp timer. */
+> +	__u64 timestamp_offset;
+
+Are you sure you don't want the cntvct_el0 and cntfrq_el0 values here, 
+too, as separate fields? While they're not values coming from the GPU, 
+they are related. Getting the lowest delta possible between querying one 
+timestamp register and the other is quite useful for tooling. Requiring 
+userspace to do two separate queries, one for CPU time and one for GPU 
+time, doesn't feel optimal, your max deviation will necessarily be 
+higher that way.
+
+> +};
+> +
+>   /**
+>    * struct drm_panthor_dev_query - Arguments passed to DRM_PANTHOR_IOCTL_DEV_QUERY
+>    */
+> 
+> base-commit: 3e828c670b0ac8a9564c69f5c5ecf637b22a58d6
+
 -- 
-2.34.1
+Mihail Atanassov <mihail.atanassov@arm.com>
 
 
