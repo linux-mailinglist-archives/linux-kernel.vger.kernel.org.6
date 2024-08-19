@@ -1,192 +1,331 @@
-Return-Path: <linux-kernel+bounces-292492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FC95957020
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:24:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB11E957073
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DD16B225DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:24:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 645F21F22920
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9E6172BA8;
-	Mon, 19 Aug 2024 16:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A7C185628;
+	Mon, 19 Aug 2024 16:35:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B1o0cYsj"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="fXkQH3GN"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C5516B723;
-	Mon, 19 Aug 2024 16:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0FD175D20;
+	Mon, 19 Aug 2024 16:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724084658; cv=none; b=W5X2qAG+/6NyDuJBxJ9T6Tl6cZ77HjGHhthKnFwUsAIFwPsQq0eZ+JDqzVco7iQV3sqsNShVXJQtbvS85sgbOXe7GBK9x1ZRYSfUPihDqBe/c27uwOR9F9qSUgd8trDlm10iw080uFrlkChbNgA76KduMLnmQCvmi2li5xvQJ9Y=
+	t=1724085318; cv=none; b=QtT54bg81r/RsfgmimGZKiCs5VMxC5K8McO8ifNyTgBQOkpvAuODy8zhRWcAYEgKNdFIJpKoNgh00vCVMpPuHWv6bt5Jrw2s0S9SUr/0ohtvnGHeJuEWyOmnRfYZfBCz5S40TVz8q9jj0Au5gma38m/hOv7IQVmAVpbflHntB9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724084658; c=relaxed/simple;
-	bh=FUr6q176nyRJP1JzJZFCsStqLKXdonS6tpz1AatdB5k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hpHhwHLmzaN3VKRUVi6VkHP+T30aW0EC1l5u3Y4mITQW3eMBmcllJOwJrOzQIvHawXS1jDynxb6Ig9hQ1WoiGIhpZlCtciFMFNpc00qiC0VZs/ZuAcx4aoOp+rtSUaMk5CB/m3MZppuE7eRDabonYB+9ErYIqkZw0IMOsYaJkAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B1o0cYsj; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7a1be7b7bb5so3139246a12.0;
-        Mon, 19 Aug 2024 09:24:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724084657; x=1724689457; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6rccIFvcICyWq3i8QX08SQKeL7MjWBM3NpnoMSo0S9Y=;
-        b=B1o0cYsjolU3g6Pr/Aa5tFh3CFlMBE/8A72EUKeTSLU4qABj0khMJ1Kc/OzesfcGQb
-         EB+rJq3zxN3TotSHiS14Wdp28DjQv/ksbC39UrH1p4yC9tMLVoJV+ZG3T3mzA7XrrBus
-         5q5jjIrlRnperKhiUZ8/ffF/9C+K912uyuLnNQKNxPdWoL15OgwEe/V1eMhKZ2YfQ0Mt
-         Yv5Hea5p49hfoi4Lf7mCVNV5E98iSg/c8NqTl98Px2rQGuK+OaJ6mI/CeBYT1J4g/5Qh
-         Bb4Fb7YJJw02iAT/VZ7N67K8MCrov9pisTsimZZY2ZnNue2w2IId8HhfC3kdMCXHweb8
-         2CgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724084657; x=1724689457;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6rccIFvcICyWq3i8QX08SQKeL7MjWBM3NpnoMSo0S9Y=;
-        b=ik5cpUlI5uflwVAOELzoFz209k0plw7OngRn0FMzJ+/b5eAqajVDdpH7ubsJ6Dx2kB
-         5IP3s5mQdTirJmxilijXFJlCUoSG6K2yn6tXZK2wMtbYI77PotykZaa6XeBIO1ub4l2x
-         DDacESJT3JNomCqgQCpz4fbSDN+Yw3n0Z8lvCx6Va1ondhRwo5hFqVyJDSdidFzndPFC
-         8y5uXU3ztBR7j86FFN1LYbThjKcjnFFgLJLnKKG36rL5IooCMs+99JDkXYrk7p9toId0
-         CHYIIIYO7eUYSFv/LYleOFN+uWIZEOt42/V2KJ4D3y00+oRW60wulq9FtSrVGa652aFs
-         kPPg==
-X-Forwarded-Encrypted: i=1; AJvYcCW8vXreZzIgc2/aN9LrICAMfPGSVXC1jz5nIs3zXiwCZPwSkKL42Vw9lJzZTGLIxLfdZuBvA9cbKpR2QV52Ad5VELWZ6t2ia9TwNYBnUZgAHf0SLfeIPlcZjOR9i4ucXJwK
-X-Gm-Message-State: AOJu0Yw+Ge+khZAy8pzRgkT31jLx9PlN/s4TnlVUfr4t4DG4Gqpw2Beq
-	5q3wFg5BuJFexaHKngmUJlakP3KIxNl0NqeRHUFaZ/qRMAOUhyRPSW5auTlkJYJ2SnmkzaljLyN
-	gING5tcxOeMx0gF4I+JFh124lteg=
-X-Google-Smtp-Source: AGHT+IHIl1OO2vL9sH/QNMZs8/rRzuJnV4NaqaDEVA9OFQsbG9DHn5qshP0fORQs5pOUy53I4CWpeKJgL7PzzHkttSM=
-X-Received: by 2002:a17:90a:ca0f:b0:2cb:4bed:ed35 with SMTP id
- 98e67ed59e1d1-2d3e00f3a00mr11594631a91.41.1724084656688; Mon, 19 Aug 2024
- 09:24:16 -0700 (PDT)
+	s=arc-20240116; t=1724085318; c=relaxed/simple;
+	bh=6M1RFv1QmucOEj5xSInzRLYUjqK4ZH5JJM5Lw0+nIGo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gLHJrzi1YQfz/AFI47wTCZneW0KWPweY5fh+PjURLtw/iJbixD+8o73o6gQvbxSZ2gNY1f85kZJNaV1CaP6jtRMPnSnimUpeQnMgVwRwZcxgl5tT+1iM3qgrdoTmI9EO+UsgYNCZcjn+9Qe0DTc9b4B+CyhREr5Vdk+Idjdl1pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=fXkQH3GN reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 257890579296d155; Mon, 19 Aug 2024 18:35:13 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 4ABE073B5D4;
+	Mon, 19 Aug 2024 18:35:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1724085313;
+	bh=6M1RFv1QmucOEj5xSInzRLYUjqK4ZH5JJM5Lw0+nIGo=;
+	h=From:Subject:Date;
+	b=fXkQH3GNAG6I21/sW5nn+7RbjxrfgLcjiRF9O+kYGle4LDdG62WMQxiK6BTnBjUgn
+	 F+L0Rf53K21KwsxglBy9yYjeGTZ0sAX1TNW4Kh4e87NUg2VJxIWZRiEtptWLRfDuQR
+	 rWkD890P2irqzq8PHyI8Er0WaHAuMzkUazk6x+JQRg9ZO0lCFMwa9XB2wjmspr+8rN
+	 ggMqZo5eSpb8Im2UfNuCxOud9NIJI1fJX1V8ujpbnS7KScjWxX9tvv3gSffLMdIyF5
+	 iEVHjHRXeW4nwevf60zuKRdPjmgkudDDFCwSoBP853bDHn/bKOssBxZaTJTJrT0/0L
+	 klobBvRfVOVmQ==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
+ Ido Schimmel <idosch@nvidia.com>, netdev@vger.kernel.org
+Subject:
+ [PATCH v3 10/14] mlxsw: core_thermal:  Use the .should_bind() thermal zone
+ callback
+Date: Mon, 19 Aug 2024 18:24:37 +0200
+Message-ID: <2216931.Icojqenx9y@rjwysocki.net>
+In-Reply-To: <2205737.irdbgypaU6@rjwysocki.net>
+References: <2205737.irdbgypaU6@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AM6PR03MB58489794C158C438B04FD0E599802@AM6PR03MB5848.eurprd03.prod.outlook.com>
- <CAEf4Bzb3XbGx+N5yrYELNAkaABP9fyifAQhTP1VHSvVycG36TQ@mail.gmail.com>
- <AM6PR03MB584807BFB29105F1D7FDC89E99812@AM6PR03MB5848.eurprd03.prod.outlook.com>
- <CAADnVQKvt2uUsvFbYnEmApj9ZzeL0on1zM4zKBJEFmzuoTtzhg@mail.gmail.com>
-In-Reply-To: <CAADnVQKvt2uUsvFbYnEmApj9ZzeL0on1zM4zKBJEFmzuoTtzhg@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 19 Aug 2024 09:24:04 -0700
-Message-ID: <CAEf4BzYWLFUtTx2obdBunaJ2qUdX+Nvv5w=VAwBTutxvYvR0PA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 1/2] bpf: Make the pointer returned by iter next
- method valid
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Juntong Deng <juntong.deng@outlook.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddugedguddtfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegoufhprghmkfhpucdlfedttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeefudduuedtuefgleffudeigeeitdeufeelvdejgefftdethffhhfethfeljefgteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepjedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdr
+ lhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtohepihguohhstghhsehnvhhiughirgdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=14 Fuz1=14 Fuz2=14
 
-On Fri, Aug 16, 2024 at 8:39=E2=80=AFAM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Fri, Aug 16, 2024 at 3:43=E2=80=AFPM Juntong Deng <juntong.deng@outloo=
-k.com> wrote:
-> >
-> > On 8/15/24 18:15, Andrii Nakryiko wrote:
-> > > On Thu, Aug 15, 2024 at 9:11=E2=80=AFAM Juntong Deng <juntong.deng@ou=
-tlook.com> wrote:
-> > >>
-> > >> Currently we cannot pass the pointer returned by iter next method as
-> > >> argument to KF_TRUSTED_ARGS kfuncs, because the pointer returned by
-> > >> iter next method is not "valid".
-> > >>
-> > >> This patch sets the pointer returned by iter next method to be valid=
-.
-> > >>
-> > >> This is based on the fact that if the iterator is implemented correc=
-tly,
-> > >> then the pointer returned from the iter next method should be valid.
-> > >>
-> > >> This does not make NULL pointer valid. If the iter next method has
-> > >> KF_RET_NULL flag, then the verifier will ask the ebpf program to
-> > >> check NULL pointer.
-> > >>
-> > >> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
-> > >> ---
-> > >>   kernel/bpf/verifier.c | 4 ++++
-> > >>   1 file changed, 4 insertions(+)
-> > >>
-> > >> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> > >> index ebec74c28ae3..35a7b7c6679c 100644
-> > >> --- a/kernel/bpf/verifier.c
-> > >> +++ b/kernel/bpf/verifier.c
-> > >> @@ -12832,6 +12832,10 @@ static int check_kfunc_call(struct bpf_veri=
-fier_env *env, struct bpf_insn *insn,
-> > >>                          /* For mark_ptr_or_null_reg, see 93c230e3f5=
-bd6 */
-> > >>                          regs[BPF_REG_0].id =3D ++env->id_gen;
-> > >>                  }
-> > >> +
-> > >> +               if (is_iter_next_kfunc(&meta))
-> > >> +                       regs[BPF_REG_0].type |=3D PTR_TRUSTED;
-> > >> +
-> > >
-> > > It seems a bit too generic to always assign PTR_TRUSTED to anything
-> > > returned from any iterator. Let's maybe add KF_RET_TRUSTED or
-> > > KF_ITER_TRUSTED or something along those lines to mark such iter_next
-> > > kfuncs explicitly?
-> > >
-> > > For the numbers iterator, for instance, this PTR_TRUSTED makes no sen=
-se.
-> > >
-> >
-> > I had the same idea (KF_RET_TRUSTED) before, but Kumar thought it shoul=
-d
-> > be avoided and pointers returned by iter next method should be trusted
-> > by default [0].
-> >
-> > The following are previous related discussions:
-> >
-> >  >> For iter_next(), I currently have an idea to add new flags to allow
-> >  >> iter_next() to decide whether the return value is trusted or not,
-> >  >> such as KF_RET_TRUSTED.
-> >  >>
-> >  >> What do you think?
-> >  >
-> >  > Why shouldn't the return value always be trusted?
-> >  > We eventually want to switch over to trusted by default everywhere.
-> >  > It would be nice not to go further in the opposite direction (i.e.
-> >  > having to manually annotate trusted) if we can avoid it.
-> >
-> > [0]:
-> > https://lore.kernel.org/bpf/CAP01T75na=3Dfz7EhrP4Aw0WZ33R7jTbZ4BcmY56S1=
-xTWczxHXWw@mail.gmail.com/
-> >
-> > Maybe we can have more discussion?
-> >
-> > (This email has been CC Kumar)
->
-> +1
-> pointer from iterator should always be trusted except
-> the case of KF_RCU_PROTECTED iterators.
-> Those iters clear iter itself outside of RCU CS,
-> so a pointer returned from iter_next should probably be
-> PTR_TO_BTF_ID | MEM_RCU | PTR_MAYBE_NULL.
->
-> For all other iters it should be safe to return
-> PTR_TO_BTF_ID | PTR_TRUSTED | PTR_MAYBE_NULL
->
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Ok, but we at some point might need to return a non-RCU/non-trusted
-pointer, so I guess we'll have to add yet another flag to opt-out of
-"trustedness"?
+Make the mlxsw core_thermal driver use the .should_bind() thermal zone
+callback to provide the thermal core with the information on whether or
+not to bind the given cooling device to the given trip point in the
+given thermal zone.  If it returns 'true', the thermal core will bind
+the cooling device to the trip and the corresponding unbinding will be
+taken care of automatically by the core on the removal of the involved
+thermal zone or cooling device.
 
-> > For the numbers iterator, for instance, this PTR_TRUSTED makes no sense
->
-> I see no conflict. It's a trusted pointer to u32.
+It replaces the .bind() and .unbind() thermal zone callbacks (in 3
+places) which assumed the same trip points ordering in the driver
+and in the thermal core (that may not be true any more in the
+future).  The .bind() callbacks used loops over trip point indices
+to call thermal_zone_bind_cooling_device() for the same cdev (once
+it had been verified) and all of the trip points, but they passed
+different 'upper' and 'lower' values to it for each trip.
+
+To retain the original functionality, the .should_bind() callbacks
+need to use the same 'upper' and 'lower' values that would be used
+by the corresponding .bind() callbacks when they are about to return
+'true'.  To that end, the 'priv' field of each trip is set during the
+thermal zone initialization to point to the corresponding 'state'
+object containing the maximum and minimum cooling states of the
+cooling device.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Ido Schimmel <idosch@nvidia.com>
+---
+
+v2 -> v3:
+   * Add R-by from Ido
+   * Reorder (previously [13/17])
+
+v1 -> v2:
+   * Fix typo in the changelog.
+   * Do not move the mlxsw_thermal_ops definition.
+   * Change ordering of local variables in mlxsw_thermal_module_should_bind().
+
+This patch only depends on the [06/14] introducing the .should_bind()
+thermal zone callback:
+
+https://lore.kernel.org/linux-pm/9334403.CDJkKcVGEf@rjwysocki.net/
+
+---
+ drivers/net/ethernet/mellanox/mlxsw/core_thermal.c |  115 +++++----------------
+ 1 file changed, 31 insertions(+), 84 deletions(-)
+
+Index: linux-pm/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
+===================================================================
+--- linux-pm.orig/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
++++ linux-pm/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
+@@ -165,52 +165,22 @@ static int mlxsw_get_cooling_device_idx(
+ 	return -ENODEV;
+ }
+ 
+-static int mlxsw_thermal_bind(struct thermal_zone_device *tzdev,
+-			      struct thermal_cooling_device *cdev)
++static bool mlxsw_thermal_should_bind(struct thermal_zone_device *tzdev,
++				      const struct thermal_trip *trip,
++				      struct thermal_cooling_device *cdev,
++				      struct cooling_spec *c)
+ {
+ 	struct mlxsw_thermal *thermal = thermal_zone_device_priv(tzdev);
+-	struct device *dev = thermal->bus_info->dev;
+-	int i, err;
++	const struct mlxsw_cooling_states *state = trip->priv;
+ 
+ 	/* If the cooling device is one of ours bind it */
+ 	if (mlxsw_get_cooling_device_idx(thermal, cdev) < 0)
+-		return 0;
+-
+-	for (i = 0; i < MLXSW_THERMAL_NUM_TRIPS; i++) {
+-		const struct mlxsw_cooling_states *state = &thermal->cooling_states[i];
+-
+-		err = thermal_zone_bind_cooling_device(tzdev, i, cdev,
+-						       state->max_state,
+-						       state->min_state,
+-						       THERMAL_WEIGHT_DEFAULT);
+-		if (err < 0) {
+-			dev_err(dev, "Failed to bind cooling device to trip %d\n", i);
+-			return err;
+-		}
+-	}
+-	return 0;
+-}
+-
+-static int mlxsw_thermal_unbind(struct thermal_zone_device *tzdev,
+-				struct thermal_cooling_device *cdev)
+-{
+-	struct mlxsw_thermal *thermal = thermal_zone_device_priv(tzdev);
+-	struct device *dev = thermal->bus_info->dev;
+-	int i;
+-	int err;
++		return false;
+ 
+-	/* If the cooling device is our one unbind it */
+-	if (mlxsw_get_cooling_device_idx(thermal, cdev) < 0)
+-		return 0;
++	c->upper = state->max_state;
++	c->lower = state->min_state;
+ 
+-	for (i = 0; i < MLXSW_THERMAL_NUM_TRIPS; i++) {
+-		err = thermal_zone_unbind_cooling_device(tzdev, i, cdev);
+-		if (err < 0) {
+-			dev_err(dev, "Failed to unbind cooling device\n");
+-			return err;
+-		}
+-	}
+-	return 0;
++	return true;
+ }
+ 
+ static int mlxsw_thermal_get_temp(struct thermal_zone_device *tzdev,
+@@ -240,57 +210,27 @@ static struct thermal_zone_params mlxsw_
+ };
+ 
+ static struct thermal_zone_device_ops mlxsw_thermal_ops = {
+-	.bind = mlxsw_thermal_bind,
+-	.unbind = mlxsw_thermal_unbind,
++	.should_bind = mlxsw_thermal_should_bind,
+ 	.get_temp = mlxsw_thermal_get_temp,
+ };
+ 
+-static int mlxsw_thermal_module_bind(struct thermal_zone_device *tzdev,
+-				     struct thermal_cooling_device *cdev)
++static bool mlxsw_thermal_module_should_bind(struct thermal_zone_device *tzdev,
++					     const struct thermal_trip *trip,
++					     struct thermal_cooling_device *cdev,
++					     struct cooling_spec *c)
+ {
+ 	struct mlxsw_thermal_module *tz = thermal_zone_device_priv(tzdev);
++	const struct mlxsw_cooling_states *state = trip->priv;
+ 	struct mlxsw_thermal *thermal = tz->parent;
+-	int i, j, err;
+ 
+ 	/* If the cooling device is one of ours bind it */
+ 	if (mlxsw_get_cooling_device_idx(thermal, cdev) < 0)
+-		return 0;
+-
+-	for (i = 0; i < MLXSW_THERMAL_NUM_TRIPS; i++) {
+-		const struct mlxsw_cooling_states *state = &tz->cooling_states[i];
++		return false;
+ 
+-		err = thermal_zone_bind_cooling_device(tzdev, i, cdev,
+-						       state->max_state,
+-						       state->min_state,
+-						       THERMAL_WEIGHT_DEFAULT);
+-		if (err < 0)
+-			goto err_thermal_zone_bind_cooling_device;
+-	}
+-	return 0;
+-
+-err_thermal_zone_bind_cooling_device:
+-	for (j = i - 1; j >= 0; j--)
+-		thermal_zone_unbind_cooling_device(tzdev, j, cdev);
+-	return err;
+-}
+-
+-static int mlxsw_thermal_module_unbind(struct thermal_zone_device *tzdev,
+-				       struct thermal_cooling_device *cdev)
+-{
+-	struct mlxsw_thermal_module *tz = thermal_zone_device_priv(tzdev);
+-	struct mlxsw_thermal *thermal = tz->parent;
+-	int i;
+-	int err;
++	c->upper = state->max_state;
++	c->lower = state->min_state;
+ 
+-	/* If the cooling device is one of ours unbind it */
+-	if (mlxsw_get_cooling_device_idx(thermal, cdev) < 0)
+-		return 0;
+-
+-	for (i = 0; i < MLXSW_THERMAL_NUM_TRIPS; i++) {
+-		err = thermal_zone_unbind_cooling_device(tzdev, i, cdev);
+-		WARN_ON(err);
+-	}
+-	return err;
++	return true;
+ }
+ 
+ static int mlxsw_thermal_module_temp_get(struct thermal_zone_device *tzdev,
+@@ -313,8 +253,7 @@ static int mlxsw_thermal_module_temp_get
+ }
+ 
+ static struct thermal_zone_device_ops mlxsw_thermal_module_ops = {
+-	.bind		= mlxsw_thermal_module_bind,
+-	.unbind		= mlxsw_thermal_module_unbind,
++	.should_bind	= mlxsw_thermal_module_should_bind,
+ 	.get_temp	= mlxsw_thermal_module_temp_get,
+ };
+ 
+@@ -342,8 +281,7 @@ static int mlxsw_thermal_gearbox_temp_ge
+ }
+ 
+ static struct thermal_zone_device_ops mlxsw_thermal_gearbox_ops = {
+-	.bind		= mlxsw_thermal_module_bind,
+-	.unbind		= mlxsw_thermal_module_unbind,
++	.should_bind	= mlxsw_thermal_module_should_bind,
+ 	.get_temp	= mlxsw_thermal_gearbox_temp_get,
+ };
+ 
+@@ -451,6 +389,7 @@ mlxsw_thermal_module_init(struct device
+ 			  struct mlxsw_thermal_area *area, u8 module)
+ {
+ 	struct mlxsw_thermal_module *module_tz;
++	int i;
+ 
+ 	module_tz = &area->tz_module_arr[module];
+ 	/* Skip if parent is already set (case of port split). */
+@@ -465,6 +404,8 @@ mlxsw_thermal_module_init(struct device
+ 	       sizeof(thermal->trips));
+ 	memcpy(module_tz->cooling_states, default_cooling_states,
+ 	       sizeof(thermal->cooling_states));
++	for (i = 0; i < MLXSW_THERMAL_NUM_TRIPS; i++)
++		module_tz->trips[i].priv = &module_tz->cooling_states[i];
+ }
+ 
+ static void mlxsw_thermal_module_fini(struct mlxsw_thermal_module *module_tz)
+@@ -579,7 +520,7 @@ mlxsw_thermal_gearboxes_init(struct devi
+ 	struct mlxsw_thermal_module *gearbox_tz;
+ 	char mgpir_pl[MLXSW_REG_MGPIR_LEN];
+ 	u8 gbox_num;
+-	int i;
++	int i, j;
+ 	int err;
+ 
+ 	mlxsw_reg_mgpir_pack(mgpir_pl, area->slot_index);
+@@ -606,6 +547,9 @@ mlxsw_thermal_gearboxes_init(struct devi
+ 		       sizeof(thermal->trips));
+ 		memcpy(gearbox_tz->cooling_states, default_cooling_states,
+ 		       sizeof(thermal->cooling_states));
++		for (j = 0; j < MLXSW_THERMAL_NUM_TRIPS; j++)
++			gearbox_tz->trips[j].priv = &gearbox_tz->cooling_states[j];
++
+ 		gearbox_tz->module = i;
+ 		gearbox_tz->parent = thermal;
+ 		gearbox_tz->slot_index = area->slot_index;
+@@ -722,6 +666,9 @@ int mlxsw_thermal_init(struct mlxsw_core
+ 	thermal->bus_info = bus_info;
+ 	memcpy(thermal->trips, default_thermal_trips, sizeof(thermal->trips));
+ 	memcpy(thermal->cooling_states, default_cooling_states, sizeof(thermal->cooling_states));
++	for (i = 0; i < MLXSW_THERMAL_NUM_TRIPS; i++)
++		thermal->trips[i].priv = &thermal->cooling_states[i];
++
+ 	thermal->line_cards[0].slot_index = 0;
+ 
+ 	err = mlxsw_reg_query(thermal->core, MLXSW_REG(mfcr), mfcr_pl);
+
+
+
 
