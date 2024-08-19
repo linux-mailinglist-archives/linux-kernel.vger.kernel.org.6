@@ -1,121 +1,158 @@
-Return-Path: <linux-kernel+bounces-291829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C54D89567B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 11:58:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0E6E9567BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 12:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 662531F226C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:58:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EB671C217A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D754915DBB9;
-	Mon, 19 Aug 2024 09:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="bvKKSNH2"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F18015B986;
+	Mon, 19 Aug 2024 10:03:44 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0FB15D5CE
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 09:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BF033C0;
+	Mon, 19 Aug 2024 10:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724061502; cv=none; b=eQLQsJewZk4A+Az9btvFSGaLtchkTT48FPBHcL8kp8ukN4WzpmH9kcjRwgTEgH6UQcWlw3BAbYx/G1G9qPMn0OJIZtvM8PU7bBSQrAgBkI6TQFKuxVOt4BwHwxc77+fh21siGQgdYdcw0AJk3gRTrMgmpb6jBJdYHgzRQu8MnOo=
+	t=1724061824; cv=none; b=ggsq5Y3qAAJxIW+b3upLT3Xp1ggWK5AEPpNBE9C6cG9uTMpdAUwuw0Kd64mg26Rhl49+3LW/WjMPqPU+0hev2+I1e73TzJkgX54T8jiN9nSegGP5bOD2rSj3kvS5BR3IqyK7bQqlXVcq1KUvlGPP+9H3qlU2o58e37GIaFQxtSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724061502; c=relaxed/simple;
-	bh=6ZZdZCRFsHhRWDlGAK+gYiJ5DQqr/lmuyPxD7mZ+llY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A41+vkjtzPprFmyklIk0gQLVVy0IngwuNTdxSEpLrkz+5rqkJZIcHbGeTEL92GX15Ojm1qyOHRpmUpPa6P0ujh+sqBchJDpDllaRksHxgnknS/ZwCgOeiIWPpfuTu2MlqQbQDe30D2OOEynz+scekXw3c4YNS9lw4oPOicfBBPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=bvKKSNH2; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7aa4bf4d1eso559144866b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 02:58:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1724061499; x=1724666299; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=z/WM/vbPfsLB9+Ywm21579BeaRCehpr1hL+f09TjRp8=;
-        b=bvKKSNH2M3+IVMmfos84UbVLx2wb0Qa3NC9Tv2Kzf00LX+DIVp7oWlUFrzkK17heBT
-         B1CAAufinsU/yC1hU3CrwRs7RmVH7YSfwpbz8g1k5y2vC6jYw4FBZdR2lksvha2zJH/t
-         kPyNWq8o03d/a3rqwqlu0eX5uEjmUkch1lZJkfJyFT4LCMDROKp1zJy1LCTLwKK8OXEX
-         bY5zYrNnAlShflB3mXPAlb5zDN2idiz6XZsJmUTEG2Trb626j5gQRJa9lVQui5gAeg6t
-         fD9/V5F8XreK3JPcowVFqxrpDZOlNDWqzmdo47kv7BETnf0Lj81gu3DVzQla2XPNTv/D
-         ZIzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724061499; x=1724666299;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z/WM/vbPfsLB9+Ywm21579BeaRCehpr1hL+f09TjRp8=;
-        b=EyzC/bsZkBGfDP17iSQ0oj4fH0E2TYBYI8lEId4KHgdAliVwEnssZYQmcJ6k9qKw19
-         vojgO7qs0Is2fCx9aig9XwvuYDwDNzyjsiXffA8M1Ve+9Yd6VckMMVTWZMqHWuwrGyw0
-         wUSSstijvRffT2GrZaRxV8nQ7x1QuUd3m+wkSBD7XzaoNIoCB/eRcpCZHl1sfKMlFXKu
-         HvY+qmIXFAfUTpYZf/QZ63pBnJr3dCk76e6svD+J0txZ+P90tyZQhZCrKqtW9/UzYkvy
-         lXnN6LKb6rv2FMoPINkfh5yiRo+D298VCWEMkGK8u7PwVUJYdJxtnUBKTbCcbqQLn5Wv
-         g+og==
-X-Forwarded-Encrypted: i=1; AJvYcCVsqejSwH3Aal40mrnh+rYpH4tliB24zUbk7ABNvsPPoBSctIGZgLeHylH9uiZ4beGdkOGcIVu4EBEzoxxKGzlcT9hpDaEm1eVwSubu
-X-Gm-Message-State: AOJu0Yygv51jlWPQUjdl6yf+ZWhqKnwYlKB1eHH6H18+9qtfpsg7ycm2
-	xFhu3w9VJn9wD7IM7f1XN48OXH1GytvlPv3galZw74fpopif2uDebyCBj+HeUXI=
-X-Google-Smtp-Source: AGHT+IE8dujqtNt2QB+POwilgZUwLTFuKQfMnKJC0wL4+RUjvO0qyeyj2M6q5xsQmP85IflYGSB+eQ==
-X-Received: by 2002:a17:907:e61d:b0:a7a:a892:8e05 with SMTP id a640c23a62f3a-a83929534d8mr738035366b.33.1724061498556;
-        Mon, 19 Aug 2024 02:58:18 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-62-216-208-163.dynamic.mnet-online.de. [62.216.208.163])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839472f4sm612225466b.184.2024.08.19.02.58.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 02:58:18 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: lucas.demarchi@intel.com,
-	thomas.hellstrom@linux.intel.com,
-	rodrigo.vivi@intel.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch
-Cc: intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1724061824; c=relaxed/simple;
+	bh=vKxt43l0OwvJY5pOsltXEYOqsDQ7ksufql72nzGBt5A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=drDT+Bsg3k6J6EUsXQ0JStXtNfoLKval9VFujmm8MYwQTYU1QvDPD+FL7oQ561s/PmPjXHjcXZOcgOzZcNMHWEkrm6OhUrPHYPKiwor2RCa7dSzViWaWro0fBGBd6uqXCeS9ir9EAlDBuItZrdkEwTWSfhJkJg0WIrXpFosJbYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 8fdc65be5e1111efa216b1d71e6e1362-20240819
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:0d267023-8f1c-4590-a5e5-11990b87f65d,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:82c5f88,CLOUDID:e841c5a9961d80c9f7a7a15340738a8e,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,URL:0
+	,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:
+	NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 8fdc65be5e1111efa216b1d71e6e1362-20240819
+Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
+	(envelope-from <xialonglong@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 193915827; Mon, 19 Aug 2024 17:58:19 +0800
+Received: from node4.com.cn (localhost [127.0.0.1])
+	by node4.com.cn (NSMail) with SMTP id 21C5616002085;
+	Mon, 19 Aug 2024 17:58:19 +0800 (CST)
+X-ns-mid: postfix-66C3173A-9875491417
+Received: from kylin-pc.. (unknown [172.25.130.133])
+	by node4.com.cn (NSMail) with ESMTPA id 49C2F16002084;
+	Mon, 19 Aug 2024 09:58:17 +0000 (UTC)
+From: Longlong Xia <xialonglong@kylinos.cn>
+To: quic_jhugo@quicinc.com
+Cc: quic_carlv@quicinc.com,
+	ogabbay@kernel.org,
+	linux-arm-msm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>,
-	Ashutosh Dixit <ashutosh.dixit@intel.com>
-Subject: [RESEND PATCH] drm/xe/oa: Use vma_pages() helper function in xe_oa_mmap()
-Date: Mon, 19 Aug 2024 11:57:52 +0200
-Message-ID: <20240819095751.539645-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.46.0
+	Longlong Xia <xialonglong@kylinos.cn>
+Subject: [PATCH 1/1] accel/qaic: Change to use DEFINE_SHOW_ATTRIBUTE macro
+Date: Mon, 19 Aug 2024 17:58:16 +0800
+Message-ID: <20240819095816.447096-1-xialonglong@kylinos.cn>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-Use the vma_pages() helper function and remove the following
-Coccinelle/coccicheck warning reported by vma_pages.cocci:
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+No functional change.
 
-  WARNING: Consider using vma_pages helper on vma
-
-Reviewed-by: Ashutosh Dixit <ashutosh.dixit@intel.com>
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+Signed-off-by: Longlong Xia <xialonglong@kylinos.cn>
 ---
- drivers/gpu/drm/xe/xe_oa.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/accel/qaic/qaic_debugfs.c | 43 ++++---------------------------
+ 1 file changed, 5 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/gpu/drm/xe/xe_oa.c b/drivers/gpu/drm/xe/xe_oa.c
-index 6d69f751bf78..133292a9d687 100644
---- a/drivers/gpu/drm/xe/xe_oa.c
-+++ b/drivers/gpu/drm/xe/xe_oa.c
-@@ -1244,8 +1244,7 @@ static int xe_oa_mmap(struct file *file, struct vm_area_struct *vma)
- 	vm_flags_mod(vma, VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP | VM_DONTCOPY,
- 		     VM_MAYWRITE | VM_MAYEXEC);
- 
--	xe_assert(stream->oa->xe, bo->ttm.ttm->num_pages ==
--		  (vma->vm_end - vma->vm_start) >> PAGE_SHIFT);
-+	xe_assert(stream->oa->xe, bo->ttm.ttm->num_pages == vma_pages(vma));
- 	for (i = 0; i < bo->ttm.ttm->num_pages; i++) {
- 		ret = remap_pfn_range(vma, start, page_to_pfn(bo->ttm.ttm->pages[i]),
- 				      PAGE_SIZE, vma->vm_page_prot);
--- 
-2.46.0
+diff --git a/drivers/accel/qaic/qaic_debugfs.c b/drivers/accel/qaic/qaic_=
+debugfs.c
+index 20b653d99e52..ba0cf2f94732 100644
+--- a/drivers/accel/qaic/qaic_debugfs.c
++++ b/drivers/accel/qaic/qaic_debugfs.c
+@@ -64,20 +64,9 @@ static int bootlog_show(struct seq_file *s, void *unus=
+ed)
+ 	return 0;
+ }
+=20
+-static int bootlog_fops_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, bootlog_show, inode->i_private);
+-}
+-
+-static const struct file_operations bootlog_fops =3D {
+-	.owner =3D THIS_MODULE,
+-	.open =3D bootlog_fops_open,
+-	.read =3D seq_read,
+-	.llseek =3D seq_lseek,
+-	.release =3D single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(bootlog);
+=20
+-static int read_dbc_fifo_size(struct seq_file *s, void *unused)
++static int fifo_size_show(struct seq_file *s, void *unused)
+ {
+ 	struct dma_bridge_chan *dbc =3D s->private;
+=20
+@@ -85,20 +74,9 @@ static int read_dbc_fifo_size(struct seq_file *s, void=
+ *unused)
+ 	return 0;
+ }
+=20
+-static int fifo_size_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, read_dbc_fifo_size, inode->i_private);
+-}
+-
+-static const struct file_operations fifo_size_fops =3D {
+-	.owner =3D THIS_MODULE,
+-	.open =3D fifo_size_open,
+-	.read =3D seq_read,
+-	.llseek =3D seq_lseek,
+-	.release =3D single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(fifo_size);
+=20
+-static int read_dbc_queued(struct seq_file *s, void *unused)
++static int queued_show(struct seq_file *s, void *unused)
+ {
+ 	struct dma_bridge_chan *dbc =3D s->private;
+ 	u32 tail =3D 0, head =3D 0;
+@@ -115,18 +93,7 @@ static int read_dbc_queued(struct seq_file *s, void *=
+unused)
+ 	return 0;
+ }
+=20
+-static int queued_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, read_dbc_queued, inode->i_private);
+-}
+-
+-static const struct file_operations queued_fops =3D {
+-	.owner =3D THIS_MODULE,
+-	.open =3D queued_open,
+-	.read =3D seq_read,
+-	.llseek =3D seq_lseek,
+-	.release =3D single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(queued);
+=20
+ void qaic_debugfs_init(struct qaic_drm_device *qddev)
+ {
+--=20
+2.45.1
 
 
