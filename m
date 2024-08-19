@@ -1,219 +1,86 @@
-Return-Path: <linux-kernel+bounces-291341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 815D495610B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:18:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 059F995610D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 04:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EA941F220EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:18:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B16AE2816D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 02:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A931924B34;
-	Mon, 19 Aug 2024 02:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mhm+Ew4v"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FDD24B34;
+	Mon, 19 Aug 2024 02:22:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4FE02F2B
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 02:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093961BC3F
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 02:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724033899; cv=none; b=aRCsTRtjnziU2mkv3jM3DJVufDReJwWE8EcTizLUYvqPO8IgzMTRJrk5uCZNhHvxGWQ/U/vQC3LqzdP4W6/8QzfqzqeTxwILPmJlWyn8A8x/h5VWKAGjImwJmTwQfXvXDqMXMgOOPilVCKBV0m7BI8rMKyaFzyaPnQrxzT6MghA=
+	t=1724034126; cv=none; b=sgPgCs1GTDELpLHeNn82GR4hIBcmu6I/e6GJHvKoCSFHojFt6WJ7eQdI/jpOdItOahPxaxNFunx8pRu6g8Zm+yamw14tVFjovqmTZ+jWCoeZ8jY0q3sQWvQ4oxHlFZFzOWUon5DBdmCx1GY8WyYQsrvQDyS5/1PMGrb51jpM/Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724033899; c=relaxed/simple;
-	bh=3odVzTPLqDJOmWI//z/O5XNxhyzdCP3ugylcNCVOyvs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=dOma4NSaADYukaybOTptnVSiH29NoH9oIo+8cztS0kzSxDOGpwxN5Lr7pP3DStHALiLgwudm5lPDwJ3CS/ID5ClZuWIfg3L9FPTWLsBe/rPpoQzK4wJe3FUtrMNan9SEY0DS7pUd/FDHS5mXJ1ARMlEs0rPiDHrlC5QIlq7rUzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mhm+Ew4v; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724033896;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zy2n/iSTOmuSOtCCgNALCFYMM/+MYQpcLsQpKWzeBUA=;
-	b=Mhm+Ew4vwpYmDDdfrctCRupxUmR8zPQZrCWmJ41gh2QtqePVNWnRYD2b72zDcODBSqeK94
-	Nv5zl1fnxy6gzJr+dnhNXeB5EapyHrsb8nrmqneXjMcIfAKwUh024IeUheg1MLCQ3mw9nP
-	3ZrWup3W2I4//UN3X3irGd/jpYIVAuY=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-448-SYOiRmuIPTq3BpxKxSpbfA-1; Sun,
- 18 Aug 2024 22:18:13 -0400
-X-MC-Unique: SYOiRmuIPTq3BpxKxSpbfA-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4751D1955BF1;
-	Mon, 19 Aug 2024 02:18:11 +0000 (UTC)
-Received: from [10.2.16.4] (unknown [10.2.16.4])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 757FB1955F43;
-	Mon, 19 Aug 2024 02:18:09 +0000 (UTC)
-Message-ID: <ff059171-d38e-41a3-86e0-e092a34ba970@redhat.com>
-Date: Sun, 18 Aug 2024 22:18:08 -0400
+	s=arc-20240116; t=1724034126; c=relaxed/simple;
+	bh=O7eYK2xy5MuuE/lM/lRPE1QcoM9vO86MaKObc7xAjLc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Tg4qbBqPUxzQvAK5jT+ZCjQE32ZB1SldagzX3/9rqyLAmk3FeUP4kP+CAWaGxKiqsXj5Y+X6+TABigchFmjt8sH6FUEAzg0cXCTTfGGchYrPExBZAF4/micS3vzMIkLDv6OtiVjsp7ky2wcFbfD5T4ryWskLBWp7P6HIY4+mFJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81d1b92b559so404108039f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 19:22:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724034124; x=1724638924;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b1bliJKR9a3PGT860CpcL4kQOfOVTrrGgVMRmAohtas=;
+        b=ngVEnhlIC4JJ3aBaCvEXu2lA1kVbUaLdJN9ObRFSTUyQRhjRlajiNhIXtsavKNNFkE
+         F6dmofr6MPGk07vXjKGzZTnMETVE8f80EflY8uUCTIF1OZthTwJ4v285VoNbvpFWGFLz
+         r+BuTFRSd/kjd94uyk2qZwOHKCkx+XSO6aUQESakCIvzhR4X/z5nRbSjv+awDtHCnIJj
+         BP14kCPL5m2Igz9HHVHBkso/6srJjb5L4XmuxiGVTTSELc45zFNH/vbEEyuNGoIvnaNV
+         zVkn/ORL2KBZklaeHUCobq0jTmwv4lfmF5MyoqLMMiup8IHjKp7bw6c056f7i88h9jy/
+         BSrQ==
+X-Gm-Message-State: AOJu0Yy1EyjxNKDhZ2A9N41uD0egoXpVhLM/cMVJiSREU5Z7NrSikPKB
+	vRVHYi8FHflhstQdFzJAa5EFyNk7wAYhNjNtS9wANcHHysDsyhm9t6diGT0isp/XOM4QfC7opXA
+	0YJ/4Gqp3ihdLfrjUV5J8Qhv+7EuNmueuVO/pKukFuXwxCjSpkA4B760=
+X-Google-Smtp-Source: AGHT+IGZkgBsLzXHP/DH3oGTwqIH0BvGmyxBRRQJc/ML1qTQfb/kQoMqwrUpJAvTBHbhbn2XLnW70OW30C/ovJ87wTYXZmOhXFpp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next 1/3] cgroup/cpuset: Correct invalid remote parition
- prs
-From: Waiman Long <longman@redhat.com>
-To: Chen Ridong <chenridong@huawei.com>, tj@kernel.org,
- lizefan.x@bytedance.com, hannes@cmpxchg.org, adityakali@google.com,
- sergeh@kernel.org, mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240816082727.2779-1-chenridong@huawei.com>
- <20240816082727.2779-2-chenridong@huawei.com>
- <dc4672a0-bff4-493f-81da-9dfdda9018f2@redhat.com>
-Content-Language: en-US
-In-Reply-To: <dc4672a0-bff4-493f-81da-9dfdda9018f2@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Received: by 2002:a05:6638:379f:b0:4bb:624c:5a7f with SMTP id
+ 8926c6da1cb9f-4cce15bec49mr365735173.1.1724034124074; Sun, 18 Aug 2024
+ 19:22:04 -0700 (PDT)
+Date: Sun, 18 Aug 2024 19:22:04 -0700
+In-Reply-To: <20240819020104.2157773-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008be49a061ffff99a@google.com>
+Subject: Re: [syzbot] [ocfs2?] WARNING: bad unlock balance in ocfs2_read_blocks
+From: syzbot <syzbot+ab134185af9ef88dfed5@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/18/24 22:14, Waiman Long wrote:
->
-> On 8/16/24 04:27, Chen Ridong wrote:
->> When enable a remote partition, I found that:
->>
->> cd /sys/fs/cgroup/
->> mkdir test
->> mkdir test/test1
->> echo +cpuset > cgroup.subtree_control
->> echo +cpuset >  test/cgroup.subtree_control
->> echo 3 > test/test1/cpuset.cpus
->> echo root > test/test1/cpuset.cpus.partition
->> cat test/test1/cpuset.cpus.partition
->> root invalid (Parent is not a partition root)
->>
->> The parent of a remote partition could not be a root. This is due to the
->> emtpy effective_xcpus. It would be better to prompt the message "invalid
->> cpu list in cpuset.cpus.exclusive".
->>
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->> ---
->>   kernel/cgroup/cpuset.c | 42 +++++++++++++++++++++++-------------------
->>   1 file changed, 23 insertions(+), 19 deletions(-)
->>
->> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->> index e34fd6108b06..fdd5346616d3 100644
->> --- a/kernel/cgroup/cpuset.c
->> +++ b/kernel/cgroup/cpuset.c
->> @@ -80,6 +80,7 @@ enum prs_errcode {
->>       PERR_HOTPLUG,
->>       PERR_CPUSEMPTY,
->>       PERR_HKEEPING,
->> +    PERR_PMT,
+Hello,
 
-One more thing, the "PMT" acronym for the error code is hard to decode. 
-I will suggest you either use the "PERMISSION" or "ACCESS" like the 
-EACCESS errno.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Cheers,
-Longman
+Reported-by: syzbot+ab134185af9ef88dfed5@syzkaller.appspotmail.com
+Tested-by: syzbot+ab134185af9ef88dfed5@syzkaller.appspotmail.com
 
->>   };
->>     static const char * const perr_strings[] = {
->> @@ -91,6 +92,7 @@ static const char * const perr_strings[] = {
->>       [PERR_HOTPLUG]   = "No cpu available due to hotplug",
->>       [PERR_CPUSEMPTY] = "cpuset.cpus and cpuset.cpus.exclusive are 
->> empty",
->>       [PERR_HKEEPING]  = "partition config conflicts with 
->> housekeeping setup",
->> +    [PERR_PMT]       = "Enable partition not permitted",
->>   };
->>     struct cpuset {
->> @@ -1669,7 +1671,7 @@ static int remote_partition_enable(struct 
->> cpuset *cs, int new_prs,
->>        * The user must have sysadmin privilege.
->>        */
->>       if (!capable(CAP_SYS_ADMIN))
->> -        return 0;
->> +        return PERR_PMT;
->>         /*
->>        * The requested exclusive_cpus must not be allocated to other
->> @@ -1683,7 +1685,7 @@ static int remote_partition_enable(struct 
->> cpuset *cs, int new_prs,
->>       if (cpumask_empty(tmp->new_cpus) ||
->>           cpumask_intersects(tmp->new_cpus, subpartitions_cpus) ||
->>           cpumask_subset(top_cpuset.effective_cpus, tmp->new_cpus))
->> -        return 0;
->> +        return PERR_INVCPUS;
->>         spin_lock_irq(&callback_lock);
->>       isolcpus_updated = partition_xcpus_add(new_prs, NULL, 
->> tmp->new_cpus);
->> @@ -1698,7 +1700,7 @@ static int remote_partition_enable(struct 
->> cpuset *cs, int new_prs,
->>        */
->>       update_tasks_cpumask(&top_cpuset, tmp->new_cpus);
->>       update_sibling_cpumasks(&top_cpuset, NULL, tmp);
->> -    return 1;
->> +    return 0;
->>   }
->
-> Since you are changing the meaning of the function returned value, you 
-> should also update the return value comment as well.
->
->>     /*
->> @@ -3151,24 +3153,26 @@ static int update_prstate(struct cpuset *cs, 
->> int new_prs)
->>           goto out;
->>         if (!old_prs) {
->> -        enum partition_cmd cmd = (new_prs == PRS_ROOT)
->> -                       ? partcmd_enable : partcmd_enablei;
->> -
->>           /*
->> -         * cpus_allowed and exclusive_cpus cannot be both empty.
->> -         */
->> -        if (xcpus_empty(cs)) {
->> -            err = PERR_CPUSEMPTY;
->> -            goto out;
->> -        }
->> +        * If parent is valid partition, enable local partiion.
->> +        * Otherwise, enable a remote partition.
->> +        */
->> +        if (is_partition_valid(parent)) {
->> +            enum partition_cmd cmd = (new_prs == PRS_ROOT)
->> +                           ? partcmd_enable : partcmd_enablei;
->>   -        err = update_parent_effective_cpumask(cs, cmd, NULL, 
->> &tmpmask);
->> -        /*
->> -         * If an attempt to become local partition root fails,
->> -         * try to become a remote partition root instead.
->> -         */
->> -        if (err && remote_partition_enable(cs, new_prs, &tmpmask))
->> -            err = 0;
->> +            /*
->> +             * cpus_allowed and exclusive_cpus cannot be both empty.
->> +             */
->> +            if (xcpus_empty(cs)) {
->> +                err = PERR_CPUSEMPTY;
->> +                goto out;
->> +            }
->
-> The xcpus_empty() check should be done for both local and remote 
-> partition.
->
-> Cheers,
-> Longman
->
->> +
->> +            err = update_parent_effective_cpumask(cs, cmd, NULL, 
->> &tmpmask);
->> +        } else {
->> +            err = remote_partition_enable(cs, new_prs, &tmpmask);
->> +        }
->>       } else if (old_prs && new_prs) {
->>           /*
->>            * A change in load balance state only, no change in cpumasks.
+Tested on:
 
+commit:         c3f2d783 Merge tag 'mm-hotfixes-stable-2024-08-17-19-3..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=10a60fcb980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7229118d88b4a71b
+dashboard link: https://syzkaller.appspot.com/bug?extid=ab134185af9ef88dfed5
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=121f77f3980000
+
+Note: testing is done by a robot and is best-effort only.
 
