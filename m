@@ -1,120 +1,126 @@
-Return-Path: <linux-kernel+bounces-291713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A8BC9565D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:42:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D109565D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 10:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 516CD1F23E1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:42:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DB671F23DF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C57F15C128;
-	Mon, 19 Aug 2024 08:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41D015D5BE;
+	Mon, 19 Aug 2024 08:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="rmpWrNZZ"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hD7DGSOn"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0728515B551
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED44415B98D;
+	Mon, 19 Aug 2024 08:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724056934; cv=none; b=pw6GjWKvOFPaHHtD/MY3iz+BGwKY3XbMQqv7Kd93kJX3aPqK7QUjb0DSRSWeGZLLY3kIhL9sR5Gy7HYcTyydj2bzDlRClBx9zVF204/5l25Fz+JwjtYyOIFy3RV2gDd9z6hr7HYa4TxfnSdvx5NB9wZDoM7/uKvA4Uf51bZ8SjM=
+	t=1724056936; cv=none; b=VSSu70q4q38opAABPtEXJsVzBHDBow9bgAdwjGw/dB9Nxb5VAU9JXAmUqOs8ltqhl9pvthxrPEU+iEvT0+nKLyEHdeoZ7GIQJ4dZFN38c2JT6T87ddAbTBRuck9qmn7Z/2l1fxyuvLd0DzwcLOr7p8YG0TWYYRMb7olwFwmwXQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724056934; c=relaxed/simple;
-	bh=nsNrokjPtlMyX9xC/z629EiU6DQLwAN+FixNCRobCbQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nWFbJzOR5AmGh9nHolSgV7JAhP8b+XI3yRFbRk78EMic0VnVmE0WrTKy8VHdTClUe+Mcb+4mEqYxwyrPDBndGm16CYa3UuAjrCHFAKUgsOY0EKwop4O3EMVM4K4CyRv2pCB0P75YXONPUlZL3fxJFPjAoqLAXGKMKQz41U3bdLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=rmpWrNZZ; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1724056928; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=KLMHvwzxuIVKCo2bV13G0bukH2Tmr6a3PUkasa/nnJk=;
-	b=rmpWrNZZIdFDHFvJVvWy8P8Vi4wuVYhEI1aM+IYnYx79WlAcV0VhsKz4AgI3wBdiZVUUH0nAV7O5orW9el9QRGT9tjHGTckeazUPJO7c/TgnHvZKWyuZijRIFiugn55gjEolAk3JYYqoA0mSwmIlb8rlnzZKLZclT5CGomZ14bc=
-Received: from 30.97.56.67(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WD9cnkN_1724056927)
-          by smtp.aliyun-inc.com;
-          Mon, 19 Aug 2024 16:42:07 +0800
-Message-ID: <3db665f2-4525-4942-abfb-0c1fdea2f729@linux.alibaba.com>
-Date: Mon, 19 Aug 2024 16:42:06 +0800
+	s=arc-20240116; t=1724056936; c=relaxed/simple;
+	bh=PGZHOvJ3I/sGSsvElOZ3BaRzkT4FOqGOtisCrn6fvqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WvCYLahSwC7i148/SG2tZJySBHdNyekAGuI2Aa5M+7eLkDiGtwDPk+fAGN3XgBObeneIhqmYPgjtLuM6Z0/XJBUuJcGEyoysvUWrJjRZFWkhfCbLaevu6BBBsQzorvaLWceiTPGGnylhLdfgvgOhnqjmULaYy35tKrHYHKaEOuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hD7DGSOn; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2020b730049so18003735ad.3;
+        Mon, 19 Aug 2024 01:42:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724056934; x=1724661734; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PGZHOvJ3I/sGSsvElOZ3BaRzkT4FOqGOtisCrn6fvqo=;
+        b=hD7DGSOnD+OzSOHGCdCEdwmAJtPR+tZQ5NjrNY6K+xO8I6Xv/zpkA2jzSdOs9Eg3O9
+         sInGMlWeZsR9+R0Mb8SB0DM3rJPprRCs1afTPo3yAXlpRoAuNYfbbfQ5YYUJRAWDs1me
+         9NYEd07D8yD7uAXi/mlFSbr/MXo3ChvTwib7puMOE6brfxAFrUnwu3BuCSvf+4bSU1uS
+         jdvLjU2PuFo+CTX8K7nAjkh76JOE0eAkhr/ndc+g/fDSKr/Sv+cxVfYosv+KA7HRxrW1
+         pB8m1bvM2qzWlTpZ8pd8n9Whc1X6ICHX8FFK5UaWL5C6k5Vcu0l++EunpfanHwUOo/HF
+         MHOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724056934; x=1724661734;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PGZHOvJ3I/sGSsvElOZ3BaRzkT4FOqGOtisCrn6fvqo=;
+        b=X0Ad1RIZsJvh6oC7QeROojdLscuWN04XfJsxoFvTroJTaLmO9UsI5tso7ALAIy1OAK
+         Kb+AkIMkOe1Sw4acidUoFr/2CVm4y6Mhc2naHh9iZSb/hE28sF0Sc5DXXQIbHreFvKV6
+         OWPTY5r7sIeDKxzprDCGcQMxqFY2B1q+VQCeuN3XDEba4srwhfnIYYbtdwaV0PnqIcPB
+         kBVbukF2yqH4jM9UXjDNTkcjTvA9+aB3Jc+fzNo1VXPDQJWzqHDTIUfW0RESNuIRGuTI
+         5Wa52p11lmkV6Tudp9ckPIStXuRXowFCHCMvXvk0RkZ3d5bzRZEYKgrYzsgCrxLzmxkj
+         XYzw==
+X-Forwarded-Encrypted: i=1; AJvYcCX3ekUbjNj+fB4K/53TFw8ueduAVPctdXzQaLFEc2jMhoKh9s6I0t6ddtmlJEiYM8a4xWOoZZgNpyNZTgVn7cwjS3NJnNeQed4VzFE/aN/O8RbDGaAG/n8zdzOOHGvzFtK9DW/wGdEt
+X-Gm-Message-State: AOJu0YzGALq7+stf8hxFh14OcaZaXA0wxIUAYz0y5syv/WPCRuhj9URL
+	g1AaSmmp05wj+9ks/afMXtkEwKva8SZq5mQAFmVGC941XdX3tXYW
+X-Google-Smtp-Source: AGHT+IH8SJoDTYfYGz7l1cO0TAPnu6MgibpGDFz1bUdQ2iWqX54EE35IqxQA8L2v7vNWAVB3QWu/QQ==
+X-Received: by 2002:a17:902:ea0e:b0:202:3e32:5d3a with SMTP id d9443c01a7336-2023e326545mr24339245ad.26.1724056933917;
+        Mon, 19 Aug 2024 01:42:13 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f037895dsm58858255ad.155.2024.08.19.01.42.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 01:42:13 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 923474935788; Mon, 19 Aug 2024 15:42:09 +0700 (WIB)
+Date: Mon, 19 Aug 2024 15:42:09 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Thorsten Leemhuis <linux@leemhuis.info>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: regressions@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Petr =?utf-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
+Subject: Re: [PATCH v2] docs: bug-bisect: rewrite to better match the other
+ bisecting text
+Message-ID: <ZsMFYRzba6cf5v_E@archie.me>
+References: <fbeae4056ae8174f454c3865bc45633281bb1b31.1723997526.git.linux@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] mm: khugepaged: expand the is_refcount_suitable() to
- support file folios
-To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org
-Cc: hughd@google.com, willy@infradead.org, 21cnbao@gmail.com,
- ryan.roberts@arm.com, shy828301@gmail.com, ziy@nvidia.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1724054125.git.baolin.wang@linux.alibaba.com>
- <d6f8e4451910da1de0420eb82724dd85c368741c.1724054125.git.baolin.wang@linux.alibaba.com>
- <c53887da-ebbe-432e-bf81-308085215420@redhat.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <c53887da-ebbe-432e-bf81-308085215420@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pS632mJ10TyJMNVd"
+Content-Disposition: inline
+In-Reply-To: <fbeae4056ae8174f454c3865bc45633281bb1b31.1723997526.git.linux@leemhuis.info>
 
 
+--pS632mJ10TyJMNVd
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/8/19 16:36, David Hildenbrand wrote:
-> On 19.08.24 10:14, Baolin Wang wrote:
->> Expand the is_refcount_suitable() to support reference checks for file 
->> folios,
->> as preparation for supporting shmem mTHP collapse.
->>
->> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->> ---
->>   mm/khugepaged.c | 11 ++++++++---
->>   1 file changed, 8 insertions(+), 3 deletions(-)
->>
->> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->> index cdd1d8655a76..f11b4f172e61 100644
->> --- a/mm/khugepaged.c
->> +++ b/mm/khugepaged.c
->> @@ -549,8 +549,14 @@ static bool is_refcount_suitable(struct folio 
->> *folio)
->>       int expected_refcount;
->>       expected_refcount = folio_mapcount(folio);
->> -    if (folio_test_swapcache(folio))
->> +    if (folio_test_anon(folio)) {
->> +        expected_refcount += folio_test_swapcache(folio) ?
->> +                    folio_nr_pages(folio) : 0;
->> +    } else {
->>           expected_refcount += folio_nr_pages(folio);
->> +        if (folio_test_private(folio))
->> +            expected_refcount++;
->> +    }
-> 
-> Alternatively, a bit neater
-> 
-> if (!folio_test_anon(folio) || folio_test_swapcache(folio))
->      expected_refcount += folio_nr_pages(folio);
-> if (folio_test_private(folio))
->      expected_refcount++;
-> 
-> The latter check should be fine even for anon folios (although always 
-> false)
+On Sun, Aug 18, 2024 at 06:12:13PM +0200, Thorsten Leemhuis wrote:
+> Rewrite the short document on bisecting kernel bugs. The new text
+> improves .config handling, brings a mention of 'git skip', and explains
+> what to do after the bisection finished -- including trying a revert to
+> verify the result. The rewrite at the same time removes the unrelated
+> and outdated section on 'Devices not appearing' and replaces some
+> sentences about bug reporting with a pointer to the document covering
+> that topic in detail.
 
-Looks better. Will do in v2.
+Looks good, thanks!
 
->>       return folio_ref_count(folio) == expected_refcount;
->>   }
->> @@ -2285,8 +2291,7 @@ static int hpage_collapse_scan_file(struct 
->> mm_struct *mm, unsigned long addr,
->>               break;
->>           }
->> -        if (folio_ref_count(folio) !=
->> -            1 + folio_mapcount(folio) + folio_test_private(folio)) {
-> 
-> The "1" is due to the pagecache, right? IIUC, we don't hold a raised 
-> folio refcount as we do the xas_for_each().
+Acked-by: Bagas Sanjaya <bagasdotme@gmail.com>
 
-Right.
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--pS632mJ10TyJMNVd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZsMFWgAKCRD2uYlJVVFO
+oxYKAP9O/K/Lvo59SJjRHKJ2qQp3tKXCIPyg2s7DnlLhwr2GqQEAh2Vl4S5BD3ez
+BDuXXN1nrniU70JJvlrxiZVKQmS8NQ0=
+=O1gW
+-----END PGP SIGNATURE-----
+
+--pS632mJ10TyJMNVd--
 
