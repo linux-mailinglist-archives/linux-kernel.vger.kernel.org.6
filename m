@@ -1,136 +1,158 @@
-Return-Path: <linux-kernel+bounces-292684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E4AB9572C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:15:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 590F09572C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E05B9B22335
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:15:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 071531F23F02
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2342F175D21;
-	Mon, 19 Aug 2024 18:15:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA481891A8;
+	Mon, 19 Aug 2024 18:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JGGDoGXq"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=mary-zone.20230601.gappssmtp.com header.i=@mary-zone.20230601.gappssmtp.com header.b="YfznrLSX"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99E213BAC6
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 18:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8837FD531
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 18:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724091325; cv=none; b=YX/AHlXylkAIrh9c3Z7txKZRXH2e/EsaFJFcLNI2qyFdb8fxWvvqaQzFKc9tAk6D1l1czqEQwkvBLMi4DXksETIqmHREr2j6NbDZyp8CHDBbLxmOhw7H9Apds4fKaUu8GpTc4RNUOi0RRRVRKJ7gcnu4m+EkffQWc83JOGspuZM=
+	t=1724091438; cv=none; b=OWgxWekLvaH9a9Wc46BFWknIl0qDNnti8k1QgFBLZuwuLWd2dTenwbpLu6LGXtp5A6+Ww3OZMb3Zpgp3iqRNIyjXwSI14EVPsReRVIaSFZSOprxEnBRQNQ14znF2DyltUEBzW5XVhL1w/VUTq2tgCHXmarw0qyxdPSFKu0kziS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724091325; c=relaxed/simple;
-	bh=WlUaJPEO53FA+WTRmjIZn/wxEwMtAVwhilaIZgSekdQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e6vVmCG6D0ZUn0+/lYP8F0zVhcs9SzL6n6YRfn53qyX1NoE2BK4NgxRKUHZ7VE+FV8FXNOkMXGvbWwTv+7KpzXbeVsAm0rhb4lvA/LlV0L4uPcv2DIIEYN7P05jtcgXnhLADSMN4aY0O/ifcH5ON5X6fzK5oZXI7qwCf29qASw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JGGDoGXq; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7ab5fc975dso459709466b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:15:23 -0700 (PDT)
+	s=arc-20240116; t=1724091438; c=relaxed/simple;
+	bh=vN9VfRlmGvy3YQFxJIT2Vq5YZXks3hjQLPnt55QuAZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R+89qyKlBnc3LEqiW2Gsjnc/0Z0YeCvVlm6cCUzA04Ut4uE6PrlucNfiWihe6mPIfx/MSiod/h9G3VoIOfmdxA1lFjVhS9r7yLNF7fyVQZAvBWlnccNer3TSk3jHErAahiOIF2X0vdV+aiE+9vZmI6FtY8S2j3NuN7Llf7EqY1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mary.zone; spf=none smtp.mailfrom=mary.zone; dkim=pass (2048-bit key) header.d=mary-zone.20230601.gappssmtp.com header.i=@mary-zone.20230601.gappssmtp.com header.b=YfznrLSX; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mary.zone
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mary.zone
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42817bee9e8so36061035e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:17:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724091322; x=1724696122; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zXJ/JxTQWUx4WEp9jXZ6KZTIfAGcgAjkGtJ6Z4ID9VE=;
-        b=JGGDoGXq4XW1kWXnxFcbsIXuevLpDdebPmP4C3zY8fQafe8FCQGl5XuslNkK325g2o
-         H98f3sLgk0mUen/5UAmLaHJytWEiT60nHwMO/VJkaGBH09GBDpo9H8h+RVRvfC4wnd3l
-         99IpN0cvxLd8R04XJSOMZjajKogHZW6v/Jn7oXNOs0SSTPldcL3qHJE07vA0noGSIZFO
-         dicY0cLUWkNhMNgYzoruDo3xyD9OfrE1sxht1cOycnombD2wj5fqQYuCTO2sIgpoPUFk
-         5nWQy/t9+9I+5Low3uLo+3J5gEf8sS4bhNo8Xi3eu+DrFJ4xYWGWH/f5V2WnfBT0jWWX
-         M+Dg==
+        d=mary-zone.20230601.gappssmtp.com; s=20230601; t=1724091432; x=1724696232; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8FoZIbuvwQvPWmR1MSeQfa4tcso/BUCB+N66Db04Kjk=;
+        b=YfznrLSXQudQiXlI6skTxnrjPPl1Hyk/NbLFBbRRSWsHD3o0Z0WxtHq2okOsCNd1dS
+         cu/q5D5IsUxZSsrrME41K1g3nkVLtKc1jxtusgK1rNfhSaEsnraMB38RgqSCwkyWdeiS
+         3i0p+/AAV/f8k5FtQdZJCTAlLSErSArhQZKuiafWZPspGer7CrJKu8IMDfY/Ue8rYkVU
+         732lXN6qRufWD4RnBqbCFrC0ieGU/MNQ6bYzzz5uueKzwgKxWAL3pEVoKJa+cznrTCd7
+         /QdutixkUljsmrq7TBYNBwX9ygqSWN9GVl+Qch7y1NlQwAczRSz3Nkw3gmrg3QiSAIBu
+         BO+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724091322; x=1724696122;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1724091432; x=1724696232;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zXJ/JxTQWUx4WEp9jXZ6KZTIfAGcgAjkGtJ6Z4ID9VE=;
-        b=u39MhWdb5Hmzyh1ausJLkW0AoKt8tBMkAk6OV29HLmu5PW1b/4fehgGos8qhAxdrVT
-         JOgN422RZTMOFoal2QFDLOsx3Gy5ZE8hq4nWuvQDDWrXa3PXhRmcHAN9zR/tp3zAMPTe
-         1LGpp+mVRZmXDeYGw09oDY7AS8TLSnjxWRLLmnm29w5ke5Gj3f426sVNjP1EOtkTtsUP
-         90MvwV4lHfC/iI7TQO4umPLUMIOH68NsD8EXBW8vCKPjDkxsGCcONoNQvGUiTz6ihb5q
-         zK9bmo6WcnIg6kRtak0W11M1lQY/UJZBZT1pW/9JSLSihAWuawoHLLybOXE72qhO2tM4
-         PnRw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFDUVGKrvFtgsSDdHCBz8DWCUWrSisfO1ri5SMOyo8X91aHr4BpTCAPjTBjgr6ujfqq9dKrTsVNXbjHh2IyFDExMZn4ApMpJ1Mtopz
-X-Gm-Message-State: AOJu0YxttHPE2eSR8sZk0Zq+5lb9XNjDbYCiyoLEiakfRDRvxPzBaw5/
-	r+8r0zpcqSBhT3bGMY1i1V6QhIoLWDyYqt+iu//wa9xqPfGQ3JzL
-X-Google-Smtp-Source: AGHT+IFc0po3mo4O9fpfmCnNRPHDYRjKwDTdjNmK8sh/+kEbHxstRUb///5F+1qJ3wH6KwvLikxDvg==
-X-Received: by 2002:a17:907:e2df:b0:a7d:a031:7bb2 with SMTP id a640c23a62f3a-a839295605bmr878537566b.40.1724091321672;
-        Mon, 19 Aug 2024 11:15:21 -0700 (PDT)
-Received: from [192.168.1.100] ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838d00f0sm656546266b.87.2024.08.19.11.15.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 11:15:21 -0700 (PDT)
-Message-ID: <e937e26f-038a-6d01-76a9-76c86760ca4a@gmail.com>
-Date: Mon, 19 Aug 2024 20:15:19 +0200
+        bh=8FoZIbuvwQvPWmR1MSeQfa4tcso/BUCB+N66Db04Kjk=;
+        b=mujDx/G59yfTkhRwpqCOMz90Ul4hK6Y9i3z2k5JGNdTo4f517DLCo+DcaQt0f4/6ly
+         ZaIFm56nBuz9Q2oe6T075pAJLp7zwh1RxfRIAVyphiEvdJXc/TOIZxUIvXfmdFv1uKfn
+         Y3TjotTgoimPQprVz0S3CN207A6gOJYqYs3bmms1+Ly+Z/myvFtlqZ6/e+z1QRoV0wUx
+         YamNA2UAfzD0ObnT8HGLKJcSy97piXq0gsoPWtP9IGwSwwSoh+LE+7qr3SsYWOZAYzBm
+         SNT/fhE7zV0z+6IXwj329TnBaTK/B4EKavVOHNkcvjDdIF4DDLdekcjjavTj54/UAb4d
+         lLnA==
+X-Gm-Message-State: AOJu0Yz6HUb/AyiwkwSA4DGkfl+kwofZM7VuvtskOivd0kDhshhIWBz8
+	JhNUPaqm8harB1AT8LFGmCrlVOxYx0slXYCGUUoQuhsltRVXs1GTuadklKWklHI=
+X-Google-Smtp-Source: AGHT+IGJJQZeKISlIF5wMeAHKYv3hXnZmpUjyZu3JRdPGIt4k5Qy/XezBg4IK2DyWAizJBAaMttqCw==
+X-Received: by 2002:a05:600c:1c0a:b0:429:e6bb:a436 with SMTP id 5b1f17b1804b1-429ed79be6dmr87170715e9.9.1724091432250;
+        Mon, 19 Aug 2024 11:17:12 -0700 (PDT)
+Received: from kuroko.kudu-justice.ts.net (2a01cb040b5eb100cb3bcc29e5f2b7ed.ipv6.abo.wanadoo.fr. [2a01:cb04:b5e:b100:cb3b:cc29:e5f2:b7ed])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed648f0csm117277185e9.9.2024.08.19.11.17.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 11:17:11 -0700 (PDT)
+Date: Mon, 19 Aug 2024 20:17:10 +0200
+From: Mary Guillemard <mary@mary.zone>
+To: Manivannan Sadhasivam <manisadhasivam.linux@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+	Peter Wang <peter.wang@mediatek.com>,
+	Stanley Jhu <chu.stanley@gmail.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH 1/1] scsi: ufs-mediatek: Add UFSHCD_QUIRK_BROKEN_LSDBS_CAP
+Message-ID: <ZsOJKMg8xlpdgoi5@kuroko.kudu-justice.ts.net>
+References: <20240818222442.44990-2-mary@mary.zone>
+ <20240818222442.44990-3-mary@mary.zone>
+ <20240819120852.tdxlebj7pjcxjbou@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] iommu/amd: Modify set_dte_entry() to use 128-bit cmpxchg
- operation
-Content-Language: en-US
-To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-Cc: joro@8bytes.org, robin.murphy@arm.com, vasant.hegde@amd.com,
- jgg@nvidia.com, kevin.tian@intel.com, jon.grimm@amd.com,
- santosh.shukla@amd.com, pandoh@google.com, kumaranand@google.com
-References: <20240819161839.4657-1-suravee.suthikulpanit@amd.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-In-Reply-To: <20240819161839.4657-1-suravee.suthikulpanit@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240819120852.tdxlebj7pjcxjbou@thinkpad>
 
-
-
-On 19. 08. 24 18:18, Suravee Suthikulpanit wrote:
-> The current implementation does not follow the 128-bit write
-> requirement to update DTE as specified in the AMD I/O Virtualization
-> Techonology (IOMMU) Specification.
+On Mon, Aug 19, 2024 at 05:38:52PM +0530, Manivannan Sadhasivam wrote:
+> On Mon, Aug 19, 2024 at 12:24:42AM +0200, Mary Guillemard wrote:
+> > MT8183 supports UFSHCI 2.1 spec, but report a bogus value of 1 in the
+> > reserved part for the Legacy Single Doorbell Support (LSDBS) capability.
+> > 
 > 
-> In addition, the function is used to program several DTE fields
-> (e.g. stage1 table, stage2 table, domain id, and etc.), which is
-> difficult to keep track with current implementation.
+> Wow... I never thought that this quirk will be used outside of Qcom SoCs...
+>
+
+Yeah I found that by trial and error some weeks ago and noticed your
+serie while looking to upstream this change, quite funny to see other
+vendors having the same quirk here.
+ 
+> > This set UFSHCD_QUIRK_BROKEN_LSDBS_CAP when MCQ support is explicitly
+> > disabled, allowing the device to be properly registered.
+> > 
+> > Signed-off-by: Mary Guillemard <mary@mary.zone>
+> > ---
+> >  drivers/ufs/host/ufs-mediatek.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/drivers/ufs/host/ufs-mediatek.c b/drivers/ufs/host/ufs-mediatek.c
+> > index 02c9064284e1..9a5919434c4e 100644
+> > --- a/drivers/ufs/host/ufs-mediatek.c
+> > +++ b/drivers/ufs/host/ufs-mediatek.c
+> > @@ -1026,6 +1026,9 @@ static int ufs_mtk_init(struct ufs_hba *hba)
+> >  	if (host->caps & UFS_MTK_CAP_DISABLE_AH8)
+> >  		hba->caps |= UFSHCD_CAP_HIBERN8_WITH_CLK_GATING;
+> >  
+> > +	if (host->caps & UFS_MTK_CAP_DISABLE_MCQ)
 > 
-> Therefore, introduce new a new dte256_t data type and a helper function
-> update_dte_256(), which uses two try_cmpxchg128 operations to update
-> 256-bit DTE.
+> How can this be the deciding factor? You said above that the issue is with
+> MT8183 SoC. So why not just use the quirk only for that platform?
 > 
-> Also, separate logic for setting up the GCR3 Table Root Pointer, GIOV, GV,
-> GLX, and GuestPagingMode into another helper function set_dte_gcr3_table().
+> - Mani
+>
+
+So my current assumption is that it also affect other Mediatek SoCs
+that are also based on UFS 2.1 spec but I cannot check this.
+
+Instead, we know that if MCQ isn't supported, we must fallback to LSDB
+as there is no other ways to drive the device.
+
+UFS_MTK_CAP_DISABLE_MCQ (mediatek,ufs-disable-mcq) being unused upstream,
+I think that's an acceptable fix.
+
+Another way to handle this would be to add a new dt property and add it
+to ufs_mtk_host_caps but I feel that my approach should be enough. 
+
+> > +		hba->quirks |= UFSHCD_QUIRK_BROKEN_LSDBS_CAP;
+> > +
+> >  	ufs_mtk_init_clocks(hba);
+> >  
+> >  	/*
+> > -- 
+> > 2.46.0
+> > 
+> > 
 > 
-> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+> -- 
+> மணிவண்ணன் சதாசிவம்
 
-[...]
+- Mary
 
-> +static void update_dte256(struct amd_iommu *iommu, u16 devid, struct dte256 *new)
-> +{
-> +	struct dev_table_entry *dev_table = get_dev_table(iommu);
-> +	struct dte256 *ptr = (struct dte256 *)&dev_table[devid];
-> +	struct dte256 old = {
-> +		.qw_lo.data = ptr->qw_lo.data,
-> +		.qw_hi.data = ptr->qw_hi.data,
-> +	};
-> +
-> +	/* Update qw_lo */
-> +	if (!try_cmpxchg128(&ptr->qw_lo.data, &old.qw_lo.data, new->qw_lo.data))
-> +		goto err_out;
-> +
-> +	/* Update qw_hi */
-> +	if (!try_cmpxchg128(&ptr->qw_hi.data, &old.qw_hi.data, new->qw_hi.data)) {
-> +		/* Restore qw_lo */
-> +		try_cmpxchg128(&ptr->qw_lo.data, &new->qw_lo.data, old.qw_lo.data);
-
-You should use plain cmpxchg128() when the result is unused.
-
-Uros.
 
