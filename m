@@ -1,123 +1,161 @@
-Return-Path: <linux-kernel+bounces-292387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7910B956ED0
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:33:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 754E0956ED6
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB62B1C2220C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:33:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A1831C22AF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD3C61FDF;
-	Mon, 19 Aug 2024 15:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9331F54FB5;
+	Mon, 19 Aug 2024 15:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="csgDOIBF"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t3Cl6uxt"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F9E49641
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE5D5339E
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724081626; cv=none; b=aGJkX+8mf1/Bot2fQeUp6ZfJoFPPWiglSCRVz48qtgAYcva9Fkwbm/iXhgjmsQzfQImwxYyJhu+zDmkPOnUDCNvhWEak9Taa50hvg+2DssVOz7JmNZ8fmTBjPyEVdl6Ze1It6ZIRG8Cp9HOMwVE0j25ThK0hPkNqAD+yym5ms/s=
+	t=1724081654; cv=none; b=sh30iOazarjWmgl9K5iLtLncIczh8qr7QHb8Exbk91RxmkLSMiKTjtPx3YdUUqKwruhreOrvNxewQEHrdZc4qhajYpPnxhkHCLqDbGIAMSamKhy8roLTnf3eqFujZe4GyiDTAPEPptAtXqvanF8V4FWMngQi9uIaptTYOE8CTBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724081626; c=relaxed/simple;
-	bh=Li4HtcxN71jzGrexxm+zQo8nWsEHwBcOm0yeIgTPTN0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QNtx321ceqAxXaUTAhKUlfiTQMmwJj4/H6V3L7a6yxrl6mTCHPHX0lb5LDlO7AxyYuQHSaC8dCPd6DyIfS+lL1bCpvaw3AlXFsE88AndYdDBbFSGVtgIF82fuUV4WtRk6j/D7a//BEvn99yTZGuGRPZBWDSuOLkqchfTC3daw3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=csgDOIBF; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3db51b8ec15so2627582b6e.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:33:44 -0700 (PDT)
+	s=arc-20240116; t=1724081654; c=relaxed/simple;
+	bh=gerX1e1SAyEGGpWbACuDeKTJftuR915APXEAPgfRDW8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tIAGiCWx8EGxR7iUdI1Wqji3yHjBww4SWvtfduvquky1TlhseyT+/FdTvTSjhhBKPTOg0ih7wOjJOyAFYppF/sRhUaZbaG+9rpcLLYcOMDInyl+yufmGMH0ifCiWI2792XO6XIY4MjBC2g1JyC1e9nPJkfvXbc5gp3pTcaTtkjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t3Cl6uxt; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-201f2b7fe0dso28476465ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 08:34:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1724081623; x=1724686423; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NU3U23GKCuYq/Ylsob2wz7pN+1xAA1HJWk8KaCIZfQ4=;
-        b=csgDOIBFEeB+IoqLO2ZTws42GFAOyQq7qSbzMCY0BuOh51JiGmU1DdnlEI/SBAoGhh
-         FOKulx8PLyNtAwRNl/Q1u9jCpeQUmifw3YE/P0HGVF59OtLBX4vAQnkCdBrnYqc6Yhi8
-         OO9yW+sHT3bg4AaQV1/6FEgHEa0e+Qjx2O+ShALScj6zB3dnaGg/IFe/BrurjgbMUoA/
-         xL2HS4YzsC10GAm836mGwikjnznrZ9CvHMb2LBQ/a5pfu+aID8ET3L5pYOebvC1E0xhJ
-         ACWiDnldrylYFQXd7LYzfFrPlcjb6/S5IXulTUy4RNgczO9ZkgiwN8Y3lsAUVuj5HpHx
-         BqMQ==
+        d=linaro.org; s=google; t=1724081653; x=1724686453; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=fWHd8Dubab2kk28unZJz+ySGMDUvatysZhSqj4nkW08=;
+        b=t3Cl6uxtfv7HC/ie0dbfni1fL+5rQOEFfX4wEpGVEcUFh63lbT6ZVrIhzmeLhlzhnr
+         IR5U5Gr+B3sQuW6it/rgu/ZOKVRBDcBkQXVuE/ouHCgXspgkfuRnQKkrUeua4xV/Wh+U
+         heMTMOFmuE4Ry/TS6RniDK52QLZcyGedcZQ81FPmG+DL2r2T5nK9rIckX20e9k6lxeVC
+         1ece6FfUPdbAlaiJ46bPzX8+MDfOIJRPjHQohvkiyZ8ngt/ew4rEyJbslZHeslWHrTxo
+         yyn/4mwtSELn2K18YiRJCihLHDGdGfO4tqO0fQrAxVhK+7y0vGZpQzT97jxtkENgkBft
+         Huvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724081623; x=1724686423;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1724081653; x=1724686453;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NU3U23GKCuYq/Ylsob2wz7pN+1xAA1HJWk8KaCIZfQ4=;
-        b=MyfuRO4ynuy5hlTOgbp3nlZSdimyuwWf81Ywt/v/sfiO+i2k/N+vITkjk7DJFZcUx/
-         HcD0DoEzG946OdpKYQk6s5Mb/PvY+NSx2eeCO14IpYFBjJkvnP9xUnmaeQuy10oLHRa+
-         KrnQ79ABHyxG1EVaaWt8k/eqKJg0jlujQU8qHMlhDIZAJffyZknwwOSgSmj3KVi5Vz7c
-         IBzRbHtv6hNkwNzo15xFCr4G7qevo9BLSHXX86qoY3sXvX/UZFuGbCiarcCa5oDJFfIG
-         KLwiT7FiKv8DT/1iMuZm8DkaN6YhYCvjWgXLYjtnAFy6WNOFfR+G5dU8DGDx834l+/mm
-         e05w==
-X-Forwarded-Encrypted: i=1; AJvYcCWxcvL4nCdKO5CJ9Z+qImFggZQuC8a+ZqnABs3LQBXqYetbGwqZB2Nf0T0cLczk6VKCG7n3kx/WJfmCNhBvoVg4iiSy22+bEjkWx7k4
-X-Gm-Message-State: AOJu0YxFzJAAmUsIA/zRGL7z4D5cm1YwEVBVIGlOLJyUgBgraJHmsaC1
-	wxNMg1rrpg0hhpzJrT2tFpaMKz7kZ0+5Jo9aMljBOcWV8GiDfMPwl/km/Y8LZyK4giBYe+111vr
-	n
-X-Google-Smtp-Source: AGHT+IFc2h/Q3kwclZpxHSSQoE/44UCvWbMzjNvb+iPkNIj9ksMQ4Q9fbRgkwskrfJdUapAJPCqYdA==
-X-Received: by 2002:a05:6808:330a:b0:3d9:db77:f4d3 with SMTP id 5614622812f47-3ddb4d16b89mr4129b6e.2.1724081623291;
-        Mon, 19 Aug 2024 08:33:43 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3dd33d400b4sm2326958b6e.11.2024.08.19.08.33.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 08:33:42 -0700 (PDT)
-Message-ID: <3c4edf41-fd3b-4258-9b9e-a81b25568403@baylibre.com>
-Date: Mon, 19 Aug 2024 10:33:41 -0500
+        bh=fWHd8Dubab2kk28unZJz+ySGMDUvatysZhSqj4nkW08=;
+        b=vFo2KfQznMlHZ1/eWeyzV10ebS3Pu4zRa14qHMMICtU8Xrb2K58XxhRDa3TUoIOMHB
+         B1xCfoQOXht7xWV8d7Mi0S2UPmSOznJFW3DPk0P6jtFm3XeUkwecDwTkjWrrx1EHv/mX
+         t9644XoSSOJSrl/udrGQSyKiX/GvRQpoyvmERk7nu4ZBHvfc+F0Jl5rLGPYopKJaqh6y
+         erbbc7XWNsAowoBsyQBJyUwIf9cLvdZn22N82tCaFE8cujTCZzGLwYH0kJmJfTSmX7/1
+         WW1eesnuUDGQPQ/yPI/a5JAPNjO2fKDl38Uc8yelhpbUZpEmoI1Iq0SDUXysy11jmYTt
+         SdHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPSzkpcKKHvuT353/GF1ZwO1XLQODsv+QHME8cHHxedHVcKc194w2mR+qIEGI8usUnPjYg2IWVGMCyn+IjrLgA9Xm+XzaOn93C7Y+R
+X-Gm-Message-State: AOJu0Yz1Y6O2DHAooJuEo0v6ifD+TaOYWDTs4egon6DjPacQN008qMZ9
+	n87rZiJHI6z32VUyO3CDW3vUGlYoih1HqsWP6CcmDwzpK3d9gKHL2/wmuRiiyw==
+X-Google-Smtp-Source: AGHT+IFkgzCoKEl2Yj644WJFA2at4eKalzRkVxpP0Hu+EOkVJUnnpmXN5q12HO6kOgQzGQcui6MKdg==
+X-Received: by 2002:a17:903:1210:b0:201:fe7d:babe with SMTP id d9443c01a7336-20203ed44b5mr130244915ad.35.1724081652535;
+        Mon, 19 Aug 2024 08:34:12 -0700 (PDT)
+Received: from thinkpad ([120.60.128.138])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f02fa51bsm63669295ad.53.2024.08.19.08.34.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 08:34:11 -0700 (PDT)
+Date: Mon, 19 Aug 2024 21:04:02 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	mika.westerberg@linux.intel.com, Hsin-Yi Wang <hsinyi@chromium.org>
+Subject: Re: [PATCH v5 4/4] PCI: Allow PCI bridges to go to D3Hot on all
+ Devicetree based platforms
+Message-ID: <20240819153402.pgykwcmtwgg257m7@thinkpad>
+References: <20240802-pci-bridge-d3-v5-0-2426dd9e8e27@linaro.org>
+ <20240802-pci-bridge-d3-v5-4-2426dd9e8e27@linaro.org>
+ <ZqyxS8spZ-ohsP3R@wunner.de>
+ <20240805133555.GC7274@thinkpad>
+ <ZrHITXLkKrDbQKQp@wunner.de>
+ <20240806124107.GB2968@thinkpad>
+ <ZrIe70Z7uFven8HH@wunner.de>
+ <20240806143918.GC2968@thinkpad>
+ <ZrKFl-dvNSNCWd8e@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] iio: adc: ad7606: add support for AD7606C-{16,18}
- parts
-To: Alexandru Ardelean <aardelean@baylibre.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc: jic23@kernel.org, krzk+dt@kernel.org, robh@kernel.org, lars@metafoo.de,
- michael.hennerich@analog.com, gstols@baylibre.com
-References: <20240819064721.91494-1-aardelean@baylibre.com>
- <20240819064721.91494-8-aardelean@baylibre.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20240819064721.91494-8-aardelean@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZrKFl-dvNSNCWd8e@wunner.de>
 
-On 8/19/24 1:47 AM, Alexandru Ardelean wrote:
-> The AD7606C-16 and AD7606C-18 are pretty similar with the AD7606B.
-> The main difference between AD7606C-16 & AD7606C-18 is the precision in
-> bits (16 vs 18).
-> Because of that, some scales need to be defined for the 18-bit variants, as
-> they need to be computed against 2**18 (vs 2**16 for the 16 bit-variants).
+On Tue, Aug 06, 2024 at 10:20:39PM +0200, Lukas Wunner wrote:
+> On Tue, Aug 06, 2024 at 08:09:18PM +0530, Manivannan Sadhasivam wrote:
+> > Regarding your comment on patch 3/4, we already have the sysfs attribute
+> > to control whether the device can be put into D3Cold or not and that is
+> > directly coming from userspace. So there is no guarantee to assume that
+> > D3Hot support is considered.
 > 
-> Because the AD7606C-16,18 also supports bipolar & differential channels,
-> for SW-mode, the default range of 10 V or ±10V should be set at probe.
-> On reset, the default range (in the registers) is set to value 0x3 which
-> corresponds to '±10 V single-ended range', regardless of bipolar or
-> differential configuration.
+> If a device is not allowed to be suspended to D3cold, it will only be
+> suspended to D3hot.
 > 
-> Aside from the scale/ranges, the AD7606C-16 is similar to the AD7606B.
+> If a port is put into anything deeper than D0, its secondary bus is
+> no longer in B0 (PCI-PM r1.2 table 6-1) and children are inaccessible,
+> so they're "effectively" in D3cold.  Hence if a device cannot be
+> suspended to D3cold, it will block all parent bridges from being
+> suspended.  That's what the logic in pci_bridge_d3_update() and
+> pci_dev_check_d3cold() is doing.
 > 
-> And the AD7606C-18 variant offers 18-bit precision. The unfortunate effect
-> of this 18-bit sample size, is that there is no simple/neat way to get the
-> samples into a 32-bit array without having to do a home-brewed bit-buffer.
-> The ADC must read all samples (from all 8 channels) in order to get the
-> N-th sample (this could be reworked to do up-to-N-th sample for scan-direct).
-> There doesn't seem to be any quick-trick to be usable to pad the samples
-> up to at least 24 bits.
-> Even the optional status-header is 8-bits, which would mean 26-bits of data
-> per sample.
-> That means that when using a simple SPI controller (which can usually read
-> 8 bit multiples) a simple bit-buffer trick is required.
-> 
-Maybe it would be better to just use .bits_per_word = 18 for the 18-bit
-ADC and not worry about "simple" SPI controller support for that one?
 
+Agree.
+
+But patch 3/4 is mostly based on the suggestion from Bjorn [1] for earlier
+revision. He specifically mentioned that the platform_pci_bridge_d3() function
+doesn't differentiate between D3Hot and D3Cold and that's why I splitted them:
+
+"These are two vastly different scenarios, and I would really like to
+untangle them so they aren't conflated.  I see that you're extending
+platform_pci_bridge_d3(), which apparently has that conflation baked
+into it already, but my personal experience is that this is really
+hard to maintain."
+
+I agree with your point that if D3Hot is not possible, then D3Cold is also not
+possible as per the PCI PM reference you quoted. But here, D3Hot is possible,
+but D3Cold is not. And platform_pci_power_manageable(),
+platform_pci_choose_state() are already returning false for DT platforms.
+
+So if 'true' is returned from platform_pci_bridge_d3(), then it implies that
+D3Cold is also supported, but it doesn't on DT platforms. So a split seems to be
+necessary IMO.
+
+- Mani
+
+[1] https://lore.kernel.org/linux-pci/20240221182000.GA1533634@bhelgaas/
+
+> The d3cold_allowed attribute in sysfs is just one of several reasons
+> why a device may not go to D3cold (see pci_dev_check_d3cold() for
+> details).
+> 
+> The d3cold_allowed attribute was originally intended to disable D3cold
+> on devices where it was known to not work.  Nowadays this should all
+> be handled automatically, which is why we've discussed moving the
+> attribute to debugfs:
+> 
+> https://lore.kernel.org/all/20230918132424.GA11357@wunner.de/
+> https://lore.kernel.org/all/20231002181025.82746-1-mario.limonciello@amd.com/
+> 
+> Thanks,
+> 
+> Lukas
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
