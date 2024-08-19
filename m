@@ -1,161 +1,200 @@
-Return-Path: <linux-kernel+bounces-292370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22BA3956E8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:18:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BCB3956E90
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 17:18:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F4C9B24D33
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:18:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E53F2B2668B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55AB2628C;
-	Mon, 19 Aug 2024 15:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43DC7347C7;
+	Mon, 19 Aug 2024 15:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MOWDFdih"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RNi4VT/0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16EA3FBA7
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 15:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFEFD4EB38;
+	Mon, 19 Aug 2024 15:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724080647; cv=none; b=kXaMXnHkcbJVBnzzLlUfbD2UxGQf3wbLskz0bUj19jm3z8Xfyll5zrrUgx2I84ktoK9b37mq463SMrGtiutlncH8Wz1sxTgl/BeiihsIlnzL9LZGPzvbRY7VR1vsWgOqwI4iQsj8xuoUqPGFvbG4Vco9GL3YP0AUAMiLF/zkJq8=
+	t=1724080672; cv=none; b=YhiCyxhlJ9z9+Zb7x2FOzBUiRTzOSaE8H23lgg4ePJKFM7zkJ+OMg1DgIu4L96/1gNYitjGzoI4KcsmINdqP+ZnNBO5iw97/sJHL/BOmx/NfKX4s9PYDUgFnimBDhL2xOdIKdB8NB98kTgvCucEXPwNrzOu7Xoc4qlZ/18XtQ1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724080647; c=relaxed/simple;
-	bh=79dx5kJlbp/APxcDTBvNrtwqZA9zos8u2hlpu6v2cxE=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=seoOyiIA3B2mrzGM/ZPweUAVOAJLoy6t8inE1vhzZrPG/DRDMmjsaT/H5qsXeFkU8GkCfHwNNm1V1QTAZq9zf9fAmVSepYgu/5V/NBLdh/o5uAb7o03F52HrJlAOhHZgh1+678DEzEBe0RAe5uqxq3pfmLcanv3W5zqCCSl86ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MOWDFdih; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724080644;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+oMbslWyUxniTyVqSh/iKY0BQR2pIPVrXRKHLsZfPgg=;
-	b=MOWDFdih9X1Shy5830N09pyrivxDdX74sGTeD5O1gG9yrpHGOK9vMDxIszYeFQOb9/9GO7
-	Yas56wA5azQmGjFHpAMy4ACVR9dadFvpFWch3tRgagA0Zf1zW4EOSV7EIoS0+hex0eADxq
-	RhodX+l8bqsZ2VAdfPGYHFU0BWkcPGw=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-190-mFqV8Sn2ONiReiz4ntrKfw-1; Mon,
- 19 Aug 2024 11:17:21 -0400
-X-MC-Unique: mFqV8Sn2ONiReiz4ntrKfw-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8A6B41956080;
-	Mon, 19 Aug 2024 15:17:17 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1139719792D8;
-	Mon, 19 Aug 2024 15:17:10 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <2924797.1723836663@warthog.procyon.org.uk>
-References: <2924797.1723836663@warthog.procyon.org.uk> <20240815090849.972355-1-kernel@pankajraghav.com>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: dhowells@redhat.com, brauner@kernel.org, akpm@linux-foundation.org,
-    chandan.babu@oracle.com, linux-fsdevel@vger.kernel.org,
-    djwong@kernel.org, hare@suse.de, gost.dev@samsung.com,
-    linux-xfs@vger.kernel.org, hch@lst.de, david@fromorbit.com,
-    Zi Yan <ziy@nvidia.com>, yang@os.amperecomputing.com,
-    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-    willy@infradead.org, john.g.garry@oracle.com,
-    cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
-    ryan.roberts@arm.com
-Subject: Re: [PATCH v12 00/10] enable bs > ps in XFS
+	s=arc-20240116; t=1724080672; c=relaxed/simple;
+	bh=mkTCGq2+1aSfwLXdPG5/078ftqbnfz5IVxvOhv3syUU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ImVLak5Mt1bfIsGcskK1nP+9Z64j9r/AczZJ71Xamne/MzFaQMvV7ThkXV0Rh/fN33zW97/GJ/whAQEIEcPvaduibmSbxuBrfPCPpNaI7xoo3uGIaGl+gXLSG4B9+Ip3eqTPKhsrB+y6doyY+dRMJqx5r8nYKjclWBfRFyBtwPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RNi4VT/0; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724080671; x=1755616671;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mkTCGq2+1aSfwLXdPG5/078ftqbnfz5IVxvOhv3syUU=;
+  b=RNi4VT/0pK7iiYZvsLQLbdE+0v64yma1gzPj59k768cXfARb2aXpFHuq
+   13FSNQE7/F4/X1+4pWUJLTbrIRIPNFIY3fsaiXNnMvOGMgYvWcnHo2H1A
+   U5cOfnC30R3ymYxbDfuQK0cUwy8pADdnXg7rjv208oyA158Xn0RdCJJpC
+   5TdEON+UF+KxoXpfKBUAIam5G8eIztLM/JxSIy1S09z1Mvp3vDmFJBhIx
+   Izzx/yO5PSAh/ljsC63fNzgmzEKFDyXxG5zfY097sqnwuQYd471njovOV
+   QO7UsKsh4JF7L3MYPgchBltXcGyxTnguu9ldqBuyH6Wcls84IHDG0W52r
+   A==;
+X-CSE-ConnectionGUID: hhdhzNJ1TPSRlHKwqZXiRw==
+X-CSE-MsgGUID: 7YGAmmA8TzG4mRnEJpsnag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="26201819"
+X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
+   d="scan'208";a="26201819"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 08:17:50 -0700
+X-CSE-ConnectionGUID: qg6M0GTMS7S3LueENvsLmw==
+X-CSE-MsgGUID: bwKcB7YoSYOagBFtT56AkQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,159,1719903600"; 
+   d="scan'208";a="64803975"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 19 Aug 2024 08:17:48 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sg48f-000976-39;
+	Mon, 19 Aug 2024 15:17:45 +0000
+Date: Mon, 19 Aug 2024 23:17:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Lizhi Xu <lizhi.xu@windriver.com>,
+	syzbot+47ecc948aadfb2ab3efc@syzkaller.appspotmail.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] bcachefs: Fix oob in bch2_dev_journal_init
+Message-ID: <202408192244.CGhqCzQ3-lkp@intel.com>
+References: <20240819064754.35606-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3452630.1724080629.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 19 Aug 2024 16:17:09 +0100
-Message-ID: <3452631.1724080629@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819064754.35606-1-lizhi.xu@windriver.com>
 
-Okay, the code in netfs_invalidate_folio() isn't correct in the way it red=
-uces
-streaming writes.  Attached is a patch that shows some of the changes I ne=
-ed
-to make - but this is not yet working.
+Hi Lizhi,
 
-David
----
-diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
-index eaa0a992d178..e237c771eeb5 100644
---- a/fs/netfs/misc.c
-+++ b/fs/netfs/misc.c
-@@ -214,18 +215,34 @@ void netfs_invalidate_folio(struct folio *folio, siz=
-e_t offset, size_t length)
- 		/* We have a partially uptodate page from a streaming write. */
- 		unsigned int fstart =3D finfo->dirty_offset;
- 		unsigned int fend =3D fstart + finfo->dirty_len;
--		unsigned int end =3D offset + length;
-+		unsigned int iend =3D offset + length;
- =
+kernel test robot noticed the following build warnings:
 
- 		if (offset >=3D fend)
- 			return;
--		if (end <=3D fstart)
-+		if (iend <=3D fstart)
-+			return;
-+
-+		/* The invalidation region overlaps the data.  If the region
-+		 * covers the start of the data, we either move along the start
-+		 * or just erase the data entirely.
-+		 */
-+		if (offset <=3D fstart) {
-+			if (iend >=3D fend)
-+				goto erase_completely;
-+			/* Move the start of the data. */
-+			finfo->dirty_len =3D fend - iend;
-+			finfo->dirty_offset =3D offset;
- 			return;
--		if (offset <=3D fstart && end >=3D fend)
--			goto erase_completely;
--		if (offset <=3D fstart && end > fstart)
--			goto reduce_len;
--		if (offset > fstart && end >=3D fend)
--			goto move_start;
-+		}
-+
-+		/* Reduce the length of the data if the invalidation region
-+		 * covers the tail part.
-+		 */
-+		if (iend >=3D fend) {
-+			finfo->dirty_len =3D offset - fstart;
-+			return;
-+		}
-+
- 		/* A partial write was split.  The caller has already zeroed
- 		 * it, so just absorb the hole.
- 		 */
-@@ -238,12 +261,6 @@ void netfs_invalidate_folio(struct folio *folio, size=
-_t offset, size_t length)
- 	folio_clear_uptodate(folio);
- 	kfree(finfo);
- 	return;
--reduce_len:
--	finfo->dirty_len =3D offset + length - finfo->dirty_offset;
--	return;
--move_start:
--	finfo->dirty_len -=3D offset - finfo->dirty_offset;
--	finfo->dirty_offset =3D offset;
- }
- EXPORT_SYMBOL(netfs_invalidate_folio);
- =
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.11-rc4 next-20240819]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Lizhi-Xu/bcachefs-Fix-oob-in-bch2_dev_journal_init/20240819-145031
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20240819064754.35606-1-lizhi.xu%40windriver.com
+patch subject: [PATCH] bcachefs: Fix oob in bch2_dev_journal_init
+config: arm-randconfig-003-20240819 (https://download.01.org/0day-ci/archive/20240819/202408192244.CGhqCzQ3-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240819/202408192244.CGhqCzQ3-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408192244.CGhqCzQ3-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> fs/bcachefs/journal.c:1317:6: warning: format specifies type 'unsigned long' but the argument has type '__u64' (aka 'unsigned long long') [-Wformat]
+    1316 |                                 prt_printf(&buf, "journal v2 entry d[%u].nr %lu overflow!\n", i,
+         |                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         |                                                                             %llu
+    1317 |                                         le64_to_cpu(journal_buckets_v2->d[i].nr));
+         |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/byteorder/generic.h:87:21: note: expanded from macro 'le64_to_cpu'
+      87 | #define le64_to_cpu __le64_to_cpu
+         |                     ^
+   include/uapi/linux/byteorder/little_endian.h:33:26: note: expanded from macro '__le64_to_cpu'
+      33 | #define __le64_to_cpu(x) ((__force __u64)(__le64)(x))
+         |                          ^
+   fs/bcachefs/util.h:78:54: note: expanded from macro 'prt_printf'
+      78 | #define prt_printf(_out, ...)           bch2_prt_printf(_out, __VA_ARGS__)
+         |                                                               ^~~~~~~~~~~
+   1 warning generated.
+
+
+vim +1317 fs/bcachefs/journal.c
+
+  1297	
+  1298	int bch2_dev_journal_init(struct bch_dev *ca, struct bch_sb *sb)
+  1299	{
+  1300		struct journal_device *ja = &ca->journal;
+  1301		struct bch_sb_field_journal *journal_buckets =
+  1302			bch2_sb_field_get(sb, journal);
+  1303		struct bch_sb_field_journal_v2 *journal_buckets_v2 =
+  1304			bch2_sb_field_get(sb, journal_v2);
+  1305	
+  1306		ja->nr = 0;
+  1307	
+  1308		if (journal_buckets_v2) {
+  1309			unsigned nr = bch2_sb_field_journal_v2_nr_entries(journal_buckets_v2);
+  1310	
+  1311			for (unsigned i = 0; i < nr; i++) {
+  1312				ja->nr += le64_to_cpu(journal_buckets_v2->d[i].nr);
+  1313				if (le64_to_cpu(journal_buckets_v2->d[i].nr) > UINT_MAX) {
+  1314					struct bch_fs *c = ca->fs;
+  1315					struct printbuf buf = PRINTBUF;
+  1316					prt_printf(&buf, "journal v2 entry d[%u].nr %lu overflow!\n", i,
+> 1317						le64_to_cpu(journal_buckets_v2->d[i].nr));
+  1318					bch_info(c, "%s", buf.buf);
+  1319					printbuf_exit(&buf);
+  1320					return -BCH_ERR_ENOMEM_dev_journal_init;
+  1321				}
+  1322			}
+  1323		} else if (journal_buckets) {
+  1324			ja->nr = bch2_nr_journal_buckets(journal_buckets);
+  1325		}
+  1326	
+  1327		ja->bucket_seq = kcalloc(ja->nr, sizeof(u64), GFP_KERNEL);
+  1328		if (!ja->bucket_seq)
+  1329			return -BCH_ERR_ENOMEM_dev_journal_init;
+  1330	
+  1331		unsigned nr_bvecs = DIV_ROUND_UP(JOURNAL_ENTRY_SIZE_MAX, PAGE_SIZE);
+  1332	
+  1333		for (unsigned i = 0; i < ARRAY_SIZE(ja->bio); i++) {
+  1334			ja->bio[i] = kmalloc(struct_size(ja->bio[i], bio.bi_inline_vecs,
+  1335					     nr_bvecs), GFP_KERNEL);
+  1336			if (!ja->bio[i])
+  1337				return -BCH_ERR_ENOMEM_dev_journal_init;
+  1338	
+  1339			ja->bio[i]->ca = ca;
+  1340			ja->bio[i]->buf_idx = i;
+  1341			bio_init(&ja->bio[i]->bio, NULL, ja->bio[i]->bio.bi_inline_vecs, nr_bvecs, 0);
+  1342		}
+  1343	
+  1344		ja->buckets = kcalloc(ja->nr, sizeof(u64), GFP_KERNEL);
+  1345		if (!ja->buckets)
+  1346			return -BCH_ERR_ENOMEM_dev_journal_init;
+  1347	
+  1348		if (journal_buckets_v2) {
+  1349			unsigned nr = bch2_sb_field_journal_v2_nr_entries(journal_buckets_v2);
+  1350			unsigned dst = 0;
+  1351	
+  1352			for (unsigned i = 0; i < nr; i++)
+  1353				for (unsigned j = 0; j < le64_to_cpu(journal_buckets_v2->d[i].nr); j++)
+  1354					ja->buckets[dst++] =
+  1355						le64_to_cpu(journal_buckets_v2->d[i].start) + j;
+  1356		} else if (journal_buckets) {
+  1357			for (unsigned i = 0; i < ja->nr; i++)
+  1358				ja->buckets[i] = le64_to_cpu(journal_buckets->buckets[i]);
+  1359		}
+  1360	
+  1361		return 0;
+  1362	}
+  1363	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
