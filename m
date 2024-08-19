@@ -1,45 +1,47 @@
-Return-Path: <linux-kernel+bounces-291529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10CEC9563B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:25:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C6B89563BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:26:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D1C21C21525
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:25:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E786728117C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3595B1547DC;
-	Mon, 19 Aug 2024 06:25:44 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A2C15624B;
+	Mon, 19 Aug 2024 06:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uWUVPa/c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36CA14B95A;
-	Mon, 19 Aug 2024 06:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7AC415530C;
+	Mon, 19 Aug 2024 06:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724048743; cv=none; b=J0r8FVMIUpmfS4d5OU8ly5bwE9atCIVFfdaFzfs9r7TEsB3EiDgxdVfc2d0bZgIZaibn1dRTN3EdD+s58nGYbngw/sAbku+4X9lHvulPNEHdHIw5ztD4raVoXXmIbvW86CKtKIG2Na7jd6+TIgd2b4DdB0Axzo8G9CQcoNtlpm4=
+	t=1724048745; cv=none; b=KIhToOvXZrEOPbUMVaesNfS3aLy7uMwPCb+w+eRhKt28nYuXiW8zNHPFCSZWLJSjoSWWIdu8kS5Z2ssAHDDWrIt+TdE8QOzgvyvJXEqPVuF8rAq4ZzUV8jZTNSOAWppnZ/GvjoyMdRQRMi3e9bnsYnpAELvehhPnwKbTit3mCBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724048743; c=relaxed/simple;
-	bh=uKftt/xyf0unfmJe7wdprT0uTWTQKoQ3fQp9bUqW2Ms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=i4b1wuMXSq+GCaB8gdqBHsAAETEbiOI7laSxtJkCBcs7dcluowC2lUQwPoSSCZqxUOjj+hRlvRRu3Y3o+hcdd963fB6/7WUjxL1VQE0oy2LRgOCBmwwNbb06vSNqADeRZ1mpCIfeUZ/HJFJ1RsagR6aAfPtKTH9euhHtFcdyiv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WnMyX6FJwz13Vjb;
-	Mon, 19 Aug 2024 14:24:52 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id ECA4F140138;
-	Mon, 19 Aug 2024 14:25:28 +0800 (CST)
-Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Mon, 19 Aug
- 2024 14:25:28 +0800
-Message-ID: <68fa943a-68e8-44d6-ad08-97519a151a79@huawei.com>
-Date: Mon, 19 Aug 2024 14:25:27 +0800
+	s=arc-20240116; t=1724048745; c=relaxed/simple;
+	bh=F7G3lRtoD78NW9jgt9aEBt8Q2gtPODxY3cSswVIb2jA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gsNDP/NhkyStRnhFZ1QnK48pPG1XIgqXHTyGGMIYwGyO148TQg7ATIbb6rGeNSfnlgRZfu/Qqvaqzt+08n3gmAfQixIG7J2xe/iw+L+LhjHw8P9xpowtKiyqb55BphPUELftEE/pNfkwYqcu4QiybdQQihtiGuNXmUhOKXErW6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uWUVPa/c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C416CC32782;
+	Mon, 19 Aug 2024 06:25:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724048744;
+	bh=F7G3lRtoD78NW9jgt9aEBt8Q2gtPODxY3cSswVIb2jA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uWUVPa/cIERAOpCuOrR3y7yg8dQPk4yYm10ri0DXrpugWAuhwURvH1OzemS4+VKkn
+	 hV8m10VxXrVT+fFjYn4Uz2wKPFLQHtW0W0LX51KHlI4odmmOA/r4eQkMPMcbNNfDx0
+	 JoZa0jGbdy5RpaF9bT5TufEt9dyi1+VrGuOTZhc5x7jkBR3I+0VDOlJT9dkWc2g+mX
+	 3ufv0QhkIlx/ePoEph55PSt0/uW/86fdZ7awOC5oU/8p+ZQzzYd2C1nLkPpc9lK3m4
+	 X+EmW3sh8SaRpTROtoG9sbm/sekssBO4UHuYiYBtl/dfhImNQKmQ//o9R1l/Sj8ZS1
+	 vqt4x89SDdDzA==
+Message-ID: <9d9704ed-6ef8-4920-9874-29e0a815e2ba@kernel.org>
+Date: Mon, 19 Aug 2024 08:25:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,168 +49,167 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next 1/3] cgroup/cpuset: Correct invalid remote parition
- prs
-To: Waiman Long <longman@redhat.com>, <tj@kernel.org>,
-	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>, <adityakali@google.com>,
-	<sergeh@kernel.org>, <mkoutny@suse.com>
-CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240816082727.2779-1-chenridong@huawei.com>
- <20240816082727.2779-2-chenridong@huawei.com>
- <dc4672a0-bff4-493f-81da-9dfdda9018f2@redhat.com>
- <ff059171-d38e-41a3-86e0-e092a34ba970@redhat.com>
+Subject: Re: [PATCH v3 3/5] dt-bindings: arm: Add Coresight TMC Control Unit
+ hardware
+To: JieGan <quic_jiegan@quicinc.com>, Rob Herring <robh@kernel.org>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Tingwei Zhang <quic_tingweiz@quicinc.com>,
+ Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+ Tao Zhang <quic_taozha@quicinc.com>, Song Chai <quic_songchai@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+References: <20240812024141.2867655-1-quic_jiegan@quicinc.com>
+ <20240812024141.2867655-4-quic_jiegan@quicinc.com>
+ <20240818142834.GA27754-robh@kernel.org>
+ <ZsKkm/Pz0GYtH2Gl@jiegan-gv.ap.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: chenridong <chenridong@huawei.com>
-In-Reply-To: <ff059171-d38e-41a3-86e0-e092a34ba970@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZsKkm/Pz0GYtH2Gl@jiegan-gv.ap.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd100013.china.huawei.com (7.221.188.163)
 
-
-
-On 2024/8/19 10:18, Waiman Long wrote:
-> On 8/18/24 22:14, Waiman Long wrote:
->>
->> On 8/16/24 04:27, Chen Ridong wrote:
->>> When enable a remote partition, I found that:
+On 19/08/2024 03:49, JieGan wrote:
+> On Sun, Aug 18, 2024 at 08:28:34AM -0600, Rob Herring wrote:
+>> On Mon, Aug 12, 2024 at 10:41:39AM +0800, Jie Gan wrote:
+>>> Add binding file to specify how to define a Coresight TMC
+>>> Control Unit device in device tree.
 >>>
->>> cd /sys/fs/cgroup/
->>> mkdir test
->>> mkdir test/test1
->>> echo +cpuset > cgroup.subtree_control
->>> echo +cpuset >  test/cgroup.subtree_control
->>> echo 3 > test/test1/cpuset.cpus
->>> echo root > test/test1/cpuset.cpus.partition
->>> cat test/test1/cpuset.cpus.partition
->>> root invalid (Parent is not a partition root)
+>>> It is responsible for controlling the data filter function
+>>> based on the source device's Trace ID for TMC ETR device.
+>>> The trace data with that Trace id can get into ETR's buffer
+>>> while other trace data gets ignored.
 >>>
->>> The parent of a remote partition could not be a root. This is due to the
->>> emtpy effective_xcpus. It would be better to prompt the message "invalid
->>> cpu list in cpuset.cpus.exclusive".
->>>
->>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>>> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
 >>> ---
->>>   kernel/cgroup/cpuset.c | 42 +++++++++++++++++++++++-------------------
->>>   1 file changed, 23 insertions(+), 19 deletions(-)
+>>>  .../bindings/arm/qcom,coresight-ctcu.yaml     | 79 +++++++++++++++++++
+>>>  1 file changed, 79 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml
 >>>
->>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->>> index e34fd6108b06..fdd5346616d3 100644
->>> --- a/kernel/cgroup/cpuset.c
->>> +++ b/kernel/cgroup/cpuset.c
->>> @@ -80,6 +80,7 @@ enum prs_errcode {
->>>       PERR_HOTPLUG,
->>>       PERR_CPUSEMPTY,
->>>       PERR_HKEEPING,
->>> +    PERR_PMT,
-> 
-> One more thing, the "PMT" acronym for the error code is hard to decode. 
-> I will suggest you either use the "PERMISSION" or "ACCESS" like the 
-> EACCESS errno.
-> 
-> Cheers,
-> Longman
-> 
-Thanks, will do.
->>>   };
->>>     static const char * const perr_strings[] = {
->>> @@ -91,6 +92,7 @@ static const char * const perr_strings[] = {
->>>       [PERR_HOTPLUG]   = "No cpu available due to hotplug",
->>>       [PERR_CPUSEMPTY] = "cpuset.cpus and cpuset.cpus.exclusive are 
->>> empty",
->>>       [PERR_HKEEPING]  = "partition config conflicts with 
->>> housekeeping setup",
->>> +    [PERR_PMT]       = "Enable partition not permitted",
->>>   };
->>>     struct cpuset {
->>> @@ -1669,7 +1671,7 @@ static int remote_partition_enable(struct 
->>> cpuset *cs, int new_prs,
->>>        * The user must have sysadmin privilege.
->>>        */
->>>       if (!capable(CAP_SYS_ADMIN))
->>> -        return 0;
->>> +        return PERR_PMT;
->>>         /*
->>>        * The requested exclusive_cpus must not be allocated to other
->>> @@ -1683,7 +1685,7 @@ static int remote_partition_enable(struct 
->>> cpuset *cs, int new_prs,
->>>       if (cpumask_empty(tmp->new_cpus) ||
->>>           cpumask_intersects(tmp->new_cpus, subpartitions_cpus) ||
->>>           cpumask_subset(top_cpuset.effective_cpus, tmp->new_cpus))
->>> -        return 0;
->>> +        return PERR_INVCPUS;
->>>         spin_lock_irq(&callback_lock);
->>>       isolcpus_updated = partition_xcpus_add(new_prs, NULL, 
->>> tmp->new_cpus);
->>> @@ -1698,7 +1700,7 @@ static int remote_partition_enable(struct 
->>> cpuset *cs, int new_prs,
->>>        */
->>>       update_tasks_cpumask(&top_cpuset, tmp->new_cpus);
->>>       update_sibling_cpumasks(&top_cpuset, NULL, tmp);
->>> -    return 1;
->>> +    return 0;
->>>   }
->>
->> Since you are changing the meaning of the function returned value, you 
->> should also update the return value comment as well.
->>
-Will do.
->>>     /*
->>> @@ -3151,24 +3153,26 @@ static int update_prstate(struct cpuset *cs, 
->>> int new_prs)
->>>           goto out;
->>>         if (!old_prs) {
->>> -        enum partition_cmd cmd = (new_prs == PRS_ROOT)
->>> -                       ? partcmd_enable : partcmd_enablei;
->>> -
->>>           /*
->>> -         * cpus_allowed and exclusive_cpus cannot be both empty.
->>> -         */
->>> -        if (xcpus_empty(cs)) {
->>> -            err = PERR_CPUSEMPTY;
->>> -            goto out;
->>> -        }
->>> +        * If parent is valid partition, enable local partiion.
->>> +        * Otherwise, enable a remote partition.
->>> +        */
->>> +        if (is_partition_valid(parent)) {
->>> +            enum partition_cmd cmd = (new_prs == PRS_ROOT)
->>> +                           ? partcmd_enable : partcmd_enablei;
->>>   -        err = update_parent_effective_cpumask(cs, cmd, NULL, 
->>> &tmpmask);
->>> -        /*
->>> -         * If an attempt to become local partition root fails,
->>> -         * try to become a remote partition root instead.
->>> -         */
->>> -        if (err && remote_partition_enable(cs, new_prs, &tmpmask))
->>> -            err = 0;
->>> +            /*
->>> +             * cpus_allowed and exclusive_cpus cannot be both empty.
->>> +             */
->>> +            if (xcpus_empty(cs)) {
->>> +                err = PERR_CPUSEMPTY;
->>> +                goto out;
->>> +            }
->>
->> The xcpus_empty() check should be done for both local and remote 
->> partition.
->>
->> Cheers,
->> Longman
->>
-Thanks, I will do it at V2.
-
-Thanks,
-Ridong
+>>> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml
+>>> new file mode 100644
+>>> index 000000000000..7a9580007942
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml
+>>> @@ -0,0 +1,79 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/arm/qcom,coresight-ctcu.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 >>> +
->>> +            err = update_parent_effective_cpumask(cs, cmd, NULL, 
->>> &tmpmask);
->>> +        } else {
->>> +            err = remote_partition_enable(cs, new_prs, &tmpmask);
->>> +        }
->>>       } else if (old_prs && new_prs) {
->>>           /*
->>>            * A change in load balance state only, no change in cpumasks.
+>>> +title: CoreSight TMC Control Unit
+>>> +
+>>> +maintainers:
+>>> +  - Yuanfang Zhang <quic_yuanfang@quicinc.com>
+>>> +  - Mao Jinlong <quic_jinlmao@quicinc.com>
+>>> +  - Jie Gan <quic_jiegan@quicinc.com>
+>>> +
+>>> +description:
+>>> +  The Coresight TMC Control unit controls various Coresight behaviors.
+>>> +  It works as a helper device when connected to TMC ETR device.
+>>> +  It is responsible for controlling the data filter function based on
+>>> +  the source device's Trace ID for TMC ETR device. The trace data with
+>>> +  that Trace id can get into ETR's buffer while other trace data gets
+>>> +  ignored.
+>>
+>> Nowhere is TMC defined.
+> The Coresight TMC control unit(CTCU) connected to Coresight TMC device via replicator and
+> works as a helper device to TMC device.
+
+Did you understand the feedback or just responding with whatever to get
+rid of reviewers?
+
 > 
+> The in-ports listed below illustrate their connection to TMC devices.
 > 
+>>
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    enum:
+>>> +      - qcom,sa8775p-ctcu
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  clocks:
+>>> +    maxItems: 1
+>>> +
+>>> +  clock-names:
+>>> +    items:
+>>> +      - const: apb
+>>> +
+>>> +  in-ports:
+>>
+>> Use 'ports' unless you have both in and out ports.
+> The ‘in-ports’ and ‘out-ports’ properties will be parsed by ‘of_coresight_get_port_parent’
+> and their relationships to other devices will be stored in the coresight_platform_data structure.
+> 
+> for example:
+> struct coresight_platform_data {
+> 	int nr_inconns;
+> 	int nr_outconns;
+> 	struct coresight_connection **out_conns;
+> 	struct coresight_connection **in_conns;
+> };
+> 
+> https://elixir.bootlin.com/linux/v6.11-rc4/source/drivers/hwtracing/coresight/coresight-platform.c#L147
+
+and? If you respond with some unrelated argument, we will respond with
+the same: Use 'ports' unless you have both in and out ports.
+
+Best regards,
+Krzysztof
+
 
