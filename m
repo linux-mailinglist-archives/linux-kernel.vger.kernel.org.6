@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-291507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F8E3956370
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:01:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89131956374
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 08:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0DD1B219D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:01:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAF7F1C212C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 06:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C34D14C58C;
-	Mon, 19 Aug 2024 06:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A810D14D28C;
+	Mon, 19 Aug 2024 06:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SAEwYnBE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="laVSL50g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4051870;
-	Mon, 19 Aug 2024 06:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D033114A4D6;
+	Mon, 19 Aug 2024 06:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724047282; cv=none; b=PZKJVfCbcvUgC1urfymRej04Uu3RR8ZXCMm2qezmrKOH07PjRYHadbLldpn/H4E8iuEIKinABDkvWfTF9P5dBZ5rJxxgs2kilOpD+p7TXODpJdznjaiArAXJC7QxOpk7agEAP3m4VVd7fAL0GaW8sUia/PROzo09xXDdXaHvcno=
+	t=1724047312; cv=none; b=OfdF6PX13ePDOJjhjmBiKcCeBFSyxlxDwz01cvgSI1yaRxRpm9n1pgxJovVZ9Kg422elfOFgC8XMDfRmGA1xbXu0EARMxsWf1kM1BToBezIlPbzE1LsO1Xr3GH+hyQ+8wS4HWvkJtcYLi8hAUbh8h18s0Z854X8Y+EcHVJdgIk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724047282; c=relaxed/simple;
-	bh=8wx80CrF41DprHEfeRt9Dem0vMpxzwzj6k7sgLRRDao=;
+	s=arc-20240116; t=1724047312; c=relaxed/simple;
+	bh=n9KuMj6/n6aEY0XgI6cATjnJ0vnhzf70Jo2I4CvSwmY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=DYmJISDuuqwMgRIRX5MVVGEL71GKtOq9XCsf4hupFtP8JLUk+oPKcgpJ73Fd7+dLUh3d3ZcV60EXNGjAhTwrHuRYLShRBZq5wTAEKis0PEEPfiVg02ms0dKuyZSqC9vnVZ6XkGBim/dOClEC4aXPrdLIkFX2hFG0RF3g4AgqZW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SAEwYnBE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BD74C32782;
-	Mon, 19 Aug 2024 06:01:17 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=kOa4MPj6EDIW8TznqhQekLWOcCKknnt/LPzhwre6AwdafrL2SS1FAoJBpF4Um9IceV7o5xCXHqy0srV+cp7bmrISMMr5xM3dbSC/Lulbwcx5SzoIVa0J+X8QwtI31XiUORBW6AxSG7BcWjaaogsLXAaJss9QyMj553G/DWj+DBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=laVSL50g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B24D7C4AF09;
+	Mon, 19 Aug 2024 06:01:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724047282;
-	bh=8wx80CrF41DprHEfeRt9Dem0vMpxzwzj6k7sgLRRDao=;
+	s=k20201202; t=1724047310;
+	bh=n9KuMj6/n6aEY0XgI6cATjnJ0vnhzf70Jo2I4CvSwmY=;
 	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=SAEwYnBE+Qz+PiRJYSJjRTFiYXb0wu8guin1ofBX7grZ7QMabbQe0itbFXEJ6JMyk
-	 vRUHWXJeskmoH+P30qTvDjiieB1MO/RieCCAg72DeMOgNN9LjfBb/aeexGD5SDnYBj
-	 E4OvS06HO+SvOV4x+ay4sjVY2HwLka9xNfND9IAI3ZWt4iI7q/aQ4HzHna+WYV7b98
-	 JrftCYJo3K5vl7k4LTn5AgQ0b9LxDS++HQSmhBRvQ4Vf2u1wijwmS8fuywrJXAcIon
-	 +OLCZydk0airNKFPWxDFR0aREOf2Afnd7edvLbCOK+6h5y96iY7S9x9wJJXWAKyeYA
-	 UEHIn7lEQACgA==
-Message-ID: <929c322e-7385-48da-b925-7f363cf5b6f7@kernel.org>
-Date: Mon, 19 Aug 2024 08:01:15 +0200
+	b=laVSL50gACLwzeP9VlHaya83itqplC0pzefrrt+PlemuyZO0E2Cd/90isOPgSA3o+
+	 hNv2/9BhgtuSicMfHGt5psn5Lwv+m+/3YMk8nQ69UXXjljctcciSWChhKkN7pwkJPe
+	 0iNETAX7lp1OQ0QX04knRF+Y70pGBKyPSqghcqr+EfU1Y2Nrt7f3XDKK7tzp0MEd5j
+	 PGaapV+cwO/+lqwhoXsuWzkOWNo6Ng/BujHp+c6eqRX2kdTJ6GsHODYm6NFkZfNSKT
+	 tfuKr0bTx6HgUtaFYSnP76ZYlvtQ+0E9S24161iWpsN0uT7ad5gzA1aASHMm2vbX2V
+	 jRyG4f7T4wdKA==
+Message-ID: <e0162031-f20f-4eef-9f7e-08c7dbf92b7a@kernel.org>
+Date: Mon, 19 Aug 2024 08:01:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,12 +49,10 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] dt-bindings: clock: Add AST2700 clock bindings
-To: Ryan Chen <ryan_chen@aspeedtech.com>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+Subject: Re: [PATCH 4/4] dt-bindings: clock: Add AST2700 clock bindings
+To: Ryan Chen <ryan_chen@aspeedtech.com>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
  Andrew Jeffery <andrew@codeconstruct.com.au>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
@@ -65,19 +63,9 @@ To: Ryan Chen <ryan_chen@aspeedtech.com>,
  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
  "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 References: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
- <OS8PR06MB75413728F0FCEE022B4B4F5BF2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <eec21668-3674-40c6-b443-90c7c02262e3@kernel.org>
- <OS8PR06MB7541CA018C86E262F826B9E5F2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <OS8PR06MB7541B0D9A43B989DC1738F68F2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <5081c41b-dfbd-49ad-a993-b983d4c339f0@kernel.org>
- <OS8PR06MB7541196D3058904998820CFFF2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <9465f8c0-5270-46df-af4b-e9ee78db63d1@kernel.org>
- <OS8PR06MB7541CC40B6B8877B2656182CF2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <OS8PR06MB75415EC7A912DBD4D21A0035F2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <e3733148-142c-40a1-b250-4502e8726f0c@kernel.org>
- <OS8PR06MB7541D5AB85D8E44E89389BC3F2862@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <26988bcd-4d58-4100-b89c-00e8ef879329@kernel.org>
- <OS8PR06MB7541A7E690A2D72BA671622EF28C2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <20240808075937.2756733-5-ryan_chen@aspeedtech.com>
+ <b089c9e5-8640-47f3-a6a3-8919b610f49d@kernel.org>
+ <OS8PR06MB7541B310B81108B9A801AEFEF28C2@OS8PR06MB7541.apcprd06.prod.outlook.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -123,57 +111,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <OS8PR06MB7541A7E690A2D72BA671622EF28C2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+In-Reply-To: <OS8PR06MB7541B310B81108B9A801AEFEF28C2@OS8PR06MB7541.apcprd06.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/08/2024 07:55, Ryan Chen wrote:
->> Subject: Re: [PATCH 3/4] dt-bindings: clock: Add AST2700 clock bindings
+On 19/08/2024 07:57, Ryan Chen wrote:
+>> Subject: Re: [PATCH 4/4] dt-bindings: clock: Add AST2700 clock bindings
 >>
->> On 13/08/2024 03:53, Ryan Chen wrote:
->>>> Drop the define for number of clocks from the header, because it is
->>>> not a
->>
->> *NUMBER OF CLOCKS*
->>
->>>> binding. You can put it in the driver or not, I don't care and do not
->>>> provide guidance on this because I don't know if it makes sense at all.
->>>> What I know is that number of clocks is not related to binding. It is
->>>> not needed
->>
->> *NUMBER OF CLOCKS*
->>
->>>> in the binding, either.
+>> On 08/08/2024 09:59, Ryan Chen wrote:
+>>> Add dt bindings for AST2700 clock controller
 >>>
->>> Sorry, I am confused.
->>> if you think that number of clocks is not related to binding.
+>>> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
 >>
->> *NUMBER OF CLOCKS*
+>> NAK, that's wrong on so many levels. There are no bindings here!
 >>
->>> How dtsi claim for clk?
->>> For example in dtsi.
->>> include <dt-bindings/clock/aspeed,ast2700-clk.h>
->>> usb3bhp: usb3bhp {
->>> ....
->>> clocks = <&syscon0 SCU0_CLK_GATE_PORTAUSB>;
->>
->> And where is *NUMBER OF CLOCKS* here? I don't see any problem. No
->> useless SCU0_CLK_GATE_NUM define here.
->>
-> Understood now, I will remove those *NUMBER OF CLOCKS*.
-> And will replace to 
-> #define SCU0_CLK_END  34
-
-NAK, it's like you keep ignoring my comments entirely. Even if you call
-it "SCU0_CLK_NOT_END" it does not change. Do you understand that it is
-not about name? Read my first comment.
-
+>> You ignored previous feedback given to Assped.
 > 
-> Refer:
-> https://github.com/torvalds/linux/blob/master/include/dt-bindings/clock/imx8-clock.h#L87
+> Will modify subject to "clk: aspeed: add ast2700 clk driver"
 
-So you found a bug and this allows you to create the same bug?
-
+Respond and implement first feedback which was given to Aspeed.
 
 Best regards,
 Krzysztof
