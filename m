@@ -1,143 +1,111 @@
-Return-Path: <linux-kernel+bounces-291613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12EFD9564BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:34:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B75839564C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:35:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 454CC1C216B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:34:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7576C281113
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0ECC157490;
-	Mon, 19 Aug 2024 07:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67776157A55;
+	Mon, 19 Aug 2024 07:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y3FRYoNh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="iYG2qi9N"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67837199B9;
-	Mon, 19 Aug 2024 07:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231D114D28C
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724052861; cv=none; b=dcwMNQ8y0ABc+E1EsdVW0bP1Zs9eis27AOUad6vC5hbnYp2pStsmfG78k0N5H96Mv0b9PqUHiQ/1gUYboRy2A62gyQ1ozTKIh1GypcOET+g++KkOCEtK85ZhKz60PSPdhRTtlt3ifM442nlWDBkofPDSRQQjRFL5MKWVosTShuA=
+	t=1724052948; cv=none; b=KadOxs6Nm0JwoxRLViAYBm12rOraHTHlPSPf02EEbo2jJ1G+hcAGm3wGDW8DvW1h2KKGueHGhz8pqUpvzMw4RbRqyxFuFbStWC7VinULRa5SxSfxxfq+eTRyH19lTDeAcACRdkdoHEt+QnPRodwYtUPIChbtd+oMO879F3ZEWOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724052861; c=relaxed/simple;
-	bh=jWCdw6+Mt7vTwAMd410byNxcR/efNsh0Co3i6REIQqE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GXVRoWGE9eqUp2RD/T5eLTNdsu76HH+3QNNSd2/BgkEOqyoi0pzdswPR/W4mdiQLafXWp6pu2ecFF2qHvRdqBGJ7NhIcgiGlRRKAt7XDVtY5VQISzdhGSsedSxSj4Y00Fcy6YT8szBqT7gZrxNmv6YELcCiDh5vMHSxsn2KEreM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y3FRYoNh; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724052859; x=1755588859;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=jWCdw6+Mt7vTwAMd410byNxcR/efNsh0Co3i6REIQqE=;
-  b=Y3FRYoNhJ9Zjhq1jbTMr/rJNEf6RwPUe4hWt4u/A+YilWreXM6da3GmS
-   H9kMalzuuulCtvCS32f02sP3LTYHj/AKCrhe/bbx4kVAtLCctgzU+UTQt
-   6tBLiztABzatagXE/a4QRU9VR7Jw5m+75tvg/yDrpiFfSxX1HdGJ7YEog
-   QjG3rUnAuQ1TMsz+t5o0ez4uJVjRyh9hcCA1TzEoKMUM6yNmcmQCEv8xZ
-   yFIM8ACsul53PYYsejRpDRjF/QTwc1xga0T2+R/b6KSMDWApUza9+Oiy/
-   IM1rZugCVEksgG+MB2mJ4TXsbEBINXP9IXqMHonSNmy/vimDnCnEbXDUP
-   Q==;
-X-CSE-ConnectionGUID: a0zdzh9pTNSIQaQTDAuqPA==
-X-CSE-MsgGUID: RILr0rTbT72jlG56sk+ByQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="22445177"
-X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="22445177"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 00:34:19 -0700
-X-CSE-ConnectionGUID: O+B60iEqRGqYo4fRX3CQFg==
-X-CSE-MsgGUID: FTEnVBr5RkuC77QyZMAnGw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
-   d="scan'208";a="60587214"
-Received: from mwiniars-desk2.ger.corp.intel.com (HELO localhost) ([10.245.246.70])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2024 00:34:13 -0700
-From: Jani Nikula <jani.nikula@intel.com>
-To: abid-sayyad <sayyad.abid16@gmail.com>, airlied@gmail.com
-Cc: daniel@ffwll.ch, dmitry.baryshkov@linaro.org, mripard@kernel.org,
- ankit.k.nautiyal@intel.com, imre.deak@intel.com,
- mitulkumar.ajitkumar.golani@intel.com, quic_abhinavk@quicinc.com,
- dianders@chromium.org, marilene.agarcia@gmail.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- tytso@mit.edu, jack@suse.com, linux-ext4@vger.kernel.org,
- skhan@linuxfoundation.org, abid-sayyad <sayyad.abid16@gmail.com>
-Subject: Re: [PATCH] fix member variable description warnings while building
- docs
-In-Reply-To: <20240818112543.1089986-1-sayyad.abid16@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240818112543.1089986-1-sayyad.abid16@gmail.com>
-Date: Mon, 19 Aug 2024 10:34:09 +0300
-Message-ID: <87a5h96k5q.fsf@intel.com>
+	s=arc-20240116; t=1724052948; c=relaxed/simple;
+	bh=spq6B6sb/ZIFGYSOPazEWb0knQr9sjtzp6ILO0qVbpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A85EOX02iVsDd7ropAlijNFPPckwgHO5CQJRwvwBocLNLcLUvO+0VTOlIois6poPdiYNn8hT3+V9GW4+ETEgzHtsrSugnOFwnvybHBZsv57pcrZvXWLVKgBfsb6jfYo9pP96CWCODspMiOeCMRzxthDNjChFs7q5R1Ozjzv0l04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=iYG2qi9N; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a83597ce5beso603081566b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 00:35:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1724052945; x=1724657745; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8NyA3r+0SEkxLBULpRBSrNH9reIkd05NfXfPtxwYdwY=;
+        b=iYG2qi9N+XFV32ngjlPE6AfO67zxKYdoqJX7bo5UPvTH+dmQ0HH1u/XAIPvJ4Y7jPc
+         taMHmqmvaswoQD416pv2cTVRCaQk7qHWK8f6lByr+SrT9h3HiKojnyTF1FDbS+SHqu4y
+         gjHfw4md/kZDnEauNzOyqp8mL2MtQDGVoPBin9E997GVYnACYsvJAtJtgA1cZoOyOsVr
+         bV3B00fYS1DmIHF6BhLA4e3rjx5rnMfuV1ZFgTLKivEgahS3SW5nNQZZEXJl27wBcmzk
+         ArnSbicerKyq0/qfldlIUIjzW16bJCGbOb7W4nuPlQfh6DFL9mDys0pd693Lf0gjlKyE
+         CBHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724052945; x=1724657745;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8NyA3r+0SEkxLBULpRBSrNH9reIkd05NfXfPtxwYdwY=;
+        b=tL6Lbq4S8padoGeNdlvBGKOOKl/0wDFQIZ//IlWW++wbOShK7SyYecxBoQwsGnhyYh
+         wy1wFUflJUkFvrSTy5ZVBztnxbmCFAZHUYvd5nzEJbfNAPls91HjJxEw9GIfYnWEEuJk
+         L4v3BnrdYslcmjIKiaIa49FClM0LQJyYfsQOltfDs5GLhdxdHt/ohVCxxuH16pLOAIxL
+         a3ngNmmDtUO4Wp1BBLZ37eq0PS1tou75cDwATg2dyiVPXTQWKPhuduEpmSPhsIbXJKD6
+         Bqp2tDy1BpzKKa1vLx4KMN4F8PnVAJOPnRS/ruQS1wO64ezr3JKNNxZ0XmxKhanZlTli
+         whPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYm/hO2nHVcpyuO37L5GICjVfJgIuqc3z22YNZN8UCpQ0BAq186Sqgish3S6aGS7xwwp77Ox9zjmFhNa5B/6LdOpytSiv885ZIE6Mu
+X-Gm-Message-State: AOJu0YxhTSCnWHy5Gqh9UBwlptYjq2Lgc30YGWurY3hIZjqliW000AEB
+	TJ4aSv2VCWV9+oNg39GpupYyVg1ft+7UbLRiy5N2DPBqgrEOH9AWbQRcV9dAQfQ=
+X-Google-Smtp-Source: AGHT+IFGNW4Rp1MF9pErnW5tAeVHGUBzNbSFgBGlimGRBnHwWDOlPps9HXt2/6wAXUpzwZnZvX8mQw==
+X-Received: by 2002:a17:907:6d2a:b0:a72:5967:b34 with SMTP id a640c23a62f3a-a8394f7e0b9mr963569066b.22.1724052944878;
+        Mon, 19 Aug 2024 00:35:44 -0700 (PDT)
+Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c6c07sm603195566b.43.2024.08.19.00.35.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 00:35:44 -0700 (PDT)
+Date: Mon, 19 Aug 2024 09:35:43 +0200
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev, 
+	linux-mips@vger.kernel.org, maz@kernel.org, mark.rutland@arm.com, saravanak@google.com, 
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	Anup Patel <apatel@ventanamicro.com>
+Subject: Re: [PATCH v3] of/irq: Support #msi-cells=<0> in of_msi_get_domain
+Message-ID: <20240819-3fd4ff3cfa1d216a1241f5a0@orel>
+References: <20240817074107.31153-2-ajones@ventanamicro.com>
+ <20240818161816.GA173148-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240818161816.GA173148-robh@kernel.org>
 
-On Sun, 18 Aug 2024, abid-sayyad <sayyad.abid16@gmail.com> wrote:
-> Fix the following warnings while building the docs :-
->
-> ./include/linux/jbd2.h:1303: warning: Function parameter or struct member
-> 		'j_transaction_overhead_buffers' not described in 'journal_s'
-> ./include/linux/jbd2.h:1303: warning: Excess struct member
-> 		'j_transaction_overhead' description in 'journal_s'
->
-> Fix spelling error for j_transaction_overhead to j_transaction_overhead_buffers.
->
-> ./include/drm/display/drm_dp_helper.h:127: warning: Function parameter or struct
-> 		member 'target_rr_divider' not described in 'drm_dp_as_sdp'
->
-> Add description for the 'target_rr_divider' member.
+On Sun, Aug 18, 2024 at 10:18:16AM GMT, Rob Herring wrote:
+> On Sat, Aug 17, 2024 at 09:41:08AM +0200, Andrew Jones wrote:
+...
+> > +	of_for_each_phandle(&it, err, np, "msi-parent", "#msi-cells", 0) {
+> > +		d = irq_find_matching_host(it.node, token);
+> > +		if (d)
+> > +			return d;
+> > +		of_node_put(it.node);
+> 
+> Pretty sure the iterator does this for you. I can fixup when applying.
 
-Please send the two separately. They are part of two completely
-different subsystems.
+Doh, I managed to mess up my usage of OF APIs twice. Thanks for applying
+the fixup.
 
-BR,
-Jani.
+> 
+> I plan to tag for stable too.
 
->
-> Signed-off-by: abid-sayyad <sayyad.abid16@gmail.com>
-> ---
->  include/drm/display/drm_dp_helper.h | 1 +
->  include/linux/jbd2.h                | 2 +-
->  2 files changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/include/drm/display/drm_dp_helper.h b/include/drm/display/drm_dp_helper.h
-> index ea03e1dd26ba..7f2567fa230d 100644
-> --- a/include/drm/display/drm_dp_helper.h
-> +++ b/include/drm/display/drm_dp_helper.h
-> @@ -112,6 +112,7 @@ struct drm_dp_vsc_sdp {
->   * @target_rr: Target Refresh
->   * @duration_incr_ms: Successive frame duration increase
->   * @duration_decr_ms: Successive frame duration decrease
-> + * @target_rr_divider: Target refresh rate divider
->   * @mode: Adaptive Sync Operation Mode
->   */
->  struct drm_dp_as_sdp {
-> diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-> index 5157d92b6f23..17662eae408f 100644
-> --- a/include/linux/jbd2.h
-> +++ b/include/linux/jbd2.h
-> @@ -1086,7 +1086,7 @@ struct journal_s
->  	int			j_revoke_records_per_block;
->
->  	/**
-> -	 * @j_transaction_overhead:
-> +	 * @j_transaction_overhead_buffers:
->  	 *
->  	 * Number of blocks each transaction needs for its own bookkeeping
->  	 */
-> --
-> 2.39.2
->
+Good idea.
 
--- 
-Jani Nikula, Intel
+Thanks,
+drew
 
