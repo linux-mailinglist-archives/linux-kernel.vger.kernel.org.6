@@ -1,280 +1,162 @@
-Return-Path: <linux-kernel+bounces-292200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88115956C59
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:41:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2691A956C5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 15:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB97DB25BA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:41:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5156F1C21E4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 13:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7E916C6B2;
-	Mon, 19 Aug 2024 13:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="APS3x+Gv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A1C16CD02;
+	Mon, 19 Aug 2024 13:42:34 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32903154C19
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 13:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C7516C84A
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 13:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724074891; cv=none; b=jiOdpJ+2AZ3U0GAQ6VOq/13ZnQ8YnXA2il3ykbzHY/zcOrFlauFb8uBxcmLe2W2vTI20zTCb739eRbaG3cDNVQN643XuloYFz142SLjE3zuLXkFidUwSwqq0UrOMRsYPu+bOrxJncCA6CCEzTy0hgaw5qSvlTvWR2uJLfrmXff0=
+	t=1724074953; cv=none; b=P4F0OQ96bmonbD1l6/zBBY2RG3vTHL/BuBrAYVIji7hIuVpYwoHAuQ/nR7AgsGbbo88UZFQvkx/T3PMX/qhJ8JOLmLV8O2hQNZQ3/ZeGp4UQUlsgR1kehT4EDTOlKTEBlAgX7jUGMpEwBAZ2v5bI/vzad4//MLwfxtHj6kg4EjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724074891; c=relaxed/simple;
-	bh=eB5Y74Zx/sSE5nnvYuaBg++kv5XFfqNRDtJ49BBh1rs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CpSML1zob+XBdDit35k8GG39iPVb6BEXFzv73jaFI4v+0qM2SrcHfOy5vyKgkAGxIpS6asDpa/s1VpMjsMfN/yrwR/gJDQCHCKaxcUuJVDMNRAuYaI0hkkkV7C9eELEtGc2LLKskmaMD1jCdHFAUmhoTdNpeR8ysi286uCDWjTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=APS3x+Gv; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724074889;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PnscDpV0loAdA10GHqqV4Sk/NPtRpYZGLZNubtluAas=;
-	b=APS3x+GvuKqgO+8qTdWC6hcAkDbGlnuQcQQY6nHF75D7BGeZwEeHHdLgp8BgLQrV7vJqA3
-	j+iSXtaT358sFGEBSxhk40jVBhx8TqpoEM2LRlGDBpyKAnNweKQF+MnQBE9OEicojr+wBX
-	5E8ndbiVmoONxH4X8vEI3g5bHuqoObI=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-251-om71W1M8Mt-rOYGSwdksHw-1; Mon,
- 19 Aug 2024 09:41:22 -0400
-X-MC-Unique: om71W1M8Mt-rOYGSwdksHw-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 33EDE18EB228;
-	Mon, 19 Aug 2024 13:41:19 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.68])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 5CC2219560A3;
-	Mon, 19 Aug 2024 13:41:14 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 19 Aug 2024 15:41:14 +0200 (CEST)
-Date: Mon, 19 Aug 2024 15:41:08 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
-	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org,
-	willy@infradead.org, surenb@google.com, akpm@linux-foundation.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH RFC v3 09/13] uprobes: SRCU-protect uretprobe lifetime
- (with timeout)
-Message-ID: <20240819134107.GB3515@redhat.com>
-References: <20240813042917.506057-1-andrii@kernel.org>
- <20240813042917.506057-10-andrii@kernel.org>
+	s=arc-20240116; t=1724074953; c=relaxed/simple;
+	bh=n055YP4UpwSx4MsWTuk5objkjsFP6bUCrLVCQsPaisA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kC/CVV3AOdQpJFRTYRSKpwtXI9q8ZrqdeKI6LLzJoOVRnhtTpGAiNvX54Fnf8mHuB3g66/RC6XkIKVYWKReYZzLDwWdK0rzrExhJbm/bOAKpx6pgry6jBLIWvQ3mN2623W6ivlXekHUmUc2RKISfSMgj5GtULTfA0RgfxJ581aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81f897b8b56so314176039f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 06:42:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724074951; x=1724679751;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yb2ABfIEAQrnVUVakDimCyPOI0QvhxH1i+Tk0ohSf9w=;
+        b=v3vmYlegeQZKJOIymbYXH0HJNqM8PJkNRQti26MvOMMS2k4LrtoFdhujjkfQ41/GzD
+         h7yAZu7HQJ82RuR6flYdoOqf0nA/RcCzAzkN1bbFunXlhhL5m/dgah3+mkj+QeeWBhoY
+         YX4SohwCBG8BAnmhSqeHIbvxuscJD0VF1xghmu0Ny5WwpF8k80R+NbtsjOskkBIShjkk
+         w2cija0LL8+GAjGqwMcbm+OGYCFLIFZyTsyESAhlLXZNt2tCDQIFToW1+qs51sLbKdrZ
+         HYRmYgdm+1bC6fkXdehC8gutzTJfw8HUAv5idYraHC8bMVB7E6ErjCHXRR8WiNBbrbq+
+         Q64Q==
+X-Forwarded-Encrypted: i=1; AJvYcCULGj0TH9e4q4SOjCeOL1KyJ/ZBjNnK6xOpZGAnfO9pVf6+N+XcawSdLtMzpBcgw+3TMyjkJ9RykLkfN+NVhVTFpRJI9IFZZJ6Xg2JJ
+X-Gm-Message-State: AOJu0YwhBsh9Jr4GaJcCvQbro5daqKv3jUyMIRXXs6ZhTEG3P2q7O4Fa
+	/CjqoX8mPbpUHj2IL6i9XpS/Nwbmva32cF3VoXN3Xtu3dV9wHhipwizVBPWgpeqxeoCA9CmjwPY
+	r6aYwwnOFEBrBMLk48iuX2mHpaLDuC+sRend8ViXiNkykDMF2wunzSWk=
+X-Google-Smtp-Source: AGHT+IE5rrDf70i/p1FbD9QFwTTP3OA7yraQQQy5xyKeucd1SSix0wNLxYR435ikpe3Pq6IV6eWLI3HP1US1yJpuHQhQ6ZySnb2J
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240813042917.506057-10-andrii@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Received: by 2002:a05:6638:8709:b0:4c2:31f5:3137 with SMTP id
+ 8926c6da1cb9f-4cce0d85575mr518009173.0.1724074951314; Mon, 19 Aug 2024
+ 06:42:31 -0700 (PDT)
+Date: Mon, 19 Aug 2024 06:42:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000a1b9a0620097bad@google.com>
+Subject: [syzbot] [serial?] KMSAN: uninit-value in n_tty_receive_buf_closing (3)
+From: syzbot <syzbot+dd514b5f0cf048aec256@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, jirislaby@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 08/12, Andrii Nakryiko wrote:
->
-> Avoid taking refcount on uprobe in prepare_uretprobe(), instead take
-> uretprobe-specific SRCU lock and keep it active as kernel transfers
-> control back to user space.
-...
->  include/linux/uprobes.h |  49 ++++++-
->  kernel/events/uprobes.c | 294 ++++++++++++++++++++++++++++++++++------
->  2 files changed, 301 insertions(+), 42 deletions(-)
+Hello,
 
-Oh. To be honest I don't like this patch.
+syzbot found the following issue on:
 
-I would like to know what other reviewers think, but to me it adds too many
-complications that I can't even fully understand...
+HEAD commit:    1fb918967b56 Merge tag 'for-6.11-rc3-tag' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10383409980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=836be0e882e376f7
+dashboard link: https://syzkaller.appspot.com/bug?extid=dd514b5f0cf048aec256
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
-And how much does it help performance-wise?
+Unfortunately, I don't have any reproducer for this issue yet.
 
-I'll try to take another look, and I'll try to think about other approaches,
-not that I have something better in mind...
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c4ce70611394/disk-1fb91896.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/014bed8fa88a/vmlinux-1fb91896.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f8aa322233dc/bzImage-1fb91896.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+dd514b5f0cf048aec256@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in n_tty_receive_char_closing drivers/tty/n_tty.c:1454 [inline]
+BUG: KMSAN: uninit-value in n_tty_receive_buf_closing+0x539/0xb40 drivers/tty/n_tty.c:1567
+ n_tty_receive_char_closing drivers/tty/n_tty.c:1454 [inline]
+ n_tty_receive_buf_closing+0x539/0xb40 drivers/tty/n_tty.c:1567
+ __receive_buf drivers/tty/n_tty.c:1630 [inline]
+ n_tty_receive_buf_common+0x196b/0x2490 drivers/tty/n_tty.c:1739
+ n_tty_receive_buf2+0x4c/0x60 drivers/tty/n_tty.c:1785
+ tty_ldisc_receive_buf+0xd0/0x290 drivers/tty/tty_buffer.c:387
+ tty_port_default_receive_buf+0xdf/0x190 drivers/tty/tty_port.c:37
+ receive_buf drivers/tty/tty_buffer.c:445 [inline]
+ flush_to_ldisc+0x473/0xdb0 drivers/tty/tty_buffer.c:495
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
+ worker_thread+0xea5/0x1520 kernel/workqueue.c:3390
+ kthread+0x3dd/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3994 [inline]
+ slab_alloc_node mm/slub.c:4037 [inline]
+ __do_kmalloc_node mm/slub.c:4157 [inline]
+ __kmalloc_noprof+0x661/0xf30 mm/slub.c:4170
+ kmalloc_noprof include/linux/slab.h:685 [inline]
+ tty_buffer_alloc drivers/tty/tty_buffer.c:180 [inline]
+ __tty_buffer_request_room+0x36e/0x6d0 drivers/tty/tty_buffer.c:273
+ __tty_insert_flip_string_flags+0x140/0x570 drivers/tty/tty_buffer.c:309
+ tty_insert_flip_char include/linux/tty_flip.h:77 [inline]
+ uart_insert_char+0x39e/0xa10 drivers/tty/serial/serial_core.c:3568
+ serial8250_read_char+0x1a7/0x5d0 drivers/tty/serial/8250/8250_port.c:1743
+ serial8250_rx_chars drivers/tty/serial/8250/8250_port.c:1760 [inline]
+ serial8250_handle_irq+0x77a/0xb80 drivers/tty/serial/8250/8250_port.c:1924
+ serial8250_default_handle_irq+0x120/0x2b0 drivers/tty/serial/8250/8250_port.c:1949
+ serial8250_interrupt+0xc5/0x360 drivers/tty/serial/8250/8250_core.c:86
+ __handle_irq_event_percpu+0x118/0xca0 kernel/irq/handle.c:158
+ handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
+ handle_irq_event+0xef/0x2c0 kernel/irq/handle.c:210
+ handle_edge_irq+0x340/0xfb0 kernel/irq/chip.c:831
+ generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
+ handle_irq arch/x86/kernel/irq.c:247 [inline]
+ call_irq_handler arch/x86/kernel/irq.c:259 [inline]
+ __common_interrupt+0x97/0x1f0 arch/x86/kernel/irq.c:285
+ common_interrupt+0x8f/0xa0 arch/x86/kernel/irq.c:278
+ asm_common_interrupt+0x2b/0x40 arch/x86/include/asm/idtentry.h:693
+
+CPU: 1 UID: 0 PID: 3148 Comm: kworker/u8:16 Not tainted 6.11.0-rc3-syzkaller-00066-g1fb918967b56 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Workqueue: events_unbound flush_to_ldisc
+=====================================================
 
 
-But lets forgets this patch for the moment. The next one adds even more
-complications, and I think it doesn't make sense.
-
-As I have already mentioned in the previous discussions, we can simply kill
-utask->active_uprobe. And utask->auprobe.
-
-So can't we start with the patch below? On top of your 08/13. It doesn't kill
-utask->auprobe yet, this needs a bit more trivial changes.
-
-What do you think?
-
-Oleg.
-
--------------------------------------------------------------------------------
-From d7cb674eb6f7bb891408b2b6a5fb872a6c2f0f6c Mon Sep 17 00:00:00 2001
-From: Oleg Nesterov <oleg@redhat.com>
-Date: Mon, 19 Aug 2024 15:34:55 +0200
-Subject: [RFC PATCH] uprobe: kill uprobe_task->active_uprobe
-
-Untested, not for inclusion yet, and I need to split it into 2 changes.
-It does 2 simple things:
-
-	1. active_uprobe != NULL is possible if and only if utask->state != 0,
-	   so it turns the active_uprobe checks into the utask->state checks.
-
-	2. handle_singlestep() doesn't really need ->active_uprobe, it only
-	   needs uprobe->arch which is "const" after prepare_uprobe().
-
-	   So this patch adds the new "arch_uprobe uarch" member into utask
-	   and changes pre_ssout() to do memcpy(&utask->uarch, &uprobe->arch).
 ---
- include/linux/uprobes.h |  2 +-
- kernel/events/uprobes.c | 37 +++++++++++--------------------------
- 2 files changed, 12 insertions(+), 27 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-index 3a3154b74fe0..df6f3dab032c 100644
---- a/include/linux/uprobes.h
-+++ b/include/linux/uprobes.h
-@@ -56,6 +56,7 @@ struct uprobe_task {
- 
- 	union {
- 		struct {
-+			struct arch_uprobe	uarch;
- 			struct arch_uprobe_task	autask;
- 			unsigned long		vaddr;
- 		};
-@@ -66,7 +67,6 @@ struct uprobe_task {
- 		};
- 	};
- 
--	struct uprobe			*active_uprobe;
- 	unsigned long			xol_vaddr;
- 
- 	struct arch_uprobe              *auprobe;
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index acc73c1bc54c..9689b557a5cf 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -1721,7 +1721,7 @@ unsigned long uprobe_get_trap_addr(struct pt_regs *regs)
- {
- 	struct uprobe_task *utask = current->utask;
- 
--	if (unlikely(utask && utask->active_uprobe))
-+	if (unlikely(utask && utask->state))
- 		return utask->vaddr;
- 
- 	return instruction_pointer(regs);
-@@ -1747,9 +1747,6 @@ void uprobe_free_utask(struct task_struct *t)
- 	if (!utask)
- 		return;
- 
--	if (utask->active_uprobe)
--		put_uprobe(utask->active_uprobe);
--
- 	ri = utask->return_instances;
- 	while (ri)
- 		ri = free_ret_instance(ri);
-@@ -1965,14 +1962,9 @@ pre_ssout(struct uprobe *uprobe, struct pt_regs *regs, unsigned long bp_vaddr)
- 	if (!utask)
- 		return -ENOMEM;
- 
--	if (!try_get_uprobe(uprobe))
--		return -EINVAL;
--
- 	xol_vaddr = xol_get_insn_slot(uprobe);
--	if (!xol_vaddr) {
--		err = -ENOMEM;
--		goto err_out;
--	}
-+	if (!xol_vaddr)
-+		return -ENOMEM;
- 
- 	utask->xol_vaddr = xol_vaddr;
- 	utask->vaddr = bp_vaddr;
-@@ -1980,15 +1972,12 @@ pre_ssout(struct uprobe *uprobe, struct pt_regs *regs, unsigned long bp_vaddr)
- 	err = arch_uprobe_pre_xol(&uprobe->arch, regs);
- 	if (unlikely(err)) {
- 		xol_free_insn_slot(current);
--		goto err_out;
-+		return err;
- 	}
- 
--	utask->active_uprobe = uprobe;
-+	memcpy(&utask->uarch, &uprobe->arch, sizeof(utask->uarch));
- 	utask->state = UTASK_SSTEP;
- 	return 0;
--err_out:
--	put_uprobe(uprobe);
--	return err;
- }
- 
- /*
-@@ -2005,7 +1994,7 @@ bool uprobe_deny_signal(void)
- 	struct task_struct *t = current;
- 	struct uprobe_task *utask = t->utask;
- 
--	if (likely(!utask || !utask->active_uprobe))
-+	if (likely(!utask || !utask->state))
- 		return false;
- 
- 	WARN_ON_ONCE(utask->state != UTASK_SSTEP);
-@@ -2313,19 +2302,15 @@ static void handle_swbp(struct pt_regs *regs)
-  */
- static void handle_singlestep(struct uprobe_task *utask, struct pt_regs *regs)
- {
--	struct uprobe *uprobe;
- 	int err = 0;
- 
--	uprobe = utask->active_uprobe;
- 	if (utask->state == UTASK_SSTEP_ACK)
--		err = arch_uprobe_post_xol(&uprobe->arch, regs);
-+		err = arch_uprobe_post_xol(&utask->uarch, regs);
- 	else if (utask->state == UTASK_SSTEP_TRAPPED)
--		arch_uprobe_abort_xol(&uprobe->arch, regs);
-+		arch_uprobe_abort_xol(&utask->uarch, regs);
- 	else
- 		WARN_ON_ONCE(1);
- 
--	put_uprobe(uprobe);
--	utask->active_uprobe = NULL;
- 	utask->state = UTASK_RUNNING;
- 	xol_free_insn_slot(current);
- 
-@@ -2342,7 +2327,7 @@ static void handle_singlestep(struct uprobe_task *utask, struct pt_regs *regs)
- /*
-  * On breakpoint hit, breakpoint notifier sets the TIF_UPROBE flag and
-  * allows the thread to return from interrupt. After that handle_swbp()
-- * sets utask->active_uprobe.
-+ * sets utask->state != 0.
-  *
-  * On singlestep exception, singlestep notifier sets the TIF_UPROBE flag
-  * and allows the thread to return from interrupt.
-@@ -2357,7 +2342,7 @@ void uprobe_notify_resume(struct pt_regs *regs)
- 	clear_thread_flag(TIF_UPROBE);
- 
- 	utask = current->utask;
--	if (utask && utask->active_uprobe)
-+	if (utask && utask->state)
- 		handle_singlestep(utask, regs);
- 	else
- 		handle_swbp(regs);
-@@ -2388,7 +2373,7 @@ int uprobe_post_sstep_notifier(struct pt_regs *regs)
- {
- 	struct uprobe_task *utask = current->utask;
- 
--	if (!current->mm || !utask || !utask->active_uprobe)
-+	if (!current->mm || !utask || !utask->state)
- 		/* task is currently not uprobed */
- 		return 0;
- 
--- 
-2.25.1.362.g51ebf55
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
