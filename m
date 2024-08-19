@@ -1,109 +1,216 @@
-Return-Path: <linux-kernel+bounces-292717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6696195736A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:35:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18DCC95736D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 20:35:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE159B2453F
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:35:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28220B2476C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA73B1898F6;
-	Mon, 19 Aug 2024 18:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DECE6189B8D;
+	Mon, 19 Aug 2024 18:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="akvf6uuj"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZT5metu4"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A1C188CD9
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 18:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A993188CD9;
+	Mon, 19 Aug 2024 18:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724092507; cv=none; b=uzFut3O08E+lGIinD8e012HcQHl27NnTy0PVjQZmx/oV+ueOPdmwyZmDUkmrUJYBrC16vG4DMdlyMf7WpVkkKNAFnjm5aBmE7UyKH0ktoLs2ygXGxZ1ClMFAuB74A3hUn5kvz7oNQYrAeLTcXbtPca5CFmHqHF6EqcgbYIbmiPg=
+	t=1724092522; cv=none; b=iQwFTTXHBNXNfEgj3Y3ATqo+TGSuhJVTYBMIOqevpf/msSxbfEqJ+uJPnvxt1iZlvlQ1fxhEt4RC4iap7Qnsf0cyoOjl/VG5pzn1UXHB8XhldBDLl3ASN3CHU0SGCgwdZ7dusbmP1SipuVBT/TyrWodOoCUh0X/waw7sa2b+sko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724092507; c=relaxed/simple;
-	bh=ZcVkigYWpjlr7iQuQ4MGhGbi2tR5jEY2SDkXCbkC91I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pqsOaqS4D98MS550P0afS4o42zU7KJXTXk37p3ZvbihVchAjHLdWK6U520qFag49NV4kB9Jg804BIl/eCNn/9J4MXciyYzLe6jtJAPCmXgIEcrnQdCudoddyJ4dvoswjJughaQaS7nqqAB+od2aX7Rgsir1ET0B2JcCnjWpGmAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=akvf6uuj; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-428119da952so37290725e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 11:35:05 -0700 (PDT)
+	s=arc-20240116; t=1724092522; c=relaxed/simple;
+	bh=qN25ESiBluW/Wgf7nnUMEGNcqsWMOVJegLeAlewK/VM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gK9iiaHok2TTMlHplEKwXyMd+DOs1n6STI7etfZP+Buay2IlTHCo4Yd94UdWauPp53CR4CY3sNISyvqvtoV/Ut6KrRLkn3Yz/t6okpIgUeTFOuDKe+4CFFCbVnHF4OVWdnCLmSPs13+07Zo0vhGEscKWm7Dc6IGQRzBEze6Qqgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZT5metu4; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e03caab48a2so3392735276.1;
+        Mon, 19 Aug 2024 11:35:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724092504; x=1724697304; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qB2aiywFQ/7bZyWYjuuiDbccrZMhIclyQ2+n0baHXZQ=;
-        b=akvf6uuj0QfAq/4CJa5leRq8yA9peg8Ko1Xbby4TwrJudROooLQDHSQCnJQ+VtAKZi
-         SU5csd7WlmAe7AQJ2h8GPaT/ChrQ75FukMQ1gAd5UrjPuHF2lcJRIOw8lUgxtGRJQgpJ
-         rdAutcKIY/KsXyjsTXIEsF5y9G2Z6zB5s1Zs6BrrVdx0WLiYMGZfbDzGbpT/+SW/MF4Z
-         6nmlFSG3M2jom2jARXretN0m9dBPirh/JZezzEDBeTUd8pq+yfABHp+0VGKNuXXEGoqf
-         HfRF7vq+kFrOstUrQ5q6lmLhnpeevrk6fcdkrVANc8+o7WdzhupcL3YIop7Oa5RSLjhw
-         TSIg==
+        d=gmail.com; s=20230601; t=1724092519; x=1724697319; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SYH3TQeVTTY68Kyifj6Lhi9y33FdIk3s3eh/aNh8/P8=;
+        b=ZT5metu4fisNshzO8bdO9LG40gGB0MlLmfAbKmpmCTiFQzOrQ6WzeOD56wb0yAMlMx
+         GVr2mVigApqvyTFxlX4E/5wUgxzleCqUC02J9YultePE2HNwXXjP1uW4bpOOe4/3xE0N
+         6UhlxCWPTWMMDKacPEJvBvEMMu9NAcEs242VWqHOSq5qoM9TxTGqlJzO8UVkOIrd2+IQ
+         pp/qRbvKIyQIpz2Ebu/yrgwdLg1Klok2Am2fkBD96Fd8tYFe5D7Ake8w2nuBM1uReNC2
+         HWU01Vi6BGmUmi6Z62ugV0JLyXT5jz6C48ak7YlK5fR1TjtQABTBRv2addL+8s/oBlk2
+         B9UQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724092504; x=1724697304;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qB2aiywFQ/7bZyWYjuuiDbccrZMhIclyQ2+n0baHXZQ=;
-        b=Oqcg00dts7VG2ac2e8vL9RAgOdrUiFm0T78LG4iwZr6aNiTi5Gok9YPr6+vUlIzd4G
-         7HS8F1X16eHGzV8wYpUMijzDhb3WMxAUfxQhDGdZy1ejPZo+XbrWf0GPjdm+rRYeWNg3
-         Gn9Uo/xZtppLyoYqoXQ7GTHAzz+dYiTcyAS2txui+2Kxg0lSHyUH3Kx1hE/kgMIOuvmT
-         X1yAuQTNkaNXoDm67CszL7c21xgln6/cvSSJWfzoyD04ZfqmN1AeYQha8xvOhKUsWfUS
-         AuE2RBAL+sKC8c9/e/7ztxi6zljpPKwAN4aOuDK5TMPk2XkbSg/ResRNRlGTK4VK5hAZ
-         iHaA==
-X-Forwarded-Encrypted: i=1; AJvYcCXW+qR1FvPQoVd1w1nMgvWjGAj0+zu1OHYDBiU3yfdjJcwhUIGrc88FYJxnxzy5RkkilgOWqcfXg6vI25j8sSnAbK2uZLCWuv5/KtI6
-X-Gm-Message-State: AOJu0Yw3GLTyrOfq6Brwv9EVQyvwnPYUtqubztc/bXdHAYj2uGvRNQ0p
-	t7QeqYtlx3RpHlNwA3PMML+EpwqlyDv11Zbx1NogMiShFsAc4SHAaGOujB7GFeoHz8v8/EgsSjv
-	mLEC0c1jCMiA+DJqMfgBbsEArjaMck+s52RQ=
-X-Google-Smtp-Source: AGHT+IHL6SFDUfjBtUFeEhGMqyWAWM/b6qf0aHg/pO4x9FUknerMtwxQJBPOY2OU8LQd8gQ7KOq0NtLDi26TDPoBP0U=
-X-Received: by 2002:a05:600c:4e8c:b0:428:31c:5a52 with SMTP id
- 5b1f17b1804b1-429ed7cc764mr104616895e9.29.1724092503366; Mon, 19 Aug 2024
- 11:35:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724092519; x=1724697319;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SYH3TQeVTTY68Kyifj6Lhi9y33FdIk3s3eh/aNh8/P8=;
+        b=CrnUZm+XgxPBkaBbFi1rZqp9wBHX2siawTsIkGWbO5tewF/78up1lgdhVj4kjJPsXL
+         njx7+lAgXTYHTPUCBLAbIGXZ9KiKdsom216iU0Ha/lA3z4sUG7uz//sDLBxnpJFBDtsc
+         5hDRJbjEV8I1wch28oChMmahD8zKArYxiWwVbPng9wzl9bFYWLWaIeWgmUQPFxfECk6U
+         ikrWi1H34Bt5DMJM3FctXKvwyu59icOlCqwUqcVDouZMaMhfLDy7wkl2rofiPpdJnQJC
+         sdwniSqh74yGF6JWJ5y3eacsbJR46rCNL5dHSYkl+02n1LBmSVklCgkPiivyprmxwoYQ
+         U39A==
+X-Forwarded-Encrypted: i=1; AJvYcCUeeqKjCnqkCrQlrqshh6zgOEiCNA+cyz6EOCZTQYu+QrpUVwaozoGVenaRBRFGvZK29iiEDdH7u/8=@vger.kernel.org, AJvYcCWNAVIlAriw1JeqD6ttReCsrdeymMcF7CFjNNR6YzF9N4L6O5Oz3UdvSi7pJ8NWnU75oaIR4+tsr2KB@vger.kernel.org, AJvYcCWiPf+rgorjgVVoRRyC+jHhwLXnh7Q9BjZRD6sYc1XLCPVbXTJ8AZsTiqnN2Z1FCzQVsAyHvp0W/h3ZHONH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+7nM0kYb8fk25NyFuGSyFFzhZfXuzIyrl/z7niwO4FjB8D5Px
+	3TnTHlbuYAfLNtpB8P1PUlb3dRZ2AYTBOO74eFb3nk4PC7FCLs1p
+X-Google-Smtp-Source: AGHT+IHJ4yX6twOUj+yvQhYg9lvd7DEHA7ViXOMbSjRZ2dxNnD3umeQUVsbdUZjFH0URzjCEzKV38Q==
+X-Received: by 2002:a5b:74b:0:b0:e11:44b9:6bc5 with SMTP id 3f1490d57ef6-e164a9a7865mr460329276.22.1724092519398;
+        Mon, 19 Aug 2024 11:35:19 -0700 (PDT)
+Received: from fan ([50.205.20.42])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e1172008bdfsm2167805276.51.2024.08.19.11.35.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 11:35:18 -0700 (PDT)
+From: Fan Ni <nifan.cxl@gmail.com>
+X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
+Date: Mon, 19 Aug 2024 11:35:15 -0700
+To: Terry Bowman <Terry.Bowman@amd.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, ira.weiny@intel.com,
+	dave@stgolabs.net, dave.jiang@intel.com, alison.schofield@intel.com,
+	ming4.li@intel.com, vishal.l.verma@intel.com,
+	jim.harris@samsung.com, ilpo.jarvinen@linux.intel.com,
+	ardb@kernel.org, sathyanarayanan.kuppuswamy@linux.intel.com,
+	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Yazen.Ghannam@amd.com, Robert.Richter@amd.com,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	a.manzanares@samsung.com
+Subject: Re: [RFC PATCH 1/9] PCI/AER: Update AER driver to call root port and
+ downstream port UCE handlers
+Message-ID: <ZsOQYyh-_t3QRSTW@fan>
+References: <20240617200411.1426554-1-terry.bowman@amd.com>
+ <20240617200411.1426554-2-terry.bowman@amd.com>
+ <6675d1cc5d08_57ac294d5@dwillia2-xfh.jf.intel.com.notmuch>
+ <ecc5fbd0-52e1-443f-8e5a-2546328319b2@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819174814.139344-3-pZ010001011111@proton.me>
-In-Reply-To: <20240819174814.139344-3-pZ010001011111@proton.me>
-From: John Stultz <jstultz@google.com>
-Date: Mon, 19 Aug 2024 11:34:52 -0700
-Message-ID: <CANDhNCqoHvvTUk7tmR7u+WPKQV1B7Eztf3TWYDpCQXgLXQijsQ@mail.gmail.com>
-Subject: Re: [PATCH] kselftest: timers: Fix const correctness
-To: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de, 
-	sboyd@kernel.org, shuah@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ecc5fbd0-52e1-443f-8e5a-2546328319b2@amd.com>
 
-On Mon, Aug 19, 2024 at 10:58=E2=80=AFAM Piotr Zalewski
-<pZ010001011111@proton.me> wrote:
->
-> Make timespec pointers, pointers to const in checklist function. As a
-> consequence, make list parameter in checklist function pointer to const
-> as well. Const-correctness increases readability.
->
-> Improvement was found by running cppcheck tool on the patched file as
-> follows:
-> ```
-> cppcheck --enable=3Dall \
->         tools/testing/selftests/timers/threadtest.c \
->         --suppress=3DmissingIncludeSystem \
->         --suppress=3DunusedFunction
-> ```
->
-> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
-> Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
+On Mon, Jun 24, 2024 at 12:56:29PM -0500, Terry Bowman wrote:
+> Hi Dan,
+> 
+> I added a response below.
+> 
+> On 6/21/24 14:17, Dan Williams wrote:
+> > Terry Bowman wrote:
+> >> The AER service driver does not currently call a handler for AER
+> >> uncorrectable errors (UCE) detected in root ports or downstream
+> >> ports. This is not needed in most cases because common PCIe port
+> >> functionality is handled by portdrv service drivers.
+> >>
+> >> CXL root ports include CXL specific RAS registers that need logging
+> >> before starting do_recovery() in the UCE case.
+> >>
+> >> Update the AER service driver to call the UCE handler for root ports
+> >> and downstream ports. These PCIe port devices are bound to the portdrv
+> >> driver that includes a CE and UCE handler to be called.
+> >>
+> >> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> >> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> >> Cc: linux-pci@vger.kernel.org
+> >> ---
+> >>  drivers/pci/pcie/err.c | 20 ++++++++++++++++++++
+> >>  1 file changed, 20 insertions(+)
+> >>
+> >> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+> >> index 705893b5f7b0..a4db474b2be5 100644
+> >> --- a/drivers/pci/pcie/err.c
+> >> +++ b/drivers/pci/pcie/err.c
+> >> @@ -203,6 +203,26 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+> >>  	pci_ers_result_t status = PCI_ERS_RESULT_CAN_RECOVER;
+> >>  	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
+> >>  
+> >> +	/*
+> >> +	 * PCIe ports may include functionality beyond the standard
+> >> +	 * extended port capabilities. This may present a need to log and
+> >> +	 * handle errors not addressed in this driver. Examples are CXL
+> >> +	 * root ports and CXL downstream switch ports using AER UIE to
+> >> +	 * indicate CXL UCE RAS protocol errors.
+> >> +	 */
+> >> +	if (type == PCI_EXP_TYPE_ROOT_PORT ||
+> >> +	    type == PCI_EXP_TYPE_DOWNSTREAM) {
+> >> +		struct pci_driver *pdrv = dev->driver;
+> >> +
+> >> +		if (pdrv && pdrv->err_handler &&
+> >> +		    pdrv->err_handler->error_detected) {
+> >> +			const struct pci_error_handlers *err_handler;
+> >> +
+> >> +			err_handler = pdrv->err_handler;
+> >> +			status = err_handler->error_detected(dev, state);
+> >> +		}
+> >> +	}
+> >> +
+> > 
+> > Would not a more appropriate place for this be pci_walk_bridge() where
+> > the ->subordinate == NULL and these type-check cases are unified?
+> 
+> It does. I can take a look at moving that.
+> 
 
-Acked-by: John Stultz <jstultz@google.com>
+Based on current code logic, the code added here will be executed as
+long as the type matches (downstream port or root port), and I also
+noticed the case ->subordinate == NULL never gets touched when I try to
+inject an error through the aer_inject module and the user space tool. 
+If my way to do error injection is right, it means the behaviour will
+get changed after the code move.
 
-thanks
--john
+Here is some of my experimental setup:
+
+QEMU +  cxl topology (one type3 memdev directly attached to a HB with a
+single root port).
+
+1. Load the cxl related drivers before error injection
+
+2. Do aer inject with aer_inject inside the QEMU VM
+
+# aer_inject ~/nonfatal
+
+aer inject input file looks like below
+-----------------------------------------------------
+fan:~/cxl/linux-fixes$ cat ~/nonfatal 
+# Inject an uncorrectable/non-fatal training error into the device
+# with header log words 0 1 2 3.
+#
+# Either specify the PCI id on the command-line option or uncomment and edit
+# the PCI_ID line below using the correct PCI ID.
+#
+# Note that system firmware/BIOS may mask certain errors, change their severity
+# and/or not report header log words.
+#
+AER
+PCI_ID 0000:0c:00.0
+UNCOR_STATUS COMP_ABORT
+HEADER_LOG 0 1 2 3
+-----------------------------------------------------
+
+The "lspci" output on the VM looks like below
+----------------------------------------------------
+Qemu: execute "lspci" on VM
+00:00.0 Host bridge: Intel Corporation 82G33/G31/P35/P31 Express DRAM Controller
+00:01.0 VGA compatible controller: Device 1234:1111 (rev 02)
+00:02.0 Ethernet controller: Intel Corporation 82540EM Gigabit Ethernet Controller (rev 03)
+00:03.0 Unclassified device [0002]: Red Hat, Inc. Virtio filesystem
+00:04.0 Unclassified device [0002]: Red Hat, Inc. Virtio filesystem
+00:05.0 Host bridge: Red Hat, Inc. QEMU PCIe Expander bridge
+00:1f.0 ISA bridge: Intel Corporation 82801IB (ICH9) LPC Interface Controller (rev 02)
+00:1f.2 SATA controller: Intel Corporation 82801IR/IO/IH (ICH9R/DO/DH) 6 port SATA Controller [AHCI mode] (rev 02)
+00:1f.3 SMBus: Intel Corporation 82801I (ICH9 Family) SMBus Controller (rev 02)
+0c:00.0 PCI bridge: Intel Corporation Device 7075
+0d:00.0 CXL: Intel Corporation Device 0d93 (rev 01)
+--------------------------------------------------
+
+Fan
+
+
+> Regards,
+> Terry
 
