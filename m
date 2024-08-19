@@ -1,66 +1,85 @@
-Return-Path: <linux-kernel+bounces-292483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-292470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E7DA957008
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:16:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E613956FD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 18:11:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD93028865B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:16:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B0411C22BEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 16:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A446A1741D9;
-	Mon, 19 Aug 2024 16:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31FC16C84F;
+	Mon, 19 Aug 2024 16:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="R8PSa6OP"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=verizon.net header.i=@verizon.net header.b="JEjbd0CK"
+Received: from sonic316-11.consmr.mail.bf2.yahoo.com (sonic316-11.consmr.mail.bf2.yahoo.com [74.6.130.121])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB62A13C3D5;
-	Mon, 19 Aug 2024 16:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006A313B7A6
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 16:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.130.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724084188; cv=none; b=klptrEP1RF9goKb1mE0eFGtXxFcoKXEd/odTRgoWm/XBZ4q/elwi3eeibNhmCPLRPpz69zpdmUUAHU84nOAIJ/Mn2xGcw/RczfSsju19hgbWYvpGXKGeXZLvxC3mjfDQyZ0zP7v0QmToPteegDKLKzlQjJzDSsctlgNWepWKa0o=
+	t=1724083867; cv=none; b=PVUGFS8RWj87MxiH8NomRRh4u1Apc2qZZ/6iCJzRk68RYCX292LzfASd3IldyQ9QWtT8EvUTR1NwP3s7yZia+jPgyfBfRd0dCyMABYQnVoVFTFn6ss0wCK0uSvx1b6ApdFix3lkOoylkbEMZ/hiGEPi4cZ6OiCv8fIs0sl0a8cI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724084188; c=relaxed/simple;
-	bh=ZuziA4nlWDx81O3fJaTlUss7+k/K6E4B59ehabNesQU=;
+	s=arc-20240116; t=1724083867; c=relaxed/simple;
+	bh=/DY40toFAIyNyal/saIXH31D2DArcM7HRNbtXTQHM8I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CF+/IdBJXzkujxSgWEn+d8DMT6QWg8CX6Ew7CJYiTsQZRsC09dGX1VcL9jFvYiQXe2WTaLzm/F6bLh8zKo+0TG0S+idiFnjZyJaXC1FduJsqGTA7RyjkmYJLDbG3d5MnXfgVTpOGpYKDgJfNvgaeXdTbeD1R1X+XJQhCTKCt4lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=R8PSa6OP reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id b44314b0e680ed63; Mon, 19 Aug 2024 18:16:24 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 62CC573B5D8;
-	Mon, 19 Aug 2024 18:16:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1724084184;
-	bh=ZuziA4nlWDx81O3fJaTlUss7+k/K6E4B59ehabNesQU=;
-	h=From:Subject:Date;
-	b=R8PSa6OPU7N36Pe1EZ226enB2Tc9ENKqMhVYqr1Q3Ar+U0mVE0oF5AQ8OMWakfNkh
-	 jKU0zlY1E8dNeR/VTcGnwUzcZGvAY0aU7CVP8OOpg8CPmSt/I00KGn4WK71rGXWgZo
-	 jInpiHd5EcJ/ELa1faDZBCUV69eumG7WemM8rrU2JDgtzJrzPvNJXA0skgIU2/hbZJ
-	 ++smj+wyCj8456BgndOMKJfE9k65toc4n7BgORzz83Gga59MnjLlRJLgqEC2s2x5UQ
-	 NXFogZVRBmHA8Y9XgE3dRbF2y1RNxq7Y9EZKnXnAoSvpZntffWRYxiEx1dUPZdaAzV
-	 tvbyvja3wRn1g==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
-Subject:
- [PATCH v3 01/14] thermal: core: Fold two functions into their respective
- callers
-Date: Mon, 19 Aug 2024 17:50:30 +0200
-Message-ID: <2962184.e9J7NaK4W3@rjwysocki.net>
-In-Reply-To: <2205737.irdbgypaU6@rjwysocki.net>
-References: <2205737.irdbgypaU6@rjwysocki.net>
+	 MIME-Version:Content-Type; b=LzZtLUR7tpNDbRJPgsFQAa/mf7NBmZ/yMeh3yti3rdVcR9rIrUSH3zgVMbqDc6XhjTxna+QH66+cQif2b8WVzsS+lhFXiF+3OSZGjQxmSOQc0JAnJ+xboKXO9ZBATd1jd0gg4BNBhLM4liW5woxksh2eGyqcIYLOdwjqGgDM13Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=verizon.net; spf=pass smtp.mailfrom=verizon.net; dkim=pass (2048-bit key) header.d=verizon.net header.i=@verizon.net header.b=JEjbd0CK; arc=none smtp.client-ip=74.6.130.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=verizon.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=verizon.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=verizon.net; s=a2048; t=1724083859; bh=IMZu0AJ47ymShNMsoaZphHY0NkdGK3m/PKOv4iUVJtY=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=JEjbd0CKiq2RBUUYRqscJNScl2/MhEY6da+B+2EsY1K8i4CKcliagoS7rvpd0lFg19HRscQequ0RCpt5FZPSUJVkW9TNpPFOXkN2evoaFeUl9U2QEz7n/l+EQ2TqCPlAxz5GTNJ4Wq5X/fKsESFKEPMpMucNdXthsXjUpiIEiSvYaZmvwSYeZmOPKwlE51bhom0Rde+LifCxUSj6+zSa3xdfMbcVtQVOAOz7RqK+WuCgcrIoryahpCiiIzgK9QvJBAVyO90MLlOW8IohUugg14zXySCutARdl4wQGrLfFkS4wMtHvxTeycwGyrXlJxLG7czBwopLtzcovz6L2DySlA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724083859; bh=zmFKLZxqg9N9Z98+ILL8ROxSD6UPd0KEdDSRUnrZKTl=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=Cu2JRIW3508Y2TAHKM3VcM90a9Zq6l+4WTLNa4B8sxVLWHF5HAO8amLpXJ4btlYb/dPFC7Qi2b2WQBPNp5VzgiN1YKmXy0NZva+yljWwtpSRj+BgPFOoepkEBb84ZyVc0Gz0feHqZrSPME2IHpgpcrinw54aG5l8qaTBNykb0we11rH5ZjTa+0k1fkG00NLibQ3TmIaR8FtvXTouzoV0EUoEDIm5k8ulzSA+TZIcFxyXgXRNprqyvuH5UbKsGyFHtvQf1bu5thkLzPPNj2sKcGTT47eliLdQbP/QSDlYYy1WkMZuo4gbZ0UtZGHhPN5wkEhmKBcP2IvKwr8RXMs6JQ==
+X-YMail-OSG: 3A83i0sVM1kETrAChdm53bIWHc64g3dMa0Fl1pUviQN9Ospjldo5lO7eg4MhSFA
+ i2CG6srASpBGGiUMiKGrQOiozT2gTeRV5vgq_t4UC0cKJbfZImXoufr6nPcoNgk37AklbOZQ0TV9
+ R3WhL9YEL0OLzi82Nqzq3BmIpq7TJeI0TlM0ihq62eRIh.g0NK_fGHCBZg1hHaSOiKYdxkuM7bR4
+ iNjxU6xjF9mSeQlOXL.dpTk2H5xlg3OWZvnrR0_achMbQyc1V4uHwwBdfP1sbzjn89gbCHzZaKgi
+ rmTgHogxj7BcgLDJdB4hSLeS_xlhuDihTp6pfq.61nTSIF8oQ8bu10txIxXRKz7VTYpP6J21piuP
+ ZqhocLBMbR0JIrPVQ0vMbWuIz1qfLumJDstCpn3D0IP0FXV02lo228XmcdAUQvmrUfh0YdL4QAlv
+ sQtWOqa_vsLl6BcboghFZi2jLRw1e5RilXag3Y83BkFck9Va2rdaAegIRPQyduM_YgpVRVJZfqkh
+ xzzNceH96omGiq1Zas56KCdmKQNW.hvuUxm2H2.7XDcVdT67x.tIqfs4QJnDplOFdgUgzKsKzui0
+ TP0oqhgTdLPeF93lwtAogUnYzHXI1BhpwlssyblWcESKNkas0BH60M8MPF_B0uZBjqBU7UyZeluE
+ 6izxo52NfCx1N2IZ80MHzGHCE4Znr6ukc0v3fNUtsp2IiHbELzczfUGasmRnDitM6FCJ0e0rVeKz
+ j_Bkte.UEYIDqDWKJLLrdNyz6dlS6iCJrhkItsHfxUQf9K5U.jctE4RltXBfeJlJKy4xrfktcMfF
+ c.3J50kbJ1pwmjjc.8Ebvx2RU1WgupZE2HoLp2SyXC27HxPfs41Wgjn1DpRmN0HEWJCsexDLAJ2k
+ dBzXiNtpduJqtCEO9Pm7no9ji0hYTnKnqCaW6iBaI2bJx11xgSiv1nYLLZXfSXdorTZ1EqGenI.U
+ 7tqA4TYM6Buubq5ii_0bUF77dkQWB46UF6xlFMYOM4WgbH.DdowjN3wt00_dn0MJJPSrWFq1uUN3
+ GZ4TA8b74vGk.MFt5g.y.FsYgnPYh0ucRW0NAJmeh7kajXBCVZ0JSJ3fBILCbwkvFufSaqMOir_e
+ 3t515cGOJNHcUJm4tv623IHpYow8ZAYWQMKUEMofkQP0wvgw0yce8FYYuf9NYnuInlqxNZq7Gev0
+ A2X7fB_CFJc4L6Q3AWL93gyYQknTnq_k_NX4JLCYpOkIbjo7erHDTTt.heIh9aNMwRtHlElyveIZ
+ bMARlviC0YyKlD_fz5W528lW6KrvvpNUs4D.AxqMuiAzvDYusKJIucgoXtuTxOdPoBNEyEH7Vu2o
+ L9kqBGy6iGraSTkUvJBkX6tDGukH2l48.5AtnDiHypIFNTvQzc18WxooFlKvmevnTIP4ZQUmh9HL
+ hDrolUoQOl_yumWsGWi6rUQntaVakDN553ZazUTDgbrUbnuXY_31uzncudkS0G4yv4AHUyK.VKlh
+ FDePoJ5VVA08TMpqB3HN9SZQ425ocvjxaqrY3UwRBH17aY04RNgEWXtWnUcYwk3g8JVzuCFRefxs
+ UelU2VUUkCap8HaYMys3wWuUxBiqfAbK1ESctBQig6RxlZ.Yr443nE3jcP_9_sW0oR93e8oZaUp1
+ q8z5FqRyYSKGaFjV.lPgpBhqBtb1NKhNhRLTKOAWF_e8Oh2IkkqHC7kpCSBO9e_xWcBqGir6D3fR
+ HPJuCeo3SIEa8iolako6mqNbNkn89D3biMiMluW3Ydfjr9iAGc6T_qR21.uY7hovj6zWWYAyzTq3
+ TOG4jHcTK6aDWIGg.cUg9JtuBNZEtaygPHHj5.BqIr12L8M9lslih6Mdc45M4IB1_foCyH_jXO1Z
+ EzYIoBsYUeeUEC6kOnwyyIKacRoSHhB47ctNW1i8mlboVwpmWKqY4jVl4yT6O9Z1z61KKtNBgDIJ
+ 5mNTC0CuHDErmAKkV8EqunuG4dK65XP0Hz7nw5NmGZNL0ehtwfOiy.xIa0cFs8UhxoO9cPbtJFAA
+ GdduuDRsw1VxZc7s6dJjoCeStZU5_oDiyhupG2E5YsYvFlPR7qcgMf7zkX2tGml7gXdyoSo8tvR3
+ wmn13O_Qe3rzkeCnDkZBmdWZHaHDtcPuOmmHJadx6RiKB4_IbvCp3tH4uon.wTWFhfFXcN9lrHZE
+ 0tF6Z5GRkq9Y4rbUFmDgAzLUrkJyCFTUd.T_iPt9LctPD6FxsABA.E9WD_VH2buJtS2U2VRCOmA1
+ hrHOAnml1LhSrjqAtZik46DVZ1JASy92y1LXDQRN5ry7claVpdneEDUsn7nlTeaxT8aRiZN5w8CF
+ iLsOgXv4-
+X-Sonic-MF: <bluescreen_avenger@verizon.net>
+X-Sonic-ID: 248b080d-cd08-4e85-9936-b9e8ad514f7b
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.bf2.yahoo.com with HTTP; Mon, 19 Aug 2024 16:10:59 +0000
+Received: by hermes--production-bf1-774ddfff8-ljmrg (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID fa466634f5437c8e572496e3ec7ec527;
+          Mon, 19 Aug 2024 15:50:40 +0000 (UTC)
+From: nerdopolis <bluescreen_avenger@verizon.net>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Greg KH <gregkh@linuxfoundation.org>, pmladek@suse.com,
+ john.ogness@linutronix.de, senozhatsky@chromium.org, tglx@linutronix.de,
+ tony@atomide.com, linux-kernel@vger.kernel.org
+Subject: Re: VT-less kernels, and /dev/console on x86
+Date: Mon, 19 Aug 2024 11:50:39 -0400
+Message-ID: <2719346.q0ZmV6gNhb@nerdopolis2>
+In-Reply-To: <20240819110935.2a7c6241@gandalf.local.home>
+References: <2669238.7s5MMGUR32.ref@nerdopolis2> <1947584.IobQ9Gjlxr@nerdopolis2>
+ <20240819110935.2a7c6241@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,123 +87,130 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddugedgleelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohephedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhr
- tghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=15 Fuz1=15 Fuz2=15
+Content-Type: text/plain; charset="us-ascii"
+X-Mailer: WebService/1.1.22544 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Monday, August 19, 2024 11:09:35 AM EDT Steven Rostedt wrote:
+> On Sun, 18 Aug 2024 10:30:22 -0400
+> nerdopolis <bluescreen_avenger@verizon.net> wrote:
+> 
+> > On Sunday, August 18, 2024 8:33:25 AM EDT nerdopolis wrote:
+> > > On Sunday, August 18, 2024 1:12:14 AM EDT Greg KH wrote:  
+> > > > On Sat, Aug 17, 2024 at 08:09:20PM -0400, nerdopolis wrote:  
+> > > > > Hi
+> > > > > 
+> > > > > I originally brought this up on linux-serial, but I think it makes more sense
+> > > > > that it's part of how printk console device selection works. Without VTs, while
+> > > > > most software is able to handle the situation, some userspace programs expect
+> > > > > /dev/console to still be responsive. Namely systemd. It calls isatty() against
+> > > > > /dev/console, and since /dev/console on VT-less systems currently defaults to
+> > > > > /dev/ttyS0, and when /dev/ttyS0 is disconnected, the ioctl's fail, and it
+> > > > > refuses to write log messages to it.
+> > > > > 
+> > > > > There doesn't seem to be a mailing list for printk, so I had to use
+> > > > > get_maintainer.pl. Hopefully this is correct
+> > > > > 
+> > > > > 
+> > > > > After some grepping and guessing and testing, and playing around Something like
+> > > > > diff --git a/drivers/tty/Kconfig b/drivers/tty/Kconfig
+> > > > > index a45d423ad10f..f94a4632aab0 100644
+> > > > > --- a/drivers/tty/Kconfig
+> > > > > +++ b/drivers/tty/Kconfig
+> > > > > @@ -384,9 +384,12 @@ config NULL_TTY
+> > > > >  
+> > > > >           In order to use this driver, you should redirect the console to this
+> > > > >           TTY, or boot the kernel with console=ttynull.
+> > > > > -
+> > > > >           If unsure, say N.
+> > > > >  
+> > > > > +config NULL_TTY_CONSOLE
+> > > > > +        bool "Supports /dev/ttynull as a console automatically"
+> > > > > +        depends on NULL_TTY && !VT_CONSOLE
+> > > > > +
+> > > > >  config VCC
+> > > > >         tristate "Sun Virtual Console Concentrator"
+> > > > >         depends on SUN_LDOMS
+> > > > > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> > > > > index dddb15f48d59..c1554a789de8 100644
+> > > > > --- a/kernel/printk/printk.c
+> > > > > +++ b/kernel/printk/printk.c
+> > > > > @@ -3712,6 +3712,11 @@ void __init console_init(void)
+> > > > >         initcall_t call;
+> > > > >         initcall_entry_t *ce;
+> > > > >  
+> > > > > +#ifdef CONFIG_NULL_TTY_CONSOLE
+> > > > > +       if (!strstr(boot_command_line, "console="))
+> > > > > +               add_preferred_console("ttynull", 0, NULL);
+> > > > > +#endif
+> > > > > +
+> > > > >         /* Setup the default TTY line discipline. */
+> > > > >         n_tty_init();
+> > > > >  
+> > > > > 
+> > > > > 
+> > > > > 
+> > > > > seems to work, it conflicts with CONFIG_VT_CONSOLE since it is effectively
+> > > > > redundant, it is optional, so that it doesn't cause any changes to
+> > > > > configurations, that historically had CONFIG_VT_CONSOLE turned off in the past,
+> > > > > and for bootloader configs, it won't change any behavior if the kernel command
+> > > > > line has a console device specified  
+> > > > 
+> > > > What is wrong with just setting the kernel command line for this
+> > > > instead?
+> > > >   
+> > > When they eventually start shipping kernels without VTs, they will then have to
+> > > include a script in their upgrade process that runs
+> > > 
+> > > sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"/GRUB_CMDLINE_LINUX_DEFAULT=\"nomodeset /g" /etc/default/grub  
+> > Ugh, I meant
+> > sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"/GRUB_CMDLINE_LINUX_DEFAULT=\"console=ttynull /g" /etc/default/grub
+> > sorry
+> 
+> If you can modify the kernel .config for this, can you just update:
+> 
+>   CONFIG_CMDLINE_BOOL=y
+>   CONFIG_CMDLINE="console=ttynull"
+> 
+> ?
+> 
+That could work, I think. I'll have to see how that works when a different
+console= is specified on the command line from the bootloader though, I am
+thinking that if console=ttyS0 is then manually specified by a user, there will
+be two devices in /proc/consoles (ttyS0 on top of ttynull), but I admit I don't
+know if there are actual ramifications of that, or not...
 
-Fold bind_cdev() into __thermal_cooling_device_register() and bind_tz()
-into thermal_zone_device_register_with_trips() to reduce code bloat and
-make it somewhat easier to follow the code flow.
 
-No intentional functional impact.
+I am not sure if real distributions would want this to be the answer I guess I
+will have to see if any others are using CONFIG_CMDLINE_BOOL/CONFIG_CMDLINE,
+although this gives me an idea..
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+Would something like this below be more acceptable? I didn't test it yet, but
+just the theory. I am thinking that this could have more use to allow a
+preferred to be set...
 
-v1 -> v3: No changes
-
----
- drivers/thermal/thermal_core.c |   55 ++++++++++++++---------------------------
- 1 file changed, 19 insertions(+), 36 deletions(-)
-
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -991,20 +991,6 @@ void print_bind_err_msg(struct thermal_z
- 		tz->type, cdev->type, ret);
- }
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index dddb15f48d59..c1554a789de8 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -3712,6 +3712,11 @@ void __init console_init(void)
+ 	initcall_t call;
+ 	initcall_entry_t *ce;
  
--static void bind_cdev(struct thermal_cooling_device *cdev)
--{
--	int ret;
--	struct thermal_zone_device *pos = NULL;
--
--	list_for_each_entry(pos, &thermal_tz_list, node) {
--		if (pos->ops.bind) {
--			ret = pos->ops.bind(pos, cdev);
--			if (ret)
--				print_bind_err_msg(pos, cdev, ret);
--		}
--	}
--}
--
- /**
-  * __thermal_cooling_device_register() - register a new thermal cooling device
-  * @np:		a pointer to a device tree node.
-@@ -1100,7 +1086,13 @@ __thermal_cooling_device_register(struct
- 	list_add(&cdev->node, &thermal_cdev_list);
- 
- 	/* Update binding information for 'this' new cdev */
--	bind_cdev(cdev);
-+	list_for_each_entry(pos, &thermal_tz_list, node) {
-+		if (pos->ops.bind) {
-+			ret = pos->ops.bind(pos, cdev);
-+			if (ret)
-+				print_bind_err_msg(pos, cdev, ret);
-+		}
-+	}
- 
- 	list_for_each_entry(pos, &thermal_tz_list, node)
- 		if (atomic_cmpxchg(&pos->need_update, 1, 0))
-@@ -1338,25 +1330,6 @@ void thermal_cooling_device_unregister(s
- }
- EXPORT_SYMBOL_GPL(thermal_cooling_device_unregister);
- 
--static void bind_tz(struct thermal_zone_device *tz)
--{
--	int ret;
--	struct thermal_cooling_device *pos = NULL;
--
--	if (!tz->ops.bind)
--		return;
--
--	mutex_lock(&thermal_list_lock);
--
--	list_for_each_entry(pos, &thermal_cdev_list, node) {
--		ret = tz->ops.bind(tz, pos);
--		if (ret)
--			print_bind_err_msg(tz, pos, ret);
--	}
--
--	mutex_unlock(&thermal_list_lock);
--}
--
- static void thermal_set_delay_jiffies(unsigned long *delay_jiffies, int delay_ms)
- {
- 	*delay_jiffies = msecs_to_jiffies(delay_ms);
-@@ -1554,13 +1527,23 @@ thermal_zone_device_register_with_trips(
- 	}
- 
- 	mutex_lock(&thermal_list_lock);
++#ifdef CONFIG_DEFAULT_CONSOLE_HINT_BOOL
++       if (!strstr(boot_command_line, "console="))
++               add_preferred_console(CONFIG_DEFAULT_CONSOLE_HINT, 0, NULL);
++#endif
 +
- 	mutex_lock(&tz->lock);
- 	list_add_tail(&tz->node, &thermal_tz_list);
- 	mutex_unlock(&tz->lock);
--	mutex_unlock(&thermal_list_lock);
+ 	/* Setup the default TTY line discipline. */
+ 	n_tty_init();
  
- 	/* Bind cooling devices for this zone */
--	bind_tz(tz);
-+	if (tz->ops.bind) {
-+		struct thermal_cooling_device *cdev;
-+
-+		list_for_each_entry(cdev, &thermal_cdev_list, node) {
-+			result = tz->ops.bind(tz, cdev);
-+			if (result)
-+				print_bind_err_msg(tz, cdev, result);
-+		}
-+	}
-+
-+	mutex_unlock(&thermal_list_lock);
- 
- 	thermal_zone_device_init(tz);
- 	/* Update the new thermal zone and mark it as already updated. */
+
+> There's also bootconfig, that allows you to append command lines to the
+> kernel image. See CONFIG_BOOT_CONFIG and Documentation/admin-guide/bootconfig.rst
+> 
+> -- Steve
+> 
+
 
 
 
