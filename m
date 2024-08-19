@@ -1,178 +1,229 @@
-Return-Path: <linux-kernel+bounces-291313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63AA99560C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 03:11:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDF449560CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 03:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 889531C21286
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 01:11:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8599D2817F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 01:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F3A1C695;
-	Mon, 19 Aug 2024 01:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C21224D1;
+	Mon, 19 Aug 2024 01:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JZzFSNJV"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GjVk7vVO"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A3EC125;
-	Mon, 19 Aug 2024 01:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006021BC59
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 01:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724029859; cv=none; b=BvosL08uZPLmrMlGOZEe8JxyL4fznWVVwPqWvEmPbMeRh8v5fuWZkqNslxPG18zIoAR31gE4l+LY9e9dJxRAmILMhzMHAohj/AV2/Xdaa5qtXk7LMocYDdGOJjgbjnZnOv+QfAHyLIYOTpyS7+zyYjfiv7Rl70OCTq0Ya9MPP4M=
+	t=1724030194; cv=none; b=XYjANz6XwJ/VLh7ccR6h2gO714mAXbsnF8XG7ajzzFGK8D5IFNnAiWeGAsM9yVJcKL4W5wGG1OEXKUNycjiMA1LRReu62mbPOLReGDPSKqLAk+bNsiZj3epD1lXD+vGBOiE5vyDP8wMM4noorO4vCFkXC9oSCsfEhLmqXBBX0S0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724029859; c=relaxed/simple;
-	bh=FHPayM0LoVPMxk1TlBxfGt+GXj8BcMKlSff2TiTAQgk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U5GPe9s7z7r5PVTv81hHqkKGkI4f7qDe/jKwYfvyc27bDYZVWsQnaTGeVmawN1vrNhMWaACHgjt2BtnyDHpKI+jWD+JuHhKYEQhv1FKs6DuefpWQbRD50YsG+22tHBeopYvMP8smru/IuGSRLJCdCIQAn++iaOl6yZ4jEiWHXVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JZzFSNJV; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-45006bcb482so20163621cf.3;
-        Sun, 18 Aug 2024 18:10:57 -0700 (PDT)
+	s=arc-20240116; t=1724030194; c=relaxed/simple;
+	bh=xhcng5MzljL+XELseiKtxkLrtjUCIkGMzpR+W/AjuHo=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=VI52FQHADkgf6nTvVx1W8pol1CgsASYYreosOWMiF3UDp2+MwZ2qmCJwiwbo7/3nFDTWVIZmo8JmueOn4ubtjlM0RQO0b5lPtbNGdwT7ItgTBKRsBlh7lrtSMVluzeGZz9whpjLvQ+rd4FEjuXhyxSCi2IaaUF8mGJFsG+RBgHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GjVk7vVO; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7a264a24ea7so2892236a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 18:16:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724029856; x=1724634656; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C6iLuHHstLUsYcIKd+4Evekv/FBo6R/JH37NwWFMKUI=;
-        b=JZzFSNJVR+Kl0mQXkRgfcmndeR7TiXQ3dPd8nri7GyRUO7E5oV0Ff5H5kwWIRSjmkY
-         YKq7wVhTyTDyGgtRNgcRmdqC0fEhANbJqqZZSNTldyWKJnjjrECRMHD4/Mg5J2yQr99e
-         /o9MubDOzu3LM/XOdHl+YLB0rAG5wO3szZFqz6yhB2slL9TZI6gBkBoZEiy2I0/aej3Z
-         V6yXeL0jUeLyUaM64jdqEiKZp8twXozgXHoxEaEUq3WWGNOq3EgzVFLJaqvEadwQcinx
-         ER36D4VZHQVuWTkdy2TznDqNttQimdbrMI5rQ0d2IsdD19lPG82k+W3rOqI0Tb8AhfJD
-         FROA==
+        d=linaro.org; s=google; t=1724030192; x=1724634992; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=96bRgenJ1LT1YAwkODeJ5weecL8b0jZhBJFXT0lV/4U=;
+        b=GjVk7vVORz8CBYSt0i3/qVJby3TOFlQcxpjYMhcsPfrtkdbYvB4bEGpYpMLnLziqZ3
+         9QQz0Ft7NMvFSeyQszO6szE3Quo0Y7eTpS3rtCr9/L00r6oZpkLijXKTzQTMse373R6j
+         YWqFkCA/2wQJMaXMjGR09yYSq2sgUSwVAxHBKOQZnAHHvqjF//YQjyVm6FrmHzRNgurb
+         KCf9iycEOEmUmhQYcOSEhdjuxqEPBieK8vJ3F4y+4f8ljrWSU0F+wEefj08ZIJWPdXFY
+         J9TIN5kWeDi6Eyk0n6fXave0h/rqSAWMXOpAFsikYIBGcdT+Or5VpY8sFsdhkLnQkMZY
+         FyjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724029856; x=1724634656;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C6iLuHHstLUsYcIKd+4Evekv/FBo6R/JH37NwWFMKUI=;
-        b=brulUBWg5MUL7SFhsWk+IGAAlnawji4c4AITjM/4CbvMZvFQoJ+Y1r+ROwgjkSw8tO
-         aQUNXAtQwA/GFFny3orcclamrMuoZ/JstbQmrYFK7dS4dMgTa6ZEplFLOVDG9CJBtCqq
-         hArPVxrcyH6MfW6fO2Pq2oN1t/IW09K/h9T7YgGRLfNf6WHdgWNxBR0CYCK82im1dykl
-         zqh/4+VDK8918q53k82gjjKwFfACBeSJRQaPpAJ9q+gk6nwWzqYZTF3qU3V5izccV0+f
-         oxxttCN0CNPBLix1djeO7hiEuL6waEw1SmJXtKlWEIh2yV896F7pdJgOD7X0umSZFrE8
-         H9HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVXrTDyaT3+ExOce/eZk3qMiQ397EG4ZygpBHzfeqoc2iRIZ3/DIqYeiodHp5cpUgTSAA5DW8jfBHKJdtJlKd9inolBbBLZS25n23aDIgaY2wCiG0gs+KCkF6wEY16zP1JFFPfB
-X-Gm-Message-State: AOJu0Yy6V2lwMoi/J/aNMwnZ5/I1kHePmrgui4TIhO/02TAp4y1Ji6aa
-	B/L4psP2wV8vKW3BtKzadjX6YwJte7KbICVLA63A/I69P58+6NThmFegHSf6CEBxBUDGxtKxdU5
-	FVPfJ1er65iNTT9ZwsuqvJecjepc=
-X-Google-Smtp-Source: AGHT+IFSlLaChurqBHaSpi18i/a6WfagYkOePrr4xUA0CqD25ygg4qed6gdbZk8aE0bWh+i9CMqAxQrr+lzVw25bhGc=
-X-Received: by 2002:a05:622a:4889:b0:440:6ccb:e6d5 with SMTP id
- d75a77b69052e-454b68e2b85mr59000071cf.51.1724029856352; Sun, 18 Aug 2024
- 18:10:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724030192; x=1724634992;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=96bRgenJ1LT1YAwkODeJ5weecL8b0jZhBJFXT0lV/4U=;
+        b=nq/vAfujVgsQVFyawdN9HuuoTL5lbG+8NzwVNLyFIWbqWVBoNKyt016WX94sYnd7d1
+         d4yj68/wFkV3W2lWDtXc0t364CUBgpIj867g6O4V6cw4fV0g7GBlStDu7+eGTks5HffN
+         KwzJLgckF39P7GuPcSzdhgLb5wmNylZIRREVdVUNSvpYIQhMJtIH+8PEk8MAmLPXKR2Q
+         xA5bPeFYFVzjKrHysUBkS9jeEiM974OfBtpPBx+t+d4iql6NHkyqtcKiuPHmtkGXHkai
+         vxkB8YeAXbGGfKHDCMNgpVc10EFYwqEk5hwBgH/7magHGNuut1hBh7l6YMU2kzl8H4Iu
+         GQiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbffE1/9yK/pKAcsf+WWKEKVIu/N7FA/4xwYiRZHd5dYgxYoqdCATnYLsAsZj4uVyi6lqN30MWHMvLdQmH3rB4u0K1zV6wcfeb3LC2
+X-Gm-Message-State: AOJu0Ywpdu36Ob13xu+yg41T3PUkNRwtjZha7IqLA85mWOGnHYszF4rG
+	gyEMDJsn+AYOfvuWP7taJRfr9d3nHBLU/m6DQwawINWY1O9+2IdYl+xqspYdvTk=
+X-Google-Smtp-Source: AGHT+IHcVgjWV8mpMJHnmx32G8QnRgUQIlumrcs85ZM34xvrN4Jh1Evor+hnrJi84mm9FQwpiFjahQ==
+X-Received: by 2002:a05:6a20:6f96:b0:1c4:2573:d197 with SMTP id adf61e73a8af0-1c9050477afmr12993409637.35.1724030192131;
+        Sun, 18 Aug 2024 18:16:32 -0700 (PDT)
+Received: from [127.0.0.1] (node-bmc.pool-118-172.dynamic.totinternet.net. [118.172.58.212])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127add68b9sm5920152b3a.19.2024.08.18.18.16.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 18 Aug 2024 18:16:31 -0700 (PDT)
+Date: Mon, 19 Aug 2024 08:16:25 +0700
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bjorn Andersson <quic_bjorande@quicinc.com>,
+ Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+CC: Johan Hovold <johan+linaro@kernel.org>, Chris Lew <quic_clew@quicinc.com>,
+ Stephen Boyd <swboyd@chromium.org>, Amit Pundir <amit.pundir@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_2/3=5D_usb=3A_typec=3A_ucsi=3A_M?=
+ =?US-ASCII?Q?ove_unregister_out_of_atomic_section?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20240818-pmic-glink-v6-11-races-v1-2-f87c577e0bc9@quicinc.com>
+References: <20240818-pmic-glink-v6-11-races-v1-0-f87c577e0bc9@quicinc.com> <20240818-pmic-glink-v6-11-races-v1-2-f87c577e0bc9@quicinc.com>
+Message-ID: <4F313FA4-C2C7-4BD8-8E42-64F98EACCBA2@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240816015355.688153-1-alex000young@gmail.com>
- <CAM0EoMmAcgbQWG7kQoe335079Y2UY_BmoYErL=44-itJ=p-B-Q@mail.gmail.com>
- <CAM0EoM=qvBxXS_1eheyhCKbNMRbK_qTTFMa1fFBFQp_hRbzpQQ@mail.gmail.com>
- <CAFC++j15p9Ey3qc4ZsY4CXBsL3LHn7TsFTi6=N9=H+_Yx_k=+Q@mail.gmail.com>
- <2024081722-reflex-reverend-4916@gregkh> <CAM0EoMmUSGEY_wGHmZJkP5s=sr0zPJ2sOyTf3Uy6P3pN8XmvhA@mail.gmail.com>
- <2024081839-fool-accuracy-b841@gregkh>
-In-Reply-To: <2024081839-fool-accuracy-b841@gregkh>
-From: Alex Young <alex000young@gmail.com>
-Date: Mon, 19 Aug 2024 09:10:45 +0800
-Message-ID: <CAFC++j0y7LZuZaZrVa01o3d1OSbo1VOccEw=zhJ+nc=-6bZOQg@mail.gmail.com>
-Subject: Re: [PATCH] net: sched: use-after-free in tcf_action_destroy
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Jamal Hadi Salim <jhs@mojatatu.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	xiyou.wangcong@gmail.com, jiri@resnulli.us, davem@davemloft.net, 
-	security@kernel.org, xkaneiki@gmail.com, hackerzheng666@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi greg.
-Thanks for your suggestion. I will try to use the new kernel.
-By the way, the 5.4.y you mentioned does not fix this bug either.
+On 19 August 2024 06:17:38 GMT+07:00, Bjorn Andersson <quic_bjorande@quicin=
+c=2Ecom> wrote:
+>Commit 'caa855189104 ("soc: qcom: pmic_glink: Fix race during
+>initialization")' moved the pmic_glink client list under a spinlock, as
+>it is accessed by the rpmsg/glink callback, which in turn is invoked
+>from IRQ context=2E
+>
+>This means that ucsi_unregister() is now called from IRQ context, which
+>isn't feasible as it's expecting a sleepable context=2E An effort is unde=
+r
+>way to get GLINK to invoke its callbacks in a sleepable context, but
+>until then lets schedule the unregistration=2E
+>
+>A side effect of this is that ucsi_unregister() can now happen
+>after the remote processor, and thereby the communication link with it, i=
+s
+>gone=2E pmic_glink_send() is amended with a check to avoid the resulting
+>NULL pointer dereference, but it becomes expecting to see a failing send
+>upon shutting down the remote processor (e=2Eg=2E during a restart follow=
+ing
+>a firmware crash):
+>
+>  ucsi_glink=2Epmic_glink_ucsi pmic_glink=2Eucsi=2E0: failed to send UCSI=
+ write request: -5
+>
+>Fixes: caa855189104 ("soc: qcom: pmic_glink: Fix race during initializati=
+on")
+>Cc: stable@vger=2Ekernel=2Eorg
+>Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc=2Ecom>
+>---
+> drivers/soc/qcom/pmic_glink=2Ec       | 10 +++++++++-
+> drivers/usb/typec/ucsi/ucsi_glink=2Ec | 28 +++++++++++++++++++++++-----
+> 2 files changed, 32 insertions(+), 6 deletions(-)
+>
+>diff --git a/drivers/soc/qcom/pmic_glink=2Ec b/drivers/soc/qcom/pmic_glin=
+k=2Ec
+>index 58ec91767d79=2E=2Ee4747f1d3da5 100644
+>--- a/drivers/soc/qcom/pmic_glink=2Ec
+>+++ b/drivers/soc/qcom/pmic_glink=2Ec
+>@@ -112,8 +112,16 @@ EXPORT_SYMBOL_GPL(pmic_glink_register_client);
+> int pmic_glink_send(struct pmic_glink_client *client, void *data, size_t=
+ len)
+> {
+> 	struct pmic_glink *pg =3D client->pg;
+>+	int ret;
+>=20
+>-	return rpmsg_send(pg->ept, data, len);
+>+	mutex_lock(&pg->state_lock);
+>+	if (!pg->ept)
+>+		ret =3D -ECONNRESET;
+>+	else
+>+		ret =3D rpmsg_send(pg->ept, data, len);
+>+	mutex_unlock(&pg->state_lock);
+>+
+>+	return ret;
+> }
+> EXPORT_SYMBOL_GPL(pmic_glink_send);
+>=20
+>diff --git a/drivers/usb/typec/ucsi/ucsi_glink=2Ec b/drivers/usb/typec/uc=
+si/ucsi_glink=2Ec
+>index ac53a81c2a81=2E=2Ea33056eec83d 100644
+>--- a/drivers/usb/typec/ucsi/ucsi_glink=2Ec
+>+++ b/drivers/usb/typec/ucsi/ucsi_glink=2Ec
+>@@ -68,6 +68,9 @@ struct pmic_glink_ucsi {
+>=20
+> 	struct work_struct notify_work;
+> 	struct work_struct register_work;
+>+	spinlock_t state_lock;
+>+	unsigned int pdr_state;
+>+	unsigned int new_pdr_state;
+>=20
+> 	u8 read_buf[UCSI_BUF_SIZE];
+> };
+>@@ -244,8 +247,22 @@ static void pmic_glink_ucsi_notify(struct work_struc=
+t *work)
+> static void pmic_glink_ucsi_register(struct work_struct *work)
+> {
+> 	struct pmic_glink_ucsi *ucsi =3D container_of(work, struct pmic_glink_u=
+csi, register_work);
+>+	unsigned long flags;
+>+	unsigned int new_state;
+>+
+>+	spin_lock_irqsave(&ucsi->state_lock, flags);
+>+	new_state =3D ucsi->new_pdr_state;
+>+	spin_unlock_irqrestore(&ucsi->state_lock, flags);
+>+
+>+	if (ucsi->pdr_state !=3D SERVREG_SERVICE_STATE_UP) {
+>+		if (new_state =3D=3D SERVREG_SERVICE_STATE_UP)
+>+			ucsi_register(ucsi->ucsi);
+>+	} else {
+>+		if (new_state =3D=3D SERVREG_SERVICE_STATE_DOWN)
+>+			ucsi_unregister(ucsi->ucsi);
+>+	}
+>=20
+>-	ucsi_register(ucsi->ucsi);
+>+	ucsi->pdr_state =3D new_state;
+> }
 
-Best regards,
-Alex
+Is there a chance if a race condition if the firmware is restarted quickly=
+, but the system is under heavy mist:=20
+- the driver gets DOWN event, updates the state and schedules the work,
+- the work starts to execute, reads the state,
+- the driver gets UP event, updates the state, but the work is not resched=
+uled as it is still executing=20
+- the worker finishes unregistering the UCSI=2E
 
-Greg KH <gregkh@linuxfoundation.org> =E4=BA=8E2024=E5=B9=B48=E6=9C=8818=E6=
-=97=A5=E5=91=A8=E6=97=A5 18:40=E5=86=99=E9=81=93=EF=BC=9A
+
+
+>=20
+> static void pmic_glink_ucsi_callback(const void *data, size_t len, void =
+*priv)
+>@@ -269,11 +286,12 @@ static void pmic_glink_ucsi_callback(const void *da=
+ta, size_t len, void *priv)
+> static void pmic_glink_ucsi_pdr_notify(void *priv, int state)
+> {
+> 	struct pmic_glink_ucsi *ucsi =3D priv;
+>+	unsigned long flags;
+>=20
+>-	if (state =3D=3D SERVREG_SERVICE_STATE_UP)
+>-		schedule_work(&ucsi->register_work);
+>-	else if (state =3D=3D SERVREG_SERVICE_STATE_DOWN)
+>-		ucsi_unregister(ucsi->ucsi);
+>+	spin_lock_irqsave(&ucsi->state_lock, flags);
+>+	ucsi->new_pdr_state =3D state;
+>+	spin_unlock_irqrestore(&ucsi->state_lock, flags);
+>+	schedule_work(&ucsi->register_work);
+> }
+>=20
+> static void pmic_glink_ucsi_destroy(void *data)
 >
-> On Sat, Aug 17, 2024 at 08:11:50AM -0400, Jamal Hadi Salim wrote:
-> > On Sat, Aug 17, 2024 at 5:35=E2=80=AFAM Greg KH <gregkh@linuxfoundation=
-.org> wrote:
-> > >
-> > > On Sat, Aug 17, 2024 at 05:27:17PM +0800, Alex Young wrote:
-> > > > Hi Jamal,
-> > > >
-> > > > Thanks your mention. I have reviewed the latest kernel code.
-> > > > I understand why these two tc function threads can enter the kernel=
- at the same
-> > > > time. It's because the request_module[2] function in tcf_action_ini=
-t_1. When the
-> > > > tc_action_init_1 function to add a new action, it will load the act=
-ion
-> > > > module. It will
-> > > > call rtnl_unlock to let the Thread2 into the kernel space.
-> > > >
-> > > > Thread1                                                 Thread2
-> > > > rtnetlink_rcv_msg                                   rtnetlink_rcv_m=
-sg
-> > > >  rtnl_lock();
-> > > >  tcf_action_init
-> > > >   for(i;i<TCA_ACT_MAX_PRIO;i++)
-> > > >    act=3Dtcf_action_init_1 //[1]
-> > > >         if (rtnl_held)
-> > > >            rtnl_unlock(); //[2]
-> > > >         request_module("act_%s", act_name);
-> > > >
-> > > >                                                                 tcf=
-_del_walker
-> > > >
-> > > > idr_for_each_entry_ul(idr,p,id)
-> > > >
-> > > > __tcf_idr_release(p,false,true)
-> > > >
-> > > >  free_tcf(p) //[3]
-> > > > if (rtnl_held)
-> > > > rtnl_lock();
-> > > >
-> > > >    if(IS_ERR(act))
-> > > >     goto err
-> > > >    actions[i] =3D act
-> > > >
-> > > >   err:
-> > > >    tcf_action_destroy
-> > > >     a=3Dactions[i]
-> > > >     ops =3D a->ops //[4]
-> > > > I know this time window is small, but it can indeed cause the bug. =
-And
-> > > > in the latest
-> > > > kernel, it have fixed the bug. But version 4.19.x is still a
-> > > > maintenance version.
-> > >
-> > > 4.19.y is only going to be alive for 4 more months, and anyone still
-> > > using it now really should have their plans to move off of it finishe=
-d
-> > > already (or almost finished.)
-> > >
-> > > If this is a request_module issue, and you care about 4.19.y kernels,
-> > > just add that module to the modprobe exclude list in userspace which
-> > > will prevent it from being loaded automatically.  Or load it at boot
-> > > time.
-> > >
-> > > And what specific commit resolved this issue in the older kernels?  H=
-ave
-> > > you attempted to just backport that change to 4.19.y?
-> > >
-> >
-> > And if you or anyone cares, here it is:
-> > d349f997686887906b1183b5be96933c5452362a
->
-> Thanks for that.  Looks like it might be good to backport that to 5.4.y
-> if someone cares about this issue there as well.
->
-> thanks,
->
-> greg k-h
+
 
