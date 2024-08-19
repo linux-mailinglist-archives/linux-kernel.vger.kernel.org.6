@@ -1,167 +1,224 @@
-Return-Path: <linux-kernel+bounces-291633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F2BA9564F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:49:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D24419564F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 09:50:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0172B1F22D28
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:49:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B213281F2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 07:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059E71586CF;
-	Mon, 19 Aug 2024 07:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D6D13BC1E;
+	Mon, 19 Aug 2024 07:49:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="eODZ1V7S"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wydSXKg3"
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B173614A62E
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7613615747D
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 07:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724053770; cv=none; b=rzZoUwrjMdTBFHPIU5EwiOse2YUNwyhEUYGOJTQwYY7ZOC7hpLg1qYS3pKsJ+O6cA9gBg1gKdPHF85kHup67k0Gzio2whv+sfix1ifTnTUG6lvFb3UufhuK7Mj6Y/eQaw8Zf1OjguVP/aqcGDwfHBi1++DSvHLrD0ehxkKBLNw4=
+	t=1724053785; cv=none; b=IgXIxkI4ftkT6XG0HiC8N/jiMfqOr8C1eBLZSGlPJG61co9+AgTORF4v+5cqg0BUvXk6x7zPm/YokvXYVTUA+YHYoikiVo+ZYYKgUx1UgboBrl2M+2zAegmQmkJKa5k7UwFh1NR8tM6W6RXcNP2oklDkxc01Wm4wbl2px6kqAAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724053770; c=relaxed/simple;
-	bh=dBBrPIfbp6qwkjh5voowEDdDMFxyyxt5vSOUgIS7qlc=;
+	s=arc-20240116; t=1724053785; c=relaxed/simple;
+	bh=sx6PmWH0A35LfzG2HSz3bstgdltXdA/Sva8mvjibDIo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hrbK5VWrikArAB36O6lddVZlsdL2AlbFxuFVIyc9DwF/RbaobN91ZfUSQU93dO2PQ9B9Ew8yP8oDKY8W+QsWZYTTrkmPRGG+I3fOl2Jy7hV/6zDGv1OJNwMb/ZLW9xKV2D28KJkNyV63LwcW93tDSlYvPyc+dyH8egpshNgzhBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=eODZ1V7S; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2d3b36f5366so2710492a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 00:49:28 -0700 (PDT)
+	 To:Cc:Content-Type; b=BjrgahneYIDOCGqqGoAMS4f4LFj/MKKMRwoIQKrGAryN4p+tGFXpiM5+7DwEwAXRTNLwUdPSuqKDIwJNWcsa5wAk8wc9Tfy7RkI2eAvZcawSN43cI2k9x8kxb1v8bRCARpDXTarBZ3A7C6XUwsuYtkYghUjAmdQbAtk6OEJman8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wydSXKg3; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-4f524fa193aso3329249e0c.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 00:49:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1724053768; x=1724658568; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YUVuHKHVrcEtqoNkxteJqRlTWi2IdXz9WHlXJpbxXpI=;
-        b=eODZ1V7SMZx3JS87TxqBgCHFFrbeMMJtJtXuc/9ftnSOgfTd0FO2qXzYex2IOAKsIs
-         vb9WlHHkAqNoM5/ltQFNJWYAKStkCPNQAa167gHsp5vANSihQ2SUkbc0AwYsrB66kRyo
-         nxdQxed2iRniy45Bg6EkOJvb6RCBuwudhN4m6Oud/BD06H4qwzORfrwPkjeRVYXr5hya
-         dYhiWqLdnZ529UUR1wpw4fT1kaEp0a6AJU9q14+sdj5+rFB6TiEk1Yx8l/vGEUKg+wOy
-         to9r2Fk7jQtwxXngpdl8rEFKxvSqdRS+WD5QakqTzCVd2UJXJNTxEKyt+46eJ0Ru92iR
-         bezQ==
+        d=linaro.org; s=google; t=1724053782; x=1724658582; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=j/s5eSp55kJmjKTWCRvYRqFXs2anNEkZMyc6DD7OVTQ=;
+        b=wydSXKg321/s+bXnnlbK9Abdheh2IfzPJBaIGIZvii342FcuneRg5UHCTuK2mFZSjt
+         zJMxe1IYqEPVvm26gAwdvSOPfene91kcO80VjtG+z9kB1AZXceP4D4O9armvy0ReBgee
+         lhJIJ22eSl7gdVzpx5oMX9TzlEWeiSf9yaS8VuKCEHI7k1b/akVl0ttwod/ngznA0SJN
+         eLmyY4ycaxwOqfVXRDDPTzIDu0AGlYANZhSsnFJuCCqlsarrwPbWzyLQgb3Wcs8yzxrC
+         yXPMON1x0DyTuxU4Y3qxstYkH49mUeduP6C0y8q37NNn5VaSn/OKe/bSzAkAjL5dhwx2
+         ZMfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724053768; x=1724658568;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YUVuHKHVrcEtqoNkxteJqRlTWi2IdXz9WHlXJpbxXpI=;
-        b=tqHcvD6bkgY3cxjD4yXzmskRp0xrdv8xkPIgnh8CA9U1uiVHHmL781D51KnDVYR4EM
-         DCDAo3I72X+dM0UjU99/VJfX3BYK2AQuoC5Mt8qzCqn+VCpANQPHn7YGFK/vXojjRc6m
-         ZPu4RjW4DdmEGKhfp1etAtSlf1sLtRVGtt9ODcFgWf+r4X6sG1GdwOiMJqqmxUsQmhMS
-         3pF4K5pm+SZ+ZfTiel8V0N6KwiLxcldai5hFYjm1yZLuvooGyuo2MWiKh/pDu0k5Pyv4
-         4mpXXjymmz1/6Z9TaXDjBtBKL2OIv78KbtWJSfAH3d5+52vaEN1eYGwoNleachV9xFWM
-         gKxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYchXJz9U3bYCTQ+hyp6u5s5K2fOB7a3LXmSBnTn8QJuK6NoHDvf0Hm7Sih/geoj8Dxcm4O+hi4mtWDc8Y6iMzvaJ42ee3qlkL2ZE0
-X-Gm-Message-State: AOJu0YzWFh2qQEjNXXD6JQkR+OPHeYCVLD3YrQGsrfEN646C06QD2L9O
-	I9Aljd2mU3/LAIeS/dN9694mz8fnOlBLRVOnfTnGPvT5YkIai4lxYqntEx2SPQ402PQ+C2W+rPu
-	Anb2VcoTlXRpcQ51WBipZ/DTGuGRrsFZcgtclIQ==
-X-Google-Smtp-Source: AGHT+IGMUxO+SbJNNsJNOeCjlAxiHYJmrGmzXoT7AF6Cdx1Io2AIZBXwOGeT+8FzlSsn1R93xMpQ61uziEW80Qs3BTQ=
-X-Received: by 2002:a17:90a:c28b:b0:2d3:c4d3:de19 with SMTP id
- 98e67ed59e1d1-2d3dfac98f0mr8696169a91.0.1724053767927; Mon, 19 Aug 2024
- 00:49:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724053782; x=1724658582;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j/s5eSp55kJmjKTWCRvYRqFXs2anNEkZMyc6DD7OVTQ=;
+        b=Fin8fejL3dynZeySoKKrubNcRDtitoIirwT4YtMB8IHHiDlOmL2/RZtXZanKdq9TGG
+         E6OpZmFAnhYxFduvA4UX1t34s34bifSmWTTDKBIKt81MtEqeuEbh6xMN/f4gK6b0Ukb0
+         ggYnPIs21eBvydYtqUrKLfM3FmS6Fxu2dNCWwMdFBr4sgVixjbIQR8XML9vWV3Mhu3B2
+         fPdCMc/nKbjX2FC/0TCCzKqCIUrCaSzOmMoNCcF4a2xrM5J9K4vBmqaAWlxyul8k/Ccd
+         dZCXQ56PoiYWksG7FhggT3VdMZafgUlu05PFWI33JqH524+3aEnQBFuA5KeOUyhHuGoc
+         4X5A==
+X-Gm-Message-State: AOJu0YxHbQ/LxYUlV9L7EPT3YTAmyg39A8G0r33AmQq6UpeeD1Y2x7nZ
+	tpDBCLAcw+jRiMtUV05UaqcFnkSQW0OsAa/tdvEHP56ShFa0s/yfGGw9L51MNEok0u0qNPAvi7x
+	OTkftwEQdbLiih823DU/Xd2p0B/wy9g+gMW+qi50zFVGI5qcHN4g=
+X-Google-Smtp-Source: AGHT+IEUUzi1hfxh9ntCtG/z4OgyGT9Fe7tMvLDI9rF6mfrANf/qH3M8lWtHLqsSgZQqcOGVrm6SPWleT8TqNoOZDIE=
+X-Received: by 2002:a05:6122:4789:b0:4f6:b320:d3ee with SMTP id
+ 71dfb90a1353d-4fc6f5fa004mr4276827e0c.2.1724053781953; Mon, 19 Aug 2024
+ 00:49:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPYmKFsTcurrUiWqM8cFj+GgqfRiaLqPDGOTSE+RLyKJGSKE2g@mail.gmail.com>
- <B0C91D33-8C1C-4C67-B9B4-41206EFD8ECF@jrtc27.com>
-In-Reply-To: <B0C91D33-8C1C-4C67-B9B4-41206EFD8ECF@jrtc27.com>
-From: Xu Lu <luxu.kernel@bytedance.com>
-Date: Mon, 19 Aug 2024 15:49:16 +0800
-Message-ID: <CAPYmKFs7ZyHyKo8uULvYp3YK8ABOJo8+FWDG_cr2YU_cXgfRww@mail.gmail.com>
-Subject: Re: [External] Re: Some feedbacks on RISC-V IOMMU driver
-To: Jessica Clarke <jrtc27@jrtc27.com>
-Cc: Tomasz Jeznach <tjeznach@rivosinc.com>, Anup Patel <apatel@ventanamicro.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, linux@rivosinc.com, Will Deacon <will@kernel.org>, 
-	joro@8bytes.org, LKML <linux-kernel@vger.kernel.org>, 
-	Yongji Xie <xieyongji@bytedance.com>, iommu@lists.linux.dev, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, wangqian.rd@bytedance.com, 
-	linux-riscv <linux-riscv@lists.infradead.org>, robin.murphy@arm.com, 
-	Hangjing Li <lihangjing@bytedance.com>, baolu.lu@linux.intel.com
+References: <CA+G9fYuD4-qKAX9nDS-3cy+HwGbyJ6WoD7bZ_QL0J__A++P9aA@mail.gmail.com>
+ <CA+G9fYuYfNA7NZDHpq2K24CsUn21LAb8vn38=JTz=54bsdSd9g@mail.gmail.com>
+In-Reply-To: <CA+G9fYuYfNA7NZDHpq2K24CsUn21LAb8vn38=JTz=54bsdSd9g@mail.gmail.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Mon, 19 Aug 2024 13:19:30 +0530
+Message-ID: <CA+G9fYvRA=K=S7Vv0-gfypG2vFGYQqgvWVaPx6uGDjwZq3N_kg@mail.gmail.com>
+Subject: Re: next: x86_64: ahci 0000:00:1f.2: probe with driver ahci failed
+ with error -12
+To: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, linux-block <linux-block@vger.kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>, 
+	Alexey Dobriyan <adobriyan@gmail.com>, Christoph Hellwig <hch@lst.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Anders Roxell <anders.roxell@linaro.org>, Matthew Brost <matthew.brost@intel.com>, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Jessica,
-
-On Mon, Aug 19, 2024 at 1:17=E2=80=AFPM Jessica Clarke <jrtc27@jrtc27.com> =
-wrote:
+On Wed, 14 Aug 2024 at 15:56, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
 >
-> On 19 Aug 2024, at 04:56, Xu Lu <luxu.kernel@bytedance.com> wrote:
+> On Wed, 14 Aug 2024 at 15:15, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
 > >
-> > Hi Tomasz,
+> > The qemu-x86_64 boot failed with today's Linux next-20240814 tag due to
+> > following crash.
 > >
-> > Thanks for your brilliant job on RISC-V IOMMU driver. It helps us a
-> > lot for what we are doing. Below is our feedback on the existing
-> > implementation[1].
+> > The catch here is the crash seen on both x86_64 device and qemu-x86_64
+> > but x86_64 device is able to boot successfully.
 > >
-> > 1) Some IOMMU HW may only support 32-bit granularity access on its
-> > control registers (even when the register is 8 byte length). Maybe it
-> > is better to provide a 32-bit access method for 8 byte length
-> > registers like what opensbi does on ACLINT MTIME register.
->
-> That OpenSBI has to access MTIME piecewise is a workaround for a vendor
-> not implementing what the spec clearly intended, even if it wasn=E2=80=99=
-t
-> explicitly stated (but is now, in response to that). Repeating that
-> situation would be a pitiful mistake.
->
-> The current IOMMU spec draft very clearly states:
->
->   "Registers that are 64-bit wide may be accessed using either a 32-bit
->    or a 64-bit access.=E2=80=9D
->
-
-The spec's description about this is pretty confusing.
- "The 8 byte IOMMU registers are defined in such a way that software
-can perform two individual 4 byte accesses, or hardware can perform
-two independent 4 byte transactions resulting from an 8 byte access."
-It seems that there is no requirement to implement 8-byte access.
-It's OK then if we think this is not a problem.
-
-> Jess
->
-> > 2) In the IOMMU fault queue handling procedure, I wonder whether it is
-> > better to clear the fqmf/fqof bit first, and then clear the ipsr.fip
-> > bit. Otherwise the ipsr.fip can not be cleared and a redundant
-> > interrupt will be signaled.
-
-By the way, it seems the irq handler must clear ipsr.fip first to
-avoid missing out some faults no matter whether a redundant irq will
-be generated.
-
-If ipsr.fiq pending via fqof/fqmf is implemented as edge triggering,
-then ipsr.fiq can be cleared at first. In this case we can not clear
-ipsr.fip again after clearing fqof/fqmf bit, as it indicates a new
-fault to be handled.
-
-If ipsr.fiq pending via fqof/fqmf is implemented as level triggering,
-then ipsr.fiq can not be cleared at first and a redundant irq will be
-generated after this handler's return. But it is OK as no fault will
-be missed. Otherwise it is hard to detect whether the ipsr.fiq is an
-old one or a new one.
-
-Please correct me if I have any misunderstanding. Looking forward to
-the subsequent code.
-
-Best regards!
-
+> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 > >
-> > Best regards!
-> > Xu Lu
-> >
-> > [1] https://lore.kernel.org/all/cover.1718388908.git.tjeznach@rivosinc.=
-com/
-> >
-> > _______________________________________________
-> > linux-riscv mailing list
-> > linux-riscv@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-riscv
+> > Boot log:
+> > ---
+> > [    0.000000] Linux version 6.11.0-rc3-next-20240814
+> > (tuxmake@tuxmake) (x86_64-linux-gnu-gcc (Debian 13.3.0-1) 13.3.0, GNU
+> > ld (GNU Binutils for Debian) 2.42.50.20240625) #1 SMP PREEMPT_DYNAMIC
+> > @1723614704
+> > ...
+> > <6>[    2.479915] scsi host0: ahci
+> > <4>[    2.484371] sysfs: cannot create duplicate filename
+> > '/devices/virtual/workqueue/scsi_tmf_-1073661392'
 >
+> Anders bisected to the following first commit and reverted this commit
+> and qemu-x86_64 boot successful now.
+>
+> # first bad commit: [b188c57af2b5c17a1e8f71a0358f330446a4f788]
+>       workqueue: Split alloc_workqueue into internal function and lockdep init
+
+This reported problem is still seen on today's Linux next-20240819 tag.
+
+>
+> original report link:
+> https://lore.kernel.org/all/CA+G9fYuD4-qKAX9nDS-3cy+HwGbyJ6WoD7bZ_QL0J__A++P9aA@mail.gmail.com/
+>
+> > <4>[    2.486170] CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted
+> > 6.11.0-rc3-next-20240814 #1
+> > <4>[    2.486709] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
+> > BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> > <4>[    2.486709] Call Trace:
+> > <4>[    2.486709]  <TASK>
+> > <4>[    2.486709]  dump_stack_lvl+0x96/0xb0
+> > <4>[    2.486709]  dump_stack+0x14/0x20
+> > <4>[    2.486709]  sysfs_warn_dup+0x5f/0x80
+> > <4>[    2.486709]  sysfs_create_dir_ns+0xd0/0xf0
+> > <4>[    2.486709]  kobject_add_internal+0xa8/0x2e0
+> > <4>[    2.486709]  kobject_add+0x97/0x100
+> > <4>[    2.486709]  ? get_device_parent+0x109/0x1d0
+> > <4>[    2.486709]  device_add+0xe4/0x880
+> > <4>[    2.486709]  ? hrtimer_init+0x2b/0x80
+> > <4>[    2.486709]  device_register+0x1e/0x30
+> > <4>[    2.486709]  workqueue_sysfs_register+0x91/0x140
+> > <4>[    2.486709]  __alloc_workqueue+0x664/0x800
+> > <4>[    2.486709]  ? trace_preempt_on+0x1e/0x70
+> > <4>[    2.486709]  ? __kthread_create_on_node+0x108/0x170
+> > <4>[    2.486709]  alloc_workqueue+0x5a/0x80
+> > <4>[    2.486709]  ? __kthread_create_on_node+0x108/0x170
+> > <4>[    2.486709]  scsi_host_alloc+0x365/0x470
+> > <4>[    2.486709]  ata_scsi_add_hosts+0xc2/0x130
+> > <4>[    2.486709]  ata_host_register+0xb5/0x260
+> > <4>[    2.486709]  ata_host_activate+0xe9/0x140
+> > <4>[    2.486709]  ahci_host_activate+0x16a/0x190
+> > <4>[    2.486709]  ahci_init_one+0xe0f/0x1080
+> > <4>[    2.486709]  ? trace_preempt_on+0x1e/0x70
+> > <4>[    2.486709]  local_pci_probe+0x48/0xa0
+> > <4>[    2.486709]  pci_device_probe+0xc6/0x1f0
+> > <4>[    2.486709]  really_probe+0xcc/0x3b0
+> > <4>[    2.486709]  __driver_probe_device+0x7d/0x160
+> > <4>[    2.486709]  driver_probe_device+0x24/0xa0
+> > <4>[    2.486709]  __driver_attach+0xdd/0x1d0
+> > <4>[    2.486709]  ? __pfx___driver_attach+0x10/0x10
+> > <4>[    2.486709]  bus_for_each_dev+0x91/0xe0
+> > <4>[    2.486709]  driver_attach+0x22/0x30
+> > <4>[    2.486709]  bus_add_driver+0x118/0x240
+> > <4>[    2.486709]  driver_register+0x62/0x120
+> > <4>[    2.486709]  ? __pfx_ahci_pci_driver_init+0x10/0x10
+> > <4>[    2.486709]  __pci_register_driver+0x62/0x70
+> > <4>[    2.486709]  ahci_pci_driver_init+0x22/0x30
+> > <4>[    2.486709]  do_one_initcall+0x62/0x250
+> > <4>[    2.486709]  kernel_init_freeable+0x1ba/0x310
+> > <4>[    2.486709]  ? __pfx_kernel_init+0x10/0x10
+> > <4>[    2.486709]  kernel_init+0x1e/0x1d0
+> > <4>[    2.486709]  ret_from_fork+0x41/0x60
+> > <4>[    2.486709]  ? __pfx_kernel_init+0x10/0x10
+> > <4>[    2.486709]  ret_from_fork_asm+0x1a/0x30
+> > <4>[    2.486709]  </TASK>
+> > <3>[    2.508109] kobject: kobject_add_internal failed for
+> > scsi_tmf_-1073661392 with -EEXIST, don't try to register things with
+> > the same name in the same directory.
+> > <4>[    2.519098] scsi host1: failed to create tmf workq
+> > <6>[    2.524520] kworker/R-scsi_ (56) used greatest stack depth:
+> > 15464 bytes left
+> > <6>[    2.528402] scsi_eh_1 (55) used greatest stack depth: 14872 bytes left
+> > <3>[    2.540312] ahci 0000:00:1f.2: probe with driver ahci failed
+> > with error -12
+> >
+> > Full dmesg log:
+> > -----------
+> >   - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240814/testrun/24850492/suite/boot/test/gcc-13-lkftconfig-rcutorture/log
+> >
+> > Reproduce script:
+> > ---
+> >  - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2kdXPeyCZIUn4AYH0UrByWXzepD/reproducer
+> >  - Qemu version: 8.2.4
+> >
+> > Boot command: /usr/bin/qemu-system-x86_64 -cpu Nehalem -machine q35
+> > -nographic -nic none -m 4G -monitor none -no-reboot -smp 2 -kernel
+> > kernel/bzImage -append \"console=ttyS0,115200 rootwait root=/dev/sda
+> > debug verbose console_msg_format=syslog systemd.log_level=warning rw
+> > earlycon\" -drive file=rootfs.ext4,if=ide,format=raw"
+> >
+> > Build link:
+> > ------
+> >  - https://storage.tuxsuite.com/public/linaro/lkft/builds/2kdXMb8C1EcMoXxMdKTWd4TB8Ef/
+> >  - https://storage.tuxsuite.com/public/linaro/lkft/builds/2kdXMb8C1EcMoXxMdKTWd4TB8Ef/config
+> >
+> > metadata:
+> > ---
+> >   git_ref: master
+> >   git_describe: next-20240814
+> >   git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+> >   kernel_version: 6.11.0-rc3
+> >   arch: x86
+> >   device: qemu-x86_64
+> >
+> > Please let me know if you need more information.
+
+Latest crash log link,
+ -  https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240819/testrun/24919484/suite/boot/test/gcc-13-lkftconfig-no-kselftest-frag/log
+
+> > --
+> > Linaro LKFT
+> > https://lkft.linaro.org
+>
+
+- Naresh
 
