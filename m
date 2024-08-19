@@ -1,357 +1,201 @@
-Return-Path: <linux-kernel+bounces-291388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-291389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D8A5956174
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:31:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6747F956175
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 05:35:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E8631F214EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 03:31:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84BF61C214E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2024 03:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BFCF13D896;
-	Mon, 19 Aug 2024 03:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4EC9139CEE;
+	Mon, 19 Aug 2024 03:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="hA1IWtYX"
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S7jbB+l1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1327E574
-	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 03:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDDB2F4A
+	for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2024 03:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724038249; cv=none; b=OKApPqboRE8BqOa2AS5Lb+vzto0Pv6co7Kr9AfUi16NmF01Sxx02PMf0Rj/Nqoyr2W1rmfPHSxg+T4uYQad8C/O0IxfMloyKdKSj97kphh6qqc0DKR8UbBg3STZhBSXGMhyTpxAKv5i9WG88jb99qNvKI29zt/sNUl/z8qYxryk=
+	t=1724038497; cv=none; b=d9+SMtelzEC2KMQBuCK/pg6SYnR7rWC8s0z1+kcQeIdO520KmsE9aeg6ZcbtdTV4fcBpK1Wdcw41Q6RCxy+bmyZY0ibgmg+aPbeGdnwxLhOG+rJZ8vhw1ZoPS2MPRkxdrbZ7ztrwcJ657hVHSkG4TK78zAaxK9BgDrk3ndTbfmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724038249; c=relaxed/simple;
-	bh=3S9p8ZP9X9hUrPiY52QZMCrw43UU8ZxmgJHko/1VNZA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fzdpdfmI2IYM2+Tq8mh5jKM9zZzh1VJLGZ+ImCNccetGLio+nEbbh9sKliWEtkvuHl1SBSGshfknIw8AlB1RkC1RKIZ6HNqw5+AR02SyodJMKSHEXMOfM48DwUSIZjpyO5qpaKfMFhvrPe2a/3Qz/+udMWEW5mgFwzGhu3i8i0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=hA1IWtYX; arc=none smtp.client-ip=209.85.160.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2689f749702so2204668fac.3
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2024 20:30:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1724038247; x=1724643047; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R2AqGjUdogreCAlf9cQO9IBasCWAvQL4YPRr9P0x8Ns=;
-        b=hA1IWtYXLSIJh50JcFGc69kvqwgVSHdyc8bzn/dDFzHmXWt4mTdPECnL9Gf+DqBkfV
-         cj6HOP3jPyQO24KkIA7sGLSLWMqY0t44p0caXL5a8Z+Ys5ykdkOTGfAO/WfaHDbGves6
-         bliYxtfPTtCCRBXuWnOzO8h3lyPBXTSYQAULMm9sZWYE9siP0/c3QycvgfHmEkcDT4TE
-         D5uqbl3daonTn3CxixN3QAIALMWpTCo71a/asy1ghp2GWT/W6lxDrojGafWq23Molic0
-         sjv7Q6bSIp4B5dEbiZyc/uOGWBgbjNyGoSQ5307b9vHaFHZaRoyDwnYqeSMeCieJedE9
-         wkoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724038247; x=1724643047;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R2AqGjUdogreCAlf9cQO9IBasCWAvQL4YPRr9P0x8Ns=;
-        b=osKhdjFkclXe8jnhT6I1qtiFUgaaEVC9XgLNUcm+mmxjKvnPh47oezQtWQAhcbA3bw
-         kcYCeibA8P/DnXfhZNWN7GzaWoVId+3RRdS9UQNWSelnxGIKlrMq+vVtKVNa8KicY3hC
-         3fNoY97xOYfCZGAOgPZVnTERtXeBr1MHus1Jr7YGdNAqMGFqiUVYUT5XUcKhaI3FWeuE
-         SaSDDwkWP/4C/OCyTpSgjvhQr5ydHHf4HfOiJ5zHu+Bv+E5gJy+8UhB85AN+niQzG2Jx
-         Mg5c/+NE6EZILFPUo/bStWhAO5X9UWPYQ2efuaOqXMs5Npv1XPSYiuj4AuylvbweMLTd
-         y2Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCXSq6H3hYupHOZ4pctu34pBhytSB8P4amBBtv0kY+buUKRcIuifu/E7bP+jlCbcixX6aI+6p243XhSfebFUEpTc08Og0yJwvOyxJadH
-X-Gm-Message-State: AOJu0YxBDZijHdSaPEorUzL0tIpHFkRrSObPJC/z2eA2v3vE0W8n6JiC
-	laLArLQuvUgfxcwVMo7aRx6mNU9fQv8dGjbh6leFs437X4BxXdzGwy5M7DL+Qts=
-X-Google-Smtp-Source: AGHT+IHxOvmnYckshWm5egikaGQZmzdAjz3lROvbj7JeIhfHfWT5cr8XmapdgxbRvGh+J0YSvolyHg==
-X-Received: by 2002:a05:6870:80cb:b0:270:6bae:5573 with SMTP id 586e51a60fabf-2706bae5802mr710501fac.28.1724038246520;
-        Sun, 18 Aug 2024 20:30:46 -0700 (PDT)
-Received: from ubuntu20.04 ([203.208.189.5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127add83bdsm5816397b3a.3.2024.08.18.20.30.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2024 20:30:45 -0700 (PDT)
-From: Yang Jihong <yangjihong@bytedance.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	james.clark@arm.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: yangjihong@bytedance.com
-Subject: [PATCH v2 2/2] perf sched timehist: Add --prio option
-Date: Mon, 19 Aug 2024 11:30:16 +0800
-Message-Id: <20240819033016.2427235-3-yangjihong@bytedance.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240819033016.2427235-1-yangjihong@bytedance.com>
-References: <20240819033016.2427235-1-yangjihong@bytedance.com>
+	s=arc-20240116; t=1724038497; c=relaxed/simple;
+	bh=OoUUZOAulltQacWH4AzegysZeKuUdfHCfIyZe7W/jrA=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=fHzD+l4gRKd/L8s8aNCmZuF8wYln1hz1+wdYp3olVojmWwKkV7QiJ3N4blQoqO04z0HoNrthqVutEhScZFMYWwdEmj/5Qvk0PM8+H2ZZA6xP5M2T1XHDwwB9nVuZrJ3fcKCTxBKJ8vmWZHcGv8i5ZH0RWXzFwvdQsLEABMpAMmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S7jbB+l1; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724038495; x=1755574495;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=OoUUZOAulltQacWH4AzegysZeKuUdfHCfIyZe7W/jrA=;
+  b=S7jbB+l1X69y1SdBKnkFDacTm3XPR0Jilq6N/OK93VtknAUY3HiNUI4n
+   M+KTQji1tFK8mZOxxFW6QNTEx5ijT+PZ5tZQmNtH7DhNwEszrI6CGLPDm
+   iLoneX7YMj5ftSssfIeqcAeqMZGlusFoVX8UG+zV8XIp5b6xq7nN3U0pY
+   qSWERrRb47tlGUUh+Fk6CcgGqhsvYi9+kR3sRJO7Ib38Wbp24uDgWb4du
+   NnNa5g6Cef0cngncVEsR5b0vcVRqh3AjqjMKwvcOobNwbVcaZOGKXntcZ
+   imwyxEdp/1Bkrjg+YJ5819WsN62q1dEAbXUUsVQ7BGhobvCx78wSumBaV
+   A==;
+X-CSE-ConnectionGUID: mXVsR/aBSEqUKZK4VvqqGw==
+X-CSE-MsgGUID: Lllwc8h4QLu5ZLRnmhIC+Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="22418348"
+X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
+   d="scan'208";a="22418348"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2024 20:34:55 -0700
+X-CSE-ConnectionGUID: m/Fr8l+HTHegHghwaKC9Dg==
+X-CSE-MsgGUID: Flunx/QZTJaGThITwK1U9w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,158,1719903600"; 
+   d="scan'208";a="83458792"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.240.228]) ([10.124.240.228])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2024 20:34:52 -0700
+Message-ID: <3631c0ca-4c8d-4cef-aa40-13e3acd22123@linux.intel.com>
+Date: Mon, 19 Aug 2024 11:34:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] iommu/vt-d: Move PCI PASID enablement to probe path
+To: Yi Liu <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
+References: <20240816104945.97160-1-baolu.lu@linux.intel.com>
+ <511f140b-2792-47b0-b366-cbbad6e80239@intel.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <511f140b-2792-47b0-b366-cbbad6e80239@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-The --prio option is used to only show events for the given task priority(ies).
-The default is to show events for all priority tasks, which is consistent with
-the previous behavior.
+On 2024/8/19 11:14, Yi Liu wrote:
+> On 2024/8/16 18:49, Lu Baolu wrote:
+>> Currently, PCI PASID is enabled alongside PCI ATS when an iommu domain is
+>> attached to the device and disabled when the device transitions to block
+>> translation mode. This approach is inappropriate as PCI PASID is a device
+>> feature independent of the type of the attached domain.
+>>
+>> Enable PCI PASID during the IOMMU device probe and disables it during the
+>> release path.
+>>
+>> Suggested-by: Yi Liu <yi.l.liu@intel.com>
+>> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>> ---
+>>   drivers/iommu/intel/iommu.c | 27 +++++++++++++--------------
+>>   1 file changed, 13 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+>> index 9ff8b83c19a3..5a8080c71b04 100644
+>> --- a/drivers/iommu/intel/iommu.c
+>> +++ b/drivers/iommu/intel/iommu.c
+>> @@ -1322,15 +1322,6 @@ static void iommu_enable_pci_caps(struct 
+>> device_domain_info *info)
+>>           return;
+>>       pdev = to_pci_dev(info->dev);
+>> -
+>> -    /* The PCIe spec, in its wisdom, declares that the behaviour of
+>> -       the device if you enable PASID support after ATS support is
+>> -       undefined. So always enable PASID support on devices which
+>> -       have it, even if we can't yet know if we're ever going to
+>> -       use it. */
+>> -    if (info->pasid_supported && !pci_enable_pasid(pdev, 
+>> info->pasid_supported & ~1))
+>> -        info->pasid_enabled = 1;
+>> -
+>>       if (info->ats_supported && pci_ats_page_aligned(pdev) &&
+>>           !pci_enable_ats(pdev, VTD_PAGE_SHIFT)) {
+>>           info->ats_enabled = 1;
+>> @@ -1352,11 +1343,6 @@ static void iommu_disable_pci_caps(struct 
+>> device_domain_info *info)
+>>           info->ats_enabled = 0;
+>>           domain_update_iotlb(info->domain);
+>>       }
+>> -
+>> -    if (info->pasid_enabled) {
+>> -        pci_disable_pasid(pdev);
+>> -        info->pasid_enabled = 0;
+>> -    }
+>>   }
+>>   static void intel_flush_iotlb_all(struct iommu_domain *domain)
+>> @@ -4110,6 +4096,16 @@ static struct iommu_device 
+>> *intel_iommu_probe_device(struct device *dev)
+>>           }
+>>       }
+>> +    /*
+>> +     * The PCIe spec, in its wisdom, declares that the behaviour of the
+>> +     * device is undefined if you enable PASID support after ATS 
+>> support.
+>> +     * So always enable PASID support on devices which have it, even if
+>> +     * we can't yet know if we're ever going to use it.
+>> +     */
+>> +    if (info->pasid_supported &&
+>> +        !pci_enable_pasid(pdev, info->pasid_supported & ~1))
+>> +        info->pasid_enabled = 1;
+>> +
+>>       intel_iommu_debugfs_create_dev(info);
+>>       return &iommu->iommu;
+>> @@ -4128,6 +4124,9 @@ static void intel_iommu_release_device(struct 
+>> device *dev)
+>>       struct device_domain_info *info = dev_iommu_priv_get(dev);
+>>       struct intel_iommu *iommu = info->iommu;
+>> +    if (info->pasid_enabled)
+>> +        pci_disable_pasid(to_pci_dev(dev));
+>> +
+> 
+> would it make sense to move this behind the
+> intel_iommu_debugfs_remove_dev(info)? This seems to mirror the order of the
+> intel_iommu_probe_device(). Or you may set info->pasid_enabled to 0 in case
+> of any code uses it before info is freed if keeping this order. Otherwise,
+> lgtm. thanks for the quick action. 🙂
 
-Testcase:
-  # perf sched record nice -n 9 perf bench sched messaging -l 10000
-  # Running 'sched/messaging' benchmark:
-  # 20 sender and receiver processes per group
-  # 10 groups == 400 processes run
+The info->pasid_enabled change should not impact the behavior of
+intel_iommu_debugfs_remove_dev(), and I didn't find any issue during my
+test.
 
-       Total time: 3.435 [sec]
-  [ perf record: Woken up 270 times to write data ]
-  [ perf record: Captured and wrote 618.688 MB perf.data (5729036 samples) ]
+Anyway, to make it more consistent with previous behavior, maybe I could
+move the part where we turn on/off pasid to the end of the probe and the
+start of the release.
 
-  # perf sched timehist -h
+Additional change likes below?
 
-   Usage: perf sched timehist [<options>]
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index 5a8080c71b04..76b317f1d1de 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -4096,6 +4096,8 @@ static struct iommu_device 
+*intel_iommu_probe_device(struct device *dev)
+                 }
+         }
 
-      -C, --cpu <cpu>       list of cpus to profile
-      -D, --dump-raw-trace  dump raw trace in ASCII
-      -f, --force           don't complain, do it
-      -g, --call-graph      Display call chains if present (default on)
-      -I, --idle-hist       Show idle events only
-      -i, --input <file>    input file name
-      -k, --vmlinux <file>  vmlinux pathname
-      -M, --migrations      Show migration events
-      -n, --next            Show next task
-      -p, --pid <pid[,pid...]>
-                            analyze events only for given process id(s)
-      -s, --summary         Show only syscall summary with statistics
-      -S, --with-summary    Show all syscalls and summary with statistics
-      -t, --tid <tid[,tid...]>
-                            analyze events only for given thread id(s)
-      -V, --cpu-visual      Add CPU visual
-      -v, --verbose         be more verbose (show symbol address, etc)
-      -w, --wakeups         Show wakeup events
-          --kallsyms <file>
-                            kallsyms pathname
-          --max-stack <n>   Maximum number of functions to display backtrace.
-          --prio <prio>     analyze events only for given task priority(ies)
-          --show-prio       Show task priority
-          --state           Show task state when sched-out
-          --symfs <directory>
-                            Look for files with symbols relative to this directory
-          --time <str>      Time span for analysis (start,stop)
++       intel_iommu_debugfs_create_dev(info);
++
+         /*
+          * The PCIe spec, in its wisdom, declares that the behaviour of the
+          * device is undefined if you enable PASID support after ATS 
+support.
+@@ -4106,8 +4108,6 @@ static struct iommu_device 
+*intel_iommu_probe_device(struct device *dev)
+             !pci_enable_pasid(pdev, info->pasid_supported & ~1))
+                 info->pasid_enabled = 1;
 
-  # perf sched timehist --prio 140
-  Samples of sched_switch event do not have callchains.
-  Invalid prio string
+-       intel_iommu_debugfs_create_dev(info);
+-
+         return &iommu->iommu;
+  free_table:
+         intel_pasid_free_table(dev);
 
-  # perf sched timehist --show-prio --prio 129
-  Samples of sched_switch event do not have callchains.
-             time    cpu  task name                       prio      wait time  sch delay   run time
-                          [tid/pid]                                    (msec)     (msec)     (msec)
-  --------------- ------  ------------------------------  --------  ---------  ---------  ---------
-   2090450.765421 [0002]  sched-messaging[1229618]        129           0.000      0.000      0.029
-   2090450.765445 [0007]  sched-messaging[1229616]        129           0.000      0.062      0.043
-   2090450.765448 [0014]  sched-messaging[1229619]        129           0.000      0.000      0.032
-   2090450.765478 [0013]  sched-messaging[1229617]        129           0.000      0.065      0.048
-   2090450.765503 [0014]  sched-messaging[1229622]        129           0.000      0.000      0.017
-   2090450.765550 [0002]  sched-messaging[1229624]        129           0.000      0.000      0.021
-   2090450.765562 [0007]  sched-messaging[1229621]        129           0.000      0.071      0.028
-   2090450.765570 [0005]  sched-messaging[1229620]        129           0.000      0.064      0.066
-   2090450.765583 [0001]  sched-messaging[1229625]        129           0.000      0.001      0.031
-   2090450.765595 [0013]  sched-messaging[1229623]        129           0.000      0.060      0.028
-   2090450.765637 [0014]  sched-messaging[1229628]        129           0.000      0.000      0.019
-   2090450.765665 [0007]  sched-messaging[1229627]        129           0.000      0.038      0.030
-  <SNIP>
-
-  # perf sched timehist --show-prio --prio 0,120-129
-  Samples of sched_switch event do not have callchains.
-             time    cpu  task name                       prio      wait time  sch delay   run time
-                          [tid/pid]                                    (msec)     (msec)     (msec)
-  --------------- ------  ------------------------------  --------  ---------  ---------  ---------
-   2090450.763231 [0000]  perf[1229608]                   120           0.000      0.000      0.000
-   2090450.763235 [0000]  migration/0[15]                 0             0.000      0.001      0.003
-   2090450.763263 [0001]  perf[1229608]                   120           0.000      0.000      0.000
-   2090450.763268 [0001]  migration/1[21]                 0             0.000      0.001      0.004
-   2090450.763302 [0002]  perf[1229608]                   120           0.000      0.000      0.000
-   2090450.763309 [0002]  migration/2[27]                 0             0.000      0.001      0.007
-   2090450.763338 [0003]  perf[1229608]                   120           0.000      0.000      0.000
-   2090450.763343 [0003]  migration/3[33]                 0             0.000      0.001      0.004
-   2090450.763459 [0004]  perf[1229608]                   120           0.000      0.000      0.000
-   2090450.763469 [0004]  migration/4[39]                 0             0.000      0.002      0.010
-   2090450.763496 [0005]  perf[1229608]                   120           0.000      0.000      0.000
-   2090450.763501 [0005]  migration/5[45]                 0             0.000      0.001      0.004
-   2090450.763613 [0006]  perf[1229608]                   120           0.000      0.000      0.000
-   2090450.763622 [0006]  migration/6[51]                 0             0.000      0.001      0.008
-   2090450.763652 [0007]  perf[1229608]                   120           0.000      0.000      0.000
-   2090450.763660 [0007]  migration/7[57]                 0             0.000      0.001      0.008
-  <SNIP>
-   2090450.765665 [0001]  <idle>                          120           0.031      0.031      0.081
-   2090450.765665 [0007]  sched-messaging[1229627]        129           0.000      0.038      0.030
-   2090450.765667 [0000]  s1-perf[8235/7168]              120           0.008      0.000      0.004
-   2090450.765684 [0013]  <idle>                          120           0.028      0.028      0.088
-   2090450.765685 [0001]  sched-messaging[1229630]        129           0.000      0.001      0.020
-   2090450.765688 [0000]  <idle>                          120           0.004      0.004      0.020
-   2090450.765689 [0002]  <idle>                          120           0.021      0.021      0.138
-   2090450.765691 [0005]  sched-messaging[1229626]        129           0.000      0.085      0.029
-
-Signed-off-by: Yang Jihong <yangjihong@bytedance.com>
----
- tools/perf/Documentation/perf-sched.txt |  6 ++
- tools/perf/builtin-sched.c              | 74 ++++++++++++++++++++++++-
- 2 files changed, 79 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
-index 3efa5c58418d..3db64954a267 100644
---- a/tools/perf/Documentation/perf-sched.txt
-+++ b/tools/perf/Documentation/perf-sched.txt
-@@ -215,6 +215,12 @@ OPTIONS for 'perf sched timehist'
- --show-prio::
- 	Show task priority.
- 
-+--prio::
-+	Only show events for given task priority(ies). Multiple priorities can be
-+	provided as a comma-separated list with no spaces: 0,120. Ranges of
-+	priorities are specified with -: 120-129. A combination of both can also be
-+	provided: 0,120-129.
-+
- OPTIONS for 'perf sched replay'
- ------------------------------
- 
-diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-index cb61cbb72bfa..d619ae670cca 100644
---- a/tools/perf/builtin-sched.c
-+++ b/tools/perf/builtin-sched.c
-@@ -51,6 +51,7 @@
- #define COMM_LEN		20
- #define SYM_LEN			129
- #define MAX_PID			1024000
-+#define MAX_PRIO		140
- 
- static const char *cpu_list;
- static DECLARE_BITMAP(cpu_bitmap, MAX_NR_CPUS);
-@@ -234,6 +235,8 @@ struct perf_sched {
- 	struct perf_time_interval ptime;
- 	struct perf_time_interval hist_time;
- 	volatile bool   thread_funcs_exit;
-+	const char	*prio_str;
-+	DECLARE_BITMAP(prio_bitmap, MAX_PRIO);
- };
- 
- /* per thread run time data */
-@@ -2504,12 +2507,33 @@ static bool timehist_skip_sample(struct perf_sched *sched,
- 				 struct perf_sample *sample)
- {
- 	bool rc = false;
-+	int prio = -1;
-+	struct thread_runtime *tr = NULL;
- 
- 	if (thread__is_filtered(thread)) {
- 		rc = true;
- 		sched->skipped_samples++;
- 	}
- 
-+	if (sched->prio_str) {
-+		/*
-+		 * Because priority may be changed during task execution,
-+		 * first read priority from prev sched_in event for current task.
-+		 * If prev sched_in event is not saved, then read priority from
-+		 * current task sched_out event.
-+		 */
-+		tr = thread__get_runtime(thread);
-+		if (tr && tr->prio != -1)
-+			prio = tr->prio;
-+		else if (evsel__name_is(evsel, "sched:sched_switch"))
-+			prio = evsel__intval(evsel, sample, "prev_prio");
-+
-+		if (prio != -1 && !test_bit(prio, sched->prio_bitmap)) {
-+			rc = true;
-+			sched->skipped_samples++;
-+		}
-+	}
-+
- 	if (sched->idle_hist) {
- 		if (!evsel__name_is(evsel, "sched:sched_switch"))
- 			rc = true;
-@@ -2723,7 +2747,7 @@ static int timehist_sched_change_event(const struct perf_tool *tool,
- 		goto out;
- 	}
- 
--	if (sched->show_prio)
-+	if (sched->show_prio || sched->prio_str)
- 		timehist_update_task_prio(evsel, sample, machine);
- 
- 	thread = timehist_get_thread(sched, sample, machine, evsel);
-@@ -3142,6 +3166,47 @@ static int timehist_check_attr(struct perf_sched *sched,
- 	return 0;
- }
- 
-+static int timehist_parse_prio_str(struct perf_sched *sched)
-+{
-+	char *p;
-+	unsigned long start_prio, end_prio;
-+	const char *str = sched->prio_str;
-+
-+	if (!str)
-+		return 0;
-+
-+	while (isdigit(*str)) {
-+		p = NULL;
-+		start_prio = strtoul(str, &p, 0);
-+		if (start_prio >= MAX_PRIO || (*p != '\0' && *p != ',' && *p != '-'))
-+			return -1;
-+
-+		if (*p == '-') {
-+			str = ++p;
-+			p = NULL;
-+			end_prio = strtoul(str, &p, 0);
-+
-+			if (end_prio >= MAX_PRIO || (*p != '\0' && *p != ','))
-+				return -1;
-+
-+			if (end_prio < start_prio)
-+				return -1;
-+		} else {
-+			end_prio = start_prio;
-+		}
-+
-+		for (; start_prio <= end_prio; start_prio++)
-+			__set_bit(start_prio, sched->prio_bitmap);
-+
-+		if (*p)
-+			++p;
-+
-+		str = p;
-+	}
-+
-+	return 0;
-+}
-+
- static int perf_sched__timehist(struct perf_sched *sched)
- {
- 	struct evsel_str_handler handlers[] = {
-@@ -3203,6 +3268,11 @@ static int perf_sched__timehist(struct perf_sched *sched)
- 	if (timehist_check_attr(sched, evlist) != 0)
- 		goto out;
- 
-+	if (timehist_parse_prio_str(sched) != 0) {
-+		pr_err("Invalid prio string\n");
-+		goto out;
-+	}
-+
- 	setup_pager();
- 
- 	/* prefer sched_waking if it is captured */
-@@ -3760,6 +3830,8 @@ int cmd_sched(int argc, const char **argv)
- 		   "analyze events only for given thread id(s)"),
- 	OPT_STRING('C', "cpu", &cpu_list, "cpu", "list of cpus to profile"),
- 	OPT_BOOLEAN(0, "show-prio", &sched.show_prio, "Show task priority"),
-+	OPT_STRING(0, "prio", &sched.prio_str, "prio",
-+		   "analyze events only for given task priority(ies)"),
- 	OPT_PARENT(sched_options)
- 	};
- 
--- 
-2.25.1
-
+Thanks,
+baolu
 
